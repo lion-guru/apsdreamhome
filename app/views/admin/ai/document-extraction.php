@@ -414,7 +414,7 @@ function renderReviewForm(job) {
 }
 
 function submitReview(action) {
-    currentAction = action;
+    showLoader();
     const form = document.getElementById('reviewForm');
     const formData = new FormData(form);
     formData.append('action', action);
@@ -430,20 +430,22 @@ function submitReview(action) {
             bootstrap.Modal.getInstance(document.getElementById('reviewModal')).hide();
             location.reload();
         } else {
-            alert('Error: ' + result.error);
+            showToast('Error: ' + result.error, 'danger');
         }
     })
-    .catch(() => alert('Error submitting review'));
+    .catch(() => showToast('Error submitting review', 'danger'))
+    .finally(() => hideLoader());
 }
 
 function retryJob(jobId) {
     if (confirm('Retry this failed job?')) {
+        showLoader();
         fetch('<?= BASE_URL ?>/api/document-ai/process/${jobId}', { method: 'POST' })
             .then(r => r.json())
             .then(result => {
                 if (result.success) location.reload();
-                else alert('Error: ' + result.error);
-            });
+                else showToast('Error: ' + result.error, 'danger');
+            }).finally(() => hideLoader());
     }
 }
 </script>

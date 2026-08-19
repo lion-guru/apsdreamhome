@@ -110,15 +110,13 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'inactive' => 0];
 <script>
 function toggleIntegration(id) {
     if (!confirm('Toggle this integration status?')) return;
+    showLoader();
     fetch('<?= BASE_URL ?>/admin/ai-management/toggle-integration/' + id, { method: 'POST' })
         .then(r => r.json())
         .then(d => {
-            if (d.success) {
-                location.reload();
-            } else {
-                alert('Error: ' + (d.message || 'Unknown error'));
-            }
+            if (d.success) { location.reload(); } else { showToast('Error: ' + (d.message || 'Unknown error'), 'danger'); }
         })
-        .catch(() => alert('Request failed'));
+        .catch(() => showToast('Request failed', 'danger'))
+        .finally(() => hideLoader());
 }
 </script>

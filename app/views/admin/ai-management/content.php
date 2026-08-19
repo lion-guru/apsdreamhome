@@ -116,15 +116,13 @@ $stats = $stats ?? ['total' => 0, 'published' => 0, 'draft' => 0];
 <script>
 function toggleContent(id) {
     if (!confirm('Toggle publish status for this content?')) return;
+    showLoader();
     fetch('<?= BASE_URL ?>/admin/ai-management/toggle-content/' + id, { method: 'POST' })
         .then(r => r.json())
         .then(d => {
-            if (d.success) {
-                location.reload();
-            } else {
-                alert('Error: ' + (d.message || 'Unknown error'));
-            }
+            if (d.success) { location.reload(); } else { showToast('Error: ' + (d.message || 'Unknown error'), 'danger'); }
         })
-        .catch(() => alert('Request failed'));
+        .catch(() => showToast('Request failed', 'danger'))
+        .finally(() => hideLoader());
 }
 </script>

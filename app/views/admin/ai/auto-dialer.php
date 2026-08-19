@@ -166,14 +166,16 @@ $recent_logs = $recent_logs ?? [];
 
 <script>
 document.getElementById('btn-process')?.addEventListener('click', function() {
+    showLoader();
     const btn = this; btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Processingâ€¦';
     fetch('<?= BASE_URL ?>/admin/ai-calling/auto-dialer/process', {method: 'POST', headers:{'X-Requested-With':'XMLHttpRequest'}})
         .then(r => r.json()).then(d => {
-            alert((d.message || 'Done') + (d.processed !== undefined ? ' (Processed: ' + d.processed + ', Failed: ' + d.failed + ')' : ''));
+            showToast((d.message || 'Done') + (d.processed !== undefined ? ' (Processed: ' + d.processed + ', Failed: ' + d.failed + ')' : ''), 'success');
             location.reload();
-        }).catch(e => { alert('Error: ' + e); btn.disabled = false; btn.innerHTML = '<i class="fas fa-play me-1"></i>Process Queue'; });
+        }).catch(e => { showToast('Error: ' + e, 'danger'); btn.disabled = false; btn.innerHTML = '<i class="fas fa-play me-1"></i>Process Queue'; }).finally(() => hideLoader());
 });
 document.getElementById('aiScheduleForm')?.addEventListener('submit', function(e) {
+    showLoader();
     e.preventDefault();
     const btn = this.querySelector('button[type=submit]'); btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Runningâ€¦';
     const fd = new FormData(this);
@@ -181,9 +183,9 @@ document.getElementById('aiScheduleForm')?.addEventListener('submit', function(e
     fd.forEach((v,k) => params.append(k, v));
     fetch('<?= BASE_URL ?>/admin/ai-calling/auto-dialer/ai-schedule', {method: 'POST', headers:{'X-Requested-With':'XMLHttpRequest','Content-Type':'application/x-www-form-urlencoded'}, body: params.toString()})
         .then(r => r.json()).then(d => {
-            alert((d.message || 'Done'));
+            showToast((d.message || 'Done'), 'success');
             location.reload();
-        }).catch(err => { alert('Error: ' + err); })
-        .finally(() => { btn.disabled = false; btn.innerHTML = '<i class="fas fa-magic me-1"></i>Run AI'; });
+        }).catch(err => { showToast('Error: ' + err, 'danger'); })
+        .finally(() => { btn.disabled = false; btn.innerHTML = '<i class="fas fa-magic me-1"></i>Run AI'; hideLoader(); });
 });
 </script>

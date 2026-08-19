@@ -324,7 +324,7 @@ $ai_agents = $ai_agents ?? [];
 <script>
 async function quickCall() {
     const phone = document.getElementById('quickCallPhone').value.trim();
-    if (!phone) { alert('Enter phone number'); return; }
+    if (!phone) { showToast('Enter phone number', 'warning'); return; }
 
     const btn = document.getElementById('quickCallBtn');
     const statusDiv = document.getElementById('quickCallStatus');
@@ -366,7 +366,7 @@ async function hangupCall(channel) {
             body: JSON.stringify({ channel })
         });
         location.reload();
-    } catch (e) { alert('Hangup failed'); }
+    } catch (e) { showToast('Hangup failed', 'danger'); }
 }
 
 function refreshChannels() { location.reload(); }
