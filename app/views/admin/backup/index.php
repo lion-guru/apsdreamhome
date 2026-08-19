@@ -22,9 +22,7 @@ $hText    = $hStatus === 'ok' ? 'Healthy' : 'Stale / No recent backup';
             <p class="text-muted mb-0">Create, restore, upload and monitor database backups.</p>
         </div>
         <div class="d-flex gap-2">
-            <button type="button" class="btn btn-outline-secondary" id="btn-refresh-health" title="Refresh health status">
-                <i class="fas fa-sync"></i>
-            </button>
+            <button type="button" class="btn btn-outline-secondary" id="btn-refresh-health" title="Refresh health status" aria-label="Add"><i class="fas fa-sync"></i></button>
             <a href="<?= htmlspecialchars($baseUrl ?? '') ?>/admin/backup/health" target="_blank" class="btn btn-outline-info" title="Open JSON health endpoint">
                 <i class="fas fa-code"></i> Health JSON
             </a>
@@ -233,9 +231,7 @@ $hText    = $hStatus === 'ok' ? 'Healthy' : 'Stale / No recent backup';
                                         <?php if ($bStatus === 'completed' && $exists): ?>
                                             <form method="POST" action="<?= htmlspecialchars($baseUrl ?? '') ?>/admin/backup/restore/<?= $bid ?>" class="d-inline" onsubmit="return confirm('RESTORE backup #<?= $bid ?> ?\n\nThis will REPLACE current database content. Make sure you have a fresh backup first.');">
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($this->getCsrfToken()) ?>">
-                                                <button type="submit" class="btn btn-sm btn-outline-warning" title="Restore">
-                                                    <i class="fas fa-undo"></i>
-                                                </button>
+                                                <button type="submit" class="btn btn-sm btn-outline-warning" title="Restore" aria-label="Undo"><i class="fas fa-undo"></i></button>
                                             </form>
                                         <?php endif; ?>
                                     </td>

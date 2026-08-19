@@ -47,7 +47,7 @@
                                 <input type="hidden" name="recon_id" value="<?= (int)($recon['id'] ?? 0) ?>">
                                 <input type="hidden" name="status" value="matched">
                                 <input type="number" name="cashbook_id" placeholder="CB #" class="form-control form-control-sm d-inline-block" class="style-31652">
-                                <button class="btn btn-sm btn-outline-success"><i class="fas fa-link"></i></button>
+                                <button class="btn btn-sm btn-outline-success" aria-label="Link"><i class="fas fa-link"></i></button>
                             </form>
                             <?php endif; ?>
                         </td>

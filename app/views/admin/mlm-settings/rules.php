@@ -44,7 +44,7 @@
                         </div>
                     </td>
                     <td>
-                        <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-save"></i></button>
+                        <button type="submit" class="btn btn-sm btn-primary" aria-label="Save"><i class="fas fa-save"></i></button>
                         </form>
                     </td>
                 </tr>

@@ -142,12 +142,8 @@ $active = $active ?? 0;
                                     </td>
                                     <td><?php echo date('d M Y', strtotime($dev['created_at'] ?? 'now')); ?></td>
                                     <td>
-                                        <button class="btn btn-sm btn-outline-info" title="View Details">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-danger" title="Revoke Key">
-                                            <i class="fas fa-key"></i>
-                                        </button>
+                                        <button class="btn btn-sm btn-outline-info" title="View Details" aria-label="Add"><i class="fas fa-eye"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger" title="Revoke Key" aria-label="View"><i class="fas fa-key"></i></button>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>

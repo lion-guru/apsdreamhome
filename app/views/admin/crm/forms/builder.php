@@ -158,7 +158,7 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
                             </div>
                             <div class="d-flex gap-2">
                                 <button type="button" class="btn btn-primary flex-grow-1" onclick="saveFieldSettings()"><i class="fas fa-save me-1"></i> Save</button>
-                                <button type="button" class="btn btn-outline-secondary" onclick="cancelFieldEdit()"><i class="fas fa-times"></i></button>
+                                <button type="button" class="btn btn-outline-secondary" onclick="cancelFieldEdit()" aria-label="Save"><i class="fas fa-times"></i></button>
                             </div>
                         </div>
                     </div>
@@ -273,8 +273,8 @@ function renderCanvas() {
             html += `<div class="form-field-card mb-3 p-3 border rounded bg-white position-relative" data-index="${i}" data-type="${f.type}">
                 <div class="d-flex justify-content-between align-items-start mb-2">
                     <span class="badge bg-${getTypeColor(f.type)}">${capitalize(f.type)}</span>
-                    <div><button type="button" class="btn btn-sm btn-outline-secondary" onclick="editField(${i})"><i class="fas fa-edit"></i></button>
-                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeField(${i})"><i class="fas fa-trash"></i></button></div>
+                    <div><button type="button" class="btn btn-sm btn-outline-secondary" onclick="editField(${i})" aria-label="Edit"><i class="fas fa-edit"></i></button>
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeField(${i})" aria-label="Edit"><i class="fas fa-trash"></i></button></div>
                 </div>
                 <div class="field-preview">
                     <label class="form-label fw-bold">${escapeHtml(f.label || '')} ${f.required ? '<span class="text-danger">*</span>' : ''}</label>

@@ -463,9 +463,7 @@ $tabs = [
                         <label class="form-label">Password</label>
                         <div class="input-group">
                             <input type="password" name="settings[smtp_password]" class="form-control" value="<?= sc($settings, 'smtp_password') ?>" id="smtpPassword">
-                            <button class="btn btn-outline-secondary" type="button" onclick="var p=document.getElementById('smtpPassword');p.type=p.type==='password'?'text':'password'">
-                                <i class="fas fa-eye"></i>
-                            </button>
+                            <button class="btn btn-outline-secondary" type="button" onclick="var p=document.getElementById('smtpPassword');p.type=p.type==='password'?'text':'password'" aria-label="View"><i class="fas fa-eye"></i></button>
                         </div>
                         <div class="form-text">For Gmail, use App Password (not regular password)</div>
                     </div>
@@ -530,9 +528,7 @@ $tabs = [
                         <label class="form-label">Key Secret</label>
                         <div class="input-group">
                             <input type="password" name="settings[razorpay_key_secret]" class="form-control" value="<?= sc($settings, 'razorpay_key_secret') ?>" id="razorpaySecret">
-                            <button class="btn btn-outline-secondary" type="button" onclick="var p=document.getElementById('razorpaySecret');p.type=p.type==='password'?'text':'password'">
-                                <i class="fas fa-eye"></i>
-                            </button>
+                            <button class="btn btn-outline-secondary" type="button" onclick="var p=document.getElementById('razorpaySecret');p.type=p.type==='password'?'text':'password'" aria-label="View"><i class="fas fa-eye"></i></button>
                         </div>
                     </div>
                     <div class="mb-3">
@@ -592,9 +588,7 @@ $tabs = [
                         <label class="form-label">MSG91 Auth Key</label>
                         <div class="input-group">
                             <input type="password" name="settings[sms_api_key]" class="form-control" value="<?= sc($settings, 'sms_api_key') ?>" id="smsApiKey">
-                            <button class="btn btn-outline-secondary" type="button" onclick="var p=document.getElementById('smsApiKey');p.type=p.type==='password'?'text':'password'">
-                                <i class="fas fa-eye"></i>
-                            </button>
+                            <button class="btn btn-outline-secondary" type="button" onclick="var p=document.getElementById('smsApiKey');p.type=p.type==='password'?'text':'password'" aria-label="View"><i class="fas fa-eye"></i></button>
                         </div>
                         <div class="form-text">Get from <a href="https://msg91.com" target="_blank">msg91.com</a> â†’ API section</div>
                     </div>
@@ -629,9 +623,7 @@ $tabs = [
                         <label class="form-label">API Token</label>
                         <div class="input-group">
                             <input type="password" name="settings[whatsapp_api_token]" class="form-control" value="<?= sc($settings, 'whatsapp_api_token') ?>" id="whatsappToken">
-                            <button class="btn btn-outline-secondary" type="button" onclick="var p=document.getElementById('whatsappToken');p.type=p.type==='password'?'text':'password'">
-                                <i class="fas fa-eye"></i>
-                            </button>
+                            <button class="btn btn-outline-secondary" type="button" onclick="var p=document.getElementById('whatsappToken');p.type=p.type==='password'?'text':'password'" aria-label="WhatsApp"><i class="fas fa-eye"></i></button>
                         </div>
                     </div>
                     <div class="mb-3">

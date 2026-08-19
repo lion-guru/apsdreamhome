@@ -45,9 +45,7 @@ $settings = $settings ?? [];
                                        value="<?= htmlspecialchars($settings['sms_api_key'] ?? '') ?>" 
                                        id="smsApiKey" placeholder="Enter your MSG91 Auth Key">
                                 <button class="btn btn-outline-secondary" type="button" 
-                                        onclick="var p=document.getElementById('smsApiKey');p.type=p.type==='password'?'text':'password'">
-                                    <i class="fas fa-eye"></i>
-                                </button>
+                                        onclick="var p=document.getElementById('smsApiKey');p.type=p.type==='password'?'text':'password'" aria-label="View"><i class="fas fa-eye"></i></button>
                             </div>
                             <div class="form-text">Get this from <a href="https://msg91.com" target="_blank">msg91.com</a> → API → Auth Key</div>
                         </div>

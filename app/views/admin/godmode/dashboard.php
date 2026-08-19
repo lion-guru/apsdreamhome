@@ -381,9 +381,7 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
                     
                     <div class="input-group mb-3">
                         <input type="text" class="search-box" id="userSearch" placeholder="Search users by name, email, or phone...">
-                        <button class="btn btn-god" onclick="searchUsers()">
-                            <i class="fas fa-search"></i>
-                        </button>
+                        <button class="btn btn-god" onclick="searchUsers()" aria-label="Search"><i class="fas fa-search"></i></button>
                     </div>
                     
                     <div class="mb-3">

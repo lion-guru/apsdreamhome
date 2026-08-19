@@ -144,16 +144,12 @@ $tasks = $tasks ?? [];
                                 </a>
                                 <form action="<?= BASE_URL ?>/admin/scheduler/tasks/run/<?= $task['id'] ?? 0 ?>" method="POST" class="style-26772">
                                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                                    <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Run this task now?')">
-                                        <i class="fas fa-play"></i>
-                                    </button>
+                                    <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Run this task now?')" aria-label="Play"><i class="fas fa-play"></i></button>
                                 </form>
                                 <?php if (!($task['is_system'] ?? true)): ?>
                                 <form action="<?= BASE_URL ?>/admin/scheduler/tasks/delete/<?= $task['id'] ?>" method="POST" class="style-26772">
                                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this task?')">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this task?')" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                 </form>
                                 <?php endif; ?>
                             </td>

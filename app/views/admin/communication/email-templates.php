@@ -78,7 +78,7 @@ $templates = $templates ?? [];
                                             </button>
                                             <form method="POST" action="<?= BASE_URL ?>/admin/communication/email-templates/<?= $t['id'] ?>/delete" class="d-inline" onsubmit="return confirm('Delete this template?')">
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
-                                                <button type="submit" class="btn btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                                <button type="submit" class="btn btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                             </form>
                                         </div>
                                     </td>

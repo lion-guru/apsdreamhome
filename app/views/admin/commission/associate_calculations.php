@@ -38,13 +38,13 @@
                             <form method="POST" action="<?= BASE_URL ?>/admin/commission/associate/calc-status/<?= $c['id'] ?>" class="style-71727" onsubmit="return confirm('Confirm calculation #<?= $c['id'] ?>?')">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <input type="hidden" name="status" value="confirmed">
-                                <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-check"></i></button>
+                                <button type="submit" class="btn btn-sm btn-primary" aria-label="Confirm"><i class="fas fa-check"></i></button>
                             </form>
                             <?php elseif ($c['status'] == 'confirmed'): ?>
                             <form method="POST" action="<?= BASE_URL ?>/admin/commission/associate/calc-status/<?= $c['id'] ?>" class="style-71727" onsubmit="return confirm('Mark #<?= $c['id'] ?> as paid?')">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <input type="hidden" name="status" value="paid">
-                                <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-money-bill"></i></button>
+                                <button type="submit" class="btn btn-sm btn-success" aria-label="Payment"><i class="fas fa-money-bill"></i></button>
                             </form>
                             <?php endif; ?>
                         </td>

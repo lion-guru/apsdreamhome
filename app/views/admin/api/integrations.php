@@ -77,10 +77,8 @@ $third_party = $third_party ?? [];
                                     </td>
                                     <td><?php echo date('d M Y', strtotime($item['created_at'] ?? 'now')); ?></td>
                                     <td>
-                                        <button class="btn btn-sm btn-outline-primary" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-danger" title="Disable">
+                                        <button class="btn btn-sm btn-outline-primary" title="Edit" aria-label="Add"><i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger" title="Disable" aria-label="Edit">
                                             <i class="fas fa-ban"></i>
                                         </button>
                                     </td>

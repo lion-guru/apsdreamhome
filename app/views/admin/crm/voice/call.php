@@ -14,9 +14,9 @@
         <div id="call-status" class="mb-4"><span class="badge bg-secondary fs-6" id="status-badge">Ready to Call</span></div>
 
         <div class="mb-4">
-            <button class="call-btn end me-2" id="btn-call" onclick="startCall()" title="Start Call"><i class="fas fa-phone"></i></button>
-            <button class="call-btn mute me-2" id="btn-mute" onclick="toggleMute()" title="Mute" disabled><i class="fas fa-microphone-slash"></i></button>
-            <button class="call-btn end" id="btn-end" onclick="endCall()" title="End Call" disabled><i class="fas fa-phone-slash"></i></button>
+            <button class="call-btn end me-2" id="btn-call" onclick="startCall()" title="Start Call" aria-label="Call"><i class="fas fa-phone"></i></button>
+            <button class="call-btn mute me-2" id="btn-mute" onclick="toggleMute()" title="Mute" disabled aria-label="Call"><i class="fas fa-microphone-slash"></i></button>
+            <button class="call-btn end" id="btn-end" onclick="endCall()" title="End Call" disabled aria-label="Call"><i class="fas fa-phone-slash"></i></button>
         </div>
 
         <div class="card border-0 shadow-sm mb-3" class="style-56956"><div class="card-body text-start">
@@ -28,7 +28,7 @@
 
         <div class="card border-0 shadow-sm" class="style-56956"><div class="card-body text-start">
             <h6 class="fw-bold"><i class="fas fa-microphone me-1"></i>Voice Commands</h6>
-            <div class="input-group"><input type="text" id="voice-cmd" class="form-control" placeholder="Type or speak a command (Hindi/English)"><button class="btn btn-primary" onclick="sendCommand()"><i class="fas fa-paper-plane"></i></button></div>
+            <div class="input-group"><input type="text" id="voice-cmd" class="form-control" placeholder="Type or speak a command (Hindi/English)"><button class="btn btn-primary" onclick="sendCommand()" aria-label="Call"><i class="fas fa-paper-plane"></i></button></div>
             <div id="cmd-result" class="mt-2"></div>
         </div></div>
     </div>

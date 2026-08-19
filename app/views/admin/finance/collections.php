@@ -139,13 +139,13 @@ $filters = $filters ?? [];
                                             <form method="POST" action="<?= BASE_URL ?>/admin/finance/collections/verify" class="style-35851">
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                                 <input type="hidden" name="id" value="<?= $c['id'] ?>">
-                                                <button type="submit" class="aps-cp-btn aps-cp-btn-sm aps-cp-btn-success" onclick="return confirm('Verify this collection?')"><i class="fas fa-check"></i></button>
+                                                <button type="submit" class="aps-cp-btn aps-cp-btn-sm aps-cp-btn-success" onclick="return confirm('Verify this collection?')" aria-label="Confirm"><i class="fas fa-check"></i></button>
                                             </form>
                                             <form method="POST" action="<?= BASE_URL ?>/admin/finance/collections/reject" class="style-35851">
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                                 <input type="hidden" name="id" value="<?= $c['id'] ?>">
                                                 <input type="text" name="reason" placeholder="Reason" required class="style-42587">
-                                                <button type="submit" class="aps-cp-btn aps-cp-btn-sm aps-cp-btn-danger" onclick="return confirm('Reject this collection?')"><i class="fas fa-times"></i></button>
+                                                <button type="submit" class="aps-cp-btn aps-cp-btn-sm aps-cp-btn-danger" onclick="return confirm('Reject this collection?')" aria-label="Close"><i class="fas fa-times"></i></button>
                                             </form>
                                         <?php endif; ?>
                                     </td>

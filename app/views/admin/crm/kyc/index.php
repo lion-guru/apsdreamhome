@@ -18,8 +18,8 @@
         <td><?= date('d M Y', strtotime($r['created_at'])) ?></td>
         <td>
             <?php if (($r['status']??'')==='pending'): ?>
-            <form method="POST" action="<?= BASE_URL ?>/admin/kyc/<?= $r['id'] ?>/approve" class="d-inline"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><button class="btn btn-sm btn-success"><i class="fas fa-check"></i></button></form>
-            <form method="POST" action="<?= BASE_URL ?>/admin/kyc/<?= $r['id'] ?>/reject" class="d-inline"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><input type="hidden" name="rejection_reason" value="Rejected by admin"><button class="btn btn-sm btn-danger"><i class="fas fa-times"></i></button></form>
+            <form method="POST" action="<?= BASE_URL ?>/admin/kyc/<?= $r['id'] ?>/approve" class="d-inline"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><button class="btn btn-sm btn-success" aria-label="Approve"><i class="fas fa-check"></i></button></form>
+            <form method="POST" action="<?= BASE_URL ?>/admin/kyc/<?= $r['id'] ?>/reject" class="d-inline"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><input type="hidden" name="rejection_reason" value="Rejected by admin"><button class="btn btn-sm btn-danger" aria-label="Reject"><i class="fas fa-times"></i></button></form>
             <?php endif; ?>
             <a href="<?= BASE_URL ?>/admin/kyc/<?= $r['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
         </td>

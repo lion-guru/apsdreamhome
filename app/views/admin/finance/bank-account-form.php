@@ -26,9 +26,7 @@
                         <label class="form-label"><?php echo __('finance_ifsc'); ?> <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <input type="text" name="ifsc_code" required class="form-control text-uppercase" maxlength="11" value="<?= htmlspecialchars($bank['ifsc_code'] ?? '') ?>" data-autofill="ifsc">
-                            <button type="button" class="btn btn-outline-secondary" data-action="gps" title="Auto-fill from IFSC">
-                                <i class="fas fa-magic"></i>
-                            </button>
+                            <button type="button" class="btn btn-outline-secondary" data-action="gps" title="Auto-fill from IFSC" aria-label="Auto"><i class="fas fa-magic"></i></button>
                         </div>
                     </div>
                     <div class="col-md-3">

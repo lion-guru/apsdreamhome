@@ -23,12 +23,12 @@
                 <td>
                   <form method="post" action="<?= BASE_URL ?>/admin/backoffice/leaves/<?= $l['id'] ?>/approve" class="d-inline">
                     <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
-                    <button class="btn btn-success btn-sm"><i class="fas fa-check"></i></button>
+                    <button class="btn btn-success btn-sm" aria-label="Approve"><i class="fas fa-check"></i></button>
                   </form>
                   <form method="post" action="<?= BASE_URL ?>/admin/backoffice/leaves/<?= $l['id'] ?>/reject" class="d-inline">
                     <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
                     <input type="text" name="remarks" placeholder="<?= __('admin_reason_label') ?>" class="form-control form-control-sm d-inline-block" class="style-72730">
-                    <button class="btn btn-danger btn-sm"><i class="fas fa-times"></i></button>
+                    <button class="btn btn-danger btn-sm" aria-label="Close"><i class="fas fa-times"></i></button>
                   </form>
                 </td>
               </tr>

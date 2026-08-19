@@ -28,7 +28,7 @@
                 <?php endif; ?>
                 <div class="mt-3 d-flex gap-2">
                     <a href="<?= BASE_URL ?>/admin/crm/custom-fields/<?= $f['id'] ?>/edit" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
-                    <form method="POST" action="<?= BASE_URL ?>/admin/crm/custom-fields/<?= $f['id'] ?>/delete" onsubmit="return confirm('Delete this field?')"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button></form>
+                    <form method="POST" action="<?= BASE_URL ?>/admin/crm/custom-fields/<?= $f['id'] ?>/delete" onsubmit="return confirm('Delete this field?')"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><button class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button></form>
                 </div>
             </div>
         </div>

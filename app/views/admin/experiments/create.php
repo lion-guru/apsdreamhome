@@ -95,9 +95,7 @@ $csrf = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
             </div>
         </div>
         <div class="col-md-2 text-end">
-            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeVariant(this)" title="Remove">
-                <i class="fas fa-times"></i>
-            </button>
+            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeVariant(this)" title="Remove" aria-label="Close"><i class="fas fa-times"></i></button>
         </div>
     </div>
 </template>

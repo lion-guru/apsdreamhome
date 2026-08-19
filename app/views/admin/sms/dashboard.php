@@ -254,9 +254,7 @@ $page_title = "SMS Dashboard";
                         <td><span class="status-badge ${statusClass}">${log.status}</span></td>
                         <td>${new Date(log.created_at).toLocaleString()}</td>
                         <td>
-                            <button class="btn btn-sm btn-outline-primary" onclick="viewDetails(${log.id})">
-                                <i class="fas fa-eye"></i>
-                            </button>
+                            <button class="btn btn-sm btn-outline-primary" onclick="viewDetails(${log.id})" aria-label="Add"><i class="fas fa-eye"></i></button>
                         </td>
                     </tr>
                 `;

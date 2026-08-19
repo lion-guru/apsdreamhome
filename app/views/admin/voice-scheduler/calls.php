@@ -41,7 +41,7 @@
                 <input type="text" name="search" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['search'] ?? '', ENT_QUOTES, 'UTF-8') ?>" placeholder="Search lead/phone">
             </div>
             <div class="col-auto">
-                <button type="submit" class="btn btn-sm btn-outline-primary"><i class="fas fa-search"></i></button>
+                <button type="submit" class="btn btn-sm btn-outline-primary" aria-label="Search"><i class="fas fa-search"></i></button>
                 <a href="<?= BASE_URL ?>admin/voice-scheduler/calls" class="btn btn-sm btn-outline-secondary"><i class="fas fa-times"></i></a>
             </div>
         </form>

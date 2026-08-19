@@ -186,9 +186,7 @@ $ai_agents = $ai_agents ?? [];
                     <div class="card card-outline card-secondary">
                         <div class="card-header">
                             <h3 class="card-title"><i class="fas fa-broadcast-tower"></i> Active Channels</h3>
-                            <button class="btn btn-sm btn-outline-info float-right" onclick="refreshChannels()">
-                                <i class="fas fa-sync"></i>
-                            </button>
+                            <button class="btn btn-sm btn-outline-info float-right" onclick="refreshChannels()" aria-label="Refresh"><i class="fas fa-sync"></i></button>
                         </div>
                         <div class="card-body p-0">
                             <?php if (empty($channels)): ?>

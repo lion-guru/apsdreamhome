@@ -112,7 +112,7 @@
                                             <td><input type="number" name="item_discount[]" class="form-control form-control-sm calc-input" value="<?= $item['discount_percent'] ?? 0 ?>" min="0" max="100" step="0.01"></td>
                                             <td><input type="number" name="item_tax[]" class="form-control form-control-sm calc-input" value="<?= $item['tax_percent'] ?? 18 ?>" min="0" max="100" step="0.01"></td>
                                             <td class="fw-bold item-total">₹<?= number_format($item['line_total'] ?? 0, 2) ?></td>
-                                            <td><button type="button" class="btn btn-sm btn-outline-danger remove-item" title="Remove"><i class="fas fa-times"></i></button></td>
+                                            <td><button type="button" class="btn btn-sm btn-outline-danger remove-item" title="Remove" aria-label="Close"><i class="fas fa-times"></i></button></td>
                                         </tr>
                                     <?php endforeach; ?>
                                     <?php if (empty($invoice['items'])): ?>
@@ -132,7 +132,7 @@
                                             <td><input type="number" name="item_discount[]" class="form-control form-control-sm calc-input" value="0" min="0" max="100" step="0.01"></td>
                                             <td><input type="number" name="item_tax[]" class="form-control form-control-sm calc-input" value="18" min="0" max="100" step="0.01"></td>
                                             <td class="fw-bold item-total">₹0.00</td>
-                                            <td><button type="button" class="btn btn-sm btn-outline-danger remove-item" title="Remove"><i class="fas fa-times"></i></button></td>
+                                            <td><button type="button" class="btn btn-sm btn-outline-danger remove-item" title="Remove" aria-label="Close"><i class="fas fa-times"></i></button></td>
                                         </tr>
                                     <?php endif; ?>
                                 </tbody>
@@ -252,7 +252,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <td><input type="number" name="item_discount[]" class="form-control form-control-sm calc-input" value="0" min="0" max="100" step="0.01"></td>
             <td><input type="number" name="item_tax[]" class="form-control form-control-sm calc-input" value="18" min="0" max="100" step="0.01"></td>
             <td class="fw-bold item-total">₹0.00</td>
-            <td><button type="button" class="btn btn-sm btn-outline-danger remove-item"><i class="fas fa-times"></i></button></td>
+            <td><button type="button" class="btn btn-sm btn-outline-danger remove-item" aria-label="Close"><i class="fas fa-times"></i></button></td>
         `;
         tbody.appendChild(row);
         recalcAll();

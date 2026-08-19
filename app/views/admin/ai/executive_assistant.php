@@ -128,7 +128,7 @@ $focusAreas = $focusAreas ?? [];
         
         <div class="ai-chat-input">
             <textarea id="chatInput" rows="1" placeholder="Type your message... (Enter to send, Shift+Enter for new line)"></textarea>
-            <button class="ai-send-btn" id="sendBtn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+            <button class="ai-send-btn" id="sendBtn" onclick="sendMessage()" aria-label="Add"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 </div>

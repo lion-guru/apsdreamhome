@@ -78,7 +78,7 @@
 </style>
 </head>
 <body>
-<button class="print-btn no-print" onclick="window.print()" title="Print Invoice"><i class="fas fa-print"></i></button>
+<button class="print-btn no-print" onclick="window.print()" title="Print Invoice" aria-label="Print"><i class="fas fa-print"></i></button>
 
 <div class="invoice-box">
     <div class="header">

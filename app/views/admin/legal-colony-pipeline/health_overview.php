@@ -81,7 +81,7 @@ $colonies = $data['colonies'] ?? [];
         <?php endforeach; ?>
       </div>
     </div>
-    <a href="/admin/legal-colony-pipeline/health/alerts" class="btn btn-sm btn-outline-danger ms-3" id="alertDetailsBtn" title="View alert details">
+    <a href="/admin/legal-colony-pipeline/health/alerts" class="btn btn-sm btn-outline-danger ms-3" id="alertDetailsBtn" title="View alert details" aria-label="Open">
       <i class="fas fa-external-link-alt"></i>
     </a>
   </div>

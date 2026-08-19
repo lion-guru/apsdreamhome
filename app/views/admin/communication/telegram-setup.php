@@ -37,9 +37,7 @@ $settings = $settings ?? [];
                                        value="<?= htmlspecialchars($settings['telegram_bot_token'] ?? '') ?>" 
                                        id="telegramToken" placeholder="123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ">
                                 <button class="btn btn-outline-secondary" type="button" 
-                                        onclick="var p=document.getElementById('telegramToken');p.type=p.type==='password'?'text':'password'">
-                                    <i class="fas fa-eye"></i>
-                                </button>
+                                        onclick="var p=document.getElementById('telegramToken');p.type=p.type==='password'?'text':'password'" aria-label="View"><i class="fas fa-eye"></i></button>
                             </div>
                             <div class="form-text">Get this from <a href="https://t.me/BotFather" target="_blank">@BotFather</a> on Telegram</div>
                         </div>

@@ -171,7 +171,7 @@ $early_settlement = $early_settlement ?? [];
             <div class="aps-cp-card">
                 <div class="aps-cp-card-header d-flex justify-content-between">
                     <span><i class="fas fa-user-shield me-2"></i>Guarantors (<?= count($guarantors) ?>)</span>
-                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#guarantorModal"><i class="fas fa-plus"></i></button>
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#guarantorModal" aria-label="Add"><i class="fas fa-plus"></i></button>
                 </div>
                 <div class="aps-cp-card-body">
                     <?php if (empty($guarantors)): ?>
@@ -198,7 +198,7 @@ $early_settlement = $early_settlement ?? [];
             <div class="aps-cp-card">
                 <div class="aps-cp-card-header d-flex justify-content-between">
                     <span><i class="fas fa-file-alt me-2"></i>Documents (<?= count($documents) ?>)</span>
-                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#docModal"><i class="fas fa-plus"></i></button>
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#docModal" aria-label="Add"><i class="fas fa-plus"></i></button>
                 </div>
                 <div class="aps-cp-card-body">
                     <?php if (empty($documents)): ?>
@@ -219,7 +219,7 @@ $early_settlement = $early_settlement ?? [];
                                             <?php if ($d['status'] === 'draft'): ?>
                                                 <form method="POST" action="<?= BASE_URL ?>/admin/company-loans/document/<?= $d['id'] ?>/finalize" class="style-71727">
                                                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-                                                    <button type="submit" class="btn btn-outline-success" title="Finalize"><i class="fas fa-check"></i></button>
+                                                    <button type="submit" class="btn btn-outline-success" title="Finalize" aria-label="Confirm"><i class="fas fa-check"></i></button>
                                                 </form>
                                             <?php endif; ?>
                                             <?php if ($d['status'] === 'final' && !$d['signed_by_customer']): ?>

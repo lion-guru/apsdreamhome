@@ -85,7 +85,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                             <form method="post" action="<?= $base ?>/admin/marketplace/toggle-featured" class="d-inline">
                                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                 <input type="hidden" name="id" value="<?= $f['id'] ?>">
-                                <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-1" title="Remove featured"><i class="fas fa-times"></i></button>
+                                <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-1" title="Remove featured" aria-label="Close"><i class="fas fa-times"></i></button>
                             </form>
                         </div>
                     <?php endforeach; ?>
@@ -102,7 +102,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                             <form method="post" action="<?= $base ?>/admin/marketplace/toggle-urgent" class="d-inline">
                                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                 <input type="hidden" name="id" value="<?= $u['id'] ?>">
-                                <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-1" title="Remove urgent"><i class="fas fa-times"></i></button>
+                                <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-1" title="Remove urgent" aria-label="Close"><i class="fas fa-times"></i></button>
                             </form>
                         </div>
                     <?php endforeach; ?>

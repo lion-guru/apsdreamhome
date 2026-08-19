@@ -49,12 +49,12 @@
                             <form method="post" action="<?= BASE_URL ?>/admin/finance/expense-approve" class="d-inline">
                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                 <input type="hidden" name="id" value="<?= (int)$e['id'] ?>">
-                                <button class="btn btn-sm btn-outline-success"><i class="fas fa-check"></i></button>
+                                <button class="btn btn-sm btn-outline-success" aria-label="Confirm"><i class="fas fa-check"></i></button>
                             </form>
                             <form method="post" action="<?= BASE_URL ?>/admin/finance/expense-reject" class="d-inline">
                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                 <input type="hidden" name="id" value="<?= (int)$e['id'] ?>">
-                                <button class="btn btn-sm btn-outline-danger"><i class="fas fa-times"></i></button>
+                                <button class="btn btn-sm btn-outline-danger" aria-label="Close"><i class="fas fa-times"></i></button>
                             </form>
                             <?php endif; ?>
                         </td>

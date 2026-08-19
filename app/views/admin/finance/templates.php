@@ -25,7 +25,7 @@
                             <form method="post" action="<?= BASE_URL ?>/admin/finance/template-delete" class="d-inline" onsubmit="return confirm('<?php echo __('finance_delete_template_confirm'); ?>')">
                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                 <input type="hidden" name="id" value="<?= (int)$t['id'] ?>">
-                                <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                <button class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                             </form>
                         </td>
                     </tr>

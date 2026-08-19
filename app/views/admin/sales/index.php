@@ -139,9 +139,7 @@ $page_title = $page_title ?? 'Sales Management';
                                     </td>
                                     <td><?= isset($sale['created_at']) ? date('d M Y', strtotime($sale['created_at'])) : 'N/A' ?></td>
                                     <td class="text-end pe-4">
-                                        <button class="btn btn-sm btn-outline-primary">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
+                                        <button class="btn btn-sm btn-outline-primary" aria-label="Add"><i class="fas fa-eye"></i></button>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

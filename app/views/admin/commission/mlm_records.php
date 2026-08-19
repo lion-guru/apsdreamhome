@@ -36,13 +36,13 @@
                             <form method="POST" action="<?= BASE_URL ?>/admin/commission/mlm/records/status/<?= $r['id'] ?>" class="d-inline" onsubmit="return confirm('Approve record #<?= $r['id'] ?>?')">
                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                                 <input type="hidden" name="status" value="approved">
-                                <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-check"></i></button>
+                                <button type="submit" class="btn btn-sm btn-primary" aria-label="Approve"><i class="fas fa-check"></i></button>
                             </form>
                             <?php elseif ($r['status'] == 'approved'): ?>
                             <form method="POST" action="<?= BASE_URL ?>/admin/commission/mlm/records/status/<?= $r['id'] ?>" class="d-inline" onsubmit="return confirm('Mark #<?= $r['id'] ?> as paid?')">
                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                                 <input type="hidden" name="status" value="paid">
-                                <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-money-bill"></i></button>
+                                <button type="submit" class="btn btn-sm btn-success" aria-label="Payment"><i class="fas fa-money-bill"></i></button>
                             </form>
                             <?php endif; ?>
                             <?php if ($r['commission_details']): ?>

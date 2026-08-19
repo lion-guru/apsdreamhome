@@ -29,7 +29,7 @@
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <h6 class="fw-bold mb-0"><?= htmlspecialchars($f['name'] ?? '') ?></h6>
                                 <div class="dropdown">
-                                    <button class="btn btn-sm btn-light" data-bs-toggle="dropdown"><i class="fas fa-ellipsis-v"></i></button>
+                                    <button class="btn btn-sm btn-light" data-bs-toggle="dropdown" aria-label="More options"><i class="fas fa-ellipsis-v"></i></button>
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li><a class="dropdown-item" href="<?= BASE_URL ?>/admin/crm/forms/<?= $f['id'] ?>/preview"><i class="fas fa-eye me-2"></i>Preview</a></li>
                                         <li><a class="dropdown-item" href="<?= BASE_URL ?>/admin/crm/forms/<?= $f['id'] ?>/embed"><i class="fas fa-code me-2"></i>Embed Code</a></li>

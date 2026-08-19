@@ -60,6 +60,17 @@ $router->post('/api/v2/mobile/properties/submit', 'Api\MobileAdminApiController@
 $router->get('/api/v2/mobile/properties/my-submissions', 'Api\MobileAdminApiController@getSubmissions')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // ============================================================
+// MOBILE API V2 - MLM Engagement, Incentives, Packages
+// ============================================================
+$router->get('/api/v2/mobile/mlm/incentives/summary', 'Api\MobileMLMApiController@getIncentiveSummary')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/mlm/incentives/targets', 'Api\MobileMLMApiController@getMonthlyTargets')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/mlm/packages', 'Api\MobileMLMApiController@listPackages')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/mlm/packages/purchase', 'Api\MobileMLMApiController@purchasePackage')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/mlm/goals', 'Api\MobileMLMApiController@getGoals')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/mlm/leaderboard/{metricType}', 'Api\MobileMLMApiController@getLeaderboard')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/form-data/{type}', 'Api\MobileMLMApiController@getFormData')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ============================================================
 // MOBILE API V2 â€” User Favorites
 // ============================================================
 $router->get('/api/v2/mobile/user/favorites', 'Api\MobilePropertyApiController@getFavorites')->middleware('App\Http\Middleware\ApiAuthMiddleware');

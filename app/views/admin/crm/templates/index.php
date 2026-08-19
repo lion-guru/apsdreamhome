@@ -44,7 +44,7 @@
                                             <a href="<?= BASE_URL ?>/admin/crm/templates/<?= $t['id'] ?>/edit" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
                                             <form method="POST" action="<?= BASE_URL ?>/admin/crm/templates/<?= $t['id'] ?>/delete" onsubmit="return confirm('Delete this template?')">
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-                                                <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                                <button class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                             </form>
                                         </div>
                                     </div>
@@ -80,7 +80,7 @@
                                             <a href="<?= BASE_URL ?>/admin/crm/templates/<?= $t['id'] ?>/edit" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
                                             <form method="POST" action="<?= BASE_URL ?>/admin/crm/templates/<?= $t['id'] ?>/delete" onsubmit="return confirm('Delete this template?')">
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-                                                <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                                <button class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                             </form>
                                         </div>
                                     </div>

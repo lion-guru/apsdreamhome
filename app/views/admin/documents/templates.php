@@ -80,7 +80,7 @@
                                                 <a href="<?= BASE_URL ?>/admin/documents/templates/edit/<?= (int)$t['id'] ?>" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>
                                                 <form method="POST" action="<?= BASE_URL ?>/admin/documents/templates/delete/<?= (int)$t['id'] ?>" class="style-71727" onsubmit="return confirm('Delete this template?');">
                                                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                                 </form>
                                             </td>
                                         </tr>

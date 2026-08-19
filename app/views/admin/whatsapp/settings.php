@@ -32,9 +32,7 @@ $webhookUrl = rtrim($base, '/') . '/api/communication/whatsapp-webhook';
                                 <input type="password" name="whatsapp_access_token" class="form-control" id="waToken"
                                        value="<?php echo htmlspecialchars($settings['whatsapp_access_token'] ?? ''); ?>"
                                        placeholder="Long-lived access token">
-                                <button class="btn btn-outline-secondary" type="button" onclick="const t=document.getElementById('waToken'); t.type=t.type==='password'?'text':'password'">
-                                    <i class="fas fa-eye"></i>
-                                </button>
+                                <button class="btn btn-outline-secondary" type="button" onclick="const t=document.getElementById('waToken'); t.type=t.type==='password'?'text':'password'" aria-label="WhatsApp"><i class="fas fa-eye"></i></button>
                             </div>
                             <div class="form-text">Paste your permanent/long-lived Meta access token</div>
                         </div>

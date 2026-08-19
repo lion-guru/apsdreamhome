@@ -115,7 +115,7 @@ $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : '';
                                         </a>
                                         <form method="POST" action="<?= $baseUrl ?>/admin/experiments/<?= (int)$exp['id'] ?>/delete" class="d-inline" onsubmit="return confirm('Delete this experiment and ALL its events? This cannot be undone.');">
                                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="fas fa-trash"></i></button>
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                         </form>
                                     </td>
                                 </tr>

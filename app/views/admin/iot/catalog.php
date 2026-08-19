@@ -29,13 +29,13 @@ $cats = ['security'=>'Security','energy'=>'Energy','water'=>'Water','climate'=>'
             <div class="card h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between"><h6 class="mb-1"><i class="fas fa-microchip me-2 text-primary"></i><?= htmlspecialchars($it['name'] ?? '') ?></h6><span class="badge bg-light text-dark"><?= ucfirst($it['category']) ?></span></div>
-                    <p class="small text-muted mb-1"><?= htmlspecialchars($it['manufacturer'] ?? 'Generic') ?> · <?= strtoupper($it['protocol'] ?? 'wifi') ?></p>
+                    <p class="small text-muted mb-1"><?= htmlspecialchars($it['manufacturer'] ?? 'Generic') ?>  <?= strtoupper($it['protocol'] ?? 'wifi') ?></p>
                     <p class="small"><?= htmlspecialchars($it['description'] ?? '') ?></p>
                 </div>
                 <div class="card-footer d-flex justify-content-end gap-2">
                     <a href="<?= BASE_URL ?>/admin/iot/catalog/form/<?= $it['id'] ?>" class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></a>
                     <form method="POST" action="<?= BASE_URL ?>/admin/iot/catalog/delete/<?= $it['id'] ?>" class="d-inline" onsubmit="return confirm('Delete catalog item?')">
-                        <input type="hidden" name="csrf_token" value="<?= $csrf ?>"><button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                        <input type="hidden" name="csrf_token" value="<?= $csrf ?>"><button class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                     </form>
                 </div>
             </div>

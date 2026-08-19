@@ -53,9 +53,7 @@ $settings = $settings ?? [];
                                        value="<?= htmlspecialchars($settings['whatsapp_api_token'] ?? '') ?>" 
                                        id="whatsappToken" placeholder="Enter your WhatsApp API token">
                                 <button class="btn btn-outline-secondary" type="button" 
-                                        onclick="var p=document.getElementById('whatsappToken');p.type=p.type==='password'?'text':'password'">
-                                    <i class="fas fa-eye"></i>
-                                </button>
+                                        onclick="var p=document.getElementById('whatsappToken');p.type=p.type==='password'?'text':'password'" aria-label="WhatsApp"><i class="fas fa-eye"></i></button>
                             </div>
                             <div class="form-text">Get this from <a href="https://developers.facebook.com/" target="_blank">Meta for Developers</a> → Your App → WhatsApp → API Setup</div>
                         </div>

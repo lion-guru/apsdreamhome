@@ -105,7 +105,7 @@ ob_start();
                   </form>
                   <form method="post" action="<?= BASE_URL ?>/admin/webhooks/delete/<?= $ep['id'] ?>" class="d-inline" onsubmit="return confirm('Delete this endpoint?')">
                                       <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                    <button class="btn btn-sm btn-outline-danger" title="Delete"><i class="fas fa-trash"></i></button>
+                    <button class="btn btn-sm btn-outline-danger" title="Delete" aria-label="Delete"><i class="fas fa-trash"></i></button>
                   </form>
                 </td>
               </tr>

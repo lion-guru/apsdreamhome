@@ -207,7 +207,7 @@ $unmatched_txns = $unmatched_txns ?? [];
                                         <td>
                                             <form method="post" action="<?= BASE_URL ?>/admin/bank-import/unmatch/<?= (int)$txn['id'] ?>" class="d-inline">
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-                                                <button type="submit" class="btn btn-sm btn-outline-warning" title="Unmatch" onclick="return confirm('Remove this match?')"><i class="fas fa-unlink"></i></button>
+                                                <button type="submit" class="btn btn-sm btn-outline-warning" title="Unmatch" onclick="return confirm('Remove this match?')" aria-label="Unlink"><i class="fas fa-unlink"></i></button>
                                             </form>
                                         </td>
                                     </tr>

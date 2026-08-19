@@ -18,7 +18,7 @@
                     <form method="GET" class="d-flex">
     <?php echo CSRFProtection::csrfField(); ?>
                         <input type="text" name="search" class="form-control form-control-sm me-2" placeholder="Search property or user..." value="<?= htmlspecialchars($search ?? '') ?>" class="style-79252">
-                        <button type="submit" class="btn btn-sm btn-outline-primary"><i class="fas fa-search"></i></button>
+                        <button type="submit" class="btn btn-sm btn-outline-primary" aria-label="Search"><i class="fas fa-search"></i></button>
                         <?php if (!empty($search)): ?>
                             <a href="<?= BASE_URL ?>/admin/property-features/favorites" class="btn btn-sm btn-outline-secondary ms-2"><i class="fas fa-times"></i></a>
                         <?php endif; ?>

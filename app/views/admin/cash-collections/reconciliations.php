@@ -92,7 +92,7 @@ ob_start();
                                         <form method="POST" action="<?= BASE_URL ?>/admin/cash-collections/reconciliations/close" class="style-71727">
                                             <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? $_SESSION['csrf_token'] ?? '' ?>">
                                             <input type="hidden" name="id" value="<?= $r['id'] ?>">
-                                            <button type="submit" class="btn btn-sm btn-outline-success" title="Close Session" onclick="return confirm('Close this reconciliation session?')"><i class="fas fa-lock"></i></button>
+                                            <button type="submit" class="btn btn-sm btn-outline-success" title="Close Session" onclick="return confirm('Close this reconciliation session?')" aria-label="Lock"><i class="fas fa-lock"></i></button>
                                         </form>
                                     <?php else: ?>
                                         <span class="text-muted">Closed</span>

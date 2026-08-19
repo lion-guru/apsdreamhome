@@ -49,7 +49,7 @@
                                 <td><?= (int)$l['min_associates'] ?></td>
                                 <td><?= (float)$l['direct_percentage'] ?>%</td>
                                 <td>&#8377;<?= number_format((float)$l['min_business']) ?></td>
-                                <td><form method="POST" action="<?= BASE_URL ?>/admin/commission/mlm/levels/delete/<?= $l['id'] ?>" class="style-71727" onsubmit="return confirm('Delete level #<?= $l['id'] ?>?')"><input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"><button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button></form></td>
+                                <td><form method="POST" action="<?= BASE_URL ?>/admin/commission/mlm/levels/delete/<?= $l['id'] ?>" class="style-71727" onsubmit="return confirm('Delete level #<?= $l['id'] ?>?')"><input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"><button type="submit" class="btn btn-sm btn-danger" aria-label="Delete"><i class="fas fa-trash"></i></button></form></td>
                             </tr>
                             <?php endforeach; ?>
                             <?php endif; ?>

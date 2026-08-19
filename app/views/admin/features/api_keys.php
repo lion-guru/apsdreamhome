@@ -115,12 +115,12 @@ ob_start();
                   <?php else: ?>
                     <form method="post" action="<?= $BASE_URL ?>/admin/api-keys/activate/<?= $k['id'] ?>" class="d-inline">
                       <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                      <button class="btn btn-sm btn-outline-success" title="Activate"><i class="fas fa-check"></i></button>
+                      <button class="btn btn-sm btn-outline-success" title="Activate" aria-label="Confirm"><i class="fas fa-check"></i></button>
                     </form>
                   <?php endif; ?>
                   <form method="post" action="<?= $BASE_URL ?>/admin/api-keys/delete/<?= $k['id'] ?>" class="d-inline" onsubmit="return confirm('Permanently delete this API key?')">
                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                    <button class="btn btn-sm btn-outline-danger" title="Delete"><i class="fas fa-trash"></i></button>
+                    <button class="btn btn-sm btn-outline-danger" title="Delete" aria-label="Delete"><i class="fas fa-trash"></i></button>
                   </form>
                 </td>
               </tr>

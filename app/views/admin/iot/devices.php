@@ -33,15 +33,15 @@ $cats = ['security'=>'Security','energy'=>'Energy','water'=>'Water','climate'=>'
                     <?php foreach ($devices as $d): ?>
                         <tr>
                             <td><strong><?= htmlspecialchars($d['name'] ?? '') ?></strong><?php if (!empty($d['catalog_name'])): ?><br><small class="text-muted"><?= htmlspecialchars($d['catalog_name'] ?? '') ?></small><?php endif; ?></td>
-                            <td><small class="text-muted"><?= htmlspecialchars($d['device_uid'] ?? '—') ?></small></td>
+                            <td><small class="text-muted"><?= htmlspecialchars($d['device_uid'] ?? '') ?></small></td>
                             <td><span class="badge bg-light text-dark"><?= ucfirst($d['category'] ?? 'smart') ?></span></td>
-                            <td><?= htmlspecialchars($d['location'] ?? '—') ?></td>
+                            <td><?= htmlspecialchars($d['location'] ?? '') ?></td>
                             <td><span class="badge bg-<?= match($d['status'] ?? 'offline') { 'online'=>'success','fault'=>'danger','configuring'=>'warning',default=>'secondary' } ?>"><?= ucfirst($d['status'] ?? 'offline') ?></span></td>
-                            <td><small><?= !empty($d['last_seen_at']) ? date('M d, H:i', strtotime($d['last_seen_at'])) : '—' ?></small></td>
+                            <td><small><?= !empty($d['last_seen_at']) ? date('M d, H:i', strtotime($d['last_seen_at'])) : '' ?></small></td>
                             <td class="text-end">
                                 <a href="<?= BASE_URL ?>/admin/iot/device/<?= $d['id'] ?>" class="btn btn-sm btn-outline-primary" title="Details"><i class="fas fa-chart-line"></i></a>
                                 <a href="<?= BASE_URL ?>/admin/iot/device/form/<?= $d['id'] ?>" class="btn btn-sm btn-outline-secondary" title="Edit"><i class="fas fa-edit"></i></a>
-                                <form method="POST" action="<?= BASE_URL ?>/admin/iot/device/delete/<?= $d['id'] ?>" class="d-inline" onsubmit="return confirm('Delete device?')"><input type="hidden" name="csrf_token" value="<?= $csrf ?>"><button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button></form>
+                                <form method="POST" action="<?= BASE_URL ?>/admin/iot/device/delete/<?= $d['id'] ?>" class="d-inline" onsubmit="return confirm('Delete device?')"><input type="hidden" name="csrf_token" value="<?= $csrf ?>"><button class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button></form>
                             </td>
                         </tr>
                     <?php endforeach; ?>

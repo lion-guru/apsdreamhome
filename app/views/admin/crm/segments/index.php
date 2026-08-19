@@ -39,7 +39,7 @@
                                     </div>
                                 </div>
                                 <div class="dropdown">
-                                    <button class="btn btn-sm btn-light" data-bs-toggle="dropdown"><i class="fas fa-ellipsis-v"></i></button>
+                                    <button class="btn btn-sm btn-light" data-bs-toggle="dropdown" aria-label="More options"><i class="fas fa-ellipsis-v"></i></button>
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li><a class="dropdown-item" href="<?= BASE_URL ?>/admin/crm/segments/<?= $seg['id'] ?>/leads"><i class="fas fa-eye me-2"></i>View Leads</a></li>
                                         <li>

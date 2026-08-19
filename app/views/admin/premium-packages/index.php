@@ -35,7 +35,7 @@
                   <a href="<?= BASE_URL ?>/admin/premium-packages/edit/<?= $pkg['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
                   <form method="post" action="<?= BASE_URL ?>/admin/premium-packages/delete/<?= $pkg['id'] ?>" class="d-inline" onsubmit="return confirm('Delete this package?');">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                    <button class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                   </form>
                 </td>
               </tr>

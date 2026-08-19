@@ -94,9 +94,7 @@ $active_page = 'properties';
                         <label for="location" class="form-label">Address *</label>
                         <div class="input-group">
                             <textarea class="form-control" id="location" name="location" rows="2" required data-autofill="address"></textarea>
-                            <button type="button" class="btn btn-outline-secondary" data-action="map-picker" data-target="location" title="Pick on Map">
-                                <i class="fas fa-map-marker-alt"></i>
-                            </button>
+                            <button type="button" class="btn btn-outline-secondary" data-action="map-picker" data-target="location" title="Pick on Map" aria-label="Add"><i class="fas fa-map-marker-alt"></i></button>
                         </div>
                         <div class="form-text">Full address or location description</div>
                     </div>

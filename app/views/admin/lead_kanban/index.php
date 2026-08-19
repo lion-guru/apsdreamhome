@@ -129,7 +129,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
             <?php endforeach; ?>
           </select>
 
-          <button id="collapseAllBtn" class="btn btn-sm btn-outline-secondary" title="Collapse/Expand all"><i class="fas fa-compress-alt"></i></button>
+          <button id="collapseAllBtn" class="btn btn-sm btn-outline-secondary" title="Collapse/Expand all" aria-label="Search"><i class="fas fa-compress-alt"></i></button>
         </div>
       </div>
     </div>
@@ -440,7 +440,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
               <h5 class="mb-1" class="style-96443"><?= $base ?>` + name + `</h5>
               <small class="text-muted">${company ? company + ' Â· ' : ''}${city || ''}</small>
             </div>
-            <button class="btn btn-sm btn-outline-secondary" onclick="closeQuickView()"><i class="fas fa-times"></i></button>
+            <button class="btn btn-sm btn-outline-secondary" onclick="closeQuickView()" aria-label="Close"><i class="fas fa-times"></i></button>
           </div>
           <div class="row g-3 mb-3">
             <div class="col-6">

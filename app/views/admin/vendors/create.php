@@ -66,9 +66,7 @@
                             <label for="address" class="form-label fw-semibold">Address</label>
                             <div class="input-group">
                                 <textarea class="form-control" id="address" name="address" rows="2" data-map-picker="true"></textarea>
-                                <button type="button" class="btn btn-outline-secondary" data-action="map-picker" title="Pick on Map">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                </button>
+                                <button type="button" class="btn btn-outline-secondary" data-action="map-picker" title="Pick on Map" aria-label="Add"><i class="fas fa-map-marker-alt"></i></button>
                             </div>
                         </div>
 
@@ -162,9 +160,7 @@
                                 <label for="ifsc_code" class="form-label fw-semibold">IFSC Code</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="ifsc_code" name="ifsc_code" placeholder="SBIN0001234" data-autofill="ifsc" maxlength="11" class="style-36130">
-                                    <button type="button" class="btn btn-outline-secondary" data-action="ifsc-lookup" title="Lookup IFSC">
-                                        <i class="fas fa-search"></i>
-                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" data-action="ifsc-lookup" title="Lookup IFSC" aria-label="Search"><i class="fas fa-search"></i></button>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">

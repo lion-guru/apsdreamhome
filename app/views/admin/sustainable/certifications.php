@@ -27,7 +27,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                 <a href="<?= BASE_URL ?>/admin/sustainable/certification/form/<?= $c['id'] ?>" class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></a>
                                 <form method="POST" action="<?= BASE_URL ?>/admin/sustainable/certification/delete/<?= $c['id'] ?>" class="d-inline" onsubmit="return confirm('Delete this certification?')">
                                     <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                 </form>
                             </td>
                         </tr>

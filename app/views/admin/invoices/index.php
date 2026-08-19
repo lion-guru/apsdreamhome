@@ -177,7 +177,7 @@
                                             <?php if ($inv['status'] !== 'paid'): ?>
                                                 <form method="POST" action="<?= BASE_URL ?>/admin/invoices/manage/<?= $inv['id'] ?>/mark-paid" class="d-inline" onsubmit="return confirm('Mark this invoice as paid?')">
                                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-                                                    <button class="btn btn-outline-success btn-sm" title="Mark Paid"><i class="fas fa-check"></i></button>
+                                                    <button class="btn btn-outline-success btn-sm" title="Mark Paid" aria-label="Confirm"><i class="fas fa-check"></i></button>
                                                 </form>
                                             <?php endif; ?>
                                         </div>

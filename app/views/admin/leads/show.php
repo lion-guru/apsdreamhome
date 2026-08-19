@@ -1087,9 +1087,7 @@ function timeAgo($dt) {
         <button type="button" class="btn btn-sm btn-primary" id="quickLogBtn" onclick="submitQuickLog()" class="style-30672">
             <i class="fas fa-paper-plane me-1"></i> Log
         </button>
-        <button type="button" class="btn btn-sm btn-outline-light" onclick="toggleQuickLog()" title="Minimize" class="style-26799">
-            <i class="fas fa-chevron-down"></i>
-        </button>
+        <button type="button" class="btn btn-sm btn-outline-light" onclick="toggleQuickLog()" title="Minimize" class="style-26799" aria-label="Send"><i class="fas fa-chevron-down"></i></button>
     </div>
 </div>
 

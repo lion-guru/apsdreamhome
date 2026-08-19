@@ -118,21 +118,21 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                 <form method="POST" action="<?= $base ?>
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/agent-agreements/send/<?= (int)$a['id'] ?>" class="style-35851">
     <?php echo CSRFProtection::csrfField(); ?>
-                                    <button type="submit" class="aag-btn aag-btn-send"><i class="fas fa-paper-plane"></i></button>
+                                    <button type="submit" class="aag-btn aag-btn-send" aria-label="Send"><i class="fas fa-paper-plane"></i></button>
                                 </form>
                             <?php endif; ?>
                             <?php if ($a['status'] === 'pending'): ?>
                                 <form method="POST" action="<?= $base ?>
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/agent-agreements/sign/<?= (int)$a['id'] ?>" class="style-35851">
     <?php echo CSRFProtection::csrfField(); ?>
-                                    <button type="submit" class="aag-btn aag-btn-sign"><i class="fas fa-check"></i></button>
+                                    <button type="submit" class="aag-btn aag-btn-sign" aria-label="Confirm"><i class="fas fa-check"></i></button>
                                 </form>
                             <?php endif; ?>
                             <?php if (in_array($a['status'], ['draft', 'pending'])): ?>
                                 <form method="POST" action="<?= $base ?>
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/agent-agreements/cancel/<?= (int)$a['id'] ?>" class="style-35851">
     <?php echo CSRFProtection::csrfField(); ?>
-                                    <button type="submit" class="aag-btn aag-btn-cancel" onclick="return confirm('Cancel this agreement?')"><i class="fas fa-times"></i></button>
+                                    <button type="submit" class="aag-btn aag-btn-cancel" onclick="return confirm('Cancel this agreement?')" aria-label="Cancel"><i class="fas fa-times"></i></button>
                                 </form>
                             <?php endif; ?>
                         </td>

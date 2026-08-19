@@ -51,7 +51,7 @@
                                 <td>&#8377;<?= number_format((float)$b['bonus_amount'],2) ?></td>
                                 <td><?= $b['achievement_id'] ? 'A#' . $b['achievement_id'] : '-' ?></td>
                                 <td><?= date('d-m-Y', strtotime($b['created_at'])) ?></td>
-                                <td><form method="POST" action="<?= BASE_URL ?>/admin/commission/bonuses/delete/<?= $b['id'] ?>" class="style-71727" onsubmit="return confirm('Delete bonus #<?= $b['id'] ?>?')"><input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"><button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button></form></td>
+                                <td><form method="POST" action="<?= BASE_URL ?>/admin/commission/bonuses/delete/<?= $b['id'] ?>" class="style-71727" onsubmit="return confirm('Delete bonus #<?= $b['id'] ?>?')"><input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"><button type="submit" class="btn btn-sm btn-danger" aria-label="Delete"><i class="fas fa-trash"></i></button></form></td>
                             </tr>
                             <?php endforeach; ?>
                             <?php endif; ?>

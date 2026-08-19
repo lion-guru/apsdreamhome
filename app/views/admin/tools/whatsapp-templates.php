@@ -128,9 +128,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'inactive' => 0, 'message_logs'
                                         </button>
                                         <form method="POST" action="<?= BASE_URL ?>/admin/tools/whatsapp-templates/<?= $t['id'] ?>/delete" class="style-71727" onsubmit="return confirm('Delete this template?')">
                                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-                                            <button type="submit" class="btn btn-outline-danger" title="Delete">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
+                                            <button type="submit" class="btn btn-outline-danger" title="Delete" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                         </form>
                                     </div>
                                 </td>

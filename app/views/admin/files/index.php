@@ -186,9 +186,7 @@
                                 </a>
                                 <form action="<?= BASE_URL ?>/admin/files/delete/<?= $file['uuid'] ?>" method="POST" class="style-26772">
                                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this file?')">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this file?')" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                 </form>
                             </td>
                         </tr>

@@ -115,7 +115,7 @@
                                                     <a href="<?= BASE_URL ?>/admin/crm/routing/<?= $rule['id'] ?>/edit" class="btn btn-outline-info"><i class="fas fa-edit"></i></a>
                                                     <form method="POST" action="<?= BASE_URL ?>/admin/crm/routing/<?= $rule['id'] ?>/delete" class="style-71727">
                                                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-                                                        <button class="btn btn-outline-danger" onclick="return confirm('Delete this rule?')"><i class="fas fa-trash"></i></button>
+                                                        <button class="btn btn-outline-danger" onclick="return confirm('Delete this rule?')" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                                     </form>
                                                 </div>
                                             </td>

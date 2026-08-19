@@ -26,9 +26,7 @@
                         <label class="form-label">Address</label>
                         <div class="input-group">
                             <textarea name="address" class="form-control" rows="2"><?= $customer['address'] ?? '' ?></textarea>
-                            <button type="button" class="btn btn-outline-secondary" data-action="map-picker" data-target="address" title="Pick on Map">
-                                <i class="fas fa-map-marker-alt"></i>
-                            </button>
+                            <button type="button" class="btn btn-outline-secondary" data-action="map-picker" data-target="address" title="Pick on Map" aria-label="Add"><i class="fas fa-map-marker-alt"></i></button>
                         </div>
                     </div>
                     <div class="col-md-3"><label class="form-label">City</label><input type="text" name="city" class="form-control" value="<?= $customer['city'] ?? '' ?>" data-autofill="city"></div>

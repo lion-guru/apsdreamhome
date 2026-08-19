@@ -150,7 +150,7 @@ ob_start();
                                         <form method="POST" action="<?= BASE_URL ?>/admin/cash-collections/verify" class="style-71727">
                                             <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? $_SESSION['csrf_token'] ?? '' ?>">
                                             <input type="hidden" name="id" value="<?= $c['id'] ?>">
-                                            <button type="submit" class="btn btn-sm btn-success" title="Verify"><i class="fas fa-check"></i></button>
+                                            <button type="submit" class="btn btn-sm btn-success" title="Verify" aria-label="Confirm"><i class="fas fa-check"></i></button>
                                         </form>
                                     <?php endif; ?>
                                 </td>

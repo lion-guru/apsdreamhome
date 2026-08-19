@@ -33,7 +33,7 @@
                                         <td>
                                             <form method="post" action="<?= BASE_URL ?>admin/voice-users/cancel-schedule/<?= (int)($c['id'] ?? 0) ?>" class="d-inline" onsubmit="return confirm('Cancel this call?')">
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                                                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-times"></i></button>
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" aria-label="Close"><i class="fas fa-times"></i></button>
                                             </form>
                                             <button class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#rescheduleModal" data-schedule-id="<?= (int)($c['id'] ?? 0) ?>" data-customer="<?= htmlspecialchars(($c['customer_name'] ?? $c['name'] ?? ''), ENT_QUOTES) ?>"><i class="fas fa-calendar-alt"></i></button>
                                         </td>

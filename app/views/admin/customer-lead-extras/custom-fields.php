@@ -138,9 +138,7 @@ $page_description = 'Manage custom fields for lead tracking';
                                             </a>
                                             <form method="POST" action="<?php echo BASE_URL; ?>/admin/customer-lead/custom-fields/delete/<?php echo $field['id']; ?>" onsubmit="return confirm('Are you sure you want to delete this custom field?');">
                                                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                                                <button type="submit" class="btn btn-outline-danger">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
+                                                <button type="submit" class="btn btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                             </form>
                                         </div>
                                     </td>

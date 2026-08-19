@@ -765,4 +765,111 @@ class MobileMLMApiController extends BaseController
             echo json_encode(['success'=>true,'data'=>['breakdown'=>[],'total_tds'=>0,'total_commission'=>0]]);
         }
     }
+
+    public function getIncentiveSummary()
+    {
+        $this->setCorsHeaders();
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Unauthorized']); return; }
+        try {
+            $service = new \App\Services\MLMIncentiveService();
+            $summary = $service->getIncentiveSummary($userId);
+            echo json_encode(['success'=>true,'data'=>$summary]);
+        } catch (\Throwable $e) {
+            echo json_encode(['success'=>false,'error'=>'Failed to get incentive summary']);
+        }
+    }
+
+    public function getMonthlyTargets()
+    {
+        $this->setCorsHeaders();
+        try {
+            $service = new \App\Services\MLMIncentiveService();
+            echo json_encode(['success'=>true,'data'=>$service->getMonthlyTargets()]);
+        } catch (\Throwable $e) {
+            echo json_encode(['success'=>false,'error'=>'Failed to get targets']);
+        }
+    }
+
+    public function listPackages()
+    {
+        $this->setCorsHeaders();
+        try {
+            $engine = new \App\Services\MlmInvestmentEngine();
+            echo json_encode(['success'=>true,'data'=>$engine->listPackages()]);
+        } catch (\Throwable $e) {
+            echo json_encode(['success'=>false,'error'=>'Failed to list packages']);
+        }
+    }
+
+    public function purchasePackage()
+    {
+        $this->setCorsHeaders();
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Unauthorized']); return; }
+        try {
+            $input = json_decode(file_get_contents('php://input'), true) ?: [];
+            $packageId = (int)($input['package_id'] ?? 0);
+            if (!$packageId) { echo json_encode(['success'=>false,'error'=>'package_id required']); return; }
+            $engine = new \App\Services\MlmInvestmentEngine();
+            $result = $engine->processJoiningPackage($packageId, $userId, [
+                'payment_method' => $input['payment_method'] ?? null,
+                'payment_reference' => $input['payment_reference'] ?? null,
+            ]);
+            echo json_encode($result);
+        } catch (\Throwable $e) {
+            echo json_encode(['success'=>false,'error'=>'Failed to purchase package']);
+        }
+    }
+
+    public function getGoals()
+    {
+        $this->setCorsHeaders();
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Unauthorized']); return; }
+        try {
+            $service = new \App\Services\EngagementService();
+            $goals = $service->getGoals(['user_id'=>$userId], 20);
+            echo json_encode(['success'=>true,'data'=>$goals]);
+        } catch (\Throwable $e) {
+            echo json_encode(['success'=>false,'error'=>'Failed to get goals']);
+        }
+    }
+
+    public function getLeaderboard($metricType = 'sales')
+    {
+        $this->setCorsHeaders();
+        try {
+            $service = new \App\Services\EngagementService();
+            $leaderboard = $service->getLeaderboardSnapshot($metricType);
+            echo json_encode(['success'=>true,'data'=>$leaderboard]);
+        } catch (\Throwable $e) {
+            echo json_encode(['success'=>false,'error'=>'Failed to get leaderboard']);
+        }
+    }
+
+    public function getFormData($type = 'colonies')
+    {
+        $this->setCorsHeaders();
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Unauthorized']); return; }
+        try {
+            $service = new \App\Services\FormSelectDataService();
+            switch ($type) {
+                case 'colonies': $data = $service->getColonies(); break;
+                case 'properties': $data = $service->getProperties(); break;
+                case 'plots': $data = $service->getPlots(); break;
+                case 'states': $data = $service->getStates(); break;
+                case 'districts': $data = $service->getDistricts(); break;
+                case 'customers': $data = $service->getCustomers(); break;
+                case 'associates': $data = $service->getAssociates(); break;
+                case 'agents': $data = $service->getAgents(); break;
+                case 'employees': $data = $service->getEmployees(); break;
+                default: $data = [];
+            }
+            echo json_encode(['success'=>true,'data'=>$data]);
+        } catch (\Throwable $e) {
+            echo json_encode(['success'=>false,'error'=>'Failed to get form data']);
+        }
+    }
 }

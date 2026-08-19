@@ -120,7 +120,7 @@ $active_page = 'possession';
                                 <form method="POST" action="<?= BASE_URL ?>/admin/possession/checklist/<?= $booking['id'] ?>/add" class="style-35851">
                                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                     <input type="hidden" name="item_name" value="<?= htmlspecialchars($s ?? '') ?>">
-                                    <button type="submit" class="btn btn-sm btn-outline-success"><i class="fas fa-plus"></i></button>
+                                    <button type="submit" class="btn btn-sm btn-outline-success" aria-label="Add"><i class="fas fa-plus"></i></button>
                                     <small><?= htmlspecialchars($s ?? '') ?></small>
                                 </form>
                             </li>

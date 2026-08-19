@@ -24,9 +24,7 @@
                     <!-- Input Area -->
                     <div class="input-group mb-3">
                         <input type="text" id="voice-input" class="form-control" placeholder="Ask me anything..." autocomplete="off">
-                        <button class="btn btn-outline-secondary" type="button" id="mic-btn" title="Voice Input">
-                            <i class="fas fa-microphone"></i>
-                        </button>
+                        <button class="btn btn-outline-secondary" type="button" id="mic-btn" title="Voice Input" aria-label="Microphone"><i class="fas fa-microphone"></i></button>
                         <button class="btn btn-primary" type="button" id="send-btn">
                             <i class="fas fa-paper-plane"></i> Send
                         </button>

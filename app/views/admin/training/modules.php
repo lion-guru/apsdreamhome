@@ -61,7 +61,7 @@ $page_description = 'Manage course modules';
                         </td>
                         <td>
                             <div class="btn-group">
-                                <button class="btn btn-sm btn-outline-info" title="View"><i class="fas fa-eye"></i></button>
+                                <button class="btn btn-sm btn-outline-info" title="View" aria-label="View"><i class="fas fa-eye"></i></button>
                             </div>
                         </td>
                     </tr>

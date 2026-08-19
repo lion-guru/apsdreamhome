@@ -50,7 +50,7 @@ $_ag = $agents ?? [];
                         <div class="card-footer">
                             <div class="input-group">
                                 <input type="text" class="form-control" id="msgInput" placeholder="Type a message..." onkeypress="if(event.key==='Enter')sendMsg()">
-                                <button class="btn btn-primary" onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
+                                <button class="btn btn-primary" onclick="sendMsg()" aria-label="Send"><i class="fas fa-paper-plane"></i></button>
                             </div>
                         </div>
                         <?php endif; ?>

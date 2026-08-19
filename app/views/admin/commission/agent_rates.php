@@ -46,7 +46,7 @@
                                 <td>&#8377;<?= number_format((float)$r['commission_per_sqft'],2) ?></td>
                                 <td><?= (float)$r['commission_percentage'] ?>%</td>
                                 <td><span class="badge bg-<?= $r['status']=='active'?'success':'secondary' ?>"><?= $r['status'] ?></span></td>
-                                <td><form method="POST" action="<?= BASE_URL ?>/admin/commission/agent-rates/delete/<?= $r['id'] ?>" class="style-71727" onsubmit="return confirm('Delete?')"><input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"><button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button></form></td>
+                                <td><form method="POST" action="<?= BASE_URL ?>/admin/commission/agent-rates/delete/<?= $r['id'] ?>" class="style-71727" onsubmit="return confirm('Delete?')"><input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"><button type="submit" class="btn btn-sm btn-danger" aria-label="Delete"><i class="fas fa-trash"></i></button></form></td>
                             </tr>
                             <?php endforeach; ?>
                             <?php endif; ?>

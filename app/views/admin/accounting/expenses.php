@@ -20,7 +20,7 @@
             <div class="row align-items-center">
                 <div class="col"><h5 class="mb-0"><i class="fas fa-list me-2"></i>All Expense Records</h5></div>
                 <div class="col-auto">
-                    <form class="d-flex" method="GET"><input type="text" name="search" class="form-control form-control-sm me-2" placeholder="Search expenses..." class="style-47085"><button class="btn btn-sm btn-outline-primary" type="submit"><i class="fas fa-search"></i></button></form>
+                    <form class="d-flex" method="GET"><input type="text" name="search" class="form-control form-control-sm me-2" placeholder="Search expenses..." class="style-47085"><button class="btn btn-sm btn-outline-primary" type="submit" aria-label="Search"><i class="fas fa-search"></i></button></form>
     <?php echo CSRFProtection::csrfField(); ?>
                 </div>
             </div>

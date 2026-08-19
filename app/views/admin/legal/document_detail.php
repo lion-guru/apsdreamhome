@@ -69,17 +69,17 @@ if (!$doc) { echo '<div class="container-fluid py-4"><div class="alert alert-dan
                                                 <form method="POST" action="<?= BASE_URL ?>/admin/legal/uploads/<?= $u['id'] ?>/verify" class="d-inline">
                                                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                                     <input type="hidden" name="status" value="verified">
-                                                    <button class="btn btn-sm btn-outline-success"><i class="fas fa-check"></i></button>
+                                                    <button class="btn btn-sm btn-outline-success" aria-label="Confirm"><i class="fas fa-check"></i></button>
                                                 </form>
                                                 <form method="POST" action="<?= BASE_URL ?>/admin/legal/uploads/<?= $u['id'] ?>/verify" class="d-inline">
                                                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                                     <input type="hidden" name="status" value="rejected">
-                                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-times"></i></button>
+                                                    <button class="btn btn-sm btn-outline-danger" aria-label="Reject"><i class="fas fa-times"></i></button>
                                                 </form>
                                             <?php endif; ?>
                                             <form method="POST" action="<?= BASE_URL ?>/admin/legal/uploads/<?= $u['id'] ?>/delete" class="d-inline" onsubmit="return confirm('Delete this upload?')">
                                                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-                                                <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                                <button class="btn btn-sm btn-outline-danger" aria-label="Upload"><i class="fas fa-trash"></i></button>
                                             </form>
                                         </td>
                                     </tr>

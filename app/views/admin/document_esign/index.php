@@ -50,18 +50,14 @@
                                 <td>{{ $doc['created_at'] }}</td>
                                 <td>
                                     <div class="flex gap-1">
-                                        <button onclick="viewDocument({{ $doc['id'] }})" class="btn btn-sm btn-info" title="View">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
+                                        <button onclick="viewDocument({{ $doc['id'] }})" class="btn btn-sm btn-info" title="View" aria-label="Add"><i class="fas fa-eye"></i></button>
                                         @if($doc['status'] === 'pending')
-                                        <button onclick="signDocument({{ $doc['id'] }})" class="btn btn-sm btn-success" title="Sign">
+                                        <button onclick="signDocument({{ $doc['id'] }})" class="btn btn-sm btn-success" title="Sign" aria-label="View">
                                             <i class="fas fa-signature"></i>
                                         </button>
                                         @endif
                                         @if($doc['status'] === 'pending')
-                                        <button onclick="cancelDocument({{ $doc['id'] }})" class="btn btn-sm btn-error" title="Cancel">
-                                            <i class="fas fa-times"></i>
-                                        </button>
+                                        <button onclick="cancelDocument({{ $doc['id'] }})" class="btn btn-sm btn-error" title="Cancel" aria-label="Close"><i class="fas fa-times"></i></button>
                                         @endif
                                     </div>
                                 </td>

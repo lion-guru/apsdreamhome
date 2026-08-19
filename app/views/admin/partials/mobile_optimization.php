@@ -1,7 +1,5 @@
 <!-- Mobile Optimization — JS only (CSS is in admin.css) -->
-<button class="mobile-menu-toggle d-md-none" id="mobileMenuToggle">
-    <i class="fas fa-bars"></i>
-</button>
+<button class="mobile-menu-toggle d-md-none" id="mobileMenuToggle" aria-label="Menu"><i class="fas fa-bars"></i></button>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');

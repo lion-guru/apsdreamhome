@@ -114,7 +114,7 @@ $categories = $categories ?? [];
                         <input type="text" name="pincode" class="form-control" maxlength="6" placeholder="273001">
                     </div>
                     <div class="col-md-1 d-flex align-items-end">
-                        <button type="submit" class="btn btn-primary w-100"><i class="fas fa-save"></i></button>
+                        <button type="submit" class="btn btn-primary w-100" aria-label="Save"><i class="fas fa-save"></i></button>
                     </div>
                 </div>
                 <div class="form-text mt-2"><i class="fas fa-info-circle me-1"></i>Distances to all active colonies will be auto-calculated using Haversine formula</div>
@@ -171,9 +171,7 @@ $categories = $categories ?? [];
                                 <td>
                                     <form method="POST" action="<?= BASE_URL ?>/admin/tools/landmarks/<?= $l['id'] ?>/delete" class="style-71727" onsubmit="return confirm('Delete this landmark?')">
                                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                     </form>
                                 </td>
                             </tr>

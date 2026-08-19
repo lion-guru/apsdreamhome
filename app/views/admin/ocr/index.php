@@ -202,12 +202,12 @@ $doc_type_labels = $doc_type_labels ?? [];
                                             <?php if (($doc['ocr_status'] ?? '') === 'pending'): ?>
                                                 <form method="POST" action="<?= BASE_URL ?>/admin/ocr/process/<?= $doc['id'] ?>" class="style-71727">
                                                     <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
-                                                    <button type="submit" class="ocr-btn ocr-btn-success" class="style-18377"><i class="fas fa-play"></i></button>
+                                                    <button type="submit" class="ocr-btn ocr-btn-success" class="style-18377" aria-label="Play"><i class="fas fa-play"></i></button>
                                                 </form>
                                             <?php endif; ?>
                                             <form method="POST" action="<?= BASE_URL ?>/admin/ocr/delete/<?= $doc['id'] ?>" class="style-71727" onsubmit="return confirm('Delete this document permanently?')">
                                                 <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
-                                                <button type="submit" class="ocr-btn ocr-btn-danger" class="style-18377"><i class="fas fa-trash"></i></button>
+                                                <button type="submit" class="ocr-btn ocr-btn-danger" class="style-18377" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                             </form>
                                         </div>
                                     </td>

@@ -26,8 +26,8 @@
         <td><span class="badge bg-<?= $m['status']==='completed'?'success':($m['status']==='cancelled'?'danger':($m['status']==='no_show'?'warning':'info')) ?>"><?= ucfirst(str_replace('_',' ',$m['status'])) ?></span></td>
         <td>
             <?php if ($m['status']==='scheduled'): ?>
-            <form method="POST" action="<?= BASE_URL ?>/admin/meetings/<?= $m['id'] ?>/complete" class="d-inline"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><input type="hidden" name="outcome" value="completed"><button class="btn btn-sm btn-success"><i class="fas fa-check"></i></button></form>
-            <form method="POST" action="<?= BASE_URL ?>/admin/meetings/<?= $m['id'] ?>/cancel" class="d-inline"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><button class="btn btn-sm btn-danger"><i class="fas fa-times"></i></button></form>
+            <form method="POST" action="<?= BASE_URL ?>/admin/meetings/<?= $m['id'] ?>/complete" class="d-inline"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><input type="hidden" name="outcome" value="completed"><button class="btn btn-sm btn-success" aria-label="Confirm"><i class="fas fa-check"></i></button></form>
+            <form method="POST" action="<?= BASE_URL ?>/admin/meetings/<?= $m['id'] ?>/cancel" class="d-inline"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><button class="btn btn-sm btn-danger" aria-label="Cancel"><i class="fas fa-times"></i></button></form>
             <?php endif; ?>
         </td>
     </tr><?php endforeach; endif; ?>

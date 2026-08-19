@@ -43,7 +43,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                             <td class="text-end">
                                 <form method="POST" action="<?= BASE_URL ?>/admin/sustainable/carbon/delete/<?= $e['id'] ?>" class="d-inline" onsubmit="return confirm('Delete entry?')">
                                     <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                 </form>
                             </td>
                         </tr>

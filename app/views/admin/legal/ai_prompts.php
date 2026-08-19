@@ -27,7 +27,7 @@ $prompts = $prompts ?? [];
                                     <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editPromptModal<?= $p['id'] ?>"><i class="fas fa-edit"></i></button>
                                     <form method="POST" action="<?= BASE_URL ?>/admin/legal/ai-prompts/<?= $p['id'] ?>/delete" class="d-inline" onsubmit="return confirm('Deactivate this prompt?')">
                                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-                                        <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                     </form>
                                 </div>
                             </div>

@@ -123,9 +123,7 @@ $groupLabels = [
                                 <div class="card-header bg-white d-flex justify-content-between align-items-center">
                                     <h6 class="fw-bold mb-0 text-capitalize"><?= htmlspecialchars($svcName ?? '') ?></h6>
                                     <div class="dropdown">
-                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                                            <i class="fas fa-ellipsis-v"></i>
-                                        </button>
+                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-label="More options"><i class="fas fa-ellipsis-v"></i></button>
                                         <ul class="dropdown-menu dropdown-menu-end">
                                             <li>
                                                 <a class="dropdown-item text-info" href="#" onclick="testConnection('<?= htmlspecialchars($svcName ?? '') ?>'); return false;">

@@ -160,9 +160,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                                                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                                 <input type="hidden" name="image_id" value="<?php echo $image['id']; ?>">
                                                 <input type="hidden" name="property_id" value="<?php echo $property['id']; ?>">
-                                                <button type="submit" class="btn btn-sm btn-outline-warning">
-                                                    <i class="fas fa-star"></i>
-                                                </button>
+                                                <button type="submit" class="btn btn-sm btn-outline-warning" aria-label="Favorite"><i class="fas fa-star"></i></button>
                                             </form>
                                         <?php endif; ?>
 
@@ -170,9 +168,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                             <input type="hidden" name="image_id" value="<?php echo $image['id']; ?>">
                                             <input type="hidden" name="property_id" value="<?php echo $property['id']; ?>">
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                         </form>
                                     </div>
                                 </div>

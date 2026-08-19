@@ -552,15 +552,9 @@ $users = $users ?? [];
             </td>
             <td>
                 <div class="action-buttons">
-                    <button class="btn btn-sm btn-info" onclick="viewUser('${user.id}')" title="View">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="btn btn-sm btn-warning" onclick="editUser('${user.id}')" title="Edit">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-sm btn-secondary" onclick="resetPassword('${user.id}')" title="Reset Password">
-                        <i class="fas fa-key"></i>
-                    </button>
+                    <button class="btn btn-sm btn-info" onclick="viewUser('${user.id}')" title="View" aria-label="View"><i class="fas fa-eye"></i></button>
+                    <button class="btn btn-sm btn-warning" onclick="editUser('${user.id}')" title="Edit" aria-label="View"><i class="fas fa-edit"></i></button>
+                    <button class="btn btn-sm btn-secondary" onclick="resetPassword('${user.id}')" title="Reset Password" aria-label="Edit"><i class="fas fa-key"></i></button>
                     ${getActionButton(user)}
                 </div>
             </td>
@@ -593,9 +587,7 @@ $users = $users ?? [];
                         <i class="fas fa-ban"></i>
                     </button>`;
         } else {
-            return `<button class="btn btn-sm btn-success" onclick="activateUser('${user.id}')" title="Activate">
-                        <i class="fas fa-check"></i>
-                    </button>`;
+            return `<button class="btn btn-sm btn-success" onclick="activateUser('${user.id}')" title="Activate" aria-label="Confirm"><i class="fas fa-check"></i></button>`;
         }
     }
     
