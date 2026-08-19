@@ -324,7 +324,8 @@ async function refreshStatus() {
 }
 
 async function hangup(channel) {
-    if (!confirm('Hangup this call?')) return;
+    apsConfirm('Hangup this call?').then(function(ok) {
+        if (!ok) return;
     try {
         showLoader();
         await fetch('<?= BASE_URL ?>/admin/sim-calling/api/hangup', {
@@ -333,6 +334,7 @@ async function hangup(channel) {
             body: JSON.stringify({ channel })
         ).finally(() => hideLoader());
         location.reload();
+    });
     } catch (e) {
         showToast('Hangup failed', 'danger');
     }

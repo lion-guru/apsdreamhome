@@ -109,7 +109,8 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'inactive' => 0];
 
 <script>
 function toggleIntegration(id) {
-    if (!confirm('Toggle this integration status?')) return;
+    apsConfirm('Toggle this integration status?').then(function(ok) {
+        if (!ok) return;
     showLoader();
     fetch('<?= BASE_URL ?>/admin/ai-management/toggle-integration/' + id, { method: 'POST' })
         .then(r => r.json())
@@ -118,5 +119,6 @@ function toggleIntegration(id) {
         })
         .catch(() => showToast('Request failed', 'danger'))
         .finally(() => hideLoader());
+    });
 }
 </script>

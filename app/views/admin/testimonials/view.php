@@ -191,7 +191,8 @@ document.getElementById('testimonialActionForm').addEventListener('submit', func
 });
 
 function deleteTestimonial(id) {
-    if (confirm('Are you sure you want to delete this testimonial?')) {
+    apsConfirm('Are you sure you want to delete this testimonial?').then(function(ok) {
+        if (!ok) return;
         showLoader();
         fetch('<?php echo BASE_URL; ?>/admin/testimonials/' + id + '/delete', {
             method: 'POST',
@@ -206,7 +207,7 @@ function deleteTestimonial(id) {
             } else {
                 showToast('Error: ' + data.error, 'danger');
             }
-        ).finally(() => hideLoader());
-    }
+        }).finally(() => hideLoader());
+    });
 }
 </script>

@@ -141,8 +141,8 @@ function updateBulkBtn() {
 function bulkReconcile() {
     const count = document.querySelectorAll('.recon-checkbox:checked').length;
     if (count === 0) return;
-    if (confirm('Mark ' + count + ' selected transaction(s) as reconciled?')) {
+    apsConfirm('Mark ' + count + ' selected transaction(s) as reconciled?').then(function(ok) {
+        if (!ok) return;
         document.getElementById('bulkReconcileForm').submit();
-    }
-}
+    });
 </script>

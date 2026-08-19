@@ -349,26 +349,23 @@ document.addEventListener('DOMContentLoaded', function() {
         const userId = e.target.dataset.userId;
         const menuId = e.target.dataset.menuId;
 
-        if (!confirm('Are you sure you want to revoke this custom permission?')) {
-            return;
-        }
-
-        showLoader();
-        fetch('<?php echo BASE_URL; ?>/admin/menu-permissions/revoke-user', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `user_id=${userId}&menu_item_id=${menuId}`
-        })
-        .then(response => response.json())
-                .catch(err => console.error('Request failed:', err));
-        .then(data => {
-            if (data.success) {
-                // Refresh the user permissions
-                document.getElementById('userSelect').dispatchEvent(new Event('change'));
-            }
-        ).finally(() => hideLoader());
+        apsConfirm('Are you sure you want to revoke this custom permission?').then(function(ok) {
+            if (!ok) return;
+            showLoader();
+            fetch('<?php echo BASE_URL; ?>/admin/menu-permissions/revoke-user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `user_id=${userId}&menu_item_id=${menuId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('userSelect').dispatchEvent(new Event('change'));
+                }
+            }).finally(() => hideLoader());
+        });
     }
 });
 </script>

@@ -130,7 +130,8 @@
 <script src="<?= BASE_URL ?>/assets/js/bootstrap.bundle.min.js"></script>
 <script>
 function approveUser(userId) {
-    if (!confirm('Approve this user? They will be able to login immediately.')) return;
+    apsConfirm('Approve this user? They will be able to login immediately.').then(function(ok) {
+        if (!ok) return;
     showLoader();
 
     fetch('<?php echo BASE_URL; ?>/admin/users/' + userId + '/approve', {
@@ -140,6 +141,7 @@ function approveUser(userId) {
             'X-Requested-With': 'XMLHttpRequest'
         },
         body: 'csrf_token=' + encodeURIComponent(document.querySelector('input[name="csrf_token"]')?.value || '')
+    });
     })
     .then(r => r.json())
     .then(data => {
@@ -221,8 +223,10 @@ function bulkApprove() {
     const checked = document.querySelectorAll('.user-checkbox:checked');
     const ids = Array.from(checked).map(cb => cb.value);
     if (ids.length === 0) return;
-    if (!confirm('Approve ' + ids.length + ' users?')) return;
+    apsConfirm('Approve ' + ids.length + ' users?').then(function(ok) {
+        if (!ok) return;
 
+    });
     const formData = new FormData();
     formData.append('csrf_token', document.querySelector('input[name="csrf_token"]')?.value || '');
     ids.forEach(id => formData.append('user_ids[]', id));

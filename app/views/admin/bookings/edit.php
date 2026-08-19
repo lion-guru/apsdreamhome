@@ -340,10 +340,13 @@ $active_page = 'bookings';
 
             // Confirm status change
             if (!statusWarning.classList.contains('d-none')) {
-                if (!confirm('Are you sure you want to change the booking status? This will trigger automated actions.')) {
-                    e.preventDefault();
-                    return false;
-                }
+                e.preventDefault();
+                apsConfirm('Are you sure you want to change the booking status? This will trigger automated actions.').then(function(ok) {
+                    if (ok) {
+                        editBookingForm.submit();
+                    }
+                });
+                return;
             }
         });
     });

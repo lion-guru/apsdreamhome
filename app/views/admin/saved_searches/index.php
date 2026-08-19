@@ -287,7 +287,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     document.querySelectorAll('.delete-btn').forEach(function(btn) {
         btn.addEventListener('click', function() {
-            if (!confirm('Delete this saved search?')) return;
+            apsConfirm('Delete this saved search?').then(function(ok) {
+                if (!ok) return;
+            });
             const id = this.getAttribute('data-id');
             window.location = '<?php echo BASE_URL; ?>/admin/saved-searches/delete/' + id;
         });

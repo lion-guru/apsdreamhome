@@ -269,9 +269,10 @@ $completedCount = count($completedMeetings);
 
 <script>
 function confirmAction(url, message) {
-    if (confirm(message)) {
+    apsConfirm(message).then(function(ok) {
+        if (!ok) return;
         window.location.href = url;
-    }
+    });
 }
 </script>
 

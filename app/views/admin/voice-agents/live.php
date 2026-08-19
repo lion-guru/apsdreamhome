@@ -244,24 +244,25 @@ function submitTransfer() {
 }
 
 function hangupCall(callSid) {
-    if (!confirm('Hangup this call? This action cannot be undone.')) return;
-    showLoader();
-    fetch('<?= BASE_URL ?>/admin/voice-agents/hangup-call', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': window.CSRF_TOKEN || ''},
-        body: 'call_sid=' + encodeURIComponent(callSid)
-    })
-    .then(r => r.json())
-    .then(data => {
-        if (data.success) {
-            .catch(err => console.error('Request failed:', err));
-            showToast('Call ended.', 'info');
-            location.reload();
-        } else {
-            showToast('Hangup failed: ' + (data.error || 'unknown'), 'danger');
-        }
-    })
-    .catch(e => showToast('Error: ' + e.message, 'danger')).finally(() => hideLoader());
+    apsConfirm('Hangup this call? This action cannot be undone.').then(function(ok) {
+        if (!ok) return;
+        showLoader();
+        fetch('<?= BASE_URL ?>/admin/voice-agents/hangup-call', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': window.CSRF_TOKEN || ''},
+            body: 'call_sid=' + encodeURIComponent(callSid)
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                showToast('Call ended.', 'info');
+                location.reload();
+            } else {
+                showToast('Hangup failed: ' + (data.error || 'unknown'), 'danger');
+            }
+        })
+        .catch(e => showToast('Error: ' + e.message, 'danger')).finally(() => hideLoader());
+    });
 }
 
 // Auto-refresh every 5s

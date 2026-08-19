@@ -241,7 +241,9 @@ function runAutoPay() {
 }
 
 function retryMandate(subscriptionId) {
-    if (!confirm('Retry auto-debit for this mandate?')) return;
+    apsConfirm('Retry auto-debit for this mandate?').then(function(ok) {
+        if (!ok) return;
     showToast('Retry queued — will be processed on next cron run.', 'info');
+    });
 }
 </script>

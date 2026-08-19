@@ -145,9 +145,11 @@ $stats = $stats ?? [];
 
 <script>
 function updateStatus(id, status) {
-    if (!confirm('Are you sure you want to ' + status + ' this withdrawal request?')) return;
+    apsConfirm('Are you sure you want to ' + status + ' this withdrawal request?').then(function(ok) {
+        if (!ok) return;
     document.getElementById('statusInput').value = status;
     document.getElementById('notesInput').value = prompt('Admin notes (optional):') || '';
+    });
     var form = document.getElementById('statusForm');
     form.action = '<?= BASE_URL ?>/admin/mlm/withdrawals/update-status/' + id;
     form.submit();

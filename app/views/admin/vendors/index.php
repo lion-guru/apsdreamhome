@@ -185,10 +185,11 @@
 
 <script>
 function deactivateVendor(id, name) {
-    if (confirm('Deactivate vendor "' + name + '"? This vendor will be marked as inactive.')) {
+    apsConfirm('Deactivate vendor "' + name + '"? This vendor will be marked as inactive.').then(function(ok) {
+        if (!ok) return;
         var form = document.getElementById('deactivateForm');
         form.action = '<?= BASE_URL ?>/admin/vendors/delete/' + id;
         form.submit();
-    }
+    });
 }
 </script>

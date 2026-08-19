@@ -69,7 +69,9 @@ function verifyLead(id) {
 }
 function convertLead(id) { verifyLead(id); }
 function convertAllVerified() {
-    if (!confirm('Convert all verified leads to CRM?')) return;
+    apsConfirm('Convert all verified leads to CRM?').then(function(ok) {
+        if (!ok) return;
+    });
     var btns = document.querySelectorAll('button[onclick^="verifyLead"]');
     var ids = []; btns.forEach(function(b) { var m = b.getAttribute('onclick').match(/\d+/); if (m) ids.push(m[0]); });
     if (!ids.length) { showToast('No verified leads to convert.', 'info'); return; }

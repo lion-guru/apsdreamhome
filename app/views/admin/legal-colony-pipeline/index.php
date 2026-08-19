@@ -118,7 +118,9 @@ $stages       = $stages ?? [];
 
 <script>
 function autoAdvance() {
-  if (!confirm('Auto-advance all colonies where requirements are met?')) return;
+  apsConfirm('Auto-advance all colonies where requirements are met?').then(function(ok) {
+      if (!ok) return;
+  });
   const btn = event.target.closest('button');
   btn.disabled = true;
   btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Processing...';

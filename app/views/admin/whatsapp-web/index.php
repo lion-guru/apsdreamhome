@@ -83,10 +83,10 @@ async function reconnectWA() {
 }
 
 async function logoutWA() {
-    if (confirm('Logout from WhatsApp Web?')) {
-        await fetch(WA_SERVICE_URL + '/api/logout', { method: 'POST' });
-        document.getElementById('wa-status').innerHTML = '<p class="text-muted mb-0">ðŸšª Logged out</p>';
-    }
+    const confirmed = await apsConfirm('Logout from WhatsApp Web?');
+    if (!confirmed) return;
+    await fetch(WA_SERVICE_URL + '/api/logout', { method: 'POST' });
+    document.getElementById('wa-status').innerHTML = '<p class="text-muted mb-0">Logged out</p>';
 }
 
 checkStatus();

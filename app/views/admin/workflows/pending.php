@@ -43,7 +43,9 @@
 
 <script>
 function approveWorkflow(id) {
-    if (!confirm('Approve this workflow?')) return;
+    apsConfirm('Approve this workflow?').then(function(ok) {
+        if (!ok) return;
+    });
     var form = document.createElement('form');
     form.method = 'POST';
     form.action = '<?= BASE_URL ?>admin/workflows/action/' + id;

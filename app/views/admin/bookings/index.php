@@ -389,13 +389,15 @@ $active_page = 'bookings';
             const status = bulkStatus.value;
             const notes = bulkNotes.value;
             if (!ids.length) return showToast('No bookings selected', 'info');
-            if (!confirm('Update status of ' + ids.length + ' booking(s) to ' + status + '?')) return;
+            apsConfirm('Update status of ' + ids.length + ' booking(s) to ' + status + '?').then(function(ok) {
+                if (!ok) return;
 
             showLoader();
             fetch(baseUrl + '/admin/bookings/bulk-action', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': '<?= $_SESSION['csrf_token'] ?? '' ?>'},
                 body: 'csrf_token=<?= $_SESSION['csrf_token'] ?? '' ?>&action=status&value=' + encodeURIComponent(status) + '&notes=' + encodeURIComponent(notes) + '&booking_ids[]=' + ids.join('&booking_ids[]=')
+            });
             }).then(r => r.json()).then(d => {
                 if (d.success) location.reload();
                 .catch(err => console.error('Request failed:', err));
@@ -406,13 +408,15 @@ $active_page = 'bookings';
         bulkCancel.addEventListener('click', function() {
             const ids = getSelected();
             if (!ids.length) return showToast('No bookings selected', 'info');
-            if (!confirm('Cancel ' + ids.length + ' booking(s)?')) return;
+            apsConfirm('Cancel ' + ids.length + ' booking(s)?').then(function(ok) {
+                if (!ok) return;
 
             showLoader();
             fetch(baseUrl + '/admin/bookings/bulk-action', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': '<?= $_SESSION['csrf_token'] ?? '' ?>'},
                 body: 'csrf_token=<?= $_SESSION['csrf_token'] ?? '' ?>&action=cancel&booking_ids[]=' + ids.join('&booking_ids[]=')
+            });
             }).then(r => r.json()).then(d => {
                 .catch(err => console.error('Request failed:', err));
                 if (d.success) location.reload();

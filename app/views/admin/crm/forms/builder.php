@@ -325,10 +325,11 @@ function editField(i) {
     }
 
     function removeField(i) {
-        if (confirm('Remove this field?')) {
+        apsConfirm('Remove this field?').then(function(ok) {
+            if (!ok) return;
             fields.splice(i, 1);
             renderCanvas();
-        }
+        });
     }
 
     function saveAndSubmit() {

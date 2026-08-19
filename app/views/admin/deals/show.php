@@ -110,7 +110,9 @@
 
 <script>
 function markDealStatus(status) {
-    if (!confirm('Mark this deal as ' + status.toUpperCase() + '?')) return;
+    apsConfirm('Mark this deal as ' + status.toUpperCase() + '?').then(function(ok) {
+        if (!ok) return;
+    });
     var form = document.createElement('form');
     form.method = 'POST';
     form.action = '<?= BASE_URL ?>admin/deals/<?= (int)($deal['id'] ?? 0) ?>/stage';

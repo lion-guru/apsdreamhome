@@ -334,10 +334,11 @@ $active_page = 'properties';
     // Featured property warning
     document.getElementById('featured').addEventListener('change', function() {
         if (this.checked) {
-            const confirmed = confirm('Marking this property as featured will display it prominently on the website. Continue?');
-            if (!confirmed) {
-                this.checked = false;
-            }
+            apsConfirm('Marking this property as featured will display it prominently on the website. Continue?').then(function(ok) {
+                if (!ok) {
+                    document.getElementById('featured').checked = false;
+                }
+            });
         }
     });
 </script>

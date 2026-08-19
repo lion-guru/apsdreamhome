@@ -306,13 +306,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     bulkDelete.addEventListener('click', function() {
         const ids = getSelected();
-        if (!confirm('Delete ' + ids.length + ' leads?')) return;
+        apsConfirm('Delete ' + ids.length + ' leads?').then(function(ok) {
+            if (!ok) return;
 
         showLoader();
         fetch('<?= $base ?>/admin/leads/bulk-action', {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': '<?= $_SESSION['csrf_token'] ?? '' ?>'},
             body: 'csrf_token=<?= $_SESSION['csrf_token'] ?? '' ?>&action=delete&ids=' + ids.join(',')
+        });
         }).then(r => r.json()).then(d => {
             .catch(err => console.error('Request failed:', err));
             if (d.success) location.reload();

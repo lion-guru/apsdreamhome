@@ -439,7 +439,8 @@ function submitReview(action) {
 }
 
 function retryJob(jobId) {
-    if (confirm('Retry this failed job?')) {
+    apsConfirm('Retry this failed job?').then(function(ok) {
+        if (!ok) return;
         showLoader();
         fetch('<?= BASE_URL ?>/api/document-ai/process/${jobId}', { method: 'POST' })
             .then(r => r.json())
@@ -447,6 +448,6 @@ function retryJob(jobId) {
                 if (result.success) location.reload();
                 else showToast('Error: ' + result.error, 'danger');
             }).finally(() => hideLoader());
-    }
+    });
 }
 </script>

@@ -192,13 +192,12 @@ $page_title = 'Deal Tracking - APS Dream Home';
 
 <script>
     function updateStage(dealId, stage) {
-        if (!confirm('Are you sure you want to mark this deal as ' + stage.toUpperCase() + '?')) {
-            return;
-        }
+        apsConfirm('Are you sure you want to mark this deal as ' + stage.toUpperCase() + '?').then(function(ok) {
+            if (!ok) return;
 
-        var csrf = '<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>';
-        showLoader();
-        fetch('<?= BASE_URL ?>/admin/deals/' + dealId + '/stage', {
+            var csrf = '<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>';
+            showLoader();
+            fetch('<?= BASE_URL ?>/admin/deals/' + dealId + '/stage', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -215,6 +214,7 @@ $page_title = 'Deal Tracking - APS Dream Home';
             })
             .catch(error => {
                 showToast('Error updating deal stage', 'danger');
-            ).finally(() => hideLoader());
+            }).finally(() => hideLoader());
+        });
     }
 </script>

@@ -342,29 +342,29 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : ('/' . trim(dirname($_SERVER['SCRIPT
     }
 
     function clearLogs() {
-        if (confirm('Are you sure you want to clear API logs? This action cannot be undone.')) {
-            fetch('<?= BASE_URL ?>/admin/ai-settings/clear-logs', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        days: 30
-                    })
+        apsConfirm('Are you sure you want to clear API logs? This action cannot be undone.').then(function(ok) {
+            if (ok) {
+                fetch('<?= BASE_URL ?>/admin/ai-settings/clear-logs', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                days: 30
+                })
                 })
                 .then(response => response.json())
-                        .catch(err => console.error('Request failed:', err));
+                .catch(err => console.error('Request failed:', err));
                 .then(data => {
-                    if (data.success) {
-                        showAlert('Logs cleared successfully', 'success');
-                        setTimeout(() => location.reload(), 1000);
-                    } else {
-                        showAlert('Failed to clear logs', 'danger');
-                    }
+                if (data.success) {
+                showAlert('Logs cleared successfully', 'success');
+                setTimeout(() => location.reload(), 1000);
+                } else {
+                showAlert('Failed to clear logs', 'danger');
+                }
                 });
-        }
-    }
-
+                }
+            }});\n
     function exportLogs() {
         window.open('<?= BASE_URL ?>/admin/ai-settings/export-usage-report', '_blank');
     }

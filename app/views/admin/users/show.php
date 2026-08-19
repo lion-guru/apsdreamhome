@@ -190,10 +190,12 @@ document.getElementById('profileForm').addEventListener('submit', function(e) {
 <script>
 document.getElementById('sponsorForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    if (!confirm('Change sponsor? This updates 5 tables.')) return;
+    apsConfirm('Change sponsor? This updates 5 tables.').then(function(ok) {
+        if (!ok) return;
     showLoader();
     fetch('<?= $base ?>/admin/users/<?= $user['id'] ?>/change-sponsor', {
         method: 'POST', headers: {'X-Requested-With': 'XMLHttpRequest'}, body: new URLSearchParams(new FormData(this))
+    });
     }).then(r => r.json()).then(d => { showToast(d.message || d.error, d.success ? 'success' : 'danger'); if (d.success) location.reload(); }).catch(() => showToast('Error', 'danger')).finally(() => hideLoader());
 });
 document.getElementById('referralForm').addEventListener('submit', function(e) {
@@ -256,10 +258,12 @@ function toggleStatus() {
     }).then(r => r.json()).then(d => { showToast(d.message, 'info'); if (d.success) location.reload(); }).catch(() => showToast('Error', 'danger'));
 }
 function softDelete() {
-    if (!confirm('Deactivate this user? They will no longer be able to login.')) return;
+    apsConfirm('Deactivate this user? They will no longer be able to login.').then(function(ok) {
+        if (!ok) return;
     fetch('<?= $base ?>/admin/users/<?= $user['id'] ?>/soft-delete', {
         method: 'POST', headers: {'X-Requested-With': 'XMLHttpRequest'},
         body: 'csrf_token=<?= $csrf ?>'
+    });
     }).then(r => r.json()).then(d => { showToast(d.message, 'info'); if (d.success) location.reload(); }).catch(() => showToast('Error', 'danger'));
 }
 </script>

@@ -266,13 +266,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const status = bulkStatus.value;
         const notes = bulkNotes.value;
         if (!ids.length) return showToast('No properties selected', 'info');
-        if (!confirm('Update status of ' + ids.length + ' propert(ies) to ' + status + '?')) return;
+        apsConfirm('Update status of ' + ids.length + ' propert(ies) to ' + status + '?').then(function(ok) {
+            if (!ok) return;
 
         showLoader();
         fetch('<?= BASE_URL ?>/admin/properties/bulk-update', {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': '<?= $_SESSION['csrf_token'] ?? '' ?>'},
             body: 'csrf_token=<?= $_SESSION['csrf_token'] ?? '' ?>&property_ids[]=' + ids.join('&property_ids[]=') + '&status=' + encodeURIComponent(status) + '&notes=' + encodeURIComponent(notes)
+        });
         }).then(r => r.json()).then(d => {
             if (d.success) location.reload();
             .catch(err => console.error('Request failed:', err));

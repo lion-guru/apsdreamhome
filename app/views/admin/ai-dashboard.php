@@ -196,20 +196,22 @@ $content = ob_start();
 
 <script>
 function retrainAI() {
-    if (!confirm('Retrain all AI models? This may take a moment.')) return;
-    showLoader();
-    fetch('<?= BASE_URL ?>/api/ai/retrain', { method: 'POST' })
-        .then(r => r.json())
-        .then(data => {
-            hideLoader();
+    apsConfirm('Retrain all AI models? This may take a moment.').then(function(ok) {
+        if (!ok) return;
+        showLoader();
+        fetch('<?= BASE_URL ?>/api/ai/retrain', { method: 'POST' })
+            .then(r => r.json())
+            .then(data => {
+                hideLoader();
+                if (data.success) {
+                    showToast({type: 'success', body: 'AI models retrained successfully!'});
+                    location.reload();
+                } else {
+                    showToast({type: 'error', body: 'Error: ' + (data.error || 'unknown')});
+                }
+            })
             .catch(err => console.error('Request failed:', err));
-            if (data.success) {
-                showToast({type: 'success', body: 'AI models retrained successfully!'});
-                location.reload();
-            } else {
-                showToast({type: 'error', body: 'Error: ' + (data.error || 'unknown')});
-            }
-        });
+    });
 }
 </script>
 <?php

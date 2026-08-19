@@ -115,7 +115,8 @@ $stats = $stats ?? ['total' => 0, 'published' => 0, 'draft' => 0];
 
 <script>
 function toggleContent(id) {
-    if (!confirm('Toggle publish status for this content?')) return;
+    apsConfirm('Toggle publish status for this content?').then(function(ok) {
+        if (!ok) return;
     showLoader();
     fetch('<?= BASE_URL ?>/admin/ai-management/toggle-content/' + id, { method: 'POST' })
         .then(r => r.json())
@@ -124,5 +125,6 @@ function toggleContent(id) {
         })
         .catch(() => showToast('Request failed', 'danger'))
         .finally(() => hideLoader());
+    });
 }
 </script>

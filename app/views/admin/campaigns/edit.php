@@ -123,9 +123,10 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
     
     <script>
         function deleteCampaign(campaignId) {
-            if (confirm('Are you sure you want to delete this campaign? This action cannot be undone.')) {
+            apsConfirm('Are you sure you want to delete this campaign? This action cannot be undone.').then(function(ok) {
+                if (!ok) return;
                 window.location.href = '<?php echo $base; ?>/admin/campaigns/' + campaignId + '/delete';
-            }
+            });
         }
         
         document.getElementById('editCampaignForm').addEventListener('submit', function(e) {

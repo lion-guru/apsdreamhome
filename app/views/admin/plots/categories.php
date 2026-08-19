@@ -134,9 +134,10 @@ function editCategory(cat) {
 }
 
 function deleteCategory(id) {
-    if (confirm('Delete this category? This cannot be undone.')) {
+    apsConfirm('Delete this category? This cannot be undone.').then(function(ok) {
+        if (!ok) return;
         window.location.href = '<?= BASE_URL ?>/admin/plots/categories/delete/' + id;
-    }
+    });
 }
 
 // Reset modal on close

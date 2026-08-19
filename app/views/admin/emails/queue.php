@@ -75,10 +75,12 @@ function processQueue() {
         .then(r => r.json()).then(d => { if (d.success) location.reload(); else showToast(d.error || 'Failed', 'danger'); ).finally(() => hideLoader());
 }
 function cancelEmail(id) {
-    if (!confirm('Cancel this email?')) return;
+    apsConfirm('Cancel this email?').then(function(ok) {
+        if (!ok) return;
     showLoader();
     fetch('<?= $base ?? BASE_URL ?>/admin/emails/cancel', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({id}) })
         .then(r => r.json()).then(d => { if (d.success) location.reload(); ).finally(() => hideLoader());
+    });
 }
 function filterQueue(status) {
     document.querySelectorAll('.email-row').forEach(row => {
