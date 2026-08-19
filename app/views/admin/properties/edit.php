@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $pageTitle = 'Edit Property';
 
 // Initialize variables with defaults if not passed from controller

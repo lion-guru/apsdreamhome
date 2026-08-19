@@ -1,4 +1,4 @@
-﻿<?php $pageTitle = 'Edit Media'; ?>
+<?php $pageTitle = 'Edit Media'; ?>
 <div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">

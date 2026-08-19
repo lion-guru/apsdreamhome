@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = 'Add New Site';
 $active_page = 'sites';
 ?>

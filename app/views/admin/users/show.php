@@ -141,12 +141,13 @@ if (in_array($user['role'] ?? '', ['associate','agent','telecaller'])) $tabs['ml
 <script>
 document.getElementById('profileForm').addEventListener('submit', function(e) {
     e.preventDefault();
+    showLoader();
     const fd = new FormData(this);
     fetch('<?= $base ?>/admin/users/<?= $user['id'] ?>/update', {
         method: 'POST', headers: {'X-Requested-With': 'XMLHttpRequest'}, body: new URLSearchParams(fd)
     }).then(r => r.json()).then(d => {
-        if (d.success) { alert('Updated!'); location.reload(); } else { alert(d.message || 'Failed'); }
-    }).catch(() => alert('Network error'));
+        if (d.success) { showToast('Updated!', 'success'); location.reload(); } else { showToast(d.message || 'Failed', 'danger'); }
+    }).catch(() => showToast('Network error', 'danger')).finally(() => hideLoader());
 });
 </script>
 
@@ -190,15 +191,17 @@ document.getElementById('profileForm').addEventListener('submit', function(e) {
 document.getElementById('sponsorForm').addEventListener('submit', function(e) {
     e.preventDefault();
     if (!confirm('Change sponsor? This updates 5 tables.')) return;
+    showLoader();
     fetch('<?= $base ?>/admin/users/<?= $user['id'] ?>/change-sponsor', {
         method: 'POST', headers: {'X-Requested-With': 'XMLHttpRequest'}, body: new URLSearchParams(new FormData(this))
-    }).then(r => r.json()).then(d => { alert(d.message || d.error); if (d.success) location.reload(); }).catch(() => alert('Error'));
+    }).then(r => r.json()).then(d => { showToast(d.message || d.error, d.success ? 'success' : 'danger'); if (d.success) location.reload(); }).catch(() => showToast('Error', 'danger')).finally(() => hideLoader());
 });
 document.getElementById('referralForm').addEventListener('submit', function(e) {
     e.preventDefault();
+    showLoader();
     fetch('<?= $base ?>/admin/users/<?= $user['id'] ?>/change-referral', {
         method: 'POST', headers: {'X-Requested-With': 'XMLHttpRequest'}, body: new URLSearchParams(new FormData(this))
-    }).then(r => r.json()).then(d => { alert(d.message || d.error); if (d.success) location.reload(); }).catch(() => alert('Error'));
+    }).then(r => r.json()).then(d => { showToast(d.message || d.error, d.success ? 'success' : 'danger'); if (d.success) location.reload(); }).catch(() => showToast('Error', 'danger')).finally(() => hideLoader());
 });
 </script>
 

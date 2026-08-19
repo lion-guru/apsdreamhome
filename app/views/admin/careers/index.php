@@ -1,4 +1,4 @@
-﻿<?php $pageTitle = 'Job Listings'; ?>
+<?php $pageTitle = 'Job Listings'; ?>
 <div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = 'Edit Booking';
 $active_page = 'bookings';
 ?>

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Plot Cost Calculator - Colony Detail
  * Shows cost breakdown and plot pricing

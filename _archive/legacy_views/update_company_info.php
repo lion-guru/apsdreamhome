@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 /**
  * Quick Company Information Updater

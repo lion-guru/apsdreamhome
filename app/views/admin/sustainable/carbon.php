@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $entries = $entries ?? [];
 $summary = $summary ?? ['total_credits' => 0, 'total_value' => 0];
 $pagination = $pagination ?? ['page' => 1, 'pages' => 1];

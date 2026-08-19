@@ -105,20 +105,20 @@ class MobileMLMApiController extends BaseController
             }
 
             // Get team size
-            $stmt = $this->db->prepare("SELECT COUNT(*) FROM mlm_referrals WHERE referrer_id = ?");
+            $stmt = $this->db->prepare("SELECT COUNT(*) FROM mlm_referrals WHERE referrer_user_id = ?");
             $stmt->execute([$userId]);
             $summary['direct_referrals'] = (int)$stmt->fetchColumn();
 
             // Get earnings
-            $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) FROM mlm_payouts WHERE user_id = ?");
+            $stmt = $this->db->prepare("SELECT COALESCE(SUM(gross_amount), 0) FROM mlm_payouts WHERE associate_user_id = ?");
             $stmt->execute([$userId]);
             $summary['total_earnings'] = (float)$stmt->fetchColumn();
 
-            $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) FROM mlm_payouts WHERE user_id = ? AND status = 'pending'");
+            $stmt = $this->db->prepare("SELECT COALESCE(SUM(gross_amount), 0) FROM mlm_payouts WHERE associate_user_id = ? AND status = 'pending'");
             $stmt->execute([$userId]);
             $summary['pending_payouts'] = (float)$stmt->fetchColumn();
 
-            $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) FROM mlm_payouts WHERE user_id = ? AND status = 'paid'");
+            $stmt = $this->db->prepare("SELECT COALESCE(SUM(gross_amount), 0) FROM mlm_payouts WHERE associate_user_id = ? AND status = 'paid'");
             $stmt->execute([$userId]);
             $summary['paid_payouts'] = (float)$stmt->fetchColumn();
 
@@ -197,6 +197,74 @@ class MobileMLMApiController extends BaseController
             echo json_encode(['success' => true, 'message' => 'Payouts processed successfully', 'processed_count' => $result]);
         } catch (\Exception $e) {
             $this->handleApiError($e, 'Process Payouts API error');
+        }
+    }
+
+    private function getMlmNetworkTree($userId)
+    {
+        try {
+            $stmt = $this->db->prepare("
+                SELECT mr.referred_user_id as user_id, u.name, u.email, mr.created_at as joined_at
+                FROM mlm_referrals mr
+                LEFT JOIN users u ON u.id = mr.referred_user_id
+                WHERE mr.referrer_user_id = ?
+                ORDER BY mr.created_at DESC
+            ");
+            $stmt->execute([$userId]);
+            $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return [
+                'user_id' => $userId,
+                'total_referrals' => count($members),
+                'members' => $members,
+            ];
+        } catch (\Exception $e) {
+            error_log("[MobileMLMApiController] getMlmNetworkTree error: " . $e->getMessage());
+            return ['user_id' => $userId, 'total_referrals' => 0, 'members' => []];
+        }
+    }
+
+    private function getMlmBusinessBreakdown($userId)
+    {
+        try {
+            $breakdown = [
+                'total_payouts' => 0,
+                'paid_amount' => 0,
+                'pending_amount' => 0,
+                'by_status' => [],
+                'recent_payouts' => [],
+            ];
+
+            $stmt = $this->db->prepare("SELECT status, COUNT(*) as count, COALESCE(SUM(gross_amount), 0) as total FROM mlm_payouts WHERE associate_user_id = ? GROUP BY status");
+            $stmt->execute([$userId]);
+            $byStatus = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $breakdown['by_status'] = $byStatus;
+
+            foreach ($byStatus as $row) {
+                $breakdown['total_payouts'] += $row['total'];
+                if ($row['status'] === 'paid') $breakdown['paid_amount'] = $row['total'];
+                if ($row['status'] === 'pending') $breakdown['pending_amount'] = $row['total'];
+            }
+
+            $stmt = $this->db->prepare("SELECT id, gross_amount, status, created_at FROM mlm_payouts WHERE associate_user_id = ? ORDER BY created_at DESC LIMIT 10");
+            $stmt->execute([$userId]);
+            $breakdown['recent_payouts'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $breakdown;
+        } catch (\Exception $e) {
+            error_log("[MobileMLMApiController] getMlmBusinessBreakdown error: " . $e->getMessage());
+            return ['total_payouts' => 0, 'paid_amount' => 0, 'pending_amount' => 0, 'by_status' => [], 'recent_payouts' => []];
+        }
+    }
+
+    public function getGlobalPayoutHistory()
+    {
+        try {
+            $stmt = $this->db->query("SELECT id, gross_amount, status, payment_mode, created_at FROM mlm_payouts ORDER BY created_at DESC LIMIT 50");
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            error_log("[MobileMLMApiController] getGlobalPayoutHistory error: " . $e->getMessage());
+            return [];
         }
     }
 
@@ -305,7 +373,7 @@ class MobileMLMApiController extends BaseController
 
     public static function getPendingPayoutsData($db, $userId)
     {
-        $stmt = $db->prepare("SELECT id, amount, level, status, created_at FROM mlm_payouts WHERE user_id = ? AND status = 'pending' ORDER BY created_at DESC");
+        $stmt = $db->prepare("SELECT id, gross_amount, status, created_at FROM mlm_payouts WHERE associate_user_id = ? AND status = 'pending' ORDER BY created_at DESC");
         $stmt->execute([$userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -314,7 +382,7 @@ class MobileMLMApiController extends BaseController
     {
         $db->beginTransaction();
         try {
-            $stmt = $db->prepare("SELECT id FROM mlm_payouts WHERE user_id = ? AND status = 'pending' ORDER BY created_at ASC FOR UPDATE");
+            $stmt = $db->prepare("SELECT id FROM mlm_payouts WHERE associate_user_id = ? AND status = 'pending' ORDER BY created_at ASC FOR UPDATE");
             $stmt->execute([$userId]);
             $payouts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -333,7 +401,7 @@ class MobileMLMApiController extends BaseController
 
     public static function getPayoutHistoryData($db, $userId)
     {
-        $stmt = $db->prepare("SELECT id, amount, level, payment_method, status, processed_at, created_at FROM mlm_payouts WHERE user_id = ? ORDER BY created_at DESC LIMIT 100");
+        $stmt = $db->prepare("SELECT id, gross_amount, status, payment_mode, created_at FROM mlm_payouts WHERE associate_user_id = ? ORDER BY created_at DESC LIMIT 100");
         $stmt->execute([$userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // Initialize default values if not set
 $tiers = $tiers ?? [
     'bronze' => ['min_points' => 0, 'discount' => 5, 'multiplier' => 1, 'benefits' => []],

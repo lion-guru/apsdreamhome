@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // Ensure variables are available (extract() may not work in all contexts)
 $_conn = $connected ?? false;
 $_cfg = $config ?? [];

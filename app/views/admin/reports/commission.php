@@ -1,4 +1,4 @@
-﻿<?php $pageTitle = 'Commission Report'; ?>
+<?php $pageTitle = 'Commission Report'; ?>
 <div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">

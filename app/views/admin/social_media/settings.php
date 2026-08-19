@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'Social Media Settings';
 $configs = $configs ?? [];
 $csrf = $_SESSION['csrf_token'] ?? '';

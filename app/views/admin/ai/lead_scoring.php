@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * AI Lead Scoring - Powered by Gemini
  */

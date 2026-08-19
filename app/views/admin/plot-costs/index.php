@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Plot Cost Calculator - Index
  * Lists all colonies with cost summary

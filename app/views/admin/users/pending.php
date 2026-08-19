@@ -131,6 +131,7 @@
 <script>
 function approveUser(userId) {
     if (!confirm('Approve this user? They will be able to login immediately.')) return;
+    showLoader();
 
     fetch('<?php echo BASE_URL; ?>/admin/users/' + userId + '/approve', {
         method: 'POST',
@@ -154,7 +155,8 @@ function approveUser(userId) {
             showToast(data.message || 'Failed to approve', 'danger');
         }
     })
-    .catch(() => showToast('Network error', 'danger'));
+    .catch(() => showToast('Network error', 'danger'))
+    .finally(() => hideLoader());
 }
 
 function rejectUser(userId) {
@@ -166,6 +168,8 @@ function rejectUser(userId) {
 function confirmReject() {
     const userId = document.getElementById('rejectUserId').value;
     const reason = document.getElementById('rejectReason').value;
+    if (!reason.trim()) { showToast('Please provide a reason', 'warning'); return; }
+    showLoader();
 
     fetch('<?php echo BASE_URL; ?>/admin/users/' + userId + '/reject', {
         method: 'POST',
@@ -190,7 +194,8 @@ function confirmReject() {
             showToast(data.message || 'Failed to reject', 'danger');
         }
     })
-    .catch(() => showToast('Network error', 'danger'));
+    .catch(() => showToast('Network error', 'danger'))
+    .finally(() => hideLoader());
 }
 
 function toggleSelectAll(checkbox) {

@@ -1,4 +1,4 @@
-﻿<!-- Payroll Batch History -->
+<!-- Payroll Batch History -->
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">

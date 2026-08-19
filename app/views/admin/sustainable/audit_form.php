@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $audit = $audit ?? null;
 $isEdit = !empty($audit);
 $csrf = $_SESSION['csrf_token'] ?? '';

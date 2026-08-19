@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'Sustainable Tech';
 $csrf = $_SESSION['csrf_token'] ?? '';
 ?>

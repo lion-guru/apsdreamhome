@@ -1,4 +1,4 @@
-﻿<?php $pageTitle = 'Workflow Steps'; ?>
+<?php $pageTitle = 'Workflow Steps'; ?>
 <div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">

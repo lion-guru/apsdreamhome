@@ -213,13 +213,14 @@ function bulkAction(action) {
     }
 
     if (!confirm('Bulk ' + action + ' ' + ids.length + ' user(s)?')) return;
+    showLoader();
 
     fetch(BASE_URL + '/admin/users/bulk-operation', {
         method: 'POST',
         headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest'},
         body: 'csrf_token=' + encodeURIComponent(CSRF) + '&bulk_action=' + action + '&' + ids.map(id => 'user_ids[]=' + id).join('&')
     }).then(r => r.json()).then(d => {
-        if (d.success) { location.reload(); } else { alert(d.message || 'Failed'); }
-    }).catch(() => alert('Network error'));
+        if (d.success) { location.reload(); } else { showToast(d.message || 'Failed', 'danger'); }
+    }).catch(() => showToast('Network error', 'danger')).finally(() => hideLoader());
 }
 </script>

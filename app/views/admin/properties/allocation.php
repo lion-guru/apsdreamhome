@@ -1,4 +1,4 @@
-﻿<?php $pageTitle = 'Property Allocations'; ?>
+<?php $pageTitle = 'Property Allocations'; ?>
 <div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">

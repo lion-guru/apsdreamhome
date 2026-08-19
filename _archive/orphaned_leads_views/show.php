@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * show - APS Dream Home Component
  * 

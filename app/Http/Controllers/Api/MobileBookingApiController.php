@@ -185,6 +185,60 @@ class MobileBookingApiController extends BaseController
         }
     }
 
+    private function getAvailableVisitSlots($date)
+    {
+        try {
+            $slots = [];
+            $times = ['09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00'];
+            $stmt = $this->db->prepare("SELECT visit_time, COUNT(*) as booked FROM site_visits WHERE visit_date = ? AND status IN ('scheduled', 'confirmed') GROUP BY visit_time");
+            $stmt->execute([$date]);
+            $booked = [];
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $booked[$row['visit_time']] = $row['booked'];
+            }
+            foreach ($times as $time) {
+                $count = $booked[$time] ?? 0;
+                $slots[] = ['time' => $time, 'available' => $count < 3, 'booked' => $count, 'capacity' => 3];
+            }
+            return $slots;
+        } catch (\Exception $e) {
+            error_log("[MobileBookingApiController] getAvailableVisitSlots error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    private function getUserSiteVisits($userId)
+    {
+        try {
+            $stmt = $this->db->prepare("
+                SELECT sv.id, sv.visit_date, sv.visit_time, sv.status, sv.notes,
+                       p.title as property_title, p.city as location
+                FROM site_visits sv
+                LEFT JOIN properties p ON sv.property_id = p.id
+                WHERE sv.user_id = ?
+                ORDER BY sv.visit_date DESC
+                LIMIT 20
+            ");
+            $stmt->execute([$userId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            error_log("[MobileBookingApiController] getUserSiteVisits error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    private function cancelVisitSession($visitId)
+    {
+        $stmt = $this->db->prepare("UPDATE site_visits SET status = 'cancelled' WHERE id = ?");
+        $stmt->execute([$visitId]);
+    }
+
+    private function rescheduleVisitSession($visitId, $newDate, $newSlot)
+    {
+        $stmt = $this->db->prepare("UPDATE site_visits SET visit_date = ?, visit_time = ?, status = 'rescheduled' WHERE id = ?");
+        $stmt->execute([$newDate, $newSlot, $visitId]);
+    }
+
     public function cancelSiteVisitApi()
     {
         $this->setCorsHeaders();

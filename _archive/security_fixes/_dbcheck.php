@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $pdo = new PDO('mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome', 'root', '');
 $tables = ['colonies','plots','plot_bookings','bookings','users','districts','states','mlm_network_tree','colony_layouts','plot_allocations','colony_development_costs'];
 foreach($tables as $t) {

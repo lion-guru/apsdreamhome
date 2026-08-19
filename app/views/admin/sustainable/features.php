@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $features = $features ?? [];
 $category = $category ?? '';
 $csrf = $_SESSION['csrf_token'] ?? '';

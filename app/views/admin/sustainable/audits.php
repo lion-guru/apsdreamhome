@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $audits = $audits ?? [];
 $pagination = $pagination ?? ['page' => 1, 'pages' => 1];
 $csrf = $_SESSION['csrf_token'] ?? '';

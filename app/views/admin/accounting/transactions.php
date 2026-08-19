@@ -1,4 +1,4 @@
-﻿<?php $mlSupport = $mlSupport ?? new class { public function translate($s) { return $s; } }; ?>
+<?php $mlSupport = $mlSupport ?? new class { public function translate($s) { return $s; } }; ?>
 <div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">
