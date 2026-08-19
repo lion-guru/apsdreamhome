@@ -527,5 +527,48 @@ class BookingController extends AdminController
         exit;
     }
 
+    public function export()
+    {
+        $this->requireAdmin();
+        try {
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $format = $_GET['format'] ?? 'csv';
+
+            $where = '';
+            $params = [];
+            if ($tid) {
+                $where = "WHERE b.tenant_id = ?";
+                $params[] = $tid;
+            }
+
+            $stmt = $this->db->prepare("SELECT b.booking_number, b.status, b.total_plot_value,
+                    pl.plot_number, c.name as colony_name, u.name as customer_name,
+                    u.email as customer_email, u.phone as customer_phone, b.created_at
+                    FROM plot_bookings b
+                    LEFT JOIN plots pl ON b.plot_id = pl.id
+                    LEFT JOIN colonies c ON pl.colony_id = c.id
+                    LEFT JOIN users u ON b.customer_id = u.id
+                    {$where}
+                    ORDER BY b.created_at DESC");
+            $stmt->execute($params);
+            $bookings = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            if ($format === 'csv') {
+                header('Content-Type: text/csv; charset=utf-8');
+                header('Content-Disposition: attachment; filename=bookings-' . date('Y-m-d') . '.csv');
+                $output = fopen('php://output', 'w');
+                fputcsv($output, ['Booking #', 'Status', 'Plot', 'Colony', 'Customer', 'Email', 'Phone', 'Value', 'Date']);
+                foreach ($bookings as $b) {
+                    fputcsv($output, [$b['booking_number'], $b['status'], $b['plot_number'], $b['colony_name'], $b['customer_name'], $b['customer_email'], $b['customer_phone'], $b['total_plot_value'], $b['created_at']]);
+                }
+                fclose($output);
+                exit;
+            }
+        } catch (\Exception $e) {
+            error_log('BookingController::export error: ' . $e->getMessage());
+            showToast(['type' => 'error', 'body' => 'Export failed: ' . $e->getMessage()]);
+        }
+    }
+
     // Helper methods for CSRF validation and JSON responses
 }

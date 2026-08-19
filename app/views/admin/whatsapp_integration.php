@@ -152,15 +152,15 @@ async function testConnection() {
         const res = await fetch('<?= BASE_URL ?>/admin/ai-calling/health-check');
         const data = await res.json();
         const status = data.services?.whatsapp?.status || 'unknown';
-        alert('WhatsApp Status: ' + (data.services?.whatsapp?.message || status));
+        showToast({type: 'info', body: 'WhatsApp Status: ' + (data.services?.whatsapp?.message || status)});
     } catch(e) {
-        alert('Could not connect to health check endpoint.');
+        showToast({type: 'error', body: 'Could not connect to health check endpoint.'});
     }
 }
 
 function sendTestMessage() {
     const phone = prompt('Enter phone number (with country code):');
     if (!phone) return;
-    alert('Test message feature requires WhatsApp QR connection first. Visit the QR scan page.');
+    showToast({type: 'warning', body: 'Test message feature requires WhatsApp QR connection first. Visit the QR scan page.'});
 }
 </script>

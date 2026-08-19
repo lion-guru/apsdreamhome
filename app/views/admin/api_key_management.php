@@ -408,21 +408,23 @@
             const form = document.getElementById("addMcpKeyForm");
             const formData = new FormData(form);
             
+            showLoader();
             fetch("<?= BASE_URL ?>/admin/api-key-mgmt/add-mcp-key", {
                 method: "POST",
                 body: formData
             })
             .then(response => response.json())
             .then(data => {
+                hideLoader();
                 if (data.success) {
                     bootstrap.Modal.getInstance(document.getElementById("addMcpKeyModal")).hide();
                     form.reset();
                     loadStats();
                 } else {
-                    alert("Error: " + data.message);
+                    showToast({type: 'error', body: "Error: " + data.message});
                 }
             })
-            .catch(error => console.error("Error adding MCP key:", error));
+            .catch(error => { hideLoader(); console.error("Error adding MCP key:", error); });
         }
         
         function createUserKey() {
@@ -436,19 +438,21 @@
             });
             formData.append("permissions", JSON.stringify(permissions));
             
+            showLoader();
             fetch("<?= BASE_URL ?>/admin/api-key-mgmt/create-user-key", {
                 method: "POST",
                 body: formData
             })
             .then(response => response.json())
             .then(data => {
+                hideLoader();
                 if (data.success) {
                     bootstrap.Modal.getInstance(document.getElementById("addUserKeyModal")).hide();
                     form.reset();
                     loadStats();
-                    alert("API Key created: " + data.api_key);
+                    showToast({type: 'success', body: "API Key created: " + data.api_key});
                 } else {
-                    alert("Error: " + data.message);
+                    showToast({type: 'error', body: "Error: " + data.message});
                 }
             })
             .catch(error => console.error("Error creating user key:", error));

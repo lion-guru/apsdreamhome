@@ -6,8 +6,11 @@ $active_page = 'bookings';
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2"><?= __('admin_bookings_management') ?></h1>
     <div class="btn-toolbar mb-2 mb-md-0">
-        <a href="<?php echo BASE_URL; ?>/admin/bookings/create" class="btn btn-primary">
+        <a href="<?php echo BASE_URL; ?>/admin/bookings/create" class="btn btn-primary me-2">
             <i class="fas fa-plus"></i> <?= __('admin_new_booking') ?>
+        </a>
+        <a href="<?php echo BASE_URL; ?>/admin/bookings/export?format=csv" class="btn btn-outline-secondary">
+            <i class="fas fa-file-csv"></i> Export CSV
         </a>
     </div>
 </div>

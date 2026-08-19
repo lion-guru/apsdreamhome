@@ -487,6 +487,51 @@ $GLOBALS['_html_doc_started'] = true;
                 })();
             }
         </script>
+        
+        <!-- Keyboard Shortcuts -->
+        <script>
+        // Global loading spinner utility
+        function showLoader() {
+            if (!document.getElementById('global-loader')) {
+                const loader = document.createElement('div');
+                loader.id = 'global-loader';
+                loader.innerHTML = '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>';
+                document.body.appendChild(loader);
+                document.body.classList.add('loading-shim');
+            }
+        }
+        function hideLoader() {
+            const loader = document.getElementById('global-loader');
+            if (loader) { loader.remove(); document.body.classList.remove('loading-shim'); }
+        }
+        
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + K = Search
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                const searchInput = document.querySelector('input[type="search"], input[name="search"], #searchBox');
+                if (searchInput) { searchInput.focus(); }
+            }
+            // Ctrl/Cmd + N = New booking (on bookings page)
+            if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                e.preventDefault();
+                const url = window.location.pathname;
+                if (url.includes('/admin/bookings')) { window.location.href = '<?= BASE_URL ?>/admin/bookings/create'; }
+            }
+            // Ctrl/Cmd + S = Save form
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                const saveBtn = document.querySelector('button[type="submit"], button.save-btn, .btn-save');
+                if (saveBtn) { saveBtn.click(); }
+            }
+            // Ctrl/Cmd + E = Export (on pages with export)
+            if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+                e.preventDefault();
+                const exportBtn = document.querySelector('a[href*="export"]');
+                if (exportBtn) { exportBtn.click(); }
+            }
+        });
+        </script>
 </body>
 
 </html>

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 use App\Core\Database\Database;
 
 // Web Routes - APS Dream Home
@@ -1331,6 +1331,9 @@ $router->post('/admin/bookings/{id}/payment',
 'App\\Http\\Controllers\\Admin\\BookingController@processPayment');
 $router->post('/admin/bookings/bulk-action', 
 'App\\Http\\Controllers\\Admin\\BookingController@bulkAction');
+
+// Admin Bookings Export
+$router->get('/admin/bookings/export', 'App\\Http\\Controllers\\Admin\\BookingController@export');
 
 // Admin Site Visits
 $router->get('/admin/site-visits', 'App\\Http\\Controllers\\Admin\\SiteVisitController@index');
