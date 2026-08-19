@@ -18,9 +18,9 @@ class DripCampaignController extends AdminController
         try { $this->audit = new AuditService($this->db); } catch (\Throwable $e) { $this->audit = null; }
     }
 
-    protected function getUserId(): ?int
+    protected function getUserId(): int
     {
-        return (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0) ?: null;
+        return (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0);
     }
 
     protected function getUserRole(): ?string

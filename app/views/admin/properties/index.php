@@ -62,6 +62,21 @@ $active_page = 'properties';
     </div>
 </div>
 
+<!-- Bulk Actions Bar (hidden by default) -->
+<div class="card border-0 shadow-sm mb-3" id="bulkActionsBar" style="display: none;">
+    <div class="card-body py-2 d-flex align-items-center gap-3 flex-wrap">
+        <span class="fw-semibold"><span id="selectedCount">0</span> selected</span>
+        <select id="bulkStatus" class="form-select form-select-sm" style="width: auto; display: inline-block;">
+            <option value="available">Available</option>
+            <option value="sold">Sold</option>
+            <option value="reserved">Reserved</option>
+            <option value="under_maintenance">Under Maintenance</option>
+        </select>
+        <input type="text" id="bulkNotes" class="form-control form-control-sm" style="width: 200px; display: inline-block;" placeholder="Notes (optional)">
+        <button type="button" class="btn btn-sm btn-warning" id="bulkApply">Apply Status</button>
+    </div>
+</div>
+
 <!-- Properties Table -->
 <div class="card aps-cp-card">
     <div class="card-body aps-cp-card-body">
@@ -69,6 +84,7 @@ $active_page = 'properties';
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
+                        <th width="30"><input type="checkbox" id="selectAll" class="form-check-input"></th>
                         <th>Property</th>
                         <th>Site</th>
                         <th>Type</th>
@@ -94,7 +110,8 @@ $active_page = 'properties';
                         </tr>
                     <?php else: ?>
                         <?php foreach ($properties as $property): ?>
-                            <tr>
+                            <tr data-property-id="<?= $property['id'] ?>">
+                                <td><input type="checkbox" class="form-check-input property-checkbox" value="<?= $property['id'] ?>"></td>
                                 <td>
                                     <strong><?= htmlspecialchars($property['title'] ?? '') ?></strong>
                                     <?php if (!empty($property['description'])): ?>
@@ -212,5 +229,51 @@ function confirmDelete(id) {
     var modal = new bootstrap.Modal(document.getElementById('deleteModal'));
     modal.show();
 }
+
+// Bulk Actions
+document.addEventListener('DOMContentLoaded', function() {
+    const selectAll = document.getElementById('selectAll');
+    const checkboxes = document.querySelectorAll('.property-checkbox');
+    const bulkBar = document.getElementById('bulkActionsBar');
+    const countEl = document.getElementById('selectedCount');
+    const bulkStatus = document.getElementById('bulkStatus');
+    const bulkNotes = document.getElementById('bulkNotes');
+    const bulkApply = document.getElementById('bulkApply');
+
+    if (!selectAll || !bulkBar) return;
+
+    function getSelected() {
+        return [...checkboxes].filter(cb => cb.checked).map(cb => parseInt(cb.value));
+    }
+
+    function updateUI() {
+        const count = getSelected().length;
+        if (countEl) countEl.textContent = count;
+        bulkBar.style.display = count > 0 ? 'block' : 'none';
+    }
+
+    selectAll.addEventListener('change', function() {
+        checkboxes.forEach(cb => cb.checked = this.checked);
+        updateUI();
+    });
+    checkboxes.forEach(cb => cb.addEventListener('change', updateUI));
+
+    bulkApply.addEventListener('click', function() {
+        const ids = getSelected();
+        const status = bulkStatus.value;
+        const notes = bulkNotes.value;
+        if (!ids.length) return alert('No properties selected');
+        if (!confirm('Update status of ' + ids.length + ' propert(ies) to ' + status + '?')) return;
+
+        fetch('<?= BASE_URL ?>/admin/properties/bulk-update', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': '<?= $_SESSION['csrf_token'] ?? '' ?>'},
+            body: 'csrf_token=<?= $_SESSION['csrf_token'] ?? '' ?>&property_ids[]=' + ids.join('&property_ids[]=') + '&status=' + encodeURIComponent(status) + '&notes=' + encodeURIComponent(notes)
+        }).then(r => r.json()).then(d => {
+            if (d.success) location.reload();
+            else alert(d.error || 'Failed');
+        });
+    });
+});
 </script>
 

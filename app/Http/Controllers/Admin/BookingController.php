@@ -437,4 +437,95 @@ class BookingController extends AdminController
         echo json_encode(['success' => true, 'data' => $data]);
         exit;
     }
+
+    /**
+     * Bulk update booking status
+     */
+    public function bulkAction()
+    {
+        $this->requireAdmin();
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode(['success' => false, 'error' => 'Invalid request method']);
+            exit;
+        }
+
+        try {
+            $bookingIds = $_POST['booking_ids'] ?? [];
+            $action = $_POST['action'] ?? '';
+            $value = $_POST['value'] ?? '';
+            $notes = $_POST['notes'] ?? '';
+
+            if (empty($bookingIds)) {
+                echo json_encode(['success' => false, 'error' => 'No bookings selected']);
+                exit;
+            }
+
+            if (!is_array($bookingIds)) {
+                $bookingIds = [$bookingIds];
+            }
+            $bookingIds = array_map('intval', $bookingIds);
+            $bookingIds = array_filter($bookingIds, fn($id) => $id > 0);
+
+            if (empty($bookingIds)) {
+                echo json_encode(['success' => false, 'error' => 'Invalid booking IDs']);
+                exit;
+            }
+
+            $tid = (int)$this->tenantId();
+            $tidSql = $tid ? " AND tenant_id = $tid" : "";
+            $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+            $affected = 0;
+
+            $placeholders = implode(',', array_fill(0, count($bookingIds), '?'));
+
+            switch ($action) {
+                case 'status':
+                    $validStatuses = ['token_paid','agreement_signed','emi_active','partially_paid','fully_paid','cancelled','transferred','registration_done','pending'];
+                    if (!in_array($value, $validStatuses)) {
+                        echo json_encode(['success' => false, 'error' => 'Invalid status']);
+                        exit;
+                    }
+                    $stmt = $this->db->prepare("UPDATE plot_bookings SET status = ?, updated_at = NOW() WHERE id IN ($placeholders)$tidSql");
+                    $params = array_merge([$value], $bookingIds);
+                    if ($tid) $params[] = $tid;
+                    $stmt->execute($params);
+                    $affected = $stmt->rowCount();
+                    break;
+
+                case 'cancel':
+                    if (!in_array('cancelled', ['cancelled'])) {
+                        echo json_encode(['success' => false, 'error' => 'Invalid action']);
+                        exit;
+                    }
+                    $stmt = $this->db->prepare("UPDATE plot_bookings SET status = 'cancelled', updated_at = NOW() WHERE id IN ($placeholders)$tidSql");
+                    $params = $bookingIds;
+                    if ($tid) $params[] = $tid;
+                    $stmt->execute($params);
+                    $affected = $stmt->rowCount();
+                    break;
+
+                case 'delete':
+                    $stmt = $this->db->prepare("DELETE FROM plot_bookings WHERE id IN ($placeholders)$tidSql");
+                    $params = $bookingIds;
+                    if ($tid) $params[] = $tid;
+                    $stmt->execute($params);
+                    $affected = $stmt->rowCount();
+                    break;
+
+                default:
+                    echo json_encode(['success' => false, 'error' => 'Unknown action: ' . $action]);
+                    exit;
+            }
+
+            echo json_encode(['success' => true, 'affected' => $affected]);
+        } catch (\Throwable $e) {
+            error_log('BookingController::bulkAction error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Server error']);
+        }
+        exit;
+    }
+
+    // Helper methods for CSRF validation and JSON responses
 }

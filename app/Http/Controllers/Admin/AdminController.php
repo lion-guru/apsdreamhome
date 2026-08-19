@@ -135,12 +135,11 @@ class AdminController extends BaseController
     }
 
     /**
-     * Admin Dashboard — redirects to Unified ERP Overview
+     * Admin Dashboard — shows Role-Based Dashboard (redirects to ERP Overview for admin users)
      */
     public function dashboard()
     {
-        $this->redirect(BASE_URL . '/admin/erp');
-        return;
+        $this->erpOverview();
     }
 
     /**

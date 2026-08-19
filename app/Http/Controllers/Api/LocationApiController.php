@@ -73,7 +73,8 @@ class LocationApiController extends BaseController
 
             echo json_encode(['success' => true, 'data' => $results]);
         } catch (\Exception $e) {
-            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+            error_log('LocationApiController::index error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'message' => 'Internal server error']);
         }
     }
 
@@ -93,7 +94,8 @@ class LocationApiController extends BaseController
             $districts = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             echo json_encode(['success' => true, 'data' => $districts]);
         } catch (\Exception $e) {
-            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+            error_log('LocationApiController::byState error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'message' => 'Internal server error']);
         }
     }
 
@@ -114,7 +116,8 @@ class LocationApiController extends BaseController
             $cities = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             echo json_encode(['success' => true, 'data' => $cities]);
         } catch (\Exception $e) {
-            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+            error_log('LocationApiController::byDistrict error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'message' => 'Internal server error']);
         }
     }
 }

@@ -21,6 +21,8 @@ $GLOBALS['_html_doc_started'] = true;
     <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
     <!-- Universal mobile-first responsive overrides -->
     <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css" rel="stylesheet">
+    <!-- Dark Mode CSS -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/dark-mode.css" rel="stylesheet">
 
     <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         * {
@@ -588,6 +590,9 @@ $GLOBALS['_html_doc_started'] = true;
                 </nav>
             </div>
             <div class="header-actions">
+                <button class="btn btn-sm btn-outline-secondary me-2" id="darkModeToggle" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+                    <i class="fas fa-moon" id="darkModeIcon"></i>
+                </button>
                 <a href="<?= BASE_URL ?>/user/notifications" class="btn-icon" title="Notifications">
                     <i class="fas fa-bell"></i>
                 </a>
@@ -670,35 +675,27 @@ $GLOBALS['_html_doc_started'] = true;
             </div>
         </div>
     </div>
+</script>
+    <!-- Dark Mode Toggle -->
     <script>
-    function toggleAssociateChat() {
-        var p = document.getElementById('chatPanel');
-        p.style.display = p.style.display === 'none' ? 'block' : 'none';
-        if (p.style.display === 'block') document.getElementById('assocChatInput').focus();
-    }
-    async function sendAssociateChat() {
-        var inp = document.getElementById('assocChatInput');
-        var msg = inp.value.trim();
-        if (!msg) return;
-        inp.value = '';
-        addAssocMsg(msg, true);
-        try {
-            var r = await fetch('<?= BASE_URL ?>api/ai/chat', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({message:msg}) });
-            var d = await r.json();
-            addAssocMsg(d.reply || d.response || 'Sorry, I could not process that.', false);
-        } catch(e) {
-            addAssocMsg('Connection error. Please try again.', false);
+        function toggleDarkMode() {
+            var isDark = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('aps-dark-mode', isDark ? '1' : '0');
+            var icon = document.getElementById('darkModeIcon');
+            if (icon) {
+                icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+            }
         }
-    }
-    function addAssocMsg(text, isUser) {
-        var c = document.getElementById('assocChatMessages');
-        var d = document.createElement('div');
-        d.style.cssText = 'padding:10px 14px;border-radius:12px;font-size:0.85rem;max-width:88%;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,0.06);' + (isUser ? 'background:#0d9488;color:#fff;margin-left:auto;border-radius:12px 12px 4px 12px;' : 'background:#fff;color:#334155;border-left:3px solid #0d9488;');
-        d.innerHTML = text.replace(/\n/g,'<br>');
-        c.appendChild(d);
-        c.scrollTop = c.scrollHeight;
-    }
+
+        // Load saved preference on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            var saved = localStorage.getItem('aps-dark-mode');
+            if (saved === '1') {
+                document.body.classList.add('dark-mode');
+                var icon = document.getElementById('darkModeIcon');
+                if (icon) icon.className = 'fas fa-sun';
+            }
+        });
     </script>
 </body>
-
 </html>

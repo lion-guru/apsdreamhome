@@ -317,6 +317,13 @@ if (!function_exists('navUrl')) {
                     </a>
                 </li>
 
+                <!-- Dark Mode Toggle -->
+                <li class="nav-item ms-2">
+                    <button class="btn btn-sm btn-outline-secondary" id="darkModeToggle" onclick="toggleDarkMode()" title="Toggle Dark Mode" aria-label="Toggle Dark Mode">
+                        <i class="fas fa-moon" id="darkModeIcon"></i>
+                    </button>
+                </li>
+
                 <!-- Quick Action: Admin (only when logged out) -->
                 <?php if (!$nav->isLoggedIn()): ?>
                 <li class="nav-item ms-2 btn-admin">

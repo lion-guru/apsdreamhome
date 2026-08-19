@@ -21,6 +21,11 @@ class RegisterController extends BaseController
         $this->regService = new UserRegistrationService();
     }
 
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
+    }
+
     /**
      * Show unified register page with role selection cards
      */

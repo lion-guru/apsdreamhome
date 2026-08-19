@@ -1,0 +1,7 @@
+
+Warning: require_once(C:\xampp\htdocs\apsdreamhome/bootstrap/app.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\apsdreamhome\artisan on line 20
+
+Fatal error: Uncaught Error: Failed opening required 'C:\xampp\htdocs\apsdreamhome/bootstrap/app.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\apsdreamhome\artisan:20
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\apsdreamhome\artisan on line 20

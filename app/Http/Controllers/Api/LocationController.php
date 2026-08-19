@@ -20,13 +20,13 @@ class LocationController extends BaseApiController
      */
     public function countries()
     {
-        $search = $_GET['q'] ?? '';
+        $search = substr($_GET['q'] ?? '', 0, 200);
         
         $sql = "SELECT id, name, iso_code, phone_code FROM countries";
         $params = [];
         
         if ($search) {
-            $sql .= " AND name LIKE ?";
+            $sql .= " WHERE name LIKE ?";
             $params[] = "%$search%";
         }
         
@@ -44,7 +44,7 @@ class LocationController extends BaseApiController
     public function states()
     {
         $countryId = intval($_GET['country_id'] ?? 1);
-        $search = $_GET['q'] ?? '';
+        $search = substr($_GET['q'] ?? '', 0, 200);
         
         $sql = "SELECT id, name, code FROM states WHERE country_id = ?";
         $params = [$countryId];
@@ -68,7 +68,7 @@ class LocationController extends BaseApiController
     public function districts()
     {
         $stateId = intval($_GET['state_id'] ?? 0);
-        $search = $_GET['q'] ?? '';
+        $search = substr($_GET['q'] ?? '', 0, 200);
         
         if (!$stateId) {
             $this->jsonResponse([]);
@@ -101,8 +101,12 @@ class LocationController extends BaseApiController
     {
         $districtId = intval($_GET['district_id'] ?? 0);
         $stateId = intval($_GET['state_id'] ?? 0);
-        $search = $_GET['q'] ?? '';
+        $search = substr($_GET['q'] ?? '', 0, 200);
         $type = $_GET['type'] ?? '';
+        $allowedTypes = ['city', 'town', 'village', 'census_town', 'municipality', 'nagar_panchayat'];
+        if ($type && !in_array($type, $allowedTypes)) {
+            $type = '';
+        }
         
         if (!$districtId && !$stateId) {
             $this->jsonResponse([]);
@@ -151,7 +155,7 @@ class LocationController extends BaseApiController
      */
     public function search()
     {
-        $search = $_GET['q'] ?? '';
+        $search = substr($_GET['q'] ?? '', 0, 200);
         
         if (strlen($search) < 2) {
             $this->jsonResponse([]);
@@ -227,7 +231,7 @@ class LocationController extends BaseApiController
      */
     public function pincodes()
     {
-        $search = $_GET['q'] ?? '';
+        $search = substr($_GET['q'] ?? '', 0, 200);
         
         if (strlen($search) < 2) {
             $this->jsonResponse([]);

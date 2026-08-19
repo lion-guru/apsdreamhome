@@ -83,7 +83,8 @@ class AutoDialerController extends BaseController
 
             return $this->jsonResponse($result, $result['success'] ? 200 : 400);
         } catch (\Throwable $e) {
-            return $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            error_log('AutoDialerController::schedule error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 
@@ -94,6 +95,10 @@ class AutoDialerController extends BaseController
     public function bulkSchedule()
     {
         try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                return $this->jsonResponse(['success' => false, 'error' => 'Authentication required'], 401);
+            }
             $input = $this->getJsonInput();
             $leads = $input['leads'] ?? [];
             $scheduledDate = $input['scheduled_date'] ?? date('Y-m-d');
@@ -136,8 +141,9 @@ class AutoDialerController extends BaseController
                         $errors[] = $result['message'] ?? 'Unknown error';
                     }
                 } catch (\Throwable $e) {
+                    error_log('AutoDialerController::bulkSchedule item error: ' . $e->getMessage());
                     $failed++;
-                    $errors[] = $e->getMessage();
+                    $errors[] = 'Internal server error';
                 }
             }
 
@@ -150,7 +156,8 @@ class AutoDialerController extends BaseController
                 'message' => "$scheduled calls scheduled, $failed failed",
             ]);
         } catch (\Throwable $e) {
-            return $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            error_log('AutoDialerController::bulkSchedule error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 
@@ -225,7 +232,8 @@ class AutoDialerController extends BaseController
                 'message' => 'Call cancelled',
             ]);
         } catch (\Throwable $e) {
-            return $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            error_log('AutoDialerController::cancel error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 
@@ -254,7 +262,8 @@ class AutoDialerController extends BaseController
                 'message' => 'Call rescheduled',
             ]);
         } catch (\Throwable $e) {
-            return $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            error_log('AutoDialerController::reschedule error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 
@@ -410,7 +419,8 @@ class AutoDialerController extends BaseController
                 'message' => "$processed calls processed, $failed failed",
             ]);
         } catch (\Throwable $e) {
-            return $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            error_log('AutoDialerController::processQueue error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 
@@ -422,6 +432,12 @@ class AutoDialerController extends BaseController
     {
         try {
             $input = $this->getJsonInput();
+            $phone = preg_replace('/[^0-9+]/', '', $input['phone'] ?? '');
+            $name = \App\Core\Security::sanitize($input['name'] ?? '');
+            $action = \App\Core\Security::sanitize($input['action'] ?? '');
+            $outcome = \App\Core\Security::sanitize($input['outcome'] ?? '');
+            $method = \App\Core\Security::sanitize($input['method'] ?? 'app');
+            $notes = \App\Core\Security::sanitize($input['notes'] ?? '');
             $this->db->execute(
                 "INSERT INTO calls_log
                  (lead_id, user_id, phone, name, action, outcome, method, duration, notes, ai_score, created_at)
@@ -429,19 +445,20 @@ class AutoDialerController extends BaseController
                 [
                     intval($input['lead_id'] ?? 0) ?: null,
                     intval($_SESSION['user_id'] ?? 0) ?: null,
-                    $input['phone'] ?? null,
-                    $input['name'] ?? null,
-                    $input['action'] ?? null,
-                    $input['outcome'] ?? null,
-                    $input['method'] ?? 'app',
+                    $phone ?: null,
+                    $name ?: null,
+                    $action ?: null,
+                    $outcome ?: null,
+                    $method ?: 'app',
                     intval($input['duration'] ?? 0) ?: null,
-                    $input['notes'] ?? null,
+                    $notes ?: null,
                     isset($input['ai_score']) ? intval($input['ai_score']) : null,
                 ]
             );
             return $this->jsonResponse(['success' => true, 'message' => 'Call logged']);
         } catch (\Throwable $e) {
-            return $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            error_log('AutoDialerController::logCall error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 
@@ -514,13 +531,23 @@ class AutoDialerController extends BaseController
     public function sendSms()
     {
         try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                return $this->jsonResponse(['success' => false, 'error' => 'Authentication required'], 401);
+            }
             $input = $this->getJsonInput();
-            $phone = $input['phone'] ?? '';
-            $message = $input['message'] ?? '';
+            $phone = preg_replace('/[^0-9+]/', '', $input['phone'] ?? '');
+            $message = trim($input['message'] ?? '');
             $templateCode = $input['template_code'] ?? null;
 
             if (empty($phone) || empty($message)) {
                 return $this->jsonResponse(['success' => false, 'error' => 'phone and message required'], 400);
+            }
+            if (strlen($phone) < 7 || strlen($phone) > 15) {
+                return $this->jsonResponse(['success' => false, 'error' => 'Invalid phone number'], 400);
+            }
+            if (strlen($message) > 1600) {
+                $message = substr($message, 0, 1600);
             }
 
             $result = $this->smsService->sendSMS($phone, $message, $templateCode);
@@ -530,7 +557,8 @@ class AutoDialerController extends BaseController
                 'message' => $result['success'] ? 'SMS sent' : ($result['error'] ?? 'Failed to send'),
             ]);
         } catch (\Throwable $e) {
-            return $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            error_log('AutoDialerController::sendSms error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 
@@ -541,13 +569,23 @@ class AutoDialerController extends BaseController
     public function sendWhatsApp()
     {
         try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                return $this->jsonResponse(['success' => false, 'error' => 'Authentication required'], 401);
+            }
             $input = $this->getJsonInput();
-            $phone = $input['phone'] ?? '';
-            $message = $input['message'] ?? '';
+            $phone = preg_replace('/[^0-9+]/', '', $input['phone'] ?? '');
+            $message = trim($input['message'] ?? '');
             $templateName = $input['template_name'] ?? null;
 
             if (empty($phone) || empty($message)) {
                 return $this->jsonResponse(['success' => false, 'error' => 'phone and message required'], 400);
+            }
+            if (strlen($phone) < 7 || strlen($phone) > 15) {
+                return $this->jsonResponse(['success' => false, 'error' => 'Invalid phone number'], 400);
+            }
+            if (strlen($message) > 4000) {
+                $message = substr($message, 0, 4000);
             }
 
             if (!$this->whatsappService->isConfigured()) {
@@ -567,7 +605,8 @@ class AutoDialerController extends BaseController
                 'message' => $result['success'] ? 'WhatsApp sent' : ($result['error'] ?? 'Failed to send'),
             ]);
         } catch (\Throwable $e) {
-            return $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            error_log('AutoDialerController::sendWhatsApp error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 
@@ -578,21 +617,31 @@ class AutoDialerController extends BaseController
     public function bulkSms()
     {
         try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                return $this->jsonResponse(['success' => false, 'error' => 'Authentication required'], 401);
+            }
             $input = $this->getJsonInput();
             $leads = $input['leads'] ?? [];
-            $message = $input['message'] ?? '';
+            $message = trim($input['message'] ?? '');
             $templateCode = $input['template_code'] ?? null;
 
             if (empty($leads) || empty($message)) {
                 return $this->jsonResponse(['success' => false, 'error' => 'leads and message required'], 400);
+            }
+            if (count($leads) > 50) {
+                return $this->jsonResponse(['success' => false, 'error' => 'Maximum 50 leads per batch'], 400);
+            }
+            if (strlen($message) > 1600) {
+                $message = substr($message, 0, 1600);
             }
 
             $sent = 0;
             $failed = 0;
 
             foreach ($leads as $lead) {
-                $phone = $lead['phone'] ?? '';
-                if (empty($phone)) {
+                $phone = preg_replace('/[^0-9+]/', '', $lead['phone'] ?? '');
+                if (empty($phone) || strlen($phone) < 7) {
                     $failed++;
                     continue;
                 }
@@ -617,7 +666,8 @@ class AutoDialerController extends BaseController
                 'message' => "$sent SMS sent, $failed failed",
             ]);
         } catch (\Throwable $e) {
-            return $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            error_log('AutoDialerController::bulkSms error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 
@@ -628,21 +678,31 @@ class AutoDialerController extends BaseController
     public function bulkWhatsApp()
     {
         try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                return $this->jsonResponse(['success' => false, 'error' => 'Authentication required'], 401);
+            }
             $input = $this->getJsonInput();
             $leads = $input['leads'] ?? [];
-            $message = $input['message'] ?? '';
+            $message = trim($input['message'] ?? '');
             $templateName = $input['template_name'] ?? null;
 
             if (empty($leads) || empty($message)) {
                 return $this->jsonResponse(['success' => false, 'error' => 'leads and message required'], 400);
+            }
+            if (count($leads) > 50) {
+                return $this->jsonResponse(['success' => false, 'error' => 'Maximum 50 leads per batch'], 400);
+            }
+            if (strlen($message) > 4000) {
+                $message = substr($message, 0, 4000);
             }
 
             $sent = 0;
             $failed = 0;
 
             foreach ($leads as $lead) {
-                $phone = $lead['phone'] ?? '';
-                if (empty($phone)) {
+                $phone = preg_replace('/[^0-9+]/', '', $lead['phone'] ?? '');
+                if (empty($phone) || strlen($phone) < 7) {
                     $failed++;
                     continue;
                 }
@@ -672,7 +732,8 @@ class AutoDialerController extends BaseController
                 'message' => "$sent WhatsApp sent, $failed failed",
             ]);
         } catch (\Throwable $e) {
-            return $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            error_log('AutoDialerController::bulkWhatsApp error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 
@@ -783,7 +844,8 @@ class AutoDialerController extends BaseController
                 'message' => "AI scheduled $scheduled calls from " . count($scored) . " hot leads",
             ]);
         } catch (\Throwable $e) {
-            return $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            error_log('AutoDialerController::aiSchedule error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 

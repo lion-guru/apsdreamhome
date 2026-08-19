@@ -170,6 +170,11 @@ class BaseController
         if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' || strpos($_SERVER['REQUEST_URI'] ?? '', '/api/') === 0) {
             $this->enforceRateLimit();
         }
+
+        // CORS: set headers for API routes so browser-based clients (SPA, mobile web) work
+        if (strpos($_SERVER['REQUEST_URI'] ?? '', '/api/') === 0) {
+            $this->setCorsHeaders();
+        }
     }
 
     /**
@@ -358,7 +363,7 @@ class BaseController
         // Content Security Policy with nonce support
         $base = defined('BASE_URL') ? BASE_URL : '';
         $csp = "default-src 'self'; "
-            . "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.google.com https://www.gstatic.com https://unpkg.com https://www.googletagmanager.com; "
+            . "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.google.com https://www.gstatic.com https://unpkg.com https://www.googletagmanager.com https://code.jquery.com; "
             . "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com https://unpkg.com; "
             . "img-src 'self' data: blob: https:; "
             . "font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; "
@@ -664,6 +669,8 @@ class BaseController
         if (!isset($_SESSION['csrf_token'])) {
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         }
+        // Set/update expiry to 1 hour from now
+        $_SESSION['csrf_token_expires'] = time() + 3600;
         return $_SESSION['csrf_token'];
     }
 
@@ -982,5 +989,173 @@ class BaseController
                 error_log("Page execution time: " . number_format($execution_time, 4) . " seconds");
             }
         }
+    }
+
+    /**
+     * Validate and sanitize input data against rules.
+     * Returns [$sanitized, $errors].
+     */
+    protected function validateInput($data, $rules): array
+    {
+        $errors = [];
+        $sanitized = [];
+
+        foreach ($rules as $field => $rule) {
+            $value = $data[$field] ?? null;
+            $rulesList = is_string($rule) ? explode('|', $rule) : $rule;
+            $valid = true;
+
+            foreach ($rulesList as $r) {
+                if ($r === 'required' && ($value === null || $value === '')) {
+                    $errors[$field][] = "The {$field} field is required.";
+                    $valid = false;
+                    break;
+                }
+                if ($r === 'email' && $value !== null && $value !== '' && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                    $errors[$field][] = "The {$field} must be a valid email address.";
+                    $valid = false;
+                    break;
+                }
+                if ($r === 'numeric' && $value !== null && $value !== '' && !is_numeric($value)) {
+                    $errors[$field][] = "The {$field} must be a number.";
+                    $valid = false;
+                    break;
+                }
+                if ($r === 'integer' && $value !== null && $value !== '' && !ctype_digit((string)$value)) {
+                    $errors[$field][] = "The {$field} must be an integer.";
+                    $valid = false;
+                    break;
+                }
+                if (preg_match('/min:(\d+)/', $r, $m) && $value !== null && strlen($value) < (int)$m[1]) {
+                    $errors[$field][] = "The {$field} must be at least {$m[1]} characters.";
+                    $valid = false;
+                    break;
+                }
+                if (preg_match('/max:(\d+)/', $r, $m) && $value !== null && strlen($value) > (int)$m[1]) {
+                    $errors[$field][] = "The {$field} may not exceed {$m[1]} characters.";
+                    $valid = false;
+                    break;
+                }
+            }
+
+            if ($valid) {
+                if (in_array('email', $rulesList) && $value !== null && $value !== '') {
+                    $sanitized[$field] = filter_var($value, FILTER_SANITIZE_EMAIL);
+                } elseif (in_array('integer', $rulesList) && $value !== null) {
+                    $sanitized[$field] = (int)$value;
+                } elseif (in_array('numeric', $rulesList) && $value !== null) {
+                    $sanitized[$field] = (float)$value;
+                } elseif ($value !== null && is_string($value)) {
+                    $sanitized[$field] = \App\Core\Security::sanitize($value);
+                } else {
+                    $sanitized[$field] = $value;
+                }
+            }
+        }
+
+        return [$sanitized, $errors];
+    }
+
+    /**
+     * Return JSON validation error and exit.
+     */
+    protected function validationError(array $errors): void
+    {
+        http_response_code(422);
+        echo json_encode(['success' => false, 'message' => 'Validation failed', 'errors' => $errors]);
+        exit;
+    }
+
+    /**
+     * Set CORS headers for API responses.
+     */
+    protected function setCorsHeaders(): void
+    {
+        header('Content-Type: application/json');
+        header('Access-Control-Allow-Origin: *');
+        header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE');
+        header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+        header('Access-Control-Max-Age: 86400');
+
+        if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
+            http_response_code(200);
+            exit();
+        }
+    }
+
+    /**
+     * Handle API errors consistently — log internally, return generic message to client.
+     */
+    protected function handleApiError(\Throwable $exception, string $context = 'API Error'): void
+    {
+        error_log($context . ': ' . $exception->getMessage());
+        http_response_code(500);
+        echo json_encode([
+            'success' => false,
+            'error' => 'Internal server error',
+            'context' => $context,
+        ]);
+    }
+
+    /**
+     * Return a safe error response — logs the real error, returns a generic message.
+     * Use this instead of $e->getMessage() to prevent information leakage.
+     */
+    protected function safeError(\Throwable $exception, string $context = 'API Error', int $code = 500): array
+    {
+        error_log($context . ': ' . $exception->getMessage());
+        return ['success' => false, 'error' => 'An internal error occurred. Please try again later.', 'context' => $context];
+    }
+
+    /**
+     * Return a JSON success response and exit.
+     */
+    protected function successResponse($data, string $message = 'Success'): void
+    {
+        echo json_encode([
+            'success' => true,
+            'message' => $message,
+            'data' => $data,
+        ]);
+        exit();
+    }
+
+    /**
+     * Return a JSON error response and exit.
+     */
+    protected function errorResponse(string $message, int $code = 400): void
+    {
+        http_response_code($code);
+        echo json_encode([
+            'success' => false,
+            'error' => $message,
+        ]);
+        exit();
+    }
+
+    /**
+     * Extract Bearer token from Authorization header.
+     */
+    protected function extractBearerToken(): ?string
+    {
+        $header = $_SERVER['HTTP_AUTHORIZATION']
+            ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION']
+            ?? null;
+        if (!$header && function_exists('apache_request_headers')) {
+            $headers = apache_request_headers();
+            foreach ($headers as $name => $value) {
+                if (strcasecmp($name, 'Authorization') === 0) {
+                    $header = $value;
+                    break;
+                }
+            }
+        }
+        if (!$header) {
+            return null;
+        }
+        if (stripos($header, 'Bearer ') === 0) {
+            return trim(substr($header, 7));
+        }
+        return null;
     }
 }

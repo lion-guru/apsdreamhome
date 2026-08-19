@@ -46,14 +46,17 @@ class KYCController extends BaseApiController
             }
 
             $body = json_decode(file_get_contents('php://input'), true) ?: $_POST;
-            $pan = $body['pan'] ?? $this->request()->input('pan');
-            $name = $body['name'] ?? $this->request()->input('name', '');
+            $pan = strtoupper(trim($body['pan'] ?? $this->request()->input('pan', '')));
+            $name = \App\Core\Security::sanitize($body['name'] ?? $this->request()->input('name', ''));
 
             if (empty($pan)) {
                 return $this->jsonError('PAN number is required', 400);
             }
 
-            $pan = strtoupper(trim($pan));
+            // PAN format: 5 letters + 4 digits + 1 letter (e.g., ABCDE1234F)
+            if (!preg_match('/^[A-Z]{5}[0-9]{4}[A-Z]$/', $pan)) {
+                return $this->jsonError('Invalid PAN format. Expected format: ABCDE1234F', 400);
+            }
             $result = $this->kycService->verifyPAN($pan, $name);
             $this->logKYCAttempt('pan', $pan, $result['success'] ?? false);
 
@@ -102,10 +105,15 @@ class KYCController extends BaseApiController
             }
 
             $body = json_decode(file_get_contents('php://input'), true) ?: $_POST;
-            $aadhaar = $body['aadhaar'] ?? $this->request()->input('aadhaar');
+            $aadhaar = preg_replace('/\s/', '', $body['aadhaar'] ?? $this->request()->input('aadhaar', ''));
 
             if (empty($aadhaar)) {
                 return $this->jsonError('Aadhaar number is required', 400);
+            }
+
+            // Aadhaar format: exactly 12 digits
+            if (!preg_match('/^[0-9]{12}$/', $aadhaar)) {
+                return $this->jsonError('Invalid Aadhaar format. Expected 12 digits.', 400);
             }
 
             $result = $this->kycService->verifyAadhaar($aadhaar);
@@ -245,9 +253,13 @@ class KYCController extends BaseApiController
             }
 
             $body = json_decode(file_get_contents('php://input'), true) ?: $_POST;
-            $aadhaar = $body['aadhaar'] ?? $this->request()->input('aadhaar');
+            $aadhaar = preg_replace('/\s/', '', $body['aadhaar'] ?? $this->request()->input('aadhaar', ''));
             if (empty($aadhaar)) {
                 return $this->jsonError('Aadhaar number is required', 400);
+            }
+            // Aadhaar format: exactly 12 digits
+            if (!preg_match('/^[0-9]{12}$/', $aadhaar)) {
+                return $this->jsonError('Invalid Aadhaar format. Expected 12 digits.', 400);
             }
 
             $uidai = new \App\Services\KYC\UIDAIVerificationService();
@@ -284,9 +296,20 @@ class KYCController extends BaseApiController
             }
 
             $body = json_decode(file_get_contents('php://input'), true) ?: $_POST;
-            $aadhaar = $body['aadhaar'] ?? $this->request()->input('aadhaar');
-            $otp = $body['otp'] ?? $this->request()->input('otp');
-            $txnId = $body['transaction_id'] ?? $this->request()->input('transaction_id');
+            $aadhaar = preg_replace('/\s/', '', $body['aadhaar'] ?? $this->request()->input('aadhaar', ''));
+            $otp = preg_replace('/[^0-9]/', '', $body['otp'] ?? $this->request()->input('otp', ''));
+            $txnId = preg_replace('/[^a-zA-Z0-9_-]/', '', $body['transaction_id'] ?? $this->request()->input('transaction_id', ''));
+
+            // Validate formats
+            if (!preg_match('/^[0-9]{12}$/', $aadhaar)) {
+                return $this->jsonError('Invalid Aadhaar format. Expected 12 digits.', 400);
+            }
+            if (empty($otp) || strlen($otp) !== 6) {
+                return $this->jsonError('OTP must be exactly 6 digits.', 400);
+            }
+            if (empty($txnId)) {
+                return $this->jsonError('Transaction ID is required.', 400);
+            }
 
             if (empty($aadhaar) || empty($otp) || empty($txnId)) {
                 return $this->jsonError('Aadhaar, OTP, and transaction_id are required', 400);

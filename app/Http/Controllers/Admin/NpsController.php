@@ -145,7 +145,7 @@ class NpsController extends AdminController
         return $this->redirect(BASE_URL . '/admin/nps');
     }
 
-    private function getUserId() { return (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0); }
+    protected function getUserId(): int { return (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0); }
 
     private function pdo(): \PDO
     {

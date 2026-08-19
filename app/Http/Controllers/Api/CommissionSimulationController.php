@@ -201,7 +201,8 @@ class CommissionSimulationController extends BaseApiController
                 'total_net' => round(array_sum(array_column($tdsResults, 'net')), 2),
             ]);
         } catch (\Exception $e) {
-            return $this->json(['success' => false, 'error' => $e->getMessage()], 500);
+            error_log('CommissionSimulationController::calculateTds error: ' . $e->getMessage());
+            return $this->json(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 

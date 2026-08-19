@@ -8,6 +8,13 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\BaseController;
 use App\Services\CRMService;
+use App\Models\BookingPaymentSchedule;
+use App\Models\PlotBooking;
+use App\Models\User;
+use App\Models\Vendor;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use App\Middleware\RateLimiter;
 use \App\Traits\TenantAwareTrait;
 
 class CRMController extends BaseController
@@ -23,7 +30,7 @@ class CRMController extends BaseController
 
     protected function skipCsrfProtection(): bool
     {
-        return true;
+        return false;
     }
 
     private function getUser() {
@@ -294,6 +301,9 @@ class CRMController extends BaseController
     // ─── Forms (Public — no auth needed) ─────────────────────────────
 
     public function captureForm() {
+        // Rate limiting for public form submissions (30 requests per minute per IP)
+        \App\Middleware\RateLimiter::check('capture_form', 30, 60);
+        
         $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
         $formCode = $input['form_code'] ?? 'WEB_ENQ';
         $data = $input['data'] ?? $input;
@@ -338,67 +348,111 @@ class CRMController extends BaseController
     // ─── Admin Overview (for admin dashboard) ──────────────────────────
 
     public function adminOverview() {
-        $pdo = $this->db->getConnection();
-        $stats = [
-            'total_users' => 0, 'active_associates' => 0, 'bookings_today' => 0,
-            'total_revenue' => 0, 'pending_commissions' => 0, 'total_leads' => 0,
-            'hot_leads' => 0, 'total_colonies' => 0, 'total_plots' => 0,
-        ];
-        $recent_activity = [];
-
         $tid = (int)$this->tenantId();
-        $tidSql = $tid > 1 ? " AND leads.tenant_id = $tid" : "";
+        $tidSql = $tid > 1 ? " AND leads.tenant_id = ?" : "";
+        
+        $uFilter = $tid > 1 ? "tenant_id = ?" : "";
+        $uFilterParams = $tid > 1 ? [$tid] : [];
 
-        $uFilter = $tid > 1 ? " AND tenant_id = $tid" : '';
-        try {
-            $r = $pdo->query("SELECT COUNT(*) as c FROM users WHERE deleted_at IS NULL{$uFilter}")->fetch();
-            $stats['total_users'] = (int)($r['c'] ?? 0);
-        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
-        try {
-            $r = $pdo->query("SELECT COUNT(*) as c FROM users WHERE role='associate' AND deleted_at IS NULL{$uFilter}")->fetch();
-            $stats['active_associates'] = (int)($r['c'] ?? 0);
-        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
-        try {
-            $r = $pdo->query("SELECT COUNT(*) as c FROM plot_bookings WHERE DATE(created_at)=CURDATE()")->fetch();
-            $stats['bookings_today'] = (int)($r['c'] ?? 0);
-        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
-        try {
-            $r = $pdo->query("SELECT COALESCE(SUM(total_plot_value),0) as v FROM plot_bookings WHERE status NOT IN ('cancelled')")->fetch();
-            $stats['total_revenue'] = (float)($r['v'] ?? 0);
-        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
-        try {
-            $r = $pdo->query("SELECT COUNT(*) as c FROM leads WHERE deleted_at IS NULL{$tidSql}")->fetch();
-            $stats['total_leads'] = (int)($r['c'] ?? 0);
-        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
-        try {
-            $r = $pdo->query("SELECT COUNT(*) as c FROM leads WHERE lead_category='hot' AND deleted_at IS NULL{$tidSql}")->fetch();
-            $stats['hot_leads'] = (int)($r['c'] ?? 0);
-        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
-        try {
-            $r = $pdo->query("SELECT COUNT(*) as c FROM colonies WHERE deleted_at IS NULL")->fetch();
-            $stats['total_colonies'] = (int)($r['c'] ?? 0);
-        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
-        try {
-            $r = $pdo->query("SELECT COUNT(*) as c FROM plots WHERE deleted_at IS NULL")->fetch();
-            $stats['total_plots'] = (int)($r['c'] ?? 0);
-        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
-        try {
-            $r = $pdo->query("SELECT COUNT(*) as c FROM mlm_commission_ledger WHERE status='pending'")->fetch();
-            $stats['pending_commissions'] = (int)($r['c'] ?? 0);
-        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
+        // Use Query Builder for all queries to prevent SQL injection
+        $query = User::query()->where('deleted_at', null);
+        if ($tid > 1) {
+            $query->where('tenant_id', $tid);
+        }
+        $stats['total_users'] = $query->count();
+
+        $stats['active_associates'] = User::query()
+            ->where('deleted_at', null)
+            ->where('role', 'associate')
+            ->when($tid > 1, fn($q) => $q->where('tenant_id', $tid))
+            ->count();
+
+        $stats['bookings_today'] = PlotBooking::query()
+            ->whereDate('created_at', now()->toDateString())
+            ->count();
+
+        $stats['total_revenue'] = PlotBooking::query()
+            ->where('status', '!=', 'cancelled')
+            ->sum('total_plot_value');
+
+        $stats['total_leads'] = Lead::query()
+            ->whereNull('deleted_at')
+            ->when($tid > 1, fn($q) => $q->where('tenant_id', $tid))
+            ->count();
+
+        $stats['hot_leads'] = Lead::query()
+            ->where('lead_category', 'hot')
+            ->whereNull('deleted_at')
+            ->when($tid > 1, fn($q) => $q->where('tenant_id', $tid))
+            ->count();
+
+        $stats['total_colonies'] = Colony::query()
+            ->whereNull('deleted_at')
+            ->count();
+
+        $stats['total_plots'] = \App\Models\Plot::query()
+            ->whereNull('deleted_at')
+            ->count();
+
+        $stats['pending_commissions'] = \App\Models\MlmCommissionLedger::query()
+            ->where('status', 'pending')
+            ->count();
 
         // Recent activity from CRM interactions
-        try {
-            $stmt = $pdo->prepare("
-                SELECT i.interaction_type, i.subject, i.body, i.created_at, l.name as lead_name
-                FROM crm_interactions i
-                JOIN leads l ON l.id = i.lead_id
-                WHERE 1=1{$tidSql}
-                ORDER BY i.created_at DESC LIMIT 10
-            ");
-            $stmt->execute();
-            $recent_activity = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
+        $recent_activity = \App\Models\CrmInteraction::query()
+            ->join('leads', 'leads.id', '=', 'crm_interactions.lead_id')
+            ->select('crm_interactions.interaction_type', 'crm_interactions.subject', 'crm_interactions.body', 'crm_interactions.created_at', 'leads.name as lead_name')
+            ->when($tid > 1, fn($q) => $q->where('leads.tenant_id', $tid))
+            ->orderBy('crm_interactions.created_at', 'desc')
+            ->limit(10)
+            ->get()
+            ->toArray();
+
+        $stats = [
+            'total_users' => User::query()->where('deleted_at', null)->when($tid > 1, fn($q) => $q->where('tenant_id', $tid))->count(),
+            'active_associates' => User::query()
+                ->where('deleted_at', null)
+                ->where('role', 'associate')
+                ->when($tid > 1, fn($q) => $q->where('tenant_id', $tid))
+                ->count(),
+            'bookings_today' => PlotBooking::query()
+                ->whereDate('created_at', now()->toDateString())
+                ->count(),
+            'total_revenue' => PlotBooking::query()
+                ->where('status', '!=', 'cancelled')
+                ->sum('total_plot_value'),
+            'pending_commissions' => \App\Models\MlmCommissionLedger::query()
+                ->where('status', 'pending')
+                ->count(),
+            'total_leads' => Lead::query()
+                ->whereNull('deleted_at')
+                ->when($tid > 1, fn($q) => $q->where('tenant_id', $tid))
+                ->count(),
+            'hot_leads' => Lead::query()
+                ->where('lead_category', 'hot')
+                ->whereNull('deleted_at')
+                ->when($tid > 1, fn($q) => $q->where('tenant_id', $tid))
+                ->count(),
+            'total_colonies' => \App\Models\Colony::query()
+                ->whereNull('deleted_at')
+                ->count(),
+            'total_plots' => \App\Models\Plot::query()
+                ->whereNull('deleted_at')
+                ->count(),
+            'pending_commissions' => \App\Models\MlmCommissionLedger::query()
+                ->where('status', 'pending')
+                ->count(),
+        ];
+
+        // Recent activity from CRM interactions
+        $recent_activity = \App\Models\CrmInteraction::query()
+            ->join('leads', 'leads.id', '=', 'crm_interactions.lead_id')
+            ->select('crm_interactions.interaction_type', 'crm_interactions.subject', 'crm_interactions.body', 'crm_interactions.created_at', 'leads.name as lead_name')
+            ->when($tid > 1, fn($q) => $q->where('leads.tenant_id', $tid))
+            ->orderBy('crm_interactions.created_at', 'desc')
+            ->limit(10)
+            ->get()
+            ->toArray();
 
         $this->json(['success' => true, 'stats' => $stats, 'recent_activity' => $recent_activity]);
     }
@@ -465,10 +519,15 @@ class CRMController extends BaseController
         $this->json(['success' => true, 'stats' => $stats, 'employees' => $employees]);
     }
 
-    // ─── Admin Finance Overview ────────────────────────────────────
+    use App\Models\BookingPaymentSchedule;
+use App\Models\PlotBooking;
+use App\Models\User;
+use App\Models\Vendor;
+use Illuminate\Support\Facades\DB;
+
+// ─── Admin Finance Overview ────────────────────────────────────
 
     public function financeOverview() {
-        $pdo = $this->db->getConnection();
         $stats = [
             'todays_collection' => 0, 'pending_emi' => 0,
             'total_outstanding' => 0, 'monthly_target_pct' => 0,
@@ -480,76 +539,113 @@ class CRMController extends BaseController
         $emi_schedule = [];
 
         // Today's collections
-        try {
-            $r = $pdo->query("SELECT COALESCE(SUM(paid_amount),0) as v FROM booking_payment_schedules WHERE DATE(payment_date)=CURDATE() AND paid_amount > 0")->fetch();
-            $stats['todays_collection'] = (float)($r['v'] ?? 0);
-        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
+        $stats['todays_collection'] = (float) BookingPaymentSchedule::query()
+            ->whereDate('payment_date', now()->toDateString())
+            ->where('paid_amount', '>', 0)
+            ->sum('paid_amount');
 
         // Monthly collection
-        try {
-            $r = $pdo->query("SELECT COALESCE(SUM(paid_amount),0) as v FROM booking_payment_schedules WHERE MONTH(payment_date)=MONTH(CURDATE()) AND YEAR(payment_date)=YEAR(CURDATE()) AND paid_amount > 0")->fetch();
-            $stats['collected_this_month'] = (float)($r['v'] ?? 0);
-        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
+        $stats['collected_this_month'] = (float) BookingPaymentSchedule::query()
+            ->whereMonth('payment_date', now()->month)
+            ->whereYear('payment_date', now()->year)
+            ->where('paid_amount', '>', 0)
+            ->sum('paid_amount');
 
         // Pending EMI
-        try {
-            $r = $pdo->query("SELECT COUNT(*) as c, COALESCE(SUM(emi_amount - paid_amount),0) as v FROM booking_payment_schedules WHERE status='pending' AND due_date < CURDATE()")->fetch();
-            $stats['pending_emi'] = (float)($r['v'] ?? 0);
-            $stats['overdue_emi_count'] = (int)($r['c'] ?? 0);
-        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
+        $pendingEmi = BookingPaymentSchedule::query()
+            ->where('status', 'pending')
+            ->whereDate('due_date', '<', now()->toDateString())
+            ->selectRaw('COUNT(*) as c, COALESCE(SUM(emi_amount - paid_amount),0) as v')
+            ->first();
+        $stats['pending_emi'] = (float)($pendingEmi->v ?? 0);
+        $stats['overdue_emi_count'] = (int)($pendingEmi->c ?? 0);
 
         // Total outstanding
-        try {
-            $r = $pdo->query("SELECT COALESCE(SUM(emi_amount - paid_amount),0) as v FROM booking_payment_schedules WHERE status IN ('pending','overdue')")->fetch();
-            $stats['total_outstanding'] = (float)($r['v'] ?? 0);
-        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
+        $stats['total_outstanding'] = (float) BookingPaymentSchedule::query()
+            ->whereIn('status', ['pending', 'overdue'])
+            ->sum(DB::raw('emi_amount - paid_amount'));
 
         // Active EMI count
-        try {
-            $r = $pdo->query("SELECT COUNT(*) as c FROM booking_payment_schedules WHERE status IN ('pending','overdue')")->fetch();
-            $stats['active_emi_count'] = (int)($r['c'] ?? 0);
-        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
+        $stats['active_emi_count'] = BookingPaymentSchedule::query()
+            ->whereIn('status', ['pending', 'overdue'])
+            ->count();
 
         // Total bookings value
-        try {
-            $r = $pdo->query("SELECT COALESCE(SUM(total_plot_value),0) as v FROM plot_bookings WHERE status NOT IN ('cancelled')")->fetch();
-            $stats['total_bookings_value'] = (float)($r['v'] ?? 0);
-        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
+        $stats['total_bookings_value'] = (float) PlotBooking::query()
+            ->where('status', '!=', 'cancelled')
+            ->sum('total_plot_value');
 
         // Vendors count
-        try {
-            $r = $pdo->query("SELECT COUNT(*) as c FROM vendors")->fetch();
-            $stats['total_vendors'] = (int)($r['c'] ?? 0);
-        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
+        $stats['total_vendors'] = Vendor::count();
 
         // Recent collections
-        try {
-            $stmt = $pdo->query("
-                SELECT s.id, s.installment_number, s.emi_amount, s.paid_amount, s.due_date, s.payment_date, s.status,
-                       pb.booking_number, pb.total_plot_value, u.name as customer_name
-                FROM booking_payment_schedules s
-                JOIN plot_bookings pb ON pb.id = s.booking_id
-                JOIN users u ON u.id = pb.customer_id
-                WHERE s.paid_amount > 0
-                ORDER BY s.payment_date DESC LIMIT 15
-            ");
-            $collections = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
+        $collections = BookingPaymentSchedule::query()
+            ->join('plot_bookings', 'plot_bookings.id', '=', 'booking_payment_schedules.booking_id')
+            ->join('users', 'users.id', '=', 'plot_bookings.customer_id')
+            ->select(
+                'booking_payment_schedules.id',
+                'booking_payment_schedules.installment_number',
+                'booking_payment_schedules.emi_amount',
+                'booking_payment_schedules.paid_amount',
+                'booking_payment_schedules.due_date',
+                'booking_payment_schedules.payment_date',
+                'booking_payment_schedules.status',
+                'plot_bookings.booking_number',
+                'plot_bookings.total_plot_value',
+                'users.name as customer_name'
+            )
+            ->where('booking_payment_schedules.paid_amount', '>', 0)
+            ->orderBy('booking_payment_schedules.payment_date', 'desc')
+            ->limit(15)
+            ->get()
+            ->toArray();
 
         // Upcoming EMI schedule
-        try {
-            $stmt = $pdo->query("
-                SELECT s.id, s.installment_number, s.emi_amount, s.paid_amount, s.due_date, s.status,
-                       pb.booking_number, u.name as customer_name,
-                       DATEDIFF(s.due_date, CURDATE()) as days_until_due
-                FROM booking_payment_schedules s
-                JOIN plot_bookings pb ON pb.id = s.booking_id
-                JOIN users u ON u.id = pb.customer_id
-                WHERE s.status IN ('pending','overdue')
-                ORDER BY s.due_date ASC LIMIT 20
-            ");
-            $emi_schedule = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
+        $emi_schedule = BookingPaymentSchedule::query()
+            ->join('plot_bookings', 'plot_bookings.id', '=', 'booking_payment_schedules.booking_id')
+            ->join('users', 'users.id', '=', 'plot_bookings.customer_id')
+            ->select(
+                'booking_payment_schedules.id',
+                'booking_payment_schedules.installment_number',
+                'booking_payment_schedules.emi_amount',
+                'booking_payment_schedules.paid_amount',
+                'booking_payment_schedules.due_date',
+                'booking_payment_schedules.status',
+                'plot_bookings.booking_number',
+                'users.name as customer_name',
+                DB::raw('DATEDIFF(booking_payment_schedules.due_date, CURDATE()) as days_until_due')
+            )
+            ->whereIn('booking_payment_schedules.status', ['pending', 'overdue'])
+            ->orderBy('booking_payment_schedules.due_date', 'asc')
+            ->limit(20)
+            ->get()
+            ->toArray();
+
+        $stats = [
+            'todays_collection' => BookingPaymentSchedule::query()
+                ->whereDate('payment_date', now()->toDateString())
+                ->where('paid_amount', '>', 0)
+                ->sum('paid_amount'),
+            'pending_emi' => (float)($pendingEmi->v ?? 0),
+            'total_outstanding' => (float) BookingPaymentSchedule::query()
+                ->whereIn('status', ['pending', 'overdue'])
+                ->sum(DB::raw('emi_amount - paid_amount')),
+            'monthly_target_pct' => 0,
+            'monthly_target_amount' => 0,
+            'collected_this_month' => (float) BookingPaymentSchedule::query()
+                ->whereMonth('payment_date', now()->month)
+                ->whereYear('payment_date', now()->year)
+                ->where('paid_amount', '>', 0)
+                ->sum('paid_amount'),
+            'total_bookings_value' => (float) PlotBooking::query()
+                ->where('status', '!=', 'cancelled')
+                ->sum('total_plot_value'),
+            'active_emi_count' => BookingPaymentSchedule::query()
+                ->whereIn('status', ['pending', 'overdue'])
+                ->count(),
+            'overdue_emi_count' => (int)($pendingEmi->c ?? 0),
+            'total_vendors' => Vendor::count(),
+        ];
 
         $this->json([
             'success' => true, 'stats' => $stats,
@@ -603,6 +699,29 @@ class CRMController extends BaseController
             return;
         }
 
+        // Enforce max file size (10 MB)
+        $maxSize = 10 * 1024 * 1024;
+        if ($file['size'] > $maxSize) {
+            $this->json(['success' => false, 'error' => 'File too large. Maximum 10MB allowed.'], 400);
+            return;
+        }
+
+        // Validate file extension
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        if (!in_array($ext, ['csv', 'txt'], true)) {
+            $this->json(['success' => false, 'error' => 'Only CSV and TXT files are allowed'], 400);
+            return;
+        }
+
+        // Validate MIME type
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($finfo, $file['tmp_name']);
+        finfo_close($finfo);
+        if (!in_array($mimeType, ['text/csv', 'text/plain', 'text/x-csv', 'application/vnd.ms-excel', 'text/comma-separated-values'], true)) {
+            $this->json(['success' => false, 'error' => 'Invalid file type. Only CSV files are accepted.'], 400);
+            return;
+        }
+
         $handle = fopen($file['tmp_name'], 'r');
         if (!$handle) {
             $this->json(['success' => false, 'error' => 'Cannot read CSV file'], 400);
@@ -611,9 +730,15 @@ class CRMController extends BaseController
 
         $headers = fgetcsv($handle);
         $rows = [];
+        $maxRows = 10000; // Prevent DoS via extremely large files
         while (($row = fgetcsv($handle)) !== false) {
             if (count($row) === count($headers)) {
                 $rows[] = array_combine($headers, $row);
+            }
+            if (count($rows) >= $maxRows) {
+                fclose($handle);
+                $this->json(['success' => false, 'error' => "File exceeds maximum of {$maxRows} rows"], 400);
+                return;
             }
         }
         fclose($handle);

@@ -208,6 +208,9 @@ class CRMService
         try {
             $leadNumber = 'CR-' . date('Ymd') . '-' . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
             $tid = $this->tid();
+
+            // Sanitize lead data to prevent stored XSS
+            $s = function($v) { return \App\Core\Security::sanitize($v ?? ''); };
             $stmt = $this->db->query(
                 "INSERT INTO leads (lead_number, name, email, phone, company, address, city, state, pincode,
                  source, property_interest, budget, budget_range, location_preference, notes, tags,
@@ -215,26 +218,26 @@ class CRMService
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', ?, ?, ?" . ($tid ? ", ?" : "") . ")",
                 [
                     $leadNumber,
-                    $data['name'] ?? '',
-                    $data['email'] ?? null,
-                    $data['phone'] ?? null,
-                    $data['company'] ?? null,
-                    $data['address'] ?? null,
-                    $data['city'] ?? null,
-                    $data['state'] ?? null,
-                    $data['pincode'] ?? null,
-                    $data['source'] ?? 'website',
-                    $data['property_interest'] ?? null,
-                    $data['budget'] ?? 0,
-                    $data['budget_range'] ?? null,
-                    $data['location_preference'] ?? null,
-                    $data['notes'] ?? null,
-                    $data['tags'] ?? null,
-                    $data['assigned_to'] ?? null,
-                    $data['created_by'] ?? null,
-                    $data['priority'] ?? 'medium',
-                    $data['lead_score'] ?? 0,
-                    $data['lead_category'] ?? 'cold',
+                    $s($data['name']),
+                    $data['email'] ? filter_var($data['email'], FILTER_SANITIZE_EMAIL) : null,
+                    $data['phone'] ? preg_replace('/[^0-9+\-\s()]/', '', $data['phone']) : null,
+                    $s($data['company']),
+                    $s($data['address']),
+                    $s($data['city']),
+                    $s($data['state']),
+                    $s($data['pincode']),
+                    $s($data['source']) ?: 'website',
+                    $s($data['property_interest']),
+                    (float)($data['budget'] ?? 0),
+                    $s($data['budget_range']),
+                    $s($data['location_preference']),
+                    $s($data['notes']),
+                    $s($data['tags']),
+                    (int)($data['assigned_to'] ?? 0) ?: null,
+                    (int)($data['created_by'] ?? 0) ?: null,
+                    $s($data['priority']) ?: 'medium',
+                    (int)($data['lead_score'] ?? 0),
+                    $s($data['lead_category']) ?: 'cold',
                     ...($tid ? [$tid] : []),
                 ]
             );
@@ -634,11 +637,11 @@ class CRMService
     public function completeTask($taskId, $userId, $notes = null) {
         try {
             $where = "id = ? AND assigned_to = ?";
-            $params = [$notes, $taskId, $userId];
+            $params = [$taskId, $userId];
             if ($tid = $this->tid()) { $where .= " AND tenant_id = ?"; $params[] = $tid; }
             $this->db->query(
                 "UPDATE crm_tasks SET status = 'completed', completed_at = NOW(), completed_notes = ? WHERE $where",
-                $params
+                array_merge([$notes], $params)
             );
             return ['success' => true];
         } catch (\Exception $e) {
@@ -1113,7 +1116,14 @@ class CRMService
 
             if (!$leadResult['success']) return $leadResult;
 
-            // Log form submission
+            // Log form submission (sanitize UTM and page fields to prevent stored XSS)
+            $sanitizedMeta = [
+                'utm_source'    => \App\Core\Security::sanitize($meta['utm_source'] ?? ''),
+                'utm_medium'    => \App\Core\Security::sanitize($meta['utm_medium'] ?? ''),
+                'utm_campaign'  => \App\Core\Security::sanitize($meta['utm_campaign'] ?? ''),
+                'page_url'      => filter_var($meta['page_url'] ?? '', FILTER_SANITIZE_URL),
+                'device_type'   => \App\Core\Security::sanitize($meta['device_type'] ?? ''),
+            ];
             $this->db->query(
                 "INSERT INTO crm_form_submissions (form_id, lead_id, submitted_data, ip_address, user_agent, utm_source, utm_medium, utm_campaign, page_url, device_type)
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -1123,11 +1133,11 @@ class CRMService
                     json_encode($data),
                     $meta['ip'] ?? null,
                     $meta['user_agent'] ?? null,
-                    $meta['utm_source'] ?? null,
-                    $meta['utm_medium'] ?? null,
-                    $meta['utm_campaign'] ?? null,
-                    $meta['page_url'] ?? null,
-                    $meta['device_type'] ?? null,
+                    $sanitizedMeta['utm_source'],
+                    $sanitizedMeta['utm_medium'],
+                    $sanitizedMeta['utm_campaign'],
+                    $sanitizedMeta['page_url'],
+                    $sanitizedMeta['device_type'],
                 ]
             );
 
@@ -1136,14 +1146,14 @@ class CRMService
             if ($tid = $this->tid()) { $ucWhere .= " AND tenant_id = ?"; $ucParams[] = $tid; }
             $this->db->query("UPDATE crm_lead_forms SET submission_count = submission_count + 1 WHERE $ucWhere", $ucParams);
 
-            // Add source detail
+            // Add source detail (using already-sanitized meta)
             $this->addSourceDetail($leadResult['lead_id'], [
                 'source_type' => $form['source_tag'] ?? 'website',
                 'form_id' => $form['id'],
-                'utm_source' => $meta['utm_source'] ?? null,
-                'utm_medium' => $meta['utm_medium'] ?? null,
-                'utm_campaign' => $meta['utm_campaign'] ?? null,
-                'landing_page' => $meta['page_url'] ?? null,
+                'utm_source' => $sanitizedMeta['utm_source'],
+                'utm_medium' => $sanitizedMeta['utm_medium'],
+                'utm_campaign' => $sanitizedMeta['utm_campaign'],
+                'landing_page' => $sanitizedMeta['page_url'],
                 'ip_address' => $meta['ip'] ?? null,
             ]);
 
@@ -1334,8 +1344,8 @@ class CRMService
         }
 
         $sets[] = "updated_at = NOW()";
+        if ($tid = $this->tid()) { $sets[] = "tenant_id = ?"; $params[] = $tid; }
         $params[] = $id;
-        if ($tid = $this->tid()) { $sets[] = "tenant_id = ?"; array_unshift($params, $tid); }
 
         try {
             $this->db->query("UPDATE lead_deals SET " . implode(', ', $sets) . " WHERE id = ?", $params);
@@ -1348,7 +1358,7 @@ class CRMService
     public function moveDealStage(int $id, string $stage): array
     {
         try {
-            $extra = ""; $params = [$stage];
+            $extra = ""; $params = [$stage, $id];
             if ($tid = $this->tid()) { $extra = " AND tenant_id = ?"; $params[] = $tid; }
             $this->db->query("UPDATE lead_deals SET stage = ?, updated_at = NOW() WHERE id = ?$extra", $params);
             if ($stage === 'won') {
@@ -1900,7 +1910,6 @@ class CRMService
             if (!empty($criteria['city'])) { $where[] = "l.city = ?"; $params[] = $criteria['city']; }
             if (!empty($criteria['min_budget'])) { $where[] = "l.budget >= ?"; $params[] = (float)$criteria['min_budget']; }
             if (!empty($criteria['max_budget'])) { $where[] = "l.budget <= ?"; $params[] = (float)$criteria['max_budget']; }
-            $params[] = $limit;
             
             $stmt = $this->db->query(
                 "SELECT l.*, u.name as assignee_name FROM leads l LEFT JOIN users u ON l.assigned_to=u.id 

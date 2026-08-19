@@ -42,10 +42,14 @@ class VoiceAgentController extends BaseController
     public function startCall()
     {
         try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                return $this->jsonResponse(['success' => false, 'error' => 'Authentication required'], 401);
+            }
             $leadId = $_POST['lead_id'] ?? null;
-            $phone = $_POST['phone'] ?? '';
-            $agentType = $_POST['agent_type'] ?? 'followup';
-            $scriptCode = $_POST['script_code'] ?? 'default';
+            $phone = preg_replace('/[^0-9+\-\s()]/', '', $_POST['phone'] ?? '');
+            $agentType = in_array(($_POST['agent_type'] ?? ''), ['followup', 'cold_call', 'qualification']) ? $_POST['agent_type'] : 'followup';
+            $scriptCode = \App\Core\Security::sanitize($_POST['script_code'] ?? 'default');
 
             if (!$leadId && !$phone) {
                 return $this->jsonResponse(['success' => false, 'error' => 'lead_id or phone is required'], 400);
@@ -104,15 +108,20 @@ class VoiceAgentController extends BaseController
                 'lead_phone' => $phone
             ]);
         } catch (\Exception $e) {
-            return $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            error_log('VoiceAgentController::startCall error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 
     public function processResponse()
     {
         try {
-            $sessionId = $_POST['session_id'] ?? '';
-            $transcript = $_POST['transcript'] ?? '';
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                return $this->jsonResponse(['success' => false, 'error' => 'Authentication required'], 401);
+            }
+            $sessionId = \App\Core\Security::sanitize($_POST['session_id'] ?? '');
+            $transcript = \App\Core\Security::sanitize($_POST['transcript'] ?? '');
             $leadId = $_POST['lead_id'] ?? null;
 
             if (!$sessionId || !$transcript) {
@@ -209,7 +218,8 @@ class VoiceAgentController extends BaseController
                 'qualification_result' => $qualificationResult
             ]);
         } catch (\Exception $e) {
-            return $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            error_log('VoiceAgentController::processResponse error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 
@@ -240,17 +250,22 @@ class VoiceAgentController extends BaseController
 
             return $this->jsonResponse(['success' => true, 'session' => $session]);
         } catch (\Exception $e) {
-            return $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            error_log('VoiceAgentController::getSession error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 
     public function endCall()
     {
         try {
-            $sessionId = $_POST['session_id'] ?? '';
-            $summary = $_POST['summary'] ?? '';
-            $sentiment = $_POST['sentiment'] ?? 'neutral';
-            $outcome = $_POST['outcome'] ?? 'unknown';
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                return $this->jsonResponse(['success' => false, 'error' => 'Authentication required'], 401);
+            }
+            $sessionId = \App\Core\Security::sanitize($_POST['session_id'] ?? '');
+            $summary = \App\Core\Security::sanitize($_POST['summary'] ?? '');
+            $sentiment = in_array(($_POST['sentiment'] ?? ''), ['positive', 'negative', 'neutral']) ? $_POST['sentiment'] : 'neutral';
+            $outcome = \App\Core\Security::sanitize($_POST['outcome'] ?? 'unknown');
 
             if (!$sessionId) {
                 return $this->jsonResponse(['success' => false, 'error' => 'session_id is required'], 400);
@@ -304,7 +319,8 @@ class VoiceAgentController extends BaseController
                 'sentiment' => $sentiment
             ]);
         } catch (\Exception $e) {
-            return $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            error_log('VoiceAgentController::endCall error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 
@@ -339,19 +355,24 @@ class VoiceAgentController extends BaseController
 
             return $this->jsonResponse(['success' => true, 'schedule' => $schedule]);
         } catch (\Exception $e) {
-            return $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            error_log('VoiceAgentController::getSchedule error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 
     public function scheduleCall()
     {
         try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                return $this->jsonResponse(['success' => false, 'error' => 'Authentication required'], 401);
+            }
             $leadId = $_POST['lead_id'] ?? null;
-            $phone = $_POST['phone'] ?? '';
-            $agentType = $_POST['agent_type'] ?? 'followup';
-            $scheduledDate = $_POST['scheduled_date'] ?? date('Y-m-d', strtotime('+1 day'));
-            $priority = $_POST['priority'] ?? 'medium';
-            $notes = $_POST['notes'] ?? '';
+            $phone = preg_replace('/[^0-9+\-\s()]/', '', $_POST['phone'] ?? '');
+            $agentType = in_array(($_POST['agent_type'] ?? ''), ['followup', 'cold_call', 'qualification']) ? $_POST['agent_type'] : 'followup';
+            $scheduledDate = \App\Core\Security::sanitize($_POST['scheduled_date'] ?? date('Y-m-d', strtotime('+1 day')));
+            $priority = in_array(($_POST['priority'] ?? ''), ['high', 'medium', 'low']) ? $_POST['priority'] : 'medium';
+            $notes = \App\Core\Security::sanitize($_POST['notes'] ?? '');
 
             if (!$leadId) {
                 return $this->jsonResponse(['success' => false, 'error' => 'lead_id is required'], 400);
@@ -378,7 +399,8 @@ class VoiceAgentController extends BaseController
                 'agent_type' => $agentType
             ]);
         } catch (\Exception $e) {
-            return $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            error_log('VoiceAgentController::scheduleCall error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 
@@ -408,13 +430,18 @@ class VoiceAgentController extends BaseController
 
             return $this->jsonResponse(['success' => true, 'extracted_leads' => $leads]);
         } catch (\Exception $e) {
-            return $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            error_log('VoiceAgentController::getExtractedLeads error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 
     public function convertExtractedLead($id)
     {
         try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                return $this->jsonResponse(['success' => false, 'error' => 'Authentication required'], 401);
+            }
             $extracted = $this->db->fetch("SELECT * FROM ai_call_extracted_leads WHERE id = ?", [$id]);
             if (!$extracted) {
                 return $this->jsonResponse(['success' => false, 'error' => 'Extracted lead not found'], 404);
@@ -460,7 +487,8 @@ class VoiceAgentController extends BaseController
                 'message' => 'Lead converted successfully'
             ]);
         } catch (\Exception $e) {
-            return $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            error_log('VoiceAgentController::convertExtractedLead error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 
@@ -512,7 +540,8 @@ class VoiceAgentController extends BaseController
                 ]
             ]);
         } catch (\Exception $e) {
-            return $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            error_log('VoiceAgentController::getStats error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 
@@ -577,7 +606,8 @@ class VoiceAgentController extends BaseController
                 ]
             ]);
         } catch (\Exception $e) {
-            return $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            error_log('VoiceAgentController::getCallHistory error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 }

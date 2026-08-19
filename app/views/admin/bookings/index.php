@@ -161,10 +161,32 @@ $active_page = 'bookings';
         </h5>
     </div>
     <div class="card-body aps-cp-card-body">
+        <!-- Bulk Actions Bar (hidden by default) -->
+        <div class="card border-0 shadow-sm mb-3" id="bulkActionsBar" style="display: none;">
+            <div class="card-body py-2 d-flex align-items-center gap-3 flex-wrap">
+                <span class="fw-semibold"><span id="selectedCount">0</span> selected</span>
+                <select id="bulkStatus" class="form-select form-select-sm" style="width: auto; display: inline-block;">
+                    <option value="pending">Pending</option>
+                    <option value="token_paid">Token Paid</option>
+                    <option value="agreement_signed">Agreement Signed</option>
+                    <option value="emi_active">EMI Active</option>
+                    <option value="partially_paid">Partially Paid</option>
+                    <option value="fully_paid">Fully Paid</option>
+                    <option value="registration_done">Registry Done</option>
+                    <option value="transferred">Transferred</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+                <input type="text" id="bulkNotes" class="form-control form-control-sm" style="width: 200px; display: inline-block;" placeholder="Notes (optional)">
+                <button type="button" class="btn btn-sm btn-warning" id="bulkApply">Apply Status</button>
+                <button type="button" class="btn btn-sm btn-outline-danger" id="bulkCancel">Cancel</button>
+            </div>
+        </div>
+
         <div class="table-responsive">
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
+                        <th width="30"><input type="checkbox" id="selectAll" class="form-check-input"></th>
                         <th>
                             <a href="?sort=booking_number&order=<?= $filters['order'] == 'ASC' ? 'DESC' : 'ASC' ?>&<?= http_build_query(array_diff_key($filters, ['sort' => '', 'order' => ''])) ?>">
                                 Booking # <i class="fas fa-sort"></i>
@@ -191,10 +213,9 @@ $active_page = 'bookings';
                         </tr>
                     <?php else: ?>
                         <?php foreach ($bookings as $booking): ?>
-                            <tr>
+                            <tr data-booking-id="<?= $booking['id'] ?>">
+                                <td><input type="checkbox" class="form-check-input booking-checkbox" value="<?= $booking['id'] ?>"></td>
                                 <td>
-                                    <strong><?= htmlspecialchars($booking['booking_number'] ?? 'N/A') ?></strong>
-                                </td>
                                 <td>
                                     <strong><?= htmlspecialchars($booking['plot_number'] ?? 'N/A') ?></strong>
                                     <br>
@@ -330,5 +351,67 @@ $active_page = 'bookings';
         const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
         modal.show();
     }
+
+    // Bulk Actions
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectAll = document.getElementById('selectAll');
+        const checkboxes = document.querySelectorAll('.booking-checkbox');
+        const bulkBar = document.getElementById('bulkActionsBar');
+        const countEl = document.getElementById('selectedCount');
+        const bulkStatus = document.getElementById('bulkStatus');
+        const bulkNotes = document.getElementById('bulkNotes');
+        const bulkApply = document.getElementById('bulkApply');
+        const bulkCancel = document.getElementById('bulkCancel');
+
+        if (!selectAll || !bulkBar) return;
+
+        function getSelected() {
+            return [...checkboxes].filter(cb => cb.checked).map(cb => parseInt(cb.value));
+        }
+
+        function updateUI() {
+            const count = getSelected().length;
+            if (countEl) countEl.textContent = count;
+            bulkBar.style.display = count > 0 ? 'block' : 'none';
+        }
+
+        selectAll.addEventListener('change', function() {
+            checkboxes.forEach(cb => cb.checked = this.checked);
+            updateUI();
+        });
+        checkboxes.forEach(cb => cb.addEventListener('change', updateUI));
+
+        bulkApply.addEventListener('click', function() {
+            const ids = getSelected();
+            const status = bulkStatus.value;
+            const notes = bulkNotes.value;
+            if (!ids.length) return alert('No bookings selected');
+            if (!confirm('Update status of ' + ids.length + ' booking(s) to ' + status + '?')) return;
+
+            fetch(baseUrl + '/admin/bookings/bulk-action', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': '<?= $_SESSION['csrf_token'] ?? '' ?>'},
+                body: 'csrf_token=<?= $_SESSION['csrf_token'] ?? '' ?>&action=status&value=' + encodeURIComponent(status) + '&notes=' + encodeURIComponent(notes) + '&booking_ids[]=' + ids.join('&booking_ids[]=')
+            }).then(r => r.json()).then(d => {
+                if (d.success) location.reload();
+                else alert(d.error || 'Failed');
+            });
+        });
+
+        bulkCancel.addEventListener('click', function() {
+            const ids = getSelected();
+            if (!ids.length) return alert('No bookings selected');
+            if (!confirm('Cancel ' + ids.length + ' booking(s)?')) return;
+
+            fetch(baseUrl + '/admin/bookings/bulk-action', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': '<?= $_SESSION['csrf_token'] ?? '' ?>'},
+                body: 'csrf_token=<?= $_SESSION['csrf_token'] ?? '' ?>&action=cancel&booking_ids[]=' + ids.join('&booking_ids[]=')
+            }).then(r => r.json()).then(d => {
+                if (d.success) location.reload();
+                else alert(d.error || 'Failed');
+            });
+        });
+    });
 </script>
 

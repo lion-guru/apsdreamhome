@@ -29,11 +29,26 @@ class AuthController extends BaseController
     {
         header('Content-Type: application/json');
         $data = json_decode(file_get_contents('php://input'), true);
-        $email = $data['email'] ?? '';
+        $email = trim($data['email'] ?? '');
         $password = $data['password'] ?? '';
+
+        if (empty($email) || empty($password)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Email and password required']);
+            return;
+        }
+
+        // Rate limit login attempts
+        \App\Middleware\RateLimiter::check('auth_login', 5, 60);
+
         $result = $this->apiAuthService->login($email, $password);
 
-        if (!$result['success']) {
+        $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+
+        if ($result['success']) {
+            error_log("AuthController Login SUCCESS: email={$email}, ip={$ip}");
+        } else {
+            error_log("AuthController Login FAILED: email={$email}, ip={$ip}, reason=" . ($result['message'] ?? 'unknown'));
             http_response_code(401);
         }
         echo json_encode($result);

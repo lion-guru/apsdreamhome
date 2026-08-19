@@ -35,7 +35,8 @@ class WorkflowController extends BaseApiController
                 'count' => count($workflows)
             ]);
         } catch (\Exception $e) {
-            return $this->jsonResponse(['success' => false, 'error' => 'Failed to load workflows: ' . $e->getMessage()], 500);
+            error_log('WorkflowController::index error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 
@@ -70,7 +71,8 @@ class WorkflowController extends BaseApiController
                 'data' => $wf
             ]);
         } catch (\Exception $e) {
-            return $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            error_log('WorkflowController::show error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 
@@ -105,7 +107,8 @@ class WorkflowController extends BaseApiController
 
             return $this->jsonResponse($result, 422);
         } catch (\Exception $e) {
-            return $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            error_log('WorkflowController::store error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 
@@ -143,7 +146,8 @@ class WorkflowController extends BaseApiController
 
             return $this->jsonResponse($result, 422);
         } catch (\Exception $e) {
-            return $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            error_log('WorkflowController::update error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 
@@ -175,7 +179,8 @@ class WorkflowController extends BaseApiController
 
             return $this->jsonResponse(['success' => true, 'message' => 'Workflow instance cancelled']);
         } catch (\Exception $e) {
-            return $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            error_log('WorkflowController::destroy error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 }

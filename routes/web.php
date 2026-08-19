@@ -1214,7 +1214,10 @@ $router->get('/admin/properties/check-availability', 'App\\Http\\Controllers\\Ad
 $router->get('/admin/properties/{id}', 'App\\Http\\Controllers\\Admin\\PropertyManagementController@show');
 $router->get('/admin/properties/{id}/edit', 'App\\Http\\Controllers\\Admin\\PropertyManagementController@edit');
 $router->post('/admin/properties/{id}/update', 'App\\Http\\Controllers\\Admin\\PropertyManagementController@update');
-$router->post('/admin/properties/{id}/destroy', 'App\\Http\\Controllers\\Admin\\PropertyManagementController@destroy');
+$router->post('/admin/properties/{id}/destroy', 
+'App\\Http\\Controllers\\Admin\\PropertyManagementController@destroy');
+$router->post('/admin/properties/bulk-update', 
+'App\\Http\\Controllers\\Admin\\PropertyManagementController@bulkUpdate');
 
 // AI Aggregator Trigger Route
 $router->post('/admin/ai-aggregator/fetch', 'App\\Http\\Controllers\\Admin\\AIAggregatorController@triggerFetch');
@@ -1324,7 +1327,10 @@ $router->get('/admin/bookings/{id}', 'App\\Http\\Controllers\\Admin\\BookingCont
 $router->get('/admin/bookings/{id}/edit', 'App\\Http\\Controllers\\Admin\\BookingController@edit');
 $router->post('/admin/bookings/{id}/update', 'App\\Http\\Controllers\\Admin\\BookingController@update');
 $router->post('/admin/bookings/{id}/destroy', 'App\\Http\\Controllers\\Admin\\BookingController@destroy');
-$router->post('/admin/bookings/{id}/payment', 'App\\Http\\Controllers\\Admin\\BookingController@processPayment');
+$router->post('/admin/bookings/{id}/payment', 
+'App\\Http\\Controllers\\Admin\\BookingController@processPayment');
+$router->post('/admin/bookings/bulk-action', 
+'App\\Http\\Controllers\\Admin\\BookingController@bulkAction');
 
 // Admin Site Visits
 $router->get('/admin/site-visits', 'App\\Http\\Controllers\\Admin\\SiteVisitController@index');

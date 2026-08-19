@@ -43,8 +43,9 @@ class ReferralController extends BaseController
                 'referral_code' => 'REF' . str_pad($userId, 6, '0', STR_PAD_LEFT)
             ]]);
         } catch (\Throwable $e) {
+            error_log('ReferralController::dashboard error: ' . $e->getMessage());
             http_response_code(500);
-            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+            echo json_encode(['success' => false, 'message' => 'Internal server error']);
         }
     }
 
@@ -65,8 +66,9 @@ class ReferralController extends BaseController
 
             echo json_encode(['success' => true, 'data' => $referrals]);
         } catch (\Throwable $e) {
+            error_log('ReferralController::stats error: ' . $e->getMessage());
             http_response_code(500);
-            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+            echo json_encode(['success' => false, 'message' => 'Internal server error']);
         }
     }
 
@@ -87,8 +89,9 @@ class ReferralController extends BaseController
 
             echo json_encode(['success' => true, 'data' => $referrals]);
         } catch (\Throwable $e) {
+            error_log('ReferralController::index error: ' . $e->getMessage());
             http_response_code(500);
-            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+            echo json_encode(['success' => false, 'message' => 'Internal server error']);
         }
     }
 }

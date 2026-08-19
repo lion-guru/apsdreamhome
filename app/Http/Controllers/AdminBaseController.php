@@ -510,24 +510,26 @@ class AdminBaseController extends BaseController
     /**
      * Success JSON response
      */
-    protected function successResponse($data = [], $message = 'Success')
+    protected function successResponse($data, string $message = 'Success'): void
     {
-        $this->jsonResponse([
+        echo json_encode([
             'success' => true,
             'message' => $message,
-            'data' => $data
+            'data' => $data,
         ]);
+        exit();
     }
 
     /**
      * Error JSON response
      */
-    protected function errorResponse($message, $statusCode = 400, $errors = [])
+    protected function errorResponse(string $message, int $code = 400): void
     {
-        $this->jsonResponse([
+        http_response_code($code);
+        echo json_encode([
             'success' => false,
-            'message' => $message,
-            'errors' => $errors
-        ], $statusCode);
+            'error' => $message,
+        ]);
+        exit();
     }
 }

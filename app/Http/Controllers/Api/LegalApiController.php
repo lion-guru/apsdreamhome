@@ -55,16 +55,46 @@ class LegalApiController extends BaseApiController
             return;
         }
         $file = $_FILES['file'];
+
+        // Check upload error status
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            $this->jsonResponse(['success' => false, 'error' => 'Upload error: ' . $file['error']], 400);
+            return;
+        }
+
+        // Enforce max file size (25 MB for legal documents)
+        $maxSize = 25 * 1024 * 1024;
+        if ($file['size'] > $maxSize) {
+            $this->jsonResponse(['success' => false, 'error' => 'File too large. Maximum 25MB allowed.'], 400);
+            return;
+        }
+
         $allowedExtensions = ['pdf','jpg','jpeg','png','gif','doc','docx','xls','xlsx','txt','csv'];
         $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
         if (!in_array($ext, $allowedExtensions, true)) {
             $this->jsonResponse(['success' => false, 'error' => 'File type not allowed. Allowed: ' . implode(', ', $allowedExtensions)], 400);
             return;
         }
+
+        // Validate MIME type
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($finfo, $file['tmp_name']);
+        finfo_close($finfo);
+        $allowedMimes = [
+            'application/pdf', 'image/jpeg', 'image/png', 'image/gif',
+            'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'text/plain', 'text/csv',
+        ];
+        if (!in_array($mimeType, $allowedMimes, true)) {
+            $this->jsonResponse(['success' => false, 'error' => 'Invalid file content type'], 400);
+            return;
+        }
+
         $uploadDir = 'uploads/legal/' . $id . '/';
         $realUploadDir = realpath($uploadDir) ?: $uploadDir;
         if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
-        $fileName = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', basename($file['name']));
+        $fileName = time() . '_' . preg_replace('/[^a-zA-Z0-9_-]/', '', basename($file['name']));
         $dest = $uploadDir . $fileName;
         $realDest = realpath(dirname($dest)) . '/' . $fileName;
         if (strpos($realDest, realpath('uploads/legal') ?: 'uploads/legal') !== 0) {
@@ -80,9 +110,9 @@ class LegalApiController extends BaseApiController
             'customer_id' => $_GET['customer_id'] ?? null,
             'file_path' => $dest,
             'file_name' => $file['name'],
-            'file_type' => $file['type'],
+            'file_type' => $mimeType,
             'file_size' => $file['size'],
-            'upload_type' => $_POST['upload_type'] ?? 'signed_copy',
+            'upload_type' => \App\Core\Security::sanitize($_POST['upload_type'] ?? 'signed_copy'),
         ]) : ['success' => false, 'error' => 'Service unavailable'];
         $this->jsonResponse($result['success'] ? ['success' => true, 'data' => $result] : ['success' => false, 'error' => $result['error'] ?? 'Failed'], $result['success'] ? 200 : 500);
     }

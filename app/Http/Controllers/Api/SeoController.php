@@ -62,14 +62,14 @@ class SeoController extends BaseApiController
             $existing = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             $data = [
-                'meta_title' => $_POST['meta_title'] ?? '',
-                'meta_description' => $_POST['meta_description'] ?? '',
-                'meta_keywords' => $_POST['meta_keywords'] ?? '',
-                'og_title' => $_POST['og_title'] ?? '',
-                'og_description' => $_POST['og_description'] ?? '',
-                'og_image' => $_POST['og_image'] ?? '',
-                'canonical_url' => $_POST['canonical_url'] ?? '',
-                'robots' => $_POST['robots'] ?? 'index, follow'
+                'meta_title' => strip_tags($_POST['meta_title'] ?? ''),
+                'meta_description' => strip_tags($_POST['meta_description'] ?? ''),
+                'meta_keywords' => \App\Core\Security::sanitize($_POST['meta_keywords'] ?? ''),
+                'og_title' => strip_tags($_POST['og_title'] ?? ''),
+                'og_description' => strip_tags($_POST['og_description'] ?? ''),
+                'og_image' => filter_var($_POST['og_image'] ?? '', FILTER_SANITIZE_URL),
+                'canonical_url' => filter_var($_POST['canonical_url'] ?? '', FILTER_SANITIZE_URL),
+                'robots' => in_array(($_POST['robots'] ?? ''), ['index, follow', 'noindex, nofollow', 'index, nofollow', 'noindex, follow']) ? $_POST['robots'] : 'index, follow'
             ];
 
             if ($existing) {

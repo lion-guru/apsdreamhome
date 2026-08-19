@@ -34,6 +34,12 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
     public function bookings()
     {
         try {
+            $page = max(1, (int)($_GET['page'] ?? 1));
+            $limit = min(100, max(1, (int)($_GET['limit'] ?? 20)));
+            $offset = ($page - 1) * $limit;
+
+            $total = $this->db->fetchOne("SELECT COUNT(*) as cnt FROM bookings")['cnt'] ?? 0;
+
             $bookings = $this->db->fetchAll(
                 "SELECT b.id, b.booking_number, b.status, b.total_amount, b.booking_amount as token_amount,
                         b.created_at, b.updated_at,
@@ -44,13 +50,18 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
                  LEFT JOIN users u ON b.user_id = u.id
                  LEFT JOIN plots p ON b.plot_id = p.id
                  LEFT JOIN colonies c ON b.colony_id = c.id
-                 ORDER BY b.created_at DESC"
+                 ORDER BY b.created_at DESC
+                 LIMIT {$limit} OFFSET {$offset}"
             );
 
-            return $this->jsonResponse(['success' => true, 'data' => $bookings]);
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $bookings,
+                'pagination' => ['page' => $page, 'limit' => $limit, 'total' => (int)$total, 'pages' => (int)ceil($total / $limit)]
+            ]);
         } catch (\Exception $e) {
             error_log('AdminMobileController::bookings error: ' . $e->getMessage());
-            return $this->jsonResponse(['success' => false, 'data' => [], 'error' => $e->getMessage()], 500);
+            return $this->jsonResponse(['success' => false, 'data' => [], 'error' => 'Internal server error'], 500);
         }
     }
 
@@ -92,7 +103,7 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
             return $this->jsonResponse(['success' => true, 'message' => 'Booking status updated']);
         } catch (\Exception $e) {
             error_log('AdminMobileController::updateBookingStatus error: ' . $e->getMessage());
-            return $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 
@@ -103,6 +114,12 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
     public function commissions()
     {
         try {
+            $page = max(1, (int)($_GET['page'] ?? 1));
+            $limit = min(100, max(1, (int)($_GET['limit'] ?? 20)));
+            $offset = ($page - 1) * $limit;
+
+            $total = $this->db->fetchOne("SELECT COUNT(*) as cnt FROM mlm_commission_ledger")['cnt'] ?? 0;
+
             $commissions = $this->db->fetchAll(
                 "SELECT l.id, l.commission_type, l.amount, l.commission_percentage,
                         l.status, l.notes, l.created_at,
@@ -111,13 +128,18 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
                         l.rank_at_time, l.level
                  FROM mlm_commission_ledger l
                  LEFT JOIN users u ON l.beneficiary_user_id = u.id
-                 ORDER BY l.created_at DESC"
+                 ORDER BY l.created_at DESC
+                 LIMIT {$limit} OFFSET {$offset}"
             );
 
-            return $this->jsonResponse(['success' => true, 'data' => $commissions]);
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $commissions,
+                'pagination' => ['page' => $page, 'limit' => $limit, 'total' => (int)$total, 'pages' => (int)ceil($total / $limit)]
+            ]);
         } catch (\Exception $e) {
             error_log('AdminMobileController::commissions error: ' . $e->getMessage());
-            return $this->jsonResponse(['success' => false, 'data' => [], 'error' => $e->getMessage()], 500);
+            return $this->jsonResponse(['success' => false, 'data' => [], 'error' => 'Internal server error'], 500);
         }
     }
 
@@ -142,7 +164,7 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
             return $this->jsonResponse(['success' => true, 'message' => "Commission $action'd"]);
         } catch (\Exception $e) {
             error_log('AdminMobileController::commissionAction error: ' . $e->getMessage());
-            return $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
     }
 
@@ -153,19 +175,30 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
     public function plots()
     {
         try {
+            $page = max(1, (int)($_GET['page'] ?? 1));
+            $limit = min(100, max(1, (int)($_GET['limit'] ?? 20)));
+            $offset = ($page - 1) * $limit;
+
+            $total = $this->db->fetchOne("SELECT COUNT(*) as cnt FROM plots")['cnt'] ?? 0;
+
             $plots = $this->db->fetchAll(
                 "SELECT p.id, p.plot_number, p.status, p.area_sqft, p.total_price,
                         p.width_ft, p.length_ft, p.block,
                         c.name as colony_name
                  FROM plots p
                  LEFT JOIN colonies c ON p.colony_id = c.id
-                 ORDER BY p.created_at DESC"
+                 ORDER BY p.created_at DESC
+                 LIMIT {$limit} OFFSET {$offset}"
             );
 
-            return $this->jsonResponse(['success' => true, 'data' => $plots]);
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $plots,
+                'pagination' => ['page' => $page, 'limit' => $limit, 'total' => (int)$total, 'pages' => (int)ceil($total / $limit)]
+            ]);
         } catch (\Exception $e) {
             error_log('AdminMobileController::plots error: ' . $e->getMessage());
-            return $this->jsonResponse(['success' => false, 'data' => [], 'error' => $e->getMessage()], 500);
+            return $this->jsonResponse(['success' => false, 'data' => [], 'error' => 'Internal server error'], 500);
         }
     }
 
@@ -176,17 +209,28 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
     public function users()
     {
         try {
+            $page = max(1, (int)($_GET['page'] ?? 1));
+            $limit = min(100, max(1, (int)($_GET['limit'] ?? 20)));
+            $offset = ($page - 1) * $limit;
+
+            $total = $this->db->fetchOne("SELECT COUNT(*) as cnt FROM users WHERE role IS NOT NULL AND role != ''")['cnt'] ?? 0;
+
             $users = $this->db->fetchAll(
                 "SELECT id, name, email, phone, role, status, created_at
                  FROM users
                  WHERE role IS NOT NULL AND role != ''
-                 ORDER BY created_at DESC"
+                 ORDER BY created_at DESC
+                 LIMIT {$limit} OFFSET {$offset}"
             );
 
-            return $this->jsonResponse(['success' => true, 'data' => $users]);
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $users,
+                'pagination' => ['page' => $page, 'limit' => $limit, 'total' => (int)$total, 'pages' => (int)ceil($total / $limit)]
+            ]);
         } catch (\Exception $e) {
             error_log('AdminMobileController::users error: ' . $e->getMessage());
-            return $this->jsonResponse(['success' => false, 'data' => [], 'error' => $e->getMessage()], 500);
+            return $this->jsonResponse(['success' => false, 'data' => [], 'error' => 'Internal server error'], 500);
         }
     }
 
@@ -316,7 +360,7 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
             return $this->jsonResponse(['success' => true, 'data' => $reports]);
         } catch (\Exception $e) {
             error_log('AdminMobileController::reports error: ' . $e->getMessage());
-            return $this->jsonResponse(['success' => false, 'data' => [], 'error' => $e->getMessage()], 500);
+            return $this->jsonResponse(['success' => false, 'data' => [], 'error' => 'Internal server error'], 500);
         }
     }
 
@@ -339,7 +383,8 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
                 'total_leads' => (int)($leads['total']??0),
             ]]);
         } catch (\Exception $e) {
-            return $this->jsonResponse(['success'=>false,'error'=>$e->getMessage()],500);
+            error_log('AdminMobileController::dashboardStats error: ' . $e->getMessage());
+            return $this->jsonResponse(['success'=>false,'error'=>'Internal server error'],500);
         }
     }
 
@@ -356,7 +401,8 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
             );
             return $this->jsonResponse(['success'=>true,'data'=>$data?:[]]);
         } catch (\Exception $e) {
-            return $this->jsonResponse(['success'=>false,'data'=>[],'error'=>$e->getMessage()],500);
+            error_log('AdminMobileController::salesTrend error: ' . $e->getMessage());
+            return $this->jsonResponse(['success'=>false,'data'=>[],'error'=>'Internal server error'],500);
         }
     }
 
@@ -373,7 +419,8 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
             );
             return $this->jsonResponse(['success'=>true,'data'=>$data?:[]]);
         } catch (\Exception $e) {
-            return $this->jsonResponse(['success'=>false,'data'=>[],'error'=>$e->getMessage()],500);
+            error_log('AdminMobileController::topAssociates error: ' . $e->getMessage());
+            return $this->jsonResponse(['success'=>false,'data'=>[],'error'=>'Internal server error'],500);
         }
     }
 
@@ -392,7 +439,8 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
             );
             return $this->jsonResponse(['success'=>true,'data'=>$data?:[]]);
         } catch (\Exception $e) {
-            return $this->jsonResponse(['success'=>false,'data'=>[],'error'=>$e->getMessage()],500);
+            error_log('AdminMobileController::colonyPerformance error: ' . $e->getMessage());
+            return $this->jsonResponse(['success'=>false,'data'=>[],'error'=>'Internal server error'],500);
         }
     }
 
@@ -488,7 +536,8 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
                 ],
             ]]);
         } catch (\Exception $e) {
-            return $this->jsonResponse(['success' => false, 'data' => [], 'error' => $e->getMessage()], 500);
+            error_log('AdminMobileController::emiCollection error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'data' => [], 'error' => 'Internal server error'], 500);
         }
     }
 
@@ -512,7 +561,8 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
                 'pipeline' => $this->db->fetchAll("SELECT status, COUNT(*) as count FROM leads GROUP BY status"),
             ]]);
         } catch (\Exception $e) {
-            return $this->jsonResponse(['success'=>false,'data'=>[],'error'=>$e->getMessage()],500);
+            error_log('AdminMobileController::leadConversion error: ' . $e->getMessage());
+            return $this->jsonResponse(['success'=>false,'data'=>[],'error'=>'Internal server error'],500);
         }
     }
 
@@ -529,7 +579,8 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
             );
             return $this->jsonResponse(['success'=>true,'data'=>$data?:[]]);
         } catch (\Exception $e) {
-            return $this->jsonResponse(['success'=>false,'data'=>[],'error'=>$e->getMessage()],500);
+            error_log('AdminMobileController::dailySales error: ' . $e->getMessage());
+            return $this->jsonResponse(['success'=>false,'data'=>[],'error'=>'Internal server error'],500);
         }
     }
 
@@ -632,7 +683,7 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
             return $this->jsonResponse(['success' => true, 'data' => $data]);
         } catch (\Exception $e) {
             error_log('AdminMobileController::telecallerDashboard error: ' . $e->getMessage());
-            return $this->jsonResponse(['success' => false, 'data' => [], 'error' => $e->getMessage()], 500);
+            return $this->jsonResponse(['success' => false, 'data' => [], 'error' => 'Internal server error'], 500);
         }
     }
 }

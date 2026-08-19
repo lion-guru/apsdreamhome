@@ -19,6 +19,12 @@ class PaymentGatewayController extends BaseController
     public function initiatePhonePe()
     {
         header('Content-Type: application/json');
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+        if (!$userId) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Authentication required']);
+            return;
+        }
         $data = json_decode(file_get_contents('php://input'), true);
         $amount = $data['amount'] ?? 0;
         $orderId = $data['order_id'] ?? uniqid('PH_');
@@ -62,6 +68,12 @@ class PaymentGatewayController extends BaseController
     public function initiateGPay()
     {
         header('Content-Type: application/json');
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+        if (!$userId) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Authentication required']);
+            return;
+        }
         $data = json_decode(file_get_contents('php://input'), true);
         $amount = $data['amount'] ?? 0;
         $orderId = $data['order_id'] ?? uniqid('GP_');
@@ -80,6 +92,12 @@ class PaymentGatewayController extends BaseController
     public function generateQRCode()
     {
         header('Content-Type: application/json');
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+        if (!$userId) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Authentication required']);
+            return;
+        }
         $data = json_decode(file_get_contents('php://input'), true);
         $amount = $data['amount'] ?? 0;
         $orderId = $data['order_id'] ?? uniqid('UPI_');

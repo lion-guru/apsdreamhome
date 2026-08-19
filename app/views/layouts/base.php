@@ -191,6 +191,8 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <link href="<?php echo BASE_URL; ?>/assets/css/live-chat-widget.css" rel="stylesheet">
     <!-- Notification Toast Widget CSS -->
     <link href="<?php echo BASE_URL; ?>/assets/css/notification-widget.css" rel="stylesheet">
+    <!-- Dark Mode CSS -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/dark-mode.css" rel="stylesheet">
     <!-- Universal mobile-first responsive overrides -->
     <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css?v=2" rel="stylesheet">
 

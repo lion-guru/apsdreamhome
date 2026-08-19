@@ -53,7 +53,7 @@ class BaseApiController extends BaseController
     protected function jsonSuccess($data = [], $message = 'Success', $statusCode = 200)
     {
         return $this->jsonResponse([
-            'status' => 'success',
+            'success' => true,
             'message' => $message,
             'data' => $data
         ], $statusCode);
@@ -65,8 +65,8 @@ class BaseApiController extends BaseController
     protected function jsonError($message = 'Error occurred', $statusCode = 400, $data = [])
     {
         return $this->jsonResponse([
-            'status' => 'error',
-            'message' => $message,
+            'success' => false,
+            'error' => $message,
             'data' => $data
         ], $statusCode);
     }

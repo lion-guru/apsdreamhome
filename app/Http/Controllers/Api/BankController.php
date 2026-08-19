@@ -20,7 +20,7 @@ class BankController extends BaseApiController
      */
     public function search()
     {
-        $search = $_GET['q'] ?? '';
+        $search = substr($_GET['q'] ?? '', 0, 200);
         
         $sql = "SELECT id, name, short_name FROM banks WHERE is_active = 1";
         $params = [];
@@ -43,7 +43,7 @@ class BankController extends BaseApiController
      */
     public function branches($bankId)
     {
-        $search = $_GET['q'] ?? '';
+        $search = substr($_GET['q'] ?? '', 0, 200);
         $bankId = intval($bankId);
         
         try {
@@ -131,7 +131,7 @@ class BankController extends BaseApiController
      */
     public function searchBranches()
     {
-        $search = $_GET['q'] ?? '';
+        $search = substr($_GET['q'] ?? '', 0, 200);
         
         if (strlen($search) < 3) {
             $this->jsonResponse([]);

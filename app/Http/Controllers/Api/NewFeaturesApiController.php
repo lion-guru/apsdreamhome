@@ -20,6 +20,31 @@ class NewFeaturesApiController extends BaseController
     use TenantAwareTrait;
     public function __construct() { parent::__construct(); }
 
+    protected function skipCsrfProtection(): bool { return true; }
+
+    private function requireAuth(): int
+    {
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+        if (!$userId) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Authentication required']);
+            exit;
+        }
+        return $userId;
+    }
+
+    private function requireAdmin(): int
+    {
+        $userId = $this->requireAuth();
+        $role = $GLOBALS['api_user_role'] ?? '';
+        if (!in_array($role, ['admin', 'employee', 'superadmin'])) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Admin access required']);
+            exit;
+        }
+        return $userId;
+    }
+
     private function reg(): ProgressiveRegistrationService { return new ProgressiveRegistrationService($this->db); }
     private function pay(): PayrollService { return new PayrollService($this->db); }
     private function resell(): ResellPropertyService { return new ResellPropertyService($this->db); }
@@ -55,6 +80,7 @@ class NewFeaturesApiController extends BaseController
 
     public function payrollGenerate()
     {
+        $this->requireAdmin();
         $month = (int)($_POST['month'] ?? date('n'));
         $year = (int)($_POST['year'] ?? date('Y'));
         $result = $this->pay()->generatePayroll($month, $year);
@@ -63,20 +89,41 @@ class NewFeaturesApiController extends BaseController
 
     public function resellList()
     {
-        $filters = $_GET;
-        $result = $this->resell()->listProperties($filters, (int)($_GET['limit'] ?? 50));
+        $allowed = ['status', 'city', 'property_type', 'min_price', 'max_price', 'bedrooms', 'sort', 'order'];
+        $filters = array_intersect_key($_GET, array_flip($allowed));
+        $result = $this->resell()->listProperties($filters, min(100, max(1, (int)($_GET['limit'] ?? 50))));
         return $this->jsonResponse(['ok' => true, 'data' => $result]);
     }
 
     public function resellCreate()
     {
+        $userId = $this->requireAuth();
         $data = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+        $stringFields = ['title', 'description', 'location', 'amenities', 'property_type', 'facing', 'possession_status'];
+        foreach ($stringFields as $field) {
+            if (!empty($data[$field])) {
+                $data[$field] = \App\Core\Security::sanitize($data[$field]);
+            }
+        }
+        $floatFields = ['asking_price', 'area_sqft', 'plot_area', 'built_up_area'];
+        foreach ($floatFields as $field) {
+            if (isset($data[$field])) {
+                $data[$field] = (float)$data[$field];
+            }
+        }
+        $intFields = ['bedrooms', 'bathrooms', 'floors', 'year_built', 'age_of_property'];
+        foreach ($intFields as $field) {
+            if (isset($data[$field])) {
+                $data[$field] = (int)$data[$field];
+            }
+        }
         $result = $this->resell()->createProperty($data);
         return $this->jsonResponse($result);
     }
 
     public function resellValuate($id)
     {
+        $this->requireAdmin();
         $data = json_decode(file_get_contents('php://input'), true) ?: $_POST;
         $value = (float)($data['estimated_value'] ?? 0);
         $source = $data['source'] ?? 'manual';
@@ -86,6 +133,7 @@ class NewFeaturesApiController extends BaseController
 
     public function commissionCalculate()
     {
+        $this->requireAdmin();
         $agentId = (int)($_POST['agent_id'] ?? 0);
         $amount = (float)($_POST['sale_amount'] ?? 0);
         $tier = $_POST['tier'] ?? 'standard';
@@ -95,6 +143,7 @@ class NewFeaturesApiController extends BaseController
 
     public function commissionRecord()
     {
+        $this->requireAdmin();
         $agentId = (int)($_POST['agent_id'] ?? 0);
         $bookingId = (int)($_POST['booking_id'] ?? 0);
         $amount = (float)($_POST['sale_amount'] ?? 0);
@@ -111,27 +160,34 @@ class NewFeaturesApiController extends BaseController
 
     public function sendNotification()
     {
+        $this->requireAdmin();
         $userId = (int)($_POST['user_id'] ?? 0);
-        $channel = $_POST['channel'] ?? 'email';
-        $subject = $_POST['subject'] ?? '';
-        $message = $_POST['message'] ?? '';
+        $channel = \App\Core\Security::sanitize($_POST['channel'] ?? 'email');
+        $subject = \App\Core\Security::sanitize($_POST['subject'] ?? '');
+        $message = \App\Core\Security::sanitize($_POST['message'] ?? '');
         $data = $_POST;
         unset($data['user_id'], $data['channel'], $data['subject'], $data['message']);
+        // Sanitize remaining data values
+        $data = array_map(function($v) { return is_string($v) ? \App\Core\Security::sanitize($v) : $v; }, $data);
         $result = $this->notif()->send($userId, $channel, $subject, $message, $data);
         return $this->jsonResponse($result);
     }
 
     public function renderTemplate()
     {
-        $code = $_POST['template_code'] ?? '';
+        $this->requireAdmin();
+        $code = \App\Core\Security::sanitize($_POST['template_code'] ?? '');
         $vars = $_POST;
         unset($vars['template_code']);
+        // Sanitize all template variables to prevent XSS
+        $vars = array_map(function($v) { return is_string($v) ? \App\Core\Security::sanitize($v) : $v; }, $vars);
         $result = $this->notif()->render($code, $vars);
         return $this->jsonResponse($result);
     }
 
     public function generate2fa()
     {
+        $this->requireAdmin();
         $userId = (int)($_POST['user_id'] ?? 0);
         $result = $this->sec()->generate2FAToken($userId);
         return $this->jsonResponse($result);
@@ -139,6 +195,7 @@ class NewFeaturesApiController extends BaseController
 
     public function verify2fa()
     {
+        $this->requireAuth();
         $userId = (int)($_POST['user_id'] ?? 0);
         $code = $_POST['code'] ?? '';
         $result = $this->sec()->verify2FA($userId, $code);
@@ -147,6 +204,7 @@ class NewFeaturesApiController extends BaseController
 
     public function passwordReset()
     {
+        $this->requireAdmin();
         $userId = (int)($_POST['user_id'] ?? 0);
         $result = $this->sec()->generatePasswordReset($userId);
         return $this->jsonResponse($result);
@@ -156,22 +214,39 @@ class NewFeaturesApiController extends BaseController
     {
         $token = $_POST['token'] ?? '';
         $newPassword = $_POST['password'] ?? '';
+        if (strlen($token) < 10 || strlen($token) > 255) {
+            return $this->jsonResponse(['success' => false, 'error' => 'Invalid reset token'], 400);
+        }
+        if (strlen($newPassword) < 8) {
+            return $this->jsonResponse(['success' => false, 'error' => 'Password must be at least 8 characters'], 400);
+        }
+        if (!preg_match('/[A-Z]/', $newPassword) || !preg_match('/[a-z]/', $newPassword) || !preg_match('/[0-9]/', $newPassword)) {
+            return $this->jsonResponse(['success' => false, 'error' => 'Password must contain uppercase, lowercase, and a number'], 400);
+        }
         $result = $this->sec()->usePasswordReset($token, $newPassword);
         return $this->jsonResponse($result);
     }
 
     public function blockIp()
     {
+        $this->requireAdmin();
         $ip = $_POST['ip'] ?? '';
-        $duration = (int)($_POST['duration'] ?? 60);
-        $reason = $_POST['reason'] ?? 'manual';
+        if (!filter_var($ip, FILTER_VALIDATE_IP)) {
+            return $this->jsonResponse(['success' => false, 'error' => 'Invalid IP address'], 400);
+        }
+        $duration = max(1, min(1440, (int)($_POST['duration'] ?? 60)));
+        $reason = \App\Core\Security::sanitize($_POST['reason'] ?? 'manual');
         $result = $this->sec()->blockIp($ip, 'manual', $reason, $duration);
         return $this->jsonResponse($result);
     }
 
     public function unblockIp()
     {
+        $this->requireAdmin();
         $ip = $_POST['ip'] ?? '';
+        if (!filter_var($ip, FILTER_VALIDATE_IP)) {
+            return $this->jsonResponse(['success' => false, 'error' => 'Invalid IP address'], 400);
+        }
         $result = $this->sec()->unblockIp($ip);
         return $this->jsonResponse($result);
     }
@@ -196,6 +271,7 @@ class NewFeaturesApiController extends BaseController
 
     public function createBudget()
     {
+        $this->requireAdmin();
         $data = json_decode(file_get_contents('php://input'), true) ?: $_POST;
         $result = $this->fin()->createBudget(
             (int)($data['department_id'] ?? 0),
@@ -209,6 +285,7 @@ class NewFeaturesApiController extends BaseController
 
     public function recordKpi()
     {
+        $this->requireAdmin();
         $kpiId = (int)($_POST['kpi_id'] ?? 0);
         $actual = (float)($_POST['actual'] ?? 0);
         $employeeId = (int)($_POST['employee_id'] ?? 0);
@@ -227,6 +304,7 @@ class NewFeaturesApiController extends BaseController
 
     public function createTask()
     {
+        $this->requireAdmin();
         $data = json_decode(file_get_contents('php://input'), true) ?: $_POST;
         $result = $this->agent()->createTask(
             (int)($data['agent_id'] ?? 0),
@@ -245,12 +323,14 @@ class NewFeaturesApiController extends BaseController
 
     public function processPendingTasks()
     {
+        $this->requireAdmin();
         $result = $this->agent()->processPendingTasks((int)($_POST['max'] ?? 50));
         return $this->jsonResponse($result);
     }
 
     public function triggerWorkflow()
     {
+        $this->requireAdmin();
         $data = json_decode(file_get_contents('php://input'), true) ?: $_POST;
         $trigger = $data['trigger'] ?? '';
         $context = $data['context'] ?? [];
@@ -260,6 +340,7 @@ class NewFeaturesApiController extends BaseController
 
     public function classifyDocument()
     {
+        $this->requireAuth();
         $data = json_decode(file_get_contents('php://input'), true) ?: $_POST;
         $docId = (int)($data['document_id'] ?? 0);
         $fileName = $data['file_name'] ?? '';
@@ -270,6 +351,7 @@ class NewFeaturesApiController extends BaseController
 
     public function executeReport()
     {
+        $this->requireAdmin();
         $data = json_decode(file_get_contents('php://input'), true) ?: $_POST;
         $reportType = $data['report_type'] ?? 'leads';
         $result = $this->generateReportData($reportType, $data);
@@ -311,6 +393,7 @@ class NewFeaturesApiController extends BaseController
 
     public function scheduleMaintenance()
     {
+        $this->requireAdmin();
         $data = json_decode(file_get_contents('php://input'), true) ?: $_POST;
         $result = $this->mkt()->scheduleMaintenance(
             (int)($data['property_id'] ?? 0),
@@ -325,8 +408,9 @@ class NewFeaturesApiController extends BaseController
 
     public function resellListPublic()
     {
-        $filters = $_GET;
-        $properties = $this->resell()->listProperties($filters, (int)($_GET['limit'] ?? 20));
+        $allowed = ['status', 'city', 'property_type', 'min_price', 'max_price', 'bedrooms', 'sort', 'order'];
+        $filters = array_intersect_key($_GET, array_flip($allowed));
+        $properties = $this->resell()->listProperties($filters, min(50, max(1, (int)($_GET['limit'] ?? 20))));
         return $this->jsonResponse(['ok' => true, 'data' => $properties]);
     }
 

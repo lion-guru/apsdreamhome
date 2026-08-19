@@ -42,8 +42,9 @@ class AnalyticsController extends BaseController
                 'timestamp' => date('Y-m-d H:i:s')
             ]]);
         } catch (\Throwable $e) {
+            error_log('AnalyticsController::getRealTimeMetrics error: ' . $e->getMessage());
             http_response_code(500);
-            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+            echo json_encode(['success' => false, 'message' => 'Internal server error']);
         }
     }
 
@@ -70,8 +71,9 @@ class AnalyticsController extends BaseController
                 'by_status' => $byStatus
             ]]);
         } catch (\Throwable $e) {
+            error_log('AnalyticsController::getPropertyAnalytics error: ' . $e->getMessage());
             http_response_code(500);
-            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+            echo json_encode(['success' => false, 'message' => 'Internal server error']);
         }
     }
 
@@ -92,8 +94,9 @@ class AnalyticsController extends BaseController
                 'by_role' => $byRole
             ]]);
         } catch (\Throwable $e) {
+            error_log('AnalyticsController::getUserAnalytics error: ' . $e->getMessage());
             http_response_code(500);
-            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+            echo json_encode(['success' => false, 'message' => 'Internal server error']);
         }
     }
 }

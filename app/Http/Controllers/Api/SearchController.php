@@ -48,9 +48,10 @@ class SearchController extends BaseController {
             ]);
             
         } catch (\Exception $e) {
+            error_log('SearchController::searchProperties error: ' . $e->getMessage());
             $this->json([
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => 'Internal server error'
             ], 500);
         }
     }
@@ -80,9 +81,10 @@ class SearchController extends BaseController {
             ]);
             
         } catch (\Exception $e) {
+            error_log('SearchController::getSuggestions error: ' . $e->getMessage());
             $this->json([
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => 'Internal server error'
             ], 500);
         }
     }
@@ -101,9 +103,10 @@ class SearchController extends BaseController {
             ]);
             
         } catch (\Exception $e) {
+            error_log('SearchController::getFacets error: ' . $e->getMessage());
             $this->json([
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => 'Internal server error'
             ], 500);
         }
     }
@@ -131,9 +134,10 @@ class SearchController extends BaseController {
             ]);
             
         } catch (\Exception $e) {
+            error_log('SearchController::getRecentSearches error: ' . $e->getMessage());
             $this->json([
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => 'Internal server error'
             ], 500);
         }
     }
@@ -153,9 +157,10 @@ class SearchController extends BaseController {
             ]);
             
         } catch (\Exception $e) {
+            error_log('SearchController::getPopularSearches error: ' . $e->getMessage());
             $this->json([
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => 'Internal server error'
             ], 500);
         }
     }
@@ -183,9 +188,10 @@ class SearchController extends BaseController {
             ]);
             
         } catch (\Exception $e) {
+            error_log('SearchController::clearCache error: ' . $e->getMessage());
             $this->json([
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => 'Internal server error'
             ], 500);
         }
     }

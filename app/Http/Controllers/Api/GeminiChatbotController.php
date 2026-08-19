@@ -70,10 +70,11 @@ class GeminiChatbotController extends BaseApiController
                 'actions' => $response['actions'] ?? []
             ]);
         } catch (\Exception $e) {
+            error_log('GeminiChatbotController::chat error: ' . $e->getMessage());
             http_response_code(500);
             echo json_encode([
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => 'Internal server error'
             ]);
         }
     }
@@ -102,10 +103,11 @@ class GeminiChatbotController extends BaseApiController
                 'history' => $conversations
             ]);
         } catch (\Exception $e) {
+            error_log('GeminiChatbotController::history error: ' . $e->getMessage());
             http_response_code(500);
             echo json_encode([
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => 'Internal server error'
             ]);
         }
     }
@@ -140,10 +142,11 @@ class GeminiChatbotController extends BaseApiController
                 'confidence' => $response['confidence']
             ]);
         } catch (\Exception $e) {
+            error_log('GeminiChatbotController::detectIntent error: ' . $e->getMessage());
             http_response_code(500);
             echo json_encode([
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => 'Internal server error'
             ]);
         }
     }
