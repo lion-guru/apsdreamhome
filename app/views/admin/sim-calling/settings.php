@@ -161,6 +161,7 @@ $_pageTitle = $page_title ?? 'SIM Calling Settings';
 <script>
 async function testConnection() {
     try {
+        showLoader();
         const res = await fetch('<?= BASE_URL ?>/admin/sim-calling/api/status');
         const data = await res.json();
         if (data.connected) {

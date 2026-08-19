@@ -391,6 +391,7 @@ $active_page = 'bookings';
             if (!ids.length) return showToast('No bookings selected', 'info');
             if (!confirm('Update status of ' + ids.length + ' booking(s) to ' + status + '?')) return;
 
+            showLoader();
             fetch(baseUrl + '/admin/bookings/bulk-action', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': '<?= $_SESSION['csrf_token'] ?? '' ?>'},
@@ -398,7 +399,7 @@ $active_page = 'bookings';
             }).then(r => r.json()).then(d => {
                 if (d.success) location.reload();
                 else showToast(d.error || 'Failed', 'danger');
-            });
+            ).finally(() => hideLoader());
         });
 
         bulkCancel.addEventListener('click', function() {
@@ -406,6 +407,7 @@ $active_page = 'bookings';
             if (!ids.length) return showToast('No bookings selected', 'info');
             if (!confirm('Cancel ' + ids.length + ' booking(s)?')) return;
 
+            showLoader();
             fetch(baseUrl + '/admin/bookings/bulk-action', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': '<?= $_SESSION['csrf_token'] ?? '' ?>'},
@@ -413,7 +415,7 @@ $active_page = 'bookings';
             }).then(r => r.json()).then(d => {
                 if (d.success) location.reload();
                 else showToast(d.error || 'Failed', 'danger');
-            });
+            ).finally(() => hideLoader());
         });
     });
 </script>

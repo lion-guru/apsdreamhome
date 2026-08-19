@@ -121,13 +121,14 @@ document.querySelectorAll('.lead-status').forEach(sel => {
     sel.addEventListener('change', function() {
         const leadId = this.dataset.lead;
         const status = this.value;
+        showLoader();
         fetch('<?= BASE_URL ?>/admin/social-media/leads/update-status', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-Token': '<?= $csrf ?>' },
             body: `csrf_token=<?= $csrf ?>&lead_id=${leadId}&status=${status}`
         }).then(r => r.json()).then(d => {
             if (!d.success) showToast('Update failed', 'danger');
-        });
+        ).finally(() => hideLoader());
     });
 });
 </script>

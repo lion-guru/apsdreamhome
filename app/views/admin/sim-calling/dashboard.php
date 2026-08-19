@@ -279,6 +279,7 @@ async function makeCall() {
     statusDiv.innerHTML = '<div class="alert alert-info">Initiating call...</div>';
 
     try {
+        showLoader();
         const res = await fetch('<?= BASE_URL ?>/admin/sim-calling/api/make-call', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -287,7 +288,7 @@ async function makeCall() {
                 agent_script: document.getElementById('agentScript').value,
                 caller_id: document.getElementById('callerId').value
             })
-        });
+        ).finally(() => hideLoader());
         const data = await res.json();
         if (data.success) {
             statusDiv.innerHTML = '<div class="alert alert-success"><i class="fas fa-check"></i> ' + data.message + ' (ID: ' + data.call_id + ')</div>';
@@ -309,6 +310,7 @@ function redial(phone) {
 
 async function refreshStatus() {
     try {
+        showLoader();
         const res = await fetch('<?= BASE_URL ?>/admin/sim-calling/api/status');
         const data = await res.json();
         if (data.connected) {
@@ -322,11 +324,12 @@ async function refreshStatus() {
 async function hangup(channel) {
     if (!confirm('Hangup this call?')) return;
     try {
+        showLoader();
         await fetch('<?= BASE_URL ?>/admin/sim-calling/api/hangup', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ channel })
-        });
+        ).finally(() => hideLoader());
         location.reload();
     } catch (e) {
         showToast('Hangup failed', 'danger');

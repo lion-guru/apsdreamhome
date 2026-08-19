@@ -146,6 +146,7 @@ document.querySelectorAll('.status-select').forEach(function(sel) {
     sel.addEventListener('change', function() {
         var id = this.dataset.id;
         var status = this.value;
+        showLoader();
         fetch('<?= BASE_URL ?>/admin/site-visits/' + id + '/status', {
             method: 'POST',
             headers: {
@@ -159,7 +160,7 @@ document.querySelectorAll('.status-select').forEach(function(sel) {
             } else {
                 showToast('Failed: ' + (d.error || 'Unknown error'), 'danger');
             }
-        });
+        ).finally(() => hideLoader());
     });
 });
 </script>

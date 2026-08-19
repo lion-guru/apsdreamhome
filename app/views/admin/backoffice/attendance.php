@@ -80,8 +80,9 @@ $today = $today ?? date('Y-m-d');
 document.getElementById('attendanceForm').addEventListener('submit', function(e) {
     e.preventDefault();
     var fd = new FormData(this);
+    showLoader();
     fetch('<?= BASE_URL ?>/admin/backoffice/attendance/record', {method:'POST',body:fd})
     .then(function(r){return r.json()})
-    .then(function(d){if(d.success){location.reload()}else{showToast(d.error||'Error', 'danger')}});
+    .then(function(d){if(d.success){location.reload()}else{showToast(d.error||'Error', 'danger')}).finally(() => hideLoader());
 });
 </script>

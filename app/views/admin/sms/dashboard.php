@@ -189,6 +189,7 @@ $page_title = "SMS Dashboard";
         
         function loadStats() {
             // Fetch stats from API
+            showLoader();
             fetch(`${baseUrl}/admin/sms/stats`)
                 .then(response => response.json())
                 .then(data => {
@@ -204,6 +205,7 @@ $page_title = "SMS Dashboard";
             const type = document.getElementById('typeFilter').value;
             const status = document.getElementById('statusFilter').value;
             
+            showLoader();
             fetch(`${baseUrl}/admin/sms/logs?type=${type}&status=${status}`)
                 .then(response => response.json())
                 .then(data => {
@@ -218,7 +220,7 @@ $page_title = "SMS Dashboard";
                             </td>
                         </tr>
                     `;
-                });
+                ).finally(() => hideLoader());
         }
         
         function renderSMSLogs(logs) {
@@ -263,6 +265,7 @@ $page_title = "SMS Dashboard";
             const form = document.getElementById('sendSMSForm');
             const formData = new FormData(form);
             
+            showLoader();
             fetch(`${baseUrl}/admin/sms/send`, {
                 method: 'POST',
                 body: formData
@@ -281,7 +284,7 @@ $page_title = "SMS Dashboard";
             .catch(error => {
                 console.error('Error:', error);
                 showToast('Error sending SMS', 'danger');
-            });
+            ).finally(() => hideLoader());
         }
         
         function viewDetails(id) {

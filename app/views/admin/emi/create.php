@@ -149,6 +149,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             
             const formData = new FormData(this);
             
+            showLoader();
             fetch(this.action, {
                 method: 'POST',
                 body: formData
@@ -165,7 +166,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             .catch(error => {
                 console.error('Error:', error);
                 showToast('An error occurred while creating EMI plan', 'danger');
-            });
+            ).finally(() => hideLoader());
         });
     </script>
 

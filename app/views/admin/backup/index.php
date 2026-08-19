@@ -276,6 +276,7 @@ document.addEventListener('DOMContentLoaded', function () {
     btn.addEventListener('click', function () {
         btn.disabled = true;
         btn.querySelector('i').classList.add('fa-spin');
+        showLoader();
         fetch('<?= htmlspecialchars($baseUrl ?? '') ?>/admin/backup/health', { credentials: 'same-origin' })
             .then(function (r) { return r.ok ? r.json() : { status: 'unknown' }; })
             .then(function (j) {
@@ -284,7 +285,7 @@ document.addEventListener('DOMContentLoaded', function () {
                           ' | Last: ' + (j.last_backup_at || 'never');
                 showToast(msg, 'info');
             })
-            .catch(function (e) { showToast('Health check failed: ' + e.message, 'danger'); })
+            .catch(function (e) { showToast('Health check failed: ' + e.message, 'danger'); }).finally(() => hideLoader());
             .finally(function () {
                 btn.disabled = false;
                 btn.querySelector('i').classList.remove('fa-spin');

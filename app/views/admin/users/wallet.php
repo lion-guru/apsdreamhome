@@ -124,13 +124,15 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
 <script>
 function creditWallet() {
+    showLoader();
     fetch('<?= $base ?>/admin/users/<?= $user['id'] ?>/wallet/credit', {
         method: 'POST', headers: {'X-Requested-With': 'XMLHttpRequest'}, body: new URLSearchParams(new FormData(document.getElementById('creditForm')))
-    }).then(r => r.json()).then(d => { showToast(d.message || d.error, 'danger'); if (d.success) location.reload(); }).catch(() => showToast('Error', 'danger'));
+    }).then(r => r.json()).then(d => { showToast(d.message || d.error, 'danger'); if (d.success) location.reload(); }).catch(() => showToast('Error', 'danger')).finally(() => hideLoader());
 }
 function debitWallet() {
+    showLoader();
     fetch('<?= $base ?>/admin/users/<?= $user['id'] ?>/wallet/debit', {
         method: 'POST', headers: {'X-Requested-With': 'XMLHttpRequest'}, body: new URLSearchParams(new FormData(document.getElementById('debitForm')))
-    }).then(r => r.json()).then(d => { showToast(d.message || d.error, 'danger'); if (d.success) location.reload(); }).catch(() => showToast('Error', 'danger'));
+    }).then(r => r.json()).then(d => { showToast(d.message || d.error, 'danger'); if (d.success) location.reload(); }).catch(() => showToast('Error', 'danger')).finally(() => hideLoader());
 }
 </script>

@@ -265,11 +265,13 @@ function toggleSub(id, active) {
     const fd = new FormData();
     fd.append('id', id);
     fd.append('active', active);
+    showLoader();
     fetch('<?= BASE_URL ?>/admin/property-alerts/toggle', { method: 'POST', body: fd })
         .then(r => r.json())
-        .then(d => { if (!d.success) showToast('Update failed', 'danger'); });
+        .then(d => { if (!d.success) showToast('Update failed', 'danger'); ).finally(() => hideLoader());
 }
 function testMatch(id) {
+    showLoader();
     fetch('<?= BASE_URL ?>/admin/property-alerts/test-match?id=' + id)
         .then(r => r.json())
         .then(d => {
@@ -278,7 +280,7 @@ function testMatch(id) {
             } else {
                 showToast('Error: ' + (d.error || 'Unknown'), 'danger');
             }
-        });
+        ).finally(() => hideLoader());
 }
 </script>
 

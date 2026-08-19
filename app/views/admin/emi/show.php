@@ -225,6 +225,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             formData.append('payment_method', document.getElementById('paymentMethod').value);
             formData.append('transaction_id', document.getElementById('transactionId').value);
             
+            showLoader();
             fetch('<?php echo $base; ?>/admin/emi/payment/<?php echo $emi_plan['id'] ?? 0; ?>', {
                 method: 'POST',
                 body: formData
@@ -241,7 +242,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             .catch(error => {
                 console.error('Error:', error);
                 showToast('An error occurred', 'danger');
-            });
+            ).finally(() => hideLoader());
             
             paymentModal.hide();
         }

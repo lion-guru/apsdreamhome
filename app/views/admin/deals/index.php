@@ -197,6 +197,7 @@ $page_title = 'Deal Tracking - APS Dream Home';
         }
 
         var csrf = '<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>';
+        showLoader();
         fetch('<?= BASE_URL ?>/admin/deals/' + dealId + '/stage', {
                 method: 'POST',
                 headers: {
@@ -214,6 +215,6 @@ $page_title = 'Deal Tracking - APS Dream Home';
             })
             .catch(error => {
                 showToast('Error updating deal stage', 'danger');
-            });
+            ).finally(() => hideLoader());
     }
 </script>

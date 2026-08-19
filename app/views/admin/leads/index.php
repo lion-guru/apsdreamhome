@@ -292,6 +292,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let value = action === 'status' ? bulkStatus.value : bulkAssign.value;
         if (!value) { showToast('Select a value first', 'info'); return; }
 
+        showLoader();
         fetch('<?= $base ?>/admin/leads/bulk-action', {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': '<?= $_SESSION['csrf_token'] ?? '' ?>'},
@@ -299,13 +300,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }).then(r => r.json()).then(d => {
             if (d.success) location.reload();
             else showToast(d.error || 'Failed', 'danger');
-        });
+        ).finally(() => hideLoader());
     });
 
     bulkDelete.addEventListener('click', function() {
         const ids = getSelected();
         if (!confirm('Delete ' + ids.length + ' leads?')) return;
 
+        showLoader();
         fetch('<?= $base ?>/admin/leads/bulk-action', {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': '<?= $_SESSION['csrf_token'] ?? '' ?>'},
@@ -313,7 +315,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }).then(r => r.json()).then(d => {
             if (d.success) location.reload();
             else showToast(d.error || 'Failed', 'danger');
-        });
+        ).finally(() => hideLoader());
     });
 });
 </script>

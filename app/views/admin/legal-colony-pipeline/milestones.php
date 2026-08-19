@@ -258,6 +258,7 @@ $completionPct = $stats['total'] > 0 ? round(($stats['completed'] / $stats['tota
 <script>
 function updateMilestone(id, status) {
   const notes = prompt('Add notes (optional):') || '';
+  showLoader();
   fetch('/admin/legal-colony-pipeline/update-milestone', {
     method: 'POST',
     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -271,6 +272,6 @@ function updateMilestone(id, status) {
       showToast('Error: ' + (data.error || 'Unknown'), 'danger');
     }
   })
-  .catch(e => showToast('Request failed', 'danger'));
+  .catch(e => showToast('Request failed', 'danger')).finally(() => hideLoader());
 }
 </script>

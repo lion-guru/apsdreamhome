@@ -104,6 +104,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
 
             const formData = new FormData(this);
 
+            showLoader();
             fetch(this.action, {
                 method: 'POST',
                 body: formData,
@@ -133,7 +134,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 console.error('Error:', error);
                 // On network error, try redirecting anyway
                 window.location.href = '<?php echo $base; ?>/admin/users';
-            });
+            ).finally(() => hideLoader());
         });
     </script>
 

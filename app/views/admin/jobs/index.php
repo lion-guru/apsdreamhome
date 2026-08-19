@@ -103,6 +103,7 @@ $error = $error ?? null;
 <script>
 function deleteJob(id) {
     if (confirm('Are you sure you want to delete this job posting? All applications will also be deleted.')) {
+        showLoader();
         fetch('<?php echo $base; ?>/admin/jobs/manage/' + id + '/delete', {
             method: 'POST',
             headers: {
@@ -116,7 +117,7 @@ function deleteJob(id) {
             } else {
                 showToast('Error: ' + data.error, 'danger');
             }
-        });
+        ).finally(() => hideLoader());
     }
 }
 </script>

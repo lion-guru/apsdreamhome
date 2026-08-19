@@ -96,6 +96,7 @@
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
 
+        showLoader();
         fetch('<?= BASE_URL ?>/admin/news', {
                 method: 'POST',
                 body: formData
@@ -114,7 +115,7 @@
                 showToast('An error occurred', 'danger');
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-save"></i> Create Article';
-            });
+            ).finally(() => hideLoader());
     });
 
     document.getElementById('image').addEventListener('change', function(e) {

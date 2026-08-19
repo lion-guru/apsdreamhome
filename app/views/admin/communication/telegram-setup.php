@@ -169,6 +169,7 @@ document.getElementById('telegramTestForm').addEventListener('submit', function(
     formData.append('message', this.querySelector('[name="message"]').value);
     formData.append('csrf_token', '<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>');
 
+    showLoader();
     fetch('<?= BASE_URL ?>/admin/communication/test-send', {
         method: 'POST',
         body: formData
@@ -188,5 +189,5 @@ document.getElementById('telegramTestForm').addEventListener('submit', function(
         btn.innerHTML = originalText;
         btn.disabled = false;
     });
-});
+).finally(() => hideLoader());
 </script>

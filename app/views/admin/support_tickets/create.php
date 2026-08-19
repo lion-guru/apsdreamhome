@@ -100,6 +100,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             e.preventDefault();
             const formData = new FormData(this);
             
+            showLoader();
             fetch(this.action, {
                 method: 'POST',
                 body: formData
@@ -116,7 +117,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             .catch(error => {
                 console.error('Error:', error);
                 showToast('An error occurred', 'danger');
-            });
+            ).finally(() => hideLoader());
         });
     </script>
 

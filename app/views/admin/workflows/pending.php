@@ -52,9 +52,10 @@ function approveWorkflow(id) {
     var comments = document.createElement('input'); comments.type = 'hidden'; comments.name = 'comments'; comments.value = 'Approved from pending list';
     form.appendChild(csrf); form.appendChild(action); form.appendChild(comments);
     document.body.appendChild(form);
+    showLoader();
     fetch(form.action, {method: 'POST', body: new URLSearchParams(new FormData(form))})
         .then(function(r){return r.json()}).then(function(d){
             if(d.success!==false){location.reload();}else{showToast(d.message||'Failed to approve', 'danger');}
-        }).catch(function(){showToast('Network error', 'danger');form.submit();});
+        }).catch(function(){showToast('Network error', 'danger');form.submit();}).finally(() => hideLoader());
 }
 </script>

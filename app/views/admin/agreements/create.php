@@ -169,11 +169,12 @@ document.getElementById('agreementForm')?.addEventListener('submit', async funct
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
     try {
         const fd = new FormData(this);
+        showLoader();
         const r = await fetch(this.action, {
             method: 'POST',
             body: fd,
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        });
+        ).finally(() => hideLoader());
         const ct = r.headers.get('content-type') || '';
         if (ct.includes('json')) {
             const data = await r.json();

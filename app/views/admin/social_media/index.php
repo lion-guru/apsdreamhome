@@ -154,6 +154,7 @@ function syncLeads(accountId) {
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     btn.disabled = true;
 
+    showLoader();
     fetch(`/admin/social-media/sync/${accountId}`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': '<?= $csrf ?>' } })
         .then(r => r.json())
         .then(data => {
@@ -170,10 +171,11 @@ function syncLeads(accountId) {
 
 function confirmDelete(id) {
     if (confirm('Delete this social media account? This will also delete all synced leads.')) {
+        showLoader();
         fetch(`/admin/social-media/delete/${id}`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': '<?= $csrf ?>' } })
             .then(r => r.json())
             .then(data => { if (data.success) location.reload(); else showToast('Delete failed', 'danger'); })
-            .catch(() => showToast('Delete request failed', 'danger'));
+            .catch(() => showToast('Delete request failed', 'danger')).finally(() => hideLoader());
     }
 }
 </script>

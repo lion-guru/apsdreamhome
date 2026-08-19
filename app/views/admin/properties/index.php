@@ -268,6 +268,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!ids.length) return showToast('No properties selected', 'info');
         if (!confirm('Update status of ' + ids.length + ' propert(ies) to ' + status + '?')) return;
 
+        showLoader();
         fetch('<?= BASE_URL ?>/admin/properties/bulk-update', {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': '<?= $_SESSION['csrf_token'] ?? '' ?>'},
@@ -275,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }).then(r => r.json()).then(d => {
             if (d.success) location.reload();
             else showToast(d.error || 'Failed', 'danger');
-        });
+        ).finally(() => hideLoader());
     });
 });
 </script>

@@ -72,6 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var meta = document.querySelector('textarea[name="meta_description"]');
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+        showLoader();
         fetch('<?php echo BASE_URL; ?>/ai/content/blog-draft', { method: 'POST', body: fd })
             .then(function (r) { return r.json(); })
             .then(function (d) {
@@ -82,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     showToast('AI generation failed. Please try again.', 'danger');
                 }
             })
-            .catch(function () { showToast('AI generation failed. Please try again.', 'danger'); })
+            .catch(function () { showToast('AI generation failed. Please try again.', 'danger'); }).finally(() => hideLoader());
             .finally(function () {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-magic"></i> Generate with AI (Hindi + English)';

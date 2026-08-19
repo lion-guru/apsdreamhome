@@ -115,6 +115,7 @@ document.getElementById('createJobForm').addEventListener('submit', function(e) 
     
     const formData = new FormData(this);
     
+    showLoader();
     fetch(this.action, {
         method: 'POST',
         body: formData,
@@ -133,6 +134,6 @@ document.getElementById('createJobForm').addEventListener('submit', function(e) 
     })
     .catch(error => {
         showToast('Error posting job. Please try again.', 'danger');
-    });
+    ).finally(() => hideLoader());
 });
 </script>

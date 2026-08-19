@@ -170,6 +170,7 @@ document.getElementById('testimonialActionForm').addEventListener('submit', func
     
     const formData = new FormData(this);
     
+    showLoader();
     fetch('<?php echo BASE_URL; ?>/admin/testimonials/<?php echo $t['id'] ?? 0; ?>/status', {
         method: 'POST',
         body: formData,
@@ -185,11 +186,12 @@ document.getElementById('testimonialActionForm').addEventListener('submit', func
         } else {
             showToast('Error: ' + data.error, 'danger');
         }
-    });
+    ).finally(() => hideLoader());
 });
 
 function deleteTestimonial(id) {
     if (confirm('Are you sure you want to delete this testimonial?')) {
+        showLoader();
         fetch('<?php echo BASE_URL; ?>/admin/testimonials/' + id + '/delete', {
             method: 'POST',
             headers: {
@@ -203,7 +205,7 @@ function deleteTestimonial(id) {
             } else {
                 showToast('Error: ' + data.error, 'danger');
             }
-        });
+        ).finally(() => hideLoader());
     }
 }
 </script>

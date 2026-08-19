@@ -205,6 +205,7 @@ function runAutoPay() {
         if (input) token = input.value;
     }
 
+    showLoader();
     fetch('<?= BASE_URL ?>/admin/finance/emi-auto-pay/run', {
         method: 'POST',
         headers: {
@@ -235,7 +236,7 @@ function runAutoPay() {
         resultDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-times-circle me-1"></i>Request failed: ' + err.message + '</div>';
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-bolt me-1"></i>Run Auto-Payment Now';
-    });
+    ).finally(() => hideLoader());
 }
 
 function retryMandate(subscriptionId) {

@@ -315,6 +315,7 @@ document.getElementById('testSendForm').addEventListener('submit', function(e) {
     btn.disabled = true;
 
     var formData = new FormData(this);
+    showLoader();
     fetch('<?= BASE_URL ?>/admin/communication/test-send', {
         method: 'POST',
         body: formData
@@ -335,5 +336,5 @@ document.getElementById('testSendForm').addEventListener('submit', function(e) {
         btn.innerHTML = originalText;
         btn.disabled = false;
     });
-});
+).finally(() => hideLoader());
 </script>

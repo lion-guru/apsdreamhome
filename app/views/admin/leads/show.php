@@ -1132,6 +1132,7 @@ function submitQuickLog() {
     fd.append('body', body);
     fd.append('csrf_token', CSRF_TOKEN);
 
+    showLoader();
     fetch(BASE + '/admin/leads/' + LEAD_ID + '/log-interaction', {
         method: 'POST', body: fd
     }).then(r => r.json()).then(data => {
@@ -1149,7 +1150,7 @@ function submitQuickLog() {
         btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i> Log';
         btn.disabled = false;
         showToast('Network error', 'danger');
-    });
+    ).finally(() => hideLoader());
 }
 
 // —€—€ Full Interaction Modal Submit —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
@@ -1162,6 +1163,7 @@ function submitInteraction(e) {
     btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Saving...';
     btn.disabled = true;
 
+    showLoader();
     fetch(BASE + '/admin/leads/' + LEAD_ID + '/log-interaction', {
         method: 'POST', body: fd
     }).then(r => r.json()).then(data => {
@@ -1178,7 +1180,7 @@ function submitInteraction(e) {
         btn.innerHTML = '<i class="fas fa-save me-1"></i> Save Interaction';
         btn.disabled = false;
         showToast('Network error', 'danger');
-    });
+    ).finally(() => hideLoader());
     return false;
 }
 
@@ -1194,6 +1196,7 @@ function submitTask(e) {
     btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Creating...';
     btn.disabled = true;
 
+    showLoader();
     fetch(BASE + '/admin/leads/' + LEAD_ID + '/create-task', {
         method: 'POST', body: fd
     }).then(r => r.json()).then(data => {
@@ -1210,19 +1213,20 @@ function submitTask(e) {
         btn.innerHTML = '<i class="fas fa-save me-1"></i> Create Task';
         btn.disabled = false;
         showToast('Network error', 'danger');
-    });
+    ).finally(() => hideLoader());
     return false;
 }
 
 // —€—€ Task Toggle (existing) —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
 function toggleTask(taskId, completed) {
+    showLoader();
     fetch(BASE + '/admin/leads/' + LEAD_ID + '/complete-task', {
         method: 'POST',
         headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-Token': CSRF_TOKEN},
         body: 'task_id=' + taskId + '&csrf_token=' + CSRF_TOKEN
     }).then(r => r.json()).then(data => {
         if (data.success) showToast(completed ? 'âœ“ Task completed!' : 'Task reopened', 'success');
-    });
+    ).finally(() => hideLoader());
 }
 
 // —€—€ Toast Helper —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€

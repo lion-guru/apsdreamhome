@@ -219,6 +219,7 @@ function submitTransfer() {
     result.textContent = 'Transferring call...';
     result.classList.remove('d-none');
 
+    showLoader();
     fetch('<?= BASE_URL ?>/admin/voice-agents/transfer-call', {
         method: 'POST',
         headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': window.CSRF_TOKEN || ''},
@@ -238,11 +239,12 @@ function submitTransfer() {
     .catch(e => {
         result.className = 'alert alert-danger';
         result.textContent = 'Error: ' + e.message;
-    });
+    ).finally(() => hideLoader());
 }
 
 function hangupCall(callSid) {
     if (!confirm('Hangup this call? This action cannot be undone.')) return;
+    showLoader();
     fetch('<?= BASE_URL ?>/admin/voice-agents/hangup-call', {
         method: 'POST',
         headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': window.CSRF_TOKEN || ''},
@@ -257,7 +259,7 @@ function hangupCall(callSid) {
             showToast('Hangup failed: ' + (data.error || 'unknown'), 'danger');
         }
     })
-    .catch(e => showToast('Error: ' + e.message, 'danger'));
+    .catch(e => showToast('Error: ' + e.message, 'danger')).finally(() => hideLoader());
 }
 
 // Auto-refresh every 5s

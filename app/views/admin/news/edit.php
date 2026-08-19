@@ -106,6 +106,7 @@
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
 
+        showLoader();
         fetch('<?= BASE_URL ?>/admin/news/<?= $news['id'] ?>/update', {
                 method: 'POST',
                 body: formData
@@ -124,7 +125,7 @@
                 showToast('An error occurred', 'danger');
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Article';
-            });
+            ).finally(() => hideLoader());
     });
 
     document.getElementById('image').addEventListener('change', function(e) {

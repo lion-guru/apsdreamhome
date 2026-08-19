@@ -160,6 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const menuId = this.dataset.menuId;
             const canView = this.checked ? 1 : 0;
 
+            showLoader();
             fetch('<?php echo BASE_URL; ?>/admin/menu-permissions/update-role', {
                 method: 'POST',
                 headers: {
@@ -186,12 +187,13 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => {
                 console.error('Error:', error);
                 showToast('Error updating permission', 'danger');
-            });
+            ).finally(() => hideLoader());
         });
     });
 
     // Load users for user permissions tab
     document.getElementById('user-permissions-tab').addEventListener('click', function() {
+        showLoader();
         fetch('<?php echo BASE_URL; ?>/admin/menu-permissions/get-users')
             .then(response => response.json())
             .then(data => {
@@ -203,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         option.value = user.id;
                         option.textContent = `${user.name} (${user.role})`;
                         select.appendChild(option);
-                    });
+                    ).finally(() => hideLoader());
                 }
             });
     });
@@ -220,6 +222,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('userPermissionsContent').style.display = 'block';
 
         // Load user's custom permissions
+        showLoader();
         fetch('<?php echo BASE_URL; ?>/admin/menu-permissions/get-user-permissions?user_id=' + userId)
             .then(response => response.json())
             .then(data => {
@@ -284,7 +287,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 `;
                                 tbody.appendChild(row);
                             }
-                        });
+                        ).finally(() => hideLoader());
                     }
                     
                     renderMenuItems(menuItems);
@@ -304,6 +307,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             const canEdit = row.querySelector('[data-perm="can_edit"]').checked ? 1 : 0;
                             const canDelete = row.querySelector('[data-perm="can_delete"]').checked ? 1 : 0;
 
+                            showLoader();
                             fetch('<?php echo BASE_URL; ?>/admin/menu-permissions/update-user', {
                                 method: 'POST',
                                 headers: {
@@ -325,7 +329,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                         actionCell.innerHTML = '<span class="text-muted">No custom permission</span>';
                                     }
                                 }
-                            });
+                            ).finally(() => hideLoader());
                         });
                     });
 
@@ -345,6 +349,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        showLoader();
         fetch('<?php echo BASE_URL; ?>/admin/menu-permissions/revoke-user', {
             method: 'POST',
             headers: {
@@ -358,7 +363,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Refresh the user permissions
                 document.getElementById('userSelect').dispatchEvent(new Event('change'));
             }
-        });
+        ).finally(() => hideLoader());
     }
 });
 </script>

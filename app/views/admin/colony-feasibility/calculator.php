@@ -277,6 +277,7 @@ document.getElementById('previewBtn')?.addEventListener('click', function() {
   params.set('ga_pct', data.get('office_overhead_pct') || 5);
   params.set('mlm_pct', data.get('mlm_budget_pct') || 25);
 
+  showLoader();
   fetch('<?= BASE_URL ?>/admin/colony-feasibility/<?= (int)($colony['id'] ?? 0) ?>/preview?' + params.toString())
     .then(r => r.json())
     .then(d => {
@@ -286,6 +287,6 @@ document.getElementById('previewBtn')?.addEventListener('click', function() {
         showToast('Preview failed: ' + d.error, 'danger');
       }
     })
-    .catch(e => showToast('Network error', 'danger'));
+    .catch(e => showToast('Network error', 'danger')).finally(() => hideLoader());
 });
 </script>

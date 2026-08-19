@@ -195,6 +195,7 @@ $stageIcons = [
     });
 
     function updateDealStage(dealId, stage) {
+        showLoader();
         fetch(baseUrl + '/admin/deals/' + dealId + '/stage', {
                 method: 'POST',
                 headers: {
@@ -212,6 +213,6 @@ $stageIcons = [
             .catch(error => {
                 console.error('Error:', error);
                 location.reload();
-            });
+            ).finally(() => hideLoader());
     }
 </script>
