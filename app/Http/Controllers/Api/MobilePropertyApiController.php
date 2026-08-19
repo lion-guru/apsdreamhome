@@ -831,6 +831,32 @@ class MobilePropertyApiController extends BaseController
         }
     }
 
+    public function getFeaturedProperties()
+    {
+        $this->setCorsHeaders();
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+            list($tSql, $tParams) = $this->tenantWhere();
+            $tCond = !empty($tSql) ? " AND p.tenant_id = ?" : "";
+            $stmt = $pdo->prepare("
+                SELECT p.*, pt.type as property_type_name,
+                       (SELECT image_path FROM property_images WHERE property_id = p.id ORDER BY is_primary DESC LIMIT 1) as main_image
+                FROM properties p
+                LEFT JOIN property_types pt ON p.property_type_id = pt.id
+                WHERE p.featured = 1 AND p.status = 'active' {$tCond}
+                ORDER BY p.created_at DESC
+                LIMIT 20
+            ");
+            $stmt->execute($tParams);
+            $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode(['success' => true, 'data' => $properties]);
+        } catch (\Throwable $e) {
+            error_log('[MobilePropertyApiController] getFeaturedProperties: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch featured properties']);
+        }
+    }
+
     public function propertyDetail($id)
     {
         $this->setCorsHeaders();

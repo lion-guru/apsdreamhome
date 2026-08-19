@@ -29,7 +29,8 @@
 
             <div class="card">
                 <div class="card-body">
-                    <form method="POST" action="<?= $department ? '/admin/departments/' . $department['id'] . '/update' : '/admin/departments/store' ?>">
+                    <form method="POST" action="<?= $department ? '/admin/departments/' . $department['id'] . '/update' : '/admin/departments/store' ?>
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">">
     <?php echo CSRFProtection::csrfField(); ?>
                         <div class="row">
                             <div class="col-md-6">

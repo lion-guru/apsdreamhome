@@ -198,7 +198,8 @@ $page_title = "SMS Dashboard";
                     document.getElementById('otpSent').textContent = data.otp_sent || 0;
                     document.getElementById('todaySent').textContent = data.today_sent || 0;
                 })
-                .catch(error => console.error('Error loading stats:', error));
+                .catch(error => console.error('Error loading stats:', error))
+                .finally(() => hideLoader());
         }
         
         function loadSMSLogs() {
@@ -220,7 +221,7 @@ $page_title = "SMS Dashboard";
                             </td>
                         </tr>
                     `;
-                ).finally(() => hideLoader());
+                }).finally(() => hideLoader());
         }
         
         function renderSMSLogs(logs) {

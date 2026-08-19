@@ -12,7 +12,8 @@ $leads = $leads ?? [];
         </div>
         <div class="d-flex gap-2">
             <a href="<?= BASE_URL ?>/admin/crm/segments" class="btn btn-secondary"><i class="fas fa-arrow-left me-1"></i> Back</a>
-            <form method="POST" action="<?= BASE_URL ?>/admin/crm/bulk-send" class="d-inline">
+            <form method="POST" action="<?= BASE_URL ?>
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/crm/bulk-send" class="d-inline">
     <?php echo CSRFProtection::csrfField(); ?>
                 <input type="hidden" name="segment_id" value="<?= $segment['id'] ?? '' ?>">
                 <button class="btn btn-success"><i class="fas fa-paper-plane me-1"></i> Bulk Send to Segment</button>

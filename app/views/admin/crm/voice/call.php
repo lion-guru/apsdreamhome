@@ -54,7 +54,6 @@ function endCall() {
     document.getElementById('btn-call').disabled = false;
     document.getElementById('btn-end').disabled = true;
     document.getElementById('btn-mute').disabled = true;
-    showLoader();
     if(callSeconds>0){fetch('<?= BASE_URL ?>/admin/crm/voice/note',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lead_id:leadId,transcript:'Call duration: '+callSeconds+' seconds'})});}
     callSeconds=0;
 }
@@ -73,13 +72,13 @@ function saveNote(){
     const text=document.getElementById('note-text').value.trim();if(!text)return;
     showLoader();
     fetch('<?= BASE_URL ?>/admin/crm/voice/note',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lead_id:leadId,transcript:text})})
-    .then(r=>r.json()).then(d=>{if(d.success){document.getElementById('note-text').value='';showToast('Note saved!', 'success');}).finally(() => hideLoader());
+    .then(r=>r.json()).then(d=>{if(d.success){document.getElementById('note-text').value='';showToast('Note saved!', 'success');}}).finally(() => hideLoader());
 }
 
 function sendCommand(){
     const cmd=document.getElementById('voice-cmd').value.trim();if(!cmd)return;
     showLoader();
     fetch('<?= BASE_URL ?>/admin/crm/voice/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:cmd})})
-    .then(r=>r.json()).then(d=>{document.getElementById('cmd-result').innerHTML='<div class="alert alert-info mb-0">'+d.message+'</div>';).finally(() => hideLoader());
+    .then(r=>r.json()).then(d=>{document.getElementById('cmd-result').innerHTML='<div class="alert alert-info mb-0">'+d.message+'</div>';}).finally(() => hideLoader());
 }
 </script>

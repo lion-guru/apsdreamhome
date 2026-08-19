@@ -31,6 +31,7 @@ $_pageTitle = $page_title ?? 'SIM Calling Settings';
                             <h3 class="card-title"><i class="fas fa-server"></i> Asterisk AMI Configuration</h3>
                         </div>
                         <form method="POST">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
     <?php echo CSRFProtection::csrfField(); ?>
                             <div class="card-body">
                                 <div class="row">
@@ -171,6 +172,8 @@ async function testConnection() {
         }
     } catch (e) {
         showToast('Connection failed: ' + e.message, 'danger');
+    } finally {
+        hideLoader();
     }
 }
 </script>

@@ -39,7 +39,8 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         <div class="col-md-7">
             <div class="listing-card">
                 <h5><i class="fas fa-sliders-h me-2"></i>General Settings</h5>
-                <form method="POST" action="<?= $base ?>/admin/listing-settings/update">
+                <form method="POST" action="<?= $base ?>
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/listing-settings/update">
     <?php echo CSRFProtection::csrfField(); ?>
                     <?php foreach ($settings as $s): ?>
                     <div class="setting-row">
@@ -60,7 +61,8 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             <div class="listing-card">
                 <h5><i class="fas fa-box me-2"></i>Listing Packages</h5>
                 <?php foreach ($packages as $pkg): ?>
-                <form method="POST" action="<?= $base ?>/admin/listing-settings/package/update" class="style-78037">
+                <form method="POST" action="<?= $base ?>
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/listing-settings/package/update" class="style-78037">
     <?php echo CSRFProtection::csrfField(); ?>
                     <input type="hidden" name="id" value="<?= $pkg['id'] ?>">
                     <div class="d-flex align-items-center gap-2 mb-2">

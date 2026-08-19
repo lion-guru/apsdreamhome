@@ -29,7 +29,8 @@
 
             <div class="card">
                 <div class="card-body">
-                    <form method="POST" action="<?= $designation ? '/admin/designations/' . $designation['id'] . '/update' : '/admin/designations/store' ?>">
+                    <form method="POST" action="<?= $designation ? '/admin/designations/' . $designation['id'] . '/update' : '/admin/designations/store' ?>
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">">
     <?php echo CSRFProtection::csrfField(); ?>
                         <div class="row">
                             <div class="col-md-5">
@@ -44,10 +45,10 @@
                                 <div class="form-group">
                                     <label>Department *</label>
                                     <select name="department_id" class="form-control" required>
-                                        <option value="">— Select Department —</option>
+                                        <option value=""> Select Department </option>
                                         <?php foreach ($departments as $d): ?>
                                             <option value="<?= $d['id'] ?>" <?= ($designation['department_id'] ?? '') == $d['id'] ? 'selected' : '' ?>>
-                                                <?= htmlspecialchars($d['code'] . ' — ' . $d['name'] ?? '') ?>
+                                                <?= htmlspecialchars($d['code'] . '  ' . $d['name'] ?? '') ?>
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
@@ -57,11 +58,11 @@
                                 <div class="form-group">
                                     <label>Level *</label>
                                     <select name="level" class="form-control" required>
-                                        <option value="1" <?= ($designation['level'] ?? 1) == 1 ? 'selected' : '' ?>>1 — Junior</option>
-                                        <option value="2" <?= ($designation['level'] ?? 1) == 2 ? 'selected' : '' ?>>2 — Executive</option>
-                                        <option value="3" <?= ($designation['level'] ?? 1) == 3 ? 'selected' : '' ?>>3 — Senior</option>
-                                        <option value="4" <?= ($designation['level'] ?? 1) == 4 ? 'selected' : '' ?>>4 — Manager</option>
-                                        <option value="5" <?= ($designation['level'] ?? 1) == 5 ? 'selected' : '' ?>>5 — Director</option>
+                                        <option value="1" <?= ($designation['level'] ?? 1) == 1 ? 'selected' : '' ?>>1  Junior</option>
+                                        <option value="2" <?= ($designation['level'] ?? 1) == 2 ? 'selected' : '' ?>>2  Executive</option>
+                                        <option value="3" <?= ($designation['level'] ?? 1) == 3 ? 'selected' : '' ?>>3  Senior</option>
+                                        <option value="4" <?= ($designation['level'] ?? 1) == 4 ? 'selected' : '' ?>>4  Manager</option>
+                                        <option value="5" <?= ($designation['level'] ?? 1) == 5 ? 'selected' : '' ?>>5  Director</option>
                                     </select>
                                 </div>
                             </div>

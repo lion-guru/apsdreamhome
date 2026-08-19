@@ -132,7 +132,8 @@
                                             <a href="<?= BASE_URL ?>/admin/departments/<?= $dept['id'] ?>/edit" class="btn btn-sm btn-outline-primary" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <form method="POST" action="<?= BASE_URL ?>/admin/departments/<?= $dept['id'] ?>/delete" class="style-71727" onsubmit="return confirm('Delete this department? Designations will be orphaned.')">
+                                            <form method="POST" action="<?= BASE_URL ?>
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/departments/<?= $dept['id'] ?>/delete" class="style-71727" onsubmit="return confirm('Delete this department? Designations will be orphaned.')">
     <?php echo CSRFProtection::csrfField(); ?>
                                                 <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="fas fa-trash"></i></button>
                                             </form>

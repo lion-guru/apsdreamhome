@@ -124,7 +124,8 @@ $statusBadgeClass = [
         <h5><i class="fas fa-cogs me-2" class="style-22437"></i>Actions</h5>
         <div class="style-83366">
             <?php if ($agreement['status'] === 'draft'): ?>
-                <form method="POST" action="<?= $base ?>/admin/agent-agreements/send/<?= (int)$agreement['id'] ?>">
+                <form method="POST" action="<?= $base ?>
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/agent-agreements/send/<?= (int)$agreement['id'] ?>">
     <?php echo CSRFProtection::csrfField(); ?>
                     <button type="submit" class="btn btn-warning btn-sm">
                         <i class="fas fa-paper-plane me-1"></i>Send for Signature
@@ -132,14 +133,16 @@ $statusBadgeClass = [
                 </form>
             <?php endif; ?>
             <?php if ($agreement['status'] === 'pending'): ?>
-                <form method="POST" action="<?= $base ?>/admin/agent-agreements/sign/<?= (int)$agreement['id'] ?>">
+                <form method="POST" action="<?= $base ?>
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/agent-agreements/sign/<?= (int)$agreement['id'] ?>">
     <?php echo CSRFProtection::csrfField(); ?>
                     <button type="submit" class="btn btn-success btn-sm">
                         <i class="fas fa-check me-1"></i>Sign Agreement
                     </button>
                 </form>
             <?php endif; ?>
-            <form method="POST" action="<?= $base ?>/admin/agent-agreements/cancel/<?= (int)$agreement['id'] ?>">
+            <form method="POST" action="<?= $base ?>
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/agent-agreements/cancel/<?= (int)$agreement['id'] ?>">
     <?php echo CSRFProtection::csrfField(); ?>
                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to cancel this agreement?')">
                     <i class="fas fa-times me-1"></i>Cancel Agreement

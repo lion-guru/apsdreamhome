@@ -142,6 +142,7 @@ function autoAdvance() {
   .finally(() => {
     btn.disabled = false;
     btn.innerHTML = '<i class="fas fa-forward me-1"></i> Auto-Advance';
+    hideLoader();
   });
 }
 </script>

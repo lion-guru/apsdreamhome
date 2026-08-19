@@ -317,7 +317,9 @@ async function refreshStatus() {
             location.reload();
         }
     } catch (e) {
-        // Asterisk not reachable — silent fail, no alert
+        // Asterisk not reachable — silent fail
+    } finally {
+        hideLoader();
     }
 }
 

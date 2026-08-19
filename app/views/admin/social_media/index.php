@@ -166,7 +166,7 @@ function syncLeads(accountId) {
             }
         })
         .catch(() => showToast('Sync request failed', 'danger'))
-        .finally(() => { btn.innerHTML = originalHtml; btn.disabled = false; });
+        .finally(() => { btn.innerHTML = originalHtml; btn.disabled = false; hideLoader(); });
 }
 
 function confirmDelete(id) {

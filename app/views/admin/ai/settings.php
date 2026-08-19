@@ -54,6 +54,7 @@ $engine_status = $engine_status ?? [];
     <div class="card" class="style-61451">
         <div class="card-body p-4">
             <form method="POST">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="row g-4">
                     <!-- Groq -->

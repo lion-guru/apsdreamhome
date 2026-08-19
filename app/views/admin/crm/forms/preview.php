@@ -38,7 +38,8 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
             <?php if (!empty($form['description'])): ?><p><?= htmlspecialchars($form['description'] ?? '') ?></p><?php endif; ?>
         </div>
         <div class="form-body">
-            <form id="previewForm" method="POST" action="<?= $baseUrl ?>/api/leads">
+            <form id="previewForm" method="POST" action="<?= $baseUrl ?>
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/api/leads">
     <?php echo CSRFProtection::csrfField(); ?>
                 <input type="hidden" name="form_id" value="<?= $form['id'] ?? '' ?>">
                 <?php foreach ($fields as $field): ?>

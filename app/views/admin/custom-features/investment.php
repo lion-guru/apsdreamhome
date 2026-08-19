@@ -22,7 +22,8 @@ $base = BASE_URL;
                     <h5 class="mb-0">Calculate Investment</h5>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="<?= $base ?>/admin/custom-features/investment-calculate">
+                    <form method="POST" action="<?= $base ?>
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/custom-features/investment-calculate">
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Property Price (₹)</label>

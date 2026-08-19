@@ -25,6 +25,7 @@
             <div class="row">
                 <div class="col-lg-8">
                     <form method="POST">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
     <?php echo CSRFProtection::csrfField(); ?>
                         <div class="card card-outline card-teal">
                             <div class="card-header">

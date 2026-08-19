@@ -179,7 +179,8 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             <!-- Assign Agent Form -->
             <div class="ac-card">
                 <h5><i class="fas fa-user-plus me-2" class="style-22437"></i>Assign Agent to Property</h5>
-                <form method="POST" action="<?= $base ?>/admin/agent-commission/assign" class="ac-form">
+                <form method="POST" action="<?= $base ?>
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/agent-commission/assign" class="ac-form">
     <?php echo CSRFProtection::csrfField(); ?>
                     <div class="mb-3">
                         <label>Select Agent</label>

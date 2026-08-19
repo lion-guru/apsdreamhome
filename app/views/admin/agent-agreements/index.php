@@ -115,19 +115,22 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <td class="style-45903">
                             <a href="<?= $base ?>/admin/agent-agreements/detail/<?= (int)$a['id'] ?>" class="aag-btn aag-btn-view"><i class="fas fa-eye"></i></a>
                             <?php if ($a['status'] === 'draft'): ?>
-                                <form method="POST" action="<?= $base ?>/admin/agent-agreements/send/<?= (int)$a['id'] ?>" class="style-35851">
+                                <form method="POST" action="<?= $base ?>
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/agent-agreements/send/<?= (int)$a['id'] ?>" class="style-35851">
     <?php echo CSRFProtection::csrfField(); ?>
                                     <button type="submit" class="aag-btn aag-btn-send"><i class="fas fa-paper-plane"></i></button>
                                 </form>
                             <?php endif; ?>
                             <?php if ($a['status'] === 'pending'): ?>
-                                <form method="POST" action="<?= $base ?>/admin/agent-agreements/sign/<?= (int)$a['id'] ?>" class="style-35851">
+                                <form method="POST" action="<?= $base ?>
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/agent-agreements/sign/<?= (int)$a['id'] ?>" class="style-35851">
     <?php echo CSRFProtection::csrfField(); ?>
                                     <button type="submit" class="aag-btn aag-btn-sign"><i class="fas fa-check"></i></button>
                                 </form>
                             <?php endif; ?>
                             <?php if (in_array($a['status'], ['draft', 'pending'])): ?>
-                                <form method="POST" action="<?= $base ?>/admin/agent-agreements/cancel/<?= (int)$a['id'] ?>" class="style-35851">
+                                <form method="POST" action="<?= $base ?>
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/agent-agreements/cancel/<?= (int)$a['id'] ?>" class="style-35851">
     <?php echo CSRFProtection::csrfField(); ?>
                                     <button type="submit" class="aag-btn aag-btn-cancel" onclick="return confirm('Cancel this agreement?')"><i class="fas fa-times"></i></button>
                                 </form>
