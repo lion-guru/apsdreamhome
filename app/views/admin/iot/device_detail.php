@@ -79,6 +79,6 @@ document.getElementById('readingForm')?.addEventListener('submit', function(e) {
     e.preventDefault();
     const fd = new FormData(this);
     fetch('<?= BASE_URL ?>/admin/iot/device/reading', { method:'POST', body: fd })
-        .then(r=>r.json()).then(d=>{ if(d.success) location.reload(); else alert('Failed'); });
+        .then(r=>r.json()).then(d=>{ if(d.success) location.reload(); else showToast('Failed', 'danger'); });
 });
 </script>

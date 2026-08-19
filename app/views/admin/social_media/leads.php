@@ -69,23 +69,23 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     <tbody>
                         <?php foreach ($leads as $l): ?>
                         <tr>
-                            <td><strong><?= htmlspecialchars($l['full_name'] ?? '—') ?></strong></td>
+                            <td><strong><?= htmlspecialchars($l['full_name'] ?? '') ?></strong></td>
                             <td>
-                                <small><?= htmlspecialchars($l['email'] ?? '—') ?></small><br>
-                                <small class="text-muted"><?= htmlspecialchars($l['phone'] ?? '—') ?></small>
+                                <small><?= htmlspecialchars($l['email'] ?? '') ?></small><br>
+                                <small class="text-muted"><?= htmlspecialchars($l['phone'] ?? '') ?></small>
                             </td>
-                            <td><?= htmlspecialchars(($l['city'] ?? '') . ($l['state'] ? ', ' . $l['state'] : '')) ?: '—' ?></td>
+                            <td><?= htmlspecialchars(($l['city'] ?? '') . ($l['state'] ? ', ' . $l['state'] : '')) ?: '' ?></td>
                             <td>
                                 <?php if (!empty($l['budget_min'])): ?>
-                                    ?<?= number_format($l['budget_min']) ?><?= !empty($l['budget_max']) ? ' – ' . number_format($l['budget_max']) : '' ?>
-                                <?php else: ?>—<?php endif; ?>
+                                    ?<?= number_format($l['budget_min']) ?><?= !empty($l['budget_max']) ? '  ' . number_format($l['budget_max']) : '' ?>
+                                <?php else: ?><?php endif; ?>
                             </td>
                             <td>
                                 <span class="badge bg-<?= match($l['platform']) { 'facebook' => 'primary', 'instagram' => 'danger', 'linkedin' => 'info', 'whatsapp_business' => 'success', default => 'secondary' } ?>">
                                     <?= ucfirst(str_replace('_', ' ', $l['platform'])) ?>
                                 </span>
                             </td>
-                            <td><small><?= htmlspecialchars($l['form_name'] ?? '—') ?></small></td>
+                            <td><small><?= htmlspecialchars($l['form_name'] ?? '') ?></small></td>
                             <td>
                                 <select class="form-select form-select-sm lead-status" data-lead="<?= $l['id'] ?>">
                                     <?php foreach (['new','contacted','qualified','converted','junk','duplicate'] as $s): ?>
@@ -126,7 +126,7 @@ document.querySelectorAll('.lead-status').forEach(sel => {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-Token': '<?= $csrf ?>' },
             body: `csrf_token=<?= $csrf ?>&lead_id=${leadId}&status=${status}`
         }).then(r => r.json()).then(d => {
-            if (!d.success) alert('Update failed');
+            if (!d.success) showToast('Update failed', 'danger');
         });
     });
 });

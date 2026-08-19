@@ -61,7 +61,7 @@ function endCall() {
 function toggleMute(){muted=!muted;document.getElementById('btn-mute').style.background=muted?'#ef4444':'#6b7280';}
 
 function startDictation(){
-    if(!('webkitSpeechRecognition' in window||'SpeechRecognition' in window)){alert('Speech recognition not supported');return;}
+    if(!('webkitSpeechRecognition' in window||'SpeechRecognition' in window)){showToast('Speech recognition not supported', 'info');return;}
     const SR=window.SpeechRecognition||window.webkitSpeechRecognition;recognition=new SR();recognition.lang='hi-IN';recognition.interimResults=true;
     recognition.onresult=e=>{document.getElementById('note-text').value=Array.from(e.results).map(r=>r[0].transcript).join('');};
     recognition.start();document.getElementById('btn-dictate').innerHTML='<i class="fas fa-spinner fa-spin me-1"></i>Listening...';
@@ -71,7 +71,7 @@ function startDictation(){
 function saveNote(){
     const text=document.getElementById('note-text').value.trim();if(!text)return;
     fetch('<?= BASE_URL ?>/admin/crm/voice/note',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lead_id:leadId,transcript:text})})
-    .then(r=>r.json()).then(d=>{if(d.success){document.getElementById('note-text').value='';alert('Note saved!');}});
+    .then(r=>r.json()).then(d=>{if(d.success){document.getElementById('note-text').value='';showToast('Note saved!', 'success');}});
 }
 
 function sendCommand(){

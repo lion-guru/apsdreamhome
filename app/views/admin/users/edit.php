@@ -123,10 +123,10 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             })
             .then(data => {
                 if (data && data.success) {
-                    alert('User updated successfully!');
+                    showToast('User updated successfully!', 'success');
                     window.location.href = '<?php echo $base; ?>/admin/users';
                 } else if (data) {
-                    alert(data.message || 'Failed to update user');
+                    showToast(data.message || 'Failed to update user', 'danger');
                 }
             })
             .catch(error => {

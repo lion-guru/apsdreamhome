@@ -164,7 +164,7 @@ $active = $active ?? 0;
 <script>
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(function() {
-        alert('API Key copied to clipboard!');
+        showToast('API Key copied to clipboard!', 'success');
     }).catch(function() {
         prompt('Copy this API key:', text);
     });

@@ -333,7 +333,7 @@ function editField(i) {
 
     function saveAndSubmit() {
         const name = document.getElementById('formNameInput').value || prompt('Enter form name:');
-        if (!name) return alert('Form name required');
+        if (!name) return showToast('Form name required', 'info');
         document.getElementById('formNameInput').value = name;
         document.getElementById('fieldsJson').value = JSON.stringify(fields);
         document.getElementById('formBuilderForm').submit();

@@ -251,13 +251,13 @@ function hangupCall(callSid) {
     .then(r => r.json())
     .then(data => {
         if (data.success) {
-            alert('Call ended.');
+            showToast('Call ended.', 'info');
             location.reload();
         } else {
-            alert('Hangup failed: ' + (data.error || 'unknown'));
+            showToast('Hangup failed: ' + (data.error || 'unknown'), 'danger');
         }
     })
-    .catch(e => alert('Error: ' + e.message));
+    .catch(e => showToast('Error: ' + e.message, 'danger'));
 }
 
 // Auto-refresh every 5s

@@ -71,7 +71,7 @@
 <script>
 function processQueue() {
     fetch('<?= $base ?? BASE_URL ?>/admin/emails/process', { method: 'POST' })
-        .then(r => r.json()).then(d => { if (d.success) location.reload(); else alert(d.error || 'Failed'); });
+        .then(r => r.json()).then(d => { if (d.success) location.reload(); else showToast(d.error || 'Failed', 'danger'); });
 }
 function cancelEmail(id) {
     if (!confirm('Cancel this email?')) return;

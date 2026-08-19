@@ -209,11 +209,11 @@ $page_title = 'Deal Tracking - APS Dream Home';
                 if (data.success) {
                     location.reload();
                 } else {
-                    alert('Failed to update deal stage');
+                    showToast('Failed to update deal stage', 'danger');
                 }
             })
             .catch(error => {
-                alert('Error updating deal stage');
+                showToast('Error updating deal stage', 'danger');
             });
     }
 </script>

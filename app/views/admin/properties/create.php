@@ -276,7 +276,7 @@ $active_page = 'properties';
 
         if (!siteId || !title || isNaN(price) || price <= 0 || !location || isNaN(area) || area <= 0) {
             e.preventDefault();
-            alert('Please fill in all required fields with valid values.');
+            showToast('Please fill in all required fields with valid values.', 'info');
             return false;
         }
     });

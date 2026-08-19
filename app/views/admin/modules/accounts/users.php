@@ -601,6 +601,6 @@ $users = $users ?? [];
     
     function showNotification(message, type = 'info') {
         // This would use the global notification system
-        if (type === 'error') { alert(message); }
+        if (type === 'error') { showToast(message, 'info'); }
     }
 </script>

@@ -259,14 +259,14 @@ $(document).ready(function() {
             data: $('#editSalaryForm').serialize(),
             success: function(response) {
                 if (response.success) {
-                    alert(response.message);
+                    showToast(response.message, 'info');
                     location.reload();
                 } else {
-                    alert(response.message);
+                    showToast(response.message, 'info');
                 }
             },
             error: function() {
-                alert('Error updating salary');
+                showToast('Error updating salary', 'danger');
             }
         });
     });
@@ -287,14 +287,14 @@ $(document).ready(function() {
             data: $('#processSalaryForm').serialize(),
             success: function(response) {
                 if (response.success) {
-                    alert(response.message);
+                    showToast(response.message, 'info');
                     location.reload();
                 } else {
-                    alert(response.message);
+                    showToast(response.message, 'info');
                 }
             },
             error: function() {
-                alert('Error processing salary');
+                showToast('Error processing salary', 'danger');
             }
         });
     });

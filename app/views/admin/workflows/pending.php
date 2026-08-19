@@ -54,7 +54,7 @@ function approveWorkflow(id) {
     document.body.appendChild(form);
     fetch(form.action, {method: 'POST', body: new URLSearchParams(new FormData(form))})
         .then(function(r){return r.json()}).then(function(d){
-            if(d.success!==false){location.reload();}else{alert(d.message||'Failed to approve');}
-        }).catch(function(){alert('Network error');form.submit();});
+            if(d.success!==false){location.reload();}else{showToast(d.message||'Failed to approve', 'danger');}
+        }).catch(function(){showToast('Network error', 'danger');form.submit();});
 }
 </script>

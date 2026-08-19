@@ -268,9 +268,9 @@ function updateMilestone(id, status) {
     if (data.success) {
       location.reload();
     } else {
-      alert('Error: ' + (data.error || 'Unknown'));
+      showToast('Error: ' + (data.error || 'Unknown'), 'danger');
     }
   })
-  .catch(e => alert('Request failed'));
+  .catch(e => showToast('Request failed', 'danger'));
 }
 </script>

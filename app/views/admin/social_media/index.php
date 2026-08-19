@@ -158,13 +158,13 @@ function syncLeads(accountId) {
         .then(r => r.json())
         .then(data => {
             if (data.success) {
-                alert(`Sync completed! Fetched: ${data.stats.fetched}, New: ${data.stats.new}, Updated: ${data.stats.updated}`);
+                showToast(`Sync completed! Fetched: ${data.stats.fetched}, New: ${data.stats.new}, Updated: ${data.stats.updated}`, 'success');
                 location.reload();
             } else {
-                alert('Sync failed: ' + (data.error || 'Unknown error'));
+                showToast('Sync failed: ' + (data.error || 'Unknown error'), 'danger');
             }
         })
-        .catch(() => alert('Sync request failed'))
+        .catch(() => showToast('Sync request failed', 'danger'))
         .finally(() => { btn.innerHTML = originalHtml; btn.disabled = false; });
 }
 
@@ -172,8 +172,8 @@ function confirmDelete(id) {
     if (confirm('Delete this social media account? This will also delete all synced leads.')) {
         fetch(`/admin/social-media/delete/${id}`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': '<?= $csrf ?>' } })
             .then(r => r.json())
-            .then(data => { if (data.success) location.reload(); else alert('Delete failed'); })
-            .catch(() => alert('Delete request failed'));
+            .then(data => { if (data.success) location.reload(); else showToast('Delete failed', 'danger'); })
+            .catch(() => showToast('Delete request failed', 'danger'));
     }
 }
 </script>

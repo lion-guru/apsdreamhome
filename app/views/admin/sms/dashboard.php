@@ -270,22 +270,22 @@ $page_title = "SMS Dashboard";
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('SMS sent successfully!');
+                    showToast('SMS sent successfully!', 'success');
                     bootstrap.Modal.getInstance(document.getElementById('sendSMSModal')).hide();
                     form.reset();
                     loadSMSLogs();
                 } else {
-                    alert('Failed to send SMS: ' + data.error);
+                    showToast('Failed to send SMS: ' + data.error, 'danger');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Error sending SMS');
+                showToast('Error sending SMS', 'danger');
             });
         }
         
         function viewDetails(id) {
             // Show details in modal or alert for now
-            alert('SMS ID: ' + id);
+            showToast('SMS ID: ' + id, 'info');
         }
     </script>

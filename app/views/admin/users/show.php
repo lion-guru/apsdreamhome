@@ -242,25 +242,25 @@ document.getElementById('referralForm').addEventListener('submit', function(e) {
 <script>
 function resetPassword() {
     const pw = prompt('Enter new password (min 6 chars):');
-    if (!pw || pw.length < 6) { alert('Password too short'); return; }
+    if (!pw || pw.length < 6) { showToast('Password too short', 'info'); return; }
     fetch('<?= $base ?>/admin/users/<?= $user['id'] ?>/update', {
         method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest'},
         body: 'csrf_token=<?= $csrf ?>&password=' + encodeURIComponent(pw)
-    }).then(r => r.json()).then(d => { alert(d.message); if (d.success) location.reload(); }).catch(() => alert('Error'));
+    }).then(r => r.json()).then(d => { showToast(d.message, 'info'); if (d.success) location.reload(); }).catch(() => showToast('Error', 'danger'));
 }
 function toggleStatus() {
     const newStatus = '<?= ($user['status'] ?? '') === 'active' ? 'inactive' : 'active' ?>';
     fetch('<?= $base ?>/admin/users/<?= $user['id'] ?>/update', {
         method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest'},
         body: 'csrf_token=<?= $csrf ?>&status=' + newStatus
-    }).then(r => r.json()).then(d => { alert(d.message); if (d.success) location.reload(); }).catch(() => alert('Error'));
+    }).then(r => r.json()).then(d => { showToast(d.message, 'info'); if (d.success) location.reload(); }).catch(() => showToast('Error', 'danger'));
 }
 function softDelete() {
     if (!confirm('Deactivate this user? They will no longer be able to login.')) return;
     fetch('<?= $base ?>/admin/users/<?= $user['id'] ?>/soft-delete', {
         method: 'POST', headers: {'X-Requested-With': 'XMLHttpRequest'},
         body: 'csrf_token=<?= $csrf ?>'
-    }).then(r => r.json()).then(d => { alert(d.message); if (d.success) location.reload(); }).catch(() => alert('Error'));
+    }).then(r => r.json()).then(d => { showToast(d.message, 'info'); if (d.success) location.reload(); }).catch(() => showToast('Error', 'danger'));
 }
 </script>
 <?php endif; ?>

@@ -126,11 +126,11 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 function creditWallet() {
     fetch('<?= $base ?>/admin/users/<?= $user['id'] ?>/wallet/credit', {
         method: 'POST', headers: {'X-Requested-With': 'XMLHttpRequest'}, body: new URLSearchParams(new FormData(document.getElementById('creditForm')))
-    }).then(r => r.json()).then(d => { alert(d.message || d.error); if (d.success) location.reload(); }).catch(() => alert('Error'));
+    }).then(r => r.json()).then(d => { showToast(d.message || d.error, 'danger'); if (d.success) location.reload(); }).catch(() => showToast('Error', 'danger'));
 }
 function debitWallet() {
     fetch('<?= $base ?>/admin/users/<?= $user['id'] ?>/wallet/debit', {
         method: 'POST', headers: {'X-Requested-With': 'XMLHttpRequest'}, body: new URLSearchParams(new FormData(document.getElementById('debitForm')))
-    }).then(r => r.json()).then(d => { alert(d.message || d.error); if (d.success) location.reload(); }).catch(() => alert('Error'));
+    }).then(r => r.json()).then(d => { showToast(d.message || d.error, 'danger'); if (d.success) location.reload(); }).catch(() => showToast('Error', 'danger'));
 }
 </script>

@@ -232,15 +232,15 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Payment processed successfully!');
+                    showToast('Payment processed successfully!', 'success');
                     location.reload();
                 } else {
-                    alert(data.message || 'Payment failed');
+                    showToast(data.message || 'Payment failed', 'danger');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('An error occurred');
+                showToast('An error occurred', 'danger');
             });
             
             paymentModal.hide();

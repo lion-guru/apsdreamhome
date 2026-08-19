@@ -167,13 +167,13 @@ document.getElementById('smsTestForm').addEventListener('submit', function(e) {
     .then(function(response) { return response.json(); })
     .then(function(data) {
         if (data.success) {
-            alert('Success: ' + data.message);
+            showToast('Success: ' + data.message, 'success');
         } else {
-            alert('Error: ' + data.message);
+            showToast('Error: ' + data.message, 'danger');
         }
     })
     .catch(function() {
-        alert('Network error occurred');
+        showToast('Network error occurred', 'danger');
     })
     .finally(function() {
         btn.innerHTML = originalText;

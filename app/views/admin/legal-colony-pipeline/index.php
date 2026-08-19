@@ -129,15 +129,15 @@ function autoAdvance() {
   .then(r => r.json())
   .then(data => {
     if (data.success) {
-      alert(data.summary);
+      showToast(data.summary, 'info');
       if (data.advanced && data.advanced.length > 0) {
         location.reload();
       }
     } else {
-      alert('Error: ' + (data.error || 'Unknown'));
+      showToast('Error: ' + (data.error || 'Unknown'), 'danger');
     }
   })
-  .catch(err => alert('Request failed: ' + err.message))
+  .catch(err => showToast('Request failed: ' + err.message, 'danger'))
   .finally(() => {
     btn.disabled = false;
     btn.innerHTML = '<i class="fas fa-forward me-1"></i> Auto-Advance';

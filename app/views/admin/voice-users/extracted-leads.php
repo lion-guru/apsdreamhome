@@ -63,15 +63,15 @@ function verifyLead(id) {
         method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: 'csrf_token=' + encodeURIComponent(csrfToken()) + '&extracted_id=' + id
     }).then(r => r.json()).then(d => {
-        if (d.success) { location.reload(); } else { alert(d.message || 'Failed'); }
-    }).catch(() => alert('Network error'));
+        if (d.success) { location.reload(); } else { showToast(d.message || 'Failed', 'danger'); }
+    }).catch(() => showToast('Network error', 'danger'));
 }
 function convertLead(id) { verifyLead(id); }
 function convertAllVerified() {
     if (!confirm('Convert all verified leads to CRM?')) return;
     var btns = document.querySelectorAll('button[onclick^="verifyLead"]');
     var ids = []; btns.forEach(function(b) { var m = b.getAttribute('onclick').match(/\d+/); if (m) ids.push(m[0]); });
-    if (!ids.length) { alert('No verified leads to convert.'); return; }
+    if (!ids.length) { showToast('No verified leads to convert.', 'info'); return; }
     var done = 0;
     ids.forEach(function(id) {
         fetch('<?= BASE_URL ?>admin/voice-users/ajax/convert-lead', {

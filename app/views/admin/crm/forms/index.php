@@ -146,7 +146,7 @@
 <script>
 function openBuilder() {
     const name = document.getElementById('modalFormName').value;
-    if (!name) { alert('Please enter a form name first'); return; }
+    if (!name) { showToast('Please enter a form name first', 'info'); return; }
     const url = '<?= BASE_URL ?>/admin/crm/forms/create' + (name ? '?name=' + encodeURIComponent(name) : '');
     window.open(url, '_blank', 'width=1200,height=800');
 }

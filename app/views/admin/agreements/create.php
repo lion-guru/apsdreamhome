@@ -180,7 +180,7 @@ document.getElementById('agreementForm')?.addEventListener('submit', async funct
             if (data.success) {
                 window.location.href = data.redirect || '<?= BASE_URL ?>/admin/agreements';
             } else {
-                alert(data.error || 'Creation failed');
+                showToast(data.error || 'Creation failed', 'danger');
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-save me-1"></i>Create Agreement';
             }
@@ -188,7 +188,7 @@ document.getElementById('agreementForm')?.addEventListener('submit', async funct
             window.location.reload();
         }
     } catch (err) {
-        alert('Network error: ' + err.message);
+        showToast('Network error: ' + err.message, 'danger');
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-save me-1"></i>Create Agreement';
     }

@@ -204,12 +204,12 @@ function clearSelection() {
 function bulkAction(action) {
     const checked = document.querySelectorAll('.user-checkbox:checked');
     const ids = Array.from(checked).map(cb => parseInt(cb.value));
-    if (!ids.length) return alert('No users selected');
+    if (!ids.length) return showToast('No users selected', 'info');
 
     const adminRoles = ['admin', 'super_admin'];
     const hasAdmin = Array.from(checked).some(cb => adminRoles.includes(cb.dataset.role));
     if (hasAdmin && (action === 'deactivate' || action === 'suspend')) {
-        return alert('Cannot ' + action + ' admin users');
+        return showToast('Cannot ' + action + ' admin users', 'info');
     }
 
     if (!confirm('Bulk ' + action + ' ' + ids.length + ' user(s)?')) return;

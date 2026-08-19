@@ -269,7 +269,7 @@
 <script>
 async function makeCall() {
     const phone = document.getElementById('callPhone').value.trim();
-    if (!phone) { alert('Enter phone number'); return; }
+    if (!phone) { showToast('Enter phone number', 'info'); return; }
 
     const btn = document.getElementById('callBtn');
     const statusDiv = document.getElementById('callStatus');
@@ -329,7 +329,7 @@ async function hangup(channel) {
         });
         location.reload();
     } catch (e) {
-        alert('Hangup failed');
+        showToast('Hangup failed', 'danger');
     }
 }
 

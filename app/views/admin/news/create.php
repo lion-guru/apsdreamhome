@@ -105,13 +105,13 @@
                 if (data.success) {
                     window.location.href = '<?= BASE_URL ?>/admin/news';
                 } else {
-                    alert(data.error || 'Failed to create article');
+                    showToast(data.error || 'Failed to create article', 'danger');
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = '<i class="fas fa-save"></i> Create Article';
                 }
             })
             .catch(error => {
-                alert('An error occurred');
+                showToast('An error occurred', 'danger');
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-save"></i> Create Article';
             });

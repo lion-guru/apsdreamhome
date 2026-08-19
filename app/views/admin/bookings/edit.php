@@ -334,7 +334,7 @@ $active_page = 'bookings';
 
             if (!propertyId || !customerId || !amount || amount <= 0 || !bookingDate) {
                 e.preventDefault();
-                alert('Please fill in all required fields');
+                showToast('Please fill in all required fields', 'info');
                 return false;
             }
 

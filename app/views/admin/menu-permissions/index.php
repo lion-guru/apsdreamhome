@@ -180,12 +180,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.querySelector('.card-body').prepend(alert);
                     setTimeout(() => alert.remove(), 3000);
                 } else {
-                    alert('Failed to update permission');
+                    showToast('Failed to update permission', 'danger');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Error updating permission');
+                showToast('Error updating permission', 'danger');
             });
         });
     });

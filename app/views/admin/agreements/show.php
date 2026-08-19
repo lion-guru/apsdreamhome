@@ -328,7 +328,7 @@ function submitStatus(action) {
     const reason = document.getElementById('reasonField')?.value || '';
 
     if ((status === 'cancelled' || status === 'expired') && !reason.trim()) {
-        alert('Reason is required for cancellation/expiration.');
+        showToast('Reason is required for cancellation/expiration.', 'info');
         return;
     }
 

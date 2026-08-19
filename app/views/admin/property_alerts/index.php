@@ -267,16 +267,16 @@ function toggleSub(id, active) {
     fd.append('active', active);
     fetch('<?= BASE_URL ?>/admin/property-alerts/toggle', { method: 'POST', body: fd })
         .then(r => r.json())
-        .then(d => { if (!d.success) alert('Update failed'); });
+        .then(d => { if (!d.success) showToast('Update failed', 'danger'); });
 }
 function testMatch(id) {
     fetch('<?= BASE_URL ?>/admin/property-alerts/test-match?id=' + id)
         .then(r => r.json())
         .then(d => {
             if (d.success) {
-                alert('Found ' + d.count + ' matching properties for this subscription');
+                showToast('Found ' + d.count + ' matching properties for this subscription', 'info');
             } else {
-                alert('Error: ' + (d.error || 'Unknown'));
+                showToast('Error: ' + (d.error || 'Unknown'), 'danger');
             }
         });
 }

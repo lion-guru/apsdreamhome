@@ -114,7 +114,7 @@ function deleteJob(id) {
             if (data.success) {
                 location.reload();
             } else {
-                alert('Error: ' + data.error);
+                showToast('Error: ' + data.error, 'danger');
             }
         });
     }

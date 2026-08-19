@@ -290,7 +290,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const ids = getSelected();
         const action = bulkAction.value;
         let value = action === 'status' ? bulkStatus.value : bulkAssign.value;
-        if (!value) { alert('Select a value first'); return; }
+        if (!value) { showToast('Select a value first', 'info'); return; }
 
         fetch('<?= $base ?>/admin/leads/bulk-action', {
             method: 'POST',
@@ -298,7 +298,7 @@ document.addEventListener('DOMContentLoaded', function() {
             body: 'csrf_token=<?= $_SESSION['csrf_token'] ?? '' ?>&action=' + action + '&value=' + value + '&ids=' + ids.join(',')
         }).then(r => r.json()).then(d => {
             if (d.success) location.reload();
-            else alert(d.error || 'Failed');
+            else showToast(d.error || 'Failed', 'danger');
         });
     });
 
@@ -312,7 +312,7 @@ document.addEventListener('DOMContentLoaded', function() {
             body: 'csrf_token=<?= $_SESSION['csrf_token'] ?? '' ?>&action=delete&ids=' + ids.join(',')
         }).then(r => r.json()).then(d => {
             if (d.success) location.reload();
-            else alert(d.error || 'Failed');
+            else showToast(d.error || 'Failed', 'danger');
         });
     });
 });

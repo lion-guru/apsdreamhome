@@ -226,13 +226,13 @@ $error = $error ?? null;
 
         if (!name) {
             e.preventDefault();
-            alert('Campaign name is required');
+            showToast('Campaign name is required', 'info');
             return false;
         }
 
         if (name.length < 3) {
             e.preventDefault();
-            alert('Campaign name must be at least 3 characters long');
+            showToast('Campaign name must be at least 3 characters long', 'info');
             return false;
         }
     });
@@ -243,7 +243,7 @@ $error = $error ?? null;
         const endDate = this.value;
 
         if (startDate && endDate && new Date(endDate) < new Date(startDate)) {
-            alert('End date must be after start date');
+            showToast('End date must be after start date', 'info');
             this.value = '';
         }
     });

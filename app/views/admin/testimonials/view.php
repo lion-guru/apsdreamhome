@@ -180,10 +180,10 @@ document.getElementById('testimonialActionForm').addEventListener('submit', func
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert(data.message);
+            showToast(data.message, 'info');
             location.reload();
         } else {
-            alert('Error: ' + data.error);
+            showToast('Error: ' + data.error, 'danger');
         }
     });
 });
@@ -201,7 +201,7 @@ function deleteTestimonial(id) {
             if (data.success) {
                 window.location.href = '<?php echo BASE_URL; ?>/admin/testimonials';
             } else {
-                alert('Error: ' + data.error);
+                showToast('Error: ' + data.error, 'danger');
             }
         });
     }

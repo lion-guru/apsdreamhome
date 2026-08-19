@@ -240,6 +240,6 @@ function runAutoPay() {
 
 function retryMandate(subscriptionId) {
     if (!confirm('Retry auto-debit for this mandate?')) return;
-    alert('Retry queued — will be processed on next cron run.');
+    showToast('Retry queued — will be processed on next cron run.', 'info');
 }
 </script>

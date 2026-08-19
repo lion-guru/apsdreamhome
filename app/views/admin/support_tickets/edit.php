@@ -112,15 +112,15 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Ticket updated successfully!');
+                    showToast('Ticket updated successfully!', 'success');
                     window.location.href = '<?php echo $base; ?>/admin/support_tickets/show/<?php echo $ticket['id'] ?? 0; ?>';
                 } else {
-                    alert(data.message || 'Failed to update ticket');
+                    showToast(data.message || 'Failed to update ticket', 'danger');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('An error occurred');
+                showToast('An error occurred', 'danger');
             });
         });
     </script>

@@ -84,7 +84,7 @@ function sendMsg(){
         body:JSON.stringify({conversation_id:<?= $_conv['id'] ?? 0 ?>,message:msg})
     }).then(function(r){return r.json()}).then(function(d){
         if(d.success){input.value='';location.reload();}
-        else{alert('Failed: '+(d.error||'Unknown error'));}
+        else{showToast('Failed: '+(d.error||'Unknown error'), 'danger');}
     });
 }
 function claimConv(){

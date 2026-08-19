@@ -139,12 +139,12 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             })
             .then(response => response.text())
             .then(data => {
-                alert('Campaign updated successfully!');
+                showToast('Campaign updated successfully!', 'success');
                 window.location.href = '<?php echo $base; ?>/admin/campaigns';
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('An error occurred while updating campaign');
+                showToast('An error occurred while updating campaign', 'danger');
             });
         });
     </script>

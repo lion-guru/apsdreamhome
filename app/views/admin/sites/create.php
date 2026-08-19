@@ -205,7 +205,7 @@ $active_page = 'sites';
 
         if (!siteName || !location || isNaN(totalArea) || totalArea <= 0) {
             e.preventDefault();
-            alert('Please fill in all required fields with valid values.');
+            showToast('Please fill in all required fields with valid values.', 'info');
             return false;
         }
     });

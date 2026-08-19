@@ -281,11 +281,11 @@ document.getElementById('previewBtn')?.addEventListener('click', function() {
     .then(r => r.json())
     .then(d => {
       if (d.success) {
-        alert('Preview:\nPrice: ₹' + d.recommended_price_ppsf + '/sqft\nCost: ₹' + d.total_cost_basis + ' total\nRevenue: ₹' + d.total_revenue?.toLocaleString());
+        showToast('Preview:\nPrice: ₹' + d.recommended_price_ppsf + '/sqft\nCost: ₹' + d.total_cost_basis + ' total\nRevenue: ₹' + d.total_revenue?.toLocaleString(), 'info');
       } else {
-        alert('Preview failed: ' + d.error);
+        showToast('Preview failed: ' + d.error, 'danger');
       }
     })
-    .catch(e => alert('Network error'));
+    .catch(e => showToast('Network error', 'danger'));
 });
 </script>

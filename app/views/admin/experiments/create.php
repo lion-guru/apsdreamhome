@@ -118,7 +118,7 @@ function addVariant(name = '', weight = 50) {
 function removeVariant(btn) {
     const container = document.getElementById('variants-container');
     if (container.querySelectorAll('.variant-row').length <= 2) {
-        alert('At least 2 variants required.');
+        showToast('At least 2 variants required.', 'info');
         return;
     }
     btn.closest('.variant-row').remove();
@@ -132,7 +132,7 @@ document.getElementById('experiment-form').addEventListener('submit', function(e
     const rows = document.querySelectorAll('.variant-row');
     if (rows.length < 2) {
         e.preventDefault();
-        alert('Add at least 2 variants.');
+        showToast('Add at least 2 variants.', 'info');
     }
 });
 </script>

@@ -282,9 +282,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 var msg = 'Status: ' + (j.status || '?') +
                           ' | Age: ' + (j.age_hours !== null ? j.age_hours + 'h' : '?') +
                           ' | Last: ' + (j.last_backup_at || 'never');
-                alert(msg);
+                showToast(msg, 'info');
             })
-            .catch(function (e) { alert('Health check failed: ' + e.message); })
+            .catch(function (e) { showToast('Health check failed: ' + e.message, 'danger'); })
             .finally(function () {
                 btn.disabled = false;
                 btn.querySelector('i').classList.remove('fa-spin');

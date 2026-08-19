@@ -164,12 +164,12 @@ async function testConnection() {
         const res = await fetch('<?= BASE_URL ?>/admin/sim-calling/api/status');
         const data = await res.json();
         if (data.connected) {
-            alert('Connected to Asterisk AMI!\nActive channels: ' + data.active_channels);
+            showToast('Connected to Asterisk AMI!\nActive channels: ' + data.active_channels, 'info');
         } else {
-            alert('Cannot connect to Asterisk AMI.\nCheck host/port and Asterisk service.');
+            showToast('Cannot connect to Asterisk AMI.\nCheck host/port and Asterisk service.', 'info');
         }
     } catch (e) {
-        alert('Connection failed: ' + e.message);
+        showToast('Connection failed: ' + e.message, 'danger');
     }
 }
 </script>

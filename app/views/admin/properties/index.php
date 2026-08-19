@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const ids = getSelected();
         const status = bulkStatus.value;
         const notes = bulkNotes.value;
-        if (!ids.length) return alert('No properties selected');
+        if (!ids.length) return showToast('No properties selected', 'info');
         if (!confirm('Update status of ' + ids.length + ' propert(ies) to ' + status + '?')) return;
 
         fetch('<?= BASE_URL ?>/admin/properties/bulk-update', {
@@ -274,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function() {
             body: 'csrf_token=<?= $_SESSION['csrf_token'] ?? '' ?>&property_ids[]=' + ids.join('&property_ids[]=') + '&status=' + encodeURIComponent(status) + '&notes=' + encodeURIComponent(notes)
         }).then(r => r.json()).then(d => {
             if (d.success) location.reload();
-            else alert(d.error || 'Failed');
+            else showToast(d.error || 'Failed', 'danger');
         });
     });
 });

@@ -205,7 +205,7 @@ $stageIcons = [
             .then(response => response.json())
             .then(data => {
                 if (!data.success) {
-                    alert('Failed to update deal stage');
+                    showToast('Failed to update deal stage', 'danger');
                     location.reload();
                 }
             })

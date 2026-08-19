@@ -125,14 +125,14 @@ document.getElementById('createJobForm').addEventListener('submit', function(e) 
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert('Job posted successfully!');
+            showToast('Job posted successfully!', 'success');
             window.location.href = '<?php echo BASE_URL; ?>/admin/jobs';
         } else {
-            alert('Error: ' + data.error);
+            showToast('Error: ' + data.error, 'danger');
         }
     })
     .catch(error => {
-        alert('Error posting job. Please try again.');
+        showToast('Error posting job. Please try again.', 'danger');
     });
 });
 </script>

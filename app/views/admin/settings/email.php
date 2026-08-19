@@ -100,7 +100,7 @@
 function sendTestEmail() {
     var emailInput = document.querySelector('input[name="test_email"]');
     var email = emailInput ? emailInput.value.trim() : '';
-    if (!email) { alert('Please enter a test email address.'); emailInput.focus(); return; }
+    if (!email) { showToast('Please enter a test email address.', 'info'); emailInput.focus(); return; }
     var btn = event.target.closest('button');
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Sending...';
     fetch('<?= BASE_URL ?>admin/settings/email-config/test', {
@@ -109,7 +109,7 @@ function sendTestEmail() {
         body: 'csrf_token=' + encodeURIComponent('<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>') + '&test_email=' + encodeURIComponent(email)
     }).then(function(r){return r.json()}).then(function(d){
         btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Send Test';
-        if (d.success) { alert('Test email sent successfully to ' + email); } else { alert('Failed: ' + (d.error || 'Unknown error')); }
-    }).catch(function(){ btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Send Test'; alert('Network error. Please try again.'); });
+        if (d.success) { showToast('Test email sent successfully to ' + email, 'success'); } else { showToast('Failed: ' + (d.error || 'Unknown error'), 'danger'); }
+    }).catch(function(){ btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Send Test'; showToast('Network error. Please try again.', 'danger'); });
 }
 </script>

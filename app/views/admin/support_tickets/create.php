@@ -107,15 +107,15 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Ticket created successfully! Ticket #: ' + data.ticket_number);
+                    showToast('Ticket created successfully! Ticket #: ' + data.ticket_number, 'success');
                     window.location.href = '<?php echo $base; ?>/admin/support_tickets';
                 } else {
-                    alert(data.message || 'Failed to create ticket');
+                    showToast(data.message || 'Failed to create ticket', 'danger');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('An error occurred');
+                showToast('An error occurred', 'danger');
             });
         });
     </script>

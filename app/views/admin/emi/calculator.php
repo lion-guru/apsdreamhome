@@ -89,7 +89,7 @@ function calculateEMI() {
     var P = parseFloat(document.getElementById('loanAmount').value) || 0;
     var annualRate = parseFloat(document.getElementById('interestRate').value) || 0;
     var N = parseInt(document.getElementById('tenureMonths').value) || 0;
-    if (P <= 0 || annualRate <= 0 || N <= 0) { alert('Please enter valid values'); return; }
+    if (P <= 0 || annualRate <= 0 || N <= 0) { showToast('Please enter valid values', 'info'); return; }
     var r = annualRate / 12 / 100;
     var emi = P * r * Math.pow(1 + r, N) / (Math.pow(1 + r, N) - 1);
     var totalPayment = emi * N;

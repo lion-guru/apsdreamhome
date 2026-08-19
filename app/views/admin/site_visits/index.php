@@ -157,7 +157,7 @@ document.querySelectorAll('.status-select').forEach(function(sel) {
             if (d.ok) {
                 location.reload();
             } else {
-                alert('Failed: ' + (d.error || 'Unknown error'));
+                showToast('Failed: ' + (d.error || 'Unknown error'), 'danger');
             }
         });
     });

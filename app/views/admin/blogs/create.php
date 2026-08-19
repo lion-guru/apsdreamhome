@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fd.append('csrf_token', '<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>');
         fd.append('topic', title ? title.value : '');
         fd.append('category', cat ? cat.textContent : '');
-        if (!title.value) { alert('Please enter a title first.'); return; }
+        if (!title.value) { showToast('Please enter a title first.', 'info'); return; }
         var ta = document.getElementById('blog_content');
         var meta = document.querySelector('textarea[name="meta_description"]');
         btn.disabled = true;
@@ -79,10 +79,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     ta.value = (d.english || '') + "\n\n---\n\n" + (d.hindi || '');
                     if (meta && d.excerpt) meta.value = d.excerpt;
                 } else {
-                    alert('AI generation failed. Please try again.');
+                    showToast('AI generation failed. Please try again.', 'danger');
                 }
             })
-            .catch(function () { alert('AI generation failed. Please try again.'); })
+            .catch(function () { showToast('AI generation failed. Please try again.', 'danger'); })
             .finally(function () {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-magic"></i> Generate with AI (Hindi + English)';
