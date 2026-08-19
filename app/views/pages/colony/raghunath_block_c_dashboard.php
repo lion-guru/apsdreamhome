@@ -153,7 +153,7 @@ $dashboardUrl = BASE_URL . '/raghunath_nagri_layout_walkthrough_suite.html';
                     config: firebaseConfig,
                     app_id: app_id
                 }, '*');
-            } catch(e) {}
+            } catch (e) { console.error("Error:", e); }
         });
     }
 

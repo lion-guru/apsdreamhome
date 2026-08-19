@@ -685,7 +685,7 @@ function submitPropertyInterest(e) {
             x.open('POST', '<?= BASE_URL ?>/api/smart-register/track', true);
             x.setRequestHeader('Content-Type', 'application/json');
             x.send(JSON.stringify({ token: token, event_type: type, event_data: data || null, page_url: window.location.href }));
-        } catch(e) {}
+        } catch (e) { console.error("Error:", e); }
     }
     // Track search events
     var searchForm = document.querySelector('form[action*="properties"]');

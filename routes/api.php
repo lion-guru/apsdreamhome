@@ -107,6 +107,7 @@ $router->get('/api/v2/mobile/properties/browse', 'Api\MobilePropertyApiControlle
 $router->get('/api/v2/mobile/plots/all', 'Api\MobilePropertyApiController@getAllPlots');
 
 // Property detail + search under /api/v2/mobile/ prefix
+$router->get('/api/v2/mobile/properties/featured', 'Api\MobilePropertyApiController@getFeaturedProperties')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/properties/{id}', 'Api\MobilePropertyApiController@propertyDetail')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/properties/search', 'Api\MobilePropertyApiController@searchProperties');
 

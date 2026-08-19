@@ -43,8 +43,7 @@ class AuthMiddleware {
             $tid = 1;
             try {
                 $tid = \App\Core\Middleware\TenantContext::getId();
-            } catch (\Throwable $e) {
-            }
+            } catch (\Throwable $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
             $tenantSql = $tid > 1 ? " AND tenant_id = :tid" : "";
             $sql = "SELECT * FROM users WHERE (name = :username OR email = :email)" . $tenantSql;
             $params = ['username' => $username, 'email' => $username];

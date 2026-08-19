@@ -118,7 +118,7 @@ class RegisterController extends BaseController
             // Load role-specific IDs
             $db = \App\Core\Database\Database::getInstance();
             $tid = 1;
-            try { $tid = \App\Core\Middleware\TenantContext::getId(); } catch (\Throwable $e) {}
+            try { $tid = \App\Core\Middleware\TenantContext::getId(); } catch (\Throwable $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
             $tenantSql = $tid > 1 ? " AND tenant_id = ?" : "";
             $params = [$result['user_id']];
             if ($tid > 1) $params[] = $tid;
@@ -130,12 +130,12 @@ class RegisterController extends BaseController
                         $_SESSION['associate_id'] = (int)$ass['id'];
                         if ($role === 'agent') $_SESSION['agent_id'] = (int)$ass['id'];
                     }
-                } catch (\Throwable $e) {}
+                } catch (\Throwable $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
             } elseif ($role === 'employee' || $role === 'telecaller') {
                 try {
                     $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ?" . $tenantSql . " LIMIT 1", $params);
                     if ($emp) $_SESSION['employee_id'] = (int)$emp['id'];
-                } catch (\Throwable $e) {}
+                } catch (\Throwable $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
             }
 
             // Mark visitor as converted

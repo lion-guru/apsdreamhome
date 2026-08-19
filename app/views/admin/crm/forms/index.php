@@ -108,7 +108,7 @@
                                     foreach ($agents as $a): ?>
                                         <option value="<?= $a['id'] ?>"><?= htmlspecialchars($a['name'] ?? '') ?></option>
                                     <?php endforeach;
-                                } catch (\Throwable $e) {}
+                                } catch (\Throwable $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
                                 ?>
                             </select>
                         </div>
@@ -123,7 +123,7 @@
                                     foreach ($campaigns as $c): ?>
                                         <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?></option>
                                     <?php endforeach;
-                                } catch (\Throwable $e) {}
+                                } catch (\Throwable $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
                                 ?>
                             </select>
                         </div>

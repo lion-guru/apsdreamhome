@@ -6,7 +6,7 @@ if (!isset($GLOBALS['_site_settings_cache'])) {
         $scPdo = \App\Core\Database\Database::getInstance()->getPdo();
         $scRows = $scPdo->query("SELECT content_key, content_value FROM site_content WHERE section = 'settings' AND is_active = 1")->fetchAll(PDO::FETCH_KEY_PAIR);
         $GLOBALS['_site_settings_cache'] = $scRows;
-    } catch (\Exception $e) {}
+    } catch (\Exception $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
 }
 $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$key] ?? $default; };
 ?>

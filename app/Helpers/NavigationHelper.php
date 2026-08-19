@@ -66,8 +66,7 @@ class NavigationHelper
                     "SELECT content_key, content_value FROM site_content WHERE section = 'settings' AND is_active = 1"
                 )->fetchAll(\PDO::FETCH_KEY_PAIR);
                 $this->siteSettings = $rows ?: [];
-            } catch (\Exception $e) {
-            }
+            } catch (\Exception $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
         }
         return $this->siteSettings[$key] ?? $default;
     }

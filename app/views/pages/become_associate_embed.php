@@ -226,7 +226,7 @@ function trackShare(platform) {
         formData.append('referral_code', <?= json_encode($referral_code) ?>);
         formData.append('message', <?= json_encode($shareText) ?>);
         navigator.sendBeacon('<?= BASE_URL ?>/share/track', formData);
-    } catch(e) {}
+    } catch (e) { console.error("Error:", e); }
 }
 function copyCode() {
     var code = document.getElementById('refCode').textContent.trim();

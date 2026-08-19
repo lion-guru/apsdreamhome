@@ -126,19 +126,19 @@ if ($statusOnly || $dryRun) {
             try {
                 $r = $pdo->query("SELECT COUNT(*) FROM booking_payment_schedules WHERE status = 'overdue' AND accrued_penalty > 0")->fetchColumn();
                 echo "Overdue installments with penalty: $r" . PHP_EOL;
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
 
             // Active investments nearing maturity
             try {
                 $r = $pdo->query("SELECT COUNT(*) FROM investments WHERE maturity_status = 'active' AND maturity_date <= DATE_ADD(NOW(), INTERVAL 7 DAY)")->fetchColumn();
                 echo "Investments maturing in 7 days: $r" . PHP_EOL;
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
 
             // Inactive agents (90+ days)
             try {
                 $r = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'agent' AND status = 'active' AND last_login_at < DATE_SUB(NOW(), INTERVAL 90 DAY)")->fetchColumn();
                 echo "Agents inactive 90+ days: $r" . PHP_EOL;
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
 
             // Royalty pool
             try {
@@ -147,8 +147,8 @@ if ($statusOnly || $dryRun) {
                 $r->execute([$thisMonth]);
                 $pool = $r->fetch(PDO::FETCH_ASSOC);
                 echo "This month royalty pool: â‚¹" . number_format($pool['total_pool_amount'] ?? 0) . " (" . ($pool['distributed_status'] ?? 'none') . ")" . PHP_EOL;
-            } catch (\Throwable $e) {}
-        } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
     }
     exit(0);
 }

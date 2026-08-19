@@ -413,7 +413,7 @@ document.getElementById('serviceInterestForm')?.addEventListener('submit', funct
         const val = new URLSearchParams(window.location.search).get(p);
         if (val) {
             document.querySelectorAll(`input[name="${p}"]`).forEach(el => el.value = val);
-            try { sessionStorage.setItem(p, val); } catch(e) {}
+            try { sessionStorage.setItem(p, val); } catch (e) { console.error("Error:", e); }
         }
     });
 })();

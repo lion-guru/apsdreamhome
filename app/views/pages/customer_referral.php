@@ -421,6 +421,6 @@ function trackShare(platform) {
         fd.append('referral_code', code);
         fd.append('message', 'Shared via ' + platform);
         fetch('<?= BASE_URL ?>/share/track', { method: 'POST', body: fd, credentials: 'same-origin' });
-    } catch(e) {}
+    } catch (e) { console.error("Error:", e); }
 }
 </script>

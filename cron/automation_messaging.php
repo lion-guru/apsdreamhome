@@ -125,7 +125,7 @@ try {
                 try {
                     $waResult = $auto->sendMessage('whatsapp', $emi['customer_phone'], $message);
                     $sent = $waResult['success'] ?? false;
-                } catch (\Throwable $e2) {}
+                } catch (\Throwable $e2) { error_log(__METHOD__ . ': ' . $e2->getMessage()); }
             }
         }
         

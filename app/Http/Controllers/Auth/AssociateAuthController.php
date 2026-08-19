@@ -189,8 +189,7 @@ class AssociateAuthController extends BaseController
                     } else {
                         // Fallback (though usually it should exist)
                     }
-                } catch (\Exception $e) {
-                }
+                } catch (\Exception $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
 
                 $_SESSION['customer_id'] = $user['customer_id'] ?? $user['id'];
                 $_SESSION['user_name'] = $user['name'];

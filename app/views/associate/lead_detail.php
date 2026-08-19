@@ -386,7 +386,7 @@ $today = date('Y-m-d');
         try {
             $scoringService = new \App\Services\LeadScoringService();
             $scoreBreakdown = $scoringService->calculateScore($lead['id']);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
         ?>
         <?php if ($scoreBreakdown): ?>
             <div class="mb-3">
@@ -509,7 +509,7 @@ $today = date('Y-m-d');
                     $st2 = $pdo2->prepare("SELECT id, name FROM users WHERE role = 'associate' AND id != ? ORDER BY name ASC");
                     $st2->execute([$_SESSION['user_id'] ?? 0]);
                     $teamMembers = $st2->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-                } catch (\Throwable $e) {}
+                } catch (\Throwable $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
                 ?>
                 <?php if (!empty($teamMembers)): ?>
                 <form method="POST" action="<?= BASE_URL ?>/associate/leads/<?= $lead['id'] ?>/assign">

@@ -410,8 +410,8 @@ $router->get('/admin/api-key-mgmt/stats', function () {
         $total = $db->query("SELECT COUNT(*) FROM api_keys")->fetchColumn();
         $active = $db->query("SELECT COUNT(*) FROM api_keys WHERE status = 'active'")->fetchColumn();
         $mcp = 0; $userKeys = 0;
-        try { $mcp = $db->query("SELECT COUNT(*) FROM mcp_api_keys")->fetchColumn(); } catch (\Exception $e) {}
-        try { $userKeys = $db->query("SELECT COUNT(*) FROM user_api_keys")->fetchColumn(); } catch (\Exception $e) {}
+        try { $mcp = $db->query("SELECT COUNT(*) FROM mcp_api_keys")->fetchColumn(); } catch (\Exception $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
+        try { $userKeys = $db->query("SELECT COUNT(*) FROM user_api_keys")->fetchColumn(); } catch (\Exception $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
         echo json_encode(['success' => true, 'stats' => ['total_keys' => (int)$total, 'active_keys' => (int)$active, 'mcp_keys' => ['total' => (int)$mcp], 'user_keys' => ['total' => (int)$userKeys]]]);
     } catch (\Exception $e) { echo json_encode(['success' => false]); }
     exit;

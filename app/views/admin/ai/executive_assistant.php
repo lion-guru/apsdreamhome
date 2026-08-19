@@ -261,7 +261,7 @@ async function loadInitialKPIs() {
         if (data.success && data.quick_data) {
             updateKPIs(data.quick_data);
         }
-    } catch (e) {}
+    } catch (e) { console.error("Error:", e); }
 }
 
 loadInitialKPIs();

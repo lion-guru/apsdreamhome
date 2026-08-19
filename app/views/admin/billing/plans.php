@@ -115,7 +115,7 @@ $base    = BASE_URL ?? '';
         try {
             $svc = new \App\Services\Gateway\RazorpayService();
             $razorpayConfigured = $svc->isConfigured();
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
         ?>
         <?php if ($razorpayConfigured): ?>
             <div class="alert alert-success mb-0">

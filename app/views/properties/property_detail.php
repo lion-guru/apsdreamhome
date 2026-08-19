@@ -1,4 +1,4 @@
-<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; } $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= htmlspecialchars($phoneDisplay ?? '') ?>'); $emailDisplay = $sc('contact_email', '<?= htmlspecialchars($emailDisplay ?? '') ?>'); ?>
+<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; } $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '+91-9277121112'); $emailDisplay = $sc('contact_email', 'info@apsdreamhome.com'); ?>
 <?php
 $page_title = $property['title'] . ' - APS Dream Home';
 include __DIR__ . '/../layouts/base.php';
@@ -150,7 +150,7 @@ include __DIR__ . '/../layouts/base.php';
                                 <!-- Logged In View: Show Contact & Track Lead -->
                                 <div class="mt-2" id="revealed-contact" class="style-2248">
                                     <h5 class="text-success fw-bold mb-0" class="style-37384">
-                                        <?php echo !empty($property['owner_contact']) ? htmlspecialchars($property['owner_contact'] ?? '') : '<?= htmlspecialchars($phoneDisplay ?? '') ?>'; ?>
+                                        <?php echo !empty($property['owner_contact']) ? htmlspecialchars($property['owner_contact'] ?? '') : htmlspecialchars($phoneDisplay ?? ''); ?>
                                     </h5>
                                     <small class="text-white-50">Verified Number <i class="bi bi-check-circle-fill text-success ms-1"></i></small>
                                 </div>
@@ -307,7 +307,7 @@ min-width: auto;
                 event_data: eventData || null,
                 page_url: window.location.href
             }));
-        } catch(e) {}
+        } catch (e) { console.error("Error:", e); }
     }
 
     // Track property view

@@ -147,7 +147,7 @@ if (!defined('BASE_URL')) { define('BASE_URL', ''); }
             var hi = voices.filter(function (v) { return /hi/i.test(v.lang); })[0];
             if (hi) u.voice = hi;
             window.speechSynthesis.speak(u);
-        } catch (e) {}
+        } catch (e) { console.error("Error:", e); }
     }
 
     function sendToBot(message) {

@@ -240,7 +240,7 @@ try {
                 o?.classList.remove('show');
             }
         });
-        setTimeout(() => { document.querySelectorAll('.alert').forEach(a => { try { new bootstrap.Alert(a).close(); } catch(e) {} }); }, 5000);
+        setTimeout(() => { document.querySelectorAll('.alert').forEach(a => { try { new bootstrap.Alert(a).close(); } catch (e) { console.error("Error:", e); } }); }, 5000);
     </script>
 </body>
 </html>

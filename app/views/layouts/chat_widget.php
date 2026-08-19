@@ -533,7 +533,7 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({source: source, page: window.location.href, ts: Date.now()})
             }).catch(function(){});
-        } catch(e) {}
+        } catch (e) { console.error("Error:", e); }
     };
 
     // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
@@ -701,7 +701,7 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({session_id: cwSession, positive: positive === 1})
             }).catch(function(){});
-        } catch(e) {}
+        } catch (e) { console.error("Error:", e); }
     };
 })();
 </script>

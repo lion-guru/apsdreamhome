@@ -197,7 +197,7 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
                                     foreach ($agents as $a): ?>
                                         <option value="<?= $a['id'] ?>" <?= ($settings['assign_to'] ?? '') == $a['id'] ? 'selected' : '' ?>><?= htmlspecialchars($a['name'] ?? '') ?></option>
                                     <?php endforeach;
-                                } catch (\Throwable $e) {}
+                                } catch (\Throwable $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
                                 ?>
                             </select>
                         </div>
@@ -212,7 +212,7 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
                                     foreach ($campaigns as $c): ?>
                                         <option value="<?= $c['id'] ?>" <?= ($settings['drip_campaign'] ?? '') == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name'] ?? '') ?></option>
                                     <?php endforeach;
-                                } catch (\Throwable $e) {}
+                                } catch (\Throwable $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
                                 ?>
                             </select>
                         </div>

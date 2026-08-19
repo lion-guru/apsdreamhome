@@ -158,7 +158,7 @@ class RealBrowserTester {
                 $screenshot = __DIR__ . '/testing/screenshots/02_login_error.png';
                 $this->page->screenshot(['path' => $screenshot, 'fullPage' => true]);
                 echo "   📸 Error screenshot: 02_login_error.png\n";
-            } catch (Exception $e2) {}
+            } catch (\Exception $e2) { error_log(__METHOD__ . ': ' . $e2->getMessage()); }
             
             $this->results['after_login'] = ['status' => 'error', 'error' => $e->getMessage()];
             return false;
@@ -269,7 +269,7 @@ class RealBrowserTester {
                         $profileFound = true;
                         break;
                     }
-                } catch (Exception $e) {}
+                } catch (\Exception $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
             }
             
             if (!$profileFound) {
