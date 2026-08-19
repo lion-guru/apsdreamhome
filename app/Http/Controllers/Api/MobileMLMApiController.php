@@ -77,6 +77,118 @@ class MobileMLMApiController extends BaseController
         }
     }
 
+    private function getMlmUserSummary($userId)
+    {
+        try {
+            $summary = [
+                'user_id' => $userId,
+                'rank' => 'Customer',
+                'total_team_size' => 0,
+                'active_members' => 0,
+                'inactive_members' => 0,
+                'total_earnings' => 0,
+                'pending_payouts' => 0,
+                'paid_payouts' => 0,
+                'direct_referrals' => 0,
+                'binary_left' => 0,
+                'binary_right' => 0,
+                'matching_bonus' => 0,
+                'rank_progress' => [],
+            ];
+
+            // Get rank
+            $stmt = $this->db->prepare("SELECT current_level FROM mlm_profiles WHERE user_id = ?");
+            $stmt->execute([$userId]);
+            $profile = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($profile) {
+                $summary['rank'] = $profile['current_level'] ?? 'Customer';
+            }
+
+            // Get team size
+            $stmt = $this->db->prepare("SELECT COUNT(*) FROM mlm_referrals WHERE referrer_id = ?");
+            $stmt->execute([$userId]);
+            $summary['direct_referrals'] = (int)$stmt->fetchColumn();
+
+            // Get earnings
+            $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) FROM mlm_payouts WHERE user_id = ?");
+            $stmt->execute([$userId]);
+            $summary['total_earnings'] = (float)$stmt->fetchColumn();
+
+            $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) FROM mlm_payouts WHERE user_id = ? AND status = 'pending'");
+            $stmt->execute([$userId]);
+            $summary['pending_payouts'] = (float)$stmt->fetchColumn();
+
+            $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) FROM mlm_payouts WHERE user_id = ? AND status = 'paid'");
+            $stmt->execute([$userId]);
+            $summary['paid_payouts'] = (float)$stmt->fetchColumn();
+
+            return $summary;
+        } catch (\Exception $e) {
+            error_log("[MobileMLMApiController] getMlmUserSummary error: " . $e->getMessage());
+            return [
+                'user_id' => $userId,
+                'rank' => 'Customer',
+                'total_team_size' => 0,
+                'active_members' => 0,
+                'inactive_members' => 0,
+                'total_earnings' => 0,
+                'pending_payouts' => 0,
+                'paid_payouts' => 0,
+                'direct_referrals' => 0,
+                'binary_left' => 0,
+                'binary_right' => 0,
+                'matching_bonus' => 0,
+                'rank_progress' => [],
+            ];
+        }
+    }
+
+    private function getMlmPayoutHistory($userId)
+    {
+        try {
+            $stmt = $this->db->prepare("SELECT id, amount, level, payment_method, status, processed_at, created_at FROM mlm_payouts WHERE user_id = ? ORDER BY created_at DESC LIMIT 50");
+            $stmt->execute([$userId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            error_log("[MobileMLMApiController] getMlmPayoutHistory error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    private function getMlmIncentiveDashboard($userId)
+    {
+        try {
+            $incentives = [
+                'total_incentives' => 0,
+                'paid_incentives' => 0,
+                'pending_incentives' => 0,
+                'recent_incentives' => [],
+            ];
+
+            $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) FROM mlm_payouts WHERE user_id = ? AND level = 'incentive'");
+            $stmt->execute([$userId]);
+            $incentives['total_incentives'] = (float)$stmt->fetchColumn();
+
+            $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) FROM mlm_payouts WHERE user_id = ? AND level = 'incentive' AND status = 'paid'");
+            $stmt->execute([$userId]);
+            $incentives['paid_incentives'] = (float)$stmt->fetchColumn();
+
+            $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) FROM mlm_payouts WHERE user_id = ? AND level = 'incentive' AND status = 'pending'");
+            $stmt->execute([$userId]);
+            $incentives['pending_incentives'] = (float)$stmt->fetchColumn();
+
+            return $incentives;
+        } catch (\Exception $e) {
+            error_log("[MobileMLMApiController] getMlmIncentiveDashboard error: " . $e->getMessage());
+            return [
+                'total_incentives' => 0,
+                'paid_incentives' => 0,
+                'pending_incentives' => 0,
+                'recent_incentives' => [],
+            ];
+        }
+    }
+
     public function processPayouts()
     {
         $this->setCorsHeaders();
