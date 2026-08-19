@@ -18,6 +18,9 @@ if (!empty($filters['status'])) $filterQs .= '&status=' . urlencode($filters['st
         <a href="<?php echo BASE_URL; ?>/admin/users/create" class="btn btn-primary">
             <i class="fas fa-plus me-2"></i>Add User
         </a>
+        <a href="<?php echo BASE_URL; ?>/admin/users/export?search=<?= urlencode($filters['search'] ?? '') ?>&role=<?= urlencode($filters['role'] ?? '') ?>&status=<?= urlencode($filters['status'] ?? '') ?>" class="btn btn-outline-secondary">
+            <i class="fas fa-file-csv me-2"></i>Export CSV
+        </a>
     </div>
 </div>
 

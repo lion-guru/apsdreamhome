@@ -14,6 +14,9 @@ $active_page = 'properties';
             <a href="<?= BASE_URL ?>admin/properties" class="btn btn-warning ms-2 shadow-sm fw-bold">
                 <i class="fas fa-robot me-1"></i> Fetch Web Listings
             </a>
+            <a href="<?= BASE_URL ?>admin/properties/export?format=csv&type=properties" class="btn btn-outline-secondary ms-2">
+                <i class="fas fa-file-csv"></i> Export CSV
+            </a>
         </div>
     </div>
 </div>

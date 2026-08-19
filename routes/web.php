@@ -1218,12 +1218,14 @@ $router->post('/admin/properties/{id}/destroy',
 'App\\Http\\Controllers\\Admin\\PropertyManagementController@destroy');
 $router->post('/admin/properties/bulk-update', 
 'App\\Http\\Controllers\\Admin\\PropertyManagementController@bulkUpdate');
+$router->get('/admin/properties/export', 'App\\Http\\Controllers\\Admin\\PropertyManagementController@export');
 
 // AI Aggregator Trigger Route
 $router->post('/admin/ai-aggregator/fetch', 'App\\Http\\Controllers\\Admin\\AIAggregatorController@triggerFetch');
 
 // Admin Users
 $router->get('/admin/users', 'App\\Http\\Controllers\\Admin\\UserController@index');
+$router->get('/admin/users/export', 'App\\Http\\Controllers\\Admin\\UserController@export');
 $router->get('/admin/users/create', 'App\\Http\\Controllers\\Admin\\UserController@create');
 $router->post('/admin/users', 'App\\Http\\Controllers\\Admin\\UserController@store');
 $router->get('/admin/users/pending', 'App\\Http\\Controllers\\Admin\\UserController@pending');

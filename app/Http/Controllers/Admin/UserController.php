@@ -1189,4 +1189,59 @@ class UserController extends AdminController
             return $this->redirect('admin/users');
         }
     }
+    
+    public function export()
+    {
+        $this->requireAdmin();
+        try {
+            $search = $_GET['search'] ?? '';
+            $role = $_GET['role'] ?? '';
+            $status = $_GET['status'] ?? '';
+
+            $sql = "SELECT u.id, u.name, u.email, u.phone, u.role, u.status, u.created_at,
+                           (SELECT COUNT(*) FROM properties WHERE created_by = u.id) as property_count,
+                           (SELECT COUNT(*) FROM plot_bookings WHERE customer_id = u.id) as booking_count
+                    FROM users u
+                    WHERE 1=1";
+            $params = [];
+
+            [$tSql, $tParams] = $this->tenantWhere();
+            $sql .= $tSql;
+            $params = array_merge($params, $tParams);
+
+            if (!empty($search)) {
+                $sql .= " AND (u.name LIKE ? OR u.email LIKE ? OR u.phone LIKE ?)";
+                $searchTerm = '%' . $search . '%';
+                $params[] = $searchTerm; $params[] = $searchTerm; $params[] = $searchTerm;
+            }
+            if (!empty($role)) {
+                $sql .= " AND u.role = ?";
+                $params[] = $role;
+            }
+            if (!empty($status)) {
+                $sql .= " AND u.status = ?";
+                $params[] = $status;
+            }
+
+            $sql .= " ORDER BY u.created_at DESC";
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $users = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            header('Content-Type: text/csv; charset=utf-8');
+            header('Content-Disposition: attachment; filename=users-' . date('Y-m-d') . '.csv');
+            $output = fopen('php://output', 'w');
+            fputcsv($output, ['ID', 'Name', 'Email', 'Phone', 'Role', 'Status', 'Properties', 'Bookings', 'Registered']);
+            foreach ($users as $u) {
+                fputcsv($output, [$u['id'], $u['name'], $u['email'], $u['phone'], $u['role'], $u['status'], $u['property_count'], $u['booking_count'], $u['created_at']]);
+            }
+            fclose($output);
+            exit;
+        } catch (\Exception $e) {
+            error_log('UserController::export error: ' . $e->getMessage());
+            $this->setFlash('error', 'Export failed');
+            return $this->redirect('admin/users');
+        }
+    }
 }
