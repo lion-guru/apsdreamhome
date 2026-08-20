@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Traits\ServiceTenantTrait;
 use PDO;
 use Exception;
 
@@ -13,6 +14,8 @@ use Exception;
  */
 class MlmInvestmentEngine
 {
+    use ServiceTenantTrait;
+
     private $pdo;
 
     public function __construct()
@@ -89,7 +92,7 @@ class MlmInvestmentEngine
 
     public function listPackages(): array
     {
-        $stmt = $this->pdo->query("SELECT id, package_code, package_name, price, direct_sponsor_bonus, level_payout_json, description, is_active FROM mlm_joining_packages WHERE is_active = 1 ORDER BY price ASC");
+        $stmt = $this->pdo->prepare("SELECT id, package_code, package_name, price, direct_sponsor_bonus, level_payout_json, description, is_active FROM mlm_joining_packages WHERE is_active = 1" . $this->tenantSql() . " ORDER BY price ASC");
         return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
 
@@ -146,8 +149,11 @@ class MlmInvestmentEngine
 
     private function createRegistration(string $regNumber, int $userId, int $packageId, array $context): void
     {
-        $stmt = $this->pdo->prepare("INSERT INTO mlm_associate_registrations (user_id, package_id, registration_number, payment_status, payment_method, payment_reference, amount_paid, registered_at, paid_at) VALUES (?, ?, ?, 'paid', ?, ?, ?, NOW(), NOW())");
-        $stmt->execute([$userId, $packageId, $regNumber, $context['payment_method'] ?? null, $context['payment_reference'] ?? null, $this->getPackagePrice($packageId)]);
+        $columns = array_merge(['user_id', 'package_id', 'registration_number', 'payment_status', 'payment_method', 'payment_reference', 'amount_paid', 'registered_at', 'paid_at'], array_keys($this->tenantInsertData()));
+        $values  = array_merge([$userId, $packageId, $regNumber, 'paid', $context['payment_method'] ?? null, $context['payment_reference'] ?? null, $this->getPackagePrice($packageId), date('Y-m-d H:i:s'), date('Y-m-d H:i:s')], array_values($this->tenantInsertData()));
+        $placeholders = str_repeat('?,', count($columns) - 1) . '?';
+        $stmt = $this->pdo->prepare("INSERT INTO mlm_associate_registrations (" . implode(', ', $columns) . ") VALUES ({$placeholders})");
+        $stmt->execute($values);
     }
 
     private function getPackagePrice(int $packageId): float
@@ -174,8 +180,11 @@ class MlmInvestmentEngine
 
     private function writeLedger(int $beneficiaryId, int $sourceId, float $saleAmount, float $amount, string $type, int $level, string $notes): int
     {
-        $stmt = $this->pdo->prepare("INSERT INTO mlm_commission_ledger (beneficiary_user_id, source_user_id, commission_type, amount, level, sale_amount, status, notes, created_at) VALUES (?, ?, ?, ?, ?, ?, 'pending', ?, NOW())");
-        $stmt->execute([$beneficiaryId, $sourceId, $type, round($amount, 2), $level, $saleAmount, $notes]);
+        $columns = array_merge(['beneficiary_user_id', 'source_user_id', 'commission_type', 'amount', 'level', 'sale_amount', 'status', 'notes', 'created_at'], array_keys($this->tenantInsertData()));
+        $values  = array_merge([$beneficiaryId, $sourceId, $type, round($amount, 2), $level, $saleAmount, 'pending', $notes, date('Y-m-d H:i:s')], array_values($this->tenantInsertData()));
+        $placeholders = str_repeat('?,', count($columns) - 1) . '?';
+        $stmt = $this->pdo->prepare("INSERT INTO mlm_commission_ledger (" . implode(', ', $columns) . ") VALUES ({$placeholders})");
+        $stmt->execute($values);
         return (int) $this->pdo->lastInsertId();
     }
 }

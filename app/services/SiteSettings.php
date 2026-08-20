@@ -1,10 +1,13 @@
 <?php
 namespace App\Services;
 
+use App\Traits\ServiceTenantTrait;
 use PDO;
 
 class SiteSettings
 {
+    use ServiceTenantTrait;
+
     private static $cache;
 
     public static function get(): array

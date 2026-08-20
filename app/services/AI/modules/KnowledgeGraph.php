@@ -2,6 +2,7 @@
 
 namespace App\Services\AI\Modules;
 
+use App\Traits\ServiceTenantTrait;
 use PDO;
 
 /**
@@ -12,6 +13,8 @@ use PDO;
  */
 class KnowledgeGraph
 {
+    use ServiceTenantTrait;
+
     private $db;
 
     public function __construct($db = null)
@@ -94,14 +97,17 @@ class KnowledgeGraph
     public function addEntity(string $name, string $type = 'concept', array $metadata = []): ?int
     {
         try {
-            $existing = $this->db->fetch("SELECT id FROM ai_knowledge_entities WHERE entity_name = ? AND entity_type = ?", [$name, $type]);
+            $existing = $this->db->fetch("SELECT id FROM ai_knowledge_entities WHERE entity_name = ? AND entity_type = ?" . $this->tenantSql(), [$name, $type]);
             if ($existing) {
                 $this->db->execute("UPDATE ai_knowledge_entities SET confidence = LEAST(confidence + 0.05, 1.0), updated_at = NOW() WHERE id = ?", [$existing['id']]);
                 return (int)$existing['id'];
             }
+            $columns = array_merge(['entity_name', 'entity_type', 'metadata', 'confidence', 'created_at', 'updated_at'], array_keys($this->tenantInsertData()));
+            $values  = array_merge([$name, $type, !empty($metadata) ? json_encode($metadata) : null, 0.5, date('Y-m-d H:i:s'), date('Y-m-d H:i:s')], array_values($this->tenantInsertData()));
+            $placeholders = str_repeat('?,', count($columns) - 1) . '?';
             $this->db->execute(
-                "INSERT INTO ai_knowledge_entities (entity_name, entity_type, metadata, confidence, created_at, updated_at) VALUES (?, ?, ?, ?, NOW(), NOW())",
-                [$name, $type, !empty($metadata) ? json_encode($metadata) : null, 0.5]
+                "INSERT INTO ai_knowledge_entities (" . implode(', ', $columns) . ") VALUES ({$placeholders})",
+                $values
             );
             return (int)$this->db->lastInsertId();
         } catch (\Throwable $e) {
@@ -121,7 +127,7 @@ class KnowledgeGraph
             if (!$id1 || !$id2 || $id1 === $id2) return false;
 
             $existing = $this->db->fetch(
-                "SELECT id FROM ai_knowledge_relations WHERE source_entity_id = ? AND target_entity_id = ? AND relation_type = ?",
+                "SELECT id FROM ai_knowledge_relations WHERE source_entity_id = ? AND target_entity_id = ? AND relation_type = ?" . $this->tenantSql(),
                 [$id1, $id2, $relation]
             );
             if ($existing) {
@@ -129,9 +135,12 @@ class KnowledgeGraph
                 return true;
             }
 
+            $columns = array_merge(['source_entity_id', 'target_entity_id', 'relation_type', 'confidence', 'metadata', 'created_at', 'updated_at'], array_keys($this->tenantInsertData()));
+            $values  = array_merge([$id1, $id2, $relation, $confidence, null, date('Y-m-d H:i:s'), date('Y-m-d H:i:s')], array_values($this->tenantInsertData()));
+            $placeholders = str_repeat('?,', count($columns) - 1) . '?';
             $this->db->execute(
-                "INSERT INTO ai_knowledge_relations (source_entity_id, target_entity_id, relation_type, confidence, metadata, created_at, updated_at) VALUES (?, ?, ?, ?, NULL, NOW(), NOW())",
-                [$id1, $id2, $relation, $confidence]
+                "INSERT INTO ai_knowledge_relations (" . implode(', ', $columns) . ") VALUES ({$placeholders})",
+                $values
             );
             return true;
         } catch (\Throwable $e) {

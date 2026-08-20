@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Traits\ServiceTenantTrait;
 use PDO;
 use Exception;
 
@@ -11,6 +12,8 @@ use Exception;
  */
 class MLMIncentiveService
 {
+    use ServiceTenantTrait;
+
     private $conn;
 
     protected $monthlyTargets = [
@@ -73,14 +76,15 @@ class MLMIncentiveService
             $achieved = $mbv >= $target;
             $incentiveAmount = $achieved ? $reward : 0;
 
-            $stmt = $this->conn->prepare("INSERT INTO mlm_monthly_incentives 
-                (user_id, month, year, rank_at_time, target_business, achieved_business, incentive_amount, status) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            $columns = array_merge(['user_id', 'month', 'year', 'rank_at_time', 'target_business', 'achieved_business', 'incentive_amount', 'status'], array_keys($this->tenantInsertData()));
+            $values  = array_merge([$userId, $month, $year, $currentRank, $target, $mbv, $incentiveAmount, $achieved ? 'approved' : 'failed'], array_values($this->tenantInsertData()));
+            $placeholders = str_repeat('?,', count($columns) - 1) . '?';
+            $stmt = $this->conn->prepare("INSERT INTO mlm_monthly_incentives (" . implode(', ', $columns) . ") VALUES ({$placeholders})
                 ON DUPLICATE KEY UPDATE 
                 achieved_business = VALUES(achieved_business),
                 incentive_amount = VALUES(incentive_amount),
                 status = IF(status = 'paid', 'paid', VALUES(status))");
-            $stmt->execute([$userId, $month, $year, $currentRank, $target, $mbv, $incentiveAmount, $achieved ? 'approved' : 'failed']);
+            $stmt->execute($values);
 
             return [
                 'success' => true,
@@ -110,8 +114,9 @@ class MLMIncentiveService
             $sql = "SELECT COALESCE(SUM(booking_amount), 0) FROM plot_bookings 
                     WHERE associate_id IN ($placeholders) 
                     AND status IN ('confirmed', 'completed')
-                    AND booking_date BETWEEN ? AND ?";
+                    AND booking_date BETWEEN ? AND ?" . $this->tenantSql();
             $params = array_merge($downline, [$startDate, $endDate]);
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($params);
             return (float)$stmt->fetchColumn();
@@ -124,8 +129,10 @@ class MLMIncentiveService
     public function getIncentiveSummary(int $userId): array
     {
         $this->calculateMonthlyIncentive($userId);
-        $stmt = $this->conn->prepare("SELECT * FROM mlm_monthly_incentives WHERE user_id = ? ORDER BY year DESC, month DESC LIMIT 12");
-        $stmt->execute([$userId]);
+        $stmt = $this->conn->prepare("SELECT * FROM mlm_monthly_incentives WHERE user_id = ?" . $this->tenantSql() . " ORDER BY year DESC, month DESC LIMIT 12");
+        $params = [$userId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 

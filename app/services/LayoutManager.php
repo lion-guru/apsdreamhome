@@ -2,8 +2,12 @@
 
 namespace App\Services;
 
+use App\Traits\ServiceTenantTrait;
+
 // Admin Layout Manager
 class LayoutManager {
+    use ServiceTenantTrait;
+
     private $db;
     
     public function __construct($database) {

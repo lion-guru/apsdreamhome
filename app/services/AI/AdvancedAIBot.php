@@ -3,11 +3,16 @@
 // TODO: Add proper error handling with try-catch blocks
 
 namespace App\Services\AI;
+
+use App\Traits\ServiceTenantTrait;
+
 /**
  * Advanced AI Bot Class
  * Implements NLP, Stateful Conversation, Role-based behavior, and Hybrid Decision logic.
  */
 class AdvancedAIBot {
+    use ServiceTenantTrait;
+
     private $db;
     private $sessionId;
     private $userRole;
@@ -31,8 +36,10 @@ class AdvancedAIBot {
         if (!$state) {
             $history = json_encode([]);
             $context = json_encode(['role' => $this->userRole, 'start_time' => date('Y-m-d H:i:s')]);
-            $this->db->execute("INSERT INTO ai_conversation_states (session_id, user_id, user_role, history, current_context) VALUES (?, ?, ?, ?, ?)",
-                [$this->sessionId, $this->userId, $this->userRole, $history, $context]);
+            $columns = array_merge(['session_id', 'user_id', 'user_role', 'history', 'current_context'], array_keys($this->tenantInsertData()));
+            $values  = array_merge([$this->sessionId, $this->userId, $this->userRole, $history, $context], array_values($this->tenantInsertData()));
+            $placeholders = str_repeat('?,', count($columns) - 1) . '?';
+            $this->db->execute("INSERT INTO ai_conversation_states (" . implode(', ', $columns) . ") VALUES ({$placeholders})", $values);
         }
     }
 
@@ -153,12 +160,17 @@ class AdvancedAIBot {
 
         // Log interaction
         $entitiesJson = json_encode($analysis['entities']);
-        $this->db->execute("INSERT INTO ai_interaction_logs (session_id, user_query, bot_response, intent, entities, sentiment) VALUES (?, ?, ?, ?, ?, ?)",
-            [$this->sessionId, $query, $response, $analysis['intent'], $entitiesJson, $analysis['sentiment']]);
+        $columns = array_merge(['session_id', 'user_query', 'bot_response', 'intent', 'entities', 'sentiment'], array_keys($this->tenantInsertData()));
+        $values  = array_merge([$this->sessionId, $query, $response, $analysis['intent'], $entitiesJson, $analysis['sentiment']], array_values($this->tenantInsertData()));
+        $placeholders = str_repeat('?,', count($columns) - 1) . '?';
+        $this->db->execute("INSERT INTO ai_interaction_logs (" . implode(', ', $columns) . ") VALUES ({$placeholders})", $values);
     }
 
     private function logPerformance($duration, $confidence) {
-        $this->db->execute("INSERT INTO ai_bot_performance (response_time_ms, accuracy_score) VALUES (?, ?)", [$duration, $confidence]);
+        $columns = array_merge(['response_time_ms', 'accuracy_score'], array_keys($this->tenantInsertData()));
+        $values  = array_merge([$duration, $confidence], array_values($this->tenantInsertData()));
+        $placeholders = str_repeat('?,', count($columns) - 1) . '?';
+        $this->db->execute("INSERT INTO ai_bot_performance (" . implode(', ', $columns) . ") VALUES ({$placeholders})", $values);
     }
 
     private function encryptResponse($data) {

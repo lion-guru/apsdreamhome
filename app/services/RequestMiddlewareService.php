@@ -10,10 +10,13 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 use App\Core\Security;
+use App\Traits\ServiceTenantTrait;
 use Exception;
 
 class RequestMiddlewareService
 {
+    use ServiceTenantTrait;
+
     private $db;
 
     public function __construct()

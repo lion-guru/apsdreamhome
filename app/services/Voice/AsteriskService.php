@@ -2,6 +2,8 @@
 
 namespace App\Services\Voice;
 
+use App\Traits\ServiceTenantTrait;
+
 /**
  * Asterisk AMI Service — SIM Card Based Outbound Calling
  *
@@ -19,6 +21,8 @@ namespace App\Services\Voice;
  */
 class AsteriskService
 {
+    use ServiceTenantTrait;
+
     private $host;
     private $port;
     private $username;

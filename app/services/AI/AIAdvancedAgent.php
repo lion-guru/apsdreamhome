@@ -3,11 +3,16 @@
 // TODO: Add proper error handling with try-catch blocks
 
 namespace App\Services\AI;
+
+use App\Traits\ServiceTenantTrait;
+
 /**
  * AI Advanced Agent
  * Orchestrates high-level functionalities: Implementation guidance, Learning, and Multi-mode operations.
  */
 class AIAdvancedAgent {
+    use ServiceTenantTrait;
+
     private $db;
     private $aiManager;
     private $toolsManager;
@@ -43,14 +48,15 @@ class AIAdvancedAgent {
         $skillsJson = json_encode($skills);
         $completedAt = ($status === 'completed') ? date('Y-m-d H:i:s') : null;
         
-        $sql = "INSERT INTO ai_learning_progress (user_id, module_name, status, score, skills_acquired, completed_at) 
-                VALUES (?, ?, ?, ?, ?, ?) 
+        $columns = array_merge(['user_id', 'module_name', 'status', 'score', 'skills_acquired', 'completed_at'], array_keys($this->tenantInsertData()));
+        $values  = array_merge([$userId, $moduleName, $status, $score, $skillsJson, $completedAt], array_values($this->tenantInsertData()));
+        $placeholders = str_repeat('?,', count($columns) - 1) . '?';
+        $sql = "INSERT INTO ai_learning_progress (" . implode(', ', $columns) . ") 
+                VALUES ({$placeholders}) 
                 ON DUPLICATE KEY UPDATE status = ?, score = ?, skills_acquired = ?, completed_at = ?";
         
-        return $this->db->execute($sql, [
-            $userId, $moduleName, $status, $score, $skillsJson, $completedAt,
-            $status, $score, $skillsJson, $completedAt
-        ]);
+        $params = array_merge($values, [$status, $score, $skillsJson, $completedAt]);
+        return $this->db->execute($sql, $params);
     }
 
     /**

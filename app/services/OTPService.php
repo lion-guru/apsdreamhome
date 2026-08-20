@@ -3,11 +3,14 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Traits\ServiceTenantTrait;
 use Exception;
 use Twilio\Rest\Client;
 
 class OTPService
 {
+    use ServiceTenantTrait;
+
     private $db;
     private $otpLength = 6;
     private $expiryMinutes = 10;

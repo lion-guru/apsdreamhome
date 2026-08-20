@@ -1,11 +1,16 @@
 <?php
 
 namespace App\Services\AI;
+
+use App\Traits\ServiceTenantTrait;
+
 /**
  * AI Tools Manager
  * Manages the database of 1000+ AI tools and provides recommendation engine logic.
  */
 class AIToolsManager {
+    use ServiceTenantTrait;
+
     private $db;
 
     public function __construct() {
@@ -104,10 +109,12 @@ class AIToolsManager {
             $params[] = $data['id'];
             return $this->db->execute($sql, $params);
         } else {
-            // Insert logic
-            $sql = "INSERT INTO ai_tools_directory (" . implode(', ', $fields) . ") VALUES (" . str_repeat('?,', count($fields)-1) . "?)";
+            // Insert logic with tenant scoping
+            $allFields = array_merge($fields, array_keys($this->tenantInsertData()));
+            $sql = "INSERT INTO ai_tools_directory (" . implode(', ', $allFields) . ") VALUES (" . str_repeat('?,', count($allFields)-1) . "?)";
             $params = [];
             foreach ($fields as $f) $params[] = is_array($data[$f] ?? '') ? json_encode($data[$f]) : ($data[$f] ?? '');
+            $params = array_merge($params, array_values($this->tenantInsertData()));
             return $this->db->execute($sql, $params);
         }
     }
@@ -123,10 +130,13 @@ class AIToolsManager {
      * Track Learning Progress
      */
     public function updateLearningProgress($userId, $toolId, $status, $score = 0) {
-        $sql = "INSERT INTO ai_learning_progress (user_id, tool_id, status, completion_score) 
-                VALUES (?, ?, ?, ?) 
+        $columns = array_merge(['user_id', 'tool_id', 'status', 'completion_score'], array_keys($this->tenantInsertData()));
+        $values  = array_merge([$userId, $toolId, $status, $score], array_values($this->tenantInsertData()));
+        $placeholders = str_repeat('?,', count($columns) - 1) . '?';
+        $sql = "INSERT INTO ai_learning_progress (" . implode(', ', $columns) . ") 
+                VALUES ({$placeholders}) 
                 ON DUPLICATE KEY UPDATE status = VALUES(status), completion_score = VALUES(completion_score), last_updated = CURRENT_TIMESTAMP";
-        return $this->db->execute($sql, [$userId, $toolId, $status, $score]);
+        return $this->db->execute($sql, $values);
     }
 
     /**

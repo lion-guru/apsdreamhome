@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Traits\ServiceTenantTrait;
 use PDO;
 use Exception;
 use InvalidArgumentException;
@@ -15,6 +16,8 @@ use RuntimeException;
  */
 class EngagementService
 {
+    use ServiceTenantTrait;
+
     private $conn;
 
     public function __construct()
@@ -83,24 +86,32 @@ class EngagementService
 
     public function getNotificationFeed(int $userId, int $limit = 20, int $offset = 0): array
     {
-        $stmt = $this->conn->prepare('SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?');
-        $stmt->execute([$userId, $limit, $offset]);
+        $stmt = $this->conn->prepare('SELECT * FROM notifications WHERE user_id = ?' . $this->tenantSql() . ' ORDER BY created_at DESC LIMIT ? OFFSET ?');
+        $params = [$userId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $params[] = $limit;
+        $params[] = $offset;
+        $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function markNotificationRead(int $notificationId, int $userId): bool
     {
         if ($notificationId <= 0 || $userId <= 0) throw new InvalidArgumentException('Valid notification_id and user_id required');
-        $stmt = $this->conn->prepare('UPDATE notifications SET read_at = NOW() WHERE id = ? AND user_id = ? AND read_at IS NULL');
-        $stmt->execute([$notificationId, $userId]);
+        $stmt = $this->conn->prepare('UPDATE notifications SET read_at = NOW() WHERE id = ? AND user_id = ? AND read_at IS NULL' . $this->tenantSql());
+        $params = [$notificationId, $userId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         return $stmt->rowCount() > 0;
     }
 
     public function markAllNotificationsRead(int $userId): int
     {
         if ($userId <= 0) throw new InvalidArgumentException('Valid user_id required');
-        $stmt = $this->conn->prepare('UPDATE notifications SET read_at = NOW() WHERE user_id = ? AND read_at IS NULL');
-        $stmt->execute([$userId]);
+        $stmt = $this->conn->prepare('UPDATE notifications SET read_at = NOW() WHERE user_id = ? AND read_at IS NULL' . $this->tenantSql());
+        $params = [$userId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         return $stmt->rowCount();
     }
 
@@ -124,8 +135,11 @@ class EngagementService
 
         $userId = !empty($payload['user_id']) ? (int) $payload['user_id'] : null;
 
-        $stmt = $this->conn->prepare("INSERT INTO mlm_goals (goal_type, scope, user_id, target_value, target_units, start_date, end_date, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'active', NOW())");
-        $stmt->execute([$goalType, $scope, $userId, $targetValue, $payload['target_units'] ?? null, $startDate, $endDate]);
+        $columns = array_merge(['goal_type', 'scope', 'user_id', 'target_value', 'target_units', 'start_date', 'end_date', 'status', 'created_at'], array_keys($this->tenantInsertData()));
+        $values  = array_merge([$goalType, $scope, $userId, $targetValue, $payload['target_units'] ?? null, $startDate, $endDate, 'active', date('Y-m-d H:i:s')], array_values($this->tenantInsertData()));
+        $placeholders = str_repeat('?,', count($columns) - 1) . '?';
+        $stmt = $this->conn->prepare("INSERT INTO mlm_goals (" . implode(', ', $columns) . ") VALUES ({$placeholders})");
+        $stmt->execute($values);
 
         return ['id' => (int) $this->conn->lastInsertId()];
     }

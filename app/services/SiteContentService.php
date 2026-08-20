@@ -2,9 +2,12 @@
 namespace App\Services;
 
 use App\Core\Database;
+use App\Traits\ServiceTenantTrait;
 
 class SiteContentService
 {
+    use ServiceTenantTrait;
+
     private static ?self $instance = null;
     private $db;
 
@@ -138,8 +141,10 @@ class SiteContentService
     public function update(string $section, string $key, string $value): bool
     {
         try {
-            $stmt = $this->getPdo()->prepare("UPDATE site_content SET content_value = ?, updated_at = NOW() WHERE section = ? AND content_key = ?");
-            $ok = $stmt->execute([$value, $section, $key]);
+            $stmt = $this->getPdo()->prepare("UPDATE site_content SET content_value = ?, updated_at = NOW() WHERE section = ? AND content_key = ?" . $this->tenantSql());
+            $params = [$value, $section, $key];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $ok = $stmt->execute($params);
             if ($ok) $this->clearCacheFor($section);
             return $ok;
         } catch (\Exception $e) {
@@ -156,9 +161,11 @@ class SiteContentService
         try {
             $pdo = $this->getPdo();
             $pdo->beginTransaction();
-            $stmt = $pdo->prepare("UPDATE site_content SET content_value = ?, updated_at = NOW() WHERE section = ? AND content_key = ?");
+            $stmt = $pdo->prepare("UPDATE site_content SET content_value = ?, updated_at = NOW() WHERE section = ? AND content_key = ?" . $this->tenantSql());
             foreach ($data as $key => $value) {
-                $stmt->execute([$value, $section, $key]);
+                $params = [$value, $section, $key];
+                if ($this->tenantId() > 1) $params[] = $this->tenantId();
+                $stmt->execute($params);
             }
             $pdo->commit();
             $this->clearCacheFor($section);
@@ -176,8 +183,8 @@ class SiteContentService
     public function create(array $data): bool
     {
         try {
-            $stmt = $this->getPdo()->prepare("INSERT INTO site_content (section, content_key, content_value, content_type, content_group, sort_order, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)");
-            $ok = $stmt->execute([
+            $columns = array_merge(['section', 'content_key', 'content_value', 'content_type', 'content_group', 'sort_order', 'is_active'], array_keys($this->tenantInsertData()));
+            $values  = array_merge([
                 $data['section'] ?? '',
                 $data['content_key'] ?? '',
                 $data['content_value'] ?? '',
@@ -185,7 +192,10 @@ class SiteContentService
                 $data['content_group'] ?? null,
                 $data['sort_order'] ?? 0,
                 $data['is_active'] ?? 1
-            ]);
+            ], array_values($this->tenantInsertData()));
+            $placeholders = str_repeat('?,', count($columns) - 1) . '?';
+            $stmt = $this->getPdo()->prepare("INSERT INTO site_content (" . implode(', ', $columns) . ") VALUES ({$placeholders})");
+            $ok = $stmt->execute($values);
             if ($ok) $this->clearCacheFor($data['section'] ?? '');
             return $ok;
         } catch (\Exception $e) {
@@ -200,8 +210,10 @@ class SiteContentService
     public function delete(string $section, string $key): bool
     {
         try {
-            $stmt = $this->getPdo()->prepare("DELETE FROM site_content WHERE section = ? AND content_key = ?");
-            $ok = $stmt->execute([$section, $key]);
+            $stmt = $this->getPdo()->prepare("DELETE FROM site_content WHERE section = ? AND content_key = ?" . $this->tenantSql());
+            $params = [$section, $key];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $ok = $stmt->execute($params);
             if ($ok) $this->clearCacheFor($section);
             return $ok;
         } catch (\Exception $e) {

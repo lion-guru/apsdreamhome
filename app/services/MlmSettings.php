@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Traits\ServiceTenantTrait;
 use PDO;
 
 /**
@@ -13,6 +14,8 @@ use PDO;
  */
 class MlmSettings
 {
+    use ServiceTenantTrait;
+
     private static ?array $cache = null;
     private static int $cacheTTL = 300;
     private static int $cacheTime = 0;

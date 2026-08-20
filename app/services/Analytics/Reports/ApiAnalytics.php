@@ -3,6 +3,7 @@
 namespace App\Services\Legacy\Analytics;
 
 use App\Core\App;
+use App\Traits\ServiceTenantTrait;
 use Exception;
 use Redis;
 
@@ -11,6 +12,8 @@ use Redis;
  * Tracks and analyzes API usage patterns and performance metrics
  */
 class ApiAnalytics {
+    use ServiceTenantTrait;
+
     private $logger;
     private $db;
     private $cache;

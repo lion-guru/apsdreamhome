@@ -2,6 +2,8 @@
 
 namespace App\Services\Async;
 
+use App\Traits\ServiceTenantTrait;
+
 /**
  * Async Task Manager Proxy - APS Dream Home
  * Proxies legacy AsyncTaskManager calls to modern AsyncTaskService
@@ -9,6 +11,8 @@ namespace App\Services\Async;
  */
 class AsyncTaskManagerProxy
 {
+    use ServiceTenantTrait;
+
     private $asyncTaskService;
 
     public function __construct()

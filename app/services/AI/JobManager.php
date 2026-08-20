@@ -2,7 +2,11 @@
 
 namespace App\Services\AI;
 
+use App\Traits\ServiceTenantTrait;
+
 class JobManager {
+    use ServiceTenantTrait;
+
     private $db;
     private $aiManager;
 
@@ -29,14 +33,17 @@ class JobManager {
         }
 
         try {
-            $sql = "INSERT INTO ai_jobs (agent_id, workflow_id, task_type, input_data, priority, scheduled_at) VALUES (?, ?, ?, ?, ?, ?)";
+            $columns = array_merge(['agent_id', 'workflow_id', 'task_type', 'input_data', 'priority', 'scheduled_at'], array_keys($this->tenantInsertData()));
+            $values  = array_merge([$agent_id, $workflow_id, $task_type, $input_json, $priority, $scheduled_at], array_values($this->tenantInsertData()));
+            $placeholders = str_repeat('?,', count($columns) - 1) . '?';
+            $sql = "INSERT INTO ai_jobs (" . implode(', ', $columns) . ") VALUES ({$placeholders})";
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
         }
         $input_json = json_encode($input_data);
 
-        if ($this->db->execute($sql, [$agent_id, $workflow_id, $task_type, $input_json, $priority, $scheduled_at])) {
+        if ($this->db->execute($sql, $values)) {
             return $this->db->lastInsertId();
         }
         return false;

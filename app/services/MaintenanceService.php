@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Traits\ServiceTenantTrait;
+
 /**
  * MaintenanceService
  *
@@ -16,6 +18,8 @@ namespace App\Services;
  */
 class MaintenanceService
 {
+    use ServiceTenantTrait;
+
     private $pdo;
 
     public const KEY_ENABLED  = 'maintenance_mode';
