@@ -1,0 +1,93 @@
+/* Dream Home Journey Scroll Sequence */
+.journey-section {
+    position: relative;
+    background: #0f172a; /* premium navy */
+    color: white;
+}
+.journey-sticky-container {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.journey-scroll-spacer {
+    height: 400vh; /* 4 phases = 400vh */
+}
+
+/* Image Backgrounds */
+.journey-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 0.5s ease, transform 0.8s ease;
+    transform: scale(1.05);
+    z-index: 1;
+}
+.journey-bg::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(to top, rgba(15,23,42,0.9) 0%, rgba(15,23,42,0.3) 100%);
+}
+
+.journey-bg.active {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Text Overlays */
+.journey-text-container {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 800px;
+    padding: 2rem;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.journey-step {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -40%);
+    width: 100%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.journey-step.active {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+    pointer-events: all;
+}
+
+.journey-title {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    color: #f8fafc;
+}
+.journey-subtitle {
+    font-size: 1.25rem;
+    color: #cbd5e1;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+@media (max-width: 768px) {
+    .journey-title { font-size: 2rem; }
+    .journey-subtitle { font-size: 1rem; }
+}

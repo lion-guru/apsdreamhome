@@ -24,7 +24,7 @@ $ref = $ref ?? $_GET['ref'] ?? $old['sponsor_code'] ?? '';
     <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
     <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;background:linear-gradient(135deg,#7c2d12 0%,#c2410c 30%,#ea580c 60%,#f97316 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:2rem 1rem}
+        body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;background:linear-gradient(135deg,#7c2d12 0%,#c2410c 30%,#ea580c 60%,#f97316 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow-x:hidden;padding:2rem 1rem}
         body::before{content:'';position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(234,88,12,.3) 0%,transparent 70%);top:-200px;right:-100px;border-radius:50%}
         body::after{content:'';position:absolute;width:500px;height:500px;background:radial-gradient(circle,rgba(249,115,22,.25) 0%,transparent 70%);bottom:-150px;left:-100px;border-radius:50%}
 

@@ -578,3 +578,16 @@
         window.addEventListener('load', function() { APS.pageLoader.hide(); });
     });
 })();
+
+
+window.toggleDarkMode = function() {
+    var isDark = document.body.classList.toggle('dark-mode');
+    localStorage.setItem('aps-dark-mode', isDark ? '1' : '0');
+    var icons = document.querySelectorAll('.fa-moon, .fa-sun');
+    icons.forEach(function(icon) {
+        if (icon.closest('#darkModeToggle') || icon.id === 'darkModeIcon') {
+            icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+        }
+    });
+};
+

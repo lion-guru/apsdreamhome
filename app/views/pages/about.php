@@ -11,57 +11,67 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 ?>
 
 <!-- ============================================ -->
-<!-- HERO SECTION -->
+<!-- PREMIUM HERO SECTION -->
 <!-- ============================================ -->
-<section class="position-relative overflow-hidden" class="style-63679">
-    <div class="style-80207"></div>
-    <div class="container position-relative" class="style-9174">
-        <div class="row align-items-center">
-            <div class="col-lg-8">
-                <div class="style-51245">
-                    <i class="fas fa-building"></i> EST. APRIL 2022 &bull; CIN: U70109UP2022PTC163047
+<section class="about-hero-section position-relative overflow-hidden">
+    <!-- Ambient glow backgrounds -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+    
+    <div class="container position-relative z-1">
+        <div class="row align-items-center g-5">
+            <!-- Left Text Content -->
+            <div class="col-lg-7">
+                <div class="hero-badge mb-3">
+                    <i class="fas fa-building text-teal"></i> 
+                    <span>EST. APRIL 2022 &bull; CIN: U70109UP2022PTC163047</span>
                 </div>
-                <h1 class="display-3 fw-bold mb-4" class="style-98841">
+                
+                <h1 class="display-3 fw-bolder mb-4 hero-title">
                     Building Dreams,<br>
-                    <span class="style-95406">Creating Communities</span>
+                    <span class="gradient-text">Creating Communities</span>
                 </h1>
-                <p class="lead mb-4" class="style-99993">
+                
+                <p class="lead mb-5 hero-subtitle">
                     APS Dream Homes Private Limited is a trusted name in real estate across Eastern Uttar Pradesh, 
                     transforming land into thriving communities since 2022.
                 </p>
-                <div class="style-39474">
-                    <a href="#leadership" class="style-97811">
-                        <i class="fas fa-users"></i> Meet Our Team
+                
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="#leadership" class="btn btn-primary btn-lg px-4 rounded-pill shadow-sm custom-btn-primary">
+                        <i class="fas fa-users me-2"></i> Meet Our Team
                     </a>
-                    <a href="#story" class="style-46547">
-                        Our Story <i class="fas fa-arrow-right"></i>
+                    <a href="#story" class="btn btn-outline-secondary btn-lg px-4 rounded-pill custom-btn-outline">
+                        Our Story <i class="fas fa-arrow-right ms-2"></i>
                     </a>
                 </div>
             </div>
-            <div class="col-lg-4 d-none d-lg-block text-center">
-                <div class="style-90775">
-                    <div class="style-3666">
-                        <i class="fas fa-home"></i>
+            
+            <!-- Right Stats Section (Glassmorphism Cards) -->
+            <div class="col-lg-5 d-none d-lg-block">
+                <div class="glass-stats-wrapper">
+                    <div class="glass-icon-header">
+                        <div class="icon-circle">
+                            <i class="fas fa-home"></i>
+                        </div>
                     </div>
-                    <h3 class="style-27686">4+</h3>
-                    <p class="style-87435">Active Projects</p>
-                    <div class="style-85876"></div>
-                    <div class="style-79490">
-                        <div>
-                            <h4 class="style-88510">5000+</h4>
-                            <p class="style-78372">Plots Sold</p>
+                    
+                    <div class="glass-stats-grid">
+                        <div class="glass-stat-item">
+                            <h3 class="hero-stat-number">4<span class="text-teal">+</span></h3>
+                            <p class="stat-label">Active Projects</p>
                         </div>
-                        <div>
-                            <h4 class="style-20250">500+</h4>
-                            <p class="style-78372">Happy Families</p>
+                        <div class="glass-stat-item">
+                            <h3 class="hero-stat-number">5000<span class="text-teal">+</span></h3>
+                            <p class="stat-label">Plots Sold</p>
                         </div>
-                        <div>
-                            <h4 class="style-45146">4+</h4>
-                            <p class="style-78372">Colonies</p>
+                        <div class="glass-stat-item">
+                            <h3 class="hero-stat-number">500<span class="text-teal">+</span></h3>
+                            <p class="stat-label">Happy Families</p>
                         </div>
-                        <div>
-                            <h4 class="style-63220">500+</h4>
-                            <p class="style-78372">Active Users</p>
+                        <div class="glass-stat-item">
+                            <h3 class="hero-stat-number">4<span class="text-teal">+</span></h3>
+                            <p class="stat-label">Colonies</p>
                         </div>
                     </div>
                 </div>
@@ -71,6 +81,173 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 </section>
 
 <style>
+/* ---- Premium About Hero ---- */
+.about-hero-section {
+    background: #0f172a;
+    padding: 100px 0 120px;
+    color: #f8fafc;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+}
+
+.ambient-glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.5;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.glow-1 {
+    top: -10%;
+    left: -10%;
+    width: 500px;
+    height: 500px;
+    background: rgba(13, 148, 136, 0.3); /* Teal */
+}
+
+.glow-2 {
+    bottom: -20%;
+    right: -10%;
+    width: 600px;
+    height: 600px;
+    background: rgba(56, 189, 248, 0.2); /* Sky Blue */
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    backdrop-filter: blur(10px);
+}
+
+.text-teal {
+    color: #2dd4bf;
+}
+
+.about-hero-section .hero-title {
+    font-size: 4rem;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    color: #f8fafc !important;
+}
+
+.about-hero-section .gradient-text {
+    background: linear-gradient(135deg, #2dd4bf, #38bdf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.about-hero-section .hero-subtitle {
+    color: #94a3b8 !important;
+    font-size: 1.25rem;
+    line-height: 1.7;
+    max-width: 90%;
+}
+
+.custom-btn-primary {
+    background: linear-gradient(135deg, #0d9488, #0284c7);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.custom-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(13, 148, 136, 0.4);
+    color: white;
+}
+
+.custom-btn-outline {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.custom-btn-outline:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.4);
+    color: #ffffff;
+}
+
+/* Glassmorphism Stats Card */
+.glass-stats-wrapper {
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    position: relative;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.glass-stats-wrapper:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 35px 60px -15px rgba(45, 212, 191, 0.3);
+}
+
+.glass-icon-header {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.icon-circle {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #2dd4bf, #38bdf8);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+    box-shadow: 0 10px 25px rgba(45, 212, 191, 0.3);
+}
+
+.glass-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px 20px;
+}
+
+.glass-stat-item {
+    text-align: center;
+}
+
+.glass-stat-item .hero-stat-number {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #f8fafc;
+    margin-bottom: 5px;
+}
+
+.glass-stat-item .stat-label {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+@media (max-width: 991px) {
+    .about-hero-section .hero-title {
+        font-size: 3rem;
+    }
+}
+
 /* ---- About Page Global ---- */
 .about-story{padding:80px 0;background:#fff}
 .about-story .story-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(13,148,136,0.08);color:#0d9488;font-size:0.75rem;font-weight:700;padding:6px 16px;border-radius:50px;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:16px}

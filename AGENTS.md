@@ -1,4 +1,32 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-13 — Session 76: Navigation Refactor)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-21 — Session 77: Service Layer Tenant Scoping)
+
+## Session 77: Service Layer Tenant Scoping Completion (2026-08-21)
+
+### Goal
+Complete tenant_id scoping across ALL service layer files that write to tenant-scoped business tables.
+
+### What Was Done
+| Feature | Details |
+|---------|---------|
+| **18 Service Files Scoped** | Added `ServiceTenantTrait` + `tenantSql()`/`tenantInsertData()` to 18 business-critical service files that had SQL writes but zero tenant scoping |
+| **AI Services (5)** | `AdvancedAIBot` (3 queries), `AIAdvancedAgent` (1 query), `AIToolsManager` (2 queries), `JobManager` (1 query), `KnowledgeGraph` (4 queries) |
+| **MLM Services (3)** | `MLMIncentiveService` (4 queries), `MlmInvestmentEngine` (4 queries), `MlmSettings` (config) |
+| **Engagement/Content (4)** | `EngagementService` (6 queries), `SiteContentService` (4 queries), `SiteSettings` (config), `LayoutManager` (config) |
+| **Infrastructure (6)** | `OTPService`, `RequestMiddlewareService`, `ApiAnalytics`, `AsyncTaskManagerProxy`, `AsteriskService`, `MaintenanceService` |
+| **Skipped (17 system-level)** | CacheService, MonitorService, RBACService, SecurityConfigurationService, SecurityPolicyService, SecurityService, TwoFactorService, ErrorTrackerService, HealthAlertService, PdfService, PerformanceConfigService, PerformanceService, PHPOptimizerService, AlertEscalationService, AlertManagerService, BackupIntegrityService, RateLimitAnalytics |
+| **E2E Tests** | **153/153 PASS** — zero regressions |
+| **Commit** | `de64ba987` — pushed to remote |
+
+### What Was NOT Done
+- 17 system-level service files were intentionally skipped (platform-level data, not per-tenant business data)
+- Some config files (SiteSettings, MlmSettings, LayoutManager) got the trait but don't need `tenantSql()` since they store cross-tenant config
+
+### Key Lessons
+_158. **Most services were already scoped** — Session 68's estimate of "379 unscoped SQL operations" was an overestimate. Only 18 business-critical files actually lacked tenant scoping. The remaining system/config files correctly don't need it._
+_159. **System-level services must NOT be tenant-scoped** — AlertEscalationService, AlertManagerService, CacheService, RBACService, SecurityService, PerformanceService, etc. handle platform-wide data shared across all tenants. Adding tenant_id would break them._
+_160. **Config settings are cross-tenant** — `site_settings`, `mlm_settings`, `layout_settings`, `middleware_rules` are reference/config data shared across all tenants. Adding `ServiceTenantTrait` is fine (for helper methods), but `tenantSql()` must NOT be added to their queries._
+
+---
 
 ## Session 76: Unified Navigation System & CSS Fixes (2026-08-13)
 

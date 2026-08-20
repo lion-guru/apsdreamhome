@@ -120,6 +120,15 @@ class PageController extends BaseController
         $this->render('pages/home', $data);
     }
 
+    public function threeDTour()
+    {
+        $data = [
+            'page_title' => '3D Virtual Colony Tour - APS Dream Home',
+            'page_description' => 'Experience our real estate plots in an interactive 3D scrollable tour.',
+        ];
+        $this->render('pages/3d-tour', $data);
+    }
+
     public function about()
     {
         [$cmsTitle, $pageContent] = $this->loadPageContent('about');

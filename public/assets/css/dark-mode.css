@@ -434,47 +434,21 @@ body.dark-mode {
   color: #0f172a !important;
 }
 
-/* Dark Mode Card, Header & Text High-Contrast Enforcements */
-.dark-mode h1,
-.dark-mode h2,
-.dark-mode h3,
-.dark-mode h4,
-.dark-mode h5,
-.dark-mode h6,
-.dark-mode .card-title,
-.dark-mode .aps-cp-card-header h1,
-.dark-mode .aps-cp-card-header h2,
-.dark-mode .aps-cp-card-header h3,
-.dark-mode .aps-cp-card-header h4,
-.dark-mode .aps-cp-card-header h5,
-.dark-mode .aps-cp-card-header h6,
-.dark-mode .aps-cp-card-header .m-0,
-.dark-mode .card-header .m-0,
-.dark-mode .card-header h1,
-.dark-mode .card-header h2,
-.dark-mode .card-header h3,
-.dark-mode .card-header h4,
-.dark-mode .card-header h5,
-.dark-mode .card-header h6,
-.dark-mode .card-header i,
-.dark-mode .aps-cp-card-header i,
-.dark-mode .card-header span,
-.dark-mode .aps-cp-card-header span,
-.dark-mode .card-body,
-.dark-mode .card-body p,
-.dark-mode .card-body span,
-.dark-mode .card-body td,
-.dark-mode .card-body th,
-.dark-mode .card-body strong,
-.dark-mode .card-body label,
-.dark-mode .card-body li {
-  color: #ffffff !important;
+/* Removed aggressive high-contrast enforcements to fix colorful cards */
+/* Explicit fallback for dark mode light sections */
+.dark-mode .bg-white,
+.dark-mode .bg-light {
+    color: #1f2937 !important;
 }
-
-.dark-mode .card .text-muted,
-.dark-mode .aps-cp-card .text-muted,
-.dark-mode small {
-  color: rgba(255, 255, 255, 0.75) !important;
+.dark-mode .bg-white h1, .dark-mode .bg-white h2, .dark-mode .bg-white h3, .dark-mode .bg-white h4, .dark-mode .bg-white h5, .dark-mode .bg-white h6,
+.dark-mode .bg-white p, .dark-mode .bg-white span, .dark-mode .bg-white strong, .dark-mode .bg-white i,
+.dark-mode .bg-light h1, .dark-mode .bg-light h2, .dark-mode .bg-light h3, .dark-mode .bg-light h4, .dark-mode .bg-light h5, .dark-mode .bg-light h6,
+.dark-mode .bg-light p, .dark-mode .bg-light span, .dark-mode .bg-light strong, .dark-mode .bg-light i {
+    color: #1f2937 !important;
+}
+.dark-mode .bg-white .text-muted, .dark-mode .bg-white small,
+.dark-mode .bg-light .text-muted, .dark-mode .bg-light small {
+    color: #6b7280 !important;
 }
 
 /* ==========================================
@@ -620,35 +594,8 @@ body.dark-mode {
   color: #e3eafc !important;
 }
 
-/* --- Card body text in dark mode --- */
-.dark-mode .card:not(.bg-dark):not(.bg-primary) .card-body,
-.dark-mode .card:not(.bg-dark):not(.bg-primary) .card-body p,
-.dark-mode .card:not(.bg-dark):not(.bg-primary) .card-body span,
-.dark-mode .card:not(.bg-dark):not(.bg-primary) .card-body td,
-.dark-mode .card:not(.bg-dark):not(.bg-primary) .card-body th,
-.dark-mode .card:not(.bg-dark):not(.bg-primary) .card-body strong,
-.dark-mode .card:not(.bg-dark):not(.bg-primary) .card-body label,
-.dark-mode .card:not(.bg-dark):not(.bg-primary) .card-body li {
-  color: #e3eafc !important;
-}
-.dark-mode .card:not(.bg-dark):not(.bg-primary) .card-body .text-muted {
-  color: #94a3b8 !important;
-}
-.dark-mode .card:not(.bg-dark):not(.bg-primary) h1,
-.dark-mode .card:not(.bg-dark):not(.bg-primary) h2,
-.dark-mode .card:not(.bg-dark):not(.bg-primary) h3,
-.dark-mode .card:not(.bg-dark):not(.bg-primary) h4,
-.dark-mode .card:not(.bg-dark):not(.bg-primary) h5,
-.dark-mode .card:not(.bg-dark):not(.bg-primary) h6 {
-  color: #ffffff !important;
-}
-.dark-mode .ps-card-title,
-.dark-mode .ps-card .ps-card-title {
-  color: #ffffff !important;
-}
-.dark-mode .ps-card-stats span {
-  color: #94a3b8 !important;
-}
+/* Removed card body text overrides */
+
 
 /* --- Admin stat card gradients --- */
 .dark-mode .stat-card,
@@ -668,6 +615,8 @@ body.dark-mode {
 
 /* --- Price tags dark --- */
 .dark-mode .price-tag {
-  background: linear-gradient(135deg, #1a3a2e, #1a3333) !important;
-  color: #5eead4 !important;
+  background: linear-gradient(135deg, #1a3a2e, #1a3333);
+  color: #5eead4;
 }
+
+/* Removed GLOBAL VISIBILITY FIXES FOR DARK MODE */

@@ -234,28 +234,22 @@ footer.bg-dark {
 .bg-dark .text-black,
 .section-dark .text-dark,
 .section-dark .text-body,
-.section-dark .text-black,
-.hero-section .text-dark,
-.hero-section .text-body,
-.hero-section .text-black {
+.section-dark .text-black {
   color: #ffffff !important;
 }
 
 .bg-dark .stat-card .num,
-.section-dark .stat-card .num,
-.hero-section .stat-card .num {
+.section-dark .stat-card .num {
   color: #ffffff !important;
 }
 
 .bg-dark .lead,
-.section-dark .lead,
-.hero-section .lead {
+.section-dark .lead {
   color: rgba(255, 255, 255, 0.8) !important;
 }
 
 .bg-dark .text-muted,
-.section-dark .text-muted,
-.hero-section .text-muted {
+.section-dark .text-muted {
   color: rgba(255, 255, 255, 0.65) !important;
 }
 

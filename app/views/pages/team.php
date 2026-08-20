@@ -314,10 +314,22 @@
 
 .special-section {
     padding: 5rem 0;
+    color: #4b5563 !important;
+}
+.special-section h1, .special-section h2, .special-section h3, .special-section h4, .special-section h5, .special-section strong {
+    color: #1f2937 !important;
+}
+.special-section .text-muted {
+    color: #6b7280 !important;
 }
 .special-section:nth-child(even) {
     background: linear-gradient(135deg, #f8f9ff 0%, #f0f0ff 100%);
 }
+
+/* Ensure bg-white cards have dark text regardless of global theme */
+.bg-white { color: #4b5563 !important; }
+.bg-white h5, .bg-white strong { color: #1f2937 !important; }
+.bg-white .text-muted { color: #6b7280 !important; }
 
 @media (max-width: 768px) {
     .team-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
@@ -567,7 +579,7 @@ foreach ($team_members ?? [] as $tm) {
                 $bgColor = $g['badget_color'] ?? $colors[$i % 4] ?? '#0d9488';
             ?>
             <div class="col-md-3">
-                <div class="group-card" class="style-87951">
+                <div class="group-card" style="background-color: <?= $bgColor ?>;">
                     <?php if ($rank <= 3): ?>
                     <div class="style-273">
                         <i class="<?= $icons[$rank-1] ?>"></i>

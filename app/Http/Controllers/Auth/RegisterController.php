@@ -159,7 +159,13 @@ class RegisterController extends BaseController
             }
 
             $_SESSION['success'] = $result['message'];
-            $this->redirectToDashboard($role);
+            
+            // Redirect team members to the 3D Digital ID onboarding success page
+            if (in_array($role, ['agent', 'associate', 'employee', 'telecaller'])) {
+                header('Location: ' . BASE_URL . '/onboarding-success');
+            } else {
+                $this->redirectToDashboard($role);
+            }
             exit;
         } catch (\Exception $e) {
             error_log("RegisterController registration error: " . $e->getMessage());
@@ -233,5 +239,19 @@ class RegisterController extends BaseController
         $label = $roleLabels[$role] ?? 'Dashboard';
         $_SESSION['login_success'] = "Welcome! Redirecting to {$label}...";
         header('Location: ' . BASE_URL . $redirect);
+    }
+
+    /**
+     * Show the 3D Digital ID Onboarding Success Page
+     */
+    public function showOnboardingSuccess()
+    {
+        @session_start();
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
+        
+        include __DIR__ . '/../../../views/auth/onboarding_success.php';
     }
 }

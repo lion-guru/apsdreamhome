@@ -32,6 +32,7 @@ if (file_exists(__DIR__ . '/../app/Http/Controllers/Admin/GodModeController.php'
 
 // Home
 $router->get('/', 'Front\\PageController@home');
+$router->get('/3d-tour', 'Front\\PageController@threeDTour');
 
 // Redirect /public to /
 $router->get('/public', function () {
@@ -778,6 +779,7 @@ $router->post('/register', 'Auth\\RegisterController@handleRegister');
 // Unified Registration alias (backward compatibility)
 $router->get('/register/unified', 'Auth\\RegisterController@showRegister');
 $router->post('/register/unified', 'Auth\\RegisterController@handleRegister');
+$router->get('/onboarding-success', 'Auth\\RegisterController@showOnboardingSuccess');
 
 // Direct Customer-only registration â€” redirect to unified register with role=customer
 $router->get('/register/customer', function() { header('Location: ' . BASE_URL . '/register?role=customer'); exit; });

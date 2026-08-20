@@ -405,9 +405,6 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     (function() {
         var bottomNav = document.querySelector('.mobile-bottom-sticky-nav');
         if (!bottomNav) return;
-    (function() {
-        var bottomNav = document.querySelector('.mobile-bottom-sticky-nav');
-        if (!bottomNav) return;
         var path = window.location.pathname;
         var a = document.createElement('a');
         var items = bottomNav.querySelectorAll('.mobile-nav-item');

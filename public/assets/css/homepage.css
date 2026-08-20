@@ -1999,3 +1999,6 @@
 .main-no-top-pad {
   padding-top: 0 !important;
 }
+
+.stat-label { white-space: normal !important; word-wrap: break-word; }
+

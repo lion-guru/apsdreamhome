@@ -7,6 +7,7 @@ if (!isset($sc)) {
 $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112'));
 $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
 ?>
+<link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/journey-scroll.css">
 <main id="main-content" class="style-18040">
     <!-- Hero Section (Premium Modern UI) -->
     <section class="hero-premium" class="style-58977" aria-labelledby="hero-title">
@@ -185,153 +186,38 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
         </div>
     </section>
 
-    <!-- EMI Calculator Section -->
-    <section class="py-5 emi-section bg-premium-navy" aria-labelledby="emi-title">
-        <div class="container">
-            <div class="text-center mb-5 premium-reveal">
-                <span class="badge px-3 py-2 mb-3 badge-premium"
-                    class="style-61594"><?= __('home_free_tool') ?></span>
-                <h2 id="emi-title" class="fw-bold text-white"><?= __('emi_calculator') ?></h2>
-                <p class="text-white-50" class="style-12699"><?= __('emi_subtitle') ?></p>
-            </div>
-            <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    <div class="card border-0 glass-dark premium-reveal" class="style-61870">
-                        <div class="card-body p-4 p-md-5 text-white">
-                            <div class="row g-4">
-                                <div class="col-md-7">
-                                    <div class="mb-4">
-                                        <label class="form-label fw-bold"><?= __('home_loan_amount') ?> <span
-                                                id="loanAmtDisplay" class="text-warning">₹50,00,000</span></label>
-                                        <input type="range" class="form-range" id="loanAmount" min="100000"
-                                            max="50000000" step="100000" value="5000000" oninput="calcEMI()" title="<?= __('home_loan_amount') ?>">
-                                        <div class="d-flex justify-content-between small text-white-50">
-                                            <span><?= __('home_emi_min_label') ?></span>
-                                            <span><?= __('home_emi_max_label') ?></span>
-                                        </div>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label class="form-label fw-bold"><?= __('home_interest_rate') ?> <span
-                                                id="rateDisplay" class="text-warning">8.5%</span></label>
-                                        <input type="range" class="form-range" id="interestRate" min="5" max="20"
-                                            step="0.1" value="8.5" oninput="calcEMI()">
-                                        <div class="d-flex justify-content-between small text-white-50">
-                                            <span>5%</span>
-                                            <span>20%</span>
-                                        </div>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label class="form-label fw-bold"><?= __('home_loan_tenure') ?> <span
-                                                id="tenureDisplay" class="text-warning">20
-                                                <?= __('home_years') ?></span></label>
-                                        <input type="range" class="form-range" id="loanTenure" min="1" max="30" step="1"
-                                            value="20" oninput="calcEMI()">
-                                        <div class="d-flex justify-content-between small text-white-50">
-                                            <span><?= __('home_emi_min_tenure') ?></span>
-                                            <span><?= __('home_emi_max_tenure') ?></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-5">
-                                    <div class="result-card bg-dark text-white" class="style-87517">
-                                        <p class="text-white-50 mb-1 small text-uppercase text-center"
-                                            class="style-82962"><?= __('home_your_monthly_emi') ?></p>
-                                        <p class="display-5 fw-bold mb-0 text-center iu-teal-light" id="emiResult">₹42,426</p>
-                                        
-                                        <!-- Animated Donut Chart -->
-                                        <div class="emi-chart-container my-3">
-                                            <svg width="120" height="120" viewBox="0 0 100 100" class="emi-donut-svg">
-                                                <circle class="emi-donut-ring" cx="50" cy="50" r="40" />
-                                                <circle id="emiPrincipalSegment" class="emi-donut-segment-principal" cx="50" cy="50" r="40" />
-                                                <circle id="emiInterestSegment" class="emi-donut-segment-interest" cx="50" cy="50" r="40" />
-                                                <g class="emi-donut-text">
-                                                    <text x="50" y="48" id="chartPrincipalPct" class="emi-donut-val">50%</text>
-                                                     <text x="50" y="58" class="emi-donut-label"><?= __('home_principal', null, 'Principal') ?></text>
-                                                </g>
-                                            </svg>
-                                        </div>
+    <!-- Dream Home Journey Scroll Sequence -->
+    <section class="journey-section" id="dream-home-journey">
+        <div class="journey-sticky-container">
+            <!-- Background Images -->
+            <div class="journey-bg bg-step-1 active" style="background-image: url('<?php echo BASE_URL; ?>/assets/images/journey/plot.jpg');"></div>
+            <div class="journey-bg bg-step-2" style="background-image: url('<?php echo BASE_URL; ?>/assets/images/journey/foundation.jpg');"></div>
+            <div class="journey-bg bg-step-3" style="background-image: url('<?php echo BASE_URL; ?>/assets/images/journey/construction.jpg');"></div>
+            <div class="journey-bg bg-step-4" style="background-image: url('<?php echo BASE_URL; ?>/assets/images/journey/home.jpg');"></div>
 
-                                        <hr class="border-light my-3 opacity-50">
-                                        <div class="d-flex justify-content-between">
-                                            <span class="text-white-50"><i class="fas fa-circle me-1" class="style-91518"></i><?= __('home_loan_amount') ?></span>
-                                            <span class="fw-bold text-white" id="totalPrincipalDisp">₹50,00,000</span>
-                                        </div>
-                                        <div class="d-flex justify-content-between mt-2">
-                                            <span class="text-white-50"><i class="fas fa-circle me-1" class="style-88794"></i><?= __('home_total_interest') ?></span>
-                                            <span class="fw-bold text-white" id="totalInterest">₹51,82,240</span>
-                                        </div>
-                                        <div class="d-flex justify-content-between mt-2 pt-2 border-top border-light opacity-50">
-                                            <span class="text-white-50"><?= __('home_total_payment') ?></span>
-                                            <span class="fw-bold text-white" id="totalPayment">₹1,01,82,240</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="text-center text-white-50 mt-3 small"><i
-                            class="fas fa-info-circle me-1"></i><?= __('home_emi_disclaimer') ?></p>
+            <!-- Text Content -->
+            <div class="journey-text-container">
+                <div class="journey-step step-1 active">
+                    <h2 class="journey-title text-primary">1. The Plot</h2>
+                    <p class="journey-subtitle">Start with a Premium Plot in a Secure Colony.</p>
+                </div>
+                <div class="journey-step step-2">
+                    <h2 class="journey-title text-warning">2. The Foundation</h2>
+                    <p class="journey-subtitle">We help you lay strong foundations for your future.</p>
+                </div>
+                <div class="journey-step step-3">
+                    <h2 class="journey-title text-info">3. Construction</h2>
+                    <p class="journey-subtitle">Watch your dream home take shape with trusted partners.</p>
+                </div>
+                <div class="journey-step step-4">
+                    <h2 class="journey-title text-success">4. The Dream Home</h2>
+                    <p class="journey-subtitle">Move into your Dream Home and build lasting memories.</p>
                 </div>
             </div>
         </div>
+        <!-- Scroll Spacer to trigger sticky events -->
+        <div class="journey-scroll-spacer"></div>
     </section>
-
-    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
-    function calcEMI() {
-        const P = parseFloat(document.getElementById('loanAmount').value);
-        const R = parseFloat(document.getElementById('interestRate').value) / 12 / 100;
-        const N = parseFloat(document.getElementById('loanTenure').value) * 12;
-
-        document.getElementById('loanAmtDisplay').textContent = '₹' + P.toLocaleString('en-IN');
-        document.getElementById('rateDisplay').textContent = document.getElementById('interestRate').value + '%';
-        document.getElementById('tenureDisplay').textContent = document.getElementById('loanTenure').value + ' ' + '<?= __('home_years') ?>';
-
-        let emi = 0;
-        let totalPay = 0;
-        let totalInt = 0;
-
-        if (R === 0) {
-            emi = P / N;
-            totalPay = P;
-            totalInt = 0;
-        } else {
-            emi = P * R * Math.pow(1 + R, N) / (Math.pow(1 + R, N) - 1);
-            totalPay = emi * N;
-            totalInt = totalPay - P;
-        }
-
-        document.getElementById('emiResult').textContent = '₹' + Math.round(emi).toLocaleString('en-IN');
-        document.getElementById('totalInterest').textContent = '₹' + Math.round(totalInt).toLocaleString('en-IN');
-        document.getElementById('totalPayment').textContent = '₹' + Math.round(totalPay).toLocaleString('en-IN');
-        if (document.getElementById('totalPrincipalDisp')) {
-            document.getElementById('totalPrincipalDisp').textContent = '₹' + P.toLocaleString('en-IN');
-        }
-
-        // Calculate donut segments
-        const circumference = 2 * Math.PI * 40; // ~251.327
-        const principalShare = P / totalPay;
-        const interestShare = totalInt / totalPay;
-
-        const principalOffset = 0;
-        const interestOffset = principalShare * circumference;
-
-        const principalSeg = document.getElementById('emiPrincipalSegment');
-        const interestSeg = document.getElementById('emiInterestSegment');
-        const pctLabel = document.getElementById('chartPrincipalPct');
-
-        if (principalSeg && interestSeg && pctLabel) {
-            // Set dasharrays and offsets
-            principalSeg.style.strokeDasharray = `${circumference}`;
-            principalSeg.style.strokeDashoffset = `${principalOffset}`;
-            
-            interestSeg.style.strokeDasharray = `${circumference}`;
-            interestSeg.style.strokeDashoffset = `${circumference - interestOffset}`; // starts where principal ends
-            
-            pctLabel.textContent = Math.round(principalShare * 100) + '%';
-        }
-    }
-    calcEMI();
-    </script>
 
     <!-- Construction Excellence - Builder Section -->
     <section class="py-5 section-gray bg-light" aria-labelledby="construction-title">
@@ -498,6 +384,31 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
         </div>
     </section>
 
+    <!-- 3D Virtual Tour Teaser -->
+    <section class="py-5 bg-dark text-white text-center position-relative overflow-hidden" aria-labelledby="3d-tour-title">
+        <!-- Background decorative elements -->
+        <div class="position-absolute w-100 h-100 top-0 start-0" style="background: radial-gradient(circle at center, rgba(16,185,129,0.15) 0%, rgba(11,17,32,1) 100%);"></div>
+        <div class="container position-relative z-1 premium-reveal">
+            <span class="badge badge-premium px-3 py-2 mb-3 bg-gradient text-dark" style="background: linear-gradient(45deg, #ffd700, #ff8c00);"><i class="fas fa-cube me-1"></i> New Feature</span>
+            <h2 id="3d-tour-title" class="fw-bold mb-3 display-5 text-white">Experience Real Estate Like Never Before</h2>
+            <p class="lead text-white-50 mx-auto mb-4" style="max-width: 600px;">Take a breathtaking 3D flight over our premium plotted colonies. See every detail, road, and park before you visit the site.</p>
+            <a href="<?= BASE_URL ?>/3d-tour" class="btn btn-lg btn-warning btn-glow rounded-pill px-5 py-3 fw-bold shadow-lg" style="transition: transform 0.3s; transform-origin: center;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <i class="fas fa-vr-cardboard me-2"></i> Start 3D Virtual Tour
+            </a>
+            
+            <!-- Floating 3D Graphic (CSS) -->
+            <div class="mt-5 mx-auto" style="width: 200px; height: 100px; perspective: 800px;">
+                <div style="width: 100%; height: 100%; background: rgba(16,185,129,0.3); border: 2px solid #10b981; transform: rotateX(60deg) rotateZ(-45deg); box-shadow: 0 20px 50px rgba(16,185,129,0.5); animation: float3d 4s ease-in-out infinite;"></div>
+            </div>
+            <style>
+                @keyframes float3d {
+                    0%, 100% { transform: rotateX(60deg) rotateZ(-45deg) translateZ(0px); }
+                    50% { transform: rotateX(60deg) rotateZ(-45deg) translateZ(20px); }
+                }
+            </style>
+        </div>
+    </section>
+
     <!-- Our Premium Projects -->
     <section class="projects-section" aria-labelledby="projects-title">
         <div class="container">
@@ -626,6 +537,278 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                 <?php endforeach; ?>
                 <?php endif; ?>
             </div>
+
+    <!-- Useful Free Tools -->
+    <section class="py-5 bg-white">
+        <div class="container">
+            <div class="text-center mb-5">
+                <span class="section-label"><?= __('home_free_tools') ?></span>
+                <h2 class="fw-bold"><?= __('home_free_tools_title') ?></h2>
+                <p class="section-subtitle"><?= __('home_free_tools_subtitle') ?></p>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('emi')">
+                        <div class="card-body p-4 text-center">
+                            <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 tool-icon-circle">
+                                <i class="fas fa-calculator fa-2x text-primary"></i>
+                            </div>
+                            <h5 class="fw-bold"><?= __('home_tool_emi') ?></h5>
+                            <p class="text-muted small mb-0"><?= __('home_tool_emi_desc') ?></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('investment')">
+                        <div class="card-body p-4 text-center">
+                            <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 tool-icon-circle">
+                                <i class="fas fa-arrow-trend-up fa-2x text-success"></i>
+                            </div>
+                            <h5 class="fw-bold"><?= __('home_tool_investment') ?></h5>
+                            <p class="text-muted small mb-0"><?= __('home_tool_investment_desc') ?></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('stamp')">
+                        <div class="card-body p-4 text-center">
+                            <div class="bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 tool-icon-circle">
+                                <i class="fas fa-file-contract fa-2x text-warning"></i>
+                            </div>
+                            <h5 class="fw-bold"><?= __('home_tool_stamp') ?></h5>
+                            <p class="text-muted small mb-0"><?= __('home_tool_stamp_desc') ?></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('converter')">
+                        <div class="card-body p-4 text-center">
+                            <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 tool-icon-circle">
+                                <i class="fas fa-vector-square fa-2x text-info"></i>
+                            </div>
+                            <h5 class="fw-bold"><?= __('home_tool_converter') ?></h5>
+                            <p class="text-muted small mb-0"><?= __('home_tool_converter_desc') ?></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('eligibility')">
+                        <div class="card-body p-4 text-center">
+                            <div class="bg-danger bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 tool-icon-circle">
+                                <i class="fas fa-hand-holding-dollar fa-2x text-danger"></i>
+                            </div>
+                            <h5 class="fw-bold"><?= __('home_tool_eligibility') ?></h5>
+                            <p class="text-muted small mb-0"><?= __('home_tool_eligibility_desc') ?></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('valuation')">
+                        <div class="card-body p-4 text-center">
+                            <div class="bg-secondary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 tool-icon-circle">
+                                <i class="fas fa-house-chimney fa-2x text-secondary"></i>
+                            </div>
+                            <h5 class="fw-bold"><?= __('home_tool_valuation') ?></h5>
+                            <p class="text-muted small mb-0"><?= __('home_tool_valuation_desc') ?></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- EMI Calculator Section -->
+    <section class="py-5 emi-section bg-premium-navy" aria-labelledby="emi-title">
+        <div class="container">
+            <div class="text-center mb-5 premium-reveal">
+                <span class="badge px-3 py-2 mb-3 badge-premium"
+                    class="style-61594"><?= __('home_free_tool') ?></span>
+                <h2 id="emi-title" class="fw-bold text-white"><?= __('emi_calculator') ?></h2>
+                <p class="text-white-50" class="style-12699"><?= __('emi_subtitle') ?></p>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="card border-0 glass-dark premium-reveal" class="style-61870">
+                        <div class="card-body p-4 p-md-5 text-white">
+                            <div class="row g-4">
+                                <div class="col-md-7">
+                                    <div class="mb-4">
+                                        <label class="form-label fw-bold"><?= __('home_loan_amount') ?> <span
+                                                id="loanAmtDisplay" class="text-warning">₹50,00,000</span></label>
+                                        <input type="range" class="form-range" id="loanAmount" min="100000"
+                                            max="50000000" step="100000" value="5000000" oninput="calcEMI()" title="<?= __('home_loan_amount') ?>">
+                                        <div class="d-flex justify-content-between small text-white-50">
+                                            <span><?= __('home_emi_min_label') ?></span>
+                                            <span><?= __('home_emi_max_label') ?></span>
+                                        </div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label fw-bold"><?= __('home_interest_rate') ?> <span
+                                                id="rateDisplay" class="text-warning">8.5%</span></label>
+                                        <input type="range" class="form-range" id="interestRate" min="5" max="20"
+                                            step="0.1" value="8.5" oninput="calcEMI()">
+                                        <div class="d-flex justify-content-between small text-white-50">
+                                            <span>5%</span>
+                                            <span>20%</span>
+                                        </div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label fw-bold"><?= __('home_loan_tenure') ?> <span
+                                                id="tenureDisplay" class="text-warning">20
+                                                <?= __('home_years') ?></span></label>
+                                        <input type="range" class="form-range" id="loanTenure" min="1" max="30" step="1"
+                                            value="20" oninput="calcEMI()">
+                                        <div class="d-flex justify-content-between small text-white-50">
+                                            <span><?= __('home_emi_min_tenure') ?></span>
+                                            <span><?= __('home_emi_max_tenure') ?></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="result-card bg-dark text-white" class="style-87517">
+                                        <p class="text-white-50 mb-1 small text-uppercase text-center"
+                                            class="style-82962"><?= __('home_your_monthly_emi') ?></p>
+                                        <p class="display-5 fw-bold mb-0 text-center iu-teal-light" id="emiResult">₹42,426</p>
+                                        
+                                        <!-- Animated Donut Chart -->
+                                        <div class="emi-chart-container my-3">
+                                            <svg width="120" height="120" viewBox="0 0 100 100" class="emi-donut-svg">
+                                                <circle class="emi-donut-ring" cx="50" cy="50" r="40" />
+                                                <circle id="emiPrincipalSegment" class="emi-donut-segment-principal" cx="50" cy="50" r="40" />
+                                                <circle id="emiInterestSegment" class="emi-donut-segment-interest" cx="50" cy="50" r="40" />
+                                                <g class="emi-donut-text">
+                                                    <text x="50" y="48" id="chartPrincipalPct" class="emi-donut-val">50%</text>
+                                                     <text x="50" y="58" class="emi-donut-label"><?= __('home_principal', null, 'Principal') ?></text>
+                                                </g>
+                                            </svg>
+                                        </div>
+
+                                        <hr class="border-light my-3 opacity-50">
+                                        <div class="d-flex justify-content-between">
+                                            <span class="text-white-50"><i class="fas fa-circle me-1" class="style-91518"></i><?= __('home_loan_amount') ?></span>
+                                            <span class="fw-bold text-white" id="totalPrincipalDisp">₹50,00,000</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between mt-2">
+                                            <span class="text-white-50"><i class="fas fa-circle me-1" class="style-88794"></i><?= __('home_total_interest') ?></span>
+                                            <span class="fw-bold text-white" id="totalInterest">₹51,82,240</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between mt-2 pt-2 border-top border-light opacity-50">
+                                            <span class="text-white-50"><?= __('home_total_payment') ?></span>
+                                            <span class="fw-bold text-white" id="totalPayment">₹1,01,82,240</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-center text-white-50 mt-3 small"><i
+                            class="fas fa-info-circle me-1"></i><?= __('home_emi_disclaimer') ?></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+    function calcEMI() {
+        const P = parseFloat(document.getElementById('loanAmount').value);
+        const R = parseFloat(document.getElementById('interestRate').value) / 12 / 100;
+        const N = parseFloat(document.getElementById('loanTenure').value) * 12;
+
+        document.getElementById('loanAmtDisplay').textContent = '₹' + P.toLocaleString('en-IN');
+        document.getElementById('rateDisplay').textContent = document.getElementById('interestRate').value + '%';
+        document.getElementById('tenureDisplay').textContent = document.getElementById('loanTenure').value + ' ' + '<?= __('home_years') ?>';
+
+        let emi = 0;
+        let totalPay = 0;
+        let totalInt = 0;
+
+        if (R === 0) {
+            emi = P / N;
+            totalPay = P;
+            totalInt = 0;
+        } else {
+            emi = P * R * Math.pow(1 + R, N) / (Math.pow(1 + R, N) - 1);
+            totalPay = emi * N;
+            totalInt = totalPay - P;
+        }
+
+        document.getElementById('emiResult').textContent = '₹' + Math.round(emi).toLocaleString('en-IN');
+        document.getElementById('totalInterest').textContent = '₹' + Math.round(totalInt).toLocaleString('en-IN');
+        document.getElementById('totalPayment').textContent = '₹' + Math.round(totalPay).toLocaleString('en-IN');
+        if (document.getElementById('totalPrincipalDisp')) {
+            document.getElementById('totalPrincipalDisp').textContent = '₹' + P.toLocaleString('en-IN');
+        }
+
+        // Calculate donut segments
+        const circumference = 2 * Math.PI * 40; // ~251.327
+        const principalShare = P / totalPay;
+        const interestShare = totalInt / totalPay;
+
+        const principalOffset = 0;
+        const interestOffset = principalShare * circumference;
+
+        const principalSeg = document.getElementById('emiPrincipalSegment');
+        const interestSeg = document.getElementById('emiInterestSegment');
+        const pctLabel = document.getElementById('chartPrincipalPct');
+
+        if (principalSeg && interestSeg && pctLabel) {
+            // Set dasharrays and offsets
+            principalSeg.style.strokeDasharray = `${circumference}`;
+            principalSeg.style.strokeDashoffset = `${principalOffset}`;
+            
+            interestSeg.style.strokeDasharray = `${circumference}`;
+            interestSeg.style.strokeDashoffset = `${circumference - interestOffset}`; // starts where principal ends
+            
+            pctLabel.textContent = Math.round(principalShare * 100) + '%';
+        }
+    }
+    calcEMI();
+    </script>
+
+    <!-- Investment Growth Section -->
+    <section class="py-5" aria-labelledby="inv-title">
+        <div class="container">
+
+
+            <!-- Growth Projection Calculator -->
+            <div class="card border-0 shadow-lg bg-dark text-white">
+                <div class="card-body p-5">
+                    <div class="row align-items-center">
+                        <div class="col-lg-7">
+                            <h4 class="fw-bold mb-3"><i
+                                    class="fas fa-calculator me-2 text-warning"></i><?= __('home_growth_calculator_title') ?>
+                            </h4>
+                            <p class="text-white-50 mb-4"><?= __('home_growth_calculator_subtitle') ?></p>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label
+                                        class="form-label text-white-50 small"><?= __('home_investment_amount') ?></label>
+                                    <select class="form-select form-select-sm" id="invAmount" onchange="calcGrowth()" title="<?= __('home_investment_amount') ?>">
+                                        <option value="500000"><?= __('home_amount_5l') ?></option>
+                                        <option value="1000000" selected><?= __('home_amount_10l') ?></option>
+                                        <option value="2500000"><?= __('home_amount_25l') ?></option>
+                                        <option value="5000000"><?= __('home_amount_50l') ?></option>
+                                        <option value="10000000"><?= __('home_amount_1cr') ?></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label text-white-50 small"><?= __('home_time_period') ?></label>
+                                    <select class="form-select form-select-sm" id="invYears" onchange="calcGrowth()" title="<?= __('home_time_period') ?>">
+                                        <option value="5"><?= __('home_years_5') ?></option>
+                                        <option value="10" selected><?= __('home_years_10') ?></option>
+                                        <option value="15"><?= __('home_years_15') ?></option>
+                                        <option value="20"><?= __('home_years_20') ?></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label text-white-50 small">&nbsp;</label>
+                                    <div class="fw-bold h4 mb-0 pt-1" id="growthResult">₹40,45,558</div>
+                                </div>
+                            </div>
+        </div>
+    </section>
+
 
             <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
             document.addEventListener('DOMContentLoaded', function() {
@@ -1376,42 +1559,6 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                     </div>
                 </div>
             </div>
-
-            <!-- Growth Projection Calculator -->
-            <div class="card border-0 shadow-lg bg-dark text-white">
-                <div class="card-body p-5">
-                    <div class="row align-items-center">
-                        <div class="col-lg-7">
-                            <h4 class="fw-bold mb-3"><i
-                                    class="fas fa-calculator me-2 text-warning"></i><?= __('home_growth_calculator_title') ?>
-                            </h4>
-                            <p class="text-white-50 mb-4"><?= __('home_growth_calculator_subtitle') ?></p>
-                            <div class="row g-3">
-                                <div class="col-md-4">
-                                    <label
-                                        class="form-label text-white-50 small"><?= __('home_investment_amount') ?></label>
-                                    <select class="form-select form-select-sm" id="invAmount" onchange="calcGrowth()" title="<?= __('home_investment_amount') ?>">
-                                        <option value="500000"><?= __('home_amount_5l') ?></option>
-                                        <option value="1000000" selected><?= __('home_amount_10l') ?></option>
-                                        <option value="2500000"><?= __('home_amount_25l') ?></option>
-                                        <option value="5000000"><?= __('home_amount_50l') ?></option>
-                                        <option value="10000000"><?= __('home_amount_1cr') ?></option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label text-white-50 small"><?= __('home_time_period') ?></label>
-                                    <select class="form-select form-select-sm" id="invYears" onchange="calcGrowth()" title="<?= __('home_time_period') ?>">
-                                        <option value="5"><?= __('home_years_5') ?></option>
-                                        <option value="10" selected><?= __('home_years_10') ?></option>
-                                        <option value="15"><?= __('home_years_15') ?></option>
-                                        <option value="20"><?= __('home_years_20') ?></option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label text-white-50 small">&nbsp;</label>
-                                    <div class="fw-bold h4 mb-0 pt-1" id="growthResult">₹40,45,558</div>
-                                </div>
-                            </div>
                             <div class="mt-3">
                                 <div class="d-flex justify-content-between align-items-center mb-1">
                                     <span class="small text-white-50"><?= __('home_re_cagr') ?></span>
@@ -1480,84 +1627,6 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
     calcGrowth();
     </script>
 
-    <!-- Useful Free Tools -->
-    <section class="py-5 bg-white">
-        <div class="container">
-            <div class="text-center mb-5">
-                <span class="section-label"><?= __('home_free_tools') ?></span>
-                <h2 class="fw-bold"><?= __('home_free_tools_title') ?></h2>
-                <p class="section-subtitle"><?= __('home_free_tools_subtitle') ?></p>
-            </div>
-            <div class="row g-4">
-                <div class="col-lg-4 col-md-6">
-                    <div class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('emi')">
-                        <div class="card-body p-4 text-center">
-                            <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 tool-icon-circle">
-                                <i class="fas fa-calculator fa-2x text-primary"></i>
-                            </div>
-                            <h5 class="fw-bold"><?= __('home_tool_emi') ?></h5>
-                            <p class="text-muted small mb-0"><?= __('home_tool_emi_desc') ?></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('investment')">
-                        <div class="card-body p-4 text-center">
-                            <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 tool-icon-circle">
-                                <i class="fas fa-arrow-trend-up fa-2x text-success"></i>
-                            </div>
-                            <h5 class="fw-bold"><?= __('home_tool_investment') ?></h5>
-                            <p class="text-muted small mb-0"><?= __('home_tool_investment_desc') ?></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('stamp')">
-                        <div class="card-body p-4 text-center">
-                            <div class="bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 tool-icon-circle">
-                                <i class="fas fa-file-contract fa-2x text-warning"></i>
-                            </div>
-                            <h5 class="fw-bold"><?= __('home_tool_stamp') ?></h5>
-                            <p class="text-muted small mb-0"><?= __('home_tool_stamp_desc') ?></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('converter')">
-                        <div class="card-body p-4 text-center">
-                            <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 tool-icon-circle">
-                                <i class="fas fa-vector-square fa-2x text-info"></i>
-                            </div>
-                            <h5 class="fw-bold"><?= __('home_tool_converter') ?></h5>
-                            <p class="text-muted small mb-0"><?= __('home_tool_converter_desc') ?></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('eligibility')">
-                        <div class="card-body p-4 text-center">
-                            <div class="bg-danger bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 tool-icon-circle">
-                                <i class="fas fa-hand-holding-dollar fa-2x text-danger"></i>
-                            </div>
-                            <h5 class="fw-bold"><?= __('home_tool_eligibility') ?></h5>
-                            <p class="text-muted small mb-0"><?= __('home_tool_eligibility_desc') ?></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('valuation')">
-                        <div class="card-body p-4 text-center">
-                            <div class="bg-secondary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 tool-icon-circle">
-                                <i class="fas fa-house-chimney fa-2x text-secondary"></i>
-                            </div>
-                            <h5 class="fw-bold"><?= __('home_tool_valuation') ?></h5>
-                            <p class="text-muted small mb-0"><?= __('home_tool_valuation_desc') ?></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Tool Modal -->
     <div class="modal fade" id="toolModal" tabindex="-1" aria-hidden="true">
@@ -1579,7 +1648,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                     </div>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body p-4" id="toolModalBody">
+                <div class="modal-body p-4 text-dark" id="toolModalBody">
                 </div>
             </div>
         </div>
@@ -2160,3 +2229,54 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
         </div>
     </section>
 </main>
+
+<!-- Particles.js for Hero Section -->
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    if(document.getElementById('particles-canvas')) {
+        particlesJS("particles-canvas", {
+            "particles": {
+                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#ffffff" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5, "random": false, "anim": { "enable": false } },
+                "size": { "value": 3, "random": true, "anim": { "enable": false } },
+                "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.4, "width": 1 },
+                "move": { "enable": true, "speed": 2, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": { "enable": true, "mode": "grab" },
+                    "onclick": { "enable": true, "mode": "push" },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": { "distance": 140, "line_linked": { "opacity": 1 } },
+                    "push": { "particles_nb": 4 }
+                }
+            },
+            "retina_detect": true
+        });
+    }
+});
+</script>
+<script nonce="<?php echo $GLOBALS['csp_nonce'] ?? ''; ?>">
+window.addEventListener('scroll', function() {
+  var journeySection = document.getElementById('dream-home-journey');
+  if(!journeySection) return;
+  var rect = journeySection.getBoundingClientRect();
+  var sectionHeight = journeySection.offsetHeight;
+  var viewportHeight = window.innerHeight;
+  var scrollY = -rect.top;
+  var progress = Math.max(0, Math.min(1, scrollY / (sectionHeight - viewportHeight)));
+  var totalSteps = 4;
+  var step = Math.min(Math.floor(progress * totalSteps) + 1, totalSteps);
+  var backgrounds = document.querySelectorAll('.journey-bg');
+  var textSteps = document.querySelectorAll('.journey-step');
+  backgrounds.forEach((bg, idx) => { bg.classList.toggle('active', idx === step - 1); });
+  textSteps.forEach((txt, idx) => { txt.classList.toggle('active', idx === step - 1); });
+});
+</script>
+

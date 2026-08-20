@@ -8,8 +8,31 @@ if (!function_exists('navUrl')) {
 }
 ?>
 
-<nav class="navbar navbar-expand-xl align-items-center" class="style-53424">
-    <div class="container d-flex align-items-center">
+<style>
+    @media (min-width: 1200px) {
+        /* Keep everything super compact so it fits even on 1600px with many items */
+        #navbarNavDesktop .nav-link {
+            padding-right: 0.35rem !important;
+            padding-left: 0.35rem !important;
+            font-size: 0.85rem !important;
+            white-space: nowrap;
+        }
+        #navbarNavDesktop .btn-sm {
+            padding: 0.25rem 0.5rem !important;
+            font-size: 0.8rem !important;
+            white-space: nowrap;
+        }
+        .navbar-brand img.logo {
+            max-width: 140px !important;
+            height: auto;
+        }
+        .nav-item.ms-1 { margin-left: 0.15rem !important; }
+        .nav-item.ms-2 { margin-left: 0.25rem !important; }
+        .nav-item.ms-3 { margin-left: 0.4rem !important; }
+    }
+</style>
+<nav class="navbar navbar-expand-xl align-items-center">
+    <div class="container-fluid px-3 px-xl-5 d-flex align-items-center">
 
         <!-- Logo - Always on the left -->
         <a class="navbar-brand d-flex align-items-center me-0" href="<?php echo BASE_URL; ?>">
@@ -286,10 +309,10 @@ if (!function_exists('navUrl')) {
                 </li>
 
                 <!-- Language Switcher -->
-                <li class="nav-item dropdown ms-2">
+                <li class="nav-item dropdown ms-1">
                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" title="<?= __('language') ?>">
                         <i class="fas fa-globe"></i>
-                        <span class="d-none d-lg-inline"><?= ($GLOBALS['app_lang'] ?? 'en') === 'hi' ? 'हिन्दी' : 'English' ?></span>
+                        <span class="d-none"><?= ($GLOBALS['app_lang'] ?? 'en') === 'hi' ? 'हिन्दी' : 'English' ?></span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="<?= BASE_URL ?>/language/set/en"><span class="me-2">🇬🇧</span> English</a></li>
@@ -298,19 +321,20 @@ if (!function_exists('navUrl')) {
                 </li>
 
                 <!-- Quick Action: Call -->
-                <li class="nav-item ms-2 btn-call">
+                <li class="nav-item ms-1 btn-call">
                     <a href="tel:<?= preg_replace('/[^0-9+]/', '', $sc('contact_phone', '+91 92771 21112')) ?>"
-                       class="btn btn-call btn-sm">
-                        <i class="fas fa-phone me-1"></i>
-                        <span class="d-none d-lg-inline"><?= htmlspecialchars($sc('contact_phone', '+91 92771 21112')) ?></span>
+                       class="btn btn-call btn-sm px-2">
+                        <i class="fas fa-phone"></i>
+                        <span class="d-none ms-1"><?= htmlspecialchars($sc('contact_phone', '+91 92771 21112')) ?></span>
                     </a>
                 </li>
 
                 <!-- Quick Action: Compare -->
-                <li class="nav-item ms-2 btn-compare">
+                <li class="nav-item ms-1 btn-compare">
                     <a href="<?php echo BASE_URL; ?>/compare"
-                       class="btn btn-outline-info btn-sm position-relative">
-                        <i class="fas fa-balance-scale"></i> <?= __('compare') ?>
+                       class="btn btn-outline-info btn-sm px-2 position-relative">
+                        <i class="fas fa-balance-scale"></i> 
+                        <span class="d-none ms-1"><?= __('compare') ?></span>
                         <span id="compareBadge"
                               class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
                               class="style-62224">0</span>
@@ -326,10 +350,10 @@ if (!function_exists('navUrl')) {
 
                 <!-- Quick Action: Admin (only when logged out) -->
                 <?php if (!$nav->isLoggedIn()): ?>
-                <li class="nav-item ms-2 btn-admin">
-                    <a href="<?php echo BASE_URL; ?>/admin/login" class="btn btn-admin btn-sm">
-                        <i class="fas fa-user-lock me-1"></i>
-                        <span class="d-none d-lg-inline"><?= __('admin') ?></span>
+                <li class="nav-item ms-1 btn-admin">
+                    <a href="<?php echo BASE_URL; ?>/admin/login" class="btn btn-admin btn-sm px-2">
+                        <i class="fas fa-user-lock"></i>
+                        <span class="d-none ms-1"><?= __('admin') ?></span>
                     </a>
                 </li>
                 <?php endif; ?>
@@ -339,3 +363,24 @@ if (!function_exists('navUrl')) {
         </div>
     </div>
 </nav>
+
+<!-- Dark Mode Toggle Script for Frontend -->
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+function toggleDarkMode() {
+    var isDark = document.body.classList.toggle('dark-mode');
+    localStorage.setItem('aps-dark-mode', isDark ? '1' : '0');
+    var icon = document.querySelector('#darkModeToggle i');
+    if (icon) {
+        icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+    }
+}
+(function() {
+    var saved = localStorage.getItem('aps-dark-mode');
+    var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (saved === '1' || (saved === null && prefersDark)) {
+        document.body.classList.add('dark-mode');
+        var icon = document.querySelector('#darkModeToggle i');
+        if (icon) icon.className = 'fas fa-sun';
+    }
+})();
+</script>
