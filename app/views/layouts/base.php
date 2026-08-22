@@ -25,6 +25,13 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <meta name="keywords" content="<?= htmlspecialchars($sc('seo_keywords', 'real estate, plots, homes, Gorakhpur, Lucknow, Kushinagar, Varanasi, Uttar Pradesh, property, residential, commercial')) ?>">
     <meta name="author" content="APS Dream Home">
     <meta name="robots" content="index, follow">
+
+    <!-- Performance: preconnect to external origins used on most pages -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://www.google.com">
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="dns-prefetch" href="https://unpkg.com">
     
     <!-- PWA Meta Tags -->
     <link rel="manifest" href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/manifest.json">
@@ -450,6 +457,29 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
         }
       });
     </script>
+
+    <!-- Floating WhatsApp CTA (site-wide lead capture) -->
+    <?php $fwaPhone = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); ?>
+    <style>
+        .aps-wa-float { position: fixed; right: 20px; bottom: 20px; z-index: 1030;
+            width: 56px; height: 56px; border-radius: 50%; background: #25D366;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 14px rgba(37,211,102,.45); text-decoration: none;
+            animation: apsWaPulse 2.5s ease-out infinite; }
+        .aps-wa-float i { font-size: 30px; color: #fff; }
+        .aps-wa-float:hover, .aps-wa-float:focus { transform: scale(1.08); transition: transform .2s; }
+        .aps-wa-float::after { content: ''; position: absolute; inset: 0; border-radius: 50%;
+            border: 2px solid #25D366; opacity: .6; animation: apsWaRing 2.5s ease-out infinite; }
+        @keyframes apsWaPulse { 0%,100% { box-shadow: 0 4px 14px rgba(37,211,102,.45); } 50% { box-shadow: 0 4px 22px rgba(37,211,102,.75); } }
+        @keyframes apsWaRing { 0% { transform: scale(1); opacity: .6; } 100% { transform: scale(1.55); opacity: 0; } }
+        @media print { .aps-wa-float { display: none; } }
+        @media (max-width: 576px) { .aps-wa-float { right: 14px; bottom: 14px; width: 52px; height: 52px; } }
+    </style>
+    <a href="https://wa.me/<?= $fwaPhone ?>?text=<?= urlencode('Hello APS Dream Home! I am interested in your properties. Please share details.') ?>"
+       class="aps-wa-float" target="_blank" rel="noopener"
+       aria-label="Chat with us on WhatsApp">
+        <i class="fab fa-whatsapp" aria-hidden="true"></i>
+    </a>
 </body>
 
 </html>
