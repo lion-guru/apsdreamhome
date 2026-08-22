@@ -18,6 +18,13 @@
                 <a href="<?= BASE_URL ?>/services/materials" class="btn btn-outline-warning btn-lg"><i class="fas fa-cubes me-2"></i>Material Prices</a>
                 <a href="<?= BASE_URL ?>/services/submit" class="btn btn-outline-info btn-lg"><i class="fas fa-plus me-2"></i>Add Your Business</a>
             </div>
+            <p class="text-muted small mt-4 mb-0">
+                <i class="fas fa-shield-alt text-success me-1"></i><?= (int)($stats['approved_listings'] ?? 0) ?> listed service providers
+                <span class="mx-2">|</span>
+                <i class="fas fa-star text-warning me-1"></i><?= (int)($stats['total_reviews'] ?? 0) ?> customer reviews
+                <span class="mx-2">|</span>
+                <i class="fas fa-check-circle text-primary me-1"></i>Verified local businesses
+            </p>
         </div>
     </div>
 

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // Homepage content (used within layouts/base.php)
 ?>
 <!-- Main Content -->
@@ -163,7 +163,7 @@
                 </div>
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card project-card h-100">
-                        <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/raghunath nagri motiram.JPG" class="card-img-top" alt="Raghunat Nagri" loading="lazy">
+                        <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/raghunath-nagri-motiram.jpg" class="card-img-top" alt="Raghunat Nagri" loading="lazy">
                         <div class="card-body aps-cp-card-body">
                             <h5 class="card-title">Raghunat Nagri</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
@@ -262,7 +262,7 @@
                 </div>
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card property-card h-100 shadow-sm">
-                        <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/raghunath nagri motiram.JPG" class="card-img-top" alt="Raghunat Nagri" loading="lazy">
+                        <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/raghunath-nagri-motiram.jpg" class="card-img-top" alt="Raghunat Nagri" loading="lazy">
                         <div class="card-body aps-cp-card-body">
                             <h5 class="card-title">Raghunat Nagri</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>

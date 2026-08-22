@@ -1,4 +1,4 @@
-<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }$phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>'); ?>
+﻿<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }$phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>'); ?>
 <?php
 /**
  * Projects by Location Page
@@ -26,7 +26,7 @@ $locationName = ucfirst($location);
                     if (stripos($project->site_name, 'Suryoday') !== false) {
                         $imgPath = '/assets/images/projects/gorakhpur/suryoday.jpg';
                     } elseif (stripos($project->site_name, 'Raghunath') !== false) {
-                        $imgPath = '/assets/images/projects/gorakhpur/raghunath nagri motiram.JPG';
+                        $imgPath = '/assets/images/projects/gorakhpur/raghunath-nagri-motiram.jpg';
                     } elseif (stripos($project->site_name, 'Braj') !== false || stripos($project->site_name, 'Radha') !== false) {
                         $imgPath = '/assets/images/projects/lucknow/braj-radha-nagri.jpg';
                     } elseif (stripos($project->site_name, 'Budh') !== false) {

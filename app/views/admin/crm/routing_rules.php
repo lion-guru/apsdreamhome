@@ -90,8 +90,8 @@
                                                 <?php
                                                 $min = (float)($rule['min_budget'] ?? 0);
                                                 $max = (float)($rule['max_budget'] ?? 0);
-                                                if ($min > 0 && $max > 0) {
-                                                    echo '₹' . number_format($min) . ' â€“ ₹' . number_format($max);
+if ($min > 0 && $max > 0) {
+                                                    echo '₹' . number_format($min) . ' – ₹' . number_format($max);
                                                 } elseif ($min > 0) {
                                                     echo '₹' . number_format($min) . '+';
                                                 } elseif ($max > 0) {

@@ -62,7 +62,7 @@ $supportedRoles = [
         .card-header-custom{padding:1.75rem 2rem 0;text-align:center}
         .brand-icon{width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,#0d9488,#0f766e);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;box-shadow:0 8px 24px rgba(13,148,136,.3)}
         .brand-icon i{font-size:1.8rem;color:#fff}
-        .card-header-custom h2{font-size:1.35rem;font-weight:800;color:#1e293b;margin-bottom:.25rem}
+        .card-header-custom h2,.card-header-custom h1{font-size:1.35rem;font-weight:800;color:#1e293b;margin-bottom:.25rem}
         .card-header-custom p{font-size:.85rem;color:#64748b}
 
         .card-body-custom{padding:1.5rem 2rem 2rem}
@@ -194,7 +194,7 @@ $supportedRoles = [
         <div class="login-card">
             <div class="card-header-custom">
                 <div class="brand-icon"><i class="fas fa-home"></i></div>
-                <h2>Welcome Back</h2>
+                <h1>Welcome Back</h1>
                 <p>Sign in to your APS Dream Home account</p>
             </div>
             <div class="card-body-custom">

@@ -71,7 +71,7 @@ $overallRate = $totalStarts > 0 ? round(($totalCompleted / $totalStarts) * 100, 
     <div class="row g-3 mb-4">
         <div class="col-md-12">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h5 class="mb-0">Ã°Å¸â€œÅ  Conversation States</h5></div>
+                <div class="card-header bg-white"><h5 class="mb-0">💬 Conversation States</h5></div>
                 <div class="card-body">
                     <div class="d-flex gap-4 flex-wrap">
                         <div class="text-center">
@@ -104,7 +104,7 @@ $overallRate = $totalStarts > 0 ? round(($totalCompleted / $totalStarts) * 100, 
     <div class="row g-4 mb-4">
         <div class="col-md-8">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h5 class="mb-0">Ã°Å¸Å½Â¯ Action Breakdown</h5></div>
+                <div class="card-header bg-white"><h5 class="mb-0">⚙️ Action Breakdown</h5></div>
                 <div class="card-body">
                     <?php if (empty($usage)): ?>
                     <p class="text-muted text-center py-4">No data yet. Start using the chatbot to see analytics.</p>
@@ -148,7 +148,7 @@ $overallRate = $totalStarts > 0 ? round(($totalCompleted / $totalStarts) * 100, 
         <!-- Drop-off Analysis -->
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h5 class="mb-0">Ã°Å¸Å¡Â¨ Drop-off Points</h5></div>
+                <div class="card-header bg-white"><h5 class="mb-0">📉 Drop-off Points</h5></div>
                 <div class="card-body">
                     <?php if (empty($dropoffs)): ?>
                     <p class="text-muted text-center py-4">No drop-offs recorded yet.</p>
@@ -170,7 +170,7 @@ $overallRate = $totalStarts > 0 ? round(($totalCompleted / $totalStarts) * 100, 
 
     <!-- Daily Trend -->
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white"><h5 class="mb-0">Ã°Å¸â€œË† Daily Trend (Last <?=$days?> Days)</h5></div>
+        <div class="card-header bg-white"><h5 class="mb-0">📈 Daily Trend (Last <?=$days?> Days)</h5></div>
         <div class="card-body">
             <?php if (empty($trend)): ?>
             <p class="text-muted text-center py-4">No daily data yet.</p>

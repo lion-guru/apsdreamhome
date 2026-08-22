@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $doc = $doc ?? null;
 if (!$doc) { echo '<div class="container-fluid py-4"><div class="alert alert-danger">Document not found</div></div>'; return; }
 ?><!DOCTYPE html>
@@ -23,7 +23,7 @@ if (!$doc) { echo '<div class="container-fluid py-4"><div class="alert alert-dan
     </div>
     <div class="status-badge no-print">
         <span class="badge bg-<?= match($doc['status']) { 'signed' => 'success', 'final' => 'info', 'draft' => 'secondary', 'expired' => 'warning', 'cancelled' => 'danger', default => 'secondary' } ?> fs-6"><?= $doc['status'] ?></span>
-        <?php if (!empty($doc['kyc_verified'])): ?><span class="badge bg-info fs-6 ms-1">KYC Ã¢Å“â€œ</span><?php endif; ?>
+        <?php if (!empty($doc['kyc_verified'])): ?><span class="badge bg-info fs-6 ms-1">✅ KYC Verified</span><?php endif; ?>
     </div>
     <div class="print-container">
         <?= $doc['content'] ?? '<p class="text-muted text-center py-5">No content</p>' ?>
@@ -35,3 +35,4 @@ if (!$doc) { echo '<div class="container-fluid py-4"><div class="alert alert-dan
     </div>
 </body>
 </html>
+

@@ -177,9 +177,9 @@ document.getElementById('bidForm')?.addEventListener('submit', async function(e)
     const r = await fetch('<?= BASE_URL ?>/auctions/bid', { method: 'POST', body: formData, credentials: 'same-origin' });
     const data = await r.json();
     if (data.error) {
-        alert('Ã¢Â�Å’ ' + data.error);
+        alert('❌ ' + data.error);
     } else {
-        alert('Ã¢Å“â€¦ Bid placed! ₹' + data.amount);
+        alert('✅ Bid placed! ₹' + data.amount);
         location.reload();
     }
 });
@@ -190,9 +190,9 @@ document.getElementById('depositBtn')?.addEventListener('click', async function(
     const r = await fetch('<?= BASE_URL ?>/auctions/deposit', { method: 'POST', body: formData, credentials: 'same-origin' });
     const data = await r.json();
     if (data.error) {
-        alert('Ã¢Â�Å’ ' + data.error);
+        alert('❌ ' + data.error);
     } else {
-        alert('Ã¢Å“â€¦ Deposit paid! You can now bid.');
+        alert('✅ Deposit paid! You can now bid.');
         location.reload();
     }
 });

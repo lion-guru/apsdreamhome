@@ -57,6 +57,11 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
                         <h4 class="mb-0 fw-bold text-white"><i class="fas fa-envelope me-2 text-white"></i><?php echo __('send_us_message'); ?></h4>
                     </div>
                     <div class="card-body p-3 p-md-4">
+                        <p class="text-center text-muted small mb-3">
+                            <i class="fas fa-users text-primary me-1"></i>1000+ Happy Clients
+                            <span class="mx-2">|</span>
+                            <i class="fas fa-clock text-warning me-1"></i>We respond within 24 hours
+                        </p>
                         <form action="<?php echo BASE_URL; ?>/contact" method="POST" id="contactForm" data-aps-ajax="true">
                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             

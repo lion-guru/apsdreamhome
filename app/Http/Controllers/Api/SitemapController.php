@@ -24,6 +24,10 @@ class SitemapController extends BaseApiController {
             ['loc' => '/projects', 'priority' => '0.8', 'changefreq' => 'weekly'],
             ['loc' => '/plots', 'priority' => '0.8', 'changefreq' => 'weekly'],
             ['loc' => '/testimonials', 'priority' => '0.5', 'changefreq' => 'monthly'],
+            ['loc' => '/blog', 'priority' => '0.7', 'changefreq' => 'weekly'],
+            ['loc' => '/invest', 'priority' => '0.8', 'changefreq' => 'weekly'],
+            ['loc' => '/financial-services', 'priority' => '0.7', 'changefreq' => 'weekly'],
+            ['loc' => '/team', 'priority' => '0.5', 'changefreq' => 'monthly'],
             ['loc' => '/tools-hub', 'priority' => '0.6', 'changefreq' => 'monthly'],
             ['loc' => '/faqs', 'priority' => '0.5', 'changefreq' => 'monthly'],
             ['loc' => '/privacy', 'priority' => '0.3', 'changefreq' => 'yearly'],
@@ -56,7 +60,7 @@ class SitemapController extends BaseApiController {
             $stmt = $db->query("SELECT id, slug, updated_at FROM colonies WHERE is_active = 1 ORDER BY name");
             while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
                 $slug = $row['slug'] ?? 'colony-' . $row['id'];
-                $lastmod = $row['updated_at'] ? date('Y-m-d', strtotime($row['updated_at'])) : '';
+                $lastmod = !empty($row['updated_at']) ? date('Y-m-d', strtotime($row['updated_at'])) : '';
                 echo '<url>';
                 echo '<loc>' . htmlspecialchars($base . '/projects/' . $slug) . '</loc>';
                 echo '<priority>0.7</priority>';
@@ -70,13 +74,15 @@ class SitemapController extends BaseApiController {
             while ($row = $stmt2->fetch(\PDO::FETCH_ASSOC)) {
                 $lastmod = $row['updated_at'] ? date('Y-m-d', strtotime($row['updated_at'])) : '';
                 echo '<url>';
-                echo '<loc>' . htmlspecialchars($base . '/properties/detail/' . $row['id']) . '</loc>';
+                echo '<loc>' . htmlspecialchars($base . '/properties/' . $row['id']) . '</loc>';
                 echo '<priority>0.6</priority>';
                 echo '<changefreq>weekly</changefreq>';
                 if ($lastmod) echo '<lastmod>' . $lastmod . '</lastmod>';
                 echo '</url>' . "\n";
             }
-        } catch (\Exception $e) { error_log('SitemapController: ' . $e->getMessage()); }
+        } catch (\Throwable $e) {
+            @error_log('SitemapController: ' . $e->getMessage() . "\n", 3, 'E:/backups/apsdreamhome/sitemap_err.log');
+        }
         
         echo '</urlset>';
         exit;

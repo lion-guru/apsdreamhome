@@ -311,10 +311,17 @@
             <div class="col-lg-8">
                 <div class="card border-0 shadow">
                     <div class="card-body p-5">
-                        <h3 class="text-center mb-4">
+                        <h3 class="text-center mb-2">
                             <i class="fas fa-paper-plane text-primary me-2"></i>
                             <?php echo __('enquire_services'); ?>
                         </h3>
+                        <p class="text-center text-muted small mb-4">
+                            <i class="fas fa-shield-alt text-success me-1"></i>500+ Properties Sold
+                            <span class="mx-2">|</span>
+                            <i class="fas fa-users text-primary me-1"></i>1000+ Happy Clients
+                            <span class="mx-2">|</span>
+                            <i class="fas fa-clock text-warning me-1"></i>We respond within 24 hours
+                        </p>
                         <form id="serviceInterestForm">
                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
                             <input type="hidden" name="utm_source" value="<?= htmlspecialchars($_GET['utm_source'] ?? $_SESSION['utm_source'] ?? '') ?>">

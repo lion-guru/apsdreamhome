@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!isset($sc)) {
     $sc = function ($k, $d = '') {
         return $GLOBALS['_site_settings_cache'][$k] ?? $d;
@@ -302,7 +302,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                             <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday1.jpeg" alt="Building Progress" class="img-cover" loading="lazy">
                         </div>
                         <div class="style-32950">
-                            <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/raghunath nagri motiram.JPG" alt="Modern Construction" class="img-cover" loading="lazy">
+                            <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/raghunath-nagri-motiram.jpg" alt="Modern Construction" class="img-cover" loading="lazy">
                         </div>
                     </div>
                 </div>

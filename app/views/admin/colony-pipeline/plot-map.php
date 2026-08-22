@@ -28,7 +28,7 @@
         <span class="map-stat" data-status="booked"><span class="dot" class="style-4960"></span> Booked: <strong id="statBooked">0</strong></span>
         <span class="map-stat" data-status="sold"><span class="dot" class="style-68656"></span> Sold: <strong id="statSold">0</strong></span>
         <span class="map-stat" data-status="hold"><span class="dot" class="style-99107"></span> Hold: <strong id="statHold">0</strong></span>
-        <span class="map-stat ms-auto text-muted">Total Value: <strong id="statValue">Ã¢â€šÂ¹0</strong></span>
+        <span class="map-stat ms-auto text-muted">Total Value: <strong id="statValue">₹0</strong></span>
     </div>
     <div class="map-filter-bar mb-3">
         <button class="btn btn-sm btn-light border active btn-map-filter" data-filter="all">All</button>
@@ -81,10 +81,10 @@
                             '<div class="info-row"><span class="label">Block</span><span class="value">' + (p.block || '-') + '</span></div>' +
                             '<div class="info-row"><span class="label">Area</span><span class="value">' + (p.area_sqft || 0) + ' sqft</span></div>' +
                             '<div class="info-row"><span class="label">Size</span><span class="value">' + (p.width_ft || '-') + 'x' + (p.length_ft || '-') + '</span></div>' +
-                            (p.price_per_sqft ? '<div class="info-row"><span class="label">Rate</span><span class="value">Ã¢â€šÂ¹' + Number(p.price_per_sqft).toLocaleString() + '/sqft</span></div>' : '') +
-                            (p.total_price ? '<div class="info-row"><span class="label">Price</span><span class="value fw-bold" class="style-5793">Ã¢â€šÂ¹' + Number(p.total_price).toLocaleString() + '</span></div>' : '') +
-                            (p.corner_plot ? '<div class="info-row"><span class="label">Corner Plot</span><span class="value" class="style-82740">Ã¢Å“â€œ</span></div>' : '') +
-                            (p.park_facing ? '<div class="info-row"><span class="label">Park Facing</span><span class="value" class="style-82740">Ã¢Å“â€œ</span></div>' : '') +
+                            (p.price_per_sqft ? '<div class="info-row"><span class="label">Rate</span><span class="value">₹' + Number(p.price_per_sqft).toLocaleString() + '/sqft</span></div>' : '') +
+                            (p.total_price ? '<div class="info-row"><span class="label">Price</span><span class="value fw-bold" class="style-5793">₹' + Number(p.total_price).toLocaleString() + '</span></div>' : '') +
+                            (p.corner_plot ? '<div class="info-row"><span class="label">Corner Plot</span><span class="value" class="style-82740">✓</span></div>' : '') +
+                            (p.park_facing ? '<div class="info-row"><span class="label">Park Facing</span><span class="value" class="style-82740">✓</span></div>' : '') +
                             (p.gata_number ? '<div class="info-row"><span class="label">Gata</span><span class="value">' + p.gata_number + '</span></div>' : '') +
                             '<hr class="my-2"><a href="' + baseUrl + '/admin/colony-pipeline/' + colonyId + '/plots?block=' + encodeURIComponent(p.block || '') + '" class="btn btn-sm btn-outline-primary w-100"><i class="fas fa-eye me-1"></i>View Details</a></div>';
                         layer.bindPopup(html, { maxWidth: 300 });
@@ -112,7 +112,7 @@
         document.getElementById('statBooked').textContent = (byStatus['booked'] || 0);
         document.getElementById('statSold').textContent = (byStatus['sold'] || 0);
         document.getElementById('statHold').textContent = (byStatus['hold'] || 0) + (byStatus['reserved'] || 0);
-        document.getElementById('statValue').textContent = 'Ã¢â€šÂ¹' + totalValue.toLocaleString();
+        document.getElementById('statValue').textContent = '₹' + totalValue.toLocaleString();
     }
 
     function applyFilter(activeBtn) {

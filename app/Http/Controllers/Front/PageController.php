@@ -1079,7 +1079,7 @@ public function rentProperty()
 
 public function investProperty()
     {
-        $this->render('pages/invest');
+        $this->render('pages/invest', ['page_title' => 'Property Investment Plans - APS Dream Home']);
     }
 
 public function listProperty()
