@@ -194,8 +194,8 @@ class PayrollService
         $ctc = $gross * 12;
 
         $sql = "INSERT INTO employee_salary_structures 
-                (employee_id, ctc, gross_salary, components, effective_from, status, created_at)
-                VALUES (?, ?, ?, ?, ?, 'active', NOW())
+                (employee_id, ctc, gross_salary, components, effective_from, status, tenant_id, created_at)
+                VALUES (?, ?, ?, ?, ?, 'active', ?, NOW())
                 ON DUPLICATE KEY UPDATE 
                     ctc = VALUES(ctc),
                     gross_salary = VALUES(gross_salary),
@@ -208,7 +208,8 @@ class PayrollService
             $ctc,
             $gross,
             json_encode($components),
-            $data['effective_from'] ?? date('Y-m-d')
+            $data['effective_from'] ?? date('Y-m-d'),
+            (int)$this->tenantId()
         ])->rowCount() > 0;
     }
 
@@ -381,8 +382,8 @@ class PayrollService
             $sql = "INSERT INTO employee_payrolls 
                     (employee_id, month, year, working_days, days_worked, paid_leaves, unpaid_leaves,
                      earnings, deductions, overtime_pay, gross_salary, total_deductions, net_salary,
-                     status, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'processed', NOW())
+                     status, tenant_id, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'processed', ?, NOW())
                     ON DUPLICATE KEY UPDATE 
                         working_days = VALUES(working_days),
                         days_worked = VALUES(days_worked),
@@ -408,7 +409,8 @@ class PayrollService
             $salaryData['overtime_pay'],
             $salaryData['gross_salary'],
             $salaryData['total_deductions'],
-            $salaryData['net_salary']
+            $salaryData['net_salary'],
+            (int)$this->tenantId()
         ]);
 
         return (int)$this->db->lastInsertId();

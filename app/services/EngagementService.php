@@ -152,18 +152,19 @@ class EngagementService
         if (isset($payload['status'])) { $fields[] = 'status = ?'; $params[] = $payload['status']; }
         if (empty($fields)) return false;
         $params[] = $goalId;
-        $stmt = $this->conn->prepare('UPDATE mlm_goals SET ' . implode(', ', $fields) . ', updated_at = NOW() WHERE id = ?');
+        $params[] = (int)$this->tenantId();
+        $stmt = $this->conn->prepare('UPDATE mlm_goals SET ' . implode(', ', $fields) . ', updated_at = NOW() WHERE id = ? AND tenant_id = ?');
         $stmt->execute($params);
         return $stmt->rowCount() > 0;
     }
 
     public function recordGoalProgress(int $goalId, string $checkpointDate, float $actualValue): bool
     {
-        $stmt = $this->conn->prepare('INSERT INTO mlm_goal_progress (goal_id, checkpoint_date, actual_value, percentage_complete) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE actual_value = VALUES(actual_value)');
+        $stmt = $this->conn->prepare('INSERT INTO mlm_goal_progress (goal_id, checkpoint_date, actual_value, percentage_complete, tenant_id) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE actual_value = VALUES(actual_value)');
         $goal = $this->fetchGoal($goalId);
         $target = $goal ? (float)$goal['target_value'] : 1;
         $pct = $target > 0 ? ($actualValue / $target) * 100 : 0;
-        $stmt->execute([$goalId, $checkpointDate, $actualValue, min(100, max(0, $pct))]);
+        $stmt->execute([$goalId, $checkpointDate, $actualValue, min(100, max(0, $pct)), (int)$this->tenantId()]);
         return true;
     }
 

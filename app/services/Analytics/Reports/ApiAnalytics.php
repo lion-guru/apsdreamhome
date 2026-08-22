@@ -70,11 +70,11 @@ class ApiAnalytics {
             // Record in database
             $sql = "INSERT INTO api_requests (
                     endpoint, method, api_key_id, response_time, status_code,
-                    ip_address, timestamp
-                ) VALUES (?, ?, ?, ?, ?, ?, NOW())";
+                    ip_address, tenant_id, timestamp
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
 
             $this->db->execute($sql, [
-                $endpoint, $method, $apiKey, $responseTime, $statusCode, $ipAddress
+                $endpoint, $method, $apiKey, $responseTime, $statusCode, $ipAddress, (int)$this->tenantId()
             ]);
 
             // Update real-time metrics in cache
@@ -306,9 +306,9 @@ class ApiAnalytics {
         $days = $this->config['metrics_retention_days'];
 
         $sql = "DELETE FROM api_requests
-                WHERE timestamp < DATE_SUB(NOW(), INTERVAL ? DAY)";
+                WHERE timestamp < DATE_SUB(NOW(), INTERVAL ? DAY) AND tenant_id = ?";
 
-        $this->db->execute($sql, [$days]);
+        $this->db->execute($sql, [$days, (int)$this->tenantId()]);
 
         if ($this->logger) {
             $this->logger->info('Cleaned up old API metrics');

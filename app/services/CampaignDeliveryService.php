@@ -325,12 +325,12 @@ class CampaignDeliveryService
     private function createDeliveryRecord($campaignId, $userId, $deliveryType)
     {
         try {
-            $query = "INSERT INTO campaign_deliveries (campaign_id, user_id, delivery_type, status, sent_at) VALUES (?, ?, ?, 'pending', NOW())";
+            $query = "INSERT INTO campaign_deliveries (campaign_id, user_id, delivery_type, status, sent_at, tenant_id) VALUES (?, ?, ?, 'pending', NOW(), ?)";
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
         }
-        $this->db->execute($query, [$campaignId, $userId, $deliveryType]);
+        $this->db->execute($query, [$campaignId, $userId, $deliveryType, (int)$this->tenantId()]);
         return $this->db->getLastInsertId();
     }
 
@@ -339,7 +339,7 @@ class CampaignDeliveryService
      */
     private function updateDeliveryStatus($deliveryId, $status, $errorMessage = null)
     {
-        $query = "UPDATE campaign_deliveries SET status = ?, error_message = ? WHERE id = ?";
+        $query = "UPDATE campaign_deliveries SET status = ?, error_message = ? WHERE id = ? AND tenant_id = ?";
         
         $params = [$status];
         if ($errorMessage) {
@@ -348,6 +348,7 @@ class CampaignDeliveryService
             $params[] = null;
         }
         $params[] = $deliveryId;
+        $params[] = (int)$this->tenantId();
         
         $this->db->execute($query, $params);
     }
@@ -357,8 +358,8 @@ class CampaignDeliveryService
      */
     private function updateCampaignStatus($campaignId, $status, $deliveredCount = 0)
     {
-        $query = "UPDATE campaigns SET status = ?, delivered_count = ?, updated_at = NOW() WHERE campaign_id = ?";
-        $this->db->execute($query, [$status, $deliveredCount, $campaignId]);
+        $query = "UPDATE campaigns SET status = ?, delivered_count = ?, updated_at = NOW() WHERE campaign_id = ? AND tenant_id = ?";
+        $this->db->execute($query, [$status, $deliveredCount, $campaignId, (int)$this->tenantId()]);
     }
 
     /**
@@ -405,7 +406,7 @@ class CampaignDeliveryService
         }
 
         try {
-            $query = "UPDATE campaign_deliveries SET {$timestampField} = NOW(), status = ? WHERE id = ?";
+            $query = "UPDATE campaign_deliveries SET {$timestampField} = NOW(), status = ? WHERE id = ? AND tenant_id = ?";
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
@@ -420,7 +421,7 @@ class CampaignDeliveryService
             $status = 'opened';
         }
         
-        return $this->db->execute($query, [$status, $deliveryId]);
+        return $this->db->execute($query, [$status, $deliveryId, (int)$this->tenantId()]);
     }
 
     /**
@@ -465,8 +466,8 @@ class CampaignDeliveryService
     {
         try {
             // Store delivery schedule
-            $query = "INSERT INTO campaign_delivery_schedule (campaign_id, scheduled_time, delivery_types, status) VALUES (?, ?, ?, 'scheduled')";
-            $this->db->execute($query, [$campaignId, $scheduledTime, json_encode($deliveryTypes)]);
+            $query = "INSERT INTO campaign_delivery_schedule (campaign_id, scheduled_time, delivery_types, status, tenant_id) VALUES (?, ?, ?, 'scheduled', ?)";
+            $this->db->execute($query, [$campaignId, $scheduledTime, json_encode($deliveryTypes), (int)$this->tenantId()]);
             
             return [
                 'success' => true,
@@ -519,7 +520,7 @@ class CampaignDeliveryService
      */
     private function updateScheduleStatus($scheduleId, $status)
     {
-        $query = "UPDATE campaign_delivery_schedule SET status = ?, processed_at = NOW() WHERE id = ?";
-        return $this->db->execute($query, [$status, $scheduleId]);
+        $query = "UPDATE campaign_delivery_schedule SET status = ?, processed_at = NOW() WHERE id = ? AND tenant_id = ?";
+        return $this->db->execute($query, [$status, $scheduleId, (int)$this->tenantId()]);
     }
 }

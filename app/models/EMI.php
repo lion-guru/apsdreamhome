@@ -10,6 +10,7 @@ class EMI extends Model
 {
     protected static $table = 'emi_plans';
     protected static $primaryKey = 'id';
+    protected static $tenantScoped = true;
 
     protected $fillable = [
         'customer_id',
