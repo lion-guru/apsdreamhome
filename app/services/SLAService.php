@@ -21,19 +21,19 @@ class SLAService
     public function getAllRules() {
         try {
             return $this->db->fetchAll("SELECT * FROM crm_sla_rules ORDER BY rule_type ASC, target_minutes ASC" . $this->tenantSql()) ?: [];
-        } catch (\Exception $e) { return []; }
+        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function getActiveRules() {
         try {
             return $this->db->fetchAll("SELECT * FROM crm_sla_rules WHERE is_active = 1" . $this->tenantSql()) ?: [];
-        } catch (\Exception $e) { return []; }
+        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function getRuleById($id) {
         try {
             return $this->db->fetch("SELECT * FROM crm_sla_rules WHERE id = ?" . $this->tenantSql(), array_merge([$id], $this->tenantId() > 1 ? [$this->tenantId()] : []));
-        } catch (\Exception $e) { return null; }
+        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return null; }
     }
 
     public function createRule($data) {
@@ -128,7 +128,7 @@ class SLAService
                  ORDER BY sl.created_at DESC LIMIT ?",
                 [$limit]
             ) ?: [];
-        } catch (\Exception $e) { return []; }
+        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function getPendingSLAs() {
@@ -142,7 +142,7 @@ class SLAService
                  WHERE sl.status = 'pending'" . $this->tenantSqlForAlias('sl') . "
                  ORDER BY sl.started_at ASC"
             ) ?: [];
-        } catch (\Exception $e) { return []; }
+        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function autoCheckBreaches() {

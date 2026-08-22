@@ -31,7 +31,7 @@ class LeadRoutingService
                  " . $this->tenantSqlForAlias('rr') . "
                  ORDER BY rr.priority ASC, rr.created_at DESC"
             ) ?: [];
-        } catch (\Exception $e) { return []; }
+        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function getActiveRules(): array {
@@ -39,13 +39,13 @@ class LeadRoutingService
             return $this->db->fetchAll(
                 "SELECT * FROM crm_routing_rules WHERE is_active = 1" . $this->tenantSql()
             ) ?: [];
-        } catch (\Exception $e) { return []; }
+        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function getRuleById(int $id): ?array {
         try {
             return $this->db->fetch("SELECT * FROM crm_routing_rules WHERE id = ?" . $this->tenantSql(), array_merge([$id], $this->tenantId() > 1 ? [$this->tenantId()] : []));
-        } catch (\Exception $e) { return null; }
+        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return null; }
     }
 
     public function createRule(array $data): array {

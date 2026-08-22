@@ -58,7 +58,7 @@ class NpsService
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) { return []; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function getSurveyById($id)
@@ -67,7 +67,7 @@ class NpsService
             $stmt = $this->pdo->prepare("SELECT s.*, u.name as creator_name FROM nps_surveys s LEFT JOIN users u ON s.created_by = u.id WHERE s.id = ? {$this->tenantSqlForAlias('s')}");
             $stmt->execute([$id]);
             return $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) { return null; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return null; }
     }
 
     public function updateSurvey($id, $data)
@@ -103,7 +103,7 @@ class NpsService
             $this->pdo->prepare("DELETE FROM nps_schedule WHERE survey_id = ? {$this->tenantSql()}")->execute([$id]);
             $this->pdo->prepare("DELETE FROM nps_surveys WHERE id = ? {$this->tenantSql()}")->execute([$id]);
             return true;
-        } catch (\Throwable $e) { return false; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     public function recordResponse($surveyId, $userId, $visitorId, $score, $followUpAnswer = null, $ip = '', $userAgent = '')
@@ -152,7 +152,7 @@ class NpsService
                                         ORDER BY r.responded_at DESC LIMIT " . (int)$limit);
             $stmt->execute([$surveyId]);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) { return []; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function getStats($surveyId = null)
@@ -280,6 +280,6 @@ class NpsService
                 'survey' => $activeSurvey,
                 'stats' => $stats
             ];
-        } catch (\Throwable $e) { return null; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return null; }
     }
 }

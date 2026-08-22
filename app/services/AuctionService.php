@@ -71,7 +71,7 @@ class AuctionService
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) { return []; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function getLiveAuctions($limit = 20)
@@ -82,7 +82,7 @@ class AuctionService
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($tid > 1 ? [$tid] : []);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) { return []; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function getAuctionById($id)
@@ -94,7 +94,7 @@ class AuctionService
             if ($this->tenantId() > 1) $params[] = $this->tenantId();
             $stmt->execute($params);
             return $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) { return null; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return null; }
     }
 
     public function placeBid($auctionId, $bidderId, $bidderName, $amount, $maxAutoBid = null)
@@ -163,7 +163,7 @@ class AuctionService
             $stmt = $this->pdo->prepare("SELECT b.*, u.name as full_name, u.email FROM auction_bids b LEFT JOIN users u ON b.bidder_id = u.id WHERE b.auction_id = ? ORDER BY b.placed_at DESC LIMIT " . (int)$limit);
             $stmt->execute([$auctionId]);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) { return []; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function endAuction($auctionId)
@@ -196,7 +196,7 @@ class AuctionService
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($tid > 1 ? [$auctionId, $tid] : [$auctionId]);
             return true;
-        } catch (\Throwable $e) { return false; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     public function cancelAuction($auctionId, $reason = null)
@@ -207,7 +207,7 @@ class AuctionService
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($tid > 1 ? [$reason, $auctionId, $tid] : [$reason, $auctionId]);
             return true;
-        } catch (\Throwable $e) { return false; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     public function watch($auctionId, $userId, $notifyOutbid = true, $notifyEnding = true)
@@ -218,7 +218,7 @@ class AuctionService
             $this->pdo->prepare("UPDATE auctions SET watcher_count = (SELECT COUNT(*) FROM auction_watchers WHERE auction_id = ?) WHERE id = ?")
                 ->execute([$auctionId, $auctionId]);
             return true;
-        } catch (\Throwable $e) { return false; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     public function unwatch($auctionId, $userId)
@@ -229,7 +229,7 @@ class AuctionService
             $this->pdo->prepare("UPDATE auctions SET watcher_count = (SELECT COUNT(*) FROM auction_watchers WHERE auction_id = ?) WHERE id = ?")
                 ->execute([$auctionId, $auctionId]);
             return true;
-        } catch (\Throwable $e) { return false; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     public function isWatching($auctionId, $userId)
@@ -238,7 +238,7 @@ class AuctionService
             $stmt = $this->pdo->prepare("SELECT id FROM auction_watchers WHERE auction_id = ? AND user_id = ?");
             $stmt->execute([$auctionId, $userId]);
             return (bool)$stmt->fetch();
-        } catch (\Throwable $e) { return false; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     public function recordDeposit($auctionId, $userId, $amount, $method = null, $transactionId = null)
@@ -247,7 +247,7 @@ class AuctionService
             $this->pdo->prepare("INSERT INTO auction_deposits (auction_id, user_id, amount, payment_method, transaction_id, status, paid_at) VALUES (?,?,?,?,?,'paid',NOW()) ON DUPLICATE KEY UPDATE amount = VALUES(amount), payment_method = VALUES(payment_method), transaction_id = VALUES(transaction_id), status = 'paid', paid_at = NOW()")
                 ->execute([$auctionId, $userId, $amount, $method, $transactionId]);
             return true;
-        } catch (\Throwable $e) { return false; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     public function hasDeposit($auctionId, $userId)
@@ -256,7 +256,7 @@ class AuctionService
             $stmt = $this->pdo->prepare("SELECT id, amount, status FROM auction_deposits WHERE auction_id = ? AND user_id = ? AND status = 'paid'");
             $stmt->execute([$auctionId, $userId]);
             return $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) { return null; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return null; }
     }
 
     public function processEndingAuctions()

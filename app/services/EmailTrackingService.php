@@ -97,7 +97,7 @@ class EmailTrackingService
                  GROUP BY DATE(event_at), event_type ORDER BY day ASC",
                 array_merge([$days], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             ) ?: [];
-        } catch (\Exception $e) { return []; }
+        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function getLeadEmailStats($leadId) {
@@ -123,6 +123,6 @@ class EmailTrackingService
                  GROUP BY link_url ORDER BY clicks DESC LIMIT ?",
                 array_merge([$limit], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             ) ?: [];
-        } catch (\Exception $e) { return []; }
+        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 }

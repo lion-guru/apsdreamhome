@@ -61,7 +61,7 @@ class LiveChatService
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute(array_merge([$sessionId], $this->_tParams()));
             return $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) { return null; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return null; }
     }
 
     public function getSessionByToken($token)
@@ -71,7 +71,7 @@ class LiveChatService
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute(array_merge([$token], $this->_tParams()));
             return $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) { return null; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return null; }
     }
 
     public function getSessions($status = null, $limit = 50, $offset = 0, $agentId = null)
@@ -91,7 +91,7 @@ class LiveChatService
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) { return []; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function sendMessage($sessionId, $senderType, $senderId, $senderName, $message, $messageType = 'text', $attachment = null, $isInternal = false)
@@ -169,7 +169,7 @@ class LiveChatService
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) { return []; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function markRead($sessionId, $readerType)
@@ -185,7 +185,7 @@ class LiveChatService
                 $this->pdo->prepare("UPDATE chat_sessions SET unread_admin_count = 0 WHERE id = ?" . $this->tenantSql())->execute(array_merge([$sessionId], $this->_tParams()));
             }
             return true;
-        } catch (\Throwable $e) { return false; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     public function assignAgent($sessionId, $agentId, $agentName)
@@ -195,7 +195,7 @@ class LiveChatService
             $this->pdo->prepare($sql)->execute(array_merge([$agentId, $agentName, $sessionId], $this->_tParams()));
             $this->sendMessage($sessionId, 'system', null, 'System', "Agent $agentName joined the chat", 'system', null, false);
             return true;
-        } catch (\Throwable $e) { return false; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     public function closeSession($sessionId, $closedBy, $reason = null, $rating = null, $feedback = null)
@@ -205,7 +205,7 @@ class LiveChatService
             $this->pdo->prepare($sql)->execute(array_merge([$closedBy, $reason, $rating, $feedback, $sessionId], $this->_tParams()));
             $this->sendMessage($sessionId, 'system', null, 'System', 'Chat session closed', 'system', null, false);
             return true;
-        } catch (\Throwable $e) { return false; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     public function getQuickReplies($category = null)
@@ -221,7 +221,7 @@ class LiveChatService
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) { return []; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function getWidgetSetting($key, $default = null)
@@ -240,7 +240,7 @@ class LiveChatService
             $stmt = $this->pdo->prepare("INSERT INTO chat_widget_settings (setting_key, setting_value, updated_by) VALUES (?,?,?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), updated_by = VALUES(updated_by), updated_at = NOW()");
             $stmt->execute([$key, $value, $updatedBy]);
             return true;
-        } catch (\Throwable $e) { return false; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
 public function getStats()
@@ -294,6 +294,6 @@ public function getStats()
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($this->_tParams());
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) { return []; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 }

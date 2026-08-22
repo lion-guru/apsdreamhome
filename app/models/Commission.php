@@ -8,7 +8,7 @@ class Commission
     public function __construct() { $this->db = Database::getInstance(); }
     public function getByUserId($userId) {
         try { return $this->db->fetchAll("SELECT * FROM commissions WHERE (user_id = ? OR associate_id = ?) ORDER BY created_at DESC", [$userId, $userId]); }
-        catch (Exception $e) { return []; }
+        catch (Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
     public function getStats($userId) {
         try {
@@ -25,7 +25,7 @@ class Commission
                 "SELECT * FROM commissions WHERE (user_id = ? OR associate_id = ?) ORDER BY created_at DESC LIMIT ?",
                 [$userId, $userId, $limit]
             );
-        } catch (Exception $e) { return []; }
+        } catch (Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
     public function getByType($userId, $type) {
         try {
@@ -33,6 +33,6 @@ class Commission
                 "SELECT * FROM commissions WHERE (user_id = ? OR associate_id = ?) AND (commission_type = ? OR type = ?) ORDER BY created_at DESC",
                 [$userId, $userId, $type, $type]
             );
-        } catch (Exception $e) { return []; }
+        } catch (Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 }

@@ -143,7 +143,7 @@ class AuctionController extends AdminController
         try {
             $stmt = $this->pdo()->query("SELECT id, name, address, price FROM user_properties WHERE status = 'approved' ORDER BY created_at DESC LIMIT 100");
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) { return []; }
+        } catch (\Throwable $e) { error_log("AuctionController::fetchProperties error: " . $e->getMessage()); return []; }
     }
 
     private function getUserId() { return (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0); }

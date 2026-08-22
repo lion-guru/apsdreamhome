@@ -207,6 +207,6 @@ class ResellPropertyService
         try {
             $st = $this->pdo->query("SELECT * FROM resell_commission_structure WHERE active = 1 ORDER BY min_price ASC");
             return $st->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) { return []; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 }

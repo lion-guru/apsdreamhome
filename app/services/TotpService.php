@@ -99,7 +99,7 @@ class TotpService
             if ($this->tenantId() > 1) $params[':stid'] = $this->tenantId();
             $st->execute($params);
             return $st->rowCount() > 0;
-        } catch (\Throwable $e) { return false; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     public function disableForUser(int $userId): bool
@@ -110,7 +110,7 @@ class TotpService
             if ($this->tenantId() > 1) $params[':stid'] = $this->tenantId();
             $st->execute($params);
             return $st->rowCount() > 0;
-        } catch (\Throwable $e) { return false; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     public function isEnabled(int $userId): bool
@@ -122,7 +122,7 @@ class TotpService
             $st->execute($params);
             $r = $st->fetch(PDO::FETCH_ASSOC);
             return !empty($r['two_factor_enabled']);
-        } catch (\Throwable $e) { return false; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     public function getSecret(int $userId): ?string
@@ -134,7 +134,7 @@ class TotpService
             $st->execute($params);
             $r = $st->fetch(PDO::FETCH_ASSOC);
             return $r['two_factor_secret'] ?? null;
-        } catch (\Throwable $e) { return null; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return null; }
     }
 
     public function generateBackupCodes(int $count = 8, int $length = 8): array
@@ -163,7 +163,7 @@ class TotpService
             if (!$json) return [];
             $decoded = json_decode($json, true);
             return is_array($decoded) ? $decoded : [];
-        } catch (\Throwable $e) { return []; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function saveBackupCodes(int $userId, array $codes): bool
@@ -174,7 +174,7 @@ class TotpService
             if ($this->tenantId() > 1) $params[':stid'] = $this->tenantId();
             $st->execute($params);
             return true;
-        } catch (\Throwable $e) { return false; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     public function verifyBackupCode(int $userId, string $code): bool
@@ -213,7 +213,7 @@ class TotpService
             if (!$json) return [];
             $decoded = json_decode($json, true);
             return is_array($decoded) ? $decoded : [];
-        } catch (\Throwable $e) { return []; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function markBackupCodeUsed(int $userId, string $code): bool
@@ -238,7 +238,7 @@ class TotpService
 
             $st->execute($params);
             return true;
-        } catch (\Throwable $e) { return false; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     public function getBackupCodeStats(int $userId): array

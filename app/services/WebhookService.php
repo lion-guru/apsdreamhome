@@ -39,7 +39,7 @@ class WebhookService
         try {
             $st = $this->db->query($sql);
             return $st->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) { return []; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function deleteEndpoint(int $id): bool
@@ -51,7 +51,7 @@ class WebhookService
             $st = $this->db->prepare($sql);
             $st->execute($params);
             return $st->rowCount() > 0;
-        } catch (\Throwable $e) { return false; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     public function toggleEndpoint(int $id, bool $active): bool
@@ -60,7 +60,7 @@ class WebhookService
             $st = $this->db->prepare("UPDATE webhook_endpoints SET is_active = :a WHERE id = :id");
             $st->execute([':a' => $active ? 1 : 0, ':id' => $id]);
             return $st->rowCount() > 0;
-        } catch (\Throwable $e) { return false; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     public function trigger(string $eventType, array $payload): array
@@ -169,7 +169,7 @@ class WebhookService
             $st->bindValue(':lim', $limit, PDO::PARAM_INT);
             $st->execute();
             return $st->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) { return []; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function getStats(int $days = 7): array

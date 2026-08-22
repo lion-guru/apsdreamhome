@@ -8,7 +8,7 @@ class Wallet
     public function __construct() { $this->db = Database::getInstance(); }
     public function getByUserId($userId) {
         try { return $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ?", [$userId]); }
-        catch (Exception $e) { return null; }
+        catch (Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return null; }
     }
     public function getBalance($userId) {
         try {
@@ -59,7 +59,7 @@ class Wallet
                 "SELECT * FROM wallet_transactions WHERE user_id = ? ORDER BY created_at DESC LIMIT ?",
                 [$userId, $limit]
             );
-        } catch (Exception $e) { return []; }
+        } catch (Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
     public function createWallet($userId) {
         try {

@@ -57,7 +57,7 @@ class ApiKeyService
                 $row['key_value_masked'] = substr($row['key_value'], 0, 8) . '...' . substr($row['key_value'], -4);
             }
             return $rows;
-        } catch (\Throwable $e) { return []; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function revoke(int $id): bool
@@ -66,7 +66,7 @@ class ApiKeyService
             $st = $this->db->prepare("UPDATE api_keys SET is_active = 0, updated_at = NOW() WHERE id = :id" . $this->tenantSql());
             $st->execute([':id' => $id]);
             return $st->rowCount() > 0;
-        } catch (\Throwable $e) { return false; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     public function activate(int $id): bool
@@ -75,7 +75,7 @@ class ApiKeyService
             $st = $this->db->prepare("UPDATE api_keys SET is_active = 1, updated_at = NOW() WHERE id = :id" . $this->tenantSql());
             $st->execute([':id' => $id]);
             return $st->rowCount() > 0;
-        } catch (\Throwable $e) { return false; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     public function delete(int $id): bool
@@ -84,7 +84,7 @@ class ApiKeyService
             $st = $this->db->prepare("DELETE FROM api_keys WHERE id = :id" . $this->tenantSql());
             $st->execute([':id' => $id]);
             return $st->rowCount() > 0;
-        } catch (\Throwable $e) { return false; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     public function verify(string $keyValue): ?array
@@ -96,7 +96,7 @@ class ApiKeyService
             if (!$key) return null;
             $this->db->prepare("UPDATE api_keys SET last_used_at = NOW(), usage_count = usage_count + 1 WHERE id = :id" . $this->tenantSql())->execute([':id' => $key['id']]);
             return $key;
-        } catch (\Throwable $e) { return null; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return null; }
     }
 
     public function getStats(): array

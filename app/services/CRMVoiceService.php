@@ -84,7 +84,7 @@ class CRMVoiceService
                  ORDER BY ci.created_at DESC LIMIT ?",
                 [$userId, $limit]
             ) ?: [];
-        } catch (\Exception $e) { return []; }
+        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function getVoiceStats() {

@@ -20,19 +20,19 @@ class CRMCustomFieldService
     public function getAllFields() {
         try {
             return $this->db->fetchAll("SELECT * FROM crm_custom_fields ORDER BY section ASC, order_index ASC") ?: [];
-        } catch (\Exception $e) { return []; }
+        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function getActiveFields() {
         try {
             return $this->db->fetchAll("SELECT * FROM crm_custom_fields WHERE is_active = 1 ORDER BY section ASC, order_index ASC") ?: [];
-        } catch (\Exception $e) { return []; }
+        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function getFieldById($id) {
         try {
             return $this->db->fetch("SELECT * FROM crm_custom_fields WHERE id = ?", [$id]);
-        } catch (\Exception $e) { return null; }
+        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return null; }
     }
 
     public function createField($data) {
@@ -85,7 +85,7 @@ class CRMCustomFieldService
             $result = [];
             foreach ($rows as $r) { $result[$r['field_name']] = $r; }
             return $result;
-        } catch (\Exception $e) { return []; }
+        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function saveLeadCustomValues($leadId, $data) {
@@ -117,6 +117,6 @@ class CRMCustomFieldService
                 "SELECT * FROM crm_custom_fields WHERE is_active = 1 AND section = ? ORDER BY order_index ASC",
                 [$section]
             ) ?: [];
-        } catch (\Exception $e) { return []; }
+        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 }

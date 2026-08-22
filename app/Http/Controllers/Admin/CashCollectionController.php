@@ -235,7 +235,7 @@ class CashCollectionController extends AdminController
             $stmt = $this->db->prepare("SELECT id, name, email FROM users WHERE role IN ('admin','agent','associate','employee'){$tidSql} ORDER BY name ASC");
             $stmt->execute($tidParams);
             return $stmt->fetchAll();
-        } catch (\Throwable $e) { return []; }
+        } catch (\Throwable $e) { error_log("CashCollectionController::getUsers error: " . $e->getMessage()); return []; }
     }
 
     public function reconcile()

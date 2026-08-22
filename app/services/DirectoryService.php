@@ -83,7 +83,7 @@ class DirectoryService
             $stmt->execute([$id, $this->tenantId()]);
             $stmt2 = $this->db->prepare("DELETE FROM directory_categories WHERE id = ? AND tenant_id = ?");
             return $stmt2->execute([$id, $this->tenantId()]);
-        } catch (\Exception $e) { return false; }
+        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     // ── Listings ──
@@ -215,7 +215,7 @@ class DirectoryService
             $this->db->prepare("DELETE FROM directory_materials WHERE listing_id = ? AND tenant_id = ?")->execute([$id, $this->tenantId()]);
             $this->db->prepare("DELETE FROM directory_listings WHERE id = ? AND tenant_id = ?")->execute([$id, $this->tenantId()]);
             return true;
-        } catch (\Exception $e) { return false; }
+        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     private function incrementListingViews(int $id): void
@@ -232,7 +232,7 @@ class DirectoryService
             $r = $stmt->execute([$data['listing_id'], $data['user_id'] ?? null, $data['reviewer_name'] ?? 'Anonymous', (int)$data['rating'], $data['review'] ?? '', $data['status'] ?? 'approved', $this->tenantId()]);
             $this->recalculateRating($data['listing_id']);
             return $r;
-        } catch (\Exception $e) { return false; }
+        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     public function recalculateRating(int $listingId): void
@@ -267,7 +267,7 @@ class DirectoryService
             $row = $rStmt->fetch(PDO::FETCH_ASSOC);
             if ($row) $this->recalculateRating($row['listing_id']);
             return true;
-        } catch (\Exception $e) { return false; }
+        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     // ── Jobs ──
@@ -307,7 +307,7 @@ class DirectoryService
     public function deleteJob(int $id): bool
     {
         try { return $this->db->prepare("DELETE FROM directory_jobs WHERE id = ? AND tenant_id = ?")->execute([$id, $this->tenantId()]); }
-        catch (\Exception $e) { return false; }
+        catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     public function getAllJobsAdmin(): array
@@ -346,7 +346,7 @@ class DirectoryService
     public function deleteMaterial(int $id): bool
     {
         try { return $this->db->prepare("DELETE FROM directory_materials WHERE id = ? AND tenant_id = ?")->execute([$id, $this->tenantId()]); }
-        catch (\Exception $e) { return false; }
+        catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     public function getAllMaterialsAdmin(): array

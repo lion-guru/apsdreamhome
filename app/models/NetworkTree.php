@@ -8,7 +8,7 @@ class NetworkTree
     public function __construct() { $this->db = Database::getInstance(); }
     public function getByUserId($userId) {
         try { return $this->db->fetchOne("SELECT * FROM network_tree WHERE associate_id = ?", [$userId]); }
-        catch (Exception $e) { return null; }
+        catch (Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return null; }
     }
     public function getDownline($userId, $maxLevel = 5) {
         try {
@@ -23,7 +23,7 @@ class NetworkTree
                  ORDER BY nt.level, nt.position",
                 [$my["root_id"], $maxLevel, $userId]
             );
-        } catch (Exception $e) { return []; }
+        } catch (Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
     public function countByLevel($userId) {
         try {
@@ -53,13 +53,13 @@ class NetworkTree
                  ORDER BY nt.level",
                 [$userId, $userId]
             );
-        } catch (Exception $e) { return []; }
+        } catch (Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
     public function getRootId($userId) {
         try {
             $my = $this->getByUserId($userId);
             return $my ? $my["root_id"] : null;
-        } catch (Exception $e) { return null; }
+        } catch (Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return null; }
     }
     public function getTeamSize($userId) {
         try {

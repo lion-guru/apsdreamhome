@@ -38,7 +38,7 @@ class MeetingService
                  WHERE " . implode(' AND ', $where) . $tidSql . " ORDER BY m.start_time DESC LIMIT 100",
                 $tid > 1 ? $params : array_slice($params, 1)
             ) ?: [];
-        } catch (\Exception $e) { return []; }
+        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function getMeetingById($id) {
@@ -53,7 +53,7 @@ class MeetingService
                  WHERE m.id = ?" . $tidSql,
                 $tid > 1 ? [$id, $tid] : [$id]
             );
-        } catch (\Exception $e) { return null; }
+        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return null; }
     }
 
     public function createMeeting($data) {
@@ -137,7 +137,7 @@ class MeetingService
                  ORDER BY m.start_time ASC LIMIT ?",
                 $params
             ) ?: [];
-        } catch (\Exception $e) { return []; }
+        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function getLeadMeetings($leadId) {
@@ -150,7 +150,7 @@ class MeetingService
                  WHERE m.lead_id = ?" . $tidSql . " ORDER BY m.start_time DESC LIMIT 20",
                 $tid > 1 ? [$leadId, $tid] : [$leadId]
             ) ?: [];
-        } catch (\Exception $e) { return []; }
+        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function getCalendarEvents($userId, $start, $end) {
@@ -166,7 +166,7 @@ class MeetingService
                  ORDER BY m.start_time ASC",
                 $params
             ) ?: [];
-        } catch (\Exception $e) { return []; }
+        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function getStats() {

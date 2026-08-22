@@ -8,11 +8,11 @@ class MlmProfile
     public function __construct() { $this->db = Database::getInstance(); }
     public function getByUserId($userId) {
         try { return $this->db->fetchOne("SELECT * FROM mlm_profiles WHERE user_id = ?", [$userId]); }
-        catch (Exception $e) { return null; }
+        catch (Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return null; }
     }
     public function getByReferralCode($code) {
         try { return $this->db->fetchOne("SELECT * FROM mlm_profiles WHERE referral_code = ?", [$code]); }
-        catch (Exception $e) { return null; }
+        catch (Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return null; }
     }
     public function create($data) {
         try { return $this->db->insert("mlm_profiles", $data); }
