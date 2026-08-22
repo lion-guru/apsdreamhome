@@ -160,32 +160,32 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <div class="card-body aps-cp-card-body">
                     <div class="row g-2">
                         <div class="col-md-2">
-                            <a href="<?php echo $base; ?>/admin/properties/create" class="btn btn-outline-primary w-100">
+                            <a href="<?php echo e($base); ?>/admin/properties/create" class="btn btn-outline-primary w-100">
                                 <i class="fas fa-plus me-2"></i>Add Property
                             </a>
                         </div>
                         <div class="col-md-2">
-                            <a href="<?php echo $base; ?>/admin/users/create" class="btn btn-outline-success w-100">
+                            <a href="<?php echo e($base); ?>/admin/users/create" class="btn btn-outline-success w-100">
                                 <i class="fas fa-user-plus me-2"></i>Add User
                             </a>
                         </div>
                         <div class="col-md-2">
-                            <a href="<?php echo $base; ?>/admin/leads" class="btn btn-outline-warning w-100">
+                            <a href="<?php echo e($base); ?>/admin/leads" class="btn btn-outline-warning w-100">
                                 <i class="fas fa-address-book me-2"></i>View Leads
                             </a>
                         </div>
                         <div class="col-md-2">
-                            <a href="<?php echo $base; ?>/admin/bookings" class="btn btn-outline-info w-100">
+                            <a href="<?php echo e($base); ?>/admin/bookings" class="btn btn-outline-info w-100">
                                 <i class="fas fa-book me-2"></i>Bookings
                             </a>
                         </div>
                         <div class="col-md-2">
-                            <a href="<?php echo $base; ?>/admin/campaigns/create" class="btn btn-outline-secondary w-100">
+                            <a href="<?php echo e($base); ?>/admin/campaigns/create" class="btn btn-outline-secondary w-100">
                                 <i class="fas fa-bullhorn me-2"></i>New Campaign
                             </a>
                         </div>
                         <div class="col-md-2">
-                            <a href="<?php echo $base; ?>/admin/settings" class="btn btn-outline-dark w-100">
+                            <a href="<?php echo e($base); ?>/admin/settings" class="btn btn-outline-dark w-100">
                                 <i class="fas fa-cog me-2"></i>Settings
                             </a>
                         </div>
@@ -230,19 +230,19 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <div class="list-group list-group-flush">
-                        <a href="<?php echo $base; ?>/admin/properties" class="list-group-item list-group-item-action">
+                        <a href="<?php echo e($base); ?>/admin/properties" class="list-group-item list-group-item-action">
                             <i class="fas fa-building me-2 text-primary"></i>Properties
                         </a>
-                        <a href="<?php echo $base; ?>/admin/users" class="list-group-item list-group-item-action">
+                        <a href="<?php echo e($base); ?>/admin/users" class="list-group-item list-group-item-action">
                             <i class="fas fa-users me-2 text-success"></i>Users
                         </a>
-                        <a href="<?php echo $base; ?>/admin/leads" class="list-group-item list-group-item-action">
+                        <a href="<?php echo e($base); ?>/admin/leads" class="list-group-item list-group-item-action">
                             <i class="fas fa-user-tie me-2 text-warning"></i>Leads
                         </a>
-                        <a href="<?php echo $base; ?>/admin/network" class="list-group-item list-group-item-action">
+                        <a href="<?php echo e($base); ?>/admin/network" class="list-group-item list-group-item-action">
                             <i class="fas fa-sitemap me-2 text-info"></i>Network
                         </a>
-                        <a href="<?php echo $base; ?>/admin/commission" class="list-group-item list-group-item-action">
+                        <a href="<?php echo e($base); ?>/admin/commission" class="list-group-item list-group-item-action">
                             <i class="fas fa-percentage me-2 text-secondary"></i>Commission
                         </a>
                     </div>

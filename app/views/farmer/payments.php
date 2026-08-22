@@ -43,11 +43,11 @@ $payments = $payments ?? [];
                         ?>
                         <tr>
                             <td><?php echo date('d M Y', strtotime($p['created_at'] ?? 'now')); ?></td>
-                            <td><span class="badge bg-<?php echo $typeBadge; ?>"><?php echo ucfirst($tType ?: 'N/A'); ?></span></td>
+                            <td><span class="badge bg-<?php echo e($typeBadge); ?>"><?php echo ucfirst($tType ?: 'N/A'); ?></span></td>
                             <td><strong>₹<?php echo number_format($p['amount'] ?? 0); ?></strong></td>
                             <td><?php echo htmlspecialchars($p['payment_method'] ?? 'N/A'); ?></td>
                             <td><small class="text-muted"><?php echo htmlspecialchars($p['bank_reference'] ?? 'N/A'); ?></small></td>
-                            <td><span class="badge bg-<?php echo $statusBadge; ?> badge-status"><?php echo ucfirst($pStatus); ?></span></td>
+                            <td><span class="badge bg-<?php echo e($statusBadge); ?> badge-status"><?php echo ucfirst($pStatus); ?></span></td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>

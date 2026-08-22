@@ -165,7 +165,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                             <?php if (!empty($bankAccounts)): ?>
                                 <?php foreach ($bankAccounts as $account): ?>
                                     <div class="bank-card <?php echo $account['is_primary'] ? 'selected' : ''; ?>" 
-                                         onclick="selectBank(<?php echo $account['id']; ?>, this)">
+                                         onclick="selectBank(<?php echo (int)$account['id']; ?>, this)">
                                         <div class="d-flex align-items-center">
                                             <div class="bank-icon">
                                                 <i class="fas fa-university"></i>
@@ -203,7 +203,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                                        id="withdrawalAmount" name="amount" 
                                        placeholder="Enter amount" 
                                        min="500" 
-                                       max="<?php echo $wallet['points_balance']; ?>"
+                                       max="<?php echo e($wallet['points_balance']); ?>"
                                        step="0.01"
                                        oninput="calculateTax()">
                             </div>
@@ -255,7 +255,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                                     <?php echo date('M d, Y', strtotime($withdrawal['created_at'])); ?>
                                 </small>
                             </div>
-                            <span class="withdrawal-status <?php echo $withdrawal['status']; ?>">
+                            <span class="withdrawal-status <?php echo e($withdrawal['status']); ?>">
                                 <?php echo ucfirst($withdrawal['status']); ?>
                             </span>
                         </div>
@@ -364,7 +364,7 @@ function processWithdrawal() {
         return;
     }
     
-    const maxAmount = <?php echo $wallet['points_balance']; ?>;
+    const maxAmount = <?php echo e($wallet['points_balance']); ?>;
     if (parseFloat(amount) > maxAmount) {
         alert('Insufficient wallet balance');
         return;
@@ -402,7 +402,7 @@ function processWithdrawal() {
             document.addEventListener('DOMContentLoaded', function() {
                 const primaryCard = document.querySelector('.bank-card.selected');
                 if (primaryCard) {
-                    selectBank(<?php echo $account['id']; ?>, primaryCard);
+                    selectBank(<?php echo (int)$account['id']; ?>, primaryCard);
                 }
             });
         <?php endif; ?>

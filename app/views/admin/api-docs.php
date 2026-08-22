@@ -124,7 +124,7 @@ $groupCount = count($groups);
                 <i class="fas fa-download me-1"></i>Export JSON
             </button>
             <!-- Direct link -->
-            <a href="<?= $specUrl ?>" target="_blank" class="btn btn-outline-info btn-sm">
+            <a href="<?= esc_url($specUrl ?? '') ?>" target="_blank" class="btn btn-outline-info btn-sm">
                 <i class="fas fa-external-link-alt me-1"></i>Raw Spec
             </a>
         </div>

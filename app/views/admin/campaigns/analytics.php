@@ -11,10 +11,10 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <p class="text-muted mb-0">Performance metrics and insights</p>
             </div>
             <div>
-                <a href="<?php echo $base; ?>/admin/campaigns/<?php echo $campaign['campaign_id'] ?? ''; ?>/edit" class="btn btn-outline-primary me-2">
+                <a href="<?php echo e($base); ?>/admin/campaigns/<?php echo $campaign['campaign_id'] ?? ''; ?>/edit" class="btn btn-outline-primary me-2">
                     <i class="fas fa-edit me-2"></i>Edit Campaign
                 </a>
-                <a href="<?php echo $base; ?>/admin/campaigns" class="btn btn-outline-secondary">
+                <a href="<?php echo e($base); ?>/admin/campaigns" class="btn btn-outline-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Back
                 </a>
             </div>
@@ -130,7 +130,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         <h6 class="mt-3">Quick Actions</h6>
                         <div class="row g-2">
                             <div class="col-6">
-                                <a href="<?php echo $base; ?>/admin/campaigns/<?php echo $campaign['campaign_id'] ?? ''; ?>/launch" class="btn btn-success w-100" <?php echo ($campaign['status'] ?? '') === 'active' ? 'disabled' : ''; ?>>
+                                <a href="<?php echo e($base); ?>/admin/campaigns/<?php echo $campaign['campaign_id'] ?? ''; ?>/launch" class="btn btn-success w-100" <?php echo ($campaign['status'] ?? '') === 'active' ? 'disabled' : ''; ?>>
                                     <i class="fas fa-rocket me-2"></i>Launch
                                 </a>
                             </div>

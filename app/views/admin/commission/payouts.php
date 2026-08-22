@@ -8,7 +8,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3"><i class="fas fa-money-bill-wave me-2 text-success"></i>Commission Payouts</h1>
-        <a href="<?php echo $base; ?>/admin/commission" class="btn btn-secondary">Back</a>
+        <a href="<?php echo e($base); ?>/admin/commission" class="btn btn-secondary">Back</a>
     </div>
 
     <!-- Stats -->
@@ -17,7 +17,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
                     <h4 class="text-warning">₹<?php echo number_format($stats['approved_total']); ?></h4>
-                    <p class="text-muted mb-0">Ready for Payout (<?php echo $stats['approved_count']; ?>)</p>
+                    <p class="text-muted mb-0">Ready for Payout (<?php echo e($stats['approved_count']); ?>)</p>
                 </div>
             </div>
         </div>
@@ -25,7 +25,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
                     <h4 class="text-success">₹<?php echo number_format($stats['paid_total']); ?></h4>
-                    <p class="text-muted mb-0">Already Paid (<?php echo $stats['paid_count']; ?>)</p>
+                    <p class="text-muted mb-0">Already Paid (<?php echo e($stats['paid_count']); ?>)</p>
                 </div>
             </div>
         </div>
@@ -70,7 +70,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         <tbody>
                             <?php foreach ($approved_commissions as $c): ?>
                                 <tr>
-                                    <td><input type="checkbox" class="form-check-input payout-check" value="<?php echo $c['id']; ?>" data-amount="<?php echo $c['amount']; ?>"></td>
+                                    <td><input type="checkbox" class="form-check-input payout-check" value="<?php echo e($c['id']); ?>" data-amount="<?php echo $c['amount']; ?>"></td>
                                     <td>
                                         <strong><?php echo htmlspecialchars($c['associate_name'] ?? 'Unknown'); ?></strong>
                                         <br><small class="text-muted"><?php echo htmlspecialchars($c['associate_email'] ?? ''); ?></small>
@@ -169,7 +169,7 @@ function bulkPay() {
     apsConfirm(`Process ${ids.length} commission payouts?`).then(function(ok) {
         if (!ok) return;
 
-        fetch('<?php echo $base; ?>/admin/commission/payout', {
+        fetch('<?php echo e($base); ?>/admin/commission/payout', {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest'},
             body: 'commission_ids[]=' + ids.join('&commission_ids[]=') + '&payout_method=bank_transfer&csrf_token=<?php echo $_SESSION['csrf_token'] ?? ''; ?>'

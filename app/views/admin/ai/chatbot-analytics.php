@@ -10,7 +10,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <h2 class="mb-1">Chatbot Analytics</h2>
                 <p class="text-muted mb-0">Usage metrics and insights</p>
             </div>
-            <a href="<?php echo $base; ?>/admin/chatbot" class="btn btn-outline-secondary">Back</a>
+            <a href="<?php echo e($base); ?>/admin/chatbot" class="btn btn-outline-secondary">Back</a>
         </div>
 
         <div class="row g-4 mb-4">

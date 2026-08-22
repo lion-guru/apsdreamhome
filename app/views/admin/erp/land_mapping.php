@@ -49,7 +49,7 @@
                     <td>₹<?php echo $row['sale_price'] ? number_format((float)$row['sale_price'], 0) : '-'; ?></td>
                     <td>
                         <?php if ($row['plot_status'] ?? false): ?>
-                        <span class="status-badge status-<?php echo $row['plot_status']; ?>"><?php echo ucfirst(str_replace('_', ' ', $row['plot_status'])); ?></span>
+                        <span class="status-badge status-<?php echo e($row['plot_status']); ?>"><?php echo ucfirst(str_replace('_', ' ', $row['plot_status'])); ?></span>
                         <?php else: ?>
                         <span class="text-muted">-</span>
                         <?php endif; ?>

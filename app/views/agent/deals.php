@@ -42,7 +42,7 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
                 <div class="style-20512">
                     <i class="fas fa-check-circle fa-lg" class="style-8693"></i>
                 </div>
-                <h3 class="style-46545"><?= $confirmed ?></h3>
+                <h3 class="style-46545"><?= e($confirmed) ?></h3>
                 <p class="text-muted mb-0">Confirmed</p>
             </div>
         </div>
@@ -53,7 +53,7 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
                 <div class="style-83109">
                     <i class="fas fa-clock fa-lg" class="style-44353"></i>
                 </div>
-                <h3 class="style-36030"><?= $pending ?></h3>
+                <h3 class="style-36030"><?= e($pending) ?></h3>
                 <p class="text-muted mb-0">Pending</p>
             </div>
         </div>
@@ -107,7 +107,7 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
                                 'cancelled' => 'bg-danger',
                             ];
                             ?>
-                            <span class="badge <?= $sClass[$status] ?? 'bg-secondary' ?>"><?= ucfirst($status) ?></span>
+                            <span class="badge <?= e($sClass[$status] ?? 'bg-secondary') ?>"><?= e(ucfirst($status)) ?></span>
                         </td>
                         <td class="px-3"><small class="text-muted"><?= date('d M Y', strtotime($deal['created_at'] ?? 'now')) ?></small></td>
                     </tr>

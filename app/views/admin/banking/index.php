@@ -214,11 +214,11 @@ $page_title = 'Banking & Reconciliation';
                                         </span>
                                     </td>
                                     <td>
-                                        <a href="<?php echo BASE_URL; ?>/admin/banking/show/<?php echo $t['id']; ?>" class="btn btn-sm btn-outline-info" title="View">
+                                        <a href="<?php echo BASE_URL; ?>/admin/banking/show/<?php echo e($t['id']); ?>" class="btn btn-sm btn-outline-info" title="View">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                         <?php if (($t['reconciliation_status'] ?? '') !== 'reconciled'): ?>
-                                            <a href="<?php echo BASE_URL; ?>/admin/banking/reconcile/<?php echo $t['id']; ?>" class="btn btn-sm btn-outline-success" title="Reconcile">
+                                            <a href="<?php echo BASE_URL; ?>/admin/banking/reconcile/<?php echo e($t['id']); ?>" class="btn btn-sm btn-outline-success" title="Reconcile">
                                                 <i class="fas fa-check-double"></i>
                                             </a>
                                         <?php endif; ?>

@@ -7,7 +7,7 @@ $colonies = $colonies ?? [];
 
 <?php if (!empty($_SESSION['flash_error'])): ?>
     <div class="alert alert-danger alert-dismissible fade show">
-        <i class="fas fa-exclamation-circle me-2"></i><?= $_SESSION['flash_error'] ?>
+        <i class="fas fa-exclamation-circle me-2"></i><?= e($_SESSION['flash_error']) ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
     <?php unset($_SESSION['flash_error']); ?>
@@ -15,7 +15,7 @@ $colonies = $colonies ?? [];
 
 <?php if (!empty($_SESSION['flash_success'])): ?>
     <div class="alert alert-success alert-dismissible fade show">
-        <i class="fas fa-check-circle me-2"></i><?= $_SESSION['flash_success'] ?>
+        <i class="fas fa-check-circle me-2"></i><?= e($_SESSION['flash_success']) ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
     <?php unset($_SESSION['flash_success']); ?>
@@ -45,7 +45,7 @@ $colonies = $colonies ?? [];
                     <select name="plot_id" id="plotSelect" class="form-select" required>
                         <option value=""><?= __('assoc_bp_select_plot_placeholder', [], 'Select Plot') ?></option>
                         <?php foreach ($plots as $p): ?>
-                            <option value="<?= $p['id'] ?>" data-colony="<?= $p['colony_id'] ?>" data-price="<?= $p['price'] ?>" data-area="<?= $p['area_sqft'] ?>">
+                            <option value="<?= e($p['id'] ?? '') ?>" data-colony="<?= e($p['colony_id'] ?? '') ?>" data-price="<?= e($p['price'] ?? '') ?>" data-area="<?= e($p['area_sqft'] ?? '') ?>">
                                 <?= __('assoc_bp_plot_option', ['number' => htmlspecialchars($p['plot_number'] ?? ''), 'area' => number_format($p['area_sqft']), 'price' => number_format($p['price'])], 'Plot #%number% - %area% sq ft - ₹%price%') ?>
                             </option>
                         <?php endforeach; ?>

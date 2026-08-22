@@ -9,7 +9,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <h2 class="mb-1"><i class="fas fa-heart me-2 text-danger"></i>User Engagement</h2>
                 <p class="text-muted mb-0">Track user interactions and activities</p>
             </div>
-            <a href="<?php echo $base; ?>/admin/dashboard" class="btn btn-outline-secondary">Back</a>
+            <a href="<?php echo e($base); ?>/admin/dashboard" class="btn btn-outline-secondary">Back</a>
         </div>
         
         <!-- Engagement Stats -->
@@ -66,7 +66,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                     <i class="fas fa-<?php echo $activity['icon'] ?? 'circle'; ?> me-2 text-<?php echo $activity['color'] ?? 'primary'; ?>"></i>
                                     <?php echo htmlspecialchars($activity['description'] ?? ''); ?>
                                 </div>
-                                <small class="text-muted"><?php echo $activity['time']; ?></small>
+                                <small class="text-muted"><?php echo e($activity['time']); ?></small>
                             </div>
                         <?php endforeach; ?>
                     </div>

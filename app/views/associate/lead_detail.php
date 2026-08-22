@@ -285,7 +285,7 @@ $today = date('Y-m-d');
                     <div class="mb-3">
                         <select class="form-select" name="status">
                             <?php foreach ($statuses as $key => $s): ?>
-                                <option value="<?= $key ?>" <?= $currentStatus === $key ? 'selected' : '' ?>><?= $s['label'] ?></option>
+                                <option value="<?= e($key ?? '') ?>" <?= $currentStatus === $key ? 'selected' : '' ?>><?= e($s['label'] ?? '') ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -538,7 +538,7 @@ $today = date('Y-m-d');
         <div class="modal-content">
             <form method="POST" action="<?= BASE_URL ?>/associate/site-visits/schedule">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-                <input type="hidden" name="lead_id" value="<?= $lead['id'] ?>">
+                <input type="hidden" name="lead_id" value="<?= e($lead['id'] ?? '') ?>">
                 <input type="hidden" name="visitor_name" value="<?= $leadName ?>">
                 <input type="hidden" name="visitor_phone" value="<?= $leadPhone ?>">
                 <div class="modal-header">

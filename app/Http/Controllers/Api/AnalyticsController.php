@@ -24,10 +24,12 @@ class AnalyticsController extends BaseController
         header('Content-Type: application/json');
         try {
             $tid = (int)$this->tenantId();
-            $tidFilter = $tid > 1 ? " AND tenant_id = $tid" : '';
+            $tidFilter = $tid > 1 ? ' AND tenant_id = ?' : '';
+            $tidParam = $tid > 1 ? [$tid] : [];
             $stmt = $this->db->query("SELECT COUNT(*) FROM properties WHERE status = 'active'");
             $properties = (int)$stmt->fetchColumn();
-            $stmt = $this->db->query("SELECT COUNT(*) FROM users WHERE DATE(created_at) = CURDATE(){$tidFilter}");
+            $stmt = $this->db->prepare("SELECT COUNT(*) FROM users WHERE DATE(created_at) = CURDATE(){$tidFilter}");
+            $stmt->execute($tidParam);
             $newUsers = (int)$stmt->fetchColumn();
             $stmt = $this->db->query("SELECT COUNT(*) FROM leads WHERE DATE(created_at) = CURDATE()");
             $newLeads = (int)$stmt->fetchColumn();
@@ -82,11 +84,14 @@ class AnalyticsController extends BaseController
         header('Content-Type: application/json');
         try {
             $tid = (int)$this->tenantId();
-            $tidWhere = $tid > 1 ? " WHERE tenant_id = $tid" : '';
-            $tidFilter = $tid > 1 ? " AND tenant_id = $tid" : '';
-            $stmt = $this->db->query("SELECT COUNT(*) FROM users{$tidWhere}");
+            $tidWhere = $tid > 1 ? ' WHERE tenant_id = ?' : '';
+            $tidFilter = $tid > 1 ? ' AND tenant_id = ?' : '';
+            $tidParam = $tid > 1 ? [$tid] : [];
+            $stmt = $this->db->prepare("SELECT COUNT(*) FROM users{$tidWhere}");
+            $stmt->execute($tidParam);
             $total = (int)$stmt->fetchColumn();
-            $stmt = $this->db->query("SELECT role, COUNT(*) as count FROM users WHERE 1=1{$tidFilter} GROUP BY role");
+            $stmt = $this->db->prepare("SELECT role, COUNT(*) as count FROM users WHERE 1=1{$tidFilter} GROUP BY role");
+            $stmt->execute($tidParam);
             $byRole = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             echo json_encode(['success' => true, 'data' => [

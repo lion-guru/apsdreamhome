@@ -13,8 +13,8 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <p class="text-muted mb-0">MLM commission levels and payouts</p>
             </div>
             <div>
-                <a href="<?php echo $base; ?>/admin/network" class="btn btn-outline-secondary me-2">Overview</a>
-                <a href="<?php echo $base; ?>/admin/network/tree" class="btn btn-outline-primary">Tree View</a>
+                <a href="<?php echo e($base); ?>/admin/network" class="btn btn-outline-secondary me-2">Overview</a>
+                <a href="<?php echo e($base); ?>/admin/network/tree" class="btn btn-outline-primary">Tree View</a>
             </div>
         </div>
         

@@ -84,7 +84,7 @@ $groupedItems = $sortedGrouped;
 
 <aside class="sidebar" id="sidebarMenu">
     <div class="sidebar-header">
-        <a href="<?php echo $base; ?>/admin/dashboard" class="sidebar-logo">
+        <a href="<?php echo e($base); ?>/admin/dashboard" class="sidebar-logo">
             <?php
             $tenantLogo = TenantContext::getLogo();
             $tenantName = TenantContext::getName();
@@ -165,11 +165,11 @@ $groupedItems = $sortedGrouped;
                 $secId = 'sec-' . preg_replace('/[^a-z0-9]/', '', $section);
                 $hasActive = !empty($sectionHasActive[$section]);
             ?>
-                <div class="sidebar-sec" onclick="toggleSidebarSection('<?php echo $secId; ?>')">
+                <div class="sidebar-sec" onclick="toggleSidebarSection('<?php echo e($secId); ?>')">
                     <span><?php echo $sectionNames[$section] ?? ucfirst($section); ?></span>
-                    <i class="fas fa-chevron-down sidebar-sec-arrow <?php echo $hasActive ? '' : 'collapsed'; ?>" id="arrow-<?php echo $secId; ?>"></i>
+                    <i class="fas fa-chevron-down sidebar-sec-arrow <?php echo $hasActive ? '' : 'collapsed'; ?>" id="arrow-<?php echo e($secId); ?>"></i>
                 </div>
-                <ul class="sidebar-menu" id="<?php echo $secId; ?>" class="style-57286">
+                <ul class="sidebar-menu" id="<?php echo e($secId); ?>" class="style-57286">
                     <?php foreach ($items as $item): ?>
                         <?php
                         $itemFullUrl = rtrim($base . $item['url'], '/');

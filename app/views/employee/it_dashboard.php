@@ -16,7 +16,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-primary mb-2"><i class="fas fa-server"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $systemUptime ?? '99.9%' ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($systemUptime ?? '99.9%') ?></h3>
                     <p class="text-muted mb-0">System Uptime</p>
                 </div>
             </div>
@@ -25,7 +25,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-danger mb-2"><i class="fas fa-bug"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $openTickets ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($openTickets ?? 0) ?></h3>
                     <p class="text-muted mb-0">Open Support Tickets</p>
                 </div>
             </div>
@@ -34,7 +34,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-success mb-2"><i class="fas fa-shield-alt"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $securityAlerts ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($securityAlerts ?? 0) ?></h3>
                     <p class="text-muted mb-0">Security Alerts</p>
                 </div>
             </div>
@@ -43,7 +43,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-warning mb-2"><i class="fas fa-database"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $dbSize ?? '0 MB' ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($dbSize ?? '0 MB') ?></h3>
                     <p class="text-muted mb-0">Database Size</p>
                 </div>
             </div>

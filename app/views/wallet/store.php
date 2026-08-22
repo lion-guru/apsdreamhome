@@ -34,7 +34,7 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 </head>
 <body>
     <div class="container py-4">
-        <a href="<?php echo $base; ?>/agent/dashboard" class="btn btn-outline-secondary mb-4"><i class="fas fa-arrow-left me-2"></i>Back to Dashboard</a>
+        <a href="<?php echo e($base); ?>/agent/dashboard" class="btn btn-outline-secondary mb-4"><i class="fas fa-arrow-left me-2"></i>Back to Dashboard</a>
         
         <div class="wallet-banner shadow-sm">
             <div>
@@ -56,13 +56,13 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
             ?>
             <div class="col-md-6 col-lg-3">
                 <div class="store-card">
-                    <div class="store-icon <?php echo $color; ?>">
-                        <i class="<?php echo $item['icon']; ?>"></i>
+                    <div class="store-icon <?php echo e($color); ?>">
+                        <i class="<?php echo e($item['icon']); ?>"></i>
                     </div>
                     <h3 class="store-title"><?php echo htmlspecialchars($item['name'] ?? ''); ?></h3>
                     <p class="store-desc"><?php echo htmlspecialchars($item['description'] ?? ''); ?></p>
                     <div class="store-price">₹<?php echo number_format($item['price']); ?></div>
-                    <button class="btn-buy" onclick="purchaseItem('<?php echo $item['id']; ?>', '<?php echo htmlspecialchars($item['name'] ?? ''); ?>', <?php echo $item['price']; ?>)">
+                    <button class="btn-buy" onclick="purchaseItem('<?php echo (int)$item['id']; ?>', '<?php echo htmlspecialchars($item['name'] ?? ''); ?>', <?php echo e($item['price']); ?>)">
                         Purchase Now
                     </button>
                 </div>
@@ -153,7 +153,7 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
             const formData = new FormData(e.target);
 
             try {
-                const response = await fetch('<?php echo $base; ?>/wallet/process-purchase', {
+                const response = await fetch('<?php echo e($base); ?>/wallet/process-purchase', {
                     method: 'POST',
                     body: formData,
                     headers: {

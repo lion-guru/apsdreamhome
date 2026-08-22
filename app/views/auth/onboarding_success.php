@@ -381,7 +381,7 @@ $joinDate = date('M Y');
                         </div>
                         <div class="detail-group">
                             <span class="detail-label">Joined</span>
-                            <span class="detail-value"><?= $joinDate ?></span>
+                            <span class="detail-value"><?= e($joinDate) ?></span>
                         </div>
                         <div class="qr-placeholder">
                             <!-- A static placeholder QR for aesthetics -->

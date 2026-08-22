@@ -82,14 +82,14 @@ $settings = $settings ?? [
                                                     <i class="fas fa-grip-vertical text-muted"></i>
                                                 </div>
                                                 <div class="col-8">
-                                                    <input type="text" class="form-control" name="nav_label_<?php echo $index; ?>"
+                                                    <input type="text" class="form-control" name="nav_label_<?php echo e($index); ?>"
                                                         value="<?php echo htmlspecialchars($item['label'] ?? ''); ?>" placeholder="Label">
-                                                    <input type="text" class="form-control mt-1" name="nav_url_<?php echo $index; ?>"
+                                                    <input type="text" class="form-control mt-1" name="nav_url_<?php echo e($index); ?>"
                                                         value="<?php echo htmlspecialchars($item['url'] ?? ''); ?>" placeholder="URL">
                                                 </div>
                                                 <div class="col-3">
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="nav_active_<?php echo $index; ?>"
+                                                        <input class="form-check-input" type="checkbox" name="nav_active_<?php echo e($index); ?>"
                                                             <?php echo ($item['active'] ?? false) ? 'checked' : ''; ?>>
                                                         <label class="form-check-label">Active</label>
                                                     </div>

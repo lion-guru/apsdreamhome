@@ -86,7 +86,7 @@
                                 <?php else: ?>
                                 <?php foreach ($states as $state): ?>
                                 <tr>
-                                    <td><?php echo $state['id']; ?></td>
+                                    <td><?php echo e($state['id']); ?></td>
                                     <td>
                                         <strong><?php echo htmlspecialchars($state['name'] ?? ''); ?></strong>
                                     </td>
@@ -94,8 +94,8 @@
                                         <span class="badge bg-secondary"><?php echo htmlspecialchars($state['code'] ?? ''); ?></span>
                                     </td>
                                     <td>
-                                        <a href="<?= BASE_URL ?>/admin/locations/districts?state_id=<?php echo $state['id']; ?>" class="btn btn-sm btn-outline-primary">
-                                            <?php echo $state['district_count']; ?> Districts
+                                        <a href="<?= BASE_URL ?>/admin/locations/districts?state_id=<?php echo e($state['id']); ?>" class="btn btn-sm btn-outline-primary">
+                                            <?php echo e($state['district_count']); ?> Districts
                                         </a>
                                     </td>
                                     <td>
@@ -105,13 +105,13 @@
                                     </td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
-                                            <a href="<?= BASE_URL ?>/admin/locations/districts?state_id=<?php echo $state['id']; ?>" class="btn btn-outline-info" title="View Districts">
+                                            <a href="<?= BASE_URL ?>/admin/locations/districts?state_id=<?php echo e($state['id']); ?>" class="btn btn-outline-info" title="View Districts">
                                                 <i class="fas fa-city"></i>
                                             </a>
-                                            <a href="<?= BASE_URL ?>/admin/locations/states/edit/<?php echo $state['id']; ?>" class="btn btn-outline-primary" title="Edit">
+                                            <a href="<?= BASE_URL ?>/admin/locations/states/edit/<?php echo e($state['id']); ?>" class="btn btn-outline-primary" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="<?= BASE_URL ?>/admin/locations/states/delete/<?php echo $state['id']; ?>" class="btn btn-outline-danger" title="Delete" data-aps-confirm="Are you sure?">
+                                            <a href="<?= BASE_URL ?>/admin/locations/states/delete/<?php echo e($state['id']); ?>" class="btn btn-outline-danger" title="Delete" data-aps-confirm="Are you sure?">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </div>

@@ -183,7 +183,7 @@
                             <div class="text-center" class="style-81546">
                                 <div class="fw-bold mb-2">₹<?php echo number_format($earning['credits'], 0); ?></div>
                                 <div class="chart-bar" class="style-39990"></div>
-                                <div class="mt-2 small text-muted"><?php echo $monthName; ?></div>
+                                <div class="mt-2 small text-muted"><?php echo e($monthName); ?></div>
                             </div>
                         <?php endforeach; ?>
                     </div>
@@ -228,7 +228,7 @@
                                 <span class="fw-bold"><?php echo ucfirst($category['transaction_category']); ?></span>
                                 <span>₹<?php echo number_format($category['total'], 2); ?></span>
                             </div>
-                            <div class="category-progress <?php echo $categoryClass; ?>" class="style-37094">
+                            <div class="category-progress <?php echo e($categoryClass); ?>" class="style-37094">
                                 <?php echo number_format($percentage, 1); ?>%
                             </div>
                         </div>

@@ -78,25 +78,25 @@ $smsUrl = "sms:?body=" . urlencode($shareText . " Register: " . $referral_link);
             <!-- Share Buttons -->
             <h6 class="fw-bold mb-3"><i class="fas fa-share-alt me-2 text-primary"></i>Share with Your Network</h6>
             <div class="share-grid">
-                <a href="<?= $whatsappUrl ?>" class="share-btn whatsapp" target="_blank" rel="noopener" onclick="trackShare('whatsapp')">
+                <a href="<?= e($whatsappUrl) ?>" class="share-btn whatsapp" target="_blank" rel="noopener" onclick="trackShare('whatsapp')">
                     <i class="fab fa-whatsapp"></i> WhatsApp
                 </a>
-                <a href="<?= $facebookUrl ?>" class="share-btn facebook" target="_blank" rel="noopener" onclick="trackShare('facebook')">
+                <a href="<?= e($facebookUrl) ?>" class="share-btn facebook" target="_blank" rel="noopener" onclick="trackShare('facebook')">
                     <i class="fab fa-facebook-f"></i> Facebook
                 </a>
-                <a href="<?= $twitterUrl ?>" class="share-btn twitter" target="_blank" rel="noopener" onclick="trackShare('twitter')">
+                <a href="<?= e($twitterUrl) ?>" class="share-btn twitter" target="_blank" rel="noopener" onclick="trackShare('twitter')">
                     <i class="fab fa-twitter"></i> Twitter
                 </a>
-                <a href="<?= $telegramUrl ?>" class="share-btn telegram" target="_blank" rel="noopener" onclick="trackShare('telegram')">
+                <a href="<?= e($telegramUrl) ?>" class="share-btn telegram" target="_blank" rel="noopener" onclick="trackShare('telegram')">
                     <i class="fab fa-telegram-plane"></i> Telegram
                 </a>
-                <a href="<?= $linkedinUrl ?>" class="share-btn linkedin" target="_blank" rel="noopener" onclick="trackShare('linkedin')">
+                <a href="<?= e($linkedinUrl) ?>" class="share-btn linkedin" target="_blank" rel="noopener" onclick="trackShare('linkedin')">
                     <i class="fab fa-linkedin-in"></i> LinkedIn
                 </a>
-                <a href="<?= $emailUrl ?>" class="share-btn email" onclick="trackShare('email')">
+                <a href="<?= e($emailUrl) ?>" class="share-btn email" onclick="trackShare('email')">
                     <i class="fas fa-envelope"></i> Email
                 </a>
-                <a href="<?= $smsUrl ?>" class="share-btn sms" onclick="trackShare('sms')">
+                <a href="<?= e($smsUrl) ?>" class="share-btn sms" onclick="trackShare('sms')">
                     <i class="fas fa-sms"></i> SMS
                 </a>
                 <button class="share-btn more" onclick="nativeShare()">

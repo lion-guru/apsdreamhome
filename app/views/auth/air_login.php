@@ -170,10 +170,10 @@ $base = BASE_URL;
                                  $icon = 'fa-mobile-alt';
                              endif;
                          ?>
-                         <label><?= $label ?></label>
+                         <label><?= e($label) ?></label>
                          <div class="input-wrap">
-                             <input type="text" name="identity" placeholder="<?= $placeholder ?>" required autofocus>
-                             <i class="fas fa-<?= $icon ?> field-icon"></i>
+                             <input type="text" name="identity" placeholder="<?= e($placeholder) ?>" required autofocus>
+                             <i class="fas fa-<?= e($icon) ?> field-icon"></i>
                          </div>
                      </div>
 

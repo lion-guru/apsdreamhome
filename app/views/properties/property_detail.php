@@ -43,7 +43,7 @@ include __DIR__ . '/../layouts/base.php';
             <div class="glass-card p-4 mb-4 d-flex flex-wrap justify-content-around text-center gap-3">
                 <div>
                     <i class="bi bi-door-open fs-3 text-primary d-block mb-1"></i>
-                    <span class="text-white fw-bold d-block"><?php echo $property['bedrooms']; ?> BHK</span>
+                    <span class="text-white fw-bold d-block"><?php echo e($property['bedrooms']); ?> BHK</span>
                     <small class="text-white-50 lowercase">Bedrooms</small>
                 </div>
                 <div class="vr bg-white opacity-25 d-none d-md-block"></div>
@@ -154,7 +154,7 @@ include __DIR__ . '/../layouts/base.php';
                                     </h5>
                                     <small class="text-white-50">Verified Number <i class="bi bi-check-circle-fill text-success ms-1"></i></small>
                                 </div>
-                                <button id="reveal-btn" class="btn btn-sm btn-success mt-2 w-100 fw-bold shadow" onclick="revealContact(<?php echo $property['id']; ?>)">
+                                <button id="reveal-btn" class="btn btn-sm btn-success mt-2 w-100 fw-bold shadow" onclick="revealContact(<?php echo e($property['id']); ?>)">
                                     <i class="bi bi-eye-fill me-1"></i> Reveal Phone Number
                                 </button>
                             <?php else: ?>

@@ -58,7 +58,7 @@ $d = $state['form_data'] ?? [];
                                     <?php $f = $d['facing'] ?? ''; ?>
                                     <option value="">-- Select --</option>
                                     <?php foreach (['North','South','East','West','North-East','North-West','South-East','South-West'] as $dir): ?>
-                                        <option value="<?= $dir ?>" <?= $f === $dir ? 'selected' : '' ?>><?= $dir ?></option>
+                                        <option value="<?= e($dir ?? '') ?>" <?= $f === $dir ? 'selected' : '' ?>><?= e($dir ?? '') ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>

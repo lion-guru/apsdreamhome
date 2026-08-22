@@ -57,7 +57,7 @@ $properties = $properties ?? [];
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start mb-2">
                             <h6 class="card-title fw-bold mb-0"><?= htmlspecialchars($p['title'] ?? __('assoc_prop_untitled', [], 'Untitled')) ?></h6>
-                            <span class="badge bg-<?= $statusClass ?>"><?= ucfirst($p['status'] ?? 'pending') ?></span>
+                            <span class="badge bg-<?= e($statusClass) ?>"><?= e(ucfirst($p['status'] ?? 'pending')) ?></span>
                         </div>
                         <div class="mb-2">
                             <span class="badge bg-light text-dark"><i class="fas fa-home me-1"></i><?= ucfirst(str_replace('_', ' ', $p['property_type'] ?? __('assoc_prop_type', [], 'Property'))) ?></span>
@@ -72,7 +72,7 @@ $properties = $properties ?? [];
                         <?php endif; ?>
                         <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
                             <small class="text-muted"><i class="fas fa-eye me-1"></i><?= (int)($p['views'] ?? 0) ?> <?= __('assoc_prop_views', [], 'views') ?></small>
-                            <small class="text-muted"><?= $p['date'] ?? '' ?></small>
+                            <small class="text-muted"><?= e($p['date'] ?? '') ?></small>
                         </div>
                     </div>
                     <div class="card-footer bg-white border-0 pt-0">

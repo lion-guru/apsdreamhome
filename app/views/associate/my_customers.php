@@ -26,7 +26,7 @@ $customers = $customers ?? [];
         <div class="card border-0 shadow-sm">
             <div class="card-body p-3 text-center">
                 <?php $totalBookings = array_sum(array_column($customers, 'booking_count')); ?>
-                <div class="fs-2 fw-bold text-primary"><?= $totalBookings ?></div>
+                <div class="fs-2 fw-bold text-primary"><?= e($totalBookings) ?></div>
                 <div class="small text-muted"><?= __('assoc_cust_total_bookings', [], 'Total Bookings') ?></div>
             </div>
         </div>
@@ -35,7 +35,7 @@ $customers = $customers ?? [];
         <div class="card border-0 shadow-sm">
             <div class="card-body p-3 text-center">
                 <?php $converted = count(array_filter($customers, fn($c) => ($c['is_associate'] ?? 0) == 1)); ?>
-                <div class="fs-2 fw-bold text-warning"><?= $converted ?></div>
+                <div class="fs-2 fw-bold text-warning"><?= e($converted) ?></div>
                 <div class="small text-muted"><?= __('assoc_cust_became_assoc', [], 'Became Associates') ?></div>
             </div>
         </div>
@@ -64,7 +64,7 @@ $customers = $customers ?? [];
                     $totalPaid = $c['total_paid'] ?? 0;
                     $pendingAmount = ($c['total_business'] ?? 0) - $totalPaid;
                     ?>
-                    <div class="col-md-6 col-lg-4 customer-card" data-name="<?= strtolower($c['name'] ?? '') ?>" data-phone="<?= $c['phone'] ?? '' ?>">
+                    <div class="col-md-6 col-lg-4 customer-card" data-name="<?= e(strtolower($c['name'] ?? '')) ?>" data-phone="<?= e($c['phone'] ?? '') ?>">
                         <div class="card border h-100 <?= $isAssociate ? 'border-success' : '' ?>" class="style-64392">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-start mb-3">
@@ -87,13 +87,13 @@ $customers = $customers ?? [];
                                     <?php if (!empty($c['phone'])): ?>
                                         <div class="d-flex align-items-center mb-1">
                                             <i class="fas fa-phone text-muted me-2" class="style-18746"></i>
-                                            <a href="tel:<?= $c['phone'] ?>" class="text-decoration-none"><?= htmlspecialchars($c['phone'] ?? '') ?></a>
+                                            <a href="tel:<?= e($c['phone']) ?>" class="text-decoration-none"><?= htmlspecialchars($c['phone'] ?? '') ?></a>
                                         </div>
                                     <?php endif; ?>
                                     <?php if (!empty($c['email'])): ?>
                                         <div class="d-flex align-items-center mb-1">
                                             <i class="fas fa-envelope text-muted me-2" class="style-18746"></i>
-                                            <a href="mailto:<?= $c['email'] ?>" class="text-decoration-none small"><?= htmlspecialchars($c['email'] ?? '') ?></a>
+                                            <a href="mailto:<?= e($c['email']) ?>" class="text-decoration-none small"><?= htmlspecialchars($c['email'] ?? '') ?></a>
                                         </div>
                                     <?php endif; ?>
                                 </div>
@@ -102,7 +102,7 @@ $customers = $customers ?? [];
                                     <div class="col-6">
                                         <div class="p-2 rounded text-center" class="style-46892">
                                             <div class="small text-muted"><?= __('assoc_cust_bookings_label', [], 'Bookings') ?></div>
-                                            <div class="fw-bold text-primary"><?= $c['booking_count'] ?? 0 ?></div>
+                                            <div class="fw-bold text-primary"><?= e($c['booking_count'] ?? 0) ?></div>
                                         </div>
                                     </div>
                                     <div class="col-6">

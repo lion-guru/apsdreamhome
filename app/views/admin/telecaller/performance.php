@@ -110,7 +110,7 @@ $ratingBadge = function($rating) {
                     <select name="telecaller_id" class="form-select">
                         <option value="">All Telecallers</option>
                         <?php foreach ($telecallers as $tc): ?>
-                            <option value="<?php echo $tc['id']; ?>" <?php echo ($telecallerFilter == $tc['id']) ? 'selected' : ''; ?>>
+                            <option value="<?php echo e($tc['id']); ?>" <?php echo ($telecallerFilter == $tc['id']) ? 'selected' : ''; ?>>
                                 <?php echo htmlspecialchars($tc['name'] ?? ''); ?>
                             </option>
                         <?php endforeach; ?>
@@ -154,7 +154,7 @@ $ratingBadge = function($rating) {
                         <?php else: ?>
                             <?php foreach ($records as $r): ?>
                                 <tr>
-                                    <td><?php echo $r['id']; ?></td>
+                                    <td><?php echo e($r['id']); ?></td>
                                     <td>
                                         <strong><?php echo htmlspecialchars($r['telecaller_name'] ?? 'N/A'); ?></strong>
                                         <br><small class="text-muted"><?php echo htmlspecialchars($r['email'] ?? ''); ?></small>

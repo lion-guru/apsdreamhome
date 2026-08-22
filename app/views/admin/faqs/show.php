@@ -5,7 +5,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">FAQ Details</h5>
                     <div>
-                        <a href="<?php echo BASE_URL; ?>/admin/faqs/<?php echo $faq['id']; ?>/edit" class="btn btn-warning">
+                        <a href="<?php echo BASE_URL; ?>/admin/faqs/<?php echo e($faq['id']); ?>/edit" class="btn btn-warning">
                             <i class="fas fa-edit"></i> Edit
                         </a>
                         <a href="<?php echo BASE_URL; ?>/admin/faqs" class="btn btn-secondary">
@@ -17,7 +17,7 @@
                     <div class="table-responsive"><table class="table table-bordered">
                         <tr>
                             <th class="w-25">ID</th>
-                            <td><?php echo $faq['id']; ?></td>
+                            <td><?php echo e($faq['id']); ?></td>
                         </tr>
                         <tr>
                             <th>Question</th>
@@ -33,7 +33,7 @@
                         </tr>
                         <tr>
                             <th>Sort Order</th>
-                            <td><?php echo $faq['display_order']; ?></td>
+                            <td><?php echo e($faq['display_order']); ?></td>
                         </tr>
                         <tr>
                             <th>Status</th>

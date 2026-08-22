@@ -25,7 +25,7 @@
                             <tbody>
                                 <?php foreach ($blogs ?? [] as $blog): ?>
                                 <tr>
-                                    <td><?php echo $blog['id']; ?></td>
+                                    <td><?php echo e($blog['id']); ?></td>
                                     <td><?php echo htmlspecialchars($blog['title'] ?? ''); ?></td>
                                     <td><?php echo htmlspecialchars($blog['category'] ?? '-'); ?></td>
                                     <td>
@@ -41,13 +41,13 @@
                                     <td><?php echo date('Y-m-d', strtotime($blog['created_at'])); ?></td>
                                     <td>
                                         <div class="btn-group">
-                                            <a href="<?php echo BASE_URL; ?>/admin/blogs/<?php echo $blog['id']; ?>" class="btn btn-sm btn-info">
+                                            <a href="<?php echo BASE_URL; ?>/admin/blogs/<?php echo e($blog['id']); ?>" class="btn btn-sm btn-info">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="<?php echo BASE_URL; ?>/admin/blogs/<?php echo $blog['id']; ?>/edit" class="btn btn-sm btn-warning">
+                                            <a href="<?php echo BASE_URL; ?>/admin/blogs/<?php echo e($blog['id']); ?>/edit" class="btn btn-sm btn-warning">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="<?php echo BASE_URL; ?>/admin/blogs/<?php echo $blog['id']; ?>/delete" class="btn btn-sm btn-danger" data-aps-confirm="Are you sure?">
+                                            <a href="<?php echo BASE_URL; ?>/admin/blogs/<?php echo e($blog['id']); ?>/delete" class="btn btn-sm btn-danger" data-aps-confirm="Are you sure?">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </div>

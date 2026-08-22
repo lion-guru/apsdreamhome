@@ -5,7 +5,7 @@
  * Consistent export functionality across all admin pages
  */
 
-$currentUrl = $_SERVER['REQUEST_URI'] ?? '';
+$currentUrl = esc_url($_SERVER['REQUEST_URI'] ?? '');
 $pageName = basename($currentUrl, '.php');
 ?>
 
@@ -14,13 +14,13 @@ $pageName = basename($currentUrl, '.php');
         <i class="fas fa-download me-2"></i>Export
     </button>
     <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/admin/export/<?php echo $pageName; ?>/excel">
+        <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/admin/export/<?php echo e($pageName); ?>/excel">
                 <i class="fas fa-file-excel me-2 text-success"></i>Export as Excel
             </a></li>
-        <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/admin/export/<?php echo $pageName; ?>/csv">
+        <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/admin/export/<?php echo e($pageName); ?>/csv">
                 <i class="fas fa-file-csv me-2 text-primary"></i>Export as CSV
             </a></li>
-        <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/admin/export/<?php echo $pageName; ?>/pdf">
+        <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/admin/export/<?php echo e($pageName); ?>/pdf">
                 <i class="fas fa-file-pdf me-2 text-danger"></i>Export as PDF
             </a></li>
         <li>

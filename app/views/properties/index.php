@@ -53,21 +53,21 @@ include __DIR__ . '/../layouts/base.php';
                 
                 <div class="p-4">
                     <div class="d-flex justify-content-between align-items-start mb-2">
-                        <h5 class="text-white mb-0"><?php echo $property['title']; ?></h5>
+                        <h5 class="text-white mb-0"><?php echo e($property['title']); ?></h5>
                         <button class="btn btn-link p-0 text-white-50"><i class="bi bi-heart"></i></button>
                     </div>
-                    <p class="text-white-50 small mb-3"><i class="bi bi-geo-alt me-1"></i><?php echo $property['location']; ?></p>
+                    <p class="text-white-50 small mb-3"><i class="bi bi-geo-alt me-1"></i><?php echo e($property['location']); ?></p>
                     
                     <div class="d-flex gap-3 mb-4 text-white-50 small">
-                        <span><i class="bi bi-door-open me-1"></i><?php echo $property['bedrooms']; ?> BHK</span>
-                        <span><i class="bi bi-rulers me-1"></i><?php echo $property['area']; ?> sq.ft</span>
+                        <span><i class="bi bi-door-open me-1"></i><?php echo e($property['bedrooms']); ?> BHK</span>
+                        <span><i class="bi bi-rulers me-1"></i><?php echo e($property['area']); ?> sq.ft</span>
                     </div>
                     
                     <div class="d-flex justify-content-between align-items-center">
                         <span class="text-<?php echo $property['status'] == 'ready-to-move' ? 'success' : 'warning'; ?> small fw-bold uppercase">
                             — <?php echo ucfirst(str_replace('-', ' ', $property['status'])); ?>
                         </span>
-                        <a href="/properties/<?php echo $property['id']; ?>" class="btn btn-outline-primary btn-sm rounded-pill px-4">View Details</a>
+                        <a href="/properties/<?php echo e($property['id']); ?>" class="btn btn-outline-primary btn-sm rounded-pill px-4">View Details</a>
                     </div>
                 </div>
             </div>

@@ -115,7 +115,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             <label class="form-label">Update Status</label>
                             <select name="status" class="form-select" id="statusSelect">
                                 <?php foreach ($statuses as $status): ?>
-                                    <option value="<?php echo $status; ?>" <?php echo ($t['status'] ?? '') === $status ? 'selected' : ''; ?>>
+                                    <option value="<?php echo e($status); ?>" <?php echo ($t['status'] ?? '') === $status ? 'selected' : ''; ?>>
                                         <?php echo ucfirst($status); ?>
                                     </option>
                                 <?php endforeach; ?>

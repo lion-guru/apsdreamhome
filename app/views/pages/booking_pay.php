@@ -8,7 +8,7 @@
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <?php if ($flashMessage = $_SESSION['flash_message'] ?? null): ?>
-                        <div class="alert alert-<?= $_SESSION['flash_type'] ?? 'info' ?> alert-dismissible fade show">
+                        <div class="alert alert-<?= e($_SESSION['flash_type'] ?? 'info') ?> alert-dismissible fade show">
                             <?= htmlspecialchars($flashMessage ?? '') ?>
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
@@ -19,7 +19,7 @@
                         <div class="col-md-6">
                             <h5><?= __('booking_summary') ?></h5>
                             <table class="table table-sm">
-                                <tr><th><?= __('booking_number') ?> #</th><td>#<?= $booking['id'] ?></td></tr>
+                                <tr><th><?= __('booking_number') ?> #</th><td>#<?= e($booking['id']) ?></td></tr>
                                 <tr><th><?= __('booking_plot') ?></th><td>#<?= htmlspecialchars($booking['plot_number'] ?? '') ?> - <?= htmlspecialchars($booking['colony_name'] ?? '') ?></td></tr>
                                 <tr><th><?= __('booking_total_price') ?></th><td><strong>&#8377;<?= number_format((float)$booking['total_amount'], 2) ?></strong></td></tr>
                                 <tr><th><?= __('booking_token_required') ?></th><td><strong class="text-primary">&#8377;<?= number_format($requiredToken, 2) ?></strong></td></tr>
@@ -27,7 +27,7 @@
                                 <tr><th><?= __('booking_token_due') ?></th><td><span class="text-danger">&#8377;<?= number_format($tokenDue, 2) ?></span></td></tr>
                             </table>
                             <div class="progress mb-3" class="style-76750">
-                                <div class="progress-bar bg-success" class="style-28108"><?= $tokenPercent ?>%</div>
+                                <div class="progress-bar bg-success" class="style-28108"><?= e($tokenPercent) ?>%</div>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -40,7 +40,7 @@
                                         <span class="input-group-text">&#8377;</span>
                                         <input type="number" step="0.01" name="amount" id="payAmount" class="form-control form-control-lg" 
                                             value="<?= number_format($tokenDue > 0 ? $tokenDue : $requiredToken, 2) ?>" 
-                                            min="1" max="<?= $requiredToken ?>" required>
+                                            min="1" max="<?= e($requiredToken) ?>" required>
                                     </div>
                                     <div class="mt-2">
                                         <button type="button" class="btn btn-outline-primary btn-sm" onclick="document.getElementById('payAmount').value='<?= number_format($requiredToken / 2, 2) ?>'">50% (&#8377;<?= number_format($requiredToken / 2) ?>)</button>

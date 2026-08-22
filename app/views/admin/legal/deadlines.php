@@ -27,7 +27,7 @@ $weekLater = date('Y-m-d', strtotime('+7 days'));
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Total Deadlines</h6>
-                            <h3 class="mb-0"><?php echo $total; ?></h3>
+                            <h3 class="mb-0"><?php echo e($total); ?></h3>
                         </div>
                     </div>
                 </div>
@@ -44,7 +44,7 @@ $weekLater = date('Y-m-d', strtotime('+7 days'));
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Overdue</h6>
-                            <h3 class="mb-0 text-danger"><?php echo $overdue; ?></h3>
+                            <h3 class="mb-0 text-danger"><?php echo e($overdue); ?></h3>
                         </div>
                     </div>
                 </div>
@@ -61,7 +61,7 @@ $weekLater = date('Y-m-d', strtotime('+7 days'));
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Due Within 7 Days</h6>
-                            <h3 class="mb-0 text-warning"><?php echo $upcoming; ?></h3>
+                            <h3 class="mb-0 text-warning"><?php echo e($upcoming); ?></h3>
                         </div>
                     </div>
                 </div>
@@ -103,7 +103,7 @@ $weekLater = date('Y-m-d', strtotime('+7 days'));
                                     $isUpcoming = !$isOverdue && $dlDate <= $weekLater;
                                     $rowClass = $isOverdue ? 'table-danger' : ($isUpcoming ? 'table-warning' : '');
                                 ?>
-                                <tr class="<?php echo $rowClass; ?>">
+                                <tr class="<?php echo e($rowClass); ?>">
                                     <td class="ps-4"><?php echo $i + 1; ?></td>
                                     <td><strong><?php echo $d['title'] ?? ''; ?></strong>
                                         <?php if (!empty($d['description'])): ?>
@@ -172,7 +172,7 @@ $weekLater = date('Y-m-d', strtotime('+7 days'));
                             <select name="assigned_to" class="form-select">
                                 <option value="">Unassigned</option>
                                 <?php $users = $users ?? []; foreach ($users as $u): ?>
-                                    <option value="<?php echo $u['id']; ?>"><?php echo $u['name']; ?></option>
+                                    <option value="<?php echo e($u['id']); ?>"><?php echo $u['name']; ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

@@ -26,7 +26,7 @@ $bannerImage = !empty($bannerRaw) && (str_starts_with($bannerRaw, 'http://') || 
 ?>
 <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 .hero-section { position:relative; min-height:60vh; display:flex; align-items:center; background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%); overflow:hidden; }
-.hero-overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:url('<?php echo $bannerImage ?: BASE_URL . '/assets/images/default-banner.jpg'; ?>') center/cover no-repeat; opacity:0.3; }
+.hero-overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:url('<?php echo e($bannerImage ?: BASE_URL . '/assets/images/default-banner.jpg'); ?>') center/cover no-repeat; opacity:0.3; }
 .hero-content { position:relative; z-index:2; color:#fff; padding:80px 0; }
 .hero-content h1 { font-size:3rem; font-weight:800; margin-bottom:1rem; text-shadow:0 2px 10px rgba(0,0,0,0.3); }
 .hero-content .badge-feat { background:rgba(255,193,7,0.9); color:#000; padding:8px 20px; border-radius:50px; font-weight:600; }
@@ -63,8 +63,8 @@ $bannerImage = !empty($bannerRaw) && (str_starts_with($bannerRaw, 'http://') || 
             </div>
             <div class="col-lg-5 mt-4 mt-lg-0">
                 <div class="row g-3">
-                    <div class="col-6"><div class="stat-card"><div class="num"><?php echo $colony['total_plots'] ?? 0; ?></div><div class="lbl"><?= __('colony_total_plots') ?></div></div></div>
-                    <div class="col-6"><div class="stat-card"><div class="num"><?php echo $colony['available_plots'] ?? 0; ?></div><div class="lbl"><?= __('colony_available') ?></div></div></div>
+                    <div class="col-6"><div class="stat-card"><div class="num"><?php echo e($colony['total_plots'] ?? 0); ?></div><div class="lbl"><?= __('colony_total_plots') ?></div></div></div>
+                    <div class="col-6"><div class="stat-card"><div class="num"><?php echo e($colony['available_plots'] ?? 0); ?></div><div class="lbl"><?= __('colony_available') ?></div></div></div>
                     <div class="col-6"><div class="stat-card"><div class="num">à¢—šÂ¹<?php echo number_format($colony['starting_price'] ?? 0); ?></div><div class="lbl"><?= __('colony_starting_price') ?></div></div></div>
                     <div class="col-6"><div class="stat-card"><div class="num"><?php echo count($amenities); ?>+</div><div class="lbl"><?= __('colony_amenities') ?></div></div></div>
                 </div>
@@ -83,7 +83,7 @@ $bannerImage = !empty($bannerRaw) && (str_starts_with($bannerRaw, 'http://') || 
             <div class="col-md-4 col-sm-6">
                 <div class="highlight-card">
                     <?php if (is_array($h)): ?>
-                        <div class="icon bg-primary bg-opacity-10 text-primary"><i class="<?php echo $h['icon'] ?? 'fas fa-check-circle'; ?>"></i></div>
+                        <div class="icon bg-primary bg-opacity-10 text-primary"><i class="<?php echo e($h['icon'] ?? 'fas fa-check-circle'); ?>"></i></div>
                         <h5><?php echo htmlspecialchars($h['title'] ?? ''); ?></h5>
                         <p class="text-muted mb-0"><?php echo htmlspecialchars($h['desc'] ?? ''); ?></p>
                     <?php else: ?>
@@ -144,7 +144,7 @@ $bannerImage = !empty($bannerRaw) && (str_starts_with($bannerRaw, 'http://') || 
                         <h6 class="mb-0"><?= sprintf(__('colony_plot_number'), htmlspecialchars($p['plot_number'] ?? 'N/A')) ?></h6>
                         <span class="badge bg-success"><?= __('colony_available') ?></span>
                     </div>
-                    <p class="text-muted small mb-2"><?php echo htmlspecialchars($p['block'] ?? ''); ?> &bull; <?php echo $p['area_sqft'] ?? 0; ?> sqft</p>
+                    <p class="text-muted small mb-2"><?php echo htmlspecialchars($p['block'] ?? ''); ?> &bull; <?php echo e($p['area_sqft'] ?? 0); ?> sqft</p>
                     <div class="price">à¢—šÂ¹<?php echo number_format($p['total_price'] ?? 0); ?></div>
                 </div>
             </div>
@@ -241,7 +241,7 @@ $bannerImage = !empty($bannerRaw) && (str_starts_with($bannerRaw, 'http://') || 
             <?php foreach ($galleryImages as $img): ?>
             <?php $imgIsExternal = (strpos($img, 'http://') === 0 || strpos($img, 'https://') === 0); ?>
             <div class="col-md-4 col-sm-6">
-                <a href="<?php echo $imgIsExternal ? $img : BASE_URL . '/' . ltrim($img, '/'); ?>" data-lightbox="gallery">
+                <a href="<?php echo $imgIsExternal ? htmlspecialchars($img ?? '') : BASE_URL . '/' . htmlspecialchars(ltrim($img, '/')); ?>" data-lightbox="gallery">
                     <img src="<?php echo $imgIsExternal ? htmlspecialchars($img ?? '') : BASE_URL . '/' . htmlspecialchars(ltrim($img, '/')); ?>" alt="Gallery" class="gallery-img" loading="lazy">
                 </a>
             </div>

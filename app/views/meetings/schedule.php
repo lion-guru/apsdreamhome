@@ -24,7 +24,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         <h4 class="mb-0"><i class="fas fa-calendar-check me-2"></i>Schedule a Meeting</h4>
                     </div>
                     <div class="card-body p-4">
-                        <form id="meetingForm" action="<?php echo $base; ?>/schedule-meeting" method="POST">
+                        <form id="meetingForm" action="<?php echo e($base); ?>/schedule-meeting" method="POST">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="mb-3">
                                 <label class="form-label">Your Name *</label>

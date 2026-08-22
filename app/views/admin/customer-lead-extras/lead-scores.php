@@ -145,9 +145,9 @@ $page_description = 'Monitor and manage AI-powered lead scores';
                                     </td>
                                     <td>
                                         <div class="progress" class="style-48235">
-                                            <div class="progress-bar <?php echo $scoreClass; ?>" class="style-58620"></div>
+                                            <div class="progress-bar <?php echo e($scoreClass); ?>" class="style-58620"></div>
                                         </div>
-                                        <span class="ms-2"><?php echo $scoreValue; ?>%</span>
+                                        <span class="ms-2"><?php echo e($scoreValue); ?>%</span>
                                     </td>
                                     <td>
                                         <div class="text-truncate" class="style-65684" title="<?php echo htmlspecialchars($score['criteria'] ?? ''); ?>">
@@ -161,10 +161,10 @@ $page_description = 'Monitor and manage AI-powered lead scores';
                                     </td>
                                     <td>
                                         <div class="btn-group">
-                                            <a href="<?php echo BASE_URL; ?>/admin/customer-lead/lead-scores/<?php echo $score['id']; ?>" class="btn btn-sm btn-outline-primary">
+                                            <a href="<?php echo BASE_URL; ?>/admin/customer-lead/lead-scores/<?php echo e($score['id']); ?>" class="btn btn-sm btn-outline-primary">
                                                 <i class="fas fa-eye"></i> View
                                             </a>
-                                            <a href="<?php echo BASE_URL; ?>/admin/customer-lead/lead-scores/edit/<?php echo $score['id']; ?>" class="btn btn-sm btn-outline-secondary">
+                                            <a href="<?php echo BASE_URL; ?>/admin/customer-lead/lead-scores/edit/<?php echo e($score['id']); ?>" class="btn btn-sm btn-outline-secondary">
                                                 <i class="fas fa-edit"></i> Edit
                                             </a>
                                         </div>

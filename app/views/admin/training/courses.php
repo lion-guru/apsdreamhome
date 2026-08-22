@@ -153,7 +153,7 @@ $page_description = 'Manage training courses';
                     <?php endif; ?>
                 </div>
                 <div class="card-footer bg-white border-0 d-flex justify-content-end gap-2">
-                    <a href="<?php echo BASE_URL; ?>/admin/training/courses/edit/<?php echo $course['id']; ?>" class="btn btn-sm btn-outline-primary">
+                    <a href="<?php echo BASE_URL; ?>/admin/training/courses/edit/<?php echo e($course['id']); ?>" class="btn btn-sm btn-outline-primary">
                         <i class="fas fa-edit me-1"></i>Edit
                     </a>
                 </div>

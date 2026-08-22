@@ -51,7 +51,8 @@ class PlotController extends BaseController
     public function index()
     {
         $tid = (int)$this->tenantId();
-        $tidSql = $tid > 1 ? " AND p.tenant_id = $tid" : "";
+        $tidSql = $tid > 1 ? ' AND p.tenant_id = ?' : '';
+        $tidParam = $tid > 1 ? [$tid] : [];
         $colonies = $this->db->fetchAll("
             SELECT c.*, d.name as district_name, s.name as state_name,
                 (SELECT COUNT(*) FROM plots p WHERE p.colony_id = c.id AND p.status = 'available'" . $tidSql . ") as available_plots
@@ -60,7 +61,7 @@ class PlotController extends BaseController
             LEFT JOIN states s ON d.state_id = s.id
             WHERE c.is_active = 1
             ORDER BY c.name
-        ");
+        ", $tidParam);
 
         $this->render('pages/plots', [
             'page_title' => 'Available Plots - APS Dream Home',
@@ -146,9 +147,10 @@ class PlotController extends BaseController
         $plots = $this->db->fetchAll($sql, $params);
 
         // Get distinct dimensions, blocks for filters
-        $tidPlots = $tid > 1 ? " AND tenant_id = $tid" : "";
-        $dimensions = $this->db->fetchAll("SELECT DISTINCT dimension_label FROM plots WHERE colony_id = ? AND dimension_label IS NOT NULL AND dimension_label != ''" . $tidPlots . " ORDER BY dimension_label", [$colony['id']]);
-        $blocks = $this->db->fetchAll("SELECT DISTINCT block FROM plots WHERE colony_id = ? AND block IS NOT NULL AND block != ''" . $tidPlots . " ORDER BY block", [$colony['id']]);
+        $tidPlots = $tid > 1 ? ' AND tenant_id = ?' : '';
+        $tidPlotParam = $tid > 1 ? [$tid] : [];
+        $dimensions = $this->db->fetchAll("SELECT DISTINCT dimension_label FROM plots WHERE colony_id = ? AND dimension_label IS NOT NULL AND dimension_label != ''" . $tidPlots . " ORDER BY dimension_label", array_merge([$colony['id']], $tidPlotParam));
+        $blocks = $this->db->fetchAll("SELECT DISTINCT block FROM plots WHERE colony_id = ? AND block IS NOT NULL AND block != ''" . $tidPlots . " ORDER BY block", array_merge([$colony['id']], $tidPlotParam));
 
         // Stats
         $stats = $this->db->fetchRow("
@@ -162,7 +164,7 @@ class PlotController extends BaseController
                 MIN(area_sqft) as min_area,
                 MAX(area_sqft) as max_area
             FROM plots WHERE colony_id = ? AND is_active = 1" . $tidPlots . "
-        ", [$colony['id']]);
+        ", array_merge([$colony['id']], $tidPlotParam));
 
         $this->render('pages/colony_plots', [
             'page_title' => $colony['name'] . ' - Available Plots',
@@ -299,7 +301,9 @@ class PlotController extends BaseController
 
         $plotId = intval($_POST['plot_id'] ?? 0);
         $tid = (int)$this->tenantId();
-        $plot = $this->db->fetchRow("SELECT * FROM plots WHERE id = ? AND is_active = 1 AND status = 'available'" . ($tid > 1 ? " AND tenant_id = $tid" : ""), [$plotId]);
+        $plotParams = [$plotId];
+        if ($tid > 1) { $plotParams[] = $tid; }
+        $plot = $this->db->fetchRow("SELECT * FROM plots WHERE id = ? AND is_active = 1 AND status = 'available'" . ($tid > 1 ? ' AND tenant_id = ?' : ''), $plotParams);
         if (!$plot) {
             $this->setFlash('error', 'Plot not found or no longer available');
             return $this->redirect('/plots');

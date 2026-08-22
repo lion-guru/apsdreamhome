@@ -53,22 +53,22 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="form-check form-switch d-inline-block">
-                                        <input class="form-check-input" type="checkbox" name="channels[<?php echo $type; ?>][]" value="email" id="email_<?php echo $type; ?>" <?php echo ($p['email'] ?? true) ? 'checked' : ''; ?>>
+                                        <input class="form-check-input" type="checkbox" name="channels[<?php echo e($type); ?>][]" value="email" id="email_<?php echo e($type); ?>" <?php echo ($p['email'] ?? true) ? 'checked' : ''; ?>>
                                     </div>
                                 </td>
                                 <td class="text-center">
                                     <div class="form-check form-switch d-inline-block">
-                                        <input class="form-check-input" type="checkbox" name="channels[<?php echo $type; ?>][]" value="sms" id="sms_<?php echo $type; ?>" <?php echo ($p['sms'] ?? false) ? 'checked' : ''; ?>>
+                                        <input class="form-check-input" type="checkbox" name="channels[<?php echo e($type); ?>][]" value="sms" id="sms_<?php echo e($type); ?>" <?php echo ($p['sms'] ?? false) ? 'checked' : ''; ?>>
                                     </div>
                                 </td>
                                 <td class="text-center">
                                     <div class="form-check form-switch d-inline-block">
-                                        <input class="form-check-input" type="checkbox" name="channels[<?php echo $type; ?>][]" value="whatsapp" id="whatsapp_<?php echo $type; ?>" <?php echo ($p['whatsapp'] ?? false) ? 'checked' : ''; ?>>
+                                        <input class="form-check-input" type="checkbox" name="channels[<?php echo e($type); ?>][]" value="whatsapp" id="whatsapp_<?php echo e($type); ?>" <?php echo ($p['whatsapp'] ?? false) ? 'checked' : ''; ?>>
                                     </div>
                                 </td>
                                 <td class="text-center">
                                     <div class="form-check form-switch d-inline-block">
-                                        <input class="form-check-input" type="checkbox" name="channels[<?php echo $type; ?>][]" value="push" id="push_<?php echo $type; ?>" <?php echo ($p['push'] ?? true) ? 'checked' : ''; ?>>
+                                        <input class="form-check-input" type="checkbox" name="channels[<?php echo e($type); ?>][]" value="push" id="push_<?php echo e($type); ?>" <?php echo ($p['push'] ?? true) ? 'checked' : ''; ?>>
                                     </div>
                                 </td>
                                 <td class="text-center">
@@ -106,7 +106,7 @@
                             $currentFreq = $prefs['booking']['frequency'] ?? 'immediate';
                             foreach ($freqs as $val => $lab):
                             ?>
-                            <option value="<?php echo $val; ?>" <?php echo $currentFreq === $val ? 'selected' : ''; ?>><?php echo htmlspecialchars($lab ?? ''); ?></option>
+                            <option value="<?php echo e($val); ?>" <?php echo $currentFreq === $val ? 'selected' : ''; ?>><?php echo htmlspecialchars($lab ?? ''); ?></option>
                             <?php endforeach; ?>
                         </select>
                         <small class="text-muted d-block mt-1"><?php echo __('notif_pref_frequency_desc', [], 'How often you receive non-urgent notifications.'); ?></small>

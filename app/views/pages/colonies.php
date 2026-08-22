@@ -50,25 +50,25 @@
         <div class="row">
             <div class="col-md-3">
                 <div class="stat-counter" data-aos="fade-up">
-                    <span class="stat-number" data-target="<?php echo $colony_stats['total_colonies']; ?>"><?php echo $colony_stats['total_colonies']; ?></span>
+                    <span class="stat-number" data-target="<?php echo e($colony_stats['total_colonies']); ?>"><?php echo e($colony_stats['total_colonies']); ?></span>
                     <span class="stat-label"><?= __('colonies_stat_active') ?></span>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stat-counter" data-aos="fade-up" data-aos-delay="100">
-                    <span class="stat-number" data-target="<?php echo (int)$colony_stats['total_area']; ?>"><?php echo $colony_stats['total_area']; ?></span>
+                    <span class="stat-number" data-target="<?php echo (int)$colony_stats['total_area']; ?>"><?php echo e($colony_stats['total_area']); ?></span>
                     <span class="stat-label"><?= __('colonies_stat_area') ?></span>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stat-counter" data-aos="fade-up" data-aos-delay="200">
-                    <span class="stat-number" data-target="<?php echo $colony_stats['total_plots']; ?>"><?php echo number_format($colony_stats['total_plots']); ?></span>
+                    <span class="stat-number" data-target="<?php echo (int)$colony_stats['total_plots']; ?>"><?php echo number_format($colony_stats['total_plots']); ?></span>
                     <span class="stat-label"><?= __('colonies_stat_plots') ?></span>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stat-counter" data-aos="fade-up" data-aos-delay="300">
-                    <span class="stat-number" data-target="<?php echo $colony_stats['cities_covered']; ?>"><?php echo $colony_stats['cities_covered']; ?></span>
+                    <span class="stat-number" data-target="<?php echo (int)$colony_stats['cities_covered']; ?>"><?php echo e($colony_stats['cities_covered']); ?></span>
                     <span class="stat-label"><?= __('colonies_stat_cities') ?></span>
                 </div>
             </div>
@@ -90,7 +90,7 @@
         <!-- Colonies Grid -->
         <div class="row" id="colonies-container">
             <?php foreach ($colonies as $index => $colony): ?>
-                <div class="col-lg-4 col-md-6 colony-item" data-location="<?php echo strtolower(explode(',', $colony['location'])[0]); ?>">
+                <div class="col-lg-4 col-md-6 colony-item" data-location="<?php echo e(strtolower(explode(',', $colony['location'])[0])); ?>">
                     <div class="colony-card">
                         <div class="colony-image">
                             <?php
@@ -102,41 +102,41 @@
                             <img src="<?php echo htmlspecialchars($imagePath ?? ''); ?>" alt="<?php echo htmlspecialchars($colony['name'] ?? ''); ?>" class="img-fluid" loading="lazy">
                             <div class="colony-placeholder" class="style-57012">
                                 <i class="fas fa-city fa-3x mb-2"></i>
-                                <p class="mb-0 text-center px-2"><?php echo $colony['name']; ?></p>
+                                <p class="mb-0 text-center px-2"><?php echo e($colony['name']); ?></p>
                             </div>
                         </div>
                         <div class="colony-overlay">
-                            <span class="status-badge"><?php echo $colony['completion_status']; ?></span>
+                            <span class="status-badge"><?php echo e($colony['completion_status']); ?></span>
                         </div>
                     </div>
 
                     <div class="colony-content">
-                        <h3 class="colony-title"><?php echo $colony['name']; ?></h3>
+                        <h3 class="colony-title"><?php echo e($colony['name']); ?></h3>
 
                         <div class="colony-location">
                             <i class="fas fa-map-marker-alt"></i>
-                            <?php echo $colony['location']; ?>
+                            <?php echo e($colony['location']); ?>
                         </div>
 
-                        <p class="colony-description"><?php echo $colony['description']; ?></p>
+                        <p class="colony-description"><?php echo e($colony['description']); ?></p>
 
                         <div class="colony-highlights">
                             <?php foreach ($colony['highlights'] as $highlight): ?>
-                                <span class="highlight-tag"><?php echo $highlight; ?></span>
+                                <span class="highlight-tag"><?php echo e($highlight); ?></span>
                             <?php endforeach; ?>
                         </div>
 
                         <div class="colony-specs">
                             <div class="spec-item">
-                                <span class="spec-value"><?php echo $colony['total_area']; ?></span>
+                                <span class="spec-value"><?php echo e($colony['total_area']); ?></span>
                                 <span class="spec-label"><?= __('colonies_spec_area') ?></span>
                             </div>
                             <div class="spec-item">
-                                <span class="spec-value"><?php echo $colony['available_plots']; ?></span>
+                                <span class="spec-value"><?php echo e($colony['available_plots']); ?></span>
                                 <span class="spec-label"><?= __('colonies_spec_available') ?></span>
                             </div>
                             <div class="spec-item">
-                                <span class="spec-value"><?php echo $colony['starting_price']; ?></span>
+                                <span class="spec-value"><?php echo e($colony['starting_price']); ?></span>
                                 <span class="spec-label"><?= __('colonies_spec_price') ?></span>
                             </div>
                         </div>
@@ -146,7 +146,7 @@
                             <?php foreach (array_slice($colony['amenities'], 0, 4) as $amenity): ?>
                                 <div class="amenity-item">
                                     <i class="fas fa-check"></i>
-                                    <?php echo $amenity; ?>
+                                    <?php echo e($amenity); ?>
                                 </div>
                             <?php endforeach; ?>
                             <?php if (count($colony['amenities']) > 4): ?>
@@ -158,7 +158,7 @@
                             <button class="btn btn-view-plots flex-fill">
                                 <i class="fas fa-eye me-2"></i><?= __('colonies_view_plots') ?>
                             </button>
-                            <button class="btn btn-outline-primary" onclick="showInterest('<?php echo $colony['id']; ?>')">
+                            <button class="btn btn-outline-primary" onclick="showInterest('<?php echo (int)$colony['id']; ?>')">
                                 <i class="fas fa-heart me-2"></i><?= __('colonies_interested') ?>
                             </button>
                         </div>

@@ -29,10 +29,10 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <p class="text-muted mb-0">View MLM network structure</p>
             </div>
             <div>
-                <a href="<?php echo $base; ?>/admin/network" class="btn btn-outline-secondary me-2">
+                <a href="<?php echo e($base); ?>/admin/network" class="btn btn-outline-secondary me-2">
                     <i class="fas fa-arrow-left me-2"></i>Back
                 </a>
-                <a href="<?php echo $base; ?>/admin/network/ranks" class="btn btn-outline-primary">
+                <a href="<?php echo e($base); ?>/admin/network/ranks" class="btn btn-outline-primary">
                     <i class="fas fa-trophy me-2"></i>Ranks
                 </a>
             </div>
@@ -45,7 +45,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
     <?php echo CSRFProtection::csrfField(); ?>
                     <div class="col-md-4">
                         <label class="form-label">Associate ID</label>
-                        <input type="number" name="associate_id" class="form-control" value="<?php echo $selected_associate; ?>" placeholder="Enter associate ID">
+                        <input type="number" name="associate_id" class="form-control" value="<?php echo e($selected_associate); ?>" placeholder="Enter associate ID">
                     </div>
                     <div class="col-md-2 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary w-100">
@@ -99,7 +99,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                     <i class="fas fa-user-circle fa-2x text-primary mb-2"></i>
                                     <h5 class="mb-1"><?php echo htmlspecialchars($root['name'] ?? 'Unknown'); ?></h5>
                                     <p class="text-muted mb-1">Root Associate</p>
-                                    <a href="?associate_id=<?php echo $root['id']; ?>" class="btn btn-sm btn-outline-primary">View Tree</a>
+                                    <a href="?associate_id=<?php echo e($root['id']); ?>" class="btn btn-sm btn-outline-primary">View Tree</a>
                                 </div>
                             <?php endforeach; ?>
                         </div>

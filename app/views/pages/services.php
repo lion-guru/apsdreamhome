@@ -11,7 +11,7 @@
                 <?php echo __('services_hero_subtitle'); ?>
             </p>
                 <?php if (!empty($pageContent)): ?>
-                <div class="cms-content text-white mt-4 mb-4 p-4 bg-white bg-opacity-10 rounded"><?php echo $pageContent; ?></div>
+                <div class="cms-content text-white mt-4 mb-4 p-4 bg-white bg-opacity-10 rounded"><?php echo e($pageContent); ?></div>
                 <?php endif; ?>
                 <div class="hero-stats">
                     <div class="row g-4">

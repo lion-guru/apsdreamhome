@@ -143,7 +143,7 @@ $page_description = 'Manage lead assignment and reassignment approval requests';
                                 }
                                 ?>
                                 <tr>
-                                    <td>#<?php echo $approval['id']; ?></td>
+                                    <td>#<?php echo e($approval['id']); ?></td>
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="flex-shrink-0">
@@ -167,12 +167,12 @@ $page_description = 'Manage lead assignment and reassignment approval requests';
                                         </span>
                                     </td>
                                     <td>
-                                        <span class="badge <?php echo $statusClass; ?>">
+                                        <span class="badge <?php echo e($statusClass); ?>">
                                             <?php echo ucfirst($approval['status'] ?? 'Unknown'); ?>
                                         </span>
                                     </td>
                                     <td>
-                                        <span class="badge <?php echo $priorityClass; ?>">
+                                        <span class="badge <?php echo e($priorityClass); ?>">
                                             <?php echo ucfirst($approval['priority'] ?? 'Unknown'); ?>
                                         </span>
                                     </td>
@@ -182,7 +182,7 @@ $page_description = 'Manage lead assignment and reassignment approval requests';
                                         </small>
                                     </td>
                                     <td>
-                                        <a href="<?php echo BASE_URL; ?>/admin/customer-lead/approvals/<?php echo $approval['id']; ?>" class="btn btn-sm btn-outline-primary">
+                                        <a href="<?php echo BASE_URL; ?>/admin/customer-lead/approvals/<?php echo e($approval['id']); ?>" class="btn btn-sm btn-outline-primary">
                                             <i class="fas fa-eye"></i> View
                                         </a>
                                     </td>

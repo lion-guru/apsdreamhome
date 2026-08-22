@@ -5,7 +5,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Article Details</h5>
                     <div>
-                        <a href="<?php echo BASE_URL; ?>/admin/knowledge-base/<?php echo $article['id']; ?>/edit" class="btn btn-warning">
+                        <a href="<?php echo BASE_URL; ?>/admin/knowledge-base/<?php echo e($article['id']); ?>/edit" class="btn btn-warning">
                             <i class="fas fa-edit"></i> Edit
                         </a>
                         <a href="<?php echo BASE_URL; ?>/admin/knowledge-base" class="btn btn-secondary">
@@ -19,7 +19,7 @@
                             <div class="table-responsive"><table class="table table-bordered">
                                 <tr>
                                     <th class="w-25">ID</th>
-                                    <td><?php echo $article['id']; ?></td>
+                                    <td><?php echo e($article['id']); ?></td>
                                 </tr>
                                 <tr>
                                     <th>Title</th>

@@ -257,20 +257,30 @@ public function getStats()
         ];
         try {
             $tid = $this->tenantId();
-            if ($tid > 1) {
-                $tenantCond = " WHERE tenant_id = $tid";
-            } else {
-                $tenantCond = "";
-            }
-            $stats['total_sessions'] = (int)$this->pdo->query("SELECT COUNT(*) FROM chat_sessions$tenantCond")->fetchColumn();
-            $stats['open_sessions'] = (int)$this->pdo->query("SELECT COUNT(*) FROM chat_sessions WHERE status IN ('open','assigned')" . ($tid > 1 ? " AND tenant_id = $tid" : ""))->fetchColumn();
-            $stats['active_sessions'] = (int)$this->pdo->query("SELECT COUNT(*) FROM chat_sessions WHERE status = 'active'" . ($tid > 1 ? " AND tenant_id = $tid" : ""))->fetchColumn();
-            $stats['closed_today'] = (int)$this->pdo->query("SELECT COUNT(*) FROM chat_sessions WHERE status = 'closed' AND DATE(closed_at) = CURDATE()" . ($tid > 1 ? " AND tenant_id = $tid" : ""))->fetchColumn();
-            $stats['unread_admin'] = (int)$this->pdo->query("SELECT COALESCE(SUM(unread_admin_count), 0) FROM chat_sessions WHERE status NOT IN ('closed')" . ($tid > 1 ? " AND tenant_id = $tid" : ""))->fetchColumn();
-            $rated = $this->pdo->query("SELECT COUNT(*) as total, AVG(rating) as avg_rating, SUM(CASE WHEN rating >= 4 THEN 1 ELSE 0 END) as happy FROM chat_sessions WHERE rating IS NOT NULL" . ($tid > 1 ? " AND tenant_id = $tid" : ""))->fetch(\PDO::FETCH_ASSOC);
+            $tp = $this->_tParams();
+            $s = $this->pdo->prepare("SELECT COUNT(*) FROM chat_sessions" . ($tid > 1 ? " WHERE tenant_id = ?" : ""));
+            $s->execute($tp);
+            $stats['total_sessions'] = (int)$s->fetchColumn();
+            $s = $this->pdo->prepare("SELECT COUNT(*) FROM chat_sessions WHERE status IN ('open','assigned')" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+            $s->execute($tp);
+            $stats['open_sessions'] = (int)$s->fetchColumn();
+            $s = $this->pdo->prepare("SELECT COUNT(*) FROM chat_sessions WHERE status = 'active'" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+            $s->execute($tp);
+            $stats['active_sessions'] = (int)$s->fetchColumn();
+            $s = $this->pdo->prepare("SELECT COUNT(*) FROM chat_sessions WHERE status = 'closed' AND DATE(closed_at) = CURDATE()" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+            $s->execute($tp);
+            $stats['closed_today'] = (int)$s->fetchColumn();
+            $s = $this->pdo->prepare("SELECT COALESCE(SUM(unread_admin_count), 0) FROM chat_sessions WHERE status NOT IN ('closed')" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+            $s->execute($tp);
+            $stats['unread_admin'] = (int)$s->fetchColumn();
+            $s = $this->pdo->prepare("SELECT COUNT(*) as total, AVG(rating) as avg_rating, SUM(CASE WHEN rating >= 4 THEN 1 ELSE 0 END) as happy FROM chat_sessions WHERE rating IS NOT NULL" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+            $s->execute($tp);
+            $rated = $s->fetch(\PDO::FETCH_ASSOC);
             $stats['avg_rating'] = $rated && $rated['avg_rating'] ? round($rated['avg_rating'], 2) : 0;
             $stats['satisfaction_pct'] = $rated && $rated['total'] > 0 ? round(($rated['happy'] / $rated['total']) * 100, 1) : 0;
-            $fr = $this->pdo->query("SELECT AVG(TIMESTAMPDIFF(SECOND, created_at, first_response_at)) as avg FROM chat_sessions WHERE first_response_at IS NOT NULL" . ($tid > 1 ? " AND tenant_id = $tid" : ""))->fetch(\PDO::FETCH_ASSOC);
+            $s = $this->pdo->prepare("SELECT AVG(TIMESTAMPDIFF(SECOND, created_at, first_response_at)) as avg FROM chat_sessions WHERE first_response_at IS NOT NULL" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+            $s->execute($tp);
+            $fr = $s->fetch(\PDO::FETCH_ASSOC);
             $stats['avg_response_seconds'] = $fr && $fr['avg'] ? (int)$fr['avg'] : 0;
         } catch (\Throwable $e) { error_log("LiveChat getStats: " . $e->getMessage()); }
         return $stats;

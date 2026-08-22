@@ -113,7 +113,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                         <?php
                         $psf = $plot['area_sqft'] > 0 ? number_format(round($plot['total_price'] / $plot['area_sqft'])) : '—';
                         ?>
-                        <small class="text-muted">₹<?= $psf ?> / <?= __('sqft') ?></small>
+                        <small class="text-muted">₹<?= e($psf) ?> / <?= __('sqft') ?></small>
                     </div>
 
                     <div class="row g-2 mb-3">
@@ -143,10 +143,10 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                     <?php endif; ?>
                 </div>
                 <div class="border-top px-3 py-2 d-flex gap-2">
-                    <a href="<?= $baseUrl ?>/plots/<?= $plot['id'] ?>/detail" class="btn btn-sm btn-outline-primary flex-grow-1">
+                    <a href="<?= $baseUrl ?>/plots/<?= e($plot['id']) ?>/detail" class="btn btn-sm btn-outline-primary flex-grow-1">
                         <i class="fas fa-eye me-1"></i><?= __('browse_view_details') ?>
                     </a>
-                    <a href="<?= $baseUrl ?>/plots/<?= $plot['id'] ?>/book" class="btn btn-sm btn-primary flex-grow-1">
+                    <a href="<?= $baseUrl ?>/plots/<?= e($plot['id']) ?>/book" class="btn btn-sm btn-primary flex-grow-1">
                         <i class="fas fa-check-circle me-1"></i><?= __('browse_book_now') ?>
                     </a>
                 </div>

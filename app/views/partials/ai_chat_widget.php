@@ -70,9 +70,9 @@ $user_role = $this->getUserRole() ?? 'customer';
         <div class="ai-role-selector">
             <select id="ai-role-select" onchange="changeAIRole()">
                 <?php foreach ($available_roles as $role_key => $role_name): ?>
-                    <option value="<?php echo $role_key; ?>" 
+                    <option value="<?php echo e($role_key); ?>" 
                             <?php echo $role_key === $user_role ? 'selected' : ''; ?>>
-                        <?php echo $role_name; ?>
+                        <?php echo e($role_name); ?>
                     </option>
                 <?php endforeach; ?>
             </select>
@@ -360,7 +360,7 @@ $user_role = $this->getUserRole() ?? 'customer';
 <!-- AI Chat JavaScript -->
 <script>
 let aiChatOpen = false;
-let currentAIRole = '<?php echo $user_role; ?>';
+let currentAIRole = '<?php echo e($user_role); ?>';
 
 function toggleAIChat() {
     const popup = document.getElementById('ai-chat-popup');

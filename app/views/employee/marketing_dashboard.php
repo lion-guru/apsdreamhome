@@ -16,7 +16,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-primary mb-2"><i class="fas fa-bullhorn"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $activeCampaigns ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($activeCampaigns ?? 0) ?></h3>
                     <p class="text-muted mb-0">Active Campaigns</p>
                 </div>
             </div>
@@ -25,7 +25,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-success mb-2"><i class="fas fa-users"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $totalLeads ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($totalLeads ?? 0) ?></h3>
                     <p class="text-muted mb-0">Total Leads</p>
                 </div>
             </div>
@@ -34,7 +34,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-warning mb-2"><i class="fas fa-newspaper"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $blogPosts ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($blogPosts ?? 0) ?></h3>
                     <p class="text-muted mb-0">Blog Posts</p>
                 </div>
             </div>
@@ -43,7 +43,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-info mb-2"><i class="fas fa-share-alt"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $socialShares ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($socialShares ?? 0) ?></h3>
                     <p class="text-muted mb-0">Social Shares</p>
                 </div>
             </div>
@@ -63,7 +63,7 @@
                                     <td class="small"><?= htmlspecialchars($cmp['name'] ?? '') ?></td>
                                     <td><span class="badge bg-info"><?= ucfirst($cmp['type'] ?? '') ?></span></td>
                                     <td><span class="badge bg-<?= ($cmp['status'] ?? '') === 'active' ? 'success' : 'secondary' ?>"><?= ucfirst($cmp['status'] ?? '') ?></span></td>
-                                    <td class="text-end small"><?= $cmp['leads_count'] ?? 0 ?></td>
+                                    <td class="text-end small"><?= e($cmp['leads_count'] ?? 0) ?></td>
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -82,7 +82,7 @@
                         <?php foreach ($leadSources as $src): ?>
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span><?= htmlspecialchars($src['source'] ?? '') ?></span>
-                            <span class="badge bg-primary"><?= $src['count'] ?? 0 ?></span>
+                            <span class="badge bg-primary"><?= e($src['count'] ?? 0) ?></span>
                         </div>
                         <?php endforeach; ?>
                     <?php else: ?>

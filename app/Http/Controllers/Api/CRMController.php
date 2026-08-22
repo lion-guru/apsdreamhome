@@ -462,16 +462,17 @@ class CRMController extends BaseController
     public function adminEmployees() {
         $pdo = $this->db->getConnection();
         $tid2 = (int)$this->tenantId();
-        $uFilter2 = $tid2 > 1 ? " AND tenant_id = $tid2" : '';
+        $uFilter2 = $tid2 > 1 ? ' AND tenant_id = ?' : '';
+        $uParam2 = $tid2 > 1 ? [$tid2] : [];
         $stats = ['total' => 0, 'active' => 0, 'on_leave' => 0, 'inactive' => 0, 'by_role' => []];
         $employees = [];
 
         try {
-            $r = $pdo->query("SELECT COUNT(*) as c FROM users WHERE deleted_at IS NULL AND role IN ('employee','agent','associate'){$uFilter2}")->fetch();
+            $r = $pdo->query("SELECT COUNT(*) as c FROM users WHERE deleted_at IS NULL AND role IN ('employee','agent','associate'){$uFilter2}", $uParam2)->fetch();
             $stats['total'] = (int)($r['c'] ?? 0);
         } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
         try {
-            $r = $pdo->query("SELECT COUNT(*) as c FROM users WHERE deleted_at IS NULL AND role IN ('employee','agent','associate') AND status='active'{$uFilter2}")->fetch();
+            $r = $pdo->query("SELECT COUNT(*) as c FROM users WHERE deleted_at IS NULL AND role IN ('employee','agent','associate') AND status='active'{$uFilter2}", $uParam2)->fetch();
             $stats['active'] = (int)($r['c'] ?? 0);
         } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
         try {

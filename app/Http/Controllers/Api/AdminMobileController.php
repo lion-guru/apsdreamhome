@@ -373,8 +373,9 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
             $revenue = $this->db->fetchOne("SELECT COALESCE(SUM(total_amount),0) as total FROM bookings WHERE status!='cancelled'");
             $bookings = $this->db->fetchOne("SELECT COUNT(*) as total FROM bookings WHERE status!='cancelled'");
             $tid = (int)$this->tenantId();
-            $tidFilter = $tid > 1 ? " AND tenant_id = $tid" : '';
-            $users = $this->db->fetchOne("SELECT COUNT(*) as total FROM users WHERE status='active'{$tidFilter}");
+            $tidFilter = $tid > 1 ? ' AND tenant_id = ?' : '';
+            $tidParam = $tid > 1 ? [$tid] : [];
+            $users = $this->db->fetchOne("SELECT COUNT(*) as total FROM users WHERE status='active'{$tidFilter}", $tidParam);
             $leads = $this->db->fetchOne("SELECT COUNT(*) as total FROM leads");
             return $this->jsonResponse(['success'=>true,'data'=>[
                 'total_revenue' => (float)($revenue['total']??0),

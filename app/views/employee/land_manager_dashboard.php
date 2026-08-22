@@ -15,7 +15,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-success mb-2"><i class="fas fa-th-large"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $totalPlots ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($totalPlots ?? 0) ?></h3>
                     <p class="text-muted mb-0">Total Plots</p>
                 </div>
             </div>
@@ -24,7 +24,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-primary mb-2"><i class="fas fa-check-circle"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $availablePlots ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($availablePlots ?? 0) ?></h3>
                     <p class="text-muted mb-0">Available Plots</p>
                 </div>
             </div>
@@ -33,7 +33,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-danger mb-2"><i class="fas fa-times-circle"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $soldPlots ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($soldPlots ?? 0) ?></h3>
                     <p class="text-muted mb-0">Sold Plots</p>
                 </div>
             </div>
@@ -42,7 +42,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-warning mb-2"><i class="fas fa-calendar-day"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $siteVisitsToday ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($siteVisitsToday ?? 0) ?></h3>
                     <p class="text-muted mb-0">Site Visits Today</p>
                 </div>
             </div>
@@ -81,7 +81,7 @@
                         <?php foreach ($plotDistribution as $item): ?>
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span><?= htmlspecialchars($item['label'] ?? '') ?></span>
-                            <span class="badge bg-secondary"><?= $item['count'] ?? 0 ?></span>
+                            <span class="badge bg-secondary"><?= e($item['count'] ?? 0) ?></span>
                         </div>
                         <?php endforeach; ?>
                     <?php else: ?>

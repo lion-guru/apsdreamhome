@@ -127,7 +127,7 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
                 <select class="form-select" name="bedrooms">
                     <option value="0">Any</option>
                     <?php for ($b = 1; $b <= 5; $b++): ?>
-                        <option value="<?= $b ?>" <?= (int)($filters['bedrooms'] ?? 0) === $b ? 'selected' : '' ?>><?= $b ?> BHK+</option>
+                        <option value="<?= e($b ?? '') ?>" <?= (int)($filters['bedrooms'] ?? 0) === $b ? 'selected' : '' ?>><?= $b ?> BHK+</option>
                     <?php endfor; ?>
                 </select>
             </div>

@@ -8,7 +8,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-1"><i class="fas fa-language me-2 text-primary"></i>Translation Management</h2>
-        <a href="<?php echo $base; ?>/admin/settings" class="btn btn-outline-secondary">Back</a>
+        <a href="<?php echo e($base); ?>/admin/settings" class="btn btn-outline-secondary">Back</a>
     </div>
 
     <!-- Language Stats -->

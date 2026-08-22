@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="mb-0"><i class="fas fa-bell text-primary me-2"></i><?php echo __('notifications_heading', [], 'Notifications'); ?></h4>
         <div>
-            <span class="badge bg-secondary me-2" id="notifCountBadge"><?php echo $unread_count ?? 0; ?> <?php echo __('notifications_unread', [], 'unread'); ?></span>
+            <span class="badge bg-secondary me-2" id="notifCountBadge"><?php echo e($unread_count ?? 0); ?> <?php echo __('notifications_unread', [], 'unread'); ?></span>
             <?php if (($unread_count ?? 0) > 0): ?>
                 <button class="btn btn-sm btn-outline-primary" onclick="markAllRead()">
                     <i class="fas fa-check-double me-1"></i><?php echo __('notifications_mark_all_read', [], 'Mark All Read'); ?>
@@ -29,7 +29,7 @@
                 $isUnread = empty($n['is_read']) || $n['is_read'] == 0;
             ?>
             <div class="list-group-item list-group-item-action d-flex align-items-start gap-3 notif-item <?php echo $isUnread ? 'notif-unread' : ''; ?>" data-id="<?php echo htmlspecialchars($n['notification_id'] ?? ''); ?>">
-                <i class="<?php echo $icon; ?> fa-lg mt-1"></i>
+                <i class="<?php echo e($icon); ?> fa-lg mt-1"></i>
                 <div class="flex-grow-1">
                     <div class="d-flex justify-content-between">
                         <strong><?php echo htmlspecialchars($n['title'] ?? ''); ?></strong>

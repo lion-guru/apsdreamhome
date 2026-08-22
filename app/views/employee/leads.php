@@ -73,7 +73,7 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
     <div class="col">
         <a href="<?= $base ?>/employee/leads<?= $search ? '?search=' . urlencode($search) : '' ?>" class="card emp-lead-stat <?= !$currentStatus || $currentStatus === 'all' ? 'active shadow-sm' : 'shadow-none' ?>">
             <div class="card-body py-2 px-3 text-center">
-                <div class="stat-num text-dark"><?= $total ?></div>
+                <div class="stat-num text-dark"><?= e($total) ?></div>
                 <div class="text-muted small">All</div>
             </div>
         </a>
@@ -81,7 +81,7 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
     <div class="col">
         <a href="<?= $base ?>/employee/leads?status=new<?= $search ? '&search=' . urlencode($search) : '' ?>" class="card emp-lead-stat <?= $currentStatus === 'new' ? 'active shadow-sm' : 'shadow-none' ?>">
             <div class="card-body py-2 px-3 text-center">
-                <div class="stat-num text-primary"><?= $stats['new'] ?></div>
+                <div class="stat-num text-primary"><?= e($stats['new']) ?></div>
                 <div class="text-muted small">New</div>
             </div>
         </a>
@@ -89,7 +89,7 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
     <div class="col">
         <a href="<?= $base ?>/employee/leads?status=contacted<?= $search ? '&search=' . urlencode($search) : '' ?>" class="card emp-lead-stat <?= $currentStatus === 'contacted' ? 'active shadow-sm' : 'shadow-none' ?>">
             <div class="card-body py-2 px-3 text-center">
-                <div class="stat-num text-info"><?= $stats['contacted'] ?></div>
+                <div class="stat-num text-info"><?= e($stats['contacted']) ?></div>
                 <div class="text-muted small">Contacted</div>
             </div>
         </a>
@@ -97,7 +97,7 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
     <div class="col">
         <a href="<?= $base ?>/employee/leads?status=qualified<?= $search ? '&search=' . urlencode($search) : '' ?>" class="card emp-lead-stat <?= $currentStatus === 'qualified' ? 'active shadow-sm' : 'shadow-none' ?>">
             <div class="card-body py-2 px-3 text-center">
-                <div class="stat-num text-warning"><?= $stats['qualified'] ?></div>
+                <div class="stat-num text-warning"><?= e($stats['qualified']) ?></div>
                 <div class="text-muted small">Qualified</div>
             </div>
         </a>
@@ -105,7 +105,7 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
     <div class="col">
         <a href="<?= $base ?>/employee/leads?status=site_visit<?= $search ? '&search=' . urlencode($search) : '' ?>" class="card emp-lead-stat <?= $currentStatus === 'site_visit' ? 'active shadow-sm' : 'shadow-none' ?>">
             <div class="card-body py-2 px-3 text-center">
-                <div class="stat-num" class="style-90386"><?= $stats['site_visit'] ?></div>
+                <div class="stat-num" class="style-90386"><?= e($stats['site_visit']) ?></div>
                 <div class="text-muted small">Site Visit</div>
             </div>
         </a>
@@ -113,7 +113,7 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
     <div class="col">
         <a href="<?= $base ?>/employee/leads?status=won<?= $search ? '&search=' . urlencode($search) : '' ?>" class="card emp-lead-stat <?= $currentStatus === 'won' ? 'active shadow-sm' : 'shadow-none' ?>">
             <div class="card-body py-2 px-3 text-center">
-                <div class="stat-num text-success"><?= $stats['won'] ?></div>
+                <div class="stat-num text-success"><?= e($stats['won']) ?></div>
                 <div class="text-muted small">Won</div>
             </div>
         </a>
@@ -121,7 +121,7 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
     <div class="col">
         <a href="<?= $base ?>/employee/leads?status=lost<?= $search ? '&search=' . urlencode($search) : '' ?>" class="card emp-lead-stat <?= $currentStatus === 'lost' ? 'active shadow-sm' : 'shadow-none' ?>">
             <div class="card-body py-2 px-3 text-center">
-                <div class="stat-num text-danger"><?= $stats['lost'] ?></div>
+                <div class="stat-num text-danger"><?= e($stats['lost']) ?></div>
                 <div class="text-muted small">Lost</div>
             </div>
         </a>
@@ -183,7 +183,7 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
                         <td class="px-3"><small class="fw-semibold"><?= !empty($lead['budget']) ? '₹' . number_format((float)$lead['budget']) : '-' ?></small></td>
                         <td class="px-3">
                             <span class="badge <?= $scoreClass === 'score-hot' ? 'bg-danger' : ($scoreClass === 'score-warm' ? 'bg-warning text-dark' : ($scoreClass === 'score-lukewarm' ? 'bg-info' : 'bg-secondary')) ?>">
-                                <?= $scoreVal ?>
+                                <?= e($scoreVal) ?>
                             </span>
                         </td>
                         <td class="px-3">
@@ -191,7 +191,7 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
                             $leadStatus = $lead['status'] ?? 'new';
                             $cls = $statusColors[$leadStatus] ?? 'bg-secondary';
                             ?>
-                            <span class="badge <?= $cls ?>"><?= ucfirst(str_replace('_', ' ', $leadStatus)) ?></span>
+                            <span class="badge <?= e($cls) ?>"><?= e(ucfirst(str_replace('_', ' ', $leadStatus))) ?></span>
                         </td>
                         <td class="px-3"><small class="text-muted"><?= date('d M Y', strtotime($lead['created_at'] ?? 'now')) ?></small></td>
                         <td class="px-3">

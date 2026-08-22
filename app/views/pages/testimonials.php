@@ -132,8 +132,8 @@
                                     <label class="form-label"><?= __('testi_lbl_rating', null, 'Rating') ?> *</label>
                                     <div class="star-rating">
                                         <?php for ($i = 5; $i >= 1; $i--): ?>
-                                            <input type="radio" name="rating" id="star<?php echo $i; ?>" value="<?php echo $i; ?>" <?php echo $i === 5 ? 'checked' : ''; ?>>
-                                            <label for="star<?php echo $i; ?>"><i class="fas fa-star"></i></label>
+                                            <input type="radio" name="rating" id="star<?php echo e($i); ?>" value="<?php echo e($i); ?>" <?php echo $i === 5 ? 'checked' : ''; ?>>
+                                            <label for="star<?php echo e($i); ?>"><i class="fas fa-star"></i></label>
                                         <?php endfor; ?>
                                     </div>
                                 </div>

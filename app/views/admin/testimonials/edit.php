@@ -6,7 +6,7 @@
                     <h5 class="card-title mb-0">Edit Testimonial</h5>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <form action="<?php echo BASE_URL; ?>/admin/testimonials/<?php echo $testimonial['id']; ?>/update" method="POST">
+                    <form action="<?php echo BASE_URL; ?>/admin/testimonials/<?php echo e($testimonial['id']); ?>/update" method="POST">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row">
                             <div class="col-md-6">
@@ -28,8 +28,8 @@
                                     <label class="form-label">Rating</label>
                                     <select name="rating" class="form-select" required>
                                         <?php for ($i = 5; $i >= 1; $i--): ?>
-                                            <option value="<?php echo $i; ?>" <?php echo ($testimonial['rating'] == $i) ? 'selected' : ''; ?>>
-                                                <?php echo str_repeat('⭐', $i); ?> (<?php echo $i; ?> Star<?php echo $i > 1 ? 's' : ''; ?>)
+                                            <option value="<?php echo e($i); ?>" <?php echo ($testimonial['rating'] == $i) ? 'selected' : ''; ?>>
+                                                <?php echo str_repeat('⭐', $i); ?> (<?php echo e($i); ?> Star<?php echo $i > 1 ? 's' : ''; ?>)
                                             </option>
                                         <?php endfor; ?>
                                     </select>

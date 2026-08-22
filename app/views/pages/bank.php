@@ -18,9 +18,9 @@
         <ol class="breadcrumb mb-0">
             <?php foreach ($breadcrumbs as $crumb): ?>
                 <?php if (isset($crumb['url'])): ?>
-                    <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= $crumb['title'] ?></a></li>
+                    <li class="breadcrumb-item"><a href="<?= e($crumb['url']) ?>"><?= e($crumb['title']) ?></a></li>
                 <?php else: ?>
-                    <li class="breadcrumb-item active"><?= $crumb['title'] ?></li>
+                    <li class="breadcrumb-item active"><?= e($crumb['title']) ?></li>
                 <?php endif; ?>
             <?php endforeach; ?>
         </ol>
@@ -50,7 +50,7 @@
                                             <label class="text-muted small text-uppercase fw-bold"><?= __('bank_account_number', [], 'Account Number') ?></label>
                                             <div class="d-flex align-items-center">
                                                 <p class="h5 mb-0 fw-bold text-primary"><?= h($account->account_number) ?></p>
-                                                <button class="btn btn-sm btn-link text-muted ms-2 p-0" onclick="copyToClipboard('<?= $account->account_number ?>')">
+                                                <button class="btn btn-sm btn-link text-muted ms-2 p-0" onclick="copyToClipboard('<?= e($account->account_number) ?>')">
                                                     <i class="far fa-copy"></i>
                                                 </button>
                                             </div>

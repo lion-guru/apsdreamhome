@@ -14,10 +14,10 @@ $activeLoans = $activeLoans ?? 0;
     </div>
 
     <?php if ($msg = \App\Core\Session::flash('success')): ?>
-        <div class="alert alert-success alert-dismissible fade show"><?php echo $msg; ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <div class="alert alert-success alert-dismissible fade show"><?php echo e($msg); ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php endif; ?>
     <?php if ($msg = \App\Core\Session::flash('error')): ?>
-        <div class="alert alert-danger alert-dismissible fade show"><?php echo $msg; ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <div class="alert alert-danger alert-dismissible fade show"><?php echo e($msg); ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php endif; ?>
 
     <div class="row mb-4">
@@ -26,7 +26,7 @@ $activeLoans = $activeLoans ?? 0;
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3"><div class="bg-success bg-opacity-10 text-success rounded p-3"><i class="fas fa-tractor fa-2x"></i></div></div>
-                        <div class="flex-grow-1"><h6 class="text-muted mb-1">Total Farmers</h6><h3 class="mb-0"><?php echo $totalFarmers; ?></h3></div>
+                        <div class="flex-grow-1"><h6 class="text-muted mb-1">Total Farmers</h6><h3 class="mb-0"><?php echo e($totalFarmers); ?></h3></div>
                     </div>
                 </div>
             </div>
@@ -36,7 +36,7 @@ $activeLoans = $activeLoans ?? 0;
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3"><div class="bg-primary bg-opacity-10 text-primary rounded p-3"><i class="fas fa-file-signature fa-2x"></i></div></div>
-                        <div class="flex-grow-1"><h6 class="text-muted mb-1">Active Agreements</h6><h3 class="mb-0"><?php echo $activeAgreements; ?></h3></div>
+                        <div class="flex-grow-1"><h6 class="text-muted mb-1">Active Agreements</h6><h3 class="mb-0"><?php echo e($activeAgreements); ?></h3></div>
                     </div>
                 </div>
             </div>
@@ -46,7 +46,7 @@ $activeLoans = $activeLoans ?? 0;
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3"><div class="bg-warning bg-opacity-10 text-warning rounded p-3"><i class="fas fa-hand-holding-usd fa-2x"></i></div></div>
-                        <div class="flex-grow-1"><h6 class="text-muted mb-1">Active Loans</h6><h3 class="mb-0"><?php echo $activeLoans; ?></h3></div>
+                        <div class="flex-grow-1"><h6 class="text-muted mb-1">Active Loans</h6><h3 class="mb-0"><?php echo e($activeLoans); ?></h3></div>
                     </div>
                 </div>
             </div>
@@ -91,7 +91,7 @@ $activeLoans = $activeLoans ?? 0;
                                 <?php endif; ?>
                             </td>
                             <td class="text-nowrap">
-                                <a href="<?php echo BASE_URL; ?>/admin/farmers/show/<?php echo $f['id']; ?>" class="btn btn-sm btn-info" title="View"><i class="fas fa-eye"></i></a>
+                                <a href="<?php echo BASE_URL; ?>/admin/farmers/show/<?php echo e($f['id']); ?>" class="btn btn-sm btn-info" title="View"><i class="fas fa-eye"></i></a>
                             </td>
                         </tr>
                         <?php endforeach; ?>

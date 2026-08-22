@@ -165,7 +165,7 @@
                                 <select class="form-select" id="leave_type_id" name="leave_type_id" required>
                                     <option value="">Select Leave Type</option>
                                     <?php foreach ($leave_types ?? [] as $type): ?>
-                                        <option value="<?= $type['leave_type_id'] ?>">
+                                        <option value="<?= e($type['leave_type_id'] ?? '') ?>">
                                             <?= htmlspecialchars($type['leave_type_name'] ?? '') ?>
                                             (<?= $type['max_days'] ?> days max)
                                         </option>

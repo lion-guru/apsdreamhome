@@ -41,14 +41,14 @@ $progress_data = $progress_data ?? [];
                     <td class="style-26283">
                         <?php $tp = $p['progress']['team_size_progress'] ?? null; if ($tp): ?>
                         <div class="progress" class="style-51910"><div class="progress-bar bg-success" class="style-73288"></div></div>
-                        <small class="text-muted"><?php echo $tp['current']; ?>/<?php echo $tp['required']; ?></small>
+                        <small class="text-muted"><?php echo e($tp['current']); ?>/<?php echo $tp['required']; ?></small>
                         <?php else: ?><small class="text-muted">--</small><?php endif; ?>
                     </td>
                     <td><?php echo $a['direct_referrals'] ?? 0; ?></td>
                     <td class="style-26283">
                         <?php $dp = $p['progress']['direct_progress'] ?? null; if ($dp): ?>
                         <div class="progress" class="style-51910"><div class="progress-bar bg-info" class="style-8346"></div></div>
-                        <small class="text-muted"><?php echo $dp['current']; ?>/<?php echo $dp['required']; ?></small>
+                        <small class="text-muted"><?php echo e($dp['current']); ?>/<?php echo $dp['required']; ?></small>
                         <?php else: ?><small class="text-muted">--</small><?php endif; ?>
                     </td>
                     <td>₹<?php echo number_format($p['monthly_sales'] ?? 0); ?></td>

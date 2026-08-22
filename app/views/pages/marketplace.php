@@ -101,7 +101,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
           <select name="type" class="form-select form-select-sm">
             <option value="">All Types</option>
             <?php foreach ($propertyTypes as $pt): ?>
-               <option value="<?= $pt ?>" <?= (($filters['type'] ?? '') === $pt) ? 'selected' : '' ?>><?= ucfirst($pt) ?></option>
+               <option value="<?= e($pt ?? '') ?>" <?= (($filters['type'] ?? '') === $pt) ? 'selected' : '' ?>><?= ucfirst($pt) ?></option>
             <?php endforeach; ?>
           </select>
         </div>
@@ -110,7 +110,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
           <select name="listing_type" class="form-select form-select-sm">
             <option value="">All</option>
             <?php foreach ($listingTypes as $lt): ?>
-               <option value="<?= $lt ?>" <?= (($filters['listing_type'] ?? '') === $lt) ? 'selected' : '' ?>><?= ucfirst($lt) ?></option>
+               <option value="<?= e($lt ?? '') ?>" <?= (($filters['listing_type'] ?? '') === $lt) ? 'selected' : '' ?>><?= ucfirst($lt) ?></option>
             <?php endforeach; ?>
           </select>
         </div>

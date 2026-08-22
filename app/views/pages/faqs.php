@@ -29,7 +29,7 @@ if (!function_exists('__')) {
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-10">
-                <div class="cms-content"><?php echo $pageContent; ?></div>
+                <div class="cms-content"><?php echo e($pageContent); ?></div>
             </div>
         </div>
     </div>

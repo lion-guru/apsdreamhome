@@ -171,7 +171,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                         <select class="form-select" id="type" name="type">
                             <option value=""><?= __('all') ?></option>
                             <?php foreach (['plot','house','flat','shop','farmhouse','villa','land'] as $t): ?>
-                                <option value="<?= $t ?>" <?= ($_GET['type'] ?? '') === $t ? 'selected' : ''; ?>><?= ucfirst($t) ?></option>
+                                <option value="<?= e($t ?? '') ?>" <?= ($_GET['type'] ?? '') === $t ? 'selected' : ''; ?>><?= ucfirst($t) ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>

@@ -26,7 +26,7 @@ $selected_lead = $selected_lead ?? '';
                             <select class="form-select" name="lead_id" id="leadSelect">
                                 <option value="">— <?= __('assoc_ssv_select_lead', [], 'Select a lead') ?> —</option>
                                 <?php foreach ($leads as $l): ?>
-                                    <option value="<?= $l['id'] ?>" <?= (string)$l['id'] === (string)$selected_lead ? 'selected' : '' ?>
+                                    <option value="<?= e($l['id'] ?? '') ?>" <?= (string)$l['id'] === (string)$selected_lead ? 'selected' : '' ?>
                                         data-name="<?= htmlspecialchars($l['name'] ?? '') ?>" data-phone="<?= htmlspecialchars($l['phone'] ?? '') ?>">
                                         <?= htmlspecialchars($l['name'] ?? '') ?> (<?= htmlspecialchars($l['phone'] ?? '') ?>)
                                     </option>

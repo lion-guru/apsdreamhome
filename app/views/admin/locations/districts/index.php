@@ -29,7 +29,7 @@
                                 <select class="form-select" id="state_id" name="state_id" onchange="this.form.submit()">
                                     <option value="">All States</option>
                                     <?php foreach ($states as $state): ?>
-                                        <option value="<?php echo $state['id']; ?>" <?php echo (isset($_GET['state_id']) && $_GET['state_id'] == $state['id']) ? 'selected' : ''; ?>>
+                                        <option value="<?php echo e($state['id']); ?>" <?php echo (isset($_GET['state_id']) && $_GET['state_id'] == $state['id']) ? 'selected' : ''; ?>>
                                             <?php echo htmlspecialchars($state['name'] ?? ''); ?>
                                         </option>
                                     <?php endforeach; ?>
@@ -71,7 +71,7 @@
                                 <?php else: ?>
                                 <?php foreach ($districts as $district): ?>
                                 <tr>
-                                    <td><?php echo $district['id']; ?></td>
+                                    <td><?php echo e($district['id']); ?></td>
                                     <td>
                                         <strong><?php echo htmlspecialchars($district['name'] ?? ''); ?></strong>
                                     </td>
@@ -79,13 +79,13 @@
                                         <span class="badge bg-secondary"><?php echo htmlspecialchars($district['code'] ?? ''); ?></span>
                                     </td>
                                     <td>
-                                        <a href="<?= BASE_URL ?>/admin/locations/districts?state_id=<?php echo $district['state_id']; ?>" class="btn btn-sm btn-outline-info">
+                                        <a href="<?= BASE_URL ?>/admin/locations/districts?state_id=<?php echo e($district['state_id']); ?>" class="btn btn-sm btn-outline-info">
                                             <?php echo htmlspecialchars($district['state_name'] ?? ''); ?>
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="<?= BASE_URL ?>/admin/locations/colonies?district_id=<?php echo $district['id']; ?>" class="btn btn-sm btn-outline-success">
-                                            <?php echo $district['colony_count']; ?> Colonies
+                                        <a href="<?= BASE_URL ?>/admin/locations/colonies?district_id=<?php echo e($district['id']); ?>" class="btn btn-sm btn-outline-success">
+                                            <?php echo e($district['colony_count']); ?> Colonies
                                         </a>
                                     </td>
                                     <td>
@@ -95,13 +95,13 @@
                                     </td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
-                                            <a href="<?= BASE_URL ?>/admin/locations/colonies?district_id=<?php echo $district['id']; ?>" class="btn btn-outline-success" title="View Colonies">
+                                            <a href="<?= BASE_URL ?>/admin/locations/colonies?district_id=<?php echo e($district['id']); ?>" class="btn btn-outline-success" title="View Colonies">
                                                 <i class="fas fa-home"></i>
                                             </a>
-                                            <a href="<?= BASE_URL ?>/admin/locations/districts/edit/<?php echo $district['id']; ?>" class="btn btn-outline-primary" title="Edit">
+                                            <a href="<?= BASE_URL ?>/admin/locations/districts/edit/<?php echo e($district['id']); ?>" class="btn btn-outline-primary" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="<?= BASE_URL ?>/admin/locations/districts/delete/<?php echo $district['id']; ?>" class="btn btn-outline-danger" title="Delete" data-aps-confirm="Are you sure? This will also delete all associated colonies.">
+                                            <a href="<?= BASE_URL ?>/admin/locations/districts/delete/<?php echo e($district['id']); ?>" class="btn btn-outline-danger" title="Delete" data-aps-confirm="Are you sure? This will also delete all associated colonies.">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </div>

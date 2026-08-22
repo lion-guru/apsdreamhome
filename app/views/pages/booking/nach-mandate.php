@@ -59,7 +59,7 @@ $statusColors = [
             <div class="aps-cp-card mb-4">
                 <div class="aps-cp-card-header">
                     <h5><i class="fas fa-info-circle text-primary"></i> <?= __('nach_status_title', [], 'Mandate Status') ?></h5>
-                    <span class="badge bg-<?= $statusColors[$m['status']] ?? 'secondary' ?>"><?= ucfirst($m['status']) ?></span>
+                    <span class="badge bg-<?= e($statusColors[$m['status']] ?? 'secondary') ?>"><?= ucfirst(e($m['status'])) ?></span>
                 </div>
                 <div class="aps-cp-card-body">
                     <div class="row g-3">
@@ -85,7 +85,7 @@ $statusColors = [
                         </div>
                         <div class="col-sm-6">
                             <label class="text-muted small"><?= __('nach_label_next_debit', [], 'Next Debit Date') ?></label>
-                            <p class="fw-semibold mb-0"><?= $m['next_debit_date'] ? date('d M Y', strtotime($m['next_debit_date'])) : __('nach_pending', [], 'Pending') ?></p>
+                            <p class="fw-semibold mb-0"><?= $m['next_debit_date'] ? date('d M Y', strtotime(e($m['next_debit_date']))) : __('nach_pending', [], 'Pending') ?></p>
                         </div>
                     </div>
 

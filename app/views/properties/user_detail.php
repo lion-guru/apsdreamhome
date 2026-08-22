@@ -169,7 +169,7 @@
             <div class="modal-body">
                 <form id="detailInterestForm" onsubmit="submitDetailInterest(event)">
     <?php echo CSRFProtection::csrfField(); ?>
-                    <input type="hidden" name="property_id" value="<?php echo $property['id']; ?>">
+                    <input type="hidden" name="property_id" value="<?php echo e($property['id']); ?>">
                     <input type="hidden" name="source" value="property_detail">
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Phone Number *</label>
@@ -185,7 +185,7 @@
                         <label class="form-label small fw-semibold">Budget Range</label>
                         <div class="d-flex flex-wrap gap-2">
                             <?php foreach (['Under 10L','10L-25L','25L-50L','50L-1Cr','1Cr+'] as $budget): ?>
-                            <button type="button" class="btn btn-outline-primary btn-sm detail-budget-chip" onclick="selectDetailBudget(this)"><?php echo $budget; ?></button>
+                            <button type="button" class="btn btn-outline-primary btn-sm detail-budget-chip" onclick="selectDetailBudget(this)"><?php echo e($budget); ?></button>
                             <?php endforeach; ?>
                         </div>
                         <input type="hidden" name="budget" id="detailInterestBudget">

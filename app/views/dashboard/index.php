@@ -60,7 +60,7 @@ try { $recentLeads = $db->fetchAll("SELECT * FROM leads ORDER BY created_at DESC
             <div class="stat-content">
                 <div class="stat-label">Total Leads</div>
                 <div class="stat-value"><?php echo number_format($stats['total_leads']); ?></div>
-                <div class="stat-change up"><i class="fas fa-arrow-up"></i> <?php echo $stats['new_leads_today']; ?> today</div>
+                <div class="stat-change up"><i class="fas fa-arrow-up"></i> <?php echo e($stats['new_leads_today']); ?> today</div>
             </div>
         </div>
     </div>

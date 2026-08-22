@@ -81,7 +81,7 @@ $nav = \App\Helpers\NavigationHelper::getInstance();
                                         <li>
                                             <a class="dropdown-item"
                                                href="<?php echo BASE_URL . rtrim('/' . ltrim($sub['url'] ?? '#', '/'), ''); ?>">
-                                                 <?php if (isset($sub['icon'])): ?><i class="<?php echo $sub['icon']; ?> me-2"></i><?php endif; ?>
+                                                 <?php if (isset($sub['icon'])): ?><i class="<?php echo e($sub['icon']); ?> me-2"></i><?php endif; ?>
                                                  <?php echo __($sub['label']); ?>
                                             </a>
                                         </li>

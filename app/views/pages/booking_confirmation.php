@@ -37,7 +37,7 @@ foreach ($statusSteps as $i => $step) {
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?= BASE_URL ?>"><?= __('breadcrumb_home') ?></a></li>
             <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/user/dashboard"><?= __('breadcrumb_dashboard') ?></a></li>
-            <li class="breadcrumb-item active"><?= __('booking_number') ?>#<?= $booking['id'] ?></li>
+            <li class="breadcrumb-item active"><?= __('booking_number') ?>#<?= e($booking['id']) ?></li>
         </ol>
     </nav>
 
@@ -55,7 +55,7 @@ foreach ($statusSteps as $i => $step) {
                         <div class="status-item">
                             <div class="dot <?= $stepClassDot ?>"></div>
                             <div class="fw-semibold <?= $i <= $currentStep ? '' : 'text-muted' ?>">
-                                <i class="<?= $step['icon'] ?> me-2"></i><?= $step['label'] ?>
+                                <i class="<?= e($step['icon']) ?> me-2"></i><?= e($step['label']) ?>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -70,7 +70,7 @@ foreach ($statusSteps as $i => $step) {
                     <tr><th><?= __('booking_plot') ?></th><td><?= htmlspecialchars($booking['plot_number'] ?? '') ?> — <?= htmlspecialchars($booking['colony_name'] ?? '') ?></td></tr>
                     <tr><th><?= __('booking_dimension') ?></th><td><?= htmlspecialchars($booking['dimension_label'] ?? '') ?> | <?= number_format(floatval($booking['area_sqft'] ?? 0)) ?> sqft</td></tr>
                     <tr><th><?= __('booking_total_price') ?></th><td class="fw-bold fs-5 text-primary">₹<?= number_format(intval($booking['total_amount'] ?? $booking['plot_price'] ?? 0)) ?></td></tr>
-                    <tr><th><?= __('booking_status') ?></th><td><span class="badge bg-<?= $currentStatus === 'confirmed' || $currentStatus === 'completed' ? 'success' : ($currentStatus === 'cancelled' ? 'danger' : 'warning') ?> fs-6"><?= ucfirst($currentStatus) ?></span></td></tr>
+                    <tr><th><?= __('booking_status') ?></th><td><span class="badge bg-<?= e($currentStatus) === 'confirmed' || e($currentStatus) === 'completed' ? 'success' : (e($currentStatus) === 'cancelled' ? 'danger' : 'warning') ?> fs-6"><?= ucfirst(e($currentStatus)) ?></span></td></tr>
                     <tr><th><?= __('booking_date') ?></th><td><?= date('d M Y', strtotime($booking['booking_date'] ?? $booking['created_at'] ?? 'now')) ?></td></tr>
                 </table>
 
@@ -88,11 +88,11 @@ foreach ($statusSteps as $i => $step) {
                         <tbody>
                             <?php foreach ($emis as $emi): ?>
                             <tr>
-                                <td><?= $emi['installment_no'] ?></td>
+                                <td><?= e($emi['installment_no']) ?></td>
                                 <td><?= date('d M Y', strtotime($emi['due_date'])) ?></td>
                                 <td>₹<?= number_format(intval($emi['amount'])) ?></td>
                                 <td>₹<?= number_format(intval($emi['paid_amount'] ?? 0)) ?></td>
-                                <td><span class="badge bg-<?= $emi['status'] === 'paid' ? 'success' : ($emi['status'] === 'overdue' ? 'danger' : 'warning') ?>"><?= ucfirst($emi['status']) ?></span></td>
+                                <td><span class="badge bg-<?= e($emi['status']) === 'paid' ? 'success' : (e($emi['status']) === 'overdue' ? 'danger' : 'warning') ?>"><?= ucfirst(e($emi['status'])) ?></span></td>
                             </tr>
                             <?php endforeach; ?>
                         </tbody>

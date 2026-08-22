@@ -117,15 +117,15 @@
                     ?>">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <h5 class="mb-2">EMI #<?php echo $emi['id']; ?></h5>
+                                <h5 class="mb-2">EMI #<?php echo e($emi['id']); ?></h5>
                                 <p class="mb-1"><strong>Due Amount:</strong> ₹<?php echo number_format($emi['due_amount'], 2); ?></p>
                                 <p class="mb-1"><strong>Due Date:</strong> <?php echo date('M d, Y', strtotime($emi['due_date'])); ?></p>
                                 <p class="mb-1"><strong>Property:</strong> <?php echo htmlspecialchars($emi['property_name'] ?? 'N/A'); ?></p>
-                                <span class="emi-status <?php echo $emi['status']; ?>">
+                                <span class="emi-status <?php echo e($emi['status']); ?>">
                                     <?php echo ucfirst($emi['status']); ?>
                                 </span>
                             </div>
-                            <button class="btn btn-primary" onclick="selectEMI(<?php echo $emi['id']; ?>, <?php echo $emi['due_amount']; ?>)">
+                            <button class="btn btn-primary" onclick="selectEMI(<?php echo (int)$emi['id']; ?>, <?php echo e($emi['due_amount']); ?>)">
                                 Pay This EMI
                             </button>
                         </div>
@@ -218,7 +218,7 @@ function selectEMI(emiId, amount) {
 function processTransfer() {
     const emiId = document.getElementById('emiId').value;
     const amount = document.getElementById('transferAmount').value;
-    const maxAmount = <?php echo $wallet['points_balance']; ?>;
+    const maxAmount = <?php echo e($wallet['points_balance']); ?>;
     
     if (!emiId) {
         alert('Please select an EMI first');

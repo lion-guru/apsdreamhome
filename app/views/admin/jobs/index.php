@@ -17,17 +17,17 @@ $error = $error ?? null;
             <p class="text-muted mb-0">Manage job postings and view applications</p>
         </div>
         <div>
-            <a href="<?php echo $base; ?>/admin/jobs/applications" class="btn btn-outline-primary me-2">
+            <a href="<?php echo e($base); ?>/admin/jobs/applications" class="btn btn-outline-primary me-2">
                 <i class="fas fa-users me-1"></i>Applications
             </a>
-            <a href="<?php echo $base; ?>/admin/jobs/create" class="btn btn-primary">
+            <a href="<?php echo e($base); ?>/admin/jobs/create" class="btn btn-primary">
                 <i class="fas fa-plus me-1"></i>Post New Job
             </a>
         </div>
     </div>
 
     <?php if ($error): ?>
-        <div class="alert alert-danger"><?php echo $error; ?></div>
+        <div class="alert alert-danger"><?php echo e($error); ?></div>
     <?php endif; ?>
 
     <div class="card shadow-sm">
@@ -51,7 +51,7 @@ $error = $error ?? null;
                             <tr>
                                 <td colspan="8" class="text-center py-4 text-muted">
                                     <i class="fas fa-inbox fa-2x mb-2"></i>
-                                    <p>No jobs posted yet. <a href="<?php echo $base; ?>/admin/jobs/create">Post your first job</a></p>
+                                    <p>No jobs posted yet. <a href="<?php echo e($base); ?>/admin/jobs/create">Post your first job</a></p>
                                 </td>
                             </tr>
                         <?php else: ?>
@@ -76,16 +76,16 @@ $error = $error ?? null;
                                         </span>
                                     </td>
                                     <td>
-                                        <a href="<?php echo $base; ?>/admin/jobs/applications/<?php echo $job['id']; ?>" class="btn btn-sm btn-outline-primary">
+                                        <a href="<?php echo e($base); ?>/admin/jobs/applications/<?php echo $job['id']; ?>" class="btn btn-sm btn-outline-primary">
                                             <i class="fas fa-users me-1"></i><?php echo $job['application_count'] ?? 0; ?> Applications
                                         </a>
                                     </td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
-                                            <a href="<?php echo $base; ?>/admin/jobs/edit/<?php echo $job['id']; ?>" class="btn btn-outline-secondary" title="Edit">
+                                            <a href="<?php echo e($base); ?>/admin/jobs/edit/<?php echo $job['id']; ?>" class="btn btn-outline-secondary" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <button type="button" class="btn btn-outline-danger" onclick="deleteJob(<?php echo $job['id']; ?>)" title="Delete">
+                                            <button type="button" class="btn btn-outline-danger" onclick="deleteJob(<?php echo e($job['id']); ?>)" title="Delete">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </div>
@@ -105,7 +105,7 @@ function deleteJob(id) {
     apsConfirm('Are you sure you want to delete this job posting? All applications will also be deleted.').then(function(ok) {
         if (!ok) return;
         showLoader();
-        fetch('<?php echo $base; ?>/admin/jobs/manage/' + id + '/delete', {
+        fetch('<?php echo e($base); ?>/admin/jobs/manage/' + id + '/delete', {
             method: 'POST',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'

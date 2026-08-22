@@ -94,25 +94,25 @@ foreach ($nodes as $n) {
     <div class="row g-3 mb-4">
         <div class="col-6 col-md-3">
             <div class="card border-0 shadow-sm text-center py-3 h-100">
-                <div class="style-15583"><?= $totalDownline ?></div>
+                <div class="style-15583"><?= e($totalDownline) ?></div>
                 <div class="text-muted small fw-bold"><?php echo __('assoc_net_total_downline', [], 'Total Downline'); ?></div>
             </div>
         </div>
         <div class="col-6 col-md-3">
             <div class="card border-0 shadow-sm text-center py-3 h-100">
-                <div class="style-31497"><?= $leftCount ?></div>
+                <div class="style-31497"><?= e($leftCount) ?></div>
                 <div class="text-muted small fw-bold"><?php echo __('assoc_net_left_leg', [], 'Left Leg'); ?></div>
             </div>
         </div>
         <div class="col-6 col-md-3">
             <div class="card border-0 shadow-sm text-center py-3 h-100">
-                <div class="style-8188"><?= $rightCount ?></div>
+                <div class="style-8188"><?= e($rightCount) ?></div>
                 <div class="text-muted small fw-bold"><?php echo __('assoc_net_right_leg', [], 'Right Leg'); ?></div>
             </div>
         </div>
         <div class="col-6 col-md-3">
             <div class="card border-0 shadow-sm text-center py-3 h-100">
-                <div class="style-86698"><?= $maxDepth ?></div>
+                <div class="style-86698"><?= e($maxDepth) ?></div>
                 <div class="text-muted small fw-bold"><?php echo __('assoc_net_max_depth', [], 'Max Depth'); ?></div>
             </div>
         </div>
@@ -128,11 +128,11 @@ foreach ($nodes as $n) {
                 </div>
                 <div class="col-md-4">
                     <small class="text-white-50"><?php echo __('assoc_net_left_leg', [], 'Left Leg'); ?></small>
-                    <div class="fw-bold" class="style-1357"><?= $leftCount ?> <?php echo __('assoc_net_members', [], 'members'); ?></div>
+                    <div class="fw-bold" class="style-1357"><?= e($leftCount) ?> <?php echo __('assoc_net_members', [], 'members'); ?></div>
                 </div>
                 <div class="col-md-4">
                     <small class="text-white-50"><?php echo __('assoc_net_right_leg', [], 'Right Leg'); ?></small>
-                    <div class="fw-bold" class="style-75156"><?= $rightCount ?> <?php echo __('assoc_net_members', [], 'members'); ?></div>
+                    <div class="fw-bold" class="style-75156"><?= e($rightCount) ?> <?php echo __('assoc_net_members', [], 'members'); ?></div>
                 </div>
             </div>
         </div>
@@ -146,7 +146,7 @@ foreach ($nodes as $n) {
                 <select id="rankFilter" class="form-select form-select-sm" class="style-1698">
                     <option value=""><?php echo __('assoc_net_all_ranks', [], 'All Ranks'); ?></option>
                     <?php foreach ($rankLabels as $k => $v): ?>
-                        <option value="<?= $k ?>"><?= $v ?></option>
+                        <option value="<?= e($k ?? '') ?>"><?= e($v ?? '') ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -215,7 +215,7 @@ foreach ($nodes as $n) {
     <div id="listView" class="style-2248">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white border-0 py-3">
-                <h5 class="m-0 fw-bold"><i class="fas fa-list text-primary me-2"></i><?php echo __('assoc_net_list_heading', [], 'List View'); ?> (<?= $totalDownline ?> <?php echo __('assoc_net_members', [], 'members'); ?>)</h5>
+                <h5 class="m-0 fw-bold"><i class="fas fa-list text-primary me-2"></i><?php echo __('assoc_net_list_heading', [], 'List View'); ?> (<?= e($totalDownline) ?> <?php echo __('assoc_net_members', [], 'members'); ?>)</h5>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -243,8 +243,8 @@ foreach ($nodes as $n) {
                                     $icon = $rankIcons[$level] ?? 'fa-user';
                                     $label = $rankLabels[$level] ?? ucfirst(str_replace('_', ' ', $level));
                                 ?>
-                                <tr data-rank="<?= $level ?>">
-                                    <td class="text-muted"><?= $i + 1 ?></td>
+                                <tr data-rank="<?= e($level) ?>">
+                                    <td class="text-muted"><?= e($i + 1) ?></td>
                                     <td>
                                         <div class="fw-bold"><?= htmlspecialchars($n['name'] ?? __('assoc_net_unknown', [], 'Unknown')) ?></div>
                                     </td>
@@ -286,7 +286,7 @@ foreach ($nodes as $n) {
                 $icon = $rankIcons[$level] ?? 'fa-user';
                 $label = $rankLabels[$level] ?? ucfirst(str_replace('_', ' ', $level));
             ?>
-            <div class="col-md-6 col-lg-4 col-xl-3 member-card" data-rank="<?= $level ?>" data-name="<?= strtolower($n['name'] ?? '') ?>">
+            <div class="col-md-6 col-lg-4 col-xl-3 member-card" data-rank="<?= e($level) ?>" data-name="<?= e(strtolower($n['name'] ?? '')) ?>">
                 <div class="card border-0 shadow-sm h-100" class="style-68538">
                     <div class="card-body text-center p-3">
                         <div class="mx-auto mb-2 d-flex align-items-center justify-content-center rounded-circle" class="style-78807">

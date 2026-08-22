@@ -25,7 +25,7 @@
     <?php $colors = ['available'=>'primary', 'reserved'=>'warning', 'booked'=>'info', 'sold'=>'success', 'under_development'=>'info']; ?>
     <?php foreach (['available','reserved','booked','sold','under_development'] as $s): ?>
     <div class="col-md-2 col-6">
-        <div class="card inv-card border-start border-4 border-<?php echo $colors[$s]; ?>">
+        <div class="card inv-card border-start border-4 border-<?php echo e($colors[$s]); ?>">
             <div class="card-body text-center py-3">
                 <div class="fs-3 fw-bold"><?php echo (int)($stats[$s] ?? 0); ?></div>
                 <div class="text-muted small text-uppercase"><?php echo ucfirst(str_replace('_', ' ', $s)); ?></div>
@@ -96,7 +96,7 @@
                     <td>₹<?php echo number_format((float)($p['amount_paid'] ?? 0), 0); ?></td>
                     <td>
                         <?php if (!empty($p['booking_id'])): ?>
-                        <a href="<?php echo BASE_URL; ?>/admin/bookings/<?php echo $p['booking_id']; ?>" class="btn btn-sm btn-outline-info">
+                        <a href="<?php echo BASE_URL; ?>/admin/bookings/<?php echo e($p['booking_id']); ?>" class="btn btn-sm btn-outline-info">
                             <?php echo htmlspecialchars($p['booking_number'] ?? 'BK#' . $p['booking_id']); ?>
                             <?php if (($p['booking_status'] ?? '') === 'confirmed'): ?>
                             <i class="fas fa-check-circle text-success ms-1"></i>

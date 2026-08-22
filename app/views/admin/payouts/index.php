@@ -13,7 +13,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <h2 class="mb-1"><i class="fas fa-money-bill-wave me-2 text-success"></i>Payouts</h2>
                 <p class="text-muted mb-0">Manage network commissions payouts</p>
             </div>
-            <a href="<?php echo $base; ?>/admin/dashboard" class="btn btn-outline-secondary">Back</a>
+            <a href="<?php echo e($base); ?>/admin/dashboard" class="btn btn-outline-secondary">Back</a>
         </div>
         
         <!-- Stats -->
@@ -69,7 +69,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Payout Requests</h5>
-                <a href="<?php echo $base; ?>/admin/payouts/list/all" class="btn btn-sm btn-success">
+                <a href="<?php echo e($base); ?>/admin/payouts/list/all" class="btn btn-sm btn-success">
                     <i class="fas fa-sync me-2"></i>Process Batch
                 </a>
             </div>
@@ -100,7 +100,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                         </td>
                                         <td><?php echo isset($payout['created_at']) ? date('M d, Y', strtotime($payout['created_at'])) : '-'; ?></td>
                                         <td>
-                                            <a href="<?php echo $base; ?>/admin/payouts/show/<?php echo (int)($payout['id'] ?? 0); ?>" class="btn btn-sm btn-primary">View</a>
+                                            <a href="<?php echo e($base); ?>/admin/payouts/show/<?php echo (int)($payout['id'] ?? 0); ?>" class="btn btn-sm btn-primary">View</a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

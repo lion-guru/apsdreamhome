@@ -22,7 +22,7 @@
                 <div class="card shadow-sm h-100">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h6 class="mb-0 fw-bold"><?php echo htmlspecialchars($col['colony_name'] ?? 'Unknown'); ?></h6>
-                        <span class="badge bg-info"><?php echo $col['total_plots_actual']; ?> plots</span>
+                        <span class="badge bg-info"><?php echo e($col['total_plots_actual']); ?> plots</span>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <p class="text-muted small mb-3">
@@ -34,7 +34,7 @@
                         <div class="mb-2">
                             <div class="d-flex justify-content-between small">
                                 <span>Available</span>
-                                <span class="fw-bold text-success"><?php echo $col['available']; ?> (<?php echo $availPct; ?>%)</span>
+                                <span class="fw-bold text-success"><?php echo e($col['available']); ?> (<?php echo $availPct; ?>%)</span>
                             </div>
                             <div class="progress" class="style-31164">
                                 <div class="progress-bar bg-success" class="style-57761"></div>
@@ -43,7 +43,7 @@
                         <div class="mb-2">
                             <div class="d-flex justify-content-between small">
                                 <span>Booked</span>
-                                <span class="fw-bold text-warning"><?php echo $col['booked']; ?> (<?php echo $bookedPct; ?>%)</span>
+                                <span class="fw-bold text-warning"><?php echo e($col['booked']); ?> (<?php echo $bookedPct; ?>%)</span>
                             </div>
                             <div class="progress" class="style-31164">
                                 <div class="progress-bar bg-warning" class="style-31368"></div>
@@ -52,7 +52,7 @@
                         <div class="mb-2">
                             <div class="d-flex justify-content-between small">
                                 <span>Sold</span>
-                                <span class="fw-bold text-danger"><?php echo $col['sold']; ?> (<?php echo $soldPct; ?>%)</span>
+                                <span class="fw-bold text-danger"><?php echo e($col['sold']); ?> (<?php echo $soldPct; ?>%)</span>
                             </div>
                             <div class="progress" class="style-31164">
                                 <div class="progress-bar bg-danger" class="style-93120"></div>
@@ -63,7 +63,7 @@
                         <div class="mb-2">
                             <div class="d-flex justify-content-between small">
                                 <span>Hold/Reserved</span>
-                                <span class="fw-bold text-secondary"><?php echo $col['other']; ?></span>
+                                <span class="fw-bold text-secondary"><?php echo e($col['other']); ?></span>
                             </div>
                             <div class="progress" class="style-31164">
                                 <div class="progress-bar bg-secondary" class="style-43704"></div>
@@ -72,10 +72,10 @@
                         <?php endif; ?>
 
                         <div class="mt-3 text-end">
-                            <a href="<?php echo BASE_URL; ?>/admin/plots?colony_id=<?php echo $col['colony_id']; ?>" class="btn btn-sm btn-outline-primary">
+                            <a href="<?php echo BASE_URL; ?>/admin/plots?colony_id=<?php echo e($col['colony_id']); ?>" class="btn btn-sm btn-outline-primary">
                                 <i class="fas fa-list me-1"></i>View Plots
                             </a>
-                            <a href="<?php echo BASE_URL; ?>/admin/bookings?colony_id=<?php echo $col['colony_id']; ?>" class="btn btn-sm btn-outline-info">
+                            <a href="<?php echo BASE_URL; ?>/admin/bookings?colony_id=<?php echo e($col['colony_id']); ?>" class="btn btn-sm btn-outline-info">
                                 <i class="fas fa-file-invoice me-1"></i>Bookings
                             </a>
                         </div>

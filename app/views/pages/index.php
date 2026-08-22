@@ -39,21 +39,21 @@
                                 <div class="col-4 text-center">
                                     <div class="trust-item">
                                         <i class="fas fa-award fa-2x mb-2"></i>
-                                        <h6><?php echo $heroStats['years_experience']; ?></h6>
+                                        <h6><?php echo e($heroStats['years_experience']); ?></h6>
                                         <small>Experience</small>
                                     </div>
                                 </div>
                                 <div class="col-4 text-center">
                                     <div class="trust-item">
                                         <i class="fas fa-home fa-2x mb-2"></i>
-                                        <h6><?php echo $heroStats['properties_sold']; ?></h6>
+                                        <h6><?php echo e($heroStats['properties_sold']); ?></h6>
                                         <small>Properties Sold</small>
                                     </div>
                                 </div>
                                 <div class="col-4 text-center">
                                     <div class="trust-item">
                                         <i class="fas fa-smile fa-2x mb-2"></i>
-                                        <h6><?php echo $heroStats['happy_clients']; ?></h6>
+                                        <h6><?php echo e($heroStats['happy_clients']); ?></h6>
                                         <small>Happy Clients</small>
                                     </div>
                                 </div>
@@ -400,25 +400,25 @@
                 ?>
                 <div class="col-md-3 mb-4">
                     <div class="stat-item">
-                        <div class="stat-number" data-target="<?php echo (int)$stats['properties_sold']; ?>"><?php echo $stats['properties_sold']; ?></div>
+                        <div class="stat-number" data-target="<?php echo (int)$stats['properties_sold']; ?>"><?php echo e($stats['properties_sold']); ?></div>
                         <div class="stat-label">Properties Sold</div>
                     </div>
                 </div>
                 <div class="col-md-3 mb-4">
                     <div class="stat-item">
-                        <div class="stat-number" data-target="<?php echo (int)$stats['happy_clients']; ?>"><?php echo $stats['happy_clients']; ?></div>
+                        <div class="stat-number" data-target="<?php echo (int)$stats['happy_clients']; ?>"><?php echo e($stats['happy_clients']); ?></div>
                         <div class="stat-label">Happy Clients</div>
                     </div>
                 </div>
                 <div class="col-md-3 mb-4">
                     <div class="stat-item">
-                        <div class="stat-number" data-target="<?php echo (int)$stats['years_experience']; ?>"><?php echo $stats['years_experience']; ?></div>
+                        <div class="stat-number" data-target="<?php echo (int)$stats['years_experience']; ?>"><?php echo e($stats['years_experience']); ?></div>
                         <div class="stat-label">Years Experience</div>
                     </div>
                 </div>
                 <div class="col-md-3 mb-4">
                     <div class="stat-item">
-                        <div class="stat-number" data-target="<?php echo (int)$stats['projects_completed']; ?>"><?php echo $stats['projects_completed']; ?></div>
+                        <div class="stat-number" data-target="<?php echo (int)$stats['projects_completed']; ?>"><?php echo e($stats['projects_completed']); ?></div>
                         <div class="stat-label">Projects Completed</div>
                     </div>
                 </div>
@@ -442,7 +442,7 @@
             <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-indicators">
                     <?php foreach($testimonialList as $i => $t): ?>
-                    <button type="button" data-bs-target="#testimonialCarousel" data-bs-slide-to="<?php echo $i; ?>" <?php echo $i === 0 ? 'class="active" aria-current="true"' : ''; ?> aria-label="Slide <?php echo $i + 1; ?>"></button>
+                    <button type="button" data-bs-target="#testimonialCarousel" data-bs-slide-to="<?php echo (int)$i; ?>" <?php echo $i === 0 ? 'class="active" aria-current="true"' : ''; ?> aria-label="Slide <?php echo (int)$i + 1; ?>"></button>
                     <?php endforeach; ?>
                 </div>
                 <div class="carousel-inner">

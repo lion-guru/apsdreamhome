@@ -7,7 +7,7 @@ $total_count = $total_count ?? 0;
 <div class="container-fluid py-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2><i class="fas fa-users me-2"></i>Users by Role: <?= htmlspecialchars(ucfirst($role ?? '')) ?></h2>
-    <span class="badge bg-primary fs-6"><?= $total_count ?> users</span>
+    <span class="badge bg-primary fs-6"><?= e($total_count) ?> users</span>
   </div>
 
   <?php if (empty($users)): ?>

@@ -32,7 +32,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-10">
-                <div class="cms-content p-4"><?php echo $pageContent; ?></div>
+                <div class="cms-content p-4"><?php echo e($pageContent); ?></div>
             </div>
         </div>
     </div>

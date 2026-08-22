@@ -34,7 +34,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-warning mb-2"><i class="fas fa-file-invoice"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $pendingInvoices ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($pendingInvoices ?? 0) ?></h3>
                     <p class="text-muted mb-0">Pending Invoices</p>
                 </div>
             </div>
@@ -43,7 +43,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-info mb-2"><i class="fas fa-calendar-check"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $taxDeadlines ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($taxDeadlines ?? 0) ?></h3>
                     <p class="text-muted mb-0">Upcoming Tax Deadlines</p>
                 </div>
             </div>

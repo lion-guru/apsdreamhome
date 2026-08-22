@@ -1,7 +1,7 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h1 class="h3 mb-1">Inquiry Details</h1>
-        <p class="text-muted mb-0">View inquiry #<?php echo $inquiry['id']; ?></p>
+        <p class="text-muted mb-0">View inquiry #<?php echo e($inquiry['id']); ?></p>
     </div>
     <div>
         <a href="<?php echo BASE_URL; ?>/admin/inquiries" class="btn btn-outline-secondary">
@@ -69,7 +69,7 @@
             <div class="card-body aps-cp-card-body">
                 <form method="POST" action="<?php echo BASE_URL; ?>/admin/inquiries/update-status">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                    <input type="hidden" name="id" value="<?php echo $inquiry['id']; ?>">
+                    <input type="hidden" name="id" value="<?php echo e($inquiry['id']); ?>">
                     <div class="mb-3">
                         <select name="status" class="form-select">
                             <option value="new" <?php echo $inquiry['status'] === 'new' ? 'selected' : ''; ?>>New</option>
@@ -122,7 +122,7 @@
                 </div>
                 <?php endif; ?>
                 <hr>
-                <form method="POST" action="<?php echo BASE_URL; ?>/admin/inquiries/delete/<?php echo $inquiry['id']; ?>" data-aps-confirm="Are you sure you want to delete this inquiry?">
+                <form method="POST" action="<?php echo BASE_URL; ?>/admin/inquiries/delete/<?php echo e($inquiry['id']); ?>" data-aps-confirm="Are you sure you want to delete this inquiry?">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <button type="submit" class="btn btn-outline-danger btn-sm w-100">
                         <i class="fas fa-trash me-1"></i>Delete Inquiry

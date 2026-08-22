@@ -133,7 +133,7 @@ $completionPct = $session['profile_completion_pct'] ?? 0;
             <div class="progress-section">
                 <div class="progress-header">
                     <span>Profile Completion</span>
-                    <small id="completionText"><?php echo $completionPct; ?>% Complete</small>
+                    <small id="completionText"><?php echo e($completionPct); ?>% Complete</small>
                 </div>
                 <div class="progress-bar">
                     <div class="progress-fill" id="progressFill" class="style-28620"></div>
@@ -233,7 +233,7 @@ $completionPct = $session['profile_completion_pct'] ?? 0;
             </div>
             <h3>Profile Complete!</h3>
             <p>Your profile is now set up. Start exploring properties and earning rewards!</p>
-            <a href="<?php echo $base; ?>/" class="btn btn-primary">
+            <a href="<?php echo e($base); ?>/" class="btn btn-primary">
                 <i class="fas fa-home me-2"></i>Go to Homepage
             </a>
         </div>
@@ -258,7 +258,7 @@ $completionPct = $session['profile_completion_pct'] ?? 0;
                 if (key !== 'token') data[key] = value;
             });
 
-            fetch('<?php echo $base; ?>/register/smart/save-profile', {
+            fetch('<?php echo e($base); ?>/register/smart/save-profile', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -288,7 +288,7 @@ $completionPct = $session['profile_completion_pct'] ?? 0;
         function skipProfile() {
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '<?php echo $base; ?>/register/smart/skip-profile';
+            form.action = '<?php echo e($base); ?>/register/smart/skip-profile';
             
             const tokenInput = document.createElement('input');
             tokenInput.type = 'hidden';

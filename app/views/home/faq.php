@@ -11,19 +11,19 @@
                 <div class="accordion" id="faqAccordion">
                     <?php foreach ($faqs as $index => $faq): ?>
                     <div class="accordion-item" data-aos="fade-up" data-aos-delay="100">
-                        <h2 class="accordion-header" id="heading<?php echo $index; ?>">
+                        <h2 class="accordion-header" id="heading<?php echo e($index); ?>">
                             <button class="accordion-button <?php echo $index === 0 ? '' : 'collapsed'; ?>" 
                                     type="button" 
                                     data-bs-toggle="collapse" 
-                                    data-bs-target="#collapse<?php echo $index; ?>" 
+                                    data-bs-target="#collapse<?php echo e($index); ?>" 
                                     aria-expanded="<?php echo $index === 0 ? 'true' : 'false'; ?>" 
-                                    aria-controls="collapse<?php echo $index; ?>">
+                                    aria-controls="collapse<?php echo e($index); ?>">
                                 <?php echo h($faq['question']); ?>
                             </button>
                         </h2>
-                        <div id="collapse<?php echo $index; ?>" 
+                        <div id="collapse<?php echo e($index); ?>" 
                              class="accordion-collapse collapse <?php echo $index === 0 ? 'show' : ''; ?>" 
-                             aria-labelledby="heading<?php echo $index; ?>" 
+                             aria-labelledby="heading<?php echo e($index); ?>" 
                              data-bs-parent="#faqAccordion">
                             <div class="accordion-body">
                                 <?php echo h($faq['answer']); ?>

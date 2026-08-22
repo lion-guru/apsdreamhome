@@ -10,7 +10,7 @@ $agent_email = $agent_email ?? ($_SESSION['user_email'] ?? '');
 $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 
 // Get current page for active state
-$current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
+$current_page = $active_page ?? basename(esc_url($_SERVER['REQUEST_URI'] ?? ''));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -65,14 +65,14 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
         }
     </style>
     <?php if (!empty($extra_css)): ?>
-    <link rel="stylesheet" href="<?php echo $extra_css; ?>">
+    <link rel="stylesheet" href="<?= e($extra_css) ?>">
     <?php endif; ?>
 </head>
 <body>
     <!-- Agent Sidebar -->
     <aside class="sidebar" id="sidebarMenu">
         <div class="sidebar-header">
-            <a href="<?php echo $base; ?>/agent/dashboard" class="sidebar-logo">
+            <a href="<?php echo e($base); ?>/agent/dashboard" class="sidebar-logo">
                 <i class="fas fa-home"></i>
                 <span>APS Dream Home</span>
             </a>
@@ -81,47 +81,47 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
         
         <ul class="sidebar-menu">
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/agent/dashboard" class="sidebar-link <?php echo $current_page == 'dashboard' ? 'active' : ''; ?>">
+                <a href="<?php echo e($base); ?>/agent/dashboard" class="sidebar-link <?php echo $current_page == 'dashboard' ? 'active' : ''; ?>">
                     <i class="fas fa-tachometer-alt"></i> Dashboard
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/agent/leads" class="sidebar-link <?php echo $current_page == 'leads' ? 'active' : ''; ?>">
+                <a href="<?php echo e($base); ?>/agent/leads" class="sidebar-link <?php echo $current_page == 'leads' ? 'active' : ''; ?>">
                     <i class="fas fa-bullseye"></i> Leads
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/agent/properties" class="sidebar-link <?php echo $current_page == 'properties' ? 'active' : ''; ?>">
+                <a href="<?php echo e($base); ?>/agent/properties" class="sidebar-link <?php echo $current_page == 'properties' ? 'active' : ''; ?>">
                     <i class="fas fa-building"></i> Properties
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/agent/leads" class="sidebar-link <?php echo $current_page == 'clients' ? 'active' : ''; ?>">
+                <a href="<?php echo e($base); ?>/agent/leads" class="sidebar-link <?php echo $current_page == 'clients' ? 'active' : ''; ?>">
                     <i class="fas fa-users"></i> Clients
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/agent/deals" class="sidebar-link <?php echo $current_page == 'bookings' ? 'active' : ''; ?>">
+                <a href="<?php echo e($base); ?>/agent/deals" class="sidebar-link <?php echo $current_page == 'bookings' ? 'active' : ''; ?>">
                     <i class="fas fa-calendar-check"></i> Bookings
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/agent/commissions" class="sidebar-link <?php echo $current_page == 'commissions' ? 'active' : ''; ?>">
+                <a href="<?php echo e($base); ?>/agent/commissions" class="sidebar-link <?php echo $current_page == 'commissions' ? 'active' : ''; ?>">
                     <i class="fas fa-rupee-sign"></i> Commissions
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/agent/profile" class="sidebar-link <?php echo $current_page == 'profile' ? 'active' : ''; ?>">
+                <a href="<?php echo e($base); ?>/agent/profile" class="sidebar-link <?php echo $current_page == 'profile' ? 'active' : ''; ?>">
                     <i class="fas fa-user"></i> Profile
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/agent/profile" class="sidebar-link <?php echo $current_page == 'settings' ? 'active' : ''; ?>">
+                <a href="<?php echo e($base); ?>/agent/profile" class="sidebar-link <?php echo $current_page == 'settings' ? 'active' : ''; ?>">
                     <i class="fas fa-cog"></i> Settings
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/agent/logout" class="sidebar-link">
+                <a href="<?php echo e($base); ?>/agent/logout" class="sidebar-link">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </a>
             </li>
@@ -138,7 +138,7 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
                 </button>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0" class="style-93188">
-                        <li class="breadcrumb-item"><a href="<?php echo $base; ?>/agent/dashboard">Agent</a></li>
+                        <li class="breadcrumb-item"><a href="<?php echo e($base); ?>/agent/dashboard">Agent</a></li>
                         <li class="breadcrumb-item active"><?php echo htmlspecialchars($active_page ?? 'Dashboard'); ?></li>
                     </ol>
                 </nav>
@@ -152,7 +152,7 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
                 </button>
                 <div class="dropdown">
                     <div class="user-box" data-bs-toggle="dropdown">
-                        <div class="user-av"><?php echo strtoupper(substr($agent_name,0,1)); ?></div>
+                        <div class="user-av"><?= e(strtoupper(substr($agent_name,0,1))) ?></div>
                         <div>
                             <div class="style-46756"><?php echo htmlspecialchars($agent_name ?? ''); ?></div>
                             <div class="style-46475"><?php echo htmlspecialchars($agent_email ?? ''); ?></div>
@@ -160,10 +160,10 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
                         <i class="fas fa-chevron-down ms-2" class="style-46475"></i>
                     </div>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="<?php echo $base; ?>/agent/profile"><i class="fas fa-user me-2"></i>Profile</a></li>
-                        <li><a class="dropdown-item" href="<?php echo $base; ?>/agent/profile"><i class="fas fa-cog me-2"></i>Profile</a></li>
+                        <li><a class="dropdown-item" href="<?php echo e($base); ?>/agent/profile"><i class="fas fa-user me-2"></i>Profile</a></li>
+                        <li><a class="dropdown-item" href="<?php echo e($base); ?>/agent/profile"><i class="fas fa-cog me-2"></i>Profile</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="<?php echo $base; ?>/agent/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        <li><a class="dropdown-item text-danger" href="<?php echo e($base); ?>/agent/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                     </ul>
                 </div>
             </div>

@@ -76,7 +76,7 @@ $stats = [
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h2 class="mb-0">Welcome, <?php echo $builder_name; ?>!</h2>
+                        <h2 class="mb-0">Welcome, <?php echo e($builder_name); ?>!</h2>
                         <div class="text-muted small">Builder Dashboard</div>
                     </div>
                     <a href="<?= BASE_URL ?>/admin/ai/executive-assistant" class="btn btn-sm btn-info text-white me-2" title="AI Assistant">
@@ -88,15 +88,15 @@ $stats = [
         <!-- Stats Cards -->
         <div class="dashboard-stats">
             <div class="stat-box">
-                <div class="fs-3 fw-bold text-primary"><?php echo $stats['total_projects']; ?></div>
+                <div class="fs-3 fw-bold text-primary"><?php echo e($stats['total_projects']); ?></div>
                 <div>Total Projects</div>
             </div>
             <div class="stat-box">
-                <div class="fs-3 fw-bold text-success"><?php echo $stats['active_projects']; ?></div>
+                <div class="fs-3 fw-bold text-success"><?php echo e($stats['active_projects']); ?></div>
                 <div>Active Projects</div>
             </div>
             <div class="stat-box">
-                <div class="fs-3 fw-bold text-warning"><?php echo $stats['completed_projects']; ?></div>
+                <div class="fs-3 fw-bold text-warning"><?php echo e($stats['completed_projects']); ?></div>
                 <div>Completed Projects</div>
             </div>
             <div class="stat-box">
@@ -143,8 +143,8 @@ $stats = [
                                 <td><?php echo htmlspecialchars($row['end_date'] ?? ''); ?></td>
                                 <td><?php echo htmlspecialchars($row['budget'] ?? ''); ?></td>
                                 <td>
-                                    <a href="edit_project.php?id=<?php echo $row['bid']; ?>" class="btn btn-sm btn-info">Edit</a>
-                                    <a href="delete_project.php?id=<?php echo $row['bid']; ?>" class="btn btn-sm btn-danger">Delete</a>
+                                    <a href="edit_project.php?id=<?php echo e($row['bid']); ?>" class="btn btn-sm btn-info">Edit</a>
+                                    <a href="delete_project.php?id=<?php echo e($row['bid']); ?>" class="btn btn-sm btn-danger">Delete</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

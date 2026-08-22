@@ -35,7 +35,7 @@ $job_types = $job_types ?? ['Full-time', 'Part-time', 'Contract', 'Internship'];
                         <select class="form-select" id="department" name="department" required>
                             <option value="">Select Department</option>
                             <?php foreach ($departments as $key => $value): ?>
-                                <option value="<?php echo $key; ?>"><?php echo $value; ?></option>
+                                <option value="<?php echo e($key); ?>"><?php echo $value; ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -51,7 +51,7 @@ $job_types = $job_types ?? ['Full-time', 'Part-time', 'Contract', 'Internship'];
                         <label for="job_type" class="form-label">Job Type *</label>
                         <select class="form-select" id="job_type" name="job_type" required>
                             <?php foreach ($job_types as $type): ?>
-                                <option value="<?php echo $type; ?>"><?php echo $type; ?></option>
+                                <option value="<?php echo e($type); ?>"><?php echo e($type); ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>

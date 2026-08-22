@@ -24,7 +24,7 @@
                             <tbody>
                                 <?php foreach ($events ?? [] as $event): ?>
                                 <tr>
-                                    <td><?php echo $event['id']; ?></td>
+                                    <td><?php echo e($event['id']); ?></td>
                                     <td><?php echo htmlspecialchars($event['title'] ?? ''); ?></td>
                                     <td><?php echo $event['event_date'] ?? '-'; ?></td>
                                     <td><?php echo htmlspecialchars($event['location'] ?? '-'); ?></td>
@@ -36,8 +36,8 @@
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <a href="<?php echo BASE_URL; ?>/admin/events/list/<?php echo $event['id']; ?>" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a>
-                                        <a href="<?php echo BASE_URL; ?>/admin/events/list/<?php echo $event['id']; ?>/edit" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>
+                                        <a href="<?php echo BASE_URL; ?>/admin/events/list/<?php echo e($event['id']); ?>" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a>
+                                        <a href="<?php echo BASE_URL; ?>/admin/events/list/<?php echo e($event['id']); ?>/edit" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>

@@ -21,14 +21,14 @@ $active_page = 'profile';
 <div class="page-content">
     <?php if ($success): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i><?php echo $success; ?>
+            <i class="fas fa-check-circle me-2"></i><?php echo e($success); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
 
     <?php if ($error): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-circle me-2"></i><?php echo $error; ?>
+            <i class="fas fa-exclamation-circle me-2"></i><?php echo e($error); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
@@ -45,7 +45,7 @@ $active_page = 'profile';
                     ?>
                     <h5 class="mb-1 mt-3"><?php echo htmlspecialchars($userName ?? ''); ?></h5>
                     <p class="text-muted mb-2"><?php echo htmlspecialchars($userEmail ?? ''); ?></p>
-                    <span class="badge bg-primary mb-3"><?php echo $roleDisplayName; ?></span>
+                    <span class="badge bg-primary mb-3"><?php echo e($roleDisplayName); ?></span>
 
                     <hr class="my-3">
 
@@ -68,7 +68,7 @@ $active_page = 'profile';
                     <h5 class="card-title mb-0"><i class="fas fa-user me-2"></i>Profile Information</h5>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <form action="<?php echo $profileUrl; ?>" method="POST">
+                    <form action="<?php echo e($profileUrl); ?>" method="POST">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row g-3">
                             <div class="col-md-6">

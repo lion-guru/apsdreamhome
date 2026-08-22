@@ -9,7 +9,7 @@ $stats = $stats ?? ['total_pending' => 0, 'overdue' => 0, 'collected' => 0, 'tot
     <div class="col-6 col-md-3">
         <div class="card border-0 shadow-sm" class="style-19672">
             <div class="card-body p-3 text-center">
-                <div class="fs-2 fw-bold"><?= $stats['total_pending'] ?></div>
+                <div class="fs-2 fw-bold"><?= e($stats['total_pending']) ?></div>
                 <div class="small opacity-75"><?= __('assoc_emi_pending', [], 'Pending EMIs') ?></div>
             </div>
         </div>
@@ -17,7 +17,7 @@ $stats = $stats ?? ['total_pending' => 0, 'overdue' => 0, 'collected' => 0, 'tot
     <div class="col-6 col-md-3">
         <div class="card border-0 shadow-sm">
             <div class="card-body p-3 text-center">
-                <div class="fs-2 fw-bold text-danger"><?= $stats['overdue'] ?></div>
+                <div class="fs-2 fw-bold text-danger"><?= e($stats['overdue']) ?></div>
                 <div class="small text-muted"><?= __('assoc_emi_overdue', [], 'Overdue') ?></div>
             </div>
         </div>
@@ -83,7 +83,7 @@ $stats = $stats ?? ['total_pending' => 0, 'overdue' => 0, 'collected' => 0, 'tot
                                         <br><small class="text-muted"><?= htmlspecialchars($emi['city'] ?? '') ?></small>
                                     <?php endif; ?>
                                 </td>
-                                <td>#<?= $emi['installment_number'] ?? $emi['id'] ?></td>
+                                <td>#<?= e($emi['installment_number'] ?? $emi['id']) ?></td>
                                 <td><strong>₹<?= number_format($emi['amount'] ?? 0) ?></strong></td>
                                 <td>
                                     <span class="<?= $isOverdue ? 'text-danger fw-bold' : '' ?>">

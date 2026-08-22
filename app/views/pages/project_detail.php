@@ -27,8 +27,8 @@ if ($project) {
             <div class="col-lg-8">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="<?php echo $baseUrl; ?>/" class="text-white"><?= __('breadcrumb_home') ?></a></li>
-                        <li class="breadcrumb-item"><a href="<?php echo $baseUrl; ?>/company/projects" class="text-white"><?= __('breadcrumb_projects') ?></a></li>
+                        <li class="breadcrumb-item"><a href="<?php echo e($baseUrl); ?>/" class="text-white"><?= __('breadcrumb_home') ?></a></li>
+                        <li class="breadcrumb-item"><a href="<?php echo e($baseUrl); ?>/company/projects" class="text-white"><?= __('breadcrumb_projects') ?></a></li>
                         <li class="breadcrumb-item text-white active"><?php echo htmlspecialchars($project->site_name); ?></li>
                     </ol>
                 </nav>
@@ -42,7 +42,7 @@ if ($project) {
                         <?php echo ucfirst($project->site_type ?? 'Residential'); ?>
                     </span>
                     <span class="badge bg-<?php echo $project->status === 'active' ? 'success' : 'secondary'; ?> fs-6">
-                        <?php echo $project->status === 'active' ? __('colony_available') : ucfirst($project->status ?? 'Active'); ?>
+                        <?php echo $project->status === 'active' ? __('colony_available') : e(ucfirst($project->status ?? 'Active')); ?>
                     </span>
                     <?php if (!empty($project->total_area)): ?>
                     <span class="badge bg-info fs-6">
@@ -200,10 +200,10 @@ if ($project) {
                             <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-outline-success btn-lg">
                                 <i class="fab fa-whatsapp me-2"></i><?= __('contact_whatsapp') ?>
                             </a>
-                            <a href="<?php echo $baseUrl; ?>/contact" class="btn btn-primary btn-lg">
+                            <a href="<?php echo e($baseUrl); ?>/contact" class="btn btn-primary btn-lg">
                                 <i class="fas fa-envelope me-2"></i><?= __('contact_inquiry') ?>
                             </a>
-                            <a href="<?php echo $baseUrl; ?>/register" class="btn btn-outline-primary btn-lg">
+                            <a href="<?php echo e($baseUrl); ?>/register" class="btn btn-outline-primary btn-lg">
                                 <i class="fas fa-user-plus me-2"></i><?= __('contact_register') ?>
                             </a>
                         </div>
@@ -251,7 +251,7 @@ if ($project) {
                             </tr>
                             <tr>
                                 <td><strong>Status:</strong></td>
-                                <td><span class="badge bg-<?php echo $project->status === 'active' ? 'success' : 'info'; ?>"><?php echo $project->status === 'active' ? 'Available' : ucfirst($project->status ?? 'Active'); ?></span></td>
+                                <td><span class="badge bg-<?php echo $project->status === 'active' ? 'success' : 'info'; ?>"><?php echo $project->status === 'active' ? 'Available' : e(ucfirst($project->status ?? 'Active')); ?></span></td>
                             </tr>
                         </table></div>
                     </div>
@@ -445,7 +445,7 @@ if ($project) {
                         <div class="card-body aps-cp-card-body">
                             <h6 class="card-title"><?php echo htmlspecialchars($related->site_name); ?></h6>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($related->district ?? ''); ?></p>
-                            <a href="<?php echo $baseUrl; ?>/projects/<?php echo $relSlug; ?>" class="btn btn-sm btn-primary"><?= __('featured_view_details') ?></a>
+                            <a href="<?php echo e($baseUrl); ?>/projects/<?php echo e($relSlug); ?>" class="btn btn-sm btn-primary"><?= __('featured_view_details') ?></a>
                         </div>
                     </div>
                 </div>
@@ -457,7 +457,7 @@ if ($project) {
                         <div class="card-body aps-cp-card-body">
                             <h6 class="card-title">Suryoday Colony</h6>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
-                            <a href="<?php echo $baseUrl; ?>/projects/suryoday-colony" class="btn btn-sm btn-primary">View Details</a>
+                            <a href="<?php echo e($baseUrl); ?>/projects/suryoday-colony" class="btn btn-sm btn-primary">View Details</a>
                         </div>
                     </div>
                 </div>
@@ -467,7 +467,7 @@ if ($project) {
                         <div class="card-body aps-cp-card-body">
                             <h6 class="card-title">Raghunath Nagri</h6>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
-                            <a href="<?php echo $baseUrl; ?>/projects/raghunath-nagri" class="btn btn-sm btn-primary">View Details</a>
+                            <a href="<?php echo e($baseUrl); ?>/projects/raghunath-nagri" class="btn btn-sm btn-primary">View Details</a>
                         </div>
                     </div>
                 </div>
@@ -477,14 +477,14 @@ if ($project) {
                         <div class="card-body aps-cp-card-body">
                             <h6 class="card-title">Braj Radha Nagri</h6>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
-                            <a href="<?php echo $baseUrl; ?>/projects/braj-radha-nagri" class="btn btn-sm btn-primary">View Details</a>
+                            <a href="<?php echo e($baseUrl); ?>/projects/braj-radha-nagri" class="btn btn-sm btn-primary">View Details</a>
                         </div>
                     </div>
                 </div>
             <?php endif; ?>
         </div>
         <div class="text-center mt-3">
-            <a href="<?php echo $baseUrl; ?>/company/projects" class="btn btn-outline-primary btn-lg">
+            <a href="<?php echo e($baseUrl); ?>/company/projects" class="btn btn-outline-primary btn-lg">
                 <i class="fas fa-building me-2"></i><?= __('project_view_all') ?>
             </a>
         </div>
@@ -503,7 +503,7 @@ if ($project) {
             <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-success btn-lg">
                 <i class="fab fa-whatsapp me-2"></i><?= __('contact_whatsapp') ?>
             </a>
-            <a href="<?php echo $baseUrl; ?>/register" class="btn btn-light btn-lg">
+            <a href="<?php echo e($baseUrl); ?>/register" class="btn btn-light btn-lg">
                 <i class="fas fa-user-plus me-2"></i><?= __('contact_register') ?>
             </a>
         </div>
@@ -517,7 +517,7 @@ if ($project) {
         <div class="alert alert-info">
             <h2><i class="fas fa-info-circle me-2"></i><?= __('project_not_found') ?></h2>
             <p class="lead"><?= __('project_not_found_desc') ?></p>
-            <a href="<?php echo $baseUrl; ?>/company/projects" class="btn btn-primary">
+            <a href="<?php echo e($baseUrl); ?>/company/projects" class="btn btn-primary">
                 <i class="fas fa-arrow-left me-2"></i><?= __('project_back_to_projects') ?>
             </a>
         </div>

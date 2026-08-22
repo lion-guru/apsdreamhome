@@ -231,11 +231,11 @@ $bankAddUrl = '/wallet/bank-accounts/add';
                             <i class="fas fa-edit me-1"></i>Edit
                         </button>
                         <?php if (empty($account['is_primary'])): ?>
-                            <button class="btn btn-set-primary mb-2" onclick="setPrimary(<?php echo $account['id']; ?>)">
+                            <button class="btn btn-set-primary mb-2" onclick="setPrimary(<?php echo (int)$account['id']; ?>)">
                                 <i class="fas fa-star me-1"></i>Set Primary
                             </button>
                         <?php endif; ?>
-                        <button class="btn btn-delete" onclick="deleteBank(<?php echo $account['id']; ?>)">
+                        <button class="btn btn-delete" onclick="deleteBank(<?php echo (int)$account['id']; ?>)">
                             <i class="fas fa-trash me-1"></i>Delete
                         </button>
                     </div>

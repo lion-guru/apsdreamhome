@@ -153,7 +153,10 @@ class RERAComplianceService
         try {
             try {
                 $tid = $this->getTenantId();
-                $stmt = $this->db->query("SELECT r.*, u.name as user_name, u.email as user_email FROM rera_requests r JOIN users u ON u.id = r.user_id" . ($tid > 1 ? " AND u.tenant_id = $tid" : "") . " WHERE r.status = 'pending' ORDER BY r.created_at DESC");
+                $sql = "SELECT r.*, u.name as user_name, u.email as user_email FROM rera_requests r JOIN users u ON u.id = r.user_id" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . " WHERE r.status = 'pending' ORDER BY r.created_at DESC";
+                $stmt = $this->db->prepare($sql);
+                $params = $tid > 1 ? [$tid] : [];
+                $stmt->execute($params);
             } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
             error_log($e->getMessage());

@@ -1,7 +1,7 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h1 class="h3 mb-1">Service Interest Details</h1>
-        <p class="text-muted mb-0">ID: #<?php echo $service['id']; ?></p>
+        <p class="text-muted mb-0">ID: #<?php echo e($service['id']); ?></p>
     </div>
     <div>
         <a href="<?php echo BASE_URL; ?>/admin/services" class="btn btn-outline-secondary">
@@ -104,7 +104,7 @@
             <div class="card-body aps-cp-card-body">
                 <form method="POST" action="<?php echo BASE_URL; ?>/admin/services/update-status">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                    <input type="hidden" name="id" value="<?php echo $service['id']; ?>">
+                    <input type="hidden" name="id" value="<?php echo e($service['id']); ?>">
                     <div class="mb-3">
                         <select name="status" class="form-select">
                             <option value="new" <?php echo $service['status'] === 'new' ? 'selected' : ''; ?>>New</option>

@@ -16,11 +16,11 @@
             <?php foreach ($nav->getMobileBottomNavItems() as $item): ?>
                 <?php $active = $nav->isActive($item['url']); ?>
                 <div class="col text-center">
-                <a href="<?php echo BASE_URL . $item['url']; ?>"
-                   class="nav-item d-flex flex-column align-items-center justify-content-center py-2 <?php echo $active ? 'active' : ''; ?>"
-                   data-nav-item="<?php echo $item['key']; ?>">
-                        <i class="<?php echo $item['icon']; ?>"></i>
-                        <span><?php echo __($item['label']); ?></span>
+                <a href="<?= e(BASE_URL . $item['url']) ?>"
+                   class="nav-item d-flex flex-column align-items-center justify-content-center py-2 <?= $active ? 'active' : '' ?>"
+                   data-nav-item="<?= e($item['key']) ?>">
+                        <i class="<?= e($item['icon']) ?>"></i>
+                        <span><?= __($item['label']) ?></span>
                     </a>
                 </div>
             <?php endforeach; ?>

@@ -460,19 +460,20 @@ class SocialMediaService
         $since = $this->periodToDate($period);
         $tid = $this->tenantId();
         $leads = $this->db->fetchAll(
-            "SELECT DATE(created_at) as date, COUNT(*) as count FROM social_media_leads WHERE created_at >= ?" . ($tid > 1 ? " AND tenant_id = $tid" : "") . " GROUP BY DATE(created_at) ORDER BY date",
-            [$since]
+            "SELECT DATE(created_at) as date, COUNT(*) as count FROM social_media_leads WHERE created_at >= ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " GROUP BY DATE(created_at) ORDER BY date",
+            $tid > 1 ? [$since, $tid] : [$since]
         );
-        $tenantSql = $tid > 1 ? " AND tenant_id = $tid" : "";
-        $totalLeads = $this->db->fetchOne("SELECT COUNT(*) as c FROM social_media_leads" . $tenantSql)['c'] ?? 0;
-        $newLeads = $this->db->fetchOne("SELECT COUNT(*) as c FROM social_media_leads WHERE status = 'new'" . $tenantSql)['c'] ?? 0;
-        $contacted = $this->db->fetchOne("SELECT COUNT(*) as c FROM social_media_leads WHERE status = 'contacted'" . $tenantSql)['c'] ?? 0;
-        $converted = $this->db->fetchOne("SELECT COUNT(*) as c FROM social_media_leads WHERE status IN ('converted', 'qualified')" . $tenantSql)['c'] ?? 0;
-        $leadsByStatus = $this->db->fetchAll("SELECT status, COUNT(*) as count FROM social_media_leads" . $tenantSql . " GROUP BY status");
+        $tp = $tid > 1 ? [$tid] : [];
+        $totalLeads = $this->db->fetchOne("SELECT COUNT(*) as c FROM social_media_leads" . ($tid > 1 ? " WHERE tenant_id = ?" : ""), $tp)['c'] ?? 0;
+        $newLeads = $this->db->fetchOne("SELECT COUNT(*) as c FROM social_media_leads WHERE status = 'new'" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tp)['c'] ?? 0;
+        $contacted = $this->db->fetchOne("SELECT COUNT(*) as c FROM social_media_leads WHERE status = 'contacted'" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tp)['c'] ?? 0;
+        $converted = $this->db->fetchOne("SELECT COUNT(*) as c FROM social_media_leads WHERE status IN ('converted', 'qualified')" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tp)['c'] ?? 0;
+        $leadsByStatus = $this->db->fetchAll("SELECT status, COUNT(*) as count FROM social_media_leads" . ($tid > 1 ? " WHERE tenant_id = ?" : "") . " GROUP BY status", $tp);
         $leadsByAccount = $this->db->fetchAll(
             "SELECT a.account_name, COUNT(*) as count FROM social_media_leads l
-             LEFT JOIN social_media_accounts a ON a.id = l.account_id" . ($tid > 1 ? " WHERE l.tenant_id = $tid" : "") . "
-             GROUP BY l.account_id ORDER BY count DESC"
+             LEFT JOIN social_media_accounts a ON a.id = l.account_id" . ($tid > 1 ? " WHERE l.tenant_id = ?" : "") . "
+             GROUP BY l.account_id ORDER BY count DESC",
+            $tp
         );
         return [
             'account' => null,

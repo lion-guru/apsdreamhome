@@ -456,6 +456,11 @@ class BaseController
             require_once __DIR__ . '/../../Helpers/TranslationHelper.php';
         }
 
+        // Ensure ViewHelper is available in all views
+        if (!class_exists('App\\Helpers\\ViewHelper')) {
+            require_once __DIR__ . '/../../Helpers/ViewHelper.php';
+        }
+
         // Start output buffering to prevent header issues
         ob_start();
 

@@ -67,7 +67,7 @@ function sendMessage() {
     
     // Simulate AI response
     setTimeout(() => {
-        addMessage("<?= __('user_ai_chat_auto_reply', 'Thank you for your inquiry! Our team will get back to you shortly. For immediate assistance, please call') ?> <?= $phoneDisplay ?>.", 'ai');
+        addMessage("<?= __('user_ai_chat_auto_reply', 'Thank you for your inquiry! Our team will get back to you shortly. For immediate assistance, please call') ?> <?= e($phoneDisplay) ?>.", 'ai');
     }, 1000);
 }
 

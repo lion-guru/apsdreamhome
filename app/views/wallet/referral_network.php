@@ -202,7 +202,7 @@
         <div class="row">
             <div class="col-md-3 col-6 mb-3">
                 <div class="stat-item">
-                    <div class="value"><?php echo $referralEarnings['total_referrals'] ?? 0; ?></div>
+                    <div class="value"><?php echo e($referralEarnings['total_referrals'] ?? 0); ?></div>
                     <div class="label">Total Referrals</div>
                 </div>
             </div>
@@ -214,7 +214,7 @@
             </div>
             <div class="col-md-3 col-6 mb-3">
                 <div class="stat-item">
-                    <div class="value"><?php echo $referralEarnings['today_referrals'] ?? 0; ?></div>
+                    <div class="value"><?php echo e($referralEarnings['today_referrals'] ?? 0); ?></div>
                     <div class="label">Today's Referrals</div>
                 </div>
             </div>
@@ -313,7 +313,7 @@
 
 <script>
 function copyReferralCode() {
-    const referralCode = '<?php echo $user_referral_code; ?>';
+    const referralCode = '<?php echo e($user_referral_code); ?>';
     navigator.clipboard.writeText(referralCode).then(() => {
         alert('Referral code copied to clipboard!');
     }).catch(err => {
@@ -322,20 +322,20 @@ function copyReferralCode() {
 }
 
 function shareOnWhatsApp() {
-    const referralCode = '<?php echo $user_referral_code; ?>';
+    const referralCode = '<?php echo e($user_referral_code); ?>';
     const text = `Join APS Dream Home and use my referral code: ${referralCode} to get 5% discount on your first booking!`;
     const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
 }
 
 function shareOnFacebook() {
-    const referralCode = '<?php echo $user_referral_code; ?>';
+    const referralCode = '<?php echo e($user_referral_code); ?>';
     const url = encodeURIComponent(window.location.href);
     window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
 }
 
 function shareOnTwitter() {
-    const referralCode = '<?php echo $user_referral_code; ?>';
+    const referralCode = '<?php echo e($user_referral_code); ?>';
     const text = `Join APS Dream Home with my referral code: ${referralCode} - Get 5% discount!`;
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');

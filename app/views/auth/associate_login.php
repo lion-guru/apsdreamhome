@@ -196,7 +196,7 @@ $base = BASE_URL;
             ?>
             <div class="stats-bar">
                 <div class="stat-item">
-                    <span class="stat-value"><?= $formatAmount($s['total_paid']) ?></span>
+                    <span class="stat-value"><?= e($formatAmount($s['total_paid'])) ?></span>
                     <span class="stat-label">Total Paid</span>
                 </div>
                 <div class="stat-item">
@@ -222,7 +222,7 @@ $base = BASE_URL;
 
             <div class="quick-stats">
                 <div class="quick-stat">
-                    <span class="quick-stat-value"><?= $formatAmount($s['total_paid']) ?></span>
+                    <span class="quick-stat-value"><?= e($formatAmount($s['total_paid'])) ?></span>
                     <span class="quick-stat-label">Total Paid</span>
                 </div>
                 <div class="quick-stat">
@@ -250,7 +250,7 @@ $base = BASE_URL;
                     </div>
                 <?php endif; ?>
 
-                <form action="<?php echo $base; ?>/associate/login" method="POST" id="associateLoginForm" novalidate>
+                <form action="<?php echo e($base); ?>/associate/login" method="POST" id="associateLoginForm" novalidate>
                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token ?? ''); ?>">
 
                     <div class="input-icon-wrapper">
@@ -285,7 +285,7 @@ $base = BASE_URL;
                     <span><?php echo __('auth_or_continue_with', 'or continue with'); ?></span>
                 </div>
 
-                <a href="<?php echo $base; ?>/auth/google" class="google-btn">
+                <a href="<?php echo e($base); ?>/auth/google" class="google-btn">
                     <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
                         <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -302,7 +302,7 @@ $base = BASE_URL;
         </div>
     </div>
 
-    <a href="<?php echo $base; ?>/" class="back-home">
+    <a href="<?php echo e($base); ?>/" class="back-home">
         <i class="fas fa-arrow-left me-1"></i> <?php echo __('auth_back_to_home', 'Back to Home'); ?>
     </a>
 

@@ -198,7 +198,7 @@
         <?php foreach ($transactions as $transaction): ?>
             <div class="transaction-card">
                 <div class="d-flex align-items-center">
-                    <div class="transaction-icon <?php echo $transaction['transaction_type']; ?>">
+                    <div class="transaction-icon <?php echo e($transaction['transaction_type']); ?>">
                         <?php if ($transaction['transaction_category'] == 'referral'): ?>
                             <i class="fas fa-user-plus"></i>
                         <?php elseif ($transaction['transaction_category'] == 'commission'): ?>
@@ -232,14 +232,14 @@
                     </div>
                 </div>
                 <div class="text-end">
-                    <div class="transaction-amount <?php echo $transaction['transaction_type']; ?>">
+                    <div class="transaction-amount <?php echo e($transaction['transaction_type']); ?>">
                         <?php if ($transaction['transaction_type'] == 'credit'): ?>
                             +₹<?php echo number_format($transaction['amount'], 2); ?>
                         <?php else: ?>
                             -₹<?php echo number_format($transaction['amount'], 2); ?>
                         <?php endif; ?>
                     </div>
-                    <span class="transaction-status <?php echo $transaction['status']; ?>">
+                    <span class="transaction-status <?php echo e($transaction['status']); ?>">
                         <?php echo ucfirst($transaction['status']); ?>
                     </span>
                 </div>
@@ -250,7 +250,7 @@
         <?php if ($totalPages > 1): ?>
             <div class="pagination">
                 <?php if ($currentPage > 1): ?>
-                    <a href="/wallet/transactions?page=<?php echo $currentPage - 1; ?>&filter=<?php echo $filter; ?>&type=<?php echo $type; ?>">
+                    <a href="/wallet/transactions?page=<?php echo $currentPage - 1; ?>&filter=<?php echo e($filter); ?>&type=<?php echo $type; ?>">
                         <i class="fas fa-chevron-left"></i>
                     </a>
                 <?php else: ?>
@@ -259,14 +259,14 @@
 
                 <?php for ($i = 1; $i <= $totalPages; $i++): ?>
                     <?php if ($i == $currentPage): ?>
-                        <span class="active"><?php echo $i; ?></span>
+                        <span class="active"><?php echo e($i); ?></span>
                     <?php else: ?>
-                        <a href="/wallet/transactions?page=<?php echo $i; ?>&filter=<?php echo $filter; ?>&type=<?php echo $type; ?>"><?php echo $i; ?></a>
+                        <a href="/wallet/transactions?page=<?php echo e($i); ?>&filter=<?php echo $filter; ?>&type=<?php echo $type; ?>"><?php echo e($i); ?></a>
                     <?php endif; ?>
                 <?php endfor; ?>
 
                 <?php if ($currentPage < $totalPages): ?>
-                    <a href="/wallet/transactions?page=<?php echo $currentPage + 1; ?>&filter=<?php echo $filter; ?>&type=<?php echo $type; ?>">
+                    <a href="/wallet/transactions?page=<?php echo $currentPage + 1; ?>&filter=<?php echo e($filter); ?>&type=<?php echo $type; ?>">
                         <i class="fas fa-chevron-right"></i>
                     </a>
                 <?php else: ?>

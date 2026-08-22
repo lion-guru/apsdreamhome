@@ -62,7 +62,7 @@ $page_description = 'Detailed view of customer journey';
                         $durationDays = $duration->days;
                         $durationHours = $duration->h;
                         ?>
-                        <p><strong>Duration:</strong> <?php echo $durationDays; ?> days, <?php echo $durationHours; ?> hours</p>
+                        <p><strong>Duration:</strong> <?php echo e($durationDays); ?> days, <?php echo $durationHours; ?> hours</p>
                         <p><strong>Status:</strong> 
                             <span class="badge bg-<?php echo strpos(strtolower($journey['journey']), 'completed') !== false || 
                                                                 strpos(strtolower($journey['journey']), 'converted') !== false ? 

@@ -23,13 +23,14 @@ class DepartmentService
     public function getAll(?string $status = null): array
     {
         $tid = $this->tenantId();
-        $tfilter = $tid > 1 ? " AND tenant_id = $tid" : "";
+        $tfilter = $tid > 1 ? " AND tenant_id = ?" : "";
         $sql = "SELECT d.*, u.name AS head_name,
-                       (SELECT COUNT(*) FROM designations des WHERE des.department_id = d.id$tfilter) AS designation_count,
-                       (SELECT COUNT(*) FROM employees e WHERE e.department COLLATE utf8mb4_unicode_ci = d.code" . ($tid > 1 ? " AND e.tenant_id = $tid" : "") . ") AS employee_count
+                       (SELECT COUNT(*) FROM designations des WHERE des.department_id = d.id" . ($tid > 1 ? " AND des.tenant_id = ?" : "") . ") AS designation_count,
+                       (SELECT COUNT(*) FROM employees e WHERE e.department COLLATE utf8mb4_unicode_ci = d.code" . ($tid > 1 ? " AND e.tenant_id = ?" : "") . ") AS employee_count
                 FROM departments d
                 LEFT JOIN users u ON d.head_user_id = u.id WHERE 1=1" . $this->tenantSql();
         $params = [];
+        if ($tid > 1) { $params[] = $tid; $params[] = $tid; }
         if ($status) {
             $sql .= " AND d.status = ?";
             $params[] = $status;
@@ -145,12 +146,13 @@ class DepartmentService
     public function getStats(): array
     {
         $tid = $this->tenantId();
-        $tfilter = $tid > 1 ? " WHERE tenant_id = $tid" : "";
+        $tp = $tid > 1 ? [$tid] : [];
+        $tfilter = $tid > 1 ? " WHERE tenant_id = ?" : "";
         return [
-            'total'        => $this->fetchColumn("SELECT COUNT(*) FROM departments$tfilter") ?? 0,
-            'active'       => $this->fetchColumn("SELECT COUNT(*) FROM departments WHERE status='active'" . $this->tenantSql()) ?? 0,
-            'total_desig'  => $this->fetchColumn("SELECT COUNT(*) FROM designations$tfilter") ?? 0,
-            'total_emp'    => $this->fetchColumn("SELECT COUNT(*) FROM employees" . $this->tenantSql()) ?? 0,
+            'total'        => $this->fetchColumn("SELECT COUNT(*) FROM departments$tfilter", $tp) ?? 0,
+            'active'       => $this->fetchColumn("SELECT COUNT(*) FROM departments WHERE status='active'" . $this->tenantSql(), $tp) ?? 0,
+            'total_desig'  => $this->fetchColumn("SELECT COUNT(*) FROM designations$tfilter", $tp) ?? 0,
+            'total_emp'    => $this->fetchColumn("SELECT COUNT(*) FROM employees" . $this->tenantSql(), $tp) ?? 0,
         ];
     }
 

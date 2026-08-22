@@ -139,12 +139,13 @@ class DesignationService
     public function getStats(): array
     {
         $tid = $this->tenantId();
-        $tfilter = $tid > 1 ? " WHERE tenant_id = $tid" : "";
+        $tfilter = $tid > 1 ? ' WHERE tenant_id = ?' : '';
+        $tParam = $tid > 1 ? [$tid] : [];
         $tfilterNamed = $this->tenantSql();
         return [
-            'total'      => $this->fetchColumn("SELECT COUNT(*) FROM designations$tfilter") ?? 0,
+            'total'      => $this->fetchColumn("SELECT COUNT(*) FROM designations$tfilter", $tParam) ?? 0,
             'active'     => $this->fetchColumn("SELECT COUNT(*) FROM designations WHERE status='active'" . $tfilterNamed) ?? 0,
-            'by_level'   => $this->fetchAll("SELECT level, COUNT(*) as cnt FROM designations" . $tfilter . " GROUP BY level ORDER BY level"),
+            'by_level'   => $this->fetchAll("SELECT level, COUNT(*) as cnt FROM designations" . $tfilter . " GROUP BY level ORDER BY level", $tParam),
             'by_dept'    => $this->fetchAll(
                 "SELECT d.code, d.name, COUNT(des.id) as cnt
                  FROM departments d LEFT JOIN designations des ON des.department_id = d.id" . $tfilterNamed . "

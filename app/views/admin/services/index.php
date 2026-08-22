@@ -13,14 +13,14 @@ if (!is_dir(__DIR__)) {
 
 <?php if (isset($success) && $success): ?>
 <div class="alert alert-success alert-dismissible fade show">
-    <i class="fas fa-check-circle me-2"></i><?php echo $success; ?>
+    <i class="fas fa-check-circle me-2"></i><?php echo e($success); ?>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 </div>
 <?php endif; ?>
 
 <?php if (isset($error) && $error): ?>
 <div class="alert alert-danger alert-dismissible fade show">
-    <i class="fas fa-exclamation-circle me-2"></i><?php echo $error; ?>
+    <i class="fas fa-exclamation-circle me-2"></i><?php echo e($error); ?>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 </div>
 <?php endif; ?>
@@ -31,7 +31,7 @@ if (!is_dir(__DIR__)) {
         <a href="<?php echo BASE_URL; ?>/admin/services" class="text-decoration-none">
             <div class="card border-0 shadow-sm text-center <?php echo !$serviceType ? 'bg-primary text-white' : 'bg-light'; ?>">
                 <div class="card-body py-2">
-                    <div class="h4 mb-0"><?php echo $total; ?></div>
+                    <div class="h4 mb-0"><?php echo e($total); ?></div>
                     <small>Total</small>
                 </div>
             </div>
@@ -101,7 +101,7 @@ if (!is_dir(__DIR__)) {
                 <select name="service" class="form-select">
                     <option value="">All Services</option>
                     <?php foreach ($serviceLabels as $key => $label): ?>
-                    <option value="<?php echo $key; ?>" <?php echo $serviceType === $key ? 'selected' : ''; ?>><?php echo $label; ?></option>
+                    <option value="<?php echo e($key); ?>" <?php echo $serviceType === $key ? 'selected' : ''; ?>><?php echo $label; ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -189,7 +189,7 @@ if (!is_dir(__DIR__)) {
                         </td>
                         <td class="text-end pe-4">
                             <div class="btn-group">
-                                <a href="<?php echo BASE_URL; ?>/admin/services/view/<?php echo $svc['id']; ?>" class="btn btn-sm btn-outline-primary">
+                                <a href="<?php echo BASE_URL; ?>/admin/services/view/<?php echo e($svc['id']); ?>" class="btn btn-sm btn-outline-primary">
                                     <i class="fas fa-eye"></i>
                                 </a>
                                 <?php if (!empty($svc['phone'])): ?>

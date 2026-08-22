@@ -642,26 +642,31 @@ class AsyncTaskService
             $tid = $this->getTenantId();
             $stats = [];
             
-            $tenantFilter = $tid > 1 ? " WHERE tenant_id = $tid" : "";
+            $tenantFilter = $tid > 1 ? ' WHERE tenant_id = ?' : '';
+            $tidParam = $tid > 1 ? [$tid] : [];
             
             // Total tasks by status
             $stats['by_status'] = $this->database->select(
-                "SELECT status, COUNT(*) as count FROM async_tasks{$tenantFilter} GROUP BY status"
+                "SELECT status, COUNT(*) as count FROM async_tasks{$tenantFilter} GROUP BY status",
+                $tidParam
             );
             
             // Total tasks by type
             $stats['by_type'] = $this->database->select(
-                "SELECT task_type, COUNT(*) as count FROM async_tasks{$tenantFilter} GROUP BY task_type"
+                "SELECT task_type, COUNT(*) as count FROM async_tasks{$tenantFilter} GROUP BY task_type",
+                $tidParam
             );
             
             // Total tasks by priority
             $stats['by_priority'] = $this->database->select(
-                "SELECT priority, COUNT(*) as count FROM async_tasks{$tenantFilter} GROUP BY priority"
+                "SELECT priority, COUNT(*) as count FROM async_tasks{$tenantFilter} GROUP BY priority",
+                $tidParam
             );
             
             // Recent tasks
             $stats['recent'] = $this->database->select(
-                "SELECT * FROM async_tasks{$tenantFilter} ORDER BY created_at DESC LIMIT 10"
+                "SELECT * FROM async_tasks{$tenantFilter} ORDER BY created_at DESC LIMIT 10",
+                $tidParam
             );
             
             // Performance metrics
@@ -672,7 +677,8 @@ class AsyncTaskService
                     SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed_tasks,
                     AVG(CASE WHEN completed_at IS NOT NULL AND started_at IS NOT NULL 
                         THEN TIMESTAMPDIFF(SECOND, started_at, completed_at) ELSE NULL END) as avg_completion_time
-                 FROM async_tasks{$tenantFilter}"
+                 FROM async_tasks{$tenantFilter}",
+                $tidParam
             );
             
             return [

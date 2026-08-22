@@ -33,10 +33,10 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <a href="<?php echo $base; ?>/admin/properties/<?php echo $property['id']; ?>/edit" class="btn btn-outline-primary me-2">
+            <a href="<?php echo e($base); ?>/admin/properties/<?php echo $property['id']; ?>/edit" class="btn btn-outline-primary me-2">
                 <i class="fas fa-edit me-2"></i>Edit Property
             </a>
-            <a href="<?php echo $base; ?>/admin/properties" class="btn btn-outline-secondary">
+            <a href="<?php echo e($base); ?>/admin/properties" class="btn btn-outline-secondary">
                 <i class="fas fa-arrow-left me-2"></i>Back
             </a>
         </div>
@@ -92,9 +92,9 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
             <h5 class="mb-0"><i class="fas fa-upload me-2"></i>Traditional Upload</h5>
         </div>
         <div class="card-body aps-cp-card-body">
-            <form action="<?php echo $base; ?>/admin/properties/images/upload" method="POST" enctype="multipart/form-data">
+            <form action="<?php echo e($base); ?>/admin/properties/images/upload" method="POST" enctype="multipart/form-data">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                <input type="hidden" name="property_id" value="<?php echo $property['id']; ?>">
+                <input type="hidden" name="property_id" value="<?php echo e($property['id']); ?>">
 
                 <div class="row">
                     <div class="col-md-6">
@@ -146,28 +146,28 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                                     alt="Property Image"
                                     class="card-img-top"
                                     class="style-12213"
-                                    onclick="openLightbox('<?php echo $base; ?>/<?php echo $image['image_path']; ?>')" loading="lazy">
+                                    onclick="openLightbox('<?php echo e($base); ?>/<?php echo $image['image_path']; ?>')" loading="lazy">
                                 <div class="card-body p-2">
                                     <input type="text"
                                         class="form-control form-control-sm mb-2"
                                         value="<?php echo htmlspecialchars($image['caption'] ?? ''); ?>"
                                         placeholder="Add caption..."
-                                        onblur="updateCaption(<?php echo $image['id']; ?>, this.value)">
+                                        onblur="updateCaption(<?php echo e($image['id']); ?>, this.value)">
 
                                     <div class="d-flex gap-1">
                                         <?php if (!$image['is_primary']): ?>
-                                            <form method="POST" action="<?php echo $base; ?>/admin/properties/images/set-primary" class="d-inline">
+                                            <form method="POST" action="<?php echo e($base); ?>/admin/properties/images/set-primary" class="d-inline">
                                                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                                                <input type="hidden" name="image_id" value="<?php echo $image['id']; ?>">
-                                                <input type="hidden" name="property_id" value="<?php echo $property['id']; ?>">
+                                                <input type="hidden" name="image_id" value="<?php echo e($image['id']); ?>">
+                                                <input type="hidden" name="property_id" value="<?php echo e($property['id']); ?>">
                                                 <button type="submit" class="btn btn-sm btn-outline-warning" aria-label="Favorite"><i class="fas fa-star"></i></button>
                                             </form>
                                         <?php endif; ?>
 
-                                        <form method="POST" action="<?php echo $base; ?>/admin/properties/images/delete" class="d-inline" data-aps-confirm="Delete this image?">
+                                        <form method="POST" action="<?php echo e($base); ?>/admin/properties/images/delete" class="d-inline" data-aps-confirm="Delete this image?">
                                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                                            <input type="hidden" name="image_id" value="<?php echo $image['id']; ?>">
-                                            <input type="hidden" name="property_id" value="<?php echo $property['id']; ?>">
+                                            <input type="hidden" name="image_id" value="<?php echo e($image['id']); ?>">
+                                            <input type="hidden" name="property_id" value="<?php echo e($property['id']); ?>">
                                             <button type="submit" class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                         </form>
                                     </div>

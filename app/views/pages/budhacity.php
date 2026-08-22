@@ -18,9 +18,9 @@
         <ol class="breadcrumb mb-0">
             <?php foreach ($breadcrumbs as $crumb): ?>
                 <?php if (isset($crumb['url'])): ?>
-                    <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= $crumb['title'] ?></a></li>
+                    <li class="breadcrumb-item"><a href="<?= e($crumb['url']) ?>"><?= e($crumb['title']) ?></a></li>
                 <?php else: ?>
-                    <li class="breadcrumb-item active"><?= $crumb['title'] ?></li>
+                    <li class="breadcrumb-item active"><?= e($crumb['title']) ?></li>
                 <?php endif; ?>
             <?php endforeach; ?>
         </ol>
@@ -57,8 +57,8 @@
                         <?php foreach ($amenities as $amenity): ?>
                             <div class="col-md-3 col-sm-6" data-aos="zoom-in">
                                 <div class="amenity-card bg-white p-4 rounded-4 shadow-sm text-center h-100 transition-hover">
-                                    <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="img-fluid mb-3 rounded-3" alt="<?= $amenity['alt_text'] ?>">
-                                    <h5 class="mb-0"><?= $amenity['title'] ?></h5>
+                                    <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="img-fluid mb-3 rounded-3" alt="<?= e($amenity['alt_text']) ?>">
+                                    <h5 class="mb-0"><?= e($amenity['title']) ?></h5>
                                 </div>
                             </div>
                         <?php endforeach; ?>

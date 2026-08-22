@@ -87,7 +87,7 @@ $statusBadgeClass = [
     <div class="aag-card">
         <h5><i class="fas fa-file-alt me-2" class="style-75937"></i>Agreement Content</h5>
         <div class="aag-content">
-            <?= $agreement['content'] ?>
+            <?= e($agreement['content'] ?? '') ?>
         </div>
     </div>
 

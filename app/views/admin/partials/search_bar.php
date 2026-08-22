@@ -6,7 +6,7 @@
  */
 
 // Get current URL for form submission
-$currentUrl = $_SERVER['REQUEST_URI'] ?? '';
+$currentUrl = esc_url($_SERVER['REQUEST_URI'] ?? '');
 $searchValue = $_GET['search'] ?? '';
 ?>
 
@@ -28,7 +28,7 @@ $searchValue = $_GET['search'] ?? '';
         </div>
     </div>
     <div class="col-md-6 text-end">
-        <button class="btn btn-outline-secondary" onclick="location.href='<?php echo $currentUrl; ?>'">
+        <button class="btn btn-outline-secondary" onclick="location.href='<?php echo e($currentUrl); ?>'">
             <i class="fas fa-sync-alt me-2"></i>Reset
         </button>
     </div>

@@ -51,8 +51,8 @@
                     <td><?php echo htmlspecialchars($p['facing'] ?? '-'); ?></td>
                     <td><?php echo $p['customer_id'] ? ('#' . $p['customer_id']) : '-'; ?></td>
                     <td class="text-nowrap">
-                        <a href="<?php echo BASE_URL; ?>/admin/plots/<?php echo $p['id']; ?>" class="btn btn-sm btn-info" title="View"><i class="fas fa-eye"></i></a>
-                        <a href="<?php echo BASE_URL; ?>/admin/plots/<?php echo $p['id']; ?>/edit" class="btn btn-sm btn-primary" title="Edit"><i class="fas fa-edit"></i></a>
+                        <a href="<?php echo BASE_URL; ?>/admin/plots/<?php echo e($p['id']); ?>" class="btn btn-sm btn-info" title="View"><i class="fas fa-eye"></i></a>
+                        <a href="<?php echo BASE_URL; ?>/admin/plots/<?php echo e($p['id']); ?>/edit" class="btn btn-sm btn-primary" title="Edit"><i class="fas fa-edit"></i></a>
                     </td>
                 </tr>
                 <?php endforeach; ?>

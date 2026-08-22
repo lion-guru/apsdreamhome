@@ -77,7 +77,7 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
                             <?= ucfirst($type) ?>
                         </td>
                         <td class="px-3 fw-bold" class="style-90551">
-                            <?= $isCredit ? '+' : '-' ?>₹<?= number_format($tx['amount'] ?? 0) ?>
+                            <?= $isCredit ? '+' : '-' ?>₹<?= e(number_format($tx['amount'] ?? 0)) ?>
                         </td>
                         <td class="px-3"><small class="text-muted"><?= htmlspecialchars($tx['description'] ?? '-') ?></small></td>
                         <td class="px-3"><small class="text-muted"><?= date('d M Y H:i', strtotime($tx['created_at'] ?? 'now')) ?></small></td>

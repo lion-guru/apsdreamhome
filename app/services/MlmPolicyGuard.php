@@ -156,7 +156,7 @@ class MlmPolicyGuard
             JOIN associates a ON a.id = pb.associate_id
             WHERE a.user_id = ?
               AND pb.status NOT IN ('cancelled', 'refunded')
-            " . ($tid > 1 ? " AND pb.tenant_id = $tid" : "") . "
+            " . ($tid > 1 ? " AND pb.tenant_id = ?" : "") . "
             GROUP BY ym
             ORDER BY ym DESC
             LIMIT 12
@@ -264,7 +264,7 @@ class MlmPolicyGuard
             JOIN associates a ON a.id = pb.associate_id
             WHERE a.user_id = ?
               AND pb.status NOT IN ('cancelled', 'refunded')"
-            . ($tid > 1 ? " AND pb.tenant_id = $tid" : "") . "
+            . ($tid > 1 ? " AND pb.tenant_id = ?" : "") . "
         ");
         $stmt->execute($tid > 1 ? [$userId, $tid] : [$userId]);
         return (float) $stmt->fetchColumn();
@@ -285,7 +285,7 @@ class MlmPolicyGuard
             JOIN users u ON u.id = mnt.associate_id
             LEFT JOIN mlm_profiles mp ON mp.user_id = mnt.associate_id
             WHERE mnt.parent_id = ?"
-            . ($tid > 1 ? " AND mnt.tenant_id = $tid" : "") . "
+            . ($tid > 1 ? " AND mnt.tenant_id = ?" : "") . "
         ");
         $stmt->execute($tid > 1 ? [$userId, $tid] : [$userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

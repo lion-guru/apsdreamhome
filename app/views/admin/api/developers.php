@@ -31,7 +31,7 @@ $active = $active ?? 0;
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Total Developers</h6>
-                            <h3 class="mb-0"><?php echo $total; ?></h3>
+                            <h3 class="mb-0"><?php echo e($total); ?></h3>
                         </div>
                     </div>
                 </div>
@@ -48,7 +48,7 @@ $active = $active ?? 0;
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Active</h6>
-                            <h3 class="mb-0"><?php echo $active; ?></h3>
+                            <h3 class="mb-0"><?php echo e($active); ?></h3>
                         </div>
                     </div>
                 </div>
@@ -82,7 +82,7 @@ $active = $active ?? 0;
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">API Keys Issued</h6>
-                            <h3 class="mb-0"><?php echo $total; ?></h3>
+                            <h3 class="mb-0"><?php echo e($total); ?></h3>
                         </div>
                     </div>
                 </div>

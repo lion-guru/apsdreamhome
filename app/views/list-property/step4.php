@@ -47,7 +47,7 @@ $d = $state['form_data'] ?? [];
                                 <select name="price_type" class="form-select">
                                     <?php $pt = $d['priceType'] ?? 'lakh'; ?>
                                     <?php foreach (['lakh','crore','thousand','per sqft','per month'] as $u): ?>
-                                        <option value="<?= $u ?>" <?= $pt === $u ? 'selected' : '' ?>><?= $u ?></option>
+                                        <option value="<?= e($u ?? '') ?>" <?= $pt === $u ? 'selected' : '' ?>><?= e($u ?? '') ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>

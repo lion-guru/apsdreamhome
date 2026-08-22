@@ -5,7 +5,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Testimonial Details</h5>
                     <div>
-                        <a href="<?php echo BASE_URL; ?>/admin/testimonials/<?php echo $testimonial['id']; ?>/edit" class="btn btn-warning">
+                        <a href="<?php echo BASE_URL; ?>/admin/testimonials/<?php echo e($testimonial['id']); ?>/edit" class="btn btn-warning">
                             <i class="fas fa-edit"></i> Edit
                         </a>
                         <a href="<?php echo BASE_URL; ?>/admin/testimonials" class="btn btn-secondary">
@@ -19,7 +19,7 @@
                             <div class="table-responsive"><table class="table table-bordered">
                                 <tr>
                                     <th class="w-25">ID</th>
-                                    <td><?php echo $testimonial['id']; ?></td>
+                                    <td><?php echo e($testimonial['id']); ?></td>
                                 </tr>
                                 <tr>
                                     <th>Customer Name</th>
@@ -39,7 +39,7 @@
                                         <?php for ($i = 1; $i <= 5; $i++): ?>
                                             <i class="fas fa-star <?php echo $i <= $testimonial['rating'] ? 'text-warning' : 'text-muted'; ?>"></i>
                                         <?php endfor; ?>
-                                        (<?php echo $testimonial['rating']; ?>/5)
+                                        (<?php echo e($testimonial['rating']); ?>/5)
                                     </td>
                                 </tr>
                                 <tr>

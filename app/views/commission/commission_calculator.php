@@ -37,7 +37,7 @@
         <ol class="breadcrumb mb-0">
             <?php foreach ($breadcrumbs as $crumb): ?>
                 <?php if (isset($crumb['url'])): ?>
-                    <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= $crumb['title'] ?></a></li>
+                    <li class="breadcrumb-item"><a href="<?= esc_url($crumb['url'] ?? '') ?>"><?= e($crumb['title'] ?? '') ?></a></li>
                 <?php else: ?>
                     <li class="breadcrumb-item active"><?= $crumb['title'] ?></li>
                 <?php endif; ?>

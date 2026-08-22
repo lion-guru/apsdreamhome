@@ -35,8 +35,8 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $projectName; ?> - APS Dream Homes</title>
-    <meta name="description" content="<?php echo $metaDescription; ?>">
+    <title><?php echo e($projectName); ?> - APS Dream Homes</title>
+    <meta name="description" content="<?php echo e($metaDescription); ?>">
 
     <!-- Bootstrap CSS -->
     <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
@@ -71,15 +71,15 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 mx-auto text-center">
-                    <h1 class="display-4 fw-bold mb-3"><?php echo $projectName; ?></h1>
+                    <h1 class="display-4 fw-bold mb-3"><?php echo e($projectName); ?></h1>
                     <p class="lead mb-4">Premium Residential Plots in Gorakhpur</p>
                     <div class="d-flex justify-content-center gap-3">
                         <span class="badge bg-primary px-3 py-2">
                             <i class="fas fa-map-marker-alt me-1"></i>
-                            <?php echo $projectLocation; ?>
+                            <?php echo e($projectLocation); ?>
                         </span>
                         <span class="badge bg-warning px-3 py-2">
-                            <?php echo $projectStatus; ?>
+                            <?php echo e($projectStatus); ?>
                         </span>
                     </div>
                 </div>
@@ -108,7 +108,7 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
                                             <i class="fas fa-home"></i>
                                         </div>
                                         <h5>Project Type</h5>
-                                        <p class="text-muted"><?php echo $projectType; ?></p>
+                                        <p class="text-muted"><?php echo e($projectType); ?></p>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
@@ -117,7 +117,7 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
                                             <i class="fas fa-map-marked-alt"></i>
                                         </div>
                                         <h5>Location</h5>
-                                        <p class="text-muted"><?php echo $projectLocation; ?></p>
+                                        <p class="text-muted"><?php echo e($projectLocation); ?></p>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
@@ -126,7 +126,7 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
                                             <i class="fas fa-calendar-alt"></i>
                                         </div>
                                         <h5>Possession</h5>
-                                        <p class="text-muted"><?php echo $possessionDate; ?></p>
+                                        <p class="text-muted"><?php echo e($possessionDate); ?></p>
                                     </div>
                                 </div>
                             </div>
@@ -164,25 +164,25 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
                             <li class="mb-3">
                                 <strong>Starting Price:</strong>
                                 <span class="float-end text-primary fw-bold">
-                                    <?php echo $startingPrice; ?>
+                                    <?php echo e($startingPrice); ?>
                                 </span>
                             </li>
                             <li class="mb-3">
                                 <strong>Project Area:</strong>
                                 <span class="float-end">
-                                    <?php echo $projectArea; ?>
+                                    <?php echo e($projectArea); ?>
                                 </span>
                             </li>
                             <li class="mb-3">
                                 <strong>Total Units:</strong>
                                 <span class="float-end">
-                                    <?php echo $totalUnits; ?>
+                                    <?php echo e($totalUnits); ?>
                                 </span>
                             </li>
                             <li class="mb-3">
                                 <strong>Possession:</strong>
                                 <span class="float-end">
-                                    <?php echo $possessionDate; ?></p>
+                                    <?php echo e($possessionDate); ?></p>
                                 </span>
                             </li>
                         </ul>
@@ -206,7 +206,7 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="enquiryModalLabel">Enquire About <?php echo $projectName; ?></h5>
+                    <h5 class="modal-title" id="enquiryModalLabel">Enquire About <?php echo e($projectName); ?></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -226,7 +226,7 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
                         </div>
                         <div class="mb-3">
                             <label for="message" class="form-label">Message</label>
-                            <textarea class="form-control" id="message" name="message" rows="3">I'm interested in <?php echo $projectName; ?>. Please contact me with more details.</textarea>
+                            <textarea class="form-control" id="message" name="message" rows="3">I'm interested in <?php echo e($projectName); ?>. Please contact me with more details.</textarea>
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Submit Enquiry</button>
                     </form>

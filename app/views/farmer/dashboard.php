@@ -38,7 +38,7 @@ $land_holdings = $land_holdings ?? [];
         <div class="col-md-3 col-6">
             <div class="farmer-stat-card">
                 <div class="stat-icon-f green"><i class="fas fa-map-marked-alt"></i></div>
-                <div class="stat-value-f"><?php echo $stats['total_holdings']; ?></div>
+                <div class="stat-value-f"><?php echo e($stats['total_holdings']); ?></div>
                 <div class="stat-label-f">Land Holdings</div>
             </div>
         </div>
@@ -59,7 +59,7 @@ $land_holdings = $land_holdings ?? [];
         <div class="col-md-3 col-6">
             <div class="farmer-stat-card">
                 <div class="stat-icon-f purple"><i class="fas fa-file-signature"></i></div>
-                <div class="stat-value-f"><?php echo $stats['active_agreements']; ?></div>
+                <div class="stat-value-f"><?php echo e($stats['active_agreements']); ?></div>
                 <div class="stat-label-f">Active Agreements</div>
             </div>
         </div>
@@ -131,7 +131,7 @@ $land_holdings = $land_holdings ?? [];
                     ?>
                     <div class="mb-2 d-flex justify-content-between">
                         <span><i class="fas fa-check-circle text-success me-1"></i>Acquired</span>
-                        <span class="fw-bold"><?php echo $acquired; ?></span>
+                        <span class="fw-bold"><?php echo e($acquired); ?></span>
                     </div>
                     <?php if ($total > 0): ?>
                     <div class="progress mb-3" class="style-79794">
@@ -140,11 +140,11 @@ $land_holdings = $land_holdings ?? [];
                     <?php endif; ?>
                     <div class="mb-2 d-flex justify-content-between">
                         <span><i class="fas fa-clock text-warning me-1"></i>Negotiation</span>
-                        <span class="fw-bold"><?php echo $negotiation; ?></span>
+                        <span class="fw-bold"><?php echo e($negotiation); ?></span>
                     </div>
                     <div class="mb-2 d-flex justify-content-between">
                         <span><i class="fas fa-hourglass-half text-secondary me-1"></i>Pending</span>
-                        <span class="fw-bold"><?php echo $pending; ?></span>
+                        <span class="fw-bold"><?php echo e($pending); ?></span>
                     </div>
                 </div>
             </div>

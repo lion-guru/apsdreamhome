@@ -13,7 +13,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             <h2 class="mb-1">EMI Foreclosure Report</h2>
             <p class="text-muted mb-0">Track and analyze all foreclosure activities across the portfolio</p>
         </div>
-        <a href="<?php echo $base; ?>/admin/emi" class="btn btn-outline-secondary">
+        <a href="<?php echo e($base); ?>/admin/emi" class="btn btn-outline-secondary">
             <i class="fas fa-arrow-left me-2"></i>Back to EMI Plans
         </a>
     </div>
@@ -69,7 +69,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     $rate = $total > 0 ? round(($success / $total) * 100, 1) : 0;
                     ?>
                     <h2 class="mb-0 text-<?php echo $rate >= 80 ? 'success' : ($rate >= 50 ? 'warning' : 'danger'); ?>">
-                        <?php echo $rate; ?>%
+                        <?php echo e($rate); ?>%
                     </h2>
                 </div>
             </div>
@@ -87,7 +87,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
     <!-- Filters -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body">
-            <form method="GET" action="<?php echo $base; ?>/admin/emi/foreclosure-report" class="row g-3 align-items-end">
+            <form method="GET" action="<?php echo e($base); ?>/admin/emi/foreclosure-report" class="row g-3 align-items-end">
                 <div class="col-md-3">
                     <label class="form-label">Start Date</label>
                     <input type="date" name="start_date" class="form-control" value="<?php echo htmlspecialchars($filters['start_date'] ?? ''); ?>">
@@ -102,7 +102,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 </div>
                 <div class="col-md-3">
                     <button type="submit" class="btn btn-primary me-2"><i class="fas fa-filter me-1"></i>Filter</button>
-                    <a href="<?php echo $base; ?>/admin/emi/foreclosure-report" class="btn btn-outline-secondary">Clear</a>
+                    <a href="<?php echo e($base); ?>/admin/emi/foreclosure-report" class="btn btn-outline-secondary">Clear</a>
                 </div>
             </form>
         </div>

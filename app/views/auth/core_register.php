@@ -185,11 +185,11 @@ $selectedRole = $selectedRole ?? 'customer';
                 <!-- Role Selection Cards -->
                 <div class="role-selector">
                     <?php foreach ($roleOptions as $roleKey => $roleData): ?>
-                    <div class="role-card <?= $roleKey ?> <?= $selectedRole === $roleKey ? 'selected' : '' ?>" 
-                         data-role="<?= $roleKey ?>" onclick="selectRole(this, '<?= $roleKey ?>')">
-                        <i class="<?= $roleData['icon'] ?> role-icon"></i>
-                        <span class="role-label"><?= $roleData['label'] ?></span>
-                        <span class="role-desc"><?= $roleData['desc'] ?></span>
+                    <div class="role-card <?= e($roleKey) ?> <?= $selectedRole === $roleKey ? 'selected' : '' ?>" 
+                         data-role="<?= e($roleKey) ?>" onclick="selectRole(this, '<?= e($roleKey) ?>')">
+                        <i class="<?= e($roleData['icon']) ?> role-icon"></i>
+                        <span class="role-label"><?= e($roleData['label']) ?></span>
+                        <span class="role-desc"><?= e($roleData['desc']) ?></span>
                     </div>
                     <?php endforeach; ?>
                 </div>

@@ -77,12 +77,11 @@ class DepartmentRequestController extends AdminController
 
     private function resolveDepartmentId(string $code): ?int
     {
-        $tid = $this->tenantId();
-        $where = $tid > 1 ? " WHERE tenant_id = $tid" : " WHERE 1";
+        $tid = (int)$this->tenantId();
+        $where = $tid > 1 ? ' WHERE tenant_id = ?' : ' WHERE 1';
 
         $sql = "SELECT id FROM departments {$where} AND code = ? LIMIT 1";
-        $params = [$code];
-        if ($tid > 1) $params[] = $tid;
+        $params = $tid > 1 ? [$tid, $code] : [$code];
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
@@ -244,11 +243,13 @@ class DepartmentRequestController extends AdminController
      */
     private function getDepartments(): array
     {
-        $tid = $this->tenantId();
-        $where = $tid > 1 ? " WHERE tenant_id = $tid" : "";
+        $tid = (int)$this->tenantId();
+        $where = $tid > 1 ? ' WHERE tenant_id = ?' : '';
+        $tidParam = $tid > 1 ? [$tid] : [];
 
         $sql = "SELECT code, name FROM departments WHERE status = 'active'{$where} ORDER BY name";
-        $stmt = $this->db->query($sql);
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($tidParam);
 
         return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
     }

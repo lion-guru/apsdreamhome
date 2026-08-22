@@ -190,10 +190,10 @@
                                 <div class="mb-2">
                                     <div class="d-flex justify-content-between mb-1">
                                         <small><?php echo htmlspecialchars(ucfirst(str_replace('_', ' ', $stage))); ?></small>
-                                        <small class="text-muted"><?php echo $count; ?> (<?php echo $pct; ?>%)</small>
+                                        <small class="text-muted"><?php echo e($count); ?> (<?php echo $pct; ?>%)</small>
                                     </div>
                                     <div class="progress" class="style-31164">
-                                        <div class="progress-bar bg-<?php echo $color; ?>" class="style-73575"></div>
+                                        <div class="progress-bar bg-<?php echo e($color); ?>" class="style-73575"></div>
                                     </div>
                                 </div>
                             <?php endforeach; ?>

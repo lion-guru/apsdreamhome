@@ -19,19 +19,21 @@ class LegalDocumentController extends AdminController
     {
         $this->requireAdmin();
         $db = $this->getDb();
-        $tid = $this->tenantId();
+        $tid = (int)$this->tenantId();
+        $tidParams = $tid > 1 ? [$tid] : [];
+        $tidSql = $tid > 1 ? ' AND tenant_id = ?' : '';
 
         $stats = [
-            'total'       => (int)$db->query("SELECT COUNT(*) FROM legal_documents WHERE tenant_id = $tid")->fetchColumn(),
-            'active'      => (int)$db->query("SELECT COUNT(*) FROM legal_documents WHERE tenant_id = $tid AND status = 'active'")->fetchColumn(),
-            'templates'   => (int)$db->query("SELECT COUNT(*) FROM legal_document_templates WHERE tenant_id = $tid")->fetchColumn(),
-            'categories'  => (int)$db->query("SELECT COUNT(*) FROM legal_document_categories WHERE tenant_id = $tid")->fetchColumn(),
+            'total'       => (int)$db->query("SELECT COUNT(*) FROM legal_documents WHERE 1=1" . $tidSql, $tidParams)->fetchColumn(),
+            'active'      => (int)$db->query("SELECT COUNT(*) FROM legal_documents WHERE status = 'active'" . $tidSql, $tidParams)->fetchColumn(),
+            'templates'   => (int)$db->query("SELECT COUNT(*) FROM legal_document_templates WHERE 1=1" . $tidSql, $tidParams)->fetchColumn(),
+            'categories'  => (int)$db->query("SELECT COUNT(*) FROM legal_document_categories WHERE 1=1" . $tidSql, $tidParams)->fetchColumn(),
             'clauses'     => (int)$db->query("SELECT COUNT(*) FROM legal_clause_library")->fetchColumn(),
             'prompts'     => (int)$db->query("SELECT COUNT(*) FROM legal_ai_prompts")->fetchColumn(),
         ];
 
         try {
-            $docs = $db->query("SELECT d.*, u.name as creator_name FROM legal_documents d LEFT JOIN users u ON d.created_by = u.id WHERE d.tenant_id = $tid ORDER BY d.created_at DESC LIMIT 20")->fetchAll(\PDO::FETCH_ASSOC);
+            $docs = $db->query("SELECT d.*, u.name as creator_name FROM legal_documents d LEFT JOIN users u ON d.created_by = u.id WHERE d.tenant_id = ? ORDER BY d.created_at DESC LIMIT 20", $tidParams)->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             $docs = [];
         }
@@ -52,7 +54,7 @@ class LegalDocumentController extends AdminController
         $tid = $this->tenantId();
 
         try {
-            $cats = $db->query("SELECT c.*, (SELECT COUNT(*) FROM legal_document_templates WHERE category_id = c.id) as template_count FROM legal_document_categories c WHERE c.tenant_id = $tid ORDER BY c.sort_order ASC, c.name ASC")->fetchAll(\PDO::FETCH_ASSOC);
+            $cats = $db->query("SELECT c.*, (SELECT COUNT(*) FROM legal_document_templates WHERE category_id = c.id) as template_count FROM legal_document_categories c WHERE c.tenant_id = ? ORDER BY c.sort_order ASC, c.name ASC", $tidParams)->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             $cats = [];
         }
@@ -137,25 +139,27 @@ class LegalDocumentController extends AdminController
     {
         $this->requireAdmin();
         $db = $this->getDb();
-        $tid = $this->tenantId();
+        $tid = (int)$this->tenantId();
+        $tidParams = $tid > 1 ? [$tid] : [];
+        $tidSql = $tid > 1 ? 't.tenant_id = ?' : '1=1';
 
         $catFilter = $_GET['category_id'] ?? '';
         $statusFilter = $_GET['status'] ?? '';
         $search = $_GET['search'] ?? '';
 
-        $where = "WHERE t.tenant_id = $tid";
+        $where = "WHERE $tidSql";
         if ($catFilter !== '') $where .= " AND t.category_id = " . (int)$catFilter;
         if ($statusFilter !== '') $where .= " AND t.status = " . $db->quote($statusFilter);
         if ($search !== '') $where .= " AND (t.name LIKE " . $db->quote("%$search%") . " OR t.description LIKE " . $db->quote("%$search%") . ")";
 
         try {
-            $tpls = $db->query("SELECT t.*, c.name as category_name FROM legal_document_templates t LEFT JOIN legal_document_categories c ON t.category_id = c.id $where ORDER BY t.created_at DESC")->fetchAll(\PDO::FETCH_ASSOC);
+            $tpls = $db->query("SELECT t.*, c.name as category_name FROM legal_document_templates t LEFT JOIN legal_document_categories c ON t.category_id = c.id $where ORDER BY t.created_at DESC", $tidParams)->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             $tpls = [];
         }
 
         try {
-            $cats = $db->query("SELECT id, name FROM legal_document_categories WHERE tenant_id = $tid ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+            $cats = $db->query("SELECT id, name FROM legal_document_categories WHERE tenant_id = ? ORDER BY name", $tidParams)->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             $cats = [];
         }
@@ -204,7 +208,8 @@ class LegalDocumentController extends AdminController
     {
         $this->requireAdmin();
         $db = $this->getDb();
-        $tid = $this->tenantId();
+        $tid = (int)$this->tenantId();
+        $tidParams = $tid > 1 ? [$tid] : [];
         $id = (int)$id;
 
         try {
@@ -216,7 +221,7 @@ class LegalDocumentController extends AdminController
         }
 
         try {
-            $cats = $db->query("SELECT id, name FROM legal_document_categories WHERE tenant_id = $tid ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+            $cats = $db->query("SELECT id, name FROM legal_document_categories WHERE tenant_id = ? ORDER BY name", $tidParams)->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             $cats = [];
         }
@@ -393,25 +398,26 @@ class LegalDocumentController extends AdminController
     {
         $this->requireAdmin();
         $db = $this->getDb();
-        $tid = $this->tenantId();
+        $tid = (int)$this->tenantId();
+        $tidParams = $tid > 1 ? [$tid] : [];
 
         $catFilter = $_GET['category'] ?? '';
         $statusFilter = $_GET['status'] ?? '';
         $search = $_GET['search'] ?? '';
 
-        $where = "WHERE d.tenant_id = $tid";
+        $where = $tid > 1 ? "WHERE d.tenant_id = ?" : "WHERE 1=1";
         if ($catFilter !== '') $where .= " AND d.category = " . $db->quote($catFilter);
         if ($statusFilter !== '') $where .= " AND d.status = " . $db->quote($statusFilter);
         if ($search !== '') $where .= " AND (d.title LIKE " . $db->quote("%$search%") . " OR d.description LIKE " . $db->quote("%$search%") . ")";
 
         try {
-            $docs = $db->query("SELECT d.*, u.name as creator_name FROM legal_documents d LEFT JOIN users u ON d.created_by = u.id $where ORDER BY d.created_at DESC")->fetchAll(\PDO::FETCH_ASSOC);
+            $docs = $db->query("SELECT d.*, u.name as creator_name FROM legal_documents d LEFT JOIN users u ON d.created_by = u.id $where ORDER BY d.created_at DESC", $tidParams)->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             $docs = [];
         }
 
         try {
-            $cats = $db->query("SELECT DISTINCT category FROM legal_documents WHERE tenant_id = $tid AND category IS NOT NULL ORDER BY category")->fetchAll(\PDO::FETCH_COLUMN);
+            $cats = $db->query("SELECT DISTINCT category FROM legal_documents WHERE tenant_id = ? AND category IS NOT NULL ORDER BY category", $tidParams)->fetchAll(\PDO::FETCH_COLUMN);
         } catch (\Exception $e) {
             $cats = [];
         }
@@ -427,10 +433,11 @@ class LegalDocumentController extends AdminController
     {
         $this->requireAdmin();
         $db = $this->getDb();
-        $tid = $this->tenantId();
+        $tid = (int)$this->tenantId();
+        $tidParams = $tid > 1 ? [$tid] : [];
 
         try {
-            $templates = $db->query("SELECT id, name FROM legal_document_templates WHERE tenant_id = $tid AND status = 'active' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+            $templates = $db->query("SELECT id, name FROM legal_document_templates WHERE tenant_id = ? AND status = 'active' ORDER BY name", $tidParams)->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             $templates = [];
         }
@@ -836,7 +843,8 @@ class LegalDocumentController extends AdminController
     {
         $this->requireAdmin();
         $db = $this->getDb();
-        $tid = $this->tenantId();
+        $tid = (int)$this->tenantId();
+        $tidParams = $tid > 1 ? [$tid] : [];
 
         try {
             $prompts = $db->query("SELECT * FROM legal_ai_prompts WHERE is_active = 1 ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
@@ -844,7 +852,7 @@ class LegalDocumentController extends AdminController
             $prompts = [];
         }
         try {
-            $cats = $db->query("SELECT id, name FROM legal_document_categories WHERE tenant_id = $tid ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+            $cats = $db->query("SELECT id, name FROM legal_document_categories WHERE tenant_id = ? ORDER BY name", $tidParams)->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             $cats = [];
         }

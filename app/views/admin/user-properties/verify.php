@@ -5,7 +5,7 @@
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/admin">Dashboard</a></li>
             <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/admin/user-properties">User Properties</a></li>
-            <li class="breadcrumb-item active">Property #<?php echo $property['id']; ?></li>
+            <li class="breadcrumb-item active">Property #<?php echo e($property['id']); ?></li>
         </ol>
     </nav>
 
@@ -36,7 +36,7 @@
                                 default => 'secondary'
                             };
                             ?>
-                            <span class="badge bg-<?php echo $statusClass; ?> fs-6"><?php echo ucfirst($property['status']); ?></span>
+                            <span class="badge bg-<?php echo e($statusClass); ?> fs-6"><?php echo ucfirst($property['status']); ?></span>
                             <span class="badge bg-secondary ms-2"><?php echo ucfirst($property['listing_type']); ?></span>
                         </div>
                     </div>
@@ -106,7 +106,7 @@
                     <div class="card-body aps-cp-card-body">
                         <form method="POST" action="<?php echo BASE_URL; ?>/admin/user-properties/action">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                            <input type="hidden" name="id" value="<?php echo $property['id']; ?>">
+                            <input type="hidden" name="id" value="<?php echo e($property['id']); ?>">
                             <input type="hidden" name="action" value="approve">
                             <div class="mb-3">
                                 <label class="form-label">Admin Notes</label>
@@ -118,7 +118,7 @@
                         </form>
                         <form method="POST" action="<?php echo BASE_URL; ?>/admin/user-properties/action">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                            <input type="hidden" name="id" value="<?php echo $property['id']; ?>">
+                            <input type="hidden" name="id" value="<?php echo e($property['id']); ?>">
                             <input type="hidden" name="action" value="reject">
                             <button type="submit" class="btn btn-outline-danger w-100">
                                 <i class="fas fa-times me-1"></i> Reject Property
@@ -144,7 +144,7 @@
                         <p class="text-muted mb-0">This property has been rejected.</p>
                         <form method="POST" action="<?php echo BASE_URL; ?>/admin/user-properties/action" class="mt-3">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                            <input type="hidden" name="id" value="<?php echo $property['id']; ?>">
+                            <input type="hidden" name="id" value="<?php echo e($property['id']); ?>">
                             <input type="hidden" name="action" value="approve">
                             <button type="submit" class="btn btn-outline-success w-100">
                                 <i class="fas fa-check me-1"></i> Re-approve

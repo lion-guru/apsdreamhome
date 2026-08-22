@@ -40,7 +40,7 @@ $GLOBALS['_html_doc_started'] = true;
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/dark-mode.css" rel="stylesheet">
     <!-- Universal mobile-first responsive overrides -->
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/mobile-responsive.css" rel="stylesheet">
-    <?php if (isset($extra_css) && $extra_css): ?><!-- Extra page-specific CSS --><?php echo $extra_css; ?><?php endif; ?>
+    <?php if (isset($extra_css) && $extra_css): ?><!-- Extra page-specific CSS --><?php echo e($extra_css); ?><?php endif; ?>
     <?php if (class_exists('\App\Core\Middleware\TenantContext')): ?>
     <?php $tcColors = \App\Core\Middleware\TenantContext::getColors(); $tcLogo = \App\Core\Middleware\TenantContext::getLogo(); ?>
     <style>
@@ -195,7 +195,7 @@ $GLOBALS['_html_doc_started'] = true;
 
 <body>
     <?php
-    $currentUrl = $_SERVER['REQUEST_URI'] ?? '';
+    $currentUrl = esc_url($_SERVER['REQUEST_URI'] ?? '');
     $adminName = $_SESSION['admin_name'] ?? $_SESSION['user_name'] ?? 'Admin';
     $adminRole = $_SESSION['admin_role'] ?? $_SESSION['role'] ?? 'admin';
     $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
@@ -259,13 +259,13 @@ $GLOBALS['_html_doc_started'] = true;
                 <!-- Notifications (Leads) — replaced by notification-system.js -->
                 <button class="nav-icon" id="notification-bell-placeholder" onclick="toggleNotifications()" title="New Leads Today">
                     <i class="fas fa-bell"></i>
-                    <span class="badge"><?php echo $newLeadsCount; ?></span>
+                    <span class="badge"><?php echo e($newLeadsCount); ?></span>
                 </button>
 
                 <!-- Messages / Inquiries -->
                 <button class="nav-icon" onclick="toggleMessages()" title="New Inquiries Today">
                     <i class="fas fa-envelope"></i>
-                    <span class="badge"><?php echo $newInquiriesCount; ?></span>
+                    <span class="badge"><?php echo e($newInquiriesCount); ?></span>
                 </button>
 
                 <!-- Profile Dropdown (Bootstrap native) -->
@@ -280,16 +280,16 @@ $GLOBALS['_html_doc_started'] = true;
                     </div>
 
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a href="<?php echo $base; ?>/admin/profile" class="dropdown-item"><i class="fas fa-user"></i> My Profile</a></li>
-                        <li><a href="<?php echo $base; ?>/admin/profile/security" class="dropdown-item"><i class="fas fa-shield-alt"></i> Security</a></li>
+                        <li><a href="<?php echo e($base); ?>/admin/profile" class="dropdown-item"><i class="fas fa-user"></i> My Profile</a></li>
+                        <li><a href="<?php echo e($base); ?>/admin/profile/security" class="dropdown-item"><i class="fas fa-shield-alt"></i> Security</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a href="<?php echo $base; ?>/admin/settings" class="dropdown-item"><i class="fas fa-cog"></i> Settings</a></li>
+                        <li><a href="<?php echo e($base); ?>/admin/settings" class="dropdown-item"><i class="fas fa-cog"></i> Settings</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a href="<?php echo $base; ?>/admin/logout" class="dropdown-item text-danger"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        <li><a href="<?php echo e($base); ?>/admin/logout" class="dropdown-item text-danger"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
                 </div>
             </div>
@@ -395,7 +395,7 @@ $GLOBALS['_html_doc_started'] = true;
         }
     })();
     </script>
-    <?php if (isset($extra_js) && $extra_js): ?><!-- Extra page-specific JS --><?php echo $extra_js; ?><?php endif; ?>
+    <?php if (isset($extra_js) && $extra_js): ?><!-- Extra page-specific JS --><?php echo e($extra_js); ?><?php endif; ?>
         <!-- Frontend enhancements: a11y, forms, toasts, loading -->
         <script src="<?= BASE_URL ?>/assets/js/frontend-enhancements.js"></script>
 

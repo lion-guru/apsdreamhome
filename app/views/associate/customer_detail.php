@@ -18,7 +18,7 @@ $isAssociate = ($customer['is_associate'] ?? 0) == 1;
                     <div class="d-flex align-items-center mb-3">
                         <div class="rounded-circle d-flex align-items-center justify-content-center me-3" 
                              class="style-89487">
-                            <i class="fas fa-<?= $isAssociate ? 'user-tie' : 'user' ?>"></i>
+                            <i class="fas fa-<?= e($isAssociate ? 'user-tie' : 'user') ?>"></i>
                         </div>
                         <div>
                             <h4 class="mb-0"><?= htmlspecialchars($customer['name'] ?? __('assoc_cd_na', [], 'N/A')) ?></h4>
@@ -31,13 +31,13 @@ $isAssociate = ($customer['is_associate'] ?? 0) == 1;
                     <div class="row g-3">
                         <div class="col-md-4">
                             <small class="text-muted d-block"><?= __('assoc_cd_phone', [], 'Phone') ?></small>
-                            <a href="tel:<?= $customer['phone'] ?>" class="text-decoration-none fw-bold">
+                            <a href="tel:<?= e($customer['phone']) ?>" class="text-decoration-none fw-bold">
                                 <i class="fas fa-phone me-1"></i><?= htmlspecialchars($customer['phone'] ?? __('assoc_cd_na', [], 'N/A')) ?>
                             </a>
                         </div>
                         <div class="col-md-4">
                             <small class="text-muted d-block"><?= __('assoc_cd_email', [], 'Email') ?></small>
-                            <a href="mailto:<?= $customer['email'] ?>" class="text-decoration-none">
+                            <a href="mailto:<?= e($customer['email']) ?>" class="text-decoration-none">
                                 <?= htmlspecialchars($customer['email'] ?? __('assoc_cd_na', [], 'N/A')) ?>
                             </a>
                         </div>
@@ -48,10 +48,10 @@ $isAssociate = ($customer['is_associate'] ?? 0) == 1;
                     </div>
                 </div>
                 <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                    <a href="tel:<?= $customer['phone'] ?>" class="btn btn-primary btn-sm mb-1">
+                    <a href="tel:<?= e($customer['phone']) ?>" class="btn btn-primary btn-sm mb-1">
                         <i class="fas fa-phone me-1"></i><?= __('assoc_cd_call', [], 'Call') ?>
                     </a>
-                    <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $customer['phone'] ?? '') ?>" class="btn btn-success btn-sm mb-1" target="_blank">
+                    <a href="https://wa.me/<?= e(preg_replace('/[^0-9]/', '', $customer['phone'] ?? '')) ?>" class="btn btn-success btn-sm mb-1" target="_blank">
                         <i class="fab fa-whatsapp me-1"></i>WhatsApp
                     </a>
                     <?php if (!$isAssociate): ?>
@@ -148,7 +148,7 @@ $isAssociate = ($customer['is_associate'] ?? 0) == 1;
                                     <td><?= htmlspecialchars($b['colony_name'] ?? __('assoc_cd_na', [], 'N/A')) ?></td>
                                     <td>�<?= number_format($b['total_plot_value'] ?? 0) ?></td>
                                     <td class="<?= $bookingPaid > 0 ? 'text-success' : 'text-danger' ?>">�<?= number_format($bookingPaid) ?></td>
-                                    <td><span class="badge bg-<?= $statusClass ?>"><?= ucfirst(str_replace('_', ' ', $b['status'] ?? '')) ?></span></td>
+                                    <td><span class="badge bg-<?= e($statusClass) ?>"><?= e(ucfirst(str_replace('_', ' ', $b['status'] ?? ''))) ?></span></td>
                                     <td><?= date('d M Y', strtotime($b['created_at'] ?? '')) ?></td>
                                 </tr>
                             <?php endforeach; ?>
@@ -185,9 +185,9 @@ $isAssociate = ($customer['is_associate'] ?? 0) == 1;
                             <?php foreach ($receipts as $r): ?>
                                 <tr>
                                     <td><strong><?= htmlspecialchars($r['receipt_number'] ?? __('assoc_cd_na', [], 'N/A')) ?></strong></td>
-                                    <td>#<?= $r['booking_id'] ?? __('assoc_cd_na', [], 'N/A') ?></td>
+                                    <td>#<?= e($r['booking_id'] ?? __('assoc_cd_na', [], 'N/A')) ?></td>
                                     <td><strong class="text-success">�<?= number_format($r['amount'] ?? 0) ?></strong></td>
-                                    <td><span class="badge bg-light text-dark"><?= ucfirst($r['payment_mode'] ?? __('assoc_cd_na', [], 'N/A')) ?></span></td>
+                                    <td><span class="badge bg-light text-dark"><?= e(ucfirst($r['payment_mode'] ?? __('assoc_cd_na', [], 'N/A'))) ?></span></td>
                                     <td><?= date('d M Y', strtotime($r['receipt_date'] ?? $r['created_at'] ?? '')) ?></td>
                                     <td>
                                         <?php
@@ -197,7 +197,7 @@ $isAssociate = ($customer['is_associate'] ?? 0) == 1;
                                             default => 'secondary'
                                         };
                                         ?>
-                                        <span class="badge bg-<?= $statusClass ?>"><?= ucfirst($r['status'] ?? __('assoc_cd_na', [], 'N/A')) ?></span>
+                                        <span class="badge bg-<?= e($statusClass) ?>"><?= e(ucfirst($r['status'] ?? __('assoc_cd_na', [], 'N/A'))) ?></span>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

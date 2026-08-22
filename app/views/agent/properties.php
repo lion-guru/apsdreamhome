@@ -43,7 +43,7 @@ if ($filter && $filter !== 'all') {
     <div class="col">
         <a href="<?= $base ?>/agent/properties" class="card agent-prop-stat <?= !$filter || $filter === 'all' ? 'active shadow-sm' : 'shadow-none' ?>">
             <div class="card-body py-2 px-3 text-center">
-                <div class="stat-num text-dark"><?= $stats['total'] ?></div>
+                <div class="stat-num text-dark"><?= e($stats['total']) ?></div>
                 <div class="text-muted small">All</div>
             </div>
         </a>
@@ -51,7 +51,7 @@ if ($filter && $filter !== 'all') {
     <div class="col">
         <a href="<?= $base ?>/agent/properties?status=active" class="card agent-prop-stat <?= $filter === 'active' ? 'active shadow-sm' : 'shadow-none' ?>">
             <div class="card-body py-2 px-3 text-center">
-                <div class="stat-num text-success"><?= $stats['active'] ?></div>
+                <div class="stat-num text-success"><?= e($stats['active']) ?></div>
                 <div class="text-muted small">Active</div>
             </div>
         </a>
@@ -59,7 +59,7 @@ if ($filter && $filter !== 'all') {
     <div class="col">
         <a href="<?= $base ?>/agent/properties?status=sold" class="card agent-prop-stat <?= $filter === 'sold' ? 'active shadow-sm' : 'shadow-none' ?>">
             <div class="card-body py-2 px-3 text-center">
-                <div class="stat-num text-danger"><?= $stats['sold'] ?></div>
+                <div class="stat-num text-danger"><?= e($stats['sold']) ?></div>
                 <div class="text-muted small">Sold</div>
             </div>
         </a>
@@ -67,7 +67,7 @@ if ($filter && $filter !== 'all') {
     <div class="col">
         <a href="<?= $base ?>/agent/properties?status=pending" class="card agent-prop-stat <?= $filter === 'pending' ? 'active shadow-sm' : 'shadow-none' ?>">
             <div class="card-body py-2 px-3 text-center">
-                <div class="stat-num text-warning"><?= $stats['pending'] ?></div>
+                <div class="stat-num text-warning"><?= e($stats['pending']) ?></div>
                 <div class="text-muted small">Pending</div>
             </div>
         </a>
@@ -103,7 +103,7 @@ if ($filter && $filter !== 'all') {
                     $status = $prop['status'] ?? 'active';
                     $sColor = $status === 'sold' ? 'bg-danger' : ($status === 'active' ? 'bg-success' : 'bg-warning text-dark');
                     ?>
-                    <span class="badge <?= $sColor ?>"><?= ucfirst($status) ?></span>
+                    <span class="badge <?= e($sColor) ?>"><?= e(ucfirst($status)) ?></span>
                 </div>
                 <p class="text-muted mb-2 small"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($prop['location'] ?? $prop['city_name'] ?? '-') ?></p>
                 <div class="d-flex gap-3 mb-2">
@@ -111,7 +111,7 @@ if ($filter && $filter !== 'all') {
                         <span class="small text-muted"><i class="fas fa-ruler-combined me-1"></i><?= number_format($prop['area_sqft']) ?> sqft</span>
                     <?php endif; ?>
                     <?php if (!empty($prop['bedrooms'])): ?>
-                        <span class="small text-muted"><i class="fas fa-bed me-1"></i><?= $prop['bedrooms'] ?> BHK</span>
+                        <span class="small text-muted"><i class="fas fa-bed me-1"></i><?= e($prop['bedrooms']) ?> BHK</span>
                     <?php endif; ?>
                 </div>
                 <h5 class="style-613">₹<?= number_format($prop['price'] ?? 0) ?></h5>

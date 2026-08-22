@@ -135,7 +135,7 @@ $page_description = 'View extracted data from lead documents and files';
                                         </small>
                                     </td>
                                     <td>
-                                        <a href="#" class="btn btn-sm btn-outline-primary view-details" data-id="<?php echo $extraction['id']; ?>">
+                                        <a href="#" class="btn btn-sm btn-outline-primary view-details" data-id="<?php echo e($extraction['id']); ?>">
                                             <i class="fas fa-eye"></i> View Details
                                         </a>
                                     </td>

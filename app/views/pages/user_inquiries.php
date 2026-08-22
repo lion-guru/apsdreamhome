@@ -58,7 +58,7 @@ $extraHead = '<style>
                                             default => 'secondary'
                                         };
                                         ?>
-                                        <span class="badge bg-<?php echo $statusClass; ?>"><?php echo ucfirst(__('inq_status_' . ($inq['status'] ?? 'new'))); ?></span>
+                                        <span class="badge bg-<?php echo e($statusClass); ?>"><?php echo ucfirst(__('inq_status_' . ($inq['status'] ?? 'new'))); ?></span>
                                     </td>
                                     <td>
                                         <?php
@@ -69,7 +69,7 @@ $extraHead = '<style>
                                             default => 'secondary'
                                         };
                                         ?>
-                                        <span class="badge bg-<?php echo $priorityClass; ?>"><?php echo ucfirst(__('priority_' . ($inq['priority'] ?? 'medium'))); ?></span>
+                                        <span class="badge bg-<?php echo e($priorityClass); ?>"><?php echo e(ucfirst(__('priority_' . ($inq['priority'] ?? 'medium')))); ?></span>
                                     </td>
                                     <td>
                                         <?php echo date('d M Y', strtotime($inq['created_at'])); ?>

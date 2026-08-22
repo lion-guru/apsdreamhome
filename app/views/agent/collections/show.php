@@ -6,7 +6,7 @@ $c = $collection;
 ?>
 <div class="container-fluid px-4">
     <div class="mb-4">
-        <a href="<?php echo $base; ?>/agent/collections" class="text-decoration-none text-success small">
+        <a href="<?php echo e($base); ?>/agent/collections" class="text-decoration-none text-success small">
             <i class="fas fa-arrow-left me-1"></i>Back to Collections
         </a>
     </div>
@@ -19,8 +19,8 @@ $c = $collection;
             $b = $s === 'verified' ? 'success' : ($s === 'rejected' ? 'danger' : 'warning');
             $icon = $s === 'verified' ? 'check-circle' : ($s === 'rejected' ? 'times-circle' : 'hourglass-half');
             ?>
-            <div class="alert alert-<?php echo $b; ?> d-flex align-items-center gap-2">
-                <i class="fas fa-<?php echo $icon; ?> fa-lg"></i>
+            <div class="alert alert-<?php echo e($b); ?> d-flex align-items-center gap-2">
+                <i class="fas fa-<?php echo e($icon); ?> fa-lg"></i>
                 <strong><?php echo ucfirst($s); ?></strong> &mdash;
                 <?php if ($s === 'submitted'): ?>
                     This collection is pending admin verification.
@@ -100,7 +100,7 @@ $c = $collection;
             <?php endif; ?>
 
             <div class="mt-4 text-center">
-                <a href="<?php echo $base; ?>/agent/collections" class="btn btn-outline-secondary">
+                <a href="<?php echo e($base); ?>/agent/collections" class="btn btn-outline-secondary">
                     <i class="fas fa-arrow-left me-1"></i>Back to Collections
                 </a>
             </div>

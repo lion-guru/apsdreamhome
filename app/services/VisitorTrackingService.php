@@ -213,7 +213,10 @@ class VisitorTrackingService
             try {
                 // Update leads - mark leads from this session as converted
                 $tid = $this->tenantId();
-                $tenantWhere = $tid > 1 ? "tenant_id = $tid AND (" : "(";
+                $tenantWhere = $tid > 1 ? 'tenant_id = ? AND (' : '(';
+                $updateParams = $tid > 1
+                    ? [$tid, $userId, $this->sessionId, $this->sessionId]
+                    : [$userId, $this->sessionId, $this->sessionId];
                 $this->db->query(
                     "UPDATE leads SET 
                         status = 'converted',
@@ -221,7 +224,7 @@ class VisitorTrackingService
                         updated_at = NOW()
                     WHERE $tenantWhere email IN (SELECT email FROM visitor_sessions WHERE session_id = ?) 
                        OR phone IN (SELECT phone FROM visitor_sessions WHERE session_id = ?))",
-                    [$userId, $this->sessionId, $this->sessionId]
+                    $updateParams
                 );
             } catch (\Throwable $e) {
             // Gracefully handle dropped table ref

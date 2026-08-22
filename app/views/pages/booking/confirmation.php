@@ -58,8 +58,8 @@ foreach ($statusSteps as $i => $step) {
                                  class="style-36086">
                             </div>
                             <div class="<?= $i <= $currentStep ? '' : 'opacity-50' ?>">
-                                <i class="<?= $step['icon'] ?> me-1"></i>
-                                <strong><?= $step['label'] ?></strong>
+                                <i class="<?= e($step['icon']) ?> me-1"></i>
+                                <strong><?= e($step['label']) ?></strong>
                                 <?php if ($i === $currentStep): ?>
                                     <span class="badge bg-primary ms-2"><?= __('booking_conf_current', [], 'Current') ?></span>
                                 <?php endif; ?>
@@ -139,7 +139,7 @@ foreach ($statusSteps as $i => $step) {
                                         default   => 'warning',
                                     };
                                     ?>
-                                    <span class="badge bg-<?= $statusClass ?>"><?= ucfirst($inst['status'] ?? 'pending') ?></span>
+                                    <span class="badge bg-<?= e($statusClass) ?>"><?= ucfirst(e($inst['status'] ?? 'pending')) ?></span>
                                 </td>
                             </tr>
                             <?php endforeach; ?>

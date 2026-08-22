@@ -949,37 +949,53 @@ class CRMService
 
     public function getDashboardStats($userId = null, $role = 'admin') {
         try {
-            $whereLead = $role !== 'admin' && $userId ? "AND l.assigned_to = $userId" : "";
-            $whereTask = $role !== 'admin' && $userId ? "AND ct.assigned_to = $userId" : "";
-            $tid = $this->tid();
-            $tenantFilter = $tid ? "AND l.tenant_id = $tid" : "";
-            $tenantFilterTask = $tid ? "AND ct.lead_id IN (SELECT id FROM leads WHERE tenant_id = $tid)" : "";
+            $whereLead = '';
+            $whereTask = '';
+            $leadParams = [];
+            $taskParams = [];
+            if ($role !== 'admin' && $userId) {
+                $whereLead = 'AND l.assigned_to = ?';
+                $leadParams = [(int)$userId];
+                $whereTask = 'AND ct.assigned_to = ?';
+                $taskParams = [(int)$userId];
+            }
+            $tid = (int)$this->tid();
+            $tenantFilter = '';
+            $tenantFilterTask = '';
+            $tidParams = [];
+            $tidParamsTask = [];
+            if ($tid > 1) {
+                $tenantFilter = 'AND l.tenant_id = ?';
+                $tidParams = [$tid];
+                $tenantFilterTask = 'AND ct.lead_id IN (SELECT id FROM leads WHERE tenant_id = ?)';
+                $tidParamsTask = [$tid];
+            }
 
             $stats = [];
+            $leadSqlParams = array_merge($leadParams, $tidParams);
+            $taskSqlParams = array_merge($taskParams, $tidParamsTask);
+            $tenantFilterInter = $tid > 1 ? 'AND ci.tenant_id = ?' : '';
+            $interParams = $tid > 1 ? [$tid] : [];
 
             // Lead counts by status
-            $stmt = $this->db->query("SELECT l.status, COUNT(*) as cnt FROM leads l WHERE l.deleted_at IS NULL $whereLead $tenantFilter GROUP BY l.status");
-            $stats['by_status'] = [];
-            foreach ($stmt->fetchAll() ?: [] as $row) {
-                $stats['by_status'][$row['status']] = (int)$row['cnt'];
-            }
-            $stats['total_leads'] = array_sum($stats['by_status']);
+            $stats['by_status'] = $this->db->fetchAll("SELECT l.status, COUNT(*) as cnt FROM leads l WHERE l.deleted_at IS NULL $whereLead $tenantFilter GROUP BY l.status", $leadSqlParams) ?: [];
+            $stats['total_leads'] = array_sum(array_column($stats['by_status'], 'cnt'));
 
             // Today's leads
-            $stmt = $this->db->query("SELECT COUNT(*) as cnt FROM leads l WHERE DATE(l.created_at) = CURDATE() $whereLead $tenantFilter");
-            $stats['today_leads'] = (int)($stmt->fetch()['cnt'] ?? 0);
+            $row = $this->db->fetch("SELECT COUNT(*) as cnt FROM leads l WHERE DATE(l.created_at) = CURDATE() $whereLead $tenantFilter", $leadSqlParams);
+            $stats['today_leads'] = (int)($row['cnt'] ?? 0);
 
             // This week
-            $stmt = $this->db->query("SELECT COUNT(*) as cnt FROM leads l WHERE l.created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) $whereLead $tenantFilter");
-            $stats['week_leads'] = (int)($stmt->fetch()['cnt'] ?? 0);
+            $row = $this->db->fetch("SELECT COUNT(*) as cnt FROM leads l WHERE l.created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) $whereLead $tenantFilter", $leadSqlParams);
+            $stats['week_leads'] = (int)($row['cnt'] ?? 0);
 
             // Hot leads
-            $stmt = $this->db->query("SELECT COUNT(*) as cnt FROM leads l WHERE l.lead_score >= 70 AND l.deleted_at IS NULL $whereLead $tenantFilter");
-            $stats['hot_leads'] = (int)($stmt->fetch()['cnt'] ?? 0);
+            $row = $this->db->fetch("SELECT COUNT(*) as cnt FROM leads l WHERE l.lead_score >= 70 AND l.deleted_at IS NULL $whereLead $tenantFilter", $leadSqlParams);
+            $stats['hot_leads'] = (int)($row['cnt'] ?? 0);
 
             // Converted
-            $stmt = $this->db->query("SELECT COUNT(*) as cnt FROM leads l WHERE l.is_converted = 1 $whereLead $tenantFilter");
-            $stats['converted'] = (int)($stmt->fetch()['cnt'] ?? 0);
+            $row = $this->db->fetch("SELECT COUNT(*) as cnt FROM leads l WHERE l.is_converted = 1 $whereLead $tenantFilter", $leadSqlParams);
+            $stats['converted'] = (int)($row['cnt'] ?? 0);
 
             // Conversion rate
             $stats['conversion_rate'] = $stats['total_leads'] > 0
@@ -987,49 +1003,46 @@ class CRMService
                 : 0;
 
             // Pending tasks
-            $stmt = $this->db->query("SELECT COUNT(*) as cnt FROM crm_tasks ct WHERE ct.status IN ('pending','in_progress') $whereTask $tenantFilterTask");
-            $stats['pending_tasks'] = (int)($stmt->fetch()['cnt'] ?? 0);
+            $row = $this->db->fetch("SELECT COUNT(*) as cnt FROM crm_tasks ct WHERE ct.status IN ('pending','in_progress') $whereTask $tenantFilterTask", $taskSqlParams);
+            $stats['pending_tasks'] = (int)($row['cnt'] ?? 0);
 
             // Overdue tasks
             $stats['overdue_tasks'] = count($this->getOverdueTasks($userId));
 
             // Interactions today
-            $tenantFilterInter = $tid ? "AND ci.tenant_id = $tid" : "";
-            $stmt = $this->db->query("SELECT COUNT(*) as cnt FROM crm_interactions ci WHERE DATE(ci.created_at) = CURDATE() $tenantFilterInter");
-            $stats['today_interactions'] = (int)($stmt->fetch()['cnt'] ?? 0);
+            $row = $this->db->fetch("SELECT COUNT(*) as cnt FROM crm_interactions ci WHERE DATE(ci.created_at) = CURDATE() $tenantFilterInter", $interParams);
+            $stats['today_interactions'] = (int)($row['cnt'] ?? 0);
 
             // Interactions this week
-            $stmt = $this->db->query("SELECT COUNT(*) as cnt FROM crm_interactions ci WHERE ci.created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) $tenantFilterInter");
-            $stats['week_interactions'] = (int)($stmt->fetch()['cnt'] ?? 0);
+            $row = $this->db->fetch("SELECT COUNT(*) as cnt FROM crm_interactions ci WHERE ci.created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) $tenantFilterInter", $interParams);
+            $stats['week_interactions'] = (int)($row['cnt'] ?? 0);
 
             // Lead sources breakdown
-            $stmt = $this->db->query("SELECT source, COUNT(*) as cnt FROM leads l WHERE l.deleted_at IS NULL $whereLead $tenantFilter GROUP BY source ORDER BY cnt DESC");
-            $stats['by_source'] = $stmt->fetchAll() ?: [];
+            $stats['by_source'] = $this->db->fetchAll("SELECT source, COUNT(*) as cnt FROM leads l WHERE l.deleted_at IS NULL $whereLead $tenantFilter GROUP BY source ORDER BY cnt DESC", $leadSqlParams) ?: [];
 
             // Score distribution
-            $stmt = $this->db->query("SELECT lead_category, COUNT(*) as cnt FROM leads l WHERE l.deleted_at IS NULL $whereLead $tenantFilter GROUP BY lead_category");
-            $stats['by_category'] = $stmt->fetchAll() ?: [];
+            $stats['by_category'] = $this->db->fetchAll("SELECT lead_category, COUNT(*) as cnt FROM leads l WHERE l.deleted_at IS NULL $whereLead $tenantFilter GROUP BY lead_category", $leadSqlParams) ?: [];
 
             // Top assignees
             if ($role === 'admin') {
-                $stmt = $this->db->query(
+                $stats['top_assignees'] = $this->db->fetchAll(
                     "SELECT u.name, l.assigned_to, COUNT(*) as lead_count,
                      SUM(CASE WHEN l.status IN ('won','booking') THEN 1 ELSE 0 END) as won_count
                      FROM leads l JOIN users u ON u.id = l.assigned_to
                      WHERE l.deleted_at IS NULL AND l.assigned_to IS NOT NULL $tenantFilter
-                     GROUP BY l.assigned_to ORDER BY lead_count DESC LIMIT 10"
-                );
-                $stats['top_assignees'] = $stmt->fetchAll() ?: [];
+                     GROUP BY l.assigned_to ORDER BY lead_count DESC LIMIT 10",
+                    $tidParams
+                ) ?: [];
             }
 
             // 7-day trend
-            $stmt = $this->db->query(
+            $stats['weekly_trend'] = $this->db->fetchAll(
                 "SELECT DATE(l.created_at) as date, COUNT(*) as cnt
                  FROM leads l
                  WHERE l.created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) $whereLead $tenantFilter
-                 GROUP BY DATE(l.created_at) ORDER BY date ASC"
-            );
-            $stats['weekly_trend'] = $stmt->fetchAll() ?: [];
+                 GROUP BY DATE(l.created_at) ORDER BY date ASC",
+                $leadSqlParams
+            ) ?: [];
 
             return $stats;
         } catch (\Exception $e) {
@@ -1196,8 +1209,8 @@ class CRMService
             $leadNum = 'LEAD-CSV-' . date('Ymd') . '-' . str_pad($idx + 1, 4, '0', STR_PAD_LEFT);
 
             try {
-                $existingPhone = $phone ? $this->db->query("SELECT id FROM leads WHERE phone = ?" . ($tid ? " AND tenant_id = $tid" : ""), $tid ? [$phone, $tid] : [$phone])->fetch() : null;
-                $existingEmail = $email ? $this->db->query("SELECT id FROM leads WHERE email = ?" . ($tid ? " AND tenant_id = $tid" : ""), $tid ? [$email, $tid] : [$email])->fetch() : null;
+                $existingPhone = $phone ? $this->db->query("SELECT id FROM leads WHERE phone = ?" . ($tid ? " AND tenant_id = ?" : ""), $tid ? [$phone, $tid] : [$phone])->fetch() : null;
+                $existingEmail = $email ? $this->db->query("SELECT id FROM leads WHERE email = ?" . ($tid ? " AND tenant_id = ?" : ""), $tid ? [$email, $tid] : [$email])->fetch() : null;
 
                 if ($existingPhone || $existingEmail) {
                     $duplicates++;
@@ -2148,52 +2161,67 @@ class CRMService
         try {
             $data = ['role' => $role, 'user_id' => $userId];
 
-            // Role-specific lead filter
+            // Role-specific lead filter (prepared statement params)
             $leadFilter = '';
             $taskFilter = '';
-            $tid = $this->tid();
-            $tidFilter = $tid ? " AND l.tenant_id = $tid" : '';
-            $tidFilterT = $tid ? " AND ct.tenant_id = $tid" : '';
+            $leadParams = [];
+            $taskParams = [];
+            $tid = (int)$this->tid();
+            $tidFilter = '';
+            $tidFilterT = '';
+            $tidParams = [];
+            $tidParamsT = [];
+            if ($tid > 1) {
+                $tidFilter = ' AND l.tenant_id = ?';
+                $tidParams = [$tid];
+                $tidFilterT = ' AND ct.tenant_id = ?';
+                $tidParamsT = [$tid];
+            }
             switch ($role) {
                 case 'admin':
                 case 'super_admin':
                     // See everything
                     break;
                 case 'manager':
-                    // See team leads (assigned to their reports)
-                    $leadFilter = "AND l.assigned_to IN (SELECT id FROM users WHERE reports_to = $userId)";
+                    $leadFilter = 'AND l.assigned_to IN (SELECT id FROM users WHERE reports_to = ?)';
+                    $leadParams = [$userId];
                     break;
                 case 'employee':
                 case 'agent':
                 case 'telecaller':
-                    // See own leads only
-                    $leadFilter = "AND l.assigned_to = $userId";
-                    $taskFilter = "AND ct.assigned_to = $userId";
+                    $leadFilter = 'AND l.assigned_to = ?';
+                    $leadParams = [$userId];
+                    $taskFilter = 'AND ct.assigned_to = ?';
+                    $taskParams = [$userId];
                     break;
                 case 'associate':
-                    $leadFilter = "AND l.assigned_to = $userId";
-                    $taskFilter = "AND ct.assigned_to = $userId";
+                    $leadFilter = 'AND l.assigned_to = ?';
+                    $leadParams = [$userId];
+                    $taskFilter = 'AND ct.assigned_to = ?';
+                    $taskParams = [$userId];
                     break;
                 case 'customer':
-                    // Customers don't see CRM dashboard
                     return ['role' => $role, 'error' => 'Customers do not have CRM access'];
             }
 
             // Lead counts
-            $data['total_leads'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM leads l WHERE l.deleted_at IS NULL $leadFilter $tidFilter")['cnt'];
-            $data['today_leads'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM leads l WHERE DATE(l.created_at) = CURDATE() $leadFilter $tidFilter")['cnt'];
-            $data['hot_leads'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM leads l WHERE l.lead_score >= 70 AND l.deleted_at IS NULL $leadFilter $tidFilter")['cnt'];
-            $data['converted'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM leads l WHERE l.is_converted = 1 $leadFilter $tidFilter")['cnt'];
+            $leadSqlParams = array_merge($leadParams, $tidParams);
+            $data['total_leads'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM leads l WHERE l.deleted_at IS NULL $leadFilter $tidFilter", $leadSqlParams)['cnt'];
+            $data['today_leads'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM leads l WHERE DATE(l.created_at) = CURDATE() $leadFilter $tidFilter", $leadSqlParams)['cnt'];
+            $data['hot_leads'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM leads l WHERE l.lead_score >= 70 AND l.deleted_at IS NULL $leadFilter $tidFilter", $leadSqlParams)['cnt'];
+            $data['converted'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM leads l WHERE l.is_converted = 1 $leadFilter $tidFilter", $leadSqlParams)['cnt'];
             $data['conversion_rate'] = $data['total_leads'] > 0 ? round(($data['converted'] / $data['total_leads']) * 100, 1) : 0;
 
             // Pipeline by status
             $data['pipeline'] = $this->db->fetchAll(
-                "SELECT l.status, COUNT(*) as cnt FROM leads l WHERE l.deleted_at IS NULL $leadFilter $tidFilter GROUP BY l.status ORDER BY cnt DESC"
+                "SELECT l.status, COUNT(*) as cnt FROM leads l WHERE l.deleted_at IS NULL $leadFilter $tidFilter GROUP BY l.status ORDER BY cnt DESC",
+                $leadSqlParams
             ) ?: [];
 
             // Tasks
-            $data['pending_tasks'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM crm_tasks ct WHERE ct.status IN ('pending','in_progress') $taskFilter $tidFilterT")['cnt'];
-            $data['overdue_tasks'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM crm_tasks ct WHERE ct.status = 'pending' AND ct.due_date < CURDATE() $taskFilter $tidFilterT")['cnt'];
+            $taskSqlParams = array_merge($taskParams, $tidParamsT);
+            $data['pending_tasks'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM crm_tasks ct WHERE ct.status IN ('pending','in_progress') $taskFilter $tidFilterT", $taskSqlParams)['cnt'];
+            $data['overdue_tasks'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM crm_tasks ct WHERE ct.status = 'pending' AND ct.due_date < CURDATE() $taskFilter $tidFilterT", $taskSqlParams)['cnt'];
 
             // Upcoming follow-ups (next 7 days)
             $data['upcoming_followups'] = $this->db->fetchAll(
@@ -2201,7 +2229,8 @@ class CRMService
                  FROM leads l LEFT JOIN users u ON l.assigned_to = u.id
                  WHERE l.next_activity_date IS NOT NULL AND l.next_activity_date <= DATE_ADD(CURDATE(), INTERVAL 7 DAY)
                    AND l.status NOT IN ('converted','closed','dead') AND l.deleted_at IS NULL $leadFilter $tidFilter
-                 ORDER BY l.next_activity_date ASC LIMIT 10"
+                 ORDER BY l.next_activity_date ASC LIMIT 10",
+                $leadSqlParams
             ) ?: [];
 
             // Recent leads
@@ -2209,7 +2238,8 @@ class CRMService
                 "SELECT l.id, l.name, l.phone, l.email, l.status, l.lead_score, l.source, l.created_at, u.name as assigned_to_name
                  FROM leads l LEFT JOIN users u ON l.assigned_to = u.id
                  WHERE l.deleted_at IS NULL $leadFilter $tidFilter
-                 ORDER BY l.created_at DESC LIMIT 10"
+                 ORDER BY l.created_at DESC LIMIT 10",
+                $leadSqlParams
             ) ?: [];
 
             // My interactions (last 7 days)

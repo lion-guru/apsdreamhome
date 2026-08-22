@@ -16,7 +16,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-primary mb-2"><i class="fas fa-project-diagram"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $activeProjects ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($activeProjects ?? 0) ?></h3>
                     <p class="text-muted mb-0">Active Projects</p>
                 </div>
             </div>
@@ -25,7 +25,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-warning mb-2"><i class="fas fa-clipboard-check"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $pendingApprovals ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($pendingApprovals ?? 0) ?></h3>
                     <p class="text-muted mb-0">Pending Approvals</p>
                 </div>
             </div>
@@ -34,7 +34,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-success mb-2"><i class="fas fa-truck"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $activeVendors ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($activeVendors ?? 0) ?></h3>
                     <p class="text-muted mb-0">Active Vendors</p>
                 </div>
             </div>
@@ -43,7 +43,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-info mb-2"><i class="fas fa-calendar-day"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $siteVisitsToday ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($siteVisitsToday ?? 0) ?></h3>
                     <p class="text-muted mb-0">Site Visits Today</p>
                 </div>
             </div>
@@ -82,7 +82,7 @@
                         <?php foreach ($projectStatus as $ps): ?>
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span><?= htmlspecialchars($ps['label'] ?? '') ?></span>
-                            <span class="badge bg-primary"><?= $ps['count'] ?? 0 ?></span>
+                            <span class="badge bg-primary"><?= e($ps['count'] ?? 0) ?></span>
                         </div>
                         <?php endforeach; ?>
                     <?php else: ?>

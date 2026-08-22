@@ -316,7 +316,7 @@
                 <div class="stat-icon referrals">
                     <i class="fas fa-user-plus"></i>
                 </div>
-                <div class="stat-value"><?php echo $referralStats['total_referrals'] ?? 0; ?></div>
+                <div class="stat-value"><?php echo e($referralStats['total_referrals'] ?? 0); ?></div>
                 <div class="stat-label">Total Referrals</div>
             </div>
         </div>
@@ -351,7 +351,7 @@
                 <?php foreach ($recentTransactions as $transaction): ?>
                     <div class="transaction-item">
                         <div class="d-flex align-items-center">
-                            <div class="transaction-icon <?php echo $transaction['transaction_type']; ?>">
+                            <div class="transaction-icon <?php echo e($transaction['transaction_type']); ?>">
                                 <?php if ($transaction['transaction_category'] == 'referral'): ?>
                                     <i class="fas fa-user-plus"></i>
                                 <?php elseif ($transaction['transaction_category'] == 'commission'): ?>
@@ -373,7 +373,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="transaction-amount <?php echo $transaction['transaction_type']; ?>">
+                        <div class="transaction-amount <?php echo e($transaction['transaction_type']); ?>">
                             <?php if ($transaction['transaction_type'] == 'credit'): ?>
                                 +₹<?php echo number_format($transaction['amount'], 2); ?>
                             <?php else: ?>
@@ -451,19 +451,19 @@
                     <ul class="list-unstyled mb-0">
                         <li class="mb-2">
                             <small class="text-muted">Conversion Rate:</small>
-                            <div class="fw-bold">1 Point = ₹<?php echo $config['point_to_rupee_conversion'] ?? 1; ?></div>
+                            <div class="fw-bold">1 Point = ₹<?php echo e($config['point_to_rupee_conversion'] ?? 1); ?></div>
                         </li>
                         <li class="mb-2">
                             <small class="text-muted">Min Withdrawal:</small>
-                            <div class="fw-bold">₹<?php echo $config['minimum_withdrawal'] ?? 500; ?></div>
+                            <div class="fw-bold">₹<?php echo e($config['minimum_withdrawal'] ?? 500); ?></div>
                         </li>
                         <li class="mb-2">
                             <small class="text-muted">Processing Time:</small>
-                            <div class="fw-bold"><?php echo $config['withdrawal_processing_days'] ?? 3; ?> days</div>
+                            <div class="fw-bold"><?php echo e($config['withdrawal_processing_days'] ?? 3); ?> days</div>
                         </li>
                         <li>
                             <small class="text-muted">Tax on Withdrawal:</small>
-                            <div class="fw-bold"><?php echo $config['tax_on_withdrawal'] ?? 10; ?>%</div>
+                            <div class="fw-bold"><?php echo e($config['tax_on_withdrawal'] ?? 10); ?>%</div>
                         </li>
                     </ul>
                 </div>
@@ -474,7 +474,7 @@
 
 <script>
 function copyReferralCode() {
-    const referralCode = '<?php echo $user_referral_code; ?>';
+    const referralCode = '<?php echo e($user_referral_code); ?>';
     navigator.clipboard.writeText(referralCode).then(() => {
         alert('Referral code copied to clipboard!');
     }).catch(err => {

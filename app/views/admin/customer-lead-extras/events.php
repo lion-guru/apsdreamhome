@@ -187,7 +187,7 @@ $page_description = 'Monitor and analyze lead interactions and events';
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="badge <?php echo $eventTypeClass; ?>">
+                                        <span class="badge <?php echo e($eventTypeClass); ?>">
                                             <?php echo ucfirst($event['event_type'] ?? 'Unknown'); ?>
                                         </span>
                                     </td>
@@ -207,7 +207,7 @@ $page_description = 'Monitor and analyze lead interactions and events';
                                         </small>
                                     </td>
                                     <td>
-                                        <a href="<?php echo BASE_URL; ?>/admin/customer-lead/events/<?php echo $event['id']; ?>" class="btn btn-sm btn-outline-primary">
+                                        <a href="<?php echo BASE_URL; ?>/admin/customer-lead/events/<?php echo e($event['id']); ?>" class="btn btn-sm btn-outline-primary">
                                             <i class="fas fa-eye"></i> View
                                         </a>
                                     </td>

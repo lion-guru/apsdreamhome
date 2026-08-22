@@ -7,23 +7,23 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-1"><i class="fas fa-sms me-2 text-success"></i>SMS Campaigns</h2>
-        <a href="<?php echo $base; ?>/admin/campaigns" class="btn btn-outline-secondary">Back</a>
+        <a href="<?php echo e($base); ?>/admin/campaigns" class="btn btn-outline-secondary">Back</a>
     </div>
 
     <div class="row mb-4">
         <div class="col-md-4">
             <div class="card border-0 shadow-sm"><div class="card-body text-center">
-                <h4 class="text-primary"><?php echo $stats['total']; ?></h4><p class="text-muted mb-0">Total</p>
+                <h4 class="text-primary"><?php echo e($stats['total']); ?></h4><p class="text-muted mb-0">Total</p>
             </div></div>
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm"><div class="card-body text-center">
-                <h4 class="text-success"><?php echo $stats['sent']; ?></h4><p class="text-muted mb-0">Sent</p>
+                <h4 class="text-success"><?php echo e($stats['sent']); ?></h4><p class="text-muted mb-0">Sent</p>
             </div></div>
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm"><div class="card-body text-center">
-                <h4 class="text-warning"><?php echo $stats['draft']; ?></h4><p class="text-muted mb-0">Drafts</p>
+                <h4 class="text-warning"><?php echo e($stats['draft']); ?></h4><p class="text-muted mb-0">Drafts</p>
             </div></div>
         </div>
     </div>

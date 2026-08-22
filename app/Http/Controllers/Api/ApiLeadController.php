@@ -660,8 +660,9 @@ class ApiLeadController extends BaseController
             $sources = $conn->query("SELECT * FROM lead_sources ORDER BY name ASC")->fetchAll(\PDO::FETCH_OBJ);
             $tags = $conn->query("SELECT * FROM lead_tags ORDER BY name ASC")->fetchAll(\PDO::FETCH_OBJ);
             $tid = (int)$this->tenantId();
-            $tidWhere = $tid > 1 ? " WHERE tenant_id = $tid" : '';
-            $users = $conn->query("SELECT id, name, email, role FROM users{$tidWhere} ORDER BY name ASC")->fetchAll(\PDO::FETCH_OBJ);
+            $tidWhere = $tid > 1 ? ' WHERE tenant_id = ?' : '';
+            $tidParam = $tid > 1 ? [$tid] : [];
+            $users = $conn->query("SELECT id, name, email, role FROM users{$tidWhere} ORDER BY name ASC", $tidParam)->fetchAll(\PDO::FETCH_OBJ);
 
             $response = [
                 'success' => true,

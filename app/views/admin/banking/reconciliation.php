@@ -94,7 +94,7 @@ $page_title = 'Bank Reconciliation';
                             <?php else: ?>
                                 <?php foreach ($transactions as $t): ?>
                                     <tr>
-                                        <td><input type="checkbox" class="recon-checkbox" name="transaction_ids[]" value="<?php echo $t['id']; ?>" onchange="updateBulkBtn()"></td>
+                                        <td><input type="checkbox" class="recon-checkbox" name="transaction_ids[]" value="<?php echo e($t['id']); ?>" onchange="updateBulkBtn()"></td>
                                         <td><?php echo isset($t['date']) ? date('d M Y', strtotime($t['date'])) : '-'; ?></td>
                                         <td>
                                             <span class="badge bg-<?php echo ($t['type'] ?? '') === 'credit' ? 'success' : 'danger'; ?>">
@@ -107,10 +107,10 @@ $page_title = 'Bank Reconciliation';
                                         <td><?php echo htmlspecialchars($t['cheque_number'] ?? '-'); ?></td>
                                         <td><?php echo htmlspecialchars(mb_substr($t['description'] ?? '', 0, 40)); ?></td>
                                         <td>
-                                            <a href="<?php echo BASE_URL; ?>/admin/banking/show/<?php echo $t['id']; ?>" class="btn btn-sm btn-outline-info" title="View">
+                                            <a href="<?php echo BASE_URL; ?>/admin/banking/show/<?php echo e($t['id']); ?>" class="btn btn-sm btn-outline-info" title="View">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="<?php echo BASE_URL; ?>/admin/banking/reconcile/<?php echo $t['id']; ?>" class="btn btn-sm btn-outline-success" title="Reconcile">
+                                            <a href="<?php echo BASE_URL; ?>/admin/banking/reconcile/<?php echo e($t['id']); ?>" class="btn btn-sm btn-outline-success" title="Reconcile">
                                                 <i class="fas fa-check"></i>
                                             </a>
                                         </td>

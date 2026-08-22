@@ -25,7 +25,7 @@
                             <tbody>
                                 <?php foreach ($articles ?? [] as $article): ?>
                                 <tr>
-                                    <td><?php echo $article['id']; ?></td>
+                                    <td><?php echo e($article['id']); ?></td>
                                     <td><?php echo htmlspecialchars($article['title'] ?? ''); ?></td>
                                     <td><?php echo htmlspecialchars($article['category'] ?? '-'); ?></td>
                                     <td><?php echo $article['views'] ?? 0; ?></td>
@@ -39,13 +39,13 @@
                                     <td><?php echo date('Y-m-d', strtotime($article['created_at'])); ?></td>
                                     <td>
                                         <div class="btn-group">
-                                            <a href="<?php echo BASE_URL; ?>/admin/knowledge-base/<?php echo $article['id']; ?>" class="btn btn-sm btn-info">
+                                            <a href="<?php echo BASE_URL; ?>/admin/knowledge-base/<?php echo e($article['id']); ?>" class="btn btn-sm btn-info">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="<?php echo BASE_URL; ?>/admin/knowledge-base/<?php echo $article['id']; ?>/edit" class="btn btn-sm btn-warning">
+                                            <a href="<?php echo BASE_URL; ?>/admin/knowledge-base/<?php echo e($article['id']); ?>/edit" class="btn btn-sm btn-warning">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="<?php echo BASE_URL; ?>/admin/knowledge-base/<?php echo $article['id']; ?>/delete" class="btn btn-sm btn-danger" data-aps-confirm="Are you sure?">
+                                            <a href="<?php echo BASE_URL; ?>/admin/knowledge-base/<?php echo e($article['id']); ?>/delete" class="btn btn-sm btn-danger" data-aps-confirm="Are you sure?">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </div>

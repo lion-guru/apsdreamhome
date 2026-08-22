@@ -72,7 +72,7 @@ class BookingLifecycleService
                 if (method_exists($pdo, 'getPdo')) {
                     $pdo = $pdo->getPdo();
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('[BookingLifecycleService] DB init failed: ' . $e->getMessage());
                 $pdo = null;
             }
@@ -113,7 +113,7 @@ class BookingLifecycleService
             }
             
             return $result;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[BookingLifecycleService::updateBookingStatus] ' . $e->getMessage());
             return false;
         }
@@ -220,7 +220,7 @@ class BookingLifecycleService
                 'booking_number'    => $bookingNumber,
                 'commission_amount' => $commissionAmt,
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[BookingLifecycleService::createBooking] ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -351,7 +351,7 @@ class BookingLifecycleService
                     'total_interest' => round($emi * $tenureMonths - $principal, 2),
                 ],
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[BookingLifecycleService::generatePaymentSchedule] ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -388,7 +388,7 @@ class BookingLifecycleService
             $stmt->execute($params);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             return $row ?: null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[BookingLifecycleService::getBookingById] ' . $e->getMessage());
             return null;
         }
@@ -469,7 +469,7 @@ class BookingLifecycleService
             $out['per_page']= $perPage;
             $out['pages']   = $pages;
             return $out;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[BookingLifecycleService::listBookings] ' . $e->getMessage());
             return $out;
         }
@@ -492,7 +492,7 @@ class BookingLifecycleService
             );
             $stmt->execute([$bookingId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[BookingLifecycleService::getPaymentSchedule] ' . $e->getMessage());
             return [];
         }
@@ -672,7 +672,7 @@ class BookingLifecycleService
                 'receipt_number' => $receiptNumber,
                 'installment_status' => $instStatus,
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->db && $this->db->inTransaction()) {
                 $this->db->rollBack();
             }
@@ -705,7 +705,7 @@ class BookingLifecycleService
             );
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[BookingLifecycleService::getOverdueInstallments] ' . $e->getMessage());
             return [];
         }
@@ -764,7 +764,7 @@ class BookingLifecycleService
                 'letter_number' => $letterNumber,
                 'pdf_path'      => $pdfPath,
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[BookingLifecycleService::generateDemandLetter] ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -876,7 +876,7 @@ class BookingLifecycleService
                 'refund_amount' => $refundAmt,
                 'status'     => 'cancelled',
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->db && $this->db->inTransaction()) {
                 $this->db->rollBack();
             }
@@ -926,7 +926,7 @@ class BookingLifecycleService
                 'transfer_id' => $transferId,
                 'status'      => 'transferred',
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->db && $this->db->inTransaction()) {
                 $this->db->rollBack();
             }
@@ -992,7 +992,7 @@ class BookingLifecycleService
             }
 
             return $out;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[BookingLifecycleService::calculateCommission] ' . $e->getMessage());
             $out['error'] = $e->getMessage();
             return $out;
@@ -1024,7 +1024,7 @@ class BookingLifecycleService
             $stmt->execute([$colonyId, $quarter, $year, $progress, $withdrawn]);
             $id = (int)$this->db->lastInsertId();
             return ['success' => true, 'id' => $id];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[BookingLifecycleService::updateReraCompliance] ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -1047,7 +1047,7 @@ class BookingLifecycleService
             );
             $stmt->execute([$colonyId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[BookingLifecycleService::getReraCompliance] ' . $e->getMessage());
             return [];
         }
@@ -1077,36 +1077,47 @@ class BookingLifecycleService
         ];
         try {
             $tid = $this->tid();
-            $tenantSql = $tid ? " WHERE tenant_id = $tid" : "";
-            $tenJoin = $tid ? " JOIN plot_bookings pb ON pb.id = bps.booking_id AND pb.tenant_id = $tid" : "";
-            $tenJoinRcpt = $tid ? " JOIN plot_bookings pb ON pb.id = bpr.booking_id AND pb.tenant_id = $tid" : "";
-            $tenJoinRef = $tid ? " JOIN plot_bookings pb ON pb.id = br.booking_id AND pb.tenant_id = $tid" : "";
-            $totalBookings = (int)$this->db->query("SELECT COUNT(*) FROM plot_bookings$tenantSql")->fetchColumn();
+            $tenantSql = $tid ? ' WHERE tenant_id = ?' : '';
+            $tenJoin = $tid ? ' JOIN plot_bookings pb ON pb.id = bps.booking_id AND pb.tenant_id = ?' : '';
+            $tenJoinRcpt = $tid ? ' JOIN plot_bookings pb ON pb.id = bpr.booking_id AND pb.tenant_id = ?' : '';
+            $tenJoinRef = $tid ? ' JOIN plot_bookings pb ON pb.id = br.booking_id AND pb.tenant_id = ?' : '';
+            $tidParam = $tid ? [$tid] : [];
+            $totalBookings = (int)$this->db->query("SELECT COUNT(*) FROM plot_bookings{$tenantSql}", $tidParam)->fetchColumn();
+            $emiParams = $tid ? [$tid] : [];
             $activeEmi = (int)$this->db->query(
-                "SELECT COUNT(DISTINCT bps.booking_id) FROM booking_payment_schedules bps$tenJoin
-                 WHERE bps.status IN ('pending','overdue','partial')"
+                "SELECT COUNT(DISTINCT bps.booking_id) FROM booking_payment_schedules bps{$tenJoin}
+                 WHERE bps.status IN ('pending','overdue','partial')",
+                $emiParams
             )->fetchColumn();
             $overdueCount = (int)$this->db->query(
-                "SELECT COUNT(*) FROM booking_payment_schedules bps$tenJoin
+                "SELECT COUNT(*) FROM booking_payment_schedules bps{$tenJoin}
                  WHERE bps.status = 'overdue'
-                    OR (bps.status = 'pending' AND bps.due_date < CURDATE())"
+                    OR (bps.status = 'pending' AND bps.due_date < CURDATE())",
+                $emiParams
             )->fetchColumn();
             $mlmWhere = "commission_type IN ('direct_sale','l1_override','l2_override','l3_override','team_bonus')
                    AND status IN ('approved','paid')";
-            if ($tid) { $mlmWhere .= " AND tenant_id = $tid"; }
+            $mlmParams = [];
+            if ($tid) { $mlmWhere .= " AND tenant_id = ?"; $mlmParams[] = $tid; }
             $commissionEarned = (float)$this->db->query(
-                "SELECT COALESCE(SUM(amount),0) FROM mlm_commission_ledger WHERE $mlmWhere"
+                "SELECT COALESCE(SUM(amount),0) FROM mlm_commission_ledger WHERE {$mlmWhere}",
+                $mlmParams
             )->fetchColumn();
+            $refundParams = $tid ? [$tid] : [];
             $refundPending = (int)$this->db->query(
-                "SELECT COUNT(*) FROM booking_refunds br$tenJoinRef WHERE br.status = 'pending'"
+                "SELECT COUNT(*) FROM booking_refunds br{$tenJoinRef} WHERE br.status = 'pending'",
+                $refundParams
             )->fetchColumn();
+            $revenueParams = $tid ? [$tid] : [];
             $totalRevenue = (float)$this->db->query(
-                "SELECT COALESCE(SUM(bpr.amount),0) FROM booking_payment_receipts bpr$tenJoinRcpt
-                 WHERE bpr.status = 'cleared'"
+                "SELECT COALESCE(SUM(bpr.amount),0) FROM booking_payment_receipts bpr{$tenJoinRcpt}
+                 WHERE bpr.status = 'cleared'",
+                $revenueParams
             )->fetchColumn();
             $byStatus = [];
             $rows = $this->db->query(
-                "SELECT status, COUNT(*) c FROM plot_bookings$tenantSql GROUP BY status"
+                "SELECT status, COUNT(*) c FROM plot_bookings{$tenantSql} GROUP BY status",
+                $tidParam
             )->fetchAll(PDO::FETCH_ASSOC);
             foreach ($rows as $r) {
                 $byStatus[$r['status']] = (int)$r['c'];
@@ -1120,7 +1131,7 @@ class BookingLifecycleService
                 'total_revenue'     => round($totalRevenue, 2),
                 'by_status'         => $byStatus,
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[BookingLifecycleService::getDashboardStats] ' . $e->getMessage());
             return $defaults;
         }
@@ -1174,7 +1185,7 @@ class BookingLifecycleService
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             return (float)$stmt->fetchColumn();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return 0.0;
         }
     }
@@ -1209,7 +1220,7 @@ class BookingLifecycleService
             if ($new !== $cur) {
                 $this->setBookingStatus($bookingId, $cur, $new, null, 'Auto-advance on payment');
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[BookingLifecycleService::maybeAdvanceBookingStatus] ' . $e->getMessage());
         }
     }
@@ -1222,7 +1233,7 @@ class BookingLifecycleService
             if ($tidStat = $this->tid()) { $sql .= " AND tenant_id = ?"; $params[] = $tidStat; }
             $this->db->prepare($sql)->execute($params);
             $this->logStatusHistory($bookingId, $from, $to, $changedBy, $reason);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[BookingLifecycleService::setBookingStatus] ' . $e->getMessage());
         }
     }
@@ -1243,7 +1254,7 @@ class BookingLifecycleService
                 $_SERVER['REMOTE_ADDR'] ?? null,
                 substr((string)($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 500),
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[BookingLifecycleService::logStatusHistory] ' . $e->getMessage());
         }
     }
@@ -1279,7 +1290,7 @@ class BookingLifecycleService
                 ];
                 $current = $sponsorId;
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[BookingLifecycleService::appendMlmUpline] ' . $e->getMessage());
         }
     }
@@ -1338,7 +1349,7 @@ class BookingLifecycleService
                 $walletStmt = $this->db->prepare($walletSql);
                 $walletStmt->execute($walletParams);
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[BookingLifecycleService::clawbackBookingCommissions] Error: ' . $e->getMessage());
         }
     }
@@ -1394,7 +1405,7 @@ class BookingLifecycleService
 
             $mandateId = (int)$this->db->lastInsertId();
             return ['success' => true, 'mandate_id' => $mandateId, 'status' => 'submitted'];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[BookingLifecycleService::registerNachMandate] ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -1494,7 +1505,7 @@ class BookingLifecycleService
                     $results[] = ['mandate_id' => $mandate['id'], 'amount' => $debitAmount, 'status' => 'failed'];
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[BookingLifecycleService::processNachAutoDebits] ' . $e->getMessage());
         }
 
@@ -1585,7 +1596,7 @@ class BookingLifecycleService
             $stmt->execute($upcomingParams);
             $out['upcoming_installments'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[BookingLifecycleService::getCustomerPaymentSummary] ' . $e->getMessage());
         }
 

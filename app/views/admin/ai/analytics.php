@@ -11,7 +11,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <h2 class="mb-1">AI Analytics</h2>
                 <p class="text-muted mb-0">AI-powered insights and predictions</p>
             </div>
-            <a href="<?php echo $base; ?>/admin/ai/hub" class="btn btn-outline-secondary">Back to AI Hub</a>
+            <a href="<?php echo e($base); ?>/admin/ai/hub" class="btn btn-outline-secondary">Back to AI Hub</a>
         </div>
         
         <!-- Stats Cards -->

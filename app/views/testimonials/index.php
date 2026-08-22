@@ -39,7 +39,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="<?php echo $base; ?>">
+            <a class="navbar-brand fw-bold" href="<?php echo e($base); ?>">
                 <i class="fas fa-home me-2"></i>APS Dream Home
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -47,10 +47,10 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="<?php echo $base; ?>">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="<?php echo $base; ?>/properties">Properties</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="<?php echo $base; ?>/testimonials">Testimonials</a></li>
-                    <li class="nav-item"><a class="nav-link" href="<?php echo $base; ?>/contact">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?php echo e($base); ?>">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?php echo e($base); ?>/properties">Properties</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="<?php echo e($base); ?>/testimonials">Testimonials</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?php echo e($base); ?>/contact">Contact</a></li>
                 </ul>
             </div>
         </div>
@@ -105,7 +105,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <div class="card border-0 shadow-sm p-4">
                     <h4 class="mb-3">Share Your Experience</h4>
                     <p class="text-muted mb-3">Have you purchased a property with us? We'd love to hear your story!</p>
-                    <a href="<?php echo $base; ?>/contact" class="btn btn-primary btn-lg">
+                    <a href="<?php echo e($base); ?>/contact" class="btn btn-primary btn-lg">
                         <i class="fas fa-pen me-2"></i>Submit Your Testimonial
                     </a>
                 </div>

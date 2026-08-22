@@ -6,7 +6,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-1"><i class="fas fa-envelope-open-text me-2 text-primary"></i>Email Templates</h2>
-        <a href="<?php echo $base; ?>/admin/campaigns" class="btn btn-outline-secondary">Back</a>
+        <a href="<?php echo e($base); ?>/admin/campaigns" class="btn btn-outline-secondary">Back</a>
     </div>
 
     <div class="card border-0 shadow-sm">
@@ -34,7 +34,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <div class="text-center py-5">
                     <i class="fas fa-envelope-open-text fa-3x text-muted mb-3"></i>
                     <p class="text-muted">No email templates found.</p>
-                    <a href="<?php echo $base; ?>/admin/emails/template-editor" class="btn btn-primary mt-2"><i class="fas fa-plus me-2"></i>Open Template Editor</a>
+                    <a href="<?php echo e($base); ?>/admin/emails/template-editor" class="btn btn-primary mt-2"><i class="fas fa-plus me-2"></i>Open Template Editor</a>
                 </div>
             <?php endif; ?>
         </div>

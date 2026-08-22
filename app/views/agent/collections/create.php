@@ -5,7 +5,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
 ?>
 <div class="container-fluid px-4">
     <div class="mb-4">
-        <a href="<?php echo $base; ?>/agent/collections" class="text-decoration-none text-success small">
+        <a href="<?php echo e($base); ?>/agent/collections" class="text-decoration-none text-success small">
             <i class="fas fa-arrow-left me-1"></i>Back to Collections
         </a>
     </div>
@@ -17,7 +17,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     <h5 class="mb-0"><i class="fas fa-hand-holding-usd text-success me-2"></i>Record Cash Collection</h5>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <form method="POST" action="<?php echo $base; ?>/agent/collections/store" enctype="multipart/form-data">
+                    <form method="POST" action="<?php echo e($base); ?>/agent/collections/store" enctype="multipart/form-data">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token ?? ''); ?>">
 
                         <div class="mb-3">
@@ -66,7 +66,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                             <button type="submit" class="btn btn-success">
                                 <i class="fas fa-check-circle me-1"></i>Submit Collection
                             </button>
-                            <a href="<?php echo $base; ?>/agent/collections" class="btn btn-outline-secondary">Cancel</a>
+                            <a href="<?php echo e($base); ?>/agent/collections" class="btn btn-outline-secondary">Cancel</a>
                         </div>
                     </form>
                 </div>

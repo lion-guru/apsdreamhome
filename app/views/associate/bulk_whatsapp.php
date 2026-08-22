@@ -43,7 +43,7 @@ $message = $message ?? '';
                         <form method="POST" action="<?= BASE_URL ?>/associate/leads/bulk-whatsapp">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                             <?php foreach ($leads as $l): ?>
-                                <input type="hidden" name="lead_ids[]" value="<?= $l['id'] ?>">
+                                <input type="hidden" name="lead_ids[]" value="<?= e($l['id'] ?? '') ?>">
                             <?php endforeach; ?>
                             <div class="mb-3">
                                 <label class="form-label fw-bold"><?= __('assoc_bw_message_template', [], 'Message Template') ?></label>
@@ -85,7 +85,7 @@ $message = $message ?? '';
                     <p class="text-muted mb-3"><?= __('assoc_bw_click_to_send', [], 'Click each link to open WhatsApp and send the message.') ?></p>
                     <div class="d-grid gap-2">
                         <?php foreach ($whatsappLinks as $link): ?>
-                        <a href="<?= $link['url'] ?>" target="_blank" class="btn btn-outline-success d-flex justify-content-between align-items-center">
+                        <a href="<?= esc_url($link['url'] ?? '') ?>" target="_blank" class="btn btn-outline-success d-flex justify-content-between align-items-center">
                             <span><i class="fab fa-whatsapp me-2"></i><?= htmlspecialchars($link['name'] ?? '') ?></span>
                             <span class="badge bg-success"><i class="fas fa-external-link-alt"></i></span>
                         </a>

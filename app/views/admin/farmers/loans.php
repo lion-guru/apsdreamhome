@@ -13,35 +13,35 @@ $closedCount = $closed_count ?? 0;
     </div>
 
     <?php if ($msg = \App\Core\Session::flash('success')): ?>
-        <div class="alert alert-success alert-dismissible fade show"><?php echo $msg; ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <div class="alert alert-success alert-dismissible fade show"><?php echo e($msg); ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php endif; ?>
     <?php if ($msg = \App\Core\Session::flash('error')): ?>
-        <div class="alert alert-danger alert-dismissible fade show"><?php echo $msg; ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <div class="alert alert-danger alert-dismissible fade show"><?php echo e($msg); ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php endif; ?>
 
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6"><div class="card border-0 shadow-sm"><div class="card-body aps-cp-card-body">
             <div class="d-flex align-items-center">
                 <div class="flex-shrink-0 me-3"><div class="bg-primary bg-opacity-10 text-primary rounded p-3"><i class="fas fa-credit-card fa-2x"></i></div></div>
-                <div><h6 class="text-muted mb-1">Total Loans</h6><h3 class="mb-0"><?php echo $totalLoans; ?></h3></div>
+                <div><h6 class="text-muted mb-1">Total Loans</h6><h3 class="mb-0"><?php echo e($totalLoans); ?></h3></div>
             </div>
         </div></div></div>
         <div class="col-xl-3 col-md-6"><div class="card border-0 shadow-sm"><div class="card-body aps-cp-card-body">
             <div class="d-flex align-items-center">
                 <div class="flex-shrink-0 me-3"><div class="bg-info bg-opacity-10 text-info rounded p-3"><i class="fas fa-check fa-2x"></i></div></div>
-                <div><h6 class="text-muted mb-1">Sanctioned</h6><h3 class="mb-0"><?php echo $sanctionedCount; ?></h3></div>
+                <div><h6 class="text-muted mb-1">Sanctioned</h6><h3 class="mb-0"><?php echo e($sanctionedCount); ?></h3></div>
             </div>
         </div></div></div>
         <div class="col-xl-3 col-md-6"><div class="card border-0 shadow-sm"><div class="card-body aps-cp-card-body">
             <div class="d-flex align-items-center">
                 <div class="flex-shrink-0 me-3"><div class="bg-success bg-opacity-10 text-success rounded p-3"><i class="fas fa-play-circle fa-2x"></i></div></div>
-                <div><h6 class="text-muted mb-1">Active/Disbursed</h6><h3 class="mb-0"><?php echo $activeCount; ?></h3></div>
+                <div><h6 class="text-muted mb-1">Active/Disbursed</h6><h3 class="mb-0"><?php echo e($activeCount); ?></h3></div>
             </div>
         </div></div></div>
         <div class="col-xl-3 col-md-6"><div class="card border-0 shadow-sm"><div class="card-body aps-cp-card-body">
             <div class="d-flex align-items-center">
                 <div class="flex-shrink-0 me-3"><div class="bg-secondary bg-opacity-10 text-secondary rounded p-3"><i class="fas fa-check-double fa-2x"></i></div></div>
-                <div><h6 class="text-muted mb-1">Closed</h6><h3 class="mb-0"><?php echo $closedCount; ?></h3></div>
+                <div><h6 class="text-muted mb-1">Closed</h6><h3 class="mb-0"><?php echo e($closedCount); ?></h3></div>
             </div>
         </div></div></div>
     </div>
@@ -74,7 +74,7 @@ $closedCount = $closed_count ?? 0;
                             </td>
                             <td><?php echo htmlspecialchars($l['sanction_date'] ?? ''); ?></td>
                             <td class="text-nowrap">
-                                <a href="<?php echo BASE_URL; ?>/admin/farmers/loans/<?php echo $l['id']; ?>" class="btn btn-sm btn-info" title="View"><i class="fas fa-eye"></i></a>
+                                <a href="<?php echo BASE_URL; ?>/admin/farmers/loans/<?php echo e($l['id']); ?>" class="btn btn-sm btn-info" title="View"><i class="fas fa-eye"></i></a>
                             </td>
                         </tr>
                         <?php endforeach; ?>

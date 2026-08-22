@@ -350,7 +350,7 @@
                 <h1>Meet Our Expert Team</h1>
                 <p class="hero-subtitle">Passionate professionals dedicated to making your real estate journey seamless, transparent, and successful. Backed by AI technology and a customer-first approach.</p>
                 <?php if (!empty($pageContent)): ?>
-                <div class="cms-banner"><?php echo $pageContent; ?></div>
+                <div class="cms-banner"><?php echo e($pageContent); ?></div>
                 <?php endif; ?>
             </div>
             <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
@@ -435,7 +435,7 @@ foreach ($team_members ?? [] as $tm) {
                 $groupColors = ['APS Warriors' => '#dc2626', 'Dream Builders' => '#2563eb', 'Nari Shakti' => '#d946ef', 'Tech Pioneers' => '#059669'];
                 $gColor = $groupColors[$m->group_name ?? ''] ?? '#0d9488';
             ?>
-            <div class="team-card" data-category="<?php echo $catSlug; ?>">
+            <div class="team-card" data-category="<?php echo e($catSlug); ?>">
                 <div class="team-card-photo">
                     <?php if ($hasPhoto): ?>
                     <img src="<?= $photoUrl ?>" alt="<?php echo htmlspecialchars($m->name); ?>" loading="lazy">

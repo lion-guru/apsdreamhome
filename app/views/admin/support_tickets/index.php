@@ -15,10 +15,10 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <p class="text-muted mb-0">Manage customer support requests</p>
             </div>
             <div>
-                <a href="<?php echo $base; ?>/admin/support_tickets/create" class="btn btn-primary me-2">
+                <a href="<?php echo e($base); ?>/admin/support_tickets/create" class="btn btn-primary me-2">
                     <i class="fas fa-plus me-2"></i>New Ticket
                 </a>
-                <a href="<?php echo $base; ?>/admin/dashboard" class="btn btn-outline-secondary">Back</a>
+                <a href="<?php echo e($base); ?>/admin/dashboard" class="btn btn-outline-secondary">Back</a>
             </div>
         </div>
         
@@ -92,8 +92,8 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                         <td><?php echo htmlspecialchars($ticket['assigned_agent_name'] ?? 'Unassigned'); ?></td>
                                         <td><?php echo isset($ticket['created_at']) ? date('M d, Y', strtotime($ticket['created_at'])) : '-'; ?></td>
                                         <td>
-                                            <a href="<?php echo $base; ?>/admin/support_tickets/show/<?php echo $ticket['id']; ?>" class="btn btn-sm btn-outline-primary">View</a>
-                                            <a href="<?php echo $base; ?>/admin/support_tickets/edit/<?php echo $ticket['id']; ?>" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                            <a href="<?php echo e($base); ?>/admin/support_tickets/show/<?php echo $ticket['id']; ?>" class="btn btn-sm btn-outline-primary">View</a>
+                                            <a href="<?php echo e($base); ?>/admin/support_tickets/edit/<?php echo $ticket['id']; ?>" class="btn btn-sm btn-outline-secondary">Edit</a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -106,7 +106,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             <ul class="pagination justify-content-center">
                                 <?php for ($i = 1; $i <= $total_pages; $i++): ?>
                                     <li class="page-item <?php echo $i === $page ? 'active' : ''; ?>">
-                                        <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                        <a class="page-link" href="?page=<?php echo e($i); ?>"><?php echo e($i); ?></a>
                                     </li>
                                 <?php endfor; ?>
                             </ul>
@@ -116,7 +116,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <div class="text-center py-4">
                         <i class="fas fa-ticket-alt fa-3x text-muted mb-3"></i>
                         <p class="text-muted">No tickets found</p>
-                        <a href="<?php echo $base; ?>/admin/support_tickets/create" class="btn btn-primary">Create First Ticket</a>
+                        <a href="<?php echo e($base); ?>/admin/support_tickets/create" class="btn btn-primary">Create First Ticket</a>
                     </div>
                 <?php endif; ?>
             </div>

@@ -14,7 +14,7 @@
                     <tbody>
                         <?php if (!empty($leads)): foreach ($leads as $lead): ?>
                         <tr>
-                            <td><input type="checkbox" class="lead-check" value="<?= $lead['id'] ?>"></td>
+                            <td><input type="checkbox" class="lead-check" value="<?= (int)$lead['id'] ?>"></td>
                             <td><?= htmlspecialchars($lead['name'] ?? '') ?></td>
                             <td><?= htmlspecialchars($lead['phone'] ?? '') ?></td>
                             <td><?= htmlspecialchars($lead['source'] ?? '') ?></td>
@@ -28,7 +28,7 @@
                                     <?php endforeach; ?>
                                 </select>
                             </td>
-                            <td><button class="btn btn-sm btn-outline-primary assign-btn" data-lead-id="<?= $lead['id'] ?>">Assign</button></td>
+                            <td><button class="btn btn-sm btn-outline-primary assign-btn" data-lead-id="<?= (int)$lead['id'] ?>">Assign</button></td>
                         </tr>
                         <?php endforeach; else: ?>
                         <tr><td colspan="8" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No leads to assign</td></tr>

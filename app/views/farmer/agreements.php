@@ -50,9 +50,9 @@ $agreements = $agreements ?? [];
                             <td><strong>₹<?php echo number_format($a['amount'] ?? 0); ?></strong></td>
                             <td><?php echo $a['start_date'] ? date('d M Y', strtotime($a['start_date'])) : 'N/A'; ?></td>
                             <td><?php echo $a['end_date'] ? date('d M Y', strtotime($a['end_date'])) : 'N/A'; ?></td>
-                            <td><span class="badge bg-<?php echo $statusBadge; ?> badge-status"><?php echo ucfirst($aStatus); ?></span></td>
+                            <td><span class="badge bg-<?php echo e($statusBadge); ?> badge-status"><?php echo ucfirst($aStatus); ?></span></td>
                             <td>
-                                <a href="<?php echo BASE_URL; ?>/farmer/agreements/download/<?php echo $a['id']; ?>" class="btn btn-sm btn-outline-primary" target="_blank">
+                                <a href="<?php echo BASE_URL; ?>/farmer/agreements/download/<?php echo e($a['id']); ?>" class="btn btn-sm btn-outline-primary" target="_blank">
                                     <i class="fas fa-download me-1"></i>Download
                                 </a>
                             </td>

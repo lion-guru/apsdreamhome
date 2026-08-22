@@ -77,7 +77,7 @@ if (!function_exists('navUrl')) {
                         <?php if ($hasChildren): ?>
                             <a class="nav-link dropdown-toggle <?php echo $isActive ? 'active' : ''; ?>"
                              href="#"
-                                id="navDrop<?php echo $index; ?>"
+                                id="navDrop<?= (int)$index ?>"
                                role="button"
                                data-bs-toggle="dropdown"
                                aria-expanded="false"
@@ -87,7 +87,7 @@ if (!function_exists('navUrl')) {
 
                             <!-- Dropdown menu: right-aligned on align_right items -->
                             <ul class="dropdown-menu dropdown-menu-end <?php echo $alignRight ? 'dropdown-menu-end' : 'dropdown-menu-start'; ?>"
-                                aria-labelledby="navDrop<?php echo $index; ?>">
+                                aria-labelledby="navDrop<?= (int)$index ?>">
 
                                 <!-- Mega-menu for Properties -->
                                 <?php if ($item['label'] === 'Properties' || $item['label'] === 'Nav Properties'): ?>
@@ -107,7 +107,7 @@ if (!function_exists('navUrl')) {
                                                     };
                                                 ?>
                                                     <a class="mega-item" href="<?php echo navUrl($sub['url']); ?>">
-                                                        <i class="<?php echo $sub['icon']; ?> <?php echo $iconColor; ?>"></i>
+                                                        <i class="<?php echo e($sub['icon']); ?> <?php echo $iconColor; ?>"></i>
                                                         <span><?php echo __($sub['label']); ?></span>
                                                     </a>
                                                  <?php endforeach; ?>
@@ -166,11 +166,11 @@ if (!function_exists('navUrl')) {
                                                         default => 'mega-icon-teal'
                                                     };
                                                 ?>
-                                                    <a class="mega-item" href="<?php echo navUrl($sub['url']); ?>">
-                                                        <i class="<?php echo $sub['icon']; ?> <?php echo $iconColor; ?>"></i>
-                                                        <span><?php echo __($sub['label']); ?></span>
-                                                        <?php if ($badge): ?>
-                                                            <span class="mega-badge"><?php echo $badge; ?></span>
+                                                     <a class="mega-item" href="<?= e(navUrl($sub['url'])) ?>">
+                                                         <i class="<?= e($sub['icon']) ?> <?= e($iconColor) ?>"></i>
+                                                         <span><?= __($sub['label']) ?></span>
+                                                         <?php if ($badge): ?>
+                                                             <span class="mega-badge"><?= e($badge) ?></span>
                                                         <?php endif; ?>
                                                     </a>
                                                 <?php endforeach; ?>
@@ -184,9 +184,9 @@ if (!function_exists('navUrl')) {
                                                     $slug = $proj['slug'] ?: preg_replace('/[^a-zA-Z0-9]+/', '-', strtolower($proj['name']));
                                                     $iconClass = $projIcons[$idx % count($projIcons)];
                                                 ?>
-                                                    <a class="mega-item" href="<?php echo BASE_URL; ?>/colony/<?php echo $slug; ?>/plots">
-                                                        <i class="fas fa-vector-square <?php echo $iconClass; ?>"></i>
-                                                        <span><?php echo htmlspecialchars($proj['name'] ?? ''); ?></span>
+                                                    <a class="mega-item" href="<?= BASE_URL ?>/colony/<?= e($slug) ?>/plots">
+                                                        <i class="fas fa-vector-square <?= e($iconClass) ?>"></i>
+                                                        <span><?= htmlspecialchars($proj['name'] ?? '') ?></span>
                                                     </a>
                                                 <?php endforeach; ?>
                                             </div>
@@ -204,11 +204,11 @@ if (!function_exists('navUrl')) {
                                                 foreach ($nav->getProjectLocations() as $idx => $loc):
                                                     $iconClass = $locIcons[(int)$idx % count($locIcons)];
                                                 ?>
-                                                    <a class="mega-item"
-                                                       href="<?php echo BASE_URL; ?>/projects?location=<?php echo urlencode(strtolower($loc['name'])); ?>">
-                                                        <i class="fas fa-map-pin <?php echo $iconClass; ?>"></i>
-                                                        <span><?php echo htmlspecialchars($loc['name'] ?? ''); ?></span>
-                                                        <span class="mega-badge"><?php echo $loc['count']; ?></span>
+                                                     <a class="mega-item"
+                                                       href="<?= BASE_URL ?>/projects?location=<?= e(urlencode(strtolower($loc['name']))) ?>">
+                                                         <i class="fas fa-map-pin <?= e($iconClass) ?>"></i>
+                                                         <span><?= htmlspecialchars($loc['name'] ?? '') ?></span>
+                                                         <span class="mega-badge"><?= e($loc['count']) ?></span>
                                                     </a>
                                                 <?php endforeach; ?>
                                             </div>
@@ -236,11 +236,11 @@ if (!function_exists('navUrl')) {
                                         <?php if (isset($sub['disabled'])): ?>
                                             <li><span class="dropdown-item-text text-muted"><?php echo __($sub['label']); ?></span></li>
                                         <?php else: ?>
-                                            <a class="dropdown-item" href="<?php echo navUrl($sub['url']); ?>">
-                                                <?php if (isset($sub['icon'])): ?><i class="<?php echo $sub['icon']; ?> me-2"></i><?php endif; ?>
+                                            <a class="dropdown-item" href="<?= e(navUrl($sub['url'])) ?>">
+                                                <?php if (isset($sub['icon'])): ?><i class="<?= e($sub['icon']) ?> me-2"></i><?php endif; ?>
                                                 <?php echo __($sub['label']); ?>
                                                 <?php if (isset($sub['badge'])): ?>
-                                                    <span class="badge bg-primary ms-2 rounded-pill"><?php echo $sub['badge']; ?></span>
+                                                    <span class="badge bg-primary ms-2 rounded-pill"><?php echo e($sub['badge']); ?></span>
                                                 <?php endif; ?>
                                             </a>
                                         <?php endif; ?>
@@ -252,7 +252,7 @@ if (!function_exists('navUrl')) {
                             <a class="nav-link <?php echo $isActive ? 'active' : ''; ?> <?php echo ($item['highlight'] ?? false) ? 'text-primary fw-bold' : ''; ?>"
                                 href="<?php echo navUrl($item['url'] ?? '#'); ?>"
                                <?php echo ($item['highlight'] ?? false) ? 'class="style-66454"' : ''; ?>>
-                                <?php if (isset($item['icon'])): ?><i class="<?php echo $item['icon']; ?> me-1"></i><?php endif; ?>
+                                <?php if (isset($item['icon'])): ?><i class="<?php echo e($item['icon']); ?> me-1"></i><?php endif; ?>
                                 <?php echo __($item['label']); ?>
                             </a>
                         <?php endif; ?>

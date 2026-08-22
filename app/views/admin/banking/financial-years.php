@@ -63,7 +63,7 @@ $page_title = 'Financial Years Management';
                         <div class="card-footer bg-white border-top-0">
                             <div class="d-flex gap-2">
                                 <?php if (($fy['is_active'] ?? $fy['status'] ?? '') !== 'active'): ?>
-                                    <a href="<?php echo BASE_URL; ?>/admin/banking/financial-years/activate/<?php echo $fy['id']; ?>" class="btn btn-sm btn-success">
+                                    <a href="<?php echo BASE_URL; ?>/admin/banking/financial-years/activate/<?php echo e($fy['id']); ?>" class="btn btn-sm btn-success">
                                         <i class="fas fa-check me-1"></i>Activate
                                     </a>
                                 <?php endif; ?>

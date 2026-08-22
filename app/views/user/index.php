@@ -15,10 +15,10 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <p class="text-muted mb-0">Total: <?php echo number_format($total_count); ?> users</p>
             </div>
             <div>
-                <a href="<?php echo $base; ?>/users/create" class="btn btn-primary me-2">
+                <a href="<?php echo e($base); ?>/users/create" class="btn btn-primary me-2">
                     <i class="fas fa-plus me-2"></i>Add User
                 </a>
-                <a href="<?php echo $base; ?>/user/dashboard" class="btn btn-outline-secondary">Dashboard</a>
+                <a href="<?php echo e($base); ?>/user/dashboard" class="btn btn-outline-secondary">Dashboard</a>
             </div>
         </div>
 
@@ -73,7 +73,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             <tbody>
                                 <?php foreach ($users as $user): ?>
                                     <tr>
-                                        <td><?php echo $user['id'] ?? '-'; ?></td>
+                                        <td><?php echo e($user['id'] ?? '-'); ?></td>
                                         <td><?php echo htmlspecialchars($user['name'] ?? '-'); ?></td>
                                         <td><?php echo htmlspecialchars($user['email'] ?? '-'); ?></td>
                                         <td><?php echo htmlspecialchars($user['phone'] ?? '-'); ?></td>
@@ -89,9 +89,9 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                         </td>
                                         <td><?php echo isset($user['created_at']) ? date('M d, Y', strtotime($user['created_at'])) : '-'; ?></td>
                                         <td>
-                                            <a href="<?php echo $base; ?>/users/show/<?php echo $user['id']; ?>" class="btn btn-sm btn-outline-primary me-1">View</a>
-                                            <a href="<?php echo $base; ?>/users/edit/<?php echo $user['id']; ?>" class="btn btn-sm btn-outline-secondary me-1">Edit</a>
-                                            <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete(<?php echo $user['id']; ?>)">Delete</button>
+                                            <a href="<?php echo e($base); ?>/users/show/<?php echo (int)$user['id']; ?>" class="btn btn-sm btn-outline-primary me-1">View</a>
+                                            <a href="<?php echo e($base); ?>/users/edit/<?php echo (int)$user['id']; ?>" class="btn btn-sm btn-outline-secondary me-1">Edit</a>
+                                            <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete(<?php echo (int)$user['id']; ?>)">Delete</button>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -102,7 +102,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <div class="text-center py-5">
                         <i class="fas fa-users fa-3x text-muted mb-3"></i>
                         <p class="text-muted">No users found</p>
-                        <a href="<?php echo $base; ?>/users/create" class="btn btn-primary">Create First User</a>
+                        <a href="<?php echo e($base); ?>/users/create" class="btn btn-primary">Create First User</a>
                     </div>
                 <?php endif; ?>
             </div>

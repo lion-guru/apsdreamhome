@@ -58,7 +58,7 @@
                                 </td>
                                 <td><?php echo date('M d, Y', strtotime($article['created_at'] ?? $article['date'])); ?></td>
                                 <td>
-                                    <a href="<?= BASE_URL ?>/admin/news/<?php echo $article['id']; ?>/edit" class="btn btn-sm btn-primary">
+                                    <a href="<?= BASE_URL ?>/admin/news/<?php echo e($article['id']); ?>/edit" class="btn btn-sm btn-primary">
                                         <i class="fas fa-edit"></i> Edit
                                     </a>
                                 </td>

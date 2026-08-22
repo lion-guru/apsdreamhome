@@ -100,28 +100,28 @@ $page_description = $page_description ?? 'Your personalized real estate dashboar
             <div class="col-md-3">
                 <div class="glass-card">
                     <div class="stat-icon bg-gradient-blue"><i class="fas fa-heart"></i></div>
-                    <h3 class="fw-bold mb-1"><?php echo $stats['favorites_count']; ?></h3>
+                    <h3 class="fw-bold mb-1"><?php echo e($stats['favorites_count']); ?></h3>
                     <p class="text-muted small mb-0">Saved Properties</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="glass-card">
                     <div class="stat-icon bg-gradient-green"><i class="fas fa-envelope"></i></div>
-                    <h3 class="fw-bold mb-1"><?php echo $stats['inquiries_count']; ?></h3>
+                    <h3 class="fw-bold mb-1"><?php echo e($stats['inquiries_count']); ?></h3>
                     <p class="text-muted small mb-0">Active Inquiries</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="glass-card">
                     <div class="stat-icon bg-gradient-orange"><i class="fas fa-eye"></i></div>
-                    <h3 class="fw-bold mb-1"><?php echo $stats['views_count']; ?></h3>
+                    <h3 class="fw-bold mb-1"><?php echo e($stats['views_count']); ?></h3>
                     <p class="text-muted small mb-0">Recent Views</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="glass-card">
                     <div class="stat-icon bg-gradient-purple"><i class="fas fa-search"></i></div>
-                    <h3 class="fw-bold mb-1"><?php echo $stats['saved_searches_count']; ?></h3>
+                    <h3 class="fw-bold mb-1"><?php echo e($stats['saved_searches_count']); ?></h3>
                     <p class="text-muted small mb-0">Custom Alerts</p>
                 </div>
             </div>
@@ -176,7 +176,7 @@ $page_description = $page_description ?? 'Your personalized real estate dashboar
                                     <p class="text-muted small mb-0 text-truncate"><?php echo htmlspecialchars($property['location'] ?? ''); ?></p>
                                     <p class="text-primary fw-bold small mb-0"><?php echo htmlspecialchars($property['price'] ?? ''); ?></p>
                                 </div>
-                                <a href="/property/<?php echo $property['id']; ?>" class="btn btn-sm btn-light rounded-circle shadow-sm ms-2"><i class="fas fa-arrow-right"></i></a>
+                                <a href="/property/<?php echo e($property['id']); ?>" class="btn btn-sm btn-light rounded-circle shadow-sm ms-2"><i class="fas fa-arrow-right"></i></a>
                             </div>
                         <?php endforeach; ?>
                     <?php else: ?>
@@ -206,7 +206,7 @@ $page_description = $page_description ?? 'Your personalized real estate dashboar
                                 <p class="text-muted small mb-3"><i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($property['location'] ?? ''); ?></p>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <button class="btn btn-sm btn-outline-danger border-0 rounded-circle"><i class="far fa-heart"></i></button>
-                                    <a href="/property/<?php echo $property['id']; ?>" class="btn btn-primary btn-sm rounded-pill px-3 fw-medium">View Details</a>
+                                    <a href="/property/<?php echo e($property['id']); ?>" class="btn btn-primary btn-sm rounded-pill px-3 fw-medium">View Details</a>
                                 </div>
                             </div>
                         </div>

@@ -16,8 +16,8 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                             <h4 class="mb-0"><i class="fas fa-user me-2"></i>User Details</h4>
                             <div>
-                                <a href="<?php echo $base; ?>/users/edit/<?php echo $user['id']; ?>" class="btn btn-sm btn-light me-2">Edit</a>
-                                <a href="<?php echo $base; ?>/users" class="btn btn-sm btn-outline-light">Back</a>
+                                <a href="<?php echo e($base); ?>/users/edit/<?php echo (int)$user['id']; ?>" class="btn btn-sm btn-light me-2">Edit</a>
+                                <a href="<?php echo e($base); ?>/users" class="btn btn-sm btn-outline-light">Back</a>
                             </div>
                         </div>
                         <div class="card-body p-4">
@@ -28,7 +28,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                 </div>
                                 <div class="col-md-6">
                                     <p class="text-muted mb-1">User ID</p>
-                                    <h5>#<?php echo $user['id'] ?? '-'; ?></h5>
+                                    <h5>#<?php echo e($user['id'] ?? '-'); ?></h5>
                                 </div>
                             </div>
                             <hr>
@@ -90,7 +90,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <?php endif; ?>
                 <?php else: ?>
                     <div class="alert alert-danger">User not found</div>
-                    <a href="<?php echo $base; ?>/users" class="btn btn-outline-secondary">Back to Users</a>
+                    <a href="<?php echo e($base); ?>/users" class="btn btn-outline-secondary">Back to Users</a>
                 <?php endif; ?>
             </div>
         </div>

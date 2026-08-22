@@ -11,7 +11,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <h2 class="mb-1">Edit User</h2>
                 <p class="text-muted mb-0">Update user information</p>
             </div>
-            <a href="<?php echo $base; ?>/admin/users" class="btn btn-outline-secondary">
+            <a href="<?php echo e($base); ?>/admin/users" class="btn btn-outline-secondary">
                 <i class="fas fa-arrow-left me-2"></i>Back to Users
             </a>
         </div>
@@ -21,7 +21,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             <div class="col-lg-8">
                 <div class="card border-0 shadow-sm">
                     <div class="card-body p-4">
-                        <form id="editUserForm" action="<?php echo $base; ?>/admin/users/<?php echo $user['id']; ?>/update" method="POST">
+                        <form id="editUserForm" action="<?php echo e($base); ?>/admin/users/<?php echo $user['id']; ?>/update" method="POST">
                             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
                             
                             <div class="row">
@@ -46,7 +46,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                     <label for="role" class="form-label">Role <span class="text-danger">*</span></label>
                                     <select class="form-select" id="role" name="role" required>
                                         <?php foreach ($roles as $role): ?>
-                                            <option value="<?php echo $role; ?>" <?php echo ($user['role'] ?? '') === $role ? 'selected' : ''; ?>>
+                                            <option value="<?php echo e($role); ?>" <?php echo ($user['role'] ?? '') === $role ? 'selected' : ''; ?>>
                                                 <?php echo ucfirst($role); ?>
                                             </option>
                                         <?php endforeach; ?>
@@ -79,7 +79,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             <hr class="my-4">
                             
                             <div class="d-flex justify-content-between">
-                                <a href="<?php echo $base; ?>/admin/users" class="btn btn-outline-secondary">Cancel</a>
+                                <a href="<?php echo e($base); ?>/admin/users" class="btn btn-outline-secondary">Cancel</a>
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-save me-2"></i>Save Changes
                                 </button>
@@ -119,7 +119,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     return response.json();
                 } else {
                     // Non-AJAX response - redirect to users list
-                    window.location.href = '<?php echo $base; ?>/admin/users';
+                    window.location.href = '<?php echo e($base); ?>/admin/users';
                     return { success: true };
                 }
             })
@@ -127,7 +127,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 if (data && data.success) {
                     .catch(err => console.error('Request failed:', err));
                     showToast('User updated successfully!', 'success');
-                    window.location.href = '<?php echo $base; ?>/admin/users';
+                    window.location.href = '<?php echo e($base); ?>/admin/users';
                 } else if (data) {
                     showToast(data.message || 'Failed to update user', 'danger');
                 }
@@ -135,7 +135,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             .catch(error => {
                 console.error('Error:', error);
                 // On network error, try redirecting anyway
-                window.location.href = '<?php echo $base; ?>/admin/users';
+                window.location.href = '<?php echo e($base); ?>/admin/users';
             ).finally(() => hideLoader());
         });
     </script>

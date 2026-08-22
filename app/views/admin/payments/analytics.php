@@ -9,7 +9,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <h2 class="mb-1">Payment Analytics</h2>
                 <p class="text-muted mb-0">Payment trends and statistics</p>
             </div>
-            <a href="<?php echo $base; ?>/admin/payments" class="btn btn-outline-secondary">Back to Payments</a>
+            <a href="<?php echo e($base); ?>/admin/payments" class="btn btn-outline-secondary">Back to Payments</a>
         </div>
         
         <div class="row">
@@ -29,7 +29,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                         <?php foreach ($analytics_data['trends'] as $trend): ?>
                                             <tr>
                                                 <td><?php echo date('M d', strtotime($trend['date'])); ?></td>
-                                                <td><?php echo $trend['count']; ?></td>
+                                                <td><?php echo e($trend['count']); ?></td>
                                                 <td>₹<?php echo number_format(floatval(trend['total'] ?? 0)); ?></td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -58,7 +58,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                         <?php foreach ($analytics_data['methods'] as $method): ?>
                                             <tr>
                                                 <td><?php echo ucfirst($method['payment_method']); ?></td>
-                                                <td><?php echo $method['count']; ?></td>
+                                                <td><?php echo e($method['count']); ?></td>
                                                 <td>₹<?php echo number_format(floatval(method['total'] ?? 0)); ?></td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -106,7 +106,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                 <?php foreach ($analytics_data['status_distribution'] as $status): ?>
                                     <div class="list-group-item d-flex justify-content-between">
                                         <span><?php echo ucfirst($status['status']); ?></span>
-                                        <span class="badge bg-primary"><?php echo $status['count']; ?></span>
+                                        <span class="badge bg-primary"><?php echo e($status['count']); ?></span>
                                     </div>
                                 <?php endforeach; ?>
                             </div>

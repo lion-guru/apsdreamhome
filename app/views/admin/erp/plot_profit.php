@@ -34,7 +34,7 @@
                 <small class="text-muted">Net Profit</small>
                 <div class="fs-4 fw-bold <?php echo $totals['profit'] >= 0 ? 'text-success' : 'text-danger'; ?>">
                     ₹<?php echo number_format($totals['profit'], 0); ?>
-                    <small>(<?php echo $totals['margin_pct']; ?>%)</small>
+                    <small>(<?php echo e($totals['margin_pct']); ?>%)</small>
                 </div>
             </div>
         </div>
@@ -75,7 +75,7 @@
                     <td class="fw-bold <?php echo $profitClass; ?>">₹<?php echo number_format((float)($p['profit'] ?? 0), 0); ?></td>
                     <td>
                         <span class="badge bg-<?php echo $p['margin_pct'] >= 20 ? 'success' : ($p['margin_pct'] >= 0 ? 'warning' : 'danger'); ?>">
-                            <?php echo $p['margin_pct']; ?>%
+                            <?php echo e($p['margin_pct']); ?>%
                         </span>
                     </td>
                     <td><span class="status-badge status-<?php echo $p['status'] ?? 'available'; ?>"><?php echo ucfirst(str_replace('_', ' ', $p['status'] ?? 'available')); ?></span></td>

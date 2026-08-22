@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-12 text-center">
                 <?php $footerHtml = $site['footer_html'] ?? ''; if ($footerHtml): ?>
-                    <?php echo $footerHtml; ?>
+                    <?php echo e($footerHtml); ?>
                 <?php else: ?>
                     <p class="mb-1">&copy; <?php echo date('Y'); ?> APS Dream Home. All rights reserved.</p>
                     <div class="mt-1">

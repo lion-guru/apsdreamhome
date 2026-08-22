@@ -50,7 +50,7 @@ include __DIR__ . '/../layouts/header.php'; ?>
 
                     <form action="<?= BASE_URL ?>/payment/process" method="POST" id="payment-form">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                        <input type="hidden" name="property_id" value="<?php echo $property['id']; ?>">
+                        <input type="hidden" name="property_id" value="<?php echo e($property['id']); ?>">
 
                         <div class="mb-3">
                             <label for="payment_method" class="form-label">Payment Method</label>

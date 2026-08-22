@@ -63,11 +63,11 @@ if (!defined('BASE_URL')) {
                                 <div class="property-overlay">
                                     <div class="property-actions">
                                         <button class="btn btn-danger btn-sm remove-favorite"
-                                                data-property-id="<?php echo $property['id']; ?>"
+                                                data-property-id="<?php echo (int)$property['id']; ?>"
                                                 title="Remove from favorites">
                                             <i class="fas fa-heart-broken"></i>
                                         </button>
-                                        <a href="<?php echo BASE_URL; ?>/property/<?php echo $property['id']; ?>"
+                                        <a href="<?php echo BASE_URL; ?>/property/<?php echo (int)$property['id']; ?>"
                                            class="btn btn-primary btn-sm">
                                             <i class="fas fa-eye"></i> View Details
                                         </a>
@@ -84,7 +84,7 @@ if (!defined('BASE_URL')) {
                             <div class="property-info">
                                 <div class="property-header">
                                     <h5 class="property-title">
-                                        <a href="<?php echo BASE_URL; ?>/property/<?php echo $property['id']; ?>">
+                                        <a href="<?php echo BASE_URL; ?>/property/<?php echo (int)$property['id']; ?>">
                                             <?php echo htmlspecialchars($property['title'] ?? ''); ?>
                                         </a>
                                     </h5>
@@ -99,13 +99,13 @@ if (!defined('BASE_URL')) {
                                         <div class="col-4">
                                             <div class="detail-item">
                                                 <i class="fas fa-bed text-primary"></i>
-                                                <span><?php echo $property['bedrooms']; ?> Bed</span>
+                                                <span><?php echo e($property['bedrooms']); ?> Bed</span>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="detail-item">
                                                 <i class="fas fa-bath text-primary"></i>
-                                                <span><?php echo $property['bathrooms']; ?> Bath</span>
+                                                <span><?php echo e($property['bathrooms']); ?> Bath</span>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -123,7 +123,7 @@ if (!defined('BASE_URL')) {
                                     </div>
                                     <div class="property-actions">
                                         <button class="btn btn-outline-primary btn-sm favorite-toggle"
-                                                data-property-id="<?php echo $property['id']; ?>">
+                                                data-property-id="<?php echo (int)$property['id']; ?>">
                                             <i class="fas fa-heart"></i> Favorited
                                         </button>
                                     </div>

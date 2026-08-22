@@ -11,7 +11,7 @@ $today = date('Y-m-d');
     <div class="col-6 col-md-3">
         <a href="?filter=all" class="card border-0 shadow-sm text-decoration-none <?= $filter === 'all' ? 'border-primary' : '' ?>" class="style-19672">
             <div class="card-body p-3 text-center">
-                <div class="fs-2 fw-bold"><?= $stats['total'] ?></div>
+                <div class="fs-2 fw-bold"><?= e($stats['total']) ?></div>
                 <div class="small opacity-75"><?= __('assoc_fu_total_tasks', [], 'Total Tasks') ?></div>
             </div>
         </a>
@@ -19,7 +19,7 @@ $today = date('Y-m-d');
     <div class="col-6 col-md-3">
         <a href="?filter=pending" class="card border-0 shadow-sm text-decoration-none <?= $filter === 'pending' ? 'border-warning' : '' ?>">
             <div class="card-body p-3 text-center">
-                <div class="fs-2 fw-bold text-warning"><?= $stats['pending'] ?></div>
+                <div class="fs-2 fw-bold text-warning"><?= e($stats['pending']) ?></div>
                 <div class="small text-muted"><?= __('assoc_fu_pending', [], 'Pending') ?></div>
             </div>
         </a>
@@ -27,7 +27,7 @@ $today = date('Y-m-d');
     <div class="col-6 col-md-3">
         <a href="?filter=overdue" class="card border-0 shadow-sm text-decoration-none <?= $filter === 'overdue' ? 'border-danger' : '' ?>">
             <div class="card-body p-3 text-center">
-                <div class="fs-2 fw-bold text-danger"><?= $stats['overdue'] ?></div>
+                <div class="fs-2 fw-bold text-danger"><?= e($stats['overdue']) ?></div>
                 <div class="small text-muted"><?= __('assoc_fu_overdue', [], 'Overdue') ?></div>
             </div>
         </a>
@@ -35,7 +35,7 @@ $today = date('Y-m-d');
     <div class="col-6 col-md-3">
         <a href="?filter=completed" class="card border-0 shadow-sm text-decoration-none <?= $filter === 'completed' ? 'border-success' : '' ?>">
             <div class="card-body p-3 text-center">
-                <div class="fs-2 fw-bold text-success"><?= $stats['completed'] ?></div>
+                <div class="fs-2 fw-bold text-success"><?= e($stats['completed']) ?></div>
                 <div class="small text-muted"><?= __('assoc_fu_completed', [], 'Completed') ?></div>
             </div>
         </a>
@@ -140,10 +140,10 @@ $today = date('Y-m-d');
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <span class="badge bg-light text-dark"><i class="fas <?= $typeIcon ?> me-1"></i><?= ucfirst(str_replace('_', ' ', $task['task_type'] ?? __('assoc_fu_task', [], 'task'))) ?></span>
+                                    <span class="badge bg-light text-dark"><i class="fas <?= e($typeIcon) ?> me-1"></i><?= e(ucfirst(str_replace('_', ' ', $task['task_type'] ?? __('assoc_fu_task', [], 'task')))) ?></span>
                                 </td>
                                 <td>
-                                    <span class="badge bg-<?= $priorityClass ?>"><?= ucfirst($task['priority'] ?? 'medium') ?></span>
+                                    <span class="badge bg-<?= e($priorityClass) ?>"><?= e(ucfirst($task['priority'] ?? 'medium')) ?></span>
                                 </td>
                                 <td>
                                     <?php if ($task['status'] === 'completed'): ?>

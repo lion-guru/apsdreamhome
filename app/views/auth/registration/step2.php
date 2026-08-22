@@ -50,7 +50,7 @@ $old = $old ?? [];
                         <?php $occ = $old['occupation'] ?? ($state['form_data']['occupation'] ?? ''); ?>
                         <option value="">-- Select --</option>
                         <?php foreach (['Salaried','Self-Employed','Business Owner','Professional','Student','Homemaker','Retired','Other'] as $o): ?>
-                            <option value="<?= $o ?>" <?= $occ === $o ? 'selected' : '' ?>><?= $o ?></option>
+                            <option value="<?= e($o) ?>" <?= $occ === $o ? 'selected' : '' ?>><?= e($o) ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -60,7 +60,7 @@ $old = $old ?? [];
                         <?php $inc = $old['income_range'] ?? ($state['form_data']['income_range'] ?? ''); ?>
                         <option value="">-- Select --</option>
                         <?php foreach (['Under 3 Lakh','3-6 Lakh','6-10 Lakh','10-20 Lakh','20-50 Lakh','Above 50 Lakh'] as $i): ?>
-                            <option value="<?= $i ?>" <?= $inc === $i ? 'selected' : '' ?>><?= $i ?></option>
+                            <option value="<?= e($i) ?>" <?= $inc === $i ? 'selected' : '' ?>><?= e($i) ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>

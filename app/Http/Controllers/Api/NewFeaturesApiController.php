@@ -441,8 +441,10 @@ class NewFeaturesApiController extends BaseController
 
         try {
             $tid = (int)$this->tenantId();
-            $tidFilter = $tid > 1 ? " AND tenant_id = $tid" : '';
-            $st = $this->db->query("SELECT COUNT(*) FROM users WHERE role = 'customer'{$tidFilter}");
+            $tidFilter = $tid > 1 ? ' AND tenant_id = ?' : '';
+            $tidParam = $tid > 1 ? [$tid] : [];
+            $st = $this->db->prepare("SELECT COUNT(*) FROM users WHERE role = 'customer'{$tidFilter}");
+            $st->execute($tidParam);
             $data['total_customers'] = (int)$st->fetchColumn();
         } catch (\Throwable $e) { $data['total_customers'] = 0; }
 
@@ -509,8 +511,10 @@ class NewFeaturesApiController extends BaseController
 
         try {
             $tid = (int)$this->tenantId();
-            $tidFilter = $tid > 1 ? " AND tenant_id = $tid" : '';
-            $st = $this->db->query("SELECT COUNT(*) FROM users WHERE role = 'customer' AND created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY){$tidFilter}");
+            $tidFilter = $tid > 1 ? ' AND tenant_id = ?' : '';
+            $tidParam = $tid > 1 ? [$tid] : [];
+            $st = $this->db->prepare("SELECT COUNT(*) FROM users WHERE role = 'customer' AND created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY){$tidFilter}");
+            $st->execute($tidParam);
             $newUsers = (int)$st->fetchColumn();
             if ($newUsers > 0) {
                 $insights[] = ['type' => 'success', 'title' => 'New Customers', 'message' => "{$newUsers} new customers this week"];

@@ -9,7 +9,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <h2 class="mb-1">Train Chatbot</h2>
                 <p class="text-muted mb-0">Manage Q&A pairs and training data</p>
             </div>
-            <a href="<?php echo $base; ?>/admin/chatbot" class="btn btn-outline-secondary">Back</a>
+            <a href="<?php echo e($base); ?>/admin/chatbot" class="btn btn-outline-secondary">Back</a>
         </div>
 
         <div class="row g-4">
@@ -17,7 +17,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white"><h5 class="mb-0">Add Training Data</h5></div>
                     <div class="card-body aps-cp-card-body">
-                        <form method="post" action="<?php echo $base; ?>/admin/chatbot/train/store">
+                        <form method="post" action="<?php echo e($base); ?>/admin/chatbot/train/store">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="mb-3">
                                 <label class="form-label">Intent</label>
@@ -67,8 +67,8 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                         <td><?php echo $item['frequency'] ?? 0; ?></td>
                                         <td><?php echo !empty($item['is_active']) ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Inactive</span>'; ?></td>
                                         <td>
-                                            <a href="<?php echo $base; ?>/admin/chatbot/train/toggle/<?php echo $item['id']; ?>" class="btn btn-sm btn-outline-warning" title="Toggle"><i class="fas fa-toggle-on"></i></a>
-                                            <a href="<?php echo $base; ?>/admin/chatbot/train/delete/<?php echo $item['id']; ?>" class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete this entry?" title="Delete"><i class="fas fa-trash"></i></a>
+                                            <a href="<?php echo e($base); ?>/admin/chatbot/train/toggle/<?php echo $item['id']; ?>" class="btn btn-sm btn-outline-warning" title="Toggle"><i class="fas fa-toggle-on"></i></a>
+                                            <a href="<?php echo e($base); ?>/admin/chatbot/train/delete/<?php echo $item['id']; ?>" class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete this entry?" title="Delete"><i class="fas fa-trash"></i></a>
                                         </td>
                                     </tr>
                                     <?php endforeach; ?>

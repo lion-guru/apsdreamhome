@@ -25,7 +25,7 @@ if (!empty($selected) && !empty($properties)) {
                     <label class="form-label fw-bold"><?= __('assoc_cmp_select_hint', [], 'Select properties to compare (max 4)') ?></label>
                     <select name="ids[]" class="form-select" multiple size="4" max="4">
                         <?php foreach ($properties as $p): ?>
-                            <option value="<?= $p['id'] ?>" <?= in_array($p['id'], $selected) ? 'selected' : '' ?>>
+                            <option value="<?= e($p['id'] ?? '') ?>" <?= in_array($p['id'], $selected) ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($p['title'] ?? __('assoc_cmp_property', ['id' => $p['id']], 'Property #%id%')) ?>
                                 (<?= htmlspecialchars($p['city'] ?? '') ?> - ₹<?= number_format($p['price'] ?? 0) ?>)
                             </option>

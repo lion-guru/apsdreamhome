@@ -152,7 +152,7 @@ $nextConfig = $nextRank ? ($rankConfig[$nextRank] ?? null) : null;
                 <p class="text-muted mb-0"><?= __('assoc_rank_eligible_desc', [], 'Both volume and team requirements are met. Promotion will be evaluated at month end.') ?></p>
             <?php else: ?>
                 <i class="fas fa-chart-line fa-2x text-warning mb-2"></i>
-                <h5 class="text-warning mb-1"><?php echo $overallPct; ?>% <?= __('assoc_rank_complete', [], 'Complete') ?></h5>
+                <h5 class="text-warning mb-1"><?php echo e($overallPct); ?>% <?= __('assoc_rank_complete', [], 'Complete') ?></h5>
                 <p class="text-muted mb-0"><?= __('assoc_rank_keep_working', [], 'Keep working! You need') ?> <?php echo ($volumePct < 100) ? __('assoc_rank_more_volume', [], 'more business volume') : __('assoc_rank_more_team', [], 'more team members'); ?> <?= __('assoc_rank_to_qualify', [], 'to qualify.') ?></p>
             <?php endif; ?>
         </div>

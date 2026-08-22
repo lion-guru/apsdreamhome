@@ -85,11 +85,11 @@ $typeLabels = [
                             <div class="card-body">
                                 <div class="d-flex align-items-center gap-3 mb-2">
                                     <div class="rounded-circle d-flex align-items-center justify-content-center" class="style-27974">
-                                        <i class="fas <?php echo $meta['icon']; ?> text-<?php echo $meta['color']; ?>"></i>
+                                        <i class="fas <?php echo e($meta['icon']); ?> text-<?php echo e($meta['color']); ?>"></i>
                                     </div>
                                     <div>
-                                        <div class="fw-bold text-dark"><?php echo $meta['label']; ?></div>
-                                        <small class="text-muted"><?php echo $b['count']; ?> <?php echo __('assoc_comm_transactions', [], 'transactions'); ?></small>
+                                        <div class="fw-bold text-dark"><?php echo e($meta['label']); ?></div>
+                                        <small class="text-muted"><?php echo e($b['count']); ?> <?php echo __('assoc_comm_transactions', [], 'transactions'); ?></small>
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-end">
@@ -191,11 +191,11 @@ $typeLabels = [
                             <?php foreach ($commissions as $c): ?>
                                 <tr>
                                     <td><?php echo htmlspecialchars($c['property'] ?? __('assoc_comm_na', [], 'N/A')); ?></td>
-                                    <td><span class="badge bg-secondary"><?php echo ucfirst($c['commission_type'] ?? __('assoc_comm_na', [], 'N/A')); ?></span></td>
+                                    <td><span class="badge bg-secondary"><?php echo e(ucfirst($c['commission_type'] ?? __('assoc_comm_na', [], 'N/A'))); ?></span></td>
                                     <td><strong>₹<?php echo number_format($c['amount'] ?? 0); ?></strong></td>
                                     <td>
                                         <span class="badge bg-<?php echo ($c['status'] ?? '') === 'paid' ? 'success' : (($c['status'] ?? '') === 'cancelled' ? 'danger' : 'warning'); ?>">
-                                            <?php echo ucfirst($c['status'] ?? __('assoc_comm_pending', [], 'Pending')); ?>
+                                            <?php echo e(ucfirst($c['status'] ?? __('assoc_comm_pending', [], 'Pending'))); ?>
                                         </span>
                                     </td>
                                     <td><?php echo htmlspecialchars($c['date'] ?? ''); ?></td>
@@ -210,15 +210,15 @@ $typeLabels = [
                     <nav>
                         <ul class="pagination pagination-sm mb-0">
                             <li class="page-item <?php echo $current_page_no <= 1 ? 'disabled' : ''; ?>">
-                                <a class="page-link" href="<?php echo $pagination_url; ?>page=<?php echo $current_page_no - 1; ?>"><?php echo __('assoc_comm_pagination_prev', [], 'Previous'); ?></a>
+                                <a class="page-link" href="<?php echo e($pagination_url); ?>page=<?php echo (int)($current_page_no - 1); ?>"><?php echo __('assoc_comm_pagination_prev', [], 'Previous'); ?></a>
                             </li>
                             <?php for ($i = 1; $i <= $total_pages; $i++): ?>
                                 <li class="page-item <?php echo $i === $current_page_no ? 'active' : ''; ?>">
-                                    <a class="page-link" href="<?php echo $pagination_url; ?>page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                    <a class="page-link" href="<?php echo e($pagination_url); ?>page=<?php echo (int)$i; ?>"><?php echo (int)$i; ?></a>
                                 </li>
                             <?php endfor; ?>
                             <li class="page-item <?php echo $current_page_no >= $total_pages ? 'disabled' : ''; ?>">
-                                <a class="page-link" href="<?php echo $pagination_url; ?>page=<?php echo $current_page_no + 1; ?>"><?php echo __('assoc_comm_pagination_next', [], 'Next'); ?></a>
+                                <a class="page-link" href="<?php echo e($pagination_url); ?>page=<?php echo (int)($current_page_no + 1); ?>"><?php echo __('assoc_comm_pagination_next', [], 'Next'); ?></a>
                             </li>
                         </ul>
                     </nav>

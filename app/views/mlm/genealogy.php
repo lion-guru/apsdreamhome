@@ -443,7 +443,7 @@
             <p class="mb-0 text-white-50">Visualize your entire referral genealogy</p>
         </div>
         <div>
-            <a href="<?php echo $base; ?>/associate/dashboard" class="btn btn-outline-light">
+            <a href="<?php echo e($base); ?>/associate/dashboard" class="btn btn-outline-light">
                 <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
             </a>
         </div>
@@ -463,7 +463,7 @@
         </div>
         <div class="stat-card">
             <div class="icon text-info"><i class="fas fa-layer-group"></i></div>
-            <div class="value"><?php echo $stats['max_depth']; ?></div>
+            <div class="value"><?php echo e($stats['max_depth']); ?></div>
             <div class="label">Network Depth</div>
         </div>
         <div class="stat-card">
@@ -509,9 +509,9 @@
                 <div class="avatar"><?php echo strtoupper(substr($parent['name'], 0, 1)); ?></div>
                 <div class="info">
                     <div class="name"><?php echo htmlspecialchars($parent['name'] ?? ''); ?></div>
-                    <div class="id"><?php echo $parent['customer_id']; ?></div>
+                    <div class="id"><?php echo e($parent['customer_id']); ?></div>
                 </div>
-                <span class="level">Level <?php echo $parent['level']; ?></span>
+                <span class="level">Level <?php echo e($parent['level']); ?></span>
             </div>
             <?php endforeach; ?>
         </div>
@@ -576,8 +576,8 @@
         let i = 0;
         let currentNodeId = null;
         const duration = 750;
-        const baseUrl = '<?php echo $base; ?>';
-        const rootId = <?php echo $currentUser['id']; ?>;
+        const baseUrl = '<?php echo e($base); ?>';
+        const rootId = <?php echo e($currentUser['id']); ?>;
         
         // Initialize tree
         document.addEventListener('DOMContentLoaded', function() {

@@ -285,7 +285,7 @@ class MarketingCampaignService
         ];
         try {
             $tid = $this->tenantId();
-            $tidSql = $tid > 1 ? " AND tenant_id = $tid" : "";
+            $tidSql = $tid > 1 ? ' AND tenant_id = ?' : '';
             $stats['total_campaigns'] = (int)$this->pdo->query("SELECT COUNT(*) FROM marketing_campaigns WHERE 1=1" . $this->tenantSql())->fetchColumn();
             foreach (['draft', 'sent', 'scheduled', 'sending'] as $s) {
                 $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM marketing_campaigns WHERE status = ?" . $this->tenantSql());

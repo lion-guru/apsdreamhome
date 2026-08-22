@@ -132,7 +132,7 @@ $project_id = $project_id ?? 0;
                             <i class="fas fa-globe text-success me-3"></i>
                             <div>
                                 <h5 class="mb-1">Coordinates</h5>
-                                <p class="text-muted mb-0"><?php echo $project['location']['lat']; ?>, <?php echo $project['location']['lng']; ?></p>
+                                <p class="text-muted mb-0"><?php echo e($project['location']['lat']); ?>, <?php echo $project['location']['lng']; ?></p>
                             </div>
                         </div>
                         <div class="location-item d-flex align-items-center">
@@ -151,7 +151,7 @@ $project_id = $project_id ?? 0;
             <div class="col-lg-6">
                 <div class="map-container">
                     <div id="projectMap" class="style-88943">
-                        <iframe src="https://maps.google.com/maps?q=<?php echo $project['location']['lat']; ?>,<?php echo $project['location']['lng']; ?>&z=15&output=embed" 
+                        <iframe src="https://maps.google.com/maps?q=<?php echo e($project['location']['lat']); ?>,<?php echo $project['location']['lng']; ?>&z=15&output=embed" 
                                 width="100%" 
                                 height="100%" 
                                 frameborder="0" 
@@ -521,8 +521,8 @@ function downloadPhoto(imageSrc) {
 }
 
 function openGoogleMaps() {
-    const lat = <?php echo $project['location']['lat']; ?>;
-    const lng = <?php echo $project['location']['lng']; ?>;
+    const lat = <?php echo e($project['location']['lat']); ?>;
+    const lng = <?php echo e($project['location']['lng']); ?>;
     window.open(`https://maps.google.com/maps?q=${lat},${lng}`, '_blank');
 }
 

@@ -28,27 +28,27 @@
     <ul class="nav nav-tabs mb-4">
         <li class="nav-item">
             <a class="nav-link <?php echo !$status ? 'active' : ''; ?>" href="?">
-                All <span class="badge bg-secondary"><?php echo $statusCounts['all']; ?></span>
+                All <span class="badge bg-secondary"><?php echo e($statusCounts['all']); ?></span>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link <?php echo $status === 'pending' ? 'active' : ''; ?>" href="?status=pending">
-                Pending <span class="badge bg-warning"><?php echo $statusCounts['pending']; ?></span>
+                Pending <span class="badge bg-warning"><?php echo e($statusCounts['pending']); ?></span>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link <?php echo $status === 'verified' ? 'active' : ''; ?>" href="?status=verified">
-                Verified <span class="badge bg-info"><?php echo $statusCounts['verified']; ?></span>
+                Verified <span class="badge bg-info"><?php echo e($statusCounts['verified']); ?></span>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link <?php echo $status === 'approved' ? 'active' : ''; ?>" href="?status=approved">
-                Approved <span class="badge bg-success"><?php echo $statusCounts['approved']; ?></span>
+                Approved <span class="badge bg-success"><?php echo e($statusCounts['approved']); ?></span>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link <?php echo $status === 'rejected' ? 'active' : ''; ?>" href="?status=rejected">
-                Rejected <span class="badge bg-danger"><?php echo $statusCounts['rejected']; ?></span>
+                Rejected <span class="badge bg-danger"><?php echo e($statusCounts['rejected']); ?></span>
             </a>
         </li>
     </ul>
@@ -110,10 +110,10 @@
                         <tbody>
                             <?php foreach ($properties as $p): ?>
                                 <tr>
-                                    <td><?php echo $p['id']; ?></td>
+                                    <td><?php echo e($p['id']); ?></td>
                                     <td>
                                         <strong><?php echo htmlspecialchars($p['name'] ?? ''); ?></strong>
-                                        <br><small class="text-muted"><?php echo $p['area_sqft']; ?> sq ft</small>
+                                        <br><small class="text-muted"><?php echo e($p['area_sqft']); ?> sq ft</small>
                                     </td>
                                     <td>
                                         <strong><?php echo htmlspecialchars($p['name'] ?? ''); ?></strong>
@@ -143,26 +143,26 @@
                                             default => 'secondary'
                                         };
                                         ?>
-                                        <span class="badge bg-<?php echo $statusClass; ?>"><?php echo ucfirst($p['status']); ?></span>
+                                        <span class="badge bg-<?php echo e($statusClass); ?>"><?php echo ucfirst($p['status']); ?></span>
                                     </td>
                                     <td>
                                         <?php echo date('d M Y', strtotime($p['created_at'])); ?>
                                     </td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
-                                            <a href="<?php echo BASE_URL; ?>/admin/user-properties/verify/<?php echo $p['id']; ?>" class="btn btn-primary" title="View & Verify">
+                                            <a href="<?php echo BASE_URL; ?>/admin/user-properties/verify/<?php echo e($p['id']); ?>" class="btn btn-primary" title="View & Verify">
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                             <?php if ($p['status'] === 'pending'): ?>
                                                 <form method="POST" action="<?php echo BASE_URL; ?>/admin/user-properties/action" class="d-inline" data-aps-confirm="Approve this property?">
                                                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                                                    <input type="hidden" name="id" value="<?php echo $p['id']; ?>">
+                                                    <input type="hidden" name="id" value="<?php echo e($p['id']); ?>">
                                                     <input type="hidden" name="action" value="approve">
                                                     <button type="submit" class="btn btn-success btn-sm" title="Approve" aria-label="Approve"><i class="fas fa-check"></i></button>
                                                 </form>
                                                 <form method="POST" action="<?php echo BASE_URL; ?>/admin/user-properties/action" class="d-inline" data-aps-confirm="Reject this property?">
                                                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                                                    <input type="hidden" name="id" value="<?php echo $p['id']; ?>">
+                                                    <input type="hidden" name="id" value="<?php echo e($p['id']); ?>">
                                                     <input type="hidden" name="action" value="reject">
                                                     <button type="submit" class="btn btn-danger btn-sm" title="Reject" aria-label="Reject"><i class="fas fa-times"></i></button>
                                                 </form>
@@ -181,8 +181,8 @@
                         <ul class="pagination justify-content-center">
                             <?php for ($i = 1; $i <= $totalPages; $i++): ?>
                                 <li class="page-item <?php echo $i === $page ? 'active' : ''; ?>">
-                                    <a class="page-link" href="?page=<?php echo $i; ?>&status=<?php echo urlencode($status); ?>&search=<?php echo urlencode($search); ?>">
-                                        <?php echo $i; ?>
+                                    <a class="page-link" href="?page=<?php echo e($i); ?>&status=<?php echo urlencode($status); ?>&search=<?php echo urlencode($search); ?>">
+                                        <?php echo e($i); ?>
                                     </a>
                                 </li>
                             <?php endfor; ?>

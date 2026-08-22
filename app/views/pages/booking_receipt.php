@@ -5,7 +5,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
-    <title>Booking Receipt #<?= $booking['id'] ?> - APS Dream Home</title>
+    <title>Booking Receipt #<?= e($booking['id']) ?> - APS Dream Home</title>
     <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
     <style>
@@ -38,8 +38,8 @@
                 <strong><?= __('receipt_date', [], 'Date:') ?></strong> <?= date('d M Y', strtotime($booking['booking_date'] ?? $booking['created_at'] ?? 'now')) ?>
             </div>
             <div class="text-end">
-                <span class="badge bg-<?= $currentStatus === 'confirmed' || $currentStatus === 'completed' ? 'success' : ($currentStatus === 'cancelled' ? 'danger' : 'warning') ?> fs-6">
-                    <?= ucfirst($currentStatus) ?>
+                <span class="badge bg-<?= e($currentStatus) === 'confirmed' || e($currentStatus) === 'completed' ? 'success' : (e($currentStatus) === 'cancelled' ? 'danger' : 'warning') ?> fs-6">
+                    <?= ucfirst(e($currentStatus)) ?>
                 </span>
             </div>
         </div>
@@ -83,11 +83,11 @@
                 <tbody>
                     <?php foreach ($emis as $emi): ?>
                     <tr>
-                        <td><?= $emi['installment_no'] ?></td>
+                        <td><?= e($emi['installment_no']) ?></td>
                         <td><?= date('d M Y', strtotime($emi['due_date'])) ?></td>
                         <td>&#8377;<?= number_format(intval($emi['amount'])) ?></td>
                         <td>&#8377;<?= number_format(intval($emi['paid_amount'] ?? 0)) ?></td>
-                        <td><span class="badge bg-<?= $emi['status'] === 'paid' ? 'success' : 'warning' ?>"><?= ucfirst($emi['status']) ?></span></td>
+                        <td><span class="badge bg-<?= e($emi['status']) === 'paid' ? 'success' : 'warning' ?>"><?= ucfirst(e($emi['status'])) ?></span></td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>

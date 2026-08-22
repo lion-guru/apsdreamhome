@@ -201,4 +201,40 @@ if (class_exists('App\Core\ConfigService')) {
     } catch (\Throwable $e) {
         error_log("Config validation error: " . $e->getMessage());
     }
-}?>
+}
+
+// Global escaping helpers
+if (!function_exists('e')) {
+    function e($string, $flags = ENT_QUOTES, $encoding = 'UTF-8', $doubleEncode = true) {
+        if (is_array($string) || is_object($string)) {
+            return '';
+        }
+        return htmlspecialchars((string)$string, $flags, $encoding, $doubleEncode);
+    }
+}
+
+if (!function_exists('h')) {
+    function h($string, $flags = ENT_QUOTES, $encoding = 'UTF-8', $doubleEncode = true) {
+        return e($string, $flags, $encoding, $doubleEncode);
+    }
+}
+
+if (!function_exists('esc_url')) {
+    function esc_url($url) {
+        if (empty($url)) return '';
+        return htmlspecialchars($url, ENT_QUOTES, 'UTF-8', false);
+    }
+}
+
+if (!function_exists('esc_attr')) {
+    function esc_attr($string) {
+        return e($string, ENT_QUOTES);
+    }
+}
+
+if (!function_exists('esc_html')) {
+    function esc_html($string) {
+        return e($string, ENT_QUOTES);
+    }
+}
+?>

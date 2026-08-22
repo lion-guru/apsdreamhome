@@ -24,10 +24,10 @@
                             <tbody>
                                 <?php foreach ($faqs ?? [] as $faq): ?>
                                 <tr>
-                                    <td><?php echo $faq['id']; ?></td>
+                                    <td><?php echo e($faq['id']); ?></td>
                                     <td><?php echo htmlspecialchars(substr($faq['question'], 0, 50)) . (strlen($faq['question']) > 50 ? '...' : ''); ?></td>
                                     <td><?php echo htmlspecialchars($faq['category'] ?? '-'); ?></td>
-                                    <td><?php echo $faq['display_order']; ?></td>
+                                    <td><?php echo e($faq['display_order']); ?></td>
                                     <td>
                                         <?php if ($faq['status'] == 'active'): ?>
                                             <span class="badge bg-success">Active</span>
@@ -37,13 +37,13 @@
                                     </td>
                                     <td>
                                         <div class="btn-group">
-                                            <a href="<?php echo BASE_URL; ?>/admin/faqs/<?php echo $faq['id']; ?>" class="btn btn-sm btn-info">
+                                            <a href="<?php echo BASE_URL; ?>/admin/faqs/<?php echo e($faq['id']); ?>" class="btn btn-sm btn-info">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="<?php echo BASE_URL; ?>/admin/faqs/<?php echo $faq['id']; ?>/edit" class="btn btn-sm btn-warning">
+                                            <a href="<?php echo BASE_URL; ?>/admin/faqs/<?php echo e($faq['id']); ?>/edit" class="btn btn-sm btn-warning">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="<?php echo BASE_URL; ?>/admin/faqs/<?php echo $faq['id']; ?>/delete" class="btn btn-sm btn-danger" data-aps-confirm="Are you sure?">
+                                            <a href="<?php echo BASE_URL; ?>/admin/faqs/<?php echo e($faq['id']); ?>/delete" class="btn btn-sm btn-danger" data-aps-confirm="Are you sure?">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </div>

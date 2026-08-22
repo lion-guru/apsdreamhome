@@ -12,10 +12,10 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <p class="text-muted mb-0">Manage all media files</p>
             </div>
             <div>
-                <a href="<?php echo $base; ?>/admin/media/create" class="btn btn-primary me-2">
+                <a href="<?php echo e($base); ?>/admin/media/create" class="btn btn-primary me-2">
                     <i class="fas fa-upload me-2"></i>Upload New
                 </a>
-                <a href="<?php echo $base; ?>/admin/dashboard" class="btn btn-outline-secondary">Back</a>
+                <a href="<?php echo e($base); ?>/admin/dashboard" class="btn btn-outline-secondary">Back</a>
             </div>
         </div>
         
@@ -58,7 +58,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                     <?php endif; ?>
                                     <div class="card-body p-2">
                                         <p class="card-text small text-truncate mb-1"><?php echo htmlspecialchars($item['name'] ?? ''); ?></p>
-                                        <small class="text-muted"><?php echo $item['size']; ?></small>
+                                        <small class="text-muted"><?php echo e($item['size']); ?></small>
                                     </div>
                                 </div>
                             </div>
@@ -68,7 +68,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <div class="text-center py-5">
                         <i class="fas fa-images fa-3x text-muted mb-3"></i>
                         <p class="text-muted">No media files found</p>
-                        <a href="<?php echo $base; ?>/admin/media/create" class="btn btn-primary">
+                        <a href="<?php echo e($base); ?>/admin/media/create" class="btn btn-primary">
                             <i class="fas fa-upload me-2"></i>Upload First File
                         </a>
                     </div>

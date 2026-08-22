@@ -207,9 +207,11 @@ class LeadershipSalaryService
             FROM plot_bookings pb
             JOIN associates a ON a.id = pb.associate_id
             WHERE a.user_id = ? 
-              AND pb.status NOT IN ('cancelled', 'defaulted')" . ($tid > 1 ? " AND pb.tenant_id = $tid" : "") . "
+              AND pb.status NOT IN ('cancelled', 'defaulted')" . ($tid > 1 ? " AND pb.tenant_id = ?" : "") . "
         ");
-        $stmt->execute([$userId]);
+        $params = [$userId];
+        if ($tid > 1) { $params[] = $tid; }
+        $stmt->execute($params);
         $plotTotal = (float)$stmt->fetch(\PDO::FETCH_ASSOC)['total'];
 
         // Also include legacy bookings table (CRM-style bookings)

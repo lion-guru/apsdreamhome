@@ -135,7 +135,7 @@ $page_description = 'Manage course enrollments';
                         <td><small><?php echo $e['completed_at'] ?? '-'; ?></small></td>
                         <td><?php echo $e['final_score'] !== null ? $e['final_score'] . '%' : '-'; ?></td>
                         <td>
-                            <a href="<?php echo BASE_URL; ?>/admin/training/enrollments/<?php echo $e['id']; ?>" class="btn btn-sm btn-outline-info">
+                            <a href="<?php echo BASE_URL; ?>/admin/training/enrollments/<?php echo e($e['id']); ?>" class="btn btn-sm btn-outline-info">
                                 <i class="fas fa-eye"></i>
                             </a>
                         </td>

@@ -33,8 +33,8 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $page_title; ?></title>
-    <meta name="description" content="<?php echo $page_description; ?>">
+    <title><?php echo e($page_title); ?></title>
+    <meta name="description" content="<?php echo e($page_description); ?>">
 
     <!-- Bootstrap CSS -->
     <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">

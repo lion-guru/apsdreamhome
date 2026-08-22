@@ -26,7 +26,7 @@ $error = $error ?? null;
     </div>
 
     <?php if ($error): ?>
-        <div class="alert alert-danger"><?php echo $error; ?></div>
+        <div class="alert alert-danger"><?php echo e($error); ?></div>
     <?php endif; ?>
 
     <!-- Filter Card -->
@@ -39,7 +39,7 @@ $error = $error ?? null;
                     <select name="job_id" class="form-select" onchange="this.form.submit()">
                         <option value="">All Jobs</option>
                         <?php foreach ($jobs as $job): ?>
-                            <option value="<?php echo $job['id']; ?>" <?php echo $selected_job == $job['id'] ? 'selected' : ''; ?>>
+                            <option value="<?php echo e($job['id']); ?>" <?php echo $selected_job == $job['id'] ? 'selected' : ''; ?>>
                                 <?php echo htmlspecialchars(job['title'] ?? ''); ?>
                             </option>
                         <?php endforeach; ?>
@@ -50,7 +50,7 @@ $error = $error ?? null;
                     <select name="status" class="form-select" onchange="this.form.submit()">
                         <option value="">All Statuses</option>
                         <?php foreach ($statuses as $status): ?>
-                            <option value="<?php echo $status; ?>"><?php echo ucfirst($status); ?></option>
+                            <option value="<?php echo e($status); ?>"><?php echo ucfirst($status); ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -123,7 +123,7 @@ $error = $error ?? null;
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <a href="<?php echo BASE_URL; ?>/admin/jobs/applications/view/<?php echo $app['id']; ?>" 
+                                        <a href="<?php echo BASE_URL; ?>/admin/jobs/applications/view/<?php echo e($app['id']); ?>" 
                                            class="btn btn-sm btn-primary">
                                             <i class="fas fa-eye me-1"></i>Review
                                         </a>

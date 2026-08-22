@@ -74,8 +74,8 @@
                             <i class="fas fa-home fa-3x text-primary mb-3"></i>
                             <h5><?php echo htmlspecialchars($project['title'] ?? ''); ?></h5>
                             <p class="text-muted"><?php echo htmlspecialchars($project['location'] ?? ''); ?></p>
-                            <p class="h5 text-primary"><?php echo $project['price']; ?></p>
-                            <a href="<?php echo BASE_URL; ?>/projects/<?php echo $slug; ?>" class="btn btn-outline-primary mt-2"><?= __('buy_view_details') ?></a>
+                            <p class="h5 text-primary"><?php echo e($project['price']); ?></p>
+                            <a href="<?php echo BASE_URL; ?>/projects/<?php echo e($slug); ?>" class="btn btn-outline-primary mt-2"><?= __('buy_view_details') ?></a>
                         </div>
                     </div>
                 </div>

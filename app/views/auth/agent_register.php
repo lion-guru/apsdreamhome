@@ -392,7 +392,7 @@ $base = BASE_URL;
 <body>
 
     <div class="register-wrapper">
-        <a href="<?php echo $base; ?>/" class="home-link">
+        <a href="<?php echo e($base); ?>/" class="home-link">
             <i class="fa-solid fa-arrow-left"></i> <?php echo __('auth_back_to_home', 'Back to Home'); ?>
         </a>
 
@@ -416,7 +416,7 @@ $base = BASE_URL;
                 </div>
             <?php endif; ?>
 
-            <form method="POST" action="<?php echo $base; ?>/agent/register" id="agentRegisterForm" novalidate>
+            <form method="POST" action="<?php echo e($base); ?>/agent/register" id="agentRegisterForm" novalidate>
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token ?? ''); ?>">
 
                 <div class="section-label"><i class="fa-solid fa-user"></i> <?php echo __('auth_personal_details', 'Personal Details'); ?></div>
@@ -502,7 +502,7 @@ $base = BASE_URL;
         </div>
 
         <div class="back-home-bottom">
-            <a href="<?php echo $base; ?>/">
+            <a href="<?php echo e($base); ?>/">
                 <i class="fas fa-arrow-left me-1"></i> <?php echo __('auth_back_to_homepage', 'Back to Homepage'); ?>
             </a>
         </div>

@@ -9,7 +9,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
     <!-- Page Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="mb-0"><i class="fas fa-hand-holding-usd text-success me-2"></i>My Cash Collections</h4>
-        <a href="<?php echo $base; ?>/associate/collections/create" class="btn btn-success btn-sm">
+        <a href="<?php echo e($base); ?>/associate/collections/create" class="btn btn-success btn-sm">
             <i class="fas fa-plus me-1"></i>New Collection
         </a>
     </div>
@@ -78,7 +78,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 </div>
                 <div class="col-auto">
                     <button type="submit" class="btn btn-sm btn-outline-primary"><i class="fas fa-filter me-1"></i>Filter</button>
-                    <a href="<?php echo $base; ?>/associate/collections" class="btn btn-sm btn-outline-secondary"><i class="fas fa-times"></i></a>
+                    <a href="<?php echo e($base); ?>/associate/collections" class="btn btn-sm btn-outline-secondary"><i class="fas fa-times"></i></a>
                 </div>
             </form>
         </div>
@@ -91,7 +91,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 <div class="text-center py-5">
                     <i class="fas fa-hand-holding-usd fa-4x text-muted mb-3"></i>
                     <p class="text-muted">No collections found.</p>
-                    <a href="<?php echo $base; ?>/associate/collections/create" class="btn btn-success">Record Your First Collection</a>
+                    <a href="<?php echo e($base); ?>/associate/collections/create" class="btn btn-success">Record Your First Collection</a>
                 </div>
             <?php else: ?>
                 <div class="table-responsive">
@@ -120,14 +120,14 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                                     $method = $c['payment_method'] ?? 'cash';
                                     $icon = $method === 'cash' ? 'money-bill-wave' : ($method === 'cheque' ? 'fa-check' : ($method === 'bank_transfer' ? 'university' : 'credit-card'));
                                     ?>
-                                    <span class="badge bg-secondary"><i class="fas fa-<?php echo $icon; ?> me-1"></i><?php echo ucfirst(str_replace('_', ' ', $method)); ?></span>
+                                    <span class="badge bg-secondary"><i class="fas fa-<?php echo e($icon); ?> me-1"></i><?php echo ucfirst(str_replace('_', ' ', $method)); ?></span>
                                 </td>
                                 <td>
                                     <?php
                                     $s = $c['status'] ?? 'submitted';
                                     $b = $s === 'verified' ? 'success' : ($s === 'rejected' ? 'danger' : 'warning');
                                     ?>
-                                    <span class="badge bg-<?php echo $b; ?>"><?php echo ucfirst($s); ?></span>
+                                    <span class="badge bg-<?php echo e($b); ?>"><?php echo ucfirst($s); ?></span>
                                 </td>
                                 <td>
                                     <?php if (!empty($c['receipt_photo'])): ?>
@@ -137,7 +137,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <a href="<?php echo $base; ?>/associate/collections/<?php echo (int)($c['id'] ?? 0); ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
+                                    <a href="<?php echo e($base); ?>/associate/collections/<?php echo (int)($c['id'] ?? 0); ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
                                 </td>
                             </tr>
                             <?php endforeach; ?>

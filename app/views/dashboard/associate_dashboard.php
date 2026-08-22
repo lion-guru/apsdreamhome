@@ -104,20 +104,20 @@ $formatRank = function (?string $rank): string {
                 <div class="mb-3">
                     <div class="d-flex justify-content-between mb-1">
                         <small class="text-white-50"><?php echo __('assoc_dash_overall_progress', [], 'Overall Progress'); ?></small>
-                        <small class="text-white fw-bold"><?php echo $rank_progress['progress_pct']; ?>%</small>
+                        <small class="text-white fw-bold"><?= e($rank_progress['progress_pct']) ?>%</small>
                     </div>
                     <div class="progress" class="style-87192">
                         <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" 
                              class="style-57284"
                              id="rankProgressBar"
-                             aria-valuenow="<?php echo $rank_progress['progress_pct']; ?>" aria-valuemin="0" aria-valuemax="100">
+                             aria-valuenow="<?= e($rank_progress['progress_pct']) ?>" aria-valuemin="0" aria-valuemax="100">
                         </div>
                     </div>
                     <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
                         document.addEventListener('DOMContentLoaded', function() {
                             setTimeout(function() {
                                 var pb = document.getElementById('rankProgressBar');
-                                if (pb) pb.style.width = '<?php echo $rank_progress['progress_pct']; ?>%';
+                                if (pb) pb.style.width = '<?= e($rank_progress['progress_pct']) ?>%';
                             }, 300);
                         });
                     </script>
@@ -148,8 +148,8 @@ $formatRank = function (?string $rank): string {
                             </div>
                             <div class="flex-grow-1">
                                 <div class="text-white-50 small"><?php echo __('assoc_dash_direct_legs', [], 'Direct Legs'); ?></div>
-                                <div class="fw-bold text-white"><?php echo $rank_progress['current_legs']; ?></div>
-                                <div class="text-white-50 small"><?php echo __('assoc_dash_required', [], 'Required'); ?>: <?php echo $rank_progress['next_rank_legs']; ?></div>
+                                <div class="fw-bold text-white"><?= e($rank_progress['current_legs']) ?></div>
+                                 <div class="text-white-50 small"><?php echo __('assoc_dash_required', [], 'Required'); ?>: <?= e($rank_progress['next_rank_legs']) ?></div>
                             </div>
                         </div>
                     </div>
@@ -187,9 +187,9 @@ $formatRank = function (?string $rank): string {
         <a href="<?php echo BASE_URL; ?>/associate/leads" class="stat-card-link">
             <div class="stat-card clickable">
                 <div class="stat-icon green"><i class="fas fa-users"></i></div>
-                <div class="stat-value"><?php echo $stats['total_leads']; ?></div>
+                <div class="stat-value"><?= e($stats['total_leads']) ?></div>
                 <div class="stat-label"><?php echo __('assoc_dash_total_leads', [], 'Total Leads'); ?></div>
-                <div class="stat-trend up"><i class="fas fa-arrow-up"></i> <?php echo $stats['direct_referrals']; ?> <?php echo __('assoc_dash_direct_refs_small', [], 'direct referrals'); ?></div>
+                <div class="stat-trend up"><i class="fas fa-arrow-up"></i> <?= e($stats['direct_referrals']) ?> <?php echo __('assoc_dash_direct_refs_small', [], 'direct referrals'); ?></div>
                 <div class="click-hint"><i class="fas fa-external-link-alt"></i> <?php echo __('assoc_dash_view_all', [], 'View All'); ?></div>
             </div>
         </a>
@@ -209,9 +209,9 @@ $formatRank = function (?string $rank): string {
         <a href="<?php echo BASE_URL; ?>/associate/genealogy" class="stat-card-link">
             <div class="stat-card clickable">
                 <div class="stat-icon purple"><i class="fas fa-sitemap"></i></div>
-                <div class="stat-value"><?php echo $stats['network_size']; ?></div>
+                <div class="stat-value"><?= e($stats['network_size']) ?></div>
                 <div class="stat-label"><?php echo __('assoc_network_size', [], 'Network Size'); ?></div>
-                <div class="stat-trend up"><i class="fas fa-arrow-up"></i> <?php echo $stats['direct_referrals']; ?> <?php echo __('assoc_dash_direct', [], 'direct'); ?>, <?php echo $stats['level2_count']; ?> L2, <?php echo $stats['level3_count']; ?> L3</div>
+                <div class="stat-trend up"><i class="fas fa-arrow-up"></i> <?= e($stats['direct_referrals']) ?> <?php echo __('assoc_dash_direct', [], 'direct'); ?>, <?= e($stats['level2_count']) ?> L2, <?= e($stats['level3_count']) ?> L3</div>
                 <div class="click-hint"><i class="fas fa-external-link-alt"></i> <?php echo __('assoc_dash_view_network', [], 'View Network'); ?></div>
             </div>
         </a>
@@ -247,9 +247,9 @@ $formatRank = function (?string $rank): string {
             <div class="stat-value"><?php echo number_format($emi_summary['paid_emi'] ?? 0); ?>/<?php echo number_format($emi_summary['total_emi'] ?? 0); ?></div>
             <div class="stat-label"><?php echo __('assoc_dash_emi_paid_total', [], 'EMI Paid/Total'); ?></div>
             <?php if (($emi_summary['overdue_emi'] ?? 0) > 0): ?>
-                <div class="stat-trend" class="style-85971"><i class="fas fa-exclamation-triangle"></i> <?php echo $emi_summary['overdue_emi']; ?> <?php echo __('assoc_dash_overdue', [], 'overdue'); ?></div>
+                <div class="stat-trend" class="style-85971"><i class="fas fa-exclamation-triangle"></i> <?= e($emi_summary['overdue_emi']) ?> <?php echo __('assoc_dash_overdue', [], 'overdue'); ?></div>
             <?php elseif (($emi_summary['pending_emi'] ?? 0) > 0): ?>
-                <div class="stat-trend" class="style-88794"><i class="fas fa-clock"></i> <?php echo $emi_summary['pending_emi']; ?> <?php echo __('assoc_dash_pending', [], 'pending'); ?></div>
+                <div class="stat-trend" class="style-88794"><i class="fas fa-clock"></i> <?= e($emi_summary['pending_emi']) ?> <?php echo __('assoc_dash_pending', [], 'pending'); ?></div>
             <?php else: ?>
                 <div class="stat-trend up"><i class="fas fa-check-circle"></i> <?php echo __('assoc_dash_all_clear', [], 'All clear'); ?></div>
             <?php endif; ?>
@@ -279,7 +279,7 @@ $formatRank = function (?string $rank): string {
             <div class="card-body aps-cp-card-body">
                 <div class="row text-center mb-4">
                     <div class="col-3">
-                        <h4 class="text-primary mb-1"><?php echo $stats['direct_referrals']; ?></h4>
+                        <h4 class="text-primary mb-1"><?= e($stats['direct_referrals']) ?></h4>
                         <small class="text-muted"><?php echo __('assoc_direct_referrals', [], 'Direct Referrals'); ?></small>
                     </div>
                     <div class="col-3">
@@ -291,7 +291,7 @@ $formatRank = function (?string $rank): string {
                         <small class="text-muted"><?php echo __('assoc_dash_earned_30d', [], 'Earned (30 days)'); ?></small>
                     </div>
                     <div class="col-3">
-                        <h4 class="text-info mb-1"><?php echo $stats['network_size']; ?></h4>
+                        <h4 class="text-info mb-1"><?= e($stats['network_size']) ?></h4>
                         <small class="text-muted"><?php echo __('assoc_network_size', [], 'Network Size'); ?></small>
                     </div>
                 </div>
@@ -450,13 +450,13 @@ $formatRank = function (?string $rank): string {
                     <?php foreach ($activities as $activity): ?>
                         <div class="d-flex gap-3 mb-3 pb-3 border-bottom">
                             <div class="flex-shrink-0">
-                                <div class="bg-<?php echo $activity['color']; ?> bg-opacity-10 text-<?php echo $activity['color']; ?> rounded-circle d-flex align-items-center justify-content-center" class="style-48301">
-                                    <i class="fas <?php echo $activity['icon']; ?>"></i>
+                                <div class="bg-<?= e($activity['color']) ?> bg-opacity-10 text-<?= e($activity['color']) ?> rounded-circle d-flex align-items-center justify-content-center" class="style-48301">
+                                    <i class="fas <?= e($activity['icon']) ?>"></i>
                                 </div>
                             </div>
                             <div class="flex-grow-1">
-                                <p class="mb-1"><?php echo $activity['text']; ?></p>
-                                <small class="text-muted"><?php echo $activity['time']; ?></small>
+                                <p class="mb-1"><?= e($activity['text']) ?></p>
+                                <small class="text-muted"><?= e($activity['time']) ?></small>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -472,20 +472,20 @@ $formatRank = function (?string $rank): string {
             <div class="card-body aps-cp-card-body">
                 <div class="d-flex justify-content-between mb-3">
                     <span class="text-muted"><i class="fas fa-user text-primary me-1"></i><?php echo __('assoc_direct_referrals', [], 'Direct Referrals'); ?></span>
-                    <strong><?php echo $stats['direct_referrals']; ?></strong>
+                    <strong><?= e($stats['direct_referrals']) ?></strong>
                 </div>
                 <div class="d-flex justify-content-between mb-3">
                     <span class="text-muted"><i class="fas fa-users text-info me-1"></i><?php echo __('assoc_dash_level_2', [], 'Level 2'); ?></span>
-                    <strong><?php echo $stats['level2_count']; ?></strong>
+                    <strong><?= e($stats['level2_count']) ?></strong>
                 </div>
                 <div class="d-flex justify-content-between mb-3">
                     <span class="text-muted"><i class="fas fa-users text-secondary me-1"></i><?php echo __('assoc_dash_level_3', [], 'Level 3'); ?></span>
-                    <strong><?php echo $stats['level3_count']; ?></strong>
+                    <strong><?= e($stats['level3_count']) ?></strong>
                 </div>
                 <hr>
                 <div class="d-flex justify-content-between mb-2">
                     <span class="text-muted"><?php echo __('assoc_dash_total_network', [], 'Total Network'); ?></span>
-                    <strong class="text-primary"><?php echo $stats['network_size']; ?></strong>
+                    <strong class="text-primary"><?= e($stats['network_size']) ?></strong>
                 </div>
                 <div class="d-flex justify-content-between">
                     <span class="text-muted"><?php echo __('assoc_dash_team_sales_title', [], 'Team Sales'); ?></span>

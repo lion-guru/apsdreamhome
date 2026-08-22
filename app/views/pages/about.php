@@ -581,7 +581,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                          <img loading="lazy" 
                               src="<?= htmlspecialchars($imgSrc ?? '') ?>" 
                               alt="<?= htmlspecialchars($name ?? '') ?>">
-                        <div class="leader-badge"><i class="fas fa-crown"></i> <?= $i === 1 ? 'Founder' : ($role === 'Senior Property Advisor' ? 'Advisor' : 'Director') ?></div>
+                        <div class="leader-badge"><i class="fas fa-crown"></i> <?= e($i === 1 ? 'Founder' : ($role === 'Senior Property Advisor' ? 'Advisor' : 'Director')) ?></div>
                     </div>
                     <div class="leader-body">
                         <h5 class="leader-name"><?= htmlspecialchars($name ?? '') ?></h5>

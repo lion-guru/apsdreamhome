@@ -16,10 +16,10 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <p class="text-muted mb-0">Manage EMI plans and payment schedules</p>
             </div>
             <div>
-                <a href="<?php echo $base; ?>/admin/emi/create" class="btn btn-primary me-2">
+                <a href="<?php echo e($base); ?>/admin/emi/create" class="btn btn-primary me-2">
                     <i class="fas fa-plus me-2"></i>Create EMI Plan
                 </a>
-                <a href="<?php echo $base; ?>/admin/dashboard" class="btn btn-outline-secondary">Back</a>
+                <a href="<?php echo e($base); ?>/admin/dashboard" class="btn btn-outline-secondary">Back</a>
             </div>
         </div>
         
@@ -79,7 +79,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                             </span>
                                         </td>
                                         <td>
-                                            <a href="<?php echo $base; ?>/admin/emi/show/<?php echo $plan['id']; ?>" class="btn btn-sm btn-outline-primary">
+                                            <a href="<?php echo e($base); ?>/admin/emi/show/<?php echo $plan['id']; ?>" class="btn btn-sm btn-outline-primary">
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                         </td>
@@ -95,7 +95,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             <ul class="pagination justify-content-center">
                                 <?php for ($i = 1; $i <= $total_pages; $i++): ?>
                                     <li class="page-item <?php echo $i === $page ? 'active' : ''; ?>">
-                                        <a class="page-link" href="?page=<?php echo $i; ?>&search=<?php echo urlencode($filters['search'] ?? ''); ?>&status=<?php echo urlencode($filters['status'] ?? ''); ?>"><?php echo $i; ?></a>
+                                        <a class="page-link" href="?page=<?php echo e($i); ?>&search=<?php echo urlencode($filters['search'] ?? ''); ?>&status=<?php echo urlencode($filters['status'] ?? ''); ?>"><?php echo e($i); ?></a>
                                     </li>
                                 <?php endfor; ?>
                             </ul>
@@ -105,7 +105,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <div class="text-center py-4">
                         <i class="fas fa-file-invoice fa-3x text-muted mb-3"></i>
                         <p class="text-muted">No EMI plans found</p>
-                        <a href="<?php echo $base; ?>/admin/emi/create" class="btn btn-primary">
+                        <a href="<?php echo e($base); ?>/admin/emi/create" class="btn btn-primary">
                             <i class="fas fa-plus me-2"></i>Create First EMI Plan
                         </a>
                     </div>

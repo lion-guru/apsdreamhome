@@ -10,12 +10,12 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <h2 class="mb-1">Create Support Ticket</h2>
                 <p class="text-muted mb-0">Create a new customer support ticket</p>
             </div>
-            <a href="<?php echo $base; ?>/admin/support-tickets" class="btn btn-outline-secondary">Back to Tickets</a>
+            <a href="<?php echo e($base); ?>/admin/support-tickets" class="btn btn-outline-secondary">Back to Tickets</a>
         </div>
         
         <div class="card border-0 shadow-sm">
             <div class="card-body aps-cp-card-body">
-                <form id="ticketForm" action="<?php echo $base; ?>/admin/support-tickets/store" method="POST">
+                <form id="ticketForm" action="<?php echo e($base); ?>/admin/support-tickets/store" method="POST">
                     <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
                     
                     <div class="row">
@@ -84,7 +84,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     </div>
                     
                     <div class="d-flex justify-content-between mt-4">
-                        <a href="<?php echo $base; ?>/admin/support_tickets" class="btn btn-outline-secondary">Cancel</a>
+                        <a href="<?php echo e($base); ?>/admin/support_tickets" class="btn btn-outline-secondary">Cancel</a>
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save me-2"></i>Create Ticket
                         </button>
@@ -110,7 +110,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 if (data.success) {
                     showToast('Ticket created successfully! Ticket #: ' + data.ticket_number, 'success');
                     .catch(err => console.error('Request failed:', err));
-                    window.location.href = '<?php echo $base; ?>/admin/support_tickets';
+                    window.location.href = '<?php echo e($base); ?>/admin/support_tickets';
                 } else {
                     showToast(data.message || 'Failed to create ticket', 'danger');
                 }

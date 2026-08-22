@@ -25,7 +25,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-primary mb-2"><i class="fas fa-handshake"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $activeDeals ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($activeDeals ?? 0) ?></h3>
                     <p class="text-muted mb-0">Active Deals</p>
                 </div>
             </div>
@@ -34,7 +34,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-warning mb-2"><i class="fas fa-clock"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $pendingFollowups ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($pendingFollowups ?? 0) ?></h3>
                     <p class="text-muted mb-0">Pending Follow-ups</p>
                 </div>
             </div>
@@ -43,7 +43,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-info mb-2"><i class="fas fa-percentage"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $conversionRate ?? 0 ?>%</h3>
+                    <h3 class="fw-bold mb-1"><?= e($conversionRate ?? 0) ?>%</h3>
                     <p class="text-muted mb-0">Conversion Rate</p>
                 </div>
             </div>

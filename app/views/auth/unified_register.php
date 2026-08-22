@@ -681,7 +681,7 @@ $base = BASE_URL;
 
             <!-- Form -->
             <div class="form-body">
-                <form method="POST" action="<?php echo $base; ?>/register/unified" id="regForm" novalidate>
+                <form method="POST" action="<?php echo e($base); ?>/register/unified" id="regForm" novalidate>
                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token ?? ''); ?>">
                     <input type="hidden" name="role" id="selectedRole" value="<?php echo htmlspecialchars($role ?? ''); ?>">
 
@@ -829,7 +829,7 @@ $base = BASE_URL;
 
                     <!-- Terms -->
                     <div class="terms">
-                        By registering, you agree to our <a href="<?php echo $base; ?>/terms">Terms of Service</a> and <a href="<?php echo $base; ?>/privacy">Privacy Policy</a>
+                        By registering, you agree to our <a href="<?php echo e($base); ?>/terms">Terms of Service</a> and <a href="<?php echo e($base); ?>/privacy">Privacy Policy</a>
                     </div>
 
                     <!-- Submit -->
@@ -849,11 +849,11 @@ $base = BASE_URL;
 
             <!-- Login Footer -->
             <div class="login-footer">
-                <p>Already have an account? <a href="<?php echo $base; ?>/login">Sign in</a></p>
+                <p>Already have an account? <a href="<?php echo e($base); ?>/login">Sign in</a></p>
             </div>
         </div>
 
-        <a href="<?php echo $base; ?>/" class="back-home">
+        <a href="<?php echo e($base); ?>/" class="back-home">
             <i class="fas fa-arrow-left me-1"></i> Back to homepage
         </a>
     </div>

@@ -44,7 +44,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <div class="card border-0 shadow-sm mb-4">
                         <div class="card-header bg-white d-flex justify-content-between align-items-center">
                             <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Profile Information</h5>
-                            <a href="<?php echo $base; ?>/users/edit/<?php echo $user['id']; ?>" class="btn btn-sm btn-outline-primary">Edit Profile</a>
+                            <a href="<?php echo e($base); ?>/users/edit/<?php echo (int)$user['id']; ?>" class="btn btn-sm btn-outline-primary">Edit Profile</a>
                         </div>
                         <div class="card-body aps-cp-card-body">
                             <div class="row">
@@ -91,10 +91,10 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         </div>
                         <div class="card-body aps-cp-card-body">
                             <div class="d-grid gap-2">
-                                <a href="<?php echo $base; ?>/users/change-password/<?php echo $user['id']; ?>" class="btn btn-outline-warning">
+                                <a href="<?php echo e($base); ?>/users/change-password/<?php echo (int)$user['id']; ?>" class="btn btn-outline-warning">
                                     <i class="fas fa-key me-2"></i>Change Password
                                 </a>
-                                <a href="<?php echo $base; ?>/customer/settings" class="btn btn-outline-info">
+                                <a href="<?php echo e($base); ?>/customer/settings" class="btn btn-outline-info">
                                     <i class="fas fa-cog me-2"></i>Settings
                                 </a>
                             </div>
@@ -125,7 +125,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
     <?php else: ?>
         <div class="container py-5">
             <div class="alert alert-danger">User not found</div>
-            <a href="<?php echo $base; ?>/users" class="btn btn-outline-secondary">Back to Users</a>
+            <a href="<?php echo e($base); ?>/users" class="btn btn-outline-secondary">Back to Users</a>
         </div>
     <?php endif; ?>
 

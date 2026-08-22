@@ -24,7 +24,7 @@
                             <tbody>
                                 <?php foreach ($testimonials ?? [] as $testimonial): ?>
                                     <tr>
-                                        <td><?php echo $testimonial['id']; ?></td>
+                                        <td><?php echo e($testimonial['id']); ?></td>
                                         <td><?php echo htmlspecialchars($testimonial['customer_name'] ?? ''); ?></td>
                                         <td>
                                             <?php for ($i = 1; $i <= 5; $i++): ?>
@@ -43,13 +43,13 @@
                                         <td><?php echo date('Y-m-d', strtotime($testimonial['created_at'])); ?></td>
                                         <td>
                                             <div class="btn-group">
-                                                <a href="<?php echo BASE_URL; ?>/admin/testimonials/<?php echo $testimonial['id']; ?>" class="btn btn-sm btn-info">
+                                                <a href="<?php echo BASE_URL; ?>/admin/testimonials/<?php echo e($testimonial['id']); ?>" class="btn btn-sm btn-info">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
-                                                <a href="<?php echo BASE_URL; ?>/admin/testimonials/<?php echo $testimonial['id']; ?>/edit" class="btn btn-sm btn-warning">
+                                                <a href="<?php echo BASE_URL; ?>/admin/testimonials/<?php echo e($testimonial['id']); ?>/edit" class="btn btn-sm btn-warning">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <a href="<?php echo BASE_URL; ?>/admin/testimonials/<?php echo $testimonial['id']; ?>/delete" class="btn btn-sm btn-danger" data-aps-confirm="Are you sure?">
+                                                <a href="<?php echo BASE_URL; ?>/admin/testimonials/<?php echo e($testimonial['id']); ?>/delete" class="btn btn-sm btn-danger" data-aps-confirm="Are you sure?">
                                                     <i class="fas fa-trash"></i>
                                                 </a>
                                             </div>

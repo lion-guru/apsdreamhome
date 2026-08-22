@@ -10,8 +10,8 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8 mx-auto text-center">
-                <h1 class="display-4 fw-bold mb-4"><?php echo ucfirst($category ?? __('blog_category', [], 'Category')); ?> - <?php echo __('blog', [], 'Blog'); ?></h1>
-                <p class="lead mb-0"><?php echo __('blog_browse_category', [], 'Browse'); ?> <?php echo $category ?? __('blog_category_lowercase', [], 'category'); ?> <?php echo __('blog_articles', [], 'articles'); ?></p>
+                <h1 class="display-4 fw-bold mb-4"><?php echo e(ucfirst($category ?? __('blog_category', [], 'Category'))); ?> - <?php echo __('blog', [], 'Blog'); ?></h1>
+                <p class="lead mb-0"><?php echo __('blog_browse_category', [], 'Browse'); ?> <?php echo e($category ?? __('blog_category_lowercase', [], 'category')); ?> <?php echo __('blog_articles', [], 'articles'); ?></p>
             </div>
         </div>
     </div>

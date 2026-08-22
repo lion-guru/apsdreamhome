@@ -153,7 +153,7 @@
                                             default => 'bg-warning',
                                         };
                                         ?>
-                                        <span class="badge <?php echo $badgeClass; ?>"><?php echo ucfirst($status); ?></span>
+                                        <span class="badge <?php echo e($badgeClass); ?>"><?php echo ucfirst($status); ?></span>
                                     </td>
                                     <td><?php echo date('d M Y', strtotime($app['created_at'] ?? 'now')); ?></td>
                                     <td>
@@ -200,7 +200,7 @@
                         for ($i = $startPage; $i <= $endPage; $i++):
                         ?>
                             <li class="page-item <?php echo $i == ($page ?? 1) ? 'active' : ''; ?>">
-                                <a class="page-link" href="?page=<?php echo $i; ?>&search=<?php echo urlencode($filters['search'] ?? ''); ?>&status=<?php echo urlencode($filters['status'] ?? ''); ?>&career_id=<?php echo urlencode($filters['career_id'] ?? ''); ?>"><?php echo $i; ?></a>
+                                <a class="page-link" href="?page=<?php echo e($i); ?>&search=<?php echo urlencode($filters['search'] ?? ''); ?>&status=<?php echo urlencode($filters['status'] ?? ''); ?>&career_id=<?php echo urlencode($filters['career_id'] ?? ''); ?>"><?php echo e($i); ?></a>
                             </li>
                         <?php endfor; ?>
                         <li class="page-item <?php echo ($page ?? 1) >= ($total_pages ?? 1) ? 'disabled' : ''; ?>">

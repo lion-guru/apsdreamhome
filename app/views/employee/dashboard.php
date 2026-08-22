@@ -17,7 +17,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-primary mb-2"><i class="fas fa-tasks"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $totalTasks ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($totalTasks ?? 0) ?></h3>
                     <p class="text-muted mb-0">Total Tasks</p>
                 </div>
             </div>
@@ -26,7 +26,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-success mb-2"><i class="fas fa-building"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $totalProperties ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($totalProperties ?? 0) ?></h3>
                     <p class="text-muted mb-0">Properties</p>
                 </div>
             </div>
@@ -35,7 +35,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-info mb-2"><i class="fas fa-envelope"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $totalInquiries ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($totalInquiries ?? 0) ?></h3>
                     <p class="text-muted mb-0">Inquiries</p>
                 </div>
             </div>
@@ -44,7 +44,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-warning mb-2"><i class="fas fa-calendar-check"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $upcomingVisits ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($upcomingVisits ?? 0) ?></h3>
                     <p class="text-muted mb-0">Upcoming Visits</p>
                 </div>
             </div>

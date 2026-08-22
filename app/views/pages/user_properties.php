@@ -47,7 +47,7 @@ $extraHead = '<style>
                                     default => 'secondary'
                                 };
                                 ?>
-                                <span class="badge bg-<?php echo $statusClass; ?>"><?php echo ucfirst(__('status_' . ($p['status'] ?? 'pending'))); ?></span>
+                                <span class="badge bg-<?php echo e($statusClass); ?>"><?php echo e(ucfirst(__('status_' . ($p['status'] ?? 'pending')))); ?></span>
                             </div>
 
                             <?php if (!empty($p['image'])): ?>
@@ -78,11 +78,11 @@ $extraHead = '<style>
                                 </div>
                                 <div class="col-4">
                                     <small class="text-muted"><?= __('user_properties_label_views') ?></small>
-                                    <p class="mb-0"><i class="fas fa-eye me-1"></i><?php echo $p['views'] ?? 0; ?></p>
+                                    <p class="mb-0"><i class="fas fa-eye me-1"></i><?php echo e($p['views'] ?? 0); ?></p>
                                 </div>
                                 <div class="col-4">
                                     <small class="text-muted"><?= __('user_properties_label_inquiries') ?></small>
-                                    <p class="mb-0"><i class="fas fa-envelope me-1"></i><?php echo $p['inquiries'] ?? 0; ?></p>
+                                    <p class="mb-0"><i class="fas fa-envelope me-1"></i><?php echo e($p['inquiries'] ?? 0); ?></p>
                                 </div>
                             </div>
 
@@ -94,8 +94,8 @@ $extraHead = '<style>
                                     <span class="badge bg-warning"><?= __('user_properties_under_review') ?></span>
                                 <?php elseif ($p['status'] === 'approved'): ?>
                                     <div class="btn-group btn-group-sm">
-                                        <a href="<?php echo BASE_URL; ?>/listing/<?php echo $p['id']; ?>" class="btn btn-outline-primary" target="_blank"><?= __('user_properties_view_listing') ?> <i class="fas fa-external-link-alt ms-1"></i></a>
-                                        <a href="<?php echo BASE_URL; ?>/user/boost-property/<?php echo $p['id']; ?>" class="btn btn-outline-warning">
+                                        <a href="<?php echo BASE_URL; ?>/listing/<?php echo (int)$p['id']; ?>" class="btn btn-outline-primary" target="_blank"><?= __('user_properties_view_listing') ?> <i class="fas fa-external-link-alt ms-1"></i></a>
+                                        <a href="<?php echo BASE_URL; ?>/user/boost-property/<?php echo (int)$p['id']; ?>" class="btn btn-outline-warning">
                                             <i class="fas fa-crown"></i> Boost
                                         </a>
                                     </div>

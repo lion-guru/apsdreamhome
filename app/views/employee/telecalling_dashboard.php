@@ -15,7 +15,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-primary mb-2"><i class="fas fa-phone-volume"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $totalCalls ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($totalCalls ?? 0) ?></h3>
                     <p class="text-muted mb-0">Total Calls</p>
                 </div>
             </div>
@@ -24,7 +24,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-success mb-2"><i class="fas fa-phone-alt"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $connectedCalls ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($connectedCalls ?? 0) ?></h3>
                     <p class="text-muted mb-0">Connected</p>
                 </div>
             </div>
@@ -33,7 +33,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-warning mb-2"><i class="fas fa-users"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $leadsGenerated ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($leadsGenerated ?? 0) ?></h3>
                     <p class="text-muted mb-0">Leads Generated</p>
                 </div>
             </div>
@@ -42,7 +42,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-info mb-2"><i class="fas fa-percent"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $conversionRate ?? 0 ?>%</h3>
+                    <h3 class="fw-bold mb-1"><?= e($conversionRate ?? 0) ?>%</h3>
                     <p class="text-muted mb-0">Conversion Rate</p>
                 </div>
             </div>

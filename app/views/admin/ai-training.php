@@ -358,14 +358,14 @@ $categories = [
 
         <?php if ($success): ?>
             <div class="alert alert-success alert-dismissible fade show">
-                <i class="fas fa-check-circle me-2"></i><?php echo $success; ?>
+                <i class="fas fa-check-circle me-2"></i><?php echo e($success); ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         <?php endif; ?>
 
         <?php if ($error): ?>
             <div class="alert alert-danger alert-dismissible fade show">
-                <i class="fas fa-exclamation-circle me-2"></i><?php echo $error; ?>
+                <i class="fas fa-exclamation-circle me-2"></i><?php echo e($error); ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         <?php endif; ?>
@@ -377,7 +377,7 @@ $categories = [
                     <div class="stats-icon bg-primary bg-opacity-10 text-primary">
                         <i class="fas fa-database"></i>
                     </div>
-                    <div class="stats-number"><?php echo $analytics['total_qa']; ?></div>
+                    <div class="stats-number"><?php echo e($analytics['total_qa']); ?></div>
                     <div class="text-muted">Total Q&A Patterns</div>
                 </div>
             </div>
@@ -386,7 +386,7 @@ $categories = [
                     <div class="stats-icon bg-success bg-opacity-10 text-success">
                         <i class="fas fa-comments"></i>
                     </div>
-                    <div class="stats-number"><?php echo $analytics['conversations_today']; ?></div>
+                    <div class="stats-number"><?php echo e($analytics['conversations_today']); ?></div>
                     <div class="text-muted">Chats Today</div>
                 </div>
             </div>
@@ -395,7 +395,7 @@ $categories = [
                     <div class="stats-icon bg-info bg-opacity-10 text-info">
                         <i class="fas fa-chart-line"></i>
                     </div>
-                    <div class="stats-number"><?php echo $analytics['total_conversations']; ?></div>
+                    <div class="stats-number"><?php echo e($analytics['total_conversations']); ?></div>
                     <div class="text-muted">Total Conversations</div>
                 </div>
             </div>
@@ -444,7 +444,7 @@ $categories = [
                         <label class="form-label">Category</label>
                         <select name="category" class="form-select" required>
                             <?php foreach ($categories as $key => $label): ?>
-                                <option value="<?php echo $key; ?>"><?php echo $label; ?></option>
+                                <option value="<?php echo e($key); ?>"><?php echo $label; ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -486,7 +486,7 @@ $categories = [
                 <div class="btn-group">
                     <a href="?" class="btn btn-outline-primary active">All</a>
                     <?php foreach ($categories as $key => $label): ?>
-                        <a href="?cat=<?php echo $key; ?>" class="btn btn-outline-primary"><?php echo $label; ?></a>
+                        <a href="?cat=<?php echo e($key); ?>" class="btn btn-outline-primary"><?php echo $label; ?></a>
                     <?php endforeach; ?>
                 </div>
             </div>
@@ -501,15 +501,15 @@ $categories = [
                         <form method="POST" class="row">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <input type="hidden" name="action" value="update_qa">
-                            <input type="hidden" name="id" value="<?php echo $qa['id']; ?>">
+                            <input type="hidden" name="id" value="<?php echo e($qa['id']); ?>">
 
                             <div class="col-md-12 mb-2">
-                                <span class="category-badge cat-<?php echo $qa['category']; ?>">
+                                <span class="category-badge cat-<?php echo e($qa['category']); ?>">
                                     <?php echo $categories[$qa['category']] ?? $qa['category']; ?>
                                 </span>
                                 <?php if ($qa['usage_count'] > 0): ?>
                                     <span class="badge bg-success ms-2">
-                                        <i class="fas fa-fire me-1"></i><?php echo $qa['usage_count']; ?> uses
+                                        <i class="fas fa-fire me-1"></i><?php echo e($qa['usage_count']); ?> uses
                                     </span>
                                 <?php endif; ?>
                             </div>
@@ -524,8 +524,8 @@ $categories = [
                                 <label class="small text-muted">Category</label>
                                 <select name="category" class="form-select form-select-sm">
                                     <?php foreach ($categories as $key => $label): ?>
-                                        <option value="<?php echo $key; ?>" <?php echo $qa['category'] == $key ? 'selected' : ''; ?>>
-                                            <?php echo $label; ?>
+                                        <option value="<?php echo e($key); ?>" <?php echo $qa['category'] == $key ? 'selected' : ''; ?>>
+                                            <?php echo e($label); ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
@@ -546,7 +546,7 @@ $categories = [
                                 <button type="submit" class="btn btn-sm btn-primary">
                                     <i class="fas fa-save me-1"></i>Update
                                 </button>
-                                <a href="?delete=<?php echo $qa['id']; ?>" class="btn btn-sm btn-outline-danger"
+                                <a href="?delete=<?php echo e($qa['id']); ?>" class="btn btn-sm btn-outline-danger"
                                     data-aps-confirm="Delete this Q&A?">
                                     <i class="fas fa-trash me-1"></i>Delete
                                 </a>
@@ -572,7 +572,7 @@ $categories = [
                     <label class="form-label">Default Category</label>
                     <select name="bulk_category" class="form-select">
                         <?php foreach ($categories as $key => $label): ?>
-                            <option value="<?php echo $key; ?>"><?php echo $label; ?></option>
+                            <option value="<?php echo e($key); ?>"><?php echo $label; ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -637,7 +637,7 @@ $categories = [
                             <?php foreach ($analytics['most_used'] as $item): ?>
                                 <li class="list-group-item d-flex justify-content-between">
                                     <span><?php echo substr($item['question_pattern'], 0, 40); ?>...</span>
-                                    <span class="badge bg-primary"><?php echo $item['usage_count']; ?> uses</span>
+                                    <span class="badge bg-primary"><?php echo e($item['usage_count']); ?> uses</span>
                                 </li>
                             <?php endforeach; ?>
                         </ul>
@@ -649,7 +649,7 @@ $categories = [
                         <?php foreach ($analytics['categories'] as $cat => $count): ?>
                             <li class="list-group-item d-flex justify-content-between">
                                 <span><?php echo $categories[$cat] ?? $cat; ?></span>
-                                <span class="badge bg-info"><?php echo $count; ?> Q&A</span>
+                                <span class="badge bg-info"><?php echo e($count); ?> Q&A</span>
                             </li>
                         <?php endforeach; ?>
                     </ul>

@@ -8,10 +8,10 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <h2 class="mb-1">Chatbot Settings</h2>
                 <p class="text-muted mb-0">Configure chatbot behavior and appearance</p>
             </div>
-            <a href="<?php echo $base; ?>/admin/chatbot" class="btn btn-outline-secondary">Back</a>
+            <a href="<?php echo e($base); ?>/admin/chatbot" class="btn btn-outline-secondary">Back</a>
         </div>
 
-        <form method="post" action="<?php echo $base; ?>/admin/chatbot/settings">
+        <form method="post" action="<?php echo e($base); ?>/admin/chatbot/settings">
                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
             <div class="row g-4">
                 <div class="col-md-8">

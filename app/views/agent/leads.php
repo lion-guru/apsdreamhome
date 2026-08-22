@@ -50,7 +50,7 @@ $statusColors = [
     <div class="col">
         <a href="<?= $base ?>/agent/leads" class="card agent-lead-stat <?= !$filter || $filter === 'all' ? 'active shadow-sm' : 'shadow-none' ?>">
             <div class="card-body py-2 px-3 text-center">
-                <div class="stat-num text-dark"><?= $stats['total'] ?></div>
+                <div class="stat-num text-dark"><?= e($stats['total']) ?></div>
                 <div class="text-muted small">All</div>
             </div>
         </a>
@@ -58,7 +58,7 @@ $statusColors = [
     <div class="col">
         <a href="<?= $base ?>/agent/leads?status=new" class="card agent-lead-stat <?= $filter === 'new' ? 'active shadow-sm' : 'shadow-none' ?>">
             <div class="card-body py-2 px-3 text-center">
-                <div class="stat-num text-primary"><?= $stats['new'] ?></div>
+                <div class="stat-num text-primary"><?= e($stats['new']) ?></div>
                 <div class="text-muted small">New</div>
             </div>
         </a>
@@ -66,7 +66,7 @@ $statusColors = [
     <div class="col">
         <a href="<?= $base ?>/agent/leads?status=contacted" class="card agent-lead-stat <?= $filter === 'contacted' ? 'active shadow-sm' : 'shadow-none' ?>">
             <div class="card-body py-2 px-3 text-center">
-                <div class="stat-num text-info"><?= $stats['contacted'] ?></div>
+                <div class="stat-num text-info"><?= e($stats['contacted']) ?></div>
                 <div class="text-muted small">Contacted</div>
             </div>
         </a>
@@ -74,7 +74,7 @@ $statusColors = [
     <div class="col">
         <a href="<?= $base ?>/agent/leads?status=qualified" class="card agent-lead-stat <?= $filter === 'qualified' ? 'active shadow-sm' : 'shadow-none' ?>">
             <div class="card-body py-2 px-3 text-center">
-                <div class="stat-num text-warning"><?= $stats['qualified'] ?></div>
+                <div class="stat-num text-warning"><?= e($stats['qualified']) ?></div>
                 <div class="text-muted small">Qualified</div>
             </div>
         </a>
@@ -82,7 +82,7 @@ $statusColors = [
     <div class="col">
         <a href="<?= $base ?>/agent/leads?status=converted" class="card agent-lead-stat <?= $filter === 'converted' ? 'active shadow-sm' : 'shadow-none' ?>">
             <div class="card-body py-2 px-3 text-center">
-                <div class="stat-num text-success"><?= $stats['converted'] ?></div>
+                <div class="stat-num text-success"><?= e($stats['converted']) ?></div>
                 <div class="text-muted small">Converted</div>
             </div>
         </a>
@@ -90,7 +90,7 @@ $statusColors = [
     <div class="col">
         <a href="<?= $base ?>/agent/leads?status=lost" class="card agent-lead-stat <?= $filter === 'lost' ? 'active shadow-sm' : 'shadow-none' ?>">
             <div class="card-body py-2 px-3 text-center">
-                <div class="stat-num text-danger"><?= $stats['lost'] ?></div>
+                <div class="stat-num text-danger"><?= e($stats['lost']) ?></div>
                 <div class="text-muted small">Lost</div>
             </div>
         </a>
@@ -150,7 +150,7 @@ $statusColors = [
                             $status = $lead['status'] ?? 'new';
                             $cls = $statusColors[$status] ?? 'bg-secondary';
                             ?>
-                            <span class="badge <?= $cls ?>"><?= ucfirst($status) ?></span>
+                            <span class="badge <?= e($cls) ?>"><?= e(ucfirst($status)) ?></span>
                         </td>
                         <td class="px-3"><small class="text-muted"><?= date('d M Y', strtotime($lead['created_at'] ?? 'now')) ?></small></td>
                         <td class="px-3">

@@ -5,7 +5,7 @@
 </div>
 <div class="card aps-cp-card">
     <div class="card-body aps-cp-card-body">
-        <form method="post" action="<?= $_SERVER['REQUEST_URI'] ?>">
+        <form method="post" action="<?= esc_url($_SERVER['REQUEST_URI'] ?? '') ?>">
                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
             <div class="row g-3">
                 <div class="col-md-6">

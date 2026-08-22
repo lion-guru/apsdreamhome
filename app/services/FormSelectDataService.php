@@ -158,7 +158,7 @@ class FormSelectDataService
                 $where[] = "colony_id = ?";
                 $params[] = $filters['colony_id'];
             }
-            $sql = "SELECT id, plot_number, area FROM plots WHERE " . implode(' AND ', $where) . " ORDER BY plot_number ASC";
+            $sql = "SELECT id, plot_number, area_sqft FROM plots WHERE " . implode(' AND ', $where) . " ORDER BY plot_number ASC";
             $stmt = $conn->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -179,7 +179,7 @@ class FormSelectDataService
                 $where[] = "tenant_id = ?";
                 $params[] = $tid;
             }
-            $sql = "SELECT id, name, city as location FROM colonies WHERE " . implode(' AND ', $where) . " ORDER BY name ASC";
+            $sql = "SELECT id, name, name as location FROM colonies WHERE " . implode(' AND ', $where) . " ORDER BY name ASC";
             $stmt = $conn->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);

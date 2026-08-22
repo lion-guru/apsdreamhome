@@ -10,7 +10,7 @@ $base = defined('BASE_URL') ? BASE_URL : ('/' . trim(dirname($_SERVER['SCRIPT_NA
                 <h2 class="mb-1"><i class="fas fa-chart-line me-2 text-primary"></i>Analytics Dashboard</h2>
                 <p class="text-muted mb-0">Real-time business insights and metrics</p>
             </div>
-            <a href="<?php echo $base; ?>/admin/dashboard" class="btn btn-outline-secondary">Back to Dashboard</a>
+            <a href="<?php echo e($base); ?>/admin/dashboard" class="btn btn-outline-secondary">Back to Dashboard</a>
         </div>
 
         <!-- KPI Cards -->
@@ -100,7 +100,7 @@ $base = defined('BASE_URL') ? BASE_URL : ('/' . trim(dirname($_SERVER['SCRIPT_NA
                                             <tr>
                                                 <td><?php echo date('M d', strtotime($item['date'])); ?></td>
                                                 <td>₹<?php echo number_format(floatval($item['amount'] ?? 0)); ?></td>
-                                                <td><?php echo $item['count']; ?></td>
+                                                <td><?php echo e($item['count']); ?></td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>
@@ -122,8 +122,8 @@ $base = defined('BASE_URL') ? BASE_URL : ('/' . trim(dirname($_SERVER['SCRIPT_NA
                             <div class="list-group list-group-flush">
                                 <?php foreach ($charts['users'] as $user): ?>
                                     <div class="list-group-item d-flex justify-content-between">
-                                        <span><?php echo $user['type']; ?></span>
-                                        <span class="badge bg-primary"><?php echo $user['count']; ?></span>
+                                        <span><?php echo e($user['type']); ?></span>
+                                        <span class="badge bg-primary"><?php echo e($user['count']); ?></span>
                                     </div>
                                 <?php endforeach; ?>
                             </div>

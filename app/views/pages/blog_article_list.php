@@ -1,7 +1,7 @@
 <div class="container py-5">
     <div class="row mb-4">
         <div class="col-12">
-            <h1 class="display-5 fw-bold"><?php echo $page_title ?? 'Blog'; ?></h1>
+            <h1 class="display-5 fw-bold"><?php echo e($page_title ?? 'Blog'); ?></h1>
             <p class="text-muted"><?= __('blog_subtitle') ?></p>
         </div>
     </div>

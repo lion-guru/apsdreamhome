@@ -55,7 +55,7 @@
                             <span class="avatar-title bg-primary bg-gradient rounded-circle" class="style-24506">
                                 <?php
                                 $name = $nav->userName();
-                                echo strtoupper(substr($name, 0, 1));
+                                 echo e(strtoupper(substr($name, 0, 1)));
                                 ?>
                             </span>
                         </div>
@@ -102,34 +102,34 @@
                                 $accordionId = 'accordion_' . md5($itemKey);
                                 ?>
                                 <?php if ($isAccordion): ?>
-                                    <a href="#<?php echo $accordionId; ?>"
+                                    <a href="#<?= e($accordionId) ?>"
                                        class="mobile-nav-link d-flex align-items-center justify-content-between p-3 border-bottom"
                                        data-bs-toggle="collapse"
                                        aria-expanded="false"
                                        role="button">
                                         <span>
-                                            <?php if (isset($item['icon'])): ?><i class="<?php echo $item['icon']; ?> me-2"></i><?php endif; ?>
-                                            <?php echo __($item['label']); ?>
+                                             <?php if (isset($item['icon'])): ?><i class="<?= e($item['icon']) ?> me-2"></i><?php endif; ?>
+                                             <?= __($item['label']) ?>
                                         </span>
                                         <i class="fas fa-chevron-down chevron-rotate"></i>
                                     </a>
-                                    <div class="collapse" id="<?php echo $accordionId; ?>" data-bs-parent="#mobileDrawer">
+                                    <div class="collapse" id="<?= e($accordionId) ?>" data-bs-parent="#mobileDrawer">
                                         <?php echo $renderAccordion($item['submenu'], $itemKey . '_'); ?>
                                     </div>
                                 <?php else: ?>
-                                    <a href="<?php echo BASE_URL . $item['url']; ?>"
+                                    <a href="<?= e(BASE_URL . $item['url']) ?>"
                                    class="mobile-nav-link d-flex align-items-center text-muted">
-                                        <?php if (isset($item['icon'])): ?><i class="<?php echo $item['icon']; ?> me-2"></i><?php endif; ?>
-                                        <?php echo __($item['label']); ?>
+                                        <?php if (isset($item['icon'])): ?><i class="<?= e($item['icon']) ?> me-2"></i><?php endif; ?>
+                                        <?= __($item['label']) ?>
                                     </a>
                                 <?php endif; ?>
                             <?php else: ?>
-                                <a href="<?php echo BASE_URL . $item['url']; ?>"
-                                   class="mobile-nav-link d-flex align-items-center p-3 border-bottom <?php echo $isActive ? 'active' : ''; ?> <?php echo isset($item['highlight']) && $item['highlight'] ? 'text-warning fw-bold' : ''; ?>">
-                                    <?php if (isset($item['icon'])): ?><i class="<?php echo $item['icon']; ?> me-2"></i><?php endif; ?>
-                                    <?php echo __($item['label']); ?>
+                                <a href="<?= e(BASE_URL . $item['url']) ?>"
+                                   class="mobile-nav-link d-flex align-items-center p-3 border-bottom <?= $isActive ? 'active' : '' ?> <?= isset($item['highlight']) && $item['highlight'] ? 'text-warning fw-bold' : '' ?>">
+                                    <?php if (isset($item['icon'])): ?><i class="<?= e($item['icon']) ?> me-2"></i><?php endif; ?>
+                                    <?= __($item['label']) ?>
                                     <?php if (isset($item['badge'])): ?>
-                                        <span class="badge bg-primary ms-auto rounded-pill"><?php echo $item['badge']; ?></span>
+                                        <span class="badge bg-primary ms-auto rounded-pill"><?= e($item['badge']) ?></span>
                                     <?php endif; ?>
                                 </a>
                             <?php endif; ?>

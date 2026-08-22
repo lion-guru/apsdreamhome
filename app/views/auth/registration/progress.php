@@ -23,11 +23,11 @@ $stepLabels = [
             $circleClass = $isActive ? 'bg-primary text-white' : ($isDone ? 'bg-success text-white' : 'bg-light text-muted');
             ?>
             <div class="text-center flex-fill">
-                <div class="rounded-circle d-inline-flex align-items-center justify-content-center <?= $circleClass ?>"
+                <div class="rounded-circle d-inline-flex align-items-center justify-content-center <?= e($circleClass) ?>"
                      class="style-71789">
-                    <i class="fas <?= $info['icon'] ?>"></i>
+                    <i class="fas <?= e($info['icon']) ?>"></i>
                 </div>
-                <div class="small mt-1 <?= $isActive ? 'fw-bold text-primary' : 'text-muted' ?>">
+                <div class="small mt-1 <?= e($isActive) ? 'fw-bold text-primary' : 'text-muted' ?>">
                     Step <?= $num ?>: <?= htmlspecialchars($info['label'] ?? '') ?>
                 </div>
             </div>

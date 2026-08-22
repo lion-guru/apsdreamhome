@@ -16,7 +16,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-primary mb-2"><i class="fas fa-user-friends"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $totalEmployees ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($totalEmployees ?? 0) ?></h3>
                     <p class="text-muted mb-0">Total users</p>
                 </div>
             </div>
@@ -25,7 +25,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-success mb-2"><i class="fas fa-user-check"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $presentToday ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($presentToday ?? 0) ?></h3>
                     <p class="text-muted mb-0">Present Today</p>
                 </div>
             </div>
@@ -34,7 +34,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-warning mb-2"><i class="fas fa-user-clock"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $onLeave ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($onLeave ?? 0) ?></h3>
                     <p class="text-muted mb-0">On Leave</p>
                 </div>
             </div>
@@ -43,7 +43,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-info mb-2"><i class="fas fa-briefcase"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $openPositions ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($openPositions ?? 0) ?></h3>
                     <p class="text-muted mb-0">Open Positions</p>
                 </div>
             </div>

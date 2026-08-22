@@ -745,8 +745,10 @@ class AgentDashboardController extends BaseController
         $transactions = [];
         try {
             $tid = (int)$this->tenantId();
-            $tenantSql = $tid ? " AND tenant_id = " . $tid : "";
-            $wallet = $this->db->fetchOne("SELECT * FROM user_wallets WHERE user_id = ? AND user_type = 'associate'$tenantSql LIMIT 1", [$userId]);
+            $tenantSql = $tid ? ' AND tenant_id = ?' : '';
+            $walletParams = [$userId];
+            if ($tid) { $walletParams[] = $tid; }
+            $wallet = $this->db->fetchOne("SELECT * FROM user_wallets WHERE user_id = ? AND user_type = 'associate'$tenantSql LIMIT 1", $walletParams);
             $balance = $wallet['balance'] ?? 0;
             $transactions = $this->db->fetchAll(
                 "SELECT * FROM wallet_transactions WHERE user_id = ? ORDER BY created_at DESC LIMIT 50",

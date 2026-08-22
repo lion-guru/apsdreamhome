@@ -203,9 +203,12 @@ class SupportTicketService
     {
         $stats = [];
         $tid = $this->isTenantScoped() ? $this->tenantId() : null;
-        $tenantWhere = $tid ? " AND tenant_id = $tid" : "";
+        $tenantWhere = $tid ? ' AND tenant_id = ?' : '';
+        $tParams = $tid ? [$tid] : [];
 
-        $row = $this->db->query("SELECT COUNT(*) as total, SUM(status='open') as open_count, SUM(status='in_progress') as in_progress, SUM(status='waiting_customer') as waiting, SUM(status='resolved') as resolved, SUM(status='closed') as closed FROM support_tickets" . $tenantWhere)->fetch();
+        $stmt = $this->db->prepare("SELECT COUNT(*) as total, SUM(status='open') as open_count, SUM(status='in_progress') as in_progress, SUM(status='waiting_customer') as waiting, SUM(status='resolved') as resolved, SUM(status='closed') as closed FROM support_tickets" . $tenantWhere);
+        $stmt->execute($tParams);
+        $row = $stmt->fetch();
         $stats['total'] = (int)($row['total'] ?? 0);
         $stats['open'] = (int)($row['open_count'] ?? 0);
         $stats['in_progress'] = (int)($row['in_progress'] ?? 0);

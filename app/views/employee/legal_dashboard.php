@@ -15,7 +15,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-warning mb-2"><i class="fas fa-file-signature"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $pendingReview ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($pendingReview ?? 0) ?></h3>
                     <p class="text-muted mb-0">Pending Review</p>
                 </div>
             </div>
@@ -24,7 +24,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-success mb-2"><i class="fas fa-check-double"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $completedReview ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($completedReview ?? 0) ?></h3>
                     <p class="text-muted mb-0">Completed Reviews</p>
                 </div>
             </div>
@@ -33,7 +33,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-danger mb-2"><i class="fas fa-balance-scale"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $activeCases ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($activeCases ?? 0) ?></h3>
                     <p class="text-muted mb-0">Active Cases</p>
                 </div>
             </div>
@@ -42,7 +42,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="display-6 text-info mb-2"><i class="fas fa-file-contract"></i></div>
-                    <h3 class="fw-bold mb-1"><?= $documentsDrafted ?? 0 ?></h3>
+                    <h3 class="fw-bold mb-1"><?= e($documentsDrafted ?? 0) ?></h3>
                     <p class="text-muted mb-0">Documents Drafted</p>
                 </div>
             </div>
@@ -82,7 +82,7 @@
                         <?php foreach ($caseStats as $stat): ?>
                         <div class="d-flex justify-content-between mb-2">
                             <span><?= htmlspecialchars($stat['label'] ?? '') ?></span>
-                            <strong><?= $stat['count'] ?? 0 ?></strong>
+                            <strong><?= e($stat['count'] ?? 0) ?></strong>
                         </div>
                         <?php endforeach; ?>
                     <?php else: ?>

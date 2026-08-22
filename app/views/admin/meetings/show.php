@@ -7,7 +7,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-1"><i class="fas fa-calendar-check me-2 text-primary"></i>Meeting Details</h2>
         <div>
-            <a href="<?php echo $base; ?>/admin/meetings" class="btn btn-outline-secondary">Back to Meetings</a>
+            <a href="<?php echo e($base); ?>/admin/meetings" class="btn btn-outline-secondary">Back to Meetings</a>
         </div>
     </div>
 
@@ -49,13 +49,13 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             <?php if (!empty($meeting['lead_id'])): ?>
                             <tr>
                                 <td class="text-muted">Lead</td>
-                                <td><a href="<?php echo $base; ?>/admin/leads/<?php echo $meeting['lead_id']; ?>">Lead #<?php echo $meeting['lead_id']; ?></a></td>
+                                <td><a href="<?php echo e($base); ?>/admin/leads/<?php echo $meeting['lead_id']; ?>">Lead #<?php echo $meeting['lead_id']; ?></a></td>
                             </tr>
                             <?php endif; ?>
                             <?php if (!empty($meeting['user_id'])): ?>
                             <tr>
                                 <td class="text-muted">Assigned To</td>
-                                <td>User #<?php echo $meeting['user_id']; ?></td>
+                                <td>User #<?php echo e($meeting['user_id']); ?></td>
                             </tr>
                             <?php endif; ?>
                         </table>
@@ -93,12 +93,12 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white"><h6 class="mb-0">Actions</h6></div>
                     <div class="card-body">
-                        <form method="POST" action="<?php echo $base; ?>/admin/meetings/<?php echo $meeting['id']; ?>/update" class="mb-2">
+                        <form method="POST" action="<?php echo e($base); ?>/admin/meetings/<?php echo $meeting['id']; ?>/update" class="mb-2">
                             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
                             <input type="hidden" name="status" value="completed">
                             <button type="submit" class="btn btn-success w-100 btn-sm"><i class="fas fa-check me-2"></i>Mark Completed</button>
                         </form>
-                        <form method="POST" action="<?php echo $base; ?>/admin/meetings/<?php echo $meeting['id']; ?>/update">
+                        <form method="POST" action="<?php echo e($base); ?>/admin/meetings/<?php echo $meeting['id']; ?>/update">
                             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
                             <input type="hidden" name="status" value="cancelled">
                             <button type="submit" class="btn btn-outline-danger w-100 btn-sm" data-aps-confirm="Cancel this meeting?"><i class="fas fa-times me-2"></i>Cancel Meeting</button>

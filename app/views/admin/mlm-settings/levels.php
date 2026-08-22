@@ -8,10 +8,10 @@
     </div>
 
     <?php if ($msg = \App\Core\Session::flash('success')): ?>
-        <div class="alert alert-success alert-dismissible fade show"><?php echo $msg; ?><button class="btn-close" data-bs-dismiss="alert"></button></div>
+        <div class="alert alert-success alert-dismissible fade show"><?php echo e($msg); ?><button class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php endif; ?>
     <?php if ($msg = \App\Core\Session::flash('error')): ?>
-        <div class="alert alert-danger alert-dismissible fade show"><?php echo $msg; ?><button class="btn-close" data-bs-dismiss="alert"></button></div>
+        <div class="alert alert-danger alert-dismissible fade show"><?php echo e($msg); ?><button class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php endif; ?>
 
     <div class="table-responsive">
@@ -43,17 +43,17 @@
                 <?php else: ?>
                 <?php foreach ($levels as $l): ?>
                 <tr>
-                    <td><?php echo $l['level_number']; ?></td>
+                    <td><?php echo e($l['level_number']); ?></td>
                     <td><strong><?php echo htmlspecialchars($l['level_name'] ?? ''); ?></strong></td>
-                    <td><?php echo $l['direct_commission_percentage']; ?>%</td>
-                    <td><?php echo $l['team_commission_percentage']; ?>%</td>
-                    <td><?php echo $l['level_difference_commission_percentage']; ?>%</td>
-                    <td><?php echo $l['matching_bonus_percentage']; ?>%</td>
-                    <td><?php echo $l['team_size_required']; ?></td>
-                    <td><?php echo $l['direct_referrals_required']; ?></td>
+                    <td><?php echo e($l['direct_commission_percentage']); ?>%</td>
+                    <td><?php echo e($l['team_commission_percentage']); ?>%</td>
+                    <td><?php echo e($l['level_difference_commission_percentage']); ?>%</td>
+                    <td><?php echo e($l['matching_bonus_percentage']); ?>%</td>
+                    <td><?php echo e($l['team_size_required']); ?></td>
+                    <td><?php echo e($l['direct_referrals_required']); ?></td>
                     <td>₹<?php echo number_format($l['monthly_target']); ?></td>
                     <td>₹<?php echo number_format($l['joining_fee']); ?></td>
-                    <td><a href="<?php echo BASE_URL; ?>/admin/mlm-settings/levels/edit/<?php echo $l['id']; ?>" class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></a></td>
+                    <td><a href="<?php echo BASE_URL; ?>/admin/mlm-settings/levels/edit/<?php echo e($l['id']); ?>" class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></a></td>
                 </tr>
                 <?php endforeach; ?>
                 <?php endif; ?>

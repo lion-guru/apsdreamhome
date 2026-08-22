@@ -64,7 +64,7 @@
                                             default => 'bg-secondary'
                                         };
                                         ?>
-                                        <span class="badge <?php echo $badgeClass; ?>"><?php echo ucfirst($log['status'] ?? 'unknown'); ?></span>
+                                        <span class="badge <?php echo e($badgeClass); ?>"><?php echo ucfirst($log['status'] ?? 'unknown'); ?></span>
                                     </td>
                                     <td><?php echo $log['sent_at'] ? date('d M Y H:i', strtotime($log['sent_at'])) : ($log['created_at'] ? date('d M Y H:i', strtotime($log['created_at'])) : 'N/A'); ?></td>
                                     <td>
@@ -88,7 +88,7 @@
                                 </li>
                                 <?php for ($p = 1; $p <= $totalPages; $p++): ?>
                                     <li class="page-item <?php echo $p === ($page ?? 1) ? 'active' : ''; ?>">
-                                        <a class="page-link" href="?status=<?php echo urlencode($statusFilter ?? ''); ?>&page=<?php echo $p; ?>"><?php echo $p; ?></a>
+                                        <a class="page-link" href="?status=<?php echo urlencode($statusFilter ?? ''); ?>&page=<?php echo e($p); ?>"><?php echo e($p); ?></a>
                                     </li>
                                 <?php endfor; ?>
                                 <li class="page-item <?php echo ($page ?? 1) >= $totalPages ? 'disabled' : ''; ?>">

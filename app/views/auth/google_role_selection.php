@@ -259,7 +259,7 @@
 
     <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         let selectedRole = null;
-        const companyReferralCode = '<?php echo $companyReferralCode; ?>';
+        const companyReferralCode = '<?php echo e($companyReferralCode); ?>';
 
         function selectRole(role) {
             selectedRole = role;

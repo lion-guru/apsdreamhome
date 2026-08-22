@@ -11,13 +11,13 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <h2 class="mb-1">Edit Ticket #<?php echo htmlspecialchars($ticket['ticket_number'] ?? '-'); ?></h2>
                 <p class="text-muted mb-0">Update ticket details and status</p>
             </div>
-            <a href="<?php echo $base; ?>/admin/support-tickets" class="btn btn-outline-secondary">Back to Tickets</a>
+            <a href="<?php echo e($base); ?>/admin/support-tickets" class="btn btn-outline-secondary">Back to Tickets</a>
         </div>
         
         <?php if (!empty($ticket)): ?>
         <div class="card border-0 shadow-sm">
             <div class="card-body aps-cp-card-body">
-                <form id="editTicketForm" action="<?php echo $base; ?>/admin/support-tickets/<?php echo $ticket['id']; ?>/update" method="POST">
+                <form id="editTicketForm" action="<?php echo e($base); ?>/admin/support-tickets/<?php echo $ticket['id']; ?>/update" method="POST">
                     <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
                     
                     <div class="row">
@@ -25,7 +25,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             <label class="form-label">Customer</label>
                             <select name="customer_id" class="form-select">
                                 <?php foreach ($users as $customer): ?>
-                                    <option value="<?php echo $customer['id']; ?>" <?php echo ($ticket['customer_id'] ?? '') == $customer['id'] ? 'selected' : ''; ?>>
+                                    <option value="<?php echo e($customer['id']); ?>" <?php echo ($ticket['customer_id'] ?? '') == $customer['id'] ? 'selected' : ''; ?>>
                                         <?php echo htmlspecialchars($customer['name'] . ' (' . $customer['email'] . ')'); ?>
                                     </option>
                                 <?php endforeach; ?>
@@ -36,7 +36,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             <select name="assigned_agent_id" class="form-select">
                                 <option value="">Unassigned</option>
                                 <?php foreach ($users as $agent): ?>
-                                    <option value="<?php echo $agent['id']; ?>" <?php echo ($ticket['assigned_agent_id'] ?? '') == $agent['id'] ? 'selected' : ''; ?>>
+                                    <option value="<?php echo e($agent['id']); ?>" <?php echo ($ticket['assigned_agent_id'] ?? '') == $agent['id'] ? 'selected' : ''; ?>>
                                         <?php echo htmlspecialchars(agent['name'] ?? ''); ?>
                                     </option>
                                 <?php endforeach; ?>
@@ -86,7 +86,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     </div>
                     
                     <div class="d-flex justify-content-between mt-4">
-                        <a href="<?php echo $base; ?>/admin/support_tickets/show/<?php echo $ticket['id']; ?>" class="btn btn-outline-secondary">Cancel</a>
+                        <a href="<?php echo e($base); ?>/admin/support_tickets/show/<?php echo $ticket['id']; ?>" class="btn btn-outline-secondary">Cancel</a>
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save me-2"></i>Update Ticket
                         </button>
@@ -115,7 +115,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 if (data.success) {
                     showToast('Ticket updated successfully!', 'success');
                     .catch(err => console.error('Request failed:', err));
-                    window.location.href = '<?php echo $base; ?>/admin/support_tickets/show/<?php echo $ticket['id'] ?? 0; ?>';
+                    window.location.href = '<?php echo e($base); ?>/admin/support_tickets/show/<?php echo $ticket['id'] ?? 0; ?>';
                 } else {
                     showToast(data.message || 'Failed to update ticket', 'danger');
                 }

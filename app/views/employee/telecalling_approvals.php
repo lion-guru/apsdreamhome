@@ -30,7 +30,7 @@
                     <tbody>
                         <?php foreach ($pending_approvals as $i => $lead): ?>
                         <tr>
-                            <td><?= $i + 1 ?></td>
+                            <td><?= e($i + 1) ?></td>
                             <td><?= htmlspecialchars($lead['name'] ?? '') ?></td>
                             <td><?= htmlspecialchars($lead['phone'] ?? '') ?></td>
                             <td><?= htmlspecialchars($lead['email'] ?? '-') ?></td>
@@ -38,8 +38,8 @@
                             <td><?= htmlspecialchars($lead['property_interest'] ?? '-') ?></td>
                             <td class="small"><?= date('d M Y', strtotime($lead['created_at'] ?? 'now')) ?></td>
                             <td>
-                                <button class="btn btn-sm btn-success me-1" onclick="alert('Approve lead #<?= $lead['id'] ?>')"><i class="fas fa-check"></i></button>
-                                <button class="btn btn-sm btn-danger" onclick="alert('Reject lead #<?= $lead['id'] ?>')"><i class="fas fa-times"></i></button>
+                                <button class="btn btn-sm btn-success me-1" onclick="alert('Approve lead #<?= e($lead['id']) ?>')"><i class="fas fa-check"></i></button>
+                                <button class="btn btn-sm btn-danger" onclick="alert('Reject lead #<?= e($lead['id']) ?>')"><i class="fas fa-times"></i></button>
                             </td>
                         </tr>
                         <?php endforeach; ?>

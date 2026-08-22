@@ -16,7 +16,7 @@ $total_count = $total_count ?? 0;
             <div class="card border-0 shadow-sm bg-success text-white">
                 <div class="card-body aps-cp-card-body">
                     <h6>Promoted</h6>
-                    <h3 class="mb-0"><?php echo $promoted_count; ?> / <?php echo $total_count; ?></h3>
+                    <h3 class="mb-0"><?php echo e($promoted_count); ?> / <?php echo $total_count; ?></h3>
                 </div>
             </div>
         </div>
@@ -24,7 +24,7 @@ $total_count = $total_count ?? 0;
             <div class="card border-0 shadow-sm bg-info text-white">
                 <div class="card-body aps-cp-card-body">
                     <h6>Total Evaluated</h6>
-                    <h3 class="mb-0"><?php echo $total_count; ?></h3>
+                    <h3 class="mb-0"><?php echo e($total_count); ?></h3>
                 </div>
             </div>
         </div>

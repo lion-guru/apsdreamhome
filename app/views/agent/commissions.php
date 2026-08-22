@@ -87,7 +87,7 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
                             ];
                             $icon = $typeIcons[$type] ?? ['fas fa-question-circle', 'bg-secondary'];
                             ?>
-                            <span class="badge <?= $icon[1] ?> me-1"><i class="<?= $icon[0] ?>"></i></span>
+                            <span class="badge <?= e($icon[1]) ?> me-1"><i class="<?= e($icon[0]) ?>"></i></span>
                             <?= ucfirst(str_replace('_', ' ', $type)) ?>
                         </td>
                         <td class="px-3 fw-bold" class="style-93945">₹<?= number_format($c['amount'] ?? 0) ?></td>

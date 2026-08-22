@@ -190,7 +190,7 @@ $ref = $ref ?? $_GET['ref'] ?? $old['sponsor_code'] ?? '';
             ?>
             <div class="stats-bar">
                 <div class="stat-item">
-                    <span class="stat-value"><?= $formatAmount($s['total_paid']) ?></span>
+                    <span class="stat-value"><?= e($formatAmount($s['total_paid'])) ?></span>
                     <span class="stat-label">Total Paid</span>
                 </div>
                 <div class="stat-item">
@@ -226,7 +226,7 @@ $ref = $ref ?? $_GET['ref'] ?? $old['sponsor_code'] ?? '';
                     </div>
                 <?php endif; ?>
 
-                <form method="POST" action="<?php echo $base; ?>/associate/register" id="associateRegisterForm" novalidate>
+                <form method="POST" action="<?php echo e($base); ?>/associate/register" id="associateRegisterForm" novalidate>
                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token ?? ''); ?>">
 
                     <div class="form-section-title"><i class="fa-solid fa-user"></i> Personal Details</div>
@@ -298,12 +298,12 @@ $ref = $ref ?? $_GET['ref'] ?? $old['sponsor_code'] ?? '';
             </div>
 
             <div class="login-section">
-                <p>Already have an account? <a href="<?php echo $base; ?>/associate/login">Sign in here</a></p>
+                <p>Already have an account? <a href="<?php echo e($base); ?>/associate/login">Sign in here</a></p>
             </div>
         </div>
     </div>
 
-    <a href="<?php echo $base; ?>/" class="back-home">
+    <a href="<?php echo e($base); ?>/" class="back-home">
         <i class="fas fa-arrow-left me-1"></i> Back to Home
     </a>
 

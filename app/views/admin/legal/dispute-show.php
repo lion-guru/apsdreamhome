@@ -51,7 +51,7 @@ $dispute = $dispute ?? [];
                     <?php if (!empty($dispute['resolved_date'])): ?>
                     <div class="row mb-3">
                         <div class="col-sm-4 text-muted">Resolved Date</div>
-                        <div class="col-sm-8"><?php echo $dispute['resolved_date']; ?></div>
+                        <div class="col-sm-8"><?php echo e($dispute['resolved_date']); ?></div>
                     </div>
                     <?php endif; ?>
                     <?php if (!empty($dispute['description'])): ?>
@@ -92,7 +92,7 @@ $dispute = $dispute ?? [];
                             <select name="assigned_to" class="form-select">
                                 <option value="">Unassigned</option>
                                 <?php $users = $users ?? []; foreach ($users as $u): ?>
-                                    <option value="<?php echo $u['id']; ?>" <?php echo (($dispute['assigned_to'] ?? 0) == $u['id']) ? 'selected' : ''; ?>><?php echo $u['name']; ?></option>
+                                    <option value="<?php echo e($u['id']); ?>" <?php echo (($dispute['assigned_to'] ?? 0) == $u['id']) ? 'selected' : ''; ?>><?php echo $u['name']; ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

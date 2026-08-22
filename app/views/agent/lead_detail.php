@@ -68,7 +68,7 @@ $activityIcons = [
                 $leadStatus = $lead['status'] ?? 'new';
                 $statusCls = $statusColors[$leadStatus] ?? 'bg-secondary';
                 ?>
-                <span class="badge <?= $statusCls ?> ms-2" class="style-47175"><?= ucfirst(str_replace('_', ' ', $leadStatus)) ?></span>
+                <span class="badge <?= e($statusCls) ?> ms-2" class="style-47175"><?= e(ucfirst(str_replace('_', ' ', $leadStatus))) ?></span>
             </h4>
             <div class="lead-meta">
                 <?php if (!empty($lead['phone'])): ?>
@@ -86,7 +86,7 @@ $activityIcons = [
         <div class="text-end">
             <?php $scoreVal = (int)($lead['lead_score'] ?? 0); ?>
             <div class="score-badge <?= $scoreVal >= 70 ? 'bg-danger text-white' : ($scoreVal >= 40 ? 'bg-warning text-dark' : ($scoreVal >= 20 ? 'bg-info text-white' : 'bg-secondary text-white')) ?>">
-                Score: <?= $scoreVal ?>
+                Score: <?= e($scoreVal) ?>
             </div>
         </div>
     </div>
@@ -137,7 +137,7 @@ $activityIcons = [
                             $priority = $lead['priority'] ?? 'medium';
                             $pCls = ['low' => 'bg-secondary', 'medium' => 'bg-info', 'high' => 'bg-warning text-dark', 'urgent' => 'bg-danger'];
                             ?>
-                            <span class="badge <?= $pCls[$priority] ?? 'bg-secondary' ?>"><?= ucfirst($priority) ?></span>
+                            <span class="badge <?= e($pCls[$priority] ?? 'bg-secondary') ?>"><?= e(ucfirst($priority)) ?></span>
                         </div>
                     </div>
                     <?php if (!empty($lead['notes'])): ?>
@@ -161,7 +161,7 @@ $activityIcons = [
                     <div class="flex-grow-1">
                         <select name="status" class="form-select">
                             <?php foreach ($statuses as $s): ?>
-                                <option value="<?= $s ?>" <?= ($lead['status'] ?? 'new') === $s ? 'selected' : '' ?>>
+                                <option value="<?= e($s ?? '') ?>" <?= ($lead['status'] ?? 'new') === $s ? 'selected' : '' ?>>
                                     <?= ucfirst(str_replace('_', ' ', $s)) ?>
                                 </option>
                             <?php endforeach; ?>

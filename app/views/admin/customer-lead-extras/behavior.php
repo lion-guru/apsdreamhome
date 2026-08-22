@@ -134,7 +134,7 @@ $page_description = 'Analyze customer behavior patterns and insights';
                                         </span>
                                     </td>
                                     <td>
-                                        <a href="<?php echo BASE_URL; ?>/admin/customer-lead/behavior/<?php echo $behavior['id']; ?>" class="btn btn-sm btn-outline-primary">
+                                        <a href="<?php echo BASE_URL; ?>/admin/customer-lead/behavior/<?php echo e($behavior['id']); ?>" class="btn btn-sm btn-outline-primary">
                                             <i class="fas fa-eye"></i> View
                                         </a>
                                     </td>

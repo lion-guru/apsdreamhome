@@ -26,7 +26,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <select class="form-select form-select-sm" name="type">
                         <option value=""><?= __('assoc_browse_all_types', [], 'All Types') ?></option>
                         <?php foreach (['plot','house','flat','shop','farmhouse','villa','land'] as $t): ?>
-                            <option value="<?= $t ?>" <?= ($current_filters['type'] ?? '') === $t ? 'selected' : '' ?>><?= __("assoc_browse_type_$t", [], ucfirst($t)) ?></option>
+                            <option value="<?= e($t ?? '') ?>" <?= ($current_filters['type'] ?? '') === $t ? 'selected' : '' ?>><?= __("assoc_browse_type_$t", [], ucfirst($t)) ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>

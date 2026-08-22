@@ -48,7 +48,7 @@ $t = $old['title'] ?? $state_data['title'] ?? '';
                             <select name="property_type" class="form-select" required>
                                 <option value="">-- Select --</option>
                                 <?php foreach (['plot','flat','house','shop','farmhouse','land','apartment','villa'] as $t1): ?>
-                                    <option value="<?= $t1 ?>" <?= $pt === $t1 ? 'selected' : '' ?>><?= ucfirst($t1) ?></option>
+                                    <option value="<?= e($t1 ?? '') ?>" <?= $pt === $t1 ? 'selected' : '' ?>><?= ucfirst($t1) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

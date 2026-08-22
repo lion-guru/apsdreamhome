@@ -40,7 +40,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                         <label class="form-label">Role *</label>
                                         <select name="role" class="form-select" required>
                                             <?php foreach ($roles as $role): ?>
-                                                <option value="<?php echo $role; ?>" <?php echo ($user['role'] ?? '') === $role ? 'selected' : ''; ?>>
+                                                <option value="<?php echo e($role); ?>" <?php echo ($user['role'] ?? '') === $role ? 'selected' : ''; ?>>
                                                     <?php echo ucfirst($role); ?>
                                                 </option>
                                             <?php endforeach; ?>
@@ -57,7 +57,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                 </div>
 
                                 <div class="d-flex justify-content-between">
-                                    <a href="<?php echo $base; ?>/users" class="btn btn-outline-secondary">Cancel</a>
+                                    <a href="<?php echo e($base); ?>/users" class="btn btn-outline-secondary">Cancel</a>
                                     <button type="submit" class="btn btn-warning">
                                         <i class="fas fa-save me-2"></i>Update User
                                     </button>
@@ -65,7 +65,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             </form>
                         <?php else: ?>
                             <div class="alert alert-danger">User not found</div>
-                            <a href="<?php echo $base; ?>/users" class="btn btn-outline-secondary">Back to Users</a>
+                            <a href="<?php echo e($base); ?>/users" class="btn btn-outline-secondary">Back to Users</a>
                         <?php endif; ?>
                     </div>
                 </div>

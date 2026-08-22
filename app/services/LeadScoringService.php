@@ -304,8 +304,9 @@ class LeadScoringService
     public function processAllLeads()
     {
         $tid = $this->tenantId();
-        $tidSql = $tid > 1 ? " WHERE tenant_id = $tid" : " WHERE 1=1";
-        $leads = $this->db->fetchAll("SELECT id FROM leads" . $tidSql);
+        $tidSql = $tid > 1 ? ' WHERE tenant_id = ?' : ' WHERE 1=1';
+        $tidParam = $tid > 1 ? [$tid] : [];
+        $leads = $this->db->fetchAll("SELECT id FROM leads" . $tidSql, $tidParam);
         $processed = 0;
         
         foreach ($leads as $lead) {
@@ -325,12 +326,13 @@ class LeadScoringService
     public function autoAssignHotLeads()
     {
         $tid = $this->tenantId();
-        $tidWhere = $tid > 1 ? " AND l.tenant_id = $tid" : "";
+        $tidWhere = $tid > 1 ? ' AND l.tenant_id = ?' : '';
+        $hotParams = $tid > 1 ? [$tid] : [];
         $hotLeads = $this->db->fetchAll(
             "SELECT ls.*, l.name, l.phone, l.assigned_to 
              FROM lead_scores ls
              JOIN leads l ON ls.lead_id = l.id
-             WHERE ls.is_hot_lead = 1 AND l.assigned_to IS NULL" . $tidWhere
+             WHERE ls.is_hot_lead = 1 AND l.assigned_to IS NULL" . $tidWhere, $hotParams
         );
         
         // Get available users

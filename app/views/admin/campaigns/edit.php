@@ -13,7 +13,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <h2 class="mb-1">Edit Campaign</h2>
                 <p class="text-muted mb-0">Update campaign details</p>
             </div>
-            <a href="<?php echo $base; ?>/admin/campaigns" class="btn btn-outline-secondary">
+            <a href="<?php echo e($base); ?>/admin/campaigns" class="btn btn-outline-secondary">
                 <i class="fas fa-arrow-left me-2"></i>Back to Campaigns
             </a>
         </div>
@@ -23,7 +23,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             <div class="col-lg-8">
                 <div class="card border-0 shadow-sm">
                     <div class="card-body p-4">
-                        <form id="editCampaignForm" action="<?php echo $base; ?>/admin/campaigns/<?php echo $campaign['campaign_id'] ?? ''; ?>/update" method="POST">
+                        <form id="editCampaignForm" action="<?php echo e($base); ?>/admin/campaigns/<?php echo $campaign['campaign_id'] ?? ''; ?>/update" method="POST">
                             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
                             
                             <div class="mb-3">
@@ -41,7 +41,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                     <label for="type" class="form-label">Campaign Type</label>
                                     <select class="form-select" id="type" name="type">
                                         <?php foreach ($campaign_types as $type): ?>
-                                            <option value="<?php echo $type; ?>" <?php echo ($campaign['type'] ?? '') === $type ? 'selected' : ''; ?>>
+                                            <option value="<?php echo e($type); ?>" <?php echo ($campaign['type'] ?? '') === $type ? 'selected' : ''; ?>>
                                                 <?php echo ucfirst($type); ?>
                                             </option>
                                         <?php endforeach; ?>
@@ -52,7 +52,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                     <label for="target_audience" class="form-label">Target Audience</label>
                                     <select class="form-select" id="target_audience" name="target_audience">
                                         <?php foreach ($target_audiences as $audience): ?>
-                                            <option value="<?php echo $audience; ?>" <?php echo ($campaign['target_audience'] ?? '') === $audience ? 'selected' : ''; ?>>
+                                            <option value="<?php echo e($audience); ?>" <?php echo ($campaign['target_audience'] ?? '') === $audience ? 'selected' : ''; ?>>
                                                 <?php echo ucfirst($audience); ?>
                                             </option>
                                         <?php endforeach; ?>
@@ -97,7 +97,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             <hr class="my-4">
                             
                             <div class="d-flex justify-content-between">
-                                <a href="<?php echo $base; ?>/admin/campaigns" class="btn btn-outline-secondary">Cancel</a>
+                                <a href="<?php echo e($base); ?>/admin/campaigns" class="btn btn-outline-secondary">Cancel</a>
                                 <div>
                                     <button type="button" onclick="deleteCampaign(<?php echo $campaign['campaign_id'] ?? ''; ?>)" class="btn btn-danger me-2">
                                         <i class="fas fa-trash me-2"></i>Delete
@@ -125,7 +125,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
         function deleteCampaign(campaignId) {
             apsConfirm('Are you sure you want to delete this campaign? This action cannot be undone.').then(function(ok) {
                 if (!ok) return;
-                window.location.href = '<?php echo $base; ?>/admin/campaigns/' + campaignId + '/delete';
+                window.location.href = '<?php echo e($base); ?>/admin/campaigns/' + campaignId + '/delete';
             });
         }
         
@@ -142,7 +142,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             .then(response => response.text())
             .then(data => {
                 showToast('Campaign updated successfully!', 'success');
-                window.location.href = '<?php echo $base; ?>/admin/campaigns';
+                window.location.href = '<?php echo e($base); ?>/admin/campaigns';
             })
             .catch(error => {
                 console.error('Error:', error);

@@ -45,7 +45,7 @@ $active_page = 'menu-permissions';
                                 <tbody>
                                     <?php foreach ($menuItems as $item): ?>
                                         <?php if (empty($item['children'])): ?>
-                                            <tr data-menu-id="<?php echo $item['id']; ?>">
+                                            <tr data-menu-id="<?php echo e($item['id']); ?>">
                                                 <td>
                                                     <i class="fas <?php echo htmlspecialchars($item['icon'] ?? ''); ?> me-2"></i>
                                                     <?php echo htmlspecialchars($item['name'] ?? ''); ?>
@@ -59,8 +59,8 @@ $active_page = 'menu-permissions';
                                                             <input class="form-check-input role-permission-check" 
                                                                    type="checkbox" 
                                                                    role="switch"
-                                                                   data-role="<?php echo $role; ?>"
-                                                                   data-menu-id="<?php echo $item['id']; ?>"
+                                                                   data-role="<?php echo e($role); ?>"
+                                                                   data-menu-id="<?php echo e($item['id']); ?>"
                                                                    <?php echo isset($item['role_permissions'][$role]) && $item['role_permissions'][$role]['can_view'] ? 'checked' : ''; ?>>
                                                         </div>
                                                     </td>
@@ -68,14 +68,14 @@ $active_page = 'menu-permissions';
                                             </tr>
                                         <?php else: ?>
                                             <!-- Parent menu item with children -->
-                                            <tr class="table-primary font-weight-bold" data-menu-id="<?php echo $item['id']; ?>">
+                                            <tr class="table-primary font-weight-bold" data-menu-id="<?php echo e($item['id']); ?>">
                                                 <td colspan="8">
                                                     <i class="fas <?php echo htmlspecialchars($item['icon'] ?? ''); ?> me-2"></i>
                                                     <?php echo htmlspecialchars($item['name'] ?? ''); ?> (Parent)
                                                 </td>
                                             </tr>
                                             <?php foreach ($item['children'] as $child): ?>
-                                                <tr class="ms-4" data-menu-id="<?php echo $child['id']; ?>">
+                                                <tr class="ms-4" data-menu-id="<?php echo e($child['id']); ?>">
                                                     <td>
                                                         <i class="fas <?php echo htmlspecialchars($child['icon'] ?? ''); ?> me-2"></i>
                                                         <?php echo htmlspecialchars($child['name'] ?? ''); ?>
@@ -88,8 +88,8 @@ $active_page = 'menu-permissions';
                                                                 <input class="form-check-input role-permission-check" 
                                                                        type="checkbox" 
                                                                        role="switch"
-                                                                       data-role="<?php echo $role; ?>"
-                                                                       data-menu-id="<?php echo $child['id']; ?>"
+                                                                       data-role="<?php echo e($role); ?>"
+                                                                       data-menu-id="<?php echo e($child['id']); ?>"
                                                                        <?php echo isset($child['role_permissions'][$role]) && $child['role_permissions'][$role]['can_view'] ? 'checked' : ''; ?>>
                                                             </div>
                                                         </td>

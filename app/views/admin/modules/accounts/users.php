@@ -124,21 +124,21 @@ $users = $users ?? [];
                 </thead>
                 <tbody>
                     <?php foreach ($users as $user): ?>
-                        <tr class="user-row" data-status="<?php echo $user['status']; ?>" data-role="<?php echo $user['role']; ?>">
+                        <tr class="user-row" data-status="<?php echo e($user['status']); ?>" data-role="<?php echo $user['role']; ?>">
                             <td>
-                                <input type="checkbox" class="user-checkbox" value="<?php echo $user['id']; ?>">
+                                <input type="checkbox" class="user-checkbox" value="<?php echo e($user['id']); ?>">
                             </td>
                             <td>
-                                <span class="user-id"><?php echo $user['id']; ?></span>
+                                <span class="user-id"><?php echo e($user['id']); ?></span>
                             </td>
                             <td>
                                 <div class="user-info">
-                                    <div class="user-name"><?php echo $user['name']; ?></div>
-                                    <small class="text-muted"><?php echo $user['email']; ?></small>
+                                    <div class="user-name"><?php echo e($user['name']); ?></div>
+                                    <small class="text-muted"><?php echo e($user['email']); ?></small>
                                 </div>
                             </td>
-                            <td><?php echo $user['email']; ?></td>
-                            <td><?php echo $user['phone']; ?></td>
+                            <td><?php echo e($user['email']); ?></td>
+                            <td><?php echo e($user['phone']); ?></td>
                             <td>
                                 <?php if ($user['role'] === 'Client'): ?>
                                     <span class="badge bg-primary">Client</span>
@@ -147,7 +147,7 @@ $users = $users ?? [];
                                 <?php elseif ($user['role'] === 'Admin'): ?>
                                     <span class="badge bg-danger">Admin</span>
                                 <?php else: ?>
-                                    <span class="badge bg-secondary"><?php echo $user['role']; ?></span>
+                                    <span class="badge bg-secondary"><?php echo e($user['role']); ?></span>
                                 <?php endif; ?>
                             </td>
                             <td>
@@ -159,31 +159,31 @@ $users = $users ?? [];
                                     <span class="badge bg-warning">Suspended</span>
                                 <?php endif; ?>
                             </td>
-                            <td><?php echo $user['location']; ?></td>
+                            <td><?php echo e($user['location']); ?></td>
                             <td>
                                 <div class="activity-info">
-                                    <div><i class="fas fa-eye"></i> <?php echo $user['properties_viewed']; ?> views</div>
-                                    <div><i class="fas fa-envelope"></i> <?php echo $user['enquiries_sent']; ?> enquiries</div>
-                                    <small class="text-muted">Last: <?php echo $user['last_login']; ?></small>
+                                    <div><i class="fas fa-eye"></i> <?php echo e($user['properties_viewed']); ?> views</div>
+                                    <div><i class="fas fa-envelope"></i> <?php echo e($user['enquiries_sent']); ?> enquiries</div>
+                                    <small class="text-muted">Last: <?php echo e($user['last_login']); ?></small>
                                 </div>
                             </td>
                             <td>
                                 <div class="action-buttons">
-                                    <button class="btn btn-sm btn-info" onclick="viewUser('<?php echo $user['id']; ?>')" title="View">
+                                    <button class="btn btn-sm btn-info" onclick="viewUser('<?php echo e($user['id']); ?>')" title="View">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-warning" onclick="editUser('<?php echo $user['id']; ?>')" title="Edit">
+                                    <button class="btn btn-sm btn-warning" onclick="editUser('<?php echo e($user['id']); ?>')" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-secondary" onclick="resetPassword('<?php echo $user['id']; ?>')" title="Reset Password">
+                                    <button class="btn btn-sm btn-secondary" onclick="resetPassword('<?php echo e($user['id']); ?>')" title="Reset Password">
                                         <i class="fas fa-key"></i>
                                     </button>
                                     <?php if ($user['status'] === 'active'): ?>
-                                        <button class="btn btn-sm btn-danger" onclick="suspendUser('<?php echo $user['id']; ?>')" title="Suspend" aria-label="Suspend user">
+                                        <button class="btn btn-sm btn-danger" onclick="suspendUser('<?php echo e($user['id']); ?>')" title="Suspend" aria-label="Suspend user">
                                             <i class="fas fa-ban"></i>
                                         </button>
                                     <?php else: ?>
-                                        <button class="btn btn-sm btn-success" onclick="activateUser('<?php echo $user['id']; ?>')" title="Activate">
+                                        <button class="btn btn-sm btn-success" onclick="activateUser('<?php echo e($user['id']); ?>')" title="Activate">
                                             <i class="fas fa-check"></i>
                                         </button>
                                     <?php endif; ?>

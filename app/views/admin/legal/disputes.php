@@ -25,7 +25,7 @@ $resolved = $resolved ?? 0;
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Total Disputes</h6>
-                            <h3 class="mb-0"><?php echo $total; ?></h3>
+                            <h3 class="mb-0"><?php echo e($total); ?></h3>
                         </div>
                     </div>
                 </div>
@@ -42,7 +42,7 @@ $resolved = $resolved ?? 0;
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Open</h6>
-                            <h3 class="mb-0"><?php echo $open; ?></h3>
+                            <h3 class="mb-0"><?php echo e($open); ?></h3>
                         </div>
                     </div>
                 </div>
@@ -59,7 +59,7 @@ $resolved = $resolved ?? 0;
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Resolved</h6>
-                            <h3 class="mb-0"><?php echo $resolved; ?></h3>
+                            <h3 class="mb-0"><?php echo e($resolved); ?></h3>
                         </div>
                     </div>
                 </div>
@@ -126,7 +126,7 @@ $resolved = $resolved ?? 0;
                             <td><?php echo $d['assigned_name'] ?? '-'; ?></td>
                             <td><?php echo $d['filed_date'] ?? '-'; ?></td>
                             <td class="text-end pe-4">
-                                <a href="<?php echo BASE_URL; ?>/admin/legal/disputes/<?php echo $d['id']; ?>" class="btn btn-sm btn-outline-info"><i class="fas fa-eye"></i></a>
+                                <a href="<?php echo BASE_URL; ?>/admin/legal/disputes/<?php echo e($d['id']); ?>" class="btn btn-sm btn-outline-info"><i class="fas fa-eye"></i></a>
                             </td>
                         </tr>
                         <?php endforeach; ?>

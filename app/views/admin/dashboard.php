@@ -44,8 +44,8 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
     <div class="page-header">
         <div class="d-flex justify-content-between align-items-center">
             <div>
-                <h1 class="page-title"><?php echo $page_title; ?></h1>
-                <p class="page-description"><?php echo $page_description; ?></p>
+<h1 class="page-title"><?php echo e($page_title); ?></h1>
+<p class="page-description"><?php echo e($page_description); ?></p>
             </div>
             <div class="d-flex gap-2">
                 <button class="btn btn-primary" onclick="location.reload()">
@@ -62,7 +62,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                 <div class="aps-cp-stat-icon"><i class="fas fa-users"></i></div>
                 <div class="aps-cp-stat-body">
                     <div class="aps-cp-stat-label"><?= __('admin_stat_users', null, 'Total Users') ?></div>
-                    <div class="aps-cp-stat-value"><?php echo number_format($stats['total_users']); ?></div>
+                    <div class="aps-cp-stat-value"><?php echo e(number_format($stats['total_users'])); ?></div>
                 </div>
             </div>
         </div>
@@ -72,7 +72,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                 <div class="aps-cp-stat-icon"><i class="fas fa-building"></i></div>
                 <div class="aps-cp-stat-body">
                     <div class="aps-cp-stat-label"><?= __('admin_stat_properties', null, 'Properties') ?></div>
-                    <div class="aps-cp-stat-value"><?php echo number_format($stats['total_properties']); ?></div>
+                    <div class="aps-cp-stat-value"><?php echo e(number_format($stats['total_properties'])); ?></div>
                 </div>
             </div>
         </div>
@@ -82,8 +82,8 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                 <div class="aps-cp-stat-icon"><i class="fas fa-bullseye"></i></div>
                 <div class="aps-cp-stat-body">
                     <div class="aps-cp-stat-label"><?= __('admin_stat_leads', null, 'Total Leads') ?></div>
-                    <div class="aps-cp-stat-value"><?php echo number_format($stats['total_leads']); ?></div>
-                    <div class="aps-cp-stat-trend up"><i class="fas fa-arrow-up"></i> <?php echo $stats['new_leads_today']; ?> <?= __('admin_today', null, 'today') ?></div>
+                    <div class="aps-cp-stat-value"><?php echo e(number_format($stats['total_leads'])); ?></div>
+                    <div class="aps-cp-stat-trend up"><i class="fas fa-arrow-up"></i> <?php echo e($stats['new_leads_today']); ?> <?= __('admin_today', null, 'today') ?></div>
                 </div>
             </div>
         </div>
@@ -93,7 +93,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                 <div class="aps-cp-stat-icon"><i class="fas fa-network-wired"></i></div>
                 <div class="aps-cp-stat-body">
                     <div class="aps-cp-stat-label"><?= __('admin_stat_associates', null, 'Associates/Agents') ?></div>
-                    <div class="aps-cp-stat-value"><?php echo number_format($stats['total_associates']); ?></div>
+                    <div class="aps-cp-stat-value"><?php echo e(number_format($stats['total_associates'])); ?></div>
                 </div>
             </div>
         </div>
@@ -105,7 +105,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
     <div class="alert alert-warning d-flex align-items-center mb-4" role="alert">
         <i class="fas fa-user-clock me-3 fa-2x"></i>
         <div class="flex-grow-1">
-            <strong><?php echo $pendingCount; ?> pending registration<?php echo $pendingCount > 1 ? 's' : ''; ?> awaiting approval.</strong>
+            <strong><?php echo e($pendingCount); ?> pending registration<?php echo e($pendingCount > 1 ? 's' : ''); ?> awaiting approval.</strong>
             <span class="ms-2">Agent registrations require manual approval before they can login.</span>
         </div>
         <a href="<?php echo BASE_URL; ?>/admin/users/pending" class="btn btn-warning btn-sm">
@@ -127,7 +127,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
     <div class="alert alert-info d-flex align-items-center mb-4" role="alert">
         <i class="fas fa-clipboard-check me-3 fa-2x"></i>
         <div class="flex-grow-1">
-            <strong><?php echo $pendingBookings; ?> booking<?php echo $pendingBookings > 1 ? 's' : ''; ?> pending approval.</strong>
+            <strong><?php echo e($pendingBookings); ?> booking<?php echo e($pendingBookings > 1 ? 's' : ''); ?> pending approval.</strong>
             <span class="ms-2">Associate-submitted bookings need your review before processing.</span>
         </div>
         <a href="<?php echo BASE_URL; ?>/admin/sales/approvals" class="btn btn-info btn-sm text-white">
@@ -144,7 +144,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                 <div class="aps-cp-stat-icon"><i class="fas fa-rupee-sign"></i></div>
                 <div class="aps-cp-stat-body">
                     <div class="aps-cp-stat-label"><?= __('admin_stat_revenue', null, 'Revenue (30 Days)') ?></div>
-                    <div class="aps-cp-stat-value">₹<?php echo number_format($stats['revenue_month'], 2); ?></div>
+                    <div class="aps-cp-stat-value">₹<?php echo e(number_format($stats['revenue_month'], 2)); ?></div>
                 </div>
             </div>
         </div>
@@ -154,7 +154,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                 <div class="aps-cp-stat-icon"><i class="fas fa-user-tie"></i></div>
                 <div class="aps-cp-stat-body">
                     <div class="aps-cp-stat-label"><?= __('admin_stat_employees', null, 'Employees') ?></div>
-                    <div class="aps-cp-stat-value"><?php echo number_format($stats['total_employees']); ?></div>
+                    <div class="aps-cp-stat-value"><?php echo e(number_format($stats['total_employees'])); ?></div>
                 </div>
             </div>
         </div>
@@ -164,7 +164,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                 <div class="aps-cp-stat-icon"><i class="fas fa-file-contract"></i></div>
                 <div class="aps-cp-stat-body">
                     <div class="aps-cp-stat-label"><?= __('admin_pending_bookings', null, 'Pending Bookings') ?></div>
-                    <div class="aps-cp-stat-value"><?php echo number_format($stats['pending_bookings']); ?></div>
+                    <div class="aps-cp-stat-value"><?php echo e(number_format($stats['pending_bookings'])); ?></div>
                 </div>
             </div>
         </div>
@@ -242,8 +242,8 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                                                 <small class="text-muted"><?php echo htmlspecialchars($lead['email'] ?? ''); ?></small>
                                             </div>
                                             <?php $statusColor = $lead['status'] === 'hot' ? 'danger' : ($lead['status'] === 'warm' ? 'warning' : 'secondary'); ?>
-                                            <span class="badge bg-<?php echo $statusColor; ?>">
-                                                <?php echo ucfirst($lead['status'] ?? 'new'); ?>
+                                            <span class="badge bg-<?php echo e($statusColor); ?>">
+                                                <?php echo e(ucfirst($lead['status'] ?? 'new')); ?>
                                             </span>
                                         </div>
                                     </div>
@@ -269,7 +269,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
 <div class="mb-3">
                         <div class="d-flex justify-content-between mb-2">
                             <span><?= __('admin_database_tables', null, 'Database Tables') ?></span>
-                            <span class="fw-semibold"><?php echo $stats['database_tables'] ?? '—'; ?></span>
+                            <span class="fw-semibold"><?php echo e($stats['database_tables'] ?? '—'); ?></span>
                         </div>
                         <div class="progress" class="style-29939">
                             <div class="progress-bar bg-primary" class="style-13113"></div>
@@ -279,7 +279,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                     <div class="mb-3">
                         <div class="d-flex justify-content-between mb-2">
                             <span><?= __('admin_active_users', null, 'Active Users') ?></span>
-                            <span class="fw-semibold"><?php echo number_format($stats['active_users'] ?? 0); ?></span>
+                            <span class="fw-semibold"><?php echo e(number_format($stats['active_users'] ?? 0)); ?></span>
                         </div>
                         <div class="progress" class="style-29939">
                             <div class="progress-bar bg-success" class="style-58158"></div>
@@ -289,7 +289,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                     <div class="mb-3">
                         <div class="d-flex justify-content-between mb-2">
                             <span><?= __('admin_system_health', null, 'System Health') ?></span>
-                            <span class="fw-semibold text-success"><?php echo number_format($stats['system_health_pct'] ?? 99.9, 1); ?>%</span>
+                            <span class="fw-semibold text-success"><?php echo e(number_format($stats['system_health_pct'] ?? 99.9, 1)); ?>%</span>
                         </div>
                         <div class="progress" class="style-29939">
                             <div class="progress-bar bg-info" class="style-10867"></div>
@@ -303,7 +303,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                     <div class="mb-3">
                         <div class="d-flex justify-content-between mb-1">
                             <span><?= __('admin_active_users', null, 'Active Users') ?></span>
-                            <span class="fw-semibold"><?php echo number_format($stats['active_users'] ?? 0); ?></span>
+                            <span class="fw-semibold"><?php echo e(number_format($stats['active_users'] ?? 0)); ?></span>
                         </div>
                         <div class="progress" class="style-29939">
                             <div class="progress-bar bg-success" class="style-14876"></div>
@@ -313,7 +313,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                     <div class="mb-3">
                         <div class="d-flex justify-content-between mb-1">
                             <span><?= __('admin_system_health', null, 'System Health') ?></span>
-                            <span class="fw-semibold text-success"><?php echo number_format($stats['system_health_pct'] ?? 99.9, 1); ?>%</span>
+                            <span class="fw-semibold text-success"><?php echo e(number_format($stats['system_health_pct'] ?? 99.9, 1)); ?>%</span>
                         </div>
                         <div class="progress" class="style-29939">
                             <div class="progress-bar bg-info" class="style-97316"></div>
@@ -324,15 +324,15 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
 
                     <div class="row text-center">
                         <div class="col-4">
-                            <div class="h4 mb-0 text-primary"><?php echo number_format($stats['total_properties']); ?></div>
+                            <div class="h4 mb-0 text-primary"><?php echo e(number_format($stats['total_properties'])); ?></div>
                             <small class="text-muted"><?= __('admin_property', null, 'Properties') ?></small>
                         </div>
                         <div class="col-4">
-                            <div class="h4 mb-0 text-success"><?php echo number_format($stats['total_leads']); ?></div>
+                            <div class="h4 mb-0 text-success"><?php echo e(number_format($stats['total_leads'])); ?></div>
                             <small class="text-muted"><?= __('admin_total_leads', null, 'Total Leads') ?></small>
                         </div>
                         <div class="col-4">
-                            <div class="h4 mb-0 text-warning"><?php echo number_format($stats['pending_bookings']); ?></div>
+                            <div class="h4 mb-0 text-warning"><?php echo e(number_format($stats['pending_bookings'])); ?></div>
                             <small class="text-muted"><?= __('admin_pending', null, 'Pending') ?></small>
                         </div>
                     </div>

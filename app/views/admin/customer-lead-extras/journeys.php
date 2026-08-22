@@ -145,15 +145,15 @@ $page_description = 'Track and analyze customer journeys';
                                         </small>
                                     </td>
                                     <td>
-                                        <span class="badge bg-light text-dark"><?php echo $durationDays; ?> days</span>
+                                        <span class="badge bg-light text-dark"><?php echo e($durationDays); ?> days</span>
                                     </td>
                                     <td>
-                                        <span class="badge bg-<?php echo $statusClass; ?>">
+                                        <span class="badge bg-<?php echo e($statusClass); ?>">
                                             <?php echo ucfirst($journey['journey'] ?? 'Unknown'); ?>
                                         </span>
                                     </td>
                                     <td>
-                                        <a href="<?php echo BASE_URL; ?>/admin/customer-lead/journeys/<?php echo $journey['id']; ?>" class="btn btn-sm btn-outline-primary">
+                                        <a href="<?php echo BASE_URL; ?>/admin/customer-lead/journeys/<?php echo e($journey['id']); ?>" class="btn btn-sm btn-outline-primary">
                                             <i class="fas fa-eye"></i> View
                                         </a>
                                     </td>

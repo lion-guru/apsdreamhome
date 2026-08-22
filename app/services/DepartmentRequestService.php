@@ -68,28 +68,32 @@ class DepartmentRequestService
     public function getRequestsForDepartment(int $departmentId, array $filters = []): array
     {
         $tid = $this->tenantId();
-        $where = $tid > 1 ? " AND dr.tenant_id = $tid" : "";
-        $params = [$departmentId];
+        $where = $tid > 1 ? " AND dr.tenant_id = ?" : "";
 
         $statusFilter = $filters['status'] ?? null;
         if ($statusFilter) {
             $where .= " AND dr.status = ?";
-            $params[] = $statusFilter;
         }
 
         $priorityFilter = $filters['priority'] ?? null;
         if ($priorityFilter) {
             $where .= " AND dr.priority = ?";
-            $params[] = $priorityFilter;
         }
 
         $sql = "SELECT dr.*, d.name as department_name,
                 u.name as requester_name
                 FROM department_requests dr
-                LEFT JOIN departments d ON d.id = dr.department_id" . ($tid > 1 ? " AND d.tenant_id = $tid" : "") . "
-                LEFT JOIN users u ON u.id = dr.requested_by" . ($tid > 1 ? " AND u.tenant_id = $tid" : "") . "
+                LEFT JOIN departments d ON d.id = dr.department_id" . ($tid > 1 ? " AND d.tenant_id = ?" : "") . "
+                LEFT JOIN users u ON u.id = dr.requested_by" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
                 WHERE dr.department_id = ?{$where}
                 ORDER BY dr.created_at DESC";
+
+        $params = [];
+        if ($tid > 1) { $params[] = $tid; $params[] = $tid; }
+        $params[] = $departmentId;
+        if ($tid > 1) $params[] = $tid;
+        if ($statusFilter) $params[] = $statusFilter;
+        if ($priorityFilter) $params[] = $priorityFilter;
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
@@ -100,16 +104,16 @@ class DepartmentRequestService
     public function getRequestsByUser(int $userId): array
     {
         $tid = $this->tenantId();
-        $where = $tid > 1 ? " AND dr.tenant_id = $tid" : "";
+        $where = $tid > 1 ? " AND dr.tenant_id = ?" : "";
 
         $sql = "SELECT dr.*, d.name as department_name
                 FROM department_requests dr
-                LEFT JOIN departments d ON d.id = dr.department_id" . ($tid > 1 ? " AND d.tenant_id = $tid" : "") . "
+                LEFT JOIN departments d ON d.id = dr.department_id" . ($tid > 1 ? " AND d.tenant_id = ?" : "") . "
                 WHERE dr.requested_by = ?{$where}
                 ORDER BY dr.created_at DESC";
 
         $params = [$userId];
-        if ($tid > 1) $params[] = $tid;
+        if ($tid > 1) { $params[] = $tid; $params[] = $tid; }
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
@@ -120,17 +124,19 @@ class DepartmentRequestService
     public function getAllPending(int $limit = 50): array
     {
         $tid = $this->tenantId();
-        $where = $tid > 1 ? " AND dr.tenant_id = $tid" : "";
+        $where = $tid > 1 ? " AND dr.tenant_id = ?" : "";
 
         $sql = "SELECT dr.*, d.name as department_name, u.name as requester_name
                 FROM department_requests dr
-                LEFT JOIN departments d ON d.id = dr.department_id" . ($tid > 1 ? " AND d.tenant_id = $tid" : "") . "
-                LEFT JOIN users u ON u.id = dr.requested_by" . ($tid > 1 ? " AND u.tenant_id = $tid" : "") . "
+                LEFT JOIN departments d ON d.id = dr.department_id" . ($tid > 1 ? " AND d.tenant_id = ?" : "") . "
+                LEFT JOIN users u ON u.id = dr.requested_by" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
                 WHERE dr.status IN ('open', 'in_progress'){$where}
                 ORDER BY dr.created_at DESC
                 LIMIT ?";
 
-        $params = [$limit];
+        $params = [];
+        if ($tid > 1) { $params[] = $tid; $params[] = $tid; }
+        $params[] = $limit;
         if ($tid > 1) $params[] = $tid;
 
         $stmt = $this->pdo->prepare($sql);
@@ -142,18 +148,20 @@ class DepartmentRequestService
     public function getRequest(int $requestId): ?array
     {
         $tid = $this->tenantId();
-        $where = $tid > 1 ? " AND dr.tenant_id = $tid" : "";
+        $where = $tid > 1 ? " AND dr.tenant_id = ?" : "";
 
         $sql = "SELECT dr.*, d.name as department_name, d.head_user_id,
                 u.name as requester_name, u.email as requester_email,
                 a.name as assignee_name
                 FROM department_requests dr
-                LEFT JOIN departments d ON d.id = dr.department_id" . ($tid > 1 ? " AND d.tenant_id = $tid" : "") . "
-                LEFT JOIN users u ON u.id = dr.requested_by" . ($tid > 1 ? " AND u.tenant_id = $tid" : "") . "
-                LEFT JOIN users a ON a.id = dr.assigned_to" . ($tid > 1 ? " AND a.tenant_id = $tid" : "") . "
+                LEFT JOIN departments d ON d.id = dr.department_id" . ($tid > 1 ? " AND d.tenant_id = ?" : "") . "
+                LEFT JOIN users u ON u.id = dr.requested_by" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
+                LEFT JOIN users a ON a.id = dr.assigned_to" . ($tid > 1 ? " AND a.tenant_id = ?" : "") . "
                 WHERE dr.id = ?{$where}";
 
-        $params = [$requestId];
+        $params = [];
+        if ($tid > 1) { $params[] = $tid; $params[] = $tid; $params[] = $tid; }
+        $params[] = $requestId;
         if ($tid > 1) $params[] = $tid;
 
         $stmt = $this->pdo->prepare($sql);
@@ -167,7 +175,7 @@ class DepartmentRequestService
     {
         try {
             $tid = $this->tenantId();
-            $where = $tid > 1 ? " AND tenant_id = $tid" : "";
+            $where = $tid > 1 ? " AND tenant_id = ?" : "";
 
             $sql = "UPDATE department_requests
                     SET status = ?, updated_at = NOW()
@@ -195,7 +203,7 @@ class DepartmentRequestService
     {
         try {
             $tid = $this->tenantId();
-            $where = $tid > 1 ? " AND tenant_id = $tid" : "";
+            $where = $tid > 1 ? " AND tenant_id = ?" : "";
 
             $sql = "UPDATE department_requests
                     SET assigned_to = ?, status = 'in_progress', updated_at = NOW()
@@ -243,16 +251,16 @@ class DepartmentRequestService
     public function getComments(int $requestId): array
     {
         $tid = $this->tenantId();
-        $where = $tid > 1 ? " AND drc.tenant_id = $tid" : "";
+        $where = $tid > 1 ? " AND drc.tenant_id = ?" : "";
 
         $sql = "SELECT drc.*, u.name as commenter_name
                 FROM department_request_comments drc
-                LEFT JOIN users u ON u.id = drc.user_id" . ($tid > 1 ? " AND u.tenant_id = $tid" : "") . "
+                LEFT JOIN users u ON u.id = drc.user_id" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
                 WHERE drc.request_id = ?{$where}
                 ORDER BY drc.created_at ASC";
 
         $params = [$requestId];
-        if ($tid > 1) $params[] = $tid;
+        if ($tid > 1) { $params[] = $tid; $params[] = $tid; }
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
@@ -263,7 +271,7 @@ class DepartmentRequestService
     public function getStats(int $departmentId): array
     {
         $tid = $this->tenantId();
-        $where = $tid > 1 ? " AND tenant_id = $tid" : "";
+        $where = $tid > 1 ? " AND tenant_id = ?" : "";
 
         $sql = "SELECT status, COUNT(*) as count
                 FROM department_requests
@@ -292,7 +300,7 @@ class DepartmentRequestService
     public function getPendingCount(int $departmentId): int
     {
         $tid = $this->tenantId();
-        $where = $tid > 1 ? " AND tenant_id = $tid" : "";
+        $where = $tid > 1 ? " AND tenant_id = ?" : "";
 
         $sql = "SELECT COUNT(*) as count
                 FROM department_requests
@@ -311,7 +319,7 @@ class DepartmentRequestService
     public function getAllDepartmentsWithCounts(): array
     {
         $tid = $this->tenantId();
-        $where = $tid > 1 ? " AND d.tenant_id = $tid" : "";
+        $where = $tid > 1 ? " AND d.tenant_id = ?" : "";
 
         $sql = "SELECT d.id, d.code, d.name, d.head_user_id,
                 COALESCE(dr.pending_count, 0) as pending_count
@@ -319,14 +327,14 @@ class DepartmentRequestService
                 LEFT JOIN (
                     SELECT department_id, COUNT(*) as pending_count
                     FROM department_requests
-                    WHERE status IN ('open', 'in_progress')" . ($tid > 1 ? " AND tenant_id = $tid" : "") . "
+                    WHERE status IN ('open', 'in_progress')" . ($tid > 1 ? " AND tenant_id = ?" : "") . "
                     GROUP BY department_id
                 ) dr ON dr.department_id = d.id
                 WHERE d.status = 'active'{$where}
                 ORDER BY d.name";
 
         $params = [];
-        if ($tid > 1) $params[] = $tid;
+        if ($tid > 1) { $params[] = $tid; $params[] = $tid; }
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
@@ -338,7 +346,7 @@ class DepartmentRequestService
     {
         try {
             $tid = $this->tenantId();
-            $where = $tid > 1 ? " AND tenant_id = $tid" : "";
+            $where = $tid > 1 ? " AND tenant_id = ?" : "";
 
             $sql = "SELECT head_user_id FROM departments WHERE id = ?{$where}";
             $stmt = $this->pdo->prepare($sql);
@@ -371,7 +379,7 @@ class DepartmentRequestService
     {
         try {
             $tid = $this->tenantId();
-            $where = $tid > 1 ? " AND tenant_id = $tid" : "";
+            $where = $tid > 1 ? " AND tenant_id = ?" : "";
 
             $sql = "SELECT name FROM users WHERE id = ?{$where}";
             $stmt = $this->pdo->prepare($sql);

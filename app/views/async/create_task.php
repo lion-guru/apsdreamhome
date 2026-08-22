@@ -56,7 +56,7 @@ $errors = $errors ?? [];
                         <label class="form-label">Priority</label>
                         <select name="priority" class="form-select">
                             <?php foreach ($priorities as $val => $label): ?>
-                                <option value="<?= $val ?>" <?= ($old_input['priority'] ?? 2) == $val ? 'selected' : '' ?>><?= $label ?></option>
+                                <option value="<?= e($val ?? '') ?>" <?= ($old_input['priority'] ?? 2) == $val ? 'selected' : '' ?>><?= e($label ?? '') ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>

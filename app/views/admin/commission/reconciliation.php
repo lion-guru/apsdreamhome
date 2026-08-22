@@ -59,12 +59,12 @@ $healthColor = $healthColors[$health] ?? '#6b7280';
                 <tbody>
                 <?php foreach ($reconciliation['orphaned_ledger_no_booking'] as $ol): ?>
                 <tr class="style-69418">
-                    <td class="style-23927"><?php echo $ol['id']; ?></td>
-                    <td class="style-23927"><?php echo $ol['booking_id']; ?></td>
-                    <td class="style-23927"><?php echo $ol['beneficiary_user_id']; ?></td>
-                    <td class="style-23927"><?php echo $ol['commission_type']; ?></td>
+                    <td class="style-23927"><?php echo e($ol['id']); ?></td>
+                    <td class="style-23927"><?php echo e($ol['booking_id']); ?></td>
+                    <td class="style-23927"><?php echo e($ol['beneficiary_user_id']); ?></td>
+                    <td class="style-23927"><?php echo e($ol['commission_type']); ?></td>
                     <td class="style-35252">₹<?php echo number_format((float)$ol['amount'], 2); ?></td>
-                    <td class="style-23927"><span class="badge badge-<?php echo $ol['status'] === 'paid' ? 'success' : 'warning'; ?>"><?php echo $ol['status']; ?></span></td>
+                    <td class="style-23927"><span class="badge badge-<?php echo $ol['status'] === 'paid' ? 'success' : 'warning'; ?>"><?php echo e($ol['status']); ?></span></td>
                 </tr>
                 <?php endforeach; ?>
                 </tbody>

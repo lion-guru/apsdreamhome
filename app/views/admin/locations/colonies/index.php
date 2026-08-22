@@ -29,7 +29,7 @@
                                 <select class="form-select" id="state_id" name="state_id" onchange="filterDistricts(this.value)">
                                     <option value="">All States</option>
                                     <?php foreach ($states as $state): ?>
-                                        <option value="<?php echo $state['id']; ?>" <?php echo (isset($_GET['state_id']) && $_GET['state_id'] == $state['id']) ? 'selected' : ''; ?>>
+                                        <option value="<?php echo e($state['id']); ?>" <?php echo (isset($_GET['state_id']) && $_GET['state_id'] == $state['id']) ? 'selected' : ''; ?>>
                                             <?php echo htmlspecialchars($state['name'] ?? ''); ?>
                                         </option>
                                     <?php endforeach; ?>
@@ -40,7 +40,7 @@
                                 <select class="form-select" id="district_id" name="district_id">
                                     <option value="">All Districts</option>
                                     <?php foreach ($districts as $district): ?>
-                                        <option value="<?php echo $district['id']; ?>" class="district-option state-<?php echo $district['state_id']; ?>" <?php echo (isset($_GET['district_id']) && $_GET['district_id'] == $district['id']) ? 'selected' : ''; ?>>
+                                        <option value="<?php echo e($district['id']); ?>" class="district-option state-<?php echo $district['state_id']; ?>" <?php echo (isset($_GET['district_id']) && $_GET['district_id'] == $district['id']) ? 'selected' : ''; ?>>
                                             <?php echo htmlspecialchars($district['name'] ?? ''); ?>
                                         </option>
                                     <?php endforeach; ?>
@@ -95,7 +95,7 @@
                                 <?php else: ?>
                                 <?php foreach ($colonies as $colony): ?>
                                 <tr>
-                                    <td><?php echo $colony['id']; ?></td>
+                                    <td><?php echo e($colony['id']); ?></td>
                                     <td>
                                         <strong><?php echo htmlspecialchars($colony['name'] ?? ''); ?></strong>
                                         <?php if ($colony['description']): ?>
@@ -109,11 +109,11 @@
                                         </small>
                                     </td>
                                     <td>
-                                        <span class="badge bg-info"><?php echo $colony['total_plots']; ?></span>
+                                        <span class="badge bg-info"><?php echo e($colony['total_plots']); ?></span>
                                     </td>
                                     <td>
                                         <span class="badge bg-<?php echo $colony['available_plots'] > 0 ? 'success' : 'danger'; ?>">
-                                            <?php echo $colony['available_plots']; ?>
+                                            <?php echo e($colony['available_plots']); ?>
                                         </span>
                                     </td>
                                     <td>
@@ -131,10 +131,10 @@
                                     </td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
-                                            <a href="<?= BASE_URL ?>/admin/locations/colonies/edit/<?php echo $colony['id']; ?>" class="btn btn-outline-primary" title="Edit">
+                                            <a href="<?= BASE_URL ?>/admin/locations/colonies/edit/<?php echo e($colony['id']); ?>" class="btn btn-outline-primary" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="<?= BASE_URL ?>/admin/locations/colonies/delete/<?php echo $colony['id']; ?>" class="btn btn-outline-danger" title="Delete" data-aps-confirm="Are you sure?">
+                                            <a href="<?= BASE_URL ?>/admin/locations/colonies/delete/<?php echo e($colony['id']); ?>" class="btn btn-outline-danger" title="Delete" data-aps-confirm="Are you sure?">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </div>

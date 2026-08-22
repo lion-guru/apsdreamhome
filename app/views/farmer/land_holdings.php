@@ -58,9 +58,9 @@ $land_holdings = $land_holdings ?? [];
                             <td><?php echo number_format($lh['area'] ?? 0, 2); ?></td>
                             <td><?php echo htmlspecialchars($lh['village'] ?? 'N/A'); ?></td>
                             <td><?php echo htmlspecialchars($lh['district'] ?? 'N/A'); ?></td>
-                            <td><span class="badge bg-<?php echo $acqBadge; ?> badge-status"><?php echo ucfirst($acqStatus); ?></span></td>
+                            <td><span class="badge bg-<?php echo e($acqBadge); ?> badge-status"><?php echo ucfirst($acqStatus); ?></span></td>
                             <td>₹<?php echo number_format($lh['acquisition_amount'] ?? 0); ?></td>
-                            <td><span class="badge bg-<?php echo $payBadge; ?> badge-status"><?php echo ucfirst($payStatus); ?></span></td>
+                            <td><span class="badge bg-<?php echo e($payBadge); ?> badge-status"><?php echo ucfirst($payStatus); ?></span></td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>

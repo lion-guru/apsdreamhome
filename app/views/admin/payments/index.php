@@ -14,7 +14,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <h2 class="mb-1">Payments</h2>
                 <p class="text-muted mb-0">Manage booking payments</p>
             </div>
-            <a href="<?php echo $base; ?>/admin/dashboard" class="btn btn-outline-secondary">Back</a>
+            <a href="<?php echo e($base); ?>/admin/dashboard" class="btn btn-outline-secondary">Back</a>
         </div>
         
         <!-- Filters -->
@@ -73,7 +73,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                         </td>
                                         <td><?php echo isset($payment['payment_date']) ? date('M d, Y', strtotime($payment['payment_date'])) : '-'; ?></td>
                                         <td>
-                                            <a href="<?php echo $base; ?>/admin/payments/show/<?php echo $payment['payment_id']; ?>" class="btn btn-sm btn-outline-primary">View</a>
+                                            <a href="<?php echo e($base); ?>/admin/payments/show/<?php echo $payment['payment_id']; ?>" class="btn btn-sm btn-outline-primary">View</a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -86,7 +86,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             <ul class="pagination justify-content-center">
                                 <?php for ($i = 1; $i <= $total_pages; $i++): ?>
                                     <li class="page-item <?php echo $i === $page ? 'active' : ''; ?>">
-                                        <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                        <a class="page-link" href="?page=<?php echo e($i); ?>"><?php echo e($i); ?></a>
                                     </li>
                                 <?php endfor; ?>
                             </ul>

@@ -109,8 +109,9 @@ class AdminController extends BaseController
             $recentLeads = [];
             try {
                 $tid = (int)$this->tenantId();
-                $tidSql = $tid > 1 ? " AND tenant_id = $tid" : "";
-                $recentLeads = $this->db->fetchAll("SELECT * FROM leads WHERE 1=1{$tidSql} ORDER BY created_at DESC LIMIT 5") ?: [];
+                $tidSql = $tid > 1 ? ' AND tenant_id = ?' : '';
+                $tidParam = $tid > 1 ? [$tid] : [];
+                $recentLeads = $this->db->fetchAll("SELECT * FROM leads WHERE 1=1{$tidSql} ORDER BY created_at DESC LIMIT 5", $tidParam) ?: [];
             } catch (\Exception $e) {
                 $recentLeads = [];
             }
@@ -486,8 +487,9 @@ class AdminController extends BaseController
                 }, 300),
                 'total_leads' => Cache::remember('admin_api_total_leads_' . ($this->tenantId()), function () {
                     $tid = (int)$this->tenantId();
-                    $tidSql = $tid > 1 ? " WHERE tenant_id = $tid" : "";
-                    return $this->db->fetch("SELECT COUNT(*) as c FROM leads{$tidSql}")['c'] ?? 0;
+                    $tidSql = $tid > 1 ? ' WHERE tenant_id = ?' : '';
+                    $tidParam = $tid > 1 ? [$tid] : [];
+                    return $this->db->fetch("SELECT COUNT(*) as c FROM leads{$tidSql}", $tidParam)['c'] ?? 0;
                 }, 300),
                 'pending_bookings' => Cache::remember('admin_api_pending_bookings', function () {
                     return $this->db->fetch("SELECT COUNT(*) as c FROM bookings WHERE status='pending'")['c'] ?? 0;

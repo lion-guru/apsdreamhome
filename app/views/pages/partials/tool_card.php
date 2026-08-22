@@ -10,15 +10,15 @@ $title = __($tool['title_key'] ?? '', [], $tool['title_default'] ?? 'Tool');
 $desc = __($tool['desc_key'] ?? '', [], $tool['desc_default'] ?? 'Description');
 ?>
 <div class="col-lg-3 col-md-4 col-sm-6">
-    <a href="<?php echo $url; ?>" class="text-decoration-none">
+    <a href="<?php echo e($url); ?>" class="text-decoration-none">
         <div class="tool-card h-100" class="style-59147">
             <div class="style-86397"></div>
             <div class="p-4">
                 <div class="style-99166">
-                    <i class="fas <?php echo $icon; ?>" class="style-65735"></i>
+                    <i class="fas <?php echo e($icon); ?>" class="style-65735"></i>
                 </div>
-                <h5 class="fw-semibold mb-2"><?php echo $title; ?></h5>
-                <p class="small mb-0" style="opacity: 0.7;"><?php echo $desc; ?></p>
+                <h5 class="fw-semibold mb-2"><?php echo e($title); ?></h5>
+                <p class="small mb-0" style="opacity: 0.7;"><?php echo e($desc); ?></p>
             </div>
             <div class="style-16016">
                 <span class="btn-sm" class="style-93887">

@@ -70,7 +70,7 @@ if (!empty($filters['status'])) $filterQs .= '&status=' . urlencode($filters['st
 
 <?php if (isset($success) && $success): ?>
 <div class="alert alert-success alert-dismissible fade show">
-    <i class="fas fa-check-circle me-2"></i><?php echo $success; ?>
+    <i class="fas fa-check-circle me-2"></i><?php echo e($success); ?>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 </div>
 <?php endif; ?>
@@ -125,13 +125,13 @@ if (!empty($filters['status'])) $filterQs .= '&status=' . urlencode($filters['st
                                 default => 'secondary'
                             };
                             ?>
-                            <span class="badge bg-<?php echo $regBadgeClass; ?>"><?php echo ucfirst($regStatus); ?></span>
+                            <span class="badge bg-<?php echo e($regBadgeClass); ?>"><?php echo ucfirst($regStatus); ?></span>
                         </td>
                         <td><?php echo date('M d, Y', strtotime($user['created_at'] ?? 'now')); ?></td>
                         <td class="text-end pe-4">
-                            <a href="<?php echo BASE_URL; ?>/admin/users/<?php echo $user['id']; ?>" class="btn btn-sm btn-outline-info" title="View"><i class="fas fa-eye"></i></a>
-                            <a href="<?php echo BASE_URL; ?>/admin/users/<?php echo $user['id']; ?>/edit" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>
-                            <a href="<?php echo BASE_URL; ?>/admin/users/<?php echo $user['id']; ?>/wallet" class="btn btn-sm btn-outline-success" title="Wallet"><i class="fas fa-wallet"></i></a>
+                            <a href="<?php echo BASE_URL; ?>/admin/users/<?php echo e($user['id']); ?>" class="btn btn-sm btn-outline-info" title="View"><i class="fas fa-eye"></i></a>
+                            <a href="<?php echo BASE_URL; ?>/admin/users/<?php echo e($user['id']); ?>/edit" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>
+                            <a href="<?php echo BASE_URL; ?>/admin/users/<?php echo e($user['id']); ?>/wallet" class="btn btn-sm btn-outline-success" title="Wallet"><i class="fas fa-wallet"></i></a>
                         </td>
                     </tr>
                     <?php endforeach; ?>

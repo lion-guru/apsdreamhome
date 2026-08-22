@@ -129,7 +129,7 @@ if (empty($grouped_projects) && !empty($projects)) {
                                                 <p class="card-text small text-muted"><?php echo htmlspecialchars(substr($project->description, 0, 80)); ?>...</p>
                                             <?php endif; ?>
                                             <div class="d-flex gap-2 mt-3">
-                                                <a href="<?php echo BASE_URL; ?>/projects/<?php echo $slug; ?>" class="btn btn-primary btn-sm flex-grow-1">
+                                                <a href="<?php echo BASE_URL; ?>/projects/<?php echo e($slug); ?>" class="btn btn-primary btn-sm flex-grow-1">
                                                     <i class="fas fa-eye me-1"></i><?= __('cproj_view_details', [], 'View Details') ?>
                                                 </a>
                                                 <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-success btn-sm">

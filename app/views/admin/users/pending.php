@@ -17,7 +17,7 @@
 
 <?php if (isset($success) && $success): ?>
 <div class="alert alert-success alert-dismissible fade show">
-    <i class="fas fa-check-circle me-2"></i><?php echo $success; ?>
+    <i class="fas fa-check-circle me-2"></i><?php echo e($success); ?>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 </div>
 <?php endif; ?>
@@ -42,9 +42,9 @@
                 <tbody>
                     <?php if (!empty($users)): ?>
                     <?php foreach ($users as $user): ?>
-                    <tr id="row-<?php echo $user['id']; ?>">
+                    <tr id="row-<?php echo e($user['id']); ?>">
                         <td class="ps-4">
-                            <input type="checkbox" class="user-checkbox" value="<?php echo $user['id']; ?>" onchange="updateBulkButton()">
+                            <input type="checkbox" class="user-checkbox" value="<?php echo e($user['id']); ?>" onchange="updateBulkButton()">
                         </td>
                         <td>
                             <div class="d-flex align-items-center">
@@ -68,10 +68,10 @@
                             <?php endif; ?>
                         </td>
                         <td class="text-end pe-4">
-                            <button onclick="approveUser(<?php echo $user['id']; ?>)" class="btn btn-sm btn-success me-1" title="Approve">
+                            <button onclick="approveUser(<?php echo e($user['id']); ?>)" class="btn btn-sm btn-success me-1" title="Approve">
                                 <i class="fas fa-check"></i>
                             </button>
-                            <button onclick="rejectUser(<?php echo $user['id']; ?>)" class="btn btn-sm btn-danger" title="Reject">
+                            <button onclick="rejectUser(<?php echo e($user['id']); ?>)" class="btn btn-sm btn-danger" title="Reject">
                                 <i class="fas fa-times"></i>
                             </button>
                         </td>
@@ -97,7 +97,7 @@
     <ul class="pagination justify-content-center">
         <?php for ($i = 1; $i <= $total_pages; $i++): ?>
         <li class="page-item <?php echo $i == ($page ?? 1) ? 'active' : ''; ?>">
-            <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+            <a class="page-link" href="?page=<?php echo e($i); ?>"><?php echo e($i); ?></a>
         </li>
         <?php endfor; ?>
     </ul>

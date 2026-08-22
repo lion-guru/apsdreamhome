@@ -81,7 +81,7 @@ $base = BASE_URL;
             <div class="card-header-custom">
                 <div class="brand-icon"><i class="fas fa-shield-check"></i></div>
                 <h2>Verify OTP</h2>
-                <p>Enter the 6-digit code sent to your <?= $identifier_type === 'email' ? 'email' : 'phone' ?></p>
+                <p>Enter the 6-digit code sent to your <?= htmlspecialchars($identifier_type ?? '') === 'email' ? 'email' : 'phone' ?></p>
             </div>
             <div class="card-body-custom">
                 <?php if ($error): ?>

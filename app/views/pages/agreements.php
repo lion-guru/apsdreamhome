@@ -10,9 +10,9 @@ $breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => BASE_URL], ['title'
                     <ol class="breadcrumb">
                         <?php foreach ($breadcrumbs as $crumb): ?>
                             <?php if (isset($crumb['url']) && $crumb['url']): ?>
-                                <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= $crumb['title'] ?></a></li>
+                                <li class="breadcrumb-item"><a href="<?= e($crumb['url']) ?>"><?= e($crumb['title']) ?></a></li>
                             <?php else: ?>
-                                <li class="breadcrumb-item active" aria-current="page"><?= $crumb['title'] ?></li>
+                                <li class="breadcrumb-item active" aria-current="page"><?= e($crumb['title']) ?></li>
                             <?php endif; ?>
                         <?php endforeach; ?>
                     </ol>

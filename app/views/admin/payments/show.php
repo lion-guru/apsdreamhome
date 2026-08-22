@@ -10,7 +10,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <h2 class="mb-1">Payment Details</h2>
                 <p class="text-muted mb-0">Transaction #<?php echo htmlspecialchars($payment['transaction_id'] ?? '-'); ?></p>
             </div>
-            <a href="<?php echo $base; ?>/admin/payments" class="btn btn-outline-secondary">Back to Payments</a>
+            <a href="<?php echo e($base); ?>/admin/payments" class="btn btn-outline-secondary">Back to Payments</a>
         </div>
         
         <?php if (!empty($payment)): ?>

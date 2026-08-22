@@ -108,7 +108,7 @@ $ratingBadge = function($rating) {
                         <label class="text-muted small">Target Achievement</label>
                         <div class="progress" class="style-70613">
                             <div class="progress-bar bg-<?php echo $achievePct >= 100 ? 'success' : ($achievePct >= 50 ? 'warning' : 'danger'); ?>" role="progressbar" class="style-53489">
-                                <?php echo $achievePct; ?>%
+                                <?php echo e($achievePct); ?>%
                             </div>
                         </div>
                     </div>
@@ -116,7 +116,7 @@ $ratingBadge = function($rating) {
                         <label class="text-muted small">Connection Rate</label>
                         <div class="progress" class="style-70613">
                             <div class="progress-bar bg-info" role="progressbar" class="style-35864">
-                                <?php echo $connectRate; ?>%
+                                <?php echo e($connectRate); ?>%
                             </div>
                         </div>
                     </div>
@@ -124,7 +124,7 @@ $ratingBadge = function($rating) {
                         <label class="text-muted small">Conversion Rate</label>
                         <div class="progress" class="style-70613">
                             <div class="progress-bar bg-success" role="progressbar" class="style-41126">
-                                <?php echo $convertRate; ?>%
+                                <?php echo e($convertRate); ?>%
                             </div>
                         </div>
                     </div>

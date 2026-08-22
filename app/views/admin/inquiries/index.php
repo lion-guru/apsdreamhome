@@ -8,14 +8,14 @@
 
 <?php if (isset($success) && $success): ?>
     <div class="alert alert-success alert-dismissible fade show">
-        <i class="fas fa-check-circle me-2"></i><?php echo $success; ?>
+        <i class="fas fa-check-circle me-2"></i><?php echo e($success); ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 <?php endif; ?>
 
 <?php if (isset($error) && $error): ?>
     <div class="alert alert-danger alert-dismissible fade show">
-        <i class="fas fa-exclamation-circle me-2"></i><?php echo $error; ?>
+        <i class="fas fa-exclamation-circle me-2"></i><?php echo e($error); ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 <?php endif; ?>
@@ -26,7 +26,7 @@
         <a href="<?php echo BASE_URL; ?>/admin/inquiries" class="text-decoration-none">
             <div class="card border-0 shadow-sm <?php echo !$status ? 'bg-primary text-white' : ''; ?>">
                 <div class="card-body text-center">
-                    <div class="h2 mb-0"><?php echo $total; ?></div>
+                    <div class="h2 mb-0"><?php echo e($total); ?></div>
                     <small><?php echo !$status ? '' : 'All Inquiries'; ?></small>
                 </div>
             </div>
@@ -36,7 +36,7 @@
         <a href="<?php echo BASE_URL; ?>/admin/inquiries?status=new" class="text-decoration-none">
             <div class="card border-0 shadow-sm <?php echo $status === 'new' ? 'bg-danger text-white' : ''; ?>">
                 <div class="card-body text-center">
-                    <div class="h2 mb-0"><?php echo $newCount; ?></div>
+                    <div class="h2 mb-0"><?php echo e($newCount); ?></div>
                     <small>New</small>
                 </div>
             </div>
@@ -46,7 +46,7 @@
         <a href="<?php echo BASE_URL; ?>/admin/inquiries?status=pending" class="text-decoration-none">
             <div class="card border-0 shadow-sm <?php echo $status === 'pending' ? 'bg-warning text-white' : ''; ?>">
                 <div class="card-body text-center">
-                    <div class="h2 mb-0"><?php echo $pendingCount; ?></div>
+                    <div class="h2 mb-0"><?php echo e($pendingCount); ?></div>
                     <small>Pending</small>
                 </div>
             </div>
@@ -56,7 +56,7 @@
         <a href="<?php echo BASE_URL; ?>/admin/inquiries?status=contacted" class="text-decoration-none">
             <div class="card border-0 shadow-sm <?php echo $status === 'contacted' ? 'bg-success text-white' : ''; ?>">
                 <div class="card-body text-center">
-                    <div class="h2 mb-0"><?php echo $contactedCount; ?></div>
+                    <div class="h2 mb-0"><?php echo e($contactedCount); ?></div>
                     <small>Contacted</small>
                 </div>
             </div>
@@ -146,13 +146,13 @@
                                 </td>
                                 <td class="text-end pe-4">
                                     <div class="btn-group">
-                                        <a href="<?php echo BASE_URL; ?>/admin/inquiries/view/<?php echo $inq['id']; ?>" class="btn btn-sm btn-outline-primary" title="View">
+                                        <a href="<?php echo BASE_URL; ?>/admin/inquiries/view/<?php echo e($inq['id']); ?>" class="btn btn-sm btn-outline-primary" title="View">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                         <a href="https://wa.me/91<?php echo preg_replace('/[^0-9]/', '', $inq['phone']); ?>" target="_blank" class="btn btn-sm btn-success" title="WhatsApp">
                                             <i class="fab fa-whatsapp"></i>
                                         </a>
-                                        <form method="POST" action="<?php echo BASE_URL; ?>/admin/inquiries/delete/<?php echo $inq['id']; ?>" class="d-inline" data-aps-confirm="Delete this inquiry?">
+                                        <form method="POST" action="<?php echo BASE_URL; ?>/admin/inquiries/delete/<?php echo e($inq['id']); ?>" class="d-inline" data-aps-confirm="Delete this inquiry?">
                                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                             <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                         </form>
@@ -171,19 +171,19 @@
                         <ul class="pagination justify-content-center mb-0">
                             <?php if ($page > 1): ?>
                                 <li class="page-item">
-                                    <a class="page-link" href="?page=<?php echo $page - 1; ?>&status=<?php echo $status; ?>&search=<?php echo urlencode($search); ?>">Previous</a>
+                                    <a class="page-link" href="?page=<?php echo $page - 1; ?>&status=<?php echo e($status); ?>&search=<?php echo urlencode($search); ?>">Previous</a>
                                 </li>
                             <?php endif; ?>
 
                             <?php for ($i = max(1, $page - 2); $i <= min($totalPages, $page + 2); $i++): ?>
                                 <li class="page-item <?php echo $i === $page ? 'active' : ''; ?>">
-                                    <a class="page-link" href="?page=<?php echo $i; ?>&status=<?php echo $status; ?>&search=<?php echo urlencode($search); ?>"><?php echo $i; ?></a>
+                                    <a class="page-link" href="?page=<?php echo e($i); ?>&status=<?php echo $status; ?>&search=<?php echo urlencode($search); ?>"><?php echo e($i); ?></a>
                                 </li>
                             <?php endfor; ?>
 
                             <?php if ($page < $totalPages): ?>
                                 <li class="page-item">
-                                    <a class="page-link" href="?page=<?php echo $page + 1; ?>&status=<?php echo $status; ?>&search=<?php echo urlencode($search); ?>">Next</a>
+                                    <a class="page-link" href="?page=<?php echo $page + 1; ?>&status=<?php echo e($status); ?>&search=<?php echo urlencode($search); ?>">Next</a>
                                 </li>
                             <?php endif; ?>
                         </ul>

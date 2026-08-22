@@ -390,7 +390,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
                                             <select class="form-select" name="plan_id" required onchange="loadPlanLevels(this.value)">
                                                 <option value="">Choose a plan...</option>
                                                 <?php foreach ($plans as $plan): ?>
-                                                    <option value="<?php echo $plan['id']; ?>">
+                                                    <option value="<?php echo e($plan['id']); ?>">
                                                         <?php echo htmlspecialchars($plan['plan_name'] ?? ''); ?> (<?php echo $plan['plan_code']; ?>)
                                                     </option>
                                                 <?php endforeach; ?>
@@ -501,7 +501,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
 
                                             <?php foreach ($calculation_result['results'] as $level_name => $level_data): ?>
                                                 <div class="commission-breakdown">
-                                                    <h6><?php echo $level_name; ?> (<?php echo $level_data['num_associates']; ?> users)</h6>
+                                                    <h6><?php echo e($level_name); ?> (<?php echo $level_data['num_associates']; ?> users)</h6>
 
                                                     <div class="breakdown-row">
                                                         <span>Monthly Sales:</span>

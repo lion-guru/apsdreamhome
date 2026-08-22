@@ -107,7 +107,7 @@ $telecallerFilter = $telecallerFilter ?? '';
                     <select name="telecaller_id" class="form-select">
                         <option value="">All Telecallers</option>
                         <?php foreach ($telecallers as $tc): ?>
-                            <option value="<?php echo $tc['id']; ?>" <?php echo ($telecallerFilter == $tc['id']) ? 'selected' : ''; ?>>
+                            <option value="<?php echo e($tc['id']); ?>" <?php echo ($telecallerFilter == $tc['id']) ? 'selected' : ''; ?>>
                                 <?php echo htmlspecialchars($tc['name'] ?? ''); ?>
                             </option>
                         <?php endforeach; ?>
@@ -164,7 +164,7 @@ $telecallerFilter = $telecallerFilter ?? '';
                         <?php else: ?>
                             <?php foreach ($tasks as $t): ?>
                                 <tr>
-                                    <td><?php echo $t['id']; ?></td>
+                                    <td><?php echo e($t['id']); ?></td>
                                     <td>
                                         <strong><?php echo htmlspecialchars($t['telecaller_name'] ?? 'N/A'); ?></strong>
                                         <br><small class="text-muted"><?php echo htmlspecialchars($t['email'] ?? ''); ?></small>
@@ -180,7 +180,7 @@ $telecallerFilter = $telecallerFilter ?? '';
                                     <td><?php echo number_format($t['pending_calls'] ?? 0); ?></td>
                                     <td><?php echo number_format($t['target_calls'] ?? 0); ?></td>
                                     <td>
-                                        <a href="<?php echo BASE_URL; ?>/admin/telecaller/task/<?php echo $t['id']; ?>" class="btn btn-sm btn-outline-info" title="View">
+                                        <a href="<?php echo BASE_URL; ?>/admin/telecaller/task/<?php echo e($t['id']); ?>" class="btn btn-sm btn-outline-info" title="View">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                     </td>

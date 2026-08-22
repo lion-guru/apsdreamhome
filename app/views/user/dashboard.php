@@ -17,7 +17,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <h2 class="mb-1">User Dashboard</h2>
                 <p class="text-muted mb-0">Manage system users and view statistics</p>
             </div>
-            <a href="<?php echo $base; ?>/admin/dashboard" class="btn btn-outline-secondary">Back to Admin</a>
+            <a href="<?php echo e($base); ?>/admin/dashboard" class="btn btn-outline-secondary">Back to Admin</a>
         </div>
 
         <!-- Stats Cards -->
@@ -65,7 +65,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             <div class="card-body aps-cp-card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">User Management</h5>
-                    <a href="<?php echo $base; ?>/users/create" class="btn btn-primary">
+                    <a href="<?php echo e($base); ?>/users/create" class="btn btn-primary">
                         <i class="fas fa-plus me-2"></i>Add New User
                     </a>
                 </div>
@@ -108,8 +108,8 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                             </span>
                                         </td>
                                         <td>
-                                            <a href="<?php echo $base; ?>/users/show/<?php echo $user['id']; ?>" class="btn btn-sm btn-outline-primary">View</a>
-                                            <a href="<?php echo $base; ?>/users/edit/<?php echo $user['id']; ?>" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                            <a href="<?php echo e($base); ?>/users/show/<?php echo $user['id']; ?>" class="btn btn-sm btn-outline-primary">View</a>
+                                            <a href="<?php echo e($base); ?>/users/edit/<?php echo $user['id']; ?>" class="btn btn-sm btn-outline-secondary">Edit</a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -117,13 +117,13 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         </table></div>
                     </div>
                     <div class="text-center mt-3">
-                        <a href="<?php echo $base; ?>/users" class="btn btn-outline-primary">View All Users</a>
+                        <a href="<?php echo e($base); ?>/users" class="btn btn-outline-primary">View All Users</a>
                     </div>
                 <?php else: ?>
                     <div class="text-center py-4">
                         <i class="fas fa-users fa-3x text-muted mb-3"></i>
                         <p class="text-muted">No users found in the system</p>
-                        <a href="<?php echo $base; ?>/users/create" class="btn btn-primary">Create First User</a>
+                        <a href="<?php echo e($base); ?>/users/create" class="btn btn-primary">Create First User</a>
                     </div>
                 <?php endif; ?>
             </div>

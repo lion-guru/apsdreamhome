@@ -16,7 +16,7 @@ $webhookUrl = rtrim($base, '/') . '/api/communication/whatsapp-webhook';
                     <h5 class="mb-0">API Configuration</h5>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <form method="post" action="<?php echo $base; ?>/admin/whatsapp/settings">
+                    <form method="post" action="<?php echo e($base); ?>/admin/whatsapp/settings">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Phone Number ID <span class="text-danger">*</span></label>
@@ -64,7 +64,7 @@ $webhookUrl = rtrim($base, '/') . '/api/communication/whatsapp-webhook';
                     <h5 class="mb-0"><i class="fas fa-paper-plane me-1"></i> Test Message</h5>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <form method="post" action="<?php echo $base; ?>/admin/whatsapp/test">
+                    <form method="post" action="<?php echo e($base); ?>/admin/whatsapp/test">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Phone Number <span class="text-danger">*</span></label>
@@ -107,7 +107,7 @@ $webhookUrl = rtrim($base, '/') . '/api/communication/whatsapp-webhook';
                     <div class="table-responsive"><table class="table table-sm table-borderless mb-0">
                         <tr>
                             <td class="text-muted">Messages Logged:</td>
-                            <td class="text-end fw-bold"><?php echo $messageCount; ?></td>
+                            <td class="text-end fw-bold"><?php echo e($messageCount); ?></td>
                         </tr>
                         <tr>
                             <td class="text-muted">API Version:</td>
@@ -140,7 +140,7 @@ $webhookUrl = rtrim($base, '/') . '/api/communication/whatsapp-webhook';
                     <h5 class="mb-0"><i class="fas fa-list me-1"></i> Quick Links</h5>
                 </div>
                 <div class="card-body py-2">
-                    <a href="<?php echo $base; ?>/admin/whatsapp/templates" class="btn btn-outline-primary btn-sm w-100 mb-2">
+                    <a href="<?php echo e($base); ?>/admin/whatsapp/templates" class="btn btn-outline-primary btn-sm w-100 mb-2">
                         <i class="fas fa-template me-1"></i> Manage Templates
                     </a>
                     <a href="https://developers.facebook.com/docs/whatsapp/cloud-api" target="_blank" class="btn btn-outline-info btn-sm w-100 mb-2">

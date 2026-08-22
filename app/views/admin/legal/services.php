@@ -24,7 +24,7 @@ $active = $active ?? 0;
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Total Services</h6>
-                            <h3 class="mb-0"><?php echo $total; ?></h3>
+                            <h3 class="mb-0"><?php echo e($total); ?></h3>
                         </div>
                     </div>
                 </div>
@@ -41,7 +41,7 @@ $active = $active ?? 0;
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Active</h6>
-                            <h3 class="mb-0"><?php echo $active; ?></h3>
+                            <h3 class="mb-0"><?php echo e($active); ?></h3>
                         </div>
                     </div>
                 </div>
@@ -101,10 +101,10 @@ $active = $active ?? 0;
                     <h5 class="card-title"><?php echo $s['title'] ?? ''; ?></h5>
                     <p class="card-text text-muted small"><?php echo htmlspecialchars(substr($s['description'] ?? '', 0, 120)); ?></p>
                     <?php if (!empty($s['price_range'])): ?>
-                    <p class="mb-1"><i class="fas fa-rupee-sign text-success me-1"></i> <strong><?php echo $s['price_range']; ?></strong></p>
+                    <p class="mb-1"><i class="fas fa-rupee-sign text-success me-1"></i> <strong><?php echo e($s['price_range']); ?></strong></p>
                     <?php endif; ?>
                     <?php if (!empty($s['duration'])): ?>
-                    <p class="mb-0"><i class="fas fa-clock text-info me-1"></i> <?php echo $s['duration']; ?></p>
+                    <p class="mb-0"><i class="fas fa-clock text-info me-1"></i> <?php echo e($s['duration']); ?></p>
                     <?php endif; ?>
                     <?php if (!empty($s['features'])): ?>
                     <hr>

@@ -51,8 +51,8 @@ $land_records = $land_records ?? [];
                             <td><?php echo number_format($r['area'] ?? 0, 2); ?> sqft</td>
                             <td><?php echo $r['owner_name'] ?? '-'; ?></td>
                             <td class="text-end pe-4">
-                                <a href="<?php echo BASE_URL; ?>/admin/land/show/<?php echo $r['id']; ?>" class="btn btn-sm btn-outline-info"><i class="fas fa-eye"></i></a>
-                                <a href="<?php echo BASE_URL; ?>/admin/land/edit/<?php echo $r['id']; ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
+                                <a href="<?php echo BASE_URL; ?>/admin/land/show/<?php echo e($r['id']); ?>" class="btn btn-sm btn-outline-info"><i class="fas fa-eye"></i></a>
+                                <a href="<?php echo BASE_URL; ?>/admin/land/edit/<?php echo e($r['id']); ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
                             </td>
                         </tr>
                         <?php endforeach; ?>

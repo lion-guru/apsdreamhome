@@ -8,7 +8,7 @@ $base = BASE_URL;
 $page_title = "SMS Dashboard";
 ?>
 
-    <title><?php echo $page_title; ?> | APS Dream Home</title>
+    <title><?php echo e($page_title); ?> | APS Dream Home</title>
     
     
     <style>
@@ -174,7 +174,7 @@ $page_title = "SMS Dashboard";
 
     
     <script>
-        const baseUrl = '<?php echo $base; ?>';
+        const baseUrl = '<?php echo e($base); ?>';
         
         // Load SMS logs on page load
         document.addEventListener('DOMContentLoaded', function() {

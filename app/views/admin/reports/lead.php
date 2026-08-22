@@ -80,7 +80,7 @@
                         <?php if (!empty($lead_data)): ?>
                             <?php foreach ($lead_data as $lead): ?>
                                 <tr>
-                                    <td><?php echo $lead['id']; ?></td>
+                                    <td><?php echo e($lead['id']); ?></td>
                                     <td><?php echo htmlspecialchars($lead['name'] ?? '-'); ?></td>
                                     <td><?php echo htmlspecialchars($lead['email'] ?? '-'); ?></td>
                                     <td><?php echo htmlspecialchars($lead['phone'] ?? '-'); ?></td>

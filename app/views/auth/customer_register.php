@@ -65,8 +65,8 @@ $base = BASE_URL;
                     </div>
                 <?php endif; ?>
 
-                <form method="POST" action="<?php echo $base; ?>/register" id="customer-register-form" data-experiment="registration_form_length" data-variant="<?= htmlspecialchars($_SESSION['experiments']['registration_form_length'] ?? 'full', ENT_QUOTES) ?>">
-                    <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+                <form method="POST" action="<?php echo e($base); ?>/register" id="customer-register-form" data-experiment="registration_form_length" data-variant="<?= htmlspecialchars($_SESSION['experiments']['registration_form_length'] ?? 'full', ENT_QUOTES) ?>">
+                    <input type="hidden" name="csrf_token" value="<?php echo e($csrf_token); ?>">
                     <?php
                         // A/B test: registration_form_length — 'minimal' shows only 3 fields, 'full' shows all
                         $formVariant = $_SESSION['experiments']['registration_form_length'] ?? 'full';
@@ -133,8 +133,8 @@ $base = BASE_URL;
                     <?php endif; ?>
                 </form>
                 <div class="text-center mt-3">
-                    <p class="text-muted"><?= __('register_have_account') ?> <a href="<?php echo $base; ?>/login"><?= __('register_link_login') ?></a></p>
-                    <a href="<?php echo $base; ?>/" class="text-muted"><i class="fas fa-arrow-left me-1"></i><?= __('register_link_home') ?></a>
+                    <p class="text-muted"><?= __('register_have_account') ?> <a href="<?php echo e($base); ?>/login"><?= __('register_link_login') ?></a></p>
+                    <a href="<?php echo e($base); ?>/" class="text-muted"><i class="fas fa-arrow-left me-1"></i><?= __('register_link_home') ?></a>
                 </div>
             </div>
         </div>

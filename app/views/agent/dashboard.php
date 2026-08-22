@@ -136,12 +136,12 @@ $active_page = 'dashboard';
     <!-- Agent Sidebar -->
     <aside class="sidebar" id="sidebarMenu">
         <div class="sidebar-header">
-            <a href="<?php echo $base; ?>/agent/dashboard" class="sidebar-logo">
+            <a href="<?php echo e($base); ?>/agent/dashboard" class="sidebar-logo">
                 <i class="fas fa-home"></i>
                 <span>APS Dream Home</span>
             </a>
             <div class="sidebar-sub">Agent Portal
-                <span class="agent-type-badge <?php echo $agent_type; ?>">
+                <span class="agent-type-badge <?= e($agent_type) ?>">
                     <?php 
                         echo $agent_type === 'freelancer' ? 'Freelancer' : 
                             ($agent_type === 'independent' ? 'Independent' : 'MLM Company');
@@ -152,47 +152,47 @@ $active_page = 'dashboard';
         
         <ul class="sidebar-menu">
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/agent/dashboard" class="sidebar-link active">
+                <a href="<?php echo e($base); ?>/agent/dashboard" class="sidebar-link active">
                     <i class="fas fa-tachometer-alt"></i> Dashboard
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/agent/leads" class="sidebar-link">
+                <a href="<?php echo e($base); ?>/agent/leads" class="sidebar-link">
                     <i class="fas fa-users"></i> My Leads
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/agent/properties" class="sidebar-link">
+                <a href="<?php echo e($base); ?>/agent/properties" class="sidebar-link">
                     <i class="fas fa-building"></i> My Properties
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/agent/commissions" class="sidebar-link">
+                <a href="<?php echo e($base); ?>/agent/commissions" class="sidebar-link">
                     <i class="fas fa-rupee-sign"></i> Commissions
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/agent/wallet" class="sidebar-link">
+                <a href="<?php echo e($base); ?>/agent/wallet" class="sidebar-link">
                     <i class="fas fa-wallet"></i> Wallet
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/agent/deals" class="sidebar-link">
+                <a href="<?php echo e($base); ?>/agent/deals" class="sidebar-link">
                     <i class="fas fa-handshake"></i> My Deals
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/properties" class="sidebar-link">
+                <a href="<?php echo e($base); ?>/properties" class="sidebar-link">
                     <i class="fas fa-search"></i> Browse Properties
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/agent/profile" class="sidebar-link">
+                <a href="<?php echo e($base); ?>/agent/profile" class="sidebar-link">
                     <i class="fas fa-user"></i> Profile
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/agent/logout" class="sidebar-link">
+                <a href="<?php echo e($base); ?>/agent/logout" class="sidebar-link">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </a>
             </li>
@@ -209,14 +209,14 @@ $active_page = 'dashboard';
                 </button>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0" class="style-93188">
-                        <li class="breadcrumb-item"><a href="<?php echo $base; ?>/agent/dashboard">Agent</a></li>
+                        <li class="breadcrumb-item"><a href="<?php echo e($base); ?>/agent/dashboard">Agent</a></li>
                         <li class="breadcrumb-item active">Dashboard</li>
                     </ol>
                 </nav>
             </div>
             <div class="nav-right">
-                <button class="nav-icon" title="Notifications" onclick="window.location.href='<?php echo $base; ?>/user/notifications'"><i class="fas fa-bell"></i></button>
-                <button class="nav-icon" title="Messages" onclick="window.location.href='<?php echo $base; ?>/user/notifications'"><i class="fas fa-envelope"></i></button>
+                <button class="nav-icon" title="Notifications" onclick="window.location.href='<?php echo e($base); ?>/user/notifications'"><i class="fas fa-bell"></i></button>
+                <button class="nav-icon" title="Messages" onclick="window.location.href='<?php echo e($base); ?>/user/notifications'"><i class="fas fa-envelope"></i></button>
                 <div class="dropdown">
                     <div class="user-box" data-bs-toggle="dropdown">
                         <div class="user-av"><?php echo strtoupper(substr($agent_name,0,1)); ?></div>
@@ -227,10 +227,10 @@ $active_page = 'dashboard';
                         <i class="fas fa-chevron-down ms-2" class="style-46475"></i>
                     </div>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="<?php echo $base; ?>/agent/profile"><i class="fas fa-user me-2"></i>Profile</a></li>
-                        <li><a class="dropdown-item" href="<?php echo $base; ?>/agent/profile"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                        <li><a class="dropdown-item" href="<?php echo e($base); ?>/agent/profile"><i class="fas fa-user me-2"></i>Profile</a></li>
+                        <li><a class="dropdown-item" href="<?php echo e($base); ?>/agent/profile"><i class="fas fa-cog me-2"></i>Settings</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="<?php echo $base; ?>/agent/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        <li><a class="dropdown-item text-danger" href="<?php echo e($base); ?>/agent/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                     </ul>
                 </div>
             </div>
@@ -246,9 +246,9 @@ $active_page = 'dashboard';
                     <i class="fas fa-exclamation-triangle"></i>
                 </div>
                 <div>
-                    <h5 class="alert-heading fw-bold mb-1" class="style-8077">You Missed ₹<?php echo $commission_summary['total_missed']; ?> in Commissions!</h5>
+                    <h5 class="alert-heading fw-bold mb-1" class="style-8077">You Missed ₹<?= e($commission_summary['total_missed']) ?> in Commissions!</h5>
                     <p class="mb-0 text-danger">Your account is currently inactive. You missed out on commissions this month because of it. 
-                        <a href="<?php echo $base; ?>/agent/renew" class="fw-bold text-decoration-underline" class="style-29076">Activate your account now</a> to prevent losing more money!
+                        <a href="<?php echo e($base); ?>/agent/renew" class="fw-bold text-decoration-underline" class="style-29076">Activate your account now</a> to prevent losing more money!
                     </p>
                 </div>
                 <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -279,10 +279,10 @@ $active_page = 'dashboard';
                     <p class="text-muted mb-0"><?php echo htmlspecialchars($page_description ?? ''); ?></p>
                 </div>
                 <div class="d-flex gap-2 flex-wrap">
-                    <a href="<?php echo $base; ?>/agent/leads" class="btn btn-primary">
+                    <a href="<?php echo e($base); ?>/agent/leads" class="btn btn-primary">
                         <i class="fas fa-plus me-1"></i> Add Lead
                     </a>
-                    <a href="<?php echo $base; ?>/agent/deals" class="btn btn-outline-primary">
+                    <a href="<?php echo e($base); ?>/agent/deals" class="btn btn-outline-primary">
                         <i class="fas fa-handshake me-1"></i> My Deals
                     </a>
                 </div>
@@ -297,13 +297,13 @@ $active_page = 'dashboard';
                 <div>
                     <h5 class="alert-heading text-warning mb-1" class="style-58498">Action Required: Missed Commissions!</h5>
                     <p class="mb-0 text-dark">
-                        You have missed out on <strong>₹<?php echo $commission_summary['total_missed'] ?? '0.00'; ?></strong> in network commissions this month because your ID is currently inactive.
+                        You have missed out on <strong>₹<?= e($commission_summary['total_missed'] ?? '0.00') ?></strong> in network commissions this month because your ID is currently inactive.
                         <br>
                         <small>Activate your ID or renew your subscription to start earning from your team's sales again.</small>
                     </p>
                 </div>
                 <div class="ms-auto ps-3 border-start border-warning d-none d-md-block">
-                    <a href="<?php echo $base; ?>/agent/subscription" class="btn btn-warning fw-bold text-dark">Activate Now</a>
+                    <a href="<?php echo e($base); ?>/agent/subscription" class="btn btn-warning fw-bold text-dark">Activate Now</a>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
@@ -316,13 +316,13 @@ $active_page = 'dashboard';
                         <div class="d-flex align-items-center justify-content-between">
                             <div>
                                 <p class="text-muted mb-1 small">Total Leads</p>
-                                <h4 class="mb-0"><?php echo $agent_stats['total_leads'] ?? 0; ?></h4>
+                                <h4 class="mb-0"><?= e($agent_stats['total_leads'] ?? 0) ?></h4>
                             </div>
                             <div class="stat-icon green"><i class="fas fa-bullseye"></i></div>
                         </div>
                         <small class="text-success">
-                            <i class="fas fa-check me-1"></i><?php echo $agent_stats['converted_leads'] ?? 0; ?> converted 
-                            (<?php echo $agent_stats['conversion_rate'] ?? '0%'; ?>)
+                            <i class="fas fa-check me-1"></i><?= e($agent_stats['converted_leads'] ?? 0) ?> converted 
+                            (<?= e($agent_stats['conversion_rate'] ?? '0%') ?>)
                         </small>
                     </div>
                 </div>
@@ -332,12 +332,12 @@ $active_page = 'dashboard';
                         <div class="d-flex align-items-center justify-content-between">
                             <div>
                                 <p class="text-muted mb-1 small"><?php echo $agent_type === 'freelancer' ? 'My Listings' : 'Properties'; ?></p>
-                                <h4 class="mb-0"><?php echo $agent_stats['total_properties'] ?? 0; ?></h4>
+                                <h4 class="mb-0"><?= e($agent_stats['total_properties'] ?? 0) ?></h4>
                             </div>
                             <div class="stat-icon blue"><i class="fas fa-building"></i></div>
                         </div>
                         <small class="text-info">
-                            <i class="fas fa-check-circle me-1"></i><?php echo $agent_stats['sold_properties'] ?? 0; ?> sold
+                            <i class="fas fa-check-circle me-1"></i><?= e($agent_stats['sold_properties'] ?? 0) ?> sold
                         </small>
                     </div>
                 </div>
@@ -347,7 +347,7 @@ $active_page = 'dashboard';
                         <div class="d-flex align-items-center justify-content-between">
                             <div>
                                 <p class="text-muted mb-1 small">Total Commission</p>
-                                <h4 class="mb-0 text-warning">₹<?php echo $commission_summary['total_commission'] ?? ($agent_stats['total_commission'] ?? 0); ?></h4>
+                                <h4 class="mb-0 text-warning">₹<?= e($commission_summary['total_commission'] ?? ($agent_stats['total_commission'] ?? 0)) ?></h4>
                             </div>
                             <div class="stat-icon gold"><i class="fas fa-rupee-sign"></i></div>
                         </div>
@@ -370,9 +370,9 @@ $active_page = 'dashboard';
                                 <h4 class="mb-0">
                                     <?php 
                                         if ($agent_type === 'freelancer' || $agent_type === 'independent') {
-                                            echo $performance['this_month']['count'] ?? 0;
+                                            echo e($performance['this_month']['count'] ?? 0);
                                         } else {
-                                            echo $network_stats['direct_count'] ?? 0;
+                                            echo e($network_stats['direct_count'] ?? 0);
                                         }
                                     ?>
                                 </h4>
@@ -398,15 +398,15 @@ $active_page = 'dashboard';
                         <div class="card-body">
                             <div class="network-stats">
                                 <div class="network-stat highlight">
-                                    <h4 class="mb-1 text-success"><?php echo $network_stats['direct_count'] ?? 0; ?></h4>
+                                    <h4 class="mb-1 text-success"><?= e($network_stats['direct_count'] ?? 0) ?></h4>
                                     <p class="text-muted mb-0 small">Direct Referrals</p>
                                 </div>
                                 <div class="network-stat">
-                                    <h4 class="mb-1 text-primary"><?php echo $network_stats['team_size'] ?? 0; ?></h4>
+                                    <h4 class="mb-1 text-primary"><?= e($network_stats['team_size'] ?? 0) ?></h4>
                                     <p class="text-muted mb-0 small">Total Team Size</p>
                                 </div>
                                 <div class="network-stat">
-                                    <h4 class="mb-1 text-info">₹<?php echo $network_stats['team_gv'] ?? '0.00'; ?></h4>
+                                    <h4 class="mb-1 text-info">₹<?= e($network_stats['team_gv'] ?? '0.00') ?></h4>
                                     <p class="text-muted mb-0 small">Team Group Volume</p>
                                 </div>
                             </div>
@@ -424,23 +424,23 @@ $active_page = 'dashboard';
                             <div class="commission-breakdown">
                                 <div class="commission-item primary">
                                     <div class="text-muted small">Direct Sales</div>
-                                    <div class="fw-bold text-success">₹<?php echo $commission_summary['total_direct'] ?? '0.00'; ?></div>
+                                    <div class="fw-bold text-success">₹<?= e($commission_summary['total_direct'] ?? '0.00') ?></div>
                                 </div>
                                 <div class="commission-item secondary">
                                     <div class="text-muted small">Network/Override</div>
-                                    <div class="fw-bold text-info">₹<?php echo $commission_summary['total_network'] ?? '0.00'; ?></div>
+                                    <div class="fw-bold text-info">₹<?= e($commission_summary['total_network'] ?? '0.00') ?></div>
                                 </div>
                                 <?php if (!empty($commission_summary['total_missed']) && $commission_summary['total_missed'] > 0): ?>
                                 <div class="commission-item" class="style-25241">
                                     <div class="text-muted small">Missed (Inactive ID)</div>
-                                    <div class="fw-bold text-danger">₹<?php echo $commission_summary['total_missed']; ?></div>
+                                    <div class="fw-bold text-danger">₹<?= e($commission_summary['total_missed']) ?></div>
                                 </div>
                                 <?php endif; ?>
                             </div>
                             <hr>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="fw-bold">Total Earned</span>
-                                <span class="fw-bold text-success fs-5">₹<?php echo $commission_summary['total_commission'] ?? '0.00'; ?></span>
+                                <span class="fw-bold text-success fs-5">₹<?= e($commission_summary['total_commission'] ?? '0.00') ?></span>
                             </div>
                         </div>
                     </div>
@@ -453,7 +453,7 @@ $active_page = 'dashboard';
                     <div class="card">
                         <div class="card-header bg-white d-flex justify-content-between align-items-center">
                             <h5 class="mb-0"><i class="fas fa-history text-warning me-2"></i>Recent Commissions</h5>
-                            <a href="<?php echo $base; ?>/agent/commissions" class="btn btn-sm btn-outline-primary">View All</a>
+                            <a href="<?php echo e($base); ?>/agent/commissions" class="btn btn-sm btn-outline-primary">View All</a>
                         </div>
                         <div class="card-body p-0">
                             <?php if (empty($commission_summary['direct_commissions']) && empty($commission_summary['network_commissions'])): ?>
@@ -479,7 +479,7 @@ $active_page = 'dashboard';
                                             <span class="badge <?php echo $isDirect ? 'bg-success' : 'bg-info'; ?> me-2">
                                                 <?php echo $isDirect ? 'Direct' : 'Network'; ?>
                                             </span>
-                                            <strong><?php echo ucfirst(str_replace('_', ' ', $comm['type'] ?? 'Commission')); ?></strong>
+                                            <strong><?= e(ucfirst(str_replace('_', ' ', $comm['type'] ?? 'Commission'))) ?></strong>
                                             <?php if (!empty($comm['description'])): ?>
                                             <small class="text-muted ms-2"><?php echo htmlspecialchars($comm['description'] ?? ''); ?></small>
                                             <?php endif; ?>
@@ -512,19 +512,19 @@ $active_page = 'dashboard';
                         <div class="card-body">
                             <div class="perf-grid">
                                 <div class="perf-card highlight">
-                                    <h4 class="text-primary mb-1"><?php echo $performance['this_month']['count'] ?? 0; ?></h4>
-                                    <p class="text-muted mb-0 small">This Month Sales</p>
-                                    <small class="text-success">₹<?php echo $performance['this_month']['volume'] ?? '0.00'; ?></small>
+                                    <h4 class="text-primary mb-1"><?= e($performance['this_month']['count'] ?? 0) ?></h4>
+                                     <p class="text-muted mb-0 small">This Month Sales</p>
+                                     <small class="text-success">₹<?= e($performance['this_month']['volume'] ?? '0.00') ?></small>
                                 </div>
                                 <div class="perf-card">
-                                    <h4 class="text-info mb-1"><?php echo $performance['last_month']['count'] ?? 0; ?></h4>
-                                    <p class="text-muted mb-0 small">Last Month Sales</p>
-                                    <small class="text-info">₹<?php echo $performance['last_month']['volume'] ?? '0.00'; ?></small>
+                                    <h4 class="text-info mb-1"><?= e($performance['last_month']['count'] ?? 0) ?></h4>
+                                     <p class="text-muted mb-0 small">Last Month Sales</p>
+                                     <small class="text-info">₹<?= e($performance['last_month']['volume'] ?? '0.00') ?></small>
                                 </div>
                                 <div class="perf-card">
-                                    <h4 class="text-warning mb-1"><?php echo $performance['career']['count'] ?? 0; ?></h4>
-                                    <p class="text-muted mb-0 small">Career Total Sales</p>
-                                    <small class="text-warning">₹<?php echo $performance['career']['volume'] ?? '0.00'; ?></small>
+                                    <h4 class="text-warning mb-1"><?= e($performance['career']['count'] ?? 0) ?></h4>
+                                     <p class="text-muted mb-0 small">Career Total Sales</p>
+                                     <small class="text-warning">₹<?= e($performance['career']['volume'] ?? '0.00') ?></small>
                                 </div>
                             </div>
                         </div>
@@ -543,7 +543,7 @@ $active_page = 'dashboard';
                             <div class="row">
                                 <div class="col-md-6">
                                     <p class="text-muted mb-1 small">Model</p>
-                                    <h6><?php echo ucfirst(str_replace('_', ' ', $commission_summary['brokerage_model'] ?? 'flat_percentage')); ?></h6>
+                                    <h6><?= e(ucfirst(str_replace('_', ' ', $commission_summary['brokerage_model'] ?? 'flat_percentage'))) ?></h6>
                                 </div>
                                 <div class="col-md-6">
                                     <p class="text-muted mb-1 small"><?php 
@@ -555,9 +555,9 @@ $active_page = 'dashboard';
                                     <h6>
                                         <?php 
                                             $model = $commission_summary['brokerage_model'] ?? 'flat_percentage';
-                                            if ($model === 'flat_percentage') echo $commission_summary['brokerage_rate'] ?? 0 . '%';
-                                            elseif ($model === 'flat_rate_sqft') echo '₹' . number_format($commission_summary['brokerage_rate'] ?? 0, 2) . '/sqft';
-                                            else echo '₹' . number_format($commission_summary['flat_fee'] ?? 0, 2);
+                                            if ($model === 'flat_percentage') echo e($commission_summary['brokerage_rate'] ?? 0) . '%';
+                                            elseif ($model === 'flat_rate_sqft') echo '₹' . e(number_format($commission_summary['brokerage_rate'] ?? 0, 2)) . '/sqft';
+                                            else echo '₹' . e(number_format($commission_summary['flat_fee'] ?? 0, 2));
                                         ?>
                                     </h6>
                                 </div>
@@ -609,7 +609,7 @@ $active_page = 'dashboard';
                     <div class="card">
                         <div class="card-header bg-white d-flex justify-content-between align-items-center">
                             <h5 class="mb-0"><i class="fas fa-history text-warning me-2"></i>Recent Commissions</h5>
-                            <a href="<?php echo $base; ?>/agent/commissions" class="btn btn-sm btn-outline-primary">View All</a>
+                            <a href="<?php echo e($base); ?>/agent/commissions" class="btn btn-sm btn-outline-primary">View All</a>
                         </div>
                         <div class="card-body p-0">
                             <?php if (empty($commission_summary['commissions'])): ?>
@@ -653,7 +653,7 @@ $active_page = 'dashboard';
                     <div class="card">
                         <div class="card-header bg-white d-flex justify-content-between align-items-center">
                             <h5 class="mb-0"><i class="fas fa-bullseye text-primary me-2"></i>Recent Leads</h5>
-                            <a href="<?php echo $base; ?>/agent/leads" class="btn btn-sm btn-outline-primary">View All</a>
+                            <a href="<?php echo e($base); ?>/agent/leads" class="btn btn-sm btn-outline-primary">View All</a>
                         </div>
                         <div class="card-body p-0">
                             <?php if (empty($recent_leads)): ?>
@@ -668,8 +668,8 @@ $active_page = 'dashboard';
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <strong><?php echo htmlspecialchars($lead['name'] ?? 'Unknown'); ?></strong>
-                                            <span class="lead-status <?php echo strtolower($lead['status'] ?? 'new'); ?> ms-2">
-                                                <?php echo ucfirst($lead['status'] ?? 'New'); ?>
+                                            <span class="lead-status <?= e(strtolower($lead['status'] ?? 'new')) ?> ms-2">
+                                                <?= e(ucfirst($lead['status'] ?? 'New')) ?>
                                             </span>
                                         </div>
                                         <div class="text-end">
@@ -692,7 +692,7 @@ $active_page = 'dashboard';
                     <div class="card">
                         <div class="card-header bg-white d-flex justify-content-between align-items-center">
                             <h5 class="mb-0"><i class="fas fa-building text-info me-2"></i><?php echo $agent_type === 'freelancer' ? 'My Listings' : 'Assigned Properties'; ?></h5>
-                            <a href="<?php echo $base; ?>/agent/properties" class="btn btn-sm btn-outline-primary">View All</a>
+                            <a href="<?php echo e($base); ?>/agent/properties" class="btn btn-sm btn-outline-primary">View All</a>
                         </div>
                         <div class="card-body p-0">
                             <?php 
@@ -725,8 +725,8 @@ $active_page = 'dashboard';
                                         </div>
                                         <div class="text-end">
                                             <div class="fw-bold text-primary">₹<?php echo number_format($prop['price'] ?? 0); ?></div>
-                                            <span class="property-status <?php echo strtolower($prop['status'] ?? 'available'); ?>">
-                                                <?php echo ucfirst($prop['status'] ?? 'Available'); ?>
+                                            <span class="property-status <?= e(strtolower($prop['status'] ?? 'available')) ?>">
+                                                <?= e(ucfirst($prop['status'] ?? 'Available')) ?>
                                             </span>
                                         </div>
                                     </div>

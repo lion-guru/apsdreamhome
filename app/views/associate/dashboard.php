@@ -366,8 +366,8 @@ body {
                 <?php foreach ($network as $level): ?>
                     <div class="list-item-row border-bottom">
                         <div>
-                            <span class="badge bg-primary text-white me-2">Level <?= $level['level'] ?></span>
-                            <span class="fw-bold" class="style-97679"><?= $level['members'] ?? 0 ?> members</span>
+                            <span class="badge bg-primary text-white me-2">Level <?= e($level['level'] ?? 0) ?></span>
+                            <span class="fw-bold" class="style-97679"><?= e($level['members'] ?? 0) ?> members</span>
                         </div>
                         <div class="text-end">
                             <div class="small text-muted fw-bold">Level Commission</div>

@@ -10,7 +10,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <h2 class="mb-1">Reports & Analytics</h2>
                 <p class="text-muted mb-0">View system performance and statistics</p>
             </div>
-            <a href="<?php echo $base; ?>/admin/dashboard" class="btn btn-outline-secondary">
+            <a href="<?php echo e($base); ?>/admin/dashboard" class="btn btn-outline-secondary">
                 <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
             </a>
         </div>
@@ -100,7 +100,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                             <?php foreach ($user_reg_labels as $i => $label):
                                             ?>
                                                 <tr>
-                                                    <td><?php echo $label; ?></td>
+                                                    <td><?php echo e($label); ?></td>
                                                     <td><?php echo $user_reg_data[$i] ?? 0; ?></td>
                                                 </tr>
                                             <?php endforeach; ?>
@@ -136,7 +136,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                             <?php foreach ($labels as $i => $label):
                                             ?>
                                                 <tr>
-                                                    <td><?php echo $label; ?></td>
+                                                    <td><?php echo e($label); ?></td>
                                                     <td><?php echo $data[$i] ?? 0; ?></td>
                                                 </tr>
                                             <?php endforeach; ?>

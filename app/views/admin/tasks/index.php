@@ -14,10 +14,10 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <p class="text-muted mb-0">Manage team tasks and assignments</p>
             </div>
             <div>
-                <a href="<?php echo $base; ?>/admin/tasks/create" class="btn btn-primary me-2">
+                <a href="<?php echo e($base); ?>/admin/tasks/create" class="btn btn-primary me-2">
                     <i class="fas fa-plus me-2"></i>New Task
                 </a>
-                <a href="<?php echo $base; ?>/admin/dashboard" class="btn btn-outline-secondary">Back</a>
+                <a href="<?php echo e($base); ?>/admin/dashboard" class="btn btn-outline-secondary">Back</a>
             </div>
         </div>
         
@@ -101,7 +101,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <div class="text-center py-5">
                         <i class="fas fa-tasks fa-3x text-muted mb-3"></i>
                         <p class="text-muted">No tasks found</p>
-                        <a href="<?php echo $base; ?>/admin/tasks/create" class="btn btn-primary">
+                        <a href="<?php echo e($base); ?>/admin/tasks/create" class="btn btn-primary">
                             <i class="fas fa-plus me-2"></i>Create First Task
                         </a>
                     </div>

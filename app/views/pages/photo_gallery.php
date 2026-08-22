@@ -1,5 +1,5 @@
 <div class="container mt-4">
-    <h1 class="mb-4"><?php echo $page_title ?? __('gallery_title'); ?></h1>
+    <h1 class="mb-4"><?php echo e($page_title ?? __('gallery_title')); ?></h1>
     <?php if (!empty($images)): ?>
         <div class="row">
             <?php foreach ($images as $image): ?>

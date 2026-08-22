@@ -6,7 +6,7 @@ $error = $error ?? null;
 <div class="container-fluid px-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="mb-0"><i class="fab fa-whatsapp me-2 text-success"></i>WhatsApp Templates</h4>
-        <form method="post" action="<?php echo $base; ?>/admin/whatsapp/templates/sync" class="style-71727" data-aps-confirm="Sync templates from Meta Cloud API?">
+        <form method="post" action="<?php echo e($base); ?>/admin/whatsapp/templates/sync" class="style-71727" data-aps-confirm="Sync templates from Meta Cloud API?">
                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
             <button type="submit" class="btn btn-outline-primary">
                 <i class="fas fa-sync me-1"></i> Sync from Meta
@@ -40,7 +40,7 @@ $error = $error ?? null;
                                 <td colspan="8" class="text-center text-muted py-4">
                                     <i class="fas fa-inbox fa-2x d-block mb-2"></i>
                                     No templates found.<br>
-                                    <a href="<?php echo $base; ?>/admin/whatsapp/settings" class="btn btn-sm btn-outline-primary mt-2">Configure WhatsApp API</a>
+                                    <a href="<?php echo e($base); ?>/admin/whatsapp/settings" class="btn btn-sm btn-outline-primary mt-2">Configure WhatsApp API</a>
                                     to sync templates from Meta.
                                 </td>
                             </tr>

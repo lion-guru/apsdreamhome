@@ -86,7 +86,7 @@ $today = date('Y-m-d');
                         <div class="style-58622"><?= number_format($stats['pending_tasks'] ?? 0) ?></div>
                         <div class="style-99734"><?= __('assoc_crm_pending_tasks', [], 'Pending Tasks') ?></div>
                         <?php if (($stats['overdue_tasks'] ?? 0) > 0): ?>
-                            <div class="style-5352"><?= $stats['overdue_tasks'] ?> <?= __('assoc_crm_overdue', [], 'overdue') ?></div>
+                            <div class="style-5352"><?= e($stats['overdue_tasks']) ?> <?= __('assoc_crm_overdue', [], 'overdue') ?></div>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -137,9 +137,9 @@ $today = date('Y-m-d');
                 $count = $byStatus[$key] ?? 0;
                 if ($count === 0 && !in_array($key, ['new','contacted','qualified','closed_won'])) continue;
             ?>
-            <a href="<?= BASE_URL ?>/associate/leads?status=<?= $key ?>" class="text-decoration-none" class="style-61015">
-                <i class="fas <?= $s['icon'] ?> me-1"></i><?= $s['label'] ?>
-                <span class="style-24086"><?= $count ?></span>
+            <a href="<?= BASE_URL ?>/associate/leads?status=<?= e($key) ?>" class="text-decoration-none" class="style-61015">
+                <i class="fas <?= e($s['icon']) ?> me-1"></i><?= e($s['label']) ?>
+                <span class="style-24086"><?= e($count) ?></span>
             </a>
             <?php endforeach; ?>
         </div>
@@ -166,7 +166,7 @@ $today = date('Y-m-d');
                                     <?php endif; ?>
                                 </div>
                             </div>
-                            <span class="badge bg-<?= $isOverdue ? 'danger' : ($task['priority'] === 'high' ? 'warning' : 'info') ?>"><?= ucfirst($task['priority'] ?? 'medium') ?></span>
+                            <span class="badge bg-<?= e($isOverdue ? 'danger' : ($task['priority'] === 'high' ? 'warning' : 'info')) ?>"><?= e(ucfirst($task['priority'] ?? 'medium')) ?></span>
                         </div>
                     </div>
                     <?php endforeach; ?>
@@ -220,8 +220,8 @@ $today = date('Y-m-d');
                         <div class="d-flex justify-content-between">
                             <div>
                                 <strong class="style-62847">
-                                    <i class="fas fa-<?= $act['interaction_type'] === 'call' ? 'phone' : ($act['interaction_type'] === 'email' ? 'envelope' : ($act['interaction_type'] === 'meeting' ? 'users' : 'comment')) ?> text-muted me-1"></i>
-                                    <?= ucfirst(str_replace('_', ' ', $act['interaction_type'] ?? __('assoc_crm_note', [], 'note'))) ?>
+                                    <i class="fas fa-<?= e($act['interaction_type'] === 'call' ? 'phone' : ($act['interaction_type'] === 'email' ? 'envelope' : ($act['interaction_type'] === 'meeting' ? 'users' : 'comment'))) ?> text-muted me-1"></i>
+                                    <?= e(ucfirst(str_replace('_', ' ', $act['interaction_type'] ?? __('assoc_crm_note', [], 'note')))) ?>
                                 </strong>
                                 <span class="text-muted ms-1" class="style-20558">— <?= htmlspecialchars($act['lead_name'] ?? '') ?></span>
                             </div>
@@ -244,10 +244,10 @@ $today = date('Y-m-d');
             ?>
             <div class="text-center">
                 <div class="style-94742">
-                    <?= $src['cnt'] ?>
+                    <?= e($src['cnt']) ?>
                 </div>
-                <small class="text-muted d-block mt-1"><?= ucfirst(str_replace('_', ' ', $src['source'] ?? __('assoc_crm_unknown', [], 'unknown'))) ?></small>
-                <small class="text-muted"><?= $pct ?>%</small>
+                <small class="text-muted d-block mt-1"><?= e(ucfirst(str_replace('_', ' ', $src['source'] ?? __('assoc_crm_unknown', [], 'unknown')))) ?></small>
+                <small class="text-muted"><?= e($pct) ?>%</small>
             </div>
             <?php endforeach; ?>
         </div>

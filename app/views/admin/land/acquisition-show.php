@@ -129,7 +129,7 @@ $acquisition = $acquisition ?? [];
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <?php if (!empty($acquisition['farmer_id'])): ?>
-                    <p class="mb-1"><strong>Farmer ID:</strong> <?php echo $acquisition['farmer_id']; ?></p>
+                    <p class="mb-1"><strong>Farmer ID:</strong> <?php echo e($acquisition['farmer_id']); ?></p>
                     <?php else: ?>
                     <p class="text-muted mb-0">No farmer linked</p>
                     <?php endif; ?>

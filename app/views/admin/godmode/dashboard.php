@@ -275,7 +275,7 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
         <div class="impersonation-banner">
             <div>
                 <i class="fas fa-user-secret me-2"></i>
-                <strong>IMpersonating User ID: <?php echo $impersonatingUserId; ?></strong>
+                <strong>IMpersonating User ID: <?php echo e($impersonatingUserId); ?></strong>
                 <span class="ms-3">Started: <?php echo date('H:i:s', $_SESSION['god_mode_start_time'] ?? time()); ?></span>
             </div>
             <button class="btn btn-light btn-sm" onclick="stopImpersonation()">
@@ -396,7 +396,7 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
                     
                     <div id="usersList" class="style-61454">
                         <?php foreach ($users as $user): ?>
-                        <div class="user-card" data-user-id="<?php echo $user['id']; ?>">
+                        <div class="user-card" data-user-id="<?php echo e($user['id']); ?>">
                             <div class="d-flex align-items-center gap-3">
                                 <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" class="style-72966">
                                     <i class="fas fa-user"></i>
@@ -431,9 +431,9 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
                         <small class="text-muted">Select a role to switch:</small>
                         <div class="mt-3">
                             <?php foreach ($roles as $role): ?>
-                            <span class="role-badge <?php echo ($tempRole === $role['id']) ? 'active' : ''; ?>" onclick="switchRole('<?php echo $role['id']; ?>')">
-                                <i class="fas <?php echo $role['icon']; ?>"></i>
-                                <?php echo $role['name']; ?>
+                            <span class="role-badge <?php echo ($tempRole === $role['id']) ? 'active' : ''; ?>" onclick="switchRole('<?php echo e($role['id']); ?>')">
+                                <i class="fas <?php echo e($role['icon']); ?>"></i>
+                                <?php echo e($role['name']); ?>
                             </span>
                             <?php endforeach; ?>
                         </div>
@@ -508,8 +508,8 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
                     <tbody>
                         <?php foreach ($impersonations as $imp): ?>
                         <tr>
-                            <td><?php echo $imp['admin_id']; ?></td>
-                            <td><?php echo $imp['user_id']; ?></td>
+                            <td><?php echo e($imp['admin_id']); ?></td>
+                            <td><?php echo e($imp['user_id']); ?></td>
                             <td><?php echo date('Y-m-d H:i:s', $imp['start_time']); ?></td>
                             <td><?php
                                 $diff = time() - (int)$imp['start_time'];
@@ -615,7 +615,7 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
     </div>
 
     <script>
-        const baseUrl = '<?php echo $base; ?>';
+        const baseUrl = '<?php echo e($base); ?>';
         let selectedUserId = null;
         
         // Show toast notification

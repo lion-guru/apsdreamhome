@@ -14,7 +14,7 @@
                 <div class="card-body aps-cp-card-body">
                     
                     
-                    <form method="POST" action="<?= BASE_URL ?>/admin/locations/states/edit/<?php echo $state['id']; ?>">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/locations/states/edit/<?php echo e($state['id']); ?>">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row">
                             <div class="col-md-6">

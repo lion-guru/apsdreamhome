@@ -12,7 +12,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <h2 class="mb-1">EMI Plan Details</h2>
                 <p class="text-muted mb-0">View payment schedule and history</p>
             </div>
-            <a href="<?php echo $base; ?>/admin/emi" class="btn btn-outline-secondary">
+            <a href="<?php echo e($base); ?>/admin/emi" class="btn btn-outline-secondary">
                 <i class="fas fa-arrow-left me-2"></i>Back to EMI Plans
             </a>
         </div>
@@ -97,7 +97,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                     <tbody>
                                         <?php foreach ($schedule as $item): ?>
                                             <tr>
-                                                <td><?php echo $item['installment_number']; ?></td>
+                                                <td><?php echo e($item['installment_number']); ?></td>
                                                 <td><?php echo isset($item['due_date']) ? date('M d, Y', strtotime($item['due_date'])) : '-'; ?></td>
                                                 <td>₹<?php echo number_format(floatval(item['due_amount'] ?? 0) ?? 0); ?></td>
                                                 <td>
@@ -107,7 +107,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                                 </td>
                                                 <td>
                                                     <?php if (($item['status'] ?? '') === 'pending'): ?>
-                                                        <button class="btn btn-sm btn-primary" onclick="processPayment(<?php echo $item['id']; ?>, <?php echo $item['due_amount']; ?>)">
+                                                        <button class="btn btn-sm btn-primary" onclick="processPayment(<?php echo e($item['id']); ?>, <?php echo $item['due_amount']; ?>)">
                                                             <i class="fas fa-money-bill-wave me-1"></i>Pay
                                                         </button>
                                                     <?php else: ?>
@@ -226,7 +226,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             formData.append('transaction_id', document.getElementById('transactionId').value);
             
             showLoader();
-            fetch('<?php echo $base; ?>/admin/emi/payment/<?php echo $emi_plan['id'] ?? 0; ?>', {
+            fetch('<?php echo e($base); ?>/admin/emi/payment/<?php echo $emi_plan['id'] ?? 0; ?>', {
                 method: 'POST',
                 body: formData
             })

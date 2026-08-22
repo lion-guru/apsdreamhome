@@ -474,7 +474,7 @@ class BookingController extends AdminController
             }
 
             $tid = (int)$this->tenantId();
-            $tidSql = $tid ? " AND tenant_id = $tid" : "";
+            $tidSql = $tid ? ' AND tenant_id = ?' : '';
             $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
             $affected = 0;
 
@@ -489,7 +489,7 @@ class BookingController extends AdminController
                     }
                     $stmt = $this->db->prepare("UPDATE plot_bookings SET status = ?, updated_at = NOW() WHERE id IN ($placeholders)$tidSql");
                     $params = array_merge([$value], $bookingIds);
-                    if ($tid) $params[] = $tid;
+                    if ($tid) { $params[] = $tid; }
                     $stmt->execute($params);
                     $affected = $stmt->rowCount();
                     break;

@@ -179,7 +179,7 @@ try {
         <div class="sidebar-section">Team</div>
         <ul class="sidebar-menu">
             <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/users" class="sidebar-link <?php echo strpos($current_uri, '/admin/users') !== false && strpos($current_uri, '/pending') === false ? 'active' : ''; ?>"><i class="fas fa-users"></i> Users</a></li>
-            <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/users/pending" class="sidebar-link <?php echo strpos($current_uri, '/admin/users/pending') !== false ? 'active' : ''; ?>"><i class="fas fa-user-clock"></i> Pending Approvals <?php if ($pendingCount > 0): ?><span class="badge bg-danger ms-1"><?php echo $pendingCount; ?></span><?php endif; ?></a></li>
+            <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/users/pending" class="sidebar-link <?php echo strpos($current_uri, '/admin/users/pending') !== false ? 'active' : ''; ?>"><i class="fas fa-user-clock"></i> Pending Approvals <?php if ($pendingCount > 0): ?><span class="badge bg-danger ms-1"><?php echo e($pendingCount); ?></span><?php endif; ?></a></li>
         </ul>
         <div class="sidebar-section">System</div>
         <ul class="sidebar-menu">

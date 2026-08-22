@@ -213,10 +213,10 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
                     <small class="text-muted"><?= __('assoc_leads_page_of', [], 'Page') ?> <?= $current_page_no ?> <?= __('assoc_leads_of', [], 'of') ?> <?= $total_pages ?></small>
                     <div class="d-flex gap-1">
                         <?php if ($current_page_no > 1): ?>
-                            <a href="<?= $pagination_url ?>page=<?= $current_page_no - 1 ?>" class="btn btn-sm btn-outline-secondary"><?= __('assoc_leads_prev', [], 'Prev') ?></a>
+                            <a href="<?= esc_url($pagination_url ?? '') ?>page=<?= $current_page_no - 1 ?>" class="btn btn-sm btn-outline-secondary"><?= __('assoc_leads_prev', [], 'Prev') ?></a>
                         <?php endif; ?>
                         <?php if ($current_page_no < $total_pages): ?>
-                            <a href="<?= $pagination_url ?>page=<?= $current_page_no + 1 ?>" class="btn btn-sm btn-outline-secondary"><?= __('assoc_leads_next', [], 'Next') ?></a>
+                            <a href="<?= esc_url($pagination_url ?? '') ?>page=<?= $current_page_no + 1 ?>" class="btn btn-sm btn-outline-secondary"><?= __('assoc_leads_next', [], 'Next') ?></a>
                         <?php endif; ?>
                     </div>
                 </div>

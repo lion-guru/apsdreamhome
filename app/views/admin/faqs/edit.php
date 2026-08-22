@@ -6,7 +6,7 @@
                     <h5 class="card-title mb-0">Edit FAQ</h5>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <form action="<?php echo BASE_URL; ?>/admin/faqs/<?php echo $faq['id']; ?>/update" method="POST">
+                    <form action="<?php echo BASE_URL; ?>/admin/faqs/<?php echo e($faq['id']); ?>/update" method="POST">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Question</label>
@@ -33,7 +33,7 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label">Sort Order</label>
-                                    <input type="number" name="display_order" class="form-control" value="<?php echo $faq['display_order']; ?>">
+                                    <input type="number" name="display_order" class="form-control" value="<?php echo e($faq['display_order']); ?>">
                                 </div>
                             </div>
                             <div class="col-md-4">

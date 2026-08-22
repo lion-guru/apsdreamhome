@@ -21,7 +21,7 @@
                                     <select class="form-select" id="state_id" name="state_id" onchange="loadDistricts(this.value)" required>
                                         <option value="">Select State</option>
                                         <?php foreach ($states as $state): ?>
-                                            <option value="<?php echo $state['id']; ?>">
+                                            <option value="<?php echo e($state['id']); ?>">
                                                 <?php echo htmlspecialchars($state['name'] ?? ''); ?>
                                             </option>
                                         <?php endforeach; ?>

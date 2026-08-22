@@ -38,8 +38,8 @@ $old = $old ?? [];
                     <?php $ptype = $state['form_data']['property_type'] ?? ''; ?>
                     <div class="d-flex flex-wrap gap-2">
                         <?php foreach (['plot','flat','house','villa','shop','farmhouse','land'] as $t): ?>
-                            <input type="radio" class="btn-check" name="property_type" id="ptype-<?= $t ?>" value="<?= $t ?>" <?= $ptype === $t ? 'checked' : '' ?>>
-                            <label class="btn btn-outline-primary" for="ptype-<?= $t ?>"><?= ucfirst($t) ?></label>
+                            <input type="radio" class="btn-check" name="property_type" id="ptype-<?= e($t) ?>" value="<?= e($t) ?>" <?= $ptype === $t ? 'checked' : '' ?>>
+                            <label class="btn btn-outline-primary" for="ptype-<?= e($t) ?>"><?= e(ucfirst($t)) ?></label>
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -49,7 +49,7 @@ $old = $old ?? [];
                     <select name="budget_range" class="form-select">
                         <option value="">-- Select --</option>
                         <?php foreach (['Under 20 Lakh','20-50 Lakh','50 Lakh - 1 Cr','1-3 Cr','3-5 Cr','Above 5 Cr'] as $b): ?>
-                            <option value="<?= $b ?>" <?= $bud === $b ? 'selected' : '' ?>><?= $b ?></option>
+                            <option value="<?= e($b) ?>" <?= $bud === $b ? 'selected' : '' ?>><?= e($b) ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>

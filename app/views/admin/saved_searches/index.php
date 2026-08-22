@@ -100,7 +100,7 @@
                                     <select class="form-select form-select-sm d-inline-block w-auto" onchange="window.location='<?php echo BASE_URL; ?>/admin/saved-searches?entity_type=' + this.value + '&favorites=<?php echo $favorites_only ? '1' : '0'; ?>'">
                                         <option value="">All Entity Types</option>
                                         <?php foreach ($entity_types as $et): ?>
-                                            <option value="<?php echo $et; ?>" <?php echo $entity_type === $et ? 'selected' : ''; ?>><?php echo ucfirst(str_replace('_', ' ', $et)); ?></option>
+                                            <option value="<?php echo e($et); ?>" <?php echo $entity_type === $et ? 'selected' : ''; ?>><?php echo ucfirst(str_replace('_', ' ', $et)); ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                     <a href="<?php echo BASE_URL; ?>/admin/saved-searches?favorites=<?php echo $favorites_only ? '0' : '1'; ?>&entity_type=<?php echo htmlspecialchars($entity_type ?? ''); ?>" class="btn btn-sm btn-outline-warning">
@@ -169,13 +169,13 @@
                                                     </td>
                                                     <td class="text-end">
                                                         <div class="btn-group btn-group-sm">
-                                                            <a href="<?php echo BASE_URL; ?>/admin/saved-searches/apply/<?php echo $s['id']; ?>" class="btn btn-outline-primary" title="Apply">
+                                                            <a href="<?php echo BASE_URL; ?>/admin/saved-searches/apply/<?php echo e($s['id']); ?>" class="btn btn-outline-primary" title="Apply">
                                                                 <i class="fas fa-play"></i>
                                                             </a>
-                                                            <button class="btn btn-outline-warning favorite-btn" data-id="<?php echo $s['id']; ?>" title="Toggle favorite">
+                                                            <button class="btn btn-outline-warning favorite-btn" data-id="<?php echo e($s['id']); ?>" title="Toggle favorite">
                                                                 <i class="fas fa-star"></i>
                                                             </button>
-                                                            <button class="btn btn-outline-danger delete-btn" data-id="<?php echo $s['id']; ?>" title="Delete">
+                                                            <button class="btn btn-outline-danger delete-btn" data-id="<?php echo e($s['id']); ?>" title="Delete">
                                                                 <i class="fas fa-trash"></i>
                                                             </button>
                                                         </div>
@@ -207,7 +207,7 @@
                                     <select name="entity_type" class="form-select" required>
                                         <option value="">Select...</option>
                                         <?php foreach ($entity_types as $et): ?>
-                                            <option value="<?php echo $et; ?>"><?php echo ucfirst(str_replace('_', ' ', $et)); ?></option>
+                                            <option value="<?php echo e($et); ?>"><?php echo ucfirst(str_replace('_', ' ', $et)); ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>

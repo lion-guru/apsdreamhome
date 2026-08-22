@@ -119,9 +119,9 @@ $maskedPhone = $phone ? substr($phone, 0, 2) . '****' . substr($phone, -2) : '**
 
             <div class="style-88083">
                 <?php if ($channel === 'whatsapp'): ?>
-                    <span class="channel-badge"><i class="fab fa-whatsapp"></i> Sent via WhatsApp to <?php echo $maskedPhone; ?></span>
+                    <span class="channel-badge"><i class="fab fa-whatsapp"></i> Sent via WhatsApp to <?php echo e($maskedPhone); ?></span>
                 <?php elseif ($channel === 'sms'): ?>
-                    <span class="channel-badge"><i class="fas fa-sms"></i> Sent via SMS to <?php echo $maskedPhone; ?></span>
+                    <span class="channel-badge"><i class="fas fa-sms"></i> Sent via SMS to <?php echo e($maskedPhone); ?></span>
                 <?php else: ?>
                     <span class="channel-badge"><i class="fas fa-envelope"></i> Sent via Email</span>
                 <?php endif; ?>
@@ -141,7 +141,7 @@ $maskedPhone = $phone ? substr($phone, 0, 2) . '****' . substr($phone, -2) : '**
                 </div>
             <?php endif; ?>
 
-            <form method="POST" action="<?php echo $base; ?>/register/smart/verify-otp" id="otpForm">
+            <form method="POST" action="<?php echo e($base); ?>/register/smart/verify-otp" id="otpForm">
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token ?? ''); ?>">
                 <input type="hidden" name="token" value="<?php echo htmlspecialchars($token ?? ''); ?>">
                 <input type="hidden" name="otp" id="otpHidden" value="">
@@ -173,11 +173,11 @@ $maskedPhone = $phone ? substr($phone, 0, 2) . '****' . substr($phone, -2) : '**
             </div>
 
             <p class="help-text">
-                <a href="<?php echo $base; ?>/register/smart">Use a different phone number</a>
+                <a href="<?php echo e($base); ?>/register/smart">Use a different phone number</a>
             </p>
         </div>
 
-        <a href="<?php echo $base; ?>/" class="back-link">
+        <a href="<?php echo e($base); ?>/" class="back-link">
             <i class="fas fa-arrow-left me-1"></i> Back to Home
         </a>
     </div>
@@ -273,7 +273,7 @@ $maskedPhone = $phone ? substr($phone, 0, 2) . '****' . substr($phone, -2) : '**
             resendTimer.style.display = 'block';
 
             // Send AJAX request to resend OTP
-            fetch('<?php echo $base; ?>/register/smart/resend-otp', {
+            fetch('<?php echo e($base); ?>/register/smart/resend-otp', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',

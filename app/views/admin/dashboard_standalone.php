@@ -101,22 +101,22 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
         <h6 class="mb-3"><i class="fas fa-bolt me-2"></i>Quick Actions</h6>
         <div class="row g-3">
             <div class="col-md-3">
-                <a href="<?php echo $base; ?>/admin/leads/create" class="btn btn-outline-primary w-100 py-3">
+                <a href="<?php echo e($base); ?>/admin/leads/create" class="btn btn-outline-primary w-100 py-3">
                     <i class="fas fa-user-plus mb-2" class="style-66594"></i>Add New Lead
                 </a>
             </div>
             <div class="col-md-3">
-                <a href="<?php echo $base; ?>/admin/properties/create" class="btn btn-outline-success w-100 py-3">
+                <a href="<?php echo e($base); ?>/admin/properties/create" class="btn btn-outline-success w-100 py-3">
                     <i class="fas fa-plus mb-2" class="style-66594"></i>Add Property
                 </a>
             </div>
             <div class="col-md-3">
-                <a href="<?php echo $base; ?>/admin/bookings/create" class="btn btn-outline-warning w-100 py-3">
+                <a href="<?php echo e($base); ?>/admin/bookings/create" class="btn btn-outline-warning w-100 py-3">
                     <i class="fas fa-file-contract mb-2" class="style-66594"></i>New Booking
                 </a>
             </div>
             <div class="col-md-3">
-                <a href="<?php echo $base; ?>/admin/gallery/create" class="btn btn-outline-info w-100 py-3">
+                <a href="<?php echo e($base); ?>/admin/gallery/create" class="btn btn-outline-info w-100 py-3">
                     <i class="fas fa-image mb-2" class="style-66594"></i>Upload Photo
                 </a>
             </div>
@@ -131,7 +131,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             <div class="card-body aps-cp-card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h6 class="mb-0"><i class="fas fa-user-clock me-2"></i>Recent Leads</h6>
-                    <a href="<?php echo $base; ?>/admin/leads" class="btn btn-sm btn-primary">View All</a>
+                    <a href="<?php echo e($base); ?>/admin/leads" class="btn btn-sm btn-primary">View All</a>
                 </div>
                 <?php if(!empty($recentLeads)): ?>
                 <div class="list-group list-group-flush">

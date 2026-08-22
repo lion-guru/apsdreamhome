@@ -26,7 +26,7 @@ $filters = $filters ?? ['status' => '', 'land_type' => ''];
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Total Acquisitions</h6>
-                            <h3 class="mb-0"><?php echo $total_acquisitions; ?></h3>
+                            <h3 class="mb-0"><?php echo e($total_acquisitions); ?></h3>
                         </div>
                     </div>
                 </div>
@@ -136,7 +136,7 @@ $filters = $filters ?? ['status' => '', 'land_type' => ''];
                             <td>
                                 <?php echo $a['location'] ?? ''; ?>
                                 <?php if (!empty($a['village'])): ?>
-                                <br><small class="text-muted"><?php echo $a['village']; ?>, <?php echo $a['tehsil'] ?? ''; ?></small>
+                                <br><small class="text-muted"><?php echo e($a['village']); ?>, <?php echo $a['tehsil'] ?? ''; ?></small>
                                 <?php endif; ?>
                             </td>
                             <td><?php echo number_format($a['land_area'] ?? 0, 2); ?> <small><?php echo $a['land_area_unit'] ?? 'sqft'; ?></small></td>
@@ -154,7 +154,7 @@ $filters = $filters ?? ['status' => '', 'land_type' => ''];
                             </td>
                             <td><?php echo $a['acquisition_date'] ?? '-'; ?></td>
                             <td class="text-end pe-4">
-                                <a href="<?php echo BASE_URL; ?>/admin/land/acquisitions/<?php echo $a['id']; ?>" class="btn btn-sm btn-outline-info"><i class="fas fa-eye"></i></a>
+                                <a href="<?php echo BASE_URL; ?>/admin/land/acquisitions/<?php echo e($a['id']); ?>" class="btn btn-sm btn-outline-info"><i class="fas fa-eye"></i></a>
                             </td>
                         </tr>
                         <?php endforeach; ?>

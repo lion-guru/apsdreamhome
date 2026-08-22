@@ -46,7 +46,7 @@ ob_start();
                                 </div>
                                 <div>
                                     <small class="text-muted d-block"><?= __('auction_bids', [], 'Bids') ?></small>
-                                    <strong><?= $a['bid_count'] ?></strong>
+                                    <strong><?= e($a['bid_count']) ?></strong>
                                 </div>
                             </div>
                             <div class="text-center mb-2 <?= $isEnding ? 'text-danger' : 'text-muted' ?>">
@@ -55,7 +55,7 @@ ob_start();
                                     <?= __('auction_ends', [], 'Ends:') ?> <?= date('M j, H:i', strtotime($a['ends_at'])) ?>
                                 </small>
                             </div>
-                            <a href="<?= BASE_URL ?>/auctions/<?= $a['id'] ?>" class="btn btn-primary w-100"><?= __('auction_view_bid', [], 'View & Bid') ?></a>
+                            <a href="<?= BASE_URL ?>/auctions/<?= e($a['id']) ?>" class="btn btn-primary w-100"><?= __('auction_view_bid', [], 'View & Bid') ?></a>
                         </div>
                     </div>
                 </div>
@@ -76,7 +76,7 @@ ob_start();
                             <h6><?= htmlspecialchars($a['title'] ?? '') ?></h6>
                             <p class="text-muted small"><?= __('auction_starts', [], 'Starts:') ?> <?= date('M j, Y H:i', strtotime($a['starts_at'])) ?></p>
                             <p class="mb-2"><strong><?= __('auction_start_price', [], 'Start:') ?> ₹<?= number_format($a['start_price']) ?></strong></p>
-                            <a href="<?= BASE_URL ?>/auctions/<?= $a['id'] ?>" class="btn btn-outline-primary btn-sm w-100"><?= __('auction_view_details', [], 'View Details') ?></a>
+                            <a href="<?= BASE_URL ?>/auctions/<?= e($a['id']) ?>" class="btn btn-outline-primary btn-sm w-100"><?= __('auction_view_details', [], 'View Details') ?></a>
                         </div>
                     </div>
                 </div>

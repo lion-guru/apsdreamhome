@@ -48,7 +48,7 @@ $states = $states ?? [];
                                 'house' => __('assoc_ep_type_house', [], 'House'),
                                 'other' => __('assoc_ep_type_other', [], 'Other')
                             ] as $val => $label): ?>
-                                <option value="<?= $val ?>" <?= ($property['property_type'] ?? '') === $val ? 'selected' : '' ?>><?= $label ?></option>
+                                <option value="<?= e($val ?? '') ?>" <?= ($property['property_type'] ?? '') === $val ? 'selected' : '' ?>><?= e($label ?? '') ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>

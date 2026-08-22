@@ -10,7 +10,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <h2 class="mb-1">Create EMI Plan</h2>
                 <p class="text-muted mb-0">Set up a new EMI payment plan for a booking</p>
             </div>
-            <a href="<?php echo $base; ?>/admin/emi" class="btn btn-outline-secondary">
+            <a href="<?php echo e($base); ?>/admin/emi" class="btn btn-outline-secondary">
                 <i class="fas fa-arrow-left me-2"></i>Back to EMI Plans
             </a>
         </div>
@@ -19,7 +19,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
         <!-- EMI Form -->
         <div class="card border-0 shadow-sm">
             <div class="card-body aps-cp-card-body">
-                <form id="emiForm" action="<?php echo $base; ?>/admin/emi/store" method="POST">
+                <form id="emiForm" action="<?php echo e($base); ?>/admin/emi/store" method="POST">
                     <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
                     
                     <div class="row">
@@ -29,7 +29,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             <select name="booking_id" class="form-select" required>
                                 <option value="">Choose a booking...</option>
                                 <?php foreach ($bookings as $booking): ?>
-                                    <option value="<?php echo $booking['id']; ?>" data-amount="<?php echo $booking['total_amount']; ?>">
+                                    <option value="<?php echo e($booking['id']); ?>" data-amount="<?php echo $booking['total_amount']; ?>">
                                         <?php echo htmlspecialchars($booking['booking_number'] ?? ''); ?> - 
                                         <?php echo htmlspecialchars($booking['customer_name'] ?? ''); ?> - 
                                         ₹<?php echo number_format(floatval($booking['total_amount'] ?? 0)); ?>
@@ -88,7 +88,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     
                     <!-- Submit Buttons -->
                     <div class="d-flex justify-content-between mt-4">
-                        <a href="<?php echo $base; ?>/admin/emi" class="btn btn-outline-secondary">Cancel</a>
+                        <a href="<?php echo e($base); ?>/admin/emi" class="btn btn-outline-secondary">Cancel</a>
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save me-2"></i>Create EMI Plan
                         </button>
@@ -159,7 +159,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 if (data.success) {
                     showToast('EMI plan created successfully!', 'success');
                     .catch(err => console.error('Request failed:', err));
-                    window.location.href = '<?php echo $base; ?>/admin/emi';
+                    window.location.href = '<?php echo e($base); ?>/admin/emi';
                 } else {
                     showToast(data.message || 'Failed to create EMI plan', 'danger');
                 }

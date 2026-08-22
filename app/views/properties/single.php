@@ -82,7 +82,7 @@ try {
 
 <div class="container mt-4">
     <?php if (isset($error_message)): ?>
-        <div class="alert alert-danger"><?php echo $error_message; ?></div>
+        <div class="alert alert-danger"><?php echo e($error_message); ?></div>
     <?php else: ?>
 
     <!-- Property Hero Section -->
@@ -131,11 +131,11 @@ try {
                     <div class="property-features-grid mb-4">
                         <div class="feature-item">
                             <i class="fas fa-bed text-primary"></i>
-                            <span><?php echo $property['bedrooms']; ?> Bedrooms</span>
+                            <span><?php echo e($property['bedrooms']); ?> Bedrooms</span>
                         </div>
                         <div class="feature-item">
                             <i class="fas fa-bath text-primary"></i>
-                            <span><?php echo $property['bathrooms']; ?> Bathrooms</span>
+                            <span><?php echo e($property['bathrooms']); ?> Bathrooms</span>
                         </div>
                         <div class="feature-item">
                             <i class="fas fa-ruler-combined text-primary"></i>
@@ -151,7 +151,7 @@ try {
                         <button class="btn btn-primary btn-lg w-100 mb-2" onclick="scheduleVisit(<?php echo $property['id']; ?>, '<?php echo htmlspecialchars($property['title'] ?? ''); ?>')">
                             <i class="fas fa-calendar-check me-2"></i>Schedule Visit
                         </button>
-                        <button class="btn btn-outline-primary w-100 mb-2" onclick="toggleFavorite(<?php echo $property['id']; ?>)">
+                        <button class="btn btn-outline-primary w-100 mb-2" onclick="toggleFavorite(<?php echo e($property['id']); ?>)">
                             <i class="far fa-heart me-2"></i>Add to Favorites
                         </button>
                         <button class="btn btn-outline-secondary w-100" onclick="shareProperty(<?php echo $property['id']; ?>, '<?php echo htmlspecialchars($property['title'] ?? ''); ?>')">
@@ -228,11 +228,11 @@ try {
                                         </tr>
                                         <tr>
                                             <td><strong>Bedrooms:</strong></td>
-                                            <td><?php echo $property['bedrooms']; ?></td>
+                                            <td><?php echo e($property['bedrooms']); ?></td>
                                         </tr>
                                         <tr>
                                             <td><strong>Bathrooms:</strong></td>
-                                            <td><?php echo $property['bathrooms']; ?></td>
+                                            <td><?php echo e($property['bathrooms']); ?></td>
                                         </tr>
                                         <tr>
                                             <td><strong>Area:</strong></td>
@@ -359,7 +359,7 @@ try {
                                             ?>
                                         </div>
                                     </div>
-                                    <span class="review-count"><?php echo $property['review_count']; ?> reviews</span>
+                                    <span class="review-count"><?php echo e($property['review_count']); ?> reviews</span>
                                 </div>
                             </div>
 
@@ -404,13 +404,13 @@ try {
                             <h5 class="card-title"><?php echo htmlspecialchars($related['title'] ?? ''); ?></h5>
                             <p class="card-text text-muted"><?php echo htmlspecialchars($related['address'] ?? ''); ?></p>
                             <div class="property-features">
-                                <span><i class="fas fa-bed me-1"></i><?php echo $related['bedrooms']; ?> beds</span>
-                                <span><i class="fas fa-bath me-1"></i><?php echo $related['bathrooms']; ?> baths</span>
+                                <span><i class="fas fa-bed me-1"></i><?php echo e($related['bedrooms']); ?> beds</span>
+                                <span><i class="fas fa-bath me-1"></i><?php echo e($related['bathrooms']); ?> baths</span>
                                 <span><i class="fas fa-ruler-combined me-1"></i><?php echo number_format($related['area_sqft']); ?> sq.ft</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mt-3">
                                 <span class="fw-bold">₹<?php echo number_format($related['price']); ?></span>
-                                <a href="/property-details.php?id=<?php echo $related['id']; ?>" class="btn btn-primary btn-sm">View Details</a>
+                                <a href="/property-details.php?id=<?php echo e($related['id']); ?>" class="btn btn-primary btn-sm">View Details</a>
                             </div>
                         </div>
                     </div>
