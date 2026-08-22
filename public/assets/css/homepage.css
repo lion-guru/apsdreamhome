@@ -2,6 +2,7 @@
    HOMEPAGE.CSS — Extracted from home.php inline styles
    APS Dream Home — Premium Real Estate
    ========================================================================== */
+html, body { overflow-x: hidden; max-width: 100vw; }
 
 /* ===== HERO BACKGROUND IMAGE ===== */
 .hero.hero-with-bg {

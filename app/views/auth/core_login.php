@@ -29,7 +29,7 @@ $supportedRoles = [
     <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
     <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;background:linear-gradient(135deg,#0f172a 0%,#1e293b 40%,#0d9488 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow:auto;padding:2rem 1rem}
+        html{overflow-x:hidden;max-width:100vw}body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;background:linear-gradient(135deg,#0f172a 0%,#1e293b 40%,#0d9488 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow-x:hidden;overflow-y:auto;padding:2rem 1rem;max-width:100vw}
         body::before{content:'';position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(13,148,136,.3) 0%,transparent 70%);top:-200px;right:-100px;border-radius:50%}
         body::after{content:'';position:absolute;width:500px;height:500px;background:radial-gradient(circle,rgba(245,158,11,.2) 0%,transparent 70%);bottom:-150px;left:-100px;border-radius:50%}
 
