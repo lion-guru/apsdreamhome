@@ -43,10 +43,12 @@ class AgentReview extends Model {
      * Get review summary for an agent
      */
     public function getAgentReviewSummary($agentId) {
+        [$tSql, $tParams] = static::tenantClause();
+        $params = array_merge([$agentId], $tParams);
         $sql = "SELECT COUNT(*) as total_reviews, AVG(rating) as average_rating
                 FROM " . static::$table . "
-                WHERE agent_id = ?";
-        $row = static::getDb()->fetch($sql, [$agentId]);
+                WHERE agent_id = ?{$tSql}";
+        $row = static::getDb()->fetch($sql, $params);
         return [
             'total_reviews' => (int)($row['total_reviews'] ?? 0),
             'average_rating' => (float)($row['average_rating'] ?? 0)
@@ -57,11 +59,13 @@ class AgentReview extends Model {
      * Get rating distribution for an agent
      */
     public function getAgentRatingDistribution($agentId) {
+        [$tSql, $tParams] = static::tenantClause();
+        $params = array_merge([$agentId], $tParams);
         $sql = "SELECT rating, COUNT(*) as count
                 FROM " . static::$table . "
-                WHERE agent_id = ?
+                WHERE agent_id = ?{$tSql}
                 GROUP BY rating";
-        return static::getDb()->fetchAll($sql, [$agentId]);
+        return static::getDb()->fetchAll($sql, $params);
     }
 
     /**

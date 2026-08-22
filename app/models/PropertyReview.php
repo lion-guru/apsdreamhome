@@ -43,10 +43,12 @@ class PropertyReview extends Model {
      * Get review summary for a property
      */
     public function getPropertyReviewSummary($propertyId) {
+        [$tSql, $tParams] = static::tenantClause();
+        $params = array_merge([$propertyId, 'approved'], $tParams);
         $sql = "SELECT COUNT(*) as total_reviews, AVG(rating) as average_rating
                 FROM " . static::$table . "
-                WHERE property_id = ? AND status = ?";
-        $row = static::getDb()->fetch($sql, [$propertyId, 'approved']);
+                WHERE property_id = ? AND status = ?{$tSql}";
+        $row = static::getDb()->fetch($sql, $params);
         return [
             'total_reviews' => (int)($row['total_reviews'] ?? 0),
             'average_rating' => (float)($row['average_rating'] ?? 0)
@@ -57,11 +59,13 @@ class PropertyReview extends Model {
      * Get rating distribution for a property
      */
     public function getPropertyRatingDistribution($propertyId) {
+        [$tSql, $tParams] = static::tenantClause();
+        $params = array_merge([$propertyId, 'approved'], $tParams);
         $sql = "SELECT rating, COUNT(*) as count
                 FROM " . static::$table . "
-                WHERE property_id = ? AND status = ?
+                WHERE property_id = ? AND status = ?{$tSql}
                 GROUP BY rating";
-        return static::getDb()->fetchAll($sql, [$propertyId, 'approved']);
+        return static::getDb()->fetchAll($sql, $params);
     }
 
     /**

@@ -9,20 +9,22 @@ class Lead extends Model
     
     public static function all()
     {
-        return self::getDb()->query("SELECT * FROM leads ORDER BY created_at DESC")->fetchAll();
+        [$tSql, $tParams] = static::tenantClause();
+        return self::getDb()->query("SELECT * FROM leads WHERE 1=1{$tSql} ORDER BY created_at DESC", $tParams)->fetchAll();
     }
     
     public static function find($id)
     {
-        return self::getDb()->query("SELECT * FROM leads WHERE id = ?", [$id])->fetch();
+        [$tSql, $tParams] = static::tenantClause();
+        $params = array_merge([(int)$id], $tParams);
+        return self::getDb()->query("SELECT * FROM leads WHERE id = ?{$tSql}", $params)->fetch();
     }
     
     public static function create($data)
     {
-        $fields = array_keys($data);
-        $values = array_values($data);
-        $sql = "INSERT INTO leads (" . implode(',', $fields) . ") VALUES (" . implode(',', array_fill(0, count($values), '?')) . ")";
-        self::getDb()->query($sql, $values);
+        ['columns' => $fields, 'values' => $vals] = static::tenantInsertData($data);
+        $sql = "INSERT INTO leads (" . implode(',', $fields) . ") VALUES (" . implode(',', array_fill(0, count($vals), '?')) . ")";
+        self::getDb()->query($sql, $vals);
         return self::getDb()->lastInsertId();
     }
     
@@ -30,23 +32,30 @@ class Lead extends Model
     {
         $sets = array_map(fn($k) => "$k = ?", array_keys($data));
         $values = array_values($data);
+        [$tSql, $tParams] = static::tenantClause();
         $values[] = $id;
-        $sql = "UPDATE leads SET " . implode(',', $sets) . " WHERE id = ?";
+        $values = array_merge($values, $tParams);
+        $sql = "UPDATE leads SET " . implode(',', $sets) . " WHERE id = ?{$tSql}";
         return self::getDb()->query($sql, $values);
     }
     
     public static function delete($id)
     {
-        return self::getDb()->query("UPDATE leads SET deleted_at = NOW() WHERE id = ?", [$id]);
+        [$tSql, $tParams] = static::tenantClause();
+        $params = array_merge([(int)$id], $tParams);
+        return self::getDb()->query("UPDATE leads SET deleted_at = NOW() WHERE id = ?{$tSql}", $params);
     }
     
     public static function getByStatus($status)
     {
-        return self::getDb()->query("SELECT * FROM leads WHERE status = ?", [$status])->fetchAll();
+        [$tSql, $tParams] = static::tenantClause();
+        $params = array_merge([$status], $tParams);
+        return self::getDb()->query("SELECT * FROM leads WHERE status = ?{$tSql}", $params)->fetchAll();
     }
     
     public static function countByStatus()
     {
-        return self::getDb()->query("SELECT status, COUNT(*) as count FROM leads GROUP BY status")->fetchAll();
+        [$tSql, $tParams] = static::tenantClause();
+        return self::getDb()->query("SELECT status, COUNT(*) as count FROM leads WHERE 1=1{$tSql} GROUP BY status", $tParams)->fetchAll();
     }
 }

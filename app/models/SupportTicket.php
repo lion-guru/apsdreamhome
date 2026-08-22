@@ -23,27 +23,34 @@ class SupportTicket extends Model
 
     public function getTicketByNumber($ticketNumber)
     {
-        $sql = "SELECT * FROM " . static::$table . " WHERE ticket_number = :ticket_number";
+        [$tSql, $tParams] = static::tenantClause();
+        $sql = "SELECT * FROM " . static::$table . " WHERE ticket_number = :ticket_number{$tSql}";
+        $params = ['ticket_number' => $ticketNumber] + array_combine(range(1, count($tParams)), $tParams);
         $stmt = static::getDb()->prepare($sql);
-        $stmt->execute(['ticket_number' => $ticketNumber]);
+        $stmt->execute($params);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function getTicketsByUser($userId)
     {
-        $sql = "SELECT * FROM " . static::$table . " WHERE user_id = :user_id ORDER BY created_at DESC";
+        [$tSql, $tParams] = static::tenantClause();
+        $sql = "SELECT * FROM " . static::$table . " WHERE user_id = :user_id{$tSql} ORDER BY created_at DESC";
+        $params = ['user_id' => $userId] + array_combine(range(1, count($tParams)), $tParams);
         $stmt = static::getDb()->prepare($sql);
-        $stmt->execute(['user_id' => $userId]);
+        $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getAllTicketsWithUser()
     {
+        [$tSql, $tParams] = static::tenantClause();
         $sql = "SELECT t.*, u.name as user_name, u.email as user_email 
                 FROM " . static::$table . " t 
                 JOIN users u ON t.user_id = u.id 
+                WHERE 1=1{$tSql}
                 ORDER BY t.created_at DESC";
-        $stmt = static::getDb()->query($sql);
+        $stmt = static::getDb()->prepare($sql);
+        $stmt->execute($tParams);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

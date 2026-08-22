@@ -14,6 +14,7 @@ class Model
 {
     protected static $table;
     protected static $primaryKey = 'id';
+    protected static $tenantScoped = false;
 
     /**
      * Get database instance
@@ -25,6 +26,42 @@ class Model
     }
 
     /**
+     * Get current tenant ID from session/context. Returns 0 if not in tenant context.
+     */
+    protected static function getTenantId(): int
+    {
+        if (isset($_SESSION['tenant_id'])) return (int)$_SESSION['tenant_id'];
+        if (isset($GLOBALS['tenant_id'])) return (int)$GLOBALS['tenant_id'];
+        if (defined('TENANT_ID')) return (int)TENANT_ID;
+        return 0;
+    }
+
+    /**
+     * Get tenant WHERE clause for tenant-scoped models.
+     * Returns [' AND tenant_id = ?', [tenantId]] or ['', []] when not scoped.
+     */
+    protected static function tenantClause(): array
+    {
+        if (!static::$tenantScoped) return ['', []];
+        $tid = static::getTenantId();
+        if ($tid <= 1) return ['', []];
+        return [' AND tenant_id = ?', [$tid]];
+    }
+
+    /**
+     * Get tenant INSERT data (adds tenant_id column if scoped).
+     * @return array ['columns' => [...], 'values' => [...]]
+     */
+    protected static function tenantInsertData(array $data): array
+    {
+        if (!static::$tenantScoped) return ['columns' => array_keys($data), 'values' => array_values($data)];
+        $tid = static::getTenantId();
+        if ($tid <= 1) return ['columns' => array_keys($data), 'values' => array_values($data)];
+        $data['tenant_id'] = $tid;
+        return ['columns' => array_keys($data), 'values' => array_values($data)];
+    }
+
+    /**
      * Find single record by ID
      * @param int $id Record ID
      * @return array|null Record data
@@ -32,8 +69,10 @@ class Model
     public static function find($id)
     {
         try {
-            $sql = "SELECT * FROM " . static::$table . " WHERE " . static::$primaryKey . " = ?";
-            return static::getDb()->fetch($sql, [$id]);
+            [$tSql, $tParams] = static::tenantClause();
+            $sql = "SELECT * FROM " . static::$table . " WHERE " . static::$primaryKey . " = ?" . $tSql;
+            $params = array_merge([(int)$id], $tParams);
+            return static::getDb()->fetch($sql, $params);
         } catch (Exception $e) {
             error_log("Model find error: " . $e->getMessage());
             return null;
@@ -48,8 +87,9 @@ class Model
     public static function findOne($conditions = [])
     {
         try {
-            $sql = "SELECT * FROM " . static::$table . " WHERE 1=1";
-            $params = [];
+            [$tSql, $tParams] = static::tenantClause();
+            $sql = "SELECT * FROM " . static::$table . " WHERE 1=1" . $tSql;
+            $params = $tParams;
 
             foreach ($conditions as $field => $value) {
                 $sql .= " AND {$field} = ?";
@@ -73,8 +113,9 @@ class Model
     public static function findMany($conditions = [], $orderBy = null, $limit = null)
     {
         try {
-            $sql = "SELECT * FROM " . static::$table . " WHERE 1=1";
-            $params = [];
+            [$tSql, $tParams] = static::tenantClause();
+            $sql = "SELECT * FROM " . static::$table . " WHERE 1=1" . $tSql;
+            $params = $tParams;
 
             foreach ($conditions as $field => $value) {
                 $sql .= " AND {$field} = ?";
@@ -104,12 +145,12 @@ class Model
     public static function create($data)
     {
         try {
-            $fields = array_keys($data);
+            ['columns' => $fields, 'values' => $vals] = static::tenantInsertData($data);
             $placeholders = implode(', ', array_fill(0, count($fields), '?'));
 
             $sql = "INSERT INTO " . static::$table . " (" . implode(', ', $fields) . ") VALUES ({$placeholders})";
 
-            $result = static::getDb()->query($sql, array_values($data));
+            $result = static::getDb()->query($sql, $vals);
 
             if ($result) {
                 return static::getDb()->lastInsertId();
@@ -134,9 +175,10 @@ class Model
     {
         try {
             $offset = ($page - 1) * $perPage;
+            [$tSql, $tParams] = static::tenantClause();
 
-            $sql = "SELECT * FROM " . static::$table . " WHERE 1=1";
-            $params = [];
+            $sql = "SELECT * FROM " . static::$table . " WHERE 1=1" . $tSql;
+            $params = $tParams;
 
             foreach ($conditions as $field => $value) {
                 $sql .= " AND {$field} = ?";
@@ -151,9 +193,8 @@ class Model
 
             $records = static::getDb()->fetchAll($sql, $params);
 
-            // Get total count for pagination
-            $countSql = "SELECT COUNT(*) as total FROM " . static::$table . " WHERE 1=1";
-            $totalResult = static::getDb()->fetch($countSql, $params);
+            $countSql = "SELECT COUNT(*) as total FROM " . static::$table . " WHERE 1=1" . $tSql;
+            $totalResult = static::getDb()->fetch($countSql, $tParams);
             $total = $totalResult['total'] ?? 0;
 
             return [
@@ -190,11 +231,10 @@ class Model
     public static function insert($data)
     {
         try {
-            $columns = implode(', ', array_keys($data));
-            $placeholders = str_repeat('?,', count($data));
-            $values = array_values($data);
+            ['columns' => $columns, 'values' => $values] = static::tenantInsertData($data);
+            $placeholders = str_repeat('?,', count($columns));
 
-            $sql = "INSERT INTO " . static::$table . " ($columns) VALUES ($placeholders)";
+            $sql = "INSERT INTO " . static::$table . " (" . implode(', ', $columns) . ") VALUES ($placeholders)";
 
             $result = static::getDb()->query($sql, $values);
 
@@ -255,8 +295,10 @@ class Model
             }
 
             $setClause = implode(', ', $setParts);
-            $sql = "UPDATE " . static::$table . " SET $setClause WHERE " . static::$primaryKey . " = ?";
+            [$tSql, $tParams] = static::tenantClause();
+            $sql = "UPDATE " . static::$table . " SET $setClause WHERE " . static::$primaryKey . " = ?" . $tSql;
             $values[] = $id;
+            $values = array_merge($values, $tParams);
 
             return static::getDb()->query($sql, $values);
         } catch (Exception $e) {
@@ -273,8 +315,10 @@ class Model
     public static function delete($id)
     {
         try {
-            $sql = "DELETE FROM " . static::$table . " WHERE " . static::$primaryKey . " = ?";
-            return static::getDb()->query($sql, [$id]);
+            [$tSql, $tParams] = static::tenantClause();
+            $sql = "DELETE FROM " . static::$table . " WHERE " . static::$primaryKey . " = ?" . $tSql;
+            $params = array_merge([(int)$id], $tParams);
+            return static::getDb()->query($sql, $params);
         } catch (Exception $e) {
             error_log("Model delete error: " . $e->getMessage());
             return false;
