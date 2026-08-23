@@ -266,9 +266,14 @@ class CAController extends BaseController
     /**
      * Process invoice
      */
-    public function processInvoice($invoiceId, $action, $notes = '')
+    public function processInvoice()
     {
         try {
+            // Inputs come from POST form (router dispatches with zero args)
+            $invoiceId = (int)($_POST['invoice_id'] ?? 0);
+            $action = $_POST['action'] ?? 'sent';
+            $notes = $_POST['notes'] ?? '';
+
             // Get invoice details
             $invoiceQuery = "SELECT * FROM invoices WHERE id = ?";
             $invoice = $this->db->fetchOne($invoiceQuery, [$invoiceId]);
@@ -335,9 +340,16 @@ class CAController extends BaseController
     /**
      * Update tax compliance
      */
-    public function updateTaxCompliance($taxId, $complianceData)
+    public function updateTaxCompliance()
     {
         try {
+            // Inputs come from POST form (router dispatches with zero args)
+            $taxId = (int)($_POST['tax_id'] ?? ($_POST['compliance_id'] ?? 0));
+            $complianceData = [
+                'status' => $_POST['status'] ?? 'completed',
+                'paid_amount' => $_POST['paid_amount'] ?? null,
+            ];
+
             // Get tax details
             $taxQuery = "SELECT * FROM efiling_deadlines WHERE id = ?";
 
@@ -400,9 +412,16 @@ class CAController extends BaseController
     /**
      * Update budget
      */
-    public function updateBudget($budgetId, $budgetData)
+    public function updateBudget()
     {
         try {
+            // Inputs come from POST form (router dispatches with zero args)
+            $budgetId = (int)($_POST['budget_id'] ?? 0);
+            $budgetData = [
+                'budget_name' => $_POST['budget_name'] ?? null,
+                'allocated_amount' => $_POST['allocated_amount'] ?? ($_POST['budget_amount'] ?? null),
+            ];
+
             // Get budget details
             $budgetQuery = "SELECT * FROM budgets WHERE id = ?";
             $budget = $this->db->fetchOne($budgetQuery, [$budgetId]);
@@ -444,9 +463,13 @@ class CAController extends BaseController
     /**
      * Generate financial report
      */
-    public function generateFinancialReport($reportType, $filters = [])
+    public function generateFinancialReport()
     {
         try {
+            // Inputs come from POST form (router dispatches with zero args)
+            $reportType = $_POST['report_type'] ?? ($_GET['type'] ?? 'profit_loss');
+            $filters = $_POST['filters'] ?? [];
+
             switch ($reportType) {
                 case 'profit_loss':
                     return $this->generateProfitLossReport($filters);

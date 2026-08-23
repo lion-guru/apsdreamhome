@@ -293,9 +293,19 @@ class TelecallingController extends AdminController
     /**
      * Log a call
      */
-    public function logCall($leadId, $callData)
+    public function logCall()
     {
         try {
+            // Inputs come from POST form (router dispatches with zero args)
+            $leadId = (int)($_POST['lead_id'] ?? 0);
+            $callData = [
+                'duration' => (int)($_POST['duration'] ?? 0),
+                'call_status' => $_POST['call_status'] ?? 'connected',
+                'outcome' => $_POST['outcome'] ?? '',
+                'notes' => $_POST['notes'] ?? '',
+                'next_follow_up' => $_POST['next_follow_up'] ?? null,
+            ];
+
             // Validate lead assignment
             $leadQuery = "SELECT id, name, status FROM leads WHERE id = ? AND assigned_to = ?";
             $lead = $this->db->fetchOne($leadQuery, [$leadId, $this->employeeId]);
@@ -556,9 +566,13 @@ class TelecallingController extends AdminController
     /**
      * Complete follow-up
      */
-    public function completeFollowUp($leadId, $result)
+    public function completeFollowUp()
     {
         try {
+            // Inputs come from POST form (router dispatches with zero args)
+            $leadId = (int)($_POST['lead_id'] ?? 0);
+            $result = $_POST['result'] ?? 'interested';
+
             // Mark pending follow-up tasks for this lead as completed
             $query = "UPDATE crm_tasks 
                       SET status = 'completed', completed_at = NOW(), completed_notes = ?

@@ -269,9 +269,13 @@ class HRManagerController extends BaseController
     /**
      * Process payroll for users
      */
-    public function processPayroll($month, $year)
+    public function processPayroll()
     {
         try {
+            // Inputs come from POST form (router dispatches with zero args)
+            $month = (int)($_POST['month'] ?? date('n'));
+            $year = (int)($_POST['year'] ?? date('Y'));
+
             // Validate payroll period
             if ($this->isPayrollProcessed($month, $year)) {
                 throw new Exception("Payroll for {$month}-{$year} has already been processed");
@@ -400,7 +404,7 @@ class HRManagerController extends BaseController
         $baseSalary = $employee['base_salary'];
         $allowances = json_decode($employee['allowances'] ?? '[]', true);
         
-        $totalAllowances = array_sum($allowances);
+        $totalAllowances = is_array($allowances) ? array_sum($allowances) : 0;
         
         // Add performance bonus if applicable
         $performanceScore = (float)($employee['performance_score'] ?? 0);
@@ -419,7 +423,7 @@ class HRManagerController extends BaseController
     private function calculateDeductions($employee, $grossSalary)
     {
         $deductions = json_decode($employee['deductions'] ?? '[]', true);
-        $totalDeductions = array_sum($deductions);
+        $totalDeductions = is_array($deductions) ? array_sum($deductions) : 0;
         
         // Calculate statutory deductions
         // PF (Provident Fund) - 12% of basic salary
@@ -439,12 +443,22 @@ class HRManagerController extends BaseController
     /**
      * Schedule performance review
      */
-    public function scheduleReview($employeeId, $reviewData)
+    public function scheduleReview()
     {
         try {
+            // Inputs come from POST form (router dispatches with zero args)
+            $employeeId = (int)($_POST['employee_id'] ?? 0);
+            $reviewData = [
+                'reviewer_id' => (int)($_POST['reviewer_id'] ?? ($this->employeeId ?? 1)),
+                'review_type' => $_POST['review_type'] ?? 'annual',
+                'scheduled_date' => $_POST['scheduled_date'] ?? date('Y-m-d'),
+                'next_review_date' => $_POST['next_review_date'] ?? null,
+                'overall_rating' => $_POST['overall_rating'] ?? null,
+            ];
+
             // Validate employee
             [$tidSql, $tidParams] = $this->tenantWhere();
-            $employeeQuery = "SELECT name, department FROM users WHERE id = ? AND status = 'active'{$tidSql}";
+            $employeeQuery = "SELECT name, department FROM employees WHERE id = ? AND status = 'active'{$tidSql}";
             $employee = $this->db->fetchOne($employeeQuery, array_merge([$employeeId], $tidParams));
             
             if (!$employee) {
@@ -488,9 +502,14 @@ class HRManagerController extends BaseController
     /**
      * Process job application
      */
-    public function processApplication($applicationId, $action, $notes = '')
+    public function processApplication()
     {
         try {
+            // Inputs come from POST form (router dispatches with zero args)
+            $applicationId = (int)($_POST['application_id'] ?? 0);
+            $action = $_POST['action'] ?? '';
+            $notes = $_POST['notes'] ?? '';
+
             // Get application details
             $appQuery = "SELECT ja.*, ja.message AS position_title
                          FROM job_applications ja
