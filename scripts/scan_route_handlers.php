@@ -17,6 +17,11 @@ $root = dirname(__DIR__);
 $routeFiles = [
     $root . '/routes/web.php',
     $root . '/routes/api.php',
+    $root . '/routes/container.php',
+    $root . '/routes/events.php',
+    $root . '/routes/farmers.php',
+    $root . '/routes/performance-cache.php',
+    $root . '/routes/request-middleware.php',
 ];
 
 $lines = [];
