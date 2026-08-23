@@ -32,12 +32,20 @@ class CAController extends BaseController
             @session_start();
         }
 
-        $this->employeeId = $_SESSION['employee_id'] ?? null;
-
-        if (!$this->employeeId) {
-            header('Location: ' . BASE_URL . '/employee/login');
-            exit;
+        if (!empty($_SESSION['employee_id'])) {
+            $this->employeeId = (int)$_SESSION['employee_id'];
+            return;
         }
+
+        // Admin fallback: admins can view employee dashboards
+        $allowedAdminRoles = ['admin', 'super_admin', 'ceo', 'cfo', 'coo', 'finance_head', 'finance_manager', 'chartered_accountant'];
+        if (!empty($_SESSION['admin_id']) && in_array($_SESSION['role'] ?? '', $allowedAdminRoles, true)) {
+            $this->employeeId = (int)$_SESSION['admin_id'];
+            return;
+        }
+
+        header('Location: ' . BASE_URL . '/employee/login');
+        exit;
     }
 
     /**
@@ -131,14 +139,10 @@ class CAController extends BaseController
      */
     private function getPendingInvoices()
     {
-        $query = "SELECT i.*, 
-                        c.name as client_name,
-                        p.title as property_title,
+        $query = "SELECT i.*,
                         DATEDIFF(i.due_date, CURDATE()) as days_overdue
                  FROM invoices i
-                 LEFT JOIN clients c ON i.client_id = c.id
-                 LEFT JOIN properties p ON i.property_id = p.id
-                 WHERE i.status = 'pending'
+                 WHERE i.status IN ('sent', 'viewed', 'overdue')
                  AND i.due_date <= DATE_ADD(CURDATE(), INTERVAL 30 DAY)
                  ORDER BY i.due_date ASC
                  LIMIT 15";
@@ -151,21 +155,14 @@ class CAController extends BaseController
      */
     private function getTaxDeadlines()
     {
-        try {
-            $query = "SELECT tr.*, 
-                            t.type as tax_type,
-                            t.frequency,
-                            DATEDIFF(tr.due_date, CURDATE()) as days_until_due
-                     FROM tax_reminders tr
-                     LEFT JOIN tax_types t ON tr.tax_type_id = t.id
-                     WHERE tr.due_date <= DATE_ADD(CURDATE(), INTERVAL 90 DAY)
-                     AND tr.status = 'pending'
-                     ORDER BY tr.due_date ASC
-                     LIMIT 20";
-        } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
-        }
+        $query = "SELECT ed.*,
+                        ed.filing_type as tax_type,
+                        DATEDIFF(ed.due_date, CURDATE()) as days_until_due
+                 FROM efiling_deadlines ed
+                 WHERE ed.due_date <= DATE_ADD(CURDATE(), INTERVAL 90 DAY)
+                 AND ed.status IN ('upcoming', 'overdue')
+                 ORDER BY ed.due_date ASC
+                 LIMIT 20";
 
         return $this->db->fetchAll($query);
     }
@@ -175,20 +172,15 @@ class CAController extends BaseController
      */
     private function getBudgetVariance()
     {
-        try {
-            $query = "SELECT db.*, 
-                            d.name as department_name,
-                            db.budget_amount - db.spent_amount as variance,
-                            ((db.budget_amount - db.spent_amount) / db.budget_amount) * 100 as variance_percentage
-                     FROM department_budgets db
-                     JOIN departments d ON db.department_id = d.id
-                     WHERE db.fiscal_year = YEAR(CURDATE())
-                     ORDER BY ABS(variance) DESC
-                     LIMIT 10";
-        } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
-        }
+        $query = "SELECT db.*,
+                        d.name as department_name,
+                        db.allocated_amount - db.spent_amount as variance,
+                        ((db.allocated_amount - db.spent_amount) / NULLIF(db.allocated_amount, 0)) * 100 as variance_percentage
+                 FROM budgets db
+                 LEFT JOIN departments d ON db.department_id = d.id
+                 WHERE db.fiscal_year = CAST(YEAR(CURDATE()) AS CHAR)
+                 ORDER BY ABS(db.allocated_amount - db.spent_amount) DESC
+                 LIMIT 10";
 
         return $this->db->fetchAll($query);
     }
@@ -267,16 +259,8 @@ class CAController extends BaseController
      */
     private function getAuditStatus()
     {
-        try {
-            $query = "SELECT * FROM audit_schedules 
-                      WHERE fiscal_year = YEAR(CURDATE())
-                      ORDER BY scheduled_date ASC";
-        } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
-        }
-
-        return $this->db->fetchAll($query);
+        // Audit scheduling module is not yet implemented
+        return [];
     }
 
     /**
@@ -295,10 +279,10 @@ class CAController extends BaseController
 
             // Update invoice status
             $query = "UPDATE invoices 
-                      SET status = ?, notes = ?, processed_by = ?, processed_at = NOW()
+                      SET status = ?, notes = ?
                       WHERE id = ?";
 
-            $this->db->execute($query, [$action, $notes, $this->employeeId, $invoiceId]);
+            $this->db->execute($query, [$action, $notes, $invoiceId]);
 
             // If approved, create financial transaction
             if ($action === 'approved') {
@@ -334,18 +318,17 @@ class CAController extends BaseController
     {
         $query = "INSERT INTO financial_transactions (
                     type, category, amount, description, transaction_date,
-                    reference_id, reference_type, created_by, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+                    reference_id, reference_type, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
 
         $this->db->execute($query, [
             'income',
             $invoice['category'] ?? 'property_sale',
-            $invoice['amount'],
-            "Invoice payment - {$invoice['description']}",
+            $invoice['total_amount'],
+            "Invoice payment - #{$invoice['invoice_number']}",
             $invoice['due_date'],
             $invoice['id'],
-            'invoice',
-            $this->employeeId
+            'invoice'
         ]);
     }
 
@@ -356,46 +339,28 @@ class CAController extends BaseController
     {
         try {
             // Get tax details
-            $taxQuery = "SELECT tr.*, t.type as tax_type, t.frequency
-                        FROM tax_reminders tr
-                        LEFT JOIN tax_types t ON tr.tax_type_id = t.id
-                        WHERE tr.id = ?";
+            $taxQuery = "SELECT * FROM efiling_deadlines WHERE id = ?";
 
             $tax = $this->db->fetchOne($taxQuery, [$taxId]);
 
             if (!$tax) {
-                throw new Exception("Tax reminder not found");
+                throw new Exception("Tax deadline not found");
             }
 
-            // Update tax compliance
-            $query = "UPDATE tax_reminders 
-                      SET status = ?, paid_amount = ?, paid_date = ?, 
-                          notes = ?, updated_by = ?, updated_at = NOW()
-                      WHERE id = ?";
+            // Update tax compliance status
+            $query = "UPDATE efiling_deadlines SET status = ? WHERE id = ?";
 
-            $this->db->execute($query, [
-                $complianceData['status'],
-                $complianceData['paid_amount'] ?? 0,
-                $complianceData['paid_date'] ?? null,
-                $complianceData['notes'] ?? '',
-                $this->employeeId,
-                $taxId
-            ]);
+            $this->db->execute($query, [$complianceData['status'], $taxId]);
 
             // Create expense transaction if paid
-            if ($complianceData['status'] === 'paid' && !empty($complianceData['paid_amount'])) {
+            if ($complianceData['status'] === 'completed' && !empty($complianceData['paid_amount'])) {
                 $this->createTaxTransaction($tax, $complianceData['paid_amount']);
-            }
-
-            // Schedule next tax reminder if applicable
-            if ($tax['frequency'] !== 'once') {
-                $this->scheduleNextTaxReminder($tax);
             }
 
             // Log activity
             $this->logFinancialActivity(
                 'tax_compliance',
-                "Tax {$tax['tax_type']} compliance updated: {$complianceData['status']}",
+                "Tax {$tax['filing_type']} compliance updated: {$complianceData['status']}",
                 $taxId
             );
 
@@ -418,55 +383,18 @@ class CAController extends BaseController
     {
         $query = "INSERT INTO financial_transactions (
                     type, category, amount, description, transaction_date,
-                    reference_id, reference_type, created_by, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+                    reference_id, reference_type, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
 
         $this->db->execute($query, [
             'expense',
             'tax',
             $amount,
-            "Tax payment - {$tax['tax_type']}",
-            $tax['paid_date'] ?? date('Y-m-d'),
+            "Tax payment - {$tax['filing_type']}",
+            date('Y-m-d'),
             $tax['id'],
-            'tax_payment',
-            $this->employeeId
+            'tax_payment'
         ]);
-    }
-
-    /**
-     * Schedule next tax reminder
-     */
-    private function scheduleNextTaxReminder($tax)
-    {
-        $nextDueDate = $this->calculateNextTaxDueDate($tax['due_date'], $tax['frequency']);
-
-        $query = "INSERT INTO tax_reminders (
-                    tax_type_id, due_date, amount, frequency, status, created_at
-                ) VALUES (?, ?, ?, ?, 'pending', NOW())";
-
-        $this->db->execute($query, [
-            $tax['tax_type_id'],
-            $nextDueDate,
-            $tax['amount'],
-            $tax['frequency']
-        ]);
-    }
-
-    /**
-     * Calculate next tax due date
-     */
-    private function calculateNextTaxDueDate($currentDate, $frequency)
-    {
-        switch ($frequency) {
-            case 'monthly':
-                return date('Y-m-d', strtotime($currentDate . ' +1 month'));
-            case 'quarterly':
-                return date('Y-m-d', strtotime($currentDate . ' +3 months'));
-            case 'annually':
-                return date('Y-m-d', strtotime($currentDate . ' +1 year'));
-            default:
-                return $currentDate;
-        }
     }
 
     /**
@@ -476,7 +404,7 @@ class CAController extends BaseController
     {
         try {
             // Get budget details
-            $budgetQuery = "SELECT * FROM department_budgets WHERE id = ?";
+            $budgetQuery = "SELECT * FROM budgets WHERE id = ?";
             $budget = $this->db->fetchOne($budgetQuery, [$budgetId]);
 
             if (!$budget) {
@@ -484,14 +412,13 @@ class CAController extends BaseController
             }
 
             // Update budget
-            $query = "UPDATE department_budgets 
-                      SET budget_amount = ?, notes = ?, updated_by = ?, updated_at = NOW()
+            $query = "UPDATE budgets 
+                      SET budget_name = ?, allocated_amount = ?
                       WHERE id = ?";
 
             $this->db->execute($query, [
-                $budgetData['budget_amount'],
-                $budgetData['notes'] ?? '',
-                $this->employeeId,
+                $budgetData['budget_name'] ?? $budget['budget_name'],
+                $budgetData['allocated_amount'] ?? $budgetData['budget_amount'] ?? $budget['allocated_amount'],
                 $budgetId
             ]);
 
@@ -622,14 +549,14 @@ class CAController extends BaseController
         $fiscalYear = $filters['fiscal_year'] ?? date('Y');
 
         try {
-            $query = "SELECT db.*, 
+            $query = "SELECT db.*,
                             d.name as department_name,
-                            db.budget_amount - db.spent_amount as variance,
-                            ((db.budget_amount - db.spent_amount) / db.budget_amount) * 100 as variance_percentage
-                     FROM department_budgets db
-                     JOIN departments d ON db.department_id = d.id
-                     WHERE db.fiscal_year = ?
-                     ORDER BY ABS(variance) DESC";
+                            db.allocated_amount - db.spent_amount as variance,
+                            ((db.allocated_amount - db.spent_amount) / NULLIF(db.allocated_amount, 0)) * 100 as variance_percentage
+                     FROM budgets db
+                     LEFT JOIN departments d ON db.department_id = d.id
+                     WHERE db.fiscal_year = CAST(? AS CHAR)
+                     ORDER BY ABS(db.allocated_amount - db.spent_amount) DESC";
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
@@ -643,7 +570,7 @@ class CAController extends BaseController
             'fiscal_year' => $fiscalYear,
             'data' => $reportData,
             'summary' => [
-                'total_budget' => array_sum(array_column($reportData, 'budget_amount')),
+                'total_budget' => array_sum(array_column($reportData, 'allocated_amount')),
                 'total_spent' => array_sum(array_column($reportData, 'spent_amount')),
                 'total_variance' => array_sum(array_column($reportData, 'variance'))
             ],
@@ -659,11 +586,10 @@ class CAController extends BaseController
         $year = $filters['year'] ?? date('Y');
 
         try {
-            $query = "SELECT tr.*, t.type as tax_type, t.frequency
-                     FROM tax_reminders tr
-                     LEFT JOIN tax_types t ON tr.tax_type_id = t.id
-                     WHERE YEAR(tr.due_date) = ?
-                     ORDER BY tr.due_date ASC";
+            $query = "SELECT ed.*, ed.filing_type as tax_type
+                     FROM efiling_deadlines ed
+                     WHERE YEAR(ed.due_date) = ?
+                     ORDER BY ed.due_date ASC";
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
@@ -677,9 +603,9 @@ class CAController extends BaseController
             'year' => $year,
             'data' => $reportData,
             'summary' => [
-                'total_tax_obligations' => array_sum(array_column($reportData, 'amount')),
-                'total_paid' => array_sum(array_column($reportData, 'paid_amount')),
-                'pending_taxes' => count(array_filter($reportData, fn($r) => $r['status'] === 'pending'))
+                'total_tax_obligations' => count($reportData),
+                'total_paid' => count(array_filter($reportData, fn($r) => ($r['status'] ?? '') === 'completed')),
+                'pending_taxes' => count(array_filter($reportData, fn($r) => in_array($r['status'] ?? '', ['upcoming', 'overdue'], true)))
             ],
             'generated_at' => date('Y-m-d H:i:s')
         ];
@@ -700,10 +626,16 @@ class CAController extends BaseController
     private function createNotification($recipientId, $type, $message, $relatedId = null)
     {
         $query = "INSERT INTO notifications (
-                    recipient_id, type, message, related_id, created_at, status
-                ) VALUES (?, ?, ?, ?, NOW(), 'unread')";
+                    user_id, type, title, message, related_id, is_read, created_at
+                ) VALUES (?, ?, ?, ?, ?, 0, NOW())";
 
-        $this->db->execute($query, [$recipientId, $type, $message, $relatedId]);
+        $this->db->execute($query, [
+            $recipientId,
+            $type,
+            ucfirst(str_replace('_', ' ', $type)),
+            $message,
+            $relatedId
+        ]);
     }
 
     /**
@@ -711,12 +643,16 @@ class CAController extends BaseController
      */
     private function logFinancialActivity($activityType, $description, $relatedId = null)
     {
-        $query = "INSERT INTO financial_activities (
-                    activity_type, description, related_id, 
-                    performed_by, created_at
+        $query = "INSERT INTO employee_activities (
+                    employee_id, activity_type, description, metadata, created_at
                 ) VALUES (?, ?, ?, ?, NOW())";
 
-        $this->db->execute($query, [$activityType, $description, $relatedId, $this->employeeId]);
+        $this->db->execute($query, [
+            $this->employeeId,
+            $activityType,
+            $description,
+            json_encode(['related_id' => $relatedId])
+        ]);
     }
 
     /**

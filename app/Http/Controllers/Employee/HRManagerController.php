@@ -101,10 +101,10 @@ class HRManagerController extends BaseController
         $deptQuery = "SELECT d.name as department, 
                              COUNT(e.id) as total_employees,
                              SUM(CASE WHEN e.status = 'active' THEN 1 ELSE 0 END) as active_employees,
-                             SUM(CASE WHEN e.hire_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) THEN 1 ELSE 0 END) as new_hires,
-                             AVG(e.performance_score) as avg_performance
+                             SUM(CASE WHEN e.joining_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) THEN 1 ELSE 0 END) as new_hires,
+                             NULL as avg_performance
                       FROM departments d
-                      LEFT JOIN users e ON d.id = e.department_id
+                      LEFT JOIN employees e ON d.name COLLATE utf8mb4_unicode_ci = e.department
                       GROUP BY d.id, d.name
                       ORDER BY total_employees DESC";
         
@@ -119,11 +119,11 @@ class HRManagerController extends BaseController
                             COUNT(*) as total_employees,
                             SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active_employees,
                             SUM(CASE WHEN status = 'on_leave' THEN 1 ELSE 0 END) as on_leave,
-                            SUM(CASE WHEN status = 'terminated' THEN 1 ELSE 0 END) as terminated,
-                            SUM(CASE WHEN hire_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) THEN 1 ELSE 0 END) as new_hires_this_month,
-                            SUM(CASE WHEN hire_date >= DATE_SUB(CURDATE(), INTERVAL 90 DAY) THEN 1 ELSE 0 END) as new_hires_this_quarter,
-                            AVG(performance_score) as avg_performance_score
-                         FROM users{$tidSql}";
+                            SUM(CASE WHEN status = 'terminated' THEN 1 ELSE 0 END) as `terminated`,
+                            SUM(CASE WHEN joining_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) THEN 1 ELSE 0 END) as new_hires_this_month,
+                            SUM(CASE WHEN joining_date >= DATE_SUB(CURDATE(), INTERVAL 90 DAY) THEN 1 ELSE 0 END) as new_hires_this_quarter,
+                            NULL as avg_performance_score
+                         FROM employees{$tidSql}";
         
         $overallStats = $this->db->fetchOne($overallQuery, $tidParams);
         
@@ -133,9 +133,8 @@ class HRManagerController extends BaseController
             $tidSql = ' WHERE tenant_id = ?';
         }
         $turnoverQuery = "SELECT 
-                             (SUM(CASE WHEN status = 'terminated' AND termination_date >= DATE_SUB(CURDATE(), INTERVAL 90 DAY) THEN 1 ELSE 0 END) / 
-                              SUM(CASE WHEN hire_date <= DATE_SUB(CURDATE(), INTERVAL 90 DAY) THEN 1 ELSE 0 END)) * 100 as turnover_rate
-                          FROM users{$tidSql}";
+                             (SUM(CASE WHEN status = 'terminated' THEN 1 ELSE 0 END) / NULLIF(COUNT(*), 0)) * 100 as turnover_rate
+                          FROM employees{$tidSql}";
         
         $turnoverRate = $this->db->fetchOne($turnoverQuery, $tidParams);
         
@@ -151,11 +150,9 @@ class HRManagerController extends BaseController
      */
     private function getPendingApplications()
     {
-        $query = "SELECT ja.*, p.title as position_title, p.department
+        $query = "SELECT ja.*, ja.message AS position_title
                  FROM job_applications ja
-                 JOIN positions p ON ja.position_id = p.id
-                 WHERE ja.status = 'pending'
-                 ORDER BY ja.applied_at DESC
+                 ORDER BY ja.id DESC
                  LIMIT 10";
         
         return $this->db->fetchAll($query);
@@ -168,10 +165,10 @@ class HRManagerController extends BaseController
     {
         $query = "SELECT pr.*, e.name as employee_name, e.department as employee_department
                  FROM performance_reviews pr
-                 JOIN users e ON pr.employee_id = e.id
-                 WHERE pr.scheduled_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY)
-                 AND pr.status = 'scheduled'
-                 ORDER BY pr.scheduled_date ASC
+                 JOIN employees e ON pr.employee_id = e.id
+                 WHERE pr.review_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY)
+                 AND pr.status IN ('draft', 'submitted', 'under_review')
+                 ORDER BY pr.review_date ASC
                  LIMIT 15";
         
         return $this->db->fetchAll($query);
@@ -185,12 +182,12 @@ class HRManagerController extends BaseController
         // Current month payroll status
         $currentMonthQuery = "SELECT 
                                  COUNT(*) as total_employees,
-                                 SUM(CASE WHEN status = 'processed' THEN 1 ELSE 0 END) as processed,
-                                 SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
+                                 SUM(CASE WHEN status = 'paid' THEN 1 ELSE 0 END) as processed,
+                                 SUM(CASE WHEN status IN ('draft', 'approved') THEN 1 ELSE 0 END) as pending,
                                  SUM(net_salary) as total_payroll_amount
-                              FROM payroll 
-                              WHERE month = MONTH(CURDATE()) 
-                              AND year = YEAR(CURDATE())";
+                              FROM payroll_entries 
+                              WHERE MONTH(created_at) = MONTH(CURDATE()) 
+                              AND YEAR(created_at) = YEAR(CURDATE())";
         
         $currentMonth = $this->db->fetchOne($currentMonthQuery);
         
@@ -198,19 +195,15 @@ class HRManagerController extends BaseController
         $lastMonthQuery = "SELECT 
                               SUM(net_salary) as total_amount,
                               COUNT(*) as processed_count
-                           FROM payroll 
-                           WHERE month = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))
-                           AND year = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))
-                           AND status = 'processed'";
+                           FROM payroll_entries 
+                           WHERE MONTH(created_at) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))
+                           AND YEAR(created_at) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))
+                           AND status = 'paid'";
         
         $lastMonth = $this->db->fetchOne($lastMonthQuery);
         
-        // Payroll deadlines
-        $deadlineQuery = "SELECT * FROM payroll_deadlines 
-                          WHERE month = MONTH(CURDATE()) 
-                          AND year = YEAR(CURDATE())";
-        
-        $deadlines = $this->db->fetchOne($deadlineQuery);
+        // Payroll deadlines module not yet implemented
+        $deadlines = null;
         
         return [
             'current_month' => $currentMonth,
@@ -226,49 +219,31 @@ class HRManagerController extends BaseController
      */
     private function getRecruitmentMetrics()
     {
-        // Open positions
-        $openPositionsQuery = "SELECT COUNT(*) as count, 
-                                      SUM(CASE WHEN urgency = 'high' THEN 1 ELSE 0 END) as urgent
-                               FROM positions 
+        // Open positions (careers table drives the public job board)
+        $openPositionsQuery = "SELECT COUNT(*) as count, 0 as urgent 
+                               FROM careers 
                                WHERE status = 'open'";
         
         $openPositions = $this->db->fetchOne($openPositionsQuery);
         
-        // Recruitment pipeline
-        $pipelineQuery = "SELECT 
-                             SUM(CASE WHEN status = 'applied' THEN 1 ELSE 0 END) as applied,
-                             SUM(CASE WHEN status = 'screening' THEN 1 ELSE 0 END) as screening,
-                             SUM(CASE WHEN status = 'interview' THEN 1 ELSE 0 END) as interview,
-                             SUM(CASE WHEN status = 'offer' THEN 1 ELSE 0 END) as offer,
-                             SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected
-                          FROM job_applications 
-                          WHERE applied_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)";
+        // Recruitment pipeline (job_applications tracks applicant contact only)
+        $pipeline = [
+            'applied' => (int)($this->db->fetchOne("SELECT COUNT(*) as c FROM job_applications")['c'] ?? 0),
+            'screening' => 0,
+            'interview' => 0,
+            'offer' => 0,
+            'rejected' => 0
+        ];
         
-        $pipeline = $this->db->fetchOne($pipelineQuery);
+        // Time to hire not tracked (no hire_date column on applications)
+        $timeToHire = [
+            'avg_time_to_hire' => null,
+            'min_time_to_hire' => null,
+            'max_time_to_hire' => null
+        ];
         
-        // Time to hire metrics
-        $timeToHireQuery = "SELECT 
-                               AVG(DATEDIFF(hire_date, applied_at)) as avg_time_to_hire,
-                               MIN(DATEDIFF(hire_date, applied_at)) as min_time_to_hire,
-                               MAX(DATEDIFF(hire_date, applied_at)) as max_time_to_hire
-                            FROM job_applications 
-                            WHERE status = 'hired' 
-                            AND hire_date >= DATE_SUB(CURDATE(), INTERVAL 90 DAY)";
-        
-        $timeToHire = $this->db->fetchOne($timeToHireQuery);
-        
-        // Source effectiveness
-        $sourceQuery = "SELECT source, 
-                               COUNT(*) as applications,
-                               SUM(CASE WHEN status = 'hired' THEN 1 ELSE 0 END) as hires,
-                               (SUM(CASE WHEN status = 'hired' THEN 1 ELSE 0 END) / COUNT(*)) * 100 as conversion_rate
-                        FROM job_applications 
-                        WHERE applied_at >= DATE_SUB(CURDATE(), INTERVAL 90 DAY)
-                        GROUP BY source
-                        ORDER BY hires DESC
-                        LIMIT 5";
-        
-        $sourceEffectiveness = $this->db->fetchAll($sourceQuery);
+        // Source effectiveness not tracked (no source/hire_date on applications)
+        $sourceEffectiveness = [];
         
         return [
             'open_positions' => $openPositions,
@@ -283,7 +258,7 @@ class HRManagerController extends BaseController
      */
     private function getRecentActivities()
     {
-        $query = "SELECT * FROM hr_activities 
+        $query = "SELECT * FROM employee_activities 
                   WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
                   ORDER BY created_at DESC
                   LIMIT 10";
@@ -302,19 +277,41 @@ class HRManagerController extends BaseController
                 throw new Exception("Payroll for {$month}-{$year} has already been processed");
             }
             
-            // Get all active users
+            // Get all active employees
             [$tidSql, $tidParams] = $this->tenantWhere();
-            $employeesQuery = "SELECT e.*, d.name as department_name,
-                                      p.base_salary, p.allowances, p.deductions
-                               FROM users e
-                               JOIN departments d ON e.department_id = d.id
-                               JOIN payroll_settings p ON e.id = p.employee_id
+            $employeesQuery = "SELECT e.*, e.department AS department_name,
+                                      e.salary AS base_salary, 0 AS allowances, 0 AS deductions
+                               FROM employees e
                                WHERE e.status = 'active'{$tidSql}";
             
             $users = $this->db->fetchAll($employeesQuery, $tidParams);
             
+            // Create payroll run
+            $periodStart = "{$year}-" . str_pad((string)$month, 2, '0', STR_PAD_LEFT) . "-01";
+            $periodEnd = date('Y-m-t', strtotime($periodStart));
+            $runName = "Payroll " . str_pad((string)$month, 2, '0', STR_PAD_LEFT) . "/{$year}";
+            
+            [$runTidSql, $runTidParams] = $this->tenantWhere();
+            if ($runTidSql) {
+                $runTidSql = ', tenant_id';
+            }
+            $runQuery = "INSERT INTO payroll_runs (
+                            run_name, pay_period_start, pay_period_end, pay_date,
+                            total_employees, status, processed_by,
+                            created_at{$runTidSql}
+                        ) VALUES (?, ?, ?, ?, ?, 'processing', ?, NOW(){$runTidSql})";
+            
+            $runParams = [$runName, $periodStart, $periodEnd, $periodEnd, count($users), $this->employeeId];
+            if (!empty($runTidParams)) {
+                $runParams[] = current($runTidParams);
+            }
+            $this->db->execute($runQuery, $runParams);
+            $runId = (int)($this->db->fetchOne("SELECT MAX(id) as id FROM payroll_runs")['id'] ?? 0);
+            
             $processedCount = 0;
             $totalAmount = 0;
+            $totalGross = 0;
+            $totalDeductionsSum = 0;
             
             foreach ($users as $employee) {
                 // Calculate salary components
@@ -322,37 +319,58 @@ class HRManagerController extends BaseController
                 $deductions = $this->calculateDeductions($employee, $grossSalary);
                 $netSalary = $grossSalary - $deductions;
                 
-                // Insert payroll record
-                $payrollQuery = "INSERT INTO payroll (
-                                    employee_id, month, year, base_salary, 
-                                    allowances, deductions, gross_salary, 
-                                    net_salary, status, processed_at, processed_by
-                                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'processed', NOW(), ?)";
+                // Insert payroll entry
+                $pf = round(((float)$employee['base_salary']) * 0.12, 2);
+                $otherDeductions = max(0, round($deductions - $pf, 2));
                 
+                $payrollQuery = "INSERT INTO payroll_entries (
+                                    tenant_id, payroll_run_id, employee_id,
+                                    basic_salary, gross_salary,
+                                    pf_deduction, other_deductions, total_deductions,
+                                    net_salary, status, created_at
+                                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft', NOW())";
+                
+                $entryTenant = !empty($runTidParams) ? current($runTidParams) : 1;
                 $this->db->execute($payrollQuery, [
+                    $entryTenant,
+                    $runId,
                     $employee['id'],
-                    $month,
-                    $year,
                     $employee['base_salary'],
-                    json_encode($employee['allowances'] ?? []),
-                    $deductions,
                     $grossSalary,
-                    $netSalary,
-                    $this->employeeId
+                    $pf,
+                    $otherDeductions,
+                    round($deductions, 2),
+                    $netSalary
                 ]);
                 
                 $totalAmount += $netSalary;
+                $totalGross += $grossSalary;
+                $totalDeductionsSum += $deductions;
                 $processedCount++;
                 
                 // Log payroll activity
                 $this->logHRActivity('payroll_processed', "Processed payroll for {$employee['name']}", $employee['id']);
             }
             
+            // Mark run completed with totals
+            if ($runId > 0) {
+                $updateRun = "UPDATE payroll_runs 
+                              SET status = 'completed', total_gross = ?,
+                                  total_net = ?, total_deductions = ?
+                              WHERE id = ?";
+                $this->db->execute($updateRun, [
+                    round($totalGross, 2),
+                    round($totalAmount, 2),
+                    round($totalDeductionsSum, 2),
+                    $runId
+                ]);
+            }
+            
             return [
                 'success' => true,
                 'processed_employees' => $processedCount,
                 'total_amount' => $totalAmount,
-                'message' => "Payroll processed successfully for {$processedCount} users"
+                'message' => "Payroll processed successfully for {$processedCount} employees"
             ];
             
         } catch (\Exception $e) {
@@ -368,9 +386,10 @@ class HRManagerController extends BaseController
      */
     private function isPayrollProcessed($month, $year)
     {
-        $query = "SELECT COUNT(*) as count FROM payroll WHERE month = ? AND year = ? AND status = 'processed'";
+        $query = "SELECT COUNT(*) as count FROM payroll_entries 
+                  WHERE MONTH(created_at) = ? AND YEAR(created_at) = ?";
         $result = $this->db->fetchOne($query, [$month, $year]);
-        return $result['count'] > 0;
+        return ($result['count'] ?? 0) > 0;
     }
 
     /**
@@ -384,9 +403,10 @@ class HRManagerController extends BaseController
         $totalAllowances = array_sum($allowances);
         
         // Add performance bonus if applicable
-        if ($employee['performance_score'] >= 90) {
+        $performanceScore = (float)($employee['performance_score'] ?? 0);
+        if ($performanceScore >= 90) {
             $totalAllowances += $baseSalary * 0.10; // 10% bonus for excellent performance
-        } elseif ($employee['performance_score'] >= 80) {
+        } elseif ($performanceScore >= 80) {
             $totalAllowances += $baseSalary * 0.05; // 5% bonus for good performance
         }
         
@@ -433,17 +453,17 @@ class HRManagerController extends BaseController
             
             // Insert performance review
             $query = "INSERT INTO performance_reviews (
-                        employee_id, reviewer_id, review_type, scheduled_date,
-                        goals, created_by, created_at
-                    ) VALUES (?, ?, ?, ?, ?, ?, NOW())";
+                        employee_id, reviewer_id, review_type, review_date,
+                        next_review_date, overall_rating, status
+                    ) VALUES (?, ?, ?, ?, ?, ?, 'draft')";
             
             $this->db->execute($query, [
                 $employeeId,
                 $reviewData['reviewer_id'],
                 $reviewData['review_type'],
-                $reviewData['scheduled_date'],
-                json_encode($reviewData['goals'] ?? []),
-                $this->employeeId
+                $reviewData['scheduled_date'] ?? date('Y-m-d'),
+                $reviewData['next_review_date'] ?? null,
+                $reviewData['overall_rating'] ?? null
             ]);
             
             // Notify employee and reviewer
@@ -472,9 +492,8 @@ class HRManagerController extends BaseController
     {
         try {
             // Get application details
-            $appQuery = "SELECT ja.*, p.title as position_title
+            $appQuery = "SELECT ja.*, ja.message AS position_title
                          FROM job_applications ja
-                         JOIN positions p ON ja.position_id = p.id
                          WHERE ja.id = ?";
             
             $application = $this->db->fetchOne($appQuery, [$applicationId]);
@@ -483,12 +502,8 @@ class HRManagerController extends BaseController
                 throw new Exception("Application not found");
             }
             
-            // Update application status
-            $query = "UPDATE job_applications 
-                      SET status = ?, notes = ?, processed_by = ?, processed_at = NOW()
-                      WHERE id = ?";
-            
-            $this->db->execute($query, [$action, $notes, $this->employeeId, $applicationId]);
+            // job_applications has no status/notes columns - log the decision only
+            $this->logHRActivity('application_processed', "Application {$action} for {$application['name']} ({$notes})", $applicationId);
             
             // Log activity
             $this->logHRActivity('application_processed', "Application {$action} for {$application['name']}", $applicationId);
@@ -516,26 +531,25 @@ class HRManagerController extends BaseController
      */
     private function createEmployeeFromApplication($application)
     {
-        // Generate employee ID
-        $employeeId = 'EMP' . date('Y') . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+        // Generate employee code
+        $employeeCode = 'EMP' . date('Y') . str_pad((string)mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
         
         $tidData = $this->tenantInsertData();
         $tidCol = !empty($tidData) ? ', tenant_id' : '';
         $tidVal = !empty($tidData) ? ', ?' : '';
         $tidParams = !empty($tidData) ? [current($tidData)] : [];
         
-        $query = "INSERT INTO users (
-                    employee_id, name, email, phone, position_id, department_id,
-                    hire_date, status, created_at{$tidCol}
-                ) VALUES (?, ?, ?, ?, ?, ?, CURDATE(), 'active', NOW(){$tidVal})";
+        $query = "INSERT INTO employees (
+                    employee_code, name, email, phone, designation,
+                    joining_date, status, created_at{$tidCol}
+                ) VALUES (?, ?, ?, ?, ?, CURDATE(), 'active', NOW(){$tidVal})";
         
         $this->db->execute($query, array_merge([
-            $employeeId,
+            $employeeCode,
             $application['name'],
             $application['email'],
             $application['phone'],
-            $application['position_id'],
-            $application['department_id'] ?? null
+            $application['position_title'] ?? 'Staff'
         ], $tidParams));
     }
 
@@ -559,10 +573,15 @@ class HRManagerController extends BaseController
     private function createNotification($employeeId, $type, $message)
     {
         $query = "INSERT INTO notifications (
-                    employee_id, type, message, created_at, status
-                ) VALUES (?, ?, ?, NOW(), 'unread')";
+                    user_id, type, title, message, is_read, created_at
+                ) VALUES (?, ?, ?, ?, 0, NOW())";
         
-        $this->db->execute($query, [$employeeId, $type, $message]);
+        $this->db->execute($query, [
+            $employeeId,
+            $type,
+            ucfirst(str_replace('_', ' ', $type)),
+            $message
+        ]);
     }
 
     /**
@@ -570,12 +589,16 @@ class HRManagerController extends BaseController
      */
     private function logHRActivity($activityType, $description, $relatedId = null)
     {
-        $query = "INSERT INTO hr_activities (
-                    activity_type, description, related_id, 
-                    performed_by, created_at
+        $query = "INSERT INTO employee_activities (
+                    employee_id, activity_type, description, metadata, created_at
                 ) VALUES (?, ?, ?, ?, NOW())";
         
-        $this->db->execute($query, [$activityType, $description, $relatedId, $this->employeeId]);
+        $this->db->execute($query, [
+            $this->employeeId,
+            $activityType,
+            $description,
+            json_encode(['related_id' => $relatedId])
+        ]);
     }
 
     /**

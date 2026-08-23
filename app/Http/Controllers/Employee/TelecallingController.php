@@ -121,10 +121,10 @@ class TelecallingController extends AdminController
         
         // Today's call logs
         $callsQuery = "SELECT COUNT(*) as total_calls,
-                              SUM(CASE WHEN call_duration > 0 THEN 1 ELSE 0 END) as connected_calls,
-                              AVG(call_duration) as avg_duration
+                              SUM(CASE WHEN duration > 0 THEN 1 ELSE 0 END) as connected_calls,
+                              AVG(duration) as avg_duration
                         FROM call_logs 
-                        WHERE employee_id = ? AND DATE(call_time) = ?";
+                        WHERE agent_id = ? AND DATE(call_time) = ?";
         
         $calls = $this->db->fetchOne($callsQuery, [$this->employeeId, $today]);
         
@@ -159,12 +159,9 @@ class TelecallingController extends AdminController
     {
         try {
             $query = "SELECT l.*, 
-                            p.title as property_title,
-                            p.location as property_location,
                             c.name as campaign_name
                      FROM leads l
-                     LEFT JOIN properties p ON l.interested_property_id = p.id
-                     LEFT JOIN marketing_campaigns c ON l.source_campaign_id = c.id
+                     LEFT JOIN marketing_campaigns c ON l.campaign_id = c.id
                      WHERE l.assigned_to = ?
                      AND l.status IN ('pending', 'follow_up')
                      ORDER BY l.priority DESC, l.created_at ASC
@@ -185,7 +182,7 @@ class TelecallingController extends AdminController
         $query = "SELECT cl.*, l.name as lead_name, l.phone as lead_phone
                  FROM call_logs cl
                  JOIN leads l ON cl.lead_id = l.id
-                 WHERE cl.employee_id = ?
+                 WHERE cl.agent_id = ?
                  ORDER BY cl.call_time DESC
                  LIMIT 15";
         
@@ -203,8 +200,8 @@ class TelecallingController extends AdminController
                           COUNT(*) as total_calls,
                           SUM(CASE WHEN l.status = 'converted' THEN 1 ELSE 0 END) as conversions
                        FROM call_logs cl
-                       JOIN leads l ON cl.lead_id = l.id
-                       WHERE cl.employee_id = ?
+                        JOIN leads l ON cl.lead_id = l.id
+                       WHERE cl.agent_id = ?
                        AND DATE(cl.call_time) >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
                        GROUP BY DATE(cl.call_time)
                        ORDER BY call_date DESC";
@@ -215,11 +212,11 @@ class TelecallingController extends AdminController
         $monthlyQuery = "SELECT 
                            COUNT(*) as total_calls,
                            SUM(CASE WHEN l.status = 'converted' THEN 1 ELSE 0 END) as conversions,
-                           AVG(cl.call_duration) as avg_duration,
+                           AVG(cl.duration) as avg_duration,
                            COUNT(DISTINCT cl.lead_id) as unique_leads
                         FROM call_logs cl
                         JOIN leads l ON cl.lead_id = l.id
-                        WHERE cl.employee_id = ?
+                        WHERE cl.agent_id = ?
                         AND MONTH(cl.call_time) = MONTH(CURDATE())
                         AND YEAR(cl.call_time) = YEAR(CURDATE())";
         
@@ -232,7 +229,7 @@ class TelecallingController extends AdminController
                            (SUM(CASE WHEN l.status = 'converted' THEN 1 ELSE 0 END) / COUNT(*)) * 100 as conversion_rate
                         FROM call_logs cl
                         JOIN leads l ON cl.lead_id = l.id
-                        WHERE cl.employee_id = ?
+                        WHERE cl.agent_id = ?
                         AND MONTH(cl.call_time) = MONTH(CURDATE())
                         AND YEAR(cl.call_time) = YEAR(CURDATE())";
         
@@ -244,9 +241,9 @@ class TelecallingController extends AdminController
                                    SUM(CASE WHEN l.status = 'converted' THEN 1 ELSE 0 END) as conversions,
                                    (SUM(CASE WHEN l.status = 'converted' THEN 1 ELSE 0 END) / COUNT(*)) * 100 as conversion_rate
                             FROM users e
-                            JOIN call_logs cl ON e.id = cl.employee_id
+                            JOIN call_logs cl ON e.id = cl.agent_id
                             JOIN leads l ON cl.lead_id = l.id
-                            WHERE e.role = 'telecalling_executive'
+                            WHERE e.role IN ('telecaller', 'telecalling_executive')
                             AND MONTH(cl.call_time) = MONTH(CURDATE())
                             AND YEAR(cl.call_time) = YEAR(CURDATE())
                             GROUP BY e.id, e.name
@@ -268,9 +265,9 @@ class TelecallingController extends AdminController
      */
     private function getCallingScripts()
     {
-        $query = "SELECT * FROM calling_scripts 
-                  WHERE status = 'active'
-                  ORDER BY category ASC, name ASC";
+        $query = "SELECT * FROM ai_calling_scripts 
+                  WHERE is_active = 1
+                  ORDER BY category ASC, script_name ASC";
         
         return $this->db->fetchAll($query);
     }
@@ -280,14 +277,14 @@ class TelecallingController extends AdminController
      */
     private function getFollowUpSchedule()
     {
-        $query = "SELECT l.*, cl.call_time, cl.next_follow_up
+        $query = "SELECT l.*, t.due_date as next_follow_up, t.title as follow_up_title
                  FROM leads l
-                 JOIN call_logs cl ON l.id = cl.lead_id
+                 JOIN crm_tasks t ON l.id = t.lead_id
                  WHERE l.assigned_to = ?
-                 AND l.status = 'follow_up'
-                 AND cl.next_follow_up IS NOT NULL
-                 AND cl.next_follow_up <= DATE_ADD(CURDATE(), INTERVAL 7 DAY)
-                 ORDER BY cl.next_follow_up ASC
+                 AND t.task_type = 'follow_up_call'
+                 AND t.status IN ('pending', 'in_progress')
+                 AND t.due_date <= DATE_ADD(CURDATE(), INTERVAL 7 DAY)
+                 ORDER BY t.due_date ASC
                  LIMIT 20";
         
         return $this->db->fetchAll($query, [$this->employeeId]);
@@ -308,20 +305,35 @@ class TelecallingController extends AdminController
             }
             
             // Insert call log
+            $tidData = $this->tenantInsertData();
+            $tidCol = !empty($tidData) ? ', tenant_id' : '';
+            $tidVal = !empty($tidData) ? ', ?' : '';
+            
+            $noteParts = [];
+            if (!empty($callData['outcome'])) {
+                $noteParts[] = 'Outcome: ' . $callData['outcome'];
+            }
+            if (!empty($callData['notes'])) {
+                $noteParts[] = $callData['notes'];
+            }
+            $notes = implode(' | ', $noteParts);
+            
             $query = "INSERT INTO call_logs (
-                        lead_id, employee_id, call_time, call_duration,
-                        call_status, outcome, notes, next_follow_up
-                    ) VALUES (?, ?, NOW(), ?, ?, ?, ?, ?)";
+                        lead_id, agent_id, call_type, duration,
+                        status, notes, call_time{$tidCol}
+                    ) VALUES (?, ?, 'outbound', ?, ?, ?, NOW(){$tidVal})";
             
             $params = [
                 $leadId,
                 $this->employeeId,
                 $callData['duration'] ?? 0,
                 $callData['call_status'] ?? 'connected',
-                $callData['outcome'] ?? 'no_answer',
-                $callData['notes'] ?? '',
-                $callData['next_follow_up'] ?? null
+                $notes
             ];
+            
+            if (!empty($tidData)) {
+                $params[] = current($tidData);
+            }
             
             $this->db->execute($query, $params);
             
@@ -374,18 +386,35 @@ class TelecallingController extends AdminController
      */
     private function scheduleFollowUp($leadId, $followUpDate)
     {
+        // Cancel any pending follow-up tasks for this lead first
         try {
-            $query = "INSERT INTO follow_ups (
-                        lead_id, employee_id, scheduled_date, status, created_at
-                    ) VALUES (?, ?, ?, 'scheduled', NOW())
-                    ON DUPLICATE KEY UPDATE 
-                    scheduled_date = ?, status = 'scheduled', updated_at = NOW()";
+            $cancelQuery = "UPDATE crm_tasks 
+                            SET status = 'cancelled', updated_at = NOW()
+                            WHERE lead_id = ? AND task_type = 'follow_up_call' 
+                            AND status IN ('pending', 'in_progress')";
+            $this->db->execute($cancelQuery, [$leadId]);
         } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
+            error_log("Telecalling scheduleFollowUp cancel: " . $e->getMessage());
         }
         
-        $this->db->execute($query, [$leadId, $this->employeeId, $followUpDate, $followUpDate]);
+        try {
+            $tidData = $this->tenantInsertData();
+            $tidCol = !empty($tidData) ? ', tenant_id' : '';
+            $tidVal = !empty($tidData) ? ', ?' : '';
+            
+            $query = "INSERT INTO crm_tasks (
+                        lead_id, assigned_to, task_type, title, due_date, status, created_at{$tidCol}
+                    ) VALUES (?, ?, 'follow_up_call', 'Telecalling follow-up', ?, 'pending', NOW(){$tidVal})";
+            
+            $params = [$leadId, $this->employeeId, $followUpDate];
+            if (!empty($tidData)) {
+                $params[] = current($tidData);
+            }
+            
+            $this->db->execute($query, $params);
+        } catch (\Throwable $e) {
+            error_log("Telecalling scheduleFollowUp: " . $e->getMessage());
+        }
     }
 
     /**
@@ -395,15 +424,11 @@ class TelecallingController extends AdminController
     {
         try {
             $query = "SELECT l.*, 
-                        p.title as property_title,
-                        p.location as property_location,
-                        p.price as property_price,
                         c.name as campaign_name,
                         cl.last_call_time,
                         cl.call_count
                     FROM leads l
-                    LEFT JOIN properties p ON l.interested_property_id = p.id
-                    LEFT JOIN marketing_campaigns c ON l.source_campaign_id = c.id
+                    LEFT JOIN marketing_campaigns c ON l.campaign_id = c.id
                     LEFT JOIN (
                         SELECT lead_id, 
                                MAX(call_time) as last_call_time,
@@ -421,7 +446,7 @@ class TelecallingController extends AdminController
             
             // Get call history for this lead
             $historyQuery = "SELECT * FROM call_logs 
-                             WHERE lead_id = ? AND employee_id = ?
+                             WHERE lead_id = ? AND agent_id = ?
                              ORDER BY call_time DESC";
             
             $callHistory = $this->db->fetchAll($historyQuery, [$leadId, $this->employeeId]);
@@ -447,10 +472,8 @@ class TelecallingController extends AdminController
     {
         try {
             // Get lead details
-            $leadQuery = "SELECT l.lead_type, l.source, l.interested_property_id,
-                            p.type as property_type, p.price_range
+            $leadQuery = "SELECT l.lead_category, l.source, l.property_interest, l.budget_range
                          FROM leads l
-                         LEFT JOIN properties p ON l.interested_property_id = p.id
                          WHERE l.id = ? AND l.assigned_to = ?";
             
             $lead = $this->db->fetchOne($leadQuery, [$leadId, $this->employeeId]);
@@ -459,32 +482,28 @@ class TelecallingController extends AdminController
                 throw new Exception("Lead not found");
             }
             
-            // Determine script category based on lead type and property
+            // Determine script category based on lead category (valid enum values only)
             $category = 'general';
             
-            if ($lead['lead_type'] === 'hot') {
-                $category = 'hot_lead';
-            } elseif ($lead['lead_type'] === 'cold') {
+            if ($lead['lead_category'] === 'hot_lead') {
+                $category = 'sales';
+            } elseif ($lead['lead_category'] === 'cold_lead') {
                 $category = 'cold_call';
-            } elseif ($lead['property_type'] === 'residential') {
-                $category = 'residential';
-            } elseif ($lead['property_type'] === 'commercial') {
-                $category = 'commercial';
             }
             
             // Get script for category
-            $scriptQuery = "SELECT * FROM calling_scripts 
-                            WHERE category = ? AND status = 'active'
-                            ORDER BY priority DESC, usage_count ASC
+            $scriptQuery = "SELECT * FROM ai_calling_scripts 
+                            WHERE category = ? AND is_active = 1
+                            ORDER BY conversion_rate DESC, total_calls_made ASC
                             LIMIT 1";
             
             $script = $this->db->fetchOne($scriptQuery, [$category]);
             
             // If no specific script found, get general script
             if (!$script) {
-                $scriptQuery = "SELECT * FROM calling_scripts 
-                                WHERE category = 'general' AND status = 'active'
-                                ORDER BY priority DESC, usage_count ASC
+                $scriptQuery = "SELECT * FROM ai_calling_scripts 
+                                WHERE category = 'general' AND is_active = 1
+                                ORDER BY conversion_rate DESC, total_calls_made ASC
                                 LIMIT 1";
                 
                 $script = $this->db->fetchOne($scriptQuery);
@@ -492,8 +511,8 @@ class TelecallingController extends AdminController
             
             // Update script usage count
             if ($script) {
-                $updateQuery = "UPDATE calling_scripts 
-                                SET usage_count = usage_count + 1 
+                $updateQuery = "UPDATE ai_calling_scripts 
+                                SET total_calls_made = total_calls_made + 1 
                                 WHERE id = ?";
                 $this->db->execute($updateQuery, [$script['id']]);
             }
@@ -518,13 +537,14 @@ class TelecallingController extends AdminController
     public function getTodayFollowUps()
     {
         try {
-            $query = "SELECT l.*, fu.scheduled_date, fu.status as follow_up_status
+            $query = "SELECT l.*, t.due_date as scheduled_date, t.status as follow_up_status
                      FROM leads l
-                     JOIN follow_ups fu ON l.id = fu.lead_id
-                     WHERE fu.employee_id = ?
-                     AND DATE(fu.scheduled_date) = CURDATE()
-                     AND fu.status = 'scheduled'
-                     ORDER BY fu.scheduled_date ASC";
+                     JOIN crm_tasks t ON l.id = t.lead_id
+                     WHERE t.assigned_to = ?
+                     AND t.task_type = 'follow_up_call'
+                     AND DATE(t.due_date) = CURDATE()
+                     AND t.status IN ('pending', 'in_progress')
+                     ORDER BY t.due_date ASC";
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
@@ -539,15 +559,12 @@ class TelecallingController extends AdminController
     public function completeFollowUp($leadId, $result)
     {
         try {
-            try {
-                // Update follow-up status
-                $query = "UPDATE follow_ups 
-                          SET status = 'completed', completed_at = NOW(), result = ?
-                          WHERE lead_id = ? AND employee_id = ? AND status = 'scheduled'";
-            } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-            error_log($e->getMessage());
-            }
+            // Mark pending follow-up tasks for this lead as completed
+            $query = "UPDATE crm_tasks 
+                      SET status = 'completed', completed_at = NOW(), completed_notes = ?
+                      WHERE lead_id = ? AND assigned_to = ? 
+                      AND task_type = 'follow_up_call' 
+                      AND status IN ('pending', 'in_progress')";
             
             $this->db->execute($query, [$result, $leadId, $this->employeeId]);
             
