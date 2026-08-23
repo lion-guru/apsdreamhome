@@ -7,26 +7,35 @@
  *  - N placeholders   -> call_user_func_array(...,$params) (N positional args)
  *
  * Fatal "Too few arguments" occurs when required_params > placeholder_count.
- * This script parses routes/web.php, resolves every Class@method handler,
- * and flags any whose REQUIRED param count exceeds the route's placeholder count.
+ * This script parses routes/web.php + routes/api.php, resolves every
+ * Class@method handler, and flags any whose REQUIRED param count exceeds
+ * the route's placeholder count.
  */
 
 error_reporting(E_ALL & ~E_DEPRECATED);
 $root = dirname(__DIR__);
-$routesFile = $root . '/routes/web.php';
+$routeFiles = [
+    $root . '/routes/web.php',
+    $root . '/routes/api.php',
+];
 
-if (!file_exists($routesFile)) {
-    fwrite(STDERR, "routes/web.php not found\n");
-    exit(1);
+$lines = [];
+foreach ($routeFiles as $rf) {
+    if (!file_exists($rf)) {
+        fwrite(STDERR, "Route file not found: {$rf}\n");
+        continue;
+    }
+    foreach (file($rf) as $i => $l) {
+        $lines[] = [$i, $l];
+    }
 }
-
-$lines = file($routesFile);
 $routes = [];
 
 // Match: $router->verb('path', 'Handler@method');  (single or double quotes)
-$re = '/\$router->(get|post|put|delete|patch|any|add|match)\s*\(\s*([\'"])(.*?)\2\s*,\s*([\'"])([^\'"]+)\4\s*(?:,.*)?\)\s*;/';
+// Trailing anchor relaxed to ')' so chained ->middleware(...) lines still match.
+$re = '/\$router->(get|post|put|delete|patch|any|add|match)\s*\(\s*([\'"])(.*?)\2\s*,\s*([\'"])([^\'"]+)\4\s*(?:,[^)]*)?\)/';
 
-foreach ($lines as $ln => $line) {
+foreach ($lines as [$ln, $line]) {
     if (!preg_match($re, $line, $m)) continue;
     $verb = strtoupper($m[1]);
     $path = $m[3];

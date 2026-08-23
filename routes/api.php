@@ -34,7 +34,7 @@ $router->get('/api/v2/mobile/mlm/summary', 'Api\MobileMLMApiController@getMlmSum
 $router->get('/api/v2/mobile/mlm/payouts', 'Api\MobileMLMApiController@getMlmPayouts')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/mlm/incentives', 'Api\MobileMLMApiController@getMlmIncentives')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/upload-document', 'Api\MobileUserApiController@uploadDocument')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/mlm/documents', 'Api\MobileMLMApiController@getDocuments')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/mlm/documents', 'Api\MobileUserApiController@getDocuments')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/site-visit/start', 'Api\MobileBookingApiController@startSiteVisit')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/site-visit/update', 'Api\MobileBookingApiController@updateSiteVisitLocation')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/site-visit/complete', 'Api\MobileBookingApiController@completeSiteVisit')->middleware('App\Http\Middleware\ApiAuthMiddleware');
@@ -180,7 +180,7 @@ $router->get('/api/monitoring/health', 'App\\Http\\Controllers\\MonitoringContro
 $router->post('/api/mobile/auth/login', 'Api\MobileAuthApiController@loginV2');
 $router->post('/api/mobile/auth/refresh', 'Api\MobileAuthApiController@refreshV2');
 $router->get('/api/mobile/profile', 'Api\MobileUserApiController@profileV2');
-$router->get('/api/mobile/properties', 'Api\MobilePropertyApiController@mobileProperties');
+$router->get('/api/mobile/properties', 'Api\MobilePropertyApiController@properties');
 $router->get('/api/mobile/dashboard', 'Api\MobileUserApiController@dashboardV2');
 $router->post('/api/mobile/notifications/register', 'Api\MobileUserApiController@registerPushTokenV2');
 
@@ -193,8 +193,8 @@ $router->get('/api/mobile/v2/properties/{id}', 'Api\MobilePropertyApiController@
 $router->get('/api/mobile/v2/bookings', 'Api\MobileBookingApiController@listBookings');
 $router->get('/api/mobile/v2/bookings/{id}', 'Api\MobileBookingApiController@bookingDetail');
 $router->post('/api/mobile/v2/bookings/{id}/pay', 'Api\MobileBookingApiController@recordBookingPayment');
-$router->post('/api/mobile/v2/inquiries', 'Api\MobileBookingApiController@submitInquiryV2');
-$router->get('/api/mobile/v2/inquiries', 'Api\MobileBookingApiController@listInquiries');
+$router->post('/api/mobile/v2/inquiries', 'Api\MobileUserApiController@submitInquiryV2');
+$router->get('/api/mobile/v2/inquiries', 'Api\MobileUserApiController@listInquiries');
 $router->put('/api/mobile/v2/profile', 'Api\MobileUserApiController@updateProfileV2');
 $router->get('/api/mobile/v2/dashboard', 'Api\MobileUserApiController@dashboardV3');
 
@@ -503,7 +503,7 @@ $router->post('/api/v2/mobile/referral/track', 'Api\MobileMLMApiController@track
 
 // KYC routes (existing at /api/kyc/*)
 $router->get('/api/v2/mobile/kyc/status', 'Api\KYCController@getStatus')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->post('/api/v2/mobile/kyc/verify-pan', 'Api\KYCController@verifyPan')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/kyc/verify-pan', 'Api\KYCController@verifyPAN')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/kyc/verify-aadhaar', 'Api\KYCController@verifyAadhaar')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // Attendance routes (existing at /api/attendance/*)
@@ -625,8 +625,8 @@ $router->post('/api/v2/mobile/user/notifications/{id}/read', 'Api\MobileUserApiC
 $router->delete('/api/v2/mobile/user/notifications/{id}', 'Api\MobileUserApiController@deleteNotification')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // --- Referral (customer dashboard, share tracking) ---
-$router->get('/api/v2/mobile/user/referral/dashboard', 'Api\MobileMLMApiController@getReferralDashboard')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->post('/api/v2/mobile/user/referral/share', 'Api\MobileMLMApiController@trackReferralShare')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/user/referral/dashboard', 'Api\MobileUserApiController@getReferralDashboard')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/user/referral/share', 'Api\MobileUserApiController@trackReferralShare')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // --- Support Tickets ---
 $router->get('/api/v2/mobile/user/support/tickets', 'Api\MobileUserApiController@getSupportTickets')->middleware('App\Http\Middleware\ApiAuthMiddleware');

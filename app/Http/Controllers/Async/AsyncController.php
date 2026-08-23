@@ -282,13 +282,13 @@ class AsyncController extends AdminController
     /**
      * Process next task (for workers)
      */
-    public function processNextTask($request)
+    public function processNextTask()
     {
         // Check authentication
         $this->requireAdmin();
 
-        $workerName = $request['post']['worker_name'] ?? 'worker_' . ($_SESSION['user_id'] ?? 0);
-        $queueName = $request['post']['queue_name'] ?? 'default';
+        $workerName = $_POST['worker_name'] ?? 'worker_' . ($_SESSION['user_id'] ?? 0);
+        $queueName = $_POST['queue_name'] ?? 'default';
 
         $result = $this->taskService->getNextTask($workerName, $queueName);
 
