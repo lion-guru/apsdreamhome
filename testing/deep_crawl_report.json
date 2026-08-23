@@ -1,0 +1,90 @@
+{
+    "generated": "2026-08-23T16:43:55+02:00",
+    "total": 309,
+    "issues": [
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/crm/analytics",
+            "finalUrl": "http://localhost/apsdreamhome/admin/crm/analytics",
+            "bodyIssues": {
+                "UNDEFINED": [
+                    "Undefined array key 0 in"
+                ]
+            },
+            "label": "admin:/admin/crm/analytics"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/careers/manage",
+            "finalUrl": "http://localhost/apsdreamhome/admin/careers/manage",
+            "problem": " EMPTY_BODY",
+            "label": "admin:/admin/careers/manage"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/legal/categories",
+            "finalUrl": "http://localhost/apsdreamhome/admin/legal/categories",
+            "bodyIssues": {
+                "UNDEFINED": [
+                    "Undefined variable $tidParams in"
+                ]
+            },
+            "label": "admin:/admin/legal/categories"
+        },
+        {
+            "http": 500,
+            "url": "http://localhost/apsdreamhome/admin/commission/recalculations",
+            "finalUrl": "http://localhost/apsdreamhome/admin/commission/recalculations",
+            "problem": "HTTP 500",
+            "label": "admin:/admin/commission/recalculations"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/communication/automation",
+            "finalUrl": "http://localhost/apsdreamhome/admin/communication/automation",
+            "bodyIssues": {
+                "UNDEFINED": [
+                    "Undefined array key \"total_messages\" in",
+                    "Undefined array key \"inbound\" in",
+                    "Undefined array key \"outbound\" in",
+                    "Undefined array key \"leads_generated\" in"
+                ]
+            },
+            "label": "admin:/admin/communication/automation"
+        },
+        {
+            "http": 500,
+            "url": "http://localhost/apsdreamhome/admin/leads/commission-heatmap",
+            "finalUrl": "http://localhost/apsdreamhome/admin/leads/commission-heatmap",
+            "problem": "HTTP 500",
+            "label": "admin:/admin/leads/commission-heatmap"
+        },
+        {
+            "http": 500,
+            "url": "http://localhost/apsdreamhome/admin/agent-commission",
+            "finalUrl": "http://localhost/apsdreamhome/admin/agent-commission",
+            "problem": "HTTP 500",
+            "label": "admin:/admin/agent-commission"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/commission/telecaller/commissions",
+            "finalUrl": "http://localhost/apsdreamhome/admin/commission",
+            "bodyIssues": {
+                "SQL": "SQLSTATE[42S02]: Base table or view not found: 1146 Table &#039;apsdreamhome.telecaller_commissions&#039; doesn&#039;t exist"
+            },
+            "label": "admin:/admin/commission/telecaller/commissions"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/",
+            "finalUrl": "http://localhost/apsdreamhome/",
+            "bodyIssues": {
+                "WARNINGS": [
+                    "notice: \"Legal notice & dispute resolution\","
+                ]
+            },
+            "label": "public:/"
+        }
+    ]
+}

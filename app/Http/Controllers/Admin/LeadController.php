@@ -1009,10 +1009,10 @@ class LeadController extends AdminController
         ", $tidParam)->fetchAll(\PDO::FETCH_ASSOC);
 
         $byCommissionType = $db->query("
-            SELECT type, SUM(amount) as total, COUNT(*) as count
+            SELECT commission_type, SUM(amount) as total, COUNT(*) as count
             FROM mlm_commission_ledger
             WHERE status = 'approved' $tenantSql
-            GROUP BY type
+            GROUP BY commission_type
             ORDER BY total DESC
         ", $tidParam)->fetchAll(\PDO::FETCH_ASSOC);
 

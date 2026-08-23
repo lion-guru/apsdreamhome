@@ -61,13 +61,16 @@ function scanBody($body) {
 }
 
 // ---------- Step 1: admin session ----------
-$ch = curl_init("$base/admin/login?test_login=1");
-curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true, CURLOPT_FOLLOWLOCATION => true, CURLOPT_MAXREDIRS => 5]);
-$resp = curl_exec($ch);
-$hsize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-curl_close($ch);
-preg_match('/PHPSESSID=([a-zA-Z0-9,\-]+)/', substr((string)$resp, 0, $hsize), $sm);
-$sid = $sm[1] ?? '';
+function adminLogin($base) {
+    $ch = curl_init("$base/admin/login?test_login=1");
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true, CURLOPT_FOLLOWLOCATION => true, CURLOPT_MAXREDIRS => 5]);
+    $resp = curl_exec($ch);
+    $hsize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+    curl_close($ch);
+    preg_match('/PHPSESSID=([a-zA-Z0-9,\-]+)/', substr((string)$resp, 0, $hsize), $sm);
+    return $sm[1] ?? '';
+}
+$sid = adminLogin($base);
 if (!$sid) { die("NO SESSION\n"); }
 
 $check = fetchPage("$base/admin/dashboard", $sid);
@@ -106,10 +109,18 @@ foreach ($routes as $label => $url) {
         continue;
     }
 
-    // bounced to login?
+    // bounced to login? -> refresh session and retry once
     $bounced = (strpos($res['finalUrl'], '/login') !== false || strpos($res['finalUrl'], '/auth') !== false)
         && strpos($label, 'public:/login') === false && strpos($label, 'public:/register') === false
         && strpos($label, 'public:/auth') === false;
+
+    if ($bounced) {
+        echo "      session expired -> re-login + retry $label\n";
+        $sid = adminLogin($base);
+        if ($sid) { $res = fetchPage($url, $sid); }
+        $bounced = (strpos($res['finalUrl'], '/login') !== false || strpos($res['finalUrl'], '/auth') !== false)
+            && strpos($label, 'public:/login') === false;
+    }
 
     $bodyIssues = scanBody($res['body']);
     $entry['finalUrl'] = $res['finalUrl'];

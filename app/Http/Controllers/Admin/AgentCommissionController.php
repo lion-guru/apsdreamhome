@@ -20,11 +20,11 @@ class AgentCommissionController extends AdminController {
         $activeListings = $this->db->query("SELECT COUNT(*) as cnt FROM property_agents WHERE status='active' AND tenant_id=?", [$tid])->fetch()['cnt'];
 
         $totalCommission = $this->db->query(
-            "SELECT COALESCE(SUM(amount),0) as total FROM mlm_commission_ledger WHERE type='direct_sale' AND tenant_id=?", [$tid]
+            "SELECT COALESCE(SUM(amount),0) as total FROM mlm_commission_ledger WHERE commission_type='direct_sale' AND tenant_id=?", [$tid]
         )->fetch()['total'];
 
         $totalSales = $this->db->query(
-            "SELECT COUNT(*) as cnt FROM mlm_commission_ledger WHERE type='direct_sale' AND tenant_id=?", [$tid]
+            "SELECT COUNT(*) as cnt FROM mlm_commission_ledger WHERE commission_type='direct_sale' AND tenant_id=?", [$tid]
         )->fetch()['cnt'];
 
         $recentCommissions = $this->db->query(

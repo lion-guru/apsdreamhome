@@ -52,6 +52,7 @@ class LegalDocumentController extends AdminController
         $this->requireAdmin();
         $db = $this->getDb();
         $tid = $this->tenantId();
+        $tidParams = $tid > 1 ? [$tid] : [];
 
         try {
             $cats = $db->query("SELECT c.*, (SELECT COUNT(*) FROM legal_document_templates WHERE category_id = c.id) as template_count FROM legal_document_categories c WHERE c.tenant_id = ? ORDER BY c.sort_order ASC, c.name ASC", $tidParams)->fetchAll(\PDO::FETCH_ASSOC);

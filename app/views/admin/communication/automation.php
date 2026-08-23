@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * Communication Automation Dashboard
@@ -123,7 +123,7 @@ $recent_logs = $recent_logs ?? [];
         <div class="col-md-3">
             <div class="card border-0 shadow-sm bg-primary bg-opacity-10">
                 <div class="card-body text-center">
-                    <h3 class="text-primary mb-1"><?= number_format($stats['total_messages']) ?></h3>
+                    <h3 class="text-primary mb-1"><?= number_format($stats['total_messages'] ?? 0) ?></h3>
                     <small class="text-muted">Total Messages</small>
                 </div>
             </div>
@@ -131,7 +131,7 @@ $recent_logs = $recent_logs ?? [];
         <div class="col-md-3">
             <div class="card border-0 shadow-sm bg-success bg-opacity-10">
                 <div class="card-body text-center">
-                    <h3 class="text-success mb-1"><?= number_format($stats['inbound']) ?></h3>
+                    <h3 class="text-success mb-1"><?= number_format($stats['inbound'] ?? 0) ?></h3>
                     <small class="text-muted">Inbound</small>
                 </div>
             </div>
@@ -139,7 +139,7 @@ $recent_logs = $recent_logs ?? [];
         <div class="col-md-3">
             <div class="card border-0 shadow-sm bg-info bg-opacity-10">
                 <div class="card-body text-center">
-                    <h3 class="text-info mb-1"><?= number_format($stats['outbound']) ?></h3>
+                    <h3 class="text-info mb-1"><?= number_format($stats['outbound'] ?? 0) ?></h3>
                     <small class="text-muted">Outbound</small>
                 </div>
             </div>
@@ -147,7 +147,7 @@ $recent_logs = $recent_logs ?? [];
         <div class="col-md-3">
             <div class="card border-0 shadow-sm bg-warning bg-opacity-10">
                 <div class="card-body text-center">
-                    <h3 class="text-warning mb-1"><?= number_format($stats['leads_generated']) ?></h3>
+                    <h3 class="text-warning mb-1"><?= number_format($stats['leads_generated'] ?? 0) ?></h3>
                     <small class="text-muted">Leads Generated</small>
                 </div>
             </div>

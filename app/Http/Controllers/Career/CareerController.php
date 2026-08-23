@@ -229,7 +229,7 @@ class CareerController extends BaseController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        return $this->viewRenderer->render('admin/careers/applications', $data);
+        echo $this->viewRenderer->render('admin/careers/applications', $data);
     }
 
     /**
@@ -271,7 +271,7 @@ class CareerController extends BaseController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        return $this->viewRenderer->render('admin/careers/applications', $data);
+        echo $this->viewRenderer->render('admin/careers/applications', $data);
     }
 
     /**
