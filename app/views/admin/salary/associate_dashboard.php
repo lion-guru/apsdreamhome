@@ -1,6 +1,3 @@
-@extends('layouts.admin')
-
-@section('content')
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">
@@ -10,8 +7,8 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{ url('/admin/dashboard') }}">Home</a></li>
-                        <li class="breadcrumb-item"><a href="{{ url('/admin/salary') }}">Salary</a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard">Home</a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/salary">Salary</a></li>
                         <li class="breadcrumb-item active">Associate Dashboard</li>
                     </ol>
                 </div>
@@ -26,7 +23,7 @@
                 <div class="col-lg-3 col-6">
                     <div class="small-box bg-info">
                         <div class="inner">
-                            <h3>{{ $total_associates }}</h3>
+                            <h3><?= (int)($total_associates ?? 0) ?></h3>
                             <p>Total Associates</p>
                         </div>
                         <div class="icon">
@@ -37,7 +34,7 @@
                 <div class="col-lg-3 col-6">
                     <div class="small-box bg-success">
                         <div class="inner">
-                            <h3>{{ $salary_eligible }}</h3>
+                            <h3><?= (int)($salary_eligible ?? 0) ?></h3>
                             <p>Salary Eligible</p>
                         </div>
                         <div class="icon">
@@ -48,7 +45,7 @@
                 <div class="col-lg-3 col-6">
                     <div class="small-box bg-warning">
                         <div class="inner">
-                            <h3>{{ $target_bonus_eligible }}</h3>
+                            <h3><?= (int)($target_bonus_eligible ?? 0) ?></h3>
                             <p>Target Bonus Eligible</p>
                         </div>
                         <div class="icon">
@@ -59,7 +56,7 @@
                 <div class="col-lg-3 col-6">
                     <div class="small-box bg-danger">
                         <div class="inner">
-                            <h3>₹{{ number_format($total_target_bonus, 2) }}</h3>
+                            <h3>&#8377;<?= number_format((float)($total_target_bonus ?? 0), 2) ?></h3>
                             <p>Total Target Bonus</p>
                         </div>
                         <div class="icon">
@@ -92,47 +89,50 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($associates as $assoc)
+                                <?php foreach (($associates ?? []) as $assoc): ?>
                                 <tr>
-                                    <td>{{ $assoc->id }}</td>
-                                    <td>{{ $assoc->user_name ?? 'N/A' }}</td>
-                                    <td>{{ $assoc->level ?? 'N/A' }}</td>
-                                    <td>₹{{ number_format($assoc->total_sales, 2) }}</td>
-                                    <td>{{ $assoc->registration_count }}</td>
-                                    <td>{{ $assoc->required_registrations }}</td>
+                                    <td><?= (int)$assoc['id'] ?></td>
+                                    <td><?= htmlspecialchars($assoc['user_name'] ?? 'N/A') ?></td>
+                                    <td><?= htmlspecialchars($assoc['level'] ?? 'N/A') ?></td>
+                                    <td>&#8377;<?= number_format((float)($assoc['total_sales'] ?? 0), 2) ?></td>
+                                    <td><?= (int)($assoc['registration_count'] ?? 0) ?></td>
+                                    <td><?= (int)($assoc['required_registrations'] ?? 0) ?></td>
                                     <td>
-                                        @if($assoc->registration_complete)
+                                        <?php if (!empty($assoc['registration_complete'])): ?>
                                             <span class="badge badge-success">Complete</span>
-                                        @else
-                                            <span class="badge badge-warning">Pending ({{ $assoc->pending_registrations }})</span>
-                                        @endif
+                                        <?php else: ?>
+                                            <span class="badge badge-warning">Pending (<?= (int)($assoc['pending_registrations'] ?? 0) ?>)</span>
+                                        <?php endif; ?>
                                     </td>
                                     <td>
-                                        @if($assoc->salary_eligible)
-                                            <span class="badge badge-success">₹{{ number_format($assoc->salary_amount, 2) }}</span>
-                                        @else
+                                        <?php if (!empty($assoc['salary_eligible'])): ?>
+                                            <span class="badge badge-success">&#8377;<?= number_format((float)($assoc['salary_amount'] ?? 0), 2) ?></span>
+                                        <?php else: ?>
                                             <span class="badge badge-secondary">Not Eligible</span>
-                                        @endif
+                                        <?php endif; ?>
                                     </td>
                                     <td>
-                                        @if($assoc->target_bonus_eligible)
-                                            <span class="badge badge-warning">₹{{ number_format($assoc->target_bonus_amount, 2) }}</span>
-                                        @else
+                                        <?php if (!empty($assoc['target_bonus_eligible'])): ?>
+                                            <span class="badge badge-warning">&#8377;<?= number_format((float)($assoc['target_bonus_amount'] ?? 0), 2) ?></span>
+                                        <?php else: ?>
                                             <span class="badge badge-secondary">Not Eligible</span>
-                                        @endif
+                                        <?php endif; ?>
                                     </td>
                                     <td>
-                                        <button class="btn btn-sm btn-primary edit-salary" data-id="{{ $assoc->id }}" data-salary="{{ $assoc->salary_amount }}" data-salary-eligible="{{ $assoc->salary_eligible }}" data-target="{{ $assoc->target_bonus_amount }}" data-target-eligible="{{ $assoc->target_bonus_eligible }}">
+                                        <button class="btn btn-sm btn-primary edit-salary" data-id="<?= (int)$assoc['id'] ?>" data-salary="<?= (float)($assoc['salary_amount'] ?? 0) ?>" data-salary-eligible="<?= (int)($assoc['salary_eligible'] ?? 0) ?>" data-target="<?= (float)($assoc['target_bonus_amount'] ?? 0) ?>" data-target-eligible="<?= (int)($assoc['target_bonus_eligible'] ?? 0) ?>">
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        @if($assoc->salary_eligible)
-                                        <button class="btn btn-sm btn-success process-salary" data-id="{{ $assoc->id }}">
+                                        <?php if (!empty($assoc['salary_eligible'])): ?>
+                                        <button class="btn btn-sm btn-success process-salary" data-id="<?= (int)$assoc['id'] ?>">
                                             <i class="fas fa-money-bill"></i>
                                         </button>
-                                        @endif
+                                        <?php endif; ?>
                                     </td>
                                 </tr>
-                                @endforeach
+                                <?php endforeach; ?>
+                                <?php if (empty($associates)): ?>
+                                <tr><td colspan="10" class="text-center text-muted">No active associates found</td></tr>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
@@ -157,7 +157,7 @@
     <?php echo CSRFProtection::csrfField(); ?>
                     <input type="hidden" id="editAssociateId" name="associate_id">
                     <div class="form-group">
-                        <label for="editSalaryAmount">Salary Amount (₹)</label>
+                        <label for="editSalaryAmount">Salary Amount (&#8377;)</label>
                         <input type="number" class="form-control" id="editSalaryAmount" name="salary_amount" step="0.01">
                     </div>
                     <div class="form-group">
@@ -168,7 +168,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="editTargetBonus">Target Bonus Amount (₹)</label>
+                        <label for="editTargetBonus">Target Bonus Amount (&#8377;)</label>
                         <input type="number" class="form-control" id="editTargetBonus" name="target_bonus_amount" step="0.01">
                     </div>
                     <div class="form-group">
@@ -221,7 +221,7 @@
                     </div>
                     <div class="form-group">
                         <label for="paymentYear">Payment Year</label>
-                        <input type="number" class="form-control" id="paymentYear" name="payment_year" value="{{ date('Y') }}">
+                        <input type="number" class="form-control" id="paymentYear" name="payment_year" value="<?= date('Y') ?>">
                     </div>
                 </form>
             </div>
@@ -254,7 +254,7 @@ $(document).ready(function() {
 
     $('#saveSalaryBtn').click(function() {
         $.ajax({
-            url: '{{ url("/admin/salary/update-associate-salary") }}',
+            url: '<?= BASE_URL ?>/admin/salary/update-associate-salary',
             type: 'POST',
             data: $('#editSalaryForm').serialize(),
             success: function(response) {
@@ -282,7 +282,7 @@ $(document).ready(function() {
 
     $('#processSalaryBtn').click(function() {
         $.ajax({
-            url: '{{ url("/admin/salary/process-associate-salary") }}',
+            url: '<?= BASE_URL ?>/admin/salary/process-associate-salary',
             type: 'POST',
             data: $('#processSalaryForm').serialize(),
             success: function(response) {
@@ -300,4 +300,3 @@ $(document).ready(function() {
     });
 });
 </script>
-@endsection
