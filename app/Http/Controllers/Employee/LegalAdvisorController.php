@@ -98,15 +98,14 @@ class LegalAdvisorController extends BaseController
                         p.title as related_property,
                         c.name as related_client
                  FROM legal_documents ld
-                 LEFT JOIN users e ON ld.submitted_by = e.id
-                 LEFT JOIN properties p ON ld.related_property_id = p.id
-                 LEFT JOIN clients c ON ld.related_client_id = c.id
-                 WHERE ld.status = 'pending_review'
-                 AND ld.assigned_to = ?
-                 ORDER BY ld.priority DESC, ld.submitted_at ASC
+                 LEFT JOIN users e ON ld.created_by = e.id
+                 LEFT JOIN properties p ON ld.entity_type = 'property' AND ld.entity_id = p.id
+                 LEFT JOIN users c ON ld.customer_id = c.id
+                 WHERE COALESCE(NULLIF(ld.status, ''), 'draft') <> 'active'
+                 ORDER BY ld.created_at ASC
                  LIMIT 15";
 
-        return $this->db->fetchAll($query, [$this->employeeId]);
+        return $this->db->fetchAll($query);
     }
 
     /**
@@ -134,23 +133,18 @@ class LegalAdvisorController extends BaseController
      */
     private function getActiveDisputes()
     {
-        try {
-            $query = "SELECT ld.*, 
-                            c.name as client_name,
-                            p.title as property_title,
-                            e.name as assigned_lawyer_name
-                     FROM legal_disputes ld
-                     LEFT JOIN clients c ON ld.client_id = c.id
-                     LEFT JOIN properties p ON ld.property_id = p.id
-                     LEFT JOIN users e ON ld.assigned_lawyer = e.id
-                     WHERE ld.status IN ('active', 'investigation', 'negotiation')
-                     AND (ld.assigned_lawyer = ? OR ld.assigned_lawyer IS NULL)
-                     ORDER BY ld.created_at DESC
-                     LIMIT 10";
-        } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
-        }
+        $query = "SELECT ld.*, 
+                        c.name as client_name,
+                        p.title as property_title,
+                        e.name as assigned_lawyer_name
+                 FROM legal_disputes ld
+                 LEFT JOIN users c ON ld.client_id = c.id
+                 LEFT JOIN properties p ON ld.property_id = p.id
+                 LEFT JOIN users e ON ld.assigned_lawyer = e.id
+                 WHERE ld.status IN ('open', 'active', 'investigation', 'negotiation')
+                 AND (ld.assigned_lawyer = ? OR ld.assigned_lawyer IS NULL)
+                 ORDER BY ld.created_at DESC
+                 LIMIT 10";
 
         return $this->db->fetchAll($query, [$this->employeeId]);
     }
@@ -163,12 +157,12 @@ class LegalAdvisorController extends BaseController
         // Document processing metrics
         $docMetricsQuery = "SELECT 
                                COUNT(*) as total_documents,
-                               SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed,
-                               SUM(CASE WHEN status = 'pending_review' THEN 1 ELSE 0 END) as pending,
-                               AVG(TIMESTAMPDIFF(HOUR, submitted_at, reviewed_at)) as avg_review_time
+                               SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as completed,
+                               SUM(CASE WHEN COALESCE(NULLIF(status, ''), 'draft') <> 'active' THEN 1 ELSE 0 END) as pending,
+                               AVG(TIMESTAMPDIFF(HOUR, created_at, COALESCE(kyc_verified_at, published_at, created_at))) as avg_review_time
                             FROM legal_documents 
-                            WHERE assigned_to = ?
-                            AND MONTH(submitted_at) = MONTH(CURDATE())";
+                            WHERE created_by = ?
+                            AND MONTH(created_at) = MONTH(CURDATE())";
 
         $docMetrics = $this->db->fetchOne($docMetricsQuery, [$this->employeeId]);
 
@@ -183,20 +177,15 @@ class LegalAdvisorController extends BaseController
 
         $complianceMetrics = $this->db->fetchOne($complianceMetricsQuery, [$this->employeeId]);
 
-        try {
-            // Dispute resolution metrics
-            $disputeMetricsQuery = "SELECT 
-                                      COUNT(*) as total_disputes,
-                                      SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) as resolved,
-                                      SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active,
-                                      AVG(TIMESTAMPDIFF(DAY, created_at, resolved_at)) as avg_resolution_time
-                                   FROM legal_disputes 
-                                   WHERE assigned_lawyer = ?
-                                   AND YEAR(created_at) = YEAR(CURDATE())";
-        } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
-        }
+        // Dispute resolution metrics
+        $disputeMetricsQuery = "SELECT 
+                                  COUNT(*) as total_disputes,
+                                  SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) as resolved,
+                                  SUM(CASE WHEN status IN ('open', 'active', 'investigation', 'negotiation') THEN 1 ELSE 0 END) as active,
+                                  AVG(TIMESTAMPDIFF(DAY, created_at, resolved_at)) as avg_resolution_time
+                               FROM legal_disputes 
+                               WHERE assigned_lawyer = ?
+                               AND YEAR(created_at) = YEAR(CURDATE())";
 
         $disputeMetrics = $this->db->fetchOne($disputeMetricsQuery, [$this->employeeId]);
 
@@ -212,16 +201,11 @@ class LegalAdvisorController extends BaseController
      */
     private function getRecentActivities()
     {
-        try {
-            $query = "SELECT * FROM legal_activities 
-                      WHERE performed_by = ?
-                      AND created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-                      ORDER BY created_at DESC
-                      LIMIT 10";
-        } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
-        }
+        $query = "SELECT * FROM employee_activities 
+                  WHERE employee_id = ?
+                  AND created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+                  ORDER BY created_at DESC
+                  LIMIT 10";
 
         return $this->db->fetchAll($query, [$this->employeeId]);
     }
@@ -249,7 +233,7 @@ class LegalAdvisorController extends BaseController
     {
         try {
             // Get document details
-            $docQuery = "SELECT * FROM legal_documents WHERE id = ? AND assigned_to = ?";
+            $docQuery = "SELECT * FROM legal_documents WHERE id = ? AND created_by = ?";
             $document = $this->db->fetchOne($docQuery, [$documentId, $this->employeeId]);
 
             if (!$document) {
@@ -258,15 +242,15 @@ class LegalAdvisorController extends BaseController
 
             // Update document status
             $query = "UPDATE legal_documents 
-                      SET status = ?, review_notes = ?, reviewed_by = ?, 
-                          reviewed_at = NOW(), next_review_date = ?
+                      SET status = ?, 
+                          notes = CONCAT_WS('\n', NULLIF(notes, ''), ?),
+                          updated_by = ?
                       WHERE id = ?";
 
             $this->db->execute($query, [
                 $reviewData['status'],
-                $reviewData['review_notes'] ?? '',
+                trim('Review: ' . ($reviewData['review_notes'] ?? '')),
                 $this->employeeId,
-                $reviewData['next_review_date'] ?? null,
                 $documentId
             ]);
 
@@ -278,7 +262,7 @@ class LegalAdvisorController extends BaseController
             );
 
             // Notify submitter
-            $this->notifyDocumentReviewed($document['submitted_by'], $document, $reviewData);
+            $this->notifyDocumentReviewed($document['created_by'], $document, $reviewData);
 
             return [
                 'success' => true,
@@ -349,13 +333,8 @@ class LegalAdvisorController extends BaseController
     public function handleDispute($disputeId, $actionData)
     {
         try {
-            try {
-                // Get dispute details
-                $disputeQuery = "SELECT * FROM legal_disputes WHERE id = ?";
-            } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-            error_log($e->getMessage());
-            }
+            // Get dispute details
+            $disputeQuery = "SELECT * FROM legal_disputes WHERE id = ?";
             $dispute = $this->db->fetchOne($disputeQuery, [$disputeId]);
 
             if (!$dispute) {
@@ -555,8 +534,8 @@ class LegalAdvisorController extends BaseController
         $query = "SELECT d.*, c.name as client_name, c.phone as client_phone,
                         e.name as assigned_lawyer,
                         TIMESTAMPDIFF(DAY, d.created_at, CURDATE()) as days_open
-                 FROM disputes d
-                 LEFT JOIN clients c ON d.client_id = c.id
+                 FROM legal_disputes d
+                 LEFT JOIN users c ON d.client_id = c.id
                  LEFT JOIN users e ON d.assigned_to = e.id
                  WHERE {$whereClause}
                  ORDER BY d.created_at DESC";
@@ -589,31 +568,21 @@ class LegalAdvisorController extends BaseController
         $params = [];
 
         if (!empty($filters['status'])) {
-            $whereClause .= " AND dr.status = ?";
+            $whereClause .= " AND ld.status = ?";
             $params[] = $filters['status'];
         }
 
         if (!empty($filters['type'])) {
-            $whereClause .= " AND dr.document_type = ?";
+            $whereClause .= " AND ld.document_type = ?";
             $params[] = $filters['type'];
         }
 
-        if (!empty($filters['priority'])) {
-            $whereClause .= " AND dr.priority = ?";
-            $params[] = $filters['priority'];
-        }
-
-        try {
-            $query = "SELECT dr.*, e.name as submitted_by_name,
-                            TIMESTAMPDIFF(DAY, dr.submitted_at, CURDATE()) as days_pending
-                     FROM document_reviews dr
-                     LEFT JOIN users e ON dr.submitted_by = e.id
-                     WHERE {$whereClause}
-                     ORDER BY dr.submitted_at DESC";
-        } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
-        }
+        $query = "SELECT ld.*, e.name as submitted_by_name,
+                        TIMESTAMPDIFF(DAY, ld.created_at, CURDATE()) as days_pending
+                 FROM legal_documents ld
+                 LEFT JOIN users e ON ld.created_by = e.id
+                 WHERE {$whereClause}
+                 ORDER BY ld.created_at DESC";
 
         $reportData = $this->db->fetchAll($query, $params);
 
@@ -626,7 +595,6 @@ class LegalAdvisorController extends BaseController
                 'pending_review' => count(array_filter($reportData, fn($d) => $d['status'] === 'pending')),
                 'approved' => count(array_filter($reportData, fn($d) => $d['status'] === 'approved')),
                 'rejected' => count(array_filter($reportData, fn($d) => $d['status'] === 'rejected')),
-                'high_priority' => count(array_filter($reportData, fn($d) => $d['priority'] === 'high')),
                 'avg_review_time' => count(array_filter($reportData, fn($d) => in_array($d['status'], ['approved', 'rejected']))) > 0 ?
                     array_sum(array_column(array_filter($reportData, fn($d) => in_array($d['status'], ['approved', 'rejected'])), 'days_pending')) /
                     count(array_filter($reportData, fn($d) => in_array($d['status'], ['approved', 'rejected']))) : 0
@@ -731,10 +699,10 @@ class LegalAdvisorController extends BaseController
     private function createNotification($recipientId, $type, $message, $relatedId = null)
     {
         $query = "INSERT INTO notifications (
-                    recipient_id, type, message, related_id, created_at, status
-                ) VALUES (?, ?, ?, ?, NOW(), 'unread')";
+                    user_id, type, title, message, related_id, is_read, created_at
+                ) VALUES (?, ?, ?, ?, ?, 0, NOW())";
 
-        $this->db->execute($query, [$recipientId, $type, $message, $relatedId]);
+        $this->db->execute($query, [$recipientId, $type, ucfirst(str_replace('_', ' ', $type)), $message, $relatedId]);
     }
 
     /**
@@ -742,17 +710,16 @@ class LegalAdvisorController extends BaseController
      */
     private function logLegalActivity($activityType, $description, $relatedId = null)
     {
-        try {
-            $query = "INSERT INTO legal_activities (
-                        activity_type, description, related_id, 
-                        performed_by, created_at
-                    ) VALUES (?, ?, ?, ?, NOW())";
-        } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
-        }
+        $query = "INSERT INTO employee_activities (
+                    employee_id, activity_type, description, metadata, created_at
+                ) VALUES (?, ?, ?, ?, NOW())";
 
-        $this->db->execute($query, [$activityType, $description, $relatedId, $this->employeeId]);
+        $this->db->execute($query, [
+            $this->employeeId,
+            $activityType,
+            $description,
+            json_encode(['related_id' => $relatedId])
+        ]);
     }
 
     /**

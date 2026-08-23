@@ -96,10 +96,10 @@ class LandManagerController extends BaseController
         $query = "SELECT 
                     p.status,
                     COUNT(*) as count,
-                    SUM(p.market_value) as total_value,
+                    SUM(p.price) as total_value,
                     AVG(p.area_sqft) as avg_area
                  FROM properties p
-                 WHERE p.manager_id = ?
+                 WHERE p.created_by = ?
                  GROUP BY p.status
                  ORDER BY count DESC";
 
@@ -109,9 +109,9 @@ class LandManagerController extends BaseController
         $typeQuery = "SELECT 
                         p.type,
                         COUNT(*) as count,
-                        SUM(p.market_value) as total_value
+                        SUM(p.price) as total_value
                       FROM properties p
-                      WHERE p.manager_id = ?
+                      WHERE p.created_by = ?
                       GROUP BY p.type
                       ORDER BY count DESC";
 
@@ -121,9 +121,9 @@ class LandManagerController extends BaseController
         $locationQuery = "SELECT 
                             p.location,
                             COUNT(*) as count,
-                            SUM(p.market_value) as total_value
+                            SUM(p.price) as total_value
                           FROM properties p
-                          WHERE p.manager_id = ?
+                          WHERE p.created_by = ?
                           GROUP BY p.location
                           ORDER BY count DESC
                           LIMIT 10";
@@ -143,8 +143,8 @@ class LandManagerController extends BaseController
     private function getPendingSiteVisits()
     {
         $query = "SELECT sv.*, 
-                        COALESCE(up.name, p.title) as property_title,
-                        COALESCE(up.location, p.location) as property_location,
+                        COALESCE(up.name, p.plot_number) as property_title,
+                        up.location as property_location,
                         sv.visitor_name,
                         sv.visitor_phone
                  FROM site_visits sv
@@ -165,21 +165,19 @@ class LandManagerController extends BaseController
     private function getAcquisitionPipeline()
     {
         $query = "SELECT la.*, 
-                        p.title as property_title,
-                        p.location as property_location,
-                        p.area_sqft,
-                        p.estimated_value,
-                        l.name as land_owner_name,
-                        l.phone as land_owner_phone
+                        COALESCE(c.name, 'Land parcel') as property_title,
+                        c.location as property_location,
+                        NULL as area_sqft,
+                        la.acquisition_cost as estimated_value,
+                        '' as land_owner_name,
+                        '' as land_owner_phone
                  FROM land_acquisitions la
-                 JOIN properties p ON la.property_id = p.id
-                 LEFT JOIN land_owners l ON la.land_owner_id = l.id
-                 WHERE la.assigned_manager = ?
-                 AND la.status IN ('evaluation', 'due_diligence', 'negotiation', 'final_approval')
-                 ORDER BY la.priority DESC, la.created_at ASC
+                 LEFT JOIN colonies c ON la.colony_id = c.id
+                 WHERE la.status IN ('evaluation', 'due_diligence', 'negotiation', 'final_approval')
+                 ORDER BY la.created_at ASC
                  LIMIT 15";
 
-        return $this->db->fetchAll($query, [$this->employeeId]);
+        return $this->db->fetchAll($query);
     }
 
     /**
@@ -192,11 +190,11 @@ class LandManagerController extends BaseController
                                 COUNT(*) as total_properties,
                                 SUM(CASE WHEN status = 'sold' THEN 1 ELSE 0 END) as sold_properties,
                                 SUM(CASE WHEN status = 'available' THEN 1 ELSE 0 END) as available_properties,
-                                AVG(TIMESTAMPDIFF(DAY, listed_date, sold_date)) as avg_days_to_sell,
-                                SUM(market_value) as total_portfolio_value
+                                AVG(CASE WHEN status = 'sold' THEN TIMESTAMPDIFF(DAY, created_at, updated_at) END) as avg_days_to_sell,
+                                SUM(price) as total_portfolio_value
                              FROM properties 
-                             WHERE manager_id = ?
-                             AND YEAR(listed_date) = YEAR(CURDATE())";
+                             WHERE created_by = ?
+                             AND YEAR(created_at) = YEAR(CURDATE())";
 
         $performanceMetrics = $this->db->fetchOne($performanceQuery, [$this->employeeId]);
 
@@ -207,7 +205,7 @@ class LandManagerController extends BaseController
                                  SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) as cancelled_visits,
                                  AVG(rating) as avg_rating
                               FROM site_visits 
-                              WHERE manager_id = ?
+                              WHERE assigned_to = ?
                               AND MONTH(visit_date) = MONTH(CURDATE())";
 
         $visitMetrics = $this->db->fetchOne($visitMetricsQuery, [$this->employeeId]);
@@ -216,13 +214,11 @@ class LandManagerController extends BaseController
         $acquisitionMetricsQuery = "SELECT 
                                       COUNT(*) as total_acquisitions,
                                       SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed_acquisitions,
-                                      SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed_acquisitions,
-                                      AVG(TIMESTAMPDIFF(DAY, created_at, completed_at)) as avg_acquisition_time
+                                      AVG(TIMESTAMPDIFF(DAY, created_at, COALESCE(registration_date, updated_at))) as avg_acquisition_time
                                    FROM land_acquisitions 
-                                   WHERE assigned_manager = ?
-                                   AND YEAR(created_at) = YEAR(CURDATE())";
+                                   WHERE YEAR(created_at) = YEAR(CURDATE())";
 
-        $acquisitionMetrics = $this->db->fetchOne($acquisitionMetricsQuery, [$this->employeeId]);
+        $acquisitionMetrics = $this->db->fetchOne($acquisitionMetricsQuery);
 
         return [
             'performance_metrics' => $performanceMetrics,
@@ -236,8 +232,8 @@ class LandManagerController extends BaseController
      */
     private function getRecentActivities()
     {
-        $query = "SELECT * FROM land_management_activities 
-                  WHERE manager_id = ?
+        $query = "SELECT * FROM employee_activities 
+                  WHERE employee_id = ?
                   AND created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
                   ORDER BY created_at DESC
                   LIMIT 10";
@@ -254,7 +250,7 @@ class LandManagerController extends BaseController
                     COUNT(*) as total_documents
                  FROM documents 
                  WHERE entity_type = 'property' AND entity_id IN (
-                     SELECT id FROM properties WHERE manager_id = ?
+                     SELECT id FROM properties WHERE created_by = ?
                  )";
 
         return $this->db->fetchOne($query, [$this->employeeId]);
@@ -267,15 +263,12 @@ class LandManagerController extends BaseController
     {
         try {
             // Validate property assignment
-            $propertyQuery = "SELECT id, title, location FROM properties WHERE id = ? AND manager_id = ?";
+            $propertyQuery = "SELECT id, title, location FROM properties WHERE id = ? AND created_by = ?";
             $property = $this->db->fetchOne($propertyQuery, [$propertyId, $this->employeeId]);
 
             if (!$property) {
                 throw new Exception("Property not found or not assigned to you");
             }
-
-            // Create visitor record if not exists
-            $visitorId = $this->createOrUpdateVisitor($visitData['visitor']);
 
             // Schedule site visit
             $query = "INSERT INTO site_visits (
@@ -305,7 +298,7 @@ class LandManagerController extends BaseController
             );
 
             // Notify visitor
-            $this->notifySiteVisitScheduled($visitorId, $property, $visitData);
+            $this->notifySiteVisitScheduled(null, $property, $visitData);
 
             return [
                 'success' => true,
@@ -321,42 +314,11 @@ class LandManagerController extends BaseController
     }
 
     /**
-     * Create or update visitor
+     * Create or update visitor (visitors merged into site_visits inline columns)
      */
     private function createOrUpdateVisitor($visitorData)
     {
-        // Check if visitor exists
-        $checkQuery = "SELECT id FROM visitors WHERE phone = ? OR email = ?";
-        $existingVisitor = $this->db->fetchOne($checkQuery, [$visitorData['phone'], $visitorData['email'] ?? '']);
-
-        if ($existingVisitor) {
-            // Update existing visitor
-            $updateQuery = "UPDATE visitors 
-                           SET name = ?, email = ?, company = ?, updated_at = NOW()
-                           WHERE id = ?";
-
-            $this->db->execute($updateQuery, [
-                $visitorData['name'],
-                $visitorData['email'] ?? '',
-                $visitorData['company'] ?? '',
-                $existingVisitor['id']
-            ]);
-
-            return $existingVisitor['id'];
-        } else {
-            // Create new visitor
-            $insertQuery = "INSERT INTO visitors (name, email, phone, company, created_at)
-                            VALUES (?, ?, ?, ?, NOW())";
-
-            $this->db->execute($insertQuery, [
-                $visitorData['name'],
-                $visitorData['email'] ?? '',
-                $visitorData['phone'],
-                $visitorData['company'] ?? ''
-            ]);
-
-            return $this->db->lastInsertId();
-        }
+        return null;
     }
 
     /**
@@ -366,8 +328,8 @@ class LandManagerController extends BaseController
     {
         try {
             // Get acquisition details
-            $acquisitionQuery = "SELECT * FROM land_acquisitions WHERE id = ? AND assigned_manager = ?";
-            $acquisition = $this->db->fetchOne($acquisitionQuery, [$acquisitionId, $this->employeeId]);
+            $acquisitionQuery = "SELECT * FROM land_acquisitions WHERE id = ?";
+            $acquisition = $this->db->fetchOne($acquisitionQuery, [$acquisitionId]);
 
             if (!$acquisition) {
                 throw new Exception("Acquisition not found or not assigned to you");
@@ -375,15 +337,11 @@ class LandManagerController extends BaseController
 
             // Update acquisition
             $query = "UPDATE land_acquisitions 
-                      SET status = ?, progress_percentage = ?, notes = ?, 
-                          updated_by = ?, updated_at = NOW()
+                      SET status = ?, updated_at = NOW()
                       WHERE id = ?";
 
             $this->db->execute($query, [
                 $acquisitionData['status'],
-                $acquisitionData['progress_percentage'] ?? 0,
-                $acquisitionData['notes'] ?? '',
-                $this->employeeId,
                 $acquisitionId
             ]);
 
@@ -421,8 +379,8 @@ class LandManagerController extends BaseController
             // Get visit details
             $visitQuery = "SELECT sv.*, p.title as property_title
                            FROM site_visits sv
-                           JOIN properties p ON sv.property_id = p.id
-                           WHERE sv.id = ? AND sv.manager_id = ?";
+                           LEFT JOIN properties p ON sv.property_id = p.id
+                           WHERE sv.id = ? AND sv.assigned_to = ?";
 
             $visit = $this->db->fetchOne($visitQuery, [$visitId, $this->employeeId]);
 
@@ -433,8 +391,8 @@ class LandManagerController extends BaseController
             // Update visit status
             $query = "UPDATE site_visits 
                       SET status = 'completed', completed_at = NOW(), 
-                          actual_duration = ?, rating = ?, feedback_notes = ?,
-                          outcome = ?, next_steps = ?
+                          duration_minutes = ?, rating = ?,
+                          feedback = CONCAT_WS(' | ', NULLIF(feedback, ''), ?, ?, ?)
                       WHERE id = ?";
 
             $this->db->execute($query, [
@@ -454,7 +412,7 @@ class LandManagerController extends BaseController
             );
 
             // Notify visitor
-            $this->notifySiteVisitCompleted($visit['visitor_id'], $visit, $completionData);
+            $this->notifySiteVisitCompleted(null, $visit, $completionData);
 
             return [
                 'success' => true,
@@ -475,7 +433,7 @@ class LandManagerController extends BaseController
     {
         try {
             // Validate property assignment
-            $propertyQuery = "SELECT id, title FROM properties WHERE id = ? AND manager_id = ?";
+            $propertyQuery = "SELECT id, title FROM properties WHERE id = ? AND created_by = ?";
             $property = $this->db->fetchOne($propertyQuery, [$propertyId, $this->employeeId]);
 
             if (!$property) {
@@ -566,7 +524,7 @@ class LandManagerController extends BaseController
      */
     private function generatePropertyPortfolioReport($filters)
     {
-        $whereClause = "p.manager_id = ?";
+        $whereClause = "p.created_by = ?";
         $params = [$this->employeeId];
 
         if (!empty($filters['status'])) {
@@ -595,8 +553,8 @@ class LandManagerController extends BaseController
             'data' => $reportData,
             'summary' => [
                 'total_properties' => count($reportData),
-                'total_value' => array_sum(array_column($reportData, 'market_value')),
-                'avg_area' => array_sum(array_column($reportData, 'area_sqft')) / count($reportData)
+                'total_value' => array_sum(array_column($reportData, 'price')),
+                'avg_area' => count($reportData) > 0 ? array_sum(array_column($reportData, 'area_sqft')) / count($reportData) : 0
             ],
             'generated_at' => date('Y-m-d H:i:s')
         ];
@@ -607,7 +565,7 @@ class LandManagerController extends BaseController
      */
     private function generateSiteVisitReport($filters)
     {
-        $whereClause = "sv.manager_id = ?";
+        $whereClause = "sv.assigned_to = ?";
         $params = [$this->employeeId];
 
         if (!empty($filters['status'])) {
@@ -625,11 +583,10 @@ class LandManagerController extends BaseController
             $params[] = $filters['date_to'];
         }
 
-        $query = "SELECT sv.*, p.title as property_title, p.address,
-                        v.name as visitor_name, v.phone as visitor_phone
+        $query = "SELECT sv.*, p.title as property_title, p.location as address,
+                        sv.visitor_name, sv.visitor_phone
                  FROM site_visits sv
                  LEFT JOIN properties p ON sv.property_id = p.id
-                 LEFT JOIN visitors v ON sv.visitor_id = v.id
                  WHERE {$whereClause}
                  ORDER BY sv.visit_date DESC";
 
@@ -653,32 +610,20 @@ class LandManagerController extends BaseController
      */
     private function generateAcquisitionReport($filters)
     {
-        $whereClause = "la.manager_id = ?";
-        $params = [$this->employeeId];
+        $whereClause = "1=1";
+        $params = [];
 
         if (!empty($filters['status'])) {
             $whereClause .= " AND la.status = ?";
             $params[] = $filters['status'];
         }
 
-        if (!empty($filters['priority'])) {
-            $whereClause .= " AND la.priority = ?";
-            $params[] = $filters['priority'];
-        }
-
-        try {
-            $query = "SELECT la.*, l.location_name, l.area_sqft, l.expected_price,
-                            COUNT(las.id) as stakeholder_count
-                     FROM land_acquisitions la
-                     LEFT JOIN land l ON la.land_id = l.id
-                     LEFT JOIN acquisition_stakeholders las ON la.id = las.acquisition_id
-                     WHERE {$whereClause}
-                     GROUP BY la.id
-                     ORDER BY la.created_at DESC";
-        } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
-        }
+        $query = "SELECT la.*, c.name as location_name,
+                        la.acquisition_cost as expected_price
+                 FROM land_acquisitions la
+                 LEFT JOIN colonies c ON la.colony_id = c.id
+                 WHERE {$whereClause}
+                 ORDER BY la.created_at DESC";
 
         $reportData = $this->db->fetchAll($query, $params);
 
@@ -688,8 +633,7 @@ class LandManagerController extends BaseController
             'data' => $reportData,
             'summary' => [
                 'total_acquisitions' => count($reportData),
-                'total_value' => array_sum(array_column($reportData, 'expected_price')),
-                'high_priority' => count(array_filter($reportData, fn($a) => $a['priority'] === 'high'))
+                'total_value' => array_sum(array_column($reportData, 'acquisition_cost'))
             ],
             'generated_at' => date('Y-m-d H:i:s')
         ];
@@ -700,11 +644,11 @@ class LandManagerController extends BaseController
      */
     private function generateDocumentationReport($filters)
     {
-        $whereClause = "pd.manager_id = ?";
+        $whereClause = "p.created_by = ?";
         $params = [$this->employeeId];
 
         if (!empty($filters['status'])) {
-            $whereClause .= " AND pd.status = ?";
+            $whereClause .= " AND pd.verification_status = ?";
             $params[] = $filters['status'];
         }
 
@@ -730,7 +674,7 @@ class LandManagerController extends BaseController
             'data' => $reportData,
             'summary' => [
                 'total_documents' => count($reportData),
-                'complete_documents' => count(array_filter($reportData, fn($d) => $d['status'] === 'complete')),
+                'complete_documents' => count(array_filter($reportData, fn($d) => $d['verification_status'] === 'verified')),
                 'expired_documents' => count(array_filter($reportData, fn($d) => $d['expiry_status'] === 'expired')),
                 'expiring_soon' => count(array_filter($reportData, fn($d) => $d['expiry_status'] === 'expiring_soon'))
             ],
@@ -743,19 +687,12 @@ class LandManagerController extends BaseController
      */
     private function addToAcquisitionTimeline($acquisitionId, $acquisitionData)
     {
-        try {
-            $query = "INSERT INTO acquisition_timeline (
-                        acquisition_id, status, notes, performed_by, created_at
-                    ) VALUES (?, ?, ?, ?, NOW())";
-        } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
-        }
+        $query = "INSERT INTO daily_operations_log (
+                    log_type, description, assigned_to, status, created_at
+                ) VALUES ('acquisition_update', ?, ?, 'completed', NOW())";
 
         $this->db->execute($query, [
-            $acquisitionId,
-            $acquisitionData['status'],
-            $acquisitionData['notes'] ?? '',
+            "Acquisition #{$acquisitionId} updated to status: {$acquisitionData['status']}. " . ($acquisitionData['notes'] ?? ''),
             $this->employeeId
         ]);
     }
@@ -783,20 +720,14 @@ class LandManagerController extends BaseController
      */
     private function notifyAcquisitionUpdate($acquisitionId, $acquisitionData)
     {
-        try {
-            // Get stakeholders to notify
-            $stakeholdersQuery = "SELECT DISTINCT employee_id FROM acquisition_stakeholders 
-                                  WHERE acquisition_id = ?";
-        } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
-        }
-        $stakeholders = $this->db->fetchAll($stakeholdersQuery, [$acquisitionId]);
+        $query = "INSERT INTO employee_activities (employee_id, activity_type, description, metadata, created_at)
+                  VALUES (?, 'acquisition_update', ?, ?, NOW())";
 
-        foreach ($stakeholders as $stakeholder) {
-            $message = "Land acquisition updated to status: {$acquisitionData['status']}";
-            $this->createNotification($stakeholder['employee_id'], 'acquisition_update', $message, $acquisitionId);
-        }
+        $this->db->execute($query, [
+            $this->employeeId,
+            "Land acquisition #{$acquisitionId} updated to status: {$acquisitionData['status']}",
+            json_encode(['acquisition_id' => $acquisitionId])
+        ]);
     }
 
     /**
@@ -805,10 +736,10 @@ class LandManagerController extends BaseController
     private function createNotification($recipientId, $type, $message, $relatedId = null)
     {
         $query = "INSERT INTO notifications (
-                    recipient_id, type, message, related_id, created_at, status
-                ) VALUES (?, ?, ?, ?, NOW(), 'unread')";
+                    user_id, type, title, message, related_id, is_read, created_at
+                ) VALUES (?, ?, ?, ?, ?, 0, NOW())";
 
-        $this->db->execute($query, [$recipientId, $type, $message, $relatedId]);
+        $this->db->execute($query, [$recipientId, $type, ucfirst(str_replace('_', ' ', $type)), $message, $relatedId]);
     }
 
     /**
@@ -816,12 +747,16 @@ class LandManagerController extends BaseController
      */
     private function logLandActivity($activityType, $description, $relatedId = null)
     {
-        $query = "INSERT INTO land_management_activities (
-                    activity_type, description, related_id, 
-                    manager_id, created_at
+        $query = "INSERT INTO employee_activities (
+                    employee_id, activity_type, description, metadata, created_at
                 ) VALUES (?, ?, ?, ?, NOW())";
 
-        $this->db->execute($query, [$activityType, $description, $relatedId, $this->employeeId]);
+        $this->db->execute($query, [
+            $this->employeeId,
+            $activityType,
+            $description,
+            json_encode(['related_id' => $relatedId])
+        ]);
     }
 
     /**
