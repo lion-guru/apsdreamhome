@@ -194,9 +194,37 @@ class CRMController extends AdminController
         $service = new CRMService();
 
         $period = $_GET['period'] ?? '30d';
-        $funnel = $service->getConversionFunnel();
-        $sourceAnalytics = $service->getSourceAnalytics($period);
+        $funnelData = $service->getConversionFunnel();
+        $srcData = $service->getSourceAnalytics($period);
         $agentPerformance = $service->getAgentPerformance();
+
+        // Adapt service wrapper shapes into the flat structures the view expects
+        $funnel = [
+            'total_leads' => (int)($funnelData['total_leads'] ?? 0),
+            'contacted' => 0, 'qualified' => 0, 'site_visit' => 0,
+            'proposal' => 0, 'negotiation' => 0, 'won' => 0, 'lost' => 0,
+        ];
+        foreach (($funnelData['funnel'] ?? []) as $f) {
+            $stage = $f['stage'] ?? '';
+            if (array_key_exists($stage, $funnel)) {
+                $funnel[$stage] = (int)($f['count'] ?? 0);
+            }
+        }
+        $totalLeads = (int)$funnel['total_leads'];
+        $funnel['conversion_rate'] = ($totalLeads > 0 && $funnel['won'] > 0)
+            ? round($funnel['won'] / $totalLeads * 100, 1)
+            : 0;
+
+        $sourceAnalytics = [];
+        foreach (($srcData['sources'] ?? []) as $s) {
+            $sourceAnalytics[] = [
+                'source' => $s['source'] ?? 'unknown',
+                'total_leads' => (int)($s['count'] ?? 0),
+                'converted' => (int)($s['converted'] ?? 0),
+                'conversion_rate' => (float)($s['conversion_rate'] ?? 0),
+                'avg_score' => (float)($s['avg_score'] ?? 0),
+            ];
+        }
 
         // Pipeline value (weighted)
         $pipelineValue = ['total' => 0, 'by_stage' => []];
