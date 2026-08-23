@@ -181,8 +181,9 @@ class CommissionAdminController extends AdminController
         }
     }
 
-    public function associateCalcStatus($id, $status)
+    public function associateCalcStatus($id)
     {
+        $status = $_POST['status'] ?? 'confirmed';
         if (!in_array($status, ['confirmed','paid'])) { $status = 'confirmed'; }
         try {
             $dbStatus = ($status === 'confirmed') ? 'approved' : 'paid';
@@ -321,8 +322,9 @@ class CommissionAdminController extends AdminController
         }
     }
 
-    public function mlmRecordStatus($id, $status)
+    public function mlmRecordStatus($id)
     {
+        $status = $_POST['status'] ?? 'approved';
         if (!in_array($status, ['approved','paid','cancelled'])) { $status = 'approved'; }
         try {
             $this->db->query("UPDATE mlm_commission_ledger SET status = ? WHERE id = ? AND tenant_id = ?", [$status, (int)$id, $this->tenantId()]);

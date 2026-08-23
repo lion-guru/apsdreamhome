@@ -818,8 +818,13 @@ class LeadController extends AdminController
     }
 
     public function uploadDocument($id) { $this->setFlash('info', 'Document upload feature available'); return $this->redirect("/admin/leads/$id"); }
-    public function deleteDocument($id, $docId) {
+    public function deleteDocument($id) {
         try {
+            $docId = (int)($_POST['doc_id'] ?? ($_POST['document_id'] ?? 0));
+            if ($docId <= 0) {
+                $this->setFlash('error', 'Document ID is required');
+                return $this->redirect("/admin/leads/$id");
+            }
             $db = \App\Core\Database\Database::getInstance()->getConnection();
             $db->query("DELETE FROM lead_documents WHERE id = ? AND lead_id = ? AND tenant_id = ?", [$docId, $id, $this->tenantId()]);
             $this->crm->logActivity((int)$id, $this->getCurrentUserId(), 'document_delete', 'Document deleted', "Document #$docId deleted");
