@@ -89,7 +89,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
     <div class="row g-4">
         <?php foreach ($plots as $plot): ?>
         <div class="col-md-6 col-lg-4">
-            <div class="aps-cp-card h-100 d-flex flex-column" class="style-2133">
+            <div class="aps-cp-card h-100 d-flex flex-column style-2133">
                 <div class="aps-cp-card-body flex-grow-1">
                     <div class="d-flex justify-content-between align-items-start mb-2">
                         <div>

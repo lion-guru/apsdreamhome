@@ -16,27 +16,27 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
 ?>
 
 <!-- Tier Card -->
-<div class="card border-0 shadow-sm mb-4" class="style-61637">
+<div class="card border-0 shadow-sm mb-4 style-61637">
     <div class="card-body">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <div class="d-flex align-items-center gap-3">
                 <div class="style-63527">
-                    <i class="<?= $tierInfo['icon'] ?>" class="style-1525"></i>
+                    <i class="<?= $tierInfo['icon'] ?> style-1525"></i>
                 </div>
                 <div>
-                    <h5 class="mb-0" class="style-72606"><?= $tierInfo['label'] ?> Tier</h5>
+                    <h5 class="mb-0 style-72606"><?= $tierInfo['label'] ?> Tier</h5>
                     <small class="text-muted">₹<?= number_format($tierInfo['bonus_per_referral']) ?> per signup Â· ₹<?= number_format($tierInfo['bonus_on_booking']) ?> on booking</small>
                 </div>
             </div>
             <?php if ($tierInfo['next_tier']): ?>
             <div class="text-end">
                 <small class="text-muted d-block"><?= $tierInfo['referrals_needed'] ?> more to <?= $tierInfo['next_tier'] ?></small>
-                <div class="progress mt-1" class="style-58327">
-                    <div class="progress-bar" class="style-25252"></div>
+                <div class="progress mt-1 style-58327">
+                    <div class="progress-bar style-25252"></div>
                 </div>
             </div>
             <?php else: ?>
-            <div class="badge" class="style-1828">
+            <div class="badge style-1828">
                 <i class="fas fa-crown me-1"></i>Max Tier
             </div>
             <?php endif; ?>
@@ -54,7 +54,7 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
 <!-- Referral Stats -->
 <div class="row g-3 mb-4">
     <div class="col-md-4">
-        <div class="card border-0 shadow-sm h-100" class="style-19672">
+        <div class="card border-0 shadow-sm h-100 style-19672">
             <div class="card-body p-4 text-center">
                 <i class="fas fa-users fa-2x mb-3 opacity-75"></i>
                 <div class="fs-2 fw-bold"><?= $referral_count ?></div>
@@ -89,9 +89,9 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
     </div>
     <div class="card-body">
         <div class="text-center mb-4">
-            <div class="d-inline-block p-4 rounded-3" class="style-18667">
+            <div class="d-inline-block p-4 rounded-3 style-18667">
                 <div class="small text-muted mb-2"><?= __('assoc_ref_your_code', [], 'Your Unique Referral Code') ?></div>
-                <code id="referralCodeDisplay" class="fs-3 fw-bold" class="style-61650">
+                <code id="referralCodeDisplay" class="fs-3 fw-bold style-61650">
                     <?= htmlspecialchars($referral_code ?: __('assoc_ref_na', [], 'N/A')) ?>
                 </code>
             </div>
@@ -141,21 +141,21 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
     <div class="card-body">
         <div class="row g-4">
             <div class="col-md-4 text-center">
-                <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" class="style-63775">
+                <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 style-63775">
                     <i class="fas fa-share text-primary fa-lg"></i>
                 </div>
                 <h6><?= __('assoc_ref_step1_title', [], '1. Share Your Code') ?></h6>
                 <p class="small text-muted"><?= __('assoc_ref_step1_desc', [], 'Share your unique referral code with friends, family, and contacts.') ?></p>
             </div>
             <div class="col-md-4 text-center">
-                <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" class="style-95624">
+                <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 style-95624">
                     <i class="fas fa-user-plus text-success fa-lg"></i>
                 </div>
                 <h6><?= __('assoc_ref_step2_title', [], '2. They Register') ?></h6>
                 <p class="small text-muted"><?= __('assoc_ref_step2_desc', [], 'When they register using your code, they become your referral.') ?></p>
             </div>
             <div class="col-md-4 text-center">
-                <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" class="style-47079">
+                <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 style-47079">
                     <i class="fas fa-rupee-sign text-warning fa-lg"></i>
                 </div>
                 <h6><?= __('assoc_ref_step3_title', [], '3. Earn Rewards') ?></h6>

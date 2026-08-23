@@ -57,7 +57,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         <?php $pct = $activeListings > 0 ? round($td['cnt']/$activeListings*100) : 0; ?>
                         <div class="mb-2">
                             <div class="d-flex justify-content-between"><small class="text-capitalize"><?= htmlspecialchars($td['property_type'] ?? '') ?></small><small><?= $td['cnt'] ?> (<?= $pct ?>%)</small></div>
-                            <div class="progress" class="style-51910"><div class="progress-bar bg-primary" class="style-21859"></div></div>
+                            <div class="progress style-51910"><div class="progress-bar bg-primary style-21859"></div></div>
                         </div>
                     <?php endforeach; ?>
                     <?php if (empty($typeDistribution)): ?><div class="text-center text-muted py-3">No listings</div><?php endif; ?>

@@ -7,7 +7,7 @@ $stats = $stats ?? ['total_pending' => 0, 'overdue' => 0, 'collected' => 0, 'tot
 
 <div class="row g-3 mb-4">
     <div class="col-6 col-md-3">
-        <div class="card border-0 shadow-sm" class="style-19672">
+        <div class="card border-0 shadow-sm style-19672">
             <div class="card-body p-3 text-center">
                 <div class="fs-2 fw-bold"><?= e($stats['total_pending']) ?></div>
                 <div class="small opacity-75"><?= __('assoc_emi_pending', [], 'Pending EMIs') ?></div>

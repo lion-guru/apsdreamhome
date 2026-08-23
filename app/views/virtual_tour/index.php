@@ -17,7 +17,7 @@
         <div class="col-lg-8">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body p-0 position-relative">
-                    <div id="panoramaViewer" class="style-19581" class="rounded">
+                    <div id="panoramaViewer" class="style-19581 rounded">
                         <div class="d-flex align-items-center justify-content-center h-100">
                             <div class="text-center text-white">
                                 <i class="fas fa-vr-cardboard fa-5x mb-3 opacity-50"></i>
@@ -69,7 +69,7 @@
                         <?php foreach ($tour_data['panoramas'] as $pano): ?>
                         <div class="col-md-4">
                             <div class="border rounded p-2 text-center">
-                                <img src="<?= BASE_URL ?>/<?= htmlspecialchars($pano['thumbnail_path'] ?? $pano['file_path'] ?? 'assets/img/no-image.jpg') ?>" alt="" class="img-fluid rounded mb-2" class="style-93542" onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
+                                <img src="<?= BASE_URL ?>/<?= htmlspecialchars($pano['thumbnail_path'] ?? $pano['file_path'] ?? 'assets/img/no-image.jpg') ?>" alt="" class="img-fluid rounded mb-2 style-93542" onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
                                 <small class="text-muted text-capitalize d-block"><?= ($pano['panorama_type'] ?? 'interior') ?></small>
                             </div>
                         </div>

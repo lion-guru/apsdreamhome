@@ -1,5 +1,5 @@
 <!-- Hero Section -->
-<section class="hero-section text-white text-center py-5" class="style-26625">
+<section class="hero-section text-white text-center py-5 style-26625">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
@@ -100,7 +100,7 @@
                             }
                             ?>
                             <img src="<?php echo htmlspecialchars($imagePath ?? ''); ?>" alt="<?php echo htmlspecialchars($colony['name'] ?? ''); ?>" class="img-fluid" loading="lazy">
-                            <div class="colony-placeholder" class="style-57012">
+                            <div class="colony-placeholder style-57012">
                                 <i class="fas fa-city fa-3x mb-2"></i>
                                 <p class="mb-0 text-center px-2"><?php echo e($colony['name']); ?></p>
                             </div>

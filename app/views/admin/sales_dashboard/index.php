@@ -155,7 +155,7 @@
                                 <?php foreach ($leaderboard as $i => $p): ?>
                                     <div class="list-group-item d-flex justify-content-between align-items-center">
                                         <div class="d-flex align-items-center">
-                                            <span class="badge bg-<?php echo $i === 0 ? 'warning' : ($i === 1 ? 'secondary' : 'light text-dark'); ?> me-2" class="style-52796"><?php echo $i + 1; ?></span>
+                                            <span class="badge bg-<?php echo $i === 0 ? 'warning' : ($i === 1 ? 'secondary' : 'light text-dark'); ?> me-2 style-52796"><?php echo $i + 1; ?></span>
                                             <div>
                                                 <strong class="small"><?php echo htmlspecialchars($p['name'] ?? ''); ?></strong>
                                                 <br><small class="text-muted"><?php echo (int)$p['won_count']; ?> won / <?php echo (int)$p['lead_count']; ?> leads</small>
@@ -192,8 +192,8 @@
                                         <small><?php echo htmlspecialchars(ucfirst(str_replace('_', ' ', $stage))); ?></small>
                                         <small class="text-muted"><?php echo e($count); ?> (<?php echo $pct; ?>%)</small>
                                     </div>
-                                    <div class="progress" class="style-31164">
-                                        <div class="progress-bar bg-<?php echo e($color); ?>" class="style-73575"></div>
+                                    <div class="progress style-31164">
+                                        <div class="progress-bar bg-<?php echo e($color); ?> style-73575"></div>
                                     </div>
                                 </div>
                             <?php endforeach; ?>

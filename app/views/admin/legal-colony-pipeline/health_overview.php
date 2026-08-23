@@ -68,7 +68,7 @@ $colonies = $data['colonies'] ?? [];
       <div class="row g-2">
         <?php foreach ($belowThreshold as $alert): ?>
           <div class="col-md-6 col-lg-4">
-            <div class="d-flex align-items-center gap-2 p-2 rounded" class="style-60853">
+            <div class="d-flex align-items-center gap-2 p-2 rounded style-60853">
               <span class="badge bg-danger fs-6"><?= $alert['overall_score'] ?? 0 ?>%</span>
               <div>
                 <strong><?= htmlspecialchars($alert['name'] ?? '') ?></strong>
@@ -104,7 +104,7 @@ $colonies = $data['colonies'] ?? [];
                 <span class="badge bg-secondary"><?= $stage ?></span>
               </div>
               <div class="text-center">
-                <div class="rounded-circle d-inline-flex align-items-center justify-content-center bg-<?= $grade['color'] ?> text-white fw-bold" class="style-47547">
+                <div class="rounded-circle d-inline-flex align-items-center justify-content-center bg-<?= $grade['color'] ?> text-white fw-bold style-47547">
                   <?= $grade['letter'] ?>
                 </div>
               </div>
@@ -116,8 +116,8 @@ $colonies = $data['colonies'] ?? [];
                 <small class="text-muted">Health Score</small>
                 <small class="fw-bold text-<?= $grade['color'] ?>"><?= $score ?>%</small>
               </div>
-              <div class="progress" class="style-87912">
-                <div class="progress-bar bg-<?= $grade['color'] ?>" class="style-12479"></div>
+              <div class="progress style-87912">
+                <div class="progress-bar bg-<?= $grade['color'] ?> style-12479"></div>
               </div>
             </div>
 
@@ -126,33 +126,33 @@ $colonies = $data['colonies'] ?? [];
               <div class="col-4">
                 <div class="text-center p-2 rounded bg-dark">
                   <div class="fw-bold text-<?= ($colony['risk_count'] ?? 0) > 0 ? 'danger' : 'success' ?>"><?= $colony['risk_count'] ?? 0 ?></div>
-                  <small class="text-muted" class="style-48967">Risks</small>
+                  <small class="text-muted style-48967">Risks</small>
                 </div>
               </div>
               <div class="col-4">
                 <div class="text-center p-2 rounded bg-dark">
                   <div class="fw-bold text-info"><?= $colony['risk_count'] ?? 0 ?></div>
-                  <small class="text-muted" class="style-48967">Issues</small>
+                  <small class="text-muted style-48967">Issues</small>
                 </div>
               </div>
               <div class="col-4">
                 <div class="text-center p-2 rounded bg-dark">
                   <div class="fw-bold text-warning"><?= $colony['risk_count'] ?? 0 ?></div>
-                  <small class="text-muted" class="style-48967">Alerts</small>
+                  <small class="text-muted style-48967">Alerts</small>
                 </div>
               </div>
             </div>
 
             <!-- Top Risk -->
             <?php if (!empty($colony['top_risk'])): ?>
-              <div class="alert alert-danger py-2 px-3 mb-2" class="style-49273">
+              <div class="alert alert-danger py-2 px-3 mb-2 style-49273">
                 <i class="fas fa-exclamation-triangle me-1"></i> <?= htmlspecialchars($colony['top_risk'] ?? '') ?>
               </div>
             <?php endif; ?>
 
             <!-- Recommendation -->
             <?php if (!empty($colony['recommendation'])): ?>
-              <div class="alert alert-info py-2 px-3 mb-0" class="style-49273">
+              <div class="alert alert-info py-2 px-3 mb-0 style-49273">
                 <i class="fas fa-lightbulb me-1"></i> <?= htmlspecialchars($colony['recommendation'] ?? '') ?>
               </div>
             <?php endif; ?>

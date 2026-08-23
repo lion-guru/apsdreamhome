@@ -45,7 +45,7 @@
                             <?php foreach ($emails as $e): ?>
                                 <tr class="email-row" data-status="<?= htmlspecialchars($e['status'] ?? '') ?>">
                                     <td><?= htmlspecialchars($e['recipient'] ?? '') ?></td>
-                                    <td class="text-truncate" class="style-14945"><?= htmlspecialchars($e['subject'] ?? '') ?></td>
+                                    <td class="text-truncate style-14945"><?= htmlspecialchars($e['subject'] ?? '') ?></td>
                                     <td>
                                         <span class="badge bg-<?= ($e['status'] ?? 'queued') === 'sent' ? 'success' : (($e['status'] ?? '') === 'failed' ? 'danger' : (($e['status'] ?? '') === 'sending' ? 'info' : 'secondary')) ?>">
                                             <?= htmlspecialchars($e['status'] ?? 'queued') ?>

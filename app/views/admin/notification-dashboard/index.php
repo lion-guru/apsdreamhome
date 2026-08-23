@@ -80,6 +80,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             .page-header { padding: 1.5rem; }
         }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
     <div class="page-header">
@@ -144,7 +145,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                     <span class="style-70391"><?= number_format($ch['count']) ?> total / <?= number_format($ch['sent']) ?> sent</span>
                                 </div>
                                 <div class="channel-bar">
-                                    <div class="channel-bar-fill" class="style-96057"></div>
+                                    <div class="channel-bar-fill style-96057"></div>
                                 </div>
                             </div>
                         <?php endforeach; ?>

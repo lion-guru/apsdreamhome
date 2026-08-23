@@ -17,7 +17,7 @@ try {
 ?>
 
 <!-- Hero Section -->
-<section class="hero-premium pt-5 pb-5" class="style-32644">
+<section class="hero-premium pt-5 pb-5 style-32644">
     <div class="container premium-reveal fade-up position-relative z-2">
         <div class="row justify-content-center text-center">
             <div class="col-lg-8">
@@ -68,7 +68,7 @@ try {
                     <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="<?= $index * 100 ?>">
                         <div class="service-card h-100 bg-white rounded-4 shadow-sm hover-lift p-4 border border-light">
                             <div class="service-icon mb-4">
-                                <div class="icon-wrap bg-primary bg-opacity-10 text-primary d-inline-flex align-items-center justify-content-center rounded-circle" class="style-84316">
+                                <div class="icon-wrap bg-primary bg-opacity-10 text-primary d-inline-flex align-items-center justify-content-center rounded-circle style-84316">
                                     <i class="<?php echo htmlspecialchars($service['icon'] ?? 'fas fa-coins'); ?>"></i>
                                 </div>
                             </div>

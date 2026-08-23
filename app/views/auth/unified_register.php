@@ -627,6 +627,7 @@ $base = BASE_URL;
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
     <div class="bg-grid"></div>
@@ -995,7 +996,7 @@ $base = BASE_URL;
             const str = checkPwdStrength(this.value);
             const el = document.getElementById('pwdStrength');
             el.className = 'pwd-strength ' + str.level;
-            document.getElementById('pwdHint').innerHTML = '<i class="fas fa-info-circle" class="style-50939"></i> <span>' + str.text + '</span>';
+            document.getElementById('pwdHint').innerHTML = '<i class="fas fa-info-circle style-50939"></i> <span>' + str.text + '</span>';
 
             if (confirmInput.value) {
                 validateField('confirm', this.value === confirmInput.value, this.value === confirmInput.value ? 'Passwords match' : 'Passwords do not match');

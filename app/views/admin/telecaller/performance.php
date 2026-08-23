@@ -169,8 +169,8 @@ $ratingBadge = function($rating) {
                                     <td>₹<?php echo number_format($r['total_commission'] ?? 0, 2); ?></td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <div class="progress flex-grow-1 me-2" class="style-29939">
-                                                <div class="progress-bar bg-<?php echo ($r['target_achieved'] ?? 0) >= 100 ? 'success' : (($r['target_achieved'] ?? 0) >= 50 ? 'warning' : 'danger'); ?>" class="style-38395"></div>
+                                            <div class="progress flex-grow-1 me-2 style-29939">
+                                                <div class="progress-bar bg-<?php echo ($r['target_achieved'] ?? 0) >= 100 ? 'success' : (($r['target_achieved'] ?? 0) >= 50 ? 'warning' : 'danger'); ?> style-38395"></div>
                                             </div>
                                             <small><?php echo number_format($r['target_achieved'] ?? 0, 1); ?>%</small>
                                         </div>

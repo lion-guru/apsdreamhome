@@ -43,8 +43,8 @@
                             <tr><th>Total Amount</th><td><strong>₹<?= number_format((float)$status['total_amount'], 2) ?></strong></td></tr>
                             <tr><th>Paid Amount</th><td>₹<?= number_format((float)$status['paid_amount'], 2) ?></td></tr>
                             <tr><th>Token Progress</th><td>
-                                <div class="progress" class="style-39312">
-                                    <div class="progress-bar bg-<?= $status['token_percentage'] >= 25 ? 'success' : 'danger' ?>" class="style-61073">
+                                <div class="progress style-39312">
+                                    <div class="progress-bar bg-<?= $status['token_percentage'] >= 25 ? 'success' : 'danger' ?> style-61073">
                                         <?= $status['token_percentage'] ?>%
                                     </div>
                                 </div>
@@ -81,8 +81,8 @@
                     <div class="card-body aps-cp-card-body">
                         <p>Total EMIs: <strong><?= $status['emi_count'] ?? 0 ?></strong></p>
                         <p>Paid EMIs: <strong><?= $status['paid_emis'] ?? 0 ?></strong></p>
-                        <div class="progress mb-3" class="style-76750">
-                            <div class="progress-bar bg-success" class="style-46071"></div>
+                        <div class="progress mb-3 style-76750">
+                            <div class="progress-bar bg-success style-46071"></div>
                         </div>
                         <?php if (!empty($status['emis'])): ?>
                         <div class="table-responsive"><table class="table table-sm">

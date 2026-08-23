@@ -250,7 +250,7 @@
 </div>
 
 <!-- Floating Compare Bar -->
-<div id="compare-bar" class="compare-bar" class="style-2248">
+<div id="compare-bar" class="compare-bar style-2248">
     <div class="compare-bar-inner">
         <span class="compare-bar-count"><i class="fas fa-balance-scale me-1"></i> <span id="compare-count">0</span> <?= __('colony_plots_selected') ?></span>
         <div class="compare-bar-actions">

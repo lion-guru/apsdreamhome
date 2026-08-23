@@ -38,8 +38,8 @@ $supported_languages = $supported_languages ?? ['en' => ['name' => 'English', 'n
                             </div>
                         </div>
                     </div>
-                    <div class="progress mt-2" class="style-29939">
-                        <div class="progress-bar bg-primary" class="style-58879"></div>
+                    <div class="progress mt-2 style-29939">
+                        <div class="progress-bar bg-primary style-58879"></div>
                     </div>
                 </div>
             </div>
@@ -51,7 +51,7 @@ $supported_languages = $supported_languages ?? ['en' => ['name' => 'English', 'n
     <div class="card aps-cp-card">
         <div class="card-header aps-cp-card-header d-flex justify-content-between align-items-center">
             <i class="fas fa-list me-2"></i>Translations
-            <div class="input-group" class="style-61646">
+            <div class="input-group style-61646">
                 <input type="text" class="form-control form-control-sm" id="translationSearch" placeholder="Search translations...">
             </div>
         </div>

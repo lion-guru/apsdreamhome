@@ -292,11 +292,11 @@ class AIController extends AdminController
     /**
      * Get user role from session
      */
-    private function getUserRole()
+    protected function getUserRole(): string
     {
         @session_start();
         if (isset($_SESSION['role'])) {
-            return $_SESSION['role'];
+            return (string)$_SESSION['role'];
         }
         if (isset($_SESSION['admin_user_id']) || isset($_SESSION['admin_id'])) {
             return 'admin';
@@ -312,9 +312,9 @@ class AIController extends AdminController
     /**
      * Get current user ID
      */
-    private function getUserId()
+    protected function getUserId(): int
     {
-        return isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0;
+        return isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
     }
 
     /**

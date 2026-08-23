@@ -35,9 +35,9 @@
                                         <span class="badge bg-primary">Email</span>
                                     </div>
                                     <?php if (!empty($t['subject'])): ?>
-                                        <p class="text-muted mb-1" class="style-87981"><strong>Subject:</strong> <?= htmlspecialchars(mb_strimwidth($t['subject'], 0, 60, '...')) ?></p>
+                                        <p class="text-muted mb-1 style-87981"><strong>Subject:</strong> <?= htmlspecialchars(mb_strimwidth($t['subject'], 0, 60, '...')) ?></p>
                                     <?php endif; ?>
-                                    <p class="text-muted mb-2" class="style-86354"><?= htmlspecialchars(mb_strimwidth($t['body'] ?? '', 0, 100, '...')) ?></p>
+                                    <p class="text-muted mb-2 style-86354"><?= htmlspecialchars(mb_strimwidth($t['body'] ?? '', 0, 100, '...')) ?></p>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <small class="text-muted"><i class="fas fa-folder me-1"></i><?= ucfirst($t['category'] ?? 'general') ?></small>
                                         <div class="d-flex gap-1">
@@ -73,7 +73,7 @@
                                         <h6 class="fw-bold mb-0"><?= htmlspecialchars($t['name'] ?? '') ?></h6>
                                         <span class="badge bg-success">SMS</span>
                                     </div>
-                                    <p class="text-muted mb-2" class="style-86354"><?= htmlspecialchars(mb_strimwidth($t['body'] ?? '', 0, 120, '...')) ?></p>
+                                    <p class="text-muted mb-2 style-86354"><?= htmlspecialchars(mb_strimwidth($t['body'] ?? '', 0, 120, '...')) ?></p>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <small class="text-muted"><i class="fas fa-folder me-1"></i><?= ucfirst($t['category'] ?? 'general') ?></small>
                                         <div class="d-flex gap-1">

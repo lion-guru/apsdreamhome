@@ -52,7 +52,7 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
         <div class="d-flex gap-2">
             <form method="POST" action="<?= BASE_URL ?>/associate/leads/recalculate-all-scores" class="d-inline">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-                <button type="submit" class="btn btn-sm" class="style-44944" onclick="return confirm('Recalculate AI scores for all your leads?')">
+                <button type="submit" class="btn btn-sm style-44944" onclick="return confirm('Recalculate AI scores for all your leads?')">
                     <i class="fas fa-brain me-1"></i> <?= __('assoc_leads_score_all', [], 'Score All') ?>
                 </button>
             </form>
@@ -67,13 +67,12 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
         <?php
         $pipelineCounts = $pipeline_counts ?? [];
         ?>
-        <div class="crm-stage" class="style-59017" onclick="filterLeads('')">
+        <div class="crm-stage style-59017" onclick="filterLeads('')">
             <i class="fas fa-layer-group"></i> <?= __('assoc_leads_all', [], 'All') ?>
             <span class="count"><?= number_format($total_count) ?></span>
         </div>
         <?php foreach ($statuses as $key => $s): ?>
-        <div class="crm-stage <?= $status_filter === $key ? 'active' : '' ?>" 
-             class="style-33170"
+        <div class="crm-stage <?= $status_filter === $key ? 'active' : '' ?> style-33170"
              onclick="filterLeads('<?= $key ?>')">
             <i class="fas <?= $s['icon'] ?>"></i> <?= $s['label'] ?>
             <span class="count"><?= $pipelineCounts[$key] ?? 0 ?></span>

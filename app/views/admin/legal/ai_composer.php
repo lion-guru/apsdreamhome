@@ -91,7 +91,7 @@ $merge_fields = $merge_fields ?? [];
             <div class="aps-cp-card mb-3">
                 <div class="aps-cp-card-header"><i class="fas fa-lightbulb me-2"></i>Available Prompt Templates</div>
                 <div class="aps-cp-card-body p-0">
-                    <div class="list-group list-group-flush" class="style-23214">
+                    <div class="list-group list-group-flush style-23214">
                         <?php foreach ($prompts as $p): ?>
                             <div class="list-group-item list-group-item-action p-2" onclick="selectPrompt(<?= $p['id'] ?>)">
                                 <div class="d-flex justify-content-between">

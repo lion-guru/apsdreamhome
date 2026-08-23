@@ -81,7 +81,7 @@ $count = count($plots);
         <div class="compare-grid">
             <!-- Row: Plot Header -->
             <div class="compare-label-col">
-                <div class="compare-label" class="style-86246"><?= __('compare_plot_header') ?></div>
+                <div class="compare-label style-86246"><?= __('compare_plot_header') ?></div>
             </div>
             <?php foreach ($plots as $i => $plot): ?>
                 <div class="compare-plot-header">
@@ -220,7 +220,7 @@ $count = count($plots);
             <?php endforeach; ?>
 
             <!-- Row: Actions -->
-            <div class="compare-label-col"><div class="compare-label" class="style-48741"><?= __('compare_actions') ?></div></div>
+            <div class="compare-label-col"><div class="compare-label style-48741"><?= __('compare_actions') ?></div></div>
             <?php foreach ($plots as $plot): ?>
                 <div class="compare-cell compare-actions-cell">
                     <button onclick="removeFromCompare(<?= $plot['id'] ?>)" class="btn-remove-compare mb-2">

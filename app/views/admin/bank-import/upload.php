@@ -37,7 +37,7 @@
 
                         <div class="mb-4">
                             <label class="form-label fw-semibold">CSV File <span class="text-danger">*</span></label>
-                            <div id="dropZone" class="border border-2 border-dashed rounded-3 p-5 text-center" class="style-96836">
+                            <div id="dropZone" class="border border-2 border-dashed rounded-3 p-5 text-center style-96836">
                                 <div id="dropContent">
                                     <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
                                     <p class="mb-1 fw-semibold">Drag & drop your CSV file here</p>

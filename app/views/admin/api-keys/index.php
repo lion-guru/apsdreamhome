@@ -97,7 +97,7 @@ $extraHead .= '<style>
                         <?php if (empty($api_keys)): ?>
                         <tr>
                             <td colspan="7" class="text-center py-5">
-                                <i class="fas fa-key fa-3x text-muted mb-3" class="style-82835"></i>
+                                <i class="fas fa-key fa-3x text-muted mb-3 style-82835"></i>
                                 <h5 class="text-muted">No API keys configured</h5>
                                 <p class="text-muted mb-3">Add API keys for third-party services like payment gateways, SMS providers, email services, and AI engines.</p>
                                 <a href="<?= BASE_URL ?>/admin/api-keys/create" class="btn btn-primary">

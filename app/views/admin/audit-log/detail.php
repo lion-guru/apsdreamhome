@@ -155,7 +155,7 @@ ob_start();
     <!-- Sidebar -->
     <div class="col-xl-4">
       <!-- Related Events -->
-      <div class="card shadow-sm mb-3 sticky-top" class="style-76854">
+      <div class="card shadow-sm mb-3 sticky-top style-76854">
         <div class="card-header bg-white">
           <h5 class="mb-0">Related Events</h5>
         </div>
@@ -192,7 +192,7 @@ ob_start();
       </div>
 
       <!-- Quick Actions -->
-      <div class="card shadow-sm sticky-top" class="style-76854">
+      <div class="card shadow-sm sticky-top style-76854">
         <div class="card-header bg-white">
           <h5 class="mb-0">Quick Actions</h5>
         </div>

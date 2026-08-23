@@ -27,13 +27,13 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
         <tr>
           <td bgcolor="#6366f1" align="center" class="style-43999">
             <div class="style-90702">&#9993;</div>
-            <h1 class="h1-mobile" class="style-56865">New Reply on Ticket</h1>
+            <h1 class="h1-mobile style-56865">New Reply on Ticket</h1>
             <p class="style-9233">{{agent_name}} replied</p>
           </td>
         </tr>
         <!-- Body -->
         <tr>
-          <td class="px-mobile" class="style-68782">
+          <td class="px-mobile style-68782">
             <h2 class="style-80102">Hi {{user_name}},</h2>
             <p class="style-28596">
               <strong>{{agent_name}}</strong> has replied to your support ticket.
@@ -53,7 +53,7 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
               <tr>
                 <td align="center" class="style-43583">
-                  <a href="{{ticket_url}}" class="button-mobile" class="style-71681">View & Reply</a>
+                  <a href="{{ticket_url}}" class="button-mobile style-71681">View & Reply</a>
                 </td>
               </tr>
             </table>

@@ -198,7 +198,7 @@ $recent_logs = $recent_logs ?? [];
                 <div class="card-body p-0">
                     <?php if (empty($recent_logs)): ?>
                         <div class="text-center py-5">
-                            <i class="fas fa-comments fa-3x mb-3" class="style-39608"></i>
+                            <i class="fas fa-comments fa-3x mb-3 style-39608"></i>
                             <h5 class="text-muted">No communication logs yet</h5>
                             <p class="text-muted mb-0">Start receiving messages or send test messages to see logs here.</p>
                         </div>

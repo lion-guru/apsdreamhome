@@ -26,13 +26,13 @@ ob_start();
       <?php else: ?>
         <div class="timeline px-4 py-4">
           <?php foreach ($timeline as $index => $t): ?>
-            <div class="timeline-item position-relative pb-4" class="style-31335">
-              <div class="position-absolute" class="style-97302">
-                <div class="timeline-marker bg-<?= ($t['status'] ?? 'success') === 'success' ? 'success' : 'danger' ?> rounded-circle border border-3 border-white shadow-sm" class="style-41849">
+            <div class="timeline-item position-relative pb-4 style-31335">
+              <div class="position-absolute style-97302">
+                <div class="timeline-marker bg-<?= ($t['status'] ?? 'success') === 'success' ? 'success' : 'danger' ?> rounded-circle border border-3 border-white shadow-sm style-41849">
                   <i class="fas fa-<?= $t['action_type'] === 'login' ? 'sign-in-alt' : ($t['action_type'] === 'logout' ? 'sign-out-alt' : ($t['action_type'] === 'create' ? 'plus' : ($t['action_type'] === 'delete' ? 'trash' : 'edit'))) ?> text-white small"></i>
                 </div>
                 <?php if ($index < count($timeline) - 1): ?>
-                  <div class="timeline-line" class="style-63524"></div>
+                  <div class="timeline-line style-63524"></div>
                 <?php endif; ?>
               </div>
               <div class="d-flex justify-content-between align-items-start mb-2">

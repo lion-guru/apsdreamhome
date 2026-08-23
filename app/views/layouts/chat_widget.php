@@ -546,7 +546,7 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
 
         var panel = document.createElement('div');
         panel.className = 'cw-wa-templates';
-        panel.innerHTML = '<h5><i class="fab fa-whatsapp" class="style-37777"></i> WhatsApp Templates</h5>';
+        panel.innerHTML = '<h5><i class="fab fa-whatsapp style-37777"></i> WhatsApp Templates</h5>';
 
         var templates = [
             {icon:'fa-home', title:'Property Inquiry', msg:'Hello! I would like to know about available plots. Are there any available?', key:'property'},
@@ -562,7 +562,7 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
             link.target = '_blank';
             link.href = 'https://wa.me/' + cwWAPhone + '?text=' + encodeURIComponent(t.msg);
             link.onclick = function() { cwTrackWhatsApp('template_' + t.key); };
-            link.innerHTML = '<i class="fas ' + t.icon + '"></i><div class="cw-wa-tpl-info"><strong>' + t.title + '</strong><small>Click to open WhatsApp</small></div><i class="fas fa-arrow-right" class="style-79086"></i>';
+            link.innerHTML = '<i class="fas ' + t.icon + '"></i><div class="cw-wa-tpl-info"><strong>' + t.title + '</strong><small>Click to open WhatsApp</small></div><i class="fas fa-arrow-right style-79086"></i>';
             panel.appendChild(link);
         });
 
@@ -633,7 +633,7 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         var div = document.createElement('div');
         div.className = 'cw-progress';
         div.innerHTML = 'Step ' + currentStep + ' of ' + totalSteps +
-            '<div class="cw-progress-bar"><div class="cw-progress-fill" class="style-74257"></div></div>';
+            '<div class="cw-progress-bar"><div class="cw-progress-fill style-74257"></div></div>';
 
         c.appendChild(div);
         c.scrollTop = c.scrollHeight;
@@ -674,7 +674,7 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         var d = document.createElement('div');
         d.id = 'cwTyping';
         d.className = 'cw-typing';
-        d.innerHTML = '<div class="cw-msg-avatar" class="style-81721"><i class="fas fa-robot"></i></div><div class="cw-typing-bubble"><span class="cw-typing-dot"></span><span class="cw-typing-dot"></span><span class="cw-typing-dot"></span></div>';
+        d.innerHTML = '<div class="cw-msg-avatar style-81721"><i class="fas fa-robot"></i></div><div class="cw-typing-bubble"><span class="cw-typing-dot"></span><span class="cw-typing-dot"></span><span class="cw-typing-dot"></span></div>';
         c.appendChild(d);
         c.scrollTop = c.scrollHeight;
     }

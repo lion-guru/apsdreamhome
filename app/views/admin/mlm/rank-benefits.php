@@ -17,7 +17,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             ?>
                 <div class="col-md-6 col-lg-4">
                     <div class="aps-cp-rank-card">
-                        <div class="aps-cp-rank-banner" class="style-78579">
+                        <div class="aps-cp-rank-banner style-78579">
                             <i class="fas <?= htmlspecialchars($icon ?? '') ?>"></i>
                         </div>
                         <div class="aps-cp-rank-body">

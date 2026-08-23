@@ -269,7 +269,7 @@ $isCancelled = $currentStatus === 'cancelled';
             <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-history"></i> Recent Activity</h5></div>
             <div class="card-body aps-cp-card-body">
                 <?php if (!empty($activities)): ?>
-                    <ul class="list-unstyled" class="style-93475">
+                    <ul class="list-unstyled style-93475">
                         <?php $count = 0; foreach ($activities as $a): if ($count++ >= 5) break; ?>
                             <li class="mb-2 pb-2 border-bottom">
                                 <small class="text-muted"><?= date('d M Y h:i A', strtotime($a['created_at'])) ?></small><br>

@@ -80,7 +80,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                         <?php endfor; ?>
                                     </div>
                                 </div>
-                                <p class="text-muted mb-4" class="style-63147">"<?php echo htmlspecialchars($testimonial['content'] ?? ''); ?>"</p>
+                                <p class="text-muted mb-4 style-63147">"<?php echo htmlspecialchars($testimonial['content'] ?? ''); ?>"</p>
                                 <div class="d-flex align-items-center">
                                     <img src="<?= !empty($testimonial['photo']) ? htmlspecialchars($testimonial['photo'] ?? '') : (BASE_URL . '/assets/images/default-avatar.png') ?>" alt="<?php echo htmlspecialchars($testimonial['name'] ?? ''); ?>" class="testimonial-img me-3">
                                     <div>

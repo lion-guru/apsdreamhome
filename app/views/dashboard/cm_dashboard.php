@@ -158,7 +158,7 @@ if (!function_exists('cm_getProjectStatusClass')) {
                                     <td><?= number_format($member['sales_count']) ?></td>
                                     <td>
                                         <div class="progress-custom">
-                                            <div class="progress-bar-custom" class="style-36765"></div>
+                                            <div class="progress-bar-custom style-36765"></div>
                                         </div>
                                     </td>
                                 </tr>

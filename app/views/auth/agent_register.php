@@ -387,6 +387,7 @@ $base = BASE_URL;
             }
         }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 
 <body>
@@ -496,7 +497,7 @@ $base = BASE_URL;
 
             <div class="divider-line"></div>
 
-            <p class="text-center mb-0" class="style-4671">
+            <p class="text-center mb-0 style-4671">
                 <?php echo __('auth_already_have_account', 'Already have an account?'); ?> <a href="<?php echo $base; ?>/agent/login" class="login-link"><?php echo __('auth_login_here', 'Login here'); ?></a>
             </p>
         </div>

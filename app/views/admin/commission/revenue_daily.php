@@ -44,7 +44,7 @@
                             <?php if (empty($daily ?? [])): ?>
                             <tr>
                                 <td colspan="6" class="text-center py-5">
-                                    <i class="fas fa-chart-line fa-3x text-muted mb-3" class="style-82835"></i>
+                                    <i class="fas fa-chart-line fa-3x text-muted mb-3 style-82835"></i>
                                     <h5 class="text-muted">No daily revenue records</h5>
                                     <p class="text-muted mb-3">Track daily agent revenue and commission earned using the form on the left.</p>
                                 </td>

@@ -560,6 +560,7 @@
             transition: width 0.3s ease;
         }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body id="hierarchy-data" data-hierarchy="<?php echo htmlspecialchars(json_encode($hierarchyData) ); ?>" data-earnings="<?php echo htmlspecialchars(json_encode($performanceData['monthly_earnings'] ?? []) ); ?>">
 //
@@ -677,7 +678,7 @@
                         <?php endforeach; ?>
                     <?php else: ?>
                         <div class="text-center py-3">
-                            <i class="bi bi-person-x text-muted" class="style-29961"></i>
+                            <i class="bi bi-person-x text-muted style-29961"></i>
                             <p class="text-muted mt-2 small">No performance data yet</p>
                         </div>
                     <?php endif; ?>
@@ -749,7 +750,7 @@
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="text-center py-4">
-                    <i class="bi bi-activity text-muted" class="style-22918"></i>
+                    <i class="bi bi-activity text-muted style-22918"></i>
                     <p class="text-muted mt-2">No recent team activities</p>
                 </div>
             <?php endif; ?>
@@ -805,7 +806,7 @@
             container.innerHTML = '';
 
             if (!hierarchyData.root) {
-                container.innerHTML = '<div class="text-center py-5"><i class="bi bi-diagram-3 text-muted" class="style-22918"></i><p class="text-muted mt-2">No team hierarchy data available</p></div>';
+                container.innerHTML = '<div class="text-center py-5"><i class="bi bi-diagram-3 text-muted style-22918"></i><p class="text-muted mt-2">No team hierarchy data available</p></div>';
                 return;
             }
 

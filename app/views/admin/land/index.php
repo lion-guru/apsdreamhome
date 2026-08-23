@@ -30,7 +30,7 @@
                         <?php if (empty($landRecords)): ?>
                             <tr>
                                 <td colspan="7" class="text-center py-5">
-                                    <i class="fas fa-map-marked-alt fa-3x text-muted mb-3" class="style-82835"></i>
+                                    <i class="fas fa-map-marked-alt fa-3x text-muted mb-3 style-82835"></i>
                                     <h5 class="text-muted">No land records found</h5>
                                     <p class="text-muted mb-3">Add land parcels to your inventory to track acquisitions, pricing, and availability across all colonies.</p>
                                     <a href="<?= BASE_URL ?>/admin/land/create" class="btn btn-primary">

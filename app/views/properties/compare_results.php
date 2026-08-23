@@ -113,7 +113,7 @@
                          class="card-img-top" alt="<?= htmlspecialchars($property['title'] ?? '') ?>"
                          class="style-12213">
                     <?php else: ?>
-                    <div class="bg-light d-flex align-items-center justify-content-center" class="style-17333">
+                    <div class="bg-light d-flex align-items-center justify-content-center style-17333">
                         <i class="fas fa-home fa-3x text-muted"></i>
                     </div>
                     <?php endif; ?>

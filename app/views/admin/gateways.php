@@ -96,7 +96,7 @@ $page_heading = $page_heading ?? 'Gateway Manager';
                                 <td><?= (int)($row['duration_ms'] ?? 0) ?>ms</td>
                                 <td>$<?= number_format((float)($row['cost'] ?? 0), 4) ?></td>
                                 <td><span title="<?= htmlspecialchars((string)$row['created_at']) ?>"><?= htmlspecialchars((string)$row['created_at']) ?></span></td>
-                                <td class="text-truncate" class="style-96974" title="<?= htmlspecialchars((string)($row['error_message'] ?? '')) ?>">
+                                <td class="text-truncate style-96974" title="<?= htmlspecialchars((string)($row['error_message'] ?? '')) ?>">
                                     <?= htmlspecialchars((string)($row['error_message'] ?? '')) ?>
                                 </td>
                             </tr>
@@ -152,7 +152,7 @@ $page_heading = $page_heading ?? 'Gateway Manager';
                             <hr/>
 
                             <p class="small text-muted mb-2"><?= __('admin_gw_last_5', null, 'Last 5 calls:') ?></p>
-                            <ul class="list-group list-group-flush mb-2" class="style-85686">
+                            <ul class="list-group list-group-flush mb-2 style-85686">
                                 <?php if (empty($card['last_5'])): ?>
                                     <li class="list-group-item text-muted small"><?= __('admin_gw_no_calls_yet', null, 'No calls yet.') ?></li>
                                 <?php else: foreach ($card['last_5'] as $row): ?>

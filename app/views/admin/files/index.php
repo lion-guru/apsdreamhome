@@ -152,7 +152,7 @@
                         <?php if (empty($files['files'] ?? [])): ?>
                         <tr>
                             <td colspan="6" class="text-center py-5">
-                                <i class="fas fa-folder-open fa-3x text-muted mb-3" class="style-82835"></i>
+                                <i class="fas fa-folder-open fa-3x text-muted mb-3 style-82835"></i>
                                 <h5 class="text-muted">No files found</h5>
                                 <p class="text-muted mb-3">Upload your first file to get started with the file manager.</p>
                             </td>

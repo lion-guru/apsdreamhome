@@ -103,7 +103,7 @@ $active_page = 'properties';
                     <?php if (empty($properties)): ?>
                         <tr>
                             <td colspan="9" class="text-center py-5">
-                                <i class="fas fa-home fa-3x text-muted mb-3" class="style-82835"></i>
+                                <i class="fas fa-home fa-3x text-muted mb-3 style-82835"></i>
                                 <h5 class="text-muted">No properties found</h5>
                                 <p class="text-muted mb-3">Add your first property listing to start showcasing plots, apartments, and commercial spaces to potential buyers.</p>
                                 <a href="<?= BASE_URL ?>/admin/properties/create" class="btn btn-primary">

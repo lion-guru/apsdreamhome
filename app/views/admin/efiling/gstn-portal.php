@@ -119,7 +119,7 @@ ob_start();
                         <i class="fas fa-cloud-upload-alt me-1"></i>Submit GSTR-1 to GSTN
                     </button>
                 </form>
-                <div id="gstr1Result" class="mt-3" class="style-2248"></div>
+                <div id="gstr1Result" class="mt-3 style-2248"></div>
             </div>
         </div>
     </div>
@@ -156,7 +156,7 @@ ob_start();
                         <i class="fas fa-cloud-upload-alt me-1"></i>Submit GSTR-3B to GSTN
                     </button>
                 </form>
-                <div id="gstr3bResult" class="mt-3" class="style-2248"></div>
+                <div id="gstr3bResult" class="mt-3 style-2248"></div>
             </div>
         </div>
     </div>

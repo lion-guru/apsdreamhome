@@ -27,13 +27,13 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
         <tr>
           <td bgcolor="#3b82f6" align="center" class="style-42381">
             <div class="style-90702">&#128172;</div>
-            <h1 class="h1-mobile" class="style-56865">Support Ticket Created</h1>
+            <h1 class="h1-mobile style-56865">Support Ticket Created</h1>
             <p class="style-9233">We're here to help</p>
           </td>
         </tr>
         <!-- Body -->
         <tr>
-          <td class="px-mobile" class="style-68782">
+          <td class="px-mobile style-68782">
             <h2 class="style-80102">Hi {{user_name}},</h2>
             <p class="style-28596">
               Your support request has been received. Our team will respond within <strong>24 hours</strong>.
@@ -55,7 +55,7 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
               <tr>
                 <td align="center" class="style-43583">
-                  <a href="{{ticket_url}}" class="button-mobile" class="style-5019">View Ticket</a>
+                  <a href="{{ticket_url}}" class="button-mobile style-5019">View Ticket</a>
                 </td>
               </tr>
             </table>

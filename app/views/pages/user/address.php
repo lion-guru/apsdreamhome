@@ -42,7 +42,7 @@ ob_start();
             </h4>
             <span class="aps-cp-badge aps-cp-badge-<?= $color ?>"><?= htmlspecialchars(ucfirst($type ?? '')) ?></span>
         </div>
-        <address class="aps-cp-info-card-meta" class="style-81916">
+        <address class="aps-cp-info-card-meta style-81916">
             <?= htmlspecialchars($a['address_line1'] ?? '') ?>
             <?php if (!empty($a['address_line2'])): ?>, <?= htmlspecialchars($a['address_line2'] ?? '') ?><?php endif; ?><br>
             <?= htmlspecialchars($a['city'] ?? '') ?>, <?= htmlspecialchars($a['state'] ?? '') ?> - <?= htmlspecialchars($a['pincode'] ?? '') ?><br>
@@ -61,7 +61,7 @@ ob_start();
 </div>
 <?php endif; ?>
 
-<div id="addressModal" class="aps-cp-modal" class="style-2248">
+<div id="addressModal" class="aps-cp-modal style-2248">
     <div class="aps-cp-modal-overlay" onclick="closeAddressModal()"></div>
     <div class="aps-cp-modal-dialog">
         <div class="aps-cp-modal-head">

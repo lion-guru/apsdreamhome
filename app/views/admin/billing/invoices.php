@@ -14,7 +14,7 @@ $base          = BASE_URL ?? '';
     <div class="d-flex justify-content-between align-items-center">
         <div>
             <h4 class="mb-0"><i class="fas fa-receipt me-2"></i>Billing History</h4>
-            <p class="mb-0 mt-1" class="style-91394">
+            <p class="mb-0 mt-1 style-91394">
                 <?= htmlspecialchars($tenant['name'] ?? 'Tenant') ?> — All subscription records
             </p>
         </div>

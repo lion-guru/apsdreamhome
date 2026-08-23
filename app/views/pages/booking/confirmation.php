@@ -25,7 +25,7 @@ foreach ($statusSteps as $i => $step) {
 <div class="container py-4">
 
     <!-- Success Banner -->
-    <div class="alert alert-success py-4 mb-4 text-center" class="style-84037">
+    <div class="alert alert-success py-4 mb-4 text-center style-84037">
         <i class="fas fa-check-circle fa-3x mb-2"></i>
         <h3 class="fw-bold mb-1"><?= __('booking_conf_heading', [], 'Booking Confirmed!') ?></h3>
         <p class="mb-0">
@@ -50,12 +50,11 @@ foreach ($statusSteps as $i => $step) {
                     <span><i class="fas fa-clock me-2"></i><?= __('booking_conf_progress', [], 'Booking Progress') ?></span>
                 </div>
                 <div class="aps-cp-card-body">
-                    <div class="position-relative" class="style-66736">
-                        <div class="position-absolute" class="style-985"></div>
+                    <div class="position-relative style-66736">
+                        <div class="position-absolute style-985"></div>
                         <?php foreach ($statusSteps as $i => $step): ?>
                         <div class="position-relative pb-3">
-                            <div class="position-absolute rounded-circle d-flex align-items-center justify-content-center"
-                                 class="style-36086">
+                            <div class="position-absolute rounded-circle d-flex align-items-center justify-content-center style-36086">
                             </div>
                             <div class="<?= $i <= $currentStep ? '' : 'opacity-50' ?>">
                                 <i class="<?= e($step['icon']) ?> me-1"></i>
@@ -115,7 +114,7 @@ foreach ($statusSteps as $i => $step) {
                 <div class="aps-cp-card-header">
                     <span><i class="fas fa-calendar-alt me-2"></i><?= __('booking_conf_payment_schedule', [], 'Payment Schedule') ?></span>
                 </div>
-                <div class="aps-cp-card-body" class="style-10754">
+                <div class="aps-cp-card-body style-10754">
                     <table class="table table-sm table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
@@ -168,28 +167,28 @@ foreach ($statusSteps as $i => $step) {
                 <div class="aps-cp-card-body">
                     <ol class="list-unstyled mb-0">
                         <li class="mb-3 d-flex">
-                            <span class="badge bg-primary rounded-circle me-2 flex-shrink-0" class="style-96907">1</span>
+                            <span class="badge bg-primary rounded-circle me-2 flex-shrink-0 style-96907">1</span>
                             <div>
                                 <strong><?= __('booking_conf_step1_title', [], 'Admin Confirmation') ?></strong>
                                 <small class="d-block text-muted"><?= __('booking_conf_step1_desc', [], 'Our team will review and confirm your booking within 24 hours.') ?></small>
                             </div>
                         </li>
                         <li class="mb-3 d-flex">
-                            <span class="badge bg-primary rounded-circle me-2 flex-shrink-0" class="style-96907">2</span>
+                            <span class="badge bg-primary rounded-circle me-2 flex-shrink-0 style-96907">2</span>
                             <div>
                                 <strong><?= __('booking_conf_step2_title', [], 'Pay Token Amount') ?></strong>
                                 <small class="d-block text-muted"><?= __('booking_conf_step2_prefix', [], 'Pay 25% token') ?> (₹<?= number_format((float)($booking['total_plot_value'] ?? 0) * 0.25) ?>) <?= __('booking_conf_step2_suffix', [], 'to confirm your spot.') ?></small>
                             </div>
                         </li>
                         <li class="mb-3 d-flex">
-                            <span class="badge bg-primary rounded-circle me-2 flex-shrink-0" class="style-96907">3</span>
+                            <span class="badge bg-primary rounded-circle me-2 flex-shrink-0 style-96907">3</span>
                             <div>
                                 <strong><?= __('booking_conf_step3_title', [], 'Sign Agreement') ?></strong>
                                 <small class="d-block text-muted"><?= __('booking_conf_step3_desc', [], 'Visit our office or complete online agreement signing.') ?></small>
                             </div>
                         </li>
                         <li class="mb-3 d-flex">
-                            <span class="badge bg-primary rounded-circle me-2 flex-shrink-0" class="style-96907">4</span>
+                            <span class="badge bg-primary rounded-circle me-2 flex-shrink-0 style-96907">4</span>
                             <div>
                                 <strong><?= __('booking_conf_step4_title', [], 'Registration') ?></strong>
                                 <small class="d-block text-muted"><?= __('booking_conf_step4_desc', [], 'Complete registration at the Sub-Registrar office.') ?></small>

@@ -48,28 +48,28 @@ $statusBadges = [
     <div class="row g-3 mb-4">
         <div class="col-6 col-md-3">
             <div class="doc-stat-card bg-white border">
-                <div class="doc-stat-icon" class="style-24507"><i class="fas fa-folder"></i></div>
+                <div class="doc-stat-icon style-24507"><i class="fas fa-folder"></i></div>
                 <h4 class="mb-0"><?= $stats['total'] ?></h4>
                 <small class="text-muted"><?= __('assoc_doc_total', [], 'Total Documents') ?></small>
             </div>
         </div>
         <div class="col-6 col-md-3">
             <div class="doc-stat-card bg-white border">
-                <div class="doc-stat-icon" class="style-17090"><i class="fas fa-clock"></i></div>
+                <div class="doc-stat-icon style-17090"><i class="fas fa-clock"></i></div>
                 <h4 class="mb-0"><?= $stats['pending'] ?></h4>
                 <small class="text-muted"><?= __('assoc_doc_pending', [], 'Pending Review') ?></small>
             </div>
         </div>
         <div class="col-6 col-md-3">
             <div class="doc-stat-card bg-white border">
-                <div class="doc-stat-icon" class="style-59662"><i class="fas fa-check-circle"></i></div>
+                <div class="doc-stat-icon style-59662"><i class="fas fa-check-circle"></i></div>
                 <h4 class="mb-0"><?= $stats['approved'] ?></h4>
                 <small class="text-muted"><?= __('assoc_doc_approved', [], 'Approved') ?></small>
             </div>
         </div>
         <div class="col-6 col-md-3">
             <div class="doc-stat-card bg-white border">
-                <div class="doc-stat-icon" class="style-64406"><i class="fas fa-times-circle"></i></div>
+                <div class="doc-stat-icon style-64406"><i class="fas fa-times-circle"></i></div>
                 <h4 class="mb-0"><?= $stats['rejected'] ?></h4>
                 <small class="text-muted"><?= __('assoc_doc_rejected', [], 'Rejected') ?></small>
             </div>
@@ -85,7 +85,7 @@ $statusBadges = [
         <div class="card-body p-0">
             <?php if (empty($documents)): ?>
             <div class="text-center py-5">
-                <i class="fas fa-folder-open fa-4x text-muted mb-3" class="style-11393"></i>
+                <i class="fas fa-folder-open fa-4x text-muted mb-3 style-11393"></i>
                 <p class="text-muted mb-2"><?= __('assoc_doc_empty', [], 'No documents uploaded yet.') ?></p>
                 <p class="text-muted small mb-3"><?= __('assoc_doc_empty_desc', [], 'Documents you upload will appear here for easy access.') ?></p>
                 <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#uploadModal">
@@ -112,8 +112,8 @@ $statusBadges = [
                         <tr class="doc-row">
                             <td>
                                 <div class="d-flex align-items-center gap-2">
-                                    <div class="doc-icon-box" class="style-96626">
-                                        <i class="fas <?= $typeInfo['icon'] ?>" class="style-48136"></i>
+                                    <div class="doc-icon-box style-96626">
+                                        <i class="fas <?= $typeInfo['icon'] ?> style-48136"></i>
                                     </div>
                                     <span class="small"><?= htmlspecialchars($typeInfo['label'] ?? '') ?></span>
                                 </div>

@@ -1,7 +1,7 @@
 ï»¿<div class="container-fluid">
     <div class="row mb-4">
         <div class="col-8">
-            <h2 class="style-48283"><i class="fas fa-money-check-alt me-2" class="style-56943"></i> Payout Batches</h2>
+            <h2 class="style-48283"><i class="fas fa-money-check-alt me-2 style-56943"></i> Payout Batches</h2>
             <p class="style-43180">Commission payout management with approval workflow</p>
         </div>
         <div class="col-4 text-end">
@@ -23,7 +23,7 @@
         ?>
         <?php foreach ($statusConfig as $sKey => $sCfg): ?>
             <div class="col-md-2">
-                <div class="card" class="style-11438">
+                <div class="card style-11438">
                     <div class="card-body text-center py-2">
                         <h4 class="style-22740"><?= $stats[$sKey]['count'] ?? 0 ?></h4>
                         <small class="style-45096"><?= str_replace('_', ' ', $sKey) ?></small>
@@ -42,11 +42,11 @@
     </div>
 
     <!-- Batch List -->
-    <div class="card" class="style-62867">
+    <div class="card style-62867">
         <div class="card-body p-0">
             <?php if (empty($items)): ?>
                 <div class="text-center p-5">
-                    <i class="fas fa-inbox fa-3x" class="style-2349"></i>
+                    <i class="fas fa-inbox fa-3x style-2349"></i>
                     <h5 class="style-39334">No payout batches found</h5>
                     <a href="<?= BASE_URL ?>/admin/payout-batches/create" class="btn btn-success mt-2"><i class="fas fa-plus me-1"></i> Create First Batch</a>
                 </div>
@@ -86,7 +86,7 @@
                                         <?php
                                         $sc = $statusConfig[$item['status']] ?? ['color' => '#6c757d'];
                                         ?>
-                                        <span class="badge" class="style-18884">
+                                        <span class="badge style-18884">
                                             <?= str_replace('_', ' ', ucfirst($item['status'])) ?>
                                         </span>
                                     </td>
@@ -105,7 +105,7 @@
 
                 <!-- Pagination -->
                 <?php if ($total_pages > 1): ?>
-                    <div class="d-flex justify-content-between align-items-center p-3" class="style-8524">
+                    <div class="d-flex justify-content-between align-items-center p-3 style-8524">
                         <small class="style-77712">Page <?= $page ?> of <?= $total_pages ?></small>
                         <div>
                             <?php for ($i = max(1, $page - 2); $i <= min($total_pages, $page + 2); $i++): ?>

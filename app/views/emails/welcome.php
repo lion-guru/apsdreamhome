@@ -30,13 +30,13 @@ a:hover{text-decoration:underline}
         <tr>
           <td bgcolor="#0d9488" align="center" class="style-40724">
             <img src="{{logo_url}}" alt="APS Dream Home" width="180" class="style-97829">
-            <h1 class="h1-mobile" class="style-56865">Welcome to APS Dream Home</h1>
+            <h1 class="h1-mobile style-56865">Welcome to APS Dream Home</h1>
             <p class="style-9233">India's Premier Real Estate Platform</p>
           </td>
         </tr>
         <!-- Body -->
         <tr>
-          <td class="px-mobile" class="style-68782">
+          <td class="px-mobile style-68782">
             <h2 class="style-80102">Hi {{name}},</h2>
             <p class="style-28596">
               Thank you for joining <strong>APS Dream Home</strong> — your trusted partner in finding the perfect property across India.
@@ -61,7 +61,7 @@ a:hover{text-decoration:underline}
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
               <tr>
                 <td align="center" class="style-43583">
-                  <a href="{{login_url}}" class="button-mobile" class="style-99288">Get Started</a>
+                  <a href="{{login_url}}" class="button-mobile style-99288">Get Started</a>
                 </td>
               </tr>
             </table>

@@ -27,7 +27,7 @@ ob_start();
                         <?php if (empty($replies)): ?>
                         <tr>
                             <td colspan="5" class="text-center py-5">
-                                <i class="fas fa-comment-dots fa-3x text-muted mb-3" class="style-82835"></i>
+                                <i class="fas fa-comment-dots fa-3x text-muted mb-3 style-82835"></i>
                                 <h5 class="text-muted">No quick replies found</h5>
                                 <p class="text-muted mb-3">Create quick reply templates to speed up live chat responses.</p>
                             </td>

@@ -276,7 +276,7 @@ $bannerImage = !empty($bannerRaw) && (str_starts_with($bannerRaw, 'http://') || 
             <?php foreach ($nearbyPlaces as $np): ?>
             <div class="col-md-4 col-sm-6">
                 <div class="d-flex align-items-center gap-3 p-3 border rounded-3 bg-light">
-                    <div class="icon-circle bg-primary bg-opacity-10 text-primary" class="style-36633">
+                    <div class="icon-circle bg-primary bg-opacity-10 text-primary style-36633">
                         <i class="fas fa-map-marker-alt"></i>
                     </div>
                     <div>

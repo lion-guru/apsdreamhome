@@ -1,0 +1,48 @@
+<?php
+// Featured Properties Page - APS Dream Homes
+
+$featuredProperties = [
+    ['name' => 'APS Anant City - Premium Plots', 'location' => 'Gorakhpur', 'price' => '12,50,000', 'area' => '1200 sq.ft', 'type' => 'Residential Plot', 'image' => 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400'],
+    ['name' => 'Suyoday Colony Phase 2', 'location' => 'Gorakhpur', 'price' => '8,75,000', 'area' => '1000 sq.ft', 'type' => 'Residential Plot', 'image' => 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400'],
+    ['name' => 'Raghunath Nagri Premium', 'location' => 'Gorakhpur', 'price' => '15,00,000', 'area' => '1500 sq.ft', 'type' => 'Residential Plot', 'image' => 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400'],
+    ['name' => 'Braj Radha Nagri', 'location' => 'Mathura', 'price' => '10,00,000', 'area' => '1100 sq.ft', 'type' => 'Residential Plot', 'image' => 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400'],
+    ['name' => 'Awadhpuri Extension', 'location' => 'Gorakhpur', 'price' => '9,50,000', 'area' => '1050 sq.ft', 'type' => 'Residential Plot', 'image' => 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400'],
+    ['name' => 'Budh Bihari Colony', 'location' => 'Gorakhpur', 'price' => '7,50,000', 'area' => '900 sq.ft', 'type' => 'Residential Plot', 'image' => 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=400'],
+];
+?>
+
+<section class="py-5 bg-primary text-white" class="style-68644">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold mb-3"><?= __('featured_hero_title') ?></h1>
+        <p class="lead"><?= __('featured_hero_desc') ?></p>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <?php foreach ($featuredProperties as $property): ?>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="position-relative">
+                        <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top img-fluid" alt="<?= htmlspecialchars($property['name'] ?? '') ?>" class="style-62479">
+                        <span class="badge bg-success position-absolute top-0 start-0 m-3"><?= __('featured_badge') ?></span>
+                    </div>
+                    <div class="card-body aps-cp-card-body">
+                        <h5 class="card-title"><?= htmlspecialchars($property['name'] ?? '') ?></h5>
+                        <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($property['location'] ?? '') ?></p>
+                        <div class="d-flex gap-3 mb-3">
+                            <span><i class="fas fa-ruler-combined text-muted me-1"></i><?= $property['area'] ?></span>
+                            <span><i class="fas fa-tag text-muted me-1"></i><?= $property['type'] ?></span>
+                        </div>
+                        <div class="h4 text-primary">₹<?= $property['price'] ?></div>
+                    </div>
+                    <div class="card-footer bg-white border-0 pb-3">
+                        <a href="<?= BASE_URL ?>/properties" class="btn btn-primary w-100"><?= __('featured_view_details') ?></a>
+                    </div>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>

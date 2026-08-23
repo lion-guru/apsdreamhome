@@ -59,8 +59,8 @@
                                     <td><?= number_format($m['transactions'] ?? 0) ?></td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <div class="progress flex-grow-1 me-2" class="style-12222">
-                                                <div class="progress-bar bg-success" class="style-18089"></div>
+                                            <div class="progress flex-grow-1 me-2 style-12222">
+                                                <div class="progress-bar bg-success style-18089"></div>
                                             </div>
                                             <small><?= number_format($m['success_rate'] ?? 0, 1) ?>%</small>
                                         </div>

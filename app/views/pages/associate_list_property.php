@@ -42,7 +42,7 @@ $associate_email = $associate_email ?? '';
     }
 </style>
 
-<div class="container-fluid px-3 py-3" class="style-63221">
+<div class="container-fluid px-3 py-3 style-63221">
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="m-0 fw-bold"><i class="fas fa-home me-2 text-primary"></i>Post Property</h5>
@@ -291,7 +291,7 @@ $associate_email = $associate_email ?? '';
 
         <!-- Submit -->
         <div class="prop-section text-center">
-            <button type="submit" class="btn btn-primary btn-lg w-100 py-3" class="style-80393">
+            <button type="submit" class="btn btn-primary btn-lg w-100 py-3 style-80393">
                 <i class="fas fa-paper-plane me-2"></i>Post Property
             </button>
             <div class="text-muted small mt-2">

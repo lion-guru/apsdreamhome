@@ -47,7 +47,7 @@ $p = $property ?? [];
         ?>
         <?php if (empty($images)): ?>
             <div class="text-center py-5">
-                <i class="fas fa-image fa-3x mb-3" class="style-39608"></i>
+                <i class="fas fa-image fa-3x mb-3 style-39608"></i>
                 <h5 class="text-muted">No images uploaded</h5>
                 <p class="text-muted mb-0">Upload property images using the form above.</p>
             </div>
@@ -56,9 +56,9 @@ $p = $property ?? [];
                 <?php foreach ($images as $idx => $img): ?>
                     <?php $src = (strpos(trim($img), 'http') === 0) ? trim($img) : BASE_URL . trim($img); ?>
                     <div class="col-md-3">
-                        <div class="card border position-relative" class="style-94398">
-                            <img src="<?= htmlspecialchars($src ?? '') ?>" alt="Property Image <?= $idx + 1 ?>" class="card-img-top" class="style-58348" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-                            <div class="d-none align-items-center justify-content-center bg-light" class="style-59965"><i class="fas fa-broken-image fa-2x text-muted"></i></div>
+                        <div class="card border position-relative style-94398">
+                            <img src="<?= htmlspecialchars($src ?? '') ?>" alt="Property Image <?= $idx + 1 ?>" class="card-img-top style-58348" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                            <div class="d-none align-items-center justify-content-center bg-light style-59965"><i class="fas fa-broken-image fa-2x text-muted"></i></div>
                             <div class="card-body p-2 text-center d-flex justify-content-between align-items-center">
                                 <small class="text-muted">Image #<?= $idx + 1 ?></small>
                                 <form method="POST" action="<?= BASE_URL ?>/admin/resell-properties/images/<?= $id ?>/delete" class="d-inline" data-aps-confirm="Remove this image?">

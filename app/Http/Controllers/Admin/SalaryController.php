@@ -22,10 +22,10 @@ class SalaryController extends AdminController
     {
         $this->requireAdmin();
         try {
-            $totalPaid = $this->db->fetch("SELECT COALESCE(SUM(net_salary),0) as total FROM salary_payments WHERE status='paid' AND MONTH(payment_date)=MONTH(CURDATE()) AND YEAR(payment_date)=YEAR(CURDATE())")['total'] ?? 0;
-            $pendingCount = $this->db->fetch("SELECT COUNT(*) as c FROM salary_payments WHERE status='pending'")['c'] ?? 0;
-            $employeeCount = $this->db->fetch("SELECT COUNT(DISTINCT employee_id) as c FROM salary_structures WHERE is_active=1")['c'] ?? 0;
-            $pendingAmount = $this->db->fetch("SELECT COALESCE(SUM(net_salary),0) as total FROM salary_payments WHERE status='pending'")['total'] ?? 0;
+            $totalPaid = $this->db->fetch("SELECT COALESCE(SUM(net_amount),0) as total FROM salary_payments WHERE payment_status='paid' AND MONTH(payment_date)=MONTH(CURDATE()) AND YEAR(payment_date)=YEAR(CURDATE())")['total'] ?? 0;
+            $pendingCount = $this->db->fetch("SELECT COUNT(*) as c FROM salary_payments WHERE payment_status='pending'")['c'] ?? 0;
+            $employeeCount = $this->db->fetch("SELECT COUNT(DISTINCT employee_id) as c FROM salary_structures WHERE status='active'")['c'] ?? 0;
+            $pendingAmount = $this->db->fetch("SELECT COALESCE(SUM(net_amount),0) as total FROM salary_payments WHERE payment_status='pending'")['total'] ?? 0;
 
             $recentPayments = $this->db->fetchAll("
                 SELECT sp.*, u.name as employee_name
@@ -216,8 +216,8 @@ class SalaryController extends AdminController
         header('Content-Type: application/json');
         try {
             $monthly = $this->db->fetchAll("
-                SELECT DATE_FORMAT(payment_date,'%b') as label, COALESCE(SUM(net_salary),0) as total
-                FROM salary_payments WHERE status='paid' AND payment_date >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+                SELECT DATE_FORMAT(payment_date,'%b') as label, COALESCE(SUM(net_amount),0) as total
+                FROM salary_payments WHERE payment_status='paid' AND payment_date >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
                 GROUP BY DATE_FORMAT(payment_date,'%Y-%m') ORDER BY MIN(payment_date)
             ") ?: [];
             echo json_encode(['success' => true, 'data' => $monthly]);

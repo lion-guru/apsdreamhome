@@ -17,6 +17,7 @@
         .btn-home:hover { transform: translateY(-2px); color: white; text-decoration: none; }
         .btn-secondary { background: #6c757d; }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
     <div class="error-container">

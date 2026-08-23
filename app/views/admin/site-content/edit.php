@@ -54,7 +54,7 @@ $groupLabels = [
                         <?php elseif ($type === 'image'): ?>
                             <?php if (!empty($val) && file_exists(dirname(__DIR__, 3) . '/' . $val)): ?>
                                 <div class="mb-2">
-                                    <img src="<?= BASE_URL ?>/<?= htmlspecialchars($val ?? '') ?>" class="img-thumbnail" class="style-2652" alt="<?= htmlspecialchars($label ?? '') ?>">
+                                    <img src="<?= BASE_URL ?>/<?= htmlspecialchars($val ?? '') ?>" class="img-thumbnail style-2652" alt="<?= htmlspecialchars($label ?? '') ?>">
                                 </div>
                             <?php endif; ?>
                             <input type="file" name="content_image[<?= htmlspecialchars($key ?? '') ?>]" class="form-control" accept="image/*">

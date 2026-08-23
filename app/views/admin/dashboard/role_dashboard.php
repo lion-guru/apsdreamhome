@@ -86,7 +86,7 @@ if ($role === 'associate') {
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
-                            <div class="rounded-circle p-3" class="style-16944">
+                            <div class="rounded-circle p-3 style-16944">
                                 <i class="<?= $card['icon'] ?> fa-lg"></i>
                             </div>
                         </div>
@@ -174,7 +174,7 @@ if ($role === 'associate') {
                         <div class="col-6">
                             <a href="<?= $base ?><?= $action['url'] ?>" class="text-decoration-none">
                                 <div class="d-flex align-items-center gap-2 p-2 rounded-3 border">
-                                    <i class="<?= $action['icon'] ?>" class="style-83279"></i>
+                                    <i class="<?= $action['icon'] ?> style-83279"></i>
                                     <span class="small fw-medium"><?= $action['label'] ?></span>
                                 </div>
                             </a>

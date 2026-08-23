@@ -9,7 +9,7 @@ $base = $base ?? BASE_URL;
 ?>
 
 <section class="py-5 bg-gradient-success text-white position-relative overflow-hidden">
-    <div class="position-absolute top-0 start-0 w-100 h-100" class="style-5567"></div>
+    <div class="position-absolute top-0 start-0 w-100 h-100 style-5567"></div>
     <div class="container position-relative">
         <div class="row align-items-center">
             <div class="col-lg-8">
@@ -112,7 +112,7 @@ $base = $base ?? BASE_URL;
                             <?php foreach ($top_performers as $i => $performer): ?>
                             <div class="list-group-item">
                                 <div class="d-flex align-items-center">
-                                    <div class="me-3 text-center" class="style-84397">
+                                    <div class="me-3 text-center style-84397">
                                         <?php if ($i === 0): ?><i class="fas fa-crown text-warning"></i>
                                         <?php elseif ($i === 1): ?><i class="fas fa-medal text-secondary"></i>
                                         <?php elseif ($i === 2): ?><i class="fas fa-medal text-bronze"></i>

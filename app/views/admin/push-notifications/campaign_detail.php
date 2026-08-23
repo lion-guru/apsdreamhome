@@ -4,13 +4,13 @@
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/push-notifications" class="style-75937">Push Notifications</a></li>
                 <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/push-notifications/campaigns" class="style-75937">Campaigns</a></li>
-                <li class="breadcrumb-item active" class="style-27277"><?= htmlspecialchars($campaign['name'] ?? '') ?></li>
+                <li class="breadcrumb-item active style-27277"><?= htmlspecialchars($campaign['name'] ?? '') ?></li>
             </ol>
         </nav>
         <div class="d-flex justify-content-between align-items-center">
             <div>
                 <h1 class="h3 mb-1 fw-bold"><?= htmlspecialchars($campaign['name'] ?? '') ?></h1>
-                <p class="mb-0" class="style-54585">
+                <p class="mb-0 style-54585">
                     <?= htmlspecialchars(mb_strimwidth($campaign['description'] ?? '', 0, 80, '...')) ?>
                 </p>
             </div>
@@ -55,31 +55,31 @@
 
     <div class="row g-3 mb-4">
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm" class="style-52634">
+            <div class="card border-0 shadow-sm style-52634">
                 <div class="card-body text-center">
-                    <div class="fs-2 fw-bold" class="style-96443"><?= (int)($campaign['total_recipients'] ?? 0) ?></div>
+                    <div class="fs-2 fw-bold style-96443"><?= (int)($campaign['total_recipients'] ?? 0) ?></div>
                     <div class="style-37380">Total Recipients</div>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm" class="style-52634">
+            <div class="card border-0 shadow-sm style-52634">
                 <div class="card-body text-center">
-                    <div class="fs-2 fw-bold" class="style-63663"><?= (int)($campaign['sent_count'] ?? 0) ?></div>
+                    <div class="fs-2 fw-bold style-63663"><?= (int)($campaign['sent_count'] ?? 0) ?></div>
                     <div class="style-37380">Sent</div>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm" class="style-52634">
+            <div class="card border-0 shadow-sm style-52634">
                 <div class="card-body text-center">
-                    <div class="fs-2 fw-bold" class="style-62247"><?= (int)($campaign['failed_count'] ?? 0) ?></div>
+                    <div class="fs-2 fw-bold style-62247"><?= (int)($campaign['failed_count'] ?? 0) ?></div>
                     <div class="style-37380">Failed</div>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm" class="style-52634">
+            <div class="card border-0 shadow-sm style-52634">
                 <div class="card-body text-center">
                     <?php
                         $statusStyles = [
@@ -92,7 +92,7 @@
                         ];
                         $st = $statusStyles[$campaign['status']] ?? ['bg' => '#334155', 'text' => '#94a3b8'];
                     ?>
-                    <span class="badge fs-6 p-2" class="style-43336">
+                    <span class="badge fs-6 p-2 style-43336">
                         <?= ucfirst(htmlspecialchars($campaign['status'] ?? '')) ?>
                     </span>
                 </div>
@@ -102,9 +102,9 @@
 
     <div class="row g-4">
         <div class="col-lg-6">
-            <div class="card border-0 shadow-sm mb-4" class="style-52634">
-                <div class="card-header" class="style-52852">
-                    <h6 class="mb-0 fw-bold" class="style-96443">Campaign Info</h6>
+            <div class="card border-0 shadow-sm mb-4 style-52634">
+                <div class="card-header style-52852">
+                    <h6 class="mb-0 fw-bold style-96443">Campaign Info</h6>
                 </div>
                 <div class="card-body">
                     <table class="table table-borderless mb-0">
@@ -115,7 +115,7 @@
                                     $channelColors = ['push' => '#3b82f6', 'email' => '#8b5cf6', 'sms' => '#10b981', 'whatsapp' => '#25d366', 'all' => '#f59e0b'];
                                     $ch = $campaign['channel'] ?? 'push';
                                 ?>
-                                <span class="badge" class="style-24324">
+                                <span class="badge style-24324">
                                     <?= strtoupper($ch) ?>
                                 </span>
                             </td>
@@ -155,13 +155,13 @@
                 </div>
             </div>
 
-            <div class="card border-0 shadow-sm" class="style-52634">
-                <div class="card-header" class="style-52852">
-                    <h6 class="mb-0 fw-bold" class="style-96443">Message Preview</h6>
+            <div class="card border-0 shadow-sm style-52634">
+                <div class="card-header style-52852">
+                    <h6 class="mb-0 fw-bold style-96443">Message Preview</h6>
                 </div>
                 <div class="card-body">
-                    <div class="p-3 rounded" class="style-1278">
-                        <div class="fw-semibold mb-1" class="style-96443">
+                    <div class="p-3 rounded style-1278">
+                        <div class="fw-semibold mb-1 style-96443">
                             <?= htmlspecialchars($campaign['title'] ?? '') ?>
                         </div>
                         <div class="style-24601">
@@ -174,26 +174,26 @@
 
         <div class="col-lg-6">
             <?php if (in_array($campaign['status'], ['running', 'completed'])): ?>
-                <div class="card border-0 shadow-sm mb-4" class="style-52634">
-                    <div class="card-header" class="style-52852">
-                        <h6 class="mb-0 fw-bold" class="style-96443">Queue Status</h6>
+                <div class="card border-0 shadow-sm mb-4 style-52634">
+                    <div class="card-header style-52852">
+                        <h6 class="mb-0 fw-bold style-96443">Queue Status</h6>
                     </div>
                     <div class="card-body">
                         <div class="row g-3 text-center">
                             <div class="col-3">
-                                <div class="fw-bold fs-5" class="style-60246"><?= (int)($queueStats['pending'] ?? 0) ?></div>
+                                <div class="fw-bold fs-5 style-60246"><?= (int)($queueStats['pending'] ?? 0) ?></div>
                                 <div class="style-20964">Pending</div>
                             </div>
                             <div class="col-3">
-                                <div class="fw-bold fs-5" class="style-23731"><?= (int)($queueStats['processing'] ?? 0) ?></div>
+                                <div class="fw-bold fs-5 style-23731"><?= (int)($queueStats['processing'] ?? 0) ?></div>
                                 <div class="style-20964">Processing</div>
                             </div>
                             <div class="col-3">
-                                <div class="fw-bold fs-5" class="style-63663"><?= (int)($queueStats['sent'] ?? 0) ?></div>
+                                <div class="fw-bold fs-5 style-63663"><?= (int)($queueStats['sent'] ?? 0) ?></div>
                                 <div class="style-20964">Sent</div>
                             </div>
                             <div class="col-3">
-                                <div class="fw-bold fs-5" class="style-62247"><?= (int)($queueStats['failed'] ?? 0) ?></div>
+                                <div class="fw-bold fs-5 style-62247"><?= (int)($queueStats['failed'] ?? 0) ?></div>
                                 <div class="style-20964">Failed</div>
                             </div>
                         </div>
@@ -207,34 +207,34 @@
                                 <small class="style-27277">Progress</small>
                                 <small class="style-27277"><?= $pct ?>%</small>
                             </div>
-                            <div class="progress" class="style-19462">
-                                <div class="progress-bar" class="style-97319"></div>
+                            <div class="progress style-19462">
+                                <div class="progress-bar style-97319"></div>
                             </div>
                         </div>
                     </div>
                 </div>
             <?php endif; ?>
 
-            <div class="card border-0 shadow-sm" class="style-52634">
-                <div class="card-header" class="style-52852">
-                    <h6 class="mb-0 fw-bold" class="style-96443">Recent Activity</h6>
+            <div class="card border-0 shadow-sm style-52634">
+                <div class="card-header style-52852">
+                    <h6 class="mb-0 fw-bold style-96443">Recent Activity</h6>
                 </div>
-                <div class="card-body p-0" class="style-43942">
+                <div class="card-body p-0 style-43942">
                     <?php if (empty($logs)): ?>
-                        <div class="text-center py-4" class="style-54585">
-                            <i class="fas fa-inbox fa-2x mb-2" class="style-97679"></i>
+                        <div class="text-center py-4 style-54585">
+                            <i class="fas fa-inbox fa-2x mb-2 style-97679"></i>
                             <p class="mb-0 small">No activity yet</p>
                         </div>
                     <?php else: ?>
                         <?php foreach ($logs as $l): ?>
-                            <div class="d-flex align-items-start gap-3 px-3 py-2" class="style-77065">
+                            <div class="d-flex align-items-start gap-3 px-3 py-2 style-77065">
                                 <div class="mt-1">
                                     <?php if (($l['status'] ?? '') === 'sent' || ($l['status'] ?? '') === 'delivered'): ?>
-                                        <i class="fas fa-check-circle" class="style-5723"></i>
+                                        <i class="fas fa-check-circle style-5723"></i>
                                     <?php elseif (($l['status'] ?? '') === 'failed'): ?>
-                                        <i class="fas fa-times-circle" class="style-73289"></i>
+                                        <i class="fas fa-times-circle style-73289"></i>
                                     <?php else: ?>
-                                        <i class="fas fa-circle" class="style-79965"></i>
+                                        <i class="fas fa-circle style-79965"></i>
                                     <?php endif; ?>
                                 </div>
                                 <div class="flex-grow-1 min-width-0">

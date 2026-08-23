@@ -27,28 +27,28 @@ $breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => BASE_URL], ['title'
                         <h4 class="fw-bold mb-4 text-primary">How It Works</h4>
                         <div class="row g-4">
                             <div class="col-md-3 text-center">
-                                <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mb-3" class="style-9543">
+                                <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mb-3 style-9543">
                                     <i class="fas fa-file-alt fa-lg"></i>
                                 </div>
                                 <h6 class="fw-bold">Document Check</h6>
                                 <p class="text-muted small mb-0">Ownership documents, title deed, encumbrance certificate verified</p>
                             </div>
                             <div class="col-md-3 text-center">
-                                <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mb-3" class="style-9543">
+                                <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mb-3 style-9543">
                                     <i class="fas fa-map-marked-alt fa-lg"></i>
                                 </div>
                                 <h6 class="fw-bold">Physical Visit</h6>
                                 <p class="text-muted small mb-0">On-site inspection of property condition, boundaries, and surroundings</p>
                             </div>
                             <div class="col-md-3 text-center">
-                                <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mb-3" class="style-9543">
+                                <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mb-3 style-9543">
                                     <i class="fas fa-gavel fa-lg"></i>
                                 </div>
                                 <h6 class="fw-bold">Legal Review</h6>
                                 <p class="text-muted small mb-0">Legal team confirms clear title, no disputes, RERA compliance</p>
                             </div>
                             <div class="col-md-3 text-center">
-                                <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mb-3" class="style-9543">
+                                <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mb-3 style-9543">
                                     <i class="fas fa-award fa-lg"></i>
                                 </div>
                                 <h6 class="fw-bold">Badge Awarded</h6>

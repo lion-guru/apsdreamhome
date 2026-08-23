@@ -125,9 +125,9 @@ $dashBookingCount = count($dashBookings);
 <?php if ($dashBookingCount > 0): ?>
 <div class="row g-3 mb-4">
     <div class="col-12">
-        <div class="aps-cp-card" class="style-77408">
-            <div class="aps-cp-card-header" class="style-61577">
-                <h5><i class="fas fa-file-invoice-dollar" class="style-23621"></i> <?= __('dash_my_bookings', null, 'My Bookings') ?></h5>
+        <div class="aps-cp-card style-77408">
+            <div class="aps-cp-card-header style-61577">
+                <h5><i class="fas fa-file-invoice-dollar style-23621"></i> <?= __('dash_my_bookings', null, 'My Bookings') ?></h5>
                 <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-sm btn-outline-primary"><?= __('dash_btn_view_all', null, 'View All') ?></a>
             </div>
             <div class="aps-cp-card-body">
@@ -140,7 +140,7 @@ $dashBookingCount = count($dashBookings);
                     </div>
                     <div class="col-md-3 col-6">
                         <div class="bg-white rounded-3 p-3 border">
-                            <div class="fw-bold fs-4 text-amber" class="style-62159" data-aps-count="<?= $dashActiveEmis ?>">0</div>
+                            <div class="fw-bold fs-4 text-amber style-62159" data-aps-count="<?= $dashActiveEmis ?>">0</div>
                             <small class="text-muted"><?= __('dash_active_emis', null, 'Active EMIs') ?></small>
                         </div>
                     </div>
@@ -262,26 +262,26 @@ $dashBookingCount = count($dashBookings);
         <?php endif; ?>
 
         <?php if (!empty($paymentSummary) && (($paymentSummary['total_overdue'] ?? 0) > 0 || ($paymentSummary['total_accrued_penalties'] ?? 0) > 0)): ?>
-        <div class="aps-cp-card mb-4" class="style-14478">
-            <div class="aps-cp-card-header" class="style-83182">
+        <div class="aps-cp-card mb-4 style-14478">
+            <div class="aps-cp-card-header style-83182">
                 <h5><i class="fas fa-exclamation-triangle text-danger"></i> Payment Alerts</h5>
                 <span class="badge bg-danger"><?= ($paymentSummary['total_overdue'] ?? 0) ?> overdue</span>
             </div>
             <div class="aps-cp-card-body">
                 <div class="row g-3 mb-3">
                     <div class="col-sm-4">
-                        <div class="aps-cp-stat aps-cp-stat--red" class="style-83240">
+                        <div class="aps-cp-stat aps-cp-stat--red style-83240">
                             <div class="aps-cp-stat-body">
-                                <div class="aps-cp-stat-value" class="style-30322">₹<?= number_format($paymentSummary['total_overdue_amount'] ?? 0) ?></div>
+                                <div class="aps-cp-stat-value style-30322">₹<?= number_format($paymentSummary['total_overdue_amount'] ?? 0) ?></div>
                                 <div class="aps-cp-stat-label">Overdue Amount</div>
                             </div>
                         </div>
                     </div>
                     <?php if (($paymentSummary['total_accrued_penalties'] ?? 0) > 0): ?>
                     <div class="col-sm-4">
-                        <div class="aps-cp-stat" class="style-84622">
+                        <div class="aps-cp-stat style-84622">
                             <div class="aps-cp-stat-body">
-                                <div class="aps-cp-stat-value" class="style-98499">₹<?= number_format($paymentSummary['total_accrued_penalties'] ?? 0) ?></div>
+                                <div class="aps-cp-stat-value style-98499">₹<?= number_format($paymentSummary['total_accrued_penalties'] ?? 0) ?></div>
                                 <div class="aps-cp-stat-label">Accrued Penalties (18% p.a.)</div>
                             </div>
                         </div>
@@ -289,9 +289,9 @@ $dashBookingCount = count($dashBookings);
                     <?php endif; ?>
                     <?php if (($paymentSummary['worst_overdue_days'] ?? 0) > 0): ?>
                     <div class="col-sm-4">
-                        <div class="aps-cp-stat" class="style-90504">
+                        <div class="aps-cp-stat style-90504">
                             <div class="aps-cp-stat-body">
-                                <div class="aps-cp-stat-value" class="style-39987"><?= (int)($paymentSummary['worst_overdue_days'] ?? 0) ?> days</div>
+                                <div class="aps-cp-stat-value style-39987"><?= (int)($paymentSummary['worst_overdue_days'] ?? 0) ?> days</div>
                                 <div class="aps-cp-stat-label">Longest Overdue</div>
                             </div>
                         </div>
@@ -337,7 +337,7 @@ $dashBookingCount = count($dashBookings);
                 <?php endif; ?>
 
                 <?php if (!empty($paymentSummary['nach_mandate'])): ?>
-                <div class="d-flex align-items-center gap-2 mt-3 p-2" class="style-62608">
+                <div class="d-flex align-items-center gap-2 mt-3 p-2 style-62608">
                     <i class="fas fa-university text-success"></i>
                     <span class="text-success fw-semibold">NACH Auto-Debit Active</span>
                     <span class="text-muted ms-auto">
@@ -369,9 +369,9 @@ $dashBookingCount = count($dashBookings);
                 <div class="row g-3">
                     <?php foreach (array_slice($properties, 0, 4) as $property): ?>
                         <div class="col-md-6">
-                            <div class="aps-cp-card" class="style-49683">
+                            <div class="aps-cp-card style-49683">
                                 <div class="d-flex gap-3 p-3">
-                                    <div class="aps-cp-stat-icon" class="style-99228">
+                                    <div class="aps-cp-stat-icon style-99228">
                                         <i class="fas fa-home"></i>
                                     </div>
                                     <div class="flex-grow-1 min-w-0">
@@ -443,15 +443,15 @@ $dashBookingCount = count($dashBookings);
         $lvl = $invStats['level'] ?? 'Bronze';
         $lvlColor = match($lvl) { 'Diamond' => 'indigo', 'Platinum' => 'purple', 'Gold' => 'orange', 'Silver' => 'secondary', default => 'primary' };
         ?>
-        <div class="aps-cp-card mb-4" class="style-77408">
-            <div class="aps-cp-card-header" class="style-95171">
-                <h5><i class="fas fa-trophy" class="style-92996"></i> <?= __('dash_investor_level', null, 'Investor Level') ?></h5>
+        <div class="aps-cp-card mb-4 style-77408">
+            <div class="aps-cp-card-header style-95171">
+                <h5><i class="fas fa-trophy style-92996"></i> <?= __('dash_investor_level', null, 'Investor Level') ?></h5>
             </div>
             <div class="aps-cp-card-body text-center">
-                <div class="display-5 fw-bold mb-1" class="style-12445"><?= htmlspecialchars($lvl ?? '') ?></div>
+                <div class="display-5 fw-bold mb-1 style-12445"><?= htmlspecialchars($lvl ?? '') ?></div>
                 <small class="text-muted d-block mb-3"><?= __('dash_total_invested', null, 'Total Invested') ?>: ₹<?= number_format((float)($invStats['total_invested'] ?? 0)) ?></small>
-                <div class="aps-cp-progress" class="style-51045">
-                    <div class="aps-cp-progress-bar" class="style-9161"></div>
+                <div class="aps-cp-progress style-51045">
+                    <div class="aps-cp-progress-bar style-9161"></div>
                 </div>
                 <p class="text-muted small mt-2 mb-0"><?= sprintf(__('dash_invest_more_format', null, 'Invest ₹%%s more to reach %%s'), number_format((float)($invStats['next_threshold'] ?? 50000)), htmlspecialchars($invStats['next_level'] ?? 'Silver')) ?></strong></p>
                 <a href="<?= BASE_URL ?>/user/investment-plans" class="aps-cp-btn aps-cp-btn-sm aps-cp-btn-primary mt-3"><i class="fas fa-arrow-up"></i> <?= __('dash_btn_upgrade', null, 'Upgrade') ?></a>
@@ -459,14 +459,14 @@ $dashBookingCount = count($dashBookings);
         </div>
 
         <?php if (!empty($referral_code)): ?>
-        <div class="aps-cp-card mb-4" class="style-77104">
-            <div class="aps-cp-card-header" class="style-39246">
+        <div class="aps-cp-card mb-4 style-77104">
+            <div class="aps-cp-card-header style-39246">
                 <h5><i class="fas fa-gift text-warning"></i> <?= __('dash_refer_earn_title', null, 'Refer & Earn') ?></h5>
                 <a href="<?= BASE_URL ?>/user/referral" class="btn btn-sm btn-outline-warning"><?= __('dash_btn_view_all', null, 'View All') ?></a>
             </div>
             <div class="aps-cp-card-body">
                 <div class="text-center mb-3">
-                    <div class="display-6 fw-bold text-warning mb-1" class="style-28340" id="dashRefCode">
+                    <div class="display-6 fw-bold text-warning mb-1 style-28340" id="dashRefCode">
                         <?= htmlspecialchars($referral_code ?? '') ?>
                     </div>
                     <small class="text-muted"><?= __('dash_your_referral_code', null, 'Your Referral Code') ?></small>
@@ -493,8 +493,8 @@ $dashBookingCount = count($dashBookings);
                     </button>
                 </div>
                 <div class="d-flex gap-2 justify-content-center mt-3">
-                    <a href="https://wa.me/?text=<?= urlencode(sprintf(__('dash_share_whatsapp_msg', null, 'Join APS Dream Home! Use my referral code: %s Register here: %s'), $referral_code, $referral_link)) ?>" target="_blank" class="aps-cp-icon-btn" class="style-66842" title="<?= __('dash_share_whatsapp', null, 'Share on WhatsApp') ?>"><i class="fab fa-whatsapp"></i></a>
-                    <a href="sms:?body=<?= urlencode(sprintf(__('dash_share_sms_msg', null, 'Use my referral code %s to register at APS Dream Home: %s'), $referral_code, $referral_link)) ?>" class="aps-cp-icon-btn" class="style-95721" title="<?= __('dash_share_sms', null, 'Share via SMS') ?>"><i class="fas fa-sms"></i></a>
+                    <a href="https://wa.me/?text=<?= urlencode(sprintf(__('dash_share_whatsapp_msg', null, 'Join APS Dream Home! Use my referral code: %s Register here: %s'), $referral_code, $referral_link)) ?>" target="_blank" class="aps-cp-icon-btn style-66842" title="<?= __('dash_share_whatsapp', null, 'Share on WhatsApp') ?>"><i class="fab fa-whatsapp"></i></a>
+                    <a href="sms:?body=<?= urlencode(sprintf(__('dash_share_sms_msg', null, 'Use my referral code %s to register at APS Dream Home: %s'), $referral_code, $referral_link)) ?>" class="aps-cp-icon-btn style-95721" title="<?= __('dash_share_sms', null, 'Share via SMS') ?>"><i class="fas fa-sms"></i></a>
                     <a href="mailto:?subject=<?= urlencode(__('dash_share_email_subject', null, 'Join APS Dream Home')) ?>&body=<?= urlencode(sprintf(__('dash_share_email_body', null, 'Use my referral code %s to register: %s'), $referral_code, $referral_link)) ?>" class="aps-cp-icon-btn" title="<?= __('dash_share_email', null, 'Share via Email') ?>"><i class="fas fa-envelope"></i></a>
                 </div>
                 <?php endif; ?>
@@ -587,14 +587,14 @@ $dashBookingCount = count($dashBookings);
         $dashOpenTickets = (int)($stats['open_tickets'] ?? 0);
         $dashTotalTickets = (int)($stats['total_tickets'] ?? 0);
         ?>
-        <div class="aps-cp-card mb-4" class="style-38523">
-            <div class="aps-cp-card-header" class="style-70066">
-                <h5><i class="fas fa-headset" class="style-54781"></i> <?= __('dash_need_help', null, 'Need Help?') ?></h5>
+        <div class="aps-cp-card mb-4 style-38523">
+            <div class="aps-cp-card-header style-70066">
+                <h5><i class="fas fa-headset style-54781"></i> <?= __('dash_need_help', null, 'Need Help?') ?></h5>
             </div>
             <div class="aps-cp-card-body text-center">
                 <div class="d-flex justify-content-center gap-4 mb-3">
                     <div>
-                        <div class="fw-bold fs-4" class="style-3908" data-aps-count="<?= $dashOpenTickets ?>">0</div>
+                        <div class="fw-bold fs-4 style-3908" data-aps-count="<?= $dashOpenTickets ?>">0</div>
                         <small class="text-muted"><?= __('dash_stat_open_tickets', null, 'Open Tickets') ?></small>
                     </div>
                     <div>
@@ -658,17 +658,17 @@ $dashBookingCount = count($dashBookings);
             <div class="aps-cp-card-body">
                 <div class="d-flex flex-column gap-2 small">
                     <div class="d-flex align-items-center">
-                        <i class="fas fa-user text-muted me-2" class="style-18746"></i>
+                        <i class="fas fa-user text-muted me-2 style-18746"></i>
                         <strong class="me-2"><?= __('dash_label_name', null, 'Name') ?>:</strong>
                         <span class="text-truncate"><?= htmlspecialchars($user['name'] ?? $_SESSION['user_name'] ?? 'N/A') ?></span>
                     </div>
                     <div class="d-flex align-items-center">
-                        <i class="fas fa-envelope text-muted me-2" class="style-18746"></i>
+                        <i class="fas fa-envelope text-muted me-2 style-18746"></i>
                         <strong class="me-2"><?= __('dash_label_email', null, 'Email') ?>:</strong>
                         <span class="text-truncate"><?= htmlspecialchars($user['email'] ?? $_SESSION['user_email'] ?? 'N/A') ?></span>
                     </div>
                     <div class="d-flex align-items-center">
-                        <i class="fas fa-phone text-muted me-2" class="style-18746"></i>
+                        <i class="fas fa-phone text-muted me-2 style-18746"></i>
                         <strong class="me-2"><?= __('dash_label_phone', null, 'Phone') ?>:</strong>
                         <span class="text-truncate"><?= htmlspecialchars($user['phone'] ?? $_SESSION['user_phone'] ?? 'N/A') ?></span>
                     </div>
@@ -679,8 +679,8 @@ $dashBookingCount = count($dashBookings);
             </div>
         </div>
 
-        <div class="aps-cp-card" class="style-86209">
-            <div class="aps-cp-card-header" class="style-17078">
+        <div class="aps-cp-card style-86209">
+            <div class="aps-cp-card-header style-17078">
                 <h5><i class="fas fa-bell text-primary"></i> <?= __('dash_section_notifications', null, 'Notifications') ?></h5>
             </div>
             <div class="aps-cp-card-body">
@@ -691,14 +691,14 @@ $dashBookingCount = count($dashBookings);
             </div>
         </div>
 
-        <div class="aps-cp-card" class="style-16398">
-            <div class="aps-cp-card-header" class="style-17078">
+        <div class="aps-cp-card style-16398">
+            <div class="aps-cp-card-header style-17078">
                 <h5><i class="fas fa-shield-alt <?= $twoFactorEnabled ? 'text-success' : 'text-warning' ?>"></i> <?= __('dash_section_security', null, 'Security') ?></h5>
             </div>
             <div class="aps-cp-card-body">
                 <?php if ($twoFactorEnabled): ?>
                     <div class="d-flex align-items-center mb-3">
-                        <div class="aps-cp-stat-icon" class="style-49988"><i class="fas fa-check-circle"></i></div>
+                        <div class="aps-cp-stat-icon style-49988"><i class="fas fa-check-circle"></i></div>
                         <div class="ms-3">
                             <p class="mb-0 fw-bold text-success"><?= __('dash_2fa_enabled', null, '2FA Enabled') ?></p>
                             <small class="text-muted"><?= __('dash_2fa_protected', null, 'Your account is protected') ?></small>
@@ -709,7 +709,7 @@ $dashBookingCount = count($dashBookings);
                     </a>
                 <?php else: ?>
                     <div class="d-flex align-items-center mb-3">
-                        <div class="aps-cp-stat-icon" class="style-22946"><i class="fas fa-exclamation-triangle"></i></div>
+                        <div class="aps-cp-stat-icon style-22946"><i class="fas fa-exclamation-triangle"></i></div>
                         <div class="ms-3">
                             <p class="mb-0 fw-bold text-warning"><?= __('dash_2fa_disabled', null, '2FA Not Enabled') ?></p>
                             <small class="text-muted"><?= __('dash_2fa_extra_security', null, 'Add an extra layer of security') ?></small>
@@ -754,13 +754,13 @@ $dashBookingCount = count($dashBookings);
             default => __('dash_kyc_not_completed_desc', null, 'Complete your KYC to unlock property bookings, loans, and payouts.')
         };
         ?>
-        <div class="aps-cp-card mt-4" class="style-259">
-            <div class="aps-cp-card-header" class="style-17078">
+        <div class="aps-cp-card mt-4 style-259">
+            <div class="aps-cp-card-header style-17078">
                 <h5><i class="fas fa-id-card text-<?= $kycColor ?>"></i> <?= $kycLabel ?></h5>
             </div>
             <div class="aps-cp-card-body">
                 <div class="d-flex align-items-center mb-3">
-                    <div class="aps-cp-stat-icon" class="style-86186"><i class="<?= $kycIcon ?>"></i></div>
+                    <div class="aps-cp-stat-icon style-86186"><i class="<?= $kycIcon ?>"></i></div>
                     <div class="ms-3">
                         <p class="mb-0 fw-bold text-<?= $kycColor ?>"><?= $kycLabel ?></p>
                         <small class="text-muted"><?= $kycDesc ?></small>

@@ -6,14 +6,14 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1" class="style-613"><i class="fas fa-wallet me-2"></i>My Wallet</h4>
+        <h4 class="mb-1 style-613"><i class="fas fa-wallet me-2"></i>My Wallet</h4>
         <p class="text-muted mb-0">View balance and transaction history</p>
     </div>
 </div>
 
 <div class="row mb-4">
     <div class="col-md-6 mb-3">
-        <div class="card border-0 shadow-sm" class="style-63990">
+        <div class="card border-0 shadow-sm style-63990">
             <div class="card-body py-4">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
@@ -41,7 +41,7 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 <div class="card border-0 shadow-sm">
     <div class="card-body text-center py-5">
         <div class="style-84169">
-            <i class="fas fa-receipt fa-2x" class="style-93945"></i>
+            <i class="fas fa-receipt fa-2x style-93945"></i>
         </div>
         <h5 class="text-muted">No transactions yet</h5>
         <p class="text-muted mb-0">Your wallet transactions will appear here</p>
@@ -50,17 +50,17 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 <?php else: ?>
 <div class="card border-0 shadow-sm">
     <div class="card-header bg-transparent border-0">
-        <h6 class="mb-0" class="style-71160"><i class="fas fa-history me-2"></i>Transaction History</h6>
+        <h6 class="mb-0 style-71160"><i class="fas fa-history me-2"></i>Transaction History</h6>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
                 <thead class="style-15087">
                     <tr>
-                        <th class="px-3 py-3" class="style-83276">Type</th>
-                        <th class="px-3 py-3" class="style-83276">Amount</th>
-                        <th class="px-3 py-3" class="style-83276">Description</th>
-                        <th class="px-3 py-3" class="style-83276">Date</th>
+                        <th class="px-3 py-3 style-83276">Type</th>
+                        <th class="px-3 py-3 style-83276">Amount</th>
+                        <th class="px-3 py-3 style-83276">Description</th>
+                        <th class="px-3 py-3 style-83276">Date</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -76,7 +76,7 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
                             </span>
                             <?= ucfirst($type) ?>
                         </td>
-                        <td class="px-3 fw-bold" class="style-90551">
+                        <td class="px-3 fw-bold style-90551">
                             <?= $isCredit ? '+' : '-' ?>₹<?= e(number_format($tx['amount'] ?? 0)) ?>
                         </td>
                         <td class="px-3"><small class="text-muted"><?= htmlspecialchars($tx['description'] ?? '-') ?></small></td>

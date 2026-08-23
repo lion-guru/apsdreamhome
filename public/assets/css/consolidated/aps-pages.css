@@ -2863,9 +2863,13 @@ body.lightbox-open { overflow: hidden; }
 }
 
 .stat-label {
-    color: #666 !important;
+    color: #4b5563 !important;
     font-weight: 500 !important;
     font-size: 0.95rem !important;
+}
+.glass-stat-item .stat-label,
+section[class*="hero"] .stat-label {
+    color: #e2e8f0 !important;
 }
 
 /* Responsive Fixes */
@@ -3062,10 +3066,12 @@ img:not(.rounded-circle):not([class*="icon"]):not([class*="fa-"]):not(.btn-icon)
     color: #1a1a1a !important;
 }
 
-/* Section headings — dark sections keep white text; dark cards inside also excluded */
-section:not(.bg-dark):not(.cta-gradient):not(.emi-section):not(.hero) h2,
-section:not(.bg-dark):not(.cta-gradient):not(.emi-section):not(.hero) h3,
-section:not(.bg-dark):not(.cta-gradient):not(.emi-section):not(.hero) h4 {
+/* Section headings — dark sections keep white text; dark cards inside also excluded.
+   [class*="hero"] covers custom hero sections (about-hero-section etc.) that have
+   their own dark backgrounds and white text. */
+section:not(.bg-dark):not(.cta-gradient):not(.emi-section):not(.hero):not([class*="hero"]) h2,
+section:not(.bg-dark):not(.cta-gradient):not(.emi-section):not(.hero):not([class*="hero"]) h3,
+section:not(.bg-dark):not(.cta-gradient):not(.emi-section):not(.hero):not([class*="hero"]) h4 {
     color: #1a1a1a !important;
     font-weight: 700 !important;
 }
@@ -3077,10 +3083,11 @@ section:not(.bg-dark):not(.cta-gradient):not(.emi-section):not(.hero) h4 {
     color: #fff !important;
 }
 
-section:not(.bg-dark):not(.cta-gradient):not(.emi-section):not(.hero) .lead {
+section:not(.bg-dark):not(.cta-gradient):not(.emi-section):not(.hero):not([class*="hero"]) .lead {
     color: #666 !important;
 }
-.bg-dark .lead, .cta-gradient .lead, .emi-section .lead, .hero .lead {
+.bg-dark .lead, .cta-gradient .lead, .emi-section .lead, .hero .lead,
+section[class*="hero"] .lead {
     color: rgba(255,255,255,0.85) !important;
 }
 

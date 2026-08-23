@@ -88,32 +88,32 @@ $st = $stats ?? [];
     <div class="card-body aps-cp-card-body">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <div class="text-center">
-                <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center" class="style-87366">1</div>
+                <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center style-87366">1</div>
                 <div class="small fw-bold mt-2"><?= __('admin_booking_fully_paid') ?></div>
             </div>
             <i class="fas fa-arrow-right text-muted"></i>
             <div class="text-center">
-                <div class="rounded-circle bg-warning text-white d-inline-flex align-items-center justify-content-center" class="style-87366">2</div>
+                <div class="rounded-circle bg-warning text-white d-inline-flex align-items-center justify-content-center style-87366">2</div>
                 <div class="small fw-bold mt-2"><?= __('admin_noc_requested') ?></div>
             </div>
             <i class="fas fa-arrow-right text-muted"></i>
             <div class="text-center">
-                <div class="rounded-circle bg-info text-white d-inline-flex align-items-center justify-content-center" class="style-87366">3</div>
+                <div class="rounded-circle bg-info text-white d-inline-flex align-items-center justify-content-center style-87366">3</div>
                 <div class="small fw-bold mt-2"><?= __('admin_noc_approved') ?></div>
             </div>
             <i class="fas fa-arrow-right text-muted"></i>
             <div class="text-center">
-                <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" class="style-87366">4</div>
+                <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center style-87366">4</div>
                 <div class="small fw-bold mt-2"><?= __('admin_registry_created') ?></div>
             </div>
             <i class="fas fa-arrow-right text-muted"></i>
             <div class="text-center">
-                <div class="rounded-circle bg-secondary text-white d-inline-flex align-items-center justify-content-center" class="style-87366">5</div>
+                <div class="rounded-circle bg-secondary text-white d-inline-flex align-items-center justify-content-center style-87366">5</div>
                 <div class="small fw-bold mt-2"><?= __('admin_sro_appointment') ?></div>
             </div>
             <i class="fas fa-arrow-right text-muted"></i>
             <div class="text-center">
-                <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center" class="style-87366">6</div>
+                <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center style-87366">6</div>
                 <div class="small fw-bold mt-2"><?= __('admin_registration_done') ?></div>
             </div>
         </div>
@@ -140,7 +140,7 @@ $st = $stats ?? [];
                                 <tr>
                                     <td class="small"><?= htmlspecialchars($n['booking_number'] ?? '') ?></td>
                                     <td class="small"><?= htmlspecialchars($n['customer_name'] ?? '') ?></td>
-                                    <td class="small text-truncate" class="style-64120"><?= htmlspecialchars($n['purpose'] ?? '') ?></td>
+                                    <td class="small text-truncate style-64120"><?= htmlspecialchars($n['purpose'] ?? '') ?></td>
                                     <td><span class="badge bg-<?= $n['status'] === 'approved' ? 'success' : ($n['status'] === 'rejected' ? 'danger' : ($n['status'] === 'blocked' ? 'dark' : 'warning')) ?>"><?= ucfirst($n['status']) ?></span></td>
                                     <td><a href="<?= BASE_URL ?>/admin/noc-registry/nocs/<?= $n['id'] ?>" class="btn btn-sm btn-outline-primary">View</a></td>
                                 </tr>

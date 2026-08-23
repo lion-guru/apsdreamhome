@@ -240,7 +240,7 @@ try {
                 <div class="card-header bg-dark text-white">
                     <h5 class="mb-0"><i class="fas fa-sitemap me-2"></i><?php echo __('network_tree', [], 'Network Tree'); ?></h5>
                 </div>
-                <div class="card-body text-center" class="style-58653">
+                <div class="card-body text-center style-58653">
                     <!-- Simple Tree Visualization -->
                     <div class="network-tree">
                         <div class="tree-level">

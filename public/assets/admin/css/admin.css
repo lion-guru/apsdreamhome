@@ -2264,10 +2264,10 @@ body:not(.dark-mode) .aps-cp-card:not(.bg-dark):not(.bg-primary) .aps-cp-card-he
 
 .breadcrumb-item,
 .breadcrumb-item a {
-  color: var(--primary, #0d9488) !important;
+  color: #115e59 !important;
 }
 .breadcrumb-item.active {
-  color: var(--text-secondary, #64748b) !important;
+  color: #475569 !important;
 }
 
 body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary) .card-body,

@@ -46,7 +46,7 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1" class="style-86030">
+        <h4 class="mb-1 style-86030">
             <i class="fas fa-user-tie me-2"></i>My Leads
         </h4>
         <p class="text-muted mb-0">Leads assigned to you — track and convert</p>
@@ -105,7 +105,7 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
     <div class="col">
         <a href="<?= $base ?>/employee/leads?status=site_visit<?= $search ? '&search=' . urlencode($search) : '' ?>" class="card emp-lead-stat <?= $currentStatus === 'site_visit' ? 'active shadow-sm' : 'shadow-none' ?>">
             <div class="card-body py-2 px-3 text-center">
-                <div class="stat-num" class="style-90386"><?= e($stats['site_visit']) ?></div>
+                <div class="stat-num style-90386"><?= e($stats['site_visit']) ?></div>
                 <div class="text-muted small">Site Visit</div>
             </div>
         </a>
@@ -132,7 +132,7 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
 <div class="card border-0 shadow-sm">
     <div class="card-body text-center py-5">
         <div class="style-33323">
-            <i class="fas fa-user-plus fa-2x" class="style-54138"></i>
+            <i class="fas fa-user-plus fa-2x style-54138"></i>
         </div>
         <h5 class="text-muted"><?= $currentStatus ? 'No leads with this status' : ($search ? 'No leads match your search' : 'No leads assigned yet') ?></h5>
         <p class="text-muted mb-0">Leads assigned to you will appear here</p>
@@ -145,14 +145,14 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
             <table class="table table-hover align-middle mb-0">
                 <thead class="style-15736">
                     <tr>
-                        <th class="px-3 py-3" class="style-75080">Name</th>
-                        <th class="px-3 py-3" class="style-75080">Contact</th>
-                        <th class="px-3 py-3" class="style-75080">Property</th>
-                        <th class="px-3 py-3" class="style-75080">Budget</th>
-                        <th class="px-3 py-3" class="style-75080">Score</th>
-                        <th class="px-3 py-3" class="style-75080">Status</th>
-                        <th class="px-3 py-3" class="style-75080">Date</th>
-                        <th class="px-3 py-3" class="style-75080">Actions</th>
+                        <th class="px-3 py-3 style-75080">Name</th>
+                        <th class="px-3 py-3 style-75080">Contact</th>
+                        <th class="px-3 py-3 style-75080">Property</th>
+                        <th class="px-3 py-3 style-75080">Budget</th>
+                        <th class="px-3 py-3 style-75080">Score</th>
+                        <th class="px-3 py-3 style-75080">Status</th>
+                        <th class="px-3 py-3 style-75080">Date</th>
+                        <th class="px-3 py-3 style-75080">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -166,7 +166,7 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
                                 ?>
                                 <span class="score-dot <?= $scoreClass ?> me-2" title="Score: <?= $scoreVal ?>"></span>
                                 <div>
-                                    <a href="<?= $base ?>/employee/leads/<?= (int)$lead['id'] ?>" class="text-decoration-none fw-semibold" class="style-54138">
+                                    <a href="<?= $base ?>/employee/leads/<?= (int)$lead['id'] ?>" class="text-decoration-none fw-semibold style-54138">
                                         <?= htmlspecialchars($lead['name'] ?? 'Unknown') ?>
                                     </a>
                                     <?php if (!empty($lead['city'])): ?>

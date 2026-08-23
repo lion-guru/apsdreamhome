@@ -1,0 +1,1569 @@
+====================================================================================================
+BACKUP FILE -> ORIGINAL LOCATION MAP (671 files)
+Backup: _archive/class_attr_repair_backup/  |  Asli: app/views/
+Status: [OK] = file sahi jagah par hai (fixed version)
+====================================================================================================
+[OK]  _archive/class_attr_repair_backup/admin/about-cms/index.php
+      -> app/views/admin/about-cms/index.php
+[OK]  _archive/class_attr_repair_backup/admin/accounts/index.php
+      -> app/views/admin/accounts/index.php
+[OK]  _archive/class_attr_repair_backup/admin/agent-agreements/detail.php
+      -> app/views/admin/agent-agreements/detail.php
+[OK]  _archive/class_attr_repair_backup/admin/agent-agreements/index.php
+      -> app/views/admin/agent-agreements/index.php
+[OK]  _archive/class_attr_repair_backup/admin/agent-commission/agent_detail.php
+      -> app/views/admin/agent-commission/agent_detail.php
+[OK]  _archive/class_attr_repair_backup/admin/agent-commission/index.php
+      -> app/views/admin/agent-commission/index.php
+[OK]  _archive/class_attr_repair_backup/admin/agentic-ai/agent-detail.php
+      -> app/views/admin/agentic-ai/agent-detail.php
+[OK]  _archive/class_attr_repair_backup/admin/agentic-ai/conversation.php
+      -> app/views/admin/agentic-ai/conversation.php
+[OK]  _archive/class_attr_repair_backup/admin/agentic-ai/conversations.php
+      -> app/views/admin/agentic-ai/conversations.php
+[OK]  _archive/class_attr_repair_backup/admin/agentic-ai/dashboard.php
+      -> app/views/admin/agentic-ai/dashboard.php
+[OK]  _archive/class_attr_repair_backup/admin/agentic-ai/logs.php
+      -> app/views/admin/agentic-ai/logs.php
+[OK]  _archive/class_attr_repair_backup/admin/agents/index.php
+      -> app/views/admin/agents/index.php
+[OK]  _archive/class_attr_repair_backup/admin/agents/salaried/create.php
+      -> app/views/admin/agents/salaried/create.php
+[OK]  _archive/class_attr_repair_backup/admin/agreements/generate.php
+      -> app/views/admin/agreements/generate.php
+[OK]  _archive/class_attr_repair_backup/admin/ai/analytics.php
+      -> app/views/admin/ai/analytics.php
+[OK]  _archive/class_attr_repair_backup/admin/ai/call-history.php
+      -> app/views/admin/ai/call-history.php
+[OK]  _archive/class_attr_repair_backup/admin/ai/call-logs.php
+      -> app/views/admin/ai/call-logs.php
+[OK]  _archive/class_attr_repair_backup/admin/ai/calling-analytics.php
+      -> app/views/admin/ai/calling-analytics.php
+[OK]  _archive/class_attr_repair_backup/admin/ai/calling-campaign.php
+      -> app/views/admin/ai/calling-campaign.php
+[OK]  _archive/class_attr_repair_backup/admin/ai/calling-dashboard.php
+      -> app/views/admin/ai/calling-dashboard.php
+[OK]  _archive/class_attr_repair_backup/admin/ai/calling-schedule.php
+      -> app/views/admin/ai/calling-schedule.php
+[OK]  _archive/class_attr_repair_backup/admin/ai/calling-sessions.php
+      -> app/views/admin/ai/calling-sessions.php
+[OK]  _archive/class_attr_repair_backup/admin/ai/calling.php
+      -> app/views/admin/ai/calling.php
+[OK]  _archive/class_attr_repair_backup/admin/ai/dashboard.php
+      -> app/views/admin/ai/dashboard.php
+[OK]  _archive/class_attr_repair_backup/admin/ai/document-extraction.php
+      -> app/views/admin/ai/document-extraction.php
+[OK]  _archive/class_attr_repair_backup/admin/ai/hub.php
+      -> app/views/admin/ai/hub.php
+[OK]  _archive/class_attr_repair_backup/admin/ai/insights.php
+      -> app/views/admin/ai/insights.php
+[OK]  _archive/class_attr_repair_backup/admin/ai/property_recommendations.php
+      -> app/views/admin/ai/property_recommendations.php
+[OK]  _archive/class_attr_repair_backup/admin/ai/reports.php
+      -> app/views/admin/ai/reports.php
+[OK]  _archive/class_attr_repair_backup/admin/ai/settings.php
+      -> app/views/admin/ai/settings.php
+[OK]  _archive/class_attr_repair_backup/admin/ai/training.php
+      -> app/views/admin/ai/training.php
+[OK]  _archive/class_attr_repair_backup/admin/ai/voice_assistant.php
+      -> app/views/admin/ai/voice_assistant.php
+[OK]  _archive/class_attr_repair_backup/admin/ai-dashboard.php
+      -> app/views/admin/ai-dashboard.php
+[OK]  _archive/class_attr_repair_backup/admin/ai-management/suggestions.php
+      -> app/views/admin/ai-management/suggestions.php
+[OK]  _archive/class_attr_repair_backup/admin/analytics/advanced.php
+      -> app/views/admin/analytics/advanced.php
+[OK]  _archive/class_attr_repair_backup/admin/analytics/financial.php
+      -> app/views/admin/analytics/financial.php
+[OK]  _archive/class_attr_repair_backup/admin/analytics/realtime.php
+      -> app/views/admin/analytics/realtime.php
+[OK]  _archive/class_attr_repair_backup/admin/api/integration-logs.php
+      -> app/views/admin/api/integration-logs.php
+[OK]  _archive/class_attr_repair_backup/admin/api/logs.php
+      -> app/views/admin/api/logs.php
+[OK]  _archive/class_attr_repair_backup/admin/api-docs.php
+      -> app/views/admin/api-docs.php
+[OK]  _archive/class_attr_repair_backup/admin/api-keys/guide.php
+      -> app/views/admin/api-keys/guide.php
+[OK]  _archive/class_attr_repair_backup/admin/api-keys/index.php
+      -> app/views/admin/api-keys/index.php
+[OK]  _archive/class_attr_repair_backup/admin/associate-extensions/index.php
+      -> app/views/admin/associate-extensions/index.php
+[OK]  _archive/class_attr_repair_backup/admin/associate-extensions/show.php
+      -> app/views/admin/associate-extensions/show.php
+[OK]  _archive/class_attr_repair_backup/admin/auctions/show.php
+      -> app/views/admin/auctions/show.php
+[OK]  _archive/class_attr_repair_backup/admin/audit-log/detail.php
+      -> app/views/admin/audit-log/detail.php
+[OK]  _archive/class_attr_repair_backup/admin/audit-log/entity_timeline.php
+      -> app/views/admin/audit-log/entity_timeline.php
+[OK]  _archive/class_attr_repair_backup/admin/audit-log/index.php
+      -> app/views/admin/audit-log/index.php
+[OK]  _archive/class_attr_repair_backup/admin/audit-log/stats.php
+      -> app/views/admin/audit-log/stats.php
+[OK]  _archive/class_attr_repair_backup/admin/audit-log/user_timeline.php
+      -> app/views/admin/audit-log/user_timeline.php
+[OK]  _archive/class_attr_repair_backup/admin/backoffice/lead-detail.php
+      -> app/views/admin/backoffice/lead-detail.php
+[OK]  _archive/class_attr_repair_backup/admin/backoffice/leaves.php
+      -> app/views/admin/backoffice/leaves.php
+[OK]  _archive/class_attr_repair_backup/admin/bank-import/show.php
+      -> app/views/admin/bank-import/show.php
+[OK]  _archive/class_attr_repair_backup/admin/bank-import/upload.php
+      -> app/views/admin/bank-import/upload.php
+[OK]  _archive/class_attr_repair_backup/admin/billing/dashboard.php
+      -> app/views/admin/billing/dashboard.php
+[OK]  _archive/class_attr_repair_backup/admin/billing/invoices.php
+      -> app/views/admin/billing/invoices.php
+[OK]  _archive/class_attr_repair_backup/admin/billing/plans.php
+      -> app/views/admin/billing/plans.php
+[OK]  _archive/class_attr_repair_backup/admin/billing/subscribe.php
+      -> app/views/admin/billing/subscribe.php
+[OK]  _archive/class_attr_repair_backup/admin/blogs/create.php
+      -> app/views/admin/blogs/create.php
+[OK]  _archive/class_attr_repair_backup/admin/bookings/create.php
+      -> app/views/admin/bookings/create.php
+[OK]  _archive/class_attr_repair_backup/admin/bulk/property_import.php
+      -> app/views/admin/bulk/property_import.php
+[OK]  _archive/class_attr_repair_backup/admin/cash-collections/show.php
+      -> app/views/admin/cash-collections/show.php
+[OK]  _archive/class_attr_repair_backup/admin/chat/analytics.php
+      -> app/views/admin/chat/analytics.php
+[OK]  _archive/class_attr_repair_backup/admin/chat/history.php
+      -> app/views/admin/chat/history.php
+[OK]  _archive/class_attr_repair_backup/admin/colony-costing/create.php
+      -> app/views/admin/colony-costing/create.php
+[OK]  _archive/class_attr_repair_backup/admin/colony-pipeline/detail.php
+      -> app/views/admin/colony-pipeline/detail.php
+[OK]  _archive/class_attr_repair_backup/admin/colony-pipeline/layout-form.php
+      -> app/views/admin/colony-pipeline/layout-form.php
+[OK]  _archive/class_attr_repair_backup/admin/colony-pipeline/plot-map.php
+      -> app/views/admin/colony-pipeline/plot-map.php
+[OK]  _archive/class_attr_repair_backup/admin/colony-pipeline/pricing.php
+      -> app/views/admin/colony-pipeline/pricing.php
+[OK]  _archive/class_attr_repair_backup/admin/commission/agent_rates.php
+      -> app/views/admin/commission/agent_rates.php
+[OK]  _archive/class_attr_repair_backup/admin/commission/associate_calculations.php
+      -> app/views/admin/commission/associate_calculations.php
+[OK]  _archive/class_attr_repair_backup/admin/commission/associate_structure.php
+      -> app/views/admin/commission/associate_structure.php
+[OK]  _archive/class_attr_repair_backup/admin/commission/bonuses.php
+      -> app/views/admin/commission/bonuses.php
+[OK]  _archive/class_attr_repair_backup/admin/commission/commission_audit_log.php
+      -> app/views/admin/commission/commission_audit_log.php
+[OK]  _archive/class_attr_repair_backup/admin/commission/commission_calculations.php
+      -> app/views/admin/commission/commission_calculations.php
+[OK]  _archive/class_attr_repair_backup/admin/commission/index.php
+      -> app/views/admin/commission/index.php
+[OK]  _archive/class_attr_repair_backup/admin/commission/mlm_analytics.php
+      -> app/views/admin/commission/mlm_analytics.php
+[OK]  _archive/class_attr_repair_backup/admin/commission/mlm_levels.php
+      -> app/views/admin/commission/mlm_levels.php
+[OK]  _archive/class_attr_repair_backup/admin/commission/mlm_records.php
+      -> app/views/admin/commission/mlm_records.php
+[OK]  _archive/class_attr_repair_backup/admin/commission/plans/compare.php
+      -> app/views/admin/commission/plans/compare.php
+[OK]  _archive/class_attr_repair_backup/admin/commission/plans/create.php
+      -> app/views/admin/commission/plans/create.php
+[OK]  _archive/class_attr_repair_backup/admin/commission/plans/edit.php
+      -> app/views/admin/commission/plans/edit.php
+[OK]  _archive/class_attr_repair_backup/admin/commission/plans/history.php
+      -> app/views/admin/commission/plans/history.php
+[OK]  _archive/class_attr_repair_backup/admin/commission/plans/index.php
+      -> app/views/admin/commission/plans/index.php
+[OK]  _archive/class_attr_repair_backup/admin/commission/plans/simulator.php
+      -> app/views/admin/commission/plans/simulator.php
+[OK]  _archive/class_attr_repair_backup/admin/commission/recalculations/detail.php
+      -> app/views/admin/commission/recalculations/detail.php
+[OK]  _archive/class_attr_repair_backup/admin/commission/recalculations/index.php
+      -> app/views/admin/commission/recalculations/index.php
+[OK]  _archive/class_attr_repair_backup/admin/commission/reconciliation.php
+      -> app/views/admin/commission/reconciliation.php
+[OK]  _archive/class_attr_repair_backup/admin/commission/revenue_daily.php
+      -> app/views/admin/commission/revenue_daily.php
+[OK]  _archive/class_attr_repair_backup/admin/commission/telecaller_commissions.php
+      -> app/views/admin/commission/telecaller_commissions.php
+[OK]  _archive/class_attr_repair_backup/admin/commission/telecaller_rules.php
+      -> app/views/admin/commission/telecaller_rules.php
+[OK]  _archive/class_attr_repair_backup/admin/commissions/index.php
+      -> app/views/admin/commissions/index.php
+[OK]  _archive/class_attr_repair_backup/admin/communication/automation.php
+      -> app/views/admin/communication/automation.php
+[OK]  _archive/class_attr_repair_backup/admin/communication/logs.php
+      -> app/views/admin/communication/logs.php
+[OK]  _archive/class_attr_repair_backup/admin/compliance/area.php
+      -> app/views/admin/compliance/area.php
+[OK]  _archive/class_attr_repair_backup/admin/compliance/index.php
+      -> app/views/admin/compliance/index.php
+[OK]  _archive/class_attr_repair_backup/admin/compliance/recommendations.php
+      -> app/views/admin/compliance/recommendations.php
+[OK]  _archive/class_attr_repair_backup/admin/compliance/scorecard.php
+      -> app/views/admin/compliance/scorecard.php
+[OK]  _archive/class_attr_repair_backup/admin/crm/agentic/dashboard.php
+      -> app/views/admin/crm/agentic/dashboard.php
+[OK]  _archive/class_attr_repair_backup/admin/crm/analytics.php
+      -> app/views/admin/crm/analytics.php
+[OK]  _archive/class_attr_repair_backup/admin/crm/bulk/send.php
+      -> app/views/admin/crm/bulk/send.php
+[OK]  _archive/class_attr_repair_backup/admin/crm/custom_fields/form.php
+      -> app/views/admin/crm/custom_fields/form.php
+[OK]  _archive/class_attr_repair_backup/admin/crm/custom_fields/index.php
+      -> app/views/admin/crm/custom_fields/index.php
+[OK]  _archive/class_attr_repair_backup/admin/crm/email_tracking/stats.php
+      -> app/views/admin/crm/email_tracking/stats.php
+[OK]  _archive/class_attr_repair_backup/admin/crm/forms/builder.php
+      -> app/views/admin/crm/forms/builder.php
+[OK]  _archive/class_attr_repair_backup/admin/crm/forms/embed.php
+      -> app/views/admin/crm/forms/embed.php
+[OK]  _archive/class_attr_repair_backup/admin/crm/forms/index.php
+      -> app/views/admin/crm/forms/index.php
+[OK]  _archive/class_attr_repair_backup/admin/crm/index.php
+      -> app/views/admin/crm/index.php
+[OK]  _archive/class_attr_repair_backup/admin/crm/kyc/index.php
+      -> app/views/admin/crm/kyc/index.php
+[OK]  _archive/class_attr_repair_backup/admin/crm/kyc/verify.php
+      -> app/views/admin/crm/kyc/verify.php
+[OK]  _archive/class_attr_repair_backup/admin/crm/lead_timeline.php
+      -> app/views/admin/crm/lead_timeline.php
+[OK]  _archive/class_attr_repair_backup/admin/crm/meetings/index.php
+      -> app/views/admin/crm/meetings/index.php
+[OK]  _archive/class_attr_repair_backup/admin/crm/role_dashboard.php
+      -> app/views/admin/crm/role_dashboard.php
+[OK]  _archive/class_attr_repair_backup/admin/crm/settings.php
+      -> app/views/admin/crm/settings.php
+[OK]  _archive/class_attr_repair_backup/admin/crm/share_stats.php
+      -> app/views/admin/crm/share_stats.php
+[OK]  _archive/class_attr_repair_backup/admin/crm/sla/breach_log.php
+      -> app/views/admin/crm/sla/breach_log.php
+[OK]  _archive/class_attr_repair_backup/admin/crm/sla/dashboard.php
+      -> app/views/admin/crm/sla/dashboard.php
+[OK]  _archive/class_attr_repair_backup/admin/crm/sla/rules.php
+      -> app/views/admin/crm/sla/rules.php
+[OK]  _archive/class_attr_repair_backup/admin/crm/templates/form.php
+      -> app/views/admin/crm/templates/form.php
+[OK]  _archive/class_attr_repair_backup/admin/crm/templates/index.php
+      -> app/views/admin/crm/templates/index.php
+[OK]  _archive/class_attr_repair_backup/admin/crm/voice/call.php
+      -> app/views/admin/crm/voice/call.php
+[OK]  _archive/class_attr_repair_backup/admin/crm/voice/index.php
+      -> app/views/admin/crm/voice/index.php
+[OK]  _archive/class_attr_repair_backup/admin/csp_violations.php
+      -> app/views/admin/csp_violations.php
+[OK]  _archive/class_attr_repair_backup/admin/customer-lead-extras/behavior.php
+      -> app/views/admin/customer-lead-extras/behavior.php
+[OK]  _archive/class_attr_repair_backup/admin/customer-lead-extras/edit-lead-score.php
+      -> app/views/admin/customer-lead-extras/edit-lead-score.php
+[OK]  _archive/class_attr_repair_backup/admin/customer-lead-extras/file-extractions.php
+      -> app/views/admin/customer-lead-extras/file-extractions.php
+[OK]  _archive/class_attr_repair_backup/admin/customer-lead-extras/journeys.php
+      -> app/views/admin/customer-lead-extras/journeys.php
+[OK]  _archive/class_attr_repair_backup/admin/customer-lead-extras/lead-scores.php
+      -> app/views/admin/customer-lead-extras/lead-scores.php
+[OK]  _archive/class_attr_repair_backup/admin/customers/index.php
+      -> app/views/admin/customers/index.php
+[OK]  _archive/class_attr_repair_backup/admin/customers/show.php
+      -> app/views/admin/customers/show.php
+[OK]  _archive/class_attr_repair_backup/admin/dashboard/role_dashboard.php
+      -> app/views/admin/dashboard/role_dashboard.php
+[OK]  _archive/class_attr_repair_backup/admin/dashboard.php
+      -> app/views/admin/dashboard.php
+[OK]  _archive/class_attr_repair_backup/admin/dashboard_content.php
+      -> app/views/admin/dashboard_content.php
+[OK]  _archive/class_attr_repair_backup/admin/dashboard_standalone.php
+      -> app/views/admin/dashboard_standalone.php
+[OK]  _archive/class_attr_repair_backup/admin/deal-pipeline/index.php
+      -> app/views/admin/deal-pipeline/index.php
+[OK]  _archive/class_attr_repair_backup/admin/deals/index.php
+      -> app/views/admin/deals/index.php
+[OK]  _archive/class_attr_repair_backup/admin/deals/kanban.php
+      -> app/views/admin/deals/kanban.php
+[OK]  _archive/class_attr_repair_backup/admin/deals/show.php
+      -> app/views/admin/deals/show.php
+[OK]  _archive/class_attr_repair_backup/admin/departments/index.php
+      -> app/views/admin/departments/index.php
+[OK]  _archive/class_attr_repair_backup/admin/department_requests/dashboard.php
+      -> app/views/admin/department_requests/dashboard.php
+[OK]  _archive/class_attr_repair_backup/admin/designations/index.php
+      -> app/views/admin/designations/index.php
+[OK]  _archive/class_attr_repair_backup/admin/directory/categories.php
+      -> app/views/admin/directory/categories.php
+[OK]  _archive/class_attr_repair_backup/admin/drip_campaigns/show.php
+      -> app/views/admin/drip_campaigns/show.php
+[OK]  _archive/class_attr_repair_backup/admin/efiling/gstn-portal.php
+      -> app/views/admin/efiling/gstn-portal.php
+[OK]  _archive/class_attr_repair_backup/admin/efiling/submission-detail.php
+      -> app/views/admin/efiling/submission-detail.php
+[OK]  _archive/class_attr_repair_backup/admin/efiling/tin-portal.php
+      -> app/views/admin/efiling/tin-portal.php
+[OK]  _archive/class_attr_repair_backup/admin/emails/logs.php
+      -> app/views/admin/emails/logs.php
+[OK]  _archive/class_attr_repair_backup/admin/emails/queue.php
+      -> app/views/admin/emails/queue.php
+[OK]  _archive/class_attr_repair_backup/admin/email_templates.php
+      -> app/views/admin/email_templates.php
+[OK]  _archive/class_attr_repair_backup/admin/emi/calculator.php
+      -> app/views/admin/emi/calculator.php
+[OK]  _archive/class_attr_repair_backup/admin/employees/index.php
+      -> app/views/admin/employees/index.php
+[OK]  _archive/class_attr_repair_backup/admin/engagement/goals.php
+      -> app/views/admin/engagement/goals.php
+[OK]  _archive/class_attr_repair_backup/admin/erp/inventory.php
+      -> app/views/admin/erp/inventory.php
+[OK]  _archive/class_attr_repair_backup/admin/erp/overview.php
+      -> app/views/admin/erp/overview.php
+[OK]  _archive/class_attr_repair_backup/admin/experiments/index.php
+      -> app/views/admin/experiments/index.php
+[OK]  _archive/class_attr_repair_backup/admin/experiments/results.php
+      -> app/views/admin/experiments/results.php
+[OK]  _archive/class_attr_repair_backup/admin/features/system_health.php
+      -> app/views/admin/features/system_health.php
+[OK]  _archive/class_attr_repair_backup/admin/files/index.php
+      -> app/views/admin/files/index.php
+[OK]  _archive/class_attr_repair_backup/admin/files/storage.php
+      -> app/views/admin/files/storage.php
+[OK]  _archive/class_attr_repair_backup/admin/files/view.php
+      -> app/views/admin/files/view.php
+[OK]  _archive/class_attr_repair_backup/admin/finance/cheque-print.php
+      -> app/views/admin/finance/cheque-print.php
+[OK]  _archive/class_attr_repair_backup/admin/finance/collection-form.php
+      -> app/views/admin/finance/collection-form.php
+[OK]  _archive/class_attr_repair_backup/admin/finance/collections.php
+      -> app/views/admin/finance/collections.php
+[OK]  _archive/class_attr_repair_backup/admin/finance/emi-auto-pay.php
+      -> app/views/admin/finance/emi-auto-pay.php
+[OK]  _archive/class_attr_repair_backup/admin/finance/penalty-summary.php
+      -> app/views/admin/finance/penalty-summary.php
+[OK]  _archive/class_attr_repair_backup/admin/finance/reconciliation-collections.php
+      -> app/views/admin/finance/reconciliation-collections.php
+[OK]  _archive/class_attr_repair_backup/admin/finance/reconciliation-match.php
+      -> app/views/admin/finance/reconciliation-match.php
+[OK]  _archive/class_attr_repair_backup/admin/finance/vendor-payment.php
+      -> app/views/admin/finance/vendor-payment.php
+[OK]  _archive/class_attr_repair_backup/admin/fraud_detection.php
+      -> app/views/admin/fraud_detection.php
+[OK]  _archive/class_attr_repair_backup/admin/gallery/edit.php
+      -> app/views/admin/gallery/edit.php
+[OK]  _archive/class_attr_repair_backup/admin/gallery/index.php
+      -> app/views/admin/gallery/index.php
+[OK]  _archive/class_attr_repair_backup/admin/gateways.php
+      -> app/views/admin/gateways.php
+[OK]  _archive/class_attr_repair_backup/admin/godmode/dashboard.php
+      -> app/views/admin/godmode/dashboard.php
+[OK]  _archive/class_attr_repair_backup/admin/hr/attendance.php
+      -> app/views/admin/hr/attendance.php
+[OK]  _archive/class_attr_repair_backup/admin/hr/attendance_report.php
+      -> app/views/admin/hr/attendance_report.php
+[OK]  _archive/class_attr_repair_backup/admin/hr/employee_report.php
+      -> app/views/admin/hr/employee_report.php
+[OK]  _archive/class_attr_repair_backup/admin/hr/employee_view.php
+      -> app/views/admin/hr/employee_view.php
+[OK]  _archive/class_attr_repair_backup/admin/hr/leaves.php
+      -> app/views/admin/hr/leaves.php
+[OK]  _archive/class_attr_repair_backup/admin/hr/leave_types.php
+      -> app/views/admin/hr/leave_types.php
+[OK]  _archive/class_attr_repair_backup/admin/hr/performance.php
+      -> app/views/admin/hr/performance.php
+[OK]  _archive/class_attr_repair_backup/admin/hr/settings.php
+      -> app/views/admin/hr/settings.php
+[OK]  _archive/class_attr_repair_backup/admin/hr/shifts.php
+      -> app/views/admin/hr/shifts.php
+[OK]  _archive/class_attr_repair_backup/admin/inquiries/view.php
+      -> app/views/admin/inquiries/view.php
+[OK]  _archive/class_attr_repair_backup/admin/inventory/index.php
+      -> app/views/admin/inventory/index.php
+[OK]  _archive/class_attr_repair_backup/admin/invoices/pdf.php
+      -> app/views/admin/invoices/pdf.php
+[OK]  _archive/class_attr_repair_backup/admin/iot/device_detail.php
+      -> app/views/admin/iot/device_detail.php
+[OK]  _archive/class_attr_repair_backup/admin/jobs/view_application.php
+      -> app/views/admin/jobs/view_application.php
+[OK]  _archive/class_attr_repair_backup/admin/knowledge-base/index.php
+      -> app/views/admin/knowledge-base/index.php
+[OK]  _archive/class_attr_repair_backup/admin/kyc/show.php
+      -> app/views/admin/kyc/show.php
+[OK]  _archive/class_attr_repair_backup/admin/land/index.php
+      -> app/views/admin/land/index.php
+[OK]  _archive/class_attr_repair_backup/admin/land-inventory/lead-form.php
+      -> app/views/admin/land-inventory/lead-form.php
+[OK]  _archive/class_attr_repair_backup/admin/layouts/rbac_sidebar.php
+      -> app/views/admin/layouts/rbac_sidebar.php
+[OK]  _archive/class_attr_repair_backup/admin/leads/assign.php
+      -> app/views/admin/leads/assign.php
+[OK]  _archive/class_attr_repair_backup/admin/leads/import_preview.php
+      -> app/views/admin/leads/import_preview.php
+[OK]  _archive/class_attr_repair_backup/admin/leads/index.php
+      -> app/views/admin/leads/index.php
+[OK]  _archive/class_attr_repair_backup/admin/leads/reports.php
+      -> app/views/admin/leads/reports.php
+[OK]  _archive/class_attr_repair_backup/admin/leads/scoring.php
+      -> app/views/admin/leads/scoring.php
+[OK]  _archive/class_attr_repair_backup/admin/leads/show.php
+      -> app/views/admin/leads/show.php
+[OK]  _archive/class_attr_repair_backup/admin/leads/sources.php
+      -> app/views/admin/leads/sources.php
+[OK]  _archive/class_attr_repair_backup/admin/leads/trash.php
+      -> app/views/admin/leads/trash.php
+[OK]  _archive/class_attr_repair_backup/admin/lead_kanban/index.php
+      -> app/views/admin/lead_kanban/index.php
+[OK]  _archive/class_attr_repair_backup/admin/legal/ai_composer.php
+      -> app/views/admin/legal/ai_composer.php
+[OK]  _archive/class_attr_repair_backup/admin/legal/ai_prompts.php
+      -> app/views/admin/legal/ai_prompts.php
+[OK]  _archive/class_attr_repair_backup/admin/legal/clauses.php
+      -> app/views/admin/legal/clauses.php
+[OK]  _archive/class_attr_repair_backup/admin/legal/document_create.php
+      -> app/views/admin/legal/document_create.php
+[OK]  _archive/class_attr_repair_backup/admin/legal/document_detail.php
+      -> app/views/admin/legal/document_detail.php
+[OK]  _archive/class_attr_repair_backup/admin/legal/noc-index.php
+      -> app/views/admin/legal/noc-index.php
+[OK]  _archive/class_attr_repair_backup/admin/legal/template_edit.php
+      -> app/views/admin/legal/template_edit.php
+[OK]  _archive/class_attr_repair_backup/admin/legal-colony-pipeline/analytics.php
+      -> app/views/admin/legal-colony-pipeline/analytics.php
+[OK]  _archive/class_attr_repair_backup/admin/legal-colony-pipeline/analytics_comparison.php
+      -> app/views/admin/legal-colony-pipeline/analytics_comparison.php
+[OK]  _archive/class_attr_repair_backup/admin/legal-colony-pipeline/detail.php
+      -> app/views/admin/legal-colony-pipeline/detail.php
+[OK]  _archive/class_attr_repair_backup/admin/legal-colony-pipeline/health_overview.php
+      -> app/views/admin/legal-colony-pipeline/health_overview.php
+[OK]  _archive/class_attr_repair_backup/admin/legal-colony-pipeline/index.php
+      -> app/views/admin/legal-colony-pipeline/index.php
+[OK]  _archive/class_attr_repair_backup/admin/legal-colony-pipeline/milestones.php
+      -> app/views/admin/legal-colony-pipeline/milestones.php
+[OK]  _archive/class_attr_repair_backup/admin/legal-colony-pipeline/readiness.php
+      -> app/views/admin/legal-colony-pipeline/readiness.php
+[OK]  _archive/class_attr_repair_backup/admin/legal_pages/index.php
+      -> app/views/admin/legal_pages/index.php
+[OK]  _archive/class_attr_repair_backup/admin/listing-settings/index.php
+      -> app/views/admin/listing-settings/index.php
+[OK]  _archive/class_attr_repair_backup/admin/live_chat/quick_replies.php
+      -> app/views/admin/live_chat/quick_replies.php
+[OK]  _archive/class_attr_repair_backup/admin/live_chat/view.php
+      -> app/views/admin/live_chat/view.php
+[OK]  _archive/class_attr_repair_backup/admin/loans/company/detail.php
+      -> app/views/admin/loans/company/detail.php
+[OK]  _archive/class_attr_repair_backup/admin/locations/colonies/index.php
+      -> app/views/admin/locations/colonies/index.php
+[OK]  _archive/class_attr_repair_backup/admin/locations/districts/index.php
+      -> app/views/admin/locations/districts/index.php
+[OK]  _archive/class_attr_repair_backup/admin/locations/states/index.php
+      -> app/views/admin/locations/states/index.php
+[OK]  _archive/class_attr_repair_backup/admin/login.php
+      -> app/views/admin/login.php
+[OK]  _archive/class_attr_repair_backup/admin/marketing/strategies.php
+      -> app/views/admin/marketing/strategies.php
+[OK]  _archive/class_attr_repair_backup/admin/marketing_campaigns/show.php
+      -> app/views/admin/marketing_campaigns/show.php
+[OK]  _archive/class_attr_repair_backup/admin/marketing_campaigns/templates.php
+      -> app/views/admin/marketing_campaigns/templates.php
+[OK]  _archive/class_attr_repair_backup/admin/marketplace/index.php
+      -> app/views/admin/marketplace/index.php
+[OK]  _archive/class_attr_repair_backup/admin/media/index.php
+      -> app/views/admin/media/index.php
+[OK]  _archive/class_attr_repair_backup/admin/meetings/show.php
+      -> app/views/admin/meetings/show.php
+[OK]  _archive/class_attr_repair_backup/admin/messages/compose.php
+      -> app/views/admin/messages/compose.php
+[OK]  _archive/class_attr_repair_backup/admin/messages/conversation.php
+      -> app/views/admin/messages/conversation.php
+[OK]  _archive/class_attr_repair_backup/admin/messages/inbox.php
+      -> app/views/admin/messages/inbox.php
+[OK]  _archive/class_attr_repair_backup/admin/mlm/associate-rank-view.php
+      -> app/views/admin/mlm/associate-rank-view.php
+[OK]  _archive/class_attr_repair_backup/admin/mlm/associate-ranks.php
+      -> app/views/admin/mlm/associate-ranks.php
+[OK]  _archive/class_attr_repair_backup/admin/mlm/dashboard.php
+      -> app/views/admin/mlm/dashboard.php
+[OK]  _archive/class_attr_repair_backup/admin/mlm/genealogy.php
+      -> app/views/admin/mlm/genealogy.php
+[OK]  _archive/class_attr_repair_backup/admin/mlm/payout-simulator.php
+      -> app/views/admin/mlm/payout-simulator.php
+[OK]  _archive/class_attr_repair_backup/admin/mlm/plan-editor.php
+      -> app/views/admin/mlm/plan-editor.php
+[OK]  _archive/class_attr_repair_backup/admin/mlm/rank-benefits.php
+      -> app/views/admin/mlm/rank-benefits.php
+[OK]  _archive/class_attr_repair_backup/admin/mlm/ranks.php
+      -> app/views/admin/mlm/ranks.php
+[OK]  _archive/class_attr_repair_backup/admin/mlm/tree.php
+      -> app/views/admin/mlm/tree.php
+[OK]  _archive/class_attr_repair_backup/admin/mlm/users/create.php
+      -> app/views/admin/mlm/users/create.php
+[OK]  _archive/class_attr_repair_backup/admin/mlm/users/index.php
+      -> app/views/admin/mlm/users/index.php
+[OK]  _archive/class_attr_repair_backup/admin/mlm-realestate/booking_detail.php
+      -> app/views/admin/mlm-realestate/booking_detail.php
+[OK]  _archive/class_attr_repair_backup/admin/mlm-realestate/free_consultants.php
+      -> app/views/admin/mlm-realestate/free_consultants.php
+[OK]  _archive/class_attr_repair_backup/admin/mlm-realestate/networkers.php
+      -> app/views/admin/mlm-realestate/networkers.php
+[OK]  _archive/class_attr_repair_backup/admin/mlm-realestate/packages.php
+      -> app/views/admin/mlm-realestate/packages.php
+[OK]  _archive/class_attr_repair_backup/admin/mlm-realestate/plots.php
+      -> app/views/admin/mlm-realestate/plots.php
+[OK]  _archive/class_attr_repair_backup/admin/mlm-realestate/rera_requests.php
+      -> app/views/admin/mlm-realestate/rera_requests.php
+[OK]  _archive/class_attr_repair_backup/admin/mlm-realestate/salary_tracker.php
+      -> app/views/admin/mlm-realestate/salary_tracker.php
+[OK]  _archive/class_attr_repair_backup/admin/mlm-settings/associate_progress.php
+      -> app/views/admin/mlm-settings/associate_progress.php
+[OK]  _archive/class_attr_repair_backup/admin/mlm-settings/evaluate.php
+      -> app/views/admin/mlm-settings/evaluate.php
+[OK]  _archive/class_attr_repair_backup/admin/mlm-settings/levels.php
+      -> app/views/admin/mlm-settings/levels.php
+[OK]  _archive/class_attr_repair_backup/admin/mlm-settings/rules.php
+      -> app/views/admin/mlm-settings/rules.php
+[OK]  _archive/class_attr_repair_backup/admin/monitoring/dashboard.php
+      -> app/views/admin/monitoring/dashboard.php
+[OK]  _archive/class_attr_repair_backup/admin/monitoring/index.php
+      -> app/views/admin/monitoring/index.php
+[OK]  _archive/class_attr_repair_backup/admin/network/ranks/edit.php
+      -> app/views/admin/network/ranks/edit.php
+[OK]  _archive/class_attr_repair_backup/admin/news/edit.php
+      -> app/views/admin/news/edit.php
+[OK]  _archive/class_attr_repair_backup/admin/noc-registry/dashboard.php
+      -> app/views/admin/noc-registry/dashboard.php
+[OK]  _archive/class_attr_repair_backup/admin/noc-registry/eligibility.php
+      -> app/views/admin/noc-registry/eligibility.php
+[OK]  _archive/class_attr_repair_backup/admin/noc-registry/noc-detail.php
+      -> app/views/admin/noc-registry/noc-detail.php
+[OK]  _archive/class_attr_repair_backup/admin/noc-registry/noc-list.php
+      -> app/views/admin/noc-registry/noc-list.php
+[OK]  _archive/class_attr_repair_backup/admin/notification-dashboard/index.php
+      -> app/views/admin/notification-dashboard/index.php
+[OK]  _archive/class_attr_repair_backup/admin/notification-dashboard/whatsapp_templates.php
+      -> app/views/admin/notification-dashboard/whatsapp_templates.php
+[OK]  _archive/class_attr_repair_backup/admin/notifications/booking-log.php
+      -> app/views/admin/notifications/booking-log.php
+[OK]  _archive/class_attr_repair_backup/admin/notifications/index.php
+      -> app/views/admin/notifications/index.php
+[OK]  _archive/class_attr_repair_backup/admin/notifications/panel.php
+      -> app/views/admin/notifications/panel.php
+[OK]  _archive/class_attr_repair_backup/admin/ocr/detail.php
+      -> app/views/admin/ocr/detail.php
+[OK]  _archive/class_attr_repair_backup/admin/ocr/index.php
+      -> app/views/admin/ocr/index.php
+[OK]  _archive/class_attr_repair_backup/admin/ocr/templates.php
+      -> app/views/admin/ocr/templates.php
+[OK]  _archive/class_attr_repair_backup/admin/ocr/template_form.php
+      -> app/views/admin/ocr/template_form.php
+[OK]  _archive/class_attr_repair_backup/admin/ocr/upload.php
+      -> app/views/admin/ocr/upload.php
+[OK]  _archive/class_attr_repair_backup/admin/pages/index.php
+      -> app/views/admin/pages/index.php
+[OK]  _archive/class_attr_repair_backup/admin/payment_analytics.php
+      -> app/views/admin/payment_analytics.php
+[OK]  _archive/class_attr_repair_backup/admin/payout-batches/create.php
+      -> app/views/admin/payout-batches/create.php
+[OK]  _archive/class_attr_repair_backup/admin/payout-batches/detail.php
+      -> app/views/admin/payout-batches/detail.php
+[OK]  _archive/class_attr_repair_backup/admin/payout-batches/index.php
+      -> app/views/admin/payout-batches/index.php
+[OK]  _archive/class_attr_repair_backup/admin/payouts/analytics.php
+      -> app/views/admin/payouts/analytics.php
+[OK]  _archive/class_attr_repair_backup/admin/performance/index.php
+      -> app/views/admin/performance/index.php
+[OK]  _archive/class_attr_repair_backup/admin/plots/availability.php
+      -> app/views/admin/plots/availability.php
+[OK]  _archive/class_attr_repair_backup/admin/plots/development.php
+      -> app/views/admin/plots/development.php
+[OK]  _archive/class_attr_repair_backup/admin/plots/map.php
+      -> app/views/admin/plots/map.php
+[OK]  _archive/class_attr_repair_backup/admin/possession/checklist.php
+      -> app/views/admin/possession/checklist.php
+[OK]  _archive/class_attr_repair_backup/admin/possession/index.php
+      -> app/views/admin/possession/index.php
+[OK]  _archive/class_attr_repair_backup/admin/possession/show.php
+      -> app/views/admin/possession/show.php
+[OK]  _archive/class_attr_repair_backup/admin/premium-packages/index.php
+      -> app/views/admin/premium-packages/index.php
+[OK]  _archive/class_attr_repair_backup/admin/projects/progress/index.php
+      -> app/views/admin/projects/progress/index.php
+[OK]  _archive/class_attr_repair_backup/admin/projects/progress/show.php
+      -> app/views/admin/projects/progress/show.php
+[OK]  _archive/class_attr_repair_backup/admin/projects/show.php
+      -> app/views/admin/projects/show.php
+[OK]  _archive/class_attr_repair_backup/admin/properties/images.php
+      -> app/views/admin/properties/images.php
+[OK]  _archive/class_attr_repair_backup/admin/properties/index.php
+      -> app/views/admin/properties/index.php
+[OK]  _archive/class_attr_repair_backup/admin/push-notifications/campaigns.php
+      -> app/views/admin/push-notifications/campaigns.php
+[OK]  _archive/class_attr_repair_backup/admin/push-notifications/campaign_detail.php
+      -> app/views/admin/push-notifications/campaign_detail.php
+[OK]  _archive/class_attr_repair_backup/admin/push-notifications/campaign_form.php
+      -> app/views/admin/push-notifications/campaign_form.php
+[OK]  _archive/class_attr_repair_backup/admin/push-notifications/index.php
+      -> app/views/admin/push-notifications/index.php
+[OK]  _archive/class_attr_repair_backup/admin/push-notifications/log.php
+      -> app/views/admin/push-notifications/log.php
+[OK]  _archive/class_attr_repair_backup/admin/push-notifications/queue_status.php
+      -> app/views/admin/push-notifications/queue_status.php
+[OK]  _archive/class_attr_repair_backup/admin/push-notifications/send.php
+      -> app/views/admin/push-notifications/send.php
+[OK]  _archive/class_attr_repair_backup/admin/push-notifications/templates.php
+      -> app/views/admin/push-notifications/templates.php
+[OK]  _archive/class_attr_repair_backup/admin/push-notifications/template_form.php
+      -> app/views/admin/push-notifications/template_form.php
+[OK]  _archive/class_attr_repair_backup/admin/referrals/index.php
+      -> app/views/admin/referrals/index.php
+[OK]  _archive/class_attr_repair_backup/admin/referrals/leaderboard.php
+      -> app/views/admin/referrals/leaderboard.php
+[OK]  _archive/class_attr_repair_backup/admin/referrals/share_analytics.php
+      -> app/views/admin/referrals/share_analytics.php
+[OK]  _archive/class_attr_repair_backup/admin/referrals/tiers.php
+      -> app/views/admin/referrals/tiers.php
+[OK]  _archive/class_attr_repair_backup/admin/registry/history.php
+      -> app/views/admin/registry/history.php
+[OK]  _archive/class_attr_repair_backup/admin/registry/index.php
+      -> app/views/admin/registry/index.php
+[OK]  _archive/class_attr_repair_backup/admin/registry/show.php
+      -> app/views/admin/registry/show.php
+[OK]  _archive/class_attr_repair_backup/admin/reports/conversion.php
+      -> app/views/admin/reports/conversion.php
+[OK]  _archive/class_attr_repair_backup/admin/reports/dashboard.php
+      -> app/views/admin/reports/dashboard.php
+[OK]  _archive/class_attr_repair_backup/admin/reports/financial.php
+      -> app/views/admin/reports/financial.php
+[OK]  _archive/class_attr_repair_backup/admin/reports/funnel.php
+      -> app/views/admin/reports/funnel.php
+[OK]  _archive/class_attr_repair_backup/admin/reports/index.php
+      -> app/views/admin/reports/index.php
+[OK]  _archive/class_attr_repair_backup/admin/reports/mlm_growth.php
+      -> app/views/admin/reports/mlm_growth.php
+[OK]  _archive/class_attr_repair_backup/admin/reports.php
+      -> app/views/admin/reports.php
+[OK]  _archive/class_attr_repair_backup/admin/resell_properties/commission.php
+      -> app/views/admin/resell_properties/commission.php
+[OK]  _archive/class_attr_repair_backup/admin/resell_properties/images.php
+      -> app/views/admin/resell_properties/images.php
+[OK]  _archive/class_attr_repair_backup/admin/resell_properties/status.php
+      -> app/views/admin/resell_properties/status.php
+[OK]  _archive/class_attr_repair_backup/admin/reviews/index.php
+      -> app/views/admin/reviews/index.php
+[OK]  _archive/class_attr_repair_backup/admin/salary/batch_preview.php
+      -> app/views/admin/salary/batch_preview.php
+[OK]  _archive/class_attr_repair_backup/admin/salary/payments.php
+      -> app/views/admin/salary/payments.php
+[OK]  _archive/class_attr_repair_backup/admin/salary/payouts.php
+      -> app/views/admin/salary/payouts.php
+[OK]  _archive/class_attr_repair_backup/admin/salary/records.php
+      -> app/views/admin/salary/records.php
+[OK]  _archive/class_attr_repair_backup/admin/salary/structures.php
+      -> app/views/admin/salary/structures.php
+[OK]  _archive/class_attr_repair_backup/admin/sales/booking-approvals.php
+      -> app/views/admin/sales/booking-approvals.php
+[OK]  _archive/class_attr_repair_backup/admin/sales/booking-detail.php
+      -> app/views/admin/sales/booking-detail.php
+[OK]  _archive/class_attr_repair_backup/admin/sales/demand-letter.php
+      -> app/views/admin/sales/demand-letter.php
+[OK]  _archive/class_attr_repair_backup/admin/sales/registry_check.php
+      -> app/views/admin/sales/registry_check.php
+[OK]  _archive/class_attr_repair_backup/admin/sales_dashboard/index.php
+      -> app/views/admin/sales_dashboard/index.php
+[OK]  _archive/class_attr_repair_backup/admin/schedule/employee_shifts.php
+      -> app/views/admin/schedule/employee_shifts.php
+[OK]  _archive/class_attr_repair_backup/admin/schedule/index.php
+      -> app/views/admin/schedule/index.php
+[OK]  _archive/class_attr_repair_backup/admin/schedule/rotation.php
+      -> app/views/admin/schedule/rotation.php
+[OK]  _archive/class_attr_repair_backup/admin/schedule/shift_schedule.php
+      -> app/views/admin/schedule/shift_schedule.php
+[OK]  _archive/class_attr_repair_backup/admin/schedule/shift_types.php
+      -> app/views/admin/schedule/shift_types.php
+[OK]  _archive/class_attr_repair_backup/admin/schedule/weekly_view.php
+      -> app/views/admin/schedule/weekly_view.php
+[OK]  _archive/class_attr_repair_backup/admin/scheduler/index.php
+      -> app/views/admin/scheduler/index.php
+[OK]  _archive/class_attr_repair_backup/admin/security-test/index.php
+      -> app/views/admin/security-test/index.php
+[OK]  _archive/class_attr_repair_backup/admin/service-configs/index.php
+      -> app/views/admin/service-configs/index.php
+[OK]  _archive/class_attr_repair_backup/admin/sim-calling/dashboard.php
+      -> app/views/admin/sim-calling/dashboard.php
+[OK]  _archive/class_attr_repair_backup/admin/site-content/edit.php
+      -> app/views/admin/site-content/edit.php
+[OK]  _archive/class_attr_repair_backup/admin/site-settings/settings.php
+      -> app/views/admin/site-settings/settings.php
+[OK]  _archive/class_attr_repair_backup/admin/sites/show.php
+      -> app/views/admin/sites/show.php
+[OK]  _archive/class_attr_repair_backup/admin/site_visits/index.php
+      -> app/views/admin/site_visits/index.php
+[OK]  _archive/class_attr_repair_backup/admin/smart_registration/dashboard.php
+      -> app/views/admin/smart_registration/dashboard.php
+[OK]  _archive/class_attr_repair_backup/admin/smart_registration/detail.php
+      -> app/views/admin/smart_registration/detail.php
+[OK]  _archive/class_attr_repair_backup/admin/social_media/insights.php
+      -> app/views/admin/social_media/insights.php
+[OK]  _archive/class_attr_repair_backup/admin/storage/index.php
+      -> app/views/admin/storage/index.php
+[OK]  _archive/class_attr_repair_backup/admin/support_tickets/show.php
+      -> app/views/admin/support_tickets/show.php
+[OK]  _archive/class_attr_repair_backup/admin/sustainability_dashboard.php
+      -> app/views/admin/sustainability_dashboard.php
+[OK]  _archive/class_attr_repair_backup/admin/sustainable/certifications.php
+      -> app/views/admin/sustainable/certifications.php
+[OK]  _archive/class_attr_repair_backup/admin/team/index.php
+      -> app/views/admin/team/index.php
+[OK]  _archive/class_attr_repair_backup/admin/telecaller/index.php
+      -> app/views/admin/telecaller/index.php
+[OK]  _archive/class_attr_repair_backup/admin/telecaller/performance.php
+      -> app/views/admin/telecaller/performance.php
+[OK]  _archive/class_attr_repair_backup/admin/telecaller/show.php
+      -> app/views/admin/telecaller/show.php
+[OK]  _archive/class_attr_repair_backup/admin/tenants/dashboard.php
+      -> app/views/admin/tenants/dashboard.php
+[OK]  _archive/class_attr_repair_backup/admin/tenants/index.php
+      -> app/views/admin/tenants/index.php
+[OK]  _archive/class_attr_repair_backup/admin/tenants/onboard.php
+      -> app/views/admin/tenants/onboard.php
+[OK]  _archive/class_attr_repair_backup/admin/tenants/show.php
+      -> app/views/admin/tenants/show.php
+[OK]  _archive/class_attr_repair_backup/admin/testimonials/index.php
+      -> app/views/admin/testimonials/index.php
+[OK]  _archive/class_attr_repair_backup/admin/testimonials/view.php
+      -> app/views/admin/testimonials/view.php
+[OK]  _archive/class_attr_repair_backup/admin/tools/whatsapp-templates.php
+      -> app/views/admin/tools/whatsapp-templates.php
+[OK]  _archive/class_attr_repair_backup/admin/training/enrollment-show.php
+      -> app/views/admin/training/enrollment-show.php
+[OK]  _archive/class_attr_repair_backup/admin/training/enrollments.php
+      -> app/views/admin/training/enrollments.php
+[OK]  _archive/class_attr_repair_backup/admin/translations/index.php
+      -> app/views/admin/translations/index.php
+[OK]  _archive/class_attr_repair_backup/admin/translations.php
+      -> app/views/admin/translations.php
+[OK]  _archive/class_attr_repair_backup/admin/users/index.php
+      -> app/views/admin/users/index.php
+[OK]  _archive/class_attr_repair_backup/admin/users/pending.php
+      -> app/views/admin/users/pending.php
+[OK]  _archive/class_attr_repair_backup/admin/users/show.php
+      -> app/views/admin/users/show.php
+[OK]  _archive/class_attr_repair_backup/admin/vendors/show.php
+      -> app/views/admin/vendors/show.php
+[OK]  _archive/class_attr_repair_backup/admin/visits/calendar.php
+      -> app/views/admin/visits/calendar.php
+[OK]  _archive/class_attr_repair_backup/admin/voice-scheduler/analytics.php
+      -> app/views/admin/voice-scheduler/analytics.php
+[OK]  _archive/class_attr_repair_backup/admin/voice-scheduler/call_detail.php
+      -> app/views/admin/voice-scheduler/call_detail.php
+[OK]  _archive/class_attr_repair_backup/admin/voice-scheduler/schedule.php
+      -> app/views/admin/voice-scheduler/schedule.php
+[OK]  _archive/class_attr_repair_backup/admin/voice-users/oln.php
+      -> app/views/admin/voice-users/oln.php
+[OK]  _archive/class_attr_repair_backup/admin/whatsapp_integration.php
+      -> app/views/admin/whatsapp_integration.php
+[OK]  _archive/class_attr_repair_backup/agent/collections/show.php
+      -> app/views/agent/collections/show.php
+[OK]  _archive/class_attr_repair_backup/agent/commissions.php
+      -> app/views/agent/commissions.php
+[OK]  _archive/class_attr_repair_backup/agent/dashboard.php
+      -> app/views/agent/dashboard.php
+[OK]  _archive/class_attr_repair_backup/agent/deals.php
+      -> app/views/agent/deals.php
+[OK]  _archive/class_attr_repair_backup/agent/layouts/agent.php
+      -> app/views/agent/layouts/agent.php
+[OK]  _archive/class_attr_repair_backup/agent/leads.php
+      -> app/views/agent/leads.php
+[OK]  _archive/class_attr_repair_backup/agent/lead_detail.php
+      -> app/views/agent/lead_detail.php
+[OK]  _archive/class_attr_repair_backup/agent/lead_form.php
+      -> app/views/agent/lead_form.php
+[OK]  _archive/class_attr_repair_backup/agent/properties.php
+      -> app/views/agent/properties.php
+[OK]  _archive/class_attr_repair_backup/agent/wallet.php
+      -> app/views/agent/wallet.php
+[OK]  _archive/class_attr_repair_backup/associate/add_property.php
+      -> app/views/associate/add_property.php
+[OK]  _archive/class_attr_repair_backup/associate/booking_receipt.php
+      -> app/views/associate/booking_receipt.php
+[OK]  _archive/class_attr_repair_backup/associate/browse.php
+      -> app/views/associate/browse.php
+[OK]  _archive/class_attr_repair_backup/associate/bulk_whatsapp.php
+      -> app/views/associate/bulk_whatsapp.php
+[OK]  _archive/class_attr_repair_backup/associate/collections/show.php
+      -> app/views/associate/collections/show.php
+[OK]  _archive/class_attr_repair_backup/associate/colony_map.php
+      -> app/views/associate/colony_map.php
+[OK]  _archive/class_attr_repair_backup/associate/commissions.php
+      -> app/views/associate/commissions.php
+[OK]  _archive/class_attr_repair_backup/associate/crm_dashboard.php
+      -> app/views/associate/crm_dashboard.php
+[OK]  _archive/class_attr_repair_backup/associate/customer_detail.php
+      -> app/views/associate/customer_detail.php
+[OK]  _archive/class_attr_repair_backup/associate/dashboard.php
+      -> app/views/associate/dashboard.php
+[OK]  _archive/class_attr_repair_backup/associate/documents.php
+      -> app/views/associate/documents.php
+[OK]  _archive/class_attr_repair_backup/associate/emi_tracker.php
+      -> app/views/associate/emi_tracker.php
+[OK]  _archive/class_attr_repair_backup/associate/followups.php
+      -> app/views/associate/followups.php
+[OK]  _archive/class_attr_repair_backup/associate/import_leads.php
+      -> app/views/associate/import_leads.php
+[OK]  _archive/class_attr_repair_backup/associate/layouts/associate.php
+      -> app/views/associate/layouts/associate.php
+[OK]  _archive/class_attr_repair_backup/associate/leads.php
+      -> app/views/associate/leads.php
+[OK]  _archive/class_attr_repair_backup/associate/lead_detail.php
+      -> app/views/associate/lead_detail.php
+[OK]  _archive/class_attr_repair_backup/associate/mlm_plan.php
+      -> app/views/associate/mlm_plan.php
+[OK]  _archive/class_attr_repair_backup/associate/my_bookings.php
+      -> app/views/associate/my_bookings.php
+[OK]  _archive/class_attr_repair_backup/associate/my_customers.php
+      -> app/views/associate/my_customers.php
+[OK]  _archive/class_attr_repair_backup/associate/network_tree.php
+      -> app/views/associate/network_tree.php
+[OK]  _archive/class_attr_repair_backup/associate/properties.php
+      -> app/views/associate/properties.php
+[OK]  _archive/class_attr_repair_backup/associate/rank_eligibility.php
+      -> app/views/associate/rank_eligibility.php
+[OK]  _archive/class_attr_repair_backup/associate/referral.php
+      -> app/views/associate/referral.php
+[OK]  _archive/class_attr_repair_backup/associate/schedule.php
+      -> app/views/associate/schedule.php
+[OK]  _archive/class_attr_repair_backup/associate/site_visits.php
+      -> app/views/associate/site_visits.php
+[OK]  _archive/class_attr_repair_backup/associate/team.php
+      -> app/views/associate/team.php
+[OK]  _archive/class_attr_repair_backup/associate/tools.php
+      -> app/views/associate/tools.php
+[OK]  _archive/class_attr_repair_backup/async/dashboard.php
+      -> app/views/async/dashboard.php
+[OK]  _archive/class_attr_repair_backup/async/tasks.php
+      -> app/views/async/tasks.php
+[OK]  _archive/class_attr_repair_backup/async/task_details.php
+      -> app/views/async/task_details.php
+[OK]  _archive/class_attr_repair_backup/auth/agent_register.php
+      -> app/views/auth/agent_register.php
+[OK]  _archive/class_attr_repair_backup/auth/air_login.php
+      -> app/views/auth/air_login.php
+[OK]  _archive/class_attr_repair_backup/auth/associate_login.php
+      -> app/views/auth/associate_login.php
+[OK]  _archive/class_attr_repair_backup/auth/associate_register.php
+      -> app/views/auth/associate_register.php
+[OK]  _archive/class_attr_repair_backup/auth/core_login.php
+      -> app/views/auth/core_login.php
+[OK]  _archive/class_attr_repair_backup/auth/customer_register.php
+      -> app/views/auth/customer_register.php
+[OK]  _archive/class_attr_repair_backup/auth/logout.php
+      -> app/views/auth/logout.php
+[OK]  _archive/class_attr_repair_backup/auth/registration/progress.php
+      -> app/views/auth/registration/progress.php
+[OK]  _archive/class_attr_repair_backup/auth/registration/step1.php
+      -> app/views/auth/registration/step1.php
+[OK]  _archive/class_attr_repair_backup/auth/unified_register.php
+      -> app/views/auth/unified_register.php
+[OK]  _archive/class_attr_repair_backup/business/users/index.php
+      -> app/views/business/users/index.php
+[OK]  _archive/class_attr_repair_backup/business/users/show.php
+      -> app/views/business/users/show.php
+[OK]  _archive/class_attr_repair_backup/buyer/dashboard.php
+      -> app/views/buyer/dashboard.php
+[OK]  _archive/class_attr_repair_backup/careers.dashboard.php
+      -> app/views/careers.dashboard.php
+[OK]  _archive/class_attr_repair_backup/commission/commission_calculator.php
+      -> app/views/commission/commission_calculator.php
+[OK]  _archive/class_attr_repair_backup/commission/commission_plan_calculator.php
+      -> app/views/commission/commission_plan_calculator.php
+[OK]  _archive/class_attr_repair_backup/components/gamification_widget.php
+      -> app/views/components/gamification_widget.php
+[OK]  _archive/class_attr_repair_backup/components/mobile-header.php
+      -> app/views/components/mobile-header.php
+[OK]  _archive/class_attr_repair_backup/components/navigation/desktop_navbar.php
+      -> app/views/components/navigation/desktop_navbar.php
+[OK]  _archive/class_attr_repair_backup/components/navigation/mobile_drawer.php
+      -> app/views/components/navigation/mobile_drawer.php
+[OK]  _archive/class_attr_repair_backup/components/navigation/mobile_top_bar.php
+      -> app/views/components/navigation/mobile_top_bar.php
+[OK]  _archive/class_attr_repair_backup/components/save_search_modal.php
+      -> app/views/components/save_search_modal.php
+[OK]  _archive/class_attr_repair_backup/custom-features/investment.php
+      -> app/views/custom-features/investment.php
+[OK]  _archive/class_attr_repair_backup/custom-features/neighborhood.php
+      -> app/views/custom-features/neighborhood.php
+[OK]  _archive/class_attr_repair_backup/dashboard/associate.php
+      -> app/views/dashboard/associate.php
+[OK]  _archive/class_attr_repair_backup/dashboard/associate_dashboard.php
+      -> app/views/dashboard/associate_dashboard.php
+[OK]  _archive/class_attr_repair_backup/dashboard/ceo_dashboard.php
+      -> app/views/dashboard/ceo_dashboard.php
+[OK]  _archive/class_attr_repair_backup/dashboard/cm_dashboard.php
+      -> app/views/dashboard/cm_dashboard.php
+[OK]  _archive/class_attr_repair_backup/dashboard/customer.php
+      -> app/views/dashboard/customer.php
+[OK]  _archive/class_attr_repair_backup/dashboard/index.php
+      -> app/views/dashboard/index.php
+[OK]  _archive/class_attr_repair_backup/emails/agreement_pending.php
+      -> app/views/emails/agreement_pending.php
+[OK]  _archive/class_attr_repair_backup/emails/agreement_signed.php
+      -> app/views/emails/agreement_signed.php
+[OK]  _archive/class_attr_repair_backup/emails/booking_cancellation.php
+      -> app/views/emails/booking_cancellation.php
+[OK]  _archive/class_attr_repair_backup/emails/booking_confirmation.php
+      -> app/views/emails/booking_confirmation.php
+[OK]  _archive/class_attr_repair_backup/emails/emi_reminder.php
+      -> app/views/emails/emi_reminder.php
+[OK]  _archive/class_attr_repair_backup/emails/kyc_approved.php
+      -> app/views/emails/kyc_approved.php
+[OK]  _archive/class_attr_repair_backup/emails/kyc_rejected.php
+      -> app/views/emails/kyc_rejected.php
+[OK]  _archive/class_attr_repair_backup/emails/password_reset.php
+      -> app/views/emails/password_reset.php
+[OK]  _archive/class_attr_repair_backup/emails/payment_success.php
+      -> app/views/emails/payment_success.php
+[OK]  _archive/class_attr_repair_backup/emails/property_approved.php
+      -> app/views/emails/property_approved.php
+[OK]  _archive/class_attr_repair_backup/emails/property_inquiry.php
+      -> app/views/emails/property_inquiry.php
+[OK]  _archive/class_attr_repair_backup/emails/referral_commission.php
+      -> app/views/emails/referral_commission.php
+[OK]  _archive/class_attr_repair_backup/emails/site_visit_confirmed.php
+      -> app/views/emails/site_visit_confirmed.php
+[OK]  _archive/class_attr_repair_backup/emails/support_ticket_created.php
+      -> app/views/emails/support_ticket_created.php
+[OK]  _archive/class_attr_repair_backup/emails/support_ticket_reply.php
+      -> app/views/emails/support_ticket_reply.php
+[OK]  _archive/class_attr_repair_backup/emails/welcome.php
+      -> app/views/emails/welcome.php
+[OK]  _archive/class_attr_repair_backup/employee/leads.php
+      -> app/views/employee/leads.php
+[OK]  _archive/class_attr_repair_backup/employee/lead_detail.php
+      -> app/views/employee/lead_detail.php
+[OK]  _archive/class_attr_repair_backup/employee/lead_form.php
+      -> app/views/employee/lead_form.php
+[OK]  _archive/class_attr_repair_backup/employees/activities.php
+      -> app/views/employees/activities.php
+[OK]  _archive/class_attr_repair_backup/employees/dashboard.php
+      -> app/views/employees/dashboard.php
+[OK]  _archive/class_attr_repair_backup/employees/department.php
+      -> app/views/employees/department.php
+[OK]  _archive/class_attr_repair_backup/employees/performance.php
+      -> app/views/employees/performance.php
+[OK]  _archive/class_attr_repair_backup/employees/reporting_structure.php
+      -> app/views/employees/reporting_structure.php
+[OK]  _archive/class_attr_repair_backup/employees/salary_history.php
+      -> app/views/employees/salary_history.php
+[OK]  _archive/class_attr_repair_backup/employees/tasks.php
+      -> app/views/employees/tasks.php
+[OK]  _archive/class_attr_repair_backup/farmer/dashboard.php
+      -> app/views/farmer/dashboard.php
+[OK]  _archive/class_attr_repair_backup/farmer/login.php
+      -> app/views/farmer/login.php
+[OK]  _archive/class_attr_repair_backup/front/digital-booking.php
+      -> app/views/front/digital-booking.php
+[OK]  _archive/class_attr_repair_backup/front/digital-document.php
+      -> app/views/front/digital-document.php
+[OK]  _archive/class_attr_repair_backup/gallery/index.php
+      -> app/views/gallery/index.php
+[OK]  _archive/class_attr_repair_backup/gallery/project.php
+      -> app/views/gallery/project.php
+[OK]  _archive/class_attr_repair_backup/layouts/active/header.php
+      -> app/views/layouts/active/header.php
+[OK]  _archive/class_attr_repair_backup/layouts/admin.php
+      -> app/views/layouts/admin.php
+[OK]  _archive/class_attr_repair_backup/layouts/admin_header.php
+      -> app/views/layouts/admin_header.php
+[OK]  _archive/class_attr_repair_backup/layouts/associate.php
+      -> app/views/layouts/associate.php
+[OK]  _archive/class_attr_repair_backup/layouts/chat_widget.php
+      -> app/views/layouts/chat_widget.php
+[OK]  _archive/class_attr_repair_backup/layouts/footer.php
+      -> app/views/layouts/footer.php
+[OK]  _archive/class_attr_repair_backup/list-property/progress.php
+      -> app/views/list-property/progress.php
+[OK]  _archive/class_attr_repair_backup/list-property/step6.php
+      -> app/views/list-property/step6.php
+[OK]  _archive/class_attr_repair_backup/localization/editor.php
+      -> app/views/localization/editor.php
+[OK]  _archive/class_attr_repair_backup/locations/gorakhpur-bohisawagar.php
+      -> app/views/locations/gorakhpur-bohisawagar.php
+[OK]  _archive/class_attr_repair_backup/locations/gorakhpur-raghunath-nagri.php
+      -> app/views/locations/gorakhpur-raghunath-nagri.php
+[OK]  _archive/class_attr_repair_backup/locations/gorakhpur-suryoday-colony.php
+      -> app/views/locations/gorakhpur-suryoday-colony.php
+[OK]  _archive/class_attr_repair_backup/locations/kushinagar-budha-city.php
+      -> app/views/locations/kushinagar-budha-city.php
+[OK]  _archive/class_attr_repair_backup/locations/lucknow-ram-nagri.php
+      -> app/views/locations/lucknow-ram-nagri.php
+[OK]  _archive/class_attr_repair_backup/locations/varanasi-ganga-nagri.php
+      -> app/views/locations/varanasi-ganga-nagri.php
+[OK]  _archive/class_attr_repair_backup/logging/dashboard.php
+      -> app/views/logging/dashboard.php
+[OK]  _archive/class_attr_repair_backup/logging/details.php
+      -> app/views/logging/details.php
+[OK]  _archive/class_attr_repair_backup/logging/logs.php
+      -> app/views/logging/logs.php
+[OK]  _archive/class_attr_repair_backup/logging/search.php
+      -> app/views/logging/search.php
+[OK]  _archive/class_attr_repair_backup/logging/viewer.php
+      -> app/views/logging/viewer.php
+[OK]  _archive/class_attr_repair_backup/map/index.php
+      -> app/views/map/index.php
+[OK]  _archive/class_attr_repair_backup/mlm/genealogy.php
+      -> app/views/mlm/genealogy.php
+[OK]  _archive/class_attr_repair_backup/mlm/network_tree.php
+      -> app/views/mlm/network_tree.php
+[OK]  _archive/class_attr_repair_backup/notification/notification_center.php
+      -> app/views/notification/notification_center.php
+[OK]  _archive/class_attr_repair_backup/pages/about.php
+      -> app/views/pages/about.php
+[OK]  _archive/class_attr_repair_backup/pages/ai/assistant.php
+      -> app/views/pages/ai/assistant.php
+[OK]  _archive/class_attr_repair_backup/pages/ai/chatbot.php
+      -> app/views/pages/ai/chatbot.php
+[OK]  _archive/class_attr_repair_backup/pages/ai/description-generator.php
+      -> app/views/pages/ai/description-generator.php
+[OK]  _archive/class_attr_repair_backup/pages/ai/suggestions.php
+      -> app/views/pages/ai/suggestions.php
+[OK]  _archive/class_attr_repair_backup/pages/ai-dashboard.php
+      -> app/views/pages/ai-dashboard.php
+[OK]  _archive/class_attr_repair_backup/pages/ai-valuation.php
+      -> app/views/pages/ai-valuation.php
+[OK]  _archive/class_attr_repair_backup/pages/ai_assistant.php
+      -> app/views/pages/ai_assistant.php
+[OK]  _archive/class_attr_repair_backup/pages/ai_chat_enhanced.php
+      -> app/views/pages/ai_chat_enhanced.php
+[OK]  _archive/class_attr_repair_backup/pages/associate_list_property.php
+      -> app/views/pages/associate_list_property.php
+[OK]  _archive/class_attr_repair_backup/pages/astrology.php
+      -> app/views/pages/astrology.php
+[OK]  _archive/class_attr_repair_backup/pages/auctions/index.php
+      -> app/views/pages/auctions/index.php
+[OK]  _archive/class_attr_repair_backup/pages/auctions/show.php
+      -> app/views/pages/auctions/show.php
+[OK]  _archive/class_attr_repair_backup/pages/become_associate_embed.php
+      -> app/views/pages/become_associate_embed.php
+[OK]  _archive/class_attr_repair_backup/pages/blog.php
+      -> app/views/pages/blog.php
+[OK]  _archive/class_attr_repair_backup/pages/blog_article_list.php
+      -> app/views/pages/blog_article_list.php
+[OK]  _archive/class_attr_repair_backup/pages/booking/browse.php
+      -> app/views/pages/booking/browse.php
+[OK]  _archive/class_attr_repair_backup/pages/booking/confirmation.php
+      -> app/views/pages/booking/confirmation.php
+[OK]  _archive/class_attr_repair_backup/pages/booking/detail.php
+      -> app/views/pages/booking/detail.php
+[OK]  _archive/class_attr_repair_backup/pages/booking/esign.php
+      -> app/views/pages/booking/esign.php
+[OK]  _archive/class_attr_repair_backup/pages/booking/form.php
+      -> app/views/pages/booking/form.php
+[OK]  _archive/class_attr_repair_backup/pages/booking_pay.php
+      -> app/views/pages/booking_pay.php
+[OK]  _archive/class_attr_repair_backup/pages/boost_property.php
+      -> app/views/pages/boost_property.php
+[OK]  _archive/class_attr_repair_backup/pages/buy.php
+      -> app/views/pages/buy.php
+[OK]  _archive/class_attr_repair_backup/pages/careers.php
+      -> app/views/pages/careers.php
+[OK]  _archive/class_attr_repair_backup/pages/career_job_detail.php
+      -> app/views/pages/career_job_detail.php
+[OK]  _archive/class_attr_repair_backup/pages/colonies.php
+      -> app/views/pages/colonies.php
+[OK]  _archive/class_attr_repair_backup/pages/colony/raghunath_block_c_dashboard.php
+      -> app/views/pages/colony/raghunath_block_c_dashboard.php
+[OK]  _archive/class_attr_repair_backup/pages/colony_detail.php
+      -> app/views/pages/colony_detail.php
+[OK]  _archive/class_attr_repair_backup/pages/colony_plots.php
+      -> app/views/pages/colony_plots.php
+[OK]  _archive/class_attr_repair_backup/pages/colony_plot_map.php
+      -> app/views/pages/colony_plot_map.php
+[OK]  _archive/class_attr_repair_backup/pages/company_projects.php
+      -> app/views/pages/company_projects.php
+[OK]  _archive/class_attr_repair_backup/pages/compare.php
+      -> app/views/pages/compare.php
+[OK]  _archive/class_attr_repair_backup/pages/construction_services.php
+      -> app/views/pages/construction_services.php
+[OK]  _archive/class_attr_repair_backup/pages/contact.php
+      -> app/views/pages/contact.php
+[OK]  _archive/class_attr_repair_backup/pages/customer_referral.php
+      -> app/views/pages/customer_referral.php
+[OK]  _archive/class_attr_repair_backup/pages/customer_reviews.php
+      -> app/views/pages/customer_reviews.php
+[OK]  _archive/class_attr_repair_backup/pages/directory/detail.php
+      -> app/views/pages/directory/detail.php
+[OK]  _archive/class_attr_repair_backup/pages/featured_properties.php
+      -> app/views/pages/featured_properties.php
+[OK]  _archive/class_attr_repair_backup/pages/financial_services.php
+      -> app/views/pages/financial_services.php
+[OK]  _archive/class_attr_repair_backup/pages/gallery.php
+      -> app/views/pages/gallery.php
+[OK]  _archive/class_attr_repair_backup/pages/gallery_project.php
+      -> app/views/pages/gallery_project.php
+[OK]  _archive/class_attr_repair_backup/pages/home.php
+      -> app/views/pages/home.php
+[OK]  _archive/class_attr_repair_backup/pages/how_it_works.php
+      -> app/views/pages/how_it_works.php
+[OK]  _archive/class_attr_repair_backup/pages/interior_design.php
+      -> app/views/pages/interior_design.php
+[OK]  _archive/class_attr_repair_backup/pages/invest.php
+      -> app/views/pages/invest.php
+[OK]  _archive/class_attr_repair_backup/pages/legal/documents.php
+      -> app/views/pages/legal/documents.php
+[OK]  _archive/class_attr_repair_backup/pages/legal/services.php
+      -> app/views/pages/legal/services.php
+[OK]  _archive/class_attr_repair_backup/pages/list_property.php
+      -> app/views/pages/list_property.php
+[OK]  _archive/class_attr_repair_backup/pages/marketplace-detail.php
+      -> app/views/pages/marketplace-detail.php
+[OK]  _archive/class_attr_repair_backup/pages/marketplace.php
+      -> app/views/pages/marketplace.php
+[OK]  _archive/class_attr_repair_backup/pages/mlm_dashboard.php
+      -> app/views/pages/mlm_dashboard.php
+[OK]  _archive/class_attr_repair_backup/pages/nach_mandate.php
+      -> app/views/pages/nach_mandate.php
+[OK]  _archive/class_attr_repair_backup/pages/news.php
+      -> app/views/pages/news.php
+[OK]  _archive/class_attr_repair_backup/pages/news_detail.php
+      -> app/views/pages/news_detail.php
+[OK]  _archive/class_attr_repair_backup/pages/opportunity.php
+      -> app/views/pages/opportunity.php
+[OK]  _archive/class_attr_repair_backup/pages/partials/tool_card.php
+      -> app/views/pages/partials/tool_card.php
+[OK]  _archive/class_attr_repair_backup/pages/plots.php
+      -> app/views/pages/plots.php
+[OK]  _archive/class_attr_repair_backup/pages/plot_detail.php
+      -> app/views/pages/plot_detail.php
+[OK]  _archive/class_attr_repair_backup/pages/plot_layout.php
+      -> app/views/pages/plot_layout.php
+[OK]  _archive/class_attr_repair_backup/pages/pricing.php
+      -> app/views/pages/pricing.php
+[OK]  _archive/class_attr_repair_backup/pages/projects_by_location.php
+      -> app/views/pages/projects_by_location.php
+[OK]  _archive/class_attr_repair_backup/pages/project_detail.php
+      -> app/views/pages/project_detail.php
+[OK]  _archive/class_attr_repair_backup/pages/properties/submit.php
+      -> app/views/pages/properties/submit.php
+[OK]  _archive/class_attr_repair_backup/pages/properties.php
+      -> app/views/pages/properties.php
+[OK]  _archive/class_attr_repair_backup/pages/property_ai_chat.php
+      -> app/views/pages/property_ai_chat.php
+[OK]  _archive/class_attr_repair_backup/pages/property_alerts/success.php
+      -> app/views/pages/property_alerts/success.php
+[OK]  _archive/class_attr_repair_backup/pages/property_comparison/index.php
+      -> app/views/pages/property_comparison/index.php
+[OK]  _archive/class_attr_repair_backup/pages/property_verification.php
+      -> app/views/pages/property_verification.php
+[OK]  _archive/class_attr_repair_backup/pages/rent.php
+      -> app/views/pages/rent.php
+[OK]  _archive/class_attr_repair_backup/pages/resell.php
+      -> app/views/pages/resell.php
+[OK]  _archive/class_attr_repair_backup/pages/resell_properties_public.php
+      -> app/views/pages/resell_properties_public.php
+[OK]  _archive/class_attr_repair_backup/pages/saas_home.php
+      -> app/views/pages/saas_home.php
+[OK]  _archive/class_attr_repair_backup/pages/security-dashboard.php
+      -> app/views/pages/security-dashboard.php
+[OK]  _archive/class_attr_repair_backup/pages/sell.php
+      -> app/views/pages/sell.php
+[OK]  _archive/class_attr_repair_backup/pages/services.php
+      -> app/views/pages/services.php
+[OK]  _archive/class_attr_repair_backup/pages/team-management.php
+      -> app/views/pages/team-management.php
+[OK]  _archive/class_attr_repair_backup/pages/team.php
+      -> app/views/pages/team.php
+[OK]  _archive/class_attr_repair_backup/pages/testimonials/index.php
+      -> app/views/pages/testimonials/index.php
+[OK]  _archive/class_attr_repair_backup/pages/testimonials/submit.php
+      -> app/views/pages/testimonials/submit.php
+[OK]  _archive/class_attr_repair_backup/pages/testimonials.php
+      -> app/views/pages/testimonials.php
+[OK]  _archive/class_attr_repair_backup/pages/tools/capital_gains.php
+      -> app/views/pages/tools/capital_gains.php
+[OK]  _archive/class_attr_repair_backup/pages/tools/construction_cost.php
+      -> app/views/pages/tools/construction_cost.php
+[OK]  _archive/class_attr_repair_backup/pages/tools/gst_calculator.php
+      -> app/views/pages/tools/gst_calculator.php
+[OK]  _archive/class_attr_repair_backup/pages/tools/loan_eligibility.php
+      -> app/views/pages/tools/loan_eligibility.php
+[OK]  _archive/class_attr_repair_backup/pages/tools/partner_tools.php
+      -> app/views/pages/tools/partner_tools.php
+[OK]  _archive/class_attr_repair_backup/pages/tools/plot_converter.php
+      -> app/views/pages/tools/plot_converter.php
+[OK]  _archive/class_attr_repair_backup/pages/tools/property_tax.php
+      -> app/views/pages/tools/property_tax.php
+[OK]  _archive/class_attr_repair_backup/pages/tools/property_valuation.php
+      -> app/views/pages/tools/property_valuation.php
+[OK]  _archive/class_attr_repair_backup/pages/tools/rental_yield.php
+      -> app/views/pages/tools/rental_yield.php
+[OK]  _archive/class_attr_repair_backup/pages/tools/rent_vs_buy.php
+      -> app/views/pages/tools/rent_vs_buy.php
+[OK]  _archive/class_attr_repair_backup/pages/tools/sip_vs_realestate.php
+      -> app/views/pages/tools/sip_vs_realestate.php
+[OK]  _archive/class_attr_repair_backup/pages/tools/stamp_duty.php
+      -> app/views/pages/tools/stamp_duty.php
+[OK]  _archive/class_attr_repair_backup/pages/tools/stamp_duty_calculator.php
+      -> app/views/pages/tools/stamp_duty_calculator.php
+[OK]  _archive/class_attr_repair_backup/pages/tools/tool_card.php
+      -> app/views/pages/tools/tool_card.php
+[OK]  _archive/class_attr_repair_backup/pages/tools/valuation_calculator.php
+      -> app/views/pages/tools/valuation_calculator.php
+[OK]  _archive/class_attr_repair_backup/pages/user/address.php
+      -> app/views/pages/user/address.php
+[OK]  _archive/class_attr_repair_backup/pages/user/agreements.php
+      -> app/views/pages/user/agreements.php
+[OK]  _archive/class_attr_repair_backup/pages/user/agreement_detail.php
+      -> app/views/pages/user/agreement_detail.php
+[OK]  _archive/class_attr_repair_backup/pages/user/booking_confirmation.php
+      -> app/views/pages/user/booking_confirmation.php
+[OK]  _archive/class_attr_repair_backup/pages/user/booking_detail.php
+      -> app/views/pages/user/booking_detail.php
+[OK]  _archive/class_attr_repair_backup/pages/user/edit_profile.php
+      -> app/views/pages/user/edit_profile.php
+[OK]  _archive/class_attr_repair_backup/pages/user/installment_success.php
+      -> app/views/pages/user/installment_success.php
+[OK]  _archive/class_attr_repair_backup/pages/user/insurance.php
+      -> app/views/pages/user/insurance.php
+[OK]  _archive/class_attr_repair_backup/pages/user/investment_plans.php
+      -> app/views/pages/user/investment_plans.php
+[OK]  _archive/class_attr_repair_backup/pages/user/new_booking.php
+      -> app/views/pages/user/new_booking.php
+[OK]  _archive/class_attr_repair_backup/pages/user/notification_preferences.php
+      -> app/views/pages/user/notification_preferences.php
+[OK]  _archive/class_attr_repair_backup/pages/user/payment_success.php
+      -> app/views/pages/user/payment_success.php
+[OK]  _archive/class_attr_repair_backup/pages/user/pay_installment.php
+      -> app/views/pages/user/pay_installment.php
+[OK]  _archive/class_attr_repair_backup/pages/user/pay_token.php
+      -> app/views/pages/user/pay_token.php
+[OK]  _archive/class_attr_repair_backup/pages/user/saved_searches.php
+      -> app/views/pages/user/saved_searches.php
+[OK]  _archive/class_attr_repair_backup/pages/user/saved_search_results.php
+      -> app/views/pages/user/saved_search_results.php
+[OK]  _archive/class_attr_repair_backup/pages/user/support_tickets.php
+      -> app/views/pages/user/support_tickets.php
+[OK]  _archive/class_attr_repair_backup/pages/user/ticket_detail.php
+      -> app/views/pages/user/ticket_detail.php
+[OK]  _archive/class_attr_repair_backup/pages/user_ai_suggestions.php
+      -> app/views/pages/user_ai_suggestions.php
+[OK]  _archive/class_attr_repair_backup/pages/user_bank_details.php
+      -> app/views/pages/user_bank_details.php
+[OK]  _archive/class_attr_repair_backup/pages/user_bookings.php
+      -> app/views/pages/user_bookings.php
+[OK]  _archive/class_attr_repair_backup/pages/user_dashboard.php
+      -> app/views/pages/user_dashboard.php
+[OK]  _archive/class_attr_repair_backup/pages/user_emi_tracker.php
+      -> app/views/pages/user_emi_tracker.php
+[OK]  _archive/class_attr_repair_backup/pages/user_favorites.php
+      -> app/views/pages/user_favorites.php
+[OK]  _archive/class_attr_repair_backup/pages/user_inquiries.php
+      -> app/views/pages/user_inquiries.php
+[OK]  _archive/class_attr_repair_backup/pages/user_network.php
+      -> app/views/pages/user_network.php
+[OK]  _archive/class_attr_repair_backup/pages/user_payment_history.php
+      -> app/views/pages/user_payment_history.php
+[OK]  _archive/class_attr_repair_backup/pages/user_properties.php
+      -> app/views/pages/user_properties.php
+[OK]  _archive/class_attr_repair_backup/pages/user_site_visits.php
+      -> app/views/pages/user_site_visits.php
+[OK]  _archive/class_attr_repair_backup/pages/vastu.php
+      -> app/views/pages/vastu.php
+[OK]  _archive/class_attr_repair_backup/pages/virtual_tour.php
+      -> app/views/pages/virtual_tour.php
+[OK]  _archive/class_attr_repair_backup/pages/visits/book.php
+      -> app/views/pages/visits/book.php
+[OK]  _archive/class_attr_repair_backup/pages/voice_bot/index.php
+      -> app/views/pages/voice_bot/index.php
+[OK]  _archive/class_attr_repair_backup/partials/ai_chat_popup.php
+      -> app/views/partials/ai_chat_popup.php
+[OK]  _archive/class_attr_repair_backup/partials/ai_chat_widget.php
+      -> app/views/partials/ai_chat_widget.php
+[OK]  _archive/class_attr_repair_backup/payment/error.php
+      -> app/views/payment/error.php
+[OK]  _archive/class_attr_repair_backup/payment/failed.php
+      -> app/views/payment/failed.php
+[OK]  _archive/class_attr_repair_backup/payment/receipt.php
+      -> app/views/payment/receipt.php
+[OK]  _archive/class_attr_repair_backup/payments/failure.php
+      -> app/views/payments/failure.php
+[OK]  _archive/class_attr_repair_backup/projects/detail.php
+      -> app/views/projects/detail.php
+[OK]  _archive/class_attr_repair_backup/projects/microsite/partials/hero.php
+      -> app/views/projects/microsite/partials/hero.php
+[OK]  _archive/class_attr_repair_backup/properties/compare.php
+      -> app/views/properties/compare.php
+[OK]  _archive/class_attr_repair_backup/properties/compare_results.php
+      -> app/views/properties/compare_results.php
+[OK]  _archive/class_attr_repair_backup/properties/detail.php
+      -> app/views/properties/detail.php
+[OK]  _archive/class_attr_repair_backup/properties/index.php
+      -> app/views/properties/index.php
+[OK]  _archive/class_attr_repair_backup/properties/property_detail.php
+      -> app/views/properties/property_detail.php
+[OK]  _archive/class_attr_repair_backup/properties/user_detail.php
+      -> app/views/properties/user_detail.php
+[OK]  _archive/class_attr_repair_backup/pwa/index.php
+      -> app/views/pwa/index.php
+[OK]  _archive/class_attr_repair_backup/pwa/install_prompt.php
+      -> app/views/pwa/install_prompt.php
+[OK]  _archive/class_attr_repair_backup/reports/financial.php
+      -> app/views/reports/financial.php
+[OK]  _archive/class_attr_repair_backup/reports/property.php
+      -> app/views/reports/property.php
+[OK]  _archive/class_attr_repair_backup/reports/sales.php
+      -> app/views/reports/sales.php
+[OK]  _archive/class_attr_repair_backup/saas/tools/inventory.php
+      -> app/views/saas/tools/inventory.php
+[OK]  _archive/class_attr_repair_backup/saas/tools/workflow.php
+      -> app/views/saas/tools/workflow.php
+[OK]  _archive/class_attr_repair_backup/team/dashboard.php
+      -> app/views/team/dashboard.php
+[OK]  _archive/class_attr_repair_backup/team/genealogy.php
+      -> app/views/team/genealogy.php
+[OK]  _archive/class_attr_repair_backup/testimonials/index.php
+      -> app/views/testimonials/index.php
+[OK]  _archive/class_attr_repair_backup/user/favorites.php
+      -> app/views/user/favorites.php
+[OK]  _archive/class_attr_repair_backup/user/saved-properties.php
+      -> app/views/user/saved-properties.php
+[OK]  _archive/class_attr_repair_backup/user/two_factor.php
+      -> app/views/user/two_factor.php
+[OK]  _archive/class_attr_repair_backup/user/two_factor_disabled.php
+      -> app/views/user/two_factor_disabled.php
+[OK]  _archive/class_attr_repair_backup/users/activities.php
+      -> app/views/users/activities.php
+[OK]  _archive/class_attr_repair_backup/users/attendance.php
+      -> app/views/users/attendance.php
+[OK]  _archive/class_attr_repair_backup/users/leaves.php
+      -> app/views/users/leaves.php
+[OK]  _archive/class_attr_repair_backup/users/leave_detail.php
+      -> app/views/users/leave_detail.php
+[OK]  _archive/class_attr_repair_backup/users/performance.php
+      -> app/views/users/performance.php
+[OK]  _archive/class_attr_repair_backup/users/reporting_structure.php
+      -> app/views/users/reporting_structure.php
+[OK]  _archive/class_attr_repair_backup/users/salary_history.php
+      -> app/views/users/salary_history.php
+[OK]  _archive/class_attr_repair_backup/users/tasks.php
+      -> app/views/users/tasks.php
+[OK]  _archive/class_attr_repair_backup/users/user_properties.php
+      -> app/views/users/user_properties.php
+[OK]  _archive/class_attr_repair_backup/virtual_tour/ar_furniture.php
+      -> app/views/virtual_tour/ar_furniture.php
+[OK]  _archive/class_attr_repair_backup/virtual_tour/index.php
+      -> app/views/virtual_tour/index.php
+[OK]  _archive/class_attr_repair_backup/wallet/analytics.php
+      -> app/views/wallet/analytics.php
+
+====================================================================================================
+SUMMARY
+====================================================================================================
+Total backup files: 671
+Original location par maujood (sahi jagah): 671
+Missing: 0
+
+Folder-wise count:
+   pages/                                                   73 files
+   associate/                                               26 files
+   pages/user/                                              18 files
+   admin/ai/                                                18 files
+   emails/                                                  16 files
+   pages/tools/                                             15 files
+   admin/                                                   15 files
+   admin/commission/                                        14 files
+   users/                                                    9 files
+   admin/push-notifications/                                 9 files
+   admin/mlm/                                                9 files
+   admin/hr/                                                 9 files
+   auth/                                                     8 files
+   agent/                                                    8 files
+   admin/leads/                                              8 files
+   admin/finance/                                            8 files
+   employees/                                                7 files
+   admin/mlm-realestate/                                     7 files
+   admin/legal-colony-pipeline/                              7 files
+   admin/legal/                                              7 files
+   properties/                                               6 files
+   locations/                                                6 files
+   dashboard/                                                6 files
+   admin/schedule/                                           6 files
+   admin/reports/                                            6 files
+   admin/crm/                                                6 files
+   admin/commission/plans/                                   6 files
+   pages/booking/                                            5 files
+   logging/                                                  5 files
+   layouts/                                                  5 files
+   admin/salary/                                             5 files
+   admin/ocr/                                                5 files
+   admin/customer-lead-extras/                               5 files
+   admin/audit-log/                                          5 files
+   admin/agentic-ai/                                         5 files
+   user/                                                     4 files
+   pages/ai/                                                 4 files
+   admin/tenants/                                            4 files
+   admin/sales/                                              4 files
+   admin/referrals/                                          4 files
+   admin/noc-registry/                                       4 files
+   admin/mlm-settings/                                       4 files
+   admin/compliance/                                         4 files
+   admin/colony-pipeline/                                    4 files
+   admin/billing/                                            4 files
+   reports/                                                  3 files
+   payment/                                                  3 files
+   employee/                                                 3 files
+   components/navigation/                                    3 files
+   components/                                               3 files
+   async/                                                    3 files
+   admin/voice-scheduler/                                    3 files
+   admin/users/                                              3 files
+   admin/telecaller/                                         3 files
+   admin/resell_properties/                                  3 files
+   admin/registry/                                           3 files
+   admin/possession/                                         3 files
+   admin/plots/                                              3 files
+   admin/payout-batches/                                     3 files
+   admin/notifications/                                      3 files
+   admin/messages/                                           3 files
+   admin/files/                                              3 files
+   admin/efiling/                                            3 files
+   admin/deals/                                              3 files
+   admin/crm/sla/                                            3 files
+   admin/crm/forms/                                          3 files
+   admin/analytics/                                          3 files
+   virtual_tour/                                             2 files
+   team/                                                     2 files
+   saas/tools/                                               2 files
+   pwa/                                                      2 files
+   partials/                                                 2 files
+   pages/testimonials/                                       2 files
+   pages/legal/                                              2 files
+   pages/auctions/                                           2 files
+   mlm/                                                      2 files
+   list-property/                                            2 files
+   gallery/                                                  2 files
+   front/                                                    2 files
+   farmer/                                                   2 files
+   custom-features/                                          2 files
+   commission/                                               2 files
+   business/users/                                           2 files
+   auth/registration/                                        2 files
+   admin/training/                                           2 files
+   admin/testimonials/                                       2 files
+   admin/smart_registration/                                 2 files
+   admin/properties/                                         2 files
+   admin/projects/progress/                                  2 files
+   admin/notification-dashboard/                             2 files
+   admin/monitoring/                                         2 files
+   admin/mlm/users/                                          2 files
+   admin/marketing_campaigns/                                2 files
+   admin/live_chat/                                          2 files
+   admin/gallery/                                            2 files
+   admin/experiments/                                        2 files
+   admin/erp/                                                2 files
+   admin/emails/                                             2 files
+   admin/customers/                                          2 files
+   admin/crm/voice/                                          2 files
+   admin/crm/templates/                                      2 files
+   admin/crm/kyc/                                            2 files
+   admin/crm/custom_fields/                                  2 files
+   admin/communication/                                      2 files
+   admin/commission/recalculations/                          2 files
+   admin/chat/                                               2 files
+   admin/bank-import/                                        2 files
+   admin/backoffice/                                         2 files
+   admin/associate-extensions/                               2 files
+   admin/api-keys/                                           2 files
+   admin/api/                                                2 files
+   admin/agent-commission/                                   2 files
+   admin/agent-agreements/                                   2 files
+   wallet/                                                   1 files
+   testimonials/                                             1 files
+   projects/microsite/partials/                              1 files
+   projects/                                                 1 files
+   payments/                                                 1 files
+   pages/voice_bot/                                          1 files
+   pages/visits/                                             1 files
+   pages/property_comparison/                                1 files
+   pages/property_alerts/                                    1 files
+   pages/properties/                                         1 files
+   pages/partials/                                           1 files
+   pages/directory/                                          1 files
+   pages/colony/                                             1 files
+   notification/                                             1 files
+   map/                                                      1 files
+   localization/                                             1 files
+   layouts/active/                                           1 files
+   buyer/                                                    1 files
+   associate/layouts/                                        1 files
+   associate/collections/                                    1 files
+   agent/layouts/                                            1 files
+   agent/collections/                                        1 files
+   admin/voice-users/                                        1 files
+   admin/visits/                                             1 files
+   admin/vendors/                                            1 files
+   admin/translations/                                       1 files
+   admin/tools/                                              1 files
+   admin/team/                                               1 files
+   admin/sustainable/                                        1 files
+   admin/support_tickets/                                    1 files
+   admin/storage/                                            1 files
+   admin/social_media/                                       1 files
+   admin/sites/                                              1 files
+   admin/site_visits/                                        1 files
+   admin/site-settings/                                      1 files
+   admin/site-content/                                       1 files
+   admin/sim-calling/                                        1 files
+   admin/service-configs/                                    1 files
+   admin/security-test/                                      1 files
+   admin/scheduler/                                          1 files
+   admin/sales_dashboard/                                    1 files
+   admin/reviews/                                            1 files
+   admin/projects/                                           1 files
+   admin/premium-packages/                                   1 files
+   admin/performance/                                        1 files
+   admin/payouts/                                            1 files
+   admin/pages/                                              1 files
+   admin/news/                                               1 files
+   admin/network/ranks/                                      1 files
+   admin/meetings/                                           1 files
+   admin/media/                                              1 files
+   admin/marketplace/                                        1 files
+   admin/marketing/                                          1 files
+   admin/locations/states/                                   1 files
+   admin/locations/districts/                                1 files
+   admin/locations/colonies/                                 1 files
+   admin/loans/company/                                      1 files
+   admin/listing-settings/                                   1 files
+   admin/legal_pages/                                        1 files
+   admin/lead_kanban/                                        1 files
+   admin/layouts/                                            1 files
+   admin/land-inventory/                                     1 files
+   admin/land/                                               1 files
+   admin/kyc/                                                1 files
+   admin/knowledge-base/                                     1 files
+   admin/jobs/                                               1 files
+   admin/iot/                                                1 files
+   admin/invoices/                                           1 files
+   admin/inventory/                                          1 files
+   admin/inquiries/                                          1 files
+   admin/godmode/                                            1 files
+   admin/features/                                           1 files
+   admin/engagement/                                         1 files
+   admin/employees/                                          1 files
+   admin/emi/                                                1 files
+   admin/drip_campaigns/                                     1 files
+   admin/directory/                                          1 files
+   admin/designations/                                       1 files
+   admin/departments/                                        1 files
+   admin/department_requests/                                1 files
+   admin/deal-pipeline/                                      1 files
+   admin/dashboard/                                          1 files
+   admin/crm/meetings/                                       1 files
+   admin/crm/email_tracking/                                 1 files
+   admin/crm/bulk/                                           1 files
+   admin/crm/agentic/                                        1 files
+   admin/commissions/                                        1 files
+   admin/colony-costing/                                     1 files
+   admin/cash-collections/                                   1 files
+   admin/bulk/                                               1 files
+   admin/bookings/                                           1 files
+   admin/blogs/                                              1 files
+   admin/auctions/                                           1 files
+   admin/ai-management/                                      1 files
+   admin/agreements/                                         1 files
+   admin/agents/salaried/                                    1 files
+   admin/agents/                                             1 files
+   admin/accounts/                                           1 files
+   admin/about-cms/                                          1 files
+   ./                                                        1 files

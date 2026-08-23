@@ -34,7 +34,7 @@
                             <?php if (empty($levels ?? [])): ?>
                             <tr>
                                 <td colspan="8" class="text-center py-5">
-                                    <i class="fas fa-layer-group fa-3x text-muted mb-3" class="style-82835"></i>
+                                    <i class="fas fa-layer-group fa-3x text-muted mb-3 style-82835"></i>
                                     <h5 class="text-muted">No commission levels defined</h5>
                                     <p class="text-muted mb-3">Add commission levels to define the payout structure for your MLM network hierarchy.</p>
                                 </td>

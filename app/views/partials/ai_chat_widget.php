@@ -12,13 +12,13 @@ $user_role = $this->getUserRole() ?? 'customer';
 <!-- AI Chat Widget -->
 <div id="ai-chat-widget" class="ai-chat-widget">
     <!-- Floating Chat Button -->
-    <button id="ai-chat-button" class="ai-chat-button" onclick="toggleAIChat()">
-        <i class="fas fa-robot"></i>
+    <button id="ai-chat-button" class="ai-chat-button" onclick="toggleAIChat()" aria-label="Open AI Assistant chat">
+        <i class="fas fa-robot" aria-hidden="true"></i>
         <span class="ai-chat-tooltip">AI Assistant</span>
     </button>
     
     <!-- Chat Popup -->
-    <div id="ai-chat-popup" class="ai-chat-popup" class="style-54390">
+    <div id="ai-chat-popup" class="ai-chat-popup style-54390">
         <!-- Chat Header -->
         <div class="ai-chat-header">
             <div class="ai-chat-info">
@@ -29,11 +29,11 @@ $user_role = $this->getUserRole() ?? 'customer';
                 </div>
             </div>
             <div class="ai-chat-actions">
-                <button onclick="minimizeAIChat()" class="ai-action-btn">
-                    <i class="fas fa-minus"></i>
+                <button onclick="minimizeAIChat()" class="ai-action-btn" aria-label="Minimize chat">
+                    <i class="fas fa-minus" aria-hidden="true"></i>
                 </button>
-                <button onclick="closeAIChat()" class="ai-action-btn">
-                    <i class="fas fa-times"></i>
+                <button onclick="closeAIChat()" class="ai-action-btn" aria-label="Close chat">
+                    <i class="fas fa-times" aria-hidden="true"></i>
                 </button>
             </div>
         </div>

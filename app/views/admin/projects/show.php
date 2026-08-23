@@ -39,7 +39,7 @@
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-chart-simple me-2"></i>Project Stats</h5></div>
                 <div class="card-body aps-cp-card-body">
-                    <div class="mb-3"><small class="text-muted d-block">Sales Progress</small><div class="progress" class="style-32124"><div class="progress-bar bg-success" class="style-30823"></div></div><small class="text-muted"><?= ($project['total_units'] ?? 0) > 0 ? round((($project['total_units'] ?? 0) - ($project['available_units'] ?? 0)) / $project['total_units'] * 100) : 0 ?>% sold</small></div>
+                    <div class="mb-3"><small class="text-muted d-block">Sales Progress</small><div class="progress style-32124"><div class="progress-bar bg-success style-30823"></div></div><small class="text-muted"><?= ($project['total_units'] ?? 0) > 0 ? round((($project['total_units'] ?? 0) - ($project['available_units'] ?? 0)) / $project['total_units'] * 100) : 0 ?>% sold</small></div>
                     <div class="mb-3"><small class="text-muted d-block">Plots/Units</small><strong class="text-primary"><?= number_format($project['total_units'] ?? 0) ?></strong> total</div>
                     <div class="mb-3"><small class="text-muted d-block">Available</small><strong class="text-success"><?= number_format($project['available_units'] ?? 0) ?></strong></div>
                     <div class="mb-3"><small class="text-muted d-block">Created</small><?= date('d M Y', strtotime($project['created_at'] ?? 'now')) ?></div>

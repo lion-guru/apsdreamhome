@@ -168,7 +168,7 @@ class LiveChatController extends AdminController
         exit;
     }
 
-    private function getUserId()
+    protected function getUserId(): int
     {
         return (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0);
     }

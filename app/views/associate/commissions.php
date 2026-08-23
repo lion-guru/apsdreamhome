@@ -81,10 +81,10 @@ $typeLabels = [
                 ?>
                 <div class="col-md-6 col-lg-4">
                     <a href="<?php echo BASE_URL; ?>/associate/commissions?type=<?php echo urlencode($type); ?>" class="text-decoration-none">
-                        <div class="card h-100 border-0" class="style-25547">
+                        <div class="card h-100 border-0 style-25547">
                             <div class="card-body">
                                 <div class="d-flex align-items-center gap-3 mb-2">
-                                    <div class="rounded-circle d-flex align-items-center justify-content-center" class="style-27974">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center style-27974">
                                         <i class="fas <?php echo e($meta['icon']); ?> text-<?php echo e($meta['color']); ?>"></i>
                                     </div>
                                     <div>
@@ -95,7 +95,7 @@ $typeLabels = [
                                 <div class="d-flex justify-content-between align-items-end">
                                     <div>
                                         <div class="text-muted small"><?php echo __('assoc_comm_total', [], 'Total'); ?></div>
-                                        <div class="fw-bold text-dark" class="style-64545">₹<?php echo number_format($b['total_amount']); ?></div>
+                                        <div class="fw-bold text-dark style-64545">₹<?php echo number_format($b['total_amount']); ?></div>
                                     </div>
                                     <div class="text-end">
                                         <div class="text-muted small"><?php echo __('assoc_comm_paid_pending', [], 'Paid / Pending'); ?></div>
@@ -106,8 +106,8 @@ $typeLabels = [
                                     </div>
                                 </div>
                                 <!-- Mini progress bar -->
-                                <div class="progress mt-2" class="style-83142">
-                                    <div class="progress-bar bg-success" class="style-96169"></div>
+                                <div class="progress mt-2 style-83142">
+                                    <div class="progress-bar bg-success style-96169"></div>
                                 </div>
                             </div>
                         </div>

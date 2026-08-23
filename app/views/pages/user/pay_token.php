@@ -85,7 +85,7 @@ $razorpay = $razorpay ?? ['key_id' => '', 'test' => true];
                 <h5><i class="fas fa-money-bill-wave text-success"></i> <?= __('user_pay_token_payment_summary_header', 'Payment Summary') ?></h5>
             </div>
             <div class="aps-cp-card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3 p-3" class="style-11131">
+                <div class="d-flex justify-content-between align-items-center mb-3 p-3 style-11131">
                     <div>
                         <small class="text-muted"><?= __('user_pay_token_amount_to_pay', 'Token Amount to Pay') ?></small>
                         <h3 class="mb-0 mt-1 text-primary">₹<?= number_format($token_amount) ?></h3>
@@ -128,7 +128,7 @@ $razorpay = $razorpay ?? ['key_id' => '', 'test' => true];
                     </div>
                 <?php endif; ?>
 
-                <button id="pay-btn" class="btn btn-primary btn-lg px-5 py-3" class="style-4415">
+                <button id="pay-btn" class="btn btn-primary btn-lg px-5 py-3 style-4415">
                     <i class="fas fa-lock me-2"></i><?= __('user_pay_token_pay_now_prefix', 'Pay') ?> ₹<?= number_format($token_amount) ?> <?= __('user_pay_token_pay_now_suffix', 'Now') ?>
                 </button>
 
@@ -146,7 +146,7 @@ $razorpay = $razorpay ?? ['key_id' => '', 'test' => true];
         <div class="aps-cp-card mb-4">
             <div class="aps-cp-card-body">
                 <h6><i class="fas fa-info-circle me-2 text-info"></i><?= __('user_pay_token_whats_next_header', 'What Happens Next?') ?></h6>
-                <ol class="mb-0 text-muted" class="style-74587">
+                <ol class="mb-0 text-muted style-74587">
                     <li><?= __('user_pay_token_step_1', 'After successful payment, your booking status advances to') ?> <strong><?= __('user_pay_token_step_1_status', 'Agreement Signed') ?></strong>.</li>
                     <li><?= __('user_pay_token_step_2', "You'll receive a payment confirmation receipt.") ?></li>
                     <li><?= __('user_pay_token_step_3', 'Our team will contact you to schedule the agreement signing.') ?></li>

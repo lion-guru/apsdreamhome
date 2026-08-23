@@ -209,25 +209,25 @@ $team_stats = $team_stats ?? [];
                 <div class="row g-3">
                     <div class="col-md-3">
                         <a href="<?php echo BASE_URL; ?>/admin/leads?action=new" class="btn btn-outline-primary w-100 py-3">
-                            <i class="fas fa-user-plus mb-2" class="style-41417"></i>
+                            <i class="fas fa-user-plus mb-2 style-41417"></i>
                             <div>Add New Lead</div>
                         </a>
                     </div>
                     <div class="col-md-3">
                         <a href="<?php echo BASE_URL; ?>/admin/properties?action=new" class="btn btn-outline-success w-100 py-3">
-                            <i class="fas fa-plus mb-2" class="style-41417"></i>
+                            <i class="fas fa-plus mb-2 style-41417"></i>
                             <div>Add Property</div>
                         </a>
                     </div>
                     <div class="col-md-3">
                         <a href="<?php echo BASE_URL; ?>/admin/bookings?action=new" class="btn btn-outline-warning w-100 py-3">
-                            <i class="fas fa-file-contract mb-2" class="style-41417"></i>
+                            <i class="fas fa-file-contract mb-2 style-41417"></i>
                             <div>New Booking</div>
                         </a>
                     </div>
                     <div class="col-md-3">
                         <a href="<?php echo BASE_URL; ?>/admin/commissions?action=payout" class="btn btn-outline-info w-100 py-3">
-                            <i class="fas fa-wallet mb-2" class="style-41417"></i>
+                            <i class="fas fa-wallet mb-2 style-41417"></i>
                             <div>Process Payout</div>
                         </a>
                     </div>
@@ -253,7 +253,7 @@ $team_stats = $team_stats ?? [];
                     <div class="list-group-item">
                         <div class="d-flex align-items-center">
                             <div class="me-3">
-                                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" class="style-48301">
+                                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center style-48301">
                                     <i class="fas fa-<?php echo $activity['icon'] ?? 'circle'; ?> text-muted"></i>
                                 </div>
                             </div>
@@ -268,7 +268,7 @@ $team_stats = $team_stats ?? [];
                 </div>
                 <?php else: ?>
                 <div class="text-center py-5 text-muted">
-                    <i class="fas fa-inbox" class="style-59773"></i>
+                    <i class="fas fa-inbox style-59773"></i>
                     <p class="mt-3">No recent activities</p>
                 </div>
                 <?php endif; ?>
@@ -288,8 +288,8 @@ $team_stats = $team_stats ?? [];
                         <span class="text-muted">Database Tables</span>
                         <span class="fw-semibold"><?php echo $stats['database_tables'] ?? '—'; ?></span>
                     </div>
-                    <div class="progress" class="style-31164">
-                        <div class="progress-bar bg-primary" class="style-13113"></div>
+                    <div class="progress style-31164">
+                        <div class="progress-bar bg-primary style-13113"></div>
                     </div>
                 </div>
                 
@@ -298,8 +298,8 @@ $team_stats = $team_stats ?? [];
                         <span class="text-muted">Active Users</span>
                         <span class="fw-semibold"><?php echo number_format($stats['active_users'] ?? 0); ?></span>
                     </div>
-                    <div class="progress" class="style-31164">
-                        <div class="progress-bar bg-success" class="style-58158"></div>
+                    <div class="progress style-31164">
+                        <div class="progress-bar bg-success style-58158"></div>
                     </div>
                 </div>
                 
@@ -308,12 +308,12 @@ $team_stats = $team_stats ?? [];
                         <span class="text-muted">System Health</span>
                         <span class="fw-semibold text-success"><?php echo number_format($stats['system_health_pct'] ?? 99.9, 1); ?>%</span>
                     </div>
-                    <div class="progress" class="style-31164">
-                        <div class="progress-bar bg-info" class="style-10867"></div>
+                    <div class="progress style-31164">
+                        <div class="progress-bar bg-info style-10867"></div>
                     </div>
                 </div>
-                    <div class="progress" class="style-31164">
-                        <div class="progress-bar bg-primary" class="style-13113"></div>
+                    <div class="progress style-31164">
+                        <div class="progress-bar bg-primary style-13113"></div>
                     </div>
                 </div>
                 
@@ -322,8 +322,8 @@ $team_stats = $team_stats ?? [];
                         <span class="text-muted">Active Users</span>
                         <span class="fw-semibold"><?php echo number_format($stats['active_users'] ?? 0); ?></span>
                     </div>
-                    <div class="progress" class="style-31164">
-                        <div class="progress-bar bg-success" class="style-14876"></div>
+                    <div class="progress style-31164">
+                        <div class="progress-bar bg-success style-14876"></div>
                     </div>
                 </div>
                 
@@ -332,8 +332,8 @@ $team_stats = $team_stats ?? [];
                         <span class="text-muted">System Health</span>
                         <span class="fw-semibold text-success"><?php echo number_format($stats['system_health_pct'] ?? 99.9, 1); ?>%</span>
                     </div>
-                    <div class="progress" class="style-31164">
-                        <div class="progress-bar bg-info" class="style-97316"></div>
+                    <div class="progress style-31164">
+                        <div class="progress-bar bg-info style-97316"></div>
                     </div>
                 </div>
                 

@@ -14,7 +14,7 @@
         <?php if (!empty($prop['image'])): ?>
           <?php $imgRaw = $prop['image'] ?? '';
                 $imgSrc = (str_starts_with($imgRaw, 'http://') || str_starts_with($imgRaw, 'https://')) ? $imgRaw : BASE_URL . '/' . $imgRaw; ?>
-          <img src="<?= htmlspecialchars($imgSrc ?? '') ?>" class="card-img-top rounded-top" class="style-94960" alt="<?= htmlspecialchars($prop['name'] ?? '') ?>">
+          <img src="<?= htmlspecialchars($imgSrc ?? '') ?>" class="card-img-top rounded-top style-94960" alt="<?= htmlspecialchars($prop['name'] ?? '') ?>">
         <?php endif; ?>
         <div class="aps-cp-card-body">
           <div class="d-flex justify-content-between align-items-start mb-3 flex-wrap gap-2">

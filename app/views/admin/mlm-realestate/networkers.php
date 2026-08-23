@@ -12,7 +12,7 @@
                         <?php if (empty($networkers ?? [])): ?>
                         <tr>
                             <td colspan="9" class="text-center py-5">
-                                <i class="fas fa-user-tie fa-3x text-muted mb-3" class="style-82835"></i>
+                                <i class="fas fa-user-tie fa-3x text-muted mb-3 style-82835"></i>
                                 <h5 class="text-muted">No networkers found</h5>
                                 <p class="text-muted mb-3">Register your first networker to start building your team.</p>
                             </td>

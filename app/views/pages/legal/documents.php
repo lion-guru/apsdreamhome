@@ -13,7 +13,7 @@ $documents = [
 ];
 ?>
 
-<section class="py-5 bg-primary text-white" class="style-68644">
+<section class="py-5 bg-primary text-white style-68644">
     <div class="container text-center">
         <h1 class="display-4 fw-bold mb-3"><?php echo __('legal_documents_heading', [], 'Legal Documents'); ?></h1>
         <p class="lead"><?php echo __('legal_documents_subtitle', [], 'Transparency and Trust in Every Step'); ?></p>

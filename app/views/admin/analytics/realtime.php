@@ -16,12 +16,12 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
 <div class="style-30464">
     <div>
         <h1 class="style-79140">
-            <i class="fas fa-chart-line" class="style-78618"></i>Real-Time Analytics
+            <i class="fas fa-chart-line style-78618"></i>Real-Time Analytics
         </h1>
         <p class="style-61566">
             <span id="rt-updated">Last updated: <?= htmlspecialchars($updated ?? '') ?></span>
             <span id="rt-ws-status" class="style-56313">
-                <i class="fas fa-circle" class="style-338"></i> Connecting&hellip;
+                <i class="fas fa-circle style-338"></i> Connecting&hellip;
             </span>
             <span id="rt-refresh-badge" class="style-14210">
                 <i class="fas fa-sync-alt fa-spin"></i> Refreshing&hellip;
@@ -29,10 +29,10 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
         </p>
     </div>
     <div class="style-85880">
-        <button onclick="rtRefreshAll()" class="btn btn-sm btn-outline-primary" class="style-69165">
+        <button onclick="rtRefreshAll()" class="btn btn-sm btn-outline-primary style-69165">
             <i class="fas fa-sync-alt"></i> Refresh Now
         </button>
-        <a href="<?= BASE_URL ?>/admin/erp" class="btn btn-sm btn-outline-secondary" class="style-69165">
+        <a href="<?= BASE_URL ?>/admin/erp" class="btn btn-sm btn-outline-secondary style-69165">
             <i class="fas fa-th-large"></i> ERP Overview
         </a>
     </div>
@@ -42,11 +42,11 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
 <div id="rt-kpi-cards" class="style-94863">
 
     <!-- Leads Today -->
-    <div class="aps-cp-card" class="style-95460">
-        <div class="aps-cp-card-body" class="style-67049">
+    <div class="aps-cp-card style-95460">
+        <div class="aps-cp-card-body style-67049">
             <div class="style-67208">
                 <div class="style-25782">
-                    <i class="fas fa-user-plus" class="style-50292"></i>
+                    <i class="fas fa-user-plus style-50292"></i>
                 </div>
                 <span class="style-82769">Leads Today</span>
             </div>
@@ -56,11 +56,11 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
     </div>
 
     <!-- Bookings This Month -->
-    <div class="aps-cp-card" class="style-74913">
-        <div class="aps-cp-card-body" class="style-67049">
+    <div class="aps-cp-card style-74913">
+        <div class="aps-cp-card-body style-67049">
             <div class="style-67208">
                 <div class="style-66150">
-                    <i class="fas fa-file-signature" class="style-40926"></i>
+                    <i class="fas fa-file-signature style-40926"></i>
                 </div>
                 <span class="style-88669">Bookings This Month</span>
             </div>
@@ -70,11 +70,11 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
     </div>
 
     <!-- Revenue This Month -->
-    <div class="aps-cp-card" class="style-24973">
-        <div class="aps-cp-card-body" class="style-67049">
+    <div class="aps-cp-card style-24973">
+        <div class="aps-cp-card-body style-67049">
             <div class="style-67208">
                 <div class="style-57731">
-                    <i class="fas fa-rupee-sign" class="style-24030"></i>
+                    <i class="fas fa-rupee-sign style-24030"></i>
                 </div>
                 <span class="style-39510">Revenue This Month</span>
             </div>
@@ -84,11 +84,11 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
     </div>
 
     <!-- Collections Today -->
-    <div class="aps-cp-card" class="style-22499">
-        <div class="aps-cp-card-body" class="style-67049">
+    <div class="aps-cp-card style-22499">
+        <div class="aps-cp-card-body style-67049">
             <div class="style-67208">
                 <div class="style-28637">
-                    <i class="fas fa-hand-holding-usd" class="style-15659"></i>
+                    <i class="fas fa-hand-holding-usd style-15659"></i>
                 </div>
                 <span class="style-70531">Collections Today</span>
             </div>
@@ -103,56 +103,56 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
 
     <!-- Chart 1: Leads over last 7 days (Line) -->
     <div class="aps-cp-card">
-        <div class="aps-cp-card-header" class="style-48741">
-            <span><i class="fas fa-chart-area" class="style-9981"></i>Leads — Last 7 Days</span>
-            <span class="badge bg-primary-subtle text-primary-emphasis" class="style-56522">LINE</span>
+        <div class="aps-cp-card-header style-48741">
+            <span><i class="fas fa-chart-area style-9981"></i>Leads — Last 7 Days</span>
+            <span class="badge bg-primary-subtle text-primary-emphasis style-56522">LINE</span>
         </div>
-        <div class="aps-cp-card-body" class="style-47072">
+        <div class="aps-cp-card-body style-47072">
             <canvas id="rtChartLeads7d"></canvas>
         </div>
     </div>
 
     <!-- Chart 2: Revenue by Colony (Bar) -->
     <div class="aps-cp-card">
-        <div class="aps-cp-card-header" class="style-48741">
-            <span><i class="fas fa-chart-bar" class="style-28560"></i>Revenue by Colony</span>
-            <span class="badge bg-success-subtle text-success-emphasis" class="style-56522">BAR</span>
+        <div class="aps-cp-card-header style-48741">
+            <span><i class="fas fa-chart-bar style-28560"></i>Revenue by Colony</span>
+            <span class="badge bg-success-subtle text-success-emphasis style-56522">BAR</span>
         </div>
-        <div class="aps-cp-card-body" class="style-47072">
+        <div class="aps-cp-card-body style-47072">
             <canvas id="rtChartRevenueColony"></canvas>
         </div>
     </div>
 
     <!-- Chart 3: Lead Sources (Doughnut) -->
     <div class="aps-cp-card">
-        <div class="aps-cp-card-header" class="style-48741">
-            <span><i class="fas fa-chart-pie" class="style-22590"></i>Lead Sources Breakdown</span>
-            <span class="badge bg-purple-subtle text-purple-emphasis" class="style-56522">DOUGHNUT</span>
+        <div class="aps-cp-card-header style-48741">
+            <span><i class="fas fa-chart-pie style-22590"></i>Lead Sources Breakdown</span>
+            <span class="badge bg-purple-subtle text-purple-emphasis style-56522">DOUGHNUT</span>
         </div>
-        <div class="aps-cp-card-body" class="style-47072">
+        <div class="aps-cp-card-body style-47072">
             <canvas id="rtChartLeadSources"></canvas>
         </div>
     </div>
 
     <!-- Chart 4: Booking Trend 30 days (Line) -->
     <div class="aps-cp-card">
-        <div class="aps-cp-card-header" class="style-48741">
-            <span><i class="fas fa-chart-line" class="style-39559"></i>Booking Trend — Last 30 Days</span>
-            <span class="badge bg-warning-subtle text-warning-emphasis" class="style-56522">LINE</span>
+        <div class="aps-cp-card-header style-48741">
+            <span><i class="fas fa-chart-line style-39559"></i>Booking Trend — Last 30 Days</span>
+            <span class="badge bg-warning-subtle text-warning-emphasis style-56522">LINE</span>
         </div>
-        <div class="aps-cp-card-body" class="style-47072">
+        <div class="aps-cp-card-body style-47072">
             <canvas id="rtChartBookings30d"></canvas>
         </div>
     </div>
 </div>
 
 <!-- ROW 3 — Live Activity Feed -->
-<div class="aps-cp-card" class="style-99970">
-    <div class="aps-cp-card-header" class="style-48741">
-        <span><i class="fas fa-stream" class="style-26991"></i>Live Activity Feed</span>
-        <span class="badge bg-light text-dark" class="style-56522" id="rt-activity-count"><?= count($acts) ?> events</span>
+<div class="aps-cp-card style-99970">
+    <div class="aps-cp-card-header style-48741">
+        <span><i class="fas fa-stream style-26991"></i>Live Activity Feed</span>
+        <span class="badge bg-light text-dark style-56522" id="rt-activity-count"><?= count($acts) ?> events</span>
     </div>
-    <div class="aps-cp-card-body" class="style-86260" id="rt-activity-list">
+    <div class="aps-cp-card-body style-86260" id="rt-activity-list">
         <?php if (empty($acts)): ?>
             <p class="style-2934">No recent activity.</p>
         <?php else: ?>
@@ -166,7 +166,7 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
                 ?>
                 <div class="style-78578">
                     <div class="style-79572">
-                        <i class="fas <?= $actIcon ?>" class="style-59362"></i>
+                        <i class="fas <?= $actIcon ?> style-59362"></i>
                     </div>
                     <div class="style-65975">
                         <div class="style-36189"><?= $actType ?></div>
@@ -440,7 +440,7 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
             var color = a.color || '#64748b';
             html += '<div class="style-78578">'
                 + '<div class="style-80599">'
-                + '<i class="fas '+icon+'" class="style-54303"></i></div>'
+                + '<i class="fas '+icon+' style-54303"></i></div>'
                 + '<div class="style-65975"><div class="style-36189">'+type+'</div>'
                 + '<div class="style-57020">'+desc+'</div></div>'
                 + '<div class="style-38661">'+time+'</div></div>';
@@ -545,9 +545,9 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
         var el = document.getElementById('rt-ws-status');
         if (!el) return;
         if (connected) {
-            el.innerHTML = '<i class="fas fa-circle" class="style-81605"></i> <span class="style-75447">Live</span>';
+            el.innerHTML = '<i class="fas fa-circle style-81605"></i> <span class="style-75447">Live</span>';
         } else {
-            el.innerHTML = '<i class="fas fa-circle" class="style-8418"></i> <span class="style-27277">Reconnecting&hellip;</span>';
+            el.innerHTML = '<i class="fas fa-circle style-8418"></i> <span class="style-27277">Reconnecting&hellip;</span>';
         }
     }
 

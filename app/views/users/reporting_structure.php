@@ -70,10 +70,10 @@ function rpLevelBadge($role) {
                 <div class="emp-rp-org">
                     <?php if ($manager): ?>
                         <div class="emp-rp-node manager">
-                            <div class="emp-rp-avatar" class="style-5818"><?= rpInitials($manager['name']) ?></div>
+                            <div class="emp-rp-avatar style-5818"><?= rpInitials($manager['name']) ?></div>
                             <div class="fw-bold text-dark"><?= htmlspecialchars($manager['name'] ?? '') ?></div>
                             <div class="text-primary small fw-semibold"><?= htmlspecialchars($manager['designation'] ?? $manager['role'] ?? '') ?></div>
-                            <div class="text-muted" class="style-20558"><?= htmlspecialchars($manager['email'] ?? '') ?></div>
+                            <div class="text-muted style-20558"><?= htmlspecialchars($manager['email'] ?? '') ?></div>
                         </div>
                         <div class="emp-rp-connector"></div>
                         <div class="text-center mb-1"><small class="text-muted"><i class="fas fa-arrow-down me-1"></i>Reports to</small></div>
@@ -82,10 +82,10 @@ function rpLevelBadge($role) {
 
                     <!-- Self -->
                     <div class="emp-rp-node self">
-                        <div class="emp-rp-avatar" class="style-63151"><?= rpInitials($employee['name']) ?></div>
+                        <div class="emp-rp-avatar style-63151"><?= rpInitials($employee['name']) ?></div>
                         <div class="fw-bold text-dark"><?= htmlspecialchars($employee['name'] ?? '') ?></div>
                         <div class="text-primary small fw-semibold"><?= htmlspecialchars($employee['designation'] ?? $employee['role'] ?? '') ?></div>
-                        <div class="text-muted" class="style-20558"><?= htmlspecialchars($employee['department'] ?? '') ?></div>
+                        <div class="text-muted style-20558"><?= htmlspecialchars($employee['department'] ?? '') ?></div>
                         <span class="badge bg-primary bg-opacity-10 text-primary mt-1">You</span>
                     </div>
 
@@ -95,10 +95,10 @@ function rpLevelBadge($role) {
                         <div class="emp-rp-connector"></div>
                         <div class="emp-rp-branch mt-1">
                             <?php foreach ($subordinates as $sub): ?>
-                                <div class="emp-rp-node" class="style-68650">
-                                    <div class="emp-rp-avatar" class="style-50771"><?= rpInitials($sub['name']) ?></div>
+                                <div class="emp-rp-node style-68650">
+                                    <div class="emp-rp-avatar style-50771"><?= rpInitials($sub['name']) ?></div>
                                     <div class="fw-semibold text-dark small"><?= htmlspecialchars($sub['name'] ?? '') ?></div>
-                                    <div class="text-muted" class="style-68658"><?= htmlspecialchars($sub['designation'] ?? '') ?></div>
+                                    <div class="text-muted style-68658"><?= htmlspecialchars($sub['designation'] ?? '') ?></div>
                                 </div>
                             <?php endforeach; ?>
                         </div>
@@ -117,7 +117,7 @@ function rpLevelBadge($role) {
                         </div>
                         <div class="card-body">
                             <div class="d-flex align-items-start gap-3 mb-3">
-                                <div class="emp-rp-avatar" class="style-23656">
+                                <div class="emp-rp-avatar style-23656">
                                     <?= rpInitials($manager['name']) ?>
                                 </div>
                                 <div>
@@ -159,7 +159,7 @@ function rpLevelBadge($role) {
                     </div>
                     <div class="card-body">
                         <div class="d-flex align-items-start gap-3 mb-3">
-                            <div class="emp-rp-avatar" class="style-29278">
+                            <div class="emp-rp-avatar style-29278">
                                 <?= rpInitials($employee['name']) ?>
                             </div>
                             <div>
@@ -217,29 +217,29 @@ function rpLevelBadge($role) {
                             <div class="col-md-6 col-lg-4">
                                 <div class="emp-rp-sub-card h-100">
                                     <div class="d-flex align-items-start gap-3 mb-3">
-                                        <div class="emp-rp-avatar" class="style-36664"><?= rpInitials($sub['name']) ?></div>
+                                        <div class="emp-rp-avatar style-36664"><?= rpInitials($sub['name']) ?></div>
                                         <div class="min-width-0">
                                             <div class="fw-bold text-dark"><?= htmlspecialchars($sub['name'] ?? '') ?></div>
                                             <div class="text-muted small"><?= htmlspecialchars($sub['designation'] ?? '') ?></div>
-                                            <span class="badge bg-<?= ($sub['status'] ?? '') === 'active' ? 'success' : 'secondary' ?> bg-opacity-10 text-<?= ($sub['status'] ?? '') === 'active' ? 'success' : 'secondary' ?>" class="style-56522"><?= htmlspecialchars(ucfirst($sub['status'] ?? 'Active')) ?></span>
+                                            <span class="badge bg-<?= ($sub['status'] ?? '') === 'active' ? 'success' : 'secondary' ?> bg-opacity-10 text-<?= ($sub['status'] ?? '') === 'active' ? 'success' : 'secondary' ?> style-56522"><?= htmlspecialchars(ucfirst($sub['status'] ?? 'Active')) ?></span>
                                         </div>
                                     </div>
                                     <div class="row g-2 mb-3">
                                         <div class="col-4 text-center">
                                             <div class="fw-bold text-dark fs-5"><?= $total ?></div>
-                                            <div class="text-muted" class="style-68658">Tasks</div>
+                                            <div class="text-muted style-68658">Tasks</div>
                                         </div>
                                         <div class="col-4 text-center">
                                             <div class="fw-bold text-success fs-5"><?= $completed ?></div>
-                                            <div class="text-muted" class="style-68658">Done</div>
+                                            <div class="text-muted style-68658">Done</div>
                                         </div>
                                         <div class="col-4 text-center">
                                             <div class="fw-bold text-<?= rpPerformanceColor($perf) ?> fs-5"><?= $perf ?>%</div>
-                                            <div class="text-muted" class="style-68658">Score</div>
+                                            <div class="text-muted style-68658">Score</div>
                                         </div>
                                     </div>
                                     <div class="emp-rp-progress mb-2">
-                                        <div class="emp-rp-progress-fill bg-<?= rpPerformanceColor($perf) ?>" class="style-89770"></div>
+                                        <div class="emp-rp-progress-fill bg-<?= rpPerformanceColor($perf) ?> style-89770"></div>
                                     </div>
                                     <div class="d-flex gap-2">
                                         <div class="text-muted small flex-grow-1"><i class="fas fa-envelope me-1"></i><?= htmlspecialchars($sub['email'] ?? '—') ?></div>
@@ -275,7 +275,7 @@ function rpLevelBadge($role) {
                                     <tr>
                                         <td>
                                             <div class="d-flex align-items-center gap-2">
-                                                <div class="emp-rp-avatar" class="style-64432"><?= rpInitials($m['name']) ?></div>
+                                                <div class="emp-rp-avatar style-64432"><?= rpInitials($m['name']) ?></div>
                                                 <span class="fw-semibold"><?= htmlspecialchars($m['name'] ?? '') ?></span>
                                             </div>
                                         </td>

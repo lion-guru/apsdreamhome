@@ -103,7 +103,7 @@ $filterTo = $_GET['to'] ?? '';
                         <div class="modal fade" id="detailModal<?= $s['id'] ?>" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content">
                             <div class="modal-header"><h5 class="modal-title">Call #<?= $s['id'] ?> — <?= htmlspecialchars($s['lead_name'] ?? '') ?></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                             <div class="modal-body">
-                                <h6>Transcript</h6><pre class="bg-light p-3 rounded small" class="style-82023"><?= htmlspecialchars($s['call_transcript'] ?? '') ?></pre>
+                                <h6>Transcript</h6><pre class="bg-light p-3 rounded small style-82023"><?= htmlspecialchars($s['call_transcript'] ?? '') ?></pre>
                                 <?php if ($s['ai_summary']): ?><h6 class="mt-3">AI Summary</h6><p><?= htmlspecialchars($s['ai_summary'] ?? '') ?></p><?php endif; ?>
                             </div>
                         </div></div></div>

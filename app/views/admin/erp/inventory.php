@@ -47,7 +47,7 @@
     <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
         <form class="d-flex gap-2" method="GET">
     <?php echo CSRFProtection::csrfField(); ?>
-            <select name="status" class="form-select form-select-sm" class="style-68062" onchange="this.form.submit()">
+            <select name="status" class="form-select form-select-sm style-68062" onchange="this.form.submit()">
                 <option value="">All Status</option>
                 <option value="available" <?php echo ($_GET['status']??'')==='available'?'selected':''; ?>>Available</option>
                 <option value="reserved" <?php echo ($_GET['status']??'')==='reserved'?'selected':''; ?>>Reserved</option>

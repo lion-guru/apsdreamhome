@@ -52,7 +52,7 @@ $project_id = $project_id ?? 0;
 ?>
 
 <!-- Hero Section -->
-<section class="project-hero text-white text-center py-5 mb-5" class="style-35257">
+<section class="project-hero text-white text-center py-5 mb-5 style-35257">
     <div class="container py-4">
         <div class="row justify-content-center">
             <div class="col-lg-10">
@@ -195,7 +195,7 @@ $project_id = $project_id ?? 0;
                     <div class="row g-4">
                         <?php foreach ($project['images'] as $index => $image): ?>
                             <div class="col-lg-4 col-md-6">
-                                <div class="photo-card animate-fade-up" class="style-88811">
+                                <div class="photo-card animate-fade-up style-88811">
                                     <div class="photo-container">
                                         <img src="<?php echo htmlspecialchars($image['src'] ?? $image['url'] ?? $image['image'] ?? ''); ?>"
                                              alt="<?php echo htmlspecialchars($image['title'] ?? 'Photo'); ?>"
@@ -228,7 +228,7 @@ $project_id = $project_id ?? 0;
                     <div class="row g-4">
                         <?php foreach ($project['videos'] as $index => $video): ?>
                             <div class="col-lg-6">
-                                <div class="video-card animate-fade-up" class="style-88811">
+                                <div class="video-card animate-fade-up style-88811">
                                     <div class="video-container">
                                         <iframe src="<?php echo htmlspecialchars($video['url'] ?? ''); ?>" 
                                                 frameborder="0" 
@@ -331,7 +331,7 @@ $project_id = $project_id ?? 0;
         <div class="modal-content bg-dark">
             <div class="modal-body p-0">
                 <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
-                <iframe id="modalVideo" src="" frameborder="0" allowfullscreen class="w-100" class="style-49460"></iframe>
+                <iframe id="modalVideo" src="" frameborder="0" allowfullscreen class="w-100 style-49460"></iframe>
             </div>
         </div>
     </div>

@@ -11,7 +11,7 @@
                 </ul>
             </div>
             <div class="col-auto">
-                <select class="form-select form-select-sm" class="style-30246"><option>This Year</option><option>This Quarter</option><option>This Month</option></select>
+                <select class="form-select form-select-sm style-30246"><option>This Year</option><option>This Quarter</option><option>This Month</option></select>
             </div>
         </div>
     </div>

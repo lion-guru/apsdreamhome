@@ -122,7 +122,7 @@
             <button id="applyPenaltiesBtn" class="btn btn-warning" onclick="applyPenalties()">
                 <i class="fas fa-calculator me-1"></i><?= __('pen_apply_now') ?>
             </button>
-            <div id="penaltyResult" class="mt-3" class="style-2248"></div>
+            <div id="penaltyResult" class="mt-3 style-2248"></div>
         </div>
     </div>
 

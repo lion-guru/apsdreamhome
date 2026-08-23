@@ -8,7 +8,7 @@
             <div class="card-body aps-cp-card-body">
                 <?php if (empty($pages)): ?>
                     <div class="text-center py-5">
-                        <i class="fas fa-file-alt fa-3x text-muted mb-3" class="style-82835"></i>
+                        <i class="fas fa-file-alt fa-3x text-muted mb-3 style-82835"></i>
                         <h5 class="text-muted">No pages found</h5>
                         <p class="text-muted mb-3">Create CMS pages for your website content like About Us, Terms of Service, and Privacy Policy.</p>
                         <a href="<?= BASE_URL ?>/admin/pages/create" class="btn btn-primary">

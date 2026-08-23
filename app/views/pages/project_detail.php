@@ -21,7 +21,7 @@ if ($project) {
 
 <?php if ($project): ?>
 <!-- Project Hero -->
-<section class="hero-section text-white py-5 position-relative" class="style-598">
+<section class="hero-section text-white py-5 position-relative style-598">
     <div class="container">
         <div class="row">
             <div class="col-lg-8">
@@ -187,7 +187,7 @@ if ($project) {
             <!-- Sidebar -->
             <div class="col-lg-4">
                 <!-- Contact Card -->
-                <div class="card shadow-lg mb-4 sticky-top" class="style-36655">
+                <div class="card shadow-lg mb-4 sticky-top style-36655">
                     <div class="card-header bg-primary text-white">
                         <h4 class="mb-0"><i class="fas fa-headset me-2"></i><?= __('project_get_in_touch') ?></h4>
                     </div>
@@ -334,7 +334,7 @@ if ($project) {
                                 ?>
                                 <div class="col-6 mb-2">
                                     <div class="nearby-item">
-                                        <i class="fas <?= $placeIcon ?>" class="style-32235"></i>
+                                        <i class="fas <?= $placeIcon ?> style-32235"></i>
                                         <div>
                                             <div class="nearby-name"><?php echo htmlspecialchars($placeName ?? ''); ?></div>
                                             <?php if ($placeDistance): ?>
@@ -358,7 +358,7 @@ if ($project) {
                                 <?php foreach ($fallbackNearby as $item): ?>
                                 <div class="col-6 mb-2">
                                     <div class="nearby-item">
-                                        <i class="fas <?= $item['icon'] ?>" class="style-63967"></i>
+                                        <i class="fas <?= $item['icon'] ?> style-63967"></i>
                                         <div>
                                             <div class="nearby-name"><?= $item['label'] ?></div>
                                             <div class="nearby-distance"><?= $item['distance'] ?></div>
@@ -492,7 +492,7 @@ if ($project) {
 </section>
 
 <!-- CTA Section -->
-<section class="py-5 text-white" class="style-68644">
+<section class="py-5 text-white style-68644">
     <div class="container text-center">
         <h2 class="mb-3">Interested in <?php echo htmlspecialchars($project->site_name); ?>?</h2>
         <p class="lead mb-4"><?= __('project_cta_desc') ?></p>

@@ -144,8 +144,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                                 <?php endif; ?>
                                 <img src="<?php echo $base; ?>/<?php echo htmlspecialchars($image['thumbnail_path'] ?? $image['image_path']); ?>"
                                     alt="Property Image"
-                                    class="card-img-top"
-                                    class="style-12213"
+                                    class="card-img-top style-12213"
                                     onclick="openLightbox('<?php echo e($base); ?>/<?php echo $image['image_path']; ?>')" loading="lazy">
                                 <div class="card-body p-2">
                                     <input type="text"

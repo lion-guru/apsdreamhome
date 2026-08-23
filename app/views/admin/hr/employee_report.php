@@ -28,7 +28,7 @@ $report = $report ?? null;
         <div class="col-md-4">
             <div class="card border-0 shadow-sm text-center">
                 <div class="card-body aps-cp-card-body">
-                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-2" class="style-85928">
+                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-2 style-85928">
                         <?= strtoupper(substr($report['name'] ?? '?', 0, 1)) ?>
                     </div>
                     <h5 class="mb-1"><?= htmlspecialchars($report['name'] ?? '') ?></h5>
@@ -45,7 +45,7 @@ $report = $report ?? null;
                 <div class="card-header bg-white py-3">
                     <h6 class="mb-0 fw-bold"><i class="fas fa-calendar-check me-2 text-success"></i>Attendance (Last 30 Records)</h6>
                 </div>
-                <div class="card-body p-0" class="style-32146">
+                <div class="card-body p-0 style-32146">
                     <div class="table-responsive"><table class="table table-sm mb-0">
                         <thead class="table-light"><tr><th>Date</th><th>Status</th><th>In</th><th>Out</th></tr></thead>
                         <tbody>

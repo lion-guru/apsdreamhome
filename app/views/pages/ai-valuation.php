@@ -81,7 +81,7 @@ $content = $content ?? '';
                     </form>
 
                     <!-- Valuation Result -->
-                    <div id="valuation-result" class="mt-4" class="style-54390">
+                    <div id="valuation-result" class="mt-4 style-54390">
                         <hr>
                         <div class="alert alert-success">
                             <h5 class="alert-heading"><i class="fas fa-check-circle me-2"></i><?= __('user_ai_valuation_estimated_price', 'Estimated Price') ?></h5>
@@ -114,7 +114,7 @@ $content = $content ?? '';
                     <div class="row" id="properties-grid">
                         <?php foreach ($properties as $property): ?>
                             <div class="col-md-6 mb-3">
-                                <div class="card property-card" class="style-75920"
+                                <div class="card property-card style-75920"
                                     onclick="selectProperty('<?= htmlspecialchars($property['location'] ?? '') ?>', 
                                          <?= $property['area_sqft'] ?>, '<?= $property['property_type'] ?>', 
                                          <?= $property['bedrooms'] ?? 0 ?>, <?= $property['bathrooms'] ?? 0 ?>, this)">
@@ -122,7 +122,7 @@ $content = $content ?? '';
                                         <div class="col-4">
                                             <?php if ($property['primary_image']): ?>
                                                 <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg"
-                                                    class="img-fluid rounded-start h-100" class="style-86926" alt="" />
+                                                    class="img-fluid rounded-start h-100 style-86926" alt="" />
                                             <?php else: ?>
                                                 <div class="bg-light h-100 d-flex align-items-center justify-content-center">
                                                     <i class="fas fa-home text-muted fa-2x"></i>
@@ -163,11 +163,11 @@ $content = $content ?? '';
                             <p><?= __('user_ai_valuation_no_recent', 'No recent valuations') ?></p>
                         </div>
                     <?php else: ?>
-                        <div class="list-group list-group-flush" class="style-61454">
+                        <div class="list-group list-group-flush style-61454">
                             <?php foreach ($recentValuations as $valuation): ?>
                                 <div class="list-group-item">
                                     <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1 text-truncate" class="style-34136">
+                                        <h6 class="mb-1 text-truncate style-34136">
                                             <?= $valuation['property_title'] ?? $valuation['location'] ?>
                                         </h6>
                                         <small class="text-muted"><?= date('M d', strtotime($valuation['created_at'])) ?></small>

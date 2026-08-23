@@ -106,7 +106,7 @@ Page Header -->
                                     </h6>
                                 </div>
                                 <div class="card-body aps-cp-card-body">
-                                    <div class="chart-container" class="style-36215">
+                                    <div class="chart-container style-36215">
                                         <canvas id="statusChart"></canvas>
                                     </div>
                                 </div>
@@ -121,7 +121,7 @@ Page Header -->
                                     </h6>
                                 </div>
                                 <div class="card-body aps-cp-card-body">
-                                    <div class="chart-container" class="style-36215">
+                                    <div class="chart-container style-36215">
                                         <canvas id="sourceChart"></canvas>
                                     </div>
                                 </div>
@@ -225,8 +225,7 @@ Page Header -->
                                                             <td><?= $source['converted_leads'] ?></td>
                                                             <td>
                                                                 <div class="progress">
-                                                                    <div class="progress-bar bg-success"
-                                                                        class="style-25686">
+                                                                    <div class="progress-bar bg-success style-25686">
                                                                         <?= number_format(floatval(source['conversion_rate'] ?? 0), 1) ?>%
                                                                     </div>
                                                                 </div>

@@ -99,8 +99,8 @@ function timeAgo($dt) {
                 <div>
                     <div class="d-flex align-items-center gap-3">
                         <h1 class="lead-name"><?= htmlspecialchars($lead['name'] ?? 'N/A') ?></h1>
-                        <span class="badge bg-<?= $statusColor ?> text-uppercase" class="style-79379"><?= ucfirst(str_replace('_',' ',$lead['status'] ?? 'new')) ?></span>
-                        <span class="badge bg-<?= $pBadge ?>" class="style-37495"><?= ucfirst($lead['priority'] ?? 'Medium') ?></span>
+                        <span class="badge bg-<?= $statusColor ?> text-uppercase style-79379"><?= ucfirst(str_replace('_',' ',$lead['status'] ?? 'new')) ?></span>
+                        <span class="badge bg-<?= $pBadge ?> style-37495"><?= ucfirst($lead['priority'] ?? 'Medium') ?></span>
                     </div>
                     <div class="lead-meta">
                         <?php if (!empty($lead['lead_number'])): ?><span><i class="fas fa-hashtag"></i> <?= $lead['lead_number'] ?></span> &middot;<?php endif; ?>
@@ -127,7 +127,7 @@ function timeAgo($dt) {
     </div>
 </div>
 
-<div class="container-fluid px-4" class="style-28820">
+<div class="container-fluid px-4 style-28820">
 
     <!-- Pipeline Visual -->
     <?php
@@ -138,7 +138,7 @@ function timeAgo($dt) {
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body py-3">
             <div class="d-flex justify-content-between align-items-center mb-2">
-                <small class="text-muted fw-bold text-uppercase" class="style-34238">Pipeline Progress</small>
+                <small class="text-muted fw-bold text-uppercase style-34238">Pipeline Progress</small>
                 <small class="text-muted"><?= ($currentIdx + 1) . ' / ' . count($pipelineStages) ?> stages</small>
             </div>
             <div class="pipeline-visual">
@@ -146,7 +146,7 @@ function timeAgo($dt) {
                     <div class="pipe-step <?= $i < $currentIdx ? 'done' : ($i === $currentIdx ? 'active' : '') ?>" title="<?= ucfirst(str_replace('_',' ',$stage)) ?>"></div>
                 <?php endforeach; ?>
             </div>
-            <div class="d-flex justify-content-between" class="style-93284">
+            <div class="d-flex justify-content-between style-93284">
                 <?php foreach ($pipelineStages as $s): ?><span><?= ucfirst(str_replace('_',' ',$s)) ?></span><?php endforeach; ?>
             </div>
         </div>
@@ -165,57 +165,57 @@ function timeAgo($dt) {
     <div class="row g-2 mb-3">
         <?php if ($daysSinceActivity === null): ?>
             <div class="col-md-3 col-6">
-                <div class="card border-0 shadow-sm" class="style-67216">
+                <div class="card border-0 shadow-sm style-67216">
                     <div class="card-body py-2 px-3 d-flex align-items-center gap-2">
                         <i class="fas fa-exclamation-triangle text-warning"></i>
-                        <div><small class="fw-bold text-warning">No Activity</small><br><small class="text-muted" class="style-26285">Never contacted</small></div>
+                        <div><small class="fw-bold text-warning">No Activity</small><br><small class="text-muted style-26285">Never contacted</small></div>
                     </div>
                 </div>
             </div>
         <?php elseif ($daysSinceActivity >= 7): ?>
             <div class="col-md-3 col-6">
-                <div class="card border-0 shadow-sm" class="style-21976">
+                <div class="card border-0 shadow-sm style-21976">
                     <div class="card-body py-2 px-3 d-flex align-items-center gap-2">
                         <i class="fas fa-clock text-danger"></i>
-                        <div><small class="fw-bold text-danger">Stale Lead</small><br><small class="text-muted" class="style-26285">No activity for <?= $daysSinceActivity ?>d</small></div>
+                        <div><small class="fw-bold text-danger">Stale Lead</small><br><small class="text-muted style-26285">No activity for <?= $daysSinceActivity ?>d</small></div>
                     </div>
                 </div>
             </div>
         <?php else: ?>
             <div class="col-md-3 col-6">
-                <div class="card border-0 shadow-sm" class="style-86513">
+                <div class="card border-0 shadow-sm style-86513">
                     <div class="card-body py-2 px-3 d-flex align-items-center gap-2">
                         <i class="fas fa-check-circle text-success"></i>
-                        <div><small class="fw-bold text-success">Active</small><br><small class="text-muted" class="style-26285">Last: <?= $daysSinceActivity ?>d ago</small></div>
+                        <div><small class="fw-bold text-success">Active</small><br><small class="text-muted style-26285">Last: <?= $daysSinceActivity ?>d ago</small></div>
                     </div>
                 </div>
             </div>
         <?php endif; ?>
 
         <div class="col-md-3 col-6">
-            <div class="card border-0 shadow-sm" class="style-54821">
+            <div class="card border-0 shadow-sm style-54821">
                 <div class="card-body py-2 px-3 d-flex align-items-center gap-2">
                     <i class="fas fa-comments text-primary"></i>
-                    <div><small class="fw-bold text-primary"><?= $interactionCount ?> Interactions</small><br><small class="text-muted" class="style-26285"><?= $daysSinceCreated ?>d since creation</small></div>
+                    <div><small class="fw-bold text-primary"><?= $interactionCount ?> Interactions</small><br><small class="text-muted style-26285"><?= $daysSinceCreated ?>d since creation</small></div>
                 </div>
             </div>
         </div>
 
         <?php if ($overdueTasks > 0): ?>
             <div class="col-md-3 col-6">
-                <div class="card border-0 shadow-sm" class="style-21976">
+                <div class="card border-0 shadow-sm style-21976">
                     <div class="card-body py-2 px-3 d-flex align-items-center gap-2">
                         <i class="fas fa-exclamation-circle text-danger"></i>
-                        <div><small class="fw-bold text-danger"><?= $overdueTasks ?> Overdue</small><br><small class="text-muted" class="style-26285"><?= $pendingTasks ?> tasks pending</small></div>
+                        <div><small class="fw-bold text-danger"><?= $overdueTasks ?> Overdue</small><br><small class="text-muted style-26285"><?= $pendingTasks ?> tasks pending</small></div>
                     </div>
                 </div>
             </div>
         <?php elseif ($pendingTasks > 0): ?>
             <div class="col-md-3 col-6">
-                <div class="card border-0 shadow-sm" class="style-24469">
+                <div class="card border-0 shadow-sm style-24469">
                     <div class="card-body py-2 px-3 d-flex align-items-center gap-2">
                         <i class="fas fa-tasks text-warning"></i>
-                        <div><small class="fw-bold text-warning"><?= $pendingTasks ?> Tasks Due</small><br><small class="text-muted" class="style-26285">Pending follow-ups</small></div>
+                        <div><small class="fw-bold text-warning"><?= $pendingTasks ?> Tasks Due</small><br><small class="text-muted style-26285">Pending follow-ups</small></div>
                     </div>
                 </div>
             </div>
@@ -223,19 +223,19 @@ function timeAgo($dt) {
 
         <?php if ($leadScore >= 80): ?>
             <div class="col-md-3 col-6">
-                <div class="card border-0 shadow-sm" class="style-86513">
+                <div class="card border-0 shadow-sm style-86513">
                     <div class="card-body py-2 px-3 d-flex align-items-center gap-2">
                         <i class="fas fa-fire text-success"></i>
-                        <div><small class="fw-bold text-success">Hot Lead</small><br><small class="text-muted" class="style-26285">Score <?= $leadScore ?>/100</small></div>
+                        <div><small class="fw-bold text-success">Hot Lead</small><br><small class="text-muted style-26285">Score <?= $leadScore ?>/100</small></div>
                     </div>
                 </div>
             </div>
         <?php elseif ($leadScore <= 20 && $daysSinceCreated > 30): ?>
             <div class="col-md-3 col-6">
-                <div class="card border-0 shadow-sm" class="style-58405">
+                <div class="card border-0 shadow-sm style-58405">
                     <div class="card-body py-2 px-3 d-flex align-items-center gap-2">
                         <i class="fas fa-snowflake text-info"></i>
-                        <div><small class="fw-bold text-info">Cold Lead</small><br><small class="text-muted" class="style-26285">Consider nurture</small></div>
+                        <div><small class="fw-bold text-info">Cold Lead</small><br><small class="text-muted style-26285">Consider nurture</small></div>
                     </div>
                 </div>
             </div>
@@ -357,11 +357,11 @@ function timeAgo($dt) {
                     <?php if (!empty($assignments)): ?>
                     <div class="card border-0 shadow-sm mt-3">
                         <div class="card-header bg-light py-2"><h6 class="mb-0 fw-bold"><i class="fas fa-user-tag me-2"></i>Assignment History</h6></div>
-                        <div class="card-body" class="style-68333">
+                        <div class="card-body style-68333">
                             <?php foreach ($assignments as $a): ?>
-                                <div class="d-flex justify-content-between align-items-center py-1" class="style-95886">
+                                <div class="d-flex justify-content-between align-items-center py-1 style-95886">
                                     <div>
-                                        <span class="fw-semibold" class="style-87981"><?= htmlspecialchars($a['assigned_to_name'] ?? 'Unknown') ?></span>
+                                        <span class="fw-semibold style-87981"><?= htmlspecialchars($a['assigned_to_name'] ?? 'Unknown') ?></span>
                                         <br><small class="text-muted"><?= htmlspecialchars($a['assigned_by_name'] ?? 'System') ?></small>
                                     </div>
                                     <small class="text-muted"><?= timeAgo($a['assigned_at'] ?? $a['created_at'] ?? '') ?></small>
@@ -400,7 +400,7 @@ function timeAgo($dt) {
                             <h6 class="mb-0 fw-bold"><i class="fas fa-history me-2"></i>Recent Activity</h6>
                             <a href="#tab-timeline" class="text-decoration-none" onclick="$('#tab-timeline-tab').tab('show')">View All <i class="fas fa-arrow-right ms-1"></i></a>
                         </div>
-                        <div class="card-body" class="style-23214">
+                        <div class="card-body style-23214">
                             <?php if (!empty($timeline)): ?>
                                 <?php foreach (array_slice($timeline, 0, 8) as $t): ?>
                                     <?php
@@ -415,9 +415,9 @@ function timeAgo($dt) {
                                                     <i class="fas fa-<?= $tIcon ?>"></i>
                                                     <?= ucfirst(str_replace('_',' ',$tType)) ?>
                                                 </span>
-                                                <span class="ms-2 fw-semibold" class="style-42715"><?= htmlspecialchars($t['subject'] ?? $t['title'] ?? $t['description'] ?? '') ?></span>
+                                                <span class="ms-2 fw-semibold style-42715"><?= htmlspecialchars($t['subject'] ?? $t['title'] ?? $t['description'] ?? '') ?></span>
                                                 <?php if (!empty($t['body']) && ($t['body'] ?? '') !== ($t['subject'] ?? '')): ?>
-                                                    <p class="mb-0 mt-1 text-muted" class="style-87981"><?= htmlspecialchars(mb_strimwidth($t['body'], 0, 120, '...')) ?></p>
+                                                    <p class="mb-0 mt-1 text-muted style-87981"><?= htmlspecialchars(mb_strimwidth($t['body'], 0, 120, '...')) ?></p>
                                                 <?php endif; ?>
                                             </div>
                                             <small class="text-muted text-nowrap ms-2"><?= timeAgo($t['created_at'] ?? $t['activity_date'] ?? '') ?></small>
@@ -440,7 +440,7 @@ function timeAgo($dt) {
                     <h6 class="mb-0 fw-bold"><i class="fas fa-history me-2"></i>Full Activity Timeline</h6>
                     <span class="badge bg-primary"><?= count($timeline) ?> activities</span>
                 </div>
-                <div class="card-body" class="style-28677">
+                <div class="card-body style-28677">
                     <?php if (!empty($timeline)): ?>
                         <?php foreach ($timeline as $t): ?>
                             <?php
@@ -457,7 +457,7 @@ function timeAgo($dt) {
                                             <strong class="style-42715"><?= htmlspecialchars($t['subject'] ?? $t['title'] ?? $t['description'] ?? '') ?></strong>
                                         </div>
                                         <?php if (!empty($t['body'])): ?>
-                                            <p class="mb-1 text-muted" class="style-87981"><?= nl2br(htmlspecialchars($t['body'] ?? '')) ?></p>
+                                            <p class="mb-1 text-muted style-87981"><?= nl2br(htmlspecialchars($t['body'] ?? '')) ?></p>
                                         <?php endif; ?>
                                         <?php if (!empty($t['outcome'])): ?>
                                             <span class="badge bg-light text-dark"><i class="fas fa-flag me-1"></i><?= htmlspecialchars($t['outcome'] ?? '') ?></span>
@@ -512,7 +512,7 @@ function timeAgo($dt) {
                                             <td class="text-muted"><?= $i + 1 ?></td>
                                             <td><span class="interaction-badge bg-<?= ($int['interaction_type'] ?? '') === 'call' ? 'primary' : (($int['interaction_type'] ?? '') === 'email' ? 'info' : (($int['interaction_type'] ?? '') === 'whatsapp' ? 'success' : 'secondary')) ?>-subtle text-<?= ($int['interaction_type'] ?? '') === 'call' ? 'primary' : (($int['interaction_type'] ?? '') === 'email' ? 'info' : (($int['interaction_type'] ?? '') === 'whatsapp' ? 'success' : 'secondary')) ?>-emphasis"><?= ucfirst($int['interaction_type'] ?? '') ?></span></td>
                                             <td><span class="badge bg-<?= ($int['direction'] ?? '') === 'inbound' ? 'success' : 'primary' ?>-subtle text-<?= ($int['direction'] ?? '') === 'inbound' ? 'success' : 'primary' ?>-emphasis"><?= ucfirst($int['direction'] ?? '') ?></span></td>
-                                            <td class="fw-semibold" class="style-86200"><?= htmlspecialchars(mb_strimwidth($int['subject'] ?? '', 0, 50, '...')) ?></td>
+                                            <td class="fw-semibold style-86200"><?= htmlspecialchars(mb_strimwidth($int['subject'] ?? '', 0, 50, '...')) ?></td>
                                             <td><?= htmlspecialchars($int['outcome'] ?? '—') ?></td>
                                             <td><?= !empty($int['duration_seconds']) ? gmdate('i:s', $int['duration_seconds']) : '—' ?></td>
                                             <td><small class="text-muted"><?= timeAgo($int['created_at'] ?? '') ?></small></td>
@@ -572,7 +572,7 @@ function timeAgo($dt) {
                                         <?php endif; ?>
                                     </div>
                                     <?php if (!empty($deal['notes'])): ?>
-                                        <p class="mt-2 mb-0 text-muted" class="style-87981"><?= htmlspecialchars(mb_strimwidth($deal['notes'], 0, 100, '...')) ?></p>
+                                        <p class="mt-2 mb-0 text-muted style-87981"><?= htmlspecialchars(mb_strimwidth($deal['notes'], 0, 100, '...')) ?></p>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -610,7 +610,7 @@ function timeAgo($dt) {
                                         <div>
                                             <strong class="style-20444"><?= htmlspecialchars($task['title'] ?? '') ?></strong>
                                             <?php if (!empty($task['description'])): ?>
-                                                <p class="mb-0 text-muted" class="style-86354"><?= htmlspecialchars(mb_strimwidth($task['description'], 0, 80, '...')) ?></p>
+                                                <p class="mb-0 text-muted style-86354"><?= htmlspecialchars(mb_strimwidth($task['description'], 0, 80, '...')) ?></p>
                                             <?php endif; ?>
                                             <div class="d-flex gap-2 mt-1">
                                                 <span class="badge bg-<?= ($task['task_type'] ?? '') === 'call' ? 'primary' : (($task['task_type'] ?? '') === 'email' ? 'info' : 'secondary') ?>-subtle text-<?= ($task['task_type'] ?? '') === 'call' ? 'primary' : (($task['task_type'] ?? '') === 'email' ? 'info' : 'secondary') ?>-emphasis"><?= ucfirst(str_replace('_',' ',$task['task_type'] ?? 'task')) ?></span>
@@ -679,7 +679,7 @@ function timeAgo($dt) {
                                             <span class="fw-bold"><?= $val ?>/<?= $max ?></span>
                                         </div>
                                         <div class="score-bar">
-                                            <div class="score-fill bg-<?= $barColor ?>" class="style-21859"></div>
+                                            <div class="score-fill bg-<?= $barColor ?> style-21859"></div>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
@@ -699,19 +699,19 @@ function timeAgo($dt) {
                         <div class="card-body">
                             <div class="mb-3 p-3 bg-light rounded">
                                 <h6 class="fw-bold text-primary"><i class="fas fa-clock me-1"></i> Recency</h6>
-                                <p class="mb-0 text-muted" class="style-87981">How recently was the lead contacted or active. Leads contacted in the last 7 days score highest.</p>
+                                <p class="mb-0 text-muted style-87981">How recently was the lead contacted or active. Leads contacted in the last 7 days score highest.</p>
                             </div>
                             <div class="mb-3 p-3 bg-light rounded">
                                 <h6 class="fw-bold text-success"><i class="fas fa-comments me-1"></i> Engagement</h6>
-                                <p class="mb-0 text-muted" class="style-87981">Number of interactions, emails opened, calls answered. More engagement = higher score.</p>
+                                <p class="mb-0 text-muted style-87981">Number of interactions, emails opened, calls answered. More engagement = higher score.</p>
                             </div>
                             <div class="mb-3 p-3 bg-light rounded">
                                 <h6 class="fw-bold text-warning"><i class="fas fa-rupee-sign me-1"></i> Budget Fit</h6>
-                                <p class="mb-0 text-muted" class="style-87981">How well the lead's budget matches available inventory. Higher match = higher conversion probability.</p>
+                                <p class="mb-0 text-muted style-87981">How well the lead's budget matches available inventory. Higher match = higher conversion probability.</p>
                             </div>
                             <div class="p-3 bg-light rounded">
                                 <h6 class="fw-bold text-info"><i class="fas fa-user-check me-1"></i> Lead Quality</h6>
-                                <p class="mb-0 text-muted" class="style-87981">Verified contact info, complete profile, and valid requirements improve the score.</p>
+                                <p class="mb-0 text-muted style-87981">Verified contact info, complete profile, and valid requirements improve the score.</p>
                             </div>
                         </div>
                     </div>
@@ -941,7 +941,7 @@ function timeAgo($dt) {
 <div class="modal fade" id="interactionModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header" class="style-17604">
+            <div class="modal-header style-17604">
                 <h5 class="modal-title"><i class="fas fa-comments me-2"></i>Log Interaction</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
@@ -1016,7 +1016,7 @@ function timeAgo($dt) {
 <div class="modal fade" id="taskModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header" class="style-57022">
+            <div class="modal-header style-57022">
                 <h5 class="modal-title"><i class="fas fa-plus-circle me-2"></i>Create Task</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
@@ -1074,7 +1074,7 @@ function timeAgo($dt) {
 <!-- Sticky Quick-Log Activity Bar -->
 <div id="quickLogBar" class="style-49227">
     <div class="d-flex align-items-center gap-2 flex-grow-1 flex-wrap">
-        <span class="text-white fw-bold" class="style-69987"><i class="fas fa-bolt me-1"></i>Quick Log:</span>
+        <span class="text-white fw-bold style-69987"><i class="fas fa-bolt me-1"></i>Quick Log:</span>
         <div class="btn-group btn-group-sm" role="group">
             <button type="button" class="btn btn-outline-light quick-type active" data-type="call" onclick="setQuickType(this)"><i class="fas fa-phone me-1"></i>Call</button>
             <button type="button" class="btn btn-outline-light quick-type" data-type="email" onclick="setQuickType(this)"><i class="fas fa-envelope me-1"></i>Email</button>

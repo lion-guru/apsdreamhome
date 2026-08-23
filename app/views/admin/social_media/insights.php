@@ -70,10 +70,10 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 <?php else: ?>
                     <?php foreach ($trend as $t): ?>
                         <div class="d-flex align-items-center mb-2">
-                            <div class="style-11044" class="small text-muted"><?= date('M d', strtotime($t['date'])) ?></div>
+                            <div class="style-11044 small text-muted"><?= date('M d', strtotime($t['date'])) ?></div>
                             <div class="flex-grow-1 mx-2">
-                                <div class="progress" class="style-43706">
-                                    <div class="progress-bar bg-primary" class="style-11521"><?= $t['count'] ?></div>
+                                <div class="progress style-43706">
+                                    <div class="progress-bar bg-primary style-11521"><?= $t['count'] ?></div>
                                 </div>
                             </div>
                         </div>

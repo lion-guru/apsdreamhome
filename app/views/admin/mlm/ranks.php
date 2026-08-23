@@ -92,7 +92,7 @@ foreach ($benefits as $b) { $rankColors[strtolower($b['rank_name'])] = $b['color
                                     ?>
                                     <tr>
                                         <td>
-                                            <span class="badge" class="style-22655">
+                                            <span class="badge style-22655">
                                                 <i class="fas <?= htmlspecialchars($icon ?? '') ?> me-1"></i><?= htmlspecialchars(ucfirst($name ?? '')) ?>
                                             </span>
                                         </td>
@@ -101,26 +101,26 @@ foreach ($benefits as $b) { $rankColors[strtolower($b['rank_name'])] = $b['color
                                             <span class="text-muted small ms-1">(<?= $pct ?>%)</span>
                                         </td>
                                         <td class="text-center">
-                                            <div class="progress" class="style-71953">
-                                                <div class="progress-bar" class="style-46497"></div>
+                                            <div class="progress style-71953">
+                                                <div class="progress-bar style-46497"></div>
                                             </div>
                                             <small class="text-muted"><?= number_format((float)$b['direct_sale_pct'], 1) ?>%</small>
                                         </td>
                                         <td class="text-center">
-                                            <div class="progress" class="style-71953">
-                                                <div class="progress-bar" class="style-59696"></div>
+                                            <div class="progress style-71953">
+                                                <div class="progress-bar style-59696"></div>
                                             </div>
                                             <small class="text-muted"><?= number_format((float)$b['l1_pct'], 1) ?>%</small>
                                         </td>
                                         <td class="text-center">
-                                            <div class="progress" class="style-71953">
-                                                <div class="progress-bar" class="style-59680"></div>
+                                            <div class="progress style-71953">
+                                                <div class="progress-bar style-59680"></div>
                                             </div>
                                             <small class="text-muted"><?= number_format((float)$b['l2_pct'], 1) ?>%</small>
                                         </td>
                                         <td class="text-center">
-                                            <div class="progress" class="style-71953">
-                                                <div class="progress-bar" class="style-15165"></div>
+                                            <div class="progress style-71953">
+                                                <div class="progress-bar style-15165"></div>
                                             </div>
                                             <small class="text-muted"><?= number_format((float)$b['l3_pct'], 1) ?>%</small>
                                         </td>
@@ -153,15 +153,15 @@ foreach ($benefits as $b) { $rankColors[strtolower($b['rank_name'])] = $b['color
                         ?>
                         <div class="d-flex align-items-center justify-content-between mb-3">
                             <div>
-                                <span class="badge" class="style-32165">
+                                <span class="badge style-32165">
                                     <i class="fas <?= htmlspecialchars($b['badge_icon'] ?? 'fa-user') ?> me-1"></i><?= htmlspecialchars(ucfirst($name ?? '')) ?>
                                 </span>
                             </div>
-                            <div class="d-flex align-items-center" class="style-12456">
-                                <div class="progress flex-grow-1 me-2" class="style-87912">
-                                    <div class="progress-bar" class="style-16043"></div>
+                            <div class="d-flex align-items-center style-12456">
+                                <div class="progress flex-grow-1 me-2 style-87912">
+                                    <div class="progress-bar style-16043"></div>
                                 </div>
-                                <span class="small fw-bold" class="style-61696"><?= $count ?></span>
+                                <span class="small fw-bold style-61696"><?= $count ?></span>
                             </div>
                         </div>
                         <?php endforeach; ?>
@@ -180,11 +180,11 @@ foreach ($benefits as $b) { $rankColors[strtolower($b['rank_name'])] = $b['color
                         $color = $b['color_code'] ?? '#94a3b8';
                         $perks = json_decode($b['perks'] ?? '{}', true) ?: [];
                     ?>
-                    <div class="border-bottom px-3 py-2" class="style-80688">
+                    <div class="border-bottom px-3 py-2 style-80688">
                         <div class="fw-bold small"><?= htmlspecialchars(ucfirst($name ?? '')) ?></div>
                         <?php if (!empty($perks)): ?>
                             <?php foreach ($perks as $k => $v): ?>
-                                <div class="text-muted" class="style-436"><i class="fas fa-check text-success me-1"></i><?= htmlspecialchars($v ?? '') ?></div>
+                                <div class="text-muted style-436"><i class="fas fa-check text-success me-1"></i><?= htmlspecialchars($v ?? '') ?></div>
                             <?php endforeach; ?>
                         <?php else: ?>
                             <div class="text-muted small">No perks defined</div>
@@ -207,11 +207,11 @@ foreach ($benefits as $b) { $rankColors[strtolower($b['rank_name'])] = $b['color
                         <div class="d-flex align-items-center border-bottom px-3 py-2">
                             <div class="flex-grow-1">
                                 <div class="small fw-bold"><?= htmlspecialchars($rp['name'] ?? 'Unknown') ?></div>
-                                <div class="text-muted" class="style-20558"><?= htmlspecialchars($rp['current_level'] ?? '') ?></div>
+                                <div class="text-muted style-20558"><?= htmlspecialchars($rp['current_level'] ?? '') ?></div>
                             </div>
                             <div class="text-end">
-                                <div class="badge bg-success" class="style-68658"><i class="fas fa-arrow-up me-1"></i>Promoted</div>
-                                <div class="text-muted" class="style-68658"><?= htmlspecialchars($rp['rank_updated_at'] ?? '') ?></div>
+                                <div class="badge bg-success style-68658"><i class="fas fa-arrow-up me-1"></i>Promoted</div>
+                                <div class="text-muted style-68658"><?= htmlspecialchars($rp['rank_updated_at'] ?? '') ?></div>
                             </div>
                         </div>
                         <?php endforeach; ?>

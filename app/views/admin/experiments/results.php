@@ -171,8 +171,8 @@ foreach ($results as $variant => $r) {
                             <td class="text-end"><?= number_format($c) ?></td>
                             <td class="text-end"><strong><?= number_format($r_pct, 2) ?>%</strong></td>
                             <td>
-                                <div class="progress" class="style-89219">
-                                    <div class="progress-bar bg-primary" class="style-68754"></div>
+                                <div class="progress style-89219">
+                                    <div class="progress-bar bg-primary style-68754"></div>
                                 </div>
                             </td>
                         </tr>

@@ -15,7 +15,7 @@ class DocumentOCRController extends AdminController
         $this->ocrService->initSchema();
     }
 
-    private function getUserId(): int
+    protected function getUserId(): int
     {
         return (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0);
     }

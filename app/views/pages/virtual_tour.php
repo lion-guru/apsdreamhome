@@ -59,7 +59,7 @@
                         <div class="row g-3">
                             <?php foreach ($tour['assets'] as $asset): ?>
                                 <div class="col-md-3">
-                                    <div class="card h-100 tour-scene-card" class="style-75920">
+                                    <div class="card h-100 tour-scene-card style-75920">
                                         <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top img-fluid" alt="<?= h($asset['title']) ?>">
                                         <div class="card-body p-2">
                                             <p class="card-text small mb-0"><?= h($asset['title']) ?></p>

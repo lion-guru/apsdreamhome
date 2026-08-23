@@ -22,7 +22,7 @@ $receipts = $receipts ?? [];
                 <div class="col-md-6">
                     <h6 class="text-primary mb-3"><?= __('assoc_br_property_details', [], 'Property Details') ?></h6>
                     <table class="table table-sm table-borderless">
-                        <tr><td class="text-muted" class="style-12616"><?= __('assoc_br_property', [], 'Property') ?></td><td><strong><?= htmlspecialchars($booking['property_title'] ?? __('assoc_br_na', [], 'N/A')) ?></strong></td></tr>
+                        <tr><td class="text-muted style-12616"><?= __('assoc_br_property', [], 'Property') ?></td><td><strong><?= htmlspecialchars($booking['property_title'] ?? __('assoc_br_na', [], 'N/A')) ?></strong></td></tr>
                         <tr><td class="text-muted"><?= __('assoc_br_city', [], 'City') ?></td><td><?= htmlspecialchars($booking['city'] ?? __('assoc_br_na', [], 'N/A')) ?></td></tr>
                         <tr><td class="text-muted"><?= __('assoc_br_area', [], 'Area') ?></td><td><?= number_format($booking['area_sqft'] ?? 0) ?> <?= __('assoc_br_sqft', [], 'sq ft') ?></td></tr>
                         <tr><td class="text-muted"><?= __('assoc_br_price', [], 'Price') ?></td><td><strong class="text-success">₹<?= number_format($booking['property_price'] ?? $booking['total_amount'] ?? 0) ?></strong></td></tr>
@@ -31,7 +31,7 @@ $receipts = $receipts ?? [];
                 <div class="col-md-6">
                     <h6 class="text-primary mb-3"><?= __('assoc_br_customer_details', [], 'Customer Details') ?></h6>
                     <table class="table table-sm table-borderless">
-                        <tr><td class="text-muted" class="style-12616"><?= __('assoc_br_name', [], 'Name') ?></td><td><strong><?= htmlspecialchars($booking['customer_name'] ?? __('assoc_br_na', [], 'N/A')) ?></strong></td></tr>
+                        <tr><td class="text-muted style-12616"><?= __('assoc_br_name', [], 'Name') ?></td><td><strong><?= htmlspecialchars($booking['customer_name'] ?? __('assoc_br_na', [], 'N/A')) ?></strong></td></tr>
                         <tr><td class="text-muted"><?= __('assoc_br_phone', [], 'Phone') ?></td><td>
                             <?php if (!empty($booking['customer_phone'])): ?>
                                 <a href="tel:<?= $booking['customer_phone'] ?>"><?= htmlspecialchars($booking['customer_phone'] ?? '') ?></a>

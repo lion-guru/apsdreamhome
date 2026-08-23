@@ -47,7 +47,7 @@ $steps = [
     <div class="d-flex justify-content-between align-items-center">
         <div>
             <h4 class="mb-0"><i class="fas fa-magic me-2"></i>Tenant Onboarding Wizard</h4>
-            <p class="mb-0 mt-1" class="style-91394">Set up a new tenant in 5 easy steps</p>
+            <p class="mb-0 mt-1 style-91394">Set up a new tenant in 5 easy steps</p>
         </div>
         <a href="<?= $base ?>/admin/tenants" class="btn btn-outline-light btn-sm"><i class="fas fa-times me-1"></i>Cancel</a>
     </div>
@@ -144,7 +144,7 @@ $steps = [
                     </div>
                 </div>
                 <!-- Live Preview -->
-                <div class="p-3 rounded mb-3" class="style-40363">
+                <div class="p-3 rounded mb-3 style-40363">
                     <h5 class="mb-0"><?= htmlspecialchars($wizardData['name'] ?? 'Company Name') ?></h5>
                     <small class="style-91394">Preview: This is how the sidebar header will look</small>
                 </div>
@@ -231,7 +231,7 @@ $steps = [
                         <tr><td class="label">Properties</td><td><?= $wizardData['max_properties'] ?? $selectedPlan['max_properties'] ?? 10 ?></td></tr>
                         <tr><td class="label">Storage</td><td><?= $wizardData['storage_limit_mb'] ?? $selectedPlan['storage_limit_mb'] ?? 100 ?>MB</td></tr>
                         <tr><td class="label">Theme</td><td>
-                            <span class="d-inline-block rounded" class="style-21195"></span>
+                            <span class="d-inline-block rounded style-21195"></span>
                             <?= htmlspecialchars($wizardData['primary_color'] ?? '#667eea') ?>
                         </td></tr>
                     </table>

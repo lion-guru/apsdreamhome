@@ -195,7 +195,7 @@ try {
                             <label for="description" class="form-label fw-bold"><?= __('list_property_label_description') ?></label>
                             <textarea name="description" id="description" class="form-control" rows="3" maxlength="500" placeholder="<?= __('list_property_ph_description') ?>" data-aps-counter="#description_counter" aria-label="<?= __('list_property_label_description') ?>"></textarea>
                             <small id="description_counter" class="text-muted">0 / 500</small>
-                            <button type="button" id="aiGenDesc" class="btn btn-sm mt-2" class="style-43547"><i class="fas fa-magic"></i> <?= __('ai_generate_description', null, 'Generate with AI') ?></button>
+                            <button type="button" id="aiGenDesc" class="btn btn-sm mt-2 style-43547"><i class="fas fa-magic"></i> <?= __('ai_generate_description', null, 'Generate with AI') ?></button>
                         </div>
                     </div>
 
@@ -213,7 +213,7 @@ try {
                             <label for="image_alt_text" class="form-label fw-bold"><?= __('list_property_alt_label', null, 'Image Alt Text (SEO)') ?></label>
                             <div class="input-group">
                                 <input type="text" name="image_alt_text" id="image_alt_text" class="form-control" placeholder="<?= __('list_property_alt_ph', null, 'Auto-generate SEO alt text with AI') ?>" maxlength="160" aria-label="<?= __('list_property_alt_label', null, 'Image Alt Text') ?>">
-                                <button type="button" id="aiGenAlt" class="btn btn-sm" class="style-43547"><i class="fas fa-magic"></i> <?= __('ai_alt_text', null, 'AI Alt') ?></button>
+                                <button type="button" id="aiGenAlt" class="btn btn-sm style-43547"><i class="fas fa-magic"></i> <?= __('ai_alt_text', null, 'AI Alt') ?></button>
                             </div>
                             <small class="text-muted"><?= __('list_property_alt_hint', null, 'Improves accessibility & Google image search ranking.') ?></small>
                         </div>
@@ -248,7 +248,7 @@ try {
                         <i class="fas fa-arrow-left me-1"></i><?= __('back', null, 'Back') ?>
                     </button>
                     <div class="aps-cp-wizard-progress" aria-label="Progress">
-                        <div class="aps-cp-wizard-progress-bar" class="style-12552"></div>
+                        <div class="aps-cp-wizard-progress-bar style-12552"></div>
                     </div>
                     <div class="d-flex gap-2">
                         <button type="button" class="btn btn-primary" data-wizard-next>

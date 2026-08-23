@@ -43,7 +43,7 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
       <?php if (!empty($health['success'])): ?>
         <div class="mb-2">
           <a href="/admin/legal-colony-pipeline/health" class="text-decoration-none">
-            <span class="rounded-circle d-inline-flex align-items-center justify-content-center bg-<?= $health['grade']['color'] ?> text-white fw-bold" class="style-43996" title="Health: <?= $health['grade']['label'] ?> (<?= $health['overall_score'] ?>%)">
+            <span class="rounded-circle d-inline-flex align-items-center justify-content-center bg-<?= $health['grade']['color'] ?> text-white fw-bold style-43996" title="Health: <?= $health['grade']['label'] ?> (<?= $health['overall_score'] ?>%)">
               <?= $health['grade']['letter'] ?>
             </span>
           </a>
@@ -76,7 +76,7 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
           $isCurrent = ($i === $currentIdx);
           $isActive  = ($i <= $currentIdx);
         ?>
-          <div class="text-center flex-fill position-relative" class="style-67772">
+          <div class="text-center flex-fill position-relative style-67772">
             <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-2 <?= $isDone ? "bg-{$stageColors[$i]}" : ($isCurrent ? "bg-{$stageColors[$i]} border border-3 border-white" : 'bg-secondary') ?>" class="style-62485">
               <i class="fas <?= $isDone ? 'fa-check' : $stageIcons[$i] ?> <?= $isActive ? 'text-white' : 'text-muted' ?> <?= $isCurrent ? 'text-white fa-bounce' : '' ?>"></i>
             </div>
@@ -90,9 +90,9 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
             <?php endif; ?>
           </div>
           <?php if ($i < count($stageKeys) - 1): ?>
-            <div class="flex-fill position-relative" class="style-46866">
-              <div class="progress" class="style-70208">
-                <div class="progress-bar bg-<?= $isDone ? $stageColors[$i] : 'secondary' ?>" class="style-90537"></div>
+            <div class="flex-fill position-relative style-46866">
+              <div class="progress style-70208">
+                <div class="progress-bar bg-<?= $isDone ? $stageColors[$i] : 'secondary' ?> style-90537"></div>
               </div>
             </div>
           <?php endif; ?>
@@ -385,8 +385,8 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
               <span class="small">Readiness</span>
               <span class="small fw-bold <?= $readiness['is_ready'] ?? false ? 'text-success' : 'text-warning' ?>"><?= (int)($readiness['readiness_pct'] ?? 0) ?>%</span>
             </div>
-            <div class="progress" class="style-51045">
-              <div class="progress-bar <?= ($readiness['is_ready'] ?? false) ? 'bg-success' : 'bg-warning' ?>" class="style-91943"></div>
+            <div class="progress style-51045">
+              <div class="progress-bar <?= ($readiness['is_ready'] ?? false) ? 'bg-success' : 'bg-warning' ?> style-91943"></div>
             </div>
           </div>
           <?php foreach (($readiness['checks'] ?? []) as $chk): ?>

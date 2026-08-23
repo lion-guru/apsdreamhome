@@ -8,13 +8,13 @@
                 </div>
                 <div class="card-body">
                     <!-- Chat Container -->
-                    <div id="chat-container" class="chat-container mb-3" class="style-57417">
+                    <div id="chat-container" class="chat-container mb-3 style-57417">
                         <div class="message bot-message mb-2">
                             <div class="d-flex align-items-start">
-                                <div class="avatar bg-primary text-white rounded-circle me-2" class="style-21880">
+                                <div class="avatar bg-primary text-white rounded-circle me-2 style-21880">
                                     <i class="fas fa-robot"></i>
                                 </div>
-                                <div class="message-content bg-white p-2 rounded shadow-sm" class="style-6955">
+                                <div class="message-content bg-white p-2 rounded shadow-sm style-6955">
                                     <p class="mb-0">Hello! I'm your APS Dream Home assistant. Ask me about plots, bookings, commissions, finance, or anything else!</p>
                                 </div>
                             </div>
@@ -43,9 +43,9 @@
                     </div>
 
                     <!-- Voice Visualizer -->
-                    <div id="voice-visualizer" class="text-center mb-2" class="style-54390">
+                    <div id="voice-visualizer" class="text-center mb-2 style-54390">
                         <div class="d-inline-flex align-items-center bg-dark text-white px-4 py-2 rounded-pill">
-                            <i class="fas fa-microphone-alt text-danger me-2" class="style-41087"></i>
+                            <i class="fas fa-microphone-alt text-danger me-2 style-41087"></i>
                             <span>Listening...</span>
                         </div>
                     </div>
@@ -166,10 +166,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const div = document.createElement('div');
         div.className = `message ${type}-message mb-2`;
         const avatar = type === 'bot' 
-            ? '<div class="avatar bg-primary text-white rounded-circle me-2" class="style-21880"><i class="fas fa-robot"></i></div>'
-            : '<div class="avatar bg-success text-white rounded-circle me-2" class="style-21880"><i class="fas fa-user"></i></div>';
+            ? '<div class="avatar bg-primary text-white rounded-circle me-2 style-21880"><i class="fas fa-robot"></i></div>'
+            : '<div class="avatar bg-success text-white rounded-circle me-2 style-21880"><i class="fas fa-user"></i></div>';
         
-        div.innerHTML = `<div class="d-flex align-items-start">${avatar}<div class="message-content bg-white p-2 rounded shadow-sm" class="style-6955"><p class="mb-0">${text}</p></div></div>`;
+        div.innerHTML = `<div class="d-flex align-items-start">${avatar}<div class="message-content bg-white p-2 rounded shadow-sm style-6955"><p class="mb-0">${text}</p></div></div>`;
         chatContainer.appendChild(div);
         chatContainer.scrollTop = chatContainer.scrollHeight;
     }
@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const div = document.createElement('div');
         div.id = id;
         div.className = 'message bot-message mb-2';
-        div.innerHTML = '<div class="d-flex align-items-start"><div class="avatar bg-primary text-white rounded-circle me-2" class="style-21880"><i class="fas fa-robot"></i></div><div class="message-content bg-white p-2 rounded shadow-sm"><p class="mb-0"><i>Typing...</i></p></div></div>';
+        div.innerHTML = '<div class="d-flex align-items-start"><div class="avatar bg-primary text-white rounded-circle me-2 style-21880"><i class="fas fa-robot"></i></div><div class="message-content bg-white p-2 rounded shadow-sm"><p class="mb-0"><i>Typing...</i></p></div></div>';
         chatContainer.appendChild(div);
         chatContainer.scrollTop = chatContainer.scrollHeight;
         return id;

@@ -411,8 +411,8 @@ foreach ($team_members ?? [] as $tm) {
 <section class="py-5">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="fw-bold mb-2" class="style-47546">Our Leadership & Team</h2>
-            <p class="text-muted" class="style-17535">Dedicated professionals working together to deliver exceptional real estate solutions with innovation and integrity.</p>
+            <h2 class="fw-bold mb-2 style-47546">Our Leadership & Team</h2>
+            <p class="text-muted style-17535">Dedicated professionals working together to deliver exceptional real estate solutions with innovation and integrity.</p>
         </div>
 
         <?php if (!empty($team_members)): ?>
@@ -457,24 +457,24 @@ foreach ($team_members ?? [] as $tm) {
                     </div>
                     <?php endif; ?>
                     <?php if (!empty($m->group_name)): ?>
-                    <span class="group-badge" class="style-50153"><?= htmlspecialchars($m->group_name) ?></span>
+                    <span class="group-badge style-50153"><?= htmlspecialchars($m->group_name) ?></span>
                     <?php endif; ?>
                 </div>
                 <div class="team-card-footer">
                     <?php if (!empty($m->email)): ?>
-                    <a href="mailto:<?php echo htmlspecialchars($m->email); ?>" title="Email"><i class="fas fa-envelope"></i></a>
+                    <a href="mailto:<?php echo htmlspecialchars($m->email); ?>" title="Email" aria-label="Email <?= htmlspecialchars($m->email) ?>"><i class="fas fa-envelope" aria-hidden="true"></i></a>
                     <?php endif; ?>
                     <?php if (!empty($m->phone)): ?>
-                    <a href="tel:<?php echo htmlspecialchars($m->phone); ?>" title="Call"><i class="fas fa-phone"></i></a>
+                    <a href="tel:<?php echo htmlspecialchars($m->phone); ?>" title="Call" aria-label="Call <?= htmlspecialchars($m->phone) ?>"><i class="fas fa-phone" aria-hidden="true"></i></a>
                     <?php endif; ?>
                     <?php if (!empty($m->facebook_url)): ?>
-                    <a href="<?php echo htmlspecialchars($m->facebook_url); ?>" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="<?php echo htmlspecialchars($m->facebook_url); ?>" target="_blank" rel="noopener noreferrer" title="Facebook" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
                     <?php endif; ?>
                     <?php if (!empty($m->linkedin)): ?>
-                    <a href="<?php echo htmlspecialchars($m->linkedin); ?>" target="_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="<?php echo htmlspecialchars($m->linkedin); ?>" target="_blank" rel="noopener noreferrer" title="LinkedIn" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
                     <?php endif; ?>
                     <?php if (!empty($m->instagram_url)): ?>
-                    <a href="<?php echo htmlspecialchars($m->instagram_url); ?>" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="<?php echo htmlspecialchars($m->instagram_url); ?>" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
                     <?php endif; ?>
                 </div>
             </div>
@@ -482,7 +482,7 @@ foreach ($team_members ?? [] as $tm) {
         </div>
         <?php else: ?>
         <div class="text-center py-5">
-            <i class="fas fa-users" class="style-27836"></i>
+            <i class="fas fa-users style-27836"></i>
             <p class="text-muted">Team members are currently being updated. Please check back soon.</p>
         </div>
         <?php endif; ?>
@@ -494,31 +494,31 @@ foreach ($team_members ?? [] as $tm) {
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0">
-                <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 mb-3" class="style-51894"><i class="fas fa-fist-raised me-2"></i>Nari Shakti</span>
+                <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 mb-3 style-51894"><i class="fas fa-fist-raised me-2"></i>Nari Shakti</span>
                 <h2 class="section-title">Women Empowerment Initiative</h2>
                 <p class="section-subtitle text-start mb-3">APS Dream Home is committed to empowering women in real estate. Our "Nari Shakti" initiative provides a platform for women to build careers, earn independently, and lead with confidence.</p>
                 <div class="row g-3 mt-2">
                     <div class="col-sm-6">
                         <div class="d-flex align-items-start gap-3 p-3 bg-white rounded-3 shadow-sm">
-                            <i class="fas fa-graduation-cap text-primary" class="style-4846"></i>
+                            <i class="fas fa-graduation-cap text-primary style-4846"></i>
                             <div><strong>Free Training</strong><br><small class="text-muted">Learn real estate, negotiation, and customer handling</small></div>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="d-flex align-items-start gap-3 p-3 bg-white rounded-3 shadow-sm">
-                            <i class="fas fa-hand-holding-usd text-success" class="style-4846"></i>
+                            <i class="fas fa-hand-holding-usd text-success style-4846"></i>
                             <div><strong>Flexible Earnings</strong><br><small class="text-muted">Work from home or on-site, earn on your terms</small></div>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="d-flex align-items-start gap-3 p-3 bg-white rounded-3 shadow-sm">
-                            <i class="fas fa-users text-warning" class="style-4846"></i>
+                            <i class="fas fa-users text-warning style-4846"></i>
                             <div><strong>Community Support</strong><br><small class="text-muted">Join a network of empowered women across India</small></div>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="d-flex align-items-start gap-3 p-3 bg-white rounded-3 shadow-sm">
-                            <i class="fas fa-chart-line text-info" class="style-4846"></i>
+                            <i class="fas fa-chart-line text-info style-4846"></i>
                             <div><strong>Leadership Track</strong><br><small class="text-muted">Clear growth path to team lead and manager roles</small></div>
                         </div>
                     </div>
@@ -532,8 +532,8 @@ foreach ($team_members ?? [] as $tm) {
                     foreach ($women as $w): 
                     ?>
                     <div class="col-md-6">
-                        <div class="team-card" class="style-32337">
-                            <div class="team-card-photo" class="style-26845">
+                        <div class="team-card style-32337">
+                            <div class="team-card-photo style-26845">
                                 <?php $wPhotoPath = ltrim($w->photo ?? '', '/'); $wPhoto = !empty($wPhotoPath) && file_exists(__DIR__ . '/../../../' . $wPhotoPath) ? BASE_URL . '/' . htmlspecialchars($wPhotoPath ?? '') : ''; ?>
                                 <?php if ($wPhoto): ?>
                                 <img src="<?= $wPhoto ?>" alt="">
@@ -550,7 +550,7 @@ foreach ($team_members ?? [] as $tm) {
                     <?php endforeach; ?>
                     <div class="col-md-6 d-flex align-items-center">
                         <div class="text-center p-4 w-100">
-                            <i class="fas fa-plus-circle text-danger" class="style-56051"></i>
+                            <i class="fas fa-plus-circle text-danger style-56051"></i>
                             <p class="text-muted mt-2 mb-0"><strong>Be the next!</strong><br><small>Join Nari Shakti today</small></p>
                         </div>
                     </div>
@@ -561,10 +561,10 @@ foreach ($team_members ?? [] as $tm) {
 </section>
 
 <!-- TEAM GROUPS / COMPETITION -->
-<section class="special-section" class="style-90491">
+<section class="special-section style-90491">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 mb-3" class="style-51894"><i class="fas fa-trophy me-2"></i>Team Competition</span>
+            <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 mb-3 style-51894"><i class="fas fa-trophy me-2"></i>Team Competition</span>
             <h2 class="section-title">Our Battle Groups</h2>
             <p class="section-subtitle">Friendly competition drives excellence. Our teams compete on sales, innovation, and customer satisfaction. Leaderboard updates every month!</p>
         </div>
@@ -614,34 +614,34 @@ foreach ($team_members ?? [] as $tm) {
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0">
-                <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 mb-3" class="style-51894"><i class="fas fa-microchip me-2"></i>Tech Powered</span>
+                <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 mb-3 style-51894"><i class="fas fa-microchip me-2"></i>Tech Powered</span>
                 <h2 class="section-title">AI & Software Innovation</h2>
                 <p class="section-subtitle text-start mb-3">APS Dream Home is not just a real estate company — we're a tech company that does real estate. Our in-house team builds AI tools, automation, and software that gives us a competitive edge.</p>
                 <div class="row g-3 mt-2">
                     <div class="col-md-6">
                         <div class="feature-card text-start p-3">
-                            <div class="f-icon text-success" class="style-43152"><i class="fas fa-robot"></i></div>
+                            <div class="f-icon text-success style-43152"><i class="fas fa-robot"></i></div>
                             <h5 class="style-85997">AI Lead Scoring</h5>
                             <p class="style-64777">Smart algorithms score and prioritize leads for maximum conversion.</p>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="feature-card text-start p-3">
-                            <div class="f-icon text-primary" class="style-43152"><i class="fas fa-phone-volume"></i></div>
+                            <div class="f-icon text-primary style-43152"><i class="fas fa-phone-volume"></i></div>
                             <h5 class="style-85997">AI Voice Agents</h5>
                             <p class="style-64777">Automated calling, follow-ups, and lead nurturing 24/7.</p>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="feature-card text-start p-3">
-                            <div class="f-icon text-warning" class="style-43152"><i class="fas fa-chart-bar"></i></div>
+                            <div class="f-icon text-warning style-43152"><i class="fas fa-chart-bar"></i></div>
                             <h5 class="style-85997">Price Prediction</h5>
                             <p class="style-64777">ML models predict optimal pricing for properties and plots.</p>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="feature-card text-start p-3">
-                            <div class="f-icon text-info" class="style-43152"><i class="fas fa-calculator"></i></div>
+                            <div class="f-icon text-info style-43152"><i class="fas fa-calculator"></i></div>
                             <h5 class="style-85997">Smart Calculators</h5>
                             <p class="style-64777">EMI, stamp duty, loan eligibility — all AI-powered.</p>
                         </div>
@@ -659,7 +659,7 @@ foreach ($team_members ?? [] as $tm) {
                         <span class="badge bg-danger">AI/ML</span>
                         <span class="badge bg-success">WebSocket</span>
                         <span class="badge bg-secondary">Docker</span>
-                        <span class="badge bg-purple" class="style-90453">Flutter</span>
+                        <span class="badge bg-purple style-90453">Flutter</span>
                     </div>
                     <p class="text-muted small">Built in-house by our Tech Pioneers team led by Vijay Verma (CTO). From AI chatbots to interactive property maps — everything is custom-built for the Indian real estate market.</p>
                     <a href="<?= BASE_URL ?>/tools-hub" class="btn btn-outline-success rounded-pill"><i class="fas fa-flask me-2"></i>Explore Our Tools</a>
@@ -670,28 +670,28 @@ foreach ($team_members ?? [] as $tm) {
 </section>
 
 <!-- COLLEGE STUDENTS / RENTAL EARNING -->
-<section class="special-section" class="style-90491">
+<section class="special-section style-90491">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-5 mb-4 mb-lg-0">
-                <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 mb-3" class="style-51894"><i class="fas fa-graduation-cap me-2"></i>Student Program</span>
+                <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 mb-3 style-51894"><i class="fas fa-graduation-cap me-2"></i>Student Program</span>
                 <h2 class="section-title">College Students — Earn While You Learn</h2>
                 <p class="section-subtitle text-start mb-3">Perfect for students who want financial independence. Focus on rental properties — the easiest entry point in real estate.</p>
                 <ul class="list-unstyled">
                     <li class="mb-3 d-flex align-items-start gap-3">
-                        <i class="fas fa-home text-primary mt-1" class="style-30322"></i>
+                        <i class="fas fa-home text-primary mt-1 style-30322"></i>
                         <div><strong>Rental Property Focus</strong><br><small class="text-muted">Help tenants find rental homes, earn referral fees. No investment needed.</small></div>
                     </li>
                     <li class="mb-3 d-flex align-items-start gap-3">
-                        <i class="fas fa-clock text-success mt-1" class="style-30322"></i>
+                        <i class="fas fa-clock text-success mt-1 style-30322"></i>
                         <div><strong>Flexible Hours</strong><br><small class="text-muted">Work around your class schedule. Part-time, from your phone.</small></div>
                     </li>
                     <li class="mb-3 d-flex align-items-start gap-3">
-                        <i class="fas fa-laptop-code text-info mt-1" class="style-30322"></i>
+                        <i class="fas fa-laptop-code text-info mt-1 style-30322"></i>
                         <div><strong>Tech Tools Access</strong><br><small class="text-muted">Use our AI tools for lead finding, property matching, and client management.</small></div>
                     </li>
                     <li class="mb-3 d-flex align-items-start gap-3">
-                        <i class="fas fa-certificate text-warning mt-1" class="style-30322"></i>
+                        <i class="fas fa-certificate text-warning mt-1 style-30322"></i>
                         <div><strong>Internship Certificate</strong><br><small class="text-muted">Earn a recognized internship certificate after 3 months.</small></div>
                     </li>
                 </ul>
@@ -701,28 +701,28 @@ foreach ($team_members ?? [] as $tm) {
                 <div class="row g-3">
                     <div class="col-6">
                         <div class="feature-card p-3 text-start">
-                            <div class="f-icon text-primary" class="style-4846"><i class="fas fa-building"></i></div>
+                            <div class="f-icon text-primary style-4846"><i class="fas fa-building"></i></div>
                             <h5 class="style-77830">Rental Listings</h5>
                             <p class="style-64777">Help property owners list rentals. Earn per listing.</p>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="feature-card p-3 text-start">
-                            <div class="f-icon text-success" class="style-4846"><i class="fas fa-handshake"></i></div>
+                            <div class="f-icon text-success style-4846"><i class="fas fa-handshake"></i></div>
                             <h5 class="style-77830">Tenant Matching</h5>
                             <p class="style-64777">Connect tenants to properties. Earn referral bonus.</p>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="feature-card p-3 text-start">
-                            <div class="f-icon text-warning" class="style-4846"><i class="fas fa-bullhorn"></i></div>
+                            <div class="f-icon text-warning style-4846"><i class="fas fa-bullhorn"></i></div>
                             <h5 class="style-77830">Campus Ambassador</h5>
                             <p class="style-64777">Represent APS on your campus. Earn stipend + incentives.</p>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="feature-card p-3 text-start">
-                            <div class="f-icon text-info" class="style-4846"><i class="fas fa-robot"></i></div>
+                            <div class="f-icon text-info style-4846"><i class="fas fa-robot"></i></div>
                             <h5 class="style-77830">AI Tools Access</h5>
                             <p class="style-64777">Use our AI for lead gen, property matching, more.</p>
                         </div>
@@ -743,8 +743,8 @@ foreach ($team_members ?? [] as $tm) {
 <section class="values-section">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="fw-bold" class="style-47546">Our Core Values</h2>
-            <p class="text-muted" class="style-37392">The principles that guide every decision we make and every relationship we build.</p>
+            <h2 class="fw-bold style-47546">Our Core Values</h2>
+            <p class="text-muted style-37392">The principles that guide every decision we make and every relationship we build.</p>
         </div>
         <div class="row g-4">
             <div class="col-md-6 col-lg-3">
@@ -788,7 +788,7 @@ foreach ($team_members ?? [] as $tm) {
             <a href="<?php echo BASE_URL; ?>/contact" class="btn-cta me-2 mb-2">
                 <i class="fas fa-calendar-check me-2"></i>Get in Touch
             </a>
-            <a href="tel:<?= $phoneRaw ?>" class="btn-cta mb-2" class="style-11030">
+            <a href="tel:<?= $phoneRaw ?>" class="btn-cta mb-2 style-11030">
                 <i class="fas fa-phone-alt me-2"></i>Call Now
             </a>
         </div>

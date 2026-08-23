@@ -28,11 +28,11 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                     <h5 class="mb-0"><i class="fas fa-file-import text-primary me-2"></i><?= __('assoc_il_title', [], 'Import Leads from CSV') ?></h5>
                 </div>
                 <div class="card-body">
-                    <div class="alert alert-info border-0 mb-4" class="style-15736">
+                    <div class="alert alert-info border-0 mb-4 style-15736">
                         <h6 class="alert-heading"><i class="fas fa-info-circle me-2"></i><?= __('assoc_il_format', [], 'CSV Format') ?></h6>
                         <p class="mb-2"><?= __('assoc_il_format_desc', [], 'Your CSV file should have these columns (first row = header):') ?></p>
                         <code class="d-block p-2 bg-white rounded mb-2">name, phone, email, source, budget, location, notes</code>
-                        <ul class="mb-0" class="style-47175">
+                        <ul class="mb-0 style-47175">
                             <li><strong>name</strong> — <?= __('assoc_il_col_name', [], "Lead's full name (required)") ?></li>
                             <li><strong>phone</strong> — <?= __('assoc_il_col_phone', [], "10-digit mobile number (required)") ?></li>
                             <li><strong>email</strong> — <?= __('assoc_il_col_email', [], "Email address (optional)") ?></li>
@@ -64,7 +64,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                     <?php if (!empty($errors)): ?>
                     <div class="mt-4">
                         <h6 class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i> <?= __('assoc_il_errors', ['count' => count($errors)], 'Import Errors (%count%)') ?></h6>
-                        <div class="bg-light p-3 rounded" class="style-46280">
+                        <div class="bg-light p-3 rounded style-46280">
                             <?php foreach (array_slice($errors, 0, 20) as $err): ?>
                                 <div class="style-43637"><?= htmlspecialchars($err ?? '') ?></div>
                             <?php endforeach; ?>

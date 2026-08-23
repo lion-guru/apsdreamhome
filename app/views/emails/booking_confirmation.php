@@ -27,13 +27,13 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
         <tr>
           <td bgcolor="#10b981" align="center" class="style-87574">
             <div class="style-90702">&#10003;</div>
-            <h1 class="h1-mobile" class="style-56865">Booking Confirmed!</h1>
+            <h1 class="h1-mobile style-56865">Booking Confirmed!</h1>
             <p class="style-9233">Your property is reserved</p>
           </td>
         </tr>
         <!-- Body -->
         <tr>
-          <td class="px-mobile" class="style-68782">
+          <td class="px-mobile style-68782">
             <p class="style-31228">Hi <strong>{{customer_name}}</strong>,</p>
             <p class="style-118">
               Great news! Your booking has been <strong class="style-54781">confirmed</strong>. Below are the details of your reservation.

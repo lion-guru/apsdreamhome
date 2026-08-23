@@ -24,7 +24,7 @@ $progress_data = $progress_data ?? [];
                 <?php if (empty($users)): ?>
                 <tr>
                     <td colspan="9" class="text-center py-5">
-                        <i class="fas fa-chart-line fa-3x text-muted mb-3" class="style-82835"></i>
+                        <i class="fas fa-chart-line fa-3x text-muted mb-3 style-82835"></i>
                         <h5 class="text-muted">No associates to display</h5>
                         <p class="text-muted mb-3">Rank progress will appear here once associates join the network.</p>
                     </td>
@@ -40,21 +40,21 @@ $progress_data = $progress_data ?? [];
                     <td><?php echo $p['team_size'] ?? $a['total_team_size'] ?? 0; ?></td>
                     <td class="style-26283">
                         <?php $tp = $p['progress']['team_size_progress'] ?? null; if ($tp): ?>
-                        <div class="progress" class="style-51910"><div class="progress-bar bg-success" class="style-73288"></div></div>
+                        <div class="progress style-51910"><div class="progress-bar bg-success style-73288"></div></div>
                         <small class="text-muted"><?php echo e($tp['current']); ?>/<?php echo $tp['required']; ?></small>
                         <?php else: ?><small class="text-muted">--</small><?php endif; ?>
                     </td>
                     <td><?php echo $a['direct_referrals'] ?? 0; ?></td>
                     <td class="style-26283">
                         <?php $dp = $p['progress']['direct_progress'] ?? null; if ($dp): ?>
-                        <div class="progress" class="style-51910"><div class="progress-bar bg-info" class="style-8346"></div></div>
+                        <div class="progress style-51910"><div class="progress-bar bg-info style-8346"></div></div>
                         <small class="text-muted"><?php echo e($dp['current']); ?>/<?php echo $dp['required']; ?></small>
                         <?php else: ?><small class="text-muted">--</small><?php endif; ?>
                     </td>
                     <td>₹<?php echo number_format($p['monthly_sales'] ?? 0); ?></td>
                     <td class="style-26283">
                         <?php $sp = $p['progress']['sales_progress'] ?? null; if ($sp): ?>
-                        <div class="progress" class="style-51910"><div class="progress-bar bg-warning" class="style-81610"></div></div>
+                        <div class="progress style-51910"><div class="progress-bar bg-warning style-81610"></div></div>
                         <small class="text-muted">₹<?php echo number_format($sp['current']); ?>/₹<?php echo number_format($sp['required']); ?></small>
                         <?php else: ?><small class="text-muted">--</small><?php endif; ?>
                     </td>

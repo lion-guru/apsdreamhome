@@ -201,7 +201,7 @@ $totalAreaSqft = (float)($total_area_sqft ?? 0);
     </div>
   </div>
 
-  <div id="preview-results" class="mt-4" class="style-54390">
+  <div id="preview-results" class="mt-4 style-54390">
     <div class="card aps-cp-card">
       <div class="card-header aps-cp-card-header"><strong><i class="fas fa-map me-2"></i><?= __('cp_layout_preview') ?></strong></div>
       <div class="card-body aps-cp-card-body" id="preview-content">
@@ -256,7 +256,7 @@ document.addEventListener('DOMContentLoaded', function() {
             else if (isPark) { bg = '#dcfce7'; border = '#86efac'; color = '#166534'; icon = '<i class="fas fa-tree me-1"></i>'; }
             html += '<div class="style-38373" onmouseover="this.style.transform=\'scale(1.05)\'" onmouseout="this.style.transform=\'scale(1)\'">' +
                 '<div class="style-20987">' + icon + p.plot_no + '</div>' +
-                '<div class="text-muted" class="style-40535">' + p.area_sqft + ' <?= __('cp_sqft') ?></div>' +
+                '<div class="text-muted style-40535">' + p.area_sqft + ' <?= __('cp_sqft') ?></div>' +
                 '<div class="style-71519">' + p.width_ft + 'x' + p.length_ft + ' ft</div>' +
                 '</div>';
           });

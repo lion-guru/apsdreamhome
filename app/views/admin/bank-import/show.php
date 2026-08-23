@@ -61,8 +61,8 @@ $unmatched_txns = $unmatched_txns ?? [];
                     <div class="text-muted small mb-1">Matched</div>
                     <div class="fs-3 fw-bold text-success"><?= number_format((int)($summary['matched_count'] ?? 0)) ?></div>
                     <div class="small text-muted">Amount: ₹<?= number_format((float)($summary['matched_amount'] ?? 0), 2) ?></div>
-                    <div class="progress mt-1" class="style-51910">
-                        <div class="progress-bar bg-success" class="style-70324"></div>
+                    <div class="progress mt-1 style-51910">
+                        <div class="progress-bar bg-success style-70324"></div>
                     </div>
                 </div>
             </div>
@@ -81,8 +81,8 @@ $unmatched_txns = $unmatched_txns ?? [];
                 <div class="aps-cp-card-body">
                     <div class="text-muted small mb-1">Match Rate</div>
                     <div class="fs-3 fw-bold text-primary"><?= (float)($summary['match_rate'] ?? 0) ?>%</div>
-                    <div class="progress mt-1" class="style-51910">
-                        <div class="progress-bar bg-primary" class="style-70324"></div>
+                    <div class="progress mt-1 style-51910">
+                        <div class="progress-bar bg-primary style-70324"></div>
                     </div>
                 </div>
             </div>
@@ -256,7 +256,7 @@ $unmatched_txns = $unmatched_txns ?? [];
                     </div>
 
                     <div id="searchResults" class="d-none">
-                        <div class="table-responsive" class="style-52319">
+                        <div class="table-responsive style-52319">
                             <table class="table table-sm table-hover">
                                 <thead class="table-light sticky-top">
                                     <tr>

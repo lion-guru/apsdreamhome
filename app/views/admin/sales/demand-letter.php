@@ -52,7 +52,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     <h6 class="m-0"><?= __('sale_letter_num') ?><?= htmlspecialchars((string)($letter['letter_number'] ?? '')) ?> (<?= htmlspecialchars((string)($letter['letter_type'] ?? '')) ?>)</h6>
                 </div>
                 <div class="aps-cp-card-body">
-                    <pre class="m-0" class="style-92067"><?= htmlspecialchars((string)($letter['letter_content'] ?? '')) ?></pre>
+                    <pre class="m-0 style-92067"><?= htmlspecialchars((string)($letter['letter_content'] ?? '')) ?></pre>
                     <hr>
                     <small class="text-muted">
                         <?= __('sale_generated') ?>: <?= htmlspecialchars((string)($letter['generated_date'] ?? '')) ?>

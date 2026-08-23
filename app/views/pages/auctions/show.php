@@ -119,7 +119,7 @@ ob_start();
                 <div class="card-header bg-white">
                     <h6 class="mb-0"><?= __('auction_bid_history', [], 'Bid History') ?></h6>
                 </div>
-                <div class="card-body aps-cp-card-body" class="style-97603" id="bidHistory">
+                <div class="card-body aps-cp-card-body style-97603" id="bidHistory">
                     <?php if (empty($bids)): ?>
                         <p class="text-muted text-center"><?= __('auction_no_bids', [], 'No bids yet. Be the first!') ?></p>
                     <?php else: ?>

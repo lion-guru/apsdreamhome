@@ -56,7 +56,7 @@ $isEligible   = $eligibility['eligible'] ?? false;
         <?php if ($isEligible): ?>
             <div class="text-center py-4">
                 <div class="mb-3">
-                    <i class="fas fa-check-circle text-success" class="style-22918"></i>
+                    <i class="fas fa-check-circle text-success style-22918"></i>
                 </div>
                 <h5 class="text-success">Eligible for Registry / NOC</h5>
                 <p class="text-muted">All financial obligations have been met. You may proceed with NOC generation.</p>
@@ -68,12 +68,12 @@ $isEligible   = $eligibility['eligible'] ?? false;
                 >
                     <i class="fas fa-file-signature me-2"></i>Generate NOC
                 </button>
-                <div id="noc-result" class="mt-3" class="style-54390"></div>
+                <div id="noc-result" class="mt-3 style-54390"></div>
             </div>
         <?php else: ?>
             <div class="text-center py-4">
                 <div class="mb-3">
-                    <i class="fas fa-times-circle text-danger" class="style-22918"></i>
+                    <i class="fas fa-times-circle text-danger style-22918"></i>
                 </div>
                 <h5 class="text-danger">Not Eligible</h5>
                 <p class="text-muted">This booking has unresolved financial obligations that block NOC / Registry generation.</p>
@@ -92,7 +92,7 @@ $isEligible   = $eligibility['eligible'] ?? false;
                         <?php if (empty($eligibility['reasons'] ?? [])): ?>
                         <tr>
                             <td colspan="2" class="text-center py-5">
-                                <i class="fas fa-check-circle fa-3x text-muted mb-3" class="style-82835"></i>
+                                <i class="fas fa-check-circle fa-3x text-muted mb-3 style-82835"></i>
                                 <h5 class="text-muted">No blocking reasons</h5>
                                 <p class="text-muted mb-3">There are no outstanding issues preventing registry or NOC generation.</p>
                             </td>

@@ -90,7 +90,7 @@
                                     <input type="text" id="callerId" class="form-control form-control-sm" placeholder="SIM number" value="<?= htmlspecialchars($config['caller_id'] ?? '') ?>">
                                 </div>
                             </div>
-                            <div id="callStatus" class="mt-3" class="style-2248"></div>
+                            <div id="callStatus" class="mt-3 style-2248"></div>
                         </div>
                     </div>
                 </div>

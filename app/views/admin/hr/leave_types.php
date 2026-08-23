@@ -24,7 +24,7 @@ $page_title = $page_title ?? 'Leave Types';
                                 <td><?= (int)($t['days_per_year'] ?? 0) ?></td>
                                 <td><?= $t['max_consecutive_days'] ?? '-' ?></td>
                                 <td><?= ($t['is_paid'] ?? 0) ? '<i class="fas fa-check text-success"></i>' : '<i class="fas fa-times text-danger"></i>' ?></td>
-                                <td><span class="badge" class="style-99091">&nbsp;&nbsp;&nbsp;</span></td>
+                                <td><span class="badge style-99091">&nbsp;&nbsp;&nbsp;</span></td>
                                 <td>
                                     <span class="badge bg-<?= ($t['status'] ?? '') === 'active' ? 'success' : 'secondary' ?>">
                                         <?= htmlspecialchars($t['status'] ?? '') ?>

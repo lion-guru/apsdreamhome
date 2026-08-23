@@ -33,7 +33,7 @@
                     </div>
 
                     <?php if ($listing['photo']): ?>
-                        <img src="<?= htmlspecialchars($listing['photo'] ?? '') ?>" loading="lazy" alt="<?= htmlspecialchars($listing['business_name'] ?? '') ?>" class="img-fluid rounded mb-3" class="style-22862">
+                        <img src="<?= htmlspecialchars($listing['photo'] ?? '') ?>" loading="lazy" alt="<?= htmlspecialchars($listing['business_name'] ?? '') ?>" class="img-fluid rounded mb-3 style-22862">
                     <?php endif; ?>
 
                     <?php if ($listing['description']): ?>
@@ -71,7 +71,7 @@
                                 <div class="star-rating">
                                     <?php for ($i = 5; $i >= 1; $i--): ?>
                                         <input type="radio" name="rating" value="<?= $i ?>" id="star<?= $i ?>" <?= $i === 5 ? 'checked' : '' ?>>
-                                        <label for="star<?= $i ?>" class="fs-4 text-warning" class="style-10432">â˜…</label>
+                                        <label for="star<?= $i ?>" class="fs-4 text-warning style-10432">â˜…</label>
                                     <?php endfor; ?>
                                 </div>
                             </div>

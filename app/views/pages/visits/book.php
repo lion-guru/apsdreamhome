@@ -157,7 +157,7 @@ unset($_SESSION['visit_form'], $_SESSION['visit_errors']);
             </div>
 
             <div class="col-lg-4">
-                <div class="card border-0 shadow-sm mb-3" class="style-86581">
+                <div class="card border-0 shadow-sm mb-3 style-86581">
                     <div class="card-header bg-primary text-white py-3">
                         <h5 class="mb-0"><i class="fas fa-clipboard-check me-2"></i><?= __('visit_summary_title', [], 'Booking Summary') ?></h5>
                     </div>

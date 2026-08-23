@@ -92,11 +92,11 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
         <div class="card-body aps-cp-card-body">
             <?php if (empty($searches)): ?>
                 <div class="text-center py-5">
-                    <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4" class="style-78270">
+                    <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4 style-78270">
                         <i class="fas fa-search-location fa-3x text-muted opacity-25"></i>
                     </div>
                     <h5 class="fw-bold"><?= __('saved_empty_title', null, 'No saved searches yet') ?></h5>
-                    <p class="text-muted mx-auto" class="style-44213"><?= __('saved_empty_desc', null, 'Apply filters on the properties page and click "Save this search" to get notified when new properties match your criteria.') ?></p>
+                    <p class="text-muted mx-auto style-44213"><?= __('saved_empty_desc', null, 'Apply filters on the properties page and click "Save this search" to get notified when new properties match your criteria.') ?></p>
                     <a href="<?= BASE_URL ?>/properties" class="btn btn-primary rounded-pill px-4 mt-2"><?= __('saved_btn_start', null, 'Start Searching') ?></a>
                 </div>
             <?php else: ?>

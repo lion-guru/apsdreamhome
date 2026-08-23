@@ -177,6 +177,7 @@
             .hero { padding: 60px 16px 50px; }
         }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
 
@@ -263,32 +264,32 @@
     </div>
     <div class="features-grid">
         <div class="feature-card">
-            <div class="feature-icon" class="style-74262"><i class="fas fa-shield-halved"></i></div>
+            <div class="feature-icon style-74262"><i class="fas fa-shield-halved"></i></div>
             <h3>Enterprise Security</h3>
             <p>AES-256-GCM encryption, 2FA, session management, RBAC, CSRF protection, audit logs. Your data is bank-grade secure.</p>
         </div>
         <div class="feature-card">
-            <div class="feature-icon" class="style-56135"><i class="fas fa-brain"></i></div>
+            <div class="feature-icon style-56135"><i class="fas fa-brain"></i></div>
             <h3>AI-Powered</h3>
             <p>Smart lead scoring, price prediction, auto-assignment, conversational chatbot, voice AI — all built-in, no extra cost.</p>
         </div>
         <div class="feature-card">
-            <div class="feature-icon" class="style-86524"><i class="fas fa-puzzle-piece"></i></div>
+            <div class="feature-icon style-86524"><i class="fas fa-puzzle-piece"></i></div>
             <h3>Modular Architecture</h3>
             <p>Use CRM alone, or add ERP, Accounting, Legal, MLM — each module works independently or together seamlessly.</p>
         </div>
         <div class="feature-card">
-            <div class="feature-icon" class="style-122"><i class="fas fa-palette"></i></div>
+            <div class="feature-icon style-122"><i class="fas fa-palette"></i></div>
             <h3>White-Label Ready</h3>
             <p>Your logo, your colors, your domain. Clients never see the APS brand. Full customization of sidebar, dashboard, and reports.</p>
         </div>
         <div class="feature-card">
-            <div class="feature-icon" class="style-311"><i class="fas fa-mobile-screen"></i></div>
+            <div class="feature-icon style-311"><i class="fas fa-mobile-screen"></i></div>
             <h3>Mobile First</h3>
             <p>Native Android app for field teams. Leads, properties, bookings, commissions — manage everything on the go.</p>
         </div>
         <div class="feature-card">
-            <div class="feature-icon" class="style-49144"><i class="fas fa-headset"></i></div>
+            <div class="feature-icon style-49144"><i class="fas fa-headset"></i></div>
             <h3>24/7 Support</h3>
             <p>Dedicated onboarding, phone support, video tutorials, and documentation. We're with you every step of the way.</p>
         </div>
@@ -363,7 +364,7 @@
         <a href="/privacy">Privacy Policy</a>
         <a href="/contact">Contact Us</a>
     </div>
-    <p>&copy; <?= date('Y') ?> APS CRM. All rights reserved. Built with <i class="fas fa-heart" class="style-85206"></i> in India.</p>
+    <p>&copy; <?= date('Y') ?> APS CRM. All rights reserved. Built with <i class="fas fa-heart style-85206"></i> in India.</p>
 </footer>
 
 </body>

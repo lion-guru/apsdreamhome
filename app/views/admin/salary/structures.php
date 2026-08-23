@@ -148,7 +148,7 @@
                                 <td>#<?= $s['id'] ?></td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <div class="avatar bg-primary text-white rounded-circle me-2 d-flex align-items-center justify-content-center" class="style-68946">
+                                        <div class="avatar bg-primary text-white rounded-circle me-2 d-flex align-items-center justify-content-center style-68946">
                                             <?= strtoupper(substr(htmlspecialchars($s['employee_name'] ?? 'U'), 0, 1)) ?>
                                         </div>
                                         <div>

@@ -5,7 +5,7 @@
  */
 ?>
 <!-- Hero Section -->
-<section class="py-5 text-white" class="style-88128">
+<section class="py-5 text-white style-88128">
     <div class="container text-center py-5">
         <h1 class="display-4 fw-bold mb-3"><i class="fas fa-tag me-3"></i><?= __('sell_hero_title') ?></h1>
         <p class="lead"><?= __('sell_hero_desc') ?></p>
@@ -62,7 +62,7 @@
             <div class="col-md-4 mb-4">
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body p-4">
-                        <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" class="style-71716">
+                        <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 style-71716">
                             <span class="h4 mb-0">1</span>
                         </div>
                         <h5><?= __('sell_step1_title') ?></h5>
@@ -73,7 +73,7 @@
             <div class="col-md-4 mb-4">
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body p-4">
-                        <div class="bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" class="style-71716">
+                        <div class="bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 style-71716">
                             <span class="h4 mb-0">2</span>
                         </div>
                         <h5><?= __('sell_step2_title') ?></h5>
@@ -84,7 +84,7 @@
             <div class="col-md-4 mb-4">
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body p-4">
-                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" class="style-71716">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 style-71716">
                             <span class="h4 mb-0">3</span>
                         </div>
                         <h5><?= __('sell_step3_title') ?></h5>
@@ -97,7 +97,7 @@
 </section>
 
 <!-- CTA -->
-<section class="py-5 text-center text-white" class="style-88128">
+<section class="py-5 text-center text-white style-88128">
     <div class="container">
         <h3><?= __('sell_need_help') ?></h3>
         <p class="mb-4"><?= __('sell_contact_us') ?></p>

@@ -46,16 +46,16 @@ $formatRank = function (?string $rank): string {
 ?>
 
 <!-- Referral Code Banner -->
-<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4 border-0 rounded-3 p-3" class="style-38537">
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4 border-0 rounded-3 p-3 style-38537">
     <div class="d-flex align-items-center gap-3">
         <i class="fas fa-ticket-alt fa-2x text-white opacity-75"></i>
         <div>
             <strong class="text-white d-block"><?php echo __('assoc_dash_referral_code', [], 'Your Referral Code'); ?></strong>
-            <span class="small" class="style-80384"><?php echo __('assoc_dash_share_rewards', [], 'Share this code to earn rewards when others join'); ?></span>
+            <span class="small style-80384"><?php echo __('assoc_dash_share_rewards', [], 'Share this code to earn rewards when others join'); ?></span>
         </div>
     </div>
     <div class="d-flex align-items-center gap-2 flex-wrap">
-        <code id="referralCode" class="px-3 py-2 rounded-2 d-inline-block" class="style-21976">
+        <code id="referralCode" class="px-3 py-2 rounded-2 d-inline-block style-21976">
             <?php echo htmlspecialchars($referral_code ?: 'N/A'); ?>
         </code>
         <button class="btn btn-light btn-sm px-3" onclick="copyReferralCode()">
@@ -80,20 +80,20 @@ $formatRank = function (?string $rank): string {
 <?php if (!empty($rank_progress) && !empty($rank_progress['next_rank'])): ?>
 <div class="row g-3 mb-4">
     <div class="col-12">
-        <div class="card border-0 shadow-sm" class="style-57089">
+        <div class="card border-0 shadow-sm style-57089">
             <div class="card-body p-4">
                 <div class="d-flex justify-content-between align-items-start mb-3">
                     <div>
-                        <h5 class="mb-1 text-white"><i class="fas fa-trophy me-2" class="style-96420"></i><?php echo __('assoc_dash_rank_progress', [], 'Rank Progress'); ?></h5>
+                        <h5 class="mb-1 text-white"><i class="fas fa-trophy me-2 style-96420"></i><?php echo __('assoc_dash_rank_progress', [], 'Rank Progress'); ?></h5>
                         <p class="mb-0 text-white-50 small"><?php echo __('assoc_dash_rank_journey', [], 'Your journey to the next rank'); ?></p>
                     </div>
                     <div class="text-end">
                         <div class="d-flex align-items-center gap-2">
-                            <span class="badge px-3 py-2" class="style-73587">
+                            <span class="badge px-3 py-2 style-73587">
                                 <i class="fas fa-medal me-1"></i><?php echo htmlspecialchars($formatRank($rank_progress['current_rank'])); ?>
                             </span>
                             <i class="fas fa-arrow-right text-white-50"></i>
-                            <span class="badge px-3 py-2" class="style-37835">
+                            <span class="badge px-3 py-2 style-37835">
                                 <i class="fas fa-crown me-1"></i><?php echo htmlspecialchars($formatRank($rank_progress['next_rank'])); ?>
                             </span>
                         </div>
@@ -106,7 +106,7 @@ $formatRank = function (?string $rank): string {
                         <small class="text-white-50"><?php echo __('assoc_dash_overall_progress', [], 'Overall Progress'); ?></small>
                         <small class="text-white fw-bold"><?= e($rank_progress['progress_pct']) ?>%</small>
                     </div>
-                    <div class="progress" class="style-87192">
+                    <div class="progress style-87192">
                         <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" 
                              class="style-57284"
                              id="rankProgressBar"
@@ -126,9 +126,9 @@ $formatRank = function (?string $rank): string {
                 <!-- Requirements -->
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <div class="d-flex align-items-center gap-3 p-3 rounded-3" class="style-64272">
+                        <div class="d-flex align-items-center gap-3 p-3 rounded-3 style-64272">
                             <div class="flex-shrink-0">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center" class="style-52514">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center style-52514">
                                     <i class="fas fa-rupee-sign text-info"></i>
                                 </div>
                             </div>
@@ -140,9 +140,9 @@ $formatRank = function (?string $rank): string {
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="d-flex align-items-center gap-3 p-3 rounded-3" class="style-64272">
+                        <div class="d-flex align-items-center gap-3 p-3 rounded-3 style-64272">
                             <div class="flex-shrink-0">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center" class="style-74144">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center style-74144">
                                     <i class="fas fa-users text-success"></i>
                                 </div>
                             </div>
@@ -162,9 +162,9 @@ $formatRank = function (?string $rank): string {
 <!-- Already at highest rank -->
 <div class="row g-3 mb-4">
     <div class="col-12">
-        <div class="card border-0 shadow-sm" class="style-41255">
+        <div class="card border-0 shadow-sm style-41255">
             <div class="card-body p-4 text-center">
-                <i class="fas fa-crown fa-3x mb-3" class="style-32772"></i>
+                <i class="fas fa-crown fa-3x mb-3 style-32772"></i>
                 <h4 class="mb-1"><?php echo __('assoc_dash_highest_rank', [], "You've Reached the Highest Rank!"); ?></h4>
                 <p class="mb-0"><?php echo __('assoc_dash_congrats', [], 'Congratulations! You are at'); ?> <strong><?php echo htmlspecialchars($formatRank($rank_progress['current_rank'])); ?></strong> &mdash; <?php echo __('assoc_dash_highest_rank_top', [], 'the top of the pyramid.'); ?></p>
             </div>
@@ -223,7 +223,7 @@ $formatRank = function (?string $rank): string {
     <div class="col-6 col-md-3">
         <a href="<?php echo BASE_URL; ?>/associate/wallet" class="stat-card-link">
             <div class="stat-card clickable">
-                <div class="stat-icon" class="style-49416"><i class="fas fa-wallet"></i></div>
+                <div class="stat-icon style-49416"><i class="fas fa-wallet"></i></div>
                 <div class="stat-value">₹<?php echo number_format($wallet_balance ?? 0); ?></div>
                 <div class="stat-label"><?php echo __('assoc_dash_wallet_balance', [], 'Wallet Balance'); ?></div>
                 <div class="click-hint"><i class="fas fa-external-link-alt"></i> <?php echo __('assoc_dash_view_wallet', [], 'View Wallet'); ?></div>
@@ -233,7 +233,7 @@ $formatRank = function (?string $rank): string {
     <div class="col-6 col-md-3">
         <a href="<?php echo BASE_URL; ?>/associate/properties" class="stat-card-link">
             <div class="stat-card clickable">
-                <div class="stat-icon" class="style-37084"><i class="fas fa-eye"></i></div>
+                <div class="stat-icon style-37084"><i class="fas fa-eye"></i></div>
                 <div class="stat-value"><?php echo number_format($property_views ?? 0); ?></div>
                 <div class="stat-label"><?php echo __('assoc_dash_property_views', [], 'Property Views'); ?></div>
                 <div class="stat-trend"><i class="fas fa-info-circle"></i> <?php echo number_format($total_inquiries ?? 0); ?> <?php echo __('assoc_dash_inquiries', [], 'inquiries'); ?></div>
@@ -243,13 +243,13 @@ $formatRank = function (?string $rank): string {
     </div>
     <div class="col-6 col-md-3">
         <div class="stat-card">
-            <div class="stat-icon" class="style-2974"><i class="fas fa-file-invoice-dollar"></i></div>
+            <div class="stat-icon style-2974"><i class="fas fa-file-invoice-dollar"></i></div>
             <div class="stat-value"><?php echo number_format($emi_summary['paid_emi'] ?? 0); ?>/<?php echo number_format($emi_summary['total_emi'] ?? 0); ?></div>
             <div class="stat-label"><?php echo __('assoc_dash_emi_paid_total', [], 'EMI Paid/Total'); ?></div>
             <?php if (($emi_summary['overdue_emi'] ?? 0) > 0): ?>
-                <div class="stat-trend" class="style-85971"><i class="fas fa-exclamation-triangle"></i> <?= e($emi_summary['overdue_emi']) ?> <?php echo __('assoc_dash_overdue', [], 'overdue'); ?></div>
+                <div class="stat-trend style-85971"><i class="fas fa-exclamation-triangle"></i> <?= e($emi_summary['overdue_emi']) ?> <?php echo __('assoc_dash_overdue', [], 'overdue'); ?></div>
             <?php elseif (($emi_summary['pending_emi'] ?? 0) > 0): ?>
-                <div class="stat-trend" class="style-88794"><i class="fas fa-clock"></i> <?= e($emi_summary['pending_emi']) ?> <?php echo __('assoc_dash_pending', [], 'pending'); ?></div>
+                <div class="stat-trend style-88794"><i class="fas fa-clock"></i> <?= e($emi_summary['pending_emi']) ?> <?php echo __('assoc_dash_pending', [], 'pending'); ?></div>
             <?php else: ?>
                 <div class="stat-trend up"><i class="fas fa-check-circle"></i> <?php echo __('assoc_dash_all_clear', [], 'All clear'); ?></div>
             <?php endif; ?>
@@ -257,13 +257,11 @@ $formatRank = function (?string $rank): string {
     </div>
     <div class="col-6 col-md-3">
         <div class="stat-card">
-            <div class="stat-icon" class="style-77150"><i class="fas fa-hand-holding-usd"></i></div>
+            <div class="stat-icon style-77150"><i class="fas fa-hand-holding-usd"></i></div>
             <div class="stat-value">₹<?php echo number_format($stats['pending_commission'] ?? 0); ?></div>
             <div class="stat-label"><?php echo __('assoc_dash_pending_commission', [], 'Pending Commission'); ?></div>
             <div class="stat-trend"><i class="fas fa-info-circle"></i> <?php echo __('assoc_dash_awaiting_approval', [], 'Awaiting approval'); ?></div>
         </div>
-    </div>
-</div>
     </div>
 </div>
 
@@ -368,7 +366,7 @@ $formatRank = function (?string $rank): string {
                                         </span>
                                     </td>
                                     <td><?php echo date('M d', strtotime($lead['date'])); ?></td>
-                                    <td><a href="#" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a></td>
+                                    <td><a href="#" class="btn btn-sm btn-outline-primary" aria-label="View lead details"><i class="fas fa-eye" aria-hidden="true"></i></a></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -450,7 +448,7 @@ $formatRank = function (?string $rank): string {
                     <?php foreach ($activities as $activity): ?>
                         <div class="d-flex gap-3 mb-3 pb-3 border-bottom">
                             <div class="flex-shrink-0">
-                                <div class="bg-<?= e($activity['color']) ?> bg-opacity-10 text-<?= e($activity['color']) ?> rounded-circle d-flex align-items-center justify-content-center" class="style-48301">
+                                <div class="bg-<?= e($activity['color']) ?> bg-opacity-10 text-<?= e($activity['color']) ?> rounded-circle d-flex align-items-center justify-content-center style-48301">
                                     <i class="fas <?= e($activity['icon']) ?>"></i>
                                 </div>
                             </div>

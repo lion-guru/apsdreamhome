@@ -6,7 +6,7 @@ $customers = $customers ?? [];
 
 <div class="row g-3 mb-4">
     <div class="col-6 col-md-3">
-        <div class="card border-0 shadow-sm" class="style-19672">
+        <div class="card border-0 shadow-sm style-19672">
             <div class="card-body p-3 text-center">
                 <div class="fs-2 fw-bold"><?= count($customers) ?></div>
                 <div class="small opacity-75"><?= __('assoc_cust_total', [], 'Total Customers') ?></div>
@@ -65,12 +65,11 @@ $customers = $customers ?? [];
                     $pendingAmount = ($c['total_business'] ?? 0) - $totalPaid;
                     ?>
                     <div class="col-md-6 col-lg-4 customer-card" data-name="<?= e(strtolower($c['name'] ?? '')) ?>" data-phone="<?= e($c['phone'] ?? '') ?>">
-                        <div class="card border h-100 <?= $isAssociate ? 'border-success' : '' ?>" class="style-64392">
+                        <div class="card border h-100 <?= $isAssociate ? 'border-success' : '' ?> style-64392">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-start mb-3">
                                     <div class="d-flex align-items-center">
-                                        <div class="rounded-circle d-flex align-items-center justify-content-center me-2" 
-                                             class="style-38516">
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center me-2 style-38516">
                                             <i class="fas fa-<?= $isAssociate ? 'user-tie' : 'user' ?>"></i>
                                         </div>
                                         <div>
@@ -86,13 +85,13 @@ $customers = $customers ?? [];
                                 <div class="mb-3">
                                     <?php if (!empty($c['phone'])): ?>
                                         <div class="d-flex align-items-center mb-1">
-                                            <i class="fas fa-phone text-muted me-2" class="style-18746"></i>
+                                            <i class="fas fa-phone text-muted me-2 style-18746"></i>
                                             <a href="tel:<?= e($c['phone']) ?>" class="text-decoration-none"><?= htmlspecialchars($c['phone'] ?? '') ?></a>
                                         </div>
                                     <?php endif; ?>
                                     <?php if (!empty($c['email'])): ?>
                                         <div class="d-flex align-items-center mb-1">
-                                            <i class="fas fa-envelope text-muted me-2" class="style-18746"></i>
+                                            <i class="fas fa-envelope text-muted me-2 style-18746"></i>
                                             <a href="mailto:<?= e($c['email']) ?>" class="text-decoration-none small"><?= htmlspecialchars($c['email'] ?? '') ?></a>
                                         </div>
                                     <?php endif; ?>
@@ -100,13 +99,13 @@ $customers = $customers ?? [];
 
                                 <div class="row g-2 mb-3">
                                     <div class="col-6">
-                                        <div class="p-2 rounded text-center" class="style-46892">
+                                        <div class="p-2 rounded text-center style-46892">
                                             <div class="small text-muted"><?= __('assoc_cust_bookings_label', [], 'Bookings') ?></div>
                                             <div class="fw-bold text-primary"><?= e($c['booking_count'] ?? 0) ?></div>
                                         </div>
                                     </div>
                                     <div class="col-6">
-                                        <div class="p-2 rounded text-center" class="style-46892">
+                                        <div class="p-2 rounded text-center style-46892">
                                             <div class="small text-muted"><?= __('assoc_cust_business_label', [], 'Business') ?></div>
                                             <div class="fw-bold text-success">₹<?= number_format($c['total_business'] ?? 0) ?></div>
                                         </div>

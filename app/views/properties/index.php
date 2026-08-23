@@ -40,7 +40,7 @@ include __DIR__ . '/../layouts/base.php';
         <div class="col-md-6 col-lg-4 col-xl-3">
             <div class="glass-card h-100 property-card overflow-hidden">
                 <div class="position-relative">
-                    <img src="<?= htmlspecialchars($property['image'] ?? $property['featured_image'] ?? '') ?>" class="w-100" class="style-79780" alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>" loading="lazy">
+                    <img src="<?= htmlspecialchars($property['image'] ?? $property['featured_image'] ?? '') ?>" class="w-100 style-79780" alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>" loading="lazy">
                     <div class="position-absolute top-0 start-0 p-3">
                         <span class="badge bg-primary glass-blur px-3 py-2">
                             <?php echo $property['featured'] ? 'Featured' : 'Premium'; ?>

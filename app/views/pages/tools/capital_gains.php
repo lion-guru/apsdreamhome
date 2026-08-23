@@ -1,4 +1,4 @@
-<section class="py-5" class="style-30941">
+<section class="py-5 style-30941">
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><i class="fas fa-chart-line me-2"></i><?php echo __('tool_capital_gains_title', [], 'Capital Gains Tax Calculator'); ?></h1>

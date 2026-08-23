@@ -65,8 +65,7 @@ $role = $role ?? '';
                                        onclick="selectUser(this)">
                                         <div class="d-flex align-items-center">
                                             <div class="flex-shrink-0 me-3">
-                                                <div class="avatar-circle d-flex align-items-center justify-content-center text-white fw-bold"
-                                                     class="style-74621">
+                                                <div class="avatar-circle d-flex align-items-center justify-content-center text-white fw-bold style-74621">
                                                     <?= strtoupper(substr($user['name'] ?? '?', 0, 1)) ?>
                                                 </div>
                                             </div>
@@ -105,7 +104,7 @@ $role = $role ?? '';
 
                         <div class="mb-3">
                             <label class="form-label">To:</label>
-                            <div id="selectedUser" class="text-muted" class="style-68125">
+                            <div id="selectedUser" class="text-muted style-68125">
                                 Select a user from the list
                             </div>
                         </div>
@@ -174,7 +173,7 @@ function searchUsers(query) {
                         + ' data-user-id="' + u.id + '" data-user-name="' + escapeHtml(u.name || '') + '" data-user-role="' + (u.role || 'user') + '"'
                         + ' onclick="selectUser(this)">'
                         + '<div class="d-flex align-items-center">'
-                        + '<div class="flex-shrink-0 me-3"><div class="d-flex align-items-center justify-content-center text-white fw-bold" class="style-51805">' + initial + '</div></div>'
+                        + '<div class="flex-shrink-0 me-3"><div class="d-flex align-items-center justify-content-center text-white fw-bold style-51805">' + initial + '</div></div>'
                         + '<div><strong>' + escapeHtml(u.name || '') + '</strong><br><small class="text-muted"><span class="badge bg-' + badge + '">' + (u.role || 'user').charAt(0).toUpperCase() + (u.role || 'user').slice(1) + '</span> ' + escapeHtml(u.email || '') + (u.phone ? ' &middot; ' + escapeHtml(u.phone) : '') + '</small></div>'
                         + '</div></a>';
                 });

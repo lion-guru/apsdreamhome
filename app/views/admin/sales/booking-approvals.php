@@ -23,7 +23,7 @@ $statusBadge = function ($s) {
 <div class="aps-cp-card mb-3">
     <div class="aps-cp-card-header d-flex justify-content-between align-items-center">
         <h5 class="m-0"><i class="fas fa-clipboard-check me-2"></i><?= __('sale_booking_approvals') ?? 'Booking Approvals' ?></h5>
-        <span class="badge bg-warning text-dark" class="style-47175"><?= $pendingCount ?> Pending</span>
+        <span class="badge bg-warning text-dark style-47175"><?= $pendingCount ?> Pending</span>
     </div>
     <div class="aps-cp-card-body">
         <!-- Filter Tabs -->
@@ -98,7 +98,7 @@ $statusBadge = function ($s) {
                                         </button>
                                     </div>
                                 <?php else: ?>
-                                    <span class="text-muted" class="style-64777"><?= htmlspecialchars($b['approval_notes'] ?? '—') ?></span>
+                                    <span class="text-muted style-64777"><?= htmlspecialchars($b['approval_notes'] ?? '—') ?></span>
                                 <?php endif; ?>
                             </td>
                         </tr>

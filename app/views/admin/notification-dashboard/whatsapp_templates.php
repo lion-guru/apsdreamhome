@@ -35,12 +35,13 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
         .empty-state { text-align: center; padding: 3rem; color: #64748b; }
         .empty-state i { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
     <div class="page-header">
         <div class="d-flex justify-content-between align-items-center">
             <div>
-                <h1><i class="fab fa-whatsapp me-2" class="style-35478"></i>WhatsApp Templates</h1>
+                <h1><i class="fab fa-whatsapp me-2 style-35478"></i>WhatsApp Templates</h1>
                 <p>Manage WhatsApp Business API message templates</p>
             </div>
             <a href="<?= $base ?>/admin/notification-dashboard" class="btn-back"><i class="fas fa-arrow-left me-1"></i>Back to Dashboard</a>

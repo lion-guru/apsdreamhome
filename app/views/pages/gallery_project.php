@@ -28,7 +28,7 @@ $images = $images ?? [];
             <div class="row g-3" id="galleryGrid">
                 <?php foreach ($images as $i => $img): ?>
                     <div class="col-6 col-md-4 col-lg-3">
-                        <div class="card border-0 shadow-sm rounded-3 overflow-hidden h-100 gallery-item" class="style-10432" onclick="openLightbox(<?= $i ?>)">
+                        <div class="card border-0 shadow-sm rounded-3 overflow-hidden h-100 gallery-item style-10432" onclick="openLightbox(<?= $i ?>)">
                             <img src="<?= htmlspecialchars($img['image_path'] ?? $img['image_url'] ?? '/assets/images/placeholder.jpg') ?>"
                                  class="card-img-top" alt="<?= htmlspecialchars($img['title'] ?? 'Gallery Image') ?>"
                                  class="style-31036" loading="lazy">
@@ -63,7 +63,7 @@ $images = $images ?? [];
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body text-center p-0">
-                <img id="lightboxImage" src="" class="img-fluid" class="style-17121">
+                <img id="lightboxImage" src="" class="img-fluid style-17121">
             </div>
         </div>
     </div>

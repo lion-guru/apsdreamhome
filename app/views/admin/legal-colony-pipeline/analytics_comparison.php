@@ -187,7 +187,7 @@ foreach ($colonies as $c) {
                 </td>
                 <td class="text-center">
                   <?php if ($health): ?>
-                    <span class="fw-bold" class="style-14182"><?= $health['score'] ?>% (<?= $health['grade'] ?>)</span>
+                    <span class="fw-bold style-14182"><?= $health['score'] ?>% (<?= $health['grade'] ?>)</span>
                   <?php else: ?>
                     <span class="text-muted">—</span>
                   <?php endif; ?>
@@ -196,8 +196,8 @@ foreach ($colonies as $c) {
                 <td class="text-end"><?= $c['plot_count'] ?? 0 ?></td>
                 <td class="text-end text-danger fw-bold"><?= $c['sold_plots'] ?? 0 ?></td>
                 <td class="text-center">
-                  <div class="progress" class="style-90048">
-                    <div class="progress-bar bg-<?= $occPct >= 50 ? 'success' : ($occPct >= 25 ? 'warning' : 'danger') ?>" class="style-1203"></div>
+                  <div class="progress style-90048">
+                    <div class="progress-bar bg-<?= $occPct >= 50 ? 'success' : ($occPct >= 25 ? 'warning' : 'danger') ?> style-1203"></div>
                   </div>
                   <br><small><?= $occPct ?>%</small>
                 </td>
@@ -417,8 +417,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td class="text-end"><?= $c['plot_count'] ?? 0 ?></td>
                 <td class="text-end text-danger fw-bold"><?= $c['sold_plots'] ?? 0 ?></td>
                 <td class="text-center">
-                  <div class="progress" class="style-90048">
-                    <div class="progress-bar bg-<?= $occPct >= 50 ? 'success' : ($occPct >= 25 ? 'warning' : 'danger') ?>" class="style-1203"></div>
+                  <div class="progress style-90048">
+                    <div class="progress-bar bg-<?= $occPct >= 50 ? 'success' : ($occPct >= 25 ? 'warning' : 'danger') ?> style-1203"></div>
                   </div>
                   <br><small><?= $occPct ?>%</small>
                 </td>

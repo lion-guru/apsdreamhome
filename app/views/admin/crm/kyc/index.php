@@ -2,12 +2,12 @@
 <div class="container-fluid px-4 py-4">
     <h4 class="fw-bold mb-4"><i class="fas fa-id-card me-2 text-primary"></i>KYC Verification</h4>
     <div class="row g-3 mb-4">
-        <div class="col-md-3"><div class="card border-0 shadow-sm text-center p-3" class="style-56956"><div class="style-61706"><?= $stats['total'] ?? 0 ?></div><small class="text-muted">Total</small></div></div>
-        <div class="col-md-3"><div class="card border-0 shadow-sm text-center p-3" class="style-56956"><div class="style-87459"><?= $stats['pending'] ?? 0 ?></div><small class="text-muted">Pending</small></div></div>
-        <div class="col-md-3"><div class="card border-0 shadow-sm text-center p-3" class="style-56956"><div class="style-52150"><?= $stats['verified'] ?? 0 ?></div><small class="text-muted">Verified</small></div></div>
-        <div class="col-md-3"><div class="card border-0 shadow-sm text-center p-3" class="style-56956"><div class="style-66629"><?= $stats['rejected'] ?? 0 ?></div><small class="text-muted">Rejected</small></div></div>
+        <div class="col-md-3"><div class="card border-0 shadow-sm text-center p-3 style-56956"><div class="style-61706"><?= $stats['total'] ?? 0 ?></div><small class="text-muted">Total</small></div></div>
+        <div class="col-md-3"><div class="card border-0 shadow-sm text-center p-3 style-56956"><div class="style-87459"><?= $stats['pending'] ?? 0 ?></div><small class="text-muted">Pending</small></div></div>
+        <div class="col-md-3"><div class="card border-0 shadow-sm text-center p-3 style-56956"><div class="style-52150"><?= $stats['verified'] ?? 0 ?></div><small class="text-muted">Verified</small></div></div>
+        <div class="col-md-3"><div class="card border-0 shadow-sm text-center p-3 style-56956"><div class="style-66629"><?= $stats['rejected'] ?? 0 ?></div><small class="text-muted">Rejected</small></div></div>
     </div>
-    <div class="card border-0 shadow-sm" class="style-56956"><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead class="table-light"><tr><th>ID</th><th>User</th><th>PAN</th><th>Aadhaar</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody>
+    <div class="card border-0 shadow-sm style-56956"><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead class="table-light"><tr><th>ID</th><th>User</th><th>PAN</th><th>Aadhaar</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody>
     <?php if (empty($requests)): ?><tr><td colspan="7" class="text-center py-4 text-muted">No KYC requests</td></tr>
     <?php else: foreach ($requests as $r): ?><tr>
         <td>#<?= $r['id'] ?></td>

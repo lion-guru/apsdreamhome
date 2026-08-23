@@ -87,7 +87,7 @@
                                 <?php if (empty($colonies ?? [])): ?>
                                 <tr>
                                     <td colspan="9" class="text-center py-5">
-                                        <i class="fas fa-home fa-3x text-muted mb-3" class="style-82835"></i>
+                                        <i class="fas fa-home fa-3x text-muted mb-3 style-82835"></i>
                                         <h5 class="text-muted">No colonies found</h5>
                                         <p class="text-muted mb-3">Add your first colony to start managing properties and plots.</p>
                                     </td>

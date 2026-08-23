@@ -67,7 +67,7 @@ $currentCategory = $category ?? null;
     <div class="aps-cp-card-header">
         <h5 class="mb-0"><i class="fas fa-list me-2 text-primary"></i><?= __('user_support_tickets_all_tickets', 'All Tickets') ?> (<?= $total ?>)</h5>
         <div class="d-flex gap-2">
-            <select class="form-select form-select-sm" class="style-19078" onchange="filterTickets('status', this.value)">
+            <select class="form-select form-select-sm style-19078" onchange="filterTickets('status', this.value)">
                 <option value=""><?= __('user_support_tickets_all_status', 'All Status') ?></option>
                 <option value="open" <?= $currentStatus === 'open' ? 'selected' : '' ?>><?= __('user_support_tickets_filter_open', 'Open') ?></option>
                 <option value="in_progress" <?= $currentStatus === 'in_progress' ? 'selected' : '' ?>><?= __('user_support_tickets_filter_in_progress', 'In Progress') ?></option>
@@ -75,7 +75,7 @@ $currentCategory = $category ?? null;
                 <option value="resolved" <?= $currentStatus === 'resolved' ? 'selected' : '' ?>><?= __('user_support_tickets_filter_resolved', 'Resolved') ?></option>
                 <option value="closed" <?= $currentStatus === 'closed' ? 'selected' : '' ?>><?= __('user_support_tickets_filter_closed', 'Closed') ?></option>
             </select>
-            <select class="form-select form-select-sm" class="style-19078" onchange="filterTickets('category', this.value)">
+            <select class="form-select form-select-sm style-19078" onchange="filterTickets('category', this.value)">
                 <option value=""><?= __('user_support_tickets_all_categories', 'All Categories') ?></option>
                 <option value="general" <?= $currentCategory === 'general' ? 'selected' : '' ?>><?= __('user_support_tickets_category_general', 'General') ?></option>
                 <option value="payment" <?= $currentCategory === 'payment' ? 'selected' : '' ?>><?= __('user_support_tickets_category_payment', 'Payment') ?></option>

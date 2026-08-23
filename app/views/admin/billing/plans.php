@@ -19,7 +19,7 @@ $base    = BASE_URL ?? '';
     <div class="d-flex justify-content-between align-items-center">
         <div>
             <h4 class="mb-0"><i class="fas fa-tags me-2"></i>Subscription Plans</h4>
-            <p class="mb-0 mt-1" class="style-91394">Manage pricing, limits, and features per plan</p>
+            <p class="mb-0 mt-1 style-91394">Manage pricing, limits, and features per plan</p>
         </div>
         <a href="<?= $base ?>/admin/billing" class="btn btn-outline-light btn-sm">
             <i class="fas fa-arrow-left me-1"></i>Back to Billing

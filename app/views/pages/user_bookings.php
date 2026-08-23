@@ -61,8 +61,8 @@ $bookings = $bookings ?? [];
                             <td>
                                 ₹<?= number_format($tokenPaid) ?>
                                 <?php if ($tokenRequired > 0): ?>
-                                <div class="progress" class="style-52430">
-                                    <div class="progress-bar bg-success" class="style-15112"></div>
+                                <div class="progress style-52430">
+                                    <div class="progress-bar bg-success style-15112"></div>
                                 </div>
                                 <?php endif; ?>
                             </td>

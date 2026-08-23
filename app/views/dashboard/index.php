@@ -124,22 +124,22 @@ try { $recentLeads = $db->fetchAll("SELECT * FROM leads ORDER BY created_at DESC
         <div class="row g-3">
             <div class="col-md-3">
                 <a href="<?php echo BASE_URL; ?>/admin/leads/create" class="btn btn-outline-primary w-100 py-3">
-                    <i class="fas fa-user-plus mb-2" class="style-98233"></i>Add New Lead
+                    <i class="fas fa-user-plus mb-2 style-98233"></i>Add New Lead
                 </a>
             </div>
             <div class="col-md-3">
                 <a href="<?php echo BASE_URL; ?>/admin/properties/create" class="btn btn-outline-success w-100 py-3">
-                    <i class="fas fa-plus mb-2" class="style-98233"></i>Add Property
+                    <i class="fas fa-plus mb-2 style-98233"></i>Add Property
                 </a>
             </div>
             <div class="col-md-3">
                 <a href="<?php echo BASE_URL; ?>/admin/bookings/create" class="btn btn-outline-warning w-100 py-3">
-                    <i class="fas fa-file-contract mb-2" class="style-98233"></i>New Booking
+                    <i class="fas fa-file-contract mb-2 style-98233"></i>New Booking
                 </a>
             </div>
             <div class="col-md-3">
                 <a href="<?php echo BASE_URL; ?>/admin/gallery/create" class="btn btn-outline-info w-100 py-3">
-                    <i class="fas fa-image mb-2" class="style-98233"></i>Upload Photo
+                    <i class="fas fa-image mb-2 style-98233"></i>Upload Photo
                 </a>
             </div>
         </div>
@@ -186,15 +186,15 @@ try { $recentLeads = $db->fetchAll("SELECT * FROM leads ORDER BY created_at DESC
             <div class="card-body aps-cp-card-body">
                 <div class="mb-3">
                     <div class="d-flex justify-content-between mb-1"><span>Database</span><span class="fw-semibold text-success">Connected</span></div>
-                    <div class="progress"><div class="progress-bar bg-success" class="style-90537"></div></div>
+                    <div class="progress"><div class="progress-bar bg-success style-90537"></div></div>
                 </div>
                 <div class="mb-3">
                     <div class="d-flex justify-content-between mb-1"><span>Active Users</span><span class="fw-semibold"><?php echo number_format($stats['total_users']); ?></span></div>
-                    <div class="progress"><div class="progress-bar bg-primary" class="style-3369"></div></div>
+                    <div class="progress"><div class="progress-bar bg-primary style-3369"></div></div>
                 </div>
                 <div class="mb-3">
                     <div class="d-flex justify-content-between mb-1"><span>Properties Listed</span><span class="fw-semibold"><?php echo number_format($stats['total_properties']); ?></span></div>
-                    <div class="progress"><div class="progress-bar bg-info" class="style-47559"></div></div>
+                    <div class="progress"><div class="progress-bar bg-info style-47559"></div></div>
                 </div>
                 <hr>
                 <div class="row text-center">

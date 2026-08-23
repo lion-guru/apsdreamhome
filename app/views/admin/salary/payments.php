@@ -74,7 +74,7 @@
                                 <td>#<?= $p['id'] ?></td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <div class="avatar bg-info text-white rounded-circle me-2 d-flex align-items-center justify-content-center" class="style-68946">
+                                        <div class="avatar bg-info text-white rounded-circle me-2 d-flex align-items-center justify-content-center style-68946">
                                             <?= strtoupper(substr(htmlspecialchars($p['employee_name'] ?? 'E'), 0, 1)) ?>
                                         </div>
                                         <strong><?= htmlspecialchars($p['employee_name'] ?? '') ?></strong>

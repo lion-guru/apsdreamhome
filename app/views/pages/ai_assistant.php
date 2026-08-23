@@ -178,7 +178,7 @@
         var div = document.createElement('div');
         div.id = 'typingIndicator';
         div.className = 'ai-typing';
-        div.innerHTML = '<div class="ai-msg-av" class="style-87578"><i class="fas fa-robot"></i></div><div class="ai-typing-bubble"><span class="ai-typing-dot"></span><span class="ai-typing-dot"></span><span class="ai-typing-dot"></span></div>';
+        div.innerHTML = '<div class="ai-msg-av style-87578"><i class="fas fa-robot"></i></div><div class="ai-typing-bubble"><span class="ai-typing-dot"></span><span class="ai-typing-dot"></span><span class="ai-typing-dot"></span></div>';
         chatMessages.appendChild(div);
         chatMessages.scrollTop = chatMessages.scrollHeight;
         return div;

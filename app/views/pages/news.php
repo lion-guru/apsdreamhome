@@ -73,7 +73,7 @@
                                 ?>
                                 <img src="<?= htmlspecialchars($imageUrl ?? '') ?>"
                                     alt="<?= htmlspecialchars($news['title'] ?? '') ?>"
-                                    class="img-fluid w-100" class="style-27608" loading="lazy">
+                                    class="img-fluid w-100 style-27608" loading="lazy" onerror="this.onerror=null;this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
                                 <?php if (!empty($news['category'])): ?>
                                 <div class="news-category position-absolute top-0 start-0 m-3">
                                     <span class="badge bg-primary"><?= htmlspecialchars($news['category'] ?? '') ?></span>
@@ -114,7 +114,7 @@
                             <input type="email" class="form-control" name="email" placeholder="<?= __('newsletter_email_placeholder') ?>" required>
                             <button class="btn btn-primary" type="submit"><?= __('newsletter_subscribe_btn') ?></button>
                         </div>
-                        <div id="newsletterMsg" class="mt-2 small" class="style-2248"></div>
+                        <div id="newsletterMsg" class="mt-2 small style-2248"></div>
                     </div>
                 </div>
             </form>

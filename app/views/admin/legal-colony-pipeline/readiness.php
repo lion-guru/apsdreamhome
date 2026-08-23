@@ -18,8 +18,8 @@ $readiness = $readiness ?? ['checks' => [], 'passed_count' => 0, 'total_checks' 
             <?= ($readiness['is_ready'] ?? false) ? 'READY FOR SALES LAUNCH!' : 'Not Yet Ready' ?>
           </h4>
           <p class="text-muted"><?= (int)($readiness['passed_count'] ?? 0) ?> / <?= (int)($readiness['total_checks'] ?? 0) ?> checks passed</p>
-          <div class="progress mt-3" class="style-38853">
-            <div class="progress-bar <?= ($readiness['is_ready'] ?? false) ? 'bg-success' : 'bg-warning' ?>" class="style-91943"></div>
+          <div class="progress mt-3 style-38853">
+            <div class="progress-bar <?= ($readiness['is_ready'] ?? false) ? 'bg-success' : 'bg-warning' ?> style-91943"></div>
           </div>
         </div>
       </div>

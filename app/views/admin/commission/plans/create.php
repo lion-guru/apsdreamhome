@@ -30,7 +30,7 @@ $ranks = [
 
 <div class="cp-card">
     <div class="cp-card-header">
-        <h5 class="m-0" class="style-43926"><i class="fas fa-plus-circle me-2" class="style-13856"></i>Create Commission Plan</h5>
+        <h5 class="m-0 style-43926"><i class="fas fa-plus-circle me-2 style-13856"></i>Create Commission Plan</h5>
         <a href="<?= $base ?>/admin/commission-plans" class="cp-btn cp-btn-outline"><i class="fas fa-arrow-left me-1"></i>Back</a>
     </div>
     <div class="cp-card-body">

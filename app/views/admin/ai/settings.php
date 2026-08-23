@@ -23,7 +23,7 @@ $engine_status = $engine_status ?? [];
 <div class="settings-header">
     <div class="container-fluid px-4">
         <h2 class="mb-1 fw-bold"><i class="fas fa-key me-2"></i>AI API Settings</h2>
-        <p class="mb-0 opacity-75" class="style-42715">Configure free AI engines. Cost: ₹0 — all free tier.</p>
+        <p class="mb-0 opacity-75 style-42715">Configure free AI engines. Cost: ₹0 — all free tier.</p>
     </div>
 </div>
 
@@ -38,7 +38,7 @@ $engine_status = $engine_status ?? [];
                         <span class="engine-status <?= $info['available'] ? 'active' : 'inactive' ?>"></span>
                     </div>
                     <div class="style-60726"><?= $info['model'] ?? 'N/A' ?></div>
-                    <div class="d-flex justify-content-between" class="style-26285">
+                    <div class="d-flex justify-content-between style-26285">
                         <span class="text-muted"><?= $info['cost'] ?? '' ?></span>
                         <span class="text-muted"><?= $info['speed'] ?? '' ?></span>
                     </div>
@@ -51,7 +51,7 @@ $engine_status = $engine_status ?? [];
     </div>
 
     <!-- API Key Form -->
-    <div class="card" class="style-61451">
+    <div class="card style-61451">
         <div class="card-body p-4">
             <form method="POST">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
@@ -60,7 +60,7 @@ $engine_status = $engine_status ?? [];
                     <!-- Groq -->
                     <div class="col-md-6">
                         <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="engine-status <?= !empty($engine_status['groq']['available']) ? 'active' : 'inactive' ?>" class="style-47443"></span>
+                            <span class="engine-status <?= !empty($engine_status['groq']['available']) ? 'active' : 'inactive' ?> style-47443"></span>
                             <label class="api-label mb-0">Groq API Key <span class="free-badge">FREE</span></label>
                         </div>
                         <input type="password" name="groq_api_key" class="api-input" value="<?= htmlspecialchars($settings['groq_api_key'] ?? '') ?>" placeholder="gsk_...">
@@ -70,7 +70,7 @@ $engine_status = $engine_status ?? [];
                     <!-- OpenRouter -->
                     <div class="col-md-6">
                         <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="engine-status <?= !empty($engine_status['openrouter']['available']) ? 'active' : 'inactive' ?>" class="style-47443"></span>
+                            <span class="engine-status <?= !empty($engine_status['openrouter']['available']) ? 'active' : 'inactive' ?> style-47443"></span>
                             <label class="api-label mb-0">OpenRouter API Key <span class="free-badge">FREE</span></label>
                         </div>
                         <input type="password" name="openrouter_api_key" class="api-input" value="<?= htmlspecialchars($settings['openrouter_api_key'] ?? '') ?>" placeholder="sk-or-...">
@@ -80,7 +80,7 @@ $engine_status = $engine_status ?? [];
                     <!-- Gemini -->
                     <div class="col-md-6">
                         <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="engine-status <?= !empty($engine_status['gemini']['available']) ? 'active' : 'inactive' ?>" class="style-47443"></span>
+                            <span class="engine-status <?= !empty($engine_status['gemini']['available']) ? 'active' : 'inactive' ?> style-47443"></span>
                             <label class="api-label mb-0">Google Gemini API Key <span class="free-badge">FREE</span></label>
                         </div>
                         <input type="password" name="gemini_api_key" class="api-input" value="<?= htmlspecialchars($settings['api_key'] ?? '') ?>" placeholder="AIza...">
@@ -90,7 +90,7 @@ $engine_status = $engine_status ?? [];
                     <!-- Ollama -->
                     <div class="col-md-6">
                         <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="engine-status <?= !empty($engine_status['ollama']['available']) ? 'active' : 'inactive' ?>" class="style-47443"></span>
+                            <span class="engine-status <?= !empty($engine_status['ollama']['available']) ? 'active' : 'inactive' ?> style-47443"></span>
                             <label class="api-label mb-0">Ollama (Local) <span class="free-badge">UNLIMITED</span></label>
                         </div>
                         <input type="text" name="ollama_url" class="api-input" value="<?= htmlspecialchars($settings['ollama_url'] ?? 'http://localhost:11434') ?>" placeholder="http://localhost:11434">
@@ -101,14 +101,14 @@ $engine_status = $engine_status ?? [];
 
                 <div class="mt-4 d-flex gap-3">
                     <button type="submit" class="save-btn"><i class="fas fa-save me-2"></i>Save Settings</button>
-                    <a href="<?= BASE_URL ?>/admin/ai-system" class="btn btn-outline-secondary" class="style-46740">Cancel</a>
+                    <a href="<?= BASE_URL ?>/admin/ai-system" class="btn btn-outline-secondary style-46740">Cancel</a>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Info -->
-    <div class="card mt-4" class="style-60010">
+    <div class="card mt-4 style-60010">
         <div class="card-body p-4">
             <h5 class="style-53819"><i class="fas fa-info-circle me-2"></i>How It Works</h5>
             <div class="row mt-3">

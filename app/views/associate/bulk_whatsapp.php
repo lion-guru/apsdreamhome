@@ -16,14 +16,14 @@ $message = $message ?? '';
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h5 class="mb-0"><i class="fab fa-whatsapp me-2" class="style-43764"></i><?= __('assoc_bw_title', [], 'Bulk WhatsApp Messages') ?></h5>
+                    <h5 class="mb-0"><i class="fab fa-whatsapp me-2 style-43764"></i><?= __('assoc_bw_title', [], 'Bulk WhatsApp Messages') ?></h5>
                 </div>
                 <div class="card-body">
                     <?php if (empty($leads)): ?>
                         <p class="text-muted"><?= __('assoc_bw_select_hint', [], 'Select leads from the') ?> <a href="<?= BASE_URL ?>/associate/leads"><?= __('assoc_bw_leads_list', [], 'leads list') ?></a> <?= __('assoc_bw_send_hint', [], 'to send bulk messages.') ?></p>
-                        <div class="alert alert-info border-0" class="style-15087">
+                        <div class="alert alert-info border-0 style-15087">
                             <h6><i class="fas fa-info-circle me-2"></i><?= __('assoc_bw_how_to', [], 'How to use') ?></h6>
-                            <ol class="mb-0" class="style-47175">
+                            <ol class="mb-0 style-47175">
                                 <li><?= __('assoc_bw_step1', [], 'Go to My Leads') ?></li>
                                 <li><?= __('assoc_bw_step2', [], 'Check the boxes next to leads you want to message') ?></li>
                                 <li><?= __('assoc_bw_step3', [], 'Click "Bulk WhatsApp" button') ?></li>

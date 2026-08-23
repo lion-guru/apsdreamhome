@@ -3,7 +3,7 @@ $page_title = __('vastu_title') . ' - APS Dream Home';
 $page_description = __('vastu_meta_desc');
 ?>
 <!-- Hero Section -->
-<section class="hero-section text-white text-center py-5" class="style-2141">
+<section class="hero-section text-white text-center py-5 style-2141">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
@@ -63,7 +63,7 @@ $page_description = __('vastu_meta_desc');
             <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body text-center p-4">
-                        <div class="icon-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3" class="style-84502">
+                        <div class="icon-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3 style-84502">
                             <i class="fas fa-compass display-5"></i>
                         </div>
                         <h4><?= __('vastu_direction_title') ?></h4>
@@ -74,7 +74,7 @@ $page_description = __('vastu_meta_desc');
             <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body text-center p-4">
-                        <div class="icon-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3" class="style-84502">
+                        <div class="icon-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3 style-84502">
                             <i class="fas fa-home display-5"></i>
                         </div>
                         <h4><?= __('vastu_plot_title') ?></h4>
@@ -85,7 +85,7 @@ $page_description = __('vastu_meta_desc');
             <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body text-center p-4">
-                        <div class="icon-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3" class="style-84502">
+                        <div class="icon-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3 style-84502">
                             <i class="fas fa-balance-scale display-5"></i>
                         </div>
                         <h4><?= __('vastu_5_elements_title') ?></h4>
@@ -112,7 +112,7 @@ $page_description = __('vastu_meta_desc');
                         <div class="position-relative">
                             <?php $imgRaw = $colony['image_path'] ?? 'assets/images/default-banner.jpg';
                                   $imgSrc = (str_starts_with($imgRaw, 'http://') || str_starts_with($imgRaw, 'https://')) ? $imgRaw : BASE_URL . '/' . $imgRaw; ?>
-                            <img src="<?= htmlspecialchars($imgSrc ?? '') ?>" alt="<?= htmlspecialchars($colony['name'] ?? '') ?>" class="card-img-top" class="style-58348">
+                            <img src="<?= htmlspecialchars($imgSrc ?? '') ?>" alt="<?= htmlspecialchars($colony['name'] ?? '') ?>" class="card-img-top style-58348">
                             <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-2"><?= $colony['completion_status'] ?? '' ?></span>
                         </div>
                         <div class="card-body">

@@ -17,7 +17,7 @@ $base = BASE_URL . '/admin/ai-calling/history';
 
     <div class="row g-3 mb-4">
         <div class="col-md-3 col-6">
-            <div class="card border-0 shadow-sm" class="style-27108">
+            <div class="card border-0 shadow-sm style-27108">
                 <div class="card-body py-3"><div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><span class="badge bg-primary rounded-pill p-2"><i class="fas fa-phone-volume"></i></span></div>
                     <div><div class="style-49205"><?= number_format($totalCalls) ?></div><div class="small text-muted text-uppercase">Total Calls</div></div>
@@ -25,26 +25,26 @@ $base = BASE_URL . '/admin/ai-calling/history';
             </div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="card border-0 shadow-sm" class="style-62228">
+            <div class="card border-0 shadow-sm style-62228">
                 <div class="card-body py-3"><div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><span class="badge bg-success rounded-pill p-2"><i class="fas fa-check-circle"></i></span></div>
-                    <div><div class="style-49205" class="text-success"><?= number_format($completedCalls) ?></div><div class="small text-muted text-uppercase">Completed</div><div class="small text-muted"><?= $totalCalls > 0 ? round($completedCalls/$totalCalls*100) : 0 ?>% rate</div></div>
+                    <div><div class="style-49205 text-success"><?= number_format($completedCalls) ?></div><div class="small text-muted text-uppercase">Completed</div><div class="small text-muted"><?= $totalCalls > 0 ? round($completedCalls/$totalCalls*100) : 0 ?>% rate</div></div>
                 </div></div>
             </div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="card border-0 shadow-sm" class="style-84448">
+            <div class="card border-0 shadow-sm style-84448">
                 <div class="card-body py-3"><div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><span class="badge bg-danger rounded-pill p-2"><i class="fas fa-times-circle"></i></span></div>
-                    <div><div class="style-49205" class="text-danger"><?= number_format($failedCalls) ?></div><div class="small text-muted text-uppercase">Failed</div></div>
+                    <div><div class="style-49205 text-danger"><?= number_format($failedCalls) ?></div><div class="small text-muted text-uppercase">Failed</div></div>
                 </div></div>
             </div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="card border-0 shadow-sm" class="style-63620">
+            <div class="card border-0 shadow-sm style-63620">
                 <div class="card-body py-3"><div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><span class="badge bg-warning rounded-pill p-2"><i class="fas fa-star"></i></span></div>
-                    <div><div class="style-49205" class="text-warning"><?= number_format($interestedCount) ?></div><div class="small text-muted text-uppercase">Interested</div></div>
+                    <div><div class="style-49205 text-warning"><?= number_format($interestedCount) ?></div><div class="small text-muted text-uppercase">Interested</div></div>
                 </div></div>
             </div>
         </div>
@@ -104,7 +104,7 @@ $base = BASE_URL . '/admin/ai-calling/history';
                     <tbody>
                         <?php if (empty($calls)): ?>
                         <tr><td colspan="8" class="text-center text-muted py-5">
-                            <i class="fas fa-phone-slash fa-3x mb-3" class="style-39608"></i>
+                            <i class="fas fa-phone-slash fa-3x mb-3 style-39608"></i>
                             <h5 class="text-muted">No call records found</h5>
                             <p class="text-muted mb-0">Calls will appear here after the auto-dialer runs.</p>
                         </td></tr>

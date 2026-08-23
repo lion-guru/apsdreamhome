@@ -230,7 +230,7 @@ $base = BASE_URL ?? '/apsdreamhome';
             </div>
             
             <div id="videoRecorder">
-                <video id="preview" autoplay muted playsinline class="w-100 border rounded mb-3 d-none" class="style-39110"></video>
+                <video id="preview" autoplay muted playsinline class="w-100 border rounded mb-3 d-none style-39110"></video>
                 <div class="row g-3">
                     <div class="col-md-6">
                         <button type="button" class="btn btn-outline-primary w-100" id="startRecording">
@@ -261,7 +261,7 @@ $base = BASE_URL ?? '/apsdreamhome';
                 </div>
             </div>
             <div id="videoPreview" class="d-none mt-3">
-                <video controls class="w-100 border rounded" class="style-39110"></video>
+                <video controls class="w-100 border rounded style-39110"></video>
                 <div class="mt-2">
                     <button type="button" class="btn btn-success" id="submitVideoConsent">
                         <i class="fas fa-check me-1"></i>Submit Video Consent

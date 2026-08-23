@@ -25,7 +25,7 @@
     
     <div class="card shadow-sm border-0">
         <div class="card-body p-0">
-            <div class="table-responsive" class="style-13405">
+            <div class="table-responsive style-13405">
                 <table class="table table-hover table-sm mb-0">
                     <thead class="table-light sticky-top"><tr><th>Block</th><th>Plot No</th><th>Size</th><th>Dimension</th><th>Basic Price</th><th>PLC</th><th>Total</th><th>Status</th></tr></thead>
                     <tbody>

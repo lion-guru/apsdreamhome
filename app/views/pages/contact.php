@@ -23,13 +23,13 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
 <?php endif; ?>
 
 <!-- Hero Section -->
-<section class="position-relative overflow-hidden" class="style-57406">
-    <div class="style-60346"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")"></div>
-    <div class="container position-relative" class="style-9174">
+<section class="position-relative overflow-hidden style-57406 cta-gradient">
+    <div class="style-60346" style="background:url(&quot;data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E&quot;)"></div>
+    <div class="container position-relative style-9174">
         <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0">
-                <h1 class="display-5 display-lg-4 fw-bold mb-3" class="style-65983"><?php echo __('get_in_touch'); ?></h1>
-                <p class="lead mb-4" class="style-40138"><?php echo __('contact_subtitle'); ?></p>
+                <h1 class="display-5 display-lg-4 fw-bold mb-3 style-65983"><?php echo __('get_in_touch'); ?></h1>
+                <p class="lead mb-4 style-40138"><?php echo __('contact_subtitle'); ?></p>
                 <div class="d-flex flex-wrap gap-3 animate-fade-in-delay-2">
                     <a href="tel:<?= preg_replace('/[^0-9+]/', '', $sc('contact_phone', '+919277121112')) ?>" class="btn btn-light btn-lg shadow-sm">
                         <i class="fas fa-phone-alt me-2"></i><?php echo __('call_now'); ?>
@@ -261,7 +261,7 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="faq1">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse1">
-                                    <i class="fas fa-building me-2" class="style-5793"></i><?= __('contact_faq1_q', null, 'What types of properties do you offer?') ?>
+                                    <i class="fas fa-building me-2 style-5793"></i><?= __('contact_faq1_q', null, 'What types of properties do you offer?') ?>
                                 </button>
                             </h2>
                             <div id="faqCollapse1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
@@ -273,7 +273,7 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="faq2">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse2">
-                                    <i class="fas fa-calendar-check me-2" class="style-5793"></i><?= __('contact_faq2_q', null, 'How can I schedule a property visit?') ?>
+                                    <i class="fas fa-calendar-check me-2 style-5793"></i><?= __('contact_faq2_q', null, 'How can I schedule a property visit?') ?>
                                 </button>
                             </h2>
                             <div id="faqCollapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
@@ -291,7 +291,7 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="faq3">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse3">
-                                    <i class="fas fa-university me-2" class="style-5793"></i><?= __('contact_faq3_q', null, 'Do you provide home loan assistance?') ?>
+                                    <i class="fas fa-university me-2 style-5793"></i><?= __('contact_faq3_q', null, 'Do you provide home loan assistance?') ?>
                                 </button>
                             </h2>
                             <div id="faqCollapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
@@ -303,7 +303,7 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="faq4">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse4">
-                                    <i class="fas fa-shield-alt me-2" class="style-5793"></i><?= __('contact_faq4_q', null, 'Are your properties legally verified?') ?>
+                                    <i class="fas fa-shield-alt me-2 style-5793"></i><?= __('contact_faq4_q', null, 'Are your properties legally verified?') ?>
                                 </button>
                             </h2>
                             <div id="faqCollapse4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
@@ -324,10 +324,10 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
                     </div>
                     <div class="office-body">
                         <address class="mb-0">
-                            <strong><i class="fas fa-map-pin me-1" class="style-5793"></i> <?= __('contact_office_addr1', null, '1st floor, Singhariya Chauraha, Kunraghat, Deoria Road') ?></strong><br>
+                            <strong><i class="fas fa-map-pin me-1 style-5793"></i> <?= __('contact_office_addr1', null, '1st floor, Singhariya Chauraha, Kunraghat, Deoria Road') ?></strong><br>
                             <?= __('contact_office_addr2', null, 'Gorakhpur, UP - 273008') ?><br><br>
-                            <i class="fas fa-phone me-1" class="style-5793"></i> <?= __('phone_lbl') ?>: <a href="tel:<?= preg_replace('/[^0-9+]/', '', $sc('contact_phone', '+919277121112')) ?>"><?= htmlspecialchars($sc('contact_phone', '+91 92771 21112')) ?></a><?php if ($sc('contact_phone_2')): ?> / <a href="tel:<?= preg_replace('/[^0-9+]/', '', $sc('contact_phone_2')) ?>"><?= htmlspecialchars($sc('contact_phone_2')) ?></a><?php endif; ?><br>
-                            <i class="fas fa-envelope me-1" class="style-5793"></i> <?= __('email_lbl') ?>: <a href="mailto:<?= htmlspecialchars($sc('contact_email', 'info@apsdreamhome.com')) ?>"><?= htmlspecialchars($sc('contact_email', 'info@apsdreamhome.com')) ?></a>
+                            <i class="fas fa-phone me-1 style-5793"></i> <?= __('phone_lbl') ?>: <a href="tel:<?= preg_replace('/[^0-9+]/', '', $sc('contact_phone', '+919277121112')) ?>"><?= htmlspecialchars($sc('contact_phone', '+91 92771 21112')) ?></a><?php if ($sc('contact_phone_2')): ?> / <a href="tel:<?= preg_replace('/[^0-9+]/', '', $sc('contact_phone_2')) ?>"><?= htmlspecialchars($sc('contact_phone_2')) ?></a><?php endif; ?><br>
+                            <i class="fas fa-envelope me-1 style-5793"></i> <?= __('email_lbl') ?>: <a href="mailto:<?= htmlspecialchars($sc('contact_email', 'info@apsdreamhome.com')) ?>"><?= htmlspecialchars($sc('contact_email', 'info@apsdreamhome.com')) ?></a>
                         </address>
                         <div class="office-map">
                             <iframe

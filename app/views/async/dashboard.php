@@ -107,7 +107,7 @@ $stats = $stats ?? [];
                                         </td>
                                         <td><?= htmlspecialchars($task['priority'] ?? '') ?></td>
                                         <td>
-                                            <div class="progress" class="style-31164">
+                                            <div class="progress style-31164">
                                                 <div class="progress-bar" role="progressbar" class="style-98943" aria-valuenow="<?= (int)($task['progress_percentage'] ?? 0) ?>" aria-valuemin="0" aria-valuemax="100"></div>
                                             </div>
                                         </td>

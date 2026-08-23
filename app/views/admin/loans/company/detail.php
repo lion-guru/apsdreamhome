@@ -131,7 +131,7 @@ $early_settlement = $early_settlement ?? [];
             <?php if (empty($installments)): ?>
                 <div class="text-center text-muted py-4"><p>No installments generated yet.</p></div>
             <?php else: ?>
-                <div class="table-responsive" class="style-61454">
+                <div class="table-responsive style-61454">
                     <table class="table table-sm table-hover mb-0">
                         <thead class="sticky-top bg-white"><tr>
                             <th>#</th><th>Due Date</th><th>Principal</th><th>Interest</th><th>Total</th><th>Paid</th><th>Penalty</th><th>Status</th><th>Paid At</th>
@@ -247,7 +247,7 @@ $early_settlement = $early_settlement ?? [];
             <?php if (empty($activity_log)): ?>
                 <div class="text-center text-muted py-3"><p>No activity recorded yet.</p></div>
             <?php else: ?>
-                <div class="table-responsive" class="style-52319">
+                <div class="table-responsive style-52319">
                     <table class="table table-sm mb-0">
                         <thead><tr><th>Date</th><th>Action</th><th>Description</th></tr></thead>
                         <tbody>

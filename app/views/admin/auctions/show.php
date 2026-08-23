@@ -75,7 +75,7 @@ ob_start();
                 <div class="card-header bg-white">
                     <h6 class="mb-0">Bid History (<?= count($bids) ?>)</h6>
                 </div>
-                <div class="card-body aps-cp-card-body" class="style-97603">
+                <div class="card-body aps-cp-card-body style-97603">
                     <?php if (empty($bids)): ?>
                         <p class="text-muted text-center small">No bids yet</p>
                     <?php else: ?>
@@ -88,7 +88,7 @@ ob_start();
                                     </div>
                                     <div class="text-end">
                                         <strong>₹<?= number_format($b['bid_amount']) ?></strong>
-                                        <br><span class="badge bg-<?= ['winning'=>'success','outbid'=>'secondary','won'=>'success','lost'=>'dark'][$b['status']] ?? 'secondary' ?>" class="style-65487"><?= ucfirst($b['status']) ?></span>
+                                        <br><span class="badge bg-<?= ['winning'=>'success','outbid'=>'secondary','won'=>'success','lost'=>'dark'][$b['status']] ?? 'secondary' ?> style-65487"><?= ucfirst($b['status']) ?></span>
                                     </div>
                                 </div>
                             </div>

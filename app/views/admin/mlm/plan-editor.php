@@ -49,22 +49,22 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                         ?>
                             <tr>
                                 <td>
-                                    <input type="number" name="benefits[<?= $rn ?>][rank_order]" value="<?= (int)$b['rank_order'] ?>" class="form-control form-control-sm" class="style-30170" min="1" max="99">
+                                    <input type="number" name="benefits[<?= $rn ?>][rank_order]" value="<?= (int)$b['rank_order'] ?>" class="form-control form-control-sm style-30170" min="1" max="99">
                                 </td>
                                 <td class="fw-bold">
-                                    <span class="badge" class="style-61509">
+                                    <span class="badge style-61509">
                                         <i class="fas <?= htmlspecialchars($b['badge_icon'] ?? 'fa-user') ?>"></i>
                                     </span>
                                     <?= $rn ?>
                                 </td>
                                 <td>
-                                    <input type="number" name="benefits[<?= $rn ?>][min_legs]" value="<?= (int)($b['min_leg_count'] ?? 0) ?>" class="form-control form-control-sm" class="style-73350" min="0">
+                                    <input type="number" name="benefits[<?= $rn ?>][min_legs]" value="<?= (int)($b['min_leg_count'] ?? 0) ?>" class="form-control form-control-sm style-73350" min="0">
                                 </td>
                                 <td>
-                                    <input type="number" name="benefits[<?= $rn ?>][min_volume]" value="<?= (float)$b['min_qualifying_volume'] ?>" class="form-control form-control-sm" class="style-39472" min="0" step="1000">
+                                    <input type="number" name="benefits[<?= $rn ?>][min_volume]" value="<?= (float)$b['min_qualifying_volume'] ?>" class="form-control form-control-sm style-39472" min="0" step="1000">
                             </td>
                             <td>
-                                <input type="number" name="benefits[<?= $rn ?>][direct_sale_pct]" value="<?= (float)$b['direct_sale_pct'] ?>" class="form-control form-control-sm" class="style-73350" min="0" max="100" step="0.1" required>
+                                <input type="number" name="benefits[<?= $rn ?>][direct_sale_pct]" value="<?= (float)$b['direct_sale_pct'] ?>" class="form-control form-control-sm style-73350" min="0" max="100" step="0.1" required>
                             </td>
                             <td class="text-center">
                                 <span class="text-muted small">Differential</span>
@@ -74,7 +74,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                                 <div class="form-text small text-info"><i class="fas fa-info-circle"></i> Upline gets (their rate âˆ’ rate below)</div>
                             </td>
                                 <td>
-                                    <span class="badge" class="style-39009">
+                                    <span class="badge style-39009">
                                         <?= htmlspecialchars($b['badge_icon'] ?? 'fa-user') ?>
                                     </span>
                                 </td>
@@ -250,7 +250,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
     <!-- INFINITY OVERRIDE SETTINGS -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-0 fw-bold"><i class="fas fa-infinity text-purple me-2" class="style-58381"></i>Infinity Override</h5>
+            <h5 class="card-title mb-0 fw-bold"><i class="fas fa-infinity text-purple me-2 style-58381"></i>Infinity Override</h5>
             <div class="form-check form-switch mb-0">
                 <input class="form-check-input" type="checkbox" name="settings[infinity_override_enabled]" value="1" id="infinityToggle"
                     <?= ($settings['infinity_override_enabled'] ?? '1') === '1' ? 'checked' : '' ?>>

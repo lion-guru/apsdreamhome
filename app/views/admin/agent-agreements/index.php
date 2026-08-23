@@ -39,7 +39,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
     </div>
 
     <?php if (!empty($_SESSION['flash_success'])): ?>
-        <div class="alert alert-success alert-dismissible fade show" class="style-99395">
+        <div class="alert alert-success alert-dismissible fade show style-99395">
             <?= $_SESSION['flash_success'] ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" class="style-22908"></button>
         </div>
@@ -55,19 +55,19 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             </div>
         </div>
         <div class="col-md-3 mb-2">
-            <div class="aag-stat" class="style-7873">
+            <div class="aag-stat style-7873">
                 <div class="num"><?= (int)$stats['draft'] ?></div>
                 <div class="lbl">Draft</div>
             </div>
         </div>
         <div class="col-md-3 mb-2">
-            <div class="aag-stat" class="style-1293">
+            <div class="aag-stat style-1293">
                 <div class="num"><?= (int)$stats['pending'] ?></div>
                 <div class="lbl">Pending Signature</div>
             </div>
         </div>
         <div class="col-md-3 mb-2">
-            <div class="aag-stat" class="style-68340">
+            <div class="aag-stat style-68340">
                 <div class="num"><?= (int)$stats['signed'] ?></div>
                 <div class="lbl">Signed</div>
             </div>
@@ -76,7 +76,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 
     <!-- Agreements Table -->
     <div class="aag-card">
-        <h5><i class="fas fa-list me-2" class="style-75937"></i>All Agreements</h5>
+        <h5><i class="fas fa-list me-2 style-75937"></i>All Agreements</h5>
         <?php if (!empty($agreements)): ?>
         <div class="style-10754">
             <table class="aag-table">

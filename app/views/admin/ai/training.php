@@ -127,7 +127,7 @@ $recentLearning = $recentLearning ?? [];
                         <?php foreach ($recentLearning as $rl): ?>
                             <div class="mb-2">
                                 <div class="d-flex justify-content-between"><small class="text-capitalize"><?= htmlspecialchars($rl['action_type'] ?? '') ?></small><small><?= $rl['cnt'] ?> records</small></div>
-                                <div class="progress" class="style-51910"><div class="progress-bar bg-primary" class="style-74689"></div></div>
+                                <div class="progress style-51910"><div class="progress-bar bg-primary style-74689"></div></div>
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>

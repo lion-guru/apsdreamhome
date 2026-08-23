@@ -26,13 +26,13 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
         <tr>
           <td bgcolor="#ef4444" align="center" class="style-59428">
             <div class="style-90702">&#10060;</div>
-            <h1 class="h1-mobile" class="style-56865">Booking Cancelled</h1>
+            <h1 class="h1-mobile style-56865">Booking Cancelled</h1>
             <p class="style-9233">Your booking has been cancelled</p>
           </td>
         </tr>
         <!-- Body -->
         <tr>
-          <td class="px-mobile" class="style-68782">
+          <td class="px-mobile style-68782">
             <h2 class="style-80102">Hi {{user_name}},</h2>
             <p class="style-28596">
               Your booking has been cancelled as per your request.

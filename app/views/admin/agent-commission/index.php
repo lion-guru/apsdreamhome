@@ -48,19 +48,19 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             </div>
         </div>
         <div class="col-md-3 mb-2">
-            <div class="ac-stat" class="style-68340">
+            <div class="ac-stat style-68340">
                 <div class="num"><?= (int)($activeListings ?? 0) ?></div>
                 <div class="lbl">Active Listings</div>
             </div>
         </div>
         <div class="col-md-3 mb-2">
-            <div class="ac-stat" class="style-1293">
+            <div class="ac-stat style-1293">
                 <div class="num">₹<?= number_format((float)($totalCommission ?? 0)) ?></div>
                 <div class="lbl">Total Commission Paid</div>
             </div>
         </div>
         <div class="col-md-3 mb-2">
-            <div class="ac-stat" class="style-41761">
+            <div class="ac-stat style-41761">
                 <div class="num"><?= (int)($totalSales ?? 0) ?></div>
                 <div class="lbl">Total Sales</div>
             </div>
@@ -71,7 +71,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         <!-- Top Agents -->
         <div class="col-md-7">
             <div class="ac-card">
-                <h5><i class="fas fa-trophy me-2" class="style-60246"></i>Top Agents by Commission</h5>
+                <h5><i class="fas fa-trophy me-2 style-60246"></i>Top Agents by Commission</h5>
                 <?php if (!empty($topAgents)): ?>
                 <div class="style-10754">
                     <table class="ac-table">
@@ -103,7 +103,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                 <td class="style-27277"><?= htmlspecialchars($a['email'] ?? '') ?></td>
                                 <td class="style-64867"><?= (int)$a['sale_count'] ?></td>
                                 <td class="style-64867"><span class="ac-money">₹<?= number_format((float)$a['total_earned']) ?></span></td>
-                                <td><a href="<?= $base ?>/admin/agent-commission/agent/<?= (int)$a['id'] ?>" class="btn btn-sm btn-outline-primary" class="style-10792">View</a></td>
+                                <td><a href="<?= $base ?>/admin/agent-commission/agent/<?= (int)$a['id'] ?>" class="btn btn-sm btn-outline-primary style-10792">View</a></td>
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -116,7 +116,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 
             <!-- Agent Listings -->
             <div class="ac-card">
-                <h5><i class="fas fa-list me-2" class="style-75937"></i>Agent Property Listings</h5>
+                <h5><i class="fas fa-list me-2 style-75937"></i>Agent Property Listings</h5>
                 <?php if (!empty($agentListings)): ?>
                 <div class="style-10754">
                     <table class="ac-table">
@@ -155,7 +155,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         <div class="col-md-5">
             <!-- Recent Commissions -->
             <div class="ac-card">
-                <h5><i class="fas fa-coins me-2" class="style-54781"></i>Recent Commissions</h5>
+                <h5><i class="fas fa-coins me-2 style-54781"></i>Recent Commissions</h5>
                 <?php if (!empty($recentCommissions)): ?>
                 <div class="style-32146">
                     <?php foreach ($recentCommissions as $rc): ?>
@@ -178,7 +178,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 
             <!-- Assign Agent Form -->
             <div class="ac-card">
-                <h5><i class="fas fa-user-plus me-2" class="style-22437"></i>Assign Agent to Property</h5>
+                <h5><i class="fas fa-user-plus me-2 style-22437"></i>Assign Agent to Property</h5>
                 <form method="POST" action="<?= $base ?>
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/agent-commission/assign" class="ac-form">
     <?php echo CSRFProtection::csrfField(); ?>

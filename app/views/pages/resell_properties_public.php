@@ -64,9 +64,9 @@ $content = $content ?? '';
     <?php else: foreach ($properties as $p): ?>
       <div class="col-md-4 mb-4">
         <div class="card shadow-sm h-100 hover-lift">
-          <div class="card-img-top bg-light d-flex align-items-center justify-content-center" class="style-20862">
+          <div class="card-img-top bg-light d-flex align-items-center justify-content-center style-20862">
             <?php if (!empty($p['images'][0]['image_url'])): ?>
-              <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="w-100 h-100" class="style-44820" alt="" />
+              <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="w-100 h-100 style-44820" alt="" />
             <?php else: ?>
               <i class="fas fa-home fa-4x text-muted"></i>
             <?php endif; ?>

@@ -135,7 +135,7 @@ $razorpay = $razorpay ?? ['key_id' => '', 'test' => true];
                 <h5><i class="fas fa-money-bill-wave text-success"></i> <?= __('user_pay_installment_payment_summary_header', 'Payment Summary') ?></h5>
             </div>
             <div class="aps-cp-card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3 p-3" class="style-11131">
+                <div class="d-flex justify-content-between align-items-center mb-3 p-3 style-11131">
                     <div>
                         <small class="text-muted"><?= __('user_pay_installment_amount_to_pay', 'Amount to Pay') ?></small>
                         <h3 class="mb-0 mt-1 text-primary">₹<?= number_format($amount_due) ?></h3>
@@ -178,7 +178,7 @@ $razorpay = $razorpay ?? ['key_id' => '', 'test' => true];
                     </div>
                 <?php endif; ?>
 
-                <button id="pay-btn" class="btn btn-primary btn-lg px-5 py-3" class="style-4415">
+                <button id="pay-btn" class="btn btn-primary btn-lg px-5 py-3 style-4415">
                     <i class="fas fa-lock me-2"></i><?= __('user_pay_installment_pay_now_prefix', 'Pay') ?> ₹<?= number_format($amount_due) ?> <?= __('user_pay_installment_pay_now_suffix', 'Now') ?>
                 </button>
 

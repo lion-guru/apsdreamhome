@@ -32,7 +32,7 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
                 <div class="dropdown">
                     <button class="btn btn-link p-0 text-decoration-none" type="button" data-bs-toggle="dropdown">
                         <img src="<?= !empty($userAvatar) ? htmlspecialchars($userAvatar ?? '') : (BASE_URL . '/assets/images/logo/apslogonew.jpg') ?>" class="img-fluid"
-                             alt="Profile" class="rounded-circle" class="style-35333">
+                             alt="Profile" class="rounded-circle style-35333">
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><h6 class="dropdown-header"><?php echo htmlspecialchars($userName ?? ''); ?></h6></li>

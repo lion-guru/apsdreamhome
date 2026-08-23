@@ -181,7 +181,7 @@
                                             </div>
                                             <div class="modal-body">
                                                 <table class="table table-sm">
-                                                    <tr><td class="text-muted" class="style-72730">Customer</td><td><?= htmlspecialchars($log['user_name'] ?? '') ?> (<?= htmlspecialchars($log['user_email'] ?? '') ?>)</td></tr>
+                                                    <tr><td class="text-muted style-72730">Customer</td><td><?= htmlspecialchars($log['user_name'] ?? '') ?> (<?= htmlspecialchars($log['user_email'] ?? '') ?>)</td></tr>
                                                     <tr><td class="text-muted">Phone</td><td><?= htmlspecialchars($log['user_phone'] ?? 'N/A') ?></td></tr>
                                                     <tr><td class="text-muted">Channel</td><td><?= ucfirst($log['channel'] ?? '') ?></td></tr>
                                                     <tr><td class="text-muted">Type</td><td><?= $typeLabel ?></td></tr>
@@ -191,7 +191,7 @@
                                                 </table>
                                                 <div class="mt-2">
                                                     <label class="form-label small text-muted">Message Content</label>
-                                                    <div class="bg-light p-3 rounded small" class="style-86734"><?= htmlspecialchars($log['message'] ?? '') ?></div>
+                                                    <div class="bg-light p-3 rounded small style-86734"><?= htmlspecialchars($log['message'] ?? '') ?></div>
                                                 </div>
                                                 <?php if (!empty($log['error_message'])): ?>
                                                     <div class="alert alert-danger mt-2 mb-0 small">

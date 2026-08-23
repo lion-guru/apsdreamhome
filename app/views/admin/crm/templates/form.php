@@ -84,7 +84,7 @@ $isEdit = !empty($template['id']);
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
                     <h6 class="fw-bold"><i class="fas fa-eye me-1"></i> Preview</h6>
-                    <div id="templatePreview" class="p-3 bg-light rounded" class="style-64467">
+                    <div id="templatePreview" class="p-3 bg-light rounded style-64467">
                         <em class="text-muted">Start typing to see preview...</em>
                     </div>
                 </div>

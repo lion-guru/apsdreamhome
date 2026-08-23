@@ -166,7 +166,7 @@ if ($filter && $filter !== 'all') {
                                     <?php endif; ?>
                                 </div>
                                 <div class="emp-task-progress">
-                                    <div class="emp-task-progress-fill bg-<?= $progColor ?>" class="style-90323"></div>
+                                    <div class="emp-task-progress-fill bg-<?= $progColor ?> style-90323"></div>
                                 </div>
                             </div>
                         </div>

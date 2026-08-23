@@ -138,7 +138,7 @@ $page_title = $page_title ?? 'WhatsApp Integration';
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom"><h6 class="mb-0">Recent Messages</h6></div>
                 <div class="card-body text-center py-4 text-muted">
-                    <i class="fab fa-whatsapp fa-3x mb-2" class="style-39608"></i>
+                    <i class="fab fa-whatsapp fa-3x mb-2 style-39608"></i>
                     <p class="mb-0 small">No recent messages.<br>Connect WhatsApp and send a test message.</p>
                 </div>
             </div>

@@ -4,7 +4,7 @@ $all_associates = $all_associates ?? [];
 $base           = defined('BASE_URL') ? BASE_URL : '';
 $preselect      = (int)($_GET['user_id'] ?? 0);
 ?>
-<div class="container-fluid py-4" class="style-88096">
+<div class="container-fluid py-4 style-88096">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="m-0"><i class="fas fa-money-check-alt me-2"></i>Set / Revise Salary Structure</h4>
         <a href="<?= htmlspecialchars($base ?? '') ?>/admin/agents/salaried" class="btn btn-outline-secondary btn-sm">

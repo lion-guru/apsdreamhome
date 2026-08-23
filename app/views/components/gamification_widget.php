@@ -28,17 +28,17 @@ $gCta = $gamify['cta_url'] ?? '#';
 $gCtaText = $gamify['cta_text'] ?? __('component_upgrade', 'Upgrade');
 $gGradient = $gamify['gradient'] ?? 'linear-gradient(135deg, #fff 0%, #ede9fe 100%)';
 ?>
-<div class="aps-cp-card mb-4" class="style-3203">
-    <div class="aps-cp-card-header" class="style-58119">
-        <h5 class="mb-0"><i class="fas <?= htmlspecialchars($gIcon ?? '') ?>" class="style-96303"></i> <?= htmlspecialchars($gTitle ?? '') ?></h5>
+<div class="aps-cp-card mb-4 style-3203">
+    <div class="aps-cp-card-header style-58119">
+        <h5 class="mb-0"><i class="fas <?= htmlspecialchars($gIcon ?? '') ?> style-96303"></i> <?= htmlspecialchars($gTitle ?? '') ?></h5>
     </div>
     <div class="aps-cp-card-body text-center">
-        <div class="display-5 fw-bold mb-1" class="style-96303"><?= htmlspecialchars($gLevel ?? '') ?></div>
+        <div class="display-5 fw-bold mb-1 style-96303"><?= htmlspecialchars($gLevel ?? '') ?></div>
         <?php if ($gMetric !== ''): ?>
         <small class="text-muted d-block mb-3"><?= htmlspecialchars($gMetric ?? '') ?></small>
         <?php endif; ?>
-        <div class="aps-cp-progress" class="style-51045">
-            <div class="aps-cp-progress-bar" class="style-5100"></div>
+        <div class="aps-cp-progress style-51045">
+            <div class="aps-cp-progress-bar style-5100"></div>
         </div>
         <p class="text-muted small mt-2 mb-0">
             <?php if ($gNextTarget !== ''): ?>

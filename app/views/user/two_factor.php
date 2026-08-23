@@ -37,7 +37,7 @@ $content = $content ?? '';
             <div class="row">
               <div class="col-md-6 text-center">
                 <h6 class="mb-3">Step 1: Scan QR Code</h6>
-                <img src="<?= htmlspecialchars($qr_url ?? $qrCodeUrl ?? '') ?>" alt="2FA QR Code" class="img-fluid border" class="style-65684">
+                <img src="<?= htmlspecialchars($qr_url ?? $qrCodeUrl ?? '') ?>" alt="2FA QR Code" class="img-fluid border style-65684">
                 <p class="small text-muted mt-2">Scan with your authenticator app</p>
               </div>
               <div class="col-md-6">

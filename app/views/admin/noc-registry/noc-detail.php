@@ -105,7 +105,7 @@ $eligibility = $eligibility ?? [];
                                 <div>
                                     <div class="small fw-semibold"><?= htmlspecialchars($check['label'] ?? '') ?></div>
                                     <?php if (!$check['passed']): ?>
-                                        <div class="text-danger" class="style-86760"><?= htmlspecialchars($check['message'] ?? '') ?></div>
+                                        <div class="text-danger style-86760"><?= htmlspecialchars($check['message'] ?? '') ?></div>
                                     <?php endif; ?>
                                 </div>
                             </div>

@@ -17,6 +17,7 @@
         .error-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(13,148,136,0.4); color: #fff; }
         .error-icon { font-size: 48px; color: #94a3b8; margin-bottom: 20px; }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
     <div class="error-card">

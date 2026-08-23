@@ -67,6 +67,7 @@ $current_page = $active_page ?? basename(esc_url($_SERVER['REQUEST_URI'] ?? ''))
     <?php if (!empty($extra_css)): ?>
     <link rel="stylesheet" href="<?= e($extra_css) ?>">
     <?php endif; ?>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
     <!-- Agent Sidebar -->
@@ -137,7 +138,7 @@ $current_page = $active_page ?? basename(esc_url($_SERVER['REQUEST_URI'] ?? ''))
                     <i class="fas fa-bars"></i>
                 </button>
                 <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb mb-0" class="style-93188">
+                    <ol class="breadcrumb mb-0 style-93188">
                         <li class="breadcrumb-item"><a href="<?php echo e($base); ?>/agent/dashboard">Agent</a></li>
                         <li class="breadcrumb-item active"><?php echo htmlspecialchars($active_page ?? 'Dashboard'); ?></li>
                     </ol>
@@ -157,7 +158,7 @@ $current_page = $active_page ?? basename(esc_url($_SERVER['REQUEST_URI'] ?? ''))
                             <div class="style-46756"><?php echo htmlspecialchars($agent_name ?? ''); ?></div>
                             <div class="style-46475"><?php echo htmlspecialchars($agent_email ?? ''); ?></div>
                         </div>
-                        <i class="fas fa-chevron-down ms-2" class="style-46475"></i>
+                        <i class="fas fa-chevron-down ms-2 style-46475"></i>
                     </div>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="<?php echo e($base); ?>/agent/profile"><i class="fas fa-user me-2"></i>Profile</a></li>

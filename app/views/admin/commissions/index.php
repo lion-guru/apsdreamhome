@@ -105,19 +105,19 @@ $stats = $stats ?? ['total_commission' => 0, 'paid_out' => 0, 'pending' => 0, 'u
                     <div class="row g-3">
                         <div class="col-md-4">
                             <a href="<?php echo BASE_URL; ?>/admin/payouts" class="btn btn-outline-primary w-100 py-3">
-                                <i class="fas fa-wallet mb-2 d-block" class="style-41417"></i>
+                                <i class="fas fa-wallet mb-2 d-block style-41417"></i>
                                 Process Payouts
                             </a>
                         </div>
                         <div class="col-md-4">
                             <a href="<?php echo BASE_URL; ?>/admin/commission/calculator" class="btn btn-outline-success w-100 py-3">
-                                <i class="fas fa-calculator mb-2 d-block" class="style-41417"></i>
+                                <i class="fas fa-calculator mb-2 d-block style-41417"></i>
                                 Calculator
                             </a>
                         </div>
                         <div class="col-md-4">
                             <a href="<?php echo BASE_URL; ?>/admin/mlm" class="btn btn-outline-info w-100 py-3">
-                                <i class="fas fa-sitemap mb-2 d-block" class="style-41417"></i>
+                                <i class="fas fa-sitemap mb-2 d-block style-41417"></i>
                                 MLM Network
                             </a>
                         </div>

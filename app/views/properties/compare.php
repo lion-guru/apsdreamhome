@@ -96,7 +96,7 @@
                                     </div>
 
                                     <!-- Property Image -->
-                                    <div class="property-image-wrapper" class="style-16984">
+                                    <div class="property-image-wrapper style-16984">
                                         <?php if ($property['primary_image']): ?>
                                             <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg"
                                                 class="card-img-top" alt="<?= htmlspecialchars($property['title'] ?? '') ?>"

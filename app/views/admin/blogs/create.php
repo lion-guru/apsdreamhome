@@ -17,7 +17,7 @@
                                 <div class="mb-3">
                                     <label class="form-label">Content</label>
                                     <textarea name="content" id="blog_content" class="form-control" rows="10" required></textarea>
-                                    <button type="button" id="aiGenBlog" class="btn btn-sm mt-2" class="style-43547"><i class="fas fa-magic"></i> Generate with AI (Hindi + English)</button>
+                                    <button type="button" id="aiGenBlog" class="btn btn-sm mt-2 style-43547"><i class="fas fa-magic"></i> Generate with AI (Hindi + English)</button>
                                 </div>
                             </div>
                             <div class="col-md-4">

@@ -11,7 +11,7 @@
                     <i class="fas fa-download fa-3x text-primary mb-3"></i>
                     <h5>Install App</h5>
                     <p class="small text-muted">Install on your device for a native-like experience</p>
-                    <button id="installPwaBtn" class="btn btn-primary" class="style-24280"><i class="fas fa-download me-1"></i>Install</button>
+                    <button id="installPwaBtn" class="btn btn-primary style-24280"><i class="fas fa-download me-1"></i>Install</button>
                     <span class="badge bg-secondary">Already installed</span>
                 </div>
             </div>
@@ -42,7 +42,7 @@
         <div class="card-header bg-white py-3"><h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>App Info</h6></div>
         <div class="card-body aps-cp-card-body">
             <div class="table-responsive"><table class="table table-sm mb-0 table-responsive">
-                <tr><td class="text-muted" class="style-47085">App Name</td><td><?= (defined('APP_NAME') ? APP_NAME : 'APS Dream Home') ?></td></tr>
+                <tr><td class="text-muted style-47085">App Name</td><td><?= (defined('APP_NAME') ? APP_NAME : 'APS Dream Home') ?></td></tr>
                 <tr><td class="text-muted">Version</td><td>1.0.0</td></tr>
                 <tr><td class="text-muted">Cache</td><td><span class="badge bg-success">Active</span></td></tr>
                 <tr><td class="text-muted">Service Worker</td><td><span class="badge bg-success">Registered</span></td></tr>

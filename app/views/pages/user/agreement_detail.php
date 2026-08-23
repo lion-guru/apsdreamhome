@@ -67,15 +67,15 @@ $customerName = htmlspecialchars($agreement['customer_name'] ?? ($user['name'] ?
 </div>
 
 <?php if ($status === 'pending_signature'): ?>
-    <div class="aps-cp-card" class="style-22751">
+    <div class="aps-cp-card style-22751">
         <div class="aps-cp-card-body">
             <div class="d-flex align-items-center gap-3">
                 <div class="style-35768">
                     <i class="fas fa-pen-fancy"></i>
                 </div>
                 <div class="flex-grow-1">
-                    <h5 class="mb-1" class="style-73192"><?= __('user_agreement_detail_action_required', null, 'Action Required: Sign Your Agreement') ?></h5>
-                    <p class="mb-0" class="style-73192"><?= __('user_agreement_detail_review_sign', null, 'Please review the agreement terms below and sign to proceed with your booking.') ?></p>
+                    <h5 class="mb-1 style-73192"><?= __('user_agreement_detail_action_required', null, 'Action Required: Sign Your Agreement') ?></h5>
+                    <p class="mb-0 style-73192"><?= __('user_agreement_detail_review_sign', null, 'Please review the agreement terms below and sign to proceed with your booking.') ?></p>
                 </div>
                 <button onclick="openSignModal()" class="btn btn-success btn-lg">
                     <i class="fas fa-pen me-2"></i><?= __('user_agreement_detail_sign_btn', null, 'Sign Agreement') ?>
@@ -84,15 +84,15 @@ $customerName = htmlspecialchars($agreement['customer_name'] ?? ($user['name'] ?
         </div>
     </div>
 <?php elseif ($status === 'signed'): ?>
-    <div class="aps-cp-card" class="style-95785">
+    <div class="aps-cp-card style-95785">
         <div class="aps-cp-card-body">
             <div class="d-flex align-items-center gap-3">
                 <div class="style-7191">
                     <i class="fas fa-check-circle"></i>
                 </div>
                 <div class="flex-grow-1">
-                    <h5 class="mb-1" class="style-58689"><?= __('user_agreement_detail_signed_success', null, 'Agreement Signed Successfully') ?></h5>
-                    <p class="mb-0" class="style-58689"><?= __('user_agreement_detail_signed_on', null, 'Signed on') ?> <?= $signedAt ?><?= !empty($agreement['signed_ip']) ? ' ' . __('user_agreement_detail_signed_from_ip', null, 'from IP:') . ' ' . htmlspecialchars($agreement['signed_ip'] ?? '') : '' ?></p>
+                    <h5 class="mb-1 style-58689"><?= __('user_agreement_detail_signed_success', null, 'Agreement Signed Successfully') ?></h5>
+                    <p class="mb-0 style-58689"><?= __('user_agreement_detail_signed_on', null, 'Signed on') ?> <?= $signedAt ?><?= !empty($agreement['signed_ip']) ? ' ' . __('user_agreement_detail_signed_from_ip', null, 'from IP:') . ' ' . htmlspecialchars($agreement['signed_ip'] ?? '') : '' ?></p>
                 </div>
                 <a href="<?= BASE_URL ?>/user/agreements/<?= $agreement['id'] ?>/preview" class="btn btn-outline-success" target="_blank">
                     <i class="fas fa-print me-2"></i><?= __('user_agreement_detail_print_download', null, 'Print / Download') ?>
@@ -138,7 +138,7 @@ $customerName = htmlspecialchars($agreement['customer_name'] ?? ($user['name'] ?
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label class="form-label text-muted small"><?= __('user_agreement_detail_value', null, 'Agreement Value') ?></label>
-                            <div class="fw-semibold" class="style-92042">&#8377;<?= $totalValue ?></div>
+                            <div class="fw-semibold style-92042">&#8377;<?= $totalValue ?></div>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -272,8 +272,8 @@ $customerName = htmlspecialchars($agreement['customer_name'] ?? ($user['name'] ?
 <!-- Sign Agreement Modal -->
 <div class="modal fade" id="signModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" class="style-18266">
-            <div class="modal-header" class="style-39104">
+        <div class="modal-content style-18266">
+            <div class="modal-header style-39104">
                 <h5 class="modal-title"><i class="fas fa-pen-fancy me-2"></i><?= __('user_agreement_detail_sign_heading', null, 'Sign Agreement') ?></h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
@@ -287,7 +287,7 @@ $customerName = htmlspecialchars($agreement['customer_name'] ?? ($user['name'] ?
                         <?= __('user_agreement_detail_i_agree', null, 'I have read, understood, and agree to all the terms and conditions of this agreement.') ?>
                     </label>
                 </div>
-                <div class="text-muted small" class="style-90969">
+                <div class="text-muted small style-90969">
                     <p class="mb-1"><i class="fas fa-fingerprint me-2"></i><?= __('user_agreement_detail_digital_sig_note', null, 'Digital signature will be recorded with:') ?></p>
                     <ul class="mb-0 ps-4">
                         <li><?= __('user_agreement_detail_sig_timestamp', null, 'Timestamp (date and time)') ?></li>

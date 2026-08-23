@@ -37,7 +37,7 @@ $statusColors = [
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1" class="style-613"><i class="fas fa-users me-2"></i>My Leads</h4>
+        <h4 class="mb-1 style-613"><i class="fas fa-users me-2"></i>My Leads</h4>
         <p class="text-muted mb-0">Manage your assigned leads and track conversions</p>
     </div>
     <div class="d-flex gap-2">
@@ -101,7 +101,7 @@ $statusColors = [
 <div class="card border-0 shadow-sm">
     <div class="card-body text-center py-5">
         <div class="style-84169">
-            <i class="fas fa-user-plus fa-2x" class="style-93945"></i>
+            <i class="fas fa-user-plus fa-2x style-93945"></i>
         </div>
         <h5 class="text-muted"><?= $filter ? 'No leads with this status' : 'No leads assigned yet' ?></h5>
         <p class="text-muted mb-0">Leads assigned to you will appear here</p>
@@ -114,13 +114,13 @@ $statusColors = [
             <table class="table table-hover align-middle mb-0">
                 <thead class="style-15087">
                     <tr>
-                        <th class="px-3 py-3" class="style-83276">Name</th>
-                        <th class="px-3 py-3" class="style-83276">Contact</th>
-                        <th class="px-3 py-3" class="style-83276">Property</th>
-                        <th class="px-3 py-3" class="style-83276">Budget</th>
-                        <th class="px-3 py-3" class="style-83276">Status</th>
-                        <th class="px-3 py-3" class="style-83276">Date</th>
-                        <th class="px-3 py-3" class="style-83276">Actions</th>
+                        <th class="px-3 py-3 style-83276">Name</th>
+                        <th class="px-3 py-3 style-83276">Contact</th>
+                        <th class="px-3 py-3 style-83276">Property</th>
+                        <th class="px-3 py-3 style-83276">Budget</th>
+                        <th class="px-3 py-3 style-83276">Status</th>
+                        <th class="px-3 py-3 style-83276">Date</th>
+                        <th class="px-3 py-3 style-83276">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

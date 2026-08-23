@@ -91,7 +91,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                             ?>
                                                 <tr>
                                                     <td colspan="2" class="text-center py-5">
-                                                        <i class="fas fa-users fa-3x text-muted mb-3" class="style-82835"></i>
+                                                        <i class="fas fa-users fa-3x text-muted mb-3 style-82835"></i>
                                                         <h5 class="text-muted">No user registration data</h5>
                                                         <p class="text-muted mb-3">Registration trends will appear here once users start signing up.</p>
                                                     </td>
@@ -127,7 +127,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                             ?>
                                                 <tr>
                                                     <td colspan="2" class="text-center py-5">
-                                                        <i class="fas fa-eye fa-3x text-muted mb-3" class="style-82835"></i>
+                                                        <i class="fas fa-eye fa-3x text-muted mb-3 style-82835"></i>
                                                         <h5 class="text-muted">No property view data</h5>
                                                         <p class="text-muted mb-3">View statistics will appear once properties start receiving traffic.</p>
                                                     </td>
@@ -158,7 +158,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                         <tbody>
                                             <tr>
                                                 <td colspan="2" class="text-center py-5">
-                                                    <i class="fas fa-rupee-sign fa-3x text-muted mb-3" class="style-82835"></i>
+                                                    <i class="fas fa-rupee-sign fa-3x text-muted mb-3 style-82835"></i>
                                                     <h5 class="text-muted">No revenue data</h5>
                                                     <p class="text-muted mb-3">Revenue analytics will appear once transactions are recorded.</p>
                                                 </td>

@@ -29,7 +29,7 @@ $active_page = 'registry';
         <?php if (empty($activities)): ?>
             <p class="text-muted text-center py-4">No activity recorded yet.</p>
         <?php else: ?>
-            <div class="timeline" class="style-37179">
+            <div class="timeline style-37179">
                 <?php foreach ($activities as $a): ?>
                     <div class="style-36833">
                         <div class="style-79878"></div>

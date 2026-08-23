@@ -34,7 +34,7 @@ $goals = $goals ?? [];
                                 <td><?= htmlspecialchars($g['target'] ?? $g['target_value'] ?? '') ?></td>
                                 <td>
                                     <?php $progress = intval($g['progress'] ?? 0); ?>
-                                    <div class="progress" class="style-40280">
+                                    <div class="progress style-40280">
                                         <div class="progress-bar bg-<?= $progress >= 100 ? 'success' : ($progress >= 50 ? 'info' : 'warning') ?>" role="progressbar" class="style-68354" aria-valuenow="<?= $progress ?>" aria-valuemin="0" aria-valuemax="100"><?= $progress ?>%</div>
                                     </div>
                                 </td>

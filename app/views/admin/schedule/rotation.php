@@ -22,7 +22,7 @@ $departments = $departments ?? [];
                         <?php foreach ($rotations as $r): ?>
                             <tr>
                                 <td><strong><?= htmlspecialchars($r['name'] ?? '') ?></strong></td>
-                                <td><span class="badge" class="style-83574"><?= htmlspecialchars($r['shift_type_name'] ?? '') ?></span></td>
+                                <td><span class="badge style-83574"><?= htmlspecialchars($r['shift_type_name'] ?? '') ?></span></td>
                                 <td><?= htmlspecialchars($r['department'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($r['start_date'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($r['end_date'] ?? 'N/A') ?></td>

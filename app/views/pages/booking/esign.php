@@ -110,7 +110,7 @@ $esignStatus = $esign['status'] ?? 'pending';
                     <?php endif; ?>
 
                     <!-- Status Detail (hidden by default, shown via JS) -->
-                    <div id="esign-detail" class="mt-3" class="style-2248">
+                    <div id="esign-detail" class="mt-3 style-2248">
                         <div class="alert alert-info mb-0" id="esign-detail-content"></div>
                     </div>
                 </div>

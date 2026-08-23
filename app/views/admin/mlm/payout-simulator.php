@@ -50,12 +50,12 @@ $csrf_token = $csrf_token ?? '';
             </div>
         </form>
 
-        <div id="simLoading" class="text-center py-4" class="style-2248">
+        <div id="simLoading" class="text-center py-4 style-2248">
             <div class="spinner-border text-primary" role="status"></div>
             <p class="mt-2 text-muted">Calculating...</p>
         </div>
 
-        <div id="simError" class="alert alert-danger" class="style-2248"></div>
+        <div id="simError" class="alert alert-danger style-2248"></div>
 
         <div id="simResults" class="style-2248">
             <!-- Summary cards -->

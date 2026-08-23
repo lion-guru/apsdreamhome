@@ -77,7 +77,7 @@
                                 <tr>
                                     <td class="ps-4 fw-bold text-gray-800">
                                         <div class="d-flex align-items-center">
-                                            <div class="avatar bg-light text-primary rounded-circle me-3 d-flex align-items-center justify-content-center border" class="style-68946">
+                                            <div class="avatar bg-light text-primary rounded-circle me-3 d-flex align-items-center justify-content-center border style-68946">
                                                 <?= strtoupper(substr(htmlspecialchars($r['name'] ?? 'E'), 0, 1)) ?>
                                             </div>
                                             <?= htmlspecialchars($r['name'] ?? '') ?>
@@ -93,7 +93,7 @@
                                         <div class="d-flex align-items-center justify-content-between mb-1">
                                             <span class="small font-weight-bold text-<?= $rateClass ?>"><?= $rate ?>%</span>
                                         </div>
-                                        <div class="progress" class="style-29939">
+                                        <div class="progress style-29939">
                                             <div class="progress-bar bg-<?= $rateClass ?>" role="progressbar" class="style-19807" aria-valuenow="<?= $rate ?>" aria-valuemin="0" aria-valuemax="100"></div>
                                         </div>
                                     </td>

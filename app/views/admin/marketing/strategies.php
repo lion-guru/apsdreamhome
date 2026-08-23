@@ -94,7 +94,7 @@ $page_description = 'Manage marketing strategies and campaigns';
                         <?php if (!empty($s['image_url'])): ?>
                             <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?= htmlspecialchars($s['title'] ?? '') ?>" class="style-24482">
                         <?php else: ?>
-                            <div class="bg-light d-flex align-items-center justify-content-center" class="style-32569">
+                            <div class="bg-light d-flex align-items-center justify-content-center style-32569">
                                 <i class="fas fa-image fa-3x text-muted"></i>
                             </div>
                         <?php endif; ?>

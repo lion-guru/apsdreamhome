@@ -9,7 +9,7 @@ $today = date('Y-m-d');
 
 <div class="row g-3 mb-4">
     <div class="col-6 col-md-3">
-        <a href="?filter=all" class="card border-0 shadow-sm text-decoration-none <?= $filter === 'all' ? 'border-primary' : '' ?>" class="style-19672">
+        <a href="?filter=all" class="card border-0 shadow-sm text-decoration-none <?= $filter === 'all' ? 'border-primary' : '' ?> style-19672">
             <div class="card-body p-3 text-center">
                 <div class="fs-2 fw-bold"><?= e($stats['total']) ?></div>
                 <div class="small opacity-75"><?= __('assoc_fu_total_tasks', [], 'Total Tasks') ?></div>
@@ -73,7 +73,7 @@ $today = date('Y-m-d');
 
         if (empty($filtered)): ?>
             <div class="text-center py-5">
-                <i class="fas fa-check-circle fa-3x text-success mb-3" class="style-56312"></i>
+                <i class="fas fa-check-circle fa-3x text-success mb-3 style-56312"></i>
                 <h5 class="text-muted"><?= $filter === 'completed' ? __('assoc_fu_no_completed', [], 'No completed tasks yet') : __('assoc_fu_no_pending', [], 'No pending follow-ups!') ?></h5>
                 <p class="text-muted"><?= $filter === 'completed' ? __('assoc_fu_no_completed_desc', [], 'Complete tasks to see them here.') : __('assoc_fu_all_caught_up', [], 'You\'re all caught up. Great job!') ?></p>
             </div>

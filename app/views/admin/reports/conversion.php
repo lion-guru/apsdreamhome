@@ -52,14 +52,14 @@
                                 <td><?= (int)($row['proposals'] ?? 0) ?></td>
                                 <td><span class="badge bg-success"><?= (int)($row['deals'] ?? 0) ?></span></td>
                                 <td>
-                                    <div class="progress" class="style-87912">
-                                        <div class="progress-bar bg-success" class="style-83710"></div>
+                                    <div class="progress style-87912">
+                                        <div class="progress-bar bg-success style-83710"></div>
                                     </div>
                                     <small><?= ($row['lead_to_deal_pct'] ?? 0) ?>%</small>
                                 </td>
                                 <td>
-                                    <div class="progress" class="style-87912">
-                                        <div class="progress-bar bg-info" class="style-12894"></div>
+                                    <div class="progress style-87912">
+                                        <div class="progress-bar bg-info style-12894"></div>
                                     </div>
                                     <small><?= ($row['proposal_to_deal_pct'] ?? 0) ?>%</small>
                                 </td>

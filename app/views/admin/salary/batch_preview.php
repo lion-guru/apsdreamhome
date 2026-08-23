@@ -52,25 +52,25 @@
             <!-- Summary Cards -->
             <div class="row mb-4">
                 <div class="col-lg-3 col-6">
-                    <div class="small-box" class="style-75630">
+                    <div class="small-box style-75630">
                         <div class="inner"><h3><?= $total_employees ?></h3><p>Employees</p></div>
                         <div class="icon"><i class="fas fa-users"></i></div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-6">
-                    <div class="small-box" class="style-55192">
+                    <div class="small-box style-55192">
                         <div class="inner"><h3>₹<?= number_format($total_gross) ?></h3><p>Total Gross</p></div>
                         <div class="icon"><i class="fas fa-arrow-up"></i></div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-6">
-                    <div class="small-box" class="style-48582">
+                    <div class="small-box style-48582">
                         <div class="inner"><h3>₹<?= number_format($total_deductions) ?></h3><p>Total Deductions</p></div>
                         <div class="icon"><i class="fas fa-arrow-down"></i></div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-6">
-                    <div class="small-box" class="style-23498">
+                    <div class="small-box style-23498">
                         <div class="inner"><h3>₹<?= number_format($total_net) ?></h3><p>Total Net Payable</p></div>
                         <div class="icon"><i class="fas fa-rupee-sign"></i></div>
                     </div>

@@ -59,7 +59,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
 
         <div class="mb-3">
             <label class="form-label small text-muted">Progress to <?= htmlspecialchars(ucfirst((string)($rankInfo['next_rank'] ?? '—'))) ?></label>
-            <div class="progress" class="style-67065">
+            <div class="progress style-67065">
                 <div class="progress-bar bg-success" role="progressbar" class="style-28910">
                     <?= number_format((float)($rankInfo['progress_pct'] ?? 0), 1) ?>%
                 </div>

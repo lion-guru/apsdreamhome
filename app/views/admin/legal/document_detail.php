@@ -43,7 +43,7 @@ if (!$doc) { echo '<div class="container-fluid py-4"><div class="alert alert-dan
                     <span><i class="fas fa-file-alt me-2"></i>Content Preview</span>
                     <a href="<?= BASE_URL ?>/admin/legal/documents/<?= $doc['id'] ?>/preview" class="btn btn-sm btn-outline-info" target="_blank"><i class="fas fa-external-link-alt me-1"></i>Full Preview</a>
                 </div>
-                <div class="aps-cp-card-body" class="style-6142">
+                <div class="aps-cp-card-body style-6142">
                     <?= $doc['content'] ?? '<p class="text-muted">No content</p>' ?>
                 </div>
             </div>

@@ -67,7 +67,7 @@
                                 <tr>
                                     <td class="ps-4">
                                         <div class="d-flex align-items-center">
-                                            <div class="avatar bg-info text-white rounded-circle me-3 d-flex align-items-center justify-content-center shadow-sm" class="style-60393">
+                                            <div class="avatar bg-info text-white rounded-circle me-3 d-flex align-items-center justify-content-center shadow-sm style-60393">
                                                 <?= strtoupper(substr(htmlspecialchars($l['employee_name'] ?? 'E'), 0, 1)) ?>
                                             </div>
                                             <strong><?= htmlspecialchars($l['employee_name'] ?? '') ?></strong>
@@ -86,7 +86,7 @@
                                         <span class="badge bg-primary rounded-pill px-3 py-1 fs-6"><?= $l['total_days'] ?? '0' ?> Days</span>
                                     </td>
                                     <td>
-                                        <div class="text-truncate d-inline-block text-muted small" class="style-67917" title="<?= htmlspecialchars($l['reason'] ?? '') ?>">
+                                        <div class="text-truncate d-inline-block text-muted small style-67917" title="<?= htmlspecialchars($l['reason'] ?? '') ?>">
                                             <?= htmlspecialchars($l['reason'] ?? '-') ?>
                                         </div>
                                     </td>

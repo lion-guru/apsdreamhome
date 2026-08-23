@@ -94,7 +94,7 @@ $c = $collection;
                     <h5 class="mb-0"><i class="fas fa-image text-info me-2"></i>Receipt Photo</h5>
                 </div>
                 <div class="card-body text-center">
-                    <img src="<?php echo $base . '/' . ltrim($c['receipt_photo'], '/'); ?>" alt="Receipt" class="img-fluid rounded" class="style-52184">
+                    <img src="<?php echo $base . '/' . ltrim($c['receipt_photo'], '/'); ?>" alt="Receipt" class="img-fluid rounded style-52184">
                 </div>
             </div>
             <?php endif; ?>

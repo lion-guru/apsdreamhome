@@ -115,7 +115,7 @@ $csrfToken = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
                     </div>
                     <div class="aps-cp-card-body">
                         <!-- Plot Lock Timer -->
-                        <div id="lockTimer" class="alert alert-warning mb-3" class="style-2248">
+                        <div id="lockTimer" class="alert alert-warning mb-3 style-2248">
                             <i class="fas fa-clock me-2"></i>
                             <strong><?= __('book_plot_reserved') ?> <span id="lockCountdown">30:00</span></strong>
                             <br><small><?= __('book_plot_reserved_desc') ?></small>
@@ -179,7 +179,7 @@ $csrfToken = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
 
             <!-- Right: Plot Summary -->
             <div class="col-lg-5">
-                <div class="aps-cp-card mb-4" class="style-99001">
+                <div class="aps-cp-card mb-4 style-99001">
                     <div class="aps-cp-card-body">
                         <h5 class="fw-bold mb-3">
                             <i class="fas fa-building me-1"></i><?= htmlspecialchars($plot['colony_name'] ?? '') ?>

@@ -2736,6 +2736,9 @@ $router->post('/admin/ai-calling/training/save-voice-model', 'App\\Http\\Control
 $router->post('/admin/ai-calling/training/save-script', 'App\\Http\\Controllers\\Admin\\AICallingController@saveScript');
 $router->post('/admin/ai-calling/training/save-intent', 'App\\Http\\Controllers\\Admin\\AICallingController@saveIntent');
 $router->get('/admin/ai-calling/health', 'App\\Http\\Controllers\\Admin\\AICallingController@healthCheck');
+$router->get('/admin/ai-calling/history', 'App\\Http\\Controllers\\Admin\\AICallingController@history');
+$router->get('/admin/ai-calling/campaign', 'App\\Http\\Controllers\\Admin\\AICallingController@campaign');
+$router->get('/admin/ai-calling/analytics', 'App\\Http\\Controllers\\Admin\\AICallingController@analytics');
 $router->get('/admin/ai-calling/auto-dialer', 'App\\Http\\Controllers\\Admin\\AICallingController@autoDialer');
 $router->get('/admin/ai-calling/call-analytics', 'App\\Http\\Controllers\\Admin\\AICallingController@callAnalytics');
 $router->post('/admin/ai-calling/auto-dialer/process', 'App\\Http\\Controllers\\Admin\\AICallingController@autoDialerProcess');
@@ -3496,7 +3499,9 @@ $router->get('/admin/banking/financial-years', 'App\\Http\\Controllers\\Admin\\B
 // MLM REWARDS & RANK CRITERIA
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 $router->get('/admin/mlm-rewards', 'App\\Http\\Controllers\\Admin\\MlmRewardsController@rankCriteria');
+$router->get('/admin/mlm-rewards/rank-criteria', 'App\\Http\\Controllers\\Admin\\MlmRewardsController@rankCriteria');
 $router->post('/admin/mlm-rewards/rank-criteria/store', 'App\\Http\\Controllers\\Admin\\MlmRewardsController@storeRankCriteria');
+$router->post('/admin/mlm/rank-criteria/store', 'App\\Http\\Controllers\\Admin\\MlmRewardsController@storeRankCriteria');
 $router->get('/admin/mlm-rewards/rewards', 'App\\Http\\Controllers\\Admin\\MlmRewardsController@rewards');
 $router->get('/admin/mlm-rewards/withdrawals', 'App\\Http\\Controllers\\Admin\\MlmRewardsController@withdrawals');
 $router->post('/admin/mlm-rewards/withdrawals/{id}/status', 'App\\Http\\Controllers\\Admin\\MlmRewardsController@updateWithdrawalStatus');
@@ -4410,6 +4415,18 @@ $router->get('/admin/audit-log/{id}', 'Admin\\AuditLogController@detail');
 $router->get('/admin/audit-log/user/{userId}', 'Admin\\AuditLogController@userTimeline');
 $router->get('/admin/audit-log/entity', 'Admin\\AuditLogController@entityTimeline');
 $router->get('/admin/audit-log/stats', 'Admin\\AuditLogController@stats');
+// Plural aliases (views link /admin/audit-logs)
+$router->get('/admin/audit-logs', 'Admin\\AuditLogController@index');
+$router->get('/admin/audit-logs/{id}', 'Admin\\AuditLogController@detail');
+$router->get('/admin/audit-logs/user/{userId}', 'Admin\\AuditLogController@userTimeline');
+$router->get('/admin/audit-logs/entity', 'Admin\\AuditLogController@entityTimeline');
+$router->get('/admin/audit-logs/stats', 'Admin\\AuditLogController@stats');
+// Document E-Sign management
+$router->get('/admin/document-esign', 'App\\Http\\Controllers\\Admin\\DocumentEsignController@index');
+$router->post('/admin/document-esign/store', 'App\\Http\\Controllers\\Admin\\DocumentEsignController@store');
+$router->get('/admin/document-esign/{id}', 'App\\Http\\Controllers\\Admin\\DocumentEsignController@show');
+$router->post('/admin/document-esign/{id}/sign', 'App\\Http\\Controllers\\Admin\\DocumentEsignController@sign');
+$router->post('/admin/document-esign/{id}/cancel', 'App\\Http\\Controllers\\Admin\\DocumentEsignController@cancel');
 $router->get('/api/v2/audit/log', 'Admin\\AuditLogController@api');
 $router->get('/api/v2/notifications/poll', 'Api\\NotificationStreamController@poll');
 $router->post('/api/v2/notifications/read', 'Api\\NotificationStreamController@markRead');

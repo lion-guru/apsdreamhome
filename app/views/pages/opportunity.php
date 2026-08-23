@@ -123,12 +123,12 @@
 
 <!-- Hero Section -->
 <section class="hero-section py-5 text-white text-center">
-    <div class="hero-circle" class="style-5588"></div>
-    <div class="hero-circle" class="style-36385"></div>
+    <div class="hero-circle style-5588"></div>
+    <div class="hero-circle style-36385"></div>
     <div class="container py-4 position-relative">
         <span class="badge bg-indigo-500 bg-opacity-20 text-indigo-300 px-3 py-2 rounded-pill mb-3 fw-bold text-uppercase tracking-wider"><?= __('opp_badge', [], 'Career Opportunities') ?></span>
         <h1 class="display-4 fw-extrabold mb-3"><?= __('opp_heading', [], 'Why Join APS Dream Home?') ?></h1>
-        <p class="lead text-indigo-200 mx-auto mb-4" class="style-13384">
+        <p class="lead text-indigo-200 mx-auto mb-4 style-13384">
             <?= __('opp_hero_desc', [], "A new beginning in Real Estate — with Salary + Commission + Health Insurance! Join Uttar Pradesh's leading real estate network and build your lifetime career.") ?>
         </p>
     </div>
@@ -372,7 +372,7 @@
 <section class="py-5 text-center bg-indigo-900 text-white">
     <div class="container py-3">
         <h2 class="fw-bold mb-3"><?= __('opp_cta_heading', [], 'Join Our Associate Network Today!') ?></h2>
-        <p class="text-indigo-200 mb-4 mx-auto" class="style-96233">
+        <p class="text-indigo-200 mb-4 mx-auto style-96233">
             <?= __('opp_cta_desc', [], 'Grow your network, build a career, and earn commissions. Register as a partner today.') ?>
         </p>
         <div class="d-flex justify-content-center gap-3">

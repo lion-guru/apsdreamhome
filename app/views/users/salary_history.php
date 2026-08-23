@@ -61,8 +61,8 @@ function salMonth($date) {
         <div class="col-6 col-md-3">
             <div class="card emp-sal-stat shadow-sm">
                 <div class="card-body d-flex align-items-center gap-3">
-                    <div class="stat-icon" class="style-94511"><i class="fas fa-indian-rupee-sign"></i></div>
-                    <div><div class="fw-bold fs-4" class="style-50238">₹<?= number_format($stats['total_earned']) ?></div><div class="text-muted small">Total Earned</div></div>
+                    <div class="stat-icon style-94511"><i class="fas fa-indian-rupee-sign"></i></div>
+                    <div><div class="fw-bold fs-4 style-50238">₹<?= number_format($stats['total_earned']) ?></div><div class="text-muted small">Total Earned</div></div>
                 </div>
             </div>
         </div>

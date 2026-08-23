@@ -483,6 +483,7 @@ $base = BASE_URL;
             }
         }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 
 <body>

@@ -105,11 +105,11 @@ $priorityBadge = match($ticket['priority'] ?? 'medium') {
                         ?>
                         <div class="d-flex mb-3 <?= $isAdmin ? '' : 'flex-row-reverse' ?>">
                             <div class="flex-shrink-0 ms-3">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center" class="style-75348">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center style-75348">
                                     <i class="fas fa-<?= $isAdmin ? 'shield-alt' : 'user' ?>"></i>
                                 </div>
                             </div>
-                            <div class="flex-grow-1" class="style-80611">
+                            <div class="flex-grow-1 style-80611">
                                 <div class="p-3 rounded <?= $isAdmin ? 'bg-success bg-opacity-10 border-start border-success border-4' : 'bg-primary bg-opacity-10 border-start border-primary border-4' ?>">
                                     <div class="d-flex justify-content-between align-items-center mb-1">
                                         <strong class="<?= $isAdmin ? 'text-success' : 'text-primary' ?>">

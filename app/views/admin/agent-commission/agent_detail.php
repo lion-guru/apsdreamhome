@@ -57,13 +57,13 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             </div>
         </div>
         <div class="col-md-4 mb-2">
-            <div class="ac-stat" class="style-32886">
+            <div class="ac-stat style-32886">
                 <div class="num"><?= count($commissions) ?></div>
                 <div class="lbl">Total Sales</div>
             </div>
         </div>
         <div class="col-md-4 mb-2">
-            <div class="ac-stat" class="style-21945">
+            <div class="ac-stat style-21945">
                 <div class="num"><?= $totalListings ?></div>
                 <div class="lbl">Active Listings</div>
             </div>
@@ -74,7 +74,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         <!-- Commission History -->
         <div class="col-md-7">
             <div class="ac-card">
-                <h5><i class="fas fa-history me-2" class="style-54781"></i>Commission History</h5>
+                <h5><i class="fas fa-history me-2 style-54781"></i>Commission History</h5>
                 <?php if (!empty($commissions)): ?>
                 <div class="style-10754">
                     <table class="ac-table">
@@ -107,7 +107,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         <!-- Agent Listings -->
         <div class="col-md-5">
             <div class="ac-card">
-                <h5><i class="fas fa-building me-2" class="style-75937"></i>Assigned Properties</h5>
+                <h5><i class="fas fa-building me-2 style-75937"></i>Assigned Properties</h5>
                 <?php if (!empty($listings)): ?>
                 <div class="style-43942">
                     <?php foreach ($listings as $l): ?>

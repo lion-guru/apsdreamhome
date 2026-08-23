@@ -74,7 +74,7 @@ ob_start();
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-image me-2"></i>Receipt Photo</h5></div>
                 <div class="card-body text-center">
-                    <img src="<?= BASE_URL . '/storage/' . htmlspecialchars($collection['receipt_photo'] ?? '') ?>" alt="Receipt" class="img-fluid rounded" class="style-35589">
+                    <img src="<?= BASE_URL . '/storage/' . htmlspecialchars($collection['receipt_photo'] ?? '') ?>" alt="Receipt" class="img-fluid rounded style-35589">
                 </div>
             </div>
             <?php endif; ?>

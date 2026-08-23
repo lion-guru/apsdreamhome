@@ -24,7 +24,7 @@
                     <?php if (empty($associates)): ?>
                         <tr>
                             <td colspan="9" class="text-center py-5">
-                                <i class="fas fa-user-plus fa-3x text-muted mb-3" class="style-82835"></i>
+                                <i class="fas fa-user-plus fa-3x text-muted mb-3 style-82835"></i>
                                 <h5 class="text-muted">No associates found</h5>
                                 <p class="text-muted mb-3">Register your first MLM associate to start building your network and tracking commissions.</p>
                                 <a href="<?= BASE_URL ?>/admin/mlm/users/create" class="btn btn-primary">

@@ -7,7 +7,7 @@ $stats = $stats ?? ['total_bookings'=>0,'active_emis'=>0,'total_paid'=>0,'total_
 $today = date('Y-m-d');
 ?>
 
-<div class="aps-cp-hero" class="style-68644">
+<div class="aps-cp-hero style-68644">
     <div class="row align-items-center">
         <div class="col-md-8">
             <h2><i class="fas fa-calendar-check me-2"></i>EMI Tracker</h2>
@@ -62,11 +62,11 @@ $today = date('Y-m-d');
 <!-- Next Payment Alert -->
 <?php if ($stats['next_payment']): ?>
 <?php $np = $stats['next_payment']; ?>
-<div class="aps-cp-card mb-4" class="style-95767">
+<div class="aps-cp-card mb-4 style-95767">
     <div class="aps-cp-card-body">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div>
-                <h6 class="mb-1" class="style-23621"><i class="fas fa-bell me-2"></i>Next Payment Due</h6>
+                <h6 class="mb-1 style-23621"><i class="fas fa-bell me-2"></i>Next Payment Due</h6>
                 <div class="fw-bold">Installment #<?= htmlspecialchars($np['installment_number'] ?? '—') ?> — <?= htmlspecialchars($np['booking_number'] ?? '') ?></div>
                 <div class="text-muted">Due: <?= date('D, d M Y', strtotime($np['due_date'])) ?> | Plot: <?= htmlspecialchars($np['plot_number'] ?? '—') ?>, <?= htmlspecialchars($np['colony_name'] ?? '') ?></div>
             </div>

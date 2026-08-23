@@ -6,7 +6,7 @@
         </div>
         <div class="d-flex gap-2">
             <input type="text" id="mapSearch" class="form-control form-control-sm" placeholder="Search location..." class="style-47085">
-            <select id="propertyTypeFilter" class="form-select form-select-sm" class="style-30246">
+            <select id="propertyTypeFilter" class="form-select form-select-sm style-30246">
                 <option value="">All Types</option>
                 <option value="apartment">Apartment</option>
                 <option value="house">House</option>
@@ -33,7 +33,7 @@
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3"><h6 class="mb-0"><i class="fas fa-list me-2"></i>Properties (<?= count($properties ?? []) ?>)</h6></div>
-                <div class="card-body p-0" class="style-62230">
+                <div class="card-body p-0 style-62230">
                     <?php if (!empty($properties ?? [])): ?>
                     <div class="list-group list-group-flush">
                         <?php foreach (($properties ?? []) as $p): ?>

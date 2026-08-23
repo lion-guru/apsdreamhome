@@ -270,7 +270,7 @@ if (!function_exists('navUrl')) {
                            aria-expanded="false">
                             <div class="d-flex align-items-center">
                                 <div class="avatar avatar-sm">
-                                    <span class="avatar-title bg-primary bg-gradient rounded-circle" class="style-43341">
+                                    <span class="avatar-title bg-primary bg-gradient rounded-circle style-43341">
                                         <?php
                                         $name = $nav->userName();
                                         echo strtoupper(substr($name, 0, 1));
@@ -310,8 +310,8 @@ if (!function_exists('navUrl')) {
 
                 <!-- Language Switcher -->
                 <li class="nav-item dropdown ms-1">
-                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" title="<?= __('language') ?>">
-                        <i class="fas fa-globe"></i>
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" title="<?= __('language') ?>" aria-label="<?= __('language') ?>">
+                        <i class="fas fa-globe" aria-hidden="true"></i>
                         <span class="d-none"><?= ($GLOBALS['app_lang'] ?? 'en') === 'hi' ? 'हिन्दी' : 'English' ?></span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
@@ -323,8 +323,8 @@ if (!function_exists('navUrl')) {
                 <!-- Quick Action: Call -->
                 <li class="nav-item ms-1 btn-call">
                     <a href="tel:<?= preg_replace('/[^0-9+]/', '', $sc('contact_phone', '+91 92771 21112')) ?>"
-                       class="btn btn-call btn-sm px-2">
-                        <i class="fas fa-phone"></i>
+                       class="btn btn-call btn-sm px-2" aria-label="Call <?= htmlspecialchars($sc('contact_phone', '+91 92771 21112')) ?>">
+                        <i class="fas fa-phone" aria-hidden="true"></i>
                         <span class="d-none ms-1"><?= htmlspecialchars($sc('contact_phone', '+91 92771 21112')) ?></span>
                     </a>
                 </li>
@@ -332,12 +332,11 @@ if (!function_exists('navUrl')) {
                 <!-- Quick Action: Compare -->
                 <li class="nav-item ms-1 btn-compare">
                     <a href="<?php echo BASE_URL; ?>/compare"
-                       class="btn btn-outline-info btn-sm px-2 position-relative">
-                        <i class="fas fa-balance-scale"></i> 
+                       class="btn btn-outline-info btn-sm px-2 position-relative" aria-label="<?= __('compare') ?>">
+                        <i class="fas fa-balance-scale" aria-hidden="true"></i> 
                         <span class="d-none ms-1"><?= __('compare') ?></span>
                         <span id="compareBadge"
-                              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                              class="style-62224">0</span>
+                              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger style-62224" aria-hidden="true">0</span>
                     </a>
                 </li>
 
@@ -351,8 +350,8 @@ if (!function_exists('navUrl')) {
                 <!-- Quick Action: Admin (only when logged out) -->
                 <?php if (!$nav->isLoggedIn()): ?>
                 <li class="nav-item ms-1 btn-admin">
-                    <a href="<?php echo BASE_URL; ?>/admin/login" class="btn btn-admin btn-sm px-2">
-                        <i class="fas fa-user-lock"></i>
+                    <a href="<?php echo BASE_URL; ?>/admin/login" class="btn btn-admin btn-sm px-2" aria-label="Admin panel">
+                        <i class="fas fa-user-lock" aria-hidden="true"></i>
                         <span class="d-none ms-1"><?= __('admin') ?></span>
                     </a>
                 </li>

@@ -37,7 +37,7 @@
                             <?php if (empty($bonuses ?? [])): ?>
                             <tr>
                                 <td colspan="7" class="text-center py-5">
-                                    <i class="fas fa-gift fa-3x text-muted mb-3" class="style-82835"></i>
+                                    <i class="fas fa-gift fa-3x text-muted mb-3 style-82835"></i>
                                     <h5 class="text-muted">No bonuses awarded yet</h5>
                                     <p class="text-muted mb-3">Award performance bonuses to top-performing associates to incentivize growth.</p>
                                 </td>

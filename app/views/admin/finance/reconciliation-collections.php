@@ -11,14 +11,14 @@ $filters = $filters ?? [];
     </div>
 
     <!-- Start New Reconciliation -->
-    <div class="aps-cp-card" class="style-46748">
+    <div class="aps-cp-card style-46748">
         <div class="aps-cp-card-header">
             <span><i class="fas fa-play-circle"></i> Start New Reconciliation Session</span>
         </div>
         <div class="aps-cp-card-body">
             <form method="POST" action="<?= BASE_URL ?>/admin/finance/reconciliation-collections/start" class="style-68981">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-                <div class="aps-cp-form-group" class="style-52775">
+                <div class="aps-cp-form-group style-52775">
                     <label class="aps-cp-form-label">Collector</label>
                     <select name="collector_id" class="aps-cp-form-select" required>
                         <option value="">-- Select --</option>
@@ -27,7 +27,7 @@ $filters = $filters ?? [];
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="aps-cp-form-group" class="style-52775">
+                <div class="aps-cp-form-group style-52775">
                     <label class="aps-cp-form-label">Date</label>
                     <input type="date" name="session_date" class="aps-cp-form-input" required value="<?= date('Y-m-d') ?>">
                 </div>
@@ -39,10 +39,10 @@ $filters = $filters ?? [];
     </div>
 
     <!-- Filters -->
-    <div class="aps-cp-card" class="style-46748">
+    <div class="aps-cp-card style-46748">
         <div class="aps-cp-card-body">
             <form method="GET" action="<?= BASE_URL ?>/admin/finance/reconciliation-collections" class="style-68981">
-                <div class="aps-cp-form-group" class="style-57352">
+                <div class="aps-cp-form-group style-57352">
                     <label class="aps-cp-form-label">Status</label>
                     <select name="status" class="aps-cp-form-select">
                         <option value="">All</option>
@@ -51,7 +51,7 @@ $filters = $filters ?? [];
                         <option value="discrepancy" <?= ($filters['status'] ?? '') === 'discrepancy' ? 'selected' : '' ?>>Discrepancy</option>
                     </select>
                 </div>
-                <div class="aps-cp-form-group" class="style-57352">
+                <div class="aps-cp-form-group style-57352">
                     <label class="aps-cp-form-label">Collector</label>
                     <select name="collector_id" class="aps-cp-form-select">
                         <option value="">All</option>
@@ -70,10 +70,10 @@ $filters = $filters ?? [];
         <div class="aps-cp-card-header">
             <span><i class="fas fa-balance-scale"></i> Reconciliation Sessions (<?= count($sessions) ?>)</span>
         </div>
-        <div class="aps-cp-card-body" class="style-97767">
+        <div class="aps-cp-card-body style-97767">
             <?php if (empty($sessions)): ?>
-                <div class="aps-cp-empty-state" class="style-85973">
-                    <i class="fas fa-inbox" class="style-3949"></i>
+                <div class="aps-cp-empty-state style-85973">
+                    <i class="fas fa-inbox style-3949"></i>
                     <p>No reconciliation sessions found.</p>
                 </div>
             <?php else: ?>

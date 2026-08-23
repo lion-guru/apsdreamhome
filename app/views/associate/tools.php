@@ -28,7 +28,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             <div class="card tool-card h-100 border-0 shadow-sm" data-tool-id="<?= $tool['id'] ?>">
                 <div class="card-header bg-white border-0 py-3 px-4">
                     <div class="d-flex justify-content-between align-items-center">
-                        <div class="tool-icon-wrapper" class="style-97798">
+                        <div class="tool-icon-wrapper style-97798">
                             <i class="fas <?= $tool['icon'] ?> text-white fs-4"></i>
                         </div>
                     </div>
@@ -38,7 +38,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <p class="text-muted small mb-3"><?= htmlspecialchars($tool['description'] ?? '') ?></p>
                     
                     <!-- Tool Form (collapsible) -->
-                    <div class="tool-form" class="style-54390">
+                    <div class="tool-form style-54390">
                         <form id="tool-form-<?= $tool['id'] ?>" class="tool-calc-form">
     <?php echo CSRFProtection::csrfField(); ?>
                             <?php foreach ($tool['fields'] as $field): ?>
@@ -73,7 +73,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                     <i class="fas fa-times me-1"></i> Close
                                 </button>
                             </div>
-                            <div class="tool-result mt-3 p-3 bg-light rounded" class="style-54390"></div>
+                            <div class="tool-result mt-3 p-3 bg-light rounded style-54390"></div>
                         </form>
                     </div>
                     

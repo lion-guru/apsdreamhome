@@ -15,9 +15,9 @@ $filters = $filters ?? [];
     </div>
 
     <!-- Stat Cards -->
-    <div class="aps-cp-stats-grid" class="style-43624">
+    <div class="aps-cp-stats-grid style-43624">
         <div class="aps-cp-stat-card">
-            <div class="aps-cp-stat-icon" class="style-6196">
+            <div class="aps-cp-stat-icon style-6196">
                 <i class="fas fa-money-bill-wave"></i>
             </div>
             <div class="aps-cp-stat-info">
@@ -27,7 +27,7 @@ $filters = $filters ?? [];
             </div>
         </div>
         <div class="aps-cp-stat-card">
-            <div class="aps-cp-stat-icon" class="style-82361">
+            <div class="aps-cp-stat-icon style-82361">
                 <i class="fas fa-clock"></i>
             </div>
             <div class="aps-cp-stat-info">
@@ -37,7 +37,7 @@ $filters = $filters ?? [];
             </div>
         </div>
         <div class="aps-cp-stat-card">
-            <div class="aps-cp-stat-icon" class="style-92749">
+            <div class="aps-cp-stat-icon style-92749">
                 <i class="fas fa-check-circle"></i>
             </div>
             <div class="aps-cp-stat-info">
@@ -47,7 +47,7 @@ $filters = $filters ?? [];
             </div>
         </div>
         <div class="aps-cp-stat-card">
-            <div class="aps-cp-stat-icon" class="style-99507">
+            <div class="aps-cp-stat-icon style-99507">
                 <i class="fas fa-times-circle"></i>
             </div>
             <div class="aps-cp-stat-info">
@@ -58,10 +58,10 @@ $filters = $filters ?? [];
     </div>
 
     <!-- Filters -->
-    <div class="aps-cp-card" class="style-98782">
+    <div class="aps-cp-card style-98782">
         <div class="aps-cp-card-body">
-            <form method="GET" action="<?= BASE_URL ?>/admin/finance/collections" class="aps-cp-form-row" class="style-68981">
-                <div class="aps-cp-form-group" class="style-57352">
+            <form method="GET" action="<?= BASE_URL ?>/admin/finance/collections" class="aps-cp-form-row style-68981">
+                <div class="aps-cp-form-group style-57352">
                     <label class="aps-cp-form-label">Status</label>
                     <select name="status" class="aps-cp-form-select">
                         <option value="">All</option>
@@ -71,7 +71,7 @@ $filters = $filters ?? [];
                         <option value="reconciled" <?= ($filters['status'] ?? '') === 'reconciled' ? 'selected' : '' ?>>Reconciled</option>
                     </select>
                 </div>
-                <div class="aps-cp-form-group" class="style-57352">
+                <div class="aps-cp-form-group style-57352">
                     <label class="aps-cp-form-label">Collector</label>
                     <select name="collector_id" class="aps-cp-form-select">
                         <option value="">All Collectors</option>
@@ -80,11 +80,11 @@ $filters = $filters ?? [];
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="aps-cp-form-group" class="style-57352">
+                <div class="aps-cp-form-group style-57352">
                     <label class="aps-cp-form-label">From Date</label>
                     <input type="date" name="from_date" class="aps-cp-form-input" value="<?= htmlspecialchars($filters['from_date'] ?? '') ?>">
                 </div>
-                <div class="aps-cp-form-group" class="style-57352">
+                <div class="aps-cp-form-group style-57352">
                     <label class="aps-cp-form-label">To Date</label>
                     <input type="date" name="to_date" class="aps-cp-form-input" value="<?= htmlspecialchars($filters['to_date'] ?? '') ?>">
                 </div>
@@ -99,10 +99,10 @@ $filters = $filters ?? [];
         <div class="aps-cp-card-header">
             <span><i class="fas fa-list"></i> Collections (<?= count($collections) ?>)</span>
         </div>
-        <div class="aps-cp-card-body" class="style-97767">
+        <div class="aps-cp-card-body style-97767">
             <?php if (empty($collections)): ?>
-                <div class="aps-cp-empty-state" class="style-85973">
-                    <i class="fas fa-inbox" class="style-3949"></i>
+                <div class="aps-cp-empty-state style-85973">
+                    <i class="fas fa-inbox style-3949"></i>
                     <p>No collections found.</p>
                 </div>
             <?php else: ?>

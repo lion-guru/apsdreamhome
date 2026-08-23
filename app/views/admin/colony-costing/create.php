@@ -10,7 +10,7 @@ $val = function(string $key, $default = 0) use ($e) {
     return $e[$key] ?? $default;
 };
 ?>
-<div class="container-fluid py-4" class="style-12596">
+<div class="container-fluid py-4 style-12596">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="m-0">
             <i class="fas fa-drafting-compass me-2"></i>
@@ -250,7 +250,7 @@ $val = function(string $key, $default = 0) use ($e) {
 
         <!-- —€—€ RIGHT: Live Result Panel —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€ -->
         <div class="col-lg-5">
-            <div class="card shadow-sm sticky-top" class="style-54247">
+            <div class="card shadow-sm sticky-top style-54247">
                 <div class="card-header bg-dark text-white py-2">
                     <i class="fas fa-chart-pie me-2"></i>Live Cost Breakdown
                 </div>

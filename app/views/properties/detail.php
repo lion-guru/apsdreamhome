@@ -157,11 +157,11 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
         </div>
         <?php if ($property): ?>
             <h1><?= htmlspecialchars($property['title'] ?? $property['name'] ?? 'Property') ?></h1>
-            <div class="pd-location" class="style-74939">
+            <div class="pd-location style-74939">
                 <i class="fas fa-map-marker-alt"></i>
                 <?= htmlspecialchars($property['location'] ?? $property['address'] ?? '') ?>
                 <?php if (!empty($property['status'])): ?>
-                    <span class="badge" class="style-55710">
+                    <span class="badge style-55710">
                         <?= ucfirst($property['status']) ?>
                     </span>
                 <?php endif; ?>
@@ -172,7 +172,7 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
     </div>
 </div>
 
-<div class="container" class="style-54650">
+<div class="container style-54650">
 <?php if ($property): ?>
 <div class="row g-4">
     <!-- Main Content -->
@@ -184,15 +184,15 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
                     <?php foreach ($images as $i => $img): ?>
                         <div class="carousel-item <?= $i === 0 ? 'active' : '' ?>">
                             <?php $src = !empty($img['image_path']) ? $img['image_path'] : BASE_URL . '/assets/images/placeholder/property.svg'; ?>
-                            <img src="<?= htmlspecialchars($src ?? '') ?>" class="d-block w-100 gallery-trigger" class="style-18064" alt="Property image <?= $i+1 ?>" onclick="openLightbox(<?= $i ?>)">
+                            <img src="<?= htmlspecialchars($src ?? '') ?>" class="d-block w-100 gallery-trigger style-18064" alt="Property image <?= $i+1 ?>" onclick="openLightbox(<?= $i ?>)">
                         </div>
                     <?php endforeach; ?>
                 </div>
                 <button class="carousel-control-prev" type="button" data-bs-target="#propertyCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" class="style-34381"></span>
+                    <span class="carousel-control-prev-icon style-34381"></span>
                 </button>
                 <button class="carousel-control-next" type="button" data-bs-target="#propertyCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" class="style-34381"></span>
+                    <span class="carousel-control-next-icon style-34381"></span>
                 </button>
                 <div class="gallery-counter"><?= count($images) ?> photos</div>
                 <button class="gallery-fullscreen" onclick="openLightbox(0)" title="View fullscreen"><i class="fas fa-expand"></i></button>
@@ -218,8 +218,8 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
                             <?= htmlspecialchars($property['location'] ?? $property['address'] ?? '') ?>
                         </div>
                     </div>
-                    <button class="btn btn-sm" class="style-34225" onclick="toggleWishlist(this)" data-id="<?= $property['id'] ?? 0 ?>">
-                        <i class="far fa-heart" class="style-78822"></i>
+                    <button class="btn btn-sm style-34225" onclick="toggleWishlist(this)" data-id="<?= $property['id'] ?? 0 ?>">
+                        <i class="far fa-heart style-78822"></i>
                     </button>
                 </div>
             </div>
@@ -232,10 +232,10 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
                     <?php endif; ?>
                 </div>
                 <div class="pd-actions">
-                    <button class="btn" class="style-58242" onclick="document.getElementById('enquiryForm').scrollIntoView({behavior:'smooth'})">
+                    <button class="btn style-58242" onclick="document.getElementById('enquiryForm').scrollIntoView({behavior:'smooth'})">
                         <i class="fas fa-envelope me-1"></i> Enquire
                     </button>
-                    <a href="tel:+919277121112" class="btn" class="style-88142">
+                    <a href="tel:+919277121112" class="btn style-88142">
                         <i class="fas fa-phone me-1"></i> Call
                     </a>
                 </div>
@@ -279,7 +279,7 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
             </div>
             <?php endif; ?>
 
-            <div class="pd-section" class="style-50873">
+            <div class="pd-section style-50873">
                 <h5><i class="fas fa-info-circle"></i> Property Details</h5>
                 <div class="pd-detail-grid">
                     <?php if (!empty($property['bedrooms'])): ?>
@@ -340,7 +340,7 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
             </div>
 
             <?php if (!empty($amenities)): ?>
-            <div class="pd-section" class="style-50873">
+            <div class="pd-section style-50873">
                 <h5><i class="fas fa-star"></i> Amenities</h5>
                 <div class="pd-amenities">
                     <?php foreach ($amenities as $amenity): ?>
@@ -412,10 +412,10 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
         <!-- Related Properties -->
         <?php if (!empty($related)): ?>
         <div class="pd-sidebar-card scroll-reveal">
-            <div class="card-head" class="style-30826">
+            <div class="card-head style-30826">
                 <h5><i class="fas fa-th-large me-2"></i> Similar Properties</h5>
             </div>
-            <div class="card-body-padded" class="style-36111">
+            <div class="card-body-padded style-36111">
                 <?php foreach (array_slice($related, 0, 4) as $rel): ?>
                     <a href="/property/<?= $rel['id'] ?>" class="pd-related-item">
                         <?php $relImg = !empty($rel['image']) ? BASE_URL.'/assets/images/properties/'.$rel['image'] : BASE_URL.'/assets/images/placeholder/property.svg'; ?>
@@ -436,7 +436,7 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
 <!-- Reviews Section -->
 <div class="pd-reviews-card mt-4 mb-5 scroll-reveal">
     <div class="style-9749">
-        <h5 class="style-75784"><i class="fas fa-star me-2" class="style-62735"></i> Customer Reviews</h5>
+        <h5 class="style-75784"><i class="fas fa-star me-2 style-62735"></i> Customer Reviews</h5>
     </div>
     <div class="style-93593">
         <?php if (!empty($reviews)): ?>
@@ -456,29 +456,29 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
             <?php endforeach; ?>
         <?php else: ?>
             <div class="text-center py-4">
-                <i class="fas fa-comment-dots fa-2x mb-2" class="style-91271"></i>
+                <i class="fas fa-comment-dots fa-2x mb-2 style-91271"></i>
                 <p class="text-muted mb-0">No reviews yet. Be the first to review!</p>
             </div>
         <?php endif; ?>
 
         <hr class="style-98128">
-        <h6 class="fw-bold mb-3" class="style-8420">Write a Review</h6>
+        <h6 class="fw-bold mb-3 style-8420">Write a Review</h6>
         <form action="<?= BASE_URL ?>/property/review" method="POST">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
             <input type="hidden" name="property_id" value="<?= $property['id'] ?? 0 ?>">
             <div class="row mb-3">
                 <div class="col-md-6 mb-3 mb-md-0">
-                    <label class="form-label" class="style-32973">Name *</label>
-                    <input type="text" name="name" class="form-control" class="style-48720" required>
+                    <label class="form-label style-32973">Name *</label>
+                    <input type="text" name="name" class="form-control style-48720" required>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label" class="style-32973">Email *</label>
-                    <input type="email" name="email" class="form-control" class="style-48720" required>
+                    <label class="form-label style-32973">Email *</label>
+                    <input type="email" name="email" class="form-control style-48720" required>
                 </div>
             </div>
             <div class="mb-3">
-                <label class="form-label" class="style-32973">Rating *</label>
-                <select name="rating" class="form-select" class="style-48720" required>
+                <label class="form-label style-32973">Rating *</label>
+                <select name="rating" class="form-select style-48720" required>
                     <option value="">Select Rating</option>
                     <option value="5">5 — Excellent</option>
                     <option value="4">4 — Good</option>
@@ -488,10 +488,10 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
                 </select>
             </div>
             <div class="mb-3">
-                <label class="form-label" class="style-32973">Your Review *</label>
+                <label class="form-label style-32973">Your Review *</label>
                 <textarea name="review_text" class="form-control" rows="4" class="style-48720" required placeholder="Share your experience..."></textarea>
             </div>
-            <button type="submit" class="btn" class="style-86133">
+            <button type="submit" class="btn style-86133">
                 <i class="fas fa-paper-plane me-1"></i> Submit Review
             </button>
         </form>
@@ -502,11 +502,11 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
 <!-- Property Not Found -->
 <div class="text-center py-5 scroll-reveal">
     <div class="style-11515">
-        <i class="fas fa-home fa-3x" class="style-78822"></i>
+        <i class="fas fa-home fa-3x style-78822"></i>
     </div>
     <h3 class="style-34088">Property Not Found</h3>
     <p class="style-3672">The property you're looking for doesn't exist or has been removed.</p>
-    <a href="/properties" class="btn px-4" class="style-58735">
+    <a href="/properties" class="btn px-4 style-58735">
         <i class="fas fa-search me-1"></i> Browse Properties
     </a>
 </div>

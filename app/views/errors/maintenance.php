@@ -26,6 +26,7 @@ header('Retry-After: 3600');
         .icon-circle { width: 100px; height: 100px; border-radius: 50%; background: #f8f9fa; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; }
         .icon-circle i { font-size: 3rem; color: #0f766e; }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
     <div class="container">

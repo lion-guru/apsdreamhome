@@ -21,6 +21,7 @@ $selectedAmenities = $d['amenities'] ?? [];
         .wizard-card { border: none; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,.06); }
         .amenity-chip { cursor: pointer; user-select: none; }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
 <div class="container">

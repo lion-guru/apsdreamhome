@@ -136,7 +136,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <meta name="twitter:description" content="<?= htmlspecialchars($seo['twitter_description'] ?? '') ?>">
     <meta name="twitter:image" content="<?= htmlspecialchars($seo['twitter_image'] ?? '') ?>">
 
-    <!-- Canonical (dynamic — overrides static one above for accuracy) -->
+    <!-- Canonical (dynamic â€” overrides static one above for accuracy) -->
     <link rel="canonical" href="<?= htmlspecialchars($seo['canonical'] ?? '') ?>">
 
     <!-- JSON-LD Structured Data -->
@@ -179,7 +179,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     $isPremiumPage = isset($premium_layout) && $premium_layout === true;
     ?>
     <?php if (!$isAdminPage): ?>
-    <!-- CSS: base → components → header → premium theme (ALL public pages) → homepage extras -->
+    <!-- CSS: base â†’ components â†’ header â†’ premium theme (ALL public pages) â†’ homepage extras -->
     <link href="<?php echo BASE_URL; ?>/assets/css/style.css?v=6" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/frontend.css?v=6" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/header.css?v=7" rel="stylesheet">
@@ -229,6 +229,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
             window.addEventListener('resize', setHeaderHeight);
         })();
     </script>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=2">
 </head>
 
 <body>
@@ -279,7 +280,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
 
     <?php
     if (!$isAdminPage) {
-        // Tell footer.php NOT to close the document — base.php handles it
+        // Tell footer.php NOT to close the document â€” base.php handles it
         $GLOBALS['_layout_handles_close'] = true;
         if ($isPremiumPage) {
             include __DIR__ . '/active/footer.php';
@@ -307,27 +308,27 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <!-- Mobile Sticky Bottom Navigation -->
     <?php if (!$isAdminPage): ?>
     <nav class="mobile-bottom-sticky-nav" aria-label="Mobile bottom navigation">
-      <a href="<?php echo BASE_URL; ?>/" class="mobile-nav-item" data-label="Home">
+      <a href="<?php echo BASE_URL; ?>/" class="mobile-nav-item" data-label="Home" aria-label="Home">
         <i class="fas fa-home"></i>
       </a>
-      <a href="<?php echo BASE_URL; ?>/properties" class="mobile-nav-item" data-label="Properties">
+      <a href="<?php echo BASE_URL; ?>/properties" class="mobile-nav-item" data-label="Properties" aria-label="Properties">
         <i class="fas fa-building"></i>
       </a>
-      <a href="<?php echo BASE_URL; ?>/search" class="mobile-nav-item" data-label="Search">
+      <a href="<?php echo BASE_URL; ?>/search" class="mobile-nav-item" data-label="Search" aria-label="Search">
         <i class="fas fa-search"></i>
       </a>
       <?php if (isset($_SESSION['user_id'])): ?>
-      <a href="<?php echo BASE_URL; ?>/user/dashboard" class="mobile-nav-item" data-label="Dashboard">
+      <a href="<?php echo BASE_URL; ?>/user/dashboard" class="mobile-nav-item" data-label="Dashboard" aria-label="Dashboard">
         <i class="fas fa-tachometer-alt"></i>
       </a>
-      <a href="<?php echo BASE_URL; ?>/user/profile" class="mobile-nav-item" data-label="Profile">
+      <a href="<?php echo BASE_URL; ?>/user/profile" class="mobile-nav-item" data-label="Profile" aria-label="Profile">
         <i class="fas fa-user"></i>
       </a>
       <?php else: ?>
-      <a href="<?php echo BASE_URL; ?>/login" class="mobile-nav-item" data-label="Login">
+      <a href="<?php echo BASE_URL; ?>/login" class="mobile-nav-item" data-label="Login" aria-label="Login">
         <i class="fas fa-sign-in-alt"></i>
       </a>
-      <a href="<?php echo BASE_URL; ?>/about" class="mobile-nav-item" data-label="About">
+      <a href="<?php echo BASE_URL; ?>/about" class="mobile-nav-item" data-label="About" aria-label="About">
         <i class="fas fa-info-circle"></i>
       </a>
       <?php endif; ?>

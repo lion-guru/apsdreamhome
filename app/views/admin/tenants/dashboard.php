@@ -15,7 +15,7 @@ $base = BASE_URL ?? '';
     <div class="d-flex justify-content-between align-items-center">
         <div>
             <h4 class="mb-0"><i class="fas fa-cloud me-2"></i>SaaS Tenant Dashboard</h4>
-            <p class="mb-0 mt-1" class="style-91394">Manage all tenants, plans, and subscriptions</p>
+            <p class="mb-0 mt-1 style-91394">Manage all tenants, plans, and subscriptions</p>
         </div>
         <a href="<?= $base ?>/admin/tenants/onboard" class="btn btn-light btn-sm">
             <i class="fas fa-plus me-1"></i>New Tenant
@@ -81,7 +81,7 @@ $base = BASE_URL ?? '';
                 <?php if (!empty($stats['by_plan'])): ?>
                     <div class="d-flex flex-wrap gap-3">
                         <?php foreach ($stats['by_plan'] as $plan): ?>
-                            <div class="text-center flex-fill" class="style-3848">
+                            <div class="text-center flex-fill style-3848">
                                 <h4><?= $plan['count'] ?></h4>
                                 <small class="text-muted"><?= htmlspecialchars($plan['name'] ?? '') ?></small>
                             </div>

@@ -26,7 +26,7 @@ $privacy_content = $privacy_content ?? ['content' => '', 'title' => 'Privacy Pol
                     <?php endif; ?>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <div class="bg-light rounded p-3 mb-3" class="style-3144">
+                    <div class="bg-light rounded p-3 mb-3 style-3144">
                         <?= strip_tags($terms_content['content'] ?? '<em>No content yet</em>') ?>
                     </div>
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#termsModal"><i class="fas fa-edit me-1"></i>Edit Terms & Conditions</button>
@@ -42,7 +42,7 @@ $privacy_content = $privacy_content ?? ['content' => '', 'title' => 'Privacy Pol
                     <?php endif; ?>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <div class="bg-light rounded p-3 mb-3" class="style-3144">
+                    <div class="bg-light rounded p-3 mb-3 style-3144">
                         <?= strip_tags($privacy_content['content'] ?? '<em>No content yet</em>') ?>
                     </div>
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#privacyModal"><i class="fas fa-edit me-1"></i>Edit Privacy Policy</button>

@@ -30,7 +30,7 @@ $statusMap = [
             $tColors = ['all'=>'primary','today'=>'warning','upcoming'=>'info','completed'=>'success','cancelled'=>'secondary'];
         ?>
         <div class="col">
-            <a href="?tab=<?= $tKey ?>" class="card border-0 shadow-sm text-decoration-none <?= $active_tab === $tKey ? 'border-' . $tColors[$tKey] : '' ?>" class="style-13097">
+            <a href="?tab=<?= $tKey ?>" class="card border-0 shadow-sm text-decoration-none <?= $active_tab === $tKey ? 'border-' . $tColors[$tKey] : '' ?> style-13097">
                 <div class="card-body p-3 text-center">
                     <div class="fs-3 fw-bold text-<?= $tColors[$tKey] ?>"><?= $stats[$tKey === 'all' ? 'total' : $tKey] ?? 0 ?></div>
                     <div class="small text-muted"><?= $tLabel ?></div>
@@ -44,7 +44,7 @@ $statusMap = [
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body py-3">
             <form class="d-flex gap-2" method="GET">
-                <div class="input-group" class="style-67695">
+                <div class="input-group style-67695">
                     <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
                     <input type="text" class="form-control" name="q" placeholder="Search name, phone, lead..." value="<?= htmlspecialchars($search ?? '') ?>">
                 </div>
@@ -62,7 +62,7 @@ $statusMap = [
         <div class="card-body p-0">
             <?php if (empty($visits)): ?>
                 <div class="text-center py-5">
-                    <i class="fas fa-map-marker-alt fa-3x text-muted mb-3" class="style-82835"></i>
+                    <i class="fas fa-map-marker-alt fa-3x text-muted mb-3 style-82835"></i>
                     <h5 class="text-muted">No site visits found</h5>
                 </div>
             <?php else: ?>

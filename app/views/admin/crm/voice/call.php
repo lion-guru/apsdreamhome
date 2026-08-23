@@ -6,7 +6,7 @@
 
     <div class="voice-call-ui">
         <?php $initials = strtoupper(substr($lead['name'] ?? 'L', 0, 1)); ?>
-        <div class="lead-avatar-lg" class="style-43228"><?= $initials ?></div>
+        <div class="lead-avatar-lg style-43228"><?= $initials ?></div>
         <h3 class="fw-bold"><?= htmlspecialchars($lead['name'] ?? 'Unknown Lead') ?></h3>
         <p class="text-muted mb-1"><?= htmlspecialchars($lead['phone'] ?? 'No phone') ?></p>
         <p class="text-muted mb-4"><?= htmlspecialchars($lead['email'] ?? '') ?></p>
@@ -19,14 +19,14 @@
             <button class="call-btn end" id="btn-end" onclick="endCall()" title="End Call" disabled aria-label="Call"><i class="fas fa-phone-slash"></i></button>
         </div>
 
-        <div class="card border-0 shadow-sm mb-3" class="style-56956"><div class="card-body text-start">
+        <div class="card border-0 shadow-sm mb-3 style-56956"><div class="card-body text-start">
             <h6 class="fw-bold"><i class="fas fa-sticky-note me-1"></i>Voice Note</h6>
             <div class="mb-2"><button class="btn btn-sm btn-outline-primary" id="btn-dictate" onclick="startDictation()"><i class="fas fa-microphone me-1"></i>Start Dictating</button></div>
             <textarea id="note-text" class="form-control" rows="3" placeholder="Or type your note here..."></textarea>
             <button class="btn btn-primary btn-sm mt-2" onclick="saveNote()"><i class="fas fa-save me-1"></i>Save Note</button>
         </div></div>
 
-        <div class="card border-0 shadow-sm" class="style-56956"><div class="card-body text-start">
+        <div class="card border-0 shadow-sm style-56956"><div class="card-body text-start">
             <h6 class="fw-bold"><i class="fas fa-microphone me-1"></i>Voice Commands</h6>
             <div class="input-group"><input type="text" id="voice-cmd" class="form-control" placeholder="Type or speak a command (Hindi/English)"><button class="btn btn-primary" onclick="sendCommand()" aria-label="Call"><i class="fas fa-paper-plane"></i></button></div>
             <div id="cmd-result" class="mt-2"></div>

@@ -119,18 +119,18 @@ $base = BASE_URL ?? '';
     <div class="card border-0 shadow-sm mb-3" id="bulkActionsBar" class="style-2248">
         <div class="card-body py-2 d-flex align-items-center gap-3">
             <span class="fw-semibold"><span id="selectedCount">0</span> selected</span>
-            <select id="bulkAction" class="form-select form-select-sm" class="style-68062">
+            <select id="bulkAction" class="form-select form-select-sm style-68062">
                 <option value="">Bulk Actions...</option>
                 <option value="status">Change Status</option>
                 <option value="assign">Assign To</option>
                 <option value="delete">Delete Selected</option>
             </select>
-            <select id="bulkStatus" class="form-select form-select-sm" class="style-15753">
+            <select id="bulkStatus" class="form-select form-select-sm style-15753">
                 <?php foreach (['new','contacted','qualified','proposal','negotiation','converted','closed','lost','dead'] as $s): ?>
                     <option value="<?= $s ?>"><?= ucfirst($s) ?></option>
                 <?php endforeach; ?>
             </select>
-            <select id="bulkAssign" class="form-select form-select-sm" class="style-15753">
+            <select id="bulkAssign" class="form-select form-select-sm style-15753">
                 <option value="">Select User...</option>
             </select>
             <button type="button" class="btn btn-sm btn-warning" id="bulkApply" class="style-2248">Apply</button>

@@ -17,7 +17,7 @@
                     <?php if (empty($commissions ?? [])): ?>
                     <tr>
                         <td colspan="9" class="text-center py-5">
-                            <i class="fas fa-phone-alt fa-3x text-muted mb-3" class="style-82835"></i>
+                            <i class="fas fa-phone-alt fa-3x text-muted mb-3 style-82835"></i>
                             <h5 class="text-muted">No telecaller commissions yet</h5>
                             <p class="text-muted mb-3">Commissions are calculated automatically when telecallers complete qualifying calls or convert leads.</p>
                         </td>

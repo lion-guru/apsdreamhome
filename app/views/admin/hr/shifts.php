@@ -25,7 +25,7 @@ $page_title = $page_title ?? 'Shift Types';
                                 <td><?= htmlspecialchars($s['end_time'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($s['duration_hours'] ?? '') ?>h</td>
                                 <td><?= htmlspecialchars($s['break_duration'] ?? '60') ?> min</td>
-                                <td><span class="badge" class="style-8989">&nbsp;&nbsp;&nbsp;</span></td>
+                                <td><span class="badge style-8989">&nbsp;&nbsp;&nbsp;</span></td>
                                 <td>
                                     <span class="badge bg-<?= ($s['is_active'] ?? 0) ? 'success' : 'secondary' ?>">
                                         <?= ($s['is_active'] ?? 0) ? 'Active' : 'Inactive' ?>

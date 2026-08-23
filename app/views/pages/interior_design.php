@@ -20,7 +20,7 @@
 .tool-card:hover { border-color: #0d9488; background: #f0fdfa; }
 </style>
 
-<section class="hero-premium pt-5 pb-5" class="style-32644">
+<section class="hero-premium pt-5 pb-5 style-32644">
     <div class="container position-relative premium-reveal fade-up z-2">
         <div class="row align-items-center">
             <div class="col-lg-7">
@@ -183,7 +183,7 @@
         <div class="row g-4 mt-2">
             <div class="col-md-6">
                 <div class="tool-card border-2 p-4" onclick="$(this).find('.collapse').collapse('toggle')">
-                    <i class="fas fa-palette fa-2x mb-2" class="style-23621"></i>
+                    <i class="fas fa-palette fa-2x mb-2 style-23621"></i>
                     <h5><?= __('id_color_palette') ?></h5>
                     <p class="text-muted small mb-2"><?= __('id_color_palette_desc') ?></p>
                     <div class="collapse">
@@ -365,7 +365,7 @@ function planBudget() {
         const amt = total * allocation[k] / 100;
         used += amt;
         html += `<div class="d-flex justify-content-between small mb-1"><span>${k}</span><span class="fw-medium">₹${amt.toLocaleString('en-IN', {maximumFractionDigits:0})}</span></div>`;
-        html += `<div class="progress mb-2" class="style-12222"><div class="progress-bar" class="style-45041"></div></div>`;
+        html += `<div class="progress mb-2 style-12222"><div class="progress-bar style-45041"></div></div>`;
     });
     document.getElementById('budgetBreakdown').innerHTML = html;
     const rem = total - used;

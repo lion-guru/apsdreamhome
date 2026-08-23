@@ -35,8 +35,8 @@
                                     <td><strong><?= htmlspecialchars($p['name'] ?? '') ?></strong></td>
                                     <td><?= htmlspecialchars($p['district_name'] ?? '') ?></td>
                                     <td>
-                                        <div class="progress" class="style-39312">
-                                            <div class="progress-bar bg-<?= ($p['progress_pct'] ?? 0) >= 100 ? 'success' : (($p['progress_pct'] ?? 0) >= 50 ? 'info' : 'warning') ?>" class="style-35683">
+                                        <div class="progress style-39312">
+                                            <div class="progress-bar bg-<?= ($p['progress_pct'] ?? 0) >= 100 ? 'success' : (($p['progress_pct'] ?? 0) >= 50 ? 'info' : 'warning') ?> style-35683">
                                                 <?= (int)($p['progress_pct'] ?? 0) ?>%
                                             </div>
                                         </div>

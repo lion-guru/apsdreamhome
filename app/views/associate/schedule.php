@@ -42,7 +42,7 @@ $today = date('Y-m-d');
         <div id="listView">
             <?php if (empty($events)): ?>
                 <div class="text-center py-5">
-                    <i class="fas fa-calendar-check fa-3x text-muted mb-3" class="style-82835"></i>
+                    <i class="fas fa-calendar-check fa-3x text-muted mb-3 style-82835"></i>
                     <h5 class="text-muted"><?= __('assoc_sched_empty', [], 'No scheduled events') ?></h5>
                     <p class="text-muted"><?= __('assoc_sched_empty_desc', [], 'Your upcoming tasks and site visits will appear here.') ?></p>
                     <a href="<?= BASE_URL ?>/associate/crm" class="btn btn-primary"><i class="fas fa-plus me-1"></i> <?= __('assoc_sched_add_task', [], 'Add Task') ?></a>
@@ -69,13 +69,13 @@ $today = date('Y-m-d');
                             <?php else: ?>
                                 <span class="badge bg-light text-dark"><?= date('d M Y', strtotime($eventDate)) ?></span>
                             <?php endif; ?>
-                            <div class="flex-grow-1" class="style-83167"></div>
+                            <div class="flex-grow-1 style-83167"></div>
                             <small class="text-muted"><?= date('l', strtotime($eventDate)) ?></small>
                         </div>
                 <?php endif; ?>
                         <div class="event-list-item <?= $isVisit ? 'site_visit' : '' ?> <?= $isPast && ($event['status'] ?? '') !== 'completed' ? 'overdue' : '' ?>">
                             <div class="d-flex align-items-center gap-2">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center" class="style-5206">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center style-5206">
                                     <i class="fas fa-<?= $isVisit ? 'map-marker-alt' : 'tasks' ?> <?= $isToday ? 'text-primary' : ($isVisit ? 'text-warning' : 'text-muted') ?>"></i>
                                 </div>
                                 <div>
@@ -167,9 +167,9 @@ $today = date('Y-m-d');
             </div>
 
             <div class="d-flex gap-3 mt-3 justify-content-center">
-                <small><span class="cal-event task" class="style-35851"><?= __('assoc_sched_task', [], 'Task') ?></span></small>
-                <small><span class="cal-event site_visit" class="style-35851"><?= __('assoc_sched_visit', [], 'Site Visit') ?></span></small>
-                <small><span class="cal-event overdue" class="style-35851"><?= __('assoc_sched_overdue', [], 'Overdue') ?></span></small>
+                <small><span class="cal-event task style-35851"><?= __('assoc_sched_task', [], 'Task') ?></span></small>
+                <small><span class="cal-event site_visit style-35851"><?= __('assoc_sched_visit', [], 'Site Visit') ?></span></small>
+                <small><span class="cal-event overdue style-35851"><?= __('assoc_sched_overdue', [], 'Overdue') ?></span></small>
             </div>
         </div>
     </div>

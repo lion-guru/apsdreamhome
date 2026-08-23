@@ -61,7 +61,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 <?php if (empty($history)): ?>
                     <p class="text-muted text-center py-3">No history.</p>
                 <?php else: ?>
-                    <div class="table-responsive" class="style-63664">
+                    <div class="table-responsive style-63664">
                         <table class="table table-sm mb-0"><tbody>
                         <?php foreach ($history as $h): ?>
                             <tr><td><?= htmlspecialchars($h['metric'] ?? '') ?></td><td class="text-end"><?= $h['value'] ?> <?= htmlspecialchars($h['unit'] ?? '') ?></td><td class="text-end"><small class="text-muted"><?= date('M d H:i', strtotime($h['recorded_at'])) ?></small></td></tr>

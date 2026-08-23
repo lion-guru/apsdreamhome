@@ -36,25 +36,25 @@ $commission = $price * $defaultRate / 100;
                 </div>
                 <div class="row g-3">
                     <div class="col-md-3">
-                        <div class="card border text-center py-3" class="style-37644">
+                        <div class="card border text-center py-3 style-37644">
                             <div class="small text-muted">1% Rate</div>
                             <div class="fw-bold">₹<?= number_format($price * 1 / 100, 2) ?></div>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="card border text-center py-3" class="style-37644">
+                        <div class="card border text-center py-3 style-37644">
                             <div class="small text-muted">1.5% Rate</div>
                             <div class="fw-bold">₹<?= number_format($price * 1.5 / 100, 2) ?></div>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="card border text-center py-3" class="style-68713">
+                        <div class="card border text-center py-3 style-68713">
                             <div class="small text-muted">2% Rate (Default)</div>
                             <div class="fw-bold text-success">₹<?= number_format($price * 2 / 100, 2) ?></div>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="card border text-center py-3" class="style-37644">
+                        <div class="card border text-center py-3 style-37644">
                             <div class="small text-muted">3% Rate</div>
                             <div class="fw-bold">₹<?= number_format($price * 3 / 100, 2) ?></div>
                         </div>

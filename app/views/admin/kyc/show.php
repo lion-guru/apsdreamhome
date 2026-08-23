@@ -60,7 +60,7 @@ unset($_SESSION['kyc_verify_results']);
                                 <div class="card aps-cp-card">
                                     <div class="card-header aps-cp-card-header"><small>PAN Card</small></div>
                                     <a href="<?= BASE_URL . '/' . $r['pan_document'] ?>" target="_blank" class="d-block">
-                                        <img src="<?= BASE_URL . '/' . $r['pan_document'] ?>" class="card-img-top" class="style-96299" alt="PAN">
+                                        <img src="<?= BASE_URL . '/' . $r['pan_document'] ?>" class="card-img-top style-96299" alt="PAN">
                                     </a>
                                     <div class="card-body text-center p-2">
                                         <a href="<?= BASE_URL . '/' . $r['pan_document'] ?>" target="_blank" class="btn btn-sm btn-outline-primary">View Full</a>
@@ -73,7 +73,7 @@ unset($_SESSION['kyc_verify_results']);
                                 <div class="card aps-cp-card">
                                     <div class="card-header aps-cp-card-header"><small>Aadhaar Front</small></div>
                                     <a href="<?= BASE_URL . '/' . $r['aadhaar_front_document'] ?>" target="_blank" class="d-block">
-                                        <img src="<?= BASE_URL . '/' . $r['aadhaar_front_document'] ?>" class="card-img-top" class="style-96299" alt="Aadhaar Front">
+                                        <img src="<?= BASE_URL . '/' . $r['aadhaar_front_document'] ?>" class="card-img-top style-96299" alt="Aadhaar Front">
                                     </a>
                                     <div class="card-body text-center p-2">
                                         <a href="<?= BASE_URL . '/' . $r['aadhaar_front_document'] ?>" target="_blank" class="btn btn-sm btn-outline-primary">View Full</a>
@@ -86,7 +86,7 @@ unset($_SESSION['kyc_verify_results']);
                                 <div class="card aps-cp-card">
                                     <div class="card-header aps-cp-card-header"><small>Aadhaar Back</small></div>
                                     <a href="<?= BASE_URL . '/' . $r['aadhaar_back_document'] ?>" target="_blank" class="d-block">
-                                        <img src="<?= BASE_URL . '/' . $r['aadhaar_back_document'] ?>" class="card-img-top" class="style-96299" alt="Aadhaar Back">
+                                        <img src="<?= BASE_URL . '/' . $r['aadhaar_back_document'] ?>" class="card-img-top style-96299" alt="Aadhaar Back">
                                     </a>
                                     <div class="card-body text-center p-2">
                                         <a href="<?= BASE_URL . '/' . $r['aadhaar_back_document'] ?>" target="_blank" class="btn btn-sm btn-outline-primary">View Full</a>

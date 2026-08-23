@@ -1,4 +1,4 @@
-<section class="py-5" class="style-50777">
+<section class="py-5 style-50777">
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><i class="fas fa-home me-2"></i><?php echo __('tool_valuation_title', [], 'Property Valuation Calculator'); ?></h1>
@@ -108,7 +108,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <small class="text-muted"><?php echo __('confidence_score', [], 'Confidence Score'); ?></small>
-                                            <div class="progress mt-1" class="style-98142">
+                                            <div class="progress mt-1 style-98142">
                                                 <div class="progress-bar bg-success" id="confBar" class="style-88324"></div>
                                             </div>
                                         </div>

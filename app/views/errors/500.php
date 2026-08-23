@@ -16,6 +16,7 @@
         .btn-home { background: linear-gradient(135deg, #6B4EE6 0%, #8B5CF6 100%); border: none; border-radius: 25px; padding: 12px 30px; color: white; font-weight: 600; text-decoration: none; display: inline-block; margin: 5px; transition: transform 0.2s; }
         .btn-home:hover { transform: translateY(-2px); color: white; text-decoration: none; }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
     <div class="error-container">

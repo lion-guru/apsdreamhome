@@ -20,7 +20,7 @@ $base = BASE_URL ?? '';
     <div class="d-flex justify-content-between align-items-center">
         <div>
             <h4 class="mb-0"><i class="fas fa-credit-card me-2"></i>Billing & Subscriptions</h4>
-            <p class="mb-0 mt-1" class="style-91394">Revenue, MRR/ARR, active subscriptions</p>
+            <p class="mb-0 mt-1 style-91394">Revenue, MRR/ARR, active subscriptions</p>
         </div>
         <div>
             <a href="<?= $base ?>/admin/billing/plans" class="btn btn-outline-light btn-sm me-2">
@@ -93,7 +93,7 @@ $base = BASE_URL ?? '';
                                 $colors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444'];
                                 $color = $colors[array_search($bp, $stats['by_plan']) % 4] ?? '#6366f1';
                                 ?>
-                                <div class="trend-fill" class="style-61744"></div>
+                                <div class="trend-fill style-61744"></div>
                             </div>
                         </div>
                     <?php endforeach; ?>

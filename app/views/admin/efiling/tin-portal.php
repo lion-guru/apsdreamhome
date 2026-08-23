@@ -109,7 +109,7 @@ ob_start();
                         <i class="fas fa-cloud-upload-alt me-1"></i>Submit Form 26Q
                     </button>
                 </form>
-                <div id="tin26qResult" class="mt-3" class="style-2248"></div>
+                <div id="tin26qResult" class="mt-3 style-2248"></div>
             </div>
         </div>
     </div>
@@ -140,7 +140,7 @@ ob_start();
                         <i class="fas fa-cloud-upload-alt me-1"></i>Submit Form 27Q
                     </button>
                 </form>
-                <div id="tin27qResult" class="mt-3" class="style-2248"></div>
+                <div id="tin27qResult" class="mt-3 style-2248"></div>
             </div>
         </div>
     </div>
@@ -194,7 +194,7 @@ ob_start();
                 </button>
             </div>
         </form>
-        <div id="form16aResult" class="mt-3" class="style-2248"></div>
+        <div id="form16aResult" class="mt-3 style-2248"></div>
     </div>
 </div>
 

@@ -141,8 +141,8 @@ function inr($n) { return '₹' . number_format($n); }
                   <i class="fas <?= $info['icon'] ?> fa-2x text-<?= $info['color'] ?>"></i>
                   <h4 class="mb-0 mt-2"><?= $count ?></h4>
                   <small class="text-muted"><?= $info['label'] ?></small>
-                  <div class="progress mt-2" class="style-21032">
-                    <div class="progress-bar bg-<?= $info['color'] ?>" class="style-21859"></div>
+                  <div class="progress mt-2 style-21032">
+                    <div class="progress-bar bg-<?= $info['color'] ?> style-21859"></div>
                   </div>
                 </div>
               </div>
@@ -165,7 +165,7 @@ function inr($n) { return '₹' . number_format($n); }
         <div class="card-header bg-transparent border-0">
           <h6 class="mb-0"><i class="fas fa-hard-hat me-2 text-warning"></i>Development Costs by Type</h6>
         </div>
-        <div class="card-body" class="style-82023">
+        <div class="card-body style-82023">
           <?php if (empty($devCosts)): ?>
             <div class="text-center text-muted py-4">
               <i class="fas fa-inbox fa-2x mb-2"></i><br>No development costs recorded yet
@@ -314,8 +314,8 @@ function inr($n) { return '₹' . number_format($n); }
         <div class="col-md-2">
           <div class="p-3">
             <small class="text-muted">Realization %</small>
-            <div class="progress mt-1" class="style-40280">
-              <div class="progress-bar bg-info" class="style-13536"><?= $roi['realization_pct'] ?? 0 ?>%</div>
+            <div class="progress mt-1 style-40280">
+              <div class="progress-bar bg-info style-13536"><?= $roi['realization_pct'] ?? 0 ?>%</div>
             </div>
           </div>
         </div>

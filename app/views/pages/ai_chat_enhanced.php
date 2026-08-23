@@ -9,7 +9,7 @@ $base = $base ?? BASE_URL;
 ?>
 
 <section class="py-5 bg-gradient-primary text-white position-relative overflow-hidden">
-    <div class="position-absolute top-0 start-0 w-100 h-100" class="style-61262"></div>
+    <div class="position-absolute top-0 start-0 w-100 h-100 style-61262"></div>
     <div class="container position-relative">
         <div class="row align-items-center">
             <div class="col-lg-8">
@@ -93,7 +93,7 @@ $base = $base ?? BASE_URL;
                         </div>
                     </div>
                     <div class="card-body p-0">
-                        <div id="enhanced-chat-messages" class="chat-messages p-4" class="style-89163">
+                        <div id="enhanced-chat-messages" class="chat-messages p-4 style-89163">
                             <div class="text-center py-5" id="enhanced-welcome">
                                 <div class="mb-3">
                                     <span class="display-1">ðŸ¤–</span>
@@ -180,7 +180,7 @@ function addEnhancedMessage(type, text) {
     const isUser = type === 'user';
     div.className = 'd-flex mb-3 ' + (isUser ? 'justify-content-end' : 'justify-content-start');
     div.innerHTML = `
-        <div class="${isUser ? 'bg-primary text-white' : 'bg-white border'} rounded-3 p-3 shadow-sm" class="style-6955">
+        <div class="${isUser ? 'bg-primary text-white' : 'bg-white border'} rounded-3 p-3 shadow-sm style-6955">
             <div class="small">${type === 'system' ? '<em>' : ''}${text}${type === 'system' ? '</em>' : ''}</div>
             <small class="${isUser ? 'text-white-50' : 'text-muted'} d-block mt-1">${new Date().toLocaleTimeString()}</small>
         </div>`;

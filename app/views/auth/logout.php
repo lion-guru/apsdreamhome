@@ -4,7 +4,7 @@
         <div class="col-md-6 col-lg-5">
             <div class="card border-0 shadow-sm text-center">
                 <div class="card-body py-5">
-                    <div class="mb-4"><i class="fas fa-check-circle text-success" class="style-69098"></i></div>
+                    <div class="mb-4"><i class="fas fa-check-circle text-success style-69098"></i></div>
                     <h4><?= __("auth_logged_out_title") ?></h4>
                     <p class="text-muted mb-1"><?= __("auth_session_ended") ?></p>
                     <p class="text-muted small mb-4"><?= __("auth_thank_you_visit") ?></p>

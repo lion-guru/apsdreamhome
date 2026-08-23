@@ -61,7 +61,7 @@
         <?php if (!empty($session['call_transcript'])): ?>
         <div class="mt-2">
             <strong>Transcript:</strong>
-            <pre class="bg-light p-3 rounded mt-1" class="style-53016"><?= htmlspecialchars($session['call_transcript'], ENT_QUOTES, 'UTF-8') ?></pre>
+            <pre class="bg-light p-3 rounded mt-1 style-53016"><?= htmlspecialchars($session['call_transcript'], ENT_QUOTES, 'UTF-8') ?></pre>
         </div>
         <?php endif; ?>
         <?php if (!empty($session['ai_summary'])): ?>

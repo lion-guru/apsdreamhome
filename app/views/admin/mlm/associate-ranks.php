@@ -53,7 +53,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         <td><?= htmlspecialchars((string)($a['name'] ?? '#'.($a['user_id'] ?? ''))) ?></td>
                         <td><?= htmlspecialchars((string)($a['email'] ?? '—')) ?></td>
                         <td>
-                            <span class="badge" class="style-1810">
+                            <span class="badge style-1810">
                                 <i class="fas <?= htmlspecialchars($icon ?? '') ?> me-1"></i>
                                 <?= htmlspecialchars(ucfirst($curRank ?? '')) ?>
                             </span>
@@ -63,7 +63,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         <td>&#8377;<?= number_format((float)($a['lifetime_sales'] ?? 0)) ?></td>
                         <td class="style-286">
                             <?php $pct = (float)($a['progress_pct'] ?? 0); ?>
-                            <div class="progress" class="style-87912">
+                            <div class="progress style-87912">
                                 <div class="progress-bar bg-success" role="progressbar" class="style-21859"></div>
                             </div>
                             <small class="text-muted"><?= number_format($pct, 1) ?>%</small>

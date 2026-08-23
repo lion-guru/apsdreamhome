@@ -10,11 +10,11 @@ $_ag = $agents ?? [];
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0"><i class="fas fa-brain" class="style-57602"></i> Agentic AI System</h1>
+                    <h1 class="m-0"><i class="fas fa-brain style-57602"></i> Agentic AI System</h1>
                     <small class="text-muted">Autonomous AI Agents running your company 24/7</small>
                 </div>
                 <div class="col-sm-6 text-right">
-                    <button onclick="runAllAgents(this)" class="btn btn-sm" class="style-87823"><i class="fas fa-play me-1"></i> Run All Agents</button>
+                    <button onclick="runAllAgents(this)" class="btn btn-sm style-87823"><i class="fas fa-play me-1"></i> Run All Agents</button>
                     <a href="<?= BASE_URL ?>/admin/agentic-ai/conversations" class="btn btn-sm btn-outline-primary"><i class="fas fa-comments"></i> Conversations</a>
                     <a href="<?= BASE_URL ?>/admin/agentic-ai/logs" class="btn btn-sm btn-outline-secondary"><i class="fas fa-list"></i> Logs</a>
                     <a href="<?= BASE_URL ?>/admin/agentic-ai/auto-reply" class="btn btn-sm btn-outline-success"><i class="fas fa-cog"></i> Auto-Reply</a>
@@ -29,7 +29,7 @@ $_ag = $agents ?? [];
             <div class="row mb-4">
                 <div class="col-lg-2 col-md-4 col-6">
                     <div class="info-box">
-                        <span class="info-box-icon" class="style-87823"><i class="fas fa-robot"></i></span>
+                        <span class="info-box-icon style-87823"><i class="fas fa-robot"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">Total Tasks</span>
                             <span class="info-box-number"><?= (int)($_ss['today_tasks'] ?? 0) ?></span>
@@ -39,7 +39,7 @@ $_ag = $agents ?? [];
                 </div>
                 <div class="col-lg-2 col-md-4 col-6">
                     <div class="info-box">
-                        <span class="info-box-icon" class="style-82623"><i class="fas fa-check"></i></span>
+                        <span class="info-box-icon style-82623"><i class="fas fa-check"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">Running Now</span>
                             <span class="info-box-number"><?= (int)($_ss['running_now'] ?? 0) ?></span>
@@ -49,7 +49,7 @@ $_ag = $agents ?? [];
                 </div>
                 <div class="col-lg-2 col-md-4 col-6">
                     <div class="info-box">
-                        <span class="info-box-icon" class="style-70855"><i class="fas fa-exclamation"></i></span>
+                        <span class="info-box-icon style-70855"><i class="fas fa-exclamation"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">Escalated</span>
                             <span class="info-box-number"><?= (int)($_ss['escalated'] ?? 0) ?></span>
@@ -59,7 +59,7 @@ $_ag = $agents ?? [];
                 </div>
                 <div class="col-lg-2 col-md-4 col-6">
                     <div class="info-box">
-                        <span class="info-box-icon" class="style-93100"><i class="fas fa-comments"></i></span>
+                        <span class="info-box-icon style-93100"><i class="fas fa-comments"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">Conversations</span>
                             <span class="info-box-number"><?= (int)($_ss['today_conversations'] ?? 0) ?></span>
@@ -69,7 +69,7 @@ $_ag = $agents ?? [];
                 </div>
                 <div class="col-lg-2 col-md-4 col-6">
                     <div class="info-box">
-                        <span class="info-box-icon" class="style-9563"><i class="fab fa-whatsapp"></i></span>
+                        <span class="info-box-icon style-9563"><i class="fab fa-whatsapp"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">WA Clicks</span>
                             <span class="info-box-number"><?= (int)($_ss['wa_clicks'] ?? 0) ?></span>
@@ -79,7 +79,7 @@ $_ag = $agents ?? [];
                 </div>
                 <div class="col-lg-2 col-md-4 col-6">
                     <div class="info-box">
-                        <span class="info-box-icon" class="style-43457"><i class="fas fa-user-plus"></i></span>
+                        <span class="info-box-icon style-43457"><i class="fas fa-user-plus"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">New Leads</span>
                             <span class="info-box-number"><?= (int)($_ss['new_leads'] ?? 0) ?></span>
@@ -96,14 +96,14 @@ $_ag = $agents ?? [];
                 <?php $stat = $_as[$key] ?? []; ?>
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
                     <a href="<?= BASE_URL ?>/admin/agentic-ai/agent/<?= $key ?>" class="text-decoration-none">
-                        <div class="card card-outline h-100" class="style-36626">
+                        <div class="card card-outline h-100 style-36626">
                             <div class="card-body p-3">
                                 <div class="d-flex align-items-center mb-2">
                                     <div class="style-35756">
-                                        <i class="fas <?= $agent['icon'] ?>" class="style-40515"></i>
+                                        <i class="fas <?= $agent['icon'] ?> style-40515"></i>
                                     </div>
                                     <div>
-                                        <h6 class="mb-0" class="style-22051"><?= $agent['name'] ?></h6>
+                                        <h6 class="mb-0 style-22051"><?= $agent['name'] ?></h6>
                                     </div>
                                 </div>
                                 <p class="small text-muted mb-2"><?= $agent['description'] ?></p>
@@ -172,8 +172,8 @@ $_ag = $agents ?? [];
 
                 <!-- Quick Info -->
                 <div class="col-lg-4">
-                    <div class="card card-outline card-purple" class="style-46001">
-                        <div class="card-header" class="style-28902"><h3 class="card-title" class="style-57602"><i class="fas fa-info-circle"></i> How It Works</h3></div>
+                    <div class="card card-outline card-purple style-46001">
+                        <div class="card-header style-28902"><h3 class="card-title style-57602"><i class="fas fa-info-circle"></i> How It Works</h3></div>
                         <div class="card-body">
                             <ol class="small mb-0 pl-3">
                                 <li class="mb-2"><strong>Each agent</strong> specializes in one business function</li>

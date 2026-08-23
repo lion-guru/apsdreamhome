@@ -16,7 +16,7 @@
                         <tr><td><strong>Line</strong></td><td><?= (int)($log['line'] ?? 0) ?></td></tr>
                         <tr><td><strong>Function</strong></td><td><?= htmlspecialchars($log['function'] ?? '-') ?></td></tr>
                         <tr><td><strong>IP</strong></td><td><code><?= htmlspecialchars($log['ip'] ?? '-') ?></code></td></tr>
-                        <tr><td><strong>User Agent</strong></td><td class="text-truncate" class="style-63668"><?= htmlspecialchars($log['user_agent'] ?? '-') ?></td></tr>
+                        <tr><td><strong>User Agent</strong></td><td class="text-truncate style-63668"><?= htmlspecialchars($log['user_agent'] ?? '-') ?></td></tr>
                         <tr><td><strong>Timestamp</strong></td><td><?= htmlspecialchars($log['created_at'] ?? '') ?></td></tr>
                     </table></div>
                 </div>
@@ -26,14 +26,14 @@
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-white border-bottom"><h5 class="mb-0"><i class="fas fa-layer-group me-2"></i>Stack Trace</h5></div>
                 <div class="card-body p-0">
-                    <pre class="mb-0 p-3" class="style-42670"><?= htmlspecialchars($log['trace'] ?? 'No stack trace available.') ?></pre>
+                    <pre class="mb-0 p-3 style-42670"><?= htmlspecialchars($log['trace'] ?? 'No stack trace available.') ?></pre>
                 </div>
             </div>
             <?php if (!empty($log['context'])): ?>
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom"><h5 class="mb-0"><i class="fas fa-code me-2"></i>Context</h5></div>
                 <div class="card-body p-0">
-                    <pre class="mb-0 p-3" class="style-52082"><?= htmlspecialchars(json_encode($log['context'], JSON_PRETTY_PRINT) ?: '{}') ?></pre>
+                    <pre class="mb-0 p-3 style-52082"><?= htmlspecialchars(json_encode($log['context'], JSON_PRETTY_PRINT) ?: '{}') ?></pre>
                 </div>
             </div>
             <?php endif; ?>

@@ -58,7 +58,7 @@
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-body aps-cp-card-body">
                     <h6 class="fw-bold mb-3"><i class="fas fa-info-circle text-primary me-1"></i> How it works</h6>
-                    <ul class="small text-muted mb-0" class="style-51338">
+                    <ul class="small text-muted mb-0 style-51338">
                         <li>Push notifications are sent to all users with an active browser subscription</li>
                         <li>Users must have granted push permission in their browser</li>
                         <li>Notifications appear even when the site is not open</li>
@@ -80,7 +80,7 @@
         </div>
     </div>
 
-    <div id="result" class="mt-3" class="style-2248"></div>
+    <div id="result" class="mt-3 style-2248"></div>
 </div>
 
 <script>

@@ -272,8 +272,7 @@ $data = $data ?? [];
                                                     <h6 class="card-title"><?= $initiative['title'] ?? '' ?></h6>
                                                     <p class="card-text small"><?= $initiative['description'] ?? '' ?></p>
                                                     <div class="progress mb-2">
-                                                        <div class="progress-bar bg-<?= $initiative['progress_color'] ?? 'primary' ?>" 
-                                                             class="style-97612"></div>
+                                                        <div class="progress-bar bg-<?= $initiative['progress_color'] ?? 'primary' ?> style-97612"></div>
                                                     </div>
                                                     <small class="text-muted"><?= $initiative['progress'] ?? 0 ?>% Complete</small>
                                                 </div>

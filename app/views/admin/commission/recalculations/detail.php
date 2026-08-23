@@ -4,7 +4,7 @@
             <a href="<?= BASE_URL ?>/admin/commission/recalculations" class="btn btn-sm btn-outline-secondary mb-2">
                 <i class="fas fa-arrow-left me-1"></i> Back to List
             </a>
-            <h2 class="style-48283"><i class="fas fa-calculator me-2" class="style-86204"></i> Recalculation #<?= $item['id'] ?></h2>
+            <h2 class="style-48283"><i class="fas fa-calculator me-2 style-86204"></i> Recalculation #<?= $item['id'] ?></h2>
         </div>
     </div>
 
@@ -17,7 +17,7 @@
         default => ['color' => '#6c757d', 'bg' => 'rgba(108,117,125,0.1)', 'icon' => 'fa-info-circle', 'label' => ucfirst($item['status'] ?? 'Unknown')],
     };
     ?>
-    <div class="alert mb-4" class="style-39216">
+    <div class="alert mb-4 style-39216">
         <i class="fas <?= $statusBanner['icon'] ?> me-2"></i>
         <strong>Status: <?= $statusBanner['label'] ?></strong>
         — <?= date('d M Y H:i', strtotime($item['created_at'])) ?>
@@ -26,8 +26,8 @@
     <div class="row">
         <!-- Left: Amount Comparison -->
         <div class="col-md-6">
-            <div class="card mb-4" class="style-62867">
-                <div class="card-header" class="style-10528">
+            <div class="card mb-4 style-62867">
+                <div class="card-header style-10528">
                     <h5 class="style-11295"><i class="fas fa-balance-scale me-2"></i> Amount Comparison</h5>
                 </div>
                 <div class="card-body">
@@ -37,7 +37,7 @@
                             <h3 class="style-52183">₹<?= number_format((float)$item['original_amount']) ?></h3>
                         </div>
                         <div class="col-2 d-flex align-items-center justify-content-center">
-                            <i class="fas fa-arrow-right" class="style-65365"></i>
+                            <i class="fas fa-arrow-right style-65365"></i>
                         </div>
                         <div class="col-5">
                             <h6 class="style-77712">New Amount</h6>
@@ -46,7 +46,7 @@
                     </div>
                     <div class="text-center">
                         <?php $diff = (float)$item['amount_diff']; ?>
-                        <span class="badge" class="style-89593">
+                        <span class="badge style-89593">
                             <?= $diff >= 0 ? '+' : '' ?>₹<?= number_format($diff) ?> (<?= $diff >= 0 ? 'Increase' : 'Decrease' ?>)
                         </span>
                     </div>
@@ -54,8 +54,8 @@
             </div>
 
             <!-- Original Entry Details -->
-            <div class="card mb-4" class="style-62867">
-                <div class="card-header" class="style-10528">
+            <div class="card mb-4 style-62867">
+                <div class="card-header style-10528">
                     <h5 class="style-11295"><i class="fas fa-file-invoice me-2"></i> Original Ledger Entry #<?= $item['original_ledger_id'] ?></h5>
                 </div>
                 <div class="card-body">
@@ -77,8 +77,8 @@
         <!-- Right: Reason + Actions -->
         <div class="col-md-6">
             <!-- Reason -->
-            <div class="card mb-4" class="style-62867">
-                <div class="card-header" class="style-10528">
+            <div class="card mb-4 style-62867">
+                <div class="card-header style-10528">
                     <h5 class="style-11295"><i class="fas fa-comment me-2"></i> Reason</h5>
                 </div>
                 <div class="card-body">
@@ -89,8 +89,8 @@
 
             <!-- Plan Snapshot (if available) -->
             <?php if (!empty($item['plan_snapshot'])): ?>
-                <div class="card mb-4" class="style-62867">
-                    <div class="card-header" class="style-10528">
+                <div class="card mb-4 style-62867">
+                    <div class="card-header style-10528">
                         <h5 class="style-11295"><i class="fas fa-camera me-2"></i> Original Plan Snapshot</h5>
                     </div>
                     <div class="card-body">
@@ -102,8 +102,8 @@
 
             <!-- Admin Notes -->
             <?php if (!empty($item['admin_notes'])): ?>
-                <div class="card mb-4" class="style-62867">
-                    <div class="card-header" class="style-10528">
+                <div class="card mb-4 style-62867">
+                    <div class="card-header style-10528">
                         <h5 class="style-11295"><i class="fas fa-sticky-note me-2"></i> Admin Notes</h5>
                     </div>
                     <div class="card-body">
@@ -120,13 +120,13 @@
 
             <!-- Action Buttons (only for pending) -->
             <?php if (($item['status'] ?? '') === 'pending'): ?>
-                <div class="card mb-4" class="style-33275">
-                    <div class="card-header" class="style-70653">
+                <div class="card mb-4 style-33275">
+                    <div class="card-header style-70653">
                         <h5 class="style-11295"><i class="fas fa-gavel me-2"></i> Admin Action</h5>
                     </div>
                     <div class="card-body">
                         <p class="style-4126">
-                            <i class="fas fa-exclamation-triangle me-1" class="style-86204"></i>
+                            <i class="fas fa-exclamation-triangle me-1 style-86204"></i>
                             Approving will create a NEW ledger entry and mark the original as superseded.
                             Past entries are NEVER modified.
                         </p>
@@ -162,8 +162,8 @@
 
             <!-- New Ledger Entry (if applied) -->
             <?php if (($item['status'] ?? '') === 'applied' && !empty($item['new_ledger_id'])): ?>
-                <div class="card mb-4" class="style-76801">
-                    <div class="card-header" class="style-92050">
+                <div class="card mb-4 style-76801">
+                    <div class="card-header style-92050">
                         <h5 class="style-37492"><i class="fas fa-check-circle me-2"></i> Applied</h5>
                     </div>
                     <div class="card-body">

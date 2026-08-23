@@ -11,13 +11,12 @@ $isAssociate = ($customer['is_associate'] ?? 0) == 1;
 <?php if (!$customer): ?>
     <div class="alert alert-danger"><?= __('assoc_cd_not_found', [], 'Customer not found.') ?></div>
 <?php else: ?>
-    <div class="card border-0 shadow-sm mb-4" class="style-64392">
+    <div class="card border-0 shadow-sm mb-4 style-64392">
         <div class="card-body">
             <div class="row align-items-center">
                 <div class="col-md-8">
                     <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle d-flex align-items-center justify-content-center me-3" 
-                             class="style-89487">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center me-3 style-89487">
                             <i class="fas fa-<?= e($isAssociate ? 'user-tie' : 'user') ?>"></i>
                         </div>
                         <div>

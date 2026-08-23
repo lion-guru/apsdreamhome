@@ -69,25 +69,25 @@ $typeLabels = [
     ?>
     <div class="row g-3 mb-4">
         <div class="col-md-3">
-            <div class="aps-cp-stat" class="style-91500">
+            <div class="aps-cp-stat style-91500">
                 <div class="stat-value"><?= count($agreements) ?></div>
                 <div class="stat-label"><?= __('user_agreements_total', null, 'Total Agreements') ?></div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="aps-cp-stat" class="style-11277">
+            <div class="aps-cp-stat style-11277">
                 <div class="stat-value"><?= $pendingCount ?></div>
                 <div class="stat-label"><?= __('user_agreements_pending_count', null, 'Pending Signature') ?></div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="aps-cp-stat" class="style-99864">
+            <div class="aps-cp-stat style-99864">
                 <div class="stat-value"><?= $signedCount ?></div>
                 <div class="stat-label"><?= __('user_agreements_signed_count', null, 'Signed') ?></div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="aps-cp-stat" class="style-50064">
+            <div class="aps-cp-stat style-50064">
                 <div class="stat-value"><?= count($agreements) - $pendingCount - $signedCount ?></div>
                 <div class="stat-label"><?= __('user_agreements_other_count', null, 'Other') ?></div>
             </div>

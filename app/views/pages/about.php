@@ -148,7 +148,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 }
 
 .about-hero-section .hero-subtitle {
-    color: #94a3b8 !important;
+    color: #e2e8f0 !important;
     font-size: 1.25rem;
     line-height: 1.7;
     max-width: 90%;
@@ -234,7 +234,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 }
 
 .glass-stat-item .stat-label {
-    color: #94a3b8;
+    color: #e2e8f0;
     font-size: 0.95rem;
     font-weight: 500;
     text-transform: uppercase;
@@ -250,7 +250,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 
 /* ---- About Page Global ---- */
 .about-story{padding:80px 0;background:#fff}
-.about-story .story-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(13,148,136,0.08);color:#0d9488;font-size:0.75rem;font-weight:700;padding:6px 16px;border-radius:50px;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:16px}
+.about-story .story-badge{display:inline-flex;align-items:center;gap:6px;background:#ecfdf5;color:#115e59;font-size:0.75rem;font-weight:700;padding:6px 16px;border-radius:50px;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:16px}
 .about-story .story-title{font-size:2.2rem;font-weight:800;color:#1e293b;margin-bottom:20px;letter-spacing:-0.5px}
 .about-story .story-title span{background:linear-gradient(135deg,#0d9488,#0f766e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .about-story .story-text{color:#475569;font-size:1rem;line-height:1.8}
@@ -409,23 +409,23 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-lg-6 mt-4 mt-lg-0">
                 <div class="story-detail">
-                    <h6><i class="fas fa-calendar-alt me-2" class="style-5793"></i> Founded</h6>
+                    <h6><i class="fas fa-calendar-alt me-2 style-5793"></i> Founded</h6>
                     <p>April 26, 2022 &bull; Incorporated under the Companies Act, 2013</p>
                 </div>
                 <div class="story-detail">
-                    <h6><i class="fas fa-map-marker-alt me-2" class="style-5793"></i> Headquarters</h6>
+                    <h6><i class="fas fa-map-marker-alt me-2 style-5793"></i> Headquarters</h6>
                     <p>Virat Bhawan, Singhariya Kunraghat, Gorakhpur, UP 273008</p>
                 </div>
                 <div class="story-detail">
-                    <h6><i class="fas fa-briefcase me-2" class="style-5793"></i> Industry</h6>
+                    <h6><i class="fas fa-briefcase me-2 style-5793"></i> Industry</h6>
                     <p>Real Estate Activities (NIC Code: 7010) — Plot & Land, Residential Floors</p>
                 </div>
                 <div class="story-detail">
-                    <h6><i class="fas fa-chart-line me-2" class="style-5793"></i> Capital</h6>
+                    <h6><i class="fas fa-chart-line me-2 style-5793"></i> Capital</h6>
                     <p>Authorized & Paid-up Capital: ₹10,00,000</p>
                 </div>
                 <div class="story-detail">
-                    <h6><i class="fas fa-star me-2" class="style-5793"></i> Rating</h6>
+                    <h6><i class="fas fa-star me-2 style-5793"></i> Rating</h6>
                     <p>5.0/5 Stars on India Online &bull; Trusted by 500+ Families</p>
                 </div>
             </div>
@@ -448,7 +448,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
         <div class="row g-4">
             <div class="col-md-3 col-6">
                 <div class="highlight-card service-card scroll-reveal" data-service="plot-selling" role="button" tabindex="0">
-                    <div class="icon-wrap" class="style-75269">
+                    <div class="icon-wrap style-75269">
                         <i class="fas fa-map-marked-alt"></i>
                     </div>
                     <h5>Plot Selling</h5>
@@ -458,7 +458,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="highlight-card service-card scroll-reveal" data-service="construction" role="button" tabindex="0">
-                    <div class="icon-wrap" class="style-46608">
+                    <div class="icon-wrap style-46608">
                         <i class="fas fa-hard-hat"></i>
                     </div>
                     <h5>Construction & Development</h5>
@@ -468,7 +468,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="highlight-card service-card scroll-reveal" data-service="legal" role="button" tabindex="0">
-                    <div class="icon-wrap" class="style-64138">
+                    <div class="icon-wrap style-64138">
                         <i class="fas fa-file-contract"></i>
                     </div>
                     <h5>Legal & Documentation</h5>
@@ -478,7 +478,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="highlight-card service-card scroll-reveal" data-service="payment" role="button" tabindex="0">
-                    <div class="icon-wrap" class="style-10633">
+                    <div class="icon-wrap style-10633">
                         <i class="fas fa-hand-holding-usd"></i>
                     </div>
                     <h5>Flexible Payment Plans</h5>
@@ -488,7 +488,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="highlight-card service-card scroll-reveal" data-service="resale" role="button" tabindex="0">
-                    <div class="icon-wrap" class="style-547">
+                    <div class="icon-wrap style-547">
                         <i class="fas fa-home"></i>
                     </div>
                     <h5>Resale & Resale Assistance</h5>
@@ -498,7 +498,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="highlight-card service-card scroll-reveal" data-service="site-visit" role="button" tabindex="0">
-                    <div class="icon-wrap" class="style-2487">
+                    <div class="icon-wrap style-2487">
                         <i class="fas fa-car"></i>
                     </div>
                     <h5>Free Site Visits</h5>
@@ -508,7 +508,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="highlight-card service-card scroll-reveal" data-service="flats" role="button" tabindex="0">
-                    <div class="icon-wrap" class="style-98426">
+                    <div class="icon-wrap style-98426">
                         <i class="fas fa-couch"></i>
                     </div>
                     <h5>Furnished Flats</h5>
@@ -518,7 +518,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="highlight-card service-card scroll-reveal" data-service="community" role="button" tabindex="0">
-                    <div class="icon-wrap" class="style-62789">
+                    <div class="icon-wrap style-62789">
                         <i class="fas fa-users"></i>
                     </div>
                     <h5>Community Building</h5>
@@ -550,7 +550,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
         </div>
         <div class="service-modal-footer">
             <button class="service-modal-btn-secondary" id="serviceModalClose2">Close</button>
-            <a class="service-modal-btn-primary" id="serviceModalLink" href="#">Learn More &nbsp;<i class="fas fa-arrow-right"></i></a>
+            <a class="service-modal-btn-primary" id="serviceModalLink" href="#" aria-label="Learn more about this service">Learn More &nbsp;<i class="fas fa-arrow-right" aria-hidden="true"></i></a>
         </div>
     </div>
 </div>
@@ -632,7 +632,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                     </div>
                     <h5><?= htmlspecialchars($dName ?? '') ?></h5>
                     <div class="dept-role"><?= htmlspecialchars($dRole ?? '') ?></div>
-                    <div class="dept-exp"><i class="fas fa-briefcase me-1" class="style-62735"></i> <?= htmlspecialchars($dExp ?? '') ?></div>
+                    <div class="dept-exp"><i class="fas fa-briefcase me-1 style-62735"></i> <?= htmlspecialchars($dExp ?? '') ?></div>
                     <p><?= htmlspecialchars($dBio ?? '') ?></p>
                 </div>
             </div>
@@ -658,7 +658,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
         <div class="row g-4">
             <div class="col-lg-4">
                 <div class="mvv-card mission scroll-reveal">
-                    <div class="mvv-icon" class="style-75269">
+                    <div class="mvv-icon style-75269">
                         <i class="fas fa-rocket"></i>
                     </div>
                     <h4>Our Mission</h4>
@@ -669,7 +669,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-lg-4">
                 <div class="mvv-card vision scroll-reveal">
-                    <div class="mvv-icon" class="style-46608">
+                    <div class="mvv-icon style-46608">
                         <i class="fas fa-eye"></i>
                     </div>
                     <h4>Our Vision</h4>
@@ -680,7 +680,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-lg-4">
                 <div class="mvv-card values scroll-reveal">
-                    <div class="mvv-icon" class="style-64138">
+                    <div class="mvv-icon style-64138">
                         <i class="fas fa-heart"></i>
                     </div>
                     <h4>Our Values</h4>
@@ -697,7 +697,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 <!-- STATS SECTION -->
 <!-- ============================================ -->
 <section class="about-stats">
-    <div class="container position-relative" class="style-9174">
+    <div class="container position-relative style-9174">
         <div class="text-center mb-5">
             <h2 class="style-69158">Our Numbers Speak</h2>
             <p class="style-57302">Building trust one project at a time</p>
@@ -705,25 +705,25 @@ function aboutContent($sc, $key, $fallbackKey = '') {
         <div class="row g-4">
             <div class="col-6 col-lg-3">
                 <div class="stat-box scroll-reveal">
-                    <div class="stat-num" class="style-2154">5000+</div>
+                    <div class="stat-num style-2154">5000+</div>
                     <div class="stat-label">Plots Sold</div>
                 </div>
             </div>
             <div class="col-6 col-lg-3">
                 <div class="stat-box scroll-reveal">
-                    <div class="stat-num" class="style-64047">500+</div>
+                    <div class="stat-num style-64047">500+</div>
                     <div class="stat-label">Happy Families</div>
                 </div>
             </div>
             <div class="col-6 col-lg-3">
                 <div class="stat-box scroll-reveal">
-                    <div class="stat-num" class="style-62735">4+</div>
+                    <div class="stat-num style-62735">4+</div>
                     <div class="stat-label">Colonies Delivered</div>
                 </div>
             </div>
             <div class="col-6 col-lg-3">
                 <div class="stat-box scroll-reveal">
-                    <div class="stat-num" class="style-80751">3</div>
+                    <div class="stat-num style-80751">3</div>
                     <div class="stat-label">Cities Covered</div>
                 </div>
             </div>
@@ -780,7 +780,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             <!-- Working Office -->
             <div class="col-lg-4 col-md-6">
                 <div class="office-card scroll-reveal">
-                    <div class="office-header" class="style-85097">
+                    <div class="office-header style-85097">
                         <h5><i class="fas fa-hard-hat me-2"></i> Working Office</h5>
                         <small>Gorakhpur, Uttar Pradesh</small>
                     </div>
@@ -813,7 +813,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             <!-- Sehwan Office -->
             <div class="col-lg-4 col-md-6">
                 <div class="office-card scroll-reveal">
-                    <div class="office-header" class="style-21462">
+                    <div class="office-header style-21462">
                         <h5><i class="fas fa-store me-2"></i> Sehwan Office</h5>
                         <small>Pachrukhi, Gorakhpur</small>
                     </div>
@@ -856,7 +856,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                             <div class="col-md-3 col-6">
                                 <div class="style-88083">
                                     <div class="style-57901">
-                                        <i class="fas fa-city" class="style-67779"></i>
+                                        <i class="fas fa-city style-67779"></i>
                                     </div>
                                     <h6 class="style-22646">Gorakhpur</h6>
                                     <p class="style-724">Suryoday Colony (1050+)</p>
@@ -867,7 +867,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                             <div class="col-md-3 col-6">
                                 <div class="style-88083">
                                     <div class="style-35621">
-                                        <i class="fas fa-city" class="style-26370"></i>
+                                        <i class="fas fa-city style-26370"></i>
                                     </div>
                                     <h6 class="style-22646">Lucknow</h6>
                                     <p class="style-724">APS Valley (800+)</p>
@@ -877,7 +877,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                             <div class="col-md-3 col-6">
                                 <div class="style-88083">
                                     <div class="style-12044">
-                                        <i class="fas fa-city" class="style-57730"></i>
+                                        <i class="fas fa-city style-57730"></i>
                                     </div>
                                     <h6 class="style-22646">Kushinagar</h6>
                                     <p class="style-724">Budh Bihar Colony (1280+)</p>
@@ -886,7 +886,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                             <div class="col-md-3 col-6">
                                 <div class="style-88083">
                                     <div class="style-44154">
-                                        <i class="fas fa-building" class="style-94843"></i>
+                                        <i class="fas fa-building style-94843"></i>
                                     </div>
                                     <h6 class="style-22646">Prayagraj</h6>
                                     <p class="style-724">APS Heights (200 Flats)</p>
@@ -916,7 +916,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
         <div class="row g-4 justify-content-center">
             <div class="col-md-3 col-6">
                 <div class="cert-card scroll-reveal">
-                    <div class="cert-icon" class="style-75269">
+                    <div class="cert-icon style-75269">
                         <i class="fas fa-file-alt"></i>
                     </div>
                     <h6>CIN Number</h6>
@@ -925,7 +925,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="cert-card scroll-reveal">
-                    <div class="cert-icon" class="style-46608">
+                    <div class="cert-icon style-46608">
                         <i class="fas fa-landmark"></i>
                     </div>
                     <h6>ROC Kanpur</h6>
@@ -934,7 +934,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="cert-card scroll-reveal">
-                    <div class="cert-icon" class="style-64138">
+                    <div class="cert-icon style-64138">
                         <i class="fas fa-check-circle"></i>
                     </div>
                     <h6>UP RERA</h6>
@@ -943,7 +943,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="cert-card scroll-reveal">
-                    <div class="cert-icon" class="style-10633">
+                    <div class="cert-icon style-10633">
                         <i class="fas fa-star"></i>
                     </div>
                     <h6>5.0 Rating</h6>
@@ -959,7 +959,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 <!-- ============================================ -->
 <section class="style-69610">
     <div class="style-80207"></div>
-    <div class="container position-relative" class="style-9174">
+    <div class="container position-relative style-9174">
         <div class="row align-items-center">
             <div class="col-lg-8">
                 <h2 class="style-19049">

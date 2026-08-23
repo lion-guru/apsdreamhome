@@ -35,18 +35,18 @@ $doc_type_labels = $doc_type_labels ?? [];
 
 <div class="ocr-page">
     <div class="ocr-header">
-        <div class="container-fluid px-4" class="style-84072">
+        <div class="container-fluid px-4 style-84072">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <h4 class="mb-1 fw-bold text-white"><i class="fas fa-cloud-upload-alt me-2"></i>Upload Document</h4>
-                    <p class="mb-0" class="style-29848">Upload a document for OCR field extraction and verification</p>
+                    <p class="mb-0 style-29848">Upload a document for OCR field extraction and verification</p>
                 </div>
                 <a href="<?= BASE_URL ?>/admin/ocr" class="ocr-btn ocr-btn-outline"><i class="fas fa-arrow-left"></i>Back</a>
             </div>
         </div>
     </div>
 
-    <div class="container-fluid px-4" class="style-86238">
+    <div class="container-fluid px-4 style-86238">
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="ocr-card">

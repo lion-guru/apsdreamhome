@@ -1,5 +1,5 @@
 <!-- Hero Section -->
-<section class="premium-hero page-hero position-relative" class="style-43150">
+<section class="premium-hero page-hero position-relative style-43150">
     <div class="hero-overlay"></div>
     <div class="container position-relative z-1">
         <div class="row justify-content-center">
@@ -45,11 +45,11 @@
                 <form class="d-flex gap-2" id="blogNewsletterForm">
     <?php echo CSRFProtection::csrfField(); ?>
                     <input type="email" class="form-control" name="email" placeholder="<?= __('blog_newsletter_ph_email') ?>" required class="style-2723">
-                    <button type="submit" class="btn btn-gold px-4 fw-bold" class="style-2723">
+                    <button type="submit" class="btn btn-gold px-4 fw-bold style-2723">
                         <i class="fas fa-envelope me-1"></i><?= __('subscribe') ?>
                     </button>
                 </form>
-                <div id="blogNewsletterMsg" class="mt-2 small" class="style-2248"></div>
+                <div id="blogNewsletterMsg" class="mt-2 small style-2248"></div>
             </div>
         </div>
     </div>

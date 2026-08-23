@@ -5,7 +5,7 @@
             <?php if (!empty($months ?? [])): ?>
             <div class="dropdown">
                 <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"><i class="fas fa-calendar me-1"></i>Jump to Month</button>
-                <ul class="dropdown-menu" class="style-82023">
+                <ul class="dropdown-menu style-82023">
                     <?php foreach ($months as $m): ?>
                     <li><a class="dropdown-item" href="<?= BASE_URL ?>/admin/salary/records/<?= $m['year'] ?>/<?= $m['month'] ?>"><?= date('F', mktime(0,0,0,$m['month'],1)) ?> <?= $m['year'] ?></a></li>
                     <?php endforeach; ?>

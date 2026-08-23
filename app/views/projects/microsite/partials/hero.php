@@ -2,8 +2,8 @@
 $heroImage = $media['hero'] ?? '/assets/images/projects/placeholder-hero.jpg';
 $palette = $theme['palette'] ?? ['primary' => '#4e73df', 'accent' => '#1cc88a'];
 ?>
-<section class="microsite-hero" class="style-95846">
-    <div class="microsite-hero__bg" class="style-50707"></div>
+<section class="microsite-hero style-95846">
+    <div class="microsite-hero__bg style-50707"></div>
     <div class="container py-5">
         <div class="row align-items-center">
             <div class="col-lg-7">

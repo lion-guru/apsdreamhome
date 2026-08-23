@@ -71,7 +71,7 @@ $logs = $logs ?? [];
                                     <td><code class="small"><?php echo htmlspecialchars($log['endpoint'] ?? ''); ?></code></td>
                                     <td><?php echo htmlspecialchars($log['dev_name'] ?? 'Unknown'); ?></td>
                                     <td><code class="small text-muted"><?php echo htmlspecialchars($log['ip_address'] ?? ''); ?></code></td>
-                                    <td class="text-truncate" class="style-65684" title="<?php echo htmlspecialchars($log['user_agent'] ?? ''); ?>">
+                                    <td class="text-truncate style-65684" title="<?php echo htmlspecialchars($log['user_agent'] ?? ''); ?>">
                                         <?php echo htmlspecialchars(substr($log['user_agent'] ?? '', 0, 60)); ?>
                                     </td>
                                     <td><?php echo date('d M Y H:i:s', strtotime($log['request_time'] ?? 'now')); ?></td>

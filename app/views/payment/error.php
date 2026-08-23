@@ -4,7 +4,7 @@
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm text-center">
                 <div class="card-body py-5">
-                    <div class="mb-4"><i class="fas fa-exclamation-triangle text-warning" class="style-69098"></i></div>
+                    <div class="mb-4"><i class="fas fa-exclamation-triangle text-warning style-69098"></i></div>
                     <h3 class="text-warning mb-3">Payment Error</h3>
                     <p class="text-muted mb-4"><?= h($errorMessage) ?></p>
                     <div class="d-flex justify-content-center gap-3">

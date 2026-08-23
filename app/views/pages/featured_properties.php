@@ -11,7 +11,7 @@ $featuredProperties = [
 ];
 ?>
 
-<section class="py-5 bg-primary text-white" class="style-68644">
+<section class="py-5 bg-primary text-white style-68644">
     <div class="container text-center">
         <h1 class="display-4 fw-bold mb-3"><?= __('featured_hero_title') ?></h1>
         <p class="lead"><?= __('featured_hero_desc') ?></p>

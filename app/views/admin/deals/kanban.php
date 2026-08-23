@@ -102,7 +102,7 @@ $stageIcons = [
                             <span class="badge bg-white text-<?= $stage['color'] ?>"><?= count($stageDeals) ?></span>
                         </div>
                     </div>
-                    <div class="card-body kanban-dropzone p-2" class="style-41906">
+                    <div class="card-body kanban-dropzone p-2 style-41906">
                         <?php foreach ($stageDeals as $deal): ?>
                             <div class="card kanban-card mb-2" data-deal-id="<?= $deal['id'] ?>" draggable="true">
                                 <div class="card-body p-2">

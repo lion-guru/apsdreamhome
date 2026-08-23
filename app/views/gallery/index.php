@@ -61,7 +61,7 @@
         }
     </style>
     <!-- Header -->
-    <nav class="navbar navbar-expand-lg navbar-dark" class="style-91831">
+    <nav class="navbar navbar-expand-lg navbar-dark style-91831">
         <div class="container">
             <a class="navbar-brand fw-bold" href="<?= BASE_URL ?>">
                 <i class="fas fa-home me-2"></i>APS Dream Home

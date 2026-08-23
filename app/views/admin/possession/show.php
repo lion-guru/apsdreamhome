@@ -190,8 +190,8 @@ $isDelayed = $currentStatus === 'delayed';
                     <?php $completedCount = 0; foreach ($checklist as $item): if ($item['is_completed']) $completedCount++; endforeach; ?>
                     <div class="mb-2">
                         <small class="text-muted"><?= $completedCount ?> / <?= count($checklist) ?> completed</small>
-                        <div class="progress" class="style-12222">
-                            <div class="progress-bar bg-success" class="style-24354"></div>
+                        <div class="progress style-12222">
+                            <div class="progress-bar bg-success style-24354"></div>
                         </div>
                     </div>
                     <div class="style-52319">

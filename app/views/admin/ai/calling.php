@@ -116,7 +116,7 @@ $ai_agents = $ai_agents ?? [];
                                     </button>
                                 </div>
                             </div>
-                            <div id="quickCallStatus" class="mt-2" class="style-2248"></div>
+                            <div id="quickCallStatus" class="mt-2 style-2248"></div>
                         </div>
                     </div>
                 </div>

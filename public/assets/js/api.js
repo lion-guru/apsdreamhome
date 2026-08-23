@@ -341,7 +341,7 @@ class ContactApi extends APSApiClient {
   }
 
   async subscribeNewsletter(email) {
-    return this.post('/api/newsletter/subscribe', { email });
+    return this.post('/api/newsletter', { email });
   }
 
   async requestCallback(formData) {

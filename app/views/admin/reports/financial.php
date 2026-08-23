@@ -104,11 +104,11 @@ $netIncome = $netIncome ?? $totalReceipts;
                 <div class="aps-cp-card-body">
                     <div class="mb-3">
                         <div class="d-flex justify-content-between"><small>Completed</small><small class="text-success"><?= $reconciliations ?></small></div>
-                        <div class="progress" class="style-32124"><div class="progress-bar bg-success" class="style-78654"></div></div>
+                        <div class="progress style-32124"><div class="progress-bar bg-success style-78654"></div></div>
                     </div>
                     <div class="mb-3">
                         <div class="d-flex justify-content-between"><small>Pending</small><small class="text-warning"><?= $pendingRecon ?></small></div>
-                        <div class="progress" class="style-32124"><div class="progress-bar bg-warning" class="style-6772"></div></div>
+                        <div class="progress style-32124"><div class="progress-bar bg-warning style-6772"></div></div>
                     </div>
                     <div class="text-center mt-3">
                         <a href="<?= BASE_URL ?>/admin/finance/reconciliation" class="btn btn-outline-primary btn-sm">View Reconciliation</a>

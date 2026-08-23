@@ -60,7 +60,7 @@ $recent_shares = $recent_shares ?? [];
                             $color = $colors[$p['platform']] ?? '#94a3b8';
                             ?>
                             <div class="d-flex align-items-center mb-3">
-                                <div class="me-3" class="style-23730">
+                                <div class="me-3 style-23730">
                                     <i class="fas fa-<?= $p['platform'] === 'whatsapp' ? 'whatsapp' : ($p['platform'] === 'copy' ? 'copy' : 'share-alt') ?>"></i>
                                 </div>
                                 <div class="flex-grow-1">
@@ -68,8 +68,8 @@ $recent_shares = $recent_shares ?? [];
                                         <span class="fw-bold small"><?= ucfirst($p['platform']) ?></span>
                                         <span class="text-muted small"><?= $p['cnt'] ?> shares (<?= $pct ?>%)</span>
                                     </div>
-                                    <div class="progress" class="style-12222">
-                                        <div class="progress-bar" class="style-61744"></div>
+                                    <div class="progress style-12222">
+                                        <div class="progress-bar style-61744"></div>
                                     </div>
                                 </div>
                             </div>

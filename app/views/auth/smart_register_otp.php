@@ -95,6 +95,7 @@ $maskedPhone = $phone ? substr($phone, 0, 2) . '****' . substr($phone, -2) : '**
             .otp-input{width:45px;height:52px;font-size:1.2rem}
         }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
     <div class="otp-wrapper">

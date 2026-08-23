@@ -2,7 +2,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-9">
             <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
-                <div class="card-header text-white p-4" class="style-68644">
+                <div class="card-header text-white p-4 style-68644">
                     <div class="d-flex align-items-center">
                         <div class="me-3">
                             <i class="fas fa-robot fa-2x"></i>
@@ -19,10 +19,10 @@
                     </div>
                 </div>
 
-                <div class="chat-container d-flex flex-column" class="style-52621">
+                <div class="chat-container d-flex flex-column style-52621">
                     <div class="chat-messages p-4" id="chatMessages" class="style-34411">
                         <div class="text-center mb-4">
-                            <div class="d-inline-block p-3 rounded-circle mb-2" class="style-68644">
+                            <div class="d-inline-block p-3 rounded-circle mb-2 style-68644">
                                 <i class="fas fa-robot fa-2x text-white"></i>
                             </div>
                             <h4 class="mb-1"><?= __('aiast_greeting', [], 'Namaste!') ?> ðŸ™�</h4>
@@ -121,11 +121,11 @@
         wrapper.className = 'message mb-3 clearfix';
         if (role === 'user') {
             wrapper.innerHTML =
-                '<div class="p-3 rounded-4 shadow-sm" class="style-8242">'
+                '<div class="p-3 rounded-4 shadow-sm style-8242">'
                 + escapeHtml(text) + '</div>';
         } else {
             wrapper.innerHTML =
-                '<div class="p-3 rounded-4 bg-white shadow-sm" class="style-65334">'
+                '<div class="p-3 rounded-4 bg-white shadow-sm style-65334">'
                 + escapeHtml(text) + '</div>';
         }
         messages.appendChild(wrapper);

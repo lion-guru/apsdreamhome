@@ -44,7 +44,7 @@
                 ?>
                 <div class="colony-section mb-4" data-colony="<?= $colony['id'] ?>">
                     <h5 class="text-primary mb-2"><?= htmlspecialchars($colony['name'] ?? '') ?></h5>
-                    <svg viewBox="0 0 <?= $svgW ?> <?= $svgH ?>" class="w-100 border rounded bg-light" class="style-50142">
+                    <svg viewBox="0 0 <?= $svgW ?> <?= $svgH ?>" class="w-100 border rounded bg-light style-50142">
                         <text x="<?= $svgW/2 ?>" y="16" text-anchor="middle" font-size="11" fill="#6c757d"><?= htmlspecialchars($colony['name'] ?? '') ?> — <?= count($cplots) ?> plots</text>
                         <?php foreach ($cplots as $i => $p):
                             $col = $i % $cols;
@@ -82,11 +82,11 @@
 <div class="aps-cp-card">
     <div class="aps-cp-card-body">
         <div class="d-flex flex-wrap gap-3 justify-content-center">
-            <span><span class="badge" class="style-85551"></span> Available</span>
-            <span><span class="badge" class="style-81819"></span> Booked</span>
-            <span><span class="badge" class="style-15902"></span> On EMI</span>
-            <span><span class="badge" class="style-5389"></span> Registered</span>
-            <span><span class="badge" class="style-23124"></span> Blocked</span>
+            <span><span class="badge style-85551"></span> Available</span>
+            <span><span class="badge style-81819"></span> Booked</span>
+            <span><span class="badge style-15902"></span> On EMI</span>
+            <span><span class="badge style-5389"></span> Registered</span>
+            <span><span class="badge style-23124"></span> Blocked</span>
         </div>
     </div>
 </div>

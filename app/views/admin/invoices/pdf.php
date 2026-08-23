@@ -107,7 +107,7 @@
             <?php if (!empty($invoice['client_address'])): ?><p><?= nl2br(htmlspecialchars($invoice['client_address'] ?? '')) ?></p><?php endif; ?>
             <?php if (!empty($invoice['gstin'])): ?><p><strong>GSTIN:</strong> <?= htmlspecialchars($invoice['gstin'] ?? '') ?></p><?php endif; ?>
         </div>
-        <div class="party-box" class="style-64867">
+        <div class="party-box style-64867">
             <h3>Ship To</h3>
             <?php if (!empty($invoice['shipping_address'])): ?>
                 <p><?= nl2br(htmlspecialchars($invoice['shipping_address'] ?? '')) ?></p>
@@ -129,11 +129,11 @@
             <tr>
                 <th class="style-69407">#</th>
                 <th class="style-45253">Description</th>
-                <th class="style-74443" class="text-center">Qty</th>
-                <th class="style-57849" class="text-right">Unit Price</th>
-                <th class="style-74443" class="text-right">Disc %</th>
-                <th class="style-74443" class="text-right">Tax %</th>
-                <th class="style-57849" class="text-right">Amount</th>
+                <th class="style-74443 text-center">Qty</th>
+                <th class="style-57849 text-right">Unit Price</th>
+                <th class="style-74443 text-right">Disc %</th>
+                <th class="style-74443 text-right">Tax %</th>
+                <th class="style-57849 text-right">Amount</th>
             </tr>
         </thead>
         <tbody>
@@ -161,7 +161,7 @@
             <div class="table-responsive"><table>
                 <tr><td>Subtotal</td><td class="text-right">₹<?= number_format($invoice['subtotal'] ?? 0, 2) ?></td></tr>
                 <?php if (($invoice['discount_amount'] ?? 0) > 0): ?>
-                    <tr><td class="style-51061">Discount</td><td class="text-right" class="style-51061">-₹<?= number_format($invoice['discount_amount'], 2) ?></td></tr>
+                    <tr><td class="style-51061">Discount</td><td class="text-right style-51061">-₹<?= number_format($invoice['discount_amount'], 2) ?></td></tr>
                 <?php endif; ?>
                 <?php if (($invoice['tax_amount'] ?? 0) > 0): ?>
                     <tr><td>Tax (GST)</td><td class="text-right">₹<?= number_format($invoice['tax_amount'], 2) ?></td></tr>

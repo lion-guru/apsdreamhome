@@ -110,7 +110,7 @@ $filters = $filters ?? ['search' => '', 'status' => ''];
                                 <tr>
                                     <td class="ps-4">
                                         <div class="d-flex align-items-center">
-                                            <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3" class="style-48301">
+                                            <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3 style-48301">
                                                 <i class="fas fa-user text-primary"></i>
                                             </div>
                                             <div>

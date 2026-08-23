@@ -24,7 +24,7 @@
 <div class="container py-3">
     <div class="map-header">
         <div>
-            <h4><i class="fas fa-map-marked-alt" class="style-5793"></i> <?= htmlspecialchars($colony['name'] ?? '') ?> à¢€—� Plot Map</h4>
+            <h4><i class="fas fa-map-marked-alt style-5793"></i> <?= htmlspecialchars($colony['name'] ?? '') ?> à¢€—� Plot Map</h4>
             <small class="text-muted"><?= count($plots) ?> plots &middot; <?= htmlspecialchars($colony['district_name'] ?? '') ?></small>
         </div>
         <a href="<?= BASE_URL ?>/colony/<?= htmlspecialchars($colony['slug'] ?? '') ?>" class="btn btn-sm btn-outline-secondary">
@@ -32,10 +32,10 @@
         </a>
     </div>
     <div class="map-stats-bar" id="mapStats">
-        <span class="map-stat" data-status="available"><span class="dot" class="style-26706"></span> Available: <strong id="statAvail">0</strong></span>
-        <span class="map-stat" data-status="booked"><span class="dot" class="style-4960"></span> Booked: <strong id="statBooked">0</strong></span>
-        <span class="map-stat" data-status="sold"><span class="dot" class="style-68656"></span> Sold: <strong id="statSold">0</strong></span>
-        <span class="map-stat" data-status="hold"><span class="dot" class="style-99107"></span> Hold: <strong id="statHold">0</strong></span>
+        <span class="map-stat" data-status="available"><span class="dot style-26706"></span> Available: <strong id="statAvail">0</strong></span>
+        <span class="map-stat" data-status="booked"><span class="dot style-4960"></span> Booked: <strong id="statBooked">0</strong></span>
+        <span class="map-stat" data-status="sold"><span class="dot style-68656"></span> Sold: <strong id="statSold">0</strong></span>
+        <span class="map-stat" data-status="hold"><span class="dot style-99107"></span> Hold: <strong id="statHold">0</strong></span>
         <span class="map-stat ms-auto text-muted">Total Value: <strong id="statValue">à¢—šÂ¹0</strong></span>
     </div>
     <div class="map-filter-bar mb-3">
@@ -83,9 +83,9 @@
                             '<div class="info-row"><span class="label">Area</span><span class="value">' + (p.area_sqft || 0) + ' sqft</span></div>' +
                             '<div class="info-row"><span class="label">Size</span><span class="value">' + (p.width_ft || '-') + 'x' + (p.length_ft || '-') + '</span></div>' +
                             (p.price_per_sqft ? '<div class="info-row"><span class="label">Rate</span><span class="value">à¢—šÂ¹' + Number(p.price_per_sqft).toLocaleString() + '/sqft</span></div>' : '') +
-                            (p.total_price ? '<div class="info-row"><span class="label">Price</span><span class="value fw-bold" class="style-5793">à¢—šÂ¹' + Number(p.total_price).toLocaleString() + '</span></div>' : '') +
-                            (p.corner_plot ? '<div class="info-row"><span class="label">Corner Plot</span><span class="value" class="style-82740">à¢Å"®</span></div>' : '') +
-                            (p.park_facing ? '<div class="info-row"><span class="label">Park Facing</span><span class="value" class="style-82740">à¢Å"®</span></div>' : '') +
+                            (p.total_price ? '<div class="info-row"><span class="label">Price</span><span class="value fw-bold style-5793">à¢—šÂ¹' + Number(p.total_price).toLocaleString() + '</span></div>' : '') +
+                            (p.corner_plot ? '<div class="info-row"><span class="label">Corner Plot</span><span class="value style-82740">à¢Å"®</span></div>' : '') +
+                            (p.park_facing ? '<div class="info-row"><span class="label">Park Facing</span><span class="value style-82740">à¢Å"®</span></div>' : '') +
                             '<hr class="my-2"><a href="' + baseUrl + '/colony/' + (colonySlug || '') + '/plots?block=' + encodeURIComponent(p.block || '') + '" class="btn btn-sm btn-outline-primary w-100"><i class="fas fa-eye me-1"></i>View Details</a></div>';
                         layer.bindPopup(html, { maxWidth: 300 });
                         layer.on('mouseover', function() { this.setStyle({ fillOpacity: 0.95, weight: 2 }); });

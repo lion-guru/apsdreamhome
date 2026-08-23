@@ -39,7 +39,7 @@ $file = $file ?? ['id' => 0, 'original_name' => '', 'file_type' => '', 'size_byt
                     $isPdf = $mime === 'application/pdf';
                     ?>
                     <?php if ($isImage): ?>
-                        <img src="<?= $base ?>/admin/files/download/<?= htmlspecialchars($file['uuid'] ?? '') ?>" alt="<?= htmlspecialchars($file['original_name'] ?? '') ?>" class="img-fluid rounded" class="style-23653">
+                        <img src="<?= $base ?>/admin/files/download/<?= htmlspecialchars($file['uuid'] ?? '') ?>" alt="<?= htmlspecialchars($file['original_name'] ?? '') ?>" class="img-fluid rounded style-23653">
                     <?php elseif ($isPdf): ?>
                         <i class="fas fa-file-pdf fa-5x text-danger"></i>
                         <p class="mt-2">PDF document - <a href="<?= $base ?>/admin/files/download/<?= $file['uuid'] ?? '' ?>">Download to view</a></p>

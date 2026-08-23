@@ -56,7 +56,7 @@ if (!empty($filters['status'])) $filterQs .= '&status=' . urlencode($filters['st
 </div>
 
 <!-- Bulk Actions Toolbar (hidden until selection) -->
-<div id="bulkToolbar" class="card border-0 shadow-sm mb-3" class="style-24280">
+<div id="bulkToolbar" class="card border-0 shadow-sm mb-3 style-24280">
     <div class="card-body py-2 d-flex align-items-center gap-3">
         <span class="text-muted"><strong id="selectedCount">0</strong> users selected</span>
         <div class="btn-group btn-group-sm">
@@ -82,7 +82,7 @@ if (!empty($filters['status'])) $filterQs .= '&status=' . urlencode($filters['st
             <table class="table table-hover mb-0">
                 <thead class="bg-light">
                     <tr>
-                        <th class="border-0 ps-4" class="style-89354">
+                        <th class="border-0 ps-4 style-89354">
                             <input type="checkbox" id="selectAll" class="form-check-input" title="Select all">
                         </th>
                         <th class="border-0">User</th>
@@ -103,7 +103,7 @@ if (!empty($filters['status'])) $filterQs .= '&status=' . urlencode($filters['st
                         </td>
                         <td>
                             <div class="d-flex align-items-center">
-                                <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" class="style-48301">
+                                <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3 style-48301">
                                     <?php echo strtoupper(substr($user['name'] ?? 'U', 0, 1)); ?>
                                 </div>
                                 <div>

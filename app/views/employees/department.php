@@ -58,6 +58,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'pending' => 0, 'completed' => 
         .empty-state i { font-size: 48px; margin-bottom: 16px; color: <?= $dept_color ?>40; }
         .empty-state h5 { color: #475569; font-weight: 600; margin-bottom: 8px; }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
 
@@ -69,8 +70,8 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'pending' => 0, 'completed' => 
                 <i class="<?= $dept_icon ?>"></i>
             </div>
             <div>
-                <h3 class="fw-bold mb-0" class="style-10134"><?= htmlspecialchars($dept_title ?? '') ?></h3>
-                <p class="mb-0 mt-1" class="style-62698"><?= htmlspecialchars($dept_desc ?? '') ?></p>
+                <h3 class="fw-bold mb-0 style-10134"><?= htmlspecialchars($dept_title ?? '') ?></h3>
+                <p class="mb-0 mt-1 style-62698"><?= htmlspecialchars($dept_desc ?? '') ?></p>
             </div>
         </div>
     </div>
@@ -87,7 +88,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'pending' => 0, 'completed' => 
                         <div class="stat-label">Total Items</div>
                         <div class="stat-value"><?= number_format($stats['total'] ?? 0) ?></div>
                     </div>
-                    <div class="stat-icon" class="style-64797">
+                    <div class="stat-icon style-64797">
                         <i class="fas fa-layer-group"></i>
                     </div>
                 </div>
@@ -100,7 +101,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'pending' => 0, 'completed' => 
                         <div class="stat-label">Active</div>
                         <div class="stat-value"><?= number_format($stats['active'] ?? 0) ?></div>
                     </div>
-                    <div class="stat-icon" class="style-48798">
+                    <div class="stat-icon style-48798">
                         <i class="fas fa-check-circle"></i>
                     </div>
                 </div>
@@ -113,7 +114,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'pending' => 0, 'completed' => 
                         <div class="stat-label">Pending</div>
                         <div class="stat-value"><?= number_format($stats['pending'] ?? 0) ?></div>
                     </div>
-                    <div class="stat-icon" class="style-45343">
+                    <div class="stat-icon style-45343">
                         <i class="fas fa-clock"></i>
                     </div>
                 </div>
@@ -126,7 +127,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'pending' => 0, 'completed' => 
                         <div class="stat-label">Completed</div>
                         <div class="stat-value"><?= number_format($stats['completed'] ?? 0) ?></div>
                     </div>
-                    <div class="stat-icon" class="style-29521">
+                    <div class="stat-icon style-29521">
                         <i class="fas fa-flag-checkered"></i>
                     </div>
                 </div>
@@ -138,7 +139,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'pending' => 0, 'completed' => 
         <!-- Main Content -->
         <div class="col-lg-8">
             <div class="section-card">
-                <h6><i class="fas fa-list me-2" class="style-94187"></i>Recent Activity</h6>
+                <h6><i class="fas fa-list me-2 style-94187"></i>Recent Activity</h6>
                 <div class="empty-state">
                     <i class="<?= $dept_icon ?>"></i>
                     <h5><?= htmlspecialchars($dept_title ?? '') ?></h5>
@@ -150,7 +151,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'pending' => 0, 'completed' => 
         <!-- Sidebar -->
         <div class="col-lg-4">
             <div class="section-card mb-3">
-                <h6><i class="fas fa-bolt me-2" class="style-94187"></i>Quick Actions</h6>
+                <h6><i class="fas fa-bolt me-2 style-94187"></i>Quick Actions</h6>
                 <div class="d-flex flex-column gap-2">
                     <?php
                     $quickActions = match($dept_slug) {
@@ -210,16 +211,16 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'pending' => 0, 'completed' => 
                     };
                     foreach ($quickActions as $action): ?>
                         <a href="<?= $base ?><?= $action['url'] ?>" class="quick-action">
-                            <i class="<?= $action['icon'] ?>" class="style-83279"></i>
+                            <i class="<?= $action['icon'] ?> style-83279"></i>
                             <span><?= $action['label'] ?></span>
                         </a>
                     <?php endforeach; ?>
                     <a href="<?= $base ?>/employee/dashboard" class="quick-action">
-                        <i class="fas fa-arrow-left" class="style-81715"></i>
+                        <i class="fas fa-arrow-left style-81715"></i>
                         <span>Back to Dashboard</span>
                     </a>
                     <a href="<?= $base ?>/employee/attendance" class="quick-action">
-                        <i class="fas fa-calendar-check" class="style-19115"></i>
+                        <i class="fas fa-calendar-check style-19115"></i>
                         <span>Attendance</span>
                     </a>
                 </div>

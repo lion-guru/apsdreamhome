@@ -2,7 +2,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
-                <div class="card-header bg-gradient text-white p-4" class="style-68644">
+                <div class="card-header bg-gradient text-white p-4 style-68644">
                     <div class="d-flex align-items-center">
                         <div class="me-3">
                             <i class="fas fa-robot fa-2x"></i>
@@ -14,9 +14,9 @@
                     </div>
                 </div>
                 
-                <div class="chat-container" class="style-54006">
+                <div class="chat-container style-54006">
                     <div class="chat-messages p-4" id="chatMessages" class="style-34411">
-                        <div class="message bot-message mb-3 p-3 rounded-4 bg-white shadow-sm" class="style-65334">
+                        <div class="message bot-message mb-3 p-3 rounded-4 bg-white shadow-sm style-65334">
                             Namaste! ðŸ™� Welcome to <strong>APS Dream Home</strong>! I'm your property assistant.\n\nHow can I help you today? Try these quick options below! ðŸ‘‡
                         </div>
                     </div>

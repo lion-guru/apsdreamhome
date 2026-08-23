@@ -41,7 +41,7 @@ $extraHead = '<style>
                                         </span>
                                     </td>
                                     <td>
-                                        <p class="mb-0" class="style-6428">
+                                        <p class="mb-0 style-6428">
                                             <?php echo htmlspecialchars(substr($inq['message'] ?? '', 0, 100)); ?>
                                             <?php if (strlen($inq['message'] ?? '') > 100): ?>...<?php endif; ?>
                                         </p>

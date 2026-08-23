@@ -6,7 +6,7 @@
 
 <div class="row">
     <div class="col-lg-12">
-        <div class="hero-section-project" class="style-57165">
+        <div class="hero-section-project style-57165">
             <div class="container">
                 <h1 class="display-3 fw-bold mb-3 animate-fade-up"><?= isset($project['name']) ? htmlspecialchars($project['name'] ?? '') : 'Suryoday Colony' ?></h1>
                 <p class="lead animate-fade-up"><?= isset($project['description']) ? htmlspecialchars($project['description'] ?? '') : "Gorakhpur's Finest Residential Community" ?></p>
@@ -55,7 +55,7 @@
 
                 <!-- Contact Sidebar -->
                 <div class="col-lg-5">
-                    <div class="card shadow-lg border-0 rounded-4 p-4 sticky-top" class="style-41697">
+                    <div class="card shadow-lg border-0 rounded-4 p-4 sticky-top style-41697">
                         <h4 class="fw-bold mb-4">Interested?</h4>
                         <form action="<?= BASE_URL ?>contact" method="POST">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
@@ -86,7 +86,7 @@
                 <div class="col-6 col-md-3 mb-4">
                     <div class="card h-100 border-0 shadow-sm text-center p-4">
                         <div class="amenity-icon mb-3">
-                            <img src="<?= BASE_URL ?>/images/<?= htmlspecialchars($amenity['image'] ?? '') ?>" alt="<?= htmlspecialchars($amenity['title'] ?? '') ?>" class="img-fluid" class="style-92690">
+                            <img src="<?= BASE_URL ?>/images/<?= htmlspecialchars($amenity['image'] ?? '') ?>" alt="<?= htmlspecialchars($amenity['title'] ?? '') ?>" class="img-fluid style-92690">
                         </div>
                         <h6 class="fw-bold"><?= $amenity['title'] ?></h6>
                     </div>

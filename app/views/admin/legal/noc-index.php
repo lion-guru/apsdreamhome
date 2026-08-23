@@ -24,7 +24,7 @@
             <div class="tab-pane fade show active" id="registries" role="tabpanel">
                 <?php if (empty($registries)): ?>
                 <div class="text-center py-5">
-                    <i class="fas fa-file-contract fa-3x text-muted mb-3" class="style-82835"></i>
+                    <i class="fas fa-file-contract fa-3x text-muted mb-3 style-82835"></i>
                     <h5 class="text-muted">No registry records found</h5>
                     <p class="text-muted mb-3">Registry records are created when property bookings reach the registration stage. Check eligibility to get started.</p>
                     <a href="<?= BASE_URL ?>/admin/legal/noc-eligibility" class="btn btn-primary">
@@ -80,7 +80,7 @@
             <div class="tab-pane fade" id="nocs" role="tabpanel">
                 <?php if (empty($nocs)): ?>
                 <div class="text-center py-5">
-                    <i class="fas fa-file-signature fa-3x text-muted mb-3" class="style-82835"></i>
+                    <i class="fas fa-file-signature fa-3x text-muted mb-3 style-82835"></i>
                     <h5 class="text-muted">No NOC records found</h5>
                     <p class="text-muted mb-3">No Objection Certificates are required during property transfer processes. Check eligibility to request an NOC.</p>
                     <a href="<?= BASE_URL ?>/admin/legal/noc-eligibility" class="btn btn-primary">

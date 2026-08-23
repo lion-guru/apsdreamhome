@@ -5,7 +5,7 @@ $payments = $payments ?? [];
 $stats = $stats ?? ['total_paid'=>0,'total_count'=>0,'this_month'=>0,'last_payment'=>null];
 ?>
 
-<div class="aps-cp-hero" class="style-75867">
+<div class="aps-cp-hero style-75867">
     <div class="row align-items-center">
         <div class="col-md-8">
             <h2><i class="fas fa-receipt me-2"></i>Payment History</h2>
@@ -122,7 +122,7 @@ $stats = $stats ?? ['total_paid'=>0,'total_count'=>0,'this_month'=>0,'last_payme
                             </td>
                             <td>
                                 <?php if (!empty($p['transaction_id'])): ?>
-                                    <small class="text-muted" class="style-79813"><?= htmlspecialchars($p['transaction_id'] ?? '') ?></small>
+                                    <small class="text-muted style-79813"><?= htmlspecialchars($p['transaction_id'] ?? '') ?></small>
                                 <?php elseif (!empty($p['reference_number'])): ?>
                                     <small class="text-muted"><?= htmlspecialchars($p['reference_number'] ?? '') ?></small>
                                 <?php else: ?>

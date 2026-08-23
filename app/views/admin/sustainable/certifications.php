@@ -18,7 +18,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     <tbody>
                     <?php foreach ($certs as $c): ?>
                         <tr>
-                            <td><i class="fas <?= htmlspecialchars($c['icon'] ?? 'fa-leaf') ?> me-2" class="style-85168"></i><strong><?= htmlspecialchars($c['name'] ?? '') ?></strong></td>
+                            <td><i class="fas <?= htmlspecialchars($c['icon'] ?? 'fa-leaf') ?> me-2 style-85168"></i><strong><?= htmlspecialchars($c['name'] ?? '') ?></strong></td>
                             <td><?= htmlspecialchars($c['code'] ?? '') ?></td>
                             <td><?= htmlspecialchars($c['authority'] ?? '') ?></td>
                             <td><?= htmlspecialchars($c['level'] ?? '') ?></td>

@@ -23,7 +23,7 @@
         <div class="col-md-4">
             <div class="card shadow-sm border-0 text-center">
                 <div class="card-body py-4">
-                    <div class="avatar-lg mx-auto mb-3 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" class="style-6167"><?= strtoupper(substr($application['name'], 0, 1)) ?></div>
+                    <div class="avatar-lg mx-auto mb-3 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center style-6167"><?= strtoupper(substr($application['name'], 0, 1)) ?></div>
                     <h5 class="mb-1"><?= $application['name'] ?></h5>
                     <p class="text-muted mb-2"><?= $application['email'] ?></p>
                     <span class="badge bg-<?= ($application['status'] ?? 'new') === 'new' ? 'primary' : (($application['status'] ?? 'new') === 'shortlisted' ? 'success' : (($application['status'] ?? 'new') === 'rejected' ? 'danger' : 'secondary')) ?>-subtle text-<?= ($application['status'] ?? 'new') === 'new' ? 'primary' : (($application['status'] ?? 'new') === 'shortlisted' ? 'success' : (($application['status'] ?? 'new') === 'rejected' ? 'danger' : 'secondary')) ?> rounded-pill px-3"><?= ucfirst($application['status'] ?? 'New') ?></span>

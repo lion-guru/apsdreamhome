@@ -27,13 +27,13 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
         <tr>
           <td bgcolor="#059669" align="center" class="style-75634">
             <div class="style-90702">&#9989;</div>
-            <h1 class="h1-mobile" class="style-56865">Agreement Signed</h1>
+            <h1 class="h1-mobile style-56865">Agreement Signed</h1>
             <p class="style-9233">Your booking is now legally binding</p>
           </td>
         </tr>
         <!-- Body -->
         <tr>
-          <td class="px-mobile" class="style-68782">
+          <td class="px-mobile style-68782">
             <h2 class="style-80102">Hi {{user_name}},</h2>
             <p class="style-28596">
               Your allotment agreement has been <strong class="style-7250">successfully signed</strong>. A copy of the signed agreement has been saved to your account.
@@ -55,7 +55,7 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
               <tr>
                 <td align="center" class="style-43583">
-                  <a href="{{booking_url}}" class="button-mobile" class="style-6697">View Booking & Pay</a>
+                  <a href="{{booking_url}}" class="button-mobile style-6697">View Booking & Pay</a>
                 </td>
               </tr>
             </table>

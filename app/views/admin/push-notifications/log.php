@@ -35,7 +35,7 @@
                             <?php foreach ($log as $entry): ?>
                                 <tr>
                                     <td class="fw-semibold"><?= htmlspecialchars($entry['title'] ?? '') ?></td>
-                                    <td class="text-muted" class="style-62358">
+                                    <td class="text-muted style-62358">
                                         <?= htmlspecialchars($entry['body'] ?? '') ?>
                                     </td>
                                     <td>

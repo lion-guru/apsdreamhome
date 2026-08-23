@@ -35,17 +35,17 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
     <div class="col-12">
         <div class="d-flex align-items-center gap-3">
             <div class="d-flex align-items-center gap-2 <?= $selectedColony > 0 ? 'text-success' : 'text-primary' ?>">
-                <span class="badge rounded-pill bg-<?= $selectedColony > 0 ? 'success' : 'primary' ?> d-inline-flex align-items-center justify-content-center" class="style-6984">1</span>
+                <span class="badge rounded-pill bg-<?= $selectedColony > 0 ? 'success' : 'primary' ?> d-inline-flex align-items-center justify-content-center style-6984">1</span>
                 <span class="fw-semibold"><?= __('user_new_booking_step_select_colony', 'Select Colony') ?></span>
             </div>
             <i class="fas fa-chevron-right text-muted"></i>
             <div class="d-flex align-items-center gap-2 <?= !empty($_GET['plot_id']) ? 'text-success' : 'text-muted' ?>">
-                <span class="badge rounded-pill bg-<?= !empty($_GET['plot_id']) ? 'success' : 'secondary' ?> d-inline-flex align-items-center justify-content-center" class="style-6984">2</span>
+                <span class="badge rounded-pill bg-<?= !empty($_GET['plot_id']) ? 'success' : 'secondary' ?> d-inline-flex align-items-center justify-content-center style-6984">2</span>
                 <span class="fw-semibold"><?= __('user_new_booking_step_choose_plot', 'Choose Plot') ?></span>
             </div>
             <i class="fas fa-chevron-right text-muted"></i>
             <div class="d-flex align-items-center gap-2 text-muted">
-                <span class="badge rounded-pill bg-secondary d-inline-flex align-items-center justify-content-center" class="style-6984">3</span>
+                <span class="badge rounded-pill bg-secondary d-inline-flex align-items-center justify-content-center style-6984">3</span>
                 <span class="fw-semibold"><?= __('user_new_booking_step_confirm', 'Confirm') ?></span>
             </div>
         </div>
@@ -75,18 +75,16 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
             <div class="col-md-6 col-lg-3">
                 <a href="<?= BASE_URL ?>/user/bookings/new?colony_id=<?= (int)$colony['id'] ?>"
                    class="text-decoration-none">
-                    <div class="aps-cp-card h-100 <?= (int)$colony['id'] === $selectedColony ? 'border-primary shadow' : '' ?>"
-                         class="style-73923">
+                    <div class="aps-cp-card h-100 <?= (int)$colony['id'] === $selectedColony ? 'border-primary shadow' : '' ?> style-73923">
                         <div class="position-relative">
                             <?php if (!empty($colony['image_path'])): ?>
                                 <?php $imgRaw = $colony['image_path'] ?? '';
                                       $imgSrc = (str_starts_with($imgRaw, 'http://') || str_starts_with($imgRaw, 'https://')) ? $imgRaw : BASE_URL . '/' . $imgRaw; ?>
                                 <img src="<?= htmlspecialchars($imgSrc ?? '') ?>"
                                      alt="<?= htmlspecialchars($colony['name'] ?? '') ?>"
-                                     class="w-100" class="style-46386">
+                                     class="w-100 style-46386">
                             <?php else: ?>
-                                <div class="w-100 d-flex align-items-center justify-content-center"
-                                     class="style-46646">
+                                <div class="w-100 d-flex align-items-center justify-content-center style-46646">
                                     <i class="fas fa-building fa-2x text-primary opacity-50"></i>
                                 </div>
                             <?php endif; ?>
@@ -187,8 +185,8 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
 
 <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content" class="style-337">
-            <div class="modal-header" class="style-99001">
+        <div class="modal-content style-337">
+            <div class="modal-header style-99001">
                 <h5 class="modal-title" id="bookingModalLabel">
                     <i class="fas fa-file-contract me-2"></i><?= __('user_new_booking_modal_title', 'Confirm Your Booking') ?>
                 </h5>
@@ -259,10 +257,10 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
 
 <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-center border-0 shadow-lg" class="style-90348">
+        <div class="modal-content text-center border-0 shadow-lg style-90348">
             <div class="modal-body p-5">
                 <div class="mb-4">
-                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success bg-opacity-10" class="style-61938">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success bg-opacity-10 style-61938">
                         <i class="fas fa-check-circle fa-3x text-success"></i>
                     </div>
                 </div>

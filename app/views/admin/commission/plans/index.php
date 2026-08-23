@@ -39,7 +39,7 @@ $statusBadge = fn($s) => match($s) {
 
 <div class="cp-card">
     <div class="cp-card-header">
-        <h5 class="m-0" class="style-43926"><i class="fas fa-file-invoice-dollar me-2" class="style-20955"></i>Commission Plan Manager</h5>
+        <h5 class="m-0 style-43926"><i class="fas fa-file-invoice-dollar me-2 style-20955"></i>Commission Plan Manager</h5>
         <div>
             <a href="<?= $base ?>/admin/commission-plans/simulator" class="btn-cp btn-cp-outline me-2"><i class="fas fa-flask me-1"></i>Simulator</a>
             <a href="<?= $base ?>/admin/commission-plans/compare" class="btn-cp btn-cp-outline me-2"><i class="fas fa-columns me-1"></i>Compare</a>
@@ -50,7 +50,7 @@ $statusBadge = fn($s) => match($s) {
     <div class="cp-card-body">
         <?php if ($activePlan): ?>
             <div class="style-30392">
-                <i class="fas fa-check-circle" class="style-56297"></i>
+                <i class="fas fa-check-circle style-56297"></i>
                 <div>
                     <strong class="style-43926">Active Plan:</strong>
                     <span class="style-55803"><?= htmlspecialchars($activePlan['plan_name'] ?? '') ?></span>
@@ -66,7 +66,7 @@ $statusBadge = fn($s) => match($s) {
             </div>
         <?php else: ?>
             <div class="style-29735">
-                <i class="fas fa-exclamation-triangle" class="style-57730"></i>
+                <i class="fas fa-exclamation-triangle style-57730"></i>
                 <span class="style-62735">No active commission plan. Activate one from the list below.</span>
             </div>
         <?php endif; ?>
@@ -99,7 +99,7 @@ $statusBadge = fn($s) => match($s) {
                 </thead>
                 <tbody>
                     <?php if (empty($plans)): ?>
-                        <tr><td colspan="11" class="text-center" class="style-10572">No plans found. Create your first plan.</td></tr>
+                        <tr><td colspan="11" class="text-center style-10572">No plans found. Create your first plan.</td></tr>
                     <?php else: ?>
                         <?php foreach ($plans as $i => $p): ?>
                             <tr>
@@ -111,7 +111,7 @@ $statusBadge = fn($s) => match($s) {
                                 <td><span class="cp-badge bg-primary"><?= (int)($p['level_count'] ?? 0) ?></span></td>
                                 <td>
                                     <strong><?= $p['global_cap_pct'] ?>%</strong>
-                                    <div class="cap-bar"><div class="cap-bar-fill" class="style-30453"></div></div>
+                                    <div class="cap-bar"><div class="cap-bar-fill style-30453"></div></div>
                                 </td>
                                 <td class="style-20996">
                                     <?= $p['track_a_pct'] ?> / <?= $p['track_b_pct'] ?> / <?= $p['track_c_pct'] ?>%

@@ -94,7 +94,7 @@ $tasks = $tasks ?? [];
                         <?php if (empty($tasks)): ?>
                         <tr>
                             <td colspan="8" class="text-center py-5">
-                                <i class="fas fa-clock fa-3x text-muted mb-3" class="style-82835"></i>
+                                <i class="fas fa-clock fa-3x text-muted mb-3 style-82835"></i>
                                 <h5 class="text-muted">No scheduled tasks</h5>
                                 <p class="text-muted mb-3">Create your first cron task to automate recurring operations like lead follow-ups, commission calculations, and report generation.</p>
                                 <a href="<?= BASE_URL ?>/admin/scheduler/create" class="btn btn-primary">

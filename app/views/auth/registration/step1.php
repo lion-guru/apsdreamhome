@@ -20,12 +20,13 @@ $old = $old ?? [];
         .wizard-card { max-width: 560px; margin: auto; border: none; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,.2); }
         .wizard-header { background: linear-gradient(135deg, #0d9488, #0f766e); color: #fff; border-radius: 16px 16px 0 0; padding: 1.5rem; }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
 <div class="container">
     <div class="wizard-card">
         <div class="wizard-header text-center">
-            <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-white text-primary mb-2" class="style-45913">
+            <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-white text-primary mb-2 style-45913">
                 <i class="fas fa-user-plus fa-lg"></i>
             </div>
             <h3 class="fw-bold mb-0">Create Your Account</h3>

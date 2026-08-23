@@ -170,7 +170,7 @@ $page_description = $page_description ?? 'Your personalized real estate dashboar
                     <?php if (!empty($favorite_properties)): ?>
                         <?php foreach ($favorite_properties as $property): ?>
                             <div class="d-flex align-items-center p-3 mb-3 bg-white bg-opacity-50 rounded-4 border">
-                                <img src="<?php echo htmlspecialchars($property['image'] ?? ''); ?>" alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>" class="rounded-3 me-3" class="style-66320" loading="lazy">
+                                <img src="<?php echo htmlspecialchars($property['image'] ?? ''); ?>" alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>" class="rounded-3 me-3 style-66320" loading="lazy">
                                 <div class="flex-grow-1 overflow-hidden">
                                     <h6 class="mb-1 text-truncate fw-bold"><?php echo htmlspecialchars($property['title'] ?? ''); ?></h6>
                                     <p class="text-muted small mb-0 text-truncate"><?php echo htmlspecialchars($property['location'] ?? ''); ?></p>
@@ -198,7 +198,7 @@ $page_description = $page_description ?? 'Your personalized real estate dashboar
                     <div class="col-md-3">
                         <div class="glass-card p-0 overflow-hidden">
                             <div class="position-relative">
-                                <img src="<?php echo htmlspecialchars($property['image'] ?? ''); ?>" alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>" class="w-100" class="style-17753" loading="lazy">
+                                <img src="<?php echo htmlspecialchars($property['image'] ?? ''); ?>" alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>" class="w-100 style-17753" loading="lazy">
                                 <span class="badge bg-white text-dark position-absolute top-0 end-0 m-3 shadow-sm rounded-pill py-2 px-3 fw-bold"><?php echo htmlspecialchars($property['price'] ?? ''); ?></span>
                             </div>
                             <div class="p-4">

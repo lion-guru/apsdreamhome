@@ -31,6 +31,7 @@ $GLOBALS['_html_doc_started'] = true;
     <link href="<?php echo BASE_URL; ?>/assets/css/dark-mode.css" rel="stylesheet">
     <!-- Consolidated APS CSS Bundles -->
     <link href="<?php echo BASE_URL; ?>/assets/css/style.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css?v=2" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/header.css?v=7" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/notification-system.css" rel="stylesheet">
     <!-- Universal mobile-first responsive overrides -->
@@ -56,10 +57,11 @@ $GLOBALS['_html_doc_started'] = true;
         }
     </style>
 
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=2">
 </head>
 <body>
     <!-- Sidebar Toggle Button (Mobile) -->
-    <button class="sidebar-toggle" onclick="toggleSidebar()">
+    <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar" aria-expanded="false">
         <i class="fas fa-bars"></i>
     </button>
 

@@ -82,7 +82,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                     <span><i class="fas fa-map-marked-alt me-2"></i><?= __('detail_location_map') ?></span>
                 </div>
                 <div class="aps-cp-card-body">
-                    <div class="bg-light rounded d-flex align-items-center justify-content-center" class="style-26992">
+                    <div class="bg-light rounded d-flex align-items-center justify-content-center style-26992">
                         <div class="text-center text-muted">
                             <i class="fas fa-map fa-3x mb-2 opacity-25"></i>
                             <p class="mb-0"><?= __('detail_plot_location_map') ?></p>

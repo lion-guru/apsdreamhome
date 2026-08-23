@@ -199,7 +199,7 @@ class BankController extends BaseApiController
     /**
      * Helper: Error response
      */
-    private function errorResponse($message, $code = 400)
+    protected function errorResponse(string $message, int $code = 400): void
     {
         $this->jsonResponse(['error' => true, 'message' => $message], $code);
     }

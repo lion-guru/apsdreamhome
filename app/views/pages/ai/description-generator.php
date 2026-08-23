@@ -62,9 +62,9 @@
                         <p class="text-muted"><?= __('aigen_loading', [], 'AI is generating the description, please wait...') ?></p>
                     </div>
                     
-                    <div id="resultContainer" class="mt-5 pt-4 border-top" class="style-54390">
+                    <div id="resultContainer" class="mt-5 pt-4 border-top style-54390">
                         <h4 class="fw-bold mb-3"><?= __('aigen_result_heading', [], 'Generated Description:') ?></h4>
-                        <div id="generatedDescription" class="p-4 bg-light rounded-4 border position-relative" class="style-76392">
+                        <div id="generatedDescription" class="p-4 bg-light rounded-4 border position-relative style-76392">
                         </div>
                         <div class="mt-3 text-end">
                             <button class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="copyToClipboard()">

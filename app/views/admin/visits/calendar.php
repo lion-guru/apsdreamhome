@@ -66,7 +66,7 @@ ob_start();
                         for ($week = 0; $week < $weeks; $week++): ?>
                         <tr class="style-380">
                             <?php for ($d = 1; $d <= 7; $d++): ?>
-                            <td class="<?= ($d == 7) ? 'bg-light' : '' ?>" class="style-97884">
+                            <td class="<?= ($d == 7) ? 'bg-light' : '' ?> style-97884">
                                 <?php
                                 if (($week == 0 && $d < $firstDay) || $day > $daysInMonth) {
                                     echo '&nbsp;';

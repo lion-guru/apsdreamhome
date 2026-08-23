@@ -17,7 +17,7 @@
                         <?php if (!empty($fav['image'])): ?>
                             <img src="<?= BASE_URL ?>/assets/images/properties/<?= htmlspecialchars($fav['image'] ?? '') ?>" class="card-img-top" alt="<?= htmlspecialchars($fav['title'] ?? __('user_favorites_default_alt')) ?>" class="style-24482" loading="lazy">
                         <?php else: ?>
-                            <div class="bg-light d-flex align-items-center justify-content-center" class="style-32569">
+                            <div class="bg-light d-flex align-items-center justify-content-center style-32569">
                                 <i class="fas fa-home fa-3x text-muted opacity-25" aria-hidden="true"></i>
                             </div>
                         <?php endif; ?>

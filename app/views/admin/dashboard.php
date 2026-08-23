@@ -191,25 +191,25 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                     <div class="row g-3">
                         <div class="col-md-3">
                             <a href="<?php echo BASE_URL; ?>/admin/leads?action=new" class="btn btn-outline-primary w-100 py-3">
-                                <i class="fas fa-user-plus mb-2" class="style-41417"></i>
+                                <i class="fas fa-user-plus mb-2 style-41417"></i>
                                 <div><?= __('admin_action_add_lead', null, 'Add New Lead') ?></div>
                             </a>
                         </div>
                         <div class="col-md-3">
                             <a href="<?php echo BASE_URL; ?>/admin/properties?action=new" class="btn btn-outline-success w-100 py-3">
-                                <i class="fas fa-plus mb-2" class="style-41417"></i>
+                                <i class="fas fa-plus mb-2 style-41417"></i>
                                 <div><?= __('admin_action_add_property', null, 'Add Property') ?></div>
                             </a>
                         </div>
                         <div class="col-md-3">
                             <a href="<?php echo BASE_URL; ?>/admin/bookings?action=new" class="btn btn-outline-warning w-100 py-3">
-                                <i class="fas fa-file-contract mb-2" class="style-41417"></i>
+                                <i class="fas fa-file-contract mb-2 style-41417"></i>
                                 <div><?= __('admin_new_booking', null, 'New Booking') ?></div>
                             </a>
                         </div>
                         <div class="col-md-3">
                             <a href="<?php echo BASE_URL; ?>/admin/mlm/commissions?action=payout" class="btn btn-outline-info w-100 py-3">
-                                <i class="fas fa-wallet mb-2" class="style-41417"></i>
+                                <i class="fas fa-wallet mb-2 style-41417"></i>
                                 <div><?= __('admin_process_payout', null, 'Process Payout') ?></div>
                             </a>
                         </div>
@@ -271,8 +271,8 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                             <span><?= __('admin_database_tables', null, 'Database Tables') ?></span>
                             <span class="fw-semibold"><?php echo e($stats['database_tables'] ?? '—'); ?></span>
                         </div>
-                        <div class="progress" class="style-29939">
-                            <div class="progress-bar bg-primary" class="style-13113"></div>
+                        <div class="progress style-29939">
+                            <div class="progress-bar bg-primary style-13113"></div>
                         </div>
                     </div>
 
@@ -281,8 +281,8 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                             <span><?= __('admin_active_users', null, 'Active Users') ?></span>
                             <span class="fw-semibold"><?php echo e(number_format($stats['active_users'] ?? 0)); ?></span>
                         </div>
-                        <div class="progress" class="style-29939">
-                            <div class="progress-bar bg-success" class="style-58158"></div>
+                        <div class="progress style-29939">
+                            <div class="progress-bar bg-success style-58158"></div>
                         </div>
                     </div>
 
@@ -291,12 +291,12 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                             <span><?= __('admin_system_health', null, 'System Health') ?></span>
                             <span class="fw-semibold text-success"><?php echo e(number_format($stats['system_health_pct'] ?? 99.9, 1)); ?>%</span>
                         </div>
-                        <div class="progress" class="style-29939">
-                            <div class="progress-bar bg-info" class="style-10867"></div>
+                        <div class="progress style-29939">
+                            <div class="progress-bar bg-info style-10867"></div>
                         </div>
                     </div>
-                        <div class="progress" class="style-29939">
-                            <div class="progress-bar bg-primary" class="style-13113"></div>
+                        <div class="progress style-29939">
+                            <div class="progress-bar bg-primary style-13113"></div>
                         </div>
                     </div>
 
@@ -305,8 +305,8 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                             <span><?= __('admin_active_users', null, 'Active Users') ?></span>
                             <span class="fw-semibold"><?php echo e(number_format($stats['active_users'] ?? 0)); ?></span>
                         </div>
-                        <div class="progress" class="style-29939">
-                            <div class="progress-bar bg-success" class="style-14876"></div>
+                        <div class="progress style-29939">
+                            <div class="progress-bar bg-success style-14876"></div>
                         </div>
                     </div>
 
@@ -315,8 +315,8 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                             <span><?= __('admin_system_health', null, 'System Health') ?></span>
                             <span class="fw-semibold text-success"><?php echo e(number_format($stats['system_health_pct'] ?? 99.9, 1)); ?>%</span>
                         </div>
-                        <div class="progress" class="style-29939">
-                            <div class="progress-bar bg-info" class="style-97316"></div>
+                        <div class="progress style-29939">
+                            <div class="progress-bar bg-info style-97316"></div>
                         </div>
                     </div>
 

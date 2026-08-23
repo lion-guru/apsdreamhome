@@ -11,7 +11,7 @@ $stats = $stats ?? ['total' => 0, 'confirmed' => 0, 'pending' => 0, 'total_value
 <!-- Stats Row -->
 <div class="row g-3 mb-4">
     <div class="col-6 col-md-3">
-        <div class="card border-0 shadow-sm" class="style-19672">
+        <div class="card border-0 shadow-sm style-19672">
             <div class="card-body p-3 text-center">
                 <div class="fs-2 fw-bold"><?= $stats['total'] ?></div>
                 <div class="small opacity-75"><?= __('assoc_book_total', [], 'Total Bookings') ?></div>

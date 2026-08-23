@@ -95,7 +95,7 @@ $active_page = 'agreements';
                 </h5>
             </div>
             <div class="card-body p-0">
-                <div class="preview-container" class="style-60710">
+                <div class="preview-container style-60710">
                     <?= $preview_html ?? '<p class="text-muted p-3">Preview not available.</p>' ?>
                 </div>
             </div>

@@ -203,8 +203,8 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
                 <span class="small"><?= htmlspecialchars($band['price_band'] ?? '') ?></span>
                 <span class="small fw-bold"><?= $bc ?> <?= __('cp_plots') ?> (<?= $pct ?>%)</span>
               </div>
-              <div class="progress" class="style-12292">
-                <div class="progress-bar bg-info" class="style-75742"></div>
+              <div class="progress style-12292">
+                <div class="progress-bar bg-info style-75742"></div>
               </div>
             </div>
           <?php endforeach; ?>

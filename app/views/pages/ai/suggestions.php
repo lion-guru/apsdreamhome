@@ -51,7 +51,7 @@
                         <div class="card bg-light border-0">
                             <div class="card-body aps-cp-card-body">
                                 <h4 class="card-title mb-3"><i class="fas fa-lightbulb text-warning me-2"></i><?= __('aisug_recommendations', [], 'Our Recommendations') ?></h4>
-                                <div id="suggestions-content" class="text-break" class="style-19219"></div>
+                                <div id="suggestions-content" class="text-break style-19219"></div>
                             </div>
                         </div>
                     </div>

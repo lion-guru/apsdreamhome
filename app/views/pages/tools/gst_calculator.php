@@ -1,4 +1,4 @@
-<section class="py-5" class="style-30941">
+<section class="py-5 style-30941">
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><i class="fas fa-percentage me-2"></i><?php echo __('tool_gst_calculator_title', [], 'GST Calculator'); ?></h1>

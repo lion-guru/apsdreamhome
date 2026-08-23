@@ -21,6 +21,8 @@ $GLOBALS['_html_doc_started'] = true;
     <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
     <!-- Universal mobile-first responsive overrides -->
     <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css" rel="stylesheet">
+    <!-- Consolidated APS component system (stat cards, hero, quick actions) -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css?v=2" rel="stylesheet">
     <!-- Dark Mode CSS -->
     <link href="<?php echo BASE_URL; ?>/assets/css/dark-mode.css" rel="stylesheet">
 
@@ -499,11 +501,12 @@ $GLOBALS['_html_doc_started'] = true;
             .pipeline-mini .pm-item { min-width: 50px !important; padding: 4px 6px !important; font-size: 0.65rem !important; }
         }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=2">
 </head>
 
 <body>
     <!-- Sidebar Toggle Button (Mobile) -->
-    <button class="sidebar-toggle" onclick="toggleSidebar()">
+    <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar" aria-expanded="false">
         <i class="fas fa-bars"></i>
     </button>
 
@@ -650,19 +653,19 @@ $GLOBALS['_html_doc_started'] = true;
 
     <!-- Floating AI Chat Widget -->
     <div id="aiChatWidget" class="style-96938">
-        <button id="chatToggle" onclick="toggleAssociateChat()" class="style-14728">
-            <i class="fas fa-robot"></i>
+        <button id="chatToggle" onclick="toggleAssociateChat()" class="style-14728" aria-label="Open APS Assistant chat">
+            <i class="fas fa-robot" aria-hidden="true"></i>
         </button>
         <div id="chatPanel" class="style-19303">
             <div class="style-25493">
                 <div class="style-44602">
-                    <i class="fas fa-robot" class="style-30322"></i>
+                    <i class="fas fa-robot style-30322"></i>
                     <div>
                         <div class="style-35140">APS Assistant</div>
                         <div class="style-1333">Property &amp; MLM Help</div>
                     </div>
                 </div>
-                <button onclick="toggleAssociateChat()" class="style-71807"><i class="fas fa-times"></i></button>
+                <button onclick="toggleAssociateChat()" class="style-71807" aria-label="Close chat"><i class="fas fa-times" aria-hidden="true"></i></button>
             </div>
             <div id="assocChatMessages" class="style-47443">
                 <div class="style-88703">
@@ -671,7 +674,7 @@ $GLOBALS['_html_doc_started'] = true;
             </div>
             <div class="style-22035">
                 <input type="text" id="assocChatInput" placeholder="Type a message..." class="style-69765" onkeypress="if(event.key==='Enter')sendAssociateChat()">
-                <button onclick="sendAssociateChat()" class="style-58231"><i class="fas fa-paper-plane" class="style-64777"></i></button>
+                <button onclick="sendAssociateChat()" class="style-58231" aria-label="Send message"><i class="fas fa-paper-plane" aria-hidden="true"></i></button>
             </div>
         </div>
     </div>

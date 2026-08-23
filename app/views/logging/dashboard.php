@@ -72,7 +72,7 @@
                             <?php foreach ($logs as $log): ?>
                                 <tr>
                                     <td><span class="badge bg-<?= ($log['level'] ?? 'info') === 'error' ? 'danger' : (($log['level'] ?? 'info') === 'warning' ? 'warning' : 'info') ?>"><?= htmlspecialchars($log['level'] ?? 'info') ?></span></td>
-                                    <td class="text-truncate" class="style-78037"><?= htmlspecialchars($log['message'] ?? '') ?></td>
+                                    <td class="text-truncate style-78037"><?= htmlspecialchars($log['message'] ?? '') ?></td>
                                     <td><?= htmlspecialchars(basename($log['file'] ?? '-')) ?></td>
                                     <td><?= (int)($log['line'] ?? 0) ?></td>
                                     <td><?= htmlspecialchars($log['created_at'] ?? '') ?></td>

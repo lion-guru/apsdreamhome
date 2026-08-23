@@ -102,14 +102,14 @@
             <h5><i class="fas fa-question-circle"></i> Common Payment Issues</h5>
             <div class="row mt-3">
                 <div class="col-md-6">
-                    <ul class="text-start" class="style-52987">
+                    <ul class="text-start style-52987">
                         <li><i class="fas fa-times-circle text-danger"></i> Insufficient balance</li>
                         <li><i class="fas fa-times-circle text-danger"></i> Card expired</li>
                         <li><i class="fas fa-times-circle text-danger"></i> Bank declined transaction</li>
                     </ul>
                 </div>
                 <div class="col-md-6">
-                    <ul class="text-start" class="style-52987">
+                    <ul class="text-start style-52987">
                         <li><i class="fas fa-times-circle text-danger"></i> Incorrect card details</li>
                         <li><i class="fas fa-times-circle text-danger"></i> Network connectivity</li>
                         <li><i class="fas fa-times-circle text-danger"></i> Daily limit exceeded</li>

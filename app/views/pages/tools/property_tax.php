@@ -1,4 +1,4 @@
-<section class="py-5" class="style-30941">
+<section class="py-5 style-30941">
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><?php echo __('tool_property_tax_title', [], 'Property Tax Calculator'); ?></h1>

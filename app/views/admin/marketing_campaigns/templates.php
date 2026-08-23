@@ -41,7 +41,7 @@ ob_start();
                             <?php if (!empty($t['subject'])): ?>
                                 <p class="fw-bold mb-2"><?= htmlspecialchars($t['subject'] ?? '') ?></p>
                             <?php endif; ?>
-                            <pre class="bg-light p-3 rounded small" class="style-65441"><?= htmlspecialchars($t['body'] ?? '') ?></pre>
+                            <pre class="bg-light p-3 rounded small style-65441"><?= htmlspecialchars($t['body'] ?? '') ?></pre>
                             <?php if (!empty($vars)): ?>
                                 <div class="mt-2">
                                     <small class="text-muted">Variables:</small>

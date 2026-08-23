@@ -45,7 +45,7 @@ $today = date('Y-m-d');
 
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6 mb-3">
-            <div class="card border-0 shadow-sm" class="style-99679">
+            <div class="card border-0 shadow-sm style-99679">
                 <div class="d-flex align-items-center gap-3">
                     <div class="style-59043"><i class="fas fa-bullseye"></i></div>
                     <div>
@@ -56,7 +56,7 @@ $today = date('Y-m-d');
             </div>
         </div>
         <div class="col-xl-3 col-md-6 mb-3">
-            <div class="card border-0 shadow-sm" class="style-99679">
+            <div class="card border-0 shadow-sm style-99679">
                 <div class="d-flex align-items-center gap-3">
                     <div class="style-93235"><i class="fas fa-fire"></i></div>
                     <div>
@@ -67,7 +67,7 @@ $today = date('Y-m-d');
             </div>
         </div>
         <div class="col-xl-3 col-md-6 mb-3">
-            <div class="card border-0 shadow-sm" class="style-99679">
+            <div class="card border-0 shadow-sm style-99679">
                 <div class="d-flex align-items-center gap-3">
                     <div class="style-4512"><i class="fas fa-trophy"></i></div>
                     <div>
@@ -79,7 +79,7 @@ $today = date('Y-m-d');
             </div>
         </div>
         <div class="col-xl-3 col-md-6 mb-3">
-            <div class="card border-0 shadow-sm" class="style-99679">
+            <div class="card border-0 shadow-sm style-99679">
                 <div class="d-flex align-items-center gap-3">
                     <div class="style-35781"><i class="fas fa-clock"></i></div>
                     <div>
@@ -96,7 +96,7 @@ $today = date('Y-m-d');
 
     <div class="row mb-4">
         <div class="col-xl-4 col-md-6 mb-3">
-            <a href="<?= BASE_URL ?>/associate/site-visits" class="card border-0 shadow-sm text-decoration-none" class="style-90419">
+            <a href="<?= BASE_URL ?>/associate/site-visits" class="card border-0 shadow-sm text-decoration-none style-90419">
                 <div class="d-flex align-items-center gap-3">
                     <div class="style-26894"><i class="fas fa-map-marker-alt"></i></div>
                     <div>
@@ -107,7 +107,7 @@ $today = date('Y-m-d');
             </a>
         </div>
         <div class="col-xl-4 col-md-6 mb-3">
-            <a href="<?= BASE_URL ?>/associate/site-visits?tab=today" class="card border-0 shadow-sm text-decoration-none" class="style-40875">
+            <a href="<?= BASE_URL ?>/associate/site-visits?tab=today" class="card border-0 shadow-sm text-decoration-none style-40875">
                 <div class="d-flex align-items-center gap-3">
                     <div class="style-99370"><i class="fas fa-calendar-check"></i></div>
                     <div>
@@ -118,7 +118,7 @@ $today = date('Y-m-d');
             </a>
         </div>
         <div class="col-xl-4 col-md-6 mb-3">
-            <a href="<?= BASE_URL ?>/associate/site-visits?tab=upcoming" class="card border-0 shadow-sm text-decoration-none" class="style-25028">
+            <a href="<?= BASE_URL ?>/associate/site-visits?tab=upcoming" class="card border-0 shadow-sm text-decoration-none style-25028">
                 <div class="d-flex align-items-center gap-3">
                     <div class="style-74581"><i class="fas fa-calendar-alt"></i></div>
                     <div>
@@ -130,14 +130,14 @@ $today = date('Y-m-d');
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm mb-4" class="style-24235">
+    <div class="card border-0 shadow-sm mb-4 style-24235">
         <h6 class="style-954"><i class="fas fa-filter text-primary me-2"></i><?= __('assoc_crm_pipeline_by_status', [], 'Pipeline by Status') ?></h6>
         <div class="style-88908">
             <?php foreach ($statusLabels as $key => $s):
                 $count = $byStatus[$key] ?? 0;
                 if ($count === 0 && !in_array($key, ['new','contacted','qualified','closed_won'])) continue;
             ?>
-            <a href="<?= BASE_URL ?>/associate/leads?status=<?= e($key) ?>" class="text-decoration-none" class="style-61015">
+            <a href="<?= BASE_URL ?>/associate/leads?status=<?= e($key) ?>" class="text-decoration-none style-61015">
                 <i class="fas <?= e($s['icon']) ?> me-1"></i><?= e($s['label']) ?>
                 <span class="style-24086"><?= e($count) ?></span>
             </a>
@@ -147,7 +147,7 @@ $today = date('Y-m-d');
 
     <div class="row g-4">
         <div class="col-lg-5">
-            <div class="card border-0 shadow-sm" class="style-63019">
+            <div class="card border-0 shadow-sm style-63019">
                 <h6 class="style-954"><i class="fas fa-tasks text-warning me-2"></i><?= __('assoc_crm_upcoming_tasks', [], 'Upcoming Tasks') ?></h6>
                 <?php if (empty($pending_tasks)): ?>
                     <p class="text-muted text-center py-4"><i class="fas fa-check-circle fa-2x d-block mb-2 text-success"></i><?= __('assoc_crm_no_tasks', [], 'No pending tasks') ?></p>
@@ -175,13 +175,13 @@ $today = date('Y-m-d');
         </div>
 
         <div class="col-lg-4">
-            <div class="card border-0 shadow-sm" class="style-63019">
-                <h6 class="d-flex justify-content-between align-items-center" class="style-954">
+            <div class="card border-0 shadow-sm style-63019">
+                <h6 class="d-flex justify-content-between align-items-center style-954">
                     <span><i class="fas fa-map-marker-alt text-warning me-2"></i><?= __('assoc_crm_upcoming_visits_title', [], 'Upcoming Visits') ?></span>
                     <a href="<?= BASE_URL ?>/associate/site-visits" class="btn btn-sm btn-outline-warning"><?= __('assoc_crm_view_all', [], 'View All') ?></a>
                 </h6>
                 <?php if (empty($upcoming_visits)): ?>
-                    <p class="text-muted text-center py-4"><i class="fas fa-calendar-check fa-2x d-block mb-2" class="style-82835"></i><?= __('assoc_crm_no_visits', [], 'No upcoming visits') ?></p>
+                    <p class="text-muted text-center py-4"><i class="fas fa-calendar-check fa-2x d-block mb-2 style-82835"></i><?= __('assoc_crm_no_visits', [], 'No upcoming visits') ?></p>
                 <?php else: ?>
                     <?php foreach ($upcoming_visits as $v):
                         $isTodayVisit = ($v['visit_date'] === $today);
@@ -201,7 +201,7 @@ $today = date('Y-m-d');
                                     <div class="style-50608"><i class="fas fa-user me-1"></i><?= htmlspecialchars($v['lead_name'] ?? '') ?></div>
                                 <?php endif; ?>
                             </div>
-                            <a href="tel:<?= htmlspecialchars($v['visitor_phone'] ?? '') ?>" class="btn btn-sm btn-outline-success" class="style-52516"><i class="fas fa-phone"></i></a>
+                            <a href="tel:<?= htmlspecialchars($v['visitor_phone'] ?? '') ?>" class="btn btn-sm btn-outline-success style-52516"><i class="fas fa-phone"></i></a>
                         </div>
                     </div>
                     <?php endforeach; ?>
@@ -210,10 +210,10 @@ $today = date('Y-m-d');
         </div>
 
         <div class="col-lg-3">
-            <div class="card border-0 shadow-sm" class="style-63019">
+            <div class="card border-0 shadow-sm style-63019">
                 <h6 class="style-954"><i class="fas fa-history text-info me-2"></i><?= __('assoc_crm_recent_activity', [], 'Recent Activity') ?></h6>
                 <?php if (empty($recent_activity)): ?>
-                    <p class="text-muted text-center py-4"><i class="fas fa-inbox fa-2x d-block mb-2" class="style-82835"></i><?= __('assoc_crm_no_activity', [], 'No activity') ?></p>
+                    <p class="text-muted text-center py-4"><i class="fas fa-inbox fa-2x d-block mb-2 style-82835"></i><?= __('assoc_crm_no_activity', [], 'No activity') ?></p>
                 <?php else: ?>
                     <?php foreach (array_slice($recent_activity, 0, 6) as $act): ?>
                     <div class="style-12119">
@@ -223,9 +223,9 @@ $today = date('Y-m-d');
                                     <i class="fas fa-<?= e($act['interaction_type'] === 'call' ? 'phone' : ($act['interaction_type'] === 'email' ? 'envelope' : ($act['interaction_type'] === 'meeting' ? 'users' : 'comment'))) ?> text-muted me-1"></i>
                                     <?= e(ucfirst(str_replace('_', ' ', $act['interaction_type'] ?? __('assoc_crm_note', [], 'note')))) ?>
                                 </strong>
-                                <span class="text-muted ms-1" class="style-20558">— <?= htmlspecialchars($act['lead_name'] ?? '') ?></span>
+                                <span class="text-muted ms-1 style-20558">— <?= htmlspecialchars($act['lead_name'] ?? '') ?></span>
                             </div>
-                            <small class="text-muted" class="style-68658"><?= date('M d, g:i A', strtotime($act['created_at'])) ?></small>
+                            <small class="text-muted style-68658"><?= date('M d, g:i A', strtotime($act['created_at'])) ?></small>
                         </div>
                     </div>
                     <?php endforeach; ?>
@@ -235,7 +235,7 @@ $today = date('Y-m-d');
     </div>
 
     <?php if (!empty($bySource)): ?>
-    <div class="card border-0 shadow-sm mt-4" class="style-24235">
+    <div class="card border-0 shadow-sm mt-4 style-24235">
         <h6 class="style-954"><i class="fas fa-chart-pie text-purple me-2"></i><?= __('assoc_crm_leads_by_source', [], 'Leads by Source') ?></h6>
         <div class="d-flex gap-3 flex-wrap">
             <?php foreach ($bySource as $src):

@@ -48,7 +48,7 @@ $department = $department ?? '';
                                 ?>
                                 <td class="text-center align-middle <?= !empty($wd['is_today']) ? 'table-primary' : '' ?>">
                                     <?php if ($shift): ?>
-                                        <span class="badge" class="style-22927"><?= htmlspecialchars($shift['shift_type_name'] ?? '') ?></span>
+                                        <span class="badge style-22927"><?= htmlspecialchars($shift['shift_type_name'] ?? '') ?></span>
                                     <?php elseif ($isWorkDay): ?>
                                         <span class="text-info"><small>Scheduled</small></span>
                                     <?php else: ?>

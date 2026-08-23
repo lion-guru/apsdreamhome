@@ -16,7 +16,7 @@
                     <?php if (!empty($property['image'])): ?>
                     <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?php echo htmlspecialchars($property['name'] ?? ''); ?>" class="style-32235" onerror="this.parentElement.querySelector('.no-image-placeholder').style.display='flex'">
                     <?php endif; ?>
-                    <div class="no-image-placeholder d-<?php echo empty($property['image']) ? 'flex' : 'none'; ?> align-items-center justify-content-center bg-light" class="style-74655">
+                    <div class="no-image-placeholder d-<?php echo empty($property['image']) ? 'flex' : 'none'; ?> align-items-center justify-content-center bg-light style-74655">
                         <div class="text-center text-muted">
                             <i class="fas fa-building fa-4x mb-3"></i>
                             <p class="mb-0">No Image Available</p>
@@ -157,8 +157,8 @@
 
 <!-- Interest Modal -->
 <div class="modal fade" id="detailInterestModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" class="style-77674">
-        <div class="modal-content" class="style-28474">
+    <div class="modal-dialog modal-dialog-centered style-77674">
+        <div class="modal-content style-28474">
             <div class="modal-header border-0 pb-0">
                 <div>
                     <h6 class="fw-bold mb-0">I'm Interested</h6>
@@ -194,7 +194,7 @@
                         <i class="fas fa-paper-plane me-1"></i>Submit Interest
                     </button>
                 </form>
-                <div id="detailInterestSuccess" class="text-center py-3" class="style-2248">
+                <div id="detailInterestSuccess" class="text-center py-3 style-2248">
                     <i class="fas fa-check-circle text-success fa-3x mb-3"></i>
                     <h6 class="fw-bold">Interest Recorded!</h6>
                     <p class="text-muted small mb-0">Our team will contact you shortly.</p>

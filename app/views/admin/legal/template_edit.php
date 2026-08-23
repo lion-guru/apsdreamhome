@@ -38,7 +38,7 @@ if (!$template) { echo '<div class="container-fluid py-4"><div class="alert aler
                             <small class="text-muted">Available merge fields:</small>
                             <div class="dropdown d-inline-block ms-2">
                                 <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">Insert Field</button>
-                                <div class="dropdown-menu p-2" class="style-52319">
+                                <div class="dropdown-menu p-2 style-52319">
                                     <?php foreach ($merge_fields as $group => $fields): ?>
                                         <h6 class="dropdown-header"><?= ucfirst($group) ?></h6>
                                         <?php foreach ($fields as $key => $label): ?>
@@ -67,7 +67,7 @@ if (!$template) { echo '<div class="container-fluid py-4"><div class="alert aler
                     <?php if (empty($versions)): ?>
                         <div class="text-center text-muted py-3 small">No version history</div>
                     <?php else: ?>
-                        <div class="list-group list-group-flush" class="style-61454">
+                        <div class="list-group list-group-flush style-61454">
                             <?php foreach ($versions as $v): ?>
                                 <div class="list-group-item p-2">
                                     <div class="d-flex justify-content-between">

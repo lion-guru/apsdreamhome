@@ -7,7 +7,7 @@ $base = BASE_URL ?? '';
 </style>
 
 <div class="form-header">
-    <a href="<?= $base ?>/agent/leads" class="text-white text-decoration-none" class="style-4669">
+    <a href="<?= $base ?>/agent/leads" class="text-white text-decoration-none style-4669">
         <i class="fas fa-arrow-left me-1"></i>Back to Leads
     </a>
     <h4 class="mt-2 mb-0"><i class="fas fa-plus-circle me-2"></i>Add New Lead</h4>

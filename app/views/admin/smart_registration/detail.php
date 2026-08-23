@@ -72,9 +72,8 @@ $behavior = $behavior ?? [];
                         <div class="col-6">
                             <div class="sd-info-label">Profile Completion</div>
                             <div class="sd-info-value">
-                                <div class="progress" class="style-31164">
-                                    <div class="progress-bar bg-<?= ($s['profile_completion_pct'] ?? 0) >= 80 ? 'success' : 'warning' ?>"
-                                         class="style-79680"></div>
+                                <div class="progress style-31164">
+                                    <div class="progress-bar bg-<?= ($s['profile_completion_pct'] ?? 0) >= 80 ? 'success' : 'warning' ?> style-79680"></div>
                                 </div>
                                 <small><?= $s['profile_completion_pct'] ?? 0 ?>%</small>
                             </div>

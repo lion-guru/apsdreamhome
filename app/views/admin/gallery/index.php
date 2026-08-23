@@ -34,7 +34,7 @@ $current_category = $current_category ?? '';
     <?php foreach ($images as $img): ?>
     <div class="col-md-4 col-lg-3">
         <div class="card border-0 shadow-sm h-100">
-            <div class="position-relative" class="style-16984">
+            <div class="position-relative style-16984">
                 <?php if (!empty($img['image_path'])): ?>
                 <img src="<?= BASE_URL ?>/<?= htmlspecialchars($img['image_path'] ?? '') ?>" alt="<?= htmlspecialchars($img['title'] ?? $img['caption'] ?? '') ?>" class="style-83369" loading="lazy">
                 <?php else: ?>

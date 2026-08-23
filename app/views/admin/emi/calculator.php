@@ -61,7 +61,7 @@
                         <p>Enter loan details and click Calculate to see the amortization schedule</p>
                     </div>
                     <div id="amortizationTable" class="style-24280">
-                        <div class="table-responsive" class="style-62230">
+                        <div class="table-responsive style-62230">
                             <table class="table table-sm table-hover mb-0" id="scheduleTable">
                                 <thead class="sticky-top bg-dark text-white"><tr>
                                     <th>#</th><th>EMI</th><th>Principal</th><th>Interest</th><th>Balance</th>

@@ -195,9 +195,8 @@ $total_pages = $total_pages ?? 1;
                                 <td>
                                     <?php if (($job['confidence_score'] ?? 0) > 0): ?>
                                         <div class="d-flex align-items-center">
-                                            <div class="progress flex-grow-1 me-2" class="style-29939">
-                                                <div class="progress-bar bg-<?= ($job['confidence_score'] >= 90) ? 'success' : (($job['confidence_score'] >= 70) ? 'warning' : 'danger') ?>" 
-                                                     class="style-59464"></div>
+                                            <div class="progress flex-grow-1 me-2 style-29939">
+                                                <div class="progress-bar bg-<?= ($job['confidence_score'] >= 90) ? 'success' : (($job['confidence_score'] >= 70) ? 'warning' : 'danger') ?> style-59464"></div>
                                             </div>
                                             <small><?= $job['confidence_score'] ?>%</small>
                                         </div>

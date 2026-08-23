@@ -30,6 +30,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
         .empty-state { text-align: center; padding: 3rem; color: #64748b; }
         .empty-state i { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
     <div class="page-header">

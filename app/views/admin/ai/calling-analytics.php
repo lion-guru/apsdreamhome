@@ -12,7 +12,7 @@ $days = $days ?? 30;
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <h2 class="mb-0"><i class="fas fa-chart-line me-2 text-primary"></i>Calling Analytics</h2>
         <div class="d-flex gap-2">
-            <select id="daysFilter" class="form-select form-select-sm" class="style-30246" onchange="window.location='?days='+this.value">
+            <select id="daysFilter" class="form-select form-select-sm style-30246" onchange="window.location='?days='+this.value">
                 <?php foreach ([7=>7,14=>14,30=>30,60=>60,90=>90] as $v=>$l): ?>
                     <option value="<?= $v ?>" <?= $days == $v ? 'selected' : '' ?>>Last <?= $l ?> days</option>
                 <?php endforeach; ?>
@@ -23,37 +23,37 @@ $days = $days ?? 30;
 
     <div class="row g-3 mb-4">
         <div class="col-md-2 col-4">
-            <div class="card border-0 shadow-sm text-center py-3" class="style-46740">
+            <div class="card border-0 shadow-sm text-center py-3 style-46740">
                 <div class="style-64786"><?= number_format($totals['total']) ?></div>
                 <div class="small text-muted">Total Calls</div>
             </div>
         </div>
         <div class="col-md-2 col-4">
-            <div class="card border-0 shadow-sm text-center py-3" class="style-46740">
+            <div class="card border-0 shadow-sm text-center py-3 style-46740">
                 <div class="style-29702"><?= number_format($totals['completed']) ?></div>
                 <div class="small text-muted">Completed</div>
             </div>
         </div>
         <div class="col-md-2 col-4">
-            <div class="card border-0 shadow-sm text-center py-3" class="style-46740">
+            <div class="card border-0 shadow-sm text-center py-3 style-46740">
                 <div class="style-21276"><?= number_format($totals['failed']) ?></div>
                 <div class="small text-muted">Failed</div>
             </div>
         </div>
         <div class="col-md-2 col-4">
-            <div class="card border-0 shadow-sm text-center py-3" class="style-46740">
+            <div class="card border-0 shadow-sm text-center py-3 style-46740">
                 <div class="style-29702"><?= number_format($totals['interested']) ?></div>
                 <div class="small text-muted">Interested</div>
             </div>
         </div>
         <div class="col-md-2 col-4">
-            <div class="card border-0 shadow-sm text-center py-3" class="style-46740">
+            <div class="card border-0 shadow-sm text-center py-3 style-46740">
                 <div class="style-21276"><?= number_format($totals['not_interested']) ?></div>
                 <div class="small text-muted">Not Interested</div>
             </div>
         </div>
         <div class="col-md-2 col-4">
-            <div class="card border-0 shadow-sm text-center py-3" class="style-46740">
+            <div class="card border-0 shadow-sm text-center py-3 style-46740">
                 <div class="style-29911"><?= round($totals['avg_duration']) ?>s</div>
                 <div class="small text-muted">Avg Duration</div>
             </div>

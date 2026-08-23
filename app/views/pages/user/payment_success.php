@@ -26,7 +26,7 @@ $token_amount = $token_amount ?? 25000;
 
         <div class="text-center mb-4">
             <div class="style-75714">
-                <i class="fas fa-check" class="style-3728"></i>
+                <i class="fas fa-check style-3728"></i>
             </div>
             <h3 class="mt-2"><?= __('user_payment_success_thank_you', 'Thank You,') ?> <?= htmlspecialchars($user['name'] ?? '') ?>!</h3>
             <p class="text-muted"><?= __('user_payment_success_received_prefix', 'Your token payment of') ?> <strong class="text-success">₹<?= number_format($token_amount) ?></strong> <?= __('user_payment_success_received_suffix', 'has been received.') ?></p>
@@ -84,8 +84,8 @@ $token_amount = $token_amount ?? 25000;
             </div>
             <div class="aps-cp-card-body">
                 <div class="d-flex align-items-start mb-3">
-                    <div class="me-3" class="style-89166">
-                        <i class="fas fa-file-signature text-primary" class="style-10933"></i>
+                    <div class="me-3 style-89166">
+                        <i class="fas fa-file-signature text-primary style-10933"></i>
                     </div>
                     <div>
                         <strong><?= __('user_payment_success_step1_title', 'Sign Agreement') ?></strong>
@@ -93,8 +93,8 @@ $token_amount = $token_amount ?? 25000;
                     </div>
                 </div>
                 <div class="d-flex align-items-start mb-3">
-                    <div class="me-3" class="style-89166">
-                        <i class="fas fa-calendar-check text-primary" class="style-10933"></i>
+                    <div class="me-3 style-89166">
+                        <i class="fas fa-calendar-check text-primary style-10933"></i>
                     </div>
                     <div>
                         <strong><?= __('user_payment_success_step2_title', 'EMI Schedule') ?></strong>
@@ -102,8 +102,8 @@ $token_amount = $token_amount ?? 25000;
                     </div>
                 </div>
                 <div class="d-flex align-items-start">
-                    <div class="me-3" class="style-89166">
-                        <i class="fas fa-key text-primary" class="style-10933"></i>
+                    <div class="me-3 style-89166">
+                        <i class="fas fa-key text-primary style-10933"></i>
                     </div>
                     <div>
                         <strong><?= __('user_payment_success_step3_title', 'Allotment & Possession') ?></strong>

@@ -3,7 +3,7 @@ $rank = $rank ?? [];
 $base = defined('BASE_URL') ? BASE_URL : '';
 $id   = (int)($rank['id'] ?? 0);
 ?>
-<div class="container-fluid py-4" class="style-28388">
+<div class="container-fluid py-4 style-28388">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="m-0"><i class="fas fa-edit me-2"></i>Edit Rank: <?= htmlspecialchars($rank['rank_name'] ?? '') ?></h4>
         <a href="<?= $base ?>/admin/network/ranks" class="btn btn-outline-secondary btn-sm">

@@ -18,7 +18,7 @@ $land_holdings = $land_holdings ?? [];
 ?>
 
 <div class="container py-4">
-    <div class="card border-0 shadow-sm mb-4" class="style-97153">
+    <div class="card border-0 shadow-sm mb-4 style-97153">
         <div class="card-body p-4 text-white">
             <div class="row align-items-center">
                 <div class="col-md-8">
@@ -134,8 +134,8 @@ $land_holdings = $land_holdings ?? [];
                         <span class="fw-bold"><?php echo e($acquired); ?></span>
                     </div>
                     <?php if ($total > 0): ?>
-                    <div class="progress mb-3" class="style-79794">
-                        <div class="progress-bar bg-success" class="style-21974"></div>
+                    <div class="progress mb-3 style-79794">
+                        <div class="progress-bar bg-success style-21974"></div>
                     </div>
                     <?php endif; ?>
                     <div class="mb-2 d-flex justify-content-between">

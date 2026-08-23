@@ -175,8 +175,8 @@ ob_start();
               <span><code><?= htmlspecialchars($item['action'] ?? '') ?></code></span>
               <strong><?= number_format($item['cnt']) ?></strong>
             </div>
-            <div class="progress" class="style-29939">
-              <div class="progress-bar bg-primary" class="style-31886"></div>
+            <div class="progress style-29939">
+              <div class="progress-bar bg-primary style-31886"></div>
             </div>
           </div>
         <?php endforeach; ?>

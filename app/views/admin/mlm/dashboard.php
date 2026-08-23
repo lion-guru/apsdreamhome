@@ -44,25 +44,25 @@ $monthByType = $stats['commission_this_month_by_type'] ?? [];
 <!-- ROW 2: 4 New Commission Streams (This Month) -->
 <div class="row g-3 mb-4">
     <div class="col-md-3 col-6">
-        <div class="aps-cp-stat" class="style-87972">
+        <div class="aps-cp-stat style-87972">
             <div class="aps-cp-stat-value">&#8377;<?= number_format((float)($stats['generation_bonus_this_month'] ?? 0) / 1000, 1) ?>K</div>
             <div class="aps-cp-stat-label">Generation Bonus (Month)</div>
         </div>
     </div>
     <div class="col-md-3 col-6">
-        <div class="aps-cp-stat" class="style-85050">
+        <div class="aps-cp-stat style-85050">
             <div class="aps-cp-stat-value">&#8377;<?= number_format((float)($stats['infinity_override_this_month'] ?? 0) / 1000, 1) ?>K</div>
             <div class="aps-cp-stat-label">Infinity Override (Month)</div>
         </div>
     </div>
     <div class="col-md-3 col-6">
-        <div class="aps-cp-stat" class="style-18399">
+        <div class="aps-cp-stat style-18399">
             <div class="aps-cp-stat-value">&#8377;<?= number_format((float)($stats['matching_bonus_this_month'] ?? 0) / 1000, 1) ?>K</div>
             <div class="aps-cp-stat-label">Matching Bonus (Month)</div>
         </div>
     </div>
     <div class="col-md-3 col-6">
-        <div class="aps-cp-stat" class="style-46200">
+        <div class="aps-cp-stat style-46200">
             <div class="aps-cp-stat-value">&#8377;<?= number_format((float)($stats['commission_this_month'] ?? 0) / 10000000, 2) ?>Cr</div>
             <div class="aps-cp-stat-label">Total Commission (Month)</div>
         </div>
@@ -96,7 +96,7 @@ $monthByType = $stats['commission_this_month_by_type'] ?? [];
                             ?>
                             <tr>
                                 <td>
-                                    <span class="badge" class="style-59711">
+                                    <span class="badge style-59711">
                                         <i class="fas <?= htmlspecialchars((string)($rb['badge_icon'] ?? 'fa-user')) ?> me-1"></i>
                                         <?= htmlspecialchars(ucfirst(str_replace('_', ' ', (string)($rb['rank_name'] ?? '')))) ?>
                                     </span>
@@ -165,8 +165,8 @@ $monthByType = $stats['commission_this_month_by_type'] ?? [];
                                 <td class="text-end fw-bold">&#8377;<?= number_format($data['total'], 0) ?></td>
                                 <td class="text-end">&#8377;<?= number_format($monthTotal, 0) ?></td>
                                 <td class="text-end">
-                                    <div class="progress" class="style-81279">
-                                        <div class="progress-bar bg-<?= $label[2] === 'text-danger' ? 'danger' : ($label[2] === 'text-primary' ? 'primary' : ($label[2] === 'text-success' ? 'success' : 'secondary')) ?>" class="style-75676"></div>
+                                    <div class="progress style-81279">
+                                        <div class="progress-bar bg-<?= $label[2] === 'text-danger' ? 'danger' : ($label[2] === 'text-primary' ? 'primary' : ($label[2] === 'text-success' ? 'success' : 'secondary')) ?> style-75676"></div>
                                     </div>
                                     <?= $pctTotal ?>%
                                 </td>

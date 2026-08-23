@@ -1,0 +1,241 @@
+/* ============================================================
+   UI/UX AUDIT FIXES
+   Source: testing/nightly_vision/uiux_audit.mjs findings
+   Loaded LAST in every layout (base, customer, associate,
+   admin, employee, agent) so these rules win the cascade.
+   Targets: tiny fonts (<11px), small tap targets (<30-36px),
+   low-contrast text pairs found by the audit.
+   ============================================================ */
+
+/* ---------------- Tiny font floors (>= 11px) ---------------- */
+
+/* Mobile bottom navigation labels (was 10px) */
+.mobile-bottom-nav .nav-item {
+  font-size: 11px;
+}
+
+/* Homepage property-showcase badges & chips (was 0.6-0.65rem) */
+.ps-badge,
+.ps-card-location-chip {
+  font-size: 0.7rem;
+}
+.ps-price small {
+  font-size: 0.7rem;
+}
+
+/* Bootstrap badges inherit 0.75em of small parents (btn-sm => ~9.8px) */
+.badge {
+  font-size: max(0.75em, 11px);
+}
+#compareBadge {
+  font-size: 0.7rem;
+}
+
+/* Quick-search kbd hints + result type tags (was 10px).
+   Match header.css specificity (.desktop-search-trigger kbd = 0,1,1). */
+kbd,
+.desktop-search-trigger kbd,
+.command-palette-footer kbd {
+  font-size: 11px;
+}
+.quick-search-result .type-tag {
+  font-size: 11px;
+}
+
+/* Navbar mega-menu count badges (was 10px).
+   Match header.css specificity (.mega-menu .mega-item .mega-badge = 0,3,0). */
+.mega-badge,
+.mega-menu .mega-item .mega-badge {
+  font-size: 11px;
+}
+
+/* Admin header notification badges (.nav-icon .badge beats generic .badge) */
+.nav-icon .badge,
+.nav-icon span.badge {
+  font-size: 11px;
+}
+
+/* Admin sidebar section headers + subtitle (was 0.66/0.68rem) */
+.sidebar-sec {
+  font-size: 0.7rem;
+}
+.sidebar-sub {
+  font-size: 0.72rem;
+}
+
+/* ERP module card stat labels — inline #94a3b8 on white = 2.6:1 */
+.erp-module-card .mc-lbl {
+  color: #64748b; /* 4.76:1 on white */
+}
+
+/* Footer bottom-bar legal links (Privacy/Terms) h~16px */
+.footer-legal-links a {
+  display: inline-block;
+  padding: 8px 0;
+}
+
+/* Customer dashboard compact buttons (Upgrade etc.) h~21px */
+.aps-cp-btn,
+.aps-cp-btn-sm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+}
+
+/* ---------------- Small tap targets (>= 32px) ---------------- */
+
+/* Footer quick-link / services lists: bare inline links h~24px */
+footer ul li a,
+.footer-links-bottom a {
+  display: inline-block;
+  padding: 5px 0;
+  min-height: 32px;
+}
+
+/* Breadcrumb items (incl. bare <li> "Admin" crumb in admin layout) */
+.breadcrumb-item a {
+  display: inline-block;
+  padding: 5px 2px;
+}
+.breadcrumb-item a,
+.breadcrumb-item {
+  color: #334155;
+}
+
+/* Mobile drawer nav links: keep dark slate (header.css base), fix active/warning variants */
+.mobile-nav-link.active {
+  color: #115e59;
+}
+.mobile-nav-link.text-warning {
+  color: #92400e !important;
+}
+
+/* Header icon-only quick actions */
+.btn-call a.btn,
+.btn-compare a.btn,
+.btn-admin a.btn {
+  min-height: 34px;
+  min-width: 40px;
+}
+
+/* Chat widget: badge + quick-reply buttons below 11px */
+.cw-badge {
+  font-size: 12px !important;
+  line-height: 1;
+}
+.cw-quick-btn {
+  font-size: 12px !important;
+}
+.cw-chip,
+.cw-chip.cw-chip-action,
+.cw-chip.cw-chip-confirm,
+.cw-chip.cw-chip-cancel {
+  font-size: 12px !important;
+}
+
+/* Admin runtime-styled inline action links (View/Edit/Delete) too small to tap */
+.page-content a[class*="style-"] {
+  display: inline-block;
+  padding: 6px 10px;
+}
+
+/* Bootstrap primary buttons: white on #0d6efd = 3.68:1 -> darker blue 5.3:1 */
+.btn-primary,
+.bg-primary {
+  background-color: #0a58ca !important;
+  border-color: #0a58ca;
+}
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: #084298;
+  border-color: #084298;
+}
+.btn-outline-primary {
+  color: #0a58ca;
+  border-color: #0a58ca;
+}
+
+/* Outline warning text #ffc107 on white = 1.6:1 -> amber-700 4.6:1 */
+.btn-outline-warning {
+  color: #b45309;
+  border-color: #b45309;
+}
+.btn-outline-warning:hover {
+  background-color: #b45309;
+  border-color: #b45309;
+}
+
+/* Outline info text cyan on white = 1.9:1 -> cyan-700 4.9:1 */
+.btn-outline-info {
+  color: #0e7490;
+  border-color: #0e7490;
+}
+.btn-outline-info:hover {
+  background-color: #0e7490;
+  border-color: #0e7490;
+}
+
+/* Small buttons: bump to comfortable tap height */
+.btn-sm {
+  min-height: 34px;
+}
+
+/* Admin stat labels */
+.aps-cp-stat-label {
+  color: #475569 !important;
+}
+
+/* Gold outline button: guarantee dark backing so gold text >= 4.5:1 on any bg */
+.btn-outline-premium {
+  background-color: rgba(15, 23, 42, 0.85);
+}
+
+/* About page hero subtitle + stats */
+.hero-subtitle {
+  color: rgba(248, 250, 252, 0.94);
+}
+
+/* ---------------- Low-contrast text fixes ---------------- */
+
+/* Header active nav link teal #0d9488 = 3.77:1 -> darker teal 4.8:1 */
+.navbar .nav-link.active {
+  color: #0f766e !important;
+}
+
+/* Skip-to-content links (header.css vs aps-core.css fight) */
+.aps-skip-link {
+  background: #0f172a !important;
+  color: #ffffff !important;
+}
+
+/* Agent dashboard SB-Admin cards + stat-cards: Bootstrap utility
+   colors too light on white (text-info 2.0:1, text-warning 1.6:1) */
+.card .text-info,
+.stat-card .text-info {
+  color: #0e7490 !important; /* cyan-700, 4.8:1 */
+}
+.card .text-warning,
+.stat-card .text-warning {
+  color: #b45309 !important; /* amber-700, 4.5:1 */
+}
+
+/* Associate dashboard stat trend green #10b981 = 2.5:1 on white */
+.stat-trend.up {
+  color: #047857 !important; /* green-700, 5.4:1 */
+}
+.stat-trend:not(.up) {
+  color: #64748b;
+}
+
+/* Admin top-header user role chip #94a3b8 = 2.6:1 on white */
+.user-role {
+  color: #64748b !important;
+}
+
+/* Admin MLM stat cards: bg-primary card but admin.css label overrides
+   Bootstrap .text-white -> gray-on-blue 1.1:1 */
+.text-white .aps-cp-stat-label,
+.bg-primary .aps-cp-stat-label {
+  color: rgba(255, 255, 255, 0.95) !important;
+}

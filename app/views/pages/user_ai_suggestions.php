@@ -54,7 +54,7 @@ $extraHead = '<link rel="stylesheet" href="<?= BASE_URL ?>/assets/fonts/fontawes
                         </div>
                     </form>
 
-                    <div id="suggestionsResult" class="mt-4" class="style-2248">
+                    <div id="suggestionsResult" class="mt-4 style-2248">
                         <h5 class="mb-3"><i class="fas fa-lightbulb me-2 text-warning"></i><?= __('user_ai_suggestions_results_heading', 'AI Suggestions') ?></h5>
                         <div id="suggestionsList"></div>
                     </div>

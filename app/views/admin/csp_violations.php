@@ -64,7 +64,7 @@ $limit = $limit ?? 50;
                 <?php else: foreach ($violations as $v): ?>
                     <tr>
                         <td><small class="text-muted"><?= htmlspecialchars($v['received_at'] ?? '') ?></small></td>
-                        <td><small><code class="text-truncate d-inline-block" class="style-1873"><?= htmlspecialchars($v['document_uri'] ?? '') ?></code></small></td>
+                        <td><small><code class="text-truncate d-inline-block style-1873"><?= htmlspecialchars($v['document_uri'] ?? '') ?></code></small></td>
                         <td><span class="badge bg-warning text-dark"><?= htmlspecialchars($v['violated_directive'] ?? '') ?></span></td>
                         <td><small><code><?= htmlspecialchars($v['blocked_uri'] ?? '') ?></code></small></td>
                         <td><small class="text-muted"><?= htmlspecialchars(($v['source_file'] ?? '') . ($v['line_number'] ? ':' . $v['line_number'] : '')) ?></small></td>

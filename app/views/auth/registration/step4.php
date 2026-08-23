@@ -29,6 +29,7 @@ $verified = $_GET['verified'] ?? '';
         .verify-card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; }
         .verify-card.verified { border-color: #10b981; background: #f0fdf4; }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
 <div class="container">

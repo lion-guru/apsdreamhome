@@ -89,12 +89,13 @@ $base = BASE_URL;
             .card-header-custom{padding:1.25rem 1.5rem 0}
         }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
     <div class="login-wrapper">
         <!-- Benefits Panel -->
         <div class="benefits-panel d-none d-lg-block">
-            <div class="benefits-title"><i class="fas fa-wind" class="style-5793"></i> Air Login</div>
+            <div class="benefits-title"><i class="fas fa-wind style-5793"></i> Air Login</div>
             <div class="benefits-subtitle">Login to your APS Dream Home account without a password — just your email or phone number.</div>
 
             <div class="benefit-item">

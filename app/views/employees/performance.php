@@ -41,7 +41,7 @@ function perfLevelBadge($level) {
     <!-- Top Stats -->
     <div class="row g-3 mb-4">
         <div class="col-6 col-lg-3">
-            <div class="card emp-perf-stat" class="style-35582">
+            <div class="card emp-perf-stat style-35582">
                 <div class="stat-body">
                     <div class="text-white-50 small mb-1"><i class="fas fa-check-double me-1"></i> Tasks Completed</div>
                     <div class="stat-val"><?= $overall['tasks_completed'] ?? 0 ?></div>
@@ -51,7 +51,7 @@ function perfLevelBadge($level) {
             </div>
         </div>
         <div class="col-6 col-lg-3">
-            <div class="card emp-perf-stat" class="style-37236">
+            <div class="card emp-perf-stat style-37236">
                 <div class="stat-body">
                     <div class="text-white-50 small mb-1"><i class="fas fa-clock me-1"></i> On-Time Rate</div>
                     <div class="stat-val"><?= $overall['on_time_rate'] ?? 0 ?>%</div>
@@ -61,7 +61,7 @@ function perfLevelBadge($level) {
             </div>
         </div>
         <div class="col-6 col-lg-3">
-            <div class="card emp-perf-stat" class="style-74239">
+            <div class="card emp-perf-stat style-74239">
                 <div class="stat-body">
                     <div class="text-white-50 small mb-1"><i class="fas fa-star me-1"></i> Avg Rating</div>
                     <div class="stat-val"><?= number_format((float)($overall['rating'] ?? 0), 1) ?></div>
@@ -71,7 +71,7 @@ function perfLevelBadge($level) {
             </div>
         </div>
         <div class="col-6 col-lg-3">
-            <div class="card emp-perf-stat" class="style-69747">
+            <div class="card emp-perf-stat style-69747">
                 <div class="stat-body">
                     <div class="text-white-50 small mb-1"><i class="fas fa-calendar-check me-1"></i> Attendance</div>
                     <div class="stat-val"><?= $overall['attendance_percent'] ?? 0 ?>%</div>
@@ -112,7 +112,7 @@ function perfLevelBadge($level) {
                                     stroke-dasharray="<?= $overallScore * 2.2 ?> 220" class="style-21665"/>
                             </svg>
                             <div class="style-7521">
-                                <div class="fw-bold fs-3" class="style-42449"><?= $overallScore ?>%</div>
+                                <div class="fw-bold fs-3 style-42449"><?= $overallScore ?>%</div>
                                 <div class="text-muted small">Overall Score</div>
                             </div>
                         </div>
@@ -127,11 +127,11 @@ function perfLevelBadge($level) {
                     ];
                     foreach ($metrics as $m): ?>
                         <div class="d-flex align-items-center gap-3 mb-2">
-                            <div class="text-muted small" class="style-43624"><?= $m['label'] ?></div>
+                            <div class="text-muted small style-43624"><?= $m['label'] ?></div>
                             <div class="flex-grow-1 emp-perf-progress">
-                                <div class="emp-perf-progress-fill" class="style-50659"></div>
+                                <div class="emp-perf-progress-fill style-50659"></div>
                             </div>
-                            <div class="fw-semibold small" class="style-66568"><?= $m['value'] ?>%</div>
+                            <div class="fw-semibold small style-66568"><?= $m['value'] ?>%</div>
                         </div>
                     <?php endforeach; ?>
                 </div>

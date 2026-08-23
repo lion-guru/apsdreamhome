@@ -120,7 +120,7 @@ $maxTypeCount = max(array_values($stats['types'] ?: [1]));
                                 if ($actionDate !== $lastDate): $lastDate = $actionDate; ?>
                                     <div class="d-flex align-items-center gap-2 mb-3 mt-2">
                                         <div class="fw-semibold text-dark small"><?= date('d M Y', strtotime($actionDate)) ?></div>
-                                        <div class="flex-grow-1" class="style-59658"></div>
+                                        <div class="flex-grow-1 style-59658"></div>
                                         <?php if ($actionDate === date('Y-m-d')): ?>
                                             <span class="badge bg-success bg-opacity-10 text-success">Today</span>
                                         <?php endif; ?>
@@ -148,7 +148,7 @@ $maxTypeCount = max(array_values($stats['types'] ?: [1]));
                                         }
                                         ?>
                                         <?php if ($details && is_array($details) && count($details) > 0): ?>
-                                            <div class="bg-light rounded p-2 mb-2" class="style-436">
+                                            <div class="bg-light rounded p-2 mb-2 style-436">
                                                 <?php foreach ($details as $k => $v): ?>
                                                     <span class="me-3"><strong><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $k))) ?>:</strong> <?= htmlspecialchars(is_array($v) ? json_encode($v) : $v) ?></span>
                                                 <?php endforeach; ?>
@@ -186,18 +186,18 @@ $maxTypeCount = max(array_values($stats['types'] ?: [1]));
                         <?php foreach ($stats['types'] as $type => $count): ?>
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <div class="d-flex align-items-center gap-2">
-                                    <div class="rounded-circle bg-<?= actColor($type) ?> bg-opacity-10" class="style-26066">
-                                        <i class="fas fa-<?= actIcon($type) ?> text-<?= actColor($type) ?>" class="style-64777"></i>
+                                    <div class="rounded-circle bg-<?= actColor($type) ?> bg-opacity-10 style-26066">
+                                        <i class="fas fa-<?= actIcon($type) ?> text-<?= actColor($type) ?> style-64777"></i>
                                     </div>
                                     <div>
                                         <div class="fw-semibold small text-dark"><?= ucfirst(htmlspecialchars($type ?? '')) ?></div>
-                                        <div class="text-muted" class="style-68658"><?= $count ?> activities</div>
+                                        <div class="text-muted style-68658"><?= $count ?> activities</div>
                                     </div>
                                 </div>
                                 <span class="badge bg-<?= actColor($type) ?> bg-opacity-10 text-<?= actColor($type) ?>"><?= $count ?></span>
                             </div>
                             <div class="emp-act-type-bar mb-3">
-                                <div class="emp-act-type-bar-fill bg-<?= actColor($type) ?>" class="style-59145"></div>
+                                <div class="emp-act-type-bar-fill bg-<?= actColor($type) ?> style-59145"></div>
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>

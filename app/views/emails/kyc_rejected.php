@@ -27,13 +27,13 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
         <tr>
           <td bgcolor="#f59e0b" align="center" class="style-67032">
             <div class="style-90702">!</div>
-            <h1 class="h1-mobile" class="style-56865">KYC Requires Update</h1>
+            <h1 class="h1-mobile style-56865">KYC Requires Update</h1>
             <p class="style-9233">Action needed to complete verification</p>
           </td>
         </tr>
         <!-- Body -->
         <tr>
-          <td class="px-mobile" class="style-68782">
+          <td class="px-mobile style-68782">
             <h2 class="style-80102">Hi {{user_name}},</h2>
             <p class="style-28596">
               We've reviewed your KYC submission and need some additional information to complete verification.
@@ -52,7 +52,7 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
               <tr>
                 <td align="center" class="style-43583">
-                  <a href="{{kyc_url}}" class="button-mobile" class="style-17666">Resubmit KYC</a>
+                  <a href="{{kyc_url}}" class="button-mobile style-17666">Resubmit KYC</a>
                 </td>
               </tr>
             </table>

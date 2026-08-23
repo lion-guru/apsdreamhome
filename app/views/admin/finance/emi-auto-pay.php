@@ -87,7 +87,7 @@ $isTestMode = $isTestMode ?? true;
             <button id="runAutoPayBtn" class="btn btn-primary" onclick="runAutoPay()">
                 <i class="fas fa-bolt me-1"></i>Run Auto-Payment Now
             </button>
-            <div id="autoPayResult" class="mt-3" class="style-2248"></div>
+            <div id="autoPayResult" class="mt-3 style-2248"></div>
         </div>
     </div>
 

@@ -98,7 +98,7 @@ $booking_id = $booking_id ?? 0;
                                     </div>
                                     <div>
                                         <div class="fw-semibold small"><?= htmlspecialchars($check['label'] ?? '') ?></div>
-                                        <div class="text-muted" class="style-10117"><?= htmlspecialchars($check['message'] ?? '') ?></div>
+                                        <div class="text-muted style-10117"><?= htmlspecialchars($check['message'] ?? '') ?></div>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
@@ -141,7 +141,7 @@ $booking_id = $booking_id ?? 0;
                                     </div>
                                     <div>
                                         <div class="fw-semibold small"><?= htmlspecialchars($check['label'] ?? '') ?></div>
-                                        <div class="text-muted" class="style-10117"><?= htmlspecialchars($check['message'] ?? '') ?></div>
+                                        <div class="text-muted style-10117"><?= htmlspecialchars($check['message'] ?? '') ?></div>
                                     </div>
                                 </div>
                             <?php endforeach; ?>

@@ -30,14 +30,14 @@ function tenantUsageBar($used, $max, $color = 'primary') {
             <div class="style-37054"><?= strtoupper(substr($tenant['name'] ?? 'T', 0, 2)) ?></div>
             <div>
                 <h4 class="mb-0"><?= htmlspecialchars($tenant['name'] ?? '') ?></h4>
-                <p class="mb-0" class="style-91394">
+                <p class="mb-0 style-91394">
                     <code><?= htmlspecialchars($tenant['slug'] ?? '') ?></code>
                     <?php if ($tenant['domain'] ?? ''): ?> Â· <?= htmlspecialchars($tenant['domain'] ?? '') ?><?php endif; ?>
                 </p>
             </div>
         </div>
         <div>
-            <span class="badge bg-white text-<?= $statusColors[$tenant['status']] ?? 'secondary' ?>" class="style-23264">
+            <span class="badge bg-white text-<?= $statusColors[$tenant['status']] ?? 'secondary' ?> style-23264">
                 <?= ucfirst($tenant['status'] ?? 'unknown') ?>
                 <?php if (($tenant['status'] ?? '') === 'trial' && ($tenant['trial_ends_at'] ?? '')): ?>
                     Â· Ends <?= date('d M', strtotime($tenant['trial_ends_at'])) ?>

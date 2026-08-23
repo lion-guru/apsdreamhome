@@ -32,7 +32,7 @@
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" class="style-43341">
+                                            <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2 style-43341">
                                                 <?= strtoupper(substr($user['name'] ?? 'U', 0, 1)) ?>
                                             </div>
                                             <strong><?= htmlspecialchars($user['name'] ?? '') ?></strong>

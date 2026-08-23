@@ -27,13 +27,13 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
         <tr>
           <td bgcolor="#f59e0b" align="center" class="style-67032">
             <div class="style-90702">&#128179;</div>
-            <h1 class="h1-mobile" class="style-56865">EMI Payment Reminder</h1>
+            <h1 class="h1-mobile style-56865">EMI Payment Reminder</h1>
             <p class="style-9233">Your upcoming installment is due soon</p>
           </td>
         </tr>
         <!-- Body -->
         <tr>
-          <td class="px-mobile" class="style-68782">
+          <td class="px-mobile style-68782">
             <h2 class="style-80102">Hi {{user_name}},</h2>
             <p class="style-28596">
               This is a friendly reminder that your next EMI installment is due in <strong class="style-44353">{{days_until_due}} days</strong>.
@@ -55,7 +55,7 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
               <tr>
                 <td align="center" class="style-43583">
-                  <a href="{{pay_url}}" class="button-mobile" class="style-17666">Pay Now</a>
+                  <a href="{{pay_url}}" class="button-mobile style-17666">Pay Now</a>
                 </td>
               </tr>
             </table>

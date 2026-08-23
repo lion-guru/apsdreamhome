@@ -85,7 +85,7 @@ $dashboardUrl = BASE_URL . '/raghunath_nagri_layout_walkthrough_suite.html';
     @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 
-<div class="container-fluid px-4 py-3" class="style-8602">
+<div class="container-fluid px-4 py-3 style-8602">
     <div class="dash-wrapper position-relative">
         <div class="dash-header">
             <div>
@@ -115,7 +115,7 @@ $dashboardUrl = BASE_URL . '/raghunath_nagri_layout_walkthrough_suite.html';
         ></iframe>
     </div>
 
-    <div class="text-center mt-3" class="style-66445">
+    <div class="text-center mt-3 style-66445">
         <p class="mb-1">
             <i class="fas fa-building me-1"></i>
             <?= h($colony['name'] ?? 'Raghunath Nagri') ?> &middot;

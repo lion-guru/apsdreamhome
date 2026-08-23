@@ -81,8 +81,8 @@ function statusColor($status) {
         <div class="card-body aps-cp-card-body">
           <div class="mb-3">
             <div class="d-flex justify-content-between"><strong>Disk Usage</strong><span><?= $disk['used_gb'] ?? 0 ?> / <?= $disk['total_gb'] ?? 0 ?> GB</span></div>
-            <div class="progress mt-1" class="style-51309">
-              <div class="progress-bar bg-<?= ($disk['used_pct'] ?? 0) > 90 ? 'danger' : (($disk['used_pct'] ?? 0) > 70 ? 'warning' : 'success') ?>" class="style-28798"><?= $disk['used_pct'] ?? 0 ?>%</div>
+            <div class="progress mt-1 style-51309">
+              <div class="progress-bar bg-<?= ($disk['used_pct'] ?? 0) > 90 ? 'danger' : (($disk['used_pct'] ?? 0) > 70 ? 'warning' : 'success') ?> style-28798"><?= $disk['used_pct'] ?? 0 ?>%</div>
             </div>
           </div>
           <h6>Cache</h6>

@@ -50,12 +50,12 @@ $st = $p['status'] ?? 'pending';
                                 'sold' => ['secondary', 'fas fa-handshake', 'Sold', 'Property sold'],
                             ] as $val => [$color, $icon, $label, $desc]): ?>
                                 <div class="col-md-4 col-6">
-                                    <label class="d-block p-3 border rounded cursor-pointer <?= $st === $val ? 'border-' . $color . ' bg-' . $color . ' bg-opacity-10' : '' ?>" class="style-78508">
+                                    <label class="d-block p-3 border rounded cursor-pointer <?= $st === $val ? 'border-' . $color . ' bg-' . $color . ' bg-opacity-10' : '' ?> style-78508">
                                         <input type="radio" name="status" value="<?= $val ?>" class="d-none" <?= $st === $val ? 'checked' : '' ?> onchange="this.closest('label').querySelectorAll('label').forEach(l=>l.classList.remove('active'));document.querySelectorAll('.status-label').forEach(l=>l.classList.remove('fw-bold','text-primary'))">
                                         <div class="text-center">
                                             <i class="<?= $icon ?> fa-2x mb-2 text-<?= $color ?>"></i>
                                             <div class="fw-semibold small"><?= $label ?></div>
-                                            <div class="text-muted" class="style-48967"><?= $desc ?></div>
+                                            <div class="text-muted style-48967"><?= $desc ?></div>
                                         </div>
                                     </label>
                                 </div>

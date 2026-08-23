@@ -648,6 +648,29 @@ body:not(.dark-mode) .amenity-item h6 {
   color: #1e293b !important;
 }
 
+/* Headings inside colored card headers stay white — overrides the universal
+   light-card heading reset above (equal specificity, later in file wins) */
+body:not(.dark-mode) .card > .card-header.bg-primary.text-white h1,
+body:not(.dark-mode) .card > .card-header.bg-primary.text-white h2,
+body:not(.dark-mode) .card > .card-header.bg-primary.text-white h3,
+body:not(.dark-mode) .card > .card-header.bg-primary.text-white h4,
+body:not(.dark-mode) .card > .card-header.bg-primary.text-white h5,
+body:not(.dark-mode) .card > .card-header.bg-primary.text-white h6,
+body:not(.dark-mode) .card > .card-header[class*='gradient'] h1,
+body:not(.dark-mode) .card > .card-header[class*='gradient'] h2,
+body:not(.dark-mode) .card > .card-header[class*='gradient'] h3,
+body:not(.dark-mode) .card > .card-header[class*='gradient'] h4,
+body:not(.dark-mode) .card > .card-header[class*='gradient'] h5,
+body:not(.dark-mode) .card > .card-header[class*='gradient'] h6,
+body:not(.dark-mode) .card > .card-header.bg-dark h1,
+body:not(.dark-mode) .card > .card-header.bg-dark h2,
+body:not(.dark-mode) .card > .card-header.bg-dark h3,
+body:not(.dark-mode) .card > .card-header.bg-dark h4,
+body:not(.dark-mode) .card > .card-header.bg-dark h5,
+body:not(.dark-mode) .card > .card-header.bg-dark h6 {
+  color: #ffffff !important;
+}
+
 body:not(.dark-mode) .ps-card-title,
 body:not(.dark-mode) .ps-card .ps-card-title {
   color: #1e293b !important;
@@ -666,10 +689,10 @@ body:not(.dark-mode) .ps-card-stats span {
   color: #64748b !important;
 }
 
-/* Breadcrumb Contrast Fix */
+/* Breadcrumb Contrast Fix (dark teal for >= 4.5:1) */
 .breadcrumb-item,
 .breadcrumb-item a {
-  color: #0d9488 !important;
+  color: #115e59 !important;
 }
 .breadcrumb-item.active {
   color: #475569 !important;
@@ -1918,10 +1941,8 @@ section[style*="linear-gradient"] .bg-light .form-control::placeholder {
 section[style*="linear-gradient"] .card:not(.bg-dark):not(.glass-dark),
 section[style*="linear-gradient"] .card.bg-white,
 section[style*="linear-gradient"] .card.bg-light,
-section[style*="linear-gradient"] .card.bg-primary.text-white,
 section[style*="linear-gradient"] .bg-light,
 section[style*="linear-gradient"] .bg-white,
-section[style*="linear-gradient"] .bg-primary.text-white,
 section[style*="linear-gradient"] div[style*="background-color"],
 section[style*="linear-gradient"] div[style*="background: linear-gradient"] {
   --aps-text: #1e293b;
@@ -1935,7 +1956,6 @@ section[style*="linear-gradient"] .card.bg-white *,
 section[style*="linear-gradient"] .card.bg-light *,
 section[style*="linear-gradient"] .bg-light *,
 section[style*="linear-gradient"] .bg-white *,
-section[style*="linear-gradient"] .bg-primary.text-white *,
 section[style*="linear-gradient"] div[style*="background-color"] *,
 section[style*="linear-gradient"] div[style*="background: linear-gradient"] * {
   color: inherit !important;

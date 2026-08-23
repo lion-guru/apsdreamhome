@@ -26,7 +26,7 @@
             <?php if (!empty($plot['image_path'])): ?>
                 <img src="<?= htmlspecialchars($plot['image_path'] ?? '') ?>" alt="Plot <?= htmlspecialchars($plot['plot_number'] ?? '') ?>" class="plot-gallery-img">
             <?php else: ?>
-                <div class="plot-gallery-img bg-light d-flex align-items-center justify-content-center" class="style-68724">
+                <div class="plot-gallery-img bg-light d-flex align-items-center justify-content-center style-68724">
                     <div class="text-center text-muted">
                         <i class="fas fa-map-marked-alt fa-4x mb-3"></i>
                         <p class="mb-0"><?= __('plot_detail_location_image') ?></p>
@@ -172,7 +172,7 @@
                     <?php $a = is_string($amenity) ? str_replace(['[', ']', '"', '\\'], '', $amenity) : ''; ?>
                     <?php if (!empty($a)): ?>
                     <div class="col-md-4 col-6">
-                        <span class="amenity-tag" class="style-80567">
+                        <span class="amenity-tag style-80567">
                             <i class="fas fa-check-circle text-success me-1"></i> <?= htmlspecialchars(trim($a)) ?>
                         </span>
                     </div>

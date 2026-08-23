@@ -259,6 +259,7 @@ $language = $language ?? 'hi';
         }
     </style>
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
 <div class="bot-container">
@@ -299,7 +300,7 @@ $language = $language ?? 'hi';
 
         <div class="text-input-row">
             <input type="text" id="textInput" placeholder="Type karein ya bolein..." onkeypress="if(event.key==='Enter')sendFromInput()">
-            <button onclick="sendFromInput()"><i class="fas fa-paper-plane" class="style-64777"></i></button>
+            <button onclick="sendFromInput()"><i class="fas fa-paper-plane style-64777"></i></button>
         </div>
 
         <button class="end-call-btn" onclick="endSession()">End Session</button>

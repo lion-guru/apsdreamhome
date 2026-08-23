@@ -22,7 +22,7 @@ class ColonyLandCostingController extends AdminController
     public function __construct()
     {
         parent::__construct();
-        $this->service = new ColonyLandCostingService($this->db);
+        $this->service = new ColonyLandCostingService($this->db->getConnection());
     }
 
     /* ── List all colonies ──────────────────────────────────────────── */

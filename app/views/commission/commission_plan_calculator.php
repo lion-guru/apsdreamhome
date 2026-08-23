@@ -311,6 +311,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
             color: white;
         }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 
 <body>
@@ -553,7 +554,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
                                                 </div>
                                             <?php endforeach; ?>
 
-                                            <div class="breakdown-row total" class="style-34971">
+                                            <div class="breakdown-row total style-34971">
                                                 <span><strong>Grand Total Payout:</strong></span>
                                                 <span><strong>₹<?php echo number_format($calculation_result['summary']['total_payout']); ?></strong></span>
                                             </div>

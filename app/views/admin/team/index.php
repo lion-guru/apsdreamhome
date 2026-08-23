@@ -27,7 +27,7 @@
                     <?php if (empty($members)): ?>
                     <tr>
                         <td colspan="10" class="text-center py-5">
-                            <i class="fas fa-users fa-3x text-muted mb-3" class="style-82835"></i>
+                            <i class="fas fa-users fa-3x text-muted mb-3 style-82835"></i>
                             <h5 class="text-muted">No team members found</h5>
                             <p class="text-muted mb-3">Add your leadership team, advisors, and key staff to showcase them on the website and build trust with customers.</p>
                             <a href="<?= BASE_URL ?>/admin/team/create" class="btn btn-primary">

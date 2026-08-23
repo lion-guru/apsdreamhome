@@ -38,15 +38,15 @@ ob_start();
         <div class="timeline">
           <?php foreach ($timeline as $index => $log): ?>
             <div class="timeline-item position-relative">
-              <div class="timeline-marker position-absolute" class="style-19702">
+              <div class="timeline-marker position-absolute style-19702">
                 <div class="rounded-circle bg-<?= match($log['status'] ?? 'success') {
                   'success' => 'success',
                   'failed' => 'danger',
                   'pending' => 'warning',
                   default => 'secondary'
-                } ?>" class="style-98478"></div>
+                } ?> style-98478"></div>
               </div>
-              <div class="ps-5 pb-4 border-start" class="style-43064">
+              <div class="ps-5 pb-4 border-start style-43064">
                 <div class="d-flex justify-content-between align-items-start mb-2">
                   <div>
                     <span class="badge bg-<?= match($log['action_type'] ?? 'update') {

@@ -16,16 +16,16 @@
 </style>
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
-        <h4 class="mb-1"><i class="fas fa-map-marked-alt" class="style-5793"></i> <?= __('assoc_cm_title', [], 'Plot Map') ?> à¢€—� <?= htmlspecialchars($colony['name'] ?? '') ?></h4>
+        <h4 class="mb-1"><i class="fas fa-map-marked-alt style-5793"></i> <?= __('assoc_cm_title', [], 'Plot Map') ?> à¢€—� <?= htmlspecialchars($colony['name'] ?? '') ?></h4>
         <span class="text-muted small"><?= count($plots) ?> <?= __('assoc_cm_plots', [], 'plots') ?> à‚Â· <?= htmlspecialchars($colony['district_name'] ?? '') ?></span>
     </div>
     <a href="<?= BASE_URL ?>/associate/browse" class="btn btn-sm btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i><?= __('assoc_cm_back', [], 'Back') ?></a>
 </div>
 <div class="map-stats-bar" id="mapStats">
-    <span class="map-stat" data-status="available"><span class="dot" class="style-26706"></span> <?= __('assoc_cm_available', [], 'Available') ?>: <strong id="statAvail">0</strong></span>
-    <span class="map-stat" data-status="booked"><span class="dot" class="style-4960"></span> <?= __('assoc_cm_booked', [], 'Booked') ?>: <strong id="statBooked">0</strong></span>
-    <span class="map-stat" data-status="sold"><span class="dot" class="style-68656"></span> <?= __('assoc_cm_sold', [], 'Sold') ?>: <strong id="statSold">0</strong></span>
-    <span class="map-stat" data-status="hold"><span class="dot" class="style-99107"></span> <?= __('assoc_cm_hold', [], 'Hold') ?>: <strong id="statHold">0</strong></span>
+    <span class="map-stat" data-status="available"><span class="dot style-26706"></span> <?= __('assoc_cm_available', [], 'Available') ?>: <strong id="statAvail">0</strong></span>
+    <span class="map-stat" data-status="booked"><span class="dot style-4960"></span> <?= __('assoc_cm_booked', [], 'Booked') ?>: <strong id="statBooked">0</strong></span>
+    <span class="map-stat" data-status="sold"><span class="dot style-68656"></span> <?= __('assoc_cm_sold', [], 'Sold') ?>: <strong id="statSold">0</strong></span>
+    <span class="map-stat" data-status="hold"><span class="dot style-99107"></span> <?= __('assoc_cm_hold', [], 'Hold') ?>: <strong id="statHold">0</strong></span>
     <span class="map-stat ms-auto text-muted"><?= __('assoc_cm_total_value', [], 'Total Value') ?>: <strong id="statValue">à¢—šÂ¹0</strong></span>
 </div>
 <div class="map-filter-bar mb-3">
@@ -75,9 +75,9 @@
                             '<div class="info-row"><span class="label"><?= __('assoc_cm_area', [], 'Area') ?></span><span class="value">' + (p.area_sqft || 0) + ' sqft</span></div>' +
                             '<div class="info-row"><span class="label"><?= __('assoc_cm_size', [], 'Size') ?></span><span class="value">' + (p.width_ft || '-') + 'x' + (p.length_ft || '-') + '</span></div>' +
                             (p.price_per_sqft ? '<div class="info-row"><span class="label"><?= __('assoc_cm_rate', [], 'Rate') ?></span><span class="value">à¢—šÂ¹' + Number(p.price_per_sqft).toLocaleString() + '/sqft</span></div>' : '') +
-                            (p.total_price ? '<div class="info-row"><span class="label"><?= __('assoc_cm_price', [], 'Price') ?></span><span class="value fw-bold" class="style-5793">à¢—šÂ¹' + Number(p.total_price).toLocaleString() + '</span></div>' : '') +
-                            (p.corner_plot ? '<div class="info-row"><span class="label"><?= __('assoc_cm_corner', [], 'Corner Plot') ?></span><span class="value" class="style-82740">à¢Å"®</span></div>' : '') +
-                            (p.park_facing ? '<div class="info-row"><span class="label"><?= __('assoc_cm_park', [], 'Park Facing') ?></span><span class="value" class="style-82740">à¢Å"®</span></div>' : '') +
+                            (p.total_price ? '<div class="info-row"><span class="label"><?= __('assoc_cm_price', [], 'Price') ?></span><span class="value fw-bold style-5793">à¢—šÂ¹' + Number(p.total_price).toLocaleString() + '</span></div>' : '') +
+                            (p.corner_plot ? '<div class="info-row"><span class="label"><?= __('assoc_cm_corner', [], 'Corner Plot') ?></span><span class="value style-82740">à¢Å"®</span></div>' : '') +
+                            (p.park_facing ? '<div class="info-row"><span class="label"><?= __('assoc_cm_park', [], 'Park Facing') ?></span><span class="value style-82740">à¢Å"®</span></div>' : '') +
                             '<hr class="my-2"><a href="' + baseUrl + '/associate/browse" class="btn btn-sm btn-outline-primary w-100"><?= __('assoc_cm_share', [], 'Share with Customer') ?></a></div>';
                         layer.bindPopup(html, { maxWidth: 300 });
                         layer.on('mouseover', function() { this.setStyle({ fillOpacity: 0.95, weight: 2 }); });

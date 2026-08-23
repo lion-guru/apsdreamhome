@@ -1,0 +1,151 @@
+{
+ "generated": "2026-08-23T01:24:14.851Z",
+ "pages": {
+  "/": {
+   "url": "/",
+   "ok": true,
+   "issues": []
+  },
+  "/properties": {
+   "url": "/properties",
+   "ok": true,
+   "issues": []
+  },
+  "/plots": {
+   "url": "/plots",
+   "ok": true,
+   "issues": []
+  },
+  "/projects": {
+   "url": "/projects",
+   "ok": true,
+   "issues": []
+  },
+  "/services": {
+   "url": "/services",
+   "ok": true,
+   "issues": []
+  },
+  "/about": {
+   "url": "/about",
+   "ok": true,
+   "issues": []
+  },
+  "/team": {
+   "url": "/team",
+   "ok": true,
+   "issues": []
+  },
+  "/blog": {
+   "url": "/blog",
+   "ok": true,
+   "issues": []
+  },
+  "/contact": {
+   "url": "/contact",
+   "ok": true,
+   "issues": []
+  },
+  "/careers": {
+   "url": "/careers",
+   "ok": true,
+   "issues": []
+  },
+  "/faq": {
+   "url": "/faq",
+   "ok": true,
+   "issues": []
+  },
+  "/calc": {
+   "url": "/calc",
+   "ok": true,
+   "issues": []
+  },
+  "/compare": {
+   "url": "/compare",
+   "ok": true,
+   "issues": []
+  },
+  "/testimonials": {
+   "url": "/testimonials",
+   "ok": true,
+   "issues": []
+  },
+  "/tools-hub": {
+   "url": "/tools-hub",
+   "ok": true,
+   "issues": []
+  },
+  "[M] /": {
+   "url": "/",
+   "ok": true,
+   "issues": []
+  },
+  "[M] /properties": {
+   "url": "/properties",
+   "ok": true,
+   "issues": []
+  },
+  "[M] /tools-hub": {
+   "url": "/tools-hub",
+   "ok": true,
+   "issues": []
+  },
+  "[M] /contact": {
+   "url": "/contact",
+   "ok": true,
+   "issues": []
+  },
+  "/admin/dashboard": {
+   "url": "/admin/dashboard",
+   "ok": true,
+   "issues": []
+  },
+  "/admin/erp": {
+   "url": "/admin/erp",
+   "ok": true,
+   "issues": []
+  },
+  "/admin/users": {
+   "url": "/admin/users",
+   "ok": true,
+   "issues": []
+  },
+  "/admin/mlm": {
+   "url": "/admin/mlm",
+   "ok": true,
+   "issues": []
+  },
+  "/user/dashboard": {
+   "url": "/user/dashboard",
+   "ok": true,
+   "issues": []
+  },
+  "/user/properties": {
+   "url": "/user/properties",
+   "ok": true,
+   "issues": []
+  },
+  "/associate/dashboard": {
+   "url": "/associate/dashboard",
+   "ok": true,
+   "issues": []
+  },
+  "/agent/dashboard": {
+   "url": "/agent/dashboard",
+   "ok": true,
+   "issues": []
+  },
+  "[M] /user/dashboard": {
+   "url": "/user/dashboard",
+   "ok": true,
+   "issues": []
+  },
+  "[M] /associate/dashboard": {
+   "url": "/associate/dashboard",
+   "ok": true,
+   "issues": []
+  }
+ },
+ "summary": {}
+}

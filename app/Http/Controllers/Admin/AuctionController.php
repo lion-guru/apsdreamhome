@@ -146,7 +146,7 @@ class AuctionController extends AdminController
         } catch (\Throwable $e) { error_log("AuctionController::fetchProperties error: " . $e->getMessage()); return []; }
     }
 
-    private function getUserId() { return (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0); }
+    protected function getUserId(): int { return (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0); }
 
     private function pdo(): \PDO
     {

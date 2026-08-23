@@ -34,7 +34,7 @@ $actionIcon = fn($a) => match($a) {
 
 <div class="cp-card">
     <div class="cp-card-header">
-        <h5 class="m-0" class="style-43926"><i class="fas fa-history me-2" class="style-20955"></i>Plan Change History</h5>
+        <h5 class="m-0 style-43926"><i class="fas fa-history me-2 style-20955"></i>Plan Change History</h5>
         <a href="<?= $base ?>/admin/commission-plans" class="cp-btn cp-btn-outline"><i class="fas fa-arrow-left me-1"></i>Back</a>
     </div>
     <div class="cp-card-body">
@@ -56,7 +56,7 @@ $actionIcon = fn($a) => match($a) {
 
         <?php if (empty($auditLog)): ?>
             <div class="style-52260">
-                <i class="fas fa-history" class="style-10910"></i>
+                <i class="fas fa-history style-10910"></i>
                 No audit entries found.
             </div>
         <?php else: ?>
@@ -68,12 +68,12 @@ $actionIcon = fn($a) => match($a) {
                     <div class="timeline-content">
                         <div>
                             <strong><?= htmlspecialchars($entry['plan_name'] ?? '') ?></strong>
-                            <span class="cp-version" class="style-44520">v<?= $entry['version'] ?></span>
+                            <span class="cp-version style-44520">v<?= $entry['version'] ?></span>
                             <span class="style-92023">
                                 <?= ucfirst($entry['action']) ?> by
                                 <?= htmlspecialchars($entry['changer_name'] ?? 'System') ?>
                             </span>
-                            <span class="time" class="style-11248"><?= date('M d, Y H:i', strtotime($entry['created_at'])) ?></span>
+                            <span class="time style-11248"><?= date('M d, Y H:i', strtotime($entry['created_at'])) ?></span>
                         </div>
                         <?php if ($entry['changed_fields']): ?>
                             <div class="detail">

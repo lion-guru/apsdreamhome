@@ -36,7 +36,7 @@
             <!-- Stats Row -->
             <div class="row mb-4">
                 <div class="col-lg-3 col-6">
-                    <div class="small-box" class="style-75630">
+                    <div class="small-box style-75630">
                         <div class="inner">
                             <h3><?= $stats['total'] ?? 0 ?></h3>
                             <p>Total Designations</p>
@@ -45,7 +45,7 @@
                     </div>
                 </div>
                 <div class="col-lg-3 col-6">
-                    <div class="small-box" class="style-55192">
+                    <div class="small-box style-55192">
                         <div class="inner">
                             <h3><?= $stats['active'] ?? 0 ?></h3>
                             <p>Active</p>

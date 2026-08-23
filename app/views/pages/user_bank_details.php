@@ -45,7 +45,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
             </div>
 
             <?php if ($success): ?>
-            <div class="aps-cp-card mb-3" class="style-1416">
+            <div class="aps-cp-card mb-3 style-1416">
                 <div class="aps-cp-card-body py-3">
                     <div class="d-flex align-items-center">
                         <i class="fas fa-check-circle text-success fa-lg me-3"></i>
@@ -57,7 +57,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
             <?php endif; ?>
 
             <?php if ($error): ?>
-            <div class="aps-cp-card mb-3" class="style-53011">
+            <div class="aps-cp-card mb-3 style-53011">
                 <div class="aps-cp-card-body py-3">
                     <div class="d-flex align-items-center">
                         <i class="fas fa-exclamation-circle text-danger fa-lg me-3"></i>
@@ -71,9 +71,9 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
             <div class="row g-4">
                 <div class="col-lg-7">
                     <div class="aps-cp-card">
-                        <div class="aps-cp-card-header" class="style-75848">
+                        <div class="aps-cp-card-header style-75848">
                             <h4 class="style-56551">
-                                <i class="fas <?= $bankAccount ? 'fa-edit' : 'fa-plus-circle' ?>" class="style-56551"></i>
+                                <i class="fas <?= $bankAccount ? 'fa-edit' : 'fa-plus-circle' ?> style-56551"></i>
                                 <?= $bankAccount ? __('bank_form_update_title', null, 'Update Bank Account') : __('bank_form_add_title', null, 'Add Bank Account') ?>
                             </h4>
                         </div>
@@ -239,7 +239,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                                         UPI: <?= htmlspecialchars($acc['upi_id'] ?? '') ?>
                                     </div>
                                     <?php endif; ?>
-                                    <div class="text-muted mt-1" class="style-11723">
+                                    <div class="text-muted mt-1 style-11723">
                                         <?= ucfirst($acc['account_type'] ?? 'savings') ?> &middot;
                                         Added <?= date('M d, Y', strtotime($acc['created_at'] ?? 'now')) ?>
                                     </div>

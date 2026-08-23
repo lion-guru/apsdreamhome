@@ -12,7 +12,7 @@
                         <?php if (empty($consultants ?? [])): ?>
                         <tr>
                             <td colspan="9" class="text-center py-5">
-                                <i class="fas fa-user-friends fa-3x text-muted mb-3" class="style-82835"></i>
+                                <i class="fas fa-user-friends fa-3x text-muted mb-3 style-82835"></i>
                                 <h5 class="text-muted">No free consultants found</h5>
                                 <p class="text-muted mb-3">Register consultants who operate outside the standard associate hierarchy.</p>
                             </td>

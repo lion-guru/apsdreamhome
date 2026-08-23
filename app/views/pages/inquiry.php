@@ -5,6 +5,7 @@
     <title><?= __('inquiry_title') ?></title>
     <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
     <div class="container">

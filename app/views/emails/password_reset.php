@@ -27,13 +27,13 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
         <tr>
           <td bgcolor="#ef4444" align="center" class="style-59428">
             <div class="style-90702">&#128274;</div>
-            <h1 class="h1-mobile" class="style-56865">Password Reset Request</h1>
+            <h1 class="h1-mobile style-56865">Password Reset Request</h1>
             <p class="style-9233">Secure your account</p>
           </td>
         </tr>
         <!-- Body -->
         <tr>
-          <td class="px-mobile" class="style-68782">
+          <td class="px-mobile style-68782">
             <h2 class="style-80102">Hi {{user_name}},</h2>
             <p class="style-28596">
               We received a request to reset the password for your APS Dream Home account. Click the button below to choose a new password.
@@ -41,7 +41,7 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
               <tr>
                 <td align="center" class="style-14543">
-                  <a href="{{reset_url}}" class="button-mobile" class="style-72281">Reset My Password</a>
+                  <a href="{{reset_url}}" class="button-mobile style-72281">Reset My Password</a>
                 </td>
               </tr>
             </table>

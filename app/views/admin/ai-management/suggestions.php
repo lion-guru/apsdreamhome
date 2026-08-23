@@ -39,8 +39,8 @@ $suggestions = $suggestions ?? [];
                                 <td><?= htmlspecialchars(mb_substr($row['property_title'] ?? 'Property #'.$row['property_id'], 0, 40)) ?></td>
                                 <td class="style-36825">
                                     <div class="d-flex align-items-center gap-2">
-                                        <div class="progress flex-grow-1" class="style-87912">
-                                            <div class="progress-bar bg-<?= ($row['score'] ?? 0) >= 80 ? 'success' : (($row['score'] ?? 0) >= 50 ? 'warning' : 'danger') ?>" class="style-83425"></div>
+                                        <div class="progress flex-grow-1 style-87912">
+                                            <div class="progress-bar bg-<?= ($row['score'] ?? 0) >= 80 ? 'success' : (($row['score'] ?? 0) >= 50 ? 'warning' : 'danger') ?> style-83425"></div>
                                         </div>
                                         <small class="fw-bold"><?= (int)($row['score'] ?? 0) ?>%</small>
                                     </div>

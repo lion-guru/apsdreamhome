@@ -79,9 +79,9 @@ $view_count = $view_count ?? 0;
     <?php else: ?>
         <div class="cmp-card">
             <div class="cmp-row">
-                <div class="label cmp-image" class="style-833"><i class="fas fa-image"></i></div>
+                <div class="label cmp-image style-833"><i class="fas fa-image"></i></div>
                 <?php foreach ($properties as $p): ?>
-                    <div class="cmp-image position-relative <?= ($comparison['best_value_id'] ?? null) == $p['id'] ? 'cmp-best' : '' ?>" class="style-47346">
+                    <div class="cmp-image position-relative <?= ($comparison['best_value_id'] ?? null) == $p['id'] ? 'cmp-best' : '' ?> style-47346">
                         <?php if (!empty($p['image'])): ?>
                             <img src="<?= htmlspecialchars($p['image'] ?? '') ?>" alt="<?= htmlspecialchars($p['title'] ?? '') ?>" class="style-25330">
                         <?php else: ?>
@@ -90,7 +90,7 @@ $view_count = $view_count ?? 0;
                         <form method="POST" action="<?= BASE_URL ?>/property-comparison/remove" class="style-15676">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <input type="hidden" name="property_id" value="<?= $p['id'] ?>">
-                            <button type="submit" class="btn btn-sm btn-danger" class="style-82522" title="Remove">
+                            <button type="submit" class="btn btn-sm btn-danger style-82522" title="Remove">
                                 <i class="fas fa-times"></i>
                             </button>
                         </form>

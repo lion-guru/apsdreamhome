@@ -27,13 +27,13 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
         <tr>
           <td bgcolor="#10b981" align="center" class="style-87574">
             <div class="style-90702">&#127873;</div>
-            <h1 class="h1-mobile" class="style-56865">Referral Commission!</h1>
+            <h1 class="h1-mobile style-56865">Referral Commission!</h1>
             <p class="style-9233">You've earned a referral reward</p>
           </td>
         </tr>
         <!-- Body -->
         <tr>
-          <td class="px-mobile" class="style-68782">
+          <td class="px-mobile style-68782">
             <h2 class="style-80102">Hi {{user_name}},</h2>
             <p class="style-28596">
               Great news! Your referred friend <strong>{{referred_name}}</strong> has made a booking, and you've earned a commission!
@@ -57,7 +57,7 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
               <tr>
                 <td align="center" class="style-43583">
-                  <a href="{{referral_url}}" class="button-mobile" class="style-59532">View Referral Dashboard</a>
+                  <a href="{{referral_url}}" class="button-mobile style-59532">View Referral Dashboard</a>
                 </td>
               </tr>
             </table>

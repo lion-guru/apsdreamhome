@@ -14,7 +14,7 @@ ob_start();
 
 <div class="row">
     <div class="col-lg-12">
-        <div class="page-banner mb-5" class="style-52090">
+        <div class="page-banner mb-5 style-52090">
             <div class="container text-center">
                 <h1 class="display-4 fw-bold animate-fade-up">Ram Nagri - Lucknow</h1>
                 <p class="lead animate-fade-up">Premium Integrated Township at Haidergarh Highway</p>

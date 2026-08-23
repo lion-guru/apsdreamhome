@@ -127,8 +127,8 @@ $testLabels = [
                         </div>
                         <span class="badge bg-<?= $statusCls ?>"><?= strtoupper($result['status']) ?></span>
                     </div>
-                    <div class="progress mb-2" class="style-51910">
-                        <div class="progress-bar bg-<?= $statusCls ?>" class="style-52052"></div>
+                    <div class="progress mb-2 style-51910">
+                        <div class="progress-bar bg-<?= $statusCls ?> style-52052"></div>
                     </div>
                     <small class="text-muted d-block mb-1"><?= htmlspecialchars($result['details'] ?? '') ?></small>
                     <?php if (!empty($result['recommendation'])): ?>

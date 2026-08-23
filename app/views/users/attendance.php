@@ -48,7 +48,7 @@ $attendanceRate = $totalDays > 0 ? round(($workingDays / $totalDays) * 100) : 0;
                 <span class="fw-bold fs-5 text-<?= $attendanceRate >= 90 ? 'success' : ($attendanceRate >= 75 ? 'warning' : 'danger') ?>"><?= $attendanceRate ?>%</span>
             </div>
             <div class="emp-att-meter">
-                <div class="emp-att-meter-fill bg-<?= $attendanceRate >= 90 ? 'success' : ($attendanceRate >= 75 ? 'warning' : 'danger') ?>" class="style-48309"></div>
+                <div class="emp-att-meter-fill bg-<?= $attendanceRate >= 90 ? 'success' : ($attendanceRate >= 75 ? 'warning' : 'danger') ?> style-48309"></div>
             </div>
             <div class="d-flex justify-content-between mt-2">
                 <small class="text-muted"><?= $workingDays ?> days worked</small>

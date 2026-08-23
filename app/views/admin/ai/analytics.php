@@ -68,8 +68,8 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                         <td><?php echo htmlspecialchars($prediction['prediction_text'] ?? '-'); ?></td>
                                         <td><?php echo htmlspecialchars($prediction['prediction_type'] ?? '-'); ?></td>
                                         <td>
-                                            <div class="progress" class="style-51309">
-                                                <div class="progress-bar bg-success" class="style-77223">
+                                            <div class="progress style-51309">
+                                                <div class="progress-bar bg-success style-77223">
                                                     <?php echo $prediction['confidence_score'] ?? 0; ?>%
     </div>
                                         </td>

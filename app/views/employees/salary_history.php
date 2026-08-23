@@ -27,7 +27,7 @@
     <!-- Salary Overview -->
     <div class="row mb-4">
         <div class="col-md-3">
-            <div class="stats-card card text-white" class="style-88128">
+            <div class="stats-card card text-white style-88128">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
@@ -44,7 +44,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="stats-card card text-white" class="style-37722">
+            <div class="stats-card card text-white style-37722">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
@@ -61,7 +61,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="stats-card card text-white" class="style-22627">
+            <div class="stats-card card text-white style-22627">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
@@ -78,7 +78,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="stats-card card text-white" class="style-72670">
+            <div class="stats-card card text-white style-72670">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>

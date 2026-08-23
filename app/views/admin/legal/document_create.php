@@ -55,7 +55,7 @@ $merge_fields = $merge_fields ?? [];
                         <div class="mb-2">
                             <div class="dropdown d-inline-block">
                                 <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">Insert Merge Field</button>
-                                <div class="dropdown-menu p-2" class="style-62849">
+                                <div class="dropdown-menu p-2 style-62849">
                                     <?php foreach ($merge_fields as $group => $fields): ?>
                                         <h6 class="dropdown-header"><?= ucfirst($group) ?></h6>
                                         <?php foreach ($fields as $key => $label): ?>

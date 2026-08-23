@@ -10,8 +10,8 @@
                 <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-tachometer-alt me-2"></i>Progress Overview</h5></div>
                 <div class="card-body aps-cp-card-body">
                     <h2 class="text-center mb-3"><?= (int)($project['progress_pct'] ?? 0) ?>% Complete</h2>
-                    <div class="progress mb-4" class="style-20185">
-                        <div class="progress-bar bg-<?= ($project['progress_pct'] ?? 0) >= 100 ? 'success' : (($project['progress_pct'] ?? 0) >= 50 ? 'info' : 'warning') ?>" class="style-29798"></div>
+                    <div class="progress mb-4 style-20185">
+                        <div class="progress-bar bg-<?= ($project['progress_pct'] ?? 0) >= 100 ? 'success' : (($project['progress_pct'] ?? 0) >= 50 ? 'info' : 'warning') ?> style-29798"></div>
                     </div>
                     <div class="row text-center">
                         <div class="col-md-4"><strong>Budget:</strong> ₹<?= number_format((float)($project['project_budget'] ?? 0), 2) ?></div>

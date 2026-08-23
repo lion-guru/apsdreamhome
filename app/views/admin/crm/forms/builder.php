@@ -25,11 +25,11 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
         <div class="row g-4">
             <!-- Field Palette -->
             <div class="col-lg-3">
-                <div class="card border-0 shadow-sm sticky-top" class="style-47885">
+                <div class="card border-0 shadow-sm sticky-top style-47885">
                     <div class="card-header bg-primary text-white">
                         <h6 class="mb-0"><i class="fas fa-palette me-2"></i>Field Palette</h6>
                     </div>
-                    <div class="card-body p-3" class="style-82773">
+                    <div class="card-body p-3 style-82773">
                         <div class="mb-3">
                             <small class="text-muted d-block mb-2">Basic Fields</small>
                             <div class="palette-item p-2 mb-1 bg-light rounded border" draggable="true" data-type="text" ondragstart="dragStart(event)">
@@ -74,7 +74,7 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
                         <h6 class="mb-0 fw-bold"><i class="fas fa-edit me-2"></i>Form Canvas</h6>
                         <span class="badge bg-primary" id="fieldCount"><?= count($fields) ?> fields</span>
                     </div>
-                    <div class="card-body p-3" class="style-95098">
+                    <div class="card-body p-3 style-95098">
                         <div id="formCanvas" class="drop-zone p-4 border-2 border-dashed rounded" ondragover="dragOver(event)" ondrop="dropField(event)" ondragleave="dragLeave(event)">
                             <?php if (empty($fields)): ?>
                                 <div class="text-center text-muted py-5" id="emptyState">
@@ -113,7 +113,7 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
 
             <!-- Field Settings -->
             <div class="col-lg-3">
-                <div class="card border-0 shadow-sm sticky-top" class="style-47885">
+                <div class="card border-0 shadow-sm sticky-top style-47885">
                     <div class="card-header bg-secondary text-white">
                         <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Field Settings</h6>
                     </div>

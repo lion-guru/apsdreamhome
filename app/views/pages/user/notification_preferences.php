@@ -102,7 +102,7 @@ $frequencyOptions = [
                                 <?php foreach ($channels as $ch):
                                     $meta = $channelMeta[$ch] ?? ['label' => ucfirst($ch), 'icon' => 'fas fa-circle'];
                                 ?>
-                                <th class="text-center" class="style-94101">
+                                <th class="text-center style-94101">
                                     <i class="<?= $meta['icon'] ?>"></i><br>
                                     <small><?= htmlspecialchars($meta['label'] ?? '') ?></small>
                                 </th>

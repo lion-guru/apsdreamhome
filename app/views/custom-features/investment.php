@@ -75,12 +75,12 @@ $base = $base ?? BASE_URL;
         </div>
       </div>
 
-      <div id="loading" class="style-24280" class="text-center py-5">
+      <div id="loading" class="style-24280 text-center py-5">
         <div class="spinner-border text-success mb-3" role="status"></div>
         <p class="text-muted">Calculating...</p>
       </div>
 
-      <div id="error" class="style-24280" class="alert alert-danger"></div>
+      <div id="error" class="style-24280 alert alert-danger"></div>
 
       <div id="empty" class="text-center py-5 text-muted">
         <i class="fas fa-calculator fa-4x mb-3 d-block"></i>

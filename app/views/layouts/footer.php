@@ -50,7 +50,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
                         <i class="fas fa-paper-plane"></i> <?= __('subscribe') ?>
                     </button>
                 </form>
-                <div id="newsletterMessage" class="mt-2" class="style-54390"></div>
+                <div id="newsletterMessage" class="mt-2 style-54390"></div>
             </div>
         </div>
         
@@ -61,22 +61,22 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
                 <p class="text-light"><?= $sc('footer_about', __('footer_company_desc')) ?></p>
                 <div class="social-links mt-3">
                     <?php if ($sc('social_facebook')): ?>
-                    <a href="<?= htmlspecialchars($sc('social_facebook')) ?>" target="_blank" class="text-white me-3 social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="<?= htmlspecialchars($sc('social_facebook')) ?>" target="_blank" class="text-white me-3 social-icon" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
                     <?php endif; ?>
                     <?php if ($sc('social_instagram')): ?>
-                    <a href="<?= htmlspecialchars($sc('social_instagram')) ?>" target="_blank" class="text-white me-3 social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="<?= htmlspecialchars($sc('social_instagram')) ?>" target="_blank" class="text-white me-3 social-icon" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                     <?php endif; ?>
                     <?php if ($sc('social_youtube')): ?>
-                    <a href="<?= htmlspecialchars($sc('social_youtube')) ?>" target="_blank" class="text-white me-3 social-icon"><i class="fab fa-youtube"></i></a>
+                    <a href="<?= htmlspecialchars($sc('social_youtube')) ?>" target="_blank" class="text-white me-3 social-icon" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
                     <?php endif; ?>
                     <?php if ($sc('social_linkedin')): ?>
-                    <a href="<?= htmlspecialchars($sc('social_linkedin')) ?>" target="_blank" class="text-white me-3 social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="<?= htmlspecialchars($sc('social_linkedin')) ?>" target="_blank" class="text-white me-3 social-icon" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                     <?php endif; ?>
                     <?php if ($sc('social_telegram')): ?>
-                    <a href="<?= htmlspecialchars($sc('social_telegram')) ?>" target="_blank" class="text-white me-3 social-icon"><i class="fab fa-telegram"></i></a>
+                    <a href="<?= htmlspecialchars($sc('social_telegram')) ?>" target="_blank" class="text-white me-3 social-icon" aria-label="Telegram"><i class="fab fa-telegram"></i></a>
                     <?php endif; ?>
                     <?php if ($sc('contact_whatsapp')): ?>
-                    <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $sc('contact_whatsapp')) ?>" target="_blank" class="text-white me-3 social-icon"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $sc('contact_whatsapp')) ?>" target="_blank" class="text-white me-3 social-icon" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                     <?php endif; ?>
                 </div>
                 <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
@@ -159,7 +159,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
                 <div class="col-md-6">
                     <p class="mb-0 text-light">&copy; <?php echo date('Y'); ?> APS Dream Home. <?= __('all_rights_reserved') ?></p>
                 </div>
-                <div class="col-md-6 text-md-end">
+                <div class="col-md-6 text-md-end footer-legal-links">
                     <a href="<?php echo BASE_URL; ?>/privacy" class="text-light me-3 text-decoration-none"><?= __('privacy_policy') ?></a>
                     <a href="<?php echo BASE_URL; ?>/legal/terms-conditions" class="text-light text-decoration-none"><?= __('terms_of_service') ?></a>
                 </div>

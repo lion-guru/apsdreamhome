@@ -22,7 +22,7 @@
                     <?php if (empty($analytics ?? [])): ?>
                     <tr>
                         <td colspan="8" class="text-center py-5">
-                            <i class="fas fa-chart-bar fa-3x text-muted mb-3" class="style-82835"></i>
+                            <i class="fas fa-chart-bar fa-3x text-muted mb-3 style-82835"></i>
                             <h5 class="text-muted">No analytics data yet</h5>
                             <p class="text-muted mb-3">Analytics are generated automatically once associates start earning commissions over multiple periods.</p>
                         </td>

@@ -118,8 +118,8 @@ $blocks = $blocks ?? [];
               <td><?= $bc ?></td>
               <td><?= $ba ?></td>
               <td>
-                <div class="progress" class="style-51309">
-                  <div class="progress-bar bg-<?= $occ >= 80 ? 'success' : ($occ >= 50 ? 'warning' : 'primary') ?>" class="style-5688"><?= $occ ?>%</div>
+                <div class="progress style-51309">
+                  <div class="progress-bar bg-<?= $occ >= 80 ? 'success' : ($occ >= 50 ? 'warning' : 'primary') ?> style-5688"><?= $occ ?>%</div>
                 </div>
               </td>
             </tr>
@@ -171,7 +171,7 @@ $blocks = $blocks ?? [];
     <div class="col-md-3">
       <a href="<?= BASE_URL ?>/admin/colony-pipeline/<?= (int)($colony['id'] ?? 0) ?>/map" class="card aps-cp-card text-decoration-none">
         <div class="card-body aps-cp-card-body text-center">
-          <i class="fas fa-map-marked-alt fa-2x" class="style-3064"></i>
+          <i class="fas fa-map-marked-alt fa-2x style-3064"></i>
           <div class="fw-semibold">Interactive Map</div>
           <small class="text-muted">Leaflet plot map with filters</small>
         </div>

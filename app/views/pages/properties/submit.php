@@ -1,5 +1,5 @@
 <?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }$phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '+91 92771 21112'); ?>
-<div class="page-banner" class="style-52830"banner/submit-property-banner.jpg", "images") ?>')">
+<div class="page-banner style-52830"banner/submit-property-banner.jpg", "images") ?>')">
     <div class="container">
         <div class="row">
             <div class="col-md-12">

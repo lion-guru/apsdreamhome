@@ -18,7 +18,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
     .match-card img { width: 80px; height: 80px; object-fit: cover; border-radius: 10px; }
 </style>
 
-<div class="container-fluid px-3 py-3" class="style-63221">
+<div class="container-fluid px-3 py-3 style-63221">
     <h5 class="fw-bold mb-3"><i class="fas fa-home me-2 text-primary"></i>Buyer Dashboard</h5>
 
     <?php if ($success): ?>
@@ -90,7 +90,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                     <textarea name="requirements" class="form-control form-control-sm" rows="2" placeholder="Specific requirements..."></textarea>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary btn-sm w-100 mt-3 py-2" class="style-48741">
+            <button type="submit" class="btn btn-primary btn-sm w-100 mt-3 py-2 style-48741">
                 <i class="fas fa-paper-plane me-2"></i>Submit Requirement
             </button>
         </form>
@@ -109,9 +109,9 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                     <?php endif; ?>
                     <div class="flex-grow-1">
                         <div class="fw-bold small"><?= htmlspecialchars($m['title'] ?? $m['property_type']) ?></div>
-                        <div class="text-muted" class="style-20558"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($m['address'] ?? '') ?></div>
+                        <div class="text-muted style-20558"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($m['address'] ?? '') ?></div>
                         <div class="fw-bold text-primary mt-1">₹<?= number_format((float)$m['price']) ?></div>
-                        <a href="<?= $base ?>/properties/<?= $m['id'] ?>" class="btn btn-outline-primary btn-sm mt-1" class="style-20558">View Details</a>
+                        <a href="<?= $base ?>/properties/<?= $m['id'] ?>" class="btn btn-outline-primary btn-sm mt-1 style-20558">View Details</a>
                     </div>
                 </div>
             <?php endforeach; ?>

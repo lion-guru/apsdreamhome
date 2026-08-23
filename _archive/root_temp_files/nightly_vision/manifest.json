@@ -1,0 +1,206 @@
+[
+  {
+    "tag": "public__home",
+    "url": "http://localhost/apsdreamhome/",
+    "title": "APS Dream Home - Premium Real Estate in UP",
+    "file": "public__home.png"
+  },
+  {
+    "tag": "public__properties",
+    "url": "http://localhost/apsdreamhome/properties",
+    "title": "Properties - APS Dream Home",
+    "file": "public__properties.png"
+  },
+  {
+    "tag": "public__plots",
+    "url": "http://localhost/apsdreamhome/plots",
+    "title": "Available Plots - APS Dream Home",
+    "file": "public__plots.png"
+  },
+  {
+    "tag": "public__projects",
+    "url": "http://localhost/apsdreamhome/projects",
+    "title": "Our Projects - APS Dream Home",
+    "file": "public__projects.png"
+  },
+  {
+    "tag": "public__services",
+    "url": "http://localhost/apsdreamhome/services",
+    "title": "Real Estate Services Directory",
+    "file": "public__services.png"
+  },
+  {
+    "tag": "public__about",
+    "url": "http://localhost/apsdreamhome/about",
+    "title": "About Us - APS Dream Home",
+    "file": "public__about.png"
+  },
+  {
+    "tag": "public__team",
+    "url": "http://localhost/apsdreamhome/team",
+    "title": "Our Team - APS Dream Home",
+    "file": "public__team.png"
+  },
+  {
+    "tag": "public__blog",
+    "url": "http://localhost/apsdreamhome/blog",
+    "title": "Blog - APS Dream Home",
+    "file": "public__blog.png"
+  },
+  {
+    "tag": "public__news",
+    "url": "http://localhost/apsdreamhome/news",
+    "title": "News - APS Dream Home",
+    "file": "public__news.png"
+  },
+  {
+    "tag": "public__contact",
+    "url": "http://localhost/apsdreamhome/contact",
+    "title": "Contact Us - APS Dream Home",
+    "file": "public__contact.png"
+  },
+  {
+    "tag": "public__careers",
+    "url": "http://localhost/apsdreamhome/careers",
+    "title": "Careers - APS Dream Home",
+    "file": "public__careers.png"
+  },
+  {
+    "tag": "public__faq",
+    "url": "http://localhost/apsdreamhome/faq",
+    "title": "FAQs - APS Dream Home",
+    "file": "public__faq.png"
+  },
+  {
+    "tag": "public__calc",
+    "url": "http://localhost/apsdreamhome/calc",
+    "title": "Calculators - APS Dream Home",
+    "file": "public__calc.png"
+  },
+  {
+    "tag": "public__compare",
+    "url": "http://localhost/apsdreamhome/compare",
+    "title": "Compare Plots - APS Dream Home",
+    "file": "public__compare.png"
+  },
+  {
+    "tag": "public__testimonials",
+    "url": "http://localhost/apsdreamhome/testimonials",
+    "title": "Customer Testimonials & Reviews",
+    "file": "public__testimonials.png"
+  },
+  {
+    "tag": "public__tools_hub",
+    "url": "http://localhost/apsdreamhome/tools-hub",
+    "title": "Tools Hub - APS Dream Home",
+    "file": "public__tools_hub.png"
+  },
+  {
+    "tag": "public__privacy",
+    "url": "http://localhost/apsdreamhome/privacy",
+    "title": "Privacy Policy - APS Dream Home",
+    "file": "public__privacy.png"
+  },
+  {
+    "tag": "public__terms",
+    "url": "http://localhost/apsdreamhome/terms",
+    "title": "Terms & Conditions - APS Dream Home",
+    "file": "public__terms.png"
+  },
+  {
+    "tag": "admin__admin_dashboard",
+    "url": "http://localhost/apsdreamhome/admin/erp",
+    "title": "ERP Overview — APS Dream Home",
+    "file": "admin__admin_dashboard.png"
+  },
+  {
+    "tag": "admin__admin_erp",
+    "url": "http://localhost/apsdreamhome/admin/erp",
+    "title": "ERP Overview — APS Dream Home",
+    "file": "admin__admin_erp.png"
+  },
+  {
+    "tag": "admin__admin_users",
+    "url": "http://localhost/apsdreamhome/admin/users",
+    "title": "User Management - APS Dream Home",
+    "file": "admin__admin_users.png"
+  },
+  {
+    "tag": "admin__admin_properties",
+    "url": "http://localhost/apsdreamhome/admin/properties",
+    "title": "Property Management",
+    "file": "admin__admin_properties.png"
+  },
+  {
+    "tag": "admin__admin_plots",
+    "url": "http://localhost/apsdreamhome/admin/plots",
+    "title": "Plot Management - APS Dream Home",
+    "file": "admin__admin_plots.png"
+  },
+  {
+    "tag": "admin__admin_mlm",
+    "url": "http://localhost/apsdreamhome/admin/mlm",
+    "title": "MLM Commission Dashboard",
+    "file": "admin__admin_mlm.png"
+  },
+  {
+    "tag": "admin__admin_finance",
+    "url": "http://localhost/apsdreamhome/admin/finance",
+    "title": "Money Workflow Dashboard",
+    "file": "admin__admin_finance.png"
+  },
+  {
+    "tag": "admin__admin_sales_bookings",
+    "url": "http://localhost/apsdreamhome/admin/sales/bookings",
+    "title": "Bookings",
+    "file": "admin__admin_sales_bookings.png"
+  },
+  {
+    "tag": "admin__admin_leads",
+    "url": "http://localhost/apsdreamhome/admin/leads",
+    "title": "APS Dream Home - Admin",
+    "file": "admin__admin_leads.png"
+  },
+  {
+    "tag": "admin__admin_settings",
+    "url": "http://localhost/apsdreamhome/admin/settings",
+    "title": "Site Settings",
+    "file": "admin__admin_settings.png"
+  },
+  {
+    "tag": "customer__user_dashboard",
+    "url": "http://localhost/apsdreamhome/user/dashboard",
+    "title": "My Dashboard - APS Dream Home",
+    "file": "customer__user_dashboard.png"
+  },
+  {
+    "tag": "customer__user_properties",
+    "url": "http://localhost/apsdreamhome/user/properties",
+    "title": "My Properties - APS Dream Home",
+    "file": "customer__user_properties.png"
+  },
+  {
+    "tag": "customer__user_inquiries",
+    "url": "http://localhost/apsdreamhome/user/inquiries",
+    "title": "My Inquiries - APS Dream Home",
+    "file": "customer__user_inquiries.png"
+  },
+  {
+    "tag": "customer__user_profile",
+    "url": "http://localhost/apsdreamhome/user/profile",
+    "title": "My Profile - APS Dream Home",
+    "file": "customer__user_profile.png"
+  },
+  {
+    "tag": "associate__associate_dashboard",
+    "url": "http://localhost/apsdreamhome/associate/dashboard",
+    "title": "Associate Dashboard - APS Dream Home",
+    "file": "associate__associate_dashboard.png"
+  },
+  {
+    "tag": "agent__agent_dashboard",
+    "url": "http://localhost/apsdreamhome/agent/dashboard",
+    "title": "Agent Dashboard - APS Dream Home",
+    "file": "agent__agent_dashboard.png"
+  }
+]

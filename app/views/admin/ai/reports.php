@@ -20,25 +20,25 @@ $leadQualified = $leadQualified ?? [];
 
     <div class="row g-3 mb-4">
         <div class="col-md-3 col-6">
-            <div class="card border-0 shadow-sm text-center py-3" class="style-26686">
+            <div class="card border-0 shadow-sm text-center py-3 style-26686">
                 <div class="style-99485"><?= number_format($totalCalls) ?></div>
                 <div class="small text-muted">Total AI Calls</div>
             </div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="card border-0 shadow-sm text-center py-3" class="style-62228">
+            <div class="card border-0 shadow-sm text-center py-3 style-62228">
                 <div class="style-29702"><?= number_format($completedCalls) ?></div>
                 <div class="small text-muted">Completed Calls</div>
             </div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="card border-0 shadow-sm text-center py-3" class="style-413">
+            <div class="card border-0 shadow-sm text-center py-3 style-413">
                 <div class="style-33659"><?= number_format($totalLeads) ?></div>
                 <div class="small text-muted">Total Leads</div>
             </div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="card border-0 shadow-sm text-center py-3" class="style-63620">
+            <div class="card border-0 shadow-sm text-center py-3 style-63620">
                 <div class="style-29911"><?= number_format($hotLeads) ?></div>
                 <div class="small text-muted">Hot Leads</div>
             </div>
@@ -67,8 +67,8 @@ $leadQualified = $leadQualified ?? [];
                                 <small class="text-muted"><?= $src['total'] > 0 ? round($src['won']/$src['total']*100,1) : 0 ?>% won</small>
                             </div>
                         </div>
-                        <div class="progress mb-2" class="style-21032">
-                            <div class="progress-bar bg-primary" class="style-55724"></div>
+                        <div class="progress mb-2 style-21032">
+                            <div class="progress-bar bg-primary style-55724"></div>
                         </div>
                         <?php endforeach; ?>
                     <?php endif; ?>

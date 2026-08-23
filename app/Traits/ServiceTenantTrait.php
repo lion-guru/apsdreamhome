@@ -114,4 +114,22 @@ trait ServiceTenantTrait
     {
         return $this->tenantId() > 1 ? " AND {$alias}.tenant_id = {$this->tenantId()}" : "";
     }
+
+    /**
+     * Positional-placeholder WHERE fragment: " AND tenant_id = ?" or "".
+     * Pair with tenantParams().
+     */
+    protected function tenantWhere(): string
+    {
+        return $this->tenantId() > 1 ? " AND tenant_id = ?" : "";
+    }
+
+    /**
+     * Append the tenant param to an existing positional params array.
+     * Pair with tenantWhere().
+     */
+    protected function tenantParams(array $params = []): array
+    {
+        return $this->tenantId() > 1 ? array_merge($params, [$this->tenantId()]) : $params;
+    }
 }

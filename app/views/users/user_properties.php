@@ -133,7 +133,7 @@ $soldCount = count(array_filter($properties, fn($p) => strtolower($p['status'] ?
                                 <?php endif; ?>
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
-                                <div class="fw-bold" class="style-50238">₹<?= number_format((float)($p['price'] ?? 0)) ?></div>
+                                <div class="fw-bold style-50238">₹<?= number_format((float)($p['price'] ?? 0)) ?></div>
                                 <span class="badge bg-light text-dark"><i class="fas fa-<?= propTypeIcon($p['listing_type'] ?? '') ?> me-1"></i><?= ucfirst(htmlspecialchars($p['listing_type'] ?? $p['type'] ?? '')) ?></span>
                             </div>
                             <?php if (!empty($p['phone'])): ?>

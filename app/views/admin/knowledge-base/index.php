@@ -55,7 +55,7 @@
                                 <?php if (empty($articles ?? [])): ?>
                                 <tr>
                                     <td colspan="7" class="text-center py-5">
-                                        <i class="fas fa-book fa-3x text-muted mb-3" class="style-82835"></i>
+                                        <i class="fas fa-book fa-3x text-muted mb-3 style-82835"></i>
                                         <h5 class="text-muted">No knowledge base articles found</h5>
                                         <p class="text-muted mb-3">Build a knowledge base to help customers find answers to common questions about properties, payments, and processes.</p>
                                         <a href="<?= BASE_URL ?>/admin/knowledge-base/create" class="btn btn-primary">

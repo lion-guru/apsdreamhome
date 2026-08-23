@@ -12,7 +12,7 @@
                     <?php if (empty($calculations ?? [])): ?>
                     <tr>
                         <td colspan="11" class="text-center py-5">
-                            <i class="fas fa-calculator fa-3x text-muted mb-3" class="style-82835"></i>
+                            <i class="fas fa-calculator fa-3x text-muted mb-3 style-82835"></i>
                             <h5 class="text-muted">No calculations found</h5>
                             <p class="text-muted mb-3">Associate commission calculations are triggered automatically when bookings are confirmed.</p>
                         </td>

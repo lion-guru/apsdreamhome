@@ -124,7 +124,7 @@ $page_description = 'Analyze customer behavior patterns and insights';
                                         </small>
                                     </td>
                                     <td>
-                                        <div class="text-truncate" class="style-65684" title="<?php echo htmlspecialchars($behavior['patterns'] ?? ''); ?>">
+                                        <div class="text-truncate style-65684" title="<?php echo htmlspecialchars($behavior['patterns'] ?? ''); ?>">
                                             <?php echo htmlspecialchars($behavior['patterns'] ?? 'No patterns'); ?>
                                         </div>
                                     </td>

@@ -60,10 +60,10 @@ $status_filter = $status_filter ?? null;
                             </td>
                             <td>
                                 <div class="small"><?= htmlspecialchars($n['customer_name'] ?? '—') ?></div>
-                                <div class="text-muted" class="style-86760"><?= htmlspecialchars($n['customer_phone'] ?? '') ?></div>
+                                <div class="text-muted style-86760"><?= htmlspecialchars($n['customer_phone'] ?? '') ?></div>
                             </td>
                             <td class="small"><?= htmlspecialchars($n['plot_no'] ?? '') ?>, <?= htmlspecialchars($n['colony_name'] ?? '') ?></td>
-                            <td class="small text-truncate" class="style-1698"><?= htmlspecialchars($n['purpose'] ?? '') ?></td>
+                            <td class="small text-truncate style-1698"><?= htmlspecialchars($n['purpose'] ?? '') ?></td>
                             <td>
                                 <?php
                                 $colors = ['pending'=>'warning','processing'=>'info','approved'=>'success','rejected'=>'danger','blocked'=>'dark'];
@@ -71,7 +71,7 @@ $status_filter = $status_filter ?? null;
                                 ?>
                                 <span class="badge bg-<?= $color ?>"><?= ucfirst($n['status']) ?></span>
                                 <?php if ($n['noc_number']): ?>
-                                    <div class="text-muted" class="style-39570"><?= htmlspecialchars($n['noc_number'] ?? '') ?></div>
+                                    <div class="text-muted style-39570"><?= htmlspecialchars($n['noc_number'] ?? '') ?></div>
                                 <?php endif; ?>
                             </td>
                             <td class="small text-muted"><?= date('d M Y', strtotime($n['created_at'])) ?></td>

@@ -141,7 +141,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
     </div>
 </div>
 
-<div class="container" class="style-54650">
+<div class="container style-54650">
     <!-- Filters -->
     <div class="props-filter-glass mb-4">
         <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#advancedFilters" role="button">
@@ -152,8 +152,8 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                         <i class="fas fa-bookmark me-1"></i>Save
                     </button>
                 <?php endif; ?>
-                <button type="button" class="btn btn-sm btn-outline-secondary style-94626" onclick="event.stopPropagation();resetFilters()">
-                    <i class="fas fa-redo"></i>
+                <button type="button" class="btn btn-sm btn-outline-secondary style-94626" onclick="event.stopPropagation();resetFilters()" aria-label="Reset filters">
+                    <i class="fas fa-redo" aria-hidden="true"></i>
                 </button>
                 <i class="fas fa-chevron-down style-8890" id="filterChevron"></i>
             </div>
@@ -276,13 +276,13 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
         <div class="col-12">
             <div class="d-flex flex-wrap gap-2 align-items-center style-1563">
                 <span class="fw-semibold text-success me-2"><i class="fas fa-compass me-1"></i><?= __('also_explore') ?></span>
-                <a href="<?= BASE_URL ?>/plots" class="btn btn-sm px-3" class="style-6722">
+                <a href="<?= BASE_URL ?>/plots" class="btn btn-sm px-3 style-6722">
                     <i class="fas fa-vector-square me-1"></i>Plots
                 </a>
-                <a href="<?= BASE_URL ?>/projects" class="btn btn-sm px-3" class="style-97522">
+                <a href="<?= BASE_URL ?>/projects" class="btn btn-sm px-3 style-97522">
                     <i class="fas fa-project-diagram me-1"></i>Projects
                 </a>
-                <a href="<?= BASE_URL ?>/colonies" class="btn btn-sm px-3" class="style-66828">
+                <a href="<?= BASE_URL ?>/colonies" class="btn btn-sm px-3 style-66828">
                     <i class="fas fa-city me-1"></i><?= __('colonies') ?>
                 </a>
             </div>
@@ -295,9 +295,9 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
             Showing <strong><?= count($properties ?? []) ?></strong> of <strong><?= number_format($total ?? 0) ?></strong> properties
         </span>
         <div class="d-flex gap-2">
-            <div class="btn-group btn-group-sm" role="group">
-                <button type="button" class="btn btn-outline-secondary active" id="gridViewBtn" onclick="setView('grid')" class="style-38876"><i class="fas fa-th-large"></i></button>
-                <button type="button" class="btn btn-outline-secondary" id="mapViewBtn" onclick="setView('map')" disabled class="style-31431" title="Coming soon"><i class="fas fa-map-marked-alt"></i></button>
+            <div class="btn-group btn-group-sm" role="group" aria-label="View mode">
+                <button type="button" class="btn btn-outline-secondary active" id="gridViewBtn" onclick="setView('grid')" aria-label="Grid view" aria-pressed="true"><i class="fas fa-th-large" aria-hidden="true"></i></button>
+                <button type="button" class="btn btn-outline-secondary" id="mapViewBtn" onclick="setView('map')" disabled aria-label="Map view" title="Coming soon"><i class="fas fa-map-marked-alt" aria-hidden="true"></i></button>
             </div>
         </div>
     </div>
@@ -310,7 +310,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
         ?>
         <?php if (!empty($properties)): ?>
             <?php foreach ($properties as $idx => $property): ?>
-                <div class="<?= htmlspecialchars($cardColClass ?? '') ?> mb-4 scroll-reveal" class="style-86452">
+                <div class="<?= htmlspecialchars($cardColClass ?? '') ?> mb-4 scroll-reveal style-86452">
                     <div class="card props-grid-card glass-card h-100" data-property-id="<?= (int)($property['id'] ?? 0) ?>">
                         <div class="card-img-wrap">
                             <?php
@@ -337,8 +337,8 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                             </div>
 
                             <div class="img-actions">
-                                <button class="btn favorite-btn" data-id="<?= $property['id'] ?? '' ?>" title="<?= __('add_to_favorites') ?>" onclick="toggleFavorite(this)">
-                                    <i class="far fa-heart style-53984"></i>
+                                <button class="btn favorite-btn" data-id="<?= $property['id'] ?? '' ?>" title="<?= __('add_to_favorites') ?>" aria-label="<?= __('add_to_favorites') ?>" onclick="toggleFavorite(this)">
+                                    <i class="far fa-heart style-53984" aria-hidden="true"></i>
                                 </button>
                             </div>
                         </div>
@@ -400,8 +400,8 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                                             onclick="showPropertyInterestModal(this)">
                                         <i class="fas fa-hand-pointer me-1"></i>Interested
                                     </button>
-                                    <button class="btn btn-compare add-to-compare" data-id="<?= $property['id'] ?? '' ?>" onclick="addToCompare(this)" title="<?= __('add_to_compare') ?>">
-                                        <i class="fas fa-balance-scale"></i>
+                                    <button class="btn btn-compare add-to-compare" data-id="<?= $property['id'] ?? '' ?>" onclick="addToCompare(this)" title="<?= __('add_to_compare') ?>" aria-label="<?= __('add_to_compare') ?>">
+                                        <i class="fas fa-balance-scale" aria-hidden="true"></i>
                                     </button>
                                 </div>
                             </div>
@@ -417,7 +417,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                     </div>
                     <h5><?= __('no_properties') ?></h5>
                     <p class="mb-3"><?= __('no_results_tip') ?></p>
-                    <a href="<?= BASE_URL ?>/properties" class="btn px-4" class="style-11181">
+                    <a href="<?= BASE_URL ?>/properties" class="btn px-4 style-11181">
                         <?= __('view_all') ?> Properties
                     </a>
                 </div>
@@ -434,7 +434,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
         <div class="props-pagination scroll-reveal">
             <?php if (($page ?? 1) > 1): ?>
                 <a class="page-btn" href="?<?= http_build_query(array_merge($paginationParams, ['page' => ($page - 1)])) ?>">
-                    <i class="fas fa-chevron-left" class="style-5315"></i>
+                    <i class="fas fa-chevron-left style-5315"></i>
                 </a>
             <?php endif; ?>
             <?php
@@ -446,7 +446,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
             <?php endfor; ?>
             <?php if (($page ?? 1) < $totalPages): ?>
                 <a class="page-btn" href="?<?= http_build_query(array_merge($paginationParams, ['page' => ($page + 1)])) ?>">
-                    <i class="fas fa-chevron-right" class="style-5315"></i>
+                    <i class="fas fa-chevron-right style-5315"></i>
                 </a>
             <?php endif; ?>
         </div>
@@ -530,7 +530,7 @@ function setView(view) {
 
 function resetFilters() { window.location.href = BASE_URL + '/properties'; }
 
-document.addEventListener('DOMContentLoaded', updateCompareBadge);
+document.addEventListener('DOMContentLoaded', function () { updateCompareBadge(); });
 
 function showPropertyInterestModal(btn) {
     document.getElementById('propInterestId').value = btn.dataset.id;
@@ -565,11 +565,11 @@ function submitPropertyInterest(e) {
 </script>
 
 <div class="modal fade" id="propertyInterestModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" class="style-77674">
-        <div class="modal-content" class="style-51436">
+    <div class="modal-dialog modal-dialog-centered style-77674">
+        <div class="modal-content style-51436">
             <div class="modal-header border-0 pb-0">
                 <div>
-                    <h6 class="fw-bold mb-0" class="style-8420">I'm Interested</h6>
+                    <h6 class="fw-bold mb-0 style-8420">I'm Interested</h6>
                     <small class="text-muted" id="propInterestName"></small>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -581,17 +581,17 @@ function submitPropertyInterest(e) {
                     <input type="hidden" name="source" value="property_listing">
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Phone Number *</label>
-                        <input type="tel" name="phone" class="form-control" class="style-46740" placeholder="+91 98765 43210" required value="<?= htmlspecialchars($_SESSION['user_phone'] ?? '') ?>">
+                        <input type="tel" name="phone" class="form-control style-46740" placeholder="+91 98765 43210" required value="<?= htmlspecialchars($_SESSION['user_phone'] ?? '') ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Your Name</label>
-                        <input type="text" name="name" class="form-control" class="style-46740" placeholder="Enter your name" value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>">
+                        <input type="text" name="name" class="form-control style-46740" placeholder="Enter your name" value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Budget Range</label>
                         <div class="d-flex flex-wrap gap-2">
                             <?php foreach (['Under 10L','10L-25L','25L-50L','50L-1Cr','1Cr+'] as $budget): ?>
-                            <button type="button" class="btn btn-sm prop-budget-chip" class="style-35248" onclick="selectPropBudget(this)"><?= $budget ?></button>
+                            <button type="button" class="btn btn-sm prop-budget-chip style-35248" onclick="selectPropBudget(this)"><?= $budget ?></button>
                             <?php endforeach; ?>
                         </div>
                         <input type="hidden" name="budget" id="propInterestBudget">
@@ -600,8 +600,8 @@ function submitPropertyInterest(e) {
                         <i class="fas fa-paper-plane me-1"></i>Submit Interest
                     </button>
                 </form>
-                <div id="propInterestSuccess" class="text-center py-3" class="style-2248">
-                    <i class="fas fa-check-circle fa-3x mb-3" class="style-2154"></i>
+                <div id="propInterestSuccess" class="text-center py-3 style-2248">
+                    <i class="fas fa-check-circle fa-3x mb-3 style-2154"></i>
                     <h6 class="fw-bold">Interest Recorded!</h6>
                     <p class="text-muted small mb-0">Our team will contact you shortly.</p>
                 </div>

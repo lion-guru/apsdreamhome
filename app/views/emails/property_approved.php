@@ -26,13 +26,13 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
         <tr>
           <td bgcolor="#10b981" align="center" class="style-87574">
             <div class="style-90702">&#10003;</div>
-            <h1 class="h1-mobile" class="style-56865">Property Approved!</h1>
+            <h1 class="h1-mobile style-56865">Property Approved!</h1>
             <p class="style-9233">Your listing is now live</p>
           </td>
         </tr>
         <!-- Body -->
         <tr>
-          <td class="px-mobile" class="style-68782">
+          <td class="px-mobile style-68782">
             <h2 class="style-80102">Hi {{user_name}},</h2>
             <p class="style-118">
               Congratulations! Your property has been <strong class="style-54781">approved</strong> by our team and is now visible to thousands of potential buyers.

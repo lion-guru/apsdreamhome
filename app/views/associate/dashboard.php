@@ -196,7 +196,7 @@ body {
 
 <!-- Welcome Section -->
 <div class="modern-welcome">
-    <div class="row align-items-center position-relative" class="style-91080">
+    <div class="row align-items-center position-relative style-91080">
         <div class="col-md-7">
             <div class="d-flex align-items-center gap-3 mb-3">
                 <div class="rank-badge-modern">
@@ -205,10 +205,10 @@ body {
                 <span class="opacity-75 small"><i class="far fa-calendar-alt me-1"></i> <?= date('l, F j, Y') ?></span>
             </div>
             
-            <h2 class="fw-bold mb-2" class="style-81858">
+            <h2 class="fw-bold mb-2 style-81858">
                 Welcome back, <?= htmlspecialchars($_SESSION['user_name'] ?? 'Associate') ?>!
             </h2>
-            <p class="mb-0 text-white-50" class="style-67142">
+            <p class="mb-0 text-white-50 style-67142">
                 Referral Code: <strong class="text-white fs-5 ms-1"><?= htmlspecialchars($_SESSION['referral_code'] ?? 'N/A') ?></strong>
             </p>
         </div>
@@ -231,28 +231,28 @@ body {
 <!-- Primary Stats -->
 <div class="row g-4 mb-4">
     <div class="col-6 col-lg-3">
-        <div class="stat-card-glass" class="style-47504">
+        <div class="stat-card-glass style-47504">
             <div class="stat-icon-wrapper"><i class="fas fa-wallet"></i></div>
             <div class="stat-value">₹<?= number_format($walletBalance) ?></div>
             <div class="stat-label">Wallet Balance</div>
         </div>
     </div>
     <div class="col-6 col-lg-3">
-        <div class="stat-card-glass" class="style-30926">
+        <div class="stat-card-glass style-30926">
             <div class="stat-icon-wrapper"><i class="fas fa-rupee-sign"></i></div>
             <div class="stat-value">₹<?= number_format($totalEarnings) ?></div>
             <div class="stat-label">Total Earnings</div>
         </div>
     </div>
     <div class="col-6 col-lg-3">
-        <div class="stat-card-glass" class="style-58217">
+        <div class="stat-card-glass style-58217">
             <div class="stat-icon-wrapper"><i class="fas fa-clock"></i></div>
             <div class="stat-value">₹<?= number_format($pendingCommissions) ?></div>
             <div class="stat-label">Pending Commission</div>
         </div>
     </div>
     <div class="col-6 col-lg-3">
-        <div class="stat-card-glass" class="style-90234">
+        <div class="stat-card-glass style-90234">
             <div class="stat-icon-wrapper"><i class="fas fa-sitemap"></i></div>
             <div class="stat-value"><?= number_format($networkSize) ?></div>
             <div class="stat-label">Network Size</div>
@@ -263,45 +263,45 @@ body {
 <!-- Secondary Stats -->
 <div class="row g-4 mb-5">
     <div class="col-6 col-lg-3">
-        <div class="stat-card-glass" class="style-19252">
+        <div class="stat-card-glass style-19252">
             <div class="d-flex align-items-center gap-3">
                 <div class="style-44749"><i class="fas fa-user-plus"></i></div>
                 <div>
-                    <div class="stat-value" class="style-79580"><?= number_format($directReferrals) ?></div>
-                    <div class="stat-label" class="style-62191">Direct Referrals</div>
+                    <div class="stat-value style-79580"><?= number_format($directReferrals) ?></div>
+                    <div class="stat-label style-62191">Direct Referrals</div>
                 </div>
             </div>
         </div>
     </div>
     <div class="col-6 col-lg-3">
-        <div class="stat-card-glass" class="style-19252">
+        <div class="stat-card-glass style-19252">
             <div class="d-flex align-items-center gap-3">
                 <div class="style-71531"><i class="fas fa-calendar-check"></i></div>
                 <div>
-                    <div class="stat-value" class="style-79580">₹<?= number_format($monthEarnings) ?></div>
-                    <div class="stat-label" class="style-62191">This Month</div>
+                    <div class="stat-value style-79580">₹<?= number_format($monthEarnings) ?></div>
+                    <div class="stat-label style-62191">This Month</div>
                 </div>
             </div>
         </div>
     </div>
     <div class="col-6 col-lg-3">
-        <div class="stat-card-glass" class="style-19252">
+        <div class="stat-card-glass style-19252">
             <div class="d-flex align-items-center gap-3">
                 <div class="style-54870"><i class="fas fa-address-book"></i></div>
                 <div>
-                    <div class="stat-value" class="style-79580"><?= number_format($activeLeads) ?></div>
-                    <div class="stat-label" class="style-62191">Active Leads</div>
+                    <div class="stat-value style-79580"><?= number_format($activeLeads) ?></div>
+                    <div class="stat-label style-62191">Active Leads</div>
                 </div>
             </div>
         </div>
     </div>
     <div class="col-6 col-lg-3">
-        <div class="stat-card-glass" class="style-19252">
+        <div class="stat-card-glass style-19252">
             <div class="d-flex align-items-center gap-3">
                 <div class="style-5712"><i class="fas fa-file-contract"></i></div>
                 <div>
-                    <div class="stat-value" class="style-79580"><?= number_format($pendingBookings) ?></div>
-                    <div class="stat-label" class="style-62191">Pending Bookings</div>
+                    <div class="stat-value style-79580"><?= number_format($pendingBookings) ?></div>
+                    <div class="stat-label style-62191">Pending Bookings</div>
                 </div>
             </div>
         </div>
@@ -311,20 +311,20 @@ body {
 <!-- FOMO & Rank Progress Section -->
 <div class="row mb-4">
     <div class="col-12">
-        <div class="list-card border-0 shadow-lg position-relative overflow-hidden" class="style-4490">
+        <div class="list-card border-0 shadow-lg position-relative overflow-hidden style-4490">
             <div class="position-absolute top-0 end-0 p-3 opacity-10">
                 <i class="fas fa-chart-line fa-8x text-primary"></i>
             </div>
             <div class="d-flex flex-column flex-md-row align-items-md-center position-relative z-1">
                 <div class="me-md-4 mb-3 mb-md-0 text-center text-md-start">
-                    <div class="bg-warning-subtle text-warning rounded-circle d-inline-flex align-items-center justify-content-center mb-2 shadow-sm" class="style-71716">
+                    <div class="bg-warning-subtle text-warning rounded-circle d-inline-flex align-items-center justify-content-center mb-2 shadow-sm style-71716">
                         <i class="fas fa-level-up-alt fa-2x"></i>
                     </div>
                 </div>
                 <div class="flex-grow-1">
                     <h5 class="fw-bold mb-1 text-dark">Unlock Next Tier Earnings! <span class="badge bg-danger ms-2 shadow-sm pulse-badge"><i class="fas fa-fire me-1"></i> Don't Miss Out!</span></h5>
                     <p class="text-muted mb-2">You are currently a <strong class="text-primary"><?= ucfirst(str_replace('_', ' ', $rank)) ?></strong>. Your team is growing fast! Upgrade to the next rank to unlock <strong>higher commission percentages</strong> and exclusive pool bonuses.</p>
-                    <div class="progress mb-2 shadow-sm" class="style-56288">
+                    <div class="progress mb-2 shadow-sm style-56288">
                         <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated" role="progressbar" class="style-32835"></div>
                     </div>
                     <div class="d-flex justify-content-between text-muted small fw-bold">
@@ -358,7 +358,7 @@ body {
     <div class="col-lg-8">
         <div class="list-card h-100">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="fw-bold m-0" class="style-85421"><i class="fas fa-network-wired text-primary me-2"></i>Network Overview</h5>
+                <h5 class="fw-bold m-0 style-85421"><i class="fas fa-network-wired text-primary me-2"></i>Network Overview</h5>
                 <a href="<?= BASE_URL ?>/associate/network/tree" class="btn btn-sm btn-light rounded-pill px-3 fw-bold">View Tree</a>
             </div>
             
@@ -367,7 +367,7 @@ body {
                     <div class="list-item-row border-bottom">
                         <div>
                             <span class="badge bg-primary text-white me-2">Level <?= e($level['level'] ?? 0) ?></span>
-                            <span class="fw-bold" class="style-97679"><?= e($level['members'] ?? 0) ?> members</span>
+                            <span class="fw-bold style-97679"><?= e($level['members'] ?? 0) ?> members</span>
                         </div>
                         <div class="text-end">
                             <div class="small text-muted fw-bold">Level Commission</div>
@@ -387,12 +387,12 @@ body {
     
     <div class="col-lg-4">
         <div class="list-card h-100">
-            <h5 class="fw-bold mb-4" class="style-85421"><i class="fas fa-history text-primary me-2"></i>Recent Earnings</h5>
+            <h5 class="fw-bold mb-4 style-85421"><i class="fas fa-history text-primary me-2"></i>Recent Earnings</h5>
             <?php if (!empty($commissions)): ?>
                 <?php foreach (array_slice($commissions, 0, 5) as $c): ?>
                     <div class="list-item-row px-0">
                         <div>
-                            <div class="fw-bold" class="style-74741"><?= htmlspecialchars($c['commission_type'] ?? 'Commission') ?></div>
+                            <div class="fw-bold style-74741"><?= htmlspecialchars($c['commission_type'] ?? 'Commission') ?></div>
                             <div class="small text-muted"><?= date('M d, Y', strtotime($c['created_at'])) ?></div>
                         </div>
                         <div class="fw-bold text-success">

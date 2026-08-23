@@ -23,9 +23,9 @@ class DripCampaignController extends AdminController
         return (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0);
     }
 
-    protected function getUserRole(): ?string
+    protected function getUserRole(): string
     {
-        return $_SESSION['admin_role'] ?? $_SESSION['role'] ?? null;
+        return $_SESSION['admin_role'] ?? $_SESSION['role'] ?? '';
     }
 
     public function index()

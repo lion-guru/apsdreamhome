@@ -48,7 +48,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
 ?>
 
 <!-- Hero Section -->
-<section class="hero-section position-relative" class="style-41301">
+<section class="hero-section position-relative style-41301">
     <div class="container-fluid h-100">
         <div class="row h-100 align-items-center">
             <div class="col-lg-6 text-white">
@@ -376,7 +376,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                             </select>
                         </div>
                         <button class="btn btn-primary w-100" onclick="calculateEMI()">Calculate EMI</button>
-                        <div id="emiResult" class="mt-3 text-center" class="style-54390">
+                        <div id="emiResult" class="mt-3 text-center style-54390">
                             <h5>Monthly EMI: <span id="monthlyEMI" class="text-primary"></span></h5>
                             <small class="text-muted">Total Amount: <span id="totalAmount"></span></small>
                         </div>

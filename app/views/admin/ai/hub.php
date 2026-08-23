@@ -102,12 +102,12 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
     </div>
 
     <!-- Real-time Notifications Panel -->
-    <div id="notificationPanel" class="card shadow-lg d-none position-fixed" class="style-87917">
+    <div id="notificationPanel" class="card shadow-lg d-none position-fixed style-87917">
         <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
             <h6 class="mb-0"><?= h($mlSupport->translate('Live AI Monitoring')) ?></h6>
             <button class="btn-close btn-close-white" onclick="toggleNotifications()"></button>
         </div>
-        <div class="card-body p-0" class="style-61454">
+        <div class="card-body p-0 style-61454">
             <div class="list-group list-group-flush" id="notifList">
                 <div class="list-group-item small text-muted text-center py-4"><?= h($mlSupport->translate('No live activities...')) ?></div>
             </div>
@@ -274,7 +274,7 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
                     </div>
                 </div>
                 <div class="col-md-9">
-                    <div class="card shadow-sm border-0" class="style-29486">
+                    <div class="card shadow-sm border-0 style-29486">
                         <div class="card-body p-0 position-relative">
                             <div id="workflowCanvas" class="w-100 h-100"></div>
                             <div class="position-absolute top-0 end-0 p-3">
@@ -502,12 +502,12 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
-                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/ai-system/health" class="btn btn-outline-primary w-100 py-3"><i class="fas fa-heartbeat mb-2 d-block" class="style-41417"></i>System Health Check</a></div>
-                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/ai-calling/call-logs" class="btn btn-outline-success w-100 py-3"><i class="fas fa-list mb-2 d-block" class="style-41417"></i>Call Logs</a></div>
-                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/ai-calling/call-analytics" class="btn btn-outline-info w-100 py-3"><i class="fas fa-chart-pie mb-2 d-block" class="style-41417"></i>Call Analytics</a></div>
-                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/crm/dedup" class="btn btn-outline-warning w-100 py-3"><i class="fas fa-clone mb-2 d-block" class="style-41417"></i>Lead Deduplication</a></div>
-                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/crm/role-dashboard" class="btn btn-outline-secondary w-100 py-3"><i class="fas fa-users-cog mb-2 d-block" class="style-41417"></i>CRM Role Dashboard</a></div>
-                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/ai/market_report" class="btn btn-outline-danger w-100 py-3"><i class="fas fa-chart-area mb-2 d-block" class="style-41417"></i>Market Report</a></div>
+                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/ai-system/health" class="btn btn-outline-primary w-100 py-3"><i class="fas fa-heartbeat mb-2 d-block style-41417"></i>System Health Check</a></div>
+                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/ai-calling/call-logs" class="btn btn-outline-success w-100 py-3"><i class="fas fa-list mb-2 d-block style-41417"></i>Call Logs</a></div>
+                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/ai-calling/call-analytics" class="btn btn-outline-info w-100 py-3"><i class="fas fa-chart-pie mb-2 d-block style-41417"></i>Call Analytics</a></div>
+                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/crm/dedup" class="btn btn-outline-warning w-100 py-3"><i class="fas fa-clone mb-2 d-block style-41417"></i>Lead Deduplication</a></div>
+                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/crm/role-dashboard" class="btn btn-outline-secondary w-100 py-3"><i class="fas fa-users-cog mb-2 d-block style-41417"></i>CRM Role Dashboard</a></div>
+                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/ai/market_report" class="btn btn-outline-danger w-100 py-3"><i class="fas fa-chart-area mb-2 d-block style-41417"></i>Market Report</a></div>
                     </div>
                 </div>
             </div>

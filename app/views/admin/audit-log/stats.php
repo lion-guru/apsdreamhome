@@ -109,8 +109,8 @@ ob_start();
                       <td><code><?= htmlspecialchars($item['action'] ?? '') ?></code></td>
                       <td class="text-end"><?= number_format($item['cnt'] ?? 0) ?></td>
                       <td class="text-end">
-                        <div class="progress" class="style-17822">
-                          <div class="progress-bar bg-primary" class="style-88739"></div>
+                        <div class="progress style-17822">
+                          <div class="progress-bar bg-primary style-88739"></div>
                         </div>
                       </td>
                     </tr>
@@ -147,8 +147,8 @@ ob_start();
                       </td>
                       <td class="text-end"><?= number_format($item['cnt'] ?? 0) ?></td>
                       <td class="text-end">
-                        <div class="progress" class="style-17822">
-                          <div class="progress-bar bg-<?= in_array($item['user_role'] ?? '', ['admin', 'super_admin']) ? 'danger' : 'secondary' ?>" class="style-88739"></div>
+                        <div class="progress style-17822">
+                          <div class="progress-bar bg-<?= in_array($item['user_role'] ?? '', ['admin', 'super_admin']) ? 'danger' : 'secondary' ?> style-88739"></div>
                         </div>
                       </td>
                     </tr>
@@ -185,8 +185,8 @@ ob_start();
                       </td>
                       <td class="text-end"><?= number_format($s['cnt'] ?? 0) ?></td>
                       <td class="text-end">
-                        <div class="progress" class="style-17822">
-                          <div class="progress-bar bg-<?= $s['status'] === 'success' ? 'success' : ($s['status'] === 'failed' ? 'danger' : 'warning') ?>" class="style-8668"></div>
+                        <div class="progress style-17822">
+                          <div class="progress-bar bg-<?= $s['status'] === 'success' ? 'success' : ($s['status'] === 'failed' ? 'danger' : 'warning') ?> style-8668"></div>
                         </div>
                       </td>
                     </tr>

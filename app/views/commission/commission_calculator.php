@@ -179,7 +179,7 @@
 </section>
 
 <!-- Results Section -->
-<section id="resultsSection" class="results-section py-5 bg-light" class="style-54390">
+<section id="resultsSection" class="results-section py-5 bg-light style-54390">
     <div class="container">
         <div class="row">
             <div class="col-lg-12 text-center mb-5">

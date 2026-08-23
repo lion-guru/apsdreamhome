@@ -29,7 +29,7 @@
             <table class="table table-hover mb-0">
                 <thead class="bg-light">
                     <tr>
-                        <th class="border-0 ps-4" class="style-89354">
+                        <th class="border-0 ps-4 style-89354">
                             <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)">
                         </th>
                         <th class="border-0">User</th>
@@ -48,7 +48,7 @@
                         </td>
                         <td>
                             <div class="d-flex align-items-center">
-                                <div class="avatar bg-warning text-white rounded-circle d-flex align-items-center justify-content-center me-3" class="style-48301">
+                                <div class="avatar bg-warning text-white rounded-circle d-flex align-items-center justify-content-center me-3 style-48301">
                                     <?php echo strtoupper(substr($user['name'] ?? 'U', 0, 1)); ?>
                                 </div>
                                 <div>

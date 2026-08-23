@@ -21,7 +21,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <div class="card-body">
                         <table class="table table-borderless">
                             <tr>
-                                <td class="text-muted" class="style-17160">Type</td>
+                                <td class="text-muted style-17160">Type</td>
                                 <td><span class="badge bg-primary"><?php echo ucfirst(htmlspecialchars($meeting['meeting_type'] ?? 'meeting')); ?></span></td>
                             </tr>
                             <tr>

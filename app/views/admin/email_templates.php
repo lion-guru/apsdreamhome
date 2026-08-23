@@ -60,7 +60,7 @@ $base_url    = $base_url    ?? (defined('BASE_URL') ? BASE_URL : '');
                             <th class="style-85429"><?= __('admin_tpl_subject', null, 'Subject') ?></th>
                             <th class="style-26295"><?= __('admin_tpl_file', null, 'File') ?></th>
                             <th class="style-33374"><?= __('admin_tpl_vars', null, 'Variables') ?></th>
-                            <th class="style-33374" class="text-end"><?= __('admin_tpl_actions', null, 'Actions') ?></th>
+                            <th class="style-33374 text-end"><?= __('admin_tpl_actions', null, 'Actions') ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -77,7 +77,7 @@ $base_url    = $base_url    ?? (defined('BASE_URL') ? BASE_URL : '');
                                     <code class="text-primary fw-bold"><?= htmlspecialchars($tpl['code'] ?? '') ?></code>
                                 </td>
                                 <td>
-                                    <div class="text-truncate" class="style-48743" title="<?= htmlspecialchars($tpl['subject'] ?? '') ?>">
+                                    <div class="text-truncate style-48743" title="<?= htmlspecialchars($tpl['subject'] ?? '') ?>">
                                         <?= htmlspecialchars($tpl['subject'] ?? '') ?>
                                     </div>
                                 </td>

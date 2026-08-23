@@ -29,7 +29,7 @@ ob_start();
                         <?php if ($a['image_url']): ?>
                             <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?= htmlspecialchars($a['title'] ?? '') ?>" class="style-24482">
                         <?php else: ?>
-                            <div class="bg-secondary text-white d-flex align-items-center justify-content-center" class="style-32569">
+                            <div class="bg-secondary text-white d-flex align-items-center justify-content-center style-32569">
                                 <i class="fas fa-gavel fa-3x"></i>
                             </div>
                         <?php endif; ?>

@@ -34,11 +34,11 @@ $doc_type_labels = $doc_type_labels ?? [];
 
 <div class="ocr-page">
     <div class="ocr-header">
-        <div class="container-fluid px-4" class="style-84072">
+        <div class="container-fluid px-4 style-84072">
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                 <div>
                     <h4 class="mb-1 fw-bold text-white"><i class="fas fa-cogs me-2"></i>OCR Templates</h4>
-                    <p class="mb-0" class="style-29848">Manage field extraction templates for each document type</p>
+                    <p class="mb-0 style-29848">Manage field extraction templates for each document type</p>
                 </div>
                 <div class="d-flex gap-2">
                     <a href="<?= BASE_URL ?>/admin/ocr" class="ocr-btn ocr-btn-outline"><i class="fas fa-arrow-left"></i>Back</a>
@@ -48,7 +48,7 @@ $doc_type_labels = $doc_type_labels ?? [];
         </div>
     </div>
 
-    <div class="container-fluid px-4" class="style-86238">
+    <div class="container-fluid px-4 style-86238">
         <?php if (empty($templates)): ?>
             <div class="ocr-card">
                 <div class="ocr-empty">
@@ -92,10 +92,10 @@ $doc_type_labels = $doc_type_labels ?? [];
                         <?php endif; ?>
 
                         <div class="ocr-template-actions">
-                            <a href="<?= BASE_URL ?>/admin/ocr/templates/edit/<?= $t['id'] ?>" class="ocr-btn ocr-btn-outline" class="style-95261"><i class="fas fa-edit me-1"></i>Edit</a>
+                            <a href="<?= BASE_URL ?>/admin/ocr/templates/edit/<?= $t['id'] ?>" class="ocr-btn ocr-btn-outline style-95261"><i class="fas fa-edit me-1"></i>Edit</a>
                             <form method="POST" action="<?= BASE_URL ?>/admin/ocr/templates/delete/<?= $t['id'] ?>" class="style-71727" data-aps-confirm="Delete this template?">
                                 <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
-                                <button type="submit" class="ocr-btn ocr-btn-danger" class="style-95261"><i class="fas fa-trash me-1"></i>Delete</button>
+                                <button type="submit" class="ocr-btn ocr-btn-danger style-95261"><i class="fas fa-trash me-1"></i>Delete</button>
                             </form>
                         </div>
                     </div>

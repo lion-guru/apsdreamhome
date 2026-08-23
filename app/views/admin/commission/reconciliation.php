@@ -17,9 +17,10 @@ $healthColor = $healthColors[$health] ?? '#6b7280';
     <title>Commission Reconciliation — APS Dream Home</title>
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/admin/css/admin.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
-<div class="aps-cp-card" class="style-33072">
+<div class="aps-cp-card style-33072">
     <div class="aps-cp-card-header">
         <h3><i class="fas fa-balance-scale"></i> Commission Reconciliation</h3>
         <span class="style-20203">
@@ -33,11 +34,11 @@ $healthColor = $healthColors[$health] ?? '#6b7280';
                 <div class="aps-cp-stat-value"><?php echo number_format($reconciliation['ledger_total'] ?? 0); ?></div>
                 <div class="aps-cp-stat-label">Ledger Entries</div>
             </div>
-            <div class="aps-cp-stat" class="style-14561">
+            <div class="aps-cp-stat style-14561">
                 <div class="aps-cp-stat-value"><?php echo $summary['critical_issues'] ?? 0; ?></div>
                 <div class="aps-cp-stat-label">Critical Issues</div>
             </div>
-            <div class="aps-cp-stat" class="style-42923">
+            <div class="aps-cp-stat style-42923">
                 <div class="aps-cp-stat-value"><?php echo $summary['warnings'] ?? 0; ?></div>
                 <div class="aps-cp-stat-label">Warnings</div>
             </div>
@@ -45,7 +46,7 @@ $healthColor = $healthColors[$health] ?? '#6b7280';
 
         <?php if (!empty($reconciliation['orphaned_ledger_no_booking'])): ?>
         <div class="style-46748">
-            <h4><i class="fas fa-link" class="style-85206"></i> Orphaned Ledger Entries (<?php echo count($reconciliation['orphaned_ledger_no_booking']); ?>)</h4>
+            <h4><i class="fas fa-link style-85206"></i> Orphaned Ledger Entries (<?php echo count($reconciliation['orphaned_ledger_no_booking']); ?>)</h4>
             <p class="style-73315">Commission entries referencing bookings that no longer exist.</p>
             <div class="table-responsive"><table class="style-14556">
                 <thead><tr class="style-64307">
@@ -74,14 +75,14 @@ $healthColor = $healthColors[$health] ?? '#6b7280';
 
         <?php if (!empty($reconciliation['missing_beneficiary'])): ?>
         <div class="style-46748">
-            <h4><i class="fas fa-user-slash" class="style-85206"></i> Missing Beneficiaries (<?php echo count($reconciliation['missing_beneficiary']); ?>)</h4>
+            <h4><i class="fas fa-user-slash style-85206"></i> Missing Beneficiaries (<?php echo count($reconciliation['missing_beneficiary']); ?>)</h4>
             <p class="style-73315">Commission entries pointing to users that no longer exist.</p>
         </div>
         <?php endif; ?>
 
         <?php if (empty($reconciliation['orphaned_ledger_no_booking']) && empty($reconciliation['missing_beneficiary']) && empty($reconciliation['negative_entries'])): ?>
         <div class="style-15711">
-            <i class="fas fa-check-circle" class="style-60715"></i>
+            <i class="fas fa-check-circle style-60715"></i>
             <h3>All Clear!</h3>
             <p>No discrepancies found across commission tables.</p>
         </div>

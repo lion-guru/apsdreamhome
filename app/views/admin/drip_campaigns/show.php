@@ -72,7 +72,7 @@ ob_start();
                 <div class="timeline">
                     <?php foreach ($emails as $i => $e): ?>
                         <div class="d-flex mb-3">
-                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" class="style-93328">
+                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3 style-93328">
                                 <strong><?= $e['sequence_order'] ?></strong>
                             </div>
                             <div class="flex-grow-1">
@@ -84,7 +84,7 @@ ob_start();
                                     <?= ($e['delay_days'] == 0 && $e['delay_hours'] == 0) ? 'enrollment' : '' ?>
                                     Â· <span class="badge bg-light text-dark"><?= ucfirst($e['channel']) ?></span>
                                 </p>
-                                <pre class="bg-light p-2 small rounded mb-0" class="style-12331"><?= htmlspecialchars($e['body'] ?? '') ?></pre>
+                                <pre class="bg-light p-2 small rounded mb-0 style-12331"><?= htmlspecialchars($e['body'] ?? '') ?></pre>
                             </div>
                         </div>
                     <?php endforeach; ?>

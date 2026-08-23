@@ -40,20 +40,20 @@ $job = $job ?? [];
                         </div>
 
                         <h5 class="fw-bold mb-3">Job Description</h5>
-                        <div class="text-muted mb-4" class="style-79072">
+                        <div class="text-muted mb-4 style-79072">
                             <?= nl2br(htmlspecialchars($job['description'] ?? 'No description available.')) ?>
                         </div>
 
                         <?php if (!empty($job['requirements'])): ?>
                             <h5 class="fw-bold mb-3">Requirements</h5>
-                            <div class="text-muted mb-4" class="style-79072">
+                            <div class="text-muted mb-4 style-79072">
                                 <?= nl2br(htmlspecialchars($job['requirements'] ?? '')) ?>
                             </div>
                         <?php endif; ?>
 
                         <?php if (!empty($job['benefits'])): ?>
                             <h5 class="fw-bold mb-3">Benefits</h5>
-                            <div class="text-muted mb-4" class="style-79072">
+                            <div class="text-muted mb-4 style-79072">
                                 <?= nl2br(htmlspecialchars($job['benefits'] ?? '')) ?>
                             </div>
                         <?php endif; ?>

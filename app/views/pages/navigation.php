@@ -237,6 +237,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
             }
         }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 
 <body>

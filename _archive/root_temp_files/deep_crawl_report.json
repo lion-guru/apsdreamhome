@@ -1,0 +1,878 @@
+{
+    "generated": "2026-08-23T11:38:10+02:00",
+    "total": 309,
+    "issues": [
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/kyc",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/kyc"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/finance/cash-flow",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/finance/cash-flow"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/sales/approvals",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/sales/approvals"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/directory",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/directory"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/directory/categories",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/directory/categories"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/directory/listings",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/directory/listings"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/directory/reviews",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/directory/reviews"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/directory/jobs",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/directory/jobs"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/directory/materials",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/directory/materials"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/ads",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/ads"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/ads/settings",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/ads/settings"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/referrals/leaderboard",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/referrals/leaderboard"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/referrals/share-analytics",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/referrals/share-analytics"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/referrals/tiers",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/referrals/tiers"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/crm/templates",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/crm/templates"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/crm/bulk-send",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/crm/bulk-send"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/crm/segments",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/crm/segments"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/crm/analytics",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/crm/analytics"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/crm/forms",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/crm/forms"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/crm/agentic",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/crm/agentic"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/ai-system",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/ai-system"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/ai-system/qualifier",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/ai-system/qualifier"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/ai-system/market-report",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/ai-system/market-report"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/crm/role-dashboard",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/crm/role-dashboard"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/crm/dedup",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/crm/dedup"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/crm/custom-fields",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/crm/custom-fields"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/crm/drip",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/crm/drip"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/crm/email-tracking/stats",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/crm/email-tracking/stats"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/crm/sla",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/crm/sla"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/meetings",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/meetings"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/crm/voice",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/crm/voice"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/careers",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/careers"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/careers/manage",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/careers/manage"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/smart-registration",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/smart-registration"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/backoffice",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/backoffice"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/company-loans",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/company-loans"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/company-loans/offers",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/company-loans/offers"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/legal/dashboard",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/legal/dashboard"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/legal/templates",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/legal/templates"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/legal/clauses",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/legal/clauses"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/legal/ai-composer",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/legal/ai-composer"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/legal/ai-prompts",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/legal/ai-prompts"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/legal/categories",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/legal/categories"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/custom-features",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/custom-features"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/custom-features/neighborhood",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/custom-features/neighborhood"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/custom-features/investment-calculator",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/custom-features/investment-calculator"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/security-test",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/security-test"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/compliance-scorecard",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/compliance-scorecard"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/notification-dashboard",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/notification-dashboard"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/hrm/departments",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/hrm/departments"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/hrm/designations",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/hrm/designations"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/commission/recalculations",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/commission/recalculations"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/payout-batches",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/payout-batches"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/messages",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/messages"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/ai-calling/dashboard",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/ai-calling/dashboard"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/sim-calling",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/sim-calling"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/voice-agents",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/voice-agents"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/ai-calling/schedule",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/ai-calling/schedule"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/ai-calling/sessions",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/ai-calling/sessions"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/ai-calling/extracted-leads",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/ai-calling/extracted-leads"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/ai-calling/health",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/ai-calling/health"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/ai-calling/auto-dialer",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/ai-calling/auto-dialer"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/ai-calling/call-analytics",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/ai-calling/call-analytics"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/ai-calling/call-logs",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/ai-calling/call-logs"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/ai-calling",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/ai-calling"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/sustainable",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/sustainable"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/iot",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/iot"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/social-media",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/social-media"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/push-notifications",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/push-notifications"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/tools/document-extraction",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/tools/document-extraction"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/tools/esign",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/tools/esign"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/tools/stamp-duty",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/tools/stamp-duty"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/tools/landmarks",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/tools/landmarks"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/tools/whatsapp-templates",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/tools/whatsapp-templates"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/push-notifications/templates",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/push-notifications/templates"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/push-notifications/campaigns",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/push-notifications/campaigns"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/ocr",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/ocr"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/ocr/templates",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/ocr/templates"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/communication/automation",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/communication/automation"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/communication/whatsapp-setup",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/communication/whatsapp-setup"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/communication/telegram-setup",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/communication/telegram-setup"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/communication/sms-setup",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/communication/sms-setup"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/communication/email-templates",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/communication/email-templates"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/communication/logs",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/communication/logs"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/ai/executive-assistant",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/ai/executive-assistant"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/crm/routing",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/crm/routing"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/crm/assignments",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/crm/assignments"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/legal-colony-pipeline",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/legal-colony-pipeline"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/legal-colony-pipeline/analytics-all",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/legal-colony-pipeline/analytics-all"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/legal-colony-pipeline/milestones/2",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/legal-colony-pipeline/milestones/2"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/crm/settings",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/crm/settings"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/leads/trash",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/leads/trash"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/legal-colony-pipeline/health",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/legal-colony-pipeline/health"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/tenants/dashboard",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/tenants/dashboard"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/tenants",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/tenants"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/billing",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/billing"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/billing/plans",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/billing/plans"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/live-chat",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/live-chat"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/hrm/leave",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/hrm/leave"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/backoffice/payslips",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/backoffice/payslips"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/business/associates",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/business/associates"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/department-requests",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/department-requests"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/department-requests/my-requests",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/department-requests/my-requests"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/property-valuations",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/property-valuations"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/property-valuations/generate",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/property-valuations/generate"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/leads/export/csv",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/leads/export/csv"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/leads/import",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/leads/import"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/leads/commission-heatmap",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/leads/commission-heatmap"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/leads/property-comparison",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/leads/property-comparison"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/leads/telecaller-performance",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/leads/telecaller-performance"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/tools/emi-calculator",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/tools/emi-calculator"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/listing-settings",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/listing-settings"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/listing-settings/inquiries",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/listing-settings/inquiries"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/agent-commission",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/agent-commission"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/agent-agreements",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/agent-agreements"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/mlm-rewards",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/mlm-rewards"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/mlm-rewards/rank-criteria",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/mlm-rewards/rank-criteria"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/mlm-rewards/rewards",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/mlm-rewards/rewards"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/mlm-rewards/upgrades",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/mlm-rewards/upgrades"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/mlm-rewards/withdrawals",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/mlm-rewards/withdrawals"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/commission/telecaller/commissions",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/commission/telecaller/commissions"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/commission/calculations",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/commission/calculations"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/admin/mlm-settings/levels",
+            "finalUrl": "http://localhost/apsdreamhome/admin/login",
+            "problem": "BOUNCED_TO_LOGIN",
+            "label": "admin:/admin/mlm-settings/levels"
+        },
+        {
+            "http": 200,
+            "url": "http://localhost/apsdreamhome/",
+            "finalUrl": "http://localhost/apsdreamhome/",
+            "bodyIssues": {
+                "WARNINGS": [
+                    "notice: \"Legal notice & dispute resolution\","
+                ]
+            },
+            "label": "public:/"
+        }
+    ]
+}

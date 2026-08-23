@@ -36,12 +36,12 @@ $currentConfig = $rankConfig[$currentRank] ?? $rankConfig['associate'];
 $nextConfig = $nextRank ? ($rankConfig[$nextRank] ?? null) : null;
 ?>
 
-<div class="card border-0 shadow-sm mb-4" class="style-61068">
+<div class="card border-0 shadow-sm mb-4 style-61068">
     <div class="card-body p-4">
         <div class="row align-items-center">
             <div class="col-md-8">
                 <div class="d-flex align-items-center mb-3">
-                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3" class="style-47783">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3 style-47783">
                         <i class="<?= $currentConfig['icon'] ?> fa-2x"></i>
                     </div>
                     <div>
@@ -51,25 +51,25 @@ $nextConfig = $nextRank ? ($rankConfig[$nextRank] ?? null) : null;
                 </div>
                 <div class="row g-3">
                     <div class="col-6 col-md-3">
-                        <div class="p-2 rounded" class="style-93131">
+                        <div class="p-2 rounded style-93131">
                             <div class="small opacity-75"><?= __('assoc_rank_monthly_vol', [], 'Monthly Volume') ?></div>
                             <div class="fw-bold">₹<?= number_format($monthlyVolume) ?></div>
                         </div>
                     </div>
                     <div class="col-6 col-md-3">
-                        <div class="p-2 rounded" class="style-93131">
+                        <div class="p-2 rounded style-93131">
                             <div class="small opacity-75"><?= __('assoc_rank_lifetime_vol', [], 'Lifetime Volume') ?></div>
                             <div class="fw-bold">₹<?= number_format($lifetimeVolume) ?></div>
                         </div>
                     </div>
                     <div class="col-6 col-md-3">
-                        <div class="p-2 rounded" class="style-93131">
+                        <div class="p-2 rounded style-93131">
                             <div class="small opacity-75"><?= __('assoc_mlm_team_size', [], 'Team Size') ?></div>
                             <div class="fw-bold"><?= $teamSize ?></div>
                         </div>
                     </div>
                     <div class="col-6 col-md-3">
-                        <div class="p-2 rounded" class="style-93131">
+                        <div class="p-2 rounded style-93131">
                             <div class="small opacity-75"><?= __('assoc_rank_direct_legs', [], 'Direct Legs') ?></div>
                             <div class="fw-bold"><?= $directLegs ?></div>
                         </div>
@@ -77,7 +77,7 @@ $nextConfig = $nextRank ? ($rankConfig[$nextRank] ?? null) : null;
                 </div>
             </div>
             <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                <div class="p-3 rounded" class="style-58007">
+                <div class="p-3 rounded style-58007">
                     <i class="fas fa-gift fa-2x mb-2"></i>
                     <h5 class="mb-0"><?= $currentConfig['reward'] ?></h5>
                     <small class="opacity-75"><?= __('assoc_rank_reward', [], 'Your Rank Reward') ?></small>
@@ -113,7 +113,7 @@ $nextConfig = $nextRank ? ($rankConfig[$nextRank] ?? null) : null;
                     <span class="fw-bold"><?= __('assoc_rank_biz_volume', [], 'Business Volume') ?></span>
                     <span>₹<?= number_format($lifetimeVolume) ?> / ₹<?= number_format($targetVolume) ?></span>
                 </div>
-                <div class="progress" class="style-58663">
+                <div class="progress style-58663">
                     <div class="progress-bar <?= $volumePct >= 100 ? 'bg-success' : '' ?>" role="progressbar" 
                          class="style-89737">
                         <?= $volumePct ?>%
@@ -130,7 +130,7 @@ $nextConfig = $nextRank ? ($rankConfig[$nextRank] ?? null) : null;
                     <span class="fw-bold"><?= __('assoc_rank_direct_legs_title', [], 'Direct Legs (Team)') ?></span>
                     <span><?= $directLegs ?> / <?= $targetLegs ?> <?= __('assoc_rank_required', [], 'required') ?></span>
                 </div>
-                <div class="progress" class="style-58663">
+                <div class="progress style-58663">
                     <div class="progress-bar <?= $legsPct >= 100 ? 'bg-success' : '' ?>" role="progressbar" 
                          class="style-5454">
                         <?= $legsPct ?>%
@@ -145,7 +145,7 @@ $nextConfig = $nextRank ? ($rankConfig[$nextRank] ?? null) : null;
         </div>
         
         <?php $bgColor = $overallPct >= 100 ? '#dcfce7' : '#fef3c7'; ?>
-        <div class="mt-4 p-3 rounded-3 text-center" class="style-11775">
+        <div class="mt-4 p-3 rounded-3 text-center style-11775">
             <?php if ($overallPct >= 100): ?>
                 <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
                 <h5 class="text-success mb-1"><?= __('assoc_rank_eligible', [], "You're Eligible for Promotion!") ?></h5>
@@ -188,8 +188,7 @@ $nextConfig = $nextRank ? ($rankConfig[$nextRank] ?? null) : null;
                         <tr class="<?= $isCurrent ? 'table-primary' : ($isAchieved ? 'table-success' : '') ?>">
                             <td>
                                 <div class="d-flex align-items-center">
-                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-2" 
-                                         class="style-66722">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-2 style-66722">
                                         <i class="<?= $config['icon'] ?>"></i>
                                     </div>
                                     <strong><?= $rankDisplay[$rankName] ?? $rank['rank_name'] ?></strong>

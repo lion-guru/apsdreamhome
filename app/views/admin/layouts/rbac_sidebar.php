@@ -113,7 +113,7 @@ $groupedItems = $sortedGrouped;
         </div>
         <form method="POST" action="<?= $base ?>/admin/tenants/stop-switch" class="style-21648">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-            <button type="submit" class="btn btn-sm btn-light w-100" class="style-90628">
+            <button type="submit" class="btn btn-sm btn-light w-100 style-90628">
                 <i class="fas fa-undo me-1"></i>Back to My Tenant
             </button>
         </form>
@@ -188,7 +188,7 @@ $groupedItems = $sortedGrouped;
         <?php endforeach; ?>
     <?php else: ?>
         <div class="style-78189">
-            <i class="fas fa-exclamation-circle" class="style-88454"></i>
+            <i class="fas fa-exclamation-circle style-88454"></i>
             <strong>No menu items found</strong><br>
             <span class="style-64777">
                 Check that admin_menu_items table has data<br>

@@ -12,7 +12,7 @@ $roleColor = $roleColors[$user['role'] ?? ''] ?? 'secondary';
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div class="d-flex align-items-center">
         <a href="<?= $base ?>/admin/users" class="text-decoration-none text-muted me-3"><i class="fas fa-arrow-left fa-lg"></i></a>
-        <div class="style-91226" class="me-3">
+        <div class="style-91226 me-3">
             <?= strtoupper(substr($user['name'] ?? 'U', 0, 1)) ?>
         </div>
         <div>
@@ -74,7 +74,7 @@ if (in_array($user['role'] ?? '', ['associate','agent','telecaller'])) $tabs['ml
             <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Account Info</h6></div>
             <div class="card-body">
                 <table class="table table-sm mb-0">
-                    <tr><td class="text-muted" class="style-19131">Phone</td><td><?= htmlspecialchars($user['phone'] ?? 'N/A') ?></td></tr>
+                    <tr><td class="text-muted style-19131">Phone</td><td><?= htmlspecialchars($user['phone'] ?? 'N/A') ?></td></tr>
                     <tr><td class="text-muted">City</td><td><?= htmlspecialchars($user['city'] ?? 'N/A') ?></td></tr>
                     <tr><td class="text-muted">Address</td><td><?= htmlspecialchars($user['address'] ?? 'N/A') ?></td></tr>
                     <tr><td class="text-muted">Registered</td><td><?= isset($user['created_at']) ? date('M d, Y h:i A', strtotime($user['created_at'])) : 'N/A' ?></td></tr>
@@ -91,7 +91,7 @@ if (in_array($user['role'] ?? '', ['associate','agent','telecaller'])) $tabs['ml
             <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-link me-2"></i>Referral & Sponsor</h6></div>
             <div class="card-body">
                 <table class="table table-sm mb-0">
-                    <tr><td class="text-muted" class="style-19131">Referral Code</td><td><code class="fs-6"><?= htmlspecialchars($user['referral_code'] ?? 'N/A') ?></code></td></tr>
+                    <tr><td class="text-muted style-19131">Referral Code</td><td><code class="fs-6"><?= htmlspecialchars($user['referral_code'] ?? 'N/A') ?></code></td></tr>
                     <tr><td class="text-muted">Referred By</td><td><?= $user['referred_by_name'] ?? ($user['referred_by'] ?? 'None') ?></td></tr>
                     <tr><td class="text-muted">Sponsor</td><td><?= $user['sponsor_name'] ?? ($user['sponsor_id'] ?? 'None') ?></td></tr>
                     <tr><td class="text-muted">MLM Position</td><td><?= ucfirst($user['mlm_position'] ?? 'N/A') ?></td></tr>

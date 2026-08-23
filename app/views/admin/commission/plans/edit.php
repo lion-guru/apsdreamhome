@@ -40,9 +40,9 @@ $statusBadge = match($plan['status']) { 'active' => 'bg-success', 'draft' => 'bg
 <div class="cp-card">
     <div class="cp-card-header">
         <div class="style-1552">
-            <h5 class="m-0" class="style-43926"><i class="fas fa-edit me-2" class="style-13856"></i><?= htmlspecialchars($plan['plan_name'] ?? '') ?></h5>
+            <h5 class="m-0 style-43926"><i class="fas fa-edit me-2 style-13856"></i><?= htmlspecialchars($plan['plan_name'] ?? '') ?></h5>
             <span class="cp-version">v<?= $plan['version'] ?></span>
-            <span class="cp-badge <?= $statusBadge ?>" class="style-77741"><?= ucfirst($plan['status']) ?></span>
+            <span class="cp-badge <?= $statusBadge ?> style-77741"><?= ucfirst($plan['status']) ?></span>
             <?php if ($isActive): ?>
                 <span class="style-62541"><i class="fas fa-lock me-1"></i>Active — editing locked</span>
             <?php endif; ?>
@@ -52,7 +52,7 @@ $statusBadge = match($plan['status']) { 'active' => 'bg-success', 'draft' => 'bg
     <div class="cp-card-body">
         <?php if ($isActive): ?>
             <div class="style-29735">
-                <i class="fas fa-info-circle" class="style-22199"></i>
+                <i class="fas fa-info-circle style-22199"></i>
                 <div>
                     <strong class="style-62735">Active plans cannot be edited.</strong>
                     <span class="style-29958"> Clone as a new version to make changes, then activate the new version.</span>

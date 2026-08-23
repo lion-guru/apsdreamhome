@@ -179,8 +179,8 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
                         <span class="fw-semibold"><?= __('user_booking_detail_payment_progress', 'Payment Progress') ?></span>
                         <span class="fw-bold text-<?= $payPct >= 100 ? 'success' : 'primary' ?>"><?= $payPct ?>%</span>
                     </div>
-                    <div class="aps-cp-progress" class="style-51045">
-                        <div class="aps-cp-progress-bar" class="style-13409"></div>
+                    <div class="aps-cp-progress style-51045">
+                        <div class="aps-cp-progress-bar style-13409"></div>
                     </div>
                     <div class="d-flex justify-content-between mt-1">
                         <small class="text-success"><?= __('user_booking_detail_paid', 'Paid') ?>: ₹<?= number_format($total_paid) ?></small>
@@ -200,13 +200,13 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
                 <h5><i class="fas fa-history text-info"></i> <?= __('user_booking_detail_status_timeline', 'Status Timeline') ?></h5>
             </div>
             <div class="aps-cp-card-body">
-                <div class="position-relative" class="style-11366">
-                    <div class="position-absolute" class="style-1238"></div>
+                <div class="position-relative style-11366">
+                    <div class="position-absolute style-1238"></div>
                     <?php foreach ($history as $i => $h):
                         $hColor = $statusColors[$h['to_status']] ?? 'secondary';
                     ?>
                     <div class="position-relative mb-3">
-                        <div class="position-absolute" class="style-41260"></div>
+                        <div class="position-absolute style-41260"></div>
                         <div>
                             <strong class="text-<?= $hColor ?>"><?= $statusLabels[$h['to_status']] ?? ucfirst($h['to_status']) ?></strong>
                             <small class="text-muted ms-2"><?= date('d M Y, h:i A', strtotime($h['created_at'] ?? 'now')) ?></small>
@@ -371,7 +371,7 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
 <div class="row g-3 mb-4">
     <?php if ($bStatus === 'token_paid'): ?>
     <div class="col-md-4">
-        <a href="<?= BASE_URL ?>/user/bookings/<?= (int)$booking['id'] ?>/pay-token" class="btn btn-success w-100 py-3" class="style-12699">
+        <a href="<?= BASE_URL ?>/user/bookings/<?= (int)$booking['id'] ?>/pay-token" class="btn btn-success w-100 py-3 style-12699">
             <i class="fas fa-credit-card me-2"></i><?= __('user_booking_detail_pay_token', 'Pay Token Amount') ?>
         </a>
     </div>
@@ -387,7 +387,7 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
     </div>
     <?php elseif ($bStatus === 'agreement_signed'): ?>
     <div class="col-md-4">
-        <span class="btn btn-success w-100 py-3 disabled" class="style-69721">
+        <span class="btn btn-success w-100 py-3 disabled style-69721">
             <i class="fas fa-check-circle me-2"></i><?= __('user_booking_detail_payment_complete', 'Payment Complete') ?>
         </span>
     </div>

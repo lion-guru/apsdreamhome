@@ -8,7 +8,7 @@ $location = $location ?? '';
 $locationName = ucfirst($location);
 ?>
 <!-- Hero Section -->
-<section class="py-5 text-white" class="style-68644">
+<section class="py-5 text-white style-68644">
     <div class="container text-center py-5">
         <h1 class="display-4 fw-bold mb-3"><i class="fas fa-map-marker-alt me-3"></i><?php echo e($locationName); ?> <?= __('projects_location_hero') ?></h1>
         <p class="lead"><?= __('projects_location_explore') ?> <?php echo e($locationName); ?></p>
@@ -39,7 +39,7 @@ $locationName = ucfirst($location);
                 ?>
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="card h-100 shadow-sm border-0 overflow-hidden">
-                        <div class="position-relative" class="style-17333">
+                        <div class="position-relative style-17333">
                             <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="w-100 h-100 img-fluid" alt="<?php echo htmlspecialchars($project->site_name); ?>" class="style-86926" onerror="this.src='<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg'">
                             <div class="position-absolute top-0 start-0 m-2">
                                 <span class="badge bg-<?php echo $project->status === 'active' ? 'success' : 'primary'; ?>">
@@ -65,8 +65,8 @@ $locationName = ucfirst($location);
                                 <a href="<?php echo BASE_URL; ?>/projects/<?php echo e($slug); ?>" class="btn btn-primary btn-sm flex-grow-1">
                                     <i class="fas fa-eye me-1"></i><?= __('featured_view_details') ?>
                                 </a>
-                                <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-success btn-sm">
-                                    <i class="fab fa-whatsapp"></i>
+                                <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-success btn-sm" aria-label="WhatsApp enquiry">
+                                    <i class="fab fa-whatsapp" aria-hidden="true"></i>
                                 </a>
                             </div>
                         </div>
@@ -104,7 +104,7 @@ $locationName = ucfirst($location);
 </section>
 
 <!-- CTA -->
-<section class="py-5 text-center text-white" class="style-68644">
+<section class="py-5 text-center text-white style-68644">
     <div class="container">
         <h3><?= __('projects_location_interested') ?> <?php echo e($locationName); ?> <?= __('projects_location_properties') ?></h3>
         <p class="mb-4"><?= __('projects_location_cta_desc') ?></p>

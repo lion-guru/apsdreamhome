@@ -25,6 +25,7 @@ $GLOBALS['_html_doc_started'] = true;
         .btn-login:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(22,163,74,0.3); }
         .icon-leaf { color: #16a34a; font-size: 3rem; }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
     <div class="container">
@@ -32,7 +33,7 @@ $GLOBALS['_html_doc_started'] = true;
             <div class="col-md-5">
                 <div class="card login-card">
                     <div class="login-header">
-                        <i class="fas fa-seedling icon-leaf mb-2" class="style-98792"></i>
+                        <i class="fas fa-seedling icon-leaf mb-2 style-98792"></i>
                         <h3>Farmer Portal</h3>
                         <p class="mb-0">APS Dream Home - Land Acquisition</p>
                     </div>
@@ -49,7 +50,7 @@ $GLOBALS['_html_doc_started'] = true;
                             <div class="mb-4">
                                 <label class="form-label fw-semibold">Registered Phone Number</label>
                                 <div class="input-group">
-                                    <span class="input-group-text bg-light border-2" class="style-2337">
+                                    <span class="input-group-text bg-light border-2 style-2337">
                                         <i class="fas fa-phone text-success"></i>
                                     </span>
                                     <input type="tel" name="phone" class="form-control" placeholder="Enter your 10-digit phone number" pattern="[0-9]{10}" maxlength="10" required class="style-47601">

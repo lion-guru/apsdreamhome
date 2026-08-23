@@ -166,6 +166,29 @@ class Router
             }
         }
 
+        // Step 5b: Global admin authentication gate
+        // Every /admin/* route requires an authenticated session whose role is in
+        // BaseController::ADMIN_ROLES. Controllers may still enforce stricter
+        // per-route RBAC via requireAdmin(). /admin/login is exempt.
+        if (preg_match('#^/admin(/|$)#', $uri) && !preg_match('#^/admin/login#', $uri)) {
+            $gateRole = $_SESSION['admin_role'] ?? $_SESSION['role'] ?? '';
+            $gateLoggedIn = isset($_SESSION['admin_id']) || isset($_SESSION['user_id'])
+                || isset($_SESSION['associate_id']) || isset($_SESSION['agent_id'])
+                || isset($_SESSION['employee_id']);
+            if (!$gateLoggedIn || !in_array($gateRole, \App\Http\Controllers\BaseController::ADMIN_ROLES, true)) {
+                error_log("ADMIN-GATE: blocked {$method} {$uri} role=" . ($gateRole ?: '(none)'));
+                if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+                    header('Content-Type: application/json', true, 401);
+                    echo json_encode(['success' => false, 'error' => 'Admin authentication required']);
+                    exit;
+                }
+                $_SESSION['error'] = 'Admin access required';
+                $base = defined('BASE_URL') ? rtrim(BASE_URL, '/') : '/apsdreamhome';
+                header('Location: ' . $base . '/admin/login');
+                exit;
+            }
+        }
+
         // Step 6: Route lookup
         $routeData = null;
         $params = [];

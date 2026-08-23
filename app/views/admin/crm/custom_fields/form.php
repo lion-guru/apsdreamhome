@@ -4,7 +4,7 @@
         <div><h4 class="fw-bold mb-1"><i class="fas fa-sliders-h me-2 text-primary"></i><?= $field ? 'Edit' : 'Add' ?> Custom Field</h4></div>
         <a href="<?= BASE_URL ?>/admin/crm/custom-fields" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back</a>
     </div>
-    <div class="cf-card" class="style-9250">
+    <div class="cf-card style-9250">
         <form method="POST" action="<?= BASE_URL ?>/admin/crm/custom-fields/<?= $field ? $field['id'] . '/update' : 'store' ?>">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
             <div class="mb-3"><label class="form-label fw-bold">Field Name (DB column)</label><input type="text" name="field_name" class="form-control" value="<?= htmlspecialchars($field['field_name'] ?? '') ?>" required pattern="[a-z_]+" title="Lowercase letters and underscores only"></div>

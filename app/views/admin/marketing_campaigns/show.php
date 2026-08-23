@@ -82,7 +82,7 @@ ob_start();
                     <?php if (!empty($campaign['subject'])): ?>
                         <p class="fw-bold"><?= htmlspecialchars($campaign['subject'] ?? '') ?></p>
                     <?php endif; ?>
-                    <pre class="bg-light p-3 rounded mb-0" class="style-92067"><?= htmlspecialchars($campaign['content'] ?? '') ?></pre>
+                    <pre class="bg-light p-3 rounded mb-0 style-92067"><?= htmlspecialchars($campaign['content'] ?? '') ?></pre>
                 </div>
             </div>
         </div>
@@ -100,9 +100,8 @@ ob_start();
                                 <span><?= ucfirst($s) ?></span>
                                 <strong><?= $count ?></strong>
                             </div>
-                            <div class="progress mb-3" class="style-29939">
-                                <div class="progress-bar bg-<?= ['delivered' => 'success', 'sent' => 'info', 'opened' => 'info', 'clicked' => 'warning', 'failed' => 'danger', 'bounced' => 'danger', 'unsubscribed' => 'secondary'][$s] ?? 'secondary' ?>"
-                                     class="style-59704"></div>
+                            <div class="progress mb-3 style-29939">
+                                <div class="progress-bar bg-<?= ['delivered' => 'success', 'sent' => 'info', 'opened' => 'info', 'clicked' => 'warning', 'failed' => 'danger', 'bounced' => 'danger', 'unsubscribed' => 'secondary'][$s] ?? 'secondary' ?> style-59704"></div>
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>

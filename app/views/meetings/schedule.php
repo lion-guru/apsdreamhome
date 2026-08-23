@@ -14,6 +14,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
     <title><?php echo htmlspecialchars($page_title ?? ''); ?></title>
     <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body class="bg-light">
     <div class="container py-5">

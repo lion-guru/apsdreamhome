@@ -38,7 +38,7 @@ $cycle   = $current['billing_cycle'] ?? 'monthly';
     <div class="d-flex justify-content-between align-items-center">
         <div>
             <h4 class="mb-0"><i class="fas fa-credit-card me-2"></i>Manage Subscription</h4>
-            <p class="mb-0 mt-1" class="style-91394">
+            <p class="mb-0 mt-1 style-91394">
                 <?= htmlspecialchars($tenant['name'] ?? 'Tenant') ?> — <?= htmlspecialchars($tenant['slug'] ?? '') ?>
             </p>
         </div>
@@ -111,9 +111,9 @@ $cycle   = $current['billing_cycle'] ?? 'monthly';
                             <input type="radio" name="plan_id" value="<?= $plan['id'] ?>" <?= ($current['plan_id'] ?? 0) == $plan['id'] ? 'checked' : '' ?>>
                             <div class="text-center">
                                 <h6 class="mb-2"><?= htmlspecialchars($plan['name'] ?? '') ?></h6>
-                                <div class="plan-price <?= ($plan['slug'] ?? '') === 'free' ? 'text-secondary' : 'text-primary' ?>" class="style-4846">
+                                <div class="plan-price <?= ($plan['slug'] ?? '') === 'free' ? 'text-secondary' : 'text-primary' ?> style-4846">
                                     ₹<span class="price-monthly"><?= number_format($plan['price_monthly']) ?></span>
-                                    <span class="price-yearly" class="style-2248"><?= number_format($plan['price_yearly']) ?></span>
+                                    <span class="price-yearly style-2248"><?= number_format($plan['price_yearly']) ?></span>
                                     <small class="text-muted fs-6 cycle-label">/mo</small>
                                 </div>
                                 <div class="mt-2 small text-muted">

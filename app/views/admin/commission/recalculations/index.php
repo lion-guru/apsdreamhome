@@ -1,7 +1,7 @@
 ï»¿<div class="container-fluid">
     <div class="row mb-4">
         <div class="col-12">
-            <h2 class="style-48283"><i class="fas fa-calculator me-2" class="style-86204"></i> Commission Recalculations</h2>
+            <h2 class="style-48283"><i class="fas fa-calculator me-2 style-86204"></i> Commission Recalculations</h2>
             <p class="style-43180">Retroactive recalculation requests — approve/reject historical commission changes</p>
         </div>
     </div>
@@ -9,7 +9,7 @@
     <!-- Stats Cards -->
     <div class="row mb-4">
         <div class="col-md-3">
-            <div class="card" class="style-91998">
+            <div class="card style-91998">
                 <div class="card-body text-center">
                     <h3 class="style-86204"><?= ($stats['pending']['count'] ?? 0) ?></h3>
                     <small class="style-43180">Pending Requests</small>
@@ -17,7 +17,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card" class="style-54853">
+            <div class="card style-54853">
                 <div class="card-body text-center">
                     <h3 class="style-56943"><?= ($stats['applied']['count'] ?? 0) ?></h3>
                     <small class="style-43180">Applied</small>
@@ -25,7 +25,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card" class="style-39606">
+            <div class="card style-39606">
                 <div class="card-body text-center">
                     <h3 class="style-52183"><?= ($stats['rejected']['count'] ?? 0) ?></h3>
                     <small class="style-43180">Rejected</small>
@@ -33,7 +33,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card" class="style-44272">
+            <div class="card style-44272">
                 <div class="card-body text-center">
                     <h3 class="style-70610">₹<?= number_format(array_sum(array_column($stats, 'total_diff'))) ?></h3>
                     <small class="style-43180">Total Impact (₹)</small>
@@ -43,8 +43,8 @@
     </div>
 
     <!-- Bulk Request Form -->
-    <div class="card mb-4" class="style-62867">
-        <div class="card-header" class="style-98074">
+    <div class="card mb-4 style-62867">
+        <div class="card-header style-98074">
             <h5 class="style-11295"><i class="fas fa-layer-group me-2"></i> Bulk Recalculation Request</h5>
         </div>
         <div class="card-body">
@@ -96,11 +96,11 @@
     </div>
 
     <!-- Requests Table -->
-    <div class="card" class="style-62867">
+    <div class="card style-62867">
         <div class="card-body p-0">
             <?php if (empty($items)): ?>
                 <div class="text-center p-5">
-                    <i class="fas fa-check-circle fa-3x" class="style-56943"></i>
+                    <i class="fas fa-check-circle fa-3x style-56943"></i>
                     <h5 class="style-39334">No recalculation requests found</h5>
                     <p class="style-77712">All commission entries are using current plan rates.</p>
                 </div>
@@ -156,7 +156,7 @@
 
                 <!-- Pagination -->
                 <?php if ($total_pages > 1): ?>
-                    <div class="d-flex justify-content-between align-items-center p-3" class="style-8524">
+                    <div class="d-flex justify-content-between align-items-center p-3 style-8524">
                         <small class="style-77712">Page <?= $page ?> of <?= $total_pages ?> (<?= number_format($total) ?> total)</small>
                         <div>
                             <?php for ($i = max(1, $page - 2); $i <= min($total_pages, $page + 2); $i++): ?>

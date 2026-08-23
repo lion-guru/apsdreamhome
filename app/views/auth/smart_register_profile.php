@@ -103,6 +103,7 @@ $completionPct = $session['profile_completion_pct'] ?? 0;
             .welcome-banner{margin:0 1.25rem 1rem}
         }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
     <div class="profile-wrapper">

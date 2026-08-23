@@ -18,7 +18,7 @@
         <div class="col-lg-8">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body p-0">
-                    <div id="arViewer" class="style-3518" class="rounded-top d-flex align-items-center justify-content-center">
+                    <div id="arViewer" class="style-3518 rounded-top d-flex align-items-center justify-content-center">
                         <div class="text-center text-white">
                             <i class="fas fa-cube fa-5x mb-3 opacity-50"></i>
                             <p class="lead">AR Furniture Placement</p>

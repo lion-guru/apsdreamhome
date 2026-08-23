@@ -39,9 +39,10 @@ $localCount = (int) ($info['local_count'] ?? 0);
         .alert-warning { background:#fef3c7; color:#92400e; border:1px solid #fcd34d; }
         .alert-info { background:#dbeafe; color:#1e40af; border:1px solid #93c5fd; }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
-<div class="admin-wrap" class="style-32224">
+<div class="admin-wrap style-32224">
     <?php include __DIR__ . '/../layouts/sidebar.php'; ?>
     <main class="style-10864">
         <h1 class="style-38351">Storage Gateways</h1>

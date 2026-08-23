@@ -19,7 +19,7 @@ $base = BASE_URL ?? '';
     <div class="d-flex justify-content-between align-items-center">
         <div>
             <h4><i class="fas fa-trash-alt me-2"></i>Lead Trash / Recycle Bin</h4>
-            <p class="mb-0 mt-1" class="style-91298">Deleted leads are recoverable. Permanent deletion is irreversible.</p>
+            <p class="mb-0 mt-1 style-91298">Deleted leads are recoverable. Permanent deletion is irreversible.</p>
         </div>
         <div class="text-end">
             <div class="style-95615"><?= $total ?></div>

@@ -38,7 +38,7 @@ $ratingBadge = function($rating) {
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-bordered">
                         <tr>
-                            <th class="style-869" class="text-muted">Telecaller</th>
+                            <th class="style-869 text-muted">Telecaller</th>
                             <td><strong><?php echo htmlspecialchars($task['telecaller_name'] ?? 'N/A'); ?></strong></td>
                         </tr>
                         <tr>
@@ -106,7 +106,7 @@ $ratingBadge = function($rating) {
                     ?>
                     <div class="mb-3">
                         <label class="text-muted small">Target Achievement</label>
-                        <div class="progress" class="style-70613">
+                        <div class="progress style-70613">
                             <div class="progress-bar bg-<?php echo $achievePct >= 100 ? 'success' : ($achievePct >= 50 ? 'warning' : 'danger'); ?>" role="progressbar" class="style-53489">
                                 <?php echo e($achievePct); ?>%
                             </div>
@@ -114,7 +114,7 @@ $ratingBadge = function($rating) {
                     </div>
                     <div class="mb-3">
                         <label class="text-muted small">Connection Rate</label>
-                        <div class="progress" class="style-70613">
+                        <div class="progress style-70613">
                             <div class="progress-bar bg-info" role="progressbar" class="style-35864">
                                 <?php echo e($connectRate); ?>%
                             </div>
@@ -122,7 +122,7 @@ $ratingBadge = function($rating) {
                     </div>
                     <div class="mb-0">
                         <label class="text-muted small">Conversion Rate</label>
-                        <div class="progress" class="style-70613">
+                        <div class="progress style-70613">
                             <div class="progress-bar bg-success" role="progressbar" class="style-41126">
                                 <?php echo e($convertRate); ?>%
                             </div>

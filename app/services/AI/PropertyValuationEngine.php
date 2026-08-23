@@ -566,10 +566,10 @@ class PropertyValuationEngine
             $generatedBy
         ];
 
-        $stmt = $this->pdo()->prepare($sql);
+        $stmt = $this->database->prepare($sql);
         $stmt->execute($params);
 
-        return (int)$this->pdo()->lastInsertId();
+        return (int)$this->database->getConnection()->lastInsertId();
     }
 
     /**
@@ -607,11 +607,11 @@ class PropertyValuationEngine
                 FROM property_valuation_reports r
                 LEFT JOIN plots p ON r.property_id = p.id
                 LEFT JOIN users u ON r.generated_by = u.id
-                {$where}
+                WHERE 1=1 {$where}
                 ORDER BY r.generated_at DESC
                 LIMIT 100";
 
-        $stmt = $this->pdo()->prepare($sql);
+        $stmt = $this->database->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
@@ -622,16 +622,18 @@ class PropertyValuationEngine
     public function getReport($id): ?array
     {
         $tid = $this->tenantId();
+        $tenantSql = $tid > 1 ? " AND r.tenant_id = ?" : "";
+        $params = [(int)$id];
+        if ($tid > 1) $params[] = $tid;
+
         $sql = "SELECT r.*, p.plot_number as property_code, p.total_price as current_price,
                 u.name as generated_by_name
                 FROM property_valuation_reports r
                 LEFT JOIN plots p ON r.property_id = p.id
                 LEFT JOIN users u ON r.generated_by = u.id
-                WHERE r.id = ? {$this->tenantWhere()}";
+                WHERE r.id = ?{$tenantSql} LIMIT 1";
 
-        $stmt = $this->pdo()->prepare($sql);
-        $stmt->execute([$id]);
-        return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
+        return $this->database->fetchOne($sql, $params);
     }
 
     /**
@@ -639,18 +641,17 @@ class PropertyValuationEngine
      */
     public function getValuationStats(): array
     {
-        $tid = $this->tenantId();
-        $sql = "SELECT 
+        $row = $this->database->fetchOne(
+            "SELECT 
             COUNT(*) as total_valuations,
             AVG(final_valuation) as avg_valuation,
             MIN(final_valuation) as min_valuation,
             MAX(final_valuation) as max_valuation,
             SUM(base_valuation) as total_base_valuation,
             COUNT(DISTINCT property_id) as unique_properties
-            FROM property_valuation_reports {$this->tenantWhere()}";
-
-        $stmt = $this->pdo()->prepare($sql);
-        $stmt->execute($this->tenantParams([]));
-        return $stmt->fetch(\PDO::FETCH_ASSOC);
+            FROM property_valuation_reports WHERE 1=1 {$this->tenantWhere()}",
+            $this->tenantParams([])
+        );
+        return is_array($row) ? $row : [];
     }
 }

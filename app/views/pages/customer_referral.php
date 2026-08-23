@@ -10,14 +10,14 @@ $shareLinks = $share_links ?? [];
 $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '#CD7F32', 'icon' => 'fas fa-medal', 'total_referrals' => 0, 'next_tier' => 'Silver', 'next_tier_min' => 5, 'progress' => 0, 'referrals_needed' => 5, 'perks' => [], 'bonus_per_referral' => 100, 'bonus_on_booking' => 500];
 ?>
 
-<div class="aps-cp-hero" class="style-1227">
+<div class="aps-cp-hero style-1227">
     <div class="row align-items-center">
         <div class="col-md-8">
             <h2><i class="fas fa-gift me-2"></i><?= __('referral_hero_title') ?></h2>
             <p><?= __('referral_hero_desc') ?></p>
         </div>
         <div class="col-md-4 text-md-end mt-3 mt-md-0">
-            <div class="display-5 fw-bold text-white" class="style-96215">
+            <div class="display-5 fw-bold text-white style-96215">
                 <?= htmlspecialchars($referralCode ?? '') ?>
             </div>
             <small class="text-white-50"><?= __('referral_your_code') ?></small>
@@ -67,27 +67,27 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
 <!-- Tier Card -->
 <div class="row g-3 mb-4">
     <div class="col-12">
-        <div class="aps-cp-card" class="style-61637">
+        <div class="aps-cp-card style-61637">
             <div class="aps-cp-card-body">
                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
                     <div class="d-flex align-items-center gap-3">
                         <div class="style-63527">
-                            <i class="<?= $tierInfo['icon'] ?>" class="style-1525"></i>
+                            <i class="<?= $tierInfo['icon'] ?> style-1525"></i>
                         </div>
                         <div>
-                            <h5 class="mb-0" class="style-72606"><?= $tierInfo['label'] ?> Tier</h5>
+                            <h5 class="mb-0 style-72606"><?= $tierInfo['label'] ?> Tier</h5>
                             <small class="text-muted">₹<?= number_format($tierInfo['bonus_per_referral']) ?> per signup Â· ₹<?= number_format($tierInfo['bonus_on_booking']) ?> on booking</small>
                         </div>
                     </div>
                     <?php if ($tierInfo['next_tier']): ?>
                     <div class="text-end">
                         <small class="text-muted d-block"><?= $tierInfo['referrals_needed'] ?> more to <?= $tierInfo['next_tier'] ?></small>
-                        <div class="progress mt-1" class="style-58327">
-                            <div class="progress-bar" class="style-25252"></div>
+                        <div class="progress mt-1 style-58327">
+                            <div class="progress-bar style-25252"></div>
                         </div>
                     </div>
                     <?php else: ?>
-                    <div class="badge" class="style-1828">
+                    <div class="badge style-1828">
                         <i class="fas fa-crown me-1"></i>Max Tier
                     </div>
                     <?php endif; ?>
@@ -111,9 +111,9 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
                 <h5><i class="fas fa-share-alt text-primary me-2"></i><?= __('referral_share_your_code') ?></h5>
             </div>
             <div class="aps-cp-card-body">
-                <div class="text-center p-4 mb-3" class="style-5014">
+                <div class="text-center p-4 mb-3 style-5014">
                     <small class="text-muted d-block mb-1"><?= __('referral_your_referral_code') ?></small>
-                    <div class="display-6 fw-bold text-primary" class="style-32630" id="refCode">
+                    <div class="display-6 fw-bold text-primary style-32630" id="refCode">
                         <?= htmlspecialchars($referralCode ?? '') ?>
                     </div>
                     <button class="btn btn-sm btn-outline-primary mt-2" onclick="copyToClipboard('<?= htmlspecialchars($referralCode ?? '') ?>', this)">
@@ -165,7 +165,7 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
             <div class="aps-cp-card-body">
                 <div class="d-flex mb-3">
                     <div class="flex-shrink-0">
-                        <span class="badge bg-primary rounded-circle" class="style-6262">1</span>
+                        <span class="badge bg-primary rounded-circle style-6262">1</span>
                     </div>
                     <div class="ms-3">
                         <strong class="d-block"><?= __('referral_step1_title') ?></strong>
@@ -174,7 +174,7 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
                 </div>
                 <div class="d-flex mb-3">
                     <div class="flex-shrink-0">
-                        <span class="badge bg-primary rounded-circle" class="style-6262">2</span>
+                        <span class="badge bg-primary rounded-circle style-6262">2</span>
                     </div>
                     <div class="ms-3">
                         <strong class="d-block"><?= __('referral_step2_title') ?></strong>
@@ -183,7 +183,7 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
                 </div>
                 <div class="d-flex">
                     <div class="flex-shrink-0">
-                        <span class="badge bg-success rounded-circle" class="style-6262">3</span>
+                        <span class="badge bg-success rounded-circle style-6262">3</span>
                     </div>
                     <div class="ms-3">
                         <strong class="d-block"><?= __('referral_step3_title') ?></strong>
@@ -326,10 +326,10 @@ $leaderboard = $leaderboard ?? [];
                     ?>
                     <div class="text-center">
                         <div class="style-73326">
-                            <i class="<?= $platformIcons[$p['share_method']] ?? 'fas fa-share text-muted' ?>" class="style-88102"></i>
+                            <i class="<?= $platformIcons[$p['share_method']] ?? 'fas fa-share text-muted' ?> style-88102"></i>
                         </div>
-                        <div class="fw-bold mt-1" class="style-51894"><?= $p['cnt'] ?></div>
-                        <small class="text-muted" class="style-68658"><?= ucfirst($p['share_method']) ?></small>
+                        <div class="fw-bold mt-1 style-51894"><?= $p['cnt'] ?></div>
+                        <small class="text-muted style-68658"><?= ucfirst($p['share_method']) ?></small>
                     </div>
                     <?php endforeach; ?>
                 </div>
@@ -337,7 +337,7 @@ $leaderboard = $leaderboard ?? [];
                 <?php if (!empty($shareStats['recent'])): ?>
                 <small class="text-muted fw-bold d-block mb-2">Recent Shares</small>
                 <?php foreach (array_slice($shareStats['recent'], 0, 5) as $rs): ?>
-                <div class="d-flex justify-content-between align-items-center py-1" class="style-34922">
+                <div class="d-flex justify-content-between align-items-center py-1 style-34922">
                     <div>
                         <i class="<?= $platformIcons[$rs['share_method']] ?? 'fas fa-share' ?> me-2 text-muted"></i>
                         <span class="style-47175"><?= ucfirst(htmlspecialchars($rs['share_method'] ?? '')) ?></span>
@@ -376,13 +376,13 @@ $leaderboard = $leaderboard ?? [];
                                 <td>
                                     <?php if ($idx === 0): ?><i class="fas fa-crown text-warning"></i>
                                     <?php elseif ($idx === 1): ?><i class="fas fa-medal text-secondary"></i>
-                                    <?php elseif ($idx === 2): ?><i class="fas fa-medal" class="style-68030"></i>
+                                    <?php elseif ($idx === 2): ?><i class="fas fa-medal style-68030"></i>
                                     <?php else: ?><?= $idx + 1 ?><?php endif; ?>
                                 </td>
                                 <td>
                                     <strong><?= htmlspecialchars($lb['name'] ?? '') ?></strong>
                                     <?php if (($lb['name'] ?? '') === ($user['name'] ?? '')): ?>
-                                        <span class="badge bg-success ms-1" class="style-56522">You</span>
+                                        <span class="badge bg-success ms-1 style-56522">You</span>
                                     <?php endif; ?>
                                 </td>
                                 <td class="text-center"><?= (int)$lb['referral_count'] ?></td>

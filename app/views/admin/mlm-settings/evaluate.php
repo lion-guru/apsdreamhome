@@ -55,7 +55,7 @@ $total_count = $total_count ?? 0;
                 <?php if (empty($results)): ?>
                 <tr>
                     <td colspan="7" class="text-center py-5">
-                        <i class="fas fa-sync fa-3x text-muted mb-3" class="style-82835"></i>
+                        <i class="fas fa-sync fa-3x text-muted mb-3 style-82835"></i>
                         <h5 class="text-muted">No evaluation results</h5>
                         <p class="text-muted mb-3">Run a rank evaluation to see promotion results here.</p>
                     </td>

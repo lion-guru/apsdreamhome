@@ -31,7 +31,7 @@ $categories = $categories ?? [];
                                 <h6 class="mb-0"><?= htmlspecialchars($cl['title'] ?? '') ?></h6>
                                 <span class="badge bg-light text-dark"><?= htmlspecialchars($cl['category_name'] ?? 'Uncategorized') ?></span>
                             </div>
-                            <div class="small text-muted mb-2 border-start border-3 border-primary ps-2" class="style-43650"><?= nl2br(htmlspecialchars(substr($cl['content'] ?? '', 0, 300))) ?></div>
+                            <div class="small text-muted mb-2 border-start border-3 border-primary ps-2 style-43650"><?= nl2br(htmlspecialchars(substr($cl['content'] ?? '', 0, 300))) ?></div>
                             <?php if (!empty($cl['tags'])): ?>
                                 <div class="mb-2"><?php foreach (explode(',', $cl['tags']) as $tag): ?><span class="badge bg-secondary me-1"><?= htmlspecialchars(trim($tag)) ?></span><?php endforeach; ?></div>
                             <?php endif; ?>

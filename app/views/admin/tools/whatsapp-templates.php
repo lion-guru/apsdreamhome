@@ -109,7 +109,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'inactive' => 0, 'message_logs'
                                 <td><span class="badge bg-info"><?= htmlspecialchars($t['category'] ?? 'general') ?></span></td>
                                 <td><small><?= strtoupper(htmlspecialchars($t['language'] ?? 'en')) ?></small></td>
                                 <td>
-                                    <small class="text-muted d-inline-block" class="style-41350">
+                                    <small class="text-muted d-inline-block style-41350">
                                         <?= htmlspecialchars(mb_substr(strip_tags($t['content'] ?? ''), 0, 80)) ?>
                                     </small>
                                 </td>

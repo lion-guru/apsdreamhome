@@ -28,7 +28,7 @@
     <?php endif; ?>
 
     <div class="card">
-        <div class="card-body" class="style-78382" id="messageContainer">
+        <div class="card-body style-78382" id="messageContainer">
             <?php if (empty($messages)): ?>
                 <div class="text-center py-5">
                     <i class="fas fa-comment-dots fa-3x text-muted mb-3"></i>
@@ -62,8 +62,7 @@
                     <?php endif; ?>
 
                     <div class="d-flex mb-3 <?= $isMine ? 'justify-content-end' : 'justify-content-start' ?>">
-                        <div class="<?= $isMine ? 'order-1' : '' ?>"
-                             class="style-23652">
+                        <div class="<?= $isMine ? 'order-1' : '' ?> style-23652">
                             <?php if (!$isMine): ?>
                                 <small class="text-muted ms-1 mb-1 d-block">
                                     <?= htmlspecialchars($msg['sender_name'] ?? '') ?>

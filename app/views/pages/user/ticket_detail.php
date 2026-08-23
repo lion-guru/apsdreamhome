@@ -92,7 +92,7 @@ $isClosed = in_array($ticket['status'] ?? '', ['resolved', 'closed']);
                             </div>
                             <small class="text-muted"><?= date('d M Y, h:i A', strtotime($r['created_at'])) ?></small>
                         </div>
-                        <div class="mb-0" class="style-19219"><?= htmlspecialchars($r['message'] ?? '') ?></div>
+                        <div class="mb-0 style-19219"><?= htmlspecialchars($r['message'] ?? '') ?></div>
                     </div>
                     <?php endforeach; ?>
                 <?php endif; ?>

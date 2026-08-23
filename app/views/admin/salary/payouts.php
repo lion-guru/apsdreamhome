@@ -51,7 +51,7 @@
                                     <?php if (($po['status'] ?? '') === 'pending'): ?>
                                     <form method="post" action="<?= BASE_URL ?>/admin/salary/payouts/process/<?= $po['id'] ?>" class="d-inline">
                                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                                        <input type="text" name="reference_no" placeholder="REF-..." class="form-control form-control-sm d-inline" class="style-50190">
+                                        <input type="text" name="reference_no" placeholder="REF-..." class="form-control form-control-sm d-inline style-50190">
                                         <button type="submit" class="btn btn-sm btn-outline-success" aria-label="Confirm"><i class="fas fa-check"></i></button>
                                     </form>
                                     <?php endif; ?>

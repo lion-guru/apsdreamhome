@@ -143,7 +143,7 @@ body {
     <!-- Modern Header -->
     <div class="modern-header flex-wrap gap-3">
         <div>
-            <h4 class="mb-1 fw-bold"><i class="fas fa-users text-primary me-2" class="style-37609"></i><?= __('assoc_team_title', [], 'My Team') ?></h4>
+            <h4 class="mb-1 fw-bold"><i class="fas fa-users text-primary me-2 style-37609"></i><?= __('assoc_team_title', [], 'My Team') ?></h4>
             <div class="text-white-50 small"><?= __('assoc_team_subtitle', [], 'Manage and track your team members\' performance') ?></div>
         </div>
         <div>
@@ -156,7 +156,7 @@ body {
     <!-- Stats Cards -->
     <div class="row g-4 mb-4">
         <div class="col-md-6 col-lg-3">
-            <div class="stat-card-glass" class="style-61710">
+            <div class="stat-card-glass style-61710">
                 <div class="stat-icon-wrapper"><i class="fas fa-users"></i></div>
                 <div>
                     <div class="stat-value"><?= $team_stats['total'] ?></div>
@@ -165,7 +165,7 @@ body {
             </div>
         </div>
         <div class="col-md-6 col-lg-3">
-            <div class="stat-card-glass" class="style-47504">
+            <div class="stat-card-glass style-47504">
                 <div class="stat-icon-wrapper"><i class="fas fa-user-check"></i></div>
                 <div>
                     <div class="stat-value"><?= $team_stats['active'] ?></div>
@@ -174,7 +174,7 @@ body {
             </div>
         </div>
         <div class="col-md-6 col-lg-3">
-            <div class="stat-card-glass" class="style-58217">
+            <div class="stat-card-glass style-58217">
                 <div class="stat-icon-wrapper"><i class="fas fa-chart-line"></i></div>
                 <div>
                     <div class="stat-value">₹<?= number_format($team_stats['total_sales']) ?></div>
@@ -183,7 +183,7 @@ body {
             </div>
         </div>
         <div class="col-md-6 col-lg-3">
-            <div class="stat-card-glass" class="style-48682">
+            <div class="stat-card-glass style-48682">
                 <div class="stat-icon-wrapper"><i class="fas fa-coins"></i></div>
                 <div>
                     <div class="stat-value">₹<?= number_format($team_stats['total_commission']) ?></div>
@@ -215,7 +215,7 @@ body {
             <?php if (empty($team)): ?>
                 <div class="text-center py-5">
                     <div class="mb-4">
-                        <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle" class="style-78270">
+                        <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle style-78270">
                             <i class="fas fa-user-friends fa-3x text-muted opacity-50"></i>
                         </div>
                     </div>
@@ -253,7 +253,7 @@ body {
                                     <div class="small text-muted"><i class="far fa-envelope me-1"></i><?= htmlspecialchars($m['email'] ?? '') ?></div>
                                 </td>
                                 <td>
-                                    <span class="rank-pill" class="style-19790">
+                                    <span class="rank-pill style-19790">
                                         <?= htmlspecialchars($label ?? '') ?>
                                     </span>
                                 </td>

@@ -116,7 +116,7 @@ ob_start();
     <i class="fas fa-info-circle"></i> <?= __('user_insurance_disclaimer', null, 'Premiums shown are indicative. Final policy subject to insurer underwriting and KYC.') ?>
 </div>
 
-<div id="enrolModal" class="aps-cp-modal" class="style-2248">
+<div id="enrolModal" class="aps-cp-modal style-2248">
     <div class="aps-cp-modal-overlay" onclick="closeEnrolModal()"></div>
     <div class="aps-cp-modal-dialog">
         <div class="aps-cp-modal-head">

@@ -45,6 +45,7 @@ $base = BASE_URL;
             padding: 2rem
         }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 
 <body>
@@ -53,7 +54,7 @@ $base = BASE_URL;
             <div class="card-body aps-cp-card-body">
                 <div class="text-center mb-4">
                     <div class="mb-3">
-                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle" class="style-53013"><i class="fas fa-home text-white fa-lg"></i></div>
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle style-53013"><i class="fas fa-home text-white fa-lg"></i></div>
                     </div>
                     <h3 class="fw-bold"><?= __('register_title') ?></h3>
                     <p class="text-muted"><?= __('register_subtitle') ?></p>
@@ -127,7 +128,7 @@ $base = BASE_URL;
                         })();
                         </script>
                     <?php else: ?>
-                        <button type="submit" class="btn btn-primary w-100 py-2" class="style-32526">
+                        <button type="submit" class="btn btn-primary w-100 py-2 style-32526">
                             <i class="fas fa-user-plus me-2"></i><?= __('register_button_submit') ?>
                         </button>
                     <?php endif; ?>

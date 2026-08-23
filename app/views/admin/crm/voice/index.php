@@ -18,7 +18,7 @@
 
     <div class="row g-3 mb-4">
         <div class="col-md-6">
-            <div class="card border-0 shadow-sm" class="style-56956"><div class="card-header" class="style-62632"><h6 class="mb-0"><i class="fas fa-terminal me-1"></i>Voice Commands (Hindi)</h6></div>
+            <div class="card border-0 shadow-sm style-56956"><div class="card-header style-62632"><h6 class="mb-0"><i class="fas fa-terminal me-1"></i>Voice Commands (Hindi)</h6></div>
                 <div class="card-body">
                     <div class="row g-2">
                         <div class="col-6"><div class="p-2 bg-light rounded"><small class="fw-bold">"à¤…à¤—à¤²à¥€ à¤¬à¥ˆà¤ à¤•"</small><br><span class="text-muted">Next meeting info</span></div></div>
@@ -32,8 +32,8 @@
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card border-0 shadow-sm" class="style-56956"><div class="card-header" class="style-62632"><h6 class="mb-0"><i class="fas fa-history me-1"></i>Recent Voice Activity</h6></div>
-                <div class="card-body" class="style-82023">
+            <div class="card border-0 shadow-sm style-56956"><div class="card-header style-62632"><h6 class="mb-0"><i class="fas fa-history me-1"></i>Recent Voice Activity</h6></div>
+                <div class="card-body style-82023">
                 <?php if (empty($recent)): ?><p class="text-muted text-center">No recent activity</p>
                 <?php else: foreach ($recent as $r): ?>
                     <div class="d-flex align-items-center gap-2 mb-2 p-2 bg-light rounded">

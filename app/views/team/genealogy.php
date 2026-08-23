@@ -22,8 +22,8 @@ include __DIR__ . '/../layouts/base.php';
 
     <div class="row">
         <div class="col-lg-12">
-            <div class="glass-card genealogy-container p-0 overflow-hidden" class="style-20983">
-                <div id="tree-loading" class="position-absolute w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-25" class="style-82516">
+            <div class="glass-card genealogy-container p-0 overflow-hidden style-20983">
+                <div id="tree-loading" class="position-absolute w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-25 style-82516">
                     <div class="spinner-border text-primary" role="status">
                         <span class="visually-hidden">Loading...</span>
                     </div>
@@ -34,10 +34,10 @@ include __DIR__ . '/../layouts/base.php';
                 <div class="tree-overlay position-absolute bottom-0 end-0 p-3">
                     <div class="glass-card p-2 d-flex flex-column gap-2">
                         <div class="d-flex align-items-center gap-2 small text-white">
-                            <span class="badge bg-primary rounded-circle p-1" class="style-85485"></span> Active
+                            <span class="badge bg-primary rounded-circle p-1 style-85485"></span> Active
                         </div>
                         <div class="d-flex align-items-center gap-2 small text-white">
-                            <span class="badge bg-danger rounded-circle p-1" class="style-85485"></span> Inactive
+                            <span class="badge bg-danger rounded-circle p-1 style-85485"></span> Inactive
                         </div>
                     </div>
                 </div>

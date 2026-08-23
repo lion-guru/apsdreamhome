@@ -12,7 +12,7 @@ $bookings = $bookings ?? [];
         </a>
     </div>
 
-    <div class="aps-cp-card" class="style-65536">
+    <div class="aps-cp-card style-65536">
         <div class="aps-cp-card-header">
             <span><i class="fas fa-edit"></i> Collection Details</span>
         </div>
@@ -25,7 +25,7 @@ $bookings = $bookings ?? [];
                     <input type="text" name="customer_name" class="aps-cp-form-input" required placeholder="e.g. Rajesh Kumar">
                 </div>
 
-                <div class="aps-cp-form-row" class="style-37292">
+                <div class="aps-cp-form-row style-37292">
                     <div class="aps-cp-form-group">
                         <label class="aps-cp-form-label">Collector <span class="style-85206">*</span></label>
                         <select name="collector_id" class="aps-cp-form-select" required>
@@ -41,7 +41,7 @@ $bookings = $bookings ?? [];
                     </div>
                 </div>
 
-                <div class="aps-cp-form-row" class="style-37292">
+                <div class="aps-cp-form-row style-37292">
                     <div class="aps-cp-form-group">
                         <label class="aps-cp-form-label">Amount (₹) <span class="style-85206">*</span></label>
                         <input type="number" name="amount" class="aps-cp-form-input" required min="1" step="0.01" placeholder="e.g. 5000">
@@ -57,7 +57,7 @@ $bookings = $bookings ?? [];
                     </div>
                 </div>
 
-                <div class="aps-cp-form-row" class="style-37292">
+                <div class="aps-cp-form-row style-37292">
                     <div class="aps-cp-form-group">
                         <label class="aps-cp-form-label">Reference Number</label>
                         <input type="text" name="reference_number" class="aps-cp-form-input" placeholder="Cheque/UPI ref (optional)">

@@ -1,4 +1,4 @@
-<section class="py-5" class="style-30941">
+<section class="py-5 style-30941">
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><i class="fas fa-calculator me-2"></i><?php echo __('tool_loan_eligibility_title', [], 'Home Loan Eligibility Calculator'); ?></h1>

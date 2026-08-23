@@ -44,19 +44,19 @@ $base = BASE_URL . '/admin/ai-calling/call-logs';
             </div></div></div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="card cl-stat-card border-0 shadow-sm" class="style-93507"><div class="card-body py-3 px-3"><div class="d-flex align-items-center">
+            <div class="card cl-stat-card border-0 shadow-sm style-93507"><div class="card-body py-3 px-3"><div class="d-flex align-items-center">
                 <div class="flex-shrink-0 me-3"><span class="badge bg-success rounded-pill p-2"><i class="fas fa-check-circle"></i></span></div>
                 <div><div class="cl-stat-value text-success"><?= number_format($completedCalls) ?></div><div class="cl-stat-label">Completed</div><div class="cl-stat-meta"><?= $totalCalls > 0 ? round($completedCalls/$totalCalls*100) : 0 ?>% success</div></div>
             </div></div></div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="card cl-stat-card border-0 shadow-sm" class="style-56775"><div class="card-body py-3 px-3"><div class="d-flex align-items-center">
+            <div class="card cl-stat-card border-0 shadow-sm style-56775"><div class="card-body py-3 px-3"><div class="d-flex align-items-center">
                 <div class="flex-shrink-0 me-3"><span class="badge bg-danger rounded-pill p-2"><i class="fas fa-times-circle"></i></span></div>
                 <div><div class="cl-stat-value text-danger"><?= number_format($failedCalls + $noAnswerCalls) ?></div><div class="cl-stat-label">Failed / No Answer</div><div class="cl-stat-meta"><?= $failedCalls ?> failed, <?= $noAnswerCalls ?> no answer</div></div>
             </div></div></div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="card cl-stat-card border-0 shadow-sm" class="style-37744"><div class="card-body py-3 px-3"><div class="d-flex align-items-center">
+            <div class="card cl-stat-card border-0 shadow-sm style-37744"><div class="card-body py-3 px-3"><div class="d-flex align-items-center">
                 <div class="flex-shrink-0 me-3"><span class="badge bg-warning rounded-pill p-2"><i class="fas fa-clock"></i></span></div>
                 <div><div class="cl-stat-value"><?= round($avgDuration) ?>s</div><div class="cl-stat-label">Avg Duration</div><div class="cl-stat-meta"><?= $interestedCount ?> interested</div></div>
             </div></div></div>

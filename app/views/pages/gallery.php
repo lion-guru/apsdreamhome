@@ -37,12 +37,12 @@
         <div class="row g-4" id="galleryGrid">
             <?php foreach ($galleryImages as $idx => $img): ?>
             <div class="col-md-4 col-lg-3 gallery-item" data-category="<?= htmlspecialchars($img['category'] ?? 'all') ?>">
-                <div class="card border-0 shadow-sm overflow-hidden h-100 gallery-card" class="style-10432" onclick="openLightbox(<?= $idx ?>)">
-                    <div class="position-relative" class="style-44237">
+                <div class="card border-0 shadow-sm overflow-hidden h-100 gallery-card style-10432" onclick="openLightbox(<?= $idx ?>)">
+                    <div class="position-relative style-44237">
                         <?php if (!empty($img['image_path'])): ?>
                         <?php $imgRaw = $img['image_path'] ?? '';
                               $imgSrc = (str_starts_with($imgRaw, 'http://') || str_starts_with($imgRaw, 'https://')) ? $imgRaw : BASE_URL . '/' . $imgRaw; ?>
-                        <img src="<?= htmlspecialchars($imgSrc ?? '') ?>" alt="<?= htmlspecialchars($img['title'] ?? $img['caption'] ?? '') ?>" class="w-100 h-100" class="style-44820" loading="lazy">
+                        <img src="<?= htmlspecialchars($imgSrc ?? '') ?>" alt="<?= htmlspecialchars($img['title'] ?? $img['caption'] ?? '') ?>" class="w-100 h-100 style-44820" loading="lazy">
                         <?php else: ?>
                         <div class="bg-light d-flex align-items-center justify-content-center h-100"><i class="fas fa-image fa-3x text-muted"></i></div>
                         <?php endif; ?>
@@ -77,7 +77,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body text-center p-0">
-                <img id="lightboxImage" src="" class="img-fluid" class="style-25219" alt="">
+                <img id="lightboxImage" src="" class="img-fluid style-25219" alt="">
                 <div class="py-3">
                     <h6 class="text-white mb-1" id="lightboxTitle"></h6>
                     <p class="text-white-50 small mb-0" id="lightboxCaption"></p>

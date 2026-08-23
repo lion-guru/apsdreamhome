@@ -158,7 +158,7 @@ class CommunicationController extends BaseApiController
     /**
      * Validate and sanitize input
      */
-    private function validateInput($input, $type = 'string', $max_length = null)
+    protected function validateInput($input, $type = 'string', $max_length = null)
     {
         $input = \trim($input);
         if (empty($input)) return false;

@@ -29,7 +29,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                     <p class="text-muted mb-3">Copy this code and paste it wherever you want the form to appear:</p>
                     <div class="position-relative">
                         <textarea class="form-control font-monospace" rows="3" readonly id="iframeCode"><?= htmlspecialchars($embed_code ?? '') ?></textarea>
-                        <button class="btn btn-sm btn-primary position-absolute" class="style-71993" onclick="copyToClipboard('iframeCode')"><i class="fas fa-copy"></i> Copy</button>
+                        <button class="btn btn-sm btn-primary position-absolute style-71993" onclick="copyToClipboard('iframeCode')"><i class="fas fa-copy"></i> Copy</button>
                     </div>
                     <div class="mt-3 p-3 bg-light rounded">
                         <h6 class="fw-bold text-muted mb-2"><i class="fas fa-info-circle me-1"></i> iframe Settings</h6>
@@ -48,7 +48,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                     <p class="text-muted mb-3">Add this code to your website's HTML. The form will load in a popup/modal:</p>
                     <div class="position-relative">
                         <textarea class="form-control font-monospace" rows="2" readonly id="scriptCode"><?= htmlspecialchars($script_code ?? '') ?></textarea>
-                        <button class="btn btn-sm btn-primary position-absolute" class="style-71993" onclick="copyToClipboard('scriptCode')"><i class="fas fa-copy"></i> Copy</button>
+                        <button class="btn btn-sm btn-primary position-absolute style-71993" onclick="copyToClipboard('scriptCode')"><i class="fas fa-copy"></i> Copy</button>
                     </div>
                 </div>
             </div>
@@ -62,7 +62,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                     <p class="text-muted mb-3">Share this link directly via email, WhatsApp, or social media:</p>
                     <div class="position-relative">
                         <input type="text" class="form-control" readonly id="directUrl" value="<?= $baseUrl ?>/form/<?= $form['id'] ?? '' ?>">
-                        <button class="btn btn-sm btn-success position-absolute" class="style-71993" onclick="copyToClipboard('directUrl')"><i class="fas fa-copy"></i> Copy</button>
+                        <button class="btn btn-sm btn-success position-absolute style-71993" onclick="copyToClipboard('directUrl')"><i class="fas fa-copy"></i> Copy</button>
                     </div>
                     <div class="mt-3 d-flex gap-2 flex-wrap">
                         <a href="<?= $baseUrl ?>/form/<?= $form['id'] ?? '' ?>" target="_blank" class="btn btn-outline-primary btn-sm"><i class="fas fa-external-link-alt me-1"></i> Open Form</a>
@@ -81,13 +81,13 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                 </div>
                 <div class="card-body">
                     <h6 class="fw-bold">For WordPress:</h6>
-                    <p class="text-muted" class="style-87981">Paste the iframe code into a Custom HTML block in your page editor.</p>
+                    <p class="text-muted style-87981">Paste the iframe code into a Custom HTML block in your page editor.</p>
                     <h6 class="fw-bold">For Shopify:</h6>
-                    <p class="text-muted" class="style-87981">Add the iframe code to your theme's template files or use a Custom Liquid section.</p>
+                    <p class="text-muted style-87981">Add the iframe code to your theme's template files or use a Custom Liquid section.</p>
                     <h6 class="fw-bold">For Wix/Squarespace:</h6>
-                    <p class="text-muted" class="style-87981">Use the "Embed HTML" or "Custom Code" widget to paste the iframe code.</p>
+                    <p class="text-muted style-87981">Use the "Embed HTML" or "Custom Code" widget to paste the iframe code.</p>
                     <h6 class="fw-bold">For Social Media:</h6>
-                    <p class="text-muted" class="style-87981">Share the Direct URL via WhatsApp, Facebook, Instagram stories, or email campaigns.</p>
+                    <p class="text-muted style-87981">Share the Direct URL via WhatsApp, Facebook, Instagram stories, or email campaigns.</p>
                 </div>
             </div>
 

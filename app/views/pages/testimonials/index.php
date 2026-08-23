@@ -127,7 +127,7 @@ $stats = $stats ?? [];
     <?php endif; ?>
 
     <div class="text-center py-5 mt-4">
-        <div class="card border-0 shadow-sm" class="style-36276">
+        <div class="card border-0 shadow-sm style-36276">
             <div class="card-body p-5">
                 <h2 class="fw-bold mb-3"><?= __('testi_cta_heading', [], 'Bought a property from us?') ?></h2>
                 <p class="lead mb-4 opacity-90"><?= __('testi_cta_subtitle', [], 'Share your experience and help other customers make the right decision') ?></p>

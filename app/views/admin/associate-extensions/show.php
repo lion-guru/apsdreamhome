@@ -26,7 +26,7 @@
                     <div class="table-responsive"><table class="table table-sm">
                         <tr><th>Points</th><td><span class="badge bg-warning text-dark fs-6"><?= (int)($associate['points'] ?? 0) ?></span></td></tr>
                         <tr><th>Badges</th><td><?= htmlspecialchars($associate['badges'] ?? '—') ?></td></tr>
-                        <tr><th>Training Progress</th><td><div class="progress"><div class="progress-bar bg-info" class="style-80519"><?= (int)($associate['training_progress'] ?? 0) ?>%</div></div></td></tr>
+                        <tr><th>Training Progress</th><td><div class="progress"><div class="progress-bar bg-info style-80519"><?= (int)($associate['training_progress'] ?? 0) ?>%</div></div></td></tr>
                         <tr><th>Total Visits</th><td><?= (int)($associate['total_visits'] ?? 0) ?></td></tr>
                         <tr><th>Total Appointments</th><td><?= (int)($associate['total_appointments'] ?? 0) ?></td></tr>
                         <tr><th>Total Referrals</th><td><?= (int)($associate['total_referrals'] ?? 0) ?></td></tr>

@@ -806,21 +806,26 @@ class UserController extends AdminController
             if ($amount <= 0) return $this->jsonError('Amount must be positive', 400);
 
             $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+            $tid = (int)$this->tenantId();
 
             // Ensure wallet exists
             $this->db->execute(
-                "INSERT IGNORE INTO wallet_points (user_id, user_type, points_balance, total_credited, is_active) VALUES (?, 'associate', 0, 0, 1)",
-                [$userId]
+                "INSERT IGNORE INTO wallet_points (user_id, tenant_id) VALUES (?, ?)",
+                [$userId, $tid]
             );
 
+            $wallet = $this->db->fetchOne("SELECT points_balance FROM wallet_points WHERE user_id = ? LIMIT 1", [$userId]);
+            $balanceBefore = $wallet ? (float)$wallet['points_balance'] : 0.0;
+
             $this->db->execute(
-                "UPDATE wallet_points SET points_balance = points_balance + ?, total_credited = total_credited + ? WHERE user_id = ?",
+                "UPDATE wallet_points SET points_balance = points_balance + ?, total_earned = total_earned + ? WHERE user_id = ?",
                 [$amount, $amount, $userId]
             );
 
             $this->db->execute(
-                "INSERT INTO wallet_transactions (user_id, type, amount, description, reference_id, created_at) VALUES (?, 'credit', ?, ?, ?, NOW())",
-                [$userId, $amount, "Admin credit: {$reason}", $adminId]
+                "INSERT INTO wallet_transactions (tenant_id, user_id, transaction_type, transaction_category, amount, balance_before, balance_after, description, reference_id, reference_type)
+                 VALUES (?, ?, 'credit', 'adjustment', ?, ?, ?, ?, ?, 'admin_credit')",
+                [$tid, $userId, $amount, $balanceBefore, $balanceBefore + $amount, "Admin credit: {$reason}", $adminId]
             );
 
             $this->loggingService->logUserActivity($adminId, 'wallet_credit', ['user_id' => $userId, 'amount' => $amount, 'reason' => $reason]);
@@ -843,20 +848,23 @@ class UserController extends AdminController
             if ($amount <= 0) return $this->jsonError('Amount must be positive', 400);
 
             $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+            $tid = (int)$this->tenantId();
 
-            $wallet = $this->db->fetchOne("SELECT points_balance FROM wallet_points WHERE user_id = ?", [$userId]);
+            $wallet = $this->db->fetchOne("SELECT points_balance FROM wallet_points WHERE user_id = ? LIMIT 1", [$userId]);
             if (!$wallet || (float)$wallet['points_balance'] < $amount) {
                 return $this->jsonError('Insufficient balance', 400);
             }
+            $balanceBefore = (float)$wallet['points_balance'];
 
             $this->db->execute(
-                "UPDATE wallet_points SET points_balance = points_balance - ? WHERE user_id = ?",
-                [$amount, $userId]
+                "UPDATE wallet_points SET points_balance = points_balance - ?, total_used = total_used + ? WHERE user_id = ?",
+                [$amount, $amount, $userId]
             );
 
             $this->db->execute(
-                "INSERT INTO wallet_transactions (user_id, type, amount, description, reference_id, created_at) VALUES (?, 'debit', ?, ?, ?, NOW())",
-                [$userId, $amount, "Admin debit: {$reason}", $adminId]
+                "INSERT INTO wallet_transactions (tenant_id, user_id, transaction_type, transaction_category, amount, balance_before, balance_after, description, reference_id, reference_type)
+                 VALUES (?, ?, 'debit', 'withdrawal', ?, ?, ?, ?, ?, 'admin_debit')",
+                [$tid, $userId, $amount, $balanceBefore, $balanceBefore - $amount, "Admin debit: {$reason}", $adminId]
             );
 
             $this->loggingService->logUserActivity($adminId, 'wallet_debit', ['user_id' => $userId, 'amount' => $amount, 'reason' => $reason]);

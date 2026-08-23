@@ -139,7 +139,7 @@ $page_title = 'Deal Tracking - APS Dream Home';
                         <?php if (empty($deals ?? [])): ?>
                         <tr>
                             <td colspan="7" class="text-center py-5">
-                                <i class="fas fa-handshake fa-3x text-muted mb-3" class="style-82835"></i>
+                                <i class="fas fa-handshake fa-3x text-muted mb-3 style-82835"></i>
                                 <h5 class="text-muted">No deals in pipeline</h5>
                                 <p class="text-muted mb-3">Start tracking your sales deals through the pipeline. Create a deal from a qualified lead to begin managing your sales process.</p>
                                 <a href="<?= BASE_URL ?>/admin/deals/create" class="btn btn-primary me-2">

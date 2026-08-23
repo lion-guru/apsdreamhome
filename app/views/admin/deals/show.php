@@ -32,8 +32,8 @@
                     <div class="col-md-4">
                         <small class="text-muted d-block">Probability</small>
                         <strong><?= ($deal['probability'] ?? $deal['probability_pct'] ?? 0) ?>%</strong>
-                        <div class="progress mt-1" class="style-51910">
-                            <div class="progress-bar bg-<?= ($deal['probability'] ?? 0) >= 80 ? 'success' : (($deal['probability'] ?? 0) >= 50 ? 'warning' : 'danger') ?>" class="style-4321"></div>
+                        <div class="progress mt-1 style-51910">
+                            <div class="progress-bar bg-<?= ($deal['probability'] ?? 0) >= 80 ? 'success' : (($deal['probability'] ?? 0) >= 50 ? 'warning' : 'danger') ?> style-4321"></div>
                         </div>
                     </div>
                     <div class="col-md-4">

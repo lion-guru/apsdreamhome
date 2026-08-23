@@ -1,4 +1,4 @@
-<section class="py-5" class="style-39878">
+<section class="py-5 style-39878">
     <div class="container">
         <div class="text-center mb-5">
             <h1 class="text-white fw-bold display-5"><i class="fas fa-handshake me-2"></i>Partner Tools</h1>
@@ -8,8 +8,8 @@
         <!-- Tool 1: Land Area Converter -->
         <div class="row mb-5">
             <div class="col-12">
-                <div class="card" class="style-18771">
-                    <div class="card-header" class="style-84117">
+                <div class="card style-18771">
+                    <div class="card-header style-84117">
                         <h4 class="text-white mb-0"><i class="fas fa-vector-square me-2"></i>Land Area Converter</h4>
                     </div>
                     <div class="card-body">
@@ -32,7 +32,7 @@
                                 </select>
                             </div>
                             <div class="col-md-1 d-flex align-items-center justify-content-center">
-                                <i class="fas fa-arrow-right fa-2x" class="style-23621"></i>
+                                <i class="fas fa-arrow-right fa-2x style-23621"></i>
                             </div>
                             <div class="col-md-3">
                                 <div id="conversionResults" class="style-3672">
@@ -54,8 +54,8 @@
         <!-- Tool 2: Plot Price Calculator -->
         <div class="row mb-5">
             <div class="col-md-6">
-                <div class="card h-100" class="style-18771">
-                    <div class="card-header" class="style-93477">
+                <div class="card h-100 style-18771">
+                    <div class="card-header style-93477">
                         <h4 class="text-white mb-0"><i class="fas fa-rupee-sign me-2"></i>Plot Price Calculator</h4>
                     </div>
                     <div class="card-body">
@@ -100,8 +100,8 @@
 
             <!-- Tool 3: Commission Calculator -->
             <div class="col-md-6">
-                <div class="card h-100" class="style-18771">
-                    <div class="card-header" class="style-38548">
+                <div class="card h-100 style-18771">
+                    <div class="card-header style-38548">
                         <h4 class="text-white mb-0"><i class="fas fa-calculator me-2"></i>Commission Calculator</h4>
                     </div>
                     <div class="card-body">
@@ -149,8 +149,8 @@
         <!-- Tool 4: Stamp Duty Quick Calc -->
         <div class="row mb-5">
             <div class="col-md-4">
-                <div class="card h-100" class="style-18771">
-                    <div class="card-header" class="style-95871">
+                <div class="card h-100 style-18771">
+                    <div class="card-header style-95871">
                         <h5 class="text-white mb-0"><i class="fas fa-file-contract me-2"></i>Stamp Duty Quick Calc</h5>
                     </div>
                     <div class="card-body">
@@ -188,8 +188,8 @@
 
             <!-- Tool 5: EMI Quick Calc -->
             <div class="col-md-4">
-                <div class="card h-100" class="style-18771">
-                    <div class="card-header" class="style-84117">
+                <div class="card h-100 style-18771">
+                    <div class="card-header style-84117">
                         <h5 class="text-white mb-0"><i class="fas fa-calendar-alt me-2"></i>EMI Quick Calculator</h5>
                     </div>
                     <div class="card-body">
@@ -226,11 +226,11 @@
 
             <!-- Tool 6: Document Checklist -->
             <div class="col-md-4">
-                <div class="card h-100" class="style-18771">
-                    <div class="card-header" class="style-31466">
+                <div class="card h-100 style-18771">
+                    <div class="card-header style-31466">
                         <h5 class="text-white mb-0"><i class="fas fa-tasks me-2"></i>Land Deal Checklist</h5>
                     </div>
-                    <div class="card-body" class="style-43942">
+                    <div class="card-body style-43942">
                         <div id="checklist">
                             <?php
                             $items = [
@@ -251,7 +251,7 @@
                                 'Occupancy Certificate (if built)',
                             ];
                             foreach ($items as $i => $item): ?>
-                                <div class="form-check mb-2" class="style-25010">
+                                <div class="form-check mb-2 style-25010">
                                     <input class="form-check-input" type="checkbox" id="item<?= $i ?>" class="style-37958">
                                     <label class="form-check-label text-white-50 ms-2" for="item<?= $i ?>" class="style-47175"><?= $item ?></label>
                                 </div>
@@ -267,7 +267,7 @@
 
         <!-- CTA Section -->
         <div class="text-center mt-5">
-            <div class="card" class="style-14815">
+            <div class="card style-14815">
                 <div class="card-body py-5">
                     <h3 class="text-white fw-bold">Become an APS Dream Home Partner</h3>
                     <p class="text-white-50 mb-4">Join 50+ associates earning commission on land deals. Free training, CRM tools, and regular income.</p>
@@ -300,7 +300,7 @@ function convertArea() {
     for (const [key, factor] of Object.entries(areaFactors)) {
         const converted = sqft / factor;
         const highlight = key === from ? 'color:#0d9488;font-weight:bold;' : '';
-        html += '<div class="d-flex justify-content-between mb-1" class="style-64711">';
+        html += '<div class="d-flex justify-content-between mb-1 style-64711">';
         html += '<span class="text-white-50">' + areaNames[key] + ':</span>';
         html += '<span class="text-white">' + converted.toLocaleString('en-IN', {maximumFractionDigits: 2}) + '</span>';
         html += '</div>';

@@ -2,7 +2,7 @@
     <div class="row mb-4">
         <div class="col-8">
             <a href="<?= BASE_URL ?>/admin/payout-batches" class="btn btn-sm btn-outline-secondary mb-2"><i class="fas fa-arrow-left me-1"></i> Back</a>
-            <h2 class="style-48283"><i class="fas fa-money-check-alt me-2" class="style-56943"></i> <?= htmlspecialchars($batch['batch_name'] ?? '') ?></h2>
+            <h2 class="style-48283"><i class="fas fa-money-check-alt me-2 style-56943"></i> <?= htmlspecialchars($batch['batch_name'] ?? '') ?></h2>
             <small class="style-77712">Created <?= date('d M Y H:i', strtotime($batch['created_at'])) ?> by <?= htmlspecialchars($batch['created_by_name'] ?? 'Admin') ?></small>
         </div>
         <div class="col-4 text-end">
@@ -44,7 +44,7 @@
     ];
     $sc = $statusColors[$batch['status']] ?? '#6c757d';
     ?>
-    <div class="alert mb-4" class="style-25876">
+    <div class="alert mb-4 style-25876">
         <i class="fas fa-info-circle me-2"></i>
         Status: <strong><?= str_replace('_', ' ', ucfirst($batch['status'])) ?></strong>
         <?php if ($batch['approved_by_name']): ?>
@@ -55,7 +55,7 @@
     <!-- Summary Cards -->
     <div class="row mb-4">
         <div class="col-md-3">
-            <div class="card" class="style-62867">
+            <div class="card style-62867">
                 <div class="card-body text-center">
                     <h3 class="style-56943"><?= number_format($batch['total_entries']) ?></h3>
                     <small class="style-77712">Total Entries</small>
@@ -63,7 +63,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card" class="style-62867">
+            <div class="card style-62867">
                 <div class="card-body text-center">
                     <h3 class="style-86204">₹<?= number_format((float)$batch['total_amount']) ?></h3>
                     <small class="style-77712">Gross Amount</small>
@@ -71,7 +71,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card" class="style-62867">
+            <div class="card style-62867">
                 <div class="card-body text-center">
                     <?php
                     $entries = $entries ?? [];
@@ -84,7 +84,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card" class="style-62867">
+            <div class="card style-62867">
                 <div class="card-body text-center">
                     <h3 class="style-29525">₹<?= number_format($totalNet) ?></h3>
                     <small class="style-77712">Net Payout</small>
@@ -95,8 +95,8 @@
 
     <!-- Auto-Populate (for draft batches) -->
     <?php if ($batch['status'] === 'draft'): ?>
-        <div class="card mb-4" class="style-76801">
-            <div class="card-header" class="style-92050">
+        <div class="card mb-4 style-76801">
+            <div class="card-header style-92050">
                 <h5 class="style-37492"><i class="fas fa-magic me-2"></i> Auto-populate with Pending Entries</h5>
             </div>
             <div class="card-body">
@@ -105,7 +105,7 @@
                     <div class="row">
                         <div class="col-md-3">
                             <label class="style-73163">Type Filter</label>
-                            <select name="populate_type" class="form-select form-select-sm" class="style-62452">
+                            <select name="populate_type" class="form-select form-select-sm style-62452">
                                 <option value="">All Types</option>
                                 <option value="direct_sale">Direct Sale</option>
                                 <option value="override">Override</option>
@@ -116,11 +116,11 @@
                         </div>
                         <div class="col-md-3">
                             <label class="style-73163">Date From</label>
-                            <input type="date" name="populate_from" class="form-control form-control-sm" class="style-62452">
+                            <input type="date" name="populate_from" class="form-control form-control-sm style-62452">
                         </div>
                         <div class="col-md-3">
                             <label class="style-73163">Date To</label>
-                            <input type="date" name="populate_to" class="form-control form-control-sm" class="style-62452">
+                            <input type="date" name="populate_to" class="form-control form-control-sm style-62452">
                         </div>
                         <div class="col-md-3 d-flex align-items-end">
                             <button type="submit" class="btn btn-success btn-sm w-100"><i class="fas fa-plus me-1"></i> Add Entries</button>
@@ -132,19 +132,19 @@
     <?php endif; ?>
 
     <!-- Entries Table -->
-    <div class="card" class="style-62867">
-        <div class="card-header" class="style-10528">
+    <div class="card style-62867">
+        <div class="card-header style-10528">
             <h5 class="style-37492"><i class="fas fa-list me-2"></i> Payout Entries (<?= number_format($total_entries) ?>)</h5>
         </div>
         <div class="card-body p-0">
             <?php if (empty($entries)): ?>
                 <div class="text-center p-4">
-                    <i class="fas fa-inbox fa-2x" class="style-2349"></i>
+                    <i class="fas fa-inbox fa-2x style-2349"></i>
                     <p class="style-82670">No entries in this batch yet.</p>
                 </div>
             <?php else: ?>
                 <div class="table-responsive">
-                    <table class="table table-dark table-hover mb-0" class="style-47175">
+                    <table class="table table-dark table-hover mb-0 style-47175">
                         <thead>
                             <tr class="style-1328">
                                 <th class="style-56943">#</th>
@@ -165,7 +165,7 @@
                                 <tr class="style-23517">
                                     <td><?= $e['id'] ?></td>
                                     <td><?= htmlspecialchars($e['beneficiary_name'] ?? 'User #' . $e['beneficiary_user_id']) ?></td>
-                                    <td><span class="badge bg-info" class="style-68658"><?= $e['commission_type'] ?? 'N/A' ?></span></td>
+                                    <td><span class="badge bg-info style-68658"><?= $e['commission_type'] ?? 'N/A' ?></span></td>
                                     <td>₹<?= number_format((float)$e['amount']) ?></td>
                                     <td class="style-52183">₹<?= number_format((float)$e['tds_amount']) ?></td>
                                     <td class="style-63408">₹<?= number_format((float)$e['net_amount']) ?></td>
@@ -202,7 +202,7 @@
                 </div>
 
                 <?php if ($entry_total_pages > 1): ?>
-                    <div class="d-flex justify-content-between align-items-center p-3" class="style-8524">
+                    <div class="d-flex justify-content-between align-items-center p-3 style-8524">
                         <small class="style-77712">Page <?= $entry_page ?> of <?= $entry_total_pages ?></small>
                         <div>
                             <?php for ($i = max(1, $entry_page - 2); $i <= min($entry_total_pages, $entry_page + 2); $i++): ?>
@@ -219,9 +219,9 @@
 <!-- Reject Modal -->
 <div class="modal fade" id="rejectModal" tabindex="-1">
     <div class="modal-dialog">
-        <div class="modal-content" class="style-97302">
-            <div class="modal-header" class="style-1328">
-                <h5 class="modal-title" class="style-52183">Reject Batch</h5>
+        <div class="modal-content style-97302">
+            <div class="modal-header style-1328">
+                <h5 class="modal-title style-52183">Reject Batch</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form method="POST" action="<?= BASE_URL ?>/admin/payout-batches/reject/<?= $batch['id'] ?>">
@@ -230,7 +230,7 @@
                     <label class="style-96386">Reason for rejection</label>
                     <textarea name="reason" class="form-control" rows="3" required class="style-62452"></textarea>
                 </div>
-                <div class="modal-footer" class="style-8524">
+                <div class="modal-footer style-8524">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-danger">Reject</button>
                 </div>
@@ -242,9 +242,9 @@
 <!-- Complete Entry Modal -->
 <div class="modal fade" id="completeModal" tabindex="-1">
     <div class="modal-dialog">
-        <div class="modal-content" class="style-97302">
-            <div class="modal-header" class="style-1328">
-                <h5 class="modal-title" class="style-56943">Mark Payment Complete</h5>
+        <div class="modal-content style-97302">
+            <div class="modal-header style-1328">
+                <h5 class="modal-title style-56943">Mark Payment Complete</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form method="POST" action="<?= BASE_URL ?>/admin/payout-batches/complete-entry">
@@ -256,7 +256,7 @@
                     <label class="style-96386">Payment Reference (UTR/Ref No)</label>
                     <input type="text" name="payment_ref" class="form-control" placeholder="e.g. UTR123456789" class="style-62452">
                 </div>
-                <div class="modal-footer" class="style-8524">
+                <div class="modal-footer style-8524">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-success">Mark Complete</button>
                 </div>

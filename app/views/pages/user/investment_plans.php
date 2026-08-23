@@ -46,11 +46,11 @@ ob_start();
         <div class="aps-cp-flex-between">
             <div>
                 <span class="aps-cp-muted"><?= __('user_investment_plans_investor_level', null, 'Investor Level') ?></span>
-                <h3 class="mt-0"><i class="fas fa-trophy" class="style-93447"></i> <span class="aps-cp-badge aps-cp-badge-<?= $levelColor ?> aps-cp-badge-lg"><?= htmlspecialchars($stats['level'] ?? '') ?></span></h3>
+                <h3 class="mt-0"><i class="fas fa-trophy style-93447"></i> <span class="aps-cp-badge aps-cp-badge-<?= $levelColor ?> aps-cp-badge-lg"><?= htmlspecialchars($stats['level'] ?? '') ?></span></h3>
             </div>
             <div class="style-12859">
                 <div class="aps-cp-progress">
-                    <div class="aps-cp-progress-bar" class="style-61755"></div>
+                    <div class="aps-cp-progress-bar style-61755"></div>
                 </div>
                 <p class="aps-cp-muted mt-1 mb-0"><?= __('user_investment_plans_progress_text', null, 'Invest ₹') ?><?= number_format((float)$stats['next_threshold']) ?> <?= __('user_investment_plans_progress_more', null, 'more to reach') ?> <strong><?= htmlspecialchars($stats['next_level'] ?? '') ?></strong></p>
             </div>
@@ -122,7 +122,7 @@ ob_start();
     </div>
 </div>
 
-<div id="investModal" class="aps-cp-modal" class="style-2248">
+<div id="investModal" class="aps-cp-modal style-2248">
     <div class="aps-cp-modal-overlay" onclick="closeInvestModal()"></div>
     <div class="aps-cp-modal-dialog">
         <div class="aps-cp-modal-head">

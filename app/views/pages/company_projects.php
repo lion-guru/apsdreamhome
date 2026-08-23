@@ -25,11 +25,11 @@ if (empty($grouped_projects) && !empty($projects)) {
 ?>
 
 <!-- Company Projects Hero -->
-<section class="hero-section text-white py-5 position-relative" class="style-30433">
+<section class="hero-section text-white py-5 position-relative style-30433">
     <div class="container position-relative">
         <div class="row align-items-center justify-content-center">
             <div class="col-lg-8 text-center">
-                <span class="badge px-3 py-2 mb-3" class="style-72717">
+                <span class="badge px-3 py-2 mb-3 style-72717">
                     <i class="fas fa-building me-1"></i> Portfolio
                 </span>
                 <h1 class="display-4 fw-bold mb-3"><i class="fas fa-building me-3"></i><?= __('cproj_heading', [], 'Our Projects') ?></h1>
@@ -40,9 +40,9 @@ if (empty($grouped_projects) && !empty($projects)) {
 </section>
 
     <!-- Cross-link Section: Also Explore -->
-    <section class="py-3" class="style-53819">
+    <section class="py-3 style-53819">
         <div class="container">
-            <div class="d-flex flex-wrap gap-2 align-items-center" class="style-1563">
+            <div class="d-flex flex-wrap gap-2 align-items-center style-1563">
                 <span class="fw-semibold text-success me-2"><i class="fas fa-compass me-1"></i><?= __('also_explore') ?></span>
                 <a href="<?= BASE_URL ?>/properties" class="btn btn-sm btn-outline-primary px-3">
                     <i class="fas fa-building me-1"></i><?= __('properties') ?>
@@ -50,7 +50,7 @@ if (empty($grouped_projects) && !empty($projects)) {
                 <a href="<?= BASE_URL ?>/plots/browse" class="btn btn-sm btn-outline-primary px-3">
                     <i class="fas fa-vector-square me-1"></i><?= __('plots') ?>
                 </a>
-                <a href="<?= BASE_URL ?>/colonies" class="btn btn-sm px-3" class="style-66828">
+                <a href="<?= BASE_URL ?>/colonies" class="btn btn-sm px-3 style-66828">
                     <i class="fas fa-city me-1"></i><?= __('colonies') ?>
                 </a>
             </div>
@@ -132,8 +132,8 @@ if (empty($grouped_projects) && !empty($projects)) {
                                                 <a href="<?php echo BASE_URL; ?>/projects/<?php echo e($slug); ?>" class="btn btn-primary btn-sm flex-grow-1">
                                                     <i class="fas fa-eye me-1"></i><?= __('cproj_view_details', [], 'View Details') ?>
                                                 </a>
-                                                <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-success btn-sm">
-                                                    <i class="fab fa-whatsapp"></i>
+                                                <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-success btn-sm" aria-label="WhatsApp enquiry">
+                                                    <i class="fab fa-whatsapp" aria-hidden="true"></i>
                                                 </a>
                                             </div>
                                         </div>

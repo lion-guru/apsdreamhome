@@ -49,7 +49,7 @@
 
             <div class="style-69368">
                 <a href="<?= $baseUrl ?>/payment/receipt" class="button">Download Receipt</a>
-                <a href="<?= $baseUrl ?>/dashboard" class="button" class="style-14800">View Dashboard</a>
+                <a href="<?= $baseUrl ?>/dashboard" class="button style-14800">View Dashboard</a>
             </div>
 
             <p>If you have any questions about your payment, please contact our support team:</p>

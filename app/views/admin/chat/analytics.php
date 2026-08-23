@@ -22,7 +22,7 @@ $overallRate = $totalStarts > 0 ? round(($totalCompleted / $totalStarts) * 100, 
             <p class="text-muted mb-0">Track chatbot action usage, completion rates, and drop-offs</p>
         </div>
         <div class="d-flex gap-2">
-            <select class="form-select form-select-sm" class="style-30246" id="periodSelect" onchange="window.location='<?= BASE_URL ?>/admin/chat-analytics?days='+this.value">
+            <select class="form-select form-select-sm style-30246" id="periodSelect" onchange="window.location='<?= BASE_URL ?>/admin/chat-analytics?days='+this.value">
                 <option value="7" <?=$days==7?'selected':''?>>Last 7 days</option>
                 <option value="30" <?=$days==30?'selected':''?>>Last 30 days</option>
                 <option value="90" <?=$days==90?'selected':''?>>Last 90 days</option>
@@ -131,8 +131,8 @@ $overallRate = $totalStarts > 0 ? round(($totalCompleted / $totalStarts) * 100, 
                                     <td class="text-center"><span class="text-warning"><?=$row['cancels']?></span></td>
                                     <td class="text-center"><span class="text-danger"><?=$row['dropoffs']?></span></td>
                                     <td class="text-center">
-                                        <div class="progress" class="style-64842">
-                                            <div class="progress-bar bg-<?=$rate>=70?'success':($rate>=40?'warning':'danger')?>" class="style-5847"<?=$rate?>%"><?=$rate?>%</div>
+                                        <div class="progress style-64842">
+                                            <div class="progress-bar bg-<?=$rate>=70?'success':($rate>=40?'warning':'danger')?> style-5847"<?=$rate?>%"><?=$rate?>%</div>
                                         </div>
                                     </td>
                                 </tr>

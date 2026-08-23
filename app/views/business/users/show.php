@@ -19,7 +19,7 @@
                         <?php if (!empty($user['photo'])): ?>
                             <img src="<?= BASE_URL ?>/<?= htmlspecialchars($user['photo'] ?? '') ?>" alt="Photo" class="rounded-circle" width="100" height="100" class="style-44820">
                         <?php else: ?>
-                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto" class="style-44468">
+                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto style-44468">
                                 <?= strtoupper(substr($user['name'] ?? 'U', 0, 1)) ?>
                             </div>
                         <?php endif; ?>

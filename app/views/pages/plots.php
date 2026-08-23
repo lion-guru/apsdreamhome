@@ -18,15 +18,15 @@
     <!-- Cross-link Section: Also Explore -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="d-flex flex-wrap gap-2 align-items-center" class="style-1563">
+            <div class="d-flex flex-wrap gap-2 align-items-center style-1563">
                 <span class="fw-semibold text-success me-2"><i class="fas fa-compass me-1"></i><?= __('also_explore') ?></span>
-                <a href="<?= BASE_URL ?>/properties" class="btn btn-sm px-3" class="style-6722">
+                <a href="<?= BASE_URL ?>/properties" class="btn btn-sm px-3 style-6722">
                     <i class="fas fa-building me-1"></i>Properties
                 </a>
-                <a href="<?= BASE_URL ?>/projects" class="btn btn-sm px-3" class="style-97522">
+                <a href="<?= BASE_URL ?>/projects" class="btn btn-sm px-3 style-97522">
                     <i class="fas fa-project-diagram me-1"></i>Projects
                 </a>
-                <a href="<?= BASE_URL ?>/colonies" class="btn btn-sm px-3" class="style-66828">
+                <a href="<?= BASE_URL ?>/colonies" class="btn btn-sm px-3 style-66828">
                     <i class="fas fa-city me-1"></i><?= __('colonies') ?>
                 </a>
             </div>
@@ -44,16 +44,16 @@
                 $startingPrice = !empty($colony['starting_price']) ? '₹' . number_format($colony['starting_price']) : '₹5.5 Lakh';
                 ?>
                 <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden position-relative aps-colony-card" class="style-42942">
+                    <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden position-relative aps-colony-card style-42942">
                         <?php if (!empty($colony['is_featured'])): ?>
-                            <span class="position-absolute top-0 start-0 m-3 badge bg-warning text-dark fw-bold px-3 py-2 shadow-sm" class="style-82516">
+                            <span class="position-absolute top-0 start-0 m-3 badge bg-warning text-dark fw-bold px-3 py-2 shadow-sm style-82516">
                                 <i class="fas fa-star me-1"></i> <?= __('plots_featured') ?>
                             </span>
                         <?php endif; ?>
                         
-                        <div class="position-relative overflow-hidden" class="style-59431">
+                        <div class="position-relative overflow-hidden style-59431">
                             <img src="<?= htmlspecialchars($img ?? '') ?>" class="w-100 h-100 object-fit-cover" alt="<?= htmlspecialchars($colony['name'] ?? '') ?>" onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
-                            <div class="position-absolute bottom-0 start-0 w-100 p-3 text-white d-flex align-items-end" class="style-78528">
+                            <div class="position-absolute bottom-0 start-0 w-100 p-3 text-white d-flex align-items-end style-78528">
                                 <span class="badge bg-primary px-2 py-1"><i class="fas fa-map-marker-alt me-1"></i> <?= htmlspecialchars($colony['district_name'] . ', ' . $colony['state_name']) ?></span>
                             </div>
                         </div>

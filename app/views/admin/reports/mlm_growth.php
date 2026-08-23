@@ -170,7 +170,7 @@ $report = $report ?? [
                         <?php if (empty($report['top_performers'] ?? [])): ?>
                         <tr>
                             <td colspan="7" class="text-center py-5">
-                                <i class="fas fa-trophy fa-3x text-muted mb-3" class="style-82835"></i>
+                                <i class="fas fa-trophy fa-3x text-muted mb-3 style-82835"></i>
                                 <h5 class="text-muted">No top performers found</h5>
                                 <p class="text-muted mb-3">Performance data will appear once associates start earning commissions.</p>
                             </td>
@@ -214,7 +214,7 @@ $report = $report ?? [
                         <?php if (empty($report['monthly_comparison'] ?? [])): ?>
                         <tr>
                             <td colspan="4" class="text-center py-5">
-                                <i class="fas fa-chart-bar fa-3x text-muted mb-3" class="style-82835"></i>
+                                <i class="fas fa-chart-bar fa-3x text-muted mb-3 style-82835"></i>
                                 <h5 class="text-muted">No monthly comparison data</h5>
                                 <p class="text-muted mb-3">Month-over-month metrics will appear after at least two periods of data are collected.</p>
                             </td>

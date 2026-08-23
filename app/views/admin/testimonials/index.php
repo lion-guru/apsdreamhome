@@ -59,7 +59,7 @@
                                 <?php if (empty($testimonials ?? [])): ?>
                                     <tr>
                                         <td colspan="6" class="text-center py-5">
-                                            <i class="fas fa-quote-left fa-3x text-muted mb-3" class="style-82835"></i>
+                                            <i class="fas fa-quote-left fa-3x text-muted mb-3 style-82835"></i>
                                             <h5 class="text-muted">No testimonials found</h5>
                                             <p class="text-muted mb-3">Collect customer testimonials to build social proof and trust with potential buyers.</p>
                                             <a href="<?= BASE_URL ?>/admin/testimonials/create" class="btn btn-primary">

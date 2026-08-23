@@ -128,7 +128,8 @@ ob_start();
         'h1{color:#b45309}code{display:inline-block;padding:8px 12px;background:#f3f4f6;border-radius:6px;margin:4px;font-weight:bold}' +
         '.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:20px 0}' +
         '.footer{margin-top:30px;padding-top:15px;border-top:1px solid #ccc;font-size:12px;color:#666}' +
-        '</style></head><body>' +
+        '</style>    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
+</head><body>' +
         '<h1>APS Dream Home — 2FA Backup Codes</h1>' +
         '<p>Account: <strong><?= htmlspecialchars($user_email ?? '') ?></strong></p>' +
         '<p>Generated: ' + new Date().toLocaleString() + '</p>' +

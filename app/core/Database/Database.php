@@ -77,7 +77,7 @@ class Database
                 $this->config['charset']
             );
 
-            $this->pdo = new PDO(
+            $this->pdo = new PdoCompat(
                 $dsn,
                 $this->config['username'],
                 $this->config['password'],

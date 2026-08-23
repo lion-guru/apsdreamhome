@@ -18,6 +18,7 @@
         .btn:hover{background:#4338ca;transform:translateY(-1px)}
         .logo-text{font-size:.8rem;color:#c7d2fe;margin-top:24px}
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
     <div class="card aps-cp-card">

@@ -63,7 +63,7 @@
                                 <h6>Featured Image</h6>
                                 <?php if (!empty($news['image'])): ?>
                                     <div class="mb-2 text-center">
-                                        <img src="<?= (strpos($news['image'], 'http') === 0 ? htmlspecialchars($news['image'] ?? '') : BASE_URL . '/' . htmlspecialchars($news['image'] ?? '')) ?>" alt="Current image" class="img-fluid rounded" class="style-62200" />
+                                        <img src="<?= (strpos($news['image'], 'http') === 0 ? htmlspecialchars($news['image'] ?? '') : BASE_URL . '/' . htmlspecialchars($news['image'] ?? '')) ?>" alt="Current image" class="img-fluid rounded style-62200" />
                                     </div>
                                 <?php endif; ?>
                                 <input type="file" class="form-control" id="image" name="image" accept="image/*">

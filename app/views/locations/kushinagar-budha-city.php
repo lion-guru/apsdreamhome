@@ -39,7 +39,7 @@ ob_start();
 <div class="row">
     <div class="col-lg-12">
         <!-- Hero Banner -->
-        <div class="page-banner mb-5" class="style-22214">
+        <div class="page-banner mb-5 style-22214">
             <div class="container text-center">
                 <h1 class="display-3 fw-bold mb-3 animate-fade-up">Budha City</h1>
                 <p class="lead animate-fade-up">Integrated Township at Premwaliya, Kushinagar Highway</p>

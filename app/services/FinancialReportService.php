@@ -65,9 +65,9 @@ class FinancialReportService
 
         // Salaries paid
         $salaries = $this->db->fetchOne(
-            "SELECT COALESCE(SUM(net_salary), 0) as total 
+            "SELECT COALESCE(SUM(net_amount), 0) as total 
              FROM salary_payments 
-             WHERE status = 'paid' 
+             WHERE payment_status = 'paid' 
              AND DATE(payment_date) BETWEEN ? AND ? {$tSql}",
             $params
         )['total'] ?? 0;
@@ -106,15 +106,20 @@ class FinancialReportService
 
         // Assets
         $cashInBank = $this->db->fetchOne(
-            "SELECT COALESCE(SUM(balance), 0) as total FROM bank_accounts_master WHERE 1=1 {$tSql}",
+            "SELECT COALESCE(SUM(current_balance), 0) as total FROM bank_accounts_master WHERE 1=1 {$tSql}",
             $tid > 1 ? [$tid] : []
         )['total'] ?? 0;
 
         $receivables = $this->db->fetchOne(
-            "SELECT COALESCE(SUM(remaining_amount), 0) as total 
-             FROM bookings 
-             WHERE status NOT IN ('cancelled', 'completed') 
-             AND DATE(created_at) <= ? {$tSql}",
+            "SELECT COALESCE(SUM(b.total_amount - COALESCE(r.paid, 0)), 0) as total 
+             FROM bookings b
+             LEFT JOIN (
+                 SELECT booking_id, SUM(amount) as paid 
+                 FROM booking_payment_receipts 
+                 WHERE status = 'cleared' GROUP BY booking_id
+             ) r ON r.booking_id = b.id
+             WHERE b.status NOT IN ('cancelled', 'completed') 
+             AND DATE(b.created_at) <= ? {$tSql}",
             $params
         )['total'] ?? 0;
 
@@ -130,9 +135,9 @@ class FinancialReportService
         )['total'] ?? 0;
 
         $pendingSalaries = $this->db->fetchOne(
-            "SELECT COALESCE(SUM(net_salary), 0) as total 
+            "SELECT COALESCE(SUM(net_amount), 0) as total 
              FROM salary_payments 
-             WHERE status = 'pending' 
+             WHERE payment_status = 'pending' 
              AND DATE(payment_date) <= ? {$tSql}",
             $params
         )['total'] ?? 0;
@@ -201,9 +206,9 @@ class FinancialReportService
         )['total'] ?? 0;
 
         $salaryPayments = $this->db->fetchOne(
-            "SELECT COALESCE(SUM(net_salary), 0) as total 
+            "SELECT COALESCE(SUM(net_amount), 0) as total 
              FROM salary_payments 
-             WHERE status = 'paid' 
+             WHERE payment_status = 'paid' 
              AND DATE(payment_date) BETWEEN ? AND ? {$tSql}",
             $params
         )['total'] ?? 0;

@@ -98,7 +98,7 @@ $statusColors = [
                         </tr>
                         <?php if (!empty($collected)): ?>
                         <tr>
-                            <td colspan="8" class="small text-muted" class="style-92816">
+                            <td colspan="8" class="small text-muted style-92816">
                                 <?php foreach ($collected as $k => $v): ?>
                                 <span class="me-3"><strong><?=$k?>:</strong> <?=htmlspecialchars(is_null($v) ? '(skip)' : (string)$v)?></span>
                                 <?php endforeach; ?>

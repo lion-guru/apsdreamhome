@@ -12,25 +12,25 @@ $activeAgents = $activeAgents ?? 0;
 
     <div class="row g-3 mb-4">
         <div class="col-md-3 col-6">
-            <div class="card border-0 shadow-sm text-center py-3" class="style-26686">
+            <div class="card border-0 shadow-sm text-center py-3 style-26686">
                 <div class="style-99485"><?= $totalAgents ?></div>
                 <div class="small text-muted">Total Agents</div>
             </div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="card border-0 shadow-sm text-center py-3" class="style-62228">
+            <div class="card border-0 shadow-sm text-center py-3 style-62228">
                 <div class="style-29702"><?= $activeAgents ?></div>
                 <div class="small text-muted">Active</div>
             </div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="card border-0 shadow-sm text-center py-3" class="style-63620">
+            <div class="card border-0 shadow-sm text-center py-3 style-63620">
                 <div class="style-29911"><?= array_sum(array_column($agents, 'deals_count')) ?></div>
                 <div class="small text-muted">Total Deals</div>
             </div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="card border-0 shadow-sm text-center py-3" class="style-413">
+            <div class="card border-0 shadow-sm text-center py-3 style-413">
                 <div class="style-33659">₹<?= number_format(array_sum(array_column($agents, 'total_commission')) / 100000, 1) ?>L</div>
                 <div class="small text-muted">Total Commission</div>
             </div>
@@ -56,7 +56,7 @@ $activeAgents = $activeAgents ?? 0;
                     <tbody>
                         <?php if (empty($agents)): ?>
                         <tr><td colspan="8" class="text-center text-muted py-5">
-                            <i class="fas fa-user-tie fa-3x mb-3" class="style-39608"></i>
+                            <i class="fas fa-user-tie fa-3x mb-3 style-39608"></i>
                             <h5 class="text-muted">No agents found</h5>
                             <p class="text-muted mb-0">Add your first agent to start managing agent activities.</p>
                         </td></tr>

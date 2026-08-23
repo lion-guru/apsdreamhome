@@ -59,7 +59,7 @@ $recent_assignments = $recent_assignments ?? [];
                                     <label class="form-label fw-bold mb-0">Select Leads:</label>
                                     <button type="button" class="btn btn-sm btn-outline-primary" onclick="toggleAll()">Select All</button>
                                 </div>
-                                <div class="table-responsive" class="style-61454">
+                                <div class="table-responsive style-61454">
                                     <table class="table table-hover table-sm">
                                         <thead class="sticky-top bg-light"><tr><th width="40"><input type="checkbox" id="checkAll" onchange="toggleAll()"></th><th>Lead</th><th>Contact</th><th>Score</th><th>Created</th></tr></thead>
                                         <tbody>
@@ -102,13 +102,13 @@ $recent_assignments = $recent_assignments ?? [];
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-history me-2"></i>Recent Assignments</h6></div>
-                <div class="card-body" class="style-97603">
+                <div class="card-body style-97603">
                     <?php if (empty($recent_assignments)): ?>
                         <p class="text-muted text-center py-3">No assignments yet</p>
                     <?php else: ?>
                         <?php foreach ($recent_assignments as $ra): ?>
                         <div class="mb-3 pb-3 border-bottom">
-                            <div class="fw-bold" class="style-16752"><?= htmlspecialchars($ra['lead_name'] ?? 'Unknown') ?></div>
+                            <div class="fw-bold style-16752"><?= htmlspecialchars($ra['lead_name'] ?? 'Unknown') ?></div>
                             <small class="text-muted">
                                 <?php if ($ra['from_name']): ?>
                                     <?= htmlspecialchars($ra['from_name'] ?? '') ?> â†’

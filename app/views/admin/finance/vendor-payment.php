@@ -53,7 +53,7 @@
                                 <i class="fas fa-sync-alt" id="vFxIcon"></i>
                             </button>
                         </div>
-                        <small class="text-muted"><?= __('vpay_exchange_hint') ?> <span id="vFxStatus" class="badge bg-secondary ms-1" class="style-24280"></span></small>
+                        <small class="text-muted"><?= __('vpay_exchange_hint') ?> <span id="vFxStatus" class="badge bg-secondary ms-1 style-24280"></span></small>
                     </div>
 
                     <div class="col-md-3">

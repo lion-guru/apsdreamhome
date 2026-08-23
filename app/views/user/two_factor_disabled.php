@@ -11,7 +11,7 @@ $disabled_at = $disabled_at ?? date('Y-m-d H:i:s');
         </div>
         <div class="card-body text-center">
           <div class="mb-4">
-            <i class="fas fa-exclamation-triangle text-warning" class="style-22918"></i>
+            <i class="fas fa-exclamation-triangle text-warning style-22918"></i>
           </div>
           <h5>2FA Has Been Disabled</h5>
           <p class="text-muted">Two-factor authentication was disabled on <strong><?= date('d M Y h:i A', strtotime($disabled_at)) ?></strong>.</p>

@@ -156,6 +156,7 @@ $selectedRole = $selectedRole ?? 'customer';
             .role-card .role-desc { font-size: 9px; }
         }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
     <div class="register-container">

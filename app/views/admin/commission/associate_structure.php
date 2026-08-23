@@ -40,7 +40,7 @@
                             <?php if (empty($levels ?? [])): ?>
                             <tr>
                                 <td colspan="6" class="text-center py-5">
-                                    <i class="fas fa-layer-group fa-3x text-muted mb-3" class="style-82835"></i>
+                                    <i class="fas fa-layer-group fa-3x text-muted mb-3 style-82835"></i>
                                     <h5 class="text-muted">No rank benefits found</h5>
                                     <p class="text-muted mb-3">Add rank benefits using the form on the left to configure commission percentages.</p>
                                 </td>

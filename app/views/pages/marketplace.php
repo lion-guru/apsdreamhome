@@ -138,7 +138,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
   <?php if (!empty($premiumListings)): ?>
   <div class="mb-4">
     <div class="d-flex align-items-center gap-2 mb-3">
-      <i class="fas fa-crown text-warning" class="style-34894"></i>
+      <i class="fas fa-crown text-warning style-34894"></i>
       <h5 class="mb-0 fw-bold">Premium Listings</h5>
       <span class="badge bg-warning text-dark"><?= count($premiumListings) ?> featured</span>
       <span class="text-muted small ms-2"><i class="fas fa-arrow-right"></i> Scroll to see all</span>
@@ -153,7 +153,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         $img = !empty($p['image']) ? ($base . '/' . $p['image']) : '';
       ?>
       <a href="<?= $base ?>/marketplace/<?= $p['id'] ?>" class="text-decoration-none text-dark premium-card">
-        <div class="ribbon" class="style-35829"><?= $ptype ?></div>
+        <div class="ribbon style-35829"><?= $ptype ?></div>
         <?php if ($img): ?>
         <img src="<?= $img ?>" class="p-img" alt="<?= htmlspecialchars($p['name'] ?? '') ?>" loading="lazy">
         <?php else: ?>
@@ -180,7 +180,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
     <i class="fas fa-crown text-warning"></i>
     <span>Want to sell faster? Try our premium packages:
     <?php foreach ($packages as $pkg): ?>
-      <span class="badge ms-1" class="style-79108"><?= htmlspecialchars($pkg['badge_label'] ?? $pkg['name']) ?> ₹<?= number_format($pkg['price']) ?></span>
+      <span class="badge ms-1 style-79108"><?= htmlspecialchars($pkg['badge_label'] ?? $pkg['name']) ?> ₹<?= number_format($pkg['price']) ?></span>
     <?php endforeach; ?>
     — <a href="<?= $base ?>/list-property" class="text-decoration-underline fw-bold">List now</a></span>
   </div>
@@ -210,7 +210,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         <div class="col-lg-4 col-md-6">
           <div class="reg-card">
             <?php if ($badge): ?>
-            <span class="position-absolute top-0 end-0 m-2 premium-badge-sm <?= $bc ?>" class="style-58936"><i class="fas fa-crown me-1"></i><?= $badge ?></span>
+            <span class="position-absolute top-0 end-0 m-2 premium-badge-sm <?= $bc ?> style-58936"><i class="fas fa-crown me-1"></i><?= $badge ?></span>
             <?php endif; ?>
             <?php if ($img): ?>
             <img src="<?= $img ?>" class="r-img" alt="<?= htmlspecialchars($prop['name'] ?? '') ?>" loading="lazy">

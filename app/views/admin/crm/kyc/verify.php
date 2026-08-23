@@ -3,7 +3,7 @@
     <h4 class="fw-bold mb-4"><i class="fas fa-id-card me-2 text-primary"></i>Verify KYC</h4>
     <div class="row g-4">
         <div class="col-md-6">
-            <div class="card border-0 shadow-sm" class="style-56956"><div class="card-header bg-primary text-white" class="style-62632"><h6 class="mb-0"><i class="fas fa-credit-card me-1"></i>PAN Verification</h6></div>
+            <div class="card border-0 shadow-sm style-56956"><div class="card-header bg-primary text-white style-62632"><h6 class="mb-0"><i class="fas fa-credit-card me-1"></i>PAN Verification</h6></div>
                 <div class="card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/crm/kyc/verify"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                         <div class="mb-3"><label class="form-label">PAN Number</label><input type="text" name="pan_number" class="form-control" placeholder="ABCDE1234F" maxlength="10" required class="style-36130"></div>
@@ -17,7 +17,7 @@
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card border-0 shadow-sm" class="style-56956"><div class="card-header bg-success text-white" class="style-62632"><h6 class="mb-0"><i class="fas fa-fingerprint me-1"></i>Aadhaar Verification</h6></div>
+            <div class="card border-0 shadow-sm style-56956"><div class="card-header bg-success text-white style-62632"><h6 class="mb-0"><i class="fas fa-fingerprint me-1"></i>Aadhaar Verification</h6></div>
                 <div class="card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/crm/kyc/verify"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                         <div class="mb-3"><label class="form-label">Aadhaar Number</label><input type="text" name="aadhaar_number" class="form-control" placeholder="1234 5678 9012" maxlength="14" required></div>

@@ -30,7 +30,7 @@ if ($filter && $filter !== 'all') {
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1" class="style-613"><i class="fas fa-building me-2"></i>My Properties</h4>
+        <h4 class="mb-1 style-613"><i class="fas fa-building me-2"></i>My Properties</h4>
         <p class="text-muted mb-0">Properties assigned to you or listed by you</p>
     </div>
     <div class="d-flex gap-2">
@@ -78,7 +78,7 @@ if ($filter && $filter !== 'all') {
 <div class="card border-0 shadow-sm">
     <div class="card-body text-center py-5">
         <div class="style-33323">
-            <i class="fas fa-home fa-2x" class="style-8693"></i>
+            <i class="fas fa-home fa-2x style-8693"></i>
         </div>
         <h5 class="text-muted"><?= $filter ? 'No properties with this status' : 'No properties yet' ?></h5>
         <p class="text-muted mb-0">Your assigned properties will appear here</p>
@@ -93,7 +93,7 @@ if ($filter && $filter !== 'all') {
                 <img src="<?= htmlspecialchars($prop['image'] ?? '') ?>" alt="<?= htmlspecialchars($prop['title'] ?? 'Property') ?>" class="prop-img">
             <?php else: ?>
                 <div class="prop-placeholder">
-                    <i class="fas fa-home fa-3x" class="style-22607"></i>
+                    <i class="fas fa-home fa-3x style-22607"></i>
                 </div>
             <?php endif; ?>
             <div class="card-body">

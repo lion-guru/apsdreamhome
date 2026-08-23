@@ -21,6 +21,7 @@ $uploaded = $d['images'] ?? [];
         body { background: #f4f6f9; min-height: 100vh; font-family: 'Inter', sans-serif; padding: 20px 0; }
         .wizard-card { border: none; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,.06); }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
 <div class="container">
@@ -53,8 +54,8 @@ $uploaded = $d['images'] ?? [];
                                 <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" multiple class="d-none">
                                 <button type="button" class="btn btn-primary" id="browse-btn"><i class="fas fa-folder-open me-1"></i> Browse</button>
                             </div>
-                            <div id="upload-progress" class="mt-3" class="style-24280">
-                                <div class="progress"><div class="progress-bar progress-bar-striped progress-bar-animated" class="style-55795"></div></div>
+                            <div id="upload-progress" class="mt-3 style-24280">
+                                <div class="progress"><div class="progress-bar progress-bar-striped progress-bar-animated style-55795"></div></div>
                             </div>
                             <div id="thumbnails" class="d-flex flex-wrap gap-2 mt-3"></div>
                         </div>

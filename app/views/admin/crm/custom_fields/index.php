@@ -16,7 +16,7 @@
             <div class="cf-card h-100">
                 <div class="d-flex justify-content-between align-items-start mb-2">
                     <div><h6 class="fw-bold mb-0"><?= htmlspecialchars($f['field_label'] ?? '') ?></h6><small class="text-muted"><?= htmlspecialchars($f['field_name'] ?? '') ?></small></div>
-                    <span class="cf-badge" class="style-77342"><?= $f['is_active'] ? 'Active' : 'Inactive' ?></span>
+                    <span class="cf-badge style-77342"><?= $f['is_active'] ? 'Active' : 'Inactive' ?></span>
                 </div>
                 <div class="mt-2">
                     <span class="badge bg-light text-dark me-1"><i class="fas fa-tag me-1"></i><?= ucfirst($f['field_type']) ?></span>

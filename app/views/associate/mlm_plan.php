@@ -109,7 +109,7 @@ foreach ($rank_benefits as $rb) {
         </div>
         <div class="progress-track">
             <?php $pct = min(100, ((float)($user_profile['lifetime_sales'] ?? 0) / max(1, (float)($next_rank['team_size_required'] ?? $next_rank['min_qualifying_volume'] ?? 1))) * 100); ?>
-            <div class="progress-fill" class="style-50517"></div>
+            <div class="progress-fill style-50517"></div>
         </div>
         <div class="d-flex justify-content-between mt-1">
             <small class="text-muted"><?= htmlspecialchars($current_rank ?? '') ?></small>
@@ -271,7 +271,7 @@ foreach ($rank_benefits as $rb) {
                         <tr class="<?= $rowClass ?>">
                             <td>
                                 <div class="d-flex align-items-center gap-2">
-                                    <span class="rank-badge me-1" class="style-72672">
+                                    <span class="rank-badge me-1 style-72672">
                                         <i class="fas <?= $rankIcons[$i] ?? 'fa-user' ?>"></i>
                                     </span>
                                     <div>
@@ -301,7 +301,7 @@ foreach ($rank_benefits as $rb) {
     </div>
     <div class="card-body">
         <div class="text-center mb-4">
-            <div class="d-inline-flex align-items-center gap-2 flex-wrap justify-content-center" class="style-60432">
+            <div class="d-inline-flex align-items-center gap-2 flex-wrap justify-content-center style-60432">
                 <span class="badge bg-success p-2 px-3"><i class="fas fa-user me-1"></i><?= __('assoc_mlm_flow_customer', [], 'Customer Pays') ?></span>
                 <i class="fas fa-arrow-right text-muted"></i>
                 <span class="badge bg-primary p-2 px-3"><i class="fas fa-credit-card me-1"></i><?= __('assoc_mlm_flow_payment', [], 'Payment Recorded') ?></span>

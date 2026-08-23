@@ -15,7 +15,7 @@
                         <?php if (empty($trackers ?? [])): ?>
                         <tr>
                             <td colspan="9" class="text-center py-5">
-                                <i class="fas fa-money-bill-wave fa-3x text-muted mb-3" class="style-82835"></i>
+                                <i class="fas fa-money-bill-wave fa-3x text-muted mb-3 style-82835"></i>
                                 <h5 class="text-muted">No salary trackers found</h5>
                                 <p class="text-muted mb-3">Leadership salary tracking records will appear here once targets are set.</p>
                             </td>

@@ -100,7 +100,7 @@ $tabs = [
                             <?php if (!empty($settings['company_logo']) && file_exists($_SERVER['DOCUMENT_ROOT'] . '/' . ltrim($settings['company_logo'], '/'))): ?>
                                 <div class="mb-2"><img src="<?= BASE_URL ?>/<?= sc($settings, 'company_logo') ?>" class="img-preview" alt="Logo"></div>
                             <?php elseif (!empty($settings['company_logo'])): ?>
-                                <div class="mb-2"><div class="img-preview d-flex align-items-center justify-content-center bg-light border rounded" class="style-84517"><small class="text-muted">Logo file missing</small></div></div>
+                                <div class="mb-2"><div class="img-preview d-flex align-items-center justify-content-center bg-light border rounded style-84517"><small class="text-muted">Logo file missing</small></div></div>
                             <?php endif; ?>
                             <input type="file" name="settings_image[company_logo]" class="form-control" accept="image/*">
                             <input type="hidden" name="settings[company_logo]" value="<?= sc($settings, 'company_logo') ?>">
@@ -145,7 +145,7 @@ $tabs = [
                                 <img src="<?= BASE_URL ?>/<?= sc($settings, 'company_favicon') ?>" class="img-preview" alt="Favicon" class="style-24361">
                             </div>
                         <?php elseif (!empty($settings['company_favicon'])): ?>
-                            <div class="mb-2 text-center"><div class="img-preview d-flex align-items-center justify-content-center bg-light border rounded" class="style-70997"><small class="text-muted">Favicon missing</small></div></div>
+                            <div class="mb-2 text-center"><div class="img-preview d-flex align-items-center justify-content-center bg-light border rounded style-70997"><small class="text-muted">Favicon missing</small></div></div>
                         <?php endif; ?>
                         <input type="file" name="settings_image[company_favicon]" class="form-control" accept="image/*">
                         <input type="hidden" name="settings[company_favicon]" value="<?= sc($settings, 'company_favicon') ?>">
@@ -304,10 +304,10 @@ $tabs = [
                     <h6><i class="fas fa-image me-2"></i>OG Image (Social Share)</h6>
                     <?php if (!empty($settings['seo_og_image']) && file_exists($_SERVER['DOCUMENT_ROOT'] . '/' . ltrim($settings['seo_og_image'], '/'))): ?>
                         <div class="mb-2 text-center">
-                            <img src="<?= BASE_URL ?>/<?= sc($settings, 'seo_og_image') ?>" class="img-fluid rounded" class="style-29190" alt="OG Image">
+                            <img src="<?= BASE_URL ?>/<?= sc($settings, 'seo_og_image') ?>" class="img-fluid rounded style-29190" alt="OG Image">
                         </div>
                     <?php elseif (!empty($settings['seo_og_image'])): ?>
-                        <div class="mb-2 text-center"><div class="d-flex align-items-center justify-content-center bg-light border rounded" class="style-3604"><small class="text-muted">OG Image file missing</small></div></div>
+                        <div class="mb-2 text-center"><div class="d-flex align-items-center justify-content-center bg-light border rounded style-3604"><small class="text-muted">OG Image file missing</small></div></div>
                     <?php endif; ?>
                     <input type="file" name="settings_image[seo_og_image]" class="form-control" accept="image/*">
                     <input type="hidden" name="settings[seo_og_image]" value="<?= sc($settings, 'seo_og_image') ?>">
@@ -316,7 +316,7 @@ $tabs = [
                 <div class="settings-group">
                     <h6><i class="fas fa-eye me-2"></i>Preview</h6>
                     <div class="border rounded p-3 bg-light">
-                        <div class="fw-bold text-primary" class="style-77830" id="seoPreviewTitle"><?= sc($settings, 'seo_title', 'Page Title') ?></div>
+                        <div class="fw-bold text-primary style-77830" id="seoPreviewTitle"><?= sc($settings, 'seo_title', 'Page Title') ?></div>
                         <div class="text-success small" id="seoPreviewUrl">apsdreamhome.com</div>
                         <div class="text-muted small" id="seoPreviewDesc"><?= sc($settings, 'seo_description', 'Page description...') ?></div>
                     </div>

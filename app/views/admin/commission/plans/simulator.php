@@ -32,7 +32,7 @@ $simMode = $_POST['sim_mode'] ?? 'single';
 
 <div class="cp-card">
     <div class="cp-card-header">
-        <h5 class="m-0" class="style-43926"><i class="fas fa-flask me-2" class="style-20955"></i>Commission What-If Simulator</h5>
+        <h5 class="m-0 style-43926"><i class="fas fa-flask me-2 style-20955"></i>Commission What-If Simulator</h5>
         <a href="<?= $base ?>/admin/commission-plans" class="cp-btn cp-btn-outline"><i class="fas fa-arrow-left me-1"></i>Back</a>
     </div>
     <div class="cp-card-body">
@@ -84,7 +84,7 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                 <?php endif; ?>
                 <div class="col-md-2">
                     <label class="cp-label">&nbsp;</label>
-                    <button type="submit" name="sim_mode" value="<?= $simMode ?>" class="cp-btn cp-btn-primary" class="style-90537"><i class="fas fa-play me-1"></i>Simulate</button>
+                    <button type="submit" name="sim_mode" value="<?= $simMode ?>" class="cp-btn cp-btn-primary style-90537"><i class="fas fa-play me-1"></i>Simulate</button>
                 </div>
             </div>
         </form>
@@ -98,7 +98,7 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                 ?>
                 <div class="row mb-4">
                     <div class="col-md-2"><div class="result-card"><div class="result-num">₹<?= number_format($r['sale_amount']) ?></div><div class="result-label">Sale Amount</div></div></div>
-                    <div class="col-md-2"><div class="result-card"><div class="result-num" class="style-27526"><?= $r['seller_rank'] ?></div><div class="result-label"><?= $r['seller_rate'] ?>% Direct Rate</div></div></div>
+                    <div class="col-md-2"><div class="result-card"><div class="result-num style-27526"><?= $r['seller_rank'] ?></div><div class="result-label"><?= $r['seller_rate'] ?>% Direct Rate</div></div></div>
                     <div class="col-md-2"><div class="result-card"><div class="result-num">₹<?= number_format($r['global_cap']) ?></div><div class="result-label">Global Cap (<?= $result['plan']['name'] ?? '' ?>)</div></div></div>
                     <div class="col-md-2"><div class="result-card"><div class="result-num">₹<?= number_format($r['track_a_total']) ?></div><div class="result-label">Track A Total</div></div></div>
                     <div class="col-md-2"><div class="result-card"><div class="result-num">₹<?= number_format($r['total_distributed']) ?></div><div class="result-label">Total Distributed</div></div></div>
@@ -110,8 +110,8 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                         <span class="style-27141">Cap Utilization: <?= number_format($pctUsed, 1) ?>%</span>
                         <span class="style-27141">Remaining: ₹<?= number_format($r['remaining_cap']) ?></span>
                     </div>
-                    <div class="track-bar" class="style-44570">
-                        <div class="track-bar-fill" class="style-85724"></div>
+                    <div class="track-bar style-44570">
+                        <div class="track-bar-fill style-85724"></div>
                     </div>
                 </div>
 
@@ -211,9 +211,9 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                 $diffTotal = $simB['total_distributed'] - $simA['total_distributed'];
                 $diffCap = $simB['global_cap'] - $simA['global_cap'];
                 ?>
-                <div class="result-card" class="style-76692">
+                <div class="result-card style-76692">
                     <div class="style-34740">Difference (Plan B âˆ’ Plan A)</div>
-                    <div class="result-num" class="style-33167">₹<?= number_format($diffTotal) ?></div>
+                    <div class="result-num style-33167">₹<?= number_format($diffTotal) ?></div>
                     <div class="style-10603"><?= $diffTotal > 0 ? 'Plan B pays MORE' : ($diffTotal < 0 ? 'Plan A pays MORE' : 'Same payout') ?></div>
                 </div>
 
@@ -224,7 +224,7 @@ $simMode = $_POST['sim_mode'] ?? 'single';
             </div>
         <?php else: ?>
             <div class="style-52260">
-                <i class="fas fa-flask" class="style-86717"></i>
+                <i class="fas fa-flask style-86717"></i>
                 Configure parameters above and click Simulate to run what-if analysis.
             </div>
         <?php endif; ?>

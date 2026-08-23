@@ -14,7 +14,7 @@ if (!defined('BASE_URL')) {
 ?>
 
 <!-- Hero Section -->
-<section class="favorites-hero py-5" class="style-68644">
+<section class="favorites-hero py-5 style-68644">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">

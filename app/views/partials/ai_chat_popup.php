@@ -6,10 +6,10 @@ $base = $base ?? BASE_URL;
 ?>
 
 <div id="ai-popup-widget" class="ai-popup-widget">
-    <button id="ai-popup-toggle" class="ai-popup-toggle" onclick="togglePopupChat()">
-        <i class="fas fa-robot"></i>
+    <button id="ai-popup-toggle" class="ai-popup-toggle" onclick="togglePopupChat()" aria-label="Open AI Helper chat">
+        <i class="fas fa-robot" aria-hidden="true"></i>
     </button>
-    <div id="ai-popup-chat" class="ai-popup-chat" class="style-54390">
+    <div id="ai-popup-chat" class="ai-popup-chat style-54390">
         <div class="ai-popup-header">
             <div class="d-flex align-items-center">
                 <span class="ai-popup-avatar me-2">ðŸ¤–</span>
@@ -19,11 +19,11 @@ $base = $base ?? BASE_URL;
                 </div>
             </div>
             <div>
-                <button class="btn btn-sm text-white" onclick="toggleMinimizePopup()" title="Minimize">
-                    <i class="fas fa-minus"></i>
+                <button class="btn btn-sm text-white" onclick="toggleMinimizePopup()" title="Minimize" aria-label="Minimize chat">
+                    <i class="fas fa-minus" aria-hidden="true"></i>
                 </button>
-                <button class="btn btn-sm text-white" onclick="closePopupChat()" title="Close">
-                    <i class="fas fa-times"></i>
+                <button class="btn btn-sm text-white" onclick="closePopupChat()" title="Close" aria-label="Close chat">
+                    <i class="fas fa-times" aria-hidden="true"></i>
                 </button>
             </div>
         </div>
@@ -37,8 +37,8 @@ $base = $base ?? BASE_URL;
         <div class="ai-popup-footer">
             <div class="input-group input-group-sm">
                 <input type="text" id="ai-popup-input" class="form-control" placeholder="Type a message..." onkeypress="handlePopupKeyPress(event)">
-                <button class="btn btn-primary" onclick="sendPopupMessage()">
-                    <i class="fas fa-paper-plane"></i>
+                <button class="btn btn-primary" onclick="sendPopupMessage()" aria-label="Send message">
+                    <i class="fas fa-paper-plane" aria-hidden="true"></i>
                 </button>
             </div>
         </div>

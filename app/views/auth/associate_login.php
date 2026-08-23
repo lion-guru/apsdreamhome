@@ -136,6 +136,7 @@ $base = BASE_URL;
             .quick-stats{margin:1rem 1.25rem 0;padding:.7rem .5rem}
         }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
     <div class="login-wrapper">
@@ -180,9 +181,9 @@ $base = BASE_URL;
                     <span class="label">Track C (Milestone)</span>
                     <span class="value">₹2,000</span>
                 </div>
-                <div class="earnings-row" class="style-24496">
-                    <span class="label" class="style-14635">Total Earning</span>
-                    <span class="value" class="style-36688">₹20,000</span>
+                <div class="earnings-row style-24496">
+                    <span class="label style-14635">Total Earning</span>
+                    <span class="value style-36688">₹20,000</span>
                 </div>
             </div>
 

@@ -15,7 +15,7 @@
         <div class="col-md-2"><div class="mtg-stat"><div class="val text-warning"><?= $stats['no_show'] ?? 0 ?></div><div class="lbl">No Show</div></div></div>
     </div>
 
-    <div class="card border-0 shadow-sm" class="style-56956"><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead class="table-light"><tr><th>Title</th><th>Lead</th><th>Agent</th><th>Type</th><th>Date/Time</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+    <div class="card border-0 shadow-sm style-56956"><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead class="table-light"><tr><th>Title</th><th>Lead</th><th>Agent</th><th>Type</th><th>Date/Time</th><th>Status</th><th>Actions</th></tr></thead><tbody>
     <?php if (empty($meetings)): ?><tr><td colspan="7" class="text-center py-4 text-muted">No meetings scheduled</td></tr>
     <?php else: foreach ($meetings as $m): ?><tr>
         <td class="fw-bold"><?= htmlspecialchars($m['title'] ?? '') ?></td>
@@ -34,7 +34,7 @@
     </tbody></table></div></div></div>
 </div>
 
-<div class="modal fade" id="createMeeting" tabindex="-1"><div class="modal-dialog"><div class="modal-content" class="style-56956">
+<div class="modal fade" id="createMeeting" tabindex="-1"><div class="modal-dialog"><div class="modal-content style-56956">
     <div class="modal-header"><h5 class="modal-title fw-bold"><i class="fas fa-calendar-plus me-2"></i>Schedule Meeting</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
     <form method="POST" action="<?= BASE_URL ?>/admin/meetings/store"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
     <div class="modal-body">

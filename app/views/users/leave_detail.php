@@ -45,11 +45,11 @@ function ldDateTime($d) { return $d ? date('d M Y, h:i A', strtotime($d)) : '—
         <!-- Main Details -->
         <div class="col-lg-8">
             <div class="card ld-card shadow-sm">
-                <div class="card-body ld-header p-4" class="style-54835">
+                <div class="card-body ld-header p-4 style-54835">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <h5 class="mb-1 fw-bold">
-                                <span class="lv-badge" class="style-75733"></span>
+                                <span class="lv-badge style-75733"></span>
                                 <?= htmlspecialchars($leave['type_name'] ?? ucfirst($leave['leave_type'] ?? 'Leave')) ?>
                             </h5>
                             <p class="mb-0 opacity-75">Application #<?= (int)($leave['id'] ?? 0) ?></p>
@@ -86,7 +86,7 @@ function ldDateTime($d) { return $d ? date('d M Y, h:i A', strtotime($d)) : '—
                     </div>
                     <div class="ld-info-row">
                         <div class="ld-label">Reason</div>
-                        <div class="ld-value" class="style-19219"><?= htmlspecialchars($leave['reason'] ?? 'No reason provided') ?></div>
+                        <div class="ld-value style-19219"><?= htmlspecialchars($leave['reason'] ?? 'No reason provided') ?></div>
                     </div>
                     <?php if (!empty($leave['emergency_contact'])): ?>
                     <div class="ld-info-row">

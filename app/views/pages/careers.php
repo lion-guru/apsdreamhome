@@ -102,19 +102,19 @@
 <section class="careers-section bg-light">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="badge px-3 py-2 mb-3" class="style-27498">
+            <span class="badge text-bg-primary px-3 py-2 mb-3">
                 <i class="fas fa-rocket me-1"></i><?= __('home_career_opportunity', null, 'Career Opportunity') ?>
             </span>
             <h2 class="fw-bold"><?= __('home_why_join_title', null, 'Why Join APS Dream Home?') ?></h2>
             <p class="lead text-muted mt-2"><?= __('home_why_join_subtitle', null, 'A new beginning in Real Estate — with Salary + Commission + Insurance!') ?></p>
-            <div class="mx-auto mt-3" class="style-60068"></div>
+            <div class="mx-auto mt-3 style-60068"></div>
         </div>
 
         <!-- Core Pillars -->
         <div class="row g-4 mb-5">
             <div class="col-lg-4 col-md-6">
                 <div class="pillar-card">
-                    <div class="pillar-icon" class="style-68656"><i class="fas fa-sack-dollar"></i></div>
+                    <div class="pillar-icon style-68656"><i class="fas fa-sack-dollar"></i></div>
                     <h5 class="fw-bold mb-2"><?= __('home_fixed_salary', null, 'Fixed Monthly Salary') ?></h5>
                     <p class="text-muted small mb-3"><?= __('home_fixed_salary_desc', null, 'In real estate usually only commission is given. But APS Dream Home also gives fixed monthly salary based on your sales performance!') ?></p>
                     <div class="table-responsive">
@@ -128,13 +128,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr><td class="ps-2 fw-semibold">Associate</td><td class="text-center">₹10L+</td><td class="text-center fw-bold" class="style-65172">5%</td><td class="text-end text-muted">Mobile</td></tr>
-                                <tr><td class="ps-2 fw-semibold">Sr. Associate</td><td class="text-center">₹35L+</td><td class="text-center fw-bold" class="style-65172">7%</td><td class="text-end text-muted">Tablet</td></tr>
-                                <tr><td class="ps-2 fw-semibold">BDM</td><td class="text-center">₹70L+</td><td class="text-center fw-bold" class="style-65172">10%</td><td class="text-end text-muted">Laptop</td></tr>
-                                <tr><td class="ps-2 fw-semibold">Sr. BDM</td><td class="text-center">₹1.5Cr+</td><td class="text-center fw-bold" class="style-65172">12%</td><td class="text-end text-muted">Tour Package</td></tr>
-                                <tr><td class="ps-2 fw-semibold">Vice President</td><td class="text-center">₹3Cr+</td><td class="text-center fw-bold" class="style-65172">15%</td><td class="text-end text-muted">Bike</td></tr>
-                                <tr><td class="ps-2 fw-semibold">President</td><td class="text-center">₹5Cr+</td><td class="text-center fw-bold" class="style-65172">18%</td><td class="text-end text-muted">Royal Enfield</td></tr>
-                                <tr><td class="ps-2 fw-semibold">Site Manager</td><td class="text-center">₹5Cr+</td><td class="text-center fw-bold" class="style-65172">20%</td><td class="text-end text-muted">Car</td></tr>
+                                <tr><td class="ps-2 fw-semibold">Associate</td><td class="text-center">₹10L+</td><td class="text-center fw-bold style-65172">5%</td><td class="text-end text-muted">Mobile</td></tr>
+                                <tr><td class="ps-2 fw-semibold">Sr. Associate</td><td class="text-center">₹35L+</td><td class="text-center fw-bold style-65172">7%</td><td class="text-end text-muted">Tablet</td></tr>
+                                <tr><td class="ps-2 fw-semibold">BDM</td><td class="text-center">₹70L+</td><td class="text-center fw-bold style-65172">10%</td><td class="text-end text-muted">Laptop</td></tr>
+                                <tr><td class="ps-2 fw-semibold">Sr. BDM</td><td class="text-center">₹1.5Cr+</td><td class="text-center fw-bold style-65172">12%</td><td class="text-end text-muted">Tour Package</td></tr>
+                                <tr><td class="ps-2 fw-semibold">Vice President</td><td class="text-center">₹3Cr+</td><td class="text-center fw-bold style-65172">15%</td><td class="text-end text-muted">Bike</td></tr>
+                                <tr><td class="ps-2 fw-semibold">President</td><td class="text-center">₹5Cr+</td><td class="text-center fw-bold style-65172">18%</td><td class="text-end text-muted">Royal Enfield</td></tr>
+                                <tr><td class="ps-2 fw-semibold">Site Manager</td><td class="text-center">₹5Cr+</td><td class="text-center fw-bold style-65172">20%</td><td class="text-end text-muted">Car</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -142,14 +142,14 @@
             </div>
             <div class="col-lg-4 col-md-6">
                 <div class="pillar-card">
-                    <div class="pillar-icon" class="style-77533"><i class="fas fa-heartbeat"></i></div>
+                    <div class="pillar-icon style-77533"><i class="fas fa-heartbeat"></i></div>
                     <h5 class="fw-bold mb-2">Free Insurance Cover</h5>
                     <p class="text-muted small">We care for your family's security. All active partners receive free health, life, and accident insurance coverage.</p>
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
                 <div class="pillar-card">
-                    <div class="pillar-icon" class="style-82660"><i class="fas fa-graduation-cap"></i></div>
+                    <div class="pillar-icon style-82660"><i class="fas fa-graduation-cap"></i></div>
                     <h5 class="fw-bold mb-2">Training &amp; Certification</h5>
                     <p class="text-muted small">No experience? No problem! Our 7-day induction program and skill workshops turn you into a sales and property expert.</p>
                 </div>
@@ -161,7 +161,7 @@
             <div class="col-12">
                 <div class="pillar-card">
                     <div class="d-flex align-items-center mb-3">
-                        <div class="pillar-icon me-3" class="style-75102"><i class="fas fa-crown"></i></div>
+                        <div class="pillar-icon me-3 style-75102"><i class="fas fa-crown"></i></div>
                         <div>
                             <h4 class="fw-bold mb-0"><?= __('home_mlm_benefits', null, 'MLM Network Benefits') ?></h4>
                             <p class="text-muted small mb-0"><?= __('home_mlm_benefits_desc', null, 'Build your network and earn residual commission on their sales. 7 rank structure — earning increases with every rank!') ?></p>
@@ -179,13 +179,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr><td class="ps-2 fw-semibold">Associate</td><td class="text-center">₹10L</td><td class="text-center fw-bold" class="style-65172">5%</td><td class="text-center text-muted">—</td><td class="text-end text-muted">Mobile</td></tr>
-                                <tr><td class="ps-2 fw-semibold">Sr. Associate</td><td class="text-center">₹35L</td><td class="text-center fw-bold" class="style-65172">7%</td><td class="text-center text-muted">₹5,000/mo</td><td class="text-end text-muted">Tablet</td></tr>
-                                <tr><td class="ps-2 fw-semibold">BDM</td><td class="text-center">₹70L</td><td class="text-center fw-bold" class="style-65172">10%</td><td class="text-center text-muted">₹15,000/mo</td><td class="text-end text-muted">Laptop</td></tr>
-                                <tr><td class="ps-2 fw-semibold">Sr. BDM</td><td class="text-center">₹1.5Cr</td><td class="text-center fw-bold" class="style-65172">12%</td><td class="text-center text-muted">₹35,000/mo</td><td class="text-end text-muted">Tour Package</td></tr>
-                                <tr><td class="ps-2 fw-semibold">Vice President</td><td class="text-center">₹3Cr</td><td class="text-center fw-bold" class="style-65172">15%</td><td class="text-center text-muted">₹75,000/mo</td><td class="text-end text-muted">Bike</td></tr>
-                                <tr><td class="ps-2 fw-semibold">President</td><td class="text-center">₹5Cr</td><td class="text-center fw-bold" class="style-65172">18%</td><td class="text-center text-muted">₹1,50,000/mo</td><td class="text-end text-muted">Royal Enfield</td></tr>
-                                <tr><td class="ps-2 fw-semibold">Site Manager</td><td class="text-center">₹5Cr+</td><td class="text-center fw-bold" class="style-65172">20%</td><td class="text-center text-muted">₹3,00,000/mo</td><td class="text-end text-muted">Car</td></tr>
+                                <tr><td class="ps-2 fw-semibold">Associate</td><td class="text-center">₹10L</td><td class="text-center fw-bold style-65172">5%</td><td class="text-center text-muted">—</td><td class="text-end text-muted">Mobile</td></tr>
+                                <tr><td class="ps-2 fw-semibold">Sr. Associate</td><td class="text-center">₹35L</td><td class="text-center fw-bold style-65172">7%</td><td class="text-center text-muted">₹5,000/mo</td><td class="text-end text-muted">Tablet</td></tr>
+                                <tr><td class="ps-2 fw-semibold">BDM</td><td class="text-center">₹70L</td><td class="text-center fw-bold style-65172">10%</td><td class="text-center text-muted">₹15,000/mo</td><td class="text-end text-muted">Laptop</td></tr>
+                                <tr><td class="ps-2 fw-semibold">Sr. BDM</td><td class="text-center">₹1.5Cr</td><td class="text-center fw-bold style-65172">12%</td><td class="text-center text-muted">₹35,000/mo</td><td class="text-end text-muted">Tour Package</td></tr>
+                                <tr><td class="ps-2 fw-semibold">Vice President</td><td class="text-center">₹3Cr</td><td class="text-center fw-bold style-65172">15%</td><td class="text-center text-muted">₹75,000/mo</td><td class="text-end text-muted">Bike</td></tr>
+                                <tr><td class="ps-2 fw-semibold">President</td><td class="text-center">₹5Cr</td><td class="text-center fw-bold style-65172">18%</td><td class="text-center text-muted">₹1,50,000/mo</td><td class="text-end text-muted">Royal Enfield</td></tr>
+                                <tr><td class="ps-2 fw-semibold">Site Manager</td><td class="text-center">₹5Cr+</td><td class="text-center fw-bold style-65172">20%</td><td class="text-center text-muted">₹3,00,000/mo</td><td class="text-end text-muted">Car</td></tr>
                             </tbody>
                         </table>
                     </div>

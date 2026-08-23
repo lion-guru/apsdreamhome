@@ -26,8 +26,8 @@ $page_title = $page_title ?? 'Performance Reviews';
                                 <td><?= htmlspecialchars($r['actual_value'] ?? '') ?></td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <div class="progress flex-grow-1 me-2" class="style-22349">
-                                            <div class="progress-bar bg-<?= ($r['achievement_percentage'] ?? 0) >= 100 ? 'success' : (($r['achievement_percentage'] ?? 0) >= 80 ? 'warning' : 'danger') ?>" class="style-81199"></div>
+                                        <div class="progress flex-grow-1 me-2 style-22349">
+                                            <div class="progress-bar bg-<?= ($r['achievement_percentage'] ?? 0) >= 100 ? 'success' : (($r['achievement_percentage'] ?? 0) >= 80 ? 'warning' : 'danger') ?> style-81199"></div>
                                         </div>
                                         <small><?= htmlspecialchars($r['achievement_percentage'] ?? '0') ?>%</small>
                                     </div>

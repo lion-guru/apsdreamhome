@@ -91,7 +91,7 @@ $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0
         </div>
         <div class="mt-3">
             <div class="d-flex justify-content-between small text-muted"><span><?= __('sale_collection_progress') ?></span><span><?= $progressPct ?>%</span></div>
-            <div class="progress" class="style-32124"><div class="progress-bar bg-success" class="style-39132"></div></div>
+            <div class="progress style-32124"><div class="progress-bar bg-success style-39132"></div></div>
         </div>
     </div>
 </div>

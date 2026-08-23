@@ -173,6 +173,7 @@
             100% { transform: rotate(360deg); }
         }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
     <div class="role-card">

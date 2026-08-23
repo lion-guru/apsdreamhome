@@ -5,7 +5,7 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1" class="style-613"><i class="fas fa-handshake me-2"></i>My Deals</h4>
+        <h4 class="mb-1 style-613"><i class="fas fa-handshake me-2"></i>My Deals</h4>
         <p class="text-muted mb-0">Track your bookings and closed deals</p>
     </div>
     <div class="d-flex gap-2">
@@ -29,7 +29,7 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
         <div class="card border-0 shadow-sm h-100">
             <div class="card-body text-center">
                 <div class="style-38412">
-                    <i class="fas fa-rupee-sign fa-lg" class="style-93945"></i>
+                    <i class="fas fa-rupee-sign fa-lg style-93945"></i>
                 </div>
                 <h3 class="style-613">₹<?= number_format($totalValue) ?></h3>
                 <p class="text-muted mb-0">Total Deal Value</p>
@@ -40,7 +40,7 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
         <div class="card border-0 shadow-sm h-100">
             <div class="card-body text-center">
                 <div class="style-20512">
-                    <i class="fas fa-check-circle fa-lg" class="style-8693"></i>
+                    <i class="fas fa-check-circle fa-lg style-8693"></i>
                 </div>
                 <h3 class="style-46545"><?= e($confirmed) ?></h3>
                 <p class="text-muted mb-0">Confirmed</p>
@@ -51,7 +51,7 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
         <div class="card border-0 shadow-sm h-100">
             <div class="card-body text-center">
                 <div class="style-83109">
-                    <i class="fas fa-clock fa-lg" class="style-44353"></i>
+                    <i class="fas fa-clock fa-lg style-44353"></i>
                 </div>
                 <h3 class="style-36030"><?= e($pending) ?></h3>
                 <p class="text-muted mb-0">Pending</p>
@@ -64,7 +64,7 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 <div class="card border-0 shadow-sm">
     <div class="card-body text-center py-5">
         <div class="style-84169">
-            <i class="fas fa-handshake fa-2x" class="style-93945"></i>
+            <i class="fas fa-handshake fa-2x style-93945"></i>
         </div>
         <h5 class="text-muted">No deals yet</h5>
         <p class="text-muted mb-0">Your bookings and deals will appear here</p>
@@ -77,11 +77,11 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
             <table class="table table-hover align-middle mb-0">
                 <thead class="style-15087">
                     <tr>
-                        <th class="px-3 py-3" class="style-83276">Property</th>
-                        <th class="px-3 py-3" class="style-83276">Customer</th>
-                        <th class="px-3 py-3" class="style-83276">Amount</th>
-                        <th class="px-3 py-3" class="style-83276">Status</th>
-                        <th class="px-3 py-3" class="style-83276">Date</th>
+                        <th class="px-3 py-3 style-83276">Property</th>
+                        <th class="px-3 py-3 style-83276">Customer</th>
+                        <th class="px-3 py-3 style-83276">Amount</th>
+                        <th class="px-3 py-3 style-83276">Status</th>
+                        <th class="px-3 py-3 style-83276">Date</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -90,13 +90,13 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
                         <td class="px-3">
                             <div class="d-flex align-items-center">
                                 <div class="style-37482">
-                                    <i class="fas fa-home" class="style-10117"></i>
+                                    <i class="fas fa-home style-10117"></i>
                                 </div>
                                 <strong><?= htmlspecialchars($deal['property_title'] ?? 'Property #' . ($deal['plot_id'] ?? '')) ?></strong>
                             </div>
                         </td>
                         <td class="px-3"><?= htmlspecialchars($deal['customer_name'] ?? '-') ?></td>
-                        <td class="px-3 fw-bold" class="style-93945">₹<?= number_format($deal['total_amount'] ?? $deal['booking_amount'] ?? 0) ?></td>
+                        <td class="px-3 fw-bold style-93945">₹<?= number_format($deal['total_amount'] ?? $deal['booking_amount'] ?? 0) ?></td>
                         <td class="px-3">
                             <?php
                             $status = $deal['status'] ?? 'pending';

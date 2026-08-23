@@ -58,12 +58,12 @@ ob_start();
                                 </div>
                             <?php else: ?>
                                 <div class="d-flex mb-2 <?= $isAgent ? 'justify-content-end' : '' ?>">
-                                    <div class="p-2 px-3 rounded shadow-sm" class="style-98554">
+                                    <div class="p-2 px-3 rounded shadow-sm style-98554">
                                         <?php if ($m['sender_type'] !== 'agent' && $m['sender_name']): ?>
-                                            <small class="d-block <?= $isAgent ? 'text-white-50' : 'text-muted' ?>" class="style-62191"><?= htmlspecialchars($m['sender_name'] ?? '') ?></small>
+                                            <small class="d-block <?= $isAgent ? 'text-white-50' : 'text-muted' ?> style-62191"><?= htmlspecialchars($m['sender_name'] ?? '') ?></small>
                                         <?php endif; ?>
                                         <div class="style-19219"><?= htmlspecialchars($m['message'] ?? '') ?></div>
-                                        <small class="d-block <?= $isAgent ? 'text-white-50' : 'text-muted' ?>" class="style-32173">
+                                        <small class="d-block <?= $isAgent ? 'text-white-50' : 'text-muted' ?> style-32173">
                                             <?= date('H:i', strtotime($m['created_at'])) ?>
                                         </small>
                                     </div>
@@ -102,7 +102,7 @@ ob_start();
                     <p class="small mb-1"><strong>Created:</strong> <?= date('M j, H:i', strtotime($session['created_at'])) ?></p>
                     <p class="small mb-1"><strong>Source:</strong> <?= htmlspecialchars($session['source'] ?? '') ?></p>
                     <?php if ($session['page_url']): ?>
-                        <p class="small mb-1"><strong>Page:</strong> <a href="<?= htmlspecialchars($session['page_url'] ?? '') ?>" target="_blank" class="text-truncate d-block" class="style-65684"><?= htmlspecialchars($session['page_url'] ?? '') ?></a></p>
+                        <p class="small mb-1"><strong>Page:</strong> <a href="<?= htmlspecialchars($session['page_url'] ?? '') ?>" target="_blank" class="text-truncate d-block style-65684"><?= htmlspecialchars($session['page_url'] ?? '') ?></a></p>
                     <?php endif; ?>
                     <p class="small mb-1"><strong>IP:</strong> <?= htmlspecialchars($session['ip_address'] ?: '—') ?></p>
                     <p class="small mb-1"><strong>Country:</strong> <?= htmlspecialchars($session['country'] ?: '—') ?></p>
@@ -170,7 +170,7 @@ function appendMessage(senderType, senderName, message, isInternal) {
     } else {
         const align = senderType === 'agent' ? 'justify-content-end' : '';
         const bg = senderType === 'agent' ? 'background:#007bff;color:white;' : 'background:white;border:1px solid #dee2e6;';
-        messagesContainer.insertAdjacentHTML('beforeend', `<div class="d-flex mb-2 ${align}"><div class="p-2 px-3 rounded shadow-sm" class="style-64326"><div class="style-19219">${escapeHtml(message)}</div><small class="d-block text-white-50" class="style-32173">${new Date().toLocaleTimeString()}</small></div></div>`);
+        messagesContainer.insertAdjacentHTML('beforeend', `<div class="d-flex mb-2 ${align}"><div class="p-2 px-3 rounded shadow-sm style-64326"><div class="style-19219">${escapeHtml(message)}</div><small class="d-block text-white-50 style-32173">${new Date().toLocaleTimeString()}</small></div></div>`);
     }
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }

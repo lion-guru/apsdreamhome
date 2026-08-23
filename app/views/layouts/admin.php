@@ -78,6 +78,7 @@ $GLOBALS['_html_doc_started'] = true;
         .nav-pills .nav-link.active { background: var(--tenant-primary); }
     </style>
     <?php endif; ?>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=2">
 </head>
 
 <body>
@@ -85,8 +86,8 @@ $GLOBALS['_html_doc_started'] = true;
     <a href="#aps-main-content" class="aps-skip-link">Skip to main content</a>
 
     <!-- Sidebar Toggle Button (Mobile) -->
-    <button class="sidebar-toggle" onclick="APS.toggleSidebar()">
-        <i class="fas fa-bars"></i>
+    <button class="sidebar-toggle" onclick="APS.toggleSidebar()" aria-label="Toggle sidebar menu">
+        <i class="fas fa-bars" aria-hidden="true"></i>
     </button>
 
         <!-- CRITICAL: Sidebar functions in HEAD - load before body -->
@@ -256,7 +257,7 @@ $GLOBALS['_html_doc_started'] = true;
                     <i class="fas fa-moon" id="darkModeIcon"></i>
                 </button>
 
-                <!-- Notifications (Leads) — replaced by notification-system.js -->
+                <!-- Notifications (Leads) â€” replaced by notification-system.js -->
                 <button class="nav-icon" id="notification-bell-placeholder" onclick="toggleNotifications()" title="New Leads Today">
                     <i class="fas fa-bell"></i>
                     <span class="badge"><?php echo e($newLeadsCount); ?></span>
@@ -269,14 +270,14 @@ $GLOBALS['_html_doc_started'] = true;
                 </button>
 
                 <!-- Profile Dropdown (Bootstrap native) -->
-                <div class="dropdown" class="style-98881">
+                <div class="dropdown style-98881">
                     <div class="user-box dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" class="style-10432">
                         <div class="user-avatar"><?php echo strtoupper(substr($adminName, 0, 1)); ?></div>
                         <div class="user-info">
                             <div class="user-name"><?php echo htmlspecialchars($adminName ?? ''); ?></div>
                             <div class="user-role"><?php echo ucfirst(str_replace('_', ' ', $adminRole)); ?></div>
                         </div>
-                        <i class="fas fa-chevron-down" class="style-40544"></i>
+                        <i class="fas fa-chevron-down style-40544"></i>
                     </div>
 
                     <ul class="dropdown-menu dropdown-menu-end">
@@ -316,7 +317,7 @@ $GLOBALS['_html_doc_started'] = true;
             <?php endif; ?>
 
             <?php
-            // Tenant status banner — read-only mode for suspended/cancelled tenants
+            // Tenant status banner â€” read-only mode for suspended/cancelled tenants
             $tenantBanner = null;
             if (class_exists('\App\Core\Middleware\TenantContext') && class_exists('\App\Services\TenantService')) {
                 try {
@@ -332,7 +333,7 @@ $GLOBALS['_html_doc_started'] = true;
             ?>
             <?php if ($tenantBanner === 'suspended'): ?>
                 <div class="style-65947">
-                    <i class="fas fa-ban" class="style-16439"></i>
+                    <i class="fas fa-ban style-16439"></i>
                     <div>
                         <strong>Account Suspended</strong>
                         <div class="style-97548">Your account has been suspended. All create/edit/delete operations are disabled. Contact support to restore access.</div>
@@ -340,7 +341,7 @@ $GLOBALS['_html_doc_started'] = true;
                 </div>
             <?php elseif ($tenantBanner === 'cancelled'): ?>
                 <div class="style-10618">
-                    <i class="fas fa-times-circle" class="style-16439"></i>
+                    <i class="fas fa-times-circle style-16439"></i>
                     <div>
                         <strong>Account Cancelled</strong>
                         <div class="style-97548">Your subscription has been cancelled. Your data is in read-only mode. Contact support to reactivate.</div>
@@ -348,7 +349,7 @@ $GLOBALS['_html_doc_started'] = true;
                 </div>
             <?php elseif ($tenantBanner === 'trial_expired'): ?>
                 <div class="style-28179">
-                    <i class="fas fa-clock" class="style-16439"></i>
+                    <i class="fas fa-clock style-16439"></i>
                     <div>
                         <strong>Trial Expired</strong>
                         <div class="style-97548">Your free trial has expired. Upgrade your plan to continue creating and editing data. <a href="<?= $base ?>/admin/billing" class="style-25944">View Plans</a></div>
@@ -557,7 +558,7 @@ $GLOBALS['_html_doc_started'] = true;
         </div>
 
         <script>
-        /* APS Confirm Modal — replaces native confirm() across admin panel
+        /* APS Confirm Modal â€” replaces native confirm() across admin panel
          * Usage: apsConfirm('Delete this item?').then(ok => { if (ok) ... })
          * Options: { title, confirmText, confirmClass, icon, iconColor }
          */

@@ -28,10 +28,10 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
     <!-- Stats -->
     <div class="row mb-4">
         <div class="col-md-2"><div class="stat-mini"><div class="num"><?= $totalListings ?></div><div class="lbl">Total Listings</div></div></div>
-        <div class="col-md-2"><div class="stat-mini" class="style-1293"><div class="num"><?= $featuredListings ?></div><div class="lbl">Featured</div></div></div>
-        <div class="col-md-2"><div class="stat-mini" class="style-41761"><div class="num"><?= $premiumListings ?></div><div class="lbl">Premium</div></div></div>
-        <div class="col-md-2"><div class="stat-mini" class="style-68340"><div class="num"><?= $totalInquiries ?></div><div class="lbl">Inquiries</div></div></div>
-        <div class="col-md-2"><div class="stat-mini" class="style-75766"><div class="num"><?= $totalMessages ?></div><div class="lbl">Messages</div></div></div>
+        <div class="col-md-2"><div class="stat-mini style-1293"><div class="num"><?= $featuredListings ?></div><div class="lbl">Featured</div></div></div>
+        <div class="col-md-2"><div class="stat-mini style-41761"><div class="num"><?= $premiumListings ?></div><div class="lbl">Premium</div></div></div>
+        <div class="col-md-2"><div class="stat-mini style-68340"><div class="num"><?= $totalInquiries ?></div><div class="lbl">Inquiries</div></div></div>
+        <div class="col-md-2"><div class="stat-mini style-75766"><div class="num"><?= $totalMessages ?></div><div class="lbl">Messages</div></div></div>
     </div>
 
     <div class="row">

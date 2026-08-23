@@ -71,7 +71,7 @@ $pendingTds = $pendingTds ?? 0;
                                         <td><?= htmlspecialchars($r['quarter'] ?? '') ?></td>
                                         <td><?= $r['year'] ?></td>
                                         <td>
-                                            <div class="progress" class="style-32026"><div class="progress-bar bg-<?= $r['progress_percent'] >= 70 ? 'success' : 'warning' ?>" class="style-47424"></div></div>
+                                            <div class="progress style-32026"><div class="progress-bar bg-<?= $r['progress_percent'] >= 70 ? 'success' : 'warning' ?> style-47424"></div></div>
                                             <small><?= $r['progress_percent'] ?>%</small>
                                         </td>
                                         <td>₹<?= number_format($r['amount_withdrawn']) ?></td>

@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       // Submit newsletter subscription
       apsUtils
-        .ajax('/api/newsletter/subscribe', {
+        .ajax('/api/newsletter', {
           method: 'POST',
           body: JSON.stringify({ email: email }),
         })

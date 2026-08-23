@@ -30,7 +30,7 @@
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Departments</h6></div>
-                <div class="card-body aps-cp-card-body"><div class="bg-light rounded d-flex align-items-center justify-content-center" class="style-48982"><p class="text-muted mb-0"><i class="fas fa-chart-pie me-2"></i>Department chart</p></div></div>
+                <div class="card-body aps-cp-card-body"><div class="bg-light rounded d-flex align-items-center justify-content-center style-48982"><p class="text-muted mb-0"><i class="fas fa-chart-pie me-2"></i>Department chart</p></div></div>
             </div>
         </div>
     </div>

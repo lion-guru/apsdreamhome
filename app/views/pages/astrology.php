@@ -3,7 +3,7 @@ $page_title = 'Astrology & Property - APS Dream Home';
 $page_description = 'Explore how Vedic astrology influences property selection and investment timing. Get personalized astrological guidance for your dream home.';
 ?>
 <!-- Hero Section -->
-<section class="hero-section text-white text-center py-5" class="style-75379">
+<section class="hero-section text-white text-center py-5 style-75379">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
@@ -64,7 +64,7 @@ $page_description = 'Explore how Vedic astrology influences property selection a
             <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body text-center p-4">
-                        <div class="icon-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3" class="style-84502">
+                        <div class="icon-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3 style-84502">
                             <i class="fas fa-star display-5"></i>
                         </div>
                         <h4>Lagna (Ascendant)</h4>
@@ -75,7 +75,7 @@ $page_description = 'Explore how Vedic astrology influences property selection a
             <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body text-center p-4">
-                        <div class="icon-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3" class="style-84502">
+                        <div class="icon-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3 style-84502">
                             <i class="fas fa-home display-5"></i>
                         </div>
                         <h4>4th House</h4>
@@ -86,7 +86,7 @@ $page_description = 'Explore how Vedic astrology influences property selection a
             <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body text-center p-4">
-                        <div class="icon-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3" class="style-84502">
+                        <div class="icon-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3 style-84502">
                             <i class="fas fa-gem display-5"></i>
                         </div>
                         <h4>Jupiter (Guru)</h4>
@@ -163,7 +163,7 @@ $page_description = 'Explore how Vedic astrology influences property selection a
                         <div class="position-relative">
                             <?php $imgRaw = $colony['image_path'] ?? 'assets/images/default-banner.jpg';
                                   $imgSrc = (str_starts_with($imgRaw, 'http://') || str_starts_with($imgRaw, 'https://')) ? $imgRaw : BASE_URL . '/' . $imgRaw; ?>
-                            <img src="<?= htmlspecialchars($imgSrc ?? '') ?>" alt="<?= htmlspecialchars($colony['name'] ?? '') ?>" class="card-img-top" class="style-58348">
+                            <img src="<?= htmlspecialchars($imgSrc ?? '') ?>" alt="<?= htmlspecialchars($colony['name'] ?? '') ?>" class="card-img-top style-58348">
                             <span class="badge bg-info text-dark position-absolute top-0 end-0 m-2">Astrology OK</span>
                         </div>
                         <div class="card-body">

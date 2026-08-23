@@ -74,7 +74,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
   .quickview-panel::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:2px; }
 </style>
 
-<div class="container-fluid py-3" class="style-21816">
+<div class="container-fluid py-3 style-21816">
   <!-- Header -->
   <div class="d-flex justify-content-between align-items-center mb-3 flex-shrink-0">
     <div>
@@ -114,7 +114,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
 
         <div class="ms-auto d-flex gap-2 align-items-center">
           <!-- Filter: Assigned To -->
-          <select id="filterAssignee" class="form-select form-select-sm" class="style-90031">
+          <select id="filterAssignee" class="form-select form-select-sm style-90031">
             <option value="">All Assignees</option>
             <?php foreach ($users as $u): ?>
               <option value="<?= (int)$u['id'] ?>" <?= ($currentFilters['assigned_to'] ?? '') == $u['id'] ? 'selected' : '' ?>><?= htmlspecialchars($u['name'] ?? '') ?></option>
@@ -122,7 +122,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
           </select>
 
           <!-- Filter: Source -->
-          <select id="filterSource" class="form-select form-select-sm" class="style-90031">
+          <select id="filterSource" class="form-select form-select-sm style-90031">
             <option value="">All Sources</option>
             <?php foreach ($sources as $src): ?>
               <option value="<?= htmlspecialchars($src ?? '') ?>" <?= ($currentFilters['source'] ?? '') === $src ? 'selected' : '' ?>><?= ucfirst(htmlspecialchars($src ?? '')) ?></option>
@@ -147,9 +147,9 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
       $stageVal  = $col['total_value'];
     ?>
       <div class="pipeline-col" data-stage="<?= htmlspecialchars($slug ?? '') ?>">
-        <div class="col-header" class="style-71574">
+        <div class="col-header style-71574">
           <div class="d-flex align-items-center">
-            <span class="stage-dot" class="style-96004"></span>
+            <span class="stage-dot style-96004"></span>
             <span class="col-header-text col-title"><?= htmlspecialchars($label ?? '') ?></span>
             <span class="col-count col-count-badge"><?= $count ?></span>
           </div>
@@ -427,7 +427,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
         let interactions = '';
         if (lead.interactions && lead.interactions.length > 0) {
           interactions = lead.interactions.slice(0, 5).map(i =>
-            '<div class="d-flex gap-2 mb-2" class="style-20427">' +
+            '<div class="d-flex gap-2 mb-2 style-20427">' +
             '<span class="badge bg-secondary">' + (i.interaction_type || 'note') + '</span>' +
             '<span class="text-muted">' + (i.subject || i.body || '') + '</span>' +
             '</div>'
@@ -437,7 +437,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
         content.innerHTML = `
           <div class="d-flex justify-content-between align-items-start mb-3">
             <div>
-              <h5 class="mb-1" class="style-96443"><?= $base ?>` + name + `</h5>
+              <h5 class="mb-1 style-96443"><?= $base ?>` + name + `</h5>
               <small class="text-muted">${company ? company + ' Â· ' : ''}${city || ''}</small>
             </div>
             <button class="btn btn-sm btn-outline-secondary" onclick="closeQuickView()" aria-label="Close"><i class="fas fa-times"></i></button>
@@ -465,7 +465,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
             </div>
             <div class="col-4">
               <small class="text-muted d-block">Stage</small>
-              <span class="badge" class="style-98566">${status}</span>
+              <span class="badge style-98566">${status}</span>
             </div>
             <div class="col-4">
               <small class="text-muted d-block">Source</small>

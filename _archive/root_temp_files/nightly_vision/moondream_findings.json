@@ -1,0 +1,206 @@
+[
+  {
+    "tag": "public__home",
+    "url": "http://localhost/apsdreamhome/",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "public__properties",
+    "url": "http://localhost/apsdreamhome/properties",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "public__plots",
+    "url": "http://localhost/apsdreamhome/plots",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "public__projects",
+    "url": "http://localhost/apsdreamhome/projects",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "public__services",
+    "url": "http://localhost/apsdreamhome/services",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "public__about",
+    "url": "http://localhost/apsdreamhome/about",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "public__team",
+    "url": "http://localhost/apsdreamhome/team",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "public__blog",
+    "url": "http://localhost/apsdreamhome/blog",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "public__news",
+    "url": "http://localhost/apsdreamhome/news",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "public__contact",
+    "url": "http://localhost/apsdreamhome/contact",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "public__careers",
+    "url": "http://localhost/apsdreamhome/careers",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "public__faq",
+    "url": "http://localhost/apsdreamhome/faq",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "public__calc",
+    "url": "http://localhost/apsdreamhome/calc",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "public__compare",
+    "url": "http://localhost/apsdreamhome/compare",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "public__testimonials",
+    "url": "http://localhost/apsdreamhome/testimonials",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "public__tools_hub",
+    "url": "http://localhost/apsdreamhome/tools-hub",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "public__privacy",
+    "url": "http://localhost/apsdreamhome/privacy",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "public__terms",
+    "url": "http://localhost/apsdreamhome/terms",
+    "issues": "1. No issues",
+    "raw": "1. No issues"
+  },
+  {
+    "tag": "admin__admin_dashboard",
+    "url": "http://localhost/apsdreamhome/admin/erp",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "admin__admin_erp",
+    "url": "http://localhost/apsdreamhome/admin/erp",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "admin__admin_users",
+    "url": "http://localhost/apsdreamhome/admin/users",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "admin__admin_properties",
+    "url": "http://localhost/apsdreamhome/admin/properties",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "admin__admin_plots",
+    "url": "http://localhost/apsdreamhome/admin/plots",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "admin__admin_mlm",
+    "url": "http://localhost/apsdreamhome/admin/mlm",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "admin__admin_finance",
+    "url": "http://localhost/apsdreamhome/admin/finance",
+    "issues": "No issues",
+    "raw": "No issues"
+  },
+  {
+    "tag": "admin__admin_sales_bookings",
+    "url": "http://localhost/apsdreamhome/admin/sales/bookings",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "admin__admin_leads",
+    "url": "http://localhost/apsdreamhome/admin/leads",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "admin__admin_settings",
+    "url": "http://localhost/apsdreamhome/admin/settings",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "customer__user_dashboard",
+    "url": "http://localhost/apsdreamhome/user/dashboard",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "customer__user_properties",
+    "url": "http://localhost/apsdreamhome/user/properties",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "customer__user_inquiries",
+    "url": "http://localhost/apsdreamhome/user/inquiries",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "customer__user_profile",
+    "url": "http://localhost/apsdreamhome/user/profile",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "associate__associate_dashboard",
+    "url": "http://localhost/apsdreamhome/associate/dashboard",
+    "issues": null,
+    "raw": ""
+  },
+  {
+    "tag": "agent__agent_dashboard",
+    "url": "http://localhost/apsdreamhome/agent/dashboard",
+    "issues": null,
+    "raw": ""
+  }
+]

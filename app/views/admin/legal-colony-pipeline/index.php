@@ -101,7 +101,7 @@ $stages       = $stages ?? [];
         $stageColors = ['warning', 'info', 'primary', 'danger', 'secondary', 'success', 'dark'];
         foreach ($stageKeys as $i => $sk): ?>
           <div class="text-center flex-fill">
-            <div class="rounded-circle bg-<?= $stageColors[$i] ?> d-inline-flex align-items-center justify-content-center mb-1" class="style-75848">
+            <div class="rounded-circle bg-<?= $stageColors[$i] ?> d-inline-flex align-items-center justify-content-center mb-1 style-75848">
               <i class="fas <?= $stageIcons[$i] ?> text-white"></i>
             </div>
             <div class="small fw-bold text-<?= $stageColors[$i] ?>"><?= $stageLabels[$i] ?></div>
@@ -215,17 +215,17 @@ function autoAdvance() {
                       $color = $health['grade_color'];
                   ?>
                     <div class="d-flex align-items-center gap-2">
-                      <div class="position-relative" class="style-39775">
+                      <div class="position-relative style-39775">
                         <svg viewBox="0 0 36 36" class="w-100 h-100">
                           <circle cx="18" cy="18" r="15.915" fill="none" stroke="#333" stroke-width="2.5"/>
                           <circle cx="18" cy="18" r="15.915" fill="none" stroke="<?= $color ?>" stroke-width="2.5"
                             stroke-dasharray="<?= $score ?> <?= 100 - $score ?>"
                             stroke-dashoffset="25" stroke-linecap="round"/>
                         </svg>
-                        <span class="position-absolute top-50 start-50 translate-middle fw-bold small" class="style-59543"><?= $letter ?></span>
+                        <span class="position-absolute top-50 start-50 translate-middle fw-bold small style-59543"><?= $letter ?></span>
                       </div>
                       <div>
-                        <span class="fw-bold" class="style-2221"><?= $score ?>%</span>
+                        <span class="fw-bold style-2221"><?= $score ?>%</span>
                         <?php if ($health['risks'] > 0): ?>
                           <br><small class="text-danger" title="<?= htmlspecialchars($health['top_risk'] ?? '') ?>">
                             <i class="fas fa-exclamation-triangle"></i> <?= $health['risks'] ?> risk<?= $health['risks'] > 1 ? 's' : '' ?>

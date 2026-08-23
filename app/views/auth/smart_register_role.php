@@ -45,6 +45,7 @@ $base = BASE_URL;
         .skip-link a:hover { color: #94a3b8; }
         @media (max-width: 480px) { .card { padding: 20px; } .role-grid { grid-template-columns: 1fr; gap: 8px; } .role-card { padding: 14px; display: flex; align-items: center; text-align: left; gap: 12px; } .role-card .icon { margin: 0; } }
     </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
     <div class="container">

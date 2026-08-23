@@ -9,7 +9,7 @@ $pagination = $pagination ?? [];
 ?>
 
 <!-- Hero Section -->
-<section class="resell-hero text-center" class="style-66359">
+<section class="resell-hero text-center style-66359">
     <div class="container">
         <div class="row">
             <div class="col-lg-8 mx-auto">
@@ -52,7 +52,7 @@ $pagination = $pagination ?? [];
 
 <!-- Filters Section -->
 <section class="container mt-n5 position-relative z-index-2">
-    <div class="resell-filter-section shadow-sm bg-white p-4 rounded-3" class="style-50828">
+    <div class="resell-filter-section shadow-sm bg-white p-4 rounded-3 style-50828">
         <form action="<?= BASE_URL ?>/resell" method="GET" class="row g-3">
     <?php echo CSRFProtection::csrfField(); ?>
             <div class="col-md-4">
