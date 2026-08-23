@@ -166,9 +166,10 @@ class PropertyFeaturesController extends AdminController
         $this->redirect('/admin/property-features/maintenance/' . $id);
     }
 
-    public function assignMaintenance($id)
+    public function assignMaintenance()
     {
         $this->requireAdmin();
+        $id = (int)($_POST['id'] ?? 0);
 
         $assignedTo = (int)($_POST['assigned_to'] ?? 0);
         if ($assignedTo <= 0) {

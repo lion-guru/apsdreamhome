@@ -229,9 +229,19 @@ class LegalAdvisorController extends BaseController
     /**
      * Review legal document
      */
-    public function reviewDocument($documentId, $reviewData)
+    public function reviewDocument()
     {
         try {
+            $documentId = (int)($_POST['document_id'] ?? 0);
+            $reviewData = [
+                'status' => $_POST['status'] ?? '',
+                'review_notes' => $_POST['review_notes'] ?? '',
+            ];
+
+            if ($documentId <= 0 || $reviewData['status'] === '') {
+                return ['success' => false, 'message' => 'Document ID and status are required'];
+            }
+
             // Get document details
             $docQuery = "SELECT * FROM legal_documents WHERE id = ? AND created_by = ?";
             $document = $this->db->fetchOne($docQuery, [$documentId, $this->employeeId]);
@@ -279,9 +289,19 @@ class LegalAdvisorController extends BaseController
     /**
      * Update compliance task
      */
-    public function updateComplianceTask($taskId, $taskData)
+    public function updateComplianceTask()
     {
         try {
+            $taskId = (int)($_POST['task_id'] ?? 0);
+            $taskData = [
+                'status' => $_POST['status'] ?? '',
+                'completion_notes' => $_POST['completion_notes'] ?? '',
+            ];
+
+            if ($taskId <= 0 || $taskData['status'] === '') {
+                return ['success' => false, 'message' => 'Task ID and status are required'];
+            }
+
             // Get task details
             $taskQuery = "SELECT * FROM compliance_tasks WHERE id = ?";
             $task = $this->db->fetchOne($taskQuery, [$taskId]);
@@ -330,9 +350,20 @@ class LegalAdvisorController extends BaseController
     /**
      * Handle legal dispute
      */
-    public function handleDispute($disputeId, $actionData)
+    public function handleDispute()
     {
         try {
+            $disputeId = (int)($_POST['dispute_id'] ?? 0);
+            $actionData = [
+                'status' => $_POST['status'] ?? '',
+                'action_taken' => $_POST['action_taken'] ?? '',
+                'next_action_date' => ($_POST['next_action_date'] ?? '') !== '' ? $_POST['next_action_date'] : null,
+            ];
+
+            if ($disputeId <= 0 || $actionData['status'] === '') {
+                return ['success' => false, 'message' => 'Dispute ID and status are required'];
+            }
+
             // Get dispute details
             $disputeQuery = "SELECT * FROM legal_disputes WHERE id = ?";
             $dispute = $this->db->fetchOne($disputeQuery, [$disputeId]);
@@ -383,17 +414,46 @@ class LegalAdvisorController extends BaseController
     /**
      * Create legal document template
      */
-    public function createDocumentTemplate($templateData)
+    public function createDocumentTemplate()
     {
         try {
+            $templateData = [
+                'title' => trim($_POST['title'] ?? ''),
+                'category' => $_POST['category'] ?? 'general',
+                'content' => $_POST['content'] ?? '',
+                'variables' => [],
+            ];
+            if (!empty($_POST['variables'])) {
+                $decoded = json_decode($_POST['variables'], true);
+                if (is_array($decoded)) {
+                    $templateData['variables'] = $decoded;
+                }
+            }
+
+            if ($templateData['title'] === '' || $templateData['content'] === '') {
+                return ['success' => false, 'message' => 'Title and content are required'];
+            }
+
+            // Resolve category name/slug to legal_document_categories.id (nullable FK)
+            $categoryId = null;
+            if ($templateData['category'] !== '') {
+                $catStmt = $this->db->prepare(
+                    "SELECT id FROM legal_document_categories
+                     WHERE slug = ? OR name = ? LIMIT 1"
+                );
+                $catStmt->execute([$templateData['category'], $templateData['category']]);
+                $categoryId = $catStmt->fetchColumn();
+                $categoryId = $categoryId !== false ? (int)$categoryId : null;
+            }
+
             $query = "INSERT INTO legal_document_templates (
-                        title, category, content, variables, 
+                        name, category_id, content, merge_fields,
                         created_by, created_at, status
                     ) VALUES (?, ?, ?, ?, ?, NOW(), 'active')";
 
             $this->db->execute($query, [
                 $templateData['title'],
-                $templateData['category'],
+                $categoryId,
                 $templateData['content'],
                 json_encode($templateData['variables'] ?? []),
                 $this->employeeId
@@ -424,9 +484,13 @@ class LegalAdvisorController extends BaseController
     /**
      * Generate legal report
      */
-    public function generateLegalReport($reportType, $filters = [])
+    public function generateLegalReport()
     {
         try {
+            $reportType = $_POST['report_type'] ?? $_GET['type'] ?? '';
+            $filters = array_merge($_GET, $_POST);
+            unset($filters['csrf_token'], $filters['report_type']);
+
             switch ($reportType) {
                 case 'compliance_status':
                     return $this->generateComplianceReport($filters);

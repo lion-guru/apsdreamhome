@@ -626,9 +626,16 @@ class EmployeeDashboardController extends BaseController
     /**
      * Update task status
      */
-    public function updateTaskStatus($taskId, $status)
+    public function updateTaskStatus()
     {
         try {
+            $taskId = (int)($_POST['task_id'] ?? 0);
+            $status = $_POST['status'] ?? '';
+
+            if ($taskId <= 0 || $status === '') {
+                return ['success' => false, 'message' => 'Task ID and status are required'];
+            }
+
             $query = "UPDATE tasks 
                       SET status = ?, updated_at = NOW() 
                       WHERE id = ? AND assigned_to = ?";

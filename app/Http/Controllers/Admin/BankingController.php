@@ -86,9 +86,10 @@ class BankingController extends AdminController
         ]);
     }
 
-    public function reconcile($id)
+    public function reconcile()
     {
         $this->requireAdmin();
+        $id = (int)($_POST['id'] ?? 0);
         $status = $_POST['status'] ?? 'reconciled';
         $notes = $_POST['notes'] ?? '';
         $financial_year = $_POST['financial_year'] ?? date('Y') . '-' . (date('Y') + 1);

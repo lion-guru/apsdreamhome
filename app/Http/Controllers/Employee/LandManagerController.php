@@ -259,9 +259,25 @@ class LandManagerController extends BaseController
     /**
      * Schedule site visit
      */
-    public function scheduleSiteVisit($propertyId, $visitData)
+    public function scheduleSiteVisit()
     {
         try {
+            $propertyId = (int)($_POST['property_id'] ?? 0);
+            $visitData = [
+                'visitor' => [
+                    'name' => trim($_POST['visitor_name'] ?? ''),
+                    'phone' => trim($_POST['visitor_phone'] ?? ''),
+                ],
+                'visit_date' => $_POST['visit_date'] ?? date('Y-m-d'),
+                'visit_time' => $_POST['visit_time'] ?? '10:00:00',
+                'purpose' => $_POST['purpose'] ?? 'site_visit',
+                'expected_duration' => (int)($_POST['expected_duration'] ?? 60),
+                'notes' => $_POST['notes'] ?? '',
+            ];
+
+            if ($propertyId <= 0 || $visitData['visit_date'] === '') {
+                return ['success' => false, 'message' => 'Property and visit date are required'];
+            }
             // Validate property assignment
             $propertyQuery = "SELECT id, title, location FROM properties WHERE id = ? AND created_by = ?";
             $property = $this->db->fetchOne($propertyQuery, [$propertyId, $this->employeeId]);
@@ -324,9 +340,19 @@ class LandManagerController extends BaseController
     /**
      * Update land acquisition
      */
-    public function updateAcquisition($acquisitionId, $acquisitionData)
+    public function updateAcquisition()
     {
         try {
+            $acquisitionId = (int)($_POST['acquisition_id'] ?? 0);
+            $acquisitionData = [
+                'status' => $_POST['status'] ?? '',
+                'notes' => $_POST['notes'] ?? '',
+            ];
+
+            if ($acquisitionId <= 0 || $acquisitionData['status'] === '') {
+                return ['success' => false, 'message' => 'Acquisition ID and status are required'];
+            }
+
             // Get acquisition details
             $acquisitionQuery = "SELECT * FROM land_acquisitions WHERE id = ?";
             $acquisition = $this->db->fetchOne($acquisitionQuery, [$acquisitionId]);
@@ -373,9 +399,22 @@ class LandManagerController extends BaseController
     /**
      * Complete site visit
      */
-    public function completeSiteVisit($visitId, $completionData)
+    public function completeSiteVisit()
     {
         try {
+            $visitId = (int)($_POST['visit_id'] ?? 0);
+            $completionData = [
+                'actual_duration' => (int)($_POST['actual_duration'] ?? 0),
+                'rating' => (isset($_POST['rating']) && $_POST['rating'] !== '') ? (int)$_POST['rating'] : null,
+                'feedback_notes' => $_POST['feedback_notes'] ?? '',
+                'outcome' => $_POST['outcome'] ?? '',
+                'next_steps' => $_POST['next_steps'] ?? '',
+            ];
+
+            if ($visitId <= 0) {
+                return ['success' => false, 'message' => 'Visit ID is required'];
+            }
+
             // Get visit details
             $visitQuery = "SELECT sv.*, p.title as property_title
                            FROM site_visits sv
@@ -429,9 +468,33 @@ class LandManagerController extends BaseController
     /**
      * Update property documentation
      */
-    public function updatePropertyDocumentation($propertyId, $documents)
+    public function updatePropertyDocumentation()
     {
         try {
+            $propertyId = (int)($_POST['property_id'] ?? 0);
+            if ($propertyId <= 0) {
+                return ['success' => false, 'message' => 'Property ID is required'];
+            }
+
+            // Accept a JSON array of documents, or fall back to flat single-document fields
+            $documents = [];
+            if (!empty($_POST['documents'])) {
+                $decoded = json_decode($_POST['documents'], true);
+                if (is_array($decoded)) {
+                    $documents = $decoded;
+                }
+            }
+            if (empty($documents) && !empty($_POST['doc_type'])) {
+                $documents[] = [
+                    'type' => $_POST['doc_type'],
+                    'status' => $_POST['doc_status'] ?? 'pending',
+                    'expiry_date' => ($_POST['expiry_date'] ?? '') !== '' ? $_POST['expiry_date'] : null,
+                ];
+            }
+            if (empty($documents)) {
+                return ['success' => false, 'message' => 'No documents provided'];
+            }
+
             // Validate property assignment
             $propertyQuery = "SELECT id, title FROM properties WHERE id = ? AND created_by = ?";
             $property = $this->db->fetchOne($propertyQuery, [$propertyId, $this->employeeId]);
@@ -496,9 +559,13 @@ class LandManagerController extends BaseController
     /**
      * Generate land management report
      */
-    public function generateLandReport($reportType, $filters = [])
+    public function generateLandReport()
     {
         try {
+            $reportType = $_POST['report_type'] ?? $_GET['type'] ?? '';
+            $filters = array_merge($_GET, $_POST);
+            unset($filters['csrf_token'], $filters['report_type']);
+
             switch ($reportType) {
                 case 'property_portfolio':
                     return $this->generatePropertyPortfolioReport($filters);

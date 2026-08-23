@@ -281,9 +281,10 @@ class AdminLoyaltyController extends AdminController
     /**
      * Update redemption status
      */
-    public function updateRedemptionStatus(int $id): void
+    public function updateRedemptionStatus(): void
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
+            $id = (int)($_POST['id'] ?? 0);
             $status = $_POST['status'] ?? '';
             
             $db = \App\Core\Database\Database::getInstance();
