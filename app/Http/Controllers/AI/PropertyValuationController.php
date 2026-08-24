@@ -250,10 +250,12 @@ class PropertyValuationController extends BaseController
      */
     public function apiValuation()
     {
-        // Allow external API access with API key validation
+        // External API callers (X-API-KEY present) must present a valid key.
+        // Browser tool-page requests (/ai-valuation form) are public and skip the key check;
+        // router-level API rate limiting still applies.
         $apiKey = $_SERVER['HTTP_X_API_KEY'] ?? null;
 
-        if (!$apiKey || !$this->validateApiKey($apiKey)) {
+        if ($apiKey !== null && $apiKey !== '' && !in_array($apiKey, $this->validApiKeys(), true)) {
             http_response_code(401);
             $this->jsonResponse([
                 'success' => false,
@@ -262,33 +264,57 @@ class PropertyValuationController extends BaseController
             return;
         }
 
-        $propertyId = $_POST['property_id'] ?? null;
-
-        if (!$propertyId) {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Property ID is required'
-            ]);
-            return;
+        // Accept form-encoded or JSON bodies
+        $input = $_POST;
+        if (empty($input)) {
+            $json = json_decode(file_get_contents('php://input') ?: '', true);
+            if (is_array($json)) {
+                $input = $json;
+            }
         }
 
-        // Generate valuation
-        $result = $this->valuationEngine->generateValuation($propertyId);
+        $propertyId = isset($input['property_id']) ? (int)$input['property_id'] : 0;
 
-        $this->jsonResponse($result);
+        try {
+            if ($propertyId > 0) {
+                $valuation = $this->valuationEngine->generateValuation($propertyId);
+                $this->jsonResponse(['success' => true, 'valuation' => $valuation]);
+                return;
+            }
+
+            if (empty($input['location'])) {
+                $this->jsonResponse([
+                    'success' => false,
+                    'message' => 'Property ID or location is required'
+                ]);
+                return;
+            }
+
+            $valuation = $this->valuationEngine->calculateValuation([
+                'location'   => trim((string)$input['location']),
+                'type'       => trim((string)($input['property_type'] ?? ($input['type'] ?? 'plot'))),
+                'area_sqft'  => (float)($input['area_sqft'] ?? 0),
+                'bedrooms'   => (int)($input['bedrooms'] ?? 0),
+                'bathrooms'  => (int)($input['bathrooms'] ?? 0),
+            ]);
+            $this->jsonResponse(['success' => true, 'valuation' => $valuation]);
+        } catch (\Throwable $e) {
+            error_log("apiValuation failed: " . $e->getMessage());
+            $this->jsonResponse([
+                'success' => false,
+                'message' => 'Valuation failed'
+            ]);
+        }
     }
 
     /**
-     * Validate API key
+     * Valid external API keys
      */
-    private function validateApiKey($apiKey)
+    private function validApiKeys(): array
     {
-        // Implement API key validation logic
-        $validKeys = [
+        return [
             'aps2024-ai-key-1',
             'aps2024-ai-key-2'
         ];
-
-        return in_array($apiKey, $validKeys);
     }
 }

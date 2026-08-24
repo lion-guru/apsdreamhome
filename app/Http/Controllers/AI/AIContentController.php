@@ -25,6 +25,30 @@ class AIContentController extends BaseController
         $this->generator = new MarketingContentGenerator();
     }
 
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Accept form-encoded or JSON bodies (views post JSON.stringify payloads),
+     * unwrapping a nested {details: {...}} envelope when present.
+     */
+    private function readInput(): array
+    {
+        $input = $_POST;
+        if (empty($input)) {
+            $json = json_decode(file_get_contents('php://input') ?: '', true);
+            if (is_array($json)) {
+                $input = $json;
+            }
+        }
+        if (isset($input['details']) && is_array($input['details'])) {
+            $input = $input['details'] + $input;
+        }
+        return $input;
+    }
+
     /**
      * POST /ai/content/description
      * Fields: name, location, price, area_sqft, colony, type, highlights (any subset)
@@ -34,14 +58,16 @@ class AIContentController extends BaseController
     {
         header('Content-Type: application/json');
 
+        $input = $this->readInput();
+
         $property = [
-            'name'        => trim($_POST['name'] ?? ($_POST['title'] ?? '')),
-            'location'    => trim($_POST['location'] ?? ($_POST['city'] ?? '')),
-            'price'       => trim($_POST['price'] ?? ($_POST['total_price'] ?? '')),
-            'area_sqft'   => trim($_POST['area_sqft'] ?? ($_POST['area'] ?? '')),
-            'colony'      => trim($_POST['colony'] ?? ''),
-            'type'        => trim($_POST['type'] ?? ($_POST['property_type'] ?? 'plot')),
-            'highlights'  => array_filter(array_map('trim', explode(',', $_POST['highlights'] ?? ''))),
+            'name'        => trim($input['name'] ?? ($input['title'] ?? '')),
+            'location'    => trim($input['location'] ?? ($input['city'] ?? '')),
+            'price'       => trim($input['price'] ?? ($input['total_price'] ?? '')),
+            'area_sqft'   => trim($input['area_sqft'] ?? ($input['area'] ?? '')),
+            'colony'      => trim($input['colony'] ?? ''),
+            'type'        => trim($input['type'] ?? ($input['property_type'] ?? 'plot')),
+            'highlights'  => array_filter(array_map('trim', explode(',', $input['highlights'] ?? ''))),
         ];
 
         try {
@@ -62,8 +88,9 @@ class AIContentController extends BaseController
     {
         header('Content-Type: application/json');
 
-        $topic = trim($_POST['topic'] ?? ($_POST['title'] ?? ''));
-        $category = trim($_POST['category'] ?? '');
+        $input = $this->readInput();
+        $topic = trim($input['topic'] ?? ($input['title'] ?? ''));
+        $category = trim($input['category'] ?? '');
 
         if (empty($topic)) {
             echo json_encode(['success' => false, 'error' => 'Topic required']);
@@ -94,13 +121,14 @@ class AIContentController extends BaseController
     {
         header('Content-Type: application/json');
 
-        $filename = trim($_POST['filename'] ?? '');
+        $input = $this->readInput();
+        $filename = trim($input['filename'] ?? '');
 
         $ctx = [
-            'title'    => trim($_POST['title'] ?? ($_POST['name'] ?? '')),
-            'type'     => trim($_POST['type'] ?? ($_POST['property_type'] ?? 'property')),
-            'location' => trim($_POST['location'] ?? ($_POST['city'] ?? ($_POST['colony'] ?? ''))),
-            'colony'   => trim($_POST['colony'] ?? ''),
+            'title'    => trim($input['title'] ?? ($input['name'] ?? '')),
+            'type'     => trim($input['type'] ?? ($input['property_type'] ?? 'property')),
+            'location' => trim($input['location'] ?? ($input['city'] ?? ($input['colony'] ?? ''))),
+            'colony'   => trim($input['colony'] ?? ''),
         ];
 
         try {

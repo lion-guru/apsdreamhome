@@ -83,8 +83,8 @@ document.getElementById('aiSuggestionForm').addEventListener('submit', function(
         const resultDiv = document.getElementById('suggestionsResult');
         const listDiv = document.getElementById('suggestionsList');
 
-        if (data.success && data.suggestions && data.suggestions.length > 0) {
-            listDiv.innerHTML = data.suggestions.map(s => 
+        if (data.success && data.items && data.items.length > 0) {
+            listDiv.innerHTML = data.items.map(s => 
                 '<div class="alert alert-light border mb-2"><i class="fas fa-check-circle text-success me-2"></i>' + s + '</div>'
             ).join('');
         } else {

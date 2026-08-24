@@ -1105,6 +1105,8 @@ $router->get('/ai/chatbot', 'AI\\AIWebController@chatbot');
 $router->get('/ai/assistant', 'Front\\AiAssistantController@index');
 $router->get('/ai/description-generator', 'AI\\AIWebController@descriptionGenerator');
 $router->get('/ai/suggestions', 'AI\\AIWebController@suggestions');
+$router->post('/ai/suggestions', 'AI\\AIWebController@generateSuggestions');
+$router->post('/api/ai/suggestions', 'AI\\AIWebController@generateSuggestions');
 $router->post('/api/ai/chatbot', 'AI\\ChatbotAPIController@handleMessage');
 $router->get('/ai/chatbot/history', 'AI\\ChatbotAPIController@getHistory');
 
