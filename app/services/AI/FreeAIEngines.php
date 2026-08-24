@@ -177,14 +177,7 @@ class FreeAIEngines
         if ($system) $messages[] = ['role' => 'system', 'content' => $system];
         $messages[] = ['role' => 'user', 'content' => $prompt];
 
-        // Free models from allowed providers (groq/nvidia/openai/minimax/anthropic/moonshotai/google-ai-studio)
-        $freeModels = [
-            'nvidia/nemotron-3.5-lightning:free',
-            'nvidia/nemotron-3-super-120b-a12b:free',
-            'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
-        ];
-
-        foreach ($freeModels as $model) {
+        foreach ($this->getOpenRouterFreeModels() as $model) {
             $payload = [
                 'model' => $model,
                 'messages' => $messages,
@@ -204,6 +197,68 @@ class FreeAIEngines
             }
         }
         return null;
+    }
+
+    /**
+     * Discover currently-available free models from OpenRouter's /models API.
+     * Free models rotate frequently — never hardcode. Cached 6h in a temp file;
+     * falls back to a static list when discovery fails.
+     */
+    private function getOpenRouterFreeModels(): array
+    {
+        static $inRequest = null;
+        if ($inRequest !== null && $inRequest !== []) return $inRequest;
+
+        // Allowed providers per account privacy settings (openrouter.ai/settings/privacy)
+        $allowedPrefixes = ['nvidia/', 'groq/', 'openai/', 'minimax/', 'anthropic/', 'moonshotai/', 'google-ai-studio/'];
+
+        $cacheFile = sys_get_temp_dir() . '/or_free_models.json';
+        if (is_file($cacheFile)) {
+            $cached = @json_decode((string)@file_get_contents($cacheFile), true);
+            if (is_array($cached) && !empty($cached['models'])
+                && (time() - (int)($cached['ts'] ?? 0)) < 21600) { // 6h TTL
+                $inRequest = $cached['models'];
+                return $inRequest;
+            }
+        }
+
+        $models = [];
+        try {
+            $ch = curl_init('https://openrouter.ai/api/v1/models');
+            curl_setopt_array($ch, [
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT => 10,
+                CURLOPT_HTTPHEADER => ['Authorization: Bearer ' . $this->openRouterKey],
+            ]);
+            $body = curl_exec($ch);
+            curl_close($ch);
+            $data = json_decode((string)$body, true)['data'] ?? [];
+
+            foreach ($data as $m) {
+                $id = $m['id'] ?? '';
+                if ($id === '' || stripos($id, ':free') === false) continue;
+                if ((float)($m['pricing']['prompt'] ?? 1) > 0 || (float)($m['pricing']['completion'] ?? 1) > 0) continue;
+                foreach ($allowedPrefixes as $p) {
+                    if (str_starts_with($id, $p)) { $models[] = $id; break; }
+                }
+            }
+            // Heuristic: prefer smaller/faster models first (shorter id, then bigger context)
+            usort($models, fn($a, $b) => strlen($a) <=> strlen($b));
+            $models = array_slice(array_values(array_unique($models)), 0, 4);
+
+            if ($models) {
+                @file_put_contents($cacheFile, json_encode(['ts' => time(), 'models' => $models]));
+            }
+        } catch (\Throwable $e) {
+            error_log("OpenRouter model discovery failed: " . $e->getMessage());
+        }
+
+        $fallback = [
+            'nvidia/nemotron-3.5-lightning:free',
+            'nvidia/nemotron-3-super-120b-a12b:free',
+        ];
+        $inRequest = $models ?: $fallback;
+        return $inRequest;
     }
 
     // Google Gemini (Free tier: 15 RPM, 1M tokens/day)
