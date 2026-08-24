@@ -1949,22 +1949,29 @@ All provider keys in `ai_settings` (id=1) tested end-to-end. FreeAIEngines fallb
 | -------- | ------ | ----- | ----- |
 | **Gemini** | ✅ WORKING | `gemini-2.5-flash` | Key valid (53 chars, `AQ.Ab8...`). THINKING model — MUST send `thinkingConfig.thinkingBudget: 0` or replies truncate to empty (thought tokens consume maxOutputTokens). Verified full Hindi responses live. |
 | **Groq** | ✅ WORKING | `groq/compound-mini` | All llama-3.x models DECOMMISSIONED (Aug 2026). Current catalog (13 models): gpt-oss-120b/20b, groq/compound(-mini), qwen3.6-27b, whisper-large-v3(+turbo) STT, canopylabs/orpheus TTS, llama-prompt-guard safety. Use `max_completion_tokens` not `max_tokens`. compound-mini verified live via chat API (engine=groq). |
-| **OpenRouter** | ❌ DEAD | — | Key returns 401 "Missing Authentication header" on GET /key AND chat completions (HTTP/1.1 forced). User visited privacy settings but key NOT rotated in DB. Needs new key from openrouter.ai/keys. |
+| **OpenRouter** | ✅ WORKING (50 req/day free tier) | NVIDIA Nemotron-3 `:free` models | NEW key saved to DB 2026-08-24. Account allowed-providers: groq, nvidia, openai, minimax, anthropic, moonshotai, google-ai-studio (privacy settings). Free models ROTATE — `FreeAIEngines::getOpenRouterFreeModels()` discovers them LIVE from `/api/v1/models`, caches 6h in sys temp dir (`or_free_models.json`), filters by allowed providers + $0 pricing. Verified live discovery: nemotron-3.5-lightning/ultra-550b/super-120b/content-safety. |
 | **Ollama** | ⏸ EMPTY (by design) | llama3.2:3b default | Server runs at localhost:11434 but zero models pulled. Under cloud-first directive, chain skips it gracefully. Pull a model later for offline/private mode. |
 
 ### Wiring completed this session
-- `FreeAIEngines`: Gemini added as 4th fallback with thinkingBudget=0; Groq model → `groq/compound-mini`; `max_completion_tokens`.
-- `AIAssistantController::chat()` + `parseLead()`: real AI stack (was hardcoded mock). Live-verified: `/api/assistant/chat` returns contextual Hindi replies (engine=groq or gemini).
+- `FreeAIEngines`: Gemini added as 4th fallback with thinkingBudget=0; Groq model → `groq/compound-mini`; `max_completion_tokens`; dynamic OpenRouter model discovery.
+- `AIAssistantController::chat()` + `parseLead()`: real AI stack (was hardcoded mock). Live-verified: `/api/assistant/chat` returns contextual Hindi replies (engine=groq or gemini); parseLead extracted name/phone/budget/location from Hinglish perfectly (test via Bearer api_tokens row).
 - Admin Executive AI (`ExecutiveAIService`) works automatically — it routes through AIGateway → FreeAIEngines.
 - Deprecated model refs replaced everywhere: gemini-2.0-flash / gemini-1.5-flash → gemini-2.5-flash (7 files).
+- `AIGeminiChatbotService`: Gemini key now loaded from ai_settings DB (env fallback) + thinkingBudget=0 — `/api/gemini/chatbot/message` returns source=gemini live.
+- `LiveChatWidgetController` auto-reply: rewired from dead llama-3.3 model → FreeAIEngines.
+- `AIManager::generateResponse()`: FreeAIEngines primary, canned templates = offline fallback only (powers legacy-chat + WhatsApp webhook fallback).
+- WhatsApp webhook unblocked: `/whatsapp-webhook` added to router CSRF exclusions (was 302-blocked); `ai_conversations` +platform VARCHAR(30). End-to-end verified: reply saved + CRM lead captured.
+- `AIVoicePipeline`: Groq whisper-large-v3 is PRIMARY STT (local Whisper docker = fallback), key from ai_settings; groq TTS case added (orpheus English-only, Hindi→Google TTS); fixed getEngineStatus() leaking response bodies to stdout (missing CURLOPT_RETURNTRANSFER).
 
 ### Schema fixes (applied to DB)
 - `ai_api_logs` +`engine_used` VARCHAR(50), +`confidence` DECIMAL(6,3) — getStats()/logResult now work; request_data CHECK(json_valid) no longer violated (never store truncated JSON).
 - `ai_knowledge_base` +`is_active` TINYINT DEFAULT 1, +`confidence` DECIMAL(3,2) — fixed "Unknown column is_active" 1054 errors in SelfLearningAI::getKnowledgeBaseResponse().
+- `ai_conversations` +`platform` VARCHAR(30) DEFAULT 'website' — fixed 1054 on every WhatsApp webhook conversation save.
 
 ### Remaining
-- `parseLead()` mobile route `/api/v2/mobile/ai/parse-lead` requires API token auth (not testable via admin session); code path shares FreeAIEngines which is verified.
-- Whisper-large-v3 (Groq STT) + orpheus (Groq TTS) are free cloud alternatives to the self-hosted Asterisk voice stack — evaluate for AIVoicePipeline.
+- Groq orpheus TTS requires one-time terms acceptance by org admin at console.groq.com/playground?model=canopylabs%2Forpheus-v1-english — after acceptance, set TTS_ENGINE=groq for English voice replies (Hindi always uses Google translate_tts).
+- OpenRouter free tier is 50 req/day — chain falls through to Groq/Gemini when exhausted; no action needed.
+- Mobile JSON POSTs consumed upstream by middleware — mobile AI endpoints accept form-encoded bodies (parseLead verified this way).
 
 ---
 
