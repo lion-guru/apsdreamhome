@@ -9,6 +9,12 @@ class BaseApiController extends BaseController
     public function __construct()
     {
         parent::__construct();
+        
+        // Rate limiting for API endpoints
+        if (class_exists('\App\Middleware\TenantRateLimitMiddleware')) {
+            \App\Middleware\TenantRateLimitMiddleware::check();
+        }
+        
         // Standard API headers
         \header('Content-Type: application/json');
         $this->handleCors();
