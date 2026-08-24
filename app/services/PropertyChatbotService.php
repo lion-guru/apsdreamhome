@@ -183,6 +183,44 @@ class PropertyChatbotService
     }
 
     /**
+     * Real AI reply via FreeAIEngines (Groq -> OpenRouter -> Gemini).
+     * Returns null on failure so caller falls back to rule-based reply.
+     */
+    private function getAIReply(string $message, string $lang): ?string
+    {
+        try {
+            $plotCount = $this->getPlotCount();
+            $colonyCount = $this->getColonyCount();
+            $colonies = $this->getLiveProperties();
+            $colonyNames = [];
+            foreach (array_slice($colonies, 0, 6) as $c) {
+                $n = trim((string)($c['name'] ?? ''));
+                if ($n === '') { continue; }
+                $sp = $c['starting_price'] ?? null;
+                $colonyNames[] = $n . (!empty($sp) && (float)$sp > 0 ? ' (plots from ₹' . number_format((float)$sp) . ')' : '');
+            }
+            $facts = "Company: APS Dream Home, real estate plots in Gorakhpur, UP. "
+                . "Active colonies: " . ($colonyNames ? implode(', ', $colonyNames) : 'Suryoday, Braj Radha Nagri, Raghunath Nagri, Budh Bihar') . ". "
+                . "Total plots available: {$plotCount} across {$colonyCount} colonies. "
+                . "Contact: +91 7007444842.";
+            $prompt = "You are the friendly APS Dream Home sales assistant on our website chat. "
+                . "Reply in " . ($lang === 'hi' ? 'Hinglish (Roman Hindi)' : 'English') . ", warm and concise (max 80 words). "
+                . "Use ONLY these facts for company specifics; do not invent prices or offers:\n{$facts}\n\n"
+                . "Customer message: {$message}";
+            $result = \App\Services\AI\FreeAIEngines::getInstance()->generate(
+                $prompt,
+                ['max_tokens' => 350, 'temperature' => 0.7],
+                'chat'
+            );
+            $text = trim($result['text'] ?? '');
+            return $text !== '' ? $text : null;
+        } catch (\Exception $e) {
+            error_log("PropertyChatbotService AI fallback: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
      * Main entry — process message and return varied response
      */
     public function processMessage($message): array
@@ -192,7 +230,21 @@ class PropertyChatbotService
         $lang = $this->detectLanguage($message);
 
         $intent = $this->detectIntent($lower, $message);
-        $reply = $this->generateReply($intent, $message, $lang);
+
+        // Open-ended questions go to the free cloud AI chain (Groq -> OpenRouter -> Gemini).
+        // Flow-critical intents (greeting, lead-qualification steps, contact/visit/booking)
+        // stay rule-driven because they drive multi-turn UX flows.
+        $flowIntents = [
+            'greeting', 'give_name', 'give_budget', 'give_location', 'smalltalk',
+            'smalltalk_name', 'booking', 'visit', 'contact', 'thanks', 'bye', 'help',
+        ];
+        $reply = null;
+        if (!in_array($intent, $flowIntents, true)) {
+            $reply = $this->getAIReply($message, $lang);
+        }
+        if ($reply === null) {
+            $reply = $this->generateReply($intent, $message, $lang);
+        }
         $quickReplies = $this->getContextualQuickReplies($intent, $lang);
 
         $this->context['history'][] = ['msg' => $message, 'intent' => $intent];
