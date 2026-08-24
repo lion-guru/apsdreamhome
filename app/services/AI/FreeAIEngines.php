@@ -261,6 +261,16 @@ class FreeAIEngines
         return $inRequest;
     }
 
+    /**
+     * Public helper for other clients (e.g. OpenRouterClient) that need a
+     * currently-free OpenRouter model id without duplicating discovery logic.
+     */
+    public function getPreferredOpenRouterModel(): string
+    {
+        $models = $this->getOpenRouterFreeModels();
+        return $models[0] ?? 'nvidia/nemotron-3.5-lightning:free';
+    }
+
     // Google Gemini (Free tier: 15 RPM, 1M tokens/day)
     private function geminiGenerate(string $prompt, string $system, float $temp, int $maxTokens): ?string
     {

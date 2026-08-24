@@ -228,8 +228,38 @@ class VoiceAssistantService
             );
         }
 
-        // Default response
+        // Default: real AI via free cloud chain (Groq -> OpenRouter -> Gemini),
+        // role-aware. Rule-based unknown response stays as offline fallback.
+        $aiReply = $this->getAIFallback($query);
+        if ($aiReply !== null) {
+            return $this->successResponse($aiReply);
+        }
         return $this->successResponse(self::RESPONSES['unknown'][array_rand(self::RESPONSES['unknown'])]);
+    }
+
+    /**
+     * Open-ended voice query fallback via FreeAIEngines.
+     * Returns null on failure so caller falls back to the rule-based response.
+     */
+    private function getAIFallback(string $query): ?string
+    {
+        try {
+            $prompt = "You are the APS Dream Home voice assistant for a logged-in {$this->userRole} user "
+                . "(user id {$this->userId}). Answer their question in 1-3 short sentences suitable for "
+                . "text-to-speech. Company facts: real estate company in Gorakhpur, UP with colonies Suryoday, "
+                . "Braj Radha Nagri, Raghunath Nagri, Budh Bihar. Do not invent numbers or offers.\n\n"
+                . "Question: {$query}";
+            $result = \App\Services\AI\FreeAIEngines::getInstance()->generate(
+                $prompt,
+                ['max_tokens' => 200, 'temperature' => 0.6],
+                'chat'
+            );
+            $text = trim($result['text'] ?? '');
+            return $text !== '' ? $text : null;
+        } catch (\Exception $e) {
+            error_log("VoiceAssistantService AI fallback: " . $e->getMessage());
+            return null;
+        }
     }
 
     /**
