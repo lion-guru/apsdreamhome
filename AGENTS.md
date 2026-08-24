@@ -1941,6 +1941,33 @@ ACTION: Before integrating any, verify availability, API/cost, and whether self-
 
 ---
 
+## AI Provider Status — VERIFIED LIVE (2026-08-24)
+
+All provider keys in `ai_settings` (id=1) tested end-to-end. FreeAIEngines fallback chain: **Ollama → Groq → OpenRouter → Gemini**.
+
+| Provider | Status | Model | Notes |
+| -------- | ------ | ----- | ----- |
+| **Gemini** | ✅ WORKING | `gemini-2.5-flash` | Key valid (53 chars, `AQ.Ab8...`). THINKING model — MUST send `thinkingConfig.thinkingBudget: 0` or replies truncate to empty (thought tokens consume maxOutputTokens). Verified full Hindi responses live. |
+| **Groq** | ✅ WORKING | `groq/compound-mini` | All llama-3.x models DECOMMISSIONED (Aug 2026). Current catalog (13 models): gpt-oss-120b/20b, groq/compound(-mini), qwen3.6-27b, whisper-large-v3(+turbo) STT, canopylabs/orpheus TTS, llama-prompt-guard safety. Use `max_completion_tokens` not `max_tokens`. compound-mini verified live via chat API (engine=groq). |
+| **OpenRouter** | ❌ DEAD | — | Key returns 401 "Missing Authentication header" on GET /key AND chat completions (HTTP/1.1 forced). User visited privacy settings but key NOT rotated in DB. Needs new key from openrouter.ai/keys. |
+| **Ollama** | ⏸ EMPTY (by design) | llama3.2:3b default | Server runs at localhost:11434 but zero models pulled. Under cloud-first directive, chain skips it gracefully. Pull a model later for offline/private mode. |
+
+### Wiring completed this session
+- `FreeAIEngines`: Gemini added as 4th fallback with thinkingBudget=0; Groq model → `groq/compound-mini`; `max_completion_tokens`.
+- `AIAssistantController::chat()` + `parseLead()`: real AI stack (was hardcoded mock). Live-verified: `/api/assistant/chat` returns contextual Hindi replies (engine=groq or gemini).
+- Admin Executive AI (`ExecutiveAIService`) works automatically — it routes through AIGateway → FreeAIEngines.
+- Deprecated model refs replaced everywhere: gemini-2.0-flash / gemini-1.5-flash → gemini-2.5-flash (7 files).
+
+### Schema fixes (applied to DB)
+- `ai_api_logs` +`engine_used` VARCHAR(50), +`confidence` DECIMAL(6,3) — getStats()/logResult now work; request_data CHECK(json_valid) no longer violated (never store truncated JSON).
+- `ai_knowledge_base` +`is_active` TINYINT DEFAULT 1, +`confidence` DECIMAL(3,2) — fixed "Unknown column is_active" 1054 errors in SelfLearningAI::getKnowledgeBaseResponse().
+
+### Remaining
+- `parseLead()` mobile route `/api/v2/mobile/ai/parse-lead` requires API token auth (not testable via admin session); code path shares FreeAIEngines which is verified.
+- Whisper-large-v3 (Groq STT) + orpheus (Groq TTS) are free cloud alternatives to the self-hosted Asterisk voice stack — evaluate for AIVoicePipeline.
+
+---
+
 ## Incident Log (2026-07-20)
 
 ### leads table data loss + recovery

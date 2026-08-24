@@ -23,7 +23,7 @@ class FreeAIEngines
 // Groq (free tier: 30 RPM, 14,400 RPD) - models may change, check console.groq.com
     private $groqKey = '';
     private $groqUrl = 'https://api.groq.com/openai/v1/chat/completions';
-    private $groqModel = 'llama-3.1-8b-instant';
+    private $groqModel = 'groq/compound-mini';
 
     // OpenRouter (paid models, low-cost fallback - free tier deprecated 2026)
     private $openRouterKey = '';
@@ -154,7 +154,7 @@ class FreeAIEngines
             'model' => $this->groqModel,
             'messages' => $messages,
             'temperature' => $temp,
-            'max_tokens' => $maxTokens,
+            'max_completion_tokens' => $maxTokens,
             'stream' => false,
         ];
 
