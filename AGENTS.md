@@ -1963,6 +1963,15 @@ All provider keys in `ai_settings` (id=1) tested end-to-end. FreeAIEngines fallb
 - WhatsApp webhook unblocked: `/whatsapp-webhook` added to router CSRF exclusions (was 302-blocked); `ai_conversations` +platform VARCHAR(30). End-to-end verified: reply saved + CRM lead captured.
 - `AIVoicePipeline`: Groq whisper-large-v3 is PRIMARY STT (local Whisper docker = fallback), key from ai_settings; groq TTS case added (orpheus English-only, Hindi→Google TTS); fixed getEngineStatus() leaking response bodies to stdout (missing CURLOPT_RETURNTRANSFER).
 
+### Wiring completed — AI surface sweep (2026-08-24)
+- `SmartAIController::chat()` (/ai-assistant): dead layers 3–6 (env-only Groq llama-3.3, paid claude-haiku, keyless HuggingFace) replaced with single FreeAIEngines call; SelfLearningAI gate 0.3→0.75; RAG restricted to prose sources (plot listings attached separately anyway). Live: commission/EMI Qs → free_ai:groq, colony plot Qs → rag+cards, greetings → conversation_engine.
+- `PropertyChatbotService` (/api/ai/chatbot + /ai/chatbot page): open-ended intents → FreeAIEngines grounded in live DB facts (per-colony starting prices, plot counts); flow-critical intents (greeting, lead-qual steps, booking, visit, contact) stay rule-driven.
+- `VoiceAssistantService` (/api/voice-assistant/query): rule-miss fallback → FreeAIEngines role-aware prompt; stat intents unchanged (real DB). NOTE endpoint is form-encoded only (JSON php://input consumed upstream).
+- `AIAssistantController`: recommendations() was SELECTing non-existent columns (`property_type`,`images`) → ALWAYS returned []; fixed to real columns + featured ordering. analyze() was hardcoded mock → now real comparables analytics (city+type avg/min/max, per-sqft, 90-day trend split → score/risk) + FreeAIEngines narrative.
+- Archived dead AI code w/ broken imports: `Core/Agent/Agent.php`, `Services/AI/AssistantService.php`, `Services/AIService.php` (zero refs), `AI/AssistantController.php` (zero routes, canned fake Lucknow data). All in `_archive/dead_services|dead_controllers/`.
+- `FreeAIEngines::getPreferredOpenRouterModel()` public helper for external clients needing current free OR model id.
+- Full smoke verified: SmartAI(rag/groq), WidgetBot(price→DB facts), GeminiBot(source=gemini), VoiceAsst(AI len=67), AsstChat(ok), Recos(count=8, was 0), Analyze(score/risk/comps real).
+
 ### Schema fixes (applied to DB)
 - `ai_api_logs` +`engine_used` VARCHAR(50), +`confidence` DECIMAL(6,3) — getStats()/logResult now work; request_data CHECK(json_valid) no longer violated (never store truncated JSON).
 - `ai_knowledge_base` +`is_active` TINYINT DEFAULT 1, +`confidence` DECIMAL(3,2) — fixed "Unknown column is_active" 1054 errors in SelfLearningAI::getKnowledgeBaseResponse().
