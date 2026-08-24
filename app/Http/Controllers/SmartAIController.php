@@ -196,7 +196,7 @@ class SmartAIController extends BaseController
         try {
             $selfLearning = new SelfLearningAI($sessionId, $userContext['id'], $userContext['role']);
             $aiResult = $selfLearning->processMessage($message);
-            if (!empty($aiResult['success']) && $aiResult['confidence'] >= 0.3) {
+            if (!empty($aiResult['success']) && $aiResult['confidence'] >= 0.75) {
                 $response = $aiResult['response'];
                 $modelUsed = 'self_learning';
             }
@@ -205,11 +205,22 @@ class SmartAIController extends BaseController
         }
 
         // 2. RAG Agent (data-backed answers from knowledge base + live property/plot data)
+        // Only accept PROSE answers (knowledge base / colony info). Plot/property/pricing
+        // listings are redundant here - getPropertyListings() attaches them as cards below,
+        // and accepting them would hijack analytical questions (EMI, commission, etc.)
+        // because retrieval relevance is hardcoded per source type.
         if ($response === null) {
             try {
                 $rag = new RAGAgent();
                 $ragResult = $rag->answer($message, $userContext['id']);
-                if (!empty($ragResult['success']) && $ragResult['confidence'] >= 0.4) {
+                $ragHasProse = false;
+                foreach (($ragResult['sources'] ?? []) as $src) {
+                    if (stripos((string)$src, 'Knowledge Base:') === 0 || stripos((string)$src, 'Colony:') === 0) {
+                        $ragHasProse = true;
+                        break;
+                    }
+                }
+                if (!empty($ragResult['success']) && $ragResult['confidence'] >= 0.4 && $ragHasProse) {
                     $response = $ragResult['answer'];
                     $modelUsed = 'rag';
                 }
@@ -218,43 +229,24 @@ class SmartAIController extends BaseController
             }
         }
 
-        // 3. Try Groq (fastest free cloud AI, Llama 3.3 70B)
+        // 3. Free cloud AI chain (Groq compound-mini → OpenRouter free models → Gemini)
+        // Replaces the old dead layers: llama-3.3-70b (decommissioned), claude-3.5-haiku (paid),
+        // HuggingFace (no key). FreeAIEngines loads all keys from ai_settings DB.
         if ($response === null) {
             try {
-                $groqKey = getenv('GROQ_API_KEY') ?: '';
-                if (!empty($groqKey)) {
-                    $groqResponse = $this->getGroqResponse($message, $userContext, $language, $groqKey);
-                    if (!empty($groqResponse)) {
-                        $response = $groqResponse;
-                        $modelUsed = 'groq';
-                    }
+                $prompt = $this->systemPrompt . "\n\n" . $this->buildContextPrompt($userContext)
+                    . "\n\nUser (" . ($language === 'hi' ? 'Hindi' : 'English') . "): " . $message . "\n\nResponse:";
+                $freeResult = \App\Services\AI\FreeAIEngines::getInstance()->generate(
+                    $prompt,
+                    ['max_tokens' => 500, 'temperature' => 0.7],
+                    'chat'
+                );
+                if (!empty($freeResult['text'])) {
+                    $response = trim($freeResult['text']);
+                    $modelUsed = 'free_ai:' . ($freeResult['engine'] ?? 'unknown');
                 }
             } catch (\Exception $e) {
-                error_log("Groq error: " . $e->getMessage());
-            }
-        }
-
-        // 4. Try Gemini (if Groq failed)
-        if ($response === null && !empty($this->geminiApiKey) && $this->geminiApiKey !== 'YOUR_GEMINI_API_KEY_HERE') {
-            $response = $this->getGeminiResponse($message, $userContext, $language);
-            if (!empty($response) && strpos($response, 'quota') === false && strpos($response, 'API key') === false) {
-                $modelUsed = 'gemini';
-            }
-        }
-
-        // 5. Try OpenRouter if Gemini failed
-        if ($response === null && !empty($this->openrouterApiKey)) {
-            $response = $this->getOpenRouterResponse($message, $userContext, $language);
-            if (!empty($response)) {
-                $modelUsed = 'openrouter';
-            }
-        }
-
-        // 6. Try HuggingFace if OpenRouter failed
-        if ($response === null && !empty($this->huggingfaceApiKey)) {
-            $response = $this->getHuggingFaceResponse($message, $userContext, $language);
-            if (!empty($response)) {
-                $modelUsed = 'huggingface';
+                error_log("FreeAIEngines error in SmartAI: " . $e->getMessage());
             }
         }
 
