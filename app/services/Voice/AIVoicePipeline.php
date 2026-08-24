@@ -37,8 +37,8 @@ class AIVoicePipeline
         $this->whisperUrl = getenv('WHISPER_URL') ?: 'http://localhost:8080';
         $this->ttsEngine = getenv('TTS_ENGINE') ?: 'google';
         $this->geminiApiKey = getenv('GEMINI_API_KEY') ?: '';
-        $this->geminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
-        $this->geminiModel = 'gemini-2.0-flash';
+        $this->geminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+        $this->geminiModel = 'gemini-2.5-flash';
         $this->knowledgeBase = $this->loadKnowledgeBase();
     }
 

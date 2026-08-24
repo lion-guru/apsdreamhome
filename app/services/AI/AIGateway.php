@@ -25,7 +25,7 @@ class AIGateway
     private $config;
     private $freeEngines;
     private $geminiApiKey;
-    private $geminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+    private $geminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
     private function __construct()
     {
@@ -397,9 +397,14 @@ class AIGateway
     {
         $elapsed = round((microtime(true) - $startTime) * 1000, 2);
         try {
+            // request_data has CHECK(json_valid) — never store truncated JSON
+            $requestData = json_encode($result['result'] ?? []);
+            if ($requestData === false || strlen($requestData) > 2000) {
+                $requestData = json_encode(['truncated' => true]);
+            }
             $this->db->getConnection()->prepare(
-                "INSERT INTO ai_api_logs (service, endpoint, status_code, response_time_ms, request_data, tenant_id, user_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())"
-            )->execute([$task, $engine, $result['confidence'] ?? 0, $elapsed, substr(json_encode($result['result'] ?? []), 0, 500), TenantContext::getId(), $GLOBALS['api_user_id'] ?? null]);
+                "INSERT INTO ai_api_logs (service, endpoint, engine_used, status_code, response_time_ms, confidence, request_data, tenant_id, user_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())"
+            )->execute([$task, $engine, $engine, (int)($result['confidence'] ?? 0) >= 0.5 ? 200 : 100, $elapsed, round((float)($result['confidence'] ?? 0), 3), $requestData, TenantContext::getId(), $GLOBALS['api_user_id'] ?? null]);
         } catch (\Throwable $e) { /* non-critical */ error_log($e->getMessage()); }
 
         $result['engine'] = $engine;

@@ -20,14 +20,18 @@ class FreeAIEngines
     private $ollamaUrl = 'http://localhost:11434';
     private $ollamaModel = 'llama3.2:3b';
 
-    // Groq (free tier: 30 RPM, 14,400 RPD)
+// Groq (free tier: 30 RPM, 14,400 RPD) - models may change, check console.groq.com
     private $groqKey = '';
     private $groqUrl = 'https://api.groq.com/openai/v1/chat/completions';
-    private $groqModel = 'llama-3.3-70b-versatile';
+    private $groqModel = 'llama-3.1-8b-instant';
 
-    // OpenRouter (paid models, low-cost fallback — free tier deprecated 2026)
+    // OpenRouter (paid models, low-cost fallback - free tier deprecated 2026)
     private $openRouterKey = '';
     private $openRouterUrl = 'https://openrouter.ai/api/v1/chat/completions';
+
+    // Google Gemini (free tier: 15 RPM, 1M tokens/day)
+    private $geminiKey = '';
+    private $geminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
     private function __construct()
     {
@@ -51,9 +55,11 @@ class FreeAIEngines
             $settings = $db->fetch("SELECT * FROM ai_settings WHERE is_active = 1") ?: [];
             $this->groqKey = $settings['groq_api_key'] ?? getenv('GROQ_API_KEY') ?: '';
             $this->openRouterKey = $settings['openrouter_api_key'] ?? getenv('OPENROUTER_API_KEY') ?: '';
+            $this->geminiKey = $settings['api_key'] ?? getenv('GEMINI_API_KEY') ?: '';
         } catch (\Throwable $e) {
             $this->groqKey = getenv('GROQ_API_KEY') ?: '';
             $this->openRouterKey = getenv('OPENROUTER_API_KEY') ?: '';
+            $this->geminiKey = getenv('GEMINI_API_KEY') ?: '';
         }
     }
 
@@ -79,16 +85,22 @@ class FreeAIEngines
             if ($result) return ['text' => $result, 'engine' => 'ollama', 'model' => $this->ollamaModel, 'tokens' => 0];
         }
 
-        // 2. Try Groq (fastest in world, free tier)
+        // 2. Try Groq (fastest in world, free tier) - models change frequently
         if (!empty($this->groqKey)) {
             $result = $this->groqGenerate($prompt, $system, $temperature, $maxTokens);
             if ($result) return ['text' => $result, 'engine' => 'groq', 'model' => $this->groqModel, 'tokens' => 0];
         }
 
-        // 3. Try OpenRouter (free models)
+        // 3. Try OpenRouter (free models) - free tier deprecated
         if (!empty($this->openRouterKey)) {
             $result = $this->openRouterGenerate($prompt, $system, $temperature, $maxTokens);
             if ($result) return ['text' => $result, 'engine' => 'openrouter', 'model' => 'free-model', 'tokens' => 0];
+        }
+
+        // 4. Try Google Gemini (free tier: 15 RPM, 1M tokens/day)
+        if (!empty($this->geminiKey)) {
+            $result = $this->geminiGenerate($prompt, $system, $temperature, $maxTokens);
+            if ($result) return ['text' => $result, 'engine' => 'gemini', 'model' => 'gemini-2.5-flash', 'tokens' => 0];
         }
 
         return ['text' => '', 'engine' => 'none', 'model' => '', 'tokens' => 0];
@@ -190,6 +202,29 @@ class FreeAIEngines
             if ($response && isset($response['choices'][0]['message']['content'])) {
                 return $response['choices'][0]['message']['content'];
             }
+        }
+        return null;
+    }
+
+    // Google Gemini (Free tier: 15 RPM, 1M tokens/day)
+    private function geminiGenerate(string $prompt, string $system, float $temp, int $maxTokens): ?string
+    {
+        $parts = [];
+        if ($system) $parts[] = ['text' => $system];
+        $parts[] = ['text' => $prompt];
+
+        $payload = [
+            'contents' => [['parts' => $parts]],
+            'generationConfig' => [
+                'temperature' => $temp,
+                'maxOutputTokens' => $maxTokens,
+                'thinkingConfig' => ['thinkingBudget' => 0],
+            ],
+        ];
+
+        $response = $this->httpPost($this->geminiUrl . '?key=' . $this->geminiKey, $payload, 15);
+        if ($response && isset($response['candidates'][0]['content']['parts'][0]['text'])) {
+            return $response['candidates'][0]['content']['parts'][0]['text'];
         }
         return null;
     }
@@ -304,8 +339,8 @@ class FreeAIEngines
                 'speed' => '~100 tokens/sec',
             ],
             'gemini' => [
-                'available' => !empty(getenv('GEMINI_API_KEY')),
-                'model' => 'gemini-2.0-flash',
+                'available' => !empty($this->geminiKey),
+                'model' => 'gemini-2.5-flash',
                 'cost' => 'Free: 15 RPM, 1M tokens/day',
                 'speed' => '~150 tokens/sec',
             ],

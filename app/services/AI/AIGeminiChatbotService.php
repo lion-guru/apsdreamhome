@@ -14,7 +14,7 @@ class AIGeminiChatbotService
 
     private $database;
     private $geminiApiKey;
-    private $geminiApiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+    private $geminiApiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
     
     public function __construct()
     {

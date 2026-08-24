@@ -107,7 +107,7 @@ class GeminiAIService
      */
     public function generateContent(string $prompt, array $options = []): array
     {
-        $url = $this->baseUrl . '/gemini-1.5-flash:generateContent?key=' . $this->apiKey;
+        $url = $this->baseUrl . '/gemini-2.5-flash:generateContent?key=' . $this->apiKey;
 
         $data = [
             'contents' => [
@@ -137,7 +137,7 @@ class GeminiAIService
      */
     public function chat(array $messages, array $options = []): array
     {
-        $url = $this->baseUrl . '/gemini-1.5-flash:generateContent?key=' . $this->apiKey;
+        $url = $this->baseUrl . '/gemini-2.5-flash:generateContent?key=' . $this->apiKey;
 
         $contents = [];
         foreach ($messages as $message) {
