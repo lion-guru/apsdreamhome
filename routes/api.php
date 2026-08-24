@@ -85,7 +85,7 @@ $router->post('/api/v2/mobile/user/notifications/read', 'Api\MobileUserApiContro
 // ============================================================
 // MOBILE API V2 â€” FCM Token Registration
 // ============================================================
-$router->post('/api/v2/mobile/fcm/register', 'Api\MobileAuthApiController@registerFcmToken')->middleware('App\Http\Middleware/ApiAuthMiddleware');
+$router->post('/api/v2/mobile/fcm/register', 'Api\MobileAuthApiController@registerFcmToken')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 $router->post('/api/v2/mobile/user/favorites', 'Api\MobilePropertyApiController@addFavorite')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->delete('/api/v2/mobile/user/favorites/{id}', 'Api\MobilePropertyApiController@removeFavorite')->middleware('App\Http\Middleware\ApiAuthMiddleware');
@@ -551,7 +551,7 @@ $router->get('/api/v2/mobile/about', 'Api\MobileUserApiController@getAboutInfo')
 // MOBILE API V2 â€” Careers / Jobs (public + auth for apply)
 // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
 $router->get('/api/v2/mobile/careers', 'Api\MobileUserApiController@getJobListings');
-$router->post('/api/v2/mobile/careers/apply', 'Api\MobileUserApiController@submitJobApplication')->middleware('App\Http\Middleware/ApiAuthMiddleware');
+$router->post('/api/v2/mobile/careers/apply', 'Api\MobileUserApiController@submitJobApplication')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/careers/{id}', 'Api\MobileUserApiController@getJobDetail');
 
 // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
