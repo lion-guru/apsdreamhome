@@ -41,7 +41,19 @@ class AIVoicePipeline
         $this->geminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
         $this->geminiModel = 'gemini-2.5-flash';
         $this->groqApiKey = getenv('GROQ_API_KEY') ?: '';
-        // Cloud-first: pull Groq key from ai_settings when env is empty
+        // Cloud-first: pull Groq key + voice engine prefs from ai_settings when env is empty
+        if ($this->ttsEngine === 'google') {
+            try {
+                $row = $this->db->fetch("SELECT groq_api_key, settings FROM ai_settings WHERE id = 1");
+                $this->groqApiKey = trim((string)($row['groq_api_key'] ?? ''));
+                $cfg = json_decode((string)($row['settings'] ?? '{}'), true) ?: [];
+                if (!empty($cfg['tts_engine']) && in_array($cfg['tts_engine'], ['google', 'groq', 'espeak', 'ollama'], true)) {
+                    $this->ttsEngine = $cfg['tts_engine'];
+                }
+            } catch (\Throwable $e) {
+                error_log("AIVoicePipeline settings load failed: " . $e->getMessage());
+            }
+        }
         if ($this->groqApiKey === '') {
             try {
                 $row = $this->db->fetch("SELECT groq_api_key FROM ai_settings WHERE id = 1");
