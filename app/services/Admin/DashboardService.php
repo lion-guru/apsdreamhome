@@ -499,11 +499,19 @@ class DashboardService
      */
     public function logAdminActivity(int $userId, string $action, array $data = []): bool
     {
+        $insertData = $this->tenantInsertData();
+        $columns = ['user_id', 'user_type', 'action', 'details', 'ip_address', 'user_agent', 'created_at'];
+        $placeholders = ['?', 'admin', '?', '?', '?', '?', 'NOW()'];
+        if (!empty($insertData)) {
+            $columns = array_merge($columns, array_keys($insertData));
+            $placeholders = array_merge($placeholders, array_fill(0, count($insertData), '?'));
+        }
+        $query = "INSERT INTO activity_logs_unified (" . implode(',', $columns) . ") VALUES (" . implode(',', $placeholders) . ")";
+
         try {
-            $this->db->execute(
-                "INSERT INTO activity_logs_unified (user_id, user_type, action, details, ip_address, user_agent, created_at) VALUES (?, 'admin', ?, ?, ?, ?, NOW())",
-                [$userId, $action, json_encode($data), $_SERVER['REMOTE_ADDR'] ?? 'unknown', $_SERVER['HTTP_USER_AGENT'] ?? 'unknown']
-            );
+            $params = [$userId, $action, json_encode($data), $_SERVER['REMOTE_ADDR'] ?? 'unknown', $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'];
+            if (!empty($insertData)) $params = array_merge($params, array_values($insertData));
+            $this->db->execute($query, $params);
 
             $this->logger->info("Admin activity logged", [
                 'user_id' => $userId,

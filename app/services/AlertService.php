@@ -313,15 +313,23 @@ class AlertService
      */
     public function createAlert($level, $title, $message, $system)
     {
-        try {
-            $query = "INSERT INTO system_alerts (level, title, message, system, created_at)
-                     VALUES (?, ?, ?, ?, NOW())";
-        } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
+        $insertData = $this->tenantInsertData();
+        $columns = ['level', 'title', 'message', 'system', 'created_at'];
+        $placeholders = ['?', '?', '?', '?', 'NOW()'];
+        if (!empty($insertData)) {
+            $columns = array_merge($columns, array_keys($insertData));
+            $placeholders = array_merge($placeholders, array_fill(0, count($insertData), '?'));
         }
+        $query = "INSERT INTO system_alerts (" . implode(',', $columns) . ") VALUES (" . implode(',', $placeholders) . ")";
 
-        $this->db->execute($query, [$level, $title, $message, $system]);
+        try {
+            $params = [$level, $title, $message, $system];
+            if (!empty($insertData)) $params = array_merge($params, array_values($insertData));
+            $this->db->execute($query, $params);
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
+        }
 
         // Send email for critical alerts
         if ($level === 'critical') {

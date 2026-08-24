@@ -401,10 +401,17 @@ class AdminMenuService
      */
     public function grantUserPermission(int $userId, int $menuItemId, array $permissions): bool
     {
+        $insertData = $this->tenantInsertData();
+        $columns = ['user_id', 'menu_item_id', 'can_view', 'can_create', 'can_edit', 'can_delete'];
+        $placeholders = ['?', '?', '?', '?', '?', '?'];
+        if (!empty($insertData)) {
+            $columns = array_merge($columns, array_keys($insertData));
+            $placeholders = array_merge($placeholders, array_fill(0, count($insertData), '?'));
+        }
         $query = "
             INSERT INTO admin_user_menu_permissions 
-            (user_id, menu_item_id, can_view, can_create, can_edit, can_delete)
-            VALUES (?, ?, ?, ?, ?, ?)
+            (" . implode(',', $columns) . ")
+            VALUES (" . implode(',', $placeholders) . ")
             ON DUPLICATE KEY UPDATE
             can_view = VALUES(can_view),
             can_create = VALUES(can_create),
@@ -413,14 +420,16 @@ class AdminMenuService
         ";
 
         try {
-            $this->db->query($query, [
+            $params = [
                 $userId,
                 $menuItemId,
                 $permissions['can_view'] ?? 1,
                 $permissions['can_create'] ?? 0,
                 $permissions['can_edit'] ?? 0,
                 $permissions['can_delete'] ?? 0,
-            ]);
+            ];
+            if (!empty($insertData)) $params = array_merge($params, array_values($insertData));
+            $this->db->query($query, $params);
             $this->clearMenuCache();
             return true;
         } catch (\Exception $e) {

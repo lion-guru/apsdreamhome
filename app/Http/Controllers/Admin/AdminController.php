@@ -585,6 +585,7 @@ class AdminController extends BaseController
      */
     public function reports()
     {
+        $this->requireAdmin();
         $reports = $this->getChartsData();
 
         return $this->render('admin/reports', [

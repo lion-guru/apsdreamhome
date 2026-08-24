@@ -61,7 +61,7 @@ class PlotController extends BaseController
             LEFT JOIN states s ON d.state_id = s.id
             WHERE c.is_active = 1
             ORDER BY c.name
-        ", $tidParam);
+        ", array_merge($tidParam, $tidParam));
 
         $this->render('pages/plots', [
             'page_title' => 'Available Plots - APS Dream Home',

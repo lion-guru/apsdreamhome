@@ -11,7 +11,8 @@ try {
     $db = \App\Core\Database::getInstance();
     $conn = $db->getConnection();
 } catch (\Exception $e) {
-    die("Database connection failed: " . $e->getMessage());
+    error_log("Database connection failed: " . $e->getMessage());
+    die("Database connection failed. Please check system logs.");
 }
 
 // Auth check removed: session_start() + auth bypass deleted (Phase 1.4)
