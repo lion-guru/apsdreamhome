@@ -28,6 +28,7 @@ class AIVoicePipeline
     private $geminiModel;
     private $knowledgeBase;
     private $db;
+    private $groqApiKey;
 
     public function __construct()
     {
@@ -39,6 +40,16 @@ class AIVoicePipeline
         $this->geminiApiKey = getenv('GEMINI_API_KEY') ?: '';
         $this->geminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
         $this->geminiModel = 'gemini-2.5-flash';
+        $this->groqApiKey = getenv('GROQ_API_KEY') ?: '';
+        // Cloud-first: pull Groq key from ai_settings when env is empty
+        if ($this->groqApiKey === '') {
+            try {
+                $row = $this->db->fetch("SELECT groq_api_key FROM ai_settings WHERE id = 1");
+                $this->groqApiKey = trim((string)($row['groq_api_key'] ?? ''));
+            } catch (\Throwable $e) {
+                error_log("AIVoicePipeline groq key load failed: " . $e->getMessage());
+            }
+        }
         $this->knowledgeBase = $this->loadKnowledgeBase();
     }
 
@@ -195,16 +206,23 @@ class AIVoicePipeline
      */
     public function transcribeAudio(string $audioPath): array
     {
-        // Try local Whisper first
+        // Cloud-first: Groq whisper-large-v3 (free tier, no local infra needed)
+        if (!empty($this->groqApiKey)) {
+            $groq = $this->transcribeAudioGroq($audioPath);
+            if ($groq['success']) {
+                return $groq;
+            }
+        }
+
+        // Fallback: local Whisper (self-hosted docker stack)
         if ($this->checkWhisperAvailable()) {
             return $this->callWhisperAPI($audioPath);
         }
 
-        // Fallback: use Asterisk AGI for basic DTMF/STT
         return [
             'success' => false,
             'text' => '',
-            'error' => 'Whisper not available',
+            'error' => 'No STT engine available',
         ];
     }
 
@@ -220,6 +238,15 @@ class AIVoicePipeline
                 return $this->eSpeakTTS($text, $language);
             case 'ollama':
                 return $this->ollamaTTS($text);
+            case 'groq':
+                // Groq orpheus is English-only; Hindi falls back to Google TTS
+                if ($language !== 'hi') {
+                    $groqAudio = $this->groqTTS($text);
+                    if ($groqAudio) {
+                        return $groqAudio;
+                    }
+                }
+                return $this->googleTTS($text, $language);
             default:
                 return $this->googleTTS($text, $language);
         }
@@ -384,6 +411,7 @@ class AIVoicePipeline
         $ollamaOk = false;
         $ch = curl_init("{$this->ollamaUrl}/api/tags");
         curl_setopt($ch, CURLOPT_TIMEOUT, 3);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_exec($ch);
         $ollamaOk = curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200;
         curl_close($ch);
@@ -395,6 +423,7 @@ class AIVoicePipeline
         $whisperOk = false;
         $ch = curl_init("{$this->whisperUrl}/health");
         curl_setopt($ch, CURLOPT_TIMEOUT, 3);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_exec($ch);
         $whisperOk = curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200;
         curl_close($ch);
@@ -403,6 +432,8 @@ class AIVoicePipeline
             'ollama' => ['available' => $ollamaOk, 'url' => $this->ollamaUrl, 'model' => $this->ollamaModel],
             'gemini' => ['available' => $geminiOk, 'model' => $this->geminiModel, 'is_pro' => true],
             'whisper' => ['available' => $whisperOk, 'url' => $this->whisperUrl],
+            'groq_stt' => ['available' => !empty($this->groqApiKey), 'model' => 'whisper-large-v3', 'primary' => true],
+            'groq_tts' => ['available' => !empty($this->groqApiKey), 'model' => 'canopylabs/orpheus-v1-english', 'note' => 'English-only; needs console terms acceptance'],
             'tts' => ['engine' => $this->ttsEngine],
             'fallback_chain' => $this->getFallbackChain(),
         ];
@@ -744,6 +775,46 @@ class AIVoicePipeline
     }
 
     /**
+     * Groq cloud STT (whisper-large-v3, free tier) — auto-detects Hindi/English
+     */
+    private function transcribeAudioGroq(string $audioPath): array
+    {
+        if (!is_file($audioPath)) {
+            return ['success' => false, 'text' => '', 'error' => 'Audio file missing'];
+        }
+
+        $ch = curl_init('https://api.groq.com/openai/v1/audio/transcriptions');
+        curl_setopt_array($ch, [
+            CURLOPT_POST => true,
+            CURLOPT_HTTPHEADER => ["Authorization: Bearer {$this->groqApiKey}"],
+            CURLOPT_POSTFIELDS => [
+                'file' => new \CURLFile($audioPath),
+                'model' => 'whisper-large-v3',
+                'response_format' => 'verbose_json',
+            ],
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 60,
+        ]);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode === 200 && $response) {
+            $data = json_decode($response, true);
+            return [
+                'success' => true,
+                'text' => trim((string)($data['text'] ?? '')),
+                'language' => $data['language'] ?? 'hi',
+                'engine' => 'groq_whisper',
+            ];
+        }
+
+        error_log("Groq STT failed (HTTP {$httpCode}): " . substr((string)$response, 0, 200));
+        return ['success' => false, 'text' => '', 'error' => 'HTTP ' . $httpCode];
+    }
+
+    /**
      * Google TTS (free tier)
      */
     private function googleTTS(string $text, string $language = 'hi'): ?string
@@ -772,6 +843,46 @@ class AIVoicePipeline
         }
 
         return file_exists($audioFile) ? $audioFile : null;
+    }
+
+    /**
+     * Groq cloud TTS (canopylabs/orpheus-v1-english, free tier).
+     * Requires one-time terms acceptance in the Groq console; falls back to null on any failure
+     * (caller then uses Google TTS).
+     */
+    private function groqTTS(string $text): ?string
+    {
+        if (empty($this->groqApiKey)) {
+            return null;
+        }
+
+        $ch = curl_init('https://api.groq.com/openai/v1/audio/speech');
+        curl_setopt_array($ch, [
+            CURLOPT_POST => true,
+            CURLOPT_HTTPHEADER => ["Authorization: Bearer {$this->groqApiKey}", 'Content-Type: application/json'],
+            CURLOPT_POSTFIELDS => json_encode([
+                'model' => 'canopylabs/orpheus-v1-english',
+                'input' => mb_substr($text, 0, 900),
+                'voice' => 'autumn',
+                'response_format' => 'mp3',
+            ]),
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 90,
+        ]);
+        $audio = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode === 200 && is_string($audio) && strlen($audio) > 1000) {
+            $audioDir = __DIR__ . '/../../storage/tts_audio';
+            if (!is_dir($audioDir)) mkdir($audioDir, 0755, true);
+            $audioFile = $audioDir . '/tts_groq_' . md5($text) . '.mp3';
+            file_put_contents($audioFile, $audio);
+            return $audioFile;
+        }
+
+        error_log("Groq TTS failed (HTTP {$httpCode}) — falling back to Google TTS");
+        return null;
     }
 
     /**
