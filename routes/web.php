@@ -1495,6 +1495,8 @@ $router->post('/admin/layout-manager', 'App\\Http\\Controllers\\Admin\\LayoutCon
 $router->get('/admin/ai-settings', 'App\\Http\\Controllers\\Admin\\AISettingsController@index');
 $router->post('/admin/ai-settings/update-key', 'App\\Http\\Controllers\\Admin\\AISettingsController@updateApiKey');
 $router->post('/admin/ai-settings/test-connection', 'App\\Http\\Controllers\\Admin\\AISettingsController@testConnection');
+$router->post('/admin/ai-settings/save-config', 'App\\Http\\Controllers\\Admin\\AISettingsController@saveConfig');
+$router->post('/admin/ai-settings/test-provider', 'App\\Http\\Controllers\\Admin\\AISettingsController@testProvider');
 $router->post('/admin/ai-settings/generate-content', 'App\\Http\\Controllers\\Admin\\AISettingsController@generateSampleContent');
 $router->post('/admin/ai-settings/clear-logs', 'App\\Http\\Controllers\\Admin\\AISettingsController@clearLogs');
 $router->get('/admin/ai-settings/export-usage-report', 'App\\Http\\Controllers\\Admin\\AISettingsController@exportUsageReport');

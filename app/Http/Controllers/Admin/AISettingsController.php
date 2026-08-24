@@ -24,15 +24,243 @@ class AISettingsController extends AdminController
      */
     public function index()
     {
-        $this->data['page_title'] = 'AI Settings';
-        $this->data['stats'] = ['requests_today' => 0, 'requests_this_month' => 0, 'error_count' => 0];
-        $this->data['recent_logs'] = [];
-        
+        $this->data['page_title'] = 'AI Provider Settings';
+
+        $config = [
+            'gemini_key' => '', 'gemini_model' => 'gemini-2.5-flash',
+            'groq_key' => '', 'openrouter_key' => '',
+            'ollama_url' => 'http://localhost:11434', 'ollama_model' => 'llama3.1:8b',
+            'tts_engine' => 'google', 'stt_engine' => 'groq', 'is_active' => 1,
+        ];
+        try {
+            $row = $this->db->fetch("SELECT api_key, is_active, settings, groq_api_key, openrouter_api_key, ollama_url, ollama_model FROM ai_settings WHERE id = 1");
+            if ($row) {
+                $cfg = json_decode((string)($row['settings'] ?? '{}'), true) ?: [];
+                $config['gemini_key'] = $row['api_key'];
+                $config['is_active'] = (int)($row['is_active'] ?? 1);
+                $config['groq_key'] = $row['groq_api_key'];
+                $config['openrouter_key'] = $row['openrouter_api_key'];
+                $config['ollama_url'] = $row['ollama_url'] ?: $config['ollama_url'];
+                $config['ollama_model'] = $row['ollama_model'] ?: $config['ollama_model'];
+                $config['gemini_model'] = $cfg['model'] ?? $config['gemini_model'];
+                $ttsCfg = $cfg['tts_engine'] ?? 'google';
+                $config['tts_engine'] = in_array($ttsCfg, ['google', 'groq', 'espeak', 'ollama'], true) ? $ttsCfg : 'google';
+                $config['stt_engine'] = ($cfg['stt_engine'] ?? 'groq') === 'whisper' ? 'whisper' : 'groq';
+            }
+        } catch (\Throwable $e) {
+            error_log("AISettings index config load failed: " . $e->getMessage());
+        }
+        // Masked previews only — full keys never re-sent to the browser
+        $mask = static function (?string $k): string {
+            $k = trim((string)$k);
+            return $k === '' ? '' : substr($k, 0, 4) . '••••••••' . substr($k, -4);
+        };
+        $this->data['masked'] = [
+            'gemini' => $mask($config['gemini_key']),
+            'groq' => $mask($config['groq_key']),
+            'openrouter' => $mask($config['openrouter_key']),
+        ];
+        $this->data['has_keys'] = [
+            'gemini' => trim($config['gemini_key']) !== '',
+            'groq' => trim($config['groq_key']) !== '',
+            'openrouter' => trim($config['openrouter_key']) !== '',
+        ];
+        unset($config['gemini_key'], $config['groq_key'], $config['openrouter_key']);
+        $this->data['config'] = $config;
+
+        // Usage stats by engine (ai_api_logs.engine_used)
+        $this->data['usage'] = ['today' => 0, 'month' => 0, 'errors_30d' => 0, 'by_engine' => []];
+        try {
+            $this->data['usage']['today'] = (int)($this->db->fetch("SELECT COUNT(*) c FROM ai_api_logs WHERE created_at >= CURDATE()")['c'] ?? 0);
+            $this->data['usage']['month'] = (int)($this->db->fetch("SELECT COUNT(*) c FROM ai_api_logs WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)")['c'] ?? 0);
+            $this->data['usage']['errors_30d'] = (int)($this->db->fetch("SELECT COUNT(*) c FROM ai_api_logs WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) AND (status_code != 200 OR status_code IS NULL)")['c'] ?? 0);
+        } catch (\Throwable $e) {
+            error_log("AISettings index stats failed: " . $e->getMessage());
+        }
+        try {
+            $this->data['usage']['by_engine'] = $this->db->fetchAll(
+                "SELECT COALESCE(NULLIF(engine_used,''), service) engine, COUNT(*) calls,
+                        ROUND(AVG(response_time_ms)) avg_ms,
+                        SUM(CASE WHEN status_code != 200 OR status_code IS NULL THEN 1 ELSE 0 END) errors
+                 FROM ai_api_logs
+                 WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+                 GROUP BY engine ORDER BY calls DESC LIMIT 10"
+            );
+        } catch (\Throwable $e) {
+            error_log("AISettings index engine stats failed: " . $e->getMessage());
+        }
+
         return $this->render('admin/ai_settings/index');
     }
-    
+
     /**
-     * Update API key
+     * Save multi-provider configuration (keys left blank keep current value)
+     */
+    public function saveConfig()
+    {
+        if (!$this->isAdmin()) {
+            $this->jsonResponse(['success' => false, 'message' => 'Unauthorized'], 401);
+            return;
+        }
+
+        try {
+            $row = $this->db->fetch("SELECT api_key, groq_api_key, openrouter_api_key, settings FROM ai_settings WHERE id = 1");
+            if (!$row) {
+                $this->jsonResponse(['success' => false, 'message' => 'ai_settings row #1 missing'], 500);
+                return;
+            }
+            $cfg = json_decode((string)($row['settings'] ?? '{}'), true) ?: [];
+
+            $fields = [];
+            $params = [];
+
+            // Gemini key lives in the shared api_key column (service=gemini)
+            $newGemini = trim($_POST['gemini_key'] ?? '');
+            if ($newGemini !== '') {
+                $fields[] = "api_key = ?";
+                $params[] = $newGemini;
+            }
+            $newGroq = trim($_POST['groq_key'] ?? '');
+            if ($newGroq !== '') {
+                $fields[] = "groq_api_key = ?";
+                $params[] = $newGroq;
+            }
+            $newOrr = trim($_POST['openrouter_key'] ?? '');
+            if ($newOrr !== '') {
+                $fields[] = "openrouter_api_key = ?";
+                $params[] = $newOrr;
+            }
+
+            $ollamaUrl = trim($_POST['ollama_url'] ?? '');
+            if ($ollamaUrl !== '' && filter_var($ollamaUrl, FILTER_VALIDATE_URL)) {
+                $fields[] = "ollama_url = ?";
+                $params[] = $ollamaUrl;
+            }
+            $ollamaModel = trim($_POST['ollama_model'] ?? '');
+            if ($ollamaModel !== '') {
+                $fields[] = "ollama_model = ?";
+                $params[] = $ollamaModel;
+            }
+
+            // JSON settings blob: gemini model + voice engines
+            if (!empty($_POST['gemini_model'])) {
+                $cfg['model'] = trim($_POST['gemini_model']);
+            }
+            $tts = $_POST['tts_engine'] ?? 'google';
+            if (in_array($tts, ['google', 'groq', 'espeak', 'ollama'], true)) {
+                $cfg['tts_engine'] = $tts;
+            }
+            $stt = $_POST['stt_engine'] ?? 'groq';
+            if (in_array($stt, ['groq', 'whisper'], true)) {
+                $cfg['stt_engine'] = $stt;
+            }
+            $fields[] = "settings = ?";
+            $params[] = json_encode($cfg);
+
+            $params[] = 1;
+            $sql = "UPDATE ai_settings SET " . implode(', ', $fields) . " WHERE id = ?";
+            $this->db->execute($sql, $params);
+
+            $this->jsonResponse(['success' => true, 'message' => 'Configuration saved. New values take effect immediately.']);
+        } catch (\Throwable $e) {
+            error_log("AISettings saveConfig failed: " . $e->getMessage());
+            $this->jsonResponse(['success' => false, 'message' => 'Save failed: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Live connection test per provider
+     */
+    public function testProvider()
+    {
+        if (!$this->isAdmin()) {
+            $this->jsonResponse(['success' => false, 'message' => 'Unauthorized'], 401);
+            return;
+        }
+
+        $provider = $_POST['provider'] ?? '';
+        try {
+            $row = $this->db->fetch("SELECT api_key, settings, groq_api_key, openrouter_api_key, ollama_url FROM ai_settings WHERE id = 1");
+            $cfg = json_decode((string)($row['settings'] ?? '{}'), true) ?: [];
+        } catch (\Throwable $e) {
+            $this->jsonResponse(['success' => false, 'message' => 'Config load failed'], 500);
+            return;
+        }
+
+        $start = microtime(true);
+        $result = ['success' => false, 'message' => 'Unknown provider'];
+
+        switch ($provider) {
+            case 'gemini':
+                $key = trim((string)($row['api_key'] ?? ''));
+                if ($key === '') { $result['message'] = 'No Gemini key saved'; break; }
+                $model = $cfg['model'] ?? 'gemini-2.5-flash';
+                $ch = curl_init("https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key=" . urlencode($key));
+                curl_setopt_array($ch, [
+                    CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_TIMEOUT => 20,
+                    CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+                    CURLOPT_POSTFIELDS => json_encode(['contents' => [['parts' => [['text' => 'ping']]]]]),
+                ]);
+                $resp = curl_exec($ch);
+                $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
+                $ok = $code === 200 && strpos((string)$resp, 'candidates') !== false;
+                $result = ['success' => $ok, 'message' => $ok ? "Gemini {$model} replied" : "HTTP {$code}: " . substr((string)$resp, 0, 160)];
+                break;
+
+            case 'groq':
+                $key = trim((string)($row['groq_api_key'] ?? ''));
+                if ($key === '') { $result['message'] = 'No Groq key saved'; break; }
+                $ch = curl_init('https://api.groq.com/openai/v1/models');
+                curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 15, CURLOPT_HTTPHEADER => ["Authorization: Bearer {$key}"]]);
+                $resp = curl_exec($ch);
+                $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
+                $data = json_decode((string)$resp, true);
+                $count = is_array($data['data'] ?? null) ? count($data['data']) : 0;
+                $ok = $code === 200 && $count > 0;
+                $result = ['success' => $ok, 'message' => $ok ? "Groq OK — {$count} models available" : "HTTP {$code}: " . substr((string)$resp, 0, 160)];
+                break;
+
+            case 'openrouter':
+                $key = trim((string)($row['openrouter_api_key'] ?? ''));
+                if ($key === '') { $result['message'] = 'No OpenRouter key saved'; break; }
+                $ch = curl_init('https://openrouter.ai/api/v1/auth/key');
+                curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 15, CURLOPT_HTTPHEADER => ["Authorization: Bearer {$key}"]]);
+                $resp = curl_exec($ch);
+                $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
+                $data = json_decode((string)$resp, true);
+                $label = $data['data']['label'] ?? '';
+                $limit = $data['data']['limit'] ?? null;
+                $usage = $data['data']['usage'] ?? null;
+                $ok = $code === 200 && !empty($data['data']);
+                $detail = $ok ? ('Key valid' . ($label ? " ({$label})" : '') . ($usage !== null ? ' — used ' . $usage . ($limit !== null && $limit !== false ? '/' . $limit : '') : '')) : "HTTP {$code}: " . substr((string)$resp, 0, 160);
+                $result = ['success' => $ok, 'message' => $detail];
+                break;
+
+            case 'ollama':
+                $url = rtrim((string)($row['ollama_url'] ?? 'http://localhost:11434'), '/');
+                $ch = curl_init($url . '/api/tags');
+                curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 6]);
+                $resp = curl_exec($ch);
+                $err = curl_error($ch);
+                $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
+                $data = json_decode((string)$resp, true);
+                $models = array_map(static fn($m) => $m['name'] ?? '', $data['models'] ?? []);
+                $ok = $code === 200;
+                $msg = $ok ? (empty($models) ? 'Ollama reachable but NO models pulled — chain skips it' : 'Ollama OK — models: ' . implode(', ', array_slice($models, 0, 5))) : 'Unreachable: ' . ($err ?: "HTTP {$code}");
+                $result = ['success' => $ok, 'message' => $msg];
+                break;
+        }
+
+        $result['latency_ms'] = (int)round((microtime(true) - $start) * 1000);
+        $this->jsonResponse($result);
+    }
+
+    /**
+     * Update API key (legacy Gemini-only endpoint, kept for compatibility)
      */
     public function updateApiKey()
     {
