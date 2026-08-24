@@ -131,6 +131,7 @@ class Router
                 '/admin/ai/',
                 '/csp-report',
                 '/webhook/',
+                '/whatsapp-webhook',
                 '/compare/',
                 '/careers/submit-application',
                 '/forgot-password',

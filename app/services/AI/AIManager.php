@@ -226,6 +226,39 @@ class AIManager
         $intent = $detection['intent'];
         $lang = $detection['language'];
 
+        // Real AI first (cloud free engines: Groq/OpenRouter/Gemini); templates are the offline fallback
+        try {
+            $aiText = trim(\App\Services\AI\FreeAIEngines::getInstance()->generate(
+                $message,
+                ['max_tokens' => 250, 'temperature' => 0.7],
+                'chat'
+            )['text'] ?? '');
+        } catch (\Throwable $e) {
+            error_log("AIManager free-engine reply failed: " . $e->getMessage());
+            $aiText = '';
+        }
+
+        if ($aiText !== '') {
+            // Add personalized follow-up for buy/rent intents
+            if (in_array($intent, ['buy_property', 'rent_property']) && $userId) {
+                $recs = $this->recommender->recommend($userId, 3);
+                if (!empty($recs)) {
+                    $aiText .= "\n\nBased on your interest, here are some options:\n";
+                    foreach ($recs as $r) {
+                        $name = $r['item']['title'] ?? $r['item']['name'] ?? 'Property #' . $r['item']['id'];
+                        $aiText .= "- $name\n";
+                    }
+                }
+            }
+            return [
+                'text' => $aiText,
+                'intent' => $intent,
+                'response_time_ms' => (int)((microtime(true) - $start) * 1000),
+                'confidence' => max($detection['confidence'], 0.85),
+                'source' => 'free_ai',
+            ];
+        }
+
         $templates = $this->getResponseTemplates($lang);
 
         if (isset($templates[$intent])) {
