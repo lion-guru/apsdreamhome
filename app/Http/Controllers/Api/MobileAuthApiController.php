@@ -273,6 +273,199 @@ class MobileAuthApiController extends BaseController
         echo json_encode(['success' => true, 'message' => 'Logged out successfully']);
     }
 
+    // Air Login (OTP-based passwordless login)
+    public function requestAirLoginOtp()
+    {
+        $this->setCorsHeaders();
+        $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+        $identity = trim($input['identity'] ?? $input['email'] ?? $input['phone'] ?? '');
+
+        if (empty($identity)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Email or phone number is required']);
+            return;
+        }
+
+        try {
+            $db = \App\Core\Database\Database::getInstance();
+            $tid = (int)$this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $params = [$identity, $identity];
+            if ($tid > 1) $params[] = $tid;
+
+            $user = $db->fetchOne(
+                "SELECT id, email, phone, name, role, status, registration_status FROM users WHERE (email = ? OR phone = ?) AND status != 'deleted'" . $tidSql . " LIMIT 1",
+                $params
+            );
+
+            if (!$user) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'No account found with this email or phone number']);
+                return;
+            }
+
+            if (($user['status'] ?? 'active') !== 'active') {
+                http_response_code(403);
+                echo json_encode(['success' => false, 'error' => 'Account is ' . ($user['status'] ?? 'inactive') . '. Please contact support.']);
+                return;
+            }
+
+            if (($user['registration_status'] ?? 'approved') === 'rejected') {
+                http_response_code(403);
+                echo json_encode(['success' => false, 'error' => 'Registration has been rejected.']);
+                return;
+            }
+
+            // Send OTP via OTPService
+            $otpService = new \App\Services\OTPService();
+            $channel = filter_var($identity, FILTER_VALIDATE_EMAIL) ? 'email' : 'sms';
+            $result = $otpService->sendOTP($identity, 'login', $channel);
+
+            if (!$result['success']) {
+                http_response_code(500);
+                echo json_encode(['success' => false, 'error' => 'Failed to send OTP: ' . ($result['error'] ?? 'Unknown error')]);
+                return;
+            }
+
+            echo json_encode([
+                'success' => true,
+                'message' => 'OTP sent successfully',
+                'data' => [
+                    'channel' => $channel,
+                    'masked_identity' => $channel === 'email' 
+                        ? preg_replace('/^(.{1}).*(@.*)$/', '$1***$2', $identity)
+                        : '****' . substr($identity, -4),
+                    'expires_in' => 300
+                ]
+            ]);
+        } catch (\Exception $e) {
+            error_log('MobileAuthApiController::requestAirLoginOtp error: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Failed to send OTP']);
+        }
+    }
+
+    public function verifyAirLoginOtp()
+    {
+        $this->setCorsHeaders();
+        $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+        $identity = trim($input['identity'] ?? $input['email'] ?? $input['phone'] ?? '');
+        $otp = trim($input['otp'] ?? '');
+        $remember = !empty($input['remember']);
+
+        if (empty($identity) || empty($otp)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Identity and OTP are required']);
+            return;
+        }
+
+        try {
+            $otpService = new \App\Services\OTPService();
+            $channel = filter_var($identity, FILTER_VALIDATE_EMAIL) ? 'email' : 'sms';
+            $result = $otpService->verifyOTP($identity, $otp, 'login', $channel);
+
+            if (!$result['success']) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => $result['error'] ?? 'Invalid or expired OTP']);
+                return;
+            }
+
+            // User verified - now log them in
+            $db = \App\Core\Database\Database::getInstance();
+            $tid = (int)$this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $params = [$identity, $identity];
+            if ($tid > 1) $params[] = $tid;
+
+            $user = $db->fetchOne(
+                "SELECT id, email, phone, name, role, status, customer_id, associate_id, employee_id, agent_id, farmer_id FROM users WHERE (email = ? OR phone = ?) AND status != 'deleted'" . $tidSql . " LIMIT 1",
+                $params
+            );
+
+            if (!$user) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'User not found']);
+                return;
+            }
+
+            // Establish session (same as password login)
+            session_regenerate_id(true);
+            $_SESSION['user_id'] = (int)$user['id'];
+            $_SESSION['role'] = $user['role'];
+            $_SESSION['tenant_id'] = $tid;
+            $_SESSION['name'] = $user['name'];
+            $_SESSION['email'] = $user['email'];
+            
+            // Set role-specific session vars
+            $role = $user['role'];
+            if ($role === 'admin' || $role === 'super_admin' || $role === 'manager' || $role === 'employee' || $role === 'telecaller') {
+                $_SESSION['admin_id'] = (int)$user['id'];
+                $_SESSION['admin_role'] = $role;
+            }
+            if (isset($user['associate_id']) && $user['associate_id']) {
+                $_SESSION['associate_id'] = (int)$user['associate_id'];
+            }
+            if (isset($user['agent_id']) && $user['agent_id']) {
+                $_SESSION['agent_id'] = (int)$user['agent_id'];
+            }
+            if (isset($user['employee_id']) && $user['employee_id']) {
+                $_SESSION['employee_id'] = (int)$user['employee_id'];
+            }
+            if (isset($user['farmer_id']) && $user['farmer_id']) {
+                $_SESSION['farmer_id'] = (int)$user['farmer_id'];
+            }
+
+            // Generate JWT token for mobile
+            $jwtService = new \App\Services\Auth\JWTAuthService();
+            $token = $jwtService->generateToken([
+                'user_id' => (int)$user['id'],
+                'role' => $role,
+                'tenant_id' => $tid,
+                'remember' => $remember
+            ]);
+
+            // Determine redirect URL based on role
+            $redirectUrl = $this->getRedirectUrlForRole($role);
+
+            echo json_encode([
+                'success' => true,
+                'message' => 'Login successful',
+                'data' => [
+                    'user' => [
+                        'id' => (int)$user['id'],
+                        'name' => $user['name'],
+                        'email' => $user['email'],
+                        'phone' => $user['phone'],
+                        'role' => $role,
+                        'redirect_url' => $redirectUrl
+                    ],
+                    'token' => $token,
+                    'expires_in' => $remember ? 2592000 : 86400
+                ]
+            ]);
+        } catch (\Exception $e) {
+            error_log('MobileAuthApiController::verifyAirLoginOtp error: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'OTP verification failed']);
+        }
+    }
+
+    private function getRedirectUrlForRole($role)
+    {
+        $redirects = [
+            'admin' => BASE_URL . '/admin/dashboard',
+            'super_admin' => BASE_URL . '/admin/dashboard',
+            'manager' => BASE_URL . '/admin/dashboard',
+            'employee' => BASE_URL . '/admin/dashboard',
+            'telecaller' => BASE_URL . '/employee/dashboard',
+            'associate' => BASE_URL . '/associate/dashboard',
+            'agent' => BASE_URL . '/agent/dashboard',
+            'farmer' => BASE_URL . '/farmer/dashboard',
+            'customer' => BASE_URL . '/user/dashboard',
+        ];
+        return $redirects[$role] ?? BASE_URL . '/user/dashboard';
+    }
+
     public function forgotPassword()
     {
         $this->setCorsHeaders();

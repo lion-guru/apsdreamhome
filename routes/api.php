@@ -24,6 +24,8 @@ $router->post('/api/v2/mobile/auth/login', 'Api\MobileAuthApiController@login');
 $router->post('/api/v2/mobile/auth/register', 'Api\MobileAuthApiController@register');
 $router->post('/api/v2/mobile/auth/logout', 'Api\MobileAuthApiController@logout');
 $router->post('/api/v2/mobile/auth/google-login', 'Api\MobileAuthApiController@googleLogin');
+$router->post('/api/v2/mobile/auth/air-login', 'Api\MobileAuthApiController@requestAirLoginOtp');
+$router->post('/api/v2/mobile/auth/air-login/verify', 'Api\MobileAuthApiController@verifyAirLoginOtp');
 $router->get('/api/v2/mobile/sync', 'Api\MobileSyncApiController@syncProperties')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/leads', 'Api\CRMController@createLead')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/leads/batch-sync', 'Api\MobileSyncApiController@batchSyncLeads')->middleware('App\Http\Middleware\ApiAuthMiddleware');
