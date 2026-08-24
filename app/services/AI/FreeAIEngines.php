@@ -31,7 +31,8 @@ class FreeAIEngines
 
     // Google Gemini (free tier: 15 RPM, 1M tokens/day)
     private $geminiKey = '';
-    private $geminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+    private $geminiModel = 'gemini-2.5-flash';
+    private $geminiUrlBase = 'https://generativelanguage.googleapis.com/v1beta/models/';
 
     private function __construct()
     {
@@ -56,6 +57,11 @@ class FreeAIEngines
             $this->groqKey = $settings['groq_api_key'] ?? getenv('GROQ_API_KEY') ?: '';
             $this->openRouterKey = $settings['openrouter_api_key'] ?? getenv('OPENROUTER_API_KEY') ?: '';
             $this->geminiKey = $settings['api_key'] ?? getenv('GEMINI_API_KEY') ?: '';
+            // Model saved by the AI Provider Settings dashboard (settings JSON column)
+            $cfg = json_decode($settings['settings'] ?? '', true);
+            if (is_array($cfg) && !empty($cfg['model']) && is_string($cfg['model'])) {
+                $this->geminiModel = $cfg['model'];
+            }
         } catch (\Throwable $e) {
             $this->groqKey = getenv('GROQ_API_KEY') ?: '';
             $this->openRouterKey = getenv('OPENROUTER_API_KEY') ?: '';
@@ -100,7 +106,7 @@ class FreeAIEngines
         // 4. Try Google Gemini (free tier: 15 RPM, 1M tokens/day)
         if (!empty($this->geminiKey)) {
             $result = $this->geminiGenerate($prompt, $system, $temperature, $maxTokens);
-            if ($result) return ['text' => $result, 'engine' => 'gemini', 'model' => 'gemini-2.5-flash', 'tokens' => 0];
+            if ($result) return ['text' => $result, 'engine' => 'gemini', 'model' => $this->geminiModel, 'tokens' => 0];
         }
 
         return ['text' => '', 'engine' => 'none', 'model' => '', 'tokens' => 0];
@@ -287,7 +293,7 @@ class FreeAIEngines
             ],
         ];
 
-        $response = $this->httpPost($this->geminiUrl . '?key=' . $this->geminiKey, $payload, 15);
+        $response = $this->httpPost($this->geminiUrlBase . $this->geminiModel . ':generateContent?key=' . $this->geminiKey, $payload, 15);
         if ($response && isset($response['candidates'][0]['content']['parts'][0]['text'])) {
             return $response['candidates'][0]['content']['parts'][0]['text'];
         }
@@ -405,7 +411,7 @@ class FreeAIEngines
             ],
             'gemini' => [
                 'available' => !empty($this->geminiKey),
-                'model' => 'gemini-2.5-flash',
+                'model' => $this->geminiModel,
                 'cost' => 'Free: 15 RPM, 1M tokens/day',
                 'speed' => '~150 tokens/sec',
             ],
