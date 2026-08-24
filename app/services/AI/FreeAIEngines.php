@@ -177,11 +177,11 @@ class FreeAIEngines
         if ($system) $messages[] = ['role' => 'system', 'content' => $system];
         $messages[] = ['role' => 'user', 'content' => $prompt];
 
-        // Low-cost models on OpenRouter (free tier deprecated)
+        // Free models from allowed providers (groq/nvidia/openai/minimax/anthropic/moonshotai/google-ai-studio)
         $freeModels = [
-            'meta-llama/llama-3.2-3b-instruct',
-            'microsoft/phi-3-mini-128k-instruct:free',
-            'google/gemma-2-9b-it',
+            'nvidia/nemotron-3.5-lightning:free',
+            'nvidia/nemotron-3-super-120b-a12b:free',
+            'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
         ];
 
         foreach ($freeModels as $model) {

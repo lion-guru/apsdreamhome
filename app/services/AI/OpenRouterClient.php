@@ -160,11 +160,10 @@ function getOpenRouterClient($model = 'anthropic/claude-3.5-haiku') {
 
 /**
  * Free tier models available on OpenRouter
+ * (allowed providers: groq/nvidia/openai/minimax/anthropic/moonshotai/google-ai-studio)
  */
 const OPENROUTER_FREE_MODELS = [
-    'anthropic/claude-3.5-haiku',     // Good for coding
-    'meta-llama/llama-3.2-3b-instruct', // Fast and free
-    'microsoft/wizardlm-2-8x22b',    // Good for code
-    'google/gemma-7b-it',            // Google's free model
-    'mistralai/mistral-7b-instruct', // Versatile
+    'nvidia/nemotron-3.5-lightning:free',          // Fast, free (50 req/day)
+    'nvidia/nemotron-3-super-120b-a12b:free',      // Larger MoE, free
+    'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free', // Reasoning, free
 ];

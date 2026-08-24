@@ -20,6 +20,15 @@ class AIGeminiChatbotService
     {
         $this->database = Database::getInstance();
         $this->geminiApiKey = $_ENV['GEMINI_API_KEY'] ?? '';
+        // Prefer DB-configured key (ai_settings) over env
+        try {
+            $row = $this->database->fetch("SELECT api_key FROM ai_settings WHERE service = 'gemini' AND is_active = 1 LIMIT 1");
+            if ($row && !empty($row['api_key'])) {
+                $this->geminiApiKey = $row['api_key'];
+            }
+        } catch (\Throwable $e) {
+            error_log("AIGeminiChatbotService key load: " . $e->getMessage());
+        }
     }
     
     /**
@@ -72,7 +81,10 @@ class AIGeminiChatbotService
                     'temperature' => 0.7,
                     'maxOutputTokens' => 1024,
                     'topP' => 0.9,
-                    'topK' => 40
+                    'topK' => 40,
+                    // gemini-2.5-flash is a thinking model — disable thinking or
+                    // thought tokens consume maxOutputTokens and replies truncate
+                    'thinkingConfig' => ['thinkingBudget' => 0]
                 ],
                 'safetySettings' => [
                     [
