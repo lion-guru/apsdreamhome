@@ -195,12 +195,4 @@ class BankController extends BaseApiController
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
         exit;
     }
-    
-    /**
-     * Helper: Error response
-     */
-    protected function errorResponse(string $message, int $code = 400): void
-    {
-        $this->jsonResponse(['error' => true, 'message' => $message], $code);
-    }
 }

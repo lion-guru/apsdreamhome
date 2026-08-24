@@ -72,12 +72,14 @@ class LeadController extends AdminController
     {
         $this->requireAdmin();
         try {
-            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $db = \App\Core\Database\Database::getInstance();
             $sources = $db->query("SELECT id, name FROM lead_sources ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
             $statuses = $db->query("SELECT status_name FROM lead_statuses ORDER BY id")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
             $tid = (int)$this->tenantId();
-            $tidParam = $tid > 1 ? [$tid] : [];
-            $assignees = $db->query("SELECT id, name FROM users WHERE role IN ('employee','admin','manager','associate','agent') AND deleted_at IS NULL" . ($tid > 1 ? " AND tenant_id = ?" : "") . " ORDER BY name", $tidParam)->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $assignees = $db->query(
+                "SELECT id, name FROM users WHERE role IN ('employee','admin','manager','associate','agent') AND deleted_at IS NULL" . ($tid > 1 ? " AND tenant_id = ?" : "") . " ORDER BY name",
+                $tid > 1 ? [$tid] : []
+            )->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Exception $e) {
             $sources = []; $statuses = []; $assignees = [];
         }
