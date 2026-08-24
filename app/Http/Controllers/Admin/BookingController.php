@@ -423,19 +423,9 @@ class BookingController extends AdminController
         return $token === ($_SESSION['csrf_token'] ?? '');
     }
 
-    private function jsonErrorLocal(string $message, int $code = 400): void
+    protected function jsonErrorLocal(string $message, int $code = 400)
     {
-        http_response_code($code);
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => $message]);
-        exit;
-    }
-
-    private function jsonSuccess($data): void
-    {
-        header('Content-Type: application/json');
-        echo json_encode(['success' => true, 'data' => $data]);
-        exit;
+        return $this->jsonError($message, $code);
     }
 
     /**

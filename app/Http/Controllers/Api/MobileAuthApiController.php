@@ -33,16 +33,12 @@ class MobileAuthApiController extends BaseController
         $password = $data['password'] ?? '';
 
         if (empty($email) || empty($password)) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'error' => 'Email and password required']);
-            return;
+            return $this->jsonError('Email and password required', 400);
         }
 
         $email = filter_var($email, FILTER_SANITIZE_EMAIL);
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'error' => 'Invalid email format']);
-            return;
+            return $this->jsonError('Invalid email format', 400);
         }
 
         \App\Middleware\RateLimiter::check('mobile_login', 5, 60);
@@ -52,11 +48,10 @@ class MobileAuthApiController extends BaseController
         
         if ($result['success']) {
             error_log("MobileAPI Login SUCCESS: email={$email}, ip={$ip}");
-            echo json_encode($result);
+            return $this->jsonSuccess($result['data'] ?? $result, $result['message'] ?? 'Login successful');
         } else {
             error_log("MobileAPI Login FAILED: email={$email}, ip={$ip}, reason=" . ($result['error'] ?? 'unknown'));
-            http_response_code(401);
-            echo json_encode($result);
+            return $this->jsonError($result['error'] ?? 'Login failed', 401);
         }
     }
 
@@ -72,28 +67,20 @@ class MobileAuthApiController extends BaseController
         $role = in_array(($data['role'] ?? ''), ['customer', 'agent', 'employee']) ? $data['role'] : 'customer';
 
         if ($name === '' || $email === '' || $password === '') {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'Name, email and password are required']);
-            return;
+            return $this->jsonError('Name, email and password are required', 400);
         }
 
         $email = filter_var($email, FILTER_SANITIZE_EMAIL);
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'Invalid email format']);
-            return;
+            return $this->jsonError('Invalid email format', 400);
         }
 
         if (strlen($password) < 6) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'Password must be at least 6 characters']);
-            return;
+            return $this->jsonError('Password must be at least 6 characters', 400);
         }
 
         if (!$this->tenantEnforce('add_user')) {
-            http_response_code(403);
-            echo json_encode(['success' => false, 'message' => $_SESSION['error'] ?? 'User limit reached for your plan']);
-            return;
+            return $this->jsonError($_SESSION['error'] ?? 'User limit reached for your plan', 403);
         }
 
         try {
@@ -103,9 +90,7 @@ class MobileAuthApiController extends BaseController
             $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?{$tidSql} LIMIT 1");
             $stmt->execute(array_merge([$email], $tidParams));
             if ($stmt->fetch()) {
-                http_response_code(409);
-                echo json_encode(['success' => false, 'message' => 'Email already registered']);
-                return;
+                return $this->jsonError('Email already registered', 409);
             }
 
             $hash = Security::hashPassword($password);
@@ -123,15 +108,13 @@ class MobileAuthApiController extends BaseController
             $result = $this->apiAuthService->login($email, $password);
 
             if ($result['success']) {
-                echo json_encode($result);
+                return $this->jsonSuccess($result['data'] ?? $result, $result['message'] ?? 'Registration successful');
             } else {
-                http_response_code(500);
-                echo json_encode(['success' => false, 'message' => 'Registration succeeded but auto-login failed']);
+                return $this->jsonError('Registration succeeded but auto-login failed', 500);
             }
         } catch (\Throwable $e) {
             error_log('MobileAuthApiController::register failed: ' . $e->getMessage());
-            http_response_code(500);
-            echo json_encode(['success' => false, 'message' => 'Registration failed: ' . $e->getMessage()]);
+            return $this->jsonError('Registration failed: ' . $e->getMessage(), 500);
         }
     }
 
@@ -244,19 +227,14 @@ class MobileAuthApiController extends BaseController
             $userData['avatar'] = $user['avatar'] ?? null;
             $userData['target'] = 0.0;
 
-            echo json_encode([
-                'success' => true,
-                'data' => [
-                    'user' => $userData,
-                    'token' => $token,
-                ],
-                'expires_at' => $expiresAt,
-            ]);
+            return $this->jsonSuccess([
+                'user' => $userData,
+                'token' => $token,
+            ], 'Google login successful', 200);
 
         } catch (\Exception $e) {
             error_log('MobileAuthApiController::googleLogin failed: ' . $e->getMessage());
-            http_response_code(500);
-            echo json_encode(['success' => false, 'message' => 'Google login failed: ' . $e->getMessage()]);
+            return $this->jsonError('Google login failed: ' . $e->getMessage(), 500);
         }
     }
 
@@ -270,7 +248,7 @@ class MobileAuthApiController extends BaseController
             $this->apiAuthService->logout($token);
         }
 
-        echo json_encode(['success' => true, 'message' => 'Logged out successfully']);
+        return $this->jsonSuccess([], 'Logged out successfully');
     }
 
     // Air Login (OTP-based passwordless login)

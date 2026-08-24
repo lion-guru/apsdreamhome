@@ -750,6 +750,14 @@ class BaseController
     }
 
     /**
+     * Return a JSON success response
+     */
+    protected function jsonSuccess($data = [], $message = 'Success', $status = 200)
+    {
+        return $this->jsonResponse(['success' => true, 'message' => $message, 'data' => $data], $status);
+    }
+
+    /**
      * Return a 404 Not Found response
      */
     protected function notFound($message = "Resource not found")
