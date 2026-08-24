@@ -329,7 +329,7 @@ class BookingController extends AdminController
         try {
             $data = $_POST;
             $stmt = $this->db->prepare(
-                "INSERT INTO payments (booking_id, amount, payment_date, payment_method, transaction_id, status, notes)
+                "INSERT INTO payments (booking_id, amount, payment_date, gateway, transaction_id, status, notes)
                  VALUES (?, ?, NOW(), ?, ?, 'completed', ?)"
             );
             $stmt->execute([$id, $data['amount'] ?? 0, $data['payment_method'] ?? 'cash', $data['transaction_id'] ?? '', $data['notes'] ?? '']);

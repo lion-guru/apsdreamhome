@@ -185,7 +185,7 @@ class SalariedAgentService
 
             // Mark associate as salary-active
             $this->pdo->prepare("
-                UPDATE associates SET is_salary_active = 1, agent_type = 'salaried'
+                UPDATE associates SET agent_type = 'salaried'
                 WHERE user_id = ?
             ")->execute([$userId]);
 

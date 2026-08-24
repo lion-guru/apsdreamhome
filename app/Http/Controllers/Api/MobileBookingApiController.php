@@ -435,11 +435,11 @@ class MobileBookingApiController extends BaseController
     {
         $this->db->beginTransaction();
         try {
-            $stmt = $this->db->prepare("INSERT INTO payments (booking_id, user_id, amount, payment_method, status, created_at) VALUES (?, ?, ?, ?, 'completed', NOW())");
+            $stmt = $this->db->prepare("INSERT INTO payments (booking_id, user_id, amount, gateway, status, created_at) VALUES (?, ?, ?, ?, 'completed', NOW())");
             $stmt->execute([$bookingId, $userId, $amount, $paymentMethod]);
             $paymentId = $this->db->lastInsertId();
 
-            $stmt = $this->db->prepare("UPDATE bookings SET amount_paid = amount_paid + ?, status = CASE WHEN amount_paid >= amount THEN 'completed' ELSE 'partial' END WHERE id = ? AND customer_id = ?");
+            $stmt = $this->db->prepare("UPDATE bookings SET amount = amount + ?, status = CASE WHEN amount >= total_amount THEN 'completed' ELSE 'partial' END WHERE id = ? AND customer_id = ?");
             $stmt->execute([$amount, $bookingId, $userId]);
 
             $this->db->commit();

@@ -460,7 +460,7 @@ class GodModeController extends AdminController
     private function logImpersonation($userId, $action)
     {
         $this->db->execute(
-            "INSERT INTO activity_logs_unified (admin_id, action, target_type, target_id, details, created_at) 
+            "INSERT INTO activity_logs_unified (user_id, action, entity_type, entity_id, details, created_at) 
              VALUES (?, ?, ?, ?, ?, NOW())",
             [
                 $_SESSION['admin_user_id'] ?? null,
@@ -480,7 +480,7 @@ class GodModeController extends AdminController
         $action = $restore ? 'role_restore' : 'role_switch';
 
         $this->db->execute(
-            "INSERT INTO activity_logs_unified (admin_id, action, target_type, target_id, details, created_at) 
+            "INSERT INTO activity_logs_unified (user_id, action, entity_type, entity_id, details, created_at) 
              VALUES (?, ?, ?, ?, ?, NOW())",
             [
                 $_SESSION['admin_user_id'] ?? null,
@@ -501,7 +501,7 @@ class GodModeController extends AdminController
     private function logCommandExecution($command, $result)
     {
         $this->db->execute(
-            "INSERT INTO activity_logs_unified (admin_id, action, target_type, target_id, details, created_at) 
+            "INSERT INTO activity_logs_unified (user_id, action, entity_type, entity_id, details, created_at) 
              VALUES (?, ?, ?, ?, ?, NOW())",
             [
                 $_SESSION['admin_user_id'] ?? null,

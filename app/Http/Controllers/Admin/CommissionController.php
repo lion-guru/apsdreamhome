@@ -278,7 +278,7 @@ class CommissionController extends AdminController
                            b.booking_number, p.title as property_title
                     FROM mlm_commission_ledger mcl
                     JOIN users u ON mcl.beneficiary_user_id = u.id
-                    LEFT JOIN bookings b ON mcl.source_booking_id = b.id
+                    LEFT JOIN bookings b ON mcl.booking_id = b.id
                     LEFT JOIN properties p ON b.property_id = p.id
                     WHERE mcl.status = 'pending'
                     ORDER BY mcl.created_at DESC
@@ -297,11 +297,11 @@ class CommissionController extends AdminController
     {
         try {
             $sql = "SELECT mcl.*, u.name as associate_name, u.email as associate_email,
-                           mcl.payout_method, mcl.payout_date
+                           mcl.paid_at
                     FROM mlm_commission_ledger mcl
                     JOIN users u ON mcl.beneficiary_user_id = u.id
-                    WHERE mcl.status = 'paid' AND mcl.payout_date IS NOT NULL
-                    ORDER BY mcl.payout_date DESC
+                    WHERE mcl.status = 'paid' AND mcl.paid_at IS NOT NULL
+                    ORDER BY mcl.paid_at DESC
                     LIMIT 10";
             return $this->db->fetchAll($sql) ?: [];
         } catch (\Exception $e) {
@@ -322,9 +322,9 @@ class CommissionController extends AdminController
                     LEFT JOIN properties p ON b.property_id = p.id
                     WHERE b.status = 'confirmed' 
                     AND b.id NOT IN (
-                        SELECT DISTINCT source_booking_id 
+                        SELECT DISTINCT booking_id 
                         FROM mlm_commission_ledger 
-                        WHERE source_booking_id IS NOT NULL
+                        WHERE booking_id IS NOT NULL
                     )
                     ORDER BY b.created_at DESC
                     LIMIT 50";
@@ -379,7 +379,7 @@ class CommissionController extends AdminController
 
             // Insert commission record
             $sql = "INSERT INTO mlm_commission_ledger 
-                    (associate_id, source_booking_id, commission_type, rate, amount, status, created_at)
+                    (beneficiary_user_id, booking_id, commission_type, commission_percentage, amount, status, created_at)
                     VALUES (?, ?, ?, ?, ?, 'pending', NOW())";
             $stmt = $this->db->prepare($sql);
             $result = $stmt->execute([
@@ -448,7 +448,7 @@ class CommissionController extends AdminController
                            b.booking_number, p.title as property_title
                     FROM mlm_commission_ledger mcl
                     JOIN users u ON mcl.beneficiary_user_id = u.id
-                    LEFT JOIN bookings b ON mcl.source_booking_id = b.id
+                    LEFT JOIN bookings b ON mcl.booking_id = b.id
                     LEFT JOIN properties p ON b.property_id = p.id
                     WHERE mcl.status = 'pending'
                     ORDER BY mcl.created_at ASC";
@@ -468,7 +468,7 @@ class CommissionController extends AdminController
             $status = $action === 'approve' ? 'approved' : 'rejected';
 
             $sql = "UPDATE mlm_commission_ledger 
-                    SET status = ?, approval_notes = ?, approved_by = ?, approved_at = NOW()
+                    SET status = ?, notes = ?, approved_by = ?
                     WHERE id = ?";
             $stmt = $this->db->prepare($sql);
             $result = $stmt->execute([$status, $notes, $_SESSION['user_id'] ?? 0, $commissionId]);
@@ -504,7 +504,7 @@ class CommissionController extends AdminController
                            u.bank_account, u.bank_name, u.ifsc_code
                     FROM mlm_commission_ledger mcl
                     JOIN users u ON mcl.beneficiary_user_id = u.id
-                    WHERE mcl.status = 'approved' AND (mcl.payout_date IS NULL OR mcl.payout_date = '')
+                    WHERE mcl.status = 'approved' AND (mcl.paid_at IS NULL OR mcl.paid_at = '')
                     ORDER BY mcl.approved_at ASC";
             return $this->db->fetchAll($sql) ?: [];
         } catch (\Exception $e) {
@@ -522,8 +522,8 @@ class CommissionController extends AdminController
             $sql = "SELECT mcl.*, u.name as associate_name, u.email as associate_email
                     FROM mlm_commission_ledger mcl
                     JOIN users u ON mcl.beneficiary_user_id = u.id
-                    WHERE mcl.status = 'paid' AND mcl.payout_date IS NOT NULL
-                    ORDER BY mcl.payout_date DESC
+                    WHERE mcl.status = 'paid' AND mcl.paid_at IS NOT NULL
+                    ORDER BY mcl.paid_at DESC
                     LIMIT 20";
             return $this->db->fetchAll($sql) ?: [];
         } catch (\Exception $e) {
@@ -553,23 +553,20 @@ class CommissionController extends AdminController
 
             // Update commission status
             $sql = "UPDATE mlm_commission_ledger 
-                    SET status = 'paid', payout_method = ?, payout_date = NOW(), processed_by = ?
+                    SET status = 'paid', paid_at = NOW()
                     WHERE id = ?";
             $stmt = $this->db->prepare($sql);
-            $result = $stmt->execute([$payoutMethod, $_SESSION['user_id'] ?? 0, $commissionId]);
+            $result = $stmt->execute([$commissionId]);
 
             if ($result) {
                 // Create payout record
                 $sql = "INSERT INTO commission_payouts 
-                        (commission_id, associate_id, amount, payout_method, processed_by, processed_at)
-                        VALUES (?, ?, ?, ?, ?, NOW())";
+                        (associate_id, amount, payout_date)
+                        VALUES (?, ?, NOW())";
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute([
-                    $commissionId,
                     $commission['associate_id'],
-                    $commission['amount'],
-                    $payoutMethod,
-                    $_SESSION['user_id'] ?? 0
+                    $commission['amount']
                 ]);
 
                 $this->db->commit();

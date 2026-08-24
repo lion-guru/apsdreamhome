@@ -35,19 +35,19 @@ if ($id) {
             try {
                 $tenantSql = $this->tenantSql();
                 $tenantVal = $this->tenantId() > 1 ? [$this->tenantId()] : [];
-                $sql = "UPDATE investment_plans SET name=?, description=?, min_amount=?, expected_roi_percentage=?, duration_months=?, plan_type=?, start_date=?, end_date=?, document_path=? WHERE id=?" . $tenantSql;
+                $sql = "UPDATE investment_plans SET plan_name=?, description=?, min_amount=?, expected_return_pct=?, tenure_months=?, plan_category=? WHERE id=?" . $tenantSql;
             } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
             error_log($e->getMessage());
             }
-            return $this->db->execute($sql, array_merge([$name, $desc, $min, $roi, $duration, $type, $start, $end, $doc, $id], $tenantVal));
+            return $this->db->execute($sql, array_merge([$name, $desc, $min, $roi, $duration, $type, $id], $tenantVal));
         } else {
             try {
                 $tenantData = $this->tenantInsertData();
                 $tenantCols = array_keys($tenantData);
                 $tenantVals = array_values($tenantData);
-                $columns = array_merge(['name', 'description', 'min_amount', 'expected_roi_percentage', 'duration_months', 'plan_type', 'start_date', 'end_date', 'document_path'], $tenantCols);
-                $values  = array_merge([$name, $desc, $min, $roi, $duration, $type, $start, $end, $doc], $tenantVals);
+                $columns = array_merge(['plan_name', 'description', 'min_amount', 'expected_return_pct', 'tenure_months', 'plan_category'], $tenantCols);
+                $values  = array_merge([$name, $desc, $min, $roi, $duration, $type], $tenantVals);
                 $colStr = implode(', ', $columns);
                 $placeholders = implode(', ', array_fill(0, count($values), '?'));
                 $sql = "INSERT INTO investment_plans ($colStr) VALUES ($placeholders)";

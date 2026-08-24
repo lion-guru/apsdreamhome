@@ -171,8 +171,8 @@ class ProjectController extends AdminController
 
             // Insert project
             $sql = "INSERT INTO projects 
-                    (project_name, location, project_type, total_area, estimated_budget, 
-                     description, image, start_date, end_date, status, created_at)
+                    (name, address, project_type, total_area, project_budget, 
+                     description, brochure_path, launch_date, completion_date, status, created_at)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'planning', NOW())";
 
             $stmt = $this->db->prepare($sql);

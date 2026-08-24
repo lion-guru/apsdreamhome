@@ -544,7 +544,7 @@ class AgentDashboardController extends BaseController
             ];
 
             $this->db->execute(
-                "INSERT INTO leads (agent_id, name, email, phone, property_interest, budget, status, source, notes, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO leads (assigned_to, name, email, phone, property_interest, budget, status, source, notes, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 [
                     $leadData['agent_id'],
                     $leadData['name'],

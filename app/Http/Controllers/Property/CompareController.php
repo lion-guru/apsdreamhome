@@ -295,13 +295,12 @@ class CompareController extends BaseController
             $sessionId = $this->pdo->lastInsertId();
 
             // Save property comparisons
-            foreach ($propertyIds as $index => $propertyId) {
-                $sql = "INSERT INTO property_comparisons 
-                        (user_id, session_id, property_id, sort_order, created_at) 
-                        VALUES (?, ?, ?, ?, NOW())";
-                $stmt = $this->pdo->prepare($sql);
-                $stmt->execute([$userId, $sessionId, $propertyId, $index + 1]);
-            }
+            $propertyIdsJson = json_encode($propertyIds);
+            $sql = "INSERT INTO property_comparisons 
+                    (user_id, session_id, property_ids, created_at) 
+                    VALUES (?, ?, ?, NOW())";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$userId, $sessionId, $propertyIdsJson]);
 
             return $sessionId;
         } catch (\Exception $e) {

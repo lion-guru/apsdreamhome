@@ -296,7 +296,7 @@ class PropertyWorkflowController extends BaseController
             $userId = $_SESSION['user_id'];
             
             $propertyData = [
-                'user_id' => $userId,
+                'created_by' => $userId,
                 'title' => $_POST['title'] ?? '',
                 'description' => $_POST['description'] ?? '',
                 'type' => $_POST['property_type'] ?? '',
@@ -307,7 +307,7 @@ class PropertyWorkflowController extends BaseController
                 'bathrooms' => intval($_POST['bathrooms'] ?? 0),
                 'area' => $_POST['area'] ?? '',
                 'amenities' => json_encode($_POST['amenities'] ?? []),
-                'images' => json_encode($this->handlePropertyImages()),
+                'features' => json_encode($this->handlePropertyImages()),
                 'status' => 'pending_approval',
                 'created_at' => date('Y-m-d H:i:s')
             ];
@@ -319,8 +319,8 @@ class PropertyWorkflowController extends BaseController
             }
 
             // Insert property
-            $sql = "INSERT INTO properties (user_id, title, description, type, city, location, price, bedrooms, bathrooms, area, amenities, images, status, created_at)
-                    VALUES (:user_id, :title, :description, :type, :city, :location, :price, :bedrooms, :bathrooms, :area, :amenities, :images, :status, :created_at)";
+            $sql = "INSERT INTO properties (created_by, title, description, type, city, location, price, bedrooms, bathrooms, area, amenities, features, status, created_at)
+                    VALUES (:created_by, :title, :description, :type, :city, :location, :price, :bedrooms, :bathrooms, :area, :amenities, :features, :status, :created_at)";
 
             $stmt = $this->db->prepare($sql);
             $success = $stmt->execute($propertyData);
@@ -362,7 +362,7 @@ class PropertyWorkflowController extends BaseController
             }
 
             $visitData = [
-                'user_id' => $userId,
+                'customer_id' => $userId,
                 'property_id' => $property['id'],
                 'visit_date' => $visitDate,
                 'visit_time' => $visitTime,
@@ -371,8 +371,8 @@ class PropertyWorkflowController extends BaseController
                 'created_at' => date('Y-m-d H:i:s')
             ];
 
-            $sql = "INSERT INTO property_visits (user_id, property_id, visit_date, visit_time, notes, status, created_at)
-                    VALUES (:user_id, :property_id, :visit_date, :visit_time, :notes, :status, :created_at)";
+            $sql = "INSERT INTO property_visits (customer_id, property_id, visit_date, visit_time, notes, status, created_at)
+                    VALUES (:customer_id, :property_id, :visit_date, :visit_time, :notes, :status, :created_at)";
 
             $stmt = $this->db->prepare($sql);
             $success = $stmt->execute($visitData);
@@ -736,7 +736,7 @@ class PropertyWorkflowController extends BaseController
                 $commissionAmount = 1000; // Fixed commission for property purchase
                 
                 $sql = "INSERT INTO mlm_commission_ledger 
-                        (user_id, commission_type, amount, source_property_id, description, status, created_at)
+                        (beneficiary_user_id, commission_type, amount, property_id, notes, status, created_at)
                         VALUES (:user_id, 'property_purchase', :amount, :property_id, :description, 'pending', NOW())";
 
                 $stmt = $this->db->prepare($sql);

@@ -73,7 +73,7 @@ class DocumentLockerService
             $tidCol = $tid > 1 ? ", tenant_id" : "";
             $tidPlaceholder = $tid > 1 ? ", ?" : "";
             $tidParam = $tid > 1 ? [$tid] : [];
-            $sql = "INSERT INTO mlm_document_locker (user_id, title, document_type, file_url, status{$tidCol}) 
+            $sql = "INSERT INTO mlm_document_locker (user_id, document_name, document_type, file_path, status{$tidCol}) 
                     VALUES (?, ?, ?, ?, 'pending'{$tidPlaceholder})";
             $this->db->query($sql, array_merge([$userId, $title, $type, $url], $tidParam));
             

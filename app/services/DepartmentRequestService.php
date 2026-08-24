@@ -37,7 +37,7 @@ class DepartmentRequestService
 
             $sql = "INSERT INTO department_requests
                 (department_id, title, description, priority,
-                 requested_by, requested_by_role, requester_name,
+                 requested_by, requester_role, requester_name,
                  created_at{$tenantCol})
                 VALUES (?, ?, ?, ?, ?, ?, ?, NOW(){$tenantVal})";
 

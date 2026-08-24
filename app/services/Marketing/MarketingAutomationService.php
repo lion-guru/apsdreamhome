@@ -81,22 +81,21 @@ class MarketingAutomationService
                 // Update existing lead
                 $sql = "UPDATE marketing_leads SET 
                         source = ?, 
-                        campaign = ?, 
                         updated_at = NOW() 
                         WHERE id = ?" . $this->tenantSql();
                 
-                $params = [$source, $campaign, $existingLead['id']];
+                $params = [$source, $existingLead['id']];
                 if ($this->tenantId() > 1) $params[] = $this->tenantId();
                 $this->database->query($sql, $params);
                 $leadId = $existingLead['id'];
             } else {
                 // Create new lead
-                $sql = "INSERT INTO marketing_leads (name, email, phone, source, campaign, tenant_id)
+                $sql = "INSERT INTO marketing_leads (first_name, last_name, email, phone, source, tenant_id)
                         VALUES (?, ?, ?, ?, ?, ?)";
                 
                 $insertData = $this->tenantInsertData();
-                $columns = array_merge(['name', 'email', 'phone', 'source', 'campaign'], array_keys($insertData));
-                $values = array_merge([$name, $email, $phone, $source, $campaign], array_values($insertData));
+                $columns = array_merge(['first_name', 'last_name', 'email', 'phone', 'source'], array_keys($insertData));
+                $values = array_merge([$name, '', $email, $phone, $source], array_values($insertData));
                 $this->database->query($sql, $values);
                 $leadId = $this->database->lastInsertId();
             }
@@ -307,7 +306,7 @@ class MarketingAutomationService
     public function createEmailCampaign($name, $subject, $content, $targetAudience, $scheduleAt = null)
     {
         try {
-            $sql = "INSERT INTO marketing_campaigns (name, type, subject, content, target_audience, schedule_at, status)
+            $sql = "INSERT INTO marketing_campaigns (name, type, subject, content, target_audience, scheduled_at, status)
                     VALUES (?, 'email', ?, ?, ?, ?, 'draft')";
             
             $audienceJson = json_encode($targetAudience);
@@ -564,10 +563,6 @@ class MarketingAutomationService
                 'template_id' => $templateId,
                 'subject' => $subject
             ]);
-            
-            // Update last contacted
-            $sql = "UPDATE marketing_leads SET last_contacted = NOW() WHERE id = ?";
-            $this->database->query($sql, [$leadId]);
             
             // Log analytics
             $this->logAnalytics($leadId, 'email_sent', [

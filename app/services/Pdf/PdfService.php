@@ -663,7 +663,7 @@ class PdfService
         try {
             $stmt = $this->db->prepare("
                 INSERT INTO gateway_logs
-                  (gateway, action, recipient, status, request_body, response_body, created_at)
+                  (gateway, action, recipient, status, request_payload, response_payload, created_at)
                 VALUES (?, ?, ?, ?, ?, ?, NOW())
             ");
             $stmt->execute([

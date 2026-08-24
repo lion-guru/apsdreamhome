@@ -30,7 +30,7 @@ class CampaignService
     public function createCampaign($data)
     {
         try {
-            $query = "INSERT INTO campaigns (title, description, type, target_audience, start_date, end_date, status, created_by, created_at, tenant_id) 
+            $query = "INSERT INTO campaigns (name, description, type, target_audience, start_date, end_date, status, created_by, created_at, tenant_id) 
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             $insertData = $this->tenantInsertData();
@@ -84,8 +84,8 @@ $query = "SELECT * FROM campaigns
     public function createNotification($userId, $title, $message, $type = 'info', $campaignId = null)
     {
         try {
-            $query = "INSERT INTO notifications (user_id, title, message, type, campaign_id, is_read, created_at, tenant_id) 
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            $query = "INSERT INTO notifications (user_id, title, message, type, related_id, related_type, is_read, created_at, tenant_id) 
+                     VALUES (?, ?, ?, ?, ?, 'campaign', ?, ?, ?)";
 
             $insertData = $this->tenantInsertData();
             $params = [

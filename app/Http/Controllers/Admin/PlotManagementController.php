@@ -359,10 +359,10 @@ class PlotManagementController extends AdminController
                 if ($action === 'approve') {
                     // Update allocation status
                     $sql = "UPDATE plot_allocations 
-                            SET status = 'approved', processed_by = ?, processed_at = NOW(), notes = ?
+                            SET status = 'approved', notes = ?
                             WHERE id = ? AND tenant_id = ?";
                     $stmt = $this->db->prepare($sql);
-                    $stmt->execute([$_SESSION['user_id'] ?? 0, $notes, $allocationId, $tid]);
+                    $stmt->execute([$notes, $allocationId, $tid]);
 
                     // Update plot status
                     $sql = "UPDATE plots SET status = 'allocated', updated_at = NOW() WHERE id = ? AND tenant_id = ?";
@@ -371,10 +371,10 @@ class PlotManagementController extends AdminController
                 } elseif ($action === 'reject') {
                     // Update allocation status
                     $sql = "UPDATE plot_allocations 
-                            SET status = 'rejected', processed_by = ?, processed_at = NOW(), notes = ?
+                            SET status = 'rejected', notes = ?
                             WHERE id = ? AND tenant_id = ?";
                     $stmt = $this->db->prepare($sql);
-                    $stmt->execute([$_SESSION['user_id'] ?? 0, $notes, $allocationId, $tid]);
+                    $stmt->execute([$notes, $allocationId, $tid]);
                 } else {
                     $this->db->rollBack();
                     return $this->jsonError('Invalid action', 400);

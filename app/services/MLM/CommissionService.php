@@ -157,21 +157,18 @@ class CommissionService
     {
         $stmt = $this->db->prepare("
             INSERT INTO commissions (
-                associate_id, source_associate_id, customer_id, property_id,
-                sale_amount, commission_rate, commission_amount, level, type,
+                associate_id, source_associate_id, property_id,
+                percentage, amount, type,
                 status, created_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
         ");
         
         $stmt->execute([
             $commissionData['associate_id'],
             $commissionData['source_associate_id'],
-            $commissionData['customer_id'],
             $commissionData['property_id'],
-            $commissionData['sale_amount'],
             $commissionData['commission_rate'],
             $commissionData['commission_amount'],
-            $commissionData['level'],
             $commissionData['type'],
             $commissionData['status']
         ]);
@@ -187,8 +184,7 @@ class CommissionService
         // Update personal sales
         $stmt = $this->db->prepare("
             UPDATE users SET 
-                total_sales = COALESCE(total_sales, 0) + ?,
-                last_sale_date = NOW(),
+                cumulative_sales = COALESCE(cumulative_sales, 0) + ?,
                 updated_at = NOW()
             WHERE id = ? AND tenant_id = ?
         ");
@@ -199,11 +195,10 @@ class CommissionService
         foreach ($upline as $associate) {
             $stmt = $this->db->prepare("
                 UPDATE users SET 
-                    team_sales = COALESCE(team_sales, 0) + ?,
                     updated_at = NOW()
                 WHERE id = ? AND tenant_id = ?
             ");
-            $stmt->execute([$saleAmount, $associate['id'], $this->getTenantId()]);
+            $stmt->execute([$associate['id'], $this->getTenantId()]);
         }
     }
     

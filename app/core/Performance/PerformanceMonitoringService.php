@@ -187,10 +187,10 @@ class PerformanceMonitoringService
             }
         }
 
-        $sql = "INSERT INTO performance_metrics (metric_type, metric_name, metric_value, metric_unit, threshold_value, status)
-                VALUES (?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO performance_metrics (metric_name, metric_value, metric_unit, threshold, status)
+                VALUES (?, ?, ?, ?, ?)";
 
-        $this->database->execute($sql, [$type, $name, $value, $unit, $threshold, $status]);
+        $this->database->execute($sql, [$name, $value, $unit, $threshold, $status]);
     }
 
     /**

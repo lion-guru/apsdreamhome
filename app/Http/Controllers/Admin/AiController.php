@@ -468,16 +468,16 @@ class AiController extends AdminController
             $confidence = rand(70, 95);
 
             // Save analysis
-            $sql = "INSERT INTO ai_lead_scores (lead_id, score, confidence_level, analysis_data, created_at)
+            $sql = "INSERT INTO ai_lead_scores (lead_id, score, confidence, factors, scored_at)
                     VALUES (?, ?, ?, ?, NOW())
-                    ON DUPLICATE KEY UPDATE score = VALUES(score), confidence_level = VALUES(confidence_level), analysis_data = VALUES(analysis_data)";
+                    ON DUPLICATE KEY UPDATE score = VALUES(score), confidence = VALUES(confidence), factors = VALUES(factors)";
 
             $stmt = $this->db->prepare($sql);
             $stmt->execute([
                 $leadId,
                 $score,
                 $confidence,
-                json_encode(['factors' => ['budget', 'timeline', 'location', 'source']])
+                json_encode(['budget', 'timeline', 'location', 'source'])
             ]);
 
             return [

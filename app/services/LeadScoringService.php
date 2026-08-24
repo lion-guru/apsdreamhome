@@ -238,26 +238,24 @@ class LeadScoringService
         if ($existing) {
             $tid = $this->tenantId();
             $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $factors = json_encode([
+                'demographics' => $scores['demographics'],
+                'engagement' => $scores['engagement'],
+                'behavior' => $scores['behavior'],
+                'ai_analysis' => $scores['ai_analysis'],
+                'rank' => $scores['rank'],
+                'is_hot' => $scores['is_hot'] ? 1 : 0
+            ]);
             $params = [
                 $scores['total'],
-                $scores['demographics'],
-                $scores['engagement'],
-                $scores['behavior'],
-                $scores['ai_analysis'],
-                $scores['rank'],
-                $scores['is_hot'] ? 1 : 0,
+                $factors,
                 $leadId
             ];
             if ($tid > 1) $params[] = $tid;
             $this->db->execute(
                 "UPDATE lead_scores SET 
-                    total_score = ?,
-                    demographics_score = ?,
-                    engagement_score = ?,
-                    behavior_score = ?,
-                    ai_analysis_score = ?,
-                    rank = ?,
-                    is_hot_lead = ?,
+                    score = ?,
+                    score_details = ?,
                     calculated_at = NOW()
                 WHERE lead_id = ?" . $tidSql,
                 $params
@@ -265,23 +263,24 @@ class LeadScoringService
         } else {
             $tid = $this->tenantId();
             $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $factors = json_encode([
+                'demographics' => $scores['demographics'],
+                'engagement' => $scores['engagement'],
+                'behavior' => $scores['behavior'],
+                'ai_analysis' => $scores['ai_analysis'],
+                'rank' => $scores['rank'],
+                'is_hot' => $scores['is_hot'] ? 1 : 0
+            ]);
             $params = [
                 $leadId,
                 $scores['total'],
-                $scores['demographics'],
-                $scores['engagement'],
-                $scores['behavior'],
-                $scores['ai_analysis'],
-                $scores['rank'],
-                $scores['is_hot'] ? 1 : 0
+                $factors
             ];
             if ($tid > 1) $params[] = $tid;
             $this->db->execute(
                 "INSERT INTO lead_scores (
-                    lead_id, total_score, demographics_score, 
-                    engagement_score, behavior_score, ai_analysis_score,
-                    rank, is_hot_lead, calculated_at" . ($tid > 1 ? ", tenant_id" : "") . "
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW()" . ($tid > 1 ? ", ?" : "") . ")",
+                    lead_id, score, score_details, calculated_at" . ($tid > 1 ? ", tenant_id" : "") . "
+                ) VALUES (?, ?, ?, NOW()" . ($tid > 1 ? ", ?" : "") . ")",
                 $params
             );
         }
@@ -366,16 +365,14 @@ class LeadScoringService
             if (!empty($users)) {
                 $assignTo = $users[$agentIndex % count($users)]['id'];
                 
-                $this->db->execute(
+$this->db->execute(
                     "UPDATE leads SET assigned_to = ?, priority = 'high' WHERE id = ?" . $tidSql,
                     array_merge([$assignTo, $lead['lead_id']], $tid > 1 ? [$tid] : [])
                 );
-                
-                $this->db->execute(
-                    "UPDATE lead_scores SET assigned_to = ?, auto_assign_at = NOW() WHERE lead_id = ?" . $tidSql,
-                    array_merge([$assignTo, $lead['lead_id']], $tid > 1 ? [$tid] : [])
-                );
-                
+
+                // Note: lead_scores table doesn't have assigned_to/auto_assign_at columns
+                // Score details are stored in score_details JSON
+
                 // Log assignment
                 $logParams = [$lead['lead_id'], "Auto-assigned due to high score ({$lead['total_score']})", $assignTo];
                 if ($tid > 1) $logParams[] = $tid;

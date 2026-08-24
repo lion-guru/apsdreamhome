@@ -176,7 +176,7 @@ class TdsConfigService
                 SELECT COALESCE(SUM(tds_amount), 0)
                 FROM tds_register
                 WHERE deductee_user_id = ? 
-                AND tds_date BETWEEN ? AND ?" . $this->tenantSql() . "
+                AND transaction_date BETWEEN ? AND ?" . $this->tenantSql() . "
             ");
             $stmt->execute([$userId, $fy['start'], $fy['end']]);
             return (float)$stmt->fetchColumn();
@@ -217,7 +217,7 @@ class TdsConfigService
         $extraVals = $insertData ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '';
         $stmt = $this->db->prepare("
             INSERT INTO tds_register 
-            (deductee_user_id, deductee_pan, tds_section, tds_date, taxable_amount, 
+            (deductee_user_id, deductee_pan, tds_section, transaction_date, gross_amount, 
              tds_amount, financial_year, quarter, status, created_at{$extraCols})
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW(){$extraVals})
         ");

@@ -74,8 +74,8 @@ $role = $role ?? '';
                                                 <br>
                                                 <small class="text-muted">
                                                     <span class="badge bg-<?php
-                                                        echo match($role) {'admin'=>'danger','associate'=>'success','agent'=>'info','employee'=>'warning',default=>'secondary'};
-                                                    ?>"><?= ucfirst($role) ?></span>
+                                                        echo match($user['role'] ?? '') {'admin'=>'danger','associate'=>'success','agent'=>'info','employee'=>'warning',default=>'secondary'};
+                                                    ?>"><?= ucfirst($user['role'] ?? '') ?></span>
                                                     <?= htmlspecialchars($user['email'] ?? '') ?>
                                                     <?php if (!empty($user['phone'])): ?>
                                                         &middot; <?= htmlspecialchars($user['phone'] ?? '') ?>

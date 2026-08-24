@@ -44,9 +44,9 @@ class AdminPackageController extends AdminController
                 $this->setFlash('error', 'Name and slug are required');
                 $this->redirect('/admin/premium-packages/create');
             }
-            $this->db->prepare("INSERT INTO premium_packages (name, slug, description, price, duration_days, features, badge_label, badge_color, priority_order, is_active, tenant_id) VALUES (?,?,?,?,?,?,?,?,?,?,?)")->execute([
+            $this->db->prepare("INSERT INTO premium_packages (name, slug, description, price, duration_days, features, badge_label, badge_color, priority_order, is_active) VALUES (?,?,?,?,?,?,?,?,?,?)")->execute([
                 $name, $slug, trim($_POST['description'] ?? ''), $price, $durationDays,
-                json_encode($features), $badgeLabel, $badgeColor, $priority, $isActive, $this->tenantId()
+                json_encode($features), $badgeLabel, $badgeColor, $priority, $isActive
             ]);
             $this->setFlash('success', 'Package created');
             $this->redirect('/admin/premium-packages');

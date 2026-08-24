@@ -27,8 +27,8 @@ class AuditLogger {
         }
 
         $stmt = $pdo->prepare("
-            INSERT INTO audit_log (action, user_id, details, ip_address, user_agent, url, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, NOW())
+            INSERT INTO audit_log (action, user_id, details, ip_address, created_at)
+            VALUES (?, ?, ?, ?, NOW())
         ");
         
         $stmt->execute([
@@ -36,8 +36,6 @@ class AuditLogger {
             $user_id ?? ($_SESSION['user_id'] ?? 'guest'),
             is_array($details) ? json_encode($details) : $details,
             $ip ?? ($_SERVER['REMOTE_ADDR'] ?? 'unknown'),
-            $_SERVER['HTTP_USER_AGENT'] ?? '',
-            $_SERVER['REQUEST_URI'] ?? ''
         ]);
     }
 

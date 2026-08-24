@@ -113,23 +113,22 @@ class TestimonialsAdminController extends AdminController
             return $this->jsonFail('Invalid request', 405);
         }
         
-        try {
+try {
             $status = $_POST['status'] ?? 'pending';
-            $notes = $_POST['notes'] ?? '';
             $featured = isset($_POST['featured']) ? 1 : 0;
-            
+
             $sql = "UPDATE testimonials SET 
-                    status = ?, notes = ?, featured = ?, 
-                    reviewed_at = NOW(), reviewed_by = ? 
+                    status = ?, featured = ?, 
+                    approved_at = NOW(), reviewed_by = ? 
                     WHERE id = ?";
-            
+
             $stmt = $this->db->prepare($sql);
             $stmt->execute([
-                $status, $notes, $featured,
+                $status, $featured,
                 $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 1,
                 $id
             ]);
-            
+
             return $this->jsonRespond([
                 'success' => true,
                 'message' => 'Testimonial ' . $status . ' successfully'

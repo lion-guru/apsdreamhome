@@ -253,8 +253,8 @@ class SecurityEnhancementService
         try {
             $expiresAt = date('Y-m-d H:i:s', strtotime("+{$hours} hours"));
 
-            $sql = "INSERT INTO blocked_ips (ip_address, reason, expires_at, blocked_by) 
-                    VALUES (?, ?, ?, 'SecurityEnhancementService')
+            $sql = "INSERT INTO blocked_ips (ip_address, reason, expires_at) 
+                    VALUES (?, ?, ?)
                     ON DUPLICATE KEY UPDATE 
                     reason = VALUES(reason), 
                     expires_at = VALUES(expires_at), 
@@ -325,10 +325,6 @@ class SecurityEnhancementService
 
             if ($currentCount >= $maxRequests) {
                 // Block for this window
-                $sql = "UPDATE rate_limits SET blocked = TRUE 
-                        WHERE ip_address = ? AND request_type = ?";
-                $this->database->execute($sql, [$ipAddress, $requestType]);
-
                 return false;
             }
 
@@ -338,9 +334,9 @@ class SecurityEnhancementService
                         WHERE ip_address = ? AND request_type = ?";
                 $this->database->execute($sql, [$ipAddress, $requestType]);
             } else {
-                $sql = "INSERT INTO rate_limits (ip_address, request_type, request_count, window_duration) 
-                        VALUES (?, ?, 1, ?)";
-                $this->database->execute($sql, [$ipAddress, $requestType, $windowDuration]);
+                $sql = "INSERT INTO rate_limits (rate_key, request_count, window_start) 
+                        VALUES (?, 1, NOW())";
+                $this->database->execute($sql, [$ipAddress . ':' . $requestType]);
             }
 
             return true;
@@ -356,8 +352,8 @@ class SecurityEnhancementService
     private function logSecurityEvent($eventType, $severity, $ipAddress, $request, $description = '')
     {
         try {
-            $sql = "INSERT INTO security_events (event_type, severity, ip_address, user_agent, request_uri, request_method, details) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO security_events (event_type, severity, ip_address, metadata) 
+                    VALUES (?, ?, ?, ?)";
 
             $details = json_encode([
                 'description' => $description,
@@ -370,9 +366,6 @@ class SecurityEnhancementService
                 $eventType,
                 $severity,
                 $ipAddress,
-                $request['user_agent'] ?? '',
-                $request['request_uri'] ?? '',
-                $request['request_method'] ?? 'GET',
                 $details
             ]);
         } catch (Exception $e) {

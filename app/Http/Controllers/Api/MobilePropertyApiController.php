@@ -539,9 +539,9 @@ class MobilePropertyApiController extends BaseController
 
             $sql = "
                 INSERT INTO property_inquiries (
-                    property_id, guest_name, guest_email, guest_phone,
-                    subject, message, inquiry_type, status, priority, tenant_id, created_at
-                ) VALUES (:propertyId, :name, :email, :phone, :subject, :message, :inquiryType, :status, :priority, :tenantId, NOW())
+                    property_id, name, email, phone,
+                    message, status, tenant_id, created_at
+                ) VALUES (:propertyId, :name, :email, :phone, :message, :status, :tenantId, NOW())
             ";
 
             $stmt = $this->db->prepare($sql);
@@ -550,11 +550,8 @@ class MobilePropertyApiController extends BaseController
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'phone' => $data['phone'],
-                'subject' => $data['subject'] ?? 'Property Inquiry',
                 'message' => $data['message'],
-                'inquiryType' => $data['inquiry_type'] ?? 'general',
                 'status' => 'new',
-                'priority' => $data['priority'] ?? 'medium',
                 'tenantId' => $tid
             ]);
 

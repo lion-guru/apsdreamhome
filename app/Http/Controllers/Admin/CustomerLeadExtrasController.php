@@ -325,8 +325,8 @@ class CustomerLeadExtrasController extends AdminController
             
             // Insert custom field
             $this->db->query(
-                "INSERT INTO lead_custom_fields (field_name, field_label, field_type, field_group, default_value, is_required, is_active, validation_rules, sort_order, created_by, created_at) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())",
+                "INSERT INTO lead_custom_fields (field_name, field_label, field_type, field_group, default_value, is_required, is_active, validation_rules, sort_order, created_by) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 [$fieldName, $fieldLabel, $fieldType, $fieldGroup, $defaultValue, $isRequired, $isActive, $validationRules, $sortOrder, $createdBy]
             );
             

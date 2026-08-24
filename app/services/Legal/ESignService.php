@@ -110,8 +110,7 @@ class ESignService
             'signer_email' => $signerEmail,
             'esign_provider' => 'mock',
             'document_hash' => $documentHash,
-            'document_content' => base64_encode($documentContent),
-            'template_id' => $templateId,
+            'document_url' => base64_encode($documentContent),
             'status' => 'initiated',
             'expires_at' => date('Y-m-d H:i:s', time() + 1800), // 30 minutes
         ]);
@@ -308,7 +307,7 @@ class ESignService
         return substr($phone, 0, 2) . '*****' . substr($phone, -2);
     }
 
-    protected function saveTransaction(array $data): int
+protected function saveTransaction(array $data): int
     {
         if (!$this->db) return 0;
 
@@ -316,9 +315,9 @@ class ESignService
             $stmt = $this->db->prepare("
                 INSERT INTO esign_transactions 
                 (booking_id, document_id, document_type, transaction_id, signer_name, signer_aadhaar, 
-                 signer_phone, signer_email, esign_provider, document_hash, document_content, 
-                 template_id, status, expires_at, tenant_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                 signer_phone, signer_email, esign_provider, document_hash, document_url, 
+                  status, expires_at, tenant_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ");
             $stmt->execute([
                 $data['booking_id'] ?? null,
@@ -331,8 +330,7 @@ class ESignService
                 $data['signer_email'] ?? '',
                 $data['esign_provider'] ?? 'mock',
                 $data['document_hash'],
-                $data['document_content'],
-                $data['template_id'] ?? null,
+                $data['document_url'] ?? '',
                 $data['status'],
                 $data['expires_at'],
                 $this->tenantId(),
@@ -412,7 +410,7 @@ class ESignService
 
     protected function generateSignedDocument(array $transaction): string
     {
-        $content = base64_decode($transaction['document_content'] ?? '');
+        $content = base64_decode($transaction['document_url'] ?? '');
         
         return $content . "\n\n--- DIGITALLY SIGNED ---\n"
             . "Signed by: {$transaction['signer_name']}\n"

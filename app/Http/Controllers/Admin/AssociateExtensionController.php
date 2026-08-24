@@ -62,8 +62,8 @@ class AssociateExtensionController extends AdminController
         $training_progress = $_POST['training_progress'] ?? 0;
         try {
             [$tw, $tp] = $this->tenantWhere();
-            $stmt = $this->db->prepare("UPDATE users SET points = ?, badges = ?, training_progress = ? WHERE id = ?" . $tw);
-            $stmt->execute([$points, $badges, $training_progress, $id, ...$tp]);
+            $stmt = $this->db->prepare("UPDATE users SET total_points = ? WHERE id = ?" . $tw);
+            $stmt->execute([$points, $id, ...$tp]);
             $this->setFlash('success', 'Associate extension updated successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to update: ' . $e->getMessage());

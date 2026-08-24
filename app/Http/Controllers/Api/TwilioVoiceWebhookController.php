@@ -161,12 +161,11 @@ class TwilioVoiceWebhookController extends Controller
                 $stmt = $pdo->prepare(
                     "UPDATE ai_call_sessions
                         SET recording_url = ?,
-                            recording_sid = ?,
-                            duration_seconds = COALESCE(?, duration_seconds),
+                            recording_duration = COALESCE(?, recording_duration),
                             updated_at = NOW()
                       WHERE call_sid = ?"
                 );
-                $stmt->execute([$recordingUrl, $recordingSid, $duration !== null ? (int)$duration : null, $callSid]);
+                $stmt->execute([$recordingUrl, $duration !== null ? (int)$duration : null, $callSid]);
             }
         } catch (\Throwable $e) {
         // Best-effort; never fail the webhook.
@@ -202,12 +201,12 @@ class TwilioVoiceWebhookController extends Controller
             if ($pdo && $callSid) {
                 $stmt = $pdo->prepare(
                     "UPDATE ai_call_sessions
-                        SET digits_pressed = ?,
-                            speech_result  = ?,
+                        SET call_transcript = CONCAT(COALESCE(call_transcript, ''), IFNULL(?, ''), IFNULL(CONCAT(' ', ?), '')),
+                            transcript = CONCAT(COALESCE(transcript, ''), IFNULL(?, ''), IFNULL(CONCAT(' ', ?), '')),
                             updated_at = NOW()
                       WHERE call_sid = ?"
                 );
-                $stmt->execute([$digits ?: null, $speech ?: null, $callSid]);
+                $stmt->execute([$digits ?: null, $speech ?: null, $digits ?: null, $speech ?: null, $callSid]);
             }
         } catch (\Throwable $e) {
         // ignore

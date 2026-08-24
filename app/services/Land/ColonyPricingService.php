@@ -827,7 +827,7 @@ class ColonyPricingService
             $this->db->execute(
                 "UPDATE pricing_approvals SET
                     status = :status, approved_by = :by,
-                    approved_at = :at, notes = :notes, updated_at = NOW()
+                    approved_at = :at, admin_notes = :notes, updated_at = NOW()
                  WHERE id = :aid" . ($tenantId > 1 ? " AND tenant_id = :tid" : ""),
                 array_merge([
                     'status' => $action,

@@ -68,7 +68,7 @@ class MediaLibraryService
 
             // Save to database
             $sql = "INSERT INTO media_library 
-                    (filename, original_name, file_path, file_size, mime_type, file_type, metadata, uploaded_by, created_at) 
+                    (file_name, original_name, file_path, file_size, mime_type, media_type, tags, uploaded_by, uploaded_at) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
             
             $this->db->execute($sql, [
@@ -270,7 +270,7 @@ class MediaLibraryService
             $updatedMetadata = array_merge($existingMetadata, $metadata);
 
             $sql = "UPDATE media_library 
-                    SET metadata = ?, updated_at = NOW() 
+                    SET tags = ? 
                     WHERE id = ?";
             
             $this->db->execute($sql, [json_encode($updatedMetadata), $id]);
@@ -318,8 +318,8 @@ class MediaLibraryService
 
             } else {
                 // Soft deletion
-                $sql = "UPDATE media_library SET deleted_at = NOW() WHERE id = ?";
-                $this->db->execute($sql, [$id]);
+                $sql = "UPDATE media_library SET tags = ? WHERE id = ?";
+                $this->db->execute($sql, [json_encode(['deleted_at' => date('Y-m-d H:i:s')]), $id]);
 
                 $this->logger->info('Media soft deleted', ['id' => $id]);
             }

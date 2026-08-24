@@ -124,14 +124,12 @@ class PropertyAllocationController extends AdminController
             
             $tid = $this->tenantId();
             $sql = "INSERT INTO property_allocations 
-                    (allocation_number, customer_id, property_id, booking_amount, total_price, 
-                     installment_plan, installment_months, notes, status, tenant_id, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, NOW())";
+                    (user_id, property_id, notes, status, tenant_id, created_at)
+                    VALUES (?, ?, ?, 'pending', ?, NOW())";
 
             $stmt = $conn->prepare($sql);
             $stmt->execute([
-                $allocationNumber, $customerId, $propertyId, $bookingAmount, $totalPrice,
-                $installmentPlan, $installmentMonths, $notes, $tid
+                $customerId, $propertyId, $notes, $tid
             ]);
 
             // Update property status to booked
@@ -210,7 +208,7 @@ class PropertyAllocationController extends AdminController
             
             $tid = $this->tenantId();
             // Update allocation status to confirmed
-            $conn->prepare("UPDATE property_allocations SET status = 'confirmed', confirmed_at = NOW() WHERE id = ? AND tenant_id = ?")->execute([$id, $tid]);
+            $conn->prepare("UPDATE property_allocations SET status = 'confirmed' WHERE id = ? AND tenant_id = ?")->execute([$id, $tid]);
 
             // Update property status to sold
             $sql = "UPDATE properties p 
@@ -246,7 +244,7 @@ class PropertyAllocationController extends AdminController
             if ($property) {
                 $tid = $this->tenantId();
                 // Update allocation status to cancelled
-                $conn->prepare("UPDATE property_allocations SET status = 'cancelled', cancelled_at = NOW() WHERE id = ? AND tenant_id = ?")->execute([$id, $tid]);
+                $conn->prepare("UPDATE property_allocations SET status = 'cancelled' WHERE id = ? AND tenant_id = ?")->execute([$id, $tid]);
 
                 // Update property status back to available
                 $conn->prepare("UPDATE properties SET status = 'available' WHERE id = ? AND tenant_id = ?")->execute([$property['property_id'], $tid]);

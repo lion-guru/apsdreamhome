@@ -100,7 +100,7 @@ class UserPackageController extends BaseController
         $expiresAt = date('Y-m-d H:i:s', strtotime('+' . (int)$pkg['duration_days'] . ' days'));
 
         $this->db->execute(
-            "INSERT INTO user_packages (user_id, property_id, package_id, amount_paid, status, expires_at, created_at, updated_at) VALUES (?, ?, ?, ?, 'active', ?, NOW(), NOW())",
+            "INSERT INTO user_packages (user_id, property_id, package_id, amount_paid, payment_status, expiry_date, start_date, created_at) VALUES (?, ?, ?, ?, 'completed', ?, NOW(), NOW())",
             [$userId, $propertyId, $packageId, (float)$pkg['price'], $expiresAt]
         );
 

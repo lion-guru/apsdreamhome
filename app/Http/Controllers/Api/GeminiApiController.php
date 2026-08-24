@@ -504,9 +504,9 @@ class GeminiApiController extends BaseController
         try {
             $db = \App\Core\Database\Database::getInstance();
             $db->execute(
-                "INSERT INTO ai_conversations (session_id, user_name, message, response, source, created_at) 
+                "INSERT INTO ai_conversations (session_id, user_id, user_role, message, response, created_at) 
                  VALUES (?, ?, ?, ?, ?, NOW())",
-                [$sessionId, $userName, $message, $response, $source]
+                [$sessionId, $_SESSION['user_id'] ?? null, $_SESSION['role'] ?? 'guest', $message, $response]
             );
         } catch (\Exception $e) {
             // Table might not exist, ignore error

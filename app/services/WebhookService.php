@@ -127,11 +127,11 @@ class WebhookService
         $err = curl_error($ch);
         curl_close($ch);
 
-        $status = ($code >= 200 && $code < 300) ? 'success' : (($delivery['attempt'] ?? 1) < $this->maxAttempts ? 'retrying' : 'failed');
+$status = ($code >= 200 && $code < 300) ? 'success' : (($delivery['attempt'] ?? 1) < $this->maxAttempts ? 'retrying' : 'failed');
         $error = $err ?: ($status === 'failed' ? "HTTP $code" : null);
 
-        $st = $this->db->prepare("UPDATE webhook_deliveries SET response_code = :c, response_body = :b, status = :s, delivered_at = NOW(), error_message = :e WHERE id = :id" . $this->tenantSql());
-        $updParams = [':c' => $code, ':b' => substr((string)$body, 0, 4000), ':s' => $status, ':e' => $error, ':id' => $deliveryId];
+        $st = $this->db->prepare("UPDATE webhook_deliveries SET response_code = :c, response_body = :b, status = :s WHERE id = :id" . $this->tenantSql());
+        $updParams = [':c' => $code, ':b' => substr((string)$body, 0, 4000), ':s' => $status, ':id' => $deliveryId];
         if ($this->tenantId() > 1) $updParams[':stid'] = $this->tenantId();
         $st->execute($updParams);
 

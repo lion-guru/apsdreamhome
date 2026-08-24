@@ -406,15 +406,14 @@ class LegalDocumentService
     public function createClause(array $data): array
     {
         try {
-            $stmt = $this->db->prepare("INSERT INTO legal_clause_library (category_id, title, content, tags, sort_order, created_by, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmt = $this->db->prepare("INSERT INTO legal_clause_library (category_id, title, content, tags, sort_order, created_by) VALUES (?, ?, ?, ?, ?, ?)");
             $stmt->execute([
                 $data['category_id'] ?? null,
                 $data['title'],
                 $data['content'],
                 $data['tags'] ?? null,
                 (int)($data['sort_order'] ?? 0),
-                $data['created_by'] ?? null,
-                $this->tenantId
+                $data['created_by'] ?? null
             ]);
             return ['success' => true, 'id' => (int)$this->db->lastInsertId()];
         } catch (\Exception $e) {
@@ -899,7 +898,7 @@ class LegalDocumentService
     public function createAiPrompt(array $data): array
     {
         try {
-            $stmt = $this->db->prepare("INSERT INTO legal_ai_prompts (name, description, prompt_template, document_category, model, temperature, max_tokens, created_by, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt = $this->db->prepare("INSERT INTO legal_ai_prompts (name, description, prompt_template, document_category, model, temperature, max_tokens, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             $stmt->execute([
                 $data['name'],
                 $data['description'] ?? null,
@@ -908,8 +907,7 @@ class LegalDocumentService
                 $data['model'] ?? 'gemini',
                 (float)($data['temperature'] ?? 0.30),
                 (int)($data['max_tokens'] ?? 2048),
-                $data['created_by'] ?? null,
-                $this->tenantId
+                $data['created_by'] ?? null
             ]);
             return ['success' => true, 'id' => (int)$this->db->lastInsertId()];
         } catch (\Exception $e) {

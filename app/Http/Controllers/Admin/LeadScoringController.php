@@ -400,14 +400,14 @@ class LeadScoringController extends AdminController
             if ($existing) {
                 // Update existing
                 $sql = "UPDATE lead_scoring 
-                        SET score = ?, breakdown_json = ?, calculated_at = NOW()
+                        SET score = ?, breakdown_json = ?, updated_at = NOW()
                         WHERE lead_id = ? $tSql";
                 $stmt = $this->pdo->prepare($sql);
                 $stmt->execute(array_merge([$score['total'], $breakdownJson, $leadId], $tParams));
             } else {
                 // Insert new
                 $insertExtra = $this->tenantInsertData();
-                $cols = "lead_id, score, breakdown_json, calculated_at, created_at";
+                $cols = "lead_id, score, breakdown_json, updated_at, created_at";
                 $vals = "?, ?, ?, NOW(), NOW()";
                 $params = [$leadId, $score['total'], $breakdownJson];
                 if (!empty($insertExtra)) {

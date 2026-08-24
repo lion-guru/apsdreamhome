@@ -54,9 +54,9 @@ class CRMFormController extends AdminController
             }
 
             $db->query(
-                "INSERT INTO crm_lead_forms (name, description, fields, settings, created_by, tenant_id, created_at)
-                 VALUES (?, ?, ?, ?, ?, ?, NOW())",
-                [$name, $description, $fields, json_encode($settings), $_SESSION['admin_id'] ?? 0, $this->tenantId()]
+                "INSERT INTO crm_lead_forms (name, description, fields_config, source_tag, default_assign_to, auto_score, auto_enroll_drip, drip_campaign_id, thank_you_message, redirect_url, webhook_url, tenant_id, created_at)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())",
+                [$name, $description, $fields, 'website', $_SESSION['admin_id'] ?? 0, 1, 0, null, $settings['success_message'], $settings['redirect_url'], '', $this->tenantId()]
             );
             $this->setFlash('success', 'Form created successfully');
         } catch (\Throwable $e) {
@@ -103,8 +103,8 @@ class CRMFormController extends AdminController
 
             [$tenantSql, $tenantParams] = $this->tenantWhere();
             $db->query(
-                "UPDATE crm_lead_forms SET name=?, description=?, fields=?, settings=?, updated_at=NOW() WHERE id=? $tenantSql",
-                array_merge([$name, $description, $fields, json_encode($settings), $id], $tenantParams)
+                "UPDATE crm_lead_forms SET name=?, description=?, fields_config=?, source_tag=?, default_assign_to=?, auto_score=?, auto_enroll_drip=?, drip_campaign_id=?, thank_you_message=?, redirect_url=?, webhook_url=? WHERE id=? $tenantSql",
+                array_merge([$name, $description, $fields, 'website', $_SESSION['admin_id'] ?? 0, 1, 0, null, $settings['success_message'], $settings['redirect_url'], '', $id], $tenantParams)
             );
             $this->setFlash('success', 'Form updated successfully');
         } catch (\Throwable $e) {

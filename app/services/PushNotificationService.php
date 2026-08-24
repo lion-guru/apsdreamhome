@@ -41,7 +41,7 @@ class PushNotificationService
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
             $tid = $this->isTenantScoped() ? $this->tenantId() : null;
-            $sql = "UPDATE push_subscriptions SET active = 0 WHERE user_id = ? AND endpoint = ?";
+            $sql = "UPDATE push_subscriptions SET is_active = 0 WHERE user_id = ? AND endpoint = ?";
             $params = [$userId, $endpoint];
             if ($tid) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
             $st = $db->prepare($sql);
@@ -57,7 +57,7 @@ class PushNotificationService
     {
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $st = $db->prepare("SELECT * FROM push_subscriptions WHERE user_id = ? AND active = 1");
+            $st = $db->prepare("SELECT * FROM push_subscriptions WHERE user_id = ? AND is_active = 1");
             $st->execute([$userId]);
             return $st->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
@@ -82,7 +82,7 @@ class PushNotificationService
     {
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $total = $db->query("SELECT COUNT(*) FROM push_subscriptions WHERE active = 1")->fetchColumn();
+            $total = $db->query("SELECT COUNT(*) FROM push_subscriptions WHERE is_active = 1")->fetchColumn();
             $today = $db->query("SELECT COUNT(*) FROM push_notifications WHERE DATE(created_at) = CURDATE()")->fetchColumn();
             return ['active_subscriptions' => (int)$total, 'sent_today' => (int)$today];
         } catch (\Throwable $e) {

@@ -64,16 +64,16 @@ class SmsSenderService
             $updParams2 = [$status, $result['error'] ?? null, $queueId];
             if ($tid > 1) $updParams2[] = $tid;
             $this->db->query(
-                "UPDATE sms_queue SET status = ?, sent_at = NOW(), error_message = ? WHERE id = ?" . $tenantFilter,
-                $updParams2
+                "UPDATE sms_queue SET status = ?, sent_at = NOW() WHERE id = ?" . $tenantFilter,
+                [$updParams2[0], $updParams2[2]]
             );
             return $result['success'] ?? false;
         } catch (\Exception $e) {
             $updParams3 = [$e->getMessage(), $queueId];
             if ($tid > 1) $updParams3[] = $tid;
             $this->db->query(
-                "UPDATE sms_queue SET status = 'failed', error_message = ? WHERE id = ?" . $tenantFilter,
-                $updParams3
+                "UPDATE sms_queue SET status = 'failed' WHERE id = ?" . $tenantFilter,
+                [$updParams3[1]]
             );
             return false;
         }

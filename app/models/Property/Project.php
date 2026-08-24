@@ -245,7 +245,7 @@ class Project extends Model
     {
         try {
             $db = \App\Core\Database::getInstance();
-            $stmt = $db->prepare("UPDATE projects SET is_active = 0, updated_at = NOW() WHERE id = :id");
+            $stmt = $db->prepare("UPDATE projects SET status = 'cancelled', updated_at = NOW() WHERE id = :id");
             return $stmt->execute(['id' => $id]);
         } catch (\Exception $e) {
             error_log("Error in deleteProject: " . $e->getMessage());

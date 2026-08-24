@@ -435,7 +435,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             $db->beginTransaction();
 
             $tid = $this->tenantId();
-            $stmt = $db->prepare("UPDATE bookings SET status = 'confirmed', confirmed_at = NOW(), confirmed_by = ? WHERE id = ? AND tenant_id = ?");
+            $stmt = $db->prepare("UPDATE bookings SET status = 'confirmed', approved_at = NOW(), approved_by = ? WHERE id = ? AND tenant_id = ?");
             $stmt->execute([$_SESSION['admin_id'] ?? 0, $id, $tid]);
 
             if (!empty($booking['plot_id'])) {
@@ -575,8 +575,8 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             $db->beginTransaction();
             $reason = $_POST['reason'] ?? 'Rejected by admin';
             $tid = $this->tenantId();
-            $stmt = $db->prepare("UPDATE bookings SET status = 'cancelled', cancelled_at = NOW(), cancelled_by = ?, cancellation_reason = ? WHERE id = ? AND tenant_id = ?");
-            $stmt->execute([$_SESSION['admin_id'] ?? 0, $reason, $id, $tid]);
+            $stmt = $db->prepare("UPDATE bookings SET status = 'cancelled' WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$id, $tid]);
 
             if (!empty($booking['plot_id'])) {
                 $stmt = $db->prepare("UPDATE plots SET status = 'available' WHERE id = ? AND tenant_id = ?");

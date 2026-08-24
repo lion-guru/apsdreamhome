@@ -382,7 +382,7 @@ if ($assignmentType === 'agent') {
      */
     private function updateAgentWorkload(int $agentId): void
     {
-        $sql = "UPDATE users SET workload = workload + 1 WHERE user_id = :agent_id" . $this->tenantSql();
+        $sql = "UPDATE customer_assignments SET updated_at = NOW() WHERE agent_id = :agent_id AND status = 'active'" . $this->tenantSql();
         $stmt = $this->db->prepare($sql);
         $params = [':agent_id' => $agentId];
         if ($this->tenantId() > 1) $params[] = $this->tenantId();
@@ -425,10 +425,10 @@ $updParams = ['reason' => $reason ?: 'Reassigned', 'assignment_id' => $currentAs
                                ended_at = NOW(), end_reason = :reason 
                                WHERE id = :assignment_id" . $this->tenantSql())->execute($updParams);
 
-            // Update old agent workload
-$wparams = ['agent_id' => $currentAssignment['agent_id']];
+// Update old agent workload
+            $wparams = ['agent_id' => $currentAssignment['agent_id']];
             if ($this->tenantId() > 1) $wparams[] = $this->tenantId();
-            $this->db->prepare("UPDATE users SET workload = workload - 1 WHERE user_id = :agent_id" . $this->tenantSql())->execute($wparams);
+            $this->db->prepare("UPDATE customer_assignments SET updated_at = NOW() WHERE agent_id = :agent_id AND status = 'active'" . $this->tenantSql())->execute($wparams);
 
             // Create new assignment
             $result = $this->createAssignment($customerId, $newAgentId, 'agent');

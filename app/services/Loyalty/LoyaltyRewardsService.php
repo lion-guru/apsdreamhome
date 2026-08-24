@@ -489,8 +489,7 @@ class LoyaltyRewardsService
             // Update tier
             $tSql = $this->tenantSql();
             $sql = "UPDATE loyalty_points SET 
-                current_tier = ?,
-                tier_achieved_at = NOW()
+                current_tier = ?
                 WHERE user_id = ? AND user_type = ?" . $tSql;
 
             $stmt = $this->database->prepare($sql);
@@ -578,13 +577,11 @@ class LoyaltyRewardsService
         $tSql = $this->tenantSql();
         $sql = "UPDATE loyalty_points SET 
             points = points + ?,
-            lifetime_points = CASE WHEN ? > 0 THEN lifetime_points + ? ELSE lifetime_points END,
-            redeemed_points = CASE WHEN ? < 0 THEN redeemed_points + ABS(?) ELSE redeemed_points END
+            lifetime_points = CASE WHEN ? > 0 THEN lifetime_points + ? ELSE lifetime_points END
             WHERE user_id = ? AND user_type = ?" . $tSql;
 
         $params = [
             $pointsDelta, $pointsDelta, $pointsDelta,
-            $pointsDelta, $pointsDelta,
             $userId, $userType
         ];
         if ($this->tenantId() > 1) $params[] = $this->tenantId();

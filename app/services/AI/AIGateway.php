@@ -398,8 +398,8 @@ class AIGateway
         $elapsed = round((microtime(true) - $startTime) * 1000, 2);
         try {
             $this->db->getConnection()->prepare(
-                "INSERT INTO ai_api_logs (task_type, engine_used, confidence, response_time_ms, input_summary, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())"
-            )->execute([$task, $engine, $result['confidence'] ?? 0, $elapsed, substr(json_encode($result['result'] ?? []), 0, 500), TenantContext::getId()]);
+                "INSERT INTO ai_api_logs (service, endpoint, status_code, response_time_ms, request_data, tenant_id, user_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())"
+            )->execute([$task, $engine, $result['confidence'] ?? 0, $elapsed, substr(json_encode($result['result'] ?? []), 0, 500), TenantContext::getId(), $GLOBALS['api_user_id'] ?? null]);
         } catch (\Throwable $e) { /* non-critical */ error_log($e->getMessage()); }
 
         $result['engine'] = $engine;

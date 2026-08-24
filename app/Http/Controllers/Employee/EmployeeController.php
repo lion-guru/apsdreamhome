@@ -392,7 +392,7 @@ class EmployeeController extends BaseController
             }
 
             // Insert attendance record
-            $query = "INSERT INTO employee_attendance (employee_id, attendance_date, check_in, attendance_status) VALUES (?, CURDATE(), ?, 'present')";
+            $query = "INSERT INTO employee_attendance (employee_id, attendance_date, check_in_time, status) VALUES (?, CURDATE(), ?, 'present')";
             $this->db->execute($query, [$employeeId, $checkInTime]);
 
             $this->jsonResponse([
@@ -426,7 +426,7 @@ class EmployeeController extends BaseController
                 throw new Exception('No check-in record found for today');
             }
 
-            $updateQuery = "UPDATE employee_attendance SET check_out = ? WHERE id = ?";
+            $updateQuery = "UPDATE employee_attendance SET check_out_time = ? WHERE id = ?";
             $this->db->execute($updateQuery, [$checkOutTime, $attendance['id']]);
 
             $this->jsonResponse([

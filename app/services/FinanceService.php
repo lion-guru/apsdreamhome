@@ -92,7 +92,7 @@ class FinanceService
 
     public function approveExpense(int $id, int $approverId): array
     {
-        $st = $this->db->prepare("UPDATE budget_expenses SET status = 'approved', approved_by = :a, approved_at = NOW() WHERE id = :id" . $this->tenantSql());
+        $st = $this->db->prepare("UPDATE budget_expenses SET status = 'approved', approved_by = :a WHERE id = :id" . $this->tenantSql());
         $st->execute([':a' => $approverId, ':id' => $id]);
         return ['ok' => true];
     }
@@ -157,8 +157,8 @@ $sql = "SELECT * FROM budget_planning WHERE 1=1" . $this->tenantSql();
 
     public function addTaxSlab(string $taxType, string $stateCode, float $min, float $max, float $rate, ?string $effectiveTo = null): array
     {
-        $st = $this->db->prepare("INSERT INTO tax_slabs (tax_type, state_code, min_amount, max_amount, tax_rate, effective_to, created_at) VALUES (:t, :sc, :mi, :ma, :r, :et, NOW())");
-        $st->execute([':t' => $taxType, ':sc' => $stateCode, ':mi' => $min, ':ma' => $max, ':r' => $rate, ':et' => $effectiveTo]);
+        $st = $this->db->prepare("INSERT INTO tax_slabs (tax_type, min_amount, max_amount, rate_pct) VALUES (:t, :mi, :ma, :r)");
+        $st->execute([':t' => $taxType, ':mi' => $min, ':ma' => $max, ':r' => $rate]);
         return ['ok' => true, 'id' => (int)$this->db->lastInsertId()];
     }
 
@@ -187,8 +187,8 @@ $sql = "SELECT * FROM budget_planning WHERE 1=1" . $this->tenantSql();
 
     public function addTaxType(string $code, string $name, string $description = '', float $defaultRate = 0): array
     {
-        $st = $this->db->prepare("INSERT INTO tax_types (code, name, description, default_rate, active, created_at) VALUES (:c, :n, :d, :r, 1, NOW())
-                                  ON DUPLICATE KEY UPDATE name = VALUES(name), description = VALUES(description), default_rate = VALUES(default_rate), active = 1");
+        $st = $this->db->prepare("INSERT INTO tax_types (type_code, type_name, description, default_rate, is_active) VALUES (:c, :n, :d, :r, 1)
+                                  ON DUPLICATE KEY UPDATE type_name = VALUES(type_name), description = VALUES(description), default_rate = VALUES(default_rate), is_active = 1");
         $st->execute([':c' => $code, ':n' => $name, ':d' => $description, ':r' => $defaultRate]);
         return ['ok' => true];
     }
@@ -207,10 +207,12 @@ $sql = "SELECT * FROM budget_planning WHERE 1=1" . $this->tenantSql();
 
     public function saveGstSetting(string $stateCode, float $cgst, float $sgst, float $igst, ?string $effectiveFrom = null): array
     {
-        $eff = $effectiveFrom ?: date('Y-m-d');
-        $st = $this->db->prepare("INSERT INTO gst_settings (state_code, cgst_rate, sgst_rate, igst_rate, effective_from, active, created_at) VALUES (:sc, :c, :s, :i, :e, 1, NOW())
-                                  ON DUPLICATE KEY UPDATE cgst_rate = VALUES(cgst_rate), sgst_rate = VALUES(sgst_rate), igst_rate = VALUES(igst_rate), effective_from = VALUES(effective_from), active = 1");
-        $st->execute([':sc' => $stateCode, ':c' => $cgst, ':s' => $sgst, ':i' => $igst, ':e' => $eff]);
+        $prefix = strtoupper(trim($stateCode) !== '' ? $stateCode : 'DEFAULT');
+        $st = $this->db->prepare("INSERT INTO gst_settings (setting_key, setting_value) VALUES (:k, :v)
+                                  ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)");
+        foreach (['CGST' => $cgst, 'SGST' => $sgst, 'IGST' => $igst] as $suffix => $rate) {
+            $st->execute([':k' => $prefix . '_' . $suffix, ':v' => (string)$rate]);
+        }
         return ['ok' => true];
     }
 

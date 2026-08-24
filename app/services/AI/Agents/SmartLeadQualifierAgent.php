@@ -161,7 +161,7 @@ class SmartLeadQualifierAgent
             $tenantCol = $tid > 1 ? ", tenant_id" : "";
             $tenantVal = $tid > 1 ? ", ?" : "";
             $this->db->getConnection()->prepare(
-                "INSERT INTO crm_interactions (lead_id, interaction_type, direction, content, created_at" . $tenantCol . ") VALUES (?, 'auto_reply', 'outbound', ?, NOW()" . $tenantVal . ")"
+                "INSERT INTO crm_interactions (lead_id, interaction_type, direction, body, created_at" . $tenantCol . ") VALUES (?, 'auto_reply', 'outbound', ?, NOW()" . $tenantVal . ")"
             )->execute(array_merge([$leadId, $response], $tid > 1 ? [$tid] : []));
         }
         return $response;
@@ -273,9 +273,9 @@ class SmartLeadQualifierAgent
             $tenantCol = $tid > 1 ? ", tenant_id" : "";
             $tenantVal = $tid > 1 ? ", ?" : "";
             $this->db->getConnection()->prepare(
-                "INSERT INTO agent_task_logs (agent_type, action_type, lead_id, details, status, created_at" . $tenantCol . ")
+                "INSERT INTO agent_task_logs (agent_type, task_name, result, status, created_at" . $tenantCol . ")
                  VALUES ('smart_qualifier', 'qualify', ?, ?, 'completed', NOW()" . $tenantVal . ")"
-            )->execute(array_merge([$leadId, "Qualified as $qualification (score: $score) — $action [engine: $engine]"], $tid > 1 ? [$tid] : []));
+            )->execute(array_merge(["Qualified as $qualification (score: $score) — $action [engine: $engine]"], $tid > 1 ? [$tid] : []));
         } catch (\Throwable $e) { /* non-critical */ error_log($e->getMessage()); }
     }
 
@@ -286,10 +286,9 @@ class SmartLeadQualifierAgent
             $tenantCol = $tid > 1 ? ", tenant_id" : "";
             $tenantVal = $tid > 1 ? ", ?" : "";
             $this->db->getConnection()->prepare(
-                "INSERT INTO agent_escalations (agent_type, lead_id, escalation_type, priority, details, status, created_at" . $tenantCol . ")
-                 VALUES ('smart_qualifier', ?, 'hot_lead', 'urgent', ?, 'pending', NOW()" . $tenantVal . ")"
+                "INSERT INTO agent_escalations (agent_type, escalation_type, description, status, created_at" . $tenantCol . ")
+                 VALUES ('smart_qualifier', 'hot_lead', ?, 'pending', NOW()" . $tenantVal . ")"
             )->execute(array_merge([
-                $leadId,
                 "HOT LEAD: {$lead['name']} ({$lead['phone']}) — Score: $score. Immediate action required."
             ], $tid > 1 ? [$tid] : []));
         } catch (\Throwable $e) { /* non-critical */ error_log($e->getMessage()); }

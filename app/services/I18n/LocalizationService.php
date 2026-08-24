@@ -103,7 +103,7 @@ class LocalizationService
     /**
      * Seed basic translations
      */
-    private function seedTranslations(): void
+private function seedTranslations(): void
     {
         $translations = [
             // English
@@ -144,7 +144,7 @@ class LocalizationService
             ['en', 'messages', 'loading', 'Loading...'],
             ['en', 'messages', 'no_results', 'No results found'],
             ['en', 'messages', 'confirm_delete', 'Are you sure you want to delete?'],
-            
+
             // Hindi
             ['hi', 'app', 'welcome', 'APS Dream Home में आपका स्वागत है'],
             ['hi', 'app', 'login', 'लॉग इन'],
@@ -184,15 +184,15 @@ class LocalizationService
             ['hi', 'messages', 'no_results', 'कोई परिणाम नहीं मिला'],
             ['hi', 'messages', 'confirm_delete', 'क्या आप वाकई हटाना चाहते हैं?'],
         ];
-        
+
         $sql = "INSERT IGNORE INTO translations 
-            (locale, namespace, key_name, value, is_system)
-            VALUES (?, ?, ?, ?, 1)";
-        
+            (language_code, context, translation_key, translation_value)
+            VALUES (?, ?, ?, ?)";
+
         $stmt = $this->database->prepare($sql);
-        
+
         foreach ($translations as $trans) {
-            $stmt->execute($trans);
+            $stmt->execute([$trans[0], $trans[1], $trans[2], $trans[3]]);
         }
     }
     
@@ -233,20 +233,21 @@ class LocalizationService
     /**
      * Load translations
      */
-    private function loadTranslations(string $locale): void
+private function loadTranslations(string $locale): void
     {
         if (isset($this->translations[$locale])) {
             return;
         }
-        
-        $sql = "SELECT namespace, key_name, value FROM translations WHERE locale = ?";
+
+        $sql = "SELECT context, translation_key, translation_value FROM translations WHERE language_code = ?";
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$locale]);
         $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        
+
         $this->translations[$locale] = [];
         foreach ($rows as $row) {
-            $this->translations[$locale][$row['namespace']][$row['key_name']] = $row['value'];
+            $namespace = $row['context'] ?? 'app';
+            $this->translations[$locale][$namespace][$row['translation_key']] = $row['translation_value'];
         }
     }
     
@@ -386,12 +387,12 @@ class LocalizationService
     /**
      * Add translation
      */
-    public function addTranslation(string $locale, string $namespace, string $key, string $value): bool
+public function addTranslation(string $locale, string $namespace, string $key, string $value): bool
     {
-        $sql = "INSERT INTO translations (locale, namespace, key_name, value)
+        $sql = "INSERT INTO translations (language_code, context, translation_key, translation_value)
             VALUES (?, ?, ?, ?)
-            ON DUPLICATE KEY UPDATE value = VALUES(value)";
-        
+            ON DUPLICATE KEY UPDATE translation_value = VALUES(translation_value)";
+
         $stmt = $this->database->prepare($sql);
         return $stmt->execute([$locale, $namespace, $key, $value]);
     }
@@ -410,18 +411,19 @@ class LocalizationService
     /**
      * Export translations
      */
-    public function exportTranslations(string $locale): array
+public function exportTranslations(string $locale): array
     {
-        $sql = "SELECT namespace, key_name, value FROM translations WHERE locale = ?";
+        $sql = "SELECT context, translation_key, translation_value FROM translations WHERE language_code = ?";
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$locale]);
         $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        
+
         $export = [];
         foreach ($rows as $row) {
-            $export[$row['namespace']][$row['key_name']] = $row['value'];
+            $namespace = $row['context'] ?? 'app';
+            $export[$namespace][$row['translation_key']] = $row['translation_value'];
         }
-        
+
         return $export;
     }
     

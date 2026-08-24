@@ -104,9 +104,9 @@ class AuthenticationService
 
                 // Store remember token
                 $tid = $this->getTenantId();
-                $sql = "UPDATE users SET remember_token = ?, remember_expires = ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+                $sql = "UPDATE users SET remember_token = ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
                 $stmt = $this->db->prepare($sql);
-                $stmt->execute($tid > 1 ? [$token, date('Y-m-d H:i:s', $expires), $user['id'], $tid] : [$token, date('Y-m-d H:i:s', $expires), $user['id']]);
+                $stmt->execute($tid > 1 ? [$token, $user['id'], $tid] : [$token, $user['id']]);
 
                 setcookie('remember_token', $token, [
                     'expires' => $expires,
@@ -405,7 +405,7 @@ class AuthenticationService
 
             // Store reset token
             $tid = $this->getTenantId();
-            $sql = "UPDATE users SET reset_token = ?, reset_expires = ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+            $sql = "UPDATE users SET reset_token = ?, reset_token_expiry = ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
             $stmt = $this->db->prepare($sql);
             $result = $stmt->execute($tid > 1 ? [$token, $expires, $user['id'], $tid] : [$token, $expires, $user['id']]);
 
@@ -452,7 +452,7 @@ class AuthenticationService
     {
         try {
             $tid = $this->getTenantId();
-            $sql = "UPDATE users SET last_login = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+            $sql = "UPDATE users SET last_login_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
             $stmt = $this->db->prepare($sql);
             $stmt->execute($tid > 1 ? [$userId, $tid] : [$userId]);
         } catch (Exception $e) {

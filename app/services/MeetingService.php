@@ -112,7 +112,7 @@ class MeetingService
             $params = [$outcome, $notes, $id];
             if ($tid > 1) $params[] = $tid;
             $this->db->query(
-                "UPDATE crm_meetings SET status = 'completed', outcome = ?, notes = ?, completed_at = NOW() WHERE id = ?" . $whereClause,
+                "UPDATE crm_meetings SET status = 'completed', outcome = ?, notes = ?, end_time = NOW() WHERE id = ?" . $whereClause,
                 $params
             );
             $meeting = $this->getMeetingById($id);

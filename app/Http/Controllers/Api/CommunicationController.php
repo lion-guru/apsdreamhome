@@ -207,7 +207,7 @@ class CommunicationController extends BaseApiController
 
         try {
             $this->db->execute(
-                "INSERT INTO security_logs (event, context, ip_address, created_at) VALUES (?, ?, ?, NOW())",
+                "INSERT INTO security_logs (action, details, ip_address, created_at) VALUES (?, ?, ?, NOW())",
                 [$event, \json_encode($context), $this->request()->getClientIp()]
             );
         } catch (\Exception $e) {

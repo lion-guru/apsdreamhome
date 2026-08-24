@@ -229,7 +229,7 @@ class TeamManagementController extends BaseController
 
             // Insert MLM profile
             $this->db->execute(
-                "INSERT INTO mlm_profiles (user_id, sponsor_id, level, position, created_at) VALUES (?, ?, ?, ?, ?)",
+                "INSERT INTO mlm_profiles (user_id, sponsor_user_id, current_level, user_type, created_at) VALUES (?, ?, ?, ?, ?)",
                 [$newUserId, $memberData['sponsor_id'], $memberData['level'], $memberData['position'], $memberData['created_at']]
             );
 

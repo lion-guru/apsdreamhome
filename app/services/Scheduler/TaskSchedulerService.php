@@ -349,19 +349,20 @@ private function getTenantId(): int
         try {
             $tid = $this->getTenantId();
             $sql = "INSERT INTO scheduled_tasks 
-                (task_name, task_type, schedule_expression, status, configuration, tenant_id)
-                VALUES (?, ?, ?, ?, ?, ?)";
+                (name, task_type, schedule, command, timezone, is_active, status, configuration, tenant_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             
             $stmt = $this->database->prepare($sql);
             $stmt->execute([
                 $name,
                 $options['task_type'] ?? 'notification',
                 $schedule,
+                $command,
+                $options['timezone'] ?? 'Asia/Kolkata',
+                ($options['is_active'] ?? 1) ? 1 : 0,
                 ($options['is_active'] ?? 1) ? 'active' : 'inactive',
                 json_encode([
                     'description' => $options['description'] ?? null,
-                    'command' => $command,
-                    'timezone' => $options['timezone'] ?? 'Asia/Kolkata',
                     'timeout' => $options['timeout'] ?? 300
                 ]),
                 $tid

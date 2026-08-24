@@ -309,9 +309,9 @@ class LocalizationService
         $locale = $locale ?? $this->currentLocale;
         
         try {
-            $sql = "INSERT INTO translations (locale, key_name, value, created_at) 
-                    VALUES (?, ?, ?, NOW())
-                    ON DUPLICATE KEY UPDATE value = VALUES(value), updated_at = NOW()";
+            $sql = "INSERT INTO translations (language_code, translation_key, translation_value, context, created_at) 
+                    VALUES (?, ?, ?, '', NOW())
+                    ON DUPLICATE KEY UPDATE translation_value = VALUES(translation_value), updated_at = NOW()";
             
             $stmt = $this->db->prepare($sql);
             $result = $stmt->execute([$locale, $key, $value]);
@@ -339,13 +339,13 @@ class LocalizationService
         $locale = $locale ?? $this->currentLocale;
         
         try {
-            $sql = "SELECT key_name, value FROM translations WHERE locale = ?";
+            $sql = "SELECT translation_key, translation_value FROM translations WHERE language_code = ?";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$locale]);
             
             $translations = [];
             foreach ($stmt->fetchAll() as $row) {
-                $translations[$row['key_name']] = $row['value'];
+                $translations[$row['translation_key']] = $row['translation_value'];
             }
             
             return $translations;

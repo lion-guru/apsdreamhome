@@ -64,7 +64,7 @@ class GamificationService
 
         // Award badge
         $this->db->query(
-            "INSERT INTO user_badges (user_id, badge_id, earned_at, created_at) VALUES (?, ?, NOW(), NOW())",
+            "INSERT INTO user_badges (user_id, badge_id, awarded_at) VALUES (?, ?, NOW())",
             [$userId, $badge['id']]
         );
 

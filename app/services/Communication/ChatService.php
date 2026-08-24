@@ -129,9 +129,9 @@ class ChatService
             
             // Insert message
             $sql = "INSERT INTO chat_messages 
-                (conversation_id, sender_id, sender_type, message_type, message, 
-                 attachments, metadata, reply_to_message_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                (session_id, sender_id, sender_type, message_type, message, 
+                 attachment_url)
+                VALUES (?, ?, ?, ?, ?, ?)";
             
             $stmt = $this->database->prepare($sql);
             $stmt->execute([
@@ -140,9 +140,7 @@ class ChatService
                 $senderType,
                 $metadata['type'] ?? 'text',
                 $message,
-                json_encode($attachments),
-                json_encode($metadata),
-                $metadata['reply_to'] ?? null
+                json_encode($attachments)
             ]);
             
             $messageId = $this->database->lastInsertId();
@@ -285,8 +283,9 @@ class ChatService
         $updateStmt->execute([$conversationId]);
         
         // Mark messages as read
-        $msgSql = "UPDATE chat_messages SET is_read = 1, read_at = NOW()
-            WHERE conversation_id = ? AND sender_type = ? AND is_read = 0";
+        $readCol = $userType === 'customer' ? 'read_by_visitor' : 'read_by_agent';
+        $msgSql = "UPDATE chat_messages SET {$readCol} = 1
+            WHERE session_id = ? AND sender_type = ? AND {$readCol} = 0";
         $msgStmt = $this->database->prepare($msgSql);
         $msgStmt->execute([$conversationId, $senderTypeToMark]);
     }
@@ -353,7 +352,7 @@ class ChatService
         string $category = '', ?string $shortcut = null): array
     {
         $sql = "INSERT INTO chat_quick_replies 
-            (agent_id, title, message, category, shortcut)
+            (created_by, title, message, category, shortcut)
             VALUES (?, ?, ?, ?, ?)";
         
         $stmt = $this->database->prepare($sql);

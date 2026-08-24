@@ -155,7 +155,7 @@ class ImportExportService
         $tidCol = $tid > 1 ? ", tenant_id" : "";
         $tidPlaceholder = $tid > 1 ? ", ?" : "";
         $tidParam = $tid > 1 ? [$tid] : [];
-        $sql = "INSERT INTO properties (title, type, price, area, location, address, 
+        $sql = "INSERT INTO properties (title, type, price, area, location, 
                 description, status, amenities, created_at{$tidCol}) 
                 VALUES ";
         
@@ -163,14 +163,13 @@ class ImportExportService
         $params = [];
         
         foreach ($batch as $row) {
-            $values[] = "(?, ?, ?, ?, ?, ?, ?, 'available', ?, NOW(){$tidPlaceholder})";
+            $values[] = "(?, ?, ?, ?, ?, ?, 'available', ?, NOW(){$tidPlaceholder})";
             $valuesParams = [
                 $row['title'],
                 $row['type'],
                 $row['price'],
                 $row['area'] ?? null,
                 $row['location'],
-                $row['address'] ?? $row['location'],
                 $row['description'] ?? null,
                 !empty($row['amenities']) ? json_encode(explode(',', $row['amenities'])) : null,
             ];
@@ -256,17 +255,17 @@ class ImportExportService
         $tidPlaceholder = $tid > 1 ? ", ?" : "";
         $tidParam = $tid > 1 ? [$tid] : [];
         $sql = "INSERT INTO leads (name, email, phone, source, status, budget, 
-                property_type, location, notes, assigned_to, created_at{$tidCol}) VALUES ";
+                location_preference, notes, assigned_to, created_at{$tidCol}) VALUES ";
         
         $values = [];
         $params = [];
         
         foreach ($batch as $row) {
-            $values[] = "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(){$tidPlaceholder})";
+            $values[] = "(?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(){$tidPlaceholder})";
             array_push($params, 
                 $row['name'], $row['email'], $row['phone'], $row['source'],
-                $row['status'], $row['budget'], $row['property_type'],
-                $row['location'], $row['notes'], $row['assigned_to']
+                $row['status'], $row['budget'], $row['location'] ?? null,
+                $row['notes'], $row['assigned_to']
             );
             $params = array_merge($params, $tidParam);
         }

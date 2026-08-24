@@ -272,9 +272,14 @@ class AgenticCRMController extends AdminController
     private function logAIAction($db, string $action, ?int $leadId, ?int $userId, string $details)
     {
         try {
+            $taskData = json_encode([
+                'lead_id' => $leadId,
+                'user_id' => $userId,
+                'details' => $details
+            ]);
             $db->query(
-                "INSERT INTO agent_task_logs (agent_type, action_type, lead_id, user_id, details, status, created_at) VALUES ('crm_ai', ?, ?, ?, ?, 'completed', NOW())",
-                [$action, $leadId, $userId, $details]
+                "INSERT INTO agent_task_logs (agent_type, task_name, task_data, status, triggered_by, completed_at, created_at) VALUES ('crm_ai', ?, ?, 'completed', ?, NOW(), NOW())",
+                [$action, $taskData, $userId]
             );
         } catch (\Throwable $e) {
             error_log('AgenticCRMController::logAIAction error: ' . $e->getMessage());

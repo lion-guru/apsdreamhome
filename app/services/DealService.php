@@ -15,7 +15,7 @@ class DealService
 
     public function getDeals($filters = []) {
         try {
-            $where = ["d.deleted_at IS NULL"];
+            $where = ["d.status != 'deleted'"];
             $params = [];
 
             if (!empty($filters['search'])) {
@@ -149,7 +149,7 @@ class DealService
 
     public function updateDeal($id, $data) {
         try {
-            $allowed = ['title', 'stage', 'deal_value', 'probability', 'expected_close_date', 'assigned_to', 'close_reason', 'close_reason_detail'];
+            $allowed = ['title', 'stage', 'deal_value', 'probability', 'expected_close_date', 'assigned_to', 'notes'];
             $fields = [];
             $params = [];
             foreach ($allowed as $field) {
@@ -176,8 +176,9 @@ class DealService
     public function closeDeal($id, $won, $reason, $reasonDetail = '') {
         try {
             $stage = $won ? 'won' : 'lost';
-            $sql = "UPDATE lead_deals SET stage = ?, close_reason = ?, close_reason_detail = ?, closed_at = NOW(), updated_at = NOW() WHERE id = ?";
-            $params = [$stage, $reason, $reasonDetail, $id];
+            $notes = "Deal {$stage}: " . ($reason ?: 'No reason provided') . ($reasonDetail ? " — $reasonDetail" : '');
+            $sql = "UPDATE lead_deals SET stage = ?, notes = ?, closed_at = NOW(), updated_at = NOW() WHERE id = ?";
+            $params = [$stage, $notes, $id];
             if ($this->tenantId() > 1) {
                 $sql .= " AND tenant_id = ?";
                 $params[] = $this->tenantId();
@@ -192,7 +193,7 @@ class DealService
 
     public function deleteDeal($id) {
         try {
-            $sql = "UPDATE lead_deals SET deleted_at = NOW() WHERE id = ?";
+            $sql = "UPDATE lead_deals SET status = 'deleted', updated_at = NOW() WHERE id = ?";
             $params = [$id];
             if ($this->tenantId() > 1) {
                 $sql .= " AND tenant_id = ?";
@@ -208,10 +209,10 @@ class DealService
 
     public function getDealActivities($dealId, $limit = 50) {
         try {
-            $sql = "SELECT a.*, u.name as user_name FROM crm_interactions a
-                     LEFT JOIN users u ON u.id = a.user_id
-                     WHERE a.lead_id IN (SELECT lead_id FROM lead_deals WHERE id = ?)
-                     AND a.deleted_at IS NULL";
+$sql = "SELECT a.*, u.name as user_name FROM crm_interactions a
+                      LEFT JOIN users u ON u.id = a.user_id
+                      WHERE a.lead_id IN (SELECT lead_id FROM lead_deals WHERE id = ? AND status != 'deleted')
+                      AND a.deleted_at IS NULL";
             $params = [$dealId];
             $tid = $this->tenantId();
             if ($tid > 1) {
@@ -229,9 +230,9 @@ class DealService
 
     public function getPipelineValue() {
         try {
-            $sql = "SELECT stage, COUNT(*) as count, SUM(deal_value) as total_value
-                     FROM lead_deals
-                     WHERE deleted_at IS NULL AND stage NOT IN ('won', 'lost')";
+$sql = "SELECT stage, COUNT(*) as count, SUM(deal_value) as total_value
+                      FROM lead_deals
+                      WHERE status != 'deleted' AND stage NOT IN ('won', 'lost')";
             $params = [];
             if ($this->tenantId() > 1) {
                 $sql .= " AND tenant_id = ?";
@@ -247,9 +248,9 @@ class DealService
 
     public function getWeightedPipeline() {
         try {
-            $sql = "SELECT SUM(deal_value * probability / 100) as weighted_value
-                     FROM lead_deals
-                     WHERE deleted_at IS NULL AND stage NOT IN ('won', 'lost')";
+$sql = "SELECT SUM(deal_value * probability / 100) as weighted_value
+                      FROM lead_deals
+                      WHERE status != 'deleted' AND stage NOT IN ('won', 'lost')";
             $params = [];
             if ($this->tenantId() > 1) {
                 $sql .= " AND tenant_id = ?";
@@ -269,11 +270,11 @@ class DealService
                 $monthStart = date('Y-m-01', strtotime("+$i months"));
                 $monthEnd = date('Y-m-t', strtotime("+$i months"));
 
-                $sql = "SELECT SUM(deal_value * probability / 100) as forecast
-                         FROM lead_deals
-                         WHERE deleted_at IS NULL
-                         AND stage NOT IN ('won', 'lost')
-                         AND expected_close_date BETWEEN ? AND ?";
+$sql = "SELECT SUM(deal_value * probability / 100) as forecast
+                          FROM lead_deals
+                          WHERE status != 'deleted'
+                          AND stage NOT IN ('won', 'lost')
+                          AND expected_close_date BETWEEN ? AND ?";
                 $params = [$monthStart, $monthEnd];
                 if ($this->tenantId() > 1) {
                     $sql .= " AND tenant_id = ?";
@@ -294,9 +295,9 @@ class DealService
 
     public function getWinLossStats() {
         try {
-            $sql1 = "SELECT close_reason, COUNT(*) as count, SUM(deal_value) as total_value
-                      FROM lead_deals
-                      WHERE deleted_at IS NULL AND stage = 'lost'";
+$sql1 = "SELECT notes, COUNT(*) as count, SUM(deal_value) as total_value
+                       FROM lead_deals
+                       WHERE status != 'deleted' AND stage = 'lost'";
             $params1 = [];
             if ($this->tenantId() > 1) {
                 $sql1 .= " AND tenant_id = ?";
@@ -306,9 +307,9 @@ class DealService
             $stmt = $this->db->query($sql1, $params1);
             $lossReasons = $stmt->fetchAll() ?: [];
 
-            $sql2 = "SELECT COUNT(*) as won_count, SUM(deal_value) as won_value
-                      FROM lead_deals
-                      WHERE deleted_at IS NULL AND stage = 'won'";
+$sql2 = "SELECT COUNT(*) as won_count, SUM(deal_value) as won_value
+                       FROM lead_deals
+                       WHERE status != 'deleted' AND stage = 'won'";
             $params2 = [];
             if ($this->tenantId() > 1) {
                 $sql2 .= " AND tenant_id = ?";
@@ -317,9 +318,9 @@ class DealService
             $stmt = $this->db->query($sql2, $params2);
             $won = $stmt->fetch() ?: ['won_count' => 0, 'won_value' => 0];
 
-            $sql3 = "SELECT COUNT(*) as lost_count, SUM(deal_value) as lost_value
-                      FROM lead_deals
-                      WHERE deleted_at IS NULL AND stage = 'lost'";
+$sql3 = "SELECT COUNT(*) as lost_count, SUM(deal_value) as lost_value
+                       FROM lead_deals
+                       WHERE status != 'deleted' AND stage = 'lost'";
             $params3 = [];
             if ($this->tenantId() > 1) {
                 $sql3 .= " AND tenant_id = ?";

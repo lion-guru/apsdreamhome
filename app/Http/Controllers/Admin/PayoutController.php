@@ -226,11 +226,11 @@ class PayoutController extends AdminController
 
                 // Update payout status
                 $sql = "UPDATE commission_payouts 
-                        SET status = 'processed', payout_method = ?, transaction_id = ?, 
-                            processed_date = NOW(), notes = ?, processed_by = ?
+                        SET status = 'processed', transaction_id = ?, 
+                            notes = ?
                         WHERE id = ?";
                 $stmt = $this->db->prepare($sql);
-                $stmt->execute([$method, $transactionId, $notes, $_SESSION['user_id'] ?? 0, $payoutId]);
+                $stmt->execute([$transactionId, $notes, $payoutId]);
 
                 // Update commission ledger status
                 $sql = "UPDATE mlm_commission_ledger mcl
@@ -527,10 +527,10 @@ class PayoutController extends AdminController
             }
 
             $sql = "UPDATE commission_payouts 
-                    SET status = 'processed', payout_method = ?, processed_date = NOW(), notes = ?, processed_by = ?
+                    SET status = 'processed', notes = ?
                     WHERE id = ?";
             $stmt = $this->db->prepare($sql);
-            $result = $stmt->execute([$method, $notes, $_SESSION['user_id'] ?? 0, $payoutId]);
+            $result = $stmt->execute([$notes, $payoutId]);
 
             if ($result) {
                 return ['payout_id' => $payoutId, 'success' => true, 'message' => 'Payout processed successfully'];

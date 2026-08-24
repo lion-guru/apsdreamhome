@@ -198,8 +198,8 @@ class StorageManager
             $pdo = method_exists($db, 'getConnection') ? $db->getConnection() : null;
             if (!$pdo) return;
             // Best effort - use INSERT IGNORE if gateway_logs is missing columns.
-            $stmt = $pdo->prepare("INSERT INTO gateway_logs (gateway, level, action, endpoint, context_json, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
-            $stmt->execute(['s3', 'warning', 'fallback_to_local', '', json_encode(['reason' => $reason])]);
+            $stmt = $pdo->prepare("INSERT INTO gateway_logs (gateway, action, method, endpoint, error_message, created_at) VALUES (?, ?, 'N/A', 'N/A', ?, NOW())");
+            $stmt->execute(['s3', 'fallback_to_local', json_encode(['reason' => $reason])]);
         } catch (\Throwable $e) {
         // silent
         error_log($e->getMessage());

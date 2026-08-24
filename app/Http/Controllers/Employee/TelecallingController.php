@@ -385,7 +385,7 @@ class TelecallingController extends AdminController
         $newStatus = $statusMap[$outcome] ?? 'pending';
         
         $query = "UPDATE leads 
-                  SET status = ?, last_contacted = NOW(), updated_at = NOW()
+                  SET status = ?, last_activity_at = NOW(), updated_at = NOW()
                   WHERE id = ?";
         
         $this->db->execute($query, [$newStatus, $leadId]);

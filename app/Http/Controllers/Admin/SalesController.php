@@ -240,13 +240,13 @@ class SalesController extends AdminController
                 // Create commission record if applicable
                 if ($commissionAmount > 0) {
                     $sql = "INSERT INTO mlm_commission_ledger 
-                            (associate_id, commission_type, amount, source_type, source_id, status, created_at)
-                            VALUES (?, 'sale_commission', ?, 'sale', ?, 'pending', NOW())";
+                            (beneficiary_user_id, commission_type, amount, source_user_id, status, created_at)
+                            VALUES (?, 'sale_commission', ?, ?, 'pending', NOW())";
                     $stmt = $this->db->prepare($sql);
                     $stmt->execute([
                         (int)$data['associate_id'],
                         $commissionAmount,
-                        $saleId
+                        (int)$data['associate_id']
                     ]);
                 }
 

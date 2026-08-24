@@ -45,7 +45,7 @@ class AdminLogger
             ];
 
             return $db->insert(
-                "INSERT INTO activity_logs_unified (admin_id, action, context, ip_address, user_agent, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+                "INSERT INTO activity_logs_unified (user_id, user_type, action, details, ip_address, user_agent, created_at) VALUES (?, 'admin', ?, ?, ?, ?, ?)",
                 [
                     $logEntry['admin_id'],
                     $logEntry['action'],

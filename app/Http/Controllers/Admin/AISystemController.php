@@ -140,7 +140,7 @@ class AISystemController extends AdminController
         try {
             $tid = $this->tenantId();
             Database::getInstance()->getConnection()->prepare(
-                "INSERT INTO agent_task_logs (agent_type, action_type, details, status, tenant_id, created_at) VALUES (?, ?, ?, 'completed', ?, NOW())"
+                "INSERT INTO agent_task_logs (agent_type, task_name, result, status, tenant_id, created_at) VALUES (?, ?, ?, 'completed', ?, NOW())"
             )->execute(['ai_' . $agentType, $action, json_encode($result), $tid]);
         } catch (\Throwable $e) { /* non-critical */ error_log($e->getMessage()); }
 

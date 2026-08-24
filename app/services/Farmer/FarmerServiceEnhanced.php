@@ -142,10 +142,10 @@ class FarmerServiceEnhanced
         $sql = "INSERT INTO farmer_profiles (
             farmer_number, full_name, father_name, spouse_name, date_of_birth, gender,
             phone, alternate_phone, email, address, village, post_office, tehsil, district, state,
-            pin_code, aadhar_number, pan_number, bank_account_number, bank_name, ifsc_code,
-            land_holdings_acres, irrigation_source, farming_type, status, associate_id, created_by,
+            pincode, aadhar_number, pan_number, bank_account_number, bank_name, ifsc_code,
+            total_land_holding, status, associate_id, created_by,
             tenant_id
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $params = [
             $data['farmer_number'],
@@ -170,8 +170,6 @@ class FarmerServiceEnhanced
             $data['bank_name'] ?? null,
             $data['ifsc_code'] ?? null,
             $data['land_holdings_acres'] ?? null,
-            $data['irrigation_source'] ?? null,
-            $data['farming_type'] ?? 'traditional',
             $data['status'] ?? 'active',
             $data['associate_id'] ?? null,
             $data['created_by'] ?? null,
@@ -201,17 +199,16 @@ class FarmerServiceEnhanced
         $tid = TenantContext::getId();
 
         $sql = "INSERT INTO farmer_land_holdings (
-            farmer_id, land_area, land_area_unit, survey_number, khasra_number,
-            village, tehsil, district, state, land_type, soil_type, irrigation_available,
-            electricity_available, road_access, ownership_type, acquisition_date, market_value, status,
+            farmer_id, land_area, land_area_unit, khasra_number,
+            village, tehsil, district, state, land_type, soil_type, irrigation_source,
+            electricity_available, road_access, acquisition_date, land_value, current_status,
             tenant_id
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $params = [
             $farmerId,
             $landData['land_area'],
             $landData['land_area_unit'] ?? 'acres',
-            $landData['survey_number'] ?? null,
             $landData['khasra_number'] ?? null,
             $landData['village'] ?? null,
             $landData['tehsil'] ?? null,
@@ -222,7 +219,6 @@ class FarmerServiceEnhanced
             $landData['irrigation_available'] ?? false,
             $landData['electricity_available'] ?? false,
             $landData['road_access'] ?? false,
-            $landData['ownership_type'] ?? 'owned',
             $landData['acquisition_date'] ?? null,
             $landData['market_value'] ?? null,
             $landData['status'] ?? 'active',
@@ -391,9 +387,9 @@ class FarmerServiceEnhanced
         $sql = "UPDATE farmer_profiles SET 
                 full_name = ?, father_name = ?, spouse_name = ?, date_of_birth = ?, gender = ?,
                 phone = ?, alternate_phone = ?, email = ?, address = ?, village = ?, post_office = ?,
-                tehsil = ?, district = ?, state = ?, pin_code = ?, aadhar_number = ?, pan_number = ?,
-                bank_account_number = ?, bank_name = ?, ifsc_code = ?, land_holdings_acres = ?,
-                irrigation_source = ?, farming_type = ?, status = ?, associate_id = ?
+                tehsil = ?, district = ?, state = ?, pincode = ?, aadhar_number = ?, pan_number = ?,
+                bank_account_number = ?, bank_name = ?, ifsc_code = ?, total_land_holding = ?,
+                crop_types = ?, status = ?, associate_id = ?
                 WHERE id = ?";
 
         $params = [
@@ -418,7 +414,6 @@ class FarmerServiceEnhanced
             $data['bank_name'] ?? null,
             $data['ifsc_code'] ?? null,
             $data['land_holdings_acres'] ?? null,
-            $data['irrigation_source'] ?? null,
             $data['farming_type'] ?? 'traditional',
             $data['status'] ?? 'active',
             $data['associate_id'] ?? null,
@@ -488,20 +483,17 @@ class FarmerServiceEnhanced
         $tid = TenantContext::getId();
 
         $sql = "INSERT INTO farmer_agreements (
-            farmer_id, agreement_number, agreement_type, land_acquisition_id, total_land_area,
-            agreement_amount, payment_terms, payment_status, agreement_date, expiry_date, status, remarks, created_by,
+            farmer_id, agreement_number, agreement_type, total_amount,
+            terms_conditions, start_date, end_date, status, remarks, created_by,
             tenant_id
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $params = [
             $farmerId,
             $agreementData['agreement_number'],
             $agreementData['agreement_type'] ?? 'land_acquisition',
-            $agreementData['land_acquisition_id'] ?? null,
-            $agreementData['total_land_area'],
             $agreementData['agreement_amount'] ?? null,
             $agreementData['payment_terms'] ?? null,
-            $agreementData['payment_status'] ?? 'pending',
             $agreementData['agreement_date'],
             $agreementData['expiry_date'] ?? null,
             $agreementData['status'] ?? 'active',

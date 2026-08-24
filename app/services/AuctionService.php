@@ -181,7 +181,7 @@ class AuctionService
                     ->execute([$auctionId, $winner['bidder_id']]);
             }
 
-            $this->pdo->prepare("UPDATE auctions SET status = ?, winner_id = ?, winning_bid = ?, closed_at = NOW() WHERE id = ?" . $this->tenantSql())
+            $this->pdo->prepare("UPDATE auctions SET status = ?, winner_id = ?, winning_bid = ? WHERE id = ?" . $this->tenantSql())
                 ->execute(array_merge([$status, $winner['bidder_id'] ?? null, $winner['bid_amount'] ?? null, $auctionId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
 
             return ['success' => true, 'status' => $status, 'winner' => $winner];
@@ -203,9 +203,9 @@ class AuctionService
     {
         try {
             $tid = $this->tenantId();
-            $sql = "UPDATE auctions SET status = 'cancelled', close_reason = ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+            $sql = "UPDATE auctions SET status = 'cancelled' WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
             $stmt = $this->pdo->prepare($sql);
-            $stmt->execute($tid > 1 ? [$reason, $auctionId, $tid] : [$reason, $auctionId]);
+            $stmt->execute($tid > 1 ? [$auctionId, $tid] : [$auctionId]);
             return true;
         } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }

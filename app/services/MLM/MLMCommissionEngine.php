@@ -942,7 +942,7 @@ class MLMCommissionEngine
             $ins = $this->db->prepare("
                 INSERT INTO mlm_commission_ledger
                     (beneficiary_user_id, source_user_id, commission_type, level, amount,
-                     sale_amount, commission_pct, notes, booking_id, created_at,
+                     sale_amount, commission_percentage, notes, booking_id, created_at,
                      plan_id, plan_version, plan_snapshot, calculation_engine, tenant_id)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(),
                         ?, ?, ?, 'emi_locked', ?)

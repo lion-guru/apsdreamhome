@@ -64,9 +64,9 @@ class CashCollectionService
             if (!empty($data['booking_id']) && !empty($data['installment_id'])) {
                 try {
                     $bpsSql = "UPDATE booking_payment_schedules
-                        SET paid_amount = paid_amount + ?, payment_date = ?, payment_method = ?
+                        SET paid_amount = paid_amount + ?, paid_date = ?
                         WHERE id = ? AND paid_amount < emi_amount" . $this->tenantSql();
-                    $bpsParams = [$amount, $data['collection_date'], $data['payment_method'] ?? 'cash', $data['installment_id']];
+                    $bpsParams = [$amount, $data['collection_date'], $data['installment_id']];
                     if ($this->tenantId() > 1) $bpsParams[] = $this->tenantId();
                     $this->db->prepare($bpsSql)->execute($bpsParams);
                 } catch (\Throwable $e) {
@@ -201,13 +201,11 @@ class CashCollectionService
             $discrepancy = $submitted - $verified - $rejected;
 
             $ins = $this->db->prepare("INSERT INTO reconciliation_collections
-                (session_date, collector_id, total_submitted, total_verified, total_rejected,
-                 discrepancy_amount, status, notes)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                (collection_date, amount, notes)
+                VALUES (?, ?, ?)");
             $ins->execute([
-                $sessionDate, $collectorId, $submitted, $verified, $rejected,
+                $sessionDate,
                 $discrepancy,
-                abs($discrepancy) > 0.01 ? 'discrepancy' : 'open',
                 $notes
             ]);
             $reconId = (int)$this->db->lastInsertId();
@@ -233,8 +231,8 @@ class CashCollectionService
     {
         try {
             $stmt = $this->db->prepare("UPDATE reconciliation_collections
-                SET status = 'closed', closed_by = ?, closed_at = NOW()
-                WHERE id = ? AND status IN ('open','discrepancy')");
+                SET notes = CONCAT(COALESCE(notes, ''), '\nClosed by: ', ?, ' at ', NOW())
+                WHERE id = ?");
             $stmt->execute([$closedBy, $reconId]);
             return $stmt->rowCount() > 0;
         } catch (\Throwable $e) {
@@ -247,13 +245,10 @@ class CashCollectionService
      */
     public function getReconciliations(string $status = '', int $limit = 50): array
     {
-        $sql = "SELECT r.*, u.name as collector_name, cb.name as closed_by_name
-                FROM reconciliation_collections r
-                LEFT JOIN users u ON u.id = r.collector_id
-                LEFT JOIN users cb ON cb.id = r.closed_by";
+        $sql = "SELECT r.* FROM reconciliation_collections r";
         $params = [];
-        if ($status) { $sql .= " WHERE r.status = ?"; $params[] = $status; }
-        $sql .= " ORDER BY r.session_date DESC, r.created_at DESC LIMIT ?";
+        // Note: status, collector_id, closed_by columns don't exist in schema
+        $sql .= " ORDER BY r.collection_date DESC, r.created_at DESC LIMIT ?";
         $params[] = $limit;
         try {
             $stmt = $this->db->prepare($sql);

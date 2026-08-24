@@ -271,11 +271,11 @@ class LocalizationService
     {
         try {
             $result = $this->db->fetchOne(
-                "SELECT translation FROM translations WHERE key_name = ? AND locale = ?",
+                "SELECT translation_value FROM translations WHERE translation_key = ? AND language_code = ?",
                 [$key, $locale]
             );
             
-            return $result ? $result['translation'] : null;
+            return $result ? $result['translation_value'] : null;
         } catch (\Exception $e) {
             $this->logger->error("Failed to get translation from database", [
                 'key' => $key,
@@ -326,9 +326,9 @@ class LocalizationService
     {
         try {
             $this->db->execute(
-                "INSERT INTO translations (key_name, locale, translation, context) 
+                "INSERT INTO translations (translation_key, language_code, translation_value, context) 
                  VALUES (?, ?, ?, ?) 
-                 ON DUPLICATE KEY UPDATE translation = VALUES(translation), context = VALUES(context), updated_at = CURRENT_TIMESTAMP",
+                 ON DUPLICATE KEY UPDATE translation_value = VALUES(translation_value), context = VALUES(context), updated_at = CURRENT_TIMESTAMP",
                 [$key, $locale, $translation, $context]
             );
 
@@ -419,14 +419,14 @@ class LocalizationService
     {
         try {
             $translations = $this->db->fetchAll(
-                "SELECT key_name, translation, context FROM translations WHERE locale = ?",
+                "SELECT translation_key, translation_value, context FROM translations WHERE language_code = ?",
                 [$locale]
             );
 
             $result = [];
             foreach ($translations as $translation) {
-                $result[$translation['key_name']] = [
-                    'translation' => $translation['translation'],
+                $result[$translation['translation_key']] = [
+                    'translation' => $translation['translation_value'],
                     'context' => $translation['context']
                 ];
             }
@@ -448,7 +448,7 @@ class LocalizationService
     {
         try {
             $this->db->execute(
-                "DELETE FROM translations WHERE key_name = ? AND locale = ?",
+                "DELETE FROM translations WHERE translation_key = ? AND language_code = ?",
                 [$key, $locale]
             );
 

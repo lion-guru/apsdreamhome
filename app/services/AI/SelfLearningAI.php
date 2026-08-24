@@ -829,7 +829,7 @@ class SelfLearningAI
 
             // Store feedback for analysis
             $this->db->execute(
-                "INSERT INTO ai_learning_data (session_id, user_id, interaction_type, input_data, output_data, rating, created_at)
+                "INSERT INTO ai_learning_data (session_id, user_id, action_type, input_data, output_data, feedback_score, learned_at)
                  VALUES (?, ?, 'feedback', ?, ?, ?, NOW())",
                 [
                     $this->sessionId,

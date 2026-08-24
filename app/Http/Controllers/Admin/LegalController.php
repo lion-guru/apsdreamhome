@@ -41,14 +41,15 @@ class LegalController extends AdminController
         $title = $_POST['title'] ?? '';
         $description = $_POST['description'] ?? '';
         $icon = $_POST['icon'] ?? 'fa-gavel';
-        $price_range = $_POST['price_range'] ?? '';
-        $duration = $_POST['duration'] ?? '';
         $features = $_POST['features'] ?? '';
+        $process = $_POST['process'] ?? '';
+        $documents = $_POST['documents'] ?? '';
         $status = $_POST['status'] ?? 'active';
-        $display_order = (int)($_POST['display_order'] ?? 0);
+        $sort_order = (int)($_POST['sort_order'] ?? 0);
+        $slug = strtolower(trim(preg_replace('/[^a-z0-9]+/i', '-', $title), '-'));
         try {
-            $stmt = $this->db->prepare("INSERT INTO legal_services (title, description, icon, price_range, duration, features, status, display_order, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-            $stmt->execute([$title, $description, $icon, $price_range, $duration, $features, $status, $display_order, $this->tenantId()]);
+            $stmt = $this->db->prepare("INSERT INTO legal_services (title, slug, description, icon, features, process, documents, status, sort_order, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+            $stmt->execute([$title, $slug, $description, $icon, $features, $process, $documents, $status, $sort_order, $this->tenantId()]);
             $this->setFlash('success', 'Legal service created successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to create legal service: ' . $e->getMessage());
@@ -115,15 +116,15 @@ class LegalController extends AdminController
         $status = $_POST['status'] ?? '';
         $notes = $_POST['notes'] ?? '';
         $assigned_to = !empty($_POST['assigned_to']) ? (int)$_POST['assigned_to'] : null;
-        $resolved_date = null;
+        $resolved_at = null;
         if ($status === 'resolved') {
-            $resolved_date = date('Y-m-d');
+            $resolved_at = date('Y-m-d H:i:s');
         }
         try {
             [$tw, $tp] = $this->tenantWhere();
-            $sql = "UPDATE legal_disputes SET status = ?, notes = ?, assigned_to = ?, resolved_date = COALESCE(?, resolved_date) WHERE id = ?" . $tw;
+            $sql = "UPDATE legal_disputes SET status = ?, notes = ?, assigned_to = ?, resolved_at = COALESCE(?, resolved_at) WHERE id = ?" . $tw;
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$status, $notes, $assigned_to, $resolved_date, (int)$id, ...$tp]);
+            $stmt->execute([$status, $notes, $assigned_to, $resolved_at, (int)$id, ...$tp]);
             $this->setFlash('success', 'Dispute updated successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to update dispute: ' . $e->getMessage());

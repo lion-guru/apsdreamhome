@@ -52,26 +52,25 @@ class SecurityMonitor {
             // Track login attempt
             $sql = "
                 INSERT INTO activity_logs_unified
-                (username, ip_address, attempt_time, successful)
-                VALUES (:username, :ip, NOW(), :successful)
+                (user_type, ip_address, log_type, details, created_at)
+                VALUES (:user_type, :ip, :log_type, :details, NOW())
             ";
             $db->execute($sql, [
-                'username' => $username,
+                'user_type' => 'customer',
                 'ip' => $ip,
-                'successful' => $successful ? 1 : 0
+                'log_type' => $successful ? 'login' : 'failed_login',
+                'details' => json_encode(['username' => $username, 'successful' => $successful ? 1 : 0])
             ]);
 
             // Count failed attempts in last hour
             $sql = "
                 SELECT COUNT(*) as failed_attempts
                 FROM activity_logs_unified
-                WHERE username = :username
-                AND ip_address = :ip
-                AND successful = 0
-                AND attempt_time > DATE_SUB(NOW(), INTERVAL 1 HOUR)
+                WHERE ip_address = :ip
+                AND log_type = 'failed_login'
+                AND created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)
             ";
             $attemptsData = $db->fetch($sql, [
-                'username' => $username,
                 'ip' => $ip
             ]);
 
@@ -283,8 +282,8 @@ class SecurityMonitor {
             $sql = "
                 SELECT COUNT(*) as suspicious_logins
                 FROM activity_logs_unified
-                WHERE successful = 0
-                AND attempt_time > DATE_SUB(NOW(), INTERVAL 24 HOUR)
+                WHERE log_type = 'failed_login'
+                AND created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR)
             ";
             $loginData = $db->fetch($sql);
 

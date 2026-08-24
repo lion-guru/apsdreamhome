@@ -201,21 +201,17 @@ class EMIController extends AdminController
 
             // Create EMI plan
             $sql = "INSERT INTO emi_plans 
-                    (booking_id, total_amount, down_payment, loan_amount, interest_rate, tenure_months, 
-                     emi_amount, total_interest, total_payable, status, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', NOW())";
+                    (total_amount, down_payment, interest_rate, tenure_months, 
+                     emi_amount, status, created_at)
+                    VALUES (?, ?, ?, ?, ?, 'active', NOW())";
 
             $stmt = $this->db->prepare($sql);
             $result = $stmt->execute([
-                $bookingId,
                 $totalAmount,
                 $downPayment,
-                $loanAmount,
                 $interestRate,
                 $tenureMonths,
-                round($emiAmount, 2),
-                round($totalInterest, 2),
-                round($totalPayable, 2)
+                round($emiAmount, 2)
             ]);
 
             if ($result) {
@@ -350,10 +346,10 @@ class EMIController extends AdminController
 
                 // Record payment
                 $sql = "INSERT INTO emi_payments 
-                        (emi_plan_id, emi_schedule_id, amount, payment_method, transaction_id, status, payment_date)
-                        VALUES (?, ?, ?, ?, ?, 'completed', NOW())";
+                        (amount, transaction_id, status, paid_at)
+                        VALUES (?, ?, 'completed', NOW())";
                 $stmt = $this->db->prepare($sql);
-                $stmt->execute([$emiPlanId, $scheduleId, $amount, $paymentMethod, $transactionId]);
+                $stmt->execute([$amount, $transactionId]);
                 $paymentId = $this->db->lastInsertId();
 
                 // Update schedule status
@@ -374,7 +370,7 @@ class EMIController extends AdminController
 
                 if ($result['total'] == $result['paid']) {
                     // Update EMI plan status to completed
-                    $sql = "UPDATE emi_plans SET status = 'completed', completed_at = NOW() WHERE id = ?";
+                    $sql = "UPDATE emi_plans SET status = 'completed' WHERE id = ?";
                     $stmt = $this->db->prepare($sql);
                     $stmt->execute([$emiPlanId]);
                 }
@@ -409,13 +405,13 @@ class EMIController extends AdminController
     private function createEMISchedule(int $emiPlanId, float $emiAmount, int $tenureMonths): void
     {
         try {
-            $sql = "INSERT INTO emi_schedule (emi_plan_id, installment_number, due_amount, due_date, status)
-                    VALUES (?, ?, ?, ?, 'pending')";
+            $sql = "INSERT INTO emi_schedule (emi_number, amount, due_date, status)
+                    VALUES (?, ?, ?, 'pending')";
 
             for ($i = 1; $i <= $tenureMonths; $i++) {
                 $dueDate = date('Y-m-d', strtotime("+$i months"));
                 $stmt = $this->db->prepare($sql);
-                $stmt->execute([$emiPlanId, $i, $emiAmount, $dueDate]);
+                $stmt->execute([$i, $emiAmount, $dueDate]);
             }
         } catch (\Exception $e) {
             $this->loggingService->error("Create EMI Schedule error: " . $e->getMessage());

@@ -132,7 +132,7 @@ class AssociateService
 
             if ($userId) {
                 $this->database->insert(
-                    "INSERT INTO associates (user_id, joining_date, commission_rate, tenant_id, created_at) VALUES (?, ?, ?, ?, NOW())",
+                    "INSERT INTO associates (user_id, joining_date, brokerage_rate, tenant_id, created_at) VALUES (?, ?, ?, ?, NOW())",
                     array_merge([$userId, $data['joining_date'] ?? date('Y-m-d'), $data['commission_rate'] ?? 0], $tid > 1 ? [$tid] : [])
                 );
             }
@@ -185,7 +185,7 @@ class AssociateService
 
             if (isset($data['commission_rate'])) {
                 $assocParams = [$data['commission_rate'], $id];
-                $assocSql = "UPDATE associates SET commission_rate = ?, updated_at = NOW() WHERE user_id = ?";
+                $assocSql = "UPDATE associates SET brokerage_rate = ?, updated_at = NOW() WHERE user_id = ?";
                 if ($tid > 1) { $assocSql .= " AND tenant_id = ?"; $assocParams[] = $tid; }
                 $this->database->query($assocSql, $assocParams);
             }
@@ -242,7 +242,7 @@ class AssociateService
         try {
             $tid = $this->getTenantId();
             $user = $this->database->fetchOne(
-                "SELECT u.*, a.joining_date, a.commission_rate 
+                "SELECT u.*, a.joining_date, a.brokerage_rate as commission_rate 
                  FROM users u 
                  LEFT JOIN associates a ON a.user_id = u.id 
                  WHERE u.id = ?" . ($tid > 1 ? " AND u.tenant_id = ?" : ""),
@@ -392,7 +392,7 @@ class AssociateService
             }
 
             $assocParams = [$rate, $id];
-            $assocSql = "UPDATE associates SET commission_rate = ?, updated_at = NOW() WHERE user_id = ?";
+            $assocSql = "UPDATE associates SET brokerage_rate = ?, updated_at = NOW() WHERE user_id = ?";
             if ($tid > 1) { $assocSql .= " AND tenant_id = ?"; $assocParams[] = $tid; }
             $this->database->query($assocSql, $assocParams);
 
@@ -422,7 +422,7 @@ class AssociateService
             $tid = $this->getTenantId();
             $tenantSql = $tid > 1 ? ' AND a.tenant_id = ?' : '';
             $performers = $this->database->fetchAll(
-                "SELECT a.id, a.name, a.email, a.commission_rate,
+                "SELECT a.id, a.name, a.email, a.brokerage_rate as commission_rate,
                         COUNT(s.id) as sales_count,
                         SUM(s.sale_amount) as total_sales_amount,
                         SUM(s.commission_amount) as total_commission,
@@ -478,6 +478,7 @@ class AssociateService
             $users = $this->database->fetchAll(
                 "SELECT a.*, 
                         a2.joining_date,
+                        a2.brokerage_rate as commission_rate,
                         COUNT(s.id) as sales_count,
                         SUM(s.sale_amount) as total_sales_amount
                  FROM users a

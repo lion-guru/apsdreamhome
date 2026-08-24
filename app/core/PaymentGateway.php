@@ -234,12 +234,12 @@ class PaymentGateway {
 
             $stmt = $pdo->prepare("
                 INSERT INTO payment_orders (
-                    razorpay_order_id, amount, currency, receipt, status, notes, created_at
+                    order_id, amount, currency, receipt, status, notes, created_at
                 ) VALUES (?, ?, ?, ?, ?, ?, ?)
             ");
 
             $stmt->execute([
-                $order_data['razorpay_order_id'],
+                $order_data['order_id'] ?? $order_data['razorpay_order_id'],
                 $order_data['amount'],
                 $order_data['currency'],
                 $order_data['receipt'],

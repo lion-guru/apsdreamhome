@@ -208,11 +208,11 @@ class LeadService
             $sql = $this->tenantSql();
             $sql = "UPDATE leads SET
                  name = ?, email = ?, phone = ?, source = ?, status = ?, priority = ?,
-                 budget = ?, property_type = ?, location_preference = ?, notes = ?, assigned_to = ?, updated_at = NOW()
+                 budget = ?, location_preference = ?, notes = ?, assigned_to = ?, updated_at = NOW()
                  WHERE id = ?" . $this->tenantSql();
             $params = [
                 $data['name'], $data['email'], $data['phone'], $data['source'],
-                $data['status'], $data['priority'], $data['budget'], $data['property_type'],
+                $data['status'], $data['priority'], $data['budget'],
                 $data['location_preference'], $data['notes'], $data['assigned_to'], $id
             ];
             if ($this->tenantId() > 1) $params[] = $this->tenantId();
@@ -316,13 +316,12 @@ class LeadService
                 "INSERT INTO users (
                     name, email, phone, password, customer_id, referral_code,
                     role, status, kyc_status, mlm_position,
-                    activity_logs_unified, is_newsletter_subscribed, is_promotional_subscribed,
                     rera_deduction_wallet, cumulative_sales, associate_payout_slab,
                     mlm_points, wallet_balance, mlm_rank, commission_rate,
-                    mlm_target, experience_years, country, created_at, updated_at
+                    mlm_target, created_at, updated_at
                     $tenantCol
                 ) VALUES (
-                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW()
+                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW()
                     $tenantVal
                 )",
                 [
@@ -336,9 +335,6 @@ class LeadService
                     'active',
                     'pending',
                     'none',
-                    0,
-                    1,
-                    1,
                     0.00,
                     0.00,
                     '5%',

@@ -35,11 +35,11 @@ class MediaService
             $params = [];
 
             if ($category) {
-                $sql .= " AND category = ?";
-                $params[] = $category;
+                $sql .= " AND tags LIKE ?";
+                $params[] = '%' . $category . '%';
             }
 
-            $sql .= " ORDER BY upload_date DESC LIMIT ?";
+            $sql .= " ORDER BY uploaded_at DESC LIMIT ?";
             $params[] = $limit;
 
             $results = $this->db->fetchAll($sql, $params);
@@ -67,9 +67,9 @@ class MediaService
     {
         try {
             $sql = "SELECT * FROM media_library
-                    WHERE category IN ('general', 'property', 'project')
+                    WHERE tags IN ('general', 'property', 'project')
                     AND mime_type LIKE 'image/%' AND tenant_id = " . $this->tenantId() . "
-                    ORDER BY upload_date DESC
+                    ORDER BY uploaded_at DESC
                     LIMIT ?";
 
             $results = $this->db->fetchAll($sql, [$limit]);
@@ -97,9 +97,9 @@ class MediaService
     {
         try {
             $sql = "SELECT * FROM media_library
-                    WHERE category = 'team'
+                    WHERE tags = 'team'
                     AND mime_type LIKE 'image/%' AND tenant_id = " . $this->tenantId() . "
-                    ORDER BY upload_date DESC
+                    ORDER BY uploaded_at DESC
                     LIMIT ?";
 
             $results = $this->db->fetchAll($sql, [$limit]);
@@ -127,9 +127,9 @@ class MediaService
     {
         try {
             $sql = "SELECT * FROM media_library
-                    WHERE category = 'property'
+                    WHERE tags = 'property'
                     AND mime_type LIKE 'image/%' AND tenant_id = " . $this->tenantId() . "
-                    ORDER BY upload_date DESC
+                    ORDER BY uploaded_at DESC
                     LIMIT ?";
 
             $results = $this->db->fetchAll($sql, [$limit]);
@@ -157,9 +157,9 @@ class MediaService
     {
         try {
             $sql = "SELECT * FROM media_library
-                    WHERE category = 'project'
+                    WHERE tags = 'project'
                     AND mime_type LIKE 'image/%' AND tenant_id = " . $this->tenantId() . "
-                    ORDER BY upload_date DESC
+                    ORDER BY uploaded_at DESC
                     LIMIT ?";
 
             $results = $this->db->fetchAll($sql, [$limit]);
@@ -190,11 +190,11 @@ class MediaService
             $params = [];
 
             if ($category) {
-                $sql .= " AND category = ?";
-                $params[] = $category;
+                $sql .= " AND tags LIKE ?";
+                $params[] = '%' . $category . '%';
             }
 
-            $sql .= " ORDER BY upload_date DESC LIMIT ?";
+            $sql .= " ORDER BY uploaded_at DESC LIMIT ?";
             $params[] = $limit;
 
             $results = $this->db->fetchAll($sql, $params);
@@ -222,9 +222,9 @@ class MediaService
     {
         try {
             $sql = "SELECT * FROM media_library
-                    WHERE category = 'carousel'
+                    WHERE tags = 'carousel'
                     AND mime_type LIKE 'image/%' AND tenant_id = " . $this->tenantId() . "
-                    ORDER BY upload_date DESC
+                    ORDER BY uploaded_at DESC
                     LIMIT ?";
 
             $results = $this->db->fetchAll($sql, [$limit]);
@@ -257,8 +257,8 @@ class MediaService
 
             // Apply filters
             if (!empty($filters['category'])) {
-                $sql .= " AND category = ?";
-                $params[] = $filters['category'];
+                $sql .= " AND tags LIKE ?";
+                $params[] = '%' . $filters['category'] . '%';
             }
 
             if (!empty($filters['type'])) {
@@ -270,13 +270,13 @@ class MediaService
             }
 
             if (!empty($filters['search'])) {
-                $sql .= " AND (title LIKE ? OR description LIKE ?)";
+                $sql .= " AND (alt_text LIKE ? OR caption LIKE ?)";
                 $searchTerm = '%' . $filters['search'] . '%';
                 $params[] = $searchTerm;
                 $params[] = $searchTerm;
             }
 
-            $sql .= " ORDER BY upload_date DESC LIMIT ? OFFSET ?";
+            $sql .= " ORDER BY uploaded_at DESC LIMIT ? OFFSET ?";
             $params[] = $limit;
             $params[] = $offset;
 
@@ -320,17 +320,24 @@ class MediaService
 
             // Save to database
             $sql = "INSERT INTO media_library 
-                    (original_name, filename, title, description, category, mime_type, file_size, upload_date, tenant_id) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), " . $this->tenantId() . ")";
+                    (tenant_id, media_type, file_name, original_name, file_path, file_size, mime_type, alt_text, caption, uploaded_by, uploaded_at) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+
+            $mediaType = 'document';
+            if (str_starts_with($file['type'], 'image/')) $mediaType = 'image';
+            elseif (str_starts_with($file['type'], 'video/')) $mediaType = 'video';
 
             $this->db->execute($sql, [
-                $file['name'],
+                $this->tenantId(),
+                $mediaType,
                 $filename,
+                $file['name'],
+                $uploadPath,
+                $file['size'],
+                $file['type'],
                 $metadata['title'] ?? $file['name'],
                 $metadata['description'] ?? '',
-                $metadata['category'] ?? 'general',
-                $file['type'],
-                $file['size']
+                $metadata['uploaded_by'] ?? 0,
             ]);
 
             $this->logger->info('Media file uploaded successfully', ['filename' => $filename]);
@@ -348,7 +355,7 @@ class MediaService
     public function getMediaUrl(int $id): ?string
     {
         try {
-            $sql = "SELECT filename FROM media_library WHERE id = ?";
+            $sql = "SELECT file_name FROM media_library WHERE id = ?";
             $filename = $this->db->fetchOne($sql, [$id]);
 
             if ($filename) {
@@ -372,7 +379,7 @@ class MediaService
     private function validateAndSecureMediaFile(array $row): ?array
     {
         // Validate filename to prevent path traversal
-        $filename = $this->validateFilename($row['filename']);
+        $filename = $this->validateFilename($row['file_name']);
         if (!$filename) {
             return null;
         }
@@ -387,13 +394,13 @@ class MediaService
             'id' => $row['id'],
             'filename' => $filename,
             'original_name' => $row['original_name'],
-            'title' => $row['title'] ?: $row['original_name'],
+            'title' => $row['alt_text'] ?: $row['original_name'],
             'url' => BASE_URL . 'uploads/media/' . $filename,
-            'description' => $row['description'],
-            'category' => $row['category'],
+            'description' => $row['caption'],
+            'category' => $row['tags'] ?? $row['media_type'],
             'mime_type' => $row['mime_type'],
             'file_size' => $row['file_size'],
-            'upload_date' => $row['upload_date']
+            'upload_date' => $row['uploaded_at']
         ];
     }
 

@@ -361,24 +361,24 @@ class PropertyManagementController extends AdminController
                 // Process allocation based on action
                 list($tSql, $tParams) = $this->tenantWhere();
                 if ($action === 'approve') {
-                    // Update allocation status
+                    // Update allocation status (processed_by, processed_at columns don't exist)
                     $sql = "UPDATE property_allocations 
-                            SET status = 'approved', processed_by = ?, processed_at = NOW(), notes = ?
+                            SET status = 'approved', notes = ?
                             WHERE id = ? $tSql";
                     $stmt = $this->db->prepare($sql);
-                    $stmt->execute(array_merge([$_SESSION['user_id'] ?? 0, $notes, $allocationId], $tParams));
+                    $stmt->execute(array_merge([$notes, $allocationId], $tParams));
 
                     // Update property status
                     $sql = "UPDATE properties SET status = 'reserved', updated_at = NOW() WHERE id = ? $tSql";
                     $stmt = $this->db->prepare($sql);
                     $stmt->execute(array_merge([$allocation['property_id']], $tParams));
                 } elseif ($action === 'reject') {
-                    // Update allocation status
+                    // Update allocation status (processed_by, processed_at columns don't exist)
                     $sql = "UPDATE property_allocations 
-                            SET status = 'rejected', processed_by = ?, processed_at = NOW(), notes = ?
+                            SET status = 'rejected', notes = ?
                             WHERE id = ? $tSql";
                     $stmt = $this->db->prepare($sql);
-                    $stmt->execute(array_merge([$_SESSION['user_id'] ?? 0, $notes, $allocationId], $tParams));
+                    $stmt->execute(array_merge([$notes, $allocationId], $tParams));
                 } else {
                     $this->db->rollBack();
                     return $this->jsonError('Invalid action', 400);
@@ -861,8 +861,8 @@ class PropertyManagementController extends AdminController
             list($tSql, $tParams) = $this->tenantWhere();
             $stmt = $this->db->prepare("
                 UPDATE properties SET 
-                    title = ?, description = ?, price = ?, property_type = ?, status = ?,
-                    site_id = ?, bedrooms = ?, bathrooms = ?, area = ?, address = ?, city = ?,
+                    title = ?, description = ?, price = ?, type = ?, status = ?,
+                    site_id = ?, bedrooms = ?, bathrooms = ?, area = ?, location = ?, city = ?,
                     updated_at = NOW()
                 WHERE id = ? $tSql
             ");

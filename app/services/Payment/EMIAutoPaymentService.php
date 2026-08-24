@@ -531,7 +531,7 @@ class EMIAutoPaymentService
         if ($captureResult['success']) {
             // Mark installment as paid
             $this->db->prepare(
-                "UPDATE booking_payment_schedules SET status = 'paid', paid_amount = amount, paid_at = NOW(), updated_at = NOW() WHERE id = ?" . $this->tenantSql()
+                "UPDATE booking_payment_schedules SET status = 'paid', paid_amount = amount, paid_date = CURDATE(), updated_at = NOW() WHERE id = ?" . $this->tenantSql()
             )->execute($this->tenantId() > 1 ? [(int)$installment['id'], $this->tenantId()] : [(int)$installment['id']]);
 
             $this->logPaymentAttempt((int)$installment['id'], 'processed', array_merge($base, [

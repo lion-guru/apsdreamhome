@@ -337,19 +337,12 @@ class CampaignDeliveryService
     /**
      * Update delivery status
      */
-    private function updateDeliveryStatus($deliveryId, $status, $errorMessage = null)
+private function updateDeliveryStatus($deliveryId, $status, $errorMessage = null)
     {
-        $query = "UPDATE campaign_deliveries SET status = ?, error_message = ? WHERE id = ? AND tenant_id = ?";
-        
-        $params = [$status];
-        if ($errorMessage) {
-            $params[] = $errorMessage;
-        } else {
-            $params[] = null;
-        }
-        $params[] = $deliveryId;
-        $params[] = (int)$this->tenantId();
-        
+        $query = "UPDATE campaign_deliveries SET status = ? WHERE id = ? AND tenant_id = ?";
+
+        $params = [$status, $deliveryId, (int)$this->tenantId()];
+
         $this->db->execute($query, $params);
     }
 
@@ -358,7 +351,7 @@ class CampaignDeliveryService
      */
     private function updateCampaignStatus($campaignId, $status, $deliveredCount = 0)
     {
-        $query = "UPDATE campaigns SET status = ?, delivered_count = ?, updated_at = NOW() WHERE campaign_id = ? AND tenant_id = ?";
+        $query = "UPDATE campaigns SET status = ?, total_sent = ?, updated_at = NOW() WHERE campaign_id = ? AND tenant_id = ?";
         $this->db->execute($query, [$status, $deliveredCount, $campaignId, (int)$this->tenantId()]);
     }
 

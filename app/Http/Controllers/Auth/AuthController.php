@@ -853,7 +853,7 @@ class AuthController extends BaseController
             }
 
             $db->execute(
-                "UPDATE users SET email_verified = 1, verify_token = NULL WHERE id = ?",
+                "UPDATE users SET email_verified_at = NOW(), reset_token = NULL, reset_token_expiry = NULL WHERE id = ?",
                 [$user['id']]
             );
 

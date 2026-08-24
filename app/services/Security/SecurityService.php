@@ -174,7 +174,7 @@ class SecurityService
     {
         try {
             $sql = "SELECT COUNT(*) as attempts FROM rate_limits 
-                    WHERE identifier = ? AND created_at >= DATE_SUB(NOW(), INTERVAL ? SECOND)";
+                    WHERE rate_key = ? AND window_start >= DATE_SUB(NOW(), INTERVAL ? SECOND)";
             
             $attempts = $this->db->fetchOne($sql, [$identifier, $windowSeconds]) ?? 0;
             
@@ -189,7 +189,7 @@ class SecurityService
             }
 
             // Record this attempt
-            $this->db->execute("INSERT INTO rate_limits (identifier, created_at) VALUES (?, NOW())", [$identifier]);
+            $this->db->execute("INSERT INTO rate_limits (rate_key, window_start) VALUES (?, NOW())", [$identifier]);
             
             return true;
 
@@ -369,7 +369,7 @@ class SecurityService
             file_put_contents($this->logFile, $logMessage, FILE_APPEND | LOCK_EX);
 
             // Log to database
-            $sql = "INSERT INTO security_logs (event_type, level, ip_address, user_agent, user_id, event_data, created_at) 
+            $sql = "INSERT INTO security_logs (action, risk_level, ip_address, user_agent, user_id, details, created_at) 
                     VALUES (?, ?, ?, ?, ?, ?, NOW())";
             
             $this->db->execute($sql, [

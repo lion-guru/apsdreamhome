@@ -121,12 +121,11 @@ class AdminLoyaltyController extends AdminController
                 // Add transaction
                 $tid = $this->tenantId();
                 $sql = "INSERT INTO loyalty_transactions 
-                    (user_id, user_type, transaction_type, points, description, balance_after, tenant_id)
-                    VALUES (?, 'customer', 'adjusted', ?, ?, 
-                        (SELECT points + ? FROM loyalty_points WHERE user_id = ? AND user_type = 'customer'), ?)";
+                    (user_id, user_type, transaction_type, points, description, tenant_id)
+                    VALUES (?, 'customer', 'adjusted', ?, ?, ?)";
                 
                 $stmt = $db->prepare($sql);
-                $stmt->execute([$userId, $points, $reason, $points, $userId, $tid]);
+                $stmt->execute([$userId, $points, $reason, $tid]);
                 
                 // Update points
                 [$tenantSql, $tenantParams] = $this->tenantWhere();
@@ -193,14 +192,14 @@ class AdminLoyaltyController extends AdminController
             if ($id) {
                 // Update
                 $sql = "UPDATE rewards_catalog SET 
-                    name = ?, description = ?, points_required = ?, reward_type = ?,
-                    reward_value = ?, stock_quantity = ?, is_limited = ?, is_active = ?
+                    reward_name = ?, reward_description = ?, points_cost = ?, reward_type = ?,
+                    reward_value = ?, stock_quantity = ?, is_active = ?
                     WHERE id = ? $tenantSql";
                 $stmt = $db->prepare($sql);
                 $stmt->execute(array_merge([
                     $data['name'], $data['description'], $data['points_required'],
                     $data['reward_type'], $data['reward_value'], $data['stock_quantity'],
-                    $data['is_limited'], $data['is_active'], $id
+                    $data['is_active'], $id
                 ], $tenantParams));
                 
                 $_SESSION['success'] = 'Reward updated successfully';
@@ -208,13 +207,13 @@ class AdminLoyaltyController extends AdminController
                 // Create
                 $tid = $this->tenantId();
                 $sql = "INSERT INTO rewards_catalog 
-                    (name, description, points_required, reward_type, reward_value, stock_quantity, is_limited, is_active, tenant_id)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    (reward_name, reward_description, points_cost, reward_type, reward_value, stock_quantity, is_active, tenant_id)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                 $stmt = $db->prepare($sql);
                 $stmt->execute([
                     $data['name'], $data['description'], $data['points_required'],
                     $data['reward_type'], $data['reward_value'], $data['stock_quantity'],
-                    $data['is_limited'], $data['is_active'], $tid
+                    $data['is_active'], $tid
                 ]);
                 
                 $_SESSION['success'] = 'Reward created successfully';

@@ -90,8 +90,8 @@ class DocumentController extends AdminController
 
                 if (move_uploaded_file($file['tmp_name'], $filePath)) {
                     $tid = $this->tenantId();
-                    $stmt = $db->prepare("INSERT INTO documents (title, type, description, file_path, file_size, related_type, related_id, category_id, doc_type_id, uploaded_by, status, created_at, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', NOW(), ?)");
-                    $stmt->execute([$title, $type, $description, $filePath, $file['size'], $relatedType, $relatedId, $categoryId, $docTypeId, $_SESSION['admin_id'] ?? 0, $tid]);
+                    $stmt = $db->prepare("INSERT INTO documents (type, url, entity_type, entity_id, user_id, uploaded_on, tenant_id) VALUES (?, ?, ?, ?, ?, NOW(), ?)");
+                    $stmt->execute([$type, $filePath, $relatedType, $relatedId, $_SESSION['admin_id'] ?? 0, $tid]);
 
                     $_SESSION['success'] = 'Document uploaded successfully';
                 } else {
@@ -183,8 +183,8 @@ class DocumentController extends AdminController
                 $parentId = !empty($_POST['parent_id']) ? (int)$_POST['parent_id'] : null;
                 $isActive = isset($_POST['is_active']) ? 1 : 1;
 
-                $stmt = $db->prepare("INSERT INTO document_categories (name, slug, description, parent_id, is_active, created_at, tenant_id) VALUES (?, ?, ?, ?, ?, NOW(), ?)");
-                $stmt->execute([$name, $slug, $description, $parentId, $isActive, $this->tenantId()]);
+                $stmt = $db->prepare("INSERT INTO document_categories (name, description, parent_id, is_active, created_at) VALUES (?, ?, ?, ?, NOW())");
+                $stmt->execute([$name, $description, $parentId, $isActive]);
                 $_SESSION['success'] = 'Category created successfully';
             } catch (\Exception $e) {
                 $_SESSION['error'] = 'Error: ' . $e->getMessage();
@@ -206,8 +206,8 @@ class DocumentController extends AdminController
                 $parentId = !empty($_POST['parent_id']) ? (int)$_POST['parent_id'] : null;
                 $isActive = isset($_POST['is_active']) ? 1 : 0;
 
-                $stmt = $db->prepare("UPDATE document_categories SET name = ?, slug = ?, description = ?, parent_id = ?, is_active = ? WHERE id = ? AND tenant_id = ?");
-                $stmt->execute([$name, $slug, $description, $parentId, $isActive, $id, $this->tenantId()]);
+                $stmt = $db->prepare("UPDATE document_categories SET name = ?, description = ?, parent_id = ?, is_active = ? WHERE id = ? AND tenant_id = ?");
+                $stmt->execute([$name, $description, $parentId, $isActive, $id, $this->tenantId()]);
                 $_SESSION['success'] = 'Category updated successfully';
             } catch (\Exception $e) {
                 $_SESSION['error'] = 'Error: ' . $e->getMessage();
@@ -262,8 +262,8 @@ class DocumentController extends AdminController
                 $categoryId = !empty($_POST['category_id']) ? (int)$_POST['category_id'] : null;
                 $description = $_POST['description'] ?? '';
 
-                $stmt = $db->prepare("INSERT INTO document_types (name, slug, category_id, description, is_active, created_at, tenant_id) VALUES (?, ?, ?, ?, 1, NOW(), ?)");
-                $stmt->execute([$name, $slug, $categoryId, $description, $this->tenantId()]);
+                $stmt = $db->prepare("INSERT INTO document_types (name, category_id, description, is_active, created_at) VALUES (?, ?, ?, 1, NOW())");
+                $stmt->execute([$name, $categoryId, $description]);
                 $_SESSION['success'] = 'Document type created successfully';
             } catch (\Exception $e) {
                 $_SESSION['error'] = 'Error: ' . $e->getMessage();
@@ -285,8 +285,8 @@ class DocumentController extends AdminController
                 $description = $_POST['description'] ?? '';
                 $isActive = isset($_POST['is_active']) ? 1 : 0;
 
-                $stmt = $db->prepare("UPDATE document_types SET name = ?, slug = ?, category_id = ?, description = ?, is_active = ? WHERE id = ? AND tenant_id = ?");
-                $stmt->execute([$name, $slug, $categoryId, $description, $isActive, $id, $this->tenantId()]);
+                $stmt = $db->prepare("UPDATE document_types SET name = ?, category_id = ?, description = ?, is_active = ? WHERE id = ? AND tenant_id = ?");
+                $stmt->execute([$name, $categoryId, $description, $isActive, $id, $this->tenantId()]);
                 $_SESSION['success'] = 'Document type updated successfully';
             } catch (\Exception $e) {
                 $_SESSION['error'] = 'Error: ' . $e->getMessage();
@@ -342,8 +342,8 @@ class DocumentController extends AdminController
                 $content = $_POST['content'] ?? '';
                 $description = $_POST['description'] ?? '';
 
-                $stmt = $db->prepare("INSERT INTO document_templates (name, type, category_id, content, description, is_active, created_at, updated_at, tenant_id) VALUES (?, ?, ?, ?, ?, 1, NOW(), NOW(), ?)");
-                $stmt->execute([$name, $type, $categoryId, $content, $description, $this->tenantId()]);
+                $stmt = $db->prepare("INSERT INTO document_templates (template_name, category, content_html, description, is_active, created_at, updated_at, tenant_id) VALUES (?, ?, ?, ?, 1, NOW(), NOW(), ?)");
+                $stmt->execute([$name, $type, $content, $description, $this->tenantId()]);
                 $_SESSION['success'] = 'Template created successfully';
             } catch (\Exception $e) {
                 $_SESSION['error'] = 'Error: ' . $e->getMessage();
@@ -382,8 +382,8 @@ class DocumentController extends AdminController
                 $description = $_POST['description'] ?? '';
                 $isActive = isset($_POST['is_active']) ? 1 : 0;
 
-                $stmt = $db->prepare("UPDATE document_templates SET name = ?, type = ?, category_id = ?, content = ?, description = ?, is_active = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?");
-                $stmt->execute([$name, $type, $categoryId, $content, $description, $isActive, $id, $this->tenantId()]);
+                $stmt = $db->prepare("UPDATE document_templates SET template_name = ?, category = ?, content_html = ?, description = ?, is_active = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?");
+                $stmt->execute([$name, $type, $content, $description, $isActive, $id, $this->tenantId()]);
                 $_SESSION['success'] = 'Template updated successfully';
             } catch (\Exception $e) {
                 $_SESSION['error'] = 'Error: ' . $e->getMessage();

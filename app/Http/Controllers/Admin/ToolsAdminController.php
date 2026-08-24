@@ -185,14 +185,14 @@ class ToolsAdminController extends AdminController
         }
 
         try {
-            $existing = $db->prepare("SELECT id FROM stamp_duty_config WHERE state_code = ? AND property_type = ?");
-            $existing->execute([$stateCode, $propertyType]);
+            $existing = $db->prepare("SELECT id FROM stamp_duty_config WHERE state_code = ?");
+            $existing->execute([$stateCode]);
             if ($existing->fetch()) {
-                $stmt = $db->prepare("UPDATE stamp_duty_config SET stamp_rate = ?, registration_rate = ?, updated_at = NOW() WHERE state_code = ? AND property_type = ? AND tenant_id = ?");
-                $stmt->execute([$stampRate, $regRate, $stateCode, $propertyType, $this->tenantId()]);
+                $stmt = $db->prepare("UPDATE stamp_duty_config SET male_rate = ?, female_rate = ?, joint_rate = ?, registration_rate = ?, updated_at = NOW() WHERE state_code = ?");
+                $stmt->execute([$stampRate, $stampRate, $stampRate, $regRate, $stateCode]);
             } else {
-                $stmt = $db->prepare("INSERT INTO stamp_duty_config (state_code, property_type, stamp_rate, registration_rate, created_at, updated_at, tenant_id) VALUES (?, ?, ?, ?, NOW(), NOW(), ?)");
-                $stmt->execute([$stateCode, $propertyType, $stampRate, $regRate, $this->tenantId()]);
+                $stmt = $db->prepare("INSERT INTO stamp_duty_config (state_code, state_name, male_rate, female_rate, joint_rate, registration_rate, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())");
+                $stmt->execute([$stateCode, $stateCode, $stampRate, $stampRate, $stampRate, $regRate]);
             }
             $_SESSION['success'] = "Stamp duty config saved for $stateCode ($propertyType)";
         } catch (\Exception $e) {
@@ -266,7 +266,7 @@ class ToolsAdminController extends AdminController
 
         try {
             $tid = $this->tenantId();
-            $stmt = $db->prepare("INSERT INTO landmarks (name, category, address, latitude, longitude, pincode, is_active, created_at, tenant_id) VALUES (?, ?, ?, ?, ?, ?, 1, NOW(), ?)");
+            $stmt = $db->prepare("INSERT INTO landmarks (name, type, address, latitude, longitude, pincode, is_active, created_at, tenant_id) VALUES (?, ?, ?, ?, ?, ?, 1, NOW(), ?)");
             $stmt->execute([$name, $category, $address, $latitude, $longitude, $pincode, $tid]);
             $landmarkId = (int)$db->lastInsertId();
 

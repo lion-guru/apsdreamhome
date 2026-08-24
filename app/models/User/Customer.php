@@ -266,13 +266,17 @@ class Customer extends Model
         $this->db->beginTransaction();
 
         try {
-            // Insert into users table
+            // Insert into users table with all profile fields that exist in schema
             $table = static::$table;
             $sql = "
                 INSERT INTO {$table} (
-                    name, email, password, phone, role, status, created_at, updated_at
+                    name, email, password, phone, role, status, 
+                    address, city, state, pincode, date_of_birth, occupation,
+                    referral_code, created_at, updated_at
                 ) VALUES (
-                    :name, :email, :password, :phone, 'customer', 'active', NOW(), NOW()
+                    :name, :email, :password, :phone, 'customer', 'active',
+                    :address, :city, :state, :pincode, :date_of_birth, :occupation,
+                    :referral_code, NOW(), NOW()
                 )
             ";
 
@@ -281,39 +285,17 @@ class Customer extends Model
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'password' => password_hash($data['password'] ?? 'default123', PASSWORD_DEFAULT),
-                'phone' => $data['phone']
-            ]);
-
-            $customerId = $this->db->lastInsertId();
-
-            // Insert into users table
-            $customerNumber = 'CUST' . date('Ymd') . rand(1000, 9999);
-
-            $profileSql = "
-                INSERT INTO users (
-                    user_id, customer_number, phone, address, city, state, pincode, date_of_birth,
-                    occupation, marital_status, anniversary_date, referral_source, created_at, updated_at
-                ) VALUES (
-                    :user_id, :customer_number, :phone, :address, :city, :state, :pincode, :date_of_birth,
-                    :occupation, :marital_status, :anniversary_date, :referral_source, NOW(), NOW()
-                )
-            ";
-
-            $profileStmt = $this->db->prepare($profileSql);
-            $profileStmt->execute([
-                'user_id' => $customerId,
-                'customer_number' => $customerNumber,
-                'phone' => $data['phone'] ?? null,
+                'phone' => $data['phone'],
                 'address' => $data['address'] ?? null,
                 'city' => $data['city'] ?? null,
                 'state' => $data['state'] ?? null,
                 'pincode' => $data['pincode'] ?? null,
                 'date_of_birth' => $data['date_of_birth'] ?? null,
                 'occupation' => $data['occupation'] ?? null,
-                'marital_status' => $data['marital_status'] ?? null,
-                'anniversary_date' => $data['anniversary_date'] ?? null,
-                'referral_source' => $data['referral_source'] ?? null
+                'referral_code' => $data['referral_source'] ?? null,
             ]);
+
+            $customerId = $this->db->lastInsertId();
 
             // Commit transaction
             $this->db->commit();
@@ -335,66 +317,32 @@ class Customer extends Model
         $this->db->beginTransaction();
 
         try {
-            // Update users table
+            // Update users table with all fields that exist in schema
             $userData = [];
             $userParams = ['id' => $customerId];
 
-            if (isset($data['name'])) {
-                $userData[] = 'name = :name';
-                $userParams['name'] = $data['name'];
+            $allowedFields = [
+                'name', 'email', 'phone', 'address', 'city', 'state', 'pincode',
+                'date_of_birth', 'occupation', 'referral_code'
+            ];
+
+            foreach ($allowedFields as $field) {
+                if (isset($data[$field])) {
+                    $userData[] = "{$field} = :{$field}";
+                    $userParams[$field] = $data[$field];
+                }
             }
 
-            if (isset($data['email'])) {
-                $userData[] = 'email = :email';
-                $userParams['email'] = $data['email'];
-            }
-
-            if (isset($data['phone'])) {
-                $userData[] = 'phone = :phone';
-                $userParams['phone'] = $data['phone'];
+            // Map referral_source to referral_code
+            if (isset($data['referral_source'])) {
+                $userData[] = 'referral_code = :referral_code';
+                $userParams['referral_code'] = $data['referral_source'];
             }
 
             if (!empty($userData)) {
                 $userSql = "UPDATE {$this->table} SET " . implode(', ', $userData) . ", updated_at = NOW() WHERE id = :id";
                 $userStmt = $this->db->prepare($userSql);
                 $userStmt->execute($userParams);
-            }
-
-            // Update users table
-            $profileData = [];
-            $profileParams = ['user_id' => $customerId];
-
-            $profileFields = [
-                'phone',
-                'address',
-                'city',
-                'state',
-                'pincode',
-                'date_of_birth',
-                'occupation',
-                'marital_status',
-                'anniversary_date',
-                'referral_source'
-            ];
-
-            foreach ($profileFields as $field) {
-                if (isset($data[$field])) {
-                    $profileData[] = "{$field} = :{$field}";
-                    $profileParams[$field] = $data[$field];
-                }
-            }
-
-            if (!empty($profileData)) {
-                $profileSql = "
-                    INSERT INTO users (user_id, " . implode(', ', $profileFields) . ", created_at, updated_at)
-                    VALUES (:user_id, " . implode(', ', array_map(function ($field) {
-                    return ':' . $field;
-                }, $profileFields)) . ", NOW(), NOW())
-                    ON DUPLICATE KEY UPDATE " . implode(', ', $profileData) . ", updated_at = NOW()
-                ";
-
-                $profileStmt = $this->db->prepare($profileSql);
-                $profileStmt->execute($profileParams);
             }
 
             // Commit transaction
@@ -1096,19 +1044,17 @@ class Customer extends Model
     public function trackPropertyView($customerId, $propertyId, $source = 'direct')
     {
         $sql = "
-            INSERT INTO property_views (customer_id, property_id, source, viewed_at, time_spent_seconds)
-            VALUES (:customer_id, :property_id, :source, NOW(), 0)
+            INSERT INTO property_views (customer_id, property_id, view_duration, viewed_at)
+            VALUES (:customer_id, :property_id, 0, NOW())
             ON DUPLICATE KEY UPDATE
-                source = VALUES(source),
                 viewed_at = NOW(),
-                time_spent_seconds = time_spent_seconds + 1
+                view_duration = view_duration + 1
         ";
 
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
             'customer_id' => $customerId,
             'property_id' => $propertyId,
-            'source' => $source
         ]);
     }
 
@@ -1277,54 +1223,34 @@ class Customer extends Model
             }
 
             // Check if customer is already an associate
-            $existingAssociate = $this->db->prepare("SELECT associate_id FROM users WHERE user_id = :user_id");
-            $existingAssociate->execute(['user_id' => $customerId]);
-            if ($existingAssociate->fetch()) {
+            if (($customer['role'] ?? '') === 'associate') {
                 throw new \Exception('Customer is already an associate');
             }
 
-            // Generate unique associate code
+            // Generate unique associate code (stored in referral_code)
             $associateCode = $this->generateAssociateCode();
 
-            // Create associate record
-            $associateData = [
-                'user_id' => $customerId,
-                'sponsor_id' => $sponsorId,
-                'associate_code' => $associateCode,
-                'level' => 1,
-                'status' => 'active',
-                'joining_date' => date('Y-m-d H:i:s'),
-                'kyc_status' => 'pending',
-                'bank_details' => null,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ];
-
+            // Update existing user record with associate data using columns that exist in users table
             $sql = "
-                INSERT INTO users (
-                    user_id, sponsor_id, associate_code, level, status, joining_date,
-                    kyc_status, bank_details, created_at, updated_at
-                ) VALUES (
-                    :user_id, :sponsor_id, :associate_code, :level, :status, :joining_date,
-                    :kyc_status, :bank_details, :created_at, :updated_at
-                )
+                UPDATE {$this->table} SET 
+                    role = 'associate',
+                    sponsor_id = :sponsor_id,
+                    referral_code = :referral_code,
+                    mlm_rank = 'Associate',
+                    commission_rate = 6.00,
+                    mlm_target = 1000000.00,
+                    current_level = 1,
+                    mlm_position = 'none',
+                    updated_at = NOW()
+                WHERE id = :customer_id
             ";
 
             $stmt = $this->db->prepare($sql);
-            $stmt->execute($associateData);
-
-            // Update customer role to associate
-            $updateSql = "UPDATE {$this->table} SET role = 'associate' WHERE id = :customer_id";
-            $updateStmt = $this->db->prepare($updateSql);
-            $updateStmt->execute(['customer_id' => $customerId]);
-
-            // Create activity log
-            $activitySql = "
-                INSERT INTO associate_activities (associate_id, activity_type, description, created_at)
-                VALUES (:associate_id, 'joined_as_associate', 'Converted from customer to associate', NOW())
-            ";
-            $activityStmt = $this->db->prepare($activitySql);
-            $activityStmt->execute(['associate_id' => $this->db->lastInsertId()]);
+            $stmt->execute([
+                'sponsor_id' => $sponsorId,
+                'referral_code' => $associateCode,
+                'customer_id' => $customerId
+            ]);
 
             // Commit transaction
             $this->db->commit();

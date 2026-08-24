@@ -85,7 +85,7 @@ class WhatsAppManager
 
         if ($row['count'] == 0) {
             foreach ($this->templates as $templateName => $template) {
-                $sql = "INSERT INTO whatsapp_templates (template_name, category, language, components, variables, status)
+                $sql = "INSERT INTO whatsapp_templates (template_name, category, language, template_content, variables, status)
                        VALUES (?, 'UTILITY', ?, ?, ?, 'APPROVED')";
                 $componentsJson = json_encode($template['components']);
                 $variablesJson = json_encode(['name', 'location', 'price', 'contact']);
@@ -134,15 +134,14 @@ class WhatsAppManager
 
         // Log message
         $logSql = "INSERT INTO whatsapp_messages
-                   (message_id, recipient_phone, recipient_name, message_type, message_content, status, created_by)
-                   VALUES (?, ?, ?, ?, ?, 'pending', ?)";
+                   (whatsapp_message_id, phone_number, contact_name, message_type, message, status)
+                   VALUES (?, ?, ?, ?, ?, 'pending')";
         $params = [
             $messageId,
             $cleanPhone,
             $messageData['name'] ?? '',
             $messageType,
-            $messageData['content'] ?? '',
-            $_SESSION['user_id'] ?? 1
+            $messageData['content'] ?? ''
         ];
         $this->db->execute($logSql, $params);
 
@@ -150,12 +149,9 @@ class WhatsAppManager
         $result = $this->sendToWhatsAppAPI($cleanPhone, $messageData, $messageType);
 
         // Update message status
-        $statusUpdateSql = "UPDATE whatsapp_messages SET status = ?, sent_at = NOW(),
-                           response_data = ?, error_message = ? WHERE message_id = ?";
+        $statusUpdateSql = "UPDATE whatsapp_messages SET status = ? WHERE whatsapp_message_id = ?";
         $this->db->execute($statusUpdateSql, [
             $result['status'],
-            $result['response_data'] ?? '',
-            $result['error'] ?? '',
             $messageId
         ]);
 

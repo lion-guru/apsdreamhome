@@ -913,7 +913,7 @@ class AgreementPDFService extends ServiceTenantTrait
         if (!$this->db) return;
         try {
             $stmt = $this->db->prepare(
-                "INSERT INTO gateway_logs (gateway, action, recipient, status, cost, error_message, request_body, response_body, duration_ms, created_at)
+                "INSERT INTO gateway_logs (gateway, action, recipient, status, cost, error_message, request_payload, response_payload, duration_ms, created_at)
                  VALUES ('pdf_generator', ?, ?, 'success', 0, NULL, ?, ?, 0, NOW())"
             );
             $stmt->execute([

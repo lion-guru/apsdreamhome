@@ -252,13 +252,13 @@ class CoreHelperService
     {
         try {
             $sql = "INSERT INTO user_activity 
-                    (user_id, action, details, ip_address, user_agent, created_at) 
-                    VALUES (:user_id, :action, :details, :ip_address, :user_agent, NOW())";
+                    (user_id, action, page, ip_address, user_agent, timestamp) 
+                    VALUES (:user_id, :action, :page, :ip_address, :user_agent, NOW())";
             
             $stmt = $this->database->prepare($sql);
             $stmt->bindParam(':user_id', $userId);
             $stmt->bindParam(':action', $action);
-            $stmt->bindParam(':details', json_encode($details));
+            $stmt->bindParam(':page', json_encode($details));
             $stmt->bindParam(':ip_address', $this->getClientIP());
             $stmt->bindParam(':user_agent', $_SERVER['HTTP_USER_AGENT'] ?? '');
             

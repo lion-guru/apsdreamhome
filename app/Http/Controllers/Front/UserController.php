@@ -922,19 +922,19 @@ class UserController extends BaseController
             // Update existing
             $stmt = $this->db->prepare("
                 UPDATE user_bank_accounts 
-                SET account_holder = ?, account_number = ?, ifsc_code = ?, 
-                    bank_name = ?, branch_name = ?, account_type = ?, upi_id = ?
+                SET account_holder_name = ?, account_number = ?, ifsc_code = ?, 
+                    bank_name = ?, branch_name = ?, account_type = ?
                 WHERE user_id = ? AND is_primary = 1
             ");
-            $stmt->execute([$accountHolder, $accountNumber, $ifscCode, $bankName, $branchName, $accountType, $upiId, $userId]);
+            $stmt->execute([$accountHolder, $accountNumber, $ifscCode, $bankName, $branchName, $accountType, $userId]);
         } else {
             // Insert new
             $stmt = $this->db->prepare("
                 INSERT INTO user_bank_accounts 
-                (user_id, account_holder, account_number, ifsc_code, bank_name, branch_name, account_type, upi_id, is_primary)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)
+                (user_id, account_holder_name, account_number, ifsc_code, bank_name, branch_name, account_type, is_primary)
+                VALUES (?, ?, ?, ?, ?, ?, ?, 1)
             ");
-            $stmt->execute([$userId, $accountHolder, $accountNumber, $ifscCode, $bankName, $branchName, $accountType, $upiId]);
+            $stmt->execute([$userId, $accountHolder, $accountNumber, $ifscCode, $bankName, $branchName, $accountType]);
         }
 
         $_SESSION['success'] = 'Bank details saved successfully!';
@@ -1840,7 +1840,7 @@ class UserController extends BaseController
             $this->db->prepare("
                 UPDATE booking_payment_schedules
                 SET paid_amount = ?, status = ?, paid_date = COALESCE(?, paid_date),
-                    payment_mode = 'razorpay', updated_at = NOW()
+                    updated_at = NOW()
                 WHERE id = ?
             ")->execute([$newPaid, $newStatus, $paidDate, $instId]);
 

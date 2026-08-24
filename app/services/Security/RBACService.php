@@ -153,12 +153,10 @@ class RBACManager
             if (!$role) {
                 // Create role if not exists
                 $db->execute("
-                    INSERT INTO roles (name, permissions, description) 
-                    VALUES (:name, :permissions, :description)
+                    INSERT INTO roles (name) 
+                    VALUES (:name)
                 ", [
-                    'name' => $roleName,
-                    'permissions' => json_encode(self::ROLES[$roleName]['permissions']),
-                    'description' => self::ROLES[$roleName]['description']
+                    'name' => $roleName
                 ]);
                 $roleId = $db->lastInsertId();
             } else {

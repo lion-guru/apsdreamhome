@@ -159,17 +159,18 @@ class LoggingService
     {
         try {
             $tid = $this->tenantId();
-            $sql = "INSERT INTO system_logs (level, message, context, ip_address, user_agent, tenant_id, created_at) 
-                    VALUES (?, ?, ?, ?, ?, ?, NOW())";
+            $sql = "INSERT INTO system_logs (action, table_name, record_id, old_values, new_values, ip_address, user_agent, created_at) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
 
             $stmt = $this->db->prepare($sql);
             $stmt->execute([
                 $level,
-                $message,
-                json_encode($context),
+                'application',
+                0,
+                '',
+                json_encode(array_merge(['message' => $message], $context)),
                 $_SERVER['REMOTE_ADDR'] ?? 'unknown',
-                $_SERVER['HTTP_USER_AGENT'] ?? 'unknown',
-                $tid
+                $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
             ]);
         } catch (Exception $e) {
             // Fallback to file logging if database fails

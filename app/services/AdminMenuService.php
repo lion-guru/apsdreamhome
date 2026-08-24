@@ -403,14 +403,13 @@ class AdminMenuService
     {
         $query = "
             INSERT INTO admin_user_menu_permissions 
-            (user_id, menu_item_id, can_view, can_create, can_edit, can_delete, granted_by)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            (user_id, menu_item_id, can_view, can_create, can_edit, can_delete)
+            VALUES (?, ?, ?, ?, ?, ?)
             ON DUPLICATE KEY UPDATE
             can_view = VALUES(can_view),
             can_create = VALUES(can_create),
             can_edit = VALUES(can_edit),
-            can_delete = VALUES(can_delete),
-            granted_by = VALUES(granted_by)
+            can_delete = VALUES(can_delete)
         ";
 
         try {
@@ -421,7 +420,6 @@ class AdminMenuService
                 $permissions['can_create'] ?? 0,
                 $permissions['can_edit'] ?? 0,
                 $permissions['can_delete'] ?? 0,
-                $this->currentUserId
             ]);
             $this->clearMenuCache();
             return true;

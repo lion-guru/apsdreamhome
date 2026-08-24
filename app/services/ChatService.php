@@ -220,7 +220,7 @@ class ChatService
             $stmt = $this->db->prepare("INSERT INTO chat_transfers (session_id, from_agent_id, to_agent_id, transfer_reason, transfer_notes) VALUES (?, ?, ?, ?, ?)");
             $stmt->execute([$sessionId, $fromAgentId, $toAgentId, $reason, $notes]);
 
-            $stmt = $this->db->prepare("UPDATE chat_sessions SET agent_id = ?, assigned_at = NOW() WHERE id = ?");
+            $stmt = $this->db->prepare("UPDATE chat_sessions SET assigned_agent_id = ?, first_response_at = NOW() WHERE id = ?");
             $stmt->execute([$toAgentId, $sessionId]);
 
             $this->updateAgentChatCount($fromAgentId, -1);
@@ -404,7 +404,7 @@ class ChatService
     private function updateSessionActivity($sessionId)
     {
         $tid = $this->isTenantScoped() ? $this->tenantId() : null;
-        $sql = "UPDATE chat_sessions SET last_activity = NOW() WHERE id = ?";
+        $sql = "UPDATE chat_sessions SET last_message_at = NOW() WHERE id = ?";
         $params = [$sessionId];
         if ($tid) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
         $stmt = $this->db->prepare($sql);

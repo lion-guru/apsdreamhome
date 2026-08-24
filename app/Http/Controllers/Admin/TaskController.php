@@ -178,13 +178,12 @@ class TaskController extends AdminController
 
             // Insert task
             $sql = "INSERT INTO tasks 
-                    (task_number, title, description, priority, due_date, 
+                    (title, description, priority, due_date, 
                      assigned_to, status, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
+                    VALUES (?, ?, ?, ?, ?, ?, NOW())";
 
             $stmt = $this->db->prepare($sql);
             $result = $stmt->execute([
-                $taskNumber,
                 CoreFunctionsServiceCustom::validateInput($data['title'], 'string'),
                 CoreFunctionsServiceCustom::validateInput($data['description'], 'string'),
                 $data['priority'],

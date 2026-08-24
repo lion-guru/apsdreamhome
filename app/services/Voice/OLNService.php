@@ -62,7 +62,7 @@ class OLNService
 
             $agentWhere = $tid > 1 ? " AND tenant_id = ?" : "";
             $users = $this->db->fetchAll(
-                "SELECT * FROM ai_calling_agents WHERE is_active = 1" . $agentWhere . " ORDER BY current_load ASC",
+                "SELECT * FROM ai_calling_agents WHERE status = 'active'" . $agentWhere . " ORDER BY current_calls ASC",
                 $tid > 1 ? [$tid] : []
             );
 
@@ -92,18 +92,18 @@ class OLNService
                     $scheduleParams[] = $tid;
                 }
                 $this->db->execute(
-                    "INSERT INTO ai_calling_schedule (lead_id, user_id, phone, agent_type, assigned_agent, scheduled_date, status, priority, created_at{$tenantCol})
+                    "INSERT INTO ai_calling_schedule (lead_id, user_id, phone, agent_type, ai_agent_id, scheduled_date, status, priority, created_at{$tenantCol})
                      VALUES (?, ?, ?, ?, ?, CURDATE(), 'scheduled', ?, NOW(){$tenantVal})",
                     $scheduleParams
                 );
 
                 $this->db->execute(
-                    "UPDATE leads SET assigned_to = ?, assigned_agent_type = 'followup' WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                    "UPDATE leads SET assigned_to = ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
                     $tid > 1 ? [$agent['id'], $lead['id'], $tid] : [$agent['id'], $lead['id']]
                 );
 
                 $this->db->execute(
-                    "UPDATE ai_calling_agents SET current_load = current_load + 1 WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                    "UPDATE ai_calling_agents SET current_calls = current_calls + 1 WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
                     $tid > 1 ? [$agent['id'], $tid] : [$agent['id']]
                 );
 
@@ -183,7 +183,7 @@ class OLNService
             }
 
             $this->db->execute(
-                "UPDATE leads SET status = ?, last_stage_change = NOW() WHERE id = ?" . $tenantWhere,
+                "UPDATE leads SET status = ? WHERE id = ?" . $tenantWhere,
                 $tid > 1 ? [$newStage, $leadId, $tid] : [$newStage, $leadId]
             );
 
@@ -220,7 +220,7 @@ class OLNService
 
             if ($newStage === 'not_interested') {
                 $this->db->execute(
-                    "UPDATE leads SET dnd_until = DATE_ADD(NOW(), INTERVAL 30 DAY) WHERE id = ?" . $tenantWhere,
+                    "UPDATE leads SET status = 'dnd' WHERE id = ?" . $tenantWhere,
                     $tid > 1 ? [$leadId, $tid] : [$leadId]
                 );
             }
@@ -370,7 +370,7 @@ class OLNService
                     $scheduleParams[] = $tid;
                 }
                 $this->db->execute(
-                    "INSERT INTO ai_calling_schedule (lead_id, user_id, phone, agent_type, assigned_agent, scheduled_date, status, created_at{$tenantCol})
+                    "INSERT INTO ai_calling_schedule (lead_id, user_id, phone, agent_type, ai_agent_id, scheduled_date, status, created_at{$tenantCol})
                      VALUES (?, ?, ?, ?, ?, DATE_ADD(CURDATE(), INTERVAL 1 DAY), 'scheduled', NOW(){$tenantVal})",
                     $scheduleParams
                 );

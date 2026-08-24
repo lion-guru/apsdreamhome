@@ -176,11 +176,11 @@ class LiveChatService
     {
         try {
             if ($readerType === 'visitor') {
-                $sql = "UPDATE chat_messages SET read_by_visitor = 1, read_at = NOW() WHERE session_id = ?" . $this->tenantSql();
+                $sql = "UPDATE chat_messages SET read_by_visitor = 1 WHERE session_id = ?" . $this->tenantSql();
                 $this->pdo->prepare($sql)->execute(array_merge([$sessionId], $this->_tParams()));
                 $this->pdo->prepare("UPDATE chat_sessions SET unread_visitor_count = 0 WHERE id = ?" . $this->tenantSql())->execute(array_merge([$sessionId], $this->_tParams()));
             } else {
-                $sql = "UPDATE chat_messages SET read_by_agent = 1, read_at = NOW() WHERE session_id = ?" . $this->tenantSql();
+                $sql = "UPDATE chat_messages SET read_by_agent = 1 WHERE session_id = ?" . $this->tenantSql();
                 $this->pdo->prepare($sql)->execute(array_merge([$sessionId], $this->_tParams()));
                 $this->pdo->prepare("UPDATE chat_sessions SET unread_admin_count = 0 WHERE id = ?" . $this->tenantSql())->execute(array_merge([$sessionId], $this->_tParams()));
             }

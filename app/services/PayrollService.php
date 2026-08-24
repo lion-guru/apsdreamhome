@@ -169,8 +169,8 @@ class PayrollService
 
     public function markPaid(int $entryId, int $paidBy, string $method = 'bank_transfer'): array
     {
-        $st = $this->db->prepare("UPDATE payroll_entries SET status = 'paid', paid_at = NOW(), paid_by = :b, payment_method = :m WHERE id = :id {$this->tenantSql()}");
-        $st->execute([':b' => $paidBy, ':m' => $method, ':id' => $entryId]);
+        $st = $this->db->prepare("UPDATE payroll_entries SET status = 'paid' WHERE id = :id {$this->tenantSql()}");
+        $st->execute([':id' => $entryId]);
         return ['ok' => true];
     }
 

@@ -147,7 +147,7 @@ class TrainingService
             }
             // Reactivate
             $this->db->query(
-                "UPDATE training_enrollments SET status = ?, enrolled_at = NOW(), progress = 0 WHERE id = ?",
+                "UPDATE training_enrollments SET status = ?, enrolled_at = NOW(), progress_percentage = 0 WHERE id = ?",
                 [self::ENROLLMENT_ACTIVE, $existing['id']]
             );
             return ['success' => true, 'enrollment_id' => $existing['id']];
@@ -232,7 +232,7 @@ class TrainingService
 
         // Update enrollment
         $this->db->query(
-            "UPDATE training_enrollments SET progress = ? WHERE id = ?" . $this->tenantSql(),
+            "UPDATE training_enrollments SET progress_percentage = ? WHERE id = ?" . $this->tenantSql(),
             array_merge([$progress, $enrollmentId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
         );
 

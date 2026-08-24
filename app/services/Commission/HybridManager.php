@@ -351,9 +351,6 @@ class HybridCommissionManager
         try {
             $this->db->execute($sql, [$userId, $preference, $region, $this->tenantId]);
 
-            $sql = "UPDATE users SET commission_preference = ? WHERE id = ? AND tenant_id = ?";
-            $this->db->execute($sql, [$preference, $userId, $this->tenantId]);
-
             return ['success' => true, 'message' => 'Commission preference updated successfully'];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => 'Failed to update preference: ' . $e->getMessage()];

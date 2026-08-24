@@ -32,9 +32,9 @@ class AnalyticsService
 
     public function createKpi(string $code, string $name, string $category, string $unit, float $target, string $frequency = 'monthly'): array
     {
-        $st = $this->db->prepare("INSERT INTO kpis (kpi_code, name, category, unit, target_value, frequency, active, created_at) VALUES (:c, :n, :cat, :u, :t, :f, 1, NOW())
-                                  ON DUPLICATE KEY UPDATE name = VALUES(name), category = VALUES(category), unit = VALUES(unit), target_value = VALUES(target_value), frequency = VALUES(frequency), active = 1");
-        $st->execute([':c' => $code, ':n' => $name, ':cat' => $category, ':u' => $unit, ':t' => $target, ':f' => $frequency]);
+        $st = $this->db->prepare("INSERT INTO kpis (name, category, unit, default_target, is_active, created_at) VALUES (:n, :cat, :u, :t, 1, NOW())
+                                  ON DUPLICATE KEY UPDATE name = VALUES(name), category = VALUES(category), unit = VALUES(unit), default_target = VALUES(default_target), is_active = 1");
+        $st->execute([':n' => $name, ':cat' => $category, ':u' => $unit, ':t' => $target]);
         return ['ok' => true];
     }
 
@@ -111,9 +111,9 @@ class AnalyticsService
 
     public function setBenchmark(string $category, string $name, float $target, float $min, float $max, string $unit = ''): array
     {
-        $st = $this->db->prepare("INSERT INTO performance_benchmarks (category, name, target_value, min_value, max_value, unit, active, created_at) VALUES (:c, :n, :t, :mi, :ma, :u, 1, NOW())
-                                  ON DUPLICATE KEY UPDATE target_value = VALUES(target_value), min_value = VALUES(min_value), max_value = VALUES(max_value), unit = VALUES(unit), active = 1");
-        $st->execute([':c' => $category, ':n' => $name, ':t' => $target, ':mi' => $min, ':ma' => $max, ':u' => $unit]);
+        $st = $this->db->prepare("INSERT INTO performance_benchmarks (metric, benchmark_name, target_value, baseline_value, excellent_value) VALUES (:c, :n, :t, :mi, :ma)
+                                  ON DUPLICATE KEY UPDATE target_value = VALUES(target_value), baseline_value = VALUES(baseline_value), excellent_value = VALUES(excellent_value)");
+        $st->execute([':c' => $category, ':n' => $name, ':t' => $target, ':mi' => $min, ':ma' => $max]);
         return ['ok' => true];
     }
 

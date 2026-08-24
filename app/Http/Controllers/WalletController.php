@@ -584,14 +584,14 @@ class WalletController extends BaseController
             
             $this->db->query("
                 UPDATE user_bank_accounts 
-                SET bank_name = ?, account_number = ?, ifsc_code = ?, account_holder = ?, branch_name = ?, account_type = ?, updated_at = NOW()
+                SET bank_name = ?, account_number = ?, ifsc_code = ?, account_holder_name = ?, branch_name = ?, account_type = ?, updated_at = NOW()
                 WHERE id = ? AND user_id = ?
             ", [$bankName, $accountNumber, $ifscCode, $accountHolder, $branchName, $accountType, $bankId, $userId]);
 
             // Log activity
             try {
                 $this->db->query("
-                    INSERT INTO user_activity_logs_unified (user_id, action, details, ip_address, created_at)
+                    INSERT INTO user_activity_logs_unified (user_id, action, context, ip_address, created_at)
                     VALUES (?, 'bank_account_updated', ?, ?, NOW())
                 ", [$userId, json_encode(['bank_id' => $bankId, 'changes' => 'Bank details updated']), $_SERVER['REMOTE_ADDR'] ?? '']);
             } catch (\Throwable $e) {

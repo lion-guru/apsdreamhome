@@ -820,7 +820,6 @@ class HybridCommissionEngine
                         UPDATE mlm_salary_grants 
                         SET months_paid = ?, 
                             status = ?, 
-                            last_paid_at = NOW(), 
                             updated_at = NOW() 
                         WHERE id = ?
                     ");

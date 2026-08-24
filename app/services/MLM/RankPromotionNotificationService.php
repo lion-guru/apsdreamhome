@@ -201,7 +201,7 @@ class RankPromotionNotificationService
         $extraVals = $insertData ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '';
         $this->db->prepare("
             INSERT INTO email_queue 
-            (recipient_email, subject, body_html, status, scheduled_at, created_at{$extraCols})
+            (to_email, subject, body_html, status, scheduled_at, created_at{$extraCols})
             VALUES (?, ?, ?, 'pending', NOW(), NOW(){$extraVals})
         ")->execute(array_merge([$email, $subject, $html], array_values($insertData)));
 
@@ -227,7 +227,7 @@ class RankPromotionNotificationService
         $extraVals = $insertData ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '';
         $this->db->prepare("
             INSERT INTO sms_queue
-            (recipient_phone, message, status, scheduled_at, created_at{$extraCols})
+            (recipient, message, status, scheduled_at, created_at{$extraCols})
             VALUES (?, ?, 'pending', NOW(), NOW(){$extraVals})
         ")->execute(array_merge([$phone, $message], array_values($insertData)));
 
@@ -294,7 +294,7 @@ class RankPromotionNotificationService
 
             // Also update current_rank in mlm_profiles for display
             $this->db->prepare("
-                UPDATE mlm_profiles SET current_rank = ?, updated_at = NOW() WHERE user_id = ?" . $this->tenantSql() . "
+                UPDATE mlm_profiles SET current_level = ?, updated_at = NOW() WHERE user_id = ?" . $this->tenantSql() . "
             ")->execute([$newRank, $userId]);
 
         } catch (Exception $e) {

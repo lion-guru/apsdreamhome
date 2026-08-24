@@ -274,11 +274,11 @@ class CommissionAdminController extends AdminController
         }
     }
 
-    public function mlmLevelStore()
+public function mlmLevelStore()
     {
         $this->validateCsrfOrFail();
         try {
-            $this->db->query("INSERT INTO mlm_rank_benefits (rank_name, min_leg_count, min_qualifying_volume, direct_sale_pct, l1_override_pct, l2_override_pct, l3_override_pct, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [
+            $this->db->query("INSERT INTO mlm_rank_benefits (rank_name, min_leg_count, min_qualifying_volume, direct_sale_pct, l1_pct, l2_pct, l3_pct, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [
                 strtolower(trim($_POST['name'] ?? '')),
                 (int)($_POST['min_associates'] ?? 0),
                 (float)($_POST['min_business'] ?? 0),
@@ -515,7 +515,7 @@ class CommissionAdminController extends AdminController
     public function telecallerCommissionPay($id)
     {
         try {
-            $this->db->query("UPDATE telecaller_commissions SET status = 'paid', paid_at = NOW() WHERE id = ? AND status = 'approved' AND tenant_id = ?", [(int)$id, $this->tenantId()]);
+            $this->db->query("UPDATE telecaller_commissions SET status = 'paid', approved_at = NOW() WHERE id = ? AND status = 'approved' AND tenant_id = ?", [(int)$id, $this->tenantId()]);
             $this->setFlash('success', 'Commission marked as paid');
         } catch (\Exception $e) {
             $this->setFlash('error', $e->getMessage());

@@ -198,14 +198,13 @@ class MobileUserApiController extends BaseController
 
     private function createInquiry($data)
     {
-        $stmt = $this->db->prepare("INSERT INTO inquiries (property_id, name, email, phone, message, subject, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
+        $stmt = $this->db->prepare("INSERT INTO inquiries (property_id, name, email, phone, message, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
         $stmt->execute([
             $data['property_id'],
             $data['name'],
             $data['email'],
             $data['phone'],
-            $data['message'],
-            $data['subject'] ?? null
+            $data['message']
         ]);
         return $this->db->lastInsertId();
     }
@@ -547,7 +546,7 @@ class MobileUserApiController extends BaseController
                 $avatarUrl = '/uploads/avatars/' . $userId . '/' . $filename;
             }
 
-            $stmt = $this->db->prepare("UPDATE users SET avatar = ? WHERE id = ?");
+            $stmt = $this->db->prepare("UPDATE users SET profile_image = ? WHERE id = ?");
             $stmt->execute([$avatarUrl, $userId]);
             echo json_encode(['success' => true, 'message' => 'Avatar uploaded successfully', 'url' => $avatarUrl]);
         } catch (\Exception $e) {
@@ -804,7 +803,7 @@ class MobileUserApiController extends BaseController
             return;
         }
         try {
-            $stmt = $this->db->prepare("UPDATE messages SET is_read = 1 WHERE sender_id = ? AND receiver_id = ? AND is_read = 0");
+            $stmt = $this->db->prepare("UPDATE messages SET read_at = NOW() WHERE sender_id = ? AND receiver_id = ? AND read_at IS NULL");
             $stmt->execute([$otherUserId, $userId]);
             echo json_encode(['success' => true, 'message' => 'Messages marked as read']);
         } catch (\Exception $e) {
@@ -1171,7 +1170,7 @@ class MobileUserApiController extends BaseController
 
     private function sendMessageData($userId, $data)
     {
-        $stmt = $this->db->prepare("INSERT INTO messages (sender_id, receiver_id, message, is_read, created_at) VALUES (?, ?, ?, 0, NOW())");
+        $stmt = $this->db->prepare("INSERT INTO messages (sender_id, receiver_id, content, sent_at) VALUES (?, ?, ?, NOW())");
         $stmt->execute([$userId, $data['to_user_id'], $data['message']]);
         return $this->db->lastInsertId();
     }
@@ -1192,7 +1191,7 @@ class MobileUserApiController extends BaseController
 
     private function saveUserBankAccountData($userId, $data)
     {
-        $stmt = $this->db->prepare("INSERT INTO user_bank_accounts (user_id, account_holder_name, account_number, ifsc_code, bank_name, is_default, created_at) VALUES (?, ?, ?, ?, ?, 0, NOW())");
+        $stmt = $this->db->prepare("INSERT INTO user_bank_accounts (user_id, account_holder_name, account_number, ifsc_code, bank_name, is_primary, created_at) VALUES (?, ?, ?, ?, ?, 0, NOW())");
         $stmt->execute([$userId, $data['account_holder_name'], $data['account_number'], $data['ifsc_code'], $data['bank_name'] ?? null]);
         return $this->db->lastInsertId();
     }
@@ -1206,7 +1205,7 @@ class MobileUserApiController extends BaseController
 
     private function saveUserAddressData($userId, $data)
     {
-        $stmt = $this->db->prepare("INSERT INTO user_addresses (user_id, address_line1, address_line2, city, state, postal_code, is_default, created_at) VALUES (?, ?, ?, ?, ?, ?, 0, NOW())");
+        $stmt = $this->db->prepare("INSERT INTO user_addresses (user_id, address_line1, address_line2, city, state, pincode, is_primary, created_at) VALUES (?, ?, ?, ?, ?, ?, 0, NOW())");
         $stmt->execute([$userId, $data['address_line1'], $data['address_line2'] ?? null, $data['city'], $data['state'], $data['postal_code']]);
         return $this->db->lastInsertId();
     }

@@ -250,10 +250,9 @@ class PaymentGatewayService
             $newRefundAmount = $transaction['refund_amount'] + $refundAmount;
             
             $updateSql = "UPDATE payment_transactions SET 
-                status = ?,
+                payment_status = ?,
                 refund_amount = ?,
-                refund_reason = ?,
-                refunded_at = NOW()
+                refund_reason = ?
                 WHERE transaction_id = ?" . $this->tenantSql();
             
             $updateStmt = $this->database->prepare($updateSql);

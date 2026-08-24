@@ -545,7 +545,7 @@ class BookingLifecycleController extends AdminController
 
             // Log status history
             $this->db->prepare(
-                "INSERT INTO booking_status_history (booking_id, old_status, new_status, changed_by, notes, created_at) VALUES (?, ?, 'approved', ?, ?, NOW())"
+                "INSERT INTO booking_status_history (booking_id, from_status, to_status, changed_by, reason, created_at) VALUES (?, ?, 'approved', ?, ?, NOW())"
             )->execute([$id, $booking['status'] ?? 'token_paid', $_SESSION['admin_id'] ?? null, $notes]);
 
             $this->setFlash('success', 'Booking ' . ($booking['booking_number'] ?? "#{$id}") . ' approved');
@@ -576,7 +576,7 @@ class BookingLifecycleController extends AdminController
 
             // Log status history
             $this->db->prepare(
-                "INSERT INTO booking_status_history (booking_id, old_status, new_status, changed_by, notes, created_at) VALUES (?, ?, 'rejected', ?, ?, NOW())"
+                "INSERT INTO booking_status_history (booking_id, from_status, to_status, changed_by, reason, created_at) VALUES (?, ?, 'rejected', ?, ?, NOW())"
             )->execute([$id, $booking['status'] ?? 'token_paid', $_SESSION['admin_id'] ?? null, $notes]);
 
             $this->setFlash('success', 'Booking ' . ($booking['booking_number'] ?? "#{$id}") . ' rejected');

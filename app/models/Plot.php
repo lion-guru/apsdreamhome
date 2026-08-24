@@ -110,8 +110,8 @@ class Plot extends Model
             $totalPrice = $plot['area_sqft'] * $pricePerSqft;
         }
         return $db->query(
-            "UPDATE plots SET price_per_sqft = ?, total_price = ?, updated_by = ?, updated_at = NOW() WHERE id = ?",
-            [$pricePerSqft, $totalPrice, auth()->id() ?? 1, $plotId]
+            "UPDATE plots SET price_per_sqft = ?, total_price = ?, updated_at = NOW() WHERE id = ?",
+            [$pricePerSqft, $totalPrice, $plotId]
         );
     }
 

@@ -37,8 +37,8 @@ class LocationAdminController extends AdminController
             }
 
             try {
-                $stmt = $this->db->prepare("INSERT INTO states (name, code, tenant_id) VALUES (?, ?, ?)");
-                $stmt->execute([$name, $code, $this->tenantId()]);
+                $stmt = $this->db->prepare("INSERT INTO states (name, code) VALUES (?, ?)");
+                $stmt->execute([$name, $code]);
 
                 $_SESSION['success'] = 'State created successfully';
                 redirect('/admin/locations/states');
@@ -79,8 +79,8 @@ class LocationAdminController extends AdminController
             }
 
             try {
-                $stmt = $this->db->prepare("UPDATE states SET name = ?, code = ?, is_active = ? WHERE id = ? AND tenant_id = ?");
-                $stmt->execute([$name, $code, $is_active, $id, $this->tenantId()]);
+                $stmt = $this->db->prepare("UPDATE states SET name = ?, code = ?, is_active = ? WHERE id = ?");
+                $stmt->execute([$name, $code, $is_active, $id]);
 
                 $_SESSION['success'] = 'State updated successfully';
                 redirect('/admin/locations/states');
@@ -100,8 +100,8 @@ class LocationAdminController extends AdminController
         
 
         try {
-            $stmt = $this->db->prepare("DELETE FROM states WHERE id = ? AND tenant_id = ?");
-            $stmt->execute([$id, $this->tenantId()]);
+            $stmt = $this->db->prepare("DELETE FROM states WHERE id = ?");
+            $stmt->execute([$id]);
 
             $_SESSION['success'] = 'State deleted successfully';
         } catch (\PDOException $e) {
@@ -166,8 +166,8 @@ class LocationAdminController extends AdminController
             }
 
             try {
-                $stmt = $this->db->prepare("INSERT INTO districts (state_id, name, code, tenant_id) VALUES (?, ?, ?, ?)");
-                $stmt->execute([$state_id, $name, $code, $this->tenantId()]);
+                $stmt = $this->db->prepare("INSERT INTO districts (state_id, name, code) VALUES (?, ?, ?)");
+                $stmt->execute([$state_id, $name, $code]);
 
                 $_SESSION['success'] = 'District created successfully';
                 redirect('/admin/locations/districts');
@@ -211,8 +211,8 @@ class LocationAdminController extends AdminController
             }
 
             try {
-                $stmt = $this->db->prepare("UPDATE districts SET state_id = ?, name = ?, code = ?, is_active = ? WHERE id = ? AND tenant_id = ?");
-                $stmt->execute([$state_id, $name, $code, $is_active, $id, $this->tenantId()]);
+                $stmt = $this->db->prepare("UPDATE districts SET state_id = ?, name = ?, code = ?, is_active = ? WHERE id = ?");
+                $stmt->execute([$state_id, $name, $code, $is_active, $id]);
 
                 $_SESSION['success'] = 'District updated successfully';
                 redirect('/admin/locations/districts');
@@ -232,8 +232,8 @@ class LocationAdminController extends AdminController
         
 
         try {
-            $stmt = $this->db->prepare("DELETE FROM districts WHERE id = ? AND tenant_id = ?");
-            $stmt->execute([$id, $this->tenantId()]);
+            $stmt = $this->db->prepare("DELETE FROM districts WHERE id = ?");
+            $stmt->execute([$id]);
 
             $_SESSION['success'] = 'District deleted successfully';
         } catch (\PDOException $e) {

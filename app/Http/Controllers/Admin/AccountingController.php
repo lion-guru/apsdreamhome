@@ -274,7 +274,7 @@ class AccountingController extends AdminController
 
             // Insert income record
             $sql = "INSERT INTO income_records 
-                    (amount, description, category, income_date, created_at)
+                    (amount, description, income_category, income_date, created_at)
                     VALUES (?, ?, ?, ?, NOW())";
 
             $stmt = $this->db->prepare($sql);

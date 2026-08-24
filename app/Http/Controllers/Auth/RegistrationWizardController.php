@@ -57,7 +57,7 @@ class RegistrationWizardController extends BaseController
                 'form_data' => [],
             ];
         }
-        $formData = !empty($row['form_data']) ? json_decode($row['form_data'], true) : [];
+        $formData = !empty($row['payload']) ? json_decode($row['payload'], true) : [];
         if (!is_array($formData)) $formData = [];
         return [
             'id' => (int)$row['id'],
@@ -65,8 +65,6 @@ class RegistrationWizardController extends BaseController
             'current_step' => $row['current_step'] ?? 'step1',
             'progress_percent' => (int)($row['progress_percent'] ?? 25),
             'form_data' => $formData,
-            'email' => $row['email'] ?? null,
-            'phone' => $row['phone'] ?? null,
         ];
     }
 
@@ -79,24 +77,27 @@ class RegistrationWizardController extends BaseController
         $state = $this->getState();
         $payload = json_encode($formData, JSON_UNESCAPED_UNICODE);
         $sessionId = $state['session_id'];
+        $stepNum = (int)substr($step, 4);
+        $token = bin2hex(random_bytes(16));
+        $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        $ua = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
 
         if (!empty($state['id'])) {
             $this->db->execute(
                 "UPDATE incomplete_registrations
-                 SET current_step = ?, progress_percent = ?, form_data = ?,
-                     email = COALESCE(?, email), phone = COALESCE(?, phone),
-                     last_activity_at = NOW(), source = COALESCE(source, 'web_wizard')
+                 SET step = ?, progress_percent = ?, payload = ?,
+                     current_step = ?, last_activity_at = NOW()
                  WHERE id = ? AND tenant_id = ?",
-                [$step, $progress, $payload, $email, $phone, $state['id'], $tid]
+                [$stepNum, $progress, $payload, $step, $state['id'], $tid]
             );
             return $state['id'];
         }
 
         $this->db->execute(
             "INSERT INTO incomplete_registrations
-                (session_id, email, phone, form_data, current_step, progress_percent, last_activity_at, source, tenant_id)
-             VALUES (?, ?, ?, ?, ?, ?, NOW(), 'web_wizard', ?)",
-            [$sessionId, $email, $phone, $payload, $step, $progress, $tid]
+                (token, session_id, step, payload, ip_address, user_agent, progress_percent, current_step, last_activity_at, tenant_id)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)",
+            [$token, $sessionId, $stepNum, $payload, $ip, $ua, $progress, $step, $tid]
         );
         return (int)$this->db->lastInsertId();
     }
@@ -287,8 +288,8 @@ class RegistrationWizardController extends BaseController
         $tid = TenantContext::getId();
         try {
             $this->db->execute(
-                "INSERT INTO gateway_logs (gateway, action, recipient, status, request_body, response_body, created_at, tenant_id)
-                 VALUES (?, 'otp_send', ?, 'success', ?, ?, NOW(), ?)",
+                "INSERT INTO gateway_logs (gateway, action, method, endpoint, recipient, status, request_payload, response_payload, created_at, tenant_id)
+                 VALUES (?, 'otp_send', 'POST', '/api/otp/send', ?, 'success', ?, ?, NOW(), ?)",
                 [
                     $gateway,
                     $recipient,
@@ -355,8 +356,8 @@ class RegistrationWizardController extends BaseController
             $userId = (int)$this->db->lastInsertId();
             if (!empty($state['id'])) {
                 $this->db->execute(
-                    "UPDATE incomplete_registrations SET recovered_at = NOW(), recovered_user_id = ? WHERE id = ? AND tenant_id = ?",
-                    [$userId, $state['id'], $tid]
+                    "UPDATE incomplete_registrations SET recovered_at = NOW(), completed = 1, completed_at = NOW() WHERE id = ? AND tenant_id = ?",
+                    [$state['id'], $tid]
                 );
             }
             $_SESSION['user_id'] = $userId;

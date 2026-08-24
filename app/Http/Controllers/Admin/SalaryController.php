@@ -186,7 +186,6 @@ class SalaryController extends AdminController
             $params = [
                 $this->tenantId(),
                 $associateId,
-                $associate['user_id'],
                 $paymentMonth,
                 $paymentYear,
                 $baseSalary,
@@ -196,9 +195,9 @@ class SalaryController extends AdminController
             ];
             $this->db->execute("
                 INSERT INTO salary_payments
-                (tenant_id, associate_id, user_id, payment_month, payment_year, payment_date,
+                (tenant_id, associate_id, payment_month, payment_year, payment_date,
                  basic_amount, gross_amount, net_amount, payment_status, remarks, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, CURDATE(), ?, ?, ?, 'pending', ?, NOW(), NOW())
+                VALUES (?, ?, ?, ?, CURDATE(), ?, ?, ?, 'pending', ?, NOW(), NOW())
             ", $params);
 
             header('Content-Type: application/json');
@@ -659,7 +658,7 @@ class SalaryController extends AdminController
         $terms = $_POST['terms'] ?? '';
         $tid = (int)$this->tenantId();
         try {
-            $this->db->execute("INSERT INTO salary_contracts (employee_id, contract_type, start_date, end_date, salary_amount, signing_bonus, terms, status, created_by, tenant_id, created_at) VALUES (?,?,?,?,?,?,?,'active',?, ?,NOW())", [$employee_id, $type, $start, $end ?: null, $amount, $bonus, $terms, (int)($_SESSION['admin_id'] ?? 0), $tid]);
+            $this->db->execute("INSERT INTO salary_contracts (employee_id, start_date, end_date, basic_salary, terms, status, tenant_id, created_at) VALUES (?,?,?,?,?,'active',?,NOW())", [$employee_id, $start, $end ?: null, $amount, $terms, $tid]);
             $this->logHistory($employee_id, 'contract_created', '0', "type=$type amount=$amount", (int)($_SESSION['admin_id'] ?? 0));
             $this->setFlash('success', 'Contract created');
         } catch (\Exception $e) {
@@ -855,10 +854,9 @@ class SalaryController extends AdminController
         try {
             $current = $this->db->fetch("SELECT * FROM salary_tracker WHERE id=?", [$id]);
             if (!$current) { $this->setFlash('error', 'Not found'); $this->redirect('/admin/salary/tracker'); }
-            $due = (float)$current['net_pay'] - $paid;
             $tid = (int)$this->tenantId();
-            $this->db->execute("UPDATE salary_tracker SET paid_amount=?, due_amount=?, payment_status=?, payment_date=? WHERE id=? AND tenant_id=?", [$paid, max(0, $due), $status, $date, $id, $tid]);
-            $this->logHistory($current['employee_id'], 'tracker_updated', $current['payment_status'], $status, (int)($_SESSION['admin_id'] ?? 0));
+            $this->db->execute("UPDATE salary_tracker SET status=? WHERE id=? AND tenant_id=?", [$status, $id, $tid]);
+            $this->logHistory($current['employee_id'], 'tracker_updated', $current['status'] ?? '', $status, (int)($_SESSION['admin_id'] ?? 0));
             $this->setFlash('success', 'Tracker updated');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
@@ -962,7 +960,7 @@ class SalaryController extends AdminController
     private function logHistory($employee_id, $field, $old, $new, $changed_by)
     {
         try {
-            $this->db->execute("INSERT INTO salary_history (employee_id, field_changed, old_value, new_value, changed_by, tenant_id, changed_at, created_at) VALUES (?,?,?,?,?,?,NOW(),NOW())", [$employee_id, $field, $old, $new, $changed_by, (int)$this->tenantId()]);
+            $this->db->execute("INSERT INTO salary_history (employee_id, change_type, old_salary, new_salary, approved_by, tenant_id, created_at) VALUES (?,?,?,?,?,?,NOW())", [$employee_id, $field, $old, $new, $changed_by, (int)$this->tenantId()]);
         } catch (\Exception $e) { error_log('SalaryController logHistory: ' . $e->getMessage()); }
     }
 

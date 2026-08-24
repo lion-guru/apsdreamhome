@@ -34,23 +34,17 @@ class SiteSettings
         ];
         try {
             $pdo = \App\Core\Database\Database::getInstance()->getConnection();
-            $pdo->exec("CREATE TABLE IF NOT EXISTS site_settings (
-                id INT PRIMARY KEY AUTO_INCREMENT,
-                brand_name VARCHAR(255) NULL,
-                logo_url VARCHAR(512) NULL,
-                favicon_url VARCHAR(512) NULL,
-                nav_json TEXT NULL,
-                social_json TEXT NULL,
-                footer_html TEXT NULL,
-                updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-            )");
-            $stmt = $pdo->query("SELECT brand_name, logo_url, favicon_url, nav_json, social_json, footer_html FROM site_settings ORDER BY id DESC LIMIT 1");
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            if ($row) {
-                self::$cache = array_merge($defaults, array_filter($row, fn($v) => $v !== null && $v !== ''));
-            } else {
-                self::$cache = $defaults;
+            $stmt = $pdo->query("SELECT setting_key, setting_value FROM site_settings");
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $settings = $defaults;
+            foreach ($rows as $row) {
+                $key = $row['setting_key'];
+                $val = $row['setting_value'];
+                if ($val !== null && $val !== '' && isset($settings[$key])) {
+                    $settings[$key] = $val;
+                }
             }
+            self::$cache = $settings;
         } catch (\Throwable $e) {
             self::$cache = $defaults;
         }
@@ -61,17 +55,16 @@ class SiteSettings
     {
         try {
             $pdo = \App\Core\Database\Database::getInstance()->getConnection();
-            $stmt = $pdo->prepare("INSERT INTO site_settings (brand_name, logo_url, favicon_url, nav_json, social_json, footer_html) VALUES (:brand_name, :logo_url, :favicon_url, :nav_json, :social_json, :footer_html)");
-            $ok = $stmt->execute([
-                ':brand_name' => $data['brand_name'] ?? null,
-                ':logo_url' => $data['logo_url'] ?? null,
-                ':favicon_url' => $data['favicon_url'] ?? null,
-                ':nav_json' => $data['nav_json'] ?? null,
-                ':social_json' => $data['social_json'] ?? null,
-                ':footer_html' => $data['footer_html'] ?? null,
-            ]);
+            foreach ($data as $key => $value) {
+                $stmt = $pdo->prepare("
+                    INSERT INTO site_settings (setting_key, setting_value, category, value, updated_at)
+                    VALUES (?, ?, 'general', ?, NOW())
+                    ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), value = VALUES(value), updated_at = NOW()
+                ");
+                $stmt->execute([$key, $value, $value]);
+            }
             self::$cache = null;
-            return $ok;
+            return true;
         } catch (\Throwable $e) {
             return false;
         }

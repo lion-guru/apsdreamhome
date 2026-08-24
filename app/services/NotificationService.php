@@ -249,8 +249,8 @@ class NotificationService
         $u = $st->fetch(PDO::FETCH_ASSOC);
         $to = $data['phone'] ?? $u['phone'] ?? '';
         $tid = $this->getTenantId();
-        $st2 = $this->db->prepare("INSERT INTO whatsapp_messages (user_id, to_phone, message, status, tenant_id, sent_at, created_at) VALUES (:u, :p, :m, 'sent', :tid, NOW(), NOW())");
-        try { $st2->execute([':u' => $userId, ':p' => $to, ':m' => $message, ':tid' => $tid]); } catch (\Throwable $e) { error_log($e->getMessage()); }
+        $st2 = $this->db->prepare("INSERT INTO whatsapp_messages (phone_number, message, direction, status, tenant_id, created_at) VALUES (:p, :m, 'outbound', 'sent', :tid, NOW())");
+        try { $st2->execute([':p' => $to, ':m' => $message, ':tid' => $tid]); } catch (\Throwable $e) { error_log($e->getMessage()); }
     }
 
     public function shareLead(int $userId, int $leadId, string $to, string $channel = 'whatsapp'): array

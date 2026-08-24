@@ -94,7 +94,7 @@ class CustomFeaturesService
     {
         try {
 $sql = "INSERT INTO virtual_tours 
-                    (property_id, title, description, tour_data, created_by, tenant_id, created_at) 
+                    (property_id, tour_title, tour_description, tour_settings, created_by, tenant_id, created_at) 
                     VALUES (?, ?, ?, ?, ?, ?, NOW())";
 
             $this->db->execute($sql, [
@@ -415,7 +415,7 @@ $sql = "INSERT INTO virtual_tours
                 case 'csv':
                     $csv = "ID,Property ID,Title,Description,Status,Created At\n";
                     foreach ($features as $feature) {
-                        $csv .= "{$feature['id']},{$feature['property_id']},\"{$feature['title']}\",\"{$feature['description']}\",{$feature['status']},{$feature['created_at']}\n";
+                        $csv .= "{$feature['id']},{$feature['property_id']},\"{$feature['tour_title']}\",\"{$feature['tour_description']}\",{$feature['status']},{$feature['created_at']}\n";
                     }
                     return [
                         'format' => 'csv',

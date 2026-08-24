@@ -213,10 +213,10 @@ class FinancialService
 
             // Insert transaction
             $sql = "INSERT INTO transactions (
-                id, type, amount, status, description,
-                user_id, associate_id, property_id, payment_method,
-                transaction_date, created_at, updated_at
-            ) VALUES (?, ?, ?, 'pending', ?, ?, ?, ?, ?, NOW(), NOW())";
+                ref_id, type, amount, description,
+                user_id, property_id,
+                date, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())";
 
             $params = [
                 $transactionId,
@@ -224,9 +224,7 @@ class FinancialService
                 $data['amount'],
                 $data['description'],
                 $data['user_id'] ?? null,
-                $data['associate_id'] ?? null,
                 $data['property_id'] ?? null,
-                $data['payment_method'] ?? null,
                 $data['transaction_date']
             ];
 
@@ -266,8 +264,8 @@ class FinancialService
             }
 
             $this->db->execute(
-                "UPDATE transactions SET status = ?, updated_at = NOW() WHERE id = ?",
-                [$status, $id]
+                "UPDATE transactions SET updated_at = NOW() WHERE id = ?",
+                [$id]
             );
 
             // Log activity
@@ -465,17 +463,16 @@ class FinancialService
                     $transactionId = 'TXN' . date('Y') . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
 
                     $sql = "INSERT INTO transactions (
-                        id, type, amount, status, description,
-                        user_id, associate_id, property_id,
-                        transaction_date, created_at, updated_at
-                    ) VALUES (?, 'commission', ?, 'completed', ?, ?, ?, ?, NOW(), NOW())";
+                        ref_id, type, amount, description,
+                        user_id, property_id,
+                        date, created_at, updated_at
+                    ) VALUES (?, 'commission', ?, ?, ?, ?, NOW(), NOW())";
 
                     $params = [
                         $transactionId,
                         $commissionAmount,
                         'Commission payment for property: ' . $property['title'],
                         null,
-                        $associateId,
                         $propertyId,
                         date('Y-m-d')
                     ];

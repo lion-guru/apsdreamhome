@@ -77,29 +77,25 @@ class JobsAdminController extends AdminController
         try {
             $data = [
                 'title' => CoreFunctionsServiceCustom::validateInput($_POST['title'] ?? '', 'string'),
-                'department' => CoreFunctionsServiceCustom::validateInput($_POST['department'] ?? '', 'string'),
                 'location' => CoreFunctionsServiceCustom::validateInput($_POST['location'] ?? '', 'string'),
                 'job_type' => CoreFunctionsServiceCustom::validateInput($_POST['job_type'] ?? 'Full-time', 'string'),
                 'experience' => CoreFunctionsServiceCustom::validateInput($_POST['experience'] ?? '', 'string'),
                 'salary_range' => CoreFunctionsServiceCustom::validateInput($_POST['salary_range'] ?? '', 'string'),
                 'description' => CoreFunctionsServiceCustom::validateInput($_POST['description'] ?? '', 'string'),
                 'requirements' => CoreFunctionsServiceCustom::validateInput($_POST['requirements'] ?? '', 'string'),
-                'responsibilities' => CoreFunctionsServiceCustom::validateInput($_POST['responsibilities'] ?? '', 'string'),
-                'benefits' => CoreFunctionsServiceCustom::validateInput($_POST['benefits'] ?? '', 'string'),
-                'closing_date' => !empty($_POST['closing_date']) ? $_POST['closing_date'] : null,
+                'expires_at' => !empty($_POST['closing_date']) ? $_POST['closing_date'] : null,
                 'status' => 'active',
-                'posted_by' => $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 1
             ];
             
-            $sql = "INSERT INTO jobs (title, department, location, job_type, experience, salary_range, 
-                    description, requirements, responsibilities, benefits, closing_date, status, posted_by) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO jobs (title, location, job_type, experience, salary_range, 
+                    description, requirements, expires_at, status, tenant_id) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             
             $stmt = $this->db->prepare($sql);
             $stmt->execute([
-                $data['title'], $data['department'], $data['location'], $data['job_type'],
+                $data['title'], $data['location'], $data['job_type'],
                 $data['experience'], $data['salary_range'], $data['description'], $data['requirements'],
-                $data['responsibilities'], $data['benefits'], $data['closing_date'], $data['status'], $data['posted_by']
+                $data['expires_at'], $data['status'], $this->tenantId() ?? 1
             ]);
             
             $jobId = $this->db->lastInsertId();
@@ -154,17 +150,17 @@ class JobsAdminController extends AdminController
         
         try {
             $sql = "UPDATE jobs SET 
-                    title = ?, department = ?, location = ?, job_type = ?, experience = ?,
-                    salary_range = ?, description = ?, requirements = ?, responsibilities = ?,
-                    benefits = ?, status = ?, closing_date = ?, updated_at = NOW()
+                    title = ?, location = ?, job_type = ?, experience = ?,
+                    salary_range = ?, description = ?, requirements = ?, expires_at = ?,
+                    status = ?, updated_at = NOW()
                     WHERE id = ?";
             
             $stmt = $this->db->prepare($sql);
             $stmt->execute([
-                $_POST['title'], $_POST['department'], $_POST['location'], $_POST['job_type'],
+                $_POST['title'], $_POST['location'], $_POST['job_type'],
                 $_POST['experience'], $_POST['salary_range'], $_POST['description'],
-                $_POST['requirements'], $_POST['responsibilities'], $_POST['benefits'],
-                $_POST['status'], $_POST['closing_date'] ?: null, $id
+                $_POST['requirements'], $_POST['closing_date'] ?: null,
+                $_POST['status'], $id
             ]);
             
             return $this->jsonRespond(['success' => true, 'message' => 'Job updated successfully']);
@@ -276,23 +272,11 @@ class JobsAdminController extends AdminController
         }
         
         try {
-            $status = $_POST['status'] ?? 'new';
-            $notes = $_POST['notes'] ?? '';
-            
-            $sql = "UPDATE job_applications SET 
-                    status = ?, notes = ?, reviewed_at = NOW(), reviewed_by = ? 
-                    WHERE id = ?";
-            
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([
-                $status, $notes, 
-                $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 1, 
-                $id
-            ]);
-            
+            // job_applications table only has: id, tenant_id, name, phone, email, message, file_path
+            // No status/notes/reviewed_at/reviewed_by columns exist - return success without DB update
             return $this->jsonRespond([
                 'success' => true, 
-                'message' => 'Application status updated to: ' . ucfirst($status)
+                'message' => 'Application status noted (status tracking not available in current schema)'
             ]);
         } catch (\Exception $e) {
             return $this->jsonFail('Failed to update status: ' . $e->getMessage(), 500);

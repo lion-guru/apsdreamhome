@@ -478,7 +478,7 @@ class CommissionManager
 
             // Update batch status
             $this->db->prepare("
-                UPDATE mlm_payout_batches SET status = 'completed', processed_at = NOW() WHERE id = ?" . $this->tenantSql() . "
+                UPDATE mlm_payout_batches SET status = 'completed', payment_date = CURDATE() WHERE id = ?" . $this->tenantSql() . "
             ")->execute([$batchId]);
 
             return [

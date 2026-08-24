@@ -167,7 +167,7 @@ class TelecallerController extends AdminController
         $rating = $_POST['rating'] ?? 'average';
 
         try {
-            $this->db->query("UPDATE telecaller_performance SET total_calls = ?, connected_calls = ?, leads_converted = ?, total_commission = ?, target_achieved = ?, rating = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?", [$totalCalls, $connectedCalls, $leadsConverted, $totalCommission, $targetAchieved, $rating, $id, (int)$this->tenantId()]);
+            $this->db->query("UPDATE telecaller_performance SET total_calls = ?, connected_calls = ?, leads_converted = ?, total_commission = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?", [$totalCalls, $connectedCalls, $leadsConverted, $totalCommission, $id, (int)$this->tenantId()]);
             $this->setFlash('success', 'Performance updated successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to update performance: ' . $e->getMessage());

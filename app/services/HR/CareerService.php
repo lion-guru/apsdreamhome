@@ -212,20 +212,14 @@ class CareerService
     private function createApplicationRecord($data, $resumeFile)
     {
         $sql = "INSERT INTO job_applications 
-                (full_name, email, phone, position, experience, cover_letter, availability, 
-                 salary_expectation, location, resume_file, created_at, status)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), 'pending')";
+                (name, email, phone, message, file_path)
+                VALUES (?, ?, ?, ?, ?)";
 
         $params = [
             $data['full_name'],
             $data['email'],
             $data['phone'],
-            $data['position'],
-            $data['experience'],
             $data['cover_letter'],
-            $data['availability'],
-            $data['salary_expectation'],
-            $data['location'],
             $resumeFile
         ];
 
@@ -384,20 +378,9 @@ class CareerService
                 throw new InvalidArgumentException('Invalid application status');
             }
 
-            $sql = "UPDATE job_applications SET status = ?, updated_at = NOW()";
-            $params = [$status];
-
-            if (!empty($notes)) {
-                $sql .= ", notes = ?";
-                $params[] = $notes;
-            }
-
-            $sql .= " WHERE id = ?";
-            $params[] = $id;
-
-            $this->db->query($sql, $params);
-
-            $this->logger->info('Application status updated', [
+            // job_applications table doesn't have status/updated_at/notes columns
+            // Log the attempt instead
+            $this->logger->info('Application status update requested (not persisted - schema mismatch)', [
                 'application_id' => $id,
                 'status' => $status,
                 'notes' => $notes

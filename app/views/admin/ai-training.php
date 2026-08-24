@@ -27,9 +27,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             try {
                 $db->execute(
                     "INSERT INTO ai_knowledge_base 
-                     (category, question_pattern, answer, keywords, question_variations, created_at, updated_at) 
-                     VALUES (?, ?, ?, ?, ?, NOW(), NOW())",
-                    [$category, $questionPattern, $answer, $keywords, $variations]
+                     (category, question_pattern, answer, usage_count, effectiveness_score, created_at, updated_at) 
+                     VALUES (?, ?, ?, 0, 0.00, NOW(), NOW())",
+                    [$category, $questionPattern, $answer]
                 );
                 $success = 'New Q&A added successfully!';
 
@@ -54,14 +54,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $category = $_POST['category'] ?? 'general';
         $questionPattern = $_POST['question_pattern'] ?? '';
         $answer = $_POST['answer'] ?? '';
-        $keywords = $_POST['keywords'] ?? '';
 
         try {
             $db->execute(
                 "UPDATE ai_knowledge_base 
-                 SET category = ?, question_pattern = ?, answer = ?, keywords = ?, updated_at = NOW() 
+                 SET category = ?, question_pattern = ?, answer = ?, updated_at = NOW() 
                  WHERE id = ?",
-                [$category, $questionPattern, $answer, $keywords, $id]
+                [$category, $questionPattern, $answer, $id]
             );
             $success = 'Q&A updated successfully!';
         } catch (\Exception $e) {
@@ -96,9 +95,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 try {
                     $db->execute(
                         "INSERT INTO ai_knowledge_base 
-                         (category, question_pattern, answer, keywords, created_at) 
-                         VALUES (?, ?, ?, ?, NOW())",
-                        [$category, $question, $answer, $keywords]
+                         (category, question_pattern, answer, usage_count, effectiveness_score, created_at) 
+                         VALUES (?, ?, ?, 0, 0.00, NOW())",
+                        [$category, $question, $answer]
                     );
                     $added++;
                 } catch (\Exception $e) {

@@ -476,7 +476,7 @@ class VoiceAgentController extends BaseController
             $newLeadId = $this->db->lastInsertId();
 
             $this->db->execute(
-                "UPDATE ai_call_extracted_leads SET converted = 1, converted_lead_id = ?, converted_at = NOW() WHERE id = ?",
+                "UPDATE ai_call_extracted_leads SET converted = 1, converted_lead_id = ?, verified_at = NOW() WHERE id = ?",
                 [$newLeadId, $id]
             );
 

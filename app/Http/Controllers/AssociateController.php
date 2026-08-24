@@ -2913,9 +2913,14 @@ class AssociateController extends BaseController
 
                 // Save document references
                 if (!empty($uploadedFiles)) {
+                    $tidInsert = $this->tenantInsertData();
+                    $tidCol = $tidInsert ? ', tenant_id' : '';
+                    $tidVal = $tidInsert ? ', ?' : '';
+                    $tidParam = $tidInsert ? [$tidInsert['tenant_id']] : [];
                     foreach ($uploadedFiles as $docType => $docPath) {
-                        $pdo->prepare("INSERT INTO booking_documents (booking_id, document_type, document_path, uploaded_at) VALUES (?, ?, ?, NOW())")
-                            ->execute([$bookingId, $docType, $docPath]);
+                        $docName = basename($docPath);
+                        $pdo->prepare("INSERT INTO booking_documents (booking_id, document_type, document_name, file_path, uploaded_by{$tidCol}) VALUES (?, ?, ?, ?, ?{$tidVal})")
+                            ->execute(array_merge([$bookingId, $docType, $docName, $docPath, $userId], $tidParam));
                     }
                 }
 

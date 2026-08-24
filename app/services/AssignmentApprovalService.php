@@ -46,9 +46,9 @@ class AssignmentApprovalService
             }
 
             $this->db->query(
-                "INSERT INTO lead_assignment_approvals (lead_id, requested_from, requested_to, requested_by, reason, status, created_at" . $tenantCol . ")
-                 VALUES (?, ?, ?, ?, ?, 'pending', NOW()" . $tenantVal . ")",
-                array_merge([$leadId, $requestedFrom, $requestedTo, $requestedBy, $reason], $tid > 1 ? [$tid] : [])
+                "INSERT INTO lead_assignment_approvals (lead_id, requested_by, requested_to, notes, status, created_at" . $tenantCol . ")
+                 VALUES (?, ?, ?, ?, 'pending', NOW()" . $tenantVal . ")",
+                array_merge([$leadId, $requestedBy, $requestedTo, $reason], $tid > 1 ? [$tid] : [])
             );
             $approvalId = $this->db->lastInsertId();
 

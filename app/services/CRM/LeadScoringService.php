@@ -303,7 +303,7 @@ class LeadScoringService
     private function updateLeadScore(int $leadId, float $score, array $breakdown): void
     {
         $this->db->query(
-            "UPDATE leads SET score = ?, score_breakdown = ?, score_updated_at = NOW() WHERE id = ? AND tenant_id = " . $this->tenantId(),
+            "UPDATE leads SET lead_score = ?, score_factors = ?, last_scored_at = NOW() WHERE id = ? AND tenant_id = " . $this->tenantId(),
             [$score, json_encode($breakdown), $leadId]
         );
     }

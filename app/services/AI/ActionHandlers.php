@@ -86,7 +86,7 @@ class ActionHandlers
         // Auto-response: log activity for the property submission
         try {
             $this->db->query(
-                "INSERT INTO lead_activities (lead_id, activity_type, description, performed_by, created_at) VALUES (0, 'property_submission', 'Property submitted via AI chatbot: {$data['name']} (PS-{$submissionId})', ?, NOW())",
+                "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at) VALUES (0, 'property_submission', 'Property submitted via AI chatbot: {$data['name']} (PS-{$submissionId})', ?, NOW())",
                 [$userId]
             );
         } catch (\Exception $e) {
@@ -139,7 +139,7 @@ class ActionHandlers
         // Auto-response: log activity for the lead
         try {
             $this->db->query(
-                "INSERT INTO lead_activities (lead_id, activity_type, description, performed_by, tenant_id, created_at) VALUES (?, 'auto_response', 'Lead created via AI chatbot. Auto-welcome message queued.', ?, ?, NOW())",
+                "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, tenant_id, created_at) VALUES (?, 'auto_response', 'Lead created via AI chatbot. Auto-welcome message queued.', ?, ?, NOW())",
                 [$leadId, $userId, $tid]
             );
         } catch (\Exception $e) {
@@ -208,7 +208,7 @@ class ActionHandlers
             try {
                 $visitId = $this->db->lastInsertId();
                 $this->db->query(
-                    "INSERT INTO lead_activities (lead_id, activity_type, description, performed_by, tenant_id, created_at) VALUES (0, 'site_visit_booked', 'Site visit booked via AI chatbot: {$data['property']} on {$visitDate}', ?, ?, NOW())",
+                    "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, tenant_id, created_at) VALUES (0, 'site_visit_booked', 'Site visit booked via AI chatbot: {$data['property']} on {$visitDate}', ?, ?, NOW())",
                     [$userId, $tid]
                 );
             } catch (\Exception $e) {
@@ -374,7 +374,7 @@ class ActionHandlers
     {
         $tid = TenantContext::getId();
         $this->db->query(
-            "INSERT INTO support_tickets (user_id, subject, description, category, priority, status, tenant_id, created_at) VALUES (?, ?, ?, ?, 'high', 'open', ?, NOW())",
+            "INSERT INTO support_tickets (user_id, subject, message, category, priority, status, tenant_id, created_at) VALUES (?, ?, ?, ?, 'high', 'open', ?, NOW())",
             [
                 $userId,
                 "Complaint: " . ($data['type'] ?? 'General'),
@@ -389,7 +389,7 @@ class ActionHandlers
         // Auto-response: log activity
         try {
             $this->db->query(
-                "INSERT INTO lead_activities (lead_id, activity_type, description, performed_by, tenant_id, created_at) VALUES (0, 'complaint_filed', 'Complaint filed via AI chatbot: {$data['type']} (Ticket #{$ticketId})', ?, ?, NOW())",
+                "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, tenant_id, created_at) VALUES (0, 'complaint_filed', 'Complaint filed via AI chatbot: {$data['type']} (Ticket #{$ticketId})', ?, ?, NOW())",
                 [$userId, $tid]
             );
         } catch (\Exception $e) {

@@ -687,7 +687,7 @@ class MobileAdminApiController extends BaseController
         if (empty($followupDate)) { http_response_code(400); echo json_encode(['success'=>false,'error'=>'Follow-up date required']); return; }
         try {
             $tid = (int)$this->tenantId();
-            $stmt = $this->db->prepare("UPDATE leads SET next_followup = ?, notes = CONCAT(COALESCE(notes,''), ?), updated_at = NOW() WHERE id = ? AND tenant_id = ?");
+            $stmt = $this->db->prepare("UPDATE leads SET next_activity_date = ?, notes = CONCAT(COALESCE(notes,''), ?), updated_at = NOW() WHERE id = ? AND tenant_id = ?");
             $stmt->execute([$followupDate, "\n[Follow-up: $notes]", $id, $tid]);
             echo json_encode(['success'=>true,'message'=>'Follow-up scheduled']);
         } catch (\Exception $e) {
@@ -712,7 +712,7 @@ class MobileAdminApiController extends BaseController
         if (empty($description)) { http_response_code(400); echo json_encode(['success'=>false,'error'=>'Description required']); return; }
         try {
             $tid = (int)$this->tenantId();
-            $stmt = $this->db->prepare("INSERT INTO lead_activities (lead_id, user_id, type, description, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
+            $stmt = $this->db->prepare("INSERT INTO lead_activities (lead_id, created_by, activity_type, description, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
             $stmt->execute([$id, $userId, $type, $description, $tid]);
             echo json_encode(['success'=>true,'message'=>'Activity logged']);
         } catch (\Exception $e) {
@@ -731,9 +731,9 @@ class MobileAdminApiController extends BaseController
         }
         try {
             $tid = (int)$this->tenantId();
-            $stmt = $this->db->prepare("UPDATE leads SET status = 'closed_won', converted_at = NOW(), deal_value = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?");
+            $stmt = $this->db->prepare("UPDATE leads SET status = 'closed_won', converted_at = NOW(), estimated_value = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?");
             $stmt->execute([$dealValue, $id, $tid]);
-            $this->db->prepare("INSERT INTO lead_activities (lead_id, user_id, type, description, tenant_id, created_at) VALUES (?, ?, 'conversion', 'Lead converted to deal', ?, NOW())")->execute([$id, $userId, $tid]);
+            $this->db->prepare("INSERT INTO lead_activities (lead_id, created_by, activity_type, description, tenant_id, created_at) VALUES (?, ?, 'conversion', 'Lead converted to deal', ?, NOW())")->execute([$id, $userId, $tid]);
             echo json_encode(['success'=>true,'message'=>'Lead converted']);
         } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
@@ -748,9 +748,9 @@ class MobileAdminApiController extends BaseController
         $reason = \App\Core\Security::sanitize($input['reason'] ?? '');
         try {
             $tid = (int)$this->tenantId();
-            $stmt = $this->db->prepare("UPDATE leads SET status = 'closed_lost', lost_reason = ?, lost_at = NOW(), updated_at = NOW() WHERE id = ? AND tenant_id = ?");
-            $stmt->execute([$reason, $id, $tid]);
-            $this->db->prepare("INSERT INTO lead_activities (lead_id, user_id, type, description, tenant_id, created_at) VALUES (?, ?, 'lost', ?, ?, NOW())")->execute([$id, $userId, 'Lead lost: ' . $reason, $tid]);
+            $stmt = $this->db->prepare("UPDATE leads SET status = 'closed_lost', notes = CONCAT(COALESCE(notes,''), ?), updated_at = NOW() WHERE id = ? AND tenant_id = ?");
+            $stmt->execute(["\n[Lost: $reason]", $id, $tid]);
+            $this->db->prepare("INSERT INTO lead_activities (lead_id, created_by, activity_type, description, tenant_id, created_at) VALUES (?, ?, 'lost', ?, ?, NOW())")->execute([$id, $userId, 'Lead lost: ' . $reason, $tid]);
             echo json_encode(['success'=>true,'message'=>'Lead marked as lost']);
         } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
@@ -789,10 +789,10 @@ class MobileAdminApiController extends BaseController
         $callType = in_array(($input['call_type'] ?? ''), ['inbound', 'outbound']) ? $input['call_type'] : 'outbound';
         try {
             $tid = (int)$this->tenantId();
-            $stmt = $this->db->prepare("INSERT INTO lead_activities (lead_id, user_id, type, description, tenant_id, created_at) VALUES (?, ?, 'call', ?, ?, NOW())");
+            $stmt = $this->db->prepare("INSERT INTO lead_activities (lead_id, created_by, activity_type, description, tenant_id, created_at) VALUES (?, ?, 'call', ?, ?, NOW())");
             $desc = "Call ($callType, " . ($duration ? "{$duration}s" : 'no duration') . "): $notes";
             $stmt->execute([$id, $userId, $desc, $tid]);
-            $this->db->prepare("UPDATE leads SET call_count = COALESCE(call_count, 0) + 1, updated_at = NOW() WHERE id = ? AND tenant_id = ?")->execute([$id, $tid]);
+            $this->db->prepare("UPDATE leads SET updated_at = NOW() WHERE id = ? AND tenant_id = ?")->execute([$id, $tid]);
             echo json_encode(['success'=>true,'message'=>'Call logged']);
         } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);

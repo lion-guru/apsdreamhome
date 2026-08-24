@@ -507,8 +507,8 @@ class AlertService
      */
     private function logEscalation($alert, $level)
     {
-        $query = "INSERT INTO system_logs (system, event, status, details, timestamp)
-                 VALUES (?, 'escalation', 'info', ?, NOW())";
+        $query = "INSERT INTO system_logs (tenant_id, user_id, action, table_name, record_id, old_values, created_at)
+                 VALUES (?, ?, 'escalation', 'system_alerts', ?, ?, NOW())";
 
         $details = json_encode([
             'alert_id' => $alert['id'],
@@ -516,6 +516,6 @@ class AlertService
             'age' => $alert['age']
         ]);
 
-        $this->db->execute($query, [$alert['system'], $details]);
+        $this->db->execute($query, [1, $alert['assigned_to'] ?? 0, $alert['id'] ?? 0, $details]);
     }
 }

@@ -275,12 +275,12 @@ class AICallingController extends AdminController
         if (empty($data['model_name'])) { $this->data['error'] = 'Model name is required'; return $this->training(); }
         $tid = $this->tenantId();
         if ($id) {
-            $db->prepare("UPDATE ai_voice_models SET model_name=?, language=?, voice_gender=?, model_provider=?, status=?, notes=? WHERE id=? AND tenant_id=?")
-               ->execute([$data['model_name'], $data['language'], $data['voice_gender'], $data['model_provider'], $data['status'], $data['notes'], $id, $tid]);
+            $db->prepare("UPDATE ai_voice_models SET model_name=?, language=?, voice_gender=?, model_provider=?, status=?, notes=? WHERE id=?")
+               ->execute([$data['model_name'], $data['language'], $data['voice_gender'], $data['model_provider'], $data['status'], $data['notes'], $id]);
             $_SESSION['success'] = 'Voice model updated';
         } else {
-            $db->prepare("INSERT INTO ai_voice_models (model_name, language, voice_gender, model_provider, status, notes, created_by, tenant_id) VALUES (?,?,?,?,?,?,?,?)")
-               ->execute([$data['model_name'], $data['language'], $data['voice_gender'], $data['model_provider'], $data['status'], $data['notes'], $_SESSION['admin_id'] ?? null, $tid]);
+            $db->prepare("INSERT INTO ai_voice_models (model_name, language, voice_gender, model_provider, status, notes, created_by) VALUES (?,?,?,?,?,?,?)")
+               ->execute([$data['model_name'], $data['language'], $data['voice_gender'], $data['model_provider'], $data['status'], $data['notes'], $_SESSION['admin_id'] ?? null]);
             $_SESSION['success'] = 'Voice model created';
         }
         redirect(BASE_URL . '/admin/ai-calling/training');

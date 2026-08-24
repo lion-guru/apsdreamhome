@@ -87,7 +87,8 @@ class PatternLearner
      */
     public function incrementHit(int $id): void
     {
-        $stmt = $this->db->prepare("UPDATE ai_learning_data SET hit_count = hit_count + 1 WHERE id = ?{$this->tenantSql()}");
+        // hit_count column doesn't exist in ai_learning_data table - using feedback_score instead
+        $stmt = $this->db->prepare("UPDATE ai_learning_data SET feedback_score = COALESCE(feedback_score, 0) + 1 WHERE id = ?{$this->tenantSql()}");
         $params = [$id];
         if ($this->tenantId() > 1) $params[] = $this->tenantId();
         $stmt->execute($params);

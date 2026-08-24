@@ -155,9 +155,9 @@ class CareerController extends AdminController
 
             // Insert career
             $sql = "INSERT INTO careers 
-                    (title, description, department, location, employment_type, 
-                     experience_level, salary_range, requirements, benefits, status, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+                    (title, description, department, location, type, 
+                     experience, salary_range, status, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
 
             $stmt = $this->db->prepare($sql);
             $result = $stmt->execute([
@@ -168,9 +168,7 @@ class CareerController extends AdminController
                 $data['employment_type'],
                 CoreFunctionsServiceCustom::validateInput($data['experience_level'] ?? '', 'string'),
                 CoreFunctionsServiceCustom::validateInput($data['salary_range'] ?? '', 'string'),
-                CoreFunctionsServiceCustom::validateInput($data['requirements'] ?? '', 'string'),
-                CoreFunctionsServiceCustom::validateInput($data['benefits'] ?? '', 'string'),
-                $data['status'] ?? 'active'
+                $data['status'] ?? 'open'
             ]);
 
             if ($result) {

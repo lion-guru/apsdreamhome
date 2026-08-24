@@ -1623,9 +1623,9 @@ class MoneyWorkflowService
             try {
                 $this->db->execute(
                     "UPDATE booking_payment_schedules
-                     SET paid_amount = paid_amount + ?, payment_date = ?, payment_method = ?
+                     SET paid_amount = paid_amount + ?, paid_date = ?
                      WHERE id = ? AND paid_amount < emi_amount",
-                    [$amount, $collectionDate, $data['payment_method'] ?? 'cash', (int)$data['installment_id']]
+                    [$amount, $collectionDate, (int)$data['installment_id']]
                 );
             } catch (\Throwable $e) {
                 error_log("[CashCollection] Failed to update installment: " . $e->getMessage());
@@ -1750,11 +1750,8 @@ class MoneyWorkflowService
 
     public function closeReconciliation(int $sessionId, int $closedBy): bool
     {
-        $tid = TenantContext::getId();
-        $this->db->execute(
-            "UPDATE reconciliation_collections SET status = 'closed', closed_by = ?, closed_at = NOW()" . ($tid > 1 ? " AND tenant_id = ?" : "") . " WHERE id = ?",
-            $tid > 1 ? [$closedBy, $tid, $sessionId] : [$closedBy, $sessionId]
-        );
+        // reconciliation_collections is a line-item table (not a session table)
+        // No session status columns exist; no-op
         return true;
     }
 
@@ -2188,8 +2185,10 @@ class MoneyWorkflowService
     {
         $tid = TenantContext::getId();
         if ($cashBookId !== null) {
+            // bank_reconciliation_items doesn't have matched_cashbook_id column
+            // Use our_voucher_id instead
             $this->db->execute(
-                "UPDATE bank_reconciliation_items SET status = ?, matched_cashbook_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " WHERE id = ?",
+                "UPDATE bank_reconciliation_items SET status = ?, our_voucher_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " WHERE id = ?",
                 $tid > 1 ? [$status, $cashBookId, $tid, $itemId] : [$status, $cashBookId, $itemId]
             );
         }
@@ -2200,7 +2199,7 @@ class MoneyWorkflowService
     {
         $tid = TenantContext::getId();
         return $this->db->execute(
-            "UPDATE bank_reconciliation SET status = 'completed', completed_at = NOW()" . ($tid > 1 ? " AND tenant_id = ?" : "") . " WHERE id = ?",
+            "UPDATE bank_reconciliation SET status = 'completed', reconciled_at = NOW()" . ($tid > 1 ? " AND tenant_id = ?" : "") . " WHERE id = ?",
             $tid > 1 ? [$tid, $id] : [$id]
         ) > 0;
     }

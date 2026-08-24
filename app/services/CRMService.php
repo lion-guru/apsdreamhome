@@ -848,7 +848,7 @@ class CRMService
 
             // Store history
             $this->db->query(
-                "INSERT INTO crm_lead_scores_history (lead_id, old_score, new_score, score_factors, scored_by, reason)
+                "INSERT INTO crm_lead_scores_history (lead_id, old_score, new_score, factors, scored_by, reason)
                  VALUES (?, ?, ?, ?, 'system', 'Auto-calculated')",
                 [$leadId, $lead['lead_score'] ?? 0, $score, json_encode($factors)]
             );
@@ -901,23 +901,17 @@ class CRMService
     public function addSourceDetail($leadId, $data) {
         try {
             $this->db->query(
-                "INSERT INTO crm_lead_sources_extended (lead_id, campaign_id, form_id, source_type, source_detail, medium,
-                 utm_source, utm_medium, utm_campaign, utm_term, utm_content, gclid, fbclid, landing_page, referrer, ip_address)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO crm_lead_sources_extended (lead_id, medium,
+                 utm_source, utm_medium, utm_campaign, utm_term, utm_content, landing_page, referrer_url, ip_address)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 [
                     $leadId,
-                    $data['campaign_id'] ?? null,
-                    $data['form_id'] ?? null,
-                    $data['source_type'] ?? 'website',
-                    $data['source_detail'] ?? null,
                     $data['medium'] ?? null,
                     $data['utm_source'] ?? null,
                     $data['utm_medium'] ?? null,
                     $data['utm_campaign'] ?? null,
                     $data['utm_term'] ?? null,
                     $data['utm_content'] ?? null,
-                    $data['gclid'] ?? null,
-                    $data['fbclid'] ?? null,
                     $data['landing_page'] ?? null,
                     $data['referrer'] ?? null,
                     $data['ip_address'] ?? null,
@@ -1735,8 +1729,8 @@ class CRMService
             ];
             
             $this->db->query(
-                "UPDATE lead_deals SET stage = ?, closed_at = NOW(), close_reason = ?, close_reason_detail = ?, closed_by = ? WHERE id = ?",
-                [$outcome, $reason, $reasonDetail, $closedBy, $dealId]
+                "UPDATE lead_deals SET stage = ?, closed_at = NOW(), notes = CONCAT(COALESCE(notes, ''), 'Deal ', ?, ': ', ?, IF(? <> '', CONCAT(' — ', ?), '')) WHERE id = ?",
+                [$outcome, $outcome, $reason, $reasonDetail, $reasonDetail, $dealId]
             );
             
             // Get deal info for activity log

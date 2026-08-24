@@ -448,9 +448,6 @@ class DigitalBookingController extends BaseController
             $db = \App\Core\Database\Database::getInstance();
             $pdo = $db->getConnection();
 
-            // Mark terms accepted
-            $pdo->prepare("UPDATE plot_bookings SET terms_accepted = 1, updated_at = NOW() WHERE id = ?")->execute([$bookingId]);
-
             // Check completion (signs docs + generates EMI schedule)
             $this->checkBookingCompletion($bookingId);
 

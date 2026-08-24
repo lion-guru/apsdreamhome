@@ -323,9 +323,9 @@ class FarmerService
 
             // Update status
             $sql = "UPDATE farmers 
-                    SET status = ?, status_reason = ?, updated_at = NOW() 
+                    SET status = ?, updated_at = NOW() 
                     WHERE id = ?" . $this->tenantSql();
-            $params = [$status, $reason, $id];
+            $params = [$status, $id];
             if ($this->tenantId() > 1) $params[] = $this->tenantId();
             
             $this->db->execute($sql, $params);
@@ -893,23 +893,7 @@ class FarmerService
 
     private function updateFarmerTotalCommission(int $farmerId): void
     {
-        try {
-            $sql = "UPDATE farmers f 
-                    SET total_commission = (
-                        SELECT COALESCE(SUM(amount), 0) 
-                        FROM farmer_commissions 
-                        WHERE farmer_id = ? AND status = 'paid'
-                    ),
-                    updated_at = NOW()
-                    WHERE f.id = ?" . $this->tenantSql();
-        } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
-        }
-        
-        $params = [$farmerId, $farmerId];
-        if ($this->tenantId() > 1) $params[] = $this->tenantId();
-        $this->db->execute($sql, $params);
+        // Column total_commission does not exist in farmers table; no-op
     }
 
     private function sendCommissionNotification(int $farmerId, int $commissionId, float $amount): void

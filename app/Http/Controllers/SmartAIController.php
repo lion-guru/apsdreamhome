@@ -737,7 +737,7 @@ class SmartAIController extends BaseController
             if ($phone && $userContext['id']) {
                 try {
                     $this->db->query(
-                        "INSERT INTO leads (user_id, name, phone, source, status, created_at) VALUES (?, ?, ?, 'ai_chatbot', 'new', NOW())",
+                        "INSERT INTO leads (assigned_to, name, phone, source, status, created_at) VALUES (?, ?, ?, 'ai_chatbot', 'new', NOW())",
                         [$userContext['id'], $userContext['name'], $phone]
                     );
                     $result['performed'] = true;
@@ -924,7 +924,7 @@ EOT;
             // Store feedback in ai_learning_data (works without message_id)
             try {
                 $this->db->query(
-                    "INSERT INTO ai_learning_data (session_id, user_id, interaction_type, input_data, output_data, rating, created_at) VALUES (?, ?, 'feedback', ?, ?, ?, NOW())",
+                    "INSERT INTO ai_learning_data (session_id, user_id, action_type, input_data, output_data, feedback_score, learned_at) VALUES (?, ?, 'feedback', ?, ?, ?, NOW())",
                     [
                         $sessionId,
                         $userId,

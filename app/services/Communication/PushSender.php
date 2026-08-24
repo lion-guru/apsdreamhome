@@ -105,16 +105,16 @@ class PushSender
         if ($existing) {
             $this->db->prepare(
             'UPDATE push_subscriptions
-                SET p256dh_key = ?, auth_key = ?, device_token = ?, is_active = 1, last_used_at = NOW()
+                SET p256dh_key = ?, auth_key = ?, is_active = 1
                 WHERE id = ? AND tenant_id = ' . $this->tenantId()
-        )->execute([$p256dh, $auth, $endpoint, (int)$existing]);
+        )->execute([$p256dh, $auth, (int)$existing]);
             return (int)$existing;
         }
 
         $this->db->prepare(
             'INSERT INTO push_subscriptions
-                (user_id, device_type, device_token, endpoint, p256dh_key, auth_key, is_active, last_used_at, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, 1, NOW(), NOW())'
+                (user_id, user_type, device_info, endpoint, p256dh_key, auth_key, is_active, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, 1, NOW())'
         )->execute([$userId, 'web', $endpoint, $endpoint, $p256dh, $auth]);
 
         return (int)$this->db->lastInsertId();
@@ -289,7 +289,7 @@ class PushSender
     private function touchSubscription(int $id): void
     {
         try {
-            $this->db->prepare('UPDATE push_subscriptions SET last_used_at = NOW() WHERE id = ?')
+            $this->db->prepare('UPDATE push_subscriptions SET updated_at = NOW() WHERE id = ?')
                      ->execute([$id]);
         } catch (\Throwable $e) { /* best-effort */ error_log($e->getMessage()); }
     }

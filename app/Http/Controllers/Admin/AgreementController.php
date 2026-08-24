@@ -451,8 +451,8 @@ class AgreementController extends AdminController
                     $message .= "You can download it from: " . (BASE_URL) . "/admin/agreements/download/" . $id . "\n\n";
                     $message .= "Thank you,\n" . ($this->company['company_name'] ?? 'APS Dream Home');
                     try {
-                        $stmt2 = $this->db->prepare("INSERT INTO email_queue (recipient_email, subject, body, status, tenant_id, created_at) VALUES (?, ?, ?, 'pending', ?, NOW())");
-                        $stmt2->execute([$customerEmail, $subject, $message, $this->tenantId()]);
+                        $stmt2 = $this->db->prepare("INSERT INTO email_queue (to_email, to_name, subject, body_text, status, tenant_id, created_at) VALUES (?, ?, ?, ?, 'pending', ?, NOW())");
+                        $stmt2->execute([$customerEmail, $bookingData['customer_name'] ?? 'Customer', $subject, $message, $this->tenantId()]);
                     } catch (\Exception $e2) {
                         error_log("AgreementController: email_queue fallback failed: " . $e2->getMessage());
                     }
@@ -462,7 +462,7 @@ class AgreementController extends AdminController
             if (!empty($customerPhone)) {
                 $smsText = "Dear " . ($bookingData['customer_name'] ?? 'Customer') . ", your " . $doc['title'] . " is ready. Doc No: " . $doc['document_code'] . " - APS Dream Home";
                 try {
-                    $stmt = $this->db->prepare("INSERT INTO sms_queue (recipient_phone, message, status, tenant_id, created_at) VALUES (?, ?, 'pending', ?, NOW())");
+                    $stmt = $this->db->prepare("INSERT INTO sms_queue (recipient, message, status, tenant_id, created_at) VALUES (?, ?, 'pending', ?, NOW())");
                     $stmt->execute([$customerPhone, $smsText, $this->tenantId()]);
                 } catch (\Exception $e) {
                     error_log("AgreementController.php: " . $e->getMessage());

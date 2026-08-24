@@ -230,8 +230,8 @@ class PaymentController extends AdminController
 
                 // Update payment status
                 $sql = "UPDATE booking_payments 
-                        SET status = 'completed', amount = ?, payment_method = ?, 
-                            transaction_id = ?, payment_date = NOW(), notes = ?
+                        SET payment_amount = ?, payment_method = ?, 
+                            transaction_id = ?, payment_date = NOW(), payment_notes = ?
                         WHERE id = ?";
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute([$amount, $method, $transactionId, $notes, $paymentId]);
@@ -311,9 +311,9 @@ class PaymentController extends AdminController
                     return $this->jsonError('Refund amount cannot exceed payment amount', 400);
                 }
 
-                // Update payment status
+                // Update payment status (refund: record in payment_notes, no refund columns exist)
                 $sql = "UPDATE booking_payments 
-                        SET status = 'refunded', refund_amount = ?, refund_reason = ?, refund_date = NOW()
+                        SET payment_notes = CONCAT(COALESCE(payment_notes, ''), ' Refund: ', ?, ' - ', ?)
                         WHERE id = ?";
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute([$refundAmount, $reason, $paymentId]);

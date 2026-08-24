@@ -212,25 +212,21 @@ class DealController extends AdminController
 
         try {
             $stmt = $this->db->prepare(
-                "INSERT INTO deals (deal_name, deal_value, currency, lead_id, customer_id, property_id, 
-                                   deal_stage_id, probability, expected_close_date, assigned_to, 
-                                   created_by, description, status)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'open')"
+                "INSERT INTO deals (deal_name, deal_value, lead_id,
+                                   stage_id, probability, expected_close_date, assigned_to,
+                                   created_by, status)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'open')"
             );
 
             $stmt->execute([
                 $dealName,
                 $dealValue,
-                $currency,
                 $leadId,
-                $customerId,
-                $propertyId,
                 $dealStageId,
                 $probability,
                 $expectedCloseDate,
                 $assignedTo,
-                $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? null,
-                $description
+                $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? null
             ]);
 
             $dealId = $this->db->lastInsertId();
@@ -369,25 +365,21 @@ class DealController extends AdminController
 
         try {
             $stmt = $this->db->prepare(
-                "UPDATE deals 
-                 SET deal_name = ?, deal_value = ?, currency = ?, lead_id = ?, customer_id = ?, 
-                     property_id = ?, deal_stage_id = ?, probability = ?, expected_close_date = ?, 
-                     assigned_to = ?, description = ?, updated_at = NOW()
+                "UPDATE deals
+                 SET deal_name = ?, deal_value = ?, lead_id = ?,
+                     stage_id = ?, probability = ?, expected_close_date = ?,
+                     assigned_to = ?, updated_at = NOW()
                  WHERE id = ?"
             );
 
             $stmt->execute([
                 $dealName,
                 $dealValue,
-                $currency,
                 $leadId,
-                $customerId,
-                $propertyId,
                 $newStageId,
                 $probability,
                 $expectedCloseDate,
                 $assignedTo,
-                $description,
                 $dealId
             ]);
 
@@ -450,11 +442,11 @@ class DealController extends AdminController
             }
 
             $stmt = $this->db->prepare(
-                "UPDATE deals 
-                 SET deal_stage_id = ?, probability = ?, status = ?, closed_at = ?, updated_at = NOW()
+                "UPDATE deals
+                 SET stage_id = ?, probability = ?, status = ?, updated_at = NOW()
                  WHERE id = ?"
             );
-            $stmt->execute([$newStageId, $newStage['probability'], $status, $closedAt, $dealId]);
+            $stmt->execute([$newStageId, $newStage['probability'], $status, $dealId]);
 
             // Log activity
             $this->logDealActivity(
@@ -584,5 +576,5 @@ class DealController extends AdminController
         }
     }
 
-    public function updateStage($id) { try { $stage = $_POST['stage'] ?? 'new'; $tid = (int)$this->tenantId(); $this->db->query("UPDATE deals SET stage = ? WHERE id = ? AND tenant_id = ?", [$stage, $id, $tid]); $this->setFlash('success', 'Stage updated'); } catch (\Exception $e) { $this->setFlash('error', $e->getMessage()); } return $this->redirect("/admin/deals/show/$id"); }
+    public function updateStage($id) { try { $stage = $_POST['stage'] ?? 'new'; $tid = (int)$this->tenantId(); $this->db->query("UPDATE deals SET stage_id = ? WHERE id = ? AND tenant_id = ?", [$stage, $id, $tid]); $this->setFlash('success', 'Stage updated'); } catch (\Exception $e) { $this->setFlash('error', $e->getMessage()); } return $this->redirect("/admin/deals/show/$id"); }
 }

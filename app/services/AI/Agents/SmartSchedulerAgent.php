@@ -136,7 +136,7 @@ class SmartSchedulerAgent
         foreach ($missed as $visit) {
             $newDate = date('Y-m-d', strtotime('+3 days'));
             $this->db->getConnection()->prepare(
-                "UPDATE site_visits SET visit_date = ?, status = 'rescheduled', updated_at = NOW() WHERE id = ? AND lead_id = ?" . $this->tenantSql()
+                "UPDATE site_visits SET visit_date = ?, status = 'rescheduled', completed_at = NOW() WHERE id = ? AND lead_id = ?" . $this->tenantSql()
             )->execute([$newDate, $visit['id'], $visit['lead_id']]);
 
             // Notify lead

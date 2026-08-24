@@ -222,19 +222,19 @@ $sql = "SELECT * FROM async_tasks WHERE 1=1 AND tenant_id = ?";
     /**
      * Cancel task
      */
-    public function cancelTask(int $id): array
+public function cancelTask(int $id): array
     {
         try {
-$sql = "UPDATE async_tasks 
-                     SET status = ?, cancelled_at = NOW(), updated_at = NOW() 
-                     WHERE id = ? AND status = ? AND tenant_id = ?";
-             
-             $affectedRows = $this->db->execute($sql, [
-                 self::STATUS_CANCELLED,
-                 $id,
-                 self::STATUS_PENDING,
-                 $this->tenantId()
-             ]);
+            $sql = "UPDATE async_tasks 
+                         SET status = ?, updated_at = NOW() 
+                         WHERE id = ? AND status = ? AND tenant_id = ?";
+            
+            $affectedRows = $this->db->execute($sql, [
+                self::STATUS_CANCELLED,
+                $id,
+                self::STATUS_PENDING,
+                $this->tenantId()
+            ]);
 
             if ($affectedRows > 0) {
                 $this->logger->info("Task cancelled", ['task_id' => $id]);
@@ -291,7 +291,7 @@ $sql = "SELECT * FROM async_tasks
                 try {
                     // Update retry count and status
                     $this->db->execute(
-                        "UPDATE async_tasks SET retry_count = retry_count + 1, status = ?, last_retry_at = NOW() WHERE id = ? AND tenant_id = ?",
+                        "UPDATE async_tasks SET retry_count = retry_count + 1, status = ? WHERE id = ? AND tenant_id = ?",
                         [self::STATUS_PENDING, $task['id'], $this->tenantId()]
                     );
 
@@ -486,10 +486,10 @@ $sql = "DELETE FROM async_tasks
         }
     }
 
-    private function createTaskRecord(string $type, array $data, int $priority, array $options): string
+private function createTaskRecord(string $type, array $data, int $priority, array $options): string
     {
-$sql = "INSERT INTO async_tasks (type, data, priority, status, options, created_at, tenant_id) 
-                 VALUES (?, ?, ?, 'pending', ?, NOW(), ?)";
+        $sql = "INSERT INTO async_tasks (task_type, parameters, priority, status, created_at, tenant_id) 
+                 VALUES (?, ?, ?, 'pending', NOW(), ?)";
         
         $tenantData = $this->tenantInsertData();
         $tenantVal = $tenantData['tenant_id'] ?? null;
@@ -498,7 +498,6 @@ $sql = "INSERT INTO async_tasks (type, data, priority, status, options, created_
             $type,
             json_encode($data),
             $priority,
-            json_encode($options),
             $tenantVal
         ]);
         

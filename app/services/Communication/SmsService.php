@@ -101,7 +101,7 @@ class SMSService
             
             // Mark as verified
             $this->db->query(
-                "UPDATE notifications_unified SET status = 'verified', verified_at = NOW() WHERE id = ?",
+                "UPDATE notifications_unified SET status = 'verified' WHERE id = ?",
                 [$record['id']]
             );
             

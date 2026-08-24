@@ -226,7 +226,7 @@ class TINApiService
         try {
             $status = ($response['success'] ?? false) ? 'success' : 'failed';
             $this->pdo->prepare(
-                'INSERT INTO gateway_logs (gateway, action, recipient, request_payload, response_payload, status, http_code, duration_ms, error_message, context_json, tenant_id, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,NOW())'
+                'INSERT INTO gateway_logs (gateway, action, recipient, request_payload, response_payload, status, http_code, duration_ms, error_message, tenant_id, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,NOW())'
             )->execute([
                 'tin-api',
                 $action,
@@ -237,7 +237,6 @@ class TINApiService
                 $response['http_code'] ?? 0,
                 $response['duration_ms'] ?? 0,
                 ($response['error'] ?? null) ? substr($response['error'], 0, 1000) : null,
-                $context ? json_encode(['context' => $context]) : null,
                 $this->tenantId(),
             ]);
         } catch (\Exception $e) {

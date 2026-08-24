@@ -637,7 +637,7 @@ class LegalDocumentController extends AdminController
         $status = in_array($status, $allowed) ? $status : 'active';
 
         try {
-            $stmt = $db->prepare("UPDATE legal_documents SET status=?, updated_at=NOW() WHERE id=? AND tenant_id=?");
+            $stmt = $db->prepare("UPDATE legal_documents SET status=? WHERE id=? AND tenant_id=?");
             $stmt->execute([$status, $id, $tid]);
             $this->setFlash('success', "Document status set to $status");
         } catch (\Exception $e) {
@@ -985,8 +985,8 @@ class LegalDocumentController extends AdminController
         $id = (int)$id;
 
         try {
-            $stmt = $db->prepare("UPDATE legal_document_uploads SET verified=1, verified_at=NOW() WHERE id=?");
-            $stmt->execute([$id]);
+            $stmt = $db->prepare("UPDATE legal_document_uploads SET status='verified', verified_at=NOW(), verified_by=? WHERE id=?");
+            $stmt->execute([$_SESSION['admin_id'] ?? null, $id]);
             $this->setFlash('success', 'Upload verified');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());

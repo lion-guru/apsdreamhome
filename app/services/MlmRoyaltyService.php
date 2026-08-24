@@ -85,14 +85,8 @@ class MlmRoyaltyService
                     min_gbv                  = ?,
                     max_gbv                  = ?,
                     commission_rate          = ?,
-                    royalty_eligible         = ?,
-                    royalty_pool_share_pct   = ?,
-                    leadership_bonus_pct     = ?,
-                    profit_share_eligible    = ?,
                     reward_name              = ?,
-                    reward_description       = ?,
                     reward_value             = ?,
-                    sort_order               = ?,
                     is_active                = ?,
                     updated_at               = NOW()
                 WHERE id = ?
@@ -102,14 +96,8 @@ class MlmRoyaltyService
                 (float)($data['min_gbv']                ?? 0),
                 (float)($data['max_gbv']                ?? 0),
                 (float)($data['commission_rate']         ?? 0),
-                (int)($data['royalty_eligible']          ?? 0),
-                (float)($data['royalty_pool_share_pct']  ?? 0),
-                (float)($data['leadership_bonus_pct']    ?? 0),
-                (int)($data['profit_share_eligible']     ?? 0),
                 $data['reward_name']        ?? null,
-                $data['reward_description'] ?? null,
                 (float)($data['reward_value'] ?? 0),
-                (int)($data['sort_order']     ?? 0),
                 (int)($data['is_active']      ?? 1),
                 $id,
             ]);
@@ -162,14 +150,13 @@ class MlmRoyaltyService
                     u.name,
                     mp.current_rank_slug,
                     mp.total_gbv,
-                    rs.royalty_pool_share_pct,
-                    rs.leadership_bonus_pct,
-                    rs.profit_share_eligible
+                    rs.commission_rate,
+                    rs.reward_value
                 FROM mlm_profiles mp
                 JOIN users u ON u.id = mp.user_id
                 JOIN mlm_rank_slabs rs ON rs.rank_slug = mp.current_rank_slug
-                WHERE rs.royalty_eligible = 1
-                  AND rs.is_active = 1
+                WHERE rs.is_active = 1
+                  AND rs.commission_rate > 0
                 ORDER BY mp.total_gbv DESC
             ");
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -208,7 +195,7 @@ class MlmRoyaltyService
             foreach ($members as $m) {
                 $slug = $m['current_rank_slug'];
                 if (!isset($rankGroups[$slug])) {
-                    $rankGroups[$slug] = ['share_pct' => (float)$m['royalty_pool_share_pct'], 'members' => []];
+                    $rankGroups[$slug] = ['share_pct' => (float)$m['commission_rate'], 'members' => []];
                 }
                 $rankGroups[$slug]['members'][] = $m;
             }

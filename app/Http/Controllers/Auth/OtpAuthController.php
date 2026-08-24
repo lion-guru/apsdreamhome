@@ -117,7 +117,7 @@ class OtpAuthController extends BaseController
 
             // Update session
             $db->query(
-                "UPDATE smart_registration_sessions SET selected_role = ?, registration_status = CASE WHEN ? IN ('associate','agent') THEN 'role_selected' ELSE 'profile_incomplete' END, updated_at = NOW() WHERE id = ?",
+                "UPDATE smart_registration_sessions SET detected_role = ?, registration_status = CASE WHEN ? IN ('associate','agent') THEN 'role_selected' ELSE 'profile_incomplete' END, updated_at = NOW() WHERE id = ?",
                 [$role, $role, $session['id']]
             );
 

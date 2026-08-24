@@ -47,8 +47,8 @@ class AIAggregatorService
                 $aiContent = $this->rewriteWithAI($listing['title'], $listing['description']);
 
                 $sql = "INSERT INTO properties 
-                        (tenant_id, title, description, price, location, city, state, type, property_type_id, bedrooms, bathrooms, area, status, source, owner_contact, original_url, created_at) 
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'available', 'ai_fetched', ?, ?, NOW())";
+                        (tenant_id, title, description, price, location, city, state, type, property_type_id, bedrooms, bathrooms, area, status, created_at) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'available', NOW())";
 
                 $stmt = $this->db->getConnection()->prepare($sql);
                 $tid = $this->tenantId();
@@ -64,9 +64,7 @@ class AIAggregatorService
                     $listing['property_type_id'],
                     $listing['bedrooms'],
                     $listing['bathrooms'],
-                    $listing['area'],
-                    $listing['contact'],
-                    $listing['url']
+                    $listing['area']
                 ]);
 
                 $results['success']++;

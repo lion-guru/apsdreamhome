@@ -73,7 +73,7 @@ class TrackCService extends ServiceTenantTrait
         // Release escrow on registry completion
         $sql = "
             UPDATE mlm_commission_ledger
-            SET status = 'released', released_at = NOW()
+            SET status = 'released'
             WHERE booking_id = ? AND commission_type = 'milestone_escrow'
         ";
         $params = [$bookingId];

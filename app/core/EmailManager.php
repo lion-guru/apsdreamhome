@@ -110,26 +110,24 @@ class EmailManager
 
             $log_data = [
                 'recipient' => $to,
-                'template' => $template,
+                'template_id' => $template,
                 'status' => $status,
-                'data' => json_encode($data),
+                'metadata' => json_encode($data),
                 'error_message' => $error,
-                'ip_address' => 'system',
                 'created_at' => date('Y-m-d H:i:s')
             ];
 
             $stmt = $pdo->prepare("
-                INSERT INTO notifications_unified (recipient, template, status, data, error_message, ip_address, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO notifications_unified (recipient, template_id, status, metadata, error_message, created_at)
+                VALUES (?, ?, ?, ?, ?, ?)
             ");
 
             $stmt->execute([
                 $log_data['recipient'],
-                $log_data['template'],
+                $log_data['template_id'],
                 $log_data['status'],
-                $log_data['data'],
+                $log_data['metadata'],
                 $log_data['error_message'],
-                $log_data['ip_address'],
                 $log_data['created_at']
             ]);
         } catch (\Exception $e) {

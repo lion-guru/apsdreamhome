@@ -76,7 +76,7 @@ class MessagingService
             "SELECT c.id FROM conversations c
              JOIN conversation_participants cp1 ON c.id = cp1.conversation_id AND cp1.user_id = ?
              JOIN conversation_participants cp2 ON c.id = cp2.conversation_id AND cp2.user_id = ?
-             WHERE c.type = 'direct'
+             WHERE c.conversation_type = 'direct'
              LIMIT 1",
             [$userId1, $userId2]
         )->fetchColumn();
@@ -87,7 +87,7 @@ class MessagingService
 
         // Create new conversation
         $this->db->query(
-            "INSERT INTO conversations (type, created_at) VALUES ('direct', NOW())"
+            "INSERT INTO conversations (conversation_type, created_at) VALUES ('direct', NOW())"
         );
         $conversationId = $this->db->lastInsertId();
 
@@ -165,8 +165,8 @@ class MessagingService
     public function markAsRead(int $conversationId, int $userId): bool
     {
         return $this->db->query(
-            "UPDATE messages SET status = 'read', read_at = NOW() 
-             WHERE conversation_id = ? AND receiver_id = ? AND status != 'read'",
+            "UPDATE messages SET read_at = NOW() 
+             WHERE conversation_id = ? AND receiver_id = ? AND read_at IS NULL",
             [$conversationId, $userId]
         )->rowCount() > 0;
     }
@@ -244,7 +244,7 @@ class MessagingService
     public function createGroup(int $creatorId, array $participantIds, string $name = null): array
     {
         $this->db->query(
-            "INSERT INTO conversations (type, name, created_by, created_at) VALUES ('group', ?, ?, NOW())",
+            "INSERT INTO conversations (conversation_type, title, created_by, created_at) VALUES ('group', ?, ?, NOW())",
             [$name, $creatorId]
         );
         $conversationId = $this->db->lastInsertId();
@@ -285,8 +285,8 @@ class MessagingService
         }
 
         $this->db->query(
-            "INSERT INTO conversation_participants (conversation_id, user_id, added_by, joined_at) VALUES (?, ?, ?, NOW())",
-            [$conversationId, $userId, $addedBy]
+            "INSERT INTO conversation_participants (conversation_id, user_id, joined_at) VALUES (?, ?, NOW())",
+            [$conversationId, $userId]
         );
 
         return ['success' => true];

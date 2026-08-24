@@ -168,7 +168,7 @@ class EmailTemplateManager {
         try {
             $active_int = $active ? 1 : 0;
             $result = $this->db->executeQuery(
-                "UPDATE email_templates SET active = ?, updated_at = NOW() WHERE name = ?" . $this->tenantSql(),
+                "UPDATE email_templates SET is_active = ?, updated_at = NOW() WHERE template_name = ?" . $this->tenantSql(),
                 [$active_int, $template_name]
             );
 

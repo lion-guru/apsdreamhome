@@ -411,7 +411,7 @@ class Security
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
             
-            $stmt = $db->prepare("INSERT INTO security_logs (event, ip_address, user_agent, details, created_at) VALUES (?, ?, ?, ?, NOW())");
+            $stmt = $db->prepare("INSERT INTO security_logs (action, ip_address, user_agent, details, created_at) VALUES (?, ?, ?, ?, NOW())");
             $stmt->execute([$event, $logEntry['ip'], $logEntry['user_agent'], json_encode($details)]);
             
         } catch (\Exception $e) {

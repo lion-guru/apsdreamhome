@@ -261,7 +261,7 @@ class EngagementController extends AdminController
 
             // Update current value
             $sql = "UPDATE engagement_goals 
-                    SET current_value = ?, updated_at = NOW()
+                    SET current_value = ?
                     WHERE id = ?";
             $stmt = $this->db->prepare($sql);
             $result = $stmt->execute([

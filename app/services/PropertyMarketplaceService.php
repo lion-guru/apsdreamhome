@@ -19,15 +19,15 @@ class PropertyMarketplaceService
         $insertData = $this->tenantInsertData();
         $extraCols = $insertData ? ', ' . implode(', ', array_keys($insertData)) : '';
         $extraVals = $insertData ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '';
-        $st = $this->db->prepare("INSERT INTO property_maintenance (property_id, maintenance_type, description, scheduled_date, estimated_cost, assigned_to, status, created_at{$extraCols}) VALUES (:p, :t, :d, :dt, :c, :a, 'scheduled', NOW(){$extraVals})");
-        $st->execute(array_merge([':p' => $propertyId, ':t' => $type, ':d' => $description, ':dt' => $scheduledDate, ':c' => $estimatedCost, ':a' => $assignedTo], array_values($insertData)));
+        $st = $this->db->prepare("INSERT INTO property_maintenance (property_id, issue_type, description, assigned_to, status, created_at{$extraCols}) VALUES (:p, :t, :d, :a, 'scheduled', NOW(){$extraVals})");
+        $st->execute(array_merge([':p' => $propertyId, ':t' => $type, ':d' => $description, ':a' => $assignedTo], array_values($insertData)));
         return ['ok' => true, 'id' => (int)$this->db->lastInsertId()];
     }
 
     public function completeMaintenance(int $id, float $actualCost, string $notes = ''): array
     {
-        $st = $this->db->prepare("UPDATE property_maintenance SET status = 'completed', actual_cost = :c, completion_notes = :n, completed_at = NOW() WHERE id = :id" . $this->tenantSql());
-        $st->execute([':c' => $actualCost, ':n' => $notes, ':id' => $id]);
+        $st = $this->db->prepare("UPDATE property_maintenance SET status = 'completed', completed_at = NOW() WHERE id = :id" . $this->tenantSql());
+        $st->execute([':id' => $id]);
         return ['ok' => true];
     }
 

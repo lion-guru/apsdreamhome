@@ -464,24 +464,20 @@ class LandInventoryController extends AdminController
 
             if (!$deal) {
                 $this->db->execute(
-                    "INSERT INTO land_deals (land_lead_id, negotiated_price, final_price, broker_commission, status, created_at)
-                     VALUES (?, ?, ?, ?, 'in_progress', NOW())",
+                    "INSERT INTO land_deals (land_lead_id, total_consideration, status, created_at)
+                     VALUES (?, ?, 'in_progress', NOW())",
                     [
                         $leadId,
-                        $this->decOrZero($_POST['negotiated_price'] ?? 0),
                         $this->decOrZero($_POST['final_price'] ?? 0),
-                        $this->decOrZero($_POST['broker_commission'] ?? 0),
                     ]
                 );
                 $dealId = (int)$this->db->lastInsertId();
             } else {
                 $dealId = (int)$deal['id'];
                 $this->db->execute(
-                    "UPDATE land_deals SET negotiated_price = ?, final_price = ?, broker_commission = ? WHERE id = ?",
+                    "UPDATE land_deals SET total_consideration = ? WHERE id = ?",
                     [
-                        $this->decOrZero($_POST['negotiated_price'] ?? 0),
                         $this->decOrZero($_POST['final_price'] ?? 0),
-                        $this->decOrZero($_POST['broker_commission'] ?? 0),
                         $dealId,
                     ]
                 );
@@ -500,15 +496,11 @@ class LandInventoryController extends AdminController
             // Optional mutation / RERA fields
             $tid = (int)$this->tenantId();
             if (!empty($_POST['mutation_filed_date'])) {
-                $this->db->execute("UPDATE land_deals SET mutation_filed_date = ?, mutation_number = ? WHERE id = ? AND tenant_id = ?", [
+                $this->db->execute("UPDATE land_deals SET mutation_date = ?, mutation_number = ? WHERE id = ? AND tenant_id = ?", [
                     $_POST['mutation_filed_date'], $_POST['mutation_number'] ?? '', $dealId, $tid,
                 ]);
             }
-            if (!empty($_POST['rera_registration'])) {
-                $this->db->execute("UPDATE land_deals SET rera_registration = ? WHERE id = ? AND tenant_id = ?", [
-                    $_POST['rera_registration'], $dealId, $tid,
-                ]);
-            }
+            // rera_registration column does not exist; skipped
 
             $r = $this->service->registerAcquisition($dealId, $regData);
 

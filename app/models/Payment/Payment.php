@@ -137,7 +137,7 @@ class Payment extends Model
                                 type,
                                 title,
                                 message,
-                                link,
+                                action_url,
                                 created_at
                             ) VALUES (?, 'payment', 'Payment Received', ?, ?, NOW())";
 

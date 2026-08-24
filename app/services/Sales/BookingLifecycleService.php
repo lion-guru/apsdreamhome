@@ -1489,17 +1489,14 @@ class BookingLifecycleService
                     // Update mandate
                     $this->db->prepare("
                         UPDATE nach_mandates 
-                        SET last_debit_date = CURDATE(), 
-                            total_debits = total_debits + 1,
-                            total_debit_amount = total_debit_amount + ?,
-                            next_debit_date = DATE_ADD(CURDATE(), INTERVAL 1 MONTH)
+                        SET next_debit_date = DATE_ADD(CURDATE(), INTERVAL 1 MONTH)
                         WHERE id = ?
-                    ")->execute([$debitAmount, $mandate['id']]);
+                    ")->execute([$mandate['id']]);
 
                     $processed++;
                     $results[] = ['mandate_id' => $mandate['id'], 'amount' => $debitAmount, 'status' => 'success'];
                 } else {
-                    $this->db->prepare("UPDATE nach_debit_log SET status = 'failed', failure_reason = 'Bank rejection' WHERE id = ?")
+                    $this->db->prepare("UPDATE nach_debit_log SET status = 'failed' WHERE id = ?")
                              ->execute([$logId]);
                     $failed++;
                     $results[] = ['mandate_id' => $mandate['id'], 'amount' => $debitAmount, 'status' => 'failed'];

@@ -282,9 +282,9 @@ class HRController extends AdminController
         try {
             $existing = $this->db->fetch("SELECT id FROM employee_attendance WHERE employee_id=? AND attendance_date=? AND tenant_id=?", [$employeeId, $date, $tid]);
             if ($existing) {
-                $this->db->execute("UPDATE employee_attendance SET attendance_status=?, check_in_time=?, remarks=? WHERE id=? AND tenant_id=?", [$status, $checkIn, $notes, $existing['id'], $tid]);
+                $this->db->execute("UPDATE employee_attendance SET status=?, check_in_time=?, remarks=? WHERE id=? AND tenant_id=?", [$status, $checkIn, $notes, $existing['id'], $tid]);
             } else {
-                $this->db->execute("INSERT INTO employee_attendance (employee_id, attendance_date, attendance_status, check_in_time, remarks, tenant_id, created_at) VALUES (?,?,?,?,?,?,NOW())", [$employeeId, $date, $status, $checkIn, $notes, $tid]);
+                $this->db->execute("INSERT INTO employee_attendance (employee_id, attendance_date, status, check_in_time, remarks, tenant_id, created_at) VALUES (?,?,?,?,?,?,NOW())", [$employeeId, $date, $status, $checkIn, $notes, $tid]);
             }
             $this->setFlash('success', 'Attendance marked');
         } catch (\Exception $e) {
@@ -305,11 +305,11 @@ class HRController extends AdminController
         $lastDay = date('Y-m-t', strtotime($firstDay));
         try {
             $report = $this->db->fetchAll("SELECT u.id as user_id, u.name,
-                SUM(CASE WHEN a.attendance_status='present' THEN 1 ELSE 0 END) as present,
-                SUM(CASE WHEN a.attendance_status='absent' THEN 1 ELSE 0 END) as absent,
-                SUM(CASE WHEN a.attendance_status='half_day' THEN 1 ELSE 0 END) as half_day,
-                SUM(CASE WHEN a.attendance_status='leave' THEN 1 ELSE 0 END) as leave_count,
-                SUM(CASE WHEN a.attendance_status='holiday' THEN 1 ELSE 0 END) as holiday,
+                SUM(CASE WHEN a.status='present' THEN 1 ELSE 0 END) as present,
+                SUM(CASE WHEN a.status='absent' THEN 1 ELSE 0 END) as absent,
+                SUM(CASE WHEN a.status='half_day' THEN 1 ELSE 0 END) as half_day,
+                SUM(CASE WHEN a.status='on_leave' THEN 1 ELSE 0 END) as leave_count,
+                SUM(CASE WHEN a.status='work_from_home' THEN 1 ELSE 0 END) as holiday,
                 COUNT(a.id) as total_days
                 FROM employee_attendance a JOIN users u ON a.employee_id=u.id
                 WHERE a.attendance_date BETWEEN ? AND ?
@@ -722,7 +722,7 @@ class HRController extends AdminController
         if (!$employeeId || !$amount) { $this->setFlash('error', 'Employee and amount required'); header('Location: ' . BASE_URL . '/admin/hr/bonuses'); exit; }
         try {
             $bn = 'BNS-' . $year . str_pad($month, 2, '0', STR_PAD_LEFT) . '-' . $employeeId . '-' . time();
-            $this->db->execute("INSERT INTO employee_bonuses (employee_id, bonus_number, bonus_type, bonus_amount, bonus_month, bonus_year, reason, payment_status, created_by, tenant_id, created_at) VALUES (?,?,?,?,?,?,?,'pending',?,?,NOW())", [$employeeId, $bn, $bonusType, $amount, $month, $year, $reason, (int)($_SESSION['admin_id'] ?? 0), $tid]);
+            $this->db->execute("INSERT INTO employee_bonuses (employee_id, bonus_type, amount, reason, given_by, tenant_id, created_at) VALUES (?,?,?,?,?,?,NOW())", [$employeeId, $bonusType, $amount, $reason, (int)($_SESSION['admin_id'] ?? 0), $tid]);
             $this->setFlash('success', 'Bonus recorded');
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());

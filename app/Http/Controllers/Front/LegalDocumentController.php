@@ -187,7 +187,7 @@ class LegalDocumentController extends BaseController
 
             $stmt = $this->db->prepare(
                 "INSERT INTO legal_document_acceptances
-                    (legal_document_id, user_id, user_type, ip_address, user_agent, version, created_at)
+                    (legal_document_id, user_id, user_type, ip_address, user_agent, version, accepted_at)
                  VALUES (?, ?, 'user', ?, ?, ?, NOW())"
             );
             $stmt->execute([

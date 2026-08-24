@@ -448,10 +448,10 @@ class MLMDashboardController extends BaseController
 
             // Create payout request
             $stmt = $pdo->prepare("
-                INSERT INTO mlm_payouts (tenant_id, associate_id, amount, bank_detail_id, status, created_at)
-                VALUES (?, ?, ?, ?, 'requested', NOW())
+                INSERT INTO mlm_payouts (tenant_id, associate_id, gross_amount, status, created_at)
+                VALUES (?, ?, ?, 'requested', NOW())
             ");
-            $stmt->execute([TenantContext::getId() ?? 1, $associate['id'], $amount, $bank['id']]);
+            $stmt->execute([TenantContext::getId() ?? 1, $associate['id'], $amount]);
             $payoutId = $pdo->lastInsertId();
 
             // Update commissions to 'processing'
@@ -556,16 +556,14 @@ class MLMDashboardController extends BaseController
             // Insert associate
             $stmt = $pdo->prepare("
                 INSERT INTO mlm_associates 
-                (user_id, name, email, phone, address, referral_code, sponsor_id, level, rank_id, status, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, 'active', NOW())
+                (user_id, name, email, phone, sponsor_id, level, status, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, 'active', NOW())
             ");
             $stmt->execute([
                 $userId,
                 $user['name'],
                 $user['email'],
                 $phone,
-                $address,
-                $referralCode,
                 $sponsorId,
                 $level
             ]);
@@ -739,34 +737,21 @@ class MLMDashboardController extends BaseController
     {
         $pdo = $this->db->getConnection();
 
-        // Insert self
+        // Get sponsor's tree level
         $stmt = $pdo->prepare("
-            INSERT INTO mlm_network_tree (ancestor_id, associate_id, level, distance)
-            VALUES (?, ?, 0, 0)
-        ");
-        $stmt->execute([$associateId, $associateId]);
-
-        // Get all ancestors of sponsor
-        $stmt = $pdo->prepare("
-            SELECT ancestor_id, level FROM mlm_network_tree
+            SELECT level FROM mlm_network_tree
             WHERE associate_id = ?
         ");
         $stmt->execute([$sponsorId]);
-        $ancestors = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $sponsorRow = $stmt->fetch(\PDO::FETCH_ASSOC);
+        $level = $sponsorRow ? ((int)$sponsorRow['level'] + 1) : 1;
 
-        // Insert connections to all ancestors
-        foreach ($ancestors as $ancestor) {
-            $stmt = $pdo->prepare("
-                INSERT INTO mlm_network_tree (ancestor_id, associate_id, level, distance)
-                VALUES (?, ?, ?, ?)
-            ");
-            $stmt->execute([
-                $ancestor['ancestor_id'],
-                $associateId,
-                $ancestor['level'] + 1,
-                $ancestor['level'] + 1
-            ]);
-        }
+        // Insert associate under sponsor (adjacency-list row)
+        $stmt = $pdo->prepare("
+            INSERT INTO mlm_network_tree (tenant_id, associate_id, sponsor_id, parent_id, level)
+            VALUES (?, ?, ?, ?, ?)
+        ");
+        $stmt->execute([TenantContext::getId() ?? 1, $associateId, $sponsorId, $sponsorId, $level]);
     }
 
     /**

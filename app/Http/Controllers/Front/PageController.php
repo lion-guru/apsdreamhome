@@ -1358,13 +1358,12 @@ public function propertyInterest()
             // Also save to inquiries table for backward compatibility
             try {
                 $this->db->query(
-                    "INSERT INTO inquiries (property_id, name, email, phone, message, type, property_type, status, priority, lead_id, created_at) VALUES (?, ?, '', ?, ?, 'property_inquiry', 'user_property', 'new', 'high', ?, NOW())",
+                    "INSERT INTO inquiries (property_id, name, email, phone, message, type, status, priority, created_at) VALUES (?, ?, '', ?, ?, 'property_inquiry', 'new', 'high', NOW())",
                     [
                         $propertyId,
                         $name ?: 'Unknown',
                         $phoneClean,
-                        "Interested in: $propName" . ($budget ? " | Budget: $budget" : ''),
-                        $leadId
+                        "Interested in: $propName" . ($budget ? " | Budget: $budget" : '')
                     ]
                 );
             } catch (\Exception $e) { /* skip */ error_log($e->getMessage()); }
@@ -1406,7 +1405,7 @@ public function propertyInquiry()
 
         try {
             $tid = (int)$this->tenantId();
-            $stmt = $this->db->prepare("INSERT INTO inquiries (property_id, name, email, phone, message, type, property_type, status, priority, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, 'property_inquiry', 'user_property', 'new', 'high', ?, NOW())");
+            $stmt = $this->db->prepare("INSERT INTO inquiries (property_id, name, email, phone, message, type, status, priority, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, 'property_inquiry', 'new', 'high', ?, NOW())");
             $stmt->execute([$propertyId, $name, $email, $phone, $message, $tid]);
 
             // Auto-wire to CRM lead
@@ -1639,10 +1638,10 @@ public function serviceInterest()
                 $this->createServiceInterestsTable();
                 // Retry
                 $stmt = $this->db->prepare("
-                    INSERT INTO service_interests (service_type, property_id, status, notes, created_at) 
-                    VALUES (?, ?, 'new', ?, NOW())
+                    INSERT INTO service_interests (service_type, status, notes, created_at) 
+                    VALUES (?, 'new', ?, NOW())
                 ");
-                $stmt->execute([$serviceType, $propertyId, $message]);
+                $stmt->execute([$serviceType, $message]);
                 $serviceId = $this->db->lastInsertId();
 
                 $leadInsCols2 = "name, email, phone, source, status, created_at";
@@ -2981,8 +2980,8 @@ public function location($slug = null)
     {
         try {
             $this->db->exec("
-                INSERT INTO property_views (property_id, viewed_at, ip_address, user_agent)
-                VALUES ($propertyId, NOW(), '{$_SERVER['REMOTE_ADDR']}', '{$_SERVER['HTTP_USER_AGENT']}')
+                INSERT INTO property_views (property_id, viewed_at)
+                VALUES ($propertyId, NOW())
                 ON DUPLICATE KEY UPDATE view_count = view_count + 1, viewed_at = NOW()
             ");
         } catch (\Throwable $e) {
@@ -3038,19 +3037,12 @@ public function location($slug = null)
             $userId = $_SESSION['user_id'] ?? 0;
 
             $stmt = $this->db->prepare("
-                INSERT INTO service_interests (user_id, service_category, service_type, budget_min, budget_max, location, description, status, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
+                INSERT INTO service_interests (service_type, notes, status, created_at)
+                VALUES (?, ?, 'pending', NOW())
             ");
             $stmt->execute([
-                $userId,
-                $category,
                 'quick_inquiry',
-                null,
-                null,
-                null,
-                "Quick inquiry: {$requirement}. Name: {$name}, Phone: {$phone}, Email: {$email}, Inquiry ID: {$inquiryId}",
-                'pending',
-                (int)date('YmdHis')
+                "Quick inquiry: {$requirement}. Name: {$name}, Phone: {$phone}, Email: {$email}, Inquiry ID: {$inquiryId}"
             ]);
         } catch (\Throwable $e) {
             error_log('trackServiceInterests error: ' . $e->getMessage());

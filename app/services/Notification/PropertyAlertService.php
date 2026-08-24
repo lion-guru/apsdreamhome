@@ -366,8 +366,8 @@ class PropertyAlertService
     {
         $tid = TenantContext::getId();
         $sql = "INSERT INTO notification_queue 
-            (user_id, type, title, message, data, scheduled_at, tenant_id) 
-            VALUES (?, ?, ?, ?, ?, ?, ?)";
+            (user_id, user_type, channel, title, message, data, priority, scheduled_at, tenant_id) 
+            VALUES (?, 'customer', ?, ?, ?, ?, 'normal', ?, ?)";
         
         $stmt = $this->database->prepare($sql);
         $stmt->execute([

@@ -207,22 +207,19 @@ class WorkDistributionController extends BaseController
     private function createTask($taskData, $assignedTo)
     {
         $query = "INSERT INTO tasks (
-                    title, description, department, required_role,
-                    required_skills, priority, deadline, estimated_hours,
-                    assigned_to, assigned_by, status, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())";
+                    title, description, department, priority,
+                    due_date, assigned_to, created_by, status, tenant_id, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?, NOW())";
         
         $params = [
             $taskData['title'],
             $taskData['description'],
             $taskData['department'],
-            $taskData['required_role'] ?? null,
-            json_encode($taskData['required_skills'] ?? []),
             $taskData['priority'] ?? 'medium',
             $taskData['deadline'],
-            $taskData['estimated_hours'] ?? null,
             $assignedTo,
-            $taskData['assigned_by']
+            $taskData['assigned_by'],
+            $this->tenantId() ?? 1
         ];
         
         $this->db->execute($query, $params);
@@ -237,9 +234,9 @@ class WorkDistributionController extends BaseController
     {
         // Create notification
         $notificationQuery = "INSERT INTO notifications (
-                                employee_id, type, title, message, 
-                                related_id, created_at, status
-                              ) VALUES (?, 'task_assigned', ?, ?, ?, NOW(), 'unread')";
+                                user_id, type, title, message, 
+                                related_id, created_at, status, tenant_id
+                              ) VALUES (?, 'task_assigned', ?, ?, ?, NOW(), 'unread', ?)";
         
         $message = "New task assigned: {$taskData['title']}. " .
                    "Priority: {$taskData['priority']}. " .
@@ -249,7 +246,8 @@ class WorkDistributionController extends BaseController
             $employeeId,
             'Task Assigned',
             $message,
-            $taskId
+            $taskId,
+            $this->tenantId() ?? 1
         ]);
         
         // Send email notification (if configured)
@@ -274,20 +272,12 @@ class WorkDistributionController extends BaseController
 
     /**
      * Log work distribution for analytics
+     * Table work_distribution_logs doesn't exist - no-op
      */
     private function logWorkDistribution($taskId, $assignedTo, $taskData)
     {
-        $query = "INSERT INTO work_distribution_logs (
-                    task_id, assigned_to, department, priority,
-                    assignment_method, created_at
-                ) VALUES (?, ?, ?, ?, 'smart_algorithm', NOW())";
-        
-        $this->db->execute($query, [
-            $taskId,
-            $assignedTo,
-            $taskData['department'],
-            $taskData['priority'] ?? 'medium'
-        ]);
+        // No-op: work_distribution_logs table doesn't exist
+        return;
     }
 
     /**
@@ -329,65 +319,42 @@ class WorkDistributionController extends BaseController
 
     /**
      * Get work distribution analytics
+     * Table work_distribution_logs doesn't exist - returns empty with error
      */
     public function getDistributionAnalytics($department = null, $dateRange = 7)
     {
-        try {
-            $whereClause = "";
-            $params = [];
-            
-            if ($department) {
-                $whereClause = "AND wd.department = ?";
-                $params[] = $department;
-            }
-            
-            $dateFilter = "DATE(wd.created_at) >= DATE_SUB(CURDATE(), INTERVAL ? DAY)";
-            $params[] = $dateRange;
-            
-            $query = "SELECT 
-                        wd.department,
-                        COUNT(*) as total_assignments,
-                        AVG(CASE WHEN t.status = 'completed' THEN 1 ELSE 0 END) * 100 as completion_rate,
-                        AVG(TIMESTAMPDIFF(HOUR, wd.created_at, t.completed_at)) as avg_completion_hours,
-                        e.role as employee_role,
-                        COUNT(DISTINCT wd.assigned_to) as unique_employees
-                    FROM work_distribution_logs wd
-                    JOIN tasks t ON wd.task_id = t.id
-                    JOIN users e ON wd.assigned_to = e.id
-                    WHERE {$dateFilter} {$whereClause}
-                    GROUP BY wd.department, e.role
-                    ORDER BY total_assignments DESC";
-            
-            return $this->db->fetchAll($query, $params);
-            
-        } catch (\Exception $e) {
-            return ['error' => $e->getMessage()];
-        }
+        return ['error' => 'Analytics not available: work_distribution_logs table does not exist'];
     }
 
     /**
      * Rebalance workloads
+     * Note: users table doesn't have current_workload/workload_capacity columns.
+     * Workload is computed from active task count.
      */
     public function rebalanceWorkloads($department)
     {
         try {
-            // Get users with high workloads
-            $highWorkloadQuery = "SELECT e.id, e.name, e.current_workload, e.workload_capacity
-                                 FROM users e
-                                 WHERE e.department = ?
-                                 AND e.status = 'active'
-                                 AND (e.current_workload / e.workload_capacity) > 0.8
-                                 ORDER BY (e.current_workload / e.workload_capacity) DESC";
+            // Get users with high workloads (computed from tasks)
+            $highWorkloadQuery = "SELECT e.id, e.name, 
+                                         (SELECT COUNT(*) FROM tasks WHERE assigned_to = e.id AND status IN ('pending', 'in_progress')) as current_workload,
+                                         10 as workload_capacity
+                                  FROM users e
+                                  WHERE e.department = ?
+                                  AND e.status = 'active'
+                                  HAVING (current_workload / workload_capacity) > 0.8
+                                  ORDER BY (current_workload / workload_capacity) DESC";
             
             $overloadedEmployees = $this->db->fetchAll($highWorkloadQuery, [$department]);
             
             // Get users with low workloads
-            $lowWorkloadQuery = "SELECT e.id, e.name, e.current_workload, e.workload_capacity
-                                FROM users e
-                                WHERE e.department = ?
-                                AND e.status = 'active'
-                                AND (e.current_workload / e.workload_capacity) < 0.5
-                                ORDER BY (e.current_workload / e.workload_capacity) ASC";
+            $lowWorkloadQuery = "SELECT e.id, e.name, 
+                                        (SELECT COUNT(*) FROM tasks WHERE assigned_to = e.id AND status IN ('pending', 'in_progress')) as current_workload,
+                                        10 as workload_capacity
+                                 FROM users e
+                                 WHERE e.department = ?
+                                 AND e.status = 'active'
+                                 HAVING (current_workload / workload_capacity) < 0.5
+                                 ORDER BY (current_workload / workload_capacity) ASC";
             
             $underloadedEmployees = $this->db->fetchAll($lowWorkloadQuery, [$department]);
             
@@ -395,16 +362,16 @@ class WorkDistributionController extends BaseController
             
             // Reassign tasks from overloaded to underloaded users
             foreach ($overloadedEmployees as $overloaded) {
-                $tasksToReassign = min(2, $overloaded['current_workload'] - $overloaded['workload_capacity']);
+                $tasksToReassign = min(2, max(0, $overloaded['current_workload'] - $overloaded['workload_capacity']));
                 
                 if ($tasksToReassign > 0 && !empty($underloadedEmployees)) {
-                    // Get reassignable tasks
+                    // Get reassignable tasks - use due_date instead of deadline
                     $reassignableQuery = "SELECT t.id, t.title, t.priority
                                          FROM tasks t
                                          WHERE t.assigned_to = ?
                                          AND t.status = 'pending'
-                                         AND t.deadline > DATE_ADD(CURDATE(), INTERVAL 3 DAY)
-                                         ORDER BY t.priority DESC, t.deadline ASC
+                                         AND t.due_date > DATE_ADD(CURDATE(), INTERVAL 3 DAY)
+                                         ORDER BY t.priority DESC, t.due_date ASC
                                          LIMIT ?";
                     
                     $tasks = $this->db->fetchAll($reassignableQuery, [$overloaded['id'], $tasksToReassign]);
@@ -413,19 +380,15 @@ class WorkDistributionController extends BaseController
                         if (!empty($underloadedEmployees)) {
                             $underloaded = array_shift($underloadedEmployees);
                             
-                            // Reassign task
+                            // Reassign task - remove reassigned_at/reassigned_from columns
                             $updateQuery = "UPDATE tasks 
-                                           SET assigned_to = ?, reassigned_at = NOW(), reassigned_from = ?
+                                           SET assigned_to = ?
                                            WHERE id = ?";
                             
-                            $this->db->execute($updateQuery, [$underloaded['id'], $overloaded['id'], $task['id']]);
+                            $this->db->execute($updateQuery, [$underloaded['id'], $task['id']]);
                             
-                            // Update employee workloads
-                            $this->updateEmployeeWorkload($overloaded['id']);
-                            $this->updateEmployeeWorkload($underloaded['id']);
-                            
-                            // Log rebalancing
-                            $this->logRebalancing($task['id'], $overloaded['id'], $underloaded['id']);
+                            // Log rebalancing - no-op since task_rebalancing_logs doesn't exist
+                            // $this->logRebalancing($task['id'], $overloaded['id'], $underloaded['id']);
                             
                             $rebalancingActions[] = [
                                 'task_id' => $task['id'],
@@ -457,31 +420,23 @@ class WorkDistributionController extends BaseController
 
     /**
      * Update employee workload
+     * users table doesn't have current_workload column - workload is computed from tasks
+     * This is a no-op.
      */
     private function updateEmployeeWorkload($employeeId)
     {
-        $query = "UPDATE users 
-                  SET current_workload = (
-                      SELECT COUNT(*) 
-                      FROM tasks 
-                      WHERE assigned_to = ? 
-                      AND status IN ('pending', 'in_progress')
-                  )
-                  WHERE id = ?";
-        
-        $this->db->execute($query, [$employeeId, $employeeId]);
+        // No-op: users table doesn't have current_workload column
+        return;
     }
 
     /**
      * Log task rebalancing
+     * Table task_rebalancing_logs doesn't exist - no-op
      */
     private function logRebalancing($taskId, $fromEmployee, $toEmployee)
     {
-        $query = "INSERT INTO task_rebalancing_logs (
-                    task_id, from_employee, to_employee, rebalanced_at
-                ) VALUES (?, ?, ?, NOW())";
-        
-        $this->db->execute($query, [$taskId, $fromEmployee, $toEmployee]);
+        // No-op: task_rebalancing_logs table doesn't exist
+        return;
     }
 
     /**
@@ -504,9 +459,9 @@ class WorkDistributionController extends BaseController
     private function createNotification($employeeId, $type, $message, $relatedId)
     {
         $query = "INSERT INTO notifications (
-                    employee_id, type, message, related_id, created_at, status
-                ) VALUES (?, ?, ?, ?, NOW(), 'unread')";
+                    user_id, type, message, related_id, created_at, status, tenant_id
+                ) VALUES (?, ?, ?, ?, NOW(), 'unread', ?)";
         
-        $this->db->execute($query, [$employeeId, $type, $message, $relatedId]);
+        $this->db->execute($query, [$employeeId, $type, $message, $relatedId, $this->tenantId() ?? 1]);
     }
 }

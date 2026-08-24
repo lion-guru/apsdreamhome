@@ -49,8 +49,9 @@ class PropertyService
 
             // Apply search filter
             if (!empty($search)) {
-                $where[] = "(p.title LIKE ? OR p.description LIKE ? OR p.location LIKE ? OR p.address LIKE ?)";
+                $where[] = "(p.title LIKE ? OR p.description LIKE ? OR p.location LIKE ? OR p.city LIKE ? OR p.state LIKE ?)";
                 $searchParam = "%{$search}%";
+                $params[] = $searchParam;
                 $params[] = $searchParam;
                 $params[] = $searchParam;
                 $params[] = $searchParam;
@@ -95,7 +96,7 @@ class PropertyService
             $tenantJoin = $tid > 1 ? " AND a.tenant_id = ?" : "";
             $sql = "SELECT p.*, a.name as associate_name, a.email as associate_email
                     FROM properties p
-                    LEFT JOIN users a ON p.associate_id = a.id{$tenantJoin}
+                    LEFT JOIN users a ON p.agent_id = a.id{$tenantJoin}
                     WHERE $whereClause
                     ORDER BY p.created_at DESC
                     LIMIT ? OFFSET ?";
@@ -136,7 +137,7 @@ class PropertyService
             $tenantJoin = $tid > 1 ? " AND a.tenant_id = ?" : "";
             $sql = "SELECT p.*, a.name as associate_name, a.email as associate_email
                     FROM properties p
-                    LEFT JOIN users a ON p.associate_id = a.id{$tenantJoin}
+                    LEFT JOIN users a ON p.agent_id = a.id{$tenantJoin}
                     WHERE p.id = ? AND p.status != 'deleted'";
 
             $propertyParams = $tid > 1 ? [$id, $tid] : [$id];
@@ -162,7 +163,7 @@ class PropertyService
     {
         try {
             // Simple validation
-            if (empty($data['title']) || empty($data['description']) || empty($data['type']) || empty($data['price']) || empty($data['area']) || empty($data['location']) || empty($data['address']) || empty($data['city']) || empty($data['state']) || empty($data['pincode']) || empty($data['category_id']) || empty($data['associate_id'])) {
+            if (empty($data['title']) || empty($data['description']) || empty($data['type']) || empty($data['price']) || empty($data['area']) || empty($data['location']) || empty($data['city']) || empty($data['state']) || empty($data['pincode']) || empty($data['category_id']) || empty($data['agent_id'])) {
                 return [
                     'success' => false,
                     'message' => 'All fields are required'
@@ -180,8 +181,8 @@ class PropertyService
             }
 
             // Insert property
-            $sql = "INSERT INTO properties (id, title, description, type, price, area, bedrooms, bathrooms, location, address, city, state, pincode, featured_image, status, category_id, associate_id, created_by, created_at, updated_at) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+            $sql = "INSERT INTO properties (id, title, description, type, price, area, bedrooms, bathrooms, location, city, state, pincode, status, category_id, agent_id, created_by, created_at, updated_at) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
 
             $params = [
                 $propertyId,
@@ -193,14 +194,12 @@ class PropertyService
                 (int)($data['bedrooms'] ?? 0),
                 (int)($data['bathrooms'] ?? 0),
                 Security::sanitize($data['location']),
-                Security::sanitize($data['address']),
                 Security::sanitize($data['city']),
                 Security::sanitize($data['state']),
                 Security::sanitize($data['pincode']),
-                $featuredImage,
                 'available',
                 (int)$data['category_id'],
-                Security::sanitize($data['associate_id']),
+                Security::sanitize($data['agent_id']),
                 $_SESSION['admin_id'] ?? null
             ];
 
@@ -230,7 +229,7 @@ class PropertyService
     {
         try {
             // Simple validation
-            if (empty($data['title']) || empty($data['description']) || empty($data['type']) || empty($data['price']) || empty($data['area']) || empty($data['location']) || empty($data['address']) || empty($data['city']) || empty($data['state']) || empty($data['pincode']) || empty($data['category_id']) || empty($data['associate_id'])) {
+            if (empty($data['title']) || empty($data['description']) || empty($data['type']) || empty($data['price']) || empty($data['area']) || empty($data['location']) || empty($data['city']) || empty($data['state']) || empty($data['pincode']) || empty($data['category_id']) || empty($data['agent_id'])) {
                 return [
                     'success' => false,
                     'message' => 'All fields are required'
@@ -245,7 +244,7 @@ class PropertyService
             }
 
             // Update property
-            $sql = "UPDATE properties SET title = ?, description = ?, type = ?, price = ?, area = ?, bedrooms = ?, bathrooms = ?, location = ?, address = ?, city = ?, state = ?, pincode = ?, featured_image = ?, category_id = ?, associate_id = ?, updated_by = ?, updated_at = NOW() 
+            $sql = "UPDATE properties SET title = ?, description = ?, type = ?, price = ?, area = ?, bedrooms = ?, bathrooms = ?, location = ?, city = ?, state = ?, pincode = ?, category_id = ?, agent_id = ?, updated_by = ?, updated_at = NOW() 
                     WHERE id = ? AND status != 'deleted'";
 
             $params = [
@@ -257,13 +256,11 @@ class PropertyService
                 (int)($data['bedrooms'] ?? 0),
                 (int)($data['bathrooms'] ?? 0),
                 Security::sanitize($data['location']),
-                Security::sanitize($data['address']),
                 Security::sanitize($data['city']),
                 Security::sanitize($data['state']),
                 Security::sanitize($data['pincode']),
-                $featuredImage,
                 (int)$data['category_id'],
-                Security::sanitize($data['associate_id']),
+                Security::sanitize($data['agent_id']),
                 $_SESSION['admin_id'] ?? null,
                 $id
             ];
@@ -365,8 +362,9 @@ class PropertyService
 
             // Add search query
             if (!empty($query)) {
-                $where[] = "(p.title LIKE ? OR p.description LIKE ? OR p.location LIKE ? OR p.address LIKE ?)";
+                $where[] = "(p.title LIKE ? OR p.description LIKE ? OR p.location LIKE ? OR p.city LIKE ? OR p.state LIKE ?)";
                 $searchParam = "%{$query}%";
+                $params[] = $searchParam;
                 $params[] = $searchParam;
                 $params[] = $searchParam;
                 $params[] = $searchParam;
@@ -395,7 +393,7 @@ class PropertyService
             $tenantJoin = $tid > 1 ? " AND a.tenant_id = ?" : "";
             $sql = "SELECT p.*, a.name as associate_name, a.email as associate_email
                     FROM properties p
-                    LEFT JOIN users a ON p.associate_id = a.id{$tenantJoin}
+                    LEFT JOIN users a ON p.agent_id = a.id{$tenantJoin}
                     WHERE $whereClause
                     ORDER BY p.created_at DESC
                     LIMIT 50";

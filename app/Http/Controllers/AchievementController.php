@@ -234,16 +234,18 @@ class AchievementController extends BaseController
                 $badgeId = $stmt->fetchColumn();
 
                 if (!$badgeId) {
-                    $sql = "INSERT INTO badges (name, description, icon, color, requirement_type, requirement_value, created_at)
-                            VALUES (?, ?, ?, ?, ?, ?, NOW())";
+                    $sql = "INSERT INTO badges (name, display_name, description, icon, category, points_required, rarity, is_active, created_at)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
                     $stmt = $this->pdo->prepare($sql);
                     $stmt->execute([
                         $badge['name'],
+                        $badge['name'],
                         'Awarded for ' . $badge['req'] . ' achievement',
                         $badge['icon'],
-                        $badge['color'],
                         $badge['req'],
-                        $badge['value']
+                        $badge['value'],
+                        'common',
+                        1
                     ]);
                     $badgeId = $this->pdo->lastInsertId();
                 }

@@ -133,17 +133,16 @@ class PaymentGatewayController extends BaseController
             // Insert payment record
             $insert_sql = "
                 INSERT INTO payment_transactions
-                (transaction_id, plot_id, payment_type, amount, payment_method, payment_status, created_at)
-                VALUES (:transaction_id, :plot_id, :payment_type, :amount, :payment_method, 'pending', NOW())
+                (transaction_id, property_id, payment_method, amount, payment_status, created_at)
+                VALUES (:transaction_id, :property_id, :payment_method, :amount, 'pending', NOW())
             ";
 
             $stmt = $this->db->prepare($insert_sql);
             $stmt->execute([
                 'transaction_id' => $transaction_id,
-                'plot_id' => $payment_data['plot_id'],
-                'payment_type' => $payment_data['payment_type'],
+                'property_id' => $payment_data['plot_id'],
+                'payment_method' => $payment_data['gateway'],
                 'amount' => $payment_data['amount'],
-                'payment_method' => $payment_data['gateway']
             ]);
 
             // Process payment based on gateway
@@ -151,7 +150,7 @@ class PaymentGatewayController extends BaseController
 
             if ($payment_result['success']) {
                 // Update payment status
-                $update_sql = "UPDATE payment_transactions SET payment_status = 'completed', gateway_response = :response, payment_date = NOW() WHERE transaction_id = :transaction_id";
+                $update_sql = "UPDATE payment_transactions SET payment_status = 'completed', gateway_response = :response WHERE transaction_id = :transaction_id";
                 $stmt = $this->db->prepare($update_sql);
                 $stmt->execute([
                     'response' => json_encode($payment_result),
@@ -197,7 +196,7 @@ class PaymentGatewayController extends BaseController
                 $this->redirect(BASE_URL . 'payment/success');
             } else {
                 // Update payment status as failed
-                $update_sql = "UPDATE payment_transactions SET payment_status = 'failed', failure_reason = :reason WHERE transaction_id = :transaction_id";
+                $update_sql = "UPDATE payment_transactions SET payment_status = 'failed', refund_reason = :reason WHERE transaction_id = :transaction_id";
                 $stmt = $this->db->prepare($update_sql);
                 $stmt->execute([
                     'reason' => $payment_result['error'],
@@ -324,7 +323,7 @@ class PaymentGatewayController extends BaseController
                 if ($commission_amount > 0) {
                     $insert_commission = "
                         INSERT INTO commission_payouts
-                        (associate_id, transaction_id, payout_amount, payout_status, created_at)
+                        (associate_id, transaction_id, amount, status, created_at)
                         VALUES (:associate_id, :transaction_id, :amount, 'pending', NOW())
                     ";
                     $stmt = $this->db->prepare($insert_commission);

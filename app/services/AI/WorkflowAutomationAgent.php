@@ -118,7 +118,7 @@ class WorkflowAutomationAgent
         try {
             $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO notification_queue (user_id, type, title, message, status, tenant_id, created_at)
+                "INSERT INTO notification_queue (user_id, channel, title, message, status, tenant_id, created_at)
                  VALUES (?, 'whatsapp', 'Welcome!', ?, 'queued', ?, NOW())",
                 [$data['user_id'] ?? 0, "Namaste $name! Welcome to APS Dream Home.\n\nI'm your AI assistant. How can I help you today?", $tid]
             );
@@ -136,7 +136,7 @@ class WorkflowAutomationAgent
         try {
             $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO notification_queue (user_id, type, title, message, status, tenant_id, created_at)
+                "INSERT INTO notification_queue (user_id, channel, title, message, status, tenant_id, created_at)
                  VALUES (?, 'push', 'New Lead Assigned', ?, 'queued', ?, NOW())",
                 [$assignedTo, "A new lead has been assigned to you. Please follow up within 24 hours.", $tid]
             );
@@ -185,7 +185,7 @@ class WorkflowAutomationAgent
             $leadId = $data['lead_id'] ?? '?';
             $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO notification_queue (user_id, type, title, message, status, tenant_id, created_at)
+                "INSERT INTO notification_queue (user_id, channel, title, message, status, tenant_id, created_at)
                  VALUES (1, 'push', 'Lead Qualified', ?, 'queued', ?, NOW())",
                 ["Lead #$leadId has been qualified and needs attention.", $tid]
             );
@@ -208,7 +208,7 @@ class WorkflowAutomationAgent
         try {
             $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO notification_queue (user_id, type, title, message, status, tenant_id, created_at)
+                "INSERT INTO notification_queue (user_id, channel, title, message, status, tenant_id, created_at)
                  VALUES (?, 'whatsapp', 'Congratulations!', ?, 'queued', ?, NOW())",
                 [$data['user_id'] ?? 0, "Congratulations! Your booking is confirmed. Welcome to APS Dream Home family!", $tid]
             );
@@ -226,7 +226,7 @@ class WorkflowAutomationAgent
         try {
             $tid = $this->getTenantId();
             $this->db->execute(
-                "UPDATE plot_bookings SET total_paid = COALESCE(total_paid, 0) + ? WHERE id = ? AND tenant_id = ?",
+                "UPDATE plot_bookings SET booking_amount = COALESCE(booking_amount, 0) + ? WHERE id = ? AND tenant_id = ?",
                 [$data['amount'] ?? 0, $bookingId, $tid]
             );
             return ['success' => true, 'message' => "Balance updated"];
@@ -266,7 +266,7 @@ class WorkflowAutomationAgent
         try {
             $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO notification_queue (user_id, type, title, message, status, tenant_id, created_at)
+                "INSERT INTO notification_queue (user_id, channel, title, message, status, tenant_id, created_at)
                  VALUES (?, 'email', 'Payment Reminder', ?, 'queued', ?, NOW())",
                 [$data['user_id'] ?? 0, "Your payment is overdue. Please clear the dues to avoid penalties.", $tid]
             );
@@ -290,7 +290,7 @@ class WorkflowAutomationAgent
             $bookingId = $data['booking_id'] ?? '?';
             $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO notification_queue (user_id, type, title, message, status, tenant_id, created_at)
+                "INSERT INTO notification_queue (user_id, channel, title, message, status, tenant_id, created_at)
                  VALUES (1, 'email', 'CRITICAL: Overdue Payment', ?, 'queued', ?, NOW())",
                 ["CRITICAL: Booking #$bookingId is $daysOverdue days overdue!", $tid]
             );
@@ -342,7 +342,7 @@ class WorkflowAutomationAgent
             $bookingId = $data['booking_id'] ?? '?';
             $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO notification_queue (user_id, type, title, message, status, tenant_id, created_at)
+                "INSERT INTO notification_queue (user_id, channel, title, message, status, tenant_id, created_at)
                  VALUES (1, 'push', 'Team Notification', ?, 'queued', ?, NOW())",
                 ["Booking #$bookingId status changed.", $tid]
             );
@@ -371,7 +371,7 @@ class WorkflowAutomationAgent
         try {
             $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO notification_queue (user_id, type, title, message, status, tenant_id, created_at)
+                "INSERT INTO notification_queue (user_id, channel, title, message, status, tenant_id, created_at)
                  VALUES (?, 'sms', 'EMI Reminder', ?, 'queued', ?, NOW())",
                 [$data['user_id'] ?? 0, "Your EMI installment is due soon. Please ensure timely payment.", $tid]
             );
@@ -386,7 +386,7 @@ class WorkflowAutomationAgent
         try {
             $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO notification_queue (user_id, type, title, message, status, tenant_id, created_at)
+                "INSERT INTO notification_queue (user_id, channel, title, message, status, tenant_id, created_at)
                  VALUES (?, 'email', 'Penalty Notice', ?, 'queued', ?, NOW())",
                 [$data['user_id'] ?? 0, "Your EMI payment is overdue. A penalty of Rs. " . ($data['penalty'] ?? '500') . " has been applied.", $tid]
             );
@@ -401,7 +401,7 @@ class WorkflowAutomationAgent
         try {
             $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO notification_queue (user_id, type, title, message, status, tenant_id, created_at)
+                "INSERT INTO notification_queue (user_id, channel, title, message, status, tenant_id, created_at)
                  VALUES (?, 'whatsapp', 'Visit Confirmed', ?, 'queued', ?, NOW())",
                 [$data['user_id'] ?? 0, "Your site visit has been confirmed!\nDate: " . ($data['visit_date'] ?? 'TBD'), $tid]
             );
@@ -421,7 +421,7 @@ class WorkflowAutomationAgent
         try {
             $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO notification_queue (user_id, type, title, message, status, tenant_id, created_at)
+                "INSERT INTO notification_queue (user_id, channel, title, message, status, tenant_id, created_at)
                  VALUES (?, 'whatsapp', 'Follow Up', ?, 'queued', ?, NOW())",
                 [$data['user_id'] ?? 0, "Thank you for visiting our project! Did you like what you saw? Any questions?", $tid]
             );
@@ -471,7 +471,7 @@ class WorkflowAutomationAgent
         try {
             $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO notification_queue (user_id, type, title, message, status, tenant_id, created_at)
+                "INSERT INTO notification_queue (user_id, channel, title, message, status, tenant_id, created_at)
                  VALUES (?, 'email', 'Welcome Kit', ?, 'queued', ?, NOW())",
                 [$data['user_id'] ?? 0, "Welcome to APS Dream Home! Here's your onboarding guide and commission structure.", $tid]
             );

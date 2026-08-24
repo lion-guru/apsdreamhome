@@ -321,12 +321,11 @@ $stmt = $this->database->prepare("
     {
         // Log email sending
         $stmt = $this->database->prepare("
-            INSERT INTO notifications_unified (lead_id, template, subject, data, sent_at, tenant_id) 
-            VALUES (?, ?, ?, ?, NOW(), " . $this->tenantId() . ")
+            INSERT INTO notifications_unified (template_id, subject, metadata, sent_at, tenant_id) 
+            VALUES (?, ?, ?, NOW(), " . $this->tenantId() . ")
         ");
         
         $stmt->execute([
-            $leadId,
             $template,
             $subject,
             json_encode($data)

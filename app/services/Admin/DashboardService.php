@@ -501,7 +501,7 @@ class DashboardService
     {
         try {
             $this->db->execute(
-                "INSERT INTO activity_logs_unified (admin_id, action, details, ip_address, user_agent, created_at) VALUES (?, ?, ?, ?, ?, NOW())",
+                "INSERT INTO activity_logs_unified (user_id, user_type, action, details, ip_address, user_agent, created_at) VALUES (?, 'admin', ?, ?, ?, ?, NOW())",
                 [$userId, $action, json_encode($data), $_SERVER['REMOTE_ADDR'] ?? 'unknown', $_SERVER['HTTP_USER_AGENT'] ?? 'unknown']
             );
 

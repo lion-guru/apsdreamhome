@@ -165,8 +165,8 @@ class SupportTicketController extends AdminController
 
             // Insert ticket
             $sql = "INSERT INTO support_tickets 
-                    (ticket_number, customer_id, subject, description, priority, 
-                     category, status, assigned_agent_id, created_at)
+                    (ticket_number, user_id, subject, message, priority, 
+                     category, status, assigned_to, created_at)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
 
             $stmt = $this->db->prepare($sql);

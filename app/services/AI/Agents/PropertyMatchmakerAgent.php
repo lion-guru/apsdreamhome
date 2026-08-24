@@ -201,10 +201,9 @@ return $this->db->fetchAll(
         try {
             $tid = $this->tenantId();
             $whereClause = $tid > 1 ? " AND tenant_id = ?" : "";
-            $plotIds = array_column($matches, 'plot_id');
             $this->db->getConnection()->prepare(
-                "UPDATE leads SET last_recommendation_date = NOW(), recommended_plots = ? WHERE id = ?" . $whereClause
-            )->execute(array_merge([json_encode($plotIds), $leadId], $tid > 1 ? [$tid] : []));
+                "UPDATE leads SET updated_at = NOW() WHERE id = ?" . $whereClause
+            )->execute(array_merge([$leadId], $tid > 1 ? [$tid] : []));
         } catch (\Throwable $e) { /* column may not exist */ error_log($e->getMessage()); }
     }
 
@@ -215,7 +214,7 @@ return $this->db->fetchAll(
             $tenantCol = $tid > 1 ? ", tenant_id" : "";
             $tenantVal = $tid > 1 ? ", ?" : "";
             $this->db->getConnection()->prepare(
-                "INSERT INTO crm_interactions (lead_id, interaction_type, direction, content, metadata, created_at" . $tenantCol . ")
+                "INSERT INTO crm_interactions (lead_id, interaction_type, direction, body, metadata, created_at" . $tenantCol . ")
                  VALUES (?, 'recommendation', 'outbound', ?, ?, NOW()" . $tenantVal . ")"
             )->execute(array_merge([
                 $leadId,

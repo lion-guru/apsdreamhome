@@ -581,12 +581,13 @@ class AuthService
         $tid = $this->getTenantId();
         $tenantCol = $tid > 1 ? ", tenant_id" : "";
         $tenantVal = $tid > 1 ? ", ?" : "";
-        $sql = "INSERT INTO activity_logs_unified (email, success, ip_address, user_agent, created_at{$tenantCol}) 
-                VALUES (?, ?, ?, ?, NOW(){$tenantVal})";
+        $sql = "INSERT INTO activity_logs_unified (user_type, action, description, ip_address, user_agent, created_at{$tenantCol}) 
+                VALUES (?, ?, ?, ?, ?, NOW(){$tenantVal})";
         
         $params = [
-            $email,
-            $success ? 1 : 0,
+            'customer',
+            $success ? 'login_success' : 'login_failed',
+            "Login attempt for email: {$email} - " . ($success ? 'success' : 'failed'),
             $_SERVER['REMOTE_ADDR'] ?? 'unknown',
             $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
         ];
@@ -654,7 +655,7 @@ class AuthService
     private function updateLastLogin(int $userId): void
     {
         $tid = $this->getTenantId();
-        $sql = "UPDATE users SET last_login = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $sql = "UPDATE users SET last_login_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
         $this->db->execute($sql, $tid > 1 ? [$userId, $tid] : [$userId]);
     }
 

@@ -387,7 +387,7 @@ class MobileMLMApiController extends BaseController
             $payouts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             foreach ($payouts as $payout) {
-                $stmt = $db->prepare("UPDATE mlm_payouts SET status = 'processing', payment_method = ? WHERE id = ?");
+                $stmt = $db->prepare("UPDATE mlm_payouts SET status = 'processing', payment_mode = ? WHERE id = ?");
                 $stmt->execute([$paymentMethod, $payout['id']]);
             }
 

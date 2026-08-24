@@ -56,7 +56,7 @@ class EMICollectionAgent extends BaseAgent {
             $paymentId = $this->db->lastInsertId();
 
             // Update installment status
-            $updateQuery = "UPDATE emi_payments SET status = 'paid', transaction_id = ?, payment_date = NOW() WHERE id = ?" . $this->tenantSql();
+            $updateQuery = "UPDATE emi_payments SET status = 'paid', transaction_id = ?, paid_at = NOW() WHERE id = ?" . $this->tenantSql();
             $this->db->execute($updateQuery, [$transactionId, $installmentId]);
 
             $this->logActivity("EMI_PAYMENT_PROCESSED", "Installment ID: $installmentId, Amount: $amount, Txn: $transactionId");

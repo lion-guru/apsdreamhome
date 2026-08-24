@@ -54,14 +54,13 @@ class EMI extends Model
             $endDateFormatted = $endDate->format('Y-m-d');
 
             // Insert EMI plan
-            $sql = "INSERT INTO emi_plans (customer_id, property_id, booking_id, total_amount, interest_rate, tenure_months, emi_amount, down_payment, start_date, end_date, created_by, status, created_at) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', NOW())";
+            $sql = "INSERT INTO emi_plans (customer_id, property_id, total_amount, interest_rate, tenure_months, emi_amount, down_payment, start_date, end_date, created_by, status, created_at) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', NOW())";
 
             $stmt = $db->prepare($sql);
             $stmt->execute([
                 $data['customer_id'],
                 $data['property_id'] ?? null,
-                $data['booking_id'] ?? null,
                 $data['total_amount'],
                 $data['interest_rate'],
                 $tenure,
@@ -88,7 +87,7 @@ class EMI extends Model
                 $remainingPrincipal -= $principalComponent;
                 $installmentDateFormatted = $installmentDate->format('Y-m-d');
 
-                $sqlInst = "INSERT INTO emi_installments (emi_plan_id, installment_number, due_date, amount, principal_component, interest_component, status) 
+                $sqlInst = "INSERT INTO emi_installments (emi_plan_id, installment_number, due_date, amount, principal_amount, interest_amount, payment_status) 
                            VALUES (?, ?, ?, ?, ?, ?, 'pending')";
                 $stmtInst = $db->prepare($sqlInst);
                 $stmtInst->execute([
@@ -163,7 +162,7 @@ class EMI extends Model
                        FROM emi_installments ei 
                        JOIN emi_plans ep ON ei.emi_plan_id = ep.id 
                        WHERE ep.status = 'active' 
-                       AND ei.status = 'pending' 
+                       AND ei.payment_status = 'pending' 
                        AND DATE_FORMAT(ei.due_date, '%Y-%m') = ?";
         $stmtPend = $db->prepare($pendingSql);
         $stmtPend->execute([$currentMonth]);
@@ -174,7 +173,7 @@ class EMI extends Model
                        FROM emi_installments ei 
                        JOIN emi_plans ep ON ei.emi_plan_id = ep.id 
                        WHERE ep.status = 'active' 
-                       AND ei.status IN ('pending', 'overdue') 
+                       AND ei.payment_status IN ('pending', 'overdue') 
                        AND ei.due_date < CURDATE()";
         $overdueCount = $db->query($overdueSql)->fetchColumn();
 
@@ -245,7 +244,7 @@ class EMI extends Model
                 throw new \Exception('Installment not found');
             }
 
-            if ($installment['status'] === 'paid') {
+            if ($installment['payment_status'] === 'paid') {
                 throw new \Exception('This installment is already paid');
             }
 
@@ -267,7 +266,7 @@ class EMI extends Model
             // 1. Create payment record in main payments table
             $sqlPay = "INSERT INTO payments (
                             transaction_id, customer_id, property_id, amount, 
-                            payment_type, payment_method, description, status, 
+                            payment_type, gateway, description, status, 
                             payment_date, created_by
                         ) VALUES (?, ?, ?, ?, 'emi', ?, ?, 'completed', ?, ?)";
             $stmtPay = $db->prepare($sqlPay);
@@ -286,18 +285,16 @@ class EMI extends Model
 
             // 2. Update installment status
             $sqlInst = "UPDATE emi_installments SET 
-                            status = 'paid', 
+                            payment_status = 'paid', 
                             payment_date = ?, 
-                            payment_id = ?,
-                            late_fee = ?,
-                            notes = ?
+                            payment_id = ?
                         WHERE id = ?";
             $stmtInst = $db->prepare($sqlInst);
-            $stmtInst->execute([$paymentDate, $paymentId, $lateFee, $notes, $installmentId]);
+            $stmtInst->execute([$paymentDate, $paymentId, $installmentId]);
 
             // 3. Update EMI plan status if all installments are paid
             $planId = $installment['emi_plan_id'];
-            $sqlCheck = "SELECT COUNT(*) FROM emi_installments WHERE emi_plan_id = ? AND status != 'paid'";
+            $sqlCheck = "SELECT COUNT(*) FROM emi_installments WHERE emi_plan_id = ? AND payment_status != 'paid'";
             $stmtCheck = $db->prepare($sqlCheck);
             $stmtCheck->execute([$planId]);
             $remaining = $stmtCheck->fetchColumn();
@@ -381,7 +378,7 @@ class EMI extends Model
         foreach ($plans as &$plan) {
             $progressSql = "SELECT 
                                 COUNT(*) as total_installments,
-                                SUM(CASE WHEN status = 'paid' THEN 1 ELSE 0 END) as paid_installments
+                                SUM(CASE WHEN payment_status = 'paid' THEN 1 ELSE 0 END) as paid_installments
                              FROM emi_installments 
                              WHERE emi_plan_id = ?";
             $stmtProg = $db->prepare($progressSql);
@@ -452,17 +449,15 @@ class EMI extends Model
      */
     public function recordPayment($data)
     {
-        $sql = "INSERT INTO emi_payments (emi_plan_id, amount, payment_date, transaction_id, status, notes, created_at) 
-                VALUES (?, ?, ?, ?, ?, ?, NOW())";
+        $sql = "INSERT INTO emi_payments (amount, transaction_id, status, paid_at, created_at) 
+                VALUES (?, ?, ?, ?, NOW())";
 
         $stmt = self::getDb()->getConnection()->prepare($sql);
         return $stmt->execute([
-            $data['emi_plan_id'],
             $data['amount'],
-            $data['payment_date'] ?? date('Y-m-d'),
             $data['transaction_id'] ?? null,
             $data['status'] ?? 'completed',
-            $data['notes'] ?? null
+            $data['payment_date'] ?? date('Y-m-d')
         ]);
     }
 
@@ -483,9 +478,9 @@ class EMI extends Model
     public function calculateForeclosureAmount($planId)
     {
         $db = self::getDb()->getConnection();
-        $sql = "SELECT SUM(principal_component) 
+        $sql = "SELECT SUM(principal_amount) 
                 FROM emi_installments 
-                WHERE emi_plan_id = ? AND status != 'paid'";
+                WHERE emi_plan_id = ? AND payment_status != 'paid'";
         $stmt = $db->prepare($sql);
         $stmt->execute([$planId]);
         return floatval($stmt->fetchColumn() ?: 0);
@@ -518,7 +513,7 @@ class EMI extends Model
 
             $sqlPay = "INSERT INTO payments (
                             transaction_id, customer_id, property_id, amount, 
-                            payment_type, payment_method, description, status, 
+                            payment_type, gateway, description, status, 
                             payment_date, created_by
                         ) VALUES (?, ?, ?, ?, 'foreclosure', ?, ?, 'completed', ?, ?)";
             $stmtPay = $db->prepare($sqlPay);
@@ -537,11 +532,10 @@ class EMI extends Model
 
             // 2. Update all pending installments to 'paid'
             $sqlInst = "UPDATE emi_installments SET 
-                            status = 'paid', 
+                            payment_status = 'paid', 
                             payment_date = ?, 
-                            payment_id = ?,
-                            notes = CONCAT(COALESCE(notes, ''), ' - Foreclosed')
-                        WHERE emi_plan_id = ? AND status != 'paid'";
+                            payment_id = ?
+                        WHERE emi_plan_id = ? AND payment_status != 'paid'";
             $stmtInst = $db->prepare($sqlInst);
             $stmtInst->execute([$paymentDate, $paymentId, $planId]);
 
@@ -778,7 +772,7 @@ class EMI extends Model
         $query = "SELECT ei.*, ep.*, u.name as customer_name, u.phone as customer_phone,
                          u.email as customer_email, p.title as property_title,
                          p.address as property_address, p.location as property_location, py.transaction_id,
-                         py.payment_method, py.description as payment_description
+                         py.gateway, py.description as payment_description
                   FROM emi_installments ei
                   JOIN emi_plans ep ON ei.emi_plan_id = ep.id
                   JOIN users u ON u.id = (SELECT c.user_id FROM users c WHERE c.id = ep.customer_id)
