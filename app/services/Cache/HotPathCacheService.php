@@ -156,6 +156,23 @@ class HotPathCacheService
         return CacheService::invalidate('home_featured_properties');
     }
 
+    /**
+     * Cached home-page hero properties (15 min TTL).
+     */
+    public static function getHomeHeroProperties(callable $callback): array
+    {
+        self::bumpCall('home_featured');
+        return self::wrap('home_featured', 'home_hero_properties', self::TTL_HOME_FEATURED, $callback);
+    }
+
+    /**
+     * Invalidate the home hero-properties cache.
+     */
+    public static function invalidateHomeHero(): int
+    {
+        return CacheService::invalidate('home_hero_properties');
+    }
+
     // ───────────────────────────────────────────────────────────────────
     //   Hot path 5: Saved searches count (per user)
     // ───────────────────────────────────────────────────────────────────

@@ -174,7 +174,7 @@ class Request implements Countable
         );
 
         // Handle request body based on content type
-        $contentType = $request->headers->get('CONTENT_TYPE', '');
+        $contentType = $request->headers->get('content_type', '');
         $method = strtoupper($request->server->get('REQUEST_METHOD', 'GET'));
 
         // Handle JSON requests

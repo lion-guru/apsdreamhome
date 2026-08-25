@@ -95,19 +95,19 @@ class SmartAIController extends BaseController
         header('Content-Type: application/json');
         try {
 
-        // Get user context
-        $userContext = $this->getUserContext();
+            // Get user context
+            $userContext = $this->getUserContext();
 
-        // Accept both JSON and form-encoded input
-        $input = json_decode(file_get_contents('php://input'), true) ?: [];
-        $message = trim($_POST['message'] ?? $input['message'] ?? $_GET['message'] ?? '');
-        $sessionId = $_POST['session_id'] ?? $input['session_id'] ?? $_GET['session_id'] ?? session_id();
-        $language = $_POST['language'] ?? $input['language'] ?? $this->detectLanguage($message);
+            // Accept both JSON and form-encoded input using request object
+            // Request::createFromGlobals() in BaseController already parses JSON body into request bag
+            $message = trim($this->request->request->get('message') ?? $this->request->query->get('message') ?? '');
+            $sessionId = $this->request->request->get('session_id') ?? $this->request->query->get('session_id') ?? session_id();
+            $language = $this->request->request->get('language') ?? $this->request->query->get('language') ?? $this->detectLanguage($message);
 
-        if (empty($message)) {
-            echo json_encode(['error' => 'Kuch to likhiye! / Please type something!']);
-            exit;
-        }
+            if (empty($message)) {
+                echo json_encode(['error' => 'Kuch to likhiye! / Please type something!']);
+                exit;
+            }
 
         // ��� CONVERSATION ENGINE - Multi-turn action flows ���
         $conversationState = null;
