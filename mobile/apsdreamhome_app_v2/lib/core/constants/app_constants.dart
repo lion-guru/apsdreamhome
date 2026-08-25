@@ -128,6 +128,10 @@ class AppConstants {
   static const String telecallerDashboardEndpoint = '/telecaller/dashboard';
   static const String telecallerReportEndpoint = '/telecaller/report';
 
+  // Calls
+  static const String callLogEndpoint = '/calls/log';
+  static const String callStatsEndpoint = '/calls/stats';
+
   // Admin
   static const String adminEmiCollectionEndpoint = '/admin/emi-collection';
 

@@ -6,72 +6,68 @@ part of 'colony_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_ColonyModel _$ColonyModelFromJson(Map<String, dynamic> json) =>
-    _ColonyModel(
-      id: (json['id'] as num?)?.toInt() ?? 0,
-      name: json['name'] as String? ?? '',
-      slug: json['slug'] as String?,
-      description: json['description'] as String?,
-      totalPlots: (json['total_plots'] as num?)?.toInt() ?? 0,
-      availablePlots: (json['available_plots'] as num?)?.toInt() ?? 0,
-      pricePerSqft: (json['starting_price'] as num?)?.toDouble() ?? 0.0,
-      district: json['district_name'] as String? ?? '',
-      districtId: (json['district_id'] as num?)?.toInt() ?? 0,
-      imagePath: json['image_path'] as String?,
-      imageUrl: json['image_url'] as String?,
-      isActive: json['is_active'] as bool? ?? true,
-      isFeatured: json['is_featured'] as bool? ?? false,
-      layoutImage: json['layout_image'] as String?,
-      layoutImageUrl: json['layout_image_url'] as String?,
-      galleryImagesData: (json['gallery_images_data'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      youtubeVideoUrl: json['youtube_video_url'] as String?,
-      virtualTourUrl: json['virtual_tour_url'] as String?,
-      brochurePath: json['brochure_path'] as String?,
-      colonyDocuments: (json['colony_documents'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      mapLinkApi: json['map_link'] as String?,
-      latitude: (json['latitude'] as num?)?.toDouble(),
-      longitude: (json['longitude'] as num?)?.toDouble(),
-      nearbyPlacesRaw: json['nearby_places'] as String?,
-      location: json['location'] as String? ?? '',
-      state: json['state'] as String? ?? '',
-      images: (json['images'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      masterPlanImage: json['masterPlanImage'] as String?,
-      videoUrl: json['videoUrl'] as String?,
-      holdPlots: (json['holdPlots'] as num?)?.toInt() ?? 0,
-      bookedPlots: (json['bookedPlots'] as num?)?.toInt() ?? 0,
-      soldPlots: (json['soldPlots'] as num?)?.toInt() ?? 0,
-      tokenAmount: (json['tokenAmount'] as num?)?.toDouble(),
-      bookingPercentage: (json['bookingPercentage'] as num?)?.toDouble(),
-      blockWisePricing: (json['blockWisePricing'] as Map<String, dynamic>?)
-          ?.map(
-            (k, e) => MapEntry(k, (e as num).toDouble()),
-          ),
-      amenities: (json['amenities'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      launchDate: json['launchDate'] as String?,
-      completionDate: json['completionDate'] as String?,
-      createdAt: json['createdAt'] as String?,
-      updatedAt: json['updatedAt'] as String?,
-      createdBy: json['createdBy'] as String?,
-      reraNumber: json['reraNumber'] as String?,
-      legalStatus: json['legalStatus'] as String?,
-      nearbyLandmarks: (json['nearbyLandmarks'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      additionalInfo: json['additionalInfo'] as Map<String, dynamic>?,
-      layoutMap: json['layoutMap'] as String?,
-      rateList: json['rateList'] as String?,
-      handbill: json['handbill'] as String?,
-    );
+_ColonyModel _$ColonyModelFromJson(Map<String, dynamic> json) => _ColonyModel(
+  id: (json['id'] as num?)?.toInt() ?? 0,
+  name: json['name'] as String? ?? '',
+  slug: json['slug'] as String?,
+  description: json['description'] as String?,
+  totalPlots: (json['total_plots'] as num?)?.toInt() ?? 0,
+  availablePlots: (json['available_plots'] as num?)?.toInt() ?? 0,
+  pricePerSqft: (json['starting_price'] as num?)?.toDouble() ?? 0.0,
+  district: json['district_name'] as String? ?? '',
+  districtId: (json['district_id'] as num?)?.toInt() ?? 0,
+  imagePath: json['image_path'] as String?,
+  imageUrl: json['image_url'] as String?,
+  isActive: json['is_active'] as bool? ?? true,
+  isFeatured: json['is_featured'] as bool? ?? false,
+  layoutImage: json['layout_image'] as String?,
+  layoutImageUrl: json['layout_image_url'] as String?,
+  galleryImagesData: (json['gallery_images_data'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
+  youtubeVideoUrl: json['youtube_video_url'] as String?,
+  virtualTourUrl: json['virtual_tour_url'] as String?,
+  brochurePath: json['brochure_path'] as String?,
+  colonyDocuments: (json['colony_documents'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
+  mapLinkApi: json['map_link'] as String?,
+  latitude: (json['latitude'] as num?)?.toDouble(),
+  longitude: (json['longitude'] as num?)?.toDouble(),
+  nearbyPlacesRaw: json['nearby_places'] as String?,
+  location: json['location'] as String? ?? '',
+  state: json['state'] as String? ?? '',
+  images: (json['images'] as List<dynamic>?)?.map((e) => e as String).toList(),
+  masterPlanImage: json['masterPlanImage'] as String?,
+  videoUrl: json['videoUrl'] as String?,
+  holdPlots: (json['holdPlots'] as num?)?.toInt() ?? 0,
+  bookedPlots: (json['bookedPlots'] as num?)?.toInt() ?? 0,
+  soldPlots: (json['soldPlots'] as num?)?.toInt() ?? 0,
+  tokenAmount: (json['tokenAmount'] as num?)?.toDouble(),
+  bookingPercentage: (json['bookingPercentage'] as num?)?.toDouble(),
+  blockWisePricing: (json['blockWisePricing'] as Map<String, dynamic>?)?.map(
+    (k, e) => MapEntry(k, (e as num).toDouble()),
+  ),
+  amenities: (json['amenities'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
+  launchDate: json['launchDate'] as String?,
+  completionDate: json['completionDate'] as String?,
+  createdAt: json['createdAt'] as String?,
+  updatedAt: json['updatedAt'] as String?,
+  createdBy: json['createdBy'] as String?,
+  reraNumber: json['reraNumber'] as String?,
+  legalStatus: json['legalStatus'] as String?,
+  nearbyLandmarks: (json['nearbyLandmarks'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
+  additionalInfo: json['additionalInfo'] as Map<String, dynamic>?,
+  layoutMap: json['layoutMap'] as String?,
+  rateList: json['rateList'] as String?,
+  handbill: json['handbill'] as String?,
+);
 
-Map<String, dynamic> _$_ColonyModelToJson(_ColonyModel instance) =>
+Map<String, dynamic> _$ColonyModelToJson(_ColonyModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,

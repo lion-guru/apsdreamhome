@@ -91,69 +91,8 @@ abstract class ColonyModel with _$ColonyModel {
     String? handbill,
   }) = _ColonyModel;
 
-  factory ColonyModel.fromJson(Map<String, dynamic> raw) {
-    // Preprocess: API detail endpoint returns different types than list endpoint
-    // - starting_price: string "17050000.00" vs number 1400
-    // - amenities: stringified JSON array "[\"...\"]" vs null/actual array
-    // - is_active/is_featured: int 1 vs boolean true
-    final json = Map<String, dynamic>.from(raw);
-
-    // starting_price: ensure numeric
-    if (json['starting_price'] is String) {
-      json['starting_price'] =
-          double.tryParse(json['starting_price'] as String) ?? 0.0;
-    }
-
-    // amenities: stringified JSON array → actual list
-    if (json['amenities'] is String) {
-      try {
-        final decoded = jsonDecode(json['amenities'] as String);
-        json['amenities'] = decoded is List ? decoded : null;
-      } catch (_) {
-        json['amenities'] = null;
-      }
-    }
-
-    // gallery_images_data: ensure list of strings
-    if (json['gallery_images_data'] is String) {
-      try {
-        final decoded = jsonDecode(json['gallery_images_data'] as String);
-        json['gallery_images_data'] = decoded is List ? decoded.cast<String>() : null;
-      } catch (_) {
-        json['gallery_images_data'] = null;
-      }
-    }
-
-    // gallery_images: JSON array from DB → list of strings (fallback for gallery_images_data)
-    if (json['gallery_images'] is String && json['gallery_images_data'] == null) {
-      try {
-        final decoded = jsonDecode(json['gallery_images'] as String);
-        if (decoded is List) {
-          json['gallery_images_data'] = decoded.cast<String>();
-        }
-      } catch (_) {}
-    }
-
-    // colony_documents: stringified JSON array → list
-    if (json['colony_documents'] is String) {
-      try {
-        final decoded = jsonDecode(json['colony_documents'] as String);
-        json['colony_documents'] = decoded is List ? decoded.cast<String>() : null;
-      } catch (_) {
-        json['colony_documents'] = null;
-      }
-    }
-
-    // is_active / is_featured: int → bool
-    if (json['is_active'] is int) {
-      json['is_active'] = (json['is_active'] as int) == 1;
-    }
-    if (json['is_featured'] is int) {
-      json['is_featured'] = (json['is_featured'] as int) == 1;
-    }
-
-    return _$ColonyModelFromJson(json);
-  }
+  factory ColonyModel.fromJson(Map<String, dynamic> raw) =>
+      _$ColonyModelFromJson(_preprocessColonyJson(raw));
 
   const ColonyModel._();
 
@@ -209,4 +148,71 @@ abstract class ColonyModel with _$ColonyModel {
     }
     return [];
   }
+}
+
+/// Preprocess raw API JSON before [ColonyModel] deserialization.
+/// API detail endpoint returns different types than list endpoint:
+/// - starting_price: string "17050000.00" vs number 1400
+/// - amenities/gallery_images/colony_documents: stringified JSON arrays vs null/actual arrays
+/// - is_active/is_featured: int 1 vs boolean true
+Map<String, dynamic> _preprocessColonyJson(Map<String, dynamic> raw) {
+  final json = Map<String, dynamic>.from(raw);
+
+  // starting_price: ensure numeric
+  if (json['starting_price'] is String) {
+    json['starting_price'] =
+        double.tryParse(json['starting_price'] as String) ?? 0.0;
+  }
+
+  // amenities: stringified JSON array -> actual list
+  if (json['amenities'] is String) {
+    try {
+      final decoded = jsonDecode(json['amenities'] as String);
+      json['amenities'] = decoded is List ? decoded : null;
+    } catch (_) {
+      json['amenities'] = null;
+    }
+  }
+
+  // gallery_images_data: ensure list of strings
+  if (json['gallery_images_data'] is String) {
+    try {
+      final decoded = jsonDecode(json['gallery_images_data'] as String);
+      json['gallery_images_data'] =
+          decoded is List ? decoded.cast<String>() : null;
+    } catch (_) {
+      json['gallery_images_data'] = null;
+    }
+  }
+
+  // gallery_images: JSON array from DB -> list of strings (fallback)
+  if (json['gallery_images'] is String && json['gallery_images_data'] == null) {
+    try {
+      final decoded = jsonDecode(json['gallery_images'] as String);
+      if (decoded is List) {
+        json['gallery_images_data'] = decoded.cast<String>();
+      }
+    } catch (_) {}
+  }
+
+  // colony_documents: stringified JSON array -> list
+  if (json['colony_documents'] is String) {
+    try {
+      final decoded = jsonDecode(json['colony_documents'] as String);
+      json['colony_documents'] =
+          decoded is List ? decoded.cast<String>() : null;
+    } catch (_) {
+      json['colony_documents'] = null;
+    }
+  }
+
+  // is_active / is_featured: int -> bool
+  if (json['is_active'] is int) {
+    json['is_active'] = (json['is_active'] as int) == 1;
+  }
+  if (json['is_featured'] is int) {
+    json['is_featured'] = (json['is_featured'] as int) == 1;
+  }
+
+  return json;
 }
