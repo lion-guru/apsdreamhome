@@ -368,10 +368,20 @@ class PropertyPageController extends BaseController
             $totalPlots = 0;
         }
 
+        $colonyStats = [
+            'total_colonies' => count($colonies),
+            'total_area' => array_sum(array_map(static function ($c) {
+                return (int)($c['available_plots'] ?? 0) * 1200;
+            }, $colonies)) . ' sqft',
+            'total_plots' => $totalPlots,
+            'cities_covered' => count(array_unique(array_column($colonies, 'location'))),
+        ];
+
         $this->render('pages/colonies', [
             'page_title' => 'Our Colonies - APS Dream Home',
             'page_description' => 'Explore our residential colonies and townships.',
             'colonies' => $colonies,
+            'colony_stats' => $colonyStats,
             'total_plots' => $totalPlots,
         ]);
     }

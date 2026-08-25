@@ -379,6 +379,96 @@ class AgentDashboardPage extends ConsumerWidget {
       },
     ];
 
+    final moreActions = [
+      {
+        'icon': Icons.analytics_outlined,
+        'label': 'Analytics',
+        'route': '/agent/analytics',
+        'color': AppTheme.primaryColor,
+      },
+      {
+        'icon': Icons.calendar_month_outlined,
+        'label': 'Bookings',
+        'route': '/agent/bookings',
+        'color': AppTheme.infoColor,
+      },
+      {
+        'icon': Icons.description_outlined,
+        'label': 'Documents',
+        'route': '/agent/documents',
+        'color': AppTheme.accentColor,
+      },
+      {
+        'icon': Icons.flag_outlined,
+        'label': 'Follow-ups',
+        'route': '/agent/follow-ups',
+        'color': AppTheme.errorColor,
+      },
+    ];
+
+    final thirdActions = [
+      {
+        'icon': Icons.home_work_outlined,
+        'label': 'Properties',
+        'route': '/agent/properties',
+        'color': AppTheme.successColor,
+      },
+      {
+        'icon': Icons.location_on_outlined,
+        'label': 'Site Visits',
+        'route': '/agent/site-visits',
+        'color': AppTheme.secondaryColor,
+      },
+      {
+        'icon': Icons.groups_outlined,
+        'label': 'My Team',
+        'route': '/agent/my-team',
+        'color': AppTheme.primaryColor,
+      },
+      {
+        'icon': Icons.military_tech_outlined,
+        'label': 'Rank',
+        'route': '/agent/rank-progress',
+        'color': AppTheme.warningColor,
+      },
+    ];
+
+    Widget actionRow(List<Map<String, Object>> rows) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: rows.map((action) {
+          return GestureDetector(
+            onTap: () => context.push(action['route'] as String),
+            child: Column(
+              children: [
+                Container(
+                  width: 62,
+                  height: 62,
+                  decoration: BoxDecoration(
+                    color: (action['color'] as Color).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  child: Icon(
+                    action['icon'] as IconData,
+                    color: action['color'] as Color,
+                    size: 28,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  action['label'] as String,
+                  style: const TextStyle(
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
@@ -391,41 +481,11 @@ class AgentDashboardPage extends ConsumerWidget {
             ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: actions.map((action) {
-              return GestureDetector(
-                onTap: () => context.push(action['route'] as String),
-                child: Column(
-                  children: [
-                    Container(
-                      width: 70,
-                      height: 70,
-                      decoration: BoxDecoration(
-                        color: (action['color'] as Color).withValues(
-                          alpha: 0.1,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Icon(
-                        action['icon'] as IconData,
-                        color: action['color'] as Color,
-                        size: 32,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      action['label'] as String,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
+          actionRow(actions),
+          const SizedBox(height: 14),
+          actionRow(moreActions),
+          const SizedBox(height: 14),
+          actionRow(thirdActions),
         ],
       ),
     );

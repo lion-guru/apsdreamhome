@@ -94,9 +94,9 @@
                     <div class="colony-card">
                         <div class="colony-image">
                             <?php
-                            $imagePath = $colony['image'];
-                            if (strpos($imagePath, 'http') !== 0) {
-                                $imagePath = get_asset_url($imagePath);
+                            $imagePath = $colony['image'] ?? null;
+                            if ($imagePath && strpos((string)$imagePath, 'http') !== 0) {
+                                $imagePath = get_asset_url((string)$imagePath);
                             }
                             ?>
                             <img src="<?php echo htmlspecialchars($imagePath ?? ''); ?>" alt="<?php echo htmlspecialchars($colony['name'] ?? ''); ?>" class="img-fluid" loading="lazy">
