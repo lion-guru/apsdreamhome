@@ -17,6 +17,11 @@ class GoogleAuthController extends BaseController
         $this->googleService = new GoogleAuthService();
     }
 
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
+    }
+
     public function googleRedirect()
     {
         $baseUrl = rtrim(BASE_URL, '/');
@@ -76,6 +81,10 @@ class GoogleAuthController extends BaseController
             header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
             exit;
         }
+
+        // Get company referral code from config
+        $companyReferralCode = getenv('COMPANY_REFERRAL_CODE') ?: ($_ENV['COMPANY_REFERRAL_CODE'] ?? 'APSREF');
+
         include __DIR__ . '/../../../views/auth/google_role_selection.php';
     }
 
