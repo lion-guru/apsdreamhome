@@ -139,6 +139,14 @@ import '../../presentation/pages/agent/deal_pipeline_page.dart';
 import '../../presentation/pages/agent/commission_approval_page.dart';
 import '../../presentation/pages/agent/agent_crm_page.dart';
 import '../../presentation/pages/agent/lead_create_page.dart';
+import '../../presentation/pages/agent/agent_analytics_page.dart';
+import '../../presentation/pages/agent/agent_bookings_page.dart';
+import '../../presentation/pages/agent/agent_documents_page.dart';
+import '../../presentation/pages/agent/agent_follow_ups_page.dart';
+import '../../presentation/pages/agent/agent_properties_page.dart';
+import '../../presentation/pages/agent/agent_site_visits_page.dart';
+import '../../presentation/pages/agent/agent_my_team_page.dart';
+import '../../presentation/pages/agent/agent_rank_progress_page.dart';
 
 // Employee
 import '../../presentation/pages/employee/employee_shell.dart';
@@ -1088,6 +1096,44 @@ final isPublicRoute =
       GoRoute(
         path: '/agent/crm',
         builder: (context, state) => const AgentCRMPage(),
+      ),
+
+      // ─── Agent Portal Extended Routes (Session 78) ───
+      GoRoute(
+        path: '/agent/analytics',
+        builder: (context, state) => const AgentAnalyticsPage(),
+      ),
+      GoRoute(
+        path: '/agent/bookings',
+        builder: (context, state) => const AgentBookingsPage(),
+      ),
+      GoRoute(
+        path: '/agent/bookings/:bookingId',
+        builder: (context, state) => const AgentBookingsPage(),
+      ),
+      GoRoute(
+        path: '/agent/documents',
+        builder: (context, state) => const AgentDocumentsPage(),
+      ),
+      GoRoute(
+        path: '/agent/follow-ups',
+        builder: (context, state) => const AgentFollowUpsPage(),
+      ),
+      GoRoute(
+        path: '/agent/properties',
+        builder: (context, state) => const AgentPropertiesPage(),
+      ),
+      GoRoute(
+        path: '/agent/site-visits',
+        builder: (context, state) => const AgentSiteVisitsPage(),
+      ),
+      GoRoute(
+        path: '/agent/my-team',
+        builder: (context, state) => const AgentMyTeamPage(),
+      ),
+      GoRoute(
+        path: '/agent/rank-progress',
+        builder: (context, state) => const AgentRankProgressPage(),
       ),
 
       // Lead creation (full-page form for agents/associates)
