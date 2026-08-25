@@ -89,7 +89,7 @@ class ContentPageController extends BaseController
     public function news()
     {
         try {
-            $stmt = $this->db->prepare("SELECT * FROM news_articles WHERE status = 'published' ORDER BY published_at DESC LIMIT 20");
+            $stmt = $this->db->prepare("SELECT * FROM news WHERE status = 'published' ORDER BY published_at DESC LIMIT 20");
             $stmt->execute();
             $news = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Exception $e) {

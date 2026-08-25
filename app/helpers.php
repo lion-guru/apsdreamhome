@@ -82,6 +82,9 @@ if (!function_exists('url')) {
 if (!function_exists('get_asset_url')) {
     function get_asset_url($path = '')
     {
+        if (empty($path)) {
+            return '';
+        }
         if (strpos($path, 'http://') === 0 || strpos($path, 'https://') === 0) {
             return $path;
         }

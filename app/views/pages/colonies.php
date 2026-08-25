@@ -106,7 +106,7 @@
                             </div>
                         </div>
                         <div class="colony-overlay">
-                            <span class="status-badge"><?php echo e($colony['completion_status']); ?></span>
+                            <span class="status-badge"><?php echo e($colony['status'] ?? 'active'); ?></span>
                         </div>
                     </div>
 
@@ -118,18 +118,20 @@
                             <?php echo e($colony['location']); ?>
                         </div>
 
-                        <p class="colony-description"><?php echo e($colony['description']); ?></p>
+                        <p class="colony-description"><?php echo e($colony['description'] ?? ''); ?></p>
 
                         <div class="colony-highlights">
-                            <?php foreach ($colony['highlights'] as $highlight): ?>
-                                <span class="highlight-tag"><?php echo e($highlight); ?></span>
-                            <?php endforeach; ?>
+                            <?php if (!empty($colony['amenities'])): ?>
+                                <?php foreach (array_slice($colony['amenities'], 0, 3) as $highlight): ?>
+                                    <span class="highlight-tag"><?php echo e($highlight); ?></span>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </div>
 
                         <div class="colony-specs">
                             <div class="spec-item">
-                                <span class="spec-value"><?php echo e($colony['total_area']); ?></span>
-                                <span class="spec-label"><?= __('colonies_spec_area') ?></span>
+                                <span class="spec-value"><?php echo e($colony['total_plots'] ?? 0); ?></span>
+                                <span class="spec-label"><?= __('colonies_spec_plots') ?></span>
                             </div>
                             <div class="spec-item">
                                 <span class="spec-value"><?php echo e($colony['available_plots']); ?></span>
