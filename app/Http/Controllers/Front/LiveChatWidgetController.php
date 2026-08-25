@@ -93,9 +93,22 @@ class LiveChatWidgetController extends BaseController
 
     public function send()
     {
-        $json = json_decode(file_get_contents('php://input'), true) ?: [];
-        $token = $json['token'] ?? ($_POST['token'] ?? '');
-        $message = trim($json['message'] ?? ($_POST['message'] ?? ''));
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'POST required']);
+            exit;
+        }
+
+        // Debug: log what we're receiving
+        error_log('LiveChatWidgetController::send - Content-Type: ' . ($this->request->headers->get('content_type') ?? 'NOT SET'));
+        error_log('LiveChatWidgetController::send - Raw content: ' . $this->request->getContentAsString());
+        
+        // Use request object which handles JSON body parsing
+        $input = $this->request->getContentAsJson();
+        error_log('LiveChatWidgetController::send - Parsed input: ' . json_encode($input));
+        
+        $token = $input['token'] ?? ($_POST['token'] ?? '');
+        $message = trim($input['message'] ?? ($_POST['message'] ?? ''));
         if (!$token || !$message) {
             header('Content-Type: application/json');
             echo json_encode(['error' => 'token and message required']);

@@ -48,42 +48,51 @@ class AppConstants {
   static const String plotsEndpoint = '/plots';
   static const String crmPrefix = '/crm';
 
-  // Chat
-  static const String chatStartEndpoint = '/api/chat/start';
-  static const String chatSendEndpoint = '/api/chat/send';
-  static const String chatPollEndpoint = '/api/chat/poll';
-  static const String chatWidgetEndpoint = '/api/chat/widget';
-  static const String chatHistoryEndpoint = '/api/chat/history';
+// Referral
+  static const String referralTrackEndpoint = '/referral/track';
+  static const String referralDashboardEndpoint = '/referral/dashboard';
+  static const String referralListEndpoint = '/referral/list';
+  static const String referralStatsEndpoint = '/referral/stats';
 
-  // In-App Messaging
-  static const String conversationsEndpoint = '/messages/conversations';
-  static const String messagesEndpoint = '/messages';
-  static const String sendMessageEndpoint = '/messages/send';
-  static const String markReadEndpoint = '/messages/read';
-  static const String unreadCountEndpoint = '/messages/unread/count';
+  // Agent Portal
+  static const String agentMyTeamEndpoint = '/my-team';
+  static const String agentRankProgressEndpoint = '/rank-progress';
+  static const String agentLeadsEndpoint = '/agent/leads';
+  static const String agentCommissionsEndpoint = '/agent/commissions';
+  static const String agentPayoutsEndpoint = '/agent/payouts';
+  static const String agentPropertyListingsEndpoint = '/agent/properties';
+  static const String agentBookingsEndpoint = '/agent/bookings';
+  static const String agentDocumentsEndpoint = '/agent/documents';
+  static const String agentSiteVisitsEndpoint = '/agent/site-visits';
+  static const String agentFollowUpsEndpoint = '/agent/follow-ups';
+  static const String agentAnalyticsEndpoint = '/agent/analytics';
 
-  // V2 Mobile Attendance
-  static const String attendancePunchInEndpoint = '/attendance/punch-in';
-  static const String attendancePunchOutEndpoint = '/attendance/punch-out';
-  static const String attendanceStatusEndpoint = '/attendance/status';
+// Admin Mobile
+  static const String adminDashboardStatsEndpoint = '/admin/dashboard-stats';
+  static const String adminSalesTrendEndpoint = '/admin/sales-trend';
+  static const String adminTopAssociatesEndpoint = '/admin/top-associates';
+  static const String adminColonyPerformanceEndpoint = '/admin/colony-performance';
+  static const String adminLeadConversionEndpoint = '/admin/lead-conversion';
+  static const String adminDailySalesEndpoint = '/admin/daily-sales';
 
-  // AI Agent / Calling
-  static const String aiAgentChatEndpoint = '/ai-agent/chat';
-  static const String aiAgentProcessLeadEndpoint = '/ai-agent/process-lead';
-  static const String aiAgentRecommendationsEndpoint =
-      '/ai-agent/recommendations';
+  // AI Agent
+  static const String aiAgentAnalyzePropertyEndpoint = '/ai-agent/analyze-property';
+  static const String aiAgentDecideEndpoint = '/ai-agent/decide';
+  static const String aiAgentFeedbackEndpoint = '/ai-agent/feedback';
+  static const String aiAgentStatsEndpoint = '/ai-agent/stats';
   static const String aiAgentAnalyticsEndpoint = '/ai-agent/analytics';
-  static const String voiceStartCallEndpoint = '/voice/start-call';
-  static const String voiceProcessResponseEndpoint = '/voice/process-response';
-  static const String voiceSessionEndpoint = '/voice/session';
-  static const String voiceEndCallEndpoint = '/voice/end-call';
-  static const String voiceScheduleEndpoint = '/voice/schedule';
-  static const String voiceStatsEndpoint = '/voice/stats';
-  static const String voiceCallHistoryEndpoint = '/voice/call-history';
-  static const String callLogEndpoint = '/calls/log';
-  static const String callStatsEndpoint = '/calls/stats';
-  static const String telecallerDashboardEndpoint = '/telecaller/dashboard';
-  static const String telecallerReportEndpoint = '/telecaller/report';
+
+  // Auth
+  static const String authChangePasswordEndpoint = '/auth/change-password';
+  static const String authCheckUserEndpoint = '/auth/check-user';
+  static const String authFirebaseLoginEndpoint = '/auth/firebase-login';
+  static const String authForgotPasswordEndpoint = '/auth/forgot-password';
+  static const String authLogoutEndpoint = '/auth/logout';
+  static const String authRefreshEndpoint = '/auth/refresh';
+  static const String authRegisterEndpoint = '/auth/register';
+  static const String authResendOtpEndpoint = '/auth/resend-otp';
+  static const String authResetPasswordEndpoint = '/auth/reset-password';
+  static const String authVerifyOtpEndpoint = '/auth/verify-otp';
 
   // Auto-Dialer
   static const String autoDialerScheduleEndpoint = '/auto-dialer/schedule';
@@ -103,24 +112,30 @@ class AppConstants {
   static const String voiceChatEndpoint = '/voice-chat';
   static const String aiScheduleEndpoint = '/auto-dialer/ai-schedule';
 
+  // Voice Agent
+  static const String voiceStartCallEndpoint = '/voice/start-call';
+  static const String voiceProcessResponseEndpoint = '/voice/process-response';
+  static const String voiceSessionEndpoint = '/voice/session';
+  static const String voiceEndCallEndpoint = '/voice/end-call';
+  static const String voiceScheduleEndpoint = '/voice/schedule';
+  static const String voiceStatsEndpoint = '/voice/stats';
+  static const String voiceCallHistoryEndpoint = '/voice/call-history';
+
+  // Voice Assistant
+  static const String voiceAssistantQueryEndpoint = '/voice-assistant/query';
+
+  // Telecaller
+  static const String telecallerDashboardEndpoint = '/telecaller/dashboard';
+  static const String telecallerReportEndpoint = '/telecaller/report';
+
   // Admin
   static const String adminEmiCollectionEndpoint = '/admin/emi-collection';
 
-  // Referral
-  static const String referralTrackEndpoint = '/referral/track';
+  // CRM
+  static const String crmAnalyticsEndpoint = '/crm/analytics';
+  static const String crmTeamPerformanceEndpoint = '/crm/team-performance';
 
-  // Agent Portal
-  static const String agentMyTeamEndpoint = '/my-team';
-  static const String agentRankProgressEndpoint = '/rank-progress';
-  static const String agentLeadsEndpoint = '/agent/leads';
-  static const String agentCommissionsEndpoint = '/agent/commissions';
-  static const String agentPayoutsEndpoint = '/agent/payouts';
-  static const String agentPropertyListingsEndpoint = '/agent/properties';
-  static const String agentBookingsEndpoint = '/agent/bookings';
-  static const String agentDocumentsEndpoint = '/agent/documents';
-  static const String agentSiteVisitsEndpoint = '/agent/site-visits';
-  static const String agentFollowUpsEndpoint = '/agent/follow-ups';
-  static const String agentAnalyticsEndpoint = '/agent/analytics';
+  // Referral
 
   // Property Marketplace
   static const String propertyInquiryEndpoint = '/properties/inquiry';
@@ -129,6 +144,9 @@ class AppConstants {
   static const String myListingsEndpoint = '/my-listings';
   static const String listingPackagesEndpoint = '/listing-packages';
   static const String propertyBoostEndpoint = '/properties/boost';
+  static const String propertySimilarEndpoint = '/properties/similar';
+  static const String propertyFavoritesEndpoint = '/properties/favorite';
+  static const String colonyPropertiesEndpoint = '/colonies/properties';
 
   // Listing Upgrade Payment
   static const String listingCreateOrderEndpoint = '/listing/create-order';
@@ -146,6 +164,21 @@ class AppConstants {
 
   // Notifications
   static const String notificationsEndpoint = '/user/notifications';
+  static const String notificationRegisterEndpoint = '/notifications/register';
+
+  // Chat
+  static const String chatStartEndpoint = '/api/v2/mobile/chat/start';
+  static const String chatSendEndpoint = '/api/v2/mobile/chat/send';
+  static const String chatPollEndpoint = '/api/v2/mobile/chat/poll';
+  static const String chatWidgetEndpoint = '/api/v2/mobile/chat/widget';
+  static const String chatHistoryEndpoint = '/api/v2/mobile/chat/history';
+
+  // In-App Messaging
+  static const String conversationsEndpoint = '/messages/conversations';
+  static const String messagesEndpoint = '/messages';
+  static const String sendMessageEndpoint = '/messages/send';
+  static const String markReadEndpoint = '/messages/read';
+  static const String unreadCountEndpoint = '/messages/unread/count';
 
   // Database
   static const String databaseName = 'aps_dream_home.db';

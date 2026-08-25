@@ -298,6 +298,13 @@ $router->post('/api/v2/mobile/ai-agent/feedback', 'App\Http\Controllers\Api\AIAg
 $router->get('/api/v2/mobile/ai-agent/stats', 'App\Http\Controllers\Api\AIAgentApiController@stats');
 $router->get('/api/v2/mobile/ai-agent/analytics', 'App\Http\Controllers\Api\AIAgentApiController@analytics');
 
+// Live Chat Widget API (Mobile App) - aliases for existing /api/chat/* routes
+$router->post('/api/v2/mobile/chat/start', 'App\Http\Controllers\Front\LiveChatWidgetController@start');
+$router->post('/api/v2/mobile/chat/send', 'App\Http\Controllers\Front\LiveChatWidgetController@send');
+$router->get('/api/v2/mobile/chat/poll', 'App\Http\Controllers\Front\LiveChatWidgetController@poll');
+$router->get('/api/v2/mobile/chat/history', 'App\Http\Controllers\Front\LiveChatWidgetController@history');
+$router->get('/api/v2/mobile/chat/widget', 'App\Http\Controllers\Front\LiveChatWidgetController@widget');
+
 // Auto-Dialer API (call scheduling, bulk messaging)
 $router->post('/api/v2/mobile/auto-dialer/schedule', 'App\Http\Controllers\Api\AutoDialerController@schedule');
 $router->post('/api/v2/mobile/auto-dialer/bulk-schedule', 'App\Http\Controllers\Api\AutoDialerController@bulkSchedule');
@@ -315,6 +322,23 @@ $router->post('/api/v2/mobile/auto-dialer/ai-schedule', 'App\Http\Controllers\Ap
 $router->post('/api/v2/mobile/calls/log', 'App\Http\Controllers\Api\AutoDialerController@logCall');
 $router->get('/api/v2/mobile/calls/stats', 'App\Http\Controllers\Api\AutoDialerController@callStats');
 $router->post('/api/v2/mobile/voice-chat', 'App\Http\Controllers\Api\AutoDialerController@voiceChat');
+
+// Voice Agent API (Mobile App) - aliases for existing /api/voice-agent/* routes
+$router->post('/api/v2/mobile/voice/start-call', 'App\Http\Controllers\Api\VoiceAgentController@startCall');
+$router->post('/api/v2/mobile/voice/process-response', 'App\Http\Controllers\Api\VoiceAgentController@processResponse');
+$router->get('/api/v2/mobile/voice/session/{id}', 'App\Http\Controllers\Api\VoiceAgentController@getSession');
+$router->post('/api/v2/mobile/voice/end-call', 'App\Http\Controllers\Api\VoiceAgentController@endCall');
+$router->get('/api/v2/mobile/voice/schedule', 'App\Http\Controllers\Api\VoiceAgentController@getSchedule');
+$router->post('/api/v2/mobile/voice/schedule', 'App\Http\Controllers\Api\VoiceAgentController@scheduleCall');
+$router->get('/api/v2/mobile/voice/stats', 'App\Http\Controllers\Api\VoiceAgentController@getStats');
+$router->get('/api/v2/mobile/voice/call-history', 'App\Http\Controllers\Api\VoiceAgentController@getCallHistory');
+
+// Voice Assistant API (Mobile App)
+$router->post('/api/v2/mobile/voice-assistant/query', 'App\Http\Controllers\Api\VoiceAssistantController@query');
+
+// Telecaller API (Mobile App)
+$router->get('/api/v2/mobile/telecaller/dashboard', 'App\Http\Controllers\Api\MobileTelecallerApiController@dashboard')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/telecaller/report', 'App\Http\Controllers\Api\MobileTelecallerApiController@report')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // Gemini Chatbot API (separate from GeminiApiController)
 $router->post('/api/gemini/chatbot/message', 'Api\GeminiChatbotController@message');
@@ -566,6 +590,20 @@ $router->get('/api/v2/mobile/careers/{id}', 'Api\MobileUserApiController@getJobD
 $router->put('/api/v2/mobile/user/profile', 'Api\MobileUserApiController@updateProfileV2')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/user/profile/avatar', 'Api\MobileUserApiController@uploadAvatar')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/dashboard', 'Api\MobileUserApiController@dashboardV3')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Agent Portal API (Mobile App)
+$router->get('/api/v2/mobile/agent/analytics', 'Api\MobileAgentApiController@analytics')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/agent/bookings', 'Api\MobileAgentApiController@bookings')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/agent/commissions', 'Api\MobileAgentApiController@commissions')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/agent/documents', 'Api\MobileAgentApiController@documents')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/agent/follow-ups', 'Api\MobileAgentApiController@followUps')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/agent/leads', 'Api\MobileAgentApiController@leads')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/agent/payouts', 'Api\MobileAgentApiController@payouts')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/agent/properties', 'Api\MobileAgentApiController@properties')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/agent/site-visits', 'Api\MobileAgentApiController@siteVisits')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/agent/my-team', 'Api\MobileAgentApiController@myTeam')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/agent/rank-progress', 'Api\MobileAgentApiController@rankProgress')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
 // ADMIN MOBILE API â€” JSON endpoints for Flutter admin pages
 // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
 $adminMobilePrefix = '/api/v2/mobile/admin';
