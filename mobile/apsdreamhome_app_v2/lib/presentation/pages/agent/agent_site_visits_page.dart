@@ -9,9 +9,9 @@ import '../../../core/providers/auth_provider.dart';
 import '../../widgets/app_widgets.dart';
 import '../../widgets/glass_card.dart';
 
-/// Agent Bookings Page - View and manage property bookings
-class AgentBookingsPage extends ConsumerWidget {
-  const AgentBookingsPage({super.key});
+/// Agent Site Visits Page - View and manage site visit schedules
+class AgentSiteVisitsPage extends ConsumerWidget {
+  const AgentSiteVisitsPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,7 +26,7 @@ class AgentBookingsPage extends ConsumerWidget {
               onRetry: () => ref.refresh(currentUserDataProvider),
             );
           }
-          return _buildBody(context, ref);
+          return _buildBody(context, ref, user);
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => AppWidgets.errorWidget(
@@ -37,12 +37,13 @@ class AgentBookingsPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildBody(BuildContext context, WidgetRef ref) {
-    final bookingsAsync = ref.watch(_agentBookingsProvider);
+  Widget _buildBody(BuildContext context, WidgetRef ref, dynamic user) {
+    final userId = (user.id ?? user['id'] ?? 0) as int;
+    final visitsAsync = ref.watch(_agentSiteVisitsProvider(userId));
 
     return RefreshIndicator(
       onRefresh: () async {
-        ref.invalidate(_agentBookingsProvider);
+        ref.invalidate(_agentSiteVisitsProvider(userId));
         await Future.delayed(const Duration(milliseconds: 500));
       },
       color: AppTheme.primaryColor,
@@ -52,18 +53,18 @@ class AgentBookingsPage extends ConsumerWidget {
           SliverToBoxAdapter(child: _buildFilterChips(context)),
           SliverToBoxAdapter(
             child: AppWidgets.sectionHeader(
-              title: 'My Bookings',
-              subtitle: 'Manage your property bookings',
+              title: 'Site Visits',
+              subtitle: 'Manage scheduled site visits',
               onSeeAll: () {},
             ),
           ),
           SliverToBoxAdapter(
-            child: bookingsAsync.when(
-              data: (bookings) {
-                if (bookings.isEmpty) {
+            child: visitsAsync.when(
+              data: (visits) {
+                if (visits.isEmpty) {
                   return _buildEmptyState(context);
                 }
-                return _buildBookingsList(context, bookings);
+                return _buildVisitsList(context, visits);
               },
               loading: () => const Center(
                 child: Padding(
@@ -74,7 +75,8 @@ class AgentBookingsPage extends ConsumerWidget {
               ),
               error: (error, stack) => AppWidgets.errorWidget(
                 message: error.toString(),
-                onRetry: () => ref.invalidate(_agentBookingsProvider),
+                onRetry: () =>
+                    ref.invalidate(_agentSiteVisitsProvider(userId)),
               ),
             ),
           ),
@@ -103,8 +105,11 @@ class AgentBookingsPage extends ConsumerWidget {
                 color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Icon(Icons.calendar_today_rounded,
-                  color: Colors.white, size: 28),
+              child: const Icon(
+                Icons.location_on_rounded,
+                color: Colors.white,
+                size: 30,
+              ),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -112,14 +117,14 @@ class AgentBookingsPage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'My Bookings',
+                    'Site Visits',
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.w800,
                         ),
                   ),
                   Text(
-                    'Manage your property bookings',
+                    'Scheduled property site visits',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Colors.white.withValues(alpha: 0.8),
                         ),
@@ -134,7 +139,7 @@ class AgentBookingsPage extends ConsumerWidget {
   }
 
   Widget _buildFilterChips(BuildContext context) {
-    final filters = ['All', 'Pending', 'Confirmed', 'Completed', 'Cancelled'];
+    final filters = ['All', 'Upcoming', 'Completed', 'Cancelled'];
     return Container(
       height: 50,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -178,12 +183,11 @@ class AgentBookingsPage extends ConsumerWidget {
                 ),
                 borderRadius: BorderRadius.circular(24),
               ),
-              child: const Icon(Icons.event_note_outlined,
-                  size: 50, color: Colors.grey),
+              child: const Icon(Icons.map_outlined, size: 50, color: Colors.grey),
             ),
             const SizedBox(height: 24),
             Text(
-              'No Bookings Yet',
+              'No Site Visits Yet',
               style: AppTheme.headlineMedium.copyWith(
                 color: Colors.grey[800],
                 fontWeight: FontWeight.w700,
@@ -191,7 +195,7 @@ class AgentBookingsPage extends ConsumerWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Start booking properties for your clients',
+              'Your scheduled site visits will appear here',
               style: TextStyle(color: Colors.grey[600], fontSize: 16),
               textAlign: TextAlign.center,
             ),
@@ -201,52 +205,50 @@ class AgentBookingsPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildBookingsList(BuildContext context, List<dynamic> bookings) {
+  Widget _buildVisitsList(BuildContext context, List<dynamic> visits) {
     return ListView.separated(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      itemCount: bookings.length,
+      itemCount: visits.length,
       separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
-        final booking = bookings[index] as Map<String, dynamic>;
-        return _buildBookingCard(context, booking);
+        final visit = visits[index] as Map<String, dynamic>;
+        return _buildVisitCard(context, visit);
       },
     );
   }
 
-  Widget _buildBookingCard(BuildContext context, Map<String, dynamic> booking) {
-    final title = booking['title']?.toString() ??
-        booking['property_title']?.toString() ??
-        'Property Booking';
-    final location = booking['location']?.toString() ?? '';
-    final price = booking['price']?.toString() ?? '';
-    final plotNumber = booking['plot_number']?.toString() ?? '';
-    final status = booking['status']?.toString() ?? 'pending';
-    final bookingId = booking['id']?.toString() ?? '';
+  Widget _buildVisitCard(BuildContext context, Map<String, dynamic> visit) {
+    final leadName = visit['lead_name']?.toString() ?? 'Unknown Lead';
+    final leadPhone = visit['lead_phone']?.toString() ?? '';
+    final colonyName =
+        visit['colony_name']?.toString() ?? visit['property_title']?.toString() ?? '';
+    final scheduledAt = visit['scheduled_at']?.toString() ?? '';
+    final status = visit['status']?.toString() ?? 'scheduled';
+    final visitId = visit['id']?.toString() ?? '';
+
+    final isUpcoming = scheduledAt.isNotEmpty &&
+        DateTime.tryParse(scheduledAt)?.isAfter(DateTime.now()) == true;
 
     Color statusColor;
     IconData statusIcon;
+    String statusLabel;
     switch (status.toLowerCase()) {
-      case 'confirmed':
+      case 'completed':
         statusColor = AppTheme.successColor;
         statusIcon = Icons.check_circle_rounded;
-        break;
-      case 'pending':
-        statusColor = AppTheme.warningColor;
-        statusIcon = Icons.hourglass_empty_rounded;
+        statusLabel = 'Completed';
         break;
       case 'cancelled':
         statusColor = Colors.red;
         statusIcon = Icons.cancel_rounded;
-        break;
-      case 'completed':
-        statusColor = AppTheme.infoColor;
-        statusIcon = Icons.done_all_rounded;
+        statusLabel = 'Cancelled';
         break;
       default:
-        statusColor = Colors.grey;
-        statusIcon = Icons.info_rounded;
+        statusColor = isUpcoming ? AppTheme.warningColor : Colors.grey;
+        statusIcon = Icons.schedule_rounded;
+        statusLabel = isUpcoming ? 'Upcoming' : 'Past';
     }
 
     return GlassCard(
@@ -257,22 +259,16 @@ class AgentBookingsPage extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 56,
-                height: 56,
+                width: 48,
+                height: 48,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppTheme.primaryColor.withValues(alpha: 0.2),
-                      AppTheme.secondaryColor.withValues(alpha: 0.2),
-                    ],
-                  ),
+                  color: AppTheme.primaryColor.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.home_work_rounded,
-                    color: AppTheme.primaryColor, size: 26),
+                child: const Icon(Icons.location_on_rounded,
+                    color: AppTheme.primaryColor, size: 24),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -280,99 +276,92 @@ class AgentBookingsPage extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      title,
-                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                      leadName,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    if (location.isNotEmpty)
+                    if (colonyName.isNotEmpty)
                       Padding(
-                        padding: EdgeInsets.only(top: 4),
+                        padding: const EdgeInsets.only(top: 4),
                         child: Row(
                           children: [
-                            Icon(Icons.location_on_rounded,
-                                size: 13, color: Colors.grey[600]),
-                            SizedBox(width: 4),
+                            Icon(Icons.home_work_rounded,
+                                size: 14, color: Colors.grey[600]),
+                            const SizedBox(width: 6),
                             Expanded(
-                              child: Text(location,
-                                  style: TextStyle(
-                                      color: Colors.grey[600], fontSize: 12),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis),
+                              child: Text(
+                                colonyName,
+                                style: TextStyle(
+                                    color: Colors.grey[600], fontSize: 12),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ],
                         ),
                       ),
-                    if (plotNumber.isNotEmpty)
-                      Padding(
-                        padding: EdgeInsets.only(top: 4),
-                        child: Text('Plot: $plotNumber',
-                            style:
-                                TextStyle(color: Colors.grey[600], fontSize: 12)),
-                      ),
                   ],
                 ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  if (price.isNotEmpty)
-                    Text('\u20B9${_formatPrice(price)}',
-                        style: TextStyle(
-                            color: AppTheme.primaryColor,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 14)),
-                  SizedBox(height: 6),
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: statusColor.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(20),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: statusColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(statusIcon, color: statusColor, size: 12),
+                    const SizedBox(width: 4),
+                    Text(
+                      statusLabel,
+                      style: TextStyle(
+                        color: statusColor,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 11,
+                      ),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(statusIcon, color: statusColor, size: 12),
-                        SizedBox(width: 4),
-                        Text(status.toUpperCase(),
-                            style: TextStyle(
-                                color: statusColor,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 10)),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          if (scheduledAt.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Icon(Icons.calendar_today_rounded,
+                    size: 16, color: AppTheme.primaryColor),
+                const SizedBox(width: 8),
+                Text(
+                  'When: ${_formatDateTime(scheduledAt)}',
+                  style: TextStyle(color: Colors.grey[700], fontSize: 13),
+                ),
+              ],
+            ),
+          ],
+          if (leadPhone.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            Row(
+              children: [
+                Icon(Icons.phone_rounded, size: 14, color: Colors.grey[600]),
+                const SizedBox(width: 8),
+                Text(
+                  leadPhone,
+                  style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                ),
+              ],
+            ),
+          ],
+          const SizedBox(height: 12),
           Row(
             children: [
-              if (bookingId.isNotEmpty)
-                Expanded(
-                  child: SizedBox(
-                    height: 36,
-                    child: OutlinedButton.icon(
-                      onPressed: () =>
-                          context.push('/agent/bookings/$bookingId'),
-                      icon: const Icon(Icons.visibility_rounded, size: 15),
-                      label: const Text('View Details'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppTheme.primaryColor,
-                        side: BorderSide(
-                            color:
-                                AppTheme.primaryColor.withValues(alpha: 0.5)),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
-                    ),
-                  ),
-                ),
-              if (status == 'pending' && bookingId.isNotEmpty)
-                const SizedBox(width: 8),
-              if (status == 'pending')
+              if (isUpcoming && status.toLowerCase() == 'scheduled') ...[
                 Expanded(
                   child: SizedBox(
                     height: 36,
@@ -380,20 +369,40 @@ class AgentBookingsPage extends ConsumerWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                         gradient: const LinearGradient(
-                          colors: [AppTheme.successColor, Color(0xFF66BB6A)],
+                          colors: [AppTheme.primaryColor, AppTheme.secondaryColor],
                         ),
                       ),
                       child: ElevatedButton.icon(
-                        onPressed: () => _confirmBooking(context, bookingId),
-                        icon: const Icon(Icons.check_circle_rounded,
-                            size: 15, color: Colors.white),
-                        label: const Text('Confirm'),
+                        onPressed: () => _startVisit(visitId),
+                        icon: const Icon(Icons.play_arrow_rounded,
+                            size: 16, color: Colors.white),
+                        label: const Text('Start Visit'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent,
                           shadowColor: Colors.transparent,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                         ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+              ],
+              if (visitId.isNotEmpty)
+                Expanded(
+                  child: SizedBox(
+                    height: 36,
+                    child: OutlinedButton.icon(
+                      onPressed: () => context.push('/agent/site-visit/$visitId'),
+                      icon: const Icon(Icons.info_outline_rounded, size: 16),
+                      label: const Text('Details'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppTheme.infoColor,
+                        side: BorderSide(
+                            color: AppTheme.infoColor.withValues(alpha: 0.5)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
                       ),
                     ),
                   ),
@@ -405,64 +414,57 @@ class AgentBookingsPage extends ConsumerWidget {
     );
   }
 
-  String _formatPrice(String value) {
-    final num = double.tryParse(value) ?? 0;
-    if (num >= 10000000) {
-      return '${(num / 10000000).toStringAsFixed(2)} Cr';
-    } else if (num >= 100000) {
-      return '${(num / 100000).toStringAsFixed(2)} L';
+  String _formatDateTime(String dateStr) {
+    try {
+      final date = DateTime.parse(dateStr);
+      return '${date.day}/${date.month}/${date.year} ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
+    } catch (_) {
+      return dateStr;
     }
-    return num.toStringAsFixed(0);
   }
 
-  void _confirmBooking(BuildContext context, String bookingId) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Booking #$bookingId confirmed'),
-        backgroundColor: AppTheme.successColor,
-      ),
-    );
-  }
+  void _startVisit(String visitId) {}
 }
 
 // Provider
-final _agentBookingsProvider =
-    FutureProvider<List<dynamic>>((ref) async {
+final _agentSiteVisitsProvider =
+    FutureProvider.family<List<dynamic>, int>((ref, userId) async {
   try {
     final api = ApiService();
     AppConstants.initBaseUrl();
-    final response = await api.get('${AppConstants.apiVersion}/agent/bookings');
+    final response =
+        await api.get('${AppConstants.apiVersion}/agent/site-visits');
     if (response['success'] == true && response['data'] != null) {
       final data = response['data'];
-      final bookings = (data is List ? data : data['bookings'] ?? []) as List;
-      return List<Map<String, dynamic>>.from(bookings);
+      final visits = (data is List ? data : data['visits'] ?? []) as List;
+      return List<Map<String, dynamic>>.from(visits);
     }
   } catch (_) {}
-  // Mock fallback
+  // Mock data fallback
   return [
     {
       'id': 1,
-      'title': 'Suryoday Heights - Plot A-101',
-      'location': 'Gorakhpur, UP',
-      'price': '2500000',
-      'status': 'confirmed',
-      'plot_number': 'A-101',
+      'lead_name': 'Rajesh Kumar',
+      'lead_phone': '+91-9876543210',
+      'colony_name': 'Suryoday Heights',
+      'scheduled_at': '2026-09-01 10:00:00',
+      'status': 'scheduled',
     },
     {
       'id': 2,
-      'title': 'Braj Radha - Plot B-205',
-      'location': 'Mathura, UP',
-      'price': '1800000',
-      'status': 'pending',
-      'plot_number': 'B-205',
+      'lead_name': 'Priya Sharma',
+      'lead_phone': '+91-9876543211',
+      'colony_name': 'Braj Radha Nagri',
+      'scheduled_at': '2026-09-02 14:30:00',
+      'status': 'scheduled',
     },
     {
       'id': 3,
-      'title': 'Raghunath Nagri - Villa C-303',
-      'location': 'Varanasi, UP',
-      'price': '4500000',
+      'lead_name': 'Amit Singh',
+      'lead_phone': '+91-9876543212',
+      'colony_name': 'Raghunath Nagri',
+      'scheduled_at': '2026-08-15 11:00:00',
       'status': 'completed',
-      'plot_number': 'C-303',
     },
   ];
 });
