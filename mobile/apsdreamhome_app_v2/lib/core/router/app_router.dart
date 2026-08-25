@@ -60,8 +60,13 @@ import '../../presentation/pages/common/document_esign_detail_page.dart';
 import '../../presentation/pages/common/contact_page.dart';
 import '../../presentation/pages/common/team_page.dart';
 import '../../presentation/pages/common/privacy_policy_page.dart';
+import '../../presentation/pages/common/terms_conditions_page.dart';
+import '../../presentation/pages/common/legal_services_page.dart';
+import '../../presentation/pages/common/disclaimer_page.dart';
+import '../../presentation/pages/common/cancellation_policy_page.dart';
 import '../../presentation/pages/common/buy_page.dart';
 import '../../presentation/pages/common/sell_page.dart';
+import '../../presentation/pages/common/resell_properties_page.dart';
 import '../../presentation/pages/common/rent_page.dart';
 import '../../presentation/pages/common/invest_page.dart';
 import '../../presentation/pages/common/gallery_page.dart';
@@ -77,6 +82,7 @@ import '../../presentation/pages/property/comparison_page.dart';
 import '../../presentation/pages/customer/referral_page.dart';
 import '../../presentation/pages/customer/language_page.dart';
 import '../../presentation/pages/customer/support_tickets_page.dart';
+import '../../presentation/pages/customer/user_agreements_page.dart';
 
 // Tools
 import '../../presentation/pages/tools/stamp_duty_calculator_page.dart';
@@ -265,8 +271,13 @@ GoRouter createRouter() {
       final isContact = uri == '/contact';
       final isTeam = uri == '/team';
       final isPrivacy = uri == '/privacy';
+      final isTerms = uri == '/terms';
+      final isLegalServices = uri == '/legal/services';
+      final isDisclaimer = uri == '/disclaimer';
+      final isCancellationPolicy = uri == '/cancellation-policy';
       final isBuy = uri == '/buy';
       final isSell = uri == '/sell';
+      final isResellProperties = uri == '/resell-properties';
       final isRent = uri == '/rent';
       final isInvest = uri == '/invest';
       final isGallery = uri == '/gallery';
@@ -294,7 +305,7 @@ GoRouter createRouter() {
       final isPlotConverter = uri == '/plot-converter';
       final isCompare = uri == '/compare';
 
-      final isPublicRoute =
+final isPublicRoute =
           isSplash ||
           isLoginPage ||
           isRegisterPage ||
@@ -308,8 +319,8 @@ GoRouter createRouter() {
           isPlots ||
           isPlotDetail ||
           isProperties ||
-           isPropertyDetail ||
-           isPropertyGallery ||
+          isPropertyDetail ||
+          isPropertyGallery ||
           isEmiCalc ||
           isValuation ||
           isSiteVisit ||
@@ -328,8 +339,13 @@ GoRouter createRouter() {
           isContact ||
           isTeam ||
           isPrivacy ||
+          isTerms ||
+          isLegalServices ||
+          isDisclaimer ||
+          isCancellationPolicy ||
           isBuy ||
           isSell ||
+          isResellProperties ||
           isRent ||
           isInvest ||
           isGallery ||
@@ -429,8 +445,28 @@ GoRouter createRouter() {
         path: '/privacy',
         builder: (context, state) => const PrivacyPolicyPage(),
       ),
+      GoRoute(
+        path: '/terms',
+        builder: (context, state) => const TermsConditionsPage(),
+      ),
+      GoRoute(
+        path: '/legal/services',
+        builder: (context, state) => const LegalServicesPage(),
+      ),
+      GoRoute(
+        path: '/disclaimer',
+        builder: (context, state) => const DisclaimerPage(),
+      ),
+      GoRoute(
+        path: '/cancellation-policy',
+        builder: (context, state) => const CancellationPolicyPage(),
+      ),
       GoRoute(path: '/buy', builder: (context, state) => const BuyPage()),
       GoRoute(path: '/sell', builder: (context, state) => const SellPage()),
+      GoRoute(
+        path: '/resell-properties',
+        builder: (context, state) => const ResellPropertiesPage(),
+      ),
       GoRoute(path: '/rent', builder: (context, state) => const RentPage()),
       GoRoute(path: '/invest', builder: (context, state) => const InvestPage()),
       GoRoute(
@@ -498,6 +534,11 @@ GoRouter createRouter() {
             path: '/profile',
             pageBuilder: (context, state) =>
                 const NoTransitionPage(child: ProfilePage()),
+          ),
+          GoRoute(
+            path: '/user/agreements',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: UserAgreementsPage()),
           ),
         ],
       ),

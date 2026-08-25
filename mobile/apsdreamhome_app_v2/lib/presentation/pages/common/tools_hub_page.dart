@@ -140,6 +140,30 @@ class ToolsHubPage extends StatelessWidget {
           Icons.receipt_long_rounded,
           '/nach-mandate',
         ),
+        _ToolItem(
+          'Terms & Conditions',
+          'Read our terms of use',
+          Icons.gavel_rounded,
+          '/terms',
+        ),
+        _ToolItem(
+          'Legal Services',
+          'Property legal assistance',
+          Icons.balance_rounded,
+          '/legal/services',
+        ),
+        _ToolItem(
+          'Disclaimer',
+          'Read our disclaimer',
+          Icons.warning_amber_rounded,
+          '/disclaimer',
+        ),
+        _ToolItem(
+          'Cancellation Policy',
+          'Booking cancellation rules',
+          Icons.cancel_rounded,
+          '/cancellation-policy',
+        ),
       ],
     ),
     _ToolCategory(
