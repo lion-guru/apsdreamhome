@@ -45,8 +45,22 @@ class SMSService
             // Save OTP to database for verification
             $this->saveOTP($mobile, $otp);
             
+            $effectiveTemplateId = $templateId ?? $this->templateId;
+            
+            // MSG91 requires a DLT-registered template ID (TRAI compliance).
+            // Skip the API call when unset instead of guaranteed-failing remotely.
+            if (empty($effectiveTemplateId)) {
+                error_log("SMS OTP skipped for {$mobile}: MSG91_TEMPLATE_ID not configured (DLT template required). OTP generated locally: valid in DB.");
+                return [
+                    'success' => false,
+                    'otp' => $otp,
+                    'error' => 'SMS template not configured',
+                    'skipped' => true
+                ];
+            }
+            
             $payload = [
-                'template_id' => $templateId ?? $this->templateId,
+                'template_id' => $effectiveTemplateId,
                 'short_url' => '0',
                 'realTimeResponse' => 'true',
                 'recipients' => [
@@ -195,6 +209,12 @@ class SMSService
     {
         try {
             $mobile = $this->cleanMobileNumber($mobile);
+            
+            // MSG91 requires a DLT-registered template ID (TRAI compliance).
+            if (empty($this->templateId)) {
+                error_log("SMS [{$type}] skipped for {$mobile}: MSG91_TEMPLATE_ID not configured.");
+                return ['success' => false, 'error' => 'SMS template not configured', 'skipped' => true];
+            }
             
             $payload = [
                 'template_id' => $this->templateId,
