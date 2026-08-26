@@ -1,4 +1,45 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-21 — Session 77: Service Layer Tenant Scoping)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-26 — Session 78: API Gap Closure + Agent Portal + Deep Scan)
+
+## Session 78: API Gap Closure + Agent Portal Flutter Pages (2026-08-26)
+
+### Goal
+Close all 30 missing mobile API endpoints found in deep scan, build the agent portal in Flutter, verify full business workflow A-to-Z.
+
+### What Was Done
+| Feature | Details | Commit |
+|---------|---------|--------|
+| **Chat System endpoints (5)** | `/api/v2/mobile/chat/{start,send,poll,history,widget}` aliases → LiveChatWidgetController; send() fixed to use `$this->request->getContentAsJson()` (php://input consumed upstream) | `e8c047b4e` |
+| **MobileAgentApiController (NEW)** | 11 endpoints: analytics, bookings, commissions, documents, follow-ups, leads, payouts, properties, site-visits, my-team, rank-progress — all TenantAwareTrait scoped | `e8c047b4e` |
+| **MobileTelecallerApiController (NEW)** | dashboard + report from ai_calling_schedule | `ca385dd75` |
+| **Voice/Assistant v2 aliases (9)** | voice/{start-call,process-response,session,end-call,schedule GET+POST,stats,call-history} + voice-assistant/query | `e8c047b4e` |
+| **app_constants.dart** | +100 endpoint constants; deduped; callLog/callStats restored after accidental removal broke telecaller build | `e8c047b4e`,`7a6bf2f67` |
+| **8 Agent Flutter pages** | analytics (funnel/sources/trends), bookings, documents, follow-ups, properties, site-visits, my-team, rank-progress (GBV progress bar + 7-rank ladder) — Dart records pattern, zero analyzer errors | `5cb5e368d`,`ca385dd75` |
+| **Router wiring** | 9 GoRoutes under /agent/* (auth-required); dashboard 3-row quick-actions grid | `b11ec36ef`,`37bad7e20` |
+| **colony_model codegen fix** | fromJson preprocessing body blocked freezed generation → extracted to top-level `_preprocessColonyJson()` helper with redirecting factory; .g.dart generated | `7a6bf2f67` |
+| **APK v1.2.2** | Release APK 88.6 MB rebuilt twice (final includes dashboard wiring), deployed to public/downloads/apsdreamhome.apk | `7a6bf2f67`+local |
+| **PROJECT_ROADMAP.md (NEW)** | Master overnight plan: phases 1–6 with results, carry-forward table, commands reference, lessons | `37bad7e20` |
+| **testing/smoke_all_ai.php (NEW)** | 7/7 AI surfaces PASS: SmartAI(engine=rag), WidgetBot, GeminiBot(source=local), VoiceAssistant(real colony answer), AsstChat(Hindi), Recos(8), Analyze | `37bad7e20` |
+| **testing/workflow_probe.php (NEW)** | 15/15 PASS: login→properties→favorites→inquiry(persisted)→colonies→dashboard→notifications→payment-history→profile + DB integrity (0 orphaned FKs anywhere) | `37bad7e20` |
+| **Colonies page warnings eliminated** | colony_stats block restored in PropertyPageController (was 211 warnings/load); null-safe image path; /colonies now logs ZERO bytes | `37bad7e20` |
+
+### Key Lessons
+_161. **ParameterBag headers are lowercase** — `Request::getHeaders()` lowercases HTTP_* and CONTENT_TYPE keys. Must read `$request->headers->get('content_type')`, NOT 'CONTENT_TYPE'. Root cause of SmartAI empty-body bug (Session 78)._
+_162. **freezed requires a redirecting factory for FromJson** — a full-body `factory X.fromJson(raw) { ...; return _$XFromJson(json); }` silently blocks .g.dart generation (build_runner "wrote 0 outputs"). Fix: extract preprocessing to a top-level function and use `factory X.fromJson(raw) => _$XFromJson(_preprocess(raw));`_
+_163. **Deduplicating constants breaks silent dependents** — grep `AppConstants.<name>` across ALL of lib/ BEFORE removing any constant. callLogEndpoint removal broke 3 telecaller files at compile time._
+_164. **Dart records `(String, int, IconData, Color)` beat private helper classes** for local widget-data lists — impossible to create duplicate class definitions, less boilerplate._
+_165. **Property inquiries target user_properties, not properties** — submitPropertyInquiry validates against user-submitted listings table; probe scripts must use a user_properties id._
+_166. **PowerShell curl -d JSON escaping is unreliable** — use a PHP curl probe file for JSON POST testing instead of fighting quote mangling._
+
+### Verification Results (Session 78 final)
+- E2E: **153/153 PASS**
+- AI smoke: **7/7 PASS** (`php testing/smoke_all_ai.php`)
+- Workflow probe: **15/15 PASS** (`php testing/workflow_probe.php`)
+- Cron lint: 0 errors across scripts/cron_*.php + cron/*.php
+- Agentic system (E:\coding-assistant): cp1252 crash fixed via shell.py encoding='utf-8'; cycle completes
+- Docker asterisk compose YAML valid
+- /colonies: zero new log warnings
+
+---
 
 ## Session 77: Service Layer Tenant Scoping Completion (2026-08-21)
 
