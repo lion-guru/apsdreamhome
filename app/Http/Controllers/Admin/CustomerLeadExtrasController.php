@@ -176,9 +176,10 @@ class CustomerLeadExtrasController extends AdminController
             }
             
             // Update lead score
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
             $this->db->query(
-                "UPDATE lead_scoring SET score = ?, criteria = CONCAT(criteria, ' | Manual override: ', ?), updated_at = NOW() WHERE id = ?",
-                [$score, $reason, $id]
+                "UPDATE lead_scoring SET score = ?, criteria = CONCAT(criteria, ' | Manual override: ', ?), updated_at = NOW() WHERE id = ?" . $tenantSql,
+                array_merge([$score, $reason, $id], $tenantParams)
             );
             
             // Also update the lead's score if needed
@@ -188,9 +189,10 @@ class CustomerLeadExtrasController extends AdminController
             )->fetch();
             
             if ($leadScore) {
+                [$tenantSql, $tenantParams] = $this->tenantWhere();
                 $this->db->query(
-                    "UPDATE leads SET lead_score = ?, score_factors = CONCAT(score_factors, ' | Manual override: ', ?) WHERE id = ?",
-                    [$score, $reason, $leadScore['lead_id']]
+                    "UPDATE leads SET lead_score = ?, score_factors = CONCAT(score_factors, ' | Manual override: ', ?) WHERE id = ?" . $tenantSql,
+                    array_merge([$score, $reason, $leadScore['lead_id']], $tenantParams)
                 );
             }
             
@@ -323,11 +325,15 @@ class CustomerLeadExtrasController extends AdminController
                 return;
             }
             
-            // Insert custom field
+            // Insert custom field — tenant business data
+            $tid = (int)$this->tenantId();
+            $tenantCol = $tid > 1 ? ", tenant_id" : "";
+            $tenantVal = $tid > 1 ? ", ?" : "";
+            $tenantInsert = $tid > 1 ? [$tid] : [];
             $this->db->query(
-                "INSERT INTO lead_custom_fields (field_name, field_label, field_type, field_group, default_value, is_required, is_active, validation_rules, sort_order, created_by) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                [$fieldName, $fieldLabel, $fieldType, $fieldGroup, $defaultValue, $isRequired, $isActive, $validationRules, $sortOrder, $createdBy]
+                "INSERT INTO lead_custom_fields (field_name, field_label, field_type, field_group, default_value, is_required, is_active, validation_rules, sort_order, created_by{$tenantCol}) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?{$tenantVal})",
+                array_merge([$fieldName, $fieldLabel, $fieldType, $fieldGroup, $defaultValue, $isRequired, $isActive, $validationRules, $sortOrder, $createdBy], $tenantInsert)
             );
             
             $_SESSION['success'] = 'Custom field created successfully';
@@ -374,9 +380,10 @@ class CustomerLeadExtrasController extends AdminController
             }
             
             // Update custom field
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
             $this->db->query(
-                "UPDATE lead_custom_fields SET field_name = ?, field_label = ?, field_type = ?, field_group = ?, default_value = ?, is_required = ?, is_active = ?, validation_rules = ?, sort_order = ? WHERE id = ?",
-                [$fieldName, $fieldLabel, $fieldType, $fieldGroup, $defaultValue, $isRequired, $isActive, $validationRules, $sortOrder, $id]
+                "UPDATE lead_custom_fields SET field_name = ?, field_label = ?, field_type = ?, field_group = ?, default_value = ?, is_required = ?, is_active = ?, validation_rules = ?, sort_order = ? WHERE id = ?" . $tenantSql,
+                array_merge([$fieldName, $fieldLabel, $fieldType, $fieldGroup, $defaultValue, $isRequired, $isActive, $validationRules, $sortOrder, $id], $tenantParams)
             );
             
             $_SESSION['success'] = 'Custom field updated successfully';
@@ -405,9 +412,10 @@ class CustomerLeadExtrasController extends AdminController
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             // Soft delete - set is_active to 0
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
             $this->db->query(
-                "UPDATE lead_custom_fields SET is_active = 0 WHERE id = ?",
-                [$id]
+                "UPDATE lead_custom_fields SET is_active = 0 WHERE id = ?" . $tenantSql,
+                array_merge([$id], $tenantParams)
             );
             
             $_SESSION['success'] = 'Custom field deleted successfully';
@@ -516,9 +524,10 @@ class CustomerLeadExtrasController extends AdminController
             
             try {
                 // Update approval status
+                [$tenantSql, $tenantParams] = $this->tenantWhere();
                 $this->db->query(
-                    "UPDATE lead_assignment_approvals SET status = ?, admin_notes = ?, approved_by = ?, approved_at = NOW(), updated_at = NOW() WHERE id = ?",
-                    [$status, $adminNotes, $approvedBy, $id]
+                    "UPDATE lead_assignment_approvals SET status = ?, admin_notes = ?, approved_by = ?, approved_at = NOW(), updated_at = NOW() WHERE id = ?" . $tenantSql,
+                    array_merge([$status, $adminNotes, $approvedBy, $id], $tenantParams)
                 );
             } catch (\Throwable $e) {
             // Gracefully handle dropped table ref

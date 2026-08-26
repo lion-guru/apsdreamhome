@@ -47,10 +47,15 @@ class MlmRewardsController extends AdminController
             'min_monthly_commission' => floatval($_POST['min_monthly_commission'] ?? 0)
         ];
 
+        $tid = (int)$this->tenantId();
         if ($id > 0) {
-            $this->db->update('mlm_rank_criteria', $data, ['id' => $id]);
+            // tenant-scoped update: only own tenant's criteria
+            $where = ['id' => $id];
+            if ($tid > 1) $where['tenant_id'] = $tid;
+            $this->db->update('mlm_rank_criteria', $data, $where);
             $_SESSION['success'] = 'Rank criteria updated successfully!';
         } else {
+            if ($tid > 1) $data['tenant_id'] = $tid;
             $this->db->insert('mlm_rank_criteria', $data);
             $_SESSION['success'] = 'Rank criteria added successfully!';
         }
@@ -147,12 +152,14 @@ class MlmRewardsController extends AdminController
             }
 
             $update = ['status' => $status];
+            $tid = (int)$this->tenantId();
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
             if ($status === 'rejected') {
                 $update['rejection_reason'] = $adminNotes;
-                // Refund the user wallet
+                // Refund the user wallet — tenant-scoped
                 $this->db->query(
-                    "UPDATE user_wallets SET balance = balance + ?, updated_at = NOW() WHERE user_id = ? AND user_type = 'associate'",
-                    [$request['amount'], $request['user_id']]
+                    "UPDATE user_wallets SET balance = balance + ?, updated_at = NOW() WHERE user_id = ? AND user_type = 'associate'" . $tenantSql,
+                    array_merge([$request['amount'], $request['user_id']], $tenantParams)
                 );
             } else {
                 $update['remarks'] = $adminNotes;
@@ -166,7 +173,9 @@ class MlmRewardsController extends AdminController
                 }
             }
 
-            $this->db->update('withdrawal_requests', $update, ['id' => intval($id)]);
+            $where = ['id' => intval($id)];
+            if ($tid > 1) $where['tenant_id'] = $tid;
+            $this->db->update('withdrawal_requests', $update, $where);
             $this->db->commit();
 
             $_SESSION['success'] = 'Withdrawal request ' . $status . ' successfully!';

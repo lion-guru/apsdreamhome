@@ -7,6 +7,7 @@ use App\Core\App;
 /**
  * CM Dashboard Controller
  * Chief Manager Dashboard
+ * NOTE: Read-only dashboard — no INSERT/UPDATE/DELETE writes. All prepare() calls are SELECT on users/properties/activity_logs_unified (reporting). No tenant write scoping needed.
  */
 class CMDashboardController extends AdminController
 {

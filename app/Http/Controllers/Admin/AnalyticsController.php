@@ -10,6 +10,7 @@ use Exception;
 /**
  * Analytics Controller - Custom MVC Implementation
  * Handles commission analytics and business intelligence
+ * NOTE: Read-only analytics — no SQL writes (only SELECT via query/fetchAll/fetchOne). No tenant write scoping needed.
  */
 class AnalyticsController extends AdminController
 {

@@ -144,17 +144,21 @@ class AIController extends AdminController
         $input['created_by'] = $this->getUserId();
         $input['user_role'] = $this->getUserRole();
 
-        // Save lead to database
+        // Save lead to database — tenant-scoped (leads has tenant_id)
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $stmt = $db->prepare("INSERT INTO leads (name, email, phone, message, source, created_by, created_at) VALUES (?, ?, ?, ?, 'ai_chat', ?, NOW())");
-            $stmt->execute([
+            $tid = (int)$this->tenantId();
+            $tenantCol = $tid > 1 ? ", tenant_id" : "";
+            $tenantVal = $tid > 1 ? ", ?" : "";
+            $tenantInsert = $tid > 1 ? [$tid] : [];
+            $stmt = $db->prepare("INSERT INTO leads (name, email, phone, message, source, created_by, created_at{$tenantCol}) VALUES (?, ?, ?, ?, 'ai_chat', ?, NOW(){$tenantVal})");
+            $stmt->execute(array_merge([
                 $input['name'] ?? '',
                 $input['email'] ?? '',
                 $input['phone'] ?? '',
                 $input['message'] ?? '',
                 $input['created_by']
-            ]);
+            ], $tenantInsert));
             echo json_encode(['success' => true, 'message' => 'Lead saved successfully']);
         } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'error' => 'Failed to save lead']);
@@ -433,24 +437,35 @@ class AIController extends AdminController
             $db = \App\Core\Database\Database::getInstance();
             $pdo = $db->getConnection();
 
-            $sql = "INSERT INTO property_valuations 
-                    (property_id, location, area_sqft, property_type, bedrooms, bathrooms,
-                     estimated_price, price_per_sqft, confidence_score, similar_properties_count, created_at) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
-
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([
-                $input['property_id'] ?? null,
-                $input['location'],
-                $input['area_sqft'],
-                $input['property_type'],
-                $input['bedrooms'] ?? 0,
-                $input['bathrooms'] ?? 0,
-                $valuation['estimated_price'],
-                $valuation['price_per_sqft'],
-                $valuation['confidence_score'],
-                $valuation['similar_properties_count']
-            ]);
+            // property_valuations table does not exist in current schema — guarded; if present, would be tenant-scoped
+            $tid = (int)$this->tenantId();
+            $tenantCol = $tid > 1 ? ", tenant_id" : "";
+            $tenantVal = $tid > 1 ? ", ?" : "";
+            $tenantInsert = $tid > 1 ? [$tid] : [];
+            // Check table exists before insert to avoid 1146
+            $tableExists = false;
+            try { $pdo->query("SELECT 1 FROM property_valuations LIMIT 0"); $tableExists = true; } catch (\Throwable $e) { $tableExists = false; }
+            if ($tableExists) {
+                $sql = "INSERT INTO property_valuations 
+                        (property_id, location, area_sqft, property_type, bedrooms, bathrooms,
+                         estimated_price, price_per_sqft, confidence_score, similar_properties_count, created_at{$tenantCol}) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(){$tenantVal})";
+                $stmt = $pdo->prepare($sql);
+                $params = [
+                    $input['property_id'] ?? null,
+                    $input['location'],
+                    $input['area_sqft'],
+                    $input['property_type'],
+                    $input['bedrooms'] ?? 0,
+                    $input['bathrooms'] ?? 0,
+                    $valuation['estimated_price'],
+                    $valuation['price_per_sqft'],
+                    $valuation['confidence_score'],
+                    $valuation['similar_properties_count']
+                ];
+                if ($tid > 1) $params[] = $tid;
+                $stmt->execute($params);
+            }
 
             $valuationId = $pdo->lastInsertId();
 

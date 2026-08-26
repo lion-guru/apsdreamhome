@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 class SeoController extends BaseApiController
 {
+    use \App\Traits\TenantAwareTrait;
     public function __construct()
     {
         parent::__construct();
@@ -20,8 +21,9 @@ class SeoController extends BaseApiController
 
             $db = \App\Core\Database\Database::getInstance();
             $conn = $db->getConnection();
-            $stmt = $conn->prepare("SELECT * FROM seo_metadata WHERE page_name = ? LIMIT 1");
-            $stmt->execute([$pageName]);
+            $tid = (int)$this->tenantId();
+            $stmt = $conn->prepare("SELECT * FROM seo_metadata WHERE page_name = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " LIMIT 1");
+            $stmt->execute($tid > 1 ? [$pageName, $tid] : [$pageName]);
             $metadata = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             $data = [
@@ -56,9 +58,9 @@ class SeoController extends BaseApiController
 
             $db = \App\Core\Database\Database::getInstance();
             $conn = $db->getConnection();
-
-            $stmt = $conn->prepare("SELECT id FROM seo_metadata WHERE page_name = ? LIMIT 1");
-            $stmt->execute([$pageName]);
+            $tid = (int)$this->tenantId();
+            $stmt = $conn->prepare("SELECT id FROM seo_metadata WHERE page_name = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " LIMIT 1");
+            $stmt->execute($tid > 1 ? [$pageName, $tid] : [$pageName]);
             $existing = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             $data = [
@@ -81,7 +83,8 @@ class SeoController extends BaseApiController
                 }
                 $params[] = $existing['id'];
                 try {
-                    $conn->prepare("UPDATE seo_metadata SET " . implode(', ', $sets) . " WHERE id = ?")->execute($params);
+                    [$tenantSql, $tenantParams] = $this->tenantWhere();
+                    $conn->prepare("UPDATE seo_metadata SET " . implode(', ', $sets) . " WHERE id = ?" . $tenantSql)->execute(array_merge($params, $tenantParams));
                 } catch (\Throwable $e) {
                 // Gracefully handle dropped table ref
                 error_log($e->getMessage());
@@ -90,7 +93,10 @@ class SeoController extends BaseApiController
                 $cols = array_keys($data);
                 $placeholders = rtrim(str_repeat('?,', count($cols)), ',');
                 $vals = array_values($data);
-                $conn->prepare("INSERT INTO seo_metadata (page_name, " . implode(',', $cols) . ") VALUES (?, $placeholders)")->execute(array_merge([$pageName], $vals));
+                $tenantCol = $tid > 1 ? ", tenant_id" : "";
+                $tenantVal = $tid > 1 ? ", ?" : "";
+                $tenantInsert = $tid > 1 ? [$tid] : [];
+                $conn->prepare("INSERT INTO seo_metadata (page_name, " . implode(',', $cols) . "{$tenantCol}) VALUES (?, $placeholders{$tenantVal})")->execute(array_merge([$pageName], $vals, $tenantInsert));
             }
 
             return $this->jsonSuccess(null, 'SEO metadata updated successfully');

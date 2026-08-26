@@ -1,4 +1,6 @@
 <?php
+// NOTE: Direct writes here target app_settings (global config table — does NOT have tenant_id, cross-tenant).
+// app_settings table does not exist in current schema; AdManager business writes (ad_placements — tenant_id YES) are delegated to AdManagerService which is tenant-scoped. This controller intentionally NOT tenant-scoped for direct reads/writes.
 
 namespace App\Http\Controllers\Admin;
 

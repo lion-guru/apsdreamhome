@@ -2,6 +2,7 @@
 /**
  * Email Settings Controller
  * Admin can configure SMTP settings here
+ * NOTE: Writes target app_settings (global config) — table does NOT exist / is cross-tenant config (not tenant business data). smtp_* keys are global platform settings shared across tenants. Intentionally NOT tenant-scoped. If per-tenant email config is needed in future, migrate to service_configs (which IS tenant-scoped).
  */
 
 namespace App\Http\Controllers\Admin;

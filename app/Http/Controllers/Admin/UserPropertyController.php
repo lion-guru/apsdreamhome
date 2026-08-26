@@ -124,20 +124,21 @@ class UserPropertyController extends AdminController
             $status = 'verified';
         }
 
+        [$tenantSql, $tenantParams] = $this->tenantWhere();
         if ($action === 'mark_sold') {
             $stmt = $this->db->prepare("
                 UPDATE user_properties 
                 SET status = ?, verified_by = ?, verified_at = NOW(), sold_at = NOW(), admin_notes = ?, updated_at = NOW()
-                WHERE id = ?
+                WHERE id = ?" . $tenantSql . "
             ");
-            $stmt->execute([$status, $adminId, $adminNotes, $id]);
+            $stmt->execute(array_merge([$status, $adminId, $adminNotes, $id], $tenantParams));
         } else {
             $stmt = $this->db->prepare("
                 UPDATE user_properties 
                 SET status = ?, verified_by = ?, verified_at = NOW(), admin_notes = ?, updated_at = NOW()
-                WHERE id = ?
+                WHERE id = ?" . $tenantSql . "
             ");
-            $stmt->execute([$status, $adminId, $adminNotes, $id]);
+            $stmt->execute(array_merge([$status, $adminId, $adminNotes, $id], $tenantParams));
         }
 
         // Send email notification to property owner

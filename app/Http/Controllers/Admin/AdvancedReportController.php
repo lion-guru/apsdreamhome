@@ -1,4 +1,6 @@
 <?php
+// NOTE: Read-only analytics controller — no INSERT/UPDATE/DELETE writes. All queries are SELECT on leads/proposals/deals/users (read-only reporting). No tenant write scoping needed. Tenant read isolation is handled at service layer if filtered.
+
 namespace App\Http\Controllers\Admin;
 use App\Core\Database\Database;
 

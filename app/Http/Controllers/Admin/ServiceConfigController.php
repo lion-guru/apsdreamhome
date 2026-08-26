@@ -135,19 +135,25 @@ class ServiceConfigController extends AdminController
         }
 
         $pdo = $this->getDb();
-        $stmt = $pdo->prepare("DELETE FROM `service_configs` WHERE `service_name` = ?");
-        $stmt->execute([$service]);
+        $tid = (int)$this->tenantId();
+        [$tenantSql, $tenantParams] = $this->tenantWhere();
+        $stmt = $pdo->prepare("DELETE FROM `service_configs` WHERE `service_name` = ?" . $tenantSql);
+        $stmt->execute(array_merge([$service], $tenantParams));
 
-        // Re-seed defaults for this service from the full seed list
+        // Re-seed defaults for this service from the full seed list — tenant-scoped
         $defaults = $this->getSeedDefaults();
         if (isset($defaults[$service])) {
+            $tenantCol = $tid > 1 ? ", `tenant_id`" : "";
+            $tenantVal = $tid > 1 ? ", ?" : "";
             $ins = $pdo->prepare(
                 "INSERT INTO `service_configs`
-                    (`service_name`,`config_key`,`config_value`,`config_type`,`description`,`is_secret`,`group_name`,`sort_order`)
-                 VALUES (?,?,?,?,?,?,?,?)"
+                    (`service_name`,`config_key`,`config_value`,`config_type`,`description`,`is_secret`,`group_name`,`sort_order`{$tenantCol})
+                 VALUES (?,?,?,?,?,?,?,?{$tenantVal})"
             );
             foreach ($defaults[$service] as $row) {
-                $ins->execute([$service, ...$row]);
+                $params = [$service, ...$row];
+                if ($tid > 1) $params[] = $tid;
+                $ins->execute($params);
             }
         }
 

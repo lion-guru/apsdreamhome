@@ -224,6 +224,7 @@ class BookingLifecycleController extends AdminController
             return $this->redirect('/admin/sales/bookings');
         }
         try {
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
             $sql = "UPDATE plot_bookings SET
                         booking_amount   = ?,
                         agreement_value  = ?,
@@ -232,8 +233,8 @@ class BookingLifecycleController extends AdminController
                         sales_manager_id = ?,
                         commission_pct   = ?,
                         notes            = ?
-                    WHERE id = ?";
-            $this->db->prepare($sql)->execute([
+                    WHERE id = ?" . $tenantSql;
+            $this->db->prepare($sql)->execute(array_merge([
                 (float)($_POST['booking_amount']   ?? $booking['booking_amount']),
                 (float)($_POST['agreement_value']  ?? $booking['agreement_value']),
                 (string)($_POST['channel']         ?? $booking['channel']),
@@ -242,7 +243,7 @@ class BookingLifecycleController extends AdminController
                 (float)($_POST['commission_pct']   ?? $booking['commission_pct']),
                 (string)($_POST['notes']           ?? $booking['notes']),
                 $id,
-            ]);
+            ], $tenantParams));
             $this->setFlash('success', 'Booking updated');
         } catch (\Exception $e) {
             error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
@@ -539,14 +540,19 @@ class BookingLifecycleController extends AdminController
             }
 
             $notes = (string)($_POST['approval_notes'] ?? 'Approved by admin');
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $tid = (int)$this->tenantId();
             $this->db->prepare(
-                "UPDATE plot_bookings SET approval_status = 'approved', approval_notes = ?, approved_by = ?, approved_at = NOW() WHERE id = ?"
-            )->execute([$notes, $_SESSION['admin_id'] ?? null, $id]);
+                "UPDATE plot_bookings SET approval_status = 'approved', approval_notes = ?, approved_by = ?, approved_at = NOW() WHERE id = ?" . $tenantSql
+            )->execute(array_merge([$notes, $_SESSION['admin_id'] ?? null, $id], $tenantParams));
 
             // Log status history
+            $tenantCol = $tid > 1 ? ", tenant_id" : "";
+            $tenantVal = $tid > 1 ? ", ?" : "";
+            $tenantInsert = $tid > 1 ? [$tid] : [];
             $this->db->prepare(
-                "INSERT INTO booking_status_history (booking_id, from_status, to_status, changed_by, reason, created_at) VALUES (?, ?, 'approved', ?, ?, NOW())"
-            )->execute([$id, $booking['status'] ?? 'token_paid', $_SESSION['admin_id'] ?? null, $notes]);
+                "INSERT INTO booking_status_history (booking_id, from_status, to_status, changed_by, reason, created_at{$tenantCol}) VALUES (?, ?, 'approved', ?, ?, NOW(){$tenantVal})"
+            )->execute(array_merge([$id, $booking['status'] ?? 'token_paid', $_SESSION['admin_id'] ?? null, $notes], $tenantInsert));
 
             $this->setFlash('success', 'Booking ' . ($booking['booking_number'] ?? "#{$id}") . ' approved');
         } catch (\Exception $e) {
@@ -570,14 +576,19 @@ class BookingLifecycleController extends AdminController
             }
 
             $notes = (string)($_POST['rejection_reason'] ?? 'Rejected by admin');
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $tid = (int)$this->tenantId();
             $this->db->prepare(
-                "UPDATE plot_bookings SET approval_status = 'rejected', approval_notes = ?, approved_by = ?, approved_at = NOW() WHERE id = ?"
-            )->execute([$notes, $_SESSION['admin_id'] ?? null, $id]);
+                "UPDATE plot_bookings SET approval_status = 'rejected', approval_notes = ?, approved_by = ?, approved_at = NOW() WHERE id = ?" . $tenantSql
+            )->execute(array_merge([$notes, $_SESSION['admin_id'] ?? null, $id], $tenantParams));
 
             // Log status history
+            $tenantCol = $tid > 1 ? ", tenant_id" : "";
+            $tenantVal = $tid > 1 ? ", ?" : "";
+            $tenantInsert = $tid > 1 ? [$tid] : [];
             $this->db->prepare(
-                "INSERT INTO booking_status_history (booking_id, from_status, to_status, changed_by, reason, created_at) VALUES (?, ?, 'rejected', ?, ?, NOW())"
-            )->execute([$id, $booking['status'] ?? 'token_paid', $_SESSION['admin_id'] ?? null, $notes]);
+                "INSERT INTO booking_status_history (booking_id, from_status, to_status, changed_by, reason, created_at{$tenantCol}) VALUES (?, ?, 'rejected', ?, ?, NOW(){$tenantVal})"
+            )->execute(array_merge([$id, $booking['status'] ?? 'token_paid', $_SESSION['admin_id'] ?? null, $notes], $tenantInsert));
 
             $this->setFlash('success', 'Booking ' . ($booking['booking_number'] ?? "#{$id}") . ' rejected');
         } catch (\Exception $e) {

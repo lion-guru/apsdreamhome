@@ -89,8 +89,9 @@ class BackupController extends AdminController
 
         try {
             $db = Database::getInstance()->getConnection();
-            $stmt = $db->prepare("SELECT file_path, status FROM system_backups WHERE id = ?");
-            $stmt->execute([$id]);
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $stmt = $db->prepare("SELECT file_path, status FROM system_backups WHERE id = ?" . $tenantSql);
+            $stmt->execute(array_merge([$id], $tenantParams));
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if (!$row) {
@@ -166,12 +167,16 @@ class BackupController extends AdminController
                 return;
             }
 
-            // Log into system_backups
+            // Log into system_backups — tenant-scoped (system_backups has tenant_id)
             $db = Database::getInstance()->getConnection();
             $checksum = hash_file('sha256', $destPath);
             $fileSize = filesize($destPath);
-            $stmt = $db->prepare("INSERT INTO system_backups (backup_type, file_path, file_size, checksum, status, completed_at, created_by) VALUES ('uploaded', ?, ?, ?, 'completed', NOW(), ?)");
-            $stmt->execute([$destPath, $fileSize, $checksum, $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? null]);
+            $tid = (int)$this->tenantId();
+            $tenantCol = $tid > 1 ? ", tenant_id" : "";
+            $tenantVal = $tid > 1 ? ", ?" : "";
+            $tenantInsert = $tid > 1 ? [$tid] : [];
+            $stmt = $db->prepare("INSERT INTO system_backups (backup_type, file_path, file_size, checksum, status, completed_at, created_by{$tenantCol}) VALUES ('uploaded', ?, ?, ?, 'completed', NOW(), ?{$tenantVal})");
+            $stmt->execute(array_merge([$destPath, $fileSize, $checksum, $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? null], $tenantInsert));
 
             $this->setFlash('success', "Upload OK: {$destName} (" . $this->humanBytes($fileSize) . ")");
         } catch (\Exception $e) {
@@ -201,8 +206,9 @@ class BackupController extends AdminController
 
         try {
             $db = Database::getInstance()->getConnection();
-            $stmt = $db->prepare("SELECT file_path, status FROM system_backups WHERE id = ?");
-            $stmt->execute([$id]);
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $stmt = $db->prepare("SELECT file_path, status FROM system_backups WHERE id = ?" . $tenantSql);
+            $stmt->execute(array_merge([$id], $tenantParams));
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if (!$row || empty($row['file_path']) || !file_exists($row['file_path'])) {
@@ -246,8 +252,9 @@ class BackupController extends AdminController
         }
         try {
             $db = Database::getInstance()->getConnection();
-            $stmt = $db->prepare("SELECT id, file_path, status FROM system_backups WHERE id = ?");
-            $stmt->execute([$id]);
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $stmt = $db->prepare("SELECT id, file_path, status FROM system_backups WHERE id = ?" . $tenantSql);
+            $stmt->execute(array_merge([$id], $tenantParams));
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
             if (!$row || empty($row['file_path']) || !is_file($row['file_path'])) {
                 $this->setFlash('error', "Backup #{$id} file not found on local disk");
@@ -276,8 +283,9 @@ class BackupController extends AdminController
 
             // Persist S3 location on the row.
             try {
-                $stmt = $db->prepare("UPDATE system_backups SET s3_key = ?, s3_uploaded_at = NOW() WHERE id = ?");
-                $stmt->execute([$key, $id]);
+                [$tenantSql2, $tenantParams2] = $this->tenantWhere();
+                $stmt = $db->prepare("UPDATE system_backups SET s3_key = ?, s3_uploaded_at = NOW() WHERE id = ?" . $tenantSql2);
+                $stmt->execute(array_merge([$key, $id], $tenantParams2));
             } catch (\Throwable $e) {
                 // column may not exist - log and continue
                 error_log('BackupController::toS3: column update failed: ' . $e->getMessage());
