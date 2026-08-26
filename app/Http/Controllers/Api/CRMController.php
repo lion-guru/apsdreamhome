@@ -8,12 +8,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\BaseController;
 use App\Services\CRMService;
-use App\Models\BookingPaymentSchedule;
-use App\Models\PlotBooking;
 use App\Models\User;
-use App\Models\Vendor;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 use App\Middleware\RateLimiter;
 use \App\Traits\TenantAwareTrait;
 
@@ -30,7 +25,8 @@ class CRMController extends BaseController
 
     protected function skipCsrfProtection(): bool
     {
-        return false;
+        // Mobile API uses Bearer token auth (ApiAuthMiddleware), not CSRF tokens
+        return true;
     }
 
     private function getUser() {
@@ -520,138 +516,80 @@ class CRMController extends BaseController
         $this->json(['success' => true, 'stats' => $stats, 'employees' => $employees]);
     }
 
-    use App\Models\BookingPaymentSchedule;
-use App\Models\PlotBooking;
-use App\Models\User;
-use App\Models\Vendor;
-use Illuminate\Support\Facades\DB;
-
-// ─── Admin Finance Overview ────────────────────────────────────
+    // ������ Admin Finance Overview ����������������������������������������������������
 
     public function financeOverview() {
-        $stats = [
-            'todays_collection' => 0, 'pending_emi' => 0,
-            'total_outstanding' => 0, 'monthly_target_pct' => 0,
-            'monthly_target_amount' => 0, 'collected_this_month' => 0,
-            'total_bookings_value' => 0, 'active_emi_count' => 0,
-            'overdue_emi_count' => 0, 'total_vendors' => 0,
-        ];
-        $collections = [];
-        $emi_schedule = [];
+        // Raw SQL implementation (framework has no Eloquent; legacy Laravel calls removed)
+        try {
+            $today = $this->db->fetch(
+                "SELECT COALESCE(SUM(paid_amount),0) AS v FROM booking_payment_schedules WHERE payment_date = CURDATE() AND paid_amount > 0"
+            )['v'] ?? 0;
 
-        // Today's collections
-        $stats['todays_collection'] = (float) BookingPaymentSchedule::query()
-            ->whereDate('payment_date', now()->toDateString())
-            ->where('paid_amount', '>', 0)
-            ->sum('paid_amount');
+            $month = $this->db->fetch(
+                "SELECT COALESCE(SUM(paid_amount),0) AS v FROM booking_payment_schedules WHERE YEAR(payment_date) = YEAR(CURDATE()) AND MONTH(payment_date) = MONTH(CURDATE()) AND paid_amount > 0"
+            )['v'] ?? 0;
 
-        // Monthly collection
-        $stats['collected_this_month'] = (float) BookingPaymentSchedule::query()
-            ->whereMonth('payment_date', now()->month)
-            ->whereYear('payment_date', now()->year)
-            ->where('paid_amount', '>', 0)
-            ->sum('paid_amount');
+            $pending = $this->db->fetch(
+                "SELECT COUNT(*) AS c, COALESCE(SUM(emi_amount - paid_amount),0) AS v FROM booking_payment_schedules WHERE status = 'pending' AND due_date < CURDATE()"
+            );
 
-        // Pending EMI
-        $pendingEmi = BookingPaymentSchedule::query()
-            ->where('status', 'pending')
-            ->whereDate('due_date', '<', now()->toDateString())
-            ->selectRaw('COUNT(*) as c, COALESCE(SUM(emi_amount - paid_amount),0) as v')
-            ->first();
-        $stats['pending_emi'] = (float)($pendingEmi->v ?? 0);
-        $stats['overdue_emi_count'] = (int)($pendingEmi->c ?? 0);
+            $outstanding = $this->db->fetch(
+                "SELECT COALESCE(SUM(emi_amount - paid_amount),0) AS v FROM booking_payment_schedules WHERE status IN ('pending','overdue')"
+            )['v'] ?? 0;
 
-        // Total outstanding
-        $stats['total_outstanding'] = (float) BookingPaymentSchedule::query()
-            ->whereIn('status', ['pending', 'overdue'])
-            ->sum(DB::raw('emi_amount - paid_amount'));
+            $activeEmi = $this->db->fetch(
+                "SELECT COUNT(*) AS c FROM booking_payment_schedules WHERE status IN ('pending','overdue')"
+            )['c'] ?? 0;
 
-        // Active EMI count
-        $stats['active_emi_count'] = BookingPaymentSchedule::query()
-            ->whereIn('status', ['pending', 'overdue'])
-            ->count();
+            $bookingsValue = $this->db->fetch(
+                "SELECT COALESCE(SUM(total_plot_value),0) AS v FROM plot_bookings WHERE status != 'cancelled'"
+            )['v'] ?? 0;
 
-        // Total bookings value
-        $stats['total_bookings_value'] = (float) PlotBooking::query()
-            ->where('status', '!=', 'cancelled')
-            ->sum('total_plot_value');
+            $vendors = $this->db->fetch("SELECT COUNT(*) AS c FROM vendors")['c'] ?? 0;
 
-        // Vendors count
-        $stats['total_vendors'] = Vendor::count();
+            $collections = $this->db->fetchAll(
+                "SELECT bps.id, bps.installment_number, bps.emi_amount, bps.paid_amount,
+                        bps.due_date, bps.payment_date, bps.status,
+                        pb.booking_number, pb.total_plot_value, u.name AS customer_name
+                 FROM booking_payment_schedules bps
+                 JOIN plot_bookings pb ON pb.id = bps.booking_id
+                 JOIN users u ON u.id = pb.customer_id
+                 WHERE bps.paid_amount > 0
+                 ORDER BY bps.payment_date DESC LIMIT 15"
+            ) ?: [];
 
-        // Recent collections
-        $collections = BookingPaymentSchedule::query()
-            ->join('plot_bookings', 'plot_bookings.id', '=', 'booking_payment_schedules.booking_id')
-            ->join('users', 'users.id', '=', 'plot_bookings.customer_id')
-            ->select(
-                'booking_payment_schedules.id',
-                'booking_payment_schedules.installment_number',
-                'booking_payment_schedules.emi_amount',
-                'booking_payment_schedules.paid_amount',
-                'booking_payment_schedules.due_date',
-                'booking_payment_schedules.payment_date',
-                'booking_payment_schedules.status',
-                'plot_bookings.booking_number',
-                'plot_bookings.total_plot_value',
-                'users.name as customer_name'
-            )
-            ->where('booking_payment_schedules.paid_amount', '>', 0)
-            ->orderBy('booking_payment_schedules.payment_date', 'desc')
-            ->limit(15)
-            ->get()
-            ->toArray();
+            $emi_schedule = $this->db->fetchAll(
+                "SELECT bps.id, bps.installment_number, bps.emi_amount, bps.paid_amount,
+                        bps.due_date, bps.status, pb.booking_number, u.name AS customer_name,
+                        DATEDIFF(bps.due_date, CURDATE()) AS days_until_due
+                 FROM booking_payment_schedules bps
+                 JOIN plot_bookings pb ON pb.id = bps.booking_id
+                 JOIN users u ON u.id = pb.customer_id
+                 WHERE bps.status IN ('pending','overdue')
+                 ORDER BY bps.due_date ASC LIMIT 20"
+            ) ?: [];
 
-        // Upcoming EMI schedule
-        $emi_schedule = BookingPaymentSchedule::query()
-            ->join('plot_bookings', 'plot_bookings.id', '=', 'booking_payment_schedules.booking_id')
-            ->join('users', 'users.id', '=', 'plot_bookings.customer_id')
-            ->select(
-                'booking_payment_schedules.id',
-                'booking_payment_schedules.installment_number',
-                'booking_payment_schedules.emi_amount',
-                'booking_payment_schedules.paid_amount',
-                'booking_payment_schedules.due_date',
-                'booking_payment_schedules.status',
-                'plot_bookings.booking_number',
-                'users.name as customer_name',
-                DB::raw('DATEDIFF(booking_payment_schedules.due_date, CURDATE()) as days_until_due')
-            )
-            ->whereIn('booking_payment_schedules.status', ['pending', 'overdue'])
-            ->orderBy('booking_payment_schedules.due_date', 'asc')
-            ->limit(20)
-            ->get()
-            ->toArray();
-
-        $stats = [
-            'todays_collection' => BookingPaymentSchedule::query()
-                ->whereDate('payment_date', now()->toDateString())
-                ->where('paid_amount', '>', 0)
-                ->sum('paid_amount'),
-            'pending_emi' => (float)($pendingEmi->v ?? 0),
-            'total_outstanding' => (float) BookingPaymentSchedule::query()
-                ->whereIn('status', ['pending', 'overdue'])
-                ->sum(DB::raw('emi_amount - paid_amount')),
-            'monthly_target_pct' => 0,
-            'monthly_target_amount' => 0,
-            'collected_this_month' => (float) BookingPaymentSchedule::query()
-                ->whereMonth('payment_date', now()->month)
-                ->whereYear('payment_date', now()->year)
-                ->where('paid_amount', '>', 0)
-                ->sum('paid_amount'),
-            'total_bookings_value' => (float) PlotBooking::query()
-                ->where('status', '!=', 'cancelled')
-                ->sum('total_plot_value'),
-            'active_emi_count' => BookingPaymentSchedule::query()
-                ->whereIn('status', ['pending', 'overdue'])
-                ->count(),
-            'overdue_emi_count' => (int)($pendingEmi->c ?? 0),
-            'total_vendors' => Vendor::count(),
-        ];
-
-        $this->json([
-            'success' => true, 'stats' => $stats,
-            'collections' => $collections, 'emi_schedule' => $emi_schedule,
-        ]);
+            $this->json([
+                'success' => true,
+                'stats' => [
+                    'todays_collection' => (float)$today,
+                    'pending_emi' => (float)($pending['v'] ?? 0),
+                    'total_outstanding' => (float)$outstanding,
+                    'monthly_target_pct' => 0,
+                    'monthly_target_amount' => 0,
+                    'collected_this_month' => (float)$month,
+                    'total_bookings_value' => (float)$bookingsValue,
+                    'active_emi_count' => (int)$activeEmi,
+                    'overdue_emi_count' => (int)($pending['c'] ?? 0),
+                    'total_vendors' => (int)$vendors,
+                ],
+                'collections' => $collections,
+                'emi_schedule' => $emi_schedule,
+            ]);
+        } catch (\Throwable $e) {
+            error_log('CRMController::financeOverview - ' . $e->getMessage());
+            $this->json(['success' => false, 'error' => 'Failed to load finance overview'], 500);
+        }
     }
 
     public function search() {

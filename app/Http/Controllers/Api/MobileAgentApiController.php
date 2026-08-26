@@ -18,7 +18,7 @@ class MobileAgentApiController extends BaseController
     public function analytics()
     {
         try {
-            $userId = (int)($_SESSION['user_id'] ?? $_SESSION['associate_id'] ?? 0);
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
             if (!$userId) {
                 return $this->jsonError('Unauthorized', 401);
             }
@@ -51,7 +51,7 @@ class MobileAgentApiController extends BaseController
     public function bookings()
     {
         try {
-            $userId = (int)($_SESSION['user_id'] ?? $_SESSION['associate_id'] ?? 0);
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
             if (!$userId) {
                 return $this->jsonError('Unauthorized', 401);
             }
@@ -84,7 +84,7 @@ class MobileAgentApiController extends BaseController
     public function commissions()
     {
         try {
-            $userId = (int)($_SESSION['user_id'] ?? $_SESSION['associate_id'] ?? 0);
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
             if (!$userId) {
                 return $this->jsonError('Unauthorized', 401);
             }
@@ -115,7 +115,7 @@ class MobileAgentApiController extends BaseController
     public function documents()
     {
         try {
-            $userId = (int)($_SESSION['user_id'] ?? $_SESSION['associate_id'] ?? 0);
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
             if (!$userId) {
                 return $this->jsonError('Unauthorized', 401);
             }
@@ -146,7 +146,7 @@ class MobileAgentApiController extends BaseController
     public function followUps()
     {
         try {
-            $userId = (int)($_SESSION['user_id'] ?? $_SESSION['associate_id'] ?? 0);
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
             if (!$userId) {
                 return $this->jsonError('Unauthorized', 401);
             }
@@ -178,7 +178,7 @@ class MobileAgentApiController extends BaseController
     public function leads()
     {
         try {
-            $userId = (int)($_SESSION['user_id'] ?? $_SESSION['associate_id'] ?? 0);
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
             if (!$userId) {
                 return $this->jsonError('Unauthorized', 401);
             }
@@ -211,7 +211,7 @@ class MobileAgentApiController extends BaseController
     public function payouts()
     {
         try {
-            $userId = (int)($_SESSION['user_id'] ?? $_SESSION['associate_id'] ?? 0);
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
             if (!$userId) {
                 return $this->jsonError('Unauthorized', 401);
             }
@@ -242,7 +242,7 @@ class MobileAgentApiController extends BaseController
     public function properties()
     {
         try {
-            $userId = (int)($_SESSION['user_id'] ?? $_SESSION['associate_id'] ?? 0);
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
             if (!$userId) {
                 return $this->jsonError('Unauthorized', 401);
             }
@@ -275,7 +275,7 @@ class MobileAgentApiController extends BaseController
     public function siteVisits()
     {
         try {
-            $userId = (int)($_SESSION['user_id'] ?? $_SESSION['associate_id'] ?? 0);
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
             if (!$userId) {
                 return $this->jsonError('Unauthorized', 401);
             }
@@ -308,7 +308,7 @@ class MobileAgentApiController extends BaseController
     public function myTeam()
     {
         try {
-            $userId = (int)($_SESSION['user_id'] ?? $_SESSION['associate_id'] ?? 0);
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
             if (!$userId) {
                 return $this->jsonError('Unauthorized', 401);
             }
@@ -341,7 +341,7 @@ class MobileAgentApiController extends BaseController
     public function rankProgress()
     {
         try {
-            $userId = (int)($_SESSION['user_id'] ?? $_SESSION['associate_id'] ?? 0);
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
             if (!$userId) {
                 return $this->jsonError('Unauthorized', 401);
             }

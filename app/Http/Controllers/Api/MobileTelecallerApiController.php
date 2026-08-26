@@ -18,7 +18,7 @@ class MobileTelecallerApiController extends BaseController
     public function dashboard()
     {
         try {
-            $userId = (int)($_SESSION['user_id'] ?? $_SESSION['telecaller_id'] ?? 0);
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
             if (!$userId) {
                 return $this->jsonError('Unauthorized', 401);
             }
@@ -54,7 +54,7 @@ class MobileTelecallerApiController extends BaseController
     public function report()
     {
         try {
-            $userId = (int)($_SESSION['user_id'] ?? $_SESSION['telecaller_id'] ?? 0);
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
             if (!$userId) {
                 return $this->jsonError('Unauthorized', 401);
             }
