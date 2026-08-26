@@ -26,6 +26,9 @@ _173. **BaseController CSRF enforces independently of router** — router $exclu
 _174. **Tables can be missing for years without alarm** — visitor_sessions + visitor_page_views + whatsapp_click_log never existed; all calls were try/catched → empty data, zero alert. Create missing tables + add migration for reproducibility._
 _175. **Services may reference a legacy schema that never existed** — ChatService used admin.aid, users.uname/uemail (WordPress-style); entire query layer needed reworking to actual users.name/email + roles. Always DESCRIBE before fixing._
 _176. **Release APK exists even when Flutter says 'Gradle build failed to produce .apk'** — file is at android/app/build/outputs/apk/release/app-release.apk (92.9 MB); copy manually._
+_177. **Tenant-gap file scan overcounts** — 1403 write ops but only 63 in files with zero tenant ref; of those 5 were SELECT-only (read-only analytics) so true gap was 20 writes across 9 files. Verify per-query, not per-file._
+_178. **Business tables all have tenant_id, system tables don't** — live DESCRIBE: every business table has `tenant_id INT UNSIGNED DEFAULT 1 MUL`; `app_settings` is missing/cross-tenant and must be skipped. Don't add tenant to system config._
+_179. **Write signal is INSERT/UPDATE/DELETE via prepare/query/exec** — SELECT-only `->prepare()` hits don't need tenant scoping; they inherit via AdminController + enforceTenantStatus. Saves 80 false positives._
 
 ### Verification Results (Session 79)
 - Scanner: 261→2 false positives (alias heuristic)
