@@ -21,15 +21,15 @@ class AIAnalyticsController extends AdminController
             $this->data['completedCalls'] = (int)($db->query("SELECT COUNT(*) FROM ai_call_sessions WHERE status='completed'")->fetchColumn());
             $this->data['totalLeads'] = (int)($db->query("SELECT COUNT(*) FROM leads")->fetchColumn());
             $this->data['hotLeads'] = (int)($db->query("SELECT COUNT(*) FROM leads WHERE score >= 70")->fetchColumn());
-            $this->data['totalCampaigns'] = (int)($db->query("SELECT COUNT(*) FROM ai_calling_campaigns")->fetchColumn());
-            $this->data['activeCampaigns'] = (int)($db->query("SELECT COUNT(*) FROM ai_calling_campaigns WHERE status='active'")->fetchColumn());
+            $this->data['totalCampaigns'] = (int)($db->query("SELECT COUNT(*) FROM campaigns")->fetchColumn());
+            $this->data['activeCampaigns'] = (int)($db->query("SELECT COUNT(*) FROM campaigns WHERE status='active'")->fetchColumn());
 
             $this->data['conversionBySource'] = $db->fetchAll(
                 "SELECT source, COUNT(*) total, SUM(CASE WHEN status='qualified' OR status='proposal' THEN 1 ELSE 0 END) qualified, SUM(CASE WHEN status='won' THEN 1 ELSE 0 END) won FROM leads WHERE source IS NOT NULL GROUP BY source ORDER BY total DESC"
             ) ?: [];
 
             $this->data['callsByScript'] = $db->fetchAll(
-                "SELECT s.script_name, COUNT(*) total, SUM(CASE WHEN acs.status='completed' THEN 1 ELSE 0 END) completed, SUM(CASE WHEN acs.customer_response='interested' THEN 1 ELSE 0 END) interested FROM ai_call_sessions acs LEFT JOIN ai_calling_scripts s ON acs.script_id = s.id WHERE s.script_name IS NOT NULL GROUP BY s.script_name ORDER BY total DESC"
+                "SELECT s.script_name, COUNT(*) total, SUM(CASE WHEN acs.status='completed' THEN 1 ELSE 0 END) completed, SUM(CASE WHEN acs.customer_response='interested' THEN 1 ELSE 0 END) interested FROM ai_call_sessions acs LEFT JOIN ai_calling_scripts s ON acs.script_code = s.script_code WHERE s.script_name IS NOT NULL GROUP BY s.script_name ORDER BY total DESC"
             ) ?: [];
 
             $this->data['weeklyLeads'] = $db->fetchAll(

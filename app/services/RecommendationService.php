@@ -205,10 +205,10 @@ class RecommendationService
     {
         try {
             $tsql = $this->tenantSql();
-            $sql = "SELECT DISTINCT pv2.user_id
+            $sql = "SELECT DISTINCT pv2.customer_id
                     FROM property_views pv1
                     JOIN property_views pv2 ON pv1.property_id = pv2.property_id
-                        AND pv1.user_id = ? AND pv2.user_id != ?" . $tsql . "
+                        AND pv1.customer_id = ? AND pv2.customer_id != ?" . $tsql . "
                     LIMIT 50";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$userId, $userId]);

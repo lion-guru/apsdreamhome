@@ -553,7 +553,7 @@ class AdminController extends BaseController
         // Revenue per month from bookings (last 6 months)
         try {
             $revenueData = $this->db->fetchAll("
-                SELECT DATE_FORMAT(b.created_at, '%b') as label, COALESCE(SUM(bp.amount), 0) as total
+                SELECT DATE_FORMAT(b.created_at, '%b') as label, COALESCE(SUM(bp.payment_amount), 0) as total
                 FROM bookings b
                 LEFT JOIN booking_payments bp ON bp.booking_id = b.id
                 WHERE b.created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)

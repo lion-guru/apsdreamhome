@@ -224,9 +224,8 @@ class CareerController extends AdminController
 
             try {
                 // Get recent applications
-                $sql = "SELECT ca.*, u.name as applicant_name, u.email as applicant_email
+                $sql = "SELECT ca.*, ca.full_name as applicant_name, ca.email as applicant_email
                         FROM career_applications ca
-                        LEFT JOIN users u ON ca.applicant_id = u.id
                         WHERE ca.career_id = ?
                         ORDER BY ca.created_at DESC
                         LIMIT 10";

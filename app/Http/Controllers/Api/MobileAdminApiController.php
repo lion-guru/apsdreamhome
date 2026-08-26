@@ -443,7 +443,7 @@ class MobileAdminApiController extends BaseController
 
     private function getCommissionsData($userId)
     {
-        $stmt = $this->db->prepare("SELECT c.id, c.amount, c.level, c.status, c.created_at, u.name as customer_name FROM commissions c LEFT JOIN users u ON c.customer_id = u.id WHERE c.associated_user_id = ? ORDER BY c.created_at DESC LIMIT 50");
+        $stmt = $this->db->prepare("SELECT c.id, c.amount, c.status, c.created_at, u.name as customer_name FROM commissions c LEFT JOIN users u ON c.source_user_id = u.id WHERE c.user_id = ? ORDER BY c.created_at DESC LIMIT 50");
         $stmt->execute([$userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -464,7 +464,7 @@ class MobileAdminApiController extends BaseController
 
     private function getPlotsData($userId)
     {
-        $stmt = $this->db->prepare("SELECT p.id, p.title, p.price, p.status, p.created_at, c.name as colony_name FROM plots p LEFT JOIN colonies c ON p.colony_id = c.id WHERE p.assigned_to = ? ORDER BY p.created_at DESC LIMIT 50");
+        $stmt = $this->db->prepare("SELECT p.id, p.plot_number as title, p.total_price as price, p.status, p.created_at, c.name as colony_name FROM plots p LEFT JOIN colonies c ON p.colony_id = c.id ORDER BY p.created_at DESC LIMIT 50");
         $stmt->execute([$userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -535,7 +535,7 @@ class MobileAdminApiController extends BaseController
 
     private function getTopAssociatesData($userId)
     {
-        $stmt = $this->db->prepare("SELECT u.id, u.name, u.email, COUNT(b.id) as bookings, COALESCE(SUM(b.amount), 0) as revenue FROM users u LEFT JOIN bookings b ON u.id = b.assigned_to WHERE u.role IN ('agent', 'associate') GROUP BY u.id ORDER BY revenue DESC LIMIT 10");
+        $stmt = $this->db->prepare("SELECT u.id, u.name, u.email, COUNT(b.id) as bookings, COALESCE(SUM(b.amount), 0) as revenue FROM users u LEFT JOIN bookings b ON u.id = b.associate_id WHERE u.role IN ('agent', 'associate') GROUP BY u.id ORDER BY revenue DESC LIMIT 10");
         $stmt->execute([]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -556,7 +556,7 @@ class MobileAdminApiController extends BaseController
 
     private function getLeadConversionData($userId)
     {
-        $stmt = $this->db->prepare("SELECT DATE(l.created_at) as date, COUNT(*) as leads, SUM(CASE WHEN b.id IS NOT NULL THEN 1 ELSE 0 END) as conversions, ROUND(SUM(CASE WHEN b.id IS NOT NULL THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) as conversion_rate FROM leads l LEFT JOIN bookings b ON l.id = b.lead_id WHERE DATE(l.created_at) >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) GROUP BY DATE(l.created_at) ORDER BY date DESC");
+        $stmt = $this->db->prepare("SELECT DATE(l.created_at) as date, COUNT(*) as leads, SUM(CASE WHEN l.is_converted = 1 THEN 1 ELSE 0 END) as conversions, ROUND(SUM(CASE WHEN l.is_converted = 1 THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) as conversion_rate FROM leads l WHERE DATE(l.created_at) >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) GROUP BY DATE(l.created_at) ORDER BY date DESC");
         $stmt->execute([]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

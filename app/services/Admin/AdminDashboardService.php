@@ -212,10 +212,10 @@ class AdminDashboardService
             
             // Properties by type
             $analytics['properties_by_type'] = $this->database->select(
-                "SELECT pt.name, COUNT(p.id) as count
+                "SELECT pt.type, COUNT(p.id) as count
                  FROM properties p
                  LEFT JOIN property_types pt ON p.property_type_id = pt.id
-                 GROUP BY p.property_type_id, pt.name
+                 GROUP BY p.property_type_id, pt.type
                  ORDER BY count DESC"
             );
             

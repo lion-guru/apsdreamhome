@@ -76,7 +76,7 @@ class CashFlowForecastService
 
         // EMI receipts due in period
         $emis = $this->db->fetchAll("
-            SELECT COALESCE(SUM(bps.amount_due), 0) AS total
+            SELECT COALESCE(SUM(bps.amount), 0) AS total
             FROM booking_payment_schedules bps
             JOIN plot_bookings pb ON pb.id = bps.booking_id
             WHERE bps.due_date BETWEEN CURDATE() AND ?
@@ -89,7 +89,8 @@ class CashFlowForecastService
         $bookings = $this->db->fetchAll("
             SELECT COALESCE(SUM(pb.agreement_value), 0) AS total
             FROM plot_bookings pb
-            WHERE pb.possession_date BETWEEN CURDATE() AND ?
+            JOIN plots pl ON pb.plot_id = pl.id
+            WHERE pl.possession_date BETWEEN CURDATE() AND ?
             AND pb.status IN ('confirmed', 'emi_active')
             " . ($tid > 1 ? " AND pb.tenant_id = ?" : ""),
             $tid > 1 ? [$days, $tid] : [$days]
@@ -99,7 +100,7 @@ class CashFlowForecastService
         $collections = $this->db->fetchAll("
             SELECT COALESCE(SUM(amount), 0) AS total
             FROM cash_collections cc
-            JOIN plot_bookings pb ON pb.id = cc.plot_booking_id
+            JOIN plot_bookings pb ON pb.id = cc.booking_id
             WHERE cc.collection_date BETWEEN CURDATE() AND ?
             AND cc.status = 'pending'
             " . ($tid > 1 ? " AND pb.tenant_id = ?" : ""),
@@ -120,9 +121,9 @@ class CashFlowForecastService
 
         // Vendor payments due
         $vendors = $this->db->fetchAll("
-            SELECT COALESCE(SUM(vp.amount), 0) AS total
+            SELECT COALESCE(SUM(vp.net_payable), 0) AS total
             FROM vendor_payments vp
-            WHERE vp.due_date BETWEEN CURDATE() AND ?
+            WHERE vp.payment_date BETWEEN CURDATE() AND ?
             AND vp.status = 'pending'
             " . ($tid > 1 ? " AND vp.tenant_id = ?" : ""),
             $tid > 1 ? [$days, $tid] : [$days]
@@ -130,10 +131,10 @@ class CashFlowForecastService
 
         // TDS/GST deposits
         $tdsGst = $this->db->fetchAll("
-            SELECT COALESCE(SUM(tds_amount), 0) AS tds, COALESCE(SUM(total_gst), 0) AS gst
+            SELECT COALESCE(SUM(tds_amount), 0) AS tds, COALESCE(SUM(total_tax), 0) AS gst
             FROM tds_register tr
-            LEFT JOIN gst_transactions gt ON gt.financial_year = tr.financial_year AND gt.quarter = tr.quarter
-            WHERE tr.deposit_status = 'pending' AND tr.deposit_date BETWEEN CURDATE() AND ?
+            LEFT JOIN gst_transactions gt ON gt.financial_year = tr.financial_year
+            WHERE tr.status = 'pending' AND tr.deposit_date BETWEEN CURDATE() AND ?
             " . ($tid > 1 ? " AND tr.tenant_id = ?" : ""),
             $tid > 1 ? [$days, $tid] : [$days]
         );
@@ -141,9 +142,9 @@ class CashFlowForecastService
         // Salaries
         $salaries = $this->db->fetchAll("
             SELECT COALESCE(SUM(net_salary), 0) AS total
-            FROM payroll p
-            WHERE p.pay_date BETWEEN CURDATE() AND ?
-            AND p.status = 'pending'
+            FROM employee_payroll p
+            WHERE p.payment_date BETWEEN CURDATE() AND ?
+            AND p.payment_status = 'pending'
             " . ($tid > 1 ? " AND p.tenant_id = ?" : ""),
             $tid > 1 ? [$days, $tid] : [$days]
         );
@@ -152,7 +153,7 @@ class CashFlowForecastService
         $expenses = $this->db->fetchAll("
             SELECT COALESCE(SUM(amount), 0) AS total
             FROM expenses e
-            WHERE e.due_date BETWEEN CURDATE() AND ?
+            WHERE e.expense_date BETWEEN CURDATE() AND ?
             AND e.status = 'pending'
             " . ($tid > 1 ? " AND e.tenant_id = ?" : ""),
             $tid > 1 ? [$days, $tid] : [$days]

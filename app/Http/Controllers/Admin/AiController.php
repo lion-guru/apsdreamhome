@@ -325,7 +325,7 @@ class AiController extends AdminController
     private function getLeadsForScoring(): array
     {
         try {
-            $sql = "SELECT l.*, als.score, als.confidence_level
+            $sql = "SELECT l.*, als.score, als.confidence AS confidence_level
                     FROM leads l
                     LEFT JOIN ai_lead_scores als ON l.id = als.lead_id
                     ORDER BY l.created_at DESC

@@ -27,7 +27,7 @@ class HRController extends AdminController
             $onLeave = $this->db->fetch("SELECT COUNT(*) as c FROM employee_leaves WHERE CURDATE() BETWEEN start_date AND end_date AND status='approved'")['c'] ?? 0;
             $pendingLeaves = $this->db->fetch("SELECT COUNT(*) as c FROM employee_leaves WHERE status='pending'")['c'] ?? 0;
             $attendanceRate = $totalEmployees > 0 ? round(($presentToday / $totalEmployees) * 100, 1) : 0;
-            $activeEmployees = $this->db->fetchAll("SELECT e.id, e.name, e.department, e.designation, e.status, u.email, u.phone FROM users e JOIN users u ON e.id = u.id WHERE e.status='active' ORDER BY e.name LIMIT 5");
+            $activeEmployees = $this->db->fetchAll("SELECT e.id, e.name, e.department, e.designation, e.status, u.email, u.phone FROM employees e JOIN users u ON e.user_id = u.id WHERE e.status='active' ORDER BY e.name LIMIT 5");
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
@@ -353,7 +353,7 @@ class HRController extends AdminController
             $leaves = [];
         }
         try {
-            $users = $this->db->fetchAll("SELECT e.id, u.name FROM users e JOIN users u ON e.user_id=u.id WHERE e.status='active' ORDER BY u.name");
+            $users = $this->db->fetchAll("SELECT e.id, u.name FROM employees e JOIN users u ON e.user_id=u.id WHERE e.status='active' ORDER BY u.name");
         } catch (\Exception $e) {
             error_log("[HRController] leaves() employees query: " . $e->getMessage());
             $users = [];

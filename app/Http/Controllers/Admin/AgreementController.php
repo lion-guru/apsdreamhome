@@ -111,7 +111,7 @@ class AgreementController extends AdminController
         $bookings = [];
         try {
             $stmt = $this->db->prepare("
-                SELECT b.id, b.booking_number, b.total_amount, b.status,
+                SELECT b.id, b.booking_number, b.total_plot_value AS total_amount, b.status,
                        u.name as customer_name, u.phone as customer_phone,
                        p.plot_number, c.name as colony_name
                 FROM plot_bookings b

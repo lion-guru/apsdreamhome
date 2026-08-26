@@ -38,7 +38,7 @@ class UserPackageController extends BaseController
             "SELECT up.*, pp.name as package_name, pp.slug as package_slug
              FROM user_packages up
              JOIN premium_packages pp ON up.package_id = pp.id
-             WHERE up.property_id = ? AND up.user_id = ? AND up.status = 'active'
+             WHERE up.property_id = ? AND up.user_id = ? AND up.is_active = 1 AND up.expiry_date > NOW()
              LIMIT 1",
             [$propertyId, $userId]
         );
@@ -88,7 +88,7 @@ class UserPackageController extends BaseController
         }
 
         $existing = $this->db->fetch(
-            "SELECT id FROM user_packages WHERE property_id = ? AND user_id = ? AND status = 'active'",
+            "SELECT id FROM user_packages WHERE property_id = ? AND user_id = ? AND is_active = 1 AND expiry_date > NOW()",
             [$propertyId, $userId]
         );
         if ($existing) {

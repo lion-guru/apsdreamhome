@@ -1451,7 +1451,7 @@ class EmployeeController extends BaseController
             $leads = $this->db->fetchAll(
                 "SELECT l.*, u.name as assigned_by_name
                  FROM leads l
-                 LEFT JOIN users u ON u.id = l.assigned_by
+                 LEFT JOIN users u ON u.id = l.created_by
                  {$where}
                  ORDER BY l.created_at DESC
                  LIMIT ? OFFSET ?",
@@ -1492,7 +1492,7 @@ class EmployeeController extends BaseController
             $lead = $this->db->fetchOne(
                 "SELECT l.*, u.name as assigned_by_name
                  FROM leads l
-                 LEFT JOIN users u ON u.id = l.assigned_by
+                 LEFT JOIN users u ON u.id = l.created_by
                  WHERE l.id = ? AND l.assigned_to = ?",
                 [$id, $employeeId]
             );

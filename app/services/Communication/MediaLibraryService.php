@@ -447,18 +447,18 @@ class MediaLibraryService
                            (SELECT JSON_ARRAYAGG(
                                JSON_OBJECT(
                                    'id', m.id,
-                                   'filename', m.filename,
+                                   'filename', m.file_name,
                                    'original_name', m.original_name,
                                    'file_path', m.file_path,
                                    'file_url', CONCAT('" . $this->getBaseUrl() . "/', m.file_path),
-                                   'file_type', m.file_type,
-                                   'metadata', m.metadata,
+                                   'file_type', m.media_type,
+                                   'metadata', m.mime_type,
                                    'position', mgi.position
                                )
                            )) as media_items
                     FROM media_galleries g
                     LEFT JOIN media_gallery_items mgi ON g.id = mgi.gallery_id
-                    LEFT JOIN media_library m ON mgi.media_id = m.id AND m.deleted_at IS NULL
+                    LEFT JOIN media_library m ON mgi.media_id = m.id
                     WHERE g.id = ?
                     GROUP BY g.id";
             

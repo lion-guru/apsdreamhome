@@ -39,16 +39,12 @@ class PaymentController extends AdminController
             $offset = ($page - 1) * $perPage;
 
             // Build query
-            $sql = "SELECT p.*, 
-                           b.booking_number,
-                           c.name as customer_name,
-                           c.email as customer_email,
-                           pr.title as property_title
-                    FROM booking_payments p
-                    LEFT JOIN bookings b ON p.booking_id = b.id
-                    LEFT JOIN users c ON b.customer_id = c.id
-                    LEFT JOIN properties pr ON b.property_id = pr.id
-                    WHERE 1=1";
+            $sql = "SELECT p.*, b.booking_number, c.name as customer_name, c.email as customer_email, pr.title as property_title"
+                 . " FROM booking_payments p"
+                 . " LEFT JOIN bookings b ON p.booking_id = b.id"
+                 . " LEFT JOIN users c ON b.customer_id = c.id"
+                 . " LEFT JOIN properties pr ON b.property_id = pr.id"
+                 . " WHERE 1=1";
             $params = [];
 
             // Apply filters
@@ -61,11 +57,6 @@ class PaymentController extends AdminController
                 $params[] = $searchParam;
             }
 
-            if (!empty($status)) {
-                $sql .= " AND p.status = ?";
-                $params[] = $status;
-            }
-
             if (!empty($method)) {
                 $sql .= " AND p.payment_method = ?";
                 $params[] = $method;
@@ -75,6 +66,7 @@ class PaymentController extends AdminController
 
             // Count total
             $countSql = str_replace("SELECT p.*, b.booking_number, c.name as customer_name, c.email as customer_email, pr.title as property_title", "SELECT COUNT(DISTINCT p.payment_id) as total", $sql);
+            $countSql = str_replace("ORDER BY p.payment_date DESC", "", $countSql);
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
             $total = $countStmt->fetch()['total'] ?? 0;
@@ -156,7 +148,7 @@ class PaymentController extends AdminController
                     LEFT JOIN bookings b ON p.booking_id = b.id
                     LEFT JOIN users c ON b.customer_id = c.id
                     LEFT JOIN properties pr ON b.property_id = pr.id
-                    WHERE p.id = ?";
+                    WHERE p.payment_id = ?";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$paymentId]);
             $payment = $stmt->fetch();
@@ -217,8 +209,8 @@ class PaymentController extends AdminController
             $this->db->beginTransaction();
 
             try {
-                // Get payment details
-                $sql = "SELECT * FROM booking_payments WHERE id = ? AND status = 'pending'";
+                // Get payment details (booking_payments has no status column)
+                $sql = "SELECT * FROM booking_payments WHERE payment_id = ?";
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute([$paymentId]);
                 $payment = $stmt->fetch();
@@ -232,7 +224,7 @@ class PaymentController extends AdminController
                 $sql = "UPDATE booking_payments 
                         SET payment_amount = ?, payment_method = ?, 
                             transaction_id = ?, payment_date = NOW(), payment_notes = ?
-                        WHERE id = ?";
+                        WHERE payment_id = ?";
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute([$amount, $method, $transactionId, $notes, $paymentId]);
 
@@ -296,7 +288,7 @@ class PaymentController extends AdminController
 
             try {
                 // Get payment details
-                $sql = "SELECT * FROM booking_payments WHERE id = ? AND status = 'completed'";
+                $sql = "SELECT * FROM booking_payments WHERE payment_id = ?";
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute([$paymentId]);
                 $payment = $stmt->fetch();
@@ -306,7 +298,7 @@ class PaymentController extends AdminController
                     return $this->jsonError('Payment not found or not completed', 404);
                 }
 
-                if ($refundAmount > $payment['amount']) {
+                if ($refundAmount > $payment['payment_amount']) {
                     $this->db->rollBack();
                     return $this->jsonError('Refund amount cannot exceed payment amount', 400);
                 }
@@ -314,7 +306,7 @@ class PaymentController extends AdminController
                 // Update payment status (refund: record in payment_notes, no refund columns exist)
                 $sql = "UPDATE booking_payments 
                         SET payment_notes = CONCAT(COALESCE(payment_notes, ''), ' Refund: ', ?, ' - ', ?)
-                        WHERE id = ?";
+                        WHERE payment_id = ?";
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute([$refundAmount, $reason, $paymentId]);
 
@@ -381,34 +373,33 @@ class PaymentController extends AdminController
         try {
             $stats = [];
 
-            // Total payments
-            $sql = "SELECT COUNT(*) as total, COALESCE(SUM(amount), 0) as total_amount
-                    FROM booking_payments WHERE status = 'completed'";
+            // Total payments (booking_payments has no status column; all rows are recorded payments)
+            $sql = "SELECT COUNT(*) as total, COALESCE(SUM(payment_amount), 0) as total_amount
+                    FROM booking_payments";
             $result = $this->db->fetchOne($sql);
             $stats['total_payments'] = (int)($result['total'] ?? 0);
             $stats['total_amount'] = (float)($result['total_amount'] ?? 0);
 
             // Today's payments
-            $sql = "SELECT COUNT(*) as total, COALESCE(SUM(amount), 0) as total_amount
+            $sql = "SELECT COUNT(*) as total, COALESCE(SUM(payment_amount), 0) as total_amount
                     FROM booking_payments 
-                    WHERE status = 'completed' AND DATE(payment_date) = CURDATE()";
+                    WHERE DATE(payment_date) = CURDATE()";
             $result = $this->db->fetchOne($sql);
             $stats['today_payments'] = (int)($result['total'] ?? 0);
             $stats['today_amount'] = (float)($result['total_amount'] ?? 0);
 
             // This month's payments
-            $sql = "SELECT COUNT(*) as total, COALESCE(SUM(amount), 0) as total_amount
+            $sql = "SELECT COUNT(*) as total, COALESCE(SUM(payment_amount), 0) as total_amount
                     FROM booking_payments 
-                    WHERE status = 'completed' 
-                    AND MONTH(payment_date) = MONTH(CURRENT_DATE) 
+                    WHERE MONTH(payment_date) = MONTH(CURRENT_DATE) 
                     AND YEAR(payment_date) = YEAR(CURRENT_DATE)";
             $result = $this->db->fetchOne($sql);
             $stats['monthly_payments'] = (int)($result['total'] ?? 0);
             $stats['monthly_amount'] = (float)($result['total_amount'] ?? 0);
 
-            // Pending payments
-            $sql = "SELECT COUNT(*) as total, COALESCE(SUM(amount), 0) as total_amount
-                    FROM booking_payments WHERE status = 'pending'";
+            // Pending payments (no status column tracked; always zero)
+            $sql = "SELECT COUNT(*) as total, COALESCE(SUM(payment_amount), 0) as total_amount
+                    FROM booking_payments WHERE 1=0";
             $result = $this->db->fetchOne($sql);
             $stats['pending_payments'] = (int)($result['total'] ?? 0);
             $stats['pending_amount'] = (float)($result['total_amount'] ?? 0);
@@ -427,9 +418,9 @@ class PaymentController extends AdminController
     {
         try {
             // Get total paid amount for booking
-            $sql = "SELECT COALESCE(SUM(amount), 0) as total_paid
+            $sql = "SELECT COALESCE(SUM(payment_amount), 0) as total_paid
                     FROM booking_payments 
-                    WHERE booking_id = ? AND status = 'completed'";
+                    WHERE booking_id = ?";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$bookingId]);
             $totalPaid = $stmt->fetch()['total_paid'];
@@ -466,37 +457,34 @@ class PaymentController extends AdminController
             $analytics = [];
 
             // Payment trends (last 30 days)
-            $sql = "SELECT DATE(payment_date) as date, COUNT(*) as count, COALESCE(SUM(amount), 0) as total
+            $sql = "SELECT DATE(payment_date) as date, COUNT(*) as count, COALESCE(SUM(payment_amount), 0) as total
                     FROM booking_payments
-                    WHERE status = 'completed' AND payment_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                    WHERE payment_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
                     GROUP BY DATE(payment_date)
                     ORDER BY date DESC";
             $analytics['trends'] = $this->db->fetchAll($sql) ?: [];
 
             // Payment methods distribution
-            $sql = "SELECT payment_method, COUNT(*) as count, COALESCE(SUM(amount), 0) as total
+            $sql = "SELECT payment_method, COUNT(*) as count, COALESCE(SUM(payment_amount), 0) as total
                     FROM booking_payments
-                    WHERE status = 'completed' AND payment_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                    WHERE payment_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
                     GROUP BY payment_method
                     ORDER BY total DESC";
             $analytics['methods'] = $this->db->fetchAll($sql) ?: [];
 
             // Top paying users
-            $sql = "SELECT c.name, c.email, COUNT(p.id) as payment_count, COALESCE(SUM(p.amount), 0) as total_paid
+            $sql = "SELECT c.name, c.email, COUNT(p.payment_id) as payment_count, COALESCE(SUM(p.payment_amount), 0) as total_paid
                     FROM booking_payments p
                     JOIN bookings b ON p.booking_id = b.id
                     JOIN users c ON b.customer_id = c.id
-                    WHERE p.status = 'completed'
                     GROUP BY c.id
                     ORDER BY total_paid DESC
                     LIMIT 10";
             $analytics['top_customers'] = $this->db->fetchAll($sql) ?: [];
 
-            // Payment status distribution
-            $sql = "SELECT status, COUNT(*) as count, COALESCE(SUM(amount), 0) as total
-                    FROM booking_payments
-                    GROUP BY status
-                    ORDER BY count DESC";
+            // Payment status distribution (no status column; report recorded payments as completed)
+            $sql = "SELECT 'completed' as status, COUNT(*) as count, COALESCE(SUM(payment_amount), 0) as total
+                    FROM booking_payments";
             $analytics['status_distribution'] = $this->db->fetchAll($sql) ?: [];
 
             return $analytics;
@@ -558,8 +546,8 @@ class PaymentController extends AdminController
                     LEFT JOIN bookings b ON p.booking_id = b.id
                     LEFT JOIN users c ON b.customer_id = c.id
                     LEFT JOIN properties pr ON b.property_id = pr.id
-                    WHERE p.created_at BETWEEN ? AND ?
-                    ORDER BY p.created_at DESC";
+                    WHERE p.payment_date BETWEEN ? AND ?
+                    ORDER BY p.payment_date DESC";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$startDate, $endDate]);
             return $stmt->fetchAll() ?: [];
@@ -581,7 +569,7 @@ class PaymentController extends AdminController
                     LEFT JOIN bookings b ON p.booking_id = b.id
                     LEFT JOIN users c ON b.customer_id = c.id
                     LEFT JOIN properties pr ON b.property_id = pr.id
-                    WHERE p.status = 'completed' AND p.payment_date BETWEEN ? AND ?
+                    WHERE p.payment_date BETWEEN ? AND ?
                     ORDER BY p.payment_date DESC";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$startDate, $endDate]);
@@ -604,8 +592,7 @@ class PaymentController extends AdminController
                     LEFT JOIN bookings b ON p.booking_id = b.id
                     LEFT JOIN users c ON b.customer_id = c.id
                     LEFT JOIN properties pr ON b.property_id = pr.id
-                    WHERE p.status = 'pending' AND p.created_at BETWEEN ? AND ?
-                    ORDER BY p.created_at DESC";
+                    WHERE 1=0";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$startDate, $endDate]);
             return $stmt->fetchAll() ?: [];
@@ -627,8 +614,7 @@ class PaymentController extends AdminController
                     LEFT JOIN bookings b ON p.booking_id = b.id
                     LEFT JOIN users c ON b.customer_id = c.id
                     LEFT JOIN properties pr ON b.property_id = pr.id
-                    WHERE p.status = 'refunded' AND p.refund_date BETWEEN ? AND ?
-                    ORDER BY p.refund_date DESC";
+                    WHERE 1=0";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$startDate, $endDate]);
             return $stmt->fetchAll() ?: [];

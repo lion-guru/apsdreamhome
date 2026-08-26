@@ -28,11 +28,12 @@ class ScheduleController extends AdminController
 
             // Today's scheduled shifts with employee names
             $todayShifts = $this->db->fetchAll(
-                "SELECT es.*, e.name as employee_name, e.department,
+                "SELECT es.*, e.name as employee_name, emp.department,
                         st.name as shift_type_name, st.color, st.start_time as shift_start_time,
                         st.end_time as shift_end_time
                  FROM employee_shifts es
                  JOIN users e ON es.employee_id = e.id
+                 LEFT JOIN employees emp ON emp.user_id = e.id
                  JOIN shift_types st ON es.shift_type_id = st.id
                  WHERE es.shift_date = ?
                  ORDER BY st.start_time",
@@ -285,11 +286,12 @@ class ScheduleController extends AdminController
             $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : 'WHERE 1=1';
 
             $assignments = $this->db->fetchAll(
-                "SELECT es.*, e.name as employee_name, e.department, e.designation,
+                "SELECT es.*, e.name as employee_name, emp.department, emp.designation,
                         st.name as shift_type_name, st.color, st.start_time as shift_start_time,
                         st.end_time as shift_end_time
                  FROM employee_shifts es
                  JOIN users e ON es.employee_id = e.id
+                 LEFT JOIN employees emp ON emp.user_id = e.id
                  JOIN shift_types st ON es.shift_type_id = st.id
                  $whereClause
                  ORDER BY es.shift_date DESC, st.start_time",
@@ -299,7 +301,7 @@ class ScheduleController extends AdminController
             // For filters
             [$tidSql, $tidParams] = $this->tenantWhere();
             $users = $this->db->fetchAll(
-                "SELECT id, name, department FROM users WHERE status = 'active'{$tidSql} ORDER BY name", $tidParams
+                "SELECT id, name FROM users WHERE status = 'active'{$tidSql} ORDER BY name", $tidParams
             );
             $shiftTypes = $this->db->fetchAll(
                 "SELECT id, name FROM shift_types WHERE is_active = 1 ORDER BY name"

@@ -66,12 +66,11 @@ class FarmerService
 
         return $this->cacheRemember($cacheKey, $this->cacheTtl, function () use ($filters, $perPage) {
             $db = $this->db();
-            $sql = "SELECT fp.*, ua.name as associate_name,
+            $sql = "SELECT fp.*, a.name as associate_name,
                     (SELECT COALESCE(SUM(land_area), 0) FROM farmer_land_holdings WHERE farmer_id = fp.id) as total_land_area,
                     (SELECT COUNT(*) FROM farmer_transactions WHERE farmer_id = fp.id) as transaction_count
                     FROM farmer_profiles fp
-                    LEFT JOIN users a ON fp.associate_id = a.id
-                    LEFT JOIN users ua ON a.user_id = ua.id" . $this->tenantSql();
+                    LEFT JOIN users a ON fp.associate_id = a.id" . $this->tenantSql();
             $params = [];
             if ($this->tenantId() > 1) $params[] = $this->tenantId();
             $conditions = [];
@@ -139,10 +138,9 @@ class FarmerService
 
         return $this->cacheRemember($cacheKey, $this->cacheTtl, function () use ($id) {
             $db = $this->db();
-            $sql = "SELECT fp.*, ua.name as associate_name, u.name as created_by_name
+            $sql = "SELECT fp.*, a.name as associate_name, u.name as created_by_name
                     FROM farmer_profiles fp
                     LEFT JOIN users a ON fp.associate_id = a.id
-                    LEFT JOIN users ua ON a.user_id = ua.id
                     LEFT JOIN users u ON fp.created_by = u.id
                     WHERE fp.id = ?";
             $farmer = $db->fetch($sql, [$id]);
@@ -768,10 +766,9 @@ class FarmerService
     {
         try {
             $db = \App\Core\Database\Database::getInstance();
-            $sql = "SELECT fp.*, ua.name as associate_name
+            $sql = "SELECT fp.*, a.name as associate_name
                     FROM farmer_profiles fp
                     LEFT JOIN users a ON fp.associate_id = a.id
-                    LEFT JOIN users ua ON a.user_id = ua.id
                     WHERE (fp.full_name LIKE ? OR fp.farmer_number LIKE ? OR fp.phone LIKE ? OR fp.village LIKE ? OR fp.aadhar_number LIKE ?)";
             $params = array_fill(0, 5, '%' . $query . '%');
 

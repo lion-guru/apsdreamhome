@@ -574,7 +574,7 @@ public function mlmLevelStore()
             $this->data['payouts'] = $this->db->fetchAll(
                 "SELECT mcl.*, u.name as associate_name FROM mlm_commission_ledger mcl
                  LEFT JOIN users u ON mcl.beneficiary_user_id = u.id
-                 WHERE mcl.status='paid' ORDER BY mcl.payout_date DESC LIMIT 100"
+                 WHERE mcl.status='paid' ORDER BY mcl.paid_at DESC LIMIT 100"
             );
         } catch (\Exception $e) {
             $this->data['payouts'] = [];
@@ -612,20 +612,23 @@ public function mlmLevelStore()
             // Approved commissions ready for payout
             $this->data['approved_commissions'] = $this->db->fetchAll("
                 SELECT mcl.*, u.name as associate_name, u.email as associate_email,
-                       u.bank_account, u.bank_name, u.ifsc_code
+                       ass.bank_account, ass.bank_ifsc as ifsc_code,
+                       mcl.created_at as approved_at
                 FROM mlm_commission_ledger mcl
                 JOIN users u ON mcl.beneficiary_user_id = u.id
-                WHERE mcl.status = 'approved' AND (mcl.payout_date IS NULL OR mcl.payout_date = '')
-                ORDER BY mcl.approved_at ASC
+                LEFT JOIN associates ass ON ass.user_id = u.id
+                WHERE mcl.status = 'approved' AND (mcl.paid_at IS NULL OR mcl.paid_at = '')
+                ORDER BY mcl.created_at ASC
             ") ?: [];
 
             // Payout history
             $this->data['payout_history'] = $this->db->fetchAll("
-                SELECT mcl.*, u.name as associate_name, u.email as associate_email
+                SELECT mcl.*, u.name as associate_name, u.email as associate_email,
+                       mcl.paid_at as payout_date
                 FROM mlm_commission_ledger mcl
                 JOIN users u ON mcl.beneficiary_user_id = u.id
-                WHERE mcl.status = 'paid' AND mcl.payout_date IS NOT NULL
-                ORDER BY mcl.payout_date DESC
+                WHERE mcl.status = 'paid' AND mcl.paid_at IS NOT NULL
+                ORDER BY mcl.paid_at DESC
                 LIMIT 20
             ") ?: [];
 

@@ -276,9 +276,9 @@ class AdminReportsController extends AdminController
                         u.name, 
                         u.email,
                         COUNT(s.id) as sales_count,
-                        COALESCE(SUM(s.amount), 0) as total_revenue
+                        COALESCE(SUM(s.sale_amount), 0) as total_revenue
                     FROM users u
-                    LEFT JOIN sales s ON u.id = s.created_by 
+                    LEFT JOIN sales s ON u.id = s.associate_id 
                         AND DATE(s.created_at) >= ? 
                         AND DATE(s.created_at) <= ?
                     WHERE 1=1{$tidSql}

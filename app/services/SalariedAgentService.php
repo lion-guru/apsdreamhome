@@ -236,7 +236,7 @@ class SalariedAgentService
             // Count plots sold this month
             $monthStr  = sprintf('%04d-%02d', $year, $month);
             $stmt = $this->pdo->prepare("
-                SELECT COUNT(*) AS plots_sold, COALESCE(SUM(pb.total_amount), 0) AS total_sale_value
+                SELECT COUNT(*) AS plots_sold, COALESCE(SUM(pb.total_plot_value), 0) AS total_sale_value
                 FROM plot_bookings pb
                 WHERE pb.associate_id = (
                     SELECT id FROM associates WHERE user_id = ? LIMIT 1
@@ -319,7 +319,7 @@ class SalariedAgentService
             }
 
             $stmt = $this->pdo->prepare("
-                SELECT total_amount FROM plot_bookings WHERE id = ? LIMIT 1
+                SELECT total_plot_value FROM plot_bookings WHERE id = ? LIMIT 1
             ");
             $stmt->execute([$bookingId]);
             $booking = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -327,7 +327,7 @@ class SalariedAgentService
                 return ['success' => false, 'incentive_amount' => 0.0, 'incentive_type' => 'none', 'error' => 'Booking not found'];
             }
 
-            $saleValue      = (float)$booking['total_amount'];
+            $saleValue      = (float)$booking['total_plot_value'];
             $incentiveType  = $structure['incentive_type'];
             $incentiveValue = (float)$structure['incentive_value'];
 
@@ -378,7 +378,7 @@ class SalariedAgentService
                     u.email,
                     u.phone,
                     a.agent_type,
-                    a.is_salary_active,
+                    a.salary_eligible AS is_salary_active,
                     s.basic_salary,
                     s.hra,
                     s.ta_da,

@@ -219,7 +219,7 @@ class CompareController extends BaseController
                        pa.phone as agent_phone
                 FROM properties p
                 LEFT JOIN property_images pi ON p.id = pi.property_id AND pi.is_primary = 1
-                LEFT JOIN property_agents pa ON p.agent_id = pa.id
+                LEFT JOIN users pa ON p.agent_id = pa.id
                 WHERE p.id IN ($placeholders)
                 ORDER BY FIELD(p.id, $placeholders)";
 
@@ -316,11 +316,9 @@ class CompareController extends BaseController
     {
         try {
             $sql = "SELECT pcs.id, pcs.name, pcs.created_at,
-                           COUNT(pc.id) as property_count,
-                           GROUP_CONCAT(p.title SEPARATOR ' vs ') as property_names
+                           COUNT(pc.id) as property_count
                     FROM property_comparison_sessions pcs
                     LEFT JOIN property_comparisons pc ON pcs.id = pc.session_id
-                    LEFT JOIN properties p ON pc.property_id = p.id
                     WHERE pcs.user_id = ? AND pcs.expires_at > NOW()
                     GROUP BY pcs.id
                     ORDER BY pcs.created_at DESC
@@ -356,12 +354,16 @@ class CompareController extends BaseController
      */
     private function getSessionPropertyIds($sessionId)
     {
-        $sql = "SELECT property_id FROM property_comparisons 
+        // property_comparisons stores ids as JSON in property_ids (no property_id/sort_order columns)
+        $sql = "SELECT property_ids FROM property_comparisons 
                 WHERE session_id = ? 
-                ORDER BY sort_order";
+                ORDER BY id DESC 
+                LIMIT 1";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$sessionId]);
-        return $stmt->fetchAll(\PDO::FETCH_COLUMN);
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+        $ids = json_decode($row['property_ids'] ?? '[]', true);
+        return is_array($ids) ? array_map('intval', $ids) : [];
     }
 
     /**

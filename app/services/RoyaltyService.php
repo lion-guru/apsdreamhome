@@ -47,10 +47,10 @@ class RoyaltyService
 
         // Get site managers with ≥₹50L GBV
         $stmt = $this->pdo->prepare("
-            SELECT u.id, u.name, u.gbv
+            SELECT u.id, u.name, u.cumulative_sales AS gbv
             FROM users u
-            WHERE u.rank = 'site_manager'
-            AND u.gbv >= 5000000
+            WHERE u.mlm_rank = 'site_manager'
+            AND u.cumulative_sales >= 5000000
             AND u.status = 'active'" . $this->tenantSql() . "
         ");
         $stmt->execute();

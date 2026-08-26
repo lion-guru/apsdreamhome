@@ -253,9 +253,9 @@ class MarketIntelligenceAgent
             // ROI by colony (price appreciation)
             $roi = $this->db->fetchAll(
                 "SELECT c.name,
-                        MIN(p.price) as min_price,
-                        MAX(p.price) as max_price,
-                        ROUND((MAX(p.price) - MIN(p.price)) / MIN(p.price) * 100, 1) as price_range_pct,
+                        MIN(p.total_price) as min_price,
+                        MAX(p.total_price) as max_price,
+                        ROUND((MAX(p.total_price) - MIN(p.total_price)) / MIN(p.total_price) * 100, 1) as price_range_pct,
                         COUNT(p.id) as plots
                  FROM plots p JOIN colonies c ON p.colony_id = c.id
                  WHERE p.status = 'available'" . $tidSql . "
@@ -417,9 +417,9 @@ class MarketIntelligenceAgent
             // ROI Analysis — price appreciation by colony
             $roi = $this->db->fetchAll(
                 "SELECT c.name,
-                        MIN(p.price) as min_price,
-                        MAX(p.price) as max_price,
-                        ROUND((MAX(p.price) - MIN(p.price)) / NULLIF(MIN(p.price),0) * 100, 1) as price_range_pct,
+                        MIN(p.total_price) as min_price,
+                        MAX(p.total_price) as max_price,
+                        ROUND((MAX(p.total_price) - MIN(p.total_price)) / NULLIF(MIN(p.total_price),0) * 100, 1) as price_range_pct,
                         COUNT(p.id) as plots
                  FROM plots p JOIN colonies c ON p.colony_id = c.id
                  WHERE p.status = 'available'" . $tidSql . "
@@ -498,11 +498,11 @@ class MarketIntelligenceAgent
             // Colony-wise comparison
             $comparisons = $this->db->fetchAll(
                 "SELECT c.name as colony,
-                        AVG(p.price) as avg_price,
+                        AVG(p.total_price) as avg_price,
                         COUNT(p.id) as total_plots,
                         SUM(CASE WHEN p.status='sold' THEN 1 ELSE 0 END) as sold,
                         ROUND(AVG(p.area_sqft),0) as avg_area,
-                        ROUND(AVG(p.price) / NULLIF(AVG(p.area_sqft),0), 0) as price_per_sqft
+                        ROUND(AVG(p.total_price) / NULLIF(AVG(p.area_sqft),0), 0) as price_per_sqft
                  FROM plots p JOIN colonies c ON p.colony_id = c.id" . $tidSql . "
                  GROUP BY c.name
                  ORDER BY avg_price DESC",
@@ -511,16 +511,17 @@ class MarketIntelligenceAgent
 
             // Gorakhpur average
             $gorakhpur = $this->db->fetch(
-                "SELECT AVG(p.price) as avg_price, AVG(p.price/NULLIF(p.area_sqft,0)) as price_per_sqft
+                "SELECT AVG(p.total_price) as avg_price, AVG(p.total_price/NULLIF(p.area_sqft,0)) as price_per_sqft
                  FROM plots p WHERE p.status IN ('available','sold')" . $tidSql,
                 $tidParams
             );
 
             // Deoria average (if separate colonies exist)
             $deoria = $this->db->fetch(
-                "SELECT AVG(p.price) as avg_price, AVG(p.price/NULLIF(p.area_sqft,0)) as price_per_sqft
+                "SELECT AVG(p.total_price) as avg_price, AVG(p.total_price/NULLIF(p.area_sqft,0)) as price_per_sqft
                  FROM plots p JOIN colonies c ON p.colony_id = c.id
-                 WHERE c.district = 'Deoria'" . $tidSql,
+                 JOIN districts d ON c.district_id = d.id
+                 WHERE d.name = 'Deoria'" . $tidSql,
                 $tidParams
             );
 
@@ -582,7 +583,7 @@ class MarketIntelligenceAgent
             $recommendations[] = [
                 'type' => 'insight',
                 'title' => 'Large budget-conscious segment',
-                'detail' => "$under10L leads with budget under ₹10L. Consider affordable plot options.",
+                'detail' => "$under10L leads with budget under â‚¹10L. Consider affordable plot options.",
                 'priority' => 'medium',
             ];
         }

@@ -128,7 +128,8 @@ class AchievementController extends BaseController
      */
     private function getUserBadges($userId)
     {
-        $sql = "SELECT ub.*, b.name, b.description, b.icon, b.color, b.requirement_type, b.requirement_value
+        // badges has no color/requirement_type; requirement_value maps to points_required
+        $sql = "SELECT ub.*, b.name, b.description, b.icon, b.points_required as requirement_value
                 FROM user_badges ub
                 JOIN badges b ON ub.badge_id = b.id
                 WHERE ub.user_id = ?
@@ -143,7 +144,7 @@ class AchievementController extends BaseController
      */
     private function getAllBadges()
     {
-        $sql = "SELECT * FROM badges ORDER BY requirement_value ASC";
+        $sql = "SELECT * FROM badges ORDER BY points_required ASC";
         $stmt = $this->pdo->query($sql);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }

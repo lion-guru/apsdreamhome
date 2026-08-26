@@ -203,7 +203,7 @@ class BookingController extends BaseController
                 JOIN customers c ON c.id = pb.customer_id
                 JOIN plots pl ON pl.id = pb.plot_id
                 WHERE pb.associate_id = ?{$tidSql}
-                ORDER BY bp.created_at DESC
+                ORDER BY bp.payment_date DESC
             ", $params) ?: [];
 
             $this->render('associate/payment_history', [

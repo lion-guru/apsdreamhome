@@ -120,11 +120,11 @@ class MessagingService
         $params = $tid > 1 ? [$conversationId, $limit, $offset, $tid] : [$conversationId, $limit, $offset];
 
         $messages = $this->db->query(
-            "SELECT m.*, u.name as sender_name, u.avatar as sender_avatar
+            "SELECT m.*, u.name as sender_name, u.profile_image as sender_avatar
              FROM messages m
              JOIN users u ON m.sender_id = u.id{$tenantSql}
              WHERE m.conversation_id = ?
-             ORDER BY m.created_at DESC
+             ORDER BY m.sent_at DESC
              LIMIT ? OFFSET ?",
             $params
         )->fetchAll(\PDO::FETCH_ASSOC);
@@ -145,12 +145,12 @@ class MessagingService
         $params = [$userId, $userId, $userId, $userId, $userId];
         if ($tid > 1) { $params[] = $tid; }
         return $this->db->query(
-            "SELECT c.id, c.type, c.last_message_at,
-                    (SELECT m.message FROM messages m WHERE m.conversation_id = c.id ORDER BY m.created_at DESC LIMIT 1) as last_message,
-                    (SELECT COUNT(*) FROM messages m WHERE m.conversation_id = c.id AND m.receiver_id = ? AND m.status != 'read') as unread_count,
+            "SELECT c.id, c.conversation_type as type, c.last_message_at,
+                    (SELECT m.content FROM messages m WHERE m.conversation_id = c.id ORDER BY m.sent_at DESC LIMIT 1) as last_message,
+                    (SELECT COUNT(*) FROM messages m WHERE m.conversation_id = c.id AND m.receiver_id = ? AND m.read_at IS NULL AND m.is_deleted = 0) as unread_count,
                     (SELECT u.name FROM conversation_participants cp JOIN users u ON cp.user_id = u.id WHERE cp.conversation_id = c.id AND cp.user_id != ?{$tenantSql} LIMIT 1) as other_user_name,
                     (SELECT u.id FROM conversation_participants cp JOIN users u ON cp.user_id = u.id WHERE cp.conversation_id = c.id AND cp.user_id != ?{$tenantSql} LIMIT 1) as other_user_id,
-                    (SELECT u.avatar FROM conversation_participants cp JOIN users u ON cp.user_id = u.id WHERE cp.conversation_id = c.id AND cp.user_id != ?{$tenantSql} LIMIT 1) as other_user_avatar
+                    (SELECT u.profile_image FROM conversation_participants cp JOIN users u ON cp.user_id = u.id WHERE cp.conversation_id = c.id AND cp.user_id != ?{$tenantSql} LIMIT 1) as other_user_avatar
              FROM conversations c
              JOIN conversation_participants cp ON c.id = cp.conversation_id
              WHERE cp.user_id = ?
@@ -333,8 +333,8 @@ class MessagingService
              FROM messages m
              JOIN conversation_participants cp ON m.conversation_id = cp.conversation_id
              JOIN users u ON m.sender_id = u.id{$tenantSql}
-             WHERE cp.user_id = ? AND m.message LIKE ?
-             ORDER BY m.created_at DESC
+             WHERE cp.user_id = ? AND m.content LIKE ?
+             ORDER BY m.sent_at DESC
              LIMIT 50",
             $params
         )->fetchAll(\PDO::FETCH_ASSOC);

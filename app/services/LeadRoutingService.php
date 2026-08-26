@@ -192,7 +192,7 @@ class LeadRoutingService
                  FROM users u
                  LEFT JOIN leads l ON l.assigned_to = u.id AND l.tenant_id = u.tenant_id AND l.deleted_at IS NULL
                  WHERE u.deleted_at IS NULL" . $this->tenantSqlForAlias('u') . "
-                   AND EXISTS (SELECT 1 FROM employee_designation_roles edr WHERE edr.user_id = u.id AND edr.department_id = ? AND edr.tenant_id = u.tenant_id)
+                   AND EXISTS (SELECT 1 FROM employees emp JOIN departments d ON d.name = emp.department WHERE emp.user_id = u.id AND d.id = ? AND emp.tenant_id = u.tenant_id)
                  GROUP BY u.id
                  ORDER BY lead_count ASC
                  LIMIT 1",

@@ -57,13 +57,11 @@ class ColonyController extends BaseController
 
             // Get plots with status
             $plots = $db->fetchAll("
-                SELECT p.*, up.title as listed_title, up.price as listed_price
+                SELECT p.*
                 FROM plots p
-                LEFT JOIN user_properties up ON up.colony_id = c.id AND up.user_id = ?
-                LEFT JOIN colonies c ON c.id = p.colony_id
                 WHERE p.colony_id = ?{$tidSql}
                 ORDER BY p.plot_number
-            ", array_merge([$userId, $id], TenantContext::getId() > 1 ? [TenantContext::getId()] : [])) ?: [];
+            ", array_merge([$id], TenantContext::getId() > 1 ? [TenantContext::getId()] : [])) ?: [];
 
             // Plot stats
             $total = count($plots);

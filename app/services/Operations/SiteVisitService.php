@@ -333,7 +333,7 @@ class SiteVisitService
         
         $whereClause = implode(' AND ', $where);
         
-        $sql = "SELECT sv.*, p.title as property_title, p.address as property_address,
+        $sql = "SELECT sv.*, p.title as property_title, p.location as property_address,
             a.name as assigned_name, a.phone as assigned_phone
             FROM site_visits sv
             JOIN properties p ON sv.property_id = p.id
@@ -353,7 +353,7 @@ class SiteVisitService
     public function getVisit(int $visitId): ?array
     {
         $tid = $this->tenantId();
-        $sql = "SELECT sv.*, p.title as property_title, p.address as property_address,
+        $sql = "SELECT sv.*, p.title as property_title, p.location as property_address,
             l.name as lead_name, l.email as lead_email, l.phone as lead_phone
             FROM site_visits sv
             JOIN properties p ON sv.property_id = p.id

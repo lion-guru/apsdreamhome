@@ -263,7 +263,7 @@ class FarmerAdminController extends AdminController
         $this->requireAdmin();
         try {
             $gataRecords = $this->db->fetchAll("
-                SELECT g.*, s.name as site_name
+                SELECT g.*, s.site_name as site_name
                 FROM gata_master g
                 LEFT JOIN sites s ON g.site_id = s.id
                 ORDER BY g.gata_id DESC

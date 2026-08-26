@@ -223,39 +223,45 @@ class CRMAnalyticsManager
         $analytics = [];
 
         $tid = $this->getTenantId();
-        $tenantWhere = $tid > 1 ? " WHERE tenant_id = ?" : "";
-        $tenantWhereCp = $tid > 1 ? " WHERE cp.tenant_id = ?" : "";
+        $tenantWhereCp = $tid > 1 ? " AND cp.tenant_id = ?" : "";
+
+        // Purchase totals per customer come from plot_bookings (users has no purchase columns)
+        $pbSub = "(SELECT customer_id, SUM(total_plot_value) AS total_value, COUNT(*) AS booking_count
+                  FROM plot_bookings WHERE status != 'cancelled' GROUP BY customer_id)";
 
         // Customer acquisition
         $sql = "SELECT
             COUNT(*) as total_customers,
-            SUM(CASE WHEN customer_status = 'active' THEN 1 ELSE 0 END) as active_customers,
-            SUM(CASE WHEN customer_status = 'vip' THEN 1 ELSE 0 END) as vip_customers,
-            AVG(total_purchase_value) as avg_customer_value,
-            AVG(DATEDIFF(NOW(), created_at)/365) as avg_customer_lifespan_years
-            FROM users{$tenantWhere}";
+            SUM(CASE WHEN u.status = 'active' THEN 1 ELSE 0 END) as active_customers,
+            AVG(COALESCE(pb.total_value, 0)) as avg_customer_value,
+            AVG(DATEDIFF(NOW(), u.created_at)/365) as avg_customer_lifespan_years
+            FROM users u
+            LEFT JOIN {$pbSub} pb ON pb.customer_id = u.id" . ($tid > 1 ? " WHERE u.tenant_id = ?" : "");
 
         $analytics['customer_acquisition'] = $tid > 1 ? $this->db->fetch($sql, [$tid]) : $this->db->fetch($sql);
 
-        // Customer segmentation
+        // Customer segmentation (group by role — no customer_type column)
         $sql = "SELECT
-            customer_type,
+            u.role as customer_type,
             COUNT(*) as customer_count,
-            AVG(total_purchase_value) as avg_value,
-            SUM(total_purchase_value) as total_value
-            FROM users{$tenantWhere}
-            GROUP BY customer_type";
+            AVG(COALESCE(pb.total_value, 0)) as avg_value,
+            SUM(COALESCE(pb.total_value, 0)) as total_value
+            FROM users u
+            LEFT JOIN {$pbSub} pb ON pb.customer_id = u.id" . ($tid > 1 ? " WHERE u.tenant_id = ?" : "") . "
+            GROUP BY u.role";
 
         $analytics['customer_segmentation'] = $tid > 1 ? $this->db->fetchAll($sql, [$tid]) : $this->db->fetchAll($sql);
 
         // Customer lifetime value
         $sql = "SELECT
-            cp.customer_type,
+            cp.role as customer_type,
             COUNT(*) as customer_count,
-            AVG(cp.total_purchase_value) as avg_clv,
+            AVG(COALESCE(pb.total_value, 0)) as avg_clv,
             AVG(DATEDIFF(NOW(), cp.created_at)/365) as avg_lifespan_years
-            FROM users cp{$tenantWhereCp}
-            GROUP BY cp.customer_type";
+            FROM users cp
+            LEFT JOIN {$pbSub} pb ON pb.customer_id = cp.id
+            WHERE 1=1{$tenantWhereCp}
+            GROUP BY cp.role";
 
         $results = $this->db->fetchAll($sql);
         $analytics['customer_lifetime_value'] = [];
@@ -265,29 +271,26 @@ class CRMAnalyticsManager
         }
 
         // Customer satisfaction
-        $sql = "SELECT
-            AVG(satisfaction_rating) as avg_satisfaction,
-            COUNT(CASE WHEN satisfaction_rating >= 4 THEN 1 END) as satisfied_customers,
-            COUNT(CASE WHEN satisfaction_rating <= 2 THEN 1 END) as dissatisfied_customers,
-            COUNT(*) as total_interactions
-            FROM customer_interactions
-            WHERE satisfaction_rating > 0";
+        // NOTE: customer_interactions table does not exist; report zeros
+        $analytics['customer_satisfaction'] = [
+            'avg_satisfaction' => null,
+            'satisfied_customers' => 0,
+            'dissatisfied_customers' => 0,
+            'total_interactions' => 0,
+            'satisfaction_rate' => 0,
+        ];
 
-        $satisfaction = $this->db->fetch($sql);
-        $satisfaction['satisfaction_rate'] = ($satisfaction['total_interactions'] ?? 0) > 0 ?
-            round(($satisfaction['satisfied_customers'] / $satisfaction['total_interactions']) * 100, 2) : 0;
-        $analytics['customer_satisfaction'] = $satisfaction;
-
-        // Repeat users
+        // Repeat users (bookings per customer)
         $tidRu = $this->getTenantId();
-        $tenantWhereRu = $tidRu > 1 ? " WHERE cp.tenant_id = ?" : "";
         $sql = "SELECT
             COUNT(DISTINCT cp.id) as total_customers,
-            COUNT(DISTINCT CASE WHEN cp.total_purchases > 1 THEN cp.id END) as repeat_customers,
-            AVG(cp.total_purchases) as avg_purchases_per_customer
-            FROM users cp{$tenantWhereRu}";
+            COUNT(DISTINCT CASE WHEN bk.booking_count > 1 THEN cp.id END) as repeat_customers,
+            AVG(bk.booking_count) as avg_purchases_per_customer
+            FROM users cp
+            LEFT JOIN {$pbSub} bk ON bk.customer_id = cp.id" . ($tidRu > 1 ? " WHERE cp.tenant_id = ?" : "");
 
         $repeatCustomers = $tidRu > 1 ? $this->db->fetch($sql, [$tidRu]) : $this->db->fetch($sql);
+        $repeatCustomers = $repeatCustomers ?: [];
         $repeatCustomers['repeat_customer_rate'] = ($repeatCustomers['total_customers'] ?? 0) > 0 ?
             round(($repeatCustomers['repeat_customers'] / $repeatCustomers['total_customers']) * 100, 2) : 0;
         $analytics['repeat_customers'] = $repeatCustomers;

@@ -135,7 +135,7 @@ class MobileUserApiController extends BaseController
 
             // 3. Payment Receipts
             try {
-                $paymentSql = "SELECT pay.id, CONCAT('Payment Receipt - ', p.title) as name, 'receipt' as type, 'payment' as category, pay.receipt_file as url, pay.created_at as uploaded_at, 'verified' as status, 'payment' as source FROM payments pay JOIN bookings b ON pay.booking_id = b.id JOIN properties p ON b.property_id = p.id WHERE b.customer_id = ? AND pay.receipt_file IS NOT NULL ORDER BY pay.created_at DESC LIMIT {$docLimit}";
+                $paymentSql = "SELECT pay.id, CONCAT('Payment Receipt - ', p.title) as name, 'receipt' as type, 'payment' as category, NULL as url, pay.created_at as uploaded_at, pay.status, 'payment' as source FROM payments pay JOIN bookings b ON pay.booking_id = b.id JOIN properties p ON b.property_id = p.id WHERE b.customer_id = ? ORDER BY pay.created_at DESC LIMIT {$docLimit}";
                 $paymentStmt = $this->db->prepare($paymentSql);
                 $paymentStmt->execute([$userId]);
                 $documents = array_merge($documents, $paymentStmt->fetchAll(PDO::FETCH_ASSOC));
@@ -162,7 +162,7 @@ class MobileUserApiController extends BaseController
     private function getUserProfileData($userId)
     {
         try {
-            $sql = "SELECT u.id, u.name, u.email, u.phone, u.role, u.avatar, u.created_at, u.updated_at, COALESCE(mp.current_level, 'Customer') as rank FROM users u LEFT JOIN mlm_profiles mp ON u.id = mp.user_id WHERE u.id = ?";
+            $sql = "SELECT u.id, u.name, u.email, u.phone, u.role, u.created_at, u.updated_at, COALESCE(mp.current_level, 'Customer') as rank FROM users u LEFT JOIN mlm_profiles mp ON u.id = mp.user_id WHERE u.id = ?";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$userId]);
             return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
@@ -1141,14 +1141,14 @@ class MobileUserApiController extends BaseController
     private function getConversationsData($userId)
     {
         $stmt = $this->db->prepare("
-            SELECT m.id, m.sender_id, m.message, m.created_at,
-                   u.name as sender_name, u.avatar as sender_avatar,
-                   (SELECT COUNT(*) FROM messages WHERE sender_id = m.sender_id AND receiver_id = ? AND is_read = 0) as unread_count
+            SELECT m.id, m.sender_id, m.content as message, m.sent_at as created_at,
+                   u.name as sender_name,
+                   (SELECT COUNT(*) FROM messages WHERE sender_id = m.sender_id AND receiver_id = ? AND read_at IS NULL) as unread_count
             FROM messages m
             JOIN users u ON m.sender_id = u.id
             WHERE m.receiver_id = ?
             GROUP BY m.sender_id
-            ORDER BY MAX(m.created_at) DESC
+            ORDER BY MAX(m.sent_at) DESC
         ");
         $stmt->execute([$userId, $userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -1157,12 +1157,12 @@ class MobileUserApiController extends BaseController
     private function getMessagesData($userId, $otherUserId)
     {
         $stmt = $this->db->prepare("
-            SELECT m.id, m.sender_id, m.message, m.created_at, m.is_read,
+            SELECT m.id, m.sender_id, m.content as message, m.sent_at as created_at, (m.read_at IS NOT NULL) as is_read,
                    u.name as sender_name
             FROM messages m
             JOIN users u ON m.sender_id = u.id
             WHERE ((m.sender_id = ? AND m.receiver_id = ?) OR (m.sender_id = ? AND m.receiver_id = ?))
-            ORDER BY m.created_at ASC
+            ORDER BY m.sent_at ASC
         ");
         $stmt->execute([$userId, $otherUserId, $otherUserId, $userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -1177,7 +1177,7 @@ class MobileUserApiController extends BaseController
 
     private function getUnreadCountData($userId)
     {
-        $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM messages WHERE receiver_id = ? AND is_read = 0");
+        $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM messages WHERE receiver_id = ? AND read_at IS NULL");
         $stmt->execute([$userId]);
         return (int)$stmt->fetch(PDO::FETCH_ASSOC)['count'];
     }

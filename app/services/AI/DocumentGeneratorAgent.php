@@ -164,7 +164,7 @@ class DocumentGeneratorAgent
             if (!$user) return ['success' => false, 'error' => 'User not found'];
 
             $commissions = $this->db->fetchAll(
-                "SELECT cl.*, pb.plot_number, c.name as colony_name
+                "SELECT cl.*, pl.plot_number, c.name as colony_name
                  FROM mlm_commission_ledger cl
                  LEFT JOIN plot_bookings pb ON cl.booking_id = pb.id
                  LEFT JOIN plots pl ON pb.plot_id = pl.id

@@ -454,7 +454,7 @@ class AlertService
             case 'department_head':
                 $query = "SELECT u.*
                          FROM users u
-                         JOIN departments d ON u.id = d.head_id
+                         JOIN departments d ON u.id = d.head_user_id
                          JOIN teams t ON d.id = t.department_id
                          JOIN alert_assignments aa ON t.id = aa.team_id
                          WHERE aa.alert_id = ?";

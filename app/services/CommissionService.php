@@ -235,7 +235,7 @@ class CommissionService
 
     public function getAgentCommissions(int $agentId, string $status = ''): array
     {
-        $sql = "SELECT h.*, u.name as agent_name, b.booking_code FROM hybrid_commission_records h LEFT JOIN users u ON h.agent_id = u.id LEFT JOIN bookings b ON h.booking_id = b.id WHERE h.agent_id = :a";
+        $sql = "SELECT h.*, u.name as agent_name, b.booking_number as booking_code FROM hybrid_commission_records h LEFT JOIN users u ON h.agent_id = u.id LEFT JOIN bookings b ON h.booking_id = b.id WHERE h.agent_id = :a";
         $params = [':a' => $agentId];
         if ($status) { $sql .= " AND h.status = :s"; $params[':s'] = $status; }
         $sql .= " ORDER BY h.created_at DESC LIMIT 100";

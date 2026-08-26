@@ -31,17 +31,18 @@ class FinancialReportsService
 
         $sql = "SELECT
                     jel.account_id,
-                    jel.account_type,
-                    jel.account_name,
-                    COALESCE(SUM(CASE WHEN je.entry_date <= ? THEN jel.debit ELSE 0 END), 0) AS total_debit,
-                    COALESCE(SUM(CASE WHEN je.entry_date <= ? THEN jel.credit ELSE 0 END), 0) AS total_credit
+                    coa.account_type,
+                    coa.account_name,
+                    COALESCE(SUM(CASE WHEN je.entry_date <= ? THEN jel.debit_amount ELSE 0 END), 0) AS total_debit,
+                    COALESCE(SUM(CASE WHEN je.entry_date <= ? THEN jel.credit_amount ELSE 0 END), 0) AS total_credit
                 FROM journal_entry_lines jel
                 JOIN journal_entries je ON je.id = jel.journal_entry_id
+                JOIN chart_of_accounts coa ON coa.id = jel.account_id
                 WHERE je.entry_date <= ?
                 " . ($tid > 1 ? " AND je.tenant_id = ?" : "") .
-                " GROUP BY jel.account_id, jel.account_type, jel.account_name
-                HAVING ABS(COALESCE(SUM(jel.debit), 0) - COALESCE(SUM(jel.credit), 0)) > 0.01
-                ORDER BY jel.account_type, jel.account_name";
+                " GROUP BY jel.account_id, coa.account_type, coa.account_name
+                HAVING ABS(COALESCE(SUM(jel.debit_amount), 0) - COALESCE(SUM(jel.credit_amount), 0)) > 0.01
+                ORDER BY coa.account_type, coa.account_name";
 
         $params = [$asOfDate, $asOfDate, $asOfDate];
         if ($tid > 1) $params[] = $tid;
@@ -77,27 +78,30 @@ class FinancialReportsService
 
         // Revenue accounts (type = 'revenue')
         $revenue = $this->db->fetchAll("
-            SELECT jel.account_name, COALESCE(SUM(jel.credit), 0) - COALESCE(SUM(jel.debit), 0) AS amount
+            SELECT coa.account_name, COALESCE(SUM(jel.credit_amount), 0) - COALESCE(SUM(jel.debit_amount), 0) AS amount
             FROM journal_entry_lines jel
             JOIN journal_entries je ON je.id = jel.journal_entry_id
-            WHERE jel.account_type = 'revenue' AND je.entry_date BETWEEN ? AND ?" . ($tid > 1 ? " AND je.tenant_id = ?" : "") .
-            " GROUP BY jel.account_name ORDER BY jel.account_name", $params) ?: [];
+            JOIN chart_of_accounts coa ON coa.id = jel.account_id
+            WHERE coa.account_type = 'revenue' AND je.entry_date BETWEEN ? AND ?" . ($tid > 1 ? " AND je.tenant_id = ?" : "") .
+            " GROUP BY coa.account_name ORDER BY coa.account_name", $params) ?: [];
 
         // Expense accounts (type = 'expense')
         $expenses = $this->db->fetchAll("
-            SELECT jel.account_name, COALESCE(SUM(jel.debit), 0) - COALESCE(SUM(jel.credit), 0) AS amount
+            SELECT coa.account_name, COALESCE(SUM(jel.debit_amount), 0) - COALESCE(SUM(jel.credit_amount), 0) AS amount
             FROM journal_entry_lines jel
             JOIN journal_entries je ON je.id = jel.journal_entry_id
-            WHERE jel.account_type = 'expense' AND je.entry_date BETWEEN ? AND ?" . ($tid > 1 ? " AND je.tenant_id = ?" : "") .
-            " GROUP BY jel.account_name ORDER BY jel.account_name", $params) ?: [];
+            JOIN chart_of_accounts coa ON coa.id = jel.account_id
+            WHERE coa.account_type = 'expense' AND je.entry_date BETWEEN ? AND ?" . ($tid > 1 ? " AND je.tenant_id = ?" : "") .
+            " GROUP BY coa.account_name ORDER BY coa.account_name", $params) ?: [];
 
         // Cost of Goods Sold
         $cogs = $this->db->fetchAll("
-            SELECT jel.account_name, COALESCE(SUM(jel.debit), 0) - COALESCE(SUM(jel.credit), 0) AS amount
+            SELECT coa.account_name, COALESCE(SUM(jel.debit_amount), 0) - COALESCE(SUM(jel.credit_amount), 0) AS amount
             FROM journal_entry_lines jel
             JOIN journal_entries je ON je.id = jel.journal_entry_id
-            WHERE jel.account_type = 'cogs' AND je.entry_date BETWEEN ? AND ?" . ($tid > 1 ? " AND je.tenant_id = ?" : "") .
-            " GROUP BY jel.account_name ORDER BY jel.account_name", $params) ?: [];
+            JOIN chart_of_accounts coa ON coa.id = jel.account_id
+            WHERE coa.account_type = 'cogs' AND je.entry_date BETWEEN ? AND ?" . ($tid > 1 ? " AND je.tenant_id = ?" : "") .
+            " GROUP BY coa.account_name ORDER BY coa.account_name", $params) ?: [];
 
         $totalRevenue = array_sum(array_column($revenue, 'amount'));
         $totalCogs = array_sum(array_column($cogs, 'amount'));
@@ -132,30 +136,33 @@ class FinancialReportsService
 
         // Assets
         $assets = $this->db->fetchAll("
-            SELECT jel.account_name,
-                   COALESCE(SUM(jel.debit), 0) - COALESCE(SUM(jel.credit), 0) AS balance
+            SELECT coa.account_name,
+                   COALESCE(SUM(jel.debit_amount), 0) - COALESCE(SUM(jel.credit_amount), 0) AS balance
             FROM journal_entry_lines jel
             JOIN journal_entries je ON je.id = jel.journal_entry_id
-            WHERE jel.account_type = 'asset' AND je.entry_date <= ?" . ($tid > 1 ? " AND je.tenant_id = ?" : "") .
-            " GROUP BY jel.account_name ORDER BY jel.account_name", $params) ?: [];
+            JOIN chart_of_accounts coa ON coa.id = jel.account_id
+            WHERE coa.account_type = 'asset' AND je.entry_date <= ?" . ($tid > 1 ? " AND je.tenant_id = ?" : "") .
+            " GROUP BY coa.account_name ORDER BY coa.account_name", $params) ?: [];
 
         // Liabilities
         $liabilities = $this->db->fetchAll("
-            SELECT jel.account_name,
-                   COALESCE(SUM(jel.credit), 0) - COALESCE(SUM(jel.debit), 0) AS balance
+            SELECT coa.account_name,
+                   COALESCE(SUM(jel.credit_amount), 0) - COALESCE(SUM(jel.debit_amount), 0) AS balance
             FROM journal_entry_lines jel
             JOIN journal_entries je ON je.id = jel.journal_entry_id
-            WHERE jel.account_type = 'liability' AND je.entry_date <= ?" . ($tid > 1 ? " AND je.tenant_id = ?" : "") .
-            " GROUP BY jel.account_name ORDER BY jel.account_name", $params) ?: [];
+            JOIN chart_of_accounts coa ON coa.id = jel.account_id
+            WHERE coa.account_type = 'liability' AND je.entry_date <= ?" . ($tid > 1 ? " AND je.tenant_id = ?" : "") .
+            " GROUP BY coa.account_name ORDER BY coa.account_name", $params) ?: [];
 
         // Equity
         $equity = $this->db->fetchAll("
-            SELECT jel.account_name,
-                   COALESCE(SUM(jel.credit), 0) - COALESCE(SUM(jel.debit), 0) AS balance
+            SELECT coa.account_name,
+                   COALESCE(SUM(jel.credit_amount), 0) - COALESCE(SUM(jel.debit_amount), 0) AS balance
             FROM journal_entry_lines jel
             JOIN journal_entries je ON je.id = jel.journal_entry_id
-            WHERE jel.account_type = 'equity' AND je.entry_date <= ?" . ($tid > 1 ? " AND je.tenant_id = ?" : "") .
-            " GROUP BY jel.account_name ORDER BY jel.account_name", $params) ?: [];
+            JOIN chart_of_accounts coa ON coa.id = jel.account_id
+            WHERE coa.account_type = 'equity' AND je.entry_date <= ?" . ($tid > 1 ? " AND je.tenant_id = ?" : "") .
+            " GROUP BY coa.account_name ORDER BY coa.account_name", $params) ?: [];
 
         $totalAssets = array_sum(array_column($assets, 'balance'));
         $totalLiabilities = array_sum(array_column($liabilities, 'balance'));
@@ -185,43 +192,48 @@ class FinancialReportsService
 
         // Operating activities
         $operating = $this->db->fetchAll("
-            SELECT jel.account_name,
-                   SUM(jel.debit) as debits,
-                   SUM(jel.credit) as credits
+            SELECT coa.account_name,
+                   SUM(jel.debit_amount) as debits,
+                   SUM(jel.credit_amount) as credits
             FROM journal_entry_lines jel
             JOIN journal_entries je ON je.id = jel.journal_entry_id
-            WHERE jel.account_type IN ('asset','liability','expense','revenue')
+            JOIN chart_of_accounts coa ON coa.id = jel.account_id
+            WHERE coa.account_type IN ('asset','liability','expense','revenue')
             AND je.entry_date BETWEEN ? AND ?" . ($tid > 1 ? " AND je.tenant_id = ?" : "") .
-            " GROUP BY jel.account_name", $params) ?: [];
+            " GROUP BY coa.account_name", $params) ?: [];
 
         // Simplified: Operating = Revenue - Expenses + Working Capital Changes
         $revenue = $this->db->fetchOne("
-            SELECT COALESCE(SUM(credit), 0) - COALESCE(SUM(debit), 0) AS amount
+            SELECT COALESCE(SUM(jel.credit_amount), 0) - COALESCE(SUM(jel.debit_amount), 0) AS amount
             FROM journal_entry_lines jel
             JOIN journal_entries je ON je.id = jel.journal_entry_id
-            WHERE jel.account_type = 'revenue' AND je.entry_date BETWEEN ? AND ?" . ($tid > 1 ? " AND je.tenant_id = ?" : ""), $params);
+            JOIN chart_of_accounts coa ON coa.id = jel.account_id
+            WHERE coa.account_type = 'revenue' AND je.entry_date BETWEEN ? AND ?" . ($tid > 1 ? " AND je.tenant_id = ?" : ""), $params);
 
         $expenses = $this->db->fetchOne("
-            SELECT COALESCE(SUM(debit), 0) - COALESCE(SUM(credit), 0) AS amount
+            SELECT COALESCE(SUM(jel.debit_amount), 0) - COALESCE(SUM(jel.credit_amount), 0) AS amount
             FROM journal_entry_lines jel
             JOIN journal_entries je ON je.id = jel.journal_entry_id
-            WHERE jel.account_type = 'expense' AND je.entry_date BETWEEN ? AND ?" . ($tid > 1 ? " AND je.tenant_id = ?" : ""), $params);
+            JOIN chart_of_accounts coa ON coa.id = jel.account_id
+            WHERE coa.account_type = 'expense' AND je.entry_date BETWEEN ? AND ?" . ($tid > 1 ? " AND je.tenant_id = ?" : ""), $params);
 
         $netOperating = (float)($revenue['amount'] ?? 0) - (float)($expenses['amount'] ?? 0);
 
         // Investing activities (simplified)
         $investing = $this->db->fetchOne("
-            SELECT COALESCE(SUM(credit), 0) - COALESCE(SUM(debit), 0) AS amount
+            SELECT COALESCE(SUM(jel.credit_amount), 0) - COALESCE(SUM(jel.debit_amount), 0) AS amount
             FROM journal_entry_lines jel
             JOIN journal_entries je ON je.id = jel.journal_entry_id
-            WHERE jel.account_type = 'asset' AND je.entry_date BETWEEN ? AND ?" . ($tid > 1 ? " AND je.tenant_id = ?" : ""), $params);
+            JOIN chart_of_accounts coa ON coa.id = jel.account_id
+            WHERE coa.account_type = 'asset' AND je.entry_date BETWEEN ? AND ?" . ($tid > 1 ? " AND je.tenant_id = ?" : ""), $params);
 
         // Financing activities
         $financing = $this->db->fetchOne("
-            SELECT COALESCE(SUM(credit), 0) - COALESCE(SUM(debit), 0) AS amount
+            SELECT COALESCE(SUM(jel.credit_amount), 0) - COALESCE(SUM(jel.debit_amount), 0) AS amount
             FROM journal_entry_lines jel
             JOIN journal_entries je ON je.id = jel.journal_entry_id
-            WHERE jel.account_type IN ('liability','equity') AND je.entry_date BETWEEN ? AND ?" . ($tid > 1 ? " AND je.tenant_id = ?" : ""), $params);
+            JOIN chart_of_accounts coa ON coa.id = jel.account_id
+            WHERE coa.account_type IN ('liability','equity') AND je.entry_date BETWEEN ? AND ?" . ($tid > 1 ? " AND je.tenant_id = ?" : ""), $params);
 
         return [
             'period' => ['from' => $fromDate, 'to' => $toDate],

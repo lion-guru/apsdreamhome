@@ -366,7 +366,7 @@ class ColonyPricingService
             // ── Colony info ───────────────────────────────────
             $tenantId = TenantContext::getId();
             $colony = $this->db->fetch(
-                "SELECT id, colony_name, total_area_acres, total_plots, available_plots, starting_price
+                "SELECT id, name AS colony_name, total_area_acres, total_plots, available_plots, starting_price
                  FROM colonies WHERE id = :cid" . ($tenantId > 1 ? " AND tenant_id = :tid" : ""),
                 array_merge(['cid' => $colonyId], $tenantId > 1 ? ['tid' => $tenantId] : [])
             );
@@ -506,7 +506,7 @@ class ColonyPricingService
             return $this->db->fetchAll(
                 "SELECT
                      c.id,
-                     c.colony_name,
+                     c.name AS colony_name,
                      c.total_plots,
                      c.available_plots,
                      c.starting_price,
@@ -518,8 +518,8 @@ class ColonyPricingService
                   LEFT JOIN plots p ON p.colony_id = c.id AND p.price_per_sqft > 0" .
                   ($tenantId > 1 ? " AND p.tenant_id = :tid" : "") . "
                   {$whereClause}
-                  GROUP BY c.id, c.colony_name, c.total_plots, c.available_plots, c.starting_price
-                  ORDER BY c.colony_name",
+                  GROUP BY c.id, c.name, c.total_plots, c.available_plots, c.starting_price
+                  ORDER BY c.name",
                 $tenantId > 1 ? ['tid' => $tenantId] : []
             );
         } catch (Exception $e) {

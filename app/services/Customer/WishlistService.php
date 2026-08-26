@@ -196,7 +196,7 @@ $sql = "SELECT rv.*, p.*, pi.image_path as primary_image
             return [
                 'success' => true,
                 'alert_id' => $this->database->lastInsertId(),
-                'message' => "You'll be notified when price drops to ₹" . number_format($targetPrice)
+                'message' => "You'll be notified when price drops to â‚¹" . number_format($targetPrice)
             ];
         } catch (\Exception $e) {
             return ['success' => false, 'error' => $e->getMessage()];
@@ -346,11 +346,11 @@ $sql = "SELECT pa.*, p.price as current_price
     public function getRecommendations(int $userId, int $limit = 6): array
     {
         // Get user's wishlist property types and locations
-$sql = "SELECT p.type, p.city, p.locality
+$sql = "SELECT p.type, p.city, p.location AS locality
             FROM wishlists w
             JOIN properties p ON w.property_id = p.id
             WHERE w.user_id = ? AND w.tenant_id = ?
-            GROUP BY p.type, p.city";
+            GROUP BY p.type, p.city, p.location";
          
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$userId, $this->tenantId()]);
@@ -363,11 +363,11 @@ $sql = "SELECT p.type, p.city, p.locality
         
         // Build recommendation query
         $where = ['p.status = ?', 'p.tenant_id = ?', 'p.id NOT IN (SELECT property_id FROM wishlists WHERE user_id = ?)'];
-        $params = ['available', $this->tenantId(), $userId];
+        $params = ['active', $this->tenantId(), $userId];
         
         $typeConditions = [];
         foreach ($preferences as $pref) {
-            $typeConditions[] = "(p.type = ? AND (p.city = ? OR p.locality = ?))";
+            $typeConditions[] = "(p.type = ? AND (p.city = ? OR p.location = ?))";
             $params[] = $pref['type'];
             $params[] = $pref['city'];
             $params[] = $pref['locality'];
@@ -384,7 +384,7 @@ $sql = "SELECT p.type, p.city, p.locality
             FROM properties p
             LEFT JOIN property_images pi ON p.id = pi.property_id AND pi.is_primary = 1
             WHERE {$whereClause} AND p.tenant_id = ?
-            ORDER BY p.views DESC
+            ORDER BY p.created_at DESC
             LIMIT ?";
         
         $params[] = $this->tenantId();
@@ -405,8 +405,8 @@ $sql = "SELECT p.*, pi.image_path as primary_image,
             (SELECT AVG(rating) FROM property_reviews WHERE property_id = p.id) as avg_rating
             FROM properties p
             LEFT JOIN property_images pi ON p.id = pi.property_id AND pi.is_primary = 1
-            WHERE p.status = 'available' AND p.tenant_id = ?
-            ORDER BY p.views DESC
+            WHERE p.status = 'active' AND p.tenant_id = ?
+            ORDER BY p.created_at DESC
             LIMIT ?";
          
         $stmt = $this->database->prepare($sql);

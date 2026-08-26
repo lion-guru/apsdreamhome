@@ -119,7 +119,7 @@ class CommissionService
         for ($level = 1; $level <= $maxLevels; $level++) {
             // Get the sponsor of current associate
             $stmt = $this->db->prepare("
-                SELECT u.id, u.name, u.customer_id, u.referrer_id 
+                SELECT u.id, u.name, u.customer_id, u.referred_by AS referrer_id 
                 FROM users u 
                 WHERE u.id = ? AND u.role = 'associate' AND u.status = 'active' AND u.tenant_id = ?
             ");
@@ -223,16 +223,15 @@ class CommissionService
             
             $stmt = $this->db->prepare("
                 SELECT 
-                    c.level,
                     c.type,
                     COUNT(*) as total_commissions,
-                    SUM(c.commission_amount) as total_amount,
-                    AVG(c.commission_amount) as average_amount,
+                    SUM(c.amount) as total_amount,
+                    AVG(c.amount) as average_amount,
                     MAX(c.created_at) as last_commission_date
                 FROM commissions c
                 $whereClause
-                GROUP BY c.level, c.type
-                ORDER BY c.level
+                GROUP BY c.type
+                ORDER BY c.type
             ");
             
             $stmt->execute($params);
@@ -263,10 +262,10 @@ class CommissionService
             $stmt = $this->db->prepare("
                 SELECT 
                     u.id, u.name, u.email, u.phone, u.customer_id,
-                    u.created_at, u.total_sales, u.team_sales,
-                    (SELECT COUNT(*) FROM users WHERE referrer_id = u.id AND role = 'associate' AND status = 'active' AND tenant_id = ?) as direct_count
+                    u.created_at, u.cumulative_sales AS total_sales,
+                    (SELECT COUNT(*) FROM users WHERE referred_by = u.id AND role = 'associate' AND status = 'active' AND tenant_id = ?) as direct_count
                 FROM users u
-                WHERE u.referrer_id IN ($placeholders) AND u.role = 'associate' AND u.status = 'active' AND u.tenant_id = ?
+                WHERE u.referred_by IN ($placeholders) AND u.role = 'associate' AND u.status = 'active' AND u.tenant_id = ?
                 ORDER BY u.created_at DESC
             ");
             

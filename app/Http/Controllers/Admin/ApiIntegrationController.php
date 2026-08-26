@@ -101,10 +101,10 @@ class ApiIntegrationController extends AdminController
         $this->requireAdmin();
 
         $logs = $this->db->fetchAll("
-            SELECT ar.*, ad.dev_name 
-            FROM api_request_logs ar 
-            LEFT JOIN api_developers ad ON ar.api_key_id = ad.id 
-            ORDER BY ar.request_time DESC 
+            SELECT ar.*, ad.developer_name AS dev_name
+            FROM api_request_logs ar
+            LEFT JOIN api_developers ad ON ar.api_key_id = ad.id
+            ORDER BY ar.request_time DESC
             LIMIT 200
         ");
 

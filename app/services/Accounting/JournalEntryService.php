@@ -35,16 +35,30 @@ class JournalEntryService
         }
 
         $je = [
+            'journal_number' => $data['journal_number'] ?? ('JE-' . date('YmdHis')),
             'entry_date'     => $data['entry_date'] ?? date('Y-m-d'),
             'narration'      => $data['narration'] ?? '',
             'reference_type' => $data['reference_type'] ?? 'manual',
             'reference_id'   => $data['reference_id'] ?? null,
             'tenant_id'      => $tid,
         ];
+        // Map to actual journal_entries schema
+        $je['description']      = $je['narration'];
+        $je['source_document']  = $je['reference_type'];
+        $je['source_id']        = $je['reference_id'];
+        unset($je['narration'], $je['reference_type'], $je['reference_id']);
         $this->db->insert('journal_entries', $je);
         $jeId = (int)$this->db->lastInsertId();
 
         foreach ($lines as $line) {
+            if (isset($line['debit']) && !isset($line['debit_amount'])) {
+                $line['debit_amount'] = $line['debit'];
+                unset($line['debit']);
+            }
+            if (isset($line['credit']) && !isset($line['credit_amount'])) {
+                $line['credit_amount'] = $line['credit'];
+                unset($line['credit']);
+            }
             $line['journal_entry_id'] = $jeId;
             $line['tenant_id'] = $tid;
             $this->db->insert('journal_entry_lines', $line);
@@ -56,7 +70,7 @@ class JournalEntryService
     public function getLedger(int $accountId, string $fromDate, string $toDate): array
     {
         $tid = TenantContext::getId();
-        $sql = "SELECT jel.*, je.entry_date, je.narration, je.reference_type, je.reference_id
+        $sql = "SELECT jel.*, je.entry_date, je.description as narration, je.source_document as reference_type, je.source_id as reference_id
                 FROM journal_entry_lines jel
                 JOIN journal_entries je ON je.id = jel.journal_entry_id
                 WHERE jel.account_id = ? AND je.entry_date BETWEEN ? AND ?" . ($tid > 1 ? " AND je.tenant_id = ?" : "");
@@ -74,17 +88,18 @@ class JournalEntryService
         // Get all accounts with balances
         $sql = "SELECT
                     jel.account_id,
-                    jel.account_type,
-                    jel.account_name,
-                    COALESCE(SUM(CASE WHEN je.entry_date <= ? THEN jel.debit ELSE 0 END), 0) AS total_debit,
-                    COALESCE(SUM(CASE WHEN je.entry_date <= ? THEN jel.credit ELSE 0 END), 0) AS total_credit
+                    coa.account_type,
+                    coa.account_name,
+                    COALESCE(SUM(CASE WHEN je.entry_date <= ? THEN jel.debit_amount ELSE 0 END), 0) AS total_debit,
+                    COALESCE(SUM(CASE WHEN je.entry_date <= ? THEN jel.credit_amount ELSE 0 END), 0) AS total_credit
                 FROM journal_entry_lines jel
                 JOIN journal_entries je ON je.id = jel.journal_entry_id
+                JOIN chart_of_accounts coa ON coa.id = jel.account_id
                 WHERE je.entry_date <= ?
                 " . ($tid > 1 ? " AND je.tenant_id = ?" : "") .
-                " GROUP BY jel.account_id, jel.account_type, jel.account_name
-                HAVING ABS(COALESCE(SUM(jel.debit), 0) - COALESCE(SUM(jel.credit), 0)) > 0.01
-                ORDER BY jel.account_type, jel.account_name";
+                " GROUP BY jel.account_id, coa.account_type, coa.account_name
+                HAVING ABS(COALESCE(SUM(jel.debit_amount), 0) - COALESCE(SUM(jel.credit_amount), 0)) > 0.01
+                ORDER BY coa.account_type, coa.account_name";
 
         $params = [$asOfDate, $asOfDate, $asOfDate];
         if ($tid > 1) $params[] = $tid;

@@ -20,7 +20,7 @@ class DocumentController extends AdminController
         $this->requireAdmin();
         try {
             $db = $this->getDb();
-            $stmt = $db->query("SELECT d.*, u.name as uploaded_by_name FROM documents d LEFT JOIN users u ON d.uploaded_by = u.id ORDER BY d.created_at DESC LIMIT 50");
+            $stmt = $db->query("SELECT d.*, u.name as uploaded_by_name FROM documents d LEFT JOIN users u ON d.user_id = u.id ORDER BY d.uploaded_on DESC LIMIT 50");
             $documents = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             $documents = [];
@@ -47,7 +47,7 @@ class DocumentController extends AdminController
         $this->requireAdmin();
         try {
             $db = $this->getDb();
-            $stmt = $db->prepare("SELECT d.*, u.name as uploaded_by_name FROM documents d LEFT JOIN users u ON d.uploaded_by = u.id WHERE d.id = ?");
+            $stmt = $db->prepare("SELECT d.*, u.name as uploaded_by_name FROM documents d LEFT JOIN users u ON d.user_id = u.id WHERE d.id = ?");
             $stmt->execute([$id]);
             $document = $stmt->fetch(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
@@ -479,7 +479,7 @@ class DocumentController extends AdminController
         $this->requireAdmin();
         try {
             $db = $this->getDb();
-            $stmt = $db->query("SELECT cl.*, d.title as document_title, u.name as classified_by_name FROM document_classification cl LEFT JOIN documents d ON cl.document_id = d.id LEFT JOIN users u ON cl.classified_by = u.id ORDER BY cl.created_at DESC LIMIT 50");
+            $stmt = $db->query("SELECT cl.*, d.document_type as document_title, u.name as classified_by_name FROM document_classification cl LEFT JOIN documents d ON cl.document_id = d.id LEFT JOIN users u ON cl.classified_by = u.id ORDER BY cl.classified_at DESC LIMIT 50");
             $records = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             $records = [];
@@ -564,7 +564,7 @@ class DocumentController extends AdminController
         $this->requireAdmin();
         try {
             $db = $this->getDb();
-            $stmt = $db->query("SELECT gd.*, t.name as template_name, u.name as generated_by_name FROM generated_documents gd LEFT JOIN document_templates t ON gd.template_id = t.id LEFT JOIN users u ON gd.generated_by = u.id ORDER BY gd.created_at DESC LIMIT 50");
+            $stmt = $db->query("SELECT gd.*, t.template_name as template_name, u.name as generated_by_name FROM generated_documents gd LEFT JOIN document_templates t ON gd.template_id = t.id LEFT JOIN users u ON gd.generated_by = u.id ORDER BY gd.created_at DESC LIMIT 50");
             $records = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             $records = [];
@@ -581,7 +581,7 @@ class DocumentController extends AdminController
         $this->requireAdmin();
         try {
             $db = $this->getDb();
-            $stmt = $db->query("SELECT o.*, d.title as original_document_title FROM ocr_documents o LEFT JOIN documents d ON o.original_document_id = d.id ORDER BY o.created_at DESC LIMIT 50");
+            $stmt = $db->query("SELECT o.*, o.original_name as original_document_title FROM ocr_documents o LEFT JOIN documents d ON o.original_document_id = d.id ORDER BY o.created_at DESC LIMIT 50");
             $records = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             $records = [];

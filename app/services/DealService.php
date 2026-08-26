@@ -211,8 +211,7 @@ class DealService
         try {
 $sql = "SELECT a.*, u.name as user_name FROM crm_interactions a
                       LEFT JOIN users u ON u.id = a.user_id
-                      WHERE a.lead_id IN (SELECT lead_id FROM lead_deals WHERE id = ? AND status != 'deleted')
-                      AND a.deleted_at IS NULL";
+                      WHERE a.lead_id IN (SELECT lead_id FROM lead_deals WHERE id = ? AND status != 'deleted')";
             $params = [$dealId];
             $tid = $this->tenantId();
             if ($tid > 1) {

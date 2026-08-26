@@ -119,7 +119,7 @@ class FraudDetectionService
         $tid = $this->getTenantId();
         $sql = "SELECT p.*, u.name as owner_name, u.created_at as owner_since 
                 FROM properties p 
-                LEFT JOIN users u ON p.user_id = u.id AND u.deleted_at IS NULL" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
+                LEFT JOIN users u ON p.created_by = u.id AND u.deleted_at IS NULL" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
                 WHERE p.id = ?";
         
         $property = $this->db->fetch($sql, $tid > 1 ? [$tid, $propertyId] : [$propertyId]);
@@ -213,7 +213,7 @@ class FraudDetectionService
         // Fetch transaction details
         $tid = $this->getTenantId();
         $transaction = $this->db->fetch(
-            "SELECT t.*, u.name as user_name, u.verification_status 
+            "SELECT t.*, u.name as user_name, u.kyc_status AS verification_status
              FROM transactions t 
              LEFT JOIN users u ON t.user_id = u.id AND u.deleted_at IS NULL" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
              WHERE t.id = ?",

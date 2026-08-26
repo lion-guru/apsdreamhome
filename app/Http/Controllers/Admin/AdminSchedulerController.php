@@ -188,7 +188,7 @@ class AdminSchedulerController extends AdminController
         
         $db = \App\Core\Database\Database::getInstance();
         
-        $sql = "SELECT tel.*, st.task_name
+        $sql = "SELECT tel.*, st.name AS task_name
             FROM task_execution_logs tel
             LEFT JOIN scheduled_tasks st ON tel.task_id = st.id
             ORDER BY tel.started_at DESC

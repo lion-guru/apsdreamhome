@@ -331,7 +331,7 @@ class LeadScoringService
             "SELECT ls.*, l.name, l.phone, l.assigned_to 
              FROM lead_scores ls
              JOIN leads l ON ls.lead_id = l.id
-             WHERE ls.is_hot_lead = 1 AND l.assigned_to IS NULL" . $tidWhere, $hotParams
+             WHERE ls.score >= 80 AND l.assigned_to IS NULL" . $tidWhere, $hotParams
         );
         
         // Get available users

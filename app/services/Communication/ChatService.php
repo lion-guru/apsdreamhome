@@ -192,7 +192,7 @@ class ChatService
             
             // Get messages
             $tid = $this->getTenantId();
-            $tenantSql = $tid > 1 ? " AND c.tenant_id = ?" : "";
+            $tenantSql = $tid > 1 ? " AND u.tenant_id = ?" : "";
             $agentTenantSql = $tid > 1 ? " AND a.tenant_id = ?" : "";
             $sql = "SELECT m.*, 
                 CASE 
@@ -201,9 +201,9 @@ class ChatService
                     ELSE 'System'
                 END as sender_name
                 FROM chat_messages m
-                LEFT JOIN users u ON m.sender_type = 'customer' AND u.id = (SELECT c.user_id FROM users c WHERE c.id = m.sender_id{$tenantSql})
+                LEFT JOIN users u ON u.id = m.sender_id AND m.sender_type = 'customer'{$tenantSql}
                 LEFT JOIN users a ON m.sender_id = a.id AND m.sender_type = 'agent'{$agentTenantSql}
-                WHERE m.conversation_id = ? 
+                WHERE m.session_id = ? 
                 " . ($beforeId ? "AND m.id < ?" : "") . "
                 ORDER BY m.id DESC
                 LIMIT ?";
@@ -238,7 +238,7 @@ class ChatService
     {
         $column = $userType === 'customer' ? 'customer_id' : 'agent_id';
         $tid = $this->getTenantId();
-        $custTenantSql = $tid > 1 ? " AND cust.tenant_id = ?" : "";
+        $custTenantSql = $tid > 1 ? " AND u.tenant_id = ?" : "";
         $agentTenantSql = $tid > 1 ? " AND a.tenant_id = ?" : "";
         
         $sql = "SELECT c.*,
@@ -252,7 +252,7 @@ class ChatService
             END as other_party_phone,
             p.title as property_title
             FROM chat_conversations c
-            LEFT JOIN users u ON u.id = (SELECT cust.user_id FROM users cust WHERE cust.id = c.customer_id{$custTenantSql})
+            LEFT JOIN users u ON u.id = c.customer_id{$custTenantSql}
             LEFT JOIN users a ON c.agent_id = a.id{$agentTenantSql}
             LEFT JOIN properties p ON c.property_id = p.id
             WHERE c.{$column} = ? AND c.status = ?

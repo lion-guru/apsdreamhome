@@ -250,7 +250,7 @@ class CrmController extends BaseController
         }
 
         // Get notes
-        $notes = $db->fetchAll("SELECT ln.*, u.name as user_name FROM lead_notes ln LEFT JOIN users u ON u.id = ln.user_id WHERE ln.lead_id = ? ORDER BY ln.created_at DESC", [$id]) ?: [];
+        $notes = $db->fetchAll("SELECT ln.*, u.name as user_name FROM lead_notes ln LEFT JOIN users u ON u.id = ln.created_by WHERE ln.lead_id = ? ORDER BY ln.created_at DESC", [$id]) ?: [];
 
         // Get activities
         $activities = $db->fetchAll("SELECT * FROM lead_activities WHERE lead_id = ? ORDER BY created_at DESC LIMIT 20", [$id]) ?: [];

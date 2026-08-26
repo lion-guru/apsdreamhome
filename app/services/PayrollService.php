@@ -117,7 +117,7 @@ class PayrollService
     public function generatePayroll(int $month, int $year, int $generatedBy = 0): array
     {
         $tid = $this->tenantId();
-        $sql = "SELECT u.id as employee_id, u.name, sc.base_salary, sc.hra, sc.allowances, sc.deductions
+        $sql = "SELECT u.id as employee_id, u.name, sc.base_salary, 0 AS hra, 0 AS allowances, 0 AS deductions
                                   FROM users u
                                   LEFT JOIN salary_contracts sc ON sc.employee_id = u.id AND sc.status = 'active' " . ($tid > 1 ? "AND sc.tenant_id = " . (int)$tid : "") . "
                                   WHERE u.role = 'employee' AND u.status = 'active' " . ($tid > 1 ? "AND u.tenant_id = " . (int)$tid : "");

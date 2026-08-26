@@ -522,19 +522,19 @@ class CRMController extends BaseController
         // Raw SQL implementation (framework has no Eloquent; legacy Laravel calls removed)
         try {
             $today = $this->db->fetch(
-                "SELECT COALESCE(SUM(paid_amount),0) AS v FROM booking_payment_schedules WHERE payment_date = CURDATE() AND paid_amount > 0"
+                "SELECT COALESCE(SUM(paid_amount),0) AS v FROM booking_payment_schedules WHERE paid_date = CURDATE() AND paid_amount > 0"
             )['v'] ?? 0;
 
             $month = $this->db->fetch(
-                "SELECT COALESCE(SUM(paid_amount),0) AS v FROM booking_payment_schedules WHERE YEAR(payment_date) = YEAR(CURDATE()) AND MONTH(payment_date) = MONTH(CURDATE()) AND paid_amount > 0"
+                "SELECT COALESCE(SUM(paid_amount),0) AS v FROM booking_payment_schedules WHERE YEAR(paid_date) = YEAR(CURDATE()) AND MONTH(paid_date) = MONTH(CURDATE()) AND paid_amount > 0"
             )['v'] ?? 0;
 
             $pending = $this->db->fetch(
-                "SELECT COUNT(*) AS c, COALESCE(SUM(emi_amount - paid_amount),0) AS v FROM booking_payment_schedules WHERE status = 'pending' AND due_date < CURDATE()"
+                "SELECT COUNT(*) AS c, COALESCE(SUM(amount - paid_amount),0) AS v FROM booking_payment_schedules WHERE status = 'pending' AND due_date < CURDATE()"
             );
 
             $outstanding = $this->db->fetch(
-                "SELECT COALESCE(SUM(emi_amount - paid_amount),0) AS v FROM booking_payment_schedules WHERE status IN ('pending','overdue')"
+                "SELECT COALESCE(SUM(amount - paid_amount),0) AS v FROM booking_payment_schedules WHERE status IN ('pending','overdue')"
             )['v'] ?? 0;
 
             $activeEmi = $this->db->fetch(
@@ -548,18 +548,18 @@ class CRMController extends BaseController
             $vendors = $this->db->fetch("SELECT COUNT(*) AS c FROM vendors")['c'] ?? 0;
 
             $collections = $this->db->fetchAll(
-                "SELECT bps.id, bps.installment_number, bps.emi_amount, bps.paid_amount,
-                        bps.due_date, bps.payment_date, bps.status,
+                "SELECT bps.id, bps.installment_no AS installment_number, bps.amount AS emi_amount, bps.paid_amount,
+                        bps.due_date, bps.paid_date AS payment_date, bps.status,
                         pb.booking_number, pb.total_plot_value, u.name AS customer_name
                  FROM booking_payment_schedules bps
                  JOIN plot_bookings pb ON pb.id = bps.booking_id
                  JOIN users u ON u.id = pb.customer_id
                  WHERE bps.paid_amount > 0
-                 ORDER BY bps.payment_date DESC LIMIT 15"
+                 ORDER BY bps.paid_date DESC LIMIT 15"
             ) ?: [];
 
             $emi_schedule = $this->db->fetchAll(
-                "SELECT bps.id, bps.installment_number, bps.emi_amount, bps.paid_amount,
+                "SELECT bps.id, bps.installment_no AS installment_number, bps.amount AS emi_amount, bps.paid_amount,
                         bps.due_date, bps.status, pb.booking_number, u.name AS customer_name,
                         DATEDIFF(bps.due_date, CURDATE()) AS days_until_due
                  FROM booking_payment_schedules bps

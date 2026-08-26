@@ -207,10 +207,10 @@ class GamificationService
     public function getUserBadges(int $userId): array
     {
         return $this->db->query(
-            "SELECT b.*, ub.earned_at FROM badges b
+            "SELECT b.*, ub.awarded_at AS earned_at FROM badges b
              JOIN user_badges ub ON b.id = ub.badge_id
              WHERE ub.user_id = ?
-             ORDER BY ub.earned_at DESC",
+             ORDER BY ub.awarded_at DESC",
             [$userId]
         )->fetchAll(\PDO::FETCH_ASSOC);
     }
@@ -225,13 +225,13 @@ class GamificationService
 
         switch ($type) {
             case 'sales':
-                $sql .= ", (SELECT COUNT(*) FROM sales s WHERE s.user_id = u.id AND MONTH(s.created_at) = MONTH(CURDATE())) as sales_count";
+                $sql .= ", (SELECT COUNT(*) FROM sales s WHERE s.associate_id = u.id AND MONTH(s.created_at) = MONTH(CURDATE())) as sales_count";
                 break;
             case 'leads':
                 $sql .= ", (SELECT COUNT(*) FROM leads l WHERE l.assigned_to = u.id AND MONTH(l.created_at) = MONTH(CURDATE())) as leads_count";
                 break;
             case 'visits':
-                $sql .= ", (SELECT COUNT(*) FROM property_visits pv WHERE pv.user_id = u.id AND MONTH(pv.created_at) = MONTH(CURDATE())) as visits_count";
+                $sql .= ", (SELECT COUNT(*) FROM property_visits pv WHERE pv.customer_id = u.id AND MONTH(pv.created_at) = MONTH(CURDATE())) as visits_count";
                 break;
             default:
                 $sql .= ", u.total_points as score";

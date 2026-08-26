@@ -195,7 +195,7 @@ class MapService
      */
     public function getPropertyCoordinates(int $propertyId): ?array
     {
-        $sql = "SELECT pc.*, p.title, p.address
+        $sql = "SELECT pc.*, p.title, p.location AS address
             FROM property_coordinates pc
             JOIN properties p ON pc.property_id = p.id
             WHERE pc.property_id = ?" . $this->tenantSql();
@@ -212,12 +212,13 @@ class MapService
     public function getPropertiesInBounds(float $swLat, float $swLng, float $neLat, float $neLng, array $filters = []): array
     {
         $sql = "SELECT pc.property_id, pc.latitude, pc.longitude, pc.address_formatted,
-            p.title, p.price, p.type, p.area, p.bedrooms, p.primary_image
+            p.title, p.price, p.type, p.area, p.bedrooms,
+            (SELECT pi.image_path FROM property_images pi WHERE pi.property_id = p.id AND pi.is_active = 1 ORDER BY pi.is_primary DESC, pi.sort_order ASC LIMIT 1) AS primary_image
             FROM property_coordinates pc
             JOIN properties p ON pc.property_id = p.id
             WHERE pc.latitude BETWEEN ? AND ?
             AND pc.longitude BETWEEN ? AND ?
-            AND p.status = 'available'" . $this->tenantSql();
+            AND p.status = 'active'" . $this->tenantSql();
         
         $params = [$swLat, $neLat, $swLng, $neLng];
         

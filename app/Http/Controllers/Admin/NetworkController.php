@@ -354,11 +354,12 @@ class NetworkController extends AdminController
     private function getPayoutHistory(): array
     {
         try {
-            $sql = "SELECT mcl.*, u.name as associate_name, u.email as associate_email
+            $sql = "SELECT mcl.*, u.name as associate_name, u.email as associate_email,
+                           mcl.paid_at as payout_date
                     FROM mlm_commission_ledger mcl
                     JOIN users u ON mcl.beneficiary_user_id = u.id
                     WHERE mcl.status = 'paid'
-                    ORDER BY mcl.payout_date DESC
+                    ORDER BY mcl.paid_at DESC
                     LIMIT 20";
             return $this->db->fetchAll($sql) ?: [];
         } catch (\Exception $e) {

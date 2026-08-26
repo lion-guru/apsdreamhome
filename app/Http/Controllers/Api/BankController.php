@@ -82,7 +82,7 @@ class BankController extends BaseApiController
         
         try {
             $result = \App\Services\LookupCacheService::remember("ifsc:$ifsc", 3600, function() use ($ifsc) {
-                $sql = "SELECT bb.ifsc, bb.branch, bb.address, bb.city, bb.district, bb.state, bb.pincode,
+                $sql = "SELECT bb.ifsc, bb.branch_name as branch, bb.address, bb.city, bb.district, bb.state, bb.pincode,
                                b.id as bank_id, b.name as bank_name, b.short_name as bank_short
                         FROM bank_branches bb
                         LEFT JOIN banks b ON bb.bank_id = b.id

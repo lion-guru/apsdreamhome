@@ -39,10 +39,8 @@ class MobileSyncApiController extends BaseController
             $stmt = $this->db->prepare("
                 SELECT p.id, p.title, p.price, p.bedrooms, p.bathrooms, p.area,
                        p.description, p.status, p.created_at, p.updated_at,
-                       c.name as colony_name,
                        (SELECT COUNT(*) FROM property_images WHERE property_id = p.id) as image_count
                 FROM properties p
-                LEFT JOIN colonies c ON p.colony_id = c.id
                 WHERE p.updated_at >= ? OR p.created_at >= ?
                 ORDER BY p.updated_at DESC
                 LIMIT 100

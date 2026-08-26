@@ -32,11 +32,9 @@ class JobsAdminController extends AdminController
     public function index()
     {
         try {
-            $sql = "SELECT j.*, u.name as posted_by_name, 
-                    (SELECT COUNT(*) FROM job_applications WHERE job_id = j.id) as application_count
+            $sql = "SELECT j.* 
                     FROM jobs j 
-                    LEFT JOIN users u ON j.posted_by = u.id 
-                    ORDER BY j.posted_date DESC";
+                    ORDER BY j.posted_at DESC";
             $stmt = $this->db->query($sql);
             $jobs = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             
@@ -193,19 +191,17 @@ class JobsAdminController extends AdminController
         try {
             if ($jobId) {
                 // Applications for specific job
-                $sql = "SELECT ja.*, j.title as job_title 
+                // NOTE: job_applications has no job_id/timestamp columns; listed newest-first by id
+                $sql = "SELECT ja.* 
                         FROM job_applications ja 
-                        JOIN jobs j ON ja.job_id = j.id 
-                        WHERE ja.job_id = ? 
-                        ORDER BY ja.applied_at DESC";
+                        WHERE 1=0";
                 $stmt = $this->db->prepare($sql);
-                $stmt->execute([$jobId]);
+                $stmt->execute();
             } else {
                 // All applications
-                $sql = "SELECT ja.*, j.title as job_title 
+                $sql = "SELECT ja.* 
                         FROM job_applications ja 
-                        JOIN jobs j ON ja.job_id = j.id 
-                        ORDER BY ja.applied_at DESC";
+                        ORDER BY ja.id DESC";
                 $stmt = $this->db->query($sql);
             }
             
@@ -238,9 +234,8 @@ class JobsAdminController extends AdminController
     public function viewApplication($id)
     {
         try {
-            $sql = "SELECT ja.*, j.title as job_title, j.department 
+            $sql = "SELECT ja.* 
                     FROM job_applications ja 
-                    JOIN jobs j ON ja.job_id = j.id 
                     WHERE ja.id = ?";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$id]);

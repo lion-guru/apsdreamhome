@@ -85,18 +85,14 @@ class PropertyComparisonService
         
         try {
             $sql = "SELECT p.*, 
-                           pt.name as property_type_name,
-                           l.name as locality_name,
-                           c.name as city_name,
+                           pt.type as property_type_name,
+                           p.location as locality_name,
+                           p.city as city_name,
                            (SELECT COUNT(*) FROM property_amenities pa WHERE pa.property_id = p.id) as amenities_count,
                            (SELECT AVG(rating) FROM property_reviews pr WHERE pr.property_id = p.id) as avg_rating,
-                           (SELECT COUNT(*) FROM property_images pi WHERE pi.property_id = p.id) as image_count,
-                           b.name as builder_name
+                           (SELECT COUNT(*) FROM property_images pi WHERE pi.property_id = p.id) as image_count
                     FROM properties p
                     LEFT JOIN property_types pt ON p.property_type_id = pt.id
-                    LEFT JOIN localities l ON p.locality_id = l.id
-                    LEFT JOIN cities c ON p.city_id = c.id
-                    LEFT JOIN builders b ON p.builder_id = b.id
                      WHERE p.id IN ($placeholders)" . $this->tenantSqlForAlias('p');
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref

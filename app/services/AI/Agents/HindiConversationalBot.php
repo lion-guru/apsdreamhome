@@ -186,13 +186,13 @@ class HindiConversationalBot
         try {
             $plots = $this->db->fetchAll(
                 "SELECT p.*, c.name as colony_name FROM plots p LEFT JOIN colonies c ON p.colony_id = c.id
-                 WHERE p.status = 'available' ORDER BY p.price ASC LIMIT 5"
+                 WHERE p.status = 'available' ORDER BY p.total_price ASC LIMIT 5"
             ) ?: [];
 
             $response = "APS Dream Home - Available Plots:\n\n";
             foreach ($plots as $i => $p) {
                 $response .= ($i + 1) . ". {$p['colony_name']} - {$p['block']} Block\n";
-                $response .= "   Size: {$p['area']} sqft | Price: ₹" . number_format($p['price']) . "\n\n";
+                $response .= "   Size: {$p['area_sqft']} sqft | Price: ₹" . number_format($p['total_price']) . "\n\n";
             }
             $response .= "Zyada jaankari ke liye call karein ya site visit book karein.";
 

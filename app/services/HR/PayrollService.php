@@ -423,11 +423,10 @@ class PayrollService
     {
         try {
             $tid = $this->getTenantId();
-            $sql = "SELECT p.*, e.name, e.employee_code, e.department_id, e.designation,
-                           d.name as department_name
+            $sql = "SELECT p.*, e.name, e.employee_code, e.designation,
+                           e.department as department_name
                     FROM employee_payrolls p
-                    JOIN users e ON p.employee_id = e.id
-                    LEFT JOIN departments d ON e.department_id = d.id
+                    JOIN employees e ON p.employee_id = e.id
                     WHERE p.id = ?" . ($tid > 1 ? " AND e.tenant_id = ?" : "");
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref

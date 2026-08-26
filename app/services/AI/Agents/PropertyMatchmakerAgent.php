@@ -143,13 +143,13 @@ return $this->db->fetchAll(
     {
         $sql = "SELECT p.*, c.name as colony_name,
                        CASE 
-                           WHEN p.price <= ? THEN 30
-                           WHEN p.price <= ? * 1.1 THEN 20
-                           WHEN p.price <= ? * 1.2 THEN 10
+                           WHEN p.total_price <= ? THEN 30
+                           WHEN p.total_price <= ? * 1.1 THEN 20
+                           WHEN p.total_price <= ? * 1.2 THEN 10
                            ELSE 0
                        END as budget_fit,
                        CASE WHEN c.name LIKE ? THEN 20 ELSE 0 END as location_fit,
-                       CASE WHEN p.area >= ? THEN 15 WHEN p.area >= ? * 0.8 THEN 10 ELSE 0 END as size_fit
+                       CASE WHEN p.area_sqft >= ? THEN 15 WHEN p.area_sqft >= ? * 0.8 THEN 10 ELSE 0 END as size_fit
                 FROM plots p LEFT JOIN colonies c ON p.colony_id = c.id
                 WHERE p.status = 'available'" . $this->tenantSql() . "
                 HAVING (budget_fit + location_fit + size_fit) > 0

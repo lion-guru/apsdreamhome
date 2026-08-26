@@ -27,23 +27,19 @@ class VendorService
 
         $payload = [
             'vendor_name'        => trim($data['vendor_name'] ?? ''),
-            'vendor_code'        => $data['vendor_code'] ?? $this->generateVendorCode(),
             'contact_person'     => $data['contact_person'] ?? null,
             'email'              => $data['email'] ?? null,
             'phone'              => $data['phone'] ?? null,
             'address'            => $data['address'] ?? null,
             'gstin'              => strtoupper($data['gstin'] ?? ''),
-            'pan'                => strtoupper($data['pan'] ?? ''),
-            'bank_account_no'    => $data['bank_account_no'] ?? null,
-            'bank_ifsc'          => strtoupper($data['bank_ifsc'] ?? ''),
+            'pan_number'         => strtoupper($data['pan'] ?? ''),
+            'bank_account'       => $data['bank_account_no'] ?? null,
+            'ifsc_code'          => strtoupper($data['bank_ifsc'] ?? ''),
             'bank_name'          => $data['bank_name'] ?? null,
             'tds_section'        => $data['tds_section'] ?? '194C',
-            'tds_rate'           => (float)($data['tds_rate'] ?? 1.0),
             'payment_terms'      => $data['payment_terms'] ?? '30_days',
             'status'             => 'active',
             'kyc_status'         => 'pending',
-            'kyc_verified_at'    => null,
-            'kyc_verified_by'    => null,
             'tenant_id'          => TenantContext::getId(),
         ];
         $this->db->insert('vendors', $payload);
@@ -94,15 +90,15 @@ class VendorService
     public function verifyVendorKyc(int $vendorId): bool
     {
         $tid = TenantContext::getId();
-        $sql = "UPDATE vendors SET kyc_status = 'verified', kyc_verified_at = NOW(), kyc_verified_by = ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
-        return $this->db->execute($sql, array_merge([TenantContext::getId(), $id], $tid > 1 ? [$tid] : []));
+        $sql = "UPDATE vendors SET kyc_status = 'verified', kyc_verified_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        return $this->db->execute($sql, array_merge([$vendorId], $tid > 1 ? [$tid] : []));
     }
 
     public function rejectVendorKyc(int $vendorId, string $reason = ''): bool
     {
         $tid = TenantContext::getId();
-        $sql = "UPDATE vendors SET kyc_status = 'rejected', kyc_rejection_reason = ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
-        return $this->db->execute($sql, array_merge([$reason, $id], $tid > 1 ? [$tid] : []));
+        $sql = "UPDATE vendors SET kyc_status = 'rejected' WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        return $this->db->execute($sql, array_merge([$vendorId], $tid > 1 ? [$tid] : []));
     }
 
     public function payVendor(array $data): int
@@ -112,17 +108,26 @@ class VendorService
         $vendor = $this->getVendor($data['vendor_id'] ?? 0);
         if (!$vendor) throw new Exception('Vendor not found');
 
+        $amount = (float)($data['amount'] ?? 0);
+        $mode = $data['payment_mode'] ?? 'neft';
+        $allowedModes = ['cash', 'cheque', 'rtgs', 'neft', 'upi', 'dd'];
+        if (!in_array($mode, $allowedModes, true)) {
+            $mode = 'neft'; // vendor_payments.payment_mode has no 'bank_transfer'
+        }
+
         $payload = [
             'vendor_id'          => $data['vendor_id'],
-            'amount'             => (float)($data['amount'] ?? 0),
+            'vendor_name'        => $vendor['vendor_name'] ?? '',
+            'bill_date'          => $data['payment_date'] ?? date('Y-m-d'),
+            'gross_amount'       => $amount,
+            'net_payable'        => $amount,
+            'paid_amount'        => $amount,
             'payment_date'       => $data['payment_date'] ?? date('Y-m-d'),
-            'payment_mode'       => $data['payment_mode'] ?? 'bank_transfer',
-            'reference_number'   => $data['reference_number'] ?? null,
-            'narration'          => $data['narration'] ?? '',
-            'tds_deducted'       => (float)($data['tds_deducted'] ?? 0),
+            'payment_mode'       => $mode,
+            'transaction_ref'    => $data['reference_number'] ?? null,
+            'tds_amount'         => (float)($data['tds_deducted'] ?? 0),
             'gst_amount'         => (float)($data['gst_amount'] ?? 0),
             'status'             => 'paid',
-            'paid_by'            => $data['paid_by'] ?? null,
             'tenant_id'          => $tid,
         ];
         $this->db->insert('vendor_payments', $payload);
@@ -164,14 +169,15 @@ class VendorService
     public function getVendorOutstanding(): array
     {
         $tid = TenantContext::getId();
-        $sql = "SELECT v.*, COALESCE(SUM(vp.amount), 0) as total_paid
+        // vendors has no outstanding_amount column; compute from vendor_payments
+        $sql = "SELECT v.*, COALESCE(SUM(vp.net_payable - vp.paid_amount), 0) as outstanding_amount
                 FROM vendors v
-                LEFT JOIN vendor_payments vp ON vp.vendor_id = v.id AND vp.status = 'paid' " . ($tid > 1 ? " AND vp.tenant_id = ?" : "")
+                LEFT JOIN vendor_payments vp ON vp.vendor_id = v.id AND vp.status != 'cancelled' " . ($tid > 1 ? " AND vp.tenant_id = ?" : "")
                 . " WHERE v.status = 'active'" . ($tid > 1 ? " AND v.tenant_id = ?" : "")
                 . " GROUP BY v.id
-                HAVING COALESCE(SUM(vp.amount), 0) < v.outstanding_amount
+                HAVING COALESCE(SUM(vp.net_payable - vp.paid_amount), 0) > 0
                 ORDER BY v.vendor_name";
-        $params = $tid > 1 ? [$tid, $tid] : [$tid];
+        $params = $tid > 1 ? [$tid, $tid] : [];
         return $this->db->fetchAll($sql, $params) ?: [];
     }
 }

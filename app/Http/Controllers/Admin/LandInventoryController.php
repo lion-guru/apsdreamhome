@@ -429,7 +429,7 @@ class LandInventoryController extends AdminController
         }
         try {
             $lead = $this->db->fetch(
-                "SELECT l.*, d.negotiated_price, d.final_price, d.broker_commission
+                "SELECT l.*, d.total_consideration AS negotiated_price, d.total_consideration AS final_price
                  FROM land_deals d JOIN land_leads l ON l.id = d.land_lead_id
                  WHERE d.id = ?",
                 [$id]

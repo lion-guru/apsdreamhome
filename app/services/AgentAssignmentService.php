@@ -197,9 +197,9 @@ class AgentAssignmentService
                             AVG(ar.rating) as avg_rating,
                             COUNT(p.id) as properties_handled
                      FROM users a
-                     LEFT JOIN customer_assignments ca ON a.user_id = ca.agent_id AND ca.status = 'active'" . $this->tenantSqlForAlias('ca') . "
-                     LEFT JOIN agent_reviews ar ON a.user_id = ar.agent_id" . $this->tenantSqlForAlias('ar') . "
-                     LEFT JOIN properties p ON a.user_id = p.assigned_agent_id" . $this->tenantSqlForAlias('p') . "
+                     LEFT JOIN customer_assignments ca ON a.id = ca.agent_id AND ca.status = 'active'" . $this->tenantSqlForAlias('ca') . "
+                     LEFT JOIN agent_reviews ar ON a.id = ar.agent_id" . $this->tenantSqlForAlias('ar') . "
+                     LEFT JOIN properties p ON a.id = p.agent_id" . $this->tenantSqlForAlias('p') . "
                      WHERE a.status = 'active' AND a.workload < a.max_workload";
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref

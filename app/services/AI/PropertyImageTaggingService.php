@@ -332,7 +332,7 @@ class PropertyImageTaggingService
 
         try {
             $stmt = $this->db->prepare("
-                SELECT pit.tag_name, pit.category, pit.confidence, pi.image_url
+                SELECT pit.tag_name, pit.category, pit.confidence, pi.image_path as image_url
                 FROM property_image_tags pit
                 JOIN property_images pi ON pit.image_id = pi.id
                 WHERE pi.property_id = ? {$this->tenantSql()}
@@ -357,7 +357,7 @@ class PropertyImageTaggingService
         try {
             $placeholders = implode(',', array_fill(0, count($tags), '?'));
             $sql = "
-                SELECT DISTINCT pi.property_id, p.title, p.price, p.city, pi.image_url,
+                SELECT DISTINCT pi.property_id, p.title, p.price, p.city, pi.image_path as image_url,
                        GROUP_CONCAT(pit.tag_name) as tags
                 FROM property_images pi
                 JOIN properties p ON pi.property_id = p.id

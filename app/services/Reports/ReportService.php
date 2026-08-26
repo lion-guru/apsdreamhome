@@ -53,7 +53,7 @@ class ReportService
                     FROM sales s
                     LEFT JOIN properties p ON s.property_id = p.id
                     LEFT JOIN users a ON s.associate_id = a.id
-                    LEFT JOIN users u ON u.id = (SELECT c.user_id FROM users c WHERE c.id = s.customer_id)
+                    LEFT JOIN users u ON u.id = s.customer_id
                     WHERE s.sale_date BETWEEN :start_date AND :end_date
                     ORDER BY s.sale_date DESC";
             

@@ -165,10 +165,10 @@ class PropertyController extends BaseController
 
         $search = trim($_GET['search'] ?? '');
         if ($search) {
-            $sql = "SELECT up.*, c.name as colony_name FROM user_properties up LEFT JOIN colonies c ON up.colony_id = c.id WHERE up.user_id = ? AND (up.title LIKE ? OR up.address LIKE ?) {$tidSql} ORDER BY up.created_at DESC";
+            $sql = "SELECT up.* FROM user_properties up WHERE up.user_id = ? AND (up.name LIKE ? OR up.address LIKE ?) {$tidSql} ORDER BY up.created_at DESC";
             $params = array_merge([$userId, "%{$search}%", "%{$search}%"], TenantContext::getId() > 1 ? [TenantContext::getId()] : []);
         } else {
-            $sql = "SELECT up.*, c.name as colony_name FROM user_properties up LEFT JOIN colonies c ON up.colony_id = c.id WHERE up.user_id = ? {$tidSql} ORDER BY up.created_at DESC";
+            $sql = "SELECT up.* FROM user_properties up WHERE up.user_id = ? {$tidSql} ORDER BY up.created_at DESC";
         }
 
         $properties = $db->fetchAll($sql, $params) ?: [];

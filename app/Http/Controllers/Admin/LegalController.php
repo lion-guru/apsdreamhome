@@ -61,7 +61,7 @@ class LegalController extends AdminController
     {
         $this->requireAdmin();
         try {
-            $stmt = $this->db->query("SELECT d.*, u.name as assigned_name FROM legal_disputes d LEFT JOIN users u ON d.assigned_to = u.id ORDER BY d.filed_date DESC");
+            $stmt = $this->db->query("SELECT d.*, u.name as assigned_name FROM legal_disputes d LEFT JOIN users u ON d.assigned_to = u.id ORDER BY d.created_at DESC");
             $disputes = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             $disputes = [];

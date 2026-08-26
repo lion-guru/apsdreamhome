@@ -422,7 +422,7 @@ class AssociateService
             $tid = $this->getTenantId();
             $tenantSql = $tid > 1 ? ' AND a.tenant_id = ?' : '';
             $performers = $this->database->fetchAll(
-                "SELECT a.id, a.name, a.email, a.brokerage_rate as commission_rate,
+                "SELECT a.id, a.name, a.email, a.commission_rate,
                         COUNT(s.id) as sales_count,
                         SUM(s.sale_amount) as total_sales_amount,
                         SUM(s.commission_amount) as total_commission,

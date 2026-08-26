@@ -724,7 +724,7 @@ class MarketingAutomationService
      */
     private function getRecentActivity()
     {
-        $sql = "SELECT ma.*, ml.name, ml.email
+        $sql = "SELECT ma.*, CONCAT_WS(' ', ml.first_name, ml.last_name) AS name, ml.email
                 FROM marketing_analytics ma
                 LEFT JOIN marketing_leads ml ON ma.lead_id = ml.id
                 ORDER BY ma.created_at DESC

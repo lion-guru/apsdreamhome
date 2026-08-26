@@ -254,18 +254,13 @@ class DealController extends AdminController
 
         // Get deal details
         $deal = $this->db->fetch(
-            "SELECT d.*, 
-                    s.stage_name, s.color as stage_color, s.probability as stage_probability,
-                    c.name as customer_name, c.email as customer_email, c.phone as customer_phone,
+            "SELECT d.*,
                     l.name as lead_name,
-                    p.site_name as property_name, p.price as property_price,
+                    l.name as customer_name, l.email as customer_email, l.phone as customer_phone,
                     u.name as assigned_to_name, u.email as assigned_to_email,
                     creator.name as created_by_name
              FROM deals d
-             LEFT JOIN deal_stages s ON d.deal_stage_id = s.id
-             LEFT JOIN users c ON d.customer_id = c.id
              LEFT JOIN leads l ON d.lead_id = l.id
-             LEFT JOIN properties p ON d.property_id = p.id
              LEFT JOIN users u ON d.assigned_to = u.id
              LEFT JOIN users creator ON d.created_by = creator.id
              WHERE d.id = ?",

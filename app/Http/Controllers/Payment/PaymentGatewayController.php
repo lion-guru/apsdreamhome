@@ -384,12 +384,11 @@ class PaymentGatewayController extends BaseController
 
         $payments = [];
         try {
+            // payment_transactions has no plot_id/associate_id — link via associate's user_id
             $payments_query = "
-                SELECT pt.*, p.plot_number, c.name as colony_name
+                SELECT pt.*
                 FROM payment_transactions pt
-                JOIN plots p ON pt.plot_id = p.id
-                JOIN colonies c ON p.colony_id = c.id
-                WHERE pt.associate_id = :associate_id
+                JOIN associates a ON a.id = :associate_id AND a.user_id = pt.user_id
                 ORDER BY pt.created_at DESC
             ";
             $stmt = $this->db->prepare($payments_query);

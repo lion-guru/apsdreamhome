@@ -74,7 +74,7 @@ class ReviewService
     {
         $tid = $this->tenantId();
         $sql = "SELECT r.*, u.name as customer_name, u.email as customer_email,
-                COALESCE(p.title, CONCAT('Property #', r.property_id)) as property_title
+                COALESCE(p.name, CONCAT('Property #', r.property_id)) as property_title
                 FROM property_reviews r
                 LEFT JOIN users u ON u.id = r.customer_id
                 LEFT JOIN user_properties p ON p.id = r.property_id";

@@ -382,11 +382,11 @@ class RAGAgent
             $tid = $this->tenantId();
             $tenantWhere = $tid > 1 ? " WHERE tenant_id = ?" : "";
             $rows = $this->db->fetchAll(
-                "SELECT p.plot_number, p.area_sqft, c.name as colony_name, ph.old_price, ph.new_price, ph.effective_date
+                "SELECT p.plot_number, p.area_sqft, c.name as colony_name, ph.old_price, ph.new_price, ph.created_at
                   FROM price_history ph
                   JOIN plots p ON ph.plot_id = p.id{$tenantWhere}
                   LEFT JOIN colonies c ON p.colony_id = c.id
-                  ORDER BY ph.effective_date DESC
+                  ORDER BY ph.created_at DESC
                   LIMIT 5",
                 $tid > 1 ? [$tid] : []
             );
@@ -400,7 +400,7 @@ class RAGAgent
                     'area' => $row['area_sqft'],
                     'current_price' => $row['new_price'],
                     'previous_price' => $row['old_price'],
-                    'date' => $row['effective_date'],
+                    'date' => $row['created_at'],
                     'details' => "{$row['plot_number']} ({$row['area_sqft']}sqft) in {$row['colony_name']}: ₹" . number_format($row['new_price']),
                     'relevance' => 0.7
                 ];

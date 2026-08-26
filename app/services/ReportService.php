@@ -97,28 +97,25 @@ class ReportService {
         try {
             $query = "SELECT 
                         u.id,
-                        COALESCE(u.name, u.username, u.email) as name,
+                        COALESCE(u.name, u.email) as name,
                         u.email,
                         u.role,
                         COUNT(DISTINCT v.id) as property_views,
-                        COUNT(DISTINCT c.id) as contacts_made,
-                        MAX(v.visited_at) as last_activity
+                        0 as contacts_made,
+                        MAX(v.viewed_at) as last_activity
                       FROM users u
-                      LEFT JOIN property_views v ON u.id = v.user_id
-                      LEFT JOIN contacts c ON u.id = c.user_id
+                      LEFT JOIN property_views v ON u.id = v.customer_id
                       WHERE 1=1";
             
             $params = [];
             
             if (!empty($filters['start_date'])) {
-                $query .= " AND (v.visited_at >= ? OR c.created_at >= ?)";
-                $params[] = $filters['start_date'];
+                $query .= " AND v.viewed_at >= ?";
                 $params[] = $filters['start_date'];
             }
             
             if (!empty($filters['end_date'])) {
-                $query .= " AND (v.visited_at <= ? OR c.created_at <= ?)";
-                $params[] = $filters['end_date'];
+                $query .= " AND v.viewed_at <= ?";
                 $params[] = $filters['end_date'];
             }
             

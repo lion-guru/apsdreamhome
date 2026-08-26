@@ -148,16 +148,16 @@ class MlmRoyaltyService
                 SELECT
                     mp.user_id,
                     u.name,
-                    mp.current_rank_slug,
-                    mp.total_gbv,
+                    mp.current_level AS current_rank_slug,
+                    mp.lifetime_sales AS total_gbv,
                     rs.commission_rate,
                     rs.reward_value
                 FROM mlm_profiles mp
                 JOIN users u ON u.id = mp.user_id
-                JOIN mlm_rank_slabs rs ON rs.rank_slug = mp.current_rank_slug
+                JOIN mlm_rank_slabs rs ON rs.rank_slug = mp.current_level
                 WHERE rs.is_active = 1
                   AND rs.commission_rate > 0
-                ORDER BY mp.total_gbv DESC
+                ORDER BY mp.lifetime_sales DESC
             ");
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {

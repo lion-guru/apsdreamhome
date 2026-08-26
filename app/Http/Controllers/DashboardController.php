@@ -76,7 +76,7 @@ class DashboardController extends BaseController
             // Get live stats
             $stats = [
                 'favorites_count' => $this->db->fetchColumn("SELECT COUNT(*) FROM property_favorites WHERE user_id = ?", [$userId]),
-                'inquiries_count' => $this->db->fetchColumn("SELECT COUNT(*) FROM property_inquiries WHERE user_id = ?", [$userId]),
+                'inquiries_count' => 0, // property_inquiries has no user_id column
                 'views_count' => 12, // Mock for now
                 'saved_searches_count' => 3 // Mock for now
             ];
@@ -91,30 +91,18 @@ class DashboardController extends BaseController
                 LIMIT 5
             ", [$userId]);
 
-            // Get recent activities (Inquiries + Favorites)
+            // Get recent activities (Favorites — property_inquiries has no user_id column)
             $activities = [];
 
-            // Fetch inquiries
-            $inquiries = $this->db->fetchAll("
-                SELECT 'inquiry' as type, p.title as property, i.created_at as date
-                FROM property_inquiries i
-                JOIN properties p ON i.property_id = p.id
-                WHERE i.user_id = ?
-                ORDER BY i.created_at DESC
-                LIMIT 5
-            ", [$userId]);
-
             // Fetch favorites
-            $favorites = $this->db->fetchAll("
+            $recent_activities = $this->db->fetchAll("
                 SELECT 'favorite' as type, p.title as property, f.created_at as date
                 FROM property_favorites f
                 JOIN properties p ON f.property_id = p.id
                 WHERE f.user_id = ?
                 ORDER BY f.created_at DESC
                 LIMIT 5
-            ", [$userId]);
-
-            $recent_activities = array_merge($inquiries, $favorites);
+            ", [$userId]) ?: [];
             usort($recent_activities, function ($a, $b) {
                 return strtotime($b['date'] ?? 'now') - strtotime($a['date'] ?? 'now');
             });

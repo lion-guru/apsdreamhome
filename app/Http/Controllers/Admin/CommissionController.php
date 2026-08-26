@@ -501,11 +501,12 @@ class CommissionController extends AdminController
     {
         try {
             $sql = "SELECT mcl.*, u.name as associate_name, u.email as associate_email,
-                           u.bank_account, u.bank_name, u.ifsc_code
+                           ass.bank_account, ass.bank_ifsc as ifsc_code
                     FROM mlm_commission_ledger mcl
                     JOIN users u ON mcl.beneficiary_user_id = u.id
+                    LEFT JOIN associates ass ON ass.user_id = u.id
                     WHERE mcl.status = 'approved' AND (mcl.paid_at IS NULL OR mcl.paid_at = '')
-                    ORDER BY mcl.approved_at ASC";
+                    ORDER BY mcl.created_at ASC";
             return $this->db->fetchAll($sql) ?: [];
         } catch (\Exception $e) {
             $this->loggingService->error("Get Approved Commissions error: " . $e->getMessage());
@@ -565,7 +566,7 @@ class CommissionController extends AdminController
                         VALUES (?, ?, NOW())";
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute([
-                    $commission['associate_id'],
+                    $commission['beneficiary_user_id'],
                     $commission['amount']
                 ]);
 

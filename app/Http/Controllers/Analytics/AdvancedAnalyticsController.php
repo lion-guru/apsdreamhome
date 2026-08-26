@@ -163,11 +163,11 @@ class AdvancedAnalyticsController extends AdminController
             $data = [];
 
             // Property distribution by type
-            $sql = "SELECT pt.name as type, COUNT(p.id) as count, AVG(p.price) as avg_price
+            $sql = "SELECT pt.type as type, COUNT(p.id) as count, AVG(p.price) as avg_price
                     FROM properties p
                     LEFT JOIN property_types pt ON p.property_type_id = pt.id
                     WHERE p.status = 'available'
-                    GROUP BY p.property_type_id, pt.name
+                    GROUP BY p.property_type_id, pt.type
                     ORDER BY count DESC";
 
             $stmt = $this->db->query($sql);

@@ -435,7 +435,7 @@ class LeadScoringController extends AdminController
             $sql = "SELECT l.*, 
                        COALESCE(ls.score, 0) as score,
                        ls.breakdown_json,
-                       ls.calculated_at,
+                       ls.created_at as calculated_at,
                        u.name as assigned_name,
                        0 as engagement_count
                 FROM leads l
@@ -490,7 +490,7 @@ class LeadScoringController extends AdminController
                     COUNT(*) as total_scored
                 FROM lead_scoring ls
                 JOIN leads l ON ls.lead_id = l.id
-                WHERE ls.calculated_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
+                WHERE ls.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
 
             $stmt = $this->pdo->query($sql);
             $result = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -536,7 +536,7 @@ class LeadScoringController extends AdminController
                     MIN(score) as min_score,
                     COUNT(*) as total_scored
                 FROM lead_scoring
-                WHERE calculated_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
+                WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
 
             $stmt = $this->pdo->query($sql);
             $result = $stmt->fetch(\PDO::FETCH_ASSOC);

@@ -61,29 +61,30 @@ class ReportService
         try {
             $sql = "SELECT 
                 p.id, p.title, p.type, p.price, p.area, p.location,
-                p.status, p.sold_date, p.created_at,
+                p.status, s.sale_date AS sold_date, s.created_at,
                 a.name as associate_name, a.commission_rate,
                 u.name as buyer_name, u.email as buyer_email,
-                (p.price * a.commission_rate / 100) as commission_amount
-                FROM properties p
-                LEFT JOIN users a ON p.associate_id = a.id{$this->tJoin('a')}
-                LEFT JOIN users u ON p.buyer_id = u.id{$this->tJoin('u')}
+                COALESCE(s.commission_amount, ROUND(p.price * a.commission_rate / 100, 2)) as commission_amount
+                FROM sales s
+                JOIN properties p ON s.property_id = p.id
+                LEFT JOIN users a ON s.associate_id = a.id{$this->tJoin('a')}
+                LEFT JOIN users u ON s.customer_id = u.id{$this->tJoin('u')}
                 WHERE 1=1";
             
             $params = array_merge($this->tVal(), $this->tVal());
             
             if (!empty($filters['start_date'])) {
-                $sql .= " AND p.sold_date >= ?";
+                $sql .= " AND s.sale_date >= ?";
                 $params[] = $filters['start_date'];
             }
             
             if (!empty($filters['end_date'])) {
-                $sql .= " AND p.sold_date <= ?";
+                $sql .= " AND s.sale_date <= ?";
                 $params[] = $filters['end_date'];
             }
             
             if (!empty($filters['associate_id'])) {
-                $sql .= " AND p.associate_id = ?";
+                $sql .= " AND s.associate_id = ?";
                 $params[] = $filters['associate_id'];
             }
             
@@ -97,7 +98,7 @@ class ReportService
                 $params[] = '%' . $filters['location'] . '%';
             }
             
-            $sql .= " ORDER BY p.sold_date DESC";
+            $sql .= " ORDER BY s.sale_date DESC";
             
             return $this->db->fetchAll($sql, $params);
 
@@ -115,13 +116,13 @@ class ReportService
         try {
             $sql = "SELECT 
                 u.id, u.name, u.email, u.phone, u.role, u.status,
-                u.registered_date, u.last_login,
+                u.created_at AS registered_date, u.last_login_at AS last_login,
                 COUNT(pv.id) as properties_viewed,
                 COUNT(e.id) as enquiries_sent,
                 COUNT(f.id) as favorites_added,
                 MAX(al.created_at) as last_activity
                 FROM users u
-                LEFT JOIN property_views pv ON u.id = pv.user_id
+                LEFT JOIN property_views pv ON u.id = pv.customer_id
                 LEFT JOIN inquiries e ON u.id = e.user_id
                 LEFT JOIN favorites f ON u.id = f.user_id
                 LEFT JOIN activity_logs_unified al ON u.id = al.user_id
@@ -130,12 +131,12 @@ class ReportService
             $params = $this->tVal();
             
             if (!empty($filters['start_date'])) {
-                $sql .= " AND u.registered_date >= ?";
+                $sql .= " AND u.created_at >= ?";
                 $params[] = $filters['start_date'];
             }
             
             if (!empty($filters['end_date'])) {
-                $sql .= " AND u.registered_date <= ?";
+                $sql .= " AND u.created_at <= ?";
                 $params[] = $filters['end_date'];
             }
             
@@ -150,8 +151,8 @@ class ReportService
             }
             
             $sql .= " GROUP BY u.id, u.name, u.email, u.phone, u.role, u.status,
-                      u.registered_date, u.last_login
-                      ORDER BY u.registered_date DESC";
+                      u.created_at, u.last_login_at
+                      ORDER BY u.created_at DESC";
             
             return $this->db->fetchAll($sql, $params);
 
@@ -168,8 +169,8 @@ class ReportService
     {
         try {
             $sql = "SELECT 
-                DATE_FORMAT(t.transaction_date, '%Y-%m') as month,
-                DATE_FORMAT(t.transaction_date, '%M %Y') as month_name,
+                DATE_FORMAT(t.date, '%Y-%m') as month,
+                DATE_FORMAT(t.date, '%M %Y') as month_name,
                 COUNT(*) as total_transactions,
                 SUM(CASE WHEN t.type = 'payment' THEN t.amount ELSE 0 END) as total_payments,
                 SUM(CASE WHEN t.type = 'commission' THEN t.amount ELSE 0 END) as total_commissions,
@@ -177,17 +178,17 @@ class ReportService
                 SUM(t.amount) as total_amount,
                 AVG(t.amount) as avg_amount
                 FROM transactions t
-                WHERE t.status = 'completed'";
+                WHERE 1=1";
             
             $params = [];
             
             if (!empty($filters['start_date'])) {
-                $sql .= " AND t.transaction_date >= ?";
+                $sql .= " AND t.date >= ?";
                 $params[] = $filters['start_date'];
             }
             
             if (!empty($filters['end_date'])) {
-                $sql .= " AND t.transaction_date <= ?";
+                $sql .= " AND t.date <= ?";
                 $params[] = $filters['end_date'];
             }
             
@@ -196,7 +197,7 @@ class ReportService
                 $params[] = $filters['transaction_type'];
             }
             
-            $sql .= " GROUP BY DATE_FORMAT(t.transaction_date, '%Y-%m'), DATE_FORMAT(t.transaction_date, '%M %Y')
+            $sql .= " GROUP BY DATE_FORMAT(t.date, '%Y-%m'), DATE_FORMAT(t.date, '%M %Y')
                       ORDER BY month DESC";
             
             return $this->db->fetchAll($sql, $params);
@@ -215,27 +216,28 @@ class ReportService
         try {
             $sql = "SELECT 
                 a.id, a.name, a.email, a.phone, a.commission_rate,
-                a.join_date, a.status, a.rating,
-                COUNT(p.id) as total_properties,
-                COUNT(CASE WHEN p.status = 'sold' THEN 1 END) as sold_properties,
-                COALESCE(SUM(p.price), 0) as total_property_value,
-                COALESCE(SUM(CASE WHEN p.status = 'sold' THEN p.price * a.commission_rate / 100 END), 0) as total_commissions,
-                COALESCE(AVG(p.price), 0) as avg_property_price,
-                MAX(p.sold_date) as last_sale_date,
-                COALESCE(SUM(CASE WHEN p.sold_date >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END), 0) as sales_this_month
+                ass.joining_date as join_date, ass.status as associate_status,
+                COUNT(DISTINCT s.property_id) as total_properties,
+                COUNT(CASE WHEN s.status = 'completed' THEN 1 END) as sold_properties,
+                COALESCE(SUM(s.sale_amount), 0) as total_property_value,
+                COALESCE(SUM(s.commission_amount), 0) as total_commissions,
+                COALESCE(AVG(s.sale_amount), 0) as avg_property_price,
+                MAX(s.sale_date) as last_sale_date,
+                COALESCE(SUM(CASE WHEN s.sale_date >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END), 0) as sales_this_month
                 FROM users a
-                LEFT JOIN properties p ON a.id = p.associate_id
+                LEFT JOIN associates ass ON ass.user_id = a.id
+                LEFT JOIN sales s ON s.associate_id = a.id
                 WHERE 1=1{$this->tJoin('a')}";
             
             $params = $this->tVal();
             
             if (!empty($filters['start_date'])) {
-                $sql .= " AND a.join_date >= ?";
+                $sql .= " AND ass.joining_date >= ?";
                 $params[] = $filters['start_date'];
             }
             
             if (!empty($filters['end_date'])) {
-                $sql .= " AND a.join_date <= ?";
+                $sql .= " AND ass.joining_date <= ?";
                 $params[] = $filters['end_date'];
             }
             
@@ -244,13 +246,10 @@ class ReportService
                 $params[] = $filters['status'];
             }
             
-            if (!empty($filters['min_rating'])) {
-                $sql .= " AND a.rating >= ?";
-                $params[] = $filters['min_rating'];
-            }
+            // NOTE: min_rating filter dropped — users/associates have no rating column
             
             $sql .= " GROUP BY a.id, a.name, a.email, a.phone, a.commission_rate,
-                      a.join_date, a.status, a.rating
+                      ass.joining_date, ass.status
                       ORDER BY total_commissions DESC";
             
             return $this->db->fetchAll($sql, $params);
@@ -275,7 +274,7 @@ class ReportService
                 COUNT(CASE WHEN e.status = 'pending' THEN 1 END) as pending_enquiries,
                 COUNT(CASE WHEN e.status = 'closed' THEN 1 END) as closed_enquiries,
                 ROUND(COUNT(CASE WHEN e.status = 'converted' THEN 1 END) * 100.0 / COUNT(*), 2) as conversion_rate,
-                COALESCE(AVG(CASE WHEN e.status = 'converted' THEN DATEDIFF(e.converted_date, e.created_at) END), 0) as avg_conversion_days
+                COALESCE(AVG(CASE WHEN e.status = 'converted' THEN DATEDIFF(e.updated_at, e.created_at) END), 0) as avg_conversion_days
                 FROM inquiries e
                 WHERE 1=1";
             
@@ -422,7 +421,7 @@ class ReportService
                     COUNT(CASE WHEN status = 'active' THEN 1 END) as active_users,
                     COUNT(CASE WHEN role = 'client' THEN 1 END) as client_users,
                     COUNT(CASE WHEN role = 'associate' THEN 1 END) as associate_users,
-                    COUNT(CASE WHEN registered_date >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as new_users_month
+                    COUNT(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as new_users_month
                 FROM users
                 WHERE 1=1{$this->tEnd()}
             ", $this->tVal());
@@ -431,23 +430,20 @@ class ReportService
             $associateStats = $this->db->fetch("
                 SELECT 
                     COUNT(*) as total_associates,
-                    COUNT(CASE WHEN status = 'active' THEN 1 END) as active_associates,
-                    AVG(rating) as avg_rating,
-                    SUM(total_commissions) as total_commissions,
-                    SUM(properties_sold) as total_properties_sold
+                    COUNT(CASE WHEN status = 'active' THEN 1 END) as active_associates
                 FROM users
-                WHERE 1=1{$this->tEnd()}
+                WHERE role IN ('associate','agent') AND 1=1{$this->tEnd()}
             ", $this->tVal());
 
             // Financial statistics
             $financialStats = $this->db->fetch("
                 SELECT 
                     COUNT(*) as total_transactions,
-                    SUM(CASE WHEN type = 'payment' AND status = 'completed' THEN amount ELSE 0 END) as total_revenue,
-                    SUM(CASE WHEN type = 'commission' AND status = 'completed' THEN amount ELSE 0 END) as total_commissions_paid,
+                    SUM(CASE WHEN type = 'payment' THEN amount ELSE 0 END) as total_revenue,
+                    SUM(CASE WHEN type = 'commission' THEN amount ELSE 0 END) as total_commissions_paid,
                     SUM(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN amount ELSE 0 END) as revenue_this_month
                 FROM transactions
-                WHERE status = 'completed'
+                WHERE 1=1
             ");
 
             // Enquiry statistics

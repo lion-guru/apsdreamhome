@@ -500,7 +500,7 @@ class ColonyPipelineController extends AdminController
                  LEFT JOIN plots p ON pa.plot_id = p.id
                  LEFT JOIN users u1 ON pa.requested_by = u1.id
                  WHERE pa.colony_id = ? AND pa.status = 'pending'
-                 ORDER BY pa.requested_at DESC LIMIT 50",
+                 ORDER BY pa.created_at DESC LIMIT 50",
                 [$id]
             );
 
@@ -514,7 +514,7 @@ class ColonyPipelineController extends AdminController
                  LEFT JOIN users u1 ON pa.requested_by = u1.id
                  LEFT JOIN users u2 ON pa.approved_by = u2.id
                  WHERE pa.colony_id = ?
-                 ORDER BY pa.requested_at DESC LIMIT 50",
+                 ORDER BY pa.created_at DESC LIMIT 50",
                 [$id]
             );
 
@@ -752,7 +752,7 @@ class ColonyPipelineController extends AdminController
             }
 
             $costs = $this->db->fetchAll(
-                "SELECT cdc.*, v.name as vendor_name_lookup
+                "SELECT cdc.*, v.vendor_name as vendor_name_lookup
                  FROM colony_development_costs cdc
                  LEFT JOIN vendors v ON cdc.vendor_id = v.id
                  WHERE cdc.colony_id = ?

@@ -46,25 +46,23 @@ class PenaltyService
             if ($daysOverdue <= $graceDays) continue;
 
             $penaltyRate = 0.18 / 365; // 18% per annum
-            $penaltyAmount = round($installment['amount_due'] * $penaltyRate * ($daysOverdue - $graceDays), 2);
+            $penaltyAmount = round($installment['amount'] * $penaltyRate * ($daysOverdue - $graceDays), 2);
 
             if ($penaltyAmount <= 0) continue;
 
             // Update or insert penalty
-            $existing = $this->db->fetchOne("SELECT * FROM penalty_audit WHERE installment_id = ? AND penalty_date = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), array_merge([$installment['id'], $today], $tid > 1 ? [$tid] : []));
+            $existing = $this->db->fetchOne("SELECT * FROM penalty_audit WHERE installment_id = ? AND DATE(applied_at) = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), array_merge([$installment['id'], $today], $tid > 1 ? [$tid] : []));
 
             if ($existing) {
-                $newAccrued = $existing['accrued_penalty'] + $penaltyAmount;
-                $this->db->execute("UPDATE penalty_audit SET accrued_penalty = ?, days_overdue = ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), array_merge([$newAccrued, $daysOverdue, $existing['id']], $tid > 1 ? [$tid] : []));
+                $newAccrued = $existing['total_accrued'] + $penaltyAmount;
+                $this->db->execute("UPDATE penalty_audit SET total_accrued = ?, penalty_amount = ?, days_overdue = ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), array_merge([$newAccrued, $penaltyAmount, $daysOverdue, $existing['id']], $tid > 1 ? [$tid] : []));
             } else {
                 $this->db->insert('penalty_audit', [
                     'installment_id'    => $installment['id'],
-                    'penalty_date'      => $today,
+                    'booking_id'        => $installment['booking_id'],
                     'days_overdue'      => $daysOverdue,
-                    'penalty_rate'      => 0.18,
-                    'accrued_penalty'   => $penaltyAmount,
-                    'paid_penalty'      => 0,
-                    'status'            => 'accrued',
+                    'penalty_amount'    => $penaltyAmount,
+                    'total_accrued'     => $penaltyAmount,
                     'tenant_id'         => TenantContext::getId(),
                 ]);
             }
@@ -90,16 +88,15 @@ class PenaltyService
         $today = date('Y-m-d');
 
         $stmt = $this->db->fetchAll("
-            SELECT pa.*, bps.amount_due, pb.booking_number, pb.customer_id
+            SELECT pa.*, bps.amount, pb.booking_number, pb.customer_id
             FROM penalty_audit pa
             JOIN booking_payment_schedules bps ON bps.id = pa.installment_id
             JOIN plot_bookings pb ON pb.id = bps.booking_id
-            WHERE pa.status = 'accrued'
-            " . ($tid > 1 ? " AND pa.tenant_id = ?" : ""),
+            " . ($tid > 1 ? " WHERE pa.tenant_id = ?" : ""),
             $tid > 1 ? [$tid] : []
         );
 
-        $totalAccrued = array_sum(array_column($stmt, 'accrued_penalty'));
+        $totalAccrued = array_sum(array_column($stmt, 'total_accrued'));
         $totalPaid = array_sum(array_column($stmt, 'paid_penalty'));
 
         return [
@@ -114,9 +111,9 @@ class PenaltyService
     public function recordPenaltyPayment(int $installmentId, float $amount): bool
     {
         $tid = TenantContext::getId();
-        $this->db->execute("UPDATE penalty_audit SET paid_penalty = paid_penalty + ?, status = CASE WHEN paid_penalty + ? >= accrued_penalty THEN 'paid' ELSE 'partial' END WHERE installment_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), array_merge([$amount, $amount, $installmentId], $tid > 1 ? [$tid] : []));
 
-        // Also update installment
+        // penalty_audit has no payment-tracking columns; the operative balance
+        // lives on booking_payment_schedules.accrued_penalty
         $this->db->execute("UPDATE booking_payment_schedules SET accrued_penalty = GREATEST(0, accrued_penalty - ?) WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), array_merge([$amount, $installmentId], $tid > 1 ? [$tid] : []));
 
         return true;

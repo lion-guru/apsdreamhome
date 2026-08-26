@@ -95,9 +95,9 @@ class EMICollectionAgent extends BaseAgent {
         $threeDaysLater = date('Y-m-d', strtotime('+3 days'));
 
         // Query for EMIs due in next 3 days or overdue
-        $query = "SELECT e.*, u.phone, u.uname
+        $query = "SELECT e.*, u.phone, u.name
                   FROM emi_payments e
-                  JOIN users u ON e.user_id = u.uid
+                  JOIN users u ON e.user_id = u.id
                   WHERE e.status = 'pending'
                   AND (e.due_date <= ? OR e.due_date = ?)" . $this->tenantSql('e');
 
@@ -123,7 +123,7 @@ class EMICollectionAgent extends BaseAgent {
         $statusPrefix = $isOverdue ? "⚠️ *OVERDUE PAYMENT*" : "📅 *UPCOMING EMI REMINDER*";
 
         $msg = "{$statusPrefix}\n\n";
-        $msg .= "Dear {$data['uname']},\n";
+        $msg .= "Dear {$data['name']},\n";
         $msg .= "This is a reminder for your EMI payment for property: *{$data['property_name']}*.\n\n";
         $msg .= "💰 *Amount:* ₹" . number_format($data['amount']) . "\n";
         $msg .= "📅 *Due Date:* " . date('d M Y', strtotime($data['due_date'])) . "\n";

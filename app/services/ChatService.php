@@ -101,13 +101,12 @@ class ChatService
     public function getSessionDetails(int $sessionId, ?int $userId = null): array
     {
         try {
-            $sql = "SELECT cs.*, u.uname as user_name, u.uemail as user_email,
-                           a.auser as agent_name, a.aemail as agent_email,
-                           p.title as property_title, p.image_url as property_image
+            $sql = "SELECT cs.*, u.name as user_name, u.email as user_email,
+                           a.auser as agent_name, a.email as agent_email,
+                           cs.subject as property_title
                     FROM chat_sessions cs
                     LEFT JOIN users u ON cs.user_id = u.id
-                    LEFT JOIN admin a ON cs.agent_id = a.aid
-                    LEFT JOIN properties p ON cs.property_id = p.id
+                    LEFT JOIN admin a ON cs.assigned_agent_id = a.id
                     WHERE cs.id = ?";
 
             $stmt = $this->db->prepare($sql);
@@ -123,13 +122,13 @@ class ChatService
             }
 
             $messages = $this->getSessionMessages($sessionId);
-            $agentStatus = $session['agent_id'] ? $this->getAgentStatus($session['agent_id']) : null;
+            $agentStatus = !empty($session['assigned_agent_id']) ? $this->getAgentStatus((int)$session['assigned_agent_id']) : null;
 
             return [
                 'session' => $session,
                 'messages' => $messages,
                 'agent_status' => $agentStatus,
-                'queue_position' => $session['session_status'] === 'waiting' ? $this->getQueuePosition($sessionId) : 0
+                'queue_position' => $session['status'] === 'open' ? $this->getQueuePosition($sessionId) : 0
             ];
         } catch (Exception $e) {
             error_log("Get Session Details Error: " . $e->getMessage());
@@ -143,16 +142,15 @@ class ChatService
     public function getUserSessions(int $userId): array
     {
         try {
-            $sql = "SELECT cs.*, a.auser as agent_name, p.title as property_title,
+            $sql = "SELECT cs.*, a.auser as agent_name,
                            COUNT(cm.id) as message_count,
                            MAX(cm.created_at) as last_message_time
                     FROM chat_sessions cs
-                    LEFT JOIN admin a ON cs.agent_id = a.aid
-                    LEFT JOIN properties p ON cs.property_id = p.id
+                    LEFT JOIN admin a ON cs.assigned_agent_id = a.id
                     LEFT JOIN chat_messages cm ON cs.id = cm.session_id
-                    WHERE cs.user_id = ? AND cs.session_status IN ('active', 'waiting')
+                    WHERE cs.user_id = ? AND cs.status IN ('active', 'open')
                     GROUP BY cs.id
-                    ORDER BY cs.started_at DESC";
+                    ORDER BY cs.created_at DESC";
 
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$userId]);
@@ -170,8 +168,9 @@ class ChatService
     {
         try {
             $this->validateSessionOwnership($sessionId, $userId);
-            $stmt = $this->db->prepare("CALL EndChatSession(?, ?, ?)");
-            $stmt->execute([$sessionId, $rating, $feedback]);
+            // EndChatSession stored procedure does not exist; direct update on real columns
+            $stmt = $this->db->prepare("UPDATE chat_sessions SET status = 'closed', closed_at = NOW(), closed_by = ?, rating = ?, feedback_text = ? WHERE id = ? AND user_id = ?");
+            $stmt->execute([$userId, $rating, $feedback, $sessionId, $userId]);
 
             $this->sendSystemMessage($sessionId, "Thank you for chatting with us! Your session has been ended.");
             $this->websocketServer->closeSessionConnections($sessionId);
@@ -189,19 +188,18 @@ class ChatService
     public function getAvailableAgents(string $department): array
     {
         try {
-            $sql = "SELECT aa.*, a.auser as agent_name, a.aemail as agent_email,
-                           (SELECT COUNT(*) FROM chat_sessions WHERE agent_id = aa.agent_id AND session_status = 'active') as active_chats
-                    FROM agent_availability aa
-                    JOIN admin a ON aa.agent_id = a.aid
-                    WHERE aa.is_available = TRUE 
-                      AND aa.is_online = TRUE 
-                      AND aa.current_chats < aa.max_chats
-                      AND aa.department = ?
-                      AND (aa.break_until IS NULL OR aa.break_until < NOW())
-                    ORDER BY (aa.current_chats / aa.max_chats) ASC, aa.customer_satisfaction DESC";
+            // agent_availability table does not exist; derive availability from users + live chat load
+            $sql = "SELECT u.id as agent_id, u.name as agent_name, u.email as agent_email,
+                           (SELECT COUNT(*) FROM chat_sessions cs
+                             WHERE cs.assigned_agent_id = u.id AND cs.status IN ('open','assigned','active')) as active_chats
+                    FROM users u
+                    WHERE u.role IN ('admin','employee','telecaller','agent')
+                      AND u.status = 'active' AND u.is_active = 1
+                    ORDER BY active_chats ASC, u.id ASC
+                    LIMIT 10";
 
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$department]);
+            $stmt->execute([]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             error_log("Get Available users Error: " . $e->getMessage());
@@ -217,14 +215,9 @@ class ChatService
         try {
             $this->validateTransfer($sessionId, $fromAgentId, $toAgentId);
 
-            $stmt = $this->db->prepare("INSERT INTO chat_transfers (session_id, from_agent_id, to_agent_id, transfer_reason, transfer_notes) VALUES (?, ?, ?, ?, ?)");
-            $stmt->execute([$sessionId, $fromAgentId, $toAgentId, $reason, $notes]);
-
-            $stmt = $this->db->prepare("UPDATE chat_sessions SET assigned_agent_id = ?, first_response_at = NOW() WHERE id = ?");
+            // chat_transfers table does not exist; record transfer on the session only
+            $stmt = $this->db->prepare("UPDATE chat_sessions SET assigned_agent_id = ?, first_response_at = COALESCE(first_response_at, NOW()) WHERE id = ?");
             $stmt->execute([$toAgentId, $sessionId]);
-
-            $this->updateAgentChatCount($fromAgentId, -1);
-            $this->updateAgentChatCount($toAgentId, +1);
 
             $this->sendSystemMessage($sessionId, "Chat has been transferred to another agent.");
             return true;
@@ -240,21 +233,21 @@ class ChatService
     public function getChatAnalytics(string $startDate, string $endDate, ?string $department = null): array
     {
         try {
-            $sql = "SELECT DATE(cs.started_at) as date, cs.department, COUNT(*) as total_sessions,
-                           SUM(CASE WHEN cs.session_status = 'active' THEN 1 ELSE 0 END) as active_sessions,
-                           AVG(cs.wait_time) as avg_wait_time, AVG(cs.session_duration) as avg_session_duration,
-                           COUNT(cm.id) as total_messages, AVG(cr.rating) as avg_rating, COUNT(cr.id) as total_ratings
+            $sql = "SELECT DATE(cs.created_at) as date, COALESCE(cs.category,'general') as department, COUNT(*) as total_sessions,
+                           SUM(CASE WHEN cs.status IN ('active','assigned') THEN 1 ELSE 0 END) as active_sessions,
+                           AVG(CASE WHEN cs.first_response_at IS NOT NULL THEN TIMESTAMPDIFF(SECOND, cs.created_at, cs.first_response_at) END) as avg_wait_time,
+                           AVG(CASE WHEN cs.closed_at IS NOT NULL THEN TIMESTAMPDIFF(SECOND, cs.created_at, cs.closed_at) END) as avg_session_duration,
+                           COUNT(cm.id) as total_messages, AVG(cs.rating) as avg_rating, COUNT(cs.rating) as total_ratings
                     FROM chat_sessions cs
                     LEFT JOIN chat_messages cm ON cs.id = cm.session_id
-                    LEFT JOIN chat_ratings cr ON cs.id = cr.session_id
-                    WHERE DATE(cs.started_at) BETWEEN ? AND ? ";
+                    WHERE DATE(cs.created_at) BETWEEN ? AND ? ";
 
             $params = [$startDate, $endDate];
             if ($department) {
-                $sql .= " AND cs.department = ? ";
+                $sql .= " AND COALESCE(cs.category,'general') = ? ";
                 $params[] = $department;
             }
-            $sql .= " GROUP BY DATE(cs.started_at), cs.department ORDER BY date DESC";
+            $sql .= " GROUP BY DATE(cs.created_at), COALESCE(cs.category,'general') ORDER BY date DESC";
 
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
@@ -270,11 +263,14 @@ class ChatService
     private function createChatSession($userId, $propertyId, $department, $sessionType)
     {
         $tid = $this->isTenantScoped() ? $this->tenantId() : null;
-        $cols = 'user_id, property_id, department, session_type, priority';
-        $vals = '?, ?, ?, ?, CASE WHEN ? = \'support\' THEN \'high\' WHEN ? = \'technical\' THEN \'high\' WHEN ? = \'sales\' THEN \'medium\' ELSE \'low\' END';
+        // chat_sessions has no property_id/department/session_type columns;
+        // department maps to category, property context goes to subject
+        $subject = $propertyId ? ('Property #' . (int)$propertyId) : ($sessionType !== 'general' ? ucfirst($sessionType) : null);
+        $cols = 'user_id, category, priority, subject';
+        $vals = '?, ?, CASE WHEN ? = \'support\' THEN \'high\' WHEN ? = \'technical\' THEN \'high\' WHEN ? = \'sales\' THEN \'medium\' ELSE \'low\' END, ?';
         if ($tid) { $cols .= ', tenant_id'; $vals .= ', ?'; }
         $sql = "INSERT INTO chat_sessions ($cols) VALUES ($vals)";
-        $params = [$userId, $propertyId, $department, $sessionType, $department, $department, $department];
+        $params = [$userId, $department, $department, $department, $department, $subject];
         if ($tid) { $params[] = $tid; }
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
@@ -283,22 +279,32 @@ class ChatService
 
     private function findAvailableAgent($department)
     {
-        $stmt = $this->db->prepare("CALL GetNextAvailableAgent(?, @agent_id)");
-        $stmt->execute([$department]);
-        return $this->db->query("SELECT @agent_id")->fetch(PDO::FETCH_COLUMN) ?: null;
+        // GetNextAvailableAgent procedure does not exist; pick least-loaded active staff user
+        $stmt = $this->db->prepare("SELECT u.id FROM users u
+                WHERE u.role IN ('admin','employee','telecaller','agent')
+                  AND u.status = 'active' AND u.is_active = 1
+                ORDER BY (SELECT COUNT(*) FROM chat_sessions cs
+                          WHERE cs.assigned_agent_id = u.id AND cs.status IN ('open','assigned','active')) ASC, u.id ASC
+                LIMIT 1");
+        $stmt->execute([]);
+        return $stmt->fetch(PDO::FETCH_COLUMN) ?: null;
     }
 
     private function assignAgentToSession($sessionId, $agentId)
     {
-        $stmt = $this->db->prepare("CALL AssignChatToAgent(?, ?, ?)");
-        $stmt->execute([$sessionId, $agentId, 'general']);
+        // AssignChatToAgent procedure does not exist; direct update on real columns
+        $stmt = $this->db->prepare("UPDATE chat_sessions cs
+                JOIN users u ON u.id = ?
+                SET cs.assigned_agent_id = ?, cs.agent_name = u.name, cs.status = 'assigned', cs.first_response_at = COALESCE(cs.first_response_at, NOW())
+                WHERE cs.id = ?");
+        $stmt->execute([$agentId, $agentId, $sessionId]);
     }
 
     private function addToQueue($sessionId, $department)
     {
-        $session = $this->getSessionById($sessionId);
-        $stmt = $this->db->prepare("INSERT INTO chat_queue (session_id, user_id, department, priority) VALUES (?, ?, ?, ?)");
-        $stmt->execute([$sessionId, $session['user_id'], $department, $session['priority']]);
+        // chat_queue table does not exist; unassigned sessions simply stay status='open'
+        $stmt = $this->db->prepare("UPDATE chat_sessions SET status = 'open' WHERE id = ?");
+        $stmt->execute([$sessionId]);
     }
 
     private function getSessionById($sessionId)
@@ -310,19 +316,19 @@ class ChatService
 
     private function getQueuePosition($sessionId)
     {
-        $sql = "SELECT COUNT(*) as position FROM chat_queue 
-                WHERE joined_queue_at <= (SELECT joined_queue_at FROM chat_queue WHERE session_id = ?)
-                AND session_id != ?";
+        $sql = "SELECT COUNT(*) as position FROM chat_sessions
+                WHERE status = 'open'
+                AND created_at < (SELECT created_at FROM chat_sessions WHERE id = ?)";
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([$sessionId, $sessionId]);
+        $stmt->execute([$sessionId]);
         return $stmt->fetchColumn() + 1;
     }
 
     private function getEstimatedWaitTime($department)
     {
-        $sql = "SELECT AVG(wait_time) as avg_wait FROM chat_sessions 
-                WHERE department = ? AND session_status = 'closed'
-                AND started_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR)";
+        $sql = "SELECT AVG(TIMESTAMPDIFF(SECOND, created_at, first_response_at)) as avg_wait FROM chat_sessions 
+                WHERE category = ? AND status = 'closed'
+                AND created_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR)";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$department]);
         $avgWait = $stmt->fetchColumn();
@@ -343,7 +349,7 @@ class ChatService
     private function sendSystemMessage($sessionId, $message)
     {
         $tid = $this->isTenantScoped() ? $this->tenantId() : null;
-        $cols = 'session_id, sender_type, message_type, message_content';
+        $cols = 'session_id, sender_type, message_type, message';
         $vals = '?, \'system\', \'system_notification\', ?';
         if ($tid) { $cols .= ', tenant_id'; $vals .= ', ?'; }
         $stmt = $this->db->prepare("INSERT INTO chat_messages ($cols) VALUES ($vals)");
@@ -364,14 +370,15 @@ class ChatService
     private function createMessage($sessionId, $senderType, $senderId, $message, $messageType, $attachment)
     {
         $tid = $this->isTenantScoped() ? $this->tenantId() : null;
-        $cols = 'session_id, sender_type, sender_id, message_type, message_content, attachment_url, file_name, file_size, mime_type';
-        $vals = '?, ?, ?, ?, ?, ?, ?, ?, ?';
+        // chat_messages.sender_type enum is ('visitor','agent','bot','system') — legacy 'user' maps to 'visitor'
+        if ($senderType === 'user') { $senderType = 'visitor'; }
+        $cols = 'session_id, sender_type, sender_id, message_type, message, attachment_url';
+        $vals = '?, ?, ?, ?, ?, ?';
         if ($tid) { $cols .= ', tenant_id'; $vals .= ', ?'; }
         $sql = "INSERT INTO chat_messages ($cols) VALUES ($vals)";
         $params = [
             $sessionId, $senderType, $senderId, $messageType, $message,
-            $attachment['url'] ?? null, $attachment['name'] ?? null,
-            $attachment['size'] ?? null, $attachment['mime_type'] ?? null
+            $attachment['url'] ?? null
         ];
         if ($tid) { $params[] = $tid; }
         $stmt = $this->db->prepare($sql);
@@ -383,9 +390,9 @@ class ChatService
     {
         $session = $this->getSessionById($sessionId);
         if (!$session) throw new Exception("Session not found");
-        if ($senderType === 'user' && $session['user_id'] != $senderId) throw new Exception("Access denied");
-        if ($senderType === 'agent' && $session['agent_id'] != $senderId) throw new Exception("Access denied");
-        if ($session['session_status'] === 'closed') throw new Exception("Session is closed");
+        if (in_array($senderType, ['user', 'visitor'], true) && $session['user_id'] != $senderId) throw new Exception("Access denied");
+        if ($senderType === 'agent' && $session['assigned_agent_id'] != $senderId) throw new Exception("Access denied");
+        if ($session['status'] === 'closed') throw new Exception("Session is closed");
     }
 
     private function validateSessionOwnership($sessionId, $userId)
@@ -398,7 +405,7 @@ class ChatService
     private function validateTransfer($sessionId, $fromAgentId, $toAgentId)
     {
         $session = $this->getSessionById($sessionId);
-        if (!$session || $session['agent_id'] != $fromAgentId) throw new Exception("Invalid session or agent");
+        if (!$session || $session['assigned_agent_id'] != $fromAgentId) throw new Exception("Invalid session or agent");
     }
 
     private function updateSessionActivity($sessionId)
@@ -419,7 +426,7 @@ class ChatService
     private function shouldUseBotResponse($sessionId)
     {
         $session = $this->getSessionById($sessionId);
-        return $session['session_status'] === 'waiting' && !$session['agent_id'];
+        return $session['status'] === 'open' && empty($session['assigned_agent_id']);
     }
 
     private function handleBotResponse($sessionId, $userMessage)
@@ -447,10 +454,10 @@ class ChatService
 
     private function getSessionMessages($sessionId, $limit = 50)
     {
-        $sql = "SELECT cm.*, CASE WHEN cm.sender_type = 'user' THEN u.name WHEN cm.sender_type = 'agent' THEN a.auser ELSE 'System' END as sender_name
+        $sql = "SELECT cm.*, CASE WHEN cm.sender_type = 'visitor' THEN u.name WHEN cm.sender_type = 'agent' THEN a.auser ELSE 'System' END as sender_name
                 FROM chat_messages cm
-                LEFT JOIN users u ON cm.sender_id = u.id AND cm.sender_type = 'user'
-                LEFT JOIN admin a ON cm.sender_id = a.aid AND cm.sender_type = 'agent'
+                LEFT JOIN users u ON cm.sender_id = u.id AND cm.sender_type = 'visitor'
+                LEFT JOIN admin a ON cm.sender_id = a.id AND cm.sender_type = 'agent'
                 WHERE cm.session_id = ? ORDER BY cm.created_at ASC LIMIT ?";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$sessionId, $limit]);
@@ -459,16 +466,16 @@ class ChatService
 
     private function getAgentStatus($agentId)
     {
-        $sql = "SELECT aa.*, a.auser as agent_name FROM agent_availability aa JOIN admin a ON aa.agent_id = a.aid WHERE aa.agent_id = ?";
+        // agent_availability table does not exist; report basic user status
+        $sql = "SELECT u.id as agent_id, u.name as agent_name, u.status FROM users u WHERE u.id = ?";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$agentId]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
     }
 
     private function updateAgentChatCount($agentId, $change)
     {
-        $stmt = $this->db->prepare("UPDATE agent_availability SET current_chats = GREATEST(current_chats + ?, 0), last_activity = NOW() WHERE agent_id = ?");
-        $stmt->execute([$change, $agentId]);
+        // agent_availability table does not exist; nothing to update
     }
 }
 

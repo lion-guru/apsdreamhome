@@ -161,7 +161,7 @@ class AssignmentApprovalService
                     u_req.name as requested_by_name
                  FROM lead_assignment_approvals laa
                  LEFT JOIN leads l ON l.id = laa.lead_id
-                 LEFT JOIN users u_from ON u_from.id = laa.requested_from
+                 LEFT JOIN users u_from ON u_from.id = laa.requested_by
                  LEFT JOIN users u_to ON u_to.id = laa.requested_to
                  LEFT JOIN users u_req ON u_req.id = laa.requested_by
                  WHERE laa.status = 'pending'" . $tidSql . "
@@ -188,7 +188,7 @@ class AssignmentApprovalService
                     u_req.name as requested_by_name, u_app.name as approved_by_name
                  FROM lead_assignment_approvals laa
                  LEFT JOIN leads l ON l.id = laa.lead_id
-                 LEFT JOIN users u_from ON u_from.id = laa.requested_from
+                 LEFT JOIN users u_from ON u_from.id = laa.requested_by
                  LEFT JOIN users u_to ON u_to.id = laa.requested_to
                  LEFT JOIN users u_req ON u_req.id = laa.requested_by
                  LEFT JOIN users u_app ON u_app.id = laa.approved_by

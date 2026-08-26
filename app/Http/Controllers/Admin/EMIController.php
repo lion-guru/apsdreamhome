@@ -38,26 +38,19 @@ class EMIController extends AdminController
             $offset = ($page - 1) * $perPage;
 
             // Build query
-            $sql = "SELECT e.*, 
-                           b.booking_number, 
-                           c.name as customer_name, 
-                           c.email as customer_email,
-                           p.title as property_title,
-                           COUNT(em.id) as payment_count,
-                           COALESCE(SUM(em.amount), 0) as paid_amount
-                    FROM emi_plans e
-                    LEFT JOIN bookings b ON e.booking_id = b.id
-                    LEFT JOIN users c ON b.customer_id = c.id
-                    LEFT JOIN properties p ON b.property_id = p.id
-                    LEFT JOIN emi_payments em ON e.id = em.emi_plan_id
-                    WHERE 1=1";
+            // NOTE: emi_plans links to users/properties directly (no booking_id); emi_payments links via user_id+property_id
+            $sql = "SELECT e.*, c.name as customer_name, c.email as customer_email, p.title as property_title, COUNT(em.id) as payment_count, COALESCE(SUM(em.amount), 0) as paid_amount"
+                 . " FROM emi_plans e"
+                 . " LEFT JOIN users c ON e.customer_id = c.id"
+                 . " LEFT JOIN properties p ON e.property_id = p.id"
+                 . " LEFT JOIN emi_payments em ON em.user_id = e.customer_id AND em.property_id = e.property_id"
+                 . " WHERE 1=1";
             $params = [];
 
             // Apply filters
             if (!empty($search)) {
-                $sql .= " AND (b.booking_number LIKE ? OR c.name LIKE ? OR p.title LIKE ?)";
+                $sql .= " AND (c.name LIKE ? OR p.title LIKE ?)";
                 $searchParam = '%' . $search . '%';
-                $params[] = $searchParam;
                 $params[] = $searchParam;
                 $params[] = $searchParam;
             }
@@ -70,7 +63,8 @@ class EMIController extends AdminController
             $sql .= " GROUP BY e.id ORDER BY e.created_at DESC";
 
             // Count total
-            $countSql = str_replace("SELECT e.*, b.booking_number, c.name as customer_name, c.email as customer_email, p.title as property_title, COUNT(em.id) as payment_count, COALESCE(SUM(em.amount), 0) as paid_amount", "SELECT COUNT(DISTINCT e.id) as total", $sql);
+            $countSql = str_replace("SELECT e.*, c.name as customer_name, c.email as customer_email, p.title as property_title, COUNT(em.id) as payment_count, COALESCE(SUM(em.amount), 0) as paid_amount", "SELECT COUNT(DISTINCT e.id) as total", $sql);
+            $countSql = str_replace("GROUP BY e.id ORDER BY e.created_at DESC", "", $countSql);
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
             $total = $countStmt->fetch()['total'];
@@ -255,14 +249,12 @@ class EMIController extends AdminController
 
             // Get EMI plan details
             $sql = "SELECT e.*, 
-                           b.booking_number, 
                            c.name as customer_name, 
                            c.email as customer_email,
                            p.title as property_title
                     FROM emi_plans e
-                    LEFT JOIN bookings b ON e.booking_id = b.id
-                    LEFT JOIN users c ON b.customer_id = c.id
-                    LEFT JOIN properties p ON b.property_id = p.id
+                    LEFT JOIN users c ON e.customer_id = c.id
+                    LEFT JOIN properties p ON e.property_id = p.id
                     WHERE e.id = ?";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$emiPlanId]);
@@ -273,22 +265,22 @@ class EMIController extends AdminController
                 return $this->redirect('admin/emi');
             }
 
-            // Get EMI schedule
-            $sql = "SELECT * FROM emi_schedule 
-                    WHERE emi_plan_id = ? 
-                    ORDER BY installment_number ASC";
+            // Get EMI schedule (emi_schedule links via customer_id; installment column is emi_number)
+            $sql = "SELECT s.*, s.emi_number AS installment_number
+                    FROM emi_schedule s
+                    WHERE s.customer_id = ?
+                    ORDER BY s.due_date ASC";
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$emiPlanId]);
+            $stmt->execute([$emiPlan['customer_id']]);
             $schedule = $stmt->fetchAll();
 
-            // Get payment history
-            $sql = "SELECT ep.*, es.installment_number
+            // Get payment history (emi_payments links via user_id + property_id)
+            $sql = "SELECT ep.*, ep.paid_at AS payment_date
                     FROM emi_payments ep
-                    LEFT JOIN emi_schedule es ON ep.emi_schedule_id = es.id
-                    WHERE ep.emi_plan_id = ?
-                    ORDER BY ep.payment_date DESC";
+                    WHERE ep.user_id = ? AND ep.property_id = ?
+                    ORDER BY ep.paid_at DESC";
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$emiPlanId]);
+            $stmt->execute([$emiPlan['customer_id'], $emiPlan['property_id']]);
             $payments = $stmt->fetchAll();
 
             $data = [
@@ -330,13 +322,13 @@ class EMIController extends AdminController
             $this->db->beginTransaction();
 
             try {
-                // Get schedule details
-                $sql = "SELECT es.*, e.emi_amount
+                // Get schedule details (attach plan EMI amount via subquery; no direct plan link on emi_schedule)
+                $sql = "SELECT es.*, 
+                               (SELECT e.emi_amount FROM emi_plans e WHERE e.id = ?) AS emi_amount
                         FROM emi_schedule es
-                        JOIN emi_plans e ON es.emi_plan_id = e.id
-                        WHERE es.id = ? AND es.emi_plan_id = ? AND es.status = 'pending'";
+                        WHERE es.id = ? AND es.status = 'pending'";
                 $stmt = $this->db->prepare($sql);
-                $stmt->execute([$scheduleId, $emiPlanId]);
+                $stmt->execute([$emiPlanId, $scheduleId]);
                 $schedule = $stmt->fetch();
 
                 if (!$schedule) {
@@ -363,7 +355,7 @@ class EMIController extends AdminController
                 $sql = "SELECT COUNT(*) as total, 
                               SUM(CASE WHEN status = 'paid' THEN 1 ELSE 0 END) as paid
                         FROM emi_schedule 
-                        WHERE emi_plan_id = ?";
+                        WHERE customer_id = (SELECT customer_id FROM emi_plans WHERE id = ?)";
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute([$emiPlanId]);
                 $result = $stmt->fetch();

@@ -155,7 +155,7 @@ class EmployeeDashboardController extends BaseController
         $callHistoryQuery = "SELECT cl.*, l.name as lead_name
                              FROM call_logs cl
                              JOIN leads l ON cl.lead_id = l.id
-                             WHERE cl.employee_id = ?
+                             WHERE cl.agent_id = ?
                              ORDER BY cl.call_time DESC
                              LIMIT 10";
         

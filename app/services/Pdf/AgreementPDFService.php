@@ -765,10 +765,11 @@ class AgreementPDFService extends ServiceTenantTrait
         if (!$this->db) return null;
         try {
             $sql = "SELECT b.*, u.name AS customer_name, u.phone AS customer_phone, u.email AS customer_email,
-                            p.plot_number, p.area_sqft, p.width_ft, p.length_ft, p.facing, p.total_price AS plot_price,
+                            p.plot_no AS plot_number, p.area_sqft, p.width_ft, p.length_ft, p.facing,
+                            COALESCE(p.negotiated_price, p.basic_price) AS plot_price,
                             p.colony_id, p.block_name
                      FROM plot_bookings b
-                     LEFT JOIN users u ON b.user_id = u.id
+                     LEFT JOIN users u ON b.customer_id = u.id
                      LEFT JOIN inventory_plots p ON b.plot_id = p.id
                      WHERE b.id = ?";
             $params = [(int)$id];

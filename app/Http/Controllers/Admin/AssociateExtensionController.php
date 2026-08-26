@@ -12,10 +12,9 @@ class AssociateExtensionController extends AdminController
         $this->requireAdmin();
         try {
             $stmt = $this->db->prepare("
-                SELECT a.*, u.name, u.email, u.phone, u.role, u.status as user_status
+                SELECT a.*, a.status as user_status
                 FROM users a
-                LEFT JOIN users u ON a.user_id = u.id
-                ORDER BY u.name ASC
+                ORDER BY a.name ASC
             ");
             $stmt->execute();
             $users = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -33,10 +32,9 @@ class AssociateExtensionController extends AdminController
         $this->requireAdmin();
         try {
             $stmt = $this->db->prepare("
-                SELECT a.*, u.name, u.email, u.phone, u.role, u.status as user_status,
-                    u.created_at as user_created_at
+                SELECT a.*, a.status as user_status,
+                    a.created_at as user_created_at
                 FROM users a
-                LEFT JOIN users u ON a.user_id = u.id
                 WHERE a.id = ?
             ");
             $stmt->execute([$id]);

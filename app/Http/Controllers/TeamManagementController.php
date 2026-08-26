@@ -77,7 +77,7 @@ class TeamManagementController extends BaseController
             // Get total team members
             // fetchOne() method exists in Database class at line 102-105
             $totalMembers = $this->db->fetchOne(
-                "SELECT COUNT(*) as count FROM mlm_profiles WHERE sponsor_id = ? OR user_id = ?",
+                "SELECT COUNT(*) as count FROM mlm_profiles WHERE sponsor_user_id = ? OR user_id = ?",
                 [$userId, $userId]
             );
 
@@ -87,7 +87,7 @@ class TeamManagementController extends BaseController
             $activeMembers = $this->db->fetchOne(
                 "SELECT COUNT(*) as count FROM users u 
                  JOIN mlm_profiles m ON u.id = m.user_id 
-                 WHERE (m.sponsor_id = ? OR u.id = ?) AND u.last_login >= DATE_SUB(NOW(), INTERVAL 30 DAY){$tidSql}",
+                 WHERE (m.sponsor_user_id = ? OR u.id = ?) AND m.updated_at >= DATE_SUB(NOW(), INTERVAL 30 DAY){$tidSql}",
                 array_merge([$userId, $userId], $tidParams)
             );
 
@@ -95,7 +95,7 @@ class TeamManagementController extends BaseController
             // fetchOne() method exists in Database class at line 102-105
             $newMembers = $this->db->fetchOne(
                 "SELECT COUNT(*) as count FROM mlm_profiles 
-                 WHERE sponsor_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH)",
+                 WHERE sponsor_user_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH)",
                 [$userId]
             );
 
@@ -104,16 +104,16 @@ class TeamManagementController extends BaseController
             $totalCommission = $this->db->fetchOne(
                 "SELECT COALESCE(SUM(c.amount), 0) as total FROM commissions c 
                  JOIN mlm_profiles m ON c.user_id = m.user_id 
-                 WHERE m.sponsor_id = ? OR m.user_id = ?",
+                 WHERE m.sponsor_user_id = ? OR m.user_id = ?",
                 [$userId, $userId]
             );
 
             // Get team levels distribution
             $levelDistribution = $this->db->fetchAll(
-                "SELECT level, COUNT(*) as count FROM mlm_profiles 
-                 WHERE sponsor_id = ? OR user_id = ? 
-                 GROUP BY level 
-                 ORDER BY level",
+                "SELECT current_level as level, COUNT(*) as count FROM mlm_profiles 
+                 WHERE sponsor_user_id = ? OR user_id = ? 
+                 GROUP BY current_level 
+                 ORDER BY count DESC",
                 [$userId, $userId]
             );
 
@@ -179,12 +179,12 @@ class TeamManagementController extends BaseController
                 "SELECT 
                     u.name,
                     u.email,
-                    m.level,
+                    m.current_level as level,
                     (SELECT COALESCE(SUM(c.amount), 0) FROM commissions c WHERE c.user_id = u.id) as commission,
-                    (SELECT COUNT(*) FROM mlm_profiles WHERE sponsor_id = u.id) as team_size
+                    (SELECT COUNT(*) FROM mlm_profiles WHERE sponsor_user_id = u.id) as team_size
                  FROM users u 
                  JOIN mlm_profiles m ON u.id = m.user_id 
-                 WHERE (m.sponsor_id = ? OR u.id = ?){$tidSql}
+                 WHERE (m.sponsor_user_id = ? OR u.id = ?){$tidSql}
                  ORDER BY commission DESC, team_size DESC 
                  LIMIT 5",
                 array_merge([$userId, $userId], $tidParams)
@@ -263,13 +263,13 @@ class TeamManagementController extends BaseController
                     u.email,
                     u.phone,
                     u.created_at,
-                    m.level,
-                    m.position,
-                    m.sponsor_id,
+                    m.current_level as level,
+                    m.user_type as position,
+                    m.sponsor_user_id as sponsor_id,
                     sp.name as sponsor_name
                  FROM users u 
                  JOIN mlm_profiles m ON u.id = m.user_id 
-                 LEFT JOIN users sp ON sp.id = m.sponsor_id 
+                 LEFT JOIN users sp ON sp.id = m.sponsor_user_id 
                  WHERE u.id = ?{$tidSql}",
                 array_merge([$memberId], $tidParams)
             );

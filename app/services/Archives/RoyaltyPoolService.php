@@ -281,7 +281,7 @@ class RoyaltyPoolService
     {
         try {
             $sql = "
-                SELECT rpd.*, u.name AS agent_name, mp.current_rank
+                SELECT rpd.*, u.name AS agent_name, mp.current_level AS current_rank
                 FROM royalty_pool_distributions rpd
                 JOIN users u ON u.id = rpd.user_id
                 LEFT JOIN mlm_profiles mp ON mp.user_id = rpd.user_id
@@ -341,10 +341,10 @@ class RoyaltyPoolService
         try {
             $inClause = implode(',', array_fill(0, count(self::ELIGIBLE_RANKS), '?'));
             $stmt = $this->pdo->prepare("
-                SELECT mp.user_id, mp.lifetime_sales, mp.current_rank, u.name
+                SELECT mp.user_id, mp.lifetime_sales, mp.current_level AS current_rank, u.name
                 FROM mlm_profiles mp
                 JOIN users u ON u.id = mp.user_id
-                WHERE mp.current_rank IN ($inClause)
+                WHERE mp.current_level IN ($inClause)
                   AND mp.lifetime_sales > 0
                 ORDER BY mp.lifetime_sales DESC
             ");

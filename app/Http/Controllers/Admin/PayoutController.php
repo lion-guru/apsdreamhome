@@ -61,15 +61,11 @@ class PayoutController extends AdminController
             $offset = ($page - 1) * $perPage;
 
             // Build query
-            $sql = "SELECT p.*, 
-                           u.name as associate_name,
-                           u.email as associate_email,
-                           u.bank_account,
-                           u.bank_name,
-                           u.ifsc_code
-                    FROM commission_payouts p
-                    JOIN users u ON p.associate_id = u.id
-                    WHERE 1=1";
+            $sql = "SELECT p.*, u.name as associate_name, u.email as associate_email, ass.bank_account, ass.bank_ifsc as ifsc_code"
+                 . " FROM commission_payouts p"
+                 . " JOIN users u ON p.associate_id = u.id"
+                 . " LEFT JOIN associates ass ON ass.user_id = u.id"
+                 . " WHERE 1=1";
             $params = [];
 
             // Apply filters
@@ -86,15 +82,11 @@ class PayoutController extends AdminController
                 $params[] = $status;
             }
 
-            if (!empty($method)) {
-                $sql .= " AND p.payout_method = ?";
-                $params[] = $method;
-            }
-
             $sql .= " ORDER BY p.created_at DESC";
 
             // Count total
-            $countSql = str_replace("SELECT p.*, u.name as associate_name, u.email as associate_email, u.bank_account, u.bank_name, u.ifsc_code", "SELECT COUNT(DISTINCT p.id) as total", $sql);
+            $countSql = str_replace("SELECT p.*, u.name as associate_name, u.email as associate_email, ass.bank_account, ass.bank_ifsc as ifsc_code", "SELECT COUNT(DISTINCT p.id) as total", $sql);
+            $countSql = str_replace("ORDER BY p.created_at DESC", "", $countSql);
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
             $total = $countStmt->fetch()['total'];
@@ -148,12 +140,12 @@ class PayoutController extends AdminController
                            u.name as associate_name,
                            u.email as associate_email,
                            u.phone as associate_phone,
-                           u.bank_account,
-                           u.bank_name,
-                           u.ifsc_code,
+                           ass.bank_account,
+                           ass.bank_ifsc as ifsc_code,
                            u.address as associate_address
                     FROM commission_payouts p
                     JOIN users u ON p.associate_id = u.id
+                    LEFT JOIN associates ass ON ass.user_id = u.id
                     WHERE p.id = ?";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$payoutId]);
@@ -165,12 +157,12 @@ class PayoutController extends AdminController
             }
 
             // Get commission details for this payout
+            // NOTE: commission_payout_commissions table missing; link via ledger payout_batch_id
             $sql = "SELECT mcl.*, b.booking_number, c.name as customer_name
                     FROM mlm_commission_ledger mcl
-                    LEFT JOIN commission_payout_commissions cpc ON mcl.id = cpc.commission_id
-                    LEFT JOIN bookings b ON mcl.source_booking_id = b.id
+                    LEFT JOIN bookings b ON mcl.booking_id = b.id
                     LEFT JOIN users c ON b.customer_id = c.id
-                    WHERE cpc.payout_id = ?
+                    WHERE mcl.payout_batch_id = ?
                     ORDER BY mcl.created_at DESC";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$payoutId]);
@@ -232,11 +224,10 @@ class PayoutController extends AdminController
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute([$transactionId, $notes, $payoutId]);
 
-                // Update commission ledger status
-                $sql = "UPDATE mlm_commission_ledger mcl
-                        JOIN commission_payout_commissions cpc ON mcl.id = cpc.commission_id
-                        SET mcl.status = 'paid', mcl.payout_date = NOW()
-                        WHERE cpc.payout_id = ?";
+                // Update commission ledger status (commission_payout_commissions table missing; use payout_batch_id)
+                $sql = "UPDATE mlm_commission_ledger
+                        SET status = 'paid', paid_at = NOW()
+                        WHERE payout_batch_id = ?";
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute([$payoutId]);
 
@@ -459,8 +450,8 @@ class PayoutController extends AdminController
             // This month's payouts
             $sql = "SELECT COUNT(*) as total, COALESCE(SUM(amount), 0) as total_amount
                     FROM commission_payouts 
-                    WHERE MONTH(processed_date) = MONTH(CURRENT_DATE) 
-                    AND YEAR(processed_date) = YEAR(CURRENT_DATE)
+                    WHERE MONTH(payout_date) = MONTH(CURRENT_DATE) 
+                    AND YEAR(payout_date) = YEAR(CURRENT_DATE)
                     AND status = 'processed'";
             $result = $this->db->fetchOne($sql);
             $stats['monthly_payouts'] = (int)($result['total'] ?? 0);
@@ -502,7 +493,7 @@ class PayoutController extends AdminController
                     FROM commission_payouts p
                     JOIN users u ON p.associate_id = u.id
                     WHERE p.status = 'processed'
-                    ORDER BY p.processed_date DESC
+                    ORDER BY p.payout_date DESC
                     LIMIT 10";
             return $this->db->fetchAll($sql) ?: [];
         } catch (\Exception $e) {

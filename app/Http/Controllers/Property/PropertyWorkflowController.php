@@ -493,16 +493,9 @@ class PropertyWorkflowController extends BaseController
 
     private function getUserAssignedAgent(int $userId): ?array
     {
-        $sql = "SELECT a.*, u.name, u.email, u.phone 
-                FROM users a
-                JOIN users u ON a.user_id = u.id
-                JOIN customer_assignments ca ON a.user_id = ca.agent_id
-                WHERE ca.customer_id = :user_id AND ca.status = 'active'
-                LIMIT 1";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['user_id' => $userId]);
-        return $stmt->fetch() ?: null;
+        // customer_assignments table does not exist and users has no user_id column;
+        // agent assignment lookup is unavailable until a proper mapping table is created
+        return null;
     }
 
     private function canUserBuyProperty(array $property): bool

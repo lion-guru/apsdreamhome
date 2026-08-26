@@ -365,10 +365,10 @@ class PropertyValuationEngine
     private function getPropertyData($propertyId)
     {
         $stmt = $this->database->prepare("
-            SELECT p.*, pi.image_url, pt.type_name as property_type_name
+            SELECT p.*, pi.image_path, pt.type as property_type_name
             FROM properties p
             LEFT JOIN property_images pi ON p.id = pi.property_id AND pi.is_primary = 1
-            LEFT JOIN property_types pt ON p.type = pt.id
+            LEFT JOIN property_types pt ON p.type = pt.type
             WHERE p.id = ?" . $this->tenantSqlForAlias('p') . "
         ");
         $stmt->execute([$propertyId]);

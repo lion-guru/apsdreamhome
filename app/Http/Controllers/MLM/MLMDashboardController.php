@@ -129,7 +129,7 @@ class MLMDashboardController extends BaseController
 
             // ── 5. Lifetime sales volume (sum of plot_bookings for this associate) ──
             $stmt = $pdo->prepare("
-                SELECT COALESCE(SUM(b.total_amount), 0) AS total_volume
+                SELECT COALESCE(SUM(b.total_plot_value), 0) AS total_volume
                 FROM plot_bookings b
                 WHERE b.associate_id = ? AND b.status NOT IN ('cancelled','rejected')
             ");
@@ -296,15 +296,14 @@ class MLMDashboardController extends BaseController
             }
 
             // Get commission history
+            // mlm_commissions has no from/to_associate_id/booking_id — earner is associate_id,
+            // property link via property_id
             $stmt = $pdo->prepare("
-                SELECT c.*, s.name as from_associate_name, t.name as to_associate_name,
-                       p.title as property_title, b.booking_id
+                SELECT c.*, c.commission_amount AS amount,
+                       p.title as property_title
                 FROM mlm_commissions c
-                LEFT JOIN mlm_associates s ON c.from_associate_id = s.id
-                LEFT JOIN mlm_associates t ON c.to_associate_id = t.id
-                LEFT JOIN bookings b ON c.booking_id = b.id
-                LEFT JOIN properties p ON b.property_id = p.id
-                WHERE c.to_associate_id = ?
+                LEFT JOIN properties p ON c.property_id = p.id
+                WHERE c.associate_id = ?
                 ORDER BY c.created_at DESC
                 LIMIT 100
             ");
@@ -353,9 +352,8 @@ class MLMDashboardController extends BaseController
             // Get payout history
             $tid = (int)TenantContext::getId();
             $stmt = $pdo->prepare("
-                SELECT p.*, b.account_number, b.bank_name, b.ifsc_code
+                SELECT p.*
                 FROM mlm_payouts p
-                LEFT JOIN mlm_bank_details b ON p.bank_detail_id = b.id
                 WHERE p.associate_id = ?" . ($tid > 1 ? " AND p.tenant_id = ?" : "") . "
                 ORDER BY p.created_at DESC
                 LIMIT 50
@@ -367,17 +365,16 @@ class MLMDashboardController extends BaseController
 
             // Get pending payout amount
             $stmt = $pdo->prepare("
-                SELECT SUM(amount) as pending_amount
+                SELECT SUM(commission_amount) as pending_amount
                 FROM mlm_commissions
-                WHERE to_associate_id = ? AND status = 'pending'
+                WHERE associate_id = ? AND status = 'pending'
             ");
             $stmt->execute([$associate['id']]);
             $pending = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             // Get bank details
-            $stmt = $pdo->prepare("SELECT * FROM mlm_bank_details WHERE associate_id = ?");
-            $stmt->execute([$associate['id']]);
-            $bankDetails = $stmt->fetch(\PDO::FETCH_ASSOC);
+            // mlm_bank_details table does not exist — no bank details available
+            $bankDetails = null;
 
             $this->view('mlm/payouts', [
                 'title' => 'My Payouts',
@@ -420,9 +417,9 @@ class MLMDashboardController extends BaseController
 
             // Get pending commission amount
             $stmt = $pdo->prepare("
-                SELECT SUM(amount) as total
+                SELECT SUM(commission_amount) as total
                 FROM mlm_commissions
-                WHERE to_associate_id = ? AND status = 'pending'
+                WHERE associate_id = ? AND status = 'pending'
             ");
             $stmt->execute([$associate['id']]);
             $result = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -458,7 +455,7 @@ class MLMDashboardController extends BaseController
             $stmt = $pdo->prepare("
                 UPDATE mlm_commissions
                 SET status = 'processing', payout_id = ?
-                WHERE to_associate_id = ? AND status = 'pending'
+                WHERE associate_id = ? AND status = 'pending'
             ");
             $stmt->execute([$payoutId, $associate['id']]);
 
@@ -621,11 +618,11 @@ class MLMDashboardController extends BaseController
 
         $stmt = $pdo->prepare("
             SELECT 
-                SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) as paid,
-                SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) as pending,
-                SUM(amount) as total
+                SUM(CASE WHEN status = 'paid' THEN commission_amount ELSE 0 END) as paid,
+                SUM(CASE WHEN status = 'pending' THEN commission_amount ELSE 0 END) as pending,
+                SUM(commission_amount) as total
             FROM mlm_commissions
-            WHERE to_associate_id = ?
+            WHERE associate_id = ?
         ");
         $stmt->execute([$associateId]);
         return $stmt->fetch(\PDO::FETCH_ASSOC);

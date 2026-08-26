@@ -254,15 +254,12 @@ class PlotManagementController extends AdminController
             $offset = ($page - 1) * $perPage;
 
             // Build query for allocation requests
-            $sql = "SELECT pa.*, 
-                           p.plot_number, p.area_sqft, p.status as plot_status,
-                           u.name as requested_by_name, u.email as requested_by_email,
-                           c.name as colony_name
-                    FROM plot_allocations pa
-                    LEFT JOIN plots p ON pa.plot_id = p.id
-                    LEFT JOIN users u ON pa.requested_by = u.id
-                    LEFT JOIN colonies c ON p.colony_id = c.id
-                    WHERE 1=1";
+            $sql = "SELECT pa.*, p.plot_number, p.area_sqft, p.status as plot_status, u.name as requested_by_name, u.email as requested_by_email, c.name as colony_name"
+                 . " FROM plot_allocations pa"
+                 . " LEFT JOIN plots p ON pa.plot_id = p.id"
+                 . " LEFT JOIN users u ON pa.customer_id = u.id"
+                 . " LEFT JOIN colonies c ON p.colony_id = c.id"
+                 . " WHERE 1=1";
             $params = [];
 
             // Apply filters
@@ -283,6 +280,7 @@ class PlotManagementController extends AdminController
 
             // Count total
             $countSql = str_replace("SELECT pa.*, p.plot_number, p.area_sqft, p.status as plot_status, u.name as requested_by_name, u.email as requested_by_email, c.name as colony_name", "SELECT COUNT(DISTINCT pa.id) as total", $sql);
+            $countSql = str_replace("ORDER BY pa.created_at DESC", "", $countSql);
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
             $total = ($countStmt->fetch()['total'] ?? 0);
@@ -417,22 +415,17 @@ class PlotManagementController extends AdminController
             $offset = ($page - 1) * $perPage;
 
             // Build query for development tracking
-            $sql = "SELECT pd.*, 
-                           p.plot_number, p.area_sqft, p.status as plot_status,
-                           c.name as colony_name,
-                           u.name as developer_name
-                    FROM plot_development pd
-                    LEFT JOIN plots p ON pd.plot_id = p.id
-                    LEFT JOIN colonies c ON p.colony_id = c.id
-                    LEFT JOIN users u ON pd.developer_id = u.id
-                    WHERE 1=1";
+            $sql = "SELECT pd.*, p.plot_number, p.area_sqft, p.status as plot_status, c.name as colony_name"
+                 . " FROM plot_development pd"
+                 . " LEFT JOIN plots p ON pd.plot_number = p.plot_number"
+                 . " LEFT JOIN colonies c ON p.colony_id = c.id"
+                 . " WHERE 1=1";
             $params = [];
 
             // Apply filters
             if (!empty($search)) {
-                $sql .= " AND (p.plot_number LIKE ? OR c.name LIKE ? OR u.name LIKE ?)";
+                $sql .= " AND (p.plot_number LIKE ? OR c.name LIKE ?)";
                 $searchParam = '%' . $search . '%';
-                $params[] = $searchParam;
                 $params[] = $searchParam;
                 $params[] = $searchParam;
             }
@@ -445,7 +438,8 @@ class PlotManagementController extends AdminController
             $sql .= " ORDER BY pd.created_at DESC";
 
             // Count total
-            $countSql = str_replace("SELECT pd.*, p.plot_number, p.area_sqft, p.status as plot_status, c.name as colony_name, u.name as developer_name", "SELECT COUNT(DISTINCT pd.id) as total", $sql);
+            $countSql = str_replace("SELECT pd.*, p.plot_number, p.area_sqft, p.status as plot_status, c.name as colony_name", "SELECT COUNT(DISTINCT pd.id) as total", $sql);
+            $countSql = str_replace("ORDER BY pd.created_at DESC", "", $countSql);
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
             $total = ($countStmt->fetch()['total'] ?? 0);
@@ -618,16 +612,15 @@ class PlotManagementController extends AdminController
             $sql = "SELECT 'allocation' as type, pa.created_at, p.plot_number, u.name as user_name, pa.status
                     FROM plot_allocations pa
                     LEFT JOIN plots p ON pa.plot_id = p.id
-                    LEFT JOIN users u ON pa.requested_by = u.id
+                    LEFT JOIN users u ON pa.customer_id = u.id
                     ORDER BY pa.created_at DESC
                     LIMIT 5";
             $activities = array_merge($activities, $this->db->fetchAll($sql) ?: []);
 
-            // Recent plot updates
+            // Recent plot updates (plots has no updated_by column)
             list($tSql, $tParams) = $this->tenantWhere();
-            $sql = "SELECT 'plot_update' as type, p.updated_at as created_at, p.plot_number, u.name as user_name, p.status
+            $sql = "SELECT 'plot_update' as type, p.updated_at as created_at, p.plot_number, '' as user_name, p.status
                     FROM plots p
-                    LEFT JOIN users u ON p.updated_by = u.id
                     WHERE p.updated_at IS NOT NULL" . $tSql . "
                     ORDER BY p.updated_at DESC
                     LIMIT 5";
@@ -715,7 +708,7 @@ class PlotManagementController extends AdminController
             $sql = "SELECT pa.*, p.plot_number, u.name as requested_by_name, c.name as colony_name
                     FROM plot_allocations pa
                     LEFT JOIN plots p ON pa.plot_id = p.id
-                    LEFT JOIN users u ON pa.requested_by = u.id
+                    LEFT JOIN users u ON pa.customer_id = u.id
                     LEFT JOIN colonies c ON p.colony_id = c.id
                     WHERE pa.created_at BETWEEN ? AND ?
                     ORDER BY pa.created_at DESC";
@@ -734,10 +727,9 @@ class PlotManagementController extends AdminController
     private function getDevelopmentExport(string $startDate, string $endDate): array
     {
         try {
-            $sql = "SELECT pd.*, p.plot_number, u.name as developer_name, c.name as colony_name
+            $sql = "SELECT pd.*, p.plot_number, c.name as colony_name
                     FROM plot_development pd
-                    LEFT JOIN plots p ON pd.plot_id = p.id
-                    LEFT JOIN users u ON pd.developer_id = u.id
+                    LEFT JOIN plots p ON pd.plot_number = p.plot_number
                     LEFT JOIN colonies c ON p.colony_id = c.id
                     WHERE pd.created_at BETWEEN ? AND ?
                     ORDER BY pd.created_at DESC";

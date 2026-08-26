@@ -48,7 +48,7 @@ class SiteVisitController extends BaseController
             if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
 
             $status = $_GET['status'] ?? '';
-            $where = "WHERE sv.associate_id = ?{$tidSql}";
+            $where = "WHERE sv.agent_id = ?{$tidSql}";
             $params = [$userId];
             if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
 
@@ -58,10 +58,10 @@ class SiteVisitController extends BaseController
             }
 
             $siteVisits = $db->fetchAll("
-                SELECT sv.*, pl.plot_number, c.name as customer_name, c.phone
+                SELECT sv.*, pl.plot_number, u.name as customer_name, u.phone
                 FROM site_visits sv
                 JOIN plots pl ON pl.id = sv.plot_id
-                JOIN customers c ON c.id = sv.customer_id
+                LEFT JOIN users u ON u.id = sv.user_id
                 WHERE {$where}
                 ORDER BY sv.visit_date DESC, sv.visit_time DESC
             ", $params) ?: [];
@@ -95,8 +95,8 @@ class SiteVisitController extends BaseController
             $db = \App\Core\Database\Database::getInstance()->getConnection();
 
             $data = [
-                'associate_id' => $userId,
-                'customer_id' => (int)($_POST['customer_id'] ?? 0),
+                'agent_id' => $userId,
+                'user_id' => (int)($_POST['customer_id'] ?? 0),
                 'plot_id' => (int)($_POST['plot_id'] ?? 0),
                 'visit_date' => $_POST['visit_date'] ?? '',
                 'visit_time' => $_POST['visit_time'] ?? '10:00:00',
@@ -116,13 +116,13 @@ class SiteVisitController extends BaseController
             $stmt->execute(array_merge([$data['plot_id']], $tid > 1 ? [$tid] : []));
             if (!$stmt->fetch()) throw new Exception('Plot not found');
 
-            // Check if customer exists and belongs to associate
+            // Check if customer exists
             $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
-            $params = [$data['customer_id'], $userId];
+            $params = [$data['user_id']];
             if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
-            $stmt = $db->prepare("SELECT id FROM customers WHERE id = ? AND associate_id = ?{$tidSql} LIMIT 1");
+            $stmt = $db->prepare("SELECT id FROM users WHERE id = ?{$tidSql} LIMIT 1");
             $stmt->execute($params);
-            if (!$stmt->fetch()) throw new Exception('Customer not found or access denied');
+            if (!$stmt->fetch()) throw new Exception('Customer not found');
 
             $db->insert('site_visits', $data);
             $visitId = (int)$db->lastInsertId();
@@ -159,9 +159,8 @@ class SiteVisitController extends BaseController
             if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
 
             $feedback = trim($_POST['feedback'] ?? '');
-            $nextAction = trim($_POST['next_action'] ?? '');
 
-            $stmt = $db->prepare("UPDATE site_visits SET status = 'completed', feedback = ?, next_action = ?, completed_at = NOW() WHERE id = ? AND associate_id = ?{$tidSql}");
+            $stmt = $db->prepare("UPDATE site_visits SET status = 'completed', feedback = ?, completed_at = NOW() WHERE id = ? AND agent_id = ?{$tidSql}");
             $params = array_merge([$feedback, $nextAction, $id, $userId], TenantContext::getId() > 1 ? [TenantContext::getId()] : []);
             $stmt->execute($params);
 
@@ -202,7 +201,7 @@ class SiteVisitController extends BaseController
 
             $reason = trim($_POST['reason'] ?? '');
 
-            $stmt = $db->prepare("UPDATE site_visits SET status = 'cancelled', cancellation_reason = ?, cancelled_at = NOW() WHERE id = ? AND associate_id = ?{$tidSql}");
+            $stmt = $db->prepare("UPDATE site_visits SET status = 'cancelled' WHERE id = ? AND agent_id = ?{$tidSql}");
             $params = array_merge([$reason, $id, $userId], TenantContext::getId() > 1 ? [TenantContext::getId()] : []);
             $stmt->execute($params);
 

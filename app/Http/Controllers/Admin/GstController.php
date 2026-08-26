@@ -16,7 +16,7 @@ class GstController extends AdminController
             $stmt = $this->db->prepare("
                 SELECT i.*, u.name as user_name
                 FROM invoices i
-                LEFT JOIN users u ON i.user_id = u.id
+                LEFT JOIN users u ON i.client_id = u.id AND i.client_type IN ('customer','associate')
                 WHERE i.gst_type IS NOT NULL OR i.gstin IS NOT NULL
                 ORDER BY i.created_at DESC
                 LIMIT 100
@@ -39,7 +39,7 @@ class GstController extends AdminController
             $stmt = $this->db->prepare("
                 SELECT i.*, u.name as user_name, u.email as user_email, u.phone as user_phone
                 FROM invoices i
-                LEFT JOIN users u ON i.user_id = u.id
+                LEFT JOIN users u ON i.client_id = u.id AND i.client_type IN ('customer','associate')
                 WHERE i.id = ?
             ");
             $stmt->execute([$id]);

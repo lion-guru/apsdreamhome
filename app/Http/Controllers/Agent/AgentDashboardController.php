@@ -221,9 +221,8 @@ class AgentDashboardController extends BaseController
     {
         try {
             $leads = $this->db->fetchAll(
-                "SELECT l.name, l.email, l.phone, l.status, l.created_at, p.title as property_title
+                "SELECT l.name, l.email, l.phone, l.status, l.created_at
                  FROM leads l 
-                 LEFT JOIN properties p ON l.property_id = p.id 
                  WHERE l.assigned_to = ? 
                  ORDER BY l.created_at DESC 
                  LIMIT 10",
@@ -264,10 +263,8 @@ class AgentDashboardController extends BaseController
     {
         try {
             $properties = $this->db->fetchAll(
-                "SELECT p.id, p.title, p.price, p.location, p.status, p.area_sqft, p.created_at,
-                        col.name as colony_name
+                "SELECT p.id, p.title, p.price, p.location, p.status, p.area_sqft, p.created_at
                  FROM properties p 
-                 LEFT JOIN colonies col ON p.colony_id = col.id
                  WHERE p.agent_id = ? 
                  ORDER BY p.created_at DESC 
                  LIMIT 20",
@@ -363,11 +360,11 @@ class AgentDashboardController extends BaseController
 
             // Recent commissions
             $commissions = $this->db->fetchAll(
-                "SELECT c.amount, c.type, c.description, c.created_at, p.title as property_title
+                "SELECT c.amount, c.commission_type as type, c.notes as description, c.created_at, p.title as property_title
                  FROM mlm_commission_ledger c
                  LEFT JOIN plot_bookings pb ON c.booking_id = pb.id
                  LEFT JOIN properties p ON pb.plot_id = p.id
-                 WHERE c.associate_id = ? AND c.type = 'direct_sale'
+                 WHERE c.beneficiary_user_id = (SELECT user_id FROM associates WHERE id = ?) AND c.commission_type = 'direct_sale'
                  ORDER BY c.created_at DESC LIMIT 10",
                 [$associateId]
             );
@@ -632,7 +629,7 @@ class AgentDashboardController extends BaseController
         try {
             $leads = $this->db->fetchAll(
                 "SELECT l.*, u.name as assigned_by_name FROM leads l 
-                 LEFT JOIN users u ON u.id = l.assigned_by 
+                 LEFT JOIN users u ON u.id = l.created_by 
                  WHERE l.assigned_to = ? ORDER BY l.created_at DESC LIMIT 50",
                 [$userId]
             ) ?: [];
@@ -804,7 +801,7 @@ class AgentDashboardController extends BaseController
             $lead = $this->db->fetchOne(
                 "SELECT l.*, u.name as assigned_by_name
                  FROM leads l
-                 LEFT JOIN users u ON u.id = l.assigned_by
+                 LEFT JOIN users u ON u.id = l.created_by
                  WHERE l.id = ? AND l.assigned_to = ?",
                 [$id, $userId]
             );

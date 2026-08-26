@@ -41,7 +41,7 @@ class LandController extends AdminController
             // Build query
             $sql = "SELECT l.*, 
                            COUNT(p.id) as property_count,
-                           COALESCE(SUM(p.total_area), 0) as total_area
+                           COALESCE(SUM(COALESCE(p.area_sqft, p.area)), 0) as total_area
                     FROM land_records l
                     LEFT JOIN properties p ON l.id = p.land_id
                     WHERE 1=1";
@@ -567,10 +567,6 @@ class LandController extends AdminController
                 $sql .= " AND status = ?";
                 $params[] = $status;
             }
-            if (!empty($land_type)) {
-                $sql .= " AND land_type = ?";
-                $params[] = $land_type;
-            }
             $sql .= " ORDER BY created_at DESC";
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
@@ -606,7 +602,7 @@ class LandController extends AdminController
     {
         $this->requireAdmin();
         try {
-            $stmt = $this->db->prepare("SELECT a.*, u.name as created_by_name FROM land_acquisitions a LEFT JOIN users u ON a.created_by = u.id WHERE a.id = ?");
+            $stmt = $this->db->prepare("SELECT a.* FROM land_acquisitions a WHERE a.id = ?");
             $stmt->execute([(int)$id]);
             $acquisition = $stmt->fetch(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {

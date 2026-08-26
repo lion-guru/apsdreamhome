@@ -359,11 +359,11 @@ class AnalyticsController extends AdminController
             $data = [];
 
             // Revenue by property type
-            $sql = "SELECT p.property_type, COALESCE(SUM(b.total_amount), 0) as revenue
+            $sql = "SELECT p.type AS property_type, COALESCE(SUM(b.total_amount), 0) as revenue
                     FROM bookings b
                     JOIN properties p ON b.property_id = p.id
                     WHERE b.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-                    GROUP BY p.property_type
+                    GROUP BY p.type
                     ORDER BY revenue DESC";
             $data['by_property_type'] = $this->db->fetchAll($sql) ?: [];
 

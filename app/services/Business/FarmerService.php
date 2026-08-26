@@ -269,7 +269,7 @@ class FarmerService
             }
 
             if (!empty($filters['search'])) {
-                $sql .= " AND (f.full_name LIKE ? OR f.email LIKE ? OR f.phone LIKE ?)";
+                $sql .= " AND (f.name LIKE ? OR f.email LIKE ? OR f.phone LIKE ?)";
                 $searchTerm = '%' . $filters['search'] . '%';
                 $params[] = $searchTerm;
                 $params[] = $searchTerm;
@@ -589,7 +589,8 @@ class FarmerService
 
     private function createFarmerRecord(array $data): string
     {
-        $columns = ['full_name', 'email', 'phone', 'address', 'region', 'district', 'state', 'pin_code', 'aadhaar_number', 'pan_number', 'bank_account_number', 'bank_ifsc', 'status', 'created_at'];
+        // Map to actual farmers schema (no full_name/pin_code/aadhaar_number/bank_account_number/bank_ifsc)
+        $columns = ['name', 'email', 'phone', 'address', 'region', 'district', 'state', 'aadhar_number', 'pan_number', 'bank_account', 'ifsc_code'];
         $values = [
             $data['full_name'],
             $data['email'],
@@ -598,7 +599,6 @@ class FarmerService
             $data['region'],
             $data['district'] ?? null,
             $data['state'] ?? null,
-            $data['pin_code'] ?? null,
             $data['aadhaar_number'] ?? null,
             $data['pan_number'] ?? null,
             $data['bank_account_number'] ?? null,
@@ -910,7 +910,7 @@ class FarmerService
     {
         try {
             $tid = $this->tenantId();
-            $sql = "SELECT fa.*, f.full_name, f.email 
+            $sql = "SELECT fa.*, f.name, f.email 
                     FROM farmer_activities fa 
                     JOIN farmers f ON fa.farmer_id = f.id 
                     WHERE 1=1";

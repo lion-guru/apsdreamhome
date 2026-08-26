@@ -283,7 +283,7 @@ class AdvancedAnalyticsService
         // Top users
         $agentSql = "SELECT a.name, COUNT(b.id) as bookings, SUM(b.total_amount) as revenue
             FROM bookings b
-            JOIN users a ON b.agent_id = a.id
+            JOIN users a ON b.associate_id = a.id
             WHERE b.status = 'confirmed' AND DATE(b.created_at) BETWEEN ? AND ?{$tsql}
             GROUP BY a.id ORDER BY revenue DESC LIMIT 5";
         $agentParams = $tid > 1 ? [$dateFrom, $dateTo, $tid] : [$dateFrom, $dateTo];
@@ -340,7 +340,7 @@ class AdvancedAnalyticsService
             SUM(b.total_amount) as revenue,
             AVG(b.total_amount) as avg_deal_size
             FROM users a
-            LEFT JOIN bookings b ON a.id = b.agent_id 
+            LEFT JOIN bookings b ON a.id = b.associate_id 
                 AND b.status = 'confirmed' 
                 AND DATE(b.created_at) BETWEEN ? AND ?
             {$tsql}

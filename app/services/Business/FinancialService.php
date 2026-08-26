@@ -68,18 +68,16 @@ class FinancialService
             $offset = ($page - 1) * $limit;
             
             $sql = "SELECT 
-                t.id, t.type, t.amount, t.status, t.description,
-                t.transaction_date, t.created_at,
+                t.id, t.type, t.amount, t.description,
+                t.date AS transaction_date, t.created_at,
                 u.name as user_name, u.email as user_email,
-                p.title as property_title, p.id as property_id,
-                a.name as associate_name
+                p.title as property_title, p.id as property_id
                 FROM transactions t
                 LEFT JOIN users u ON t.user_id = u.id{$this->tJoin('u')}
                 LEFT JOIN properties p ON t.property_id = p.id
-                LEFT JOIN users a ON t.associate_id = a.id{$this->tJoin('a')}
                 WHERE 1=1";
             
-            $params = array_merge($this->tVal(), $this->tVal());
+            $params = $this->tVal();
             
             // Apply filters
             if (!empty($filters['type'])) {
@@ -87,32 +85,22 @@ class FinancialService
                 $params[] = $filters['type'];
             }
             
-            if (!empty($filters['status'])) {
-                $sql .= " AND t.status = ?";
-                $params[] = $filters['status'];
-            }
-            
             if (!empty($filters['user_id'])) {
                 $sql .= " AND t.user_id = ?";
                 $params[] = $filters['user_id'];
             }
             
-            if (!empty($filters['associate_id'])) {
-                $sql .= " AND t.associate_id = ?";
-                $params[] = $filters['associate_id'];
-            }
-            
             if (!empty($filters['start_date'])) {
-                $sql .= " AND t.transaction_date >= ?";
+                $sql .= " AND t.date >= ?";
                 $params[] = $filters['start_date'];
             }
             
             if (!empty($filters['end_date'])) {
-                $sql .= " AND t.transaction_date <= ?";
+                $sql .= " AND t.date <= ?";
                 $params[] = $filters['end_date'];
             }
             
-            $sql .= " ORDER BY t.transaction_date DESC LIMIT ? OFFSET ?";
+            $sql .= " ORDER BY t.date DESC LIMIT ? OFFSET ?";
             $params[] = $limit;
             $params[] = $offset;
             
@@ -123,19 +111,13 @@ class FinancialService
                          FROM transactions t
                          LEFT JOIN users u ON t.user_id = u.id{$this->tJoin('u')}
                          LEFT JOIN properties p ON t.property_id = p.id
-                         LEFT JOIN users a ON t.associate_id = a.id{$this->tJoin('a')}
                          WHERE 1=1";
             
-            $countParams = array_merge($this->tVal(), $this->tVal());
+            $countParams = $this->tVal();
             
             if (!empty($filters['type'])) {
                 $countSql .= " AND t.type = ?";
                 $countParams[] = $filters['type'];
-            }
-            
-            if (!empty($filters['status'])) {
-                $countSql .= " AND t.status = ?";
-                $countParams[] = $filters['status'];
             }
             
             if (!empty($filters['user_id'])) {
@@ -143,18 +125,13 @@ class FinancialService
                 $countParams[] = $filters['user_id'];
             }
             
-            if (!empty($filters['associate_id'])) {
-                $countSql .= " AND t.associate_id = ?";
-                $countParams[] = $filters['associate_id'];
-            }
-            
             if (!empty($filters['start_date'])) {
-                $countSql .= " AND t.transaction_date >= ?";
+                $countSql .= " AND t.date >= ?";
                 $countParams[] = $filters['start_date'];
             }
             
             if (!empty($filters['end_date'])) {
-                $countSql .= " AND t.transaction_date <= ?";
+                $countSql .= " AND t.date <= ?";
                 $countParams[] = $filters['end_date'];
             }
             
@@ -294,13 +271,13 @@ class FinancialService
             $sql = "SELECT 
                 a.id as associate_id, a.name as associate_name, a.email as associate_email,
                 a.commission_rate,
-                COUNT(p.id) as properties_sold,
-                COALESCE(SUM(p.price), 0) as total_property_value,
-                COALESCE(SUM(p.price * a.commission_rate / 100), 0) as total_commission,
-                COALESCE(AVG(p.price), 0) as avg_property_price,
-                MAX(p.sold_date) as last_sale_date
+                COUNT(s.id) as properties_sold,
+                COALESCE(SUM(s.sale_amount), 0) as total_property_value,
+                COALESCE(SUM(s.commission_amount), 0) as total_commission,
+                COALESCE(AVG(s.sale_amount), 0) as avg_property_price,
+                MAX(s.sale_date) as last_sale_date
                 FROM users a
-                LEFT JOIN properties p ON a.id = p.associate_id AND p.status = 'sold'
+                LEFT JOIN sales s ON s.associate_id = a.id
                 WHERE a.status = 'active'{$this->tJoin('a')}";
             
             $params = $this->tVal();
@@ -311,12 +288,12 @@ class FinancialService
             }
             
             if (!empty($filters['start_date'])) {
-                $sql .= " AND p.sold_date >= ?";
+                $sql .= " AND s.sale_date >= ?";
                 $params[] = $filters['start_date'];
             }
             
             if (!empty($filters['end_date'])) {
-                $sql .= " AND p.sold_date <= ?";
+                $sql .= " AND s.sale_date <= ?";
                 $params[] = $filters['end_date'];
             }
             
@@ -395,29 +372,30 @@ class FinancialService
     {
         try {
             $sql = "SELECT 
-                p.id as property_id, p.title, p.price, p.sold_date,
+                p.id as property_id, p.title, p.price, s.sale_date AS sold_date,
                 a.commission_rate,
-                (p.price * a.commission_rate / 100) as commission_amount,
-                t.id as transaction_id, t.status as payment_status,
+                COALESCE(s.commission_amount, ROUND(p.price * a.commission_rate / 100, 2)) as commission_amount,
+                t.id as transaction_id,
                 t.created_at as commission_paid_date
-                FROM properties p
-                JOIN users a ON p.associate_id = a.id{$this->tJoin('a')}
+                FROM sales s
+                JOIN properties p ON s.property_id = p.id
+                JOIN users a ON s.associate_id = a.id{$this->tJoin('a')}
                 LEFT JOIN transactions t ON p.id = t.property_id AND t.type = 'commission'
-                WHERE p.associate_id = ? AND p.status = 'sold'";
+                WHERE s.associate_id = ?";
             
             $params = [$associateId];
             
             if ($startDate) {
-                $sql .= " AND p.sold_date >= ?";
+                $sql .= " AND s.sale_date >= ?";
                 $params[] = $startDate;
             }
             
             if ($endDate) {
-                $sql .= " AND p.sold_date <= ?";
+                $sql .= " AND s.sale_date <= ?";
                 $params[] = $endDate;
             }
             
-            $sql .= " ORDER BY p.sold_date DESC";
+            $sql .= " ORDER BY s.sale_date DESC";
             
             return $this->db->fetchAll($sql, $params);
 
@@ -449,9 +427,11 @@ class FinancialService
             $totalAmount = 0;
 
             foreach ($propertyIds as $propertyId) {
-                // Get property details
+                // Get property details (associate link lives on sales, properties has no associate_id)
                 $property = $this->db->fetch(
-                    "SELECT title, price FROM properties WHERE id = ? AND status = 'sold' AND associate_id = ?",
+                    "SELECT p.title, p.price FROM properties p
+                     JOIN sales s ON s.property_id = p.id
+                     WHERE p.id = ? AND p.status = 'sold' AND s.associate_id = ?",
                     [$propertyId, $associateId]
                 );
 

@@ -115,7 +115,7 @@ $query = "SELECT * FROM campaigns
         try {
             $query = "SELECT n.*, c.title as campaign_title " .
                       "FROM notifications n " .
-                      "LEFT JOIN campaigns c ON n.campaign_id = c.id " .
+                      "LEFT JOIN campaigns c ON n.campaign_id = c.campaign_id " .
                       "WHERE n.user_id = ?" . $this->tenantSql();
 
             $params = [$userId];
@@ -277,10 +277,10 @@ public function markNotificationRead($notificationId, $userId)
     {
         try {
             $query = "SELECT p.* FROM popups p
-                     INNER JOIN campaigns c ON p.campaign_id = c.id
+                     INNER JOIN campaigns c ON p.campaign_id = c.campaign_id
                      WHERE p.page = ? OR p.page = 'all'
                      AND (p.target_role = ? OR p.target_role = 'all')
-                     AND c.is_active = 1
+                     AND c.status = 'active'
                      AND c.start_date <= CURDATE()
                      AND c.end_date >= CURDATE()
                      ORDER BY p.priority DESC, p.created_at DESC

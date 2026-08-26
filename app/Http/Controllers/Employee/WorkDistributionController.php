@@ -80,23 +80,23 @@ class WorkDistributionController extends BaseController
      */
     private function getAvailableEmployees($department, $requiredRole = null)
     {
-        $query = "SELECT e.id, e.name, e.role, e.department, 
-                        e.workload_capacity, e.current_workload,
-                        e.skills, e.performance_score
+        // users table has no department/workload columns — department comes via employees join
+        $query = "SELECT e.id, e.name, e.role
                  FROM users e
+                 JOIN employees emp ON emp.user_id = e.id
                  WHERE e.status = 'active'
-                 AND e.department = ?
-                 AND e.current_workload < e.workload_capacity";
-        
+                 AND emp.status = 'active'
+                 AND emp.department = ?";
+
         $params = [$department];
-        
+
         if ($requiredRole) {
             $query .= " AND e.role = ?";
             $params[] = $requiredRole;
         }
-        
-        $query .= " ORDER BY e.performance_score DESC, e.current_workload ASC";
-        
+
+        $query .= " ORDER BY e.name ASC";
+
         return $this->db->fetchAll($query, $params);
     }
 
@@ -113,17 +113,20 @@ class WorkDistributionController extends BaseController
                           FROM tasks
                           WHERE assigned_to = ?
                           AND status IN ('pending', 'in_progress')
-                          AND deadline >= CURDATE()";
-            
+                          AND due_date >= CURDATE()";
+
             $taskCount = $this->db->fetchOne($taskQuery, [$employee['id']]);
-            
+
+            // Default capacity (users table has no workload_capacity column)
+            $capacity = 10;
+
             // Calculate workload percentage
-            $workloadPercentage = ($taskCount['active_tasks'] / $employee['workload_capacity']) * 100;
-            
+            $workloadPercentage = ($taskCount['active_tasks'] / $capacity) * 100;
+
             $workloads[$employee['id']] = [
                 'active_tasks' => $taskCount['active_tasks'],
                 'workload_percentage' => $workloadPercentage,
-                'capacity_remaining' => $employee['workload_capacity'] - $taskCount['active_tasks']
+                'capacity_remaining' => $capacity - $taskCount['active_tasks']
             ];
         }
         
@@ -147,7 +150,7 @@ class WorkDistributionController extends BaseController
         }
         
         foreach ($users as $employee) {
-            $employeeSkills = json_decode($employee['skills'] ?? '[]', true);
+            $employeeSkills = []; // users table has no skills column
             $matchingSkills = array_intersect($requiredSkills, $employeeSkills);
             
             // Calculate skill match percentage

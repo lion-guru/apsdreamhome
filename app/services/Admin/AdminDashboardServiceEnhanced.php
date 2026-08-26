@@ -169,10 +169,10 @@ class AdminDashboardService
         $analytics = [];
 
         // Properties by type
-        $sql = "SELECT pt.name, COUNT(p.id) as count
+        $sql = "SELECT pt.type, COUNT(p.id) as count
                 FROM properties p
                 LEFT JOIN property_types pt ON p.property_type_id = pt.id
-                GROUP BY p.property_type_id, pt.name";
+                GROUP BY p.property_type_id, pt.type";
         $analytics['properties_by_type'] = $this->db->fetchAll($sql);
 
         // Properties by status
