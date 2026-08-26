@@ -99,14 +99,8 @@ class LiveChatWidgetController extends BaseController
             exit;
         }
 
-        // Debug: log what we're receiving
-        error_log('LiveChatWidgetController::send - Content-Type: ' . ($this->request->headers->get('content_type') ?? 'NOT SET'));
-        error_log('LiveChatWidgetController::send - Raw content: ' . $this->request->getContentAsString());
-        
         // Use request object which handles JSON body parsing
         $input = $this->request->getContentAsJson();
-        error_log('LiveChatWidgetController::send - Parsed input: ' . json_encode($input));
-        
         $token = $input['token'] ?? ($_POST['token'] ?? '');
         $message = trim($input['message'] ?? ($_POST['message'] ?? ''));
         if (!$token || !$message) {
