@@ -80,7 +80,7 @@ class RBACManager
 
             // Fetch user role and permissions using the query method which handles cross-driver support
             $sql = "
-                SELECT r.permissions 
+                SELECT r.name as permissions 
                 FROM user_roles ur
                 JOIN roles r ON ur.role_id = r.id
                 WHERE ur.user_id = :user_id

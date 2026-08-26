@@ -113,7 +113,7 @@ class SalariedAgentController extends AdminController
 
         try {
             $stmt = $this->db->prepare("
-                SELECT u.name, u.email, a.agent_type, a.is_salary_active
+                SELECT u.name, u.email, a.agent_type, a.salary_eligible
                 FROM users u
                 JOIN associates a ON a.user_id = u.id
                 WHERE u.id = ?

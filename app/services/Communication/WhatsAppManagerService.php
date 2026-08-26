@@ -632,7 +632,7 @@ class WhatsAppManager
         $tenantSql = $tid > 1 ? " AND a.tenant_id = ?" : "";
         $sql = "SELECT a.*, u.name as name, u.phone as phone
                 FROM users a
-                LEFT JOIN users u ON a.user_id = u.id{$tenantJoin}
+                {$tenantJoin}
                 WHERE a.id = ?{$tenantSql}";
         return $this->db->fetch($sql, $tid > 1 ? [$tid, $associateId, $tid] : [$associateId]);
     }

@@ -926,9 +926,9 @@ class CRMService
     public function getLeadSourceDetails($leadId) {
         try {
             $stmt = $this->db->query(
-                "SELECT cles.*, crm.name as campaign_name
+                "SELECT cles.*
                  FROM crm_lead_sources_extended cles
-                 LEFT JOIN crm_campaigns crm ON crm.id = cles.campaign_id
+                
                  WHERE cles.lead_id = ?
                  ORDER BY cles.created_at DESC LIMIT 5",
                 [$leadId]
@@ -1764,18 +1764,18 @@ class CRMService
             if ($tid) { $wonParams[] = $tid; $lostParams[] = $tid; }
 
             $won = $this->db->fetchAll(
-                "SELECT ld.close_reason, COUNT(*) as cnt, SUM(ld.deal_value) as total_value
+                "SELECT ld.status, COUNT(*) as cnt, SUM(ld.deal_value) as total_value
                  FROM lead_deals ld
                  WHERE ld.stage = 'won' AND ld.closed_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY) $tenantWhere
-                 GROUP BY ld.close_reason",
+                 GROUP BY ld.status",
                 $wonParams
             ) ?: [];
             
             $lost = $this->db->fetchAll(
-                "SELECT ld.close_reason, COUNT(*) as cnt, SUM(ld.deal_value) as total_value
+                "SELECT ld.status, COUNT(*) as cnt, SUM(ld.deal_value) as total_value
                  FROM lead_deals ld
                  WHERE ld.stage = 'lost' AND ld.closed_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY) $tenantWhere
-                 GROUP BY ld.close_reason",
+                 GROUP BY ld.status",
                 $lostParams
             ) ?: [];
             

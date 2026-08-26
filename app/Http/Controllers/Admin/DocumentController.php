@@ -419,7 +419,7 @@ class DocumentController extends AdminController
             $db = $this->getDb();
             $statusFilter = isset($_GET['status']) ? $_GET['status'] : '';
             try {
-                $sql = "SELECT r.*, d.title as document_title, u.name as reviewer_name FROM document_reviews r LEFT JOIN documents d ON r.document_id = d.id LEFT JOIN users u ON r.reviewer_id = u.id";
+                $sql = "SELECT r.*, d.document_number as document_title, u.name as reviewer_name FROM document_reviews r LEFT JOIN documents d ON r.document_id = d.id LEFT JOIN users u ON r.reviewer_id = u.id";
             } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
             error_log($e->getMessage());

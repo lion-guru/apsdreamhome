@@ -346,7 +346,7 @@ class PossessionController extends AdminController
         try {
             $stmt = $this->db->prepare("SELECT b.*, p.title as property_title, p.location as property_location,
                 p.price as property_price, u.name as customer_name, u.email as customer_email, u.phone as customer_phone,
-                pl.plot_number, pl.area_sqft, pl.width, pl.length, c.name as colony_name,
+                pl.plot_number, pl.area_sqft, pl.width_ft, pl.length_ft, c.name as colony_name,
                 ha.name as handover_by_name
                 FROM bookings b
                 LEFT JOIN properties p ON b.property_id = p.id

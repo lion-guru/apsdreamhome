@@ -245,7 +245,7 @@ class TrainingService
     private function completeCourse(int $enrollmentId): void
     {
         $enrollment = $this->db->query(
-            "SELECT e.*, c.title as course_title, c.points_reward FROM training_enrollments e
+            "SELECT e.*, c.course_title as course_title, c.points_reward FROM training_enrollments e
              JOIN training_courses c ON e.course_id = c.id" . $this->tenantSqlForAlias('e') . $this->tenantSqlForAlias('c') . "
              WHERE e.id = ?",
             array_merge([$enrollmentId], $this->tenantId() > 1 ? [$this->tenantId(), $this->tenantId()] : [])
@@ -334,7 +334,7 @@ class TrainingService
     public function getUserEnrollments(int $userId): array
     {
         return $this->db->query(
-            "SELECT e.*, c.title, c.description, c.thumbnail_url, c.category, c.difficulty_level,
+            "SELECT e.*, c.course_title, c.description, c.thumbnail_url, c.category, c.difficulty_level,
                    c.duration_minutes, c.points_reward
              FROM training_enrollments e" . $this->tenantSqlForAlias('e') . "
              JOIN training_courses c ON e.course_id = c.id" . $this->tenantSqlForAlias('c') . "

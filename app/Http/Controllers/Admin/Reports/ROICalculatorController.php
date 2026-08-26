@@ -169,7 +169,7 @@ class ROICalculatorController extends \App\Http\Controllers\Admin\AdminControlle
                 c.name as colony_name,
                 d.name as district_name
             FROM properties p
-            LEFT JOIN colonies c ON p.colony_id = c.id
+            LEFT JOIN colonies c ON p.project_id = c.id
             LEFT JOIN districts d ON c.district_id = d.id
             WHERE p.status = 'available'
             ORDER BY p.price ASC
@@ -234,7 +234,7 @@ class ROICalculatorController extends \App\Http\Controllers\Admin\AdminControlle
                 d.name as district_name,
                 s.name as state_name
             FROM properties p
-            LEFT JOIN colonies c ON p.colony_id = c.id
+            LEFT JOIN colonies c ON p.project_id = c.id
             LEFT JOIN districts d ON c.district_id = d.id
             LEFT JOIN states s ON d.state_id = s.id
             WHERE p.id IN ($placeholders)

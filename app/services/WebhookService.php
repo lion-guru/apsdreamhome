@@ -92,7 +92,7 @@ class WebhookService
 
     public function deliver(int $deliveryId): array
     {
-        $sql = "SELECT d.*, e.url, e.secret_key FROM webhook_deliveries d JOIN webhook_endpoints e ON d.endpoint_id = e.id WHERE d.id = :id" . $this->tenantSql();
+        $sql = "SELECT d.*, e.url, e.secret_key FROM webhook_deliveries d JOIN webhook_endpoints e ON d.webhook_id = e.id WHERE d.id = :id" . $this->tenantSql();
         $params = [':id' => $deliveryId];
         if ($this->tenantId() > 1) $params[':stid'] = $this->tenantId();
         $st = $this->db->prepare($sql);
@@ -158,9 +158,9 @@ $status = ($code >= 200 && $code < 300) ? 'success' : (($delivery['attempt'] ?? 
 
     public function getDeliveries(int $endpointId = 0, int $limit = 50, ?string $status = null): array
     {
-        $sql = "SELECT d.*, e.name as endpoint_name FROM webhook_deliveries d JOIN webhook_endpoints e ON d.endpoint_id = e.id WHERE 1=1";
+        $sql = "SELECT d.*, e.name as endpoint_name FROM webhook_deliveries d JOIN webhook_endpoints e ON d.webhook_id = e.id WHERE 1=1";
         $params = [];
-        if ($endpointId) { $sql .= " AND d.endpoint_id = :e"; $params[':e'] = $endpointId; }
+        if ($endpointId) { $sql .= " AND d.webhook_id = :e"; $params[':e'] = $endpointId; }
         if ($status) { $sql .= " AND d.status = :s"; $params[':s'] = $status; }
         $sql .= " ORDER BY d.id DESC LIMIT :lim";
         try {

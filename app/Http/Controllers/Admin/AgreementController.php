@@ -206,7 +206,7 @@ class AgreementController extends AdminController
                        p.plot_number, p.block, p.sector, p.area_sqft, p.total_price as plot_price,
                        p.width_ft, p.length_ft, p.dimension_label, p.facing,
                        c.name as colony_name, c.description as colony_description,
-                       b.booking_number, b.total_amount as booking_amount, b.status as booking_status,
+                       b.booking_number, b.total_plot_value as booking_amount, b.status as booking_status,
                        u.name as customer_name, u.email as customer_email, u.phone as customer_phone
                 FROM agreements a
                 LEFT JOIN plots p ON a.plot_id = p.id

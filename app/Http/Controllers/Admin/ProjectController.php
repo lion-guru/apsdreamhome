@@ -43,7 +43,7 @@ class ProjectController extends AdminController
             // Build query
             $sql = "SELECT p.*, 
                            COUNT(pr.id) as property_count,
-                           COALESCE(SUM(pr.total_area), 0) as developed_area,
+                           COALESCE(SUM(COALESCE(pr.area_sqft, pr.area)), 0) as developed_area,
                            COALESCE(SUM(pr.price), 0) as total_value
                     FROM projects p
                     LEFT JOIN properties pr ON p.id = pr.project_id
@@ -52,7 +52,7 @@ class ProjectController extends AdminController
 
             // Apply filters
             if (!empty($search)) {
-                $sql .= " AND (p.project_name LIKE ? OR p.location LIKE ? OR p.description LIKE ?)";
+                $sql .= " AND (p.name LIKE ? OR p.location LIKE ? OR p.description LIKE ?)";
                 $searchParam = '%' . $search . '%';
                 $params[] = $searchParam;
                 $params[] = $searchParam;
@@ -72,7 +72,7 @@ class ProjectController extends AdminController
             $sql .= " GROUP BY p.id ORDER BY p.created_at DESC";
 
             // Count total
-            $countSql = str_replace("SELECT p.*, COUNT(pr.id) as property_count, COALESCE(SUM(pr.total_area), 0) as developed_area, COALESCE(SUM(pr.price), 0) as total_value", "SELECT COUNT(DISTINCT p.id) as total", $sql);
+            $countSql = str_replace("SELECT p.*, COUNT(pr.id) as property_count, COALESCE(SUM(COALESCE(pr.area_sqft, pr.area)), 0) as developed_area, COALESCE(SUM(pr.price), 0) as total_value", "SELECT COUNT(DISTINCT p.id) as total", $sql);
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
             $total = $countStmt->fetch()['total'];
@@ -234,7 +234,7 @@ class ProjectController extends AdminController
             // Get project details
             $sql = "SELECT p.*, 
                            COUNT(pr.id) as property_count,
-                           COALESCE(SUM(pr.total_area), 0) as developed_area,
+                           COALESCE(SUM(COALESCE(pr.area_sqft, pr.area)), 0) as developed_area,
                            COALESCE(SUM(pr.price), 0) as total_value
                     FROM projects p
                     LEFT JOIN properties pr ON p.id = pr.project_id
@@ -627,7 +627,7 @@ class ProjectController extends AdminController
             $analytics['type_distribution'] = $this->db->fetchAll($sql) ?: [];
 
             // Top projects by value
-            $sql = "SELECT p.project_name, COUNT(pr.id) as property_count,
+            $sql = "SELECT p.name, COUNT(pr.id) as property_count,
                            COALESCE(SUM(pr.price), 0) as total_value
                     FROM projects p
                     LEFT JOIN properties pr ON p.id = pr.project_id

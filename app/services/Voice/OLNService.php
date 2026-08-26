@@ -325,14 +325,14 @@ class OLNService
             );
 
             $agentPerformance = $this->db->fetchAll(
-                "SELECT a.id, a.name, COUNT(s.id) as total_calls,
+                "SELECT a.id, a.agent_name as name, COUNT(s.id) as total_calls,
                         SUM(CASE WHEN s.status = 'completed' THEN 1 ELSE 0 END) as completed,
                         SUM(CASE WHEN s.sentiment = 'positive' THEN 1 ELSE 0 END) as positive_calls,
                         AVG(CASE WHEN s.started_at AND s.ended_at
                             THEN TIMESTAMPDIFF(SECOND, s.started_at, s.ended_at) ELSE 0 END) as avg_duration
                  FROM ai_calling_agents a
                  LEFT JOIN ai_call_sessions s ON a.id = s.agent_id AND s.started_at >= ?" . $tenantWhere . "
-                 GROUP BY a.id, a.name",
+                 GROUP BY a.id, a.agent_name",
                 $tid > 1 ? [$since, $tid] : [$since]
             );
 

@@ -379,7 +379,7 @@ class ChatService
             AVG(CASE WHEN m.sender_type = 'agent' THEN 1 END) as agent_messages,
             AVG(TIMESTAMPDIFF(MINUTE, c.created_at, c.last_message_at)) as avg_conversation_duration
             FROM chat_conversations c
-            LEFT JOIN chat_messages m ON c.id = m.conversation_id
+            LEFT JOIN chat_messages m ON c.id = m.session_id
             WHERE c.agent_id = ? AND DATE(c.created_at) BETWEEN ? AND ?";
         
         $stmt = $this->database->prepare($sql);

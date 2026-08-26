@@ -64,7 +64,7 @@ class LandController extends AdminController
             $sql .= " GROUP BY l.id ORDER BY l.created_at DESC";
 
             // Count total
-            $countSql = str_replace("SELECT l.*, COUNT(p.id) as property_count, COALESCE(SUM(p.total_area), 0) as total_area", "SELECT COUNT(DISTINCT l.id) as total", $sql);
+            $countSql = str_replace("SELECT l.*, COUNT(p.id) as property_count, COALESCE(SUM(COALESCE(p.area_sqft, p.area)), 0) as total_area", "SELECT COUNT(DISTINCT l.id) as total", $sql);
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
             $total = $countStmt->fetch()['total'];
@@ -210,7 +210,7 @@ class LandController extends AdminController
             // Get land record details
             $sql = "SELECT l.*, 
                            COUNT(p.id) as property_count,
-                           COALESCE(SUM(p.total_area), 0) as developed_area
+                           COALESCE(SUM(COALESCE(p.area_sqft, p.area)), 0) as developed_area
                     FROM land_records l
                     LEFT JOIN properties p ON l.id = p.land_id
                     WHERE l.id = ?

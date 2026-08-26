@@ -239,7 +239,7 @@ class SalaryController extends AdminController
                 SELECT s.*, u.name as employee_name, u.email as employee_email
                 FROM salary_structures s
                 LEFT JOIN users u ON s.employee_id = u.id
-                ORDER BY s.is_active DESC, s.created_at DESC
+                ORDER BY s.status DESC, s.created_at DESC
             ") ?? [];
             $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' {$tidSql} ORDER BY name", $tidParams) ?? [];
         } catch (\Exception $e) {
@@ -365,8 +365,8 @@ class SalaryController extends AdminController
         $this->requireAdmin();
         [$tidSql, $tidParams] = $this->tenantWhere();
         try {
-            $users = $this->db->fetchAll("SELECT DISTINCT u.id, u.name FROM users u JOIN salary_structures s ON u.id=s.employee_id WHERE s.is_active=1 AND u.role='employee' {$tidSql} ORDER BY u.name", $tidParams) ?? [];
-            $structures = $this->db->fetchAll("SELECT s.*, u.name as employee_name FROM salary_structures s LEFT JOIN users u ON s.employee_id=u.id WHERE s.is_active=1 ORDER BY u.name") ?? [];
+            $users = $this->db->fetchAll("SELECT DISTINCT u.id, u.name FROM users u JOIN salary_structures s ON u.id=s.employee_id WHERE s.status='active' AND u.role='employee' {$tidSql} ORDER BY u.name", $tidParams) ?? [];
+            $structures = $this->db->fetchAll("SELECT s.*, u.name as employee_name FROM salary_structures s LEFT JOIN users u ON s.employee_id=u.id WHERE s.status='active' ORDER BY u.name") ?? [];
         } catch (\Exception $e) {
             $users = []; $structures = [];
         }
@@ -585,7 +585,7 @@ class SalaryController extends AdminController
         try {
             $where = []; $params = [];
             if ($employee_id) { $where[] = 'sh.employee_id=?'; $params[] = $employee_id; }
-            $sql = "SELECT sh.*, u.name as employee_name, uc.name as changed_by_name FROM salary_history sh LEFT JOIN users u ON sh.employee_id=u.id LEFT JOIN users uc ON sh.changed_by=uc.id";
+            $sql = "SELECT sh.*, u.name as employee_name, uc.name as changed_by_name FROM salary_history sh LEFT JOIN users u ON sh.employee_id=u.id LEFT JOIN users uc ON sh.approved_by=uc.id";
             if ($where) $sql .= " WHERE " . implode(' AND ', $where);
             $sql .= " ORDER BY sh.created_at DESC LIMIT 200";
             $history = $this->db->fetchAll($sql, $params) ?? [];
@@ -606,7 +606,7 @@ class SalaryController extends AdminController
         $this->requireAdmin();
         try {
             $employee = $this->db->fetch("SELECT id, name, email FROM users WHERE id=?", [$id]);
-            $history = $this->db->fetchAll("SELECT sh.*, uc.name as changed_by_name FROM salary_history sh LEFT JOIN users uc ON sh.changed_by=uc.id WHERE sh.employee_id=? ORDER BY sh.created_at DESC LIMIT 200", [$id]) ?? [];
+            $history = $this->db->fetchAll("SELECT sh.*, uc.name as changed_by_name FROM salary_history sh LEFT JOIN users uc ON sh.approved_by=uc.id WHERE sh.employee_id=? ORDER BY sh.created_at DESC LIMIT 200", [$id]) ?? [];
         } catch (\Exception $e) {
             $employee = null; $history = [];
         }
@@ -629,10 +629,9 @@ class SalaryController extends AdminController
         [$tidSql, $tidParams] = $this->tenantWhere();
         try {
             $contracts = $this->db->fetchAll("
-                SELECT c.*, u.name as employee_name, uc.name as created_by_name
+                SELECT c.*, u.name as employee_name
                 FROM salary_contracts c
                 LEFT JOIN users u ON c.employee_id = u.id
-                LEFT JOIN users uc ON c.created_by = uc.id
                 ORDER BY c.created_at DESC
             ") ?? [];
             $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' {$tidSql} ORDER BY name", $tidParams) ?? [];
@@ -671,7 +670,7 @@ class SalaryController extends AdminController
     {
         $this->requireAdmin();
         try {
-            $contract = $this->db->fetch("SELECT c.*, u.name as employee_name, u.email as employee_email, uc.name as created_by_name FROM salary_contracts c LEFT JOIN users u ON c.employee_id=u.id LEFT JOIN users uc ON c.created_by=uc.id WHERE c.id=?", [$id]);
+            $contract = $this->db->fetch("SELECT c.*, u.name as employee_name, u.email as employee_email FROM salary_contracts c LEFT JOIN users u ON c.employee_id=u.id WHERE c.id=?", [$id]);
         } catch (\Exception $e) {
             $contract = null;
         }
@@ -824,10 +823,10 @@ class SalaryController extends AdminController
         [$tidSql, $tidParams] = $this->tenantWhere();
         try {
             $where = []; $params = [];
-            if ($employee_id) { $where[] = 't.employee_id=?'; $params[] = $employee_id; }
+            if ($employee_id) { $where[] = 't.user_id=?'; $params[] = $employee_id; }
             if ($month) { $where[] = 't.month=?'; $params[] = $month; }
             if ($year) { $where[] = 't.year=?'; $params[] = $year; }
-            $sql = "SELECT t.*, u.name as employee_name FROM salary_tracker t LEFT JOIN users u ON t.employee_id=u.id";
+            $sql = "SELECT t.*, u.name as employee_name FROM salary_tracker t LEFT JOIN users u ON t.user_id=u.id";
             if ($where) $sql .= " WHERE " . implode(' AND ', $where);
             $sql .= " ORDER BY t.year DESC, t.month DESC LIMIT 200";
             $tracker = $this->db->fetchAll($sql, $params) ?? [];

@@ -481,10 +481,9 @@ class CareerController extends AdminController
             $offset = ($page - 1) * $perPage;
 
             try {
-                $sql = "SELECT ca.*, c.title as career_title, u.name as applicant_name, u.email as applicant_email, u.phone as applicant_phone
+                $sql = "SELECT ca.*, c.title as career_title, ca.full_name as applicant_name, ca.email as applicant_email, ca.phone as applicant_phone
                         FROM career_applications ca
                         LEFT JOIN careers c ON ca.career_id = c.id
-                        LEFT JOIN users u ON ca.applicant_id = u.id
                         WHERE 1=1";
             } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
@@ -493,7 +492,7 @@ class CareerController extends AdminController
             $params = [];
 
             if (!empty($search)) {
-                $sql .= " AND (u.name LIKE ? OR u.email LIKE ? OR u.phone LIKE ?)";
+                $sql .= " AND (ca.full_name LIKE ? OR ca.email LIKE ? OR ca.phone LIKE ?)";
                 $s = '%' . $search . '%';
                 $params[] = $s;
                 $params[] = $s;

@@ -105,7 +105,7 @@ class FarmerService
             // Count total
             $countSql = "SELECT COUNT(*) FROM farmer_profiles fp
                          LEFT JOIN users a ON fp.associate_id = a.id
-                         LEFT JOIN users ua ON a.user_id = ua.id" . $this->tenantSql();
+                         " . $this->tenantSql();
             if (!empty($conditions)) {
                 $countSql .= " WHERE " . implode(" AND ", $conditions);
             }

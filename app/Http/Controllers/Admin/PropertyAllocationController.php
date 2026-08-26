@@ -30,7 +30,7 @@ class PropertyAllocationController extends AdminController
             
             // Get all property allocations with customer and property details
             $sql = "SELECT pa.*, c.name as customer_name, c.email as customer_email, c.phone as customer_phone,
-                    p.title as property_title, p.location as property_location, p.plot_number, p.area_sqft,
+                    p.title as property_title, p.location as property_location, p.area_sqft,
                     CASE pa.status
                         WHEN 'pending' THEN 'Pending'
                         WHEN 'confirmed' THEN 'Confirmed'
@@ -39,7 +39,7 @@ class PropertyAllocationController extends AdminController
                         ELSE pa.status
                     END as status_label
                     FROM property_allocations pa
-                    LEFT JOIN users c ON pa.customer_id = c.id
+                    LEFT JOIN users c ON pa.user_id = c.id
                     LEFT JOIN properties p ON pa.property_id = p.id
                     ORDER BY pa.created_at DESC";
             
@@ -155,7 +155,7 @@ class PropertyAllocationController extends AdminController
             
             $sql = "SELECT pa.*, c.name as customer_name, c.email as customer_email, c.phone as customer_phone,
                     c.address as customer_address,
-                    p.title as property_title, p.location as property_location, p.plot_number, 
+                    p.title as property_title, p.location as property_location, 
                     p.area_sqft, p.price as property_price,
                     CASE pa.status
                         WHEN 'pending' THEN 'Pending'
@@ -165,7 +165,7 @@ class PropertyAllocationController extends AdminController
                         ELSE pa.status
                     END as status_label
                     FROM property_allocations pa
-                    LEFT JOIN users c ON pa.customer_id = c.id
+                    LEFT JOIN users c ON pa.user_id = c.id
                     LEFT JOIN properties p ON pa.property_id = p.id
                     WHERE pa.id = ?";
             

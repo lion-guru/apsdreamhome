@@ -265,7 +265,7 @@ class PropertyManagementController extends AdminController
                            s.site_name
                     FROM property_allocations pa
                     LEFT JOIN properties p ON pa.property_id = p.id
-                    LEFT JOIN users u ON pa.requested_by = u.id
+                    LEFT JOIN users u ON pa.user_id = u.id
                     LEFT JOIN sites s ON p.site_id = s.id
                     WHERE 1=1";
             $params = [];
@@ -623,7 +623,7 @@ class PropertyManagementController extends AdminController
             $sql = "SELECT 'allocation' as type, pa.created_at, p.title as property_title, u.name as user_name, pa.status
                     FROM property_allocations pa
                     LEFT JOIN properties p ON pa.property_id = p.id
-                    LEFT JOIN users u ON pa.requested_by = u.id
+                    LEFT JOIN users u ON pa.user_id = u.id
                     ORDER BY pa.created_at DESC
                     LIMIT 5";
             $activities = array_merge($activities, $this->db->fetchAll($sql) ?: []);
@@ -723,7 +723,7 @@ class PropertyManagementController extends AdminController
             $sql = "SELECT pa.*, p.title as property_title, u.name as requested_by_name, s.site_name
                     FROM property_allocations pa
                     LEFT JOIN properties p ON pa.property_id = p.id
-                    LEFT JOIN users u ON pa.requested_by = u.id
+                    LEFT JOIN users u ON pa.user_id = u.id
                     LEFT JOIN sites s ON p.site_id = s.id
                     WHERE pa.created_at BETWEEN ? AND ?
                     ORDER BY pa.created_at DESC";

@@ -342,7 +342,7 @@ class WorkDistributionController extends BaseController
                                          (SELECT COUNT(*) FROM tasks WHERE assigned_to = e.id AND status IN ('pending', 'in_progress')) as current_workload,
                                          10 as workload_capacity
                                   FROM users e
-                                  WHERE e.department = ?
+                                  WHERE e.role = ?
                                   AND e.status = 'active'
                                   HAVING (current_workload / workload_capacity) > 0.8
                                   ORDER BY (current_workload / workload_capacity) DESC";
@@ -354,7 +354,7 @@ class WorkDistributionController extends BaseController
                                         (SELECT COUNT(*) FROM tasks WHERE assigned_to = e.id AND status IN ('pending', 'in_progress')) as current_workload,
                                         10 as workload_capacity
                                  FROM users e
-                                 WHERE e.department = ?
+                                 WHERE e.role = ?
                                  AND e.status = 'active'
                                  HAVING (current_workload / workload_capacity) < 0.5
                                  ORDER BY (current_workload / workload_capacity) ASC";

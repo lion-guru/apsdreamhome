@@ -286,8 +286,8 @@ class SiteVisitController extends BaseController
             SELECT sv.id, sv.visit_date, sv.visit_time, sv.status, pl.plot_number, c.name as customer_name
             FROM site_visits sv
             JOIN plots pl ON pl.id = sv.plot_id
-            JOIN customers c ON c.id = sv.customer_id
-            WHERE sv.associate_id = ? AND sv.visit_date BETWEEN ? AND ?{$tidSql}
+            JOIN customers c ON c.id = sv.user_id
+            WHERE sv.agent_id = ? AND sv.visit_date BETWEEN ? AND ?{$tidSql}
         ", $params) ?: [];
 
         $events = [];

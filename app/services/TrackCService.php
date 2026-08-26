@@ -17,7 +17,7 @@ class TrackCService extends ServiceTenantTrait
     public function calculateTrackC(int $bookingId): array
     {
         $sql = "
-            SELECT pb.*, u.id as user_id, u.rank, u.referred_by
+            SELECT pb.*, u.id as user_id, u.mlm_rank, u.referred_by
             FROM plot_bookings pb
             JOIN users u ON pb.customer_id = u.id
             WHERE pb.id = ?

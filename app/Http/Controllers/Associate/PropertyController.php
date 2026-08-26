@@ -71,30 +71,28 @@ class PropertyController extends BaseController
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
 
+            $colonyId = (int)($_POST['colony_id'] ?? 0);
+            $facing = $_POST['facing'] ?? '';
+            $amenities = isset($_POST['amenities']) ? $_POST['amenities'] : [];
             $data = [
-                'colony_id' => (int)($_POST['colony_id'] ?? 0),
                 'property_type' => $_POST['property_type'] ?? 'plot',
-                'title' => trim($_POST['title'] ?? ''),
+                'name' => trim($_POST['title'] ?? ''),
                 'description' => trim($_POST['description'] ?? ''),
                 'price' => (float)($_POST['price'] ?? 0),
                 'area_sqft' => (float)($_POST['area_sqft'] ?? 0),
                 'bedrooms' => (int)($_POST['bedrooms'] ?? 0),
                 'bathrooms' => (int)($_POST['bathrooms'] ?? 0),
-                'facing' => $_POST['facing'] ?? '',
-                'amenities' => isset($_POST['amenities']) ? json_encode($_POST['amenities']) : '[]',
                 'address' => trim($_POST['address'] ?? ''),
-                'city' => $_POST['city'] ?? '',
-                'state' => $_POST['state'] ?? '',
+                'location' => trim($_POST['city'] ?? ''),
+                'city_name' => $_POST['city'] ?? '',
                 'pincode' => $_POST['pincode'] ?? '',
-                'latitude' => $_POST['latitude'] ?? null,
-                'longitude' => $_POST['longitude'] ?? null,
                 'status' => 'pending',
-                'featured' => 0,
+                'is_featured' => 0,
             ];
 
             // Validate
-            if (empty($data['colony_id'])) throw new Exception('Colony is required');
-            if (empty($data['title'])) throw new Exception('Title is required');
+            if (empty($colonyId)) throw new Exception('Colony is required');
+            if (empty($data['name'])) throw new Exception('Title is required');
             if ($data['price'] <= 0) throw new Exception('Price must be greater than 0');
             if ($data['area_sqft'] <= 0) throw new Exception('Area must be greater than 0');
 
@@ -118,7 +116,8 @@ class PropertyController extends BaseController
                     }
                 }
             }
-            $data['images'] = json_encode($images);
+            $data['image'] = $images[0] ?? null;
+            $data['metadata'] = json_encode(['images' => $images, 'facing' => $facing, 'amenities' => $amenities, 'colony_id' => $colonyId]);
 
             // Insert property
             $tid = TenantContext::getId();
@@ -195,7 +194,7 @@ class PropertyController extends BaseController
         $params = [$id, $userId];
         if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
 
-        $property = $db->fetchOne("SELECT up.*, c.name as colony_name FROM user_properties up LEFT JOIN colonies c ON up.colony_id = c.id WHERE up.id = ? AND up.user_id = ?{$tidSql} LIMIT 1", $params);
+        $property = $db->fetchOne("SELECT up.* FROM user_properties up WHERE up.id = ? AND up.user_id = ?{$tidSql} LIMIT 1", $params);
 
         if (!$property) {
             $_SESSION['error'] = 'Property not found';
@@ -233,23 +232,21 @@ class PropertyController extends BaseController
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
 
+            $colonyId = (int)($_POST['colony_id'] ?? 0);
+            $facingUp = $_POST['facing'] ?? '';
+            $amenitiesUp = isset($_POST['amenities']) ? $_POST['amenities'] : [];
             $data = [
-                'colony_id' => (int)($_POST['colony_id'] ?? 0),
                 'property_type' => $_POST['property_type'] ?? 'plot',
-                'title' => trim($_POST['title'] ?? ''),
+                'name' => trim($_POST['title'] ?? ''),
                 'description' => trim($_POST['description'] ?? ''),
                 'price' => (float)($_POST['price'] ?? 0),
                 'area_sqft' => (float)($_POST['area_sqft'] ?? 0),
                 'bedrooms' => (int)($_POST['bedrooms'] ?? 0),
                 'bathrooms' => (int)($_POST['bathrooms'] ?? 0),
-                'facing' => $_POST['facing'] ?? '',
-                'amenities' => isset($_POST['amenities']) ? json_encode($_POST['amenities']) : '[]',
                 'address' => trim($_POST['address'] ?? ''),
-                'city' => $_POST['city'] ?? '',
-                'state' => $_POST['state'] ?? '',
+                'location' => trim($_POST['city'] ?? ''),
+                'city_name' => $_POST['city'] ?? '',
                 'pincode' => $_POST['pincode'] ?? '',
-                'latitude' => $_POST['latitude'] ?? null,
-                'longitude' => $_POST['longitude'] ?? null,
                 'status' => $_POST['status'] ?? 'pending',
             ];
 
@@ -273,11 +270,12 @@ class PropertyController extends BaseController
                     }
                 }
             }
-            $data['images'] = json_encode($existingImages);
+            $data['image'] = $existingImages[0] ?? null;
+            $data['metadata'] = json_encode(['images' => $existingImages, 'facing' => $facingUp, 'amenities' => $amenitiesUp, 'colony_id' => $colonyId]);
 
             // Validate
-            if (empty($data['colony_id'])) throw new Exception('Colony is required');
-            if (empty($data['title'])) throw new Exception('Title is required');
+            if (empty($colonyId)) throw new Exception('Colony is required');
+            if (empty($data['name'])) throw new Exception('Title is required');
             if ($data['price'] <= 0) throw new Exception('Price must be greater than 0');
             if ($data['area_sqft'] <= 0) throw new Exception('Area must be greater than 0');
 
@@ -365,13 +363,9 @@ class PropertyController extends BaseController
 
         $where = "WHERE 1=1";
         if ($search) {
-            $where .= " AND (up.title LIKE ? OR up.address LIKE ?)";
+            $where .= " AND (up.name LIKE ? OR up.address LIKE ?)";
             $params[] = "%{$search}%";
             $params[] = "%{$search}%";
-        }
-        if ($colonyFilter) {
-            $where .= " AND up.colony_id = ?";
-            $params[] = $colonyFilter;
         }
         if ($typeFilter) {
             $where .= " AND up.property_type = ?";
@@ -383,7 +377,7 @@ class PropertyController extends BaseController
             $params[] = TenantContext::getId();
         }
 
-        $sql = "SELECT up.*, c.name as colony_name FROM user_properties up LEFT JOIN colonies c ON up.colony_id = c.id {$where} ORDER BY up.created_at DESC";
+        $sql = "SELECT up.* FROM user_properties up {$where} ORDER BY up.created_at DESC";
         $properties = $db->fetchAll($sql, $params) ?: [];
 
         // Get colonies for filter
@@ -416,7 +410,7 @@ class PropertyController extends BaseController
         $params = [$userId];
         if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
 
-        $sql = "SELECT up.*, c.name as colony_name FROM user_properties up LEFT JOIN colonies c ON up.colony_id = c.id WHERE up.user_id = ? AND up.listing_type = 'sell' AND up.status = 'sold'{$tidSql} ORDER BY up.updated_at DESC";
+        $sql = "SELECT up.* FROM user_properties up WHERE up.user_id = ? AND up.listing_type = 'sell' AND up.status = 'sold'{$tidSql} ORDER BY up.updated_at DESC";
         $params = array_merge([$userId], TenantContext::getId() > 1 ? [TenantContext::getId()] : []);
         $properties = $db->fetchAll($sql, $params) ?: [];
 
@@ -441,7 +435,7 @@ class PropertyController extends BaseController
         $params = [$userId];
         if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
 
-        $sql = "SELECT up.*, c.name as colony_name FROM user_properties up LEFT JOIN colonies c ON up.colony_id = c.id WHERE up.user_id = ? AND up.status = 'pending'{$tidSql} ORDER BY up.created_at DESC";
+        $sql = "SELECT up.* FROM user_properties up WHERE up.user_id = ? AND up.status = 'pending'{$tidSql} ORDER BY up.created_at DESC";
         $params = array_merge([$userId], TenantContext::getId() > 1 ? [TenantContext::getId()] : []);
         $properties = $db->fetchAll($sql, $params) ?: [];
 

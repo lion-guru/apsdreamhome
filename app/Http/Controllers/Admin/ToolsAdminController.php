@@ -212,7 +212,7 @@ class ToolsAdminController extends AdminController
 
         $landmarks = [];
         try {
-            $landmarks = $db->query("SELECT l.*, (SELECT COUNT(*) FROM colony_landmark_distances WHERE landmark_id = l.id) as linked_colonies FROM landmarks l ORDER BY l.category, l.name")->fetchAll(PDO::FETCH_ASSOC);
+            $landmarks = $db->query("SELECT l.*, (SELECT COUNT(*) FROM colony_landmark_distances WHERE landmark_id = l.id) as linked_colonies FROM landmarks l ORDER BY l.type, l.name")->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Exception $e) { error_log("ToolsAdminController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $colonies = [];
@@ -223,7 +223,7 @@ class ToolsAdminController extends AdminController
         $distances = [];
         try {
             $distances = $db->query("
-                SELECT cld.*, l.name as landmark_name, l.category as landmark_category, c.name as colony_name 
+                SELECT cld.*, l.name as landmark_name, l.type as landmark_category, c.name as colony_name 
                 FROM colony_landmark_distances cld 
                 JOIN landmarks l ON cld.landmark_id = l.id 
                 JOIN colonies c ON cld.colony_id = c.id 

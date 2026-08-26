@@ -113,7 +113,7 @@ class EMIController extends AdminController
                     FROM bookings b
                     LEFT JOIN users c ON b.customer_id = c.id
                     LEFT JOIN properties p ON b.property_id = p.id
-                    WHERE b.id NOT IN (SELECT booking_id FROM emi_plans)
+                    WHERE 1=1
                     AND b.status = 'confirmed'
                     ORDER BY b.created_at DESC";
             $bookings = $this->db->fetchAll($sql);
@@ -170,7 +170,7 @@ class EMIController extends AdminController
             // Check if booking exists and has no EMI plan
             $sql = "SELECT b.*, COUNT(e.id) as existing_emi
                     FROM bookings b
-                    LEFT JOIN emi_plans e ON b.id = e.booking_id
+                    LEFT JOIN emi_plans e ON b.property_id = e.property_id
                     WHERE b.id = ?
                     GROUP BY b.id";
             $stmt = $this->db->prepare($sql);
