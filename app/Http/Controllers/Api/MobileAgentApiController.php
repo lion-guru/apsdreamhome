@@ -63,10 +63,10 @@ class MobileAgentApiController extends BaseController
             $bookings = [];
             try {
                 $stmt = $this->db->prepare("
-                    SELECT pb.*, p.title as property_title, p.price
+                    SELECT pb.*, pl.plot_number, pl.total_price as plot_price
                     FROM plot_bookings pb
-                    LEFT JOIN plots p ON p.id = pb.plot_id
-                    WHERE pb.agent_id = ?{$tidSql}
+                    LEFT JOIN plots pl ON pl.id = pb.plot_id
+                    WHERE pb.associate_id = ?{$tidSql}
                     ORDER BY pb.created_at DESC
                 ");
                 $stmt->execute($params);
@@ -97,7 +97,7 @@ class MobileAgentApiController extends BaseController
             try {
                 $stmt = $this->db->prepare("
                     SELECT * FROM mlm_commission_ledger
-                    WHERE user_id = ?{$tidSql}
+                    WHERE beneficiary_user_id = ?{$tidSql}
                     ORDER BY created_at DESC
                 ");
                 $stmt->execute($params);
@@ -127,9 +127,9 @@ class MobileAgentApiController extends BaseController
             $documents = [];
             try {
                 $stmt = $this->db->prepare("
-                    SELECT * FROM agent_documents
-                    WHERE agent_id = ?{$tidSql}
-                    ORDER BY created_at DESC
+                    SELECT * FROM documents
+                    WHERE user_id = ?{$tidSql}
+                    ORDER BY uploaded_on DESC
                 ");
                 $stmt->execute($params);
                 $documents = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
@@ -190,9 +190,8 @@ class MobileAgentApiController extends BaseController
             $leads = [];
             try {
                 $stmt = $this->db->prepare("
-                    SELECT l.*, u.name as customer_name
+                    SELECT l.*
                     FROM leads l
-                    LEFT JOIN users u ON u.id = l.customer_id
                     WHERE l.assigned_to = ?{$tidSql}
                     ORDER BY l.created_at DESC
                 ");
@@ -224,7 +223,7 @@ class MobileAgentApiController extends BaseController
             try {
                 $stmt = $this->db->prepare("
                     SELECT * FROM payout_entries
-                    WHERE user_id = ?{$tidSql}
+                    WHERE beneficiary_user_id = ?{$tidSql}
                     ORDER BY created_at DESC
                 ");
                 $stmt->execute($params);
@@ -254,9 +253,8 @@ class MobileAgentApiController extends BaseController
             $properties = [];
             try {
                 $stmt = $this->db->prepare("
-                    SELECT p.*, c.name as colony_name
-                    FROM user_properties p
-                    LEFT JOIN colonies c ON c.id = p.colony_id
+                    SELECT p.*
+                    FROM properties p
                     WHERE p.agent_id = ?{$tidSql} AND p.deleted_at IS NULL
                     ORDER BY p.created_at DESC
                 ");
@@ -291,7 +289,7 @@ class MobileAgentApiController extends BaseController
                     FROM site_visits sv
                     LEFT JOIN leads l ON l.id = sv.lead_id
                     WHERE sv.agent_id = ?{$tidSql}
-                    ORDER BY sv.scheduled_at DESC
+                    ORDER BY sv.visit_date DESC, sv.visit_time DESC
                 ");
                 $stmt->execute($params);
                 $visits = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
@@ -320,10 +318,12 @@ class MobileAgentApiController extends BaseController
             $team = [];
             try {
                 $stmt = $this->db->prepare("
-                    SELECT u.*, mnt.rank as current_rank
+                    SELECT u.id, u.name, u.email, u.phone, u.role, u.status,
+                           u.mlm_rank as current_rank, u.created_at,
+                           mnt.level as tree_level
                     FROM users u
-                    LEFT JOIN mlm_network_tree mnt ON mnt.associate_id = u.id
-                    WHERE mnt.parent_id = ?{$tidSql} AND u.tenant_id = u.tenant_id
+                    INNER JOIN mlm_network_tree mnt ON mnt.associate_id = u.id
+                    WHERE mnt.parent_id = ?{$tidSql}
                     ORDER BY u.created_at DESC
                 ");
                 $stmt->execute($params);
@@ -353,19 +353,32 @@ class MobileAgentApiController extends BaseController
             $progress = [];
             try {
                 $stmt = $this->db->prepare("
-                    SELECT 
-                        r.name as current_rank,
-                        r.required_gbv as next_rank_gbv,
-                        r.gbv_threshold as current_rank_gbv,
-                        COALESCE(SUM(CASE WHEN pb.status = 'confirmed' THEN pb.total_plot_value ELSE 0 END), 0) as current_gbv
+                    SELECT u.mlm_rank as current_rank,
+                           COALESCE((SELECT SUM(pb.total_plot_value)
+                                     FROM plot_bookings pb
+                                     WHERE pb.associate_id = u.id
+                                       AND pb.status IN ('token_paid','agreement_signed','emi_active','partially_paid','fully_paid','registration_done')), 0) as current_gbv
                     FROM users u
-                    LEFT JOIN mlm_rank_benefits r ON r.name = u.rank
-                    LEFT JOIN plot_bookings pb ON pb.agent_id = u.id
-                    WHERE u.id = ?{$tidSql}
-                    GROUP BY u.id, r.name, r.required_gbv, r.gbv_threshold
+                    WHERE u.id = ?
                 ");
-                $stmt->execute($params);
+                $stmt->execute([$userId]);
                 $progress = $stmt->fetch(\PDO::FETCH_ASSOC) ?: [];
+
+                // Next rank = lowest min_qualifying_volume above current GBV
+                if (!empty($progress)) {
+                    $gbv = (float)($progress['current_gbv'] ?? 0);
+                    $rstmt = $this->db->prepare("
+                        SELECT rank_name, min_qualifying_volume
+                        FROM mlm_rank_benefits
+                        WHERE is_active = 1 AND min_qualifying_volume > ?
+                        ORDER BY min_qualifying_volume ASC
+                        LIMIT 1
+                    ");
+                    $rstmt->execute([$gbv]);
+                    $next = $rstmt->fetch(\PDO::FETCH_ASSOC);
+                    $progress['next_rank'] = $next['rank_name'] ?? null;
+                    $progress['next_rank_gbv'] = $next['min_qualifying_volume'] ?? null;
+                }
             } catch (\Throwable $e) {
                 error_log("Agent rank progress error: " . $e->getMessage());
             }

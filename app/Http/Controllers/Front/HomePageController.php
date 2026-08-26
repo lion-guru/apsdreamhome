@@ -128,7 +128,7 @@ class HomePageController extends BaseController
         // Get hero properties from cache (hot-path)
         $hero_properties = \App\Services\Cache\HotPathCacheService::getHomeHeroProperties(
             function () {
-                $stmt = $this->db->prepare("SELECT id, title, price, city, location, type, area_sqft, bedrooms, featured, image_path FROM properties WHERE status = 'active' AND featured = 1 AND deleted_at IS NULL ORDER BY created_at DESC LIMIT 3");
+                $stmt = $this->db->prepare("SELECT id, title, price, city, location, type, area_sqft, bedrooms, featured, image FROM properties WHERE status = 'active' AND featured = 1 AND deleted_at IS NULL ORDER BY created_at DESC LIMIT 3");
                 $stmt->execute();
                 return $stmt->fetchAll(\PDO::FETCH_ASSOC);
             }
