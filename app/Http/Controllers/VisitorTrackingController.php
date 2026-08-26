@@ -19,6 +19,16 @@ class VisitorTrackingController extends AdminController
         $this->trackingService = null;
     }
 
+    /**
+     * Anonymous analytics endpoints fired by visitor-tracking.js via fetch/sendBeacon
+     * (no session, no form, no CSRF token available). CSRF is meaningless here;
+     * the router already exempts /track/incomplete-registration.
+     */
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
+    }
+
     private function getTrackingService()
     {
         if ($this->trackingService === null) {

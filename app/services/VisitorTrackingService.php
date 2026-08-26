@@ -138,6 +138,8 @@ class VisitorTrackingService
             $registrationType = $data['registration_type'] ?? 'standard';
             $stepCompleted = $data['step_completed'] ?? 1;
             $totalSteps = $data['total_steps'] ?? 1;
+            $marker = $data['last_message']
+                ?? "[Incomplete Registration - Step {$stepCompleted}/{$totalSteps}]";
 
             // Check if lead already exists for this email/phone
             $existing = $this->db->fetchOne(
@@ -160,7 +162,7 @@ class VisitorTrackingService
                         $name,
                         $email,
                         $phone,
-                        "[Incomplete Registration - Step {$stepCompleted}/{$totalSteps}]",
+                        $marker,
                         $existing['id']
                     ]
                 );
@@ -171,7 +173,7 @@ class VisitorTrackingService
                     'name' => $name,
                     'email' => $email,
                     'phone' => $phone,
-                    'last_message' => "[Incomplete Registration - Step {$stepCompleted}/{$totalSteps}]",
+                    'last_message' => $marker,
                     'status' => 'new',
                     'source' => 'incomplete_registration',
                     'priority' => 'medium',
@@ -290,6 +292,39 @@ class VisitorTrackingService
         $last = strtotime($lastVisit);
         $now = time();
         return $now - $last;
+    }
+
+    /**
+     * Track interest signal (property type, budget range, etc.)
+     * Creates/updates a lead when contact info is present; logs the view otherwise.
+     */
+    public function trackInterest($data)
+    {
+        try {
+            $email = $data['email'] ?? null;
+            $phone = $data['phone'] ?? null;
+            $name = $data['name'] ?? 'Guest';
+            $interestType = $this->determineInterestType($data);
+
+            if (!empty($email) || !empty($phone)) {
+                // Reuse lead-capture path with an interest marker
+                return $this->trackIncompleteRegistration(array_merge($data, [
+                    'registration_type' => 'interest',
+                    'step_completed' => 1,
+                    'total_steps' => 1,
+                    'last_message' => "[Interest: {$interestType}]",
+                ]));
+            }
+
+            // Anonymous interest — record as a page view with context
+            return $this->trackPageView(
+                $data['page_url'] ?? ($_SERVER['REQUEST_URI'] ?? '/'),
+                "Interest: {$interestType}"
+            );
+        } catch (\Exception $e) {
+            error_log("Interest tracking error: " . $e->getMessage());
+            return false;
+        }
     }
 
     /**
