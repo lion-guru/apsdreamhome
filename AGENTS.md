@@ -1,3 +1,41 @@
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-26 — Session 79: Schema Sweep + Tracking Fix + Cross-Port Verification)
+
+## Session 79: Schema Sweep — 261 Latent Unknown-Column Mismatches + Visitor Tracking Repair (2026-08-26)
+
+### Goal
+Fix silent SQL column mismatches that returned empty data (1054s swallowed by try/catch) + repair visitor tracking pipeline that was 403/500.
+
+### What Was Done
+| Feature | Details | Commit |
+|---------|---------|--------|
+| **Schema scanner (NEW)** | `testing/scan_schema_mismatches.php` — parses FROM/JOIN aliases, validates alias.column against information_schema; found 261 real mismatches across 131 files (627 tables scanned) | `c374ae205` |
+| **Batch 1: 220 fixes (111 files)** | mlm_commission_ledger.user_id→beneficiary_user_id, plot_bookings.total_amount→total_plot_value, mlm_rank_benefits.name→rank_name, users.rank→mlm_rank, properties.image_path→image, leads campaign/property joins removed, chat_service legacy admin schema reworked, etc. | `c374ae205` |
+| **Batch 2: 39 fixes (31 files)** | emi_plans property_id link, career full_name, document_number, width_ft/length_ft, associates salary_eligible, landmarks type, bank_branches branch_name, etc. 41→2 false positives (scanner alias heuristic) | `7eaa40dc2` |
+| **Release APK v1.2.2** | 92.9 MB release APK rebuilt, deployed to public/downloads/apsdreamhome.apk | local |
+| **Visitor tracking 403 fix** | VisitorTrackingController missing skipCsrfProtection() — fetch/sendBeacon POSTs failed despite router exemption (BaseController ctor enforces CSRF independently) — added override | `e9c3b8021` |
+| **Tracking tables created** | visitor_sessions + visitor_page_views never existed — all page-view logging lost; created + migration `scripts/migrate_tracking_tables.php` | `e9c3b8021`/`6d65b4b8c` |
+| **trackInterest 500 fix** | Controller called service->trackInterest() which didn't exist — added (lead capture or contextual page view) | `e9c3b8021` |
+| **WhatsApp click table** | whatsapp_click_log missing — created; verified POST /api/track/whatsapp-click → row lands | `8ad38cf2b`+migration |
+| **SMS graceful skip** | SmsService MSG91 requires TRAI DLT template — when MSG91_TEMPLATE_ID unset, skipped call instead of guaranteed remote fail; OTP still saved | `8ad38cf2b` |
+| **WebSocket verified** | ws://localhost:8080 (Ratchet) starts cleanly — notification bell sync carry-forward closable (needs daemon in prod) | — |
+| **E2E 153/153** | All gates green after both batches | — |
+
+### Key Lessons
+_172. **Scan alias.column against information_schema before runtime** — led to finding 261 latent 1054s (e.g., mlm_commission_ledger.user_id vs beneficiary_user_id) that were silently swallowed. Scanner: parse FROM/JOIN `<table> <alias>`, validate each `alias.col`._
+_173. **BaseController CSRF enforces independently of router** — router $excludedPaths only covers router-level check; BaseController::__construct() does its own CSRF unless skipCsrfProtection() returns true. Visitor tracking was 403 despite router exemption._
+_174. **Tables can be missing for years without alarm** — visitor_sessions + visitor_page_views + whatsapp_click_log never existed; all calls were try/catched → empty data, zero alert. Create missing tables + add migration for reproducibility._
+_175. **Services may reference a legacy schema that never existed** — ChatService used admin.aid, users.uname/uemail (WordPress-style); entire query layer needed reworking to actual users.name/email + roles. Always DESCRIBE before fixing._
+_176. **Release APK exists even when Flutter says 'Gradle build failed to produce .apk'** — file is at android/app/build/outputs/apk/release/app-release.apk (92.9 MB); copy manually._
+
+### Verification Results (Session 79)
+- Scanner: 261→2 false positives (alias heuristic)
+- E2E: 153/153 PASS
+- AI smoke: 7/7, Workflow 15/15, Associate chain 12/12
+- Homepage: 200, Tracking endpoints 200 (DB writes confirmed)
+- WebSocket ws://localhost:8080 reachable
+
+---
+
 # APS Dream Home - Agent Rules & Project Status (Updated 2026-08-26 — Session 78: API Gap Closure + Agent Portal + Deep Scan)
 
 ## Session 78: API Gap Closure + Agent Portal Flutter Pages (2026-08-26)
