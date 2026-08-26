@@ -54,10 +54,14 @@
 
 ### 3B. Dead route/view spot audit — covered by E2E (90 admin routes 200 OK) ✅
 
-### 3C. Flutter analyzer debt ⏳ PARTIAL
-- [x] colony_model.dart freezed codegen FIXED (redirecting factory pattern) → .g.dart generated
-- [ ] booking_model.dart (4 classes), daily_caller_model.dart (6), emi_automation_model.dart (6+) need same treatment
-- Note: does NOT block APK build (models unreferenced in compile graph)
+### 3C. Flutter analyzer debt ✅ DONE (Session 78 night, commit `756acd96c`)
+- [x] Root cause identified: freezed 3.x requires `abstract class` for the `_$X` mixin pattern
+- [x] Added `abstract` to 43 @freezed classes across 8 legacy models (booking, daily_caller,
+      emi_automation, emi_collection, gamification, notification, property_listing, site_visit)
+- [x] Fixed chat_service.dart dynamic-list conversion + live_chat_page.dart null-safe date parse
+- [x] build_runner regenerated 24 outputs; codegen synced
+- [x] **flutter analyze lib/: ZERO errors** (was 51), 286 style infos only
+- [x] APK rebuilt + deployed; all gates re-verified green
 
 ---
 
