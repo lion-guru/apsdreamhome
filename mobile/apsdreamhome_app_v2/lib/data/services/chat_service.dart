@@ -196,7 +196,12 @@ class ChatService {
       );
       final data = response.data;
       if (data is Map<String, dynamic> && data['success'] == true) {
-        return List<Map<String, dynamic>>.from(data['messages'] ?? []);
+        final raw = data['messages'];
+        if (raw is List) {
+          return List<Map<String, dynamic>>.from(
+              raw.whereType<Map>().map((e) => Map<String, dynamic>.from(e)));
+        }
+        return <Map<String, dynamic>>[];
       }
     } catch (_) {}
     return [];

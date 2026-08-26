@@ -5,7 +5,7 @@ part 'site_visit_model.g.dart';
 
 /// Site Visit Model - GPS Tracking for Site Visits
 @freezed
-class SiteVisitModel with _$SiteVisitModel {
+abstract class SiteVisitModel with _$SiteVisitModel {
   const factory SiteVisitModel({
     @Default('') String id,
     @Default('') String agentId,
@@ -64,7 +64,7 @@ class SiteVisitModel with _$SiteVisitModel {
 
 // Live Location Sharing Model
 @freezed
-class LiveLocationModel with _$LiveLocationModel {
+abstract class LiveLocationModel with _$LiveLocationModel {
   const factory LiveLocationModel({
     @Default('') String userId,
     @Default('') String userName,

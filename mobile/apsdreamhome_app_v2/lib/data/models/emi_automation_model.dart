@@ -6,7 +6,7 @@ part 'emi_automation_model.g.dart';
 /// EMI Automation Configuration & System
 /// Automated reminders, calls, WhatsApp messages for EMI collection
 @freezed
-class EMIAutomationConfig with _$EMIAutomationConfig {
+abstract class EMIAutomationConfig with _$EMIAutomationConfig {
   const factory EMIAutomationConfig({
     required String id,
     required String companyId,
@@ -45,7 +45,7 @@ class EMIAutomationConfig with _$EMIAutomationConfig {
 }
 
 @freezed
-class WhatsAppConfig with _$WhatsAppConfig {
+abstract class WhatsAppConfig with _$WhatsAppConfig {
   const factory WhatsAppConfig({
     @Default(false) bool isEnabled,
     String? businessAccountId,
@@ -76,7 +76,7 @@ class WhatsAppConfig with _$WhatsAppConfig {
 }
 
 @freezed
-class VoiceCallConfig with _$VoiceCallConfig {
+abstract class VoiceCallConfig with _$VoiceCallConfig {
   const factory VoiceCallConfig({
     @Default(false) bool isEnabled,
     String? provider, // Exotel, Knowlarity, Twilio, Ozonetel
@@ -109,7 +109,7 @@ class VoiceCallConfig with _$VoiceCallConfig {
 }
 
 @freezed
-class SMSConfig with _$SMSConfig {
+abstract class SMSConfig with _$SMSConfig {
   const factory SMSConfig({
     @Default(false) bool isEnabled,
     String? provider, // Msg91, Twilio, ValueFirst
@@ -134,7 +134,7 @@ class SMSConfig with _$SMSConfig {
 }
 
 @freezed
-class EmailConfig with _$EmailConfig {
+abstract class EmailConfig with _$EmailConfig {
   const factory EmailConfig({
     @Default(false) bool isEnabled,
     String? provider, // SendGrid, AWS SES, Mailgun
@@ -162,7 +162,7 @@ class EmailConfig with _$EmailConfig {
 }
 
 @freezed
-class FieldAgentConfig with _$FieldAgentConfig {
+abstract class FieldAgentConfig with _$FieldAgentConfig {
   const factory FieldAgentConfig({
     // Agent assignment settings
     @Default('round_robin') String assignmentMethod, // round_robin, load_based, location_based, performance_based
@@ -196,7 +196,7 @@ class FieldAgentConfig with _$FieldAgentConfig {
 }
 
 @freezed
-class AIConfig with _$AIConfig {
+abstract class AIConfig with _$AIConfig {
   const factory AIConfig({
     // AI Lead Scoring
     @Default(true) bool enableLeadScoring,
@@ -226,7 +226,7 @@ class AIConfig with _$AIConfig {
 }
 
 @freezed
-class AutomationRule with _$AutomationRule {
+abstract class AutomationRule with _$AutomationRule {
   const factory AutomationRule({
     @Default('') String id,
     @Default('') String name,
@@ -266,7 +266,7 @@ class AutomationRule with _$AutomationRule {
 // ==================== AUTOMATION EXECUTION LOGS ====================
 
 @freezed
-class AutomationExecution with _$AutomationExecution {
+abstract class AutomationExecution with _$AutomationExecution {
   const factory AutomationExecution({
     @Default('') String id,
     @Default('') String ruleId,
@@ -309,7 +309,7 @@ class AutomationExecution with _$AutomationExecution {
 // ==================== CUSTOMER COMMUNICATION LOG ====================
 
 @freezed
-class CustomerCommunicationLog with _$CustomerCommunicationLog {
+abstract class CustomerCommunicationLog with _$CustomerCommunicationLog {
   const factory CustomerCommunicationLog({
     @Default('') String id,
     @Default('') String customerId,

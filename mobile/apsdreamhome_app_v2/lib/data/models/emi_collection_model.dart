@@ -7,7 +7,7 @@ part 'emi_collection_model.g.dart';
 /// EMI Collection Agent Model
 /// For field agents who collect EMI payments door-to-door
 @freezed
-class EMICollectionAgent with _$EMICollectionAgent {
+abstract class EMICollectionAgent with _$EMICollectionAgent {
   const factory EMICollectionAgent({
     required String id,
     required String name,
@@ -70,7 +70,7 @@ enum CollectionAgentType { fullTime, partTime, freelance, contractor }
 enum AgentStatus { active, onLeave, suspended, terminated }
 
 @freezed
-class CollectionArea with _$CollectionArea {
+abstract class CollectionArea with _$CollectionArea {
   const factory CollectionArea({
     required String areaName,
     required String state,
@@ -86,7 +86,7 @@ class CollectionArea with _$CollectionArea {
 }
 
 @freezed
-class EMICustomerAssignment with _$EMICustomerAssignment {
+abstract class EMICustomerAssignment with _$EMICustomerAssignment {
   const factory EMICustomerAssignment({
     required String customerId,
     required String customerName,
@@ -131,7 +131,7 @@ class EMICustomerAssignment with _$EMICustomerAssignment {
 enum PaymentStatus { regular, irregular, defaulter, newCustomer }
 
 @freezed
-class PreviousVisit with _$PreviousVisit {
+abstract class PreviousVisit with _$PreviousVisit {
   const factory PreviousVisit({
     required DateTime visitDate,
     required VisitOutcome outcome,
@@ -147,7 +147,7 @@ class PreviousVisit with _$PreviousVisit {
 enum VisitOutcome { collected, partial, notHome, refused, willPayLater, rescheduled, notInterested }
 
 @freezed
-class DailyCollectionReport with _$DailyCollectionReport {
+abstract class DailyCollectionReport with _$DailyCollectionReport {
   const factory DailyCollectionReport({
     required String id,
     required DateTime date,
@@ -193,7 +193,7 @@ class DailyCollectionReport with _$DailyCollectionReport {
 enum ReportSubmissionStatus { pending, submitted, verified, disputed }
 
 @freezed
-class CollectionRecord with _$CollectionRecord {
+abstract class CollectionRecord with _$CollectionRecord {
   const factory CollectionRecord({
     required String customerId,
     required String customerName,
@@ -232,7 +232,7 @@ class CollectionRecord with _$CollectionRecord {
 enum PaymentMode { cash, cheque, online, upi, card, bankTransfer }
 
 @freezed
-class MonthlyCollectionPerformance with _$MonthlyCollectionPerformance {
+abstract class MonthlyCollectionPerformance with _$MonthlyCollectionPerformance {
   const factory MonthlyCollectionPerformance({
     required String id,
     required int year,
@@ -280,7 +280,7 @@ class MonthlyCollectionPerformance with _$MonthlyCollectionPerformance {
 }
 
 @freezed
-class LocationTracking with _$LocationTracking {
+abstract class LocationTracking with _$LocationTracking {
   const factory LocationTracking({
     required DateTime timestamp,
     required GeoLocation location,
@@ -294,7 +294,7 @@ class LocationTracking with _$LocationTracking {
 
 /// EMI Due List - Generated automatically for agents
 @freezed
-class EMIDueList with _$EMIDueList {
+abstract class EMIDueList with _$EMIDueList {
   const factory EMIDueList({
     required String id,
     required DateTime generatedAt,
@@ -323,7 +323,7 @@ class EMIDueList with _$EMIDueList {
 }
 
 @freezed
-class EMIDueItem with _$EMIDueItem {
+abstract class EMIDueItem with _$EMIDueItem {
   const factory EMIDueItem({
     required String customerId,
     required String customerName,
@@ -366,7 +366,7 @@ enum DuePriority { high, medium, low }
 
 /// Automated EMI Reminder System
 @freezed
-class EMIReminder with _$EMIReminder {
+abstract class EMIReminder with _$EMIReminder {
   const factory EMIReminder({
     required String id,
     required String customerId,

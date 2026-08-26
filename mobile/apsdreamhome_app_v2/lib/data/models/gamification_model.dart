@@ -5,7 +5,7 @@ part 'gamification_model.g.dart';
 
 /// Gamification Model - Points, Badges, Rewards System
 @freezed
-class GamificationModel with _$GamificationModel {
+abstract class GamificationModel with _$GamificationModel {
   const factory GamificationModel({
     @Default('') String userId,
     @Default(0) int totalPoints,
@@ -44,7 +44,7 @@ class GamificationModel with _$GamificationModel {
 }
 
 @freezed
-class PointsTransaction with _$PointsTransaction {
+abstract class PointsTransaction with _$PointsTransaction {
   const factory PointsTransaction({
     @Default('') String id,
     @Default('') String userId,
@@ -63,7 +63,7 @@ class PointsTransaction with _$PointsTransaction {
 }
 
 @freezed
-class Achievement with _$Achievement {
+abstract class Achievement with _$Achievement {
   const factory Achievement({
     @Default('') String id,
     @Default('') String name,
@@ -85,7 +85,7 @@ class Achievement with _$Achievement {
 }
 
 @freezed
-class Badge with _$Badge {
+abstract class Badge with _$Badge {
   const factory Badge({
     @Default('') String id,
     @Default('') String name,
@@ -102,7 +102,7 @@ class Badge with _$Badge {
 }
 
 @freezed
-class Reward with _$Reward {
+abstract class Reward with _$Reward {
   const factory Reward({
     @Default('') String id,
     @Default('') String name,
@@ -123,7 +123,7 @@ class Reward with _$Reward {
 }
 
 @freezed
-class RewardRedemption with _$RewardRedemption {
+abstract class RewardRedemption with _$RewardRedemption {
   const factory RewardRedemption({
     @Default('') String id,
     @Default('') String userId,
@@ -146,7 +146,7 @@ class RewardRedemption with _$RewardRedemption {
 
 // Leaderboard Entry
 @freezed
-class LeaderboardEntry with _$LeaderboardEntry {
+abstract class LeaderboardEntry with _$LeaderboardEntry {
   const factory LeaderboardEntry({
     @Default('') String userId,
     @Default('') String userName,

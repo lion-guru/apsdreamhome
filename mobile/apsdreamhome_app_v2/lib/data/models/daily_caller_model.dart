@@ -7,7 +7,7 @@ part 'daily_caller_model.g.dart';
 /// Daily Caller (Telesales) Model
 /// For tracking calling activity, salary + commission
 @freezed
-class DailyCaller with _$DailyCaller {
+abstract class DailyCaller with _$DailyCaller {
   const DailyCaller._();
 
   const factory DailyCaller({
@@ -74,7 +74,7 @@ enum SalaryType { fixed, commissionOnly, fixedPlusCommission }
 enum CallerStatus { active, onLeave, suspended, terminated }
 
 @freezed
-class DailyCallReport with _$DailyCallReport {
+abstract class DailyCallReport with _$DailyCallReport {
   const factory DailyCallReport({
     @Default('') String id,
     required DateTime date,
@@ -119,7 +119,7 @@ class DailyCallReport with _$DailyCallReport {
 enum ReportStatus { pending, submitted, verified, rejected }
 
 @freezed
-class CallDetail with _$CallDetail {
+abstract class CallDetail with _$CallDetail {
   const factory CallDetail({
     @Default('') String leadId,
     @Default('') String leadName,
@@ -150,7 +150,7 @@ enum CallOutcome {
 }
 
 @freezed
-class MonthlyPerformance with _$MonthlyPerformance {
+abstract class MonthlyPerformance with _$MonthlyPerformance {
   const factory MonthlyPerformance({
     @Default('') String id,
     @Default(0) int year,
@@ -198,7 +198,7 @@ class MonthlyPerformance with _$MonthlyPerformance {
 enum PaymentStatus { pending, calculated, approved, paid }
 
 @freezed
-class CallerLeadAssignment with _$CallerLeadAssignment {
+abstract class CallerLeadAssignment with _$CallerLeadAssignment {
   const factory CallerLeadAssignment({
     @Default('') String leadId,
     @Default('') String leadName,
@@ -222,7 +222,7 @@ enum AssignmentPriority { high, medium, low }
 
 /// Lead Distribution System for Daily Callers
 @freezed
-class LeadDistributionBatch with _$LeadDistributionBatch {
+abstract class LeadDistributionBatch with _$LeadDistributionBatch {
   const factory LeadDistributionBatch({
     @Default('') String id,
     @Default('') String batchName,

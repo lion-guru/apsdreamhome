@@ -7,7 +7,7 @@ part 'property_listing_model.g.dart';
 /// Property Listing Model - For Buy/Sell Marketplace
 /// Anyone can post: Customer, Associate, Agent, Employee
 @freezed
-class PropertyListing with _$PropertyListing {
+abstract class PropertyListing with _$PropertyListing {
   const PropertyListing._();
 
   const factory PropertyListing({
@@ -96,7 +96,7 @@ enum ListingStatus { pending, underReview, verified, active, sold, rejected, exp
 enum ListingPlan { free, featured, premium, spotlight }
 
 @freezed
-class PropertyInquiry with _$PropertyInquiry {
+abstract class PropertyInquiry with _$PropertyInquiry {
   const factory PropertyInquiry({
     @Default('') String id,
     @Default('') String buyerId,

@@ -115,13 +115,15 @@ class _LiveChatPageState extends ConsumerState<LiveChatPage> {
       setState(() {
         for (var msg in history) {
           final role = msg['role']?.toString() ?? 'user';
+          final createdAtRaw = msg['created_at']?.toString() ??
+              DateTime.now().toIso8601String();
           _messages.add(ChatMessage(
             id: DateTime.now().millisecondsSinceEpoch + _messages.length,
-            text: msg['message'] ?? '',
+            text: msg['message']?.toString() ?? '',
             senderType: role,
             senderName: role == 'user' ? 'You' : 'APS Bot',
             isMe: role == 'user',
-            createdAt: DateTime.parse(msg['created_at'] ?? DateTime.now().toIso8601String()),
+            createdAt: DateTime.tryParse(createdAtRaw) ?? DateTime.now(),
           ));
         }
       });

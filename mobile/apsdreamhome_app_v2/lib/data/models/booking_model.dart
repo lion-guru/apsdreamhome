@@ -5,7 +5,7 @@ part 'booking_model.g.dart';
 
 /// Booking Model - Plot Booking Management
 @freezed
-class BookingModel with _$BookingModel {
+abstract class BookingModel with _$BookingModel {
   const factory BookingModel({
     @Default('') String id,
     @Default('') String plotId,
@@ -90,7 +90,7 @@ class BookingModel with _$BookingModel {
 }
 
 @freezed
-class BookingDocument with _$BookingDocument {
+abstract class BookingDocument with _$BookingDocument {
   const factory BookingDocument({
     @Default('') String id,
     @Default('') String type, // aadhar, pan, photo, agreement, etc.
@@ -109,7 +109,7 @@ class BookingDocument with _$BookingDocument {
 }
 
 @freezed
-class PaymentModel with _$PaymentModel {
+abstract class PaymentModel with _$PaymentModel {
   const factory PaymentModel({
     @Default('') String id,
     @Default('') String bookingId,
@@ -133,7 +133,7 @@ class PaymentModel with _$PaymentModel {
 }
 
 @freezed
-class BookingHistory with _$BookingHistory {
+abstract class BookingHistory with _$BookingHistory {
   const factory BookingHistory({
     @Default('') String id,
     @Default('') String action,

@@ -5,7 +5,7 @@ part 'notification_model.g.dart';
 
 /// Notification Model - Push Notifications & In-App
 @freezed
-class NotificationModel with _$NotificationModel {
+abstract class NotificationModel with _$NotificationModel {
   const factory NotificationModel({
     @Default('') String id,
     @Default('') String userId,
