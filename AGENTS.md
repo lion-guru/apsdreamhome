@@ -29,6 +29,11 @@ _163. **Deduplicating constants breaks silent dependents** — grep `AppConstant
 _164. **Dart records `(String, int, IconData, Color)` beat private helper classes** for local widget-data lists — impossible to create duplicate class definitions, less boilerplate._
 _165. **Property inquiries target user_properties, not properties** — submitPropertyInquiry validates against user-submitted listings table; probe scripts must use a user_properties id._
 _166. **PowerShell curl -d JSON escaping is unreliable** — use a PHP curl probe file for JSON POST testing instead of fighting quote mangling._
+_167. **Mid-file `use` statements inside a class = PHP trait import = fatal** — CRMController had duplicate `use App\Models\...` lines after a method (copy-paste artifact); PHP resolved them as trait imports of non-existent classes, fataleing EVERY request to ANY method in the file. Scan pattern: `use` after first `function` inside class body. Fixed + full codebase scanned clean (`testing/scan_midfile_use.php`)._
+_168. **Mobile API controllers MUST use `$GLOBALS['api_user_id']`, never `$_SESSION`** — ApiAuthMiddleware sets globals from Bearer token; sessions are empty in stateless mobile requests. Symptom: every endpoint 401 despite valid token._
+_169. **freezed 3.x requires `abstract class` for the `_$X` mixin pattern** — plain `class X with _$X` gives "Missing concrete implementations" for every generated member. Batch-fixed 43 classes across 8 legacy models via regex script._
+_170. **mlm_network_tree.associate_id is the join key, not user_id** — probe scripts checking tree membership must query `WHERE associate_id = ?`; ledger integrity joins on `beneficiary_user_id`, not `user_id`._
+_171. **CRMService::createLead read 14 array keys without defaults** — PHP warnings prepended to JSON response broke Flutter parsing (probe saw `[]`). Always `?? null` user-input array access in API-facing services._
 
 ### Verification Results (Session 78 final)
 - E2E: **153/153 PASS**
