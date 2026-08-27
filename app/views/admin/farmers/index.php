@@ -62,41 +62,27 @@ $activeLoans = $activeLoans ?? 0;
                         <tr>
                             <th>Farmer Name</th>
                             <th>Mobile</th>
-                            <th>Land Area</th>
+                            <th>Holdings</th>
+                            <th>Total Land Area</th>
                             <th>Location</th>
-                            <th>Total Price</th>
-                            <th>Paid</th>
-                            <th>Pending</th>
-                            <th>Agreement Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($farmers as $f): ?>
                         <tr class="farmer-row">
-                            <td><strong><?php echo htmlspecialchars($f['farmer_name'] ?? ''); ?></strong></td>
-                            <td><?php echo htmlspecialchars($f['farmer_mobile'] ?? ''); ?></td>
-                            <td><?php echo htmlspecialchars($f['land_area'] ?? '0'); ?> sq.ft</td>
-                            <td><?php echo htmlspecialchars($f['district'] ?? ($f['location'] ?? '')); ?></td>
-                            <td>₹<?php echo number_format($f['total_land_price'] ?? 0); ?></td>
-                            <td>₹<?php echo number_format($f['total_paid_amount'] ?? 0); ?></td>
-                            <td>₹<?php echo number_format($f['amount_pending'] ?? 0); ?></td>
-                            <td>
-                                <?php $s = $f['agreement_status'] ?? 'N/A'; ?>
-                                <?php if ($s === 'active'): ?><span class="badge bg-success">Active</span>
-                                <?php elseif ($s === 'completed'): ?><span class="badge bg-info">Completed</span>
-                                <?php elseif ($s === 'terminated'): ?><span class="badge bg-danger">Terminated</span>
-                                <?php elseif ($s === 'draft'): ?><span class="badge bg-secondary">Draft</span>
-                                <?php else: ?><span class="badge bg-light text-dark"><?php echo htmlspecialchars($s ?? ''); ?></span>
-                                <?php endif; ?>
-                            </td>
+                            <td><strong><?php echo htmlspecialchars($f['name'] ?? ''); ?></strong></td>
+                            <td><?php echo htmlspecialchars($f['phone'] ?? ''); ?></td>
+                            <td><?php echo htmlspecialchars($f['holdings_count'] ?? '0'); ?></td>
+                            <td><?php echo htmlspecialchars($f['total_land_area'] ?? '0'); ?> sq.ft</td>
+                            <td><?php echo htmlspecialchars(($f['district'] ?? '') . ($f['city'] ? ', ' . $f['city'] : '')); ?></td>
                             <td class="text-nowrap">
                                 <a href="<?php echo BASE_URL; ?>/admin/farmers/show/<?php echo e($f['id']); ?>" class="btn btn-sm btn-info" title="View"><i class="fas fa-eye"></i></a>
                             </td>
                         </tr>
                         <?php endforeach; ?>
                         <?php if (empty($farmers)): ?>
-                        <tr><td colspan="9" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No farmers found.</td></tr>
+                        <tr><td colspan="6" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No farmers found.</td></tr>
                         <?php endif; ?>
                     </tbody>
                 </table>

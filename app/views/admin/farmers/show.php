@@ -26,18 +26,16 @@ $isLegacy = $is_legacy ?? false;
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-user me-2"></i>Farmer Info</h5></div>
                 <div class="card-body aps-cp-card-body">
                     <table class="table table-sm table-borderless">
-                        <tr><td class="text-muted">Name</td><td><strong><?php echo htmlspecialchars($farmer['farmer_name'] ?? ''); ?></strong></td></tr>
-                        <tr><td class="text-muted">Mobile</td><td><?php echo htmlspecialchars($farmer['farmer_mobile'] ?? ''); ?></td></tr>
+                        <tr><td class="text-muted">Name</td><td><strong><?php echo htmlspecialchars($farmer['name'] ?? ''); ?></strong></td></tr>
+                        <tr><td class="text-muted">Mobile</td><td><?php echo htmlspecialchars($farmer['phone'] ?? ''); ?></td></tr>
                         <?php if ($farmer['email'] ?? ''): ?>
                         <tr><td class="text-muted">Email</td><td><?php echo htmlspecialchars($farmer['email'] ?? ''); ?></td></tr>
                         <?php endif; ?>
-                        <tr><td class="text-muted">Land Area</td><td><?php echo htmlspecialchars($farmer['land_area'] ?? '0'); ?> sq.ft</td></tr>
-                        <tr><td class="text-muted">Location</td><td><?php echo htmlspecialchars($farmer['district'] ?? ($farmer['location'] ?? '')); ?></td></tr>
-                        <?php if ($farmer['city'] ?? ''): ?><tr><td class="text-muted">City</td><td><?php echo htmlspecialchars($farmer['city'] ?? ''); ?></td></tr><?php endif; ?>
-                        <?php if ($farmer['tehsil'] ?? ''): ?><tr><td class="text-muted">Tehsil</td><td><?php echo htmlspecialchars($farmer['tehsil'] ?? ''); ?></td></tr><?php endif; ?>
-                        <?php if ($farmer['gram'] ?? ''): ?><tr><td class="text-muted">Gram</td><td><?php echo htmlspecialchars($farmer['gram'] ?? ''); ?></td></tr><?php endif; ?>
-                        <?php if ($farmer['site_name'] ?? ''): ?><tr><td class="text-muted">Site</td><td><?php echo htmlspecialchars($farmer['site_name'] ?? ''); ?></td></tr><?php endif; ?>
-                        <?php if ($farmer['gata_number'] ?? ''): ?><tr><td class="text-muted">Gata #</td><td><?php echo htmlspecialchars($farmer['gata_number'] ?? ''); ?></td></tr><?php endif; ?>
+                        <tr><td class="text-muted">Total Land Area</td><td><?php echo htmlspecialchars($farmer['total_land_area'] ?? '0'); ?> sq.ft</td></tr>
+                        <tr><td class="text-muted">Holdings</td><td><?php echo htmlspecialchars($farmer['holdings_count'] ?? '0'); ?></td></tr>
+                        <tr><td class="text-muted">Location</td><td><?php echo htmlspecialchars(($farmer['district'] ?? '') . ($farmer['city'] ? ', ' . $farmer['city'] : '')); ?></td></tr>
+                        <?php if ($farmer['khasra_numbers'] ?? ''): ?><tr><td class="text-muted">Khasra Numbers</td><td><?php echo htmlspecialchars($farmer['khasra_numbers'] ?? ''); ?></td></tr><?php endif; ?>
+                        <tr><td class="text-muted">Location</td><td><?php echo htmlspecialchars(($farmer['district'] ?? '') . ($farmer['city'] ? ', ' . $farmer['city'] : '')); ?></td></tr>
                     </table>
                 </div>
             </div>
@@ -45,12 +43,9 @@ $isLegacy = $is_legacy ?? false;
 
         <div class="col-md-4 mb-4">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa- rupee-sign me-2"></i>Financials</h5></div>
+                <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-rupee-sign me-2"></i>Financials</h5></div>
                 <div class="card-body aps-cp-card-body">
                     <table class="table table-sm table-borderless">
-                        <tr><td class="text-muted">Total Land Price</td><td><strong>₹<?php echo number_format($farmer['total_land_price'] ?? 0); ?></strong></td></tr>
-                        <tr><td class="text-muted">Total Paid</td><td class="text-success"><strong>₹<?php echo number_format($farmer['total_paid_amount'] ?? 0); ?></strong></td></tr>
-                        <tr><td class="text-muted">Pending</td><td class="text-danger"><strong>₹<?php echo number_format($farmer['amount_pending'] ?? 0); ?></strong></td></tr>
                         <?php if ($farmer['bank_name'] ?? ''): ?>
                         <tr><td class="text-muted">Bank</td><td><?php echo htmlspecialchars($farmer['bank_name'] ?? ''); ?></td></tr>
                         <tr><td class="text-muted">IFSC</td><td><?php echo htmlspecialchars($farmer['bank_ifsc'] ?? ''); ?></td></tr>
@@ -63,14 +58,13 @@ $isLegacy = $is_legacy ?? false;
 
         <div class="col-md-4 mb-4">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-people-arrows me-2"></i>Management</h5></div>
+                <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-people-arrows me-2"></i>Holdings</h5></div>
                 <div class="card-body aps-cp-card-body">
                     <table class="table table-sm table-borderless">
-                        <?php if ($farmer['land_manager_name'] ?? ''): ?>
-                        <tr><td class="text-muted">Land Manager</td><td><?php echo htmlspecialchars($farmer['land_manager_name'] ?? ''); ?></td></tr>
-                        <tr><td class="text-muted">Mgr Mobile</td><td><?php echo htmlspecialchars($farmer['land_manager_mobile'] ?? ''); ?></td></tr>
-                        <?php endif; ?>
-                        <tr><td class="text-muted">Agreement Status</td>
+                        <tr><td class="text-muted">Holdings Count</td><td><?php echo htmlspecialchars($farmer['holdings_count'] ?? '0'); ?></td></tr>
+                        <tr><td class="text-muted">Total Land Area</td><td><?php echo htmlspecialchars($farmer['total_land_area'] ?? '0'); ?> sq.ft</td></tr>
+                        <tr><td class="text-muted">Khasra Numbers</td><td><?php echo htmlspecialchars($farmer['khasra_numbers'] ?? 'N/A'); ?></td></tr>
+                        <tr><td class="text-muted">Status</td>
                             <td><?php $s = $farmer['agreement_status'] ?? 'N/A'; ?>
                                 <?php if ($s === 'active'): ?><span class="badge bg-success">Active</span>
                                 <?php elseif ($s === 'completed'): ?><span class="badge bg-info">Completed</span>
