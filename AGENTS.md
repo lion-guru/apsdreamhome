@@ -295,10 +295,10 @@ Production-ready security hardening, feature completion, performance optimizatio
 
 | Metric | Value |
 | :----- | ---- |
-| Total Tables | 599 + 1 VIEW |
-| Controllers | 434 |
-| Services | 460 |
-| Views | 1,718 |
+| Total Tables | 626 |
+| Controllers | 458 |
+| Services | 483 |
+| Views | 1,733 |
 | Language Keys | 8,758 EN, 8,765 HI |
 | E2E Tests | 153/153 PASS |
 
@@ -341,7 +341,7 @@ _125. **`service_team` column in `property_agents` may not exist** — Use actua
 - **Framework:** Custom PHP MVC (NOT Laravel) — `app/Http/Controllers/`, `app/Models/`, `app/views/`, `app/Services/`
 - **Runtime:** PHP 8.3, MySQL 8.0 (port 3307), Apache (XAMPP, port 80)
 - **Frontend:** Flutter (mobile app), Vanilla JS + Bootstrap 5 (web admin)
-- **Database:** 599 tables + 1 VIEW, InnoDB, 595 with PKs, 262 FK constraints, 8,700 columns
+- **Database:** 626 tables, InnoDB, 595 with PKs, 262 FK constraints, 8,700 columns
 - **Mobile App:** `mobile/apsdreamhome_app_v2/` — Flutter, debug APK at `public/downloads/apsdreamhome.apk`
 
 ## Key Commands
@@ -817,11 +817,11 @@ _67. **Every auth query must be tenant-scoped** — Login, register, password-re
 
 ## Project Scale (2026)
 
-- **Controllers:** 434 PHP files
-- **Models:** 91 PHP files
-- **Views:** 1,718 PHP files
-- **Services:** 460 PHP files
-- **Routes:** 3,194 web (web.php) + 444 API (api.php) = 3,638 total
+- **Controllers:** 458 PHP files
+- **Models:** 80 PHP files (91 minus 11 archived)
+- **Views:** 1,733 PHP files
+- **Services:** 483 PHP files
+- **Routes:** 3,279 web (web.php) + 487 API (api.php) = 3,766 total
 - **Database Tables:** 599 (InnoDB, 595 with PKs, 262 FK constraints)
 - **Language Keys:** 8,758 EN, 8,765 HI
 - **Admin sidebar items:** 286 (281 active, 100% route coverage)
