@@ -38,12 +38,9 @@ class LandController extends AdminController
 
             $offset = ($page - 1) * $perPage;
 
-            // Build query
-            $sql = "SELECT l.*, 
-                           COUNT(p.id) as property_count,
-                           COALESCE(SUM(COALESCE(p.area_sqft, p.area)), 0) as total_area
+            // Build query — land_records is standalone (no FK to properties; legacy)
+            $sql = "SELECT l.*, 0 as property_count, COALESCE(l.area,0) as total_area
                     FROM land_records l
-                    LEFT JOIN properties p ON l.id = p.land_id
                     WHERE 1=1";
             $params = [];
 
@@ -208,13 +205,9 @@ class LandController extends AdminController
             }
 
             // Get land record details
-            $sql = "SELECT l.*, 
-                           COUNT(p.id) as property_count,
-                           COALESCE(SUM(COALESCE(p.area_sqft, p.area)), 0) as developed_area
+            $sql = "SELECT l.*, 0 as property_count, COALESCE(l.area,0) as developed_area
                     FROM land_records l
-                    LEFT JOIN properties p ON l.id = p.land_id
-                    WHERE l.id = ?
-                    GROUP BY l.id";
+                    WHERE l.id = ?";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$landId]);
             $landRecord = $stmt->fetch();
@@ -224,15 +217,8 @@ class LandController extends AdminController
                 return $this->redirect('admin/land');
             }
 
-            // Get properties on this land
-            $sql = "SELECT p.*, 
-                           b.booking_number,
-                           c.name as customer_name
-                    FROM properties p
-                    LEFT JOIN bookings b ON p.id = b.property_id
-                    LEFT JOIN users c ON b.customer_id = c.id
-                    WHERE p.land_id = ?
-                    ORDER BY p.created_at DESC";
+            // Get plots on this land (legacy land_records has no FK to plots; use land_parcel_id best-effort)
+            $sql = "SELECT p.* FROM plots p WHERE p.land_parcel_id = ? ORDER BY p.created_at DESC";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$landId]);
             $properties = $stmt->fetchAll();
@@ -443,8 +429,8 @@ class LandController extends AdminController
                 return $this->jsonError('Land record not found', 404);
             }
 
-            // Check if land has properties
-            $sql = "SELECT COUNT(*) as property_count FROM properties WHERE land_id = ?";
+            // Check if land has plots (legacy check; land_records has no direct plot FK)
+            $sql = "SELECT COUNT(*) as property_count FROM plots WHERE land_parcel_id = ?";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$landId]);
             $propertyCount = $stmt->fetch()['property_count'];
@@ -575,8 +561,8 @@ class LandController extends AdminController
             $totalArea = 0;
             $totalCost = 0;
             foreach ($acquisitions as $a) {
-                $totalArea += (float)($a['land_area'] ?? 0);
-                $totalCost += (float)($a['acquisition_cost'] ?? 0);
+                $totalArea += (float)($a['total_area_sqft'] ?? $a['land_area'] ?? 0);
+                $totalCost += (float)($a['acquisition_cost'] ?? $a['total_consideration'] ?? 0);
             }
         } catch (\Exception $e) {
             $this->loggingService->error("Land Acquisitions error: " . $e->getMessage());
@@ -647,8 +633,10 @@ class LandController extends AdminController
         $created_by = $_SESSION['admin_id'] ?? ($_SESSION['user_id'] ?? null);
         try {
             $tid = $this->tenantId();
-            $stmt = $this->db->prepare("INSERT INTO land_acquisitions (sale_agreement_number, total_area_sqft, sale_agreement_date, acquisition_cost, status, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
-            $stmt->execute([$acquisition_number, $land_area, $acquisition_date, $acquisition_cost, $status]);
+            // Map legacy status to land_deals enum (active -> in_progress)
+            $dealStatus = in_array($status, ['in_progress','registered','mutated','closed','cancelled']) ? $status : 'in_progress';
+            $stmt = $this->db->prepare("INSERT INTO land_deals (land_lead_id, sale_agreement_number, total_area_sqft, sale_agreement_date, total_consideration, status, tenant_id) VALUES ((SELECT id FROM land_leads ORDER BY id DESC LIMIT 1), ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$acquisition_number, $land_area, $acquisition_date, $acquisition_cost, $dealStatus, $tid]);
             $this->setFlash('success', 'Land acquisition recorded successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to record acquisition: ' . $e->getMessage());
