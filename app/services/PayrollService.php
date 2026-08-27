@@ -83,7 +83,7 @@ class PayrollService
     public function createSalaryContract(int $employeeId, float $baseSalary, float $hra, float $allowances, float $deductions, string $effectiveFrom, ?string $effectiveTo = null): array
     {
         $tid = $this->tenantId();
-        $cols = "employee_id, base_salary, hra, allowances, deductions, net_salary, effective_from, effective_to, status, created_at";
+        $cols = "employee_id, basic_salary, hra, allowances, deductions, net_salary, effective_from, effective_to, status, created_at";
         $vals = ":e, :bs, :hra, :a, :d, :n, :f, :t, 'active', NOW()";
         $params = [
             ':e' => $employeeId, ':bs' => $baseSalary, ':hra' => $hra, ':a' => $allowances,
@@ -96,7 +96,7 @@ class PayrollService
         $id = (int)$this->db->lastInsertId();
 
         $tid = $this->tenantId();
-        $cols = "contract_id, employee_id, change_type, base_salary, hra, allowances, deductions, effective_from, created_at";
+        $cols = "contract_id, employee_id, change_type, basic_salary, hra, allowances, deductions, effective_from, created_at";
         $vals = ":c, :e, 'created', :bs, :hra, :a, :d, :f, NOW()";
         $params = [':c' => $id, ':e' => $employeeId, ':bs' => $baseSalary, ':hra' => $hra, ':a' => $allowances, ':d' => $deductions, ':f' => $effectiveFrom];
         if ($tid > 1) { $cols .= ", tenant_id"; $vals .= ", :tid"; $params[':tid'] = $tid; }
@@ -117,7 +117,7 @@ class PayrollService
     public function generatePayroll(int $month, int $year, int $generatedBy = 0): array
     {
         $tid = $this->tenantId();
-        $sql = "SELECT u.id as employee_id, u.name, sc.base_salary, 0 AS hra, 0 AS allowances, 0 AS deductions
+        $sql = "SELECT u.id as employee_id, u.name, sc.basic_salary, 0 AS hra, 0 AS allowances, 0 AS deductions
                                   FROM users u
                                   LEFT JOIN salary_contracts sc ON sc.employee_id = u.id AND sc.status = 'active' " . ($tid > 1 ? "AND sc.tenant_id = " . (int)$tid : "") . "
                                   WHERE u.role = 'employee' AND u.status = 'active' " . ($tid > 1 ? "AND u.tenant_id = " . (int)$tid : "");
@@ -127,19 +127,19 @@ class PayrollService
 
         $count = 0; $totalAmount = 0;
         foreach ($employees as $emp) {
-            $base = (float)($emp['base_salary'] ?? 0);
+            $base = (float)($emp['basic_salary'] ?? 0);
             $hra = (float)($emp['hra'] ?? 0);
             $allw = (float)($emp['allowances'] ?? 0);
             $ded = (float)($emp['deductions'] ?? 0);
             $net = $base + $hra + $allw - $ded;
 
         $tid = $this->tenantId();
-        $cols = "employee_id, month, year, base_salary, hra, allowances, deductions, net_salary, status, generated_at, generated_by";
+        $cols = "employee_id, month, year, basic_salary, hra, allowances, deductions, net_salary, status, generated_at, generated_by";
         $vals = ":e, :m, :y, :b, :hra, :a, :d, :n, 'generated', NOW(), :g";
         $baseParams = [':e' => $emp['employee_id'], ':m' => $month, ':y' => $year, ':b' => $base, ':hra' => $hra, ':a' => $allw, ':d' => $ded, ':n' => $net, ':g' => $generatedBy];
         if ($tid > 1) { $cols .= ", tenant_id"; $vals .= ", :tid"; $baseParams[':tid'] = $tid; }
         $st2 = $this->db->prepare("INSERT INTO payroll_entries ($cols) VALUES ($vals)
-                                   ON DUPLICATE KEY UPDATE base_salary = VALUES(base_salary), hra = VALUES(hra), allowances = VALUES(allowances), deductions = VALUES(deductions), net_salary = VALUES(net_salary), generated_at = NOW()");
+                                   ON DUPLICATE KEY UPDATE basic_salary = VALUES(basic_salary), hra = VALUES(hra), allowances = VALUES(allowances), deductions = VALUES(deductions), net_salary = VALUES(net_salary), generated_at = NOW()");
         $st2->execute($baseParams);
             $count++;
             $totalAmount += $net;

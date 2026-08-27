@@ -119,7 +119,7 @@ public function showAgreement($id)
             $tidSql = $tid > 1 ? " AND a.tenant_id = ?" : "";
             $params = $tid > 1 ? [$id, $tid] : [$id];
             $agreement = $this->db->fetch("
-                SELECT a.*, f.name as farmer_name, f.phone as farmer_mobile, f.district, f.city
+                SELECT a.*, f.name as farmer_name, f.phone as farmer_mobile, f.district
                 FROM farmer_agreements a
                 LEFT JOIN farmers f ON a.farmer_id = f.id
                 WHERE a.id = ?" . $tidSql, array_merge([$id], $this->tenantId() > 1 ? [$this->tenantId()] : []));
@@ -224,7 +224,7 @@ public function showLoan($id)
             $tidSql = $tid > 1 ? " AND l.tenant_id = ?" : "";
             $params = $tid > 1 ? [$id, $tid] : [$id];
             $loan = $this->db->fetch("
-                SELECT l.*, f.name as farmer_name, f.phone as farmer_mobile, f.district, f.city
+                SELECT l.*, f.name as farmer_name, f.phone as farmer_mobile, f.district
                 FROM farmer_loans l
                 LEFT JOIN farmers f ON l.farmer_id = f.id
                 WHERE l.id = ?" . $tidSql, array_merge([$id], $this->tenantId() > 1 ? [$this->tenantId()] : []));

@@ -320,7 +320,7 @@ class DocumentController extends AdminController
         $this->requireAdmin();
         try {
             $db = $this->getDb();
-            $stmt = $db->query("SELECT t.*, c.name as category_name FROM document_templates t LEFT JOIN document_categories c ON t.category_id = c.id ORDER BY t.name");
+            $stmt = $db->query("SELECT t.*, c.name as category_name FROM document_templates t LEFT JOIN document_categories c ON t.category_id = c.id ORDER BY t.template_name");
             $templates = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             $categories = $db->query("SELECT id, name FROM document_categories WHERE is_active = 1 ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
