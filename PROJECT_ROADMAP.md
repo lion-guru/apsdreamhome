@@ -1,4 +1,4 @@
-# PROJECT ROADMAP — APS Dream Home (Overnight Autonomous Session 78)
+# PROJECT ROADMAP — APS Dream Home (Overnight Autonomous Session 78–79)
 
 > Created: 2026-08-26, Session 78. CEO/Senior-Arch level deep scan.
 > **Rule: Work top-to-bottom. Check off items as completed. Never lose this file.**
@@ -84,6 +84,25 @@
 ## PHASE 6 — DOCUMENTATION
 - [x] This file updated with results
 - [x] AGENTS.md Session 78 entry added
+- [x] Session 79: schema sweep 261→2 + tracking fix + tenant gap 63→3 + cross-port verify + pubspec 1.2.2 + health_check.php (AGENTS lessons 172-179)
+
+---
+
+## ✅ SESSION 79 COMPLETED (2026-08-26)
+
+| # | Item | Commit |
+|---|------|--------|
+| 13 | Schema scanner NEW `testing/scan_schema_mismatches.php` — 261 mismatches (627 tables) | `c374ae205` |
+| 14 | Batch 1: 220 fixes (111 files) + Batch 2: 39 fixes (31 files) → 261→2 false positives | `c374ae205`+`7eaa40dc2` |
+| 15 | Release APK v1.2.2 rebuilt 92.9 MB | local |
+| 16 | Visitor tracking CSRF fix `skipCsrfProtection()` + `/track/` prefix | `e9c3b8021` |
+| 17 | Tracking tables created `visitor_sessions`+`visitor_page_views` + migration | `e9c3b8021`/`6d65b4b8c` |
+| 18 | `trackInterest` 500 fix (service method added) | `e9c3b8021` |
+| 19 | `whatsapp_click_log` table + SMS graceful skip (DLT) | `8ad38cf2b` |
+| 20 | Tenant gap sweep: 1403 ops → 63 → 3 (9 controllers, 20 writes) | `5ffb20f94` |
+| 21 | WebSocket daemon `scripts/run_websocket_daemon.bat` | `5c8ff604d` |
+| 22 | pubspec `1.0.0+1→1.2.2+1` + doc sync 626/458/483/3766 + health_check.php | `cd9489e99`+`7a10fac01`+`e8feea68a` |
+| 23 | E2E 153/153, AI 7/7, Workflow 15/15, Associate 12/12, scanner CLEAN, midfile-use CLEAN | verified |
 
 ---
 
@@ -91,7 +110,7 @@
 
 | Item | Why deferred | Where recorded |
 |------|--------------|----------------|
-| Controller tenant_id scoping (379 ops / 105 files) | Mitigated by enforceTenantStatus(); needs per-file analysis | AGENTS.md Session 59 |
+| Controller tenant_id scoping (379 ops / 105 files) | **DONE Session 79**: recount 1403→63→3 (9 controllers, 20 writes) — system tables correctly skipped | AGENTS.md Session 79 |
 | Asterisk/Ollama/Whisper Docker stack | Requires Docker Desktop running + USB modem hardware | Session 53 docs |
 | Groq orpheus TTS terms acceptance | Needs org-admin click at console.groq.com | AGENTS.md AI section |
 | OpenRouter 50 req/day limit | Chain falls through to Groq/Gemini automatically | AGENTS.md AI section |
