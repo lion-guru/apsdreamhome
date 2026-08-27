@@ -608,7 +608,7 @@ class DailyOperationsService
 
     public function getPlots($colonyId = 0)
     {
-        if ($colonyId) return $this->fetchAll("SELECT id,plot_no FROM inventory_plots WHERE colony_id=? ORDER BY plot_no", [$colonyId]);
-        return $this->fetchAll("SELECT id,plot_no FROM inventory_plots ORDER BY plot_no");
+        if ($colonyId) return $this->fetchAll("SELECT id,plot_number AS plot_no FROM plots WHERE colony_id=? ORDER BY plot_number", [$colonyId]);
+        return $this->fetchAll("SELECT id,plot_number AS plot_no FROM plots ORDER BY plot_number");
     }
 }

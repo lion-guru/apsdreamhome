@@ -765,12 +765,12 @@ class AgreementPDFService extends ServiceTenantTrait
         if (!$this->db) return null;
         try {
             $sql = "SELECT b.*, u.name AS customer_name, u.phone AS customer_phone, u.email AS customer_email,
-                            p.plot_no AS plot_number, p.size_sqft as area_sqft, p.width_ft, p.length_ft ,'' as facing,
-                            COALESCE(p.negotiated_price, p.basic_price) AS plot_price,
-                            p.colony_id, p.block_name
+                            p.plot_number AS plot_number, p.area_sqft as area_sqft, p.width_ft, p.length_ft , p.facing as facing,
+                            COALESCE(p.negotiated_price, p.price_per_sqft) AS plot_price,
+                            p.colony_id, p.block
                      FROM plot_bookings b
                      LEFT JOIN users u ON b.customer_id = u.id
-                     LEFT JOIN inventory_plots p ON b.plot_id = p.id
+                     LEFT JOIN plots p ON b.plot_id = p.id
                      WHERE b.id = ?";
             $params = [(int)$id];
             $this->tenantWhere($sql, $params);
@@ -807,7 +807,7 @@ class AgreementPDFService extends ServiceTenantTrait
     {
         if (!$this->db || !$plotId) return null;
         try {
-            $sql = "SELECT * FROM inventory_plots WHERE id = ?";
+            $sql = "SELECT * FROM plots WHERE id = ?";
             $params = [(int)$plotId];
             $this->tenantWhere($sql, $params);
             $sql .= ' LIMIT 1';

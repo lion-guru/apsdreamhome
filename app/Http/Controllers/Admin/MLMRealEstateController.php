@@ -21,8 +21,8 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             $stats = [];
             $stats['total_networkers'] = $db->query("SELECT COUNT(*) as c FROM users WHERE onboarding_track = 'networker'")->fetch()['c'] ?? 0;
             $stats['total_consultants'] = $db->query("SELECT COUNT(*) as c FROM users WHERE onboarding_track = 'free_consultant'")->fetch()['c'] ?? 0;
-            $stats['total_plots'] = $db->query("SELECT COUNT(*) as c FROM inventory_plots")->fetch()['c'] ?? 0;
-            $stats['available_plots'] = $db->query("SELECT COUNT(*) as c FROM inventory_plots WHERE status = 'Available'")->fetch()['c'] ?? 0;
+            $stats['total_plots'] = $db->query("SELECT COUNT(*) as c FROM plots")->fetch()['c'] ?? 0;
+            $stats['available_plots'] = $db->query("SELECT COUNT(*) as c FROM plots WHERE status = 'available'")->fetch()['c'] ?? 0;
             $stats['pending_rera'] = $db->query("SELECT COUNT(*) as c FROM rera_requests WHERE status = 'pending'")->fetch()['c'] ?? 0;
             $stats['active_salaries'] = $db->query("SELECT COUNT(*) as c FROM salary_tracker WHERE status = 'active'")->fetch()['c'] ?? 0;
             $stats['total_bookings'] = $db->query("SELECT COUNT(*) as c FROM bookings WHERE status NOT IN ('cancelled')")->fetch()['c'] ?? 0;
@@ -177,18 +177,18 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             $block = $_GET['block'] ?? '';
             $status = $_GET['status'] ?? '';
             
-            $sql = "SELECT * FROM inventory_plots WHERE 1=1";
+            $sql = "SELECT * FROM plots WHERE 1=1";
             $params = [];
-            if ($block) { $sql .= " AND block_name = ?"; $params[] = $block; }
+            if ($block) { $sql .= " AND block = ?"; $params[] = $block; }
             if ($status) { $sql .= " AND status = ?"; $params[] = $status; }
-            $sql .= " ORDER BY block_name, plot_no LIMIT 300";
+            $sql .= " ORDER BY block, plot_number LIMIT 300";
             
             $stmt = $db->prepare($sql);
             $stmt->execute($params);
             $plots = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             
-            $blocks = $db->query("SELECT DISTINCT block_name FROM inventory_plots ORDER BY block_name")->fetchAll(\PDO::FETCH_COLUMN);
-            $statusSummary = $db->query("SELECT status, COUNT(*) as cnt FROM inventory_plots GROUP BY status")->fetchAll(\PDO::FETCH_ASSOC);
+            $blocks = $db->query("SELECT DISTINCT block FROM plots ORDER BY block")->fetchAll(\PDO::FETCH_COLUMN);
+            $statusSummary = $db->query("SELECT status, COUNT(*) as cnt FROM plots GROUP BY status")->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             $plots = []; $blocks = []; $statusSummary = [];
         }
@@ -379,7 +379,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
         $db = Database::getInstance()->getConnection();
         try {
             $users = $db->query("SELECT id, name FROM users WHERE onboarding_track IN ('networker','free_consultant') AND status = 'active' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
-            $plots = $db->query("SELECT id, plot_no, block_name, size_sqft, basic_price, status FROM inventory_plots WHERE status = 'Available' ORDER BY block_name, plot_no")->fetchAll(\PDO::FETCH_ASSOC);
+            $plots = $db->query("SELECT id, plot_number, block, area_sqft, price_per_sqft, status FROM plots WHERE status = 'available' ORDER BY block, plot_number")->fetchAll(\PDO::FETCH_ASSOC);
             $plots2 = $db->query("SELECT id, plot_number as plot_no, block, area_sqft, total_price, status FROM plots WHERE status = 'available' AND colony_id = 2 ORDER BY block, plot_number")->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             $users = []; $plots = []; $plots2 = [];
@@ -441,7 +441,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             if (!empty($booking['plot_id'])) {
                 $stmt = $db->prepare("UPDATE plots SET status = 'booked' WHERE id = ? AND tenant_id = ?");
                 $stmt->execute([$booking['plot_id'], $tid]);
-                $stmt = $db->prepare("UPDATE inventory_plots SET status = 'Booked' WHERE id = ? AND tenant_id = ?");
+                $stmt = $db->prepare("UPDATE plots SET status = 'booked' WHERE id = ? AND tenant_id = ?");
                 $stmt->execute([$booking['plot_id'], $tid]);
             }
 
@@ -581,7 +581,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             if (!empty($booking['plot_id'])) {
                 $stmt = $db->prepare("UPDATE plots SET status = 'available' WHERE id = ? AND tenant_id = ?");
                 $stmt->execute([$booking['plot_id'], $tid]);
-                $stmt = $db->prepare("UPDATE inventory_plots SET status = 'Available' WHERE id = ? AND tenant_id = ?");
+                $stmt = $db->prepare("UPDATE plots SET status = 'available' WHERE id = ? AND tenant_id = ?");
                 $stmt->execute([$booking['plot_id'], $tid]);
             }
 
