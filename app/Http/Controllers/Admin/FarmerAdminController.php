@@ -5,16 +5,25 @@ class FarmerAdminController extends AdminController
 {
     use \App\Traits\TenantAwareTrait;
 
-    public function index()
+public function index()
     {
         $this->requireAdmin();
         try {
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $params = $tid > 1 ? [$tid] : [];
             $farmers = $this->db->fetchAll("
-                SELECT *, 'farmer' as source, 'किसान' as source_hi FROM farmer_land_management
-                ORDER BY id DESC
-            ");
+                SELECT f.*, 
+                       COUNT(flh.id) as holdings_count,
+                       COALESCE(SUM(flh.land_area), 0) as total_land_area,
+                       'farmer' as source, 'किसान' as source_hi
+                FROM farmers f
+                LEFT JOIN farmer_land_holdings flh ON flh.farmer_id = f.id" . $tidSql . "
+                WHERE 1=1
+                GROUP BY f.id
+                ORDER BY f.id DESC
+            ", $params);
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
             $farmers = [];
         }
         $totalFarmers = count($farmers ?? []);
@@ -29,14 +38,26 @@ class FarmerAdminController extends AdminController
         ]);
     }
 
-    public function show($id)
+public function show($id)
     {
         $this->requireAdmin();
         try {
-            $farmer = $this->db->fetch("SELECT * FROM farmer_land_management WHERE id = ?", [$id]);
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND f.tenant_id = ?" : "";
+            $params = $tid > 1 ? [$id, $tid] : [$id];
+            $farmer = $this->db->fetch("
+                SELECT f.*, 
+                       COUNT(flh.id) as holdings_count,
+                       COALESCE(SUM(flh.land_area), 0) as total_land_area,
+                       GROUP_CONCAT(flh.khasra_number SEPARATOR ', ') as khasra_numbers
+                FROM farmers f
+                LEFT JOIN farmer_land_holdings flh ON flh.farmer_id = f.id
+                WHERE f.id = ? " . $tidSql . "
+                GROUP BY f.id
+            ", array_merge([$id], $tid > 1 ? [$this->tenantId()] : []));
         } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
+            error_log($e->getMessage());
+            $farmer = null;
         }
         if (!$farmer) {
             $this->setFlash('error', 'Farmer not found');
@@ -48,7 +69,7 @@ class FarmerAdminController extends AdminController
         $transactions = $this->db->fetchAll("SELECT * FROM farmer_transactions WHERE farmer_id = ? ORDER BY payment_date DESC", [$id]);
         $documents = $this->db->fetchAll("SELECT * FROM documents WHERE entity_type = 'farmer' AND entity_id = ? ORDER BY uploaded_on DESC", [$id]);
         $this->render('admin/farmers/show', [
-            'page_title' => 'Farmer: ' . ($farmer['farmer_name'] ?? 'Unknown'),
+            'page_title' => 'Farmer: ' . ($farmer['name'] ?? 'Unknown'),
             'farmer' => $farmer,
             'agreements' => $agreements,
             'loans' => $loans,
@@ -58,19 +79,23 @@ class FarmerAdminController extends AdminController
         ]);
     }
 
-    public function agreements()
+public function agreements()
     {
         $this->requireAdmin();
         try {
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND a.tenant_id = ?" : "";
+            $params = $tid > 1 ? [$tid] : [];
             $agreements = $this->db->fetchAll("
-                SELECT a.*, k.farmer_name, k.farmer_mobile
+                SELECT a.*, f.name as farmer_name, f.phone as farmer_mobile
                 FROM farmer_agreements a
-                LEFT JOIN farmer_land_management k ON a.farmer_id = k.id
+                LEFT JOIN farmers f ON a.farmer_id = f.id
+                WHERE 1=1" . $tidSql . "
                 ORDER BY a.created_at DESC
-            ");
+            ", $params);
         } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
+            error_log($e->getMessage());
+            $agreements = [];
         }
         $totalAgreements = count($agreements ?? []);
         $activeCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM farmer_agreements WHERE status = 'active'");
@@ -86,19 +111,21 @@ class FarmerAdminController extends AdminController
         ]);
     }
 
-    public function showAgreement($id)
+public function showAgreement($id)
     {
         $this->requireAdmin();
         try {
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND a.tenant_id = ?" : "";
+            $params = $tid > 1 ? [$id, $tid] : [$id];
             $agreement = $this->db->fetch("
-                SELECT a.*, k.farmer_name, k.farmer_mobile, k.district, k.city
+                SELECT a.*, f.name as farmer_name, f.phone as farmer_mobile, f.district, f.city
                 FROM farmer_agreements a
-                LEFT JOIN farmer_land_management k ON a.farmer_id = k.id
-                WHERE a.id = ?
-            ", [$id]);
+                LEFT JOIN farmers f ON a.farmer_id = f.id
+                WHERE a.id = ?" . $tidSql, array_merge([$id], $this->tenantId() > 1 ? [$this->tenantId()] : []));
         } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
+            error_log($e->getMessage());
+            $agreement = null;
         }
         if (!$agreement) {
             $this->setFlash('error', 'Agreement not found');
@@ -157,19 +184,23 @@ class FarmerAdminController extends AdminController
         $this->redirect('/admin/farmers/agreements/' . $id);
     }
 
-    public function loans()
+public function loans()
     {
         $this->requireAdmin();
         try {
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND l.tenant_id = ?" : "";
+            $params = $tid > 1 ? [$tid] : [];
             $loans = $this->db->fetchAll("
-                SELECT l.*, k.farmer_name, k.farmer_mobile
+                SELECT l.*, f.name as farmer_name, f.phone as farmer_mobile
                 FROM farmer_loans l
-                LEFT JOIN farmer_land_management k ON l.farmer_id = k.id
+                LEFT JOIN farmers f ON l.farmer_id = f.id
+                WHERE 1=1" . $tidSql . "
                 ORDER BY l.created_at DESC
-            ");
+            ", $params);
         } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
+            error_log($e->getMessage());
+            $loans = [];
         }
         $totalLoans = count($loans ?? []);
         $sanctionedCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM farmer_loans WHERE status = 'sanctioned'");
@@ -185,19 +216,21 @@ class FarmerAdminController extends AdminController
         ]);
     }
 
-    public function showLoan($id)
+public function showLoan($id)
     {
         $this->requireAdmin();
         try {
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND l.tenant_id = ?" : "";
+            $params = $tid > 1 ? [$id, $tid] : [$id];
             $loan = $this->db->fetch("
-                SELECT l.*, k.farmer_name, k.farmer_mobile, k.district, k.city
+                SELECT l.*, f.name as farmer_name, f.phone as farmer_mobile, f.district, f.city
                 FROM farmer_loans l
-                LEFT JOIN farmer_land_management k ON l.farmer_id = k.id
-                WHERE l.id = ?
-            ", [$id]);
+                LEFT JOIN farmers f ON l.farmer_id = f.id
+                WHERE l.id = ?" . $tidSql, array_merge([$id], $this->tenantId() > 1 ? [$this->tenantId()] : []));
         } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
+            error_log($e->getMessage());
+            $loan = null;
         }
         if (!$loan) {
             $this->setFlash('error', 'Loan not found');
