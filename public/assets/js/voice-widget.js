@@ -1,3 +1,11 @@
+
+function getCsrfToken() {
+  const meta = document.querySelector('meta[name="csrf-token"]');
+  if (meta) return meta.getAttribute('content');
+  const m = document.cookie.match(/(^|; )csrf_token=([^;]*)/);
+  return m ? decodeURIComponent(m[2]) : '';
+}
+
 /**
  * APS Dream Home - Voice Assistant Widget
  * Uses Web Speech API for STT and TTS, interfacing with /api/v2/mobile/voice-chat
@@ -183,6 +191,7 @@
     fetch((window.BASE_URL || '') + '/api/v2/mobile/voice-chat', {
       method: 'POST',
       headers: {
+        'X-CSRF-Token': getCsrfToken(),
         'Content-Type': 'application/json',
         'X-Requested-With': 'XMLHttpRequest',
       },

@@ -4,6 +4,14 @@
  */
 
 // ===== CONTACT FORM MANAGER =====
+
+function getCsrfToken() {
+  const meta = document.querySelector('meta[name="csrf-token"]');
+  if (meta) return meta.getAttribute('content');
+  const m = document.cookie.match(/(^|; )csrf_token=([^;]*)/);
+  return m ? decodeURIComponent(m[2]) : '';
+}
+
 class ContactFormManager {
   constructor() {
     this.contactForm = document.getElementById('contactForm');
@@ -245,7 +253,8 @@ class ContactFormManager {
       const response = await fetch(`${BASE_URL}/api/contact/submit`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'X-CSRF-Token': getCsrfToken(),
+        'Content-Type': 'application/json',
           'X-Requested-With': 'XMLHttpRequest',
         },
         body: JSON.stringify(data),

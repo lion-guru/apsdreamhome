@@ -3,6 +3,14 @@
  * Handles notifications and popups for all user types
  */
 
+
+function getCsrfToken() {
+  const meta = document.querySelector('meta[name="csrf-token"]');
+  if (meta) return meta.getAttribute('content');
+  const m = document.cookie.match(/(^|; )csrf_token=([^;]*)/);
+  return m ? decodeURIComponent(m[2]) : '';
+}
+
 class NotificationSystem {
   constructor() {
     this.userId = null;
@@ -74,7 +82,8 @@ class NotificationSystem {
     const response = await fetch((window.BASE_URL || '').replace(/\/+$/,'') + '/api/notifications', {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
+          'X-CSRF-Token': getCsrfToken(),
+        'Content-Type': 'application/json',
         },
       });
 
@@ -99,7 +108,8 @@ class NotificationSystem {
       const response = await fetch((window.BASE_URL || '').replace(/\/+$/,'') + '/api/popups?page=' + this.currentPage, {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
+          'X-CSRF-Token': getCsrfToken(),
+        'Content-Type': 'application/json',
         },
       });
 
@@ -189,7 +199,8 @@ class NotificationSystem {
       const response = await fetch((window.BASE_URL || '').replace(/\/+$/,'') + '/api/popups/dismiss', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'X-CSRF-Token': getCsrfToken(),
+        'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           popup_id: popupId,
@@ -363,7 +374,8 @@ class NotificationSystem {
       const response = await fetch((window.BASE_URL || '').replace(/\/+$/,'') + '/api/notifications/mark-read', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'X-CSRF-Token': getCsrfToken(),
+        'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           notification_id: notificationId,

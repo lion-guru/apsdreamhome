@@ -1,3 +1,11 @@
+
+function getCsrfToken() {
+  const meta = document.querySelector('meta[name="csrf-token"]');
+  if (meta) return meta.getAttribute('content');
+  const m = document.cookie.match(/(^|; )csrf_token=([^;]*)/);
+  return m ? decodeURIComponent(m[2]) : '';
+}
+
 /**
  * APS Dream Home — Live Chat Widget v2.0
  *

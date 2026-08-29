@@ -4,6 +4,14 @@
  */
 
 // ===== PROPERTY SEARCH MANAGER =====
+
+function getCsrfToken() {
+  const meta = document.querySelector('meta[name="csrf-token"]');
+  if (meta) return meta.getAttribute('content');
+  const m = document.cookie.match(/(^|; )csrf_token=([^;]*)/);
+  return m ? decodeURIComponent(m[2]) : '';
+}
+
 class PropertySearchManager {
     constructor() {
         this.searchForm = document.getElementById('quickSearchForm');
@@ -86,7 +94,8 @@ class PropertySearchManager {
             const response = await fetch(`${BASE_URL}/api/properties/search`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': getCsrfToken(),
+        'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
                 },
                 body: JSON.stringify(searchParams)

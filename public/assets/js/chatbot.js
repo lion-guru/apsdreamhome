@@ -1,3 +1,11 @@
+
+function getCsrfToken() {
+  const meta = document.querySelector('meta[name="csrf-token"]');
+  if (meta) return meta.getAttribute('content');
+  const m = document.cookie.match(/(^|; )csrf_token=([^;]*)/);
+  return m ? decodeURIComponent(m[2]) : '';
+}
+
 (function () {
   'use strict';
 
@@ -172,7 +180,8 @@
 
     fetch(apiUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Session-ID': ChatbotState.sessionId },
+      headers: { 'X-CSRF-Token': getCsrfToken(),
+        'Content-Type': 'application/json', 'X-Session-ID': ChatbotState.sessionId },
       body: JSON.stringify({
         message: message,
         session_id: ChatbotState.sessionId,
