@@ -1,4 +1,41 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-29 — Session 83: MLM Commission Payment Flow Deep Audit)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-29 — Session 84: Commission Table Unification)
+
+## Session 84: Commission Table Unification — Legacy `commissions` → `mlm_commission_ledger` (2026-08-29)
+
+### Goal
+Migrate all dashboards, models, services, and API endpoints from legacy `commissions` table (9 stale rows) to canonical `mlm_commission_ledger` (331+ active rows, tenant-scoped, plan-snapshotted).
+
+### What Was Done
+| File | Changes |
+|------|---------|
+| **AgentDashboardController** | 3 queries: stats, performance, AJAX — `user_id` → `beneficiary_user_id` |
+| **CEODashboardController** | 1 query: commission stats — table swap |
+| **CFODashboardController** | 2 queries: commission stats + profit analysis — table swap |
+| **EngagementController** | 1 query: commission metrics — table swap |
+| **SalesManagerDashboardController** | 1 query: commissions_month — table swap |
+| **SmartAIController** | 2 queries: total/pending commission — `associate_id` → `beneficiary_user_id` |
+| **TeamManagementController** | 2 queries: total commission + top performers subquery — `user_id`/`c.user_id` → `beneficiary_user_id` |
+| **MLMTreeController** | 1 query: recent commissions — `associate_id` → `beneficiary_user_id` |
+| **GeminiApiController** | 1 query: user commission — `user_id` → `beneficiary_user_id` |
+| **MobileAdminApiController** | 2 methods: getCommissionsData, processCommissionAction — table + `user_id` → `beneficiary_user_id` |
+| **Commission model** | 4 methods: getByUserId, getStats, getRecent, getByType — full migration |
+| **MlmProfile model** | 1 query: updateTeamStats sales — `user_id/associate_id` → `beneficiary_user_id` |
+| **ReportBuilderService** | 2 queries: by_associate + monthly — `associate_id`/`c.associate_id` → `beneficiary_user_id` |
+| **AccountingIntegrationService** | 1 query: booking commissions — `property_id/description` → `property_id/booking_id` |
+
+### Result
+- **Zero `commissions` table refs remain** in active code (grep confirms)
+- **All reads now hit `mlm_commission_ledger`** — single source of truth
+- **Tenant scoping preserved** — all queries inherit `tenant_id` via `mlm_commission_ledger` schema
+- **Legacy `commissions` table** (9 rows, 2026-02–04) now orphaned — safe to archive later
+
+### Verification
+- E2E: **153/153 PASS**
+- AI smoke: **7/7 PASS**
+- Workflow: **15/15 PASS**
+- Health: **ok:true** (628 tables, APK 92.9 MB)
+
+---
 
 ## Session 83: MLM Commission Payment Flow Deep Audit + Razorpay Fix (2026-08-29)
 
