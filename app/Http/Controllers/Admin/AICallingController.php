@@ -18,10 +18,12 @@ class AICallingController extends AdminController
         try {
             $db = $this->db;
             $this->data['campaigns'] = $db->fetchAll(
-                // TODO: ai_calling_campaigns table missing; no campaign link on ai_calling_schedule/ai_call_sessions
-                "SELECT c.campaign_id AS id, c.name, c.status, c.created_at,
-                        0 as total_scheduled, 0 as completed, 0 as calls_made, 0 as interested
-                 FROM campaigns c ORDER BY c.created_at DESC"
+                "SELECT c.id, c.name, c.status, c.created_at,
+                        COALESCE((SELECT COUNT(*) FROM ai_calling_schedule WHERE campaign_id = c.id), 0) as total_scheduled,
+                        COALESCE((SELECT COUNT(*) FROM ai_calling_schedule WHERE campaign_id = c.id AND status = 'completed'), 0) as completed,
+                        COALESCE((SELECT COUNT(*) FROM ai_call_sessions WHERE campaign_id = c.id), 0) as calls_made,
+                        COALESCE((SELECT COUNT(*) FROM ai_call_sessions WHERE campaign_id = c.id AND status = 'interested'), 0) as interested
+                 FROM ai_calling_campaigns c ORDER BY c.created_at DESC"
             ) ?: [];
             $this->data['totalCampaigns'] = count($this->data['campaigns']);
             $this->data['activeCampaigns'] = count(array_filter($this->data['campaigns'], fn($c) => $c['status'] === 'active'));
