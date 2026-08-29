@@ -1,4 +1,47 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-29 — Session 84: Commission Table Unification)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-29 — Session 85: Salary/Grant Cron Integration)
+
+## Session 85: Salary/Grant Cron Integration — Monthly Payout Automation (2026-08-29)
+
+### Goal
+Wire the existing `SalaryIncentiveService` and `LeadershipSalaryService` into the master cron runner so monthly salary/grant payouts execute automatically.
+
+### What Was Done
+| File | Changes |
+|------|---------|
+| **scripts/run_all_crons.php** | Added Task 12: Salary Incentive Grants (calls `SalaryIncentiveService::processMonthlyGrants()`) + Task 13: Leadership Salary Payouts (calls `LeadershipSalaryService::processMonthlyPayouts()`) in monthly mode |
+
+### Salary Incentive Grants (Task 12)
+- **Tiered grants** based on cumulative GBV:
+  - ₹15L/60d → ₹5K/mo ×6mo
+  - ₹30L/100d → ₹5K/mo ×12mo
+  - ₹50L/150d → ₹8K/mo ×12mo
+  - ₹75L/200d → ₹12K/mo ×12mo
+  - ₹1Cr/300d → ₹20K/mo ×12mo
+- **Monthly maintenance**: Must hit ≥₹50K side volume to receive grant
+- Writes to `mlm_commission_ledger` (`commission_type = 'salary_grant'`) + credits `user_wallets`
+
+### Leadership Salary Payouts (Task 13)
+- **Time-bound targets**:
+  - Target 1: ₹15L in 60 days → ₹5K/mo ×6mo
+  - Target 2: ₹30L in 100 days → ₹5K/mo ×12mo
+- **Overlap handling**: Multiple active targets pay combined sum (cumulative, not overwrite)
+- **Monthly qualification**: Must hit ≥₹15L volume to receive payout (withheld if missed)
+- Writes to `mlm_commission_ledger` (`commission_type = 'performance_bonus'`) + credits `user_wallets`
+
+### Key Safeguards
+- **Withhold logic**: Fails monthly qualification → salary withheld (logs to ledger as `salary_withheld`)
+- **Overlap aggregation**: Multiple overlapping targets pay combined sum
+- **Idempotency**: Checks `mlm_commission_ledger` for existing `performance_bonus` entry this month
+- **Tenant scoping**: All queries inherit `tenant_id` via `ServiceTenantTrait`
+- **Wallet credit**: Direct `user_wallets` balance update alongside ledger entry
+
+### Verification
+- E2E: **153/153 PASS**
+- AI smoke: **7/7 PASS**
+- Workflow: **15/15 PASS**
+- Health: **ok:true** (628 tables, APK 92.9 MB)
+
+---
 
 ## Session 84: Commission Table Unification — Legacy `commissions` → `mlm_commission_ledger` (2026-08-29)
 
