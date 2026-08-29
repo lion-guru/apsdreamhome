@@ -1,4 +1,37 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-26 — Session 79: Schema Sweep + Tracking Fix + Cross-Port Verification)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-28 — Session 80: Flutter Restore + MySQL Recovery + Health Check Fix)
+
+## Session 80: Flutter Restore + MySQL Recovery + Health Check Fix (2026-08-28)
+
+### Goal
+Recover from broken HEAD (empty 0-byte lib files + pubspec duplicate from PowerShell UTF-16 redirect), restore MySQL privilege tables, verify full stack (E2E/AI/Workflow/Health).
+
+### What Was Done
+| Feature | Details | Commit |
+|---------|---------|--------|
+| **Root cause: empty lib in HEAD** | `HEAD`/`4b7fdd7e9:lib/main.dart` 0 bytes — `git show > file` on PowerShell writes UTF-16LE (null bytes) → empty parse, plus `pubspec.yaml` duplicate `flutter_localizations`/`flutter_dotenv` from bad merge in `4b7f` | `c7c70bc34` |
+| **Restore lib 1.2.2** | `git checkout cd9489e99 -- lib/ pubspec.yaml` (binary, not `>` redirect) — 309 files, 140k insert, `main.dart:3253B`, `pubspec 1.2.2+1` clean (`go_router ^17.3.0`, `riverpod ^3.3.2`, `fl_chart`, `font_awesome ^11.0`) | `c7c70bc34` |
+| **widget_test fix** | `package:aps_dream_home/app.dart` → `apsdreamhome_app_v2/app.dart` + smoke test | `c7c70bc34` |
+| **Release APK v1.2.2** | `flutter build apk --release` BUILD SUCCESS (485s) `app-release.apk` 92,872,709 bytes (88.6 MB) `android/app/build/outputs/apk/release/` + `flutter-apk/` — copied to `public/downloads/apsdreamhome.apk` (known Gradle file-not-found) | local |
+| **MySQL recovery** | `mysql/db.MAD Incorrect file format` after unclean shutdown — restored `C:\xampp\mysql\backup\mysql\db.*` (16k/24k), `mysqladmin password 2jcePXuNaOfEyo6I5wJVkG` (`.env:DB_PASS`), `SELECT 1` OK, 628 tables, site 200 | — |
+| **E2E 153/153** | `node testing/visual_tests/E2E_MASTER_TEST.mjs` 153 pass after DB restore | — |
+| **AI smoke 7/7** | `php testing/smoke_all_ai.php` PASS (SmartAI rag, WidgetBot, Gemini, VoiceAssistant, AsstChat Hindi, Recos 8, Analyze) | — |
+| **Workflow 15/15** | `php testing/workflow_probe.php` PASS (login→properties→favorites→inquiry→colonies→dashboard→notifications→payment→profile + DB 0 orphans) | — |
+| **health_check fix** | `scripts/health_check.php:38` `preg_match` captures `\r` (CRLF) → `1.2.2+1\r !== 1.2.2+1` false — `trim($m[1])` fix → `ok:true` (apache:80, mysql:3307 628, apk 92.9M, tracking, pubspec) | `1c0a6a15b` |
+
+### Key Lessons
+_180. **PowerShell `>` writes UTF-16LE, not UTF-8** — `git show branch:path > file` on PowerShell 5.1 creates UTF-16LE (null bytes) → Dart `Duplicate mapping key` + `variable 't'` ghost parse. Fix: `git checkout branch -- path` (binary) or `Out-File -Encoding utf8NoBOM`._
+_181. **HEAD can have 0-byte lib after bad merge** — `HEAD:lib/main.dart` 0 bytes (162 files empty) breaks `flutter analyze` but not `git ls-files`. Verify with `git show HEAD:lib/main.dart | Measure-Object` not just `ls-files`._
+_182. **MySQL Aria `db.MAD Incorrect file format` after crash** — `aria_log` + `db.MAD` corrupt. Fix: `Copy-Item backup\mysql\db.* -> data\mysql\` + `mysqladmin password $DB_PASS` (from `.env`). Don't restore only `.MAD` — need `.MAI` + `.frm` trio + other system tables._
+_183. **health_check CRLF trap** — `preg_match('/^version:\s*(.+)$/m'` captures `\r` on CRLF files → strict `=== '1.2.2+1'` fails. Fix: `trim($m[1])` before compare._
+_184. **Gradle file-not-found is not failure** — `BUILD SUCCESSFUL` + `Gradle build failed to produce .apk` with `flutter-apk/app-release.apk` present is expected (lesson 143) — copy from `android/app/build/outputs/apk/release/` manually._
+
+### Verification Results (Session 80)
+- E2E: 153/153 PASS, Smoke: 7/7, Workflow: 15/15, Health: ok:true
+- MySQL: 628 tables, 192 users, site 200
+- APK: 92.9 MB at `public/downloads/apsdreamhome.apk`
+- pubspec: `1.2.2+1` clean (no duplicate keys)
+
+---
 
 ## Session 79: Schema Sweep — 261 Latent Unknown-Column Mismatches + Visitor Tracking Repair (2026-08-26)
 
