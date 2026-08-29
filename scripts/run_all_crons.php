@@ -517,10 +517,56 @@ try {
             echo "  â�Œ " . $e->getMessage() . PHP_EOL;
             $errors[] = 'matching_bonus: ' . $e->getMessage();
         }
+echo PHP_EOL;
+
+        // 12. SALARY INCENTIVE GRANTS (Tiered: 15L->5K, 30L->5K, 50L->8K, 75L->12K, 1Cr->20K)
+        $taskNum++;
+        echo "==========================================================================================================" . PHP_EOL;
+        echo "{$taskNum}/14  Salary Incentive Grants" . PHP_EOL;
+        echo "==========================================================================================================" . PHP_EOL;
+        try {
+            $salaryService = new \App\Services\MLM\SalaryIncentiveService($pdo);
+            $monthYear   = date('Y-m');
+            $grantResult = $salaryService->processMonthlyGrants($monthYear);
+            if ($grantResult['success']) {
+                echo "  [OK] {$grantResult['processed']} grants, Rs" . number_format($grantResult['amount'], 2) . PHP_EOL;
+                if (!empty($grantResult['errors'])) {
+                    foreach ($grantResult['errors'] as $err) {
+                    echo "  [WARN] " . $err . PHP_EOL;
+                    }
+                }
+                $log['salary_grants'] = $grantResult;
+            } else {
+            echo "  [FAIL] " . ($grantResult['error'] ?? 'unknown') . PHP_EOL;
+            }
+        } catch (\Throwable $e) {
+            echo "  [FAIL] " . $e->getMessage() . PHP_EOL;
+            $errors[] = 'salary_grants: ' . $e->getMessage();
+        }
+        echo PHP_EOL;
+
+        // 13. LEADERSHIP SALARY PAYOUTS (15L/60d->5K, 30L/100d->5K, overlap combined)
+        $taskNum++;
+        echo "==========================================================================================================" . PHP_EOL;
+        echo "{$taskNum}/14  Leadership Salary Payouts" . PHP_EOL;
+        echo "==========================================================================================================" . PHP_EOL;
+        try {
+            $leadershipSalary = new \App\Services\MLM\LeadershipSalaryService($pdo);
+            $salaryResult     = $leadershipSalary->processMonthlyPayouts();
+            if ($salaryResult['processed'] > 0) {
+                echo "  [OK] {$salaryResult['processed']} users paid, Rs" . number_format($salaryResult['total_amount'], 2) . PHP_EOL;
+                $log['leadership_salary'] = $salaryResult;
+            } else {
+                echo "  [INFO] No active salary targets this month" . PHP_EOL;
+            }
+        } catch (\Throwable $e) {
+            echo "  [FAIL] " . $e->getMessage() . PHP_EOL;
+            $errors[] = 'leadership_salary: ' . $e->getMessage();
+        }
         echo PHP_EOL;
     }
 
-    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
+    // A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����
     // SUMMARY
     // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     $elapsed = round(microtime(true) - $startTime, 2);
