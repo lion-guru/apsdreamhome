@@ -35,7 +35,8 @@ check('db:tracking_tables', function(){
 check('flutter:pubspec', function(){
   $c=file_get_contents(__DIR__.'/../mobile/apsdreamhome_app_v2/pubspec.yaml');
   preg_match('/^version:\s*(.+)$/m',$c,$m);
-  return ['pass'=>($m[1]??'')==='1.2.2+1','version'=>trim($m[1]??'?')];
+  $ver=trim($m[1]??'');
+  return ['pass'=>$ver==='1.2.2+1','version'=>$ver];
 });
 echo json_encode(['ok'=>$ok,'report'=>$report], JSON_PRETTY_PRINT)."\n";
 exit($ok?0:1);
