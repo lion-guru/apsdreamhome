@@ -37,7 +37,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         <div class="row">
                             <div class="col-md-4">
                                 <p class="text-muted mb-1">Amount</p>
-                                <h5 class="text-primary">₹<?php echo number_format(floatval(payment['amount'] ?? 0) ?? 0); ?></h5>
+                                <h5 class="text-primary">₹<?php echo number_format(floatval($payment['amount'] ?? 0) ?? 0); ?></h5>
                             </div>
                             <div class="col-md-4">
                                 <p class="text-muted mb-1">Payment Method</p>

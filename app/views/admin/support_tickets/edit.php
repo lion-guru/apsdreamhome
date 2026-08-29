@@ -37,7 +37,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                 <option value="">Unassigned</option>
                                 <?php foreach ($users as $agent): ?>
                                     <option value="<?php echo e($agent['id']); ?>" <?php echo ($ticket['assigned_agent_id'] ?? '') == $agent['id'] ? 'selected' : ''; ?>>
-                                        <?php echo htmlspecialchars(agent['name'] ?? ''); ?>
+                                        <?php echo htmlspecialchars($agent['name'] ?? ''); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>

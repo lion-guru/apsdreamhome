@@ -30,7 +30,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                             <tr>
                                                 <td><?php echo date('M d', strtotime($trend['date'])); ?></td>
                                                 <td><?php echo e($trend['count']); ?></td>
-                                                <td>₹<?php echo number_format(floatval(trend['total'] ?? 0)); ?></td>
+                                                <td>₹<?php echo number_format(floatval($trend['total'] ?? 0)); ?></td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>
@@ -59,7 +59,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                             <tr>
                                                 <td><?php echo ucfirst($method['payment_method']); ?></td>
                                                 <td><?php echo e($method['count']); ?></td>
-                                                <td>₹<?php echo number_format(floatval(method['total'] ?? 0)); ?></td>
+                                                <td>₹<?php echo number_format(floatval($method['total'] ?? 0)); ?></td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>
@@ -84,8 +84,8 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             <div class="list-group list-group-flush">
                                 <?php foreach (array_slice($analytics_data['top_customers'], 0, 5) as $customer): ?>
                                     <div class="list-group-item d-flex justify-content-between">
-                                        <span><?php echo htmlspecialchars(customer['name'] ?? ''); ?></span>
-                                        <span class="fw-bold">₹<?php echo number_format(floatval(customer['total_paid'] ?? 0)); ?></span>
+                                        <span><?php echo htmlspecialchars($customer['name'] ?? ''); ?></span>
+                                        <span class="fw-bold">₹<?php echo number_format(floatval($customer['total_paid'] ?? 0)); ?></span>
                                     </div>
                                 <?php endforeach; ?>
                             </div>

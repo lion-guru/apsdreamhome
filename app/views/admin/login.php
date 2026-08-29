@@ -1,7 +1,5 @@
 <?php
-
-// TODO: Add proper error handling with try-catch blocks
-
+// Admin login view - error handling via $error/$success vars from controller
 ?>
 <style>
         body {

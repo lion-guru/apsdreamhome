@@ -94,7 +94,7 @@ ob_start();
                                         echo '<div class="mt-1 p-1 bg-' . $statusColor . ' bg-opacity-10 rounded small">';
                                         echo '<div class="text-truncate fw-bold">' . htmlspecialchars($visit['lead_name'] ?? $visit['customer_name'] ?? '') . '</div>';
                                         echo '<div class="text-truncate text-muted">' . date('h:i A', strtotime($visit['visit_time'])) . '</div>';
-                                        echo '<div class="text-truncate text-muted">' . htmlspecialchars(visit['property_title'] ?? '') . '</div>';
+                                        echo '<div class="text-truncate text-muted">' . htmlspecialchars($visit['property_title'] ?? '') . '</div>';
                                         echo '</div>';
                                     }
                                     
