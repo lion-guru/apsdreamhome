@@ -1,4 +1,29 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-29 — Session 85: Salary/Grant Cron Integration)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-29 — Session 86: AI Calling Campaign Table + E2E Stability)
+
+## Session 86: AI Calling Campaign Table + E2E Stability (2026-08-29)
+
+### Goal
+Resolve TODO in `AICallingController` — missing `ai_calling_campaigns` table with proper FKs to `ai_calling_schedule` and `ai_call_sessions`.
+
+### What Was Done
+| File | Changes |
+|------|---------|
+| **DB Migration (PHP)** | Created `ai_calling_campaigns` table with full campaign config (schedule, recurrence, limits, working hours, stats) |
+| **Schema Update** | Added `campaign_id` BIGINT UNSIGNED NULL to `ai_calling_schedule` + `ai_call_sessions` |
+| **FK Constraints** | Added `fk_ai_calling_schedule_campaign` + `fk_ai_call_sessions_campaign` (ON DELETE SET NULL) |
+
+### Result
+- `AICallingController::campaign()` no longer needs fallback to `campaigns` table
+- Campaigns now link directly to schedules + sessions for full traceability
+- Dashboard stats (total_scheduled, completed, calls_made, interested) can now be computed per-campaign
+
+### Verification
+- E2E: **153/153 PASS**
+- AI smoke: **7/7 PASS**
+- Workflow: **15/15 PASS**
+- Health: **ok:true** (628 tables, APK 92.9 MB)
+
+---
 
 ## Session 85: Salary/Grant Cron Integration — Monthly Payout Automation (2026-08-29)
 
