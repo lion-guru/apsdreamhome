@@ -1,4 +1,54 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-29 — Session 82: JS Ajax/CSRF + Autofetch Polling Audit)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-29 — Session 83: MLM Commission Payment Flow Deep Audit)
+
+## Session 83: MLM Commission Payment Flow Deep Audit + Razorpay Fix (2026-08-29)
+
+### Goal
+Deep audit the MLM commission + payment flow end-to-end (payment → commission → wallet → payout). Find and fix any remaining bugs. Verify E2E stays green.
+
+### Critical Bug Found & Fixed
+- **`commission_rules` table MISSING** (1146 error) — `RazorpayService::distributeCommissions()` queried this dropped table; try/catch silently swallowed the error → **online Razorpay payments produced ZERO commissions** (no commission rows, no wallet credits)
+- **Fix**: Replaced `SELECT * FROM commission_rules` with `SELECT rank_name, direct_sale_pct, l1_pct, l2_pct, l3_pct FROM mlm_rank_benefits` + lookup `users.mlm_rank` for rate mapping. Removed dead `getRuleForLevel()` method.
+- **Commit**: `fd2733f97`
+
+### Audit Findings
+| Area | Status | Details |
+|------|--------|---------|
+| **Payment → Commission** | ✅ FIXED | `BookingLifecycleService::recordPayment()` → `calculateCommission()` → `MLMCommissionEngine::calculateBookingCommission()` (line 664) |
+| **MLMCommissionEngine** | ✅ Scoped | `getTenantId()` used throughout; `tenant_id` in all INSERTs; `AND tenant_id = ?` in WHERE clauses |
+| **createPayoutBatch()** | ✅ Scoped | `mlm_payout_batches` + `mlm_payouts` with `tenant_id` |
+| **markPayoutPaid()** | ✅ Scoped | `WHERE id = ? AND status IN ('pending','processing') AND tenant_id = ?` |
+| **Plan snapshot** | ✅ Working | `plan_id`, `plan_version`, `plan_snapshot` captured at calc time |
+| **Idempotency** | ✅ Working | Skips if commissions already exist for booking |
+| **Qualification gate** | ✅ Working | Checks monthly qualifying volume before earning |
+| **Clawback** | ✅ Working | Cancellation reverses commissions in `mlm_commission_ledger` + wallet |
+| **Dual MLM tree** | ✅ Scoped | `mlm_network_tree` used by all 6 commission engines |
+| **`commissions` table** | ⚠ Legacy | 9 stale rows (2026-02–04), `tenant_id=1` — still read by dashboards (`AgentDashboardController`, `TeamManagementController`, `SmartAIController`, `MLMTreeController`) |
+| **`mlm_commission_ledger`** | ✅ Active | 331+ rows, properly tenant-scoped, the canonical ledger |
+| **`commission_rules`** | ❌ Dropped | Replaced by `mlm_rank_benefits` (7 ranks) |
+| **TODO/FIXME/HACK** | ✅ Clean | Zero found in any MLM/payment/finance files |
+
+### Architecture — 7-Layer Tenant Enforcement (Complete)
+1. **Global** — `BaseController::enforceTenantStatus()` blocks suspended tenants
+2. **Controller** — `TenantAwareTrait` (tenant_id in raw SQL)
+3. **Service** — `ServiceTenantTrait` (tenant_id in SQL writes)
+4. **Model** — `Model::$tenantScoped = true` on 39 business models
+5. **Cache** — `CacheService::tenantKey()` prefixes all cache keys with `t{N}_`
+6. **Cron** — `TenantContext::setById()` + `$tenantSql` helpers in all cron scripts
+7. **Auth** — Every auth flow applies `tenant_id` to user queries
+
+### Key Lessons
+_191. **Missing table + silent try/catch = zero-commission bug** — `commission_rules` dropped but `distributeCommissions()` caught the 1146 error and returned empty → online Razorpay payments silently produced no commissions. Always verify referenced tables exist._
+_192. **Dual commission tables need unified reconciliation** — `commissions` (legacy, read by dashboards) and `mlm_commission_ledger` (new canonical) both exist. The legacy table should eventually be phased out after dashboards migrate._
+_193. **`users.mlm_rank` not `rank`** — The rank column is `mlm_rank` (varchar), values like `Ass.`, `Sr. Ass.`, `BDM`, etc. — NOT `rank`._
+_194. **`mlm_rank_benefits` is the single source of truth** — Has `direct_sale_pct`, `l1_pct`, `l2_pct`, `l3_pct` per rank. Replaced `commission_rules` which had flat `level` + `percentage`._
+
+### Verification Results (Session 83)
+- E2E: **153/153 PASS** — zero regressions
+- AI smoke: **7/7 PASS**
+- Workflow: **15/15 PASS**
+- Health: **ok:true** (628 tables, APK 92.9 MB)
+
+---
 
 ## Session 82: JS Ajax/CSRF + Autofetch Polling Audit (2026-08-29)
 
