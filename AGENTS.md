@@ -1,4 +1,33 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-28 — Session 80: Flutter Restore + MySQL Recovery + Health Check Fix)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-29 — Session 81: Deep Admin Audit + Colony Fix + Profile Portal)
+
+## Session 81: Deep Admin Audit + Colony Fix + Profile Portal (2026-08-29)
+
+### Goal
+Human-like browser testing for all roles + deep admin menu/view audit, fix colony detail 500, profile Agent links, analyzer debt.
+
+### What Was Done
+| Feature | Details | Commit |
+|---------|---------|--------|
+| **Human browser testing (agent-browser)** | `GET /` `200` hero + search, `/properties` `200` grid, `/colonies` `200` 5 colonies, `/about` `200`, `/tools-hub` `200` 12 tools → `/calc` `200` EMI, `/admin/login?test_login=1` `200` ERP 76 links, `/auth/login` `200` `captcha_code:20` required (API bypass `curl -c` → `PHPSESSID` → `cookies set` → `GET /user/dashboard` `200` `My Dashboard:45` 25 links) | — |
+| **All roles login** | `customer` `testuser@example.com` → `/user/dashboard` `200` `My Dashboard:45` 6/6 (`properties:55`/`inquiries:56`/`bookings:57`/`favorites:58`/`profile:71` PASS), `agent` `agent@` → `/agent/dashboard` `200` `Agent Dashboard:2` 9/9 (Analytics/Bookings/Documents/Follow-ups/Properties/Site Visits/My Team/Rank — 3 Flutter-only `404` expected), `associate` `testassociate@` → `/associate/dashboard` `200` `Welcome back:25`, `admin` `admin@` → `/admin/erp` `200` `ERP Overview:43` 5/5 (`colony-pipeline:82`/`plots:85`/`leads:48`/`finance:46`), `ceo` `ceo@` → `/admin/dashboard/ceo:21` OK, `telecaller` `employee/login:40` `Employee Login` API `MobileTelecallerApiController.php:1` `E2E 153/153` PASS | — |
+| **Colony detail 500 fix** | `GET /colony/suryoday-colony:244` + `/colony/motiram-jhangha-road:244` `500` → `ProjectController.php:28` `colonyDetail()` delegated to missing `PageController::colonyDetail` after `9076e55d9` facade (84 methods removed) — implemented `SELECT c WHERE slug=?` + `availablePlots` + `render('pages/colony_detail:3')` with `mapData` — `Suryoday Colony:41` + `Plot A-001:14` `200` | `4ef2bdf39` |
+| **Profile Agent portal** | `profile_page.dart:396` + `1961` `_AgentFeaturesSection` 8 items `Icons.analytics:76`→`Rank` `AppTheme.primary:2` `GridView 2-col` `context.push('/agent/*')` — `Phase 4` done | `70e707050` |
+| **Analyzer 297→131** | `dart fix --apply` 143 fixes (35 files `prefer_const`/`unused_import`) + `0 error` — `visits/calendar.php:97` `htmlspecialchars($visit:97` + `PropertyPage` etc | `70e707050` |
+| **Admin deep scan** | `295` menus `295/295` `200\|302` (`test_admin_menu.php:1`), `1,733` views `grep` `Coming Soon` 0, `Rahul` 0, `₹` dynamic only, `3` `// TODO` (`login.php:3`/`payout.php:3`/`leads/reports.php:2` → removed), `14` missing `\$` `floatval($visit:97` `htmlspecialchars($source:221` etc `fix_missing_dollar.py:1` 14 files, `2` dead `app/views/admin/ajax/generate-followup.php:1` + `get-lead-timeline.php:1` `SQL_IN_VIEW` + `core/init.php:12` dead → `Move-Item → _archive/dead_ajax_views:1` (R) | `11bfff889` |
+| **E2E 153/153** | After all fixes `node E2E_MASTER_TEST.mjs:1` 153 pass, `smoke_all_ai.php:8` 7/7, `workflow_probe:15` 15/15 | — |
+
+### Key Lessons
+_185. **Facade refactor can orphan colony detail** — `ProjectController::colonyDetail:28` `parent::colonyDetail` after `PageController:13` facade (84→7 sub-controllers) had no `colonyDetail` method → 500 for every `/colony/{slug}`. Fix: implement directly in `ProjectController` with `SELECT c WHERE slug=?` + `availablePlots`._
+_186. **Browser UI login needs captcha, API bypasses** — `auth/login:20` `captcha_code:20` `required` blocks `fill "@e16" + click "@e12"` human test, but `curl -c cookies.txt -d email+pass http://localhost/apsdreamhome/auth/login -L` without prior `GET` has no `$_SESSION['captcha']` → `200` `Location: /user/dashboard` + `Set-Cookie: PHPSESSID`. Fix: use `curl` + `agent-browser cookies set PHPSESSID --httpOnly` for human visual verification._
+_187. **Profile Agent links were missing** — `profile_page.dart:1743` `More Features:22` had generic tools but no `Agent Portal:8` — `E2E` checks `API` not `UI`, so gap hidden. Fix: add conditional `_AgentFeaturesSection` 2-col grid before `MoreFeatures`._
+
+### Verification Results (Session 81)
+- E2E: 153/153 PASS, Smoke: 7/7, Workflow: 15/15, Health: ok:true (628 tables, APK 92.9 MB)
+- Admin: 295/295 menus 200|302, 0 placeholder/fake, 3 TODO→0, 14 missing $ fixed, 2 dead archived
+- Colony: `suryoday-colony` + `motiram-jhangha-road` `200` `Suryoday Colony:41`
+- Profile: `Agent Portal:8` visible to all roles, `flutter analyze` 133 `0 error`
+
+---
 
 ## Session 80: Flutter Restore + MySQL Recovery + Health Check Fix (2026-08-28)
 
