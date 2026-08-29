@@ -65,7 +65,7 @@ class CEODashboardController extends AdminController
                     COALESCE(SUM(amount), 0) as total_commissions,
                     COUNT(*) as total_commission_transactions,
                     COALESCE(AVG(amount), 0) as avg_commission
-                FROM commissions
+                FROM mlm_commission_ledger
                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)"
             );
 

@@ -41,8 +41,8 @@ class AgentDashboardController extends AdminController
                 COALESCE(SUM(CASE WHEN status = 'paid' THEN amount END), 0) as total_commissions,
                 COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending_sales,
                 COALESCE(SUM(CASE WHEN status = 'pending' THEN amount END), 0) as pending_commissions
-            FROM commissions 
-            WHERE user_id = ? 
+            FROM mlm_commission_ledger 
+            WHERE beneficiary_user_id = ? 
             AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)",
             [$user_id]
         ) ?: ['total_sales' => 0, 'total_commissions' => 0, 'pending_sales' => 0, 'pending_commissions' => 0];
@@ -74,8 +74,8 @@ class AgentDashboardController extends AdminController
                 DATE(created_at) as date,
                 COUNT(*) as sales_count,
                 COALESCE(SUM(amount), 0) as daily_commission
-            FROM commissions 
-            WHERE user_id = ? 
+            FROM mlm_commission_ledger 
+            WHERE beneficiary_user_id = ? 
             AND created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
             GROUP BY DATE(created_at)
             ORDER BY date DESC",
@@ -118,8 +118,8 @@ class AgentDashboardController extends AdminController
                     DATE(created_at) as date,
                     COUNT(*) as sales_count,
                     COALESCE(SUM(amount), 0) as daily_commission
-                FROM commissions 
-                WHERE user_id = ? 
+                FROM mlm_commission_ledger 
+                WHERE beneficiary_user_id = ? 
                 AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
                 GROUP BY DATE(created_at)
                 ORDER BY date DESC",

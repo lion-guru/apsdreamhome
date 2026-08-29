@@ -61,7 +61,7 @@ class EngagementController extends AdminController
                         COALESCE(SUM(amount), 0) as total_commission_amount,
                         COUNT(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as commissions_this_month,
                         COALESCE(SUM(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN amount END), 0) as commission_amount_this_month
-                    FROM commissions";
+                    FROM mlm_commission_ledger";
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
             $commissionMetrics = $stmt->fetch(\PDO::FETCH_ASSOC);

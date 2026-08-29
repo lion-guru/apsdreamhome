@@ -53,7 +53,7 @@ class CFODashboardController extends AdminController
                     COALESCE(SUM(CASE WHEN status = 'paid' THEN amount END), 0) as total_commissions,
                     COUNT(*) as total_commission_transactions,
                     COALESCE(AVG(amount), 0) as avg_commission
-                FROM commissions
+                FROM mlm_commission_ledger
                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)"
             );
 
@@ -75,7 +75,7 @@ class CFODashboardController extends AdminController
             try {
                 $comm_sum = $this->db->fetchOne(
                     "SELECT COALESCE(SUM(CASE WHEN status = 'paid' THEN amount END), 0) as total
-                     FROM commissions WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)"
+                     FROM mlm_commission_ledger WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)"
                 );
             } catch (\Exception $e) { $comm_sum = ['total' => 0]; }
 

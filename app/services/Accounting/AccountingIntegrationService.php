@@ -250,7 +250,7 @@ class AccountingIntegrationService
 
         $payments = $this->db->fetchAll("SELECT * FROM payments WHERE booking_id = ? ORDER BY created_at", [$bookingId]);
         $totalPaid = array_sum(array_column($payments, 'amount'));
-        $commissions = $this->db->fetchAll("SELECT * FROM commissions WHERE property_id = ? OR description LIKE ?", [$booking['property_id'] ?? 0, "%Booking #{$bookingId}%"]);
+        $commissions = $this->db->fetchAll("SELECT * FROM mlm_commission_ledger WHERE property_id = ? OR booking_id = ?", [$booking['property_id'] ?? 0, $bookingId]);
 
         return [
             'booking' => $booking,

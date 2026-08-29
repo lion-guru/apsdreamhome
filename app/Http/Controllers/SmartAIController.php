@@ -420,14 +420,14 @@ class SmartAIController extends BaseController
 
             // Get commission stats
             $commissionStats = $this->db->fetch(
-                "SELECT SUM(amount) as total FROM commissions WHERE associate_id = ? AND status = 'paid'",
+                "SELECT SUM(amount) as total FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND status = 'paid'",
                 [$associateId]
             );
             $data['total_commission'] = $commissionStats['total'] ?? 0;
 
             // Get pending commission
             $pendingStats = $this->db->fetch(
-                "SELECT SUM(amount) as total FROM commissions WHERE associate_id = ? AND status = 'pending'",
+                "SELECT SUM(amount) as total FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND status = 'pending'",
                 [$associateId]
             );
             $data['pending_commission'] = $pendingStats['total'] ?? 0;

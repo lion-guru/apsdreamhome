@@ -557,7 +557,7 @@ class GeminiApiController extends BaseController
 
                     // Get commission
                     $commission = $db->fetch(
-                        "SELECT SUM(amount) as total FROM commissions WHERE user_id = ?",
+                        "SELECT SUM(amount) as total FROM mlm_commission_ledger WHERE beneficiary_user_id = ?",
                         [$context['user_id']]
                     );
                     $context['total_commission'] = $commission['total'] ?? 0;

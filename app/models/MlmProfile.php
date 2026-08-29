@@ -34,7 +34,7 @@ class MlmProfile
             if (!$tree) return false;
             $total = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM network_tree WHERE root_id = (SELECT root_id FROM network_tree WHERE associate_id = ?)", [$userId]);
             $direct = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM network_tree WHERE parent_id = ?", [$userId]);
-            $sales = (float)$this->db->fetchColumn("SELECT COALESCE(SUM(amount), 0) FROM commissions WHERE (user_id = ? OR associate_id = ?) AND status = 'paid'", [$userId, $userId]);
+            $sales = (float)$this->db->fetchColumn("SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND status = 'paid'", [$userId]);
             return $this->update($userId, ["total_team_size" => $total, "direct_referrals" => $direct, "lifetime_sales" => $sales]);
         } catch (Exception $e) { error_log("MlmProfile updateTeamStats: " . $e->getMessage()); return false; }
     }

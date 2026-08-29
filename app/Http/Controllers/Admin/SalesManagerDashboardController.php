@@ -53,7 +53,7 @@ class SalesManagerDashboardController extends AdminController
             $stats['conversion_rate'] = $totalLeads > 0 ? round(($won / $totalLeads) * 100, 1) : 0;
             $stats['avg_deal_size'] = $stats['bookings_month'] > 0 ? $stats['revenue_month'] / $stats['bookings_month'] : 0;
             $stats['active_agents'] = (int)$this->fetchScalar("SELECT COUNT(DISTINCT user_id) FROM leads WHERE user_id IS NOT NULL AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
-            $stats['commissions_month'] = (float)$this->fetchScalar("SELECT COALESCE(SUM(amount), 0) FROM commissions WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) AND status = 'paid'");
+            $stats['commissions_month'] = (float)$this->fetchScalar("SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) AND status = 'paid'");
         } catch (\Throwable $e) {
         // Tables may be missing
         error_log($e->getMessage());

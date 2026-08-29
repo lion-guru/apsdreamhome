@@ -102,8 +102,8 @@ class TeamManagementController extends BaseController
             // Get team performance metrics
             // fetchOne() method exists in Database class at line 102-105
             $totalCommission = $this->db->fetchOne(
-                "SELECT COALESCE(SUM(c.amount), 0) as total FROM commissions c 
-                 JOIN mlm_profiles m ON c.user_id = m.user_id 
+                "SELECT COALESCE(SUM(c.amount), 0) as total FROM mlm_commission_ledger c 
+                 JOIN mlm_profiles m ON c.beneficiary_user_id = m.user_id 
                  WHERE m.sponsor_user_id = ? OR m.user_id = ?",
                 [$userId, $userId]
             );
@@ -180,7 +180,7 @@ class TeamManagementController extends BaseController
                     u.name,
                     u.email,
                     m.current_level as level,
-                    (SELECT COALESCE(SUM(c.amount), 0) FROM commissions c WHERE c.user_id = u.id) as commission,
+                    (SELECT COALESCE(SUM(c.amount), 0) FROM mlm_commission_ledger c WHERE c.beneficiary_user_id = u.id) as commission,
                     (SELECT COUNT(*) FROM mlm_profiles WHERE sponsor_user_id = u.id) as team_size
                  FROM users u 
                  JOIN mlm_profiles m ON u.id = m.user_id 

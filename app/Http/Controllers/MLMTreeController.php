@@ -288,8 +288,8 @@ class MLMTreeController extends \App\Http\Controllers\Admin\AdminController
 
             // Get recent commissions
             $commissions = $this->db->fetchAll(
-                "SELECT * FROM commissions 
-                 WHERE associate_id = ? 
+                "SELECT * FROM mlm_commission_ledger 
+                 WHERE beneficiary_user_id = ? 
                  ORDER BY created_at DESC LIMIT 5",
                 [$memberId]
             );

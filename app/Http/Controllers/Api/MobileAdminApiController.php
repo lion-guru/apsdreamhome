@@ -443,7 +443,7 @@ class MobileAdminApiController extends BaseController
 
     private function getCommissionsData($userId)
     {
-        $stmt = $this->db->prepare("SELECT c.id, c.amount, c.status, c.created_at, u.name as customer_name FROM commissions c LEFT JOIN users u ON c.source_user_id = u.id WHERE c.user_id = ? ORDER BY c.created_at DESC LIMIT 50");
+        $stmt = $this->db->prepare("SELECT c.id, c.amount, c.status, c.created_at, u.name as customer_name FROM mlm_commission_ledger c LEFT JOIN users u ON c.source_user_id = u.id WHERE c.beneficiary_user_id = ? ORDER BY c.created_at DESC LIMIT 50");
         $stmt->execute([$userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -451,11 +451,11 @@ class MobileAdminApiController extends BaseController
     private function processCommissionAction($commissionId, $action)
     {
         if ($action === 'release') {
-            $stmt = $this->db->prepare("UPDATE commissions SET status = 'released' WHERE id = ?");
+            $stmt = $this->db->prepare("UPDATE mlm_commission_ledger SET status = 'released' WHERE id = ?");
             $stmt->execute([$commissionId]);
             return true;
         } elseif ($action === 'hold') {
-            $stmt = $this->db->prepare("UPDATE commissions SET status = 'on_hold' WHERE id = ?");
+            $stmt = $this->db->prepare("UPDATE mlm_commission_ledger SET status = 'on_hold' WHERE id = ?");
             $stmt->execute([$commissionId]);
             return true;
         }

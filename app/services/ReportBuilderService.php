@@ -223,10 +223,10 @@ class ReportBuilderService
             SUM(c.amount) as total_amount,
             COALESCE(SUM(CASE WHEN c.status = 'paid' THEN c.amount ELSE 0 END), 0) as paid_amount,
             COALESCE(SUM(CASE WHEN c.status != 'paid' THEN c.amount ELSE 0 END), 0) as pending_amount
-            FROM commissions c
-            JOIN users a ON c.associate_id = a.id
+            FROM mlm_commission_ledger c
+            JOIN users a ON c.beneficiary_user_id = a.id
             WHERE {$where}
-            GROUP BY c.associate_id
+            GROUP BY c.beneficiary_user_id
             ORDER BY total_amount DESC";
         
         $stmt = $this->database->prepare($sql);
@@ -238,7 +238,7 @@ class ReportBuilderService
             DATE_FORMAT(created_at, '%Y-%m') as month,
             COUNT(*) as count,
             SUM(amount) as total
-            FROM commissions 
+            FROM mlm_commission_ledger 
             WHERE DATE(created_at) BETWEEN ? AND ?" . $this->tenantSql() . "
             GROUP BY DATE_FORMAT(created_at, '%Y-%m')
             ORDER BY month";
