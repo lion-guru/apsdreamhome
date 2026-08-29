@@ -335,7 +335,7 @@ class AgentSiteVisitsPage extends ConsumerWidget {
             const SizedBox(height: 12),
             Row(
               children: [
-                Icon(Icons.calendar_today_rounded,
+                const Icon(Icons.calendar_today_rounded,
                     size: 16, color: AppTheme.primaryColor),
                 const SizedBox(width: 8),
                 Text(

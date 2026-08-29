@@ -3,11 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_theme.dart';
-import '../../../core/services/api_service.dart';
 import '../../../core/utils/logger.dart';
 import '../../../data/services/crm_service.dart';
-import '../../../data/models/user_model.dart';
-import '../../../data/repositories/auth_repository.dart';
 import '../../widgets/app_widgets.dart';
 
 class LeadCreatePage extends ConsumerStatefulWidget {

@@ -138,7 +138,7 @@ class AgentRankProgressPage extends ConsumerWidget {
     final nextGbv = _toDouble(progress['next_rank_gbv']);
 
     // Find the next target from the static ladder
-    double target = _nextTargetFor(currentGbv);
+    final double target = _nextTargetFor(currentGbv);
     final pct = target > 0 ? (currentGbv / target).clamp(0.0, 1.0) : 0.0;
 
     final remaining = (target - currentGbv).clamp(0.0, double.infinity);
@@ -159,12 +159,12 @@ class AgentRankProgressPage extends ConsumerWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Current Rank',
+                        const Text('Current Rank',
                             style: TextStyle(
                                 color: Colors.white70, fontSize: 13)),
                         const SizedBox(height: 4),
                         Text(currentRank,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w800,
                                 fontSize: 22)),
@@ -174,7 +174,7 @@ class AgentRankProgressPage extends ConsumerWidget {
                       width: 64,
                       height: 64,
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(colors: [
+                        gradient: const LinearGradient(colors: [
                           AppTheme.accentColor,
                           Color(0xFFFFB300)
                         ]),
@@ -184,11 +184,11 @@ class AgentRankProgressPage extends ConsumerWidget {
                             color:
                                 AppTheme.accentColor.withValues(alpha: 0.3),
                             blurRadius: 16,
-                            offset: Offset(0, 6),
+                            offset: const Offset(0, 6),
                           ),
                         ],
                       ),
-                      child: Icon(Icons.military_tech_rounded,
+                      child: const Icon(Icons.military_tech_rounded,
                           color: Colors.white, size: 34),
                     ),
                   ],
@@ -209,7 +209,7 @@ class AgentRankProgressPage extends ConsumerWidget {
                       child: Container(
                         height: 14,
                         decoration: BoxDecoration(
-                          gradient: LinearGradient(colors: [
+                          gradient: const LinearGradient(colors: [
                             AppTheme.successColor,
                             AppTheme.accentColor
                           ]),
@@ -224,10 +224,10 @@ class AgentRankProgressPage extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('\u20B9${_formatCurrency(currentGbv)} earned',
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: Colors.white70, fontSize: 12)),
                     Text('\u20B9${_formatCurrency(target)} target',
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: Colors.white70, fontSize: 12)),
                   ],
                 ),
@@ -235,7 +235,7 @@ class AgentRankProgressPage extends ConsumerWidget {
                   const SizedBox(height: 16),
                   Container(
                     width: double.infinity,
-                    padding: EdgeInsets.symmetric(vertical: 12),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                     decoration: BoxDecoration(
                       color: AppTheme.primaryColor.withValues(alpha: 0.25),
                       borderRadius: BorderRadius.circular(10),
@@ -247,11 +247,11 @@ class AgentRankProgressPage extends ConsumerWidget {
                         TextSpan(children: [
                           TextSpan(
                               text: '\u20B9${_formatCurrency(remaining)}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: AppTheme.successColor,
                                   fontWeight: FontWeight.w800,
                                   fontSize: 15)),
-                          TextSpan(
+                          const TextSpan(
                               text:
                                   ' more GBV to reach the next rank',
                               style: TextStyle(
@@ -272,32 +272,32 @@ class AgentRankProgressPage extends ConsumerWidget {
                   height: 44,
                   child: OutlinedButton.icon(
                     onPressed: () => context.push('/associate/team'),
-                    icon: Icon(Icons.groups_rounded, size: 18),
-                    label: Text('View Team'),
+                    icon: const Icon(Icons.groups_rounded, size: 18),
+                    label: const Text('View Team'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.white,
-                      side: BorderSide(color: Colors.white38),
+                      side: const BorderSide(color: Colors.white38),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12)),
                     ),
                   ),
                 ),
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Expanded(
                 child: SizedBox(
                   height: 44,
                   child: DecoratedBox(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
-                      gradient: LinearGradient(
+                      gradient: const LinearGradient(
                           colors: [AppTheme.primaryColor, AppTheme.secondaryColor]),
                     ),
                     child: ElevatedButton.icon(
                       onPressed: () => context.push('/referral'),
                       icon:
-                          Icon(Icons.share_rounded, size: 18, color: Colors.white),
-                      label: Text('Grow Network',
+                          const Icon(Icons.share_rounded, size: 18, color: Colors.white),
+                      label: const Text('Grow Network',
                           style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w600)),
@@ -330,7 +330,7 @@ class AgentRankProgressPage extends ConsumerWidget {
     ];
 
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: List.generate(ranks.length, (i) {
           final r = ranks[i];
@@ -340,7 +340,7 @@ class AgentRankProgressPage extends ConsumerWidget {
           return Column(
             children: [
               Container(
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
@@ -349,7 +349,7 @@ class AgentRankProgressPage extends ConsumerWidget {
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.04),
                       blurRadius: 8,
-                      offset: Offset(0, 2),
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
@@ -365,16 +365,16 @@ class AgentRankProgressPage extends ConsumerWidget {
                       child: Icon(Icons.workspace_premium_rounded,
                           color: color, size: 22),
                     ),
-                    SizedBox(width: 14),
+                    const SizedBox(width: 14),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(r['name'] as String,
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontWeight: FontWeight.w700,
                                   fontSize: 14)),
-                          SizedBox(height: 2),
+                          const SizedBox(height: 2),
                           Text(
                             '\u20B9${_formatCurrency((r['target'] as num).toDouble())}+ GBV',
                             style: TextStyle(
@@ -385,7 +385,7 @@ class AgentRankProgressPage extends ConsumerWidget {
                     ),
                     Container(
                       padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
                         color: color.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(8),

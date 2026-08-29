@@ -1153,7 +1153,7 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
                   );
                 },
                 icon: const Icon(Icons.photo_library_outlined, size: 18),
-                label: Text(
+                label: const Text(
                   'View Full Gallery',
                   style: TextStyle(
                     color: AppTheme.primaryColor,

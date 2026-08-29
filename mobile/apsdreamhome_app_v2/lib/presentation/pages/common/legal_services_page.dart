@@ -231,16 +231,16 @@ class LegalServicesPage extends StatelessWidget {
         maxChildSize: 0.9,
         minChildSize: 0.4,
         builder: (context, scrollController) => Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                const Color(0xFF0F172A),
-                const Color(0xFF1E293B),
+                Color(0xFF0F172A),
+                Color(0xFF1E293B),
               ],
             ),
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           ),
           child: SingleChildScrollView(
             controller: scrollController,
@@ -304,7 +304,7 @@ class LegalServicesPage extends StatelessWidget {
                         label: const Text('Close'),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: Colors.white70,
-                          side: BorderSide(color: Colors.white24),
+                          side: const BorderSide(color: Colors.white24),
                           padding: const EdgeInsets.symmetric(vertical: 14),
                         ),
                       ),

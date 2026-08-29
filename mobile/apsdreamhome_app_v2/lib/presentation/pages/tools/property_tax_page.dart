@@ -371,7 +371,7 @@ class _PropertyTaxPageState extends State<PropertyTaxPage> {
           ),
           const SizedBox(height: 10),
           DropdownButtonFormField<String>(
-            value: _selectedState,
+            initialValue: _selectedState,
             isExpanded: true,
             decoration: const InputDecoration(
               border: OutlineInputBorder(),

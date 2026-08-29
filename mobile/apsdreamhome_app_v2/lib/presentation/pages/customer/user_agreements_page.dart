@@ -66,13 +66,13 @@ class _UserAgreementsPageState extends ConsumerState<UserAgreementsPage> {
               SliverPadding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
                 sliver: _isLoading
-                    ? SliverFillRemaining(
+                    ? const SliverFillRemaining(
                         child: Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               CircularProgressIndicator(color: AppTheme.accentColor),
-                              const SizedBox(height: 16),
+                              SizedBox(height: 16),
                               Text(
                                 'Loading your agreements...',
                                 style: TextStyle(color: Colors.white70),
@@ -347,11 +347,11 @@ class _UserAgreementsPageState extends ConsumerState<UserAgreementsPage> {
             const SizedBox(height: 12),
             Row(
               children: [
-                Icon(Icons.currency_rupee_rounded, color: AppTheme.accentColor, size: 16),
+                const Icon(Icons.currency_rupee_rounded, color: AppTheme.accentColor, size: 16),
                 const SizedBox(width: 4),
                 Text(
                   'Value: ₹${_formatCurrency(totalValue)}',
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: AppTheme.accentColor,
                     fontWeight: FontWeight.w600,
                     fontSize: 13,
@@ -364,7 +364,7 @@ class _UserAgreementsPageState extends ConsumerState<UserAgreementsPage> {
             const SizedBox(height: 8),
             Row(
               children: [
-                Icon(Icons.calendar_today_rounded, color: Colors.white54, size: 14),
+                const Icon(Icons.calendar_today_rounded, color: Colors.white54, size: 14),
                 const SizedBox(width: 6),
                 Text(
                   'Created: $formattedDate',

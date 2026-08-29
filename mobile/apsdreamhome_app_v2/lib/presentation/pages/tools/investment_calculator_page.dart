@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-import '../../../core/constants/app_constants.dart';
 
 /// Investment Calculator Page
 /// Calculate property investment returns including EMI, ROI, break-even analysis

@@ -243,45 +243,45 @@ class _NeighborhoodPageState extends State<NeighborhoodPage> {
 
     _landmarksByType = {
       'school': [
-        _AmenityItem(
+        const _AmenityItem(
           name: 'DPS School',
           distance: '0.8 km',
           icon: Icons.school_rounded,
-          color: const Color(0xFF1565C0),
+          color: Color(0xFF1565C0),
           rating: 4.5,
         ),
-        _AmenityItem(
+        const _AmenityItem(
           name: 'Kendriya Vidyalaya',
           distance: '1.8 km',
           icon: Icons.school_rounded,
-          color: const Color(0xFF1565C0),
+          color: Color(0xFF1565C0),
           rating: 3.8,
         ),
       ],
       'hospital': [
-        _AmenityItem(
+        const _AmenityItem(
           name: 'District Hospital',
           distance: '1.5 km',
           icon: Icons.local_hospital_rounded,
-          color: const Color(0xFFE53935),
+          color: Color(0xFFE53935),
           rating: 4.2,
         ),
       ],
       'bank': [
-        _AmenityItem(
+        const _AmenityItem(
           name: 'State Bank of India',
           distance: '0.5 km',
           icon: Icons.account_balance_rounded,
-          color: const Color(0xFF1565C0),
+          color: Color(0xFF1565C0),
           rating: 4.2,
         ),
       ],
       'park': [
-        _AmenityItem(
+        const _AmenityItem(
           name: 'City Park',
           distance: '0.6 km',
           icon: Icons.park_rounded,
-          color: const Color(0xFF2E7D32),
+          color: Color(0xFF2E7D32),
           rating: 4.6,
         ),
       ],

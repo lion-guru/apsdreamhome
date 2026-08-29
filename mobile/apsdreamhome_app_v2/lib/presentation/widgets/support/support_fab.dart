@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -85,7 +84,7 @@ class _SupportFABState extends State<SupportFAB>
           borderRadius: BorderRadius.circular(32),
           boxShadow: [
             BoxShadow(
-              color: Color(0xFF25D366).withValues(alpha: _pulse ? 0.5 : 0.3),
+              color: const Color(0xFF25D366).withValues(alpha: _pulse ? 0.5 : 0.3),
               blurRadius: _pulse ? 20 : 12,
               spreadRadius: _pulse ? 2 : 0,
               offset: const Offset(0, 4),
@@ -138,7 +137,7 @@ class _SupportFABState extends State<SupportFAB>
       final offset = (i + 1) * 68.0;
       return AnimatedBuilder(
         animation: _animController,
-        builder: (_, __) {
+        builder: (_, _) {
           final delay = i * 0.1;
           final t =
               ((_animController.value - delay) / (1.0 - delay)).clamp(0.0, 1.0);

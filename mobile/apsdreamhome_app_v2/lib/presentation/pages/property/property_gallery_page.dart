@@ -384,7 +384,7 @@ class _PropertyGalleryPageState extends ConsumerState<PropertyGalleryPage>
               child: Center(
                 child: Text(
                   '${_filteredImages.length} photo${_filteredImages.length != 1 ? 's' : ''}',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     color: AppTheme.textSecondaryLight,
                   ),

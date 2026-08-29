@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -661,7 +659,7 @@ Widget _buildESignDocumentsLink() {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.primaryColor.withOpacity(0.4),
+                color: AppTheme.primaryColor.withValues(alpha: 0.4),
                 blurRadius: 20,
                 offset: const Offset(0, 4),
               ),

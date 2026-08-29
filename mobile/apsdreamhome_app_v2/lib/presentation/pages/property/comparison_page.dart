@@ -331,7 +331,7 @@ class _ComparisonPageState extends State<ComparisonPage> {
                   onTap: () => _service.remove(property.id),
                   child: Container(
                     padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Colors.black54,
                       shape: BoxShape.circle,
                     ),

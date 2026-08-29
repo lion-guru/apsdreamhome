@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../widgets/app_widgets.dart';
-import '../../widgets/glass_card.dart';
 
 /// Agent Analytics Page - Detailed analytics and performance metrics
 class AgentAnalyticsPage extends ConsumerWidget {
@@ -157,8 +155,8 @@ class AgentAnalyticsPage extends ConsumerWidget {
       final color = item.$4;
       return Expanded(
         child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 4),
-          padding: EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
@@ -174,10 +172,10 @@ class AgentAnalyticsPage extends ConsumerWidget {
           child: Column(
             children: [
               Icon(item.$3, color: color, size: 22),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(item.$2,
-                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
-              SizedBox(height: 2),
+                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
+              const SizedBox(height: 2),
               Text(item.$1,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 10, color: Colors.grey[600])),
@@ -188,7 +186,7 @@ class AgentAnalyticsPage extends ConsumerWidget {
     }
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(16, 20, 16, 8),
+      padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
       child: Row(children: items.map(card).toList()),
     );
   }
@@ -203,7 +201,7 @@ class AgentAnalyticsPage extends ConsumerWidget {
     ];
 
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: List.generate(stages.length, (index) {
           final stage = stages[index];
@@ -211,7 +209,7 @@ class AgentAnalyticsPage extends ConsumerWidget {
           return Column(
             children: [
               Container(
-                padding: EdgeInsets.all(14),
+                padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
@@ -219,7 +217,7 @@ class AgentAnalyticsPage extends ConsumerWidget {
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 8,
-                      offset: Offset(0, 2),
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
@@ -234,10 +232,10 @@ class AgentAnalyticsPage extends ConsumerWidget {
                       ),
                       child: Icon(stage.$3, color: stage.$4, size: 22),
                     ),
-                    SizedBox(width: 14),
+                    const SizedBox(width: 14),
                     Expanded(
                       child: Text(stage.$1,
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontWeight: FontWeight.w700, fontSize: 14)),
                     ),
                     Text('${stage.$2} leads',
@@ -270,12 +268,12 @@ class AgentAnalyticsPage extends ConsumerWidget {
     ];
 
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: sources.map((source) {
           return Container(
-            margin: EdgeInsets.only(bottom: 10),
-            padding: EdgeInsets.all(14),
+            margin: const EdgeInsets.only(bottom: 10),
+            padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
@@ -293,16 +291,16 @@ class AgentAnalyticsPage extends ConsumerWidget {
                   ),
                   child: Icon(source.$4, color: source.$5, size: 20),
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(source.$1,
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontWeight: FontWeight.w600, fontSize: 14)),
                 ),
                 Text('${source.$2} leads',
                     style:
                         TextStyle(color: Colors.grey[600], fontSize: 12)),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Text(source.$3,
                     style: TextStyle(
                         fontWeight: FontWeight.w800,
@@ -328,8 +326,8 @@ class AgentAnalyticsPage extends ConsumerWidget {
     const maxLeads = 70.0;
 
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16),
-      padding: EdgeInsets.all(20),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -337,16 +335,16 @@ class AgentAnalyticsPage extends ConsumerWidget {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 12,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('6-Month Trend',
+          const Text('6-Month Trend',
               style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           SizedBox(
             height: 180,
             child: Row(
@@ -370,13 +368,13 @@ class AgentAnalyticsPage extends ConsumerWidget {
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                           ),
-                          borderRadius: BorderRadius.only(
+                          borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(6),
                             topRight: Radius.circular(6),
                           ),
                         ),
                       ),
-                      SizedBox(height: 6),
+                      const SizedBox(height: 6),
                       Text(month.$1,
                           style: TextStyle(
                               color: Colors.grey[600],

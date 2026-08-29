@@ -94,7 +94,7 @@ class _VirtualTourPageState extends State<VirtualTourPage> {
     // Fallback tours
     setState(() {
       _tours = [
-        _TourItem(
+        const _TourItem(
           id: 1,
           title: 'Braj Radha Enclave Walkthrough',
           description:
@@ -106,7 +106,7 @@ class _VirtualTourPageState extends State<VirtualTourPage> {
           district: 'Gorakhpur',
           totalPlots: 40,
         ),
-        _TourItem(
+        const _TourItem(
           id: 2,
           title: 'Raghunath Nagri — Commercial Zone',
           description:
@@ -118,7 +118,7 @@ class _VirtualTourPageState extends State<VirtualTourPage> {
           district: 'Lucknow',
           totalPlots: 262,
         ),
-        _TourItem(
+        const _TourItem(
           id: 3,
           title: 'Plot Interior 3D Walkthrough',
           description:
@@ -130,7 +130,7 @@ class _VirtualTourPageState extends State<VirtualTourPage> {
           district: '',
           totalPlots: 0,
         ),
-        _TourItem(
+        const _TourItem(
           id: 4,
           title: 'Budh Bihar — Drone Overview',
           description:
@@ -142,7 +142,7 @@ class _VirtualTourPageState extends State<VirtualTourPage> {
           district: 'Gorakhpur',
           totalPlots: 12,
         ),
-        _TourItem(
+        const _TourItem(
           id: 5,
           title: 'Clubhouse & Amenities Tour',
           description:
@@ -154,7 +154,7 @@ class _VirtualTourPageState extends State<VirtualTourPage> {
           district: '',
           totalPlots: 0,
         ),
-        _TourItem(
+        const _TourItem(
           id: 6,
           title: 'Neighborhood 360° Street View',
           description:

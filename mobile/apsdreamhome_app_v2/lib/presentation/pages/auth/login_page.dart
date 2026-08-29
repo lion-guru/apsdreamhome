@@ -642,11 +642,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                 .read(authProvider.notifier)
                                 .verifyAirLoginOtp(otp);
                             if (!mounted) return;
-                            if (user != null) {
-                              final route = defaultRouteForRole(user);
-                              AuthBridge.instance.currentUser.value = user;
-                              context.go(route);
-                            }
+                            final route = defaultRouteForRole(user);
+                            AuthBridge.instance.currentUser.value = user;
+                            context.go(route);
                           }
                         } catch (e) {
                           if (!mounted) return;

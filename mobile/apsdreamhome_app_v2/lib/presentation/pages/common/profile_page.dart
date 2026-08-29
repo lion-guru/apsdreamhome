@@ -393,6 +393,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     onStartKyc: () => context.push('/kyc-verification'),
                   ),
                   const SizedBox(height: 20),
+                  _AgentFeaturesSection(context: context),
+                  const SizedBox(height: 20),
                   _MoreFeaturesSection(context: context),
                   const SizedBox(height: 20),
                   _QuickActionsSection(
@@ -1954,6 +1956,63 @@ class _ActionTile extends StatelessWidget {
         ),
         if (showDivider) Divider(height: 1, color: Colors.grey.shade100),
       ],
+    );
+  }
+}
+
+class _AgentFeaturesSection extends StatelessWidget {
+  final BuildContext context;
+  const _AgentFeaturesSection({required this.context});
+
+  @override
+  Widget build(BuildContext context) {
+    final items = [
+      _FeatureItem(Icons.analytics_outlined, 'Analytics', '/agent/analytics', AppTheme.primaryColor),
+      _FeatureItem(Icons.calendar_month_outlined, 'Bookings', '/agent/bookings', AppTheme.infoColor),
+      _FeatureItem(Icons.description_outlined, 'Documents', '/agent/documents', AppTheme.accentColor),
+      _FeatureItem(Icons.flag_outlined, 'Follow-ups', '/agent/follow-ups', AppTheme.errorColor),
+      _FeatureItem(Icons.home_work_outlined, 'Properties', '/agent/properties', AppTheme.successColor),
+      _FeatureItem(Icons.location_on_outlined, 'Site Visits', '/agent/site-visits', AppTheme.secondaryColor),
+      _FeatureItem(Icons.groups_outlined, 'My Team', '/agent/my-team', AppTheme.primaryColor),
+      _FeatureItem(Icons.military_tech_outlined, 'Rank Progress', '/agent/rank-progress', AppTheme.warningColor),
+    ];
+    return Card(
+      elevation: 1,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Row(
+              children: [
+                Icon(Icons.badge_outlined, size: 20, color: AppTheme.primaryColor),
+                SizedBox(width: 8),
+                Text('Agent Portal', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppTheme.textPrimaryLight)),
+              ],
+            ),
+            const SizedBox(height: 12),
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 3.2, crossAxisSpacing: 8, mainAxisSpacing: 8),
+              itemCount: items.length,
+              itemBuilder: (c, i) {
+                final it = items[i];
+                return InkWell(
+                  onTap: () => context.push(it.route),
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    decoration: BoxDecoration(color: it.color.withOpacity(0.08), borderRadius: BorderRadius.circular(8), border: Border.all(color: it.color.withOpacity(0.2))),
+                    child: Row(children: [Icon(it.icon, size: 18, color: it.color), const SizedBox(width: 8), Expanded(child: Text(it.label, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: it.color), overflow: TextOverflow.ellipsis))]),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

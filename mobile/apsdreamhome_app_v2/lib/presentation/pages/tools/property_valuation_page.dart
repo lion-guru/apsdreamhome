@@ -353,7 +353,7 @@ class _PropertyValuationPageState extends State<PropertyValuationPage> {
 
             // City Selection
             DropdownButtonFormField<String>(
-              value: _selectedCity,
+              initialValue: _selectedCity,
               decoration: InputDecoration(
                 labelText: _loadingRates ? 'Loading rates...' : 'City',
                 prefixIcon: const Icon(Icons.location_city),
@@ -379,7 +379,7 @@ class _PropertyValuationPageState extends State<PropertyValuationPage> {
 
             // Property Type
             DropdownButtonFormField<String>(
-              value: _selectedType,
+              initialValue: _selectedType,
               decoration: InputDecoration(
                 labelText: 'Property Type',
                 prefixIcon: const Icon(Icons.home),
@@ -415,7 +415,7 @@ class _PropertyValuationPageState extends State<PropertyValuationPage> {
 
             // Location Type
             DropdownButtonFormField<String>(
-              value: _selectedLocation,
+              initialValue: _selectedLocation,
               decoration: InputDecoration(
                 labelText: 'Location Type',
                 prefixIcon: const Icon(Icons.place),

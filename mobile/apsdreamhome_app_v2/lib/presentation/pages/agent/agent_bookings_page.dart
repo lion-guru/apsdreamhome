@@ -281,18 +281,18 @@ class AgentBookingsPage extends ConsumerWidget {
                   children: [
                     Text(
                       title,
-                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     if (location.isNotEmpty)
                       Padding(
-                        padding: EdgeInsets.only(top: 4),
+                        padding: const EdgeInsets.only(top: 4),
                         child: Row(
                           children: [
                             Icon(Icons.location_on_rounded,
                                 size: 13, color: Colors.grey[600]),
-                            SizedBox(width: 4),
+                            const SizedBox(width: 4),
                             Expanded(
                               child: Text(location,
                                   style: TextStyle(
@@ -305,7 +305,7 @@ class AgentBookingsPage extends ConsumerWidget {
                       ),
                     if (plotNumber.isNotEmpty)
                       Padding(
-                        padding: EdgeInsets.only(top: 4),
+                        padding: const EdgeInsets.only(top: 4),
                         child: Text('Plot: $plotNumber',
                             style:
                                 TextStyle(color: Colors.grey[600], fontSize: 12)),
@@ -318,14 +318,14 @@ class AgentBookingsPage extends ConsumerWidget {
                 children: [
                   if (price.isNotEmpty)
                     Text('\u20B9${_formatPrice(price)}',
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: AppTheme.primaryColor,
                             fontWeight: FontWeight.w700,
                             fontSize: 14)),
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   Container(
                     padding:
-                        EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: statusColor.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(20),
@@ -334,7 +334,7 @@ class AgentBookingsPage extends ConsumerWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(statusIcon, color: statusColor, size: 12),
-                        SizedBox(width: 4),
+                        const SizedBox(width: 4),
                         Text(status.toUpperCase(),
                             style: TextStyle(
                                 color: statusColor,

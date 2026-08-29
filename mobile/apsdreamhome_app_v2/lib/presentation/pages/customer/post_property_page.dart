@@ -293,7 +293,7 @@ class _PostPropertyPageState extends ConsumerState<PostPropertyPage> {
 
   Widget _buildDropdown(String label, String value, List<String> items, void Function(String?) onChanged) {
     return DropdownButtonFormField<String>(
-      value: value,
+      initialValue: value,
       onChanged: onChanged,
       decoration: InputDecoration(
         labelText: label,

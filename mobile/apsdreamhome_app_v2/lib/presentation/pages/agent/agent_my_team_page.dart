@@ -291,7 +291,7 @@ class AgentMyTeamPage extends ConsumerWidget {
                 AppTheme.primaryColor.withValues(alpha: 0.15),
             child: Text(
               initials,
-              style: TextStyle(
+              style: const TextStyle(
                 color: AppTheme.primaryColor,
                 fontWeight: FontWeight.w800,
                 fontSize: 16,
@@ -309,7 +309,7 @@ class AgentMyTeamPage extends ConsumerWidget {
                     Expanded(
                       child: Text(
                         name,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 15,
                           color: Colors.black,
@@ -342,7 +342,7 @@ class AgentMyTeamPage extends ConsumerWidget {
                       ),
                       child: Text(
                         rank,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Color(0xFF9C7A00),
                           fontWeight: FontWeight.w700,
                           fontSize: 10,

@@ -256,7 +256,7 @@ class ColonyDetailPage extends ConsumerWidget {
                           child: ListView.separated(
                             scrollDirection: Axis.horizontal,
                             itemCount: colony.galleryImagesData!.length,
-                            separatorBuilder: (_, __) =>
+                            separatorBuilder: (_, _) =>
                                 const SizedBox(width: 12),
                             itemBuilder: (context, index) {
                               final imgUrl = colony.galleryImagesData![index];
@@ -270,7 +270,7 @@ class ColonyDetailPage extends ConsumerWidget {
                                     width: 200,
                                     height: 150,
                                     fit: BoxFit.cover,
-                                    errorBuilder: (_, __, ___) => Container(
+                                    errorBuilder: (_, _, _) => Container(
                                       width: 200,
                                       height: 150,
                                       color: Colors.grey.shade200,
@@ -787,7 +787,7 @@ class _FullScreenImageViewerState extends State<_FullScreenImageViewer> {
               child: Image.network(
                 widget.images[index],
                 fit: BoxFit.contain,
-                errorBuilder: (_, __, ___) => const Icon(
+                errorBuilder: (_, _, _) => const Icon(
                   Icons.broken_image,
                   color: Colors.white54,
                   size: 80,

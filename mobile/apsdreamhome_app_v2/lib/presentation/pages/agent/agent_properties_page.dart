@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/constants/app_constants.dart';
@@ -332,7 +331,7 @@ class AgentPropertiesPage extends ConsumerWidget {
                   if (price.isNotEmpty)
                     Text(
                       '\u20B9${_formatPrice(price)}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: AppTheme.successColor,
                         fontWeight: FontWeight.w700,
                         fontSize: 15,

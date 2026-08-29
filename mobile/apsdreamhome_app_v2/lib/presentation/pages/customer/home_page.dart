@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -1643,10 +1642,10 @@ class _HomePageState extends ConsumerState<HomePage>
 
   Widget _buildStatsCounter(BuildContext context) {
     final stats = [
-      _StatData('5+', 'Colonies', Icons.location_city_rounded, const Color(0xFF43A047)),
-      _StatData('200+', 'Plots', Icons.grid_on_rounded, const Color(0xFF1E88E5)),
-      _StatData('1000+', 'Families', Icons.people_rounded, const Color(0xFFFF9800)),
-      _StatData('12+', 'Years', Icons.workspace_premium_rounded, const Color(0xFF9C27B0)),
+      const _StatData('5+', 'Colonies', Icons.location_city_rounded, Color(0xFF43A047)),
+      const _StatData('200+', 'Plots', Icons.grid_on_rounded, Color(0xFF1E88E5)),
+      const _StatData('1000+', 'Families', Icons.people_rounded, Color(0xFFFF9800)),
+      const _StatData('12+', 'Years', Icons.workspace_premium_rounded, Color(0xFF9C27B0)),
     ];
 
     return Container(
@@ -1709,19 +1708,19 @@ class _HomePageState extends ConsumerState<HomePage>
 
   Widget _buildTestimonialsSection(BuildContext context) {
     final testimonials = [
-      _TestimonialData(
+      const _TestimonialData(
         name: 'Rajesh Kumar',
         role: 'Plot Owner, Suryoday Colony',
         text: 'Excellent experience! The plots are well-located and the team helped me through every step of the purchase.',
         rating: 5,
       ),
-      _TestimonialData(
+      const _TestimonialData(
         name: 'Priya Singh',
         role: 'Home Buyer, Braj Radha Nagri',
         text: 'APS Dream Home made my dream of owning a plot come true. Very transparent and professional.',
         rating: 5,
       ),
-      _TestimonialData(
+      const _TestimonialData(
         name: 'Amit Verma',
         role: 'Investor, Raghunath Nagri',
         text: 'Great investment returns! The colonies are well-planned and the ROI has been fantastic.',
@@ -1795,7 +1794,7 @@ class _HomePageState extends ConsumerState<HomePage>
                           backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.1),
                           child: Text(
                             t.name[0],
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: AppTheme.primaryColor,
                               fontWeight: FontWeight.bold,
                               fontSize: 14,

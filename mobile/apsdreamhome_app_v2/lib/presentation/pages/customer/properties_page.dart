@@ -259,7 +259,7 @@ class _PropertiesPageState extends ConsumerState<PropertiesPage> {
                       height: 200,
                       width: double.infinity,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => _buildPlaceholder(),
+                      errorBuilder: (_, _, _) => _buildPlaceholder(),
                     )
                   : _buildPlaceholder(),
             ),
@@ -655,7 +655,7 @@ class FavoriteButton extends ConsumerWidget {
         onPressed: null,
         icon: Icon(Icons.favorite_border, color: Colors.grey),
       ),
-      error: (_, __) => const IconButton(
+      error: (_, _) => const IconButton(
         onPressed: null,
         icon: Icon(Icons.favorite_border, color: Colors.grey),
       ),

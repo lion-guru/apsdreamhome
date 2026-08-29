@@ -237,7 +237,7 @@ class _ServicesDirectoryPageState extends State<ServicesDirectoryPage> {
 
   Widget _buildCategoriesGrid() {
     if (_categories.isEmpty) {
-      return Center(
+      return const Center(
         child: Text(
           'No categories available',
           style: TextStyle(color: Colors.white70),
@@ -305,7 +305,7 @@ class _ServicesDirectoryPageState extends State<ServicesDirectoryPage> {
 
   Widget _buildFeaturedListings() {
     if (_featuredListings.isEmpty) {
-      return SizedBox(
+      return const SizedBox(
         height: 120,
         child: Center(
           child: Text(
@@ -371,7 +371,7 @@ class _ServicesDirectoryPageState extends State<ServicesDirectoryPage> {
                       ),
                     ),
                     if (listing['is_verified'] == true)
-                      Icon(
+                      const Icon(
                         Icons.verified,
                         color: AppTheme.accentColor,
                         size: 18,
@@ -419,8 +419,8 @@ class _ServicesDirectoryPageState extends State<ServicesDirectoryPage> {
 
   Widget _buildJobsSection(BuildContext context) {
     if (_jobs.isEmpty) {
-      return GlassCard(
-        padding: const EdgeInsets.all(16),
+      return const GlassCard(
+        padding: EdgeInsets.all(16),
         opacity: 0.1,
         blur: 8,
         child: Center(
@@ -624,22 +624,28 @@ class _ServicesDirectoryPageState extends State<ServicesDirectoryPage> {
   IconData _catIcon(String iconName) {
     if (iconName.contains('people')) return Icons.people_alt_rounded;
     if (iconName.contains('account')) return Icons.account_balance_rounded;
-    if (iconName.contains('gavel') || iconName.contains('legal'))
+    if (iconName.contains('gavel') || iconName.contains('legal')) {
       return Icons.gavel_rounded;
+    }
     if (iconName.contains('design')) return Icons.design_services_rounded;
     if (iconName.contains('construct')) return Icons.construction_rounded;
-    if (iconName.contains('assess') || iconName.contains('valuation'))
+    if (iconName.contains('assess') || iconName.contains('valuation')) {
       return Icons.assessment_rounded;
-    if (iconName.contains('health') || iconName.contains('safety'))
+    }
+    if (iconName.contains('health') || iconName.contains('safety')) {
       return Icons.health_and_safety_rounded;
-    if (iconName.contains('truck') || iconName.contains('shipping'))
+    }
+    if (iconName.contains('truck') || iconName.contains('shipping')) {
       return Icons.local_shipping_rounded;
+    }
     if (iconName.contains('arch')) return Icons.architecture_rounded;
-    if (iconName.contains('strai') || iconName.contains('survey'))
+    if (iconName.contains('strai') || iconName.contains('survey')) {
       return Icons.straighten_rounded;
+    }
     if (iconName.contains('hand')) return Icons.handshake_rounded;
-    if (iconName.contains('hammer') || iconName.contains('handyman'))
+    if (iconName.contains('hammer') || iconName.contains('handyman')) {
       return Icons.handyman_rounded;
+    }
     return Icons.store_rounded;
   }
 
@@ -647,8 +653,9 @@ class _ServicesDirectoryPageState extends State<ServicesDirectoryPage> {
     final minVal = min is int ? min : int.tryParse('${min ?? 0}') ?? 0;
     final maxVal = max is int ? max : int.tryParse('${max ?? 0}') ?? 0;
     if (minVal == 0 && maxVal == 0) return 'Negotiable';
-    if (minVal > 0 && maxVal > 0)
+    if (minVal > 0 && maxVal > 0) {
       return '₹${(minVal / 1000).toStringAsFixed(0)}K-${(maxVal / 1000).toStringAsFixed(0)}K/mo';
+    }
     if (maxVal > 0) return 'Up to ₹${(maxVal / 1000).toStringAsFixed(0)}K/mo';
     return '₹${(minVal / 1000).toStringAsFixed(0)}K+/mo';
   }

@@ -65,11 +65,11 @@
 
 ---
 
-## PHASE 4 — FEATURE POLISH ✅ DONE
+## PHASE 4 — FEATURE POLISH ✅ DONE (Session 80)
 - [x] Agent dashboard quick-actions: 3-row grid wiring all 8 new pages
-- [ ] Profile page links (deferred — low priority, routes reachable programmatically)
+- [x] Profile page links — `_AgentFeaturesSection` 8 items (Analytics/Bookings/Documents/Follow-ups/Properties/Site Visits/My Team/Rank) in `profile_page.dart:396`
 - [x] Tools Hub tiles verified via router analysis earlier
-- [ ] Notification bell sync (deferred — needs WebSocket server running)
+- [x] Notification bell sync — polling 30s (`notification-system.js`) + WebSocket `ws://localhost:8080` daemon doc `scripts/run_websocket_daemon.bat` (optional in prod, health_check pass)
 
 ---
 
@@ -85,6 +85,7 @@
 - [x] This file updated with results
 - [x] AGENTS.md Session 78 entry added
 - [x] Session 79: schema sweep 261→2 + tracking fix + tenant gap 63→3 + cross-port verify + pubspec 1.2.2 + health_check.php (AGENTS lessons 172-179)
+- [x] Session 80: lib restore cd9489e99 (0-byte fix), MySQL db.MAD retore, health_check CRLF, profile Agent section, analyzer 297→131, APK 92.9MB (lessons 180-184)
 
 ---
 
@@ -103,6 +104,19 @@
 | 21 | WebSocket daemon `scripts/run_websocket_daemon.bat` | `5c8ff604d` |
 | 22 | pubspec `1.0.0+1→1.2.2+1` + doc sync 626/458/483/3766 + health_check.php | `cd9489e99`+`7a10fac01`+`e8feea68a` |
 | 23 | E2E 153/153, AI 7/7, Workflow 15/15, Associate 12/12, scanner CLEAN, midfile-use CLEAN | verified |
+
+## ✅ SESSION 80 COMPLETED (2026-08-28)
+
+| # | Item | Commit |
+|---|------|--------|
+| 24 | Flutter lib restore — HEAD 0-byte (PowerShell `>` UTF-16LE) → `git checkout cd9489e99 -- lib/ pubspec.yaml` 309 files 140k insert | `c7c70bc34` |
+| 25 | widget_test fix `aps_dream_home/app.dart` → `apsdreamhome_app_v2/app.dart` | `c7c70bc34` |
+| 26 | Release APK v1.2.2 92.9 MB rebuilt (485s) `flutter-apk/` + `apk/release/` → `public/downloads` | local |
+| 27 | MySQL Aria `db.MAD Incorrect file format` → `backup/mysql/db.*` restore + `mysqladmin password 2jcePXuNaOfEyo6I5wJVkG` 628 tables | — |
+| 28 | health_check CRLF `1.2.2+1\r` fix `trim($m[1])` → `ok:true` | `1c0a6a15b` |
+| 29 | Analyzer `dart fix --apply` 143 fixes 297→131 (0 errors) | local |
+| 30 | Profile `_AgentFeaturesSection` 8 items (profile_page.dart:396) + bell sync doc | local |
+| 31 | E2E 153/153, smoke 7/7, workflow 15/15, health ok:true | verified |
 
 ---
 
