@@ -1,4 +1,29 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-29 — Session 81: Deep Admin Audit + Colony Fix + Profile Portal)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-29 — Session 82: JS Ajax/CSRF + Autofetch Polling Audit)
+
+## Session 82: JS Ajax/CSRF + Autofetch Polling Audit (2026-08-29)
+
+### Goal
+Har jagah ka JS `fetch`/`$.ajax` + `setInterval` autofetch + `BASE_URL` + error handling check karo, CSRF missing thik karo.
+
+### What Was Done
+| Feature | Details | Commit |
+|---------|---------|--------|
+| **Scan 20 JS** | `public/assets/js` 20 files `Get-ChildItem` — `fetch=True` 8, `poll=setInterval` 10, `hasCsrf` check | — |
+| **CSRF fix (6 files)** | `chatbot.js:189` `contact-form.js:132` `live-chat-widget.js:298` `notification-system.js:188` (`POST /api/popups/dismiss` + `/api/notifications/mark-read` without `X-CSRF-Token`) `property-search.js:168` `voice-widget.js:84` — added `getCsrfToken()` (`meta[name="csrf-token"]:107` + `cookie csrf_token:113` from `api.js:105`) + `headers: {'X-CSRF-Token': getCsrfToken()}` | `3a9df3074` |
+| **Hardcode/BASE_URL** | `http://localhost` 0, `window.BASE_URL:10` via `api.js:9` correct, `BASE_URL` replace `replace(/\/+$/,'')` safe | — |
+| **Polling** | `notification-system.js:416` `setInterval loadNotifications 30000` + `loadPopups` with `try/catch console.error`, `live-chat-widget.js:5s` `fetch /api/chat/poll` with `AbortController:126` timeout, `aps-location-autofill.js` `GET` no CSRF needed — thik | — |
+| **Syntax** | `node --check` 6 files `0 error`, `E2E 153/153` still green | — |
+
+### Key Lessons
+_188. **JS POST without X-CSRF-Token = 403** — `notification-system.js:188` `fetch('/api/popups/dismiss', {method:'POST'})` without `X-CSRF-Token` fails if `BaseController::__construct()` enforces CSRF (even when `routes/router.php:107` excludes `/api/`). Fix: add `getCsrfToken()` helper as in `api.js:96`._
+_189. **GET autofetch doesn't need CSRF** — `aps-location-autofill.js` `fetch('/api/locations?q=')` `GET` is safe; only `POST`/`PUT`/`DELETE` need `X-CSRF-Token`. Don't add CSRF to GET polling._
+_190. **Polling must have error handling + backoff** — `notification-system.js:416` `setInterval 30s` wraps `loadNotifications:72` `try/catch`, `api.js:126` `AbortController` timeout 10s + retry 3x. Without it, `setInterval` flood on network error._
+
+### Verification Results (Session 82)
+- JS: 6/6 POST CSRF fixed, 0 hardcode, polling 30s/5s with catch
+- E2E: 153/153 PASS, `node --check` 0
+
+---
 
 ## Session 81: Deep Admin Audit + Colony Fix + Profile Portal (2026-08-29)
 
