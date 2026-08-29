@@ -174,19 +174,30 @@ class RazorpayService
             }
             
             try {
-                // Get commission rules
-                $rules = $this->db->fetchAll("SELECT * FROM commission_rules WHERE is_active = 1 ORDER BY level ASC");
+                // Get commission rates from mlm_rank_benefits (replaces dropped commission_rules)
+                $sourceUser = $this->db->fetchOne("SELECT mlm_rank FROM users WHERE id = ? LIMIT 1", [$userId]);
+                $sourceRank = $sourceUser['mlm_rank'] ?? 'Ass.';
+                $rules = $this->db->fetchAll("SELECT rank_name, direct_sale_pct, l1_pct, l2_pct, l3_pct FROM mlm_rank_benefits WHERE is_active = 1");
+                $rateMap = [];
+                foreach ($rules as $r) {
+                    $rateMap[$r['rank_name']] = [
+                        'direct' => (float)$r['direct_sale_pct'],
+                        1 => (float)$r['l1_pct'],
+                        2 => (float)$r['l2_pct'],
+                        3 => (float)$r['l3_pct'],
+                    ];
+                }
             } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-            error_log($e->getMessage());
+                error_log("Failed to load commission rates: " . $e->getMessage());
+                $rateMap = [];
             }
             
             foreach ($referrers as $index => $referrer) {
                 $level = $index + 1;
-                $rule = $this->getRuleForLevel($rules, $level);
+                $rate = $rateMap[$sourceRank][$level] ?? $rateMap['Ass.'][$level] ?? 0;
                 
-                if ($rule && $rule['percentage'] > 0) {
-                    $commissionAmount = ($amount * $rule['percentage']) / 100;
+                if ($rate > 0) {
+                    $commissionAmount = ($amount * $rate) / 100;
                     
                     // Record commission
                     $this->db->insert('commissions', [
@@ -195,7 +206,7 @@ class RazorpayService
                         'booking_id' => $bookingId,
                         'sale_amount' => $amount,
                         'commission_amount' => $commissionAmount,
-                        'percentage' => $rule['percentage'],
+                        'percentage' => $rate,
                         'level' => $level,
                         'status' => 'pending',
                         'created_at' => date('Y-m-d H:i:s')
@@ -293,19 +304,6 @@ class RazorpayService
         }
         
         return $referrers;
-    }
-    
-    /**
-     * Get commission rule for level
-     */
-    private function getRuleForLevel($rules, $level)
-    {
-        foreach ($rules as $rule) {
-            if ($rule['level'] == $level) {
-                return $rule;
-            }
-        }
-        return null;
     }
     
     /**
