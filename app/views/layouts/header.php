@@ -15,10 +15,10 @@ $sc = function ($key, $default = '') {
     return $GLOBALS['_site_settings_cache'][$key] ?? $default;
 };
 
-// Google Analytics 4 (gtag.js)
+// Google Analytics 4 (gtag.js) — only fire when real ID set
 $ga4_id = $_ENV['GA4_MEASUREMENT_ID'] ?? getenv('GA4_MEASUREMENT_ID') ?: 'G-PLACEHOLDER';
 $ga4_id = is_string($ga4_id) ? trim($ga4_id) : 'G-PLACEHOLDER';
-$ga4_enabled = ($ga4_id !== '');
+$ga4_enabled = ($ga4_id !== '' && $ga4_id !== 'G-PLACEHOLDER');
 
 if ($ga4_enabled && !isset($GLOBALS['_ga4_loader_emitted'])) {
     $GLOBALS['_ga4_loader_emitted'] = true;

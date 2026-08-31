@@ -78,7 +78,6 @@ $GLOBALS['_html_doc_started'] = true;
         .nav-pills .nav-link.active { background: var(--tenant-primary); }
     </style>
     <?php endif; ?>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=3">
 </head>
 
 <body class="aps-admin-body">
@@ -491,7 +490,7 @@ $GLOBALS['_html_doc_started'] = true;
         </script>
         
         <!-- Keyboard Shortcuts -->
-        <script>
+        <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         // Global loading spinner utility
         function showLoader() {
             if (!document.getElementById('global-loader')) {
@@ -557,8 +556,8 @@ $GLOBALS['_html_doc_started'] = true;
             </div>
         </div>
 
-        <script>
-        /* APS Confirm Modal â€” replaces native confirm() across admin panel
+        <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+        /* APS Confirm Modal — replaces native confirm() across admin panel
          * Usage: apsConfirm('Delete this item?').then(ok => { if (ok) ... })
          * Options: { title, confirmText, confirmClass, icon, iconColor }
          */

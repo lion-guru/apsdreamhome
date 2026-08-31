@@ -162,13 +162,6 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <!-- Google Fonts (preloaded) -->
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Bootstrap CSS -->
-    <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
     <!-- Leaflet CSS for map picker -->
     <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
     <!-- AOS Animation CSS -->
@@ -180,6 +173,9 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     ?>
     <?php if (!$isAdminPage): ?>
     <!-- CSS Load Order: Framework -> Icons -> Fonts -> Design Tokens -> Components -> Theme -> Page Extras -> Responsive -> Fixes -->
+    <!-- Google Fonts (preloaded) -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
     <!-- Design Tokens (Single Source of Truth) -->
@@ -197,18 +193,17 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <link href="<?php echo BASE_URL; ?>/assets/css/dark-mode.css" rel="stylesheet">
     <!-- Mobile Responsive Overrides -->
     <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css?v=3" rel="stylesheet">
+    <!-- Dark Mode (inside cascade, before responsive) -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/dark-mode.css" rel="stylesheet">
+    <!-- Universal mobile-first responsive overrides -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css?v=3" rel="stylesheet">
     <!-- Final UI/UX Polish (contrast, tap targets) -->
     <link href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=3" rel="stylesheet">
     <?php endif; ?>
+    <!-- Shared widgets: load once globally (outside admin guard, version synced) -->
     <link href="<?php echo BASE_URL; ?>/assets/css/notification-system.css?v=6" rel="stylesheet">
-    <!-- Live Chat Widget CSS -->
     <link href="<?php echo BASE_URL; ?>/assets/css/live-chat-widget.css" rel="stylesheet">
-    <!-- Notification Toast Widget CSS -->
     <link href="<?php echo BASE_URL; ?>/assets/css/notification-widget.css" rel="stylesheet">
-    <!-- Dark Mode CSS -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/dark-mode.css" rel="stylesheet">
-    <!-- Universal mobile-first responsive overrides -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css?v=2" rel="stylesheet">
 
     <!-- Scroll fix (Cleaned) -->
     <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
@@ -236,7 +231,6 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
             window.addEventListener('resize', setHeaderHeight);
         })();
     </script>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=2">
 </head>
 
 <body>
@@ -447,7 +441,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     
     <!-- AOS Animation JS -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
       document.addEventListener('DOMContentLoaded', function() {
         if (typeof AOS !== 'undefined') {
             // Automatically add data-aos attributes to elements with premium-reveal

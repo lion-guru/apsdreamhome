@@ -68,10 +68,16 @@ class TenantContext
             }
         }
 
-        // 4. Query param (admin switching)
+        // 4. Query param (admin switching) — gated: only admins may impersonate via URL
         if (!empty($_GET['tenant_id']) && is_numeric($_GET['tenant_id'])) {
-            self::setById((int)$_GET['tenant_id'], $db);
-            return;
+            $isAdmin = !empty($_SESSION['admin_id']) || (($_SESSION['role'] ?? '') === 'admin') || (($_SESSION['admin_role'] ?? '') === 'admin') || !empty($_SESSION['is_superadmin']);
+            if ($isAdmin) {
+                self::setById((int)$_GET['tenant_id'], $db);
+                error_log('TenantContext: admin tenant switch via ?tenant_id=' . (int)$_GET['tenant_id'] . ' by session ' . json_encode(['admin_id'=>$_SESSION['admin_id']??null,'role'=>$_SESSION['role']??null]));
+                return;
+            }
+            // Non-admin ?tenant_id ignored — fall through to session/default
+            error_log('TenantContext: blocked non-admin tenant_id spoof attempt: ' . (int)$_GET['tenant_id']);
         }
 
         // 5. Session

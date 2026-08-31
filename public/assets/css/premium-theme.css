@@ -3,8 +3,7 @@
    Applied to ALL public pages via base.php
    ========================================================================== */
 
-/* Import Premium Font (Plus Jakarta Sans) */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+/* Plus Jakarta Sans loaded via <link> in base.php (preloaded) — @import removed to avoid render-blocking */
 
 :root {
   /* LUXURY COLOR PALETTE — mapped to canonical tokens from style.css */

@@ -304,10 +304,10 @@ class AppConstants {
   // Rank Targets (alias for targets)
   static Map<String, double> get rankTargets => targets;
 
-  // App Info
+  // App Info — keep in sync with pubspec.yaml:4 version: 1.2.2+1
   static const String appName = 'APS Dream Home';
   static const String supportPhone = '7007444842';
-  static const String version = '1.2.0';
+  static const String version = '1.2.2+1';
 
   // Validation Constants
   static const int minPasswordLength = 6;

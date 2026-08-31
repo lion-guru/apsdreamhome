@@ -23,9 +23,13 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Error reporting
+// Error reporting — gated by env (never expose traces in prod)
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+if ((defined('APP_ENV') && APP_ENV === 'production') || getenv('APP_ENV') === 'production') {
+    ini_set('display_errors', 0);
+} else {
+    ini_set('display_errors', (defined('APS_ENV') && APS_ENV === 'development') || getenv('APS_ENV') === 'development' ? 1 : 0);
+}
 ini_set('log_errors', 1);
 ini_set('error_log', APS_LOGS . '/php_error.log');
 

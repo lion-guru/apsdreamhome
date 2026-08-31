@@ -131,9 +131,10 @@ SetEnvIf Authorization (.*) HTTP_AUTHORIZATION=$1
     </FilesMatch>
 </IfModule>
 
-# PHP settings
+# PHP settings — display_errors OFF in prod (prevent stack trace / SQL leak)
 <IfModule mod_php.c>
-    php_flag display_errors on
+    php_flag display_errors off
+    php_flag display_startup_errors off
     php_value error_log logs/php_error.log
 </IfModule>
 
