@@ -327,7 +327,7 @@ $GLOBALS['_html_doc_started'] = true;
                             $tenantBanner = $tenant['status'];
                         }
                     }
-                } catch (\Throwable $e) { /* ignore */ }
+                } catch (\Throwable $e) { error_log('admin tenant banner: ' . $e->getMessage()); }
             }
             ?>
             <?php if ($tenantBanner === 'suspended'): ?>

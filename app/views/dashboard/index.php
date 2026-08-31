@@ -18,7 +18,7 @@ try {
     $stats['revenue_month'] = $db->fetch("SELECT COALESCE(SUM(amount),0) as c FROM payments WHERE DATE(created_at) >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)")['c'] ?? 0;
     $stats['total_employees'] = $db->fetch("SELECT COUNT(*) as c FROM users")['c'] ?? 0;
     $stats['pending_bookings'] = $db->fetch("SELECT COUNT(*) as c FROM bookings WHERE status='pending'")['c'] ?? 0;
-} catch (\Exception $e) { /* silent */ }
+} catch (\Exception $e) { error_log('dashboard stats: ' . $e->getMessage()); }
 
 // Recent leads
 $recentLeads = [];
