@@ -27,15 +27,15 @@ $GLOBALS['_html_doc_started'] = true;
     <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
+    <!-- Design Tokens (Single Source of Truth) -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/style.css?v=7" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/header.css?v=8" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css?v=2" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/notification-system.css" rel="stylesheet">
     <!-- Dark Mode CSS -->
     <link href="<?php echo BASE_URL; ?>/assets/css/dark-mode.css" rel="stylesheet">
-    <!-- Consolidated APS CSS Bundles -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/style.css" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css?v=2" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/header.css?v=7" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/notification-system.css" rel="stylesheet">
     <!-- Universal mobile-first responsive overrides -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css?v=3" rel="stylesheet">
     <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         /* ===== CUSTOMER PORTAL MOBILE RESPONSIVENESS ===== */
         @media (max-width: 768px) {
@@ -57,7 +57,7 @@ $GLOBALS['_html_doc_started'] = true;
         }
     </style>
 
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=2">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=3">
 </head>
 <body>
     <!-- Sidebar Toggle Button (Mobile) -->

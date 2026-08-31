@@ -18,14 +18,15 @@ $GLOBALS['_html_doc_started'] = true;
 
     <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
+    <!-- Design Tokens (Single Source of Truth) -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/style.css?v=7" rel="stylesheet">
     <!-- Consolidated APS CSS Bundles -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-core.css" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-layout.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css?v=2" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-layout.css?v=2" rel="stylesheet">
     <!-- Dark Mode CSS -->
     <link href="<?php echo BASE_URL; ?>/assets/css/dark-mode.css" rel="stylesheet">
     <!-- Universal mobile-first responsive overrides -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css?v=3" rel="stylesheet">
 
     <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -73,7 +74,7 @@ $GLOBALS['_html_doc_started'] = true;
         .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; }
         .sidebar-overlay.show { display: block; }
     </style>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=2">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=3">
 </head>
 <body>
     <button class="sidebar-toggle" onclick="toggleSidebar()">

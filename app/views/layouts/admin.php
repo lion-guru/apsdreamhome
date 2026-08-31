@@ -38,8 +38,8 @@ $GLOBALS['_html_doc_started'] = true;
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/notification-system.css" rel="stylesheet">
     <!-- Dark mode CSS (toggle via button or system preference) -->
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/dark-mode.css" rel="stylesheet">
-    <!-- Universal mobile-first responsive overrides -->
-    <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/mobile-responsive.css" rel="stylesheet">
+    <!-- UI/UX Fixes (contrast, tap targets) -->
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/uiux-fixes.css?v=3" rel="stylesheet">
     <?php if (isset($extra_css) && $extra_css): ?><!-- Extra page-specific CSS --><?php echo e($extra_css); ?><?php endif; ?>
     <?php if (class_exists('\App\Core\Middleware\TenantContext')): ?>
     <?php $tcColors = \App\Core\Middleware\TenantContext::getColors(); $tcLogo = \App\Core\Middleware\TenantContext::getLogo(); ?>
@@ -78,10 +78,10 @@ $GLOBALS['_html_doc_started'] = true;
         .nav-pills .nav-link.active { background: var(--tenant-primary); }
     </style>
     <?php endif; ?>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=2">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=3">
 </head>
 
-<body>
+<body class="aps-admin-body">
     <!-- Skip to content link (a11y) -->
     <a href="#aps-main-content" class="aps-skip-link">Skip to main content</a>
 

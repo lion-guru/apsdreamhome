@@ -179,19 +179,26 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     $isPremiumPage = isset($premium_layout) && $premium_layout === true;
     ?>
     <?php if (!$isAdminPage): ?>
-    <!-- CSS: base â†’ components â†’ header â†’ premium theme (ALL public pages) â†’ homepage extras -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/style.css?v=6" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/frontend.css?v=6" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/header.css?v=7" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/premium-theme.css?v=9" rel="stylesheet">
-    <!-- Homepage + public page extras (hero, projects, animations) -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/homepage.css?v=11" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/modern-animations.css?v=1" rel="stylesheet">
-    <!-- Core layout, typography, dark-section helpers -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-core.css?v=3" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-pages.css?v=2" rel="stylesheet">
-    <!-- Customer portal components (wizard, hero, cards, checklist) -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css?v=2" rel="stylesheet">
+    <!-- CSS Load Order: Framework -> Icons -> Fonts -> Design Tokens -> Components -> Theme -> Page Extras -> Responsive -> Fixes -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
+    <!-- Design Tokens (Single Source of Truth) -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/style.css?v=7" rel="stylesheet">
+    <!-- Core Components -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/frontend.css?v=7" rel="stylesheet">
+    <!-- Navigation & Header -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/header.css?v=8" rel="stylesheet">
+    <!-- Real Estate Theme & Gradients -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/premium-theme.css?v=10" rel="stylesheet">
+    <!-- Homepage Specific Extras -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/homepage.css?v=12" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/modern-animations.css?v=2" rel="stylesheet">
+    <!-- Dark Mode -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/dark-mode.css" rel="stylesheet">
+    <!-- Mobile Responsive Overrides -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css?v=3" rel="stylesheet">
+    <!-- Final UI/UX Polish (contrast, tap targets) -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=3" rel="stylesheet">
     <?php endif; ?>
     <link href="<?php echo BASE_URL; ?>/assets/css/notification-system.css?v=6" rel="stylesheet">
     <!-- Live Chat Widget CSS -->

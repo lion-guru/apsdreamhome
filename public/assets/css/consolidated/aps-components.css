@@ -1,6 +1,8 @@
 /* ========================================================================
- * aps-components.css - Consolidated Bundle
- * Generated: 2026-06-06 17:50:02
+ * aps-components.css - Consolidated Bundle [PORTAL-ONLY]
+ * Generated: 2026-06-06 17:50:02 (kept for portal compatibility)
+ * PORTAL-ONLY: Used by customer/associate/employee/agent layouts only.
+ * Public pages use canonical cascade (style.css → header.css → premium-theme.css).
  * ======================================================================== */
 
 /* ===== customer-pages.css ===== */

@@ -46,11 +46,14 @@ if (!isset($GLOBALS['_html_doc_started'])) {
     <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
-    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/style.css?v=6" rel="stylesheet">
-    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/frontend.css?v=6" rel="stylesheet">
-    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/header.css?v=7" rel="stylesheet">
-    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/premium-theme.css?v=6" rel="stylesheet">
-    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/mobile-responsive.css" rel="stylesheet">
+    <!-- CSS Load Order (standalone mode only) -->
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/style.css?v=7" rel="stylesheet">
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/frontend.css?v=7" rel="stylesheet">
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/header.css?v=8" rel="stylesheet">
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/premium-theme.css?v=10" rel="stylesheet">
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/mobile-responsive.css?v=3" rel="stylesheet">
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/dark-mode.css" rel="stylesheet">
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/uiux-fixes.css?v=3" rel="stylesheet">
 
     <?php if ($ga4_enabled): ?>
     <!-- Google Analytics 4 -->

@@ -1,6 +1,9 @@
 ﻿/* ========================================================================
- * aps-core.css - Consolidated Bundle
+ * aps-core.css - Consolidated Bundle [DEPRECATED]
  * Generated: 2026-06-06 17:50:02
+ * DEPRECATED: Use canonical cascade via style.css (Single Source of Truth).
+ * Kept for backward compat only - will be removed. Do NOT add new styles here.
+ * Canonical tokens: :root in public/assets/css/style.css
  * ======================================================================== */
 
 /* ===== style.css ===== */

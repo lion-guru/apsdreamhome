@@ -39,8 +39,11 @@ try {
     <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Design Tokens (Single Source of Truth) -->
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/style.css?v=7" rel="stylesheet">
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/dark-mode.css" rel="stylesheet">
     <!-- Universal mobile-first responsive overrides -->
-    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/mobile-responsive.css" rel="stylesheet">
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/mobile-responsive.css?v=3" rel="stylesheet">
     <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         :root {
             --primary: #0d9488; --primary-dark: #0f766e;
@@ -141,7 +144,7 @@ try {
             .navbar-icon .badge { font-size: 0.5rem; padding: 1px 4px; }
         }
     </style>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=2">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=3">
 </head>
 <body>
     <aside class="sidebar" id="sidebar">
