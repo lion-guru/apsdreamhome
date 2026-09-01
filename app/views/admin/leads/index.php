@@ -202,7 +202,7 @@ $base = BASE_URL ?? '';
                                     $st = $lead['status'] ?? 'new';
                                     $color = $statusColors[$st] ?? 'secondary';
                                     ?>
-                                    <span class="badge bg-<?= $color ?>"><?= ucfirst($st) ?></span>
+                                    <span class="badge bg-<?= $color ?> status-badge" data-lead-id="<?= $lead['id'] ?>" data-status="<?= $st ?>" style="cursor:pointer" title="Click to change status"><?= ucfirst($st) ?></span>
                                 </td>
                                 <td>
                                     <?php
@@ -328,5 +328,49 @@ document.addEventListener('DOMContentLoaded', function() {
               .finally(() => { if (typeof hideLoader==='function') hideLoader(); });
         });
     });
+
+    // Inline edit status badge -> select (optimistic, no reload)
+    document.querySelectorAll('.status-badge').forEach(badge=>{
+        badge.addEventListener('click', function(){
+            const leadId=this.dataset.leadId, cur=this.dataset.status;
+            const sel=document.createElement('select');
+            sel.className='form-select form-select-sm'; sel.style.minWidth='110px';
+            ['new','contacted','qualified','proposal','negotiation','converted','closed','lost','dead'].forEach(s=>{
+                const o=document.createElement('option'); o.value=s; o.textContent=s; if(s===cur) o.selected=true; sel.appendChild(o);
+            });
+            this.replaceWith(sel); sel.focus();
+            sel.addEventListener('change', function(){
+                const newStatus=this.value;
+                const fd=new FormData(); fd.append('status',newStatus); fd.append('csrf_token','<?= $_SESSION['csrf_token'] ?? '' ?>');
+                // optimistic badge
+                const newBadge=document.createElement('span');
+                newBadge.className='badge bg-warning status-badge'; newBadge.dataset.leadId=leadId; newBadge.dataset.status=newStatus;
+                newBadge.style.cursor='pointer'; newBadge.textContent=newStatus; newBadge.title='Click to change status';
+                this.replaceWith(newBadge);
+                fetch('<?= $base ?>/admin/leads/'+leadId+'/status', {method:'POST', body:fd})
+                .then(r=>r.json()).then(d=>{
+                    if(!d.success){ showToast(d.error||'Failed','danger'); location.reload(); }
+                    else { newBadge.className='badge bg-success status-badge'; showToast('Status updated','success'); }
+                }).catch(()=>location.reload());
+            });
+            sel.addEventListener('blur', function(){ setTimeout(()=>{ if(document.body.contains(this)) this.replaceWith(badge); },150); });
+        });
+    });
+
+    // Debounce search (300ms) + skeleton shimmer
+    const searchInput=document.querySelector('input[name=search]');
+    if(searchInput){
+        let t=null;
+        searchInput.addEventListener('input', function(){
+            clearTimeout(t);
+            // skeleton: add shimmer to table rows
+            document.querySelectorAll('tbody tr').forEach(tr=>tr.classList.add('skeleton-row'));
+            t=setTimeout(()=>{ this.form.submit(); }, 300);
+        });
+    }
+    // skeleton CSS
+    const style=document.createElement('style');
+    style.textContent='.skeleton-row{opacity:0.6; background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.2s infinite} @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}';
+    document.head.appendChild(style);
 });
 </script>
