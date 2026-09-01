@@ -10,6 +10,7 @@
     </div>
 
 
+    <div class="row mb-3"><div class="col-md-5"><input type="text" id="segmentSearch" class="form-control" placeholder="Search segments..."></div></div>
     <?php if (empty($segments)): ?>
         <div class="text-center py-5 bg-white rounded shadow-sm">
             <i class="fas fa-layer-group fa-3x text-muted mb-3"></i>
@@ -18,7 +19,7 @@
             <button class="btn btn-primary" onclick="new bootstrap.Modal(document.getElementById('segmentModal')).show()"><i class="fas fa-plus me-1"></i> Create First Segment</button>
         </div>
     <?php else: ?>
-        <div class="row g-3">
+        <div class="row g-3" id="segmentGrid">
             <?php
             $colors = ['primary','success','warning','danger','info','info','danger','dark'];
             foreach ($segments as $i => $seg):
@@ -80,6 +81,14 @@
         </div>
     <?php endif; ?>
 </div>
+<script>
+document.getElementById('segmentSearch')?.addEventListener('input', function(){
+  const q=this.value.toLowerCase();
+  document.querySelectorAll('#segmentGrid .col-md-6').forEach(el=>{
+    el.style.display = el.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+});
+</script>
 
 <!-- Create Segment Modal -->
 <div class="modal fade" id="segmentModal" tabindex="-1">

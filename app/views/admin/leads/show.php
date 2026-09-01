@@ -242,6 +242,28 @@ function timeAgo($dt) {
         <?php endif; ?>
     </div>
 
+    <!-- AI Summary (fallback template, no API call) -->
+    <?php
+    $aiSummary = '';
+    $aiNext = [];
+    if ($leadScore >= 80) { $aiSummary = "Hot lead ($leadScore/100) with $interactionCount interactions. Last activity ".($daysSinceActivity===0?'today':$daysSinceActivity.'d ago')." — high conversion potential."; $aiNext=['Schedule Site Visit','Send WhatsApp Template','Create Deal']; }
+    elseif ($leadScore >= 50) { $aiSummary = "Warm lead ($leadScore/100), $interactionCount touches. Nurture with targeted follow-up."; $aiNext=['Schedule Call','Send Email','Add Task']; }
+    elseif ($daysSinceActivity !== null && $daysSinceActivity >= 7) { $aiSummary = "Stale lead — no activity for $daysSinceActivity days. Re-engage or mark Nurture."; $aiNext=['Send WhatsApp','Reschedule Call','Update Status']; }
+    else { $aiSummary = "New lead — $interactionCount interactions, score $leadScore. Qualify and assign promptly."; $aiNext=['Call Now','Qualify Lead','Create Task']; }
+    ?>
+    <div class="alert alert-info border-0 shadow-sm d-flex align-items-start gap-3 mb-4" style="background:linear-gradient(135deg,#eff6ff 0%,#f0f9ff 100%);border-left:4px solid #3b82f6 !important">
+        <i class="fas fa-robot fa-2x text-primary mt-1"></i>
+        <div class="flex-grow-1">
+            <strong><i class="fas fa-sparkles me-1"></i>AI Summary</strong>
+            <p class="mb-2 mt-1"><?= htmlspecialchars($aiSummary) ?></p>
+            <div class="d-flex gap-2 flex-wrap">
+                <?php foreach ($aiNext as $act): ?>
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle" style="padding:6px 12px;border-radius:20px;cursor:pointer" onclick="document.getElementById('quickSubject').value='<?= htmlspecialchars($act) ?>';document.getElementById('quickLogBar')?.scrollIntoView({behavior:'smooth'})"><i class="fas fa-bolt me-1"></i><?= $act ?></span>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+
     <!-- Quick Stats Row -->
     <div class="row g-3 mb-4">
         <div class="col-6 col-md-3 col-xl">

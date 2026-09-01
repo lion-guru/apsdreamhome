@@ -10,6 +10,9 @@
     </div>
 
 
+    <div class="row mb-3">
+        <div class="col-md-5"><input type="text" id="templateSearch" class="form-control" placeholder="Search templates by name or subject..."></div>
+    </div>
     <ul class="nav nav-pills mb-4" id="templateTabs">
         <li class="nav-item"><a class="nav-link active" data-bs-toggle="pill" href="#email-tab"><i class="fas fa-envelope me-1"></i> Email Templates (<?= count($templates) ?>)</a></li>
         <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#sms-tab"><i class="fas fa-sms me-1"></i> SMS Templates (<?= count($sms_templates) ?>)</a></li>
@@ -93,3 +96,12 @@
         </div>
     </div>
 </div>
+<script>
+document.getElementById('templateSearch')?.addEventListener('input', function(){
+  const q=this.value.toLowerCase();
+  document.querySelectorAll('#email-tab .col-md-6, #sms-tab .col-md-6').forEach(el=>{
+    const txt=el.textContent.toLowerCase();
+    el.style.display = txt.includes(q) ? '' : 'none';
+  });
+});
+</script>
