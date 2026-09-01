@@ -211,11 +211,12 @@ class DealController extends AdminController
         }
 
         try {
+            $tid = (int)$this->tenantId();
             $stmt = $this->db->prepare(
                 "INSERT INTO deals (deal_name, deal_value, lead_id,
                                    stage_id, probability, expected_close_date, assigned_to,
-                                   created_by, status)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'open')"
+                                   created_by, status, tenant_id)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'open', ?)"
             );
 
             $stmt->execute([
@@ -226,7 +227,8 @@ class DealController extends AdminController
                 $probability,
                 $expectedCloseDate,
                 $assignedTo,
-                $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? null
+                $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? null,
+                $tid ?: 1
             ]);
 
             $dealId = $this->db->lastInsertId();

@@ -900,25 +900,29 @@ class CRMService
 
     public function addSourceDetail($leadId, $data) {
         try {
-            $this->db->query(
-                "INSERT INTO crm_lead_sources_extended (lead_id, medium,
-                 utm_source, utm_medium, utm_campaign, utm_term, utm_content, landing_page, referrer_url, ip_address)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                [
+            $tid = $this->tid();
+            $cols = "lead_id, medium, utm_source, utm_medium, utm_campaign, utm_term, utm_content, landing_page, referrer_url, ip_address";
+            $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
+            $params = [
                     $leadId,
-                    $data['medium'] ?? null,
+                    $data['medium'] ?? ($data['source_type'] ?? null),
                     $data['utm_source'] ?? null,
                     $data['utm_medium'] ?? null,
                     $data['utm_campaign'] ?? null,
                     $data['utm_term'] ?? null,
                     $data['utm_content'] ?? null,
                     $data['landing_page'] ?? null,
-                    $data['referrer'] ?? null,
+                    $data['referrer'] ?? $data['referrer_url'] ?? null,
                     $data['ip_address'] ?? null,
-                ]
+                ];
+            if ($tid) { $cols .= ", tenant_id"; $vals .= ", ?"; $params[] = $tid; }
+            $this->db->query(
+                "INSERT INTO crm_lead_sources_extended ($cols) VALUES ($vals)",
+                $params
             );
             return ['success' => true];
         } catch (\Exception $e) {
+            error_log('CRMService::addSourceDetail error: ' . $e->getMessage());
             return ['success' => false];
         }
     }
@@ -1131,10 +1135,10 @@ class CRMService
                 'page_url'      => filter_var($meta['page_url'] ?? '', FILTER_SANITIZE_URL),
                 'device_type'   => \App\Core\Security::sanitize($meta['device_type'] ?? ''),
             ];
-            $this->db->query(
-                "INSERT INTO crm_form_submissions (form_id, lead_id, submitted_data, ip_address, user_agent, utm_source, utm_medium, utm_campaign, page_url, device_type)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                [
+            $tidForm = $this->tid();
+            $formCols = "form_id, lead_id, submitted_data, ip_address, user_agent, utm_source, utm_medium, utm_campaign, page_url, device_type";
+            $formVals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
+            $formParams = [
                     $form['id'],
                     $leadResult['lead_id'],
                     json_encode($data),
@@ -1145,7 +1149,11 @@ class CRMService
                     $sanitizedMeta['utm_campaign'],
                     $sanitizedMeta['page_url'],
                     $sanitizedMeta['device_type'],
-                ]
+                ];
+            if ($tidForm) { $formCols .= ", tenant_id"; $formVals .= ", ?"; $formParams[] = $tidForm; }
+            $this->db->query(
+                "INSERT INTO crm_form_submissions ($formCols) VALUES ($formVals)",
+                $formParams
             );
 
             // Update submission count
@@ -1212,7 +1220,7 @@ class CRMService
                 }
 
                 $this->db->query(
-                    "INSERT INTO leads (lead_number, name, phone, email, source, budget_min, status, assigned_to, created_by, lead_score, created_at, updated_at" . ($tid ? ", tenant_id" : "") . ")
+                    "INSERT INTO leads (lead_number, name, phone, email, source, budget, status, assigned_to, created_by, lead_score, created_at, updated_at" . ($tid ? ", tenant_id" : "") . ")
                      VALUES (?, ?, ?, ?, ?, ?, 'new', ?, ?, 0, NOW(), NOW()" . ($tid ? ", ?" : "") . ")",
                     array_merge([$leadNum, $name, $phone, $email, $source, $budget, $userId, $userId], $tid ? [$tid] : [])
                 );
@@ -1429,7 +1437,11 @@ class CRMService
             $breakdown = [];
 
             $budgetScore = 0;
-            $budget = (float)($lead['budget_max'] ?? $lead['budget_min'] ?? 0);
+            $budget = (float)($lead['budget'] ?? $lead['budget_range'] ?? 0);
+            // budget_range may be "5000000-10000000" — take upper bound
+            if (is_string($budget) && strpos($lead['budget_range'] ?? '', '-') !== false) {
+                $parts = explode('-', $lead['budget_range']); $budget = (float)end($parts);
+            }
             if ($budget >= 10000000) $budgetScore = 25;
             elseif ($budget >= 5000000) $budgetScore = 20;
             elseif ($budget >= 3000000) $budgetScore = 15;
@@ -1467,7 +1479,7 @@ class CRMService
             $profileScore = 0;
             if (!empty($lead['phone'])) $profileScore += 3;
             if (!empty($lead['email'])) $profileScore += 3;
-            if (!empty($lead['budget_min'])) $profileScore += 3;
+            if (!empty($lead['budget']) || !empty($lead['budget_range'])) $profileScore += 3;
             if (!empty($lead['preferred_location'])) $profileScore += 3;
             if (!empty($lead['property_type'])) $profileScore += 3;
             $breakdown['profile'] = ['score' => $profileScore, 'max' => 15, 'label' => "Profile completeness"];
@@ -1582,7 +1594,10 @@ class CRMService
             $lead = $this->getLeadById($leadId);
             if (!$lead) return ['error' => 'Lead not found'];
 
-            $budget = (float)($lead['budget_max'] ?? $lead['budget_min'] ?? 0);
+            $budget = (float)($lead['budget'] ?? 0);
+            if ($budget <= 0 && !empty($lead['budget_range'])) {
+                $parts = explode('-', $lead['budget_range']); $budget = (float)end($parts);
+            }
             if ($budget <= 0) return ['error' => 'No budget set for this lead'];
 
             $rankSlabs = [
@@ -1676,21 +1691,21 @@ class CRMService
 
             // Lead activities (status changes, notes, updates, assignments)
             $activities = $this->db->fetchAll(
-                "SELECT id, lead_id, 'activity' as timeline_type, type, subject as title, details as description, created_at, user_id as actor_id
+                "SELECT id, lead_id, 'activity' as timeline_type, activity_type as type, subject as title, description, created_at, created_by as actor_id
                  FROM lead_activities WHERE $actWhere ORDER BY created_at DESC LIMIT ?",
                 $actParams
             ) ?: [];
 
             // Interactions (calls, emails, WhatsApp, meetings)
             $interactions = $this->db->fetchAll(
-                "SELECT id, lead_id, 'interaction' as timeline_type, type, subject, body as description, created_at, user_id as actor_id
+                "SELECT id, lead_id, 'interaction' as timeline_type, interaction_type as type, subject, body as description, created_at, user_id as actor_id
                  FROM crm_interactions WHERE $intWhere ORDER BY created_at DESC LIMIT ?",
                 $intParams
             ) ?: [];
 
             // Tasks (follow-ups, to-dos)
             $tasks = $this->db->fetchAll(
-                "SELECT id, lead_id, 'task' as timeline_type, type, title, description, created_at, assigned_to as actor_id
+                "SELECT id, lead_id, 'task' as timeline_type, task_type as type, title, description, created_at, assigned_to as actor_id
                  FROM crm_tasks WHERE $taskWhere ORDER BY created_at DESC LIMIT ?",
                 $taskParams
             ) ?: [];
@@ -1703,6 +1718,7 @@ class CRMService
 
             return array_slice($all, 0, $limit);
         } catch (\Exception $e) {
+            error_log('CRMService::getLeadTimeline error: ' . $e->getMessage());
             return [];
         }
     }
@@ -1864,7 +1880,10 @@ class CRMService
     public function getSegments(): array
     {
         try {
-            $segments = $this->db->fetchAll("SELECT * FROM crm_segments ORDER BY created_at DESC") ?: [];
+            $tidSeg = $this->tid();
+            $segWhere = $tidSeg ? " WHERE tenant_id = ?" : "";
+            $segParams = $tidSeg ? [$tidSeg] : [];
+            $segments = $this->db->fetchAll("SELECT * FROM crm_segments{$segWhere} ORDER BY created_at DESC", $segParams) ?: [];
             foreach ($segments as &$seg) {
                 $criteria = json_decode($seg['filter_criteria'] ?? '{}', true) ?? [];
                 $where = ["deleted_at IS NULL"];
