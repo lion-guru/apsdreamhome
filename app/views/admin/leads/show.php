@@ -786,13 +786,13 @@ function timeAgo($dt) {
         <div class="tab-pane fade" id="tab-actions">
             <div class="row g-3">
                 <div class="col-6 col-md-4 col-lg-3">
-                    <a href="https://wa.me/91<?= $phone ?>" target="_blank" class="action-btn">
+                    <a href="https://wa.me/91<?= $phone ?>" target="_blank" class="action-btn" onclick="logQuickInteraction('whatsapp')">
                         <i class="fab fa-whatsapp text-success"></i>
                         <span>WhatsApp</span>
                     </a>
                 </div>
                 <div class="col-6 col-md-4 col-lg-3">
-                    <a href="tel:<?= $phone ?>" class="action-btn">
+                    <a href="tel:<?= $phone ?>" class="action-btn" onclick="logQuickInteraction('call')">
                         <i class="fas fa-phone text-primary"></i>
                         <span>Call Now</span>
                     </a>
@@ -1137,19 +1137,19 @@ function submitQuickLog() {
         btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i> Log';
         btn.disabled = false;
         if (data.success) {
-            showToast('âœ“ ' + quickType.charAt(0).toUpperCase() + quickType.slice(1) + ' logged!', 'success');
-            .catch(err => console.error('Request failed:', err));
+            showToast('✓ ' + quickType.charAt(0).toUpperCase() + quickType.slice(1) + ' logged!', 'success');
             document.getElementById('quickSubject').value = '';
             document.getElementById('quickBody').value = '';
             setTimeout(() => location.reload(), 800);
         } else {
             showToast('Error: ' + (data.error || 'Failed'), 'danger');
         }
-    }).catch(() => {
+    }).catch(err => {
+        console.error('Request failed:', err);
         btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i> Log';
         btn.disabled = false;
         showToast('Network error', 'danger');
-    ).finally(() => hideLoader());
+    }).finally(() => hideLoader());
 }
 
 // —€—€ Full Interaction Modal Submit —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
@@ -1169,18 +1169,18 @@ function submitInteraction(e) {
         btn.innerHTML = '<i class="fas fa-save me-1"></i> Save Interaction';
         btn.disabled = false;
         if (data.success) {
-            .catch(err => console.error('Request failed:', err));
             bootstrap.Modal.getInstance(document.getElementById('interactionModal')).hide();
-            showToast('âœ“ Interaction logged!', 'success');
+            showToast('✓ Interaction logged!', 'success');
             setTimeout(() => location.reload(), 800);
         } else {
             showToast('Error: ' + (data.error || 'Failed'), 'danger');
         }
-    }).catch(() => {
+    }).catch(err => {
+        console.error('Request failed:', err);
         btn.innerHTML = '<i class="fas fa-save me-1"></i> Save Interaction';
         btn.disabled = false;
         showToast('Network error', 'danger');
-    ).finally(() => hideLoader());
+    }).finally(() => hideLoader());
     return false;
 }
 
@@ -1202,19 +1202,19 @@ function submitTask(e) {
     }).then(r => r.json()).then(data => {
         btn.innerHTML = '<i class="fas fa-save me-1"></i> Create Task';
         btn.disabled = false;
-            .catch(err => console.error('Request failed:', err));
         if (data.success) {
             bootstrap.Modal.getInstance(document.getElementById('taskModal')).hide();
-            showToast('âœ“ Task created!', 'success');
+            showToast('✓ Task created!', 'success');
             setTimeout(() => location.reload(), 800);
         } else {
             showToast('Error: ' + (data.error || 'Failed'), 'danger');
         }
-    }).catch(() => {
+    }).catch(err => {
+        console.error('Request failed:', err);
         btn.innerHTML = '<i class="fas fa-save me-1"></i> Create Task';
         btn.disabled = false;
         showToast('Network error', 'danger');
-    ).finally(() => hideLoader());
+    }).finally(() => hideLoader());
     return false;
 }
 
@@ -1226,11 +1226,17 @@ function toggleTask(taskId, completed) {
         headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-Token': CSRF_TOKEN},
         body: 'task_id=' + taskId + '&csrf_token=' + CSRF_TOKEN
     }).then(r => r.json()).then(data => {
-        if (data.success) showToast(completed ? 'âœ“ Task completed!' : 'Task reopened', 'success');
-    ).finally(() => hideLoader());
+        if (data.success) showToast(completed ? '✓ Task completed!' : 'Task reopened', 'success');
+        else showToast(data.error || 'Failed', 'danger');
+    }).catch(err => console.error('Task toggle failed:', err))
+      .finally(() => hideLoader());
 }
 
-// —€—€ Toast Helper —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+function logQuickInteraction(type){
+  const fd=new FormData(); fd.append('type',type); fd.append('subject', type.charAt(0).toUpperCase()+type.slice(1)+' via Quick Action'); fd.append('direction','outbound'); fd.append('csrf_token',CSRF_TOKEN);
+  fetch(BASE + '/admin/leads/' + LEAD_ID + '/log-interaction', {method:'POST', body: fd}).then(r=>r.json()).then(d=>{ if(d.success) showToast('✓ '+type+' logged','success'); }).catch(()=>{});
+}
+// ——— Toast Helper ——————————————————————————————————————————————
 function showToast(msg, type) {
     const toast = document.createElement('div');
     toast.className = 'alert alert-' + type + ' position-fixed shadow-lg';

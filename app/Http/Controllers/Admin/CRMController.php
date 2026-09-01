@@ -32,12 +32,17 @@ class CRMController extends AdminController
             ];
             $recent_tickets = $db->query("SELECT st.*, u.name as user_name FROM support_tickets st LEFT JOIN users u ON st.user_id=u.id WHERE 1=1{$ticketWhere} ORDER BY st.created_at DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
             $recent_leads = $db->query("SELECT l.*, u.name as assignee_name FROM leads l LEFT JOIN users u ON l.assigned_to=u.id WHERE l.deleted_at IS NULL{$leadWhere} ORDER BY l.created_at DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            // Pipeline + status distribution for view (avoids DB queries in view)
+            $pipeline = $db->query("SELECT status, COUNT(*) as cnt, SUM(COALESCE(budget, 0)) as total_val FROM leads WHERE deleted_at IS NULL AND status NOT IN ('converted','closed','dead'){$leadWhere} GROUP BY status ORDER BY FIELD(status, 'new','contacted','qualified','site_visit','proposal','negotiation','booking','won')")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $statusDist = $db->query("SELECT status, COUNT(*) as cnt FROM leads WHERE deleted_at IS NULL{$leadWhere} GROUP BY status ORDER BY cnt DESC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Exception $e) {
             $stats = ['total_customers'=>0,'active_leads'=>0,'open_tickets'=>0,'total_inquiries'=>0,'converted_this_month'=>0,'pending_followups'=>0];
             $recent_tickets = [];
             $recent_leads = [];
+            $pipeline = [];
+            $statusDist = [];
         }
-        return $this->render('admin/crm/index', ['stats' => $stats, 'recent_tickets' => $recent_tickets, 'recent_leads' => $recent_leads]);
+        return $this->render('admin/crm/index', ['stats' => $stats, 'recent_tickets' => $recent_tickets, 'recent_leads' => $recent_leads, 'pipeline' => $pipeline, 'statusDist' => $statusDist]);
     }
 
     public function users()

@@ -276,12 +276,7 @@ $kpis = [
                     <h6 class="crm-section-title mb-0"><i class="fas fa-project-diagram"></i>Pipeline Summary</h6>
                 </div>
                 <div class="card-body">
-                    <?php
-                    try {
-                        $db = \App\Core\Database\Database::getInstance()->getConnection();
-                        $pipeline = $db->query("SELECT status, COUNT(*) as cnt, SUM(COALESCE(budget, 0)) as total_val FROM leads WHERE deleted_at IS NULL AND status NOT IN ('converted','closed','dead') GROUP BY status ORDER BY FIELD(status, 'new','contacted','qualified','site_visit','proposal','negotiation','booking','won')")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-                    } catch (\Throwable $e) { $pipeline = []; }
-                    ?>
+                    <?php $pipeline = $pipeline ?? []; ?>
                     <?php if (!empty($pipeline)): ?>
                         <?php
                         $cnts = array_map(function($p) { return (int)$p['cnt']; }, $pipeline);
@@ -314,13 +309,7 @@ $kpis = [
                     <h6 class="crm-section-title mb-0"><i class="fas fa-filter"></i>Lead Status Distribution</h6>
                 </div>
                 <div class="card-body">
-                    <?php
-                    try {
-                        $db = \App\Core\Database\Database::getInstance()->getConnection();
-                        $statusDist = $db->query("SELECT status, COUNT(*) as cnt FROM leads WHERE deleted_at IS NULL GROUP BY status ORDER BY cnt DESC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-                    } catch (\Throwable $e) { $statusDist = []; }
-                    $totalAll = array_sum(array_map(fn($s) => (int)$s['cnt'], $statusDist)) ?: 1;
-                    ?>
+                    <?php $statusDist = $statusDist ?? []; $totalAll = array_sum(array_map(fn($s) => (int)$s['cnt'], $statusDist)) ?: 1; ?>
                     <?php if (!empty($statusDist)): ?>
                         <!-- Donut Chart (CSS-based) -->
                         <?php
