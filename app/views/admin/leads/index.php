@@ -116,25 +116,33 @@ $base = BASE_URL ?? '';
     </div>
 
     <!-- Bulk Actions Bar (hidden by default) -->
-    <div class="card border-0 shadow-sm mb-3" id="bulkActionsBar" class="style-2248">
-        <div class="card-body py-2 d-flex align-items-center gap-3">
+    <div class="card border-0 shadow-sm mb-3" id="bulkActionsBar" style="display:none">
+        <div class="card-body py-2 d-flex align-items-center gap-3 flex-wrap">
             <span class="fw-semibold"><span id="selectedCount">0</span> selected</span>
-            <select id="bulkAction" class="form-select form-select-sm style-68062">
+            <select id="bulkAction" class="form-select form-select-sm" style="min-width:140px">
                 <option value="">Bulk Actions...</option>
                 <option value="status">Change Status</option>
                 <option value="assign">Assign To</option>
                 <option value="delete">Delete Selected</option>
             </select>
-            <select id="bulkStatus" class="form-select form-select-sm style-15753">
+            <select id="bulkStatus" class="form-select form-select-sm" style="display:none;min-width:140px">
                 <?php foreach (['new','contacted','qualified','proposal','negotiation','converted','closed','lost','dead'] as $s): ?>
                     <option value="<?= $s ?>"><?= ucfirst($s) ?></option>
                 <?php endforeach; ?>
             </select>
-            <select id="bulkAssign" class="form-select form-select-sm style-15753">
+            <select id="bulkAssign" class="form-select form-select-sm" style="display:none;min-width:160px">
                 <option value="">Select User...</option>
+                <?php
+                $bulkUsers = $assignees ?? $users ?? [];
+                if (empty($bulkUsers)) {
+                    try { $bulkUsers = \App\Core\Database\Database::getInstance()->getConnection()->query("SELECT id, name FROM users WHERE status='active' ORDER BY name ASC LIMIT 50")->fetchAll(PDO::FETCH_ASSOC) ?: []; } catch(Throwable $e) { $bulkUsers = []; }
+                }
+                foreach ($bulkUsers as $u): ?>
+                    <option value="<?= $u['id'] ?>"><?= htmlspecialchars($u['name'] ?? '') ?></option>
+                <?php endforeach; ?>
             </select>
-            <button type="button" class="btn btn-sm btn-warning" id="bulkApply" class="style-2248">Apply</button>
-            <button type="button" class="btn btn-sm btn-outline-danger" id="bulkDelete" class="style-2248">Delete</button>
+            <button type="button" class="btn btn-sm btn-warning" id="bulkApply" style="display:none">Apply</button>
+            <button type="button" class="btn btn-sm btn-outline-danger" id="bulkDelete" style="display:none">Delete</button>
         </div>
     </div>
 
@@ -290,36 +298,35 @@ document.addEventListener('DOMContentLoaded', function() {
         const ids = getSelected();
         const action = bulkAction.value;
         let value = action === 'status' ? bulkStatus.value : bulkAssign.value;
-        if (!value) { showToast('Select a value first', 'info'); return; }
-
-        showLoader();
+        if (!value) { if (typeof showToast==='function') showToast('Select a value first', 'info'); else alert('Select a value'); return; }
+        if (typeof showLoader==='function') showLoader();
         fetch('<?= $base ?>/admin/leads/bulk-action', {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': '<?= $_SESSION['csrf_token'] ?? '' ?>'},
-            body: 'csrf_token=<?= $_SESSION['csrf_token'] ?? '' ?>&action=' + action + '&value=' + value + '&ids=' + ids.join(',')
+            body: 'csrf_token=<?= $_SESSION['csrf_token'] ?? '' ?>&action=' + encodeURIComponent(action) + '&value=' + encodeURIComponent(value) + '&ids=' + ids.join(',')
         }).then(r => r.json()).then(d => {
             if (d.success) location.reload();
-            .catch(err => console.error('Request failed:', err));
-            else showToast(d.error || 'Failed', 'danger');
-        ).finally(() => hideLoader());
+            else { if (typeof showToast==='function') showToast(d.error || 'Failed', 'danger'); else alert(d.error||'Failed'); }
+        }).catch(err => console.error('Request failed:', err))
+          .finally(() => { if (typeof hideLoader==='function') hideLoader(); });
     });
 
     bulkDelete.addEventListener('click', function() {
         const ids = getSelected();
-        apsConfirm('Delete ' + ids.length + ' leads?').then(function(ok) {
+        if (!ids.length) return;
+        apsConfirm('Delete ' + ids.length + ' leads? This cannot be undone.').then(function(ok) {
             if (!ok) return;
-
-        showLoader();
-        fetch('<?= $base ?>/admin/leads/bulk-action', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': '<?= $_SESSION['csrf_token'] ?? '' ?>'},
-            body: 'csrf_token=<?= $_SESSION['csrf_token'] ?? '' ?>&action=delete&ids=' + ids.join(',')
+            if (typeof showLoader==='function') showLoader();
+            fetch('<?= $base ?>/admin/leads/bulk-action', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': '<?= $_SESSION['csrf_token'] ?? '' ?>'},
+                body: 'csrf_token=<?= $_SESSION['csrf_token'] ?? '' ?>&action=delete&ids=' + ids.join(',')
+            }).then(r => r.json()).then(d => {
+                if (d.success) location.reload();
+                else { if (typeof showToast==='function') showToast(d.error || 'Failed', 'danger'); else alert(d.error||'Failed'); }
+            }).catch(err => console.error('Request failed:', err))
+              .finally(() => { if (typeof hideLoader==='function') hideLoader(); });
         });
-        }).then(r => r.json()).then(d => {
-            .catch(err => console.error('Request failed:', err));
-            if (d.success) location.reload();
-            else showToast(d.error || 'Failed', 'danger');
-        ).finally(() => hideLoader());
     });
 });
 </script>

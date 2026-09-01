@@ -249,8 +249,9 @@ $kpis = [
                                 <span class="fw-bold text-danger"><?= $pendingFollowups ?></span>
                                 <small class="text-muted">leads need follow-up</small>
                             </div>
-                            <div class="progress mb-3 style-32124">
-                                <div class="progress-bar bg-danger style-75914"></div>
+                            <?php $followPct = $activeLeads > 0 ? min(100, round($pendingFollowups / max(1,$activeLeads) * 100)) : ($pendingFollowups>0?100:0); ?>
+                            <div class="progress mb-3" style="height:6px;background:#fee2e2;border-radius:50px;overflow:hidden">
+                                <div class="progress-bar bg-danger" style="width:<?= $followPct ?>%;height:100%;border-radius:50px"></div>
                             </div>
                             <a href="<?= $base ?>/admin/leads/followups" class="btn btn-sm btn-warning w-100 fw-bold">
                                 <i class="fas fa-arrow-right me-1"></i> Handle Follow-ups
@@ -293,11 +294,11 @@ $kpis = [
                         ?>
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between mb-1">
-                                    <span class="fw-semibold style-87981"><?= ucfirst(str_replace('_',' ',$p['status'])) ?></span>
+                                    <span class="fw-semibold"><?= ucfirst(str_replace('_',' ',$p['status'])) ?></span>
                                     <span class="fw-bold"><?= (int)$p['cnt'] ?> leads &middot; ₹<?= number_format((float)$p['total_val'] / 100000, 1) ?>L</span>
                                 </div>
-                                <div class="progress style-28392">
-                                    <div class="progress-bar style-25298"></div>
+                                <div class="progress" style="height:8px;background:#f0f0f5;border-radius:50px;overflow:hidden">
+                                    <div class="progress-bar" style="width:<?= $width ?>%;background:<?= $color ?>;height:100%;border-radius:50px;transition:width 0.6s"></div>
                                 </div>
                             </div>
                         <?php endforeach; ?>

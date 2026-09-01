@@ -195,25 +195,37 @@ $stageIcons = [
     });
 
     function updateDealStage(dealId, stage) {
-        showLoader();
+        if (typeof showLoader === 'function') showLoader();
+        const csrf = document.querySelector('meta[name=csrf-token]')?.content || '';
         fetch(baseUrl + '/admin/deals/' + dealId + '/stage', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRF-Token': csrf
                 },
-                body: 'stage=' + stage
+                body: 'stage=' + encodeURIComponent(stage) + '&csrf_token=' + encodeURIComponent(csrf)
             })
             .then(response => response.json())
             .then(data => {
                 if (!data.success) {
-                    showToast('Failed to update deal stage', 'danger');
-                    .catch(err => console.error('Request failed:', err));
+                    if (typeof showToast === 'function') showToast(data.message || 'Failed to update deal stage', 'danger');
+                    else alert(data.message || 'Failed');
                     location.reload();
+                } else {
+                    // update badge counts optimistically
+                    document.querySelectorAll('.kanban-column').forEach(col=>{
+                        const cnt = col.querySelectorAll('.kanban-card').length;
+                        const badge = col.querySelector('.badge'); if(badge) badge.textContent = cnt;
+                    });
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
+                if (typeof showToast === 'function') showToast('Request failed', 'danger');
                 location.reload();
-            ).finally(() => hideLoader());
+            })
+            .finally(() => { if (typeof hideLoader === 'function') hideLoader(); });
     }
+    function showLoader(){ const l=document.getElementById('global-loader'); if(l) l.style.display='flex'; }
+    function hideLoader(){ const l=document.getElementById('global-loader'); if(l) l.style.display='none'; }
 </script>
