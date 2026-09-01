@@ -147,6 +147,10 @@ $router->get('/construction-cost-estimator', 'Front\\ToolController@construction
 $router->get('/rental-yield-calculator', 'Front\\ToolController@rentalYieldCalculator');
 $router->get('/property-tax-calculator', 'Front\\ToolController@propertyTaxCalculator');
 $router->get('/rera-lookup', 'Front\\ToolController@reraLookup');
+// Aliases for user-facing tool names (fix 404s from homepage/tools listing)
+$router->get('/investment-calculator', function(){ header('Location: '.BASE_URL.'/sip-vs-realestate', true, 301); exit; });
+$router->get('/loan-eligibility', function(){ header('Location: '.BASE_URL.'/home-loan-eligibility', true, 301); exit; });
+$router->get('/emi-calculator', function(){ header('Location: '.BASE_URL.'/calc', true, 301); exit; });
 
 // Free Tools (new)
 $router->get('/tools/plot-converter', 'Front\\PropertyController@plotConverter');

@@ -2137,3 +2137,27 @@ section[style*="linear-gradient"] .btn-warning {
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background: #fff;
 }
+
+/* === Tool pages contrast hotfix (8 tools: EMI, Investment, Stamp, Plot Converter, Loan Eligibility, Valuation, Home Loan) === */
+section.bg-white .tool-card .text-white,
+section.bg-light .tool-card .text-white,
+section.bg-white .card .text-white,
+section.bg-light .card .text-white {
+  color: var(--color-text-primary) !important;
+}
+section.bg-white .tool-card .text-white-50,
+section.bg-light .tool-card .text-white-50 {
+  color: var(--color-text-muted) !important;
+}
+.bg-dark .tool-card,
+.bg-premium-navy .tool-card {
+  color: var(--color-text-primary) !important;
+}
+.bg-dark .tool-card h5, .bg-dark .tool-card p,
+.bg-premium-navy .tool-card h5, .bg-premium-navy .tool-card p {
+  color: var(--color-text-primary) !important;
+}
+.bg-dark .tool-card .text-muted,
+.bg-premium-navy .tool-card .text-muted {
+  color: var(--color-text-muted) !important;
+}
