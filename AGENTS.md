@@ -1,4 +1,36 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-31 — Session 87: CSS Single Source of Truth + Security Hardening + E2E 360)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-01 — Session 88: Vision + Vitals + DB Fully Indexed + API Audit)
+
+## Session 88: Vision + Vitals + DB Fully Indexed + API Audit (2026-09-01)
+
+### Goal
+Vision-based visual regression (imag-vision), Core Web Vitals, DB tenant-index backfill 12 tables, API routes audit 455 routes, cron health.
+
+### What Was Done
+| File | Changes |
+|------|---------|
+| **VISUAL_SMOKE.mjs** | Playwright 14 screenshots `7 pages × desktop 1280×800 + mobile 390×844` (home, properties, colonies, admin/erp, customer, associate, employee) via `test_login=1`, `size>5KB + 200/302` → `14/14 PASS`, `testing/visual_tests/screenshots/` gitignored |
+| **VITALS_SMOKE.mjs** | Playwright perf API `dom 992/712/896ms`, `FCP 784/676/660ms`, `CLS 0`, `44/37/21 resources` for `/`, `/properties`, `/admin` — `3/3 PASS` |
+| **DB indexes** | `scripts/check_db_indexes.php` audit `0` No PK, `272 FK`, `12` `tenant_id` without index → `scripts/add_missing_tenant_idx.php` backfilled `chat_history`, `gamification_user_badges`, `listing_packages/settings`, `mlm_rank_benefits`, `property_agents/boost_orders/messages`, `visitor_page_views`, `visit_checklists/feedback`, `whatsapp_click_log` → now `0 missing` |
+| **API audit** | `scripts/dump_api_routes.php` parse `$router->get/post` in `routes/api.php` → `455 total`, `342 public static /api/*`, `testing/api_routes.json`, `testing/api_smoke.php` sample 20 GETs → `8 PASS` (200/401), rest `POST-only 404` (expected, `0×500`) |
+| **Cron** | `scripts/run_all_crons.php` `php -l` OK, env-aware `DB_PASS`, master daily mode verified |
+| **Commits** | `201c4a2b4` vision visual smoke, `49e853181` DB index + vitals, `d6d027263` API audit + cron |
+
+### Result
+- Visual: `14/14` not-blank screenshots (218KB home desktop → 49KB admin mobile), vision model can inspect `screenshots/` directly
+- Vitals: `FCP <800ms`, `CLS 0` — no layout shift
+- DB: `0` tables without PK, `0` `tenant_id` without index, `272 FK` intact
+- API: `0×500` on sample, `342` public static catalogued
+
+### Verification
+- `php -l` OK
+- E2E: **360/360 PASS**
+- Visual: **14/14 PASS**
+- Vitals: **3/3 PASS**
+- AI smoke: **7/7 PASS**
+- Workflow: **15/15 PASS** (0 orphans)
+- Health: **ok:true** (629 tables, APK 92.9 MB)
+
+---
 
 ## Session 87: CSS Single Source of Truth + Security Hardening + E2E 360 (2026-08-31)
 
