@@ -1,4 +1,40 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-29 — Session 86: AI Calling Campaign Table + E2E Stability)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-31 — Session 87: CSS Single Source of Truth + Security Hardening + E2E 360)
+
+## Session 87: CSS Single Source of Truth + Security Hardening + E2E 360 (2026-08-31)
+
+### Goal
+Fix Dual-Loading & Specificity War (33+ CSS files, 16 simultaneously loaded), close P0 security gaps (tenant spoof, .env leak, display_errors), expand E2E coverage 153→360.
+
+### What Was Done
+| File | Changes |
+|------|---------|
+| **style.css :root** | Canonical tokens `--color-primary/accent/success/indigo/purple`, `--radius-*`, `--shadow-*`, `--z-*`, legacy aliases mapped, duplicate 340-line block removed, +`--color-indigo/purple` |
+| **premium-theme.css :root** | Mapped to canonical tokens, 52+ hardcoded `#0a192f/#d4af37/#0d9488/#1e293b/#64748b/#e2e8f0` → `var(--color-*)`, `@import` Google Fonts removed |
+| **frontend.css** | `#4f46e5→var(--color-indigo)`, `#7c3aed→var(--color-purple)`, `#0f172a→var(--color-primary-hover)`, `#1e293b→var(--color-text-primary)` |
+| **header.css / homepage.css** | `#0a192f→var(--color-primary)`, `#1e293b→var(--color-text-primary)`, `#0f172a→var(--color-primary-hover)` |
+| **base.php** | Single cascade `bootstrap → fontawesome → style v7 → frontend v7 → header v8 → premium v10 → homepage v12 → dark-mode → mobile v3 → uiux v3`, removed duplicate `bootstrap/fontawesome/dark-mode/mobile/uiux` loads, removed consolidated `aps-core/pages` bundles, `premium @import` removed |
+| **admin.php** | Removed duplicate `mobile-responsive` + duplicate `uiux-fixes`, added `aps-admin-body` scoping, CSP nonce added to 2 script blocks |
+| **customer/associate/employee/agent/admin_header** | Added `style.css v7` tokens, fixed cascade order, version bump `v7/v3`, `employee/agent` replaced `aps-core` with `style.css` |
+| **consolidated/** | `aps-core/pages` marked `DEPRECATED [NOT LOADED]`, `aps-components/layout` marked `PORTAL-ONLY` |
+| **Security P0** | `mobile/.env` removed from git + `pubspec.yaml:103` assets (was bundled in APK), `TenantContext.php:72` gated `?tenant_id` behind `admin_id/role/superadmin` + audit log, `.htaccess:136` `display_errors on→off`, `public/index.php:28` gated by `APP_ENV` |
+| **P1** | `header.php:21` GA4 `G-PLACEHOLDER` guard, `base.php` deduplication, `premium @import` removal, `health_check.php` env-aware `DB_PASS` + real `reachable` flag, Flutter `app_constants 1.2.0→1.2.2+1` |
+| **E2E** | Generated `admin_menu_urls.json` 288 URLs via `scripts/dump_admin_urls.php`, `E2E_MASTER_TEST.mjs` dynamic `fs` load + `safeGoto` download/slow-page handling, `web_static_routes.json` 2192 static routes audit (272 overlap, 94% menu coverage), `dashboard/index:21` + `admin:330` silent catches → `error_log` |
+| **Commits** | `67bb25834` CSS Single Source, `694f90d23` header/homepage tokens, `75f02899e` playwright devDep, `edaed8719` Security hardening, `c0499390b` E2E 360, `0501a6af0` web routes audit |
+
+### Result
+- Single Source of Truth: `style.css :root` — all portals inherit canonical tokens, `!important` 51 kept (WCAG contrast intentional)
+- Security: tenant spoof blocked, .env no longer in APK/history, prod traces not leaked, GA4 404 fixed
+- E2E: **360/360 PASS** (was 153), covers 100% sidebar (288/288) + key public/lifecycle/dynamic/login flows
+
+### Verification
+- `php -l` 8 layouts — OK
+- E2E: **360/360 PASS** (0 unexpected, 2 expected downloads handled)
+- AI smoke: **7/7 PASS**
+- Workflow: **15/15 PASS** (0 orphans)
+- Health: **ok:true** (629 tables, APK 92.9 MB, pubspec 1.2.2+1)
+- Routes: 3085 total, 2192 static, 272 overlap
+
+---
 
 ## Session 86: AI Calling Campaign Table + E2E Stability (2026-08-29)
 
