@@ -286,22 +286,22 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                                 </div>
                             </div>
                         </div>
-                        </div>
                         <div class="col-12 mt-4">
-                            <a href="<?= BASE_URL ?>/company/projects" class="style-17222">
+                            <a href="<?= BASE_URL ?>/company/projects" class="btn btn-dark-gradient">
                                 <i class="fas fa-arrow-right"></i> <?= __('home_view_our_projects') ?>
                             </a>
                         </div>
+                    </div>
                 </div>
                 <div class="col-lg-6">
-                    <div class="style-88890 construction-grid">
-                        <div class="style-88883">
+                    <div class="construction-grid">
+                        <div>
                             <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" alt="Construction Work" class="img-cover" loading="lazy" onerror="this.onerror=null;this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
                         </div>
-                        <div class="style-88883">
+                        <div>
                             <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday1.jpeg" alt="Building Progress" class="img-cover" loading="lazy" onerror="this.onerror=null;this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
                         </div>
-                        <div class="style-32950">
+                        <div>
                             <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/raghunath-nagri-motiram.jpg" alt="Modern Construction" class="img-cover" loading="lazy" onerror="this.onerror=null;this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
                         </div>
                     </div>
@@ -363,9 +363,9 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="service-card p-0 overflow-hidden hover-lift h-100 premium-reveal style-75842">
+                    <div class="service-card p-0 overflow-hidden hover-lift h-100 premium-reveal">
                         <div class="position-relative colony-img-height">
-                            <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" alt="<?= __('home_colony_budh_bihar') ?>" class="w-100 h-100 object-fit-cover" loading="lazy">
+                            <img src="<?= BASE_URL ?>/assets/images/projects/kushinagar/budh-bihar.jpg" alt="<?= __('home_colony_budh_bihar') ?>" class="w-100 h-100 object-fit-cover" loading="lazy">
                             <div class="position-absolute bottom-0 start-0 w-100 p-3 bg-gradient colony-overlay-gradient">
                                 <span class="capsule-badge badge-upcoming text-white badge-upcoming"><?= __('home_colony_upcoming') ?></span>
                             </div>
