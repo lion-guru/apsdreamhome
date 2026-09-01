@@ -8,11 +8,11 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
 $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
 ?>
 <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/journey-scroll.css">
-<main id="main-content" class="style-18040">
+<main id="main-content" >
     <!-- Hero Section (Premium Modern UI) -->
-    <section class="hero-premium style-58977" aria-labelledby="hero-title">
+    <section class="hero-premium" aria-labelledby="hero-title">
         <!-- Particles Canvas -->
-        <canvas id="particles-canvas" class="style-36436"></canvas>
+        <canvas id="particles-canvas" ></canvas>
         <!-- Gradient Overlay -->
         <div class="hero-overlay"></div>
         <div class="container hero-content">
@@ -33,7 +33,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                     <!-- Typed Text Subtitle -->
                     <div class="mb-4 premium-reveal">
                         <span class="hero-typed-label">
-                            <i class="fas fa-circle me-1 style-43650"></i>
+                            <i class="fas fa-circle me-1"></i>
                             <?= __('home_we_offer') ?> <span id="typed-text" class="fw-semibold gradient-text-gold" data-strings="<?= __('hero_typed_strings') ?>||Premium Plots in Gorakhpur||Smart Investment Opportunities||Trusted by 5000+ Families||"></span><span class="typing-cursor iu-teal-light"></span>
                         </span>
                     </div>
@@ -83,8 +83,8 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                 </div>
                 <div class="col-lg-5">
                     <div class="hero-search-glass glass-panel hover-lift premium-reveal">
-                        <div class="card-header text-center py-4 border-bottom style-68016">
-                            <h5 class="mb-0 fw-semibold text-dark"><i class="fas fa-search me-2 style-1896"></i><?= __('search') ?> <?= __('properties') ?></h5>
+                        <div class="card-header text-center py-4 border-bottom">
+                            <h5 class="mb-0 fw-semibold text-dark"><i class="fas fa-search me-2"></i><?= __('search') ?> <?= __('properties') ?></h5>
                         </div>
                         <div class="card-body p-4">
                             <form action="<?php echo BASE_URL; ?>/properties" method="GET">
@@ -148,7 +148,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                     <div class="col-lg-3 col-6">
                         <div class="text-center">
                             <div class="stats-icon-wrap">
-                                <i class="fas fa-vector-square fa-lg style-2154"></i>
+                                <i class="fas fa-vector-square fa-lg"></i>
                             </div>
                             <div class="stat-number" data-target="5000" data-suffix="+">0</div>
                             <div class="stat-label"><?= __('home_stat_plots_sold') ?></div>
@@ -157,7 +157,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                     <div class="col-lg-3 col-6">
                         <div class="text-center">
                             <div class="stats-icon-wrap">
-                                <i class="fas fa-home fa-lg style-64047"></i>
+                                <i class="fas fa-home fa-lg"></i>
                             </div>
                             <div class="stat-number" data-target="500" data-suffix="+">0</div>
                             <div class="stat-label"><?= __('home_stat_happy_families') ?></div>
@@ -166,7 +166,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                     <div class="col-lg-3 col-6">
                         <div class="text-center">
                             <div class="stats-icon-wrap">
-                                <i class="fas fa-city fa-lg style-62735"></i>
+                                <i class="fas fa-city fa-lg"></i>
                             </div>
                             <div class="stat-number" data-target="4" data-suffix="">0</div>
                             <div class="stat-label"><?= __('home_stat_colonies_delivered') ?></div>
@@ -175,7 +175,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                     <div class="col-lg-3 col-6">
                         <div class="text-center">
                             <div class="stats-icon-wrap">
-                                <i class="fas fa-calendar-alt fa-lg style-80751"></i>
+                                <i class="fas fa-calendar-alt fa-lg"></i>
                             </div>
                             <div class="stat-number" data-target="4" data-suffix="+">0</div>
                             <div class="stat-label"><?= __('home_stat_years_trust') ?></div>
@@ -237,7 +237,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                         <div class="col-6">
                             <div class="service-card p-3">
                                 <div class="d-flex align-items-center gap-3">
-                                    <div class="service-icon mb-0 style-12116">
+                                    <div class="service-icon mb-0">
                                         <i class="fas fa-drafting-compass"></i>
                                     </div>
                                     <div>
@@ -250,7 +250,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                         <div class="col-6">
                             <div class="service-card p-3">
                                 <div class="d-flex align-items-center gap-3">
-                                    <div class="service-icon mb-0 style-93468">
+                                    <div class="service-icon mb-0">
                                         <i class="fas fa-road"></i>
                                     </div>
                                     <div>
@@ -263,7 +263,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                         <div class="col-6">
                             <div class="service-card p-3">
                                 <div class="d-flex align-items-center gap-3">
-                                    <div class="service-icon mb-0 style-14793">
+                                    <div class="service-icon mb-0">
                                         <i class="fas fa-tree"></i>
                                     </div>
                                     <div>
@@ -276,7 +276,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                         <div class="col-6">
                             <div class="service-card p-3">
                                 <div class="d-flex align-items-center gap-3">
-                                    <div class="service-icon mb-0 style-22451">
+                                    <div class="service-icon mb-0">
                                         <i class="fas fa-bolt"></i>
                                     </div>
                                     <div>
@@ -331,7 +331,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                         <div class="position-relative colony-img-height">
                             <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" alt="<?= __('home_colony_suryoday') ?>" class="w-100 h-100 object-fit-cover" loading="lazy">
                             <div class="position-absolute bottom-0 start-0 w-100 p-3 bg-gradient colony-overlay-gradient">
-                                <span class="capsule-badge badge-delivered text-white style-21516"><?= __('home_colony_delivered') ?></span>
+                                <span class="capsule-badge badge-delivered text-white"><?= __('home_colony_delivered') ?></span>
                             </div>
                         </div>
                         <div class="p-4">
@@ -345,11 +345,11 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="service-card p-0 overflow-hidden hover-lift h-100 premium-reveal style-44791">
+                    <div class="service-card p-0 overflow-hidden hover-lift h-100 premium-reveal">
                         <div class="position-relative colony-img-height">
                             <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday1.jpeg" alt="<?= __('home_colony_braj_radha') ?>" class="w-100 h-100 object-fit-cover" loading="lazy">
                             <div class="position-absolute bottom-0 start-0 w-100 p-3 bg-gradient colony-overlay-gradient">
-                                <span class="capsule-badge badge-ongoing text-white style-97765"><?= __('home_colony_ongoing') ?></span>
+                                <span class="capsule-badge badge-ongoing text-white"><?= __('home_colony_ongoing') ?></span>
                             </div>
                         </div>
                         <div class="p-4">
@@ -622,13 +622,13 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
     <section class="py-5 emi-section bg-premium-navy" aria-labelledby="emi-title">
         <div class="container">
             <div class="text-center mb-5 premium-reveal">
-                <span class="badge px-3 py-2 mb-3 badge-premium style-61594"><?= __('home_free_tool') ?></span>
+                <span class="badge px-3 py-2 mb-3 badge-premium"><?= __('home_free_tool') ?></span>
                 <h2 id="emi-title" class="fw-bold text-white"><?= __('emi_calculator') ?></h2>
-                <p class="text-white-50 style-12699"><?= __('emi_subtitle') ?></p>
+                <p class="text-white-50"><?= __('emi_subtitle') ?></p>
             </div>
             <div class="row justify-content-center">
                 <div class="col-lg-10">
-                    <div class="card border-0 glass-dark premium-reveal style-61870">
+                    <div class="card border-0 glass-dark premium-reveal">
                         <div class="card-body p-4 p-md-5 text-white">
                             <div class="row g-4">
                                 <div class="col-md-7">
@@ -665,8 +665,8 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                                     </div>
                                 </div>
                                 <div class="col-md-5">
-                                    <div class="result-card bg-dark text-white style-87517">
-                                        <p class="text-white-50 mb-1 small text-uppercase text-center style-82962"><?= __('home_your_monthly_emi') ?></p>
+                                    <div class="result-card bg-dark text-white">
+                                        <p class="text-white-50 mb-1 small text-uppercase text-center"><?= __('home_your_monthly_emi') ?></p>
                                         <p class="display-5 fw-bold mb-0 text-center iu-teal-light" id="emiResult">₹42,426</p>
                                         
                                         <!-- Animated Donut Chart -->
@@ -684,11 +684,11 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
 
                                         <hr class="border-light my-3 opacity-50">
                                         <div class="d-flex justify-content-between">
-                                            <span class="text-white-50"><i class="fas fa-circle me-1 style-91518"></i><?= __('home_loan_amount') ?></span>
+                                            <span class="text-white-50"><i class="fas fa-circle me-1"></i><?= __('home_loan_amount') ?></span>
                                             <span class="fw-bold text-white" id="totalPrincipalDisp">₹50,00,000</span>
                                         </div>
                                         <div class="d-flex justify-content-between mt-2">
-                                            <span class="text-white-50"><i class="fas fa-circle me-1 style-88794"></i><?= __('home_total_interest') ?></span>
+                                            <span class="text-white-50"><i class="fas fa-circle me-1"></i><?= __('home_total_interest') ?></span>
                                             <span class="fw-bold text-white" id="totalInterest">₹51,82,240</span>
                                         </div>
                                         <div class="d-flex justify-content-between mt-2 pt-2 border-top border-light opacity-50">
@@ -867,7 +867,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                 <!-- Buyers -->
                 <div class="col-lg-3 col-md-6">
                     <div class="service-card p-4 text-center hover-lift h-100 premium-reveal">
-                        <div class="d-inline-flex align-items-center justify-content-center mb-3 style-5632">
+                        <div class="d-inline-flex align-items-center justify-content-center mb-3">
                             <i class="fas fa-shopping-cart"></i>
                         </div>
                         <h3 class="fw-bold mb-1 section-heading-lg"><?= __('home_buyers_count') ?></h3>
@@ -878,8 +878,8 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                 
                 <!-- Sellers -->
                 <div class="col-lg-3 col-md-6">
-                    <div class="service-card p-4 text-center hover-lift h-100 premium-reveal style-44791">
-                        <div class="d-inline-flex align-items-center justify-content-center mb-3 style-55731">
+                    <div class="service-card p-4 text-center hover-lift h-100 premium-reveal">
+                        <div class="d-inline-flex align-items-center justify-content-center mb-3">
                             <i class="fas fa-hand-holding-usd"></i>
                         </div>
                         <h3 class="fw-bold mb-1 section-heading-lg"><?= __('home_sellers_count') ?></h3>
@@ -890,8 +890,8 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                 
                 <!-- Renters -->
                 <div class="col-lg-3 col-md-6">
-                    <div class="service-card p-4 text-center hover-lift h-100 premium-reveal style-75842">
-                        <div class="d-inline-flex align-items-center justify-content-center mb-3 style-96962">
+                    <div class="service-card p-4 text-center hover-lift h-100 premium-reveal">
+                        <div class="d-inline-flex align-items-center justify-content-center mb-3">
                             <i class="fas fa-key"></i>
                         </div>
                         <h3 class="fw-bold mb-1 section-heading-lg"><?= __('home_renters_count') ?></h3>
@@ -902,8 +902,8 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                 
                 <!-- Agents/Associates -->
                 <div class="col-lg-3 col-md-6">
-                    <div class="service-card p-4 text-center hover-lift h-100 premium-reveal style-11538">
-                        <div class="d-inline-flex align-items-center justify-content-center mb-3 style-49481">
+                    <div class="service-card p-4 text-center hover-lift h-100 premium-reveal">
+                        <div class="d-inline-flex align-items-center justify-content-center mb-3">
                             <i class="fas fa-user-tie"></i>
                         </div>
                         <h3 class="fw-bold mb-1 section-heading-lg"><?= __('home_associates_count') ?></h3>
@@ -914,7 +914,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
             </div>
             
             <!-- Testimonial Ticker -->
-            <div class="glass-panel p-4 mt-5 premium-reveal style-33511">
+            <div class="glass-panel p-4 mt-5 premium-reveal">
                 <div class="row align-items-center">
                     <div class="col-md-2 text-center text-md-start mb-3 mb-md-0">
                         <div class="d-inline-flex align-items-center gap-1 text-warning fw-bold fs-6">
@@ -927,8 +927,8 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                         <div class="text-muted small mt-1"><?= __('home_rating_text') ?></div>
                     </div>
                     <div class="col-md-7">
-                        <div class="testimonial-ticker-wrap style-41582">
-                            <div id="testimonial-ticker" class="style-78916">
+                        <div class="testimonial-ticker-wrap">
+                            <div id="testimonial-ticker" >
                                 <p class="fw-bold mb-0 testimonial-ticker-item"><i class="fas fa-quote-left me-2 text-primary"></i><?= __('home_testimonial_tick_1') ?></p>
                                 <p class="fw-bold mb-0 testimonial-ticker-item"><i class="fas fa-quote-left me-2 text-primary"></i><?= __('home_testimonial_tick_2') ?></p>
                                 <p class="fw-bold mb-0 testimonial-ticker-item"><i class="fas fa-quote-left me-2 text-primary"></i><?= __('home_testimonial_tick_3') ?></p>
@@ -953,12 +953,12 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                 <div class="capsule-badge mb-3 capsule-green">
                     <i class="fas fa-star"></i> <?= __('home_expertise') ?>
                 </div>
-                <h2 id="services-title" class="fw-bold mb-3 style-55666"><?= __('our_services') ?></h2>
+                <h2 id="services-title" class="fw-bold mb-3"><?= __('our_services') ?></h2>
                 <p class="text-muted fs-6 mx-auto section-desc"><?= __('services_tagline') ?></p>
             </div>
             <div class="row g-4 stagger-children">
                 <div class="col-lg-4 col-md-6 reveal">
-                    <div class="service-card-modern" onclick="openServiceModal('loan')" class="style-2635">
+                    <div class="service-card-modern" onclick="openServiceModal('loan')" >
                         <div class="service-icon icon-green">
                             <i class="fas fa-hand-holding-usd fa-2x iu-emerald"></i>
                         </div>
@@ -968,17 +968,17 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 reveal">
-                    <div class="service-card-modern" onclick="openServiceModal('legal')" class="style-11543">
+                    <div class="service-card-modern" onclick="openServiceModal('legal')" >
                         <div class="service-icon icon-indigo">
-                            <i class="fas fa-gavel fa-2x style-50270"></i>
+                            <i class="fas fa-gavel fa-2x"></i>
                         </div>
                         <h5 class="fw-bold mb-2"><?= __('home_service_legal') ?></h5>
                         <p class="text-muted small mb-3"><?= __('home_service_legal_desc') ?></p>
-                        <span class="badge px-3 py-2 rounded-pill style-28254"><?= __('home_service_legal_badge') ?></span>
+                        <span class="badge px-3 py-2 rounded-pill"><?= __('home_service_legal_badge') ?></span>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 reveal">
-                    <div class="service-card-modern" onclick="openServiceModal('interior')" class="style-3005">
+                    <div class="service-card-modern" onclick="openServiceModal('interior')" >
                         <div class="service-icon icon-amber">
                             <i class="fas fa-couch fa-2x iu-amber"></i>
                         </div>
@@ -988,33 +988,33 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 reveal">
-                    <div class="service-card-modern" onclick="openServiceModal('registry')" class="style-36978">
+                    <div class="service-card-modern" onclick="openServiceModal('registry')" >
                         <div class="service-icon icon-red">
                             <i class="fas fa-file-signature fa-2x iu-red"></i>
                         </div>
                         <h5 class="fw-bold mb-2"><?= __('home_service_registry') ?></h5>
                         <p class="text-muted small mb-3"><?= __('home_service_registry_desc') ?></p>
-                        <span class="badge px-3 py-2 rounded-pill style-35438"><?= __('home_service_registry_badge') ?></span>
+                        <span class="badge px-3 py-2 rounded-pill"><?= __('home_service_registry_badge') ?></span>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 reveal">
-                    <div class="service-card-modern" onclick="openServiceModal('rental')" class="style-42397">
+                    <div class="service-card-modern" onclick="openServiceModal('rental')" >
                         <div class="service-icon icon-teal">
                             <i class="fas fa-file-contract fa-2x iu-teal-light"></i>
                         </div>
                         <h5 class="fw-bold mb-2"><?= __('home_service_rental') ?></h5>
                         <p class="text-muted small mb-3"><?= __('home_service_rental_desc') ?></p>
-                        <span class="badge px-3 py-2 rounded-pill style-63209"><?= __('home_service_rental_badge') ?></span>
+                        <span class="badge px-3 py-2 rounded-pill"><?= __('home_service_rental_badge') ?></span>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 reveal">
-                    <div class="service-card-modern" onclick="openServiceModal('tax')" class="style-90606">
+                    <div class="service-card-modern" onclick="openServiceModal('tax')" >
                         <div class="service-icon icon-cyan">
-                            <i class="fas fa-file-invoice-dollar fa-2x style-61912"></i>
+                            <i class="fas fa-file-invoice-dollar fa-2x"></i>
                         </div>
                         <h5 class="fw-bold mb-2"><?= __('home_service_tax') ?></h5>
                         <p class="text-muted small mb-3"><?= __('home_service_tax_desc') ?></p>
-                        <span class="badge px-3 py-2 rounded-pill style-74888"><?= __('home_service_tax_badge') ?></span>
+                        <span class="badge px-3 py-2 rounded-pill"><?= __('home_service_tax_badge') ?></span>
                     </div>
                 </div>
             </div>
@@ -1024,10 +1024,10 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
     <!-- Service Modal -->
     <div class="modal fade" id="serviceModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg style-337">
+            <div class="modal-content border-0 shadow-lg">
                 <div class="modal-header border-0 p-4 bg-gradient-success" id="serviceModalHeader">
                     <div class="d-flex align-items-center gap-3">
-                        <div class="bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center style-93293">
+                        <div class="bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center">
                             <i class="fas fa-hand-holding-usd text-white fa-xl" id="serviceModalIcon"></i>
                         </div>
                         <div>
@@ -1305,7 +1305,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
         }
         featuresHtml += '</div>';
 
-        featuresHtml += '<div class="col-md-5"><div class="card border-0 shadow-sm p-4 h-100 style-3970">';
+        featuresHtml += '<div class="col-md-5"><div class="card border-0 shadow-sm p-4 h-100">';
         featuresHtml += '<h5 class="fw-bold mb-3"><i class="fas fa-paper-plane text-' + svc.ctaColor + ' me-2"></i><?= __("enquire_services", null, "Quick Inquiry") ?></h5>';
         featuresHtml += '<form id="modalServiceInquiryForm" class="small">';
         featuresHtml += '<input type="hidden" name="service_type" value="' + service + '">';
@@ -1367,10 +1367,10 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
         <div class="container">
             <div class="row align-items-center g-5">
                 <div class="col-lg-6 reveal-left">
-                    <span class="section-label style-30520"><?= __('home_why_us_label') ?></span>
-                    <h2 id="why-choose-title" class="fw-bold mb-4 style-24037"><?= __('section_why_choose_us') ?></h2>
+                    <span class="section-label"><?= __('home_why_us_label') ?></span>
+                    <h2 id="why-choose-title" class="fw-bold mb-4"><?= __('section_why_choose_us') ?></h2>
                     <div class="checklist-item">
-                        <div class="check-icon style-41724">
+                        <div class="check-icon">
                             <i class="fas fa-check"></i>
                         </div>
                         <div>
@@ -1379,7 +1379,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                         </div>
                     </div>
                     <div class="checklist-item">
-                        <div class="check-icon style-67132">
+                        <div class="check-icon">
                             <i class="fas fa-check"></i>
                         </div>
                         <div>
@@ -1388,7 +1388,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                         </div>
                     </div>
                     <div class="checklist-item">
-                        <div class="check-icon style-62870">
+                        <div class="check-icon">
                             <i class="fas fa-check"></i>
                         </div>
                         <div>
@@ -1396,8 +1396,8 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                             <p class="text-muted small mb-0"><?= __('why_choose_transparent_desc') ?></p>
                         </div>
                     </div>
-                    <div class="checklist-item style-12082">
-                        <div class="check-icon style-24465">
+                    <div class="checklist-item">
+                        <div class="check-icon">
                             <i class="fas fa-check"></i>
                         </div>
                         <div>
@@ -1407,18 +1407,18 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                     </div>
                 </div>
                 <div class="col-lg-6 reveal-right">
-                    <div class="glass-card p-4 text-center style-50288">
-                        <div class="style-2185 float-slow">
+                    <div class="glass-card p-4 text-center">
+                        <div class="float-slow">
                             <i class="fas fa-headset fa-3x iu-teal"></i>
                         </div>
                         <h4 class="fw-bold"><?= __('need_help') ?></h4>
                         <p class="text-muted mb-4"><?= __('need_help_desc') ?></p>
                         <div class="d-grid gap-3">
-                            <a href="tel:<?= $phoneRaw ?>" class="btn btn-lg btn-glow btn-shine style-48100">
+                            <a href="tel:<?= $phoneRaw ?>" class="btn btn-lg btn-glow btn-shine">
                                 <i class="fas fa-phone me-2"></i><?= __('call_now') ?>
                             </a>
                              <a href="https://wa.me/<?= htmlspecialchars($phoneRaw ?? '') ?>" target="_blank"
-                                class="btn btn-outline-dark btn-lg btn-glow style-42273">
+                                class="btn btn-outline-dark btn-lg btn-glow">
                                 <i class="fab fa-whatsapp me-2"></i><?= __('home_whatsapp') ?>
                             </a>
                         </div>
@@ -1432,7 +1432,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
     <section class="py-5">
         <div class="container">
             <div class="text-center mb-5">
-                <span class="section-label style-36645"><?= __('home_why_real_estate') ?></span>
+                <span class="section-label"><?= __('home_why_real_estate') ?></span>
                 <h2 class="fw-bold"><?= __('home_why_real_estate_title') ?></h2>
                 <p class="section-subtitle"><?= __('home_why_real_estate_subtitle') ?></p>
             </div>
@@ -1440,7 +1440,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
             <!-- Investment Comparison Chart -->
             <div class="row g-3 g-md-4 mb-5">
                 <div class="col-md-3 col-6">
-                    <div class="invest-card style-16988">
+                    <div class="invest-card">
                         <div class="icon-circle ic-green">
                             <i class="fas fa-vector-square fa-2x iu-emerald"></i>
                         </div>
@@ -1448,28 +1448,28 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                         <div class="return-pct iu-emerald">15-25%</div>
                         <p class="text-muted small"><?= __('home_avg_annual_returns') ?></p>
                         <div class="progress mb-2 progress-thin">
-                            <div class="progress-bar style-47967"></div>
+                            <div class="progress-bar"></div>
                         </div>
-                        <span class="badge style-16264">â­�
+                        <span class="badge">â­�
                             <?= __('home_best_investment') ?></span>
                     </div>
                 </div>
                 <div class="col-md-3 col-6">
-                    <div class="invest-card style-13880">
+                    <div class="invest-card">
                         <div class="icon-circle ic-amber">
                             <i class="fas fa-coins fa-2x iu-amber"></i>
                         </div>
                         <h5 class="fw-bold iu-amber"><?= __('home_invest_fd') ?></h5>
-                        <div class="return-pct style-48841">5-7%</div>
+                        <div class="return-pct">5-7%</div>
                         <p class="text-muted small"><?= __('home_avg_annual_returns') ?></p>
                         <div class="progress mb-2 progress-thin">
-                            <div class="progress-bar style-40685"></div>
+                            <div class="progress-bar"></div>
                         </div>
                         <span class="badge bg-secondary"><?= __('home_low_returns') ?></span>
                     </div>
                 </div>
                 <div class="col-md-3 col-6">
-                    <div class="invest-card style-14401">
+                    <div class="invest-card">
                         <div class="icon-circle ic-red">
                             <i class="fas fa-chart-line fa-2x iu-red"></i>
                         </div>
@@ -1477,13 +1477,13 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                         <div class="return-pct">10-14%</div>
                         <p class="text-muted small"><?= __('home_high_risk') ?></p>
                         <div class="progress mb-2 progress-thin">
-                            <div class="progress-bar style-94524"></div>
+                            <div class="progress-bar"></div>
                         </div>
                         <span class="badge bg-warning text-dark"><?= __('home_moderate') ?></span>
                     </div>
                 </div>
                 <div class="col-md-3 col-6">
-                    <div class="invest-card style-81106">
+                    <div class="invest-card">
                         <div class="icon-circle ic-teal">
                             <i class="fas fa-ring fa-2x iu-teal"></i>
                         </div>
@@ -1491,9 +1491,9 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                         <div class="return-pct iu-teal">8-10%</div>
                         <p class="text-muted small"><?= __('home_gold_desc') ?></p>
                         <div class="progress mb-2 progress-thin">
-                            <div class="progress-bar style-11504"></div>
+                            <div class="progress-bar"></div>
                         </div>
-                        <span class="badge style-73911"><?= __('home_safe_haven') ?></span>
+                        <span class="badge"><?= __('home_safe_haven') ?></span>
                     </div>
                 </div>
             </div>
@@ -1503,7 +1503,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                 <div class="col-lg-5 mb-4 mb-lg-0 text-center">
                     <img src="<?php echo BASE_URL; ?>/assets/images/hero/luxury-home-1.jpg"
                         alt="<?= __('home_why_real_estate_title') ?>"
-                        class="img-fluid rounded-4 shadow-lg style-9800"
+                        class="img-fluid rounded-4 shadow-lg"
                         onerror="this.onerror=null;this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
                 </div>
                 <div class="col-lg-7">
@@ -1561,28 +1561,28 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                                     <span class="small fw-bold text-success" id="reValue">₹52,33,855</span>
                                 </div>
                                 <div class="progress mb-2 progress-thin">
-                                    <div class="progress-bar bg-success" id="reBar" class="style-3541"></div>
+                                    <div class="progress-bar bg-success" id="reBar" ></div>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mb-1">
                                     <span class="small text-white-50"><?= __('home_fd_cagr') ?></span>
                                     <span class="small fw-bold text-warning" id="fdValue">₹17,90,848</span>
                                 </div>
                                 <div class="progress mb-2 progress-thin">
-                                    <div class="progress-bar bg-warning" id="fdBar" class="style-85960"></div>
+                                    <div class="progress-bar bg-warning" id="fdBar" ></div>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mb-1">
                                     <span class="small text-white-50"><?= __('home_gold_cagr') ?></span>
                                     <span class="small fw-bold text-info" id="goldValue">₹23,67,364</span>
                                 </div>
                                 <div class="progress mb-0 progress-thin">
-                                    <div class="progress-bar bg-primary" id="goldBar" class="style-86013"></div>
+                                    <div class="progress-bar bg-primary" id="goldBar" ></div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-lg-5 text-center mt-4 mt-lg-0">
                             <img src="<?php echo BASE_URL; ?>/assets/images/hero/luxury-home-2.jpg"
                                 alt="<?= __('home_growth_calculator_title') ?>"
-                                class="img-fluid rounded-4 shadow-lg mb-3 style-57910"
+                                class="img-fluid rounded-4 shadow-lg mb-3"
                                 onerror="this.onerror=null;this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
                             <h3 class="fw-bold text-warning mb-2"><?= __('home_real_estate_wins') ?></h3>
                             <p class="text-white-50 small mb-0"><i
@@ -1628,11 +1628,11 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
     <!-- Tool Modal -->
     <div class="modal fade" id="toolModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg style-337">
+            <div class="modal-content border-0 shadow-lg">
                 <div class="modal-header border-0 p-4" id="toolModalHeader"
-                    class="style-11453">
+                    >
                     <div class="d-flex align-items-center gap-3">
-                        <div class="bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center style-93293">
+                        <div class="bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center">
                             <i class="fas fa-calculator text-white fa-xl" id="toolModalIcon"></i>
                         </div>
                         <div>
@@ -1856,13 +1856,13 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
             '<div class="mt-3">' +
             '<div class="d-flex justify-content-between mb-1"><span>' + T.reEstate +
             ' <span class="text-success">(18%)</span></span><span class="fw-bold text-success" id="mInvRE">₹52,33,855</span></div>' +
-            '<div class="progress mb-2 style-51910"><div class="progress-bar bg-success" id="mInvREBar" class="style-90537"></div></div>' +
+            '<div class="progress mb-2"><div class="progress-bar bg-success" id="mInvREBar" ></div></div>' +
             '<div class="d-flex justify-content-between mb-1"><span>' + T.fd +
             ' <span class="text-warning">(6%)</span></span><span class="fw-bold text-warning" id="mInvFD">₹17,90,848</span></div>' +
-            '<div class="progress mb-2 style-51910"><div class="progress-bar bg-warning" id="mInvFDBar" class="style-76833"></div></div>' +
+            '<div class="progress mb-2"><div class="progress-bar bg-warning" id="mInvFDBar" ></div></div>' +
             '<div class="d-flex justify-content-between"><span>' + T.gold +
              ' <span class="text-info">(9%)</span></span><span class="fw-bold text-info" id="mInvGold">₹23,67,364</span></div>' +
-            '<div class="progress style-51910"><div class="progress-bar bg-primary" id="mInvGoldBar" class="style-2443"></div></div></div></div>' +
+            '<div class="progress"><div class="progress-bar bg-primary" id="mInvGoldBar" ></div></div></div></div>' +
             '<div class="col-md-5 text-center d-flex flex-column justify-content-center">' +
             '<div class="bg-success bg-opacity-10 rounded-4 p-4"><i class="fas fa-trophy fa-3x text-success mb-3"></i>' +
             '<h4 class="fw-bold text-success">' + T.reWins + '</h4>' +
@@ -2132,10 +2132,10 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
     <section class="py-5" aria-labelledby="testimonials-title">
         <div class="container">
             <div class="text-center mb-5 reveal">
-                <div class="capsule-badge mb-3 style-36645">
+                <div class="capsule-badge mb-3">
                     <i class="fas fa-quote-left"></i> <?= __('home_testimonials_badge') ?>
                 </div>
-                <h2 id="testimonials-title" class="fw-bold mb-3 style-94570"><?= __('testimonials_title') ?></h2>
+                <h2 id="testimonials-title" class="fw-bold mb-3"><?= __('testimonials_title') ?></h2>
             </div>
             <div class="row g-4 stagger-children">
                 <div class="col-md-4 mb-4 reveal">
@@ -2147,7 +2147,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                         <div class="d-flex align-items-center">
                             <img src="<?php echo BASE_URL; ?>/assets/images/placeholder/hero.svg"
                                 alt="<?= __('home_testimonial_1_name') ?>"
-                                class="rounded-circle me-3" width="50" height="50" class="style-67977">
+                                class="rounded-circle me-3" width="50" height="50" >
                             <div>
                                 <h6 class="mb-0 fw-bold"><?= __('home_testimonial_1_name') ?></h6>
                                 <small class="testimonial-location"><i class="fas fa-map-marker-alt me-1"></i><?= __('home_testimonial_1_location') ?></small>
@@ -2164,7 +2164,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                         <div class="d-flex align-items-center">
                             <img src="<?php echo BASE_URL; ?>/assets/images/placeholder/hero.svg"
                                 alt="<?= __('home_testimonial_2_name') ?>"
-                                class="rounded-circle me-3" width="50" height="50" class="style-45904">
+                                class="rounded-circle me-3" width="50" height="50" >
                             <div>
                                 <h6 class="mb-0 fw-bold"><?= __('home_testimonial_2_name') ?></h6>
                                 <small class="testimonial-location"><i class="fas fa-map-marker-alt me-1"></i><?= __('home_testimonial_2_location') ?></small>
@@ -2181,7 +2181,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                         <div class="d-flex align-items-center">
                             <img src="<?php echo BASE_URL; ?>/assets/images/placeholder/hero.svg"
                                 alt="<?= __('home_testimonial_3_name') ?>"
-                                class="rounded-circle me-3" width="50" height="50" class="style-54840">
+                                class="rounded-circle me-3" width="50" height="50" >
                             <div>
                                 <h6 class="mb-0 fw-bold"><?= __('home_testimonial_3_name') ?></h6>
                                 <small class="testimonial-location"><i class="fas fa-map-marker-alt me-1"></i><?= __('home_testimonial_3_location') ?></small>
@@ -2202,21 +2202,21 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
     <!-- CTA (Modern) -->
     <section class="py-5 text-white text-center cta-modern section-teal-gradient">
         <!-- Decorative elements -->
-        <div class="style-10266"></div>
-        <div class="style-13978"></div>
-        <div class="container style-53439">
+        <div ></div>
+        <div ></div>
+        <div class="container">
             <div class="reveal">
-                <span class="badge px-3 py-2 mb-3 style-53907">
+                <span class="badge px-3 py-2 mb-3">
                     <i class="fas fa-phone-volume me-1"></i>
                     <?= __('home_get_in_touch') ?>
                 </span>
-                <h2 class="fw-bold mb-3 style-24037"><?= __('cta_title') ?></h2>
-                <p class="mb-4 style-48507"><?= __('cta_subtitle') ?></p>
+                <h2 class="fw-bold mb-3"><?= __('cta_title') ?></h2>
+                <p class="mb-4"><?= __('cta_subtitle') ?></p>
                 <div class="d-flex justify-content-center gap-3 flex-wrap">
                     <a href="tel:<?= $phoneRaw ?>" class="btn btn-premium btn-lg px-4 btn-glow btn-shine">
                         <i class="fas fa-phone me-2"></i><?= __('home_call_now') ?>
                     </a>
-                    <a href="https://wa.me/<?= htmlspecialchars($phoneRaw ?? '') ?>" target="_blank" class="btn btn-light btn-lg text-success px-4 btn-glow style-10870">
+                    <a href="https://wa.me/<?= htmlspecialchars($phoneRaw ?? '') ?>" target="_blank" class="btn btn-light btn-lg text-success px-4 btn-glow">
                         <i class="fab fa-whatsapp me-2"></i><?= __('home_whatsapp') ?>
                     </a>
                 </div>
