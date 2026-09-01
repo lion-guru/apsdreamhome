@@ -7,7 +7,6 @@ if (!isset($sc)) {
 $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112'));
 $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
 ?>
-<link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/journey-scroll.css">
 <main id="main-content" >
     <!-- Hero Section (Premium Modern UI) -->
     <section class="hero-premium" aria-labelledby="hero-title">
@@ -184,39 +183,6 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                 </div>
             </div>
         </div>
-    </section>
-
-    <!-- Dream Home Journey Scroll Sequence -->
-    <section class="journey-section" id="dream-home-journey">
-        <div class="journey-sticky-container">
-            <!-- Background Images -->
-            <div class="journey-bg bg-step-1 active" style="background-image: url('<?php echo BASE_URL; ?>/assets/images/journey/plot.jpg');"></div>
-            <div class="journey-bg bg-step-2" style="background-image: url('<?php echo BASE_URL; ?>/assets/images/journey/foundation.jpg');"></div>
-            <div class="journey-bg bg-step-3" style="background-image: url('<?php echo BASE_URL; ?>/assets/images/journey/construction.jpg');"></div>
-            <div class="journey-bg bg-step-4" style="background-image: url('<?php echo BASE_URL; ?>/assets/images/journey/home.jpg');"></div>
-
-            <!-- Text Content -->
-            <div class="journey-text-container">
-                <div class="journey-step step-1 active">
-                    <h2 class="journey-title text-primary">1. The Plot</h2>
-                    <p class="journey-subtitle">Start with a Premium Plot in a Secure Colony.</p>
-                </div>
-                <div class="journey-step step-2">
-                    <h2 class="journey-title text-warning">2. The Foundation</h2>
-                    <p class="journey-subtitle">We help you lay strong foundations for your future.</p>
-                </div>
-                <div class="journey-step step-3">
-                    <h2 class="journey-title text-info">3. Construction</h2>
-                    <p class="journey-subtitle">Watch your dream home take shape with trusted partners.</p>
-                </div>
-                <div class="journey-step step-4">
-                    <h2 class="journey-title text-success">4. The Dream Home</h2>
-                    <p class="journey-subtitle">Move into your Dream Home and build lasting memories.</p>
-                </div>
-            </div>
-        </div>
-        <!-- Scroll Spacer to trigger sticky events -->
-        <div class="journey-scroll-spacer"></div>
     </section>
 
     <!-- Construction Excellence - Builder Section -->
