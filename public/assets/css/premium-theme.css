@@ -1001,7 +1001,7 @@ footer.bg-dark {
 }
 
 .section-subtitle {
-  color: var(--text-muted, var(--color-text-muted));
+  color: var(--color-text-secondary) !important;
   font-size: 1.05rem;
   line-height: 1.7;
   max-width: 600px;
@@ -2137,6 +2137,13 @@ section[style*="linear-gradient"] .btn-warning {
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background: #fff;
 }
+
+/* === Global contrast hotfix: btn-primary + section-subtitle + tool pages === */
+.btn-primary, .btn-primary:hover, .btn-primary:focus, .btn-primary:active,
+a.btn-primary, a.btn-primary:hover {
+  color: #fff !important;
+}
+.section-subtitle { color: var(--color-text-secondary) !important; }
 
 /* === Tool pages contrast hotfix (8 tools: EMI, Investment, Stamp, Plot Converter, Loan Eligibility, Valuation, Home Loan) === */
 section.bg-white .tool-card .text-white,

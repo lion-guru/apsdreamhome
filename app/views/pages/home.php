@@ -7,6 +7,20 @@ if (!isset($sc)) {
 $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112'));
 $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
 ?>
+<style>
+/* Hotfix deep preview invisible: btn-primary + ps-filter + subtitle */
+.premium-header .nav-link.btn-primary, a.btn-primary.btn-primary, .btn-primary { color: #fff !important; }
+.ps-filter-bar .ps-filter-btn.active, .ps-filter-btn.active { background: linear-gradient(135deg, var(--color-accent, #0d9488), var(--color-accent-hover, #0f766e)) !important; color: #fff !important; }
+.section-subtitle { color: var(--color-text-secondary, #475569) !important; }
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('.ps-filter-btn.active').forEach(el=>{
+    el.style.setProperty('background','linear-gradient(135deg, #0d9488, #0f766e)','important');
+    el.style.setProperty('color','#fff','important');
+  });
+});
+</script>
 <main id="main-content" >
     <!-- Hero Section (Premium Modern UI) -->
     <section class="hero-premium" aria-labelledby="hero-title">
