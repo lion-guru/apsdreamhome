@@ -98,15 +98,17 @@
   function animateCounter(el) {
     var target = parseInt(el.getAttribute('data-target'), 10);
     var duration = 2000;
-    var start = 0;
     var startTime = null;
     var suffix = el.getAttribute('data-suffix') || '';
+    var currentText = el.textContent.replace(/[+,]/g, '').trim();
+    var currentVal = parseInt(currentText, 10);
+    var start = (!isNaN(currentVal) && currentVal > 0) ? currentVal : 0;
 
     function step(timestamp) {
       if (!startTime) startTime = timestamp;
       var progress = Math.min((timestamp - startTime) / duration, 1);
       var eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
-      var current = Math.floor(eased * target);
+      var current = Math.floor(start + eased * (target - start));
       el.textContent = current.toLocaleString('en-IN') + suffix;
       if (progress < 1) {
         requestAnimationFrame(step);

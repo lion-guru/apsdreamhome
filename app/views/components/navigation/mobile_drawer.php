@@ -19,7 +19,7 @@
     <div class="mobile-drawer-panel" id="mobileDrawerPanel">
 
         <!-- Drawer Header -->
-        <div class="mobile-drawer-header d-flex align-items-center justify-content-between p-3 style-15495">
+        <div class="mobile-drawer-header d-flex align-items-center justify-content-between p-3">
 
             <a class="navbar-brand d-flex align-items-center m-0 text-white"
                href="<?php echo BASE_URL; ?>">
@@ -27,9 +27,9 @@
                        if ($logo && $logo[0] !== '/') $logo = '/' . $logo; ?>
                 <img src="<?php echo BASE_URL . htmlspecialchars($logo ?? ''); ?>"
                      alt="<?php echo htmlspecialchars($nav->companyName()); ?>"
-                     class="logo style-39414"
+                     class="logo"
                      loading="eager">
-                <span class="brand-text ms-2 fw-bold style-6037">
+                <span class="brand-text ms-2 fw-bold">
                     <?php echo htmlspecialchars($nav->companyName()); ?>
                 </span>
             </a>
@@ -43,14 +43,14 @@
         </div>
 
         <!-- Drawer Body -->
-        <div class="mobile-drawer-body style-93279">
+        <div class="mobile-drawer-body">
 
             <!-- User Section -->
             <?php if ($nav->isLoggedIn()): ?>
                 <div class="p-3 border-bottom">
                     <div class="d-flex align-items-center">
                         <div class="avatar avatar-sm flex-shrink-0">
-                            <span class="avatar-title bg-primary bg-gradient rounded-circle style-24506">
+                            <span class="avatar-title bg-primary bg-gradient rounded-circle">
                                 <?php
                                 $name = $nav->userName();
                                  echo e(strtoupper(substr($name, 0, 1)));
@@ -79,7 +79,7 @@
             <?php endif; ?>
 
             <!-- Navigation Tree -->
-            <nav class="mobile-drawer-nav style-94963">
+            <nav class="mobile-drawer-nav">
                 <?php
                 /**
                  * Build a recursive accordion menu from a navigation array.

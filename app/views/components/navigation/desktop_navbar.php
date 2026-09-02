@@ -250,8 +250,7 @@ if (!function_exists('navUrl')) {
                             </ul>
                         <?php else: ?>
                             <a class="nav-link <?php echo $isActive ? 'active' : ''; ?> <?php echo ($item['highlight'] ?? false) ? 'text-primary fw-bold' : ''; ?>"
-                                href="<?php echo navUrl($item['url'] ?? '#'); ?>"
-                               <?php echo ($item['highlight'] ?? false) ? 'class="style-66454"' : ''; ?>>
+                                href="<?php echo navUrl($item['url'] ?? '#'); ?>">
                                 <?php if (isset($item['icon'])): ?><i class="<?php echo e($item['icon']); ?> me-1"></i><?php endif; ?>
                                 <?php echo __($item['label']); ?>
                             </a>
@@ -270,7 +269,7 @@ if (!function_exists('navUrl')) {
                            aria-expanded="false">
                             <div class="d-flex align-items-center">
                                 <div class="avatar avatar-sm">
-                                    <span class="avatar-title bg-primary bg-gradient rounded-circle style-43341">
+                                    <span class="avatar-title bg-primary bg-gradient rounded-circle">
                                         <?php
                                         $name = $nav->userName();
                                         echo strtoupper(substr($name, 0, 1));
@@ -301,8 +300,7 @@ if (!function_exists('navUrl')) {
                         </ul>
                     <?php else: ?>
                         <a class="nav-link btn btn-primary btn-sm text-white ms-3"
-                           href="<?php echo BASE_URL; ?>/login"
-                           class="style-60873">
+                           href="<?php echo BASE_URL; ?>/login">
                             <i class="fas fa-sign-in-alt me-1"></i> <?php echo __('login'); ?> / <?php echo __('register'); ?>
                         </a>
                     <?php endif; ?>
@@ -336,7 +334,7 @@ if (!function_exists('navUrl')) {
                         <i class="fas fa-balance-scale" aria-hidden="true"></i> 
                         <span class="d-none ms-1"><?= __('compare') ?></span>
                         <span id="compareBadge"
-                              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger style-62224" aria-hidden="true">0</span>
+                              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" aria-hidden="true">0</span>
                     </a>
                 </li>
 

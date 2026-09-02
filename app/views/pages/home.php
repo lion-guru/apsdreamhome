@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', function(){
                             <div class="stats-icon-wrap">
                                 <i class="fas fa-vector-square fa-lg"></i>
                             </div>
-                            <div class="stat-number" data-target="5000" data-suffix="+">0</div>
+                            <div class="stat-number" data-target="5000" data-suffix="+">5,000+</div>
                             <div class="stat-label"><?= __('home_stat_plots_sold') ?></div>
                         </div>
                     </div>
@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', function(){
                             <div class="stats-icon-wrap">
                                 <i class="fas fa-home fa-lg"></i>
                             </div>
-                            <div class="stat-number" data-target="500" data-suffix="+">0</div>
+                            <div class="stat-number" data-target="500" data-suffix="+">500+</div>
                             <div class="stat-label"><?= __('home_stat_happy_families') ?></div>
                         </div>
                     </div>
@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function(){
                             <div class="stats-icon-wrap">
                                 <i class="fas fa-city fa-lg"></i>
                             </div>
-                            <div class="stat-number" data-target="4" data-suffix="">0</div>
+                            <div class="stat-number" data-target="4" data-suffix="">4</div>
                             <div class="stat-label"><?= __('home_stat_colonies_delivered') ?></div>
                         </div>
                     </div>
@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function(){
                             <div class="stats-icon-wrap">
                                 <i class="fas fa-calendar-alt fa-lg"></i>
                             </div>
-                            <div class="stat-number" data-target="4" data-suffix="+">0</div>
+                            <div class="stat-number" data-target="4" data-suffix="+">4+</div>
                             <div class="stat-label"><?= __('home_stat_years_trust') ?></div>
                         </div>
                     </div>
