@@ -1,4 +1,41 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-01 — Session 88: Vision + Vitals + DB Fully Indexed + API Audit)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-02 — Session 89: Hero White Gap Fix + Page Visibility + Stats)
+
+## Session 89: Hero White Gap Fix + Page Visibility + Stats (2026-09-02)
+
+### Goal
+Fix the ~260px white gap between nav bar and hero section on homepage. Fix `premium-reveal` sections invisible on initial load. Fix stat counters showing `0,0,0,0`.
+
+### What Was Done
+| File | Changes |
+|------|---------|
+| **base.php:232** | Added `page-home` body class detection: parses `REQUEST_URI`, sets `class="page-home"` on `<body>` for homepage. Removes `padding-top: 76px` from body on homepage |
+| **header.css:649** | Added `body.page-home main { padding-top: 0; }` — overrides `main { padding-top: var(--header-height) }` that was adding 123px offset to hero |
+| **premium-theme.css:1341** | Changed `.reveal, .premium-reveal` from `opacity: 0; transform: translateY(30px)` to `opacity: 1; transform: translateY(0)` — sections visible by default, JS enhances with scroll reveal |
+| **premium-theme.css** | Added `background-color: var(--color-primary, #0a192f) !important` to `.hero-premium` — solid dark background prevents white bleed-through transparent overlay |
+| **home.php:166/175/184/193** | Changed stat counters from `>0</div>` to `>5,000+</div>` / `>500+</div>` / `>4</div>` / `>4+</div>` — shows final values immediately on load |
+| **modern-effects.js:98-124** | Fixed `animateCounter()` to use current text as `start` value (not hardcoded 0); `step()` uses `start + eased * (target - start)` — animation invisible when values match |
+
+### Root Cause
+Two independent padding rules combined to create the white gap:
+1. `body:not(.page-home) { padding-top: 76px }` — body had no class, so ALL pages got 76px top padding
+2. `main { padding-top: var(--header-height, 80px) }` — `<main>` got 123px from JS-set `--header-height`
+
+The homepage `<body>` lacked the `page-home` class because `base.php` never set it.
+
+### Result
+- Hero section now starts immediately below nav bar (heroTop: 25.59px vs previous 271.59px)
+- Body padding-top: 0px on homepage (was 76px)
+- Main padding-top: 0px on homepage (was 123px)
+- All 15 homepage sections render with non-zero height
+- Stat counters show `5,000+`, `500+`, `4`, `4+` immediately
+
+### Verification
+- `php -l` OK
+- E2E: **360/360 PASS**
+- Visual: **14/14 PASS**
+- Health: **ok:true** (629 tables, APK 92.9 MB)
+
+---
 
 ## Session 88: Vision + Vitals + DB Fully Indexed + API Audit (2026-09-01)
 

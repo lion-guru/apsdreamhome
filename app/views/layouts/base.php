@@ -229,7 +229,13 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     </script>
 </head>
 
-<body>
+<?php
+$_reqUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+$_reqUri = rtrim($_reqUri, '/');
+$isHomePage = ($_reqUri === '' || $_reqUri === '/apsdreamhome' || $_reqUri === '/apsdreamhome/');
+$bodyClass = $isHomePage ? 'page-home' : '';
+?>
+<body class="<?= $bodyClass ?>">
     <?php
     // Mark document as started so header.php doesn't emit duplicate DOCTYPE/head/body
     $GLOBALS['_html_doc_started'] = true;

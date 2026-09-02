@@ -649,6 +649,9 @@ body.mobile-drawer-open {
 main {
   padding-top: var(--header-height, 80px);
 }
+body.page-home main {
+  padding-top: 0;
+}
 
 /* ── QUICK SEARCH TYPEAHEAD ──────────────────────────────────── */
 .quick-search-form {
