@@ -201,11 +201,11 @@ th { background: #f0f0f0; }
 <h2>Loan Details</h2>
 <table>
 <tr><th>Loan Number</th><td>{$loan['loan_number']}</td></tr>
-<tr><th>Loan Amount</th><td>â‚¹ {$loan['loan_amount']}</td></tr>
+<tr><th>Loan Amount</th><td>₹ {$loan['loan_amount']}</td></tr>
 <tr><th>Interest Rate</th><td>{$loan['interest_rate']}% p.a. ({$loan['interest_type']} balance)</td></tr>
 <tr><th>Tenure</th><td>{$loan['tenure_months']} months</td></tr>
-<tr><th>EMI Amount</th><td>â‚¹ {$loan['emi_amount']}</td></tr>
-<tr><th>Total Payable</th><td>â‚¹ {$loan['total_payable']}</td></tr>
+<tr><th>EMI Amount</th><td>₹ {$loan['emi_amount']}</td></tr>
+<tr><th>Total Payable</th><td>₹ {$loan['total_payable']}</td></tr>
 <tr><th>Start Date</th><td>{$loan['start_date']}</td></tr>
 <tr><th>End Date</th><td>{$loan['end_date']}</td></tr>
 {$interestFreeNote}
@@ -215,7 +215,7 @@ th { background: #f0f0f0; }
 
 <h2>Terms and Conditions</h2>
 <ol>
-<li><strong>Repayment:</strong> The Borrower agrees to repay the loan in {$loan['tenure_months']} monthly installments of â‚¹{$loan['emi_amount']} each.</li>
+<li><strong>Repayment:</strong> The Borrower agrees to repay the loan in {$loan['tenure_months']} monthly installments of ₹{$loan['emi_amount']} each.</li>
 <li><strong>Payment Due:</strong> Each installment is due on the same day of each month. Late payment attracts penal interest at 18% p.a. on the overdue amount after a 5-day grace period.</li>
 <li><strong>Default:</strong> If the Borrower fails to pay 3 consecutive installments, the entire outstanding amount shall become due immediately.</li>
 <li><strong>Foreclosure:</strong> The Borrower may prepay the loan at any time. Early settlement incentives as per Company policy shall apply.</li>
@@ -258,9 +258,9 @@ h1 { text-align: center; }
 <p class="style-58107">Date: $date</p>
 
 <div class="content">
-<p><strong>FOR VALUE RECEIVED</strong>, I, <strong>{$loan['customer_name']}</strong>, residing at [...], do hereby promise to pay to <strong>APS Dream Home</strong> (the "Company"), on demand or as per the agreed schedule, the sum of <strong>â‚¹ {$loan['loan_amount']}</strong> (Rupees ... only) together with interest at the rate of <strong>{$loan['interest_rate']}% per annum</strong>.</p>
+<p><strong>FOR VALUE RECEIVED</strong>, I, <strong>{$loan['customer_name']}</strong>, residing at [...], do hereby promise to pay to <strong>APS Dream Home</strong> (the "Company"), on demand or as per the agreed schedule, the sum of <strong>₹ {$loan['loan_amount']}</strong> (Rupees ... only) together with interest at the rate of <strong>{$loan['interest_rate']}% per annum</strong>.</p>
 
-<p>The said sum shall be repaid in <strong>{$loan['tenure_months']}</strong> monthly installments of <strong>â‚¹{$loan['emi_amount']}</strong> each, commencing from {$loan['start_date']}.</p>
+<p>The said sum shall be repaid in <strong>{$loan['tenure_months']}</strong> monthly installments of <strong>₹{$loan['emi_amount']}</strong> each, commencing from {$loan['start_date']}.</p>
 
 <p>In case of default in payment of any installment, I agree to pay penal interest at 18% per annum on the overdue amount.</p>
 
@@ -314,11 +314,11 @@ th { background: #f5f5f5; text-align: left; }
 <table>
 <tr><th>Installment No</th><td>{$installment['installment_no']}</td></tr>
 <tr><th>Due Date</th><td>{$installment['due_date']}</td></tr>
-<tr><th>Principal Amount</th><td>â‚¹ {$installment['principal_amount']}</td></tr>
-<tr><th>Interest Amount</th><td>â‚¹ {$installment['interest_amount']}</td></tr>
-<tr><th>Total Due</th><td>â‚¹ {$installment['total_amount']}</td></tr>
-<tr><th>Outstanding</th><td><strong>â‚¹ $outstanding</strong></td></tr>
-<tr><th>Penalty Accrued</th><td>â‚¹ {$installment['accrued_penalty']}</td></tr>
+<tr><th>Principal Amount</th><td>₹ {$installment['principal_amount']}</td></tr>
+<tr><th>Interest Amount</th><td>₹ {$installment['interest_amount']}</td></tr>
+<tr><th>Total Due</th><td>₹ {$installment['total_amount']}</td></tr>
+<tr><th>Outstanding</th><td><strong>₹ $outstanding</strong></td></tr>
+<tr><th>Penalty Accrued</th><td>₹ {$installment['accrued_penalty']}</td></tr>
 </table>
 
 <p>We request you to make the payment at the earliest to avoid further penal charges and adverse action. If the payment is not received within <strong>7 days</strong>, the Company may be constrained to initiate recovery proceedings as per the Loan Agreement.</p>
@@ -343,7 +343,7 @@ HTML;
         $rows = '';
         foreach ($overdueInstallments as $inst) {
             $outstanding = (float)$inst['total_amount'] - (float)$inst['paid_amount'];
-            $rows .= "<tr><td>{$inst['installment_no']}</td><td>{$inst['due_date']}</td><td>â‚¹ {$inst['total_amount']}</td><td>â‚¹ " . round($outstanding, 2) . "</td><td>â‚¹ {$inst['accrued_penalty']}</td></tr>";
+            $rows .= "<tr><td>{$inst['installment_no']}</td><td>{$inst['due_date']}</td><td>₹ {$inst['total_amount']}</td><td>₹ " . round($outstanding, 2) . "</td><td>₹ {$inst['accrued_penalty']}</td></tr>";
         }
 
         return <<<HTML
@@ -373,12 +373,12 @@ th { background: #fee; }
 <table>
 <tr><th>#</th><th>Due Date</th><th>Amount</th><th>Outstanding</th><th>Penalty</th></tr>
 $rows
-<tr><th colspan="2">Total</th><th>—"</th><th>â‚¹ $totalOverdue</th><th>â‚¹ $totalPenalty</th></tr>
+<tr><th colspan="2">Total</th><th>—"</th><th>₹ $totalOverdue</th><th>₹ $totalPenalty</th></tr>
 </table>
 
-<p><strong>Total Outstanding: â‚¹ </strong> " . round($totalOverdue + $totalPenalty, 2) . "</p>
+<p><strong>Total Outstanding: ₹ </strong> " . round($totalOverdue + $totalPenalty, 2) . "</p>
 
-<p>You are hereby called upon to pay the entire outstanding amount of <strong>â‚¹ " . round($totalOverdue + $totalPenalty, 2) . "</strong> within <strong>15 days</strong> from the date of this notice.</p>
+<p>You are hereby called upon to pay the entire outstanding amount of <strong>₹ " . round($totalOverdue + $totalPenalty, 2) . "</strong> within <strong>15 days</strong> from the date of this notice.</p>
 
 <p><strong>FAILURE TO PAY</strong> within the stipulated time will result in:</p>
 <ol>

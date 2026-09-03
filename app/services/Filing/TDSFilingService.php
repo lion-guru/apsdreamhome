@@ -134,7 +134,7 @@ class TDSFilingService
                 'filing_mode' => 'offline',
                 'total_records' => count($records),
                 'total_amount' => array_sum(array_column($records, 'gross_amount')),
-                'notes' => "Form 26Q {$quarter} {$fy}: " . count($records) . " records, TDS total â‚¹" .
+                'notes' => "Form 26Q {$quarter} {$fy}: " . count($records) . " records, TDS total ₹" .
                     number_format(array_sum(array_column($records, 'tds_amount')), 2),
             ]);
             $this->efiling->updateSubmissionStatus($submissionId, 'prepared', ['json_file_path' => $filepath]);
@@ -212,7 +212,7 @@ class TDSFilingService
             'filing_mode' => 'offline',
             'total_records' => 1,
             'total_amount' => $totalWithCharges,
-            'notes' => "Challan 281: {$data['tds_section']} â‚¹" . number_format($totalWithCharges, 2),
+            'notes' => "Challan 281: {$data['tds_section']} ₹" . number_format($totalWithCharges, 2),
         ]);
 
         return $challanId;
@@ -388,9 +388,9 @@ class TDSFilingService
                 <th>S.No.</th>
                 <th>Date of Payment/Credit</th>
                 <th>Section</th>
-                <th>Gross Amount (â‚¹)</th>
+                <th>Gross Amount (₹)</th>
                 <th>TDS Rate (%)</th>
-                <th>TDS Amount (â‚¹)</th>
+                <th>TDS Amount (₹)</th>
             </tr>';
 
         $sno = 0;

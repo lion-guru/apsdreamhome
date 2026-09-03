@@ -348,8 +348,8 @@ class BookingNotificationService
         <tr><td class="style-20120">Colony</td><td class="style-85150">{$colonyName}</td></tr>
         <tr><td class="style-20120">Plot</td><td class="style-85150">{$block} - {$plotNo}</td></tr>
         <tr><td class="style-20120">Area</td><td class="style-85150">{$areaSqft} sq ft</td></tr>
-        <tr><td class="style-20120">Total Amount</td><td class="style-85150">â‚¹{$totalAmount}</td></tr>
-        <tr><td class="style-20120">Token Paid</td><td class="style-85150">â‚¹{$tokenAmount}</td></tr>
+        <tr><td class="style-20120">Total Amount</td><td class="style-85150">₹{$totalAmount}</td></tr>
+        <tr><td class="style-20120">Token Paid</td><td class="style-85150">₹{$tokenAmount}</td></tr>
     </table>
     <p class="style-10698">Thank you for choosing APS Dream Home! Our team will contact you shortly for the next steps.</p>
     <p class="style-10698">For any queries, call us at <strong class="style-22019">+91 92771 21112</strong></p>
@@ -386,7 +386,7 @@ HTML;
     <p class="style-10698">We have received your payment. Here are the details:</p>
     <div class="style-84747">
         <p class="style-63380">Amount Received</p>
-        <p class="style-19032">â‚¹{$formattedAmount}</p>
+        <p class="style-19032">₹{$formattedAmount}</p>
     </div>
     <table class="style-73344">
         <tr><td class="style-20120">Booking Number</td><td class="style-85150">{$bookingNumber}</td></tr>
@@ -483,10 +483,10 @@ HTML;
         <table class="style-61075">
             <tr><td class="style-89250">Booking:</td><td class="style-79766">{$bookingNumber}</td></tr>
             <tr><td class="style-89250">Installment:</td><td class="style-40961">#{$instNo}</td></tr>
-            <tr><td class="style-89250">Amount Due:</td><td class="style-34699">â‚¹{$amount}</td></tr>
+            <tr><td class="style-89250">Amount Due:</td><td class="style-34699">₹{$amount}</td></tr>
             <tr><td class="style-89250">Due Date:</td><td class="style-40961">{$dueDate}</td></tr>
             <tr><td class="style-89250">Days Overdue:</td><td class="style-34699">{$daysOverdue} days</td></tr>
-            <tr><td class="style-89250">Total Due (with penalty):</td><td class="style-34699">â‚¹{$totalDue}</td></tr>
+            <tr><td class="style-89250">Total Due (with penalty):</td><td class="style-34699">₹{$totalDue}</td></tr>
         </table>
     </div>
     <p class="style-10698">Please make the payment at the earliest to avoid further penalties.</p>

@@ -107,10 +107,10 @@ try {
     
     foreach ($overdue as $emi) {
         $daysOverdue = (int)((time() - strtotime($emi['due_date'])) / 86400);
-        $message = "Dear {$emi['customer_name']}, your EMI installment #{$emi['installment_number']} of â‚¹" . number_format($emi['amount']) . " was due on " . date('d M Y', strtotime($emi['due_date'])) . ". {$daysOverdue} days overdue";
+        $message = "Dear {$emi['customer_name']}, your EMI installment #{$emi['installment_number']} of ₹" . number_format($emi['amount']) . " was due on " . date('d M Y', strtotime($emi['due_date'])) . ". {$daysOverdue} days overdue";
         
         if ($emi['accrued_penalty'] > 0) {
-            $message .= ". Late fee: â‚¹" . number_format($emi['accrued_penalty']);
+            $message .= ". Late fee: ₹" . number_format($emi['accrued_penalty']);
         }
         $message .= ". Please pay at the earliest to avoid further charges. - APS Dream Home";
         

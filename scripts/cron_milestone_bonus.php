@@ -36,10 +36,10 @@ $milestones = [
 ];
 
 $bonusRates = [
-    'quarter_milestone'     => 1000,   // â‚¹1,000 at 25%
-    'half_milestone'        => 2500,   // â‚¹2,500 at 50%
-    'three_quarter_milestone' => 5000, // â‚¹5,000 at 75%
-    'full_milestone'        => 10000,  // â‚¹10,000 at 100%
+    'quarter_milestone'     => 1000,   // ₹1,000 at 25%
+    'half_milestone'        => 2500,   // ₹2,500 at 50%
+    'three_quarter_milestone' => 5000, // ₹5,000 at 75%
+    'full_milestone'        => 10000,  // ₹10,000 at 100%
 ];
 
 try {
@@ -94,14 +94,14 @@ try {
                             'percentage' => 0,
                             'basis_amount' => $totalValue,
                             'status' => 'pending',
-                            'description' => ucfirst(str_replace('_', ' ', $type)) . " â€” " . $pct . "% of â‚¹" . number_format($totalValue) . " paid",
+                            'description' => ucfirst(str_replace('_', ' ', $type)) . " â€” " . $pct . "% of ₹" . number_format($totalValue) . " paid",
                             'created_at' => date('Y-m-d H:i:s'),
                             'updated_at' => date('Y-m-d H:i:s')
                         ];
                         if ($cronTenantId > 1) $milestoneLedgerData['tenant_id'] = $cronTenantId;
                         $db->insert('mlm_commission_ledger', $milestoneLedgerData);
 
-                        echo "  âœ… Booking #{$booking['booking_id']} â€” $type (â‚¹$bonusAmount) â†’ Associate #$associateId\n";
+                        echo "  âœ… Booking #{$booking['booking_id']} â€” $type (₹$bonusAmount) â†’ Associate #$associateId\n";
                         $credited++;
                     } catch (\Throwable $e) {
                         $errors[] = "Booking #{$booking['booking_id']} $type: " . $e->getMessage();

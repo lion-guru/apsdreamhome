@@ -16,7 +16,7 @@ try {
     echo "[$ts] NACH Auto-Debit: processed={$result['processed']}, failed={$result['failed']}\n";
 
     foreach ($result['results'] as $r) {
-        echo "  Mandate #{$r['mandate_id']}: â‚¹{$r['amount']} â€” {$r['status']}\n";
+        echo "  Mandate #{$r['mandate_id']}: ₹{$r['amount']} â€” {$r['status']}\n";
     }
 
     if ($result['processed'] === 0 && $result['failed'] === 0) {

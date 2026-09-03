@@ -63,7 +63,7 @@ try {
                 $activityLogData = [
                     'user_id' => $inv['user_id'],
                     'user_type' => 'customer',
-                    'action' => "Investment {$inv['investment_ref']} matured. Principal: â‚¹" . number_format($inv['principal_amount']) . ", Final Value: â‚¹" . number_format($inv['current_value']),
+                    'action' => "Investment {$inv['investment_ref']} matured. Principal: ₹" . number_format($inv['principal_amount']) . ", Final Value: ₹" . number_format($inv['current_value']),
                     'ip_address' => '127.0.0.1',
                     'created_at' => date('Y-m-d H:i:s')
                 ];
@@ -73,7 +73,7 @@ try {
                 // Non-fatal â€” logging failure doesn't block maturity
             }
 
-            echo "  âœ… #{$inv['id']} {$inv['investment_ref']} â€” â‚¹" . number_format($inv['principal_amount']) . " ({$inv['plan_name']})\n";
+            echo "  âœ… #{$inv['id']} {$inv['investment_ref']} â€” ₹" . number_format($inv['principal_amount']) . " ({$inv['plan_name']})\n";
             $matured++;
 
         } catch (\Throwable $e) {

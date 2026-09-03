@@ -9,11 +9,11 @@
                 <div class="card border-0 shadow">
                     <div class="card-body p-4">
                         <div class="mb-3">
-                            <label class="form-label fw-bold"><?php echo __('property_value_rs', [], 'Property Value (â‚¹)'); ?></label>
+                            <label class="form-label fw-bold"><?php echo __('property_value_rs', [], 'Property Value (₹)'); ?></label>
                             <input type="number" class="form-control form-control-lg" id="propVal" value="5000000" oninput="calcYield()">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-bold"><?php echo __('monthly_rent_rs', [], 'Monthly Rent (â‚¹)'); ?></label>
+                            <label class="form-label fw-bold"><?php echo __('monthly_rent_rs', [], 'Monthly Rent (₹)'); ?></label>
                             <input type="number" class="form-control form-control-lg" id="rentAmt" value="15000" oninput="calcYield()">
                         </div>
                         <div class="mb-3">

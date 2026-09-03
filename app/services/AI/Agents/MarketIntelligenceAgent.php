@@ -583,7 +583,7 @@ class MarketIntelligenceAgent
             $recommendations[] = [
                 'type' => 'insight',
                 'title' => 'Large budget-conscious segment',
-                'detail' => "$under10L leads with budget under â‚¹10L. Consider affordable plot options.",
+                'detail' => "$under10L leads with budget under ₹10L. Consider affordable plot options.",
                 'priority' => 'medium',
             ];
         }

@@ -4,7 +4,7 @@ $recent = $recent_activity ?? [];
 $cashFlow = $cash_flow_chart ?? [];
 $pipeline = $lead_pipeline_chart ?? [];
 $updated = $updated_at ?? date('d M Y, h:i A');
-$fmt = fn($v) => 'â‚¹' . number_format((float)$v, 0, '.', ',');
+$fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
 ?>
 
 <style>
@@ -318,7 +318,7 @@ document.addEventListener('DOMContentLoaded', function() {
             options: {
                 responsive: true, maintainAspectRatio: false,
                 plugins: { legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', padding: 16, font: { size: 12 } } } },
-                scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { callback: function(v) { return 'â‚¹' + v.toLocaleString(); }, font: { size: 11 } } }, x: { grid: { display: false }, ticks: { font: { size: 11 } } } }
+                scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { callback: function(v) { return '₹' + v.toLocaleString(); }, font: { size: 11 } } }, x: { grid: { display: false }, ticks: { font: { size: 11 } } } }
             }
         });
     }

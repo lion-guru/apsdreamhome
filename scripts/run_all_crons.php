@@ -146,7 +146,7 @@ if ($statusOnly || $dryRun) {
                 $r = $pdo->prepare("SELECT total_pool_amount, distributed_status FROM mlm_royalty_pool WHERE month_year = ?");
                 $r->execute([$thisMonth]);
                 $pool = $r->fetch(PDO::FETCH_ASSOC);
-                echo "This month royalty pool: â‚¹" . number_format($pool['total_pool_amount'] ?? 0) . " (" . ($pool['distributed_status'] ?? 'none') . ")" . PHP_EOL;
+                echo "This month royalty pool: ₹" . number_format($pool['total_pool_amount'] ?? 0) . " (" . ($pool['distributed_status'] ?? 'none') . ")" . PHP_EOL;
             } catch (\Throwable $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
         } catch (\Throwable $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
     }
@@ -192,7 +192,7 @@ try {
             $penaltyService = new \App\Services\Accounting\MoneyWorkflowService();
             $penaltyResult  = $penaltyService->applyDailyPenalties();
             if ($penaltyResult['success']) {
-                echo "  âœ… {$penaltyResult['penalties_applied']} installments, â‚¹" . number_format($penaltyResult['total_penalty'], 2) . PHP_EOL;
+                echo "  âœ… {$penaltyResult['penalties_applied']} installments, ₹" . number_format($penaltyResult['total_penalty'], 2) . PHP_EOL;
                 $log['penalties'] = $penaltyResult;
             } else {
                 echo "  âš ï¸�  " . ($penaltyResult['error'] ?? 'no overdue installments') . PHP_EOL;
@@ -211,7 +211,7 @@ try {
         try {
             $clawbackEngine = new \App\Services\MLM\MLMCommissionEngine($pdo);
             $clawbackResult = $clawbackEngine->processClawbacks();
-            echo "  âœ… {$clawbackResult['processed']} entries, â‚¹" . number_format($clawbackResult['amount'], 2) . PHP_EOL;
+            echo "  âœ… {$clawbackResult['processed']} entries, ₹" . number_format($clawbackResult['amount'], 2) . PHP_EOL;
             $log['clawback'] = $clawbackResult;
         } catch (\Throwable $e) {
             echo "  â�Œ " . $e->getMessage() . PHP_EOL;
@@ -442,7 +442,7 @@ try {
             if ($poolAmt > 0) {
                 $engine = new \App\Services\HybridCommissionEngine($pdo);
                 $result = $engine->distributeRoyaltyPool($poolMonth);
-                echo "  âœ… Pool â‚¹" . number_format($poolAmt) . " distributed to " . ($result['qualified_managers'] ?? 0) . " managers" . PHP_EOL;
+                echo "  âœ… Pool ₹" . number_format($poolAmt) . " distributed to " . ($result['qualified_managers'] ?? 0) . " managers" . PHP_EOL;
                 $log['royalty_pool'] = $result;
             } else {
                 echo "  âš ï¸�  No pool accumulated for {$poolMonth}" . PHP_EOL;
@@ -464,7 +464,7 @@ try {
             if (!empty($genResult['entries'])) {
                 $persisted = $genEngine->persistGenerationBonuses($genResult['entries']);
                 $newCount  = count($persisted['created_ids'] ?? []);
-                echo "  âœ… " . count($genResult['entries']) . " entries, â‚¹" . number_format($genResult['total'], 2) . ", {$newCount} persisted" . PHP_EOL;
+                echo "  âœ… " . count($genResult['entries']) . " entries, ₹" . number_format($genResult['total'], 2) . ", {$newCount} persisted" . PHP_EOL;
                 $log['generation_bonus'] = ['entries' => count($genResult['entries']), 'total' => $genResult['total']];
             } else {
                 echo "  âš ï¸�  No qualifying leaders" . PHP_EOL;
@@ -486,7 +486,7 @@ try {
             if (!empty($infResult['entries'])) {
                 $persisted = $infService->persistOverrides($infResult['entries']);
                 $newCount  = count($persisted['created_ids'] ?? []);
-                echo "  âœ… " . count($infResult['entries']) . " entries, â‚¹" . number_format($infResult['total'], 2) . ", {$newCount} persisted" . PHP_EOL;
+                echo "  âœ… " . count($infResult['entries']) . " entries, ₹" . number_format($infResult['total'], 2) . ", {$newCount} persisted" . PHP_EOL;
                 $log['infinity_override'] = ['entries' => count($infResult['entries']), 'total' => $infResult['total']];
             } else {
                 echo "  âš ï¸�  No VP+ leaders with qualifying volume" . PHP_EOL;
@@ -508,7 +508,7 @@ try {
             if (!empty($matchResult['entries'])) {
                 $persisted = $matchService->persistMatchingBonuses($matchResult['entries']);
                 $newCount  = count($persisted['created_ids'] ?? []);
-                echo "  âœ… " . count($matchResult['entries']) . " entries, â‚¹" . number_format($matchResult['total'], 2) . ", {$newCount} persisted" . PHP_EOL;
+                echo "  âœ… " . count($matchResult['entries']) . " entries, ₹" . number_format($matchResult['total'], 2) . ", {$newCount} persisted" . PHP_EOL;
                 $log['matching_bonus'] = ['entries' => count($matchResult['entries']), 'total' => $matchResult['total']];
             } else {
                 echo "  âš ï¸�  No leaders with earnings to match" . PHP_EOL;

@@ -153,10 +153,10 @@ class RegistryController extends AdminController
             $notes = $_POST['notes'] ?? '';
 
             $stmt = $this->db->prepare("UPDATE bookings SET stamp_duty_amount = ?, registration_fees = ?, registry_status = 'stamp_duty_pending', registry_notes = CONCAT(IFNULL(registry_notes,''), ?) WHERE id = ? AND tenant_id = ?");
-            $note = "\n[" . date('Y-m-d H:i') . "] Stamp duty: â‚¹$stampDuty, Reg fees: â‚¹$regFees. " . $notes;
+            $note = "\n[" . date('Y-m-d H:i') . "] Stamp duty: ₹$stampDuty, Reg fees: ₹$regFees. " . $notes;
             $stmt->execute([$stampDuty, $regFees, $note, $id, $this->tenantId()]);
 
-            $this->logRegistryActivity($id, 'stamp_duty_recorded', "Stamp Duty: â‚¹$stampDuty, Registration Fees: â‚¹$regFees. $notes");
+            $this->logRegistryActivity($id, 'stamp_duty_recorded', "Stamp Duty: ₹$stampDuty, Registration Fees: ₹$regFees. $notes");
 
             $this->setFlash('success', 'Stamp duty details recorded successfully');
             $this->redirect('/admin/registry/show/' . $id);

@@ -750,22 +750,22 @@ Address: {$booking['address']}
 PROPERTY DETAILS:
 Plot: {$booking['plot_code']} ({$booking['plot_number']})
 Colony: {$booking['colony_name']}
-Booking Value: â‚¹" . number_format($booking['agreement_value'], 2) . "
-Token Paid: â‚¹" . number_format($booking['booking_amount'], 2) . "
-Principal for EMI: â‚¹" . number_format($principal, 2) . "
+Booking Value: ₹" . number_format($booking['agreement_value'], 2) . "
+Token Paid: ₹" . number_format($booking['booking_amount'], 2) . "
+Principal for EMI: ₹" . number_format($principal, 2) . "
 
 LOAN TERMS:
 Interest Rate: {$rate}% per annum
 Tenure: {$tenure} months
 EMI Type: {$methodName}
 Moratorium Period: {$moratorium} months
-Monthly EMI: â‚¹" . number_format($emi, 2) . "
-Total Principal: â‚¹" . number_format($principal, 2) . "
-Total Interest: â‚¹" . number_format($totalInterest, 2) . "
-Total Payable: â‚¹" . number_format($totalPayable, 2) . "
+Monthly EMI: ₹" . number_format($emi, 2) . "
+Total Principal: ₹" . number_format($principal, 2) . "
+Total Interest: ₹" . number_format($totalInterest, 2) . "
+Total Payable: ₹" . number_format($totalPayable, 2) . "
 
 TERMS & CONDITIONS:
-1. The borrower agrees to pay the EMI of â‚¹" . number_format($emi, 2) . " on or before the due date each month.
+1. The borrower agrees to pay the EMI of ₹" . number_format($emi, 2) . " on or before the due date each month.
 2. Interest is calculated on {$methodName} basis at {$rate}% per annum.
 3. Late payment penalty: 2% per month on overdue amount after 5 days grace period.
 4. Three consecutive missed EMIs will trigger loan recall and legal proceedings.
@@ -873,15 +873,15 @@ AUTHORIZED SIGNATORY (APS DREAM HOME): _________________________  DATE: ________
                 <div class="info-grid">
                     <div class="info-item">
                         <div class="info-label">Principal Amount</div>
-                        <div class="info-value highlight">â‚¹<?= number_format($agreement['total_amount'] ?? 0, 2) ?></div>
+                        <div class="info-value highlight">₹<?= number_format($agreement['total_amount'] ?? 0, 2) ?></div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">Booking Value</div>
-                        <div class="info-value">â‚¹<?= number_format($booking['agreement_value'] ?? 0, 2) ?></div>
+                        <div class="info-value">₹<?= number_format($booking['agreement_value'] ?? 0, 2) ?></div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">Token Paid</div>
-                        <div class="info-value">â‚¹<?= number_format($booking['booking_amount'] ?? 0, 2) ?></div>
+                        <div class="info-value">₹<?= number_format($booking['booking_amount'] ?? 0, 2) ?></div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">Interest Rate</div>
@@ -901,7 +901,7 @@ AUTHORIZED SIGNATORY (APS DREAM HOME): _________________________  DATE: ________
                     </div>
                     <div class="info-item">
                         <div class="info-label">Monthly EMI</div>
-                        <div class="info-value success highlight">â‚¹<?= number_format($emi, 2) ?></div>
+                        <div class="info-value success highlight">₹<?= number_format($emi, 2) ?></div>
                     </div>
                 </div>
             </div>
@@ -911,15 +911,15 @@ AUTHORIZED SIGNATORY (APS DREAM HOME): _________________________  DATE: ________
                 <div class="info-grid">
                     <div class="info-item">
                         <div class="info-label">Total Principal</div>
-                        <div class="info-value">â‚¹<?= number_format($agreement['total_principal'] ?? 0, 2) ?></div>
+                        <div class="info-value">₹<?= number_format($agreement['total_principal'] ?? 0, 2) ?></div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">Total Interest</div>
-                        <div class="info-value danger">â‚¹<?= number_format($agreement['total_interest'] ?? 0, 2) ?></div>
+                        <div class="info-value danger">₹<?= number_format($agreement['total_interest'] ?? 0, 2) ?></div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">Total Payable</div>
-                        <div class="info-value highlight">â‚¹<?= number_format($agreement['total_payable'] ?? 0, 2) ?></div>
+                        <div class="info-value highlight">₹<?= number_format($agreement['total_payable'] ?? 0, 2) ?></div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">Installments</div>
@@ -951,10 +951,10 @@ AUTHORIZED SIGNATORY (APS DREAM HOME): _________________________  DATE: ________
                         <tr>
                             <td><?= $inst['installment_no'] ?></td>
                             <td><?= date('d M Y', strtotime($inst['due_date'])) ?></td>
-                            <td class="text-right">â‚¹<?= number_format($inst['principal_amount'], 2) ?></td>
-                            <td class="text-right">â‚¹<?= number_format($inst['interest_amount'], 2) ?></td>
-                            <td class="text-right"><strong>â‚¹<?= number_format($inst['total_amount'], 2) ?></strong></td>
-                            <td class="text-right">â‚¹<?= number_format($inst['balance_after'], 2) ?></td>
+                            <td class="text-right">₹<?= number_format($inst['principal_amount'], 2) ?></td>
+                            <td class="text-right">₹<?= number_format($inst['interest_amount'], 2) ?></td>
+                            <td class="text-right"><strong>₹<?= number_format($inst['total_amount'], 2) ?></strong></td>
+                            <td class="text-right">₹<?= number_format($inst['balance_after'], 2) ?></td>
                             <td><?= $inst['is_moratorium'] ? 'Moratorium' : ucfirst($inst['status']) ?></td>
                         </tr>
                         <?php endfor; ?>
@@ -972,7 +972,7 @@ AUTHORIZED SIGNATORY (APS DREAM HOME): _________________________  DATE: ________
             <div class="section">
                 <div class="section-title">TERMS & CONDITIONS</div>
                 <ol class="style-65903">
-                    <li>The borrower agrees to pay the EMI amount of <strong>â‚¹<?= number_format($emi, 2) ?></strong> on or before the due date each month.</li>
+                    <li>The borrower agrees to pay the EMI amount of <strong>₹<?= number_format($emi, 2) ?></strong> on or before the due date each month.</li>
                     <li>Interest is calculated on <strong><?= ucfirst(str_replace('_', ' ', $agreement['emi_type'] ?? 'reducing')) ?></strong> basis at <strong><?= number_format($agreement['interest_rate'] ?? 0, 2) ?>% per annum</strong>.</li>
                     <li>Late payment penalty: <strong>2% per month</strong> on overdue amount after <strong>5 days grace period</strong>.</li>
                     <li>Three consecutive missed EMIs will trigger loan recall and legal proceedings.</li>
@@ -1068,11 +1068,11 @@ AUTHORIZED SIGNATORY (APS DREAM HOME): _________________________  DATE: ________
                 </div>
                 <div class="info-row">
                     <span class="info-label">Total Value:</span>
-                    <span class="info-value">â‚¹<?= number_format((float)($booking['total_plot_value'] ?? 0), 2) ?></span>
+                    <span class="info-value">₹<?= number_format((float)($booking['total_plot_value'] ?? 0), 2) ?></span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">Agreement Value:</span>
-                    <span class="info-value">â‚¹<?= number_format((float)($booking['agreement_value'] ?? 0), 2) ?></span>
+                    <span class="info-value">₹<?= number_format((float)($booking['agreement_value'] ?? 0), 2) ?></span>
                 </div>
             </div>
             

@@ -127,7 +127,7 @@ class PDFService
             <p>This is to inform you that Installment <strong>#' . $instNo . '</strong> under your Booking Reference 
             <strong>' . $bookingNo . '</strong> for Plot <strong>' . $plotNo . ($block ? ' (Block ' . $block . ')' : '') . '</strong> 
             at <strong>' . $colonyName . '</strong> (' . $area . ', ' . $dimLabel . ') is ' . ($isOverdue ? '<span class="highlight">overdue</span>' : 'due for payment') . '.</p>
-            <p>Please arrange payment of <strong>â‚¹' . $totalDue . '</strong> on or before <strong>' . $dueDate . '</strong> to avoid additional late fees and penalties.</p>
+            <p>Please arrange payment of <strong>₹' . $totalDue . '</strong> on or before <strong>' . $dueDate . '</strong> to avoid additional late fees and penalties.</p>
         </div>
 
         <h3 class="section-title">Installment Breakdown</h3>
@@ -135,7 +135,7 @@ class PDFService
             <thead>
                 <tr>
                     <th>Description</th>
-                    <th class="amount">Amount (â‚¹)</th>
+                    <th class="amount">Amount (₹)</th>
                 </tr>
             </thead>
             <tbody>
@@ -157,7 +157,7 @@ class PDFService
                 </tr>' : '') . '
                 <tr class="total-row">
                     <td>Total Amount Due</td>
-                    <td class="amount">â‚¹' . $totalDue . '</td>
+                    <td class="amount">₹' . $totalDue . '</td>
                 </tr>
             </tbody>
         </table>
@@ -262,7 +262,7 @@ class PDFService
             <thead>
                 <tr>
                     <th>Description</th>
-                    <th class="amount">Amount (â‚¹)</th>
+                    <th class="amount">Amount (₹)</th>
                 </tr>
             </thead>
             <tbody>
@@ -276,7 +276,7 @@ class PDFService
                 </tr>
                 <tr class="total-row">
                     <td>Balance Amount</td>
-                    <td class="amount">â‚¹' . number_format((float)($booking['total_plot_value'] ?? 0) - (float)($booking['booking_amount'] ?? 0), 2) . '</td>
+                    <td class="amount">₹' . number_format((float)($booking['total_plot_value'] ?? 0) - (float)($booking['booking_amount'] ?? 0), 2) . '</td>
                 </tr>
             </tbody>
         </table>
@@ -371,7 +371,7 @@ class PDFService
             <div class="row"><span class="label">Plot No:</span> <span class="value">' . $plotNo . ($block ? ' (Block ' . $block . ')' : '') . '</span></div>
             <div class="row"><span class="label">Area:</span> <span class="value">' . $area . '</span></div>
             <div class="row"><span class="label">Booking Ref:</span> <span class="value">' . $bookingNo . '</span></div>
-            <div class="row"><span class="label">Total Value:</span> <span class="value">â‚¹' . $totalValue . '</span></div>
+            <div class="row"><span class="label">Total Value:</span> <span class="value">₹' . $totalValue . '</span></div>
         </div>
 
         <div class="body-text">

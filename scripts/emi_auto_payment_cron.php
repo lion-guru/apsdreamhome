@@ -69,7 +69,7 @@ try {
     if (!empty($result['results'])) {
         foreach ($result['results'] as $r) {
             $line = sprintf(
-                "  Installment #%d (Booking %s): %s â€” â‚¹%s",
+                "  Installment #%d (Booking %s): %s â€” ₹%s",
                 $r['installment_id'] ?? 0,
                 $r['booking_number'] ?? '?',
                 $r['status'] ?? 'unknown',

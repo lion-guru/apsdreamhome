@@ -196,7 +196,7 @@ $sql = "SELECT rv.*, p.*, pi.image_path as primary_image
             return [
                 'success' => true,
                 'alert_id' => $this->database->lastInsertId(),
-                'message' => "You'll be notified when price drops to â‚¹" . number_format($targetPrice)
+                'message' => "You'll be notified when price drops to ₹" . number_format($targetPrice)
             ];
         } catch (\Exception $e) {
             return ['success' => false, 'error' => $e->getMessage()];

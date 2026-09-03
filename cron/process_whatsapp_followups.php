@@ -89,7 +89,7 @@ try {
             'interested' => "Namaste {$name}! ðŸ�¡\n\n" .
                 "APS Dream Home mein aapki baat hui thi property ke baare mein.\n\n" .
                 "Humari available properties:\n" .
-                "â€¢ Plots from â‚¹5 lakh onwards\n" .
+                "â€¢ Plots from ₹5 lakh onwards\n" .
                 "â€¢ EMI options: 12-60 months\n" .
                 "â€¢ Bank loan: 80% tak\n\n" .
                 "Kya aapko pricing details chahiye? Reply karein! ðŸ˜Š",
@@ -151,7 +151,7 @@ try {
         if ($daysLeft < 0) {
             $message = "âš ï¸� APS Dream Home - EMI Reminder\n\n" .
                 "Namaste {$emi['customer_name']}!\n\n" .
-                "Aapki â‚¹{$amount} ki EMI OVERDUE hai.\n" .
+                "Aapki ₹{$amount} ki EMI OVERDUE hai.\n" .
                 "Due date tha: {$dueDate}\n\n" .
                 "Kripya jald se jald payment karein.\n" .
                 "ðŸ“ž 7007444842\n" .
@@ -160,7 +160,7 @@ try {
         } elseif ($daysLeft == 0) {
             $message = "ðŸ“… APS Dream Home - EMI Due Today\n\n" .
                 "Namaste {$emi['customer_name']}!\n\n" .
-                "Aaj aapki â‚¹{$amount} ki EMI due hai.\n\n" .
+                "Aaj aapki ₹{$amount} ki EMI due hai.\n\n" .
                 "Payment karein:\n" .
                 "â€¢ Cash: Raghunath Nagri office\n" .
                 "â€¢ Online: UPI/Bank transfer\n\n" .
@@ -168,7 +168,7 @@ try {
         } else {
             $message = "ðŸ“‹ APS Dream Home - EMI Reminder\n\n" .
                 "Namaste {$emi['customer_name']}!\n\n" .
-                "Aapki â‚¹{$amount} ki EMI {$daysLeft} din mein due hai.\n" .
+                "Aapki ₹{$amount} ki EMI {$daysLeft} din mein due hai.\n" .
                 "Due date: {$dueDate}\n\n" .
                 "Payment ki taiyari kar lein.\n" .
                 "ðŸ“ž 7007444842 ðŸ™�";
@@ -191,7 +191,7 @@ try {
             [$emi['installment_id'], $phone, $message, $sent ? 'sent' : 'failed']
         );
 
-        waLog(($sent ? "SENT" : "FAIL") . " EMI reminder to {$emi['customer_name']} (â‚¹{$amount}, {$daysLeft}d)");
+        waLog(($sent ? "SENT" : "FAIL") . " EMI reminder to {$emi['customer_name']} (₹{$amount}, {$daysLeft}d)");
     }
 
     // â”€â”€ 3. New registration welcome messages â”€â”€

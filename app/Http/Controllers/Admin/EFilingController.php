@@ -74,7 +74,7 @@ class EFilingController extends AdminController
 
         $result = $this->tdsFiling->generateForm26Q($fy, $quarter);
         if ($result['success']) {
-            $_SESSION['flash_success'] = "Form 26Q generated: {$result['summary']['total_records']} records, TDS â‚¹" .
+            $_SESSION['flash_success'] = "Form 26Q generated: {$result['summary']['total_records']} records, TDS ₹" .
                 number_format($result['summary']['total_tds'], 2) . ". File: {$result['filename']}";
         } else {
             $_SESSION['flash_error'] = "Error: " . ($result['error'] ?? 'Unknown error');
@@ -218,10 +218,10 @@ class EFilingController extends AdminController
 
         $result = $this->gstFiling->generateGSTR3B($month, $year, $fy);
         if ($result['success']) {
-            $_SESSION['flash_success'] = "GSTR-3B generated: Output â‚¹" .
+            $_SESSION['flash_success'] = "GSTR-3B generated: Output ₹" .
                 number_format($result['summary']['output_tax'], 2) .
-                ", ITC â‚¹" . number_format($result['summary']['input_tax'], 2) .
-                ", Net â‚¹" . number_format($result['summary']['net_payable'], 2);
+                ", ITC ₹" . number_format($result['summary']['input_tax'], 2) .
+                ", Net ₹" . number_format($result['summary']['net_payable'], 2);
         } else {
             $_SESSION['flash_error'] = "Error: " . ($result['error'] ?? 'Unknown error');
         }
@@ -364,11 +364,11 @@ class EFilingController extends AdminController
                 <td>' . htmlspecialchars($r['transaction_date'] ?? '') . '</td>
                 <td>' . htmlspecialchars($r['tds_section'] ?? '') . '</td>
                 <td>' . htmlspecialchars($r['description'] ?? $r['nature_of_payment'] ?? '-') . '</td>
-                <td class="text-right">â‚¹' . number_format((float)$r['gross_amount'], 2) . '</td>
+                <td class="text-right">₹' . number_format((float)$r['gross_amount'], 2) . '</td>
                 <td class="text-right">' . (float)$r['tds_rate'] . '%</td>
-                <td class="text-right">â‚¹' . number_format((float)$r['tds_amount'], 2) . '</td>
-                <td class="text-right">â‚¹' . number_format((float)($r['surcharge'] ?? 0), 2) . '</td>
-                <td class="text-right">â‚¹' . number_format((float)($r['cess'] ?? 0), 2) . '</td>
+                <td class="text-right">₹' . number_format((float)$r['tds_amount'], 2) . '</td>
+                <td class="text-right">₹' . number_format((float)($r['surcharge'] ?? 0), 2) . '</td>
+                <td class="text-right">₹' . number_format((float)($r['cess'] ?? 0), 2) . '</td>
             </tr>';
         }
 
@@ -443,11 +443,11 @@ th { background: #f0f0f0; font-weight: bold; }
         ' . ($rows ?: '<tr><td colspan="9" class="style-58107">No TDS records found</td></tr>') . '
         <tr class="total-row">
             <td colspan="4">Total</td>
-            <td class="text-right">â‚¹' . number_format(array_sum(array_column($tdsRecords, 'gross_amount')), 2) . '</td>
+            <td class="text-right">₹' . number_format(array_sum(array_column($tdsRecords, 'gross_amount')), 2) . '</td>
             <td></td>
-            <td class="text-right">â‚¹' . $totalTds . '</td>
-            <td class="text-right">â‚¹' . number_format(array_sum(array_column($tdsRecords, 'surcharge')), 2) . '</td>
-            <td class="text-right">â‚¹' . number_format(array_sum(array_column($tdsRecords, 'cess')), 2) . '</td>
+            <td class="text-right">₹' . $totalTds . '</td>
+            <td class="text-right">₹' . number_format(array_sum(array_column($tdsRecords, 'surcharge')), 2) . '</td>
+            <td class="text-right">₹' . number_format(array_sum(array_column($tdsRecords, 'cess')), 2) . '</td>
         </tr>
     </tbody>
 </table>
