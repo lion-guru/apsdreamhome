@@ -22,8 +22,6 @@ $GLOBALS['_html_doc_started'] = true;
     <!-- Consolidated APS CSS Bundles -->
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css?v=2" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-layout.css?v=2" rel="stylesheet">
-    <!-- Dark Mode CSS -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/dark-mode.css" rel="stylesheet">
     <!-- Universal mobile-first responsive overrides -->
     <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css?v=3" rel="stylesheet">
 
@@ -141,9 +139,6 @@ $GLOBALS['_html_doc_started'] = true;
                 </nav>
             </div>
             <div class="header-actions">
-                <button class="btn btn-sm btn-outline-secondary me-2" id="darkModeToggle" onclick="toggleDarkMode()" title="Toggle Dark Mode">
-                    <i class="fas fa-moon" id="darkModeIcon"></i>
-                </button>
                 <a href="<?= BASE_URL ?>/employee/notifications" class="btn-icon" title="Notifications"><i class="fas fa-bell"></i></a>
             </div>
         </header>
@@ -161,37 +156,6 @@ $GLOBALS['_html_doc_started'] = true;
     <script defer src="<?php echo BASE_URL; ?>/assets/js/notification-system.js"></script>
     <link href="<?php echo BASE_URL; ?>/assets/css/notification-widget.css" rel="stylesheet">
     <script defer src="<?php echo BASE_URL; ?>/assets/js/notification-widget.js"></script>
-    <script>
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('show');
-            document.querySelector('.sidebar-overlay').classList.toggle('show');
-        }
-        window.addEventListener('resize', function() {
-            if (window.innerWidth > 1024) {
-                document.getElementById('sidebar').classList.remove('show');
-                document.querySelector('.sidebar-overlay').classList.remove('show');
-            }
-        });
-
-        // Dark Mode Toggle
-        function toggleDarkMode() {
-            var isDark = document.body.classList.toggle('dark-mode');
-            localStorage.setItem('aps-dark-mode', isDark ? '1' : '0');
-            var icon = document.getElementById('darkModeIcon');
-            if (icon) {
-                icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
-            }
-        }
-
-        // Load saved preference on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            var saved = localStorage.getItem('aps-dark-mode');
-            if (saved === '1') {
-                document.body.classList.add('dark-mode');
-                var icon = document.getElementById('darkModeIcon');
-                if (icon) icon.className = 'fas fa-sun';
-            }
-        });
-    </script>
+    
 </body>
 </html>

@@ -426,7 +426,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     $fallbackProjects = [
                         ['title' => 'Suryoday Colony', 'city' => 'Gorakhpur', 'price' => '₹999+/sqft', 'slug' => 'suryoday-colony', 'status' => 'Possession Ready', 'img' => 'gorakhpur/suryoday.jpg', 'plots' => '1050+', 'type' => 'Residential', 'area' => '35 Acres', 'sold' => '100+ Sold'],
                         ['title' => 'Braj Radha Nagri', 'city' => 'Gorakhpur', 'price' => '₹7.5L+', 'slug' => 'braj-radha-nagri', 'status' => 'Available', 'img' => 'projects/gorakhpur/suryoday.jpg', 'plots' => '1550+', 'type' => 'Premium', 'area' => '10 Acres', 'sold' => 'Best Seller'],
-                        ['title' => 'Raghunath Nagri', 'city' => 'Gorakhpur', 'price' => '₹5.5L+', 'slug' => 'raghunath-nagri', 'status' => 'Available', 'img' => 'projects/gorakhpur/suryoday1.jpeg', 'plots' => '780+', 'type' => 'Residential', 'area' => '22 Acres', 'sold' => 'Hot Deal'],
+                        ['title' => 'Raghunath Nagri', 'city' => 'Gorakhpur', 'price' => '₹5.5L+', 'slug' => 'raghunath-nagri-motiram', 'status' => 'Available', 'img' => 'projects/gorakhpur/suryoday1.jpeg', 'plots' => '780+', 'type' => 'Residential', 'area' => '22 Acres', 'sold' => 'Hot Deal'],
                         ['title' => 'Budh Bihar Colony', 'city' => 'Kushinagar', 'price' => '₹3.5L+', 'slug' => 'budh-bihar-colony', 'status' => 'Available', 'img' => 'kushinagar/budh-bihar.jpg', 'plots' => '1280+', 'type' => 'Affordable', 'area' => '30 Acres', 'sold' => 'Value Buy'],
                     ];
                     foreach ($fallbackProjects as $p):
@@ -468,7 +468,7 @@ document.addEventListener('DOMContentLoaded', function(){
                         if ($projectTitle && stripos($projectTitle, 'Suryoday') !== false) {
                             $imgPath .= 'gorakhpur/suryoday.jpg';
                         } elseif ($projectTitle && stripos($projectTitle, 'Raghunath') !== false) {
-                            $imgPath .= 'gorakhpur/raghunath-nagri.jpg';
+                            $imgPath .= 'gorakhpur/raghunath-nagri-motiram.jpg';
                         } elseif ($projectTitle && stripos($projectTitle, 'Braj') !== false || stripos($projectTitle, 'Radha') !== false) {
                             $imgPath .= 'gorakhpur/braj-radha-nagri.jpg';
                         } elseif ($projectTitle && stripos($projectTitle, 'Budh') !== false) {

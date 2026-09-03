@@ -500,6 +500,115 @@ class PageController extends BaseController
         return $this->mobileSystemPageController->createMobileApp();
     }
 
+    public function becomeAssociate()
+    {
+        $viewPath = APP_PATH . '/views/pages/become_associate.php';
+        if (file_exists($viewPath)) {
+            extract($_GET + ['base' => defined('BASE_URL') ? BASE_URL : '/apsdreamhome']);
+            include $viewPath;
+        } else {
+            http_response_code(404);
+            echo 'Page not found';
+        }
+    }
+
+    /* ============================================================
+       MISCELLANEOUS PUBLIC PAGES
+       ============================================================ */
+
+    public function builderRegistration()
+    {
+        $viewPath = APP_PATH . '/views/pages/builder_registration.php';
+        if (file_exists($viewPath)) {
+            $this->render('pages/builder_registration', [
+                'page_title' => 'Builder Registration - APS Dream Home',
+                'page_description' => 'Register as a builder with APS Dream Home.',
+            ]);
+        } else {
+            $this->redirect(BASE_URL);
+        }
+    }
+
+    public function navigation()
+    {
+        $viewPath = APP_PATH . '/views/pages/navigation.php';
+        if (file_exists($viewPath)) {
+            extract($_GET + ['base' => defined('BASE_URL') ? BASE_URL : '/apsdreamhome']);
+            include $viewPath;
+        } else {
+            $this->redirect(BASE_URL);
+        }
+    }
+
+    public function underConstruction()
+    {
+        $viewPath = APP_PATH . '/views/pages/under_construction.php';
+        if (file_exists($viewPath)) {
+            extract($_GET + ['base' => defined('BASE_URL') ? BASE_URL : '/apsdreamhome']);
+            include $viewPath;
+        } else {
+            $this->redirect(BASE_URL);
+        }
+    }
+
+    public function customerReviews()
+    {
+        $viewPath = APP_PATH . '/views/pages/customer_reviews.php';
+        if (file_exists($viewPath)) {
+            $this->render('pages/customer_reviews', [
+                'page_title' => 'Customer Reviews - APS Dream Home',
+                'page_description' => 'Read what our customers say about APS Dream Home.',
+            ]);
+        } else {
+            $this->redirect(BASE_URL);
+        }
+    }
+
+    public function analytics()
+    {
+        $viewPath = APP_PATH . '/views/pages/analytics.php';
+        if (file_exists($viewPath)) {
+            extract($_GET + ['base' => defined('BASE_URL') ? BASE_URL : '/apsdreamhome']);
+            include $viewPath;
+        } else {
+            $this->redirect(BASE_URL);
+        }
+    }
+
+    public function pricing()
+    {
+        $viewPath = APP_PATH . '/views/pages/pricing.php';
+        if (file_exists($viewPath)) {
+            extract($_GET + ['base' => defined('BASE_URL') ? BASE_URL : '/apsdreamhome']);
+            include $viewPath;
+        } else {
+            $this->redirect(BASE_URL);
+        }
+    }
+
+    /* ============================================================
+       LANGUAGE SWITCHER
+       ============================================================ */
+
+    public function setLanguage($lang = '')
+    {
+        $allowed = ['en', 'hi'];
+        $lang = strtolower(trim($lang));
+
+        if (!in_array($lang, $allowed, true)) {
+            $lang = 'en';
+        }
+
+        $_SESSION['locale'] = $lang;
+
+        $referer = $_SERVER['HTTP_REFERER'] ?? BASE_URL;
+        if (!filter_var($referer, FILTER_VALIDATE_URL)) {
+            $referer = BASE_URL;
+        }
+
+        $this->redirect($referer);
+    }
+
     /* ============================================================
        LEGACY METHODS - Kept for backward compatibility
        ============================================================ */
@@ -520,5 +629,42 @@ class PageController extends BaseController
             error_log('PageController loadPageContent: ' . $e->getMessage());
         }
         return [$pageTitle, $pageContent];
+    }
+
+    public function newsView($id) {
+        try {
+            $id = (int)$id;
+            $stmt = $this->db->prepare("SELECT * FROM blog_posts WHERE id = ? AND status = 'published' LIMIT 1");
+            $stmt->execute([$id]);
+            $post = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if (!$post) { header('Location: /apsdreamhome/news'); exit; }
+            $this->render('pages/news_detail', ['post' => $post]);
+        } catch (\Exception $e) {
+            error_log('PageController newsView: ' . $e->getMessage());
+            header('Location: /apsdreamhome/news'); exit;
+        }
+    }
+
+    public function userPropertyDetail($id) {
+        try {
+            $id = (int)$id;
+            $stmt = $this->db->prepare("SELECT * FROM user_properties WHERE id = ? AND status = 'active' LIMIT 1");
+            $stmt->execute([$id]);
+            $property = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if (!$property) { header('Location: /apsdreamhome/properties'); exit; }
+            $this->render('pages/property_detail', ['property' => $property]);
+        } catch (\Exception $e) {
+            error_log('PageController userPropertyDetail: ' . $e->getMessage());
+            header('Location: /apsdreamhome/properties'); exit;
+        }
+    }
+
+    public function saasHome() {
+        $viewPath = APP_PATH . '/views/pages/saas_home.php';
+        if (file_exists($viewPath)) {
+            include $viewPath;
+        } else {
+            header('Location: /apsdreamhome/'); exit;
+        }
     }
 }

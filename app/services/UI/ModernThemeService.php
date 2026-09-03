@@ -383,19 +383,10 @@ class ModernThemeService
     }
     
     /**
-     * Get dark mode specific styles
+     * Get dark mode specific styles — deprecated (dark mode removed, light only)
      */
     private function getDarkModeStyles(): string
     {
-        return '
-/* Dark Mode Overrides */
-.dark-mode .card { background-color: var(--theme-surface); border-color: var(--theme-border); }
-.dark-mode .table { color: var(--theme-text); }
-.dark-mode .form-control { background-color: var(--theme-surface); color: var(--theme-text); border-color: var(--theme-border); }
-.dark-mode .modal-content { background-color: var(--theme-surface); color: var(--theme-text); }
-.dark-mode .dropdown-menu { background-color: var(--theme-surface); border-color: var(--theme-border); }
-.dark-mode .dropdown-item { color: var(--theme-text); }
-.dark-mode .dropdown-item:hover { background-color: var(--theme-primary); color: #fff; }
-';
+        return '/* Dark mode removed — light mode is single source of truth */';
     }
 }

@@ -117,7 +117,7 @@ class ToolsPageController extends BaseController
 
     public function propertyValuation()
     {
-        $this->render('pages/property_valuation', [
+        $this->render('pages/tools/property_valuation', [
             'page_title' => 'Property Valuation - APS Dream Home',
             'page_description' => 'Get estimated property value.',
         ]);

@@ -467,7 +467,7 @@ if ($project) {
                         <div class="card-body aps-cp-card-body">
                             <h6 class="card-title">Raghunath Nagri</h6>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
-                            <a href="<?php echo e($baseUrl); ?>/projects/raghunath-nagri" class="btn btn-sm btn-primary">View Details</a>
+                            <a href="<?php echo e($baseUrl); ?>/projects/raghunath-nagri-motiram" class="btn btn-sm btn-primary">View Details</a>
                         </div>
                     </div>
                 </div>

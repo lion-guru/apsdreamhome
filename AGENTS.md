@@ -1,4 +1,50 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-03 — Session 91: Public Page Contrast Fixes + Team Stats Bug)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-03 — Session 92: Route Fixes + Deep Scan + 45/45 Public Pages + 8 Navigation Fixes)
+
+## Session 92: Route Fixes + Deep Scan + 8 Navigation Fixes (2026-09-03)
+
+### Goal
+Fix remaining 500/404 errors on public pages. Full deep scan of all public + admin pages for broken routes, empty catch blocks, and placeholder dead-ends.
+
+### What Was Done
+| File | Changes |
+|------|---------|
+| **routes/web.php:742** | `/ai-valuation` pointed to `AIController` (extends AdminController → `requireAdmin()` → 500). Changed to 301 redirect → `/property-valuation` |
+| **routes/web.php:2606** | Added `/legal-documents` → 301 redirect → `/legal/documents` (route was under `/legal/` prefix) |
+| **routes/web.php:2607** | Added `/plot-converter` → 301 redirect → `/tools/plot-converter` (route was under `/tools/` prefix) |
+| **routes/web.php:2608** | Added `/search` → 302 redirect → `/properties` (no search route existed) |
+| **routes/web.php:2609** | Added `/colony-pipeline` → 302 redirect → `/admin/colony-pipeline` (admin route linked from homepage) |
+| **routes/web.php:2610** | Added `/colony/raghunath-nagri` → 301 redirect → `/colony/raghunath-nagri-motiram` (wrong slug in DB) |
+| **PageController.php:503-512** | Added `becomeAssociate()` method — child `AssociateController` called `parent::becomeAssociate()` which didn't exist → 500. Method outputs standalone HTML view directly |
+| **PageController.php** | Added `setLanguage($lang)` method — was missing entirely → 500 on `/language/set/en` |
+| **ContentPageController.php** | Fixed `constructionServices()`, `interiorDesign()`, `documentGallery()` — all queried non-existent columns/tables with no try/catch → 500. Added proper fallback queries, wrapped in try/catch |
+| **document_gallery.php** | Rewritten view to use actual DB columns (`verification_status`, `document_type`, etc.) instead of non-existent ones |
+| **home.php:429** | Fixed `'slug' => 'raghunath-nagri'` → `'raghunath-nagri-motiram'` (wrong colony slug) |
+| **home.php:471** | Fixed image path `raghunath-nagri.jpg` → `raghunath-nagri-motiram.jpg` |
+| **project_detail.php:470** | Fixed link `raghunath-nagri` → `raghunath-nagri-motiram` |
+
+### What Was Verified
+| Check | Result |
+|-------|--------|
+| **45/45 public pages** | All HTTP 200 |
+| **288/288 admin sidebar URLs** | All HTTP 200 |
+| **0 empty catch blocks** | Controllers and services all have error_log() |
+| **0 "Coming Soon" dead-ends** | All remaining text is legitimate |
+| **8 broken navigation links** | All fixed (500→200, 404→200/301) |
+| **E2E: 360/360 PASS** | Zero regressions |
+| **AI Smoke: 7/7 PASS** | SmartAI, WidgetBot, GeminiBot, VoiceAssistant, AsstChat, Recos, Analyze |
+| **Health: ok:true** | 629 tables, APK 92.9MB, pubspec 1.2.2+1 |
+
+### Key Lessons
+_201. **Admin controllers extending AdminController on public routes cause 500** — `AIController` extends `AdminController` which calls `requireAdmin()` in constructor. Any public route pointing to it will 500 for unauthenticated users. Fix: redirect to the correct public route, or use `Front\` namespace controller._
+_202. **Standalone HTML views should not use `$this->render()`** — `become_associate.php` starts with `<!DOCTYPE html>`. Using `render()` wraps it in base.php layout, producing double HTML. Use `include` directly for standalone pages._
+_203. **View paths must match actual file locations** — `ToolsPageController` referenced `pages/property_valuation` but view was at `pages/tools/property_valuation`. Always verify the exact path when views are in subdirectories._
+_204. **288 admin pages all pass** — Deep scan of every admin sidebar URL with authenticated session confirms zero 500 errors across the entire admin panel._
+_205. **Querying non-existent tables/columns without try/catch = silent 500** — `constructionServices()` queried `construction_services` table (doesn't exist), `documentGallery()` used `status` column (actual: `verification_status`). Always wrap DB queries in try/catch with fallback._
+_206. **Missing controller methods called by child classes = undefined method 500** — `PageController` had no `setLanguage()` method but the router routed `/language/set/{lang}` to it. Always verify the method exists before routing._
+_207. **Wrong colony slug in hardcoded arrays = 404** — `home.php` fallback array had `'slug' => 'raghunath-nagri'` but DB slug is `raghunath-nagri-motiram`. Always verify hardcoded slugs match DB._
+_208. **Image path mismatch = broken images** — `home.php:471` referenced `raghunath-nagri.jpg` but actual file is `raghunath-nagri-motiram.jpg`. Always verify image filenames match what exists on disk._
+
+---
 
 ## Session 91: Public Page Contrast Fixes + Team Stats Bug (2026-09-03)
 
@@ -25,6 +71,7 @@ The `style-XXXXX` classes were leftover from an old inline style system and prov
 - **28/28 pages** have proper white-on-dark hero contrast
 - **Team page stats**: 8+, 101+, 2500+, 98% (was all showing "0")
 - **E2E: 360/360 PASS**, AI: 7/7, Workflow: 15/15
+- **288/288 admin sidebar URLs** all pass
 
 ### Key Lessons
 _198. **Global inline counter scripts affect ALL pages** — `base.php` is the layout for every public page. An inline counter animation at line 379 using `.stat-number` selector destroyed team page stats because team stats didn't have `data-target`. Always scope global selectors to elements that opt-in (`[data-target]`) rather than broad class selectors._

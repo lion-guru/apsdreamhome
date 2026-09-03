@@ -23,8 +23,6 @@ $GLOBALS['_html_doc_started'] = true;
     <link href="<?php echo BASE_URL; ?>/assets/css/style.css?v=7" rel="stylesheet">
     <!-- Consolidated APS component system (stat cards, hero, quick actions) -->
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css?v=2" rel="stylesheet">
-    <!-- Dark Mode CSS -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/dark-mode.css" rel="stylesheet">
     <!-- Universal mobile-first responsive overrides -->
     <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css?v=3" rel="stylesheet">
 
@@ -595,9 +593,6 @@ $GLOBALS['_html_doc_started'] = true;
                 </nav>
             </div>
             <div class="header-actions">
-                <button class="btn btn-sm btn-outline-secondary me-2" id="darkModeToggle" onclick="toggleDarkMode()" title="Toggle Dark Mode">
-                    <i class="fas fa-moon" id="darkModeIcon"></i>
-                </button>
                 <a href="<?= BASE_URL ?>/user/notifications" class="btn-icon" title="Notifications">
                     <i class="fas fa-bell"></i>
                 </a>
@@ -682,25 +677,6 @@ $GLOBALS['_html_doc_started'] = true;
     </div>
 </script>
     <!-- Dark Mode Toggle -->
-    <script>
-        function toggleDarkMode() {
-            var isDark = document.body.classList.toggle('dark-mode');
-            localStorage.setItem('aps-dark-mode', isDark ? '1' : '0');
-            var icon = document.getElementById('darkModeIcon');
-            if (icon) {
-                icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
-            }
-        }
-
-        // Load saved preference on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            var saved = localStorage.getItem('aps-dark-mode');
-            if (saved === '1') {
-                document.body.classList.add('dark-mode');
-                var icon = document.getElementById('darkModeIcon');
-                if (icon) icon.className = 'fas fa-sun';
-            }
-        });
-    </script>
+    
 </body>
 </html>

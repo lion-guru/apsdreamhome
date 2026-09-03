@@ -739,7 +739,7 @@ $router->get('/dashboard/inquiries', 'App\\Http\\Controllers\\DashboardControlle
 $router->post('/dashboard/inquiries/submit', 'App\\Http\\Controllers\\DashboardController@submitInquiry');
 
 // AI Routes
-$router->get('/ai-valuation', 'App\\Http\\Controllers\\AIController@propertyValuation');
+$router->get('/ai-valuation', function () { header('Location: ' . BASE_URL . '/property-valuation', true, 301); exit; });
 
 // Lead Scoring Routes (API)
 $router->get('/api/leads/{id}/score-details', 'App\Http\Controllers\Admin\LeadScoringController@getScoreDetails');
@@ -2603,6 +2603,11 @@ $router->get('/agreements', function() { header('Location: /apsdreamhome/legal/a
 $router->get('/nach-mandate', function() { header('Location: /apsdreamhome/legal/nach-mandate'); exit; });
 $router->get('/property-verification', function() { header('Location: /apsdreamhome/legal/property-verification'); exit; });
 $router->get('/title-protection', function() { header('Location: /apsdreamhome/legal/title-protection'); exit; });
+$router->get('/legal-documents', function() { header('Location: /apsdreamhome/legal/documents', true, 301); exit; });
+$router->get('/plot-converter', function() { header('Location: /apsdreamhome/tools/plot-converter', true, 301); exit; });
+$router->get('/search', function() { header('Location: /apsdreamhome/properties', true, 302); exit; });
+$router->get('/colony-pipeline', function() { header('Location: /apsdreamhome/admin/colony-pipeline', true, 302); exit; });
+$router->get('/colony/raghunath-nagri', function() { header('Location: /apsdreamhome/colony/raghunath-nagri-motiram', true, 301); exit; });
 
 // Standalone full-HTML pages
 $router->get('/analytics', 'Front\\PageController@analytics');

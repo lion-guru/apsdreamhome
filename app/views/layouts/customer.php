@@ -32,8 +32,6 @@ $GLOBALS['_html_doc_started'] = true;
     <link href="<?php echo BASE_URL; ?>/assets/css/header.css?v=8" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css?v=2" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/notification-system.css" rel="stylesheet">
-    <!-- Dark Mode CSS -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/dark-mode.css" rel="stylesheet">
     <!-- Universal mobile-first responsive overrides -->
     <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css?v=3" rel="stylesheet">
     <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
@@ -134,9 +132,6 @@ $GLOBALS['_html_doc_started'] = true;
                 </nav>
             </div>
             <div class="header-actions">
-                <button class="btn btn-sm btn-outline-secondary me-2" id="darkModeToggle" onclick="toggleDarkMode()" title="Toggle Dark Mode">
-                    <i class="fas fa-moon" id="darkModeIcon"></i>
-                </button>
                 <a href="<?= BASE_URL ?>/user/notifications" class="btn btn-sm btn-outline-primary position-relative me-2">
                     <i class="fas fa-bell"></i>
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notifBadge" class="style-32982">0</span>
@@ -203,38 +198,6 @@ setInterval(checkNotifications, 30000);
         });
     </script>
 <script src="<?= BASE_URL ?>/assets/js/push-notifications.js"></script>
-<script>
-function showToast(message, type) {
-    if (typeof APS !== 'undefined' && APS.toast) {
-        APS.toast(message, type || 'info');
-    } else {
-        var toast = document.createElement('div');
-        toast.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 24px;background:#3b82f6;color:#fff;border-radius:8px;z-index:99999;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);animation:fadeIn 0.3s';
-        toast.textContent = message;
-        document.body.appendChild(toast);
-        setTimeout(function() { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; setTimeout(function() { toast.remove(); }, 300); }, 3000);
-    }
-}
 
-// Dark Mode Toggle
-function toggleDarkMode() {
-    var isDark = document.body.classList.toggle('dark-mode');
-    localStorage.setItem('aps-dark-mode', isDark ? '1' : '0');
-    var icon = document.getElementById('darkModeIcon');
-    if (icon) {
-        icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
-    }
-}
-
-// Load saved preference on page load
-document.addEventListener('DOMContentLoaded', function() {
-    var saved = localStorage.getItem('aps-dark-mode');
-    if (saved === '1') {
-        document.body.classList.add('dark-mode');
-        var icon = document.getElementById('darkModeIcon');
-        if (icon) icon.className = 'fas fa-sun';
-    }
-});
-</script>
 </body>
 </html>

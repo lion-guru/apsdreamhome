@@ -179,39 +179,105 @@ class ContentPageController extends BaseController
 
     public function constructionServices()
     {
-        $tid = TenantContext::getId();
-        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
-        $params = $tid > 1 ? [$tid] : [];
+        $services = [];
+        $projects = [];
 
-        $services = $this->db->fetchAll("
-            SELECT * FROM construction_services
-            WHERE status = 'active'{$tidSql}
-            ORDER BY sort_order
-        ", $params) ?: [];
+        try {
+            $tid = TenantContext::getId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $params = $tid > 1 ? [$tid] : [];
+
+            $services = $this->db->fetchAll("
+                SELECT * FROM construction_services
+                WHERE status = 'active'{$tidSql}
+                ORDER BY sort_order
+            ", $params) ?: [];
+        } catch (\Exception $e) {
+            error_log("constructionServices query error: " . $e->getMessage());
+        }
+
+        try {
+            $projects = $this->db->fetchAll("
+                SELECT * FROM colonies
+                WHERE status = 'active'
+                ORDER BY created_at DESC
+                LIMIT 6
+            ") ?: [];
+        } catch (\Exception $e) {
+            error_log("constructionServices projects query error: " . $e->getMessage());
+        }
 
         $this->render('pages/construction_services', [
             'page_title' => 'Construction Services - APS Dream Home',
             'page_description' => 'Professional construction services.',
             'services' => $services,
+            'projects' => $projects,
         ]);
     }
 
     public function interiorDesign()
     {
-        $tid = TenantContext::getId();
-        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
-        $params = $tid > 1 ? [$tid] : [];
+        $services = [];
+        $designs = [];
+        $portfolio = [];
+        $testimonials = [];
+        $faqs = [];
 
-        $designs = $this->db->fetchAll("
-            SELECT * FROM interior_designs
-            WHERE status = 'active'{$tidSql}
-            ORDER BY created_at DESC
-        ", $params) ?: [];
+        try {
+            $tid = TenantContext::getId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $params = $tid > 1 ? [$tid] : [];
+
+            $designs = $this->db->fetchAll("
+                SELECT * FROM interior_designs
+                WHERE status = 'active'{$tidSql}
+                ORDER BY created_at DESC
+            ", $params) ?: [];
+        } catch (\Exception $e) {
+            error_log("interiorDesign query error: " . $e->getMessage());
+        }
+
+        try {
+            $portfolio = $this->db->fetchAll("
+                SELECT * FROM interior_designs
+                WHERE status = 'active'
+                ORDER BY created_at DESC
+                LIMIT 6
+            ") ?: [];
+        } catch (\Exception $e) {
+            error_log("interiorDesign portfolio query error: " . $e->getMessage());
+        }
+
+        try {
+            $testimonials = $this->db->fetchAll("
+                SELECT * FROM testimonials
+                WHERE status = 'approved'
+                ORDER BY created_at DESC
+                LIMIT 3
+            ") ?: [];
+        } catch (\Exception $e) {
+            error_log("interiorDesign testimonials query error: " . $e->getMessage());
+        }
+
+        try {
+            $faqs = $this->db->fetchAll("
+                SELECT * FROM faqs
+                WHERE status = 'active' AND category = 'Interior Design'
+                ORDER BY display_order
+                LIMIT 5
+            ") ?: [];
+        } catch (\Exception $e) {
+            error_log("interiorDesign faqs query error: " . $e->getMessage());
+        }
 
         $this->render('pages/interior_design', [
             'page_title' => 'Interior Design - APS Dream Home',
             'page_description' => 'Beautiful interior design solutions.',
             'designs' => $designs,
+            'services' => $services,
+            'portfolio' => $portfolio,
+            'testimonials' => $testimonials,
+            'faqs' => $faqs,
         ]);
     }
 
@@ -245,20 +311,46 @@ class ContentPageController extends BaseController
 
     public function documentGallery()
     {
-        $tid = TenantContext::getId();
-        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
-        $params = $tid > 1 ? [$tid] : [];
+        $documents = [];
+        $categories = [];
+        $selectedCategory = '';
+        $searchQuery = '';
 
-        $documents = $this->db->fetchAll("
-            SELECT * FROM documents
-            WHERE status = 'published'{$tidSql}
-            ORDER BY created_at DESC
-        ", $params) ?: [];
+        try {
+            $tid = TenantContext::getId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $params = $tid > 1 ? [$tid] : [];
+
+            $documents = $this->db->fetchAll("
+                SELECT id, tenant_id, entity_type, document_type, document_number,
+                       issued_by, issue_date, expiry_date, verification_status,
+                       uploaded_on, url, type
+                FROM documents
+                WHERE verification_status IN ('verified','pending'){$tidSql}
+                ORDER BY uploaded_on DESC
+            ", $params) ?: [];
+        } catch (\Exception $e) {
+            error_log("documentGallery query error: " . $e->getMessage());
+        }
+
+        try {
+            $categories = $this->db->fetchAll("
+                SELECT DISTINCT document_type AS category
+                FROM documents
+                WHERE document_type IS NOT NULL AND document_type != ''
+                ORDER BY document_type
+            ") ?: [];
+        } catch (\Exception $e) {
+            error_log("documentGallery categories query error: " . $e->getMessage());
+        }
 
         $this->render('pages/document_gallery', [
             'page_title' => 'Document Gallery - APS Dream Home',
             'page_description' => 'Browse our document gallery.',
             'documents' => $documents,
+            'categories' => $categories,
+            'selected_category' => $selectedCategory,
+            'search_query' => $searchQuery,
         ]);
     }
 

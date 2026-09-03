@@ -338,13 +338,6 @@ if (!function_exists('navUrl')) {
                     </a>
                 </li>
 
-                <!-- Dark Mode Toggle -->
-                <li class="nav-item ms-2">
-                    <button class="btn btn-sm btn-outline-secondary" id="darkModeToggle" onclick="toggleDarkMode()" title="Toggle Dark Mode" aria-label="Toggle Dark Mode">
-                        <i class="fas fa-moon" id="darkModeIcon"></i>
-                    </button>
-                </li>
-
                 <!-- Quick Action: Admin (only when logged out) -->
                 <?php if (!$nav->isLoggedIn()): ?>
                 <li class="nav-item ms-1 btn-admin">
@@ -361,23 +354,4 @@ if (!function_exists('navUrl')) {
     </div>
 </nav>
 
-<!-- Dark Mode Toggle Script for Frontend -->
-<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
-function toggleDarkMode() {
-    var isDark = document.body.classList.toggle('dark-mode');
-    localStorage.setItem('aps-dark-mode', isDark ? '1' : '0');
-    var icon = document.querySelector('#darkModeToggle i');
-    if (icon) {
-        icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
-    }
-}
-(function() {
-    var saved = localStorage.getItem('aps-dark-mode');
-    var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (saved === '1' || (saved === null && prefersDark)) {
-        document.body.classList.add('dark-mode');
-        var icon = document.querySelector('#darkModeToggle i');
-        if (icon) icon.className = 'fas fa-sun';
-    }
-})();
-</script>
+

@@ -189,8 +189,6 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <!-- Homepage Specific Extras -->
     <link href="<?php echo BASE_URL; ?>/assets/css/homepage.css?v=13" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/modern-animations.css?v=2" rel="stylesheet">
-    <!-- Dark Mode -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/dark-mode.css" rel="stylesheet">
     <!-- Mobile Responsive Overrides -->
     <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css?v=3" rel="stylesheet">
     <!-- Final UI/UX Polish (contrast, tap targets) -->

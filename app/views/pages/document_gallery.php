@@ -36,7 +36,7 @@ $documents = $documents ?? [];
                     <select class="form-select" id="category" name="category">
                         <option value=""><?= __('documents_all_categories') ?></option>
                         <?php foreach ($categories as $cat): ?>
-                            <option value="<?= htmlspecialchars($cat['category'] ?? '') ?>" <?= $selectedCategory === $cat['category'] ? 'selected' : '' ?>>
+                            <option value="<?= htmlspecialchars($cat['category'] ?? '') ?>" <?= $selectedCategory === ($cat['category'] ?? '') ? 'selected' : '' ?>>
                                 <?= ucfirst(htmlspecialchars($cat['category'] ?? '')) ?>
                             </option>
                         <?php endforeach; ?>
@@ -61,36 +61,58 @@ $documents = $documents ?? [];
                             <div class="d-flex align-items-center mb-3">
                                 <div class="document-icon me-3">
                                     <?php
-                                    $icon = match ($doc['file_type'] ?? 'pdf') {
+                                    $fileType = $doc['document_type'] ?? $doc['type'] ?? 'pdf';
+                                    $iconMap = [
                                         'pdf' => 'fa-file-pdf text-danger',
-                                        'doc', 'docx' => 'fa-file-word text-primary',
-                                        'xls', 'xlsx' => 'fa-file-excel text-success',
-                                        'jpg', 'jpeg', 'png' => 'fa-file-image text-info',
-                                        default => 'fa-file text-muted'
-                                    };
+                                        'doc' => 'fa-file-word text-primary',
+                                        'docx' => 'fa-file-word text-primary',
+                                        'xls' => 'fa-file-excel text-success',
+                                        'xlsx' => 'fa-file-excel text-success',
+                                        'jpg' => 'fa-file-image text-info',
+                                        'jpeg' => 'fa-file-image text-info',
+                                        'png' => 'fa-file-image text-info',
+                                    ];
+                                    $icon = $iconMap[strtolower($fileType)] ?? 'fa-file text-muted';
                                     ?>
                                     <i class="fas <?= $icon ?> fa-3x"></i>
                                 </div>
                                 <div class="flex-grow-1">
-                                    <h6 class="card-title mb-1"><?= htmlspecialchars($doc['title'] ?? '') ?></h6>
+                                    <h6 class="card-title mb-1"><?= htmlspecialchars($doc['document_number'] ?? $doc['document_type'] ?? 'Document') ?></h6>
                                     <small class="text-muted">
-                                        <i class="fas fa-tag me-1"></i><?= ucfirst(htmlspecialchars($doc['category'] ?? 'general')) ?>
-                                        <?php if ($doc['file_size'] > 0): ?>
-                                            <span class="ms-2"><i class="fas fa-database me-1"></i><?= round($doc['file_size'] / 1024, 1) ?> KB</span>
+                                        <i class="fas fa-tag me-1"></i><?= ucfirst(htmlspecialchars($doc['document_type'] ?? 'general')) ?>
+                                        <?php if (!empty($doc['issued_by'])): ?>
+                                            <span class="ms-2"><i class="fas fa-building me-1"></i><?= htmlspecialchars($doc['issued_by']) ?></span>
                                         <?php endif; ?>
                                     </small>
                                 </div>
                             </div>
-                            <?php if (!empty($doc['description'])): ?>
-                                <p class="card-text small text-muted mb-3"><?= htmlspecialchars($doc['description'] ?? '') ?></p>
+                            <?php if (!empty($doc['issue_date'])): ?>
+                                <p class="card-text small text-muted mb-3">
+                                    <i class="fas fa-calendar me-1"></i>Issued: <?= htmlspecialchars($doc['issue_date']) ?>
+                                    <?php if (!empty($doc['expiry_date'])): ?>
+                                        | Expires: <?= htmlspecialchars($doc['expiry_date']) ?>
+                                    <?php endif; ?>
+                                </p>
                             <?php endif; ?>
                             <div class="d-flex justify-content-between align-items-center">
                                 <small class="text-muted">
-                                    <i class="fas fa-download me-1"></i><?= (int)($doc['downloads_count'] ?? 0) ?> <?= __('documents_downloads') ?>
+                                    <?php
+                                    $statusColors = [
+                                        'verified' => 'success',
+                                        'pending' => 'warning',
+                                        'rejected' => 'danger',
+                                        'expired' => 'secondary',
+                                    ];
+                                    $status = $doc['verification_status'] ?? 'pending';
+                                    $statusColor = $statusColors[$status] ?? 'secondary';
+                                    ?>
+                                    <span class="badge bg-<?= $statusColor ?>"><?= ucfirst(htmlspecialchars($status)) ?></span>
                                 </small>
-                                <a href="<?= BASE_URL ?>/documents/download/<?= $doc['id'] ?>" class="btn btn-sm btn-primary">
-                                    <i class="fas fa-download me-1"></i><?= __('common_download') ?>
-                                </a>
+                                <?php if (!empty($doc['url'])): ?>
+                                    <a href="<?= htmlspecialchars($doc['url']) ?>" class="btn btn-sm btn-primary" target="_blank">
+                                        <i class="fas fa-external-link-alt me-1"></i><?= __('common_view') ?>
+                                    </a>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>

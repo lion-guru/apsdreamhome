@@ -52,7 +52,6 @@ if (!isset($GLOBALS['_html_doc_started'])) {
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/header.css?v=8" rel="stylesheet">
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/premium-theme.css?v=10" rel="stylesheet">
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/mobile-responsive.css?v=3" rel="stylesheet">
-    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/dark-mode.css" rel="stylesheet">
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/uiux-fixes.css?v=3" rel="stylesheet">
 
     <?php if ($ga4_enabled): ?>
@@ -412,28 +411,19 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        if (isMobileView()) {
-            // Mobile: auto-hide behavior
-            if (delta > 8 && !headerHidden) {
-                // Scrolling down — hide header
-                header.style.transform = 'translateY(-100%)';
-                header.classList.add('header-hidden');
-                headerHidden = true;
-            } else if (delta < -8 && headerHidden) {
-                // Scrolling up — show header
-                header.style.transform = 'translateY(0)';
-                header.classList.remove('header-hidden');
-                headerHidden = false;
-            }
+        // Unified: header always visible, only shadow changes on scroll (no hide gap)
+        if (currentY > 50) {
+            header.classList.add('header-scrolled');
+            header.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.1)';
         } else {
-            // Desktop: always visible, shadow on scroll
-            if (currentY > 50) {
-                header.classList.add('header-scrolled');
-                header.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.1)';
-            } else {
-                header.classList.remove('header-scrolled');
-                header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.06)';
-            }
+            header.classList.remove('header-scrolled');
+            header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.06)';
+        }
+        // Ensure header never hidden (fix white gap bug Session 89)
+        if (headerHidden) {
+            header.style.transform = 'translateY(0)';
+            header.classList.remove('header-hidden');
+            headerHidden = false;
         }
 
         lastScrollY = currentY;

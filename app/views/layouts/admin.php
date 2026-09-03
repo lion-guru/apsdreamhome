@@ -36,8 +36,6 @@ $GLOBALS['_html_doc_started'] = true;
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/css/responsive-fixes.css" rel="stylesheet">
     <!-- Notification system CSS (dropdowns, toasts, popups) -->
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/notification-system.css" rel="stylesheet">
-    <!-- Dark mode CSS (toggle via button or system preference) -->
-    <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/dark-mode.css" rel="stylesheet">
     <!-- UI/UX Fixes (contrast, tap targets) -->
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/uiux-fixes.css?v=3" rel="stylesheet">
     <?php if (isset($extra_css) && $extra_css): ?><!-- Extra page-specific CSS --><?php echo e($extra_css); ?><?php endif; ?>
@@ -251,11 +249,6 @@ $GLOBALS['_html_doc_started'] = true;
             </div>
 
             <div class="nav-right">
-                <!-- Dark Mode Toggle -->
-                <button class="nav-icon" id="darkModeToggle" onclick="toggleDarkMode()" title="Toggle Dark Mode">
-                    <i class="fas fa-moon" id="darkModeIcon"></i>
-                </button>
-
                 <!-- Notifications (Leads) â€” replaced by notification-system.js -->
                 <button class="nav-icon" id="notification-bell-placeholder" onclick="toggleNotifications()" title="New Leads Today">
                     <i class="fas fa-bell"></i>
@@ -379,21 +372,6 @@ $GLOBALS['_html_doc_started'] = true;
     function toggleMessages() {
         window.location.href = '<?php echo $base ?? BASE_URL; ?>/admin/inquiries';
     }
-    function toggleDarkMode() {
-        var isDark = document.body.classList.toggle('dark-mode');
-        localStorage.setItem('aps-dark-mode', isDark ? '1' : '0');
-        var icon = document.getElementById('darkModeIcon');
-        if (icon) { icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon'; }
-    }
-    (function() {
-        var saved = localStorage.getItem('aps-dark-mode');
-        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (saved === '1' || (saved === null && prefersDark)) {
-            document.body.classList.add('dark-mode');
-            var icon = document.getElementById('darkModeIcon');
-            if (icon) icon.className = 'fas fa-sun';
-        }
-    })();
     </script>
     <?php if (isset($extra_js) && $extra_js): ?><!-- Extra page-specific JS --><?php echo e($extra_js); ?><?php endif; ?>
         <!-- Frontend enhancements: a11y, forms, toasts, loading -->
