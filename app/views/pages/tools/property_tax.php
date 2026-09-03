@@ -1,4 +1,4 @@
-<section class="py-5 style-30941">
+﻿<section class="py-5 text-white" style="background: linear-gradient(135deg, #0a192f 0%, #1e3a5f 100%)">
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><?php echo __('tool_property_tax_title', [], 'Property Tax Calculator'); ?></h1>
@@ -9,7 +9,7 @@
                 <div class="card border-0 shadow">
                     <div class="card-body p-4">
                         <div class="mb-3">
-                            <label class="form-label fw-bold"><?php echo __('property_value_rs', [], 'Property Value (₹)'); ?></label>
+                            <label class="form-label fw-bold"><?php echo __('property_value_rs', [], 'Property Value (â‚¹)'); ?></label>
                             <input type="number" class="form-control form-control-lg" id="propVal" value="5000000" oninput="calcTax()">
                         </div>
                         <div class="mb-3">
@@ -27,13 +27,13 @@
                             <div class="col-6">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('annual_tax', [], 'Annual Tax'); ?></small>
-                                    <h4 class="text-danger mb-0" id="annualTax">₹7,500</h4>
+                                    <h4 class="text-danger mb-0" id="annualTax">â‚¹7,500</h4>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('monthly_tax', [], 'Monthly Tax'); ?></small>
-                                    <h4 class="text-primary mb-0" id="monthlyTax">₹625</h4>
+                                    <h4 class="text-primary mb-0" id="monthlyTax">â‚¹625</h4>
                                 </div>
                             </div>
                         </div>

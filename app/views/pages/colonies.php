@@ -1,3 +1,29 @@
+<?php
+function getAmenityIcon($amenity) {
+    $map = [
+        'security' => 'fa-shield-halved', 'gated' => 'fa-door-closed',
+        'club' => 'fa-champagne-glasses', 'swimming' => 'fa-person-swimming',
+        'pool' => 'fa-person-swimming', 'gym' => 'fa-dumbbell',
+        'road' => 'fa-road', 'drainage' => 'fa-water',
+        'street light' => 'fa-lightbulb', 'water' => 'fa-faucet-drip',
+        'power' => 'fa-bolt', 'backup' => 'fa-bolt',
+        'community' => 'fa-building', 'hall' => 'fa-building',
+        'children' => 'fa-children', 'play' => 'fa-children',
+        'jogging' => 'fa-person-running', 'garden' => 'fa-seedling',
+        'landscape' => 'fa-seedling', 'shopping' => 'fa-cart-shopping',
+        'temple' => 'fa-place-of-worship', 'park' => 'fa-tree',
+        'green' => 'fa-tree', 'spiritual' => 'fa-mosque',
+        'meditation' => 'fa-spa', 'library' => 'fa-book',
+        'heritage' => 'fa-landmark', '24' => 'fa-clock',
+    ];
+    $lower = strtolower($amenity);
+    foreach ($map as $kw => $icon) {
+        if (strpos($lower, $kw) !== false) return $icon;
+    }
+    return 'fa-check';
+}
+?>
+
 <!-- Hero Section -->
 <section class="hero-section text-white text-center py-5 style-26625">
     <div class="container">
@@ -147,7 +173,7 @@
                             <h6><i class="fas fa-star me-2"></i><?= __('colonies_amenities_title') ?></h6>
                             <?php foreach (array_slice($colony['amenities'], 0, 4) as $amenity): ?>
                                 <div class="amenity-item">
-                                    <i class="fas fa-check"></i>
+                                    <i class="fas <?= getAmenityIcon($amenity) ?>"></i>
                                     <?php echo e($amenity); ?>
                                 </div>
                             <?php endforeach; ?>

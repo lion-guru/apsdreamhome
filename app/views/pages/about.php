@@ -982,26 +982,9 @@ function aboutContent($sc, $key, $fallbackKey = '') {
     </div>
 </section>
 
-<!-- Scroll Reveal Init + Service Modal -->
+<!-- Service Modal -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Scroll reveal
-    const reveals = document.querySelectorAll('.scroll-reveal');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    }, { threshold: 0.1 });
-    
-    reveals.forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-        observer.observe(el);
-    });
 
     // Service modal data
     const SERVICES = {
@@ -1107,7 +1090,7 @@ document.addEventListener('DOMContentLoaded', function() {
             title: 'Community Building',
             subtitle: 'We build neighborhoods, not just plots',
             icon: 'fas fa-users',
-            desc: 'We don—™t just sell plots — we build neighborhoods. Parks, temples, schools nearby and regular community events make every APS colony a place where families grow and communities flourish.',
+            desc: 'We don\'t just sell plots — we build neighborhoods. Parks, temples, schools nearby and regular community events make every APS colony a place where families grow and communities flourish.',
             steps: [
                 'Planned green & community spaces',
                 'Nearby temples, schools & essentials',

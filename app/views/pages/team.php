@@ -808,18 +808,9 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
 });
 document.addEventListener('DOMContentLoaded', function() {
     const cards = document.querySelectorAll('.team-card');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry, i) => {
-            if (entry.isIntersecting) {
-                setTimeout(() => { entry.target.style.opacity = '1'; entry.target.style.transform = 'translateY(0)'; }, i * 100);
-            }
-        });
-    }, { threshold: 0.1 });
-    cards.forEach(card => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(30px)';
-        card.style.transition = 'all 0.5s ease';
-        observer.observe(card);
+    cards.forEach((card, i) => {
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
     });
 });
 </script>

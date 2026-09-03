@@ -200,6 +200,11 @@ class PageController extends BaseController
         return $this->propertyPageController->colonies();
     }
 
+    public function projects()
+    {
+        return $this->propertyPageController->projects();
+    }
+
     /* ============================================================
        CONTENT PAGES (delegates to ContentPageController)
        ============================================================ */

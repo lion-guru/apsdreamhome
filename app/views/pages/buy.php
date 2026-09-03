@@ -1,5 +1,5 @@
 <!-- Hero Section -->
-<section class="py-5 text-white style-68644">
+<section class="py-5 text-white" style="background: linear-gradient(135deg, #0a192f 0%, #1e3a5f 100%)">
     <div class="container text-center py-5">
         <h1 class="display-4 fw-bold mb-3"><i class="fas fa-search me-3"></i><?= __('buy_hero_title') ?></h1>
         <p class="lead"><?= __('buy_hero_desc') ?></p>

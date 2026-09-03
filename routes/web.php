@@ -2600,6 +2600,9 @@ $router->get('/legal/property-verification', 'Front\\LegalController@propertyVer
 // Short aliases — redirect bare URLs to /legal/ prefix
 $router->get('/insurance', function() { header('Location: /apsdreamhome/legal/insurance'); exit; });
 $router->get('/agreements', function() { header('Location: /apsdreamhome/legal/agreements'); exit; });
+$router->get('/nach-mandate', function() { header('Location: /apsdreamhome/legal/nach-mandate'); exit; });
+$router->get('/property-verification', function() { header('Location: /apsdreamhome/legal/property-verification'); exit; });
+$router->get('/title-protection', function() { header('Location: /apsdreamhome/legal/title-protection'); exit; });
 
 // Standalone full-HTML pages
 $router->get('/analytics', 'Front\\PageController@analytics');

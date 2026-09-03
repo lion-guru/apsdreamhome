@@ -518,6 +518,14 @@ document.addEventListener('DOMContentLoaded', function(){
                 <?php endif; ?>
             </div>
 
+            <div class="text-center ps-viewall-wrap">
+                <a href="<?= BASE_URL ?>/company/projects" class="ps-viewall-btn">
+                    <i class="fas fa-th-large"></i> <?= __('nav_all_projects') ?> <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
     <!-- Useful Free Tools -->
     <section class="py-5 bg-white">
         <div class="container">
@@ -785,7 +793,50 @@ document.addEventListener('DOMContentLoaded', function(){
                                 </div>
                             </div>
         </div>
-    </section>
+        <div class="col-lg-5 text-center mt-4 mt-lg-0">
+            <div class="mt-3">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="small text-white-50"><?= __('home_re_cagr') ?></span>
+                    <span class="small fw-bold text-success" id="reValue">₹52,33,855</span>
+                </div>
+                <div class="progress mb-2 progress-thin">
+                    <div class="progress-bar bg-success" id="reBar" ></div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="small text-white-50"><?= __('home_fd_cagr') ?></span>
+                    <span class="small fw-bold text-warning" id="fdValue">₹17,90,848</span>
+                </div>
+                <div class="progress mb-2 progress-thin">
+                    <div class="progress-bar bg-warning" id="fdBar" ></div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="small text-white-50"><?= __('home_gold_cagr') ?></span>
+                    <span class="small fw-bold text-info" id="goldValue">₹23,67,364</span>
+                </div>
+                <div class="progress mb-0 progress-thin">
+                    <div class="progress-bar bg-primary" id="goldBar" ></div>
+                </div>
+            </div>
+            <img src="<?php echo BASE_URL; ?>/assets/images/hero/luxury-home-2.jpg"
+                alt="<?= __('home_growth_calculator_title') ?>"
+                class="img-fluid rounded-4 shadow-lg mb-3"
+                onerror="this.onerror=null;this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
+            <h3 class="fw-bold text-warning mb-2"><?= __('home_real_estate_wins') ?></h3>
+            <p class="text-white-50 small mb-0"><i
+                    class="fas fa-check-circle text-success me-1"></i><?= __('home_highest_returns') ?>
+            </p>
+            <p class="text-white-50 small mb-0"><i
+                    class="fas fa-check-circle text-success me-1"></i><?= __('home_lowest_risk') ?>
+            </p>
+            <p class="text-white-50 small mb-0"><i
+                    class="fas fa-check-circle text-success me-1"></i><?= __('home_dual_benefit') ?>
+            </p>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</section>
 
 
             <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
@@ -819,14 +870,6 @@ document.addEventListener('DOMContentLoaded', function(){
                 });
             });
             </script>
-
-            <div class="text-center ps-viewall-wrap">
-                <a href="<?= BASE_URL ?>/company/projects" class="ps-viewall-btn">
-                    <i class="fas fa-th-large"></i> <?= __('nav_all_projects') ?> <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-        </div>
-    </section>
 
     <!-- Platform Users - Big Company Social Proof -->
     <section class="py-5 section-gray bg-light" aria-labelledby="users-title">
@@ -1531,49 +1574,6 @@ document.addEventListener('DOMContentLoaded', function(){
                                     <p><?= __('home_inflation_hedge_desc') ?></p>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-                            <div class="mt-3">
-                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <span class="small text-white-50"><?= __('home_re_cagr') ?></span>
-                                    <span class="small fw-bold text-success" id="reValue">₹52,33,855</span>
-                                </div>
-                                <div class="progress mb-2 progress-thin">
-                                    <div class="progress-bar bg-success" id="reBar" ></div>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <span class="small text-white-50"><?= __('home_fd_cagr') ?></span>
-                                    <span class="small fw-bold text-warning" id="fdValue">₹17,90,848</span>
-                                </div>
-                                <div class="progress mb-2 progress-thin">
-                                    <div class="progress-bar bg-warning" id="fdBar" ></div>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <span class="small text-white-50"><?= __('home_gold_cagr') ?></span>
-                                    <span class="small fw-bold text-info" id="goldValue">₹23,67,364</span>
-                                </div>
-                                <div class="progress mb-0 progress-thin">
-                                    <div class="progress-bar bg-primary" id="goldBar" ></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-5 text-center mt-4 mt-lg-0">
-                            <img src="<?php echo BASE_URL; ?>/assets/images/hero/luxury-home-2.jpg"
-                                alt="<?= __('home_growth_calculator_title') ?>"
-                                class="img-fluid rounded-4 shadow-lg mb-3"
-                                onerror="this.onerror=null;this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
-                            <h3 class="fw-bold text-warning mb-2"><?= __('home_real_estate_wins') ?></h3>
-                            <p class="text-white-50 small mb-0"><i
-                                    class="fas fa-check-circle text-success me-1"></i><?= __('home_highest_returns') ?>
-                            </p>
-                            <p class="text-white-50 small mb-0"><i
-                                    class="fas fa-check-circle text-success me-1"></i><?= __('home_lowest_risk') ?>
-                            </p>
-                            <p class="text-white-50 small mb-0"><i
-                                    class="fas fa-check-circle text-success me-1"></i><?= __('home_dual_benefit') ?>
-                            </p>
                         </div>
                     </div>
                 </div>

@@ -376,7 +376,7 @@ $bodyClass = $isHomePage ? 'page-home' : '';
             });
         });
 
-        var counters = document.querySelectorAll('.stat-number');
+        var counters = document.querySelectorAll('.stat-number[data-target]');
         counters.forEach(function(counter) {
             function animate() {
                 var value = +counter.getAttribute('data-target');

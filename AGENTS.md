@@ -1,4 +1,74 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-02 — Session 89: Hero White Gap Fix + Page Visibility + Stats)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-03 — Session 91: Public Page Contrast Fixes + Team Stats Bug)
+
+## Session 91: Public Page Contrast Fixes + Team Stats Bug (2026-09-03)
+
+### Goal
+Fix all remaining visual issues: white-on-light contrast on buy/sell/invest pages, 14 tool/calculator page heroes, team page showing all-zero stats.
+
+### What Was Done
+| File | Changes |
+|------|---------|
+| **buy.php:2** | Replaced `class="py-5 text-white style-49029"` with `class="py-5 text-white" style="background: linear-gradient(135deg, #0a192f 0%, #1e3a5f 100%)"` — hero now shows white text on dark gradient |
+| **sell.php:8** | Same fix — `style-36245` replaced with inline dark gradient |
+| **invest.php:3** | Same fix — `style-60373` replaced with inline dark gradient |
+| **14 tool/calculator pages** | All had `style-XXXXX` with no background. Batch-replaced with `style="background: linear-gradient(135deg, #0a192f 0%, #1e3a5f 100%)"`. Files: `capital_gains.php`, `construction_cost.php`, `gst_calculator.php`, `loan_eligibility.php`, `partner_tools.php`, `plot_converter.php`, `property_tax.php`, `property_valuation.php`, `rental_yield.php`, `rent_vs_buy.php`, `sip_vs_realestate.php`, `stamp_duty.php`, `stamp_duty_calculator.php`, `valuation_calculator.php` |
+| **base.php:379** | Changed `document.querySelectorAll('.stat-number')` to `document.querySelectorAll('.stat-number[data-target]')` — global counter animation was destroying team page stats by overwriting them with NaN |
+
+### Root Cause — Team Stats Bug
+An inline counter animation script in `base.php:379-396` selected ALL `.stat-number` elements on every page. It tried to animate each element from its current text value to a `data-target` attribute value. The team page stats had no `data-target` attribute, so `+counter.getAttribute('data-target')` returned `NaN`, and `counter.innerText = NaN` displayed as "0". The fix was to restrict the selector to `[data-target]` so only elements with actual animation targets are affected.
+
+### Root Cause — `style-XXXXX` Contrast
+The `style-XXXXX` classes were leftover from an old inline style system and provided no background color. Hero sections using these classes rendered text (which was white via CSS) on a transparent/white background, creating white-on-white invisible text.
+
+### Result
+- **28/28 public pages** return HTTP 200
+- **28/28 pages** have proper white-on-dark hero contrast
+- **Team page stats**: 8+, 101+, 2500+, 98% (was all showing "0")
+- **E2E: 360/360 PASS**, AI: 7/7, Workflow: 15/15
+
+### Key Lessons
+_198. **Global inline counter scripts affect ALL pages** — `base.php` is the layout for every public page. An inline counter animation at line 379 using `.stat-number` selector destroyed team page stats because team stats didn't have `data-target`. Always scope global selectors to elements that opt-in (`[data-target]`) rather than broad class selectors._
+_199. **`style-XXXXX` classes are dead CSS** — They were leftover from an old inline style system. When the inline `style` attribute was removed but the class remained, the hero section lost its background. Always replace both the class AND inline style when fixing heroes._
+_200. **Server-side HTML vs browser DOM can differ** — PowerShell `Invoke-WebRequest` correctly returned "8+" etc. but Playwright showed "0" because the inline counter script in base.php overwrote the values after DOM load. Always test with a real browser, not just raw HTTP._
+
+---
+
+## Session 90: CSS Scroll Reveal Fix + Route Aliases + Public Page Audit (2026-09-03)
+
+### Goal
+Fix invisible elements across ALL public pages caused by CSS scroll-reveal opacity rules. Fix 404 routes for property-verification/title-protection. Deep-scan all 26 public pages for visual issues.
+
+### What Was Done
+| File | Changes |
+|------|---------|
+| **modern-animations.css:97-151** | Changed `.reveal`, `.reveal-left`, `.reveal-right`, `.reveal-scale`, `.reveal-rotate` from `opacity: 0` to `opacity: 1; transform: none` — elements visible by default, JS enhances with scroll animation |
+| **premium-theme.css:1797-1803** | Added `.aos-init` to `[data-aos]` rule with `!important` — prevents AOS library from overriding visibility when elements haven't entered viewport |
+| **premium-theme.css:1353-1364** | Changed `.reveal-left`, `.reveal-right` from `opacity: 0` to `opacity: 1; transform: none` — same fix for legacy reveal classes |
+| **routes/web.php:2601-2603** | Added short aliases: `/property-verification` → `/legal/property-verification`, `/title-protection` → `/legal/title-protection` |
+
+### Root Cause
+**CSS cascade conflict:** Three files set `.reveal` opacity:
+1. `premium-theme.css` → `.reveal { opacity: 1 }` ✅
+2. `modern-animations.css` → `.reveal { opacity: 0 }` ❌ (loaded AFTER premium-theme, so it won)
+3. AOS library `.aos-init` class → sets `opacity: 0` on elements not yet in viewport
+
+The `.reveal` class was used on 12+ homepage elements (tools, services, testimonials) plus projects page cards. They all showed as invisible `opacity: 0` with `transform: translateY(40px)`.
+
+### Result
+- **Zero opacity: 0 elements** across ALL 26 public pages (was 12+ on homepage, 3 on projects)
+- **Projects page**: 3 project cards now visible with real data, prices (₹7.5L-₹60L), badges, amenities
+- **Team page**: 8 team members, stats, Women Empowerment, Battle Groups, AI Innovation sections all visible
+- **Homepage**: All 15 sections render — no more dark empty gaps between stats and colonies
+- **All pages verified**: /, /properties, /projects, /colonies, /team, /about, /services, /tools-hub, /blog, /contact, /faq, /careers, /buy, /sell, /rent, /invest, /gallery, /news, /rera-lookup, /home-loan-eligibility, + 7 calculators
+- **Route aliases**: /property-verification, /title-protection now redirect correctly (were 404)
+- **E2E: 360/360 PASS**, AI: 7/7, Workflow: 15/15, Health: ok:true
+
+### Key Lessons
+_195. **CSS cascade load order determines winner** — When two CSS rules have same specificity, the one loaded LAST wins. `premium-theme.css` set `.reveal { opacity: 1 }` but `modern-animations.css` (loaded after) set `.reveal { opacity: 0 }`. Always check ALL loaded stylesheets for conflicting rules._
+_196. **AOS library hides elements until scroll** — `.aos-init` class sets `opacity: 0` on elements not yet in viewport. Progressive enhancement means elements should be visible by default. Fix: `[data-aos], .aos-init { opacity: 1 !important; }`_
+_197. **Flutter-only pages show 404 on web** — /property-verification, /neighborhood, /title-protection exist only in Flutter app. Add redirect aliases in web.php for pages linked from home/tools-hub._
+
+---
 
 ## Session 89: Hero White Gap Fix + Page Visibility + Stats (2026-09-02)
 

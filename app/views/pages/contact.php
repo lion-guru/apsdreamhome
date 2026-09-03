@@ -326,8 +326,8 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
                         <address class="mb-0">
                             <strong><i class="fas fa-map-pin me-1 style-5793"></i> <?= __('contact_office_addr1', null, '1st floor, Singhariya Chauraha, Kunraghat, Deoria Road') ?></strong><br>
                             <?= __('contact_office_addr2', null, 'Gorakhpur, UP - 273008') ?><br><br>
-                            <i class="fas fa-phone me-1 style-5793"></i> <?= __('phone_lbl') ?>: <a href="tel:<?= preg_replace('/[^0-9+]/', '', $sc('contact_phone', '+919277121112')) ?>"><?= htmlspecialchars($sc('contact_phone', '+91 92771 21112')) ?></a><?php if ($sc('contact_phone_2')): ?> / <a href="tel:<?= preg_replace('/[^0-9+]/', '', $sc('contact_phone_2')) ?>"><?= htmlspecialchars($sc('contact_phone_2')) ?></a><?php endif; ?><br>
-                            <i class="fas fa-envelope me-1 style-5793"></i> <?= __('email_lbl') ?>: <a href="mailto:<?= htmlspecialchars($sc('contact_email', 'info@apsdreamhome.com')) ?>"><?= htmlspecialchars($sc('contact_email', 'info@apsdreamhome.com')) ?></a>
+                            <i class="fas fa-phone me-1 style-5793"></i> <?= __('phone_lbl', null, 'Phone') ?>: <a href="tel:<?= preg_replace('/[^0-9+]/', '', $sc('contact_phone', '+919277121112')) ?>"><?= htmlspecialchars($sc('contact_phone', '+91 92771 21112')) ?></a><?php if ($sc('contact_phone_2')): ?> / <a href="tel:<?= preg_replace('/[^0-9+]/', '', $sc('contact_phone_2')) ?>"><?= htmlspecialchars($sc('contact_phone_2')) ?></a><?php endif; ?><br>
+                            <i class="fas fa-envelope me-1 style-5793"></i> <?= __('email_lbl', null, 'Email') ?>: <a href="mailto:<?= htmlspecialchars($sc('contact_email', 'info@apsdreamhome.com')) ?>"><?= htmlspecialchars($sc('contact_email', 'info@apsdreamhome.com')) ?></a>
                         </address>
                         <div class="office-map">
                             <iframe

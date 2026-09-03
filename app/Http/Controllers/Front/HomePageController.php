@@ -210,6 +210,7 @@ class HomePageController extends BaseController
             'page_title' => 'About Us - APS Dream Home',
             'page_description' => 'Learn about APS Dream Home - your trusted real estate partner.',
             'leaders' => $leaders,
+            'siteContent' => $siteContent,
         ]);
     }
 
@@ -236,16 +237,33 @@ class HomePageController extends BaseController
         try {
             $stmt = $this->db->prepare("SELECT * FROM team_members WHERE status = 'active' ORDER BY sort_order ASC");
             $stmt->execute();
-            $teamMembers = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $teamMembers = $stmt->fetchAll(\PDO::FETCH_OBJ) ?: [];
         } catch (\Exception $e) {
             error_log('Team page error: ' . $e->getMessage());
             $teamMembers = [];
+        }
+
+        // Build category_groups from team members (category => [members])
+        $category_groups = [];
+        foreach ($teamMembers as $m) {
+            $cat = $m->category ?? 'team';
+            $category_groups[$cat][] = $m;
+        }
+
+        // Fetch team groups for the competition/battle groups section
+        try {
+            $stmt = $this->db->query("SELECT * FROM team_groups WHERE status = 'active' ORDER BY score DESC");
+            $teamGroups = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Exception $e) {
+            $teamGroups = [];
         }
 
         $this->render('pages/team', [
             'page_title' => 'Our Team - APS Dream Home',
             'page_description' => 'Meet the team behind APS Dream Home.',
             'team_members' => $teamMembers,
+            'category_groups' => $category_groups,
+            'team_groups' => $teamGroups,
         ]);
     }
 

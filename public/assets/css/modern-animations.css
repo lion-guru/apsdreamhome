@@ -93,10 +93,10 @@
   }
 }
 
-/* ---- Scroll Reveal Classes ---- */
+/* ---- Scroll Reveal Classes (visible by default, JS animates) ---- */
 .reveal {
-  opacity: 0;
-  transform: translateY(40px);
+  opacity: 1;
+  transform: translateY(0);
   transition:
     opacity 0.8s ease,
     transform 0.8s ease;
@@ -106,8 +106,8 @@
   transform: translateY(0);
 }
 .reveal-left {
-  opacity: 0;
-  transform: translateX(-50px);
+  opacity: 1;
+  transform: translateX(0);
   transition:
     opacity 0.8s ease,
     transform 0.8s ease;
@@ -117,8 +117,8 @@
   transform: translateX(0);
 }
 .reveal-right {
-  opacity: 0;
-  transform: translateX(50px);
+  opacity: 1;
+  transform: translateX(0);
   transition:
     opacity 0.8s ease,
     transform 0.8s ease;
@@ -128,8 +128,8 @@
   transform: translateX(0);
 }
 .reveal-scale {
-  opacity: 0;
-  transform: scale(0.8);
+  opacity: 1;
+  transform: scale(1);
   transition:
     opacity 0.8s ease,
     transform 0.8s ease;
@@ -139,8 +139,8 @@
   transform: scale(1);
 }
 .reveal-rotate {
-  opacity: 0;
-  transform: rotate(-8deg) scale(0.9);
+  opacity: 1;
+  transform: rotate(0) scale(1);
   transition:
     opacity 0.8s ease,
     transform 0.8s ease;

@@ -41,7 +41,7 @@ class PropertyPageController extends BaseController
                     'title' => $prop['title'],
                     'location' => $prop['city'] . ', ' . ($prop['state'] ?? ''),
                     'city' => $prop['city'],
-                    'price' => "\xE2\x82\xB9" . number_format($prop['price']),
+                    'price' => $prop['price'],
                     'slug' => $prop['slug'] ?? strtolower(str_replace(' ', '-', $prop['title'])),
                     'type' => ucfirst($prop['type'] ?? 'Residential'),
                     'status' => 'Available',
@@ -58,6 +58,7 @@ class PropertyPageController extends BaseController
             'page_title' => 'Properties - APS Dream Home',
             'page_description' => 'Browse our premium properties for sale.',
             'properties' => $featured_properties,
+            'total' => count($featured_properties),
         ]);
     }
 
@@ -343,7 +344,7 @@ class PropertyPageController extends BaseController
                 if (!empty($row['amenities'])) {
                     $amenitiesList = json_decode($row['amenities'], true);
                     if (is_array($amenitiesList)) {
-                        $amenities = array_map(function($a) { return $a['name'] ?? ''; }, $amenitiesList);
+                        $amenities = array_map(function($a) { return is_array($a) ? ($a['name'] ?? '') : $a; }, $amenitiesList);
                     }
                 }
                 $colonyPlots = $this->db->fetch("SELECT COUNT(*) as total FROM plots WHERE colony_id = ? AND status = 'available'", [$row['id']])['total'] ?? 0;
@@ -383,6 +384,74 @@ class PropertyPageController extends BaseController
             'colonies' => $colonies,
             'colony_stats' => $colonyStats,
             'total_plots' => $totalPlots,
+        ]);
+    }
+
+    public function projects()
+    {
+        try {
+            $rows = $this->db->fetchAll(
+                "SELECT p.*, c.name AS colony_name, d.name AS district_name, s.name AS state_name
+                 FROM projects p
+                 LEFT JOIN colonies c ON p.colony_id = c.id
+                 LEFT JOIN districts d ON p.district_id = d.id
+                 LEFT JOIN states s ON d.state_id = s.id
+                 WHERE p.status != 'cancelled'
+                 ORDER BY p.is_featured DESC, p.created_at DESC"
+            );
+            $projects = [];
+            foreach ($rows as $row) {
+                $images = json_decode($row['images'] ?? '[]', true);
+                $amenities = json_decode($row['amenities'] ?? '[]', true);
+                $projects[] = [
+                    'id' => (int)$row['id'],
+                    'name' => $row['name'],
+                    'slug' => strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $row['name'])),
+                    'description' => $row['description'] ?? '',
+                    'project_type' => $row['project_type'] ?? 'residential',
+                    'developer_name' => $row['developer_name'] ?? '',
+                    'address' => $row['address'] ?? '',
+                    'colony_name' => $row['colony_name'] ?? '',
+                    'district_name' => $row['district_name'] ?? '',
+                    'state_name' => $row['state_name'] ?? '',
+                    'location' => trim(($row['district_name'] ?? '') . ', ' . ($row['state_name'] ?? ''), ', '),
+                    'total_area' => $row['total_area'] ?? 0,
+                    'total_plots' => (int)($row['total_plots'] ?? 0),
+                    'available_plots' => (int)($row['available_plots'] ?? 0),
+                    'sold_plots' => (int)($row['sold_plots'] ?? 0),
+                    'booked_plots' => (int)($row['booked_plots'] ?? 0),
+                    'price_range_min' => $row['price_range_min'] ?? 0,
+                    'price_range_max' => $row['price_range_max'] ?? 0,
+                    'avg_price_per_sqft' => $row['avg_price_per_sqft'] ?? 0,
+                    'status' => $row['status'] ?? 'planning',
+                    'is_featured' => (int)($row['is_featured'] ?? 0),
+                    'is_hot_deal' => (int)($row['is_hot_deal'] ?? 0),
+                    'rera_number' => $row['rera_number'] ?? '',
+                    'amenities' => is_array($amenities) ? $amenities : [],
+                    'images' => is_array($images) ? $images : [],
+                    'image' => !empty($images) ? $images[0] : null,
+                    'progress_pct' => (float)($row['progress_pct'] ?? 0),
+                    'completion_date' => $row['completion_date'] ?? null,
+                    'possession_date' => $row['possession_date'] ?? null,
+                ];
+            }
+        } catch (\Exception $e) {
+            error_log("Projects page error: " . $e->getMessage());
+            $projects = [];
+        }
+
+        $stats = [
+            'total_projects' => count($projects),
+            'completed' => count(array_filter($projects, fn($p) => $p['status'] === 'completed')),
+            'under_construction' => count(array_filter($projects, fn($p) => $p['status'] === 'under_construction')),
+            'total_plots' => array_sum(array_column($projects, 'total_plots')),
+        ];
+
+        $this->render('pages/projects', [
+            'page_title' => 'Our Projects - APS Dream Home',
+            'page_description' => 'Explore our residential and commercial real estate projects.',
+            'projects' => $projects,
+            'project_stats' => $stats,
         ]);
     }
 }

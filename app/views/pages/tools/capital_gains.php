@@ -1,4 +1,4 @@
-<section class="py-5 style-30941">
+﻿<section class="py-5 text-white" style="background: linear-gradient(135deg, #0a192f 0%, #1e3a5f 100%)">
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><i class="fas fa-chart-line me-2"></i><?php echo __('tool_capital_gains_title', [], 'Capital Gains Tax Calculator'); ?></h1>
@@ -10,11 +10,11 @@
                     <div class="card-body p-4">
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('purchase_price_rs', [], 'Purchase Price (₹)'); ?></label>
+                                <label class="form-label fw-bold"><?php echo __('purchase_price_rs', [], 'Purchase Price (â‚¹)'); ?></label>
                                 <input type="number" class="form-control" id="purchasePrice" value="3000000" oninput="calcCG()">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('sale_price_rs', [], 'Sale Price (₹)'); ?></label>
+                                <label class="form-label fw-bold"><?php echo __('sale_price_rs', [], 'Sale Price (â‚¹)'); ?></label>
                                 <input type="number" class="form-control" id="salePrice" value="5000000" oninput="calcCG()">
                             </div>
                         </div>
@@ -22,12 +22,12 @@
                             <div class="col-md-4">
                                 <label class="form-label fw-bold"><?php echo __('holding_period', [], 'Holding Period'); ?></label>
                                 <select class="form-select" id="holdPeriod" onchange="calcCG()">
-                                    <option value="short"><?php echo __('short_term', [], 'Short Term (â‰¤ 2 years)'); ?></option>
+                                    <option value="short"><?php echo __('short_term', [], 'Short Term (Ã¢â€°Â¤ 2 years)'); ?></option>
                                     <option value="long" selected><?php echo __('long_term', [], 'Long Term (> 2 years)'); ?></option>
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold"><?php echo __('improvement_cost_rs', [], 'Improvement Cost (₹)'); ?></label>
+                                <label class="form-label fw-bold"><?php echo __('improvement_cost_rs', [], 'Improvement Cost (â‚¹)'); ?></label>
                                 <input type="number" class="form-control" id="improveCost" value="200000" oninput="calcCG()">
                             </div>
                             <div class="col-md-4">
@@ -42,7 +42,7 @@
                             <div class="col-md-4">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('taxable_gain', [], 'Taxable Gain'); ?></small>
-                                    <h4 class="text-danger mb-0" id="taxableGain">₹18,00,000</h4>
+                                    <h4 class="text-danger mb-0" id="taxableGain">â‚¹18,00,000</h4>
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -54,7 +54,7 @@
                             <div class="col-md-4">
                                 <div class="bg-danger text-white rounded-3 p-3">
                                     <small class="d-block"><?php echo __('capital_gains_tax', [], 'Capital Gains Tax'); ?></small>
-                                    <h4 class="mb-0" id="cgTax">₹3,60,000</h4>
+                                    <h4 class="mb-0" id="cgTax">â‚¹3,60,000</h4>
                                 </div>
                             </div>
                         </div>
