@@ -96,11 +96,11 @@ body.mobile-drawer-open {
   .mobile-bottom-nav {
     display: none !important;
   }
-  /* Desktop: allow nav items to wrap when there are too many for one line */
+  /* Desktop: keep single line, no wrap — overflow handled by compact padding */
   .premium-header .navbar-nav {
-    flex-wrap: wrap;
-    align-content: center;
-    gap: 2px 4px;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 2px;
     overflow: visible;
   }
   .premium-header .navbar-nav .nav-item {
@@ -390,7 +390,7 @@ body.mobile-drawer-open {
   display: flex;
   flex-direction: row;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0;
 }
 .premium-header .navbar-nav .nav-item {
@@ -580,11 +580,11 @@ body.mobile-drawer-open {
     right: 0;
     left: auto;
   }
-  /* Allow nav items to wrap on smaller desktops */
+  /* Keep single line on smaller desktops — compact instead of wrap */
   .premium-header .navbar-nav {
-    flex-wrap: wrap;
-    align-content: center;
-    gap: 2px;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 1px;
   }
   .premium-header .navbar-nav .nav-link {
     flex-shrink: 0;
@@ -752,8 +752,11 @@ body.page-home main {
     display: none !important;
   }
   .premium-header .navbar-nav .nav-link {
-    font-size: 11px;
-    padding: 16px 5px !important;
+    font-size: 10.5px;
+    padding: 16px 3px !important;
+  }
+  .premium-header .nav-item.btn-call a {
+    padding: 4px 6px !important;
   }
 }
 
