@@ -158,6 +158,10 @@ $router->get('/emi-calculator', function(){ header('Location: '.BASE_URL.'/calc'
 $router->get('/tools/plot-converter', 'Front\\PropertyController@plotConverter');
 $router->get('/tools/valuation-calculator', 'Front\\ToolController@valuationCalculator');
 
+// Fix: Empty-action POST forms (page opens but submit 404) — add POST for same URL as GET
+$router->post('/customer-reviews', 'Front\\PageController@customerReviews');
+$router->post('/financial-services', 'Front\\PageController@financialServices');
+
 // Free Tools API
 $router->get('/api/tools/convert-area', function () {
     $value = floatval($_GET['value'] ?? 0);
