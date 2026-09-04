@@ -2623,6 +2623,7 @@ $router->get('/customer-referral', function() { header('Location: /apsdreamhome/
 // Standalone full-HTML pages
 $router->get('/analytics', 'Front\\PageController@analytics');
 $router->get('/calc', 'Front\\ToolController@calc');
+$router->post('/calc', 'Front\\ToolController@calc');
 
 // WebSocket Real-time Notification Test Page
 $router->get('/websocket-test', function () {
