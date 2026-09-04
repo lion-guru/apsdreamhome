@@ -500,6 +500,19 @@ class PageController extends BaseController
         return $this->mobileSystemPageController->createMobileApp();
     }
 
+    public function opportunity()
+    {
+        $viewPath = APP_PATH . '/views/pages/opportunity.php';
+        if (file_exists($viewPath)) {
+            $this->render('pages/opportunity', [
+                'page_title' => 'Opportunity - APS Dream Home',
+                'page_description' => 'Explore career and business opportunities with APS Dream Home.',
+            ]);
+        } else {
+            $this->redirect(BASE_URL);
+        }
+    }
+
     public function becomeAssociate()
     {
         $viewPath = APP_PATH . '/views/pages/become_associate.php';
