@@ -813,6 +813,17 @@ a {
   color: var(--premium-navy) !important;
 }
 
+/* Fix: Explore Projects btn in hero was transparent (dark-on-dark invisible) — force gold */
+.hero-premium .btn-premium,
+.hero-premium a.btn-premium,
+.hero a.btn-premium {
+  background: linear-gradient(135deg, #d4af37 0%, #b5952f 100%) !important;
+  background-image: linear-gradient(135deg, #d4af37 0%, #b5952f 100%) !important;
+  color: #0a192f !important;
+  border: none !important;
+  opacity: 1 !important;
+}
+
 /* Subtle glow pulse on CTA buttons */
 .btn-premium.btn-glow,
 .glow-on-hover {

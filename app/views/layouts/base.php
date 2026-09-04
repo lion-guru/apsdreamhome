@@ -185,7 +185,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <!-- Navigation & Header -->
     <link href="<?php echo BASE_URL; ?>/assets/css/header.css?v=8" rel="stylesheet">
     <!-- Real Estate Theme & Gradients -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/premium-theme.css?v=11" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/premium-theme.css?v=12" rel="stylesheet">
     <!-- Homepage Specific Extras -->
     <link href="<?php echo BASE_URL; ?>/assets/css/homepage.css?v=13" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/modern-animations.css?v=2" rel="stylesheet">
