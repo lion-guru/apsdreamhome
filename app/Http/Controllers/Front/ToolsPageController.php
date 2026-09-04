@@ -115,6 +115,14 @@ class ToolsPageController extends BaseController
         ]);
     }
 
+    public function propertyAppreciationCalculator()
+    {
+        $this->render('pages/tools/property_appreciation', [
+            'page_title' => 'Property Appreciation Calculator - APS Dream Home',
+            'page_description' => 'Calculate future property value based on appreciation rate and years.',
+        ]);
+    }
+
     public function propertyValuation()
     {
         $this->render('pages/tools/property_valuation', [

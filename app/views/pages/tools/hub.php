@@ -19,6 +19,7 @@
                 ['url' => BASE_URL . '/sip-vs-realestate', 'gradient' => 'linear-gradient(135deg, #ffecd2, #fcb69f)', 'icon' => 'fa-chart-line', 'title_key' => 'tool_sip_vs_re', 'title_default' => 'SIP vs Real Estate', 'desc_key' => 'tool_sip_vs_re_desc', 'desc_default' => 'Compare returns between SIP investments and real estate'],
                 ['url' => BASE_URL . '/gst-calculator', 'gradient' => 'linear-gradient(135deg, #a8edea, #fed6e3)', 'icon' => 'fa-receipt', 'title_key' => 'tool_gst_calc', 'title_default' => 'GST Calculator', 'desc_key' => 'tool_gst_calc_desc', 'desc_default' => 'See GST on property — view base price and GST separately'],
                 ['url' => BASE_URL . '/capital-gains-calculator', 'gradient' => 'linear-gradient(135deg, #89f7fe, #66a6ff)', 'icon' => 'fa-coins', 'title_key' => 'tool_cap_gains', 'title_default' => 'Capital Gains Calculator', 'desc_key' => 'tool_cap_gains_desc', 'desc_default' => 'Calculate tax on property sale with capital gains calculator'],
+                ['url' => BASE_URL . '/property-appreciation-calculator', 'gradient' => 'linear-gradient(135deg, #667eea, #764ba2)', 'icon' => 'fa-arrow-trend-up', 'title_key' => 'tool_appreciation', 'title_default' => 'Property Appreciation Calculator', 'desc_key' => 'tool_appreciation_desc', 'desc_default' => 'See how your property value grows over time with appreciation'],
             ];
 
             foreach ($tools as $tool) {

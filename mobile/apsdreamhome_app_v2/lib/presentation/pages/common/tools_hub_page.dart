@@ -49,6 +49,12 @@ class ToolsHubPage extends StatelessWidget {
           '/capital-gains-calculator',
         ),
         _ToolItem(
+          'Property Appreciation',
+          'Future value with appreciation + rent',
+          Icons.trending_up_rounded,
+          '/property-appreciation-calculator',
+        ),
+        _ToolItem(
           'GST Calculator',
           'GST on property transactions',
           Icons.percent_rounded,

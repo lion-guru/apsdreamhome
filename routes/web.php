@@ -147,6 +147,8 @@ $router->get('/construction-cost-estimator', 'Front\\ToolController@construction
 $router->get('/rental-yield-calculator', 'Front\\ToolController@rentalYieldCalculator');
 $router->get('/property-tax-calculator', 'Front\\ToolController@propertyTaxCalculator');
 $router->get('/rera-lookup', 'Front\\ToolController@reraLookup');
+$router->get('/property-appreciation-calculator', 'Front\\ToolsPageController@propertyAppreciationCalculator');
+$router->get('/property-appreciation', function(){ header('Location: '.BASE_URL.'/property-appreciation-calculator', true, 301); exit; });
 // Aliases for user-facing tool names (fix 404s from homepage/tools listing)
 $router->get('/investment-calculator', function(){ header('Location: '.BASE_URL.'/sip-vs-realestate', true, 301); exit; });
 $router->get('/loan-eligibility', function(){ header('Location: '.BASE_URL.'/home-loan-eligibility', true, 301); exit; });
@@ -2608,6 +2610,15 @@ $router->get('/plot-converter', function() { header('Location: /apsdreamhome/too
 $router->get('/search', function() { header('Location: /apsdreamhome/properties', true, 302); exit; });
 $router->get('/colony-pipeline', function() { header('Location: /apsdreamhome/admin/colony-pipeline', true, 302); exit; });
 $router->get('/colony/raghunath-nagri', function() { header('Location: /apsdreamhome/colony/raghunath-nagri-motiram', true, 301); exit; });
+$router->get('/neighborhood', function() { header('Location: /apsdreamhome/tools-hub', true, 301); exit; });
+$router->get('/opportunities', function() { header('Location: /apsdreamhome/careers', true, 301); exit; });
+$router->get('/stamp-duty', function() { header('Location: /apsdreamhome/stamp-duty-calculator', true, 301); exit; });
+$router->get('/construction-cost', function() { header('Location: /apsdreamhome/construction-cost-estimator', true, 301); exit; });
+$router->get('/rental-yield', function() { header('Location: /apsdreamhome/rental-yield-calculator', true, 301); exit; });
+$router->get('/capital-gains', function() { header('Location: /apsdreamhome/capital-gains-calculator', true, 301); exit; });
+$router->get('/property-tax', function() { header('Location: /apsdreamhome/property-tax-calculator', true, 301); exit; });
+$router->get('/document-gallery', function() { header('Location: /apsdreamhome/gallery', true, 301); exit; });
+$router->get('/customer-referral', function() { header('Location: /apsdreamhome/mlm-dashboard', true, 301); exit; });
 
 // Standalone full-HTML pages
 $router->get('/analytics', 'Front\\PageController@analytics');

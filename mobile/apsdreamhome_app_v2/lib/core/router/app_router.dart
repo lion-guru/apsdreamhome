@@ -88,6 +88,7 @@ import '../../presentation/pages/customer/user_agreements_page.dart';
 import '../../presentation/pages/tools/stamp_duty_calculator_page.dart';
 import '../../presentation/pages/tools/plot_converter_page.dart';
 import '../../presentation/pages/tools/capital_gains_page.dart';
+import '../../presentation/pages/tools/property_appreciation_page.dart';
 import '../../presentation/pages/tools/construction_cost_page.dart';
 import '../../presentation/pages/tools/rental_yield_page.dart';
 import '../../presentation/pages/tools/rent_vs_buy_page.dart';
@@ -290,6 +291,7 @@ GoRouter createRouter() {
       final isInvest = uri == '/invest';
       final isGallery = uri == '/gallery';
       final isCapitalGains = uri == '/capital-gains-calculator';
+      final isPropertyAppreciation = uri == '/property-appreciation-calculator';
       final isConstructionCost = uri == '/construction-cost-estimator';
       final isRentalYield = uri == '/rental-yield-calculator';
       final isRentVsBuy = uri == '/rent-vs-buy';
@@ -358,6 +360,7 @@ final isPublicRoute =
           isInvest ||
           isGallery ||
           isCapitalGains ||
+          isPropertyAppreciation ||
           isConstructionCost ||
           isRentalYield ||
           isRentVsBuy ||
@@ -951,6 +954,10 @@ final isPublicRoute =
       GoRoute(
         path: '/capital-gains-calculator',
         builder: (context, state) => const CapitalGainsPage(),
+      ),
+      GoRoute(
+        path: '/property-appreciation-calculator',
+        builder: (context, state) => const PropertyAppreciationPage(),
       ),
       GoRoute(
         path: '/construction-cost-estimator',
