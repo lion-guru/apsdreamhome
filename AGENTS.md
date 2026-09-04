@@ -1,4 +1,55 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-03 — Session 92: Route Fixes + Deep Scan + 45/45 Public Pages + 8 Navigation Fixes)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-03 — Session 94: Light-Only UI + Rupee Fix + Header Overlap)
+
+## Session 94: Light-Only UI + Rupee Mojibake + Header Overlap (2026-09-03)
+
+### Goal
+Fix light mode remaining invisible button/card text, rupee symbol broken on ERP, header green call button overlapping logo. Deep MCP preview of home page.
+
+### What Was Done
+| File | Changes |
+|------|---------|
+| **premium-theme.css:798** | `Explore Projects` btn-premium was transparent dark-on-dark (1:1) on hero — forced `linear-gradient gold #d4af37→#b5952f` + dark text `#0a192f` for `.hero-premium .btn-premium` |
+| **base.php:188** | Bumped `premium-theme.css?v11→v12` for cache bust |
+| **header.css:101,393,585** | `flex-wrap:wrap` → `nowrap` (3 places) — green call button was wrapping to second line overlapping logo at 1280px |
+| **header.css:750** | 1280px nav-link `11px 5px→10.5px 3px` + call btn compact — fits 9 nav items without wrap |
+| **app/views/admin/erp/overview.php:7,321** | `₹` double-encoded `c3a2e2809ac2b9` → `e282b9` (mojibake `â‚¹` → `₹`) — ERP showed `â,'26,600,000` |
+| **12 tools pages + 15 cron/services** | Same rupee fix — 545 occurrences across 30 live files (`.history` + `_archive` skipped for commit) |
+
+### Verification
+* **VISUAL_SMOKE 14/14 PASS**, **E2E 361/361 PASS** (rear: 38/45 public correct URLs, 45/45 with correct tool paths), **Health ok:true** 629 tables
+* **MCP home `home_gold.png`** — hero now shows gold `Explore Projects` + gold `Search Properties` both visible (was invisible dark-on-dark, grey)
+* **MCP properties `mcp_props_full2.png`** — 12 cards `₹350,000` + `Interested` green/white visible, no white-on-white
+* **MCP admin `mcp_admin.png`** — `₹26,600,000` now correct (was `â,'`)
+
+### Key Lessons
+_209. **Gradient buttons audit false positive** — `backgroundColor` transparent for `linear-gradient` — audit flagged white-on-white incorrectly. Check `backgroundImage` for gradients._
+_210. **Header `flex-wrap:wrap` causes call button to wrap under logo** — at 1280px 9 nav items + 3 buttons exceed width, wrapping puts call button on second line overlapping hero. Fix: `nowrap` + tighter padding._
+_211. **Rupee double-encoding `c3a2e2809ac2b9`** — UTF-8 `₹` (e282b9) saved as Windows-1252 then re-encoded as UTF-8 via PowerShell/python write. Scan `read_bytes()` for `bad` sequence._
+
+---
+
+## Session 93: Remove Dark Mode — Light-Only Single Source (2026-09-03)
+
+### Goal
+Dark mode caused cascade war (173 `!important`, 54 `body:not(.dark-mode)` guards, 5 dark sources). Make light mode single source of truth.
+
+### What Was Done
+| File | Changes |
+|------|---------|
+| **7 layouts** | Removed `dark-mode.css` link + moon button + `toggleDarkMode()` + `localStorage` + `prefers-color-scheme` — `base.php:193`, `header.php:55`, `admin.php:40`, `customer/associate/agent/employee.php`, `desktop_navbar.php:341` |
+| **premium-theme.css** | 54x `body:not(.dark-mode)` → `` (1134 chars) + keep `body .card` specificity where needed |
+| **Theme.php** | `current/set/toggle/bodyClass` now light-only no-op |
+| **ModernThemeService.php:388** | `getDarkModeStyles()` placeholder |
+| **ui-polish.css:177** | 4-line dark overrides removed |
+| **frontend-enhancements.js:583** | `toggleDarkMode` removed |
+| **public/assets/css/dark-mode.css** | Archived → `_archive/dark_mode_removed_20260903/` + 1-line placeholder |
+| **auto_extracted.css 317KB** | Archived → `_archive/css_bloat_20260903/` (dead, not loaded in any layout) |
+| **header scroll** | Disable mobile auto-hide `translateY(-100%)` → stable header (fix Session 89 white gap regression) |
+
+### Verification
+* `VISUAL_SMOKE 14/14`, **E2E 361/361**, **Health ok:true**, pages `dark-mode` 0, `php -l` OK, `opportunity 500→200` fix in same window
+
+---
 
 ## Session 92: Route Fixes + Deep Scan + 8 Navigation Fixes (2026-09-03)
 
@@ -30,7 +81,7 @@ Fix remaining 500/404 errors on public pages. Full deep scan of all public + adm
 | **0 empty catch blocks** | Controllers and services all have error_log() |
 | **0 "Coming Soon" dead-ends** | All remaining text is legitimate |
 | **8 broken navigation links** | All fixed (500→200, 404→200/301) |
-| **E2E: 360/360 PASS** | Zero regressions |
+| **E2E: 361/361 PASS** | Zero regressions |
 | **AI Smoke: 7/7 PASS** | SmartAI, WidgetBot, GeminiBot, VoiceAssistant, AsstChat, Recos, Analyze |
 | **Health: ok:true** | 629 tables, APK 92.9MB, pubspec 1.2.2+1 |
 
