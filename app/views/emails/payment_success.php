@@ -37,7 +37,7 @@
 
             <p>Thank you for your payment to apsdreamhome. Your transaction has been successfully processed.</p>
 
-            <div class="style-97813">
+            <div >
                 <p><strong>What happens next?</strong></p>
                 <ul>
                     <li>You will receive a confirmation SMS shortly</li>
@@ -47,9 +47,9 @@
                 </ul>
             </div>
 
-            <div class="style-69368">
+            <div >
                 <a href="<?= $baseUrl ?>/payment/receipt" class="button">Download Receipt</a>
-                <a href="<?= $baseUrl ?>/dashboard" class="button style-14800">View Dashboard</a>
+                <a href="<?= $baseUrl ?>/dashboard" class="button">View Dashboard</a>
             </div>
 
             <p>If you have any questions about your payment, please contact our support team:</p>

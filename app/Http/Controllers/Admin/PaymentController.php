@@ -158,18 +158,19 @@ class PaymentController extends AdminController
                 return $this->redirect('admin/payments');
             }
 
+            $history = [];
             try {
                 // Get payment history
                 $sql = "SELECT * FROM payment_history 
                         WHERE payment_id = ? 
                         ORDER BY created_at DESC";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([$paymentId]);
+                $history = $stmt->fetchAll();
             } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-            error_log($e->getMessage());
+                // Gracefully handle dropped table ref
+                error_log($e->getMessage());
             }
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([$paymentId]);
-            $history = $stmt->fetchAll();
 
             $data = [
                 'page_title' => 'Payment Details - APS Dream Home',
@@ -229,16 +230,16 @@ class PaymentController extends AdminController
                 $stmt->execute([$amount, $method, $transactionId, $notes, $paymentId]);
 
                 try {
-                    // Create payment history record
+                    // Create payment history record (best-effort; never fail the payment)
                     $sql = "INSERT INTO payment_history 
                             (payment_id, action, amount, method, transaction_id, notes, created_by, created_at)
                             VALUES (?, 'processed', ?, ?, ?, ?, ?, NOW())";
+                    $stmt = $this->db->prepare($sql);
+                    $stmt->execute([$paymentId, $amount, $method, $transactionId, $notes, $_SESSION['user_id'] ?? 0]);
                 } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
-                error_log($e->getMessage());
+                    // Gracefully handle dropped table ref
+                    error_log($e->getMessage());
                 }
-                $stmt = $this->db->prepare($sql);
-                $stmt->execute([$paymentId, $amount, $method, $transactionId, $notes, $_SESSION['user_id'] ?? 0]);
 
                 // Update booking payment status
                 $this->updateBookingPaymentStatus($payment['booking_id']);
@@ -311,16 +312,16 @@ class PaymentController extends AdminController
                 $stmt->execute([$refundAmount, $reason, $paymentId]);
 
                 try {
-                    // Create payment history record
+                    // Create payment history record (best-effort; never fail the refund)
                     $sql = "INSERT INTO payment_history 
                             (payment_id, action, amount, method, notes, created_by, created_at)
                             VALUES (?, 'refunded', ?, ?, ?, ?, NOW())";
+                    $stmt = $this->db->prepare($sql);
+                    $stmt->execute([$paymentId, $refundAmount, $payment['payment_method'], $reason, $_SESSION['user_id'] ?? 0]);
                 } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
-                error_log($e->getMessage());
+                    // Gracefully handle dropped table ref
+                    error_log($e->getMessage());
                 }
-                $stmt = $this->db->prepare($sql);
-                $stmt->execute([$paymentId, $refundAmount, $payment['payment_method'], $reason, $_SESSION['user_id'] ?? 0]);
 
                 $this->db->commit();
 

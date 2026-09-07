@@ -8,7 +8,7 @@ $happy_users = $happy_users ?? 100;
 $satisfaction = $satisfaction ?? 98;
 ?>
 
-<section class="py-5 bg-primary text-white style-68644">
+<section class="py-5 bg-primary text-white">
     <div class="container text-center">
         <h1 class="display-4 fw-bold mb-3"><?= __('reviews_hero_title') ?></h1>
         <p class="lead"><?= __('reviews_hero_desc') ?></p>
@@ -43,7 +43,7 @@ $satisfaction = $satisfaction ?? 98;
                         </div>
                         <p class="text-muted fst-italic">"<?php echo htmlspecialchars($review['text'] ?? ''); ?>"</p>
                         <div class="d-flex align-items-center mt-3">
-                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center style-87543">
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center">
                                 <?= strtoupper(substr($review['name'], 0, 1)) ?>
                             </div>
                             <div class="ms-3">
@@ -92,7 +92,7 @@ $satisfaction = $satisfaction ?? 98;
                                 <label class="form-label"><?= __('reviews_rating') ?></label>
                                 <div>
                                     <?php for ($i = 1; $i <= 5; $i++): ?>
-                                        <i class="fas fa-star fs-4 text-muted rating-star" data-rating="<?= htmlspecialchars($i, ENT_QUOTES, 'UTF-8') ?>" class="style-78508"></i>
+                                        <i class="fas fa-star fs-4 text-muted rating-star" data-rating="<?= htmlspecialchars($i, ENT_QUOTES, 'UTF-8') ?>" ></i>
                                     <?php endfor; ?>
                                 </div>
                             </div>

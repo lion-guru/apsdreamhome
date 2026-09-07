@@ -130,7 +130,6 @@ $extraHead = '<style>
                 <div class="progress mb-3">
                     <?php $payment_percentage = ($booking['booking_amount'] > 0) ? ($total_paid / $booking['booking_amount']) * 100 : 0; ?>
                     <div class="progress-bar" role="progressbar"
-                        class="style-3614"
                         aria-valuenow="<?= $payment_percentage ?>"
                         aria-valuemin="0" aria-valuemax="100">
                         <?= round($payment_percentage, 1) ?>% Paid
@@ -317,7 +316,7 @@ $extraHead = '<style>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('admin_cancel') ?></button>
-                <form method="POST" action="<?= BASE_URL ?>admin/bookings/<?= $booking['id'] ?>/destroy" class="style-26772">
+                <form method="POST" action="<?= BASE_URL ?>admin/bookings/<?= $booking['id'] ?>/destroy" >
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                     <button type="submit" class="btn btn-danger"><?= __('admin_delete') ?></button>
                 </form>

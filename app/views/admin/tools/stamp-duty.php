@@ -41,7 +41,7 @@ $total_circle_rates = $total_circle_rates ?? 0;
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <div class="col-md-2">
                             <label class="form-label">State Code</label>
-                            <input type="text" name="state_code" class="form-control" placeholder="UP" maxlength="2" required class="style-36130">
+                            <input type="text" name="state_code" class="form-control" placeholder="UP" maxlength="2" required >
                         </div>
                         <div class="col-md-2">
                             <label class="form-label">Property Type</label>

@@ -11,7 +11,7 @@ $featuredProperties = [
 ];
 ?>
 
-<section class="py-5 bg-primary text-white style-68644">
+<section class="py-5 bg-primary text-white">
     <div class="container text-center">
         <h1 class="display-4 fw-bold mb-3"><?= __('featured_hero_title') ?></h1>
         <p class="lead"><?= __('featured_hero_desc') ?></p>
@@ -25,7 +25,7 @@ $featuredProperties = [
             <div class="col-lg-4 col-md-6 mb-4">
                 <div class="card h-100 shadow-sm border-0">
                     <div class="position-relative">
-                        <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top img-fluid" alt="<?= htmlspecialchars($property['name'] ?? '') ?>" class="style-62479">
+                        <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top img-fluid" alt="<?= htmlspecialchars($property['name'] ?? '') ?>" >
                         <span class="badge bg-success position-absolute top-0 start-0 m-3"><?= __('featured_badge') ?></span>
                     </div>
                     <div class="card-body aps-cp-card-body">

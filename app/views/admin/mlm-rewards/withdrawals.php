@@ -137,7 +137,7 @@ $stats = $stats ?? [];
     </div>
 </div>
 
-<form method="POST" id="statusForm" class="style-24280">
+<form method="POST" id="statusForm" >
                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
     <input type="hidden" name="status" id="statusInput">
     <input type="hidden" name="admin_notes" id="notesInput">

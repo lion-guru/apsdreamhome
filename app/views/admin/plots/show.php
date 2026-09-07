@@ -24,7 +24,7 @@
                         <div class="card-header aps-cp-card-header"><h5 class="mb-0">Basic Information</h5></div>
                         <div class="card-body aps-cp-card-body">
                             <div class="table-responsive"><table class="table table-bordered">
-                                <tr><th class="style-17160">Plot Number</th><td><?= htmlspecialchars($plot['plot_number'] ?? '') ?></td></tr>
+                                <tr><th >Plot Number</th><td><?= htmlspecialchars($plot['plot_number'] ?? '') ?></td></tr>
                                 <tr><th>Block / Sector</th><td><?= htmlspecialchars($plot['block'] ?? '') ?> <?= !empty($plot['sector']) ? '/ Sector ' . htmlspecialchars($plot['sector'] ?? '') : '' ?></td></tr>
                                 <tr><th>Type</th><td><?= ucfirst(htmlspecialchars($plot['plot_type'] ?? 'residential')) ?></td></tr>
                                 <tr><th>Status</th><td>
@@ -45,7 +45,7 @@
                         <div class="card-header aps-cp-card-header"><h5 class="mb-0">Dimensions & Area</h5></div>
                         <div class="card-body aps-cp-card-body">
                             <div class="table-responsive"><table class="table table-bordered">
-                                <tr><th class="style-17160">Dimensions</th>
+                                <tr><th >Dimensions</th>
                                     <td>
                                         <?php if (!empty($plot['dimension_label'])): ?>
                                             <span class="badge bg-primary fs-6 px-3 py-2"><?= htmlspecialchars($plot['dimension_label'] ?? '') ?></span>

@@ -286,5 +286,6 @@
     "\/admin\/mlm-rewards\/withdrawals",
     "\/admin\/commission\/telecaller\/commissions",
     "\/admin\/commission\/calculations",
-    "\/admin\/mlm-settings\/levels"
+    "\/admin\/mlm-settings\/levels",
+    "\/admin\/knowledge-base-new"
 ]

@@ -19,11 +19,11 @@ $base = BASE_URL ?? '';
     <div class="d-flex justify-content-between align-items-center">
         <div>
             <h4><i class="fas fa-trash-alt me-2"></i>Lead Trash / Recycle Bin</h4>
-            <p class="mb-0 mt-1 style-91298">Deleted leads are recoverable. Permanent deletion is irreversible.</p>
+            <p class="mb-0 mt-1">Deleted leads are recoverable. Permanent deletion is irreversible.</p>
         </div>
         <div class="text-end">
-            <div class="style-95615"><?= $total ?></div>
-            <div class="style-50584">Deleted Leads</div>
+            <div ><?= $total ?></div>
+            <div >Deleted Leads</div>
         </div>
     </div>
 </div>
@@ -96,13 +96,13 @@ $base = BASE_URL ?? '';
                             </td>
                             <td>
                                 <div class="d-flex gap-1">
-                                    <form method="POST" action="<?= $base ?>/admin/leads/<?= (int)$lead['id'] ?>/restore" class="style-35851">
+                                    <form method="POST" action="<?= $base ?>/admin/leads/<?= (int)$lead['id'] ?>/restore" >
                                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                         <button type="submit" class="btn btn-sm btn-outline-success" title="Restore Lead">
                                             <i class="fas fa-undo"></i> Restore
                                         </button>
                                     </form>
-                                    <form method="POST" action="<?= $base ?>/admin/leads/<?= (int)$lead['id'] ?>/permanent-delete" class="style-35851" data-aps-confirm="PERMANENTLY delete this lead? This cannot be undone!">
+                                    <form method="POST" action="<?= $base ?>/admin/leads/<?= (int)$lead['id'] ?>/permanent-delete" data-aps-confirm="PERMANENTLY delete this lead? This cannot be undone!">
                                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                         <button type="submit" class="btn btn-sm btn-outline-danger" title="Permanently Delete">
                                             <i class="fas fa-trash"></i> Delete Forever

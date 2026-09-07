@@ -70,11 +70,11 @@ $recent_logs = $recent_logs ?? [];
     <?php echo CSRFProtection::csrfField(); ?>
                             <div class="col-auto">
                                 <label class="form-label mb-0 small">Min Score</label>
-                                <input type="number" name="min_score" class="form-control form-control-sm" value="70" min="0" max="100" class="style-11044">
+                                <input type="number" name="min_score" class="form-control form-control-sm" value="70" min="0" max="100" >
                             </div>
                             <div class="col-auto">
                                 <label class="form-label mb-0 small">Date</label>
-                                <input type="date" name="scheduled_date" class="form-control form-control-sm" value="<?= date('Y-m-d') ?>" class="style-33863">
+                                <input type="date" name="scheduled_date" class="form-control form-control-sm" value="<?= date('Y-m-d') ?>" >
                             </div>
                             <div class="col-auto">
                                 <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-magic me-1"></i>Run AI</button>

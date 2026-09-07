@@ -86,7 +86,7 @@ $colonies = $colonies ?? [];
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-bold"><?= __('assoc_bp_pan', [], 'PAN Number') ?></label>
-                    <input type="text" name="pan_number" class="form-control" placeholder="ABCDE1234F" pattern="[A-Z]{5}[0-9]{4}[A-Z]" class="style-73536" maxlength="10">
+                    <input type="text" name="pan_number" class="form-control" placeholder="ABCDE1234F" pattern="[A-Z]{5}[0-9]{4}[A-Z]" maxlength="10">
                 </div>
             </div>
 

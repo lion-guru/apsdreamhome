@@ -807,6 +807,33 @@ $router->post('/api/v2/mobile/document-esign/sign/{id}', 'Api\DocumentEsignApiCo
 $router->get('/api/v2/mobile/document-esign/{id}', 'Api\DocumentEsignApiController@getDocument')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/document-esign', 'Api\DocumentEsignApiController@getDocuments')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
+// --- Property Verification Badge API ---
+$router->get('/api/v2/mobile/property-verification/levels', 'Api\PropertyVerificationApiController@getLevels')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/property-verification/levels/{id}', 'Api\PropertyVerificationApiController@getLevel')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Verification Requests
+$router->post('/api/v2/mobile/property-verification/request', 'Api\PropertyVerificationApiController@createRequest')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/property-verification/request/{id}', 'Api\PropertyVerificationApiController@getRequest')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/property-verification/my-requests', 'Api\PropertyVerificationApiController@getMyRequests')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/property-verification/property/{propertyId}', 'Api\PropertyVerificationApiController@getPropertyRequests')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->put('/api/v2/mobile/property-verification/request/{id}', 'Api\PropertyVerificationApiController@updateRequest')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/property-verification/request/{id}/submit', 'Api\PropertyVerificationApiController@submitRequest')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/property-verification/request/{id}/approve', 'Api\PropertyVerificationApiController@approveRequest')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/property-verification/request/{id}/reject', 'Api\PropertyVerificationApiController@rejectRequest')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Documents
+$router->post('/api/v2/mobile/property-verification/request/{requestId}/documents', 'Api\PropertyVerificationApiController@uploadDocument')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/property-verification/request/{requestId}/documents', 'Api\PropertyVerificationApiController@getDocuments')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/property-verification/documents/{docId}/verify', 'Api\PropertyVerificationApiController@verifyDocument')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Badges
+$router->post('/api/v2/mobile/property-verification/request/{requestId}/badge', 'Api\PropertyVerificationApiController@issueBadge')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/property-verification/badge/{code}', 'Api\PropertyVerificationApiController@verifyBadge');
+$router->post('/api/v2/mobile/property-verification/badge/{badgeId}/revoke', 'Api\PropertyVerificationApiController@revokeBadge')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Stats
+$router->get('/api/v2/mobile/property-verification/stats', 'Api\PropertyVerificationApiController@getStats')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
 // ============================================================
 // INFRASTRUCTURE & DEBUGGING API (Admin Tools)
 // ============================================================

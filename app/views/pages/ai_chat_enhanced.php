@@ -9,7 +9,7 @@ $base = $base ?? BASE_URL;
 ?>
 
 <section class="py-5 bg-gradient-primary text-white position-relative overflow-hidden">
-    <div class="position-absolute top-0 start-0 w-100 h-100 style-61262"></div>
+    <div class="position-absolute top-0 start-0 w-100 h-100"></div>
     <div class="container position-relative">
         <div class="row align-items-center">
             <div class="col-lg-8">
@@ -93,7 +93,7 @@ $base = $base ?? BASE_URL;
                         </div>
                     </div>
                     <div class="card-body p-0">
-                        <div id="enhanced-chat-messages" class="chat-messages p-4 style-89163">
+                        <div id="enhanced-chat-messages" class="chat-messages p-4">
                             <div class="text-center py-5" id="enhanced-welcome">
                                 <div class="mb-3">
                                     <span class="display-1">ðŸ¤–</span>
@@ -102,17 +102,17 @@ $base = $base ?? BASE_URL;
                                 <p class="text-muted mb-3"><?= __('user_ai_chat_enhanced_welcome_sub', "I'm your enhanced AI assistant. Ask me anything about properties, leads, or reports.") ?></p>
                                 <div class="row justify-content-center g-2">
                                     <div class="col-auto">
-                                        <span class="badge bg-primary bg-opacity-10 text-primary p-2" onclick="sendEnhancedPrompt('Show my properties')" class="style-78508">
+                                        <span class="badge bg-primary bg-opacity-10 text-primary p-2" onclick="sendEnhancedPrompt('Show my properties')" >
                                             <i class="fas fa-building me-1"></i> <?= __('user_ai_chat_enhanced_prompt_properties', 'My Properties') ?>
                                         </span>
                                     </div>
                                     <div class="col-auto">
-                                        <span class="badge bg-success bg-opacity-10 text-success p-2" onclick="sendEnhancedPrompt('Lead statistics')" class="style-78508">
+                                        <span class="badge bg-success bg-opacity-10 text-success p-2" onclick="sendEnhancedPrompt('Lead statistics')" >
                                             <i class="fas fa-chart-line me-1"></i> <?= __('user_ai_chat_enhanced_prompt_leads', 'Lead Stats') ?>
                                         </span>
                                     </div>
                                     <div class="col-auto">
-                                        <span class="badge bg-info bg-opacity-10 text-info p-2" onclick="sendEnhancedPrompt('Team performance')" class="style-78508">
+                                        <span class="badge bg-info bg-opacity-10 text-info p-2" onclick="sendEnhancedPrompt('Team performance')" >
                                             <i class="fas fa-users me-1"></i> <?= __('user_ai_chat_enhanced_prompt_team', 'Team Performance') ?>
                                         </span>
                                     </div>
@@ -180,7 +180,7 @@ function addEnhancedMessage(type, text) {
     const isUser = type === 'user';
     div.className = 'd-flex mb-3 ' + (isUser ? 'justify-content-end' : 'justify-content-start');
     div.innerHTML = `
-        <div class="${isUser ? 'bg-primary text-white' : 'bg-white border'} rounded-3 p-3 shadow-sm style-6955">
+        <div class="${isUser ? 'bg-primary text-white' : 'bg-white border'} rounded-3 p-3 shadow-sm">
             <div class="small">${type === 'system' ? '<em>' : ''}${text}${type === 'system' ? '</em>' : ''}</div>
             <small class="${isUser ? 'text-white-50' : 'text-muted'} d-block mt-1">${new Date().toLocaleTimeString()}</small>
         </div>`;

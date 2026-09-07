@@ -58,7 +58,7 @@
                         </div>
 
                         <!-- Employee-specific fields (shown for employee/telecaller/manager) -->
-                        <div id="employeeFields" class="style-2248">
+                        <div id="employeeFields" >
                             <hr class="my-3">
                             <h6 class="text-primary mb-3"><i class="fas fa-building me-2"></i>Employment Details</h6>
                             <div class="row g-3">
@@ -93,7 +93,7 @@
                         </div>
 
                         <!-- Associate/Agent-specific fields -->
-                        <div id="mlmFields" class="style-2248">
+                        <div id="mlmFields" >
                             <hr class="my-3">
                             <h6 class="text-success mb-3"><i class="fas fa-handshake me-2"></i>MLM / Agent Details</h6>
                             <div class="row g-3">

@@ -1,7 +1,5 @@
 <?php
 
-// TODO: Add proper error handling with try-catch blocks
-
 if (!defined('BASE_URL')) {
     $basePath = preg_replace('#/public$#', '', dirname($_SERVER['SCRIPT_NAME'] ?? '/'));
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
@@ -96,7 +94,7 @@ $page_description = 'Discover exceptional featured properties handpicked for you
                         <!-- Property Image -->
                         <div class="property-image-container">
                             <?php if ($property['featured_image']): ?>
-                                <img src="<?= htmlspecialchars($property['featured_image'] ?? '') ?>" class="card-img-top property-image" alt="<?= htmlspecialchars($property['title'] ?? '') ?>" loading="lazy">
+                                <img src="<?= htmlspecialchars($property['featured_image'] ?? '')?>" class="card-img-top property-image" alt="<?= htmlspecialchars($property['title'] ?? '') ?>" loading="lazy">
                             <?php else: ?>
                                 <div class="property-image-placeholder">
                                     <i class="fas fa-home fa-3x text-muted"></i>

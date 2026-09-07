@@ -135,7 +135,7 @@ $statusLabels = [
                             $paid = (float)($b['total_paid'] ?? 0);
                             $pending = max(0, $totalVal - $paid);
                         ?>
-                        <tr class="style-10432" onclick="window.location='<?= BASE_URL ?>/user/bookings/<?= (int)$b['id'] ?>'">
+                        <tr onclick="window.location='<?= BASE_URL ?>/user/bookings/<?= (int)$b['id'] ?>'">
                             <td><strong><?= htmlspecialchars($b['booking_number'] ?? 'N/A') ?></strong></td>
                             <td>
                                 <?= htmlspecialchars($b['plot_number'] ?? 'N/A') ?>

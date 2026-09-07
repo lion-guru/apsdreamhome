@@ -54,10 +54,8 @@ $extraHead = '<style>
                                 <?php $imgRaw = $p['image'] ?? '';
                                       $imgSrc = (str_starts_with($imgRaw, 'http://') || str_starts_with($imgRaw, 'https://'))
                                           ? $imgRaw
-                                          : ((str_starts_with($imgRaw, 'assets/') || str_starts_with($imgRaw, 'uploads/'))
-                                              ? BASE_URL . '/' . $imgRaw
-                                              : BASE_URL . '/assets/images/properties/' . $imgRaw); ?>
-                                <img src="<?= htmlspecialchars($imgSrc ?? '') ?>" class="img-fluid rounded mb-3 style-9014" alt="<?php echo htmlspecialchars($p['name'] ?? ''); ?>" loading="lazy"
+                                          : BASE_URL . '/' . ltrim($imgRaw, '/'); ?>
+                                <img src="<?= htmlspecialchars($imgSrc ?? '')?>" class="img-fluid rounded mb-3" alt="<?php echo htmlspecialchars($p['name'] ?? ''); ?>" loading="lazy"
                                      onerror="this.onerror=null;this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
                             <?php endif; ?>
 

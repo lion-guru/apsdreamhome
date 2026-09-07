@@ -20,7 +20,17 @@ include __DIR__ . '/../layouts/base.php';
             <!-- Hero Image Section -->
             <div class="glass-card p-2 mb-4 overflow-hidden" data-gallery="property-<?= (int)($property['id'] ?? 0) ?>">
                 <div class="position-relative">
-                    <img src="<?= !empty($property['image']) ? htmlspecialchars($property['image'] ?? '') : (BASE_URL . '/assets/images/property-placeholder.jpg') ?>" alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>" data-caption="<?php echo htmlspecialchars($property['title'] ?? ''); ?>" class="w-100 rounded-lg shadow-2xl property-image" id="main-gallery-image" class="style-91752" loading="lazy">
+                    <?php
+                    $heroImg = $property['image'] ?? '';
+                    if (empty($heroImg)) {
+                        $heroImgSrc = BASE_URL . '/assets/images/property-placeholder.jpg';
+                    } elseif (strpos($heroImg, 'http') === 0) {
+                        $heroImgSrc = $heroImg;
+                    } else {
+                        $heroImgSrc = BASE_URL . '/' . ltrim($heroImg, '/');
+                    }
+                    ?>
+                    <img src="<?= htmlspecialchars($heroImgSrc) ?>" alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>" data-caption="<?php echo htmlspecialchars($property['title'] ?? ''); ?>" class="w-100 rounded-lg shadow-2xl property-image" id="main-gallery-image" loading="lazy">
 
                     <div class="position-absolute top-0 end-0 p-3">
                         <span class="badge bg-primary glass-blur px-3 py-2 fs-6">
@@ -33,7 +43,7 @@ include __DIR__ . '/../layouts/base.php';
                 <?php if (!empty($property_images) && count($property_images) > 1): ?>
                     <div class="d-flex gap-2 mt-2 px-1 overflow-auto pb-2 scrollbar-hidden" data-gallery="property-<?= (int)($property['id'] ?? 0) ?>-thumbs">
                         <?php foreach ($property_images as $img): ?>
-                            <img src="<?= htmlspecialchars(is_array($img) ? ($img['src'] ?? $img['image_path'] ?? '') : $img) ?>" alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>" data-caption="<?php echo htmlspecialchars($property['title'] ?? ''); ?>" class="rounded cursor-pointer thumbnail-hover style-62460" loading="lazy">
+                            <img src="<?= htmlspecialchars(is_array($img) ? ($img['src'] ?? $img['image_path'] ?? '') : $img) ?>" alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>" data-caption="<?php echo htmlspecialchars($property['title'] ?? ''); ?>" class="rounded cursor-pointer thumbnail-hover" loading="lazy">
                         <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
@@ -100,9 +110,9 @@ include __DIR__ . '/../layouts/base.php';
                     </div>
                     <div class="tab-pane fade" id="location">
                         <p><i class="bi bi-geo-alt me-2 text-primary"></i><?php echo htmlspecialchars($property['address'] ?? $property['location']); ?></p>
-                        <div class="rounded-lg overflow-hidden border border-secondary style-59191">
+                        <div class="rounded-lg overflow-hidden border border-secondary">
                             <!-- Mock Map -->
-                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" alt="Property location map" class="w-100 h-100 style-86926" loading="lazy">
+                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" alt="Property location map" class="w-100 h-100" loading="lazy">
                         </div>
                     </div>
                 </div>
@@ -111,7 +121,7 @@ include __DIR__ . '/../layouts/base.php';
 
         <!-- Right: Pricing & Lead Form -->
         <div class="col-lg-4">
-            <div class="sticky-top style-5389">
+            <div class="sticky-top">
                 <!-- Pricing Card -->
                 <div class="glass-card p-4 mb-4">
                     <h5 class="text-white-50 small text-uppercase mb-1">Investment Amount</h5>
@@ -142,14 +152,14 @@ include __DIR__ . '/../layouts/base.php';
                 <div class="glass-card p-4">
                     <h5 class="text-white h6 mb-3">Contact Property <?php echo !empty($property['source']) && $property['source'] == 'ai_fetched' ? 'Owner' : 'Specialist'; ?></h5>
                     <div class="d-flex align-items-center gap-3 mb-4">
-                        <img src="<?= BASE_URL ?>/assets/images/placeholder/hero.svg" class="rounded-circle shadow" alt="Contact person" class="style-12174">
+                        <img src="<?= BASE_URL ?>/assets/images/placeholder/hero.svg" class="rounded-circle shadow" alt="Contact person" >
                         <div class="w-100">
                             <h6 class="text-white mb-0"><?php echo !empty($property['source']) && $property['source'] == 'ai_fetched' ? 'Verified Owner' : 'APS Sales Team'; ?></h6>
 
                             <?php if (isset($_SESSION['user_id'])): ?>
                                 <!-- Logged In View: Show Contact & Track Lead -->
-                                <div class="mt-2" id="revealed-contact" class="style-2248">
-                                    <h5 class="text-success fw-bold mb-0 style-37384">
+                                <div class="mt-2" id="revealed-contact" >
+                                    <h5 class="text-success fw-bold mb-0">
                                         <?php echo !empty($property['owner_contact']) ? htmlspecialchars($property['owner_contact'] ?? '') : htmlspecialchars($phoneDisplay ?? ''); ?>
                                     </h5>
                                     <small class="text-white-50">Verified Number <i class="bi bi-check-circle-fill text-success ms-1"></i></small>
@@ -159,13 +169,13 @@ include __DIR__ . '/../layouts/base.php';
                                 </button>
                             <?php else: ?>
                                 <!-- Logged Out View: Lead Capture Wall -->
-                                <div class="mt-2 position-relative style-2079">
-                                    <h5 class="text-white-50 fw-bold mb-0 style-55023">+91 98765 43210</h5>
+                                <div class="mt-2 position-relative">
+                                    <h5 class="text-white-50 fw-bold mb-0">+91 98765 43210</h5>
                                 </div>
                                 <a href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/login?redirect=property/<?php echo $property['id']; ?>" class="btn btn-sm btn-warning mt-3 w-100 fw-bold shadow">
                                     <i class="bi bi-lock-fill me-1"></i> Login to View Contact
                                 </a>
-                                <small class="text-white-50 d-block mt-2 text-center style-11723">(100% Free - Verify you're human)</small>
+                                <small class="text-white-50 d-block mt-2 text-center">(100% Free - Verify you're human)</small>
                             <?php endif; ?>
                         </div>
                     </div>

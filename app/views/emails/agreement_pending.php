@@ -18,29 +18,29 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
 }
 </style>
 </head>
-<body class="style-51511">
+<body >
 <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#f4f6fb">
   <tr>
-    <td align="center" class="style-56039">
-      <table role="presentation" class="container" border="0" cellpadding="0" cellspacing="0" width="600" class="style-99000">
+    <td align="center" >
+      <table role="presentation" class="container" border="0" cellpadding="0" cellspacing="0" width="600" >
         <!-- Header -->
         <tr>
-          <td bgcolor="#14b8a6" align="center" class="style-54393">
-            <div class="style-90702">&#128220;</div>
-            <h1 class="h1-mobile style-56865">Agreement Ready</h1>
-            <p class="style-9233">Your booking agreement awaits your signature</p>
+          <td bgcolor="#14b8a6" align="center" >
+            <div >&#128220;</div>
+            <h1 class="h1-mobile">Agreement Ready</h1>
+            <p >Your booking agreement awaits your signature</p>
           </td>
         </tr>
         <!-- Body -->
         <tr>
-          <td class="px-mobile style-68782">
-            <h2 class="style-80102">Hi {{user_name}},</h2>
-            <p class="style-28596">
+          <td class="px-mobile">
+            <h2 >Hi {{user_name}},</h2>
+            <p >
               Your allotment agreement for Plot <strong>{{plot_number}}</strong> at <strong>{{colony_name}}</strong> has been generated and is ready for your review and digital signature.
             </p>
-            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" class="style-72677">
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" >
               <tr>
-                <td class="style-44396">
+                <td >
                   <strong>Booking:</strong> {{booking_number}}<br>
                   <strong>Plot:</strong> {{plot_number}}, {{colony_name}}<br>
                   <strong>Total Value:</strong> {{total_amount}}<br>
@@ -48,26 +48,26 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
                 </td>
               </tr>
             </table>
-            <p class="style-28596">
+            <p >
               Please review the agreement carefully and complete the digital signing to proceed with your booking.
             </p>
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
               <tr>
-                <td align="center" class="style-43583">
-                  <a href="{{agreement_url}}" class="button-mobile style-22503">Review & Sign Agreement</a>
+                <td align="center" >
+                  <a href="{{agreement_url}}" class="button-mobile">Review & Sign Agreement</a>
                 </td>
               </tr>
             </table>
-            <p class="style-25661">
+            <p >
               Best regards,<br><strong>The APS Dream Home Team</strong>
             </p>
           </td>
         </tr>
         <!-- Footer -->
         <tr>
-          <td bgcolor="#f7fafc" class="style-89423">
-            <p class="style-40082">APS Dream Home &nbsp;|&nbsp; {{company_phone}} &nbsp;|&nbsp; {{company_email}}</p>
-            <p class="style-75003">&copy; {{year}} APS Dream Home. All rights reserved.</p>
+          <td bgcolor="#f7fafc" >
+            <p >APS Dream Home &nbsp;|&nbsp; {{company_phone}} &nbsp;|&nbsp; {{company_email}}</p>
+            <p >&copy; {{year}} APS Dream Home. All rights reserved.</p>
           </td>
         </tr>
       </table>

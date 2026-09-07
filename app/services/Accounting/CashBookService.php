@@ -62,8 +62,22 @@ class CashBookService
             'transaction_date' => $txnDate,
             'tenant_id'        => $tid,
         ];
-        $this->db->insert('cash_book', $cb);
-        $cbId = (int)$this->db->lastInsertId();
+        try {
+            $this->db->insert('cash_book_entries', [
+                'entry_date'     => $txnDate,
+                'type'           => $type === 'receipt' ? 'credit' : 'debit',
+                'amount'         => $amount,
+                'description'    => ($party ? $party . ' - ' : '') . $narr,
+                'reference_type' => 'cash_book',
+                'payment_mode'   => 'cash',
+                'created_by'     => null,
+                'tenant_id'      => $tid,
+            ]);
+            $cbId = (int)$this->db->lastInsertId();
+        } catch (\Throwable $e) {
+            error_log('CashBookService::recordCashTransaction insert error: ' . $e->getMessage());
+            throw new \Exception('Failed to record cash transaction: ' . $e->getMessage());
+        }
 
         // Auto-create journal entry for double-entry
         $this->createJournalForCashBook($cbId, $type, $amount, $bankId, $party, $narr, $txnDate);
@@ -117,8 +131,22 @@ class CashBookService
             'transaction_date' => $data['transaction_date'] ?? date('Y-m-d'),
             'tenant_id'        => $tid,
         ];
-        $this->db->insert('cash_book', $cb);
-        $cbId = (int)$this->db->lastInsertId();
+        try {
+            $this->db->insert('cash_book_entries', [
+                'entry_date'     => $cb['transaction_date'],
+                'type'           => 'credit',
+                'amount'         => $amount,
+                'description'    => $cb['party_name'] . ' - ' . $cb['narration'],
+                'reference_type' => 'petty_cash',
+                'payment_mode'   => 'cash',
+                'created_by'     => null,
+                'tenant_id'      => $tid,
+            ]);
+            $cbId = (int)$this->db->lastInsertId();
+        } catch (\Throwable $e) {
+            error_log('CashBookService::topupPettyCash insert error: ' . $e->getMessage());
+            throw new \Exception('Failed to record petty cash top-up: ' . $e->getMessage());
+        }
 
         $pc = [
             'type'            => 'topup',
@@ -166,10 +194,10 @@ class CashBookService
     public function getDailyCashBook(string $fromDate, string $toDate, ?int $bankAccountId = null): array
     {
         $tid = TenantContext::getId();
-        $where = "WHERE transaction_date BETWEEN ? AND ?";
+        $where = "WHERE entry_date BETWEEN ? AND ?";
         $params = [$fromDate, $toDate];
         if ($bankAccountId) {
-            $where .= " AND bank_account_id = ?";
+            $where .= " AND reference_id = ?";
             $params[] = $bankAccountId;
         }
         if ($tid > 1) {
@@ -178,25 +206,36 @@ class CashBookService
         } else {
             $where .= " AND (tenant_id = 1 OR tenant_id IS NULL)";
         }
-        return $this->db->fetchAll("SELECT * FROM cash_book $where ORDER BY transaction_date, id", $params) ?: [];
+        try {
+            return $this->db->fetchAll("SELECT * FROM cash_book_entries $where ORDER BY entry_date, id", $params) ?: [];
+        } catch (\Throwable $e) {
+            error_log('CashBookService::getDailyCashBook error: ' . $e->getMessage());
+            return [];
+        }
     }
 
     public function getCashBookSummary(string $fromDate, string $toDate): array
     {
         $tid = TenantContext::getId();
-        $where = "WHERE transaction_date BETWEEN ? AND ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $where = "WHERE entry_date BETWEEN ? AND ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
         $params = [$fromDate, $toDate];
         if ($tid > 1) $params[] = $tid;
 
-        $receipts = $this->db->fetchOne("SELECT COALESCE(SUM(amount), 0) AS total FROM cash_book WHERE transaction_type = 'receipt' $where", $params);
-        $payments = $this->db->fetchOne("SELECT COALESCE(SUM(amount), 0) AS total FROM cash_book WHERE transaction_type = 'payment' $where", $params);
-        $contras  = $this->db->fetchOne("SELECT COALESCE(SUM(amount), 0) AS total FROM cash_book WHERE transaction_type = 'contra' $where", $params);
+        try {
+            $cbWhere = "WHERE entry_date BETWEEN ? AND ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+            $cbParams = $params;
+            $receipts = $this->db->fetchOne("SELECT COALESCE(SUM(amount), 0) AS total FROM cash_book_entries WHERE type = 'credit' $cbWhere", $cbParams);
+            $payments = $this->db->fetchOne("SELECT COALESCE(SUM(amount), 0) AS total FROM cash_book_entries WHERE type = 'debit' $cbWhere", $cbParams);
 
-        return [
-            'total_receipts' => (float)($receipts['total'] ?? 0),
-            'total_payments' => (float)($payments['total'] ?? 0),
-            'total_contras'  => (float)($contras['total'] ?? 0),
-            'net_flow'       => (float)($receipts['total'] ?? 0) - (float)($payments['total'] ?? 0),
-        ];
+            return [
+                'total_receipts' => (float)($receipts['total'] ?? 0),
+                'total_payments' => (float)($payments['total'] ?? 0),
+                'total_contras'  => 0.0,
+                'net_flow'       => (float)($receipts['total'] ?? 0) - (float)($payments['total'] ?? 0),
+            ];
+        } catch (\Throwable $e) {
+            error_log('CashBookService::getCashBookSummary error: ' . $e->getMessage());
+            return ['total_receipts' => 0.0, 'total_payments' => 0.0, 'total_contras' => 0.0, 'net_flow' => 0.0];
+        }
     }
 }

@@ -52,25 +52,25 @@
             <!-- Summary Cards -->
             <div class="row mb-4">
                 <div class="col-lg-3 col-6">
-                    <div class="small-box style-75630">
+                    <div class="small-box">
                         <div class="inner"><h3><?= $total_employees ?></h3><p>Employees</p></div>
                         <div class="icon"><i class="fas fa-users"></i></div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-6">
-                    <div class="small-box style-55192">
+                    <div class="small-box">
                         <div class="inner"><h3>₹<?= number_format($total_gross) ?></h3><p>Total Gross</p></div>
                         <div class="icon"><i class="fas fa-arrow-up"></i></div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-6">
-                    <div class="small-box style-48582">
+                    <div class="small-box">
                         <div class="inner"><h3>₹<?= number_format($total_deductions) ?></h3><p>Total Deductions</p></div>
                         <div class="icon"><i class="fas fa-arrow-down"></i></div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-6">
-                    <div class="small-box style-23498">
+                    <div class="small-box">
                         <div class="inner"><h3>₹<?= number_format($total_net) ?></h3><p>Total Net Payable</p></div>
                         <div class="icon"><i class="fas fa-rupee-sign"></i></div>
                     </div>
@@ -82,7 +82,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">Detailed Breakdown</h3>
                     <?php if (!empty($entries)): ?>
-                        <form method="POST" action="<?= BASE_URL ?>/admin/salary/batch/generate" class="style-71727" data-aps-confirm="Generate <?= count($entries) ?> payslips for <?= $month ?>/<?= $year ?>?">
+                        <form method="POST" action="<?= BASE_URL ?>/admin/salary/batch/generate" data-aps-confirm="Generate <?= count($entries) ?> payslips for <?= $month ?>/<?= $year ?>?">
                             <input type="hidden" name="month" value="<?= $month ?>">
                             <input type="hidden" name="year" value="<?= $year ?>">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">

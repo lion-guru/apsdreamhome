@@ -17,7 +17,42 @@ class ProjectController extends PageController
 
     public function projectDetails($slug = null)
     {
-        return parent::projectDetails($slug);
+        try {
+            $db = Database::getInstance()->getConnection();
+            $tid = $this->tenantId();
+
+            $sql = "SELECT p.*, c.name as colony_name, c.slug as colony_slug
+                    FROM projects p
+                    LEFT JOIN colonies c ON p.colony_id = c.id
+                    WHERE (p.id = ? OR LOWER(REPLACE(p.name, ' ', '-')) = LOWER(?))
+                    AND p.tenant_id = ?
+                    LIMIT 1";
+            $stmt = $db->prepare($sql);
+            $stmt->execute([(int)$slug, $slug, $tid]);
+            $project = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$project) {
+                http_response_code(404);
+                $this->render('errors/404', ['page_title' => 'Project Not Found']);
+                return;
+            }
+
+            $images = [];
+            if (!empty($project['images'])) {
+                $decoded = json_decode($project['images'], true);
+                if (is_array($decoded)) $images = $decoded;
+            }
+
+            $this->render('pages/project_detail', [
+                'page_title' => $project['name'] . ' - APS Dream Home',
+                'project' => $project,
+                'images' => $images,
+            ]);
+        } catch (\Exception $e) {
+            error_log("ProjectController::projectDetails: " . $e->getMessage());
+            http_response_code(500);
+            $this->render('errors/500', ['page_title' => 'Error']);
+        }
     }
 
     public function colonies()
@@ -53,52 +88,67 @@ class ProjectController extends PageController
 
     public function colonyPlots($slug = null)
     {
-        return parent::colonyPlots($slug);
+        return $this->colonyDetail($slug);
     }
 
     public function suyodayColony()
     {
-        return parent::suyodayColony();
+        return $this->colonyDetail('suryoday-colony');
     }
 
     public function raghunatNagri()
     {
-        return parent::raghunatNagri();
+        return $this->colonyDetail('raghunath-nagri-motiram');
     }
 
     public function brajRadhaNagri()
     {
-        return parent::brajRadhaNagri();
+        return $this->colonyDetail('braj-radha-nagri');
     }
 
     public function budhBiharColony()
     {
-        return parent::budhBiharColony();
+        return $this->colonyDetail('budh-bihar-colony');
     }
 
     public function awadhpuri()
     {
-        return parent::awadhpuri();
+        return $this->colonyDetail('motiram-jhangha-road');
     }
 
     public function budhaCity()
     {
-        return parent::budhaCity();
+        return $this->projectDetails('budha-city');
     }
 
     public function suyodayColonyPage()
     {
-        return parent::suyodayColonyPage();
+        return $this->colonyDetail('suryoday-colony');
     }
 
     public function projectsByLocation($location = null)
     {
-        return parent::projectsByLocation($location);
+        try {
+            $db = Database::getInstance()->getConnection();
+            $tid = $this->tenantId();
+            $stmt = $db->prepare("SELECT * FROM projects WHERE tenant_id = ? ORDER BY is_featured DESC, name");
+            $stmt->execute([$tid]);
+            $projects = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $this->render('pages/projects_by_location', [
+                'page_title' => 'Projects by Location - APS Dream Home',
+                'projects' => $projects,
+                'location' => $location,
+            ]);
+        } catch (\Exception $e) {
+            error_log("ProjectController::projectsByLocation: " . $e->getMessage());
+            http_response_code(500);
+            $this->render('errors/500', ['page_title' => 'Error']);
+        }
     }
 
     public function location($slug = null)
     {
-        return parent::location($slug);
+        return $this->colonyDetail($slug);
     }
 
     public function plotMap()

@@ -201,7 +201,7 @@ $totalAreaSqft = (float)($total_area_sqft ?? 0);
     </div>
   </div>
 
-  <div id="preview-results" class="mt-4 style-54390">
+  <div id="preview-results" class="mt-4">
     <div class="card aps-cp-card">
       <div class="card-header aps-cp-card-header"><strong><i class="fas fa-map me-2"></i><?= __('cp_layout_preview') ?></strong></div>
       <div class="card-body aps-cp-card-body" id="preview-content">
@@ -241,9 +241,9 @@ document.addEventListener('DOMContentLoaded', function() {
               '</div>';
           
           html += '<h6 class="mb-3 fw-bold text-secondary"><i class="fas fa-map-marked-alt me-1"></i><?= __('cp_spatial_layout_map') ?></h6>';
-          html += '<div class="style-9547">';
-          html += '<div class="style-32634"><i class="fas fa-tree me-2"></i><?= __('cp_dedicated_park') ?> (' + parkPct + '%)</div>';
-          html += '<div class="style-89666"><i class="fas fa-road me-2"></i><?= __('cp_main_road') ?> (' + roadW + ' ft)</div>';
+          html += '<div >';
+          html += '<div ><i class="fas fa-tree me-2"></i><?= __('cp_dedicated_park') ?> (' + parkPct + '%)</div>';
+          html += '<div ><i class="fas fa-road me-2"></i><?= __('cp_main_road') ?> (' + roadW + ' ft)</div>';
 
           data.plots.forEach(function(p, i) {
             var isCorner = p.plot_type && p.plot_type.toLowerCase().indexOf('corner') !== -1;
@@ -254,10 +254,10 @@ document.addEventListener('DOMContentLoaded', function() {
             var icon = '<i class="fas fa-home me-1"></i>';
             if (isCorner) { bg = '#fef3c7'; border = '#fcd34d'; color = '#78350f'; icon = '<i class="fas fa-angle-double-up me-1"></i>'; }
             else if (isPark) { bg = '#dcfce7'; border = '#86efac'; color = '#166534'; icon = '<i class="fas fa-tree me-1"></i>'; }
-            html += '<div class="style-38373" onmouseover="this.style.transform=\'scale(1.05)\'" onmouseout="this.style.transform=\'scale(1)\'">' +
-                '<div class="style-20987">' + icon + p.plot_no + '</div>' +
-                '<div class="text-muted style-40535">' + p.area_sqft + ' <?= __('cp_sqft') ?></div>' +
-                '<div class="style-71519">' + p.width_ft + 'x' + p.length_ft + ' ft</div>' +
+            html += '<div onmouseover="this.style.transform=\'scale(1.05)\'" onmouseout="this.style.transform=\'scale(1)\'">' +
+                '<div >' + icon + p.plot_no + '</div>' +
+                '<div class="text-muted">' + p.area_sqft + ' <?= __('cp_sqft') ?></div>' +
+                '<div >' + p.width_ft + 'x' + p.length_ft + ' ft</div>' +
                 '</div>';
           });
           html += '</div>';

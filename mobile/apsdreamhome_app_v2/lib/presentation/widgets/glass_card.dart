@@ -94,9 +94,11 @@ class MeshGradientBackground extends StatefulWidget {
   const MeshGradientBackground({
     super.key,
     required this.child,
+    this.colors,
   });
 
   final Widget child;
+  final List<Color>? colors;
 
   @override
   State<MeshGradientBackground> createState() => _MeshGradientBackgroundState();
@@ -129,19 +131,22 @@ class _MeshGradientBackgroundState extends State<MeshGradientBackground>
     final shift3 = t * 25 - 12;
     final shift4 = (1 - t) * 35 - 17;
 
+    final gradientColors = widget.colors ??
+        const [
+          Color(0xFF0D1B3E),
+          Color(0xFF1A237E),
+          Color(0xFF283593),
+          Color(0xFF1A237E),
+          Color(0xFF0D1B3E),
+        ];
+
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF0D1B3E),
-            Color(0xFF1A237E),
-            Color(0xFF283593),
-            Color(0xFF1A237E),
-            Color(0xFF0D1B3E),
-          ],
-          stops: [0.0, 0.25, 0.5, 0.75, 1.0],
+          colors: gradientColors,
+          stops: const [0.0, 0.25, 0.5, 0.75, 1.0],
         ),
       ),
       child: AnimatedBuilder(

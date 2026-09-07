@@ -1,7 +1,5 @@
 <?php
 
-// TODO: Add proper error handling with try-catch blocks
-
 if (!defined('BASE_URL')) {
     $basePath = preg_replace('#/public$#', '', dirname($_SERVER['SCRIPT_NAME'] ?? '/'));
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
@@ -48,7 +46,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
 ?>
 
 <!-- Hero Section -->
-<section class="hero-section position-relative style-41301">
+<section class="hero-section position-relative">
     <div class="container-fluid h-100">
         <div class="row h-100 align-items-center">
             <div class="col-lg-6 text-white">
@@ -281,7 +279,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                                     <?= $project['latitude'] ?>, <?= $project['longitude'] ?>
                                 </p>
                             </div>
-                            <div id="map" class="style-71242"></div>
+                            <div id="map" ></div>
                         </div>
                     </div>
                 <?php endif; ?>
@@ -293,7 +291,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                             <h4><i class="fas fa-project-diagram me-2"></i>Project Layout</h4>
                         </div>
                         <div class="card-body text-center">
-                            <img src="<?= htmlspecialchars($project['layout_map'] ?? '') ?>" class="img-fluid" alt="Project Layout" class="style-52003" loading="lazy">
+                            <img src="<?= htmlspecialchars($project['layout_map'] ?? '') ?>" class="img-fluid" alt="Project Layout" loading="lazy">
                         </div>
                     </div>
                 <?php endif; ?>
@@ -376,7 +374,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                             </select>
                         </div>
                         <button class="btn btn-primary w-100" onclick="calculateEMI()">Calculate EMI</button>
-                        <div id="emiResult" class="mt-3 text-center style-54390">
+                        <div id="emiResult" class="mt-3 text-center">
                             <h5>Monthly EMI: <span id="monthlyEMI" class="text-primary"></span></h5>
                             <small class="text-muted">Total Amount: <span id="totalAmount"></span></small>
                         </div>

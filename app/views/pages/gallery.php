@@ -37,14 +37,13 @@
         <div class="row g-4" id="galleryGrid">
             <?php foreach ($galleryImages as $idx => $img): ?>
             <div class="col-md-4 col-lg-3 gallery-item" data-category="<?= htmlspecialchars($img['category'] ?? 'all') ?>">
-                <div class="card border-0 shadow-sm overflow-hidden h-100 gallery-card style-10432" onclick="openLightbox(<?= $idx ?>)">
-                    <div class="position-relative style-44237">
-                        <?php if (!empty($img['image_path'])): ?>
-                        <?php $imgRaw = $img['image_path'] ?? '';
-                              $imgSrc = (str_starts_with($imgRaw, 'http://') || str_starts_with($imgRaw, 'https://')) ? $imgRaw : BASE_URL . '/' . $imgRaw; ?>
-                        <img src="<?= htmlspecialchars($imgSrc ?? '') ?>" alt="<?= htmlspecialchars($img['title'] ?? $img['caption'] ?? '') ?>" class="w-100 h-100 style-44820" loading="lazy">
+                <div class="card border-0 shadow-sm overflow-hidden h-100 gallery-card" onclick="openLightbox(<?= $idx ?>)">
+                    <div class="position-relative">
+                        <?php $rawGallery = trim((string)($img['image_path'] ?? '')); if (!empty($rawGallery) && $rawGallery !== 'undefined' && $rawGallery !== 'null'): ?>
+                        <?php $imgSrc = (str_starts_with($rawGallery, 'http://') || str_starts_with($rawGallery, 'https://')) ? $rawGallery : BASE_URL . '/' . ltrim($rawGallery, '/'); ?>
+                        <img src="<?= htmlspecialchars($imgSrc, ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars($img['title'] ?? $img['caption'] ?? 'Gallery image', ENT_QUOTES, 'UTF-8') ?>" class="w-100 h-100" loading="lazy" onerror="this.onerror=null;this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg';this.style.objectFit='contain';this.style.background='#f8fafc'">
                         <?php else: ?>
-                        <div class="bg-light d-flex align-items-center justify-content-center h-100"><i class="fas fa-image fa-3x text-muted"></i></div>
+                        <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" alt="<?= htmlspecialchars($img['title'] ?? 'Gallery image', ENT_QUOTES, 'UTF-8') ?>" class="w-100 h-100" style="object-fit:contain;background:#f8fafc;padding:20px" loading="lazy">
                         <?php endif; ?>
                         <?php if (!empty($img['category'])): ?>
                         <span class="badge bg-dark position-absolute top-0 start-0 m-2"><?= ucfirst($img['category']) ?></span>
@@ -77,7 +76,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body text-center p-0">
-                <img id="lightboxImage" src="" class="img-fluid style-25219" alt="">
+                <img id="lightboxImage" src="" class="img-fluid" alt="">
                 <div class="py-3">
                     <h6 class="text-white mb-1" id="lightboxTitle"></h6>
                     <p class="text-white-50 small mb-0" id="lightboxCaption"></p>
@@ -108,7 +107,10 @@ function navigateLightbox(dir) {
 
 function updateLightbox() {
     var img = galleryData[currentLightboxIndex];
-    var src = img.image_path ? (img.image_path.startsWith('http') ? img.image_path : '<?= BASE_URL ?>/' + img.image_path) : '';
+    var raw = img.image_path || '';
+    if (!raw || raw === 'undefined' || raw === 'null' || String(raw).trim() === '') { raw = '<?= BASE_URL ?>/assets/images/placeholder/property.svg'; }
+    var src = raw.startsWith('http') ? raw : '<?= BASE_URL ?>/' + String(raw).replace(/^\/+/, '');
+    if (src.includes('undefined') || src.includes('null')) { src = '<?= BASE_URL ?>/assets/images/placeholder/property.svg'; }
     document.getElementById('lightboxImage').src = src;
     document.getElementById('lightboxTitle').textContent = img.title || '';
     document.getElementById('lightboxCaption').textContent = img.caption || '';

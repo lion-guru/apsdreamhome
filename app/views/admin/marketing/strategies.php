@@ -92,9 +92,9 @@ $page_description = 'Manage marketing strategies and campaigns';
                 <div class="col-xl-4 col-md-6">
                     <div class="card border-0 shadow-sm h-100">
                         <?php if (!empty($s['image_url'])): ?>
-                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?= htmlspecialchars($s['title'] ?? '') ?>" class="style-24482">
+                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?= htmlspecialchars($s['title'] ?? '') ?>" >
                         <?php else: ?>
-                            <div class="bg-light d-flex align-items-center justify-content-center style-32569">
+                            <div class="bg-light d-flex align-items-center justify-content-center">
                                 <i class="fas fa-image fa-3x text-muted"></i>
                             </div>
                         <?php endif; ?>

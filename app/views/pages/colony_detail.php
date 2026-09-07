@@ -65,7 +65,7 @@ $bannerImage = !empty($bannerRaw) && (str_starts_with($bannerRaw, 'http://') || 
                 <div class="row g-3">
                     <div class="col-6"><div class="stat-card"><div class="num"><?php echo e($colony['total_plots'] ?? 0); ?></div><div class="lbl"><?= __('colony_total_plots') ?></div></div></div>
                     <div class="col-6"><div class="stat-card"><div class="num"><?php echo e($colony['available_plots'] ?? 0); ?></div><div class="lbl"><?= __('colony_available') ?></div></div></div>
-                    <div class="col-6"><div class="stat-card"><div class="num">à¢—šÂ¹<?php echo number_format($colony['starting_price'] ?? 0); ?></div><div class="lbl"><?= __('colony_starting_price') ?></div></div></div>
+                    <div class="col-6"><div class="stat-card"><div class="num"><?php echo '&#8377;' . number_format($colony['starting_price'] ?? 0); ?></div><div class="lbl"><?= __('colony_starting_price') ?></div></div></div>
                     <div class="col-6"><div class="stat-card"><div class="num"><?php echo count($amenities); ?>+</div><div class="lbl"><?= __('colony_amenities') ?></div></div></div>
                 </div>
             </div>
@@ -145,7 +145,7 @@ $bannerImage = !empty($bannerRaw) && (str_starts_with($bannerRaw, 'http://') || 
                         <span class="badge bg-success"><?= __('colony_available') ?></span>
                     </div>
                     <p class="text-muted small mb-2"><?php echo htmlspecialchars($p['block'] ?? ''); ?> &bull; <?php echo e($p['area_sqft'] ?? 0); ?> sqft</p>
-                    <div class="price">à¢—šÂ¹<?php echo number_format($p['total_price'] ?? 0); ?></div>
+                    <div class="price"><?php echo '&#8377;' . number_format($p['total_price'] ?? 0); ?></div>
                 </div>
             </div>
             <?php endforeach; ?>
@@ -170,14 +170,14 @@ $bannerImage = !empty($bannerRaw) && (str_starts_with($bannerRaw, 'http://') || 
             <button class="btn btn-sm btn-outline-danger" data-filter="sold">Sold</button>
             <button class="btn btn-sm btn-outline-secondary" data-filter="hold">On Hold</button>
         </div>
-        <div class="style-29289">
-            <div id="customerPlotMap" class="style-51783"></div>
+        <div >
+            <div id="customerPlotMap" ></div>
         </div>
         <div class="d-flex flex-wrap gap-3 justify-content-center mt-3 small text-muted">
-            <span><span class="style-42091"></span> Available</span>
-            <span><span class="style-80089"></span> Booked</span>
-            <span><span class="style-1950"></span> Sold</span>
-            <span><span class="style-34008"></span> On Hold</span>
+            <span><span ></span> Available</span>
+            <span><span ></span> Booked</span>
+            <span><span ></span> Sold</span>
+            <span><span ></span> On Hold</span>
         </div>
     </div>
 </section>
@@ -197,15 +197,15 @@ $bannerImage = !empty($bannerRaw) && (str_starts_with($bannerRaw, 'http://') || 
         onEachFeature: function(f, layer) {
             var p = f.properties;
             var statusBadge = { available: 'success', booked: 'warning text-dark', sold: 'danger', hold: 'secondary', reserved: 'warning' };
-            var html = '<div class="style-92728">' +
-                '<h6 class="style-83369">Plot #' + p.plot_number +
+            var html = '<div >' +
+                '<h6 >Plot #' + p.plot_number +
                 ' <span class="badge bg-' + (statusBadge[p.status] || 'secondary') + '">' + p.status + '</span></h6>' +
-                '<div class="style-24913"><span class="style-74529">Block</span><span class="style-44823">' + (p.block || '-') + '</span></div>' +
-                '<div class="style-24913"><span class="style-74529">Area</span><span class="style-44823">' + (p.area_sqft || 0) + ' sqft</span></div>' +
-                '<div class="style-24913"><span class="style-74529">Size</span><span class="style-44823">' + (p.width_ft || '-') + 'x' + (p.length_ft || '-') + '</span></div>' +
-                (p.corner_plot ? '<div class="style-24913"><span class="style-74529">Corner Plot</span><span class="style-83728">&#10003;</span></div>' : '') +
-                (p.park_facing ? '<div class="style-24913"><span class="style-74529">Park Facing</span><span class="style-83728">&#10003;</span></div>' : '') +
-                '<hr class="style-25998"><div class="style-85512"><span class="style-74529">Price</span><span class="style-12533">&#8377;' + Number(p.total_price || 0).toLocaleString() + '</span></div></div>';
+                '<div ><span >Block</span><span >' + (p.block || '-') + '</span></div>' +
+                '<div ><span >Area</span><span >' + (p.area_sqft || 0) + ' sqft</span></div>' +
+                '<div ><span >Size</span><span >' + (p.width_ft || '-') + 'x' + (p.length_ft || '-') + '</span></div>' +
+                (p.corner_plot ? '<div ><span >Corner Plot</span><span >&#10003;</span></div>' : '') +
+                (p.park_facing ? '<div ><span >Park Facing</span><span >&#10003;</span></div>' : '') +
+                '<hr ><div ><span >Price</span><span >&#8377;' + Number(p.total_price || 0).toLocaleString() + '</span></div></div>';
             layer.bindPopup(html, { maxWidth: 300 });
             layer.on('mouseover', function() { this.setStyle({ fillOpacity: 0.95, weight: 2 }); });
             layer.on('mouseout', function() { geojsonLayer.resetStyle(this); });
@@ -276,7 +276,7 @@ $bannerImage = !empty($bannerRaw) && (str_starts_with($bannerRaw, 'http://') || 
             <?php foreach ($nearbyPlaces as $np): ?>
             <div class="col-md-4 col-sm-6">
                 <div class="d-flex align-items-center gap-3 p-3 border rounded-3 bg-light">
-                    <div class="icon-circle bg-primary bg-opacity-10 text-primary style-36633">
+                    <div class="icon-circle bg-primary bg-opacity-10 text-primary">
                         <i class="fas fa-map-marker-alt"></i>
                     </div>
                     <div>
@@ -297,7 +297,7 @@ $bannerImage = !empty($bannerRaw) && (str_starts_with($bannerRaw, 'http://') || 
     <div class="container">
         <h2 class="text-center mb-5"><i class="fas fa-map text-primary me-2"></i><?= __('colony_location_map_heading') ?></h2>
         <div class="rounded-4 overflow-hidden shadow">
-            <iframe src="<?php echo htmlspecialchars($colony['map_link'] ?? ''); ?>" width="100%" height="400" class="style-69986" allowfullscreen loading="lazy"></iframe>
+            <iframe src="<?php echo htmlspecialchars($colony['map_link'] ?? ''); ?>" width="100%" height="400" allowfullscreen loading="lazy"></iframe>
         </div>
     </div>
 </section>

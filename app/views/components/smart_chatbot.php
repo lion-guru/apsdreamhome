@@ -552,7 +552,7 @@ if (isset($_SESSION['associate_id'])) {
 
     function formatMessage(text) {
         // Convert URLs to links
-        text = text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" class="style-65868">$1</a>');
+        text = text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" >$1</a>');
         // Convert newlines to breaks
         text = text.replace(/\n/g, '<br>');
         return text;

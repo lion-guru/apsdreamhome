@@ -92,19 +92,19 @@ class AccountingIntegrationService
     {
         $this->db->beginTransaction();
         try {
-            // 1. Create commission record
-            $commissionId = $this->db->insert('commissions', [
-                'associate_id' => $associateId,
-                'amount' => $amount,
-                'commission_type' => $commissionType,
-                'status' => 'paid',
-                'paid_at' => date('Y-m-d H:i:s'),
-                'description' => "Commission from Booking #{$bookingId}",
-                'created_at' => date('Y-m-d H:i:s'),
-            ]);
+            // 1. Create commission record in canonical ledger
+            $tid = TenantContext::getId();
+            $insertCols = ['beneficiary_user_id', 'source_user_id', 'commission_type', 'amount', 'status', 'paid_at', 'notes', 'booking_id', 'created_at'];
+            $insertVals = [$associateId, null, $commissionType, $amount, 'paid', date('Y-m-d H:i:s'), "Commission from Booking #{$bookingId}", $bookingId, date('Y-m-d H:i:s')];
+            if ($tid > 1) {
+                $insertCols[] = 'tenant_id';
+                $insertVals[] = $tid;
+            }
+            $insPlaceholders = implode(', ', array_fill(0, count($insertCols), '?'));
+            $this->db->execute("INSERT INTO mlm_commission_ledger (" . implode(', ', $insertCols) . ") VALUES ({$insPlaceholders})", $insertVals);
+            $commissionId = (int)$this->db->lastInsertId();
 
             // 2. Credit user wallet
-            $tid = TenantContext::getId();
             $user = $this->db->fetchRow("SELECT wallet_balance FROM users WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$associateId, $tid] : [$associateId]);
             $oldBalance = $user['wallet_balance'] ?? 0;
             $newBalance = $oldBalance + $amount;

@@ -78,7 +78,7 @@
         <div class="card mb-3">
             <div class="card-header aps-cp-card-header">Usage Chart</div>
             <div class="card-body aps-cp-card-body">
-                <div class="style-96132">
+                <div >
                     <div class="text-center">
                         <i class="fas fa-chart-bar fa-3x mb-2"></i>
                         <p class="mb-0 small">Chart placeholder</p>

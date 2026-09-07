@@ -34,7 +34,7 @@ include __DIR__ . '/../layouts/base.php';
                     </div>
 
                     <!-- Valuation Results -->
-                    <div id="valuation-results" class="style-54390">
+                    <div id="valuation-results" >
                         <div class="row">
                             <div class="col-md-8">
                                 <div class="card bg-light">
@@ -76,7 +76,7 @@ include __DIR__ . '/../layouts/base.php';
                                             <div class="col-md-12">
                                                 <strong>Confidence Score:</strong>
                                                 <div class="progress">
-                                                    <div class="progress-bar" id="confidence-bar" class="style-73819">0%</div>
+                                                    <div class="progress-bar" id="confidence-bar" >0%</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -116,7 +116,7 @@ include __DIR__ . '/../layouts/base.php';
                     </div>
 
                     <!-- Recommendations -->
-                    <div id="recommendations" class="style-54390">
+                    <div id="recommendations" >
                         <div class="card aps-cp-card">
                             <div class="card-header aps-cp-card-header">
                                 <h5><i class="fas fa-lightbulb"></i> AI Recommendations</h5>
@@ -128,7 +128,7 @@ include __DIR__ . '/../layouts/base.php';
                     </div>
 
                     <!-- Loading State -->
-                    <div id="loading-state" class="style-54390">
+                    <div id="loading-state" >
                         <div class="text-center">
                             <div class="spinner-border" role="status">
                                 <span class="sr-only">Loading...</span>
@@ -138,7 +138,7 @@ include __DIR__ . '/../layouts/base.php';
                     </div>
 
                     <!-- Error State -->
-                    <div id="error-state" class="style-54390">
+                    <div id="error-state" >
                         <div class="alert alert-danger">
                             <i class="fas fa-exclamation-triangle"></i>
                             <span id="error-message">Error occurred during valuation</span>

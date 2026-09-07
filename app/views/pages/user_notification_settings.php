@@ -25,7 +25,7 @@
                     <table class="table table-hover align-middle">
                         <thead class="table-light">
                             <tr>
-                                <th class="style-38624"><?php echo __('notif_pref_type', [], 'Notification Type'); ?></th>
+                                <th ><?php echo __('notif_pref_type', [], 'Notification Type'); ?></th>
                                 <th class="text-center"><i class="fas fa-envelope"></i><br><small><?php echo __('notif_pref_email', [], 'Email'); ?></small></th>
                                 <th class="text-center"><i class="fas fa-mobile-alt"></i><br><small><?php echo __('notif_pref_sms', [], 'SMS'); ?></small></th>
                                 <th class="text-center"><i class="fab fa-whatsapp"></i><br><small><?php echo __('notif_pref_whatsapp', [], 'WhatsApp'); ?></small></th>

@@ -22,7 +22,7 @@ class RateLimiter {
         if (extension_loaded('redis')) {
             try {
                 $redis = new Redis();
-                $redis->connect('127.0.0.1', 6379);
+                $redis->connect(getenv('REDIS_HOST') ?: '127.0.0.1', (int)(getenv('REDIS_PORT') ?: 6379));
                 $this->storage = new RedisStorage($redis);
             } catch (\Exception $e) {
                 $this->storage = new FileStorage();

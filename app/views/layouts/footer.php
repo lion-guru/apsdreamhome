@@ -50,7 +50,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
                         <i class="fas fa-paper-plane"></i> <?= __('subscribe') ?>
                     </button>
                 </form>
-                <div id="newsletterMessage" class="mt-2 style-54390"></div>
+                <div id="newsletterMessage" class="mt-2"></div>
             </div>
         </div>
         

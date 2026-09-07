@@ -20,7 +20,7 @@ ob_start();
         <div class="col-md-8">
             <div class="card border-0 shadow-sm">
                 <?php if ($auction['image_url']): ?>
-                    <img alt="" loading="lazy" src="<?= htmlspecialchars($auction['image_url'] ?? '') ?>" class="card-img-top" alt="<?= htmlspecialchars($auction['title'] ?? '') ?>" class="style-44644">
+                    <img alt="" loading="lazy" src="<?= htmlspecialchars($auction['image_url'] ?? '') ?>" class="card-img-top" alt="<?= htmlspecialchars($auction['title'] ?? '') ?>" >
                 <?php endif; ?>
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-start mb-3">
@@ -119,7 +119,7 @@ ob_start();
                 <div class="card-header bg-white">
                     <h6 class="mb-0"><?= __('auction_bid_history', [], 'Bid History') ?></h6>
                 </div>
-                <div class="card-body aps-cp-card-body style-97603" id="bidHistory">
+                <div class="card-body aps-cp-card-body" id="bidHistory">
                     <?php if (empty($bids)): ?>
                         <p class="text-muted text-center"><?= __('auction_no_bids', [], 'No bids yet. Be the first!') ?></p>
                     <?php else: ?>

@@ -25,7 +25,7 @@ function getAmenityIcon($amenity) {
 ?>
 
 <!-- Hero Section -->
-<section class="hero-section text-white text-center py-5 style-26625">
+<section class="hero-section text-white text-center py-5">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
@@ -107,8 +107,8 @@ function getAmenityIcon($amenity) {
     <div class="container">
         <div class="filter-buttons" data-aos="fade-up">
             <button class="filter-btn active" data-filter="all"><?= __('colonies_filter_all') ?></button>
-            <button class="filter-btn" data-filter="gorakhpur"><?= __('location_gorakhpur') ?></button>
-            <button class="filter-btn" data-filter="lucknow"><?= __('location_lucknow') ?></button>
+            <button class="filter-btn" data-filter="gorakhpur">Gorakhpur</button>
+            <button class="filter-btn" data-filter="lucknow">Lucknow</button>
             <button class="filter-btn" data-filter="residential"><?= __('colonies_filter_residential') ?></button>
             <button class="filter-btn" data-filter="commercial"><?= __('colonies_filter_commercial') ?></button>
         </div>
@@ -125,8 +125,9 @@ function getAmenityIcon($amenity) {
                                 $imagePath = get_asset_url((string)$imagePath);
                             }
                             ?>
-                            <img src="<?php echo htmlspecialchars($imagePath ?? ''); ?>" alt="<?php echo htmlspecialchars($colony['name'] ?? ''); ?>" class="img-fluid" loading="lazy">
-                            <div class="colony-placeholder style-57012">
+                            <img src="<?php echo htmlspecialchars($imagePath ?? '');?>" alt="<?php echo htmlspecialchars($colony['name'] ?? ''); ?>" class="img-fluid" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" <?php if (empty($imagePath)) echo 'class="d-none"'; ?>>
+                            <?php if (empty($imagePath)): ?><style>.colony-placeholder{display:flex!important}</style><?php endif; ?>
+                            <div class="colony-placeholder">
                                 <i class="fas fa-city fa-3x mb-2"></i>
                                 <p class="mb-0 text-center px-2"><?php echo e($colony['name']); ?></p>
                             </div>

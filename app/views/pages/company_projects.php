@@ -25,11 +25,11 @@ if (empty($grouped_projects) && !empty($projects)) {
 ?>
 
 <!-- Company Projects Hero -->
-<section class="hero-section text-white py-5 position-relative style-30433">
+<section class="hero-section text-white py-5 position-relative">
     <div class="container position-relative">
         <div class="row align-items-center justify-content-center">
             <div class="col-lg-8 text-center">
-                <span class="badge px-3 py-2 mb-3 style-72717">
+                <span class="badge px-3 py-2 mb-3">
                     <i class="fas fa-building me-1"></i> Portfolio
                 </span>
                 <h1 class="display-4 fw-bold mb-3"><i class="fas fa-building me-3"></i><?= __('cproj_heading', [], 'Our Projects') ?></h1>
@@ -40,9 +40,9 @@ if (empty($grouped_projects) && !empty($projects)) {
 </section>
 
     <!-- Cross-link Section: Also Explore -->
-    <section class="py-3 style-53819">
+    <section class="py-3">
         <div class="container">
-            <div class="d-flex flex-wrap gap-2 align-items-center style-1563">
+            <div class="d-flex flex-wrap gap-2 align-items-center">
                 <span class="fw-semibold text-success me-2"><i class="fas fa-compass me-1"></i><?= __('also_explore') ?></span>
                 <a href="<?= BASE_URL ?>/properties" class="btn btn-sm btn-outline-primary px-3">
                     <i class="fas fa-building me-1"></i><?= __('properties') ?>
@@ -50,7 +50,7 @@ if (empty($grouped_projects) && !empty($projects)) {
                 <a href="<?= BASE_URL ?>/plots/browse" class="btn btn-sm btn-outline-primary px-3">
                     <i class="fas fa-vector-square me-1"></i><?= __('plots') ?>
                 </a>
-                <a href="<?= BASE_URL ?>/colonies" class="btn btn-sm px-3 style-66828">
+                <a href="<?= BASE_URL ?>/colonies" class="btn btn-sm px-3">
                     <i class="fas fa-city me-1"></i><?= __('colonies') ?>
                 </a>
             </div>
@@ -102,7 +102,7 @@ if (empty($grouped_projects) && !empty($projects)) {
                                 <div class="col-lg-4 col-md-6 mb-4">
                                     <div class="card property-card h-100 shadow-sm border-0 overflow-hidden">
                                         <div class="card-img-wrapper position-relative">
-                                            <img src="<?= $isExternal ? $imgPath : BASE_URL . $imgPath ?>" class="img-fluid card-img-top" alt="<?php echo htmlspecialchars($project->site_name); ?>" class="style-10068" onerror="this.src='<?= BASE_URL ?>/assets/images/projects/placeholder/property.svg'">
+                                            <img src="<?= $isExternal ? $imgPath : BASE_URL . $imgPath ?>" class="img-fluid card-img-top" alt="<?php echo htmlspecialchars($project->site_name); ?>" onerror="this.src='<?= BASE_URL ?>/assets/images/projects/placeholder/property.svg'">
                                             <div class="position-absolute top-0 start-0 m-3">
                                                 <span class="badge bg-<?php echo $project->status === 'active' ? 'success' : ($project->status === 'completed' ? 'primary' : 'warning'); ?> shadow-sm">
                                                     <?php echo ucfirst(str_replace('_', ' ', $project->status ?? 'Active')); ?>

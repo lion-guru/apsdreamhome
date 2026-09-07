@@ -12,7 +12,7 @@
         <div class="col-md-8">
             <div class="card aps-cp-card">
                 <div class="card-body text-center py-5">
-                    <iframe src="<?= WHATSAPP_SERVICE_URL ?>" width="100%" height="600" class="style-3619" title="WhatsApp Web QR"></iframe>
+                    <iframe src="<?= WHATSAPP_SERVICE_URL ?>" width="100%" height="600" title="WhatsApp Web QR"></iframe>
                 </div>
             </div>
         </div>

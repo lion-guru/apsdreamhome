@@ -91,7 +91,7 @@ $groupedItems = $sortedGrouped;
             $tenantColors = TenantContext::getColors();
             ?>
             <?php if ($tenantLogo): ?>
-                <img src="<?php echo htmlspecialchars($tenantLogo ?? ''); ?>" alt="Logo" class="style-94888">
+                <img src="<?php echo htmlspecialchars($tenantLogo ?? '');?>" alt="Logo" >
             <?php else: ?>
                 <i class="fas fa-home"></i>
             <?php endif; ?>
@@ -106,14 +106,14 @@ $groupedItems = $sortedGrouped;
     $switchName = $_SESSION['tenant_switch_name'] ?? '';
     ?>
     <?php if ($switchActive): ?>
-    <div class="style-84038">
+    <div >
         <div class="d-flex align-items-center gap-2 mb-1">
             <i class="fas fa-exchange-alt"></i>
             <strong>Viewing: <?= htmlspecialchars($switchName ?? '') ?></strong>
         </div>
-        <form method="POST" action="<?= $base ?>/admin/tenants/stop-switch" class="style-21648">
+        <form method="POST" action="<?= $base ?>/admin/tenants/stop-switch" >
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-            <button type="submit" class="btn btn-sm btn-light w-100 style-90628">
+            <button type="submit" class="btn btn-sm btn-light w-100">
                 <i class="fas fa-undo me-1"></i>Back to My Tenant
             </button>
         </form>
@@ -153,7 +153,7 @@ $groupedItems = $sortedGrouped;
     </div>
 
     <?php if (!empty($menuError)): ?>
-        <div class="style-85283">
+        <div >
             <i class="fas fa-exclamation-triangle"></i> Sidebar error:<br>
             <code><?php echo htmlspecialchars($menuError ?? ''); ?></code>
         </div>
@@ -169,7 +169,7 @@ $groupedItems = $sortedGrouped;
                     <span><?php echo $sectionNames[$section] ?? ucfirst($section); ?></span>
                     <i class="fas fa-chevron-down sidebar-sec-arrow <?php echo $hasActive ? '' : 'collapsed'; ?>" id="arrow-<?php echo e($secId); ?>"></i>
                 </div>
-                <ul class="sidebar-menu" id="<?php echo e($secId); ?>" class="style-57286">
+                <ul class="sidebar-menu" id="<?php echo e($secId); ?>" >
                     <?php foreach ($items as $item): ?>
                         <?php
                         $itemFullUrl = rtrim($base . $item['url'], '/');
@@ -187,10 +187,10 @@ $groupedItems = $sortedGrouped;
             <?php endif; ?>
         <?php endforeach; ?>
     <?php else: ?>
-        <div class="style-78189">
-            <i class="fas fa-exclamation-circle style-88454"></i>
+        <div >
+            <i class="fas fa-exclamation-circle"></i>
             <strong>No menu items found</strong><br>
-            <span class="style-64777">
+            <span >
                 Check that admin_menu_items table has data<br>
                 and AdminMenuService is working.
             </span>

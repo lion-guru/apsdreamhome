@@ -78,11 +78,11 @@ $focusAreas = $focusAreas ?? [];
             <h3><?= htmlspecialchars($userName ?? '') ?></h3>
             <span class="role-badge"><?= htmlspecialchars($roleTitle ?? '') ?></span>
             <?php if (!empty($focusAreas)): ?>
-            <div class="style-17873">
-                <div class="style-83709">Focus Areas</div>
-                <div class="style-47731">
+            <div >
+                <div >Focus Areas</div>
+                <div >
                     <?php foreach ($focusAreas as $area): ?>
-                    <span class="style-56820"><?= htmlspecialchars(ucwords(str_replace('_', ' ', $area))) ?></span>
+                    <span ><?= htmlspecialchars(ucwords(str_replace('_', ' ', $area))) ?></span>
                     <?php endforeach; ?>
                 </div>
             </div>

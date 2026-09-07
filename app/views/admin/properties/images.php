@@ -81,7 +81,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                 <button class="btn btn-primary btn-lg">
                     <i class="fas fa-folder-open me-2"></i>Select Files
                 </button>
-                <input type="file" id="fileInput" multiple accept="image/*" class="style-54390">
+                <input type="file" id="fileInput" multiple accept="image/*" >
             </div>
         </div>
     </div>
@@ -142,10 +142,13 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                                         <i class="fas fa-star me-1"></i>Primary
                                     </span>
                                 <?php endif; ?>
-                                <img src="<?php echo $base; ?>/<?php echo htmlspecialchars($image['thumbnail_path'] ?? $image['image_path']); ?>"
-                                    alt="Property Image"
-                                    class="card-img-top style-12213"
-                                    onclick="openLightbox('<?php echo e($base); ?>/<?php echo $image['image_path']; ?>')" loading="lazy">
+                                <?php $rawThumb = trim((string)($image['thumbnail_path'] ?? $image['image_path'] ?? '')); if (empty($rawThumb) || $rawThumb === 'undefined' || $rawThumb === 'null') { $thumbSrc = $base . '/assets/images/placeholder/property.svg'; $fullSrc = $base . '/assets/images/placeholder/property.svg'; } else { $thumbSrc = $base . '/' . ltrim($rawThumb, '/'); $rawFull = trim((string)($image['image_path'] ?? '')); if (empty($rawFull) || $rawFull === 'undefined' || $rawFull === 'null') { $fullSrc = $base . '/assets/images/placeholder/property.svg'; } else { $fullSrc = $base . '/' . ltrim($rawFull, '/'); } } ?>
+                                <img src="<?php echo htmlspecialchars($thumbSrc, ENT_QUOTES, 'UTF-8');?>"
+                                    alt="<?php echo htmlspecialchars(($property['title'] ?? 'Property') . ' image', ENT_QUOTES, 'UTF-8'); ?>"
+                                    class="card-img-top"
+                                    loading="lazy"
+                                    onerror="this.onerror=null;this.src='<?php echo $base; ?>/assets/images/placeholder/property.svg'"
+                                    onclick="openLightbox('<?php echo htmlspecialchars($fullSrc, ENT_QUOTES, 'UTF-8'); ?>')">
                                 <div class="card-body p-2">
                                     <input type="text"
                                         class="form-control form-control-sm mb-2"
@@ -186,7 +189,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
 </div>
 
 <!-- Upload Progress Panel -->
-<div class="upload-progress" id="uploadProgress" class="style-54390">
+<div class="upload-progress" id="uploadProgress" >
     <h6 class="mb-3"><i class="fas fa-upload me-2"></i>Uploading...</h6>
     <div id="progressList"></div>
 </div>

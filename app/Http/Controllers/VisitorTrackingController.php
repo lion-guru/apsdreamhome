@@ -29,6 +29,15 @@ class VisitorTrackingController extends AdminController
         return true;
     }
 
+    /**
+     * Tracking endpoints fire on every page load via JS.
+     * Rate limiting them blocks normal visitors.
+     */
+    protected function enforceRateLimit(): void
+    {
+        // no-op: tracking is anonymous high-volume, skip rate limit
+    }
+
     private function getTrackingService()
     {
         if ($this->trackingService === null) {

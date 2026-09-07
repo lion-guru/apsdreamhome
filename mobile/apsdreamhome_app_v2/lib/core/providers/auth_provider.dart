@@ -84,3 +84,8 @@ final currentUserDataProvider = FutureProvider<User?>((ref) async {
   final repository = ref.watch(authRepositoryProvider);
   return await repository.getCurrentUser();
 });
+
+/// Synchronous current user provider - reads from authProvider state
+final currentUserProvider = Provider<User?>((ref) {
+  return ref.watch(authProvider);
+});

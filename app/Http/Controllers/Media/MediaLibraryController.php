@@ -4,12 +4,10 @@ namespace App\Http\Controllers\Media;
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Services\Media\MediaLibraryService;
-/**
- * Media Library Controller - APS Dream Home
- */
+
 class MediaLibraryController extends AdminController
 {
-    private $mediaService;
+    private MediaLibraryService $mediaService;
 
     public function __construct()
     {
@@ -17,475 +15,276 @@ class MediaLibraryController extends AdminController
         $this->mediaService = new MediaLibraryService();
     }
 
-    /**
-     * Show media library
-     */
-    public function index($request = [])
+    public function index()
     {
-        $this->requireAdmin();
+        $category = $_GET['category'] ?? null;
+        $search = $_GET['search'] ?? null;
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $perPage = 24;
+        $offset = ($page - 1) * $perPage;
 
-        $category = $request['get']['category'] ?? null;
-        $search = $request['get']['search'] ?? null;
-        $page = max(1, intval($request['get']['page'] ?? 1));
-        $limit = 20;
-        $offset = ($page - 1) * $limit;
+        $result = $this->mediaService->getMediaFiles($category, $search, $perPage, $offset);
+        $files = $result['success'] ? $result['data'] : [];
+        $stats = $this->mediaService->getMediaStats();
+        $categories = $this->mediaService->getCategories();
 
-        // Get media files
-        $result = $this->mediaService->getMediaFiles($category, $search, $limit, $offset);
-
-        // Get categories
-        $categoriesResult = $this->mediaService->getCategories();
-
-        $data = [
-            'title' => 'Media Library - APS Dream Home',
-            'files' => $result['success'] ? $result['data'] : [],
-            'categories' => $categoriesResult['success'] ? $categoriesResult['data'] : [],
-            'current_category' => $category,
+        $this->render('admin.media.index', [
+            'files' => $files,
+            'stats' => $stats['success'] ? $stats['data'] : [],
+            'categories' => $categories['success'] ? $categories['data'] : [],
+            'currentCategory' => $category,
             'search' => $search,
-            'success' => $_SESSION['success'] ?? '',
-            'errors' => $_SESSION['errors'] ?? []
-        ];
-
-        unset($_SESSION['success'], $_SESSION['errors']);
-
-        $this->render('media/index', $data);
+            'page' => $page
+        ]);
     }
 
-    /**
-     * Show upload form
-     */
-    public function upload($request = [])
+    public function upload()
     {
-        // Check authentication
-        $this->requireAdmin();
-
-        // Get categories for dropdown
-        $categoriesResult = $this->mediaService->getCategories();
-
-        $data = [
-            'title' => 'Upload Media - APS Dream Home',
-            'user' => $this->authService->getCurrentUser(),
-            'categories' => $categoriesResult['success'] ? $categoriesResult['data'] : [],
-            'success' => $_SESSION['success'] ?? '',
-            'errors' => $_SESSION['errors'] ?? [],
-            'old_input' => $_SESSION['old_input'] ?? []
-        ];
-
-        unset($_SESSION['success'], $_SESSION['errors'], $_SESSION['old_input']);
-
-        $this->render('media/upload', $data);
+        $this->render('admin.media.upload', [
+            'categories' => $this->mediaService->getCategories()['data'] ?? []
+        ]);
     }
 
-    /**
-     * Handle file upload
-     */
-    public function handleUpload($request = [])
+    public function handleUpload()
     {
-        // Check authentication
-        $this->requireAdmin();
-
-        $data = [
-            'title' => trim($request['post']['title'] ?? ''),
-            'description' => trim($request['post']['description'] ?? ''),
-            'category' => trim($request['post']['category'] ?? 'general'),
-            'tags' => trim($request['post']['tags'] ?? '')
-        ];
-
-        $files = $request['files'] ?? [];
-
-        $result = $this->mediaService->handleUpload($data, $files);
-
-        if ($result['success']) {
-            $_SESSION['success'] = $result['message'];
-            $this->redirect('/media');
-        } else {
-            $_SESSION['errors'] = [$result['message']];
-            $_SESSION['old_input'] = $data;
-            $this->redirect('/media/upload');
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->response(['success' => false, 'message' => 'Method not allowed'], 405);
+            return;
         }
 
-        return $result;
+        $data = $_POST;
+        $files = $_FILES;
+        $result = $this->mediaService->handleUpload($data, $files);
+
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+            $this->response($result, $result['success'] ? 200 : 400);
+            return;
+        }
+
+        if ($result['success']) {
+            header('Location: /admin/media-library?success=uploaded');
+        } else {
+            header('Location: /admin/media-library?error=' . urlencode($result['message']));
+        }
+        exit;
     }
 
-    /**
-     * Show media file details
-     */
-    public function details($request = [])
+    public function details($id = null)
     {
-        // Check authentication
-        $this->requireAdmin();
-
-        $id = $request['params']['id'] ?? null;
-
-        if (!$id) {
-            $_SESSION['errors'] = ['Media ID is required'];
-            $this->redirect('/media');
-            return;
+        $id = (int)($id ?? $_GET['id'] ?? 0);
+        if ($id <= 0) {
+            header('Location: /admin/media-library');
+            exit;
         }
 
         $result = $this->mediaService->getMediaFile($id);
-
         if (!$result['success']) {
-            $_SESSION['errors'] = [$result['message']];
-            $this->redirect('/media');
+            header('Location: /admin/media-library?error=not_found');
+            exit;
+        }
+
+        $this->render('admin.media.show', [
+            'file' => $result['data']
+        ]);
+    }
+
+    public function update($id = null)
+    {
+        $id = (int)($id ?? $_POST['id'] ?? 0);
+        if ($id <= 0) {
+            $this->response(['success' => false, 'message' => 'Invalid ID'], 400);
             return;
         }
 
-        $data = [
-            'title' => 'Media Details - APS Dream Home',
-            'user' => $this->authService->getCurrentUser(),
-            'file' => $result['data'],
-            'success' => $_SESSION['success'] ?? '',
-            'errors' => $_SESSION['errors'] ?? []
-        ];
+        $result = $this->mediaService->updateMediaFile(
+            $id,
+            $_POST['title'] ?? '',
+            $_POST['description'] ?? '',
+            $_POST['category'] ?? 'general',
+            $_POST['tags'] ?? ''
+        );
 
-        unset($_SESSION['success'], $_SESSION['errors']);
-
-        $this->render('media/details', $data);
-    }
-
-    /**
-     * Update media file
-     */
-    public function update($request = [])
-    {
-        // Check authentication
-        $this->requireAdmin();
-
-        $id = $request['params']['id'] ?? null;
-        $title = trim($request['post']['title'] ?? '');
-        $description = trim($request['post']['description'] ?? '');
-        $category = trim($request['post']['category'] ?? '');
-        $tags = trim($request['post']['tags'] ?? '');
-
-        if (!$id) {
-            return [
-                'success' => false,
-                'message' => 'Media ID is required'
-            ];
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+            $this->response($result, $result['success'] ? 200 : 400);
+            return;
         }
 
-        $result = $this->mediaService->updateMediaFile($id, $title, $description, $category, $tags);
-
-        if ($result['success']) {
-            $_SESSION['success'] = $result['message'];
-        } else {
-            $_SESSION['errors'] = [$result['message']];
-        }
-
-        $this->redirect("/media/details/$id");
-
-        return $result;
+        header('Location: /admin/media-library/details/' . $id . ($result['success'] ? '?success=updated' : '?error=' . urlencode($result['message'])));
+        exit;
     }
 
-    /**
-     * Delete media file
-     */
-    public function delete($request = [])
+    public function delete($id = null)
     {
-        // Check authentication
-        $this->requireAdmin();
-
-        $id = $request['params']['id'] ?? null;
-
-        if (!$id) {
-            return [
-                'success' => false,
-                'message' => 'Media ID is required'
-            ];
+        $id = (int)($id ?? $_POST['id'] ?? 0);
+        if ($id <= 0) {
+            $this->response(['success' => false, 'message' => 'Invalid ID'], 400);
+            return;
         }
 
         $result = $this->mediaService->deleteMediaFile($id);
 
-        if ($result['success']) {
-            $_SESSION['success'] = $result['message'];
-        } else {
-            $_SESSION['errors'] = [$result['message']];
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+            $this->response($result, $result['success'] ? 200 : 400);
+            return;
         }
 
-        $this->redirect('/media');
-
-        return $result;
+        header('Location: /admin/media-library' . ($result['success'] ? '?success=deleted' : '?error=' . urlencode($result['message'])));
+        exit;
     }
 
-    /**
-     * Get media files (AJAX)
-     */
-    public function getMediaFiles($request = [])
+    public function getMediaFiles()
     {
-        // Check authentication
-        $this->requireAdmin();
+        $category = $_GET['category'] ?? null;
+        $search = $_GET['search'] ?? null;
+        $limit = min(100, max(1, (int)($_GET['limit'] ?? 50)));
+        $offset = max(0, (int)($_GET['offset'] ?? 0));
 
-        $category = $request['get']['category'] ?? null;
-        $search = $request['get']['search'] ?? null;
-        $limit = min(max(intval($request['get']['limit'] ?? 20), 1), 100);
-        $offset = max(0, intval($request['get']['offset'] ?? 0));
-
-        return $this->mediaService->getMediaFiles($category, $search, $limit, $offset);
+        $result = $this->mediaService->getMediaFiles($category, $search, $limit, $offset);
+        $this->response($result, $result['success'] ? 200 : 500);
     }
 
-    /**
-     * Get media file (AJAX)
-     */
-    public function getMediaFile($request)
+    public function getMediaFile($id = null)
     {
-        // Check authentication
-        $this->requireAdmin();
-
-        $id = $request['get']['id'] ?? null;
-
-        if (!$id) {
-            return [
-                'success' => false,
-                'message' => 'Media ID is required'
-            ];
-        }
-
-        return $this->mediaService->getMediaFile($id);
-    }
-
-    /**
-     * Get categories (AJAX)
-     */
-    public function getCategories($request = [])
-    {
-        // Check authentication
-        $this->requireAdmin();
-
-        return $this->mediaService->getCategories();
-    }
-
-    /**
-     * Get media statistics (AJAX)
-     */
-    public function getMediaStats($request = [])
-    {
-        // Check authentication and admin access
-        $this->requireAdmin();
-
-        return $this->mediaService->getMediaStats();
-    }
-
-    /**
-     * Upload file (AJAX)
-     */
-    public function uploadFile($request = [])
-    {
-        // Check authentication
-        $this->requireAdmin();
-
-        $data = [
-            'title' => trim($request['post']['title'] ?? ''),
-            'description' => trim($request['post']['description'] ?? ''),
-            'category' => trim($request['post']['category'] ?? 'general'),
-            'tags' => trim($request['post']['tags'] ?? '')
-        ];
-
-        $files = $request['files'] ?? [];
-
-        return $this->mediaService->handleUpload($data, $files);
-    }
-
-    /**
-     * Update file (AJAX)
-     */
-    public function updateFile($request = [])
-    {
-        // Check authentication
-        $this->requireAdmin();
-
-        $id = $request['post']['id'] ?? null;
-        $title = trim($request['post']['title'] ?? '');
-        $description = trim($request['post']['description'] ?? '');
-        $category = trim($request['post']['category'] ?? '');
-        $tags = trim($request['post']['tags'] ?? '');
-
-        if (!$id) {
-            return [
-                'success' => false,
-                'message' => 'Media ID is required'
-            ];
-        }
-
-        return $this->mediaService->updateMediaFile($id, $title, $description, $category, $tags);
-    }
-
-    /**
-     * Delete file (AJAX)
-     */
-    public function deleteFile($request = [])
-    {
-        // Check authentication
-        $this->requireAdmin();
-
-        $id = $request['post']['id'] ?? null;
-
-        if (!$id) {
-            return [
-                'success' => false,
-                'message' => 'Media ID is required'
-            ];
-        }
-
-        return $this->mediaService->deleteMediaFile($id);
-    }
-
-    /**
-     * Download file
-     */
-    public function download($request = [])
-    {
-        // Check authentication
-        $this->requireAdmin();
-
-        $id = $request['params']['id'] ?? null;
-
-        if (!$id) {
-            $_SESSION['errors'] = ['Media ID is required'];
-            $this->redirect('/media');
+        $id = (int)($id ?? $_GET['id'] ?? 0);
+        if ($id <= 0) {
+            $this->response(['success' => false, 'message' => 'Invalid ID'], 400);
             return;
         }
 
         $result = $this->mediaService->getMediaFile($id);
+        $this->response($result, $result['success'] ? 200 : 404);
+    }
 
-        if (!$result['success']) {
-            $_SESSION['errors'] = [$result['message']];
-            $this->redirect('/media');
+    public function getCategories()
+    {
+        $result = $this->mediaService->getCategories();
+        $this->response($result, $result['success'] ? 200 : 500);
+    }
+
+    public function getMediaStats()
+    {
+        $result = $this->mediaService->getMediaStats();
+        $this->response($result, $result['success'] ? 200 : 500);
+    }
+
+    public function uploadFile()
+    {
+        $data = $_POST;
+        $files = $_FILES;
+        $result = $this->mediaService->handleUpload($data, $files);
+        $this->response($result, $result['success'] ? 200 : 400);
+    }
+
+    public function updateFile($id = null)
+    {
+        $id = (int)($id ?? $_POST['id'] ?? 0);
+        if ($id <= 0) {
+            $this->response(['success' => false, 'message' => 'Invalid ID'], 400);
             return;
+        }
+
+        $result = $this->mediaService->updateMediaFile(
+            $id,
+            $_POST['title'] ?? '',
+            $_POST['description'] ?? '',
+            $_POST['category'] ?? 'general',
+            $_POST['tags'] ?? ''
+        );
+        $this->response($result, $result['success'] ? 200 : 400);
+    }
+
+    public function deleteFile($id = null)
+    {
+        $id = (int)($id ?? $_POST['id'] ?? $_GET['id'] ?? 0);
+        if ($id <= 0) {
+            $this->response(['success' => false, 'message' => 'Invalid ID'], 400);
+            return;
+        }
+
+        $result = $this->mediaService->deleteMediaFile($id);
+        $this->response($result, $result['success'] ? 200 : 400);
+    }
+
+    public function download($id = null)
+    {
+        $id = (int)($id ?? $_GET['id'] ?? 0);
+        if ($id <= 0) {
+            header('Location: /admin/media-library');
+            exit;
+        }
+
+        $result = $this->mediaService->getMediaFile($id);
+        if (!$result['success']) {
+            header('Location: /admin/media-library?error=not_found');
+            exit;
         }
 
         $file = $result['data'];
         $filepath = $this->mediaService->getFilePath($file['filename']);
 
         if (!file_exists($filepath)) {
-            $_SESSION['errors'] = ['File not found'];
-            $this->redirect('/media');
-            return;
+            header('Location: /admin/media-library?error=file_missing');
+            exit;
         }
 
-        // Set headers for file download
-        $filename = $file['original_name'];
-
-        header('Content-Type: ' . $file['mime_type']);
-        header('Content-Disposition: attachment; filename="' . $filename . '"');
-        header('Content-Length: ' . $file['file_size']);
-        header('Cache-Control: no-cache, must-revalidate');
-        header('Pragma: no-cache');
-
+        header('Content-Type: ' . ($file['mime_type'] ?? 'application/octet-stream'));
+        header('Content-Disposition: attachment; filename="' . ($file['original_name'] ?? $file['filename']) . '"');
+        header('Content-Length: ' . filesize($filepath));
         readfile($filepath);
         exit;
     }
 
-    /**
-     * Show file preview
-     */
-    public function preview($request = [])
+    public function preview($id = null)
     {
-        // Check authentication
-        $this->requireAdmin();
+        $id = (int)($id ?? $_GET['id'] ?? 0);
+        if ($id <= 0) {
+            header('Location: /admin/media-library');
+            exit;
+        }
 
-        $id = $request['params']['id'] ?? null;
+        $result = $this->mediaService->getMediaFile($id);
+        if (!$result['success']) {
+            header('Location: /admin/media-library?error=not_found');
+            exit;
+        }
 
-        if (!$id) {
-            $_SESSION['errors'] = ['Media ID is required'];
-            $this->redirect('/media');
+        $file = $result['data'];
+        $filepath = $this->mediaService->getFilePath($file['filename']);
+
+        if (!file_exists($filepath)) {
+            header('Location: /admin/media-library?error=file_missing');
+            exit;
+        }
+
+        header('Content-Type: ' . ($file['mime_type'] ?? 'application/octet-stream'));
+        header('Content-Length: ' . filesize($filepath));
+        readfile($filepath);
+        exit;
+    }
+
+    public function createThumbnail($id = null)
+    {
+        $id = (int)($id ?? $_POST['id'] ?? 0);
+        if ($id <= 0) {
+            $this->response(['success' => false, 'message' => 'Invalid ID'], 400);
             return;
         }
 
         $result = $this->mediaService->getMediaFile($id);
-
         if (!$result['success']) {
-            $_SESSION['errors'] = [$result['message']];
-            $this->redirect('/media');
+            $this->response(['success' => false, 'message' => 'File not found'], 404);
             return;
         }
 
         $file = $result['data'];
+        $width = (int)($_POST['width'] ?? 300);
+        $height = (int)($_POST['height'] ?? 300);
 
-        if (!$file['is_image']) {
-            $_SESSION['errors'] = ['Preview only available for images'];
-            $this->redirect("/media/details/$id");
-            return;
-        }
-
-        $data = [
-            'title' => 'Preview - ' . $file['title'] . ' - APS Dream Home',
-            'user' => $this->authService->getCurrentUser(),
-            'file' => $file
-        ];
-
-        $this->render('media/preview', $data);
-    }
-
-    /**
-     * Create thumbnail (AJAX)
-     */
-    public function createThumbnail($request = [])
-    {
-        // Check authentication
-        $this->requireAdmin();
-
-        $id = $request['post']['id'] ?? null;
-        $width = intval($request['post']['width'] ?? 300);
-        $height = intval($request['post']['height'] ?? 300);
-
-        if (!$id) {
-            return [
-                'success' => false,
-                'message' => 'Media ID is required'
-            ];
-        }
-
-        $result = $this->mediaService->getMediaFile($id);
-
-        if (!$result['success']) {
-            return $result;
-        }
-
-        $file = $result['data'];
-
-        if (!$file['is_image']) {
-            return [
-                'success' => false,
-                'message' => 'Thumbnails can only be created for images'
-            ];
-        }
-
-        $thumbnailFilename = $this->mediaService->createThumbnail($file['filename'], $width, $height);
-
-        if ($thumbnailFilename) {
-            return [
-                'success' => true,
-                'message' => 'Thumbnail created successfully',
-                'thumbnail_url' => $this->mediaService->getFileUrl('thumbnails/' . $thumbnailFilename)
-            ];
+        $thumbPath = $this->mediaService->createThumbnail($file['filename'], $width, $height);
+        if ($thumbPath) {
+            $this->response(['success' => true, 'message' => 'Thumbnail created', 'path' => $thumbPath]);
         } else {
-            return [
-                'success' => false,
-                'message' => 'Failed to create thumbnail'
-            ];
-        }
-    }
-
-    /**
-     * Check if user is admin
-     */
-    protected function checkUserIsAdmin($user)
-    {
-        return $user && ($user['role'] === 'admin' || $user['role'] === 'super_admin');
-    }
-
-    /**
-     * Redirect helper
-     */
-    public function redirect($url)
-    {
-        if (!headers_sent()) {
-            header("Location: $url");
-            exit;
-        } else {
-            echo '<script>window.location.href = "' . $url . '";</script>';
-            exit;
+            $this->response(['success' => false, 'message' => 'Failed to create thumbnail'], 500);
         }
     }
 }

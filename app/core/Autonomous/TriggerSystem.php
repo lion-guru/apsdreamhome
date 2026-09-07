@@ -280,7 +280,6 @@ class AutonomousTriggerSystem
         // Check if advanced features exist
         $features = [
             'AI Valuation' => 'app/Services/AI/PropertyValuationEngine.php',
-            'Advanced CRM' => 'app/Services/CRM/AdvancedCRMService.php',
             'Virtual Tours' => 'app/Services/Property/VirtualTourService.php'
         ];
 

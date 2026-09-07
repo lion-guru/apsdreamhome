@@ -42,11 +42,11 @@ $localCount = (int) ($info['local_count'] ?? 0);
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
-<div class="admin-wrap style-32224">
+<div class="admin-wrap">
     <?php include __DIR__ . '/../layouts/sidebar.php'; ?>
-    <main class="style-10864">
-        <h1 class="style-38351">Storage Gateways</h1>
-        <p class="style-55261">Active storage driver + S3 configuration status.</p>
+    <main >
+        <h1 >Storage Gateways</h1>
+        <p >Active storage driver + S3 configuration status.</p>
 
         <?php if (!empty($flash['success'])): ?>
             <div class="alert alert-success"><?= htmlspecialchars($flash['success'] ?? '') ?></div>
@@ -73,12 +73,12 @@ $localCount = (int) ($info['local_count'] ?? 0);
                 <div class="k">Resolved driver</div><div class="v"><?= htmlspecialchars($driver ?? '') ?></div>
                 <div class="k">Driver switch</div>
                 <div class="v">
-                    <form method="post" action="<?= $base ?>/admin/storage/switch" class="style-35851">
+                    <form method="post" action="<?= $base ?>/admin/storage/switch" >
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <input type="hidden" name="driver" value="local">
                         <button class="btn btn-secondary" type="submit" <?= $info['configured_driver'] === 'local' ? 'disabled' : '' ?>>Use Local</button>
                     </form>
-                    <form method="post" action="<?= $base ?>/admin/storage/switch" class="style-35851">
+                    <form method="post" action="<?= $base ?>/admin/storage/switch" >
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <input type="hidden" name="driver" value="s3">
                         <button class="btn btn-secondary" type="submit" <?= $info['configured_driver'] === 's3' ? 'disabled' : '' ?>>Use S3</button>
@@ -104,15 +104,15 @@ $localCount = (int) ($info['local_count'] ?? 0);
                     <div class="k">URL expiry (min)</div><div class="v"><?= (int) $info['s3_url_expiry'] ?></div>
                 </div>
                 <div class="actions">
-                    <form method="post" action="<?= $base ?>/admin/storage/test" class="style-35851">
+                    <form method="post" action="<?= $base ?>/admin/storage/test" >
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <button class="btn" type="submit">Test Connection</button>
                     </form>
                     <a class="btn btn-secondary" href="<?= $base ?>/admin/storage/list?prefix=&limit=10" target="_blank">View Bucket (first 10)</a>
                 </div>
             <?php else: ?>
-                <p class="style-57887">AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_BUCKET must be set in <code>.env</code> and <code>STORAGE_DRIVER=s3</code>.</p>
-                <pre class="style-17804">STORAGE_DRIVER=s3
+                <p >AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_BUCKET must be set in <code>.env</code> and <code>STORAGE_DRIVER=s3</code>.</p>
+                <pre >STORAGE_DRIVER=s3
 AWS_ACCESS_KEY_ID=...
 AWS_SECRET_ACCESS_KEY=...
 AWS_DEFAULT_REGION=ap-south-1

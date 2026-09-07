@@ -27,14 +27,14 @@ $base = defined('BASE_URL') ? BASE_URL : '';
 
 <div class="cp-card">
     <div class="cp-card-header">
-        <h5 class="m-0 style-43926"><i class="fas fa-columns me-2 style-13856"></i>Compare Commission Plans</h5>
+        <h5 class="m-0"><i class="fas fa-columns me-2"></i>Compare Commission Plans</h5>
         <a href="<?= $base ?>/admin/commission-plans" class="cp-btn cp-btn-outline"><i class="fas fa-arrow-left me-1"></i>Back</a>
     </div>
     <div class="cp-card-body">
         <form method="GET" class="mb-4">
             <div class="row align-items-end">
                 <div class="col-md-4">
-                    <label class="style-47305">Plan A</label>
+                    <label >Plan A</label>
                     <select name="plan_a" class="cp-input">
                         <?php foreach ($plans as $p): ?>
                             <option value="<?= $p['id'] ?>" <?= $planIdA == $p['id'] ? 'selected' : '' ?>>
@@ -44,7 +44,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label class="style-47305">Plan B</label>
+                    <label >Plan B</label>
                     <select name="plan_b" class="cp-input">
                         <?php foreach ($plans as $p): ?>
                             <option value="<?= $p['id'] ?>" <?= $planIdB == $p['id'] ? 'selected' : '' ?>>
@@ -54,7 +54,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <button type="submit" class="cp-btn cp-btn-primary style-90537"><i class="fas fa-balance-scale me-1"></i>Compare</button>
+                    <button type="submit" class="cp-btn cp-btn-primary"><i class="fas fa-balance-scale me-1"></i>Compare</button>
                 </div>
             </div>
         </form>
@@ -62,22 +62,22 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         <?php if ($comparison): ?>
             <div class="row mb-4">
                 <div class="col-md-6">
-                    <div class="style-731">
-                        <div class="style-34740">Plan A</div>
-                        <div class="style-69154"><?= htmlspecialchars($comparison['plan_a']['name'] ?? '') ?></div>
-                        <div class="cp-version style-62298">v<?= $comparison['plan_a']['version'] ?></div>
+                    <div >
+                        <div >Plan A</div>
+                        <div ><?= htmlspecialchars($comparison['plan_a']['name'] ?? '') ?></div>
+                        <div class="cp-version">v<?= $comparison['plan_a']['version'] ?></div>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="style-71182">
-                        <div class="style-34740">Plan B</div>
-                        <div class="style-62989"><?= htmlspecialchars($comparison['plan_b']['name'] ?? '') ?></div>
-                        <div class="cp-version style-62298">v<?= $comparison['plan_b']['version'] ?></div>
+                    <div >
+                        <div >Plan B</div>
+                        <div ><?= htmlspecialchars($comparison['plan_b']['name'] ?? '') ?></div>
+                        <div class="cp-version">v<?= $comparison['plan_b']['version'] ?></div>
                     </div>
                 </div>
             </div>
 
-            <h6 class="style-36277">Global Parameters</h6>
+            <h6 >Global Parameters</h6>
             <div class="row mb-4">
                 <?php foreach (['global' => 'Global Cap', 'track_a' => 'Track A', 'track_b' => 'Track B', 'track_c' => 'Track C', 'royalty' => 'Royalty Pool'] as $key => $label): ?>
                     <?php
@@ -86,12 +86,12 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     $diff = $valB - $valA;
                     ?>
                     <div class="col-md-2">
-                        <div class="style-15110">
-                            <div class="style-76820"><?= $label ?></div>
-                            <div class="plan-a style-15627"><?= $valA ?>%</div>
-                            <div class="style-54323">vs</div>
-                            <div class="plan-b style-15627"><?= $valB ?>%</div>
-                            <div class="<?= $diff > 0 ? 'diff-pos' : ($diff < 0 ? 'diff-neg' : 'diff-zero') ?> style-40481">
+                        <div >
+                            <div ><?= $label ?></div>
+                            <div class="plan-a"><?= $valA ?>%</div>
+                            <div >vs</div>
+                            <div class="plan-b"><?= $valB ?>%</div>
+                            <div class="<?= $diff > 0 ? 'diff-pos' : ($diff < 0 ? 'diff-neg' : 'diff-zero') ?>">
                                 <?= $diff > 0 ? '+' : '' ?><?= $diff ?>%
                             </div>
                         </div>
@@ -99,8 +99,8 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 <?php endforeach; ?>
             </div>
 
-            <h6 class="style-36277">Rank-by-Rank Comparison</h6>
-            <div class="style-50496">
+            <h6 >Rank-by-Rank Comparison</h6>
+            <div >
                 <table class="table compare-table m-0">
                     <thead>
                         <tr>
@@ -126,7 +126,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                             $ld = $lv['level_b'] - $lv['level_a'];
                             ?>
                             <tr>
-                                <td class="style-35725"><?= htmlspecialchars($lv['name_a'] ?? '') ?> / <?= htmlspecialchars($lv['name_b'] ?? '') ?></td>
+                                <td ><?= htmlspecialchars($lv['name_a'] ?? '') ?> / <?= htmlspecialchars($lv['name_b'] ?? '') ?></td>
                                 <td class="plan-a"><?= $lv['direct_a'] ?>%</td>
                                 <td class="plan-b"><?= $lv['direct_b'] ?>%</td>
                                 <td class="<?= $dd > 0 ? 'diff-pos' : ($dd < 0 ? 'diff-neg' : 'diff-zero') ?>"><?= $dd > 0 ? '+' : '' ?><?= $dd ?>%</td>
@@ -144,8 +144,8 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 </table>
             </div>
         <?php else: ?>
-            <div class="style-52260">
-                <i class="fas fa-columns style-86717"></i>
+            <div >
+                <i class="fas fa-columns"></i>
                 Select two plans and click Compare to see side-by-side differences.
             </div>
         <?php endif; ?>

@@ -335,7 +335,7 @@ foreach ($plans as $plan):
     <table class="comparison-table">
         <thead>
             <tr>
-                <th class="style-19004">Feature</th>
+                <th >Feature</th>
                 <?php foreach ($plans as $p): ?>
                     <th><?= htmlspecialchars($p['name'] ?? '') ?></th>
                 <?php endforeach; ?>
@@ -369,43 +369,43 @@ foreach ($plans as $plan):
             <tr>
                 <td>CRM Pipeline</td>
                 <?php foreach ($plans as $p): ?>
-                    <td><i class="fas fa-check style-84511"></i></td>
+                    <td><i class="fas fa-check"></i></td>
                 <?php endforeach; ?>
             </tr>
             <tr>
                 <td>Kanban Board</td>
                 <?php foreach ($plans as $p): ?>
-                    <td><i class="fas fa-<?= ($p['slug'] ?? '') === 'free' ? 'xmark' : 'check' ?> style-22637"></i></td>
+                    <td><i class="fas fa-<?= ($p['slug'] ?? '') === 'free' ? 'xmark' : 'check' ?>"></i></td>
                 <?php endforeach; ?>
             </tr>
             <tr>
                 <td>API Access</td>
                 <?php foreach ($plans as $p): ?>
-                    <td><i class="fas fa-<?= ($p['api_access'] ?? 0) ? 'check' : 'xmark' ?> style-64853"></i></td>
+                    <td><i class="fas fa-<?= ($p['api_access'] ?? 0) ? 'check' : 'xmark' ?>"></i></td>
                 <?php endforeach; ?>
             </tr>
             <tr>
                 <td>White Label</td>
                 <?php foreach ($plans as $p): ?>
-                    <td><i class="fas fa-<?= ($p['white_label'] ?? 0) ? 'check' : 'xmark' ?> style-75536"></i></td>
+                    <td><i class="fas fa-<?= ($p['white_label'] ?? 0) ? 'check' : 'xmark' ?>"></i></td>
                 <?php endforeach; ?>
             </tr>
             <tr>
                 <td>MLM Engine</td>
                 <?php foreach ($plans as $p): ?>
-                    <td><i class="fas fa-<?= ($p['mlm_engine'] ?? 0) ? 'check' : 'xmark' ?> style-24574"></i></td>
+                    <td><i class="fas fa-<?= ($p['mlm_engine'] ?? 0) ? 'check' : 'xmark' ?>"></i></td>
                 <?php endforeach; ?>
             </tr>
             <tr>
                 <td>AI Features</td>
                 <?php foreach ($plans as $p): ?>
-                    <td><i class="fas fa-<?= ($p['ai_features'] ?? 0) ? 'check' : 'xmark' ?> style-793"></i></td>
+                    <td><i class="fas fa-<?= ($p['ai_features'] ?? 0) ? 'check' : 'xmark' ?>"></i></td>
                 <?php endforeach; ?>
             </tr>
             <tr>
                 <td>Priority Support</td>
                 <?php foreach ($plans as $p): ?>
-                    <td><i class="fas fa-<?= ($p['priority_support'] ?? 0) ? 'check' : 'xmark' ?> style-7763"></i></td>
+                    <td><i class="fas fa-<?= ($p['priority_support'] ?? 0) ? 'check' : 'xmark' ?>"></i></td>
                 <?php endforeach; ?>
             </tr>
         </tbody>
@@ -415,7 +415,7 @@ foreach ($plans as $plan):
 <div class="cta-section">
     <h2>Ready to Grow Your Real Estate Business?</h2>
     <p>Start your 14-day free trial. No credit card required.</p>
-    <a href="<?= $base ?>/tenant-signup" class="btn-plan primary style-49967">Get Started Now</a>
+    <a href="<?= $base ?>/tenant-signup" class="btn-plan primary">Get Started Now</a>
 </div>
 
 <div class="footer-note">

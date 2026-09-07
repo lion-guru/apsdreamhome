@@ -55,9 +55,16 @@ $alertsOn = (int)($search['email_alerts'] ?? 0) === 1;
                     <div class="card property-card h-100">
                         <div class="position-relative">
                             <?php
-                            $imgSrc = !empty($p['image']) ? BASE_URL . '/assets/images/properties/' . htmlspecialchars($p['image'] ?? '') : BASE_URL . '/assets/images/placeholder/property.svg';
+                            $imgRaw = $p['image'] ?? '';
+                            if (empty($imgRaw)) {
+                                $imgSrc = BASE_URL . '/assets/images/placeholder/property.svg';
+                            } elseif (strpos($imgRaw, 'http') === 0 || strpos($imgRaw, '/') === 0) {
+                                $imgSrc = $imgRaw;
+                            } else {
+                                $imgSrc = BASE_URL . '/' . ltrim($imgRaw, '/');
+                            }
                             ?>
-                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top style-12213"
+                            <img src="<?= htmlspecialchars($imgSrc)?>" class="card-img-top"
                                  onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
                             <span class="badge bg-<?= ($p['listing_type'] ?? 'sell') === 'rent' ? 'info' : 'success' ?> position-absolute top-0 end-0 m-2">
                                 <?= ucfirst($p['listing_type'] ?? 'Sell') ?>

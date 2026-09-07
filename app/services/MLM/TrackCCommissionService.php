@@ -132,12 +132,16 @@ class TrackCCommissionService
 
         $status = $isMissed ? 'missed' : 'pending';
 
+        $planSnapshot = $this->getActivePlanSnapshot();
+
         $stmt = $db->prepare("
             INSERT INTO mlm_commission_ledger
                 (beneficiary_user_id, source_user_id, commission_type, amount,
                  level, sale_amount, commission_percentage, status, notes,
-                 booking_id, receipt_id, hold_until, created_at, tenant_id)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 45 DAY), NOW(), ?)
+                 booking_id, receipt_id, hold_until, created_at, tenant_id,
+                 plan_id, plan_version, plan_snapshot, calculation_engine)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 45 DAY), NOW(), ?,
+                    ?, ?, ?, 'hybrid')
         ");
         $stmt->execute([
             $beneficiaryId,
@@ -152,6 +156,8 @@ class TrackCCommissionService
             $bookingId,
             $receiptId,
             $this->getTenantId(),
+            $planSnapshot['plan_id'] ?? null, $planSnapshot['plan_version'] ?? null,
+            $planSnapshot ? json_encode($planSnapshot) : null,
         ]);
         return (int) $db->lastInsertId();
     }
@@ -163,5 +169,34 @@ class TrackCCommissionService
         } catch (\Throwable $e) {
             return 1;
         }
+    }
+
+    private function getActivePlanSnapshot(): ?array
+    {
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $stmt = $db->prepare("SELECT id, version, global_cap_pct, track_a_pct, track_b_pct, track_c_pct, royalty_pool_pct, same_level_override_gen1, same_level_override_gen2, effective_date, expiry_date FROM mlm_commission_plans WHERE status = 'active' ORDER BY version DESC LIMIT 1");
+            $stmt->execute();
+            $plan = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if ($plan) {
+                return [
+                    'plan_id'           => (int)$plan['id'],
+                    'plan_version'      => (int)$plan['version'],
+                    'global_cap_pct'    => (float)$plan['global_cap_pct'],
+                    'track_a_pct'       => (float)$plan['track_a_pct'],
+                    'track_b_pct'       => (float)$plan['track_b_pct'],
+                    'track_c_pct'       => (float)$plan['track_c_pct'],
+                    'royalty_pool_pct'  => (float)$plan['royalty_pool_pct'],
+                    'same_level_gen1'   => (float)$plan['same_level_override_gen1'],
+                    'same_level_gen2'   => (float)$plan['same_level_override_gen2'],
+                    'effective_date'    => $plan['effective_date'],
+                    'expiry_date'       => $plan['expiry_date'],
+                ];
+            }
+        } catch (\Throwable $e) {
+            error_log(__METHOD__ . ' error: ' . $e->getMessage());
+        }
+
+        return ['plan_id' => 1, 'plan_version' => 1, 'global_cap_pct' => 20.0, 'track_a_pct' => 15.0, 'track_b_pct' => 3.0, 'track_c_pct' => 2.0, 'royalty_pool_pct' => 2.0, 'same_level_gen1' => 2.0, 'same_level_gen2' => 1.0];
     }
 }

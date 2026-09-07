@@ -10,7 +10,7 @@
     width: 65px;
     height: 65px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--color-indigo) 0%, var(--color-purple) 100%);
     border: none;
     color: white;
     font-size: 28px;
@@ -30,7 +30,7 @@
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--color-indigo) 0%, var(--color-purple) 100%);
     animation: pulse 2s infinite;
     z-index: -1;
     top: 0;
@@ -79,7 +79,7 @@
 }
 
 .ai-chat-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--color-indigo) 0%, var(--color-purple) 100%);
     color: white;
     padding: 15px 20px;
     display: flex;
@@ -206,7 +206,7 @@
 }
 
 .ai-message.user .ai-message-content {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--color-indigo) 0%, var(--color-purple) 100%);
     color: white;
     border-bottom-right-radius: 4px;
 }
@@ -240,7 +240,7 @@
 }
 
 .quick-btn:hover {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--color-indigo) 0%, var(--color-purple) 100%);
     color: white;
     border-color: transparent;
     transform: translateY(-2px);
@@ -268,14 +268,14 @@
 }
 
 .ai-chat-footer input:focus {
-    border-color: #667eea;
+    border-color: var(--color-indigo);
 }
 
 .ai-send-btn {
     width: 45px;
     height: 45px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--color-indigo) 0%, var(--color-purple) 100%);
     border: none;
     color: white;
     cursor: pointer;
@@ -342,7 +342,7 @@
 }
 
 .ai-suggestion:hover {
-    background: #667eea;
+    background: var(--color-indigo);
     color: white;
 }
 

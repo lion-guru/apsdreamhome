@@ -16,12 +16,12 @@ $payout_history = $payout_history ?? [];
 <div class="container-fluid px-4 py-4">
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card border-0 shadow-sm overflow-hidden style-36203">
+            <div class="card border-0 shadow-sm overflow-hidden">
                 <div class="card-body p-4">
                     <div class="row align-items-center">
                         <div class="col-md-8">
                             <div class="d-flex align-items-center mb-3">
-                                <div class="rounded-circle bg-white bg-opacity-20 d-flex align-items-center justify-content-center me-3 style-12716">
+                                <div class="rounded-circle bg-white bg-opacity-20 d-flex align-items-center justify-content-center me-3">
                                     <i class="fas fa-user-tie fa-2x text-white"></i>
                                 </div>
                                 <div>
@@ -61,7 +61,7 @@ $payout_history = $payout_history ?? [];
                             <h3 class="fw-bold mb-0 text-dark"><?= number_format($team_size) ?></h3>
                             <small class="text-success"><i class="fas fa-users me-1"></i><?= __('mlm_dash_active_members', [], 'Active Members') ?></small>
                         </div>
-                        <div class="rounded-3 d-flex align-items-center justify-content-center style-76438">
+                        <div class="rounded-3 d-flex align-items-center justify-content-center">
                             <i class="fas fa-users text-success fa-lg"></i>
                         </div>
                     </div>
@@ -77,7 +77,7 @@ $payout_history = $payout_history ?? [];
                             <h3 class="fw-bold mb-0 text-dark">&#8377;<?= number_format($total_sales, 2) ?></h3>
                             <small class="text-info"><i class="fas fa-chart-line me-1"></i><?= __('mlm_dash_all_time', [], 'All Time') ?></small>
                         </div>
-                        <div class="rounded-3 d-flex align-items-center justify-content-center style-41431">
+                        <div class="rounded-3 d-flex align-items-center justify-content-center">
                             <i class="fas fa-rupee-sign text-info fa-lg"></i>
                         </div>
                     </div>
@@ -93,7 +93,7 @@ $payout_history = $payout_history ?? [];
                             <h3 class="fw-bold mb-0 text-dark">&#8377;<?= number_format($commission_earned, 2) ?></h3>
                             <small class="text-success"><i class="fas fa-arrow-up me-1"></i><?= __('mlm_dash_lifetime', [], 'Lifetime') ?></small>
                         </div>
-                        <div class="rounded-3 d-flex align-items-center justify-content-center style-76438">
+                        <div class="rounded-3 d-flex align-items-center justify-content-center">
                             <i class="fas fa-hand-holding-usd text-success fa-lg"></i>
                         </div>
                     </div>
@@ -109,7 +109,7 @@ $payout_history = $payout_history ?? [];
                             <h3 class="fw-bold mb-0 text-dark">&#8377;<?= number_format($pending_payout, 2) ?></h3>
                             <small class="text-warning"><i class="fas fa-clock me-1"></i><?= __('mlm_dash_processing', [], 'Processing') ?></small>
                         </div>
-                        <div class="rounded-3 d-flex align-items-center justify-content-center style-21381">
+                        <div class="rounded-3 d-flex align-items-center justify-content-center">
                             <i class="fas fa-hourglass-half text-warning fa-lg"></i>
                         </div>
                     </div>
@@ -142,17 +142,17 @@ $payout_history = $payout_history ?? [];
 
         <!-- LEFT: Rank Progress Card -->
         <div class="col-lg-5">
-            <div class="card border-0 shadow-sm h-100 style-56043">
+            <div class="card border-0 shadow-sm h-100">
                 <div class="card-body p-4">
-                    <h6 class="fw-bold text-dark mb-4"><i class="fas fa-trophy me-2 style-1977"></i>My Rank Progress</h6>
+                    <h6 class="fw-bold text-dark mb-4"><i class="fas fa-trophy me-2"></i>My Rank Progress</h6>
 
                     <!-- Current Rank Badge -->
                     <div class="d-flex align-items-center mb-4">
-                        <div class="rounded-3 d-flex align-items-center justify-content-center me-3 style-3971">
-                            <i class="fas fa-medal fa-xl style-1977"></i>
+                        <div class="rounded-3 d-flex align-items-center justify-content-center me-3">
+                            <i class="fas fa-medal fa-xl"></i>
                         </div>
                         <div>
-                            <div class="badge px-3 py-2 mb-1 fw-bold fs-6 style-2595">
+                            <div class="badge px-3 py-2 mb-1 fw-bold fs-6">
                                 <?= htmlspecialchars($currentRankLabel ?? '') ?>
                             </div>
                             <div class="small text-muted">Commission Rate: <strong class="text-dark"><?= $currentRankRate ?>%</strong> on your plot sales</div>
@@ -163,12 +163,11 @@ $payout_history = $payout_history ?? [];
                     <?php if ($amountToNext > 0): ?>
                     <div class="mb-3">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <small class="fw-semibold text-dark">Progress to <span class="style-75371"><?= htmlspecialchars($nextRankLabel ?? '') ?></span></small>
-                            <span class="badge rounded-pill style-37741"><?= $rankProgressPct ?>%</span>
+                            <small class="fw-semibold text-dark">Progress to <span ><?= htmlspecialchars($nextRankLabel ?? '') ?></span></small>
+                            <span class="badge rounded-pill"><?= $rankProgressPct ?>%</span>
                         </div>
-                        <div class="progress style-78839">
+                        <div class="progress">
                             <div class="progress-bar" role="progressbar"
-                                 class="style-40953"
                                  aria-valuenow="<?= $rankProgressPct ?>" aria-valuemin="0" aria-valuemax="100">
                             </div>
                         </div>
@@ -179,11 +178,11 @@ $payout_history = $payout_history ?? [];
                     </div>
 
                     <!-- Next Rank Unlock Preview -->
-                    <div class="rounded-3 p-3 style-19689">
+                    <div class="rounded-3 p-3">
                         <div class="d-flex align-items-center">
-                            <i class="fas fa-lock me-2 style-75371"></i>
+                            <i class="fas fa-lock me-2"></i>
                             <div>
-                                <div class="fw-semibold small style-75371">Unlock <?= htmlspecialchars($nextRankLabel ?? '') ?></div>
+                                <div class="fw-semibold small">Unlock <?= htmlspecialchars($nextRankLabel ?? '') ?></div>
                                 <small class="text-muted">Earn <strong><?= $nextRankRate ?>%</strong> on plot sales (+<?= round($nextRankRate - $currentRankRate, 1) ?>% uplift)</small>
                             </div>
                         </div>
@@ -204,7 +203,7 @@ $payout_history = $payout_history ?? [];
                                 $isActive = $rb['rank_name'] === $currentRank;
                                 $isPassed = ($rb['rank_order'] ?? 99) < ($rankBenefits[array_search($currentRank, array_column($rankBenefits,'rank_name'))]['rank_order'] ?? 0);
                             ?>
-                            <span class="badge px-2 py-1 style-75652">
+                            <span class="badge px-2 py-1">
                                 <?= htmlspecialchars($rb['rank_name'] === $currentRank ? 'â˜… ' : '') ?><?= (float)$rb['direct_sale_pct'] ?>%
                             </span>
                             <?php endforeach; ?>
@@ -247,19 +246,19 @@ $payout_history = $payout_history ?? [];
                             $pct       = $totalCommEarned > 0 ? round(($ct['total'] / $totalCommEarned) * 100, 1) : 0;
                         ?>
                         <div class="d-flex align-items-center gap-3">
-                            <div class="rounded-2 d-flex align-items-center justify-content-center flex-shrink-0 style-57509">
-                                <i class="fas <?= $typeMeta['icon'] ?> small style-44543"></i>
+                            <div class="rounded-2 d-flex align-items-center justify-content-center flex-shrink-0">
+                                <i class="fas <?= $typeMeta['icon'] ?> small"></i>
                             </div>
                             <div class="flex-grow-1 min-w-0">
                                 <div class="d-flex justify-content-between align-items-center mb-1">
                                     <small class="fw-semibold text-dark text-truncate"><?= htmlspecialchars($typeMeta['label'] ?? '') ?></small>
-                                    <small class="fw-bold ms-2 flex-shrink-0 style-44543">₹<?= number_format($ct['total']) ?></small>
+                                    <small class="fw-bold ms-2 flex-shrink-0">₹<?= number_format($ct['total']) ?></small>
                                 </div>
-                                <div class="progress style-94565">
-                                    <div class="progress-bar style-32326"></div>
+                                <div class="progress">
+                                    <div class="progress-bar"></div>
                                 </div>
                             </div>
-                            <div class="text-end flex-shrink-0 style-2939">
+                            <div class="text-end flex-shrink-0">
                                 <small class="text-muted"><?= $pct ?>%</small>
                             </div>
                         </div>
@@ -284,8 +283,8 @@ $payout_history = $payout_history ?? [];
                     <h6 class="fw-bold mb-3 text-dark"><i class="fas fa-bolt text-success me-2"></i><?= __('mlm_dash_quick_actions', [], 'Quick Actions') ?></h6>
                     <div class="row g-3">
                         <div class="col-xl-3 col-md-6">
-                            <a href="javascript:void(0)" onclick="shareReferralLink()" class="btn w-100 py-3 fw-semibold text-start d-flex align-items-center text-decoration-none style-46768">
-                                <div class="rounded-3 d-flex align-items-center justify-content-center me-3 style-98741">
+                            <a href="javascript:void(0)" onclick="shareReferralLink()" class="btn w-100 py-3 fw-semibold text-start d-flex align-items-center text-decoration-none">
+                                <div class="rounded-3 d-flex align-items-center justify-content-center me-3">
                                     <i class="fas fa-share-alt text-success"></i>
                                 </div>
                                 <div>
@@ -295,8 +294,8 @@ $payout_history = $payout_history ?? [];
                             </a>
                         </div>
                         <div class="col-xl-3 col-md-6">
-                            <a href="#downlineSection" class="btn w-100 py-3 fw-semibold text-start d-flex align-items-center text-decoration-none style-75889">
-                                <div class="rounded-3 d-flex align-items-center justify-content-center me-3 style-16060">
+                            <a href="#downlineSection" class="btn w-100 py-3 fw-semibold text-start d-flex align-items-center text-decoration-none">
+                                <div class="rounded-3 d-flex align-items-center justify-content-center me-3">
                                     <i class="fas fa-sitemap text-info"></i>
                                 </div>
                                 <div>
@@ -306,8 +305,8 @@ $payout_history = $payout_history ?? [];
                             </a>
                         </div>
                         <div class="col-xl-3 col-md-6">
-                            <a href="javascript:void(0)" onclick="requestPayout()" class="btn w-100 py-3 fw-semibold text-start d-flex align-items-center text-decoration-none style-77524">
-                                <div class="rounded-3 d-flex align-items-center justify-content-center me-3 style-40950">
+                            <a href="javascript:void(0)" onclick="requestPayout()" class="btn w-100 py-3 fw-semibold text-start d-flex align-items-center text-decoration-none">
+                                <div class="rounded-3 d-flex align-items-center justify-content-center me-3">
                                     <i class="fas fa-wallet text-warning"></i>
                                 </div>
                                 <div>
@@ -317,8 +316,8 @@ $payout_history = $payout_history ?? [];
                             </a>
                         </div>
                         <div class="col-xl-3 col-md-6">
-                            <a href="javascript:void(0)" onclick="downloadStatement()" class="btn w-100 py-3 fw-semibold text-start d-flex align-items-center text-decoration-none style-27434">
-                                <div class="rounded-3 d-flex align-items-center justify-content-center me-3 style-18893">
+                            <a href="javascript:void(0)" onclick="downloadStatement()" class="btn w-100 py-3 fw-semibold text-start d-flex align-items-center text-decoration-none">
+                                <div class="rounded-3 d-flex align-items-center justify-content-center me-3">
                                     <i class="fas fa-file-download text-secondary"></i>
                                 </div>
                                 <div>
@@ -341,7 +340,7 @@ $payout_history = $payout_history ?? [];
                     <h6 class="fw-bold text-dark"><i class="fas fa-link text-success me-2"></i><?= __('mlm_dash_referral_code', [], 'Referral Code') ?></h6>
                 </div>
                 <div class="card-body p-4">
-                    <div class="text-center p-4 rounded-3 mb-3 style-29574">
+                    <div class="text-center p-4 rounded-3 mb-3">
                         <small class="text-white-50 d-block mb-2"><?= __('mlm_dash_unique_code', [], 'Your Unique Code') ?></small>
                         <h2 class="text-white fw-bold font-monospace mb-0"><?= htmlspecialchars($referral_code ?? '') ?></h2>
                     </div>
@@ -352,16 +351,16 @@ $payout_history = $payout_history ?? [];
                         </button>
                     </div>
                     <div class="d-flex justify-content-center gap-3">
-                        <button class="btn btn-outline-success btn-sm rounded-circle style-48301" onclick="shareVia('whatsapp')" title="WhatsApp">
+                        <button class="btn btn-outline-success btn-sm rounded-circle" onclick="shareVia('whatsapp')" title="WhatsApp">
                             <i class="fab fa-whatsapp"></i>
                         </button>
-                        <button class="btn btn-outline-primary btn-sm rounded-circle style-48301" onclick="shareVia('telegram')" title="Telegram">
+                        <button class="btn btn-outline-primary btn-sm rounded-circle" onclick="shareVia('telegram')" title="Telegram">
                             <i class="fab fa-telegram-plane"></i>
                         </button>
-                        <button class="btn btn-outline-info btn-sm rounded-circle style-48301" onclick="shareVia('twitter')" title="Twitter">
+                        <button class="btn btn-outline-info btn-sm rounded-circle" onclick="shareVia('twitter')" title="Twitter">
                             <i class="fab fa-twitter"></i>
                         </button>
-                        <button class="btn btn-outline-secondary btn-sm rounded-circle style-48301" onclick="shareVia('email')" title="Email">
+                        <button class="btn btn-outline-secondary btn-sm rounded-circle" onclick="shareVia('email')" title="Email">
                             <i class="fas fa-envelope"></i>
                         </button>
                     </div>
@@ -375,12 +374,12 @@ $payout_history = $payout_history ?? [];
                 <div class="card-header bg-white border-0 pt-4 pb-0">
                     <h6 class="fw-bold text-dark"><i class="fas fa-project-diagram text-success me-2"></i><?= __('mlm_dash_network_tree', [], 'Network Tree') ?></h6>
                 </div>
-                <div class="card-body p-4 style-61454">
+                <div class="card-body p-4">
                     <?php if (!empty($downline_members)): ?>
                         <ul class="list-unstyled mb-0">
                             <li class="mb-3">
-                                <div class="d-flex align-items-center p-3 rounded-3 style-29574">
-                                    <div class="rounded-circle bg-white d-flex align-items-center justify-content-center me-3 style-81491">
+                                <div class="d-flex align-items-center p-3 rounded-3">
+                                    <div class="rounded-circle bg-white d-flex align-items-center justify-content-center me-3">
                                         <i class="fas fa-crown text-success"></i>
                                     </div>
                                     <div>
@@ -398,13 +397,13 @@ $payout_history = $payout_history ?? [];
                                     <?php foreach ($level1 as $member): ?>
                                     <li class="mb-2">
                                         <div class="d-flex align-items-center p-2 rounded-2 bg-light">
-                                            <div class="rounded-circle bg-success bg-opacity-10 d-flex align-items-center justify-content-center me-2 style-93118">
+                                            <div class="rounded-circle bg-success bg-opacity-10 d-flex align-items-center justify-content-center me-2">
                                                 <i class="fas fa-user text-success small"></i>
                                             </div>
                                             <div class="flex-grow-1">
                                                 <span class="fw-semibold small"><?= htmlspecialchars($member['name'] ?? __('mlm_dash_member', [], 'Member')) ?></span>
                                                 <span class="badge bg-success bg-opacity-10 text-success ms-1 small">L1</span>
-                                                <small class="d-block text-muted style-11723"><?= __('mlm_dash_joined', [], 'Joined:') ?> <?= htmlspecialchars($member['join_date'] ?? 'N/A') ?></small>
+                                                <small class="d-block text-muted"><?= __('mlm_dash_joined', [], 'Joined:') ?> <?= htmlspecialchars($member['join_date'] ?? 'N/A') ?></small>
                                             </div>
                                             <span class="badge <?= ($member['status'] ?? 'active') === 'active' ? 'bg-success' : 'bg-secondary' ?> small">
                                                 <?= ucfirst(htmlspecialchars($member['status'] ?? 'active')) ?>
@@ -419,15 +418,15 @@ $payout_history = $payout_history ?? [];
                                         <ul class="list-unstyled ms-4 mt-1 border-start border-2 border-success-subtle ps-3">
                                             <?php foreach ($l2Children as $child): ?>
                                             <li class="mb-1">
-                                                <div class="d-flex align-items-center p-2 rounded-2 style-65620">
-                                                    <div class="rounded-circle bg-success bg-opacity-10 d-flex align-items-center justify-content-center me-2 style-2458">
-                                                        <i class="fas fa-user text-success style-65487"></i>
+                                                <div class="d-flex align-items-center p-2 rounded-2">
+                                                    <div class="rounded-circle bg-success bg-opacity-10 d-flex align-items-center justify-content-center me-2">
+                                                        <i class="fas fa-user text-success"></i>
                                                     </div>
                                                     <div class="flex-grow-1">
                                                         <span class="small"><?= htmlspecialchars($child['name'] ?? __('mlm_dash_member', [], 'Member')) ?></span>
-                                                        <span class="badge bg-success bg-opacity-10 text-success ms-1 style-65487">L2</span>
+                                                        <span class="badge bg-success bg-opacity-10 text-success ms-1">L2</span>
                                                     </div>
-                                                    <span class="badge <?= ($child['status'] ?? 'active') === 'active' ? 'bg-success' : 'bg-secondary' ?> style-65487">
+                                                    <span class="badge <?= ($child['status'] ?? 'active') === 'active' ? 'bg-success' : 'bg-secondary' ?>">
                                                         <?= ucfirst(htmlspecialchars($child['status'] ?? 'active')) ?>
                                                     </span>
                                                 </div>
@@ -443,7 +442,7 @@ $payout_history = $payout_history ?? [];
                         </ul>
                     <?php else: ?>
                         <div class="text-center py-5">
-                            <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center mb-3 style-94767">
+                            <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center mb-3">
                                 <i class="fas fa-seedling fa-2x text-muted"></i>
                             </div>
                             <h6 class="text-muted"><?= __('mlm_dash_network_empty', [], 'Your network is empty') ?></h6>
@@ -471,7 +470,7 @@ $payout_history = $payout_history ?? [];
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                             <thead>
-                                <tr class="style-93173">
+                                <tr >
                                     <th class="border-0 fw-semibold text-muted small text-uppercase">#</th>
                                     <th class="border-0 fw-semibold text-muted small text-uppercase"><?= __('mlm_dash_th_name', [], 'Name') ?></th>
                                     <th class="border-0 fw-semibold text-muted small text-uppercase"><?= __('mlm_dash_th_level', [], 'Level') ?></th>
@@ -486,7 +485,7 @@ $payout_history = $payout_history ?? [];
                                     <td class="text-muted small"><?= $idx++ ?></td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <div class="rounded-circle bg-success bg-opacity-10 d-flex align-items-center justify-content-center me-2 style-71789">
+                                            <div class="rounded-circle bg-success bg-opacity-10 d-flex align-items-center justify-content-center me-2">
                                                 <i class="fas fa-user text-success small"></i>
                                             </div>
                                             <span class="fw-semibold"><?= htmlspecialchars($member['name'] ?? 'N/A') ?></span>
@@ -534,7 +533,7 @@ $payout_history = $payout_history ?? [];
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                             <thead>
-                                <tr class="style-93173">
+                                <tr >
                                     <th class="border-0 fw-semibold text-muted small text-uppercase"><?= __('mlm_dash_th_date', [], 'Date') ?></th>
                                     <th class="border-0 fw-semibold text-muted small text-uppercase"><?= __('mlm_dash_th_type', [], 'Type') ?></th>
                                     <th class="border-0 fw-semibold text-muted small text-uppercase"><?= __('mlm_dash_th_amount', [], 'Amount') ?></th>
@@ -600,7 +599,7 @@ $payout_history = $payout_history ?? [];
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                             <thead>
-                                <tr class="style-93173">
+                                <tr >
                                     <th class="border-0 fw-semibold text-muted small text-uppercase"><?= __('mlm_dash_th_date', [], 'Date') ?></th>
                                     <th class="border-0 fw-semibold text-muted small text-uppercase"><?= __('mlm_dash_th_amount', [], 'Amount') ?></th>
                                     <th class="border-0 fw-semibold text-muted small text-uppercase"><?= __('mlm_dash_th_status', [], 'Status') ?></th>

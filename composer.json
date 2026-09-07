@@ -29,10 +29,7 @@
     },
     "config": {
         "sort-packages": true,
-        "optimize-autoloader": true,
-        "audit": {
-            "ignore": ["cboden/ratchet"]
-        }
+        "optimize-autoloader": true
     },
     "minimum-stability": "stable",
     "prefer-stable": true

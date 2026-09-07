@@ -15,9 +15,9 @@ $filters = $filters ?? [];
     </div>
 
     <!-- Stat Cards -->
-    <div class="aps-cp-stats-grid style-43624">
+    <div class="aps-cp-stats-grid">
         <div class="aps-cp-stat-card">
-            <div class="aps-cp-stat-icon style-6196">
+            <div class="aps-cp-stat-icon">
                 <i class="fas fa-money-bill-wave"></i>
             </div>
             <div class="aps-cp-stat-info">
@@ -27,7 +27,7 @@ $filters = $filters ?? [];
             </div>
         </div>
         <div class="aps-cp-stat-card">
-            <div class="aps-cp-stat-icon style-82361">
+            <div class="aps-cp-stat-icon">
                 <i class="fas fa-clock"></i>
             </div>
             <div class="aps-cp-stat-info">
@@ -37,7 +37,7 @@ $filters = $filters ?? [];
             </div>
         </div>
         <div class="aps-cp-stat-card">
-            <div class="aps-cp-stat-icon style-92749">
+            <div class="aps-cp-stat-icon">
                 <i class="fas fa-check-circle"></i>
             </div>
             <div class="aps-cp-stat-info">
@@ -47,7 +47,7 @@ $filters = $filters ?? [];
             </div>
         </div>
         <div class="aps-cp-stat-card">
-            <div class="aps-cp-stat-icon style-99507">
+            <div class="aps-cp-stat-icon">
                 <i class="fas fa-times-circle"></i>
             </div>
             <div class="aps-cp-stat-info">
@@ -58,10 +58,10 @@ $filters = $filters ?? [];
     </div>
 
     <!-- Filters -->
-    <div class="aps-cp-card style-98782">
+    <div class="aps-cp-card">
         <div class="aps-cp-card-body">
-            <form method="GET" action="<?= BASE_URL ?>/admin/finance/collections" class="aps-cp-form-row style-68981">
-                <div class="aps-cp-form-group style-57352">
+            <form method="GET" action="<?= BASE_URL ?>/admin/finance/collections" class="aps-cp-form-row">
+                <div class="aps-cp-form-group">
                     <label class="aps-cp-form-label">Status</label>
                     <select name="status" class="aps-cp-form-select">
                         <option value="">All</option>
@@ -71,7 +71,7 @@ $filters = $filters ?? [];
                         <option value="reconciled" <?= ($filters['status'] ?? '') === 'reconciled' ? 'selected' : '' ?>>Reconciled</option>
                     </select>
                 </div>
-                <div class="aps-cp-form-group style-57352">
+                <div class="aps-cp-form-group">
                     <label class="aps-cp-form-label">Collector</label>
                     <select name="collector_id" class="aps-cp-form-select">
                         <option value="">All Collectors</option>
@@ -80,11 +80,11 @@ $filters = $filters ?? [];
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="aps-cp-form-group style-57352">
+                <div class="aps-cp-form-group">
                     <label class="aps-cp-form-label">From Date</label>
                     <input type="date" name="from_date" class="aps-cp-form-input" value="<?= htmlspecialchars($filters['from_date'] ?? '') ?>">
                 </div>
-                <div class="aps-cp-form-group style-57352">
+                <div class="aps-cp-form-group">
                     <label class="aps-cp-form-label">To Date</label>
                     <input type="date" name="to_date" class="aps-cp-form-input" value="<?= htmlspecialchars($filters['to_date'] ?? '') ?>">
                 </div>
@@ -99,10 +99,10 @@ $filters = $filters ?? [];
         <div class="aps-cp-card-header">
             <span><i class="fas fa-list"></i> Collections (<?= count($collections) ?>)</span>
         </div>
-        <div class="aps-cp-card-body style-97767">
+        <div class="aps-cp-card-body">
             <?php if (empty($collections)): ?>
-                <div class="aps-cp-empty-state style-85973">
-                    <i class="fas fa-inbox style-3949"></i>
+                <div class="aps-cp-empty-state">
+                    <i class="fas fa-inbox"></i>
                     <p>No collections found.</p>
                 </div>
             <?php else: ?>
@@ -125,7 +125,7 @@ $filters = $filters ?? [];
                                     <td><?= htmlspecialchars($c['collection_date'] ?? '') ?></td>
                                     <td><?= htmlspecialchars($c['customer_name'] ?? '') ?></td>
                                     <td><?= htmlspecialchars($c['collector_name'] ?? 'N/A') ?></td>
-                                    <td class="style-24039">₹<?= number_format($c['amount'], 2) ?></td>
+                                    <td >₹<?= number_format($c['amount'], 2) ?></td>
                                     <td><span class="aps-cp-badge aps-cp-badge-info"><?= ucfirst($c['payment_method']) ?></span></td>
                                     <td>
                                         <?php
@@ -136,15 +136,15 @@ $filters = $filters ?? [];
                                     </td>
                                     <td>
                                         <?php if ($c['status'] === 'submitted'): ?>
-                                            <form method="POST" action="<?= BASE_URL ?>/admin/finance/collections/verify" class="style-35851">
+                                            <form method="POST" action="<?= BASE_URL ?>/admin/finance/collections/verify" >
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                                 <input type="hidden" name="id" value="<?= $c['id'] ?>">
                                                 <button type="submit" class="aps-cp-btn aps-cp-btn-sm aps-cp-btn-success" data-aps-confirm="Verify this collection?" aria-label="Confirm"><i class="fas fa-check"></i></button>
                                             </form>
-                                            <form method="POST" action="<?= BASE_URL ?>/admin/finance/collections/reject" class="style-35851">
+                                            <form method="POST" action="<?= BASE_URL ?>/admin/finance/collections/reject" >
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                                 <input type="hidden" name="id" value="<?= $c['id'] ?>">
-                                                <input type="text" name="reason" placeholder="Reason" required class="style-42587">
+                                                <input type="text" name="reason" placeholder="Reason" required >
                                                 <button type="submit" class="aps-cp-btn aps-cp-btn-sm aps-cp-btn-danger" data-aps-confirm="Reject this collection?" aria-label="Close"><i class="fas fa-times"></i></button>
                                             </form>
                                         <?php endif; ?>

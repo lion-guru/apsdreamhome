@@ -131,7 +131,7 @@ $early_settlement = $early_settlement ?? [];
             <?php if (empty($installments)): ?>
                 <div class="text-center text-muted py-4"><p>No installments generated yet.</p></div>
             <?php else: ?>
-                <div class="table-responsive style-61454">
+                <div class="table-responsive">
                     <table class="table table-sm table-hover mb-0">
                         <thead class="sticky-top bg-white"><tr>
                             <th>#</th><th>Due Date</th><th>Principal</th><th>Interest</th><th>Total</th><th>Paid</th><th>Penalty</th><th>Status</th><th>Paid At</th>
@@ -217,13 +217,13 @@ $early_settlement = $early_settlement ?? [];
                                         <div class="btn-group btn-group-sm">
                                             <a href="<?= BASE_URL ?>/admin/company-loans/document/<?= $d['id'] ?>" target="_blank" class="btn btn-outline-primary" title="View"><i class="fas fa-eye"></i></a>
                                             <?php if ($d['status'] === 'draft'): ?>
-                                                <form method="POST" action="<?= BASE_URL ?>/admin/company-loans/document/<?= $d['id'] ?>/finalize" class="style-71727">
+                                                <form method="POST" action="<?= BASE_URL ?>/admin/company-loans/document/<?= $d['id'] ?>/finalize" >
                                                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                                     <button type="submit" class="btn btn-outline-success" title="Finalize" aria-label="Confirm"><i class="fas fa-check"></i></button>
                                                 </form>
                                             <?php endif; ?>
                                             <?php if ($d['status'] === 'final' && !$d['signed_by_customer']): ?>
-                                                <form method="POST" action="<?= BASE_URL ?>/admin/company-loans/document/<?= $d['id'] ?>/sign" class="style-71727">
+                                                <form method="POST" action="<?= BASE_URL ?>/admin/company-loans/document/<?= $d['id'] ?>/sign" >
                                                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                                     <button type="submit" class="btn btn-outline-info" title="Mark as signed" aria-label="Mark as signed"><i class="fas fa-signature"></i></button>
                                                 </form>
@@ -247,7 +247,7 @@ $early_settlement = $early_settlement ?? [];
             <?php if (empty($activity_log)): ?>
                 <div class="text-center text-muted py-3"><p>No activity recorded yet.</p></div>
             <?php else: ?>
-                <div class="table-responsive style-52319">
+                <div class="table-responsive">
                     <table class="table table-sm mb-0">
                         <thead><tr><th>Date</th><th>Action</th><th>Description</th></tr></thead>
                         <tbody>
@@ -393,7 +393,7 @@ $early_settlement = $early_settlement ?? [];
                         <option value="default_notice">Default Notice</option>
                     </select>
                 </div>
-                <div class="mb-3" id="installmentSelectWrapper" class="style-2248">
+                <div class="mb-3" id="installmentSelectWrapper" >
                     <label class="form-label">Installment Number</label>
                     <select name="installment_no" class="form-select">
                         <?php for ($i = 1; $i <= count($installments); $i++): ?>

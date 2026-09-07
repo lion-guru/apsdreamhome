@@ -133,7 +133,7 @@ $statusColors = [
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('nach_form_ifsc', [], 'IFSC Code') ?> <span class="text-danger">*</span></label>
-                                <input type="text" name="ifsc_code" class="form-control" placeholder="<?= __('nach_placeholder_ifsc', [], 'e.g. SBIN0001234') ?>" required pattern="[A-Z]{4}0[A-Z0-9]{6}" maxlength="11" class="style-99357">
+                                <input type="text" name="ifsc_code" class="form-control" placeholder="<?= __('nach_placeholder_ifsc', [], 'e.g. SBIN0001234') ?>" required pattern="[A-Z]{4}0[A-Z0-9]{6}" maxlength="11" >
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('nach_form_mandate_type', [], 'Mandate Type') ?></label>

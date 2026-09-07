@@ -1,7 +1,5 @@
 <?php
 
-// TODO: Add proper error handling with try-catch blocks
-
 // FIXED: Removed missing include - file doesn't exist
 // require_once 'includes/db_connection.php';
 
@@ -160,7 +158,7 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
 
                 <!-- Sidebar -->
                 <div class="col-lg-4">
-                    <div class="project-highlight sticky-top style-36655">
+                    <div class="project-highlight sticky-top">
                         <h3 class="mb-4">Project Overview</h3>
                         <ul class="list-unstyled">
                             <li class="mb-3">

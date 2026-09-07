@@ -31,7 +31,7 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <div class="d-flex align-items-center gap-2">
-                                    <div class="style-60772">
+                                    <div >
                                         <i class="fas fa-<?= $color === 'primary' ? 'users' : ($color === 'success' ? 'check-circle' : ($color === 'warning' ? 'star' : 'filter')) ?> text-<?= $color ?>"></i>
                                     </div>
                                     <div>
@@ -62,7 +62,7 @@
                             </div>
                             <div class="mt-3">
                                 <div class="d-flex justify-content-between mb-1">
-                                    <span class="style-60668"><?= (int)$seg['lead_count'] ?></span>
+                                    <span ><?= (int)$seg['lead_count'] ?></span>
                                     <small class="text-muted">leads matched</small>
                                 </div>
                                 <div class="d-flex flex-wrap gap-1 mt-2">

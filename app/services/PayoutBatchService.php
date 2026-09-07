@@ -150,8 +150,9 @@ class PayoutBatchService
             $existingBatch->execute($existingParams);
             $existingIds = array_flip($existingBatch->fetchAll(PDO::FETCH_COLUMN));
 
-            // TDS config: 194C for contractors (10%), 194J for professionals (10%)
-            $tdsRate = 10.0; // Default 10% TDS
+            // TDS: delegate to TdsConfigService (194H for brokerage/commission)
+            $tdsConfig = new \App\Services\MLM\TdsConfigService($this->pdo);
+            $tdsRate = 5.0; // fallback — 194H default with PAN
 
             $inserted = 0;
             $totalAmount = 0;
@@ -169,7 +170,8 @@ class PayoutBatchService
                 }
 
                 $amount = (float)$entry['amount'];
-                $tds = round($amount * $tdsRate / 100, 2);
+                $tdsResult = $tdsConfig->calculateForCommission($amount);
+                $tds = $tdsResult['tds_amount'];
                 $net = $amount - $tds;
 
                 $ins->execute([

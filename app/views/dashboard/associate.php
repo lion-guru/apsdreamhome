@@ -118,9 +118,8 @@ $notifications = $notifications ?? [];
                 <h5 class="mb-0">Current Rank: <span class="text-primary"><?= $rank_info['rank'] ?></span></h5>
                 <span class="badge bg-light text-primary border"><?= $rank_info['performance'] ?>% Progress</span>
             </div>
-            <div class="progress style-92162">
+            <div class="progress">
                 <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" 
-                     class="style-56845" 
                      aria-valuenow="<?= $rank_info['performance'] ?>" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
             <?php if ($rank_info['next_rank_info']): ?>

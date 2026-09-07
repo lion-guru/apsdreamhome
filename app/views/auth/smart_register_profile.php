@@ -137,7 +137,7 @@ $completionPct = $session['profile_completion_pct'] ?? 0;
                     <small id="completionText"><?php echo e($completionPct); ?>% Complete</small>
                 </div>
                 <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill" class="style-28620"></div>
+                    <div class="progress-fill" id="progressFill" ></div>
                 </div>
             </div>
 

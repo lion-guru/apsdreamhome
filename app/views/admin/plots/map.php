@@ -29,7 +29,7 @@
                 </div>
                 <?php endforeach; ?>
             </div>
-            <div id="plotContainer" class="style-80745">
+            <div id="plotContainer" >
                 <?php foreach ($colonies as $ci => $colony):
                     $cplots = array_filter($all_plots, fn($p) => $p['colony_id'] == $colony['id']);
                     if (!$cplots) continue;
@@ -44,7 +44,7 @@
                 ?>
                 <div class="colony-section mb-4" data-colony="<?= $colony['id'] ?>">
                     <h5 class="text-primary mb-2"><?= htmlspecialchars($colony['name'] ?? '') ?></h5>
-                    <svg viewBox="0 0 <?= $svgW ?> <?= $svgH ?>" class="w-100 border rounded bg-light style-50142">
+                    <svg viewBox="0 0 <?= $svgW ?> <?= $svgH ?>" class="w-100 border rounded bg-light">
                         <text x="<?= $svgW/2 ?>" y="16" text-anchor="middle" font-size="11" fill="#6c757d"><?= htmlspecialchars($colony['name'] ?? '') ?> — <?= count($cplots) ?> plots</text>
                         <?php foreach ($cplots as $i => $p):
                             $col = $i % $cols;
@@ -69,7 +69,7 @@
                         </rect>
                         <text x="<?= $x + $cw/2 ?>" y="<?= $y + $rh/2 + 4 ?>"
                               text-anchor="middle" font-size="8" fill="#fff" pointer-events="none"
-                              class="style-30355"><?= htmlspecialchars($p['plot_number'] ?? '') ?></text>
+                              ><?= htmlspecialchars($p['plot_number'] ?? '') ?></text>
                         <?php endforeach; ?>
                     </svg>
                 </div>
@@ -82,11 +82,11 @@
 <div class="aps-cp-card">
     <div class="aps-cp-card-body">
         <div class="d-flex flex-wrap gap-3 justify-content-center">
-            <span><span class="badge style-85551"></span> Available</span>
-            <span><span class="badge style-81819"></span> Booked</span>
-            <span><span class="badge style-15902"></span> On EMI</span>
-            <span><span class="badge style-5389"></span> Registered</span>
-            <span><span class="badge style-23124"></span> Blocked</span>
+            <span><span class="badge"></span> Available</span>
+            <span><span class="badge"></span> Booked</span>
+            <span><span class="badge"></span> On EMI</span>
+            <span><span class="badge"></span> Registered</span>
+            <span><span class="badge"></span> Blocked</span>
         </div>
     </div>
 </div>

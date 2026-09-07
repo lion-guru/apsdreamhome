@@ -148,7 +148,7 @@
                                 <td>#<?= $s['id'] ?></td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <div class="avatar bg-primary text-white rounded-circle me-2 d-flex align-items-center justify-content-center style-68946">
+                                        <div class="avatar bg-primary text-white rounded-circle me-2 d-flex align-items-center justify-content-center">
                                             <?= strtoupper(substr(htmlspecialchars($s['employee_name'] ?? 'U'), 0, 1)) ?>
                                         </div>
                                         <div>
@@ -206,7 +206,7 @@
                     <div class="card shadow-sm border-0 mb-4">
                         <div class="card-body">
                             <label class="form-label font-weight-bold text-primary">Select Employee <span class="text-danger">*</span></label>
-                            <select name="employee_id" class="form-select select2-modal" required class="style-13113">
+                            <select name="employee_id" class="form-select select2-modal" required >
                                 <option value="">Search and select an employee...</option>
                                 <?php foreach ($users ?? [] as $e): ?>
                                 <option value="<?= $e['id'] ?>"><?= htmlspecialchars($e['name'] ?? '') ?></option>

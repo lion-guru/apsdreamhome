@@ -115,6 +115,9 @@ class GodModeController extends AdminController
         if (!isset($_SESSION['god_mode_impersonating'])) {
             return $this->json(['error' => 'Not impersonating'], 400);
         }
+        if (($_SESSION['role'] ?? '') !== 'admin' && ($_SESSION['role'] ?? '') !== 'super_admin') {
+            return $this->json(['error' => 'Forbidden'], 403);
+        }
 
         $impersonatedUserId = $_SESSION['god_mode_user_id'] ?? null;
 
@@ -190,6 +193,9 @@ class GodModeController extends AdminController
     {
         if (!isset($_SESSION['god_mode_role_switched'])) {
             return $this->json(['error' => 'Role not switched'], 400);
+        }
+        if (($_SESSION['role'] ?? '') !== 'admin' && ($_SESSION['role'] ?? '') !== 'super_admin') {
+            return $this->json(['error' => 'Forbidden'], 403);
         }
 
         // Restore original role

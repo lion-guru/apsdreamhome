@@ -582,7 +582,7 @@ document.addEventListener('DOMContentLoaded', function() {
         currentItems = items.filter(function(i) { return !i.divider; });
         activeIndex = -1;
         if (currentItems.length === 0) {
-            results.innerHTML = '<div class="style-68356">No results found</div>';
+            results.innerHTML = '<div >No results found</div>';
             return;
         }
 

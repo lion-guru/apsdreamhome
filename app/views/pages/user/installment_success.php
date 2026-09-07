@@ -33,8 +33,8 @@ $instStatusColors = [
     <div class="col-lg-7">
 
         <div class="text-center mb-4">
-            <div class="style-75714">
-                <i class="fas fa-check style-3728"></i>
+            <div >
+                <i class="fas fa-check"></i>
             </div>
             <h3 class="mt-2"><?= __('user_installment_success_thank_you', 'Thank You,') ?> <?= htmlspecialchars($user['name'] ?? '') ?>!</h3>
             <p class="text-muted">

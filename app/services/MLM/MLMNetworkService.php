@@ -24,6 +24,31 @@ class MLMNetworkService
         }
     }
 
+    private function getActivePlanSnapshot(): array
+    {
+        try {
+            $stmt = $this->db->query("SELECT * FROM mlm_commission_plans WHERE status = 'active' LIMIT 1");
+            $plan = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if ($plan) {
+                return [
+                    'plan_id' => $plan['id'],
+                    'plan_version' => $plan['version'] ?? 1,
+                    'rates' => [
+                        'direct_sale_pct' => $plan['direct_sale_pct'] ?? null,
+                        'override_l1_pct' => $plan['l1_pct'] ?? null,
+                        'override_l2_pct' => $plan['l2_pct'] ?? null,
+                        'override_l3_pct' => $plan['l3_pct'] ?? null,
+                        'global_cap_pct' => $plan['global_cap_pct'] ?? null,
+                    ],
+                    'snapshot_at' => date('Y-m-d H:i:s'),
+                ];
+            }
+        } catch (\Exception $e) {
+            error_log('getActivePlanSnapshot error: ' . $e->getMessage());
+        }
+        return ['plan_id' => null, 'plan_version' => 1, 'rates' => [], 'snapshot_at' => date('Y-m-d H:i:s')];
+    }
+
     /**
      * Register a Networker (paid onboarding)
      */
@@ -143,8 +168,9 @@ class MLMNetworkService
         $stmt->execute([$amount, $amount, $sponsorId]);
         
         // Insert ledger entry
-        $stmt = $this->db->prepare("INSERT INTO mlm_commission_ledger (beneficiary_user_id, source_user_id, commission_type, amount, level, status, notes, created_at) VALUES (?, ?, 'referral', ?, 1, 'approved', 'Direct referral reward', NOW())");
-        $stmt->execute([$sponsorId, $newUserId, $amount]);
+        $snapshot = $this->getActivePlanSnapshot();
+        $stmt = $this->db->prepare("INSERT INTO mlm_commission_ledger (beneficiary_user_id, source_user_id, commission_type, amount, level, status, notes, created_at, plan_id, plan_version, plan_snapshot, calculation_engine) VALUES (?, ?, 'referral', ?, 1, 'approved', 'Direct referral reward', NOW(), ?, ?, ?, 'mlm_network_service')");
+        $stmt->execute([$sponsorId, $newUserId, $amount, $snapshot['plan_id'], $snapshot['plan_version'], json_encode($snapshot)]);
     }
     
     private function distributeLevelRewards(int $newUserId, array $package): void
@@ -153,6 +179,7 @@ class MLMNetworkService
         if ($levelReward <= 0) return;
         
         $cappingService = new DailyCappingService();
+        $snapshot = $this->getActivePlanSnapshot();
         
         // Walk up the tree 25 levels
         $currentUserId = $newUserId;
@@ -196,8 +223,8 @@ class MLMNetworkService
                 $stmt = $this->db->prepare("UPDATE user_wallets SET balance = balance + ?, total_credited = total_credited + ? WHERE user_id = ? AND user_type = 'associate'");
                 $stmt->execute([$credited, $credited, $upline['sponsor_id']]);
                 
-                $stmt = $this->db->prepare("INSERT INTO mlm_commission_ledger (beneficiary_user_id, source_user_id, commission_type, amount, level, status, notes, created_at) VALUES (?, ?, 'level_bonus', ?, ?, 'approved', CONCAT('Level ', ?, ' reward'), NOW())");
-                $stmt->execute([$upline['sponsor_id'], $newUserId, $credited, $level, $level]);
+                $stmt = $this->db->prepare("INSERT INTO mlm_commission_ledger (beneficiary_user_id, source_user_id, commission_type, amount, level, status, notes, created_at, plan_id, plan_version, plan_snapshot, calculation_engine) VALUES (?, ?, 'level_bonus', ?, ?, 'approved', CONCAT('Level ', ?, ' reward'), NOW(), ?, ?, ?, 'mlm_network_service')");
+                $stmt->execute([$upline['sponsor_id'], $newUserId, $credited, $level, $level, $snapshot['plan_id'], $snapshot['plan_version'], json_encode($snapshot)]);
             }
             
             $currentUserId = $upline['sponsor_id'];

@@ -23,7 +23,7 @@
     <?php unset($_SESSION['flash_error']); ?>
 <?php endif; ?>
 
-<section class="hero-premium pt-5 pb-5 style-32644">
+<section class="hero-premium pt-5 pb-5">
     <div class="container position-relative premium-reveal fade-up z-2">
         <div class="row align-items-center">
             <div class="col-lg-7">
@@ -42,7 +42,7 @@
             </div>
             <div class="col-lg-5 d-none d-lg-block">
                 <div class="position-relative">
-                    <img loading="lazy" src="https://images.unsplash.com/photo-1508514177221-188b19028604?auto=format&fit=crop&w=600&h=400&q=80" alt="Construction" class="img-fluid rounded-4 shadow-lg glass-panel p-2">
+                    <img loading="lazy" src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=600&h=400&q=80" alt="Construction" class="img-fluid rounded-4 shadow-lg glass-panel p-2">
                     <div class="position-absolute bottom-0 start-0 bg-white text-dark p-3 rounded-3 m-3 shadow">
                         <i class="fas fa-check-circle text-success me-1"></i> <?= __('const_iso_badge') ?>
                     </div>
@@ -187,9 +187,9 @@
                                 }
                                 ?>
                                 <?php if (!empty($imgSrc)): ?>
-                                    <img src="<?= htmlspecialchars($imgSrc ?? ''); ?>" class="card-img-top" alt="<?= htmlspecialchars($p['site_name'] ?? 'Project') ?>">
+                                    <img src="<?= htmlspecialchars($imgSrc ?? '');?>" class="card-img-top" alt="<?= htmlspecialchars($p['site_name'] ?? 'Project') ?>">
                                 <?php else: ?>
-                                    <div class="card-img-top bg-primary bg-opacity-10 d-flex align-items-center justify-content-center style-2610"><i class="fas fa-building fa-4x text-primary opacity-50"></i></div>
+                                    <div class="card-img-top bg-primary bg-opacity-10 d-flex align-items-center justify-content-center"><i class="fas fa-building fa-4x text-primary opacity-50"></i></div>
                                 <?php endif; ?>
                                 <div class="card-body aps-cp-card-body">
                                     <span class="badge <?= $p['status'] === 'completed' ? 'bg-success' : 'bg-warning' ?> mb-2"><?= ucfirst($p['status'] ?? 'In Progress') ?></span>

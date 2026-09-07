@@ -458,7 +458,7 @@ $router->get('/admin/api-key-mgmt/integration', function () {
 });
 $router->post('/admin/api-key-mgmt/add-mcp-key', function () {
     header('Content-Type: application/json');
-    if (!isset($_SESSION['admin_id'])) { echo json_encode(['success' => false]); exit; }
+    if (!isset($_SESSION['admin_id']) || !in_array(($_SESSION['role'] ?? ''), ['admin', 'super_admin'])) { echo json_encode(['success' => false, 'message' => 'Forbidden']); exit; }
     try {
         $db = \App\Core\Database\Database::getInstance()->getConnection();
         $name = $_POST['service_name'] ?? '';
@@ -474,7 +474,7 @@ $router->post('/admin/api-key-mgmt/add-mcp-key', function () {
 });
 $router->post('/admin/api-key-mgmt/create-user-key', function () {
     header('Content-Type: application/json');
-    if (!isset($_SESSION['admin_id'])) { echo json_encode(['success' => false]); exit; }
+    if (!isset($_SESSION['admin_id']) || !in_array(($_SESSION['role'] ?? ''), ['admin', 'super_admin'])) { echo json_encode(['success' => false, 'message' => 'Forbidden']); exit; }
     try {
         $db = \App\Core\Database\Database::getInstance()->getConnection();
         $name = $_POST['name'] ?? '';
@@ -601,7 +601,7 @@ $router->get('/api/saved-searches/autocomplete', 'Front\\SavedSearchController@a
 $router->get('/user/saved-searches/cron-alerts', 'Front\\SavedSearchController@cronAlerts');
 $router->post('/user/saved-searches/cron-alerts', 'Front\\SavedSearchController@cronAlerts');
 $router->get('/news/view/{id}', 'Front\\PageController@newsView');
-$router->post('/property/review', 'Front\\PageController@reviewSubmit');
+$router->post('/property/review', 'App\\Http\\Controllers\\Api\\ReviewController@addPropertyReview');
 $router->get('/property/{id}', 'Front\\PropertyController@propertyDetails');
 $router->get('/listing/{id}', 'Front\\PageController@userPropertyDetail');
 $router->get('/marketplace', 'Front\\MarketplaceController@index');
@@ -4459,6 +4459,22 @@ $router->post('/admin/document-esign/store', 'App\\Http\\Controllers\\Admin\\Doc
 $router->get('/admin/document-esign/{id}', 'App\\Http\\Controllers\\Admin\\DocumentEsignController@show');
 $router->post('/admin/document-esign/{id}/sign', 'App\\Http\\Controllers\\Admin\\DocumentEsignController@sign');
 $router->post('/admin/document-esign/{id}/cancel', 'App\\Http\\Controllers\\Admin\\DocumentEsignController@cancel');
+
+// Property Verification Badge management
+$router->get('/admin/property-verification', 'App\\Http\\Controllers\\Admin\\PropertyVerificationController@index');
+$router->get('/admin/property-verification/levels', 'App\\Http\\Controllers\\Admin\\PropertyVerificationController@levels');
+$router->post('/admin/property-verification/levels/store', 'App\\Http\\Controllers\\Admin\\PropertyVerificationController@storeLevel');
+$router->post('/admin/property-verification/levels/{id}/update', 'App\\Http\\Controllers\\Admin\\PropertyVerificationController@updateLevel');
+$router->post('/admin/property-verification/levels/{id}/delete', 'App\\Http\\Controllers\\Admin\\PropertyVerificationController@deleteLevel');
+$router->get('/admin/property-verification/requests', 'App\\Http\\Controllers\\Admin\\PropertyVerificationController@requests');
+$router->get('/admin/property-verification/requests/{id}', 'App\\Http\\Controllers\\Admin\\PropertyVerificationController@showRequest');
+$router->post('/admin/property-verification/requests/{id}/approve', 'App\\Http\\Controllers\\Admin\\PropertyVerificationController@approveRequest');
+$router->post('/admin/property-verification/requests/{id}/reject', 'App\\Http\\Controllers\\Admin\\PropertyVerificationController@rejectRequest');
+$router->post('/admin/property-verification/requests/{id}/assign', 'App\\Http\\Controllers\\Admin\\PropertyVerificationController@assignRequest');
+$router->get('/admin/property-verification/badges', 'App\\Http\\Controllers\\Admin\\PropertyVerificationController@badges');
+$router->post('/admin/property-verification/badges/{id}/revoke', 'App\\Http\\Controllers\\Admin\\PropertyVerificationController@revokeBadge');
+$router->get('/admin/property-verification/stats', 'App\\Http\\Controllers\\Admin\\PropertyVerificationController@stats');
+
 $router->get('/api/v2/audit/log', 'Admin\\AuditLogController@api');
 $router->get('/api/v2/notifications/poll', 'Api\\NotificationStreamController@poll');
 $router->post('/api/v2/notifications/read', 'Api\\NotificationStreamController@markRead');

@@ -175,8 +175,8 @@ ob_start();
               <span><code><?= htmlspecialchars($item['action'] ?? '') ?></code></span>
               <strong><?= number_format($item['cnt']) ?></strong>
             </div>
-            <div class="progress style-29939">
-              <div class="progress-bar bg-primary style-31886"></div>
+            <div class="progress">
+              <div class="progress-bar bg-primary"></div>
             </div>
           </div>
         <?php endforeach; ?>
@@ -195,14 +195,14 @@ ob_start();
         <table class="table table-hover mb-0">
           <thead class="table-light">
             <tr>
-              <th class="style-35962">Time</th>
-              <th class="style-869">User</th>
-              <th class="style-10944">Action</th>
-              <th class="style-70827">Type</th>
+              <th >Time</th>
+              <th >User</th>
+              <th >Action</th>
+              <th >Type</th>
               <th>Entity</th>
-              <th class="style-73161">Description</th>
-              <th class="style-70827">IP</th>
-              <th class="style-80799">Status</th>
+              <th >Description</th>
+              <th >IP</th>
+              <th >Status</th>
             </tr>
           </thead>
           <tbody>

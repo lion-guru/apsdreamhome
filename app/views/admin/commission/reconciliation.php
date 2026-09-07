@@ -20,52 +20,52 @@ $healthColor = $healthColors[$health] ?? '#6b7280';
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
-<div class="aps-cp-card style-33072">
+<div class="aps-cp-card">
     <div class="aps-cp-card-header">
         <h3><i class="fas fa-balance-scale"></i> Commission Reconciliation</h3>
-        <span class="style-20203">
+        <span >
             <?php echo strtoupper($health); ?>
         </span>
     </div>
     <div class="aps-cp-card-body">
         <!-- Stats Row -->
-        <div class="style-81558">
+        <div >
             <div class="aps-cp-stat">
                 <div class="aps-cp-stat-value"><?php echo number_format($reconciliation['ledger_total'] ?? 0); ?></div>
                 <div class="aps-cp-stat-label">Ledger Entries</div>
             </div>
-            <div class="aps-cp-stat style-14561">
+            <div class="aps-cp-stat">
                 <div class="aps-cp-stat-value"><?php echo $summary['critical_issues'] ?? 0; ?></div>
                 <div class="aps-cp-stat-label">Critical Issues</div>
             </div>
-            <div class="aps-cp-stat style-42923">
+            <div class="aps-cp-stat">
                 <div class="aps-cp-stat-value"><?php echo $summary['warnings'] ?? 0; ?></div>
                 <div class="aps-cp-stat-label">Warnings</div>
             </div>
         </div>
 
         <?php if (!empty($reconciliation['orphaned_ledger_no_booking'])): ?>
-        <div class="style-46748">
-            <h4><i class="fas fa-link style-85206"></i> Orphaned Ledger Entries (<?php echo count($reconciliation['orphaned_ledger_no_booking']); ?>)</h4>
-            <p class="style-73315">Commission entries referencing bookings that no longer exist.</p>
-            <div class="table-responsive"><table class="style-14556">
-                <thead><tr class="style-64307">
-                    <th class="style-91688">Ledger ID</th>
-                    <th class="style-91688">Booking</th>
-                    <th class="style-91688">User</th>
-                    <th class="style-91688">Type</th>
-                    <th class="style-35252">Amount</th>
-                    <th class="style-91688">Status</th>
+        <div >
+            <h4><i class="fas fa-link"></i> Orphaned Ledger Entries (<?php echo count($reconciliation['orphaned_ledger_no_booking']); ?>)</h4>
+            <p >Commission entries referencing bookings that no longer exist.</p>
+            <div class="table-responsive"><table >
+                <thead><tr >
+                    <th >Ledger ID</th>
+                    <th >Booking</th>
+                    <th >User</th>
+                    <th >Type</th>
+                    <th >Amount</th>
+                    <th >Status</th>
                 </tr></thead>
                 <tbody>
                 <?php foreach ($reconciliation['orphaned_ledger_no_booking'] as $ol): ?>
-                <tr class="style-69418">
-                    <td class="style-23927"><?php echo e($ol['id']); ?></td>
-                    <td class="style-23927"><?php echo e($ol['booking_id']); ?></td>
-                    <td class="style-23927"><?php echo e($ol['beneficiary_user_id']); ?></td>
-                    <td class="style-23927"><?php echo e($ol['commission_type']); ?></td>
-                    <td class="style-35252">₹<?php echo number_format((float)$ol['amount'], 2); ?></td>
-                    <td class="style-23927"><span class="badge badge-<?php echo $ol['status'] === 'paid' ? 'success' : 'warning'; ?>"><?php echo e($ol['status']); ?></span></td>
+                <tr >
+                    <td ><?php echo e($ol['id']); ?></td>
+                    <td ><?php echo e($ol['booking_id']); ?></td>
+                    <td ><?php echo e($ol['beneficiary_user_id']); ?></td>
+                    <td ><?php echo e($ol['commission_type']); ?></td>
+                    <td >₹<?php echo number_format((float)$ol['amount'], 2); ?></td>
+                    <td ><span class="badge badge-<?php echo $ol['status'] === 'paid' ? 'success' : 'warning'; ?>"><?php echo e($ol['status']); ?></span></td>
                 </tr>
                 <?php endforeach; ?>
                 </tbody>
@@ -74,21 +74,21 @@ $healthColor = $healthColors[$health] ?? '#6b7280';
         <?php endif; ?>
 
         <?php if (!empty($reconciliation['missing_beneficiary'])): ?>
-        <div class="style-46748">
-            <h4><i class="fas fa-user-slash style-85206"></i> Missing Beneficiaries (<?php echo count($reconciliation['missing_beneficiary']); ?>)</h4>
-            <p class="style-73315">Commission entries pointing to users that no longer exist.</p>
+        <div >
+            <h4><i class="fas fa-user-slash"></i> Missing Beneficiaries (<?php echo count($reconciliation['missing_beneficiary']); ?>)</h4>
+            <p >Commission entries pointing to users that no longer exist.</p>
         </div>
         <?php endif; ?>
 
         <?php if (empty($reconciliation['orphaned_ledger_no_booking']) && empty($reconciliation['missing_beneficiary']) && empty($reconciliation['negative_entries'])): ?>
-        <div class="style-15711">
-            <i class="fas fa-check-circle style-60715"></i>
+        <div >
+            <i class="fas fa-check-circle"></i>
             <h3>All Clear!</h3>
             <p>No discrepancies found across commission tables.</p>
         </div>
         <?php endif; ?>
 
-        <div class="style-1082">
+        <div >
             Last reconciled: <?php echo $reconciliation['timestamp'] ?? 'Never'; ?>
         </div>
     </div>

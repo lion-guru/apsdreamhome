@@ -48,7 +48,7 @@ $kpis = [
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div>
                 <h2 class="mb-1 fw-bold"><i class="fas fa-tachometer-alt me-2"></i>CRM Dashboard</h2>
-                <p class="mb-0 opacity-75 style-42715">Lead management, pipeline, and performance overview</p>
+                <p class="mb-0 opacity-75">Lead management, pipeline, and performance overview</p>
             </div>
             <div class="d-flex gap-2 flex-wrap">
                 <a href="<?= $base ?>/admin/leads/create" class="btn btn-warning fw-bold"><i class="fas fa-plus me-1"></i> New Lead</a>
@@ -59,7 +59,7 @@ $kpis = [
     </div>
 </div>
 
-<div class="container-fluid px-4 style-71772">
+<div class="container-fluid px-4">
     <!-- KPI Cards -->
     <div class="row g-3 mb-4">
         <?php foreach ($kpis as $kpi): ?>
@@ -120,7 +120,7 @@ $kpis = [
         </div>
         <div class="col-6 col-md-3 col-lg">
             <a href="<?= $base ?>/admin/crm/outreach" class="crm-quick-action">
-                <i class="fas fa-paper-plane text-purple style-57602"></i>
+                <i class="fas fa-paper-plane text-purple"></i>
                 <span>Bulk Outreach</span>
             </a>
         </div>
@@ -184,7 +184,7 @@ $kpis = [
                                         <tr>
                                             <td>
                                                 <div class="d-flex align-items-center gap-2">
-                                                    <div class="recent-avatar style-37549"><?= strtoupper(substr($l['name'] ?? 'N', 0, 1)) ?></div>
+                                                    <div class="recent-avatar"><?= strtoupper(substr($l['name'] ?? 'N', 0, 1)) ?></div>
                                                     <a href="<?= $base ?>/admin/leads/<?= $l['id'] ?>" class="text-decoration-none fw-bold text-dark"><?= htmlspecialchars($l['name'] ?? '') ?></a>
                                                 </div>
                                             </td>
@@ -220,12 +220,12 @@ $kpis = [
                     <?php else: ?>
                         <?php foreach (array_slice($recent_tickets, 0, 6) as $t): ?>
                             <div class="recent-item px-3">
-                                <div class="recent-avatar style-4018">
+                                <div class="recent-avatar">
                                     <i class="fas fa-<?= ($t['status'] ?? '') === 'open' ? 'exclamation' : (($t['status'] ?? '') === 'resolved' ? 'check' : 'clock') ?>"></i>
                                 </div>
-                                <div class="flex-grow-1 style-62036">
+                                <div class="flex-grow-1">
                                     <div class="d-flex justify-content-between">
-                                        <span class="fw-semibold text-truncate style-94021"><?= htmlspecialchars($t['subject'] ?? 'Ticket') ?></span>
+                                        <span class="fw-semibold text-truncate"><?= htmlspecialchars($t['subject'] ?? 'Ticket') ?></span>
                                         <small class="text-muted text-nowrap ms-2"><?= date('d M', strtotime($t['created_at'])) ?></small>
                                     </div>
                                     <small class="text-muted"><?= htmlspecialchars($t['user_name'] ?? 'Unknown') ?></small>
@@ -326,17 +326,17 @@ $kpis = [
                         ?>
                         <div class="d-flex align-items-center gap-4">
                             <div style="width:120px;height:120px;border-radius:50%;background:conic-gradient(<?= $donutGradient ?>);position:relative;flex-shrink:0">
-                                <div class="style-36412">
-                                    <strong class="style-92777"><?= number_format(array_sum(array_map(fn($s) => (int)$s['cnt'], $statusDist))) ?></strong>
+                                <div >
+                                    <strong ><?= number_format(array_sum(array_map(fn($s) => (int)$s['cnt'], $statusDist))) ?></strong>
                                 </div>
                             </div>
-                            <div class="style-47240">
+                            <div >
                                 <?php foreach (array_slice($statusDist, 0, 8) as $i => $s): ?>
                                     <div class="d-flex align-items-center gap-2 mb-1">
-                                        <div class="style-23855"></div>
-                                        <span class="style-25759"><?= ucfirst(str_replace('_',' ',$s['status'])) ?></span>
-                                        <span class="fw-bold style-86354"><?= (int)$s['cnt'] ?></span>
-                                        <small class="text-muted style-26285"><?= round(((int)$s['cnt'] / $totalAll) * 100) ?>%</small>
+                                        <div ></div>
+                                        <span ><?= ucfirst(str_replace('_',' ',$s['status'])) ?></span>
+                                        <span class="fw-bold"><?= (int)$s['cnt'] ?></span>
+                                        <small class="text-muted"><?= round(((int)$s['cnt'] / $totalAll) * 100) ?>%</small>
                                     </div>
                                 <?php endforeach; ?>
                             </div>

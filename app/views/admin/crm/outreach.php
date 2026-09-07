@@ -16,25 +16,25 @@ $lead_stats = $lead_stats ?? ['total' => 0, 'with_phone' => 0, 'new' => 0, 'cont
     <div class="row g-3 mb-4">
         <div class="col-md-3 col-6">
             <div class="card border-0 shadow-sm text-center py-3">
-                <div class="style-38176"><?= number_format($lead_stats['total']) ?></div>
+                <div ><?= number_format($lead_stats['total']) ?></div>
                 <div class="text-muted small">Total Leads</div>
             </div>
         </div>
         <div class="col-md-3 col-6">
             <div class="card border-0 shadow-sm text-center py-3">
-                <div class="style-23322"><?= number_format($lead_stats['with_phone']) ?></div>
+                <div ><?= number_format($lead_stats['with_phone']) ?></div>
                 <div class="text-muted small">With Phone</div>
             </div>
         </div>
         <div class="col-md-3 col-6">
             <div class="card border-0 shadow-sm text-center py-3">
-                <div class="style-39581"><?= number_format($lead_stats['new']) ?></div>
+                <div ><?= number_format($lead_stats['new']) ?></div>
                 <div class="text-muted small">New Leads</div>
             </div>
         </div>
         <div class="col-md-3 col-6">
             <div class="card border-0 shadow-sm text-center py-3">
-                <div class="style-50200"><?= number_format($lead_stats['contacted']) ?></div>
+                <div ><?= number_format($lead_stats['contacted']) ?></div>
                 <div class="text-muted small">Contacted</div>
             </div>
         </div>
@@ -135,7 +135,7 @@ $lead_stats = $lead_stats ?? ['total' => 0, 'with_phone' => 0, 'new' => 0, 'cont
                                             <td class="small"><?= date('M d', strtotime($c['created_at'])) ?></td>
                                             <td>
                                                 <?php if ($c['status'] === 'draft'): ?>
-                                                    <form action="<?= $base ?>/admin/crm/outreach/<?= $c['id'] ?>/send" method="POST" class="style-35851">
+                                                    <form action="<?= $base ?>/admin/crm/outreach/<?= $c['id'] ?>/send" method="POST" >
                                                         <button type="submit" class="btn btn-success btn-sm" data-aps-confirm="Send to <?= (int)$c['total_leads'] ?> leads?">
                                                             <i class="fas fa-paper-plane me-1"></i>Send
                                                         </button>

@@ -468,7 +468,7 @@
             <div class="label">Network Depth</div>
         </div>
         <div class="stat-card">
-            <div class="icon style-34277"><i class="fas fa-rupee-sign"></i></div>
+            <div class="icon"><i class="fas fa-rupee-sign"></i></div>
             <div class="value">₹<?php echo number_format($stats['total_team_commission'], 2); ?></div>
             <div class="label">Team Commission</div>
         </div>
@@ -521,15 +521,15 @@
         <!-- Legend -->
         <div class="legend">
             <div class="legend-item">
-                <div class="legend-color style-91901"></div>
+                <div class="legend-color"></div>
                 <span>You (Root)</span>
             </div>
             <div class="legend-item">
-                <div class="legend-color style-88862"></div>
+                <div class="legend-color"></div>
                 <span>Direct Referral</span>
             </div>
             <div class="legend-item">
-                <div class="legend-color style-18736"></div>
+                <div class="legend-color"></div>
                 <span>Extended Network</span>
             </div>
         </div>

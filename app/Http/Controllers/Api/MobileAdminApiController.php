@@ -423,9 +423,14 @@ class MobileAdminApiController extends BaseController
 
     private function getEmployeeAttendanceData($userId)
     {
-        $stmt = $this->db->prepare("SELECT id, punch_in_time, punch_out_time, punch_in_location, date FROM attendance WHERE user_id = ? ORDER BY date DESC LIMIT 30");
-        $stmt->execute([$userId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $stmt = $this->db->prepare("SELECT id, check_in, check_out, attendance_date as date, status FROM attendance_records WHERE user_id = ? ORDER BY attendance_date DESC LIMIT 30");
+            $stmt->execute([$userId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            error_log('MobileAdminApiController::getEmployeeAttendanceData error: ' . $e->getMessage());
+            return [];
+        }
     }
 
     private function getAdminBookingsData($userId)

@@ -87,11 +87,11 @@
                                         <td><small><?= date('M j, g:i A', strtotime($req['created_at'])) ?></small></td>
                                         <td>
                                             <div class="btn-group btn-group-sm">
-                                                <form method="POST" action="<?= BASE_URL ?>/admin/crm/assignments/<?= $req['id'] ?>/approve" class="style-71727">
+                                                <form method="POST" action="<?= BASE_URL ?>/admin/crm/assignments/<?= $req['id'] ?>/approve" >
                                                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                                     <button class="btn btn-success btn-sm" title="Approve" aria-label="Confirm"><i class="fas fa-check"></i></button>
                                                 </form>
-                                                <form method="POST" action="<?= BASE_URL ?>/admin/crm/assignments/<?= $req['id'] ?>/reject" class="style-71727">
+                                                <form method="POST" action="<?= BASE_URL ?>/admin/crm/assignments/<?= $req['id'] ?>/reject" >
                                                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                                     <input type="hidden" name="reason" value="Rejected by admin">
                                                     <button class="btn btn-danger btn-sm" title="Reject" data-aps-confirm="Reject this request?" aria-label="Reject"><i class="fas fa-times"></i></button>

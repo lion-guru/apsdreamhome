@@ -215,7 +215,7 @@ try {
                         <div class="user-name"><?php echo htmlspecialchars($admin_name ?? ''); ?></div>
                         <div class="user-role"><?php echo ucfirst(str_replace('_', ' ', $admin_role)); ?></div>
                     </div>
-                    <i class="fas fa-chevron-down style-34565"></i>
+                    <i class="fas fa-chevron-down"></i>
                 </div>
             </div>
         </nav>

@@ -103,7 +103,7 @@
             </div>
             <div class="card-body">
                 <div class="bg-gray-50 p-4 rounded border">
-                    <img src="data:image/png;base64,<?= htmlspecialchars($document['signature_data']) ?>" alt="Signature" class="max-w-full h-auto" />
+                    <img src="data:image/png;base64,<?= htmlspecialchars($document['signature_data'])?>" alt="Signature" class="max-w-full h-auto" />
                 </div>
             </div>
         </div>

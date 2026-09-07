@@ -165,7 +165,7 @@ $active_page = 'bookings';
     </div>
     <div class="card-body aps-cp-card-body">
         <!-- Bulk Actions Bar (hidden by default) -->
-        <div class="card border-0 shadow-sm mb-3" id="bulkActionsBar" style="display: none;">
+        <div class="card border-0 shadow-sm mb-3" id="bulkActionsBar" class="d-none">
             <div class="card-body py-2 d-flex align-items-center gap-3 flex-wrap">
                 <span class="fw-semibold"><span id="selectedCount">0</span> selected</span>
                 <select id="bulkStatus" class="form-select form-select-sm" style="width: auto; display: inline-block;">
@@ -335,7 +335,7 @@ $active_page = 'bookings';
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('admin_cancel') ?></button>
-                <form id="deleteForm" method="POST" action="<?= BASE_URL ?>/admin/bookings/0/destroy" class="style-26772">
+                <form id="deleteForm" method="POST" action="<?= BASE_URL ?>/admin/bookings/0/destroy" >
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                     <button type="submit" class="btn btn-danger"><?= __('admin_delete') ?></button>
                 </form>

@@ -191,6 +191,8 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <link href="<?php echo BASE_URL; ?>/assets/css/modern-animations.css?v=2" rel="stylesheet">
     <!-- Mobile Responsive Overrides -->
     <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css?v=3" rel="stylesheet">
+    <!-- Utility classes (display, min-width, visibility) -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/utils.css?v=1" rel="stylesheet">
     <!-- Final UI/UX Polish (contrast, tap targets) -->
     <link href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=3" rel="stylesheet">
     <?php endif; ?>
@@ -234,6 +236,15 @@ $isHomePage = ($_reqUri === '' || $_reqUri === '/apsdreamhome' || $_reqUri === '
 $bodyClass = $isHomePage ? 'page-home' : '';
 ?>
 <body class="<?= $bodyClass ?>">
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+    // APS namespace polyfill — prevents "window.APS.toast is not a function" 
+    // when inline scripts fire before deferred toast-notifications.js loads
+    window.APS = window.APS || {};
+    window.APS.toast = window.APS.toast || function(msg, type) {
+        // Minimal fallback: show a basic browser alert if real toast hasn't loaded
+        console.log('[APS.toast]', type || 'info', msg);
+    };
+    </script>
     <?php
     // Mark document as started so header.php doesn't emit duplicate DOCTYPE/head/body
     $GLOBALS['_html_doc_started'] = true;
@@ -460,28 +471,6 @@ $bodyClass = $isHomePage ? 'page-home' : '';
       });
     </script>
 
-    <!-- Floating WhatsApp CTA (site-wide lead capture) -->
-    <?php $fwaPhone = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); ?>
-    <style>
-        .aps-wa-float { position: fixed; right: 20px; bottom: 20px; z-index: 1030;
-            width: 56px; height: 56px; border-radius: 50%; background: #25D366;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 14px rgba(37,211,102,.45); text-decoration: none;
-            animation: apsWaPulse 2.5s ease-out infinite; }
-        .aps-wa-float i { font-size: 30px; color: #fff; }
-        .aps-wa-float:hover, .aps-wa-float:focus { transform: scale(1.08); transition: transform .2s; }
-        .aps-wa-float::after { content: ''; position: absolute; inset: 0; border-radius: 50%;
-            border: 2px solid #25D366; opacity: .6; animation: apsWaRing 2.5s ease-out infinite; }
-        @keyframes apsWaPulse { 0%,100% { box-shadow: 0 4px 14px rgba(37,211,102,.45); } 50% { box-shadow: 0 4px 22px rgba(37,211,102,.75); } }
-        @keyframes apsWaRing { 0% { transform: scale(1); opacity: .6; } 100% { transform: scale(1.55); opacity: 0; } }
-        @media print { .aps-wa-float { display: none; } }
-        @media (max-width: 576px) { .aps-wa-float { right: 14px; bottom: 14px; width: 52px; height: 52px; } }
-    </style>
-    <a href="https://wa.me/<?= $fwaPhone ?>?text=<?= urlencode('Hello APS Dream Home! I am interested in your properties. Please share details.') ?>"
-       class="aps-wa-float" target="_blank" rel="noopener"
-       aria-label="Chat with us on WhatsApp">
-        <i class="fab fa-whatsapp" aria-hidden="true"></i>
-    </a>
-</body>
+    </body>
 
 </html>

@@ -1,8 +1,5 @@
 <?php
 
-// TODO: Add proper error handling with try-catch blocks
-
-
 /**
  * API Documentation Generator
  * Automatically generates comprehensive API documentation

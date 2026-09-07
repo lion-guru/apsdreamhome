@@ -195,8 +195,8 @@ $total_pages = $total_pages ?? 1;
                                 <td>
                                     <?php if (($job['confidence_score'] ?? 0) > 0): ?>
                                         <div class="d-flex align-items-center">
-                                            <div class="progress flex-grow-1 me-2 style-29939">
-                                                <div class="progress-bar bg-<?= ($job['confidence_score'] >= 90) ? 'success' : (($job['confidence_score'] >= 70) ? 'warning' : 'danger') ?> style-59464"></div>
+                                            <div class="progress flex-grow-1 me-2">
+                                                <div class="progress-bar bg-<?= ($job['confidence_score'] >= 90) ? 'success' : (($job['confidence_score'] >= 70) ? 'warning' : 'danger') ?>"></div>
                                             </div>
                                             <small><?= $job['confidence_score'] ?>%</small>
                                         </div>
@@ -371,7 +371,7 @@ function renderReviewForm(job) {
                     html += `<input type="text" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="XXXX-XXXX-1234" maxlength="14">`;
                     break;
                 case 'pan':
-                    html += `<input type="text" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="ABCDE1234F" maxlength="10" class="style-36130">`;
+                    html += `<input type="text" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="ABCDE1234F" maxlength="10" >`;
                     break;
                 case 'phone':
                     html += `<input type="tel" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="+91">`;

@@ -142,10 +142,10 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <span class="badge-channel badge-<?= $ch['channel'] ?>"><?= strtoupper($ch['channel']) ?></span>
-                                    <span class="style-70391"><?= number_format($ch['count']) ?> total / <?= number_format($ch['sent']) ?> sent</span>
+                                    <span ><?= number_format($ch['count']) ?> total / <?= number_format($ch['sent']) ?> sent</span>
                                 </div>
                                 <div class="channel-bar">
-                                    <div class="channel-bar-fill style-96057"></div>
+                                    <div class="channel-bar-fill"></div>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -165,7 +165,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             <tbody>
                                 <?php foreach ($type_stats as $t): ?>
                                     <tr>
-                                        <td><span class="style-56206"><?= htmlspecialchars($t['type'] ?? '') ?></span></td>
+                                        <td><span ><?= htmlspecialchars($t['type'] ?? '') ?></span></td>
                                         <td class="text-end"><?= number_format($t['count']) ?></td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -240,8 +240,8 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <tbody>
                         <?php foreach ($recent_logs as $log): ?>
                             <tr>
-                                <td class="style-64704"><?= date('d M, H:i', strtotime($log['created_at'] ?? '')) ?></td>
-                                <td class="style-56206"><?= htmlspecialchars($log['type'] ?? '') ?></td>
+                                <td ><?= date('d M, H:i', strtotime($log['created_at'] ?? '')) ?></td>
+                                <td ><?= htmlspecialchars($log['type'] ?? '') ?></td>
                                 <td><span class="badge-channel badge-<?= $log['channel'] ?? 'email' ?>"><?= strtoupper($log['channel'] ?? 'email') ?></span></td>
                                 <td><?= htmlspecialchars(($log['user_name'] ?? $log['recipient_token'] ?? 'System')) ?></td>
                                 <td><span class="badge-status badge-<?= $log['status'] ?? 'sent' ?>"><?= ucfirst($log['status'] ?? 'sent') ?></span></td>

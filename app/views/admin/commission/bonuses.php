@@ -37,7 +37,7 @@
                             <?php if (empty($bonuses ?? [])): ?>
                             <tr>
                                 <td colspan="7" class="text-center py-5">
-                                    <i class="fas fa-gift fa-3x text-muted mb-3 style-82835"></i>
+                                    <i class="fas fa-gift fa-3x text-muted mb-3"></i>
                                     <h5 class="text-muted">No bonuses awarded yet</h5>
                                     <p class="text-muted mb-3">Award performance bonuses to top-performing associates to incentivize growth.</p>
                                 </td>
@@ -51,7 +51,7 @@
                                 <td>&#8377;<?= number_format((float)$b['bonus_amount'],2) ?></td>
                                 <td><?= $b['achievement_id'] ? 'A#' . $b['achievement_id'] : '-' ?></td>
                                 <td><?= date('d-m-Y', strtotime($b['created_at'])) ?></td>
-                                <td><form method="POST" action="<?= BASE_URL ?>/admin/commission/bonuses/delete/<?= $b['id'] ?>" class="style-71727" data-aps-confirm="Delete bonus #<?= $b['id'] ?>?"><input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"><button type="submit" class="btn btn-sm btn-danger" aria-label="Delete"><i class="fas fa-trash"></i></button></form></td>
+                                <td><form method="POST" action="<?= BASE_URL ?>/admin/commission/bonuses/delete/<?= $b['id'] ?>" data-aps-confirm="Delete bonus #<?= $b['id'] ?>?"><input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"><button type="submit" class="btn btn-sm btn-danger" aria-label="Delete"><i class="fas fa-trash"></i></button></form></td>
                             </tr>
                             <?php endforeach; ?>
                             <?php endif; ?>

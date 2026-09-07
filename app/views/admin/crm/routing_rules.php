@@ -103,7 +103,7 @@ if ($min > 0 && $max > 0) {
                                             </td>
                                             <td><span class="badge bg-secondary"><?= $rule['priority'] ?? 100 ?></span></td>
                                             <td>
-                                                <form method="POST" action="<?= BASE_URL ?>/admin/crm/routing/<?= $rule['id'] ?>/toggle" class="style-71727">
+                                                <form method="POST" action="<?= BASE_URL ?>/admin/crm/routing/<?= $rule['id'] ?>/toggle" >
                                                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                                     <button type="submit" class="btn btn-sm btn-outline-<?= ($rule['is_active'] ?? 0) ? 'success' : 'secondary' ?>">
                                                         <?= ($rule['is_active'] ?? 0) ? '<i class="fas fa-check-circle"></i> Active' : '<i class="fas fa-times-circle"></i> Inactive' ?>
@@ -113,7 +113,7 @@ if ($min > 0 && $max > 0) {
                                             <td>
                                                 <div class="btn-group btn-group-sm">
                                                     <a href="<?= BASE_URL ?>/admin/crm/routing/<?= $rule['id'] ?>/edit" class="btn btn-outline-info"><i class="fas fa-edit"></i></a>
-                                                    <form method="POST" action="<?= BASE_URL ?>/admin/crm/routing/<?= $rule['id'] ?>/delete" class="style-71727">
+                                                    <form method="POST" action="<?= BASE_URL ?>/admin/crm/routing/<?= $rule['id'] ?>/delete" >
                                                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                                         <button class="btn btn-outline-danger" data-aps-confirm="Delete this rule?" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                                     </form>

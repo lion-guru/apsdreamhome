@@ -18,30 +18,30 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
 }
 </style>
 </head>
-<body class="style-51511">
+<body >
 <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#f4f6fb">
   <tr>
-    <td align="center" class="style-56039">
-      <table role="presentation" class="container" border="0" cellpadding="0" cellspacing="0" width="600" class="style-99000">
+    <td align="center" >
+      <table role="presentation" class="container" border="0" cellpadding="0" cellspacing="0" width="600" >
         <!-- Header -->
         <tr>
-          <td bgcolor="#f59e0b" align="center" class="style-67032">
-            <div class="style-90702">&#128179;</div>
-            <h1 class="h1-mobile style-56865">EMI Payment Reminder</h1>
-            <p class="style-9233">Your upcoming installment is due soon</p>
+          <td bgcolor="#f59e0b" align="center" >
+            <div >&#128179;</div>
+            <h1 class="h1-mobile">EMI Payment Reminder</h1>
+            <p >Your upcoming installment is due soon</p>
           </td>
         </tr>
         <!-- Body -->
         <tr>
-          <td class="px-mobile style-68782">
-            <h2 class="style-80102">Hi {{user_name}},</h2>
-            <p class="style-28596">
-              This is a friendly reminder that your next EMI installment is due in <strong class="style-44353">{{days_until_due}} days</strong>.
+          <td class="px-mobile">
+            <h2 >Hi {{user_name}},</h2>
+            <p >
+              This is a friendly reminder that your next EMI installment is due in <strong >{{days_until_due}} days</strong>.
             </p>
-            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" class="style-81530">
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" >
               <tr>
-                <td class="style-57034">
-                  <strong class="style-92359">Installment #{{installment_no}}</strong><br><br>
+                <td >
+                  <strong >Installment #{{installment_no}}</strong><br><br>
                   <strong>Amount:</strong> &#8377;{{emi_amount}}<br>
                   <strong>Due Date:</strong> {{due_date}}<br>
                   <strong>Booking:</strong> {{booking_number}}<br>
@@ -49,26 +49,26 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
                 </td>
               </tr>
             </table>
-            <p class="style-28596">
+            <p >
               Pay now to avoid late fees. You can pay online via UPI, Card, Netbanking, or Wallet.
             </p>
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
               <tr>
-                <td align="center" class="style-43583">
-                  <a href="{{pay_url}}" class="button-mobile style-17666">Pay Now</a>
+                <td align="center" >
+                  <a href="{{pay_url}}" class="button-mobile">Pay Now</a>
                 </td>
               </tr>
             </table>
-            <p class="style-25661">
+            <p >
               Best regards,<br><strong>The APS Dream Home Team</strong>
             </p>
           </td>
         </tr>
         <!-- Footer -->
         <tr>
-          <td bgcolor="#f7fafc" class="style-89423">
-            <p class="style-40082">APS Dream Home &nbsp;|&nbsp; {{company_phone}} &nbsp;|&nbsp; {{company_email}}</p>
-            <p class="style-75003">&copy; {{year}} APS Dream Home. All rights reserved.</p>
+          <td bgcolor="#f7fafc" >
+            <p >APS Dream Home &nbsp;|&nbsp; {{company_phone}} &nbsp;|&nbsp; {{company_email}}</p>
+            <p >&copy; {{year}} APS Dream Home. All rights reserved.</p>
           </td>
         </tr>
       </table>

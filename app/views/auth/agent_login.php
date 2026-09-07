@@ -563,7 +563,7 @@ $base = BASE_URL;
                 <div class="form-options">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="remember" id="remember">
-                        <label class="form-check-label" for="remember" class="style-78225"><?php echo __('auth_remember_me', 'Remember me'); ?></label>
+                        <label class="form-check-label" for="remember" ><?php echo __('auth_remember_me', 'Remember me'); ?></label>
                     </div>
                     <a href="<?php echo $base; ?>/forgot-password" class="forgot-link"><?php echo __('auth_forgot_password', 'Forgot Password?'); ?></a>
                 </div>

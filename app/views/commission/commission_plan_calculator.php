@@ -555,7 +555,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
                                                 </div>
                                             <?php endforeach; ?>
 
-                                            <div class="breakdown-row total style-34971">
+                                            <div class="breakdown-row total">
                                                 <span><strong>Grand Total Payout:</strong></span>
                                                 <span><strong>₹<?php echo number_format($calculation_result['summary']['total_payout']); ?></strong></span>
                                             </div>

@@ -14,7 +14,7 @@ if (!defined('BASE_URL')) {
 ?>
 
 <!-- Hero Section -->
-<section class="favorites-hero py-5 style-68644">
+<section class="favorites-hero py-5">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">
@@ -59,7 +59,7 @@ if (!defined('BASE_URL')) {
                         <div class="property-card">
                             <!-- Property Image -->
                             <div class="property-image">
-                                <img src="<?= !empty($property['image']) ? htmlspecialchars($property['image'] ?? '') : (BASE_URL . '/assets/images/placeholder/property.svg') ?>" alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>" class="img-fluid" onerror="this.src='<?= BASE_URL ?>assets/images/placeholder/property.svg'" loading="lazy">
+                                <img src="<?= !empty($property['image']) ? htmlspecialchars($property['image'] ?? '') : (BASE_URL . '/assets/images/placeholder/property.svg')?>" alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>" class="img-fluid" onerror="this.src='<?= BASE_URL ?>assets/images/placeholder/property.svg'" loading="lazy">
                                 <div class="property-overlay">
                                     <div class="property-actions">
                                         <button class="btn btn-danger btn-sm remove-favorite"

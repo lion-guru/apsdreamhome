@@ -61,7 +61,7 @@
         }
     </style>
     <!-- Header -->
-    <nav class="navbar navbar-expand-lg navbar-dark style-91831">
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand fw-bold" href="<?= BASE_URL ?>">
                 <i class="fas fa-home me-2"></i>APS Dream Home
@@ -112,10 +112,10 @@
                         <div class="col-lg-4 col-md-6">
                             <div class="gallery-card">
                                 <?php if (($item['type'] ?? 'image') === 'video'): ?>
-                                    <img src="<?= !empty($item['thumbnail']) ? htmlspecialchars($item['thumbnail'] ?? '') : (BASE_URL . '/assets/images/video-placeholder.jpg') ?>" class="img-fluid" alt="<?= htmlspecialchars($item['title'] ?? '') ?>" loading="lazy">
+                                    <img src="<?= !empty($item['thumbnail']) ? htmlspecialchars($item['thumbnail'] ?? '') : (BASE_URL . '/assets/images/video-placeholder.jpg')?>" class="img-fluid" alt="<?= htmlspecialchars($item['title'] ?? '') ?>" loading="lazy">
                                     <div class="video-icon"><i class="fas fa-play"></i></div>
                                 <?php else: ?>
-                                    <img src="<?= !empty($item['image']) ? htmlspecialchars($item['image'] ?? '') : (BASE_URL . '/assets/images/gallery-placeholder.jpg') ?>" class="img-fluid" alt="<?= htmlspecialchars($item['title'] ?? '') ?>" loading="lazy">
+                                    <img src="<?= !empty($item['image']) ? htmlspecialchars($item['image'] ?? '') : (BASE_URL . '/assets/images/gallery-placeholder.jpg')?>" class="img-fluid" alt="<?= htmlspecialchars($item['title'] ?? '') ?>" loading="lazy">
                                 <?php endif; ?>
                                 <div class="gallery-overlay">
                                     <h5 class="mb-1"><?= htmlspecialchars($item['title'] ?? 'Gallery Item') ?></h5>
@@ -131,7 +131,7 @@
     </section>
 
     <!-- Footer -->
-    <footer class="style-99070">
+    <footer >
         <div class="container text-center">
             <p class="mb-0">&copy; 2024 APS Dream Home. All rights reserved.</p>
             <p class="small mt-2">

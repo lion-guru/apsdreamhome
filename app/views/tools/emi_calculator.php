@@ -38,7 +38,7 @@
           <h5 class="mb-0">Results</h5>
         </div>
         <div class="card-body">
-          <div id="results" class="style-2248">
+          <div id="results" >
             <div class="text-center mb-4">
               <h2 class="text-primary mb-0" id="emiAmount">₹0</h2>
               <small class="text-muted">Monthly EMI</small>

@@ -32,8 +32,13 @@ class AccountingDashboardService
         $totalBankBalance = (float)($bankBalances[0]['total'] ?? 0);
 
         // Cash in hand
-        $cashInHand = $this->db->fetchOne("SELECT COALESCE(SUM(CASE WHEN transaction_type = 'receipt' THEN amount ELSE -amount END), 0) AS balance FROM cash_book" . $where, $params);
-        $cashBalance = (float)($cashInHand['balance'] ?? 0);
+        try {
+            $cashInHand = $this->db->fetchOne("SELECT COALESCE(SUM(CASE WHEN type = 'credit' THEN amount ELSE -amount END), 0) AS balance FROM cash_book_entries" . $where, $params);
+            $cashBalance = (float)($cashInHand['balance'] ?? 0);
+        } catch (\Throwable $e) {
+            error_log('AccountingDashboardService::getDashboardStats cash_book query error: ' . $e->getMessage());
+            $cashBalance = 0.0;
+        }
 
         // Outstanding receivables
         $receivables = $this->db->fetchOne("SELECT COALESCE(SUM(amount_due), 0) AS total FROM booking_payment_schedules WHERE status IN ('pending', 'partial')" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$tid] : []);

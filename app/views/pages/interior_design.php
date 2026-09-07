@@ -20,7 +20,7 @@
 .tool-card:hover { border-color: #0d9488; background: #f0fdfa; }
 </style>
 
-<section class="hero-premium pt-5 pb-5 style-32644">
+<section class="hero-premium pt-5 pb-5">
     <div class="container position-relative premium-reveal fade-up z-2">
         <div class="row align-items-center">
             <div class="col-lg-7">
@@ -40,7 +40,7 @@
             </div>
             <div class="col-lg-5 d-none d-lg-block">
                 <div class="position-relative">
-                    <img loading="lazy" src="https://img.freepik.com/free-photo/living-room-interior-design_23-2148892625.jpg" alt="Interior Design" class="img-fluid rounded-4 shadow-lg glass-panel p-2">
+                    <img loading="lazy" src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=600&h=400&q=80" alt="Interior Design" class="img-fluid rounded-4 shadow-lg glass-panel p-2">
                     <div class="position-absolute bottom-0 end-0 bg-white text-dark p-3 rounded-3 m-3 shadow">
                         <i class="fas fa-star text-warning me-1"></i> <?= __('id_award_winning') ?>
                     </div>
@@ -183,7 +183,7 @@
         <div class="row g-4 mt-2">
             <div class="col-md-6">
                 <div class="tool-card border-2 p-4" onclick="$(this).find('.collapse').collapse('toggle')">
-                    <i class="fas fa-palette fa-2x mb-2 style-23621"></i>
+                    <i class="fas fa-palette fa-2x mb-2"></i>
                     <h5><?= __('id_color_palette') ?></h5>
                     <p class="text-muted small mb-2"><?= __('id_color_palette_desc') ?></p>
                     <div class="collapse">
@@ -216,7 +216,7 @@
                             </div>
                             <button class="btn btn-sm btn-success mb-3" onclick="planFurniture()"><i class="fas fa-arrows-alt me-1"></i>Plan Layout</button>
                             <div id="furnitureResult" class="d-none">
-                                <div class="bg-white p-3 rounded-2 border" id="furnitureLayout" class="style-20059"></div>
+                                <div class="bg-white p-3 rounded-2 border" id="furnitureLayout" ></div>
                             </div>
                         </div>
                     </div>
@@ -251,7 +251,7 @@ function generatePalette() {
     };
     const p = (palettes[room] && palettes[room][style]) || { colors: ['#0d9488','#ff6f00','#00c853','#2979ff','#ff1744'], desc: 'Default vibrant palette. Customize for your space.' };
     const cont = document.getElementById('paletteColors');
-    cont.innerHTML = p.colors.map(c => `<div class="style-1914" title="${c}" onclick="navigator.clipboard.writeText('${c}')"></div>`).join('');
+    cont.innerHTML = p.colors.map(c => `<div title="${c}" onclick="navigator.clipboard.writeText('${c}')"></div>`).join('');
     document.getElementById('paletteDesc').textContent = p.desc;
     document.getElementById('paletteResult').classList.remove('d-none');
 }
@@ -280,14 +280,14 @@ function planFurniture() {
     };
     const items = layouts[type] || layouts['Living Room'];
     const scale = 12; const rw = w * scale; const rl = l * scale;
-    let html = `<div class="style-96122">`;
+    let html = `<div >`;
     let xp = 5, yp = 5;
-    html += `<div class="style-89642">${w}ft x ${l}ft</div>`;
+    html += `<div >${w}ft x ${l}ft</div>`;
     items.forEach((item, i) => {
         const iw = item.w * scale; const il = item.l * scale;
         if (xp + iw + 5 > rw && yp > 5) { xp = 5; yp += Math.max(...items.map(it => it.l * scale)) + 5; }
         const colors = ['#0d9488','#3498db','#27ae60','#e74c3c','#f39c12','#8e44ad','#1abc9c','#e67e22'];
-        html += `<div class="style-7069">${item.name}</div>`;
+        html += `<div >${item.name}</div>`;
         xp += iw + 5;
     });
     html += '</div>';
@@ -365,7 +365,7 @@ function planBudget() {
         const amt = total * allocation[k] / 100;
         used += amt;
         html += `<div class="d-flex justify-content-between small mb-1"><span>${k}</span><span class="fw-medium">₹${amt.toLocaleString('en-IN', {maximumFractionDigits:0})}</span></div>`;
-        html += `<div class="progress mb-2 style-12222"><div class="progress-bar style-45041"></div></div>`;
+        html += `<div class="progress mb-2"><div class="progress-bar"></div></div>`;
     });
     document.getElementById('budgetBreakdown').innerHTML = html;
     const rem = total - used;
@@ -386,7 +386,7 @@ function planBudget() {
             <?php foreach (array_slice($portfolio, 0, 6) as $item): ?>
                 <div class="col-lg-4 col-md-6">
                     <div class="portfolio-item">
-                        <img src="<?= htmlspecialchars($item['image'] ?? '') ?>" alt="<?= htmlspecialchars($item['title'] ?? 'Portfolio') ?>" loading="lazy">
+                        <img src="<?= htmlspecialchars($item['image'] ?? '')?>" alt="<?= htmlspecialchars($item['title'] ?? 'Portfolio') ?>" loading="lazy">
                         <div class="overlay">
                             <h5 class="mb-1"><?= htmlspecialchars($item['title'] ?? 'Project') ?></h5>
                             <small><?= htmlspecialchars($item['category'] ?? '') ?></small>

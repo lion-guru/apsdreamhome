@@ -56,11 +56,11 @@ $base_url    = $base_url    ?? (defined('BASE_URL') ? BASE_URL : '');
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th class="style-45100"><?= __('admin_tpl_code', null, 'Code') ?></th>
-                            <th class="style-85429"><?= __('admin_tpl_subject', null, 'Subject') ?></th>
-                            <th class="style-26295"><?= __('admin_tpl_file', null, 'File') ?></th>
-                            <th class="style-33374"><?= __('admin_tpl_vars', null, 'Variables') ?></th>
-                            <th class="style-33374 text-end"><?= __('admin_tpl_actions', null, 'Actions') ?></th>
+                            <th ><?= __('admin_tpl_code', null, 'Code') ?></th>
+                            <th ><?= __('admin_tpl_subject', null, 'Subject') ?></th>
+                            <th ><?= __('admin_tpl_file', null, 'File') ?></th>
+                            <th ><?= __('admin_tpl_vars', null, 'Variables') ?></th>
+                            <th class=" text-end"><?= __('admin_tpl_actions', null, 'Actions') ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -77,7 +77,7 @@ $base_url    = $base_url    ?? (defined('BASE_URL') ? BASE_URL : '');
                                     <code class="text-primary fw-bold"><?= htmlspecialchars($tpl['code'] ?? '') ?></code>
                                 </td>
                                 <td>
-                                    <div class="text-truncate style-48743" title="<?= htmlspecialchars($tpl['subject'] ?? '') ?>">
+                                    <div class="text-truncate" title="<?= htmlspecialchars($tpl['subject'] ?? '') ?>">
                                         <?= htmlspecialchars($tpl['subject'] ?? '') ?>
                                     </div>
                                 </td>

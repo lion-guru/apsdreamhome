@@ -4183,6 +4183,7 @@ return array(
   'colonies_stat_area' => 'कुल क्षेत्रफल',
   'colonies_stat_plots' => 'कुल प्लॉट',
   'colonies_stat_cities' => 'शहर कवर',
+  'colonies_spec_plots' => 'प्लॉट',
   'colonies_spec_area' => 'कुल क्षेत्रफल',
   'colonies_spec_available' => 'उपलब्ध',
   'colonies_spec_price' => 'शुरुआती कीमत',

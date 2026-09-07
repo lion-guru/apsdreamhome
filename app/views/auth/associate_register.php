@@ -175,9 +175,9 @@ $ref = $ref ?? $_GET['ref'] ?? $old['sponsor_code'] ?? '';
                     <span class="label">Track C (Milestone)</span>
                     <span class="value">₹2,000</span>
                 </div>
-                <div class="earnings-row style-24496">
-                    <span class="label style-14635">Total Earning</span>
-                    <span class="value style-36688">₹20,000</span>
+                <div class="earnings-row">
+                    <span class="label">Total Earning</span>
+                    <span class="value">₹20,000</span>
                 </div>
             </div>
 

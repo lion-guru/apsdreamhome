@@ -61,38 +61,38 @@ $channels = $channels ?? [];
     <!-- Stat Cards -->
     <div class="row g-3 mb-4">
         <div class="col-md-2">
-            <div class="sr-stat-card style-24145">
+            <div class="sr-stat-card">
                 <div class="stat-value text-primary"><?= number_format($total) ?></div>
                 <div class="stat-label">Total Sessions</div>
             </div>
         </div>
         <div class="col-md-2">
-            <div class="sr-stat-card style-18251">
+            <div class="sr-stat-card">
                 <div class="stat-value text-warning"><?= number_format($pendingOtp) ?></div>
                 <div class="stat-label">Pending OTP</div>
             </div>
         </div>
         <div class="col-md-2">
-            <div class="sr-stat-card style-92805">
+            <div class="sr-stat-card">
                 <div class="stat-value text-info"><?= number_format($otpSent) ?></div>
                 <div class="stat-label">OTP Sent</div>
             </div>
         </div>
         <div class="col-md-2">
-            <div class="sr-stat-card style-67614">
+            <div class="sr-stat-card">
                 <div class="stat-value text-danger"><?= number_format($abandoned) ?></div>
                 <div class="stat-label">Abandoned</div>
             </div>
         </div>
         <div class="col-md-2">
-            <div class="sr-stat-card style-17789">
+            <div class="sr-stat-card">
                 <div class="stat-value text-success"><?= number_format($completed) ?></div>
                 <div class="stat-label">Completed</div>
             </div>
         </div>
         <div class="col-md-2">
-            <div class="sr-stat-card style-38203">
-                <div class="stat-value text-purple style-70610"><?= $conversionRate ?>%</div>
+            <div class="sr-stat-card">
+                <div class="stat-value text-purple"><?= $conversionRate ?>%</div>
                 <div class="stat-label">Conversion Rate</div>
             </div>
         </div>
@@ -117,8 +117,8 @@ $channels = $channels ?? [];
                                     <small class="fw-semibold"><?= ucfirst($r['detected_role'] ?? 'Unknown') ?></small>
                                     <small class="text-muted"><?= $r['c'] ?></small>
                                 </div>
-                                <div class="progress style-29939">
-                                    <div class="progress-bar style-70351"></div>
+                                <div class="progress">
+                                    <div class="progress-bar"></div>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -144,8 +144,8 @@ $channels = $channels ?? [];
                                     <span><span class="sr-channel-badge sr-channel-<?= $ch['otp_channel'] ?>"><?= ucfirst($ch['otp_channel']) ?></span></span>
                                     <small class="text-muted"><?= $ch['c'] ?> sessions</small>
                                 </div>
-                                <div class="progress style-31164">
-                                    <div class="progress-bar bg-<?= $ch['otp_channel'] === 'whatsapp' ? 'success' : ($ch['otp_channel'] === 'sms' ? 'primary' : 'info') ?> style-44924"></div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-<?= $ch['otp_channel'] === 'whatsapp' ? 'success' : ($ch['otp_channel'] === 'sms' ? 'primary' : 'info') ?>"></div>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -175,8 +175,8 @@ $channels = $channels ?? [];
                                 <small><?= $f[0] ?></small>
                                 <small class="text-muted"><?= number_format($f[1]) ?></small>
                             </div>
-                            <div class="progress style-92162">
-                                <div class="progress-bar style-30512"></div>
+                            <div class="progress">
+                                <div class="progress-bar"></div>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -190,7 +190,7 @@ $channels = $channels ?? [];
         <div class="card-header bg-white d-flex justify-content-between align-items-center">
             <h6 class="mb-0 fw-bold"><i class="fas fa-list me-2"></i>Recent Sessions (Last 50)</h6>
             <div class="d-flex gap-2">
-                <select class="form-select form-select-sm" id="filterStatus" class="style-68062" onchange="filterSessions()">
+                <select class="form-select form-select-sm" id="filterStatus" onchange="filterSessions()">
                     <option value="">All Status</option>
                     <option value="pending_otp">Pending OTP</option>
                     <option value="otp_sent">OTP Sent</option>
@@ -200,7 +200,7 @@ $channels = $channels ?? [];
                     <option value="profile_complete">Profile Complete</option>
                     <option value="abandoned">Abandoned</option>
                 </select>
-                <select class="form-select form-select-sm" id="filterChannel" class="style-68062" onchange="filterSessions()">
+                <select class="form-select form-select-sm" id="filterChannel" onchange="filterSessions()">
                     <option value="">All Channels</option>
                     <option value="whatsapp">WhatsApp</option>
                     <option value="sms">SMS</option>
@@ -249,8 +249,8 @@ $channels = $channels ?? [];
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <div class="progress flex-grow-1 me-2 style-78848">
-                                                <div class="progress-bar bg-<?= ($s['profile_completion_pct'] ?? 0) >= 80 ? 'success' : (($s['profile_completion_pct'] ?? 0) >= 40 ? 'warning' : 'danger') ?> style-79680"></div>
+                                            <div class="progress flex-grow-1 me-2">
+                                                <div class="progress-bar bg-<?= ($s['profile_completion_pct'] ?? 0) >= 80 ? 'success' : (($s['profile_completion_pct'] ?? 0) >= 40 ? 'warning' : 'danger') ?>"></div>
                                             </div>
                                             <small><?= $s['profile_completion_pct'] ?? 0 ?>%</small>
                                         </div>

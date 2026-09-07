@@ -194,6 +194,25 @@ class CommissionLedgerService
         }
     }
 
+    /**
+     * Get pending commissions for a user.
+     */
+    public function getPendingCommissionsForUser(int $userId): array
+    {
+        if ($userId <= 0) {
+            return [];
+        }
+        
+        $stmt = $this->pdo->prepare("
+            SELECT id, beneficiary_user_id, amount, commission_type, booking_id, status, created_at
+            FROM mlm_commission_ledger
+            WHERE beneficiary_user_id = ? AND status = 'pending'
+            ORDER BY created_at DESC
+        ");
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
     protected function getTenantId(): int
     {
         try {

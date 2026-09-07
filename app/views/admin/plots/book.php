@@ -26,7 +26,7 @@ $paymentPlans = $paymentPlans ?? ['Full Payment', 'Installment (6 months)', 'Ins
                         <div class="card-header bg-primary text-white"><h5 class="mb-0"><i class="fas fa-th"></i> Plot Details</h5></div>
                         <div class="card-body aps-cp-card-body">
                             <div class="table-responsive"><table class="table table-bordered">
-                                <tr><th class="style-97126">Plot #</th><td><strong><?= htmlspecialchars($plot['plot_number'] ?? 'N/A') ?></strong></td></tr>
+                                <tr><th >Plot #</th><td><strong><?= htmlspecialchars($plot['plot_number'] ?? 'N/A') ?></strong></td></tr>
                                 <tr><th>Colony</th><td><?= htmlspecialchars($plot['colony_name'] ?? 'N/A') ?></td></tr>
                                 <tr><th>Block / Sector</th><td><?= htmlspecialchars($plot['block'] ?? '') ?> <?= !empty($plot['sector']) ? '/ Sector ' . htmlspecialchars($plot['sector'] ?? '') : '' ?></td></tr>
                                 <tr><th>Type</th><td><?= ucfirst(htmlspecialchars($plot['plot_type'] ?? 'residential')) ?></td></tr>

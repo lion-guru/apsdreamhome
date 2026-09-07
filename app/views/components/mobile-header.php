@@ -1,7 +1,5 @@
 <?php
 
-// TODO: Add proper error handling with try-catch blocks
-
 /**
  * APS Dream Home - Mobile Optimized Header Component
  * Modern responsive header with mobile navigation for all user types
@@ -23,7 +21,7 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
         </button>
 
         <a href="<?php echo BASE_URL; ?>" class="flex items-center space-x-2 mx-auto">
-            <img src="<?= BASE_URL ?>/assets/images/logo/apslogonew.jpg" class="img-fluid" alt="htmlspecialchars(__('aps_dream_home', 'APS Dream Home'))" class="style-2609" onerror="this.style.display='none'">
+            <img src="<?= BASE_URL ?>/assets/images/logo/apslogonew.jpg" class="img-fluid" alt="htmlspecialchars(__('aps_dream_home', 'APS Dream Home'))" onerror="this.style.display='none'">
             <span class="text-lg font-bold text-primary">__('aps_dream_home', 'APS Dream Home')</span>
         </a>
 
@@ -31,8 +29,8 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
             <?php if ($isAuthenticated): ?>
                 <div class="dropdown">
                     <button class="btn btn-link p-0 text-decoration-none" type="button" data-bs-toggle="dropdown">
-                        <img src="<?= !empty($userAvatar) ? htmlspecialchars($userAvatar ?? '') : (BASE_URL . '/assets/images/logo/apslogonew.jpg') ?>" class="img-fluid"
-                             alt="Profile" class="rounded-circle style-35333">
+                        <img src="<?= !empty($userAvatar) ? htmlspecialchars($userAvatar ?? '') : (BASE_URL . '/assets/images/logo/apslogonew.jpg')?>" class="img-fluid"
+                             alt="Profile" class="rounded-circle">
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><h6 class="dropdown-header"><?php echo htmlspecialchars($userName ?? ''); ?></h6></li>
@@ -81,7 +79,7 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
                 <!-- Logo -->
                 <div class="col-lg-3">
                     <a href="<?php echo BASE_URL; ?>" class="d-flex align-items-center text-decoration-none">
-                        <img src="<?= BASE_URL ?>/assets/images/logo/apslogonew.jpg" class="me-2" alt="APS Dream Home" class="style-92690" onerror="this.style.display='none'">
+                        <img src="<?= BASE_URL ?>/assets/images/logo/apslogonew.jpg" class="me-2" alt="APS Dream Home" onerror="this.style.display='none'">
                         <span class="h5 mb-0 text-primary fw-bold">APS Dream Home</span>
                     </a>
                 </div>
@@ -124,8 +122,8 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
                     <?php if ($isAuthenticated): ?>
                         <div class="dropdown">
                             <button class="btn btn-link text-decoration-none d-flex align-items-center ms-auto p-0" type="button" data-bs-toggle="dropdown">
-                                <img src="<?= !empty($userAvatar) ? htmlspecialchars($userAvatar ?? '') : (BASE_URL . '/assets/images/logo/apslogonew.jpg') ?>" class="rounded-circle me-2"
-                                     alt="Profile" class="style-58830">
+                                <img src="<?= !empty($userAvatar) ? htmlspecialchars($userAvatar ?? '') : (BASE_URL . '/assets/images/logo/apslogonew.jpg')?>" class="rounded-circle me-2"
+                                     alt="Profile" >
                                 <div class="text-start d-none d-md-block">
                                     <div class="fw-bold small"><?php echo htmlspecialchars($userName ?? ''); ?></div>
                                     <div class="text-muted small">
@@ -208,8 +206,8 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
             <!-- User Info -->
             <?php if ($isAuthenticated): ?>
                 <div class="text-center mb-4 pb-3 border-bottom">
-                    <img src="<?= !empty($userAvatar) ? htmlspecialchars($userAvatar ?? '') : (BASE_URL . '/assets/images/logo/apslogonew.jpg') ?>" class="rounded-circle mb-2"
-                         alt="Profile" class="style-12174">
+                    <img src="<?= !empty($userAvatar) ? htmlspecialchars($userAvatar ?? '') : (BASE_URL . '/assets/images/logo/apslogonew.jpg')?>" class="rounded-circle mb-2"
+                         alt="Profile" >
                     <div class="fw-bold"><?php echo htmlspecialchars($userName ?? ''); ?></div>
                     <small class="text-muted"><?php echo ucfirst($userRole); ?></small>
                 </div>
@@ -342,7 +340,7 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
     </div>
 
     <!-- Mobile Overlay -->
-    <div class="d-lg-none" id="mobileOverlay" class="style-69131" onclick="closeMobileMenu()"></div>
+    <div class="d-lg-none" id="mobileOverlay" onclick="closeMobileMenu()"></div>
 </header>
 
 <script>

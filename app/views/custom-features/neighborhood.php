@@ -25,7 +25,7 @@ $base = $base ?? BASE_URL;
     </div>
   </div>
 
-  <div id="results" class="style-24280">
+  <div id="results" >
     <div class="row g-3 mb-4" id="statCards"></div>
 
     <div class="row g-3 mb-4">
@@ -75,12 +75,12 @@ $base = $base ?? BASE_URL;
     </div>
   </div>
 
-  <div id="loading" class="style-24280 text-center py-5">
+  <div id="loading" class=" text-center py-5">
     <div class="spinner-border text-primary mb-3" role="status"></div>
     <p class="text-muted">Fetching neighborhood data...</p>
   </div>
 
-  <div id="error" class="style-24280 alert alert-danger mt-3"></div>
+  <div id="error" class=" alert alert-danger mt-3"></div>
 
   <div id="empty" class="text-center py-5 text-muted">
     <i class="fas fa-map-marked-alt fa-4x mb-3 d-block"></i>

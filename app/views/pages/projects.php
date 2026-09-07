@@ -80,7 +80,12 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
                 <?php foreach ($projects as $project):
                     $imgPath = BASE_URL . '/assets/images/placeholder/property.svg';
                     if (!empty($project['images'][0])) {
-                        $imgPath = BASE_URL . '/uploads/projects/' . $project['images'][0];
+                        $img = $project['images'][0];
+                        if (strpos($img, '/') === 0 || strpos($img, 'assets/') === 0 || strpos($img, 'http') === 0) {
+                            $imgPath = (strpos($img, 'http') === 0) ? $img : BASE_URL . '/' . ltrim($img, '/');
+                        } else {
+                            $imgPath = BASE_URL . '/uploads/projects/' . $img;
+                        }
                     }
                     $statusClass = match($project['status'] ?? '') {
                         'completed' => 'success',

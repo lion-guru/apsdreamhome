@@ -41,7 +41,7 @@
                 <li>Monitor for similar notifications</li>
             </ol>
 
-            <div class="style-69368">
+            <div >
                 <a href="<?= $baseUrl ?>/admin" class="button">Open Admin Panel</a>
             </div>
         </div>

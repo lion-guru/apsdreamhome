@@ -397,7 +397,8 @@ function send_scheduled_newsletter($email_system) {
 
         try {
             // Mark as sent
-            $conn->query("UPDATE newsletter_schedules SET status = 'sent' WHERE id = " . $schedule['id']);
+            $stmt = $conn->prepare("UPDATE newsletter_schedules SET status = 'sent' WHERE id = ?");
+            $stmt->execute([(int)$schedule['id']]);
         } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
         }

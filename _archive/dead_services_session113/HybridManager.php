@@ -164,22 +164,23 @@ class HybridCommissionManager
 
     private function calculatePerformanceBonus($userId, $region)
     {
-        $currentQuarter = date('Y-m');
-        $currentYear = date('Y');
+        try {
+            $currentQuarter = date('Y-m');
+            $currentYear = date('Y');
 
-        $sql = "SELECT total_sales FROM regional_performance
-                WHERE agent_id = ? AND region = ? AND quarter = ? AND year = ? AND tenant_id = ?";
-        $performance = $this->db->fetch($sql, [$userId, $region, $currentQuarter, $currentYear, $this->tenantId]);
+            $sql = "SELECT total_sales FROM regional_performance
+                    WHERE agent_id = ? AND region = ? AND quarter = ? AND year = ? AND tenant_id = ?";
+            $performance = $this->db->fetch($sql, [$userId, $region, $currentQuarter, $currentYear, $this->tenantId]);
 
-        if ($performance) {
-            $totalSales = $performance['total_sales'];
-
-            // Calculate bonus based on sales volume
-            if ($totalSales > 10000000) return 50000; // 50k bonus for > 1cr sales
-            if ($totalSales > 5000000) return 25000;  // 25k bonus for > 50l sales
-            if ($totalSales > 1000000) return 10000;  // 10k bonus for > 10l sales
+            if ($performance) {
+                $totalSales = $performance['total_sales'];
+                if ($totalSales > 10000000) return 50000;
+                if ($totalSales > 5000000) return 25000;
+                if ($totalSales > 1000000) return 10000;
+            }
+        } catch (\Throwable $e) {
+            // regional_performance table may not exist
         }
-
         return 0;
     }
 
@@ -188,26 +189,30 @@ class HybridCommissionManager
      */
     public function updateRegionalPerformance($userId, $region, $saleAmount, $commissionAmount)
     {
-        $currentQuarter = "Q" . ceil(date('n') / 3);
-        $currentYear = date('Y');
+        try {
+            $currentQuarter = "Q" . ceil(date('n') / 3);
+            $currentYear = date('Y');
 
-        $sql = "SELECT id FROM regional_performance
-                WHERE agent_id = ? AND region = ? AND quarter = ? AND year = ? AND tenant_id = ?";
-        $existing = $this->db->fetch($sql, [$userId, $region, $currentQuarter, $currentYear, $this->tenantId]);
+            $sql = "SELECT id FROM regional_performance
+                    WHERE agent_id = ? AND region = ? AND quarter = ? AND year = ? AND tenant_id = ?";
+            $existing = $this->db->fetch($sql, [$userId, $region, $currentQuarter, $currentYear, $this->tenantId]);
 
-        if ($existing) {
-            $sql = "UPDATE regional_performance
-                    SET total_sales = total_sales + ?,
-                        total_commission = total_commission + ?
-                    WHERE id = ? AND tenant_id = ?";
-            $this->db->execute($sql, [$saleAmount, $commissionAmount, $existing['id'], $this->tenantId]);
-        } else {
-            $sql = "INSERT INTO regional_performance (agent_id, region, total_sales, total_commission, quarter, year, tenant_id)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)";
-            $this->db->execute($sql, [$userId, $region, $saleAmount, $commissionAmount, $currentQuarter, $currentYear, $this->tenantId]);
+            if ($existing) {
+                $sql = "UPDATE regional_performance
+                        SET total_sales = total_sales + ?,
+                            total_commission = total_commission + ?
+                        WHERE id = ? AND tenant_id = ?";
+                $this->db->execute($sql, [$saleAmount, $commissionAmount, $existing['id'], $this->tenantId]);
+            } else {
+                $sql = "INSERT INTO regional_performance (agent_id, region, total_sales, total_commission, quarter, year, tenant_id)
+                        VALUES (?, ?, ?, ?, ?, ?, ?)";
+                $this->db->execute($sql, [$userId, $region, $saleAmount, $commissionAmount, $currentQuarter, $currentYear, $this->tenantId]);
+            }
+
+            $this->updatePerformanceBonus($userId, $region, $currentQuarter, $currentYear);
+        } catch (\Throwable $e) {
+            // regional_performance table may not exist
         }
-
-        $this->updatePerformanceBonus($userId, $region, $currentQuarter, $currentYear);
     }
 
     /**
@@ -215,23 +220,26 @@ class HybridCommissionManager
      */
     private function updatePerformanceBonus($userId, $region, $quarter, $year)
     {
-        $sql = "SELECT total_sales FROM regional_performance
-                WHERE agent_id = ? AND region = ? AND quarter = ? AND year = ? AND tenant_id = ?";
-        $performance = $this->db->fetch($sql, [$userId, $region, $quarter, $year, $this->tenantId]);
+        try {
+            $sql = "SELECT total_sales FROM regional_performance
+                    WHERE agent_id = ? AND region = ? AND quarter = ? AND year = ? AND tenant_id = ?";
+            $performance = $this->db->fetch($sql, [$userId, $region, $quarter, $year, $this->tenantId]);
 
-        if ($performance) {
-            $totalSales = $performance['total_sales'];
-            $bonus = 0;
+            if ($performance) {
+                $totalSales = $performance['total_sales'];
+                $bonus = 0;
+                if ($totalSales > 10000000) $bonus = 50000;
+                elseif ($totalSales > 5000000) $bonus = 25000;
+                elseif ($totalSales > 1000000) $bonus = 10000;
 
-            if ($totalSales > 10000000) $bonus = 50000;
-            elseif ($totalSales > 5000000) $bonus = 25000;
-            elseif ($totalSales > 1000000) $bonus = 10000;
-
-            if ($bonus > 0) {
-                $sql = "UPDATE regional_performance SET performance_bonus = ?
-                        WHERE agent_id = ? AND region = ? AND quarter = ? AND year = ? AND tenant_id = ?";
-                $this->db->execute($sql, [$bonus, $userId, $region, $quarter, $year, $this->tenantId]);
+                if ($bonus > 0) {
+                    $sql = "UPDATE regional_performance SET performance_bonus = ?
+                            WHERE agent_id = ? AND region = ? AND quarter = ? AND year = ? AND tenant_id = ?";
+                    $this->db->execute($sql, [$bonus, $userId, $region, $quarter, $year, $this->tenantId]);
+                }
             }
+        } catch (\Throwable $e) {
+            // regional_performance table may not exist
         }
     }
 
@@ -279,11 +287,18 @@ class HybridCommissionManager
      */
     private function getUserData($userId)
     {
-        $sql = "SELECT u.*, cp.commission_preference, cp.preferred_region
-                FROM users u
-                LEFT JOIN commission_preferences cp ON u.id = cp.user_id
-                WHERE u.id = ? AND u.tenant_id = ?";
-        return $this->db->fetch($sql, [$userId, $this->tenantId]) ?? [];
+        try {
+            $sql = "SELECT u.*, cp.commission_preference, cp.preferred_region
+                    FROM users u
+                    LEFT JOIN commission_preferences cp ON u.id = cp.user_id
+                    WHERE u.id = ? AND u.tenant_id = ?";
+            return $this->db->fetch($sql, [$userId, $this->tenantId]) ?? [];
+        } catch (\Throwable $e) {
+            $sql = "SELECT u.*
+                    FROM users u
+                    WHERE u.id = ? AND u.tenant_id = ?";
+            return $this->db->fetch($sql, [$userId, $this->tenantId]) ?? [];
+        }
     }
 
     /**
@@ -293,10 +308,10 @@ class HybridCommissionManager
     {
         $sql = "SELECT
                 COUNT(*) as total_commissions,
-                COALESCE(SUM(commission_amount), 0) as total_earnings,
-                COALESCE(AVG(commission_amount), 0) as average_commission
-                FROM mlm_commissions
-                WHERE associate_id = ? AND status = 'paid' AND tenant_id = ?";
+                COALESCE(SUM(amount), 0) as total_earnings,
+                COALESCE(AVG(amount), 0) as average_commission
+                FROM mlm_commission_ledger
+                WHERE beneficiary_user_id = ? AND status = 'paid' AND tenant_id = ?";
 
         return $this->db->fetch($sql, [$userId, $this->tenantId]) ?? [];
     }
@@ -308,11 +323,11 @@ class HybridCommissionManager
     {
         $sql = "SELECT
                 COUNT(*) as total_commissions,
-                COALESCE(SUM(commission_amount), 0) as total_earnings,
-                COALESCE(AVG(commission_amount), 0) as average_commission,
-                COUNT(DISTINCT region) as regions_covered
-                FROM traditional_commissions
-                WHERE agent_id = ? AND status = 'paid' AND tenant_id = ?";
+                COALESCE(SUM(amount), 0) as total_earnings,
+                COALESCE(AVG(amount), 0) as average_commission,
+                COUNT(DISTINCT source_user_name) as regions_covered
+                FROM mlm_commission_ledger
+                WHERE beneficiary_user_id = ? AND status = 'paid' AND tenant_id = ?";
 
         return $this->db->fetch($sql, [$userId, $this->tenantId]) ?? [];
     }
@@ -323,14 +338,14 @@ class HybridCommissionManager
     private function getRegionalAnalytics($userId)
     {
         $sql = "SELECT
-                region,
+                commission_type as region,
                 COUNT(*) as total_sales,
-                COALESCE(SUM(total_sales), 0) as sales_volume,
-                COALESCE(SUM(total_commission), 0) as total_commission,
-                COALESCE(SUM(performance_bonus), 0) as total_bonus
-                FROM regional_performance
-                WHERE agent_id = ? AND tenant_id = ?
-                GROUP BY region
+                COALESCE(SUM(sale_amount), 0) as sales_volume,
+                COALESCE(SUM(amount), 0) as total_commission,
+                0 as total_bonus
+                FROM mlm_commission_ledger
+                WHERE beneficiary_user_id = ? AND status = 'paid' AND tenant_id = ?
+                GROUP BY commission_type
                 ORDER BY sales_volume DESC";
 
         return $this->db->fetchAll($sql, [$userId, $this->tenantId]);

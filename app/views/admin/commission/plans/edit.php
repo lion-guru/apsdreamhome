@@ -39,25 +39,25 @@ $statusBadge = match($plan['status']) { 'active' => 'bg-success', 'draft' => 'bg
 
 <div class="cp-card">
     <div class="cp-card-header">
-        <div class="style-1552">
-            <h5 class="m-0 style-43926"><i class="fas fa-edit me-2 style-13856"></i><?= htmlspecialchars($plan['plan_name'] ?? '') ?></h5>
+        <div >
+            <h5 class="m-0"><i class="fas fa-edit me-2"></i><?= htmlspecialchars($plan['plan_name'] ?? '') ?></h5>
             <span class="cp-version">v<?= $plan['version'] ?></span>
-            <span class="cp-badge <?= $statusBadge ?> style-77741"><?= ucfirst($plan['status']) ?></span>
+            <span class="cp-badge <?= $statusBadge ?>"><?= ucfirst($plan['status']) ?></span>
             <?php if ($isActive): ?>
-                <span class="style-62541"><i class="fas fa-lock me-1"></i>Active — editing locked</span>
+                <span ><i class="fas fa-lock me-1"></i>Active — editing locked</span>
             <?php endif; ?>
         </div>
         <a href="<?= $base ?>/admin/commission-plans" class="cp-btn cp-btn-outline"><i class="fas fa-arrow-left me-1"></i>Back</a>
     </div>
     <div class="cp-card-body">
         <?php if ($isActive): ?>
-            <div class="style-29735">
-                <i class="fas fa-info-circle style-22199"></i>
+            <div >
+                <i class="fas fa-info-circle"></i>
                 <div>
-                    <strong class="style-62735">Active plans cannot be edited.</strong>
-                    <span class="style-29958"> Clone as a new version to make changes, then activate the new version.</span>
+                    <strong >Active plans cannot be edited.</strong>
+                    <span > Clone as a new version to make changes, then activate the new version.</span>
                 </div>
-                <form method="POST" action="<?= $base ?>/admin/commission-plans/clone/<?= $plan['id'] ?>" class="style-69485">
+                <form method="POST" action="<?= $base ?>/admin/commission-plans/clone/<?= $plan['id'] ?>" >
                     <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
                     <input type="hidden" name="effective_date" value="<?= date('Y-m-d') ?>">
                     <button type="submit" class="cp-btn cp-btn-success"><i class="fas fa-copy me-1"></i>Clone as New Version</button>
@@ -66,7 +66,7 @@ $statusBadge = match($plan['status']) { 'active' => 'bg-success', 'draft' => 'bg
         <?php endif; ?>
 
         <?php if (!empty($versions) && count($versions) > 1): ?>
-            <div class="style-76692">
+            <div >
                 <label class="cp-label">Version History</label>
                 <div>
                     <?php foreach ($versions as $v): ?>
@@ -110,7 +110,7 @@ $statusBadge = match($plan['status']) { 'active' => 'bg-success', 'draft' => 'bg
                 </div>
             </div>
 
-            <h6 class="style-36277"><i class="fas fa-cog me-1"></i>Global Parameters</h6>
+            <h6 ><i class="fas fa-cog me-1"></i>Global Parameters</h6>
             <div class="row mb-4">
                 <div class="col-md-2"><label class="cp-label">Global Cap %</label><input type="number" name="global_cap_pct" class="cp-input" value="<?= $plan['global_cap_pct'] ?>" step="0.5" <?= $canEdit ? '' : 'disabled' ?>></div>
                 <div class="col-md-2"><label class="cp-label">Track A %</label><input type="number" name="track_a_pct" class="cp-input" value="<?= $plan['track_a_pct'] ?>" step="0.5" <?= $canEdit ? '' : 'disabled' ?>></div>
@@ -121,22 +121,22 @@ $statusBadge = match($plan['status']) { 'active' => 'bg-success', 'draft' => 'bg
                 <div class="col-md-1"><label class="cp-label">Override G2</label><input type="number" name="same_level_override_gen2" class="cp-input" value="<?= $plan['same_level_override_gen2'] ?>" step="0.5" <?= $canEdit ? '' : 'disabled' ?>></div>
             </div>
 
-            <h6 class="style-36277"><i class="fas fa-layer-group me-1"></i>Rank Levels</h6>
-            <div class="style-15107">
+            <h6 ><i class="fas fa-layer-group me-1"></i>Rank Levels</h6>
+            <div >
                 <table class="table rank-table m-0">
                     <thead>
                         <tr><th>#</th><th>Level</th><th>Direct %</th><th>Team %</th><th>Level Bonus %</th><th>Matching %</th><th>Leadership %</th><th>Performance %</th><th>GBV Threshold</th><th>Row Total</th></tr>
                     </thead>
                     <tbody>
                         <?php if (empty($levels)): ?>
-                            <tr><td colspan="10" class="style-41966">No levels configured</td></tr>
+                            <tr><td colspan="10" >No levels configured</td></tr>
                         <?php else: ?>
                             <?php foreach ($levels as $lv):
                                 $rowTotal = (float)$lv['direct_commission'] + (float)$lv['team_commission'] + (float)$lv['level_bonus'] + (float)$lv['matching_bonus'] + (float)$lv['leadership_bonus'] + (float)$lv['performance_bonus'];
                             ?>
                             <tr>
-                                <td class="style-53581"><?= $lv['level_order'] ?></td>
-                                <td class="style-93158"><?= htmlspecialchars($lv['level_name'] ?? '') ?></td>
+                                <td ><?= $lv['level_order'] ?></td>
+                                <td ><?= htmlspecialchars($lv['level_name'] ?? '') ?></td>
                                 <td><input type="number" name="levels[<?= $lv['id'] ?>][direct_commission]" value="<?= $lv['direct_commission'] ?>" step="0.01" min="0" max="100" <?= $canEdit ? '' : 'disabled' ?>></td>
                                 <td><input type="number" name="levels[<?= $lv['id'] ?>][team_commission]" value="<?= $lv['team_commission'] ?>" step="0.01" min="0" max="100" <?= $canEdit ? '' : 'disabled' ?>></td>
                                 <td><input type="number" name="levels[<?= $lv['id'] ?>][level_bonus]" value="<?= $lv['level_bonus'] ?>" step="0.01" min="0" max="100" <?= $canEdit ? '' : 'disabled' ?>></td>
@@ -144,7 +144,7 @@ $statusBadge = match($plan['status']) { 'active' => 'bg-success', 'draft' => 'bg
                                 <td><input type="number" name="levels[<?= $lv['id'] ?>][leadership_bonus]" value="<?= $lv['leadership_bonus'] ?>" step="0.01" min="0" max="100" <?= $canEdit ? '' : 'disabled' ?>></td>
                                 <td><input type="number" name="levels[<?= $lv['id'] ?>][performance_bonus]" value="<?= $lv['performance_bonus'] ?>" step="0.01" min="0" max="100" <?= $canEdit ? '' : 'disabled' ?>></td>
                                 <td><input type="number" name="levels[<?= $lv['id'] ?>][monthly_target]" value="<?= $lv['monthly_target'] ?>" step="1000" min="0" <?= $canEdit ? '' : 'disabled' ?>></td>
-                                <td class="style-88477"><?= number_format($rowTotal, 1) ?>%</td>
+                                <td ><?= number_format($rowTotal, 1) ?>%</td>
                             </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -156,7 +156,7 @@ $statusBadge = match($plan['status']) { 'active' => 'bg-success', 'draft' => 'bg
             <div class="d-flex gap-2">
                 <button type="submit" class="cp-btn cp-btn-primary"><i class="fas fa-save me-1"></i>Save Changes</button>
                 <?php if (!$isActive): ?>
-                    <form method="POST" action="<?= $base ?>/admin/commission-plans/activate/<?= $plan['id'] ?>" class="style-71727">
+                    <form method="POST" action="<?= $base ?>/admin/commission-plans/activate/<?= $plan['id'] ?>" >
                         <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
                         <button type="submit" class="cp-btn cp-btn-success"><i class="fas fa-power-off me-1"></i>Activate This Plan</button>
                     </form>

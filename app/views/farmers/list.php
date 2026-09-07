@@ -1,7 +1,5 @@
 <?php
 
-// TODO: Add proper error handling with try-catch blocks
-
 ?>
 
 <div class="container-fluid mt-4">

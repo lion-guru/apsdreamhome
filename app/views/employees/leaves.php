@@ -1,7 +1,5 @@
 ï»¿<?php
 
-// TODO: Add proper error handling with try-catch blocks
-
 /**
  * Employee Leaves View
  * Shows employee leave records and allows leave applications
@@ -201,7 +199,7 @@
                         </div>
                     </div>
 
-                    <div class="row" id="multipleDayFields" class="style-54390">
+                    <div class="row" id="multipleDayFields" >
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="start_date" class="form-label">From Date *</label>

@@ -8,19 +8,19 @@
         <!-- Tool 1: Land Area Converter -->
         <div class="row mb-5">
             <div class="col-12">
-                <div class="card style-18771">
-                    <div class="card-header style-84117">
+                <div class="card">
+                    <div class="card-header">
                         <h4 class="text-white mb-0"><i class="fas fa-vector-square me-2"></i>Land Area Converter</h4>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-3">
                                 <label class="text-white-50">Value</label>
-                                <input type="number" id="areaValue" class="form-control" value="1000" oninput="convertArea()" class="style-46367">
+                                <input type="number" id="areaValue" class="form-control" value="1000" oninput="convertArea()" >
                             </div>
                             <div class="col-md-3">
                                 <label class="text-white-50">From</label>
-                                <select id="areaFrom" class="form-select" onchange="convertArea()" class="style-46367">
+                                <select id="areaFrom" class="form-select" onchange="convertArea()" >
                                     <option value="sqft">Square Feet (sqft)</option>
                                     <option value="sqm">Square Meter (sqm)</option>
                                     <option value="acre">Acre</option>
@@ -32,10 +32,10 @@
                                 </select>
                             </div>
                             <div class="col-md-1 d-flex align-items-center justify-content-center">
-                                <i class="fas fa-arrow-right fa-2x style-23621"></i>
+                                <i class="fas fa-arrow-right fa-2x"></i>
                             </div>
                             <div class="col-md-3">
-                                <div id="conversionResults" class="style-3672">
+                                <div id="conversionResults" >
                                     <small class="text-white-50 d-block mb-2">Results:</small>
                                     <div id="areaResults"></div>
                                 </div>
@@ -54,28 +54,28 @@
         <!-- Tool 2: Plot Price Calculator -->
         <div class="row mb-5">
             <div class="col-md-6">
-                <div class="card h-100 style-18771">
-                    <div class="card-header style-93477">
+                <div class="card h-100">
+                    <div class="card-header">
                         <h4 class="text-white mb-0"><i class="fas fa-rupee-sign me-2"></i>Plot Price Calculator</h4>
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="text-white-50">Plot Area (sqft)</label>
-                            <input type="number" id="priceArea" class="form-control" value="1000" oninput="calcPrice()" class="style-46367">
+                            <input type="number" id="priceArea" class="form-control" value="1000" oninput="calcPrice()" >
                         </div>
                         <div class="mb-3">
                             <label class="text-white-50">Rate per sqft (₹)</label>
-                            <input type="number" id="priceRate" class="form-control" value="2500" oninput="calcPrice()" class="style-46367">
+                            <input type="number" id="priceRate" class="form-control" value="2500" oninput="calcPrice()" >
                         </div>
                         <div class="mb-3">
                             <label class="text-white-50">PLC Charges (₹, optional)</label>
-                            <input type="number" id="pricePLC" class="form-control" value="0" oninput="calcPrice()" class="style-46367">
+                            <input type="number" id="pricePLC" class="form-control" value="0" oninput="calcPrice()" >
                         </div>
                         <div class="mb-3">
                             <label class="text-white-50">Discount % (optional)</label>
-                            <input type="number" id="priceDiscount" class="form-control" value="0" oninput="calcPrice()" class="style-46367">
+                            <input type="number" id="priceDiscount" class="form-control" value="0" oninput="calcPrice()" >
                         </div>
-                        <div class="style-3672">
+                        <div >
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-white-50">Base Price:</span>
                                 <span class="text-white" id="priceBase">₹25,00,000</span>
@@ -88,7 +88,7 @@
                                 <span class="text-white-50">Discount:</span>
                                 <span class="text-danger" id="priceDiscountDisplay">-₹0</span>
                             </div>
-                            <hr class="style-96118">
+                            <hr >
                             <div class="d-flex justify-content-between">
                                 <strong class="text-white">Total Price:</strong>
                                 <strong class="text-success fs-4" id="priceTotal">₹25,00,000</strong>
@@ -100,18 +100,18 @@
 
             <!-- Tool 3: Commission Calculator -->
             <div class="col-md-6">
-                <div class="card h-100 style-18771">
-                    <div class="card-header style-38548">
+                <div class="card h-100">
+                    <div class="card-header">
                         <h4 class="text-white mb-0"><i class="fas fa-calculator me-2"></i>Commission Calculator</h4>
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="text-white-50">Sale Amount (₹)</label>
-                            <input type="number" id="commAmount" class="form-control" value="2500000" oninput="calcCommission()" class="style-46367">
+                            <input type="number" id="commAmount" class="form-control" value="2500000" oninput="calcCommission()" >
                         </div>
                         <div class="mb-3">
                             <label class="text-white-50">Your Rank</label>
-                            <select id="commRank" class="form-select" onchange="calcCommission()" class="style-46367">
+                            <select id="commRank" class="form-select" onchange="calcCommission()" >
                                 <option value="5">Associate (5%)</option>
                                 <option value="7">Sr. Associate (7%)</option>
                                 <option value="10">BDM (10%)</option>
@@ -121,7 +121,7 @@
                                 <option value="20">Site Manager (20%)</option>
                             </select>
                         </div>
-                        <div class="style-3672">
+                        <div >
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-white-50">Track A (Direct Sale):</span>
                                 <span class="text-success" id="commTrackA">₹1,25,000</span>
@@ -134,7 +134,7 @@
                                 <span class="text-white-50">Track C (Milestone):</span>
                                 <span class="text-warning" id="commTrackC">₹50,000</span>
                             </div>
-                            <hr class="style-96118">
+                            <hr >
                             <div class="d-flex justify-content-between">
                                 <strong class="text-white">Total Commission (Max 20%):</strong>
                                 <strong class="text-success fs-4" id="commTotal">₹2,50,000</strong>
@@ -149,25 +149,25 @@
         <!-- Tool 4: Stamp Duty Quick Calc -->
         <div class="row mb-5">
             <div class="col-md-4">
-                <div class="card h-100 style-18771">
-                    <div class="card-header style-95871">
+                <div class="card h-100">
+                    <div class="card-header">
                         <h5 class="text-white mb-0"><i class="fas fa-file-contract me-2"></i>Stamp Duty Quick Calc</h5>
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="text-white-50">Property Value (₹)</label>
-                            <input type="number" id="stampValue" class="form-control" value="2500000" oninput="calcStamp()" class="style-46367">
+                            <input type="number" id="stampValue" class="form-control" value="2500000" oninput="calcStamp()" >
                         </div>
                         <div class="mb-3">
                             <label class="text-white-50">State</label>
-                            <select id="stampState" class="form-select" onchange="calcStamp()" class="style-46367">
+                            <select id="stampState" class="form-select" onchange="calcStamp()" >
                                 <option value="5">Uttar Pradesh (5%)</option>
                                 <option value="6">Delhi (6%)</option>
                                 <option value="7">Rajasthan (7%)</option>
                                 <option value="3">Haryana (3% rural)</option>
                             </select>
                         </div>
-                        <div class="style-3672">
+                        <div >
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-white-50">Stamp Duty:</span>
                                 <span class="text-white" id="stampDuty">₹1,25,000</span>
@@ -176,7 +176,7 @@
                                 <span class="text-white-50">Registration (1%):</span>
                                 <span class="text-white" id="stampReg">₹25,000</span>
                             </div>
-                            <hr class="style-96118">
+                            <hr >
                             <div class="d-flex justify-content-between">
                                 <strong class="text-white">Total:</strong>
                                 <strong class="text-danger fs-5" id="stampTotal">₹1,50,000</strong>
@@ -188,25 +188,25 @@
 
             <!-- Tool 5: EMI Quick Calc -->
             <div class="col-md-4">
-                <div class="card h-100 style-18771">
-                    <div class="card-header style-84117">
+                <div class="card h-100">
+                    <div class="card-header">
                         <h5 class="text-white mb-0"><i class="fas fa-calendar-alt me-2"></i>EMI Quick Calculator</h5>
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="text-white-50">Loan Amount (₹)</label>
-                            <input type="number" id="emiLoan" class="form-control" value="1500000" oninput="calcEMI()" class="style-46367">
+                            <input type="number" id="emiLoan" class="form-control" value="1500000" oninput="calcEMI()" >
                         </div>
                         <div class="mb-3">
                             <label class="text-white-50">Interest Rate (% p.a.)</label>
-                            <input type="number" id="emiRate" class="form-control" value="8.5" step="0.1" oninput="calcEMI()" class="style-46367">
+                            <input type="number" id="emiRate" class="form-control" value="8.5" step="0.1" oninput="calcEMI()" >
                         </div>
                         <div class="mb-3">
                             <label class="text-white-50">Tenure (years)</label>
-                            <input type="range" id="emiTenure" class="form-range" min="1" max="30" value="15" oninput="calcEMI()" class="style-87889">
+                            <input type="range" id="emiTenure" class="form-range" min="1" max="30" value="15" oninput="calcEMI()" >
                             <span class="text-white-50" id="emiTenureLabel">15 years</span>
                         </div>
-                        <div class="style-3672">
+                        <div >
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-white-50">Monthly EMI:</span>
                                 <strong class="text-success fs-5" id="emiMonthly">₹14,995</strong>
@@ -226,11 +226,11 @@
 
             <!-- Tool 6: Document Checklist -->
             <div class="col-md-4">
-                <div class="card h-100 style-18771">
-                    <div class="card-header style-31466">
+                <div class="card h-100">
+                    <div class="card-header">
                         <h5 class="text-white mb-0"><i class="fas fa-tasks me-2"></i>Land Deal Checklist</h5>
                     </div>
-                    <div class="card-body style-43942">
+                    <div class="card-body">
                         <div id="checklist">
                             <?php
                             $items = [
@@ -251,9 +251,9 @@
                                 'Occupancy Certificate (if built)',
                             ];
                             foreach ($items as $i => $item): ?>
-                                <div class="form-check mb-2 style-25010">
-                                    <input class="form-check-input" type="checkbox" id="item<?= $i ?>" class="style-37958">
-                                    <label class="form-check-label text-white-50 ms-2" for="item<?= $i ?>" class="style-47175"><?= $item ?></label>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="item<?= $i ?>" >
+                                    <label class="form-check-label text-white-50 ms-2" for="item<?= $i ?>" ><?= $item ?></label>
                                 </div>
                             <?php endforeach; ?>
                         </div>
@@ -267,7 +267,7 @@
 
         <!-- CTA Section -->
         <div class="text-center mt-5">
-            <div class="card style-14815">
+            <div class="card">
                 <div class="card-body py-5">
                     <h3 class="text-white fw-bold">Become an APS Dream Home Partner</h3>
                     <p class="text-white-50 mb-4">Join 50+ associates earning commission on land deals. Free training, CRM tools, and regular income.</p>
@@ -300,7 +300,7 @@ function convertArea() {
     for (const [key, factor] of Object.entries(areaFactors)) {
         const converted = sqft / factor;
         const highlight = key === from ? 'color:#0d9488;font-weight:bold;' : '';
-        html += '<div class="d-flex justify-content-between mb-1 style-64711">';
+        html += '<div class="d-flex justify-content-between mb-1">';
         html += '<span class="text-white-50">' + areaNames[key] + ':</span>';
         html += '<span class="text-white">' + converted.toLocaleString('en-IN', {maximumFractionDigits: 2}) + '</span>';
         html += '</div>';

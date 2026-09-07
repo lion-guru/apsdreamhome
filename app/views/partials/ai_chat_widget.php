@@ -18,7 +18,7 @@ $user_role = $this->getUserRole() ?? 'customer';
     </button>
     
     <!-- Chat Popup -->
-    <div id="ai-chat-popup" class="ai-chat-popup style-54390">
+    <div id="ai-chat-popup" class="ai-chat-popup">
         <!-- Chat Header -->
         <div class="ai-chat-header">
             <div class="ai-chat-info">

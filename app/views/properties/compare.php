@@ -85,7 +85,7 @@
                                 data-name="<?= strtolower(htmlspecialchars($property['title'] ?? '')) ?>"
                                 data-location="<?= strtolower(htmlspecialchars($property['location'] ?? '')) ?>">
                                 <div class="card h-100 property-select-card" id="property-<?= $property['id'] ?>"
-                                    onclick="toggleProperty(<?= $property['id'] ?>)" class="style-75920">
+                                    onclick="toggleProperty(<?= $property['id'] ?>)" >
 
                                     <!-- Selection Badge -->
                                     <div class="position-absolute top-0 end-0 m-2">
@@ -96,11 +96,11 @@
                                     </div>
 
                                     <!-- Property Image -->
-                                    <div class="property-image-wrapper style-16984">
+                                    <div class="property-image-wrapper">
                                         <?php if ($property['primary_image']): ?>
                                             <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg"
                                                 class="card-img-top" alt="<?= htmlspecialchars($property['title'] ?? '') ?>"
-                                                class="style-59893">
+                                                >
                                         <?php else: ?>
                                             <div class="bg-light d-flex align-items-center justify-content-center h-100">
                                                 <i class="fas fa-home fa-3x text-muted"></i>

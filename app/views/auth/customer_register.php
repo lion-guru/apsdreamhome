@@ -54,7 +54,7 @@ $base = BASE_URL;
             <div class="card-body aps-cp-card-body">
                 <div class="text-center mb-4">
                     <div class="mb-3">
-                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle style-53013"><i class="fas fa-home text-white fa-lg"></i></div>
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle"><i class="fas fa-home text-white fa-lg"></i></div>
                     </div>
                     <h3 class="fw-bold"><?= __('register_title') ?></h3>
                     <p class="text-muted"><?= __('register_subtitle') ?></p>
@@ -84,7 +84,7 @@ $base = BASE_URL;
                         <label class="form-label"><?= __('register_label_phone') ?> *</label>
                         <input type="text" class="form-control" name="phone" value="<?php echo htmlspecialchars($old['phone'] ?? ''); ?>" placeholder="<?= __('register_ph_phone') ?>" required>
                     </div>
-                    <div class="reg-step-2" <?= $formVariant === 'minimal' ? 'class="style-24280"' : '' ?>>
+                    <div class="reg-step-2" <?= $formVariant === 'minimal' ? 'class=""' : '' ?>>
                         <div class="mb-3">
                             <label class="form-label"><?= __('register_label_password') ?> *</label>
                             <input type="password" class="form-control" name="password" placeholder="<?= __('register_ph_password') ?>" <?= $formVariant === 'minimal' ? '' : 'required' ?>>
@@ -103,12 +103,12 @@ $base = BASE_URL;
                         </div>
                     </div>
                     <?php if ($formVariant === 'minimal'): ?>
-                        <button type="button" class="btn btn-primary w-100 py-2 reg-step-1-btn" id="reg-step-1-continue" class="style-32526">
+                        <button type="button" class="btn btn-primary w-100 py-2 reg-step-1-btn" id="reg-step-1-continue" >
                             <i class="fas fa-arrow-right me-2"></i><?= __('register_continue') ?>
                         </button>
                         
 <?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>
-<button type="submit" class="btn btn-primary w-100 py-2 reg-step-2-btn" id="reg-step-2-submit" class="style-95374">
+<button type="submit" class="btn btn-primary w-100 py-2 reg-step-2-btn" id="reg-step-2-submit" >
                             <i class="fas fa-user-plus me-2"></i><?= __('register_button_submit') ?>
                         </button>
                         <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
@@ -128,7 +128,7 @@ $base = BASE_URL;
                         })();
                         </script>
                     <?php else: ?>
-                        <button type="submit" class="btn btn-primary w-100 py-2 style-32526">
+                        <button type="submit" class="btn btn-primary w-100 py-2">
                             <i class="fas fa-user-plus me-2"></i><?= __('register_button_submit') ?>
                         </button>
                     <?php endif; ?>

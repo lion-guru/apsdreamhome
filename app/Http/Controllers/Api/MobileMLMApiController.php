@@ -771,8 +771,8 @@ class MobileMLMApiController extends BaseController
         $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Unauthorized']); return; }
         try {
-            $service = new \App\Services\MLMIncentiveService();
-            $summary = $service->getIncentiveSummary($userId);
+            $service = new \App\Services\MLM\SalaryIncentiveService($this->pdo);
+            $summary = $service->checkSalaryIncentiveEligibility($userId);
             echo json_encode(['success'=>true,'data'=>$summary]);
         } catch (\Throwable $e) {
             echo json_encode(['success'=>false,'error'=>'Failed to get incentive summary']);
@@ -783,8 +783,8 @@ class MobileMLMApiController extends BaseController
     {
         $this->setCorsHeaders();
         try {
-            $service = new \App\Services\MLMIncentiveService();
-            echo json_encode(['success'=>true,'data'=>$service->getMonthlyTargets()]);
+            $service = new \App\Services\MLM\SalaryIncentiveService($this->pdo);
+            echo json_encode(['success'=>true,'data'=>$service->getSalaryTiers()]);
         } catch (\Throwable $e) {
             echo json_encode(['success'=>false,'error'=>'Failed to get targets']);
         }

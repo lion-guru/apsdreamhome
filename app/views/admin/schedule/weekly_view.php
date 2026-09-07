@@ -24,7 +24,7 @@ $department = $department ?? '';
         <table class="table table-bordered table-sm">
             <thead class="table-light">
                 <tr>
-                    <th class="style-730">Employee</th>
+                    <th >Employee</th>
                     <?php foreach ($week_dates as $wd): ?>
                         <th class="text-center <?= !empty($wd['is_today']) ? 'table-primary' : '' ?>">
                             <?= htmlspecialchars($wd['day'] ?? '') ?><br><small><?= htmlspecialchars($wd['date'] ?? '') ?></small>
@@ -48,7 +48,7 @@ $department = $department ?? '';
                                 ?>
                                 <td class="text-center align-middle <?= !empty($wd['is_today']) ? 'table-primary' : '' ?>">
                                     <?php if ($shift): ?>
-                                        <span class="badge style-22927"><?= htmlspecialchars($shift['shift_type_name'] ?? '') ?></span>
+                                        <span class="badge"><?= htmlspecialchars($shift['shift_type_name'] ?? '') ?></span>
                                     <?php elseif ($isWorkDay): ?>
                                         <span class="text-info"><small>Scheduled</small></span>
                                     <?php else: ?>

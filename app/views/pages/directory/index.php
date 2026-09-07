@@ -44,7 +44,7 @@
                 <div class="col-md-4 col-lg-3 mb-4">
                     <div class="card h-100 shadow-sm border-0">
                         <?php if ($f['photo']): ?>
-                            <img src="<?= htmlspecialchars($f['photo'] ?? '') ?>" loading="lazy" class="card-img-top" alt="<?= htmlspecialchars($f['business_name'] ?? '') ?>" class="style-66292">
+                            <img src="<?= htmlspecialchars($f['photo'] ?? '')?>" loading="lazy" class="card-img-top" alt="<?= htmlspecialchars($f['business_name'] ?? '') ?>" >
                         <?php else: ?>
                             <div class="bg-light text-center py-5"><i class="<?= htmlspecialchars($f['category_icon'] ?? 'fas fa-building') ?> fa-3x text-muted"></i></div>
                         <?php endif; ?>

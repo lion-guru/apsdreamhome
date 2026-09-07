@@ -1,32 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>APS Dream Home — Payment Overdue Notice</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta charset="utf-8"></head>
-<body class="style-26942">
-<div class="style-10137">
-    <h1 class="style-85930">APS Dream Home</h1>
-    <p class="style-8849">Payment Overdue — Immediate Action Required</p>
+<body >
+<div >
+    <h1 >APS Dream Home</h1>
+    <p >Payment Overdue — Immediate Action Required</p>
 </div>
-<div class="style-38030">
-    <p class="style-33752">Dear <strong>{{customer_name}}</strong>,</p>
-    <p class="style-10698">Your EMI installment is now <strong class="style-31031">{{days_overdue}} days overdue</strong>. Immediate payment is required to avoid further penalties and potential action on your booking.</p>
+<div >
+    <p >Dear <strong>{{customer_name}}</strong>,</p>
+    <p >Your EMI installment is now <strong >{{days_overdue}} days overdue</strong>. Immediate payment is required to avoid further penalties and potential action on your booking.</p>
     
-    <div class="style-20329">
-        <table class="style-61075">
-            <tr><td class="style-20694">Booking:</td><td class="style-60925">{{booking_number}}</td></tr>
-            <tr><td class="style-20694">Installment:</td><td class="style-42101">#{{installment_no}}</td></tr>
-            <tr><td class="style-20694">Original Amount:</td><td class="style-42101">₹{{amount}}</td></tr>
-            <tr><td class="style-20694">Penalty Accrued:</td><td class="style-15627">₹{{penalty}}</td></tr>
-            <tr><td class="style-24404">Total Due Now:</td><td class="style-77436">₹{{total_due}}</td></tr>
+    <div >
+        <table >
+            <tr><td >Booking:</td><td >{{booking_number}}</td></tr>
+            <tr><td >Installment:</td><td >#{{installment_no}}</td></tr>
+            <tr><td >Original Amount:</td><td >₹{{amount}}</td></tr>
+            <tr><td >Penalty Accrued:</td><td >₹{{penalty}}</td></tr>
+            <tr><td >Total Due Now:</td><td >₹{{total_due}}</td></tr>
         </table>
     </div>
 
-    <p class="style-10698">Late payment charges accrue at <strong>18% per annum</strong> on the overdue amount. Please pay immediately to avoid further escalation.</p>
-    <p class="style-10698">Pay online: <a href="{{payment_url}}" class="style-69054">Click Here to Pay</a></p>
-    <p class="style-10698">For queries, call <strong class="style-22019">{{company_phone}}</strong></p>
+    <p >Late payment charges accrue at <strong>18% per annum</strong> on the overdue amount. Please pay immediately to avoid further escalation.</p>
+    <p >Pay online: <a href="{{payment_url}}" >Click Here to Pay</a></p>
+    <p >For queries, call <strong >{{company_phone}}</strong></p>
 </div>
-<div class="style-1322">
-    <p class="style-85082">&copy; APS Dream Home. All rights reserved.</p>
+<div >
+    <p >&copy; APS Dream Home. All rights reserved.</p>
 </div>
 </body>
 </html>

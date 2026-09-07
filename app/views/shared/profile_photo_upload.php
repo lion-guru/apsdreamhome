@@ -23,11 +23,11 @@ $initials = strtoupper(substr(preg_replace('/[^A-Za-z]/', '', $userName), 0, 2))
 $base = BASE_URL;
 ?>
 <div class="profile-photo-upload" data-user-id="<?= (int)$userId ?>">
-    <div class="photo-preview" id="profilePhotoPreview" class="style-60299">
+    <div class="photo-preview" id="profilePhotoPreview" >
         <?php if ($photoUrl): ?>
-            <img src="<?= htmlspecialchars($photoUrl ?? '') ?>" alt="Profile Photo" id="profilePhotoImg">
+            <img src="<?= htmlspecialchars($photoUrl ?? '')?>" alt="Profile Photo" id="profilePhotoImg">
         <?php else: ?>
-            <div class="photo-initials" id="profilePhotoInitials" class="style-38370"><?= htmlspecialchars($initials ?? '') ?></div>
+            <div class="photo-initials" id="profilePhotoInitials" ><?= htmlspecialchars($initials ?? '') ?></div>
         <?php endif; ?>
     </div>
     <div class="photo-actions">
@@ -43,7 +43,7 @@ $base = BASE_URL;
         <?php endif; ?>
     </div>
     <div class="photo-hint">JPG, PNG, GIF or WebP. Max 2MB, 1024x1024px</div>
-    <div class="photo-progress" id="profilePhotoProgress" class="style-2248">
+    <div class="photo-progress" id="profilePhotoProgress" >
         <div class="photo-progress-bar"></div>
     </div>
     <div class="photo-message" id="profilePhotoMessage"></div>

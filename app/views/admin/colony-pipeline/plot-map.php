@@ -15,7 +15,7 @@
 <div class="container-fluid py-3">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-            <h4 class="mb-1"><i class="fas fa-map-marked-alt style-5793"></i> Plot Map &mdash; <?= htmlspecialchars($colony['name'] ?? '') ?></h4>
+            <h4 class="mb-1"><i class="fas fa-map-marked-alt"></i> Plot Map &mdash; <?= htmlspecialchars($colony['name'] ?? '') ?></h4>
             <span class="text-muted small"><?= count($plots) ?> plots &middot; <?= htmlspecialchars($colony['district_name'] ?? '') ?></span>
         </div>
         <div>
@@ -24,18 +24,18 @@
         </div>
     </div>
     <div class="map-stats-bar" id="mapStats">
-        <span class="map-stat" data-status="available"><span class="dot style-26706"></span> Available: <strong id="statAvail">0</strong></span>
-        <span class="map-stat" data-status="booked"><span class="dot style-4960"></span> Booked: <strong id="statBooked">0</strong></span>
-        <span class="map-stat" data-status="sold"><span class="dot style-68656"></span> Sold: <strong id="statSold">0</strong></span>
-        <span class="map-stat" data-status="hold"><span class="dot style-99107"></span> Hold: <strong id="statHold">0</strong></span>
+        <span class="map-stat" data-status="available"><span class="dot"></span> Available: <strong id="statAvail">0</strong></span>
+        <span class="map-stat" data-status="booked"><span class="dot"></span> Booked: <strong id="statBooked">0</strong></span>
+        <span class="map-stat" data-status="sold"><span class="dot"></span> Sold: <strong id="statSold">0</strong></span>
+        <span class="map-stat" data-status="hold"><span class="dot"></span> Hold: <strong id="statHold">0</strong></span>
         <span class="map-stat ms-auto text-muted">Total Value: <strong id="statValue">₹0</strong></span>
     </div>
     <div class="map-filter-bar mb-3">
         <button class="btn btn-sm btn-light border active btn-map-filter" data-filter="all">All</button>
-        <button class="btn btn-sm btn-light border btn-map-filter" data-filter="available" class="style-82740">Available</button>
-        <button class="btn btn-sm btn-light border btn-map-filter" data-filter="booked" class="style-67064">Booked</button>
-        <button class="btn btn-sm btn-light border btn-map-filter" data-filter="sold" class="style-51061">Sold</button>
-        <button class="btn btn-sm btn-light border btn-map-filter" data-filter="hold" class="style-79191">Hold</button>
+        <button class="btn btn-sm btn-light border btn-map-filter" data-filter="available" >Available</button>
+        <button class="btn btn-sm btn-light border btn-map-filter" data-filter="booked" >Booked</button>
+        <button class="btn btn-sm btn-light border btn-map-filter" data-filter="sold" >Sold</button>
+        <button class="btn btn-sm btn-light border btn-map-filter" data-filter="hold" >Hold</button>
     </div>
     <div id="plotMap"></div>
 </div>
@@ -52,11 +52,11 @@
     var legend = L.control({ position: 'bottomright' });
     legend.onAdd = function() {
         var div = L.DomUtil.create('div', 'legend');
-        div.innerHTML = '<div class="style-45261">' +
-            '<div><span class="style-96563"></span>Available</div>' +
-            '<div><span class="style-42723"></span>Booked</div>' +
-            '<div><span class="style-62460"></span>Sold</div>' +
-            '<div><span class="style-60540"></span>Hold</div></div>';
+        div.innerHTML = '<div >' +
+            '<div><span ></span>Available</div>' +
+            '<div><span ></span>Booked</div>' +
+            '<div><span ></span>Sold</div>' +
+            '<div><span ></span>Hold</div></div>';
         return div;
     };
     legend.addTo(map);
@@ -82,9 +82,9 @@
                             '<div class="info-row"><span class="label">Area</span><span class="value">' + (p.area_sqft || 0) + ' sqft</span></div>' +
                             '<div class="info-row"><span class="label">Size</span><span class="value">' + (p.width_ft || '-') + 'x' + (p.length_ft || '-') + '</span></div>' +
                             (p.price_per_sqft ? '<div class="info-row"><span class="label">Rate</span><span class="value">₹' + Number(p.price_per_sqft).toLocaleString() + '/sqft</span></div>' : '') +
-                            (p.total_price ? '<div class="info-row"><span class="label">Price</span><span class="value fw-bold style-5793">₹' + Number(p.total_price).toLocaleString() + '</span></div>' : '') +
-                            (p.corner_plot ? '<div class="info-row"><span class="label">Corner Plot</span><span class="value style-82740">✓</span></div>' : '') +
-                            (p.park_facing ? '<div class="info-row"><span class="label">Park Facing</span><span class="value style-82740">✓</span></div>' : '') +
+                            (p.total_price ? '<div class="info-row"><span class="label">Price</span><span class="value fw-bold">₹' + Number(p.total_price).toLocaleString() + '</span></div>' : '') +
+                            (p.corner_plot ? '<div class="info-row"><span class="label">Corner Plot</span><span class="value">✓</span></div>' : '') +
+                            (p.park_facing ? '<div class="info-row"><span class="label">Park Facing</span><span class="value">✓</span></div>' : '') +
                             (p.gata_number ? '<div class="info-row"><span class="label">Gata</span><span class="value">' + p.gata_number + '</span></div>' : '') +
                             '<hr class="my-2"><a href="' + baseUrl + '/admin/colony-pipeline/' + colonyId + '/plots?block=' + encodeURIComponent(p.block || '') + '" class="btn btn-sm btn-outline-primary w-100"><i class="fas fa-eye me-1"></i>View Details</a></div>';
                         layer.bindPopup(html, { maxWidth: 300 });

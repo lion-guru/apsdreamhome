@@ -26,9 +26,12 @@ if (!empty($properties) && is_array($properties)) {
     $startPosition = (int)((($page ?? 1) - 1) * 12) + 1;
     foreach ($properties as $i => $property) {
         $itemUrl = (defined('BASE_URL') ? BASE_URL : '') . '/property/' . ($property['id'] ?? '');
-        $itemImage = !empty($property['image'])
-            ? ((defined('BASE_URL') ? BASE_URL : '') . '/assets/images/properties/' . $property['image'])
-            : '';
+        $imgVal = $property['image'] ?? '';
+        if (!empty($imgVal)) {
+            $itemImage = (strpos($imgVal, 'http') === 0 || strpos($imgVal, '/') === 0) ? $imgVal : ((defined('BASE_URL') ? BASE_URL : '') . '/' . ltrim($imgVal, '/'));
+        } else {
+            $itemImage = '';
+        }
         $jsonLd['itemListElement'][] = [
             '@type' => 'ListItem',
             'position' => $startPosition + $i,
@@ -141,21 +144,21 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
     </div>
 </div>
 
-<div class="container style-54650">
+<div class="container">
     <!-- Filters -->
     <div class="props-filter-glass mb-4">
         <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#advancedFilters" role="button">
-            <h6><i class="fas fa-sliders-h me-2 style-5793"></i><?= __('advanced_search') ?></h6>
+            <h6><i class="fas fa-sliders-h me-2"></i><?= __('advanced_search') ?></h6>
             <div class="d-flex align-items-center gap-2">
                 <?php if (!empty($_SESSION['user_id']) && $hasActiveFilters): ?>
-                    <button type="button" class="btn btn-sm style-26680" onclick="event.stopPropagation();triggerSaveSearch()">
+                    <button type="button" class="btn btn-sm" onclick="event.stopPropagation();triggerSaveSearch()">
                         <i class="fas fa-bookmark me-1"></i>Save
                     </button>
                 <?php endif; ?>
-                <button type="button" class="btn btn-sm btn-outline-secondary style-94626" onclick="event.stopPropagation();resetFilters()" aria-label="Reset filters">
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="event.stopPropagation();resetFilters()" aria-label="Reset filters">
                     <i class="fas fa-redo" aria-hidden="true"></i>
                 </button>
-                <i class="fas fa-chevron-down style-8890" id="filterChevron"></i>
+                <i class="fas fa-chevron-down" id="filterChevron"></i>
             </div>
         </div>
         <div class="collapse" id="advancedFilters">
@@ -256,13 +259,13 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                         <input type="number" class="form-control" id="area_max" name="area_max" placeholder="Max" min="0" value="<?= htmlspecialchars($_GET['area_max'] ?? '') ?>">
                     </div>
                     <div class="col-12 d-flex gap-2 align-items-center pt-2 flex-wrap">
-                        <button type="submit" class="btn px-4 style-55218">
+                        <button type="submit" class="btn px-4">
                             <i class="fas fa-search me-1"></i><?= __('search') ?>
                         </button>
                         <button type="button" class="btn btn-teal px-4" id="aiSearchBtn" onclick="openAISearchModal()">
                             <i class="fas fa-robot me-1"></i><?= __('ai_search') ?>
                         </button>
-                        <a href="<?php echo BASE_URL; ?>/properties" class="btn btn-outline-secondary style-46740">
+                        <a href="<?php echo BASE_URL; ?>/properties" class="btn btn-outline-secondary">
                             <i class="fas fa-times me-1"></i><?= __('clear_all') ?>
                         </a>
                     </div>
@@ -274,15 +277,15 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
     <!-- Cross-link Section: Also Explore -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="d-flex flex-wrap gap-2 align-items-center style-1563">
+            <div class="d-flex flex-wrap gap-2 align-items-center">
                 <span class="fw-semibold text-success me-2"><i class="fas fa-compass me-1"></i><?= __('also_explore') ?></span>
-                <a href="<?= BASE_URL ?>/plots" class="btn btn-sm px-3 style-6722">
+                <a href="<?= BASE_URL ?>/plots" class="btn btn-sm px-3">
                     <i class="fas fa-vector-square me-1"></i>Plots
                 </a>
-                <a href="<?= BASE_URL ?>/projects" class="btn btn-sm px-3 style-97522">
+                <a href="<?= BASE_URL ?>/projects" class="btn btn-sm px-3">
                     <i class="fas fa-project-diagram me-1"></i>Projects
                 </a>
-                <a href="<?= BASE_URL ?>/colonies" class="btn btn-sm px-3 style-66828">
+                <a href="<?= BASE_URL ?>/colonies" class="btn btn-sm px-3">
                     <i class="fas fa-city me-1"></i><?= __('colonies') ?>
                 </a>
             </div>
@@ -291,7 +294,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
 
     <!-- View Toggle Bar -->
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <span class="text-muted style-49273">
+        <span class="text-muted">
             Showing <strong><?= count($properties ?? []) ?></strong> of <strong><?= number_format($total ?? 0) ?></strong> properties
         </span>
         <div class="d-flex gap-2">
@@ -310,12 +313,18 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
         ?>
         <?php if (!empty($properties)): ?>
             <?php foreach ($properties as $idx => $property): ?>
-                <div class="<?= htmlspecialchars($cardColClass ?? '') ?> mb-4 scroll-reveal style-86452">
+                <div class="<?= htmlspecialchars($cardColClass ?? '') ?> mb-4 scroll-reveal">
                     <div class="card props-grid-card glass-card h-100" data-property-id="<?= (int)($property['id'] ?? 0) ?>">
                         <div class="card-img-wrap">
                             <?php
-                                $imgSrc = BASE_URL . '/assets/images/properties/' . htmlspecialchars($property['image'] ?? '');
-                                if (empty($property['image'])) $imgSrc = BASE_URL . '/assets/images/placeholder/property.svg';
+                                $imgVal = $property['image'] ?? '';
+                                if (empty($imgVal)) {
+                                    $imgSrc = BASE_URL . '/assets/images/placeholder/property.svg';
+                                } elseif (strpos($imgVal, 'http') === 0 || strpos($imgVal, '/') === 0) {
+                                    $imgSrc = $imgVal;
+                                } else {
+                                    $imgSrc = BASE_URL . '/' . ltrim($imgVal, '/');
+                                }
                                 $propTitle = $property['title'] ?? $property['name'] ?? 'Property';
                                 $propType = $property['type'] ?? $property['property_type'] ?? '';
                                 $propLocation = $property['location'] ?? $property['address'] ?? '';
@@ -326,11 +335,11 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                                  onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
 
                             <div class="img-badges">
-                                <span class="badge style-55032">
+                                <span class="badge">
                                     <?= $propListingType === 'rent' ? 'FOR RENT' : 'FOR SALE' ?>
                                 </span>
                                 <?php if (!empty($propType)): ?>
-                                    <span class="badge style-11190">
+                                    <span class="badge">
                                         <?= strtoupper($propType) ?>
                                     </span>
                                 <?php endif; ?>
@@ -338,7 +347,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
 
                             <div class="img-actions">
                                 <button class="btn favorite-btn" data-id="<?= $property['id'] ?? '' ?>" title="<?= __('add_to_favorites') ?>" aria-label="<?= __('add_to_favorites') ?>" onclick="toggleFavorite(this)">
-                                    <i class="far fa-heart style-53984" aria-hidden="true"></i>
+                                    <i class="far fa-heart" aria-hidden="true"></i>
                                 </button>
                             </div>
                         </div>
@@ -351,7 +360,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                             </div>
 
                             <?php if (!empty($property['description'])): ?>
-                                <p class="style-88890">
+                                <p >
                                     <?= htmlspecialchars($property['description'] ?? '') ?>
                                 </p>
                             <?php endif; ?>
@@ -417,7 +426,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                     </div>
                     <h5><?= __('no_properties') ?></h5>
                     <p class="mb-3"><?= __('no_results_tip') ?></p>
-                    <a href="<?= BASE_URL ?>/properties" class="btn px-4 style-11181">
+                    <a href="<?= BASE_URL ?>/properties" class="btn px-4">
                         <?= __('view_all') ?> Properties
                     </a>
                 </div>
@@ -434,7 +443,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
         <div class="props-pagination scroll-reveal">
             <?php if (($page ?? 1) > 1): ?>
                 <a class="page-btn" href="?<?= http_build_query(array_merge($paginationParams, ['page' => ($page - 1)])) ?>">
-                    <i class="fas fa-chevron-left style-5315"></i>
+                    <i class="fas fa-chevron-left"></i>
                 </a>
             <?php endif; ?>
             <?php
@@ -446,7 +455,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
             <?php endfor; ?>
             <?php if (($page ?? 1) < $totalPages): ?>
                 <a class="page-btn" href="?<?= http_build_query(array_merge($paginationParams, ['page' => ($page + 1)])) ?>">
-                    <i class="fas fa-chevron-right style-5315"></i>
+                    <i class="fas fa-chevron-right"></i>
                 </a>
             <?php endif; ?>
         </div>
@@ -565,11 +574,11 @@ function submitPropertyInterest(e) {
 </script>
 
 <div class="modal fade" id="propertyInterestModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered style-77674">
-        <div class="modal-content style-51436">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
             <div class="modal-header border-0 pb-0">
                 <div>
-                    <h6 class="fw-bold mb-0 style-8420">I'm Interested</h6>
+                    <h6 class="fw-bold mb-0">I'm Interested</h6>
                     <small class="text-muted" id="propInterestName"></small>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -581,27 +590,27 @@ function submitPropertyInterest(e) {
                     <input type="hidden" name="source" value="property_listing">
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Phone Number *</label>
-                        <input type="tel" name="phone" class="form-control style-46740" placeholder="+91 98765 43210" required value="<?= htmlspecialchars($_SESSION['user_phone'] ?? '') ?>">
+                        <input type="tel" name="phone" class="form-control" placeholder="+91 98765 43210" required value="<?= htmlspecialchars($_SESSION['user_phone'] ?? '') ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Your Name</label>
-                        <input type="text" name="name" class="form-control style-46740" placeholder="Enter your name" value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>">
+                        <input type="text" name="name" class="form-control" placeholder="Enter your name" value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Budget Range</label>
                         <div class="d-flex flex-wrap gap-2">
                             <?php foreach (['Under 10L','10L-25L','25L-50L','50L-1Cr','1Cr+'] as $budget): ?>
-                            <button type="button" class="btn btn-sm prop-budget-chip style-35248" onclick="selectPropBudget(this)"><?= $budget ?></button>
+                            <button type="button" class="btn btn-sm prop-budget-chip" onclick="selectPropBudget(this)"><?= $budget ?></button>
                             <?php endforeach; ?>
                         </div>
                         <input type="hidden" name="budget" id="propInterestBudget">
                     </div>
-                    <button type="submit" class="btn w-100" id="propInterestSubmitBtn" class="style-55218">
+                    <button type="submit" class="btn w-100" id="propInterestSubmitBtn" >
                         <i class="fas fa-paper-plane me-1"></i>Submit Interest
                     </button>
                 </form>
-                <div id="propInterestSuccess" class="text-center py-3 style-2248">
-                    <i class="fas fa-check-circle fa-3x mb-3 style-2154"></i>
+                <div id="propInterestSuccess" class="text-center py-3">
+                    <i class="fas fa-check-circle fa-3x mb-3"></i>
                     <h6 class="fw-bold">Interest Recorded!</h6>
                     <p class="text-muted small mb-0">Our team will contact you shortly.</p>
                 </div>

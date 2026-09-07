@@ -24,6 +24,11 @@ import '../../presentation/pages/customer/colony_plot_grid_page.dart';
 import '../../presentation/pages/customer/plot_detail_page.dart';
 import '../../presentation/pages/customer/customer_bookings_page.dart';
 import '../../presentation/pages/customer/post_property_page.dart';
+import '../../presentation/pages/customer/user_inquiries_page.dart';
+import '../../presentation/pages/customer/user_bank_details_page.dart';
+import '../../presentation/pages/customer/user_ai_suggestions_page.dart';
+import '../../presentation/pages/customer/user_notification_settings_page.dart';
+import '../../presentation/pages/customer/user_network_page.dart';
 
 // Property
 import '../../presentation/pages/property/property_marketplace_page.dart';
@@ -64,6 +69,11 @@ import '../../presentation/pages/common/terms_conditions_page.dart';
 import '../../presentation/pages/common/legal_services_page.dart';
 import '../../presentation/pages/common/disclaimer_page.dart';
 import '../../presentation/pages/common/cancellation_policy_page.dart';
+import '../../presentation/pages/common/construction_services_page.dart';
+import '../../presentation/pages/common/interior_design_page.dart';
+import '../../presentation/pages/common/document_gallery_page.dart';
+import '../../presentation/pages/common/vastu_page.dart';
+import '../../presentation/pages/common/whatsapp_templates_page.dart';
 import '../../presentation/pages/common/buy_page.dart';
 import '../../presentation/pages/common/sell_page.dart';
 import '../../presentation/pages/common/resell_properties_page.dart';
@@ -284,6 +294,11 @@ GoRouter createRouter() {
       final isLegalServices = uri == '/legal/services';
       final isDisclaimer = uri == '/disclaimer';
       final isCancellationPolicy = uri == '/cancellation-policy';
+      final isConstructionServices = uri == '/construction-services';
+      final isInteriorDesign = uri == '/interior-design';
+      final isDocumentGallery = uri == '/document-gallery';
+      final isVastu = uri == '/vastu';
+      final isWhatsAppTemplates = uri == '/whatsapp-templates';
       final isBuy = uri == '/buy';
       final isSell = uri == '/sell';
       final isResellProperties = uri == '/resell-properties';
@@ -351,9 +366,14 @@ final isPublicRoute =
           isPrivacy ||
           isTerms ||
           isLegalServices ||
-          isDisclaimer ||
-          isCancellationPolicy ||
-          isBuy ||
+isDisclaimer ||
+            isCancellationPolicy ||
+            isConstructionServices ||
+            isInteriorDesign ||
+            isDocumentGallery ||
+            isVastu ||
+            isWhatsAppTemplates ||
+            isBuy ||
           isSell ||
           isResellProperties ||
           isRent ||
@@ -471,6 +491,26 @@ final isPublicRoute =
       GoRoute(
         path: '/cancellation-policy',
         builder: (context, state) => const CancellationPolicyPage(),
+      ),
+      GoRoute(
+        path: '/construction-services',
+        builder: (context, state) => const ConstructionServicesPage(),
+      ),
+      GoRoute(
+        path: '/interior-design',
+        builder: (context, state) => const InteriorDesignPage(),
+      ),
+      GoRoute(
+        path: '/document-gallery',
+        builder: (context, state) => const DocumentGalleryPage(),
+      ),
+      GoRoute(
+        path: '/vastu',
+        builder: (context, state) => const VastuPage(),
+      ),
+      GoRoute(
+        path: '/whatsapp-templates',
+        builder: (context, state) => const WhatsAppTemplatesPage(),
       ),
       GoRoute(path: '/buy', builder: (context, state) => const BuyPage()),
       GoRoute(path: '/sell', builder: (context, state) => const SellPage()),
@@ -805,6 +845,41 @@ final isPublicRoute =
         path: '/post-property',
         pageBuilder: (context, state) => const CustomTransitionPage<void>(
           child: PostPropertyPage(),
+          transitionsBuilder: _slideTransition,
+        ),
+      ),
+      GoRoute(
+        path: '/user/inquiries',
+        pageBuilder: (context, state) => const CustomTransitionPage<void>(
+          child: UserInquiriesPage(),
+          transitionsBuilder: _slideTransition,
+        ),
+      ),
+      GoRoute(
+        path: '/user/bank-details',
+        pageBuilder: (context, state) => const CustomTransitionPage<void>(
+          child: UserBankDetailsPage(),
+          transitionsBuilder: _slideTransition,
+        ),
+      ),
+      GoRoute(
+        path: '/user/ai-suggestions',
+        pageBuilder: (context, state) => const CustomTransitionPage<void>(
+          child: UserAISuggestionsPage(),
+          transitionsBuilder: _slideTransition,
+        ),
+      ),
+      GoRoute(
+        path: '/user/notification-settings',
+        pageBuilder: (context, state) => const CustomTransitionPage<void>(
+          child: UserNotificationSettingsPage(),
+          transitionsBuilder: _slideTransition,
+        ),
+      ),
+      GoRoute(
+        path: '/user/network',
+        pageBuilder: (context, state) => const CustomTransitionPage<void>(
+          child: UserNetworkPage(),
           transitionsBuilder: _slideTransition,
         ),
       ),

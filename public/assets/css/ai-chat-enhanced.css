@@ -1,7 +1,7 @@
 /* APS Dream Home AI Chat - Enhanced Professional System */
 
 :root {
-  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --primary-gradient: linear-gradient(135deg, var(--color-indigo) 0%, var(--color-purple) 100%);
   --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   --success-color: #4ade80;
   --warning-color: #fbbf24;
@@ -218,7 +218,7 @@
 }
 
 .file-upload-area:hover {
-  border-color: #667eea;
+  border-color: var(--color-indigo);
   background: rgba(102, 126, 234, 0.1);
 }
 
@@ -295,7 +295,7 @@
 .lead-form input:focus,
 .lead-form select:focus,
 .lead-form textarea:focus {
-  border-color: #667eea;
+  border-color: var(--color-indigo);
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
 }
 
@@ -524,7 +524,7 @@ input[type='text'] {
 }
 
 input[type='text']:focus {
-  border-color: #667eea;
+  border-color: var(--color-indigo);
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
 }
 
@@ -599,7 +599,7 @@ input[type='text']:focus {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #667eea;
+  background: var(--color-indigo);
   animation: typing 1.4s infinite;
 }
 

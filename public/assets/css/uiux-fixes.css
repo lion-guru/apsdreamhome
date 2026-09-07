@@ -205,7 +205,7 @@ footer ul li a,
 
 /* Skip-to-content links (header.css vs aps-core.css fight) */
 .aps-skip-link {
-  background: #0f172a !important;
+  background: var(--color-primary) !important;
   color: #ffffff !important;
 }
 

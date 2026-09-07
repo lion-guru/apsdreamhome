@@ -23,7 +23,7 @@ $insights = $insights ?? [];
     <div class="row g-3 mb-4">
         <?php foreach ($insights as $ins): ?>
         <div class="col-md-6">
-            <div class="alert alert-<?= $ins['type'] ?> d-flex align-items-start gap-3 mb-0 style-46740">
+            <div class="alert alert-<?= $ins['type'] ?> d-flex align-items-start gap-3 mb-0">
                 <i class="<?= $ins['icon'] ?> fa-2x mt-1"></i>
                 <div><strong><?= $ins['title'] ?></strong><br><span class="small"><?= $ins['text'] ?></span></div>
             </div>
@@ -34,26 +34,26 @@ $insights = $insights ?? [];
 
     <div class="row g-3 mb-4">
         <div class="col-md-3 col-6">
-            <div class="card border-0 shadow-sm text-center py-3 style-46740">
-                <div class="style-99485"><?= number_format($totalLeads) ?></div>
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div ><?= number_format($totalLeads) ?></div>
                 <div class="small text-muted">Total Leads</div>
             </div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="card border-0 shadow-sm text-center py-3 style-46740">
-                <div class="style-29702"><?= number_format($hotLeads) ?></div>
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div ><?= number_format($hotLeads) ?></div>
                 <div class="small text-muted">Hot Leads (Score â‰¥70)</div>
             </div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="card border-0 shadow-sm text-center py-3 style-46740">
-                <div class="style-21276"><?= number_format($coldLeads) ?></div>
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div ><?= number_format($coldLeads) ?></div>
                 <div class="small text-muted">Cold Leads (Score &lt;30)</div>
             </div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="card border-0 shadow-sm text-center py-3 style-46740">
-                <div class="style-29911"><?= number_format($unassignedLeads) ?></div>
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div ><?= number_format($unassignedLeads) ?></div>
                 <div class="small text-muted">Unassigned</div>
             </div>
         </div>
@@ -83,15 +83,15 @@ $insights = $insights ?? [];
                     ?>
                     <div class="mb-3">
                         <div class="d-flex justify-content-between small"><span class="text-success">Hot</span><span><?= $hotPct ?>%</span></div>
-                        <div class="progress style-32124"><div class="progress-bar bg-success style-24533"></div></div>
+                        <div class="progress"><div class="progress-bar bg-success"></div></div>
                     </div>
                     <div class="mb-3">
                         <div class="d-flex justify-content-between small"><span class="text-danger">Cold</span><span><?= $coldPct ?>%</span></div>
-                        <div class="progress style-32124"><div class="progress-bar bg-danger style-58791"></div></div>
+                        <div class="progress"><div class="progress-bar bg-danger"></div></div>
                     </div>
                     <div>
                         <div class="d-flex justify-content-between small"><span class="text-warning">Unassigned</span><span><?= $unassignedPct ?>%</span></div>
-                        <div class="progress style-32124"><div class="progress-bar bg-warning style-78464"></div></div>
+                        <div class="progress"><div class="progress-bar bg-warning"></div></div>
                     </div>
                 </div>
             </div>
@@ -100,7 +100,7 @@ $insights = $insights ?? [];
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom"><h6 class="mb-0">New Leads This Week</h6></div>
                 <div class="card-body text-center py-4">
-                    <div class="style-20181"><?= number_format($newLeadsWeek) ?></div>
+                    <div ><?= number_format($newLeadsWeek) ?></div>
                     <div class="text-muted mt-1">leads in the last 7 days</div>
                 </div>
             </div>
@@ -161,15 +161,15 @@ $insights = $insights ?? [];
         <div class="card-body">
             <?php foreach ($sourcePerformance as $src): ?>
             <div class="d-flex align-items-center mb-3">
-                <div class="flex-shrink-0 me-3 style-72730"><span class="small fw-semibold"><?= htmlspecialchars($src['source'] ?? '') ?></span></div>
+                <div class="flex-shrink-0 me-3"><span class="small fw-semibold"><?= htmlspecialchars($src['source'] ?? '') ?></span></div>
                 <div class="flex-grow-1">
-                    <div class="progress style-40280">
-                        <div class="progress-bar bg-<?= $src['win_rate'] > 10 ? 'success' : ($src['win_rate'] > 5 ? 'warning' : 'secondary') ?> style-46654">
+                    <div class="progress">
+                        <div class="progress-bar bg-<?= $src['win_rate'] > 10 ? 'success' : ($src['win_rate'] > 5 ? 'warning' : 'secondary') ?>">
                             <?= $src['win_rate'] ?>%
                         </div>
                     </div>
                 </div>
-                <div class="flex-shrink-0 ms-2 style-31652"><small class="text-muted"><?= $src['total'] ?> leads</small></div>
+                <div class="flex-shrink-0 ms-2"><small class="text-muted"><?= $src['total'] ?> leads</small></div>
             </div>
             <?php endforeach; ?>
         </div>

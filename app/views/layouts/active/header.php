@@ -41,15 +41,15 @@ $nav = \App\Helpers\NavigationHelper::getInstance();
 
 <header class="premium-header fixed-top" id="mainHeader">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <nav class="navbar navbar-expand-xl align-items-center style-53424">
+    <nav class="navbar navbar-expand-xl align-items-center">
         <div class="container d-flex align-items-center">
             <!-- Logo - Always on the left -->
-            <a class="navbar-brand d-flex align-items-center me-0" href="<?php echo BASE_URL; ?>" class="style-38085">
+            <a class="navbar-brand d-flex align-items-center me-0" href="<?php echo BASE_URL; ?>" >
                 <?php $brand = $sc('company_name', 'APS Dream Home');
                 $logo = $sc('company_logo', '/assets/images/logo/apslogonew.jpg'); ?>
-                <img src="<?php echo BASE_URL . h($logo); ?>" alt="<?php echo h($brand); ?>" class="logo style-11857" loading="eager" fetchpriority="high">
+                <img src="<?php echo BASE_URL . h($logo);?>" alt="<?php echo h($brand); ?>" class="logo" loading="eager" fetchpriority="high">
                 <?php if (isset($brand)): ?>
-                    <span class="brand-text d-none d-md-inline ms-2 fw-bold style-38619"><?php echo h($brand); ?></span>
+                    <span class="brand-text d-none d-md-inline ms-2 fw-bold"><?php echo h($brand); ?></span>
                 <?php endif; ?>
             </a>
 
@@ -102,25 +102,25 @@ $nav = \App\Helpers\NavigationHelper::getInstance();
                 <!-- Action Buttons (Desktop) -->
                 <ul class="navbar-nav ms-auto align-items-center">
                     <!-- Phone Button -->
-                    <li class="nav-item ms-2">
-                        <a href="tel:<?php echo preg_replace('/[^0-9+]/', '', $sc('contact_phone', '+91 92771 21112')); ?>" class="btn btn-success btn-sm">
+                    <li class="nav-item ms-2 btn-call">
+                        <a href="tel:<?php echo preg_replace('/[^0-9+]/', '', $sc('contact_phone', '+91 92771 21112')); ?>" class="btn btn-call btn-sm px-2">
                             <i class="fas fa-phone me-1"></i>
                             <span><?php echo htmlspecialchars($sc('contact_phone', '+91 92771 21112')); ?></span>
                         </a>
                     </li>
 
                     <!-- Compare Button -->
-                    <li class="nav-item ms-2">
-                        <a href="<?php echo BASE_URL; ?>/compare" class="btn btn-outline-info btn-sm position-relative">
+                    <li class="nav-item ms-2 btn-compare">
+                        <a href="<?php echo BASE_URL; ?>/compare" class="btn btn-outline-info btn-sm px-2 position-relative">
                             <i class="fas fa-balance-scale"></i> Compare
-                            <span id="compareBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger style-62224">0</span>
+                            <span id="compareBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
                         </a>
                     </li>
 
                     <!-- Admin Login Button (when not logged in) -->
                     <?php if (!$isLoggedIn): ?>
-                        <li class="nav-item ms-2">
-                            <a href="<?php echo BASE_URL; ?>/admin/login" class="btn btn-primary btn-sm">
+                        <li class="nav-item ms-2 btn-admin">
+                            <a href="<?php echo BASE_URL; ?>/admin/login" class="btn btn-admin btn-sm px-2">
                                 <i class="fas fa-user-lock me-1"></i>
                                 Admin Login
                             </a>
@@ -498,7 +498,7 @@ window.apsAnnounce = announce;
         currentItems = items.filter(function(i) { return !i.divider; });
         activeIndex = -1;
         if (currentItems.length === 0) {
-            results.innerHTML = '<div class="style-68356">No results found</div>';
+            results.innerHTML = '<div >No results found</div>';
             return;
         }
 

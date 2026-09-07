@@ -78,7 +78,7 @@ $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : '';
                                     <td>
                                         <strong><?= htmlspecialchars($exp['name'] ?? '') ?></strong>
                                         <?php if (!empty($exp['description'])): ?>
-                                            <div class="small text-muted text-truncate style-96974">
+                                            <div class="small text-muted text-truncate">
                                                 <?= htmlspecialchars($exp['description'] ?? '') ?>
                                             </div>
                                         <?php endif; ?>

@@ -66,7 +66,7 @@ foreach ($statusSteps as $i => $step) {
             <div class="conf-card">
                 <h5 class="fw-bold mb-3"><i class="fas fa-file-invoice"></i> <?= __('booking_details') ?></h5>
                 <table class="table">
-                    <tr><th class="style-17160"><?= __('booking_number') ?></th><td><strong>#<?= $booking['id'] ?> (<?= htmlspecialchars($booking['booking_number'] ?? '') ?>)</strong></td></tr>
+                    <tr><th ><?= __('booking_number') ?></th><td><strong>#<?= $booking['id'] ?> (<?= htmlspecialchars($booking['booking_number'] ?? '') ?>)</strong></td></tr>
                     <tr><th><?= __('booking_plot') ?></th><td><?= htmlspecialchars($booking['plot_number'] ?? '') ?> — <?= htmlspecialchars($booking['colony_name'] ?? '') ?></td></tr>
                     <tr><th><?= __('booking_dimension') ?></th><td><?= htmlspecialchars($booking['dimension_label'] ?? '') ?> | <?= number_format(floatval($booking['area_sqft'] ?? 0)) ?> sqft</td></tr>
                     <tr><th><?= __('booking_total_price') ?></th><td class="fw-bold fs-5 text-primary">₹<?= number_format(intval($booking['total_amount'] ?? $booking['plot_price'] ?? 0)) ?></td></tr>

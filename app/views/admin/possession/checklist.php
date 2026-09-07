@@ -48,8 +48,8 @@ $active_page = 'possession';
                 <?php else: ?>
                     <?php $progress = count($checklist_items) > 0 ? round(($completed / count($checklist_items)) * 100) : 0; ?>
                     <div class="px-3 pt-3">
-                        <div class="progress style-87912">
-                            <div class="progress-bar bg-success style-8643"><?= $progress ?>%</div>
+                        <div class="progress">
+                            <div class="progress-bar bg-success"><?= $progress ?>%</div>
                         </div>
                     </div>
                     <div class="mt-2">
@@ -59,7 +59,7 @@ $active_page = 'possession';
                                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                     <input type="hidden" name="item_id" value="<?= $item['id'] ?>">
                                     <input type="hidden" name="is_completed" value="<?= $item['is_completed'] ? 0 : 1 ?>">
-                                    <button type="submit" class="btn btn-sm <?= $item['is_completed'] ? 'btn-success' : 'btn-outline-secondary' ?> style-46378">
+                                    <button type="submit" class="btn btn-sm <?= $item['is_completed'] ? 'btn-success' : 'btn-outline-secondary' ?>">
                                         <i class="fas <?= $item['is_completed'] ? 'fa-check' : 'fa-times' ?>"></i>
                                     </button>
                                     <span class="item-name <?= $item['is_completed'] ? 'completed-text' : '' ?>"><?= htmlspecialchars($item['item_name'] ?? '') ?></span>
@@ -117,7 +117,7 @@ $active_page = 'possession';
                     <?php foreach ($suggested as $s): ?>
                         <?php if (!in_array(strtolower($s), $existingNames)): ?>
                             <li class="mb-1">
-                                <form method="POST" action="<?= BASE_URL ?>/admin/possession/checklist/<?= $booking['id'] ?>/add" class="style-35851">
+                                <form method="POST" action="<?= BASE_URL ?>/admin/possession/checklist/<?= $booking['id'] ?>/add" >
                                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                     <input type="hidden" name="item_name" value="<?= htmlspecialchars($s ?? '') ?>">
                                     <button type="submit" class="btn btn-sm btn-outline-success" aria-label="Add"><i class="fas fa-plus"></i></button>

@@ -27,11 +27,12 @@ $images = $images ?? [];
         <?php else: ?>
             <div class="row g-3" id="galleryGrid">
                 <?php foreach ($images as $i => $img): ?>
+                    <?php $rawGp = trim((string)($img['image_path'] ?? $img['image_url'] ?? '')); if (empty($rawGp) || $rawGp === 'undefined' || $rawGp === 'null') { $rawGp = BASE_URL . '/assets/images/placeholder/property.svg'; } elseif (!str_starts_with($rawGp, 'http') && !str_starts_with($rawGp, '/')) { $rawGp = BASE_URL . '/' . ltrim($rawGp, '/'); } elseif (str_starts_with($rawGp, '/') && !str_starts_with($rawGp, 'http')) { $rawGp = BASE_URL . $rawGp; } ?>
                     <div class="col-6 col-md-4 col-lg-3">
-                        <div class="card border-0 shadow-sm rounded-3 overflow-hidden h-100 gallery-item style-10432" onclick="openLightbox(<?= $i ?>)">
-                            <img src="<?= htmlspecialchars($img['image_path'] ?? $img['image_url'] ?? '/assets/images/placeholder.jpg') ?>"
-                                 class="card-img-top" alt="<?= htmlspecialchars($img['title'] ?? 'Gallery Image') ?>"
-                                 class="style-31036" loading="lazy">
+                        <div class="card border-0 shadow-sm rounded-3 overflow-hidden h-100 gallery-item" onclick="openLightbox(<?= $i ?>)">
+                            <img src="<?= htmlspecialchars($rawGp, ENT_QUOTES, 'UTF-8') ?>"
+                                 class="card-img-top" alt="<?= htmlspecialchars($img['title'] ?? 'Gallery Image', ENT_QUOTES, 'UTF-8') ?>"
+                                 loading="lazy" onerror="this.onerror=null;this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
                             <?php if (!empty($img['title'])): ?>
                                 <div class="card-body p-2">
                                     <p class="card-text small text-muted mb-0"><?= htmlspecialchars($img['title'] ?? '') ?></p>
@@ -63,16 +64,13 @@ $images = $images ?? [];
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body text-center p-0">
-                <img id="lightboxImage" src="" class="img-fluid style-17121">
+                <img id="lightboxImage" src="" class="img-fluid" alt="Project gallery photo">
             </div>
         </div>
     </div>
 </div>
 <script>
-const galleryImages = <?= json_encode(array_map(fn($img) => [
-    'src' => $img['image_path'] ?? $img['image_url'] ?? '/assets/images/placeholder.jpg',
-    'title' => $img['title'] ?? ''
-], $images)) ?>;
+const galleryImages = <?= json_encode(array_map(function($img) { $raw = trim((string)($img['image_path'] ?? $img['image_url'] ?? '')); if (empty($raw) || $raw === 'undefined' || $raw === 'null') { $raw = BASE_URL . '/assets/images/placeholder/property.svg'; } elseif (!str_starts_with($raw, 'http') && !str_starts_with($raw, '/')) { $raw = BASE_URL . '/' . ltrim($raw, '/'); } elseif (str_starts_with($raw, '/')) { $raw = BASE_URL . $raw; } return ['src' => $raw, 'title' => $img['title'] ?? '']; }, $images)) ?>;
 let currentIndex = 0;
 function openLightbox(index) {
     currentIndex = index;

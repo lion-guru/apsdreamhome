@@ -76,7 +76,7 @@
                             </div>
                         </div>
 
-                        <div id="valResults" class="style-2248">
+                        <div id="valResults" >
                             <div class="row g-3 text-center mb-3">
                                 <div class="col-md-3 col-6">
                                     <div class="bg-light rounded-3 p-3">
@@ -108,8 +108,8 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <small class="text-muted"><?php echo __('confidence_score', [], 'Confidence Score'); ?></small>
-                                            <div class="progress mt-1 style-98142">
-                                                <div class="progress-bar bg-success" id="confBar" class="style-88324"></div>
+                                            <div class="progress mt-1">
+                                                <div class="progress-bar bg-success" id="confBar" ></div>
                                             </div>
                                         </div>
                                         <span class="badge bg-success" id="confBadge">70%</span>

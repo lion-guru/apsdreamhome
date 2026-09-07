@@ -1,8 +1,5 @@
 <?php
 
-// TODO: Add proper error handling with try-catch blocks
-
-
 namespace App\Services\Payment;
 
 use App\Core\Http\Response;

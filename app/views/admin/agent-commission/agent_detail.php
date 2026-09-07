@@ -30,7 +30,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 
 <div class="container-fluid py-4">
     <!-- Back link -->
-    <a href="<?= $base ?>/admin/agent-commission" class="style-83847">
+    <a href="<?= $base ?>/admin/agent-commission" >
         <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
     </a>
 
@@ -39,9 +39,9 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         <div class="d-flex align-items-center gap-4">
             <div class="ac-avatar"><?= strtoupper(substr($agent['name'] ?? 'A', 0, 1)) ?></div>
             <div>
-                <h4 class="style-53765"><?= htmlspecialchars($agent['name'] ?? 'N/A') ?></h4>
-                <div class="style-45569"><?= htmlspecialchars($agent['email'] ?? '') ?></div>
-                <div class="style-35629">
+                <h4 ><?= htmlspecialchars($agent['name'] ?? 'N/A') ?></h4>
+                <div ><?= htmlspecialchars($agent['email'] ?? '') ?></div>
+                <div >
                     <span class="ac-badge ac-badge-active"><?= ucfirst($agent['role'] ?? 'agent') ?></span>
                 </div>
             </div>
@@ -57,13 +57,13 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             </div>
         </div>
         <div class="col-md-4 mb-2">
-            <div class="ac-stat style-32886">
+            <div class="ac-stat">
                 <div class="num"><?= count($commissions) ?></div>
                 <div class="lbl">Total Sales</div>
             </div>
         </div>
         <div class="col-md-4 mb-2">
-            <div class="ac-stat style-21945">
+            <div class="ac-stat">
                 <div class="num"><?= $totalListings ?></div>
                 <div class="lbl">Active Listings</div>
             </div>
@@ -74,9 +74,9 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         <!-- Commission History -->
         <div class="col-md-7">
             <div class="ac-card">
-                <h5><i class="fas fa-history me-2 style-54781"></i>Commission History</h5>
+                <h5><i class="fas fa-history me-2"></i>Commission History</h5>
                 <?php if (!empty($commissions)): ?>
-                <div class="style-10754">
+                <div >
                     <table class="ac-table">
                         <thead>
                             <tr>
@@ -92,7 +92,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                 <td>#<?= (int)$c['id'] ?></td>
                                 <td><span class="ac-money">₹<?= number_format((float)$c['amount']) ?></span></td>
                                 <td><span class="ac-badge ac-badge-<?= $c['status'] ?>"><?= ucfirst($c['status']) ?></span></td>
-                                <td class="style-4937"><?= date('d M Y, h:i A', strtotime($c['created_at'])) ?></td>
+                                <td ><?= date('d M Y, h:i A', strtotime($c['created_at'])) ?></td>
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -107,16 +107,16 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         <!-- Agent Listings -->
         <div class="col-md-5">
             <div class="ac-card">
-                <h5><i class="fas fa-building me-2 style-75937"></i>Assigned Properties</h5>
+                <h5><i class="fas fa-building me-2"></i>Assigned Properties</h5>
                 <?php if (!empty($listings)): ?>
-                <div class="style-43942">
+                <div >
                     <?php foreach ($listings as $l): ?>
-                    <div class="style-88188">
-                        <div class="style-91674"><?= htmlspecialchars($l['property_name'] ?? 'N/A') ?></div>
-                        <div class="style-63117"><?= htmlspecialchars($l['property_location'] ?? '') ?></div>
-                        <div class="style-27644">
+                    <div >
+                        <div ><?= htmlspecialchars($l['property_name'] ?? 'N/A') ?></div>
+                        <div ><?= htmlspecialchars($l['property_location'] ?? '') ?></div>
+                        <div >
                             <span class="ac-badge ac-badge-<?= $l['status'] ?>"><?= ucfirst($l['status']) ?></span>
-                            <span class="style-4937"><?= (float)$l['commission_pct'] ?>% commission</span>
+                            <span ><?= (float)$l['commission_pct'] ?>% commission</span>
                         </div>
                     </div>
                     <?php endforeach; ?>

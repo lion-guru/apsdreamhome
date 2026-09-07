@@ -47,7 +47,7 @@
                                     <input type="text" name="code" class="form-control" required
                                            value="<?= htmlspecialchars($department['code'] ?? '') ?>"
                                            placeholder="e.g. FIN" maxlength="20"
-                                           class="style-36130">
+                                           >
                                 </div>
                             </div>
                             <div class="col-md-3">

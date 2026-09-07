@@ -21,54 +21,54 @@ a:hover{text-decoration:underline}
 }
 </style>
 </head>
-<body class="style-51511">
+<body >
 <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#f4f6fb">
   <tr>
-    <td align="center" class="style-56039">
-      <table role="presentation" class="container" border="0" cellpadding="0" cellspacing="0" width="600" class="style-99000">
+    <td align="center" >
+      <table role="presentation" class="container" border="0" cellpadding="0" cellspacing="0" width="600" >
         <!-- Header -->
         <tr>
-          <td bgcolor="#0d9488" align="center" class="style-40724">
-            <img src="{{logo_url}}" alt="APS Dream Home" width="180" class="style-97829">
-            <h1 class="h1-mobile style-56865">Welcome to APS Dream Home</h1>
-            <p class="style-9233">India's Premier Real Estate Platform</p>
+          <td bgcolor="#0d9488" align="center" >
+            <img src="{{logo_url}}" alt="APS Dream Home" width="180" >
+            <h1 class="h1-mobile">Welcome to APS Dream Home</h1>
+            <p >India's Premier Real Estate Platform</p>
           </td>
         </tr>
         <!-- Body -->
         <tr>
-          <td class="px-mobile style-68782">
-            <h2 class="style-80102">Hi {{name}},</h2>
-            <p class="style-28596">
+          <td class="px-mobile">
+            <h2 >Hi {{name}},</h2>
+            <p >
               Thank you for joining <strong>APS Dream Home</strong> — your trusted partner in finding the perfect property across India.
             </p>
-            <p class="style-28596">
+            <p >
               You can now:
             </p>
-            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" class="style-95815">
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" >
               <tr>
-                <td class="style-34995">&bull; Browse thousands of verified properties</td>
+                <td >&bull; Browse thousands of verified properties</td>
               </tr>
               <tr>
-                <td class="style-34995">&bull; Save your favorite listings and get instant alerts</td>
+                <td >&bull; Save your favorite listings and get instant alerts</td>
               </tr>
               <tr>
-                <td class="style-34995">&bull; Connect with our expert agents for site visits</td>
+                <td >&bull; Connect with our expert agents for site visits</td>
               </tr>
               <tr>
-                <td class="style-34995">&bull; Track your inquiries and bookings in one place</td>
+                <td >&bull; Track your inquiries and bookings in one place</td>
               </tr>
             </table>
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
               <tr>
-                <td align="center" class="style-43583">
-                  <a href="{{login_url}}" class="button-mobile style-99288">Get Started</a>
+                <td align="center" >
+                  <a href="{{login_url}}" class="button-mobile">Get Started</a>
                 </td>
               </tr>
             </table>
-            <p class="style-17625">
+            <p >
               If you have any questions, our support team is here to help.
             </p>
-            <p class="style-16742">
+            <p >
               Best regards,<br>
               <strong>The APS Dream Home Team</strong>
             </p>
@@ -76,13 +76,13 @@ a:hover{text-decoration:underline}
         </tr>
         <!-- Footer -->
         <tr>
-          <td bgcolor="#f7fafc" class="style-89423">
-            <p class="style-40082">APS Dream Home &nbsp;|&nbsp; {{company_phone}} &nbsp;|&nbsp; {{company_email}}</p>
-            <p class="style-31566">
-              <a href="{{unsubscribe_url}}" class="style-66032">Unsubscribe</a> &nbsp;&middot;&nbsp;
-              <a href="{{preferences_url}}" class="style-66032">Email Preferences</a>
+          <td bgcolor="#f7fafc" >
+            <p >APS Dream Home &nbsp;|&nbsp; {{company_phone}} &nbsp;|&nbsp; {{company_email}}</p>
+            <p >
+              <a href="{{unsubscribe_url}}" >Unsubscribe</a> &nbsp;&middot;&nbsp;
+              <a href="{{preferences_url}}" >Email Preferences</a>
             </p>
-            <p class="style-75003">&copy; {{year}} APS Dream Home. All rights reserved.</p>
+            <p >&copy; {{year}} APS Dream Home. All rights reserved.</p>
           </td>
         </tr>
       </table>

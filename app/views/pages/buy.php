@@ -29,8 +29,8 @@
                                 <div class="col-md-4">
                                     <select name="location" class="form-select">
                                         <option value=""><?= __('buy_location_placeholder') ?></option>
-                                        <option value="Gorakhpur"><?= __('location_gorakhpur') ?></option>
-                                        <option value="Lucknow"><?= __('location_lucknow') ?></option>
+                                        <option value="Gorakhpur">Gorakhpur</option>
+                                        <option value="Lucknow">Lucknow</option>
                                         <option value="Kushinagar"><?= __('location_kushinagar') ?></option>
                                         <option value="Varanasi"><?= __('location_varanasi') ?></option>
                                     </select>
@@ -90,7 +90,7 @@
 </section>
 
 <!-- CTA -->
-<section class="py-5 text-center text-white style-68644">
+<section class="py-5 text-center text-white" style="background: linear-gradient(135deg, #0a192f 0%, #1e3a5f 100%)">
     <div class="container">
         <h3><?= __('buy_sell_cta_title') ?></h3>
         <p class="mb-4"><?= __('buy_sell_cta_desc') ?></p>

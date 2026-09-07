@@ -369,7 +369,7 @@ $joinDate = date('M Y');
                     
                     <div class="id-profile">
                         <div class="profile-img-wrap">
-                            <img src="<?= $base ?>/assets/images/user-placeholder.jpg" alt="Profile" class="profile-img">
+                            <img src="<?= $base?>/assets/images/user-placeholder.jpg" alt="Profile" class="profile-img">
                         </div>
                         <div class="id-name"><?= htmlspecialchars($userName) ?></div>
                         <div class="id-role"><?= htmlspecialchars($userRole) ?></div>
@@ -386,7 +386,7 @@ $joinDate = date('M Y');
                         </div>
                         <div class="qr-placeholder">
                             <!-- A static placeholder QR for aesthetics -->
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=<?= urlencode($userId) ?>" alt="QR">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=<?= urlencode($userId)?>" alt="QR">
                         </div>
                     </div>
                 </div>

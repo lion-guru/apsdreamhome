@@ -649,29 +649,29 @@ $GLOBALS['_html_doc_started'] = true;
     </script>
 
     <!-- Floating AI Chat Widget -->
-    <div id="aiChatWidget" class="style-96938">
-        <button id="chatToggle" onclick="toggleAssociateChat()" class="style-14728" aria-label="Open APS Assistant chat">
+    <div id="aiChatWidget" >
+        <button id="chatToggle" onclick="toggleAssociateChat()" aria-label="Open APS Assistant chat">
             <i class="fas fa-robot" aria-hidden="true"></i>
         </button>
-        <div id="chatPanel" class="style-19303">
-            <div class="style-25493">
-                <div class="style-44602">
-                    <i class="fas fa-robot style-30322"></i>
+        <div id="chatPanel" >
+            <div >
+                <div >
+                    <i class="fas fa-robot"></i>
                     <div>
-                        <div class="style-35140">APS Assistant</div>
-                        <div class="style-1333">Property &amp; MLM Help</div>
+                        <div >APS Assistant</div>
+                        <div >Property &amp; MLM Help</div>
                     </div>
                 </div>
-                <button onclick="toggleAssociateChat()" class="style-71807" aria-label="Close chat"><i class="fas fa-times" aria-hidden="true"></i></button>
+                <button onclick="toggleAssociateChat()" aria-label="Close chat"><i class="fas fa-times" aria-hidden="true"></i></button>
             </div>
-            <div id="assocChatMessages" class="style-47443">
-                <div class="style-88703">
+            <div id="assocChatMessages" >
+                <div >
                     Namaste! I'm your APS assistant. Ask about properties, commissions, bookings, or anything else.
                 </div>
             </div>
-            <div class="style-22035">
-                <input type="text" id="assocChatInput" placeholder="Type a message..." class="style-69765" onkeypress="if(event.key==='Enter')sendAssociateChat()">
-                <button onclick="sendAssociateChat()" class="style-58231" aria-label="Send message"><i class="fas fa-paper-plane" aria-hidden="true"></i></button>
+            <div >
+                <input type="text" id="assocChatInput" placeholder="Type a message..." onkeypress="if(event.key==='Enter')sendAssociateChat()">
+                <button onclick="sendAssociateChat()" aria-label="Send message"><i class="fas fa-paper-plane" aria-hidden="true"></i></button>
             </div>
         </div>
     </div>

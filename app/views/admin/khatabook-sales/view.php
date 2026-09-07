@@ -10,7 +10,7 @@
                 <div class="card-header aps-cp-card-header"><h5 class="mb-0">Transaction Details</h5></div>
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-bordered">
-                        <tr><th class="style-47085">Transaction Date</th><td><?= htmlspecialchars($sale['transaction_date'] ?? '') ?></td></tr>
+                        <tr><th >Transaction Date</th><td><?= htmlspecialchars($sale['transaction_date'] ?? '') ?></td></tr>
                         <tr><th>Customer Name</th><td><strong><?= htmlspecialchars($sale['customer_name'] ?? '') ?></strong></td></tr>
                         <tr><th>Phone</th><td><?= htmlspecialchars($sale['customer_phone'] ?? '-') ?></td></tr>
                         <tr><th>Address</th><td><?= nl2br(htmlspecialchars($sale['customer_address'] ?? '-')) ?></td></tr>

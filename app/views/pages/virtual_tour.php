@@ -1,7 +1,5 @@
 <?php
 
-// TODO: Add proper error handling with try-catch blocks
-
 /**
  * Virtual Tour View
  */
@@ -17,10 +15,10 @@
             <?php elseif (isset($tour)): ?>
                 <h1 class="mb-4"><?= h($tour['property_title'] ?? __('virtual_tour_default_title')) ?></h1>
                 
-                <div id="viewer-container" class="style-43831">
+                <div id="viewer-container" >
                     <?php if (!empty($tour['assets'])): ?>
                         <!-- 360 Viewer Implementation -->
-                        <div id="viewer" class="style-80928"></div>
+                        <div id="viewer" ></div>
                         
                         <script src="https://cdn.jsdelivr.net/npm/photo-sphere-viewer@4/dist/photo-sphere-viewer.min.js"></script>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photo-sphere-viewer@4/dist/photo-sphere-viewer.min.css">
@@ -59,7 +57,7 @@
                         <div class="row g-3">
                             <?php foreach ($tour['assets'] as $asset): ?>
                                 <div class="col-md-3">
-                                    <div class="card h-100 tour-scene-card style-75920">
+                                    <div class="card h-100 tour-scene-card">
                                         <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top img-fluid" alt="<?= h($asset['title']) ?>">
                                         <div class="card-body p-2">
                                             <p class="card-text small mb-0"><?= h($asset['title']) ?></p>

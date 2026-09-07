@@ -145,7 +145,7 @@ if ($amount > 0 && $mon > 0 && $int > 0) {
 
 <style>
     .calc-header {
-        background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('<?= get_asset_url('breadcrumb.jpg', 'images') ?>') center/cover no-repeat;
+        background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('<?= get_asset_url('assets/images/breadcrumb.jpg') ?>') center/cover no-repeat;
     }
     .header-desc {
         max-width: 700px;

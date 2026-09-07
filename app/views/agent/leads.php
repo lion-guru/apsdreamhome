@@ -37,7 +37,7 @@ $statusColors = [
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1 style-613"><i class="fas fa-users me-2"></i>My Leads</h4>
+        <h4 class="mb-1"><i class="fas fa-users me-2"></i>My Leads</h4>
         <p class="text-muted mb-0">Manage your assigned leads and track conversions</p>
     </div>
     <div class="d-flex gap-2">
@@ -100,8 +100,8 @@ $statusColors = [
 <?php if (empty($filtered)): ?>
 <div class="card border-0 shadow-sm">
     <div class="card-body text-center py-5">
-        <div class="style-84169">
-            <i class="fas fa-user-plus fa-2x style-93945"></i>
+        <div >
+            <i class="fas fa-user-plus fa-2x"></i>
         </div>
         <h5 class="text-muted"><?= $filter ? 'No leads with this status' : 'No leads assigned yet' ?></h5>
         <p class="text-muted mb-0">Leads assigned to you will appear here</p>
@@ -112,15 +112,15 @@ $statusColors = [
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
-                <thead class="style-15087">
+                <thead >
                     <tr>
-                        <th class="px-3 py-3 style-83276">Name</th>
-                        <th class="px-3 py-3 style-83276">Contact</th>
-                        <th class="px-3 py-3 style-83276">Property</th>
-                        <th class="px-3 py-3 style-83276">Budget</th>
-                        <th class="px-3 py-3 style-83276">Status</th>
-                        <th class="px-3 py-3 style-83276">Date</th>
-                        <th class="px-3 py-3 style-83276">Actions</th>
+                        <th class="px-3 py-3">Name</th>
+                        <th class="px-3 py-3">Contact</th>
+                        <th class="px-3 py-3">Property</th>
+                        <th class="px-3 py-3">Budget</th>
+                        <th class="px-3 py-3">Status</th>
+                        <th class="px-3 py-3">Date</th>
+                        <th class="px-3 py-3">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -128,7 +128,7 @@ $statusColors = [
                     <tr class="agent-lead-row">
                         <td class="px-3">
                             <div class="d-flex align-items-center">
-                                <div class="style-88532">
+                                <div >
                                     <?= strtoupper(substr($lead['name'] ?? 'U', 0, 1)) ?>
                                 </div>
                                 <div>
@@ -163,7 +163,7 @@ $statusColors = [
                                         <i class="fas fa-phone"></i>
                                     </a>
                                 <?php endif; ?>
-                                <form method="POST" action="<?= $base ?>/agent/leads/<?= (int)$lead['id'] ?>/delete" class="style-35851" onsubmit="return confirm('Move this lead to trash?')">
+                                <form method="POST" action="<?= $base ?>/agent/leads/<?= (int)$lead['id'] ?>/delete" onsubmit="return confirm('Move this lead to trash?')">
                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                     <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
                                         <i class="fas fa-trash"></i>

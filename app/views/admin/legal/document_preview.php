@@ -28,7 +28,7 @@ if (!$doc) { echo '<div class="container-fluid py-4"><div class="alert alert-dan
     <div class="print-container">
         <?= $doc['content'] ?? '<p class="text-muted text-center py-5">No content</p>' ?>
         <?php if (!empty($doc['notes'])): ?>
-            <div class="style-85491">
+            <div >
                 <strong>Internal Notes:</strong> <?= nl2br(htmlspecialchars($doc['notes'] ?? '')) ?>
             </div>
         <?php endif; ?>

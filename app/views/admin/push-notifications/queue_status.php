@@ -19,50 +19,50 @@
 
     <div class="row g-3 mb-4">
         <div class="col-md-2">
-            <div class="card border-0 shadow-sm style-52634">
+            <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
-                    <div class="fs-3 fw-bold style-96443"><?= number_format($stats['total'] ?? 0) ?></div>
-                    <div class="style-9012">Total</div>
+                    <div class="fs-3 fw-bold"><?= number_format($stats['total'] ?? 0) ?></div>
+                    <div >Total</div>
                 </div>
             </div>
         </div>
         <div class="col-md-2">
-            <div class="card border-0 shadow-sm style-52634">
+            <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
-                    <div class="fs-3 fw-bold style-60246"><?= number_format($stats['pending'] ?? 0) ?></div>
-                    <div class="style-9012">Pending</div>
+                    <div class="fs-3 fw-bold"><?= number_format($stats['pending'] ?? 0) ?></div>
+                    <div >Pending</div>
                 </div>
             </div>
         </div>
         <div class="col-md-2">
-            <div class="card border-0 shadow-sm style-52634">
+            <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
-                    <div class="fs-3 fw-bold style-23731"><?= number_format($stats['processing'] ?? 0) ?></div>
-                    <div class="style-9012">Processing</div>
+                    <div class="fs-3 fw-bold"><?= number_format($stats['processing'] ?? 0) ?></div>
+                    <div >Processing</div>
                 </div>
             </div>
         </div>
         <div class="col-md-2">
-            <div class="card border-0 shadow-sm style-52634">
+            <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
-                    <div class="fs-3 fw-bold style-63663"><?= number_format($stats['sent'] ?? 0) ?></div>
-                    <div class="style-9012">Sent</div>
+                    <div class="fs-3 fw-bold"><?= number_format($stats['sent'] ?? 0) ?></div>
+                    <div >Sent</div>
                 </div>
             </div>
         </div>
         <div class="col-md-2">
-            <div class="card border-0 shadow-sm style-52634">
+            <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
-                    <div class="fs-3 fw-bold style-62247"><?= number_format($stats['failed'] ?? 0) ?></div>
-                    <div class="style-9012">Failed</div>
+                    <div class="fs-3 fw-bold"><?= number_format($stats['failed'] ?? 0) ?></div>
+                    <div >Failed</div>
                 </div>
             </div>
         </div>
         <div class="col-md-2">
-            <div class="card border-0 shadow-sm style-52634">
+            <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
-                    <div class="fs-3 fw-bold style-54585"><?= number_format($stats['cancelled'] ?? 0) ?></div>
-                    <div class="style-9012">Cancelled</div>
+                    <div class="fs-3 fw-bold"><?= number_format($stats['cancelled'] ?? 0) ?></div>
+                    <div >Cancelled</div>
                 </div>
             </div>
         </div>
@@ -70,21 +70,21 @@
 
     <div class="row g-4">
         <div class="col-md-6">
-            <div class="card border-0 shadow-sm style-52634">
-                <div class="card-header style-52852">
-                    <h6 class="mb-0 fw-bold style-96443">
-                        <i class="fas fa-calendar-day me-1 style-75937"></i> Today's Activity
+            <div class="card border-0 shadow-sm">
+                <div class="card-header">
+                    <h6 class="mb-0 fw-bold">
+                        <i class="fas fa-calendar-day me-1"></i> Today's Activity
                     </h6>
                 </div>
                 <div class="card-body">
                     <div class="row g-3 text-center">
                         <div class="col-6">
-                            <div class="fw-bold fs-4 style-63663"><?= number_format($todayStats['sent_today'] ?? 0) ?></div>
-                            <div class="style-37380">Sent Today</div>
+                            <div class="fw-bold fs-4"><?= number_format($todayStats['sent_today'] ?? 0) ?></div>
+                            <div >Sent Today</div>
                         </div>
                         <div class="col-6">
-                            <div class="fw-bold fs-4 style-62247"><?= number_format($todayStats['failed_today'] ?? 0) ?></div>
-                            <div class="style-37380">Failed Today</div>
+                            <div class="fw-bold fs-4"><?= number_format($todayStats['failed_today'] ?? 0) ?></div>
+                            <div >Failed Today</div>
                         </div>
                     </div>
                     <?php
@@ -93,11 +93,11 @@
                     ?>
                     <div class="mt-3">
                         <div class="d-flex justify-content-between mb-1">
-                            <small class="style-27277">Success Rate</small>
-                            <small class="style-27277"><?= $todayRate ?>%</small>
+                            <small >Success Rate</small>
+                            <small ><?= $todayRate ?>%</small>
                         </div>
-                        <div class="progress style-75342">
-                            <div class="progress-bar style-95483"></div>
+                        <div class="progress">
+                            <div class="progress-bar"></div>
                         </div>
                     </div>
                 </div>
@@ -105,25 +105,25 @@
         </div>
 
         <div class="col-md-6">
-            <div class="card border-0 shadow-sm style-52634">
-                <div class="card-header style-52852">
-                    <h6 class="mb-0 fw-bold style-96443">
-                        <i class="fas fa-bullhorn me-1 style-22437"></i> Campaign Status
+            <div class="card border-0 shadow-sm">
+                <div class="card-header">
+                    <h6 class="mb-0 fw-bold">
+                        <i class="fas fa-bullhorn me-1"></i> Campaign Status
                     </h6>
                 </div>
                 <div class="card-body">
                     <div class="row g-3 text-center">
                         <div class="col-6">
-                            <div class="fw-bold fs-4 style-96443"><?= number_format($campaignStats['total_campaigns'] ?? 0) ?></div>
-                            <div class="style-37380">Total Campaigns</div>
+                            <div class="fw-bold fs-4"><?= number_format($campaignStats['total_campaigns'] ?? 0) ?></div>
+                            <div >Total Campaigns</div>
                         </div>
                         <div class="col-6">
-                            <div class="fw-bold fs-4 style-63663"><?= number_format($campaignStats['active_campaigns'] ?? 0) ?></div>
-                            <div class="style-37380">Active Campaigns</div>
+                            <div class="fw-bold fs-4"><?= number_format($campaignStats['active_campaigns'] ?? 0) ?></div>
+                            <div >Active Campaigns</div>
                         </div>
                     </div>
                     <div class="mt-3">
-                        <a href="<?= BASE_URL ?>/admin/push-notifications/campaigns" class="btn btn-sm w-100 style-26367">
+                        <a href="<?= BASE_URL ?>/admin/push-notifications/campaigns" class="btn btn-sm w-100">
                             <i class="fas fa-arrow-right me-1"></i> View Campaigns
                         </a>
                     </div>
@@ -132,7 +132,7 @@
         </div>
     </div>
 
-    <div id="processResult" class="mt-3 style-2248"></div>
+    <div id="processResult" class="mt-3"></div>
 </div>
 
 <script>
@@ -156,16 +156,16 @@ function processQueue() {
     .catch(err => console.error('Request failed:', err));
         result.style.display = 'block';
         if (d.success) {
-            result.innerHTML = '<div class="alert alert-success style-54711"><i class="fas fa-check-circle me-1"></i> ' + (d.message || 'Queue processed!') + '</div>';
+            result.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle me-1"></i> ' + (d.message || 'Queue processed!') + '</div>';
         } else {
-            result.innerHTML = '<div class="alert alert-danger style-42865"><i class="fas fa-exclamation-circle me-1"></i> ' + (d.error || 'Failed to process') + '</div>';
+            result.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-1"></i> ' + (d.error || 'Failed to process') + '</div>';
         }
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-play me-1"></i> Process Batch';
     })
     .catch(err => {
         result.style.display = 'block';
-        result.innerHTML = '<div class="alert alert-danger style-42865"><i class="fas fa-exclamation-circle me-1"></i> Network error: ' + err.message + '</div>';
+        result.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-1"></i> Network error: ' + err.message + '</div>';
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-play me-1"></i> Process Batch';
     });

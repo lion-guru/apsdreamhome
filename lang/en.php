@@ -4188,6 +4188,7 @@ return array(
   'colonies_stat_area' => 'Total Area',
   'colonies_stat_plots' => 'Total Plots',
   'colonies_stat_cities' => 'Cities Covered',
+  'colonies_spec_plots' => 'Plots',
   'colonies_spec_area' => 'Total Area',
   'colonies_spec_available' => 'Available',
   'colonies_spec_price' => 'Starting Price',

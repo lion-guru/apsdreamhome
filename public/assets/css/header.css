@@ -26,14 +26,7 @@
 }
 
 /* ── BASE ────────────────────────────────────────────────────── */
-body:not(.page-home) {
-  padding-top: 76px;
-}
-@media (max-width: 1199.98px) {
-  body:not(.page-home) {
-    padding-top: 64px;
-  }
-}
+/* padding-top moved to main — single layer of offset for fixed header */
 
 /* Prevent body scroll when mobile drawer is open */
 body.mobile-drawer-open {

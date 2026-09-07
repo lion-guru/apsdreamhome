@@ -265,12 +265,17 @@ class FinancialReportsService
         $bankBalance = $bankStmt ? (float)$bankStmt['current_balance'] : 0.0;
 
         // 2. Book Balance (Cash Book)
-        $bookStmt = $this->db->fetchOne("
-            SELECT COALESCE(SUM(CASE WHEN transaction_type = 'receipt' THEN amount ELSE -amount END), 0) AS balance
-            FROM cash_book WHERE bank_account_id = ? AND transaction_date <= ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
-            array_merge([$trustAccountId, $asOfDate], $tid > 1 ? [$tid] : [])
-        );
-        $bookBalance = $bookStmt ? (float)$bookStmt['balance'] : 0.0;
+        try {
+            $bookStmt = $this->db->fetchOne("
+                SELECT COALESCE(SUM(CASE WHEN type = 'credit' THEN amount ELSE -amount END), 0) AS balance
+                FROM cash_book_entries WHERE reference_id = ? AND entry_date <= ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                array_merge([$trustAccountId, $asOfDate], $tid > 1 ? [$tid] : [])
+            );
+            $bookBalance = $bookStmt ? (float)$bookStmt['balance'] : 0.0;
+        } catch (\Throwable $e) {
+            error_log('FinancialReportsService::threeWayReconciliation cash_book query error: ' . $e->getMessage());
+            $bookBalance = 0.0;
+        }
 
         // 3. Trust Ledger Balance (client funds held)
         $trustStmt = $this->db->fetchOne("

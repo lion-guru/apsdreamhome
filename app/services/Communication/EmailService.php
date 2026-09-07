@@ -258,27 +258,27 @@ class EmailService
     {
         try {
             $tid = $this->getTenantId();
-            $tenantSql = $tid > 1 ? " AND u.tenant_id = ? AND u2.tenant_id = ?" : "";
+            $tenantSql = $tid > 1 ? " AND l.tenant_id = ?" : "";
             $commission = $this->db->fetchOne(
-                "SELECT c.*, u.name, u.email, u2.name as referred_name 
-                 FROM commissions c 
-                 JOIN users u ON c.associate_id = u.id{$tenantSql} 
-                 JOIN users u2 ON c.referred_user_id = u2.id 
-                 WHERE c.id = ?",
-                $tid > 1 ? [$commissionId, $tid, $tid] : [$commissionId]
+                "SELECT l.*, u.name, u.email, u2.name as referred_name 
+                 FROM mlm_commission_ledger l 
+                 JOIN users u ON l.beneficiary_user_id = u.id{$tenantSql} 
+                 LEFT JOIN users u2 ON l.source_user_id = u2.id 
+                 WHERE l.id = ?",
+                $tid > 1 ? [$commissionId, $tid] : [$commissionId]
             );
             
             if (!$commission) return false;
             
-            $subject = "Commission Credited - ₹" . number_format($commission['commission_amount'], 2);
+            $subject = "Commission Credited - " . number_format($commission['amount'], 2);
             
             $body = $this->getCommissionCreditTemplate([
                 'name' => $commission['name'],
-                'amount' => number_format($commission['commission_amount'], 2),
-                'percentage' => $commission['percentage'],
-                'referred_user' => $commission['referred_name'],
+                'amount' => number_format($commission['amount'], 2),
+                'percentage' => $commission['commission_percentage'],
+                'referred_user' => $commission['referred_name'] ?? '',
                 'level' => $commission['level'],
-                'wallet_balance' => $this->getWalletBalance($commission['associate_id']),
+                'wallet_balance' => $this->getWalletBalance($commission['beneficiary_user_id']),
                 'dashboard_url' => BASE_URL . '/associate/dashboard',
                 'payout_url' => BASE_URL . '/wallet/withdrawal',
                 'support_email' => $this->fromEmail

@@ -24,7 +24,7 @@ $page_description = __('user_ai_chat_description', 'Professional AI Chat Assista
                         <h4 class="mb-0"><i class="fas fa-comments me-2"></i><?= __('user_ai_chat_header', 'AI Chat Assistant') ?></h4>
                     </div>
                     <div class="card-body aps-cp-card-body">
-                        <div id="chat-container" class="style-98088">
+                        <div id="chat-container" >
                             <div class="text-center text-muted">
                                 <i class="fas fa-robot fa-3x mb-3"></i>
                                 <p><?= __('user_ai_chat_welcome', 'Welcome to APS Dream Home AI Assistant!') ?></p>

@@ -282,13 +282,18 @@ class SiteVisitController extends BaseController
         $end = $_GET['end'] ?? date('Y-m-t');
 
         $params = array_merge([$userId, $start, $end], $tid > 1 ? [$tid] : []);
-        $siteVisits = $db->fetchAll("
-            SELECT sv.id, sv.visit_date, sv.visit_time, sv.status, pl.plot_number, c.name as customer_name
-            FROM site_visits sv
-            JOIN plots pl ON pl.id = sv.plot_id
-            JOIN customers c ON c.id = sv.user_id
-            WHERE sv.agent_id = ? AND sv.visit_date BETWEEN ? AND ?{$tidSql}
-        ", $params) ?: [];
+        try {
+            $siteVisits = $db->fetchAll("
+                SELECT sv.id, sv.visit_date, sv.visit_time, sv.status, pl.plot_number, u.name as customer_name
+                FROM site_visits sv
+                JOIN plots pl ON pl.id = sv.plot_id
+                LEFT JOIN users u ON u.id = sv.user_id
+                WHERE sv.agent_id = ? AND sv.visit_date BETWEEN ? AND ?{$tidSql}
+            ", $params) ?: [];
+        } catch (\Throwable $e) {
+            error_log('SiteVisitController::calendarData error: ' . $e->getMessage());
+            $siteVisits = [];
+        }
 
         $events = [];
         foreach ($siteVisits as $sv) {

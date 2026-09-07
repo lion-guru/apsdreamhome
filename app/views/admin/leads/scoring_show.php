@@ -23,8 +23,8 @@
         <div class="col-md-4">
             <div class="card shadow-sm border-0 text-center">
                 <div class="card-body py-4">
-                    <div class="style-66597">
-                        <div class="style-67189"><span class="style-44801"><?= $score['total_score'] ?? 0 ?></span><small class="style-65753">/100</small></div>
+                    <div >
+                        <div ><span ><?= $score['total_score'] ?? 0 ?></span><small >/100</small></div>
                     </div>
                     <h5 class="mb-1">Lead Score</h5>
                     <span class="badge bg-<?= ($score['total_score'] ?? 0) >= 70 ? 'success' : (($score['total_score'] ?? 0) >= 40 ? 'warning' : 'danger') ?>-subtle text-<?= ($score['total_score'] ?? 0) >= 70 ? 'success' : (($score['total_score'] ?? 0) >= 40 ? 'warning' : 'danger') ?> rounded-pill px-3"><?= ($score['total_score'] ?? 0) >= 70 ? 'Hot' : (($score['total_score'] ?? 0) >= 40 ? 'Warm' : 'Cold') ?></span>

@@ -10,9 +10,8 @@ $stepLabels = [
 ];
 ?>
 <div class="wizard-progress mb-4">
-    <div class="progress style-74911">
+    <div class="progress">
         <div class="progress-bar bg-primary" role="progressbar"
-             class="style-77565"
              aria-valuenow="<?= (int)$progress ?>" aria-valuemin="0" aria-valuemax="100"></div>
     </div>
     <div class="d-flex justify-content-between mt-2">
@@ -23,7 +22,7 @@ $stepLabels = [
             $circleClass = $isActive ? 'bg-primary text-white' : ($isDone ? 'bg-success text-white' : 'bg-light text-muted');
             ?>
             <div class="text-center flex-fill">
-                <div class="rounded-circle d-inline-flex align-items-center justify-content-center <?= e($circleClass) ?> style-71789">
+                <div class="rounded-circle d-inline-flex align-items-center justify-content-center <?= e($circleClass) ?>">
                     <i class="fas <?= e($info['icon']) ?>"></i>
                 </div>
                 <div class="small mt-1 <?= e($isActive) ? 'fw-bold text-primary' : 'text-muted' ?>">

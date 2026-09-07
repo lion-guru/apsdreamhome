@@ -300,7 +300,7 @@ $language = $language ?? 'hi';
 
         <div class="text-input-row">
             <input type="text" id="textInput" placeholder="Type karein ya bolein..." onkeypress="if(event.key==='Enter')sendFromInput()">
-            <button onclick="sendFromInput()"><i class="fas fa-paper-plane style-64777"></i></button>
+            <button onclick="sendFromInput()"><i class="fas fa-paper-plane"></i></button>
         </div>
 
         <button class="end-call-btn" onclick="endSession()">End Session</button>

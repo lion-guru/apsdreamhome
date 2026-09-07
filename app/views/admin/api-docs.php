@@ -149,31 +149,31 @@ $groupCount = count($groups);
             }}
             ?>
             <div class="doc-stats-card">
-                <div class="stat-value style-45299"><?= $getCount ?></div>
+                <div class="stat-value"><?= $getCount ?></div>
                 <div class="stat-label">GET</div>
             </div>
         </div>
         <div class="col-md-2">
             <div class="doc-stats-card">
-                <div class="stat-value style-61414"><?= $postCount ?></div>
+                <div class="stat-value"><?= $postCount ?></div>
                 <div class="stat-label">POST</div>
             </div>
         </div>
         <div class="col-md-2">
             <div class="doc-stats-card">
-                <div class="stat-value style-81434"><?= $putCount ?></div>
+                <div class="stat-value"><?= $putCount ?></div>
                 <div class="stat-label">PUT</div>
             </div>
         </div>
         <div class="col-md-2">
             <div class="doc-stats-card">
-                <div class="stat-value style-37569"><?= $delCount ?></div>
+                <div class="stat-value"><?= $delCount ?></div>
                 <div class="stat-label">DELETE</div>
             </div>
         </div>
         <div class="col-md-2">
             <div class="doc-stats-card">
-                <div class="stat-value style-31491"><?= $groupCount ?></div>
+                <div class="stat-value"><?= $groupCount ?></div>
                 <div class="stat-label">Groups</div>
             </div>
         </div>
@@ -182,8 +182,8 @@ $groupCount = count($groups);
     <!-- Endpoint groups sidebar + Swagger UI -->
     <div class="row">
         <!-- Left: endpoint index -->
-        <div class="col-md-3 style-18847">
-            <h6 class="text-muted mb-3 fw-bold text-uppercase style-62352">
+        <div class="col-md-3">
+            <h6 class="text-muted mb-3 fw-bold text-uppercase">
                 <i class="fas fa-list me-1"></i>Endpoint Groups
             </h6>
             <?php foreach ($groups as $groupName => $endpoints): ?>
@@ -192,17 +192,17 @@ $groupCount = count($groups);
                         <span class="group-name"><?= htmlspecialchars($groupName ?? '') ?></span>
                         <span class="group-count"><?= count($endpoints) ?></span>
                     </div>
-                    <div class="mt-1 style-182">
+                    <div class="mt-1">
                         <?php foreach (array_slice($endpoints, 0, 8) as $ep): ?>
                             <div class="endpoint-row d-flex align-items-center gap-2">
                                 <span class="method-badge method-<?= $ep['method'] ?>"><?= $ep['method'] ?></span>
-                                <span class="endpoint-path text-truncate style-27277">
+                                <span class="endpoint-path text-truncate">
                                     <?= htmlspecialchars(preg_replace('#^/api(/v\d+)?#', '', $ep['path'])) ?>
                                 </span>
                             </div>
                         <?php endforeach; ?>
                         <?php if (count($endpoints) > 8): ?>
-                            <div class="endpoint-row text-muted style-68658">
+                            <div class="endpoint-row text-muted">
                                 +<?= count($endpoints) - 8 ?> more
                             </div>
                         <?php endif; ?>

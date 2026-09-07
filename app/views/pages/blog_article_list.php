@@ -11,9 +11,9 @@
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card h-100 shadow-sm border-0">
                         <?php if (!empty($post['featured_image'])): ?>
-                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?php echo htmlspecialchars($post['title'] ?? ''); ?>" class="style-12213">
+                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?php echo htmlspecialchars($post['title'] ?? ''); ?>" >
                         <?php else: ?>
-                            <div class="bg-light d-flex align-items-center justify-content-center style-17333">
+                            <div class="bg-light d-flex align-items-center justify-content-center">
                                 <i class="fas fa-newspaper fa-3x text-muted"></i>
                             </div>
                         <?php endif; ?>

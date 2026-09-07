@@ -31,13 +31,14 @@ $GLOBALS['_html_doc_started'] = true;
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Admin CSS (page-specific overrides) -->
-    <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/css/admin.css" rel="stylesheet">
-    <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/css/responsive-fixes.css" rel="stylesheet">
+    <!-- Admin Theme (consolidated: admin.css + responsive-fixes + uiux-fixes) -->
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/css/admin-theme.css?v=1" rel="stylesheet">
+    <!-- Utility classes (display, min-width, visibility) -->
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/utils.css?v=1" rel="stylesheet">
     <!-- Notification system CSS (dropdowns, toasts, popups) -->
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/notification-system.css" rel="stylesheet">
-    <!-- UI/UX Fixes (contrast, tap targets) -->
-    <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/uiux-fixes.css?v=3" rel="stylesheet">
+    <!-- Mobile Responsive (all pages) -->
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/mobile-responsive.css?v=3" rel="stylesheet">
     <?php if (isset($extra_css) && $extra_css): ?><!-- Extra page-specific CSS --><?php echo e($extra_css); ?><?php endif; ?>
     <?php if (class_exists('\App\Core\Middleware\TenantContext')): ?>
     <?php $tcColors = \App\Core\Middleware\TenantContext::getColors(); $tcLogo = \App\Core\Middleware\TenantContext::getLogo(); ?>
@@ -262,14 +263,14 @@ $GLOBALS['_html_doc_started'] = true;
                 </button>
 
                 <!-- Profile Dropdown (Bootstrap native) -->
-                <div class="dropdown style-98881">
-                    <div class="user-box dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" class="style-10432">
+                <div class="dropdown">
+                    <div class="user-box dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" >
                         <div class="user-avatar"><?php echo strtoupper(substr($adminName, 0, 1)); ?></div>
                         <div class="user-info">
                             <div class="user-name"><?php echo htmlspecialchars($adminName ?? ''); ?></div>
                             <div class="user-role"><?php echo ucfirst(str_replace('_', ' ', $adminRole)); ?></div>
                         </div>
-                        <i class="fas fa-chevron-down style-40544"></i>
+                        <i class="fas fa-chevron-down"></i>
                     </div>
 
                     <ul class="dropdown-menu dropdown-menu-end">
@@ -324,27 +325,27 @@ $GLOBALS['_html_doc_started'] = true;
             }
             ?>
             <?php if ($tenantBanner === 'suspended'): ?>
-                <div class="style-65947">
-                    <i class="fas fa-ban style-16439"></i>
+                <div >
+                    <i class="fas fa-ban"></i>
                     <div>
                         <strong>Account Suspended</strong>
-                        <div class="style-97548">Your account has been suspended. All create/edit/delete operations are disabled. Contact support to restore access.</div>
+                        <div >Your account has been suspended. All create/edit/delete operations are disabled. Contact support to restore access.</div>
                     </div>
                 </div>
             <?php elseif ($tenantBanner === 'cancelled'): ?>
-                <div class="style-10618">
-                    <i class="fas fa-times-circle style-16439"></i>
+                <div >
+                    <i class="fas fa-times-circle"></i>
                     <div>
                         <strong>Account Cancelled</strong>
-                        <div class="style-97548">Your subscription has been cancelled. Your data is in read-only mode. Contact support to reactivate.</div>
+                        <div >Your subscription has been cancelled. Your data is in read-only mode. Contact support to reactivate.</div>
                     </div>
                 </div>
             <?php elseif ($tenantBanner === 'trial_expired'): ?>
-                <div class="style-28179">
-                    <i class="fas fa-clock style-16439"></i>
+                <div >
+                    <i class="fas fa-clock"></i>
                     <div>
                         <strong>Trial Expired</strong>
-                        <div class="style-97548">Your free trial has expired. Upgrade your plan to continue creating and editing data. <a href="<?= $base ?>/admin/billing" class="style-25944">View Plans</a></div>
+                        <div >Your free trial has expired. Upgrade your plan to continue creating and editing data. <a href="<?= $base ?>/admin/billing" >View Plans</a></div>
                     </div>
                 </div>
             <?php endif; ?>

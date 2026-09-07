@@ -81,7 +81,7 @@ $states = $states ?? [];
                         <?php if (!empty($property['image'])): ?>
                             <div class="mt-2">
                                 <small class="text-muted"><?= __('assoc_ep_current', [], 'Current') ?>:</small><br>
-                                <img src="<?= BASE_URL ?>/assets/images/<?= htmlspecialchars($property['image'] ?? '') ?>" alt="Current" class="style-57868">
+                                <img src="<?= BASE_URL ?>/assets/images/<?= htmlspecialchars($property['image'] ?? '') ?>" alt="Current" >
                             </div>
                         <?php endif; ?>
                     </div>

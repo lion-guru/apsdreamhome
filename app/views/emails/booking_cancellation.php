@@ -17,29 +17,29 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
 }
 </style>
 </head>
-<body class="style-51511">
+<body >
 <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#f4f6fb">
   <tr>
-    <td align="center" class="style-56039">
-      <table role="presentation" class="container" border="0" cellpadding="0" cellspacing="0" width="600" class="style-99000">
+    <td align="center" >
+      <table role="presentation" class="container" border="0" cellpadding="0" cellspacing="0" width="600" >
         <!-- Header -->
         <tr>
-          <td bgcolor="#ef4444" align="center" class="style-59428">
-            <div class="style-90702">&#10060;</div>
-            <h1 class="h1-mobile style-56865">Booking Cancelled</h1>
-            <p class="style-9233">Your booking has been cancelled</p>
+          <td bgcolor="#ef4444" align="center" >
+            <div >&#10060;</div>
+            <h1 class="h1-mobile">Booking Cancelled</h1>
+            <p >Your booking has been cancelled</p>
           </td>
         </tr>
         <!-- Body -->
         <tr>
-          <td class="px-mobile style-68782">
-            <h2 class="style-80102">Hi {{user_name}},</h2>
-            <p class="style-28596">
+          <td class="px-mobile">
+            <h2 >Hi {{user_name}},</h2>
+            <p >
               Your booking has been cancelled as per your request.
             </p>
-            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" class="style-87013">
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" >
               <tr>
-                <td class="style-6557">
+                <td >
                   <strong>Cancellation Details:</strong><br>
                   Booking: {{booking_number}}<br>
                   Plot: {{plot_number}}, {{colony_name}}<br>
@@ -50,22 +50,22 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
                 </td>
               </tr>
             </table>
-            <p class="style-28596">
+            <p >
               Your refund will be processed within <strong>7-10 business days</strong> to your original payment method.
             </p>
-            <p class="style-28596">
+            <p >
               If you have any questions about the cancellation or refund, please contact our support team.
             </p>
-            <p class="style-25661">
+            <p >
               Best regards,<br><strong>The APS Dream Home Team</strong>
             </p>
           </td>
         </tr>
         <!-- Footer -->
         <tr>
-          <td bgcolor="#f7fafc" class="style-89423">
-            <p class="style-40082">APS Dream Home &nbsp;|&nbsp; {{company_phone}} &nbsp;|&nbsp; {{company_email}}</p>
-            <p class="style-75003">&copy; {{year}} APS Dream Home. All rights reserved.</p>
+          <td bgcolor="#f7fafc" >
+            <p >APS Dream Home &nbsp;|&nbsp; {{company_phone}} &nbsp;|&nbsp; {{company_email}}</p>
+            <p >&copy; {{year}} APS Dream Home. All rights reserved.</p>
           </td>
         </tr>
       </table>

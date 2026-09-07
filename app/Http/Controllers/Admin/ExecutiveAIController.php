@@ -24,7 +24,7 @@ class ExecutiveAIController extends AdminController
 
     public function skipCsrfProtection(): bool
     {
-        return true;
+        return $_SERVER['REQUEST_METHOD'] === 'POST';
     }
 
     /**

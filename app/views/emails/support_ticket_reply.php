@@ -18,55 +18,55 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
 }
 </style>
 </head>
-<body class="style-51511">
+<body >
 <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#f4f6fb">
   <tr>
-    <td align="center" class="style-56039">
-      <table role="presentation" class="container" border="0" cellpadding="0" cellspacing="0" width="600" class="style-99000">
+    <td align="center" >
+      <table role="presentation" class="container" border="0" cellpadding="0" cellspacing="0" width="600" >
         <!-- Header -->
         <tr>
-          <td bgcolor="#6366f1" align="center" class="style-43999">
-            <div class="style-90702">&#9993;</div>
-            <h1 class="h1-mobile style-56865">New Reply on Ticket</h1>
-            <p class="style-9233">{{agent_name}} replied</p>
+          <td bgcolor="#6366f1" align="center" >
+            <div >&#9993;</div>
+            <h1 class="h1-mobile">New Reply on Ticket</h1>
+            <p >{{agent_name}} replied</p>
           </td>
         </tr>
         <!-- Body -->
         <tr>
-          <td class="px-mobile style-68782">
-            <h2 class="style-80102">Hi {{user_name}},</h2>
-            <p class="style-28596">
+          <td class="px-mobile">
+            <h2 >Hi {{user_name}},</h2>
+            <p >
               <strong>{{agent_name}}</strong> has replied to your support ticket.
             </p>
-            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" class="style-42991">
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" >
               <tr>
-                <td class="style-30011">
-                  <strong class="style-52648">Ticket #{{ticket_id}} — {{subject}}</strong><br><br>
-                  <div class="style-73231">
+                <td >
+                  <strong >Ticket #{{ticket_id}} — {{subject}}</strong><br><br>
+                  <div >
                     {{reply_message}}
                   </div>
                   <br>
-                  <span class="style-70231">Replied on {{reply_date}}</span>
+                  <span >Replied on {{reply_date}}</span>
                 </td>
               </tr>
             </table>
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
               <tr>
-                <td align="center" class="style-43583">
-                  <a href="{{ticket_url}}" class="button-mobile style-71681">View & Reply</a>
+                <td align="center" >
+                  <a href="{{ticket_url}}" class="button-mobile">View & Reply</a>
                 </td>
               </tr>
             </table>
-            <p class="style-25661">
+            <p >
               Best regards,<br><strong>The APS Dream Home Support Team</strong>
             </p>
           </td>
         </tr>
         <!-- Footer -->
         <tr>
-          <td bgcolor="#f7fafc" class="style-89423">
-            <p class="style-40082">APS Dream Home &nbsp;|&nbsp; {{company_phone}} &nbsp;|&nbsp; {{company_email}}</p>
-            <p class="style-75003">&copy; {{year}} APS Dream Home. All rights reserved.</p>
+          <td bgcolor="#f7fafc" >
+            <p >APS Dream Home &nbsp;|&nbsp; {{company_phone}} &nbsp;|&nbsp; {{company_email}}</p>
+            <p >&copy; {{year}} APS Dream Home. All rights reserved.</p>
           </td>
         </tr>
       </table>

@@ -1,0 +1,135 @@
+/* Utility classes for common inline styles */
+
+.d-none {
+    display: none !important;
+}
+
+.d-inline {
+    display: inline !important;
+}
+
+.d-inline-block {
+    display: inline-block !important;
+}
+
+.d-block {
+    display: block !important;
+}
+
+.d-flex {
+    display: flex !important;
+}
+
+.d-inline-flex {
+    display: inline-flex !important;
+}
+
+.d-none-print {
+    @media print {
+        display: none !important;
+    }
+}
+
+/* Min-width utilities */
+.min-w-140 {
+    min-width: 140px !important;
+}
+
+.min-w-160 {
+    min-width: 160px !important;
+}
+
+.min-w-180 {
+    min-width: 180px !important;
+}
+
+.min-w-200 {
+    min-width: 200px !important;
+}
+
+/* Display utilities for JS toggling */
+.d-none-important {
+    display: none !important;
+}
+
+.d-block-important {
+    display: block !important;
+}
+
+.d-inline-important {
+    display: inline !important;
+}
+
+.d-inline-block-important {
+    display: inline-block !important;
+}
+
+.d-flex-important {
+    display: flex !important;
+}
+
+.d-inline-flex-important {
+    display: inline-flex !important;
+}
+
+/* Display utilities with responsive breakpoints */
+@media (min-width: 576px) {
+    .d-sm-none { display: none !important; }
+    .d-sm-inline { display: inline !important; }
+    .d-sm-inline-block { display: inline-block !important; }
+    .d-sm-block { display: block !important; }
+    .d-sm-flex { display: flex !important; }
+    .d-sm-inline-flex { display: inline-flex !important; }
+}
+
+@media (min-width: 768px) {
+    .d-md-none { display: none !important; }
+    .d-md-inline { display: inline !important; }
+    .d-md-inline-block { display: inline-block !important; }
+    .d-md-block { display: block !important; }
+    .d-md-flex { display: flex !important; }
+    .d-md-inline-flex { display: inline-flex !important; }
+}
+
+@media (min-width: 992px) {
+    .d-lg-none { display: none !important; }
+    .d-lg-inline { display: inline !important; }
+    .d-lg-inline-block { display: inline-block !important; }
+    .d-lg-block { display: block !important; }
+    .d-lg-flex { display: flex !important; }
+    .d-lg-inline-flex { display: inline-flex !important; }
+}
+
+@media (min-width: 1200px) {
+    .d-xl-none { display: none !important; }
+    .d-xl-inline { display: inline !important; }
+    .d-xl-inline-block { display: inline-block !important; }
+    .d-xl-block { display: block !important; }
+    .d-xl-flex { display: flex !important; }
+    .d-xl-inline-flex { display: inline-flex !important; }
+}
+
+/* Min-width utilities with responsive breakpoints */
+@media (min-width: 576px) {
+    .min-w-sm-140 { min-width: 140px !important; }
+    .min-w-sm-160 { min-width: 160px !important; }
+}
+
+@media (min-width: 768px) {
+    .min-w-md-140 { min-width: 140px !important; }
+    .min-w-md-160 { min-width: 160px !important; }
+}
+
+@media (min-width: 992px) {
+    .min-w-lg-140 { min-width: 140px !important; }
+    .min-w-lg-160 { min-width: 160px !important; }
+}
+
+/* Visibility utilities */
+.visible {
+    visibility: visible !important;
+}
+
+.invisible {
+    visibility: hidden !important;
+}

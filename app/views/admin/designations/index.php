@@ -36,7 +36,7 @@
             <!-- Stats Row -->
             <div class="row mb-4">
                 <div class="col-lg-3 col-6">
-                    <div class="small-box style-75630">
+                    <div class="small-box">
                         <div class="inner">
                             <h3><?= $stats['total'] ?? 0 ?></h3>
                             <p>Total Designations</p>
@@ -45,7 +45,7 @@
                     </div>
                 </div>
                 <div class="col-lg-3 col-6">
-                    <div class="small-box style-55192">
+                    <div class="small-box">
                         <div class="inner">
                             <h3><?= $stats['active'] ?? 0 ?></h3>
                             <p>Active</p>
@@ -138,7 +138,7 @@
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <form method="POST" action="<?= BASE_URL ?>
-            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/designations/<?= $desig['id'] ?>/delete" class="style-71727" data-aps-confirm="Delete this designation?">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/designations/<?= $desig['id'] ?>/delete" data-aps-confirm="Delete this designation?">
     <?php echo CSRFProtection::csrfField(); ?>
                                                 <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                             </form>

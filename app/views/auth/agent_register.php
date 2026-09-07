@@ -497,7 +497,7 @@ $base = BASE_URL;
 
             <div class="divider-line"></div>
 
-            <p class="text-center mb-0 style-4671">
+            <p class="text-center mb-0">
                 <?php echo __('auth_already_have_account', 'Already have an account?'); ?> <a href="<?php echo $base; ?>/agent/login" class="login-link"><?php echo __('auth_login_here', 'Login here'); ?></a>
             </p>
         </div>

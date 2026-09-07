@@ -190,6 +190,25 @@ class DatabaseHelper {
       )
     ''');
 
+    // Messages Table (for persistent in-app messaging)
+    await db.execute('''
+      CREATE TABLE messages (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        server_id INTEGER UNIQUE,
+        sender_id INTEGER NOT NULL,
+        receiver_id INTEGER NOT NULL,
+        content TEXT NOT NULL,
+        message_type TEXT DEFAULT 'text',
+        sent_at TEXT NOT NULL,
+        read_at TEXT,
+        is_synced INTEGER DEFAULT 0,
+        is_failed INTEGER DEFAULT 0,
+        local_id TEXT UNIQUE,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT
+      )
+    ''');
+
     // Indexes
     await db.execute('CREATE INDEX idx_properties_type ON properties(property_type)');
     await db.execute('CREATE INDEX idx_properties_status ON properties(status)');
@@ -889,6 +908,150 @@ class DatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
+  }
+
+  // ========== MESSAGES METHODS ==========
+
+  Future<List<Map<String, dynamic>>> getConversations(int userId) async {
+    final db = await database;
+    return await db.rawQuery('''
+      SELECT m.*, u.name as other_user_name, u.role as other_user_role,
+             (SELECT COUNT(*) FROM messages WHERE sender_id = m.other_user_id AND receiver_id = ? AND read_at IS NULL AND is_synced = 1) as unread_count
+      FROM (
+        SELECT 
+          CASE 
+            WHEN sender_id = ? THEN receiver_id 
+            ELSE sender_id 
+          END as other_user_id,
+          MAX(id) as last_message_id,
+          MAX(sent_at) as last_message_time
+        FROM messages 
+        WHERE (sender_id = ? OR receiver_id = ?) AND is_synced = 1
+        GROUP BY other_user_id
+        ORDER BY last_message_time DESC
+      ) m
+      JOIN users u ON u.server_id = m.other_user_id
+      ORDER BY m.last_message_time DESC
+    ''', [userId, userId, userId, userId]);
+  }
+
+  Future<List<Map<String, dynamic>>> getMessages(int userId, int otherUserId) async {
+    final db = await database;
+    return await db.query(
+      'messages',
+      where: '((sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)) AND is_synced = 1',
+      whereArgs: [userId, otherUserId, otherUserId, userId],
+      orderBy: 'sent_at ASC',
+    );
+  }
+
+  Future<void> saveMessage(Map<String, dynamic> message) async {
+    final db = await database;
+    await db.insert(
+      'messages',
+      message,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<void> saveMessages(List<Map<String, dynamic>> messages) async {
+    final db = await database;
+    final batch = db.batch();
+    for (final message in messages) {
+      batch.insert(
+        'messages',
+        message,
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+    await batch.commit(noResult: true);
+  }
+
+  Future<void> markMessagesRead(int userId, int otherUserId) async {
+    final db = await database;
+    await db.update(
+      'messages',
+      {
+        'read_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      },
+      where: 'sender_id = ? AND receiver_id = ? AND read_at IS NULL',
+      whereArgs: [otherUserId, userId],
+    );
+  }
+
+  Future<int> getUnreadCount(int userId) async {
+    final db = await database;
+    final result = await db.rawQuery(
+      'SELECT COUNT(*) as count FROM messages WHERE receiver_id = ? AND read_at IS NULL AND is_synced = 1',
+      [userId],
+    );
+    return result.first['count'] as int? ?? 0;
+  }
+
+  Future<void> saveMessageLocal({
+    required int senderId,
+    required int receiverId,
+    required String content,
+    required String localId,
+    String messageType = 'text',
+  }) async {
+    final db = await database;
+    await db.insert('messages', {
+      'sender_id': senderId,
+      'receiver_id': receiverId,
+      'content': content,
+      'message_type': 'text',
+      'sent_at': DateTime.now().toIso8601String(),
+      'read_at': null,
+      'is_synced': 0,
+      'is_failed': 0,
+      'local_id': localId,
+      'created_at': DateTime.now().toIso8601String(),
+      'updated_at': DateTime.now().toIso8601String(),
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> getUnsyncedMessages() async {
+    final db = await database;
+    return await db.query(
+      'messages',
+      where: 'is_synced = ?',
+      whereArgs: [0],
+      orderBy: 'sent_at ASC',
+    );
+  }
+
+  Future<void> markMessageSynced(String localId, int serverId) async {
+    final db = await database;
+    await db.update(
+      'messages',
+      {
+        'server_id': serverId,
+        'is_synced': 1,
+        'updated_at': DateTime.now().toIso8601String(),
+      },
+      where: 'local_id = ?',
+      whereArgs: [localId],
+    );
+  }
+
+  Future<void> markMessageFailed(String localId) async {
+    final db = await database;
+    await db.update(
+      'messages',
+      {
+        'is_failed': 1,
+        'updated_at': DateTime.now().toIso8601String(),
+      },
+      where: 'local_id = ?',
+      whereArgs: [localId],
+    );
+  }
+
+  Future<void> clearAllMessages() async {
+    final db = await database;
+    await db.delete('messages');
   }
 
   // ========== GENERIC METHODS ==========

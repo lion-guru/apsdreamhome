@@ -62,7 +62,7 @@
             <?php if ($colony['map_link'] ?? ''): ?>
             <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h6 class="mb-0">Location</h6></div>
             <div class="card-body p-0">
-                <iframe src="<?php echo htmlspecialchars($colony['map_link'] ?? ''); ?>" width="100%" height="250" class="style-84307" allowfullscreen loading="lazy"></iframe>
+                <iframe src="<?php echo htmlspecialchars($colony['map_link'] ?? ''); ?>" width="100%" height="250" allowfullscreen loading="lazy"></iframe>
             </div></div>
             <?php endif; ?>
         </div>

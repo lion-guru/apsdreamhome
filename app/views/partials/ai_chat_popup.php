@@ -9,7 +9,7 @@ $base = $base ?? BASE_URL;
     <button id="ai-popup-toggle" class="ai-popup-toggle" onclick="togglePopupChat()" aria-label="Open AI Helper chat">
         <i class="fas fa-robot" aria-hidden="true"></i>
     </button>
-    <div id="ai-popup-chat" class="ai-popup-chat style-54390">
+    <div id="ai-popup-chat" class="ai-popup-chat">
         <div class="ai-popup-header">
             <div class="d-flex align-items-center">
                 <span class="ai-popup-avatar me-2">ðŸ¤–</span>
@@ -29,7 +29,7 @@ $base = $base ?? BASE_URL;
         </div>
         <div id="ai-popup-messages" class="ai-popup-messages">
             <div class="text-center py-4 px-3">
-                <div class="mb-2"><span class="style-46757">ðŸ'‹</span></div>
+                <div class="mb-2"><span >ðŸ'‹</span></div>
                 <p class="mb-1 small fw-bold">Namaste! Main APS Dream Home ki AI hoon.</p>
                 <p class="text-muted small mb-0">Aapki kya madad kar sakta hoon?</p>
             </div>

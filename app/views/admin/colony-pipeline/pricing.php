@@ -170,7 +170,7 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
                     <input type="hidden" name="sub_action" value="reject_discount">
                     <input type="hidden" name="approval_id" value="<?= (int)($pa['id'] ?? 0) ?>">
                     <div class="input-group input-group-sm">
-                      <input type="text" name="approval_notes" class="form-control form-control-sm" placeholder="<?= __('cp_reason') ?>" class="style-50190">
+                      <input type="text" name="approval_notes" class="form-control form-control-sm" placeholder="<?= __('cp_reason') ?>" >
                       <button type="submit" class="btn btn-danger btn-sm" data-aps-confirm="<?= __('cp_confirm_reject') ?>">
                         <i class="fas fa-times"></i>
                       </button>
@@ -203,8 +203,8 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
                 <span class="small"><?= htmlspecialchars($band['price_band'] ?? '') ?></span>
                 <span class="small fw-bold"><?= $bc ?> <?= __('cp_plots') ?> (<?= $pct ?>%)</span>
               </div>
-              <div class="progress style-12292">
-                <div class="progress-bar bg-info style-75742"></div>
+              <div class="progress">
+                <div class="progress-bar bg-info"></div>
               </div>
             </div>
           <?php endforeach; ?>

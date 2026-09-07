@@ -52,7 +52,7 @@ $actionIcons = [
             <table class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th class="style-1979"></th>
+                        <th ></th>
                         <th>Action</th>
                         <th>Details</th>
                         <th>Admin</th>

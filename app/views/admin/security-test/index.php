@@ -46,8 +46,8 @@ $testLabels = [
         <div class="col-md-4">
             <div class="card shadow-sm h-100 border-0">
                 <div class="card-body text-center py-5">
-                    <div class="style-20273">
-                        <span class="style-43086"><?= $overallScore ?></span>
+                    <div >
+                        <span ><?= $overallScore ?></span>
                     </div>
                     <h5 class="fw-bold mb-1">Overall Security Score</h5>
                     <span class="badge bg-<?= $scoreBg ?> fs-6"><?= $overallScore >= 80 ? 'Secure' : ($overallScore >= 50 ? 'Needs Improvement' : 'Critical') ?></span>
@@ -127,8 +127,8 @@ $testLabels = [
                         </div>
                         <span class="badge bg-<?= $statusCls ?>"><?= strtoupper($result['status']) ?></span>
                     </div>
-                    <div class="progress mb-2 style-51910">
-                        <div class="progress-bar bg-<?= $statusCls ?> style-52052"></div>
+                    <div class="progress mb-2">
+                        <div class="progress-bar bg-<?= $statusCls ?>"></div>
                     </div>
                     <small class="text-muted d-block mb-1"><?= htmlspecialchars($result['details'] ?? '') ?></small>
                     <?php if (!empty($result['recommendation'])): ?>

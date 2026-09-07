@@ -165,7 +165,7 @@ $current_page = $active_page ?? basename(esc_url($_SERVER['REQUEST_URI'] ?? ''))
                     <i class="fas fa-bars"></i>
                 </button>
                 <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb mb-0 style-93188">
+                    <ol class="breadcrumb mb-0">
                         <li class="breadcrumb-item"><a href="<?php echo e($base); ?>/associate/dashboard">Associate</a></li>
                         <li class="breadcrumb-item active"><?php echo htmlspecialchars($active_page ?? 'Dashboard'); ?></li>
                     </ol>
@@ -182,10 +182,10 @@ $current_page = $active_page ?? basename(esc_url($_SERVER['REQUEST_URI'] ?? ''))
                     <div class="user-box" data-bs-toggle="dropdown">
                         <div class="user-av"><?= e(strtoupper(substr($associate_name,0,1))) ?></div>
                         <div>
-                            <div class="style-46756"><?php echo htmlspecialchars($associate_name ?? ''); ?></div>
-                            <div class="style-46475"><?php echo htmlspecialchars($associate_email ?? ''); ?></div>
+                            <div ><?php echo htmlspecialchars($associate_name ?? ''); ?></div>
+                            <div ><?php echo htmlspecialchars($associate_email ?? ''); ?></div>
                         </div>
-                        <i class="fas fa-chevron-down ms-2 style-46475"></i>
+                        <i class="fas fa-chevron-down ms-2"></i>
                     </div>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="<?php echo e($base); ?>/associate/profile"><i class="fas fa-user me-2"></i>Profile</a></li>

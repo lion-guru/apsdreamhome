@@ -45,7 +45,7 @@
         </div>
 
         <table class="table table-bordered">
-            <tr><th class="style-83841"><?= __('receipt_booking_number', [], 'Booking Number') ?></th><td><strong>#<?= $booking['id'] ?></strong> (<?= htmlspecialchars($booking['booking_number'] ?? '') ?>)</td></tr>
+            <tr><th ><?= __('receipt_booking_number', [], 'Booking Number') ?></th><td><strong>#<?= $booking['id'] ?></strong> (<?= htmlspecialchars($booking['booking_number'] ?? '') ?>)</td></tr>
             <tr><th><?= __('receipt_plot_details', [], 'Plot Details') ?></th><td>
                 <strong><?= __('receipt_plot_no', [], 'Plot #') ?><?= htmlspecialchars($booking['plot_number'] ?? '') ?></strong><br>
                 <?= htmlspecialchars($booking['colony_name'] ?? '') ?>
@@ -102,7 +102,7 @@
                 <i class="fas fa-check-circle text-success me-1"></i> <?= __('receipt_park_facing', [], 'Park Facing:') ?> <?= !empty($booking['park_facing']) ? __('receipt_yes', [], 'Yes') : __('receipt_no_label', [], 'No') ?><br>
             </div>
             <div class="col-6 text-end">
-                <img src="<?= BASE_URL ?>/assets/images/logo/apslogonew.jpg" alt="APS Dream Home" class="style-78171" onerror="this.style.display='none'" /><br>
+                <img src="<?= BASE_URL ?>/assets/images/logo/apslogonew.jpg" alt="APS Dream Home" onerror="this.style.display='none'" /><br>
                 <small class="text-muted"><?= __('receipt_authorized_sig', [], 'Authorized Signature') ?></small>
             </div>
         </div>

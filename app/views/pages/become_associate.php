@@ -530,7 +530,7 @@
             </button>
             <div class="text-center mt-4">
                 <div class="qr-code">
-                    <div class="style-32164">
+                    <div >
                         <i class="fas fa-qrcode fa-4x text-muted"></i>
                     </div>
                     <small class="text-muted d-block mt-2"><?= __('assoc_scan_join') ?></small>

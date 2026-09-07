@@ -74,7 +74,7 @@ $active_page = 'bookings';
                             <?php endforeach; ?>
                         </select>
                         <label for="associate_id">Assign Associate / Agent</label>
-                        <div id="associate_resolution" class="form-text mt-1 text-primary fw-bold style-54390">
+                        <div id="associate_resolution" class="form-text mt-1 text-primary fw-bold">
                             <i class="fas fa-check-circle"></i> <span id="associate_name_display"></span>
                         </div>
                         <div class="form-text text-muted small mt-1" id="associate_help_text">
@@ -125,7 +125,7 @@ $active_page = 'bookings';
                 </div>
 
                 <!-- New Customer Section -->
-                <div id="new_customer_section" class="col-md-12 style-54390">
+                <div id="new_customer_section" class="col-md-12">
                     <div class="row g-3">
                         <div class="col-md-4">
                             <div class="form-floating">
@@ -185,7 +185,7 @@ $active_page = 'bookings';
                 <!-- Notes -->
                 <div class="col-md-12">
                     <div class="form-floating">
-                        <textarea class="form-control" id="notes" name="notes" class="style-48147" placeholder="Any special remarks or terms..."></textarea>
+                        <textarea class="form-control" id="notes" name="notes" placeholder="Any special remarks or terms..."></textarea>
                         <label for="notes">Booking Notes / Remarks (Optional)</label>
                     </div>
                 </div>
@@ -288,7 +288,7 @@ $active_page = 'bookings';
                             <strong class="text-success">₹${commissionAmount.toLocaleString('en-IN', {minimumFractionDigits: 2})}</strong>
                         </div>
                     </div>
-                    <div class="mt-2 text-muted style-11723">
+                    <div class="mt-2 text-muted">
                         * Note: Actual commission will be calculated automatically by the MLM Engine based on the Associate's rank and current plan.
                     </div>
                 `;

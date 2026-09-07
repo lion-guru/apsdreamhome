@@ -68,8 +68,8 @@
                     <h5 class="mb-0">Monthly Performance</h5>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <div class="style-27886">
-                        <canvas id="performanceChart" class="style-40817"></canvas>
+                    <div >
+                        <canvas id="performanceChart" ></canvas>
                     </div>
                 </div>
             </div>

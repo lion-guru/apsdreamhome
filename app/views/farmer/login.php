@@ -33,7 +33,7 @@ $GLOBALS['_html_doc_started'] = true;
             <div class="col-md-5">
                 <div class="card login-card">
                     <div class="login-header">
-                        <i class="fas fa-seedling icon-leaf mb-2 style-98792"></i>
+                        <i class="fas fa-seedling icon-leaf mb-2"></i>
                         <h3>Farmer Portal</h3>
                         <p class="mb-0">APS Dream Home - Land Acquisition</p>
                     </div>
@@ -50,10 +50,10 @@ $GLOBALS['_html_doc_started'] = true;
                             <div class="mb-4">
                                 <label class="form-label fw-semibold">Registered Phone Number</label>
                                 <div class="input-group">
-                                    <span class="input-group-text bg-light border-2 style-2337">
+                                    <span class="input-group-text bg-light border-2">
                                         <i class="fas fa-phone text-success"></i>
                                     </span>
-                                    <input type="tel" name="phone" class="form-control" placeholder="Enter your 10-digit phone number" pattern="[0-9]{10}" maxlength="10" required class="style-47601">
+                                    <input type="tel" name="phone" class="form-control" placeholder="Enter your 10-digit phone number" pattern="[0-9]{10}" maxlength="10" required >
                                 </div>
                                 <small class="text-muted">Enter the phone number registered with us</small>
                             </div>

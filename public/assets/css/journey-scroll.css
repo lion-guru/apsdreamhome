@@ -1,7 +1,7 @@
 /* Dream Home Journey Scroll Sequence */
 .journey-section {
     position: relative;
-    background: #0f172a; /* premium navy */
+    background: var(--color-primary); /* premium navy */
     color: white;
 }
 .journey-sticky-container {

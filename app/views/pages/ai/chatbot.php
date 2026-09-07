@@ -2,7 +2,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
-                <div class="card-header bg-gradient text-white p-4 style-68644">
+                <div class="card-header bg-gradient text-white p-4">
                     <div class="d-flex align-items-center">
                         <div class="me-3">
                             <i class="fas fa-robot fa-2x"></i>
@@ -14,9 +14,9 @@
                     </div>
                 </div>
                 
-                <div class="chat-container style-54006">
-                    <div class="chat-messages p-4" id="chatMessages" class="style-34411">
-                        <div class="message bot-message mb-3 p-3 rounded-4 bg-white shadow-sm style-65334">
+                <div class="chat-container">
+                    <div class="chat-messages p-4" id="chatMessages" >
+                        <div class="message bot-message mb-3 p-3 rounded-4 bg-white shadow-sm">
                             Namaste! ðŸ™� Welcome to <strong>APS Dream Home</strong>! I'm your property assistant.\n\nHow can I help you today? Try these quick options below! ðŸ‘‡
                         </div>
                     </div>
@@ -38,19 +38,19 @@
                         </div>
                     </div>
                     
-                    <div class="loading text-center py-3 text-muted small" id="loading" class="style-54390">
+                    <div class="loading text-center py-3 text-muted small" id="loading" >
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                         Typing<span class="dots"></span>
                     </div>
                     
                     <div class="chat-input p-3 bg-white border-top">
                         <div class="d-flex align-items-center gap-2 mb-2">
-                            <button class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center" id="voiceToggle" onclick="toggleVoiceMode()" class="style-54689" title="Voice mode ON/OFF">
+                            <button class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center" id="voiceToggle" onclick="toggleVoiceMode()" title="Voice mode ON/OFF">
                                 <i class="fas fa-volume-up" id="voiceToggleIcon"></i>
                             </button>
-                            <small class="text-muted" id="voiceModeLabel" class="style-68658">Voice: OFF</small>
+                            <small class="text-muted" id="voiceModeLabel" >Voice: OFF</small>
                             <div class="ms-auto d-flex align-items-center gap-2">
-                                <button class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center" id="micBtn" onclick="toggleMic()" class="style-69226" title="Speak">
+                                <button class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center" id="micBtn" onclick="toggleMic()" title="Speak">
                                     <i class="fas fa-microphone"></i>
                                 </button>
                             </div>

@@ -110,7 +110,7 @@ $variantNames = array_keys($results);
                     <?php if (empty($results)): ?>
                         <div class="text-center text-muted py-5">No data yet. Variants will be assigned as users visit pages with this experiment.</div>
                     <?php else: ?>
-                        <canvas id="conversionChart" class="style-92289"></canvas>
+                        <canvas id="conversionChart" ></canvas>
                     <?php endif; ?>
                 </div>
             </div>

@@ -409,23 +409,23 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-lg-6 mt-4 mt-lg-0">
                 <div class="story-detail">
-                    <h6><i class="fas fa-calendar-alt me-2 style-5793"></i> Founded</h6>
+                    <h6><i class="fas fa-calendar-alt me-2"></i> Founded</h6>
                     <p>April 26, 2022 &bull; Incorporated under the Companies Act, 2013</p>
                 </div>
                 <div class="story-detail">
-                    <h6><i class="fas fa-map-marker-alt me-2 style-5793"></i> Headquarters</h6>
+                    <h6><i class="fas fa-map-marker-alt me-2"></i> Headquarters</h6>
                     <p>Virat Bhawan, Singhariya Kunraghat, Gorakhpur, UP 273008</p>
                 </div>
                 <div class="story-detail">
-                    <h6><i class="fas fa-briefcase me-2 style-5793"></i> Industry</h6>
+                    <h6><i class="fas fa-briefcase me-2"></i> Industry</h6>
                     <p>Real Estate Activities (NIC Code: 7010) — Plot & Land, Residential Floors</p>
                 </div>
                 <div class="story-detail">
-                    <h6><i class="fas fa-chart-line me-2 style-5793"></i> Capital</h6>
+                    <h6><i class="fas fa-chart-line me-2"></i> Capital</h6>
                     <p>Authorized & Paid-up Capital: ₹10,00,000</p>
                 </div>
                 <div class="story-detail">
-                    <h6><i class="fas fa-star me-2 style-5793"></i> Rating</h6>
+                    <h6><i class="fas fa-star me-2"></i> Rating</h6>
                     <p>5.0/5 Stars on India Online &bull; Trusted by 500+ Families</p>
                 </div>
             </div>
@@ -439,16 +439,16 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 <section class="about-highlights">
     <div class="container">
         <div class="text-center mb-5">
-            <div class="style-74105">
+            <div >
                 <i class="fas fa-concierge-bell"></i> What We Do
             </div>
-            <h2 class="style-84813">Our <span class="style-79458">Services</span></h2>
-            <p class="style-95961">End-to-end real estate solutions — from finding the perfect plot to handing over the keys.</p>
+            <h2 >Our <span >Services</span></h2>
+            <p >End-to-end real estate solutions — from finding the perfect plot to handing over the keys.</p>
         </div>
         <div class="row g-4">
             <div class="col-md-3 col-6">
                 <div class="highlight-card service-card scroll-reveal" data-service="plot-selling" role="button" tabindex="0">
-                    <div class="icon-wrap style-75269">
+                    <div class="icon-wrap">
                         <i class="fas fa-map-marked-alt"></i>
                     </div>
                     <h5>Plot Selling</h5>
@@ -458,7 +458,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="highlight-card service-card scroll-reveal" data-service="construction" role="button" tabindex="0">
-                    <div class="icon-wrap style-46608">
+                    <div class="icon-wrap">
                         <i class="fas fa-hard-hat"></i>
                     </div>
                     <h5>Construction & Development</h5>
@@ -468,7 +468,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="highlight-card service-card scroll-reveal" data-service="legal" role="button" tabindex="0">
-                    <div class="icon-wrap style-64138">
+                    <div class="icon-wrap">
                         <i class="fas fa-file-contract"></i>
                     </div>
                     <h5>Legal & Documentation</h5>
@@ -478,7 +478,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="highlight-card service-card scroll-reveal" data-service="payment" role="button" tabindex="0">
-                    <div class="icon-wrap style-10633">
+                    <div class="icon-wrap">
                         <i class="fas fa-hand-holding-usd"></i>
                     </div>
                     <h5>Flexible Payment Plans</h5>
@@ -488,7 +488,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="highlight-card service-card scroll-reveal" data-service="resale" role="button" tabindex="0">
-                    <div class="icon-wrap style-547">
+                    <div class="icon-wrap">
                         <i class="fas fa-home"></i>
                     </div>
                     <h5>Resale & Resale Assistance</h5>
@@ -498,7 +498,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="highlight-card service-card scroll-reveal" data-service="site-visit" role="button" tabindex="0">
-                    <div class="icon-wrap style-2487">
+                    <div class="icon-wrap">
                         <i class="fas fa-car"></i>
                     </div>
                     <h5>Free Site Visits</h5>
@@ -508,7 +508,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="highlight-card service-card scroll-reveal" data-service="flats" role="button" tabindex="0">
-                    <div class="icon-wrap style-98426">
+                    <div class="icon-wrap">
                         <i class="fas fa-couch"></i>
                     </div>
                     <h5>Furnished Flats</h5>
@@ -518,7 +518,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="highlight-card service-card scroll-reveal" data-service="community" role="button" tabindex="0">
-                    <div class="icon-wrap style-62789">
+                    <div class="icon-wrap">
                         <i class="fas fa-users"></i>
                     </div>
                     <h5>Community Building</h5>
@@ -540,7 +540,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             <div class="service-modal-icon" id="serviceModalIcon"></div>
             <div>
                 <h3 id="serviceModalTitle"></h3>
-                <p id="serviceModalSubtitle" class="style-43781"></p>
+                <p id="serviceModalSubtitle" ></p>
             </div>
         </div>
         <div class="service-modal-body">
@@ -579,7 +579,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                          <?php $imgRaw = $photo ?? '';
                                $imgSrc = (str_starts_with($imgRaw, 'http://') || str_starts_with($imgRaw, 'https://')) ? $imgRaw : BASE_URL . '/' . $imgRaw; ?>
                          <img loading="lazy" 
-                              src="<?= htmlspecialchars($imgSrc ?? '') ?>" 
+                              src="<?= htmlspecialchars($imgSrc ?? '')?>" 
                               alt="<?= htmlspecialchars($name ?? '') ?>">
                         <div class="leader-badge"><i class="fas fa-crown"></i> <?= e($i === 1 ? 'Founder' : ($role === 'Senior Property Advisor' ? 'Advisor' : 'Director')) ?></div>
                     </div>
@@ -602,13 +602,13 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 <section class="dept-heads">
     <div class="container">
         <div class="text-center mb-5">
-            <div class="style-74105">
+            <div >
                 <i class="fas fa-user-tie"></i> Department Heads
             </div>
-            <h2 class="style-14450">
-                The <span class="style-79458">Experts</span> Leading Our Teams
+            <h2 >
+                The <span >Experts</span> Leading Our Teams
             </h2>
-            <p class="style-95961">
+            <p >
                 Each department is led by experienced professionals committed to excellence.
             </p>
         </div>
@@ -632,7 +632,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                     </div>
                     <h5><?= htmlspecialchars($dName ?? '') ?></h5>
                     <div class="dept-role"><?= htmlspecialchars($dRole ?? '') ?></div>
-                    <div class="dept-exp"><i class="fas fa-briefcase me-1 style-62735"></i> <?= htmlspecialchars($dExp ?? '') ?></div>
+                    <div class="dept-exp"><i class="fas fa-briefcase me-1"></i> <?= htmlspecialchars($dExp ?? '') ?></div>
                     <p><?= htmlspecialchars($dBio ?? '') ?></p>
                 </div>
             </div>
@@ -647,18 +647,18 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 <section class="about-mvv">
     <div class="container">
         <div class="text-center mb-5">
-            <div class="style-74105">
+            <div >
                 <i class="fas fa-bullseye"></i> Our Foundation
             </div>
-            <h2 class="style-84813">
-                Mission, Vision & <span class="style-79458">Values</span>
+            <h2 >
+                Mission, Vision & <span >Values</span>
             </h2>
         </div>
         
         <div class="row g-4">
             <div class="col-lg-4">
                 <div class="mvv-card mission scroll-reveal">
-                    <div class="mvv-icon style-75269">
+                    <div class="mvv-icon">
                         <i class="fas fa-rocket"></i>
                     </div>
                     <h4>Our Mission</h4>
@@ -669,7 +669,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-lg-4">
                 <div class="mvv-card vision scroll-reveal">
-                    <div class="mvv-icon style-46608">
+                    <div class="mvv-icon">
                         <i class="fas fa-eye"></i>
                     </div>
                     <h4>Our Vision</h4>
@@ -680,7 +680,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-lg-4">
                 <div class="mvv-card values scroll-reveal">
-                    <div class="mvv-icon style-64138">
+                    <div class="mvv-icon">
                         <i class="fas fa-heart"></i>
                     </div>
                     <h4>Our Values</h4>
@@ -697,33 +697,33 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 <!-- STATS SECTION -->
 <!-- ============================================ -->
 <section class="about-stats">
-    <div class="container position-relative style-9174">
+    <div class="container position-relative">
         <div class="text-center mb-5">
-            <h2 class="style-69158">Our Numbers Speak</h2>
-            <p class="style-57302">Building trust one project at a time</p>
+            <h2 >Our Numbers Speak</h2>
+            <p >Building trust one project at a time</p>
         </div>
         <div class="row g-4">
             <div class="col-6 col-lg-3">
                 <div class="stat-box scroll-reveal">
-                    <div class="stat-num style-2154">5000+</div>
+                    <div class="stat-num">5000+</div>
                     <div class="stat-label">Plots Sold</div>
                 </div>
             </div>
             <div class="col-6 col-lg-3">
                 <div class="stat-box scroll-reveal">
-                    <div class="stat-num style-64047">500+</div>
+                    <div class="stat-num">500+</div>
                     <div class="stat-label">Happy Families</div>
                 </div>
             </div>
             <div class="col-6 col-lg-3">
                 <div class="stat-box scroll-reveal">
-                    <div class="stat-num style-62735">4+</div>
+                    <div class="stat-num">4+</div>
                     <div class="stat-label">Colonies Delivered</div>
                 </div>
             </div>
             <div class="col-6 col-lg-3">
                 <div class="stat-box scroll-reveal">
-                    <div class="stat-num style-80751">3</div>
+                    <div class="stat-num">3</div>
                     <div class="stat-label">Cities Covered</div>
                 </div>
             </div>
@@ -737,10 +737,10 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 <section class="about-offices">
     <div class="container">
         <div class="text-center mb-5">
-            <div class="style-74105">
+            <div >
                 <i class="fas fa-map-marked-alt"></i> Our Offices
             </div>
-            <h2 class="style-84813">Visit Us <span class="style-79458">Anywhere</span></h2>
+            <h2 >Visit Us <span >Anywhere</span></h2>
         </div>
         
         <div class="row g-4">
@@ -780,7 +780,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             <!-- Working Office -->
             <div class="col-lg-4 col-md-6">
                 <div class="office-card scroll-reveal">
-                    <div class="office-header style-85097">
+                    <div class="office-header">
                         <h5><i class="fas fa-hard-hat me-2"></i> Working Office</h5>
                         <small>Gorakhpur, Uttar Pradesh</small>
                     </div>
@@ -813,7 +813,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             <!-- Sehwan Office -->
             <div class="col-lg-4 col-md-6">
                 <div class="office-card scroll-reveal">
-                    <div class="office-header style-21462">
+                    <div class="office-header">
                         <h5><i class="fas fa-store me-2"></i> Sehwan Office</h5>
                         <small>Pachrukhi, Gorakhpur</small>
                     </div>
@@ -847,50 +847,50 @@ function aboutContent($sc, $key, $fallbackKey = '') {
         <!-- Projects Across Cities -->
         <div class="row g-4 mt-4">
             <div class="col-12">
-                <div class="style-80841">
-                    <div class="style-78042">
-                        <h5 class="style-77763"><i class="fas fa-project-diagram me-2"></i> Our Projects Across Cities</h5>
+                <div >
+                    <div >
+                        <h5 ><i class="fas fa-project-diagram me-2"></i> Our Projects Across Cities</h5>
                     </div>
-                    <div class="style-57825">
+                    <div >
                         <div class="row g-4">
                             <div class="col-md-3 col-6">
-                                <div class="style-88083">
-                                    <div class="style-57901">
-                                        <i class="fas fa-city style-67779"></i>
+                                <div >
+                                    <div >
+                                        <i class="fas fa-city"></i>
                                     </div>
-                                    <h6 class="style-22646">Gorakhpur</h6>
-                                    <p class="style-724">Suryoday Colony (1050+)</p>
-                                    <p class="style-724">Braj Radha Nagri (1550+)</p>
-                                    <p class="style-724">Raghunath Nagri (780+)</p>
+                                    <h6 >Gorakhpur</h6>
+                                    <p >Suryoday Colony (1050+)</p>
+                                    <p >Braj Radha Nagri (1550+)</p>
+                                    <p >Raghunath Nagri (780+)</p>
                                 </div>
                             </div>
                             <div class="col-md-3 col-6">
-                                <div class="style-88083">
-                                    <div class="style-35621">
-                                        <i class="fas fa-city style-26370"></i>
+                                <div >
+                                    <div >
+                                        <i class="fas fa-city"></i>
                                     </div>
-                                    <h6 class="style-22646">Lucknow</h6>
-                                    <p class="style-724">APS Valley (800+)</p>
-                                    <p class="style-724">Awadhpuri</p>
+                                    <h6 >Lucknow</h6>
+                                    <p >APS Valley (800+)</p>
+                                    <p >Awadhpuri</p>
                                 </div>
                             </div>
                             <div class="col-md-3 col-6">
-                                <div class="style-88083">
-                                    <div class="style-12044">
-                                        <i class="fas fa-city style-57730"></i>
+                                <div >
+                                    <div >
+                                        <i class="fas fa-city"></i>
                                     </div>
-                                    <h6 class="style-22646">Kushinagar</h6>
-                                    <p class="style-724">Budh Bihar Colony (1280+)</p>
+                                    <h6 >Kushinagar</h6>
+                                    <p >Budh Bihar Colony (1280+)</p>
                                 </div>
                             </div>
                             <div class="col-md-3 col-6">
-                                <div class="style-88083">
-                                    <div class="style-44154">
-                                        <i class="fas fa-building style-94843"></i>
+                                <div >
+                                    <div >
+                                        <i class="fas fa-building"></i>
                                     </div>
-                                    <h6 class="style-22646">Prayagraj</h6>
-                                    <p class="style-724">APS Heights (200 Flats)</p>
-                                    <p class="style-724">Naini, ₹65 Lakh+</p>
+                                    <h6 >Prayagraj</h6>
+                                    <p >APS Heights (200 Flats)</p>
+                                    <p >Naini, ₹65 Lakh+</p>
                                 </div>
                             </div>
                         </div>
@@ -907,16 +907,16 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 <section class="about-certs">
     <div class="container">
         <div class="text-center mb-5">
-            <div class="style-74105">
+            <div >
                 <i class="fas fa-certificate"></i> Legal & Compliance
             </div>
-            <h2 class="style-84813">Registered & <span class="style-79458">Certified</span></h2>
+            <h2 >Registered & <span >Certified</span></h2>
         </div>
         
         <div class="row g-4 justify-content-center">
             <div class="col-md-3 col-6">
                 <div class="cert-card scroll-reveal">
-                    <div class="cert-icon style-75269">
+                    <div class="cert-icon">
                         <i class="fas fa-file-alt"></i>
                     </div>
                     <h6>CIN Number</h6>
@@ -925,7 +925,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="cert-card scroll-reveal">
-                    <div class="cert-icon style-46608">
+                    <div class="cert-icon">
                         <i class="fas fa-landmark"></i>
                     </div>
                     <h6>ROC Kanpur</h6>
@@ -934,7 +934,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="cert-card scroll-reveal">
-                    <div class="cert-icon style-64138">
+                    <div class="cert-icon">
                         <i class="fas fa-check-circle"></i>
                     </div>
                     <h6>UP RERA</h6>
@@ -943,7 +943,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="cert-card scroll-reveal">
-                    <div class="cert-icon style-10633">
+                    <div class="cert-icon">
                         <i class="fas fa-star"></i>
                     </div>
                     <h6>5.0 Rating</h6>
@@ -957,24 +957,24 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 <!-- ============================================ -->
 <!-- CTA SECTION -->
 <!-- ============================================ -->
-<section class="style-69610">
-    <div class="style-80207"></div>
-    <div class="container position-relative style-9174">
+<section >
+    <div ></div>
+    <div class="container position-relative">
         <div class="row align-items-center">
             <div class="col-lg-8">
-                <h2 class="style-19049">
+                <h2 >
                     Ready to Find Your Dream Plot?
                 </h2>
-                <p class="style-40126">
+                <p >
                     Join 500+ families who trust APS Dream Homes for their property needs. 
                     Browse our available plots or schedule a site visit today.
                 </p>
             </div>
             <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
-                <a href="<?= BASE_URL ?>/properties" class="style-15737">
+                <a href="<?= BASE_URL ?>/properties" >
                     <i class="fas fa-search"></i> Browse Properties
                 </a>
-                <a href="<?= BASE_URL ?>/contact" class="style-29836">
+                <a href="<?= BASE_URL ?>/contact" >
                     <i class="fas fa-phone"></i> Contact Us
                 </a>
             </div>

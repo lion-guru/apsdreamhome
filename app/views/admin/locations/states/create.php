@@ -24,7 +24,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="code" class="form-label">State Code *</label>
-                                    <input type="text" class="form-control" id="code" name="code" maxlength="10" required class="style-73536">
+                                    <input type="text" class="form-control" id="code" name="code" maxlength="10" required >
                                     <small class="form-text text-muted">e.g., UP, MP, RJ</small>
                                 </div>
                             </div>

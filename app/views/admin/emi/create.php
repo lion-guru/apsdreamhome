@@ -64,7 +64,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     </div>
                     
                     <!-- EMI Preview -->
-                    <div class="alert alert-info mt-3" id="emiPreview" class="style-54390">
+                    <div class="alert alert-info mt-3" id="emiPreview" >
                         <h6><i class="fas fa-calculator me-2"></i>EMI Preview</h6>
                         <div class="row">
                             <div class="col-md-3">

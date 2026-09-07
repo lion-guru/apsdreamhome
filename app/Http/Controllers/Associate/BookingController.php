@@ -48,11 +48,11 @@ class BookingController extends BaseController
             if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
 
             $bookings = $db->fetchAll("
-                SELECT pb.*, pl.plot_number, pl.area_sqft, c.name as customer_name, c.email, c.phone,
+                SELECT pb.*, pl.plot_number, pl.area_sqft, u.name as customer_name, u.email, u.phone,
                        col.name as colony_name
                 FROM plot_bookings pb
                 JOIN plots pl ON pl.id = pb.plot_id
-                JOIN customers c ON c.id = pb.customer_id
+                LEFT JOIN users u ON u.id = pb.customer_id
                 JOIN colonies col ON col.id = pl.colony_id
                 WHERE pb.associate_id = ?{$tidSql}
                 ORDER BY pb.created_at DESC
@@ -84,12 +84,12 @@ class BookingController extends BaseController
             if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
 
             $customers = $db->fetchAll("
-                SELECT c.*, COUNT(pb.id) as booking_count
-                FROM customers c
-                LEFT JOIN plot_bookings pb ON pb.customer_id = c.id AND pb.associate_id = ?
-                WHERE c.associate_id = ?{$tidSql}
-                GROUP BY c.id
-                ORDER BY c.created_at DESC
+                SELECT u.*, COUNT(pb.id) as booking_count
+                FROM users u
+                LEFT JOIN plot_bookings pb ON pb.customer_id = u.id AND pb.associate_id = ?
+                WHERE u.role = 'customer' AND u.associate_id = ?{$tidSql}
+                GROUP BY u.id
+                ORDER BY u.created_at DESC
             ", array_merge([$userId, $userId], TenantContext::getId() > 1 ? [TenantContext::getId()] : [])) ?: [];
 
             $this->render('associate/my_customers', [
@@ -117,7 +117,7 @@ class BookingController extends BaseController
             $params = [$id, $userId];
             if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
 
-            $customer = $db->fetchOne("SELECT * FROM customers WHERE id = ? AND associate_id = ?{$tidSql} LIMIT 1", $params);
+            $customer = $db->fetchOne("SELECT * FROM users WHERE id = ? AND role = 'customer' AND associate_id = ?{$tidSql} LIMIT 1", $params);
 
             if (!$customer) {
                 $_SESSION['error'] = 'Customer not found or access denied';
@@ -162,10 +162,10 @@ class BookingController extends BaseController
             if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
 
             $emis = $db->fetchAll("
-                SELECT bps.*, pb.booking_number, c.name as customer_name, pl.plot_number
+                SELECT bps.*, pb.booking_number, u.name as customer_name, pl.plot_number
                 FROM booking_payment_schedules bps
                 JOIN plot_bookings pb ON pb.id = bps.booking_id
-                JOIN customers c ON c.id = pb.customer_id
+                LEFT JOIN users u ON u.id = pb.customer_id
                 JOIN plots pl ON pl.id = pb.plot_id
                 WHERE pb.associate_id = ? AND bps.due_date >= CURDATE() AND bps.status IN ('pending', 'partial')
                 ORDER BY bps.due_date ASC
@@ -197,10 +197,10 @@ class BookingController extends BaseController
             if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
 
             $payments = $db->fetchAll("
-                SELECT bp.*, pb.booking_number, c.name as customer_name, pl.plot_number
+                SELECT bp.*, pb.booking_number, u.name as customer_name, pl.plot_number
                 FROM booking_payments bp
                 JOIN plot_bookings pb ON pb.id = bp.booking_id
-                JOIN customers c ON c.id = pb.customer_id
+                LEFT JOIN users u ON u.id = pb.customer_id
                 JOIN plots pl ON pl.id = pb.plot_id
                 WHERE pb.associate_id = ?{$tidSql}
                 ORDER BY bp.payment_date DESC
@@ -232,10 +232,10 @@ class BookingController extends BaseController
             if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
 
             $booking = $db->fetchOne("
-                SELECT pb.*, c.name as customer_name, c.email, c.phone,
+                SELECT pb.*, u.name as customer_name, u.email, u.phone,
                        pl.plot_number, pl.area_sqft, col.name as colony_name
                 FROM plot_bookings pb
-                JOIN customers c ON c.id = pb.customer_id
+                LEFT JOIN users u ON u.id = pb.customer_id
                 JOIN plots pl ON pl.id = pb.plot_id
                 JOIN colonies col ON col.id = pl.colony_id
                 WHERE pb.id = ? AND pb.associate_id = ?{$tidSql} LIMIT 1

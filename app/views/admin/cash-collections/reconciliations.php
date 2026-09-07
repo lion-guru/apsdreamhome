@@ -89,7 +89,7 @@ ob_start();
                                 </td>
                                 <td>
                                     <?php if (($r['status'] ?? '') === 'open'): ?>
-                                        <form method="POST" action="<?= BASE_URL ?>/admin/cash-collections/reconciliations/close" class="style-71727">
+                                        <form method="POST" action="<?= BASE_URL ?>/admin/cash-collections/reconciliations/close" >
                                             <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? $_SESSION['csrf_token'] ?? '' ?>">
                                             <input type="hidden" name="id" value="<?= $r['id'] ?>">
                                             <button type="submit" class="btn btn-sm btn-outline-success" title="Close Session" data-aps-confirm="Close this reconciliation session?" aria-label="Lock"><i class="fas fa-lock"></i></button>

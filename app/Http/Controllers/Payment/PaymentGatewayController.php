@@ -10,6 +10,8 @@ namespace App\Http\Controllers\Payment;
 use App\Http\Controllers\BaseController;
 use App\Core\Security;
 use App\Services\Payment\RazorpayGateway;
+use App\Services\Payment\PhonePeGateway;
+use App\Services\Payment\GPayGateway;
 use App\Services\Communication\NotificationService;
 use App\Services\DepartmentRequestService;
 use Exception;
@@ -17,29 +19,38 @@ use PDO;
 
 class PaymentGatewayController extends BaseController
 {
-
-    private $gateway_config = [
-        'razorpay' => [
-            'key_id' => 'rzp_test_your_key',
-            'key_secret' => 'your_secret_key',
-            'enabled' => true
-        ],
-        'payu' => [
-            'merchant_key' => 'your_merchant_key',
-            'merchant_salt' => 'your_merchant_salt',
-            'enabled' => true
-        ],
-        'phonepe' => [
-            'merchant_id' => 'your_merchant_id',
-            'salt_key' => 'your_salt_key',
-            'salt_index' => '1',
-            'enabled' => true
-        ]
-    ];
+    private $gateway_config = [];
 
     public function __construct()
     {
         parent::__construct();
+        $this->gateway_config = [
+            'razorpay' => [
+                'key_id' => env('RAZORPAY_KEY_ID', ''),
+                'key_secret' => env('RAZORPAY_KEY_SECRET', ''),
+                'enabled' => !empty(env('RAZORPAY_KEY_ID'))
+            ],
+            'payu' => [
+                'merchant_key' => env('PAYU_MERCHANT_KEY', ''),
+                'merchant_salt' => env('PAYU_MERCHANT_SALT', ''),
+                'enabled' => !empty(env('PAYU_MERCHANT_KEY'))
+            ],
+            'phonepe' => [
+                'merchant_id' => env('PHONEPE_MERCHANT_ID', ''),
+                'salt_key' => env('PHONEPE_SALT_KEY', ''),
+                'salt_index' => env('PHONEPE_SALT_INDEX', '1'),
+                'enabled' => !empty(env('PHONEPE_MERCHANT_ID'))
+            ],
+            'gpay' => [
+                'merchant_vpa' => env('GP_MERCHANT_VPA', ''),
+                'merchant_name' => env('GP_MERCHANT_NAME', 'APS Dream Home'),
+                'merchant_code' => env('GP_MERCHANT_CODE', 'APSDH'),
+                'enabled' => !empty(env('GP_MERCHANT_VPA'))
+            ],
+            'upi' => [
+                'enabled' => true // UPI QR codes work without gateway config
+            ]
+        ];
         $this->createPaymentTables();
     }
 
@@ -225,6 +236,10 @@ class PaymentGatewayController extends BaseController
                 return $this->processPayuPayment($payment_data, $transaction_id);
             case 'phonepe':
                 return $this->processPhonePePayment($payment_data, $transaction_id);
+            case 'gpay':
+                return $this->processGPayPayment($payment_data, $transaction_id);
+            case 'upi':
+                return $this->processUpiPayment($payment_data, $transaction_id);
             default:
                 return ['success' => false, 'error' => 'Unsupported payment gateway'];
         }
@@ -272,16 +287,103 @@ class PaymentGatewayController extends BaseController
     }
 
     /**
-     * Process PhonePe payment
+     * Process PhonePe payment using PhonePeGateway service
      */
     private function processPhonePePayment($payment_data, $transaction_id)
     {
-        // PhonePe integration code
-        return [
-            'success' => true,
-            'gateway_transaction_id' => 'pp_' . rand(100000000, 999999999),
-            'message' => 'Payment processed successfully'
-        ];
+        $phonepe = new PhonePeGateway([
+            'merchant_id' => env('PHONEPE_MERCHANT_ID', ''),
+            'salt_key' => env('PHONEPE_SALT_KEY', ''),
+            'salt_index' => env('PHONEPE_SALT_INDEX', '1'),
+            'test_mode' => env('PAYMENT_SANDBOX', true)
+        ]);
+
+        if (!$phonepe->isConfigured()) {
+            return ['success' => false, 'error' => 'PhonePe not configured. Missing merchant credentials.'];
+        }
+
+        $result = $phonepe->initiatePayment([
+            'amount' => floatval($payment_data['amount']),
+            'receipt' => $transaction_id,
+            'description' => ($payment_data['payment_type'] ?? 'Payment') . ' - APS Dream Home',
+            'customer_name' => $payment_data['customer_name'] ?? '',
+            'customer_email' => $payment_data['customer_email'] ?? '',
+            'customer_phone' => $payment_data['customer_phone'] ?? '',
+            'redirect_url' => env('APP_URL', '') . '/payment/phonepe/callback',
+            'callback_url' => env('APP_URL', '') . '/api/v2/mobile/payment/phonepe/webhook'
+        ]);
+
+        return $result;
+    }
+
+    /**
+     * Process Google Pay / UPI payment using GPayGateway service
+     */
+    private function processGPayPayment($payment_data, $transaction_id)
+    {
+        $gpay = new GPayGateway([
+            'merchant_vpa' => env('GP_MERCHANT_VPA', ''),
+            'merchant_name' => env('GP_MERCHANT_NAME', 'APS Dream Home'),
+            'merchant_code' => env('GP_MERCHANT_CODE', 'APSDH'),
+            'test_mode' => env('PAYMENT_SANDBOX', true),
+            // Pass PhonePe config for UPI Intent
+            'phonepe_merchant_id' => env('PHONEPE_MERCHANT_ID', ''),
+            'phonepe_salt_key' => env('PHONEPE_SALT_KEY', ''),
+            'phonepe_salt_index' => env('PHONEPE_SALT_INDEX', '1'),
+            'phonepe_test_mode' => env('PAYMENT_SANDBOX', true)
+        ]);
+
+        if (!$gpay->isConfigured()) {
+            return ['success' => false, 'error' => 'Google Pay/UPI not configured. Missing merchant VPA.'];
+        }
+
+        $result = $gpay->initiatePayment([
+            'amount' => floatval($payment_data['amount']),
+            'receipt' => $transaction_id,
+            'description' => ($payment_data['payment_type'] ?? 'Payment') . ' - APS Dream Home',
+            'customer_name' => $payment_data['customer_name'] ?? '',
+            'customer_email' => $payment_data['customer_email'] ?? '',
+            'customer_phone' => $payment_data['customer_phone'] ?? ''
+        ]);
+
+        // Store QR code data in session for display
+        if ($result['success'] && isset($result['upi_qr'])) {
+            $_SESSION['gpay_qr_data'] = $result['upi_qr'];
+            $_SESSION['gpay_upi_link'] = $result['upi_link'];
+            $_SESSION['gpay_upi_intent'] = $result['upi_intent'] ?? null;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Process UPI QR Code payment (generic UPI)
+     */
+    private function processUpiPayment($payment_data, $transaction_id)
+    {
+        // Use GPayGateway's UPI QR generator
+        $gpay = new GPayGateway([
+            'merchant_vpa' => env('GP_MERCHANT_VPA', 'apsdreamhome@upi'),
+            'merchant_name' => env('GP_MERCHANT_NAME', 'APS Dream Home'),
+            'merchant_code' => env('GP_MERCHANT_CODE', 'APSDH'),
+            'test_mode' => env('PAYMENT_SANDBOX', true)
+        ]);
+
+        $result = $gpay->initiatePayment([
+            'amount' => floatval($payment_data['amount']),
+            'receipt' => $transaction_id,
+            'description' => ($payment_data['payment_type'] ?? 'Payment') . ' - APS Dream Home',
+            'customer_name' => $payment_data['customer_name'] ?? '',
+            'customer_email' => $payment_data['customer_email'] ?? '',
+            'customer_phone' => $payment_data['customer_phone'] ?? ''
+        ]);
+
+        if ($result['success'] && isset($result['upi_qr'])) {
+            $_SESSION['upi_qr_data'] = $result['upi_qr'];
+            $_SESSION['upi_link'] = $result['upi_link'];
+        }
+
+        return $result;
     }
 
     /**
@@ -410,62 +512,461 @@ class PaymentGatewayController extends BaseController
     // TODO: Implement real PhonePe/GPay/UPI gateway integration
     // =====================================================================
 
+    // =====================================================================
+    // API Methods — PhonePe, GPay, UPI Integration
+    // =====================================================================
+
+    /**
+     * Initiate PhonePe Payment (Standard Checkout)
+     * POST /api/v2/mobile/payment/phonepe/initiate
+     */
     public function initiatePhonePe()
     {
         $data = json_decode(file_get_contents('php://input'), true) ?: $_POST;
-        $this->json(['success' => false, 'error' => 'PhonePe integration not yet implemented', 'received' => $data], 501);
+        
+        $required = ['amount', 'receipt'];
+        foreach ($required as $field) {
+            if (empty($data[$field])) {
+                $this->json(['success' => false, 'error' => "Missing required field: {$field}"], 400);
+                return;
+            }
+        }
+
+        $phonepe = new PhonePeGateway([
+            'merchant_id' => env('PHONEPE_MERCHANT_ID', ''),
+            'salt_key' => env('PHONEPE_SALT_KEY', ''),
+            'salt_index' => env('PHONEPE_SALT_INDEX', '1'),
+            'test_mode' => env('PAYMENT_SANDBOX', true)
+        ]);
+
+        if (!$phonepe->isConfigured()) {
+            $this->json(['success' => false, 'error' => 'PhonePe not configured'], 503);
+            return;
+        }
+
+        $result = $phonepe->initiatePayment([
+            'amount' => floatval($data['amount']),
+            'receipt' => $data['receipt'],
+            'description' => $data['description'] ?? 'APS Dream Home Payment',
+            'customer_name' => $data['customer_name'] ?? '',
+            'customer_email' => $data['customer_email'] ?? '',
+            'customer_phone' => $data['customer_phone'] ?? '',
+            'redirect_url' => $data['redirect_url'] ?? (env('APP_URL', '') . '/payment/phonepe/callback'),
+            'callback_url' => $data['callback_url'] ?? (env('APP_URL', '') . '/api/v2/mobile/payment/phonepe/webhook')
+        ]);
+
+        $this->json($result, $result['success'] ? 200 : 400);
     }
 
+    /**
+     * Initiate PhonePe UPI Intent (for Google Pay, PhonePe, BHIM apps)
+     * POST /api/v2/mobile/payment/phonepe/upi-intent
+     */
+    public function initiatePhonePeUpiIntent()
+    {
+        $data = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+        
+        $required = ['amount', 'receipt'];
+        foreach ($required as $field) {
+            if (empty($data[$field])) {
+                $this->json(['success' => false, 'error' => "Missing required field: {$field}"], 400);
+                return;
+            }
+        }
+
+        $phonepe = new PhonePeGateway([
+            'merchant_id' => env('PHONEPE_MERCHANT_ID', ''),
+            'salt_key' => env('PHONEPE_SALT_KEY', ''),
+            'salt_index' => env('PHONEPE_SALT_INDEX', '1'),
+            'test_mode' => env('PAYMENT_SANDBOX', true)
+        ]);
+
+        if (!$phonepe->isConfigured()) {
+            $this->json(['success' => false, 'error' => 'PhonePe not configured'], 503);
+            return;
+        }
+
+        $result = $phonepe->initiateUpiIntent([
+            'amount' => floatval($data['amount']),
+            'receipt' => $data['receipt'],
+            'description' => $data['description'] ?? 'APS Dream Home Payment',
+            'customer_name' => $data['customer_name'] ?? '',
+            'customer_email' => $data['customer_email'] ?? '',
+            'customer_phone' => $data['customer_phone'] ?? '',
+            'redirect_url' => $data['redirect_url'] ?? (env('APP_URL', '') . '/payment/phonepe/callback'),
+            'callback_url' => $data['callback_url'] ?? (env('APP_URL', '') . '/api/v2/mobile/payment/phonepe/webhook'),
+            'upi_app' => $data['upi_app'] ?? '' // e.g., 'gpay', 'phonepe', 'paytm'
+        ]);
+
+        $this->json($result, $result['success'] ? 200 : 400);
+    }
+
+    /**
+     * Verify PhonePe Payment
+     * GET /api/v2/mobile/payment/phonepe/verify/{transactionId}
+     */
     public function verifyPhonePe($transactionId = null)
     {
-        $this->json(['success' => false, 'error' => 'PhonePe verification not yet implemented', 'transaction_id' => $transactionId], 501);
+        $transactionId = $transactionId ?? $_GET['transaction_id'] ?? '';
+        
+        if (empty($transactionId)) {
+            $this->json(['success' => false, 'error' => 'Missing transaction ID'], 400);
+            return;
+        }
+
+        $phonepe = new PhonePeGateway([
+            'merchant_id' => env('PHONEPE_MERCHANT_ID', ''),
+            'salt_key' => env('PHONEPE_SALT_KEY', ''),
+            'salt_index' => env('PHONEPE_SALT_INDEX', '1'),
+            'test_mode' => env('PAYMENT_SANDBOX', true)
+        ]);
+
+        if (!$phonepe->isConfigured()) {
+            $this->json(['success' => false, 'error' => 'PhonePe not configured'], 503);
+            return;
+        }
+
+        $result = $phonepe->getPaymentStatus($transactionId);
+        $this->json($result, $result['success'] ? 200 : 400);
     }
 
+    /**
+     * PhonePe Webhook/Callback Handler
+     * POST /api/v2/mobile/payment/phonepe/webhook
+     */
     public function phonePeWebhook()
     {
         $payload = json_decode(file_get_contents('php://input'), true);
+        
         error_log('PhonePe webhook received: ' . json_encode($payload));
+
+        // Verify checksum if provided
+        $checksum = $_SERVER['HTTP_X_VERIFY'] ?? '';
+        $merchantTransactionId = $payload['merchantTransactionId'] ?? '';
+        
+        if ($merchantTransactionId) {
+            $phonepe = new PhonePeGateway([
+                'merchant_id' => env('PHONEPE_MERCHANT_ID', ''),
+                'salt_key' => env('PHONEPE_SALT_KEY', ''),
+                'salt_index' => env('PHONEPE_SALT_INDEX', '1'),
+                'test_mode' => env('PAYMENT_SANDBOX', true)
+            ]);
+
+            $result = $phonepe->getPaymentStatus($merchantTransactionId);
+            
+            if ($result['success']) {
+                // Payment successful - update local DB
+                $this->updatePaymentStatus($merchantTransactionId, 'completed', $result);
+                
+                // Trigger commission processing if needed
+                if ($this->db) {
+                    $this->processCommissionByTransactionId($merchantTransactionId);
+                }
+            }
+        }
+
         http_response_code(200);
         echo json_encode(['status' => 'received']);
     }
 
+    /**
+     * Initiate Google Pay Payment (via UPI Intent through PhonePe)
+     * POST /api/v2/mobile/payment/gpay/initiate
+     */
     public function initiateGPay()
     {
         $data = json_decode(file_get_contents('php://input'), true) ?: $_POST;
-        $this->json(['success' => false, 'error' => 'GPay integration not yet implemented', 'received' => $data], 501);
+        
+        $required = ['amount', 'receipt'];
+        foreach ($required as $field) {
+            if (empty($data[$field])) {
+                $this->json(['success' => false, 'error' => "Missing required field: {$field}"], 400);
+                return;
+            }
+        }
+
+        $gpay = new GPayGateway([
+            'merchant_vpa' => env('GP_MERCHANT_VPA', ''),
+            'merchant_name' => env('GP_MERCHANT_NAME', 'APS Dream Home'),
+            'merchant_code' => env('GP_MERCHANT_CODE', 'APSDH'),
+            'test_mode' => env('PAYMENT_SANDBOX', true),
+            'phonepe_merchant_id' => env('PHONEPE_MERCHANT_ID', ''),
+            'phonepe_salt_key' => env('PHONEPE_SALT_KEY', ''),
+            'phonepe_salt_index' => env('PHONEPE_SALT_INDEX', '1'),
+            'phonepe_test_mode' => env('PAYMENT_SANDBOX', true)
+        ]);
+
+        if (!$gpay->isConfigured()) {
+            $this->json(['success' => false, 'error' => 'Google Pay/UPI not configured'], 503);
+            return;
+        }
+
+        $result = $gpay->initiatePayment([
+            'amount' => floatval($data['amount']),
+            'receipt' => $data['receipt'],
+            'description' => $data['description'] ?? 'APS Dream Home Payment',
+            'customer_name' => $data['customer_name'] ?? '',
+            'customer_email' => $data['customer_email'] ?? '',
+            'customer_phone' => $data['customer_phone'] ?? ''
+        ]);
+
+        $this->json($result, $result['success'] ? 200 : 400);
     }
 
+    /**
+     * Generate UPI QR Code
+     * POST /api/v2/mobile/payment/upi/qr
+     */
     public function generateQRCode()
     {
         $data = json_decode(file_get_contents('php://input'), true) ?: $_POST;
-        $this->json(['success' => false, 'error' => 'UPI QR code generation not yet implemented', 'received' => $data], 501);
+        
+        $required = ['amount', 'receipt'];
+        foreach ($required as $field) {
+            if (empty($data[$field])) {
+                $this->json(['success' => false, 'error' => "Missing required field: {$field}"], 400);
+                return;
+            }
+        }
+
+        $gpay = new GPayGateway([
+            'merchant_vpa' => env('GP_MERCHANT_VPA', 'apsdreamhome@upi'),
+            'merchant_name' => env('GP_MERCHANT_NAME', 'APS Dream Home'),
+            'merchant_code' => env('GP_MERCHANT_CODE', 'APSDH'),
+            'test_mode' => env('PAYMENT_SANDBOX', true)
+        ]);
+
+        $result = $gpay->initiatePayment([
+            'amount' => floatval($data['amount']),
+            'receipt' => $data['receipt'],
+            'description' => $data['description'] ?? 'APS Dream Home Payment',
+            'customer_name' => $data['customer_name'] ?? '',
+            'customer_email' => $data['customer_email'] ?? '',
+            'customer_phone' => $data['customer_phone'] ?? ''
+        ]);
+
+        $this->json($result, $result['success'] ? 200 : 400);
     }
 
+    /**
+     * UPI Callback/Return Handler
+     * POST/GET /api/v2/mobile/payment/upi/callback
+     */
     public function upiCallback()
     {
-        $payload = json_decode(file_get_contents('php://input'), true);
+        // Handle both GET (redirect) and POST (webhook) callbacks
+        $payload = $_POST ?: $_GET;
+        
         error_log('UPI callback received: ' . json_encode($payload));
-        http_response_code(200);
-        echo json_encode(['status' => 'received']);
+
+        // For UPI payments, verification typically happens via:
+        // 1. Bank/PSP webhook (if using PhonePe/Razorpay as PSP)
+        // 2. Manual reconciliation
+        // 3. Checking transaction status with PSP
+
+        $transactionId = $payload['transaction_id'] ?? $payload['txn_id'] ?? $payload['tr'] ?? '';
+        $status = $payload['status'] ?? $payload['txn_status'] ?? 'UNKNOWN';
+        
+        if ($transactionId && in_array($status, ['SUCCESS', 'COMPLETED', 'PAID'])) {
+            // Update local payment status
+            $this->updatePaymentStatus($transactionId, 'completed', $payload);
+            
+            if ($this->db) {
+                $this->processCommissionByTransactionId($transactionId);
+            }
+        }
+
+        // Return success page or JSON
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+            http_response_code(200);
+            echo json_encode(['status' => 'received', 'transaction_id' => $payload['tr'] ?? $payload['transaction_id'] ?? '']);
+        } else {
+            // Redirect to success/failed page
+            $redirectUrl = in_array($status, ['SUCCESS', 'COMPLETED', 'PAID']) 
+                ? (env('APP_URL', '') . '/payment/success?txn=' . $transactionId)
+                : (env('APP_URL', '') . '/payment/failed?txn=' . $transactionId);
+            header('Location: ' . $redirectUrl);
+        }
+        exit;
     }
 
+    /**
+     * Get Payment Status
+     * GET /api/v2/mobile/payment/status/{orderId}
+     */
     public function getStatus($orderId = null)
     {
-        $this->json(['success' => false, 'error' => 'Payment status lookup not yet implemented', 'order_id' => $orderId], 501);
+        $orderId = $orderId ?? $_GET['order_id'] ?? '';
+        
+        if (empty($orderId)) {
+            $this->json(['success' => false, 'error' => 'Missing order ID'], 400);
+            return;
+        }
+
+        // Try PhonePe first (most common for UPI)
+        $phonepe = new PhonePeGateway([
+            'merchant_id' => env('PHONEPE_MERCHANT_ID', ''),
+            'salt_key' => env('PHONEPE_SALT_KEY', ''),
+            'salt_index' => env('PHONEPE_SALT_INDEX', '1'),
+            'test_mode' => env('PAYMENT_SANDBOX', true)
+        ]);
+
+        if ($phonepe->isConfigured()) {
+            $result = $phonepe->getPaymentStatus($orderId);
+            if ($result['success']) {
+                $this->json($result);
+                return;
+            }
+        }
+
+        // Fallback: check local DB
+        if ($this->db) {
+            try {
+                $stmt = $this->db->prepare("SELECT * FROM payment_transactions WHERE transaction_id = ?");
+                $stmt->execute([$orderId]);
+                $payment = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                if ($payment) {
+                    $this->json(['success' => true, 'status' => $payment['payment_status'], 'payment' => $payment]);
+                    return;
+                }
+            } catch (Exception $e) {
+                error_log('Payment status lookup error: ' . $e->getMessage());
+            }
+        }
+
+        $this->json(['success' => false, 'error' => 'Payment not found', 'order_id' => $orderId], 404);
     }
 
+    /**
+     * Get Available Payment Methods
+     * GET /api/v2/mobile/payment/methods
+     */
     public function getPaymentMethods()
     {
+        $methods = [
+            ['id' => 'razorpay', 'name' => 'Razorpay', 'enabled' => !empty(env('RAZORPAY_KEY_ID'))],
+            ['id' => 'payu', 'name' => 'PayU', 'enabled' => !empty(env('PAYU_MERCHANT_KEY'))],
+            ['id' => 'phonepe', 'name' => 'PhonePe', 'enabled' => !empty(env('PHONEPE_MERCHANT_ID'))],
+            ['id' => 'gpay', 'name' => 'Google Pay', 'enabled' => !empty(env('GP_MERCHANT_VPA')) || !empty(env('PHONEPE_MERCHANT_ID'))],
+            ['id' => 'upi', 'name' => 'UPI QR', 'enabled' => true],
+            ['id' => 'bank_transfer', 'name' => 'Bank Transfer', 'enabled' => true],
+            ['id' => 'cash', 'name' => 'Cash', 'enabled' => true],
+        ];
+
         $this->json([
             'success' => true,
-            'methods' => [
-                ['id' => 'razorpay', 'name' => 'Razorpay', 'enabled' => true],
-                ['id' => 'phonepe', 'name' => 'PhonePe', 'enabled' => false],
-                ['id' => 'gpay', 'name' => 'Google Pay', 'enabled' => false],
-                ['id' => 'upi', 'name' => 'UPI QR', 'enabled' => false],
-                ['id' => 'bank_transfer', 'name' => 'Bank Transfer', 'enabled' => true],
-                ['id' => 'cash', 'name' => 'Cash', 'enabled' => true],
-            ]
+            'methods' => $methods
         ]);
+    }
+
+    /**
+     * Process Refund
+     * POST /api/v2/mobile/payment/refund
+     */
+    public function processRefund()
+    {
+        $data = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+        
+        $required = ['payment_id', 'amount'];
+        foreach ($required as $field) {
+            if (empty($data[$field])) {
+                $this->json(['success' => false, 'error' => "Missing required field: {$field}"], 400);
+                return;
+            }
+        }
+
+        $paymentId = $data['payment_id'];
+        $amount = floatval($data['amount']);
+        $reason = $data['reason'] ?? 'Customer requested refund';
+
+        // Determine gateway from payment record
+        if ($this->db) {
+            try {
+                $stmt = $this->db->prepare("SELECT payment_method FROM payment_transactions WHERE transaction_id = ?");
+                $stmt->execute([$paymentId]);
+                $payment = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                if ($payment) {
+                    $gateway = $payment['payment_method'];
+                    
+                    if ($gateway === 'phonepe') {
+                        $phonepe = new PhonePeGateway([
+                            'merchant_id' => env('PHONEPE_MERCHANT_ID', ''),
+                            'salt_key' => env('PHONEPE_SALT_KEY', ''),
+                            'salt_index' => env('PHONEPE_SALT_INDEX', '1'),
+                            'test_mode' => env('PAYMENT_SANDBOX', true)
+                        ]);
+                        $result = $phonepe->refund($paymentId, $data['amount'], $reason);
+                        $this->json($result);
+                        return;
+                    }
+                    
+                    if (in_array($gateway, ['gpay', 'upi'])) {
+                        $gpay = new GPayGateway([
+                            'merchant_vpa' => env('GP_MERCHANT_VPA', ''),
+                            'phonepe_merchant_id' => env('PHONEPE_MERCHANT_ID', ''),
+                            'phonepe_salt_key' => env('PHONEPE_SALT_KEY', ''),
+                            'phonepe_salt_index' => env('PHONEPE_SALT_INDEX', '1'),
+                            'phonepe_test_mode' => env('PAYMENT_SANDBOX', true)
+                        ]);
+                        if ($gpay->phonepeGateway && $gpay->phonepeGateway->isConfigured()) {
+                            $result = $gpay->refund($paymentId, $data['amount'], $reason);
+                            $this->json($result);
+                            return;
+                        }
+                    }
+                }
+            } catch (Exception $e) {
+                error_log('Refund lookup error: ' . $e->getMessage());
+            }
+        }
+
+        $this->json(['success' => false, 'error' => 'Refund not supported for this payment method or gateway not configured'], 400);
+    }
+
+    /**
+     * Helper: Update payment status in local DB
+     */
+    private function updatePaymentStatus(string $transactionId, string $status, array $gatewayResponse = [])
+    {
+        if (!$this->db) return;
+
+        try {
+            $stmt = $this->db->prepare("
+                UPDATE payment_transactions 
+                SET payment_status = :status, 
+                    gateway_response = :response,
+                    payment_date = NOW()
+                WHERE transaction_id = :transaction_id
+            ");
+            $stmt->execute([
+                'status' => $status,
+                'response' => json_encode($gatewayResponse),
+                'transaction_id' => $transactionId
+            ]);
+        } catch (Exception $e) {
+            error_log('PaymentGatewayController: updatePaymentStatus error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Helper: Process commission by transaction ID
+     */
+    private function processCommissionByTransactionId(string $transactionId)
+    {
+        if (!$this->db) return;
+
+        try {
+            $stmt = $this->db->prepare("SELECT plot_id FROM payment_transactions WHERE transaction_id = ?");
+            $stmt->execute([$transactionId]);
+            $payment = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($payment && !empty($payment['plot_id'])) {
+                $this->processCommission($transactionId, $payment['plot_id']);
+            }
+        } catch (Exception $e) {
+            error_log('PaymentGatewayController: commission processing error: ' . $e->getMessage());
+        }
     }
 }

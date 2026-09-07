@@ -187,4 +187,57 @@ class RankService
             'same_level_gen2'  => 1.0,
         ];
     }
+
+    /** Rank reward data (display logic — merged from parent RankService). */
+    private const RANK_REWARDS = [
+        ['label' => 'Site Manager',    'min' => 50000000, 'reward' => 'Car',                     'color' => '#cc0000'],
+        ['label' => 'President',       'min' => 30000000, 'reward' => 'Bullet Bike',              'color' => '#ff6600'],
+        ['label' => 'Vice President',  'min' => 15000000, 'reward' => 'Pulsar Bike',              'color' => '#ff9900'],
+        ['label' => 'Sr. BDM',         'min' =>  7000000, 'reward' => 'Domestic / Foreign Tour',  'color' => '#00b894'],
+        ['label' => 'BDM',             'min' =>  3500000, 'reward' => 'Laptop',                   'color' => '#0984e3'],
+        ['label' => 'Sr. Associate',   'min' =>  1000000, 'reward' => 'Tablet',                   'color' => '#0f766e'],
+        ['label' => 'Associate',       'min' =>        0, 'reward' => 'Mobile',                   'color' => '#14b8a6'],
+    ];
+
+    /**
+     * Determine rank information (label, reward, color, progress) for a business amount.
+     * Used by ReferralService for display.
+     */
+    public function getRankInfo(float $businessAmount): array
+    {
+        foreach (self::RANK_REWARDS as $index => $rank) {
+            if ($businessAmount >= $rank['min']) {
+                $next = self::RANK_REWARDS[$index - 1] ?? null;
+                return [
+                    'current_label'    => $rank['label'],
+                    'reward'           => $rank['reward'],
+                    'color'            => $rank['color'],
+                    'business'         => $businessAmount,
+                    'next'             => $next ? [
+                        'label'    => $next['label'],
+                        'required' => $next['min'],
+                        'reward'   => $next['reward'],
+                    ] : null,
+                    'progress_percent' => $this->calculateRewardProgress($businessAmount, $rank, $next),
+                ];
+            }
+        }
+        $fallback = end(self::RANK_REWARDS);
+        return [
+            'current_label'    => $fallback['label'],
+            'reward'           => $fallback['reward'],
+            'color'            => $fallback['color'],
+            'business'         => $businessAmount,
+            'next'             => null,
+            'progress_percent' => 100,
+        ];
+    }
+
+    private function calculateRewardProgress(float $amount, array $current, ?array $next): float
+    {
+        if (!$next) return 100.0;
+        $range = $next['min'] - $current['min'];
+        if ($range <= 0) return 0.0;
+        return max(0, min(100, ($amount - $current['min']) / $range * 100));
+    }
 }

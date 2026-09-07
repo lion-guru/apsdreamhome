@@ -31,7 +31,13 @@ class PropertyPageController extends BaseController
     {
         $featured_properties = [];
         try {
-            $stmt = $this->db->prepare("SELECT * FROM properties WHERE status = 'active' AND deleted_at IS NULL ORDER BY created_at DESC LIMIT 12");
+            $stmt = $this->db->prepare("
+                SELECT p.*, pi.image_path as primary_image
+                FROM properties p
+                LEFT JOIN property_images pi ON pi.property_id = p.id AND pi.is_primary = 1
+                WHERE p.status = 'active' AND p.deleted_at IS NULL
+                ORDER BY p.created_at DESC LIMIT 12
+            ");
             $stmt->execute();
             $allProperties = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 
@@ -47,7 +53,7 @@ class PropertyPageController extends BaseController
                     'status' => 'Available',
                     'total_area' => $prop['area_sqft'] ?? null,
                     'description' => $prop['description'] ?? null,
-                    'image' => $prop['image_path'] ?? null,
+                    'image' => $prop['primary_image'] ?? null,
                 ];
             }
         } catch (\Exception $e) {
@@ -125,11 +131,21 @@ class PropertyPageController extends BaseController
     {
         $property = null;
         if ($id) {
-            $property = $this->db->fetchOne("SELECT * FROM properties WHERE id = ? AND status = 'active' AND deleted_at IS NULL LIMIT 1", [$id]);
+            $property = $this->db->fetchOne("
+                SELECT p.*, pi.image_path as image
+                FROM properties p
+                LEFT JOIN property_images pi ON pi.property_id = p.id AND pi.is_primary = 1
+                WHERE p.id = ? AND p.status = 'active' AND p.deleted_at IS NULL LIMIT 1
+            ", [$id]);
         }
 
         if (!$property && isset($_GET['slug'])) {
-            $property = $this->db->fetchOne("SELECT * FROM properties WHERE slug = ? AND status = 'active' AND deleted_at IS NULL LIMIT 1", [$_GET['slug']]);
+            $property = $this->db->fetchOne("
+                SELECT p.*, pi.image_path as image
+                FROM properties p
+                LEFT JOIN property_images pi ON pi.property_id = p.id AND pi.is_primary = 1
+                WHERE p.slug = ? AND p.status = 'active' AND p.deleted_at IS NULL LIMIT 1
+            ", [$_GET['slug']]);
         }
 
         if (!$property) {
@@ -142,10 +158,12 @@ class PropertyPageController extends BaseController
 
         // Get similar properties
         $similar = $this->db->fetchAll("
-            SELECT * FROM properties
-            WHERE id != ? AND status = 'active' AND deleted_at IS NULL
-            AND (city = ? OR type = ?)
-            ORDER BY created_at DESC LIMIT 4
+            SELECT p.*, pi.image_path as image
+            FROM properties p
+            LEFT JOIN property_images pi ON pi.property_id = p.id AND pi.is_primary = 1
+            WHERE p.id != ? AND p.status = 'active' AND p.deleted_at IS NULL
+            AND (p.city = ? OR p.type = ?)
+            ORDER BY p.created_at DESC LIMIT 4
         ", [$property['id'], $property['city'], $property['type']]) ?: [];
 
         // Get recent testimonials
@@ -158,7 +176,7 @@ class PropertyPageController extends BaseController
             // fallback
         }
 
-        $this->render('pages/property_detail', [
+        $this->render('properties/property_detail', [
             'page_title' => $property['title'] . ' - APS Dream Home',
             'page_description' => $property['description'] ?? 'View property details',
             'property' => $property,
@@ -185,9 +203,74 @@ class PropertyPageController extends BaseController
 
     public function rentProperty()
     {
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $perPage = 12;
+        $offset = ($page - 1) * $perPage;
+        $filters = [
+            'q' => trim($_GET['q'] ?? ''),
+            'location' => trim($_GET['location'] ?? ''),
+            'type' => $_GET['type'] ?? '',
+            'bedrooms' => (int)($_GET['bedrooms'] ?? 0),
+            'min_price' => (int)($_GET['min_price'] ?? 0),
+            'max_price' => (int)($_GET['max_price'] ?? 0),
+        ];
+
+        try {
+            $where = "WHERE listing_type = 'rent' AND status IN ('verified','approved')";
+            $params = [];
+
+            if ($filters['q']) {
+                $where .= " AND (title LIKE ? OR description LIKE ? OR location LIKE ?)";
+                $q = "%{$filters['q']}%";
+                $params = array_merge($params, [$q, $q, $q]);
+            }
+            if ($filters['location']) {
+                $where .= " AND location LIKE ?";
+                $params[] = "%{$filters['location']}%";
+            }
+            if ($filters['type']) {
+                $where .= " AND property_type = ?";
+                $params[] = $filters['type'];
+            }
+            if ($filters['bedrooms'] > 0) {
+                $where .= " AND bedrooms >= ?";
+                $params[] = $filters['bedrooms'];
+            }
+            if ($filters['min_price'] > 0) {
+                $where .= " AND price >= ?";
+                $params[] = $filters['min_price'];
+            }
+            if ($filters['max_price'] > 0) {
+                $where .= " AND price <= ?";
+                $params[] = $filters['max_price'];
+            }
+
+            $countStmt = $this->db->prepare("SELECT COUNT(*) FROM user_properties {$where}");
+            $countStmt->execute($params);
+            $total = (int)$countStmt->fetchColumn();
+
+            $stmt = $this->db->prepare("SELECT * FROM user_properties {$where} ORDER BY created_at DESC LIMIT {$perPage} OFFSET {$offset}");
+            $stmt->execute($params);
+            $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+            $statsStmt = $this->db->query("SELECT COUNT(*) as total, MIN(price) as min_price, MAX(price) as max_price, AVG(price) as avg_price FROM user_properties WHERE listing_type = 'rent' AND status IN ('verified','approved')");
+            $stats = $statsStmt->fetch(\PDO::FETCH_ASSOC) ?: ['total' => 0, 'min_price' => 0, 'max_price' => 0, 'avg_price' => 0];
+        } catch (\Exception $e) {
+            error_log("rentProperty error: " . $e->getMessage());
+            $total = 0;
+            $properties = [];
+            $stats = ['total' => 0, 'min_price' => 0, 'max_price' => 0, 'avg_price' => 0];
+        }
+
         $this->render('pages/rent', [
             'page_title' => 'Rent Property - APS Dream Home',
             'page_description' => 'Find properties to rent.',
+            'properties' => $properties,
+            'total' => $total,
+            'page' => $page,
+            'totalPages' => max(1, (int)ceil($total / $perPage)),
+            'stats' => $stats,
+            'filters' => $filters,
         ]);
     }
 
@@ -352,7 +435,7 @@ class PropertyPageController extends BaseController
                     'id' => $row['id'],
                     'name' => $row['name'],
                     'slug' => $row['slug'],
-                    'location' => trim(($row['district_name'] ?? '') . ', ' . ($row['state_name'] ?? ''), ', '),
+                    'location' => $row['location'] ?: trim(($row['district_name'] ?? '') . ', ' . ($row['state_name'] ?? ''), ', '),
                     'starting_price' => $row['starting_price'] ?? 0,
                     'total_plots' => $row['total_plots'] ?? 0,
                     'available_plots' => $colonyPlots,
@@ -360,7 +443,7 @@ class PropertyPageController extends BaseController
                     'status' => $row['status'] ?? 'active',
                     'description' => $row['description'] ?? '',
                     'amenities' => $amenities,
-                    'image' => $row['image'] ?? null,
+                    'image' => $row['image_path'] ?? $row['layout_image'] ?? null,
                 ];
             }
         } catch (\Exception $e) {

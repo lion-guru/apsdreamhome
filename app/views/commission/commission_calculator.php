@@ -20,7 +20,6 @@
  * @see https://apsdreamhome.com/docs
  */
 
-// TODO: Add proper error handling with try-catch blocks
 ?>
 
 <!-- Page Header -->
@@ -179,7 +178,7 @@
 </section>
 
 <!-- Results Section -->
-<section id="resultsSection" class="results-section py-5 bg-light style-54390">
+<section id="resultsSection" class="results-section py-5 bg-light">
     <div class="container">
         <div class="row">
             <div class="col-lg-12 text-center mb-5">
@@ -260,7 +259,7 @@
                                     <span class="breakdown-label">Direct Commissions (Level 1)</span>
                                     <span class="breakdown-value" id="directCommission">₹0</span>
                                     <div class="progress">
-                                        <div class="progress-bar bg-success" id="directCommissionBar" class="style-73819"></div>
+                                        <div class="progress-bar bg-success" id="directCommissionBar" ></div>
                                     </div>
                                 </div>
                             </div>
@@ -269,7 +268,7 @@
                                     <span class="breakdown-label">Level 2-3 Commissions</span>
                                     <span class="breakdown-value" id="level23Commission">₹0</span>
                                     <div class="progress">
-                                        <div class="progress-bar bg-info" id="level23CommissionBar" class="style-73819"></div>
+                                        <div class="progress-bar bg-info" id="level23CommissionBar" ></div>
                                     </div>
                                 </div>
                             </div>
@@ -278,7 +277,7 @@
                                     <span class="breakdown-label">Level 4-7 Commissions</span>
                                     <span class="breakdown-value" id="level47Commission">₹0</span>
                                     <div class="progress">
-                                        <div class="progress-bar bg-warning" id="level47CommissionBar" class="style-73819"></div>
+                                        <div class="progress-bar bg-warning" id="level47CommissionBar" ></div>
                                     </div>
                                 </div>
                             </div>
@@ -287,7 +286,7 @@
                                     <span class="breakdown-label">Level 8-10 Commissions</span>
                                     <span class="breakdown-value" id="level810Commission">₹0</span>
                                     <div class="progress">
-                                        <div class="progress-bar bg-secondary" id="level810CommissionBar" class="style-73819"></div>
+                                        <div class="progress-bar bg-secondary" id="level810CommissionBar" ></div>
                                     </div>
                                 </div>
                             </div>

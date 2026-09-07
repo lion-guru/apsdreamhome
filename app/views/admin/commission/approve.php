@@ -33,7 +33,7 @@ $commissions = $commissions ?? [];
                                 <td>₹<?= number_format(floatval($c['amount'] ?? 0), 2) ?></td>
                                 <td><?= htmlspecialchars($c['created_at'] ?? $c['date'] ?? '') ?></td>
                                 <td>
-                                    <form method="POST" action="<?= $base ?>/admin/commission/action" class="style-71727">
+                                    <form method="POST" action="<?= $base ?>/admin/commission/action" >
                                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                         <input type="hidden" name="id" value="<?= $c['id'] ?? '' ?>">
                                         <button type="submit" name="action" value="approve" class="btn btn-sm btn-success"><i class="fas fa-check me-1"></i>Approve</button>

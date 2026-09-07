@@ -144,13 +144,18 @@ class DemandLetterService
     private function getBookingData(int $bookingId): ?array
     {
         $tid = TenantContext::getId();
-        $sql = "SELECT pb.*, c.name as customer_name, c.email, c.phone, pl.plot_number, pl.area_sqft, col.name as colony_name
-                FROM plot_bookings pb
-                JOIN customers c ON c.id = pb.customer_id
-                JOIN plots pl ON pl.id = pb.plot_id
-                JOIN colonies col ON col.id = pl.colony_id
-                WHERE pb.id = ?" . ($tid > 1 ? " AND pb.tenant_id = ?" : "");
-        return $this->db->fetchOne($sql, $tid > 1 ? [$bookingId, $tid] : [$bookingId]) ?: null;
+        try {
+            $sql = "SELECT pb.*, u.name as customer_name, u.email, u.phone, pl.plot_number, pl.area_sqft, col.name as colony_name
+                    FROM plot_bookings pb
+                    LEFT JOIN users u ON u.id = pb.customer_id
+                    JOIN plots pl ON pl.id = pb.plot_id
+                    JOIN colonies col ON col.id = pl.colony_id
+                    WHERE pb.id = ?" . ($tid > 1 ? " AND pb.tenant_id = ?" : "");
+            return $this->db->fetchOne($sql, $tid > 1 ? [$bookingId, $tid] : [$bookingId]) ?: null;
+        } catch (\Throwable $e) {
+            error_log('DemandLetterService::getBookingData error: ' . $e->getMessage());
+            return null;
+        }
     }
 
     private function substituteVariables(string $template, array $data): string

@@ -27,9 +27,9 @@ ob_start();
                 <div class="col-md-4">
                     <div class="card border-0 shadow-sm h-100">
                         <?php if ($a['image_url']): ?>
-                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?= htmlspecialchars($a['title'] ?? '') ?>" class="style-24482">
+                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?= htmlspecialchars($a['title'] ?? '') ?>" >
                         <?php else: ?>
-                            <div class="bg-secondary text-white d-flex align-items-center justify-content-center style-32569">
+                            <div class="bg-secondary text-white d-flex align-items-center justify-content-center">
                                 <i class="fas fa-gavel fa-3x"></i>
                             </div>
                         <?php endif; ?>

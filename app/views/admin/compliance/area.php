@@ -44,36 +44,36 @@ function areaStatusLabel($status) {
 </style>
 
 <div class="area-detail-header">
-    <div class="container-fluid px-4 style-84072">
+    <div class="container-fluid px-4">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div>
-                <a href="<?= $base ?>/admin/compliance-scorecard" class="text-white-50 text-decoration-none style-87981"><i class="fas fa-arrow-left me-1"></i>Back to Scorecard</a>
+                <a href="<?= $base ?>/admin/compliance-scorecard" class="text-white-50 text-decoration-none"><i class="fas fa-arrow-left me-1"></i>Back to Scorecard</a>
                 <h2 class="mb-1 fw-bold mt-1"><i class="<?= $area_icon ?> me-2"></i><?= htmlspecialchars($area_label ?? '') ?></h2>
-                <p class="mb-0 opacity-75 style-42715">Weight: <?= round($area_weight * 100) ?>% of overall compliance</p>
+                <p class="mb-0 opacity-75">Weight: <?= round($area_weight * 100) ?>% of overall compliance</p>
             </div>
             <div class="text-end">
-                <div class="style-20327"><?= $result['score'] ?></div>
-                <span class="badge <?= areaBadgeClass($result['status']) ?> style-49132"><?= areaStatusLabel($result['status']) ?></span>
+                <div ><?= $result['score'] ?></div>
+                <span class="badge <?= areaBadgeClass($result['status']) ?>"><?= areaStatusLabel($result['status']) ?></span>
             </div>
         </div>
     </div>
 </div>
 
-<div class="container-fluid px-4 style-71772">
+<div class="container-fluid px-4">
     <div class="row g-4">
         <!-- Main Content -->
         <div class="col-lg-8">
             <!-- Details -->
-            <div class="p-4 mb-4 style-32484">
-                <h6 class="fw-bold mb-3 style-88720"><i class="fas fa-info-circle me-2 text-primary"></i>Check Summary</h6>
-                <p class="mb-0 style-36467"><?= htmlspecialchars($result['details'] ?? '') ?></p>
+            <div class="p-4 mb-4">
+                <h6 class="fw-bold mb-3"><i class="fas fa-info-circle me-2 text-primary"></i>Check Summary</h6>
+                <p class="mb-0"><?= htmlspecialchars($result['details'] ?? '') ?></p>
             </div>
 
             <!-- Findings -->
-            <div class="p-4 mb-4 style-32484">
-                <h6 class="fw-bold mb-3 style-88720">
+            <div class="p-4 mb-4">
+                <h6 class="fw-bold mb-3">
                     <i class="fas fa-exclamation-triangle me-2 text-danger"></i>Findings
-                    <span class="badge bg-danger ms-2 style-26285"><?= count($result['findings']) ?></span>
+                    <span class="badge bg-danger ms-2"><?= count($result['findings']) ?></span>
                 </h6>
                 <?php if (empty($result['findings'])): ?>
                     <div class="text-center text-muted py-3">
@@ -88,10 +88,10 @@ function areaStatusLabel($status) {
             </div>
 
             <!-- Recommendations -->
-            <div class="p-4 style-32484">
-                <h6 class="fw-bold mb-3 style-88720">
+            <div class="p-4">
+                <h6 class="fw-bold mb-3">
                     <i class="fas fa-lightbulb me-2 text-warning"></i>Recommendations
-                    <span class="badge bg-success ms-2 style-26285"><?= count($result['recommendations']) ?></span>
+                    <span class="badge bg-success ms-2"><?= count($result['recommendations']) ?></span>
                 </h6>
                 <?php if (empty($result['recommendations'])): ?>
                     <div class="text-center text-muted py-3">
@@ -108,26 +108,26 @@ function areaStatusLabel($status) {
 
         <!-- Sidebar: Other Areas -->
         <div class="col-lg-4">
-            <div class="p-4 style-32484">
-                <h6 class="fw-bold mb-3 style-42715"><i class="fas fa-th-large me-2 text-muted"></i>All Compliance Areas</h6>
+            <div class="p-4">
+                <h6 class="fw-bold mb-3"><i class="fas fa-th-large me-2 text-muted"></i>All Compliance Areas</h6>
                 <?php foreach ($all_areas as $key => $area): ?>
                     <?php $color = areaColor($area['score']); $active = $key === $area_key; ?>
                     <a href="<?= $base ?>/admin/compliance-scorecard/area/<?= $key ?>"
-                       class="d-flex align-items-center gap-3 p-2 mb-1 rounded text-decoration-none <?= $active ? 'bg-light' : '' ?> style-62827">
-                        <div class="style-99317"></div>
+                       class="d-flex align-items-center gap-3 p-2 mb-1 rounded text-decoration-none <?= $active ? 'bg-light' : '' ?>">
+                        <div ></div>
                         <div class="flex-grow-1">
-                            <div class="style-83373"><?= $area_labels[$key] ?? $key ?></div>
+                            <div ><?= $area_labels[$key] ?? $key ?></div>
                         </div>
-                        <div class="style-21942"><?= $area['score'] ?></div>
+                        <div ><?= $area['score'] ?></div>
                     </a>
                 <?php endforeach; ?>
 
                 <hr class="my-3">
 
                 <div class="text-center">
-                    <div class="style-60726">Overall Score</div>
-                    <div class="style-53854"><?= $overall ?></div>
-                    <a href="<?= $base ?>/admin/compliance-scorecard" class="btn btn-sm btn-outline-primary mt-2 style-86354">View Full Scorecard</a>
+                    <div >Overall Score</div>
+                    <div ><?= $overall ?></div>
+                    <a href="<?= $base ?>/admin/compliance-scorecard" class="btn btn-sm btn-outline-primary mt-2">View Full Scorecard</a>
                 </div>
             </div>
         </div>

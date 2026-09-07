@@ -26,7 +26,7 @@
             <?php if (!empty($plot['image_path'])): ?>
                 <img src="<?= htmlspecialchars($plot['image_path'] ?? '') ?>" alt="Plot <?= htmlspecialchars($plot['plot_number'] ?? '') ?>" class="plot-gallery-img">
             <?php else: ?>
-                <div class="plot-gallery-img bg-light d-flex align-items-center justify-content-center style-68724">
+                <div class="plot-gallery-img bg-light d-flex align-items-center justify-content-center">
                     <div class="text-center text-muted">
                         <i class="fas fa-map-marked-alt fa-4x mb-3"></i>
                         <p class="mb-0"><?= __('plot_detail_location_image') ?></p>
@@ -145,7 +145,7 @@
                         </a>
                     <?php endif; ?>
                 </div>
-                <div class="text-center mt-2" id="compareMsg" class="style-2248">
+                <div class="text-center mt-2" id="compareMsg" >
                     <small class="text-success"><i class="fas fa-check-circle"></i> <?= __('plot_detail_added_compare') ?> <a href="<?= BASE_URL ?>/compare"><?= __('compare_plot_header') ?></a></small>
                 </div>
             </div>
@@ -172,7 +172,7 @@
                     <?php $a = is_string($amenity) ? str_replace(['[', ']', '"', '\\'], '', $amenity) : ''; ?>
                     <?php if (!empty($a)): ?>
                     <div class="col-md-4 col-6">
-                        <span class="amenity-tag style-80567">
+                        <span class="amenity-tag">
                             <i class="fas fa-check-circle text-success me-1"></i> <?= htmlspecialchars(trim($a)) ?>
                         </span>
                     </div>

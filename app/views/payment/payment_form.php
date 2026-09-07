@@ -33,7 +33,7 @@
                                 <option value="wallet" <?= ($_POST['method'] ?? '') === 'wallet' ? 'selected' : '' ?>>Wallet</option>
                             </select>
                         </div>
-                        <div id="cardDetails" class="style-24280">
+                        <div id="cardDetails" >
                             <div class="mb-3">
                                 <label class="form-label">Card Number</label>
                                 <input type="text" name="card_number" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19">
@@ -49,7 +49,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="upiDetails" class="style-61568">
+                        <div id="upiDetails" >
                             <div class="mb-3">
                                 <label class="form-label">UPI ID</label>
                                 <input type="text" name="upi_id" class="form-control" placeholder="example@paytm" value="<?= htmlspecialchars($_POST['upi_id'] ?? '') ?>">

@@ -23,15 +23,15 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 </style>
 
 <div class="container-fluid py-4">
-    <h4 class="style-43890"><i class="fas fa-cog me-2"></i>Listing Settings</h4>
+    <h4 ><i class="fas fa-cog me-2"></i>Listing Settings</h4>
 
     <!-- Stats -->
     <div class="row mb-4">
         <div class="col-md-2"><div class="stat-mini"><div class="num"><?= $totalListings ?></div><div class="lbl">Total Listings</div></div></div>
-        <div class="col-md-2"><div class="stat-mini style-1293"><div class="num"><?= $featuredListings ?></div><div class="lbl">Featured</div></div></div>
-        <div class="col-md-2"><div class="stat-mini style-41761"><div class="num"><?= $premiumListings ?></div><div class="lbl">Premium</div></div></div>
-        <div class="col-md-2"><div class="stat-mini style-68340"><div class="num"><?= $totalInquiries ?></div><div class="lbl">Inquiries</div></div></div>
-        <div class="col-md-2"><div class="stat-mini style-75766"><div class="num"><?= $totalMessages ?></div><div class="lbl">Messages</div></div></div>
+        <div class="col-md-2"><div class="stat-mini"><div class="num"><?= $featuredListings ?></div><div class="lbl">Featured</div></div></div>
+        <div class="col-md-2"><div class="stat-mini"><div class="num"><?= $premiumListings ?></div><div class="lbl">Premium</div></div></div>
+        <div class="col-md-2"><div class="stat-mini"><div class="num"><?= $totalInquiries ?></div><div class="lbl">Inquiries</div></div></div>
+        <div class="col-md-2"><div class="stat-mini"><div class="num"><?= $totalMessages ?></div><div class="lbl">Messages</div></div></div>
     </div>
 
     <div class="row">
@@ -49,7 +49,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     </div>
                     <?php endforeach; ?>
                     <?php if (empty($settings)): ?>
-                    <p class="style-81715">No settings configured yet. Settings will appear here once listing_settings table is seeded.</p>
+                    <p >No settings configured yet. Settings will appear here once listing_settings table is seeded.</p>
                     <?php endif; ?>
                     <button type="submit" class="btn btn-primary mt-3">Save Settings</button>
                 </form>
@@ -62,26 +62,26 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <h5><i class="fas fa-box me-2"></i>Listing Packages</h5>
                 <?php foreach ($packages as $pkg): ?>
                 <form method="POST" action="<?= $base ?>
-            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/listing-settings/package/update" class="style-78037">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/listing-settings/package/update" >
     <?php echo CSRFProtection::csrfField(); ?>
                     <input type="hidden" name="id" value="<?= $pkg['id'] ?>">
                     <div class="d-flex align-items-center gap-2 mb-2">
-                        <strong class="style-43890"><?= htmlspecialchars($pkg['name'] ?? '') ?></strong>
+                        <strong ><?= htmlspecialchars($pkg['name'] ?? '') ?></strong>
                         <?php if ($pkg['is_featured']): ?><span class="badge-featured">Featured</span><?php endif; ?>
                         <?php if ($pkg['is_premium']): ?><span class="badge-premium">Premium</span><?php endif; ?>
                         <?php if ($pkg['is_urgent']): ?><span class="badge-urgent">Urgent</span><?php endif; ?>
                     </div>
                     <div class="row g-2">
                         <div class="col-6">
-                            <small class="style-81715">Price (₹)</small>
+                            <small >Price (₹)</small>
                             <input type="number" name="price" value="<?= $pkg['price'] ?>" class="form-control form-control-sm">
                         </div>
                         <div class="col-6">
-                            <small class="style-81715">Duration (days)</small>
+                            <small >Duration (days)</small>
                             <input type="number" name="duration_days" value="<?= $pkg['duration_days'] ?>" class="form-control form-control-sm">
                         </div>
                         <div class="col-4">
-                            <small class="style-81715">Boost Score</small>
+                            <small >Boost Score</small>
                             <input type="number" name="boost_score" value="<?= $pkg['boost_score'] ?>" class="form-control form-control-sm">
                         </div>
                         <div class="col-8 d-flex align-items-end">
@@ -91,7 +91,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 </form>
                 <?php endforeach; ?>
                 <?php if (empty($packages)): ?>
-                <p class="style-81715">No packages configured yet.</p>
+                <p >No packages configured yet.</p>
                 <?php endif; ?>
             </div>
         </div>

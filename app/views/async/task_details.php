@@ -103,8 +103,8 @@ $task = $task ?? [];
                             <span class="fw-bold">Progress</span>
                             <span class="fw-bold"><?= (int)($task['progress_percentage'] ?? 0) ?>%</span>
                         </div>
-                        <div class="progress style-51309">
-                            <div class="progress-bar bg-primary" role="progressbar" class="style-98943" aria-valuenow="<?= (int)($task['progress_percentage'] ?? 0) ?>" aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress">
+                            <div class="progress-bar bg-primary" role="progressbar" aria-valuenow="<?= (int)($task['progress_percentage'] ?? 0) ?>" aria-valuemin="0" aria-valuemax="100">
                                 <?= (int)($task['progress_percentage'] ?? 0) ?>%
                             </div>
                         </div>

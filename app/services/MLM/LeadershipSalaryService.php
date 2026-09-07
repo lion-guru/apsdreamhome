@@ -37,6 +37,31 @@ class LeadershipSalaryService
         }
     }
 
+    private function getActivePlanSnapshot(): array
+    {
+        try {
+            $stmt = $this->db->query("SELECT * FROM mlm_commission_plans WHERE status = 'active' LIMIT 1");
+            $plan = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if ($plan) {
+                return [
+                    'plan_id' => $plan['id'],
+                    'plan_version' => $plan['version'] ?? 1,
+                    'rates' => [
+                        'direct_sale_pct' => $plan['direct_sale_pct'] ?? null,
+                        'override_l1_pct' => $plan['l1_pct'] ?? null,
+                        'override_l2_pct' => $plan['l2_pct'] ?? null,
+                        'override_l3_pct' => $plan['l3_pct'] ?? null,
+                        'global_cap_pct' => $plan['global_cap_pct'] ?? null,
+                    ],
+                    'snapshot_at' => date('Y-m-d H:i:s'),
+                ];
+            }
+        } catch (\Exception $e) {
+            error_log('getActivePlanSnapshot error: ' . $e->getMessage());
+        }
+        return ['plan_id' => null, 'plan_version' => 1, 'rates' => [], 'snapshot_at' => date('Y-m-d H:i:s')];
+    }
+
     /**
      * Evaluate a user's eligibility for leadership salary targets
      * Called after a booking/commission event
@@ -146,14 +171,15 @@ class LeadershipSalaryService
             $minTarget = self::MONTHLY_TARGET_STARTER;
             if ($monthlyVolume < $minTarget) {
                 // Withhold salary — target not met
+                $snapshot = $this->getActivePlanSnapshot();
                 $insertData = $this->tenantInsertData();
                 $extraCols = $insertData ? ', ' . implode(', ', array_keys($insertData)) : '';
                 $extraVals = $insertData ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '';
                 $this->db->prepare(
                     "INSERT INTO mlm_commission_ledger 
-                     (beneficiary_user_id, source_user_id, commission_type, amount, level, status, notes, created_at{$extraCols})
-                     VALUES (?, 0, 'salary_withheld', 0, 0, 'withheld', ?, NOW(){$extraVals})"
-                )->execute(array_merge([$userId, "Leadership Salary WITHHELD — Monthly volume ₹" . number_format($monthlyVolume) . " < target ₹" . number_format($minTarget)], array_values($insertData)));
+                     (beneficiary_user_id, source_user_id, commission_type, amount, level, status, notes, created_at, plan_id, plan_version, plan_snapshot, calculation_engine{$extraCols})
+                     VALUES (?, 0, 'salary_withheld', 0, 0, 'withheld', ?, NOW(), ?, ?, ?, 'leadership_salary_service'{$extraVals})"
+                )->execute(array_merge([$userId, "Leadership Salary WITHHELD — Monthly volume ₹" . number_format($monthlyVolume) . " < target ₹" . number_format($minTarget), $snapshot['plan_id'], $snapshot['plan_version'], json_encode($snapshot)], array_values($insertData)));
                 error_log("LeadershipSalary: WITHHELD user #$userId — monthly volume ₹$monthlyVolume < target ₹$minTarget");
                 continue;
             }
@@ -167,11 +193,12 @@ class LeadershipSalaryService
                 
                 // Create monthly commission entry for EACH source target (so accounting is transparent)
                 $targetIds = array_column($targets, 'id');
+                $snapshot = $this->getActivePlanSnapshot();
                 $insertData = $this->tenantInsertData();
                 $extraCols = $insertData ? ', ' . implode(', ', array_keys($insertData)) : '';
                 $extraVals = $insertData ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '';
-                $stmt = $this->db->prepare("INSERT INTO mlm_commission_ledger (beneficiary_user_id, source_user_id, commission_type, amount, level, status, notes, created_at{$extraCols}) VALUES (?, ?, 'performance_bonus', ?, 1, 'approved', CONCAT('Leadership Salary [Targets: ', ?, '] - Monthly payout with overlap aggregation'), NOW(){$extraVals})");
-                $stmt->execute(array_merge([$userId, 1, $totalMonthlyPayout, implode(',', $targetIds)], array_values($insertData)));
+                $stmt = $this->db->prepare("INSERT INTO mlm_commission_ledger (beneficiary_user_id, source_user_id, commission_type, amount, level, status, notes, created_at, plan_id, plan_version, plan_snapshot, calculation_engine{$extraCols}) VALUES (?, ?, 'performance_bonus', ?, 1, 'approved', CONCAT('Leadership Salary [Targets: ', ?, '] - Monthly payout with overlap aggregation'), NOW(), ?, ?, ?, 'leadership_salary_service'{$extraVals})");
+                $stmt->execute(array_merge([$userId, 1, $totalMonthlyPayout, implode(',', $targetIds), $snapshot['plan_id'], $snapshot['plan_version'], json_encode($snapshot)], array_values($insertData)));
                 
                 $this->db->commit();
                 $processed++;

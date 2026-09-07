@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
-use App\Services\RankService;
+use App\Services\MLM\RankService;
 use App\Traits\ServiceTenantTrait;
 use Exception;
 use PDO;

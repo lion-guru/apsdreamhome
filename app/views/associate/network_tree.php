@@ -94,45 +94,45 @@ foreach ($nodes as $n) {
     <div class="row g-3 mb-4">
         <div class="col-6 col-md-3">
             <div class="card border-0 shadow-sm text-center py-3 h-100">
-                <div class="style-15583"><?= e($totalDownline) ?></div>
+                <div ><?= e($totalDownline) ?></div>
                 <div class="text-muted small fw-bold"><?php echo __('assoc_net_total_downline', [], 'Total Downline'); ?></div>
             </div>
         </div>
         <div class="col-6 col-md-3">
             <div class="card border-0 shadow-sm text-center py-3 h-100">
-                <div class="style-31497"><?= e($leftCount) ?></div>
+                <div ><?= e($leftCount) ?></div>
                 <div class="text-muted small fw-bold"><?php echo __('assoc_net_left_leg', [], 'Left Leg'); ?></div>
             </div>
         </div>
         <div class="col-6 col-md-3">
             <div class="card border-0 shadow-sm text-center py-3 h-100">
-                <div class="style-8188"><?= e($rightCount) ?></div>
+                <div ><?= e($rightCount) ?></div>
                 <div class="text-muted small fw-bold"><?php echo __('assoc_net_right_leg', [], 'Right Leg'); ?></div>
             </div>
         </div>
         <div class="col-6 col-md-3">
             <div class="card border-0 shadow-sm text-center py-3 h-100">
-                <div class="style-86698"><?= e($maxDepth) ?></div>
+                <div ><?= e($maxDepth) ?></div>
                 <div class="text-muted small fw-bold"><?php echo __('assoc_net_max_depth', [], 'Max Depth'); ?></div>
             </div>
         </div>
     </div>
 
     <!-- Team Earnings Summary -->
-    <div class="card border-0 shadow-sm mb-4 style-49239">
+    <div class="card border-0 shadow-sm mb-4">
         <div class="card-body py-3 px-4">
             <div class="row align-items-center">
                 <div class="col-md-4">
                     <small class="text-white-50"><?php echo __('assoc_net_team_earnings', [], 'Team Total Earnings'); ?></small>
-                    <div class="fw-bold style-4846">₹<?= number_format($totalCommission) ?></div>
+                    <div class="fw-bold">₹<?= number_format($totalCommission) ?></div>
                 </div>
                 <div class="col-md-4">
                     <small class="text-white-50"><?php echo __('assoc_net_left_leg', [], 'Left Leg'); ?></small>
-                    <div class="fw-bold style-1357"><?= e($leftCount) ?> <?php echo __('assoc_net_members', [], 'members'); ?></div>
+                    <div class="fw-bold"><?= e($leftCount) ?> <?php echo __('assoc_net_members', [], 'members'); ?></div>
                 </div>
                 <div class="col-md-4">
                     <small class="text-white-50"><?php echo __('assoc_net_right_leg', [], 'Right Leg'); ?></small>
-                    <div class="fw-bold style-75156"><?= e($rightCount) ?> <?php echo __('assoc_net_members', [], 'members'); ?></div>
+                    <div class="fw-bold"><?= e($rightCount) ?> <?php echo __('assoc_net_members', [], 'members'); ?></div>
                 </div>
             </div>
         </div>
@@ -142,8 +142,8 @@ foreach ($nodes as $n) {
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-2">
             <div class="d-flex gap-2 flex-wrap">
-                <input type="text" id="treeSearch" class="form-control form-control-sm style-45496" placeholder="<?php echo __('assoc_net_search', [], 'Search by name, rank...'); ?>" autocomplete="off">
-                <select id="rankFilter" class="form-select form-select-sm style-1698">
+                <input type="text" id="treeSearch" class="form-control form-control-sm" placeholder="<?php echo __('assoc_net_search', [], 'Search by name, rank...'); ?>" autocomplete="off">
+                <select id="rankFilter" class="form-select form-select-sm">
                     <option value=""><?php echo __('assoc_net_all_ranks', [], 'All Ranks'); ?></option>
                     <?php foreach ($rankLabels as $k => $v): ?>
                         <option value="<?= e($k ?? '') ?>"><?= e($v ?? '') ?></option>
@@ -177,7 +177,7 @@ foreach ($nodes as $n) {
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="m-0 fw-bold"><i class="fas fa-sitemap text-primary me-2"></i><?php echo __('assoc_net_hierarchy_view', [], 'Hierarchy View'); ?></h5>
                 </div>
-                <div class="card-body overflow-x-auto style-68694">
+                <div class="card-body overflow-x-auto">
                     <?php foreach ($rootNodes as $root):
                         $rootLevel = strtolower($root['current_level'] ?? 'associate');
                         $rootColor = $rankColors[$rootLevel] ?? '#94a3b8';
@@ -186,14 +186,14 @@ foreach ($nodes as $n) {
                     ?>
                     <!-- Root node (YOU) -->
                     <div class="text-center mb-2">
-                        <div class="d-inline-block border-2 rounded-3 p-3 position-relative rank-pulse style-59006">
+                        <div class="d-inline-block border-2 rounded-3 p-3 position-relative rank-pulse">
                             <span class="gen-badge mb-1 d-inline-block"><?php echo __('assoc_net_you', [], 'YOU'); ?> (Gen 0)</span>
-                            <span class="leg-badge mb-2 d-inline-block style-61782"><?php echo __('assoc_net_you', [], 'YOU'); ?></span>
-                            <div class="fw-bold style-88102"><?= htmlspecialchars($root['name'] ?? 'You') ?></div>
+                            <span class="leg-badge mb-2 d-inline-block"><?php echo __('assoc_net_you', [], 'YOU'); ?></span>
+                            <div class="fw-bold"><?= htmlspecialchars($root['name'] ?? 'You') ?></div>
                             <div class="small text-muted mt-1">
-                                <span class="badge style-37804"><i class="fas <?= $rootIcon ?> me-1"></i><?= htmlspecialchars($rootLabel ?? '') ?></span>
+                                <span class="badge"><i class="fas <?= $rootIcon ?> me-1"></i><?= htmlspecialchars($rootLabel ?? '') ?></span>
                             </div>
-                            <div class="mt-2 style-64777">
+                            <div class="mt-2">
                                 <span class="me-3"><i class="fas fa-rupee-sign text-success"></i> <?= number_format((float)($root['total_commission'] ?? 0)) ?></span>
                                 <span><i class="fas fa-chart-line text-primary"></i> <?= number_format((float)($root['personal_bv'] ?? 0)) ?></span>
                             </div>
@@ -201,7 +201,7 @@ foreach ($nodes as $n) {
                     </div>
                     <!-- Connector -->
                     <?php if (!empty($byParent[$root['id'] ?? null])): ?>
-                        <div class="text-center"><div class="tree-v-line style-16797"></div></div>
+                        <div class="text-center"><div class="tree-v-line"></div></div>
                     <?php endif; ?>
                     <!-- Children -->
                     <?= buildTreeLevel($root['id'] ?? null, $byParent, $rankColors, $rankIcons, $rankLabels, 0) ?>
@@ -212,7 +212,7 @@ foreach ($nodes as $n) {
     </div>
 
     <!-- List View -->
-    <div id="listView" class="style-2248">
+    <div id="listView" >
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white border-0 py-3">
                 <h5 class="m-0 fw-bold"><i class="fas fa-list text-primary me-2"></i><?php echo __('assoc_net_list_heading', [], 'List View'); ?> (<?= e($totalDownline) ?> <?php echo __('assoc_net_members', [], 'members'); ?>)</h5>
@@ -250,15 +250,15 @@ foreach ($nodes as $n) {
                                     </td>
                                     <td><span class="gen-badge">Gen <?= (int)($n['level'] ?? 0) ?></span></td>
                                     <td>
-                                        <span class="badge style-76027">
+                                        <span class="badge">
                                             <i class="fas <?= $icon ?> me-1"></i><?= htmlspecialchars($label ?? '') ?>
                                         </span>
                                     </td>
                                     <td>
                                         <?php if (($n['position'] ?? '') === 'left'): ?>
-                                            <span class="leg-badge style-60845"><?php echo __('assoc_net_leg_left', [], 'LEFT'); ?></span>
+                                            <span class="leg-badge"><?php echo __('assoc_net_leg_left', [], 'LEFT'); ?></span>
                                         <?php elseif (($n['position'] ?? '') === 'right'): ?>
-                                            <span class="leg-badge style-46420"><?php echo __('assoc_net_leg_right', [], 'RIGHT'); ?></span>
+                                            <span class="leg-badge"><?php echo __('assoc_net_leg_right', [], 'RIGHT'); ?></span>
                                         <?php else: ?>
                                             <span class="text-muted">-</span>
                                         <?php endif; ?>
@@ -278,7 +278,7 @@ foreach ($nodes as $n) {
     </div>
 
     <!-- Cards View -->
-    <div id="cardsView" class="style-2248">
+    <div id="cardsView" >
         <div class="row g-3" id="cardsContainer">
             <?php foreach ($nodes as $n):
                 $level = strtolower($n['current_level'] ?? 'associate');
@@ -287,15 +287,15 @@ foreach ($nodes as $n) {
                 $label = $rankLabels[$level] ?? ucfirst(str_replace('_', ' ', $level));
             ?>
             <div class="col-md-6 col-lg-4 col-xl-3 member-card" data-rank="<?= e($level) ?>" data-name="<?= e(strtolower($n['name'] ?? '')) ?>">
-                <div class="card border-0 shadow-sm h-100 style-68538">
+                <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center p-3">
-                        <div class="mx-auto mb-2 d-flex align-items-center justify-content-center rounded-circle style-78807">
+                        <div class="mx-auto mb-2 d-flex align-items-center justify-content-center rounded-circle">
                             <i class="fas <?= $icon ?> fa-lg"></i>
                         </div>
                         <h6 class="fw-bold mb-1"><?= htmlspecialchars($n['name'] ?? 'Unknown') ?></h6>
-                        <span class="badge mb-2 style-34096"><?= htmlspecialchars($label ?? '') ?></span>
+                        <span class="badge mb-2"><?= htmlspecialchars($label ?? '') ?></span>
                         <div class="gen-badge mb-2 d-inline-block">Gen <?= (int)($n['level'] ?? 0) ?></div>
-                        <div class="d-flex justify-content-around mt-2 style-436">
+                        <div class="d-flex justify-content-around mt-2">
                             <div>
                                 <div class="fw-bold text-primary">₹<?= number_format((float)($n['total_commission'] ?? 0)) ?></div>
                                 <div class="text-muted"><?php echo __('assoc_net_earned', [], 'Earned'); ?></div>
@@ -307,10 +307,10 @@ foreach ($nodes as $n) {
                         </div>
                         <?php if (($n['position'] ?? '')): ?>
                             <div class="mt-2">
-                                <span class="leg-badge style-46814"><?= strtoupper($n['position']) ?> <?php echo __('assoc_net_leg', [], 'LEG'); ?></span>
+                                <span class="leg-badge"><?= strtoupper($n['position']) ?> <?php echo __('assoc_net_leg', [], 'LEG'); ?></span>
                             </div>
                         <?php endif; ?>
-                        <div class="text-muted mt-2 style-68658">
+                        <div class="text-muted mt-2">
                             <i class="fas fa-calendar me-1"></i><?php echo __('assoc_net_joined', [], 'Joined'); ?> <?= date('d M Y', strtotime($n['joined_at'] ?? 'now')) ?>
                         </div>
                     </div>
@@ -330,7 +330,7 @@ function buildTreeLevel($parentId, $byParent, $rankColors, $rankIcons, $rankLabe
     if (empty($children)) return '';
 
     $count = count($children);
-    $html = '<div class="d-flex justify-content-center gap-3 mt-0 style-26370">';
+    $html = '<div class="d-flex justify-content-center gap-3 mt-0">';
 
     foreach ($children as $idx => $child) {
         $level = strtolower($child['current_level'] ?? 'associate');
@@ -350,20 +350,20 @@ function buildTreeLevel($parentId, $byParent, $rankColors, $rankIcons, $rankLabe
         $hasChildren = !empty($byParent[$childId]);
         $genNum = $depth + 1;
 
-        $html .= '<div class="tree-node text-center style-14373">';
+        $html .= '<div class="tree-node text-center">';
 
         // Vertical connector line
-        $html .= '<div class="tree-v-line style-13733"></div>';
+        $html .= '<div class="tree-v-line"></div>';
 
         // Leg badge
         if ($posLabel) {
-            $html .= '<span class="leg-badge mb-1 d-inline-block style-39937">'.$posLabel.' '.__('assoc_net_leg', [], 'LEG').'</span>';
+            $html .= '<span class="leg-badge mb-1 d-inline-block">'.$posLabel.' '.__('assoc_net_leg', [], 'LEG').'</span>';
         }
 
         // Card with tooltip and click-through
         $profileUrl = BASE_URL . '/associate/team';
         $html .= '<a href="'.$profileUrl.'" class="text-decoration-none">';
-        $html .= '<div class="card border-0 shadow-sm p-2 text-center style-460">';
+        $html .= '<div class="card border-0 shadow-sm p-2 text-center">';
 
         // Tooltip on hover
         $html .= '<div class="tree-tooltip">';
@@ -375,17 +375,17 @@ function buildTreeLevel($parentId, $byParent, $rankColors, $rankIcons, $rankLabe
 
         // Gen badge
         $html .= '<span class="gen-badge mb-1 d-inline-block">Gen '.$genNum.'</span>';
-        $html .= '<span class="badge mb-1 style-21508"><i class="fas '.$icon.'"></i> '.$label.'</span>';
-        $html .= '<div class="fw-bold style-58264">'.$name.'</div>';
-        $html .= '<div class="mt-1 style-36196">';
+        $html .= '<span class="badge mb-1"><i class="fas '.$icon.'"></i> '.$label.'</span>';
+        $html .= '<div class="fw-bold">'.$name.'</div>';
+        $html .= '<div class="mt-1">';
         $html .= '<span class="me-2"><i class="fas fa-rupee-sign"></i>'.$commission.'</span>';
         $html .= '<span><i class="fas fa-chart-line"></i>'.$bv.'</span>';
         $html .= '</div>';
         if ($hasChildren) {
             $directChildCount = count($byParent[$childId]);
-            $html .= '<div class="text-muted style-7865"><i class="fas fa-sitemap me-1"></i>'.$directChildCount.' direct</div>';
+            $html .= '<div class="text-muted"><i class="fas fa-sitemap me-1"></i>'.$directChildCount.' direct</div>';
         }
-        $html .= '<div class="text-muted style-56522"><i class="fas fa-calendar me-1"></i>'.__('assoc_net_joined', [], 'Joined').' '.$joinDate.'</div>';
+        $html .= '<div class="text-muted"><i class="fas fa-calendar me-1"></i>'.__('assoc_net_joined', [], 'Joined').' '.$joinDate.'</div>';
         $html .= '</div>';
         $html .= '</a>';
 

@@ -40,7 +40,7 @@ function perfLevelBadge($level) {
     <!-- Top Stats -->
     <div class="row g-3 mb-4">
         <div class="col-6 col-lg-3">
-            <div class="card emp-perf-stat style-35582">
+            <div class="card emp-perf-stat">
                 <div class="stat-body">
                     <div class="text-white-50 small mb-1"><i class="fas fa-check-double me-1"></i> Tasks Completed</div>
                     <div class="stat-val"><?= $overall['tasks_completed'] ?></div>
@@ -50,7 +50,7 @@ function perfLevelBadge($level) {
             </div>
         </div>
         <div class="col-6 col-lg-3">
-            <div class="card emp-perf-stat style-37236">
+            <div class="card emp-perf-stat">
                 <div class="stat-body">
                     <div class="text-white-50 small mb-1"><i class="fas fa-clock me-1"></i> On-Time Rate</div>
                     <div class="stat-val"><?= $overall['on_time_rate'] ?>%</div>
@@ -60,7 +60,7 @@ function perfLevelBadge($level) {
             </div>
         </div>
         <div class="col-6 col-lg-3">
-            <div class="card emp-perf-stat style-74239">
+            <div class="card emp-perf-stat">
                 <div class="stat-body">
                     <div class="text-white-50 small mb-1"><i class="fas fa-star me-1"></i> Avg Rating</div>
                     <div class="stat-val"><?= number_format($overall['rating'], 1) ?></div>
@@ -70,7 +70,7 @@ function perfLevelBadge($level) {
             </div>
         </div>
         <div class="col-6 col-lg-3">
-            <div class="card emp-perf-stat style-69747">
+            <div class="card emp-perf-stat">
                 <div class="stat-body">
                     <div class="text-white-50 small mb-1"><i class="fas fa-calendar-check me-1"></i> Attendance</div>
                     <div class="stat-val"><?= $overall['attendance_percent'] ?>%</div>
@@ -98,14 +98,14 @@ function perfLevelBadge($level) {
                     $scoreColor = $overallScore >= 80 ? '#10b981' : ($overallScore >= 60 ? '#f59e0b' : '#ef4444');
                     ?>
                     <div class="text-center mb-3">
-                        <div class="style-86338">
-                            <svg viewBox="0 0 160 80" class="style-27995">
+                        <div >
+                            <svg viewBox="0 0 160 80" >
                                 <path d="M 10 75 A 70 70 0 0 1 150 75" fill="none" stroke="#e2e8f0" stroke-width="12" stroke-linecap="round"/>
                                 <path d="M 10 75 A 70 70 0 0 1 150 75" fill="none" stroke="<?= $scoreColor ?>" stroke-width="12" stroke-linecap="round"
-                                    stroke-dasharray="<?= $overallScore * 2.2 ?> 220" class="style-21665"/>
+                                    stroke-dasharray="<?= $overallScore * 2.2 ?> 220" />
                             </svg>
-                            <div class="style-7521">
-                                <div class="fw-bold fs-3 style-42449"><?= $overallScore ?>%</div>
+                            <div >
+                                <div class="fw-bold fs-3"><?= $overallScore ?>%</div>
                                 <div class="text-muted small">Overall Score</div>
                             </div>
                         </div>
@@ -120,11 +120,11 @@ function perfLevelBadge($level) {
                     ];
                     foreach ($metrics as $m): ?>
                         <div class="d-flex align-items-center gap-3 mb-2">
-                            <div class="text-muted small style-43624"><?= $m['label'] ?></div>
+                            <div class="text-muted small"><?= $m['label'] ?></div>
                             <div class="flex-grow-1 emp-perf-progress">
-                                <div class="emp-perf-progress-fill style-50659"></div>
+                                <div class="emp-perf-progress-fill"></div>
                             </div>
-                            <div class="fw-semibold small style-66568"><?= $m['value'] ?>%</div>
+                            <div class="fw-semibold small"><?= $m['value'] ?>%</div>
                         </div>
                     <?php endforeach; ?>
                 </div>

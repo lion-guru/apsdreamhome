@@ -17,7 +17,7 @@
                     <?php if (empty($commissions ?? [])): ?>
                     <tr>
                         <td colspan="9" class="text-center py-5">
-                            <i class="fas fa-phone-alt fa-3x text-muted mb-3 style-82835"></i>
+                            <i class="fas fa-phone-alt fa-3x text-muted mb-3"></i>
                             <h5 class="text-muted">No telecaller commissions yet</h5>
                             <p class="text-muted mb-3">Commissions are calculated automatically when telecallers complete qualifying calls or convert leads.</p>
                         </td>
@@ -40,12 +40,12 @@
                         <td><?= date('d-m-Y', strtotime($c['created_at'])) ?></td>
                         <td>
                             <?php if ($c['status'] == 'pending'): ?>
-                            <form method="POST" action="<?= BASE_URL ?>/admin/commission/telecaller/commissions/approve/<?= $c['id'] ?>" class="style-71727" data-aps-confirm="Approve commission #<?= $c['id'] ?>?">
+                            <form method="POST" action="<?= BASE_URL ?>/admin/commission/telecaller/commissions/approve/<?= $c['id'] ?>" data-aps-confirm="Approve commission #<?= $c['id'] ?>?">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <button type="submit" class="btn btn-sm btn-primary" aria-label="Confirm"><i class="fas fa-check"></i></button>
                             </form>
                             <?php elseif ($c['status'] == 'approved'): ?>
-                            <form method="POST" action="<?= BASE_URL ?>/admin/commission/telecaller/commissions/pay/<?= $c['id'] ?>" class="style-71727" data-aps-confirm="Pay commission #<?= $c['id'] ?>?">
+                            <form method="POST" action="<?= BASE_URL ?>/admin/commission/telecaller/commissions/pay/<?= $c['id'] ?>" data-aps-confirm="Pay commission #<?= $c['id'] ?>?">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <button type="submit" class="btn btn-sm btn-success" aria-label="Payment"><i class="fas fa-money-bill"></i></button>
                             </form>

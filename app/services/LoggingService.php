@@ -184,15 +184,265 @@ class LoggingService
     private function sendAlert(string $level, string $message, array $context): void
     {
         try {
-            // TODO: Implement external alert system (email, Slack, etc.)
-            // For now, just log to a separate alert file
+            // 1. Always log to alert file
             $alertFile = 'logs/alerts.log';
             $timestamp = date('Y-m-d H:i:s');
             $alertEntry = "[$timestamp] $level ALERT: $message " . json_encode($context) . PHP_EOL;
-
             file_put_contents($alertFile, $alertEntry, FILE_APPEND | LOCK_EX);
+
+            // 2. Send email alert for critical levels
+            $this->sendEmailAlert($level, $message, $context);
+
+            // 3. Send Slack webhook alert
+            $this->sendSlackAlert($level, $message, $context);
+
         } catch (Exception $e) {
             error_log("Failed to send alert: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Send email alert for critical errors
+     */
+    private function sendEmailAlert(string $level, string $message, array $context): void
+    {
+        $emailConfig = [
+            'enabled' => env('ALERT_EMAIL_ENABLED', false),
+            'smtp_host' => env('ALERT_EMAIL_SMTP_HOST', ''),
+            'smtp_port' => env('ALERT_EMAIL_SMTP_PORT', 587),
+            'smtp_user' => env('ALERT_EMAIL_SMTP_USER', ''),
+            'smtp_pass' => env('ALERT_EMAIL_SMTP_PASS', ''),
+            'from_email' => env('ALERT_EMAIL_FROM', 'alerts@apsdreamhome.com'),
+            'from_name' => env('ALERT_EMAIL_FROM_NAME', 'APS Dream Home Alerts'),
+            'to_emails' => array_filter(array_map('trim', explode(',', env('ALERT_EMAIL_TO', ''))))
+        ];
+
+        if (!$emailConfig['enabled'] || empty($emailConfig['to_emails'])) {
+            return; // Email alerts not configured
+        }
+
+        $subject = "[APS Dream Home] $level Alert: " . substr($message, 0, 80);
+        
+        $body = $this->buildAlertEmailBody($level, $message, $context);
+
+        $this->sendEmail($emailConfig, $emailConfig['to_emails'], $subject, $body);
+    }
+
+    /**
+     * Send Slack webhook alert for critical errors
+     */
+    private function sendSlackAlert(string $level, string $message, array $context): void
+    {
+        $slackConfig = [
+            'enabled' => env('ALERT_SLACK_ENABLED', false),
+            'webhook_url' => env('ALERT_SLACK_WEBHOOK_URL', ''),
+            'channel' => env('ALERT_SLACK_CHANNEL', '#alerts'),
+            'username' => env('ALERT_SLACK_USERNAME', 'APS Dream Home Alerts'),
+            'icon_emoji' => env('ALERT_SLACK_ICON', ':warning:')
+        ];
+
+        if (!$slackConfig['enabled'] || empty($slackConfig['webhook_url'])) {
+            return; // Slack alerts not configured
+        }
+
+        $color = match ($level) {
+            'EMERGENCY' => '#ff0000',
+            'ALERT' => '#ff4500',
+            'CRITICAL' => '#ff8c00',
+            default => '#ffa500'
+        };
+
+        $fields = [
+            [
+                'title' => 'Level',
+                'value' => $level,
+                'short' => true
+            ],
+            [
+                'title' => 'Time',
+                'value' => date('Y-m-d H:i:s'),
+                'short' => true
+            ]
+        ];
+
+        if (!empty($context)) {
+            foreach ($context as $key => $value) {
+                $fields[] = [
+                    'title' => ucfirst($key),
+                    'value' => is_scalar($value) ? (string)$value : json_encode($value),
+                    'short' => true
+                ];
+            }
+        }
+
+        $payload = [
+            'channel' => $slackConfig['channel'],
+            'username' => $slackConfig['username'],
+            'icon_emoji' => $slackConfig['icon_emoji'],
+            'attachments' => [[
+                'color' => $color,
+                'title' => "APS Dream Home - $level Alert",
+                'text' => $message,
+                'fields' => $fields,
+                'footer' => 'APS Dream Home Monitoring',
+                'ts' => time()
+            ]]
+        ];
+
+        $this->sendWebhook($slackConfig['webhook_url'], $payload);
+    }
+
+    /**
+     * Build HTML email body for alerts
+     */
+    private function buildAlertEmailBody(string $level, string $message, array $context): string
+    {
+        $levelColors = [
+            'EMERGENCY' => '#dc3545',
+            'ALERT' => '#fd7e14',
+            'CRITICAL' => '#ffc107',
+            'ERROR' => '#dc3545',
+            'WARNING' => '#ffc107'
+        ];
+
+        $color = $levelColors[$level] ?? '#6c757d';
+
+        $html = '<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: ' . $color . '; color: white; padding: 20px; border-radius: 8px 8px 0 0; }
+        .content { background: #f8f9fa; padding: 20px; border-radius: 0 0 8px 8px; }
+        .level-badge { display: inline-block; background: ' . $color . '; color: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .field { margin-bottom: 12px; }
+        .field-label { font-weight: bold; color: #666; font-size: 13px; }
+        .field-value { font-family: monospace; background: #fff; padding: 8px; border-radius: 4px; border: 1px solid #dee2e6; }
+        .footer { text-align: center; margin-top: 20px; color: #999; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2 style="margin: 0;">APS Dream Home - System Alert</h2>
+        </div>
+        <div class="content">
+            <div class="field">
+                <div class="field-label">Alert Level</div>
+                <div class="field-value"><span class="level-badge">' . $level . '</span></div>
+            </div>
+            <div class="field">
+                <div class="field-label">Message</div>
+                <div class="field-value">' . htmlspecialchars($message) . '</div>
+            </div>
+            <div class="field">
+                <div class="field-label">Timestamp</div>
+                <div class="field-value">' . date('Y-m-d H:i:s') . '</div>
+            </div>';
+
+        if (!empty($context)) {
+            $html .= '<div class="field">
+                <div class="field-label">Context</div>
+                <div class="field-value"><pre style="margin: 0;">' . htmlspecialchars(json_encode($context, JSON_PRETTY_PRINT)) . '</pre></div>
+            </div>';
+        }
+
+        $html .= '<div class="field">
+                <div class="field-label">Server</div>
+                <div class="field-value">' . ($_SERVER['SERVER_NAME'] ?? 'unknown') . '</div>
+            </div>
+            <div class="field">
+                <div class="field-label">URL</div>
+                <div class="field-value">' . ($_SERVER['REQUEST_URI'] ?? 'CLI') . '</div>
+            </div>
+        </div>
+        <div class="footer">
+            This is an automated alert from APS Dream Home monitoring system.
+        </div>
+    </div>
+</body>
+</html>';
+
+        return $html;
+    }
+
+    /**
+     * Send email using SMTP
+     */
+    private function sendEmail(array $config, array $toEmails, string $subject, string $body): void
+    {
+        // Build SMTP headers
+        $headers = [
+            'From: ' . $config['from_name'] . ' <' . $config['from_email'] . '>',
+            'Reply-To: ' . $config['from_email'],
+            'MIME-Version: 1.0',
+            'Content-Type: text/html; charset=UTF-8',
+            'X-Priority: 1 (Highest)',
+            'X-MSMail-Priority: High',
+            'Importance: High'
+        ];
+
+        $headerString = implode("\r\n", $headers);
+
+        // Use PHPMailer if available, fallback to mail()
+        if (class_exists('PHPMailer\PHPMailer\PHPMailer')) {
+            $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
+            try {
+                $mail->isSMTP();
+                $mail->Host = $config['smtp_host'];
+                $mail->SMTPAuth = true;
+                $mail->Username = $config['smtp_user'];
+                $mail->Password = $config['smtp_pass'];
+                $mail->SMTPSecure = 'tls';
+                $mail->Port = $config['smtp_port'];
+
+                $mail->setFrom($config['from_email'], $config['from_name']);
+                
+                foreach ($toEmails as $to) {
+                    $mail->addAddress($to);
+                }
+
+                $mail->isHTML(true);
+                $mail->Subject = $subject;
+                $mail->Body = $body;
+                $mail->AltBody = strip_tags($body);
+
+                $mail->send();
+                return;
+            } catch (Exception $e) {
+                error_log("PHPMailer failed: " . $e->getMessage());
+                // Fall through to mail()
+            }
+        }
+
+        // Fallback to PHP mail()
+        foreach ($toEmails as $to) {
+            @mail($to, $subject, $body, $headerString);
+        }
+    }
+
+    /**
+     * Send webhook (for Slack, Discord, etc.)
+     */
+    private function sendWebhook(string $url, array $payload): void
+    {
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+            CURLOPT_POSTFIELDS => json_encode($payload),
+            CURLOPT_TIMEOUT => 10
+        ]);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode < 200 || $httpCode >= 300) {
+            error_log("Slack webhook failed: HTTP $httpCode - $response");
         }
     }
 

@@ -15,9 +15,12 @@
                 <div class="col-md-6 col-lg-4">
                     <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
                         <?php if (!empty($fav['image'])): ?>
-                            <img src="<?= BASE_URL ?>/assets/images/properties/<?= htmlspecialchars($fav['image'] ?? '') ?>" class="card-img-top" alt="<?= htmlspecialchars($fav['title'] ?? __('user_favorites_default_alt')) ?>" class="style-24482" loading="lazy">
+                            <?php $favImg = $fav['image'] ?? '';
+                                  $favImgSrc = (strpos($favImg, 'http') === 0 || strpos($favImg, '/') === 0) ? $favImg : BASE_URL . '/' . ltrim($favImg, '/'); ?>
+                            <img src="<?= htmlspecialchars($favImgSrc)?>" class="card-img-top" alt="<?= htmlspecialchars($fav['title'] ?? __('user_favorites_default_alt')) ?>" loading="lazy"
+                                 onerror="this.onerror=null;this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
                         <?php else: ?>
-                            <div class="bg-light d-flex align-items-center justify-content-center style-32569">
+                            <div class="bg-light d-flex align-items-center justify-content-center">
                                 <i class="fas fa-home fa-3x text-muted opacity-25" aria-hidden="true"></i>
                             </div>
                         <?php endif; ?>

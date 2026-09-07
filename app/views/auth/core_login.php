@@ -143,7 +143,7 @@ $supportedRoles = [
     <div class="login-wrapper">
         <!-- Benefits Panel -->
         <div class="benefits-panel d-none d-lg-block">
-            <div class="benefits-title"><i class="fas fa-shield-halved style-5793"></i> Why APS Dream Home?</div>
+            <div class="benefits-title"><i class="fas fa-shield-halved"></i> Why APS Dream Home?</div>
             <div class="benefits-subtitle">Trusted by 5000+ families across Uttar Pradesh for premium real estate investments.</div>
 
             <div class="benefit-item">
@@ -249,14 +249,14 @@ $supportedRoles = [
 
                 <div class="social-row">
                     <a href="<?= $base ?>/auth/air-login?method=email" class="social-btn">
-                        <i class="fab fa-google style-85143"></i> Google
+                        <i class="fab fa-google"></i> Google
                     </a>
                     <a href="<?= $base ?>/auth/air-login?method=phone" class="social-btn">
-                        <i class="fas fa-phone style-85531"></i> Phone
+                        <i class="fas fa-phone"></i> Phone
                     </a>
                 </div>
 
-                <div class="register-link style-47816">
+                <div class="register-link">
                     Don't have an account? <a href="<?= $base ?>/auth/register">Register</a>
                 </div>
                 <div class="otp-link">

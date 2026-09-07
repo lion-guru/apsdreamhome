@@ -66,7 +66,7 @@ $active_page = 'properties';
 </div>
 
 <!-- Bulk Actions Bar (hidden by default) -->
-<div class="card border-0 shadow-sm mb-3" id="bulkActionsBar" style="display: none;">
+<div class="card border-0 shadow-sm mb-3" id="bulkActionsBar" class="d-none">
     <div class="card-body py-2 d-flex align-items-center gap-3 flex-wrap">
         <span class="fw-semibold"><span id="selectedCount">0</span> selected</span>
         <select id="bulkStatus" class="form-select form-select-sm" style="width: auto; display: inline-block;">
@@ -103,7 +103,7 @@ $active_page = 'properties';
                     <?php if (empty($properties)): ?>
                         <tr>
                             <td colspan="9" class="text-center py-5">
-                                <i class="fas fa-home fa-3x text-muted mb-3 style-82835"></i>
+                                <i class="fas fa-home fa-3x text-muted mb-3"></i>
                                 <h5 class="text-muted">No properties found</h5>
                                 <p class="text-muted mb-3">Add your first property listing to start showcasing plots, apartments, and commercial spaces to potential buyers.</p>
                                 <a href="<?= BASE_URL ?>/admin/properties/create" class="btn btn-primary">
@@ -214,7 +214,7 @@ $active_page = 'properties';
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form method="POST" id="deleteForm" action="<?= BASE_URL ?>/admin/properties/0/destroy" class="style-26772">
+                <form method="POST" id="deleteForm" action="<?= BASE_URL ?>/admin/properties/0/destroy" >
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                     <button type="submit" class="btn btn-danger">Delete Property</button>
                 </form>

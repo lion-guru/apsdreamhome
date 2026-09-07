@@ -31,7 +31,7 @@ class SyncService extends ServiceTenantTrait
     public function getDeltaUpdates($table, $lastSync, $options = [])
     {
         try {
-            $allowedTables = ['properties', 'leads', 'commissions', 'mlm_profiles', 'mlm_monthly_incentives'];
+            $allowedTables = ['properties', 'leads', 'mlm_commission_ledger', 'mlm_profiles', 'mlm_monthly_incentives'];
             if (!in_array($table, $allowedTables)) {
                 throw new Exception("Table $table is not supported for sync.");
             }

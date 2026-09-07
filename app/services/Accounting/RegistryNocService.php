@@ -25,14 +25,19 @@ class RegistryNocService
     {
         $tid = TenantContext::getId();
 
-        $booking = $this->db->fetchOne("
-            SELECT pb.*, pl.plot_number, pl.area_sqft, c.name as customer_name, c.email, c.phone, c.pan, c.aadhaar
-            FROM plot_bookings pb
-            JOIN plots pl ON pl.id = pb.plot_id
-            JOIN customers c ON c.id = pb.customer_id
-            WHERE pb.id = ?" . ($tid > 1 ? " AND pb.tenant_id = ?" : ""),
-            $tid > 1 ? [$bookingId, $tid] : [$bookingId]
-        );
+        try {
+            $booking = $this->db->fetchOne("
+                SELECT pb.*, pl.plot_number, pl.area_sqft, u.name as customer_name, u.email, u.phone
+                FROM plot_bookings pb
+                JOIN plots pl ON pl.id = pb.plot_id
+                LEFT JOIN users u ON u.id = pb.customer_id
+                WHERE pb.id = ?" . ($tid > 1 ? " AND pb.tenant_id = ?" : ""),
+                $tid > 1 ? [$bookingId, $tid] : [$bookingId]
+            );
+        } catch (\Throwable $e) {
+            error_log('RegistryNocService::checkRegistryEligibility booking query error: ' . $e->getMessage());
+            $booking = null;
+        }
 
         if (!$booking) {
             return ['eligible' => false, 'error' => 'Booking not found'];
@@ -114,8 +119,13 @@ class RegistryNocService
     private function checkCustomerKyc(int $customerId): bool
     {
         $tid = TenantContext::getId();
-        $stmt = $this->db->fetchOne("SELECT kyc_status FROM customers WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$customerId, $tid] : [$customerId]);
-        return ($stmt['kyc_status'] ?? '') === 'verified';
+        try {
+            $stmt = $this->db->fetchOne("SELECT kyc_status FROM users WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$customerId, $tid] : [$customerId]);
+            return ($stmt['kyc_status'] ?? '') === 'verified';
+        } catch (\Throwable $e) {
+            error_log('RegistryNocService::checkCustomerKyc error: ' . $e->getMessage());
+            return false;
+        }
     }
 
     private function checkPlotClear(int $plotId): bool

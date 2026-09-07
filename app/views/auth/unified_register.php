@@ -668,7 +668,7 @@ $base = BASE_URL;
 
             <!-- Error Box -->
             <?php if (!empty($errors)): ?>
-                <div class="style-54467">
+                <div >
                     <div class="error-box">
                         <div class="error-title"><i class="fas fa-exclamation-circle"></i> Please fix these errors</div>
                         <ul>
@@ -996,7 +996,7 @@ $base = BASE_URL;
             const str = checkPwdStrength(this.value);
             const el = document.getElementById('pwdStrength');
             el.className = 'pwd-strength ' + str.level;
-            document.getElementById('pwdHint').innerHTML = '<i class="fas fa-info-circle style-50939"></i> <span>' + str.text + '</span>';
+            document.getElementById('pwdHint').innerHTML = '<i class="fas fa-info-circle"></i> <span>' + str.text + '</span>';
 
             if (confirmInput.value) {
                 validateField('confirm', this.value === confirmInput.value, this.value === confirmInput.value ? 'Passwords match' : 'Passwords do not match');

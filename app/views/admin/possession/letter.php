@@ -105,11 +105,11 @@ $price = htmlspecialchars(number_format(floatval($booking['property_price'] ?? 0
             <tr>
                 <td>
                     <div class="signature-line"><?= $handoverByName ?></div>
-                    <div class="style-8200">Authorized Signatory<br>APS Dream Home</div>
+                    <div >Authorized Signatory<br>APS Dream Home</div>
                 </td>
                 <td>
                     <div class="signature-line"><?= $customerName ?></div>
-                    <div class="style-8200">Allottee / Buyer</div>
+                    <div >Allottee / Buyer</div>
                 </td>
             </tr>
         </table></div>

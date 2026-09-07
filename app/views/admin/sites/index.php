@@ -172,7 +172,7 @@ $active_page = 'sites';
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form method="POST" id="deleteForm" class="style-26772">
+                <form method="POST" id="deleteForm" >
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <button type="submit" class="btn btn-danger">Delete Site</button>
                 </form>

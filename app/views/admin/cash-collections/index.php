@@ -147,7 +147,7 @@ ob_start();
                                 <td>
                                     <a href="<?= BASE_URL ?>/admin/cash-collections/<?= $c['id'] ?>" class="btn btn-sm btn-outline-primary" title="View"><i class="fas fa-eye"></i></a>
                                     <?php if (($c['status'] ?? '') === 'submitted'): ?>
-                                        <form method="POST" action="<?= BASE_URL ?>/admin/cash-collections/verify" class="style-71727">
+                                        <form method="POST" action="<?= BASE_URL ?>/admin/cash-collections/verify" >
                                             <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? $_SESSION['csrf_token'] ?? '' ?>">
                                             <input type="hidden" name="id" value="<?= $c['id'] ?>">
                                             <button type="submit" class="btn btn-sm btn-success" title="Verify" aria-label="Confirm"><i class="fas fa-check"></i></button>
@@ -175,7 +175,7 @@ ob_start();
     </div>
 </div>
 
-<form id="bulkVerifyForm" method="POST" action="<?= BASE_URL ?>/admin/cash-collections/bulk-verify" class="style-24280">
+<form id="bulkVerifyForm" method="POST" action="<?= BASE_URL ?>/admin/cash-collections/bulk-verify" >
     <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? $_SESSION['csrf_token'] ?? '' ?>">
     <input type="hidden" name="ids[]" id="bulkIdsInput" value="">
 </form>

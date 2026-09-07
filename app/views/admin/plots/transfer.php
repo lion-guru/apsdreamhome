@@ -26,7 +26,7 @@ $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer
                         <div class="card-header bg-info text-white"><h5 class="mb-0"><i class="fas fa-th"></i> Plot Information</h5></div>
                         <div class="card-body aps-cp-card-body">
                             <div class="table-responsive"><table class="table table-bordered">
-                                <tr><th class="style-97126">Plot #</th><td><strong><?= htmlspecialchars($plot['plot_number'] ?? 'N/A') ?></strong></td></tr>
+                                <tr><th >Plot #</th><td><strong><?= htmlspecialchars($plot['plot_number'] ?? 'N/A') ?></strong></td></tr>
                                 <tr><th>Colony</th><td><?= htmlspecialchars($plot['colony_name'] ?? 'N/A') ?></td></tr>
                                 <tr><th>Block / Sector</th><td><?= htmlspecialchars($plot['block'] ?? '') ?> <?= !empty($plot['sector']) ? '/ Sector ' . htmlspecialchars($plot['sector'] ?? '') : '' ?></td></tr>
                                 <tr><th>Dimensions</th><td><?= !empty($plot['dimension_label']) ? htmlspecialchars($plot['dimension_label'] ?? '') : number_format($plot['width_ft'] ?? 0) . 'x' . number_format($plot['length_ft'] ?? 0) . ' ft' ?></td></tr>
@@ -42,7 +42,7 @@ $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer
                         <div class="card-body aps-cp-card-body">
                             <?php if (!empty($plot['customer_id']) && !empty($plot['current_owner_name'])): ?>
                                 <div class="table-responsive"><table class="table table-bordered">
-                                    <tr><th class="style-97126">Name</th><td><?= htmlspecialchars($plot['current_owner_name'] ?? '') ?></td></tr>
+                                    <tr><th >Name</th><td><?= htmlspecialchars($plot['current_owner_name'] ?? '') ?></td></tr>
                                     <tr><th>Email</th><td><?= htmlspecialchars($plot['current_owner_email'] ?? '') ?></td></tr>
                                     <tr><th>Phone</th><td><?= htmlspecialchars($plot['current_owner_phone'] ?? '') ?></td></tr>
                                     <tr><th>Booking Date</th><td><?= htmlspecialchars($plot['booking_date'] ?? 'N/A') ?></td></tr>
@@ -61,7 +61,7 @@ $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer
                             $transferFee = floatval($plot['total_price'] ?? 0) * $transferFeeRate;
                             ?>
                             <div class="table-responsive"><table class="table table-bordered">
-                                <tr><th class="style-97126">Transfer Fee</th><td><strong class="text-danger">₹<?= number_format($transferFee, 2) ?></strong></td></tr>
+                                <tr><th >Transfer Fee</th><td><strong class="text-danger">₹<?= number_format($transferFee, 2) ?></strong></td></tr>
                                 <tr><th>Rate</th><td><?= ($transferFeeRate * 100) ?>% of total price</td></tr>
                                 <tr><th>Total Price</th><td>₹<?= number_format(intval($plot['total_price'] ?? 0)) ?></td></tr>
                             </table></div>

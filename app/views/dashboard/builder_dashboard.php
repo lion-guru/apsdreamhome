@@ -1,7 +1,5 @@
 <?php
 
-// TODO: Add proper error handling with try-catch blocks
-
 // Modern Builder Dashboard - AI Powered, Responsive, Feature-Rich (2025 best practices)
 // FIXED: Removed missing includes - files don't exist
 // require_once(__DIR__ . '/includes/functions/role_helper.php');

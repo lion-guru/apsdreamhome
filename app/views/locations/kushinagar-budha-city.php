@@ -39,7 +39,7 @@ ob_start();
 <div class="row">
     <div class="col-lg-12">
         <!-- Hero Banner -->
-        <div class="page-banner mb-5 style-22214">
+        <div class="page-banner mb-5">
             <div class="container text-center">
                 <h1 class="display-3 fw-bold mb-3 animate-fade-up">Budha City</h1>
                 <p class="lead animate-fade-up">Integrated Township at Premwaliya, Kushinagar Highway</p>
@@ -94,7 +94,7 @@ ob_start();
                     <?php foreach ($amenities as $amenity): ?>
                         <div class="col-lg-3 col-md-6">
                             <div class="card border-0 shadow-sm rounded-4 overflow-hidden hover-lift h-100">
-                                <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?= h($amenity['alt_text']) ?>" class="style-12213">
+                                <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?= h($amenity['alt_text']) ?>" >
                                 <div class="card-body text-center p-3">
                                     <h6 class="fw-bold mb-0"><?= h($amenity['title']) ?></h6>
                                 </div>

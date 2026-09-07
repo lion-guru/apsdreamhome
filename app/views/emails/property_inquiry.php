@@ -46,9 +46,9 @@
                 <li>Follow up after property visit</li>
             </ol>
 
-            <div class="style-69368">
+            <div >
                 <a href="<?= $baseUrl ?>/admin" class="button">View in Admin Panel</a>
-                <a href="mailto:<?= htmlspecialchars($customer_email ?? '') ?>" class="button style-4360">Reply to Customer</a>
+                <a href="mailto:<?= htmlspecialchars($customer_email ?? '') ?>" class="button">Reply to Customer</a>
             </div>
         </div>
 

@@ -18,7 +18,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
     .match-card img { width: 80px; height: 80px; object-fit: cover; border-radius: 10px; }
 </style>
 
-<div class="container-fluid px-3 py-3 style-63221">
+<div class="container-fluid px-3 py-3">
     <h5 class="fw-bold mb-3"><i class="fas fa-home me-2 text-primary"></i>Buyer Dashboard</h5>
 
     <?php if ($success): ?>
@@ -32,13 +32,13 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
     <div class="row g-2 mb-3">
         <div class="col-6">
             <div class="buyer-card text-center">
-                <div class="style-38176"><?= $total_interests ?></div>
+                <div ><?= $total_interests ?></div>
                 <div class="text-muted small">My Requirements</div>
             </div>
         </div>
         <div class="col-6">
             <div class="buyer-card text-center">
-                <div class="style-23322"><?= $total_matched ?></div>
+                <div ><?= $total_matched ?></div>
                 <div class="text-muted small">Matched Properties</div>
             </div>
         </div>
@@ -90,7 +90,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                     <textarea name="requirements" class="form-control form-control-sm" rows="2" placeholder="Specific requirements..."></textarea>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary btn-sm w-100 mt-3 py-2 style-48741">
+            <button type="submit" class="btn btn-primary btn-sm w-100 mt-3 py-2">
                 <i class="fas fa-paper-plane me-2"></i>Submit Requirement
             </button>
         </form>
@@ -103,15 +103,15 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
             <?php foreach ($matched as $m): ?>
                 <div class="d-flex gap-3 p-2 mb-2 border rounded match-card">
                     <?php if ($m['image']): ?>
-                        <img src="<?= $base ?>/assets/images/<?= htmlspecialchars($m['image'] ?? '') ?>" alt="Property">
+                        <img src="<?= $base?>/assets/images/<?= htmlspecialchars($m['image'] ?? '') ?>" alt="Property">
                     <?php else: ?>
-                        <div class="style-68235"><i class="fas fa-home fa-2x text-muted"></i></div>
+                        <div ><i class="fas fa-home fa-2x text-muted"></i></div>
                     <?php endif; ?>
                     <div class="flex-grow-1">
                         <div class="fw-bold small"><?= htmlspecialchars($m['title'] ?? $m['property_type']) ?></div>
-                        <div class="text-muted style-20558"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($m['address'] ?? '') ?></div>
+                        <div class="text-muted"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($m['address'] ?? '') ?></div>
                         <div class="fw-bold text-primary mt-1">₹<?= number_format((float)$m['price']) ?></div>
-                        <a href="<?= $base ?>/properties/<?= $m['id'] ?>" class="btn btn-outline-primary btn-sm mt-1 style-20558">View Details</a>
+                        <a href="<?= $base ?>/properties/<?= $m['id'] ?>" class="btn btn-outline-primary btn-sm mt-1">View Details</a>
                     </div>
                 </div>
             <?php endforeach; ?>

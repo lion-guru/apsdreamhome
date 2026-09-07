@@ -243,7 +243,7 @@ $nextStatuses = [
                             <?php endforeach; ?>
                         </select>
 
-                        <div class="mb-3" id="reasonGroup" class="style-2248">
+                        <div class="mb-3" id="reasonGroup" >
                             <label class="form-label">Rejection/Cancellation Reason <span class="text-danger">*</span></label>
                             <textarea name="rejection_reason" class="form-control" rows="3" id="reasonField"></textarea>
                         </div>

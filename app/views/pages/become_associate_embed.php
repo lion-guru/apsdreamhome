@@ -55,17 +55,17 @@ $smsUrl = "sms:?body=" . urlencode($shareText . " Register: " . $referral_link);
 
 <div class="container-fluid px-4 py-3 promo-section">
     <!-- Referral Code Card -->
-    <div class="promo-card style-96762">
+    <div class="promo-card">
         <div class="referral-display">
-            <div class="style-69504">Your Personal Referral Code</div>
+            <div >Your Personal Referral Code</div>
             <div class="referral-code-text" id="refCode"><?= htmlspecialchars($referral_code ?? '') ?></div>
             <div class="referral-link-box" id="refLink"><?= htmlspecialchars($referral_link ?? '') ?></div>
             <div class="d-flex gap-2 justify-content-center flex-wrap">
                 <button class="btn-copy" onclick="copyCode()"><i class="fas fa-copy me-1"></i> Copy Code</button>
-                <button class="btn-copy" onclick="copyLink()" class="style-38019"><i class="fas fa-link me-1"></i> Copy Link</button>
+                <button class="btn-copy" onclick="copyLink()" ><i class="fas fa-link me-1"></i> Copy Link</button>
             </div>
         </div>
-        <div class="style-67734">
+        <div >
             <!-- QR Code -->
             <div class="text-center mb-4">
                 <h6 class="fw-bold mb-3"><i class="fas fa-qrcode me-2 text-primary"></i>Scan to Register Instantly</h6>

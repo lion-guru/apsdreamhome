@@ -46,7 +46,7 @@ if (!empty($selected) && !empty($properties)) {
                 <table class="table table-bordered">
                     <thead class="table-light">
                         <tr>
-                            <th class="style-869"><?= __('assoc_cmp_feature', [], 'Feature') ?></th>
+                            <th ><?= __('assoc_cmp_feature', [], 'Feature') ?></th>
                             <?php foreach ($selectedProperties as $sp): ?>
                                 <th class="text-center">
                                     <strong><?= htmlspecialchars($sp['title'] ?? __('assoc_cmp_prop', [], 'Property')) ?></strong>

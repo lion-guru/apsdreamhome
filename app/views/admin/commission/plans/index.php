@@ -39,7 +39,7 @@ $statusBadge = fn($s) => match($s) {
 
 <div class="cp-card">
     <div class="cp-card-header">
-        <h5 class="m-0 style-43926"><i class="fas fa-file-invoice-dollar me-2 style-20955"></i>Commission Plan Manager</h5>
+        <h5 class="m-0"><i class="fas fa-file-invoice-dollar me-2"></i>Commission Plan Manager</h5>
         <div>
             <a href="<?= $base ?>/admin/commission-plans/simulator" class="btn-cp btn-cp-outline me-2"><i class="fas fa-flask me-1"></i>Simulator</a>
             <a href="<?= $base ?>/admin/commission-plans/compare" class="btn-cp btn-cp-outline me-2"><i class="fas fa-columns me-1"></i>Compare</a>
@@ -49,14 +49,14 @@ $statusBadge = fn($s) => match($s) {
     </div>
     <div class="cp-card-body">
         <?php if ($activePlan): ?>
-            <div class="style-30392">
-                <i class="fas fa-check-circle style-56297"></i>
+            <div >
+                <i class="fas fa-check-circle"></i>
                 <div>
-                    <strong class="style-43926">Active Plan:</strong>
-                    <span class="style-55803"><?= htmlspecialchars($activePlan['plan_name'] ?? '') ?></span>
+                    <strong >Active Plan:</strong>
+                    <span ><?= htmlspecialchars($activePlan['plan_name'] ?? '') ?></span>
                     <span class="cp-version">v<?= $activePlan['version'] ?></span>
                     <span class="cp-badge bg-success ms-2"><?= htmlspecialchars($activePlan['plan_code'] ?? '') ?></span>
-                    <span class="style-72550">
+                    <span >
                         Global Cap: <?= $activePlan['global_cap_pct'] ?>% |
                         Track A: <?= $activePlan['track_a_pct'] ?>% |
                         Track B: <?= $activePlan['track_b_pct'] ?>% |
@@ -65,9 +65,9 @@ $statusBadge = fn($s) => match($s) {
                 </div>
             </div>
         <?php else: ?>
-            <div class="style-29735">
-                <i class="fas fa-exclamation-triangle style-57730"></i>
-                <span class="style-62735">No active commission plan. Activate one from the list below.</span>
+            <div >
+                <i class="fas fa-exclamation-triangle"></i>
+                <span >No active commission plan. Activate one from the list below.</span>
             </div>
         <?php endif; ?>
 
@@ -99,41 +99,41 @@ $statusBadge = fn($s) => match($s) {
                 </thead>
                 <tbody>
                     <?php if (empty($plans)): ?>
-                        <tr><td colspan="11" class="text-center style-10572">No plans found. Create your first plan.</td></tr>
+                        <tr><td colspan="11" class="text-center">No plans found. Create your first plan.</td></tr>
                     <?php else: ?>
                         <?php foreach ($plans as $i => $p): ?>
                             <tr>
                                 <td><?= $i + 1 ?></td>
                                 <td><strong><?= htmlspecialchars($p['plan_name'] ?? '') ?></strong></td>
-                                <td><code class="style-13856"><?= htmlspecialchars($p['plan_code'] ?? '') ?></code></td>
+                                <td><code ><?= htmlspecialchars($p['plan_code'] ?? '') ?></code></td>
                                 <td><span class="cp-version">v<?= $p['version'] ?></span></td>
                                 <td><?= ucfirst(htmlspecialchars($p['plan_type'] ?? '')) ?></td>
                                 <td><span class="cp-badge bg-primary"><?= (int)($p['level_count'] ?? 0) ?></span></td>
                                 <td>
                                     <strong><?= $p['global_cap_pct'] ?>%</strong>
-                                    <div class="cap-bar"><div class="cap-bar-fill style-30453"></div></div>
+                                    <div class="cap-bar"><div class="cap-bar-fill"></div></div>
                                 </td>
-                                <td class="style-20996">
+                                <td >
                                     <?= $p['track_a_pct'] ?> / <?= $p['track_b_pct'] ?> / <?= $p['track_c_pct'] ?>%
                                 </td>
                                 <td><span class="cp-badge <?= $statusBadge($p['status']) ?>"><?= ucfirst($p['status']) ?></span></td>
-                                <td class="style-76409"><?= $p['effective_date'] ?? '—' ?></td>
+                                <td ><?= $p['effective_date'] ?? '—' ?></td>
                                 <td>
                                     <div class="cp-action-bar justify-content-end">
                                         <a href="<?= $base ?>/admin/commission-plans/edit/<?= $p['id'] ?>" class="btn-cp btn-cp-outline" title="Edit"><i class="fas fa-edit"></i></a>
                                         <?php if ($p['status'] !== 'active'): ?>
-                                            <form method="POST" action="<?= $base ?>/admin/commission-plans/activate/<?= $p['id'] ?>" class="style-71727">
+                                            <form method="POST" action="<?= $base ?>/admin/commission-plans/activate/<?= $p['id'] ?>" >
                                                 <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
                                                 <button type="submit" class="btn-cp btn-cp-success" title="Activate" aria-label="Activate plan"><i class="fas fa-power-off"></i></button>
                                             </form>
                                         <?php else: ?>
-                                            <form method="POST" action="<?= $base ?>/admin/commission-plans/deactivate/<?= $p['id'] ?>" class="style-71727">
+                                            <form method="POST" action="<?= $base ?>/admin/commission-plans/deactivate/<?= $p['id'] ?>" >
                                                 <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
                                                 <button type="submit" class="btn-cp btn-cp-warning" title="Deactivate" aria-label="Pause"><i class="fas fa-pause"></i></button>
                                             </form>
                                         <?php endif; ?>
                                         <?php if ($p['status'] !== 'active'): ?>
-                                            <form method="POST" action="<?= $base ?>/admin/commission-plans/delete/<?= $p['id'] ?>" class="style-71727" data-aps-confirm="Delete this plan?">
+                                            <form method="POST" action="<?= $base ?>/admin/commission-plans/delete/<?= $p['id'] ?>" data-aps-confirm="Delete this plan?">
                                                 <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
                                                 <button type="submit" class="btn-cp btn-cp-danger" title="Delete" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                             </form>

@@ -8,7 +8,7 @@ $location = $location ?? '';
 $locationName = ucfirst($location);
 ?>
 <!-- Hero Section -->
-<section class="py-5 text-white style-68644">
+<section class="py-5 text-white">
     <div class="container text-center py-5">
         <h1 class="display-4 fw-bold mb-3"><i class="fas fa-map-marker-alt me-3"></i><?php echo e($locationName); ?> <?= __('projects_location_hero') ?></h1>
         <p class="lead"><?= __('projects_location_explore') ?> <?php echo e($locationName); ?></p>
@@ -20,8 +20,14 @@ $locationName = ucfirst($location);
     <div class="container">
         <?php if (!empty($projects)): ?>
             <div class="row">
-                <?php foreach ($projects as $project): 
-                    $slug = strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $project->site_name));
+                <?php foreach ($projects as $project):
+                    $colonySlugMap = [
+                        'Suryoday Colony' => 'suryoday-colony',
+                        'Raghunath Nagri' => 'raghunath-nagri-motiram',
+                        'Braj Radha Nagri' => 'braj-radha-nagri',
+                        'Budh Bihar Colony' => 'budh-bihar-colony',
+                    ];
+                    $slug = $colonySlugMap[$project->site_name] ?? strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $project->site_name));
                     $imgPath = '/assets/images/placeholder/property.svg';
                     if (stripos($project->site_name, 'Suryoday') !== false) {
                         $imgPath = '/assets/images/projects/gorakhpur/suryoday.jpg';
@@ -30,17 +36,20 @@ $locationName = ucfirst($location);
                     } elseif (stripos($project->site_name, 'Braj') !== false || stripos($project->site_name, 'Radha') !== false) {
                         $imgPath = '/assets/images/projects/lucknow/braj-radha-nagri.jpg';
                     } elseif (stripos($project->site_name, 'Budh') !== false) {
-                        $imgPath = '/assets/images/projects/gorakhpur/suryoday.jpg';
+                        $imgPath = '/assets/images/projects/kushinagar/budh-bihar.jpg';
                     } elseif (stripos($project->site_name, 'Awadhpuri') !== false) {
                         $imgPath = '/assets/images/projects/lucknow/awadhpuri.jpg';
                     } elseif (stripos($project->site_name, 'Ganga') !== false) {
                         $imgPath = '/assets/images/projects/varanasi/ganga-nagri.jpg';
                     }
+                    $detailUrl = in_array($slug, ['suryoday-colony','raghunath-nagri-motiram','braj-radha-nagri','budh-bihar-colony','motiram-jhangha-road'])
+                        ? BASE_URL . '/colony/' . $slug
+                        : BASE_URL . '/colonies';
                 ?>
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="card h-100 shadow-sm border-0 overflow-hidden">
-                        <div class="position-relative style-17333">
-                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="w-100 h-100 img-fluid" alt="<?php echo htmlspecialchars($project->site_name); ?>" class="style-86926" onerror="this.src='<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg'">
+                        <div class="position-relative">
+                            <img src="<?= BASE_URL . $imgPath ?>" class="w-100 h-100 img-fluid" alt="<?php echo htmlspecialchars($project->site_name); ?>" onerror="this.src='<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg'">
                             <div class="position-absolute top-0 start-0 m-2">
                                 <span class="badge bg-<?php echo $project->status === 'active' ? 'success' : 'primary'; ?>">
                                     <?php echo $project->status === 'active' ? __('colony_available') : __('projects_completed'); ?>
@@ -62,7 +71,7 @@ $locationName = ucfirst($location);
                                 <p class="card-text small text-muted"><?php echo htmlspecialchars(substr($project->description, 0, 100)); ?>...</p>
                             <?php endif; ?>
                             <div class="d-flex gap-2 mt-3">
-                                <a href="<?php echo BASE_URL; ?>/projects/<?php echo e($slug); ?>" class="btn btn-primary btn-sm flex-grow-1">
+                                <a href="<?php echo $detailUrl; ?>" class="btn btn-primary btn-sm flex-grow-1">
                                     <i class="fas fa-eye me-1"></i><?= __('featured_view_details') ?>
                                 </a>
                                 <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-success btn-sm" aria-label="WhatsApp enquiry">
@@ -104,7 +113,7 @@ $locationName = ucfirst($location);
 </section>
 
 <!-- CTA -->
-<section class="py-5 text-center text-white style-68644">
+<section class="py-5 text-center text-white">
     <div class="container">
         <h3><?= __('projects_location_interested') ?> <?php echo e($locationName); ?> <?= __('projects_location_properties') ?></h3>
         <p class="mb-4"><?= __('projects_location_cta_desc') ?></p>

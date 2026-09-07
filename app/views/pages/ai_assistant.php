@@ -70,7 +70,7 @@
     }
 </style>
 
-<div class="style-47021">
+<div >
     <div class="ai-header">
         <div class="ai-avatar"><i class="fas fa-robot"></i></div>
         <div class="ai-info">
@@ -178,7 +178,7 @@
         var div = document.createElement('div');
         div.id = 'typingIndicator';
         div.className = 'ai-typing';
-        div.innerHTML = '<div class="ai-msg-av style-87578"><i class="fas fa-robot"></i></div><div class="ai-typing-bubble"><span class="ai-typing-dot"></span><span class="ai-typing-dot"></span><span class="ai-typing-dot"></span></div>';
+        div.innerHTML = '<div class="ai-msg-av"><i class="fas fa-robot"></i></div><div class="ai-typing-bubble"><span class="ai-typing-dot"></span><span class="ai-typing-dot"></span><span class="ai-typing-dot"></span></div>';
         chatMessages.appendChild(div);
         chatMessages.scrollTop = chatMessages.scrollHeight;
         return div;
@@ -206,7 +206,7 @@
         return text.replace(urlRegex, function(url) {
             var cleanUrl = url.replace(/[.,;:!?)}\]]+$/, '');
             var suffix = url.substring(cleanUrl.length);
-            return '<a href="' + cleanUrl + '" target="_blank" rel="noopener" class="style-95271">' + cleanUrl + '</a>' + suffix;
+            return '<a href="' + cleanUrl + '" target="_blank" rel="noopener" >' + cleanUrl + '</a>' + suffix;
         });
     }
 

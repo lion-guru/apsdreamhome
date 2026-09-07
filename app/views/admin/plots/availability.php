@@ -27,13 +27,13 @@ $stats = $stats ?? ['available' => 0, 'booked' => 0, 'sold' => 0, 'hold' => 0, '
                     </div>
                 </div>
                 <div class="col-md-2 col-6 mb-2">
-                    <div class="card border-0 shadow-sm text-center p-3 style-5252">
+                    <div class="card border-0 shadow-sm text-center p-3">
                         <div class="fs-3 fw-bold text-success"><?= $stats['available'] ?></div>
                         <div class="small text-success">Available</div>
                     </div>
                 </div>
                 <div class="col-md-2 col-6 mb-2">
-                    <div class="card border-0 shadow-sm text-center p-3 style-93630">
+                    <div class="card border-0 shadow-sm text-center p-3">
                         <div class="fs-3 fw-bold text-warning"><?= $stats['booked'] ?></div>
                         <div class="small text-warning">Booked</div>
                     </div>
@@ -45,9 +45,9 @@ $stats = $stats ?? ['available' => 0, 'booked' => 0, 'sold' => 0, 'hold' => 0, '
                     </div>
                 </div>
                 <div class="col-md-2 col-6 mb-2">
-                    <div class="card border-0 shadow-sm text-center p-3 style-70859">
-                        <div class="fs-3 fw-bold style-50946"><?= $stats['hold'] ?></div>
-                        <div class="small style-50946">Hold</div>
+                    <div class="card border-0 shadow-sm text-center p-3">
+                        <div class="fs-3 fw-bold"><?= $stats['hold'] ?></div>
+                        <div class="small">Hold</div>
                     </div>
                 </div>
                 <div class="col-md-2 col-6 mb-2">
@@ -101,7 +101,7 @@ $stats = $stats ?? ['available' => 0, 'booked' => 0, 'sold' => 0, 'hold' => 0, '
                 <span class="badge bg-success me-2 p-2">Available</span>
                 <span class="badge bg-warning text-dark me-2 p-2">Booked</span>
                 <span class="badge bg-danger me-2 p-2">Sold</span>
-                <span class="badge style-22510">Hold</span>
+                <span class="badge">Hold</span>
                 <span class="badge bg-secondary me-2 p-2">Other</span>
             </div>
 
@@ -149,7 +149,6 @@ $stats = $stats ?? ['available' => 0, 'booked' => 0, 'sold' => 0, 'hold' => 0, '
                                                 <span class="badge bg-<?= $statusClass ?> p-2 w-100 status-badge"
                                                       data-plot-id="<?= $p['id'] ?>"
                                                       data-status="<?= htmlspecialchars($p['status'] ?? 'available') ?>"
-                                                      class="style-78508"
                                                       onclick="quickStatusChange(this)">
                                                     <?= ucfirst(htmlspecialchars($p['status'] ?? 'available')) ?>
                                                 </span>

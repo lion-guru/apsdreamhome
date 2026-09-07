@@ -187,12 +187,16 @@ class GenerationBonusEngine
         try {
             $this->db->beginTransaction();
 
+            $planSnapshot = $this->getActivePlanSnapshot();
+
             $ledgerStmt = $this->db->prepare("
                 INSERT INTO mlm_commission_ledger
                     (beneficiary_user_id, source_user_id, commission_type, level, amount,
-                     status, sale_amount, commission_percentage, notes, booking_id, created_at, tenant_id)
+                     status, sale_amount, commission_percentage, notes, booking_id, created_at, tenant_id,
+                     plan_id, plan_version, plan_snapshot, calculation_engine)
                 VALUES
-                    (?, ?, 'generation_bonus', ?, ?, 'pending', ?, ?, 'Monthly generation bonus', 0, NOW(), ?)
+                    (?, ?, 'generation_bonus', ?, ?, 'pending', ?, ?, 'Monthly generation bonus', 0, NOW(), ?,
+                     ?, ?, ?, 'hybrid')
             ");
 
             $genStmt = $this->db->prepare("
@@ -215,6 +219,8 @@ class GenerationBonusEngine
                 // Ledger entry — source_user_id = beneficiary (aggregate monthly bonus)
                 $ledgerStmt->execute([
                     $beneficiary, $beneficiary, $level, $amount, $volume, $pct, $this->getTenantId(),
+                    $planSnapshot['plan_id'] ?? null, $planSnapshot['plan_version'] ?? null,
+                    $planSnapshot ? json_encode($planSnapshot) : null,
                 ]);
                 $ledgerId = (int)$this->db->lastInsertId();
                 $result['created_ids'][] = $ledgerId;
@@ -387,5 +393,34 @@ class GenerationBonusEngine
         } catch (\Throwable $e) {
             return $default;
         }
+    }
+
+    private function getActivePlanSnapshot(): ?array
+    {
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $stmt = $db->prepare("SELECT id, version, global_cap_pct, track_a_pct, track_b_pct, track_c_pct, royalty_pool_pct, same_level_override_gen1, same_level_override_gen2, effective_date, expiry_date FROM mlm_commission_plans WHERE status = 'active' ORDER BY version DESC LIMIT 1");
+            $stmt->execute();
+            $plan = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if ($plan) {
+                return [
+                    'plan_id'           => (int)$plan['id'],
+                    'plan_version'      => (int)$plan['version'],
+                    'global_cap_pct'    => (float)$plan['global_cap_pct'],
+                    'track_a_pct'       => (float)$plan['track_a_pct'],
+                    'track_b_pct'       => (float)$plan['track_b_pct'],
+                    'track_c_pct'       => (float)$plan['track_c_pct'],
+                    'royalty_pool_pct'  => (float)$plan['royalty_pool_pct'],
+                    'same_level_gen1'   => (float)$plan['same_level_override_gen1'],
+                    'same_level_gen2'   => (float)$plan['same_level_override_gen2'],
+                    'effective_date'    => $plan['effective_date'],
+                    'expiry_date'       => $plan['expiry_date'],
+                ];
+            }
+        } catch (\Throwable $e) {
+            error_log(__METHOD__ . ' error: ' . $e->getMessage());
+        }
+
+        return ['plan_id' => 1, 'plan_version' => 1, 'global_cap_pct' => 20.0, 'track_a_pct' => 15.0, 'track_b_pct' => 3.0, 'track_c_pct' => 2.0, 'royalty_pool_pct' => 2.0, 'same_level_gen1' => 2.0, 'same_level_gen2' => 1.0];
     }
 }

@@ -237,7 +237,7 @@
             </small>
         </div>
 
-        <div class="mb-3 mt-4" id="phoneSection" class="style-54390">
+        <div class="mb-3 mt-4" id="phoneSection" >
             <label class="form-label fw-bold"><?php echo __('auth_phone_number_required', 'Phone Number *'); ?></label>
             <input type="tel" class="form-control" id="phone" placeholder="<?php echo __('auth_enter_phone', 'Enter your phone number'); ?>" pattern="[0-9]{10}">
         </div>

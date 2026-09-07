@@ -28,7 +28,7 @@
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <div class="table-responsive"><table class="table table-bordered mb-0">
-                            <tr><th class="style-58160">Booking ID</th><td>#<?= $b['id'] ?></td></tr>
+                            <tr><th >Booking ID</th><td>#<?= $b['id'] ?></td></tr>
                             <tr><th>Booking Number</th><td><?= htmlspecialchars($b['booking_number'] ?? 'N/A') ?></td></tr>
                             <tr><th>Customer</th><td>
                                 <?= htmlspecialchars($b['customer_name'] ?? 'N/A') ?>
@@ -43,8 +43,8 @@
                             <tr><th>Total Amount</th><td><strong>₹<?= number_format((float)$status['total_amount'], 2) ?></strong></td></tr>
                             <tr><th>Paid Amount</th><td>₹<?= number_format((float)$status['paid_amount'], 2) ?></td></tr>
                             <tr><th>Token Progress</th><td>
-                                <div class="progress style-39312">
-                                    <div class="progress-bar bg-<?= $status['token_percentage'] >= 25 ? 'success' : 'danger' ?> style-61073">
+                                <div class="progress">
+                                    <div class="progress-bar bg-<?= $status['token_percentage'] >= 25 ? 'success' : 'danger' ?>">
                                         <?= $status['token_percentage'] ?>%
                                     </div>
                                 </div>
@@ -81,8 +81,8 @@
                     <div class="card-body aps-cp-card-body">
                         <p>Total EMIs: <strong><?= $status['emi_count'] ?? 0 ?></strong></p>
                         <p>Paid EMIs: <strong><?= $status['paid_emis'] ?? 0 ?></strong></p>
-                        <div class="progress mb-3 style-76750">
-                            <div class="progress-bar bg-success style-46071"></div>
+                        <div class="progress mb-3">
+                            <div class="progress-bar bg-success"></div>
                         </div>
                         <?php if (!empty($status['emis'])): ?>
                         <div class="table-responsive"><table class="table table-sm">

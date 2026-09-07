@@ -32,16 +32,16 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="style-76816"><i class="fas fa-file-signature me-2"></i>Agent Agreements</h4>
+        <h4 ><i class="fas fa-file-signature me-2"></i>Agent Agreements</h4>
         <a href="<?= $base ?>/admin/agent-agreements/create" class="btn btn-primary">
             <i class="fas fa-plus me-1"></i>Create Agreement
         </a>
     </div>
 
     <?php if (!empty($_SESSION['flash_success'])): ?>
-        <div class="alert alert-success alert-dismissible fade show style-99395">
+        <div class="alert alert-success alert-dismissible fade show">
             <?= $_SESSION['flash_success'] ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" class="style-22908"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" ></button>
         </div>
         <?php unset($_SESSION['flash_success']); ?>
     <?php endif; ?>
@@ -55,19 +55,19 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             </div>
         </div>
         <div class="col-md-3 mb-2">
-            <div class="aag-stat style-7873">
+            <div class="aag-stat">
                 <div class="num"><?= (int)$stats['draft'] ?></div>
                 <div class="lbl">Draft</div>
             </div>
         </div>
         <div class="col-md-3 mb-2">
-            <div class="aag-stat style-1293">
+            <div class="aag-stat">
                 <div class="num"><?= (int)$stats['pending'] ?></div>
                 <div class="lbl">Pending Signature</div>
             </div>
         </div>
         <div class="col-md-3 mb-2">
-            <div class="aag-stat style-68340">
+            <div class="aag-stat">
                 <div class="num"><?= (int)$stats['signed'] ?></div>
                 <div class="lbl">Signed</div>
             </div>
@@ -76,61 +76,61 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 
     <!-- Agreements Table -->
     <div class="aag-card">
-        <h5><i class="fas fa-list me-2 style-75937"></i>All Agreements</h5>
+        <h5><i class="fas fa-list me-2"></i>All Agreements</h5>
         <?php if (!empty($agreements)): ?>
-        <div class="style-10754">
+        <div >
             <table class="aag-table">
                 <thead>
                     <tr>
                         <th>Title</th>
                         <th>Agent</th>
                         <th>Property</th>
-                        <th class="style-58107">Commission</th>
+                        <th >Commission</th>
                         <th>Status</th>
                         <th>Start Date</th>
                         <th>End Date</th>
-                        <th class="style-64867">Actions</th>
+                        <th >Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($agreements as $a): ?>
                     <tr>
-                        <td class="style-24039"><?= htmlspecialchars($a['title'] ?? '') ?></td>
+                        <td ><?= htmlspecialchars($a['title'] ?? '') ?></td>
                         <td>
-                            <div class="style-51792"><?= htmlspecialchars($a['agent_name'] ?? 'N/A') ?></div>
-                            <div class="style-63117"><?= htmlspecialchars($a['agent_email'] ?? '') ?></div>
+                            <div ><?= htmlspecialchars($a['agent_name'] ?? 'N/A') ?></div>
+                            <div ><?= htmlspecialchars($a['agent_email'] ?? '') ?></div>
                         </td>
                         <td>
                             <?php if ($a['property_name']): ?>
-                                <div class="style-51792"><?= htmlspecialchars($a['property_name'] ?? '') ?></div>
-                                <div class="style-63117"><?= htmlspecialchars($a['property_location'] ?? '') ?></div>
+                                <div ><?= htmlspecialchars($a['property_name'] ?? '') ?></div>
+                                <div ><?= htmlspecialchars($a['property_location'] ?? '') ?></div>
                             <?php else: ?>
-                                <span class="style-71870">General</span>
+                                <span >General</span>
                             <?php endif; ?>
                         </td>
-                        <td class="style-88252"><?= (float)$a['commission_pct'] ?>%</td>
+                        <td ><?= (float)$a['commission_pct'] ?>%</td>
                         <td><span class="aag-badge aag-badge-<?= $a['status'] ?>"><?= ucfirst($a['status']) ?></span></td>
-                        <td class="style-4937"><?= $a['start_date'] ? date('d M Y', strtotime($a['start_date'])) : '—' ?></td>
-                        <td class="style-4937"><?= $a['end_date'] ? date('d M Y', strtotime($a['end_date'])) : '—' ?></td>
-                        <td class="style-45903">
+                        <td ><?= $a['start_date'] ? date('d M Y', strtotime($a['start_date'])) : '—' ?></td>
+                        <td ><?= $a['end_date'] ? date('d M Y', strtotime($a['end_date'])) : '—' ?></td>
+                        <td >
                             <a href="<?= $base ?>/admin/agent-agreements/detail/<?= (int)$a['id'] ?>" class="aag-btn aag-btn-view"><i class="fas fa-eye"></i></a>
                             <?php if ($a['status'] === 'draft'): ?>
                                 <form method="POST" action="<?= $base ?>
-            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/agent-agreements/send/<?= (int)$a['id'] ?>" class="style-35851">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/agent-agreements/send/<?= (int)$a['id'] ?>" >
     <?php echo CSRFProtection::csrfField(); ?>
                                     <button type="submit" class="aag-btn aag-btn-send" aria-label="Send"><i class="fas fa-paper-plane"></i></button>
                                 </form>
                             <?php endif; ?>
                             <?php if ($a['status'] === 'pending'): ?>
                                 <form method="POST" action="<?= $base ?>
-            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/agent-agreements/sign/<?= (int)$a['id'] ?>" class="style-35851">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/agent-agreements/sign/<?= (int)$a['id'] ?>" >
     <?php echo CSRFProtection::csrfField(); ?>
                                     <button type="submit" class="aag-btn aag-btn-sign" aria-label="Confirm"><i class="fas fa-check"></i></button>
                                 </form>
                             <?php endif; ?>
                             <?php if (in_array($a['status'], ['draft', 'pending'])): ?>
                                 <form method="POST" action="<?= $base ?>
-            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/agent-agreements/cancel/<?= (int)$a['id'] ?>" class="style-35851">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/agent-agreements/cancel/<?= (int)$a['id'] ?>" >
     <?php echo CSRFProtection::csrfField(); ?>
                                     <button type="submit" class="aag-btn aag-btn-cancel" data-aps-confirm="Cancel this agreement?" aria-label="Cancel"><i class="fas fa-times"></i></button>
                                 </form>

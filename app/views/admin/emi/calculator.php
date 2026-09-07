@@ -30,7 +30,7 @@
                 </div>
             </div>
 
-            <div class="aps-cp-card mt-3" id="emiResult" class="style-24280">
+            <div class="aps-cp-card mt-3" id="emiResult" >
                 <div class="aps-cp-card-header"><i class="fas fa-chart-pie me-2"></i>EMI Breakdown</div>
                 <div class="aps-cp-card-body">
                     <div class="row text-center">
@@ -60,8 +60,8 @@
                         <i class="fas fa-table fa-3x mb-3 opacity-25"></i>
                         <p>Enter loan details and click Calculate to see the amortization schedule</p>
                     </div>
-                    <div id="amortizationTable" class="style-24280">
-                        <div class="table-responsive style-62230">
+                    <div id="amortizationTable" >
+                        <div class="table-responsive">
                             <table class="table table-sm table-hover mb-0" id="scheduleTable">
                                 <thead class="sticky-top bg-dark text-white"><tr>
                                     <th>#</th><th>EMI</th><th>Principal</th><th>Interest</th><th>Balance</th>

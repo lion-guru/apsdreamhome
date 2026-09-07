@@ -52,7 +52,7 @@ $project_id = $project_id ?? 0;
 ?>
 
 <!-- Hero Section -->
-<section class="project-hero text-white text-center py-5 mb-5 style-35257">
+<section class="project-hero text-white text-center py-5 mb-5">
     <div class="container py-4">
         <div class="row justify-content-center">
             <div class="col-lg-10">
@@ -150,12 +150,11 @@ $project_id = $project_id ?? 0;
             </div>
             <div class="col-lg-6">
                 <div class="map-container">
-                    <div id="projectMap" class="style-88943">
+                    <div id="projectMap" >
                         <iframe src="https://maps.google.com/maps?q=<?php echo e($project['location']['lat']); ?>,<?php echo $project['location']['lng']; ?>&z=15&output=embed" 
                                 width="100%" 
                                 height="100%" 
                                 frameborder="0" 
-                                class="style-69986" 
                                 allowfullscreen>
                         </iframe>
                     </div>
@@ -195,11 +194,12 @@ $project_id = $project_id ?? 0;
                     <div class="row g-4">
                         <?php foreach ($project['images'] as $index => $image): ?>
                             <div class="col-lg-4 col-md-6">
-                                <div class="photo-card animate-fade-up style-88811">
+                                <div class="photo-card animate-fade-up">
                                     <div class="photo-container">
-                                        <img src="<?php echo htmlspecialchars($image['src'] ?? $image['url'] ?? $image['image'] ?? ''); ?>"
-                                             alt="<?php echo htmlspecialchars($image['title'] ?? 'Photo'); ?>"
-                                             class="photo-image" loading="lazy">
+                                        <?php $rawImg = $image['src'] ?? $image['url'] ?? $image['image'] ?? ''; if (empty($rawImg) || $rawImg === 'undefined' || $rawImg === 'null') { $rawImg = BASE_URL . '/assets/images/placeholder/property.svg'; } ?>
+                                        <img src="<?php echo htmlspecialchars($rawImg, ENT_QUOTES, 'UTF-8'); ?>"
+                                             alt="<?php echo htmlspecialchars($image['title'] ?? $project['project_name'] ?? 'Project photo', ENT_QUOTES, 'UTF-8'); ?>"
+                                             class="photo-image" loading="lazy" onerror="this.onerror=null;this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
                                         <div class="photo-overlay">
                                             <div class="photo-actions">
                                                 <button class="btn btn-light btn-sm" onclick="openPhotoModal('<?php echo htmlspecialchars($image['url'] ?? ''); ?>', '<?php echo htmlspecialchars($image['title'] ?? ''); ?>')">
@@ -228,7 +228,7 @@ $project_id = $project_id ?? 0;
                     <div class="row g-4">
                         <?php foreach ($project['videos'] as $index => $video): ?>
                             <div class="col-lg-6">
-                                <div class="video-card animate-fade-up style-88811">
+                                <div class="video-card animate-fade-up">
                                     <div class="video-container">
                                         <iframe src="<?php echo htmlspecialchars($video['url'] ?? ''); ?>" 
                                                 frameborder="0" 
@@ -320,7 +320,7 @@ $project_id = $project_id ?? 0;
         <div class="modal-content bg-dark">
             <div class="modal-body p-0">
                 <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
-                <img loading="lazy" id="modalPhoto" src="" />
+                <img loading="lazy" id="modalPhoto" src=""  alt="Project gallery photo" />
             </div>
         </div>
     </div>
@@ -331,7 +331,7 @@ $project_id = $project_id ?? 0;
         <div class="modal-content bg-dark">
             <div class="modal-body p-0">
                 <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
-                <iframe id="modalVideo" src="" frameborder="0" allowfullscreen class="w-100 style-49460"></iframe>
+                <iframe id="modalVideo" src="" frameborder="0" allowfullscreen class="w-100"></iframe>
             </div>
         </div>
     </div>

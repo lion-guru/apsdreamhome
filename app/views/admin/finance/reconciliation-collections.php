@@ -11,14 +11,14 @@ $filters = $filters ?? [];
     </div>
 
     <!-- Start New Reconciliation -->
-    <div class="aps-cp-card style-46748">
+    <div class="aps-cp-card">
         <div class="aps-cp-card-header">
             <span><i class="fas fa-play-circle"></i> Start New Reconciliation Session</span>
         </div>
         <div class="aps-cp-card-body">
-            <form method="POST" action="<?= BASE_URL ?>/admin/finance/reconciliation-collections/start" class="style-68981">
+            <form method="POST" action="<?= BASE_URL ?>/admin/finance/reconciliation-collections/start" >
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-                <div class="aps-cp-form-group style-52775">
+                <div class="aps-cp-form-group">
                     <label class="aps-cp-form-label">Collector</label>
                     <select name="collector_id" class="aps-cp-form-select" required>
                         <option value="">-- Select --</option>
@@ -27,7 +27,7 @@ $filters = $filters ?? [];
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="aps-cp-form-group style-52775">
+                <div class="aps-cp-form-group">
                     <label class="aps-cp-form-label">Date</label>
                     <input type="date" name="session_date" class="aps-cp-form-input" required value="<?= date('Y-m-d') ?>">
                 </div>
@@ -39,10 +39,10 @@ $filters = $filters ?? [];
     </div>
 
     <!-- Filters -->
-    <div class="aps-cp-card style-46748">
+    <div class="aps-cp-card">
         <div class="aps-cp-card-body">
-            <form method="GET" action="<?= BASE_URL ?>/admin/finance/reconciliation-collections" class="style-68981">
-                <div class="aps-cp-form-group style-57352">
+            <form method="GET" action="<?= BASE_URL ?>/admin/finance/reconciliation-collections" >
+                <div class="aps-cp-form-group">
                     <label class="aps-cp-form-label">Status</label>
                     <select name="status" class="aps-cp-form-select">
                         <option value="">All</option>
@@ -51,7 +51,7 @@ $filters = $filters ?? [];
                         <option value="discrepancy" <?= ($filters['status'] ?? '') === 'discrepancy' ? 'selected' : '' ?>>Discrepancy</option>
                     </select>
                 </div>
-                <div class="aps-cp-form-group style-57352">
+                <div class="aps-cp-form-group">
                     <label class="aps-cp-form-label">Collector</label>
                     <select name="collector_id" class="aps-cp-form-select">
                         <option value="">All</option>
@@ -70,10 +70,10 @@ $filters = $filters ?? [];
         <div class="aps-cp-card-header">
             <span><i class="fas fa-balance-scale"></i> Reconciliation Sessions (<?= count($sessions) ?>)</span>
         </div>
-        <div class="aps-cp-card-body style-97767">
+        <div class="aps-cp-card-body">
             <?php if (empty($sessions)): ?>
-                <div class="aps-cp-empty-state style-85973">
-                    <i class="fas fa-inbox style-3949"></i>
+                <div class="aps-cp-empty-state">
+                    <i class="fas fa-inbox"></i>
                     <p>No reconciliation sessions found.</p>
                 </div>
             <?php else: ?>
@@ -97,13 +97,13 @@ $filters = $filters ?? [];
                                     <td><?= htmlspecialchars($s['session_date'] ?? '') ?></td>
                                     <td><?= htmlspecialchars($s['collector_name'] ?? 'N/A') ?></td>
                                     <td>₹<?= number_format($s['total_submitted'], 2) ?></td>
-                                    <td class="style-45683">₹<?= number_format($s['total_verified'], 2) ?></td>
-                                    <td class="style-78245">₹<?= number_format($s['total_rejected'], 2) ?></td>
+                                    <td >₹<?= number_format($s['total_verified'], 2) ?></td>
+                                    <td >₹<?= number_format($s['total_rejected'], 2) ?></td>
                                     <td>
                                         <?php if ((float)$s['discrepancy_amount'] > 0): ?>
-                                            <span class="style-60540">₹<?= number_format($s['discrepancy_amount'], 2) ?></span>
+                                            <span >₹<?= number_format($s['discrepancy_amount'], 2) ?></span>
                                         <?php else: ?>
-                                            <span class="style-7250">—</span>
+                                            <span >—</span>
                                         <?php endif; ?>
                                     </td>
                                     <td>
@@ -115,7 +115,7 @@ $filters = $filters ?? [];
                                     </td>
                                     <td>
                                         <?php if ($s['status'] !== 'closed'): ?>
-                                            <form method="POST" action="<?= BASE_URL ?>/admin/finance/reconciliation-collections/close" class="style-35851">
+                                            <form method="POST" action="<?= BASE_URL ?>/admin/finance/reconciliation-collections/close" >
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                                 <input type="hidden" name="session_id" value="<?= $s['id'] ?>">
                                                 <button type="submit" class="aps-cp-btn aps-cp-btn-sm aps-cp-btn-primary" data-aps-confirm="Close this session?"><i class="fas fa-lock"></i> Close</button>

@@ -1,8 +1,5 @@
 <?php
 
-// TODO: Add proper error handling with try-catch blocks
-
-
 namespace App\Http\Controllers\SaaS;
 
 use App\Http\Controllers\BaseController;

@@ -54,8 +54,8 @@ class MonitoringController extends AdminController
      */
     public function adminMonitoring()
     {
-        // Allow ?test_login=1 to bypass auth in dev for visual verification.
-        $bypass = isset($_GET['test_login']) && $_GET['test_login'] === '1';
+        // Allow ?test_login=1 to bypass auth in dev ONLY for visual verification.
+        $bypass = (defined('APP_ENV') && APP_ENV !== 'production') && isset($_GET['test_login']) && $_GET['test_login'] === '1';
         if (!$bypass) {
             $isAdmin = !empty($_SESSION['admin_id']) || (($_SESSION['role'] ?? '') === 'admin');
             if (!$isAdmin) {

@@ -179,7 +179,7 @@
     </div>
 </div>
 
-<form id="deactivateForm" method="POST" class="style-2248">
+<form id="deactivateForm" method="POST" >
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
 </form>
 

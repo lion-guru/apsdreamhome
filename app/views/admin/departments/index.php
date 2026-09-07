@@ -36,7 +36,7 @@
             <!-- Stats Cards -->
             <div class="row mb-4">
                 <div class="col-lg-3 col-6">
-                    <div class="small-box style-75630">
+                    <div class="small-box">
                         <div class="inner">
                             <h3><?= $stats['total'] ?? 0 ?></h3>
                             <p>Total Departments</p>
@@ -45,7 +45,7 @@
                     </div>
                 </div>
                 <div class="col-lg-3 col-6">
-                    <div class="small-box style-55192">
+                    <div class="small-box">
                         <div class="inner">
                             <h3><?= $stats['active'] ?? 0 ?></h3>
                             <p>Active</p>
@@ -54,7 +54,7 @@
                     </div>
                 </div>
                 <div class="col-lg-3 col-6">
-                    <div class="small-box style-48582">
+                    <div class="small-box">
                         <div class="inner">
                             <h3><?= $stats['total_desig'] ?? 0 ?></h3>
                             <p>Designations</p>
@@ -63,7 +63,7 @@
                     </div>
                 </div>
                 <div class="col-lg-3 col-6">
-                    <div class="small-box style-23498">
+                    <div class="small-box">
                         <div class="inner">
                             <h3><?= $stats['total_emp'] ?? 0 ?></h3>
                             <p>Total Employees</p>
@@ -133,7 +133,7 @@
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <form method="POST" action="<?= BASE_URL ?>
-            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/departments/<?= $dept['id'] ?>/delete" class="style-71727" data-aps-confirm="Delete this department? Designations will be orphaned.">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/departments/<?= $dept['id'] ?>/delete" data-aps-confirm="Delete this department? Designations will be orphaned.">
     <?php echo CSRFProtection::csrfField(); ?>
                                                 <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                             </form>

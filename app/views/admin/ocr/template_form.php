@@ -28,20 +28,20 @@ $isEdit = !empty($template);
 
 <div class="ocr-page">
     <div class="ocr-header">
-        <div class="container-fluid px-4 style-84072">
+        <div class="container-fluid px-4">
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                 <div>
                     <h4 class="mb-1 fw-bold text-white">
                         <i class="fas fa-cog me-2"></i><?= $isEdit ? 'Edit Template' : 'Create Template' ?>
                     </h4>
-                    <p class="mb-0 style-29848">Define field extraction rules for a document type</p>
+                    <p class="mb-0">Define field extraction rules for a document type</p>
                 </div>
                 <a href="<?= BASE_URL ?>/admin/ocr/templates" class="ocr-btn ocr-btn-outline"><i class="fas fa-arrow-left"></i>Back</a>
             </div>
         </div>
     </div>
 
-    <div class="container-fluid px-4 style-86238">
+    <div class="container-fluid px-4">
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="ocr-card">
@@ -70,7 +70,7 @@ $isEdit = !empty($template);
 
                         <div class="mb-4">
                             <label class="ocr-label">Active</label>
-                            <select name="is_active" class="ocr-select style-72730">
+                            <select name="is_active" class="ocr-select">
                                 <option value="1" <?= ($template['is_active'] ?? 1) ? 'selected' : '' ?>>Yes</option>
                                 <option value="0" <?= !($template['is_active'] ?? 1) ? 'selected' : '' ?>>No</option>
                             </select>
@@ -80,11 +80,11 @@ $isEdit = !empty($template);
                             <label class="ocr-label">Field Definitions (JSON)</label>
                             <textarea name="field_definitions_json" class="ocr-textarea" placeholder='[{"name": "full_name", "label": "Full Name", "pattern": "/Name:\\s*(.+)/i"}]' id="fieldsJson"><?= htmlspecialchars($fields_json ?? '') ?></textarea>
                             <div class="d-flex gap-2 mt-2">
-                                <button type="button" class="ocr-btn ocr-btn-outline style-45098" onclick="validateJson()"><i class="fas fa-check me-1"></i>Validate JSON</button>
-                                <button type="button" class="ocr-btn ocr-btn-outline style-45098" onclick="prettifyJson()"><i class="fas fa-indent me-1"></i>Prettify</button>
-                                <button type="button" class="ocr-btn ocr-btn-outline style-45098" onclick="addField()"><i class="fas fa-plus me-1"></i>Add Field</button>
+                                <button type="button" class="ocr-btn ocr-btn-outline" onclick="validateJson()"><i class="fas fa-check me-1"></i>Validate JSON</button>
+                                <button type="button" class="ocr-btn ocr-btn-outline" onclick="prettifyJson()"><i class="fas fa-indent me-1"></i>Prettify</button>
+                                <button type="button" class="ocr-btn ocr-btn-outline" onclick="addField()"><i class="fas fa-plus me-1"></i>Add Field</button>
                             </div>
-                            <div id="jsonStatus" class="style-30392"></div>
+                            <div id="jsonStatus" ></div>
                         </div>
 
                         <div class="d-flex gap-3">
@@ -143,9 +143,9 @@ function prettifyJson() {
     try {
         const data = JSON.parse(el.value);
         el.value = JSON.stringify(data, null, 2);
-        document.getElementById('jsonStatus').innerHTML = '<span class="style-49307"><i class="fas fa-check-circle me-1"></i>Prettified</span>';
+        document.getElementById('jsonStatus').innerHTML = '<span ><i class="fas fa-check-circle me-1"></i>Prettified</span>';
     } catch (e) {
-        document.getElementById('jsonStatus').innerHTML = '<span class="style-37569"><i class="fas fa-times-circle me-1"></i>Cannot prettify invalid JSON</span>';
+        document.getElementById('jsonStatus').innerHTML = '<span ><i class="fas fa-times-circle me-1"></i>Cannot prettify invalid JSON</span>';
     }
 }
 
@@ -164,7 +164,7 @@ function addField() {
     if (!pattern) return;
     data.push({ name: name, label: name.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()), pattern: pattern });
     el.value = JSON.stringify(data, null, 2);
-    document.getElementById('jsonStatus').innerHTML = '<span class="style-49307"><i class="fas fa-plus-circle me-1"></i>Added field: ' + name + '</span>';
+    document.getElementById('jsonStatus').innerHTML = '<span ><i class="fas fa-plus-circle me-1"></i>Added field: ' + name + '</span>';
 }
 
 validateJson();

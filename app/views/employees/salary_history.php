@@ -1,7 +1,5 @@
 <?php
 
-// TODO: Add proper error handling with try-catch blocks
-
 /**
  * Employee Salary History View
  * Shows employee salary history and payment records
@@ -27,7 +25,7 @@
     <!-- Salary Overview -->
     <div class="row mb-4">
         <div class="col-md-3">
-            <div class="stats-card card text-white style-88128">
+            <div class="stats-card card text-white">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
@@ -44,7 +42,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="stats-card card text-white style-37722">
+            <div class="stats-card card text-white">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
@@ -61,7 +59,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="stats-card card text-white style-22627">
+            <div class="stats-card card text-white">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
@@ -78,7 +76,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="stats-card card text-white style-72670">
+            <div class="stats-card card text-white">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>

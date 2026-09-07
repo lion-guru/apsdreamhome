@@ -111,7 +111,9 @@ class AgenticCRMController extends AdminController
 
         $adjusted = 0;
         foreach ($leads as $lead) {
-            $oldScore = (int)$db->query("SELECT lead_score FROM leads WHERE id = {$lead['id']}")->fetchColumn();
+            $stmt = $db->prepare("SELECT lead_score FROM leads WHERE id = ?");
+            $stmt->execute([(int)$lead['id']]);
+            $oldScore = (int)$stmt->fetchColumn();
             $newScore = $service->recalculateScore($lead['id']);
             if ($oldScore !== $newScore) {
                 $adjusted++;

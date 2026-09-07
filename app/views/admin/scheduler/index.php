@@ -94,7 +94,7 @@ $tasks = $tasks ?? [];
                         <?php if (empty($tasks)): ?>
                         <tr>
                             <td colspan="8" class="text-center py-5">
-                                <i class="fas fa-clock fa-3x text-muted mb-3 style-82835"></i>
+                                <i class="fas fa-clock fa-3x text-muted mb-3"></i>
                                 <h5 class="text-muted">No scheduled tasks</h5>
                                 <p class="text-muted mb-3">Create your first cron task to automate recurring operations like lead follow-ups, commission calculations, and report generation.</p>
                                 <a href="<?= BASE_URL ?>/admin/scheduler/create" class="btn btn-primary">
@@ -142,12 +142,12 @@ $tasks = $tasks ?? [];
                                 <a href="<?= BASE_URL ?>/admin/scheduler/tasks/edit/<?= $task['id'] ?? 0 ?>" class="btn btn-sm btn-primary">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <form action="<?= BASE_URL ?>/admin/scheduler/tasks/run/<?= $task['id'] ?? 0 ?>" method="POST" class="style-26772">
+                                <form action="<?= BASE_URL ?>/admin/scheduler/tasks/run/<?= $task['id'] ?? 0 ?>" method="POST" >
                                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                     <button type="submit" class="btn btn-sm btn-success" data-aps-confirm="Run this task now?" aria-label="Play"><i class="fas fa-play"></i></button>
                                 </form>
                                 <?php if (!($task['is_system'] ?? true)): ?>
-                                <form action="<?= BASE_URL ?>/admin/scheduler/tasks/delete/<?= $task['id'] ?>" method="POST" class="style-26772">
+                                <form action="<?= BASE_URL ?>/admin/scheduler/tasks/delete/<?= $task['id'] ?>" method="POST" >
                                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                     <button type="submit" class="btn btn-sm btn-danger" data-aps-confirm="Delete this task?" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                 </form>

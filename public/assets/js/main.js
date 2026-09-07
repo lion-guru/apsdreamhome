@@ -61,7 +61,8 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Utility functions
-window.APS = {
+window.APS = window.APS || {};
+Object.assign(window.APS, {
   // Show loading spinner
   showLoading: function () {
     const loader = document.createElement('div');
@@ -115,4 +116,4 @@ window.APS = {
       timeout = setTimeout(later, wait);
     };
   },
-};
+});

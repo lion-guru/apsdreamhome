@@ -38,7 +38,7 @@ if (!function_exists('navUrl')) {
         <a class="navbar-brand d-flex align-items-center me-0" href="<?php echo BASE_URL; ?>">
             <?php $logo = $nav->getSetting('company_logo', '/assets/images/logo/apslogonew.jpg');
                    if ($logo && $logo[0] !== '/') $logo = '/' . $logo; ?>
-            <img src="<?php echo navUrl($logo); ?>"
+            <img src="<?php echo navUrl($logo);?>"
                  alt="APS Dream Home"
                  class="logo"
                  loading="eager"

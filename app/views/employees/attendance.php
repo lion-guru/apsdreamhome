@@ -1,7 +1,5 @@
 <?php
 
-// TODO: Add proper error handling with try-catch blocks
-
 /**
  * Employee Attendance View
  * Shows employee attendance records with location-based check-in/out

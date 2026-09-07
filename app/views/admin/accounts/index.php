@@ -229,25 +229,25 @@ $incomeByCategory = $income_by_category ?? [];
                     <div class="row g-3">
                         <div class="col-md-3">
                             <a href="<?= BASE_URL ?>/admin/accounting" class="btn btn-outline-primary w-100 py-3">
-                                <i class="fas fa-book mb-2 d-block style-41417"></i>
+                                <i class="fas fa-book mb-2 d-block"></i>
                                 Accounting
                             </a>
                         </div>
                         <div class="col-md-3">
                             <a href="<?= BASE_URL ?>/admin/accounting/income" class="btn btn-outline-success w-100 py-3">
-                                <i class="fas fa-arrow-up mb-2 d-block style-41417"></i>
+                                <i class="fas fa-arrow-up mb-2 d-block"></i>
                                 Income
                             </a>
                         </div>
                         <div class="col-md-3">
                             <a href="<?= BASE_URL ?>/admin/accounting/expenses" class="btn btn-outline-danger w-100 py-3">
-                                <i class="fas fa-arrow-down mb-2 d-block style-41417"></i>
+                                <i class="fas fa-arrow-down mb-2 d-block"></i>
                                 Expenses
                             </a>
                         </div>
                         <div class="col-md-3">
                             <a href="<?= BASE_URL ?>/admin/finance/bank-accounts" class="btn btn-outline-info w-100 py-3">
-                                <i class="fas fa-university mb-2 d-block style-41417"></i>
+                                <i class="fas fa-university mb-2 d-block"></i>
                                 Bank Accounts
                             </a>
                         </div>

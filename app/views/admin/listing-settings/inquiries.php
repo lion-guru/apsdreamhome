@@ -14,15 +14,15 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="style-43890"><i class="fas fa-inbox me-2"></i>Property Inquiries</h4>
-        <span class="style-87977"><?= number_format($total) ?> total inquiries</span>
+        <h4 ><i class="fas fa-inbox me-2"></i>Property Inquiries</h4>
+        <span ><?= number_format($total) ?> total inquiries</span>
     </div>
 
     <div class="inq-card">
         <?php if (empty($inquiries)): ?>
-        <p class="style-14163">No inquiries found.</p>
+        <p >No inquiries found.</p>
         <?php else: ?>
-        <div class="style-6410">
+        <div >
         <table class="inq-table">
             <thead>
                 <tr>
@@ -43,7 +43,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <td><?= htmlspecialchars($i['property_location'] ?? 'N/A') ?></td>
                     <td><?= htmlspecialchars($i['name'] ?? $i['user_name'] ?? 'Anonymous') ?></td>
                     <td><?= htmlspecialchars($i['phone'] ?? $i['user_phone'] ?? '') ?></td>
-                    <td class="style-49903"><?= htmlspecialchars($i['message'] ?? '') ?></td>
+                    <td ><?= htmlspecialchars($i['message'] ?? '') ?></td>
                     <td><?= htmlspecialchars($i['created_at'] ?? '') ?></td>
                 </tr>
                 <?php endforeach; ?>
@@ -56,13 +56,13 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             <nav>
                 <ul class="pagination pagination-sm">
                     <?php if ($page > 1): ?>
-                    <li class="page-item"><a class="page-link" href="?page=<?= $page - 1 ?>" class="style-99722">Prev</a></li>
+                    <li class="page-item"><a class="page-link" href="?page=<?= $page - 1 ?>" >Prev</a></li>
                     <?php endif; ?>
                     <?php for ($p = max(1, $page - 2); $p <= min($totalPages, $page + 2); $p++): ?>
-                    <li class="page-item <?= $p === $page ? 'active' : '' ?>"><a class="page-link" href="?page=<?= $p ?>" class="style-67855"><?= $p ?></a></li>
+                    <li class="page-item <?= $p === $page ? 'active' : '' ?>"><a class="page-link" href="?page=<?= $p ?>" ><?= $p ?></a></li>
                     <?php endfor; ?>
                     <?php if ($page < $totalPages): ?>
-                    <li class="page-item"><a class="page-link" href="?page=<?= $page + 1 ?>" class="style-99722">Next</a></li>
+                    <li class="page-item"><a class="page-link" href="?page=<?= $page + 1 ?>" >Next</a></li>
                     <?php endif; ?>
                 </ul>
             </nav>

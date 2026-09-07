@@ -484,7 +484,7 @@ document.addEventListener('DOMContentLoaded', function(){
                 <div class="ps-card-wrap project-card-item" data-location="<?= strtolower($project['city'] ?? '') ?>">
                     <div class="ps-card">
                         <div class="ps-card-img">
-                            <img loading="lazy" src="<?= BASE_URL . $imgPath ?>"
+                            <img loading="lazy" src="<?= BASE_URL . $imgPath?>"
                                 alt="<?= htmlspecialchars($projectTitle ?? '') ?>"
                                 onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
                             <div class="ps-card-img-grad"></div>
@@ -817,7 +817,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     <div class="progress-bar bg-primary" id="goldBar" ></div>
                 </div>
             </div>
-            <img src="<?php echo BASE_URL; ?>/assets/images/hero/luxury-home-2.jpg"
+            <img src="<?php echo BASE_URL;?>/assets/images/hero/luxury-home-2.jpg"
                 alt="<?= __('home_growth_calculator_title') ?>"
                 class="img-fluid rounded-4 shadow-lg mb-3"
                 onerror="this.onerror=null;this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
@@ -1524,7 +1524,7 @@ document.addEventListener('DOMContentLoaded', function(){
             <!-- Why Invest Details -->
             <div class="row align-items-center mb-5">
                 <div class="col-lg-5 mb-4 mb-lg-0 text-center">
-                    <img src="<?php echo BASE_URL; ?>/assets/images/hero/luxury-home-1.jpg"
+                    <img src="<?php echo BASE_URL;?>/assets/images/hero/luxury-home-1.jpg"
                         alt="<?= __('home_why_real_estate_title') ?>"
                         class="img-fluid rounded-4 shadow-lg"
                         onerror="this.onerror=null;this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
@@ -2125,7 +2125,7 @@ document.addEventListener('DOMContentLoaded', function(){
                         </div>
                         <p class="card-text mb-4 testimonial-text"><?= __('home_testimonial_1') ?></p>
                         <div class="d-flex align-items-center">
-                            <img src="<?php echo BASE_URL; ?>/assets/images/placeholder/hero.svg"
+                            <img src="<?php echo BASE_URL;?>/assets/images/placeholder/hero.svg"
                                 alt="<?= __('home_testimonial_1_name') ?>"
                                 class="rounded-circle me-3" width="50" height="50" >
                             <div>
@@ -2142,7 +2142,7 @@ document.addEventListener('DOMContentLoaded', function(){
                         </div>
                         <p class="card-text mb-4 testimonial-text"><?= __('home_testimonial_2') ?></p>
                         <div class="d-flex align-items-center">
-                            <img src="<?php echo BASE_URL; ?>/assets/images/placeholder/hero.svg"
+                            <img src="<?php echo BASE_URL;?>/assets/images/placeholder/hero.svg"
                                 alt="<?= __('home_testimonial_2_name') ?>"
                                 class="rounded-circle me-3" width="50" height="50" >
                             <div>
@@ -2159,7 +2159,7 @@ document.addEventListener('DOMContentLoaded', function(){
                         </div>
                         <p class="card-text mb-4 testimonial-text"><?= __('home_testimonial_3') ?></p>
                         <div class="d-flex align-items-center">
-                            <img src="<?php echo BASE_URL; ?>/assets/images/placeholder/hero.svg"
+                            <img src="<?php echo BASE_URL;?>/assets/images/placeholder/hero.svg"
                                 alt="<?= __('home_testimonial_3_name') ?>"
                                 class="rounded-circle me-3" width="50" height="50" >
                             <div>

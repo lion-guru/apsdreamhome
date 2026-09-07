@@ -680,4 +680,13 @@ class PageController extends BaseController
             header('Location: /apsdreamhome/'); exit;
         }
     }
+
+    public function tenantSignup() {
+        $viewPath = APP_PATH . '/views/pages/tenant_signup.php';
+        if (file_exists($viewPath)) {
+            include $viewPath;
+        } else {
+            header('Location: /apsdreamhome/pricing'); exit;
+        }
+    }
 }

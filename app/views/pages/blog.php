@@ -1,5 +1,5 @@
 <!-- Hero Section -->
-<section class="premium-hero page-hero position-relative style-43150">
+<section class="premium-hero page-hero position-relative">
     <div class="hero-overlay"></div>
     <div class="container position-relative z-1">
         <div class="row justify-content-center">
@@ -44,12 +44,12 @@
                 <p class="mb-4 text-white-50"><?= __('blog_newsletter_desc') ?></p>
                 <form class="d-flex gap-2" id="blogNewsletterForm">
     <?php echo CSRFProtection::csrfField(); ?>
-                    <input type="email" class="form-control" name="email" placeholder="<?= __('blog_newsletter_ph_email') ?>" required class="style-2723">
-                    <button type="submit" class="btn btn-gold px-4 fw-bold style-2723">
+                    <input type="email" class="form-control" name="email" placeholder="<?= __('blog_newsletter_ph_email') ?>" required >
+                    <button type="submit" class="btn btn-gold px-4 fw-bold">
                         <i class="fas fa-envelope me-1"></i><?= __('subscribe') ?>
                     </button>
                 </form>
-                <div id="blogNewsletterMsg" class="mt-2 small style-2248"></div>
+                <div id="blogNewsletterMsg" class="mt-2 small"></div>
             </div>
         </div>
     </div>
@@ -87,7 +87,7 @@
                                 ? $featuredImage
                                 : get_asset_url($featuredImage);
                             ?>
-                            <img src="<?= htmlspecialchars($featuredImageUrl ?? '') ?>" class="img-fluid card-img-top blog-image" alt="<?= htmlspecialchars($blog_posts[0]['title'] ?? '') ?>" class="style-74755">
+                            <img src="<?= htmlspecialchars($featuredImageUrl ?? '') ?>" class="img-fluid card-img-top blog-image" alt="<?= htmlspecialchars($blog_posts[0]['title'] ?? '') ?>" >
                             <div class="category-badge">
                                 <?php echo ucfirst(htmlspecialchars($blog_posts[0]['category'] ?? '')); ?>
                             </div>
@@ -128,7 +128,7 @@
                             $postImage = !empty($blog_posts[$i]['featured_image']) ? $blog_posts[$i]['featured_image'] : get_asset_url('assets/images/placeholder/property.svg');
                             $postImageUrl = str_starts_with($postImage, 'http') ? $postImage : get_asset_url($postImage);
                             ?>
-                            <img src="<?= htmlspecialchars($postImageUrl ?? '') ?>" class="img-fluid card-img-top blog-image" alt="<?= htmlspecialchars($blog_posts[$i]['title'] ?? '') ?>" class="style-62479">
+                            <img src="<?= htmlspecialchars($postImageUrl ?? '') ?>" class="img-fluid card-img-top blog-image" alt="<?= htmlspecialchars($blog_posts[$i]['title'] ?? '') ?>" >
                             <div class="category-badge">
                                 <?php echo ucfirst(htmlspecialchars($blog_posts[$i]['category'] ?? '')); ?>
                             </div>

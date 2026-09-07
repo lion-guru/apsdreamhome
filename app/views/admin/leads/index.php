@@ -116,21 +116,21 @@ $base = BASE_URL ?? '';
     </div>
 
     <!-- Bulk Actions Bar (hidden by default) -->
-    <div class="card border-0 shadow-sm mb-3" id="bulkActionsBar" style="display:none">
+    <div class="card border-0 shadow-sm mb-3 d-none" id="bulkActionsBar">
         <div class="card-body py-2 d-flex align-items-center gap-3 flex-wrap">
             <span class="fw-semibold"><span id="selectedCount">0</span> selected</span>
-            <select id="bulkAction" class="form-select form-select-sm" style="min-width:140px">
+            <select id="bulkAction" class="form-select form-select-sm min-w-140">
                 <option value="">Bulk Actions...</option>
                 <option value="status">Change Status</option>
                 <option value="assign">Assign To</option>
                 <option value="delete">Delete Selected</option>
             </select>
-            <select id="bulkStatus" class="form-select form-select-sm" style="display:none;min-width:140px">
+            <select id="bulkStatus" class="form-select form-select-sm d-none min-w-140">
                 <?php foreach (['new','contacted','qualified','proposal','negotiation','converted','closed','lost','dead'] as $s): ?>
                     <option value="<?= $s ?>"><?= ucfirst($s) ?></option>
                 <?php endforeach; ?>
             </select>
-            <select id="bulkAssign" class="form-select form-select-sm" style="display:none;min-width:160px">
+            <select id="bulkAssign" class="form-select form-select-sm d-none min-w-160">
                 <option value="">Select User...</option>
                 <?php
                 $bulkUsers = $assignees ?? $users ?? [];
@@ -141,8 +141,8 @@ $base = BASE_URL ?? '';
                     <option value="<?= $u['id'] ?>"><?= htmlspecialchars($u['name'] ?? '') ?></option>
                 <?php endforeach; ?>
             </select>
-            <button type="button" class="btn btn-sm btn-warning" id="bulkApply" style="display:none">Apply</button>
-            <button type="button" class="btn btn-sm btn-outline-danger" id="bulkDelete" style="display:none">Delete</button>
+            <button type="button" class="btn btn-sm btn-warning d-none" id="bulkApply">Apply</button>
+            <button type="button" class="btn btn-sm btn-outline-danger d-none" id="bulkDelete">Delete</button>
         </div>
     </div>
 
@@ -278,7 +278,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateUI() {
         const count = getSelected().length;
         countEl.textContent = count;
-        bulkBar.style.display = count > 0 ? 'block' : 'none';
+        bulkBar.classList.toggle('d-none', count === 0);
+        bulkBar.classList.toggle('d-flex', count > 0);
     }
 
     if (selectAll) selectAll.addEventListener('change', function() {
@@ -288,10 +289,14 @@ document.addEventListener('DOMContentLoaded', function() {
     checkboxes.forEach(cb => cb.addEventListener('change', updateUI));
 
     bulkAction.addEventListener('change', function() {
-        bulkStatus.style.display = this.value === 'status' ? 'inline-block' : 'none';
-        bulkAssign.style.display = this.value === 'assign' ? 'inline-block' : 'none';
-        bulkApply.style.display = this.value !== '' && this.value !== 'delete' ? 'inline-block' : 'none';
-        bulkDelete.style.display = this.value === 'delete' ? 'inline-block' : 'none';
+        bulkStatus.classList.toggle('d-none', this.value !== 'status');
+        bulkStatus.classList.toggle('d-inline-block', this.value === 'status');
+        bulkAssign.classList.toggle('d-none', this.value !== 'assign');
+        bulkAssign.classList.toggle('d-inline-block', this.value === 'assign');
+        bulkApply.classList.toggle('d-none', this.value === '' || this.value === 'delete');
+        bulkApply.classList.toggle('d-inline-block', this.value !== '' && this.value !== 'delete');
+        bulkDelete.classList.toggle('d-none', this.value !== 'delete');
+        bulkDelete.classList.toggle('d-inline-block', this.value === 'delete');
     });
 
     bulkApply.addEventListener('click', function() {

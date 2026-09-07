@@ -295,16 +295,14 @@ class MLMDashboardController extends BaseController
                 exit;
             }
 
-            // Get commission history
-            // mlm_commissions has no from/to_associate_id/booking_id — earner is associate_id,
-            // property link via property_id
+            // Get commission history from mlm_commission_ledger (canonical)
             $stmt = $pdo->prepare("
-                SELECT c.*, c.commission_amount AS amount,
+                SELECT l.*, l.amount AS amount,
                        p.title as property_title
-                FROM mlm_commissions c
-                LEFT JOIN properties p ON c.property_id = p.id
-                WHERE c.associate_id = ?
-                ORDER BY c.created_at DESC
+                FROM mlm_commission_ledger l
+                LEFT JOIN properties p ON l.property_id = p.id
+                WHERE l.beneficiary_user_id = ?
+                ORDER BY l.created_at DESC
                 LIMIT 100
             ");
             $stmt->execute([$associate['id']]);
@@ -363,18 +361,24 @@ class MLMDashboardController extends BaseController
             $stmt->execute($params);
             $payouts = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-            // Get pending payout amount
+            // Get pending payout amount from mlm_commission_ledger (canonical)
             $stmt = $pdo->prepare("
-                SELECT SUM(commission_amount) as pending_amount
-                FROM mlm_commissions
-                WHERE associate_id = ? AND status = 'pending'
+                SELECT SUM(amount) as pending_amount
+                FROM mlm_commission_ledger
+                WHERE beneficiary_user_id = ? AND status = 'pending'
             ");
             $stmt->execute([$associate['id']]);
             $pending = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-            // Get bank details
-            // mlm_bank_details table does not exist — no bank details available
+            // Get bank details from user_bank_accounts
             $bankDetails = null;
+            try {
+                $stmt = $pdo->prepare("SELECT * FROM user_bank_accounts WHERE user_id = ? AND is_primary = 1");
+                $stmt->execute([$userId]);
+                $bankDetails = $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
+            } catch (\Throwable $e) {
+                // user_bank_accounts may not have entries
+            }
 
             $this->view('mlm/payouts', [
                 'title' => 'My Payouts',
@@ -415,11 +419,11 @@ class MLMDashboardController extends BaseController
                 exit;
             }
 
-            // Get pending commission amount
+            // Get pending commission amount from mlm_commission_ledger (canonical)
             $stmt = $pdo->prepare("
-                SELECT SUM(commission_amount) as total
-                FROM mlm_commissions
-                WHERE associate_id = ? AND status = 'pending'
+                SELECT SUM(amount) as total
+                FROM mlm_commission_ledger
+                WHERE beneficiary_user_id = ? AND status = 'pending'
             ");
             $stmt->execute([$associate['id']]);
             $result = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -432,9 +436,9 @@ class MLMDashboardController extends BaseController
                 exit;
             }
 
-            // Get bank details
-            $stmt = $pdo->prepare("SELECT id FROM mlm_bank_details WHERE associate_id = ?");
-            $stmt->execute([$associate['id']]);
+            // Get bank details from user_bank_accounts
+            $stmt = $pdo->prepare("SELECT id FROM user_bank_accounts WHERE user_id = ? AND is_primary = 1");
+            $stmt->execute([$userId]);
             $bank = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if (!$bank) {
@@ -451,11 +455,11 @@ class MLMDashboardController extends BaseController
             $stmt->execute([TenantContext::getId() ?? 1, $associate['id'], $amount]);
             $payoutId = $pdo->lastInsertId();
 
-            // Update commissions to 'processing'
+            // Update commissions to 'processing' in mlm_commission_ledger (canonical)
             $stmt = $pdo->prepare("
-                UPDATE mlm_commissions
-                SET status = 'processing', payout_id = ?
-                WHERE associate_id = ? AND status = 'pending'
+                UPDATE mlm_commission_ledger
+                SET status = 'pending', payout_batch_id = ?
+                WHERE beneficiary_user_id = ? AND status = 'pending'
             ");
             $stmt->execute([$payoutId, $associate['id']]);
 
@@ -618,11 +622,11 @@ class MLMDashboardController extends BaseController
 
         $stmt = $pdo->prepare("
             SELECT 
-                SUM(CASE WHEN status = 'paid' THEN commission_amount ELSE 0 END) as paid,
-                SUM(CASE WHEN status = 'pending' THEN commission_amount ELSE 0 END) as pending,
-                SUM(commission_amount) as total
-            FROM mlm_commissions
-            WHERE associate_id = ?
+                SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) as paid,
+                SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) as pending,
+                SUM(amount) as total
+            FROM mlm_commission_ledger
+            WHERE beneficiary_user_id = ?
         ");
         $stmt->execute([$associateId]);
         return $stmt->fetch(\PDO::FETCH_ASSOC);

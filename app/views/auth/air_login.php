@@ -95,7 +95,7 @@ $base = BASE_URL;
     <div class="login-wrapper">
         <!-- Benefits Panel -->
         <div class="benefits-panel d-none d-lg-block">
-            <div class="benefits-title"><i class="fas fa-wind style-5793"></i> Air Login</div>
+            <div class="benefits-title"><i class="fas fa-wind"></i> Air Login</div>
             <div class="benefits-subtitle">Login to your APS Dream Home account without a password — just your email or phone number.</div>
 
             <div class="benefit-item">

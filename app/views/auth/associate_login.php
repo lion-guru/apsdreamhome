@@ -181,9 +181,9 @@ $base = BASE_URL;
                     <span class="label">Track C (Milestone)</span>
                     <span class="value">₹2,000</span>
                 </div>
-                <div class="earnings-row style-24496">
-                    <span class="label style-14635">Total Earning</span>
-                    <span class="value style-36688">₹20,000</span>
+                <div class="earnings-row">
+                    <span class="label">Total Earning</span>
+                    <span class="value">₹20,000</span>
                 </div>
             </div>
 
@@ -270,7 +270,7 @@ $base = BASE_URL;
                     <div class="form-options">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="remember" id="remember">
-                            <label class="form-check-label" for="remember" class="style-27797"><?php echo __('auth_remember_me', 'Remember me'); ?></label>
+                            <label class="form-check-label" for="remember" ><?php echo __('auth_remember_me', 'Remember me'); ?></label>
                         </div>
                         <a href="<?php echo $base; ?>/associate/forgot-password" class="forgot-link"><?php echo __('auth_forgot_password', 'Forgot Password?'); ?></a>
                     </div>

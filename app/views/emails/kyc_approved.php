@@ -18,29 +18,29 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
 }
 </style>
 </head>
-<body class="style-51511">
+<body >
 <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#f4f6fb">
   <tr>
-    <td align="center" class="style-56039">
-      <table role="presentation" class="container" border="0" cellpadding="0" cellspacing="0" width="600" class="style-99000">
+    <td align="center" >
+      <table role="presentation" class="container" border="0" cellpadding="0" cellspacing="0" width="600" >
         <!-- Header -->
         <tr>
-          <td bgcolor="#10b981" align="center" class="style-87574">
-            <div class="style-90702">&#10003;</div>
-            <h1 class="h1-mobile style-56865">KYC Verified Successfully</h1>
-            <p class="style-9233">Your identity has been verified</p>
+          <td bgcolor="#10b981" align="center" >
+            <div >&#10003;</div>
+            <h1 class="h1-mobile">KYC Verified Successfully</h1>
+            <p >Your identity has been verified</p>
           </td>
         </tr>
         <!-- Body -->
         <tr>
-          <td class="px-mobile style-68782">
-            <h2 class="style-80102">Hi {{user_name}},</h2>
-            <p class="style-28596">
-              Great news! Your KYC (Know Your Customer) verification has been <strong class="style-54781">approved</strong>.
+          <td class="px-mobile">
+            <h2 >Hi {{user_name}},</h2>
+            <p >
+              Great news! Your KYC (Know Your Customer) verification has been <strong >approved</strong>.
             </p>
-            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" class="style-77691">
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" >
               <tr>
-                <td class="style-65704">
+                <td >
                   <strong>Verification Details:</strong><br>
                   PAN: {{pan_number}}<br>
                   Aadhaar: {{aadhaar_last4}}<br>
@@ -48,26 +48,26 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
                 </td>
               </tr>
             </table>
-            <p class="style-28596">
+            <p >
               You can now proceed with property bookings, payments, and other services without restrictions.
             </p>
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
               <tr>
-                <td align="center" class="style-43583">
-                  <a href="{{dashboard_url}}" class="button-mobile style-59532">Go to Dashboard</a>
+                <td align="center" >
+                  <a href="{{dashboard_url}}" class="button-mobile">Go to Dashboard</a>
                 </td>
               </tr>
             </table>
-            <p class="style-25661">
+            <p >
               Best regards,<br><strong>The APS Dream Home Team</strong>
             </p>
           </td>
         </tr>
         <!-- Footer -->
         <tr>
-          <td bgcolor="#f7fafc" class="style-89423">
-            <p class="style-40082">APS Dream Home &nbsp;|&nbsp; {{company_phone}} &nbsp;|&nbsp; {{company_email}}</p>
-            <p class="style-75003">&copy; {{year}} APS Dream Home. All rights reserved.</p>
+          <td bgcolor="#f7fafc" >
+            <p >APS Dream Home &nbsp;|&nbsp; {{company_phone}} &nbsp;|&nbsp; {{company_email}}</p>
+            <p >&copy; {{year}} APS Dream Home. All rights reserved.</p>
           </td>
         </tr>
       </table>

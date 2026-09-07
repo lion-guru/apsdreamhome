@@ -209,7 +209,7 @@ $active_page = 'dashboard';
                     <i class="fas fa-bars" aria-hidden="true"></i>
                 </button>
                 <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb mb-0 style-93188">
+                    <ol class="breadcrumb mb-0">
                         <li class="breadcrumb-item"><a href="<?php echo e($base); ?>/agent/dashboard">Agent</a></li>
                         <li class="breadcrumb-item active">Dashboard</li>
                     </ol>
@@ -222,10 +222,10 @@ $active_page = 'dashboard';
                     <div class="user-box" data-bs-toggle="dropdown">
                         <div class="user-av"><?php echo strtoupper(substr($agent_name,0,1)); ?></div>
                         <div>
-                            <div class="style-46756"><?php echo htmlspecialchars($agent_name ?? ''); ?></div>
-                            <div class="style-46475"><?php echo htmlspecialchars($_SESSION['user_email'] ?? ''); ?></div>
+                            <div ><?php echo htmlspecialchars($agent_name ?? ''); ?></div>
+                            <div ><?php echo htmlspecialchars($_SESSION['user_email'] ?? ''); ?></div>
                         </div>
-                        <i class="fas fa-chevron-down ms-2 style-46475"></i>
+                        <i class="fas fa-chevron-down ms-2"></i>
                     </div>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="<?php echo e($base); ?>/agent/profile"><i class="fas fa-user me-2"></i>Profile</a></li>
@@ -242,14 +242,14 @@ $active_page = 'dashboard';
             
             <?php if (!empty($commission_summary['missed_commissions'])): ?>
             <!-- FOMO Strategy: Missed Commissions Banner -->
-            <div class="alert alert-danger alert-dismissible fade show mb-4 border-0 d-flex align-items-center" role="alert" class="style-38485">
-                <div class="stat-icon red me-3 flex-shrink-0 style-83006">
+            <div class="alert alert-danger alert-dismissible fade show mb-4 border-0 d-flex align-items-center" role="alert" >
+                <div class="stat-icon red me-3 flex-shrink-0">
                     <i class="fas fa-exclamation-triangle"></i>
                 </div>
                 <div>
-                    <h5 class="alert-heading fw-bold mb-1 style-8077">You Missed ₹<?= e($commission_summary['total_missed']) ?> in Commissions!</h5>
+                    <h5 class="alert-heading fw-bold mb-1">You Missed ₹<?= e($commission_summary['total_missed']) ?> in Commissions!</h5>
                     <p class="mb-0 text-danger">Your account is currently inactive. You missed out on commissions this month because of it. 
-                        <a href="<?php echo e($base); ?>/agent/renew" class="fw-bold text-decoration-underline style-29076">Activate your account now</a> to prevent losing more money!
+                        <a href="<?php echo e($base); ?>/agent/renew" class="fw-bold text-decoration-underline">Activate your account now</a> to prevent losing more money!
                     </p>
                 </div>
                 <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -291,12 +291,12 @@ $active_page = 'dashboard';
 
             <!-- FOMO Strategy: Missed Commissions Banner -->
             <?php if (!empty($commission_summary['missed_commissions']) && count($commission_summary['missed_commissions']) > 0): ?>
-            <div class="alert alert-warning alert-dismissible fade show mb-4 d-flex align-items-center style-85605">
+            <div class="alert alert-warning alert-dismissible fade show mb-4 d-flex align-items-center">
                 <div class="me-3 fs-3 text-warning">
                     <i class="fas fa-exclamation-triangle"></i>
                 </div>
                 <div>
-                    <h5 class="alert-heading text-warning mb-1 style-58498">Action Required: Missed Commissions!</h5>
+                    <h5 class="alert-heading text-warning mb-1">Action Required: Missed Commissions!</h5>
                     <p class="mb-0 text-dark">
                         You have missed out on <strong>₹<?= e($commission_summary['total_missed'] ?? '0.00') ?></strong> in network commissions this month because your ID is currently inactive.
                         <br>
@@ -432,7 +432,7 @@ $active_page = 'dashboard';
                                     <div class="fw-bold text-info">₹<?= e($commission_summary['total_network'] ?? '0.00') ?></div>
                                 </div>
                                 <?php if (!empty($commission_summary['total_missed']) && $commission_summary['total_missed'] > 0): ?>
-                                <div class="commission-item style-25241">
+                                <div class="commission-item">
                                     <div class="text-muted small">Missed (Inactive ID)</div>
                                     <div class="fw-bold text-danger">₹<?= e($commission_summary['total_missed']) ?></div>
                                 </div>
@@ -711,9 +711,9 @@ $active_page = 'dashboard';
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div class="d-flex align-items-center gap-3">
                                             <?php if (!empty($prop['image'])): ?>
-                                            <img src="<?php echo htmlspecialchars($prop['image'] ?? ''); ?>" alt="" class="style-97710">
+                                            <img src="<?php echo htmlspecialchars($prop['image'] ?? '');?>" alt="" >
                                             <?php else: ?>
-                                            <div class="style-44705">
+                                            <div >
                                                 <i class="fas fa-building text-muted"></i>
                                             </div>
                                             <?php endif; ?>

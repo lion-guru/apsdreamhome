@@ -83,7 +83,7 @@
                     <h6 class="mb-0 fw-bold"><i class="fas fa-eye me-2"></i>Message Preview</h6>
                 </div>
                 <div class="card-body">
-                    <div id="messagePreview" class="p-3 bg-light rounded style-92119">
+                    <div id="messagePreview" class="p-3 bg-light rounded">
                         <em class="text-muted">Type your message to see a preview with sample data</em>
                     </div>
                 </div>
@@ -107,9 +107,9 @@
                 </div>
                 <div class="card-body p-0">
                     <?php foreach (array_slice($recent_campaigns, 0, 5) as $c): ?>
-                        <div class="px-3 py-2 style-95886">
+                        <div class="px-3 py-2">
                             <div class="d-flex justify-content-between">
-                                <span class="fw-semibold style-87981"><?= htmlspecialchars(mb_strimwidth($c['name'] ?? '', 0, 40, '...')) ?></span>
+                                <span class="fw-semibold"><?= htmlspecialchars(mb_strimwidth($c['name'] ?? '', 0, 40, '...')) ?></span>
                                 <span class="badge bg-<?= ($c['status'] ?? '') === 'sent' ? 'success' : 'secondary' ?>"><?= ucfirst($c['status'] ?? '') ?></span>
                             </div>
                             <small class="text-muted"><?= (int)($c['sent_count'] ?? 0) ?> sent &middot; <?= date('d M', strtotime($c['created_at'])) ?></small>
@@ -164,9 +164,9 @@ function previewRecipients() {
         if (data.total > 0) {
             let html = '<div class="mb-2"><span class="badge bg-primary fs-6">' + data.total + '</span> leads will receive this message</div>';
             data.leads.forEach(l => {
-                html += '<div class="d-flex align-items-center gap-2 py-1 style-95886">';
-                html += '<div class="style-54603">' + (l.name || 'N')[0].toUpperCase() + '</div>';
-                html += '<div class="style-87981"><strong>' + (l.name || '') + '</strong><br><small class="text-muted">' + (l.phone || '') + '</small></div>';
+                html += '<div class="d-flex align-items-center gap-2 py-1">';
+                html += '<div >' + (l.name || 'N')[0].toUpperCase() + '</div>';
+                html += '<div ><strong>' + (l.name || '') + '</strong><br><small class="text-muted">' + (l.phone || '') + '</small></div>';
                 html += '</div>';
             });
             if (data.sample > 20) html += '<small class="text-muted mt-2 d-block">Showing 20 of ' + data.total + '</small>';

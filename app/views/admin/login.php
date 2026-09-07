@@ -39,10 +39,10 @@
             </div>
         <?php endif; ?>
 
-        <div class="login-header style-65235">
-            <div class="panel-title style-52663">APS Dream Homes</div>
-            <div class="style-90235">Admin Panel Login</div>
-            <div class="panel-desc style-55278">Welcome! Only authorized personnel may proceed.</div>
+        <div class="login-header">
+            <div class="panel-title">APS Dream Homes</div>
+            <div >Admin Panel Login</div>
+            <div class="panel-desc">Welcome! Only authorized personnel may proceed.</div>
         </div>
 
         <?php if (!empty($error)): ?>

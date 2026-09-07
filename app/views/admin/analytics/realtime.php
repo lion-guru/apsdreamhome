@@ -13,148 +13,148 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
 ?>
 
 <!-- Title Bar -->
-<div class="style-30464">
+<div >
     <div>
-        <h1 class="style-79140">
-            <i class="fas fa-chart-line style-78618"></i>Real-Time Analytics
+        <h1 >
+            <i class="fas fa-chart-line"></i>Real-Time Analytics
         </h1>
-        <p class="style-61566">
+        <p >
             <span id="rt-updated">Last updated: <?= htmlspecialchars($updated ?? '') ?></span>
-            <span id="rt-ws-status" class="style-56313">
-                <i class="fas fa-circle style-338"></i> Connecting&hellip;
+            <span id="rt-ws-status" >
+                <i class="fas fa-circle"></i> Connecting&hellip;
             </span>
-            <span id="rt-refresh-badge" class="style-14210">
+            <span id="rt-refresh-badge" >
                 <i class="fas fa-sync-alt fa-spin"></i> Refreshing&hellip;
             </span>
         </p>
     </div>
-    <div class="style-85880">
-        <button onclick="rtRefreshAll()" class="btn btn-sm btn-outline-primary style-69165">
+    <div >
+        <button onclick="rtRefreshAll()" class="btn btn-sm btn-outline-primary">
             <i class="fas fa-sync-alt"></i> Refresh Now
         </button>
-        <a href="<?= BASE_URL ?>/admin/erp" class="btn btn-sm btn-outline-secondary style-69165">
+        <a href="<?= BASE_URL ?>/admin/erp" class="btn btn-sm btn-outline-secondary">
             <i class="fas fa-th-large"></i> ERP Overview
         </a>
     </div>
 </div>
 
 <!-- ROW 1 — 4 KPI Cards -->
-<div id="rt-kpi-cards" class="style-94863">
+<div id="rt-kpi-cards" >
 
     <!-- Leads Today -->
-    <div class="aps-cp-card style-95460">
-        <div class="aps-cp-card-body style-67049">
-            <div class="style-67208">
-                <div class="style-25782">
-                    <i class="fas fa-user-plus style-50292"></i>
+    <div class="aps-cp-card">
+        <div class="aps-cp-card-body">
+            <div >
+                <div >
+                    <i class="fas fa-user-plus"></i>
                 </div>
-                <span class="style-82769">Leads Today</span>
+                <span >Leads Today</span>
             </div>
-            <div id="rt-kpi-leads" class="style-89425"><?= (int)($m['leads_today'] ?? 0) ?></div>
-            <div class="style-28983">New inquiries received</div>
+            <div id="rt-kpi-leads" ><?= (int)($m['leads_today'] ?? 0) ?></div>
+            <div >New inquiries received</div>
         </div>
     </div>
 
     <!-- Bookings This Month -->
-    <div class="aps-cp-card style-74913">
-        <div class="aps-cp-card-body style-67049">
-            <div class="style-67208">
-                <div class="style-66150">
-                    <i class="fas fa-file-signature style-40926"></i>
+    <div class="aps-cp-card">
+        <div class="aps-cp-card-body">
+            <div >
+                <div >
+                    <i class="fas fa-file-signature"></i>
                 </div>
-                <span class="style-88669">Bookings This Month</span>
+                <span >Bookings This Month</span>
             </div>
-            <div id="rt-kpi-bookings" class="style-89425"><?= (int)($m['bookings_month'] ?? 0) ?></div>
-            <div class="style-28983">Active plot bookings</div>
+            <div id="rt-kpi-bookings" ><?= (int)($m['bookings_month'] ?? 0) ?></div>
+            <div >Active plot bookings</div>
         </div>
     </div>
 
     <!-- Revenue This Month -->
-    <div class="aps-cp-card style-24973">
-        <div class="aps-cp-card-body style-67049">
-            <div class="style-67208">
-                <div class="style-57731">
-                    <i class="fas fa-rupee-sign style-24030"></i>
+    <div class="aps-cp-card">
+        <div class="aps-cp-card-body">
+            <div >
+                <div >
+                    <i class="fas fa-rupee-sign"></i>
                 </div>
-                <span class="style-39510">Revenue This Month</span>
+                <span >Revenue This Month</span>
             </div>
-            <div id="rt-kpi-revenue" class="style-89425"><?= $fmt($m['revenue_month'] ?? 0) ?></div>
-            <div class="style-28983">Booking value booked</div>
+            <div id="rt-kpi-revenue" ><?= $fmt($m['revenue_month'] ?? 0) ?></div>
+            <div >Booking value booked</div>
         </div>
     </div>
 
     <!-- Collections Today -->
-    <div class="aps-cp-card style-22499">
-        <div class="aps-cp-card-body style-67049">
-            <div class="style-67208">
-                <div class="style-28637">
-                    <i class="fas fa-hand-holding-usd style-15659"></i>
+    <div class="aps-cp-card">
+        <div class="aps-cp-card-body">
+            <div >
+                <div >
+                    <i class="fas fa-hand-holding-usd"></i>
                 </div>
-                <span class="style-70531">Collections Today</span>
+                <span >Collections Today</span>
             </div>
-            <div id="rt-kpi-collections" class="style-89425"><?= $fmt($m['collections_today'] ?? 0) ?></div>
-            <div class="style-28983">Cash receipts collected</div>
+            <div id="rt-kpi-collections" ><?= $fmt($m['collections_today'] ?? 0) ?></div>
+            <div >Cash receipts collected</div>
         </div>
     </div>
 </div>
 
 <!-- ROW 2 — Charts (2Ã—2 grid) -->
-<div class="style-38908">
+<div >
 
     <!-- Chart 1: Leads over last 7 days (Line) -->
     <div class="aps-cp-card">
-        <div class="aps-cp-card-header style-48741">
-            <span><i class="fas fa-chart-area style-9981"></i>Leads — Last 7 Days</span>
-            <span class="badge bg-primary-subtle text-primary-emphasis style-56522">LINE</span>
+        <div class="aps-cp-card-header">
+            <span><i class="fas fa-chart-area"></i>Leads — Last 7 Days</span>
+            <span class="badge bg-primary-subtle text-primary-emphasis">LINE</span>
         </div>
-        <div class="aps-cp-card-body style-47072">
+        <div class="aps-cp-card-body">
             <canvas id="rtChartLeads7d"></canvas>
         </div>
     </div>
 
     <!-- Chart 2: Revenue by Colony (Bar) -->
     <div class="aps-cp-card">
-        <div class="aps-cp-card-header style-48741">
-            <span><i class="fas fa-chart-bar style-28560"></i>Revenue by Colony</span>
-            <span class="badge bg-success-subtle text-success-emphasis style-56522">BAR</span>
+        <div class="aps-cp-card-header">
+            <span><i class="fas fa-chart-bar"></i>Revenue by Colony</span>
+            <span class="badge bg-success-subtle text-success-emphasis">BAR</span>
         </div>
-        <div class="aps-cp-card-body style-47072">
+        <div class="aps-cp-card-body">
             <canvas id="rtChartRevenueColony"></canvas>
         </div>
     </div>
 
     <!-- Chart 3: Lead Sources (Doughnut) -->
     <div class="aps-cp-card">
-        <div class="aps-cp-card-header style-48741">
-            <span><i class="fas fa-chart-pie style-22590"></i>Lead Sources Breakdown</span>
-            <span class="badge bg-purple-subtle text-purple-emphasis style-56522">DOUGHNUT</span>
+        <div class="aps-cp-card-header">
+            <span><i class="fas fa-chart-pie"></i>Lead Sources Breakdown</span>
+            <span class="badge bg-purple-subtle text-purple-emphasis">DOUGHNUT</span>
         </div>
-        <div class="aps-cp-card-body style-47072">
+        <div class="aps-cp-card-body">
             <canvas id="rtChartLeadSources"></canvas>
         </div>
     </div>
 
     <!-- Chart 4: Booking Trend 30 days (Line) -->
     <div class="aps-cp-card">
-        <div class="aps-cp-card-header style-48741">
-            <span><i class="fas fa-chart-line style-39559"></i>Booking Trend — Last 30 Days</span>
-            <span class="badge bg-warning-subtle text-warning-emphasis style-56522">LINE</span>
+        <div class="aps-cp-card-header">
+            <span><i class="fas fa-chart-line"></i>Booking Trend — Last 30 Days</span>
+            <span class="badge bg-warning-subtle text-warning-emphasis">LINE</span>
         </div>
-        <div class="aps-cp-card-body style-47072">
+        <div class="aps-cp-card-body">
             <canvas id="rtChartBookings30d"></canvas>
         </div>
     </div>
 </div>
 
 <!-- ROW 3 — Live Activity Feed -->
-<div class="aps-cp-card style-99970">
-    <div class="aps-cp-card-header style-48741">
-        <span><i class="fas fa-stream style-26991"></i>Live Activity Feed</span>
-        <span class="badge bg-light text-dark style-56522" id="rt-activity-count"><?= count($acts) ?> events</span>
+<div class="aps-cp-card">
+    <div class="aps-cp-card-header">
+        <span><i class="fas fa-stream"></i>Live Activity Feed</span>
+        <span class="badge bg-light text-dark" id="rt-activity-count"><?= count($acts) ?> events</span>
     </div>
-    <div class="aps-cp-card-body style-86260" id="rt-activity-list">
+    <div class="aps-cp-card-body" id="rt-activity-list">
         <?php if (empty($acts)): ?>
-            <p class="style-2934">No recent activity.</p>
+            <p >No recent activity.</p>
         <?php else: ?>
             <?php foreach ($acts as $act): ?>
                 <?php
@@ -164,15 +164,15 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
                     $actIcon = $act['icon'] ?? 'fa-circle';
                     $actColor = $act['color'] ?? '#64748b';
                 ?>
-                <div class="style-78578">
-                    <div class="style-79572">
-                        <i class="fas <?= $actIcon ?> style-59362"></i>
+                <div >
+                    <div >
+                        <i class="fas <?= $actIcon ?>"></i>
                     </div>
-                    <div class="style-65975">
-                        <div class="style-36189"><?= $actType ?></div>
-                        <div class="style-57020"><?= $actDesc ?></div>
+                    <div >
+                        <div ><?= $actType ?></div>
+                        <div ><?= $actDesc ?></div>
                     </div>
-                    <div class="style-38661"><?= $actTime ?></div>
+                    <div ><?= $actTime ?></div>
                 </div>
             <?php endforeach; ?>
         <?php endif; ?>
@@ -426,7 +426,7 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
         if (!list) return;
 
         if (!activities || activities.length === 0) {
-            list.innerHTML = '<p class="style-2934">No recent activity.</p>';
+            list.innerHTML = '<p >No recent activity.</p>';
             if (count) count.textContent = '0 events';
             return;
         }
@@ -438,12 +438,12 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
             var time  = (a.created_at || '').replace(/</g, '&lt;');
             var icon  = a.icon  || 'fa-circle';
             var color = a.color || '#64748b';
-            html += '<div class="style-78578">'
-                + '<div class="style-80599">'
-                + '<i class="fas '+icon+' style-54303"></i></div>'
-                + '<div class="style-65975"><div class="style-36189">'+type+'</div>'
-                + '<div class="style-57020">'+desc+'</div></div>'
-                + '<div class="style-38661">'+time+'</div></div>';
+            html += '<div >'
+                + '<div >'
+                + '<i class="fas '+icon+'"></i></div>'
+                + '<div ><div >'+type+'</div>'
+                + '<div >'+desc+'</div></div>'
+                + '<div >'+time+'</div></div>';
         });
         list.innerHTML = html;
         if (count) count.textContent = activities.length + ' events';
@@ -545,9 +545,9 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
         var el = document.getElementById('rt-ws-status');
         if (!el) return;
         if (connected) {
-            el.innerHTML = '<i class="fas fa-circle style-81605"></i> <span class="style-75447">Live</span>';
+            el.innerHTML = '<i class="fas fa-circle"></i> <span >Live</span>';
         } else {
-            el.innerHTML = '<i class="fas fa-circle style-8418"></i> <span class="style-27277">Reconnecting&hellip;</span>';
+            el.innerHTML = '<i class="fas fa-circle"></i> <span >Reconnecting&hellip;</span>';
         }
     }
 

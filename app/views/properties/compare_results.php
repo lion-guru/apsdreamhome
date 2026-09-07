@@ -111,9 +111,9 @@
                     <?php if ($property['primary_image']): ?>
                     <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg"
                          class="card-img-top" alt="<?= htmlspecialchars($property['title'] ?? '') ?>"
-                         class="style-12213">
+                         >
                     <?php else: ?>
-                    <div class="bg-light d-flex align-items-center justify-content-center style-17333">
+                    <div class="bg-light d-flex align-items-center justify-content-center">
                         <i class="fas fa-home fa-3x text-muted"></i>
                     </div>
                     <?php endif; ?>
@@ -208,9 +208,9 @@
                         <table class="table table-bordered mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th class="style-26295">Feature</th>
+                                    <th >Feature</th>
                                     <?php foreach ($properties as $property): ?>
-                                    <th class="style-37463">
+                                    <th >
                                         <?= htmlspecialchars($property['title'] ?? '') ?>
                                     </th>
                                     <?php endforeach; ?>

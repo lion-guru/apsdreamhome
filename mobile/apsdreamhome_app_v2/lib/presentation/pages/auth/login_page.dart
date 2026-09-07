@@ -731,12 +731,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           } else if (label == 'Google') {
             setState(() => _isLoading = true);
             try {
+              
               final result = await GoogleAuthService.signInWithGoogle();
               if (result == null) {
                 if (mounted) {
                   AppWidgets.showInfoSnackBar(
                     context,
-                    'Google Sign-In cancelled or failed. Try again.',
+                    'Google Sign-In was cancelled. Please try again.',
                   );
                 }
                 return;
@@ -767,7 +768,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               if (mounted) {
                 AppWidgets.showErrorSnackBar(
                   context,
-                  'Google Sign-In failed: $e',
+                  'Google Sign-In failed: ${e.toString()}',
                 );
               }
             } finally {

@@ -120,7 +120,7 @@ $early_incentives = $early_incentives ?? [];
         </div>
 
         <!-- Calculation Preview -->
-        <div class="aps-cp-card mt-4" id="calculationPreview" class="style-2248">
+        <div class="aps-cp-card mt-4" id="calculationPreview" >
             <div class="aps-cp-card-header"><i class="fas fa-calculator me-2"></i>Loan Calculation Preview</div>
             <div class="aps-cp-card-body">
                 <div class="row g-3 text-center" id="calcResults">

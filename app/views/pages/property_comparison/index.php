@@ -54,7 +54,7 @@ $view_count = $view_count ?? 0;
                 </button>
             <?php endif; ?>
             <?php if ($count > 0): ?>
-                <form method="POST" action="<?= BASE_URL ?>/property-comparison/clear" class="style-35851">
+                <form method="POST" action="<?= BASE_URL ?>/property-comparison/clear" >
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <button type="submit" class="btn btn-outline-danger" onclick="return confirm('<?= __('cmp_clear_confirm', [], 'Clear all?') ?>')">
                         <i class="fas fa-trash me-1"></i> <?= __('cmp_clear_all', [], 'Clear All') ?>
@@ -79,18 +79,18 @@ $view_count = $view_count ?? 0;
     <?php else: ?>
         <div class="cmp-card">
             <div class="cmp-row">
-                <div class="label cmp-image style-833"><i class="fas fa-image"></i></div>
+                <div class="label cmp-image"><i class="fas fa-image"></i></div>
                 <?php foreach ($properties as $p): ?>
-                    <div class="cmp-image position-relative <?= ($comparison['best_value_id'] ?? null) == $p['id'] ? 'cmp-best' : '' ?> style-47346">
+                    <div class="cmp-image position-relative <?= ($comparison['best_value_id'] ?? null) == $p['id'] ? 'cmp-best' : '' ?>">
                         <?php if (!empty($p['image'])): ?>
-                            <img src="<?= htmlspecialchars($p['image'] ?? '') ?>" alt="<?= htmlspecialchars($p['title'] ?? '') ?>" class="style-25330">
+                            <img src="<?= htmlspecialchars($p['image'] ?? '')?>" alt="<?= htmlspecialchars($p['title'] ?? '') ?>" >
                         <?php else: ?>
                             <i class="fas fa-home text-muted"></i>
                         <?php endif; ?>
-                        <form method="POST" action="<?= BASE_URL ?>/property-comparison/remove" class="style-15676">
+                        <form method="POST" action="<?= BASE_URL ?>/property-comparison/remove" >
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <input type="hidden" name="property_id" value="<?= $p['id'] ?>">
-                            <button type="submit" class="btn btn-sm btn-danger style-82522" title="Remove">
+                            <button type="submit" class="btn btn-sm btn-danger" title="Remove">
                                 <i class="fas fa-times"></i>
                             </button>
                         </form>
