@@ -22,10 +22,10 @@ class WebhookService
     public function registerEndpoint(string $name, string $url, array $events, ?string $secret = null, ?int $userId = null): int
     {
         $insertData = $this->tenantInsertData();
-        $cols = "name, url, secret_key, events, is_active, created_by" . (count($insertData) > 0 ? ', tenant_id' : '');
-        $ph = ":n, :u, :s, :e, 1, :uid" . (count($insertData) > 0 ? ', :tid' : '');
+        $cols = "name, url, secret, events, is_active" . (count($insertData) > 0 ? ', tenant_id' : '');
+        $ph = ":n, :u, :s, :e, 1" . (count($insertData) > 0 ? ', :tid' : '');
         $st = $this->db->prepare("INSERT INTO webhook_endpoints ($cols) VALUES ($ph)");
-        $params = [':n' => $name, ':u' => $url, ':s' => $secret, ':e' => implode(',', $events), ':uid' => $userId];
+        $params = [':n' => $name, ':u' => $url, ':s' => $secret, ':e' => implode(',', $events)];
         if (!empty($insertData)) $params = array_merge($params, $insertData);
         $st->execute($params);
         return (int)$this->db->lastInsertId();
@@ -81,7 +81,7 @@ class WebhookService
     private function recordDelivery(int $endpointId, string $eventType, array $payload): int
     {
         $insertData = $this->tenantInsertData();
-        $cols = "endpoint_id, event_type, payload, status" . (count($insertData) > 0 ? ', tenant_id' : '');
+        $cols = "webhook_id, event_type, payload, status" . (count($insertData) > 0 ? ', tenant_id' : '');
         $ph = ":e, :ev, :p, 'pending'" . (count($insertData) > 0 ? ', :tid' : '');
         $st = $this->db->prepare("INSERT INTO webhook_deliveries ($cols) VALUES ($ph)");
         $params = [':e' => $endpointId, ':ev' => $eventType, ':p' => json_encode($payload, JSON_UNESCAPED_UNICODE)];
@@ -92,7 +92,7 @@ class WebhookService
 
     public function deliver(int $deliveryId): array
     {
-        $sql = "SELECT d.*, e.url, e.secret_key FROM webhook_deliveries d JOIN webhook_endpoints e ON d.webhook_id = e.id WHERE d.id = :id" . $this->tenantSql();
+        $sql = "SELECT d.*, e.url, e.secret FROM webhook_deliveries d JOIN webhook_endpoints e ON d.webhook_id = e.id WHERE d.id = :id" . $this->tenantSql();
         $params = [':id' => $deliveryId];
         if ($this->tenantId() > 1) $params[':stid'] = $this->tenantId();
         $st = $this->db->prepare($sql);
@@ -101,7 +101,7 @@ class WebhookService
         if (!$delivery) return ['ok' => false, 'error' => 'Delivery not found'];
 
         $payload = json_decode($delivery['payload'] ?? '{}', true) ?: [];
-        $signature = $delivery['secret_key'] ? hash_hmac('sha256', $delivery['payload'] ?? '', $delivery['secret_key']) : null;
+        $signature = $delivery['secret'] ? hash_hmac('sha256', $delivery['payload'] ?? '', $delivery['secret']) : null;
 
         $headers = [
             'Content-Type: application/json',
@@ -127,7 +127,7 @@ class WebhookService
         $err = curl_error($ch);
         curl_close($ch);
 
-$status = ($code >= 200 && $code < 300) ? 'success' : (($delivery['attempt'] ?? 1) < $this->maxAttempts ? 'retrying' : 'failed');
+        $status = ($code >= 200 && $code < 300) ? 'success' : (($delivery['attempts'] ?? 0) < $this->maxAttempts ? 'retry' : 'failed');
         $error = $err ?: ($status === 'failed' ? "HTTP $code" : null);
 
         $st = $this->db->prepare("UPDATE webhook_deliveries SET response_code = :c, response_body = :b, status = :s WHERE id = :id" . $this->tenantSql());
@@ -140,7 +140,7 @@ $status = ($code >= 200 && $code < 300) ? 'success' : (($delivery['attempt'] ?? 
 
     public function processPending(int $maxBatch = 50): array
     {
-        $sql = "SELECT id FROM webhook_deliveries WHERE status IN ('pending','retrying')" . $this->tenantSql() . " ORDER BY id ASC LIMIT :lim";
+        $sql = "SELECT id FROM webhook_deliveries WHERE status IN ('pending','retry')" . $this->tenantSql() . " ORDER BY id ASC LIMIT :lim";
         $st = $this->db->prepare($sql);
         $params = [];
         if ($this->tenantId() > 1) $params[':stid'] = $this->tenantId();
@@ -174,7 +174,7 @@ $status = ($code >= 200 && $code < 300) ? 'success' : (($delivery['attempt'] ?? 
 
     public function getStats(int $days = 7): array
     {
-        $stats = ['total' => 0, 'success' => 0, 'failed' => 0, 'pending' => 0, 'retrying' => 0, 'by_event' => []];
+        $stats = ['total' => 0, 'success' => 0, 'failed' => 0, 'pending' => 0, 'retry' => 0, 'by_event' => []];
         try {
             $st = $this->db->prepare("SELECT status, COUNT(*) as cnt FROM webhook_deliveries WHERE created_at >= DATE_SUB(NOW(), INTERVAL :d DAY) GROUP BY status");
             $st->bindValue(':d', $days, PDO::PARAM_INT);

@@ -30,7 +30,7 @@ ob_start();
       <div class="card-body aps-cp-card-body"><small class="opacity-75">Success</small><h3 class="mb-0"><?= $stats['success'] ?? 0 ?></h3></div>
     </div></div>
     <div class="col-md-3"><div class="card border-0 shadow-sm bg-warning text-white">
-      <div class="card-body aps-cp-card-body"><small class="opacity-75">Retrying</small><h3 class="mb-0"><?= $stats['retrying'] ?? 0 ?></h3></div>
+      <div class="card-body aps-cp-card-body"><small class="opacity-75">Retrying</small><h3 class="mb-0"><?= $stats['retry'] ?? 0 ?></h3></div>
     </div></div>
     <div class="col-md-3"><div class="card border-0 shadow-sm bg-danger text-white">
       <div class="card-body aps-cp-card-body"><small class="opacity-75">Failed</small><h3 class="mb-0"><?= $stats['failed'] ?? 0 ?></h3></div>
@@ -145,7 +145,7 @@ ob_start();
                 <td><code><?= htmlspecialchars($d['event_type'] ?? '') ?></code></td>
                 <td><?= $d['attempt'] ?? 1 ?></td>
                 <td>
-                  <span class="badge bg-<?= $d['status'] === 'success' ? 'success' : ($d['status'] === 'pending' ? 'secondary' : ($d['status'] === 'retrying' ? 'warning' : 'danger')) ?>">
+                  <span class="badge bg-<?= $d['status'] === 'success' ? 'success' : ($d['status'] === 'pending' ? 'secondary' : ($d['status'] === 'retry' ? 'warning' : 'danger')) ?>">
                     <?= htmlspecialchars($d['status'] ?? '') ?>
                   </span>
                 </td>

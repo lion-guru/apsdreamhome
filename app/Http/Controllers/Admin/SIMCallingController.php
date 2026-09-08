@@ -39,17 +39,17 @@ class SIMCallingController extends AdminController
         try {
             $stats = $db->fetch("SELECT 
                 COUNT(*) as total_calls,
-                SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed,
-                SUM(CASE WHEN status = 'answered' THEN 1 ELSE 0 END) as answered,
-                SUM(CASE WHEN status = 'no-answer' THEN 1 ELSE 0 END) as no_answer,
-                SUM(CASE WHEN status = 'busy' THEN 1 ELSE 0 END) as busy,
+                SUM(CASE WHEN call_status = 'completed' THEN 1 ELSE 0 END) as completed,
+                SUM(CASE WHEN call_status = 'answered' THEN 1 ELSE 0 END) as answered,
+                SUM(CASE WHEN call_status = 'no-answer' THEN 1 ELSE 0 END) as no_answer,
+                SUM(CASE WHEN call_status = 'busy' THEN 1 ELSE 0 END) as busy,
                 SUM(CASE WHEN DATE(created_at) = CURDATE() THEN 1 ELSE 0 END) as today_calls
-                FROM voice_call_logs WHERE channel_type = 'asterisk'") ?: [];
+                FROM voice_call_logs WHERE call_type = 'asterisk'") ?: [];
 
             $recentCalls = $db->fetchAll("SELECT vcl.*, u.name as customer_name
                 FROM voice_call_logs vcl
-                LEFT JOIN users u ON vcl.customer_id = u.id
-                WHERE vcl.channel_type = 'asterisk'
+                LEFT JOIN users u ON vcl.caller_id = u.id
+                WHERE vcl.call_type = 'asterisk'
                 ORDER BY vcl.created_at DESC LIMIT 15") ?: [];
         } catch (\Exception $e) {
             $stats = ['total_calls' => 0, 'completed' => 0, 'answered' => 0, 'no_answer' => 0, 'busy' => 0, 'today_calls' => 0];
@@ -140,8 +140,8 @@ class SIMCallingController extends AdminController
         if ($result['success']) {
             try {
                 $this->db->execute(
-                    "INSERT INTO voice_call_logs (call_id, customer_phone, channel_type, status, started_at, notes, created_at) VALUES (?, ?, 'asterisk', 'initiated', NOW(), ?, NOW())",
-                    [$result['call_id'], $phone, json_encode(['agent_script' => $agentScript])]
+                    "INSERT INTO voice_call_logs (callee_phone, call_type, call_status, created_at) VALUES (?, 'asterisk', 'initiated', NOW())",
+                    [$phone]
                 );
             } catch (\Exception $e) {
                 error_log("Call log error: " . $e->getMessage());

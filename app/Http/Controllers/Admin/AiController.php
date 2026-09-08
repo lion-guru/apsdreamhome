@@ -365,7 +365,7 @@ class AiController extends AdminController
                     FROM ai_property_recommendations pr
                     JOIN properties p ON pr.property_id = p.id
                     WHERE pr.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
-                    ORDER BY pr.confidence_score DESC
+                    ORDER BY pr.score DESC
                     LIMIT 30";
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
@@ -534,9 +534,9 @@ class AiController extends AdminController
             // Save recommendations if table exists
             if ($this->tableExists('ai_property_recommendations')) {
                 foreach ($recommendations as $property) {
-                    $sql = "INSERT INTO ai_property_recommendations (customer_id, property_id, confidence_score, recommendation_data, created_at)
+                    $sql = "INSERT INTO ai_property_recommendations (user_id, property_id, score, reason, created_at)
                             VALUES (?, ?, ?, ?, NOW())
-                            ON DUPLICATE KEY UPDATE confidence_score = VALUES(confidence_score), recommendation_data = VALUES(recommendation_data)";
+                            ON DUPLICATE KEY UPDATE score = VALUES(score), reason = VALUES(reason)";
                     $stmt = $this->db->prepare($sql);
                     $stmt->execute([
                         $customerId,

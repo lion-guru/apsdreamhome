@@ -175,11 +175,9 @@ class FileManagerService
             $tid = $this->tenantId();
             $tidSql = $tid > 1 ? " AND f.tenant_id = ?" : "";
             $stmt = $this->database->prepare("SELECT f.*, 
-                GROUP_CONCAT(t.name) as tag_names,
-                GROUP_CONCAT(t.color) as tag_colors
+                GROUP_CONCAT(t.tag_name) as tag_names
                 FROM files f
-                LEFT JOIN file_tag_relations ftr ON f.id = ftr.file_id
-                LEFT JOIN file_tags t ON ftr.tag_id = t.id
+                LEFT JOIN file_tags t ON f.id = t.file_id
                 WHERE f.uuid = ?
                 {$tidSql}
                 GROUP BY f.id");
@@ -590,22 +588,13 @@ class FileManagerService
         $tidParam = $tid > 1 ? [$tid] : [];
         foreach ($tags as $tagName) {
             try {
-                // Get or create tag
-                $tagStmt = $this->database->prepare("SELECT id FROM file_tags WHERE name = ?{$tidWhere}");
-                $tagStmt->execute(array_merge([$tagName], $tidParam));
-                $tag = $tagStmt->fetch(\PDO::FETCH_ASSOC);
-                
-                if (!$tag) {
-                    $insertStmt = $this->database->prepare("INSERT INTO file_tags (name{$tidSql}) VALUES (?{$tidPlaceholder})");
-                    $insertStmt->execute(array_merge([$tagName], $tidParam));
-                    $tagId = $this->database->lastInsertId();
-                } else {
-                    $tagId = $tag['id'];
+                // Insert tag if not already attached
+                $dedupStmt = $this->database->prepare("SELECT id FROM file_tags WHERE file_id = ? AND tag_name = ?{$tidWhere}");
+                $dedupStmt->execute(array_merge([$fileId, $tagName], $tidParam));
+                if (!$dedupStmt->fetch(\PDO::FETCH_ASSOC)) {
+                    $insertStmt = $this->database->prepare("INSERT INTO file_tags (file_id, tag_name, created_at{$tidSql}) VALUES (?, ?, NOW(){$tidPlaceholder})");
+                    $insertStmt->execute(array_merge([$fileId, $tagName], $tidParam));
                 }
-                
-                // Add relation
-                $relStmt = $this->database->prepare("INSERT IGNORE INTO file_tag_relations (file_id, tag_id{$tidSql}) VALUES (?, ?{$tidPlaceholder})");
-                $relStmt->execute(array_merge([$fileId, $tagId], $tidParam));
             } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
             error_log($e->getMessage());
@@ -708,8 +697,8 @@ class FileManagerService
         $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
         $params = [$fileId];
         if ($tid > 1) $params[] = $tid;
-        // Delete tag relations
-        $tagStmt = $this->database->prepare("DELETE FROM file_tag_relations WHERE file_id = ?{$tidSql}");
+        // Delete file tags
+        $tagStmt = $this->database->prepare("DELETE FROM file_tags WHERE file_id = ?{$tidSql}");
         $tagStmt->execute($params);
         
         try {

@@ -65,8 +65,7 @@ class AlertService
         try {
             $query = "SELECT *
                      FROM system_alerts
-                     WHERE resolved_at IS NULL
-                       AND acknowledged_at IS NULL
+                     WHERE is_active = 1
                        AND created_at <= DATE_SUB(NOW(), INTERVAL 4 HOUR)";
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
@@ -75,10 +74,10 @@ class AlertService
 
         $results = $this->db->fetchAll($query);
         foreach ($results as $alert) {
-            $recipients = $this->getSystemSubscribers($alert['system'], $alert['level']);
+            $recipients = $this->getSystemSubscribers($alert['alert_type'], $alert['severity']);
 
             $variables = [
-                'system' => $alert['system'],
+'system' => $alert['alert_type'],
                 'title' => $alert['title'],
                 'message' => $alert['message'],
                 'age' => floor((time() - strtotime($alert['created_at'])) / 3600),
@@ -100,12 +99,19 @@ class AlertService
         }
 
         // Check if digest already sent today
-        $query = "SELECT COUNT(*) as sent
-                 FROM mlm_notification_log
-                 WHERE type = 'system_status'
-                   AND DATE(created_at) = CURDATE()";
+        $row = ['sent' => 0];
+        try {
+            $query = "SELECT COUNT(*) as sent
+                     FROM mlm_notification_log
+                     WHERE type = 'system_status'
+                       AND DATE(created_at) = CURDATE()";
 
-        $row = $this->db->fetchOne($query);
+            $row = $this->db->fetchOne($query);
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
+            $row = ['sent' => 0];
+        }
         if (($row['sent'] ?? 0) > 0) {
             return;
         }
@@ -131,10 +137,10 @@ class AlertService
     private function getAlertStats()
     {
         try {
-            $query = "SELECT level, COUNT(*) as count
+            $query = "SELECT severity, COUNT(*) as count
                      FROM system_alerts
                      WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
-                     GROUP BY level";
+                     GROUP BY severity";
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
@@ -144,7 +150,7 @@ class AlertService
         $stats = ['critical' => 0, 'warning' => 0, 'info' => 0];
 
         foreach ($results as $row) {
-            $stats[$row['level']] = $row['count'];
+            $stats[$row['severity']] = $row['count'];
         }
 
         return $stats;
@@ -152,9 +158,9 @@ class AlertService
 
     private function getPerformanceStats()
     {
-        $query = "SELECT AVG(response_time) as avg_response_time
-                 FROM system_logs
-                 WHERE timestamp >= DATE_SUB(NOW(), INTERVAL 24 HOUR)";
+        $query = "SELECT AVG(response_time_ms) as avg_response_time
+                 FROM api_request_logs
+                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)";
 
         return $this->db->fetchOne($query);
     }
@@ -171,14 +177,20 @@ class AlertService
 
     private function getSystemSubscribers($system, $level)
     {
-        $query = "SELECT u.*
-                 FROM users u
-                 JOIN alert_subscriptions s ON u.id = s.user_id
-                 WHERE s.system = ?
-                   AND s.level = ?
-                   AND s.email_enabled = 1";
+        try {
+            $query = "SELECT u.*
+                     FROM users u
+                     JOIN alert_subscriptions s ON u.id = s.user_id
+                     WHERE s.system = ?
+                       AND s.level = ?
+                       AND s.email_enabled = 1";
 
-        return $this->db->fetchAll($query, [$system, $level]);
+            return $this->db->fetchAll($query, [$system, $level]);
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
+            return [];
+        }
     }
 
     /**
@@ -186,20 +198,26 @@ class AlertService
      */
     private function checkResponseTimes()
     {
-        $query = "SELECT system, AVG(response_time) as avg_response
-                 FROM system_logs
-                 WHERE timestamp >= DATE_SUB(NOW(), INTERVAL 1 HOUR)
-                 GROUP BY system
-                 HAVING avg_response > :threshold";
+        try {
+            $query = "SELECT endpoint, AVG(response_time_ms) as avg_response
+                     FROM api_request_logs
+                     WHERE created_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR)
+                     GROUP BY endpoint
+                     HAVING avg_response > :threshold";
 
-        $results = $this->db->fetchAll($query, ['threshold' => $this->thresholds['response_time']]);
+            $results = $this->db->fetchAll($query, ['threshold' => $this->thresholds['response_time']]);
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
+            return;
+        }
 
         foreach ($results as $row) {
             $this->createAlert(
                 'warning',
-                "{$row['system']} system response time is high",
+                "{$row['endpoint']} system response time is high",
                 "Average response time: " . round($row['avg_response']) . "ms",
-                $row['system']
+                $row['endpoint']
             );
         }
     }
@@ -209,24 +227,30 @@ class AlertService
      */
     private function checkErrorRates()
     {
-        $query = "SELECT
-                     system,
-                     COUNT(*) as total,
-                     SUM(CASE WHEN status = 'error' THEN 1 ELSE 0 END) as errors
-                 FROM system_logs
-                 WHERE timestamp >= DATE_SUB(NOW(), INTERVAL 1 HOUR)
-                 GROUP BY system
-                 HAVING (errors / total) > :threshold";
+        try {
+            $query = "SELECT
+                         endpoint,
+                         COUNT(*) as total,
+                         SUM(CASE WHEN status_code >= 500 THEN 1 ELSE 0 END) as errors
+                     FROM api_request_logs
+                     WHERE created_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR)
+                     GROUP BY endpoint
+                     HAVING (errors / total) > :threshold";
 
-        $results = $this->db->fetchAll($query, ['threshold' => $this->thresholds['error_rate']]);
+            $results = $this->db->fetchAll($query, ['threshold' => $this->thresholds['error_rate']]);
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
+            return;
+        }
 
         foreach ($results as $row) {
             $error_rate = ($row['errors'] / $row['total']) * 100;
             $this->createAlert(
                 'critical',
-                "High error rate in {$row['system']} system",
+                "High error rate in {$row['endpoint']} system",
                 "Error rate: " . round($error_rate, 2) . "%",
-                $row['system']
+                $row['endpoint']
             );
         }
     }
@@ -312,7 +336,7 @@ class AlertService
     public function createAlert($level, $title, $message, $system)
     {
         $insertData = $this->tenantInsertData();
-        $columns = ['level', 'title', 'message', 'system', 'created_at'];
+        $columns = ['severity', 'title', 'message', 'alert_type', 'created_at'];
         $placeholders = ['?', '?', '?', '?', 'NOW()'];
         if (!empty($insertData)) {
             $columns = array_merge($columns, array_keys($insertData));
@@ -365,10 +389,10 @@ class AlertService
             $query = "SELECT
                          a.*,
                          TIMESTAMPDIFF(MINUTE, created_at, NOW()) as age,
-                         COALESCE(MAX(e.level), 0) as current_level
+                         COALESCE(MAX(e.escalation_level), 0) as current_level
                      FROM system_alerts a
                      LEFT JOIN alert_escalations e ON a.id = e.alert_id
-                     WHERE a.resolved_at IS NULL
+                     WHERE a.is_active = 1
                      GROUP BY a.id
                      HAVING age >= 15"; // Only process alerts older than 15 minutes
     
@@ -392,10 +416,16 @@ class AlertService
         // Check if we should escalate
         if ($next_level <= 4 && $alert['age'] >= $this->escalation_levels[$next_level]['timeout']) {
             // Create escalation record
-            $query = "INSERT INTO alert_escalations (alert_id, level, created_at)
-                     VALUES (?, ?, NOW())";
+            $query = "INSERT INTO alert_escalations (alert_id, escalated_to, escalation_level, notes, tenant_id, created_at)
+                     VALUES (?, ?, ?, ?, ?, NOW())";
 
-            $this->db->execute($query, [$alert['id'], $next_level]);
+            $this->db->execute($query, [
+                $alert['id'],
+                null,
+                $next_level,
+                'Auto-escalation for #' . $alert['id'],
+                (int)($alert['tenant_id'] ?? $this->tenantId())
+            ]);
 
             // Send notifications
             $this->sendEscalationNotifications($alert, $next_level);
@@ -418,7 +448,7 @@ class AlertService
             $this->sendEmailNotification($recipient, $alert, $level);
 
             // Send SMS if enabled for critical alerts
-            if ($alert['level'] === 'critical' && isset($recipient['sms_enabled']) && $recipient['sms_enabled']) {
+            if ($alert['severity'] === 'critical' && isset($recipient['sms_enabled']) && $recipient['sms_enabled']) {
                 $this->sendSmsNotification($recipient, $alert, $level);
             }
         }

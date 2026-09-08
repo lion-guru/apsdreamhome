@@ -23,11 +23,11 @@ class TelecallerController extends AdminController
             $where = "WHERE t.task_date = ?";
             $params = [$dateFilter];
             if (!empty($telecallerFilter)) {
-                $where .= " AND t.user_id = ?";
+                $where .= " AND t.telecaller_id = ?";
                 $params[] = (int)$telecallerFilter;
             }
 
-            $tasks = $this->db->fetchAll("SELECT t.*, u.name as telecaller_name, u.email, u.phone FROM telecaller_daily_tasks t LEFT JOIN users u ON t.user_id = u.id $where ORDER BY t.created_at DESC", $params);
+            $tasks = $this->db->fetchAll("SELECT t.*, u.name as telecaller_name, u.email, u.phone FROM telecaller_daily_tasks t LEFT JOIN users u ON t.telecaller_id = u.id $where ORDER BY t.created_at DESC", $params);
 
             [$tidSql, $tidParams] = $this->tenantWhere();
             $telecallers = $this->db->fetchAll("SELECT id, name, email, phone FROM users WHERE role IN ('telecaller','employee','agent'){$tidSql} ORDER BY name", $tidParams);
@@ -91,7 +91,7 @@ class TelecallerController extends AdminController
         $this->requireAdmin();
 
         try {
-            $task = $this->db->fetch("SELECT t.*, u.name as telecaller_name, u.email, u.phone FROM telecaller_daily_tasks t LEFT JOIN users u ON t.user_id = u.id WHERE t.id = ?", [(int)$id]);
+            $task = $this->db->fetch("SELECT t.*, u.name as telecaller_name, u.email, u.phone FROM telecaller_daily_tasks t LEFT JOIN users u ON t.telecaller_id = u.id WHERE t.id = ?", [(int)$id]);
             if (!$task) {
                 header('Location: ' . BASE_URL . '/admin/telecaller');
                 exit;
@@ -145,7 +145,7 @@ class TelecallerController extends AdminController
         $notes = $_POST['notes'] ?? '';
 
         try {
-            $this->db->query("INSERT INTO telecaller_daily_tasks (user_id, task_date, total_leads_assigned, calls_made, calls_connected, leads_converted, leads_callback, leads_not_interested, pending_calls, target_calls, notes, tenant_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())", [$userId, $taskDate, $leadsAssigned, $callsMade, $callsConnected, $leadsConverted, $leadsCallback, $leadsNotInterested, $pendingCalls, $targetCalls, $notes, (int)$this->tenantId()]);
+            $this->db->query("INSERT INTO telecaller_daily_tasks (telecaller_id, task_date, total_leads_assigned, calls_made, calls_connected, leads_converted, leads_callback, leads_not_interested, pending_calls, target_calls, notes, tenant_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())", [$userId, $taskDate, $leadsAssigned, $callsMade, $callsConnected, $leadsConverted, $leadsCallback, $leadsNotInterested, $pendingCalls, $targetCalls, $notes, (int)$this->tenantId()]);
             $this->setFlash('success', 'Daily task saved successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to save task: ' . $e->getMessage());
