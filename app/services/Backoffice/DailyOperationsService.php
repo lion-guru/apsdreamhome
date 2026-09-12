@@ -233,9 +233,13 @@ class DailyOperationsService
         $gross = round($basic + $hra + $allowances, 2);
         $net = max(0, round($gross - $totalDeductions, 2));
 
-         $existing = $this->fetchOne("SELECT id FROM employee_payslips WHERE employee_id=? AND period_month=? AND period_year=?" . $this->tenantSql(), array_merge([$empTableId, $month, $year], $this->tVal()));
+         $existing = $this->fetchOne("SELECT id, status FROM employee_payslips WHERE employee_id=? AND period_month=? AND period_year=?" . $this->tenantSql(), array_merge([$empTableId, $month, $year], $this->tVal()));
 
         if ($existing) {
+            // Paid slips are immutable: never overwrite amounts or reset to draft.
+            if (($existing['status'] ?? '') === 'paid') {
+                return ['error' => 'Payslip already paid for ' . $month . '/' . $year . ' — paid slips cannot be regenerated'];
+            }
             $sql = "UPDATE employee_payslips SET basic_salary=?,hra=?,allowances=?,deductions=?,tds=?,pf=?,esi=?,professional_tax=?,net_salary=?,days_present=?,lop_days=?,status='draft' WHERE id=?" . $this->tenantSql();
             $params = [$basic,$hra,$allowances,$deductions,$tds,$pf,$esi,$pt,$net,$daysPresent,$lopDays,$existing['id']];
             $params = array_merge($params, $this->tVal());

@@ -287,5 +287,15 @@
     "\/admin\/commission\/telecaller\/commissions",
     "\/admin\/commission\/calculations",
     "\/admin\/mlm-settings\/levels",
-    "\/admin\/knowledge-base-new"
+    "\/admin\/knowledge-base-new",
+    "\/admin\/blogs\/comments",
+    "\/admin\/financial-inquiries",
+    "\/admin\/scheduler",
+    "\/admin\/campaign-templates",
+    "\/admin\/search-history",
+    "\/admin\/voice-uploads",
+    "\/admin\/app-feedback",
+    "\/admin\/erp\/defaulters",
+    "\/admin\/reports\/tds-194h",
+    "\/admin\/reports\/profit-loss"
 ]

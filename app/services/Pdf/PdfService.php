@@ -36,10 +36,11 @@ class PdfService
     const TYPE_AGREEMENT = 'agreement';
     const TYPE_REPORT    = 'report';
     const TYPE_BROCHURE  = 'brochure';
+    const TYPE_PAYSLIP   = 'payslip';
 
     const ALL_TYPES = [
         self::TYPE_RECEIPT, self::TYPE_INVOICE, self::TYPE_AGREEMENT,
-        self::TYPE_REPORT, self::TYPE_BROCHURE,
+        self::TYPE_REPORT, self::TYPE_BROCHURE, self::TYPE_PAYSLIP,
     ];
 
     /** @var \PDO|null */
@@ -54,7 +55,7 @@ class PdfService
         'by_type' => [
             self::TYPE_RECEIPT => 0, self::TYPE_INVOICE => 0,
             self::TYPE_AGREEMENT => 0, self::TYPE_REPORT => 0,
-            self::TYPE_BROCHURE => 0,
+            self::TYPE_BROCHURE => 0, self::TYPE_PAYSLIP => 0,
         ],
     ];
 
@@ -552,6 +553,120 @@ class PdfService
     {
         $this->lastType = $type;
         return $this->generate($type, $id);
+    }
+
+    /* ------------------------------------------------------------------ */
+    /*  6. Salary Payslip (employee_payslips)                               */
+    /* ------------------------------------------------------------------ */
+
+    public function payslip($payslipId)
+    {
+        $this->lastType = self::TYPE_PAYSLIP;
+        $payslipId = (int)$payslipId;
+        if ($payslipId <= 0) return ['success' => false, 'error' => 'Invalid payslip ID'];
+
+        $data = $this->loadPayslip($payslipId);
+        if (!$data) return ['success' => false, 'error' => 'Payslip not found'];
+
+        $cached = $this->checkCache(self::TYPE_PAYSLIP, $payslipId);
+        if ($cached) return $cached;
+
+        $basic = (float)($data['basic_salary'] ?? 0);
+        $hra = (float)($data['hra'] ?? 0);
+        $allowances = (float)($data['allowances'] ?? 0);
+        $gross = $basic + $hra + $allowances;
+        $pf = (float)($data['pf'] ?? 0);
+        $esi = (float)($data['esi'] ?? 0);
+        $tds = (float)($data['tds'] ?? 0);
+        $pt = (float)($data['professional_tax'] ?? 0);
+        $other = (float)($data['deductions'] ?? 0);
+        $totalDed = $pf + $esi + $tds + $pt + $other;
+        $net = (float)($data['net_salary'] ?? max(0, $gross - $totalDed));
+        $period = str_pad((string)($data['period_month'] ?? ''), 2, '0', STR_PAD_LEFT)
+            . '/' . ($data['period_year'] ?? '');
+
+        $netWords = '';
+        try {
+            if (class_exists('\App\Helpers\UtilityHelper')) {
+                $netWords = (string)\App\Helpers\UtilityHelper::numberToWords($net);
+            }
+        } catch (\Throwable $e) { $netWords = ''; }
+        if ($netWords === '') $netWords = 'Rupees ' . number_format($net, 2) . ' only';
+
+        $pdf = new MinimalPDF();
+        $this->renderHeader($pdf, 'Salary Payslip');
+
+        $this->renderKvBlock($pdf, 110, [
+            'Payslip No'       => 'PAY-' . str_pad((string)$payslipId, 6, '0', STR_PAD_LEFT),
+            'Pay Period'       => $period,
+            'Employee'         => ($data['employee_name'] ?? 'Employee')
+                . ' (' . ($data['employee_code'] ?: 'N/A') . ')',
+            'Department'       => ($data['department'] ?: 'N/A')
+                . ' / ' . ($data['designation'] ?: 'N/A'),
+            'PAN'              => $data['pan_number'] ?: 'N/A',
+            'Bank A/c'         => ($data['bank_account'] ?: 'N/A')
+                . ' | IFSC: ' . ($data['bank_ifsc'] ?: 'N/A'),
+            'Days Present/LOP' => ($data['days_present'] ?? 0) . ' / ' . ($data['lop_days'] ?? 0),
+            'Status'           => strtoupper($data['status'] ?? 'draft'),
+        ]);
+
+        $this->renderTable($pdf, 290,
+            ['Earnings', 'Amount (Rs.)'],
+            [
+                ['Basic Salary', number_format($basic, 2)],
+                ['House Rent Allowance', number_format($hra, 2)],
+                ['Other Allowances', number_format($allowances, 2)],
+                ['Gross Earnings', number_format($gross, 2)],
+            ],
+            [330, 150]
+        );
+
+        $this->renderTable($pdf, 430,
+            ['Deductions', 'Amount (Rs.)'],
+            [
+                ['Provident Fund (12%)', number_format($pf, 2)],
+                ['ESI (0.75%)', number_format($esi, 2)],
+                ['TDS', number_format($tds, 2)],
+                ['Professional Tax', number_format($pt, 2)],
+                ['Other Deductions', number_format($other, 2)],
+                ['Total Deductions', number_format($totalDed, 2)],
+            ],
+            [330, 150]
+        );
+
+        $pdf->setFont('Helvetica', 'B', 13);
+        $pdf->text(40, 620, 'Net Pay: Rs. ' . number_format($net, 2));
+        $pdf->setFont('Helvetica', '', 9);
+        $pdf->multiText(40, 642, 'Amount in words: ' . $netWords, 515);
+        $pdf->setFont('Helvetica', 'I', 9);
+        $pdf->multiText(40, 700,
+            "This is a computer-generated payslip. No signature required.\n" .
+            "For queries: support@apsdreamhome.com | +91 92771 21112",
+            515
+        );
+
+        $path = $this->writePdf($pdf, self::TYPE_PAYSLIP, $payslipId);
+        return $this->returnResult($path, $payslipId);
+    }
+
+    /**
+     * Load a payslip row with employee identity + bank details.
+     */
+    protected function loadPayslip($payslipId)
+    {
+        try {
+            $db = $this->db instanceof \PDO ? $this->db : $this->resolveDb();
+            if (!$db instanceof \PDO) return null;
+            $stmt = $db->prepare("SELECT ep.*, u.name AS employee_name, u.email AS employee_email,
+                    e.employee_code, e.department, e.designation, e.pan_number,
+                    e.bank_account, e.bank_ifsc
+                FROM employee_payslips ep
+                LEFT JOIN employees e ON ep.employee_id = e.id
+                LEFT JOIN users u ON e.user_id = u.id
+                WHERE ep.id = ?");
+            $stmt->execute([(int)$payslipId]);
+            return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
+        } catch (\Throwable $e) { return null; }
     }
 
     /* ------------------------------------------------------------------ */

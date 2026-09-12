@@ -17,6 +17,8 @@
     <h4 class="mb-0"><i class="fas fa-cubes me-2"></i>Plot Inventory</h4>
     <div class="d-flex gap-2">
         <a href="<?php echo BASE_URL; ?>/admin/erp/plot-profit" class="btn btn-outline-primary btn-sm"><i class="fas fa-chart-line me-1"></i>P&L Report</a>
+        <a href="<?php echo BASE_URL; ?>/admin/erp/colony-pnl" class="btn btn-outline-success btn-sm"><i class="fas fa-chart-pie me-1"></i>Colony P&L</a>
+        <a href="<?php echo BASE_URL; ?>/admin/erp/defaulters" class="btn btn-outline-warning btn-sm"><i class="fas fa-exclamation-triangle me-1"></i>EMI Defaulters</a>
         <a href="<?php echo BASE_URL; ?>/admin/erp/land-mapping" class="btn btn-outline-secondary btn-sm"><i class="fas fa-map me-1"></i>Land Mapping</a>
     </div>
 </div>

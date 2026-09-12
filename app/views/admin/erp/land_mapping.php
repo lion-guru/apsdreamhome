@@ -3,6 +3,7 @@
     <div class="d-flex gap-2">
         <a href="<?php echo BASE_URL; ?>/admin/erp/inventory" class="btn btn-outline-primary btn-sm"><i class="fas fa-cubes me-1"></i>Inventory</a>
         <a href="<?php echo BASE_URL; ?>/admin/erp/plot-profit" class="btn btn-outline-success btn-sm"><i class="fas fa-chart-line me-1"></i>P&L</a>
+        <a href="<?php echo BASE_URL; ?>/admin/erp/colony-pnl" class="btn btn-outline-success btn-sm"><i class="fas fa-chart-pie me-1"></i>Colony P&L</a>
     </div>
 </div>
 

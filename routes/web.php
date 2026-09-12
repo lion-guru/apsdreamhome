@@ -2033,6 +2033,9 @@ $router->get('/admin/colonies/{id}/financials', 'App\\Http\\Controllers\\Admin\\
 $router->get('/admin/erp/inventory', 'App\\Http\\Controllers\\Admin\\ErpDashboardController@inventory');
 $router->get('/admin/erp/plot-profit', 'App\\Http\\Controllers\\Admin\\ErpDashboardController@plotProfit');
 $router->get('/admin/erp/land-mapping', 'App\\Http\\Controllers\\Admin\\ErpDashboardController@landMapping');
+$router->get('/admin/erp/colony-pnl', 'App\\Http\\Controllers\\Admin\\ErpDashboardController@colonyPnl');
+$router->get('/admin/erp/defaulters', 'App\\Http\\Controllers\\Admin\\ErpDashboardController@emiDefaulters');
+$router->post('/admin/erp/send-emi-reminder', 'App\\Http\\Controllers\\Admin\\ErpDashboardController@sendEmiReminder');
 
 // Admin Team Management
 $router->get('/admin/team', 'App\\Http\\Controllers\\Admin\\TeamController@index');
@@ -3378,6 +3381,9 @@ $router->post('/admin/kyc/{id}/verify', 'App\\Http\\Controllers\\Admin\\KycContr
 $router->get('/admin/payroll', 'App\\Http\\Controllers\\Admin\\PayrollController@index');
 $router->get('/admin/payroll/create', 'App\\Http\\Controllers\\Admin\\PayrollController@create');
 $router->post('/admin/payroll/store', 'App\\Http\\Controllers\\Admin\\PayrollController@store');
+$router->post('/admin/payroll/generate-batch', 'App\\Http\\Controllers\\Admin\\PayrollController@generateBatch');
+$router->get('/admin/payroll/payslip/{id}', 'App\\Http\\Controllers\\Admin\\PayrollController@payslip');
+$router->get('/admin/payroll/payslip/{id}/pdf', 'App\\Http\\Controllers\\Admin\\PayrollController@downloadPayslipPdf');
 $router->get('/admin/payroll/{id}/edit', 'App\\Http\\Controllers\\Admin\\PayrollController@edit');
 $router->post('/admin/payroll/{id}/update', 'App\\Http\\Controllers\\Admin\\PayrollController@update');
 $router->get('/admin/payroll/advances', 'App\\Http\\Controllers\\Admin\\PayrollController@advances');
@@ -5078,6 +5084,9 @@ $router->get('/admin/reports/financial/profit-loss', 'App\\Http\\Controllers\\Ad
 $router->get('/admin/reports/financial/balance-sheet', 'App\\Http\\Controllers\\Admin\\FinancialReportController@balanceSheet');
 $router->get('/admin/reports/financial/cash-flow', 'App\\Http\\Controllers\\Admin\\FinancialReportController@cashFlow');
 $router->get('/admin/reports/financial/export', 'App\\Http\\Controllers\\Admin\\FinancialReportController@export');
+$router->get('/admin/reports/tds-194h', 'App\\Http\\Controllers\\Admin\\FinancialReportController@tdsReport');
+$router->get('/admin/reports/tds-194h/export', 'App\\Http\\Controllers\\Admin\\FinancialReportController@exportTdsCsv');
+$router->get('/admin/reports/profit-loss', 'App\\Http\\Controllers\\Admin\\FinancialReportController@profitAndLossStatement');
 
 // ============================================================
 // BULK OPERATIONS

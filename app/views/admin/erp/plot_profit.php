@@ -1,6 +1,10 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Plot P&L Report</h4>
-    <a href="<?php echo BASE_URL; ?>/admin/erp/inventory" class="btn btn-outline-primary btn-sm"><i class="fas fa-cubes me-1"></i>Inventory</a>
+    <div class="d-flex gap-2">
+        <a href="<?php echo BASE_URL; ?>/admin/erp/inventory" class="btn btn-outline-primary btn-sm"><i class="fas fa-cubes me-1"></i>Inventory</a>
+        <a href="<?php echo BASE_URL; ?>/admin/erp/colony-pnl" class="btn btn-outline-success btn-sm"><i class="fas fa-chart-line me-1"></i>Colony P&L</a>
+        <a href="<?php echo BASE_URL; ?>/admin/erp/defaulters" class="btn btn-outline-warning btn-sm"><i class="fas fa-exclamation-triangle me-1"></i>EMI Defaulters</a>
+    </div>
 </div>
 
 <div class="row g-3 mb-4">
