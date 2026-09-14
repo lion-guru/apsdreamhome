@@ -13,10 +13,11 @@ Apply all 22 PlotController improvements (security, race condition, tenant scope
 | **P1/P2/P3** | `getBookingWithDetails`/`getBookingEmis` dedup, pagination (colony 24pp + view nav, API 50pp + `{meta}`), rate-limit + per-booking throttle, `random_bytes` booking numbers, idempotency key + ref dedup, generic errors + `error_log`, `receipt()` `exit` → `return` |
 | **Token schedule** | `BookingComplianceService::createTokenSchedule($bookingId, $dealPrice, $plan=[])` (configurable `token_pct`/`due_days`, same-PDO txn participant); `storeBooking()` delegates to it |
 | **Live bugs found** | `booking_emis.transaction_ref` → `transaction_id` (every payment 1054-failed); pay-form action `/booking/pay/{id}` → `/booking/{id}/pay` (every payment 404'd); DDL `ensureIdempotencyColumn()` inside txn caused implicit commit → moved before `beginTransaction()` |
-| **NOT wired** | Balance-installment plans: canonical engine (`BookingLifecycleService::generatePaymentSchedule`) reads `plot_bookings` table, web flow writes `bookings` table — cross-table wiring needs business spec (tenure/rate/trigger). Token-only default preserved |
+| **Balance schedule (follow-up)** | `BookingComplianceService::createBalanceSchedule()` — default 24 monthly 0%-interest EMIs (rows 2..N+1 in `booking_emis`, remainder on last EMI, paisa-exact), plan overrides (`installments` 0–120, `frequency` monthly/quarterly, `anchor_date`), double-generate guard; wired into `storeBooking()` step 5 (same txn) + plan-aware flash. Deliberately NOT in `booking_payment_schedules` (its `booking_id` = `plot_bookings.id`; web `bookings.id` would collide and corrupt dunning/penalties) |
 
 ### Verification
 - Live booking probe **12/12** (login→book→hold→token EMI→pay→replay dedup→full scratch cleanup, 0 rows left)
+- Balance probe **13/13** (25-row schedule, paisa-exact ₹27L sum, guards no-op, payment + replay intact, 0 rows left)
 - `workflow_probe` **15/15**, E2E **374/374**, `php -l` clean, health `ok:true`
 
 ### Key Lessons

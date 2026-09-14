@@ -77,6 +77,88 @@ class BookingComplianceService
         ];
     }
 
+    /** Default balance-installment count (monthly, 0% interest). */
+    public const DEFAULT_BALANCE_INSTALLMENTS = 24;
+    /** Allowed balance frequencies. */
+    public const BALANCE_FREQUENCIES = ['monthly', 'quarterly'];
+
+    /**
+     * Create the post-token balance schedule for a booking.
+     *
+     * Business rules (Session 105):
+     * - Balance = deal price − token amount, split into N EQUAL monthly
+     *   (or quarterly) installments at 0% interest — the standard
+     *   interest-free developer scheme (cf. company-loan 12/36-mo offers).
+     * - Token row stays installment_no = 1; balance rows are 2..N+1; paid
+     *   receipts use 0 — no number collisions, payment idempotency untouched.
+     * - Rounding remainder goes on the LAST installment so the total is
+     *   paisa-exact (no leakage across EMIs).
+     * - First balance due = one frequency-step after the token due date.
+     * - Defensive no-op: if balance rows already exist for the booking,
+     *   nothing is inserted (safe to call twice).
+     *
+     * Plan overrides: ['installments' => 24, 'frequency' => 'monthly',
+     *   'anchor_date' => 'Y-m-d']. installments = 0 means token-only.
+     *
+     * MUST be called inside the caller's DB transaction (same pattern as
+     * createTokenSchedule). Throws on DB failure so the caller can roll back.
+     *
+     * @return array ['generated'=>int, 'balance'=>float, 'per_emi'=>float,
+     *                'frequency'=>string, 'first_due'=>?string, 'last_due'=>?string]
+     */
+    public function createBalanceSchedule(int $bookingId, float $dealPrice, float $tokenAmount, array $plan = []): array
+    {
+        $n = isset($plan['installments']) ? (int)$plan['installments'] : self::DEFAULT_BALANCE_INSTALLMENTS;
+        if ($n < 0) $n = 0;
+        if ($n > 120) $n = 120;
+        $frequency = $plan['frequency'] ?? 'monthly';
+        if (!in_array($frequency, self::BALANCE_FREQUENCIES, true)) $frequency = 'monthly';
+
+        $balance = round($dealPrice - $tokenAmount, 2);
+        if ($n === 0 || $balance <= 0) {
+            return ['generated' => 0, 'balance' => max(0.0, $balance), 'per_emi' => 0.0,
+                    'frequency' => $frequency, 'first_due' => null, 'last_due' => null];
+        }
+
+        // Defensive: never double-generate a schedule for one booking.
+        $existingStmt = $this->db->prepare(
+            "SELECT COUNT(*) FROM booking_emis WHERE booking_id = ? AND installment_no >= 2"
+        );
+        $existingStmt->execute([$bookingId]);
+        $existing = (int)$existingStmt->fetchColumn();
+        if ($existing > 0) {
+            return ['generated' => 0, 'balance' => $balance, 'per_emi' => 0.0,
+                    'frequency' => $frequency, 'first_due' => null, 'last_due' => null];
+        }
+
+        $anchor = $plan['anchor_date'] ?? null;
+        if (!is_string($anchor) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $anchor)) {
+            $anchor = date('Y-m-d', strtotime('+' . (int)$this->tokenDueDays . ' days'));
+        }
+        $stepMonths = $frequency === 'quarterly' ? 3 : 1;
+
+        // Equal splits, remainder absorbed by the last installment.
+        $base = floor(($balance / $n) * 100) / 100;
+        $last = round($balance - ($base * ($n - 1)), 2);
+
+        $stmt = $this->db->prepare(
+            "INSERT INTO booking_emis (booking_id, installment_no, due_date, amount, status, tenant_id, created_at) VALUES (?, ?, ?, ?, 'pending', ?, ?)"
+        );
+        $now = date('Y-m-d H:i:s');
+        $tid = $this->tenantId();
+        $firstDue = null; $lastDue = null;
+        for ($i = 1; $i <= $n; $i++) {
+            $due = date('Y-m-d', strtotime($anchor . ' + ' . ($i * $stepMonths) . ' months'));
+            $amt = ($i === $n) ? $last : $base;
+            $stmt->execute([$bookingId, $i + 1, $due, $amt, $tid, $now]);
+            if ($i === 1) $firstDue = $due;
+            $lastDue = $due;
+        }
+
+        return ['generated' => $n, 'balance' => $balance, 'per_emi' => $base,
+                'frequency' => $frequency, 'first_due' => $firstDue, 'last_due' => $lastDue];
+    }
+
     public function __construct()
     {
         $this->db = \App\Core\Database\Database::getInstance()->getConnection();

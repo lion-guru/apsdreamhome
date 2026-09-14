@@ -145,6 +145,13 @@ class PlotBookingController extends PlotBaseController
             $schedule = $compliance->createTokenSchedule((int)$bookingId, $dealPrice);
             $tokenAmount = $schedule['token_amount'];
 
+            // 5. Create the post-token balance schedule (default: 24 monthly
+            //    0%-interest installments in the same transaction).
+            $balancePlan = $compliance->createBalanceSchedule(
+                (int)$bookingId, $dealPrice, $tokenAmount,
+                ['anchor_date' => $schedule['due_date']]
+            );
+
             $this->db->commit();
 
             try {
@@ -155,7 +162,14 @@ class PlotBookingController extends PlotBaseController
                 error_log('PlotBookingController::storeBooking notify: ' . $e->getMessage());
             }
 
-            $this->setFlash('success', 'Booking request submitted! Pay the ' . $this->tokenPct() . '% token amount (₹' . number_format($tokenAmount, 2) . ') to confirm your booking.');
+            $planNote = '';
+            if (!empty($balancePlan['generated'])) {
+                $planNote = ' Balance ₹' . number_format($balancePlan['balance'], 2)
+                    . ' in ' . $balancePlan['generated'] . ' ' . $balancePlan['frequency']
+                    . ' installments of ₹' . number_format($balancePlan['per_emi'], 2)
+                    . ' from ' . $balancePlan['first_due'] . '.';
+            }
+            $this->setFlash('success', 'Booking request submitted! Pay the ' . $this->tokenPct() . '% token amount (₹' . number_format($tokenAmount, 2) . ') to confirm your booking.' . $planNote);
             return $this->redirect('/booking/' . $bookingId . '/pay');
         } catch (\Throwable $e) {
             try { $this->db->rollBack(); } catch (\Throwable $ignored) { error_log($ignored->getMessage()); }
