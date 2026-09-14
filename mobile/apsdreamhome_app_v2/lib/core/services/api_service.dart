@@ -389,6 +389,52 @@ class ApiService {
     return response;
   }
 
+  // Demand Letters (Phase 6)
+  Future<List<dynamic>> getDemandLetters({Map<String, dynamic>? queryParameters}) async {
+    final response = await get(AppConstants.demandLettersEndpoint, queryParameters: queryParameters);
+    // API returns {success, data: {letters, total, page}} or direct list
+    final data = response['data'];
+    if (data is Map && data['letters'] is List) return data['letters'] as List<dynamic>;
+    if (data is List) return data;
+    return [];
+  }
+
+  Future<Map<String, dynamic>> getDemandLetterDetail(String id) async {
+    final response = await get('${AppConstants.demandLettersEndpoint}${AppConstants.demandLetterDetailSuffix}$id');
+    return (response['data'] ?? {}) as Map<String, dynamic>;
+  }
+
+  String demandLetterPdfUrl(String id) {
+    return '${AppConstants.baseUrl}/${AppConstants.apiVersion}${AppConstants.demandLettersEndpoint}/$id/pdf';
+  }
+
+  // Construction Progress & Material Inventory (Phase 6)
+  Future<List<dynamic>> getConstructionColonies() async {
+    final response = await get(AppConstants.constructionColoniesEndpoint);
+    final data = response['data'];
+    if (data is Map && data['colonies'] is List) return data['colonies'] as List<dynamic>;
+    if (data is List) return data;
+    return [];
+  }
+
+  Future<List<dynamic>> getColonyMilestones(String colonyId) async {
+    final response = await get('${AppConstants.constructionColoniesEndpoint}/$colonyId${AppConstants.constructionMilestonesSuffix}');
+    final data = response['data'];
+    if (data is Map && data['milestones'] is List) return data['milestones'] as List<dynamic>;
+    if (data is List) return data;
+    return [];
+  }
+
+  Future<Map<String, dynamic>> getConstructionMaterials({Map<String, dynamic>? queryParameters}) async {
+    final response = await get(AppConstants.constructionMaterialsEndpoint, queryParameters: queryParameters);
+    return (response['data'] ?? response) as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> logMaterialUsage(Map<String, dynamic> data) async {
+    final response = await post(AppConstants.constructionMaterialUsageEndpoint, data: data);
+    return response;
+  }
+
   Future<Map<String, dynamic>> startSiteVisit({
     required String userId,
     required String leadId,

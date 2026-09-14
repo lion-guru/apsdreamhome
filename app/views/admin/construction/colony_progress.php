@@ -157,7 +157,7 @@
                                         </td>
                                         <td>
                                             <?php if (!empty($m['site_photo_path'])): ?>
-                                                <a href="<?= BASE_URL ?>/<?= htmlspecialchars($m['site_photo_path']) ?>" target="_blank"><img src="<?= BASE_URL ?>/<?= htmlspecialchars($m['site_photo_path']) ?>" alt="site photo" style="width:48px;height:48px;object-fit:cover;border-radius:4px;border:1px solid #dee2e6;"></a>
+                                                <a href="javascript:void(0)" onclick="openPhotoModal('<?= BASE_URL ?>/<?= htmlspecialchars($m['site_photo_path']) ?>','<?= htmlspecialchars($m['milestone_name'] ?? '') ?>')"><img src="<?= BASE_URL ?>/<?= htmlspecialchars($m['site_photo_path']) ?>" alt="site photo" style="width:48px;height:48px;object-fit:cover;border-radius:4px;border:1px solid #dee2e6;cursor:zoom-in;"></a>
                                             <?php else: ?>
                                                 <span class="text-muted">—</span>
                                             <?php endif; ?>
@@ -337,4 +337,25 @@ function editMilestone(m) {
     document.getElementById('m_remarks').value = m.remarks || m.notes || '';
     document.getElementById('m_notes').value = m.notes || '';
 }
+function openPhotoModal(src, title) {
+    var modal = document.getElementById('photoLightbox');
+    if (!modal) return;
+    document.getElementById('photoLightboxImg').src = src;
+    document.getElementById('photoLightboxTitle').textContent = title || 'Site Photo';
+    new bootstrap.Modal(modal).show();
+}
 </script>
+<!-- Lightbox Modal for site photos -->
+<div class="modal fade" id="photoLightbox" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content bg-dark">
+      <div class="modal-header border-0">
+        <h6 class="modal-title text-white" id="photoLightboxTitle">Site Photo</h6>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-0 text-center">
+        <img id="photoLightboxImg" src="" alt="site photo" style="max-width:100%;max-height:70vh;object-fit:contain;">
+      </div>
+    </div>
+  </div>
+</div>

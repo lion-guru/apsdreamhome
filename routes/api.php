@@ -886,6 +886,17 @@ $router->post('/api/v2/mobile/site-visits/{id}/outcome', 'Api\SiteVisitDispatchA
 $router->post('/api/v2/mobile/site-visits/{id}/send-pin', 'Api\SiteVisitDispatchApiController@sendPin')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // ============================================================
+// DEMAND LETTER & CONSTRUCTION (Mobile — Phase 6)
+// ============================================================
+
+$router->get('/api/v2/mobile/demand-letters', 'Api\DemandLetterApiController@list')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/demand-letters/{id}', 'Api\DemandLetterApiController@detail')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/construction/colonies', 'Api\ConstructionApiController@colonyProgress')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/construction/colonies/{id}/milestones', 'Api\ConstructionApiController@colonyMilestones')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/construction/materials', 'Api\ConstructionApiController@materialInventory')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/construction/materials/usage', 'Api\ConstructionApiController@logUsage')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ============================================================
 // INFRASTRUCTURE & DEBUGGING API (Admin Tools)
 // ============================================================
 require_once __DIR__ . '/container.php';

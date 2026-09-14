@@ -5038,10 +5038,13 @@ $router->get('/api/whatsapp/webhook', function() {
 });
 
 $router->post('/api/whatsapp/webhook', function() {
-    $payload = json_decode(file_get_contents('php://input'), true);
-    require_once __DIR__ . '/../app/Services/Auc/WhatsAppService.php';
-    $wa = new \App\Services\Auc\WhatsAppService();
-    $wa->handleIncomingMessage($payload);
+    $payload = json_decode(file_get_contents('php://input'), true) ?: [];
+    try {
+        $wa = new \App\Services\Communication\WhatsAppService();
+        $wa->handleWebhook($payload);
+    } catch (\Throwable $e) {
+        error_log("WhatsApp webhook error: " . $e->getMessage());
+    }
     http_response_code(200);
     echo 'ok';
 });
@@ -5241,6 +5244,7 @@ $router->get('/customer/possession-certificate/{bookingId}', 'App\\Http\\Control
 // DEMAND LETTERS (Finance) & CONSTRUCTION PROGRESS (Ops) MODULES
 // ============================================================
 $router->get('/admin/finance/demand-letters', 'App\\Http\\Controllers\\Admin\\DemandLetterController@index');
+$router->get('/admin/finance/demand-letters/export', 'App\\Http\\Controllers\\Admin\\DemandLetterController@exportCsv');
 $router->get('/admin/finance/demand-letters/create', 'App\\Http\\Controllers\\Admin\\DemandLetterController@generate');
 $router->post('/admin/finance/demand-letters/generate', 'App\\Http\\Controllers\\Admin\\DemandLetterController@generate');
 $router->get('/admin/finance/demand-letters/{id}/pdf', 'App\\Http\\Controllers\\Admin\\DemandLetterController@pdf');

@@ -744,6 +744,24 @@ class _HomePageState extends ConsumerState<HomePage>
         '/admin/payout-batches',
         Color(0xFF7c3aed),
       ),
+      const _ToolItem(
+        Icons.receipt_long_rounded,
+        'Demand',
+        '/demand-letters',
+        Color(0xFFe11d48),
+      ),
+      const _ToolItem(
+        Icons.construction_rounded,
+        'Site Work',
+        '/admin/colony-progress',
+        Color(0xFFea580c),
+      ),
+      const _ToolItem(
+        Icons.inventory_2_rounded,
+        'Stock',
+        '/admin/material-inventory',
+        Color(0xFF0d9488),
+      ),
     ];
 
     return Padding(

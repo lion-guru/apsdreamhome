@@ -46,12 +46,20 @@
         </form>
     </div>
 
+    <?php
+    $lowMaterials = array_filter($materials ?? [], function($m){ return in_array($m['status'] ?? '', ['low_stock','out_of_stock'], true); });
+    if (!empty($lowMaterials)): ?>
+        <div class="alert alert-warning d-flex align-items-center mb-4" role="alert">
+            <i class="fas fa-triangle-exclamation fa-lg me-3"></i>
+            <div><strong>Low stock alert:</strong> <?= count($lowMaterials) ?> material(s) need restocking — <?= htmlspecialchars(implode(', ', array_map(function($m){ return $m['material_name'] ?? $m['name'] ?? ''; }, array_slice($lowMaterials, 0, 5)))) ?><?= count($lowMaterials) > 5 ? ' +' . (count($lowMaterials)-5) . ' more' : '' ?>.</div>
+        </div>
+    <?php endif; ?>
     <div class="row g-3 mb-4">
         <div class="col-md-3">
             <div class="card shadow-sm bg-primary text-white h-100">
                 <div class="card-body text-center">
-                    <h2 class="mb-0"><?= number_format((float)($total_value ?? 0), 0) ?></h2>
-                    <small>Inventory Value (₹)</small>
+                    <h2 class="mb-0">₹<?= number_format((float)($total_value ?? 0), 0) ?></h2>
+                    <small>Inventory Value</small>
                 </div>
             </div>
         </div>

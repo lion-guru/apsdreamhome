@@ -95,10 +95,13 @@ class DemandLetterController extends AdminController
                            COALESCE(cu.name, bu.name) AS customer_name,
                            COALESCE(cu.phone, bu.phone) AS customer_phone,
                            COALESCE(cu.email, bu.email) AS customer_email,
-                           DATEDIFF(CURDATE(), dl.due_date) AS overdue_days_calc
+                           DATEDIFF(CURDATE(), dl.due_date) AS overdue_days_calc,
+                           COALESCE(col.name, pcol.name) AS colony_name
                     FROM booking_demand_letters dl
                     JOIN bookings b ON b.id = dl.booking_id
                     LEFT JOIN plots p ON p.id = b.plot_id
+                    LEFT JOIN colonies col ON col.id = b.colony_id
+                    LEFT JOIN colonies pcol ON pcol.id = p.colony_id
                     LEFT JOIN users cu ON cu.id = b.customer_id
                     LEFT JOIN users bu ON bu.id = b.user_id
                     WHERE {$whereSql}
@@ -410,6 +413,80 @@ class DemandLetterController extends AdminController
         } catch (\Exception $e) {
             error_log('DemandLetterController::sendWhatsApp error: ' . $e->getMessage());
             $this->setFlash('error', 'Failed to send demand letter via WhatsApp.');
+            $this->redirect('/admin/finance/demand-letters');
+        }
+    }
+
+    /**
+     * CSV export — respects same filters as index (colony, status, overdue, search, dates) — tenant-scoped.
+     */
+    public function exportCsv()
+    {
+        $this->requireAdmin();
+        try {
+            $filters = [
+                'status'       => trim((string)($_GET['status'] ?? '')),
+                'search'       => trim((string)($_GET['search'] ?? '')),
+                'date_from'    => trim((string)($_GET['date_from'] ?? '')),
+                'date_to'      => trim((string)($_GET['date_to'] ?? '')),
+                'colony_id'    => (int)($_GET['colony_id'] ?? 0),
+                'overdue_days' => trim((string)($_GET['overdue_days'] ?? '')),
+            ];
+            $where = ['dl.tenant_id = ?'];
+            $params = [$this->tenantId()];
+            if ($filters['status'] !== '') { $where[] = 'dl.status = ?'; $params[] = $filters['status']; }
+            if ($filters['search'] !== '') {
+                $where[] = '(dl.letter_number LIKE ? OR b.booking_number LIKE ? OR COALESCE(cu.name, bu.name) LIKE ?)';
+                $like = '%' . $filters['search'] . '%';
+                $params[] = $like; $params[] = $like; $params[] = $like;
+            }
+            if ($filters['date_from'] !== '') { $where[] = 'dl.generated_date >= ?'; $params[] = $filters['date_from']; }
+            if ($filters['date_to'] !== '') { $where[] = 'dl.generated_date <= ?'; $params[] = $filters['date_to']; }
+            if ($filters['colony_id'] > 0) { $where[] = '(b.colony_id = ? OR p.colony_id = ?)'; $params[] = $filters['colony_id']; $params[] = $filters['colony_id']; }
+            if ($filters['overdue_days'] !== '') {
+                $days = (int)$filters['overdue_days'];
+                if ($days > 0) { $where[] = "dl.status IN ('drafted','sent','overdue') AND DATEDIFF(CURDATE(), dl.due_date) >= ?"; $params[] = $days; }
+                elseif ($filters['overdue_days'] === '0') { $where[] = "dl.due_date < CURDATE() AND dl.status IN ('drafted','sent','overdue')"; }
+            }
+            $whereSql = implode(' AND ', $where);
+            $sql = "SELECT dl.letter_number, dl.generated_date, dl.due_date, dl.amount, dl.status,
+                           b.booking_number, COALESCE(cu.name, bu.name) AS customer_name,
+                           COALESCE(cu.phone, bu.phone) AS customer_phone,
+                           COALESCE(col.name, pcol.name) AS colony_name,
+                           DATEDIFF(CURDATE(), dl.due_date) AS overdue_days
+                    FROM booking_demand_letters dl
+                    JOIN bookings b ON b.id = dl.booking_id
+                    LEFT JOIN plots p ON p.id = b.plot_id
+                    LEFT JOIN colonies col ON col.id = b.colony_id
+                    LEFT JOIN colonies pcol ON pcol.id = p.colony_id
+                    LEFT JOIN users cu ON cu.id = b.customer_id
+                    LEFT JOIN users bu ON bu.id = b.user_id
+                    WHERE {$whereSql}
+                    ORDER BY dl.due_date ASC, dl.id ASC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            $filename = 'demand_letters_' . date('Ymd_His') . '.csv';
+            header('Content-Type: text/csv; charset=utf-8');
+            header('Content-Disposition: attachment; filename="' . $filename . '"');
+            header('Pragma: no-cache');
+            $out = fopen('php://output', 'w');
+            // BOM for Excel
+            fwrite($out, "\xEF\xBB\xBF");
+            fputcsv($out, ['Letter #', 'Booking #', 'Colony', 'Customer', 'Phone', 'Amount', 'Status', 'Generated', 'Due Date', 'Overdue Days']);
+            foreach ($rows as $r) {
+                fputcsv($out, [
+                    $r['letter_number'] ?? '', $r['booking_number'] ?? '', $r['colony_name'] ?? '',
+                    $r['customer_name'] ?? '', $r['customer_phone'] ?? '',
+                    $r['amount'] ?? 0, $r['status'] ?? '', $r['generated_date'] ?? '', $r['due_date'] ?? '', $r['overdue_days'] ?? 0
+                ]);
+            }
+            fclose($out);
+            exit;
+        } catch (\Exception $e) {
+            error_log('DemandLetterController::exportCsv error: ' . $e->getMessage());
+            $this->setFlash('error', 'CSV export failed.');
             $this->redirect('/admin/finance/demand-letters');
         }
     }

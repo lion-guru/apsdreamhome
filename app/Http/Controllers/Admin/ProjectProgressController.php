@@ -200,12 +200,17 @@ class ProjectProgressController extends AdminController
             $progressPct = 0;
         }
 
-        // Handle site photo upload (optional, additive)
+        // Handle site photo upload (optional, additive) — 5MB limit, tenant-safe path
         $sitePhotoPath = null;
         $hasNewPhoto = false;
         if (!empty($_FILES['site_photo']['name']) && ($_FILES['site_photo']['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK) {
             $tmp = $_FILES['site_photo']['tmp_name'];
             $orig = $_FILES['site_photo']['name'];
+            $size = (int)($_FILES['site_photo']['size'] ?? 0);
+            if ($size > 5 * 1024 * 1024) {
+                $this->setFlash('error', 'Site photo exceeds 5MB limit.');
+                $this->redirect('/admin/construction/colony-progress?colony_id=' . $colonyId);
+            }
             $ext = strtolower(pathinfo($orig, PATHINFO_EXTENSION));
             $allowed = ['jpg', 'jpeg', 'png', 'webp'];
             if (in_array($ext, $allowed, true) && is_uploaded_file($tmp)) {
@@ -217,6 +222,9 @@ class ProjectProgressController extends AdminController
                     $sitePhotoPath = 'uploads/colony_progress/' . $safe;
                     $hasNewPhoto = true;
                 }
+            } else if (!in_array($ext, $allowed, true)) {
+                $this->setFlash('error', 'Invalid photo format — only jpg, png, webp allowed.');
+                $this->redirect('/admin/construction/colony-progress?colony_id=' . $colonyId);
             }
         }
 

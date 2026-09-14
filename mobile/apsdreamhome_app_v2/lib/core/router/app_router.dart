@@ -204,6 +204,11 @@ import '../../presentation/pages/telecaller/templates_page.dart';
 import '../../presentation/pages/telecaller/bulk_operations_page.dart';
 import '../../presentation/pages/telecaller/voice_call_page.dart';
 
+// Phase 6 — Demand Letters & Construction
+import '../../presentation/pages/customer/demand_letters_page.dart';
+import '../../presentation/pages/admin/colony_progress_page.dart';
+import '../../presentation/pages/admin/material_inventory_page.dart';
+
 // User model
 import '../../data/models/user_model.dart';
 
@@ -822,6 +827,19 @@ isDisclaimer ||
           child: PayoutBatchDetailPage(batchId: state.pathParameters['batchId']!),
           transitionsBuilder: _slideTransition,
         ),
+      ),
+      // Phase 6 — Demand Letters & Construction (auth-required)
+      GoRoute(
+        path: '/demand-letters',
+        pageBuilder: (context, state) => const CustomTransitionPage<void>(child: DemandLettersPage(), transitionsBuilder: _slideTransition),
+      ),
+      GoRoute(
+        path: '/admin/colony-progress',
+        pageBuilder: (context, state) => const CustomTransitionPage<void>(child: ColonyProgressPage(), transitionsBuilder: _slideTransition),
+      ),
+      GoRoute(
+        path: '/admin/material-inventory',
+        pageBuilder: (context, state) => const CustomTransitionPage<void>(child: MaterialInventoryPage(), transitionsBuilder: _slideTransition),
       ),
       GoRoute(
         path: '/customer-bookings',

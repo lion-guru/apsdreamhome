@@ -214,6 +214,16 @@ class AppConstants {
   static const String siteVisitOutcomeSuffix = '/outcome';
   static const String siteVisitSendPinSuffix = '/send-pin';
 
+  // Demand Letters (Phase 6 — customer + staff)
+  static const String demandLettersEndpoint = '/demand-letters';
+  static const String demandLetterDetailSuffix = '/';
+
+  // Construction Progress & Material Inventory (Phase 6)
+  static const String constructionColoniesEndpoint = '/construction/colonies';
+  static const String constructionMilestonesSuffix = '/milestones';
+  static const String constructionMaterialsEndpoint = '/construction/materials';
+  static const String constructionMaterialUsageEndpoint = '/construction/materials/usage';
+
   // Database
   static const String databaseName = 'aps_dream_home.db';
   static const int databaseVersion = 2;

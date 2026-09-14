@@ -144,15 +144,21 @@
                     </div>
                 <?php else: ?>
                     <div class="table-responsive">
+                        <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom bg-light">
+                            <small class="text-muted">Showing <?= count($letters) ?> letters</small>
+                            <a href="<?= $base ?>/admin/finance/demand-letters/export?<?= http_build_query($filters) ?>" class="btn btn-sm btn-outline-success"><i class="fas fa-file-csv me-1"></i>Export CSV</a>
+                        </div>
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light">
                                 <tr>
                                     <th>Letter #</th>
                                     <th>Booking #</th>
+                                    <th>Colony</th>
                                     <th>Customer Name</th>
                                     <th class="text-end">Amount</th>
                                     <th class="text-center">Status</th>
-                                    <th>Generated Date</th>
+                                    <th>Due Date</th>
+                                    <th>Overdue</th>
                                     <th class="text-center">Actions</th>
                                 </tr>
                             </thead>
@@ -170,6 +176,7 @@
                                     <tr>
                                         <td><strong><?= htmlspecialchars($letter['letter_number'] ?? '') ?></strong></td>
                                         <td><span class="text-muted"><?= htmlspecialchars($letter['booking_number'] ?? '') ?></span></td>
+                                        <td><span class="badge bg-light text-dark border"><?= htmlspecialchars($letter['colony_name'] ?? '—') ?></span></td>
                                         <td>
                                             <div class="fw-semibold"><?= htmlspecialchars($letter['customer_name'] ?? '') ?></div>
                                             <small class="text-muted"><?= htmlspecialchars($letter['customer_email'] ?? '') ?></small>
@@ -178,7 +185,18 @@
                                         <td class="text-center">
                                             <span class="badge bg-<?= $badgeClass ?>"><?= strtoupper($letter['status'] ?? 'drafted') ?></span>
                                         </td>
-                                        <td><?= htmlspecialchars($letter['generated_date'] ?? '') ?></td>
+                                        <td><small><?= htmlspecialchars($letter['due_date'] ?? '') ?></small><br><small class="text-muted"><?= htmlspecialchars($letter['generated_date'] ?? '') ?></small></td>
+                                        <td class="text-center">
+                                            <?php $od = (int)($letter['overdue_days_calc'] ?? 0); if (($letter['status'] ?? '') !== 'paid' && $od > 0): ?>
+                                                <span class="badge bg-danger"><?= $od ?>d overdue</span>
+                                            <?php elseif (($letter['status'] ?? '') !== 'paid' && $od === 0): ?>
+                                                <span class="badge bg-warning text-dark">Due today</span>
+                                            <?php elseif (($letter['status'] ?? '') !== 'paid' && $od < 0): ?>
+                                                <span class="badge bg-success"><?= abs($od) ?>d left</span>
+                                            <?php else: ?>
+                                                <span class="text-muted">—</span>
+                                            <?php endif; ?>
+                                        </td>
                                         <td class="text-center">
                                             <a href="<?= $base ?>/admin/finance/demand-letters/<?= (int)$letter['id'] ?>/pdf" class="btn btn-sm btn-outline-primary" title="View PDF" target="_blank">
                                                 <i class="fas fa-file-pdf"></i>
