@@ -1,4 +1,36 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-14 — Session 102: Release APK Build + Full System Sweep)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-14 — Session 103: CI/CD Pipeline Canonical + Trigger Cleanup)
+
+## Session 103: CI/CD Pipeline Canonical + Trigger Cleanup (2026-09-14)
+
+### Goal
+Resolve 4-way CI trigger overlap (ci-cd.yml, ci.yml, complete-ci-cd.yml, php.yml all firing on every push). Establish clear canonical pipeline, eliminate redundant Actions runs.
+
+### Summary
+| Area | Result |
+|------|--------|
+| **Branch protection** | **Not enabled** on main (gh API returns 404) — no required status checks |
+| **Repository dispatch** | No external webhook triggers in ci.yml/complete-ci-cd.yml — safe to demote |
+| **ci-cd.yml** | ✅ **Canonical** — real Playwright E2E (all browsers), docker-build, deploy-production |
+| **ci.yml** | ⏸ Demoted to `workflow_dispatch`-only (lint + test + security + no-op frontend skeleton) |
+| **complete-ci-cd.yml** | ⏸ Demoted to `workflow_dispatch`-only (code-quality + Trivy + performance info) |
+| **php.yml** | ✅ Kept on push/PR (legacy, external trigger URL compatibility) |
+| **codeql** | ✅ GitHub's own — always fires on push |
+| **Actions runs per push** | **5 → 3** (ci-cd.yml + php.yml + codeql) |
+| **Controller fix** | `requireAdmin()` visibility: `private` → `protected` in CampaignTemplateApiController + VoiceUploadApiController (safe child-gate reuse) |
+| **Scratch cleanup** | Deleted `test_admin_token.php` |
+
+### Verification
+- `gh api repos/lion-guru/apsdreamhome/branches/main/protection` → 404 (no branch protection)
+- `gh api repos/lion-guru/apsdreamhome/actions/runs?per_page=10` → post-push: only php.yml, ci-cd.yml, codeql fire for `e0d14fcc`
+- ci.yml/complete-ci-cd.yml last triggered for `0156e34b` (prior commit), not `e0d14fcc` ✅
+- Commits: `8c8174d81` (Playwright fix + controller visibility), `e0d14fcc7` (trigger demotion)
+
+### Key Lessons
+_234. **gh API resolves branch-protection uncertainty** — Before changing workflow triggers, `gh api repos/{owner}/{repo}/branches/main/protection` confirms whether required status checks exist. A 404 means no protection — safe to demote duplicate workflows without breaking anything._
+_235. **No repository_dispatch = no external webhook dependency** — If workflows only trigger on push/PR (no `repository_dispatch`, no `workflow_dispatch` with external callers), demoting to workflow_dispatch-only carries zero external risk._
+_236. **4 near-identical CI pipelines waste Actions minutes** — ci.yml + ci-cd.yml + complete-ci-cd.yml + php.yml all ran on every push to main, with 3× redundant MySQL test suites. Canonical pipeline (ci-cd.yml) is the only one with real Playwright E2E and deploy. Demote duplicates._
+
+---
 
 ## Session 102: Release APK Build + Full System Sweep (2026-09-14)
 
