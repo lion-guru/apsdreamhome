@@ -489,10 +489,11 @@ class AuthController extends BaseController
     {
         [$tSql, $tParams] = $this->getTenantSql();
         $params = array_merge([$identity, $identity], $tParams);
-        return $db->fetchOne(
+        $row = $db->fetchOne(
             "SELECT * FROM users WHERE (email = ? OR phone = ?) AND status = 'active' AND registration_status = 'approved'" . $tSql . " LIMIT 1",
             $params
         );
+        return $row ?: null;
     }
 
     /**

@@ -128,16 +128,53 @@ $colonies = $colonies ?? [];
             </div>
 
             <div class="mb-4">
+                <div class="card border-gold bg-light">
+                    <div class="card-header bg-primary text-white py-2">
+                        <h6 class="mb-0"><i class="fas fa-file-contract me-2"></i>Master Deed & Agreement</h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small mb-2">The Master Deed governs all terms of the plot booking. Both the associate and customer must accept these terms.</p>
+                        <div class="d-flex gap-2 mb-2 flex-wrap">
+                            <a href="<?= BASE_URL ?>/assets/documents/APS Group - Tripartite Master Legal Deed & Agreement (English Ultimate V8).docx" target="_blank" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-download me-1"></i> Download Master Deed (English)
+                            </a>
+                            <a href="<?= BASE_URL ?>/assets/documents/APS Group - त्रि-पक्षीय मास्टर रियल एस्टेट अनुबंध एवं नियम-शर्तें.docx" target="_blank" class="btn btn-sm btn-outline-success">
+                                <i class="fas fa-download me-1"></i> डाउनलोड मास्टर डीड (हिंदी)
+                            </a>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="masterDeedAccepted" name="master_deed_accepted" required>
+                            <label class="form-check-label" for="masterDeedAccepted">
+                                I confirm that I have read, understood, and unconditionally agree to the <strong>Master Deed & Agreement</strong> (both English and Hindi versions available above). *
+                            </label>
+                            <div class="invalid-feedback">You must accept the Master Deed to proceed.</div>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label fw-bold small">Upload Signed Master Deed Copy</label>
+                            <input type="file" name="master_deed_upload" class="form-control" accept="image/*,.pdf">
+                            <div class="form-text">Scanned or photographed copy of the signed Master Deed (JPG, PNG, or PDF — max 5MB)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-4">
                 <label class="form-label fw-bold"><?= __('assoc_bp_notes', [], 'Notes / Special Instructions') ?></label>
                 <textarea name="notes" class="form-control" rows="3" placeholder="<?= __('assoc_bp_notes_placeholder', [], 'Any special requests or notes about this booking...') ?>"></textarea>
             </div>
 
             <div class="mb-4">
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                    <input class="form-check-input" type="checkbox" id="agreeTerms" name="terms_consent" required>
                     <label class="form-check-label" for="agreeTerms">
-                        <?= __('assoc_bp_terms', [], 'I confirm that all details are correct and I have verified the customer\'s identity.') ?> *
+                        <?= __('assoc_bp_terms', [], 'I confirm that all details are correct and I have verified the customer\'s identity.') ?> *<br>
+                        <small class="text-muted">I have read, understood, and unconditionally agree to the
+                            <a href="<?= BASE_URL ?>/terms-conditions" target="_blank" class="text-primary text-decoration-underline">Master Agreement Terms</a>,
+                            <a href="<?= BASE_URL ?>/cancellation-policy" target="_blank" class="text-primary text-decoration-underline">Cancellation Policy</a>, and
+                            <a href="<?= BASE_URL ?>/refund-policy" target="_blank" class="text-primary text-decoration-underline">Refund Policy</a>.
+                        </small>
                     </label>
+                    <div class="invalid-feedback">You must accept the cancellation, refund, and master agreement terms to proceed.</div>
                 </div>
             </div>
 

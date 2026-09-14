@@ -37,10 +37,12 @@ class PdfService
     const TYPE_REPORT    = 'report';
     const TYPE_BROCHURE  = 'brochure';
     const TYPE_PAYSLIP   = 'payslip';
+    const TYPE_POSSESSION = 'possession';
 
     const ALL_TYPES = [
         self::TYPE_RECEIPT, self::TYPE_INVOICE, self::TYPE_AGREEMENT,
         self::TYPE_REPORT, self::TYPE_BROCHURE, self::TYPE_PAYSLIP,
+        self::TYPE_POSSESSION,
     ];
 
     /** @var \PDO|null */
@@ -56,6 +58,7 @@ class PdfService
             self::TYPE_RECEIPT => 0, self::TYPE_INVOICE => 0,
             self::TYPE_AGREEMENT => 0, self::TYPE_REPORT => 0,
             self::TYPE_BROCHURE => 0, self::TYPE_PAYSLIP => 0,
+            self::TYPE_POSSESSION => 0,
         ],
     ];
 
@@ -666,6 +669,172 @@ class PdfService
                 WHERE ep.id = ?");
             $stmt->execute([(int)$payslipId]);
             return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
+        } catch (\Throwable $e) { return null; }
+    }
+
+    /* ------------------------------------------------------------------ */
+    /*  7. Plot Possession & Handover Certificate (bookings)               */
+    /* ------------------------------------------------------------------ */
+
+    public function possession($bookingId)
+    {
+        $this->lastType = self::TYPE_POSSESSION;
+        $bookingId = (int)$bookingId;
+        if ($bookingId <= 0) return ['success' => false, 'error' => 'Invalid booking ID'];
+
+        $data = $this->loadPossession($bookingId);
+        if (!$data) return ['success' => false, 'error' => 'Booking not found'];
+
+        $cached = $this->checkCache(self::TYPE_POSSESSION, $bookingId);
+        if ($cached) return $cached;
+
+        $totalValue = (float)($data['total_price'] ?? $data['total_amount'] ?? $data['booking_amount'] ?? 0);
+        $outstanding = (float)($data['outstanding'] ?? 0);
+        $noDues = $outstanding <= 0.01;
+        $width = $data['width_ft'] ?? '';
+        $length = $data['length_ft'] ?? '';
+        $dims = ($width !== '' && $width !== null && $length !== '' && $length !== null)
+            ? $width . ' ft x ' . $length . ' ft' : 'As per sanctioned layout';
+
+        $pdf = new MinimalPDF();
+        $this->renderHeader($pdf, 'Plot Possession & Handover Certificate');
+
+        $this->renderKvBlock($pdf, 110, [
+            'Certificate No' => 'POS-' . str_pad((string)$bookingId, 6, '0', STR_PAD_LEFT) . '-' . date('Y'),
+            'Date of Issue'  => date('d-M-Y'),
+            'Booking No'     => $data['booking_number'] ?? ('BK-' . $bookingId),
+            'Customer'       => ($data['customer_name'] ?? 'Customer')
+                . (!empty($data['customer_phone']) ? ' | ' . $data['customer_phone'] : ''),
+            'Colony'         => ($data['colony_name'] ?? 'N/A')
+                . (!empty($data['colony_location']) ? ', ' . $data['colony_location'] : ''),
+            'Plot No'        => ($data['plot_number'] ?? 'N/A')
+                . (!empty($data['block']) ? ' (Block ' . $data['block'] . ')' : ''),
+            'Area / Size'    => ($data['area_sqft'] ?? '___') . ' sq. ft. | ' . $dims,
+            'Registry No'    => ($data['registry_number'] ?? 'N/A')
+                . ' | Dated: ' . (!empty($data['registry_date']) ? date('d-M-Y', strtotime($data['registry_date'])) : 'N/A'),
+            'Possession Date' => !empty($data['possession_date']) ? date('d-M-Y', strtotime($data['possession_date'])) : date('d-M-Y'),
+        ]);
+
+        $pdf->setFont('Helvetica', 'B', 11);
+        $pdf->text(40, 330, 'Plot Boundaries (as per sanctioned colony layout):');
+        $this->renderTable($pdf, 348,
+            ['Direction', 'Measurement'],
+            [
+                ['North', ($width !== '' && $width !== null) ? $width . ' ft' : 'As per layout'],
+                ['South', ($width !== '' && $width !== null) ? $width . ' ft' : 'As per layout'],
+                ['East',  ($length !== '' && $length !== null) ? $length . ' ft' : 'As per layout'],
+                ['West',  ($length !== '' && $length !== null) ? $length . ' ft' : 'As per layout'],
+            ],
+            [200, 280]
+        );
+
+        $pdf->setFont('Helvetica', 'B', 11);
+        $pdf->text(40, 480, 'No-Dues Clearance:');
+        $pdf->setFont('Helvetica', '', 10);
+        $pdf->multiText(40, 498,
+            $noDues
+                ? 'Certified that the customer has cleared all dues towards Plot No '
+                    . ($data['plot_number'] ?? '') . ' (total consideration Rs. '
+                    . number_format($totalValue, 2) . '). No amount is outstanding as on '
+                    . date('d-M-Y') . '. Physical possession of the plot is hereby handed over.'
+                : 'Total consideration Rs. ' . number_format($totalValue, 2)
+                    . ' | Outstanding as on ' . date('d-M-Y') . ': Rs. '
+                    . number_format($outstanding, 2)
+                    . '. Possession handed over subject to clearance of the outstanding amount.',
+            515, 1.5);
+
+        $pdf->setFont('Helvetica', '', 10);
+        $pdf->multiText(40, 610,
+            "The customer has inspected the plot, verified the boundaries with reference to the "
+            . "sanctioned layout, and accepts physical possession in its present condition. "
+            . "Mutation / Dakhil-Kharij: " . ($data['mutation_number'] ?? 'under process')
+            . ". This certificate is issued in duplicate — one copy for the customer and one for the company record.",
+            515, 1.5);
+
+        $pdf->setFont('Helvetica', '', 10);
+        $pdf->text(40, 700, '________________________');
+        $pdf->text(360, 700, '________________________');
+        $pdf->setFont('Helvetica', 'B', 10);
+        $pdf->text(40, 716, 'Managing Director');
+        $pdf->text(360, 716, 'Customer (Accepted)');
+        $pdf->setFont('Helvetica', '', 9);
+        $pdf->text(40, 730, 'APS Dream Home Pvt. Ltd. | Seal');
+        $pdf->text(360, 730, ($data['customer_name'] ?? '') . ' | Date: ' . date('d-M-Y'));
+        $pdf->setFont('Helvetica', 'I', 9);
+        $pdf->multiText(40, 758,
+            "Computer-generated certificate. For queries: support@apsdreamhome.com | +91 92771 21112",
+            515);
+
+        $path = $this->writePdf($pdf, self::TYPE_POSSESSION, $bookingId);
+        return $this->returnResult($path, $bookingId);
+    }
+
+    /**
+     * Load possession-certificate data for a bookings-table row.
+     * No-dues math: total consideration minus paid EMI schedules/payments.
+     */
+    protected function loadPossession($bookingId)
+    {
+        try {
+            $db = $this->db instanceof \PDO ? $this->db : $this->resolveDb();
+            if (!$db instanceof \PDO) return null;
+            $stmt = $db->prepare("SELECT b.*, p.plot_number, p.block, p.area_sqft,
+                        p.width_ft, p.length_ft, p.facing,
+                        c.name AS colony_name, c.location AS colony_location
+                    FROM bookings b
+                    LEFT JOIN plots p ON p.id = b.plot_id
+                    LEFT JOIN colonies c ON c.id = COALESCE(b.colony_id, p.colony_id)
+                    WHERE b.id = ? LIMIT 1");
+            $stmt->execute([(int)$bookingId]);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if (!$row) return null;
+
+            // Customer identity: customer_id first, then user_id fallback.
+            $custId = (int)($row['customer_id'] ?? 0);
+            $altId = (int)($row['user_id'] ?? 0);
+            foreach (array_filter([$custId, $altId]) as $uid) {
+                try {
+                    $u = $db->prepare("SELECT name, email, phone FROM users WHERE id = ? LIMIT 1");
+                    $u->execute([(int)$uid]);
+                    if ($user = $u->fetch(\PDO::FETCH_ASSOC)) {
+                        $row['customer_name'] = $user['name'] ?? '';
+                        $row['customer_email'] = $user['email'] ?? '';
+                        $row['customer_phone'] = $user['phone'] ?? '';
+                        break;
+                    }
+                } catch (\Throwable $e) { error_log($e->getMessage()); }
+            }
+            $row['customer_name'] = $row['customer_name'] ?? ('Customer #' . $bookingId);
+
+            // Latest possession record (handover facts override booking row).
+            try {
+                $pr = $db->prepare("SELECT * FROM possession_records WHERE booking_id = ? ORDER BY id DESC LIMIT 1");
+                $pr->execute([(int)$bookingId]);
+                if ($rec = $pr->fetch(\PDO::FETCH_ASSOC)) {
+                    if (!empty($rec['possession_date'])) $row['possession_date'] = $rec['possession_date'];
+                    if (!empty($rec['condition_notes'])) $row['handover_notes'] = $rec['condition_notes'];
+                    $row['possession_record_status'] = $rec['status'] ?? '';
+                }
+            } catch (\Throwable $e) { error_log($e->getMessage()); }
+
+            // No-dues math: total consideration vs paid schedules.
+            $total = (float)($row['total_price'] ?? $row['total_amount'] ?? $row['booking_amount'] ?? 0);
+            $paid = 0.0;
+            try {
+                $ps = $db->prepare("SELECT COALESCE(SUM(paid_amount), 0) FROM booking_payment_schedules WHERE booking_id = ?");
+                $ps->execute([(int)$bookingId]);
+                $paid = (float)$ps->fetchColumn();
+            } catch (\Throwable $e) { error_log($e->getMessage()); }
+            if ($paid <= 0) {
+                try {
+                    $py = $db->prepare("SELECT COALESCE(SUM(total_amount), 0) FROM payments WHERE booking_id = ? AND status IN ('paid','captured','success','completed')");
+                    $py->execute([(int)$bookingId]);
+                    $paid = (float)$py->fetchColumn();
+                } catch (\Throwable $e) { error_log($e->getMessage()); }
+            }
+            $row['total_paid_calc'] = $paid;
+            $row['outstanding'] = $total > 0 ? max(0, $total - $paid) : 0;
+            return $row;
         } catch (\Throwable $e) { return null; }
     }
 

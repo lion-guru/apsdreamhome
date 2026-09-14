@@ -376,8 +376,164 @@ class AssociateController extends BaseController
 
     public function bookPlot()
     {
-        // Legacy - redirects to property listing
-        $this->redirect('/associate/add-property');
+        $this->requireAuth();
+        $userId = $_SESSION['user_id'];
+        $tid = (int)TenantContext::getId();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            // GET: render the booking form
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $tidSql = $tid > 1 ? ' AND tenant_id = ?' : '';
+            $params = $tid > 1 ? [$tid] : [];
+            $colonies = $db->fetchAll("SELECT * FROM colonies WHERE is_active = 1{$tidSql} ORDER BY name", $params);
+            $plots = $db->fetchAll("SELECT p.*, c.name as colony_name FROM plots p JOIN colonies c ON p.colony_id = c.id WHERE p.is_active = 1{$tidSql} ORDER BY p.plot_number", $params);
+            $this->render('associate/book_plot', [
+                'page_title' => 'Book Plot - Associate Portal',
+                'colonies' => $colonies,
+                'plots' => $plots,
+            ], 'layouts/associate');
+            return;
+        }
+
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+
+            // Validate CSRF
+            $csrfToken = $_POST['csrf_token'] ?? '';
+            if (empty($csrfToken) || ($csrfToken !== ($_SESSION['csrf_token'] ?? ''))) {
+                $_SESSION['flash_error'] = 'Invalid CSRF token';
+                $this->redirect('/associate/book-plot');
+                return;
+            }
+
+            // Validate terms_consent (Master Deed V8 compliance)
+            $termsConsent = $_POST['terms_consent'] ?? '';
+            if (empty($termsConsent)) {
+                $_SESSION['flash_error'] = 'You must accept the Master Agreement Terms, Cancellation Policy, and Refund Policy to proceed.';
+                $this->redirect('/associate/book-plot');
+                return;
+            }
+
+            // Validate master_deed_accepted
+            $masterDeedAccepted = $_POST['master_deed_accepted'] ?? '';
+            if (empty($masterDeedAccepted)) {
+                $_SESSION['flash_error'] = 'You must accept the Master Deed & Agreement to proceed.';
+                $this->redirect('/associate/book-plot');
+                return;
+            }
+
+            // Handle Master Deed upload
+            $masterDeedPath = '';
+            if (isset($_FILES['master_deed_upload']) && $_FILES['master_deed_upload']['error'] === UPLOAD_ERR_OK) {
+                $allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+                $maxSize = 5 * 1024 * 1024; // 5MB
+                $tmpPath = $_FILES['master_deed_upload']['tmp_name'];
+                $origName = basename($_FILES['master_deed_upload']['name']);
+                $fileExt = strtolower(pathinfo($origName, PATHINFO_EXTENSION));
+                $mime = mime_content_type($tmpPath);
+                if (in_array($mime, $allowedTypes) && $_FILES['master_deed_upload']['size'] <= $maxSize) {
+                    $uploadDir = 'assets/documents/master-deeds/';
+                    if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+                    $safeName = 'deed_' . time() . '_' . uniqid() . '.' . $fileExt;
+                    if (move_uploaded_file($tmpPath, $uploadDir . $safeName)) {
+                        $masterDeedPath = $uploadDir . $safeName;
+                    }
+                }
+            }
+
+            // Validate required fields
+            $plotId = (int)($_POST['plot_id'] ?? 0);
+
+            // Read additional form fields for booking notes
+            $masterDeedAcceptedStr = $masterDeedAccepted ? 'Master Deed accepted.' : '';
+            $colonyId = (int)($_POST['colony_id'] ?? 0);
+            $customerName = trim($_POST['customer_name'] ?? '');
+            $customerPhone = trim($_POST['customer_phone'] ?? '');
+            $customerEmail = trim($_POST['customer_email'] ?? '');
+            $customerAddress = trim($_POST['customer_address'] ?? '');
+            $bookingAmount = (float)($_POST['booking_amount'] ?? 0);
+            $paymentMode = trim($_POST['payment_mode'] ?? '');
+            $notes = trim($_POST['notes'] ?? '');
+            $aadharNumber = trim($_POST['aadhar_number'] ?? '');
+            $panNumber = trim($_POST['pan_number'] ?? '');
+
+            if ($plotId <= 0 || $colonyId <= 0) {
+                $_SESSION['flash_error'] = 'Please select a plot.';
+                $this->redirect('/associate/book-plot');
+                return;
+            }
+            if (empty($customerName) || empty($customerPhone)) {
+                $_SESSION['flash_error'] = 'Customer name and phone are required.';
+                $this->redirect('/associate/book-plot');
+                return;
+            }
+            if ($bookingAmount <= 0) {
+                $_SESSION['flash_error'] = 'Booking amount must be greater than zero.';
+                $this->redirect('/associate/book-plot');
+                return;
+            }
+            if (empty($paymentMode)) {
+                $_SESSION['flash_error'] = 'Payment mode is required.';
+                $this->redirect('/associate/book-plot');
+                return;
+            }
+
+            // Check plot availability
+            $tidSql = $tid > 1 ? ' AND tenant_id = ?' : '';
+            $plotParams = [$plotId];
+            if ($tid > 1) $plotParams[] = $tid;
+            $plot = $db->fetchRow("SELECT p.*, c.name as colony_name FROM plots p JOIN colonies c ON p.colony_id = c.id WHERE p.id = ? AND p.is_active = 1 AND p.status = 'available'{$tidSql}", $plotParams);
+            if (!$plot) {
+                $_SESSION['flash_error'] = 'Plot is no longer available.';
+                $this->redirect('/associate/book-plot');
+                return;
+            }
+
+            // Generate booking number
+            $bookingNumber = 'BK-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -6));
+
+            $db->beginTransaction();
+            try {
+                // Insert into plot_bookings
+                $bookingId = $db->insert('plot_bookings', [
+                    'tenant_id' => $tid,
+                    'plot_id' => $plotId,
+                    'colony_id' => $colonyId,
+                    'customer_name' => $customerName,
+                    'customer_phone' => $customerPhone,
+                    'customer_email' => $customerEmail,
+                    'customer_address' => $customerAddress,
+                    'booking_number' => $bookingNumber,
+                    'booking_date' => date('Y-m-d'),
+                    'total_plot_value' => (float)($plot['total_price'] ?? $bookingAmount),
+                    'booking_amount' => $bookingAmount,
+                    'agreement_value' => (float)($plot['total_price'] ?? $bookingAmount),
+                    'status' => 'pending',
+                    'approval_status' => 'pending',
+                    'associate_id' => $userId,
+                    'channel' => 'associate_booking',
+                    'notes' => 'Master Deed: ' . ($masterDeedAcceptedStr ? 'Accepted' : 'N/A') . '. Deed file: ' . ($masterDeedPath ?: 'N/A') . '. Terms accepted. Aadhar: ' . $aadharNumber . ' | PAN: ' . $panNumber . ' | ' . $notes,
+                    'created_by' => $userId,
+                    'created_at' => date('Y-m-d H:i:s'),
+                ]);
+
+                // Update plot status to booked
+                $db->update('plots', ['status' => 'booked', 'updated_at' => date('Y-m-d H:i:s')], "id = ?{$tidSql}", array_merge([$plotId], $tid > 1 ? [$tid] : []));
+
+                $db->commit();
+                $_SESSION['flash_success'] = 'Plot booking submitted successfully! Booking #' . $bookingNumber . '. Waiting for admin approval.';
+                $this->redirect('/associate/dashboard');
+            } catch (Exception $e) {
+                $db->rollBack();
+                error_log('AssociateController::bookPlot insert error: ' . $e->getMessage());
+                $_SESSION['flash_error'] = 'Error saving booking. Please try again.';
+                $this->redirect('/associate/book-plot');
+            }
+        } catch (Exception $e) {
+            error_log('AssociateController::bookPlot error: ' . $e->getMessage());
+            $_SESSION['flash_error'] = 'An error occurred. Please try again.';
+            $this->redirect('/associate/book-plot');
+        }
     }
 
     public function compareProperties()

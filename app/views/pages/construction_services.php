@@ -221,14 +221,14 @@
                 </div>
                 <div class="card border-0 shadow-lg">
                     <div class="card-body p-5">
-                        <form action="<?= BASE_URL ?>/construction-services/inquiry" method="POST">
-                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+<form action="<?= BASE_URL ?>/construction-services/inquiry" method="POST" id="constructionInquiryForm">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="row g-3">
                                 <div class="col-md-6"><label class="form-label fw-medium"><?= __('contact_form_name') ?> <span class="text-danger">*</span></label><input type="text" name="name" class="form-control form-control-lg" required></div>
                                 <div class="col-md-6"><label class="form-label fw-medium"><?= __('contact_form_phone') ?> <span class="text-danger">*</span></label><input type="tel" name="phone" class="form-control form-control-lg" required></div>
                                 <div class="col-md-6"><label class="form-label fw-medium"><?= __('contact_form_email') ?></label><input type="email" name="email" class="form-control form-control-lg"></div>
                                 <div class="col-md-6"><label class="form-label fw-medium"><?= __('const_project_type') ?></label>
-                                    <select name="project_type" class="form-select form-select-lg">
+                                    <select name="project_type" class="form-select form-select-lg" required>
                                         <option value=""><?= __('const_select') ?></option>
                                         <option value="residential"><?= __('const_type_residential') ?></option>
                                         <option value="commercial"><?= __('const_type_commercial') ?></option>
@@ -237,9 +237,19 @@
                                         <option value="turnkey"><?= __('const_type_turnkey') ?></option>
                                     </select>
                                 </div>
-                                <div class="col-md-6"><label class="form-label fw-medium"><?= __('const_budget_range') ?></label><input type="number" name="budget" class="form-control form-control-lg" placeholder="<?= __('const_budget_placeholder') ?>"></div>
-                                <div class="col-md-6"><label class="form-label fw-medium"><?= __('const_location') ?></label><input type="text" name="location" class="form-control form-control-lg" placeholder="<?= __('const_location_placeholder') ?>"></div>
-                                <div class="col-12"><label class="form-label fw-medium"><?= __('const_project_details') ?></label><textarea name="message" rows="4" class="form-control" placeholder="<?= __('const_project_details_placeholder') ?>"></textarea></div>
+                                <div class="col-md-6"><label class="form-label fw-medium"><?= __('const_budget_range') ?></label><input type="number" name="budget" class="form-control form-control-lg" placeholder="<?= __('const_budget_placeholder') ?>" min="100000"></div>
+                                <div class="col-md-6"><label class="form-label fw-medium"><?= __('const_location') ?></label><input type="text" name="location" class="form-control form-control-lg" placeholder="<?= __('const_location_placeholder') ?>" required></div>
+                                <div class="col-md-6"><label class="form-label fw-medium"><?= __('const_timeline') ?></label>
+                                    <select name="timeline" class="form-select form-select-lg">
+                                        <option value=""><?= __('const_select_timeline') ?></option>
+                                        <option value="1-3"><?= __('const_timeline_1_3') ?></option>
+                                        <option value="3-6"><?= __('const_timeline_3_6') ?></option>
+                                        <option value="6-12"><?= __('const_timeline_6_12') ?></option>
+                                        <option value="12+"><?= __('const_timeline_12_plus') ?></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6"><label class="form-label fw-medium"><?= __('const_plot_area') ?></label><input type="number" name="plot_area" class="form-control form-control-lg" placeholder="<?= __('const_plot_area_placeholder') ?>" min="100"></div>
+                                <div class="col-12"><label class="form-label fw-medium"><?= __('const_project_details') ?></label><textarea name="message" rows="4" class="form-control" placeholder="<?= __('const_project_details_placeholder') ?>" required></textarea></div>
                                 <div class="col-12">
                                     <button type="submit" class="btn btn-primary btn-lg w-100"><i class="fas fa-paper-plane me-2"></i><?= __('const_submit_inquiry') ?></button>
                                 </div>
@@ -270,3 +280,181 @@
         </div>
     </div>
 </section>
+
+<!-- Construction Inquiry Modal -->
+<div class="modal fade" id="constModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header border-0 p-4 bg-gradient-warning" id="constModalHeader">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="fas fa-hard-hat text-white fa-xl" id="constModalIcon"></i>
+                    </div>
+                    <div>
+                        <h5 class="modal-title text-white fw-bold mb-1" id="constModalTitle">
+                            <?= __('const_get_quote') ?></h5>
+                        <p class="text-white-50 small mb-0" id="constModalSubtitle">
+                            Get a free construction estimate for your project</p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4" id="constModalBody">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function openConstModal() {
+    var header = document.getElementById('constModalHeader');
+    var icon = document.getElementById('constModalIcon');
+    var title = document.getElementById('constModalTitle');
+    var subtitle = document.getElementById('constModalSubtitle');
+    var body = document.getElementById('constModalBody');
+
+    header.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+    icon.className = 'fas fa-hard-hat text-white fa-xl';
+    title.textContent = '<?= __('const_get_quote') ?>';
+    subtitle.textContent = 'Get a free construction estimate for your project';
+
+    var featuresHtml = 
+        '<div class="row g-4"><div class="col-md-7"><h6 class="fw-bold mb-3"><i class="fas fa-check-circle text-warning me-2"></i>Why Choose Us</h6><ul class="list-unstyled">';
+    ['Free Site Visit', 'Detailed BOQ', 'Material Selection Help', 'Timeline Planning', 'Quality Assurance'].forEach(function(f) {
+        featuresHtml += '<li class="mb-2"><i class="fas fa-check text-warning me-2"></i>' + f + '</li>';
+    });
+    featuresHtml += '</ul>';
+    
+    featuresHtml += '<div class="bg-light rounded p-3 mt-3"><h6 class="fw-bold mb-2">Construction Types</h6>';
+    ['Residential', 'Commercial', 'Renovation', 'Infrastructure', 'Turnkey'].forEach(function(t) {
+        featuresHtml += '<span class="badge bg-warning text-dark me-1 mb-1">' + t + '</span>';
+    });
+    featuresHtml += '</div>';
+    
+    featuresHtml += '</div><div class="col-md-5"><div class="card border-0 shadow-sm p-4 h-100">';
+    featuresHtml += '<h5 class="fw-bold mb-3"><i class="fas fa-paper-plane text-warning me-2"></i>Quick Inquiry</h5>';
+    featuresHtml += '<form id="constModalInquiryForm" class="small">';
+    featuresHtml += '<input type="hidden" name="service_type" value="construction">';
+    featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1">Name *</label><input type="text" class="form-control form-control-sm" name="name" required></div>';
+    featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1">Phone *</label><input type="tel" class="form-control form-control-sm" name="phone" required></div>';
+    featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1">Email *</label><input type="email" class="form-control form-control-sm" name="email" required></div>';
+    featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1">Project Type</label><select class="form-select form-control-sm" name="project_type"><option value="">Select</option><option value="residential">Residential</option><option value="commercial">Commercial</option><option value="renovation">Renovation</option><option value="infrastructure">Infrastructure</option><option value="turnkey">Turnkey</option></select></div>';
+    featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1">Budget (₹)</label><input type="number" class="form-control form-control-sm" name="budget" min="100000"></div>';
+    featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1">Location</label><input type="text" class="form-control form-control-sm" name="location" required></div>';
+    featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1">Details</label><textarea class="form-control form-control-sm" name="message" rows="2" placeholder="Brief description..."></textarea></div>';
+    featuresHtml += '<button type="submit" class="btn btn-sm btn-warning w-100 mt-1" id="constModalSubmitBtn"><i class="fas fa-paper-plane me-1"></i>Submit Inquiry</button>';
+    featuresHtml += '<div id="constModalFormResponse" class="alert p-2 mt-2 small d-none"></div>';
+    featuresHtml += '</form></div></div></div>';
+
+    body.innerHTML = featuresHtml;
+    showBootstrapModal('constModal');
+
+    // Dynamic event binding for modal form
+    var modalForm = document.getElementById('constModalInquiryForm');
+    if (modalForm) {
+        modalForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var mSubmitBtn = document.getElementById('constModalSubmitBtn');
+            var mResponse = document.getElementById('constModalFormResponse');
+            
+            mSubmitBtn.disabled = true;
+            mSubmitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Sending...';
+            
+            var formData = new FormData(modalForm);
+            fetch('<?php echo BASE_URL; ?>/service-interest', {
+                method: 'POST',
+                body: formData
+            })
+            .then(r => r.json())
+            .then(d => {
+                mResponse.classList.remove('d-none', 'alert-success', 'alert-danger');
+                mResponse.classList.add(d.success ? 'alert-success' : 'alert-danger');
+                mResponse.textContent = d.message;
+                if (d.success) {
+                    modalForm.reset();
+                    if (window.APS && window.APS.showNotification) {
+                        window.APS.showNotification('Construction inquiry submitted successfully!', 'success');
+                    }
+                }
+                mSubmitBtn.disabled = false;
+                mSubmitBtn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Submit Inquiry';
+            })
+            .catch(err => {
+                mResponse.classList.remove('d-none', 'alert-success');
+                mResponse.classList.add('alert-danger');
+                mResponse.textContent = 'Something went wrong. Please try again.';
+                mSubmitBtn.disabled = false;
+                mSubmitBtn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Submit Inquiry';
+            });
+        });
+    }
+}
+
+function showBootstrapModal(id) {
+    if (typeof bootstrap !== 'undefined') {
+        new bootstrap.Modal(document.getElementById(id)).show();
+    } else {
+        setTimeout(function() { showBootstrapModal(id); }, 200);
+    }
+}
+
+// AJAX form submission for main form
+document.getElementById('constructionInquiryForm')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const form = this;
+    const btn = form.querySelector('button[type="submit"]');
+    const originalText = btn.innerHTML;
+    
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Submitting...';
+    
+    try {
+        const formData = new FormData(form);
+        const response = await fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showToast('success', '<?= __('const_inquiry_submitted') ?>');
+            form.reset();
+        } else {
+            showToast('error', result.message || '<?= __('const_enquiry_failed') ?>');
+        }
+    } catch (error) {
+        showToast('error', '<?= __('const_enquiry_error') ?>');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    }
+});
+
+function showToast(type, message) {
+    const toast = document.createElement('div');
+    toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
+    toast.setAttribute('role', 'alert');
+    toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">${message}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    `;
+    
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+        document.body.appendChild(container);
+    }
+    container.appendChild(toast);
+    const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+    toast.addEventListener('hidden.bs.toast', () => toast.remove());
+}
+</script>

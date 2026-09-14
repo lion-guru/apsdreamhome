@@ -205,7 +205,7 @@ class PropertyFeaturesController extends AdminController
         $entries = $this->db->fetchAll("
             SELECT m.* FROM property_market_data m
             $whereClause
-            ORDER BY m.data_date DESC
+            ORDER BY m.created_at DESC
         ", $params) ?: [];
 
         $locations = $this->db->fetchAll("SELECT DISTINCT location FROM property_market_data ORDER BY location") ?: [];
@@ -261,13 +261,14 @@ class PropertyFeaturesController extends AdminController
             SELECT a.*, p.title as property_title, p.type as property_type, p.location as property_location, p.price as property_price
             FROM property_analytics a
             LEFT JOIN properties p ON a.property_id = p.id
-            ORDER BY a.views DESC
+            WHERE a.metric_type = 'views'
+            ORDER BY a.metric_value DESC
         ") ?: [];
 
-        $totalViews = $this->db->fetch("SELECT COALESCE(SUM(views), 0) as c FROM property_analytics") ?: ['c' => 0];
-        $totalInquiries = $this->db->fetch("SELECT COALESCE(SUM(inquiries), 0) as c FROM property_analytics") ?: ['c' => 0];
-        $totalFavorites = $this->db->fetch("SELECT COALESCE(SUM(favorites), 0) as c FROM property_analytics") ?: ['c' => 0];
-        $totalShares = $this->db->fetch("SELECT COALESCE(SUM(shares), 0) as c FROM property_analytics") ?: ['c' => 0];
+        $totalViews = $this->db->fetch("SELECT COALESCE(SUM(metric_value), 0) as c FROM property_analytics WHERE metric_type = 'views'") ?: ['c' => 0];
+        $totalInquiries = $this->db->fetch("SELECT COALESCE(SUM(metric_value), 0) as c FROM property_analytics WHERE metric_type = 'inquiries'") ?: ['c' => 0];
+        $totalFavorites = $this->db->fetch("SELECT COALESCE(SUM(metric_value), 0) as c FROM property_analytics WHERE metric_type = 'favorites'") ?: ['c' => 0];
+        $totalShares = $this->db->fetch("SELECT COALESCE(SUM(metric_value), 0) as c FROM property_analytics WHERE metric_type = 'shares'") ?: ['c' => 0];
 
         $topFavorited = $this->db->fetchAll("
             SELECT p.id, p.title, COUNT(f.id) as total
@@ -279,10 +280,11 @@ class PropertyFeaturesController extends AdminController
         ") ?: [];
 
         $mostViewed = $this->db->fetchAll("
-            SELECT p.id, p.title, a.views
+            SELECT p.id, p.title, a.metric_value as views
             FROM property_analytics a
             JOIN properties p ON a.property_id = p.id
-            ORDER BY a.views DESC
+            WHERE a.metric_type = 'views'
+            ORDER BY a.metric_value DESC
             LIMIT 10
         ") ?: [];
 

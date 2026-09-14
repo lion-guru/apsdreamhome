@@ -89,4 +89,112 @@ class BlogController extends AdminController
         }
         $this->redirect('/admin/blogs');
     }
+
+    public function comments()
+    {
+        $this->requireAdmin();
+        try {
+            $status = $_GET['status'] ?? '';
+            $search = $_GET['search'] ?? '';
+
+            $where = [];
+            $params = [];
+
+            if (!empty($status) && in_array($status, ['pending', 'approved', 'spam'])) {
+                $where[] = "c.status = ?";
+                $params[] = $status;
+            }
+            if (!empty($search)) {
+                $where[] = "(c.author_name LIKE ? OR c.author_email LIKE ? OR c.comment LIKE ?)";
+                $params[] = "%$search%";
+                $params[] = "%$search%";
+                $params[] = "%$search%";
+            }
+
+            $whereSql = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
+
+            $countStmt = $this->db->prepare("SELECT COUNT(*) as total FROM blog_comments c $whereSql");
+            $countStmt->execute($params);
+            $total = $countStmt->fetch(\PDO::FETCH_ASSOC)['total'] ?? 0;
+
+            $page = max(1, (int)($_GET['page'] ?? 1));
+            $perPage = 25;
+            $offset = ($page - 1) * $perPage;
+            $totalPages = max(1, ceil($total / $perPage));
+
+            $stmt = $this->db->prepare("
+                SELECT c.*, p.title as post_title, u.name as admin_name
+                FROM blog_comments c
+                LEFT JOIN blog_posts p ON c.post_id = p.id
+                LEFT JOIN users u ON c.user_id = u.id
+                $whereSql
+                ORDER BY c.created_at DESC
+                LIMIT $perPage OFFSET $offset
+            ");
+            $stmt->execute($params);
+            $comments = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+            $stats = $this->db->query("
+                SELECT
+                    COUNT(*) as total,
+                    SUM(IF(status='pending',1,0)) as pending,
+                    SUM(IF(status='approved',1,0)) as approved,
+                    SUM(IF(status='spam',1,0)) as spam
+                FROM blog_comments
+            ")->fetch(\PDO::FETCH_ASSOC);
+
+            $this->render('admin/blogs/comments', [
+                'page_title' => 'Blog Comments',
+                'comments' => $comments,
+                'stats' => $stats,
+                'total' => $total,
+                'page' => $page,
+                'totalPages' => $totalPages,
+                'status' => $status,
+                'search' => $search,
+            ]);
+        } catch (\Exception $e) {
+            $_SESSION['error'] = 'Error: ' . $e->getMessage();
+            $this->redirect('/admin/blogs');
+        }
+    }
+
+    public function approveComment($id)
+    {
+        $this->requireAdmin();
+        try {
+            $stmt = $this->db->prepare("UPDATE blog_comments SET status = 'approved' WHERE id = ?");
+            $stmt->execute([$id]);
+            $_SESSION['success'] = 'Comment approved.';
+        } catch (\Exception $e) {
+            $_SESSION['error'] = 'Error: ' . $e->getMessage();
+        }
+        $this->redirect('/admin/blogs/comments');
+    }
+
+    public function rejectComment($id)
+    {
+        $this->requireAdmin();
+        try {
+            $stmt = $this->db->prepare("UPDATE blog_comments SET status = 'spam' WHERE id = ?");
+            $stmt->execute([$id]);
+            $_SESSION['success'] = 'Comment marked as spam.';
+        } catch (\Exception $e) {
+            $_SESSION['error'] = 'Error: ' . $e->getMessage();
+        }
+        $this->redirect('/admin/blogs/comments');
+    }
+
+    public function deleteComment($id)
+    {
+        $this->requireAdmin();
+        try {
+            $stmt = $this->db->prepare("DELETE FROM blog_comments WHERE id = ?");
+            $stmt->execute([$id]);
+            $_SESSION['success'] = 'Comment deleted.';
+        } catch (\Exception $e) {
+            $_SESSION['error'] = 'Error: ' . $e->getMessage();
+        }
+        $this->redirect('/admin/blogs/comments');
+    }
 }

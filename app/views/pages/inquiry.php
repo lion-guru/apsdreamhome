@@ -52,7 +52,19 @@
                                 <a href="/" class="btn btn-secondary"><?= __('contact_form_cancel') ?></a>
                                 <button type="submit" class="btn btn-primary"><?= __('inquiry_submit_btn') ?></button>
                             </div>
-                        </form>
+                        </div>
+
+                        <div class="form-check mb-3 mt-3">
+                            <input class="form-check-input" type="checkbox" name="terms_consent" id="terms_consent" required>
+                            <label class="form-check-label small text-muted" for="terms_consent">
+                                I have read, understood, and unconditionally agree to the
+                                <a href="/cancellation-policy" target="_blank" class="text-primary text-decoration-underline">Cancellation Policy</a>,
+                                <a href="/refund-policy" target="_blank" class="text-primary text-decoration-underline">Refund Policy</a>, and
+                                <a href="/terms-conditions" target="_blank" class="text-primary text-decoration-underline">Master Agreement Terms</a>.
+                            </label>
+                            <div class="invalid-feedback">You must accept the legal terms and cancellation policy to proceed.</div>
+                        </div>
+                    </form>
                     </div>
                 </div>
             </div>

@@ -14,6 +14,7 @@ $base = BASE_URL ?? '';
             <a href="<?= $base ?>/admin/leads/trash" class="btn btn-outline-danger btn-sm"><i class="fas fa-trash-alt me-1"></i>Trash</a>
             <a href="<?= $base ?>/admin/leads/import" class="btn btn-success btn-sm"><i class="fas fa-upload me-1"></i>Import</a>
             <a href="<?= $base ?>/admin/leads/export/csv" class="btn btn-outline-primary btn-sm"><i class="fas fa-download me-1"></i>Export CSV</a>
+            <button type="button" class="btn btn-warning btn-sm" id="btnAutoAssign" title="Auto-assign unassigned leads"><i class="fas fa-magic me-1"></i>Auto-Assign</button>
             <a href="<?= $base ?>/admin/leads/create" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Add Lead</a>
         </div>
     </div>
@@ -213,9 +214,10 @@ $base = BASE_URL ?? '';
                                 </td>
                                 <td>
                                     <?php if (!empty($lead['assigned_name'])): ?>
-                                        <small><?= htmlspecialchars($lead['assigned_name'] ?? '') ?></small>
+                                        <span class="badge bg-info text-dark"><i class="fas fa-user-check fa-sm"></i> <?= htmlspecialchars($lead['assigned_name'] ?? '') ?></span>
                                     <?php else: ?>
-                                        <small class="text-muted">Unassigned</small>
+                                        <span class="text-muted">Unassigned</span>
+                                        <button class="btn btn-sm btn-outline-warning ms-1 btn-auto-assign-single" data-lead-id="<?= $lead['id'] ?>" title="Auto-assign this lead"><i class="fas fa-magic fa-sm"></i></button>
                                     <?php endif; ?>
                                 </td>
                                 <td><small class="text-muted"><?= date('d M Y', strtotime($lead['created_at'] ?? 'now')) ?></small></td>
@@ -377,5 +379,53 @@ document.addEventListener('DOMContentLoaded', function() {
     const style=document.createElement('style');
     style.textContent='.skeleton-row{opacity:0.6; background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.2s infinite} @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}';
     document.head.appendChild(style);
+
+    // Auto-Assign Batch
+    var btnAutoAssign = document.getElementById('btnAutoAssign');
+    if (btnAutoAssign) {
+        btnAutoAssign.addEventListener('click', function() {
+            if (typeof showLoader === 'function') showLoader();
+            fetch('<?= $base ?>/admin/leads/auto-assign', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': '<?= $_SESSION['csrf_token'] ?? '' ?>'},
+                body: 'csrf_token=<?= $_SESSION['csrf_token'] ?? '' ?>'
+            }).then(function(r) { return r.json(); }).then(function(d) {
+                if (d.success) {
+                    if (typeof showToast === 'function') showToast(d.message, 'success');
+                    setTimeout(function() { location.reload(); }, 1200);
+                } else {
+                    if (typeof showToast === 'function') showToast(d.error || 'Auto-assign failed', 'danger');
+                }
+            }).catch(function() {
+                if (typeof showToast === 'function') showToast('Network error', 'danger');
+            }).finally(function() {
+                if (typeof hideLoader === 'function') hideLoader();
+            });
+        });
+    }
+
+    // Auto-Assign Single
+    document.querySelectorAll('.btn-auto-assign-single').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var leadId = this.dataset.leadId;
+            if (typeof showLoader === 'function') showLoader();
+            fetch('<?= $base ?>/admin/leads/' + leadId + '/auto-assign', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': '<?= $_SESSION['csrf_token'] ?? '' ?>'},
+                body: 'csrf_token=<?= $_SESSION['csrf_token'] ?? '' ?>'
+            }).then(function(r) { return r.json(); }).then(function(d) {
+                if (d.success) {
+                    if (typeof showToast === 'function') showToast('Lead assigned!', 'success');
+                    setTimeout(function() { location.reload(); }, 800);
+                } else {
+                    if (typeof showToast === 'function') showToast(d.error || d.message || 'No agents available', 'info');
+                }
+            }).catch(function() {
+                if (typeof showToast === 'function') showToast('Network error', 'danger');
+            }).finally(function() {
+                if (typeof hideLoader === 'function') hideLoader();
+            });
+        });
+    });
 });
 </script>

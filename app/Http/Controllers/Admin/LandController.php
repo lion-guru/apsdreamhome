@@ -38,15 +38,15 @@ class LandController extends AdminController
 
             $offset = ($page - 1) * $perPage;
 
-            // Build query — land_records is standalone (no FK to properties; legacy)
-            $sql = "SELECT l.*, 0 as property_count, COALESCE(l.area,0) as total_area
+            // Build query using real land_records columns
+            $sql = "SELECT l.id, l.survey_number, l.land_area, l.land_type, l.location, l.owner_name, l.owner_contact, l.acquisition_status, l.acquisition_cost, l.colony_id, l.created_at
                     FROM land_records l
                     WHERE 1=1";
             $params = [];
 
             // Apply filters
             if (!empty($search)) {
-                $sql .= " AND (l.land_title LIKE ? OR l.location LIKE ? OR l.owner_name LIKE ?)";
+                $sql .= " AND (l.survey_number LIKE ? OR l.location LIKE ? OR l.owner_name LIKE ?)";
                 $searchParam = '%' . $search . '%';
                 $params[] = $searchParam;
                 $params[] = $searchParam;
@@ -54,14 +54,20 @@ class LandController extends AdminController
             }
 
             if (!empty($status)) {
-                $sql .= " AND l.status = ?";
+                $sql .= " AND l.acquisition_status = ?";
                 $params[] = $status;
             }
 
-            $sql .= " GROUP BY l.id ORDER BY l.created_at DESC";
+            $sql .= " ORDER BY l.created_at DESC";
 
             // Count total
-            $countSql = str_replace("SELECT l.*, COUNT(p.id) as property_count, COALESCE(SUM(COALESCE(p.area_sqft, p.area)), 0) as total_area", "SELECT COUNT(DISTINCT l.id) as total", $sql);
+            $countSql = "SELECT COUNT(DISTINCT l.id) as total FROM land_records l WHERE 1=1";
+            if (!empty($search)) {
+                $countSql .= " AND (l.survey_number LIKE ? OR l.location LIKE ? OR l.owner_name LIKE ?)";
+            }
+            if (!empty($status)) {
+                $countSql .= " AND l.acquisition_status = ?";
+            }
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
             $total = $countStmt->fetch()['total'];
@@ -128,8 +134,8 @@ class LandController extends AdminController
         try {
             $data = $_POST;
 
-            // Validate required fields
-            $required = ['land_title', 'location', 'owner_name', 'total_area', 'land_type'];
+            // Validate required fields using real land_records columns
+            $required = ['survey_number', 'location', 'owner_name', 'land_area', 'land_type'];
             foreach ($required as $field) {
                 if (empty($data[$field])) {
                     return $this->jsonError(ucfirst(str_replace('_', ' ', $field)) . ' is required', 400);
@@ -137,35 +143,41 @@ class LandController extends AdminController
             }
 
             // Validate area
-            $totalArea = (float)$data['total_area'];
-            if ($totalArea <= 0) {
-                return $this->jsonError('Total area must be greater than 0', 400);
+            $landArea = (float)$data['land_area'];
+            if ($landArea <= 0) {
+                return $this->jsonError('Land area must be greater than 0', 400);
             }
 
-            // Validate coordinates if provided
-            $latitude = null;
-            $longitude = null;
-            if (!empty($data['latitude']) && !empty($data['longitude'])) {
-                $latitude = (float)$data['latitude'];
-                $longitude = (float)$data['longitude'];
-
-                if ($latitude < -90 || $latitude > 90 || $longitude < -180 || $longitude > 180) {
-                    return $this->jsonError('Invalid coordinates', 400);
-                }
+            // Validate acquisition_status if provided
+            $acquisitionStatus = $data['acquisition_status'] ?? 'identified';
+            $validStatuses = ['identified', 'negotiation', 'acquired', 'disputed'];
+            if (!in_array($acquisitionStatus, $validStatuses)) {
+                return $this->jsonError('Invalid acquisition status', 400);
             }
 
-            // Insert land record
+            // Validate acquisition_cost if provided
+            $acquisitionCost = isset($data['acquisition_cost']) ? (float)$data['acquisition_cost'] : 0.00;
+
+            // Validate colony_id if provided
+            $colonyId = !empty($data['colony_id']) ? (int)$data['colony_id'] : null;
+
+            // Insert land record using real columns
             $tid = $this->tenantId();
             $sql = "INSERT INTO land_records
-                    (land_title, location, owner_name, area, created_at, tenant_id)
-                    VALUES (?, ?, ?, ?, NOW(), ?)";
+                    (survey_number, land_area, land_type, location, owner_name, owner_contact, acquisition_status, acquisition_cost, colony_id, created_at, tenant_id)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)";
 
             $stmt = $this->db->prepare($sql);
             $result = $stmt->execute([
-                CoreFunctionsServiceCustom::validateInput($data['land_title'], 'string'),
+                CoreFunctionsServiceCustom::validateInput($data['survey_number'], 'string'),
+                $landArea,
+                CoreFunctionsServiceCustom::validateInput($data['land_type'], 'string'),
                 CoreFunctionsServiceCustom::validateInput($data['location'], 'string'),
                 CoreFunctionsServiceCustom::validateInput($data['owner_name'], 'string'),
-                $totalArea,
+                CoreFunctionsServiceCustom::validateInput($data['owner_contact'] ?? '', 'string'),
+                $acquisitionStatus,
+                $acquisitionCost,
+                $colonyId,
                 $tid
             ]);
 
@@ -175,7 +187,7 @@ class LandController extends AdminController
                 // Log activity
                 $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'land_record_created', [
                     'land_id' => $landId,
-                    'land_title' => $data['land_title']
+                    'survey_number' => $data['survey_number']
                 ]);
 
                 return $this->jsonResponse([
@@ -204,8 +216,8 @@ class LandController extends AdminController
                 return $this->redirect('admin/land');
             }
 
-            // Get land record details
-            $sql = "SELECT l.*, 0 as property_count, COALESCE(l.area,0) as developed_area
+            // Get land record details using real columns
+            $sql = "SELECT l.id, l.survey_number, l.land_area, l.land_type, l.location, l.owner_name, l.owner_contact, l.acquisition_status, l.acquisition_cost, l.colony_id, l.created_at, l.updated_at
                     FROM land_records l
                     WHERE l.id = ?";
             $stmt = $this->db->prepare($sql);
@@ -310,13 +322,13 @@ class LandController extends AdminController
                 return $this->jsonError('Land record not found', 404);
             }
 
-            // Build update query
+            // Build update query using real land_records columns
             $updateFields = [];
             $updateValues = [];
 
-            if (!empty($data['land_title'])) {
-                $updateFields[] = "land_title = ?";
-                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['land_title'], 'string');
+            if (!empty($data['survey_number'])) {
+                $updateFields[] = "survey_number = ?";
+                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['survey_number'], 'string');
             }
 
             if (!empty($data['location'])) {
@@ -329,13 +341,18 @@ class LandController extends AdminController
                 $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['owner_name'], 'string');
             }
 
-            if (!empty($data['total_area'])) {
-                $totalArea = (float)$data['total_area'];
-                if ($totalArea <= 0) {
-                    return $this->jsonError('Total area must be greater than 0', 400);
+            if (!empty($data['owner_contact'])) {
+                $updateFields[] = "owner_contact = ?";
+                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['owner_contact'], 'string');
+            }
+
+            if (!empty($data['land_area'])) {
+                $landArea = (float)$data['land_area'];
+                if ($landArea <= 0) {
+                    return $this->jsonError('Land area must be greater than 0', 400);
                 }
-                $updateFields[] = "total_area = ?";
-                $updateValues[] = $totalArea;
+                $updateFields[] = "land_area = ?";
+                $updateValues[] = $landArea;
             }
 
             if (!empty($data['land_type'])) {
@@ -343,32 +360,26 @@ class LandController extends AdminController
                 $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['land_type'], 'string');
             }
 
-            if (isset($data['description'])) {
-                $updateFields[] = "description = ?";
-                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['description'], 'string');
+            if (!empty($data['acquisition_status'])) {
+                $validStatuses = ['identified', 'negotiation', 'acquired', 'disputed'];
+                if (in_array($data['acquisition_status'], $validStatuses)) {
+                    $updateFields[] = "acquisition_status = ?";
+                    $updateValues[] = $data['acquisition_status'];
+                }
             }
 
-            // Validate coordinates if provided
-            if (!empty($data['latitude']) && !empty($data['longitude'])) {
-                $latitude = (float)$data['latitude'];
-                $longitude = (float)$data['longitude'];
-
-                if ($latitude < -90 || $latitude > 90 || $longitude < -180 || $longitude > 180) {
-                    return $this->jsonError('Invalid coordinates', 400);
+            if (isset($data['acquisition_cost'])) {
+                $acquisitionCost = (float)$data['acquisition_cost'];
+                if ($acquisitionCost < 0) {
+                    return $this->jsonError('Acquisition cost cannot be negative', 400);
                 }
-
-                $updateFields[] = "latitude = ?";
-                $updateValues[] = $latitude;
-                $updateFields[] = "longitude = ?";
-                $updateValues[] = $longitude;
+                $updateFields[] = "acquisition_cost = ?";
+                $updateValues[] = $acquisitionCost;
             }
 
-            if (isset($data['status'])) {
-                $validStatuses = ['available', 'under_development', 'fully_developed', 'reserved'];
-                if (in_array($data['status'], $validStatuses)) {
-                    $updateFields[] = "status = ?";
-                    $updateValues[] = $data['status'];
-                }
+            if (!empty($data['colony_id'])) {
+                $updateFields[] = "colony_id = ?";
+                $updateValues[] = (int)$data['colony_id'];
             }
 
             if (empty($updateFields)) {
@@ -419,8 +430,8 @@ class LandController extends AdminController
                 return $this->jsonError('Invalid land record ID', 400);
             }
 
-            // Check if land record exists
-            $sql = "SELECT * FROM land_records WHERE id = ?";
+            // Check if land record exists using real columns
+            $sql = "SELECT id, survey_number FROM land_records WHERE id = ?";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$landId]);
             $landRecord = $stmt->fetch();
@@ -449,7 +460,7 @@ class LandController extends AdminController
                 // Log activity
                 $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'land_record_deleted', [
                     'land_id' => $landId,
-                    'land_title' => $landRecord['land_title']
+                    'survey_number' => $landRecord['survey_number']
                 ]);
 
                 return $this->jsonResponse([
@@ -547,13 +558,14 @@ class LandController extends AdminController
         try {
             $status = $_GET['status'] ?? '';
             $land_type = $_GET['land_type'] ?? '';
-            $sql = "SELECT * FROM land_acquisitions WHERE 1=1";
+            $sql = "SELECT a.* FROM land_acquisitions a WHERE 1=1";
             $params = [];
             if (!empty($status)) {
-                $sql .= " AND status = ?";
+                $sql .= " AND a.status = ?";
                 $params[] = $status;
             }
-            $sql .= " ORDER BY created_at DESC";
+            // Note: land_type column doesn't exist in land_acquisitions, use mutation_status instead if needed
+            $sql .= " ORDER BY a.created_at DESC";
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             $acquisitions = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -561,7 +573,7 @@ class LandController extends AdminController
             $totalArea = 0;
             $totalCost = 0;
             foreach ($acquisitions as $a) {
-                $totalArea += (float)($a['total_area_sqft'] ?? $a['land_area'] ?? 0);
+                $totalArea += (float)($a['total_area_sqft'] ?? 0);
                 $totalCost += (float)($a['acquisition_cost'] ?? $a['total_consideration'] ?? 0);
             }
         } catch (\Exception $e) {
@@ -611,32 +623,34 @@ class LandController extends AdminController
     {
         $this->requireAdmin();
         $acquisition_number = $_POST['acquisition_number'] ?? ('ACQ' . date('Ymd') . rand(100, 999));
-        $farmer_id = !empty($_POST['farmer_id']) ? (int)$_POST['farmer_id'] : null;
-        $land_area = (float)($_POST['land_area'] ?? 0);
-        $land_area_unit = $_POST['land_area_unit'] ?? 'sqft';
-        $location = $_POST['location'] ?? '';
-        $village = $_POST['village'] ?? '';
-        $tehsil = $_POST['tehsil'] ?? '';
-        $district = $_POST['district'] ?? '';
-        $state = $_POST['state'] ?? '';
-        $acquisition_date = $_POST['acquisition_date'] ?? date('Y-m-d');
+        $land_lead_id = !empty($_POST['land_lead_id']) ? (int)$_POST['land_lead_id'] : null;
+        $colony_id = !empty($_POST['colony_id']) ? (int)$_POST['colony_id'] : null;
+        $total_area_sqft = (float)($_POST['total_area_sqft'] ?? 0);
+        $acquired_area_sqft = (float)($_POST['acquired_area_sqft'] ?? 0);
         $acquisition_cost = (float)($_POST['acquisition_cost'] ?? 0);
-        $payment_status = $_POST['payment_status'] ?? 'pending';
-        $land_type = $_POST['land_type'] ?? '';
-        $soil_type = $_POST['soil_type'] ?? '';
-        $water_source = $_POST['water_source'] ?? '';
-        $electricity_available = isset($_POST['electricity_available']) ? 1 : 0;
-        $road_access = isset($_POST['road_access']) ? 1 : 0;
-        $documents = $_POST['documents'] ?? '';
-        $remarks = $_POST['remarks'] ?? '';
-        $status = $_POST['status'] ?? 'active';
-        $created_by = $_SESSION['admin_id'] ?? ($_SESSION['user_id'] ?? null);
+        $total_consideration = (float)($_POST['total_consideration'] ?? 0);
+        $advance_paid = (float)($_POST['advance_paid'] ?? 0);
+        $balance_amount = (float)($_POST['balance_amount'] ?? 0);
+        $sale_agreement_date = $_POST['sale_agreement_date'] ?? null;
+        $sale_agreement_number = $_POST['sale_agreement_number'] ?? '';
+        $registration_date = $_POST['registration_date'] ?? null;
+        $registration_number = $_POST['registration_number'] ?? '';
+        $sub_registrar_office = $_POST['sub_registrar_office'] ?? '';
+        $stamp_duty_amount = (float)($_POST['stamp_duty_amount'] ?? 0);
+        $registration_fee = (float)($_POST['registration_fee'] ?? 0);
+        $mutation_status = $_POST['mutation_status'] ?? 'not_started';
+        $mutation_number = $_POST['mutation_number'] ?? '';
+        $mutation_date = $_POST['mutation_date'] ?? null;
+        $status = $_POST['status'] ?? 'in_progress';
         try {
             $tid = $this->tenantId();
-            // Map legacy status to land_deals enum (active -> in_progress)
-            $dealStatus = in_array($status, ['in_progress','registered','mutated','closed','cancelled']) ? $status : 'in_progress';
-            $stmt = $this->db->prepare("INSERT INTO land_deals (land_lead_id, sale_agreement_number, total_area_sqft, sale_agreement_date, total_consideration, status, tenant_id) VALUES ((SELECT id FROM land_leads ORDER BY id DESC LIMIT 1), ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$acquisition_number, $land_area, $acquisition_date, $acquisition_cost, $dealStatus, $tid]);
+            $validStatuses = ['in_progress', 'registered', 'mutated', 'closed', 'cancelled'];
+            $dealStatus = in_array($status, $validStatuses) ? $status : 'in_progress';
+            $validMutationStatuses = ['not_started', 'applied', 'in_progress', 'completed', 'rejected'];
+            $mutStatus = in_array($mutation_status, $validMutationStatuses) ? $mutation_status : 'not_started';
+
+            $stmt = $this->db->prepare("INSERT INTO land_acquisitions (land_lead_id, colony_id, total_area_sqft, acquired_area_sqft, acquisition_cost, total_consideration, advance_paid, balance_amount, sale_agreement_date, sale_agreement_number, registration_date, registration_number, sub_registrar_office, stamp_duty_amount, registration_fee, mutation_status, mutation_number, mutation_date, status, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+            $stmt->execute([$land_lead_id, $colony_id, $total_area_sqft, $acquired_area_sqft, $acquisition_cost, $total_consideration, $advance_paid, $balance_amount, $sale_agreement_date, $sale_agreement_number, $registration_date, $registration_number, $sub_registrar_office, $stamp_duty_amount, $registration_fee, $mutStatus, $mutation_number, $mutation_date, $dealStatus, $tid]);
             $this->setFlash('success', 'Land acquisition recorded successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to record acquisition: ' . $e->getMessage());
@@ -669,14 +683,19 @@ class LandController extends AdminController
     public function storeRecord()
     {
         $this->requireAdmin();
-        $land_title = $_POST['land_title'] ?? '';
+        $survey_number = $_POST['survey_number'] ?? '';
         $location = $_POST['location'] ?? '';
-        $area = (float)($_POST['area'] ?? 0);
+        $land_area = (float)($_POST['land_area'] ?? 0);
+        $land_type = $_POST['land_type'] ?? '';
         $owner_name = $_POST['owner_name'] ?? '';
+        $owner_contact = $_POST['owner_contact'] ?? '';
+        $acquisition_status = $_POST['acquisition_status'] ?? 'identified';
+        $acquisition_cost = (float)($_POST['acquisition_cost'] ?? 0);
+        $colony_id = !empty($_POST['colony_id']) ? (int)$_POST['colony_id'] : null;
         try {
             $tid = $this->tenantId();
-            $stmt = $this->db->prepare("INSERT INTO land_records (land_title, location, area, owner_name, created_at, tenant_id) VALUES (?, ?, ?, ?, NOW(), ?)");
-            $stmt->execute([$land_title, $location, $area, $owner_name, $tid]);
+            $stmt = $this->db->prepare("INSERT INTO land_records (survey_number, land_area, land_type, location, owner_name, owner_contact, acquisition_status, acquisition_cost, colony_id, created_at, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)");
+            $stmt->execute([$survey_number, $land_area, $land_type, $location, $owner_name, $owner_contact, $acquisition_status, $acquisition_cost, $colony_id, $tid]);
             $this->setFlash('success', 'Land record added successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to add land record: ' . $e->getMessage());
@@ -698,7 +717,7 @@ class LandController extends AdminController
             $stats['total_records'] = (int)($result['total'] ?? 0);
 
             // Total land area
-            $sql = "SELECT COALESCE(SUM(area), 0) as total FROM land_records";
+            $sql = "SELECT COALESCE(SUM(land_area), 0) as total FROM land_records";
             $result = $this->db->fetchOne($sql);
             $stats['total_area'] = (float)($result['total'] ?? 0);
 

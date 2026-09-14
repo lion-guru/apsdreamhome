@@ -338,6 +338,202 @@
     </div>
 </div>
 
+<!-- Student Program Section -->
+<section class="careers-section bg-light" id="student-program">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="badge bg-warning text-dark px-3 py-2 mb-3">
+                <i class="fas fa-graduation-cap me-1"></i><?= __('student_program_badge', null, 'Student Program') ?>
+            </span>
+            <h2 class="fw-bold"><?= __('student_program_title', null, 'College Students — Earn While You Learn') ?></h2>
+            <p class="lead text-muted mt-2"><?= __('student_program_desc', null, 'Perfect for students who want financial independence. Focus on rental properties — the easiest entry point in real estate.') ?></p>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <div class="col-lg-4 col-md-6">
+                <div class="pillar-card h-100">
+                    <div class="pillar-icon" style="background: linear-gradient(135deg, #0d6efd, #6610f2);"><i class="fas fa-home"></i></div>
+                    <h5 class="fw-bold mb-2"><?= __('student_rental_focus', null, 'Rental Property Focus') ?></h5>
+                    <p class="text-muted small mb-3"><?= __('student_rental_focus_desc', null, 'Help tenants find rental homes, earn referral fees. No investment needed.') ?></p>
+                    <ul class="list-unstyled small text-muted">
+                        <li class="mb-1"><i class="fas fa-check text-success me-2"></i><?= __('student_rental_listings', null, 'Rental Listings') ?></li>
+                        <li class="mb-1"><i class="fas fa-check text-success me-2"></i><?= __('student_tenant_matching', null, 'Tenant Matching') ?></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="pillar-card h-100">
+                    <div class="pillar-icon" style="background: linear-gradient(135deg, #20c997, #0d6efd);"><i class="fas fa-clock"></i></div>
+                    <h5 class="fw-bold mb-2"><?= __('student_flexible_hours', null, 'Flexible Hours') ?></h5>
+                    <p class="text-muted small mb-3"><?= __('student_flexible_hours_desc', null, 'Work around your class schedule. Part-time, from your phone.') ?></p>
+                    <ul class="list-unstyled small text-muted">
+                        <li class="mb-1"><i class="fas fa-check text-success me-2"></i><?= __('student_remote_work', null, 'Remote Work') ?></li>
+                        <li class="mb-1"><i class="fas fa-check text-success me-2"></i><?= __('student_no_investment', null, 'Zero Investment') ?></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="pillar-card h-100">
+                    <div class="pillar-icon" style="background: linear-gradient(135deg, #fd7e14, #ffc107);"><i class="fas fa-robot"></i></div>
+                    <h5 class="fw-bold mb-2"><?= __('student_ai_tools', null, 'Tech Tools Access') ?></h5>
+                    <p class="text-muted small mb-3"><?= __('student_ai_tools_desc', null, 'Use our AI tools for lead finding, property matching, and client management.') ?></p>
+                    <ul class="list-unstyled small text-muted">
+                        <li class="mb-1"><i class="fas fa-check text-success me-2"></i><?= __('student_ai_access', null, 'AI Tools Access') ?></li>
+                        <li class="mb-1"><i class="fas fa-check text-success me-2"></i><?= __('student_internship_cert', null, 'Internship Certificate') ?></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Campus Ambassador -->
+        <div class="row g-4 mb-5">
+            <div class="col-lg-6">
+                <div class="pillar-card h-100">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="pillar-icon me-3" style="background: linear-gradient(135deg, #e83e8c, #fd7e14);"><i class="fas fa-user-graduate"></i></div>
+                        <div>
+                            <h5 class="fw-bold mb-1"><?= __('student_campus_ambassador', null, 'Campus Ambassador Program') ?></h5>
+                            <p class="text-muted small mb-0"><?= __('student_campus_ambassador_desc', null, 'Represent APS on your campus. Earn stipend + incentives.') ?></p>
+                        </div>
+                    </div>
+                    <ul class="list-unstyled small text-muted">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i><?= __('student_stipend', null, 'Monthly Stipend') ?></li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i><?= __('student_performance_bonus', null, 'Performance Bonuses') ?></li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i><?= __('student_leadership', null, 'Leadership Training') ?></li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i><?= __('student_certification', null, 'Certification') ?></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="pillar-card h-100">
+                    <h5 class="fw-bold mb-3"><?= __('student_testimonials', null, 'What Students Say') ?></h5>
+                    <div class="testimonial-carousel" id="studentTestimonials">
+                        <div class="testimonial-item active">
+                            <p class="text-muted fst-italic">"<?= __('student_testimonial_1', null, 'Earned my first rental commission in week one. The AI tools make it super easy.') ?>"</p>
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px;">
+                                    <i class="fas fa-user-graduate fa-lg"></i>
+                                </div>
+                                <div>
+                                    <strong class="small"><?= __('student_testimonial_name_1', null, 'Priya Sharma') ?></strong>
+                                    <br><small class="text-muted"><?= __('student_testimonial_college_1', null, 'BBA Student, Gorakhpur') ?></small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="testimonial-item">
+                            <p class="text-muted fst-italic">"<?= __('student_testimonial_2', null, 'Flexible hours let me study and earn. Best decision for my college life!') ?>"</p>
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px;">
+                                    <i class="fas fa-user-graduate fa-lg"></i>
+                                </div>
+                                <div>
+                                    <strong class="small"><?= __('student_testimonial_name_2', null, 'Rahul Kumar') ?></strong>
+                                    <br><small class="text-muted"><?= __('student_testimonial_college_2', null, 'MBA Student, Lucknow') ?></small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="testimonial-item">
+                            <p class="text-muted fst-italic">"<?= __('student_testimonial_3', null, 'The internship certificate helped me get a great job after graduation.') ?>"</p>
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px;">
+                                    <i class="fas fa-user-graduate fa-lg"></i>
+                                </div>
+                                <div>
+                                    <strong class="small"><?= __('student_testimonial_name_3', null, 'Anjali Singh') ?></strong>
+                                    <br><small class="text-muted"><?= __('student_testimonial_college_3', null, 'B.Com Student, Deoria') ?></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-center gap-2 mt-3">
+                        <button class="btn btn-sm btn-outline-primary" onclick="prevStudentTestimonial()"><i class="fas fa-chevron-left"></i></button>
+                        <button class="btn btn-sm btn-outline-primary" onclick="nextStudentTestimonial()"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Apply Button -->
+        <div class="text-center">
+            <button class="btn btn-warning btn-lg px-5" data-bs-toggle="modal" data-bs-target="#studentApplyModal">
+                <i class="fas fa-user-plus me-2"></i><?= __('student_apply_now', null, 'Join Student Program') ?>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Student Program Application Modal -->
+<div class="modal fade" id="studentApplyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title"><i class="fas fa-graduation-cap me-2"></i><?= __('student_apply_title', null, 'Join Student Program') ?></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="studentApplicationForm" novalidate>
+                    <input type="hidden" name="program_type" value="student">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold"><?= __('careers_full_name', null, 'Full Name') ?> <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="name" placeholder="Enter your full name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold"><?= __('careers_email', null, 'Email') ?> <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" name="email" placeholder="you@college.edu" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold"><?= __('careers_phone', null, 'Phone') ?> <span class="text-danger">*</span></label>
+                            <input type="tel" class="form-control" name="phone" placeholder="9876543210" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold"><?= __('student_college', null, 'College/University') ?> <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="college" placeholder="Enter your college name" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold"><?= __('student_course', null, 'Course/Stream') ?></label>
+                            <select class="form-select" name="course">
+                                <option value=""><?= __('student_select_course', null, 'Select Course') ?></option>
+                                <option value="bba">BBA/BBM</option>
+                                <option value="mba">MBA</option>
+                                <option value="bcom">B.Com</option>
+                                <option value="btech">B.Tech</option>
+                                <option value="ba">BA</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold"><?= __('student_year', null, 'Current Year') ?></label>
+                            <select class="form-select" name="year">
+                                <option value=""><?= __('student_select_year', null, 'Select Year') ?></option>
+                                <option value="1">1st Year</option>
+                                <option value="2">2nd Year</option>
+                                <option value="3">3rd Year</option>
+                                <option value="4">4th Year</option>
+                                <option value="final">Final Year</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold"><?= __('student_motivation', null, 'Why do you want to join?') ?></label>
+                        <textarea class="form-control" name="motivation" rows="3" placeholder="Tell us about your interest in real estate..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-top-0 px-4 pb-4">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal"><?= __('careers_cancel', null, 'Cancel') ?></button>
+                <button type="button" class="btn btn-warning px-4" id="studentSubmitBtn">
+                    <i class="fas fa-paper-plane me-1"></i><?= __('careers_submit_application', null, 'Submit Application') ?>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- •�•�•�•�•�•�•�•�•�•�•�•� CTA •�•�•�•�•�•�•�•�•�•�•�•� -->
 <section class="careers-section">
     <div class="container">
@@ -377,6 +573,58 @@ document.getElementById('careerSubmitBtn').addEventListener('click', function() 
     .then(function(data) {
         if (data.success) {
             var modal = bootstrap.Modal.getInstance(document.getElementById('applyModal'));
+            if (modal) modal.hide();
+            form.reset();
+            showToast(data.message, 'success');
+        } else {
+            showToast(data.message, 'danger');
+        }
+    })
+    .catch(function() { showToast('Network error. Please try again.', 'danger'); })
+    .finally(function() { btn.disabled = false; btn.innerHTML = orig; });
+});
+
+// Student testimonial carousel
+var currentStudentTestimonial = 0;
+var studentTestimonials = document.querySelectorAll('.testimonial-item');
+
+function showStudentTestimonial(index) {
+    studentTestimonials.forEach(function(item, i) {
+        item.classList.toggle('active', i === index);
+    });
+}
+
+function nextStudentTestimonial() {
+    currentStudentTestimonial = (currentStudentTestimonial + 1) % studentTestimonials.length;
+    showStudentTestimonial(currentStudentTestimonial);
+}
+
+function prevStudentTestimonial() {
+    currentStudentTestimonial = (currentStudentTestimonial - 1 + studentTestimonials.length) % studentTestimonials.length;
+    showStudentTestimonial(currentStudentTestimonial);
+}
+
+// Auto-rotate testimonials
+setInterval(nextStudentTestimonial, 5000);
+
+// Student application form submission
+document.getElementById('studentSubmitBtn')?.addEventListener('click', function() {
+    var form = document.getElementById('studentApplicationForm');
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+
+    var formData = new FormData(form);
+    var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    formData.append('csrf_token', csrfToken);
+    var btn = this;
+    var orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Submitting...';
+
+    fetch('<?= BASE_URL ?>/careers/submit-application', { method: 'POST', body: formData })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.success) {
+            var modal = bootstrap.Modal.getInstance(document.getElementById('studentApplyModal'));
             if (modal) modal.hide();
             form.reset();
             showToast(data.message, 'success');

@@ -64,7 +64,7 @@ class AgentSiteVisitsPage extends ConsumerWidget {
                 if (visits.isEmpty) {
                   return _buildEmptyState(context);
                 }
-                return _buildVisitsList(context, visits);
+                return _buildVisitsList(context, ref, userId, visits);
               },
               loading: () => const Center(
                 child: Padding(
@@ -205,7 +205,7 @@ class AgentSiteVisitsPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildVisitsList(BuildContext context, List<dynamic> visits) {
+  Widget _buildVisitsList(BuildContext context, WidgetRef ref, int userId, List<dynamic> visits) {
     return ListView.separated(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -214,12 +214,12 @@ class AgentSiteVisitsPage extends ConsumerWidget {
       separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final visit = visits[index] as Map<String, dynamic>;
-        return _buildVisitCard(context, visit);
+        return _buildVisitCard(context, ref, userId, visit);
       },
     );
   }
 
-  Widget _buildVisitCard(BuildContext context, Map<String, dynamic> visit) {
+  Widget _buildVisitCard(BuildContext context, WidgetRef ref, int userId, Map<String, dynamic> visit) {
     final leadName = visit['lead_name']?.toString() ?? 'Unknown Lead';
     final leadPhone = visit['lead_phone']?.toString() ?? '';
     final colonyName =
@@ -359,53 +359,35 @@ class AgentSiteVisitsPage extends ConsumerWidget {
             ),
           ],
           const SizedBox(height: 12),
-          Row(
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
             children: [
-              if (isUpcoming && status.toLowerCase() == 'scheduled') ...[
-                Expanded(
-                  child: SizedBox(
-                    height: 36,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        gradient: const LinearGradient(
-                          colors: [AppTheme.primaryColor, AppTheme.secondaryColor],
-                        ),
-                      ),
-                      child: ElevatedButton.icon(
-                        onPressed: () => _startVisit(visitId),
-                        icon: const Icon(Icons.play_arrow_rounded,
-                            size: 16, color: Colors.white),
-                        label: const Text('Start Visit'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                        ),
-                      ),
-                    ),
-                  ),
+              OutlinedButton.icon(
+                onPressed: visitId.isEmpty ? null : () => _sendPin(context, ref, visitId, userId),
+                icon: const Icon(Icons.share_location, size: 16),
+                label: const Text('Send Pin', style: TextStyle(fontSize: 12)),
+                style: OutlinedButton.styleFrom(foregroundColor: AppTheme.successColor, side: BorderSide(color: AppTheme.successColor.withValues(alpha: 0.5))),
+              ),
+              OutlinedButton.icon(
+                onPressed: visitId.isEmpty ? null : () => _showOutcomeSheet(context, ref, visitId, userId),
+                icon: const Icon(Icons.task_alt, size: 16),
+                label: const Text('Outcome', style: TextStyle(fontSize: 12)),
+                style: OutlinedButton.styleFrom(foregroundColor: Colors.orange, side: BorderSide(color: Colors.orange.withValues(alpha: 0.5))),
+              ),
+              if (isUpcoming && status.toLowerCase() == 'scheduled')
+                ElevatedButton.icon(
+                  onPressed: () => _startVisit(visitId),
+                  icon: const Icon(Icons.play_arrow_rounded, size: 16, color: Colors.white),
+                  label: const Text('Start Visit', style: TextStyle(fontSize: 12)),
+                  style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryColor, foregroundColor: Colors.white),
                 ),
-                const SizedBox(width: 8),
-              ],
               if (visitId.isNotEmpty)
-                Expanded(
-                  child: SizedBox(
-                    height: 36,
-                    child: OutlinedButton.icon(
-                      onPressed: () => context.push('/agent/site-visit/$visitId'),
-                      icon: const Icon(Icons.info_outline_rounded, size: 16),
-                      label: const Text('Details'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppTheme.infoColor,
-                        side: BorderSide(
-                            color: AppTheme.infoColor.withValues(alpha: 0.5)),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
-                    ),
-                  ),
+                OutlinedButton.icon(
+                  onPressed: () => context.push('/agent/site-visit/$visitId'),
+                  icon: const Icon(Icons.info_outline_rounded, size: 16),
+                  label: const Text('Details', style: TextStyle(fontSize: 12)),
+                  style: OutlinedButton.styleFrom(foregroundColor: AppTheme.infoColor, side: BorderSide(color: AppTheme.infoColor.withValues(alpha: 0.5))),
                 ),
             ],
           ),
@@ -424,6 +406,69 @@ class AgentSiteVisitsPage extends ConsumerWidget {
   }
 
   void _startVisit(String visitId) {}
+
+  Future<void> _sendPin(BuildContext context, WidgetRef ref, String visitId, int userId) async {
+    try {
+      final api = ApiService();
+      AppConstants.initBaseUrl();
+      final res = await api.sendSiteVisitPin(visitId);
+      if (context.mounted) {
+        final url = res['whatsapp_customer_url']?.toString() ?? res['colony_gps_url']?.toString() ?? '';
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(url.isNotEmpty ? 'Pin ready: $url' : 'Pin sent')));
+      }
+      ref.invalidate(_agentSiteVisitsProvider(userId));
+    } catch (e) {
+      if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Send pin failed: $e')));
+    }
+  }
+
+  void _showOutcomeSheet(BuildContext context, WidgetRef ref, String visitId, int userId) {
+    final outcomes = ['completed', 'interested', 'token_booked', 'not_interested', 'rescheduled'];
+    String selected = outcomes.first;
+    final notesCtrl = TextEditingController();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (ctx) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom, left: 16, right: 16, top: 16),
+        child: StatefulBuilder(builder: (ctx, setS) {
+          return Column(mainAxisSize: MainAxisSize.min, children: [
+            const Text('Visit Outcome', style: TextStyle(fontWeight: FontWeight.w700)),
+            const SizedBox(height: 12),
+            DropdownButtonFormField<String>(
+              initialValue: selected,
+              items: outcomes.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+              onChanged: (v) => setS(() => selected = v ?? outcomes.first),
+              decoration: const InputDecoration(labelText: 'Outcome', border: OutlineInputBorder()),
+            ),
+            const SizedBox(height: 12),
+            TextField(controller: notesCtrl, decoration: const InputDecoration(labelText: 'Notes (optional)', border: OutlineInputBorder()), maxLines: 3),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  try {
+                    final api = ApiService();
+                    AppConstants.initBaseUrl();
+                    await api.markSiteVisitOutcome(visitId: visitId, outcome: selected, outcomeNotes: notesCtrl.text.trim().isEmpty ? null : notesCtrl.text.trim());
+                    if (ctx.mounted) Navigator.pop(ctx);
+                    if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Outcome saved')));
+                    ref.invalidate(_agentSiteVisitsProvider(userId));
+                  } catch (e) {
+                    if (ctx.mounted) ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text('Failed: $e')));
+                  }
+                },
+                style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryColor, foregroundColor: Colors.white),
+                child: const Text('Save Outcome'),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ]);
+        }),
+      ),
+    );
+  }
 }
 
 // Provider

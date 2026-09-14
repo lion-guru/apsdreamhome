@@ -31,6 +31,75 @@
             <div class="blog-content fs-5 lh-lg">
                 <?= nl2br(htmlspecialchars($post['content'] ?? '')) ?>
             </div>
+
+            <!-- Comments Section -->
+            <div class="mt-5 pt-4 border-top">
+                <h3 class="mb-4"><i class="fas fa-comments me-2"></i>Comments (<?= $comment_count ?? 0 ?>)</h3>
+
+                <?php if (!empty($comment_success)): ?>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($comment_success) ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                <?php endif; ?>
+                <?php if (!empty($comment_error)): ?>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i><?= htmlspecialchars($comment_error) ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                <?php endif; ?>
+
+                <!-- Comment Form -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Leave a Comment</h5>
+                        <form method="POST" action="<?= BASE_URL ?>/blog/comment/<?= (int)($post['id'] ?? 0) ?>">
+                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="author_name" required placeholder="Your name" value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" name="author_email" placeholder="your@email.com (not published)">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Comment <span class="text-danger">*</span></label>
+                                <textarea class="form-control" name="comment" rows="4" required placeholder="Share your thoughts..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane me-2"></i>Submit Comment</button>
+                            <small class="text-muted ms-2">Your comment will be reviewed before publishing.</small>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Approved Comments -->
+                <?php if (!empty($comments)): ?>
+                    <?php foreach ($comments as $c): ?>
+                        <div class="d-flex mb-4">
+                            <div class="flex-shrink-0">
+                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:48px;height:48px;font-size:1.1rem;">
+                                    <?= strtoupper(substr(htmlspecialchars($c['author_name'] ?? $c['user_name'] ?? 'G'), 0, 1)) ?>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <div class="d-flex align-items-center mb-1">
+                                    <strong><?= htmlspecialchars($c['author_name'] ?? $c['user_name'] ?? 'Guest') ?></strong>
+                                    <small class="text-muted ms-2">
+                                        <i class="far fa-clock me-1"></i><?= date('M d, Y \a\t g:i A', strtotime($c['created_at'])) ?>
+                                    </small>
+                                </div>
+                                <p class="mb-0"><?= nl2br(htmlspecialchars($c['comment'] ?? '')) ?></p>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p class="text-muted text-center py-3"><i class="far fa-comment-dots me-2"></i>No comments yet. Be the first to share your thoughts!</p>
+                <?php endif; ?>
+            </div>
+
             <div class="mt-5">
                 <a href="<?php echo BASE_URL; ?>/blog" class="btn btn-outline-secondary">&larr; <?= __('blog_back_to') ?></a>
             </div>

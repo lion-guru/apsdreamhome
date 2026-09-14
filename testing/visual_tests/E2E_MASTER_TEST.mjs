@@ -163,6 +163,8 @@ const dynamic_urls = [
   '/admin/plots/1',
   '/admin/plots/1/edit',
   '/admin/bookings/1',
+  '/admin/payout-batches/2',
+  '/admin/payout-batches/2/export-bank-csv?format=generic',
 ];
 
 let browser, context, page;
@@ -325,7 +327,7 @@ async function run() {
       check('OK', 'Manager Login (API Verified)', 'manager1@apsdreamhome.com -> /admin/dashboard', true, results);
 
       // Verify dashboards are accessible
-      for (const path of ['/user/dashboard', '/user/properties', '/user/inquiries', '/user/profile']) {
+      for (const path of ['/user/dashboard', '/user/properties', '/user/inquiries', '/user/profile', '/customer/passbook']) {
         await safeGoto(path, path, `Customer: ${path}`, results);
       }
     } catch (err) {

@@ -93,6 +93,31 @@
         </div>
     </div>
 
+    <!-- Bank Bulk Payout Engine (NEFT/RTGS CSV + UTR reconciliation) -->
+    <?php if (in_array($batch['status'] ?? '', ['approved', 'processing', 'completed'], true)): ?>
+        <div class="card mb-4 border-success">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-university me-2"></i>Bank Bulk Payout (NEFT/RTGS)</h5>
+            </div>
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-7">
+                        <p class="mb-2"><strong>Step 1 — Export Bank File:</strong> download the Corporate NetBanking bulk-upload CSV (Beneficiary, Account, IFSC, Net Amount after 194H TDS, NEFT/RTGS split, Reference <code>APS-COMM-{batch}-{entry}</code>).</p>
+                        <div class="btn-group" role="group" aria-label="Export bank file">
+                            <a href="<?= BASE_URL ?>/admin/payout-batches/<?= (int)$batch['id'] ?>/export-bank-csv?format=generic" class="btn btn-sm btn-outline-success"><i class="fas fa-download me-1"></i>Generic CSV</a>
+                            <a href="<?= BASE_URL ?>/admin/payout-batches/<?= (int)$batch['id'] ?>/export-bank-csv?format=icici" class="btn btn-sm btn-outline-success"><i class="fas fa-download me-1"></i>ICICI Bank</a>
+                            <a href="<?= BASE_URL ?>/admin/payout-batches/<?= (int)$batch['id'] ?>/export-bank-csv?format=hdfc" class="btn btn-sm btn-outline-success"><i class="fas fa-download me-1"></i>HDFC</a>
+                        </div>
+                    </div>
+                    <div class="col-md-5 text-md-end mt-3 mt-md-0">
+                        <p class="mb-2"><strong>Step 2 — Import UTR Report:</strong> after the bank processes the file, upload its reconciliation CSV to auto-mark payouts completed with UTR + SMS/WhatsApp alerts.</p>
+                        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#utrImportModal"><i class="fas fa-upload me-1"></i>Import Bank UTR File</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <!-- Auto-Populate (for draft batches) -->
     <?php if ($batch['status'] === 'draft'): ?>
         <div class="card mb-4">
@@ -272,3 +297,28 @@ function completeEntry(id, name) {
     new bootstrap.Modal(document.getElementById('completeModal')).show();
 }
 </script>
+
+<!-- UTR Reconciliation Import Modal -->
+<div class="modal fade" id="utrImportModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-upload me-2"></i>Import Bank UTR Reconciliation File</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="<?= BASE_URL ?>/admin/payout-batches/<?= (int)$batch['id'] ?>/import-utr" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+                <div class="modal-body">
+                    <p class="text-muted small">Upload the bank's processed-report CSV. Rows match on <code>Payment Reference</code> (APS-COMM-{batch}-{entry}) or <code>Account Number + Amount</code>. Matched payouts flip to completed with UTR + auto SMS/WhatsApp alerts.</p>
+                    <label class="form-label">UTR CSV File (max 10MB)</label>
+                    <input type="file" name="utr_file" class="form-control" accept=".csv" required>
+                    <small class="text-muted">Expected columns: Reference, UTR, Amount, Account (header names are flexible).</small>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-upload me-1"></i>Import &amp; Reconcile</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -101,8 +101,10 @@ class RegistryController extends AdminController
                 $this->redirect('/admin/registry');
             }
 
-            $activities = $this->db->prepare("SELECT * FROM registry_activity_log WHERE booking_id = ? ORDER BY created_at DESC");
-            $activities->execute([$id]);
+            // Live schema: registry_activity_log keys on registries.id (registry_id),
+            // not booking_id — join through registries + booking-tagged fallback rows.
+            $activities = $this->db->prepare("SELECT * FROM registry_activity_log WHERE registry_id IN (SELECT id FROM registries WHERE booking_id = ?) OR (registry_id IS NULL AND details LIKE ?) ORDER BY created_at DESC");
+            $activities->execute([$id, '[booking #' . (int)$id . ']%']);
             $activities = $activities->fetchAll(\PDO::FETCH_ASSOC);
 
             return $this->render('admin/registry/show', [
@@ -334,12 +336,12 @@ class RegistryController extends AdminController
         $this->requireAdmin();
         try {
             try {
-                $activities = $this->db->prepare("SELECT * FROM registry_activity_log WHERE booking_id = ? ORDER BY created_at DESC");
+                $activities = $this->db->prepare("SELECT * FROM registry_activity_log WHERE registry_id IN (SELECT id FROM registries WHERE booking_id = ?) OR (registry_id IS NULL AND details LIKE ?) ORDER BY created_at DESC");
             } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
             error_log($e->getMessage());
             }
-            $activities->execute([$bookingId]);
+            $activities->execute([$bookingId, '[booking #' . (int)$bookingId . ']%']);
             $activities = $activities->fetchAll(\PDO::FETCH_ASSOC);
 
             $stmt = $this->db->prepare("SELECT b.booking_number, u.name as customer_name FROM bookings b LEFT JOIN users u ON b.customer_id = u.id WHERE b.id = ?");
@@ -366,14 +368,22 @@ class RegistryController extends AdminController
     public function logRegistryActivity($bookingId, $action, $details = '')
     {
         try {
+            // Live schema keys on registries.id (registry_id) + user_id — the old
+            // booking_id/performed_by columns never existed, so every historical
+            // call failed silently (0 rows in table). Map booking → registry row;
+            // fall back to a booking-tagged row when no registry file is open yet.
+            $tid = $this->tenantId();
+            $registryId = null;
             try {
-                $tid = $this->tenantId();
-                $stmt = $this->db->prepare("INSERT INTO registry_activity_log (booking_id, action, details, performed_by, created_at, tenant_id) VALUES (?, ?, ?, ?, NOW(), ?)");
+                $map = $this->db->prepare("SELECT id FROM registries WHERE booking_id = ? ORDER BY id DESC LIMIT 1");
+                $map->execute([(int)$bookingId]);
+                $registryId = $map->fetchColumn() ?: null;
             } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-            error_log($e->getMessage());
+                error_log($e->getMessage());
             }
-            $stmt->execute([$bookingId, $action, $details, $_SESSION['admin_id'] ?? null, $tid]);
+            $tagged = $registryId ? (string)$details : '[booking #' . (int)$bookingId . '] ' . $details;
+            $stmt = $this->db->prepare("INSERT INTO registry_activity_log (registry_id, action, details, user_id, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
+            $stmt->execute([$registryId, $action, $tagged, $_SESSION['admin_id'] ?? null, $tid > 0 ? $tid : 1]);
         } catch (\Exception $e) {
                     error_log("RegistryController.php: " . $e->getMessage());
         }

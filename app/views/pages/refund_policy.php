@@ -20,6 +20,9 @@ $breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => BASE_URL], ['title'
 
                 <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
                     <div class="card-body p-4 p-md-5">
+                        <?php if (!empty($pageContent)): ?>
+                            <?= $pageContent ?>
+                        <?php else: ?>
                         <h4 class="fw-bold mb-3 text-primary">1. Eligibility for Refund</h4>
                         <p class="text-muted mb-4">Refunds are applicable in the following scenarios: booking cancellation (as per cancellation policy), service non-delivery, duplicate payments, or any payment made in error. All refund requests must be submitted within 30 days of the original transaction.</p>
 
@@ -44,6 +47,7 @@ $breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => BASE_URL], ['title'
 
                         <h4 class="fw-bold mb-3 text-primary">5. Contact for Refunds</h4>
                         <p class="text-muted mb-0">For any refund-related queries, please reach out to <a href="mailto:accounts@apsdreamhome.com" class="text-primary fw-bold">accounts@apsdreamhome.com</a> or call <a href="tel:+919277121112" class="text-primary fw-bold">+91 9277121112</a>. Please keep your booking receipt/payment proof ready when contacting us.</p>
+                        <?php endif; ?>
                     </div>
                 </div>
 

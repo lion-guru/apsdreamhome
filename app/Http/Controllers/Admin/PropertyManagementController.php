@@ -42,14 +42,17 @@ class PropertyManagementController extends AdminController
 
             $offset = ($page - 1) * $perPage;
 
-            // Build query
+// Build query
             list($tSql, $tParams) = $this->tenantWhere();
             $sql = "SELECT p.*, 
                            s.site_name,
                            s.location as site_location,
                            pr.name as project_name,
                            pl.plot_number,
-                           l.land_title,
+                           l.survey_number,
+                           l.land_area,
+                           l.land_type,
+                           l.acquisition_status,
                            c.name as category_name,
                            u.name as customer_name,
                            COUNT(pi.id) as image_count

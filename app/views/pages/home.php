@@ -757,8 +757,8 @@ document.addEventListener('DOMContentLoaded', function(){
         <div class="container">
 
 
-            <!-- Growth Projection Calculator -->
-            <div class="card border-0 shadow-lg bg-dark text-white">
+<!-- Growth Projection Calculator -->
+            <div class="card border-0 shadow-lg bg-dark text-white" style="background: linear-gradient(135deg, #0a192f 0%, #1e3a5f 100%);">
                 <div class="card-body p-5">
                     <div class="row align-items-center">
                         <div class="col-lg-7">
@@ -770,7 +770,7 @@ document.addEventListener('DOMContentLoaded', function(){
                                 <div class="col-md-4">
                                     <label
                                         class="form-label text-white-50 small"><?= __('home_investment_amount') ?></label>
-                                    <select class="form-select form-select-sm" id="invAmount" onchange="calcGrowth()" title="<?= __('home_investment_amount') ?>">
+                                    <select class="form-select form-select-sm bg-dark text-white border-light" id="invAmount" onchange="calcGrowth()" title="<?= __('home_investment_amount') ?>" style="background-color: #1e293b !important; color: #ffffff !important;">
                                         <option value="500000"><?= __('home_amount_5l') ?></option>
                                         <option value="1000000" selected><?= __('home_amount_10l') ?></option>
                                         <option value="2500000"><?= __('home_amount_25l') ?></option>
@@ -780,7 +780,7 @@ document.addEventListener('DOMContentLoaded', function(){
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label text-white-50 small"><?= __('home_time_period') ?></label>
-                                    <select class="form-select form-select-sm" id="invYears" onchange="calcGrowth()" title="<?= __('home_time_period') ?>">
+                                    <select class="form-select form-select-sm bg-dark text-white border-light" id="invYears" onchange="calcGrowth()" title="<?= __('home_time_period') ?>" style="background-color: #1e293b !important; color: #ffffff !important;">
                                         <option value="5"><?= __('home_years_5') ?></option>
                                         <option value="10" selected><?= __('home_years_10') ?></option>
                                         <option value="15"><?= __('home_years_15') ?></option>
@@ -792,7 +792,7 @@ document.addEventListener('DOMContentLoaded', function(){
                                     <div class="fw-bold h4 mb-0 pt-1" id="growthResult">₹40,45,558</div>
                                 </div>
                             </div>
-        </div>
+                        </div>
         <div class="col-lg-5 text-center mt-4 mt-lg-0">
             <div class="mt-3">
                 <div class="d-flex justify-content-between align-items-center mb-1">
@@ -1463,7 +1463,7 @@ document.addEventListener('DOMContentLoaded', function(){
             <!-- Investment Comparison Chart -->
             <div class="row g-3 g-md-4 mb-5">
                 <div class="col-md-3 col-6">
-                    <div class="invest-card">
+                    <div class="invest-card bg-white text-dark h-100">
                         <div class="icon-circle ic-green">
                             <i class="fas fa-vector-square fa-2x iu-emerald"></i>
                         </div>
@@ -1471,42 +1471,41 @@ document.addEventListener('DOMContentLoaded', function(){
                         <div class="return-pct iu-emerald">15-25%</div>
                         <p class="text-muted small"><?= __('home_avg_annual_returns') ?></p>
                         <div class="progress mb-2 progress-thin">
-                            <div class="progress-bar"></div>
+                            <div class="progress-bar bg-success"></div>
                         </div>
-                        <span class="badge">â­�
-                            <?= __('home_best_investment') ?></span>
+                        <span class="badge bg-success"><i class="fas fa-crown me-1"></i><?= __('home_best_investment') ?></span>
                     </div>
                 </div>
                 <div class="col-md-3 col-6">
-                    <div class="invest-card">
+                    <div class="invest-card bg-white text-dark h-100">
                         <div class="icon-circle ic-amber">
                             <i class="fas fa-coins fa-2x iu-amber"></i>
                         </div>
                         <h5 class="fw-bold iu-amber"><?= __('home_invest_fd') ?></h5>
-                        <div class="return-pct">5-7%</div>
+                        <div class="return-pct text-dark">5-7%</div>
                         <p class="text-muted small"><?= __('home_avg_annual_returns') ?></p>
                         <div class="progress mb-2 progress-thin">
-                            <div class="progress-bar"></div>
+                            <div class="progress-bar bg-secondary"></div>
                         </div>
                         <span class="badge bg-secondary"><?= __('home_low_returns') ?></span>
                     </div>
                 </div>
                 <div class="col-md-3 col-6">
-                    <div class="invest-card">
+                    <div class="invest-card bg-white text-dark h-100">
                         <div class="icon-circle ic-red">
                             <i class="fas fa-chart-line fa-2x iu-red"></i>
                         </div>
                         <h5 class="fw-bold iu-red"><?= __('home_invest_stock') ?></h5>
-                        <div class="return-pct">10-14%</div>
+                        <div class="return-pct text-dark">10-14%</div>
                         <p class="text-muted small"><?= __('home_high_risk') ?></p>
                         <div class="progress mb-2 progress-thin">
-                            <div class="progress-bar"></div>
+                            <div class="progress-bar bg-danger"></div>
                         </div>
                         <span class="badge bg-warning text-dark"><?= __('home_moderate') ?></span>
                     </div>
                 </div>
                 <div class="col-md-3 col-6">
-                    <div class="invest-card">
+                    <div class="invest-card bg-white text-dark h-100">
                         <div class="icon-circle ic-teal">
                             <i class="fas fa-ring fa-2x iu-teal"></i>
                         </div>
@@ -1514,9 +1513,9 @@ document.addEventListener('DOMContentLoaded', function(){
                         <div class="return-pct iu-teal">8-10%</div>
                         <p class="text-muted small"><?= __('home_gold_desc') ?></p>
                         <div class="progress mb-2 progress-thin">
-                            <div class="progress-bar"></div>
+                            <div class="progress-bar bg-info"></div>
                         </div>
-                        <span class="badge"><?= __('home_safe_haven') ?></span>
+                        <span class="badge bg-info text-dark"><?= __('home_safe_haven') ?></span>
                     </div>
                 </div>
             </div>

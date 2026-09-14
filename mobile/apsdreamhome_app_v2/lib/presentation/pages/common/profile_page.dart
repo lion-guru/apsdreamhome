@@ -395,6 +395,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   const SizedBox(height: 20),
                   _AgentFeaturesSection(context: context),
                   const SizedBox(height: 20),
+                  _RegistryPayoutSection(context: context),
+                  const SizedBox(height: 20),
                   _MoreFeaturesSection(context: context),
                   const SizedBox(height: 20),
                   _QuickActionsSection(
@@ -1956,6 +1958,28 @@ class _ActionTile extends StatelessWidget {
         ),
         if (showDivider) Divider(height: 1, color: Colors.grey.shade100),
       ],
+    );
+  }
+}
+
+class _RegistryPayoutSection extends StatelessWidget {
+  final BuildContext context;
+  const _RegistryPayoutSection({required this.context});
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 1,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          const Row(children: [Icon(Icons.verified_outlined, size: 20, color: Color(0xFF0d9488)), SizedBox(width: 8), Text('Registry & Payouts', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppTheme.textPrimaryLight))]),
+          const Divider(height: 20),
+          _ActionTile(icon: Icons.assignment_turned_in_outlined, label: 'My Bookings & Registry', subtitle: 'Track allotment → possession (7 stages)', color: const Color(0xFF0d9488), onTap: () => GoRouter.of(context).push('/my-bookings')),
+          _ActionTile(icon: Icons.account_balance_wallet_outlined, label: 'Payout Batches', subtitle: 'Commission batches & bank exports (staff)', color: const Color(0xFF7c3aed), onTap: () => GoRouter.of(context).push('/admin/payout-batches')),
+          _ActionTile(icon: Icons.location_on_outlined, label: 'Site Visits', subtitle: 'Executive dispatch & colony pin', color: AppTheme.successColor, onTap: () => GoRouter.of(context).push('/agent/site-visits'), showDivider: false),
+        ]),
+      ),
     );
   }
 }

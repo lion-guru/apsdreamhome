@@ -127,6 +127,7 @@
                                 <div class="col-6"><label class="small text-muted">Material Grade</label><select class="form-select form-select-sm" id="costMaterial"><option value="local">Local</option><option value="mid" selected>Mid-Range</option><option value="imported">Imported</option></select></div>
                             </div>
                             <button class="btn btn-sm btn-primary" onclick="estimateCost()"><i class="fas fa-calculator me-1"></i>Estimate Cost</button>
+                            <button class="btn btn-sm btn-outline-primary ms-2" onclick="estimateCostAI()"><i class="fas fa-robot me-1"></i>AI Estimate</button>
                             <div id="costResult" class="d-none mt-3 p-3 bg-white rounded-2 border">
                                 <h6 class="mb-2">Cost Breakdown</h6>
                                 <div id="costBreakdown"></div>
@@ -280,18 +281,18 @@ function planFurniture() {
     };
     const items = layouts[type] || layouts['Living Room'];
     const scale = 12; const rw = w * scale; const rl = l * scale;
-    let html = `<div >`;
+    let html = `<div style="border:2px dashed #ccc; border-radius:8px; padding:10px; min-height:200px; position:relative;">`;
     let xp = 5, yp = 5;
-    html += `<div >${w}ft x ${l}ft</div>`;
+    html += `<div class="text-center small text-muted mb-2">${w}ft × ${l}ft ${type}</div>`;
     items.forEach((item, i) => {
         const iw = item.w * scale; const il = item.l * scale;
         if (xp + iw + 5 > rw && yp > 5) { xp = 5; yp += Math.max(...items.map(it => it.l * scale)) + 5; }
         const colors = ['#0d9488','#3498db','#27ae60','#e74c3c','#f39c12','#8e44ad','#1abc9c','#e67e22'];
-        html += `<div >${item.name}</div>`;
+        html += `<div style="position:absolute; left:${xp}px; top:${yp}px; width:${iw}px; height:${il}px; background:${colors[i % colors.length]}; color:white; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:10px; box-shadow:0 2px 4px rgba(0,0,0,0.2);">${item.name}</div>`;
         xp += iw + 5;
     });
     html += '</div>';
-    html += `<p class="small text-muted mt-2 mb-0 text-center">Recommended layout for a ${w}ft x ${l}ft ${type}</p>`;
+    html += `<p class="small text-muted mt-2 mb-0 text-center">Recommended layout for a ${w}ft × ${l}ft ${type}</p>`;
     document.getElementById('furnitureLayout').innerHTML = html;
     document.getElementById('furnitureResult').classList.remove('d-none');
 }
@@ -325,6 +326,42 @@ function estimateCost() {
     document.getElementById('costTotal').textContent = 'Total Estimated Cost: ₹' + baseCost.toLocaleString('en-IN', {maximumFractionDigits:0});
     document.getElementById('costResult').classList.remove('d-none');
 }
+
+function estimateCostAI() {
+    const btn = event.target.closest('button');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>AI Calculating...';
+    
+    const formData = new FormData();
+    formData.append('csrf_token', '<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>');
+    formData.append('room_type', document.getElementById('costRoomType').value);
+    formData.append('area_sqft', document.getElementById('costArea').value);
+    formData.append('quality', document.getElementById('costQuality').value);
+    formData.append('material_grade', document.getElementById('costMaterial').value);
+    
+    fetch('<?= BASE_URL ?>/ai/content/interior-estimate', { method: 'POST', body: formData })
+        .then(r => r.json())
+        .then(d => {
+            if (d.success && d.estimate) {
+                document.getElementById('costBreakdown').innerHTML = d.estimate.breakdown.map(c => 
+                    `<div class="d-flex justify-content-between small"><span>${c.name}</span><span>₹${c.amount.toLocaleString('en-IN')}</span></div>`
+                ).join('');
+                document.getElementById('costTotal').textContent = 'AI Total: ₹' + d.estimate.total.toLocaleString('en-IN');
+                document.getElementById('costResult').classList.remove('d-none');
+            } else {
+                alert('AI estimation unavailable. Using standard calculation.');
+                estimateCost();
+            }
+        })
+        .catch(() => {
+            alert('AI estimation failed. Using standard calculation.');
+            estimateCost();
+        })
+        .finally(() => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-robot me-1"></i>AI Estimate';
+        });
+}
 function planRoom() {
     const w = parseFloat(document.getElementById('plannerW').value) || 12;
     const l = parseFloat(document.getElementById('plannerL').value) || 14;
@@ -346,6 +383,10 @@ function planRoom() {
     if (unit !== 'sqft') {
         html += `<tr class="table-primary"><td>Your selected unit</td><td><strong>${conversions[unit].toFixed(unit==='sqm'?2:0)} ${labels[unit]}</strong></td></tr>`;
     }
+    html += '</table>';
+    document.getElementById('plannerDetails').innerHTML = html;
+    document.getElementById('plannerResult').classList.remove('d-none');
+}
     html += '</table>';
     document.getElementById('plannerDetails').innerHTML = html;
     document.getElementById('plannerResult').classList.remove('d-none');

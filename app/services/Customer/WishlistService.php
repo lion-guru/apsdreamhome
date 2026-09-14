@@ -86,7 +86,7 @@ class WishlistService
         ];
     }
     
-    /**
+/**
      * Get user's wishlist
      */
     public function getWishlist(int $userId, array $options = []): array
@@ -98,8 +98,8 @@ $sql = "SELECT w.*, p.*, pi.image_path as primary_image,
              JOIN properties p ON w.property_id = p.id
              LEFT JOIN property_images pi ON p.id = pi.property_id AND pi.is_primary = 1
              WHERE w.user_id = ? AND w.tenant_id = ? AND p.status = 'available'
-             ORDER BY w.updated_at DESC";
-         
+             ORDER BY w.created_at DESC";
+        
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$userId, $this->tenantId()]);
         

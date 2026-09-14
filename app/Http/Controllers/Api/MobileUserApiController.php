@@ -127,7 +127,7 @@ class MobileUserApiController extends BaseController
 
             // 2. Booking Agreements
             try {
-                $bookingSql = "SELECT b.id, CONCAT('Booking Agreement - ', p.title) as name, 'agreement' as type, 'booking' as category, ba.agreement_file as url, ba.created_at as uploaded_at, 'verified' as status, 'booking' as source FROM bookings b JOIN properties p ON b.property_id = p.id LEFT JOIN booking_agreements ba ON b.id = ba.booking_id WHERE b.customer_id = ? AND ba.agreement_file IS NOT NULL ORDER BY ba.created_at DESC LIMIT {$docLimit}";
+                $bookingSql = "SELECT b.id, CONCAT('Booking Agreement - ', p.title) as name, 'agreement' as type, 'booking' as category, ba.content as url, ba.created_at as uploaded_at, ba.status, 'booking' as source FROM bookings b JOIN properties p ON b.property_id = p.id LEFT JOIN booking_agreements ba ON b.id = ba.booking_id WHERE b.customer_id = ? ORDER BY ba.created_at DESC LIMIT {$docLimit}";
                 $bookingStmt = $this->db->prepare($bookingSql);
                 $bookingStmt->execute([$userId]);
                 $documents = array_merge($documents, $bookingStmt->fetchAll(PDO::FETCH_ASSOC));
@@ -143,7 +143,7 @@ class MobileUserApiController extends BaseController
 
             // 4. Plot Allotment Letters
             try {
-                $allotmentSql = "SELECT pa.id, CONCAT('Allotment Letter - ', p.title) as name, 'allotment' as type, 'booking' as category, pa.letter_file as url, pa.created_at as uploaded_at, pa.status, 'allotment' as source FROM plot_allotments pa JOIN bookings b ON pa.booking_id = b.id JOIN properties p ON b.property_id = p.id WHERE b.customer_id = ? AND pa.letter_file IS NOT NULL ORDER BY pa.created_at DESC LIMIT {$docLimit}";
+                $allotmentSql = "SELECT pa.id, CONCAT('Allotment Letter - ', p.title) as name, 'allotment' as type, 'booking' as category, pa.allotment_date as url, pa.created_at as uploaded_at, pa.status, 'allotment' as source FROM plot_allotments pa JOIN bookings b ON pa.booking_id = b.id JOIN properties p ON b.property_id = p.id WHERE b.customer_id = ? ORDER BY pa.created_at DESC LIMIT {$docLimit}";
                 $allotmentStmt = $this->db->prepare($allotmentSql);
                 $allotmentStmt->execute([$userId]);
                 $documents = array_merge($documents, $allotmentStmt->fetchAll(PDO::FETCH_ASSOC));

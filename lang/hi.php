@@ -9331,4 +9331,17 @@ return array(
   'assoc_lead_commission_note' => 'वर्तमान रैंक और बजट पर आधारित। वास्तविक भिन्न हो सकता है।',
   'assoc_lead_no_budget' => 'अनुमानित कमाई देखने के लिए बजट रेंज सेट करें।',
   'assoc_lead_view_commission_structure' => 'पूरी कमीशन संरचना देखें',
+  /* Legal Documentation */
+  'legal_docs_heading' => 'कानूनी दस्तावेज़',
+  'legal_docs_subtitle' => 'आधिकारिक कानूनी दस्तावेज़, संविदाएँ और विधिसम्मत नीतियाँ',
+  'legal_index_subtitle' => 'आधिकारिक कानूनी दस्तावेज़, संविदाएँ और विधिसम्मत नीतियाँ',
+  'legal_no_documents' => 'कोई कानूनी दस्तावेज़ नहीं मिला',
+  'legal_check_back' => 'कृपया बाद में जाँचें या हमारी कानूनी अनुपालन डेस्क से सहायता लें।',
+  'back_home' => 'होम पर वापस',
+  'legal_documentation' => 'कानूनी दस्तावेज़',
+  'download_pdf' => 'PDF डाउनलोड करें',
+  'additional_legal_papers' => 'अतिरिक्त कानूनी दस्तावेज़',
+  'doc_name' => 'दस्तावेज़ का नाम',
+  'date_published' => 'प्रकाशन तिथि',
+  'no_additional_docs' => 'कोई अतिरिक्त दस्तावेज़ उपलब्ध नहीं है।',
 );

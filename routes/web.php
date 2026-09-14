@@ -503,6 +503,7 @@ $router->get('/admin/whatsapp-web/manage', 'App\\Http\\Controllers\\Admin\\Admin
 
 // Missing frontend routes (from header/footer links)
 $router->get('/financial-services', 'Front\\FinancialController@financialServices');
+$router->get('/financial-services/contact', 'Front\\FinancialController@financialContact');
 $router->post('/financial-services/contact', 'Front\\FinancialController@financialContact');
 $router->get('/interior-design', 'Front\\ServiceController@interiorDesign');
 $router->get('/construction-services', 'Front\\ServiceController@constructionServices');
@@ -877,6 +878,9 @@ $router->post('/associate/register', 'Auth\\AssociateAuthController@handleAssoci
 $router->get('/associate/login', 'Auth\\AssociateAuthController@associateLogin');
 $router->post('/associate/login', 'Auth\\AssociateAuthController@authenticateAssociate');
 $router->get('/associate/logout', 'Auth\\AssociateAuthController@logout');
+// ═══ LEGAL COMPLIANCE: Associate Code of Conduct consent endpoints ═══
+$router->get('/associate/legal-consent/status', 'App\\Http\\Controllers\\Associate\\LegalConsentController@status');
+$router->post('/associate/legal-consent/accept', 'App\\Http\\Controllers\\Associate\\LegalConsentController@accept');
 $router->get('/associate/dashboard', 'App\\Http\\Controllers\\AssociateController@dashboard');
 $router->get('/associate/add-property', 'App\\Http\\Controllers\\AssociateController@addProperty');
 $router->post('/associate/add-property', 'App\\Http\\Controllers\\AssociateController@storeAddProperty');
@@ -1272,6 +1276,11 @@ $router->get('/admin/leads/followups', 'App\\Http\\Controllers\\Admin\\LeadContr
 $router->get('/admin/leads/analysis', 'App\\Http\\Controllers\\Admin\\LeadController@analysis');
 $router->get('/admin/leads/assign', 'App\\Http\\Controllers\\Admin\\LeadController@assignPage');
 $router->post('/admin/leads/assign/process', 'App\\Http\\Controllers\\Admin\\LeadController@processAssignment');
+
+// Lead Auto-Assign (AJAX — must be before {id} routes)
+$router->post('/admin/leads/auto-assign', 'App\\Http\\Controllers\\Admin\\LeadController@autoAssign');
+$router->post('/admin/leads/{id}/auto-assign', 'App\\Http\\Controllers\\Admin\\LeadController@autoAssignSingle');
+
 $router->get('/admin/leads/{id}', 'App\\Http\\Controllers\\Admin\\LeadController@show');
 $router->get('/admin/leads/{id}/edit', 'App\\Http\\Controllers\\Admin\\LeadController@edit');
 $router->post('/admin/leads/{id}/update', 'App\\Http\\Controllers\\Admin\\LeadController@update');
@@ -1354,6 +1363,10 @@ $router->get('/admin/bookings/export', 'App\\Http\\Controllers\\Admin\\BookingCo
 // Admin Site Visits
 $router->get('/admin/site-visits', 'App\\Http\\Controllers\\Admin\\SiteVisitController@index');
 $router->post('/admin/site-visits/{id}/status', 'App\\Http\\Controllers\\Admin\\SiteVisitController@updateStatus');
+// Smart Site Visit Dispatch & Colony GPS Pin Engine (Module 3)
+$router->post('/admin/site-visits/{id}/assign', 'App\\Http\\Controllers\\Admin\\SiteVisitController@assignExecutive');
+$router->post('/admin/site-visits/{id}/outcome', 'App\\Http\\Controllers\\Admin\\SiteVisitController@markOutcome');
+$router->post('/admin/site-visits/{id}/send-pin', 'App\\Http\\Controllers\\Admin\\SiteVisitController@sendPin');
 
 // Admin Agreements
 $router->get('/admin/agreements', 'App\\Http\\Controllers\\Admin\\AgreementController@index');
@@ -1456,6 +1469,19 @@ $router->post('/admin/blog/store', 'App\\Http\\Controllers\\Admin\\BlogControlle
 $router->get('/admin/blog/{id}/edit', 'App\\Http\\Controllers\\Admin\\BlogController@edit');
 $router->post('/admin/blog/{id}/update', 'App\\Http\\Controllers\\Admin\\BlogController@update');
 $router->post('/admin/blog/{id}/destroy', 'App\\Http\\Controllers\\Admin\\BlogController@destroy');
+
+// Blog Comment Routes (public submit + admin moderation)
+$router->post('/blog/comment/{id}', 'App\\Http\\Controllers\\Front\\BlogController@submitComment');
+$router->get('/admin/blogs/comments', 'App\\Http\\Controllers\\Admin\\BlogController@comments');
+$router->get('/admin/blogs/comment/{id}/approve', 'App\\Http\\Controllers\\Admin\\BlogController@approveComment');
+$router->get('/admin/blogs/comment/{id}/reject', 'App\\Http\\Controllers\\Admin\\BlogController@rejectComment');
+$router->get('/admin/blogs/comment/{id}/delete', 'App\\Http\\Controllers\\Admin\\BlogController@deleteComment');
+
+// Financial Inquiries
+$router->get('/admin/financial-inquiries', 'App\\Http\\Controllers\\Admin\\FinancialInquiryController@index');
+$router->get('/admin/financial-inquiries/{id}', 'App\\Http\\Controllers\\Admin\\FinancialInquiryController@show');
+$router->post('/admin/financial-inquiries/{id}/status', 'App\\Http\\Controllers\\Admin\\FinancialInquiryController@updateStatus');
+$router->get('/admin/financial-inquiries/{id}/delete', 'App\\Http\\Controllers\\Admin\\FinancialInquiryController@destroy');
 
 // Admin Campaigns
 $router->get('/admin/campaigns', 'App\\Http\\Controllers\\Admin\\CampaignController@index');
@@ -2017,6 +2043,8 @@ $router->get('/admin/pages/create', 'App\\Http\\Controllers\\Admin\\PagesControl
 $router->post('/admin/pages/store', 'App\\Http\\Controllers\\Admin\\PagesController@store');
 $router->get('/admin/pages/edit/{id}', 'App\\Http\\Controllers\\Admin\\PagesController@edit');
 $router->post('/admin/pages/update/{id}', 'App\\Http\\Controllers\\Admin\\PagesController@update');
+$router->post('/admin/pages/{id}/restore/{versionId}', 'App\\Http\\Controllers\\Admin\\PagesController@restore');
+$router->get('/admin/pages/{id}/preview', 'App\\Http\\Controllers\\Admin\\PagesController@preview');
 
 // Admin Colony Management
 $router->get('/admin/colonies', 'App\\Http\\Controllers\\Admin\\ColonyController@index');
@@ -2492,6 +2520,7 @@ $router->get('/admin/land/{id}', 'App\\Http\\Controllers\\Admin\\LandController@
 $router->get('/admin/land/{id}/edit', 'App\\Http\\Controllers\\Admin\\LandController@edit');
 $router->post('/admin/land/{id}/update', 'App\\Http\\Controllers\\Admin\\LandController@update');
 $router->post('/admin/land/{id}/destroy', 'App\\Http\\Controllers\\Admin\\LandController@destroy');
+$router->get('/admin/land/acquisitions/{id}', 'App\\Http\\Controllers\\Admin\\LandController@showAcquisition');
 
 // ============================================================
 // ADMIN LOYALTY PROGRAM
@@ -2524,6 +2553,53 @@ $router->post('/admin/scheduler/tasks/run/{id}', 'App\\Http\\Controllers\\Admin\
 $router->get('/admin/scheduler/logs', 'App\\Http\\Controllers\\Admin\\AdminSchedulerController@logs');
 $router->get('/admin/scheduler/health', 'App\\Http\\Controllers\\Admin\\AdminSchedulerController@health');
 $router->post('/admin/scheduler/cleanup', 'App\\Http\\Controllers\\Admin\\AdminSchedulerController@cleanup');
+
+// ============================================================
+// ADMIN CODING CHALLENGES
+// ============================================================
+
+$router->get('/admin/coding-challenges', 'App\\Http\\Controllers\\Admin\\CodingChallengeController@index');
+$router->get('/admin/coding-challenges/create', 'App\\Http\\Controllers\\Admin\\CodingChallengeController@create');
+$router->post('/admin/coding-challenges/store', 'App\\Http\\Controllers\\Admin\\CodingChallengeController@store');
+$router->get('/admin/coding-challenges/edit/{id}', 'App\\Http\\Controllers\\Admin\\CodingChallengeController@edit');
+$router->post('/admin/coding-challenges/update/{id}', 'App\\Http\\Controllers\\Admin\\CodingChallengeController@update');
+$router->get('/admin/coding-challenges/delete/{id}', 'App\\Http\\Controllers\\Admin\\CodingChallengeController@destroy');
+
+// ============================================================
+// ADMIN CAMPAIGN TEMPLATES
+// ============================================================
+
+$router->get('/admin/campaign-templates', 'App\\Http\\Controllers\\Admin\\CampaignTemplateController@index');
+$router->get('/admin/campaign-templates/create', 'App\\Http\\Controllers\\Admin\\CampaignTemplateController@create');
+$router->post('/admin/campaign-templates/store', 'App\\Http\\Controllers\\Admin\\CampaignTemplateController@store');
+$router->get('/admin/campaign-templates/edit/{id}', 'App\\Http\\Controllers\\Admin\\CampaignTemplateController@edit');
+$router->post('/admin/campaign-templates/update/{id}', 'App\\Http\\Controllers\\Admin\\CampaignTemplateController@update');
+$router->get('/admin/campaign-templates/delete/{id}', 'App\\Http\\Controllers\\Admin\\CampaignTemplateController@destroy');
+
+// ============================================================
+// ADMIN VOICE UPLOADS
+// ============================================================
+
+$router->get('/admin/voice-uploads', 'App\\Http\\Controllers\\Admin\\VoiceUploadController@index');
+$router->get('/admin/voice-uploads/{id}', 'App\\Http\\Controllers\\Admin\\VoiceUploadController@show');
+$router->post('/admin/voice-uploads/{id}/process', 'App\\Http\\Controllers\\Admin\\VoiceUploadController@process');
+$router->get('/admin/voice-uploads/{id}/delete', 'App\\Http\\Controllers\\Admin\\VoiceUploadController@delete');
+
+// ============================================================
+// ADMIN APP FEEDBACK
+// ============================================================
+
+$router->get('/admin/app-feedback', 'App\\Http\\Controllers\\Admin\\AppFeedbackController@index');
+$router->get('/admin/app-feedback/{id}', 'App\\Http\\Controllers\\Admin\\AppFeedbackController@show');
+$router->post('/admin/app-feedback/{id}/status', 'App\\Http\\Controllers\\Admin\\AppFeedbackController@updateStatus');
+$router->post('/admin/app-feedback/{id}/respond', 'App\\Http\\Controllers\\Admin\\AppFeedbackController@respond');
+$router->get('/admin/app-feedback/{id}/delete', 'App\\Http\\Controllers\\Admin\\AppFeedbackController@delete');
+
+// ============================================================
+// ADMIN SEARCH HISTORY
+// ============================================================
+
+$router->get('/admin/search-history', 'App\\Http\\Controllers\\Admin\\SearchHistoryController@index');
 
 // ============================================================
 // ADMIN FILE MANAGER
@@ -2595,11 +2671,15 @@ $router->get('/suyoday-colony', 'Front\\ProjectController@suyodayColonyPage');
 
 // Legal section
 $router->get('/legal', 'Front\\LegalController@index');
+$router->get('/terms-conditions', function () { header('Location: /apsdreamhome/legal/terms-conditions'); exit; });
+$router->get('/refund-policy', function () { header('Location: /apsdreamhome/legal/refund-policy'); exit; });
+$router->get('/privacy-policy', function () { header('Location: /apsdreamhome/legal/privacy'); exit; });
 $router->get('/legal/privacy', 'Front\\LegalController@privacy');
 $router->get('/legal/terms', 'Front\\LegalController@terms');
 $router->get('/legal/disclaimer', 'Front\\LegalController@disclaimer');
 $router->get('/legal/cancellation-policy', 'Front\\LegalController@cancellationPolicy');
 $router->get('/legal/refund-policy', 'Front\\LegalController@refundPolicy');
+$router->get('/legal/associate-rules', 'Front\\LegalController@associateRules');
 $router->get('/legal/insurance', 'Front\\LegalController@insurance');
 $router->get('/legal/nach-mandate', 'Front\\LegalController@nachMandate');
 $router->get('/legal/agreements', 'Front\\LegalController@agreements');
@@ -3771,6 +3851,9 @@ $router->post('/admin/commission/recalculations/bulk-request',            'App\\
 $router->get('/admin/payout-batches',                                        'App\\Http\\Controllers\\Admin\\PayoutBatchController@index');
 $router->get('/admin/payout-batches/create',                                 'App\\Http\\Controllers\\Admin\\PayoutBatchController@create');
 $router->post('/admin/payout-batches/store',                                 'App\\Http\\Controllers\\Admin\\PayoutBatchController@store');
+// Bank Bulk Payout Engine (specific paths BEFORE the {id} detail route)
+$router->get('/admin/payout-batches/{id}/export-bank-csv',                   'App\\Http\\Controllers\\Admin\\PayoutBatchController@exportBankCsv');
+$router->post('/admin/payout-batches/{id}/import-utr',                        'App\\Http\\Controllers\\Admin\\PayoutBatchController@importUtrCsv');
 $router->get('/admin/payout-batches/{id}',                                   'App\\Http\\Controllers\\Admin\\PayoutBatchController@detail');
 $router->post('/admin/payout-batches/populate/{id}',                         'App\\Http\\Controllers\\Admin\\PayoutBatchController@populate');
 $router->post('/admin/payout-batches/submit/{id}',                           'App\\Http\\Controllers\\Admin\\PayoutBatchController@submit');
@@ -3808,6 +3891,7 @@ $router->get('/admin/mlm-withdrawals', 'App\\Http\\Controllers\\Admin\\AdminCont
 $router->get('/admin/api/developers', 'App\\Http\\Controllers\\Admin\\ApiIntegrationController@developers');
 $router->get('/admin/api/developers/create', 'App\\Http\\Controllers\\Admin\\ApiIntegrationController@developersCreate');
 $router->post('/admin/api/developers/store', 'App\\Http\\Controllers\\Admin\\ApiIntegrationController@developersStore');
+$router->get('/admin/api/logs', 'App\\Http\\Controllers\\Admin\\ApiIntegrationController@requestLogs');
 
 
 // ============================================================
@@ -5139,3 +5223,16 @@ $router->get('/legal/{category}', 'App\\Http\\Controllers\\Front\\LegalDocumentC
 $router->get('/legal/{slug}', 'App\\Http\\Controllers\\Front\\LegalDocumentController@show');
 $router->post('/legal/accept', 'App\\Http\\Controllers\\Front\\LegalDocumentController@accept');
 $router->get('/api/legal/unaccepted', 'App\\Http\\Controllers\\Front\\LegalDocumentController@getUnaccepted');
+
+// ============================================================
+// CUSTOMER PASSBOOK & EMI QR PAYMENT
+// ============================================================
+$router->get('/customer/passbook', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
+$router->post('/customer/pay-emi/upi-qr', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@generateUpiQr');
+$router->get('/customer/receipt/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadReceipt');
+
+// ============================================================
+// CUSTOMER LIVE REGISTRY & HANDOVER TRACKER (Module 1)
+// ============================================================
+$router->get('/customer/registry/{bookingId}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@registryTimeline');
+$router->get('/customer/possession-certificate/{bookingId}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadPossessionCertificate');

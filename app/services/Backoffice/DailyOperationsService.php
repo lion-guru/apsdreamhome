@@ -391,7 +391,7 @@ class DailyOperationsService
 
     public function getLeadById($id)
     {
-        return $this->fetchOne("SELECT lp.*,u.name AS assigned_name,c.name AS creator_name FROM lead_pipeline lp LEFT JOIN users u ON lp.assigned_to=u.id{$this->tJoin('u')} LEFT JOIN users c ON lp.created_by=c.id{$this->tJoin('c')} WHERE lp.id=?", array_merge($this->tVal(), $this->tVal(), [$id]));
+        return $this->fetchOne("SELECT lp.*,u.name AS assigned_name FROM lead_pipeline lp LEFT JOIN users u ON lp.assigned_to=u.id{$this->tJoin('u')} WHERE lp.id=?", array_merge($this->tVal(), [$id]));
     }
 
     public function listLeads(array $filters = [])

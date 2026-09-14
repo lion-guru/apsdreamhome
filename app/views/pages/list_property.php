@@ -31,16 +31,21 @@ try {
 }
 ?>
 
-<div class="aps-cp-hero">
-    <div class="row align-items-center">
-        <div class="col-md-8">
-            <h2><i class="fas fa-paper-plane me-2"></i><?= __('list_property_hero_title') ?></h2>
-            <p><?= __('list_property_hero_lead') ?></p>
-        </div>
-        <div class="col-md-4 mt-3 mt-md-0">
-            <div class="aps-cp-hero-actions justify-content-md-end">
-                <a href="tel:<?= $phoneRaw ?>" class="btn btn-light">
-                    <i class="fas fa-phone me-2"></i><?= __('list_property_call_label') ?>: <?= $phoneDisplay ?>
+<div class="aps-cp-hero" style="background: linear-gradient(135deg, #0a192f 0%, #1e3a5f 100%); color: white;">
+    <div class="container">
+        <div class="row align-items-center py-5">
+            <div class="col-lg-8">
+                <h2 class="display-5 fw-bold mb-3"><i class="fas fa-paper-plane me-2 text-warning"></i><?= __('list_property_hero_title') ?></h2>
+                <p class="lead text-white-50 mb-4"><?= __('list_property_hero_lead') ?></p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <span class="badge bg-success px-3 py-2"><i class="fas fa-check me-1"></i> Free Listing</span>
+                    <span class="badge bg-info px-3 py-2"><i class="fas fa-shield-alt me-1"></i> Verified Leads</span>
+                    <span class="badge bg-warning text-dark px-3 py-2"><i class="fas fa-bolt me-1"></i> Quick Approval</span>
+                </div>
+            </div>
+            <div class="col-lg-4 mt-4 mt-lg-0 text-center text-lg-end">
+                <a href="tel:<?= $phoneRaw ?>" class="btn btn-warning btn-lg px-4 py-3">
+                    <i class="fas fa-phone me-2"></i><?= __('list_property_call_label') ?><br><small><?= $phoneDisplay ?></small>
                 </a>
             </div>
         </div>
@@ -76,15 +81,15 @@ try {
                 </div>
 
                 <ol class="aps-cp-wizard-steps" role="list">
-                    <li class="aps-cp-wizard-step">
+                    <li class="aps-cp-wizard-step active" data-step="0">
                         <span class="aps-cp-wizard-step-num"><span>1</span></span>
                         <span class="aps-cp-wizard-step-label"><?= __('list_property_step1_label', null, 'Type & Listing') ?></span>
                     </li>
-                    <li class="aps-cp-wizard-step">
+                    <li class="aps-cp-wizard-step" data-step="1">
                         <span class="aps-cp-wizard-step-num"><span>2</span></span>
                         <span class="aps-cp-wizard-step-label"><?= __('list_property_step2_label', null, 'Location & Details') ?></span>
                     </li>
-                    <li class="aps-cp-wizard-step">
+                    <li class="aps-cp-wizard-step" data-step="2">
                         <span class="aps-cp-wizard-step-num"><span>3</span></span>
                         <span class="aps-cp-wizard-step-label"><?= __('list_property_step3_label', null, 'Photos & Contact') ?></span>
                     </li>
@@ -247,9 +252,6 @@ try {
                     <button type="button" class="btn btn-outline-secondary" data-wizard-prev disabled>
                         <i class="fas fa-arrow-left me-1"></i><?= __('back', null, 'Back') ?>
                     </button>
-                    <div class="aps-cp-wizard-progress" aria-label="Progress">
-                        <div class="aps-cp-wizard-progress-bar"></div>
-                    </div>
                     <div class="d-flex gap-2">
                         <button type="button" class="btn btn-primary" data-wizard-next>
                             <?= __('next', null, 'Next') ?> <i class="fas fa-arrow-right ms-1"></i>

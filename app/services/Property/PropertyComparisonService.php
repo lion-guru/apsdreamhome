@@ -347,21 +347,19 @@ class PropertyComparisonService
         return date('Y') - (int)$yearBuilt;
     }
 
-    /**
+/**
      * Get property amenities
      */
     private function getPropertyAmenities(int $propertyId): array
     {
         try {
             return $this->db->query(
-                "SELECT a.name FROM amenities a
-                 JOIN property_amenities pa ON a.id = pa.amenity_id
-                 WHERE pa.property_id = ?",
+                "SELECT amenity_name as name FROM property_amenities WHERE property_id = ?",
                 [$propertyId]
             )->fetchAll(\PDO::FETCH_COLUMN);
         } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
         }
     }
 

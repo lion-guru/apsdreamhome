@@ -1,14 +1,36 @@
 <?php
 $pdo = new PDO('mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome', 'root', '');
-$count = $pdo->query("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'apsdreamhome'")->fetchColumn();
-echo "Total tables: $count\n";
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-// Check the new tables exist
-$newTables = ['incomplete_registrations', 'employee_advances', 'resell_properties', 'budgets', 'two_factor_tokens', 'agent_tasks', 'kpis', 'notification_templates', 'gst_returns', 'mlm_rank_rates'];
-$found = 0;
-foreach ($newTables as $t) {
-    $r = $pdo->query("SHOW TABLES LIKE '$t'")->fetchAll();
-    if ($r) { $found++; echo "  [OK] $t\n"; }
-    else echo "  [MISSING] $t\n";
+// Get all tables
+$stmt = $pdo->query("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'apsdreamhome' AND TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME");
+$allTables = [];
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    $allTables[] = $row['TABLE_NAME'];
 }
-echo "Found: $found / " . count($newTables) . "\n";?>
+echo "Total tables: " . count($allTables) . "\n\n";
+
+// Check which have tenant_id
+echo "Tables WITH tenant_id column:\n";
+$withTenant = [];
+foreach ($allTables as $t) {
+    $c = $pdo->query("SHOW COLUMNS FROM `$t` LIKE 'tenant_id'");
+    if ($c->rowCount() > 0) {
+        $withTenant[] = $t;
+        echo "  $t\n";
+    }
+}
+
+echo "\nTables WITHOUT tenant_id (relevant for controllers):\n";
+$withoutTenant = array_diff($allTables, $withTenant);
+// Only show tables that are likely tenant-scoped (not laravel/system/cache tables)
+$skipPatterns = ['cache', 'sessions', 'migrations', 'failed_jobs', 'personal_access_tokens', 'password_reset'];
+foreach ($withoutTenant as $t) {
+    $skip = false;
+    foreach ($skipPatterns as $p) {
+        if (strpos($t, $p) !== false) { $skip = true; break; }
+    }
+    if (!$skip) {
+        echo "  $t\n";
+    }
+}?>

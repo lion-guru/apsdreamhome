@@ -395,7 +395,7 @@ class AdvancedPaymentController extends AdminController
                 return false;
             }
 
-            $sql = "UPDATE orders SET status = :status, transaction_id = :transaction_id, updated_at = NOW() WHERE order_id = :order_id";
+            $sql = "UPDATE orders SET status = :status, payment_id = :transaction_id, updated_at = NOW() WHERE id = :order_id";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([
                 'status' => $status,
@@ -471,9 +471,8 @@ class AdvancedPaymentController extends AdminController
                 throw new Exception('Database connection failed');
             }
 
-            $sql = "SELECT o.*, p.title as property_title, p.city, p.state
+            $sql = "SELECT o.*
                     FROM orders o
-                    LEFT JOIN properties p ON o.property_id = p.id
                     WHERE o.user_id = :user_id
                     ORDER BY o.created_at DESC";
 
@@ -508,12 +507,10 @@ class AdvancedPaymentController extends AdminController
                 throw new Exception('Database connection failed');
             }
 
-            $sql = "SELECT o.*, p.title as property_title, p.city, p.state,
-                           u.name as customer_name, u.email as customer_email
+            $sql = "SELECT o.*, u.name as customer_name, u.email as customer_email
                     FROM orders o
-                    LEFT JOIN properties p ON o.property_id = p.id
                     LEFT JOIN users u ON o.user_id = u.id
-                    WHERE o.order_id = :order_id AND o.user_id = :user_id";
+                    WHERE o.id = :order_id AND o.user_id = :user_id";
 
             $stmt = $this->db->prepare($sql);
             $stmt->execute([
@@ -531,12 +528,12 @@ class AdvancedPaymentController extends AdminController
 
             // Generate PDF receipt
             $receipt_data = [
-                'order_id' => $payment['order_id'],
+                'order_id' => $payment['id'],
                 'customer_name' => $payment['customer_name'],
-                'property_title' => $payment['property_title'],
+                'property_title' => $payment['order_type'] ?? 'Property Booking',
                 'amount' => $payment['amount'],
                 'payment_date' => $payment['created_at'],
-                'transaction_id' => $payment['transaction_id'],
+                'transaction_id' => $payment['payment_id'],
                 'payment_method' => $payment['payment_method']
             ];
 
@@ -590,11 +587,11 @@ class AdvancedPaymentController extends AdminController
             $payment_methods = $stmt->fetchAll();
 
             // Gateway performance
-            $sql = "SELECT gateway, COUNT(*) as transactions, SUM(amount) as volume,
-                           AVG(amount) as avg_transaction
-                    FROM orders
-                    WHERE status = 'completed'
-                    GROUP BY gateway";
+$sql = "SELECT payment_method as gateway, COUNT(*) as transactions, SUM(amount) as volume,
+                       AVG(amount) as avg_transaction
+                FROM orders
+                WHERE status = 'completed'
+                GROUP BY payment_method";
 
             $stmt = $this->db->query($sql);
             $gateway_performance = $stmt->fetchAll();

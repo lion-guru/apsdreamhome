@@ -109,17 +109,66 @@ class LegalFinancialSystemPageController extends BaseController
 
     public function financialServices()
     {
+        $services = [];
+        try {
+            $stmt = Database::getInstance()->getConnection()->query("
+                SELECT * FROM financial_services WHERE status = 'active' ORDER BY sort_order, title
+            ");
+            $services = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Exception $e) {
+            error_log("Financial services fetch error: " . $e->getMessage());
+        }
+        
         $this->render('pages/financial_services', [
             'page_title' => 'Financial Services - APS Dream Home',
             'page_description' => 'Our financial services and solutions.',
+            'services' => $services,
         ]);
     }
 
     public function financialContact()
     {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $name = trim($_POST['name'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $phone = trim($_POST['phone'] ?? '');
+            $service = trim($_POST['service'] ?? '');
+            $message = trim($_POST['message'] ?? '');
+            
+            if ($name && $email && $phone && $service) {
+                try {
+                    $pdo = Database::getInstance()->getConnection();
+                    $stmt = $pdo->prepare("
+                        INSERT INTO financial_inquiries (name, email, phone, service_interest, message, status, tenant_id, created_at)
+                        VALUES (?, ?, ?, ?, ?, 'new', 1, NOW())
+                    ");
+                    $stmt->execute([$name, $email, $phone, $service, $message]);
+                    $_SESSION['success'] = 'Thank you for your inquiry! Our financial team will contact you soon.';
+                } catch (\Exception $e) {
+                    error_log("Financial contact form error: " . $e->getMessage());
+                    $_SESSION['error'] = 'Something went wrong. Please try again.';
+                }
+            } else {
+                $_SESSION['error'] = 'Please fill all required fields.';
+            }
+            $this->redirect(BASE_URL . '/financial-services#contact-form');
+        }
+        
+        // Fetch active financial services for dropdown
+        $services = [];
+        try {
+            $stmt = Database::getInstance()->getConnection()->query("
+                SELECT id, title, slug FROM financial_services WHERE status = 'active' ORDER BY sort_order, title
+            ");
+            $services = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Exception $e) {
+            error_log("Financial services fetch error: " . $e->getMessage());
+        }
+        
         $this->render('pages/financial_contact', [
             'page_title' => 'Financial Contact - APS Dream Home',
             'page_description' => 'Contact our financial services team.',
+            'services' => $services,
         ]);
     }
 

@@ -12,7 +12,7 @@ class LegalController extends PageController
     use TenantAwareTrait;
     public function terms()
     {
-        [$cmsTitle, $pageContent] = $this->loadPageContent('terms');
+        [$cmsTitle, $pageContent] = $this->loadPageContent('terms-conditions');
         $data = [
             'page_title' => ($cmsTitle ?: 'Terms & Conditions') . ' - APS Dream Home',
             'page_description' => 'Terms and conditions of use',
@@ -23,7 +23,7 @@ class LegalController extends PageController
 
     public function privacy()
     {
-        [$cmsTitle, $pageContent] = $this->loadPageContent('privacy');
+        [$cmsTitle, $pageContent] = $this->loadPageContent('privacy-policy');
         $data = [
             'page_title' => ($cmsTitle ?: 'Privacy Policy') . ' - APS Dream Home',
             'page_description' => 'Our privacy policy',
@@ -63,6 +63,17 @@ class LegalController extends PageController
             'pageContent' => $pageContent,
         ];
         $this->render('pages/refund_policy', $data);
+    }
+
+    public function associateRules()
+    {
+        [$cmsTitle, $pageContent] = $this->loadPageContent('associate-rules');
+        $data = [
+            'page_title' => ($cmsTitle ?: 'Associate Rules & Code of Conduct') . ' - APS Dream Home',
+            'page_description' => 'Rules and code of conduct for APS Dream Home associates',
+            'pageContent' => $pageContent,
+        ];
+        $this->render('pages/associate_rules', $data);
     }
 
     public function insurance()
@@ -142,10 +153,23 @@ class LegalController extends PageController
     public function legalServices()
     {
         [$cmsTitle, $pageContent] = $this->loadPageContent('legal-services');
+        
+        // Fetch legal services from database
+        $services = [];
+        try {
+            $stmt = Database::getInstance()->getConnection()->query("
+                SELECT * FROM legal_services WHERE status = 'active' ORDER BY sort_order, title
+            ");
+            $services = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Exception $e) {
+            error_log("Legal services fetch error: " . $e->getMessage());
+        }
+
         $data = [
             'page_title' => ($cmsTitle ?: 'Legal Services') . ' - APS Dream Home',
             'page_description' => 'Legal services for property',
             'pageContent' => $pageContent,
+            'services' => $services,
         ];
         $this->render('pages/legal/services', $data);
     }

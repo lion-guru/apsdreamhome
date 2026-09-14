@@ -247,6 +247,148 @@ class ApiService {
     return (response['data'] ?? {}) as Map<String, dynamic>;
   }
 
+  // Campaign Templates
+  Future<List<Map<String, dynamic>>> getCampaignTemplates({
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    final response = await get(
+      AppConstants.campaignTemplatesEndpoint,
+      queryParameters: queryParameters,
+    );
+    return (response['data'] ?? []) as List<Map<String, dynamic>>;
+  }
+
+  Future<Map<String, dynamic>> getCampaignTemplate(String id) async {
+    final response = await get('${AppConstants.campaignTemplateDetailEndpoint}$id');
+    return (response['data'] ?? {}) as Map<String, dynamic>;
+  }
+
+  // Voice Uploads
+  Future<List<Map<String, dynamic>>> getVoiceUploads({
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    final response = await get(
+      AppConstants.voiceUploadsEndpoint,
+      queryParameters: queryParameters,
+    );
+    return (response['data'] ?? []) as List<Map<String, dynamic>>;
+  }
+
+  Future<Map<String, dynamic>> getVoiceUpload(String id) async {
+    final response = await get('${AppConstants.voiceUploadDetailEndpoint}$id');
+    return (response['data'] ?? {}) as Map<String, dynamic>;
+  }
+
+  // App Feedback
+  Future<List<Map<String, dynamic>>> getAppFeedback({
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    final response = await get(
+      AppConstants.appFeedbackEndpoint,
+      queryParameters: queryParameters,
+    );
+    return (response['data'] ?? []) as List<Map<String, dynamic>>;
+  }
+
+  Future<Map<String, dynamic>> submitAppFeedback(Map<String, dynamic> data) async {
+    final response = await post(AppConstants.appFeedbackEndpoint, data: data);
+    return response;
+  }
+
+  Future<Map<String, dynamic>> getAppFeedbackDetail(String id) async {
+    final response = await get('${AppConstants.appFeedbackDetailEndpoint}$id');
+    return (response['data'] ?? {}) as Map<String, dynamic>;
+  }
+
+  // Search History
+  Future<List<Map<String, dynamic>>> getSearchHistory({
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    final response = await get(
+      AppConstants.searchHistoryEndpoint,
+      queryParameters: queryParameters,
+    );
+    return (response['data'] ?? []) as List<Map<String, dynamic>>;
+  }
+
+  // Registry Timeline (customer)
+  Future<Map<String, dynamic>> getRegistryTimeline(String bookingId) async {
+    final response = await get('${AppConstants.registryTimelineEndpoint}$bookingId');
+    return (response['data'] ?? {}) as Map<String, dynamic>;
+  }
+
+  /// Download URL for the branded possession-certificate PDF (Bearer header required).
+  String possessionCertificateUrl(String bookingId) {
+    return '${AppConstants.baseUrl}${AppConstants.possessionCertificateEndpoint}$bookingId';
+  }
+
+  // Payout Batches (staff)
+  Future<List<Map<String, dynamic>>> getPayoutBatches({
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    final response = await get(
+      AppConstants.payoutBatchesEndpoint,
+      queryParameters: queryParameters,
+    );
+    return (response['data'] ?? []) as List<Map<String, dynamic>>;
+  }
+
+  Future<Map<String, dynamic>> getPayoutBatchDetail(String id) async {
+    final response = await get('${AppConstants.payoutBatchDetailEndpoint}$id');
+    return (response['data'] ?? {}) as Map<String, dynamic>;
+  }
+
+  /// Download URL for the bank bulk-upload CSV (Bearer header required).
+  String payoutBatchExportUrl(String id, {String format = 'generic'}) {
+    return '${AppConstants.baseUrl}${AppConstants.payoutBatchDetailEndpoint}$id${AppConstants.payoutBatchExportSuffix}?format=$format';
+  }
+
+  // Site Visit Dispatch (staff)
+  Future<Map<String, dynamic>> assignSiteVisitExecutive({
+    required String visitId,
+    required String executiveId,
+    String? cabAssigned,
+    String? pickupTime,
+  }) async {
+    final response = await post(
+      '${AppConstants.siteVisitDispatchEndpoint}$visitId${AppConstants.siteVisitAssignSuffix}',
+      data: {
+        'executive_id': executiveId,
+        if (cabAssigned != null) 'cab_assigned': cabAssigned,
+        if (pickupTime != null) 'pickup_time': pickupTime,
+      },
+    );
+    return response;
+  }
+
+  Future<Map<String, dynamic>> markSiteVisitOutcome({
+    required String visitId,
+    required String outcome,
+    String? plotPreference,
+    String? budgetFeedback,
+    String? outcomeNotes,
+    String? followupDate,
+  }) async {
+    final response = await post(
+      '${AppConstants.siteVisitDispatchEndpoint}$visitId${AppConstants.siteVisitOutcomeSuffix}',
+      data: {
+        'outcome': outcome,
+        if (plotPreference != null) 'plot_preference': plotPreference,
+        if (budgetFeedback != null) 'budget_feedback': budgetFeedback,
+        if (outcomeNotes != null) 'outcome_notes': outcomeNotes,
+        if (followupDate != null) 'followup_date': followupDate,
+      },
+    );
+    return response;
+  }
+
+  Future<Map<String, dynamic>> sendSiteVisitPin(String visitId) async {
+    final response = await post(
+      '${AppConstants.siteVisitDispatchEndpoint}$visitId${AppConstants.siteVisitSendPinSuffix}',
+    );
+    return response;
+  }
+
   Future<Map<String, dynamic>> startSiteVisit({
     required String userId,
     required String leadId,

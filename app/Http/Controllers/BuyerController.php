@@ -128,7 +128,7 @@ class BuyerController extends BaseController
             $interests = $interests->fetchAll(\PDO::FETCH_ASSOC);
 
             foreach ($interests as $interest) {
-                $where = "WHERE up.status = 'active' AND up.property_type = ?";
+                $where = "WHERE up.status IN ('approved','verified') AND up.property_type = ?";
                 $params = [$interest['property_type']];
 
                 if ($interest['budget_min'] > 0) {

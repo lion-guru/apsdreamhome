@@ -126,7 +126,7 @@ class AuctionService
                 return ['error' => "Minimum bid is ₹" . number_format($minBid)];
             }
 
-            $this->pdo->prepare("UPDATE auction_bids SET status = 'outbid' WHERE auction_id = ? AND status = 'winning'")
+            $this->pdo->prepare("UPDATE auction_bids SET status = 'outbid' WHERE auction_item_id = ? AND status = 'winning'")
                 ->execute([$auctionId]);
 
             $newEndsAt = $auction['ends_at'];
@@ -137,7 +137,7 @@ class AuctionService
                 $autoExtended = true;
             }
 
-            $this->pdo->prepare("INSERT INTO auction_bids (auction_id, bidder_id, bidder_name, bid_amount, max_auto_bid, bid_type, ip_address, status) VALUES (?,?,?,?,?,'manual',?,'winning')")
+            $this->pdo->prepare("INSERT INTO auction_bids (auction_item_id, bidder_id, bidder_name, bid_amount, max_auto_bid, bid_type, ip_address, status) VALUES (?,?,?,?,?,'manual',?,'winning')")
                 ->execute([$auctionId, $bidderId, $bidderName, $amount, $maxAutoBid, $_SERVER['REMOTE_ADDR'] ?? '']);
 
             $this->pdo->prepare("UPDATE auctions SET current_bid = ?, bid_count = bid_count + 1, ends_at = ?" . $this->tenantSql() . " WHERE id = ?")
@@ -160,7 +160,7 @@ class AuctionService
     public function getBids($auctionId, $limit = 50)
     {
         try {
-            $stmt = $this->pdo->prepare("SELECT b.*, u.name as full_name, u.email FROM auction_bids b LEFT JOIN users u ON b.bidder_id = u.id WHERE b.auction_id = ? ORDER BY b.placed_at DESC LIMIT " . (int)$limit);
+            $stmt = $this->pdo->prepare("SELECT b.*, u.name as full_name, u.email FROM auction_bids b LEFT JOIN users u ON b.bidder_id = u.id WHERE b.auction_item_id = ? ORDER BY b.created_at DESC LIMIT " . (int)$limit);
             $stmt->execute([$auctionId]);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
@@ -169,7 +169,7 @@ class AuctionService
     public function endAuction($auctionId)
     {
         try {
-            $winnerStmt = $this->pdo->prepare("SELECT bidder_id, bidder_name, bid_amount FROM auction_bids WHERE auction_id = ? AND status = 'winning' ORDER BY bid_amount DESC LIMIT 1");
+            $winnerStmt = $this->pdo->prepare("SELECT bidder_id, bidder_name, bid_amount FROM auction_bids WHERE auction_item_id = ? AND status = 'winning' ORDER BY bid_amount DESC LIMIT 1");
             $winnerStmt->execute([$auctionId]);
             $winner = $winnerStmt->fetch(\PDO::FETCH_ASSOC);
 
@@ -177,7 +177,7 @@ class AuctionService
             $status = 'ended';
             if ($winner && (!$auction['reserve_price'] || $winner['bid_amount'] >= $auction['reserve_price'])) {
                 $status = 'sold';
-                $this->pdo->prepare("UPDATE auction_bids SET status = 'won' WHERE auction_id = ? AND bidder_id = ?")
+                $this->pdo->prepare("UPDATE auction_bids SET status = 'won' WHERE auction_item_id = ? AND bidder_id = ?")
                     ->execute([$auctionId, $winner['bidder_id']]);
             }
 

@@ -15,6 +15,9 @@ import '../../presentation/pages/customer/colony_detail_page.dart';
 import '../../presentation/pages/customer/plots_page.dart';
 import '../../presentation/pages/customer/booking_page.dart';
 import '../../presentation/pages/customer/my_bookings_page.dart';
+import '../../presentation/pages/customer/registry_timeline_page.dart';
+import '../../presentation/pages/admin/payout_batches_page.dart';
+import '../../presentation/pages/admin/payout_batch_detail_page.dart';
 import '../../presentation/pages/customer/favorites_page.dart';
 import '../../presentation/pages/customer/kyc_verification_page.dart';
 import '../../presentation/pages/customer/kyc_status_page.dart';
@@ -796,6 +799,27 @@ isDisclaimer ||
         path: '/my-bookings',
         pageBuilder: (context, state) => const CustomTransitionPage<void>(
           child: MyBookingsPage(),
+          transitionsBuilder: _slideTransition,
+        ),
+      ),
+      GoRoute(
+        path: '/registry-timeline/:bookingId',
+        pageBuilder: (context, state) => CustomTransitionPage<void>(
+          child: RegistryTimelinePage(bookingId: state.pathParameters['bookingId']!),
+          transitionsBuilder: _slideTransition,
+        ),
+      ),
+      GoRoute(
+        path: '/admin/payout-batches',
+        pageBuilder: (context, state) => const CustomTransitionPage<void>(
+          child: PayoutBatchesPage(),
+          transitionsBuilder: _slideTransition,
+        ),
+      ),
+      GoRoute(
+        path: '/admin/payout-batches/:batchId',
+        pageBuilder: (context, state) => CustomTransitionPage<void>(
+          child: PayoutBatchDetailPage(batchId: state.pathParameters['batchId']!),
           transitionsBuilder: _slideTransition,
         ),
       ),

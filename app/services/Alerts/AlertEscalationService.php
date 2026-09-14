@@ -14,6 +14,8 @@ use RuntimeException;
  * Alert Escalation Service - APS Dream Home
  * Modern alert management with escalation levels and notifications
  * Custom MVC implementation without Laravel dependencies
+ * Matches real database schema: alerts (id, alert_type, severity, title, message, source, is_resolved, resolved_by, resolved_at)
+ * and alert_escalations (id, alert_id, escalated_to, escalation_level, notes, tenant_id, created_at)
  */
 class AlertEscalationService
 {
@@ -22,26 +24,26 @@ class AlertEscalationService
     private $database;
     private $logger;
     private $notificationService;
-    
-    // Alert levels
+
+    // Alert severity levels (match real alerts.severity enum)
     const LEVEL_INFO = 'info';
     const LEVEL_WARNING = 'warning';
+    const LEVEL_ERROR = 'error';
     const LEVEL_CRITICAL = 'critical';
-    const LEVEL_EMERGENCY = 'emergency';
-    
+
     // Escalation levels
     const ESCALATION_LEVEL_1 = 1; // 15 minutes
     const ESCALATION_LEVEL_2 = 2; // 30 minutes
     const ESCALATION_LEVEL_3 = 3; // 60 minutes
     const ESCALATION_LEVEL_4 = 4; // 120 minutes
-    
+
     private $escalationTimeouts = [
         self::ESCALATION_LEVEL_1 => 900,   // 15 minutes
         self::ESCALATION_LEVEL_2 => 1800,  // 30 minutes
         self::ESCALATION_LEVEL_3 => 3600,  // 60 minutes
         self::ESCALATION_LEVEL_4 => 7200   // 120 minutes
     ];
-    
+
     private $escalationRecipients = [
         self::ESCALATION_LEVEL_1 => ['assigned_user'],
         self::ESCALATION_LEVEL_2 => ['team_lead'],
@@ -54,58 +56,48 @@ class AlertEscalationService
         $this->database = $database ?: Database::getInstance();
         $this->logger = $logger ?: LoggingService::getInstance();
         $this->notificationService = $notificationService ?: new NotificationService();
-        $this->createAlertTables();
-    }
-
-    /**
-     * Create alert management tables
-     */
-    private function createAlertTables()
-    {
-        try {
-            // Alerts table
-            $sql = "";
-            $this->database->query($sql);
-
-            // Alert escalations table
-            $sql = "";
-            $this->database->query($sql);
-
-        } catch (Exception $e) {
-            $this->logger->log("Error creating alert tables: " . $e->getMessage(), 'error', 'alerts');
-            throw new RuntimeException("Failed to create alert tables: " . $e->getMessage());
-        }
     }
 
     /**
      * Create a new alert
      */
-    public function createAlert($title, $description = '', $level = self::LEVEL_INFO, $source = null, $category = null, $metadata = [])
+    public function createAlert($title, $message = '', $severity = self::LEVEL_INFO, $source = null, $category = null, $metadata = [])
     {
         if (empty($title)) {
             throw new InvalidArgumentException('Alert title is required');
         }
 
-        $alertId = $this->generateAlertId();
+        // Valid severities match the real alerts.severity enum
+        $validSeverities = ['info', 'warning', 'error', 'critical'];
+        if (!in_array($severity, $validSeverities)) {
+            $severity = self::LEVEL_INFO;
+        }
 
         $tenantIns = $this->tenantInsertData();
-        $insCols = array_merge(['alert_id', 'title', 'description', 'level', 'source', 'category', 'metadata'], array_keys($tenantIns));
-        $insVals = array_merge([$alertId, $title, $description, $level, $source, $category, json_encode($metadata)], array_values($tenantIns));
+        $insCols = array_merge(
+            ['alert_type', 'title', 'message', 'severity', 'source'],
+            array_keys($tenantIns)
+        );
+        $insVals = array_merge(
+            [$category ?? 'system', $title, $message, $severity, $source],
+            array_values($tenantIns)
+        );
         $colStr = implode(', ', $insCols);
         $placeholders = implode(', ', array_fill(0, count($insVals), '?'));
 
         try {
             $this->database->execute("INSERT INTO alerts ($colStr) VALUES ($placeholders)", $insVals);
-            
-            $this->logger->log("Alert created: $title (ID: $alertId, Level: $level)", 'info', 'alerts');
-            
-            // Start escalation if critical or emergency
-            if (in_array($level, [self::LEVEL_CRITICAL, self::LEVEL_EMERGENCY])) {
+            $alertId = $this->database->lastInsertId();
+
+            $this->logger->log("Alert created: $title (ID: $alertId, Severity: $severity)", 'info', 'alerts');
+
+            // Start escalation for critical/emergency alerts
+            if (in_array($severity, [self::LEVEL_CRITICAL, self::LEVEL_ERROR])) {
                 $this->startEscalation($alertId);
             }
-            
+
             return $alertId;
-            
+
         } catch (Exception $e) {
             $this->logger->log("Error creating alert: " . $e->getMessage(), 'error', 'alerts');
             throw new RuntimeException("Failed to create alert: " . $e->getMessage());
@@ -118,19 +110,26 @@ class AlertEscalationService
     public function startEscalation($alertId)
     {
         try {
+            // Insert into alert_escalations (real columns: alert_id, escalation_level, escalated_to, notes, tenant_id)
             $tenantIns = $this->tenantInsertData();
-            $insCols = array_merge(['alert_id', 'escalation_level', 'timeout_minutes', 'notified_users'], array_keys($tenantIns));
-            $insVals = array_merge([$alertId, self::ESCALATION_LEVEL_1, $this->escalationTimeouts[self::ESCALATION_LEVEL_1], json_encode($this->getEscalationRecipients(self::ESCALATION_LEVEL_1))], array_values($tenantIns));
+            $insCols = array_merge(
+                ['alert_id', 'escalation_level', 'escalated_to', 'notes'],
+                array_keys($tenantIns)
+            );
+            $insVals = array_merge(
+                [$alertId, self::ESCALATION_LEVEL_1, null, json_encode($this->getEscalationRecipients(self::ESCALATION_LEVEL_1))],
+                array_values($tenantIns)
+            );
             $colStr = implode(', ', $insCols);
             $placeholders = implode(', ', array_fill(0, count($insVals), '?'));
 
             $this->database->execute("INSERT INTO alert_escalations ($colStr) VALUES ($placeholders)", $insVals);
-            
+
             // Send initial notifications
             $this->sendEscalationNotification($alertId, self::ESCALATION_LEVEL_1);
-            
+
             $this->logger->log("Escalation started for alert: $alertId", 'info', 'alerts');
-            
+
         } catch (Exception $e) {
             $this->logger->log("Error starting escalation for alert $alertId: " . $e->getMessage(), 'error', 'alerts');
             throw new RuntimeException("Failed to start escalation: " . $e->getMessage());
@@ -139,104 +138,107 @@ class AlertEscalationService
 
     /**
      * Process pending escalations
+     * Real alert_escalations doesn't have status/escalated_at/timeout_minutes
+     * So we check if alert is not resolved and escalation was created long enough ago
      */
     public function processEscalations()
     {
         $processed = 0;
-        
+
         try {
-            // Find timed out escalations
-            $sql = "SELECT ae.*, a.title, a.description, a.level
+            // Find alerts that need escalation: not resolved, have escalation, 
+            // and last escalation was created more than timeout ago
+            $sql = "SELECT ae.*, a.title, a.message, a.severity
                     FROM alert_escalations ae
-                    JOIN alerts a ON ae.alert_id = a.alert_id
-                    WHERE ae.status = 'pending' 
-                    AND ae.escalated_at < DATE_SUB(NOW(), INTERVAL ae.timeout_minutes MINUTE)";
-            
+                    JOIN alerts a ON ae.alert_id = a.id
+                    WHERE a.is_resolved = 0
+                    AND ae.created_at < DATE_SUB(NOW(), INTERVAL 
+                        CASE ae.escalation_level
+                            WHEN 1 THEN 900
+                            WHEN 2 THEN 1800
+                            WHEN 3 THEN 3600
+                            WHEN 4 THEN 7200
+                            ELSE 900
+                        END SECOND)";
+
             $escalations = $this->database->fetchAll($sql);
-            
+
             foreach ($escalations as $escalation) {
                 $this->escalateAlert($escalation['alert_id'], $escalation['escalation_level']);
                 $processed++;
             }
-            
+
             $this->logger->log("Processed $processed timed out escalations", 'info', 'alerts');
-            
+
         } catch (Exception $e) {
             $this->logger->log("Error processing escalations: " . $e->getMessage(), 'error', 'alerts');
         }
-        
+
         return $processed;
     }
 
     /**
      * Escalate an alert to the next level
      */
-private function escalateAlert($alertId, $currentLevel)
+    private function escalateAlert($alertId, $currentLevel)
     {
         $nextLevel = $currentLevel + 1;
 
         if ($nextLevel > self::ESCALATION_LEVEL_4) {
-            // Maximum escalation reached
-            $this->markEscalationTimeout($alertId, $currentLevel);
+            // Maximum escalation reached - mark as max escalated
+            $this->markMaxEscalation($alertId, $currentLevel);
             return;
         }
 
         try {
-            // Mark current escalation as escalated
-            $tenantSql = $this->tenantSql();
-            $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
-            $sql = "UPDATE alert_escalations SET status = 'escalated'
-                    WHERE alert_id = ? AND escalation_level = ?{$tenantSql}";
-            $params = array_merge([$alertId, $currentLevel], $tenantParam);
-            $this->database->execute($sql, $params);
-
-            // Create new escalation
+            // Insert new escalation level
             $tenantIns = $this->tenantInsertData();
-            $insCols = array_merge(['alert_id', 'escalation_level', 'timeout_minutes', 'notified_users'], array_keys($tenantIns));
-            $insVals = array_merge([$alertId, $nextLevel, $this->escalationTimeouts[$nextLevel], json_encode($this->getEscalationRecipients($nextLevel))], array_values($tenantIns));
+            $insCols = array_merge(
+                ['alert_id', 'escalation_level', 'escalated_to', 'notes'],
+                array_keys($tenantIns)
+            );
+            $insVals = array_merge(
+                [$alertId, $nextLevel, null, json_encode($this->getEscalationRecipients($nextLevel))],
+                array_values($tenantIns)
+            );
             $colStr = implode(', ', $insCols);
             $placeholders = implode(', ', array_fill(0, count($insVals), '?'));
             $this->database->execute("INSERT INTO alert_escalations ($colStr) VALUES ($placeholders)", $insVals);
-            
-            // Update alert status
-            $sql = "UPDATE alerts SET status = 'escalated' WHERE alert_id = ?";
-            $this->database->execute($sql, [$alertId]);
-            
+
             // Send escalation notification
             $this->sendEscalationNotification($alertId, $nextLevel);
-            
+
             $this->logger->log("Alert escalated: $alertId to level $nextLevel", 'warning', 'alerts');
-            
+
         } catch (Exception $e) {
             $this->logger->log("Error escalating alert $alertId: " . $e->getMessage(), 'error', 'alerts');
         }
     }
 
     /**
-     * Acknowledge an alert
+     * Acknowledge an alert (mark as resolved)
      */
-public function acknowledgeAlert($alertId, $userId)
+    public function acknowledgeAlert($alertId, $userId)
     {
         try {
             $tenantSql = $this->tenantSql();
             $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
             $sql = "UPDATE alerts
-                    SET status = 'acknowledged', acknowledged_at = NOW(), acknowledged_by = ?
-                    WHERE alert_id = ?{$tenantSql}";
+                    SET is_resolved = 1, resolved_at = NOW(), resolved_by = ?
+                    WHERE id = ?{$tenantSql}";
             $params = array_merge([$userId, $alertId], $tenantParam);
             $this->database->execute($sql, $params);
 
-            $tenantSql2 = $this->tenantSql();
-            $tenantParam2 = $this->tenantId() > 1 ? [$this->tenantId()] : [];
-            $sql2 = "UPDATE alert_escalations SET status = 'acknowledged'
-                    WHERE alert_id = ? AND status = 'pending'{$tenantSql2}";
-            $params2 = array_merge([$alertId], $tenantParam2);
-            $this->database->execute($sql2, $params2);
-            
-            $this->logger->log("Alert acknowledged: $alertId by user $userId", 'info', 'alerts');
-            
+            // Also clear any pending escalations
+            $this->database->execute(
+                "DELETE FROM alert_escalations WHERE alert_id = ?",
+                [$alertId]
+            );
+
+            $this->logger->log("Alert acknowledged/resolved: $alertId by user $userId", 'info', 'alerts');
+
             return true;
-            
+
         } catch (Exception $e) {
             $this->logger->log("Error acknowledging alert $alertId: " . $e->getMessage(), 'error', 'alerts');
             return false;
@@ -244,30 +246,29 @@ public function acknowledgeAlert($alertId, $userId)
     }
 
     /**
-     * Resolve an alert
+     * Resolve an alert with resolution notes
      */
-public function resolveAlert($alertId, $userId, $resolution = '')
+    public function resolveAlert($alertId, $userId, $resolution = '')
     {
         try {
             $tenantSql = $this->tenantSql();
             $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
             $sql = "UPDATE alerts
-                    SET status = 'resolved', resolved_at = NOW(), resolved_by = ?, description = ?
-                    WHERE alert_id = ?{$tenantSql}";
-            $params = array_merge([$userId, $resolution, $alertId], $tenantParam);
+                    SET is_resolved = 1, resolved_at = NOW(), resolved_by = ?
+                    WHERE id = ?{$tenantSql}";
+            $params = array_merge([$userId, $alertId], $tenantParam);
             $this->database->execute($sql, $params);
 
-            $tenantSql2 = $this->tenantSql();
-            $tenantParam2 = $this->tenantId() > 1 ? [$this->tenantId()] : [];
-            $sql2 = "UPDATE alert_escalations SET status = 'acknowledged'
-                    WHERE alert_id = ? AND status = 'pending'{$tenantSql2}";
-            $params2 = array_merge([$alertId], $tenantParam2);
-            $this->database->execute($sql2, $params2);
-            
+            // Clear pending escalations
+            $this->database->execute(
+                "DELETE FROM alert_escalations WHERE alert_id = ?",
+                [$alertId]
+            );
+
             $this->logger->log("Alert resolved: $alertId by user $userId", 'info', 'alerts');
-            
+
             return true;
-            
+
         } catch (Exception $e) {
             $this->logger->log("Error resolving alert $alertId: " . $e->getMessage(), 'error', 'alerts');
             return false;
@@ -275,22 +276,21 @@ public function resolveAlert($alertId, $userId, $resolution = '')
     }
 
     /**
-     * Get alerts by status
+     * Get alerts by resolved status
      */
-public function getAlertsByStatus($status = 'active', $limit = 50, $offset = 0)
+    public function getAlertsByStatus($resolved = 0, $limit = 50, $offset = 0)
     {
         $tenantSql = $this->tenantSql();
         $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
-        $sql = "SELECT a.*, u1.name as acknowledged_by_name, u2.name as resolved_by_name
+        $sql = "SELECT a.*, u1.name as resolved_by_name
                 FROM alerts a
-                LEFT JOIN users u1 ON a.acknowledged_by = u1.id
-                LEFT JOIN users u2 ON a.resolved_by = u2.id
-                WHERE a.status = ?{$tenantSql}
+                LEFT JOIN users u1 ON a.resolved_by = u1.id
+                WHERE a.is_resolved = ?{$tenantSql}
                 ORDER BY a.created_at DESC
                 LIMIT ? OFFSET ?";
 
         try {
-            return $this->database->fetchAll($sql, array_merge([$status], $tenantParam, [(int)$limit, (int)$offset]));
+            return $this->database->fetchAll($sql, array_merge([$resolved], $tenantParam, [(int)$limit, (int)$offset]));
         } catch (Exception $e) {
             $this->logger->log("Error fetching alerts: " . $e->getMessage(), 'error', 'alerts');
             return [];
@@ -300,46 +300,81 @@ public function getAlertsByStatus($status = 'active', $limit = 50, $offset = 0)
     /**
      * Get alert statistics
      */
-public function getAlertStats()
+    public function getAlertStats()
     {
         $stats = [];
         $tenantSql = $this->tenantSql();
 
         try {
-            // Total alerts by status
-            $sql = "SELECT status, COUNT(*) as count FROM alerts GROUP BY status";
+            // Total alerts by severity
+            $sql = "SELECT severity, COUNT(*) as count FROM alerts GROUP BY severity";
             if ($tenantSql) {
                 $sql .= " WHERE tenant_id = " . $this->tenantId();
             }
             $results = $this->database->fetchAll($sql);
-            $stats['by_status'] = [];
+            $stats['by_severity'] = [];
             foreach ($results as $row) {
-                $stats['by_status'][$row['status']] = $row['count'];
+                $stats['by_severity'][$row['severity']] = $row['count'];
             }
-            
-            // Total alerts by level
-            $sql = "SELECT level, COUNT(*) as count FROM alerts GROUP BY level";
+
+            // Total alerts by resolved status
+            $sql = "SELECT is_resolved, COUNT(*) as count FROM alerts GROUP BY is_resolved";
+            if ($tenantSql) {
+                $sql .= " WHERE tenant_id = " . $this->tenantId();
+            }
             $results = $this->database->fetchAll($sql);
-            $stats['by_level'] = [];
+            $stats['by_resolved'] = [];
             foreach ($results as $row) {
-                $stats['by_level'][$row['level']] = $row['count'];
+                $stats['by_resolved'][$row['is_resolved'] ? 'resolved' : 'active'] = $row['count'];
             }
-            
+
             // Recent alerts (24 hours)
             $sql = "SELECT COUNT(*) as count FROM alerts WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)";
+            if ($tenantSql) {
+                $sql .= " AND tenant_id = " . $this->tenantId();
+            }
             $result = $this->database->fetchOne($sql);
             $stats['recent_24h'] = $result['count'] ?? 0;
-            
-            // Pending escalations
-            $sql = "SELECT COUNT(*) as count FROM alert_escalations WHERE status = 'pending'";
+
+            // Active escalations count
+            $sql = "SELECT COUNT(DISTINCT ae.alert_id) as count 
+                    FROM alert_escalations ae
+                    JOIN alerts a ON ae.alert_id = a.id
+                    WHERE a.is_resolved = 0";
+            if ($tenantSql) {
+                $sql .= " AND a.tenant_id = " . $this->tenantId();
+            }
             $result = $this->database->fetchOne($sql);
-            $stats['pending_escalations'] = $result['count'] ?? 0;
-            
+            $stats['active_escalations'] = $result['count'] ?? 0;
+
         } catch (Exception $e) {
             $this->logger->log("Error fetching alert stats: " . $e->getMessage(), 'error', 'alerts');
         }
-        
+
         return $stats;
+    }
+
+    /**
+     * Get all alerts for admin display
+     */
+    public function getAllAlerts($limit = 100, $offset = 0)
+    {
+        $tenantSql = $this->tenantSql();
+        $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
+        $sql = "SELECT a.*, u.name as resolved_by_name,
+                (SELECT COUNT(*) FROM alert_escalations ae WHERE ae.alert_id = a.id) as escalation_count
+                FROM alerts a
+                LEFT JOIN users u ON a.resolved_by = u.id
+                WHERE 1=1{$tenantSql}
+                ORDER BY a.created_at DESC
+                LIMIT ? OFFSET ?";
+
+        try {
+            return $this->database->fetchAll($sql, array_merge($tenantParam, [(int)$limit, (int)$offset]));
+        } catch (Exception $e) {
+            $this->logger->log("Error fetching all alerts: " . $e->getMessage(), 'error', 'alerts');
+            return [];
+        }
     }
 
     /**
@@ -350,15 +385,15 @@ public function getAlertStats()
         try {
             $alert = $this->getAlert($alertId);
             if (!$alert) return;
-            
+
             $recipients = $this->getEscalationRecipients($escalationLevel);
             $subject = "Alert Escalation: {$alert['title']} (Level $escalationLevel)";
             $message = "Alert has been escalated to level $escalationLevel\n\n";
             $message .= "Title: {$alert['title']}\n";
-            $message .= "Description: {$alert['description']}\n";
-            $message .= "Level: {$alert['level']}\n";
+            $message .= "Description: {$alert['message']}\n";
+            $message .= "Severity: {$alert['severity']}\n";
             $message .= "Created: {$alert['created_at']}\n";
-            
+
             // Send notifications to recipients
             foreach ($recipients as $recipient) {
                 $this->notificationService->sendNotification([
@@ -369,7 +404,7 @@ public function getAlertStats()
                     'priority' => 'high'
                 ]);
             }
-            
+
         } catch (Exception $e) {
             $this->logger->log("Error sending escalation notification: " . $e->getMessage(), 'error', 'alerts');
         }
@@ -388,7 +423,7 @@ public function getAlertStats()
             self::ESCALATION_LEVEL_3 => ['department_head@example.com'],
             self::ESCALATION_LEVEL_4 => ['admin1@example.com', 'admin2@example.com']
         ];
-        
+
         return $recipients[$level] ?? [];
     }
 
@@ -397,7 +432,7 @@ public function getAlertStats()
      */
     private function getAlert($alertId)
     {
-        $sql = "SELECT * FROM alerts WHERE alert_id = ?";
+        $sql = "SELECT * FROM alerts WHERE id = ?";
         try {
             return $this->database->fetchOne($sql, [$alertId]);
         } catch (Exception $e) {
@@ -406,16 +441,18 @@ public function getAlertStats()
     }
 
     /**
-     * Mark escalation as timeout
+     * Mark max escalation reached
      */
-    private function markEscalationTimeout($alertId, $level)
+    private function markMaxEscalation($alertId, $level)
     {
         try {
-            $sql = "UPDATE alert_escalations SET status = 'timeout' 
+            // Update the last escalation record with a note about max reached
+            $sql = "UPDATE alert_escalations 
+                    SET notes = CONCAT(COALESCE(notes, ''), '\n[Max escalation reached at level $level]')
                     WHERE alert_id = ? AND escalation_level = ?";
             $this->database->execute($sql, [$alertId, $level]);
         } catch (Exception $e) {
-            $this->logger->log("Error marking escalation timeout: " . $e->getMessage(), 'error', 'alerts');
+            $this->logger->log("Error marking max escalation: " . $e->getMessage(), 'error', 'alerts');
         }
     }
 
@@ -428,23 +465,25 @@ public function getAlertStats()
     }
 
     /**
-     * Clean up old alerts
+     * Clean up old resolved alerts
      */
-public function cleanupOldAlerts($daysOld = 30)
+    public function cleanupOldAlerts($daysOld = 30)
     {
         try {
             $tenantSql = $this->tenantSql();
             $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
-            $sql = "DELETE FROM alerts WHERE created_at < DATE_SUB(NOW(), INTERVAL ? DAY){$tenantSql}";
+            $sql = "DELETE FROM alerts WHERE is_resolved = 1 AND created_at < DATE_SUB(NOW(), INTERVAL ? DAY){$tenantSql}";
             $params = array_merge([$daysOld], $tenantParam);
             $this->database->execute($sql, $params);
 
+            // Also clean up orphaned escalations
             $tenantSql2 = $this->tenantSql();
             $tenantParam2 = $this->tenantId() > 1 ? [$this->tenantId()] : [];
-            $sql2 = "DELETE FROM alert_escalations WHERE escalated_at < DATE_SUB(NOW(), INTERVAL ? DAY){$tenantSql2}";
-            $params2 = array_merge([$daysOld], $tenantParam2);
-            $this->database->execute($sql2, $params2);
-            
+            $sql2 = "DELETE ae FROM alert_escalations ae
+                     LEFT JOIN alerts a ON ae.alert_id = a.id
+                     WHERE a.id IS NULL{$tenantSql2}";
+            $this->database->execute($sql2, $tenantParam2);
+
             $this->logger->log("Old alerts cleaned up", 'info', 'alerts');
             return true;
         } catch (Exception $e) {

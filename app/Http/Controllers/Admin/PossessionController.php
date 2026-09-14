@@ -493,7 +493,19 @@ class PossessionController extends AdminController
     private function logPossessionActivity($bookingId, $action, $details = '')
     {
         try {
-            $this->db->query("INSERT INTO registry_activity_log (booking_id, action, details, performed_by, created_at, tenant_id) VALUES (?, ?, ?, ?, NOW(), ?)", [$bookingId, 'possession_' . $action, $details, $_SESSION['admin_id'] ?? null, $this->tenantId()]);
+            // Live schema keys on registries.id (registry_id) + user_id — the old
+            // booking_id/performed_by columns never existed (see RegistryController).
+            $registryId = null;
+            try {
+                $map = $this->db->prepare("SELECT id FROM registries WHERE booking_id = ? ORDER BY id DESC LIMIT 1");
+                $map->execute([(int)$bookingId]);
+                $registryId = $map->fetchColumn() ?: null;
+            } catch (\Throwable $e) {
+                error_log($e->getMessage());
+            }
+            $tagged = $registryId ? (string)$details : '[booking #' . (int)$bookingId . '] ' . $details;
+            $tid = (int)$this->tenantId();
+            $this->db->query("INSERT INTO registry_activity_log (registry_id, action, details, user_id, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, NOW())", [$registryId, 'possession_' . $action, $tagged, $_SESSION['admin_id'] ?? null, $tid > 0 ? $tid : 1]);
         } catch (\Exception $e) {
                     error_log("PossessionController.php: " . $e->getMessage());
         }

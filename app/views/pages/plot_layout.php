@@ -123,10 +123,10 @@
         </div>
         <div class="sidebar-legend">
             <h3><?= __('plot_legend_title', [], 'Status Legend') ?></h3>
-            <div class="legend-item"><div class="legend-dot"></div> Available</div>
-            <div class="legend-item"><div class="legend-dot"></div> Booked / Reserved</div>
-            <div class="legend-item"><div class="legend-dot"></div> Sold</div>
-            <div class="legend-item"><div class="legend-dot"></div> Hold / Other</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#10b981;"></div> Available</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#f59e0b;"></div> Booked / Reserved</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#ef4444;"></div> Sold</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#6b7280;"></div> Hold / Other</div>
         </div>
         <div class="sidebar-chart">
             <h3><?= __('plot_distribution', [], 'Distribution') ?></h3>
@@ -410,6 +410,9 @@ function showPlotDetail(id) {
     var footer = '';
     if (plot.status === 'available') {
         footer = '<a href="' + BASE_URL + '/plots/' + plot.id + '/book" class="book-btn"><i class="fas fa-bookmark"></i> Book Now</a>';
+        footer += ' <button class="book-btn" style="background:#f59e0b;margin-left:8px;" onclick="holdPlot(' + plot.id + ')"><i class="fas fa-clock"></i> Hold 30 min</button>';
+    } else if (plot.status === 'hold') {
+        footer = '<a class="book-btn disabled"><i class="fas fa-hourglass-half"></i> On Hold</a>';
     } else {
         footer = '<a class="book-btn disabled"><i class="fas fa-ban"></i> Not Available</a>';
     }
@@ -441,4 +444,27 @@ document.addEventListener('DOMContentLoaded', function() {
     updateStats();
     renderSVG();
 });
+
+// ---- HOLD PLOT ----
+function holdPlot(plotId) {
+    var csrf = document.querySelector('meta[name="csrf-token"]');
+    var token = csrf ? csrf.getAttribute('content') : '';
+    if (!confirm('Reserve this plot for 30 minutes?')) return;
+
+    fetch(BASE_URL + '/plots/' + plotId + '/lock', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': token },
+        body: 'csrf_token=' + encodeURIComponent(token)
+    }).then(function(r) { return r.json(); }).then(function(d) {
+        if (d.success) {
+            alert('Plot reserved for 30 minutes! Expires: ' + (d.expires_at || ''));
+            renderSVG();
+            closeDetail();
+        } else {
+            alert(d.error || 'Could not reserve plot.');
+        }
+    }).catch(function() {
+        alert('Network error. Please try again.');
+    });
+}
 </script>

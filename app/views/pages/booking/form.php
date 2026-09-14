@@ -160,6 +160,27 @@ $csrfToken = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
                             </label>
                         </div>
 
+                        <!-- ═══ LEGAL COMPLIANCE: Tripartite Master Deed Clickwrap ═══ -->
+                        <div class="border border-danger rounded-3 p-3 mb-3" id="tripartiteConsentBox" style="background: #fff5f5;">
+                            <div class="form-check mb-0">
+                                <input class="form-check-input" type="checkbox" id="tripartiteConsent" name="tripartite_consent" required
+                                       style="border-color: #dc3545; width: 1.3em; height: 1.3em; margin-top: 0.15em;">
+                                <label class="form-check-label fw-semibold" for="tripartiteConsent" style="font-size: 0.92rem; line-height: 1.5; color: #1a1a2e;">
+                                    <i class="fas fa-gavel text-danger me-1"></i>
+                                    I have read, understood, and unconditionally agree to the
+                                    <a href="<?= $baseUrl ?>/terms-conditions" target="_blank" class="fw-bold text-decoration-underline">Master Agreement Terms</a>,
+                                    the <a href="<?= $baseUrl ?>/cancellation-policy" target="_blank" class="fw-bold text-decoration-underline">Cancellation Policy</a> (100% non-refundable token, 25%/10%/5% admin slabs),
+                                    the <a href="<?= $baseUrl ?>/refund-policy" target="_blank" class="fw-bold text-decoration-underline">Refund Policy</a> (180-working-day staggered payout, zero cash),
+                                    and the <strong>18% penal interest on 3-month EMI default</strong>.
+                                </label>
+                                <div class="invalid-feedback">You must accept the cancellation, refund, and master agreement terms to proceed.</div>
+                            </div>
+                            </div>
+                            <div id="tripartiteError" class="text-danger small mt-1 d-none">
+                                <i class="fas fa-exclamation-circle me-1"></i>You must accept the Tripartite Master Deed terms to proceed with booking.
+                            </div>
+                        </div>
+
                         <div id="kycStatus" class="d-none">
                             <div class="d-flex align-items-center gap-2 p-2 rounded" id="kycBadge" >
                                 <i class="fas fa-check-circle text-success"></i>
@@ -306,6 +327,18 @@ $csrfToken = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
                 return false;
             }
         }
+
+        // ═══ LEGAL COMPLIANCE: Tripartite consent gate ═══
+        const tripartiteEl = document.getElementById('tripartiteConsent');
+        const tripartiteErr = document.getElementById('tripartiteError');
+        if (!tripartiteEl.checked) {
+            e.preventDefault();
+            tripartiteErr.classList.remove('d-none');
+            tripartiteEl.closest('.form-check').classList.add('shake');
+            tripartiteEl.focus();
+            return false;
+        }
+        tripartiteErr.classList.add('d-none');
 
         // AJAX KYC check
         e.preventDefault();

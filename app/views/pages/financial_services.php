@@ -107,9 +107,9 @@ try {
                                 <?php endif; ?>
                             </div>
                             
-                            <a href="#contact-form" class="btn btn-outline-primary w-100 mt-3">
-                                <?= __('fs_enquire_now') ?>
-                            </a>
+<button type="button" class="btn btn-primary w-100 mt-3" onclick="openFSModal('<?= htmlspecialchars($service['slug'] ?? $service['title'], ENT_QUOTES) ?>', '<?= htmlspecialchars($service['title'] ?? '', ENT_QUOTES) ?>')">
+                                 <i class="fas fa-paper-plane me-1"></i><?= __('fs_enquire_now') ?>
+                             </button>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -421,7 +421,120 @@ try {
 }
 </style>
 
+<!-- Financial Services Inquiry Modal -->
+<div class="modal fade" id="fsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header border-0 p-4 bg-gradient-primary" id="fsModalHeader">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="fas fa-coins text-white fa-xl" id="fsModalIcon"></i>
+                    </div>
+                    <div>
+                        <h5 class="modal-title text-white fw-bold mb-1" id="fsModalTitle">
+                            <?= __('fs_enquire_now') ?></h5>
+                        <p class="text-white-50 small mb-0" id="fsModalSubtitle">
+                            <?= __('fs_contact_desc') ?></p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4" id="fsModalBody">
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
+function openFSModal(serviceSlug, serviceTitle) {
+    var header = document.getElementById('fsModalHeader');
+    var icon = document.getElementById('fsModalIcon');
+    var title = document.getElementById('fsModalTitle');
+    var subtitle = document.getElementById('fsModalSubtitle');
+    var body = document.getElementById('fsModalBody');
+
+    header.style.background = 'linear-gradient(135deg, #0d6efd, #6610f2)';
+    icon.className = 'fas fa-coins text-white fa-xl';
+    title.textContent = serviceTitle;
+    subtitle.textContent = 'Get expert financial advice for your real estate needs';
+
+    var featuresHtml = 
+        '<div class="row g-4"><div class="col-md-7"><h6 class="fw-bold mb-3"><i class="fas fa-check-circle text-primary me-2"></i>Why Choose Us</h6><ul class="list-unstyled">';
+    ['Free Consultation', 'Compare Bank Rates', 'Documentation Support', 'Doorstep Service', 'Loan Pre-approval'].forEach(function(f) {
+        featuresHtml += '<li class="mb-2"><i class="fas fa-check text-primary me-2"></i>' + f + '</li>';
+    });
+    featuresHtml += '</ul>';
+    
+    featuresHtml += '<div class="bg-light rounded p-3 mt-3"><h6 class="fw-bold mb-2">Current Bank Rates</h6>';
+    [{b: 'SBI', r: '8.50%'}, {b: 'HDFC', r: '8.55%'}, {b: 'ICICI', r: '8.55%'}, {b: 'PNB', r: '8.50%'}].forEach(function(r) {
+        featuresHtml += '<div class="d-flex justify-content-between mb-1"><span>' + r.b + '</span><span class="fw-bold text-success">' + r.r + '</span></div>';
+    });
+    featuresHtml += '</div>';
+    
+    featuresHtml += '</div><div class="col-md-5"><div class="card border-0 shadow-sm p-4 h-100">';
+    featuresHtml += '<h5 class="fw-bold mb-3"><i class="fas fa-paper-plane text-primary me-2"></i>Quick Inquiry</h5>';
+    featuresHtml += '<form id="fsModalInquiryForm" class="small">';
+    featuresHtml += '<input type="hidden" name="service_type" value="financial_' + serviceSlug + '">';
+    featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1">Name *</label><input type="text" class="form-control form-control-sm" name="name" required></div>';
+    featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1">Phone *</label><input type="tel" class="form-control form-control-sm" name="phone" required></div>';
+    featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1">Email *</label><input type="email" class="form-control form-control-sm" name="email" required></div>';
+    featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1">Details</label><textarea class="form-control form-control-sm" name="message" rows="2" placeholder="Tell us about your requirement..."></textarea></div>';
+    featuresHtml += '<button type="submit" class="btn btn-sm btn-primary w-100 mt-1" id="fsModalSubmitBtn"><i class="fas fa-paper-plane me-1"></i>Submit Inquiry</button>';
+    featuresHtml += '<div id="fsModalFormResponse" class="alert p-2 mt-2 small d-none"></div>';
+    featuresHtml += '</form></div></div></div>';
+
+    body.innerHTML = featuresHtml;
+    showBootstrapModal('fsModal');
+
+    // Dynamic event binding for modal form
+    var modalForm = document.getElementById('fsModalInquiryForm');
+    if (modalForm) {
+        modalForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var mSubmitBtn = document.getElementById('fsModalSubmitBtn');
+            var mResponse = document.getElementById('fsModalFormResponse');
+            
+            mSubmitBtn.disabled = true;
+            mSubmitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Sending...';
+            
+            var formData = new FormData(modalForm);
+            fetch('<?php echo BASE_URL; ?>/service-interest', {
+                method: 'POST',
+                body: formData
+            })
+            .then(r => r.json())
+            .then(d => {
+                mResponse.classList.remove('d-none', 'alert-success', 'alert-danger');
+                mResponse.classList.add(d.success ? 'alert-success' : 'alert-danger');
+                mResponse.textContent = d.message;
+                if (d.success) {
+                    modalForm.reset();
+                    if (window.APS && window.APS.showNotification) {
+                        window.APS.showNotification('Inquiry submitted successfully!', 'success');
+                    }
+                }
+                mSubmitBtn.disabled = false;
+                mSubmitBtn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Submit Inquiry';
+            })
+            .catch(err => {
+                mResponse.classList.remove('d-none', 'alert-success');
+                mResponse.classList.add('alert-danger');
+                mResponse.textContent = 'Something went wrong. Please try again.';
+                mSubmitBtn.disabled = false;
+                mSubmitBtn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Submit Inquiry';
+            });
+        });
+    }
+}
+
+function showBootstrapModal(id) {
+    if (typeof bootstrap !== 'undefined') {
+        new bootstrap.Modal(document.getElementById(id)).show();
+    } else {
+        setTimeout(function() { showBootstrapModal(id); }, 200);
+    }
+}
+
 document.getElementById('financialContactForm')?.addEventListener('submit', async function(e) {
     e.preventDefault();
     const form = this;

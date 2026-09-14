@@ -21,26 +21,24 @@ class LeadAssignmentService
     }
 
     /**
-     * Assign a lead to the best available telecaller
+     * Assign a lead to the best available agent/telecaller/associate via weighted round-robin
      */
     public function assignLead(int $leadId): array
     {
         try {
             $tid = (int)$this->tenantId();
-            $tenantSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $tenantSql = $tid > 1 ? " AND u.tenant_id = ?" : "";
             $tenantParams = $tid > 1 ? [$tid] : [];
 
             // 1. Get Settings
             $strategy = $this->getSetting('crm_lead_assignment_strategy', 'round_robin', $tid);
             $requireAttendance = $this->getSetting('crm_require_attendance', '0', $tid);
 
-            // 2. Get active telecallers
-            // Join users with employees to ensure we have a valid telecaller
-            $query = "SELECT u.id as user_id, e.id as employee_id 
-                      FROM users u 
-                      JOIN employees e ON u.id = e.user_id
-                      WHERE u.role = 'telecaller' AND u.status = 'active'";
-            
+            // 2. Get active agents, telecallers, and associates
+            $query = "SELECT u.id as user_id, u.role as user_role
+                      FROM users u
+                      WHERE u.role IN ('agent', 'telecaller', 'associate') AND u.status = 'active'";
+
             $params = [];
             if ($tid > 1) {
                 $query .= " AND u.tenant_id = ?";
@@ -49,32 +47,33 @@ class LeadAssignmentService
 
             if ($requireAttendance === '1') {
                 $today = date('Y-m-d');
-                // Check if clocked in today and not clocked out
                 $query .= " AND EXISTS (
-                                SELECT 1 FROM employee_attendance a 
-                                WHERE a.employee_id = e.id 
-                                AND a.attendance_date = ? 
-                                AND a.check_in_time IS NOT NULL 
+                                SELECT 1 FROM employee_attendance a
+                                JOIN employees e ON a.employee_id = e.id
+                                WHERE e.user_id = u.id
+                                AND a.attendance_date = ?
+                                AND a.check_in_time IS NOT NULL
                                 AND a.check_out_time IS NULL
                             )";
                 $params[] = $today;
             }
 
-            $telecallers = $this->db->fetchAll($query, $params);
+            $query .= " ORDER BY u.name";
+            $assignees = $this->db->fetchAll($query, $params);
 
-            if (empty($telecallers)) {
-                return ['success' => false, 'message' => 'No available telecallers found'];
+            if (empty($assignees)) {
+                return ['success' => false, 'message' => 'No available agents/telecallers found'];
             }
 
-            $assignedEmployeeId = null;
+            $assignedUserId = null;
 
             if ($strategy === 'least_burdened') {
-                // Find telecaller with fewest active leads
+                // Find assignee with fewest active leads
                 $minLeads = null;
-                foreach ($telecallers as $tc) {
-                    $empId = $tc['employee_id'];
-                    $q = "SELECT COUNT(*) as cnt FROM leads WHERE assigned_to = ? AND status NOT IN ('converted', 'dead')";
-                    $p = [$empId];
+                foreach ($assignees as $a) {
+                    $userId = $a['user_id'];
+                    $q = "SELECT COUNT(*) as cnt FROM leads WHERE assigned_to = ? AND status NOT IN ('converted', 'dead', 'closed', 'lost')";
+                    $p = [$userId];
                     if ($tid > 1) {
                         $q .= " AND tenant_id = ?";
                         $p[] = $tid;
@@ -83,59 +82,54 @@ class LeadAssignmentService
 
                     if ($minLeads === null || $activeCount < $minLeads) {
                         $minLeads = $activeCount;
-                        $assignedEmployeeId = $empId;
+                        $assignedUserId = $userId;
                     }
                 }
             } else {
-                // Round Robin
-                // Get the telecaller with the oldest last_assigned_at timestamp
+                // Weighted Round Robin — pick the assignee with the oldest last assignment
                 $oldestTime = null;
-                foreach ($telecallers as $tc) {
-                    $empId = $tc['employee_id'];
-                    $q = "SELECT MAX(assigned_at) as last_assigned FROM lead_assignments_log WHERE employee_id = ?";
-                    $p = [$empId];
+                foreach ($assignees as $a) {
+                    $userId = $a['user_id'];
+                    $q = "SELECT MAX(created_at) as last_assigned FROM crm_assignments WHERE assigned_to = ?";
+                    $p = [$userId];
                     if ($tid > 1) {
                         $q .= " AND tenant_id = ?";
                         $p[] = $tid;
                     }
                     $lastAssigned = $this->db->fetchOne($q, $p)['last_assigned'] ?? '2000-01-01 00:00:00';
-                    
+
                     if ($oldestTime === null || strtotime($lastAssigned) < strtotime($oldestTime)) {
                         $oldestTime = $lastAssigned;
-                        $assignedEmployeeId = $empId;
+                        $assignedUserId = $userId;
                     }
                 }
             }
 
-            if ($assignedEmployeeId) {
-                // Assign to the selected telecaller
+            if ($assignedUserId) {
+                // Get the current assigned_to (for the 'from' field)
+                $leadRow = $this->db->fetchOne("SELECT assigned_to FROM leads WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$leadId, $tid] : [$leadId]);
+                $fromUserId = $leadRow ? ($leadRow['assigned_to'] ?? null) : null;
+
+                // Assign to the selected user
                 $q = "UPDATE leads SET assigned_to = ?, updated_at = NOW() WHERE id = ?";
-                $p = [$assignedEmployeeId, $leadId];
+                $p = [$assignedUserId, $leadId];
                 if ($tid > 1) {
                     $q .= " AND tenant_id = ?";
                     $p[] = $tid;
                 }
                 $this->db->query($q, $p);
 
-                // Log the assignment
-                // We assume lead_assignments_log exists. If not, this might fail, but it's okay, catch block handles it.
-                $cols = "lead_id, employee_id, assigned_at";
-                $vals = "?, ?, NOW()";
-                $logParams = [$leadId, $assignedEmployeeId];
-                if ($tid > 1) {
-                    $cols .= ", tenant_id";
-                    $vals .= ", ?";
-                    $logParams[] = $tid;
-                }
-                
+                // Log the assignment in crm_assignments
                 try {
-                    $this->db->query("INSERT INTO lead_assignments_log ($cols) VALUES ($vals)", $logParams);
+                    $cols = "lead_id, assigned_from, assigned_to, assigned_by, reason, is_active, tenant_id";
+                    $vals = "?, ?, ?, ?, 'auto_assign', 1, ?";
+                    $logParams = [$leadId, $fromUserId, $assignedUserId, $fromUserId, $tid > 1 ? $tid : 1];
+                    $this->db->query("INSERT INTO crm_assignments ($cols) VALUES ($vals)", $logParams);
                 } catch (\Exception $e) {
-                    // Ignore if table doesn't exist yet, just error log it
                     error_log("Failed to log lead assignment: " . $e->getMessage());
                 }
 
-                return ['success' => true, 'assigned_to' => $assignedEmployeeId, 'message' => 'Lead assigned successfully'];
+                return ['success' => true, 'assigned_to' => $assignedUserId, 'message' => 'Lead assigned successfully'];
             }
 
             return ['success' => false, 'message' => 'Failed to determine assignee'];
@@ -146,10 +140,38 @@ class LeadAssignmentService
         }
     }
 
+    /**
+     * Auto-assign a batch of unassigned leads
+     */
+    public function autoAssignBatch(int $limit = 50): array
+    {
+        $tid = (int)$this->tenantId();
+        $tenantSql = $tid > 1 ? " AND l.tenant_id = ?" : "";
+        $p = $tid > 1 ? [$limit, $tid] : [$limit];
+
+        $rows = $this->db->fetchAll(
+            "SELECT l.id FROM leads l WHERE l.assigned_to IS NULL AND l.status NOT IN ('converted','dead','closed','lost') {$tenantSql} ORDER BY l.created_at ASC LIMIT ?",
+            $p
+        );
+
+        $assigned = 0;
+        $failed = 0;
+        foreach ($rows as $row) {
+            $result = $this->assignLead((int)$row['id']);
+            if ($result['success']) {
+                $assigned++;
+            } else {
+                $failed++;
+            }
+        }
+
+        return ['assigned' => $assigned, 'failed' => $failed, 'total' => count($rows)];
+    }
+
     private function getSetting(string $key, string $default, int $tid): string
     {
         try {
-            $q = "SELECT value FROM settings WHERE key_name = ?";
+            $q = "SELECT value FROM settings WHERE `key` = ?";
             $p = [$key];
             if ($tid > 1) {
                 $q .= " AND tenant_id = ?";

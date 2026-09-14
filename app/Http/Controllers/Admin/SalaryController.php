@@ -769,13 +769,14 @@ class SalaryController extends AdminController
                 SELECT r.*, u.name as employee_name
                 FROM salary_records r
                 LEFT JOIN users u ON r.employee_id = u.id
-                ORDER BY r.year DESC, r.month DESC, u.name ASC LIMIT 200
+                ORDER BY r.pay_date DESC, u.name ASC LIMIT 200
             ") ?? [];
             $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' {$tidSql} ORDER BY name", $tidParams) ?? [];
             $months = [];
             foreach ($records as $r) {
-                $key = $r['year'] . '-' . str_pad($r['month'],2,'0',STR_PAD_LEFT);
-                $months[$key] = ['year' => $r['year'], 'month' => $r['month']];
+                $key = substr($r['pay_date'] ?? '', 0, 7);
+                if ($key === '') continue;
+                $months[$key] = ['year' => (int)substr($key, 0, 4), 'month' => (int)substr($key, 5, 2)];
             }
         } catch (\Exception $e) {
             $records = []; $users = []; $months = [];
@@ -796,7 +797,7 @@ class SalaryController extends AdminController
                 SELECT r.*, u.name as employee_name
                 FROM salary_records r
                 LEFT JOIN users u ON r.employee_id = u.id
-                WHERE r.year=? AND r.month=?
+                WHERE YEAR(r.pay_date)=? AND MONTH(r.pay_date)=?
                 ORDER BY u.name ASC
             ", [(int)$year, (int)$month]) ?? [];
         } catch (\Exception $e) {

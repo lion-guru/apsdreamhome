@@ -55,6 +55,13 @@ class ContactCareerPageController extends BaseController
     public function propertyInquiry()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // ═══ LEGAL COMPLIANCE: Terms consent must be accepted ═══
+            $termsConsent = $_POST['terms_consent'] ?? '';
+            if ($termsConsent !== 'on' && $termsConsent !== '1') {
+                $_SESSION['error'] = 'You must accept the Cancellation Policy, Refund Policy, and Master Agreement Terms to proceed.';
+                $this->redirect('/inquiry');
+                return;
+            }
             // Handle property inquiry
             $_SESSION['success'] = 'Thank you for your inquiry! We will contact you soon.';
         }

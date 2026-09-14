@@ -87,7 +87,7 @@ class BookingController extends BaseController
                 SELECT u.*, COUNT(pb.id) as booking_count
                 FROM users u
                 LEFT JOIN plot_bookings pb ON pb.customer_id = u.id AND pb.associate_id = ?
-                WHERE u.role = 'customer' AND u.associate_id = ?{$tidSql}
+                WHERE u.role = 'customer' AND u.referred_by = ?{$tidSql}
                 GROUP BY u.id
                 ORDER BY u.created_at DESC
             ", array_merge([$userId, $userId], TenantContext::getId() > 1 ? [TenantContext::getId()] : [])) ?: [];

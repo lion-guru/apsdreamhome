@@ -676,6 +676,153 @@ $GLOBALS['_html_doc_started'] = true;
         </div>
     </div>
 </script>
+    <!-- ═══ LEGAL COMPLIANCE: Associate Code of Conduct Consent Modal ═══ -->
+    <div id="legalConsentModal" class="modal fade" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="legalConsentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content" style="border-radius: 16px; border: 2px solid #d4af37;">
+                <div class="modal-header" style="background: linear-gradient(135deg, #0a192f, #1e3a5f); color: #fff; border-radius: 14px 14px 0 0;">
+                    <h5 class="modal-title fw-bold" id="legalConsentModalLabel">
+                        <i class="fas fa-gavel me-2"></i>Associate Code of Conduct — Mandatory Acceptance
+                    </h5>
+                </div>
+                <div class="modal-body p-4" style="max-height: 60vh; overflow-y: auto; font-size: 0.93rem; line-height: 1.7;">
+                    <div class="alert alert-warning d-flex align-items-start mb-3" style="border-left: 4px solid #d4af37;">
+                        <i class="fas fa-exclamation-triangle me-2 mt-1"></i>
+                        <div>
+                            <strong>First-Time Login Required:</strong> You must read and accept this Code of Conduct before accessing the Associate Portal. This constitutes a legally binding digital agreement under the Indian Information Technology Act, 2000.
+                        </div>
+                    </div>
+
+                    <h6 class="fw-bold mt-3" style="color: #0a192f;"><i class="fas fa-handshake me-2 text-primary"></i>Parties to this Agreement</h6>
+                    <p class="ms-4 mb-1"><strong>1. Company:</strong> APS Dream Home (hereinafter "the Company")</p>
+                    <p class="ms-4 mb-3"><strong>2. Associate:</strong> The undersigned individual (hereinafter "the Associate")</p>
+
+                    <h6 class="fw-bold mt-4" style="color: #0a192f;"><i class="fas fa-list-check me-2 text-success"></i>Associate Obligations</h6>
+                    <ol class="ms-4">
+                        <li><strong>Professional Conduct:</strong> The Associate shall conduct all business dealings in a professional, ethical, and lawful manner, consistent with the standards expected of a licensed real estate associate.</li>
+                        <li><strong>Fiduciary Duty:</strong> The Associate shall act in the best interests of both the Company and the Client, disclosing all material facts regarding any property listing, transaction, or investment opportunity.</li>
+                        <li><strong>Anti-Bribery &amp; Anti-Corruption:</strong> The Associate shall not offer, give, solicit, or accept any bribe, kickback, or improper inducement in connection with any Company business.</li>
+                        <li><strong>Confidentiality:</strong> The Associate shall maintain strict confidentiality of all proprietary information, client data, pricing strategies, and business plans of the Company.</li>
+                        <li><strong>Data Protection:</strong> The Associate shall handle all personal data of clients in compliance with the Digital Personal Data Protection Act, 2023, and shall not share client data with unauthorized third parties.</li>
+                        <li><strong>Marketing Compliance:</strong> All marketing materials, advertisements, and promotional activities conducted by the Associate shall comply with the Real Estate (Regulation and Development) Act, 2016 (RERA), and shall not contain any misleading or false claims.</li>
+                        <li><strong>Commission Structure:</strong> The Associate acknowledges and agrees to the commission structure as outlined in the <a href="<?= BASE_URL ?>/legal/terms-conditions" target="_blank" class="fw-bold text-decoration-underline">Tripartite Master Deed</a>. Any deviation from the approved commission structure must be authorized in writing by the Company.</li>
+                        <li><strong>Compliance with Laws:</strong> The Associate shall comply with all applicable laws, rules, and regulations, including but not limited to RERA, the Indian Contract Act, 1872, the Transfer of Property Act, 1882, and the Stamp Act, 1899.</li>
+                        <li><strong>No Unauthorized Representations:</strong> The Associate shall not make any unauthorized commitments or representations on behalf of the Company without prior written approval.</li>
+                        <li><strong>Termination:</strong> Either party may terminate this agreement with 30 days' written notice. Upon termination, all outstanding commissions and obligations shall be settled as per the Company's settlement policy.</li>
+                    </ol>
+
+                    <h6 class="fw-bold mt-4" style="color: #0a192f;"><i class="fas fa-exclamation-circle me-2 text-danger"></i>Breach Consequences</h6>
+                    <p class="ms-4">Any breach of this Code of Conduct may result in:</p>
+                    <ul class="ms-5">
+                        <li>Immediate suspension of the Associate's account</li>
+                        <li>Forfeiture of pending commissions</li>
+                        <li>Termination of the association</li>
+                        <li>Legal action for damages, including recovery of any losses caused</li>
+                    </ul>
+
+                    <div class="border rounded-3 p-3 mt-4" style="background: #f8f9fa; border-color: #d4af37 !important;">
+                        <div class="form-check mb-0">
+                            <input class="form-check-input" type="checkbox" id="legalConsentCheckbox"
+                                   style="border-color: #d4af37; width: 1.4em; height: 1.4em; margin-top: 0.1em;">
+                            <label class="form-check-label fw-bold" for="legalConsentCheckbox" style="font-size: 0.95rem; line-height: 1.6; color: #1a1a2e;">
+                                <i class="fas fa-check-circle text-success me-1"></i>
+                                I, the Associate, have carefully read, understood, and agree to be legally bound by all terms and conditions of this Associate Code of Conduct, the Tripartite Master Deed, and all Company policies referenced herein.
+                            </label>
+                        </div>
+                        <div id="consentError" class="text-danger small mt-2 d-none">
+                            <i class="fas fa-exclamation-circle me-1"></i>You must check this box to confirm acceptance of the Code of Conduct.
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top: 2px solid #d4af37; background: #f8f9fa;">
+                    <button type="button" class="btn btn-outline-danger px-3" onclick="handleConsentDecline()" id="consentDeclineBtn">
+                        <i class="fas fa-times me-1"></i>I Decline
+                    </button>
+                    <button type="button" class="btn btn-warning fw-bold px-4" onclick="handleConsentAccept()" id="consentAcceptBtn">
+                        <i class="fas fa-gavel me-1"></i>I Accept the Code of Conduct
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+    (function() {
+        var csrfToken = '<?= $_SESSION['csrf_token'] ?? '' ?>';
+
+        // Check consent status on page load
+        fetch('<?= BASE_URL ?>/associate/legal-consent/status', {
+            credentials: 'same-origin'
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (!data.accepted) {
+                var modal = new bootstrap.Modal(document.getElementById('legalConsentModal'));
+                modal.show();
+            }
+        })
+        .catch(function(err) {
+            console.error('[LegalConsent] status check failed:', err);
+        });
+
+        window.handleConsentAccept = function() {
+            var checkbox = document.getElementById('legalConsentCheckbox');
+            var errorEl = document.getElementById('consentError');
+
+            if (!checkbox.checked) {
+                errorEl.classList.remove('d-none');
+                checkbox.closest('.form-check').classList.add('shake');
+                return;
+            }
+            errorEl.classList.add('d-none');
+
+            var btn = document.getElementById('consentAcceptBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Recording acceptance...';
+
+            var formData = new FormData();
+            formData.append('csrf_token', csrfToken);
+            formData.append('consent_confirmed', '1');
+
+            fetch('<?= BASE_URL ?>/associate/legal-consent/accept', {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin'
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    var modal = bootstrap.Modal.getInstance(document.getElementById('legalConsentModal'));
+                    modal.hide();
+                    document.getElementById('legalConsentModal').remove();
+                    var toast = document.createElement('div');
+                    toast.className = 'alert alert-success alert-dismissible fade show position-fixed';
+                    toast.style.cssText = 'top: 80px; right: 20px; z-index: 9999; min-width: 300px;';
+                    toast.innerHTML = '<i class="fas fa-check-circle me-2"></i>' + (data.message || 'Welcome to the Associate Portal.') +
+                        '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+                    document.body.appendChild(toast);
+                    setTimeout(function() { if (toast.parentNode) toast.remove(); }, 5000);
+                } else {
+                    alert(data.message || 'Failed to record acceptance. Please try again.');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-gavel me-1"></i>I Accept the Code of Conduct';
+                }
+            })
+            .catch(function(err) {
+                console.error('[LegalConsent] accept failed:', err);
+                alert('Network error. Please try again.');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-gavel me-1"></i>I Accept the Code of Conduct';
+            });
+        };
+
+        window.handleConsentDecline = function() {
+            if (confirm('If you decline, you will be logged out and cannot access the Associate Portal.\n\nAre you sure you want to decline?')) {
+                window.location.href = '<?= BASE_URL ?>/associate/logout';
+            }
+        };
+    })();
+    </script>
     <!-- Dark Mode Toggle -->
     
 </body>

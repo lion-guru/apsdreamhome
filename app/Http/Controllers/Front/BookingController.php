@@ -221,6 +221,13 @@ class BookingController extends BaseController
         $paymentPlan = $_POST['payment_plan'] ?? 'emi';
         $notes = trim($_POST['notes'] ?? '');
 
+        // ═══ LEGAL COMPLIANCE: Tripartite consent must be accepted ═══
+        $tripartiteConsent = $_POST['tripartite_consent'] ?? '';
+        if ($tripartiteConsent !== 'on' && $tripartiteConsent !== '1') {
+            $this->setFlash('error', 'You must accept the Tripartite Master Deed terms to proceed with booking.');
+            return $this->redirect('/plots/' . $id . '/book');
+        }
+
         try {
             $svc = new BookingLifecycleService();
             $result = $svc->createBooking([
@@ -230,6 +237,8 @@ class BookingController extends BaseController
                 'booking_amount'   => round($plot['total_price'] * 0.25, 2),
                 'channel'          => 'direct',
                 'notes'            => $notes,
+                'legal_consent'    => true,
+                'consent_timestamp'=> date('Y-m-d H:i:s'),
             ]);
 
             if (!$result['success']) {

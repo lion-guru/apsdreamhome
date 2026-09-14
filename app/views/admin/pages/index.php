@@ -43,8 +43,24 @@
                                     </td>
                                     <td><?= htmlspecialchars($p['updated_at'] ?? '') ?></td>
                                     <td>
-                                        <a href="<?= BASE_URL ?>/admin/pages/edit/<?= $p['id'] ?>" class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></a>
-                                        <a href="<?= BASE_URL ?>/<?= htmlspecialchars($p['slug'] ?? '') ?>" class="btn btn-sm btn-outline-secondary" target="_blank"><i class="fas fa-external-link-alt"></i></a>
+                                        <a href="<?= BASE_URL ?>/admin/pages/edit/<?= $p['id'] ?>" class="btn btn-sm btn-primary" title="Edit"><i class="fas fa-edit"></i></a>
+                                        <?php
+                                        // Preview links for CMS pages: legal pages go to /legal/{slug}, others go to /{slug}
+                                        $legalSlugs = ['terms-conditions','privacy-policy','refund-policy','disclaimer','cancellation-policy','associate-rules','services','legal-services','legal-documents'];
+                                        $slug = $p['slug'] ?? '';
+                                        if (in_array($slug, $legalSlugs)) {
+                                            $previewUrl = BASE_URL . '/legal/' . $slug;
+                                        } elseif ($slug === 'about-us') {
+                                            $previewUrl = BASE_URL . '/about';
+                                        } elseif ($slug === 'contact-us') {
+                                            $previewUrl = BASE_URL . '/contact';
+                                        } elseif ($slug === 'careers') {
+                                            $previewUrl = BASE_URL . '/careers';
+                                        } else {
+                                            $previewUrl = BASE_URL . '/' . $slug;
+                                        }
+                                        ?>
+                                        <a href="<?= $previewUrl ?>" class="btn btn-sm btn-outline-secondary" target="_blank" title="Preview"><i class="fas fa-external-link-alt"></i></a>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>

@@ -888,11 +888,14 @@ class ScheduleController extends AdminController
         try {
             // Get rotation schedules from shift_schedules table
             $rotations = $this->db->fetchAll(
-                "SELECT ss.*, st.name as shift_type_name, st.color,
-                        (SELECT COUNT(*) FROM employee_shifts es WHERE es.shift_type_id = ss.shift_type_id AND es.shift_date >= ss.start_date AND (ss.end_date IS NULL OR es.shift_date <= ss.end_date)) as assigned_count
+                "SELECT ss.id, IFNULL(emp.name, st.name) as name, st.name as shift_type_name, st.color,
+                        IFNULL(emp.department, '') as department,
+                        ss.schedule_date as start_date, ss.schedule_date as end_date,
+                        (SELECT COUNT(*) FROM employee_shifts es WHERE es.shift_type_id = ss.shift_type_id) as assigned_count
                  FROM shift_schedules ss
                  JOIN shift_types st ON ss.shift_type_id = st.id
-                 ORDER BY ss.name"
+                 LEFT JOIN employees emp ON emp.user_id = ss.employee_id
+                 ORDER BY st.name, ss.schedule_date"
             );
 
             $shiftTypes = $this->db->fetchAll(

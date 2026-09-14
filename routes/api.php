@@ -835,6 +835,57 @@ $router->post('/api/v2/mobile/property-verification/badge/{badgeId}/revoke', 'Ap
 $router->get('/api/v2/mobile/property-verification/stats', 'Api\PropertyVerificationApiController@getStats')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // ============================================================
+// CAMPAIGN TEMPLATES API (Mobile)
+// ============================================================
+
+$router->get('/api/v2/mobile/campaign-templates', 'Api\CampaignTemplateApiController@index')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/campaign-templates/{id}', 'Api\CampaignTemplateApiController@show')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ============================================================
+// VOICE UPLOADS API (Mobile)
+// ============================================================
+
+$router->get('/api/v2/mobile/voice-uploads', 'Api\VoiceUploadApiController@index')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/voice-uploads/{id}', 'Api\VoiceUploadApiController@show')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ============================================================
+// APP FEEDBACK API (Mobile)
+// ============================================================
+
+$router->get('/api/v2/mobile/app-feedback', 'Api\AppFeedbackApiController@index')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/app-feedback', 'Api\AppFeedbackApiController@store')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/app-feedback/{id}', 'Api\AppFeedbackApiController@show')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ============================================================
+// SEARCH HISTORY API (Mobile)
+// ============================================================
+
+$router->get('/api/v2/mobile/search-history', 'Api\SearchHistoryApiController@index')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ============================================================
+// REGISTRY TIMELINE API (Mobile — customer registry journey + possession certificate)
+// ============================================================
+
+$router->get('/api/v2/mobile/registry/timeline/{bookingId}', 'Api\RegistryTimelineApiController@timeline')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/registry/possession-certificate/{bookingId}', 'Api\RegistryTimelineApiController@certificate')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ============================================================
+// PAYOUT BATCH API (Mobile — staff bulk payout list/detail/CSV export)
+// ============================================================
+
+$router->get('/api/v2/mobile/payout-batches', 'Api\PayoutBatchApiController@index')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/payout-batches/{id}/export-bank-csv', 'Api\PayoutBatchApiController@exportCsv')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/payout-batches/{id}', 'Api\PayoutBatchApiController@detail')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ============================================================
+// SITE VISIT DISPATCH API (Mobile — staff assign/outcome/send-pin)
+// ============================================================
+
+$router->post('/api/v2/mobile/site-visits/{id}/assign', 'Api\SiteVisitDispatchApiController@assign')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/site-visits/{id}/outcome', 'Api\SiteVisitDispatchApiController@outcome')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/site-visits/{id}/send-pin', 'Api\SiteVisitDispatchApiController@sendPin')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ============================================================
 // INFRASTRUCTURE & DEBUGGING API (Admin Tools)
 // ============================================================
 require_once __DIR__ . '/container.php';

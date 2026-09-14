@@ -8,12 +8,17 @@ $search = $search ?? '';
 
 $statusMap = [
     'scheduled' => ['color'=>'primary','icon'=>'fa-calendar-check'],
+    'confirmed' => ['color'=>'info','icon'=>'fa-user-check'],
     'rescheduled' => ['color'=>'warning','icon'=>'fa-calendar-alt'],
     'completed' => ['color'=>'success','icon'=>'fa-check-circle'],
+    'interested' => ['color'=>'success','icon'=>'fa-thumbs-up'],
+    'token_booked' => ['color'=>'success','icon'=>'fa-ticket-alt'],
+    'not_interested' => ['color'=>'dark','icon'=>'fa-thumbs-down'],
     'cancelled' => ['color'=>'secondary','icon'=>'fa-times-circle'],
     'in_progress' => ['color'=>'info','icon'=>'fa-spinner'],
     'no_show' => ['color'=>'danger','icon'=>'fa-user-slash'],
 ];
+$executives = $executives ?? [];
 ?>
 
 <div class="container-fluid px-4 py-3">
@@ -127,9 +132,14 @@ $statusMap = [
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <?php if (!empty($v['visitor_phone'])): ?>
-                                        <a href="tel:<?= htmlspecialchars($v['visitor_phone'] ?? '') ?>" class="btn btn-sm btn-outline-success" title="Call"><i class="fas fa-phone"></i></a>
-                                    <?php endif; ?>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <?php if (!empty($v['visitor_phone'])): ?>
+                                            <a href="tel:<?= htmlspecialchars($v['visitor_phone'] ?? '') ?>" class="btn btn-outline-success" title="Call"><i class="fas fa-phone"></i></a>
+                                        <?php endif; ?>
+                                        <button class="btn btn-outline-primary" title="Assign Executive &amp; Cab" onclick="openAssignModal(<?= (int)$v['id'] ?>, '<?= htmlspecialchars(addslashes($v['visitor_name'] ?? ''), ENT_QUOTES) ?>')"><i class="fas fa-user-check"></i></button>
+                                        <button class="btn btn-outline-success" title="Send WhatsApp Pin" onclick="sendVisitPin(<?= (int)$v['id'] ?>, this)"><i class="fab fa-whatsapp"></i></button>
+                                        <button class="btn btn-outline-warning" title="Record Outcome" onclick="openOutcomeModal(<?= (int)$v['id'] ?>, '<?= htmlspecialchars(addslashes($v['visitor_name'] ?? ''), ENT_QUOTES) ?>')"><i class="fas fa-clipboard-check"></i></button>
+                                    </div>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
@@ -163,4 +173,188 @@ document.querySelectorAll('.status-select').forEach(function(sel) {
         ).finally(() => hideLoader());
     });
 });
+</script>
+
+<!-- Assign Executive & Cab Modal (Site Visit Dispatch Engine) -->
+<div class="modal fade" id="assignExecModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-user-check me-2"></i>Assign Executive &amp; Cab</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="assignExecForm" onsubmit="return submitAssignForm(event)">
+                <div class="modal-body">
+                    <p class="text-muted small">Visitor: <strong id="assignVisitorName"></strong></p>
+                    <input type="hidden" id="assignVisitId">
+                    <div class="mb-3">
+                        <label class="form-label">Sales Executive *</label>
+                        <select id="assignExecId" class="form-select" required>
+                            <option value="">— Select executive —</option>
+                            <?php foreach ($executives as $ex): ?>
+                                <option value="<?= (int)$ex['id'] ?>"><?= htmlspecialchars($ex['name'] ?? ('User #' . $ex['id'])) ?><?= !empty($ex['phone']) ? ' (' . htmlspecialchars($ex['phone']) . ')' : '' ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Cab Assigned</label>
+                        <input type="text" id="assignCab" class="form-control" placeholder="e.g. UP53-AB-1234 (Driver Ramesh)">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Pickup Time</label>
+                        <input type="text" id="assignPickupTime" class="form-control" placeholder="e.g. 10:30 AM from home">
+                    </div>
+                    <div id="assignResult" class="d-none">
+                        <div class="alert alert-success py-2 small mb-2" id="assignMsg"></div>
+                        <div class="d-flex gap-2">
+                            <a href="#" id="assignWaCustomer" target="_blank" rel="noopener" class="btn btn-sm btn-success"><i class="fab fa-whatsapp me-1"></i>Customer Pin</a>
+                            <a href="#" id="assignWaExec" target="_blank" rel="noopener" class="btn btn-sm btn-outline-success"><i class="fab fa-whatsapp me-1"></i>Executive Card</a>
+                        </div>
+                        <small class="text-muted d-block mt-1" id="assignApiStatus"></small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" id="assignSubmitBtn"><i class="fas fa-paper-plane me-1"></i>Confirm &amp; Send WhatsApp</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Visit Outcome Modal -->
+<div class="modal fade" id="visitOutcomeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-clipboard-check me-2"></i>Visit Outcome</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="visitOutcomeForm" onsubmit="return submitOutcomeForm(event)">
+                <div class="modal-body">
+                    <p class="text-muted small">Visitor: <strong id="outcomeVisitorName"></strong></p>
+                    <input type="hidden" id="outcomeVisitId">
+                    <div class="mb-3">
+                        <label class="form-label">Outcome *</label>
+                        <select id="outcomeValue" class="form-select" required>
+                            <option value="completed">Completed</option>
+                            <option value="interested">Interested (creates CRM Opportunity)</option>
+                            <option value="token_booked">Token Booked (creates CRM Opportunity)</option>
+                            <option value="not_interested">Not Interested</option>
+                            <option value="rescheduled">Rescheduled</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Plot Preference</label>
+                        <input type="text" id="outcomePlotPref" class="form-control" placeholder="e.g. East-facing 1200 sqft near park">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Budget Feedback</label>
+                        <input type="text" id="outcomeBudget" class="form-control" placeholder="e.g. 25 lakh">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Follow-up Date (for reschedule)</label>
+                        <input type="date" id="outcomeFollowup" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Notes</label>
+                        <textarea id="outcomeNotes" class="form-control" rows="2" placeholder="Visit feedback, objections, next steps..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-warning" id="outcomeSubmitBtn"><i class="fas fa-check me-1"></i>Save Outcome</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+var SV_CSRF = '<?= $_SESSION['csrf_token'] ?? '' ?>';
+function openAssignModal(id, name) {
+    document.getElementById('assignVisitId').value = id;
+    document.getElementById('assignVisitorName').textContent = name;
+    document.getElementById('assignResult').classList.add('d-none');
+    new bootstrap.Modal(document.getElementById('assignExecModal')).show();
+}
+function submitAssignForm(e) {
+    e.preventDefault();
+    var id = document.getElementById('assignVisitId').value;
+    var btn = document.getElementById('assignSubmitBtn');
+    btn.disabled = true;
+    showLoader();
+    fetch('<?= BASE_URL ?>/admin/site-visits/' + id + '/assign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-Token': SV_CSRF },
+        body: 'executive_id=' + encodeURIComponent(document.getElementById('assignExecId').value)
+            + '&cab_assigned=' + encodeURIComponent(document.getElementById('assignCab').value)
+            + '&pickup_time=' + encodeURIComponent(document.getElementById('assignPickupTime').value)
+    }).then(function(r) { return r.json(); }).then(function(d) {
+        if (d.success) {
+            document.getElementById('assignResult').classList.remove('d-none');
+            document.getElementById('assignMsg').textContent = d.message + ' ' + (d.api_status || '');
+            var cA = document.getElementById('assignWaCustomer');
+            var eA = document.getElementById('assignWaExec');
+            cA.style.display = d.whatsapp_customer_url ? '' : 'none';
+            eA.style.display = d.whatsapp_exec_url ? '' : 'none';
+            cA.href = d.whatsapp_customer_url || '#';
+            eA.href = d.whatsapp_exec_url || '#';
+            document.getElementById('assignApiStatus').textContent = d.api_status || '';
+            if (d.whatsapp_customer_url) { window.open(d.whatsapp_customer_url, '_blank'); }
+            showToast('Executive assigned & visit confirmed', 'success');
+        } else {
+            showToast('Failed: ' + (d.error || 'Unknown error'), 'danger');
+        }
+    }).catch(function() { showToast('Network error', 'danger'); })
+    .finally(function() { btn.disabled = false; hideLoader(); });
+    return false;
+}
+function sendVisitPin(id, btn) {
+    if (btn) { btn.disabled = true; }
+    showLoader();
+    fetch('<?= BASE_URL ?>/admin/site-visits/' + id + '/send-pin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-Token': SV_CSRF },
+        body: ''
+    }).then(function(r) { return r.json(); }).then(function(d) {
+        if (d.success && d.whatsapp_customer_url) {
+            window.open(d.whatsapp_customer_url, '_blank');
+            showToast('WhatsApp pin opened' + (d.api_status ? ' — ' + d.api_status : ''), 'success');
+        } else {
+            showToast('Failed: ' + (d.error || 'Customer phone unavailable'), 'danger');
+        }
+    }).catch(function() { showToast('Network error', 'danger'); })
+    .finally(function() { if (btn) { btn.disabled = false; } hideLoader(); });
+}
+function openOutcomeModal(id, name) {
+    document.getElementById('outcomeVisitId').value = id;
+    document.getElementById('outcomeVisitorName').textContent = name;
+    new bootstrap.Modal(document.getElementById('visitOutcomeModal')).show();
+}
+function submitOutcomeForm(e) {
+    e.preventDefault();
+    var id = document.getElementById('outcomeVisitId').value;
+    var btn = document.getElementById('outcomeSubmitBtn');
+    btn.disabled = true;
+    showLoader();
+    fetch('<?= BASE_URL ?>/admin/site-visits/' + id + '/outcome', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-Token': SV_CSRF },
+        body: 'outcome=' + encodeURIComponent(document.getElementById('outcomeValue').value)
+            + '&plot_preference=' + encodeURIComponent(document.getElementById('outcomePlotPref').value)
+            + '&budget_feedback=' + encodeURIComponent(document.getElementById('outcomeBudget').value)
+            + '&followup_date=' + encodeURIComponent(document.getElementById('outcomeFollowup').value)
+            + '&outcome_notes=' + encodeURIComponent(document.getElementById('outcomeNotes').value)
+    }).then(function(r) { return r.json(); }).then(function(d) {
+        if (d.success) {
+            showToast(d.opportunity_created ? 'Outcome saved — CRM Opportunity #' + d.opportunity_id + ' created' : 'Outcome saved', 'success');
+            setTimeout(function() { location.reload(); }, 900);
+        } else {
+            showToast('Failed: ' + (d.error || 'Unknown error'), 'danger');
+        }
+    }).catch(function() { showToast('Network error', 'danger'); })
+    .finally(function() { btn.disabled = false; hideLoader(); });
+    return false;
+}
 </script>

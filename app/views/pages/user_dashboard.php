@@ -533,6 +533,13 @@ $dashBookingCount = count($dashBookings);
                             <p class="aps-cp-quick-action-desc"><?= __('dash_quick_bookings_desc', null, 'Track purchase & payment status') ?></p>
                         </div>
                     </a>
+                    <a href="<?= BASE_URL ?>/customer/passbook" class="aps-cp-quick-action">
+                        <div class="aps-cp-quick-action-icon"><i class="fas fa-passport"></i></div>
+                        <div class="aps-cp-quick-action-body">
+                            <p class="aps-cp-quick-action-title"><?= __('dash_btn_my_passbook', null, 'My Passbook') ?></p>
+                            <p class="aps-cp-quick-action-desc"><?= __('dash_quick_passbook_desc', null, 'Payment ledger & receipts') ?></p>
+                        </div>
+                    </a>
                     <a href="<?= BASE_URL ?>/user/inquiries" class="aps-cp-quick-action">
                         <div class="aps-cp-quick-action-icon"><i class="fas fa-envelope"></i></div>
                         <div class="aps-cp-quick-action-body">

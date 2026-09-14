@@ -292,18 +292,16 @@ class DealController extends AdminController
 
         // Get deal contacts
         $contacts = $this->db->fetchAll(
-            "SELECT dc.*, c.name, c.email, c.phone
+            "SELECT dc.*
              FROM deal_contacts dc
-             LEFT JOIN users c ON dc.contact_id = c.id
              WHERE dc.deal_id = ?",
             [$dealId]
         );
 
         // Get deal documents
         $documents = $this->db->fetchAll(
-            "SELECT d.*, u.name as uploaded_by_name
+            "SELECT d.*
              FROM deal_documents d
-             LEFT JOIN users u ON d.uploaded_by = u.id
              WHERE d.deal_id = ?
              ORDER BY d.created_at DESC",
             [$dealId]

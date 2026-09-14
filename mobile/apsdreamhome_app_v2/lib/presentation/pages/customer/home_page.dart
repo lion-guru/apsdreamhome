@@ -732,6 +732,18 @@ class _HomePageState extends ConsumerState<HomePage>
         '/inbox',
         Color(0xFF4F46E5),
       ),
+      const _ToolItem(
+        Icons.verified_outlined,
+        'Registry',
+        '/my-bookings',
+        Color(0xFF0d9488),
+      ),
+      const _ToolItem(
+        Icons.account_balance_wallet_outlined,
+        'Payouts',
+        '/admin/payout-batches',
+        Color(0xFF7c3aed),
+      ),
     ];
 
     return Padding(

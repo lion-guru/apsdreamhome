@@ -9348,4 +9348,17 @@ return array(
   'assoc_lead_commission_note' => 'Based on current rank & budget. Actual may vary.',
   'assoc_lead_no_budget' => 'Set a budget range to see estimated earnings.',
   'assoc_lead_view_commission_structure' => 'View Full Commission Structure',
+  /* Legal Documentation */
+  'legal_docs_heading' => 'Legal Documents',
+  'legal_docs_subtitle' => 'Official Legal Documents, Covenants & Statutory Policies',
+  'legal_index_subtitle' => 'Official Legal Documents, Covenants & Statutory Policies',
+  'legal_no_documents' => 'No Legal Documents Found',
+  'legal_check_back' => 'Please check back later or contact our legal compliance desk for assistance.',
+  'back_home' => 'Back to Home',
+  'legal_documentation' => 'Legal Documentation',
+  'download_pdf' => 'Download PDF',
+  'additional_legal_papers' => 'Additional Legal Papers',
+  'doc_name' => 'Document Name',
+  'date_published' => 'Date Published',
+  'no_additional_docs' => 'No additional documents available.',
 );

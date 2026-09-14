@@ -1,6 +1,235 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-03 — Session 94: Light-Only UI + Rupee Fix + Header Overlap)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-14 — Session 101: Flutter Registry/Payout/Site-Visit Wiring & Home/Profile Quick Links)
+
+## Session 101: Flutter Registry/Payout/Site-Visit Wiring & Home/Profile Quick Links (2026-09-14)
+
+### Goal
+Wire the three mission APIs into the Flutter app (customer registry stepper + certificate, staff payout batches + CSV export, agent site-visit dispatch) and surface them via home Tools and profile Registry & Payouts sections.
+
+### Summary
+| Area | Files | Key Changes |
+|------|-------|-------------|
+| **Registry Timeline (customer)** | `customer/registry_timeline_page.dart` (NEW) | 7-stage stepper (done / in_progress / pending dots), appointment card, gated certificate button via `url_launcher`; `FutureProvider` → `ApiService.getRegistryTimeline` |
+| **Payout Batches (staff)** | `admin/payout_batches_page.dart` (NEW) + `admin/payout_batch_detail_page.dart` (NEW) | List + detail (entries, UTR, amount) + Export Bank CSV (`ApiService.payoutBatchExportUrl`) via `url_launcher` |
+| **Site-Visit Dispatch (agent)** | `agent/agent_site_visits_page.dart` | Threaded `ref`/`userId` through `_buildVisitsList`→`_buildVisitCard`; +Send Pin (`sendSiteVisitPin`) + Outcome bottom-sheet (`markSiteVisitOutcome` incl. lakh/cr parse) |
+| **Bookings → Registry** | `customer/my_bookings_page.dart` | Per-card Wrap: **Registry** → `/registry-timeline/:bookingId` + Pay Now / Receipt |
+| **Home / Profile Shortcuts** | `customer/home_page.dart` + `common/profile_page.dart` | Home Tools: +Registry (→ My Bookings) + Payouts (→ admin batches); Profile: NEW `_RegistryPayoutSection` card (My Bookings & Registry / Payout Batches / Site Visits) between Agent portal & More Features |
+| **Routing** | `core/router/app_router.dart` | +`/registry-timeline/:bookingId`, +`/admin/payout-batches`, +`/admin/payout-batches/:batchId` (+3 imports) |
+| **API Surface** | `core/constants/app_constants.dart` + `core/services/api_service.dart` | Reused Session 99 constants/methods (registry timeline, payout batches, site-visit dispatch) — no new endpoints |
+
+### Verification
+- `flutter analyze` **0 errors** (3 `prefer_const_constructors` infos)
+- `php -l` clean on all API/Flutter-touched files
+- `health_check` **ok:true** (807 tables), `workflow_probe` **15/15**, `E2E` **374/374** (300s), `smoke_all_ai` **7/7**, APK debug **264MB** → `public/downloads/apsdreamhome.apk`
+
+---
+
+## Session 100: Zero-Mismatch Schema Realignment (2026-09-14)
+
+### Goal
+Eliminate all remaining SQL column and relationship schema mismatches across all 15 core business modules (Land, Property, Deals, APIs, Mobile, Auctions, Chat, Ops). Achieve 0 schema mismatches across the entire application.
+
+### Summary — All Fixes Complete (0 Mismatches)
+| Area | Files Fixed | Key Changes |
+|------|-------------|-------------|
+| **Land Module** | `LandController.php` + 7 views | Fully realigned to real `land_records` / `land_acquisitions` schemas. |
+| **Property Management** | `PropertyManagementController.php` | Fixed `p.property_id` → `p.id`. |
+| **Associate Booking** | `Associate/BookingController.php` | Fixed `u.associate_id` → `u.referred_by`. |
+| **API Integration** | `ApiIntegrationController.php` + routes | Fixed `api_key_id` → `user_id`, `request_time` → `created_at`; added `/admin/api/logs` route. |
+| **Deals** | `DealController.php` | Removed invalid JOINs on non-existent `contact_id`, `uploaded_by`. |
+| **Financial Inquiries** | `FinancialInquiryController.php` | Removed invalid `assigned_to` JOIN. |
+| **Property Features** | `PropertyFeaturesController.php` | Fixed `data_date` → `created_at`; `views` → `metric_type`/`metric_value`. |
+| **Mobile API** | `MobileUserApiController.php` | Fixed `booking_agreements.agreement_file` → `content`; `plot_allotments.letter_file` → `allotment_date`. |
+| **Compare** | `CompareController.php` | Fixed `property_comparison_sessions` to use real columns. |
+| **Auction** | `AuctionService.php` | Fixed all `auction_id` → `auction_item_id`; `placed_at` → `created_at`. |
+| **Daily Ops** | `DailyOperationsService.php` | Removed invalid `created_by` JOIN. |
+| **Chat** | `ChatService.php` | Fixed `customer_id` → `user_id`; removed non-existent `property_id`, `status`, `last_message_at`. |
+| **Wishlist** | `WishlistService.php` | Fixed `updated_at` → `created_at`. |
+| **Property Comparison** | `PropertyComparisonService.php` | Fixed `amenity_id` → `amenity_name`. |
+| **Alert Escalation** | `AlertEscalationService.php` + DB tables | Complete rewrite to match real `alerts` / `alert_escalations` schema. Added missing columns: `alerts` (`level`, `status`, `acknowledged_by`, `acknowledged_at`, `description`), `alert_escalations` (`status`, `escalated_at`, `timeout_minutes`). |
+
+### Verification
+- **Schema scanner:** **CLEAN (0 mismatches)** — down from 261+.
+- **Health Check:** `ok: true`, 806 MySQL tables on port 3307, Apache:80 (pass), APK: 264MB.
+- **Workflow Probe:** **15/15 PASS** (Customer Login, Booking, Plots, MLM, Colonies).
+- **PHP Syntax:** 100% clean on all modified files.
+- **E2E Suite:** **374/374 PASS** (zero regressions).
+
+---
+
+## Session 99: Customer Registry Journey, Bank Bulk Payout Engine & Site Visit Dispatch (2026-09-14)
+
+### Goal
+Implement the three mission modules end-to-end (controllers + views + routes + live verification): 7-stage customer registry tracker with possession-certificate PDF, NEFT/RTGS bulk payout CSV export + UTR reconciliation import, and executive/cab dispatch with WhatsApp colony GPS pins + CRM opportunity auto-creation.
+
+### What Was Done (all additive, no existing method touched)
+| Area | Change |
+|------|--------|
+| **PdfService** | +`TYPE_POSSESSION` const + ALL_TYPES entry + `possession($bookingId)` generator (letterhead header, KV block, N/S/E/W boundary table from width/length, no-dues clearance from schedules/payments, MD + customer signature blocks) + `loadPossession()` (`bookings`→plots/colonies/users + latest `possession_records`) |
+| **CustomerPassbookController** | +`registryTimeline($bookingId)` (ownership check, `bookings`→`plot_bookings` fallback resolver, 7-stage builder, renders `customer/registry_timeline`), +`downloadPossessionCertificate($bookingId)` (gated on handed_over/completed, streams PdfService PDF), +private `resolveRegistryBooking()`, `loadRegistryExtras()`, `buildRegistryStages()` (sequential normalization) |
+| **customer/registry_timeline.php (NEW)** | Stepper (green ticks + pulse), appointment card (date/venue/token), documents-to-carry checklist, deed block, gated certificate button |
+| **passbook.php** | +"Track Registry Status" button on Plot Details card; +PHP `formatINR()` fallback (BONUS FIX — view called undefined PHP fn → 500 for EVERY customer with bookings; only a JS namesake existed) |
+| **PayoutBatchController** | +`exportBankCsv($id)` (GET, formats generic/icici/hdfc, bank data from `user_bank_accounts` primary→any-verified→entry snapshot, net from `payout_entries.net_amount`, ref `APS-COMM-{batch}-{entry}` persisted, RTGS≥₹2L else NEFT, streamed CSV + BOM), +`importUtrCsv($id)` (multipart CSV, header-flexible match on reference incl. in-remarks regex OR account+amount, completed+UTR+paid_at, ledger→paid, batch auto-complete, in-app+SMS+WhatsApp alerts best-effort, flash "N payouts. M errors."), +`ensureUtrColumns()` (adds `utr_number`/`paid_at` iff missing; canonical `payment_reference`/`processed_at` always written) |
+| **payout-batches/detail.php** | +Bank Bulk Payout card (3 format buttons + UTR import modal) for approved/processing/completed |
+| **SiteVisitController** | +`assignExecutive($id)` (executive+cab+pickup → status confirmed, customer pin card + executive pickup card, click-to-chat URLs always returned), +`sendPin($id)` (1-click resend), +`markOutcome($id)` (5 outcomes → auto `opportunities` row for interested/token_booked with budget parse incl. lakh/cr), +`ensureVisitColumns()` (adds `cab_details`/`pickup_time`/`outcome`/`outcome_notes` iff missing), index passes `$executives` |
+| **site_visits/index.php** | +statusMap entries (confirmed/interested/token_booked/not_interested), assign/outcome modals, per-row Assign/Pin/Outcome buttons (fetch + CSRF header) |
+| **routes/web.php** | +7 routes: 2 customer registry, 2 payout-bank (GET export placed BEFORE `{id}` detail), 3 site-visit POST |
+| **DB (via idempotent guards)** | `site_visits` +4 cols, `payout_entries` +2 cols (all NULL-able, added only when missing) |
+
+### Verification
+- `php -l` clean on all 9 touched files; **health_check ok:true** (804 tables); **workflow_probe 15/15**; **module probe 22/22** (all scratch rows deleted, visit 11 restored byte-for-byte); **E2E 371/371 PASS** (zero regressions)
+- Follow-up E2E +3 (payout-batches detail + export CSV + passbook) → **374/374 PASS** (rear: re-probed 374/374, 300s run)
+
+### Follow-up batch "next all" (same session)
+| Area | Change |
+|------|--------|
+| **registry_activity_log schema fix (BONUS)** | `RegistryController::show/history/logRegistryActivity` + `PossessionController::logPossessionActivity` used non-existent cols (`booking_id`, `performed_by`) — every call failed silently (0 rows ever). Now maps booking→`registries.id`, writes real cols (`registry_id`,`action`,`details`,`user_id`,`tenant_id`), booking-tagged fallback when no registry file open. Live-verified: first-ever rows written (id 1,2,3) then cleaned |
+| **Mobile APIs (+8 routes)** | `RegistryTimelineApiController` (customer timeline JSON + gated PDF stream), `PayoutBatchApiController` (staff list/detail/CSV export via PayoutBatchService), `SiteVisitDispatchApiController` (staff assign/outcome/send-pin + opportunity) — all `ApiAuthMiddleware`, `(int)$GLOBALS['api_user_id']`, customer ownership / `ADMIN_ROLES` gates, form-or-JSON bodies |
+| **Flutter** | +13 endpoint constants (`AppConstants`) + 9 client methods (`ApiService`, incl. PDF/CSV URL composers); **+3 pages** `customer/registry_timeline_page` (stepper + certificate `url_launcher`), `admin/payout_batches_page` + `payout_batch_detail_page` (export CSV), `my_bookings` Registry button → `/registry-timeline/:id`, `agent_site_visits` Send Pin + Outcome sheet; +2 quick-links `home` Tools & `profile` Registry & Payouts section; `flutter analyze` 0 errors (3 infos); debug APK rebuilt + deployed to `public/downloads/apsdreamhome.apk` (264MB) |
+| **E2E** | +3 checks (`/admin/payout-batches/2`, export CSV download, `/customer/passbook`) → **374/374 PASS** |
+| **Verification** | API probe 16/16 (401/404/403 gates, 7-stage JSON, PDF bytes, CSV, 1.2cr→12000000 parse, RAL row); web regress 3/3; health ok:true; workflow 15/15; zero scratch rows left |
+
+### Key Lessons (cont.)
+_228. **API controllers must not declare `private function input()`** — `BaseController` already defines `protected input()`; a private narrowing fatals every request to the controller (500 on all 3 dispatch endpoints, caught only by live Bearer test). Renamed to `apiInput()`._
+_229. **Mobile auth login needs JSON, not form-encoded** — `/api/v2/mobile/auth/login` only mints tokens on `Content-Type: application/json` bodies; form POSTs 401 (probe bug, not app bug)._
+_230. **Project-local log is `logs/php_error.log`, not XAMPP's** — the app's ErrorHandler writes fatals there; `C:\xampp\php\logs\php_error_log` only shows CLI errors. Check the project log first for HTTP 500s._
+
+### Key Lessons
+_223. **Spec tables ≠ live tables (DESCRIBE first)** — spec said `plots` boundary cols, `users.bank_account_no/ifsc_code`, `mlm_commission_ledger.net_amount`, `payout_entries.status='paid'`+`utr_number`+`paid_at`, `site_visits.cab_details` — NONE exist. Real mapping: boundaries derived from width/length; bank data in `user_bank_accounts`; net in `payout_entries.net_amount`; payout status enum is pending/processing/completed/failed/cancelled; cab/outcome cols added idempotently._
+_224. **Registry journey lives in `bookings`, passbook lives in `plot_bookings`** — the passbook button passes a `plot_bookings` id, so `resolveRegistryBooking()` maps plot+customer to the canonical `bookings` row (registry/possession cols exist ONLY there)._
+_225. **Probe bugs can masquerade as app bugs** — login `session_regenerate_id` sends TWO Set-Cookie headers; first-match capture used a stale sid (all customer tests 302'd). Always take the LAST PHPSESSID. Likewise `preg_match` POSITIVE tests can pass trivially on early-return 302s — assert DB state, not just HTTP codes._
+_226. **`strtolower(preg_replace('/[^a-z0-9]/',...))` strips UPPERCASE before lowering** — CSV header `UTR` normalized to `''`, so UTR import silently matched nothing (caught only because the probe asserted DB state). Fix: `/[^a-zA-Z0-9]/`._
+_227. **Dead-on-arrival passbook for all booking holders** — `passbook.php` called PHP `formatINR()` which exists NOWHERE (only a JS namesake). Every customer with ≥1 booking got HTTP 500; testuser has 0 bookings so E2E never caught it. Fixed with an Indian-grouping PHP fallback in-view._
+
+---
+
+## Session 98: Dead Tables Activation, Mobile API Endpoints & Enterprise Integrations (2026-09-14)
+
+### Goal
+Activate dormant database tables from the 800-table audit, wire missing service dropdowns, and create secure multi-tenant mobile API endpoints for the new admin features.
+
+### What Was Done
+| Phase | Scope | Details |
+|-------|-------|---------|
+| **Phase 1: Core Features** | Dead tables activation | Possession Handover enhanced (added `remarks`), Blog Comments full CRUD (frontend submit + admin moderation), Financial Inquiries admin CRUD with status workflow. |
+| **Phase 2: Missing Admin Features** | 5 Dead tables | `CampaignTemplateController`, `VoiceUploadController`, `AppFeedbackController`, `SearchHistoryController`, `AdminSchedulerController` wired with full views and sidebar entries. |
+| **Phase 3: Service Dropdown Wiring** | Forms & reference tables | Financial inquiries (`financial_services`), Contact form (`handleQuickInquiry()` to `contact_submissions`), Legal services (`legal_services`), Construction services (`construction_services`). |
+| **Phase 4: Service Seeding** | DB reference tables | Seeded 12 construction services, wired legal services dropdown. |
+| **Phase 5: Mobile API Endpoints** | 4 new mobile API controllers | Created `CampaignTemplateApiController`, `VoiceUploadApiController`, `AppFeedbackApiController`, `SearchHistoryApiController` with 8 new endpoints under `/api/v2/mobile/` protected by `ApiAuthMiddleware`. |
+| **Flutter Mobile Integration** | API constants & service methods | Added 5 endpoint constants to `AppConstants` and 9 client methods to `ApiService` in `mobile/apsdreamhome_app_v2`. Dart analyze 0 errors. |
+| **Master Prompt 3 Integrations** | Customer Passbook & Payouts | `CustomerPassbookController` (`/customer/passbook`, `/customer/registry/{bookingId}`, `/customer/possession-certificate/{bookingId}`), `PayoutBatchController` (`exportBankCsv`, `importUtrCsv`), `SiteVisitController` (`assignExecutive`). |
+
+### Verification
+- **PHP syntax:** Clean on all files (`php -l`).
+- **Health Check:** `ok: true`, 804 MySQL tables on port 3307, Apache:80 (pass), APK: 264MB, Flutter: 1.2.2+1.
+- **Workflow Probe:** **15/15 PASS** (Customer Login, Booking, Plots, MLM, Colonies).
+- **AI Smoke Test:** **7/7 PASS** (SmartAI, GeminiBot, VoiceAssistant, Recos, Analyze).
+- **E2E Master Suite:** **371/371 PASS** (zero regressions across all admin, public, lifecycle, and login flows).
+
+---
+
+## Session 97: Enterprise ERP Modules — Payroll Batch, Colony P&L, 194H TDS (2026-09-12)
+
+### Goal
+Mission: 1-click monthly payroll + payslip PDFs (Module 1), colony P&L + overdue EMI tracker with WhatsApp reminders (Module 2), 194H TDS + executive P&L (Module 3). Strategy: reuse-first — thin new methods on existing engines, real-schema mapping, zero deletions.
+
+### What Was Done (all additive, no existing method touched)
+| Area | Change |
+|------|--------|
+| **PayrollController** | +`generateBatch()` (POST month YYYY-MM, loops `DailyOperationsService::generatePayslip`, flash stats), +`payslip($id)` (print view), +`downloadPayslipPdf($id)` (streams PdfService PDF); `index()` additionally passes `recent_payslips` + `batch_month` |
+| **PdfService** | +`TYPE_PAYSLIP` const + ALL_TYPES entry + `payslip($id)` generator (MinimalPDF header/KV/earnings/deductions tables, net-in-words) + `loadPayslip()` |
+| **payroll/index.php** | +Batch card (month picker + Run modal, CSRF) + Recent Payslips table (view/PDF buttons); existing employee_payroll table untouched |
+| **payroll/payslip.php (NEW)** | Standalone printable Indian payslip (logo header, UAN/PF omitted — no such columns exist; PAN/Bank from `employees`), earnings/deductions, net-in-words, signatory, print CSS, Download PDF button |
+| **ErpDashboardController** | +`colonyPnl()` (+ `?export=csv`), +`emiDefaulters()` (1–30/31–60/61–90/90+ buckets), +`sendEmiReminder()` (JSON: wa.me click-to-chat + template attempt + reminder counters), +private `tCond($alias)` tenant helper |
+| **erp/colony_pnl.php, erp/emi_defaulters.php (NEW)** | Colony cards + ledger table + CSV; aging badges + green WhatsApp button (fetch POST with CSRF header) |
+| **FinancialReportController** | +`tdsReport()`, +`exportTdsCsv()` (26Q columns), +`profitAndLossStatement()` (FinancialReportService base + land/dev/commission/salary/overhead lines, each try/caught), +private `buildTdsData()`, `currentFyLabel()`, `fyOptions()` |
+| **reports/tds_194h.php, reports/profit_loss.php (NEW)** | FY/quarter filter + 26Q table + CSV; tiered printable P&L with EBITDA |
+| **routes/web.php** | +9 routes (payroll×3, erp×3, reports×3), placed before `{id}` routes; zero collisions |
+| **Navigation wiring** | ERP cross-link buttons added (inventory/plot-profit/land-mapping/colony-pnl interlinked); 3 sidebar items in `admin_menu_items` (EMI Defaulters→finance/emi.manage, TDS 194H→finance/financial.view, Executive P&L→reports/reports.view) + mirrored `admin_role_menu_permissions` from closest siblings (8/11/41 roles) + `AdminMenuService::clearMenuCache()` |
+
+### Verification
+- `php -l` clean on all touched files; **health_check ok:true** (804 tables — `plot_locks` created 17:37 by booking flow, NOT this session); **workflow_probe 15/15 PASS**; all 9 new + 6 neighboring routes HTTP 200 (incl. real `%PDF` bytes, TDS math 577176×20%=115435.20 verified live); **E2E_MASTER_TEST 371/371 PASS** (was 360 — regenerated `admin_menu_urls.json` via `dump_admin_urls.php` to 299 URLs so the 3 new sidebar pages are suite-covered; full sidebar + lifecycle + public + login flows green); **gates audit**: zero user-input SQL interpolations (all `?` bound + hardcoded tenant fragments), all divisions `$x > 0 ? : 0` guarded
+
+### Key Lessons
+_221. **NEVER batch-test payroll against months with paid slips without a paid-guard** — `DailyOperationsService::generatePayslip()` blindly upserts AND resets status to `draft`. First test overwrote 6 paid June slips (amounts + status). Restored from May siblings (paid_date/refs survive UPDATE) + added paid-skip guard in `generateBatch()` (paid slips never overwritten; re-tested 0 rows touched). Pre-existing engine flaw, now contained on batch path._
+_222. **Spec-vs-reality mapping (verified via DESCRIBE, not memory)** — `employee_attendance.status` (not `attendance_status`); `salary_structures` has no `da`; `salary_payments` has no `month_year/payable_days`; `land_purchases` has no `colony_id` (aggregate DISTINCT holdings, fallback `estimated_land_cost`); `mlm_commission_ledger` has no TDS cols (compute via `TdsConfigService`); PAN lives in `employees.pan_number` (0 filled — report exercises the 20% path); `bookings.customer_id` often empty — join `users` via `customer_id` THEN `user_id` + `plot_bookings` subquery fallback._
+_223. **TDS threshold follows `TdsConfigService` (₹30,000), not spec's ₹15,000** — single source of truth; UI displays the live value. Rates 5%/20% match spec._
+_224. **Pre-existing breakage found AND fixed (bonus, additive-only)** — `/admin/reports/financial/profit-loss|balance-sheet|cash-flow` rendered views that did NOT exist ("View not found"). Created the 3 missing view files matching the exact `$data` structures `FinancialReportService` returns; zero controller changes. All 3 now HTTP 200._
+_225. **CURL cookie jars are flaky on this box (NOJAR written); explicit `PHPSESSID` header + 1s pacing gives stable verification.**_
+
+---
+
+## Session 96: Root Debris & Scratch Scripts Sanitization (2026-09-12)
+
+### Goal
+Sanitize workspace root and archive folders so AI agents are not confused by scratch scripts, misfired CLI files, or old screenshot dumps. Ensure zero active code is touched.
+
+### What Was Done
+| Category | Action | Details |
+|----------|--------|---------|
+| **Root typo/CLI junk** | ✅ DELETED 17 files | `,`, `and`, `progress`, `runs`, `tests,`, `--full-page`, `--output`, `--selector`, `query`, `temp_head_pubspec.yaml.bak`, `_cookies.txt`, `_cookies2.txt`, `c_drive_opencode.log`, `e_drive_opencode.log`, `overnight_tests.log`, `lint_errors.log`, `e2e_output.txt` |
+| **Empty folders** | ✅ DELETED 2 dirs | `backup_cleanup/`, `_tmp/` (both 0 items) |
+| **Root scratch scripts** | 📦 ARCHIVED 37 files | `test.php`, `test_chat*.php` (10 files), `check_admin*.php` (4 files), `check_routes*.php` (2 files), `check_mlm_tables.php`, `check_schema.php`, `audit_routes*.js` (2 files), `audit_urls.php`, `fetch_html.php`, `show_html.php`, `tail_log.php`, `find_duplicate.py`, `list_extra.py`, `list_flutter_routes.py`, `list_web_routes.py`, `analyze_screenshots*.ps1/py` (3 files), `archive_auth.php`, `compare_endpoints.py`, `e2e.js`, `real_test_report.json`, `migration_status.txt`, `artisan` → `_archive/root_scratch_scripts_20260912/` |
+| **Old audit screenshot dumps** | 📦 ARCHIVED 3 dirs | `visual_audit_output/` (47 files), `audit_results/` (66 files), `_test_screenshots/` (15 files) → `_archive/audit_screenshots_old/` |
+| **Legacy config folders** | 📦 ARCHIVED 2 dirs | `Drive/` (devmind assistant_config.json), `aps/` (Visual Studio SQL proj) → `_archive/legacy_configs_20260912/` |
+| **Script & SQL reorganization** | 🚚 MOVED 3 files | `db_integrity_check.php` & `analyze_services.php` → `scripts/`, `create_document_esign_table.sql` → `sql/` |
+
+### Critical Items Verified & Preserved
+| Item | Status | Purpose |
+|------|--------|---------|
+| `google_callback.php` | PRESERVED AT ROOT | Active Google OAuth redirect handler required for Google Login |
+| `websocket_server.php` & `websocket_broadcast_server.php` | PRESERVED AT ROOT | Active Ratchet WebSocket servers for real-time notifications |
+| `start_services.bat`, `QUICK_START_SERVER.bat`, etc. | PRESERVED AT ROOT | Active server start scripts |
+| `health_check.php` | ✅ PASS | All services (Apache, MySQL 803 tables, APK, Flutter) passing |
+
+### Key Lessons
+_217. **Misfired CLI commands create root debris** — Tools run from CLI sometimes output arguments as filenames (e.g., `--full-page`, `--output`, `--selector`, `,`, `tests,`). Clean these carefully._
+_218. **Keep root focused on bootstrapping** — Development scripts, database integrity scripts, and one-off queries belong in `scripts/` or `sql/`, not at the repository root where they clutter file trees for AI agents._
+_219. **Root vs Subdirectory Services are NOT simple duplicates** — `duplicate_checker.php` flags 28 pairs of services with same class names, but critical methods differ! E.g., `\App\Services\MLMNetworkService->getTeamSize()` is called by `MobileMLMApiController`, whereas `\App\Services\MLM\MLMNetworkService` does NOT have this method. Never delete root services without grepping all controller method calls._
+_220. **Zero loose files in `_archive`** — Subfolders keep archive clean; 35 loose PNGs and 28 loose test scripts were organized into `audit_screenshots_old/`, `legacy_scripts/`, and `orphaned_services/`._
+
+---
+
+## Session 95: Deep Duplicate Cleanup — Root Dart Stubs + Orphaned CSS/Views/Scripts (2026-09-12)
+
+### Goal
+Deep analysis and safe cleanup of all duplicate/orphaned files discovered: 298 root `.dart` stubs, orphaned CSS files, v1 Flutter WebView app, orphaned view folders, iterative script versions, dev screenshots at root.
+
+### What Was Done
+| Category | Action | Details |
+|----------|--------|---------|
+| **Root `.dart` stubs** | ✅ DELETED 298 files | All 0 KB empty stubs — confirmed no references |
+| **CSS orphans deleted** | ✅ DELETED 6 files | `responsive.css` (no layout reference), `auto_extracted.css` (placeholder), `extracted-styles.css` (placeholder), `modern-style.css` (no reference), `admin-login.min.css` (no reference), `advanced-features.min.css` (no reference) |
+| **CSS orphans archived** | 📦 ARCHIVED 2 files | `ai-chat.css`, `ai-chat-enhanced.css` → `_archive/css_orphans_20260912/` (only in _archive HTML, no active layout) |
+| **Flutter v1 app** | 📦 ARCHIVED | `mobile/aps_dream_home_app/` → `_archive/mobile_v1_webview_20260912/` (simple WebView wrapper, superseded by v2 native app) |
+| **Orphaned views** | 📦 ARCHIVED | `app/views/farmers/` (6 files, no controller), `app/views/language/selector.php` (no controller ref) → `_archive/orphaned_views_20260912/` |
+| **Script iterations** | 📦 ARCHIVED 11 files | `fix_web_routes` (4 versions), `debug_scanner2-6` (5 files), `scan_routes_debug/debug2` (2 files) → `_archive/scripts_iterations_20260912/` |
+| **Root screenshots** | 📦 MOVED 10 files | `colonies_fixed*.png/webp`, `login_page.png`, `mlm_dashboard.png`, etc. → `_screenshots/` |
+
+### Critical Findings (DO NOT TOUCH)
+| Item | Why |
+|------|-----|
+| `consolidated/` CSS folder | STILL ACTIVE — `employee.php`, `agent.php`, `customer.php`, `associate.php` all load `aps-components.css`. Session 87 "DEPRECATED" label was INCORRECT. |
+| `mobile-responsive.css` | Active in ALL 8 layouts |
+| `notification-system.css` | Active in 5 layouts |
+| `notification-widget.css` | Active in 5 layouts |
+| `app/views/employee/` | Role dashboards (EmployeeDashboardController renders here) |
+| `app/views/employees/` | Employee self-service portal (EmployeeController renders here) |
+| `app/views/payment/` | AdvancedPaymentController + PaymentGatewayController |
+| `app/views/payments/` | Main PaymentController |
+| `app/views/farmer/` | FarmerDashboardController |
+| `app/views/languages/` | LanguageController reads translations from here |
+
+### Key Lessons
+_212. **Root `.dart` stubs are orphaned planning artifacts** — AI sessions sometimes create stub files at project root during planning. Always verify 0 KB `.dart` files are truly empty before deleting. All 298 were confirmed 0 KB with no references._
+_213. **Session notes "DEPRECATED" can be wrong** — Session 87 marked `consolidated/` CSS as "NOT LOADED" but 5 active layouts still load `aps-components.css` from it. Always grep to verify before deleting._
+_214. **Similar folder names ≠ duplicates** — `employee/` vs `employees/`, `payment/` vs `payments/`, `farmer/` vs `farmers/` all serve different controllers with different purposes. Naming confusion, not actual duplication._
+_215. **`language/` vs `languages/` are genuinely different** — `languages/` has translation files (en.php, hi.php) loaded by LanguageController. `language/selector.php` was an orphaned UI file with no controller reference._
+_216. **v1 Flutter app was a WebView wrapper** — `aps_dream_home_app` was a simple website-in-app. The actual native app is `apsdreamhome_app_v2` with Clean Architecture. v1 has nothing that v2 doesn't have natively._
+
+---
 
 ## Session 94: Light-Only UI + Rupee Mojibake + Header Overlap (2026-09-03)
+
 
 ### Goal
 Fix light mode remaining invisible button/card text, rupee symbol broken on ERP, header green call button overlapping logo. Deep MCP preview of home page.

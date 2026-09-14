@@ -174,11 +174,77 @@ class LeadController extends AdminController
                 }
             } catch (\Throwable $e) { error_log('LeadController::store department request error: ' . $e->getMessage()); }
 
+            // Auto-assign if no assigned_to was provided
+            if (empty($_POST['assigned_to']) && !empty($result['lead_id'])) {
+                try {
+                    $assignSvc = new \App\Services\CRM\LeadAssignmentService(\App\Core\Database\Database::getInstance());
+                    $assignSvc->assignLead((int)$result['lead_id']);
+                } catch (\Throwable $e) {
+                    error_log('LeadController::store auto-assign error: ' . $e->getMessage());
+                }
+            }
+
+            // Enroll in drip campaign if email provided
+            if (!empty($result['lead_id']) && !empty($_POST['email'])) {
+                try {
+                    $dripSvc = new \App\Services\DripCampaignService(\App\Core\Database\Database::getInstance());
+                    $leadName = trim(($_POST['first_name'] ?? '') . ' ' . ($_POST['last_name'] ?? ''));
+                    $dripSvc->autoEnrollNewLeads((int)$result['lead_id'], $_POST['email'], $leadName ?: null);
+                } catch (\Throwable $e) {
+                    error_log('LeadController::store drip enrollment error: ' . $e->getMessage());
+                }
+            }
+
             $this->setFlash('success', 'Lead created successfully (' . ($result['lead_number'] ?? '') . ')');
         } else {
             $this->setFlash('error', 'Failed to create lead: ' . ($result['error'] ?? 'Unknown error'));
         }
         return $this->redirect('/admin/leads');
+    }
+
+    /**
+     * AJAX: Auto-assign a single lead — POST /admin/leads/{id}/auto-assign
+     */
+    public function autoAssignSingle($id)
+    {
+        $this->requireAdmin();
+        $id = (int)$id;
+        if ($id <= 0) {
+            return $this->jsonResponse(['success' => false, 'error' => 'Invalid lead ID'], 400);
+        }
+
+        try {
+            $assignSvc = new \App\Services\CRM\LeadAssignmentService(\App\Core\Database\Database::getInstance());
+            $result = $assignSvc->assignLead($id);
+            return $this->jsonResponse($result, $result['success'] ? 200 : 404);
+        } catch (\Throwable $e) {
+            error_log('LeadController::autoAssignSingle error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Assignment failed'], 500);
+        }
+    }
+
+    /**
+     * AJAX: Auto-assign all unassigned leads — POST /admin/leads/auto-assign
+     */
+    public function autoAssign()
+    {
+        $this->requireAdmin();
+        $limit = min((int)($_POST['limit'] ?? 50), 200);
+
+        try {
+            $assignSvc = new \App\Services\CRM\LeadAssignmentService(\App\Core\Database\Database::getInstance());
+            $result = $assignSvc->autoAssignBatch($limit);
+            return $this->jsonResponse([
+                'success' => true,
+                'assigned' => $result['assigned'],
+                'failed' => $result['failed'],
+                'total' => $result['total'],
+                'message' => "{$result['assigned']} leads assigned, {$result['failed']} failed out of {$result['total']} unassigned",
+            ]);
+        } catch (\Throwable $e) {
+            error_log('LeadController::autoAssign error: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'Batch assignment failed'], 500);
+        }
     }
     
     /**

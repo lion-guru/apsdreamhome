@@ -184,6 +184,36 @@ class AppConstants {
   static const String markReadEndpoint = '/messages/read';
   static const String unreadCountEndpoint = '/messages/unread/count';
 
+  // Campaign Templates
+  static const String campaignTemplatesEndpoint = '/api/v2/mobile/campaign-templates';
+  static const String campaignTemplateDetailEndpoint = '/api/v2/mobile/campaign-templates/';
+
+  // Voice Uploads
+  static const String voiceUploadsEndpoint = '/api/v2/mobile/voice-uploads';
+  static const String voiceUploadDetailEndpoint = '/api/v2/mobile/voice-uploads/';
+
+  // App Feedback
+  static const String appFeedbackEndpoint = '/api/v2/mobile/app-feedback';
+  static const String appFeedbackDetailEndpoint = '/api/v2/mobile/app-feedback/';
+
+  // Search History
+  static const String searchHistoryEndpoint = '/api/v2/mobile/search-history';
+
+  // Registry Timeline (customer registry journey + possession certificate)
+  static const String registryTimelineEndpoint = '/api/v2/mobile/registry/timeline/';
+  static const String possessionCertificateEndpoint = '/api/v2/mobile/registry/possession-certificate/';
+
+  // Payout Batches (staff bulk payout list/detail/CSV export)
+  static const String payoutBatchesEndpoint = '/api/v2/mobile/payout-batches';
+  static const String payoutBatchDetailEndpoint = '/api/v2/mobile/payout-batches/';
+  static const String payoutBatchExportSuffix = '/export-bank-csv';
+
+  // Site Visit Dispatch (staff assign/outcome/send-pin)
+  static const String siteVisitDispatchEndpoint = '/api/v2/mobile/site-visits/';
+  static const String siteVisitAssignSuffix = '/assign';
+  static const String siteVisitOutcomeSuffix = '/outcome';
+  static const String siteVisitSendPinSuffix = '/send-pin';
+
   // Database
   static const String databaseName = 'aps_dream_home.db';
   static const int databaseVersion = 2;

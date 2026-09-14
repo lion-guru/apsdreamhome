@@ -3,6 +3,16 @@ $selectedCategory = $selected_category ?? '';
 $searchQuery = $search_query ?? '';
 $categories = $categories ?? [];
 $documents = $documents ?? [];
+
+// Document categories for booking process
+$bookingDocCategories = [
+    'booking_forms' => ['label' => 'Booking Forms', 'icon' => 'fa-file-contract', 'color' => 'primary'],
+    'kyc_docs' => ['label' => 'KYC Documents', 'icon' => 'fa-id-card', 'color' => 'success'],
+    'payment_docs' => ['label' => 'Payment Documents', 'icon' => 'fa-receipt', 'color' => 'warning'],
+    'legal_docs' => ['label' => 'Legal Documents', 'icon' => 'fa-gavel', 'color' => 'danger'],
+    'registry_docs' => ['label' => 'Registry Documents', 'icon' => 'fa-file-signature', 'color' => 'info'],
+    'possession_docs' => ['label' => 'Possession Documents', 'icon' => 'fa-key', 'color' => 'secondary'],
+];
 ?>
 
 <div class="container mt-4">
@@ -21,6 +31,79 @@ $documents = $documents ?? [];
             <p class="text-muted"><?= __('document_gallery_subtitle') ?></p>
         </div>
     </div>
+
+    <!-- Document Categories for Booking Process -->
+    <section class="mb-5" id="booking-docs-guide">
+        <div class="row g-4 mb-4">
+            <div class="col-12">
+                <h4 class="fw-bold text-primary mb-3"><i class="fas fa-info-circle me-2"></i>Documents Required for Plot Booking</h4>
+                <p class="text-muted">Complete document checklist for a smooth booking process. All documents can be uploaded digitally or submitted physically at our office.</p>
+            </div>
+            <?php foreach ($bookingDocCategories as $key => $cat): ?>
+                <div class="col-lg-2 col-md-4 col-6">
+                    <div class="doc-category-card h-100 p-4 text-center border rounded-4" style="border-color: var(--bs-<?= $cat['color'] ?>) !important;">
+                        <div class="doc-category-icon mb-3">
+                            <i class="fas <?= $cat['icon'] ?> fa-3x text-<?= $cat['color'] ?>"></i>
+                        </div>
+                        <h6 class="fw-bold mb-2"><?= $cat['label'] ?></h6>
+                        <small class="text-muted">
+                            <?php
+                            $descMap = [
+                                'booking_forms' => 'Application, Agreement, Terms',
+                                'kyc_docs' => 'PAN, Aadhaar, Photo, Address',
+                                'payment_docs' => 'Receipts, Bank Statements, NOC',
+                                'legal_docs' => 'Sale Deed, Title Deed, POA',
+                                'registry_docs' => 'Mutation, Registry, Khata',
+                                'possession_docs' => 'Handover, NOC, Keys'
+                            ];
+                            echo $descMap[$key] ?? '';
+                            ?>
+                        </small>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+
+        <!-- Video Recording & Terms Notice -->
+        <div class="alert alert-info border-0 shadow-sm" style="background: linear-gradient(135deg, #e0f2fe 0%, #fef3c7 100%);">
+            <div class="d-flex align-items-start gap-3">
+                <i class="fas fa-video fa-2x text-primary mt-1"></i>
+                <div>
+                    <h5 class="fw-bold mb-2">Video Recording & Digital Consent</h5>
+                    <p class="mb-2">For all plot bookings, we record a short video confirmation where you acknowledge understanding the terms and conditions. This provides legal protection for both parties.</p>
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <a href="<?= BASE_URL ?>/documents/booking-terms" class="btn btn-sm btn-outline-primary" target="_blank">
+                                <i class="fas fa-file-alt me-1"></i> View Booking Terms & Conditions
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="<?= BASE_URL ?>/documents/privacy-policy" class="btn btn-sm btn-outline-secondary" target="_blank">
+                                <i class="fas fa-shield-alt me-1"></i> Privacy Policy
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Physical Document Submission -->
+        <div class="alert alert-warning border-0 shadow-sm mt-3">
+            <div class="d-flex align-items-start gap-3">
+                <i class="fas fa-file-alt fa-2x text-warning mt-1"></i>
+                <div>
+                    <h5 class="fw-bold mb-2">Physical Document Submission</h5>
+                    <p class="mb-2">You can also download, print, and submit physical copies at our office:</p>
+                    <ul class="mb-0 small">
+                        <li>Download forms from <a href="<?= BASE_URL ?>/documents/download-forms" target="_blank">here</a></li>
+                        <li>Fill, sign, and attach required KYC documents</li>
+                        <li>Submit at: APS Dream Home Office, Gorakhpur, UP</li>
+                        <li>Associates can also help you fill forms at your location</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Filters -->
     <div class="card mb-4">
@@ -146,5 +229,21 @@ $documents = $documents ?? [];
 .document-icon {
     width: 50px;
     text-align: center;
+}
+
+.doc-category-card {
+    transition: all 0.3s ease;
+    background: white;
+}
+.doc-category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border-color: var(--bs-primary) !important;
+}
+.doc-category-icon {
+    transition: transform 0.3s ease;
+}
+.doc-category-card:hover .doc-category-icon {
+    transform: scale(1.1);
 }
 </style>

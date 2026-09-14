@@ -283,24 +283,21 @@ class CompareController extends BaseController
     /**
      * Save comparison session
      */
-    private function saveComparisonSession($userId, $propertyIds, $sessionName = null)
+private function saveComparisonSession($userId, $propertyIds, $sessionName = null)
     {
         try {
-            // Create session
-            $sql = "INSERT INTO property_comparison_sessions 
-                    (user_id, name, created_at, expires_at) 
-                    VALUES (?, ?, NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY))";
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([$userId, $sessionName ?? 'Comparison ' . date('Y-m-d H:i')]);
-            $sessionId = $this->pdo->lastInsertId();
-
-            // Save property comparisons
+            // Create session using real table columns
             $propertyIdsJson = json_encode($propertyIds);
-            $sql = "INSERT INTO property_comparisons 
-                    (user_id, session_id, property_ids, created_at) 
-                    VALUES (?, ?, ?, NOW())";
+            $sessionData = json_encode([
+                'name' => $sessionName ?? 'Comparison ' . date('Y-m-d H:i'),
+                'expires_at' => date('Y-m-d H:i:s', strtotime('+30 days')),
+            ]);
+            $sql = "INSERT INTO property_comparison_sessions 
+                    (user_id, property_ids, session_data, tenant_id, created_at) 
+                    VALUES (?, ?, ?, ?, NOW())";
             $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([$userId, $sessionId, $propertyIdsJson]);
+            $stmt->execute([$userId, $propertyIdsJson, $sessionData, $this->tenantId()]);
+            $sessionId = $this->pdo->lastInsertId();
 
             return $sessionId;
         } catch (\Exception $e) {
@@ -315,17 +312,17 @@ class CompareController extends BaseController
     private function getUserSessions($userId)
     {
         try {
-            $sql = "SELECT pcs.id, pcs.name, pcs.created_at,
-                           COUNT(pc.id) as property_count
+            $sql = "SELECT pcs.id, 
+                           JSON_UNQUOTE(JSON_EXTRACT(pcs.session_data, '$.name')) as name,
+                           pcs.created_at,
+                           JSON_LENGTH(pcs.property_ids) as property_count
                     FROM property_comparison_sessions pcs
-                    LEFT JOIN property_comparisons pc ON pcs.id = pc.session_id
-                    WHERE pcs.user_id = ? AND pcs.expires_at > NOW()
-                    GROUP BY pcs.id
+                    WHERE pcs.user_id = ?
                     ORDER BY pcs.created_at DESC
                     LIMIT 10";
         } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
         }
 
         $stmt = $this->pdo->prepare($sql);

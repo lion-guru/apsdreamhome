@@ -236,7 +236,7 @@ class ChatService
      */
     public function getConversations(int $userId, string $userType, string $status = 'active'): array
     {
-        $column = $userType === 'customer' ? 'customer_id' : 'agent_id';
+        $column = $userType === 'customer' ? 'user_id' : 'agent_id';
         $tid = $this->getTenantId();
         $custTenantSql = $tid > 1 ? " AND u.tenant_id = ?" : "";
         $agentTenantSql = $tid > 1 ? " AND a.tenant_id = ?" : "";
@@ -249,17 +249,15 @@ class ChatService
             CASE 
                 WHEN ? = 'customer' THEN a.phone
                 ELSE u.phone
-            END as other_party_phone,
-            p.title as property_title
+            END as other_party_phone
             FROM chat_conversations c
-            LEFT JOIN users u ON u.id = c.customer_id{$custTenantSql}
+            LEFT JOIN users u ON u.id = c.user_id{$custTenantSql}
             LEFT JOIN users a ON c.agent_id = a.id{$agentTenantSql}
-            LEFT JOIN properties p ON c.property_id = p.id
-            WHERE c.{$column} = ? AND c.status = ?
-            ORDER BY c.last_message_at DESC";
+            WHERE c.{$column} = ?
+            ORDER BY c.created_at DESC";
         
         $stmt = $this->database->prepare($sql);
-        $params = [$userType, $userType, $userId, $status];
+        $params = [$userType, $userType, $userId];
         if ($tid > 1) { $params[] = $tid; $params[] = $tid; }
         $stmt->execute($params);
         
@@ -374,10 +372,10 @@ class ChatService
         
         $sql = "SELECT 
             COUNT(DISTINCT c.id) as total_conversations,
-            COUNT(DISTINCT CASE WHEN c.status = 'active' THEN c.id END) as active_conversations,
+            COUNT(DISTINCT c.id) as active_conversations,
             COUNT(m.id) as total_messages,
             AVG(CASE WHEN m.sender_type = 'agent' THEN 1 END) as agent_messages,
-            AVG(TIMESTAMPDIFF(MINUTE, c.created_at, c.last_message_at)) as avg_conversation_duration
+            0 as avg_conversation_duration
             FROM chat_conversations c
             LEFT JOIN chat_messages m ON c.id = m.session_id
             WHERE c.agent_id = ? AND DATE(c.created_at) BETWEEN ? AND ?";
@@ -399,11 +397,11 @@ class ChatService
         if ($userType === 'customer') {
             $sql = "SELECT SUM(customer_unread_count) as total,
                 COUNT(CASE WHEN customer_unread_count > 0 THEN 1 END) as conversations
-                FROM chat_conversations WHERE customer_id = ? AND status = 'active'";
+                FROM chat_conversations WHERE user_id = ?";
         } else {
             $sql = "SELECT SUM(agent_unread_count) as total,
                 COUNT(CASE WHEN agent_unread_count > 0 THEN 1 END) as conversations
-                FROM chat_conversations WHERE agent_id = ? AND status = 'active'";
+                FROM chat_conversations WHERE agent_id = ?";
         }
         
         $stmt = $this->database->prepare($sql);

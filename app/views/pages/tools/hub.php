@@ -4,22 +4,42 @@
             <h1 class="text-white fw-bold display-5"><i class="fas fa-toolbox me-2"></i><?php echo __('tool_hub_title', [], 'Tools Hub'); ?></h1>
             <p class="text-white-50 fs-5"><?php echo __('tool_hub_subtitle', [], 'Make your property journey smarter — all calculators in one place'); ?></p>
         </div>
-        <div class="row g-4">
+        
+        <!-- Category Filter Tabs -->
+        <div class="d-flex flex-wrap justify-content-center gap-2 mb-5" role="tablist">
+            <button class="tool-filter-btn active btn btn-sm px-4 py-2" data-filter="all" role="tab" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;">
+                <i class="fas fa-th-large me-1"></i> All Tools
+            </button>
+            <button class="tool-filter-btn btn btn-sm px-4 py-2" data-filter="financial" role="tab" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;">
+                <i class="fas fa-calculator me-1"></i> Financial
+            </button>
+            <button class="tool-filter-btn btn btn-sm px-4 py-2" data-filter="property" role="tab" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;">
+                <i class="fas fa-home me-1"></i> Property
+            </button>
+            <button class="tool-filter-btn btn btn-sm px-4 py-2" data-filter="investment" role="tab" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;">
+                <i class="fas fa-chart-line me-1"></i> Investment
+            </button>
+            <button class="tool-filter-btn btn btn-sm px-4 py-2" data-filter="tax" role="tab" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;">
+                <i class="fas fa-receipt me-1"></i> Tax & Legal
+            </button>
+        </div>
+
+        <div class="row g-4" id="toolsGrid">
             <?php
             $tools = [
-                ['url' => BASE_URL . '/calc', 'gradient' => 'linear-gradient(135deg, #0d9488, #0f766e)', 'icon' => 'fa-calculator', 'title_key' => 'tool_emi_calc', 'title_default' => 'EMI Calculator', 'desc_key' => 'tool_emi_calc_desc', 'desc_default' => 'Calculate home loan EMI and total interest payable'],
-                ['url' => BASE_URL . '/stamp-duty-calculator', 'gradient' => 'linear-gradient(135deg, #f093fb, #f5576c)', 'icon' => 'fa-file-contract', 'title_key' => 'tool_stamp_calc', 'title_default' => 'Stamp Duty Calculator', 'desc_key' => 'tool_stamp_calc_desc', 'desc_default' => 'Know the total government charges for property registration'],
-                ['url' => BASE_URL . '/plot-size-converter', 'gradient' => 'linear-gradient(135deg, #4facfe, #00f2fe)', 'icon' => 'fa-vector-square', 'title_key' => 'tool_plot_conv', 'title_default' => 'Plot Size Converter', 'desc_key' => 'tool_plot_conv_desc', 'desc_default' => 'Convert between SQFT, Acre, Bigha, Gaj and more units'],
-                ['url' => BASE_URL . '/home-loan-eligibility', 'gradient' => 'linear-gradient(135deg, #43e97b, #38f9d7)', 'icon' => 'fa-hand-holding-dollar', 'title_key' => 'tool_loan_elig', 'title_default' => 'Home Loan Eligibility', 'desc_key' => 'tool_loan_elig_desc', 'desc_default' => 'Check how much home loan you can get based on your salary'],
-                ['url' => BASE_URL . '/rent-vs-buy', 'gradient' => 'linear-gradient(135deg, #a18cd1, #fbc2eb)', 'icon' => 'fa-scale-balanced', 'title_key' => 'tool_rent_vs_buy', 'title_default' => 'Rent vs Buy Calculator', 'desc_key' => 'tool_rent_vs_buy_desc', 'desc_default' => 'Understand whether renting or buying property is better for you'],
-                ['url' => BASE_URL . '/construction-cost-estimator', 'gradient' => 'linear-gradient(135deg, #f7971e, #ffd200)', 'icon' => 'fa-hard-hat', 'title_key' => 'tool_constr_cost', 'title_default' => 'Construction Cost Estimator', 'desc_key' => 'tool_constr_cost_desc', 'desc_default' => 'Estimate house construction cost based on area and quality'],
-                ['url' => BASE_URL . '/rental-yield-calculator', 'gradient' => 'linear-gradient(135deg, #11998e, #38ef7d)', 'icon' => 'fa-chart-pie', 'title_key' => 'tool_rental_yield', 'title_default' => 'Rental Yield Calculator', 'desc_key' => 'tool_rental_yield_desc', 'desc_default' => 'Calculate expected rental income and ROI on your property'],
-                ['url' => BASE_URL . '/property-tax-calculator', 'gradient' => 'linear-gradient(135deg, #fc5c7d, #6a82fb)', 'icon' => 'fa-file-invoice-dollar', 'title_key' => 'tool_prop_tax', 'title_default' => 'Property Tax Calculator', 'desc_key' => 'tool_prop_tax_desc', 'desc_default' => 'Estimate your annual property tax with detailed breakdown'],
-                ['url' => BASE_URL . '/property-valuation', 'gradient' => 'linear-gradient(135deg, #fa709a, #fee140)', 'icon' => 'fa-house-chimney', 'title_key' => 'tool_prop_val', 'title_default' => 'Property Valuation', 'desc_key' => 'tool_prop_val_desc', 'desc_default' => 'Get an instant estimate of your property market value'],
-                ['url' => BASE_URL . '/sip-vs-realestate', 'gradient' => 'linear-gradient(135deg, #ffecd2, #fcb69f)', 'icon' => 'fa-chart-line', 'title_key' => 'tool_sip_vs_re', 'title_default' => 'SIP vs Real Estate', 'desc_key' => 'tool_sip_vs_re_desc', 'desc_default' => 'Compare returns between SIP investments and real estate'],
-                ['url' => BASE_URL . '/gst-calculator', 'gradient' => 'linear-gradient(135deg, #a8edea, #fed6e3)', 'icon' => 'fa-receipt', 'title_key' => 'tool_gst_calc', 'title_default' => 'GST Calculator', 'desc_key' => 'tool_gst_calc_desc', 'desc_default' => 'See GST on property — view base price and GST separately'],
-                ['url' => BASE_URL . '/capital-gains-calculator', 'gradient' => 'linear-gradient(135deg, #89f7fe, #66a6ff)', 'icon' => 'fa-coins', 'title_key' => 'tool_cap_gains', 'title_default' => 'Capital Gains Calculator', 'desc_key' => 'tool_cap_gains_desc', 'desc_default' => 'Calculate tax on property sale with capital gains calculator'],
-                ['url' => BASE_URL . '/property-appreciation-calculator', 'gradient' => 'linear-gradient(135deg, #667eea, #764ba2)', 'icon' => 'fa-arrow-trend-up', 'title_key' => 'tool_appreciation', 'title_default' => 'Property Appreciation Calculator', 'desc_key' => 'tool_appreciation_desc', 'desc_default' => 'See how your property value grows over time with appreciation'],
+                ['slug' => 'calc', 'category' => 'financial', 'url' => BASE_URL . '/calc', 'gradient' => 'linear-gradient(135deg, #0d9488, #0f766e)', 'icon' => 'fa-calculator', 'title_key' => 'tool_emi_calc', 'title_default' => 'EMI Calculator', 'desc_key' => 'tool_emi_calc_desc', 'desc_default' => 'Calculate home loan EMI and total interest payable'],
+                ['slug' => 'stamp-duty-calculator', 'category' => 'tax', 'url' => BASE_URL . '/stamp-duty-calculator', 'gradient' => 'linear-gradient(135deg, #f093fb, #f5576c)', 'icon' => 'fa-file-contract', 'title_key' => 'tool_stamp_calc', 'title_default' => 'Stamp Duty Calculator', 'desc_key' => 'tool_stamp_calc_desc', 'desc_default' => 'Know the total government charges for property registration'],
+                ['slug' => 'plot-size-converter', 'category' => 'property', 'url' => BASE_URL . '/plot-size-converter', 'gradient' => 'linear-gradient(135deg, #4facfe, #00f2fe)', 'icon' => 'fa-vector-square', 'title_key' => 'tool_plot_conv', 'title_default' => 'Plot Size Converter', 'desc_key' => 'tool_plot_conv_desc', 'desc_default' => 'Convert between SQFT, Acre, Bigha, Gaj and more units'],
+                ['slug' => 'home-loan-eligibility', 'category' => 'financial', 'url' => BASE_URL . '/home-loan-eligibility', 'gradient' => 'linear-gradient(135deg, #43e97b, #38f9d7)', 'icon' => 'fa-hand-holding-dollar', 'title_key' => 'tool_loan_elig', 'title_default' => 'Home Loan Eligibility', 'desc_key' => 'tool_loan_elig_desc', 'desc_default' => 'Check how much home loan you can get based on your salary'],
+                ['slug' => 'rent-vs-buy', 'category' => 'investment', 'url' => BASE_URL . '/rent-vs-buy', 'gradient' => 'linear-gradient(135deg, #a18cd1, #fbc2eb)', 'icon' => 'fa-scale-balanced', 'title_key' => 'tool_rent_vs_buy', 'title_default' => 'Rent vs Buy Calculator', 'desc_key' => 'tool_rent_vs_buy_desc', 'desc_default' => 'Understand whether renting or buying property is better for you'],
+                ['slug' => 'construction-cost-estimator', 'category' => 'property', 'url' => BASE_URL . '/construction-cost-estimator', 'gradient' => 'linear-gradient(135deg, #f7971e, #ffd200)', 'icon' => 'fa-hard-hat', 'title_key' => 'tool_constr_cost', 'title_default' => 'Construction Cost Estimator', 'desc_key' => 'tool_constr_cost_desc', 'desc_default' => 'Estimate house construction cost based on area and quality'],
+                ['slug' => 'rental-yield-calculator', 'category' => 'investment', 'url' => BASE_URL . '/rental-yield-calculator', 'gradient' => 'linear-gradient(135deg, #11998e, #38ef7d)', 'icon' => 'fa-chart-pie', 'title_key' => 'tool_rental_yield', 'title_default' => 'Rental Yield Calculator', 'desc_key' => 'tool_rental_yield_desc', 'desc_default' => 'Calculate expected rental income and ROI on your property'],
+                ['slug' => 'property-tax-calculator', 'category' => 'tax', 'url' => BASE_URL . '/property-tax-calculator', 'gradient' => 'linear-gradient(135deg, #fc5c7d, #6a82fb)', 'icon' => 'fa-file-invoice-dollar', 'title_key' => 'tool_prop_tax', 'title_default' => 'Property Tax Calculator', 'desc_key' => 'tool_prop_tax_desc', 'desc_default' => 'Estimate your annual property tax with detailed breakdown'],
+                ['slug' => 'property-valuation', 'category' => 'property', 'url' => BASE_URL . '/property-valuation', 'gradient' => 'linear-gradient(135deg, #fa709a, #fee140)', 'icon' => 'fa-house-chimney', 'title_key' => 'tool_prop_val', 'title_default' => 'Property Valuation', 'desc_key' => 'tool_prop_val_desc', 'desc_default' => 'Get an instant estimate of your property market value'],
+                ['slug' => 'sip-vs-realestate', 'category' => 'investment', 'url' => BASE_URL . '/sip-vs-realestate', 'gradient' => 'linear-gradient(135deg, #ffecd2, #fcb69f)', 'icon' => 'fa-chart-line', 'title_key' => 'tool_sip_vs_re', 'title_default' => 'SIP vs Real Estate', 'desc_key' => 'tool_sip_vs_re_desc', 'desc_default' => 'Compare returns between SIP investments and real estate'],
+                ['slug' => 'gst-calculator', 'category' => 'tax', 'url' => BASE_URL . '/gst-calculator', 'gradient' => 'linear-gradient(135deg, #a8edea, #fed6e3)', 'icon' => 'fa-receipt', 'title_key' => 'tool_gst_calc', 'title_default' => 'GST Calculator', 'desc_key' => 'tool_gst_calc_desc', 'desc_default' => 'See GST on property — view base price and GST separately'],
+                ['slug' => 'capital-gains-calculator', 'category' => 'tax', 'url' => BASE_URL . '/capital-gains-calculator', 'gradient' => 'linear-gradient(135deg, #89f7fe, #66a6ff)', 'icon' => 'fa-coins', 'title_key' => 'tool_cap_gains', 'title_default' => 'Capital Gains Calculator', 'desc_key' => 'tool_cap_gains_desc', 'desc_default' => 'Calculate tax on property sale with capital gains calculator'],
+                ['slug' => 'property-appreciation-calculator', 'category' => 'investment', 'url' => BASE_URL . '/property-appreciation-calculator', 'gradient' => 'linear-gradient(135deg, #667eea, #764ba2)', 'icon' => 'fa-arrow-trend-up', 'title_key' => 'tool_appreciation', 'title_default' => 'Property Appreciation Calculator', 'desc_key' => 'tool_appreciation_desc', 'desc_default' => 'See how your property value grows over time with appreciation'],
             ];
 
             foreach ($tools as $tool) {
@@ -29,4 +49,112 @@
         </div>
     </div>
 </section>
+
+<!-- Tool Modal -->
+<div class="modal fade" id="toolModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header border-0 p-4" id="toolModalHeader">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="fas fa-calculator text-white fa-xl" id="toolModalIcon"></i>
+                    </div>
+                    <div>
+                        <h5 class="modal-title text-white fw-bold mb-1" id="toolModalTitle"><?= __('tool') ?></h5>
+                        <p class="text-white-50 small mb-0" id="toolModalSubtitle"><?= __('calculate_instantly') ?></p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4 text-dark" id="toolModalBody"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Tool configurations for modal
+var TOOL_CONFIGS = {
+    'calc': {
+        color: 'linear-gradient(135deg, #0d9488, #0f766e)',
+        icon: 'fa-calculator',
+        title: 'EMI Calculator',
+        subtitle: 'Calculate home loan EMI and total interest payable',
+        html: '<div class="row g-4">...</div>'
+    },
+    'stamp-duty-calculator': {
+        color: 'linear-gradient(135deg, #f093fb, #f5576c)',
+        icon: 'fa-file-contract',
+        title: 'Stamp Duty Calculator',
+        subtitle: 'Know the total government charges for property registration',
+        html: '<div class="row g-4">...</div>'
+    },
+    // ... add more configs
+};
+
+function openToolModal(slug) {
+    var config = TOOL_CONFIGS[slug];
+    if (!config) {
+        // Fallback: navigate to the tool page directly
+        var tool = document.querySelector('[onclick*="' + slug + '"]');
+        if (tool) tool.click();
+        return;
+    }
+    
+    var header = document.getElementById('toolModalHeader');
+    var icon = document.getElementById('toolModalIcon');
+    var title = document.getElementById('toolModalTitle');
+    var subtitle = document.getElementById('toolModalSubtitle');
+    var body = document.getElementById('toolModalBody');
+
+    header.style.background = config.color;
+    icon.className = 'fas ' + config.icon + ' text-white fa-xl';
+    title.textContent = config.title;
+    subtitle.textContent = config.subtitle;
+    body.innerHTML = config.html;
+
+    // Show modal
+    if (typeof bootstrap !== 'undefined') {
+        new bootstrap.Modal(document.getElementById('toolModal')).show();
+    }
+}
+
+// Filter functionality
+document.querySelectorAll('.tool-filter-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.tool-filter-btn').forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+        var filter = this.getAttribute('data-filter');
+        document.querySelectorAll('#toolsGrid > div').forEach(function(card) {
+            var cat = card.getAttribute('data-category');
+            if (filter === 'all' || cat === filter) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+});
+
+// Add data-category to tool cards after DOM load
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('#toolsGrid .tool-card').forEach(function(card) {
+        var onclick = card.getAttribute('onclick');
+        if (onclick) {
+            var match = onclick.match(/openToolModal\('([^']+)'\)/);
+            if (match) {
+                var slug = match[1];
+                var categories = {
+                    'calc': 'financial', 'home-loan-eligibility': 'financial',
+                    'stamp-duty-calculator': 'tax', 'gst-calculator': 'tax', 'property-tax-calculator': 'tax', 'capital-gains-calculator': 'tax',
+                    'plot-size-converter': 'property', 'construction-cost-estimator': 'property', 'property-valuation': 'property',
+                    'rent-vs-buy': 'investment', 'rental-yield-calculator': 'investment', 'sip-vs-realestate': 'investment', 'property-appreciation-calculator': 'investment'
+                };
+                if (categories[slug]) {
+                    card.setAttribute('data-category', categories[slug]);
+                }
+            }
+        }
+    });
+});
+</script>
 <?php include __DIR__ . '/../partials/related_tools.php'; ?>

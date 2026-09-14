@@ -508,11 +508,6 @@ class PaymentGatewayController extends BaseController
     }
 
     // =====================================================================
-    // API stub methods — routes/api.php references these 8 methods
-    // TODO: Implement real PhonePe/GPay/UPI gateway integration
-    // =====================================================================
-
-    // =====================================================================
     // API Methods — PhonePe, GPay, UPI Integration
     // =====================================================================
 

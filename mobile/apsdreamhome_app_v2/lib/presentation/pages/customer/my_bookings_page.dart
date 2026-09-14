@@ -255,44 +255,52 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage>
                   ),
                 ],
               ),
-              if (status != 'completed' && status != 'registration_done')
-                ElevatedButton.icon(
-                  onPressed: () {
-                    if (bookingId != null) {
-                      context.push('/customer/emi-schedule', extra: bookingId);
-                    }
-                  },
-                  icon: const Icon(Icons.payment, size: 16),
-                  label: const Text('Pay Now', style: TextStyle(fontSize: 12)),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primaryColor,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 8,
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  OutlinedButton.icon(
+                    onPressed: () {
+                      if (bookingId != null) {
+                        context.push('/registry-timeline/$bookingId');
+                      }
+                    },
+                    icon: const Icon(Icons.verified_outlined, size: 16),
+                    label: const Text('Registry', style: TextStyle(fontSize: 12)),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppTheme.primaryColor,
+                      side: BorderSide(color: AppTheme.primaryColor.withValues(alpha: 0.5)),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     ),
                   ),
-                ),
-              if (status == 'completed' || status == 'registration_done')
-                OutlinedButton.icon(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Receipt will be available after final payment confirmation',
-                        ),
+                  if (status != 'completed' && status != 'registration_done')
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        if (bookingId != null) {
+                          context.push('/customer/emi-schedule', extra: bookingId);
+                        }
+                      },
+                      icon: const Icon(Icons.payment, size: 16),
+                      label: const Text('Pay Now', style: TextStyle(fontSize: 12)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primaryColor,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                       ),
-                    );
-                  },
-                  icon: const Icon(Icons.download, size: 16),
-                  label: const Text('Receipt', style: TextStyle(fontSize: 12)),
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 8,
                     ),
-                  ),
-                ),
+                  if (status == 'completed' || status == 'registration_done')
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Receipt will be available after final payment confirmation')),
+                        );
+                      },
+                      icon: const Icon(Icons.download, size: 16),
+                      label: const Text('Receipt', style: TextStyle(fontSize: 12)),
+                      style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8)),
+                    ),
+                ],
+              ),
             ],
           ),
         ],

@@ -139,15 +139,6 @@ class PropertyPageController extends BaseController
             ", [$id]);
         }
 
-        if (!$property && isset($_GET['slug'])) {
-            $property = $this->db->fetchOne("
-                SELECT p.*, pi.image_path as image
-                FROM properties p
-                LEFT JOIN property_images pi ON pi.property_id = p.id AND pi.is_primary = 1
-                WHERE p.slug = ? AND p.status = 'active' AND p.deleted_at IS NULL LIMIT 1
-            ", [$_GET['slug']]);
-        }
-
         if (!$property) {
             $this->render('pages/404', [
                 'page_title' => 'Property Not Found',
@@ -352,9 +343,63 @@ class PropertyPageController extends BaseController
 
     public function plotMap()
     {
-        $this->render('pages/plot_map', [
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+            $tid = (int)$this->tenantId();
+            $tenantSql = $tid > 1 ? " AND c.tenant_id = ?" : "";
+            $baseParams = $tid > 1 ? [$tid] : [];
+
+            $colonies = $pdo->prepare("
+                SELECT c.id, c.name, c.slug,
+                       (SELECT COUNT(*) FROM plots WHERE colony_id = c.id" . ($tid > 1 ? " AND tenant_id = ?" : "") . ") as total_plots,
+                       (SELECT COUNT(*) FROM plots WHERE colony_id = c.id AND status = 'available'" . ($tid > 1 ? " AND tenant_id = ?" : "") . ") as available_plots
+                FROM colonies c
+                WHERE c.status = 'active' {$tenantSql}
+                ORDER BY c.name
+            ");
+            $p = [];
+            $paramIdx = 0;
+            if ($tid > 1) { $p[] = $tid; $p[] = $tid; $p[] = $tid; }
+            $colonies->execute($p);
+            $colonyList = $colonies->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+            foreach ($colonyList as &$col) {
+                $plotQ = $pdo->prepare("
+                    SELECT id, plot_number, block, area_sqft, width_ft, length_ft, facing,
+                           status, total_price, colony_id
+                    FROM plots
+                    WHERE colony_id = ? AND is_active = 1
+                    ORDER BY block, plot_number
+                ");
+                $plotQ->execute([$col['id']]);
+                $col['plots'] = $plotQ->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            }
+            unset($col);
+
+            $totalStats = ['total' => 0, 'available' => 0, 'booked' => 0, 'sold' => 0, 'blocked' => 0];
+            foreach ($colonyList as $col) {
+                $totalStats['total'] += $col['total_plots'];
+                $totalStats['available'] += $col['available_plots'];
+                foreach ($col['plots'] as $pl) {
+                    $status = $pl['status'] ?? 'available';
+                    if (isset($totalStats[$status])) {
+                        $totalStats[$status]++;
+                    } else {
+                        $totalStats['available']++;
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            error_log('[PropertyPageController::plotMap] Error: ' . $e->getMessage());
+            $colonyList = [];
+            $totalStats = ['total' => 0, 'available' => 0, 'booked' => 0, 'sold' => 0, 'blocked' => 0];
+        }
+
+        $this->render('pages/plot_layout', [
             'page_title' => 'Interactive Plot Map - APS Dream Home',
             'page_description' => 'Explore plots on interactive map.',
+            'colonies' => $colonyList,
+            'total_stats' => $totalStats,
         ]);
     }
 
