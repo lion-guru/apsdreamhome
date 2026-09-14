@@ -3,11 +3,11 @@ name: APS Dream Home CI/CD Pipeline
 # Comprehensive pipeline. Lighter than the deploy.yml workflow.
 # Uses the new tests/migrate.php and tests/run_all_tests.php for testing.
 
+# NOTE: triggers converted to workflow_dispatch-only on 2026-09-14.
+# ci-cd.yml is the canonical CI pipeline (real Playwright E2E + docker + deploy).
+# This workflow is kept for manual on-demand runs and diagnostic checks.
 on:
-  push:
-    branches: [ main, develop, feature/monitoring-alerts ]
-  pull_request:
-    branches: [ main, develop ]
+  workflow_dispatch:
 
 env:
   PHP_VERSION: "8.2"

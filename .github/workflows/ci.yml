@@ -1,10 +1,10 @@
 name: APS Dream Home CI
 
+# NOTE: triggers converted to workflow_dispatch-only on 2026-09-14.
+# ci-cd.yml is the canonical CI pipeline (real Playwright E2E + docker + deploy).
+# This workflow is kept for manual on-demand runs and diagnostic checks.
 on:
-  push:
-    branches: [ main, develop, feature/monitoring-alerts ]
-  pull_request:
-    branches: [ main, develop ]
+  workflow_dispatch:
 
 # Cancel in-flight runs on the same branch
 concurrency:
