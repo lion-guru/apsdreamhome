@@ -95,14 +95,19 @@ if ($statusOnly || $dryRun) {
         echo "    3. Rank Auto-Promotion" . PHP_EOL;
         echo "    4. Investment Maturity" . PHP_EOL;
         echo "    5. Agent Auto-Deactivate" . PHP_EOL;
-        echo "    6. Milestone Bonus" . PHP_EOL;
+        echo "    6. Milestone Bonus Auto-Credit" . PHP_EOL;
+        echo "    7. Follow-up Reminders" . PHP_EOL;
+        echo "    8. EMI Auto-Payment" . PHP_EOL;
+        echo "    9. NACH Auto-Debit" . PHP_EOL;
     }
     if (in_array($mode, ['monthly', 'all'])) {
         echo "  MONTHLY:" . PHP_EOL;
-        echo "    7. Royalty Pool Distribution" . PHP_EOL;
-        echo "    8. Generation Bonus" . PHP_EOL;
-        echo "    9. Infinity Override" . PHP_EOL;
-        echo "   10. Matching Bonus" . PHP_EOL;
+        echo "   10. Royalty Pool Distribution" . PHP_EOL;
+        echo "   11. Generation Bonus" . PHP_EOL;
+        echo "   12. Infinity Override" . PHP_EOL;
+        echo "   13. Matching Bonus" . PHP_EOL;
+        echo "   14. Salary Incentive Grants" . PHP_EOL;
+        echo "   15. Leadership Salary Payouts" . PHP_EOL;
     }
     if ($statusOnly) {
         // Also show DB status
@@ -402,6 +407,42 @@ try {
         } catch (\Throwable $e) {
             echo "  â�Œ " . $e->getMessage() . PHP_EOL;
             $errors[] = 'followup_reminders: ' . $e->getMessage();
+        }
+        echo PHP_EOL;
+
+        // 8. EMI AUTO-PAYMENT
+        $taskNum++;
+        echo "===============================================================" . PHP_EOL;
+        echo "{$taskNum}/15  EMI Auto-Payment" . PHP_EOL;
+        echo "===============================================================" . PHP_EOL;
+        try {
+            $emiService = new \App\Services\Payment\EMIAutoPaymentService($pdo);
+            $emiResult = $emiService->processDueEmiPayments();
+            if ($emiResult['success']) {
+                echo "  [OK] {$emiResult['processed']} paid, {$emiResult['failed']} failed, {$emiResult['skipped']} skipped" . PHP_EOL;
+                $log['emi_auto_payment'] = $emiResult;
+            } else {
+                echo "  [FAIL] " . ($emiResult['error'] ?? 'unknown') . PHP_EOL;
+            }
+        } catch (\Throwable $e) {
+            echo "  [FAIL] " . $e->getMessage() . PHP_EOL;
+            $errors[] = 'emi_auto_payment: ' . $e->getMessage();
+        }
+        echo PHP_EOL;
+
+        // 9. NACH AUTO-DEBIT
+        $taskNum++;
+        echo "===============================================================" . PHP_EOL;
+        echo "{$taskNum}/15  NACH Auto-Debit" . PHP_EOL;
+        echo "===============================================================" . PHP_EOL;
+        try {
+            $bhService = new \App\Services\Sales\BookingLifecycleService($pdo);
+            $nachResult = $bhService->processNachAutoDebits();
+            echo "  [OK] {$nachResult['processed']} debits, {$nachResult['failed']} failed" . PHP_EOL;
+            $log['nach_auto_debit'] = $nachResult;
+        } catch (\Throwable $e) {
+            echo "  [FAIL] " . $e->getMessage() . PHP_EOL;
+            $errors[] = 'nach_auto_debit: ' . $e->getMessage();
         }
         echo PHP_EOL;
     }
