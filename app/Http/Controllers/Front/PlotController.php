@@ -50,18 +50,23 @@ class PlotController extends BaseController
      */
     public function index()
     {
-        $tid = (int)$this->tenantId();
-        $tidSql = $tid > 1 ? ' AND p.tenant_id = ?' : '';
-        $tidParam = $tid > 1 ? [$tid] : [];
-        $colonies = $this->db->fetchAll("
-            SELECT c.*, d.name as district_name, s.name as state_name,
-                (SELECT COUNT(*) FROM plots p WHERE p.colony_id = c.id AND p.status = 'available'" . $tidSql . ") as available_plots
-            FROM colonies c
-            LEFT JOIN districts d ON c.district_id = d.id
-            LEFT JOIN states s ON d.state_id = s.id
-            WHERE c.is_active = 1
-            ORDER BY c.name
-        ", $tidParam);
+        $colonies = [];
+        try {
+            $tid = (int)$this->tenantId();
+            $tidSql = $tid > 1 ? ' AND p.tenant_id = ' . $tid : '';
+            $colonies = $this->db->fetchAll("
+                SELECT c.*, d.name as district_name, s.name as state_name,
+                    (SELECT COUNT(*) FROM plots p WHERE p.colony_id = c.id AND p.status = 'available'" . $tidSql . ") as available_plots
+                FROM colonies c
+                LEFT JOIN districts d ON c.district_id = d.id
+                LEFT JOIN states s ON d.state_id = s.id
+                WHERE c.is_active = 1
+                ORDER BY c.name
+            ") ?: [];
+        } catch (\Throwable $e) {
+            error_log('PlotController::index error: ' . $e->getMessage());
+            $colonies = [];
+        }
 
         $this->render('pages/plots', [
             'page_title' => 'Available Plots - APS Dream Home',

@@ -105,12 +105,13 @@
                                 <th>Contractor</th>
                                 <th>Est. Cost</th>
                                 <th>Actual Cost</th>
+                                <th>Photo</th>
                                 <th class="text-end">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if (empty($milestones ?? [])): ?>
-                                <tr><td colspan="11" class="text-center text-muted py-5">
+                                <tr><td colspan="12" class="text-center text-muted py-5">
                                     <i class="fas fa-hard-hat fa-3x text-muted mb-3"></i>
                                     <h5>No Milestones</h5>
                                     <p class="mb-3">No construction milestones recorded for this colony yet.</p>
@@ -154,6 +155,13 @@
                                         <td class="text-<?= (float)($m['actual_cost'] ?? 0) > (float)($m['estimated_cost'] ?? 0) ? 'danger' : 'success' ?>">
                                             ₹<?= number_format((float)($m['actual_cost'] ?? 0), 2) ?>
                                         </td>
+                                        <td>
+                                            <?php if (!empty($m['site_photo_path'])): ?>
+                                                <a href="<?= BASE_URL ?>/<?= htmlspecialchars($m['site_photo_path']) ?>" target="_blank"><img src="<?= BASE_URL ?>/<?= htmlspecialchars($m['site_photo_path']) ?>" alt="site photo" style="width:48px;height:48px;object-fit:cover;border-radius:4px;border:1px solid #dee2e6;"></a>
+                                            <?php else: ?>
+                                                <span class="text-muted">—</span>
+                                            <?php endif; ?>
+                                        </td>
                                         <td class="text-end">
                                             <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#milestoneModal"
                                                 onclick='editMilestone(<?= json_encode([
@@ -170,7 +178,9 @@
                                                     'contractor_contact' => $m['contractor_contact'] ?? '',
                                                     'estimated_cost' => $m['estimated_cost'] ?? '',
                                                     'actual_cost' => $m['actual_cost'] ?? '',
-                                                    'notes' => $m['notes'] ?? ''
+                                                    'notes' => $m['notes'] ?? '',
+                                                    'remarks' => $m['remarks'] ?? '',
+                                                    'site_photo_path' => $m['site_photo_path'] ?? ''
                                                 ], JSON_HEX_APOS | JSON_HEX_QUOT) ?>)'>
                                                 <i class="fas fa-edit"></i>
                                             </button>
@@ -187,7 +197,7 @@
         <div class="modal fade" id="milestoneModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-scrollable">
                 <div class="modal-content">
-                    <form method="post" action="<?= BASE_URL ?>/admin/construction/colony-progress/update">
+                        <form method="post" action="<?= BASE_URL ?>/admin/construction/colony-progress/update" enctype="multipart/form-data">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <input type="hidden" name="milestone_id" id="milestone_id" value="0">
                         <input type="hidden" name="colony_id" id="m_colony_id" value="<?= (int)($selected_colony['id'] ?? 0) ?>">
@@ -256,8 +266,17 @@
                                     <input type="number" name="actual_cost" id="actual_cost" class="form-control" min="0" step="0.01" value="0">
                                 </div>
                                 <div class="col-12">
+                                    <label class="form-label">Remarks</label>
+                                    <textarea name="remarks" id="m_remarks" class="form-control" rows="2" maxlength="2000" placeholder="% complete remarks, site observations..."></textarea>
+                                </div>
+                                <div class="col-12">
                                     <label class="form-label">Notes</label>
                                     <textarea name="notes" id="m_notes" class="form-control" rows="3" maxlength="2000"></textarea>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Site Photo <small class="text-muted">(jpg/png/webp, optional)</small></label>
+                                    <input type="file" name="site_photo" id="site_photo" class="form-control" accept=".jpg,.jpeg,.png,.webp">
+                                    <small class="text-muted">Upload path saved to <code>site_photo_path</code> column.</small>
                                 </div>
                             </div>
                         </div>
@@ -295,7 +314,9 @@ function resetMilestoneForm() {
     document.getElementById('contractor_contact').value = '';
     document.getElementById('estimated_cost').value = '0';
     document.getElementById('actual_cost').value = '0';
+    document.getElementById('m_remarks').value = '';
     document.getElementById('m_notes').value = '';
+    var sp = document.getElementById('site_photo'); if (sp) sp.value = '';
 }
 
 function editMilestone(m) {
@@ -313,6 +334,7 @@ function editMilestone(m) {
     document.getElementById('contractor_contact').value = m.contractor_contact || '';
     document.getElementById('estimated_cost').value = m.estimated_cost || '0';
     document.getElementById('actual_cost').value = m.actual_cost || '0';
+    document.getElementById('m_remarks').value = m.remarks || m.notes || '';
     document.getElementById('m_notes').value = m.notes || '';
 }
 </script>

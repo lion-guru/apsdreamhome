@@ -1,6 +1,7 @@
 <?php
 /**
- * Migration: Create directory_categories and directory_listings tables if not exists
+ * Migration: Create directory tables if not exists.
+ * Tables: directory_categories, directory_listings, directory_reviews, directory_jobs, directory_materials.
  */
 declare(strict_types=1);
 
@@ -65,6 +66,58 @@ try {
             KEY `idx_city` (`city`),
             KEY `idx_category_status` (`category_id`,`status`),
             KEY `idx_directory_listings_tenant_id` (`tenant_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+        CREATE TABLE IF NOT EXISTS `directory_reviews` (
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `tenant_id` int(10) unsigned NOT NULL DEFAULT 1,
+            `listing_id` int(11) NOT NULL,
+            `user_id` int(11) DEFAULT NULL,
+            `reviewer_name` varchar(255) DEFAULT 'Anonymous',
+            `rating` tinyint(4) NOT NULL DEFAULT 5,
+            `review` text DEFAULT NULL,
+            `status` enum('pending','approved','rejected') DEFAULT 'approved',
+            `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+            PRIMARY KEY (`id`),
+            KEY `idx_listing_status` (`listing_id`,`status`),
+            KEY `idx_tenant_id` (`tenant_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+        CREATE TABLE IF NOT EXISTS `directory_jobs` (
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `tenant_id` int(10) unsigned NOT NULL DEFAULT 1,
+            `listing_id` int(11) DEFAULT NULL,
+            `user_id` int(11) DEFAULT NULL,
+            `title` varchar(255) NOT NULL,
+            `description` text DEFAULT NULL,
+            `job_type` varchar(50) DEFAULT 'Full-time',
+            `experience_level` varchar(50) DEFAULT 'Any',
+            `salary_range` varchar(100) DEFAULT NULL,
+            `location` varchar(255) DEFAULT NULL,
+            `status` enum('active','closed','draft') DEFAULT 'active',
+            `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+            `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+            PRIMARY KEY (`id`),
+            KEY `idx_status` (`status`),
+            KEY `idx_tenant_id` (`tenant_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+        CREATE TABLE IF NOT EXISTS `directory_materials` (
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `tenant_id` int(10) unsigned NOT NULL DEFAULT 1,
+            `listing_id` int(11) DEFAULT NULL,
+            `material_name` varchar(255) NOT NULL,
+            `category` varchar(100) DEFAULT NULL,
+            `brand` varchar(100) DEFAULT NULL,
+            `unit` varchar(50) DEFAULT NULL,
+            `price` decimal(12,2) NOT NULL DEFAULT 0.00,
+            `price_date` date DEFAULT NULL,
+            `notes` text DEFAULT NULL,
+            `status` enum('active','inactive') DEFAULT 'active',
+            `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+            PRIMARY KEY (`id`),
+            KEY `idx_status` (`status`),
+            KEY `idx_tenant_id` (`tenant_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
     ");
     echo "directory tables verified/created successfully.\n";

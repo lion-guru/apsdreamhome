@@ -138,7 +138,6 @@ class DirectoryService
         $sql = "SELECT l.*, dc.name as category_name, dc.slug as category_slug, dc.icon as category_icon
             FROM directory_listings l LEFT JOIN directory_categories dc ON l.category_id = dc.id
             WHERE l.status = 'approved' AND l.is_featured = 1" . $this->tenantSql() . " ORDER BY l.rating DESC, l.views DESC LIMIT ?";
-        $params = [$limit];
         $stmt = $this->db->prepare($sql);
         $stmt->bindValue(1, $limit, PDO::PARAM_INT);
         $stmt->execute();
@@ -353,34 +352,41 @@ class DirectoryService
 
     public function getStats(): array
     {
-        $stats = [];
-        $tid = $this->tenantId();
-        $params = $tid > 1 ? [$tid] : [];
-        $sqlTenant = $this->tenantSql();
-        $stmt = $this->db->prepare("SELECT COUNT(*) FROM directory_categories" . $sqlTenant);
-        $stmt->execute($params);
-        $stats['total_categories'] = (int)$stmt->fetchColumn();
-        $stmt = $this->db->prepare("SELECT COUNT(*) FROM directory_listings" . $sqlTenant);
-        $stmt->execute($params);
-        $stats['total_listings'] = (int)$stmt->fetchColumn();
-        $stmt = $this->db->prepare("SELECT COUNT(*) FROM directory_listings WHERE status = 'approved'" . $sqlTenant);
-        $stmt->execute($params);
-        $stats['approved_listings'] = (int)$stmt->fetchColumn();
-        $stmt = $this->db->prepare("SELECT COUNT(*) FROM directory_listings WHERE status = 'pending'" . $sqlTenant);
-        $stmt->execute($params);
-        $stats['pending_listings'] = (int)$stmt->fetchColumn();
-        $stmt = $this->db->prepare("SELECT COUNT(*) FROM directory_jobs" . $sqlTenant);
-        $stmt->execute($params);
-        $stats['total_jobs'] = (int)$stmt->fetchColumn();
-        $stmt = $this->db->prepare("SELECT COUNT(*) FROM directory_jobs WHERE status = 'active'" . $sqlTenant);
-        $stmt->execute($params);
-        $stats['active_jobs'] = (int)$stmt->fetchColumn();
-        $stmt = $this->db->prepare("SELECT COUNT(*) FROM directory_reviews" . $sqlTenant);
-        $stmt->execute($params);
-        $stats['total_reviews'] = (int)$stmt->fetchColumn();
-        $stmt = $this->db->prepare("SELECT COUNT(*) FROM directory_materials" . $sqlTenant);
-        $stmt->execute($params);
-        $stats['total_materials'] = (int)$stmt->fetchColumn();
+        $stats = [
+            'total_categories' => 0,
+            'total_listings' => 0,
+            'approved_listings' => 0,
+            'pending_listings' => 0,
+            'total_jobs' => 0,
+            'active_jobs' => 0,
+            'total_reviews' => 0,
+            'total_materials' => 0,
+        ];
+        try {
+            $tid = (int)$this->tenantId();
+            $w = $tid > 1 ? " WHERE tenant_id = " . $tid : "";
+            $a = $tid > 1 ? " AND tenant_id = " . $tid : "";
+
+            $stats['total_categories'] = (int)$this->db->query("SELECT COUNT(*) FROM directory_categories" . $w)->fetchColumn();
+            $stats['total_listings'] = (int)$this->db->query("SELECT COUNT(*) FROM directory_listings" . $w)->fetchColumn();
+            $stats['approved_listings'] = (int)$this->db->query("SELECT COUNT(*) FROM directory_listings WHERE status = 'approved'" . $a)->fetchColumn();
+            $stats['pending_listings'] = (int)$this->db->query("SELECT COUNT(*) FROM directory_listings WHERE status = 'pending'" . $a)->fetchColumn();
+
+            try {
+                $stats['total_jobs'] = (int)$this->db->query("SELECT COUNT(*) FROM directory_jobs" . $w)->fetchColumn();
+                $stats['active_jobs'] = (int)$this->db->query("SELECT COUNT(*) FROM directory_jobs WHERE status = 'active'" . $a)->fetchColumn();
+            } catch (\Throwable $e) {}
+
+            try {
+                $stats['total_reviews'] = (int)$this->db->query("SELECT COUNT(*) FROM directory_reviews" . $w)->fetchColumn();
+            } catch (\Throwable $e) {}
+
+            try {
+                $stats['total_materials'] = (int)$this->db->query("SELECT COUNT(*) FROM directory_materials" . $w)->fetchColumn();
+            } catch (\Throwable $e) {}
+        } catch (\Throwable $e) {
+            error_log('DirectoryService::getStats: ' . $e->getMessage());
+        }
         return $stats;
     }
 }

@@ -739,7 +739,29 @@ class AgreementPDFService extends ServiceTenantTrait
         $this->renderInfoRow($pdf, 'UPI', self::$bankUpi);
         $pdf->Ln(3);
 
+        // Payment QR (UPI) — additive, fails silently if barcode not available
+        try {
+            $upiPayload = 'upi://pay?pa=' . self::$bankUpi . '&pn=' . rawurlencode(self::$companyName) . '&cu=INR';
+            $style = ['border' => false, 'padding' => 2, 'fgcolor' => [0, 0, 0], 'bgcolor' => [255, 255, 255]];
+            $pdf->SetFont('helvetica', 'B', 9);
+            $pdf->Cell(0, 6, 'Scan to Pay (UPI QR)', 0, 1, 'L');
+            // write2DBarcode draws at current X,Y; center it
+            $x = 20; $y = $pdf->GetY();
+            $pdf->write2DBarcode($upiPayload, 'QRCODE,H', $x, $y, 28, 28, $style, 'N');
+            $pdf->SetXY($x + 32, $y + 6);
+            $pdf->SetFont('helvetica', '', 8);
+            $pdf->MultiCell(120, 5, "UPI ID: " . self::$bankUpi . "\nScan with any UPI app (GPay / PhonePe / Paytm)\nAuthorized Signatory: " . self::$companyName, 0, 'L');
+            $pdf->SetXY(20, $y + 30);
+        } catch (\Exception $e) {
+            error_log('AgreementPDFService::renderPaymentInstructions QR error: ' . $e->getMessage());
+        }
+
+        $pdf->Ln(2);
         $this->renderBodyText($pdf, 'Please share the transaction reference number via email or WhatsApp after payment.');
+        $pdf->SetFont('helvetica', 'I', 8);
+        $pdf->SetTextColor(100, 100, 100);
+        $pdf->Cell(0, 5, 'Authorized Signatory: ' . self::$companyName . ' | ' . self::$phone, 0, 1, 'C');
+        $pdf->SetTextColor(30, 30, 30);
     }
 
     /* =========================================================

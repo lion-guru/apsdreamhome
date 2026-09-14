@@ -54,13 +54,13 @@
                         <div class="position-relative overflow-hidden">
                             <img src="<?= htmlspecialchars($img ?? '')?>" class="w-100 h-100 object-fit-cover" alt="<?= htmlspecialchars($colony['name'] ?? '') ?>" onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
                             <div class="position-absolute bottom-0 start-0 w-100 p-3 text-white d-flex align-items-end">
-                                <span class="badge bg-primary px-2 py-1"><i class="fas fa-map-marker-alt me-1"></i> <?= htmlspecialchars($colony['district_name'] . ', ' . $colony['state_name']) ?></span>
+                                <span class="badge bg-primary px-2 py-1"><i class="fas fa-map-marker-alt me-1"></i> <?= htmlspecialchars(trim(($colony['district_name'] ?? '') . ', ' . ($colony['state_name'] ?? ''), ', ') ?: 'Uttar Pradesh') ?></span>
                             </div>
                         </div>
 
                         <div class="card-body p-4 d-flex flex-column">
-                            <h4 class="card-title fw-bold text-dark mb-2"><?= htmlspecialchars($colony['name'] ?? '') ?></h4>
-                            <p class="card-text text-muted small flex-grow-1"><?= htmlspecialchars(substr(strip_tags($colony['description'] ?? ''), 0, 120)) ?>...</p>
+                            <h4 class="card-title fw-bold text-dark mb-2"><?= htmlspecialchars((string)($colony['name'] ?? '')) ?></h4>
+                            <p class="card-text text-muted small flex-grow-1"><?= htmlspecialchars(substr(strip_tags((string)($colony['description'] ?? '')), 0, 120)) ?>...</p>
                             
                             <hr class="text-muted opacity-25 my-3">
                             

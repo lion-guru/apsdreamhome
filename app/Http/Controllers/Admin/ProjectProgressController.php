@@ -186,6 +186,7 @@ class ProjectProgressController extends AdminController
         $estimatedCost = isset($_POST['estimated_cost']) ? (float)$_POST['estimated_cost'] : 0;
         $actualCost = isset($_POST['actual_cost']) ? (float)$_POST['actual_cost'] : 0;
         $notes = trim($_POST['notes'] ?? '');
+        $remarks = trim($_POST['remarks'] ?? $notes);
 
         $validCategories = ['roads', 'drainage', 'electricity', 'boundary', 'water', 'landscaping', 'other'];
         $validStatuses = ['not_started', 'in_progress', 'on_hold', 'completed', 'cancelled'];
@@ -199,21 +200,47 @@ class ProjectProgressController extends AdminController
             $progressPct = 0;
         }
 
+        // Handle site photo upload (optional, additive)
+        $sitePhotoPath = null;
+        $hasNewPhoto = false;
+        if (!empty($_FILES['site_photo']['name']) && ($_FILES['site_photo']['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK) {
+            $tmp = $_FILES['site_photo']['tmp_name'];
+            $orig = $_FILES['site_photo']['name'];
+            $ext = strtolower(pathinfo($orig, PATHINFO_EXTENSION));
+            $allowed = ['jpg', 'jpeg', 'png', 'webp'];
+            if (in_array($ext, $allowed, true) && is_uploaded_file($tmp)) {
+                $dir = __DIR__ . '/../../../public/uploads/colony_progress';
+                if (!is_dir($dir)) { mkdir($dir, 0755, true); }
+                $safe = 'colony_' . $colonyId . '_' . date('Ymd_His') . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+                $dest = $dir . '/' . $safe;
+                if (move_uploaded_file($tmp, $dest)) {
+                    $sitePhotoPath = 'uploads/colony_progress/' . $safe;
+                    $hasNewPhoto = true;
+                }
+            }
+        }
+
         try {
             [$tenantSql, $tenantParams] = $this->tenantWhere();
             if ($milestoneId > 0) {
-                $stmt = $this->db->prepare("UPDATE colony_milestones SET category = ?, status = ?, progress_pct = ?, start_date = ?, expected_completion = ?, actual_completion = ?, contractor_name = ?, contractor_contact = ?, estimated_cost = ?, actual_cost = ?, notes = ?, updated_at = NOW() WHERE id = ?" . $tenantSql);
-                $stmt->execute(array_merge([$category, $status, $progressPct, $startDate, $expectedCompletion, $actualCompletion, $contractorName, $contractorContact, $estimatedCost, $actualCost, $notes, $milestoneId], $tenantParams));
-                $this->setFlash('success', 'Milestone updated successfully');
+                // Preserve existing photo if no new upload
+                if ($hasNewPhoto) {
+                    $stmt = $this->db->prepare("UPDATE colony_milestones SET category = ?, status = ?, progress_pct = ?, start_date = ?, expected_completion = ?, actual_completion = ?, contractor_name = ?, contractor_contact = ?, estimated_cost = ?, actual_cost = ?, notes = ?, remarks = ?, site_photo_path = ?, updated_at = NOW() WHERE id = ?" . $tenantSql);
+                    $stmt->execute(array_merge([$category, $status, $progressPct, $startDate, $expectedCompletion, $actualCompletion, $contractorName, $contractorContact, $estimatedCost, $actualCost, $notes, $remarks, $sitePhotoPath, $milestoneId], $tenantParams));
+                } else {
+                    $stmt = $this->db->prepare("UPDATE colony_milestones SET category = ?, status = ?, progress_pct = ?, start_date = ?, expected_completion = ?, actual_completion = ?, contractor_name = ?, contractor_contact = ?, estimated_cost = ?, actual_cost = ?, notes = ?, remarks = ?, updated_at = NOW() WHERE id = ?" . $tenantSql);
+                    $stmt->execute(array_merge([$category, $status, $progressPct, $startDate, $expectedCompletion, $actualCompletion, $contractorName, $contractorContact, $estimatedCost, $actualCost, $notes, $remarks, $milestoneId], $tenantParams));
+                }
+                $this->setFlash('success', 'Milestone updated successfully' . ($hasNewPhoto ? ' with site photo' : ''));
             } else {
                 if ($colonyId <= 0 || empty($milestoneName)) {
                     $this->setFlash('error', 'Colony and milestone name are required to create a milestone');
                     $this->redirect('/admin/construction/colony-progress');
                 }
                 $tid = (int)$this->tenantId();
-                $stmt = $this->db->prepare("INSERT INTO colony_milestones (tenant_id, colony_id, milestone_name, category, status, progress_pct, start_date, expected_completion, actual_completion, contractor_name, contractor_contact, estimated_cost, actual_cost, notes, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-                $stmt->execute([$tid, $colonyId, $milestoneName, $category, $status, $progressPct, $startDate, $expectedCompletion, $actualCompletion, $contractorName, $contractorContact, $estimatedCost, $actualCost, $notes]);
-                $this->setFlash('success', 'Milestone created successfully');
+                $stmt = $this->db->prepare("INSERT INTO colony_milestones (tenant_id, colony_id, milestone_name, category, status, progress_pct, start_date, expected_completion, actual_completion, contractor_name, contractor_contact, estimated_cost, actual_cost, notes, remarks, site_photo_path, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+                $stmt->execute([$tid, $colonyId, $milestoneName, $category, $status, $progressPct, $startDate, $expectedCompletion, $actualCompletion, $contractorName, $contractorContact, $estimatedCost, $actualCost, $notes, $remarks, $sitePhotoPath]);
+                $this->setFlash('success', 'Milestone created successfully' . ($hasNewPhoto ? ' with site photo' : ''));
             }
         } catch (\Exception $e) {
             error_log('ProjectProgressController::updateColonyProgress error: ' . $e->getMessage());

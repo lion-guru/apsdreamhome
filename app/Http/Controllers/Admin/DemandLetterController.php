@@ -363,10 +363,18 @@ class DemandLetterController extends AdminController
                 $this->redirect('/admin/finance/demand-letters?status=' . urlencode($letter['status']));
             }
 
+            // Build payment + PDF URLs (BASE_URL safe)
+            $base = defined('BASE_URL') ? rtrim(BASE_URL, '/') : '';
+            $pdfUrl = $base . '/admin/finance/demand-letters/' . $id . '/pdf';
+            $payUrl = $base . '/user/installments/' . (int)($letter['installment_id'] ?? 0) . '/pay';
+
             $message = "Dear " . ($letter['customer_name'] ?? 'Customer') . ","
                 . " your demand letter (" . $letter['letter_number'] . ") for booking "
                 . $letter['booking_number'] . " amounting to Rs. " . number_format((float)$letter['amount'], 2) . " is ready."
-                . " Kindly make the payment before the due date " . $letter['due_date'] . ". - APS Dream Home";
+                . " Kindly make the payment before the due date " . $letter['due_date'] . "."
+                . " Pay now: " . $payUrl
+                . " | Download PDF: " . $pdfUrl
+                . " - APS Dream Home";
 
             $delivered = false;
             try {
