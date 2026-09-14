@@ -2,18 +2,41 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
 use App\Traits\TenantAwareTrait;
 use Exception;
 
-class VoiceUploadApiController extends AdminController
+class VoiceUploadApiController extends BaseController
 {
     use TenantAwareTrait;
 
+    public function __construct()
+    {
+        parent::__construct();
+        $this->skipCsrfProtection();
+    }
+
+    private function requireAdmin(): int
+    {
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+        if (!$userId) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Authentication required']);
+            exit;
+        }
+        $role = $GLOBALS['api_user_role'] ?? '';
+        if (!in_array($role, ['admin', 'employee', 'superadmin'])) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Admin access required']);
+            exit;
+        }
+        return $userId;
+    }
+
     public function index()
     {
-        $this->requireAuth();
+        $this->requireAdmin();
         try {
             $tid = $this->tenantId();
             $page = max(1, (int)($_GET['page'] ?? 1));
@@ -72,7 +95,7 @@ class VoiceUploadApiController extends AdminController
 
     public function show($id)
     {
-        $this->requireAuth();
+        $this->requireAdmin();
         try {
             $tid = $this->tenantId();
             $where = 'id = ?';

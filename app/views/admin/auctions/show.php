@@ -98,6 +98,48 @@ ob_start();
             </div>
         </div>
     </div>
+
+    <?php if (!empty($items)): ?>
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white">
+                        <h6 class="mb-0">Lots (<?= count($items) ?>)</h6>
+                    </div>
+                    <div class="card-body aps-cp-card-body table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Starting Price</th>
+                                    <th class="text-end">Current Price</th>
+                                    <th class="text-end">Bids</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($items as $item): ?>
+                                    <?php
+                                        $lotBids = array_filter($bids, fn($b) => (int)($b['auction_item_id'] ?? 0) === (int)$item['id']);
+                                    ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($item['title'] ?? '') ?></td>
+                                        <td>
+                                            <?php $badge = ['pending'=>'secondary','active'=>'primary','sold'=>'success','unsold'=>'warning','cancelled'=>'dark'][$item['status']] ?? 'secondary'; ?>
+                                            <span class="badge bg-<?= $badge ?>"><?= ucfirst($item['status']) ?></span>
+                                        </td>
+                                        <td class="text-end">₹<?= number_format((float)($item['starting_price'] ?? 0)) ?></td>
+                                        <td class="text-end">₹<?= number_format((float)($item['current_price'] ?? 0)) ?></td>
+                                        <td class="text-end"><?= count($lotBids) ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
 </div>
 <?php
 $content = ob_get_clean();

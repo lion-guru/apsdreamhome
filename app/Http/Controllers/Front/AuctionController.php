@@ -48,13 +48,15 @@ class AuctionController extends BaseController
         $userId = (int)($_SESSION['user_id'] ?? $_SESSION['customer_id'] ?? 0);
         $isWatching = $userId ? $this->service->isWatching($id, $userId) : false;
         $deposit = $userId ? $this->service->hasDeposit($id, $userId) : null;
+        $items = $this->service->items($id);
         $this->renderView('auctions.show', [
             'page_title' => $auction['title'],
             'page_heading' => $auction['title'],
             'auction' => $auction,
             'bids' => $bids,
             'is_watching' => $isWatching,
-            'has_deposit' => $deposit
+            'has_deposit' => $deposit,
+            'items' => $items
         ]);
     }
 

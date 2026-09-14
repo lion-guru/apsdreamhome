@@ -88,11 +88,13 @@ class AuctionController extends AdminController
             return $this->redirect(BASE_URL . '/admin/auctions');
         }
         $bids = $this->service->getBids($id, 100);
+        $items = $this->service->items($id);
         return $this->render('admin.auctions.show', [
             'page_title' => $auction['title'],
             'page_heading' => $auction['title'],
             'auction' => $auction,
-            'bids' => $bids
+            'bids' => $bids,
+            'items' => $items
         ]);
     }
 

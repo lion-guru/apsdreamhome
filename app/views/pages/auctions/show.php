@@ -127,7 +127,7 @@ ob_start();
                             <div class="d-flex justify-content-between border-bottom py-2">
                                 <div>
                                     <strong><?= htmlspecialchars($b['bidder_name'] ?? '') ?></strong>
-                                    <br><small class="text-muted"><?= date('M j, H:i', strtotime($b['placed_at'])) ?></small>
+                                    <br><small class="text-muted"><?= date('M j, H:i', strtotime($b['created_at'])) ?></small>
                                 </div>
                                 <div class="text-end">
                                     <strong>₹<?= number_format($b['bid_amount']) ?></strong>
@@ -153,6 +153,48 @@ ob_start();
             </div>
         </div>
     </div>
+
+    <?php if (!empty($items)): ?>
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white">
+                        <h6 class="mb-0"><?= __('auction_lots', [], 'Lots') ?></h6>
+                    </div>
+                    <div class="card-body aps-cp-card-body table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th><?= __('auction_lot_title', [], 'Title') ?></th>
+                                    <th><?= __('auction_status', [], 'Status') ?></th>
+                                    <th class="text-end"><?= __('auction_start_price', [], 'Starting Price') ?></th>
+                                    <th class="text-end"><?= __('auction_current_price', [], 'Current Price') ?></th>
+                                    <th class="text-end"><?= __('auction_bids_count', [], 'Bids') ?></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($items as $item): ?>
+                                    <?php
+                                        $lotBids = array_filter($bids, fn($b) => (int)($b['auction_item_id'] ?? 0) === (int)$item['id']);
+                                    ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($item['title'] ?? '') ?></td>
+                                        <td>
+                                            <?php $badge = ['pending'=>'secondary','active'=>'primary','sold'=>'success','unsold'=>'warning','cancelled'=>'dark'][$item['status']] ?? 'secondary'; ?>
+                                            <span class="badge bg-<?= $badge ?>"><?= ucfirst($item['status']) ?></span>
+                                        </td>
+                                        <td class="text-end">₹<?= number_format((float)($item['starting_price'] ?? 0)) ?></td>
+                                        <td class="text-end">₹<?= number_format((float)($item['current_price'] ?? 0)) ?></td>
+                                        <td class="text-end"><?= count($lotBids) ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
 </div>
 
 <script>
