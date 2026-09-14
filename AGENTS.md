@@ -1,4 +1,38 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-14 — Session 101: Flutter Registry/Payout/Site-Visit Wiring & Home/Profile Quick Links)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-14 — Session 102: Release APK Build + Full System Sweep)
+
+## Session 102: Release APK Build + Full System Sweep (2026-09-14)
+
+### Goal
+Build fresh release APK (89.6MB) with Session 101 Flutter wiring, deploy to public/downloads, run full system sweep to confirm zero regressions across all 809 tables.
+
+### Summary
+| Area | Result |
+|------|--------|
+| **Release APK** | Fresh build 93.9MB → `public/downloads/apsdreamhome.apk`; debug APK 264MB → `apsdreamhome-debug.apk` |
+| **Schema Scanner** | **CLEAN** (0 mismatches across 936 files, 809 tables) |
+| **Health Check** | **ok:true** (apache:80, mysql:3307, 809 tables, APK 89.6MB, pubspec 1.2.2+1) |
+| **Workflow Probe** | **15/15 PASS** (login→properties→favorites→inquiry→colonies→dashboard→notifications→payment→profile, 0 orphans) |
+| **AI Smoke** | **7/7 PASS** (SmartAI rag, WidgetBot, GeminiBot local, VoiceAssistant, AsstChat Hindi, Recos 8, Analyze) |
+| **Flutter Analyze** | **0 errors** (3 infos: unused_local_variable, avoid_print, use_null_aware_elements) |
+| **DB Growth** | 809 tables (+2 from Session 99 idempotent site_visits/payout_entries column additions) |
+
+### Verification
+- `php -l` clean on all Session 99-101 files
+- `health_check` **ok:true** (809 tables, APK 89.6MB)
+- `workflow_probe` **15/15 PASS**
+- `smoke_all_ai` **7/7 PASS**
+- `scan_schema_mismatches` **CLEAN** (0 mismatches)
+- `flutter analyze` **0 errors**
+- Release APK deployed at `public/downloads/apsdreamhome.apk` (89.6MB)
+
+### Key Lessons
+_231. **Release APK is 1/3 the size of debug** — Release (89.6MB) vs Debug (264MB) due to tree-shaking and minification. Always ship release APK for end users._
+_232. **Gradle "failed to produce .apk" is a known Flutter issue** — APK IS built at `android/app/build/outputs/flutter-apk/app-release.apk`. Copy manually._
+_233. **`health_check` APK size now reflects release APK** — `apk:public/downloads` reports 93907089 bytes (89.6MB) after release deployment. Previous 264MB was debug._
+
+---
+
+## Session 101: Flutter Registry/Payout/Site-Visit Wiring & Home/Profile Quick Links (2026-09-14)
 
 ## Session 101: Flutter Registry/Payout/Site-Visit Wiring & Home/Profile Quick Links (2026-09-14)
 

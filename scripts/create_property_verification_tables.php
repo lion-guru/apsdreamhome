@@ -1,5 +1,5 @@
 <?php
-require_once 'C:/xampp/htdocs/apsdreamhome/config/bootstrap.php';
+require_once __DIR__ . '/../config/bootstrap.php';
 
 $db = \App\Core\Database\Database::getInstance()->getConnection();
 

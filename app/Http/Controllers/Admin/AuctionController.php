@@ -62,6 +62,18 @@ class AuctionController extends AdminController
             'created_by' => $this->getUserId()
         ];
         $id = $this->service->createAuction($data);
+        if ($id) {
+            try {
+                $this->service->addItem((int)$id, [
+                    'property_id' => $data['property_id'],
+                    'title' => $data['title'],
+                    'starting_price' => $data['start_price'],
+                    'reserve_price' => $data['reserve_price'],
+                    'current_price' => $data['start_price'],
+                    'status' => 'pending'
+                ]);
+            } catch (\Throwable $e) { error_log("AuctionController::store addItem error: " . $e->getMessage()); }
+        }
         $this->setFlash($id ? 'success' : 'error', $id ? "Auction #$id created" : 'Failed to create auction');
         return $this->redirect(BASE_URL . '/admin/auctions/show/' . $id);
     }
@@ -119,7 +131,8 @@ class AuctionController extends AdminController
                 $tid = $this->tenantId();
                 $this->pdo()->prepare("DELETE FROM auction_deposits WHERE auction_id = ? AND tenant_id = ?")->execute([$id, $tid]);
                 $this->pdo()->prepare("DELETE FROM auction_watchers WHERE auction_id = ? AND tenant_id = ?")->execute([$id, $tid]);
-                $this->pdo()->prepare("DELETE FROM auction_bids WHERE auction_id = ? AND tenant_id = ?")->execute([$id, $tid]);
+                $this->pdo()->prepare("DELETE FROM auction_bids WHERE auction_item_id = ? AND tenant_id = ?")->execute([$id, $tid]);
+                $this->pdo()->prepare("DELETE FROM auction_items WHERE auction_id = ? AND tenant_id = ?")->execute([$id, $tid]);
                 $this->pdo()->prepare("DELETE FROM auctions WHERE id = ? AND tenant_id = ?")->execute([$id, $tid]);
                 $this->setFlash('success', 'Auction deleted');
             } catch (\Throwable $e) {

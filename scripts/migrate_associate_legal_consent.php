@@ -17,6 +17,13 @@ try {
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     ]);
 
+    // Check if table exists
+    $tblCheck = $pdo->query("SHOW TABLES LIKE 'associates'");
+    if ($tblCheck->rowCount() === 0) {
+        echo "[SKIP] Table 'associates' does not exist.\n";
+        exit(0);
+    }
+
     // Check if column already exists
     $colCheck = $pdo->query("SHOW COLUMNS FROM associates LIKE 'legal_consent_accepted'");
     if ($colCheck->rowCount() > 0) {
