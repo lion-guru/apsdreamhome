@@ -32,8 +32,9 @@
                         </div>
                         <div class="col-md-6">
                             <h5><?= __('booking_payment_details') ?></h5>
-                            <form method="POST" action="<?= BASE_URL ?>/booking/pay/<?= $booking['id'] ?>">
+                            <form method="POST" action="<?= BASE_URL ?>/booking/<?= $booking['id'] ?>/pay">
                                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                                                <input type="hidden" name="idempotency_key" value="<?php echo htmlspecialchars($idempotency_key ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <div class="mb-3">
                                     <label class="form-label"><?= __('booking_amount') ?> (&#8377;)</label>
                                     <div class="input-group">

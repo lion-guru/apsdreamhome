@@ -1,4 +1,30 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-14 — Session 103: CI/CD Pipeline Canonical + Trigger Cleanup)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-14 — Session 104: PlotController Split + Service-Owned Token Schedule)
+
+## Session 104: PlotController Split + Service-Owned Token Schedule (2026-09-14)
+
+### Goal
+Apply all 22 PlotController improvements (security, race condition, tenant scope, pagination, idempotency, maintainability), split the god-controller, and move the token schedule into BookingComplianceService.
+
+### Summary
+| Area | Result |
+|------|--------|
+| **Split** | `Front/PlotController.php` (953 lines, deleted) → `PlotBaseController` (abstract: 12 consts + 9 protected helpers) + `PlotIndexController` (browse) + `PlotBookingController` (booking) + `PlotPaymentController` (payment). 10 routes repointed, URLs unchanged |
+| **P0 fixes** | `SELECT ... FOR UPDATE` + atomic hold (`rowCount` check), tenant+ownership scope on all booking fetches, parameterized `index()` (`LEFT JOIN + GROUP BY`), CSRF verified enforced (no skip) |
+| **P1/P2/P3** | `getBookingWithDetails`/`getBookingEmis` dedup, pagination (colony 24pp + view nav, API 50pp + `{meta}`), rate-limit + per-booking throttle, `random_bytes` booking numbers, idempotency key + ref dedup, generic errors + `error_log`, `receipt()` `exit` → `return` |
+| **Token schedule** | `BookingComplianceService::createTokenSchedule($bookingId, $dealPrice, $plan=[])` (configurable `token_pct`/`due_days`, same-PDO txn participant); `storeBooking()` delegates to it |
+| **Live bugs found** | `booking_emis.transaction_ref` → `transaction_id` (every payment 1054-failed); pay-form action `/booking/pay/{id}` → `/booking/{id}/pay` (every payment 404'd); DDL `ensureIdempotencyColumn()` inside txn caused implicit commit → moved before `beginTransaction()` |
+| **NOT wired** | Balance-installment plans: canonical engine (`BookingLifecycleService::generatePaymentSchedule`) reads `plot_bookings` table, web flow writes `bookings` table — cross-table wiring needs business spec (tenure/rate/trigger). Token-only default preserved |
+
+### Verification
+- Live booking probe **12/12** (login→book→hold→token EMI→pay→replay dedup→full scratch cleanup, 0 rows left)
+- `workflow_probe` **15/15**, E2E **374/374**, `php -l` clean, health `ok:true`
+
+### Key Lessons
+_237. **ALTER TABLE inside a transaction is a silent partial commit** — MySQL DDL causes implicit commit; an idempotency-column guard inside the payment txn committed the charge, then `commit()` threw "no active transaction". DDL guards must run before `beginTransaction()`._
+_238. **`bookings` vs `plot_bookings` are separate lifecycles** — web plot flow writes `bookings`; the balance-EMI engine reads `plot_bookings`. Do not bridge them without a business spec (tenure/rate/trigger + id mapping)._
+_239. **Split controllers by moving methods verbatim, then repointing routes** — zero logic change in the move; behavior proven identical by route probes + full E2E before any further refactoring._
+
+---
 
 ## Session 103: CI/CD Pipeline Canonical + Trigger Cleanup (2026-09-14)
 

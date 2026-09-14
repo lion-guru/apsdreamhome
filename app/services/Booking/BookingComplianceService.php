@@ -9,6 +9,73 @@ class BookingComplianceService
 
     private $db;
     private $tokenPercentage = 25;
+    private $tokenDueDays = 15;
+
+    /**
+     * Token percentage of deal price (percent units, e.g. 25).
+     * Single source of truth consumed by the Front plot flow
+     * (PlotBaseController and its PlotIndex/PlotBooking/PlotPayment children).
+     */
+    public function getTokenPercentage(): float
+    {
+        return (float)$this->tokenPercentage;
+    }
+
+    /**
+     * Days given to pay the token amount after booking.
+     */
+    public function getTokenDueDays(): int
+    {
+        return (int)$this->tokenDueDays;
+    }
+
+    /**
+     * Token amount for a deal price.
+     */
+    public function calculateTokenAmount(float $dealPrice): float
+    {
+        return round($dealPrice * ($this->tokenPercentage / 100), 2);
+    }
+
+    /**
+     * Create the initial token payment schedule for a booking.
+     *
+     * This is the configurable payment-plan entry point consumed by
+     * Front\PlotBookingController::storeBooking(). Plan overrides allow
+     * per-booking customization without code changes:
+     *   ['token_pct' => 25, 'due_days' => 15]
+     *
+     * MUST be called inside the caller's DB transaction (this method never
+     * begins/commits — it shares the singleton PDO connection, so it
+     * participates in the caller's transaction). Throws on DB failure so the
+     * caller can roll back.
+     *
+     * @return array ['emi_id'=>int, 'token_amount'=>float, 'due_date'=>string,
+     *                'token_pct'=>float, 'due_days'=>int]
+     */
+    public function createTokenSchedule(int $bookingId, float $dealPrice, array $plan = []): array
+    {
+        $tokenPct = isset($plan['token_pct']) ? (float)$plan['token_pct'] : (float)$this->tokenPercentage;
+        $dueDays = isset($plan['due_days']) ? (int)$plan['due_days'] : (int)$this->tokenDueDays;
+        if ($tokenPct <= 0 || $tokenPct > 100) $tokenPct = (float)$this->tokenPercentage;
+        if ($dueDays < 0 || $dueDays > 365) $dueDays = (int)$this->tokenDueDays;
+
+        $tokenAmount = round($dealPrice * ($tokenPct / 100), 2);
+        $dueDate = date('Y-m-d', strtotime('+' . $dueDays . ' days'));
+
+        $stmt = $this->db->prepare(
+            "INSERT INTO booking_emis (booking_id, installment_no, due_date, amount, status, tenant_id, created_at) VALUES (?, 1, ?, ?, 'pending', ?, ?)"
+        );
+        $stmt->execute([$bookingId, $dueDate, $tokenAmount, $this->tenantId(), date('Y-m-d H:i:s')]);
+
+        return [
+            'emi_id' => (int)$this->db->lastInsertId(),
+            'token_amount' => $tokenAmount,
+            'due_date' => $dueDate,
+            'token_pct' => $tokenPct,
+            'due_days' => $dueDays,
+        ];
+    }
 
     public function __construct()
     {

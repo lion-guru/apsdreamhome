@@ -249,6 +249,26 @@
     <?php endif; ?>
 </div>
 
+<?php $pg = $pagination ?? null; if (!empty($pg) && ($pg['total_pages'] ?? 1) > 1): ?>
+    <?php
+        $pgBase = $_GET;
+        unset($pgBase['page']);
+        $pgQuery = http_build_query($pgBase);
+        $pgPrefix = BASE_URL . '/colony/' . htmlspecialchars($colony['slug'] ?? '') . '/plots' . ($pgQuery !== '' ? '?' . $pgQuery . '&' : '?');
+    ?>
+    <nav aria-label="Plots pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item <?= ($pg['page'] <= 1) ? 'disabled' : '' ?>">
+                <a class="page-link" href="<?= $pgPrefix ?>page=<?= max(1, $pg['page'] - 1) ?>">&laquo; Prev</a>
+            </li>
+            <li class="page-item disabled"><span class="page-link">Page <?= intval($pg['page']) ?> of <?= intval($pg['total_pages']) ?> (<?= intval($pg['total']) ?> plots)</span></li>
+            <li class="page-item <?= ($pg['page'] >= $pg['total_pages']) ? 'disabled' : '' ?>">
+                <a class="page-link" href="<?= $pgPrefix ?>page=<?= min($pg['total_pages'], $pg['page'] + 1) ?>">Next &raquo;</a>
+            </li>
+        </ul>
+    </nav>
+<?php endif; ?>
+
 <!-- Floating Compare Bar -->
 <div id="compare-bar" class="compare-bar">
     <div class="compare-bar-inner">

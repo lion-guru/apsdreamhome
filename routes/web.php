@@ -288,7 +288,7 @@ $router->get('/projects/{location}', 'Front\\ProjectController@projectsByLocatio
 
 // Dynamic Colony Pages (single-template, DB-driven)
 $router->get('/colony/{slug}', 'Front\\ProjectController@colonyDetail');
-$router->get('/plots', 'Front\\PlotController@index');
+$router->get('/plots', 'Front\\PlotIndexController@index');
 
 // â”€â”€ Customer Booking Portal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $router->get('/plots/browse', 'Front\\BookingController@browse');
@@ -313,21 +313,21 @@ $router->post('/plots/{id}/verify-kyc', 'Front\\BookingController@verifyKyc');
 $router->get('/user/bookings/{id}/nach',              'Front\\BookingController@nachMandate');
 $router->post('/user/bookings/{id}/nach/register',    'Front\\BookingController@registerNachMandate');
 
-$router->get('/plot/{id}', 'Front\\PlotController@show');
-$router->get('/plot/{id}/book', 'Front\\PlotController@bookPlot');
-$router->post('/plot/book', 'Front\\PlotController@storeBooking');
-$router->get('/booking/{id}/confirmation', 'Front\\PlotController@bookingConfirmation');
-$router->get('/booking/{id}/pay', 'Front\\PlotController@payBooking');
-$router->post('/booking/{id}/pay', 'Front\\PlotController@processPayment');
-$router->get('/booking/{id}/receipt', 'Front\\PlotController@receipt');
+$router->get('/plot/{id}', 'Front\\PlotIndexController@show');
+$router->get('/plot/{id}/book', 'Front\\PlotBookingController@bookPlot');
+$router->post('/plot/book', 'Front\\PlotBookingController@storeBooking');
+$router->get('/booking/{id}/confirmation', 'Front\\PlotBookingController@bookingConfirmation');
+$router->get('/booking/{id}/pay', 'Front\\PlotPaymentController@payBooking');
+$router->post('/booking/{id}/pay', 'Front\\PlotPaymentController@processPayment');
+$router->get('/booking/{id}/receipt', 'Front\\PlotBookingController@receipt');
 
-$router->get('/colony/{slug}/plots', 'Front\\PlotController@colonyPlots');
+$router->get('/colony/{slug}/plots', 'Front\\PlotIndexController@colonyPlots');
 $router->get('/colony/{slug}/map', 'App\\Http\\Controllers\\MapController@colonyPlotMap');
 $router->get('/api/colony/{id}/map/geojson', 'App\\Http\\Controllers\\MapController@colonyGeoJson');
 $router->get('/colony/raghunath-nagri/block-c-dashboard', 'Front\\ColonyDashboardController@raghunathBlockC');
 $router->post('/api/colony/raghunath-nagri/sync-booking', 'Front\\ColonyDashboardController@syncBookingFromFirebase');
 $router->get('/api/colony/raghunath-nagri/bookings', 'Front\\ColonyDashboardController@getBlockCBookings');
-$router->get('/api/plots/by-colony/{colonyId}', 'Front\\PlotController@apiByColony');
+$router->get('/api/plots/by-colony/{colonyId}', 'Front\\PlotIndexController@apiByColony');
 
 // â”€â”€ Digital Booking Flow (Customer-facing) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $router->get('/booking/digital/{bookingNumber}', 'Front\\DigitalBookingController@show');
