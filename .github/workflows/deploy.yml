@@ -199,6 +199,9 @@ jobs:
     needs: test
     permissions:
       contents: read
+    outputs:
+      sha: ${{ steps.meta.outputs.sha }}
+      ts: ${{ steps.meta.outputs.ts }}
 
     steps:
       - name: Checkout
@@ -268,7 +271,6 @@ jobs:
     needs: build
     environment:
       name: production
-      url: ${{ secrets.PROD_APP_URL }}
     steps:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
@@ -291,7 +293,7 @@ jobs:
 
             echo "==== Running deploy script ===="
             chmod +x deploy-to-production.sh
-            APP_VERSION="${{ steps.meta.outputs.sha }}" \
+            APP_VERSION="${{ needs.build.outputs.sha }}" \
               HEALTHCHECK_URL="${{ secrets.PROD_APP_URL }}/health" \
               DEPLOY_BRANCH=main \
               ./deploy-to-production.sh

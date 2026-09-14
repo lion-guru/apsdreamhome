@@ -143,6 +143,9 @@ class AuctionService
             $this->pdo->prepare("UPDATE auctions SET current_bid = ?, bid_count = bid_count + 1, ends_at = ?" . $this->tenantSql() . " WHERE id = ?")
                 ->execute(array_merge([$amount, $newEndsAt, $auctionId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
 
+            $this->pdo->prepare("UPDATE auction_items SET current_price = ?, status = 'active' WHERE auction_id = ?" . $this->tenantSql())
+                ->execute(array_merge([$amount, $auctionId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
+
             $this->pdo->commit();
             return [
                 'success' => true,
@@ -274,6 +277,80 @@ class AuctionService
             }
             return $ended;
         } catch (\Throwable $e) { return 0; }
+    }
+
+    public function items($auctionId)
+    {
+        try {
+            $tid = $this->tenantId();
+            $sql = "SELECT * FROM auction_items WHERE auction_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($tid > 1 ? [$auctionId, $tid] : [$auctionId]);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            error_log("Auction items: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function addItem($auctionId, $data)
+    {
+        try {
+            $tid = $this->tenantId();
+            $sql = "INSERT INTO auction_items (auction_id, property_id, title, starting_price, reserve_price, current_price, status, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([
+                $auctionId,
+                $data['property_id'] ?? null,
+                $data['title'] ?? null,
+                $data['starting_price'] ?? 0,
+                $data['reserve_price'] ?? null,
+                $data['current_price'] ?? 0,
+                $data['status'] ?? 'pending',
+                $tid
+            ]);
+            return $this->pdo->lastInsertId();
+        } catch (\Throwable $e) {
+            error_log("Auction addItem: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    public function deleteItem($itemId)
+    {
+        try {
+            $tid = $this->tenantId();
+            $sql = "DELETE FROM auction_items WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($tid > 1 ? [$itemId, $tid] : [$itemId]);
+            return $stmt->rowCount() > 0;
+        } catch (\Throwable $e) {
+            error_log("Auction deleteItem: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function syncItemStatus($auctionId, $auctionStatus)
+    {
+        $statusMap = [
+            'scheduled' => 'pending',
+            'live'      => 'active',
+            'ended'     => 'unsold',
+            'sold'      => 'sold',
+            'cancelled' => 'cancelled',
+        ];
+        $itemStatus = $statusMap[$auctionStatus] ?? 'pending';
+
+        try {
+            $tid = $this->tenantId();
+            $params = [$itemStatus, $auctionId];
+            $sql = "UPDATE auction_items SET status = ? WHERE auction_id = ?";
+            if ($tid > 1) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
+        } catch (\Throwable $e) {
+            error_log("Auction syncItemStatus: " . $e->getMessage());
+        }
     }
 
     public function getStats()
