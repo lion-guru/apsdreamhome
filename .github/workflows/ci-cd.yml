@@ -136,10 +136,23 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
 
-      - name: Setup database
+      - name: Wait for MySQL
         run: |
-          mysql -h 127.0.0.1 -u root -proot -e "CREATE DATABASE IF NOT EXISTS apsdreamhome_test;"
-          mysql -h 127.0.0.1 -u root -proot apsdreamhome_test < database/apsdreamhome.sql
+          for i in {1..30}; do
+            mysqladmin ping -h127.0.0.1 -P3306 -utest -ptest --silent && break
+            sleep 2
+          done
+          mysqladmin ping -h127.0.0.1 -P3306 -utest -ptest --silent
+
+      - name: Setup database
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: apsdreamhome_test
+          DB_USERNAME: test
+          DB_PASSWORD: test
+          APP_ENV: testing
+        run: php tests/migrate.php
 
       - name: Start Apache/PHP server
         run: |
@@ -216,6 +229,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Deploy to server
+        if: env.PROD_SERVER_HOST != ''
+        env:
+          PROD_SERVER_HOST: ${{ secrets.PROD_SERVER_HOST }}
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.PROD_SERVER_HOST }}
