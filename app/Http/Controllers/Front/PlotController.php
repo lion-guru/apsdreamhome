@@ -394,11 +394,11 @@ class PlotController extends BaseController
             return $this->redirect('/user/dashboard');
         }
 
+        $emis = [];
         try {
             $emis = $this->db->fetchAll("SELECT * FROM booking_emis WHERE booking_id = ? ORDER BY installment_no", [$bookingId]);
         } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
+            error_log($e->getMessage());
         }
 
         $this->layout = 'layouts/customer';
@@ -447,24 +447,22 @@ class PlotController extends BaseController
                 exit;
             }
 
+            $emis = [];
             try {
                 $emis = $this->db->fetchAll("SELECT * FROM booking_emis WHERE booking_id = ? ORDER BY installment_no", [$bookingId]);
             } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-            error_log($e->getMessage());
+                error_log($e->getMessage());
             }
             $currentStatus = $booking['status'] ?? 'pending';
 
             $viewFile = __DIR__ . '/../../views/pages/booking_receipt.php';
             if (file_exists($viewFile)) {
-                require $viewFile;
+                require_once $viewFile;
             } else {
                 echo '<h2>View file not found</h2>';
             }
         } catch (\Throwable $e) {
             echo '<h2>Error: ' . htmlspecialchars($e->getMessage()) . '</h2>';
-            echo '<p>File: ' . $e->getFile() . ':' . $e->getLine() . '</p>';
-            echo '<pre>' . htmlspecialchars($e->getTraceAsString()) . '</pre>';
         }
         exit;
     }
