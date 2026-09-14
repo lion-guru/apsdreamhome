@@ -3,7 +3,7 @@ import { readFileSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
-const BASE = 'http://localhost/apsdreamhome';
+const BASE = (process.env.BASE_URL || process.env.APP_URL || 'http://localhost/apsdreamhome').replace(/\/$/, '');
 const CRASH_THRESHOLD = 25; // restart browser every N pages to prevent memory crash
 
 // Dynamic admin menu URLs from DB (generated via php scripts/dump_admin_urls.php) — fallback to hardcoded if file missing

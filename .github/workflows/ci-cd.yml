@@ -155,7 +155,20 @@ jobs:
         run: php tests/migrate.php
 
       - name: Start Apache/PHP server
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: apsdreamhome_test
+          DB_USERNAME: test
+          DB_PASSWORD: test
+          APP_ENV: testing
         run: |
+          echo "DB_HOST=127.0.0.1" >> .env
+          echo "DB_PORT=3306" >> .env
+          echo "DB_DATABASE=apsdreamhome_test" >> .env
+          echo "DB_USERNAME=test" >> .env
+          echo "DB_PASSWORD=test" >> .env
+          echo "APP_ENV=testing" >> .env
           php -S 0.0.0.0:8000 -t public &
           sleep 5
 
