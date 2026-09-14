@@ -176,10 +176,23 @@ async function createBrowser() {
       await browser.close();
     } catch (e) {}
   }
-  browser = await chromium.launch({
+  const launchOptions = {
     headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
-  });
+  };
+  try {
+    browser = await chromium.launch(launchOptions);
+  } catch (err) {
+    try {
+      browser = await chromium.launch({ ...launchOptions, channel: 'chromium' });
+    } catch (err2) {
+      try {
+        browser = await chromium.launch({ ...launchOptions, channel: 'chrome' });
+      } catch (err3) {
+        throw err;
+      }
+    }
+  }
   context = await browser.newContext({
     viewport: { width: 1280, height: 800 },
     extraHTTPHeaders: { 'X-Testing': '1' },

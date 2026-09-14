@@ -175,7 +175,7 @@ jobs:
       - name: Install Playwright
         run: |
           npm install
-          npx playwright install --with-deps
+          npx playwright install chromium chromium-headless-shell --with-deps || npx playwright install --with-deps
 
       - name: Run E2E Tests
         run: node testing/visual_tests/E2E_MASTER_TEST.mjs

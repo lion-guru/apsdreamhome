@@ -28,7 +28,7 @@ class AppFeedbackApiController extends BaseController
         return $userId;
     }
 
-    private function requireAdmin(): int
+    protected function requireAdmin(): int
     {
         $userId = $this->requireAuth();
         $role = $GLOBALS['api_user_role'] ?? '';
