@@ -17,7 +17,7 @@ class VoiceUploadApiController extends BaseController
         $this->skipCsrfProtection();
     }
 
-    private function requireAdmin(): int
+    protected function requireAdmin(): int
     {
         $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) {
