@@ -100,25 +100,32 @@ try {
     
     // 5. Seed blog_comments with test data for verification
     echo "Seeding blog_comments test data...\n";
-    $stmt = $db->prepare("SELECT id FROM blog_posts WHERE status = 'published' LIMIT 1");
-    $stmt->execute();
-    $post = $stmt->fetch(\PDO::FETCH_ASSOC);
-    if ($post) {
-        $stmt = $db->prepare("SELECT COUNT(*) as cnt FROM blog_comments WHERE post_id = ?");
-        $stmt->execute([$post['id']]);
-        $cnt = $stmt->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0;
-        if ($cnt == 0) {
-            $db->exec("INSERT INTO blog_comments (post_id, author_name, author_email, content, status, tenant_id) VALUES 
-                ({$post['id']}, 'Rahul Kumar', 'rahul@example.com', 'Great article! Very informative about real estate trends.', 'approved', 1),
-                ({$post['id']}, 'Priya Singh', 'priya@example.com', 'Very helpful for first-time buyers. Thank you!', 'approved', 1),
-                ({$post['id']}, 'Test User', 'test@example.com', 'This is a pending comment for testing.', 'pending', 1)
-            ");
-            echo "  ✓ Seeded 3 test comments\n";
+    try {
+        $hasBlogTable = (bool)$db->query("SHOW TABLES LIKE 'blog_posts'")->fetch();
+    } catch (\Throwable $e) { $hasBlogTable = false; }
+    if ($hasBlogTable) {
+        $stmt = $db->prepare("SELECT id FROM blog_posts WHERE status = 'published' LIMIT 1");
+        $stmt->execute();
+        $post = $stmt->fetch(\PDO::FETCH_ASSOC);
+        if ($post) {
+            $stmt = $db->prepare("SELECT COUNT(*) as cnt FROM blog_comments WHERE post_id = ?");
+            $stmt->execute([$post['id']]);
+            $cnt = $stmt->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0;
+            if ($cnt == 0) {
+                $db->exec("INSERT INTO blog_comments (post_id, author_name, author_email, content, status, tenant_id) VALUES 
+                    ({$post['id']}, 'Rahul Kumar', 'rahul@example.com', 'Great article! Very informative about real estate trends.', 'approved', 1),
+                    ({$post['id']}, 'Priya Singh', 'priya@example.com', 'Very helpful for first-time buyers. Thank you!', 'approved', 1),
+                    ({$post['id']}, 'Test User', 'test@example.com', 'This is a pending comment for testing.', 'pending', 1)
+                ");
+                echo "  ✓ Seeded 3 test comments\n";
+            } else {
+                echo "  ✓ Comments already exist\n";
+            }
         } else {
-            echo "  ✓ Comments already exist\n";
+            echo "  ⚠ No published blog posts found, skipping seed\n";
         }
     } else {
-        echo "  ⚠ No published blog posts found, skipping seed\n";
+        echo "  ⚠ blog_posts table does not exist, skipping seed\n";
     }
     
     echo "\n=== Phase 1 Migration Complete ===\n";
