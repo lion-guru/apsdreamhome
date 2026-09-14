@@ -375,15 +375,15 @@ class DirectoryService
             try {
                 $stats['total_jobs'] = (int)$this->db->query("SELECT COUNT(*) FROM directory_jobs" . $w)->fetchColumn();
                 $stats['active_jobs'] = (int)$this->db->query("SELECT COUNT(*) FROM directory_jobs WHERE status = 'active'" . $a)->fetchColumn();
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log('DirectoryService::getStats jobs: ' . $e->getMessage()); }
 
             try {
                 $stats['total_reviews'] = (int)$this->db->query("SELECT COUNT(*) FROM directory_reviews" . $w)->fetchColumn();
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log('DirectoryService::getStats reviews: ' . $e->getMessage()); }
 
             try {
                 $stats['total_materials'] = (int)$this->db->query("SELECT COUNT(*) FROM directory_materials" . $w)->fetchColumn();
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log('DirectoryService::getStats materials: ' . $e->getMessage()); }
         } catch (\Throwable $e) {
             error_log('DirectoryService::getStats: ' . $e->getMessage());
         }
