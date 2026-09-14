@@ -5,11 +5,11 @@
  * Usage: php scripts/migrate_associate_rules_page.php
  */
 
-$host = '127.0.0.1';
-$port = 3307;
-$user = 'root';
-$pass = '2jcePXuNaOfEyo6I5wJVkG';
-$db   = 'apsdreamhome';
+$host = getenv('DB_HOST') ?: '127.0.0.1';
+$port = getenv('DB_PORT') ?: 3307;
+$user = getenv('DB_USERNAME') ?: 'root';
+$pass = getenv('DB_PASSWORD') !== false ? getenv('DB_PASSWORD') : (getenv('DB_PASS') ?: '2jcePXuNaOfEyo6I5wJVkG');
+$db   = getenv('DB_DATABASE') ?: 'apsdreamhome';
 
 try {
     $pdo = new PDO("mysql:host={$host};port={$port};dbname={$db}", $user, $pass, [

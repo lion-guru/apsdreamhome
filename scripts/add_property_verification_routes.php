@@ -1,6 +1,14 @@
 <?php
-$file = 'C:/xampp/htdocs/apsdreamhome/routes/web.php';
+$file = dirname(__DIR__) . '/routes/web.php';
+if (!file_exists($file)) {
+    echo "Routes file not found\n";
+    exit(0);
+}
 $content = file_get_contents($file);
+if (strpos($content, '/admin/property-verification') !== false) {
+    echo "Routes already present\n";
+    exit(0);
+}
 
 $old = <<<'EOF'
 $router->get('/admin/document-esign', 'App\Http\Controllers\Admin\DocumentEsignController@index');

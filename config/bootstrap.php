@@ -146,7 +146,11 @@ if (file_exists(APP_ROOT . '/vendor/autoload.php')) {
 
 // Fallback for missing PSR log interface
 if (!interface_exists('Psr\Log\LoggerInterface')) {
-    require_once APP_PATH . '/Core/LoggerInterfaceFallback.php';
+    if (file_exists(CORE_PATH . '/LoggerInterfaceFallback.php')) {
+        require_once CORE_PATH . '/LoggerInterfaceFallback.php';
+    } elseif (file_exists(APP_PATH . '/core/LoggerInterfaceFallback.php')) {
+        require_once APP_PATH . '/core/LoggerInterfaceFallback.php';
+    }
 }
 
 // Include core system files

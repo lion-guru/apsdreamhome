@@ -1,6 +1,13 @@
 <?php
 require_once __DIR__ . '/../config/bootstrap.php';
 $pdo = App\Core\Database\Database::getInstance()->getConnection();
+
+$check = $pdo->query("SHOW TABLES LIKE 'inventory_plots'")->fetchAll();
+if (empty($check)) {
+    echo "Legacy table 'inventory_plots' does not exist. Skipping.\n";
+    exit(0);
+}
+
 $before = $pdo->query("SELECT COUNT(*) FROM plots")->fetchColumn();
 $inserted = $pdo->exec("
 INSERT INTO plots (tenant_id, colony_id, plot_number, block, area_sqft, area_sqm, width_ft, length_ft, price_per_sqft, total_price, status, is_active, created_at, updated_at)

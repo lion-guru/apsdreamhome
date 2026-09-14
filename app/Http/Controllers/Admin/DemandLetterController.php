@@ -87,18 +87,20 @@ class DemandLetterController extends AdminController
             $letters = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             $stats = [
-                'total'  => 0,
-                'sent'   => 0,
-                'paid'   => 0,
-                'overdue' => 0,
-                'amount' => 0,
+                'total'        => 0,
+                'sent'         => 0,
+                'paid'         => 0,
+                'overdue'      => 0,
+                'amount'       => 0,
+                'total_amount' => 0,
             ];
             $statsSql = "SELECT
                             COUNT(*) AS total,
                             SUM(dl.status = 'sent') AS sent,
                             SUM(dl.status = 'paid') AS paid,
                             SUM(dl.status = 'overdue') AS overdue,
-                            COALESCE(SUM(dl.amount), 0) AS amount
+                            COALESCE(SUM(dl.amount), 0) AS amount,
+                            COALESCE(SUM(CASE WHEN dl.status <> 'paid' THEN dl.amount ELSE 0 END), 0) AS total_amount
                          FROM booking_demand_letters dl
                          WHERE dl.tenant_id = ?";
             $stmt = $this->db->prepare($statsSql);
@@ -110,15 +112,21 @@ class DemandLetterController extends AdminController
                 $stats['paid'] = (int)$row['paid'];
                 $stats['overdue'] = (int)$row['overdue'];
                 $stats['amount'] = (float)$row['amount'];
+                $stats['total_amount'] = (float)$row['total_amount'];
             }
+
+            $pagination = [
+                'current_page' => $page,
+                'total_pages'  => $totalPages,
+                'per_page'     => $perPage,
+                'total'        => $total,
+            ];
 
             return $this->render('admin.finance.demand_letters.index', [
                 'letters'    => $letters,
                 'stats'      => $stats,
                 'filters'    => $filters,
-                'page'       => $page,
-                'totalPages' => $totalPages,
-                'total'      => $total,
+                'pagination' => $pagination,
             ]);
         } catch (\Exception $e) {
             error_log('DemandLetterController::index error: ' . $e->getMessage());
@@ -128,16 +136,26 @@ class DemandLetterController extends AdminController
     }
 
     /**
-     * Show the demand-letter generation form for a payment installment.
+     * Show the demand-letter generation form for a payment installment,
+     * or render the booking picker when no installment is supplied.
      */
     public function generate($installmentId = null)
     {
         $this->requireAdmin();
         $installmentId = (int)($installmentId ?? 0);
 
+        if ($installmentId <= 0 && $this->isPost()) {
+            $installmentId = (int)($_POST['installment_id'] ?? 0);
+        }
+
         if ($installmentId <= 0) {
-            $this->setFlash('error', 'Invalid installment ID.');
-            $this->redirect('/admin/finance/dashboard');
+            if (!$this->isPost()) {
+                return $this->render('admin.finance.demand_letters.generate', [
+                    'bookings' => $this->fetchBookingsWithInstallments(),
+                ]);
+            }
+            $this->setFlash('error', 'Please select a booking and installment to generate the demand letter.');
+            $this->redirect('/admin/finance/demand-letters/create');
         }
 
         try {
@@ -216,6 +234,7 @@ class DemandLetterController extends AdminController
                 'installment' => $installment,
                 'booking'     => $booking,
                 'customer'   => $this->fetchBookingCustomer($booking),
+                'bookings'   => [],
             ]);
         } catch (\Exception $e) {
             error_log('DemandLetterController::generate error: ' . $e->getMessage());

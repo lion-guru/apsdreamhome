@@ -73,8 +73,6 @@ $patterns = [
     'fix_*.php',
     'consolidate_*.php',
     'apply_*.php',
-    'audit_*.php',
-    'cron_*.php',
 ];
 $excluded = ['create_migrations_table.php'];
 $scripts = [];

@@ -1,6 +1,13 @@
 <?php
 require_once __DIR__ . '/../config/bootstrap.php';
 $pdo = App\Core\Database\Database::getInstance()->getConnection();
+
+$check = $pdo->query("SHOW TABLES LIKE 'farmer_land_management'")->fetchAll();
+if (empty($check)) {
+    echo "Legacy table 'farmer_land_management' does not exist. Skipping.\n";
+    exit(0);
+}
+
 $rows = $pdo->query("SELECT * FROM farmer_land_management")->fetchAll(PDO::FETCH_ASSOC);
 foreach($rows as $r){
   $phone = $r['farmer_mobile'];

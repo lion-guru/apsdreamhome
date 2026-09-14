@@ -2,6 +2,18 @@
 
 namespace Tests\Integration;
 
+if (!class_exists('PHPUnit\Framework\TestCase')) {
+    $autoload = dirname(__DIR__, 2) . '/vendor/autoload.php';
+    if (file_exists($autoload)) {
+        require_once $autoload;
+    }
+}
+
+if (!class_exists('PHPUnit\Framework\TestCase')) {
+    echo "PHPUnit\\Framework\\TestCase not available. Skipping integration test.\n";
+    exit(2);
+}
+
 use PHPUnit\Framework\TestCase;
 
 class ApiEndpointTest extends TestCase
