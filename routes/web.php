@@ -1091,9 +1091,9 @@ $router->get('/employee/{slug}', 'Employee\\EmployeeController@departmentPage');
 
 // MLM/Team
 $router->get('/team/genealogy', 'Admin\\NetworkController@genealogy');
-$router->get('/api/mlm/tree', 'App\\Http\\Controllers\\MLMController@getNetworkTree');
-$router->get('/api/mlm/tree-data', 'App\\Http\\Controllers\\MLMTreeController@getTreeData');
-$router->get('/api/mlm/search', 'App\\Http\\Controllers\\MLMTreeController@search');
+$router->get('/api/mlm/tree', 'MLMController@getNetworkTree');
+$router->get('/api/mlm/tree-data', 'MLMTreeController@getTreeData');
+$router->get('/api/mlm/search', 'MLMTreeController@search');
 
 // ============================================================
 // AI PROPERTY VALUATION

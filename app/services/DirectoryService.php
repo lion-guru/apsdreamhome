@@ -21,10 +21,8 @@ class DirectoryService
     public function getActiveCategories(): array
     {
         $sql = "SELECT * FROM directory_categories WHERE is_active = 1" . $this->tenantSql() . " ORDER BY sort_order ASC";
-        $params = [];
-        if ($this->tenantId() > 1) $params[] = $this->tenantId();
         $stmt = $this->db->prepare($sql);
-        $stmt->execute($params);
+        $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
 
@@ -92,7 +90,6 @@ class DirectoryService
     {
         $where = ["l.status = 'approved'" . $this->tenantSql()];
         $params = [];
-        if ($this->tenantId() > 1) $params[] = $this->tenantId();
 
         if ($categoryId) {
             $where[] = 'l.category_id = ?';
@@ -141,12 +138,10 @@ class DirectoryService
         $sql = "SELECT l.*, dc.name as category_name, dc.slug as category_slug, dc.icon as category_icon
             FROM directory_listings l LEFT JOIN directory_categories dc ON l.category_id = dc.id
             WHERE l.status = 'approved' AND l.is_featured = 1" . $this->tenantSql() . " ORDER BY l.rating DESC, l.views DESC LIMIT ?";
-        $params = [];
-        if ($this->tenantId() > 1) $params[] = $this->tenantId();
-        $params[] = $limit;
+        $params = [$limit];
         $stmt = $this->db->prepare($sql);
-        $stmt->bindValue(1 + count($params) - 1, end($params), PDO::PARAM_INT);
-        $stmt->execute($params);
+        $stmt->bindValue(1, $limit, PDO::PARAM_INT);
+        $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
 

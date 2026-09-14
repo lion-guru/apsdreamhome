@@ -32,7 +32,7 @@ class AppFeedbackApiController extends BaseController
     {
         $userId = $this->requireAuth();
         $role = $GLOBALS['api_user_role'] ?? '';
-        if (!in_array($role, ['admin', 'employee', 'superadmin'])) {
+        if (!in_array($role, ['admin', 'employee', 'super_admin', 'superadmin'])) {
             http_response_code(403);
             echo json_encode(['success' => false, 'error' => 'Admin access required']);
             exit;
@@ -42,9 +42,13 @@ class AppFeedbackApiController extends BaseController
 
     public function index()
     {
-        $this->requireAdmin();
+        $this->requireAuth();
         try {
             $tid = $this->tenantId();
+            $userId = $this->requireAuth();
+            $role = $GLOBALS['api_user_role'] ?? '';
+            $isAdmin = in_array($role, ['admin', 'employee', 'super_admin', 'superadmin']);
+            
             $page = max(1, (int)($_GET['page'] ?? 1));
             $perPage = 20;
             $offset = ($page - 1) * $perPage;
@@ -59,6 +63,12 @@ class AppFeedbackApiController extends BaseController
             if ($tid > 1) {
                 $where .= ' AND tenant_id = ?';
                 $params[] = $tid;
+            }
+
+            // Non-admin users can only see their own feedback
+            if (!$isAdmin) {
+                $where .= ' AND user_id = ?';
+                $params[] = $this->requireAuth();
             }
 
             if ($search !== '') {

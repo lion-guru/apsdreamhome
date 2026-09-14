@@ -29,10 +29,12 @@ class DemandLetterController extends AdminController
             $offset = ($page - 1) * $perPage;
 
             $filters = [
-                'status'    => trim((string)($_GET['status'] ?? '')),
-                'search'    => trim((string)($_GET['search'] ?? '')),
-                'date_from' => trim((string)($_GET['date_from'] ?? '')),
-                'date_to'   => trim((string)($_GET['date_to'] ?? '')),
+                'status'       => trim((string)($_GET['status'] ?? '')),
+                'search'       => trim((string)($_GET['search'] ?? '')),
+                'date_from'    => trim((string)($_GET['date_from'] ?? '')),
+                'date_to'      => trim((string)($_GET['date_to'] ?? '')),
+                'colony_id'    => (int)($_GET['colony_id'] ?? 0),
+                'overdue_days' => trim((string)($_GET['overdue_days'] ?? '')),
             ];
 
             $where = ['dl.tenant_id = ?'];
@@ -57,11 +59,30 @@ class DemandLetterController extends AdminController
                 $where[] = 'dl.generated_date <= ?';
                 $params[] = $filters['date_to'];
             }
+            if ($filters['colony_id'] > 0) {
+                $where[] = '(b.colony_id = ? OR p.colony_id = ?)';
+                $params[] = $filters['colony_id'];
+                $params[] = $filters['colony_id'];
+            }
+            if ($filters['overdue_days'] !== '') {
+                $days = (int)$filters['overdue_days'];
+                if ($days > 0) {
+                    $where[] = "dl.status IN ('drafted','sent','overdue') AND DATEDIFF(CURDATE(), dl.due_date) >= ?";
+                    $params[] = $days;
+                } elseif ($filters['overdue_days'] === '0') {
+                    $where[] = "dl.due_date < CURDATE() AND dl.status IN ('drafted','sent','overdue')";
+                }
+            }
 
             $whereSql = implode(' AND ', $where);
 
+            // Need plots join for colony filter — join plots for colony_id resolution
+            $needsPlotJoin = ($filters['colony_id'] > 0);
+            $plotJoin = $needsPlotJoin ? "LEFT JOIN plots p ON p.id = b.plot_id" : "";
+
             $countSql = "SELECT COUNT(*) FROM booking_demand_letters dl
                          JOIN bookings b ON b.id = dl.booking_id
+                         {$plotJoin}
                          LEFT JOIN users cu ON cu.id = b.customer_id
                          LEFT JOIN users bu ON bu.id = b.user_id
                          WHERE {$whereSql}";
@@ -70,12 +91,14 @@ class DemandLetterController extends AdminController
             $total = (int)$stmt->fetchColumn();
             $totalPages = max(1, (int)ceil($total / $perPage));
 
-            $sql = "SELECT dl.*, b.booking_number,
+            $sql = "SELECT dl.*, b.booking_number, b.colony_id AS booking_colony_id,
                            COALESCE(cu.name, bu.name) AS customer_name,
                            COALESCE(cu.phone, bu.phone) AS customer_phone,
-                           COALESCE(cu.email, bu.email) AS customer_email
+                           COALESCE(cu.email, bu.email) AS customer_email,
+                           DATEDIFF(CURDATE(), dl.due_date) AS overdue_days_calc
                     FROM booking_demand_letters dl
                     JOIN bookings b ON b.id = dl.booking_id
+                    LEFT JOIN plots p ON p.id = b.plot_id
                     LEFT JOIN users cu ON cu.id = b.customer_id
                     LEFT JOIN users bu ON bu.id = b.user_id
                     WHERE {$whereSql}
@@ -122,11 +145,23 @@ class DemandLetterController extends AdminController
                 'total'        => $total,
             ];
 
+            // Colonies for filter dropdown (tenant-scoped)
+            $colonies = [];
+            try {
+                [$tenantSql, $tenantParams] = $this->tenantWhere();
+                $cs = $this->db->prepare("SELECT id, name FROM colonies WHERE 1=1" . $tenantSql . " ORDER BY name ASC");
+                $cs->execute($tenantParams);
+                $colonies = $cs->fetchAll(\PDO::FETCH_ASSOC);
+            } catch (\Exception $e) {
+                error_log('DemandLetterController::index colonies fetch error: ' . $e->getMessage());
+            }
+
             return $this->render('admin.finance.demand_letters.index', [
                 'letters'    => $letters,
                 'stats'      => $stats,
                 'filters'    => $filters,
                 'pagination' => $pagination,
+                'colonies'   => $colonies,
             ]);
         } catch (\Exception $e) {
             error_log('DemandLetterController::index error: ' . $e->getMessage());

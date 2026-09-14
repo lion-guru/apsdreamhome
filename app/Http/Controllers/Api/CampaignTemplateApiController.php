@@ -26,7 +26,7 @@ class CampaignTemplateApiController extends BaseController
             exit;
         }
         $role = $GLOBALS['api_user_role'] ?? '';
-        if (!in_array($role, ['admin', 'employee', 'superadmin'])) {
+        if (!in_array($role, ['admin', 'employee', 'super_admin', 'superadmin'])) {
             http_response_code(403);
             echo json_encode(['success' => false, 'error' => 'Admin access required']);
             exit;

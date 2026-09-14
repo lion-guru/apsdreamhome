@@ -90,9 +90,29 @@
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
+                        <label class="form-label small fw-semibold">Colony</label>
+                        <select name="colony_id" class="form-select form-select-sm">
+                            <option value="">All Colonies</option>
+                            <?php foreach (($colonies ?? []) as $col): ?>
+                                <option value="<?= (int)$col['id'] ?>" <?= (int)($filters['colony_id'] ?? 0) === (int)$col['id'] ? 'selected' : '' ?>><?= htmlspecialchars($col['name'] ?? '') ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small fw-semibold">Overdue</label>
+                        <select name="overdue_days" class="form-select form-select-sm">
+                            <option value="">All</option>
+                            <option value="0" <?= ($filters['overdue_days'] ?? '') === '0' ? 'selected' : '' ?>>Any Overdue</option>
+                            <option value="7" <?= ($filters['overdue_days'] ?? '') === '7' ? 'selected' : '' ?>>7+ days</option>
+                            <option value="15" <?= ($filters['overdue_days'] ?? '') === '15' ? 'selected' : '' ?>>15+ days</option>
+                            <option value="30" <?= ($filters['overdue_days'] ?? '') === '30' ? 'selected' : '' ?>>30+ days</option>
+                            <option value="60" <?= ($filters['overdue_days'] ?? '') === '60' ? 'selected' : '' ?>>60+ days</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
                         <label class="form-label small fw-semibold">Search</label>
-                        <input type="text" name="search" class="form-control form-control-sm" placeholder="Booking # or customer name..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
+                        <input type="text" name="search" class="form-control form-control-sm" placeholder="Booking # or customer..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
                     </div>
                     <div class="col-md-2">
                         <label class="form-label small fw-semibold">Date From</label>
@@ -102,10 +122,13 @@
                         <label class="form-label small fw-semibold">Date To</label>
                         <input type="date" name="date_to" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['date_to'] ?? '') ?>">
                     </div>
-                    <div class="col-md-1">
+                    <div class="col-md-6 text-muted small">
+                        Filters: colony, status, overdue days — tenant-scoped.
+                    </div>
+                    <div class="col-md-3">
                         <button type="submit" class="btn btn-primary btn-sm w-100"><i class="fas fa-filter me-1"></i>Filter</button>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <a href="<?= $base ?>/admin/finance/demand-letters" class="btn btn-outline-secondary btn-sm w-100"><i class="fas fa-times me-1"></i>Clear</a>
                     </div>
                 </form>
