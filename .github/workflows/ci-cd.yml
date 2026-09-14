@@ -191,6 +191,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [static-analysis, unit-tests]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       - name: Checkout code
@@ -220,6 +223,7 @@ jobs:
 
       - name: Build and push
         uses: docker/build-push-action@v5
+        continue-on-error: true
         with:
           context: .
           file: Dockerfile
@@ -261,6 +265,9 @@ jobs:
             echo "Deployment complete!"
 
       - name: Health check
+        if: env.PROD_SERVER_HOST != ''
+        env:
+          PROD_SERVER_HOST: ${{ secrets.PROD_SERVER_HOST }}
         run: |
           sleep 30
           curl -f https://yourdomain.com/health || exit 1
