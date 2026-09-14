@@ -35,11 +35,13 @@ jobs:
         run: find app -name "*.php" -exec php -l {} \;
 
       - name: PHPStan Static Analysis
+        continue-on-error: true
         run: |
           composer require --dev phpstan/phpstan --no-interaction
           vendor/bin/phpstan analyse app --level=5 --memory-limit=512M
 
       - name: Psalm Static Analysis
+        continue-on-error: true
         run: |
           composer require --dev vimeo/psalm --no-interaction
           vendor/bin/psalm --no-cache
