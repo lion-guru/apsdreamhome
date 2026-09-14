@@ -5236,3 +5236,16 @@ $router->get('/customer/receipt/{id}', 'App\\Http\\Controllers\\Front\\CustomerP
 // ============================================================
 $router->get('/customer/registry/{bookingId}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@registryTimeline');
 $router->get('/customer/possession-certificate/{bookingId}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadPossessionCertificate');
+
+// ============================================================
+// DEMAND LETTERS (Finance) & CONSTRUCTION PROGRESS (Ops) MODULES
+// ============================================================
+$router->get('/admin/finance/demand-letters', 'App\\Http\\Controllers\\Admin\\DemandLetterController@index');
+$router->get('/admin/finance/demand-letters/create', 'App\\Http\\Controllers\\Admin\\DemandLetterController@generate');
+$router->post('/admin/finance/demand-letters/generate', 'App\\Http\\Controllers\\Admin\\DemandLetterController@generate');
+$router->get('/admin/finance/demand-letters/{id}/pdf', 'App\\Http\\Controllers\\Admin\\DemandLetterController@pdf');
+$router->post('/admin/finance/demand-letters/{id}/send-whatsapp', 'App\\Http\\Controllers\\Admin\\DemandLetterController@sendWhatsApp');
+$router->get('/admin/construction/colony-progress', 'App\\Http\\Controllers\\Admin\\ProjectProgressController@colonyProgress');
+$router->post('/admin/construction/colony-progress/update', 'App\\Http\\Controllers\\Admin\\ProjectProgressController@updateColonyProgress');
+$router->get('/admin/construction/material-inventory', 'App\\Http\\Controllers\\Admin\\ProjectProgressController@materialInventory');
+$router->post('/admin/construction/material-inventory/log-usage', 'App\\Http\\Controllers\\Admin\\ProjectProgressController@logMaterialUsage');

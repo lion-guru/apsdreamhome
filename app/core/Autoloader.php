@@ -120,7 +120,16 @@ class Autoloader
                     require_once $file;
                     return;
                 } else {
-                    // error_log("Autoloader: File not found: " . $file);
+                    // Case-sensitivity fallback for Linux (e.g. Services/... -> services/..., Core/... -> core/..., Models/... -> models/...)
+                    $parts = explode('\\', $relativeClass);
+                    if (!empty($parts)) {
+                        $parts[0] = strtolower($parts[0]);
+                        $altFile = $baseDir . implode('/', $parts) . '.php';
+                        if (file_exists($altFile)) {
+                            require_once $altFile;
+                            return;
+                        }
+                    }
                 }
             }
         }
@@ -166,24 +175,24 @@ if (defined('APP_ROOT')) {
     $autoloader->addNamespace('App', \APP_ROOT . '/app');
 
     // Register common class mappings for legacy compatibility
-    $autoloader->addClassMap('Database', \APP_ROOT . '/app/Core/Database/Database.php');
-    $autoloader->addClassMap('App\Core\Database\Database', \APP_ROOT . '/app/Core/Database/Database.php');
-    $autoloader->addClassMap('SessionManager', \APP_ROOT . '/app/Core/Session/SessionManager.php');
-    $autoloader->addClassMap('ErrorHandler', \APP_ROOT . '/app/Core/ErrorHandler.php');
-    $autoloader->addClassMap('Security', \APP_ROOT . '/app/Core/Security.php');
+    $autoloader->addClassMap('Database', \APP_ROOT . '/app/core/Database/Database.php');
+    $autoloader->addClassMap('App\Core\Database\Database', \APP_ROOT . '/app/core/Database/Database.php');
+    $autoloader->addClassMap('SessionManager', \APP_ROOT . '/app/core/Session/SessionManager.php');
+    $autoloader->addClassMap('ErrorHandler', \APP_ROOT . '/app/core/ErrorHandler.php');
+    $autoloader->addClassMap('Security', \APP_ROOT . '/app/core/Security.php');
 
     // Register consolidated models for seamless migration
-    $autoloader->addClassMap('ConsolidatedUser', \APP_ROOT . '/app/Models/ConsolidatedUser.php');
-    $autoloader->addClassMap('ConsolidatedProperty', \APP_ROOT . '/app/Models/ConsolidatedProperty.php');
-    $autoloader->addClassMap('UnifiedModel', \APP_ROOT . '/app/Core/UnifiedModel.php');
+    $autoloader->addClassMap('ConsolidatedUser', \APP_ROOT . '/app/models/ConsolidatedUser.php');
+    $autoloader->addClassMap('ConsolidatedProperty', \APP_ROOT . '/app/models/ConsolidatedProperty.php');
+    $autoloader->addClassMap('UnifiedModel', \APP_ROOT . '/app/core/UnifiedModel.php');
 
     // PropertyFavorite class lives in Property/Favorite.php but is declared
     // in the App\Models namespace — PSR-4 can't resolve it, so map explicitly.
-    $autoloader->addClassMap('App\Models\PropertyFavorite', \APP_ROOT . '/app/Models/Property/Favorite.php');
+    $autoloader->addClassMap('App\Models\PropertyFavorite', \APP_ROOT . '/app/models/Property/Favorite.php');
 
     // Customer class lives in User/Customer.php but is declared in the
     // App\Models namespace — PSR-4 can't resolve it, so map explicitly.
-    $autoloader->addClassMap('App\Models\Customer', \APP_ROOT . '/app/Models/User/Customer.php');
+    $autoloader->addClassMap('App\Models\Customer', \APP_ROOT . '/app/models/User/Customer.php');
 
     // Register root-namespace controllers
     $autoloader->addClassMap('AIAssistantController', \APP_ROOT . '/app/Http/Controllers/AI/AssistantController.php');
@@ -202,33 +211,33 @@ if (defined('APP_ROOT')) {
     $autoloader->addClassMap('App\Http\Controllers\Api\AuthController', \APP_ROOT . '/app/Http/Controllers/AuthController.php');
 
     // Register BaseAgent (class is in Agents/ directory but namespace was 'users')
-    $autoloader->addClassMap('App\Services\AI\users\BaseAgent', \APP_ROOT . '/app/Services/AI/Agents/BaseAgent.php');
-    $autoloader->addClassMap('App\Services\AI\users\AgentInterface', \APP_ROOT . '/app/Services/AI/Agents/AgentInterface.php');
-    $autoloader->addClassMap('App\Services\AI\Agents\BaseAgent', \APP_ROOT . '/app/Services/AI/Agents/BaseAgent.php');
-    $autoloader->addClassMap('App\Services\AI\Agents\AgentInterface', \APP_ROOT . '/app/Services/AI/Agents/AgentInterface.php');
+    $autoloader->addClassMap('App\Services\AI\users\BaseAgent', \APP_ROOT . '/app/services/AI/Agents/BaseAgent.php');
+    $autoloader->addClassMap('App\Services\AI\users\AgentInterface', \APP_ROOT . '/app/services/AI/Agents/AgentInterface.php');
+    $autoloader->addClassMap('App\Services\AI\Agents\BaseAgent', \APP_ROOT . '/app/services/AI/Agents/BaseAgent.php');
+    $autoloader->addClassMap('App\Services\AI\Agents\AgentInterface', \APP_ROOT . '/app/services/AI/Agents/AgentInterface.php');
     // WhatsAppAgent archived — broken require_once deps, never instantiated
-    $autoloader->addClassMap('App\Services\AI\users\specialized\LeadGenerationAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/LeadGenerationAgent.php');
-    $autoloader->addClassMap('App\Services\AI\Agents\specialized\LeadGenerationAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/LeadGenerationAgent.php');
-    $autoloader->addClassMap('App\Services\AI\users\specialized\EMICollectionAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/EMICollectionAgent.php');
+    $autoloader->addClassMap('App\Services\AI\users\specialized\LeadGenerationAgent', \APP_ROOT . '/app/services/AI/Agents/specialized/LeadGenerationAgent.php');
+    $autoloader->addClassMap('App\Services\AI\Agents\specialized\LeadGenerationAgent', \APP_ROOT . '/app/services/AI/Agents/specialized/LeadGenerationAgent.php');
+    $autoloader->addClassMap('App\Services\AI\users\specialized\EMICollectionAgent', \APP_ROOT . '/app/services/AI/Agents/specialized/EMICollectionAgent.php');
 
     // Register Auth services
-    $autoloader->addClassMap('App\Core\Auth\UnifiedAuthService', \APP_ROOT . '/app/Core/Auth/AuthService.php');
-    $autoloader->addClassMap('App\Services\AI\Agents\specialized\EMICollectionAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/EMICollectionAgent.php');
-    $autoloader->addClassMap('App\Services\AI\users\specialized\ResearchAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/ResearchAgent.php');
-    $autoloader->addClassMap('App\Services\AI\Agents\specialized\ResearchAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/ResearchAgent.php');
-    $autoloader->addClassMap('App\Services\AI\users\specialized\DataAnalysisAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/DataAnalysisAgent.php');
-    $autoloader->addClassMap('App\Services\AI\Agents\specialized\DataAnalysisAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/DataAnalysisAgent.php');
-    $autoloader->addClassMap('App\Services\AI\users\specialized\ContentCreationAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/ContentCreationAgent.php');
-    $autoloader->addClassMap('App\Services\AI\Agents\specialized\ContentCreationAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/ContentCreationAgent.php');
-    $autoloader->addClassMap('App\Services\AI\users\specialized\RecommendationAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/RecommendationAgent.php');
-    $autoloader->addClassMap('App\Services\AI\Agents\specialized\RecommendationAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/RecommendationAgent.php');
+    $autoloader->addClassMap('App\Core\Auth\UnifiedAuthService', \APP_ROOT . '/app/core/Auth/AuthService.php');
+    $autoloader->addClassMap('App\Services\AI\Agents\specialized\EMICollectionAgent', \APP_ROOT . '/app/services/AI/Agents/specialized/EMICollectionAgent.php');
+    $autoloader->addClassMap('App\Services\AI\users\specialized\ResearchAgent', \APP_ROOT . '/app/services/AI/Agents/specialized/ResearchAgent.php');
+    $autoloader->addClassMap('App\Services\AI\Agents\specialized\ResearchAgent', \APP_ROOT . '/app/services/AI/Agents/specialized/ResearchAgent.php');
+    $autoloader->addClassMap('App\Services\AI\users\specialized\DataAnalysisAgent', \APP_ROOT . '/app/services/AI/Agents/specialized/DataAnalysisAgent.php');
+    $autoloader->addClassMap('App\Services\AI\Agents\specialized\DataAnalysisAgent', \APP_ROOT . '/app/services/AI/Agents/specialized/DataAnalysisAgent.php');
+    $autoloader->addClassMap('App\Services\AI\users\specialized\ContentCreationAgent', \APP_ROOT . '/app/services/AI/Agents/specialized/ContentCreationAgent.php');
+    $autoloader->addClassMap('App\Services\AI\Agents\specialized\ContentCreationAgent', \APP_ROOT . '/app/services/AI/Agents/specialized/ContentCreationAgent.php');
+    $autoloader->addClassMap('App\Services\AI\users\specialized\RecommendationAgent', \APP_ROOT . '/app/services/AI/Agents/specialized/RecommendationAgent.php');
+    $autoloader->addClassMap('App\Services\AI\Agents\specialized\RecommendationAgent', \APP_ROOT . '/app/services/AI/Agents/specialized/RecommendationAgent.php');
 
     // Register legacy managers for backward compatibility
-    $autoloader->addClassMap('Cache', \APP_ROOT . '/app/Core/Cache.php');
-    $autoloader->addClassMap('App\Core\Cache', \APP_ROOT . '/app/Core/Cache.php');
-    $autoloader->addClassMap('RedisCache', \APP_ROOT . '/app/Core/RedisCache.php');
-    $autoloader->addClassMap('App\Core\RedisCache', \APP_ROOT . '/app/Core/RedisCache.php');
-    $autoloader->addClassMap('UploadValidator', \APP_ROOT . '/app/helpers/UploadValidator.php');
+    $autoloader->addClassMap('Cache', \APP_ROOT . '/app/core/Cache.php');
+    $autoloader->addClassMap('App\Core\Cache', \APP_ROOT . '/app/core/Cache.php');
+    $autoloader->addClassMap('RedisCache', \APP_ROOT . '/app/core/RedisCache.php');
+    $autoloader->addClassMap('App\Core\RedisCache', \APP_ROOT . '/app/core/RedisCache.php');
+    $autoloader->addClassMap('UploadValidator', \APP_ROOT . '/app/Helpers/UploadValidator.php');
 
     // Alias the namespaced CacheService to the legacy global name
     // so any pre-namespace references (e.g. `CacheService::getProjects()`)

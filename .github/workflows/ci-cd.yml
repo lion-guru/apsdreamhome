@@ -79,13 +79,23 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
 
-      - name: Create test database
-        run: |
-          mysql -h 127.0.0.1 -u root -proot -e "CREATE DATABASE IF NOT EXISTS apsdreamhome_test;"
-          mysql -h 127.0.0.1 -u root -proot apsdreamhome_test < database/apsdreamhome.sql
+      - name: Run database migrations
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: apsdreamhome_test
+          DB_USERNAME: test
+          DB_PASSWORD: test
+        run: php tests/migrate.php
 
-      - name: Run PHPUnit Tests
-        run: vendor/bin/phpunit --testdox --coverage-text
+      - name: Run CI test runner
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: apsdreamhome_test
+          DB_USERNAME: test
+          DB_PASSWORD: test
+        run: php tests/run_all_tests.php
 
       - name: Upload Coverage
         uses: codecov/codecov-action@v3

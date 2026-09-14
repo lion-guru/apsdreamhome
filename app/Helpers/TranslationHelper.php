@@ -15,7 +15,7 @@
  *  - Pluralization via trans_choice() and choice()
  */
 
-require_once __DIR__ . '/../Services/TranslationService.php';
+require_once __DIR__ . '/../services/TranslationService.php';
 
 if (!function_exists('__')) {
     /**

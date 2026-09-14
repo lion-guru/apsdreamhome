@@ -237,14 +237,7 @@ function sendWhatsApp(letterId, customerName) {
             'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content || ''
         }
     })
-    .then(r => r.json())
-    .then(data => {
-        if (data.success) {
-            location.reload();
-        } else {
-            alert(data.message || 'Failed to send');
-        }
-    })
-    .catch(() => alert('Network error. Please try again.'));
+    .catch(() => alert('Network error. Please try again.'))
+    .then(() => location.reload());
 }
 </script>

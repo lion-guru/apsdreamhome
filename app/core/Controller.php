@@ -133,7 +133,7 @@ class Controller
         }
         try {
             if (!class_exists('\App\Services\TranslationService', false)) {
-                require_once dirname(__DIR__) . '/Services/TranslationService.php';
+                require_once dirname(__DIR__) . '/services/TranslationService.php';
             }
             \App\Services\TranslationService::getInstance()->detectLanguage();
         } catch (\Throwable $e) {

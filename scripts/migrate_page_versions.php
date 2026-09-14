@@ -50,6 +50,20 @@ try {
         echo "[SUCCESS] Created 'page_versions' table.\n";
     }
 
+    $pdo->exec("CREATE TABLE IF NOT EXISTS pages (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        tenant_id INT UNSIGNED NOT NULL DEFAULT 1,
+        title VARCHAR(255) NOT NULL,
+        slug VARCHAR(255) NOT NULL UNIQUE,
+        content LONGTEXT DEFAULT NULL,
+        meta_description VARCHAR(500) DEFAULT NULL,
+        meta_keywords VARCHAR(500) DEFAULT NULL,
+        status ENUM('draft','published','archived') DEFAULT 'draft',
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        KEY idx_pages_tenant_id (tenant_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
     // Seed initial versions for all existing pages
     $stmt = $pdo->query("SELECT id, title, slug, content, meta_description, meta_keywords, status, tenant_id FROM pages ORDER BY id");
     $pages = $stmt->fetchAll();

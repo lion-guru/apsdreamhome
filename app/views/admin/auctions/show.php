@@ -84,7 +84,7 @@ ob_start();
                                 <div class="d-flex justify-content-between">
                                     <div>
                                         <strong><?= htmlspecialchars($b['bidder_name'] ?? '') ?></strong>
-                                        <br><small class="text-muted"><?= date('M j, H:i', strtotime($b['placed_at'])) ?></small>
+                                        <br><small class="text-muted"><?= date('M j, H:i', strtotime($b['created_at'])) ?></small>
                                     </div>
                                     <div class="text-end">
                                         <strong>₹<?= number_format($b['bid_amount']) ?></strong>

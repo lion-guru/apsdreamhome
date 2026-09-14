@@ -429,4 +429,66 @@ class DemandLetterController extends AdminController
         }
         return false;
     }
+
+    /**
+     * Bookings with their payment installments, for the generation picker.
+     * Scoped by tenant; only bookings that actually carry installments are included.
+     */
+    private function fetchBookingsWithInstallments(int $limit = 200): array
+    {
+        $limit = max(1, (int)$limit);
+
+        try {
+            $stmt = $this->db->prepare(
+                "SELECT b.id, b.booking_number, b.total_amount,
+                        COALESCE(cu.name, bu.name) AS customer_name
+                 FROM bookings b
+                 LEFT JOIN users cu ON cu.id = b.customer_id
+                 LEFT JOIN users bu ON bu.id = b.user_id
+                 WHERE b.tenant_id = ?
+                 AND EXISTS (
+                     SELECT 1 FROM booking_payment_schedules bps
+                     WHERE bps.booking_id = b.id AND bps.tenant_id = ?
+                 )
+                 ORDER BY b.created_at DESC
+                 LIMIT {$limit}"
+            );
+            $stmt->execute([$this->tenantId(), $this->tenantId()]);
+            $bookings = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            if (empty($bookings)) {
+                return [];
+            }
+
+            $ids = array_map('intval', array_column($bookings, 'id'));
+            $placeholders = implode(',', array_fill(0, count($ids), '?'));
+            $params = array_merge($ids, [$this->tenantId()]);
+
+            $stmt = $this->db->prepare(
+                "SELECT id, booking_id, installment_no AS installment_number,
+                        amount, due_date, status
+                 FROM booking_payment_schedules
+                 WHERE booking_id IN ({$placeholders}) AND tenant_id = ?
+                 ORDER BY installment_no ASC"
+            );
+            $stmt->execute($params);
+            $installments = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            $byBooking = [];
+            foreach ($installments as $inst) {
+                $byBooking[(int)$inst['booking_id']][] = $inst;
+            }
+
+            foreach ($bookings as &$booking) {
+                $booking['total_amount'] = (float)($booking['total_amount'] ?? 0);
+                $booking['installments'] = $byBooking[(int)$booking['id']] ?? [];
+            }
+            unset($booking);
+
+            return $bookings;
+        } catch (\Exception $e) {
+            error_log('DemandLetterController::fetchBookingsWithInstallments error: ' . $e->getMessage());
+            return [];
+        }
+    }
 }
