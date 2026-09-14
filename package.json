@@ -5,9 +5,10 @@
     "test:e2e": "node node_modules/puppeteer/puppeteer.js"
   },
   "dependencies": {
+    "playwright": "^1.42.0",
     "puppeteer": "^19.0.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.62.1"
+    "@playwright/test": "^1.42.0"
   }
 }
