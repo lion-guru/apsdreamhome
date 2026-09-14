@@ -2,6 +2,13 @@
 require_once __DIR__ . '/../config/bootstrap.php';
 echo "Starting migration...\n";
 $pdo = App\Core\Database\Database::getInstance()->getConnection();
+try {
+    $hasTable = (bool)$pdo->query("SHOW TABLES LIKE 'land_records'")->fetch();
+} catch (Throwable $e) { $hasTable = false; }
+if (!$hasTable) {
+    echo "Table 'land_records' does not exist. Skipping.\n";
+    exit(0);
+}
 $rows = $pdo->query("SELECT * FROM land_records")->fetchAll(PDO::FETCH_ASSOC);
 echo "Found " . count($rows) . " land records\n";
 foreach($rows as $r){

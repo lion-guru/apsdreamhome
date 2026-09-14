@@ -9,6 +9,14 @@ use App\Core\Database\Database;
 try {
     $db = Database::getInstance()->getConnection();
     
+    try {
+        $hasBlog = (bool)$db->query("SHOW TABLES LIKE 'blog_posts'")->fetch();
+    } catch (\Throwable $e) { $hasBlog = false; }
+    if (!$hasBlog) {
+        echo "Table 'blog_posts' does not exist. Skipping blog comments seed.\n";
+        exit(0);
+    }
+    
     // Get first published blog post
     $stmt = $db->query("SELECT id FROM blog_posts WHERE status = 'published' ORDER BY id LIMIT 1");
     $post = $stmt->fetch(\PDO::FETCH_ASSOC);

@@ -155,15 +155,20 @@ function runStep(string $script, callable $log): int
     stream_set_blocking($pipes[2], false);
     $output = '';
     $deadline = microtime(true) + MIGRATION_STEP_TIMEOUT;
+    $exitCode = -1;
     while (true) {
         $status = proc_get_status($proc);
         $output .= (stream_get_contents($pipes[1]) ?: '');
         $output .= (stream_get_contents($pipes[2]) ?: '');
-        if (!$status['running']) break;
+        if (!$status['running']) {
+            $exitCode = $status['exitcode'];
+            break;
+        }
         if (microtime(true) > $deadline) {
             proc_terminate($proc, 9);
             $log('    ! TIMEOUT after ' . MIGRATION_STEP_TIMEOUT . 's');
             $output .= "\n[CI: killed after timeout]";
+            $exitCode = 124;
             break;
         }
         usleep(50_000);
@@ -174,7 +179,8 @@ function runStep(string $script, callable $log): int
             fclose($pipes[(int)$idx]);
         }
     }
-    $exit = proc_close($proc);
+    $closeCode = proc_close($proc);
+    $exit = ($exitCode !== -1) ? $exitCode : $closeCode;
     $trimmed = trim($output);
     if ($trimmed !== '') {
         $maxLines = 6;
