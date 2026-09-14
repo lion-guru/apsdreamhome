@@ -41,9 +41,13 @@ ini_set('session.use_strict_mode', 1);
 ini_set('session.cookie_samesite', 'Lax');
 
 if (!defined('BASE_URL')) {
-    $isHttps = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || 
-               (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
-    $protocol = $isHttps ? 'https' : 'http';
+    $envBase = getenv('BASE_URL') ?: (getenv('APP_URL') ?: '');
+    if (!empty($envBase)) {
+        define('BASE_URL', rtrim($envBase, '/'));
+    } else {
+        $isHttps = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || 
+                   (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+        $protocol = $isHttps ? 'https' : 'http';
 
     if (php_sapi_name() === 'cli') {
         // CLI mode (cron scripts, artisan): detect from project structure
@@ -70,6 +74,7 @@ if (!defined('BASE_URL')) {
 
         define('BASE_URL', rtrim("$protocol://$host$script", '/'));
     }
+}
 }
 
 // Ensure BASE_URL is always defined as a last resort
