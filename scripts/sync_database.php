@@ -12,7 +12,7 @@
 # =============================================================================
 
 $host = getenv('DB_HOST') ?: ($_ENV['DB_HOST'] ?? '127.0.0.1');
-$port = (int)(getenv('DB_PORT') ?: ($_ENV['DB_PORT'] ?? '3307'));
+$port = (int)(getenv('DB_PORT') ?: ($_ENV['DB_PORT'] ?? '3306'));
 $db   = getenv('DB_DATABASE') ?: ($_ENV['DB_DATABASE'] ?? 'apsdreamhome');
 $user = getenv('DB_USERNAME') ?: ($_ENV['DB_USERNAME'] ?? 'root');
 $pass = getenv('DB_PASSWORD') ?: ($_ENV['DB_PASSWORD'] ?? '');

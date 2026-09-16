@@ -18,7 +18,7 @@ if (fs.existsSync(mcpConfigPath)) {
 }
 
 console.log('\n🔧 Available MCP Tools:');
-console.log('   - Database: MySQL operations on port 3307');
+console.log('   - Database: MySQL operations on port 3306');
 console.log('   - Filesystem: File operations in project directory');
 console.log('   - Git: Version control operations');
 console.log('   - Puppeteer: Web automation and testing');

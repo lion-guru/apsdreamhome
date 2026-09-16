@@ -209,7 +209,7 @@ class SequentialWorkflowManager {
     try {
       const result = execSync(`php -r "
         try {
-            \$pdo = new PDO('mysql:host=localhost;port=3307;dbname=${database}', 'root', '');
+            \$pdo = new PDO('mysql:host=localhost;port=3306;dbname=${database}', 'root', '');
             \$stmt = \$pdo->query('${query}');
             \$result = \$stmt->fetchAll(PDO::FETCH_ASSOC);
             echo 'Database query successful: ' . count(\$result) . ' rows';

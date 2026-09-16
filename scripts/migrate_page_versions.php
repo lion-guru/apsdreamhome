@@ -9,9 +9,9 @@
  */
 
 $host = getenv('DB_HOST') ?: '127.0.0.1';
-$port = getenv('DB_PORT') ?: 3307;
+$port = getenv('DB_PORT') ?: 3306;
 $user = getenv('DB_USERNAME') ?: 'root';
-$pass = getenv('DB_PASSWORD') !== false ? getenv('DB_PASSWORD') : (getenv('DB_PASS') ?: '2jcePXuNaOfEyo6I5wJVkG');
+$pass = getenv('DB_PASSWORD') !== false ? getenv('DB_PASSWORD') : (getenv('DB_PASS') ?: '');
 $db   = getenv('DB_DATABASE') ?: 'apsdreamhome';
 
 try {

@@ -125,7 +125,7 @@ if (getenv('RAZORPAY_TEST_MODE') === false || getenv('RAZORPAY_TEST_MODE') === '
 try {
     $pdo = new PDO(
         'mysql:host=' . (getenv('DB_HOST') ?: '127.0.0.1')
-        . ';port=' . (getenv('DB_PORT') ?: '3307')
+        . ';port=' . (getenv('DB_PORT') ?: '3306')
         . ';dbname=' . (getenv('DB_NAME') ?: 'apsdreamhome')
         . ';charset=utf8mb4',
         getenv('DB_USER') ?: 'root',

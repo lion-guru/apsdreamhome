@@ -1,5 +1,5 @@
 <?php
-$pdo = new PDO("mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome", "root", "2jcePXuNaOfEyo6I5wJVkG");
+$pdo = new PDO("mysql:host=127.0.0.1;port=3306;dbname=apsdreamhome", "root", "");
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 // Get all foreign keys

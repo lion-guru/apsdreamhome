@@ -1,7 +1,7 @@
 <?php
 /**
  * APS Dream Home — Cross-port health check (run: php scripts/health_check.php)
- * Checks: Apache :80, MySQL :3307, WebSocket :8080, DB tables, routes, APK, AI settings.
+ * Checks: Apache :80, MySQL :3306, WebSocket :8080, DB tables, routes, APK, AI settings.
  * Exit 0 if all critical pass, 1 if any critical fails.
  */
 $ok = true; $report = [];
@@ -9,10 +9,10 @@ function check($name, $fn){ global $ok,$report; try{ $res=$fn(); $report[$name]=
 
 // 1 Apache :80
 check('apache:80', fn()=>['pass'=>@fsockopen('127.0.0.1',80,$e,$s,2)!==false,'detail'=>'http://localhost/apsdreamhome/']);
-// 2 MySQL :3307 — DB_PASS from env (fallback to local dev)
-check('mysql:3307', function(){
-  $pass = getenv('DB_PASS') ?: ($_ENV['DB_PASS'] ?? '2jcePXuNaOfEyo6I5wJVkG');
-  $pdo=new PDO('mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome','root',$pass,['PDO::ATTR_TIMEOUT'=>2]);
+// 2 MySQL :3306 — DB_PASS from env (fallback to local dev)
+check('mysql:3306', function(){
+  $pass = getenv('DB_PASS') ?: ($_ENV['DB_PASS'] ?? '');
+  $pdo=new PDO('mysql:host=127.0.0.1;port=3306;dbname=apsdreamhome','root',$pass,['PDO::ATTR_TIMEOUT'=>2]);
   $c=$pdo->query("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='apsdreamhome'")->fetchColumn();
   return ['pass'=>true,'tables'=>(int)$c];
 });
@@ -27,8 +27,8 @@ check('websocket:8080', function(){
 check('apk:public/downloads', fn()=>['pass'=>file_exists(__DIR__.'/../public/downloads/apsdreamhome.apk'),'size'=>file_exists(__DIR__.'/../public/downloads/apsdreamhome.apk')?filesize(__DIR__.'/../public/downloads/apsdreamhome.apk'):0]);
 // 5 DB tracking tables — env-aware
 check('db:tracking_tables', function(){
-  $pass = getenv('DB_PASS') ?: ($_ENV['DB_PASS'] ?? '2jcePXuNaOfEyo6I5wJVkG');
-  $pdo=new PDO('mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome','root',$pass);
+  $pass = getenv('DB_PASS') ?: ($_ENV['DB_PASS'] ?? '');
+  $pdo=new PDO('mysql:host=127.0.0.1;port=3306;dbname=apsdreamhome','root',$pass);
   foreach(['visitor_sessions','visitor_page_views','whatsapp_click_log'] as $t){
     $pdo->query("SELECT 1 FROM `$t` LIMIT 1");
   }

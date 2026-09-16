@@ -96,7 +96,7 @@ require_once $root . '/app/Core/Database/Database.php';
 
 // Set DB config in memory for Database::getInstance()
 $_ENV['DB_HOST'] = '127.0.0.1';
-$_ENV['DB_PORT'] = '3307';
+$_ENV['DB_PORT'] = '3306';
 $_ENV['DB_NAME'] = 'apsdreamhome';
 $_ENV['DB_USER'] = 'root';
 $_ENV['DB_PASS'] = '';
