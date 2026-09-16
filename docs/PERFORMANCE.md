@@ -1,7 +1,7 @@
 # APS Dream Home — Performance & Load Testing
 
 This document captures the **baseline performance metrics** for the APS Dream Home
-platform (custom PHP MVC framework, MySQL 8.0 on port 3307, XAMPP Apache on port 80)
+platform (custom PHP MVC framework, MySQL 8.0 on port 3306, XAMPP Apache on port 80)
 and the **optimization strategy** to scale to 10,000+ concurrent users.
 
 > **Test environment:** Windows 10, XAMPP 8.2 (Apache + PHP 8.2 + MySQL 8.0),

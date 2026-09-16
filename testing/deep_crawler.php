@@ -81,7 +81,7 @@ if ($check['finalUrl'] !== "$base/admin/dashboard" && strpos($check['body'], 'lo
 $routes = [];
 // Admin menu from DB
 try {
-    $pdo = new PDO('mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome', 'root', '2jcePXuNaOfEyo6I5wJVkG');
+    $pdo = new PDO('mysql:host=127.0.0.1;port=3306;dbname=apsdreamhome', 'root', '');
     foreach ($pdo->query("SELECT url FROM admin_menu_items WHERE url LIKE '/%' AND is_active=1") as $r) {
         $routes['admin:' . $r['url']] = $base . $r['url'];
     }

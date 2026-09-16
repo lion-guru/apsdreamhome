@@ -47,17 +47,17 @@ This guide is for **engineers contributing to the APS Dream Home codebase**. It 
 ### Quick Start with XAMPP (Windows)
 
 1. **Install XAMPP** with PHP 8.2 (https://www.apachefriends.org).
-2. **Start Apache + MySQL** (default port 3307 for MySQL in this project).
+2. **Start Apache + MySQL** (default port 3306 for MySQL in this project).
 3. **Clone the repo** to `C:\xampp\htdocs\apsdreamhome`.
 4. **Import the database**:
    ```powershell
-   & "C:\xampp\mysql\bin\mysql.exe" -h 127.0.0.1 -P 3307 -u root -e "CREATE DATABASE apsdreamhome CHARACTER SET utf8mb4"
-   & "C:\xampp\mysql\bin\mysql.exe" -h 127.0.0.1 -P 3307 -u root apsdreamhome < database/apsdreamhome_backup_nofk.sql
+   & "C:\xampp\mysql\bin\mysql.exe" -h 127.0.0.1 -P 3306 -u root -e "CREATE DATABASE apsdreamhome CHARACTER SET utf8mb4"
+   & "C:\xampp\mysql\bin\mysql.exe" -h 127.0.0.1 -P 3306 -u root apsdreamhome < database/apsdreamhome_backup_nofk.sql
    ```
 5. **Configure** `.env` (copy from `.env.example` if needed):
    ```
    DB_HOST=127.0.0.1
-   DB_PORT=3307
+   DB_PORT=3306
    DB_DATABASE=apsdreamhome
    DB_USERNAME=root
    DB_PASSWORD=

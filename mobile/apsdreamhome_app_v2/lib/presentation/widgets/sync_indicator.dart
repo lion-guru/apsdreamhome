@@ -10,7 +10,7 @@ class SyncIndicator extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final syncState = ref.watch(syncStateProvider);
-    final connectivity = ref.watch(connectivityProvider);
+    final isOnline = ref.watch(isOnlineProvider);
 
     return Container(
       padding: const EdgeInsets.all(8),
@@ -22,7 +22,7 @@ class SyncIndicator extends ConsumerWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (connectivity.value ?? false) ...[
+          if (isOnline) ...[
             if (syncState.isSyncing) ...[
               const SizedBox(
                 width: 16,

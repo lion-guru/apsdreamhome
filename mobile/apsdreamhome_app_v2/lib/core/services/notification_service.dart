@@ -247,65 +247,90 @@ class NotificationService {
       final context = navigatorKey.currentContext!;
       final goRouter = GoRouter.of(context);
 
+      // Extract additional route parameters from data payload
+      final entityId = (data['id'] ?? data['entity_id'] ?? id).toString();
+      final extra = Map<String, dynamic>.from(data);
+
       switch (type) {
         case 'booking':
         case 'booking_confirmed':
         case 'booking_payment':
-          if (id.isNotEmpty) {
-            goRouter.push('/my-bookings');
-          } else {
-            goRouter.push('/my-bookings');
-          }
+          goRouter.push('/my-bookings');
           break;
         case 'commission':
         case 'commission_credit':
           goRouter.push('/associate/commission');
           break;
+        case 'lead':
         case 'lead_assigned':
         case 'lead_update':
           goRouter.push('/agent/leads');
           break;
         case 'payment':
         case 'payment_received':
+        case 'payment_success':
+          goRouter.push('/payment-history');
+          break;
+        case 'emi_due':
+        case 'emi_overdue':
+        case 'emi_reminder':
           goRouter.push('/emi-schedule');
           break;
         case 'property':
         case 'property_alert':
-          if (id.isNotEmpty) {
-            goRouter.push('/property-detail/$id');
+          if (entityId.isNotEmpty) {
+            goRouter.push('/property-detail/$entityId', extra: extra);
           } else {
             goRouter.push('/properties');
           }
           break;
         case 'kyc':
         case 'kyc_update':
+        case 'kyc_approved':
+        case 'kyc_rejected':
           goRouter.push('/kyc-status');
           break;
         case 'payout':
+        case 'payout_initiated':
+        case 'payout_completed':
           goRouter.push('/associate/payout');
           break;
         case 'team':
         case 'team_update':
+        case 'team_member_added':
           goRouter.push('/associate/team');
           break;
         case 'document':
+        case 'document_ready':
+        case 'document_signed':
           goRouter.push('/documents');
           break;
         case 'support':
         case 'ticket':
+        case 'ticket_update':
           goRouter.push('/support-tickets');
           break;
         case 'welcome':
+          goRouter.push('/welcome');
+          break;
         case 'registration_welcome':
-          goRouter.push('/profile');
+          goRouter.push('/welcome');
           break;
         case 'login_alert':
-        case 'security_alert':
           goRouter.push('/notifications-center');
           break;
+        case 'security_alert':
+          goRouter.push('/settings/security');
+          break;
         default:
-          // Default to notifications center
-          goRouter.push('/notifications-center');
+          // Try to use action_url from payload if available
+          final actionUrl = (data['action_url'] as String?) ?? '';
+          if (actionUrl.isNotEmpty) {
+            goRouter.push(actionUrl);
+          } else {
+            // Default to notifications center
+            goRouter.push('/notifications-center');
+          }
           break;
       }
       AppLogger.info('Navigated to screen for notification type: $type');

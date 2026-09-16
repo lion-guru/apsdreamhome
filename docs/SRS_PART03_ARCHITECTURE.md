@@ -59,7 +59,7 @@
                           │  DATABASE LAYER   │
                           │  MySQL 8.0        │
                           │  (584 tables)     │
-                          │  Port 3307        │
+                          │  Port 3306        │
                           │                   │
                           │  263 Foreign Keys │
                           │  InnoDB 100%      │

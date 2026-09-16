@@ -456,6 +456,18 @@ class AssociateDashboardPage extends ConsumerWidget {
         'route': '/associate/payout',
         'color': AppTheme.warningColor,
       },
+      {
+        'icon': Icons.calendar_month_outlined,
+        'label': 'My Bookings',
+        'route': '/agent/bookings',
+        'color': AppTheme.infoColor,
+      },
+      {
+        'icon': Icons.schedule_outlined,
+        'label': 'EMI Tracker',
+        'route': '/associate/emi-tracker',
+        'color': AppTheme.errorColor,
+      },
     ];
 
     return Padding(
@@ -470,8 +482,10 @@ class AssociateDashboardPage extends ConsumerWidget {
             ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+          Wrap(
+            alignment: WrapAlignment.spaceAround,
+            spacing: 8,
+            runSpacing: 16,
             children: actions.map((action) {
               return GestureDetector(
                 onTap: () => context.push(action['route'] as String),

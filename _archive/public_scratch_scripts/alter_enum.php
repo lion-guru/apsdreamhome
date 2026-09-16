@@ -1,6 +1,6 @@
 <?php
 try {
-    $dsn = "mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome;charset=utf8mb4";
+    $dsn = "mysql:host=127.0.0.1;port=3306;dbname=apsdreamhome;charset=utf8mb4";
     $pdo = new PDO($dsn, 'root', '');
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 

@@ -105,7 +105,7 @@ APS Dream Home is an enterprise-grade **Real Estate ERP, CRM, MLM/Affiliate Mana
 ## 🚀 8. Production Deployment & Infrastructure
 
 - **Web Server:** Apache / Nginx with PHP 8.3 FPM.
-- **Database Server:** MySQL 8.0 (Port 3307), InnoDB Engine, Foreign Key Constraints.
+- **Database Server:** MySQL 8.0 (Port 3306), InnoDB Engine, Foreign Key Constraints.
 - **Caching:** Redis / File Cache.
 - **Mobile Build:** Flutter v1.2.0 (147 screens) APK at `public/downloads/apsdreamhome.apk`.
 

@@ -1,5 +1,5 @@
 <?php
-$pdo = new PDO("mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome", "root", "", [
+$pdo = new PDO("mysql:host=127.0.0.1;port=3306;dbname=apsdreamhome", "root", "", [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
 ]);
@@ -17,5 +17,5 @@ function query($pdo, $sql) {
 }
 
 echo "<pre>";
-query($pdo, "DESCRIBE users");
+query($pdo, "DESCRIBE mlm_commission_ledger");
 echo "</pre>";?>

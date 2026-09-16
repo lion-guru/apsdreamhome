@@ -1,6 +1,6 @@
 # =============================================================================
 # APS Dream Home - Development Docker Compose (GitHub Codespaces + local Docker)
-# Services: PHP 8.2 (Apache, port 80), MySQL 8 (port 3307), Node.js (E2E tests)
+# Services: PHP 8.2 (Apache, port 80), MySQL 8 (port 3306), Node.js (E2E tests)
 # =============================================================================
 services:
   app:
@@ -18,7 +18,7 @@ services:
         condition: service_healthy
     environment:
       - DB_HOST=db
-      - DB_PORT=3307
+      - DB_PORT=3306
       - DB_DATABASE=apsdreamhome
       - DB_USERNAME=root
       - DB_PASSWORD=
@@ -27,7 +27,7 @@ services:
         mkdir -p /workspace/storage/logs /workspace/storage/cache /workspace/storage/sessions /workspace/logs;
         chown -R 33:33 /workspace/storage /workspace/public/uploads /workspace/logs 2>/dev/null;
         chmod -R 775 /workspace/storage /workspace/public/uploads /workspace/logs 2>/dev/null;
-        for i in $$(seq 1 30); do mysqladmin ping -h db -P 3307 --silent 2>/dev/null && break; sleep 1; done;
+        for i in $$(seq 1 30); do mysqladmin ping -h db -P 3306 --silent 2>/dev/null && break; sleep 1; done;
         echo 'MySQL is ready';
         apache2-foreground
       "
@@ -37,7 +37,7 @@ services:
     container_name: apsdreamhome_dev_db
     restart: unless-stopped
     ports:
-      - "3307:3307"
+      - "3306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=
       - MYSQL_DATABASE=apsdreamhome

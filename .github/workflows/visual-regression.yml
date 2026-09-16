@@ -1,0 +1,147 @@
+name: Visual Regression Testing
+
+on:
+  pull_request:
+    branches: [main, develop]
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
+    paths:
+      - 'app/views/**'
+      - 'public/assets/css/**'
+      - 'public/assets/js/**'
+      - 'testing/visual_tests/**'
+
+jobs:
+  visual-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      BASE_URL: http://localhost:8000/apsdreamhome
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ${{ github.workspace }}
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+        working-directory: ${{ github.workspace }}
+
+      - name: Start PHP server
+        run: |
+          php -S 0.0.0.0:8000 -t public &
+          sleep 5
+          curl -f http://localhost:8000/apsdreamhome || exit 1
+
+      - name: Run visual regression tests
+        id: visual-test
+        run: |
+          npx playwright test testing/visual_tests/visual_regression.spec.js --reporter=line
+        working-directory: ${{ github.workspace }}
+        continue-on-error: true
+
+      - name: Upload screenshots as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-regression-screenshots
+          path: |
+            testing/visual_tests/screenshots/current/**/*.png
+            testing/visual_tests/screenshots/diff/**/*.png
+          retention-days: 7
+
+      - name: Comment PR with visual diff on failure
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            const diffDir = 'testing/visual_tests/screenshots/diff';
+            const currentDir = 'testing/visual_tests/screenshots/current';
+            const baselineDir = 'testing/visual_tests/baselines';
+            
+            let comment = '## 🎨 Visual Regression Test Results\n\n';
+            comment += '**Status: FAILED** - Visual differences detected.\n\n';
+            comment += '| Page | Viewport | Diff % | Baseline | Current | Diff |\n';
+            comment += '|------|----------|--------|----------|---------|------|\n';
+            
+            const viewports = ['desktop', 'mobile'];
+            
+            for (const viewport of viewports) {
+              const diffPath = path.join(diffDir, viewport);
+              if (!fs.existsSync(diffPath)) continue;
+              
+              const files = fs.readdirSync(diffPath).filter(f => f.endsWith('-diff.png'));
+              
+              for (const file of files) {
+                const pageName = file.replace('-diff.png', '');
+                const diffFile = path.join(diffDir, viewport, file);
+                const currentFile = path.join(currentDir, viewport, `${pageName}.png`);
+                const baselineFile = path.join(baselineDir, viewport, `${pageName}.png`);
+                
+                if (fs.existsSync(diffFile)) {
+                  const diffStats = fs.statSync(diffFile);
+                  const diffSizeKB = (diffStats.size / 1024).toFixed(1);
+                  
+                  comment += `| ${pageName} | ${viewport} | ${diffSizeKB} KB | `;
+                  comment += `![Baseline](${baselineFile}) | `;
+                  comment += `![Current](${currentFile}) | `;
+                  comment += `![Diff](${diffFile}) |\n`;
+                }
+              }
+            }
+            
+            comment += '\n---\n';
+            comment += '### How to fix:\n';
+            comment += '1. **Approve changes**: If the differences are expected, copy current screenshots to baselines:\n';
+            comment += '   ```bash\n';
+            comment += '   cp testing/visual_tests/screenshots/current/desktop/*.png testing/visual_tests/baselines/desktop/\n';
+            comment += '   cp testing/visual_tests/screenshots/current/mobile/*.png testing/visual_tests/baselines/mobile/\n';
+            comment += '   git add testing/visual_tests/baselines/\n';
+            comment += '   git commit -m "Update visual regression baselines"\n';
+            comment += '   ```\n';
+            comment += '2. **Fix code**: If the differences are bugs, fix the CSS/HTML and re-run.\n\n';
+            comment += '*Threshold: 0.1% pixel difference tolerance*';
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      - name: Fail job if visual regression detected
+        if: failure()
+        run: |
+          echo "Visual regression test failed. Check the PR comment for diff images."
+          exit 1
+
+      - name: Update baselines on main branch
+        if: success() && github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          echo "Updating baselines on main branch..."
+          cp testing/visual_tests/screenshots/current/desktop/*.png testing/visual_tests/baselines/desktop/
+          cp testing/visual_tests/screenshots/current/mobile/*.png testing/visual_tests/baselines/mobile/
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add testing/visual_tests/baselines/
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update visual regression baselines [skip ci]"
+            git push
+          else
+            echo "No baseline changes to commit"
+          fi
+        working-directory: ${{ github.workspace }}

@@ -124,7 +124,7 @@ if ($customerToken) {
 
     // POST app-feedback
     $res = http('POST', "{$baseUrl}/api/v2/mobile/app-feedback", $authHeaders,
-        json_encode(['rating' => 5, 'message' => 'Test feedback from probe'])
+        json_encode(['feedback_type' => 'bug', 'description' => 'Test feedback from probe'])
     );
     logResult("POST /api/v2/mobile/app-feedback (customer)", [200, 201], $res['code'], $pass, $fail);
 } else {

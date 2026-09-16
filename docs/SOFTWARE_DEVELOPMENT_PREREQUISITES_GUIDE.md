@@ -36,7 +36,7 @@ Coding start karne se pehle local dev machine aur server environment ready hona 
 
 1. **Development Server Environment:**
    - Apache / Nginx Web Server (XAMPP / Docker / LAMP Stack).
-   - MySQL 8.0 Database Instance (Default/Dedicated Port e.g., 3307).
+   - MySQL 8.0 Database Instance (Default/Dedicated Port e.g., 3306).
    - PHP 8.3 with PDO, OpenSSL, MBString, curl extensions enabled.
 2. **Version Control System (VCS):**
    - Git repository (GitHub / GitLab / Bitbucket) branching policy (`main`, `dev`, `feature/*`).

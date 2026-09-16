@@ -67,6 +67,10 @@ class AppConstants {
   static const String agentFollowUpsEndpoint = '/agent/follow-ups';
   static const String agentAnalyticsEndpoint = '/agent/analytics';
 
+  // Associate Portal
+  static const String associateBookingsEndpoint = '/associate/bookings';
+  static const String associateEmiTrackerEndpoint = '/associate/emi-tracker';
+
 // Admin Mobile
   static const String adminDashboardStatsEndpoint = '/admin/dashboard-stats';
   static const String adminSalesTrendEndpoint = '/admin/sales-trend';

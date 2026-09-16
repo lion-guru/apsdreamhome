@@ -216,14 +216,24 @@ class AgentBookingsPage extends ConsumerWidget {
   }
 
   Widget _buildBookingCard(BuildContext context, Map<String, dynamic> booking) {
+    final plotNumber = booking['plot_number']?.toString() ?? '';
     final title = booking['title']?.toString() ??
         booking['property_title']?.toString() ??
-        'Property Booking';
+        (plotNumber.isNotEmpty ? 'Plot $plotNumber' : 'Property Booking');
     final location = booking['location']?.toString() ?? '';
-    final price = booking['price']?.toString() ?? '';
-    final plotNumber = booking['plot_number']?.toString() ?? '';
+    final price = (booking['price'] ??
+            booking['plot_price'] ??
+            booking['total_plot_value'] ??
+            booking['booking_amount'] ??
+            '')
+        .toString();
     final status = booking['status']?.toString() ?? 'pending';
     final bookingId = booking['id']?.toString() ?? '';
+    final pendingAmount =
+        double.tryParse('${booking['total_pending'] ?? 0}') ?? 0;
+    final overdueCount =
+        int.tryParse('${booking['overdue_count'] ?? 0}') ?? 0;
+    final nextDueDate = booking['next_due_date']?.toString() ?? '';
 
     Color statusColor;
     IconData statusIcon;
@@ -309,6 +319,34 @@ class AgentBookingsPage extends ConsumerWidget {
                         child: Text('Plot: $plotNumber',
                             style:
                                 TextStyle(color: Colors.grey[600], fontSize: 12)),
+                      ),
+                    if (pendingAmount > 0 || overdueCount > 0)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 6),
+                        child: Wrap(
+                          spacing: 6,
+                          runSpacing: 6,
+                          children: [
+                            if (pendingAmount > 0)
+                              _buildEmiChip(
+                                Icons.schedule_rounded,
+                                'Due ₹${_formatPrice(pendingAmount.toString())}',
+                                AppTheme.warningColor,
+                              ),
+                            if (overdueCount > 0)
+                              _buildEmiChip(
+                                Icons.warning_rounded,
+                                '$overdueCount overdue',
+                                Colors.red,
+                              ),
+                            if (nextDueDate.isNotEmpty)
+                              _buildEmiChip(
+                                Icons.event_rounded,
+                                'Next: $nextDueDate',
+                                AppTheme.infoColor,
+                              ),
+                          ],
+                        ),
                       ),
                   ],
                 ),
@@ -399,6 +437,31 @@ class AgentBookingsPage extends ConsumerWidget {
                   ),
                 ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmiChip(IconData icon, String label, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color, size: 12),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.w600,
+              fontSize: 11,
+            ),
           ),
         ],
       ),

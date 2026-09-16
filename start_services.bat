@@ -62,9 +62,9 @@ echo [6/6] Verifying services...
 echo.
 
 REM Check MySQL
-"C:\xampp\mysql\bin\mysql.exe" -h 127.0.0.1 -P 3307 -u root -e "SELECT 1" >nul 2>&1
+"C:\xampp\mysql\bin\mysql.exe" -h 127.0.0.1 -P 3306 -u root -e "SELECT 1" >nul 2>&1
 if %ERRORLEVEL% EQU 0 (
-    echo [OK] MySQL is running on port 3307
+    echo [OK] MySQL is running on port 3306
 ) else (
     echo [FAIL] MySQL is NOT running
 )

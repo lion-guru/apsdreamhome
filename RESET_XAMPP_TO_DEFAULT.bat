@@ -29,16 +29,16 @@ set PMA_CONFIG=C:\xampp\phpMyAdmin\config.inc.php
 set XAMPP_INI=C:\xampp\xampp-control.ini
 
 echo [ACTION] Restoring MySQL Port to 3306...
-powershell -Command "(Get-Content '%MYSQL_INI%') -replace 'port=3307', 'port=3306' | Set-Content '%MYSQL_INI%'"
+powershell -Command "(Get-Content '%MYSQL_INI%') -replace 'port=3306', 'port=3306' | Set-Content '%MYSQL_INI%'"
 
 echo [ACTION] Restoring Apache DocumentRoot to default htdocs...
 powershell -Command "(Get-Content '%APACHE_CONF%') -replace 'DocumentRoot \"C:/xampp/htdocs/apsdreamhome\"', 'DocumentRoot \"C:/xampp/htdocs\"' -replace '<Directory \"C:/xampp/htdocs/apsdreamhome\">', '<Directory \"C:/xampp/htdocs\">' | Set-Content '%APACHE_CONF%'"
 
 echo [ACTION] Resetting phpMyAdmin Config...
-powershell -Command "$content = Get-Content '%PMA_CONFIG%'; $content = $content -replace \"'port'\] = '3307'\", \"'port'] = '3306'\"; $content = $content -replace \"'host'\\].*\", \"'host'] = '127.0.0.1';\"; $content | Set-Content '%PMA_CONFIG%'"
+powershell -Command "$content = Get-Content '%PMA_CONFIG%'; $content = $content -replace \"'port'\] = '3306'\", \"'port'] = '3306'\"; $content = $content -replace \"'host'\\].*\", \"'host'] = '127.0.0.1';\"; $content | Set-Content '%PMA_CONFIG%'"
 
 echo [ACTION] Resetting XAMPP Control Panel UI...
-powershell -Command "(Get-Content '%XAMPP_INI%') -replace 'MySQL=3307', 'MySQL=3306' | Set-Content '%XAMPP_INI%'"
+powershell -Command "(Get-Content '%XAMPP_INI%') -replace 'MySQL=3306', 'MySQL=3306' | Set-Content '%XAMPP_INI%'"
 
 echo.
 echo =================================================

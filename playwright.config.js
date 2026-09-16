@@ -1,24 +1,15 @@
-// @ts-check
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
-  testDir: './testing/e2e',
-  fullyParallel: false,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 1,
-  workers: 1,
-  reporter: 'list',
-  timeout: 30000,
-  use: {
-    baseURL: 'http://localhost/apsdreamhome',
-    trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
-    headless: true,
+  testDir: './testing/visual_tests',
+  testMatch: '**/visual_regression.spec.js',
+  timeout: 60000,
+  expect: {
+    timeout: 10000,
   },
-  projects: [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
-  ],
+  use: {
+    baseURL: process.env.BASE_URL || 'http://localhost/apsdreamhome',
+    trace: 'on-first-retry',
+  },
+  reporter: 'line',
 });

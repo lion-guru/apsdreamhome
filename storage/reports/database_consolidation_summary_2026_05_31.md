@@ -2,7 +2,7 @@
 
 **Generated:** 2026-05-31  
 **Project:** APS Dream Home Real Estate Management System  
-**Database:** apsdreamhome (MySQL on port 3307)  
+**Database:** apsdreamhome (MySQL on port 3306)  
 **Consolidation Date:** 2026-05-31
 
 ---

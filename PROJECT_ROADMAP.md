@@ -142,7 +142,7 @@ node testing/visual_tests/E2E_MASTER_TEST.mjs
 php -l <file>
 
 # DB query (PowerShell-safe quoting)
-$env:MYSQL_PWD='...'; & 'C:\xampp\mysql\bin\mysql.exe' -h 127.0.0.1 -P 3307 -u root apsdreamhome --batch -e "..."
+$env:MYSQL_PWD='...'; & 'C:\xampp\mysql\bin\mysql.exe' -h 127.0.0.1 -P 3306 -u root apsdreamhome --batch -e "..."
 
 # Flutter analyze only errors
 flutter analyze lib/ 2>&1 | Select-String " error "

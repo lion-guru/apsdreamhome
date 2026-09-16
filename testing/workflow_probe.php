@@ -83,8 +83,10 @@ if ($propId) {
     check(false, 'Favorites (no property id found)');
 }
 
-// 4. Property inquiry (public) — targets user_properties listings (id=1 verified)
-[$code, $d] = req('POST', '/api/v2/mobile/properties/inquiry', ['property_id' => 1, 'name' => 'WF Probe', 'phone' => '9999990001', 'message' => 'Workflow smoke test']);
+// 4. Property inquiry (public) — targets user_properties listings
+$upId = null;
+try { $upId = \App\Core\Database\Database::getInstance()->getConnection()->query("SELECT id FROM user_properties WHERE status='approved' LIMIT 1")->fetchColumn(); } catch (\Throwable $e) {}
+[$code, $d] = req('POST', '/api/v2/mobile/properties/inquiry', ['property_id' => (int)$upId ?: 1, 'name' => 'WF Probe', 'phone' => '9999990001', 'message' => 'Workflow smoke test']);
 check(($d['success'] ?? false) === true || $code === 200, 'Property inquiry', 'HTTP ' . $code . ' ' . ($d['error'] ?? ($d['message'] ?? '')));
 
 // 5. Colonies + plots

@@ -277,7 +277,7 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage>
                     ElevatedButton.icon(
                       onPressed: () {
                         if (bookingId != null) {
-                          context.push('/customer/emi-schedule', extra: bookingId);
+                          context.push('/emi-schedule', extra: bookingId);
                         }
                       },
                       icon: const Icon(Icons.payment, size: 16),

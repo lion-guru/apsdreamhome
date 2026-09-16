@@ -1,14 +1,22 @@
 {
-  "name": "your-app",
-  "version": "1.0.0",
+  "name": "apsdreamhome",
+  "version": "1.2.2",
+  "description": "APS Dream Home - Real Estate Platform",
   "scripts": {
-    "test:e2e": "node node_modules/puppeteer/puppeteer.js"
+    "test:visual": "playwright test testing/visual_tests/visual_regression.spec.js",
+    "test:visual:update": "playwright test testing/visual_tests/visual_regression.spec.js --update-snapshots",
+    "test:e2e": "node testing/visual_tests/E2E_MASTER_TEST.mjs"
   },
   "dependencies": {
     "playwright": "^1.42.0",
     "puppeteer": "^19.0.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.42.0"
+    "@playwright/test": "^1.42.0",
+    "pixelmatch": "^5.3.0",
+    "pngjs": "^7.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

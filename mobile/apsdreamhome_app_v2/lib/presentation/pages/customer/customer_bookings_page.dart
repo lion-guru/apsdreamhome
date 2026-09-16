@@ -78,7 +78,7 @@ class CustomerBookingsPage extends ConsumerWidget {
       margin: const EdgeInsets.only(bottom: 16),
       child: GlassCard(
         child: InkWell(
-          onTap: () => context.push('/customer/emi-schedule', extra: booking['id']),
+          onTap: () => context.push('/emi-schedule', extra: booking['id']),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -129,7 +129,7 @@ class CustomerBookingsPage extends ConsumerWidget {
                       ],
                     ),
                     ElevatedButton.icon(
-                      onPressed: () => context.push('/customer/emi-schedule', extra: booking['id']),
+                      onPressed: () => context.push('/emi-schedule', extra: booking['id']),
                       icon: const Icon(Icons.payment, size: 18),
                       label: const Text('View EMIs'),
                       style: ElevatedButton.styleFrom(

@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../constants/app_constants.dart';
 import '../errors/failures.dart';
+import 'storage_service.dart';
 
 class ApiService {
   static final ApiService _instance = ApiService._internal();
@@ -43,7 +44,6 @@ class ApiService {
   Future<bool> isConnected() async {
     final result = await Connectivity().checkConnectivity();
     return result.isNotEmpty && !result.contains(ConnectivityResult.none);
-    return result != ConnectivityResult.none;
   }
 
   // Generic API request method
@@ -165,6 +165,74 @@ class ApiService {
   // Sync methods
   Future<Map<String, dynamic>> syncData(Map<String, dynamic> syncData) async {
     return post(AppConstants.syncEndpoint, data: syncData);
+  }
+
+  // Offline-aware EMI fetch for Associate EMI Tracker
+  Future<OfflineEmiResult> getAssociateEmiTrackerOffline() async {
+    final storage = StorageService();
+    
+    // Try to get cached data first
+    final cachedData = storage.getCachedEmiData();
+    final isFresh = storage.isCacheFresh();
+    
+    if (cachedData != null && cachedData.isNotEmpty) {
+      // Return cached data immediately
+      return OfflineEmiResult(
+        emis: cachedData,
+        fromCache: true,
+        cacheTimestamp: storage.getCacheTimestamp(),
+      );
+    }
+
+    // No cache, try network
+    try {
+      final response = await get(
+        '${AppConstants.apiVersion}${AppConstants.associateEmiTrackerEndpoint}',
+      );
+      if (response['success'] == true && response['data'] != null) {
+        final data = response['data'];
+        final emis = data is List ? data : [];
+        final emisList = List<Map<String, dynamic>>.from(emis);
+        
+        // Cache the fresh data
+        await storage.cacheEmiData(emisList);
+        
+        return OfflineEmiResult(
+          emis: emisList,
+          fromCache: false,
+          cacheTimestamp: DateTime.now(),
+        );
+      }
+    } catch (e) {
+      // If network fails but we have stale cache, return it
+      if (cachedData != null && cachedData.isNotEmpty) {
+        return OfflineEmiResult(
+          emis: cachedData,
+          fromCache: true,
+          cacheTimestamp: storage.getCacheTimestamp(),
+          isStale: true,
+        );
+      }
+      rethrow;
+    }
+
+    return OfflineEmiResult(emis: [], fromCache: false);
+  }
+
+  // Force refresh EMI data (bypass cache)
+  Future<List<Map<String, dynamic>>> refreshAssociateEmiTracker() async {
+    final storage = StorageService();
+    final response = await get(
+      '${AppConstants.apiVersion}${AppConstants.associateEmiTrackerEndpoint}',
+    );
+    if (response['success'] == true && response['data'] != null) {
+      final data = response['data'];
+      final emis = data is List ? data : [];
+      final emisList = List<Map<String, dynamic>>.from(emis);
+      await storage.cacheEmiData(emisList);
+      return emisList;
+    }
+    return [];
   }
 
   Future<List<Map<String, dynamic>>> getProperties({
@@ -468,6 +536,23 @@ class ApiService {
   Future<Map<String, dynamic>> completeSiteVisit({required int visitId}) async {
     return post('/site-visit/complete', data: {'visit_id': visitId});
   }
+}
+
+// Offline EMI Result wrapper
+class OfflineEmiResult {
+  final List<Map<String, dynamic>> emis;
+  final bool fromCache;
+  final DateTime? cacheTimestamp;
+  final bool isStale;
+
+  OfflineEmiResult({
+    required this.emis,
+    required this.fromCache,
+    this.cacheTimestamp,
+    this.isStale = false,
+  });
+
+  bool get hasData => emis.isNotEmpty;
 }
 
 class AuthInterceptor extends Interceptor {

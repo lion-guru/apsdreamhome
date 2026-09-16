@@ -1,6 +1,6 @@
 <?php
 // Part 1: Get DB menu items
-$db = new PDO('mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome;charset=utf8','root','');
+$db = new PDO('mysql:host=127.0.0.1;port=3306;dbname=apsdreamhome;charset=utf8','root','');
 $stmt = $db->query('SELECT id, section, name, url, icon, parent_id, order_index FROM admin_menu_items WHERE url IS NOT NULL AND url != "" ORDER BY section, order_index');
 $menuItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

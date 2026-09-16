@@ -1,5 +1,5 @@
 <?php
-$pdo = new PDO('mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome;charset=utf8mb4', 'root', '', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+$pdo = new PDO('mysql:host=127.0.0.1;port=3306;dbname=apsdreamhome;charset=utf8mb4', 'root', '', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 
 echo "=== booking_payment_schedules amount columns ===\n";
 $stmt = $pdo->query("SHOW COLUMNS FROM booking_payment_schedules WHERE Field IN ('amount','total_amount','paid_amount','accrued_penalty','status')");

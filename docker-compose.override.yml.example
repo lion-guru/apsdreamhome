@@ -41,7 +41,7 @@ services:
   db:
     ports:
       # Expose MySQL on the host (e.g. for MySQL Workbench)
-      - "3307:3306"
+      - "3306:3306"
 
   redis:
     ports:

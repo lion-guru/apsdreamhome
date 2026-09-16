@@ -2,7 +2,7 @@
 
 **Generated:** 2026-05-31  
 **Database:** apsdreamhome  
-**Server:** MySQL (127.0.0.1:3307)  
+**Server:** MySQL (127.0.0.1:3306)  
 **Total Tables:** 775  
 **Total Records:** 52,854  
 
@@ -28,7 +28,7 @@ The APS Dream Home database is a large-scale, feature-rich real estate managemen
 ### Connection Settings
 ```php
 Host: 127.0.0.1
-Port: 3307 (XAMPP MySQL)
+Port: 3306 (XAMPP MySQL)
 Database: apsdreamhome
 Username: root
 Password: (empty)

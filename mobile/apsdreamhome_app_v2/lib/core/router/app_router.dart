@@ -145,6 +145,7 @@ import '../../presentation/pages/associate/commission_page.dart';
 import '../../presentation/pages/associate/payout_page.dart';
 import '../../presentation/pages/associate/my_team_page.dart';
 import '../../presentation/pages/associate/genealogy_page.dart';
+import '../../presentation/pages/associate/associate_emi_tracker_page.dart';
 
 // Agent
 import '../../presentation/pages/agent/agent_dashboard_page.dart';
@@ -850,10 +851,18 @@ isDisclaimer ||
       ),
       GoRoute(
         path: '/emi-schedule',
-        pageBuilder: (context, state) => const CustomTransitionPage<void>(
-          child: EmiSchedulePage(),
-          transitionsBuilder: _slideTransition,
-        ),
+        pageBuilder: (context, state) {
+          final routeExtra = state.extra;
+          final bookingId = routeExtra is int
+              ? routeExtra
+              : (routeExtra is num
+                  ? routeExtra.toInt()
+                  : int.tryParse(routeExtra?.toString() ?? ''));
+          return CustomTransitionPage<void>(
+            child: EmiSchedulePage(bookingId: bookingId),
+            transitionsBuilder: _slideTransition,
+          );
+        },
       ),
       GoRoute(
         path: '/favorites',
@@ -1183,6 +1192,10 @@ isDisclaimer ||
       GoRoute(
         path: '/associate/crm',
         builder: (context, state) => const AgentCRMPage(),
+      ),
+      GoRoute(
+        path: '/associate/emi-tracker',
+        builder: (context, state) => const AssociateEmiTrackerPage(),
       ),
 
       // Legacy MLM routes (redirect to associate routes)

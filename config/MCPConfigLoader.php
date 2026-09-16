@@ -37,7 +37,7 @@ class MCPConfigLoader
                     'args' => ['-y', '@modelcontextprotocol/server-mysql'],
                     'env' => [
                         'MYSQL_HOST' => getenv('DB_HOST') ?: 'localhost',
-                        'MYSQL_PORT' => getenv('DB_PORT') ?: '3307',
+                        'MYSQL_PORT' => getenv('DB_PORT') ?: '3306',
                         'MYSQL_USER' => getenv('DB_USERNAME') ?: 'root',
                         'MYSQL_PASSWORD' => getenv('DB_PASSWORD') ?: ''
                     ],
