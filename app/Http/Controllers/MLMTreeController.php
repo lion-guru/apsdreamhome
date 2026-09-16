@@ -156,7 +156,14 @@ class MLMTreeController extends \App\Http\Controllers\Admin\AdminController
         }
 
         if (!$userId) {
-            header('Location: ' . BASE_URL . '/login');
+            echo json_encode(['error' => 'Unauthorized']);
+            exit;
+        }
+
+        // Role gate: genealogy tree is an MLM portal feature. Customers and
+        // other non-MLM roles must not open associate tree pages.
+        if (!in_array($userRole, ['associate', 'agent', 'admin', 'super_admin'], true)) {
+            header('Location: ' . BASE_URL . '/user/dashboard');
             exit;
         }
 
@@ -190,6 +197,37 @@ class MLMTreeController extends \App\Http\Controllers\Admin\AdminController
     }
 
     /**
+     * Whether $viewerId may view $memberId's network data.
+     * Admins: anyone. Others: self or own downline (parent-chain walk).
+     */
+    private function canViewMember(int $viewerId, bool $isAdmin, int $memberId): bool
+    {
+        if ($isAdmin || $memberId === $viewerId || $memberId <= 0 || $viewerId <= 0) {
+            return $isAdmin || $memberId === $viewerId;
+        }
+        try {
+            $node = $this->db->fetchOne(
+                "SELECT parent_id FROM network_tree WHERE associate_id = ? LIMIT 1",
+                [$memberId]
+            );
+            $hops = 0;
+            while ($node && $hops < 25) {
+                $parent = (int)($node['parent_id'] ?? 0);
+                if ($parent === $viewerId) return true;
+                if ($parent <= 0) return false;
+                $node = $this->db->fetchOne(
+                    "SELECT parent_id FROM network_tree WHERE associate_id = ? LIMIT 1",
+                    [$parent]
+                );
+                $hops++;
+            }
+        } catch (\Throwable $e) {
+            error_log(__METHOD__ . ': ' . $e->getMessage());
+        }
+        return false;
+    }
+
+    /**
      * API: Get network tree data for D3.js
      */
     public function getTreeData()
@@ -198,11 +236,26 @@ class MLMTreeController extends \App\Http\Controllers\Admin\AdminController
 
         @session_start();
 
-        $userId = isset($_GET['root_id']) ? (int)$_GET['root_id'] : ($_SESSION['user_id'] ?? null);
+        $sessionId = (int)($_SESSION['user_id'] ?? 0);
+        $userRole = $_SESSION['role'] ?? '';
+        $isAdmin = in_array($userRole, ['admin', 'super_admin'], true)
+            || isset($_SESSION['admin_id']);
+        $requested = isset($_GET['root_id']) ? (int)$_GET['root_id'] : $sessionId;
+        // Non-admins may only pull their own subtree; anything else falls
+        // back to their own id (prevents cross-user tree data leaks).
+        $userId = ($isAdmin || $this->canViewMember($sessionId, false, $requested))
+            ? $requested : $sessionId;
         $levels = min((int)($_GET['levels'] ?? 5), 10); // Max 10 levels
 
         if (!$userId) {
-            echo json_encode(['error' => 'Unauthorized']);
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
+
+        // Role gate (API-appropriate 403): tree data is an MLM feature.
+        if (!in_array($userRole, ['associate', 'agent', 'admin', 'super_admin'], true)) {
+            http_response_code(403);
+            echo json_encode(['error' => 'Forbidden']);
             exit;
         }
 
@@ -262,16 +315,30 @@ class MLMTreeController extends \App\Http\Controllers\Admin\AdminController
     {
         header('Content-Type: application/json');
 
-        $memberId = $_GET['id'] ?? null;
+        @session_start();
+        $sessionId = (int)($_SESSION['user_id'] ?? 0);
+        $isAdmin = in_array($_SESSION['role'] ?? '', ['admin', 'super_admin'], true)
+            || isset($_SESSION['admin_id']);
+        $memberId = (int)($_GET['id'] ?? 0);
 
         if (!$memberId) {
             echo json_encode(['error' => 'Invalid request']);
             exit;
         }
+        if (!$sessionId) {
+            echo json_encode(['error' => 'Unauthorized']);
+            exit;
+        }
+        if (!$isAdmin && !$this->canViewMember($sessionId, false, $memberId)) {
+            echo json_encode(['error' => 'Forbidden']);
+            exit;
+        }
 
         try {
+            // NOTE: explicit columns only — never expose password hashes.
             $member = $this->db->fetchOne(
-                "SELECT u.*, 
+                "SELECT u.id, u.customer_id, u.name, u.email, u.phone, u.role,
+                        u.status, u.referral_code, u.created_at,
                         wp.points_balance, wp.total_earned, wp.commission_earnings,
                         (SELECT COUNT(*) FROM network_tree WHERE parent_id = u.id) as direct_referrals,
                         (SELECT COUNT(*) FROM network_tree WHERE root_id = u.id) as total_team_size
