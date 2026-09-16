@@ -6,11 +6,16 @@
 // - DROP demand_letter_template (0 rows; canonical is demand_letter_templates)
 // Guards: renames only if source exists and archive missing; drops only if empty.
 // Run: php scripts/migrate_phase3c_archive_singulars.php
-$pdo = new PDO('mysql:host=127.0.0.1;port=3306;dbname=apsdreamhome', 'root', '');
+$dbHost = getenv('DB_HOST') ?: '127.0.0.1';
+$dbPort = getenv('DB_PORT') ?: '3306';
+$dbName = getenv('DB_DATABASE') ?: 'apsdreamhome';
+$dbUser = getenv('DB_USERNAME') ?: 'root';
+$dbPass = getenv('DB_PASSWORD') ?: '';
+$pdo = new PDO("mysql:host=$dbHost;port=$dbPort;dbname=$dbName", $dbUser, $dbPass);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 function tableExists($pdo, $t) {
-    $s = $pdo->prepare("SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA='apsdreamhome' AND TABLE_NAME=?");
+    $s = $pdo->prepare("SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=?");
     $s->execute([$t]);
     return (bool)$s->fetchColumn();
 }

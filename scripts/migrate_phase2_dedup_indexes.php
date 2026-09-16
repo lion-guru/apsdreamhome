@@ -2,7 +2,12 @@
 // Phase 2: drop exact-duplicate indexes (idempotent). NEVER drops a UNIQUE index
 // while keeping a non-unique twin; in that case it reports and skips.
 // Run: php scripts/migrate_phase2_dedup_indexes.php
-$pdo = new PDO('mysql:host=127.0.0.1;port=3306;dbname=apsdreamhome', 'root', '');
+$dbHost = getenv('DB_HOST') ?: '127.0.0.1';
+$dbPort = getenv('DB_PORT') ?: '3306';
+$dbName = getenv('DB_DATABASE') ?: 'apsdreamhome';
+$dbUser = getenv('DB_USERNAME') ?: 'root';
+$dbPass = getenv('DB_PASSWORD') ?: '';
+$pdo = new PDO("mysql:host=$dbHost;port=$dbPort;dbname=$dbName", $dbUser, $dbPass);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 $pairs = [

@@ -2,7 +2,12 @@
 // Phase 2b: for the 11 pairs where the mission-named index is UNIQUE and the twin
 // is plain, drop the PLAIN twin instead (keeps constraint, still reclaims space).
 // Run: php scripts/migrate_phase2b_dedup_unique_twins.php
-$pdo = new PDO('mysql:host=127.0.0.1;port=3306;dbname=apsdreamhome', 'root', '');
+$dbHost = getenv('DB_HOST') ?: '127.0.0.1';
+$dbPort = getenv('DB_PORT') ?: '3306';
+$dbName = getenv('DB_DATABASE') ?: 'apsdreamhome';
+$dbUser = getenv('DB_USERNAME') ?: 'root';
+$dbPass = getenv('DB_PASSWORD') ?: '';
+$pdo = new PDO("mysql:host=$dbHost;port=$dbPort;dbname=$dbName", $dbUser, $dbPass);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 // [table, DROP (plain twin), KEEP (unique)]

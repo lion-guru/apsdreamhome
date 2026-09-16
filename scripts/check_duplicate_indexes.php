@@ -1,5 +1,10 @@
 <?php
-$pdo = new PDO('mysql:host=127.0.0.1;port=3306;dbname=apsdreamhome', 'root', '');
+$dbHost = getenv('DB_HOST') ?: '127.0.0.1';
+$dbPort = getenv('DB_PORT') ?: '3306';
+$dbName = getenv('DB_DATABASE') ?: 'apsdreamhome';
+$dbUser = getenv('DB_USERNAME') ?: 'root';
+$dbPass = getenv('DB_PASSWORD') ?: '';
+$pdo = new PDO("mysql:host=$dbHost;port=$dbPort;dbname=$dbName", $dbUser, $dbPass);
 
 // Find duplicate indexes (same table, same leftmost columns)
 $indexes = $pdo->query("

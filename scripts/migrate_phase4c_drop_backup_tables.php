@@ -5,7 +5,12 @@
 // booking_payment_schedules rows (ids 9003-9008, emi_active). Dropping it
 // would orphan live EMI data. See mission report.
 // Run: php scripts/migrate_phase4c_drop_backup_tables.php
-$pdo = new PDO('mysql:host=127.0.0.1;port=3306;dbname=apsdreamhome', 'root', '');
+$dbHost = getenv('DB_HOST') ?: '127.0.0.1';
+$dbPort = getenv('DB_PORT') ?: '3306';
+$dbName = getenv('DB_DATABASE') ?: 'apsdreamhome';
+$dbUser = getenv('DB_USERNAME') ?: 'root';
+$dbPass = getenv('DB_PASSWORD') ?: '';
+$pdo = new PDO("mysql:host=$dbHost;port=$dbPort;dbname=$dbName", $dbUser, $dbPass);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 $archive = __DIR__ . '/../database/_archive_backup_tables_20260916.sql';

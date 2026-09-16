@@ -1,5 +1,10 @@
 <?php
-$db = new PDO('mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome', 'root', '2jcePXuNaOfEyo6I5wJVkG');
+$dbHost = getenv('DB_HOST') ?: '127.0.0.1';
+$dbPort = getenv('DB_PORT') ?: '3306';
+$dbName = getenv('DB_DATABASE') ?: 'apsdreamhome';
+$dbUser = getenv('DB_USERNAME') ?: 'root';
+$dbPass = getenv('DB_PASSWORD') ?: '';
+$db = new PDO("mysql:host=$dbHost;port=$dbPort;dbname=$dbName", $dbUser, $dbPass);
 
 echo "=== PROPERTIES SCHEMA ===" . PHP_EOL;
 $r = $db->query("DESCRIBE properties")->fetchAll(PDO::FETCH_COLUMN);

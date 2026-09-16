@@ -7,7 +7,12 @@
 //  - 36 rows parent to backup_plot_bookings (emi_active live bookings)
 //  - bps.status enum has no cancelled/archived value (pending/paid/overdue/partial)
 // Run: php scripts/migrate_phase5_lead_reassign.php
-$pdo = new PDO('mysql:host=127.0.0.1;port=3306;dbname=apsdreamhome', 'root', '');
+$dbHost = getenv('DB_HOST') ?: '127.0.0.1';
+$dbPort = getenv('DB_PORT') ?: '3306';
+$dbName = getenv('DB_DATABASE') ?: 'apsdreamhome';
+$dbUser = getenv('DB_USERNAME') ?: 'root';
+$dbPass = getenv('DB_PASSWORD') ?: '';
+$pdo = new PDO("mysql:host=$dbHost;port=$dbPort;dbname=$dbName", $dbUser, $dbPass);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 $bad = $pdo->query("SELECT l.id, l.assigned_to FROM leads l LEFT JOIN users u ON u.id=l.assigned_to WHERE l.assigned_to IS NOT NULL AND u.id IS NULL ORDER BY l.id")->fetchAll(PDO::FETCH_ASSOC);
