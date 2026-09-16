@@ -365,7 +365,9 @@ class MobileUserApiController extends BaseController
             return;
         }
         try {
-            $emiSchedule = $this->getEmiScheduleData($userId);
+            $input = json_decode(file_get_contents('php://input'), true) ?: $_GET;
+            $bookingId = (int)($input['booking_id'] ?? 0);
+            $emiSchedule = $this->getEmiScheduleData($userId, $bookingId);
             echo json_encode(['success' => true, 'data' => $emiSchedule]);
         } catch (\Exception $e) {
             $this->handleApiError($e, 'EMI Schedule API error');
@@ -1045,8 +1047,10 @@ class MobileUserApiController extends BaseController
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    private function getEmiScheduleData($userId)
+    private function getEmiScheduleData($userId, $bookingId = 0)
     {
+        $bookSql = $bookingId > 0 ? " AND e.booking_id = ?" : "";
+        $params = $bookingId > 0 ? [$userId, $bookingId] : [$userId];
         $stmt = $this->db->prepare("
             SELECT e.id, e.booking_id, e.due_date, e.amount, e.paid_amount, e.status, e.paid_date,
                    b.booking_date,
@@ -1054,10 +1058,10 @@ class MobileUserApiController extends BaseController
             FROM emi_schedule e
             LEFT JOIN bookings b ON e.booking_id = b.id
             LEFT JOIN properties p ON b.property_id = p.id
-            WHERE b.customer_id = ?
+            WHERE b.customer_id = ?{$bookSql}
             ORDER BY e.due_date ASC
         ");
-        $stmt->execute([$userId]);
+        $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -1112,7 +1116,7 @@ class MobileUserApiController extends BaseController
 
     private function getNotificationsData($userId)
     {
-        $stmt = $this->db->prepare("SELECT id, title, message, type, is_read, created_at FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 50");
+        $stmt = $this->db->prepare("SELECT id, title, message, type, data, action_url, is_read, created_at FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 50");
         $stmt->execute([$userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

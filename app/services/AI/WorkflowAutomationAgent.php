@@ -504,8 +504,8 @@ class WorkflowAutomationAgent
         try {
             $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO audit_log (action, details, tenant_id, created_at)
-                 VALUES (?, ?, ?, NOW())",
+                "INSERT INTO audit_logs (action, description, tenant_id, user_id, user_role, created_at)
+                 VALUES (?, ?, ?, 0, 'system', NOW())",
                 ["workflow_event:$eventType", json_encode($data), $tid]
             );
         } catch (\Exception $e) { error_log($e->getMessage()); }

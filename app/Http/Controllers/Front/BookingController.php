@@ -24,6 +24,15 @@ class BookingController extends BaseController
         return strpos($uri, '/webhook/esign') !== false;
     }
 
+    /**
+     * Admin-configurable booking token (flat ₹51,000 default, pct fallback).
+     * Single source: BookingComplianceService (service_configs booking group).
+     */
+    private function tokenAmountFor(float $dealPrice): float
+    {
+        return (new \App\Services\Booking\BookingComplianceService())->resolveTokenAmount($dealPrice);
+    }
+
     private function getUser()
     {
         $stmt = $this->db->prepare("SELECT * FROM users WHERE id = ?");
@@ -132,7 +141,7 @@ class BookingController extends BaseController
         }
 
         $pricePerSqft = $plot['area_sqft'] > 0 ? round($plot['total_price'] / $plot['area_sqft'], 2) : 0;
-        $tokenAmount = round($plot['total_price'] * 0.25, 2);
+        $tokenAmount = $this->tokenAmountFor((float)$plot['total_price']);
         $stampDuty = round($plot['total_price'] * 0.05, 2);
 
         $nearbyPlots = $this->db->fetchAll("
@@ -178,7 +187,7 @@ class BookingController extends BaseController
             return $this->redirect('/plots/browse');
         }
 
-        $tokenAmount = round($plot['total_price'] * 0.25, 2);
+        $tokenAmount = $this->tokenAmountFor((float)$plot['total_price']);
 
         $this->layout = 'layouts/customer';
         $this->render('pages/booking/form', [
@@ -234,7 +243,7 @@ class BookingController extends BaseController
                 'plot_id'          => $plot['id'],
                 'customer_id'      => $user['id'],
                 'total_plot_value' => (float)$plot['total_price'],
-                'booking_amount'   => round($plot['total_price'] * 0.25, 2),
+                'booking_amount'   => $this->tokenAmountFor((float)$plot['total_price']),
                 'channel'          => 'direct',
                 'notes'            => $notes,
                 'legal_consent'    => true,

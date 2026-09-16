@@ -371,7 +371,7 @@ class ComplianceService
         $totalChecks = 3;
 
         $archiveFound = false;
-        foreach (['_archive', 'audit_log', 'system_backups'] as $t) {
+        foreach (['_archive', 'audit_logs', 'system_backups'] as $t) {
             if ($this->tableExists($t) || is_dir((defined('APS_ROOT') ? APS_ROOT : dirname(__DIR__, 3)) . '/' . $t)) {
                 $archiveFound = true;
                 break;
@@ -387,7 +387,7 @@ class ComplianceService
 
         $sevenYearsAgo = date('Y-m-d', strtotime('-7 years'));
         $oldRecordCount = 0;
-        foreach (['leads', 'booking_payments', 'commissions', 'kyc_verification_logs', 'audit_log'] as $table) {
+        foreach (['leads', 'booking_payments', 'commissions', 'kyc_verification_logs', 'audit_logs'] as $table) {
             if (!$this->tableExists($table)) {
                 continue;
             }

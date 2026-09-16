@@ -14,7 +14,11 @@ class AppFeedbackApiController extends BaseController
     public function __construct()
     {
         parent::__construct();
-        $this->skipCsrfProtection();
+    }
+
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
     }
 
     private function requireAuth(): int

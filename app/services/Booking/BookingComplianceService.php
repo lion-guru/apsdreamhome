@@ -2,39 +2,99 @@
 namespace App\Services\Booking;
 
 use App\Traits\ServiceTenantTrait;
+use App\Services\ServiceConfigService;
 
 class BookingComplianceService
 {
     use ServiceTenantTrait;
 
     private $db;
+    /** Fallbacks when service_configs booking group has no rows (admin can override). */
     private $tokenPercentage = 25;
     private $tokenDueDays = 15;
+    private $tokenFlatAmount = 51000.0;
+    private $agreementThresholdPct = 25;
+    private $tokenRefundable = false;
 
     /**
      * Token percentage of deal price (percent units, e.g. 25).
+     * Admin-configurable via service_configs booking.token_pct.
      * Single source of truth consumed by the Front plot flow
      * (PlotBaseController and its PlotIndex/PlotBooking/PlotPayment children).
      */
     public function getTokenPercentage(): float
     {
-        return (float)$this->tokenPercentage;
+        return (float)ServiceConfigService::getVal('booking', 'token_pct', $this->tokenPercentage);
     }
 
     /**
      * Days given to pay the token amount after booking.
+     * Admin-configurable via service_configs booking.token_due_days.
      */
     public function getTokenDueDays(): int
     {
-        return (int)$this->tokenDueDays;
+        return (int)ServiceConfigService::getVal('booking', 'token_due_days', $this->tokenDueDays);
     }
 
     /**
-     * Token amount for a deal price.
+     * Flat booking token (₹51,000 default, non-refundable).
+     * Admin-configurable via service_configs booking.token_amount.
+     * 0 disables the flat token (falls back to percentage).
+     */
+    public function getTokenFlatAmount(): float
+    {
+        return (float)ServiceConfigService::getVal('booking', 'token_amount', $this->tokenFlatAmount);
+    }
+
+    /**
+     * Paid-share (%) of deal price that triggers agreement/paperwork.
+     * Admin-configurable via service_configs booking.agreement_threshold_pct.
+     */
+    public function getAgreementThresholdPct(): float
+    {
+        return (float)ServiceConfigService::getVal('booking', 'agreement_threshold_pct', $this->agreementThresholdPct);
+    }
+
+    /**
+     * Whether the booking token is refundable on cancellation.
+     * Admin-configurable via service_configs booking.token_refundable.
+     */
+    public function isTokenRefundable(): bool
+    {
+        return (bool)ServiceConfigService::getVal('booking', 'token_refundable', $this->tokenRefundable);
+    }
+
+    /**
+     * Resolve the token amount for a deal: flat token_amount when > 0,
+     * otherwise the percentage fallback. Plan override ['token_amount'] wins.
+     */
+    public function resolveTokenAmount(float $dealPrice, array $plan = []): float
+    {
+        if (isset($plan['token_amount'])) {
+            return round(max(0, (float)$plan['token_amount']), 2);
+        }
+        $flat = $this->getTokenFlatAmount();
+        if ($flat > 0) {
+            return round($flat, 2);
+        }
+        return round($dealPrice * ($this->getTokenPercentage() / 100), 2);
+    }
+
+    /**
+     * Token amount for a deal price (kept for backward compat).
      */
     public function calculateTokenAmount(float $dealPrice): float
     {
-        return round($dealPrice * ($this->tokenPercentage / 100), 2);
+        return $this->resolveTokenAmount($dealPrice);
+    }
+
+    /**
+     * Agreement/paperwork due once paid total reaches the threshold share.
+     */
+    public function isAgreementDue(float $paidTotal, float $dealPrice): bool
+    {
+        if ($dealPrice <= 0) return false;
+        return ($paidTotal / $dealPrice) * 100 >= $this->getAgreementThresholdPct();
     }
 
     /**
@@ -55,12 +115,12 @@ class BookingComplianceService
      */
     public function createTokenSchedule(int $bookingId, float $dealPrice, array $plan = []): array
     {
-        $tokenPct = isset($plan['token_pct']) ? (float)$plan['token_pct'] : (float)$this->tokenPercentage;
-        $dueDays = isset($plan['due_days']) ? (int)$plan['due_days'] : (int)$this->tokenDueDays;
-        if ($tokenPct <= 0 || $tokenPct > 100) $tokenPct = (float)$this->tokenPercentage;
-        if ($dueDays < 0 || $dueDays > 365) $dueDays = (int)$this->tokenDueDays;
+        $tokenPct = isset($plan['token_pct']) ? (float)$plan['token_pct'] : $this->getTokenPercentage();
+        $dueDays = isset($plan['due_days']) ? (int)$plan['due_days'] : $this->getTokenDueDays();
+        if ($tokenPct <= 0 || $tokenPct > 100) $tokenPct = $this->getTokenPercentage();
+        if ($dueDays < 0 || $dueDays > 365) $dueDays = $this->getTokenDueDays();
 
-        $tokenAmount = round($dealPrice * ($tokenPct / 100), 2);
+        $tokenAmount = $this->resolveTokenAmount($dealPrice, $plan);
         $dueDate = date('Y-m-d', strtotime('+' . $dueDays . ' days'));
 
         $stmt = $this->db->prepare(
@@ -74,6 +134,8 @@ class BookingComplianceService
             'due_date' => $dueDate,
             'token_pct' => $tokenPct,
             'due_days' => $dueDays,
+            'token_refundable' => $this->isTokenRefundable(),
+            'agreement_threshold_pct' => $this->getAgreementThresholdPct(),
         ];
     }
 
@@ -185,12 +247,12 @@ class BookingComplianceService
             $baseAmount = (float)$plot['total_price'];
             $totalAmount = $baseAmount + $plcAmount;
 
-            $tokenAmount = $totalAmount * ($this->tokenPercentage / 100);
-            $tokenDeadline = date('Y-m-d', strtotime($bookingDate . ' + 15 days'));
+            $tokenAmount = $this->resolveTokenAmount($totalAmount);
+            $tokenDeadline = date('Y-m-d', strtotime($bookingDate . ' + ' . $this->getTokenDueDays() . ' days'));
 
             $initialPayment = (float)($data['initial_payment'] ?? 0);
             if (in_array($paymentMode, ['EMI', 'Offer']) && $initialPayment < $tokenAmount) {
-                throw new \Exception("Initial payment must be at least 25% (₹" . number_format($tokenAmount, 2) . ") for $paymentMode bookings");
+                throw new \Exception("Initial payment must be at least ₹" . number_format($tokenAmount, 2) . " (token) for $paymentMode bookings");
             }
 
             $stmt = $this->db->prepare("UPDATE plots SET status = 'Hold' WHERE id = ? AND tenant_id = ?");
@@ -273,13 +335,15 @@ class BookingComplianceService
         $released = 0;
         $warnings = 0;
 
+        $thresholdShare = $this->getAgreementThresholdPct() / 100;
+        $graceDays = $this->getTokenDueDays() + 1;
         $stmt = $this->db->query("
             SELECT b.id, b.total_amount, b.amount as paid_amount, b.notes,
                    JSON_UNQUOTE(JSON_EXTRACT(b.notes, '$.plot_id')) as plot_id
             FROM bookings b
             WHERE b.status = 'pending'
-              AND b.created_at <= DATE_SUB(CURDATE(), INTERVAL 16 DAY)
-              AND (b.amount / NULLIF(b.total_amount, 0)) < 0.25
+              AND b.created_at <= DATE_SUB(CURDATE(), INTERVAL {$graceDays} DAY)
+              AND (b.amount / NULLIF(b.total_amount, 0)) < {$thresholdShare}
               " . $this->tenantSql());
         $violations = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -291,8 +355,9 @@ class BookingComplianceService
                     $stmt->execute([$plotId, $this->tenantId()]);
                 }
 
-$stmt = $this->db->prepare("UPDATE bookings SET status = 'cancelled', notes = CONCAT(COALESCE(notes,''), ' | Auto-cancelled: Token payment < 25% within 15 days') WHERE id = ? AND tenant_id = ?");
-                    $stmt->execute([$v['id'], $this->tenantId()]);
+$cancelNote = ' | Auto-cancelled: Token payment < ' . $this->getAgreementThresholdPct() . '% within ' . $this->getTokenDueDays() . ' days';
+                $stmt = $this->db->prepare("UPDATE bookings SET status = 'cancelled', notes = CONCAT(COALESCE(notes,''), ?) WHERE id = ? AND tenant_id = ?");
+                $stmt->execute([$cancelNote, $v['id'], $this->tenantId()]);
 
                 error_log("BookingCompliance: Booking #{$v['id']} auto-cancelled. Plot #$plotId released back to Available.");
                 $released++;
@@ -326,7 +391,7 @@ $stmt = $this->db->prepare("UPDATE bookings SET status = 'cancelled', notes = CO
             if ($newPaid >= $total) {
                 $paymentStatus = 'paid';
                 $this->db->prepare("UPDATE bookings SET payment_status = 'paid', status = 'completed' WHERE id = ? AND tenant_id = " . $this->tenantId())->execute([$bookingId]);
-            } elseif ($newPaid >= $total * 0.25) {
+            } elseif ($this->isAgreementDue($newPaid, $total)) {
                 $paymentStatus = 'partial';
                 $this->db->prepare("UPDATE bookings SET payment_status = 'partial' WHERE id = ? AND tenant_id = " . $this->tenantId())->execute([$bookingId]);
             }

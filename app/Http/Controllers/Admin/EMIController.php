@@ -193,9 +193,11 @@ class EMIController extends AdminController
             $totalPayable = $downPayment + ($emiAmount * $tenureMonths);
             $totalInterest = $totalPayable - $totalAmount;
 
-            // Create EMI plan
-            $sql = "INSERT INTO emi_plans 
-                    (total_amount, down_payment, interest_rate, tenure_months, 
+            // Create EMI plan + schedule atomically (legacy emi_* quarantined:
+            // no orphan plan rows when schedule generation fails)
+            $this->db->beginTransaction();
+            $sql = "INSERT INTO emi_plans
+                    (total_amount, down_payment, interest_rate, tenure_months,
                      emi_amount, status, created_at)
                     VALUES (?, ?, ?, ?, ?, 'active', NOW())";
 
@@ -213,6 +215,7 @@ class EMIController extends AdminController
 
                 // Create EMI schedule
                 $this->createEMISchedule($emiPlanId, $emiAmount, $tenureMonths);
+                $this->db->commit();
 
                 // Log activity
                 $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'emi_plan_created', [
@@ -228,8 +231,14 @@ class EMIController extends AdminController
                 ]);
             }
 
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
             return $this->jsonError('Failed to create EMI plan', 500);
         } catch (\Exception $e) {
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
             $this->loggingService->error("EMI Store error: " . $e->getMessage());
             return $this->jsonError('Failed to create EMI plan', 500);
         }

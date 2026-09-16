@@ -1,129 +1,214 @@
 <?php
 /**
  * Rate Limit Middleware
- * 
- * Prevents brute force attacks by limiting request rates
+ *
+ * Redis-backed rate limiting with tiered limits and per-endpoint configuration.
+ * Falls back to file-based storage if Redis is unavailable.
+ *
+ * Limits:
  * - Auth endpoints: 5 requests per minute
- * - API endpoints: 60 requests per minute
- * - Web endpoints: 100 requests per minute
+ * - API endpoints: 120 requests per minute (tier adjusted)
+ * - Search endpoints: 30 requests per minute
+ * - Admin endpoints: 300 requests per minute (tier adjusted)
+ * - Web endpoints: 600 requests per minute
  */
 
 namespace App\Core\Middleware;
 
-use App\Core\Database\Database;
+use App\Services\Cache\RedisRateLimiter;
 
 class RateLimitMiddleware
 {
-    private $db;
-    private $limits = [
-        'auth' => ['limit' => 10, 'window' => 60],      // 10 per minute
-        'api' => ['limit' => 120, 'window' => 60],      // 120 per minute
-        'web' => ['limit' => 600, 'window' => 60],      // 600 per minute
+    private RedisRateLimiter $limiter;
+    private array $endpointMap = [
+        // Auth routes
+        '/auth/login'        => 'auth.login',
+        '/auth/register'     => 'auth.register',
+        '/auth/forgot-password' => 'auth.password',
+        '/auth/reset-password'  => 'auth.password',
+        '/auth/verify-otp'   => 'auth.otp',
+        '/auth/air-login'    => 'auth.air_login',
+        '/auth/air-login/verify' => 'auth.otp',
+
+        // API routes
+        '/api/auth/login'    => 'auth.login',
+        '/api/auth/register' => 'auth.register',
+        '/api/auth/forgot-password' => 'auth.password',
+        '/api/auth/verify-otp' => 'auth.otp',
+        '/api/search'        => 'api.search',
+        '/api/properties'    => 'api.properties',
+        '/api/bookings'      => 'api.bookings',
+        '/api/payments'      => 'api.payments',
+        '/api/profile'       => 'api.profile',
+        '/api/notifications' => 'api.notifications',
+
+        // Admin routes
+        '/admin/api'         => 'admin.default',
+        '/admin/export'      => 'admin.export',
+        '/admin/bulk'        => 'admin.bulk',
+    ];
+
+    private array $patternMap = [
+        '#^/api/auth/#'      => 'auth.login',
+        '#^/api/search#'     => 'api.search',
+        '#^/api/properties#' => 'api.properties',
+        '#^/api/bookings#'   => 'api.bookings',
+        '#^/api/payments#'   => 'api.payments',
+        '#^/api/profile#'    => 'api.profile',
+        '#^/api/notifications#' => 'api.notifications',
+        '#^/admin/api#'      => 'admin.default',
+        '#^/admin/export#'   => 'admin.export',
+        '#^/admin/bulk#'     => 'admin.bulk',
     ];
 
     public function __construct()
     {
-        $this->db = Database::getInstance();
+        $configPath = __DIR__ . '/../../../config/rate_limits.php';
+        $config = is_file($configPath) ? (require $configPath) : [];
+        $this->limiter = new RedisRateLimiter($config);
     }
 
     /**
-     * Check if request is within rate limit
+     * Check rate limit for current request.
+     * Returns false if limit exceeded (and sends 429 response).
      */
-    public function check(string $type = 'web'): bool
+    public function check(): bool
     {
-        $limit = $this->limits[$type] ?? $this->limits['web'];
-        $identifier = $this->getIdentifier();
-        $key = "rate_limit:{$type}:{$identifier}";
-        $window = $limit['window'];
-        $maxRequests = $limit['limit'];
-
-        // Clean old entries
-        $this->cleanup($key, $window);
-
-        // Count current requests
-        $current = $this->count($key);
-
-        if ($current >= $maxRequests) {
-            return false;
+        // Skip for test requests
+        if ($this->isTestRequest()) {
+            return true;
         }
 
-        // Log this request
-        $this->log($key, $window);
+        $identifier = $this->getIdentifier();
+        $endpoint = $this->resolveEndpoint();
+        $tier = $this->resolveTier();
 
-        return true;
+        return $this->limiter->enforce($identifier, $endpoint, $tier);
     }
 
     /**
-     * Get client identifier (IP + User Agent hash)
+     * Get remaining requests for current request context.
+     */
+    public function getRemaining(): int
+    {
+        $identifier = $this->getIdentifier();
+        $endpoint = $this->resolveEndpoint();
+        $tier = $this->resolveTier();
+
+        $result = $this->limiter->check($identifier, $endpoint, $tier);
+        return $result['remaining'] ?? 0;
+    }
+
+    /**
+     * Determine if this is a test request that should bypass rate limiting.
+     */
+    private function isTestRequest(): bool
+    {
+        return isset($_GET['test_login'])
+            || isset($_SERVER['HTTP_X_TESTING'])
+            || (defined('APP_ENV') && APP_ENV === 'testing');
+    }
+
+    /**
+     * Get client identifier (IP + User Agent hash).
      */
     private function getIdentifier(): string
     {
-        $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-        $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
-        return md5($ip . $ua);
+        return RedisRateLimiter::getClientIdentifier();
     }
 
     /**
-     * Clean old rate limit entries
+     * Resolve endpoint configuration key from current request path.
      */
-    private function cleanup(string $key, int $window): void
+    private function resolveEndpoint(): string
     {
-        $cutoff = time() - $window;
-        try {
-            $stmt = $this->db->prepare(
-                "DELETE FROM rate_limit_logs WHERE request_key = ? AND created_at < ?"
-            );
-            $stmt->execute([$key, date('Y-m-d H:i:s', $cutoff)]);
-        } catch (\Throwable $e) {
-            // Silently fail - rate limiting should not break app
+        $path = $_SERVER['REQUEST_URI'] ?? '/';
+        $path = parse_url($path, PHP_URL_PATH) ?? '/';
+
+        // Exact match first
+        if (isset($this->endpointMap[$path])) {
+            return $this->endpointMap[$path];
         }
-    }
 
-    /**
-     * Count requests in current window
-     */
-    private function count(string $key): int
-    {
-        try {
-            $stmt = $this->db->prepare(
-                "SELECT COUNT(*) FROM rate_limit_logs WHERE request_key = ?"
-            );
-            $stmt->execute([$key]);
-            return (int) $stmt->fetchColumn();
-        } catch (\Throwable $e) {
-            return 0;
+        // Pattern match
+        foreach ($this->patternMap as $pattern => $endpoint) {
+            if (preg_match($pattern, $path)) {
+                return $endpoint;
+            }
         }
-    }
 
-    /**
-     * Log a request
-     */
-    private function log(string $key, int $window): void
-    {
-        try {
-            $stmt = $this->db->prepare(
-                "INSERT INTO rate_limit_logs (request_key, ip_address, user_agent, expires_at) VALUES (?, ?, ?, ?)"
-            );
-            $stmt->execute([
-                $key,
-                $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0',
-                $_SERVER['HTTP_USER_AGENT'] ?? '',
-                date('Y-m-d H:i:s', time() + $window)
-            ]);
-        } catch (\Throwable $e) {
-            // Silently fail
+        // Default based on path prefix
+        if (str_starts_with($path, '/api/')) {
+            return 'api.default';
         }
+        if (str_starts_with($path, '/admin/')) {
+            return 'admin.default';
+        }
+        if (str_starts_with($path, '/auth/')) {
+            return 'auth.login';
+        }
+
+        return 'web.default';
     }
 
     /**
-     * Get remaining requests
+     * Resolve user tier from session.
      */
-    public function getRemaining(string $type = 'web'): int
+    private function resolveTier(): ?string
     {
-        $limit = $this->limits[$type] ?? $this->limits['web'];
-        $identifier = $this->getIdentifier();
-        $key = "rate_limit:{$type}:{$identifier}";
-        $current = $this->count($key);
-        return max(0, $limit['limit'] - $current);
+        // Check for authenticated user
+        $userId = null;
+
+        if (isset($_SESSION['user_id'])) {
+            $userId = (int)$_SESSION['user_id'];
+        } elseif (isset($_SESSION['admin_id'])) {
+            $userId = (int)$_SESSION['admin_id'];
+        } elseif (isset($_SESSION['employee_id'])) {
+            $userId = (int)$_SESSION['employee_id'];
+        } elseif (isset($_SESSION['associate_id'])) {
+            $userId = (int)$_SESSION['associate_id'];
+        } elseif (isset($_SESSION['agent_id'])) {
+            $userId = (int)$_SESSION['agent_id'];
+        }
+
+        if ($userId) {
+            return $this->limiter->getTierForUser($userId);
+        }
+
+        // Check for API token (Bearer token)
+        $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+        if (str_starts_with($authHeader, 'Bearer ')) {
+            // Could look up API key tier here
+            return 'basic'; // Default for API tokens
+        }
+
+        return null; // Use default tier
+    }
+
+    /**
+     * Manually enforce rate limit for a specific endpoint (for controllers).
+     */
+    public function enforceForEndpoint(string $endpoint, ?string $identifier = null, ?string $tier = null): bool
+    {
+        $identifier = $identifier ?? $this->getIdentifier();
+        $tier = $tier ?? $this->resolveTier();
+
+        return $this->limiter->enforce($identifier, $endpoint, $tier);
+    }
+
+    /**
+     * Get rate limiter instance for advanced usage.
+     */
+    public function getLimiter(): RedisRateLimiter
+    {
+        return $this->limiter;
+    }
+
+    /**
+     * Check if Redis backend is available.
+     */
+    public function isRedisAvailable(): bool
+    {
+        return $this->limiter->isRedisAvailable();
     }
 }

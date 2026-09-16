@@ -484,15 +484,17 @@ class LoggingService
     public function logSecurityEvent(string $event, array $details = []): void
     {
         try {
-            $sql = "INSERT INTO security_log (event, details, ip_address, user_agent, created_at) 
-                    VALUES (?, ?, ?, ?, NOW())";
+            $uid = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? null;
+            $sql = "INSERT INTO security_logs (action, details, ip_address, user_agent, user_id, created_at)
+                    VALUES (?, ?, ?, ?, ?, NOW())";
 
             $stmt = $this->db->prepare($sql);
             $stmt->execute([
                 $event,
                 json_encode($details),
                 $_SERVER['REMOTE_ADDR'] ?? 'unknown',
-                $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
+                $_SERVER['HTTP_USER_AGENT'] ?? 'unknown',
+                (is_numeric($uid) ? (int)$uid : null)
             ]);
 
             // Also log to main log

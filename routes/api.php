@@ -2,30 +2,80 @@
 
 /** @var Router $router */
 
-// Per-tenant rate limiting (plan-based), fallback to global if middleware unavailable
-// Only apply to API routes (this file is included from web.php, so must not block web pages)
+// ============================================================
+// GLOBAL RATE LIMITING FOR ALL API ROUTES
+// ============================================================
+// This runs for every API request before route matching
 $apiUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 if (strpos($apiUri, '/api/') !== false || strpos($apiUri, '/apsdreamhome/api/') !== false) {
-    if (class_exists('\App\Middleware\TenantRateLimitMiddleware')) {
-        \App\Middleware\TenantRateLimitMiddleware::check();
+    if (class_exists('\App\Core\Middleware\RateLimitMiddleware')) {
+        $rateLimiter = new \App\Core\Middleware\RateLimitMiddleware();
+        $rateLimiter->check();
     } elseif (class_exists('\App\Middleware\RateLimiter')) {
         \App\Middleware\RateLimiter::checkApi();
     }
 }
 
+// Rate Limit Middleware Helper
+// Usage: $router->get('/path', 'Controller@method')->middleware('rate_limit:api.default');
+function applyRateLimit(string $endpoint): string
+{
+    return 'App\Http\Middleware\RateLimitMiddleware:' . $endpoint;
+}
+
+// ============================================================
+// AUTH ROUTES - Strict limits
+// ============================================================
+$router->post('/api/v2/mobile/auth/login', 'Api\MobileAuthApiController@login')
+    ->middleware(applyRateLimit('auth.login'));
+$router->post('/api/v2/mobile/auth/register', 'Api\MobileAuthApiController@register')
+    ->middleware(applyRateLimit('auth.register'));
+$router->post('/api/v2/mobile/auth/logout', 'Api\MobileAuthApiController@logout');
+$router->post('/api/v2/mobile/auth/google-login', 'Api\MobileAuthApiController@googleLogin')
+    ->middleware(applyRateLimit('auth.login'));
+$router->post('/api/v2/mobile/auth/air-login', 'Api\MobileAuthApiController@requestAirLoginOtp')
+    ->middleware(applyRateLimit('auth.air_login'));
+$router->post('/api/v2/mobile/auth/air-login/verify', 'Api\MobileAuthApiController@verifyAirLoginOtp')
+    ->middleware(applyRateLimit('auth.otp'));
+
+// Web auth routes
+$router->post('/auth/login', 'Auth\CustomerAuthController@login')
+    ->middleware(applyRateLimit('auth.login'));
+$router->post('/auth/register', 'Auth\CustomerAuthController@register')
+    ->middleware(applyRateLimit('auth.register'));
+$router->post('/auth/forgot-password', 'Auth\CustomerAuthController@forgotPassword')
+    ->middleware(applyRateLimit('auth.password'));
+$router->post('/auth/reset-password', 'Auth\CustomerAuthController@resetPassword')
+    ->middleware(applyRateLimit('auth.password'));
+$router->post('/auth/verify-otp', 'Auth\CustomerAuthController@verifyOtp')
+    ->middleware(applyRateLimit('auth.otp'));
+$router->post('/auth/air-login', 'Auth\CoreAuthController@requestAirLoginOtp')
+    ->middleware(applyRateLimit('auth.air_login'));
+$router->post('/auth/air-login/verify', 'Auth\CoreAuthController@verifyAirLoginOtp')
+    ->middleware(applyRateLimit('auth.otp'));
+
+// ============================================================
+// SEARCH ROUTES - Lower limits
+// ============================================================
+$router->get('/api/v2/mobile/properties/search', 'Api\MobilePropertyApiController@searchProperties')
+    ->middleware(applyRateLimit('api.search'));
+$router->get('/api/search/properties', 'Api\SearchController@searchProperties')
+    ->middleware(applyRateLimit('api.search'));
+$router->get('/api/v2/mobile/colonies/search', 'Api\MobilePropertyApiController@searchColonies')
+    ->middleware(applyRateLimit('api.search'));
+$router->get('/api/v2/mobile/leads/search', 'Api\CRMController@search')
+    ->middleware(applyRateLimit('api.search'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
 // API Routes
-$router->get('/api/user/resolve-sponsor', 'Api\UserController@resolveSponsor');
+$router->get('/api/user/resolve-sponsor', 'Api\UserController@resolveSponsor')
+    ->middleware(applyRateLimit('api.default'));
 
 // Voice Assistant
-$router->post('/api/voice-assistant/query', 'Api\VoiceAssistantController@query');
-$router->get('/api/voice-assistant', 'Api\VoiceAssistantController@index');
-
-$router->post('/api/v2/mobile/auth/login', 'Api\MobileAuthApiController@login');
-$router->post('/api/v2/mobile/auth/register', 'Api\MobileAuthApiController@register');
-$router->post('/api/v2/mobile/auth/logout', 'Api\MobileAuthApiController@logout');
-$router->post('/api/v2/mobile/auth/google-login', 'Api\MobileAuthApiController@googleLogin');
-$router->post('/api/v2/mobile/auth/air-login', 'Api\MobileAuthApiController@requestAirLoginOtp');
-$router->post('/api/v2/mobile/auth/air-login/verify', 'Api\MobileAuthApiController@verifyAirLoginOtp');
+$router->post('/api/voice-assistant/query', 'Api\VoiceAssistantController@query')
+    ->middleware(applyRateLimit('api.default'));
+$router->get('/api/voice-assistant', 'Api\VoiceAssistantController@index')
+    ->middleware(applyRateLimit('api.default'));
 $router->get('/api/v2/mobile/sync', 'Api\MobileSyncApiController@syncProperties')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/leads', 'Api\CRMController@createLead')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/leads/batch-sync', 'Api\MobileSyncApiController@batchSyncLeads')->middleware('App\Http\Middleware\ApiAuthMiddleware');
@@ -603,6 +653,8 @@ $router->get('/api/v2/mobile/agent/properties', 'Api\MobileAgentApiController@pr
 $router->get('/api/v2/mobile/agent/site-visits', 'Api\MobileAgentApiController@siteVisits')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/agent/my-team', 'Api\MobileAgentApiController@myTeam')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/agent/rank-progress', 'Api\MobileAgentApiController@rankProgress')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/associate/bookings', 'Api\MobileAgentApiController@associateBookings')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/associate/emi-tracker', 'Api\MobileAgentApiController@associateEmiTracker')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // ADMIN MOBILE API â€” JSON endpoints for Flutter admin pages
 // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
@@ -895,6 +947,17 @@ $router->get('/api/v2/mobile/construction/colonies', 'Api\ConstructionApiControl
 $router->get('/api/v2/mobile/construction/colonies/{id}/milestones', 'Api\ConstructionApiController@colonyMilestones')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/construction/materials', 'Api\ConstructionApiController@materialInventory')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/construction/materials/usage', 'Api\ConstructionApiController@logUsage')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ============================================================
+// QUERY ANALYZER API
+// ============================================================
+$router->get('/api/v2/admin/query-analyzer/slow-queries', 'Api\QueryAnalyzerController@slowQueries')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/admin/query-analyzer/table-stats', 'Api\QueryAnalyzerController@tableStats')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/admin/query-analyzer/index-stats', 'Api\QueryAnalyzerController@indexStats')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/admin/query-analyzer/missing-indexes', 'Api\QueryAnalyzerController@missingIndexes')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/admin/query-analyzer/processes', 'Api\QueryAnalyzerController@processList')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/admin/query-analyzer/kill/{id}', 'Api\QueryAnalyzerController@killProcess')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/admin/query-analyzer/explain', 'Api\QueryAnalyzerController@explainQuery')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // ============================================================
 // INFRASTRUCTURE & DEBUGGING API (Admin Tools)

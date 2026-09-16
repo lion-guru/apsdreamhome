@@ -1224,6 +1224,23 @@ $router->get('/api/dashboard/cfo/expenses', 'App\\Http\\Controllers\\RoleBasedDa
 $router->get('/api/dashboard/builder/analytics', 'App\\Http\\Controllers\\RoleBasedDashboardController@getConstructionAnalytics');
 $router->get('/api/dashboard/builder/materials', 'App\\Http\\Controllers\\RoleBasedDashboardController@getMaterialStatus');
 
+// Admin Dashboard Widgets
+$router->get('/admin/dashboard/customize', 'App\\Http\\Controllers\\Admin\\DashboardWidgetController@index');
+$router->get('/admin/dashboard/widgets', 'App\\Http\\Controllers\\Admin\\DashboardWidgetController@getWidgets');
+$router->post('/admin/dashboard/layout', 'App\\Http\\Controllers\\Admin\\DashboardWidgetController@saveLayout');
+$router->get('/admin/dashboard/layout/{id}', 'App\\Http\\Controllers\\Admin\\DashboardWidgetController@getWidgets');
+$router->delete('/admin/dashboard/layout/{id}', 'App\\Http\\Controllers\\Admin\\DashboardWidgetController@deleteLayout');
+
+// Query Analyzer
+$router->get('/admin/query-analyzer', 'App\\Http\\Controllers\\Admin\\QueryAnalyzerController@index');
+$router->get('/api/query-analyzer/slow-queries', 'App\\Http\\Controllers\\Admin\\QueryAnalyzerController@slowQueries');
+$router->get('/api/query-analyzer/table-stats', 'App\\Http\\Controllers\\Admin\\QueryAnalyzerController@tableStats');
+$router->get('/api/query-analyzer/index-stats', 'App\\Http\\Controllers\\Admin\\QueryAnalyzerController@indexStats');
+$router->get('/api/query-analyzer/missing-indexes', 'App\\Http\\Controllers\\Admin\\QueryAnalyzerController@missingIndexes');
+$router->get('/api/query-analyzer/processes', 'App\\Http\\Controllers\\Admin\\QueryAnalyzerController@processList');
+$router->post('/api/query-analyzer/kill/{id}', 'App\\Http\\Controllers\\Admin\\QueryAnalyzerController@killProcess');
+$router->post('/api/query-analyzer/explain', 'App\\Http\\Controllers\\Admin\\QueryAnalyzerController@explainQuery');
+
 // Admin Properties
 $router->get('/admin/properties', 'App\\Http\\Controllers\\Admin\\PropertyManagementController@index');
 $router->get('/admin/properties/create', 'App\\Http\\Controllers\\Admin\\PropertyManagementController@create');

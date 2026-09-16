@@ -224,7 +224,6 @@ function runAutoPay() {
                 'Skipped: <strong>' + data.skipped + '</strong>. ' +
                 'Page will reload in 2 seconds.</div>';
             setTimeout(function() { location.reload(); }, 2000);
-            .catch(err => console.error('Request failed:', err));
         } else {
             resultDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-times-circle me-1"></i>Error: ' +
                 (data.error || 'Unknown error') + '</div>';
@@ -237,7 +236,7 @@ function runAutoPay() {
         resultDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-times-circle me-1"></i>Request failed: ' + err.message + '</div>';
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-bolt me-1"></i>Run Auto-Payment Now';
-    ).finally(() => hideLoader());
+    }).finally(() => hideLoader());
 }
 
 function retryMandate(subscriptionId) {

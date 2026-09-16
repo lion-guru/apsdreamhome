@@ -62,11 +62,21 @@ class MobileAgentApiController extends BaseController
 
             $bookings = [];
             try {
+                $bpsTid = $tid > 1 ? " AND bps.tenant_id = {$tid}" : "";
                 $stmt = $this->db->prepare("
-                    SELECT pb.*, pl.plot_number, pl.total_price as plot_price
+                    SELECT pb.*, pl.plot_number,
+                           pl.total_price as price,
+                           c.name as location,
+                           COALESCE(SUM(CASE WHEN bps.status = 'paid' THEN bps.amount ELSE 0 END), 0) as total_collected,
+                           COALESCE(SUM(CASE WHEN bps.status IN ('pending','partial','overdue') THEN bps.amount ELSE 0 END), 0) as total_pending,
+                           COUNT(CASE WHEN bps.status IN ('pending','partial','overdue') AND bps.due_date < CURDATE() THEN 1 END) as overdue_count,
+                           MIN(CASE WHEN bps.status IN ('pending','partial','overdue') THEN bps.due_date END) as next_due_date
                     FROM plot_bookings pb
                     LEFT JOIN plots pl ON pl.id = pb.plot_id
+                    LEFT JOIN colonies c ON c.id = pl.colony_id
+                    LEFT JOIN booking_payment_schedules bps ON bps.booking_id = pb.id{$bpsTid}
                     WHERE pb.associate_id = ?{$tidSql}
+                    GROUP BY pb.id
                     ORDER BY pb.created_at DESC
                 ");
                 $stmt->execute($params);
@@ -384,6 +394,84 @@ class MobileAgentApiController extends BaseController
             }
 
             $this->jsonResponse(['success' => true, 'data' => $progress]);
+        } catch (\Throwable $e) {
+            $this->jsonError('Server error: ' . $e->getMessage(), 500);
+        }
+    }
+
+    public function associateBookings()
+    {
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                return $this->jsonError('Unauthorized', 401);
+            }
+
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND pb.tenant_id = ?" : "";
+            $params = $tid > 1 ? [$userId, $tid] : [$userId];
+
+            $bookings = [];
+            try {
+                $stmt = $this->db->prepare("
+                    SELECT pb.*, pl.plot_number,
+                           pl.total_price as price,
+                           c.name as location,
+                           COALESCE(SUM(CASE WHEN bps.status = 'paid' THEN bps.amount ELSE 0 END), 0) as total_collected,
+                           COALESCE(SUM(CASE WHEN bps.status IN ('pending','partial','overdue') THEN bps.amount ELSE 0 END), 0) as total_pending,
+                           COUNT(CASE WHEN bps.status IN ('pending','partial','overdue') AND bps.due_date < CURDATE() THEN 1 END) as overdue_count,
+                           MIN(CASE WHEN bps.status IN ('pending','partial','overdue') THEN bps.due_date END) as next_due_date
+                    FROM plot_bookings pb
+                    LEFT JOIN plots pl ON pl.id = pb.plot_id
+                    LEFT JOIN colonies c ON c.id = pl.colony_id
+                    LEFT JOIN booking_payment_schedules bps ON bps.booking_id = pb.id AND (bps.tenant_id = pb.tenant_id OR {$tid} <= 1)
+                    WHERE pb.associate_id = ?{$tidSql}
+                    GROUP BY pb.id
+                    ORDER BY pb.created_at DESC
+                ");
+                $stmt->execute($params);
+                $bookings = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            } catch (\Throwable $e) {
+                error_log("Associate bookings error: " . $e->getMessage());
+            }
+
+            $this->jsonResponse(['success' => true, 'data' => $bookings]);
+        } catch (\Throwable $e) {
+            $this->jsonError('Server error: ' . $e->getMessage(), 500);
+        }
+    }
+
+    public function associateEmiTracker()
+    {
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                return $this->jsonError('Unauthorized', 401);
+            }
+
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND bps.tenant_id = ?" : "";
+            $params = $tid > 1 ? [$userId, $tid] : [$userId];
+
+            $emis = [];
+            try {
+                $stmt = $this->db->prepare("
+                    SELECT bps.*, pb.booking_number, u.name as customer_name, pl.plot_number
+                    FROM booking_payment_schedules bps
+                    JOIN plot_bookings pb ON pb.id = bps.booking_id
+                    LEFT JOIN users u ON u.id = pb.customer_id
+                    JOIN plots pl ON pl.id = pb.plot_id
+                    WHERE pb.associate_id = ? AND bps.due_date >= CURDATE()
+                      AND bps.status IN ('pending', 'partial'){$tidSql}
+                    ORDER BY bps.due_date ASC
+                ");
+                $stmt->execute($params);
+                $emis = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            } catch (\Throwable $e) {
+                error_log("Associate EMI tracker error: " . $e->getMessage());
+            }
+
+            $this->jsonResponse(['success' => true, 'data' => $emis]);
         } catch (\Throwable $e) {
             $this->jsonError('Server error: ' . $e->getMessage(), 500);
         }

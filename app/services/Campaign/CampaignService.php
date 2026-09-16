@@ -606,10 +606,10 @@ class CampaignService
         if (!$this->audit) {
             try {
                 $insertData = $this->tenantInsertData();
-                $columns = "user_id,user_role,action,details,ip_address,created_at";
+                $columns = "user_id,user_role,action,description,ip_address,created_at";
                 $values = "?,?,?,?,?,NOW()";
                 $params = [
-                    $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? null,
+                    (isset($_SESSION['admin_id']) && is_numeric($_SESSION['admin_id'])) ? (int)$_SESSION['admin_id'] : ((isset($_SESSION['user_id']) && is_numeric($_SESSION['user_id'])) ? (int)$_SESSION['user_id'] : 0),
                     $_SESSION['role'] ?? 'admin',
                     $action,
                     json_encode(['campaign_id' => $campaignId, 'description' => $description]),
@@ -620,7 +620,7 @@ class CampaignService
                     $values .= ", ?";
                     $params = array_merge($params, array_values($insertData));
                 }
-                $stmt = $this->pdo->prepare("INSERT INTO audit_log ($columns) VALUES ($values)");
+                $stmt = $this->pdo->prepare("INSERT INTO audit_logs ($columns) VALUES ($values)");
                 $stmt->execute($params);
             } catch (\Throwable $e) {
             // audit table might not exist; ignore

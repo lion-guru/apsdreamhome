@@ -461,6 +461,34 @@ class MLMTreeController extends \App\Http\Controllers\Admin\AdminController
             $children = [];
         }
 
+        // Union fallback: mlm_network_tree is the engines' source of truth
+        // for the unilevel downline. Legacy network_tree rows can carry
+        // associate_id = NULL (binary-position placeholders), which the
+        // users-JOIN above silently drops -> empty tree despite real
+        // downline. Merge any missing direct downline here (dedup by id).
+        try {
+            $uni = $this->db->fetchAll(
+                "SELECT u.id, u.name, u.email, u.customer_id, u.referral_code, u.status,
+                        u.created_at as join_date,
+                        wp.points_balance, wp.commission_earnings,
+                        mnt.level, mnt.position
+                 FROM users u
+                 JOIN mlm_network_tree mnt ON u.id = mnt.associate_id
+                 LEFT JOIN wallet_points wp ON u.id = wp.user_id
+                 WHERE mnt.parent_id = ? OR mnt.sponsor_id = ?",
+                [$rootId, $rootId]
+            ) ?: [];
+            $seen = [];
+            foreach ($children as $ch) $seen[(int)($ch['id'] ?? 0)] = true;
+            foreach ($uni as $row) {
+                if (isset($seen[(int)$row['id']])) continue;
+                $seen[(int)$row['id']] = true;
+                $children[] = $row;
+            }
+        } catch (\Throwable $e) {
+            error_log(__METHOD__ . ' unilevel fallback: ' . $e->getMessage());
+        }
+
         $node = [
             'id' => $user['id'],
             'name' => $user['name'],

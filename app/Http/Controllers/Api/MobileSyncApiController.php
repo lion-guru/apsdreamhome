@@ -171,6 +171,9 @@ class MobileSyncApiController extends BaseController
                 } elseif ($type === 'interaction') {
                     $res = $this->addInteraction($data);
                     $results[] = ['type' => 'interaction', 'id' => $res, 'status' => 'success'];
+                } elseif ($type === 'booking') {
+                    $res = $this->createOfflineBooking($userId, $data);
+                    $results[] = ['type' => 'booking', 'id' => $res, 'status' => 'success'];
                 } else {
                     $results[] = ['type' => $type, 'status' => 'error', 'message' => 'Unknown upload type'];
                 }
@@ -180,5 +183,92 @@ class MobileSyncApiController extends BaseController
             }
         }
         return $results;
+    }
+
+    private function createOfflineBooking(int $userId, array $data): int
+    {
+        $tid = (int)$this->tenantId();
+        $plotId = (int)($data['plot_id'] ?? 0);
+        if ($plotId <= 0) {
+            throw new \InvalidArgumentException('plot_id is required');
+        }
+
+        // NOTE: Flutter offline_booking_page.dart sends client_* keys + token_amount
+        $customerName = \App\Core\Security::sanitize($data['client_name'] ?? $data['customer_name'] ?? '');
+        $customerPhone = preg_replace('/[^0-9+]/', '', $data['client_phone'] ?? $data['customer_phone'] ?? '');
+        $customerEmail = filter_var($data['client_email'] ?? $data['customer_email'] ?? '', FILTER_SANITIZE_EMAIL);
+        $tokenAmount = (float)($data['token_amount'] ?? $data['booking_amount'] ?? 0);
+        $notes = \App\Core\Security::sanitize($data['notes'] ?? 'Offline booking synced from mobile');
+        $bookDate = substr((string)($data['booking_date'] ?? ''), 0, 10);
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $bookDate)) {
+            $bookDate = date('Y-m-d');
+        }
+        if ($customerName === '' && $customerPhone === '') {
+            throw new \InvalidArgumentException('client_name or client_phone is required');
+        }
+        if ($customerEmail === '' && $customerPhone !== '') {
+            $customerEmail = $customerPhone . '@offline.local';
+        }
+
+        // plot must exist; default colony from plot
+        $pchk = $this->db->prepare("SELECT id, colony_id FROM plots WHERE id = ? LIMIT 1");
+        $pchk->execute([$plotId]);
+        $plot = $pchk->fetch(\PDO::FETCH_ASSOC);
+        if (!$plot) {
+            throw new \InvalidArgumentException('Plot not found');
+        }
+        $colonyId = (int)($data['colony_id'] ?? 0);
+        if ($colonyId <= 0) {
+            $colonyId = (int)($plot['colony_id'] ?? 0);
+        }
+
+        // idempotent retry: same plot + phone + pending => return existing
+        $dup = $this->db->prepare("SELECT id FROM plot_bookings WHERE plot_id = ? AND customer_phone = ? AND status = 'pending' LIMIT 1");
+        $dup->execute([$plotId, $customerPhone]);
+        $existing = $dup->fetch(\PDO::FETCH_ASSOC);
+        if ($existing) {
+            return (int)$existing['id'];
+        }
+
+        // find-or-create customer user by phone (customer_id is NOT NULL)
+        $customerId = 0;
+        if ($customerPhone !== '') {
+            $uchk = $this->db->prepare("SELECT id FROM users WHERE phone = ? LIMIT 1");
+            $uchk->execute([$customerPhone]);
+            $u = $uchk->fetch(\PDO::FETCH_ASSOC);
+            if ($u) {
+                $customerId = (int)$u['id'];
+            } else {
+                $uTidCol = $tid > 1 ? ', tenant_id' : '';
+                $uTidVal = $tid > 1 ? ', ' . $tid : '';
+                $this->db->prepare("INSERT INTO users (name, email, phone, role, referred_by{$uTidCol}) VALUES (?, ?, ?, 'customer', ?{$uTidVal})")
+                    ->execute([$customerName !== '' ? $customerName : $customerPhone, $customerEmail, $customerPhone, $userId]);
+                $customerId = (int)$this->db->lastInsertId();
+            }
+        }
+
+        $bookingNumber = 'OFL-' . strtoupper(bin2hex(random_bytes(4)));
+
+        $tidCol = $tid > 1 ? ', tenant_id' : '';
+        $tidVal = $tid > 1 ? ', ?' : '';
+        $params = [$plotId, $colonyId > 0 ? $colonyId : null, $customerId,
+                    $customerName, $customerEmail, $customerPhone,
+                    $bookingNumber, $bookDate, $tokenAmount,
+                    'pending', 'mobile_app', $userId, $userId, $notes];
+        if ($tid > 1) $params[] = $tid;
+
+        $stmt = $this->db->prepare("
+            INSERT INTO plot_bookings (plot_id, colony_id, customer_id, customer_name, customer_email, customer_phone,
+                booking_number, booking_date, booking_amount, status, channel,
+                associate_id, created_by, notes{$tidCol})
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?{$tidVal})
+        ");
+        $stmt->execute($params);
+
+        $bookingId = (int)$this->db->lastInsertId();
+        if ($bookingId > 0) {
+            $this->db->prepare("UPDATE plots SET status = 'booked' WHERE id = ? AND status = 'available'")->execute([$plotId]);
+        }
+        return $bookingId;
     }
 }

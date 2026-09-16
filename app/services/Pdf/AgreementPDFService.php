@@ -64,6 +64,45 @@ class AgreementPDFService extends ServiceTenantTrait
     private static $bankIfsc = 'HDFC0001234';
     private static $bankUpi = 'apsdreamhome@hdfcbank';
 
+    private function getBankDetails(): array
+    {
+        $bankName = self::$bankName;
+        $bankAccount = self::$bankAccount;
+        $bankIfsc = self::$bankIfsc;
+        $bankUpi = self::$bankUpi;
+        $companyName = self::$companyName;
+        if ($this->db) {
+            try {
+                $tid = $this->getTenantId();
+                // Primary active bank account (tenant-scoped)
+                $stmt = $this->db->prepare("SELECT bank_name, account_number, ifsc_code, branch_name FROM bank_accounts WHERE status='active' AND tenant_id = ? ORDER BY is_primary DESC, id ASC LIMIT 1");
+                $stmt->execute([$tid]);
+                $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+                if (!$row && $tid !== 1) {
+                    $stmt = $this->db->prepare("SELECT bank_name, account_number, ifsc_code, branch_name FROM bank_accounts WHERE status='active' AND tenant_id = 1 ORDER BY is_primary DESC, id ASC LIMIT 1");
+                    $stmt->execute();
+                    $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+                }
+                if ($row) {
+                    if (!empty($row['bank_name'])) $bankName = $row['bank_name'] . (!empty($row['branch_name']) ? ', ' . $row['branch_name'] : '');
+                    if (!empty($row['account_number'])) $bankAccount = $row['account_number'];
+                    if (!empty($row['ifsc_code'])) $bankIfsc = $row['ifsc_code'];
+                }
+                // UPI from site_settings (optional)
+                $stmt = $this->db->prepare("SELECT setting_value FROM site_settings WHERE setting_key IN ('bank_upi','upi_id','upi') LIMIT 1");
+                $stmt->execute();
+                $upiRow = $stmt->fetch(\PDO::FETCH_ASSOC);
+                if ($upiRow && !empty($upiRow['setting_value'])) $bankUpi = $upiRow['setting_value'];
+                // Company name from company_settings (optional)
+                $stmt = $this->db->prepare("SELECT company_name FROM company_settings WHERE tenant_id = ? LIMIT 1");
+                $stmt->execute([$tid]);
+                $cRow = $stmt->fetch(\PDO::FETCH_ASSOC);
+                if ($cRow && !empty($cRow['company_name'])) $companyName = $cRow['company_name'];
+            } catch (\Exception $e) { error_log('AgreementPDFService::getBankDetails DB fallback: ' . $e->getMessage()); }
+        }
+        return ['bankName' => $bankName, 'bankAccount' => $bankAccount, 'bankIfsc' => $bankIfsc, 'bankUpi' => $bankUpi, 'companyName' => $companyName];
+    }
+
     public function __construct($pdo = null)
     {
         if ($pdo) {
@@ -726,31 +765,31 @@ class AgreementPDFService extends ServiceTenantTrait
 
     private function renderPaymentInstructions(TCPDF $pdf): void
     {
+        $bank = $this->getBankDetails();
         $this->renderSectionTitle($pdf, 'PAYMENT INSTRUCTIONS');
 
         $pdf->SetFont('helvetica', 'B', 10);
         $pdf->Cell(0, 7, 'Bank Transfer / NEFT / RTGS / UPI', 0, 1);
         $pdf->SetFont('helvetica', '', 10);
 
-        $this->renderInfoRow($pdf, 'Account Name', self::$companyName);
-        $this->renderInfoRow($pdf, 'Account No', self::$bankAccount);
-        $this->renderInfoRow($pdf, 'Bank', self::$bankName);
-        $this->renderInfoRow($pdf, 'IFSC', self::$bankIfsc);
-        $this->renderInfoRow($pdf, 'UPI', self::$bankUpi);
+        $this->renderInfoRow($pdf, 'Account Name', $bank['companyName']);
+        $this->renderInfoRow($pdf, 'Account No', $bank['bankAccount']);
+        $this->renderInfoRow($pdf, 'Bank', $bank['bankName']);
+        $this->renderInfoRow($pdf, 'IFSC', $bank['bankIfsc']);
+        $this->renderInfoRow($pdf, 'UPI', $bank['bankUpi']);
         $pdf->Ln(3);
 
         // Payment QR (UPI) — additive, fails silently if barcode not available
         try {
-            $upiPayload = 'upi://pay?pa=' . self::$bankUpi . '&pn=' . rawurlencode(self::$companyName) . '&cu=INR';
+            $upiPayload = 'upi://pay?pa=' . $bank['bankUpi'] . '&pn=' . rawurlencode($bank['companyName']) . '&cu=INR';
             $style = ['border' => false, 'padding' => 2, 'fgcolor' => [0, 0, 0], 'bgcolor' => [255, 255, 255]];
             $pdf->SetFont('helvetica', 'B', 9);
             $pdf->Cell(0, 6, 'Scan to Pay (UPI QR)', 0, 1, 'L');
-            // write2DBarcode draws at current X,Y; center it
             $x = 20; $y = $pdf->GetY();
             $pdf->write2DBarcode($upiPayload, 'QRCODE,H', $x, $y, 28, 28, $style, 'N');
             $pdf->SetXY($x + 32, $y + 6);
             $pdf->SetFont('helvetica', '', 8);
-            $pdf->MultiCell(120, 5, "UPI ID: " . self::$bankUpi . "\nScan with any UPI app (GPay / PhonePe / Paytm)\nAuthorized Signatory: " . self::$companyName, 0, 'L');
+            $pdf->MultiCell(120, 5, "UPI ID: " . $bank['bankUpi'] . "\nScan with any UPI app (GPay / PhonePe / Paytm)\nAuthorized Signatory: " . $bank['companyName'], 0, 'L');
             $pdf->SetXY(20, $y + 30);
         } catch (\Exception $e) {
             error_log('AgreementPDFService::renderPaymentInstructions QR error: ' . $e->getMessage());
@@ -760,7 +799,7 @@ class AgreementPDFService extends ServiceTenantTrait
         $this->renderBodyText($pdf, 'Please share the transaction reference number via email or WhatsApp after payment.');
         $pdf->SetFont('helvetica', 'I', 8);
         $pdf->SetTextColor(100, 100, 100);
-        $pdf->Cell(0, 5, 'Authorized Signatory: ' . self::$companyName . ' | ' . self::$phone, 0, 1, 'C');
+        $pdf->Cell(0, 5, 'Authorized Signatory: ' . $bank['companyName'] . ' | ' . self::$phone, 0, 1, 'C');
         $pdf->SetTextColor(30, 30, 30);
     }
 

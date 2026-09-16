@@ -230,8 +230,8 @@ class SystemLogger
             $tenantCols = count($tenantData) > 0 ? ', ' . implode(', ', array_keys($tenantData)) : '';
             $tenantPhs  = count($tenantData) > 0 ? ', ' . implode(', ', array_fill(0, count($tenantData), '?')) : '';
             $stmt = $this->db->prepare(
-                "INSERT INTO audit_log 
-                (user_id, user_role, action, details, ip_address{$tenantCols}, created_at) 
+                "INSERT INTO audit_logs
+                (user_id, user_role, action, description, ip_address{$tenantCols}, created_at)
                 VALUES (?, ?, ?, ?, ?{$tenantPhs}, NOW())"
             );
 
@@ -243,7 +243,7 @@ class SystemLogger
             ], JSON_UNESCAPED_SLASHES);
 
             $params = [
-                $logEntry['user_id'] ?? null,
+                isset($logEntry['user_id']) && is_numeric($logEntry['user_id']) ? (int)$logEntry['user_id'] : 0,
                 $logEntry['username'] ?? 'system',
                 $logEntry['level'],
                 $detailsJson,

@@ -146,7 +146,7 @@ class CommissionController extends AdminController
 
             return $this->jsonResponse([
                 'success' => true,
-                'message' => "Commission {$action}al completed",
+                'message' => $action === 'approve' ? 'Commission approval completed' : 'Commission rejection completed',
                 'results' => $results
             ]);
         } catch (\Exception $e) {
@@ -465,7 +465,10 @@ class CommissionController extends AdminController
     private function processCommissionApproval(int $commissionId, string $action, string $notes): array
     {
         try {
-            $status = $action === 'approve' ? 'approved' : 'rejected';
+            // NOTE: mlm_commission_ledger.status enum has no 'rejected' value;
+            // rejected commissions are stored as 'cancelled' (same convention
+            // as Api\AdminMobileController which maps rejected => cancelled).
+            $status = $action === 'approve' ? 'approved' : 'cancelled';
 
             $sql = "UPDATE mlm_commission_ledger 
                     SET status = ?, notes = ?, approved_by = ?

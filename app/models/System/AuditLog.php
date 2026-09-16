@@ -9,12 +9,12 @@ use App\Models\Model;
  */
 class AuditLog extends Model
 {
-    public static $table = 'audit_log';
+    public static $table = 'audit_logs';
     public static $primaryKey = 'id';
     protected static $tenantScoped = true;
 
     protected $fillable = [
-        'user_id', 'action', 'entity_type', 'entity_id', 'changes', 'ip_address', 'created_at'
+        'user_id', 'action', 'entity_type', 'entity_id', 'description', 'ip_address', 'created_at'
     ];
 
     /**

@@ -324,8 +324,14 @@ class EMI extends Model
         $start = $params['start'] ?? 0;
         $length = $params['length'] ?? 10;
         $search = $params['search'] ?? '';
+        // Quarantined legacy emi_* (Session 105): whitelist ORDER BY —
+        // raw interpolation was an SQL-injection surface.
+        $allowedOrder = ['ep.id', 'ep.total_amount', 'ep.status', 'ep.created_at', 'ep.emi_amount'];
         $orderBy = $params['orderBy'] ?? 'ep.id';
-        $orderDir = $params['orderDir'] ?? 'DESC';
+        if (!in_array($orderBy, $allowedOrder, true)) {
+            $orderBy = 'ep.id';
+        }
+        $orderDir = strtoupper($params['orderDir'] ?? 'DESC') === 'ASC' ? 'ASC' : 'DESC';
 
         // Base query
         $sql = "SELECT ep.*, u.name as customer_name, p.title as property_title
@@ -404,7 +410,14 @@ class EMI extends Model
      */
     public function getByBookingId($bookingId)
     {
-        return $this->where('booking_id', $bookingId)->first();
+        // Quarantined legacy emi_* (Session 105): fail soft when the
+        // legacy columns/tables are absent instead of fatal 1054.
+        try {
+            return $this->where('booking_id', $bookingId)->first();
+        } catch (\Throwable $e) {
+            error_log('EMI::getByBookingId quarantined: ' . $e->getMessage());
+            return null;
+        }
     }
 
     /**
@@ -438,10 +451,17 @@ class EMI extends Model
      */
     public function getSchedule($emiPlanId)
     {
-        $sql = "SELECT * FROM emi_payments WHERE emi_plan_id = ? ORDER BY due_date ASC";
-        $stmt = self::getDb()->getConnection()->prepare($sql);
-        $stmt->execute([$emiPlanId]);
-        return $stmt->fetchAll();
+        // Quarantined legacy emi_* (Session 105): fail soft when the
+        // legacy columns/tables are absent instead of fatal 1054.
+        try {
+            $sql = "SELECT * FROM emi_payments WHERE emi_plan_id = ? ORDER BY due_date ASC";
+            $stmt = self::getDb()->getConnection()->prepare($sql);
+            $stmt->execute([$emiPlanId]);
+            return $stmt->fetchAll();
+        } catch (\Throwable $e) {
+            error_log('EMI::getSchedule quarantined: ' . $e->getMessage());
+            return [];
+        }
     }
 
     /**

@@ -127,7 +127,7 @@ class SystemHealthService
 
     public function checkTables(): array
     {
-        $tables = ['users', 'leads', 'properties', 'plots', 'bookings', 'commissions', 'audit_log', 'webhook_endpoints'];
+        $tables = ['users', 'leads', 'properties', 'plots', 'bookings', 'commissions', 'audit_logs', 'webhook_endpoints'];
         $result = ['checked' => 0, 'ok' => 0, 'missing' => []];
         foreach ($tables as $t) {
             $result['checked']++;
