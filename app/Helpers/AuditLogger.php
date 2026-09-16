@@ -26,14 +26,17 @@ class AuditLogger {
             return true;
         }
 
+        $userId = $user_id ?? ($_SESSION['user_id'] ?? null);
+        $userId = is_numeric($userId) ? (int)$userId : 0;
         $stmt = $pdo->prepare("
-            INSERT INTO audit_log (action, user_id, details, ip_address, created_at)
-            VALUES (?, ?, ?, ?, NOW())
+            INSERT INTO audit_logs (action, user_id, user_role, description, ip_address, created_at)
+            VALUES (?, ?, ?, ?, ?, NOW())
         ");
-        
+
         $stmt->execute([
             $action,
-            $user_id ?? ($_SESSION['user_id'] ?? 'guest'),
+            $userId,
+            $_SESSION['role'] ?? 'system',
             is_array($details) ? json_encode($details) : $details,
             $ip ?? ($_SERVER['REMOTE_ADDR'] ?? 'unknown'),
         ]);

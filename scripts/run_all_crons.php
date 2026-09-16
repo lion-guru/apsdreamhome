@@ -7,12 +7,14 @@
  *
  * Tasks executed:
  *   DAILY:
- *     1. EMI Penalty Accrual (overdue installments â†’ penalty)
- *     2. Commission Clawback (30+ day defaulters â†’ debit upline)
- *     3. Rank Auto-Promotion (evaluate all associates â†’ promote)
- *     4. Investment Maturity (matured investments â†’ payout)
- *     5. Agent Auto-Deactivate (90+ days inactive â†’ deactivate)
+ *     1. EMI Penalty Accrual (overdue installments → penalty)
+ *     2. Commission Clawback (30+ day defaulters → debit upline)
+ *     3. Rank Auto-Promotion (evaluate all associates → promote)
+ *     4. Investment Maturity (matured investments → payout)
+ *     5. Agent Auto-Deactivate (90+ days inactive → deactivate)
  *     6. Milestone Bonus Auto-Credit (25/50/75/100% payment milestones)
+ *     7. Follow-up Reminders / 8. EMI Auto-Payment / 9. NACH Auto-Debit
+ *    10. Log Retention Purge (ab_events 90d, visitor_page_views 60d, csp_violations 30d)
  *
  *   MONTHLY (1st of each month):
  *     7. Royalty Pool Distribution (2% â†’ qualified site managers)
@@ -99,6 +101,7 @@ if ($statusOnly || $dryRun) {
         echo "    7. Follow-up Reminders" . PHP_EOL;
         echo "    8. EMI Auto-Payment" . PHP_EOL;
         echo "    9. NACH Auto-Debit" . PHP_EOL;
+        echo "   10. Log Retention Purge" . PHP_EOL;
     }
     if (in_array($mode, ['monthly', 'all'])) {
         echo "  MONTHLY:" . PHP_EOL;
@@ -443,6 +446,23 @@ try {
         } catch (\Throwable $e) {
             echo "  [FAIL] " . $e->getMessage() . PHP_EOL;
             $errors[] = 'nach_auto_debit: ' . $e->getMessage();
+        }
+        echo PHP_EOL;
+
+        // 10. LOG RETENTION PURGE (ab_events 90d, visitor_page_views 60d, csp_violations 30d)
+        $taskNum++;
+        echo "===============================================================" . PHP_EOL;
+        echo "{$taskNum}/15  Log Retention Purge" . PHP_EOL;
+        echo "===============================================================" . PHP_EOL;
+        try {
+            require_once $root . '/scripts/cron_cleanup_logs.php';
+            $purgeResult = cron_cleanup_logs($pdo);
+            $totalPurged = array_sum(array_map(fn($n) => max(0, (int)$n), $purgeResult['deleted']));
+            echo "  [OK] {$totalPurged} rows purged (" . json_encode($purgeResult['deleted']) . ")" . PHP_EOL;
+            $log['log_retention'] = $purgeResult;
+        } catch (\Throwable $e) {
+            echo "  [FAIL] " . $e->getMessage() . PHP_EOL;
+            $errors[] = 'log_retention: ' . $e->getMessage();
         }
         echo PHP_EOL;
     }

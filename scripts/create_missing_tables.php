@@ -102,20 +102,9 @@ $tables = [
         INDEX idx_tenant (tenant_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
 
-    // Demand letter templates
-    "CREATE TABLE IF NOT EXISTS demand_letter_template (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        template_type VARCHAR(50) NOT NULL,
-        subject VARCHAR(255) NOT NULL,
-        body TEXT NOT NULL,
-        is_active TINYINT(1) DEFAULT 1,
-        tenant_id INT UNSIGNED NOT NULL DEFAULT 1,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        INDEX idx_type (template_type),
-        INDEX idx_active (is_active),
-        INDEX idx_tenant (tenant_id)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
+    // Demand letter templates (canonical plural table; legacy singular
+    // `demand_letter_template` dropped 2026-09-16 — plural owned by DemandLetterService)
+    // NOTE: intentionally no CREATE here; see demand_letter_templates (live table).
 
     // Reconciliation collections
     "CREATE TABLE IF NOT EXISTS reconciliation_collections (

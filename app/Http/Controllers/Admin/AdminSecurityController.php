@@ -23,7 +23,7 @@ class AdminSecurityController extends AdminController
             $failed7d = (int)($this->db->query("SELECT COUNT(*) FROM failed_login_attempts WHERE attempted_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)")->fetchColumn());
             $tfaEnabled = (int)($this->db->fetch("SELECT COUNT(*) as c FROM users WHERE two_factor_enabled = 1 {$tidSql}", $tidParams)['c'] ?? 0);
             $totalUsers = (int)($this->db->fetch("SELECT COUNT(*) as c FROM users WHERE deleted_at IS NULL {$tidSql}", $tidParams)['c'] ?? 0);
-            $recentEvents = $this->db->query("SELECT u.name, a.action, a.details, a.ip_address, a.created_at FROM audit_log a LEFT JOIN users u ON a.user_id = u.id ORDER BY a.created_at DESC LIMIT 20")->fetchAll(\PDO::FETCH_ASSOC);
+            $recentEvents = $this->db->query("SELECT u.name, a.action, a.description AS details, a.ip_address, a.created_at FROM audit_logs a LEFT JOIN users u ON a.user_id = u.id ORDER BY a.created_at DESC LIMIT 20")->fetchAll(\PDO::FETCH_ASSOC);
             $topIPs = $this->db->query("SELECT ip_address, COUNT(*) as cnt FROM failed_login_attempts WHERE attempted_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) GROUP BY ip_address ORDER BY cnt DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC);
             $recentBlocked = $this->db->query("SELECT * FROM blocked_ips ORDER BY created_at DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {

@@ -300,7 +300,7 @@ Add to `trusted_ips` table:
 
 ## 9. Audit Logging
 
-All security-relevant events are logged to the `audit_log` table:
+All security-relevant events are logged to the `audit_logs` table:
 
 | Event | Logged Fields |
 |-------|---------------|
@@ -363,7 +363,7 @@ We run a **monthly restore drill**:
 1. Pick a random backup from the last 30 days
 2. Decrypt and load into a staging MySQL
 3. Run E2E tests against it
-4. Verify the drill in `audit_log`
+4. Verify the drill in `audit_logs`
 
 ---
 
@@ -560,7 +560,7 @@ We do not currently run a paid bug bounty program, but we do:
 - [ ] Backups are encrypted and tested (monthly restore drill)
 - [ ] SSL certificate valid for > 30 days
 - [ ] Security headers verified (HSTS, CSP, X-Frame-Options)
-- [ ] Rate limits are appropriate (check `audit_log` for 429s)
+- [ ] Rate limits are appropriate (check `audit_logs` for 429s)
 - [ ] Firewall rules still minimal (only 22, 80, 443)
 - [ ] SSH access only via key
 - [ ] Server OS patches up to date

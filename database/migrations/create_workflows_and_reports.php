@@ -88,32 +88,35 @@ try {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     
-    // 6. Audit Log
-    echo "🔍 Creating audit_log table...\n";
-    $pdo->exec("CREATE TABLE IF NOT EXISTS audit_log (
-        id BIGINT AUTO_INCREMENT PRIMARY KEY,
-        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        user_id INT NULL,
-        user_type ENUM('admin', 'employee', 'associate', 'customer', 'system') DEFAULT 'system',
-        user_ip VARCHAR(45) NULL,
-        user_agent VARCHAR(500) NULL,
-        session_id VARCHAR(64) NULL,
+    // 6. Audit Log (canonical plural table; legacy `audit_log` merged 2026-09-16)
+    echo "🔍 Ensuring audit_logs table...\n";
+    $pdo->exec("CREATE TABLE IF NOT EXISTS audit_logs (
+        id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        tenant_id INT UNSIGNED NOT NULL DEFAULT 1,
+        user_id INT UNSIGNED NOT NULL DEFAULT 0,
+        user_role VARCHAR(50) NOT NULL DEFAULT 'system',
         action VARCHAR(100) NOT NULL,
-        entity_type VARCHAR(50) NULL,
-        entity_id INT NULL,
-        old_values JSON NULL,
-        new_values JSON NULL,
+        action_type ENUM('create','read','update','delete','login','logout','export','import','print','approve','reject','payment','commission') NOT NULL DEFAULT 'update',
+        entity_type VARCHAR(100) NULL,
+        entity_id BIGINT UNSIGNED NULL,
         description TEXT NULL,
-        severity ENUM('info', 'warning', 'error', 'critical') DEFAULT 'info',
-        status ENUM('success', 'failed') DEFAULT 'success',
-        error_message TEXT NULL,
+        old_values LONGTEXT NULL,
+        new_values LONGTEXT NULL,
+        ip_address VARCHAR(45) NULL,
+        user_agent TEXT NULL,
         request_url VARCHAR(500) NULL,
         request_method VARCHAR(10) NULL,
-        INDEX idx_timestamp (timestamp),
-        INDEX idx_user (user_id, user_type),
+        session_id VARCHAR(128) NULL,
+        status ENUM('success','failed','pending') NOT NULL DEFAULT 'success',
+        error_message TEXT NULL,
+        metadata LONGTEXT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_tenant (tenant_id),
+        INDEX idx_user (user_id),
         INDEX idx_action (action),
-        INDEX idx_entity (entity_type, entity_id)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        INDEX idx_entity (entity_type, entity_id),
+        INDEX idx_created (created_at)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
     
     echo "✅ Migration complete\n";
     
