@@ -84,7 +84,7 @@ Mission: all core flows deep-test — multi-role registration (customer + associ
 
 ### Test-data hygiene (all restored, verified)
 - 0 probe users left; sponsor agent1 counters back to dr=3/ts=9; `wallet_points` reconciled to pre-probe baseline (200/200/200 — journal-vs-cache analysis, one legit ₹200 earning); ledger count 356 unchanged; agent1 password hash swap-tested with try/finally restore.
-- Scratch files (`_probe_*.php`, `testing/probe_mission_e2e.php`) deleted. Fixes left UNCOMMITTED (no commit requested).
+- Scratch files (`_probe_*.php`, `testing/probe_mission_e2e.php`) deleted. NOTE: the 3 code fixes were auto-committed by a concurrent session into `9d18cd85f` (15:00 IST, message "chore: testing probes..." — includes PdoCompat +76, MLMTree +28, CommissionController 7+-); this AGENTS.md entry committed separately.
 
 ### Key Lessons (carried)
 _245. **`getConnection()` ≠ wrapper — PdoCompat has no fetch helpers** — any `$db = Database::getInstance()->getConnection(); $db->fetchAll($sql,$params)` fatals. Either use the wrapper directly or extend the shim. Grep pattern for future audits: `getConnection\(\)` + `$db->fetch` on later lines._
