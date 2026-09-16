@@ -69,7 +69,7 @@ function run_migration() {
 
 function getDBConnection() {
     $host = '127.0.0.1';
-    $port = 3307;
+    $port = 3306;
     $db = 'apsdreamhome';
     $user = 'root';
     $pass = '';

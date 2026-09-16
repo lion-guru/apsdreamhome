@@ -24,7 +24,7 @@ $root   = dirname(__DIR__, 2);
 $config = require $root . '/config/database.php';
 
 try {
-    $password = $config['password'] ?: (getenv('DB_PASS') ?: '2jcePXuNaOfEyo6I5wJVkG');
+    $password = $config['password'] ?: (getenv('DB_PASS') ?: '');
     $pdo = new PDO(
         "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4",
         $config['username'],

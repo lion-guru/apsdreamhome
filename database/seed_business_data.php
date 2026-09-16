@@ -4,7 +4,7 @@
  * Run: php database/seed_business_data.php
  */
 $dbHost = '127.0.0.1';
-$dbPort = '3307';
+$dbPort = '3306';
 $dbName = 'apsdreamhome';
 $dbUser = 'root';
 $dbPass = '';

@@ -1,6 +1,6 @@
 <?php
 // Check Current User Roles in Database
-$pdo = new PDO('mysql:host=localhost;port=3307;dbname=apsdreamhome', 'root', '', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+$pdo = new PDO('mysql:host=localhost;port=3306;dbname=apsdreamhome', 'root', '', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 
 echo "Checking User Roles in Database...\n\n";
 

@@ -1,5 +1,5 @@
 <?php
-$db = new PDO('mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome', 'root', '');
+$db = new PDO('mysql:host=127.0.0.1;port=3306;dbname=apsdreamhome', 'root', '');
 
 // Check if Ad Manager menu item exists
 $r = $db->query("SELECT id, name, section, order_index FROM admin_menu_items WHERE url LIKE '%ads%' ORDER BY id");
