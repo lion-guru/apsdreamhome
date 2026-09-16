@@ -15,7 +15,12 @@ $dbPass = getenv('DB_PASSWORD') ?: '';
 $pdo = new PDO("mysql:host=$dbHost;port=$dbPort;dbname=$dbName", $dbUser, $dbPass);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-$bad = $pdo->query("SELECT l.id, l.assigned_to FROM leads l LEFT JOIN users u ON u.id=l.assigned_to WHERE l.assigned_to IS NOT NULL AND u.id IS NULL ORDER BY l.id")->fetchAll(PDO::FETCH_ASSOC);
+try {
+    $bad = $pdo->query("SELECT l.id, l.assigned_to FROM leads l LEFT JOIN users u ON u.id=l.assigned_to WHERE l.assigned_to IS NOT NULL AND u.id IS NULL ORDER BY l.id")->fetchAll(PDO::FETCH_ASSOC);
+} catch (\PDOException $e) {
+    if ($e->getCode() == '42S02') { echo "SKIP: leads table not found\n"; echo "DONE phase5\n"; exit(0); }
+    throw $e;
+}
 echo "orphaned assignments: " . count($bad) . "\n";
 if (count($bad) > 0) {
     $file = __DIR__ . '/../database/_archive_lead_assignments_20260916.sql';

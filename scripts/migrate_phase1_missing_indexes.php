@@ -29,9 +29,13 @@ $wanted = [
 ];
 
 foreach ($wanted as $table => $indexes) {
-    // verify columns exist first
-    $cols = [];
-    foreach ($pdo->query("DESCRIBE `$table`")->fetchAll(PDO::FETCH_ASSOC) as $c) $cols[] = $c['Field'];
+    try {
+        $cols = [];
+        foreach ($pdo->query("DESCRIBE `$table`")->fetchAll(PDO::FETCH_ASSOC) as $c) $cols[] = $c['Field'];
+    } catch (\PDOException $e) {
+        echo "SKIP $table: table not found\n";
+        continue;
+    }
     $existing = [];
     foreach ($pdo->query("SHOW INDEX FROM `$table`")->fetchAll(PDO::FETCH_ASSOC) as $i) $existing[] = $i['Key_name'];
     foreach ($indexes as $name => $columns) {

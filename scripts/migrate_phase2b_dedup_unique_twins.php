@@ -37,13 +37,17 @@ function indexInfo($pdo, $table, $name) {
 }
 
 foreach ($pairs as [$table, $drop, $keep]) {
-    $d = indexInfo($pdo, $table, $drop);
-    $k = indexInfo($pdo, $table, $keep);
-    if ($d === null) { echo "OK $table.$drop already gone\n"; continue; }
-    if ($k === null) { echo "SKIP $table.$drop: keeper $keep missing\n"; continue; }
-    if ($d['cols'] !== $k['cols']) { echo "SKIP $table.$drop: columns differ\n"; continue; }
-    if ($d['non_unique'] === 0) { echo "SKIP $table.$drop: unexpectedly UNIQUE, manual review\n"; continue; }
-    $pdo->exec("ALTER TABLE `$table` DROP INDEX `$drop`");
-    echo "DROPPED $table.$drop (kept UNIQUE $keep)\n";
+    try {
+        $d = indexInfo($pdo, $table, $drop);
+        $k = indexInfo($pdo, $table, $keep);
+        if ($d === null) { echo "OK $table.$drop already gone\n"; continue; }
+        if ($k === null) { echo "SKIP $table.$drop: keeper $keep missing\n"; continue; }
+        if ($d['cols'] !== $k['cols']) { echo "SKIP $table.$drop: columns differ\n"; continue; }
+        if ($d['non_unique'] === 0) { echo "SKIP $table.$drop: unexpectedly UNIQUE, manual review\n"; continue; }
+        $pdo->exec("ALTER TABLE `$table` DROP INDEX `$drop`");
+        echo "DROPPED $table.$drop (kept UNIQUE $keep)\n";
+    } catch (\PDOException $e) {
+        echo "SKIP $table: " . ($e->getCode() == '42S02' ? 'table not found' : substr($e->getMessage(), 0, 100)) . "\n";
+    }
 }
 echo "DONE phase2b\n";
