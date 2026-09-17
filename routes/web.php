@@ -2095,7 +2095,12 @@ $router->get('/admin/erp/inventory', 'App\\Http\\Controllers\\Admin\\ErpDashboar
 $router->get('/admin/erp/plot-profit', 'App\\Http\\Controllers\\Admin\\ErpDashboardController@plotProfit');
 $router->get('/admin/erp/land-mapping', 'App\\Http\\Controllers\\Admin\\ErpDashboardController@landMapping');
 $router->get('/admin/erp/colony-pnl', 'App\\Http\\Controllers\\Admin\\ErpDashboardController@colonyPnl');
-$router->get('/admin/erp/defaulters', 'App\\Http\\Controllers\\Admin\\ErpDashboardController@emiDefaulters');
+$router->get('/admin/erp/defaulters', 
+'App\\Http\\Controllers\\Admin\\ErpDashboardController@emiDefaulters');
+$router->get('/admin/erp/collection-sheet', 
+'App\\Http\\Controllers\\Admin\\ErpDashboardController@collectionSheet');
+$router->get('/admin/erp/collection-sheet.csv', 
+'App\\Http\\Controllers\\Admin\\ErpDashboardController@exportCollectionCsv');
 $router->post('/admin/erp/send-emi-reminder', 'App\\Http\\Controllers\\Admin\\ErpDashboardController@sendEmiReminder');
 
 // Admin Team Management

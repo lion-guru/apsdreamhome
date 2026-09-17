@@ -328,6 +328,98 @@ class ErpDashboardController extends AdminController
     }
 
     /**
+     * Monthly collection sheet: EMIs due vs collected vs outstanding.
+     * GET /admin/erp/collection-sheet?month=YYYY-MM
+     */
+    public function collectionSheet()
+    {
+        $this->requireAdmin();
+        $month = $this->resolveSheetMonth($_GET['month'] ?? '');
+        $data = $this->collectionSheetData($month);
+        $this->render('admin/erp/collection_sheet', [
+            'page_title' => 'Monthly Collection Sheet',
+            'month' => $month,
+            'rows' => $data['rows'],
+            'summary' => $data['summary'],
+            'currentPage' => 'erp-collection',
+        ]);
+    }
+
+    /**
+     * CSV export of the monthly collection sheet.
+     * GET /admin/erp/collection-sheet.csv?month=YYYY-MM
+     */
+    public function exportCollectionCsv()
+    {
+        $this->requireAdmin();
+        $month = $this->resolveSheetMonth($_GET['month'] ?? '');
+        $data = $this->collectionSheetData($month);
+        $filename = 'collection-sheet-' . $month . '.csv';
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        $out = fopen('php://output', 'w');
+        fputs($out, "\xEF\xBB\xBF");
+        fputcsv($out, ['Installment', 'Booking No', 'Plot', 'Colony', 'Customer', 'Phone', 'Due Date', 'Due Amount', 'Paid Amount', 'Outstanding', 'Status']);
+        foreach ($data['rows'] as $r) {
+            fputcsv($out, [
+                $r['installment_no'] ?? '', $r['booking_number'] ?? '', $r['plot_number'] ?? '',
+                $r['colony_name'] ?? '', $r['customer_name'] ?? '', $r['customer_phone'] ?? '',
+                $r['due_date'] ?? '', $r['amount'] ?? 0, $r['paid_amount'] ?? 0,
+                max(0, (float)($r['amount'] ?? 0) - (float)($r['paid_amount'] ?? 0)), $r['status'] ?? '',
+            ]);
+        }
+        fputcsv($out, []);
+        fputcsv($out, ['TOTAL', '', '', '', '', '', '', $data['summary']['due'], $data['summary']['collected'], $data['summary']['outstanding'], '']);
+        fclose($out);
+        exit;
+    }
+
+    private function resolveSheetMonth(string $raw): string
+    {
+        $raw = trim($raw);
+        if (preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $raw)) return $raw;
+        return date('Y-m');
+    }
+
+    private function collectionSheetData(string $month): array
+    {
+        $summary = ['due' => 0, 'collected' => 0, 'outstanding' => 0, 'count' => 0, 'rate' => 0];
+        try {
+            [$sSql, $sParams] = $this->tCond('s');
+            $rows = $this->db->fetchAll("
+                SELECT s.installment_no, s.due_date, s.amount, s.paid_amount, s.status,
+                        b.booking_number, p.plot_number, c.name AS colony_name,
+                        COALESCE(u1.name, u2.name, 'Customer') AS customer_name,
+                        COALESCE(u1.phone, u2.phone, '') AS customer_phone
+                 FROM booking_payment_schedules s
+                 LEFT JOIN bookings b ON b.id = s.booking_id
+                 LEFT JOIN plots p ON p.id = b.plot_id
+                 LEFT JOIN colonies c ON c.id = COALESCE(b.colony_id, p.colony_id)
+                 LEFT JOIN users u1 ON u1.id = b.customer_id
+                 LEFT JOIN users u2 ON u2.id = b.user_id
+                 WHERE DATE_FORMAT(s.due_date, '%Y-%m') = ?{$sSql}
+                 ORDER BY s.due_date, b.booking_number
+                 LIMIT 1000
+            ", array_merge([$month], $sParams)) ?: [];
+        } catch (\Exception $e) {
+            error_log('ErpDashboardController::collectionSheet: ' . $e->getMessage());
+            $rows = [];
+        }
+        foreach ($rows as $r) {
+            $due = (float)($r['amount'] ?? 0);
+            $paid = min($due, (float)($r['paid_amount'] ?? 0));
+            $summary['due'] += $due;
+            $summary['collected'] += $paid;
+            $summary['count']++;
+        }
+        $summary['due'] = round($summary['due'], 2);
+        $summary['collected'] = round($summary['collected'], 2);
+        $summary['outstanding'] = round($summary['due'] - $summary['collected'], 2);
+        $summary['rate'] = $summary['due'] > 0 ? round($summary['collected'] / $summary['due'] * 100, 1) : 0;
+        return ['rows' => $rows, 'summary' => $summary];
+    }
+
+    /**
      * 1-click EMI reminder: pre-filled WhatsApp click-to-chat URL + optional
      * template send via WhatsAppTemplateService. Updates reminder counters.
      * POST {schedule_id}

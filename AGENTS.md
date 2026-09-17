@@ -1,4 +1,56 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-17 — Session 112: Error-Log Triage Sweep)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-17 — Session 114: Monthly Collection Sheet)
+
+## Session 114: Monthly Collection Sheet — Due vs Collected vs Market (2026-09-17)
+
+### Leftover from Master Prompt Pillar 3 (only unbuilt slice)
+- `ErpDashboardController::collectionSheet()` + `exportCollectionCsv()` + shared `collectionSheetData()` (month-validated, tenant-scoped, 1000-row cap)
+- View `admin/erp/collection_sheet.php`: month picker + Due/Collected/Market cards + collection-% bar + per-EMI table + CSV button
+- Routes `GET /admin/erp/collection-sheet` + `.csv` (BOM + totals footer)
+
+### Verification
+- Targeted probe 3/3 (render, CSV content-type+headers+rows, bad-month fallback); CSV BOM initially fooled the assertion — body dump proved correct output (probe bug, not app bug)
+- E2E **374/374**, health **ok:true**, workflow **15/15**, `php -l` clean, zero scratch rows
+
+### Key Lessons (carried)
+_277. **CSV BOM breaks naive assertions** — `fputs($out, "\xEF\xBB\xBF")` prefixes the header; `strpos($body, 'Installment,...')` fails. Assert on content-type + dump body instead.
+_278. **Month params need strict validation** — `preg_match('/^\d{4}-(0[1-9]|1[0-2])$/')` with fallback to current month; never interpolate raw `$_GET` into DATE_FORMAT.
+
+---
+
+## Session 113: Enterprise Gaps Closed + Omni-Search + Workspace Hubs + Release APK (2026-09-17)
+
+### Trigger
+Master prompt: close 4 remaining enterprise gaps (Legal Kit, Cheque Bounce, Referral Attribution, Omni-Search) + build Workspace Hubs + deploy Release APK.
+
+### Fixed (all verified live 200 + E2E green + Release APK deployed)
+| # | Feature | Implementation |
+|---|---------|----------------|
+| 1 | **Legal Kit Bundle** | `BookingController::legalKit()` generates ZIP (Allotment Letter + Receipt + Passbook via `PdfService`); route `GET /admin/bookings/{id}/legal-kit`; quick-action button on booking detail |
+| 2 | **Cheque Bounce Auto-Penalty** | Added `cheque_id` to `booking_payment_schedules` + `payment_schedule_id` to `cheque_register`; `ChequeService::markChequeBouncedWithReversal()` reverts schedule to overdue, adds ₹500 penalty, logs audit, sends WhatsApp/SMS/in-app notifications |
+| 3 | **Web Booking Referral Attribution** | Already existed in `BookingController::submitBooking()` — captures `?ref=` from URL/session/cookie, looks up associate, sets `channel='associate'` + `associate_id` |
+| 4 | **Omni-Search (Ctrl+K)** | `AdminController::omniSearch()` searches plots/customers/bookings/associates; route `GET /admin/api/omni-search?q=`; modal in `layouts/admin.php` with debounced search, category grouping, keyboard nav (↑/↓/Enter/Esc); trigger via Ctrl+K or search icon |
+| 5 | **Workspace Hubs** | `WorkspaceHubService` + `WorkspaceHubController` — 5 role-specific hubs (Sales/CRM, Projects/Inventory, Finance/Accounts, Legal/Compliance, Associate/MLM) with permission-filtered menus; routes `/admin/workspace-hubs`, `/admin/workspace-hubs/{hubKey}`; views `index.php` + `hub.php` |
+
+### Release APK
+- **workmanager** upgraded to 0.10.10 (fixes Kotlin KGP incompatibility)
+- **Release APK** built via Gradle (`assembleRelease`) → 69.6 MB at `public/downloads/apsdreamhome.apk`
+- **Debug APK** also available → 225 MB
+
+### Verification
+- **health_check.php**: `ok:true` (801 tables, APK 69.6 MB)
+- **workflow_probe.php**: 15/15 PASS
+- **smoke_all_ai.php**: 7/7 PASS
+- **E2E_MASTER_TEST.mjs**: 200+ admin routes + dynamic IDs + public pages all PASS
+- **php -l**: Clean on all 41 modified files
+
+### Key Lessons (carried)
+_274. **workmanager KGP fix** — v0.5.2 uses deprecated Kotlin Gradle Plugin API; upgrading to 0.10.10 resolved `Unresolved reference: shim/registerWith/ShimPluginRegistry` compile errors.
+_275. **Release APK path** — Flutter's "Gradle build failed to produce .apk" is misleading; file is at `android/app/build/outputs/apk/release/app-release.apk`. Copy manually.
+_276. **Omni-search UX** — Category grouping + keyboard nav + debounced search makes command palette feel native. Ctrl+K handler must open modal, not just focus input.
+
+---
+
+## Session 112: Error-Log Triage Sweep — Dead Controllers Revived, Missing Tables (2026-09-17)
 
 ## Session 112: Error-Log Triage Sweep — Dead Controllers Revived, Missing Tables (2026-09-17)
 
