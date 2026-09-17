@@ -1,4 +1,31 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-17 — Session 111: Enterprise Pillars — CRM/MLM/Finance/Omni-Search)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-17 — Session 112: Error-Log Triage Sweep)
+
+## Session 112: Error-Log Triage Sweep — Dead Controllers Revived, Missing Tables (2026-09-17)
+
+### Trigger
+Proactive sweep: fresh 1146/TypeError entries in `logs/php_error.log` (16:50–16:51) on committed Session 95–101 code.
+
+### Fixed (all verified live 200 + E2E green)
+| # | Bug | Fix |
+|---|-----|-----|
+| 1 | `CampaignTemplateController::pdo()` returned wrapper as `\PDO` → TypeError on every call (page dead-empty) | Return `getPdo()`; siblings (`VoiceUpload`, `AppFeedback`, `SearchHistory`) already correct via `PdoCompat extends \PDO` |
+| 2 | `execute("")` stub in `CustomFeaturesService::createFeatureTables` logged "Query was empty" each call | Removed dead stub |
+| 3 | Missing `land_acquisitions` (renamed to `_legacy` with different schema; controller expects deal-pipeline grain) | Created with exact contract (colony_id/cost/status/registration_date) |
+| 4 | Missing `app_feedback` | Created with exact view contract (user/type/rating/platform/response cols) |
+| 5 | Missing `customer_voice_upload` | Created with exact view contract (user/phone/sample/transcript/processed_by) |
+
+### Verification
+- Targeted probe 4/4 (campaign-templates, app-feedback, voice-uploads, legal-dashboard all 200)
+- E2E **374/374**, health **ok:true** (801 tables), hygiene zero-scratch
+
+### Key Lessons (carried)
+_271. **`return $this->db` ≠ PDO** — the Database wrapper is not a `\PDO`; `getPdo()` (raw) or `getConnection()` (`PdoCompat extends \PDO`) are. A `\PDO` return type turns the mismatch into a total outage, not a degraded page.
+_272. **Catch-all + empty render hides dead pages as healthy** — campaign-templates returned HTTP 200 with zero rows; probes must assert CONTENT (row counts), not just status (lesson 246 again).
+_273. **Renamed tables orphan their readers** — `land_acquisitions` → `_legacy` (different schema) left the Land Manager dashboard querying air. Prefer views/aliases over renames; grep readers before renaming.
+
+---
+
+## Session 111: Master Prompt Pillars — Sales, MLM Payouts, Finance, Omni-Search (2026-09-17)
 
 ## Session 111: Master Prompt Pillars — Sales, MLM Payouts, Finance, Omni-Search (2026-09-17)
 
