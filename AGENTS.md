@@ -1,4 +1,40 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-17 — Session 115: Legal Kit Bundle + PDF Fatal Fix)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-17 — Session 116: Fail-Soft Triage Sweep #2)
+
+## Session 116: Fail-Soft Triage Sweep #2 — Merge-Fields, Template Stats, Stamp/Landmark Cols, AI Logs (2026-09-17)
+
+### Trigger
+Fresh warnings/1054s in `logs/php_error.log` on committed code + audit of 5 uncommitted second-actor files. Second actor active concurrently (new commits + scratch files landing mid-session).
+
+### Fixed (all DESCRIBE-verified, probe-verified live 200 + zero fresh log errors)
+| # | Bug | Fix |
+|---|-----|-----|
+| 1 | `aiComposer` (+`templates`, `document_create`) passed flat `merge_fields` list but all 4 views `foreach` grouped `$group => $fields` → warnings on every render | Grouped structure (`customer`/`plot`/`document`/`company` with `{{customer_name}}`, `{{plot_no}}` keys) ×3 assignments |
+| 2 | `whatsapp_templates` has NO `usage_count` col → `getTemplateStats` 1054, empty WhatsApp stats | `0 as usage_count` (matches sms side pattern) |
+| 3 | `stamp_duty_config` has NO `property_type` col → config list query 1054 (dead-empty) + view `$c['stamp_rate']` warnings (real col is `male_rate`) | `ORDER BY state_code`; view uses `male_rate` + `?? 'all'` fallback |
+| 4 | `landmarks` has `type` enum, NO `category` col → `DISTINCT category` 1054 + view `$l['category']` empty | `l.type AS category` + `DISTINCT type AS category` |
+| 5 | `ai_api_logs` has NO `engine`/`task` cols (real: `engine_used`, `service`, `endpoint`) → analytics 1054s, empty engine/intent panels | `COALESCE(NULLIF(engine_used,''),service)` + `endpoint AS task` fallback |
+| 6 | `gateway_logs.method`+`endpoint` NOT NULL no-default → `logPdfGeneration` 1364 on EVERY PDF generation (log spam; PDFs still built) | `method='LOCAL'`, `endpoint='pdf/{type}'` in both `AgreementPDFService` + `PdfService` |
+
+### Second-Actor Audit (evidence-first, per lesson 266)
+| File | Verdict |
+|---|---|
+| `BookingLifecycleController::legalKit` + route + detail button | ✅ KEEP — distinct `plot_bookings` lifecycle (`AgreementPDFService`) vs committed `BookingController::legalKit` (`bookings` table via `PdfService`); probe: ZIP 200, PK magic, 12KB (independently confirms their 3/3) |
+| `AgreementPDFService` customer_id + font fixes | ✅ KEEP — real bugs (their commit `82d82ea7b`; also swept my `LOCAL` fix — attribution noted here) |
+| `associate/dashboard.php` 309-line rework | ❌ REVERTED — expects `$stats[]`+`$associate[]` but controller passes flat vars → all-zero dashboard (lesson 246); `git checkout` restored |
+| `local.properties` (buildMode debug→release) | ❌ REVERTED — machine-local SDK path; never commit env files |
+| Scratch (`check_*.php`, `test_*.php`, `debug_*.php`, `_tmp_*`) | LEFT UNTOUCHED — second actor actively working; deleted only my own probes |
+
+### Verification
+- Targeted probes **4/4** (ai-composer grouped fields, stamp-duty, landmarks, notification-dashboard) + kit ZIP re-verified; **zero fresh log errors** after hits
+- E2E **374/374**, health **ok:true** (801 tables), workflow **15/15**, `php -l` clean (pre-commit hook), zero scratch rows
+
+### Key Lessons (carried)
+_282. **Views define the contract, not the controller** — all 4 legal views `foreach` grouped merge-fields; 3 controller assignments were flat. Grep the view before "fixing" the controller.
+_283. **Fail-soft pages need log-driven discovery** — all 5 bugs returned HTTP 200 with silently empty panels; only `php_error.log` revealed them (lessons 246/272 again).
+_284. **Audit-log INSERTs must match NOT NULL schema** — `gateway_logs.method`/`endpoint` have no defaults; every PDF generation error-logged. DESCRIBE the log table too.
+_285. **Don't delete a second actor's live scratch** — new `test_*.php`/`debug_*.php` landed mid-session; removing in-use debug files breaks their run. Delete only your own; note the rest.
+
+---
 
 ## Session 115: 1-Click Legal Kit — Bundle Download + TCPDF Font Fatal (2026-09-17)
 
