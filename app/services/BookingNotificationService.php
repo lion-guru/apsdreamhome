@@ -52,11 +52,13 @@ class BookingNotificationService
     }
 
     /**
-     * Send payment receipt notification
+     * Send payment receipt notification (email + SMS + WhatsApp).
+     * Optional $extra: ['balance' => float outstanding after this payment,
+     *                    'receipt_url' => string public receipt link].
      */
-    public function sendPaymentReceipt(array $booking, array $user, float $amount, string $transactionId): array
+    public function sendPaymentReceipt(array $booking, array $user, float $amount, string $transactionId, array $extra = []): array
     {
-        $result = ['email' => false, 'sms' => false];
+        $result = ['email' => false, 'sms' => false, 'whatsapp' => false];
 
         $userName = $user['name'] ?? 'Customer';
         $bookingNumber = $booking['booking_number'] ?? 'N/A';
@@ -72,9 +74,21 @@ class BookingNotificationService
         $sms = "Dear {$userName}, payment of " . number_format($amount) . " received for booking {$bookingNumber} (Plot {$plotNo}, {$colonyName}). Txn: {$transactionId} - APS Dream Home";
         $result['sms'] = $this->sendSms($user['phone'] ?? '', $sms);
 
+        // WhatsApp (graceful when unconfigured — service returns success=false)
+        $waText = "Dear {$userName}, received Rs." . number_format($amount)
+            . " against Plot #{$plotNo} ({$colonyName}). Receipt: {$transactionId}.";
+        if (isset($extra['balance']) && is_numeric($extra['balance'])) {
+            $waText .= " Balance: Rs." . number_format((float)$extra['balance']) . ".";
+        }
+        if (!empty($extra['receipt_url'])) {
+            $waText .= " View receipt: {$extra['receipt_url']}";
+        }
+        $result['whatsapp'] = $this->sendWhatsapp($user['phone'] ?? '', $waText);
+
         // Log
         $this->logCommunication((int)$user['id'], 'payment_receipt', 'email', $result['email'], $subject, $sms);
         $this->logCommunication((int)$user['id'], 'payment_receipt', 'sms', $result['sms'], 'Payment Receipt SMS', $sms);
+        $this->logCommunication((int)$user['id'], 'payment_receipt', 'whatsapp', $result['whatsapp'], 'Payment Receipt WhatsApp', $waText);
 
         return $result;
     }
@@ -286,6 +300,20 @@ class BookingNotificationService
             return true;
         } catch (\Throwable $e) {
             error_log("[BookingNotificationService] SMS queue fallback failed: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    private function sendWhatsapp(string $to, string $message): bool
+    {
+        if (empty($to) || empty($message)) return false;
+        try {
+            $wa = new \App\Services\Communication\WhatsAppService();
+            if (!$wa->isConfigured()) return false;
+            $result = $wa->sendTextMessage($to, $message);
+            return (bool)($result['success'] ?? false);
+        } catch (\Throwable $e) {
+            error_log("[BookingNotificationService] WhatsApp failed: " . $e->getMessage());
             return false;
         }
     }

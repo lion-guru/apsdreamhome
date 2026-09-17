@@ -618,12 +618,29 @@ class BookingLifecycleService
                     $userData = $user->fetch(PDO::FETCH_ASSOC);
 
                     if ($userData) {
+                        // Outstanding balance for the WhatsApp receipt line
+                        $balance = null;
+                        try {
+                            $sumSql = "SELECT COALESCE(SUM(paid_amount), 0) AS paid FROM booking_payment_schedules WHERE booking_id = ?";
+                            $sumParams = [(int)$inst['booking_id']];
+                            if ($tid = $this->tid()) { $sumSql .= " AND tenant_id = ?"; $sumParams[] = $tid; }
+                            $sumStmt = $this->db->prepare($sumSql);
+                            $sumStmt->execute($sumParams);
+                            $paidSoFar = (float)($sumStmt->fetch(PDO::FETCH_ASSOC)['paid'] ?? 0);
+                            $balance = max(0, (float)($inst['total_plot_value'] ?? 0) - $paidSoFar);
+                        } catch (\Throwable $e) {
+                            error_log("[BookingLifecycleService::recordPayment] balance lookup failed: " . $e->getMessage());
+                        }
                         $notifSvc = new \App\Services\BookingNotificationService();
                         $notifSvc->sendPaymentReceipt(
                             $booking,
                             $userData,
                             $amount,
-                            $receiptNumber
+                            $receiptNumber,
+                            [
+                                'balance' => $balance,
+                                'receipt_url' => (defined('BASE_URL') ? BASE_URL : '') . '/customer/receipt/' . $receiptId,
+                            ]
                         );
                     }
                 }
@@ -931,6 +948,119 @@ class BookingLifecycleService
                 $this->db->rollBack();
             }
             error_log('[BookingLifecycleService::transferBooking] ' . $e->getMessage());
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /* ====================================================================
+     * 10b. swapBookingPlot — same-customer plot swap (Plot 12 -> Plot 15).
+     * Old plot released to available, new plot booked, paid money carries
+     * over on the same booking (receipts untouched). Price difference is
+     * recorded; admin regenerates the EMI schedule afterwards via the
+     * existing schedule/regenerate route. Single transaction, row locks.
+     * ================================================================== */
+
+    /**
+     * Swap the plot on an active booking.
+     */
+    public function swapBookingPlot(int $bookingId, int $newPlotId, string $reason, float $swapCharge = 0.0): array
+    {
+        try {
+            $booking = $this->getBookingById($bookingId);
+            if (!$booking) {
+                return ['success' => false, 'error' => 'Booking not found'];
+            }
+            if (in_array($booking['status'], ['cancelled', 'completed', 'transferred', 'registration_done'], true)) {
+                return ['success' => false, 'error' => 'Only active bookings can be swapped (status: ' . $booking['status'] . ')'];
+            }
+            $oldPlotId = (int)($booking['plot_id'] ?? 0);
+            if ($newPlotId <= 0 || $newPlotId === $oldPlotId) {
+                return ['success' => false, 'error' => 'Choose a different plot to swap to'];
+            }
+
+            // DDL guard BEFORE the transaction (MySQL DDL causes implicit commit).
+            try {
+                $this->db->exec("CREATE TABLE IF NOT EXISTS booking_swaps (
+                    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    booking_id INT UNSIGNED NOT NULL,
+                    old_plot_id INT UNSIGNED NOT NULL,
+                    new_plot_id INT UNSIGNED NOT NULL,
+                    old_total DECIMAL(12,2) NOT NULL DEFAULT 0,
+                    new_total DECIMAL(12,2) NOT NULL DEFAULT 0,
+                    balance_diff DECIMAL(12,2) NOT NULL DEFAULT 0,
+                    paid_carried DECIMAL(12,2) NOT NULL DEFAULT 0,
+                    swap_charge DECIMAL(12,2) NOT NULL DEFAULT 0,
+                    reason VARCHAR(500) NULL,
+                    swapped_by INT UNSIGNED NULL,
+                    tenant_id INT UNSIGNED NOT NULL DEFAULT 1,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    INDEX idx_swap_booking (booking_id)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+            } catch (\Throwable $e) { error_log('[swapBookingPlot] ensure table: ' . $e->getMessage()); }
+
+            $this->db->beginTransaction();
+
+            // Lock new plot row — concurrent swaps serialize here.
+            $newPlotStmt = $this->db->prepare("SELECT * FROM plots WHERE id = ? FOR UPDATE");
+            $newPlotStmt->execute([$newPlotId]);
+            $newPlot = $newPlotStmt->fetch(PDO::FETCH_ASSOC);
+            if (!$newPlot) { $this->db->rollBack(); return ['success' => false, 'error' => 'New plot not found']; }
+            if (($newPlot['status'] ?? '') !== 'available') {
+                $this->db->rollBack();
+                return ['success' => false, 'error' => 'New plot is no longer available (status: ' . ($newPlot['status'] ?? '?') . ')'];
+            }
+
+            $paidSoFar = $this->totalPaid($bookingId);
+            $oldTotal = (float)($booking['total_plot_value'] ?? 0);
+            $newTotal = (float)($newPlot['total_price'] ?? 0);
+            $balanceDiff = round($newTotal - $oldTotal, 2);
+
+            $swCols = "booking_id, old_plot_id, new_plot_id, old_total, new_total, balance_diff, paid_carried, swap_charge, reason, swapped_by";
+            $swVals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
+            $swParams = [$bookingId, $oldPlotId, $newPlotId, $oldTotal, $newTotal, $balanceDiff, $paidSoFar, $swapCharge, $reason, $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? null];
+            if ($tidSw = $this->tid()) { $swCols .= ", tenant_id"; $swVals .= ", ?"; $swParams[] = $tidSw; }
+            $this->db->prepare("INSERT INTO booking_swaps ($swCols) VALUES ($swVals)")->execute($swParams);
+            $swapId = (int)$this->db->lastInsertId();
+
+            // Release old plot, book the new one.
+            $relSql = "UPDATE plots SET status = 'available', held_by = NULL, held_at = NULL, hold_expires_at = NULL, customer_id = NULL WHERE id = ?";
+            $relParams = [$oldPlotId];
+            if ($tidRel = $this->tid()) { $relSql .= " AND tenant_id = ?"; $relParams[] = $tidRel; }
+            $this->db->prepare($relSql)->execute($relParams);
+
+            $bookSql = "UPDATE plots SET status = 'booked', customer_id = ?, booking_date = CURDATE(), updated_at = NOW() WHERE id = ? AND status = 'available'";
+            $bookParams = [(int)$booking['customer_id'], $newPlotId];
+            if ($tidBook = $this->tid()) { $bookSql .= " AND tenant_id = ?"; $bookParams[] = $tidBook; }
+            $bookStmt = $this->db->prepare($bookSql);
+            $bookStmt->execute($bookParams);
+            if ($bookStmt->rowCount() === 0) {
+                $this->db->rollBack();
+                return ['success' => false, 'error' => 'New plot was just taken by someone else. Please choose another plot.'];
+            }
+
+            // Move booking to the new plot with the new total; paid receipts stay linked.
+            $updSql = "UPDATE plot_bookings SET plot_id = ?, total_plot_value = ? WHERE id = ?";
+            $updParams = [$newPlotId, $newTotal, $bookingId];
+            if ($tidUpd = $this->tid()) { $updSql .= " AND tenant_id = ?"; $updParams[] = $tidUpd; }
+            $this->db->prepare($updSql)->execute($updParams);
+            $this->logStatusHistory($bookingId, (string)$booking['status'], (string)$booking['status'], $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? null,
+                "Plot swap #{$oldPlotId} -> #{$newPlotId}: {$reason}");
+
+            $this->db->commit();
+
+            return [
+                'success'      => true,
+                'swap_id'      => $swapId,
+                'old_plot_id'  => $oldPlotId,
+                'new_plot_id'  => $newPlotId,
+                'paid_carried' => $paidSoFar,
+                'balance_diff' => $balanceDiff,
+            ];
+        } catch (\Throwable $e) {
+            if ($this->db && $this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
+            error_log('[BookingLifecycleService::swapBookingPlot] ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }

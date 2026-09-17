@@ -251,6 +251,12 @@ class EMIAutomationService
                     $this->renderEmail('dunning_reminder', $row)
                 );
                 if ($sent) {
+                    $this->logDunning($row, 'reminder', 'email');
+                }
+                // WhatsApp pre-due reminder (graceful when unconfigured)
+                $waSent = $this->sendWhatsappReminder($row);
+                $this->logDunning($row, 'reminder', 'whatsapp', $waSent ? 'sent' : 'failed');
+                if ($sent || $waSent) {
                     $upStmt = $this->db->prepare(
                         "UPDATE booking_payment_schedules
                          SET reminder_count = reminder_count + 1, last_reminder_at = NOW()
@@ -259,7 +265,6 @@ class EMIAutomationService
                     $upParams = [$row['id']];
                     if ($this->tenantId() > 1) $upParams[] = $this->tenantId();
                     $upStmt->execute($upParams);
-                    $this->logDunning($row, 'reminder', 'email');
                 }
             }
             return true;
@@ -454,6 +459,32 @@ class EMIAutomationService
             return @mail($to, $subject, $html, $headers);
         } catch (\Exception $e) {
             error_log("sendEmail error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Send pre-due EMI reminder via WhatsApp. Returns false (logged) when
+     * unconfigured or phone missing — never throws.
+     */
+    private function sendWhatsappReminder(array $row): bool
+    {
+        $phone = $row['customer_phone'] ?? '';
+        if (empty($phone)) return false;
+        try {
+            $wa = new \App\Services\Communication\WhatsAppService();
+            if (!$wa->isConfigured()) return false;
+            $due = !empty($row['due_date']) ? date('d M Y', strtotime($row['due_date'])) : ($row['due_date'] ?? '');
+            $text = "Dear " . ($row['customer_name'] ?? 'Customer')
+                . ", your EMI of Rs." . number_format((float)($row['amount'] ?? 0))
+                . " (Installment #" . ($row['installment_no'] ?? '') . ")"
+                . " for Plot #" . ($row['plot_number'] ?? '') . " (" . ($row['colony_name'] ?? '') . ")"
+                . ", Booking " . ($row['booking_number'] ?? '')
+                . ", is due on {$due}. Please pay on time to avoid penalties. - APS Dream Home";
+            $result = $wa->sendTextMessage($phone, $text);
+            return (bool)($result['success'] ?? false);
+        } catch (\Throwable $e) {
+            error_log("sendWhatsappReminder: " . $e->getMessage());
             return false;
         }
     }

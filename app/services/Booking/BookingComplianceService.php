@@ -65,6 +65,31 @@ class BookingComplianceService
     }
 
     /**
+     * Plot hold duration (hours) after booking before auto-release.
+     * Admin-configurable via service_configs booking.hold_hours (default 48).
+     */
+    public function getHoldHours(): int
+    {
+        return max(1, (int)ServiceConfigService::getVal('booking', 'hold_hours', 48));
+    }
+
+    /**
+     * Idempotent schema guard: plots.hold_expires_at (DATETIME NULL).
+     * DDL runs outside any caller transaction (implicit commit).
+     */
+    public function ensureHoldExpiryColumn(): void
+    {
+        try {
+            $cols = $this->db->query("SHOW COLUMNS FROM plots LIKE 'hold_expires_at'")->fetchAll(\PDO::FETCH_ASSOC);
+            if (empty($cols)) {
+                $this->db->exec("ALTER TABLE plots ADD COLUMN hold_expires_at DATETIME NULL DEFAULT NULL AFTER held_at");
+            }
+        } catch (\Throwable $e) {
+            error_log("BookingComplianceService::ensureHoldExpiryColumn: " . $e->getMessage());
+        }
+    }
+
+    /**
      * Resolve the token amount for a deal: flat token_amount when > 0,
      * otherwise the percentage fallback. Plan override ['token_amount'] wins.
      */
@@ -339,7 +364,8 @@ class BookingComplianceService
         $graceDays = $this->getTokenDueDays() + 1;
         $stmt = $this->db->query("
             SELECT b.id, b.total_amount, b.amount as paid_amount, b.notes,
-                   JSON_UNQUOTE(JSON_EXTRACT(b.notes, '$.plot_id')) as plot_id
+                   COALESCE(NULLIF(b.plot_id, 0),
+                            CAST(JSON_UNQUOTE(JSON_EXTRACT(b.notes, '$.plot_id')) AS UNSIGNED)) as plot_id
             FROM bookings b
             WHERE b.status = 'pending'
               AND b.created_at <= DATE_SUB(CURDATE(), INTERVAL {$graceDays} DAY)
@@ -351,15 +377,16 @@ class BookingComplianceService
             try {
                 $plotId = (int)$v['plot_id'];
                 if ($plotId > 0) {
-                    $stmt = $this->db->prepare("UPDATE plots SET status = 'Available' WHERE id = ? AND tenant_id = ?");
+                    // NOTE: plots.status is a lowercase enum — 'Available' would violate it.
+                    $stmt = $this->db->prepare("UPDATE plots SET status = 'available', held_by = NULL, held_at = NULL, hold_expires_at = NULL WHERE id = ? AND tenant_id = ?");
                     $stmt->execute([$plotId, $this->tenantId()]);
                 }
 
-$cancelNote = ' | Auto-cancelled: Token payment < ' . $this->getAgreementThresholdPct() . '% within ' . $this->getTokenDueDays() . ' days';
+                $cancelNote = ' | Auto-cancelled: Token payment < ' . $this->getAgreementThresholdPct() . '% within ' . $this->getTokenDueDays() . ' days';
                 $stmt = $this->db->prepare("UPDATE bookings SET status = 'cancelled', notes = CONCAT(COALESCE(notes,''), ?) WHERE id = ? AND tenant_id = ?");
                 $stmt->execute([$cancelNote, $v['id'], $this->tenantId()]);
 
-                error_log("BookingCompliance: Booking #{$v['id']} auto-cancelled. Plot #$plotId released back to Available.");
+                error_log("BookingCompliance: Booking #{$v['id']} auto-cancelled. Plot #$plotId released back to available.");
                 $released++;
 
             } catch (\Exception $e) {
@@ -369,6 +396,61 @@ $cancelNote = ' | Auto-cancelled: Token payment < ' . $this->getAgreementThresho
         }
 
         return ['released_plots' => $released, 'warnings' => $warnings];
+    }
+
+    /**
+     * Release 48h-expired plot holds whose bookings are still pending and
+     * under the agreement threshold (unpaid token). Paid/progressing bookings
+     * keep their hold. Returns ['released_plots', 'skipped_paid', 'warnings'].
+     */
+    public function releaseExpiredHolds(): array
+    {
+        $this->ensureHoldExpiryColumn();
+        $released = 0;
+        $skippedPaid = 0;
+        $warnings = 0;
+        $thresholdShare = $this->getAgreementThresholdPct() / 100;
+
+        try {
+            $rows = $this->db->query("
+                SELECT p.id AS plot_id, b.id AS booking_id, b.total_amount, b.amount AS paid_amount
+                FROM plots p
+                JOIN bookings b ON b.plot_id = p.id AND b.status = 'pending'
+                WHERE p.status = 'hold'
+                  AND p.hold_expires_at IS NOT NULL
+                  AND p.hold_expires_at <= NOW()"
+                . $this->tenantSqlForAlias('p'))->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            error_log("BookingCompliance::releaseExpiredHolds select: " . $e->getMessage());
+            return ['released_plots' => 0, 'skipped_paid' => 0, 'warnings' => 1];
+        }
+
+        foreach ($rows as $r) {
+            try {
+                $paidShare = ((float)$r['total_amount'] > 0)
+                    ? ((float)$r['paid_amount'] / (float)$r['total_amount'])
+                    : 0;
+                if ($paidShare >= $thresholdShare) {
+                    // Token paid — hold stays; clear expiry so it isn't re-scanned.
+                    $this->db->prepare("UPDATE plots SET hold_expires_at = NULL WHERE id = ? AND tenant_id = ?")
+                        ->execute([(int)$r['plot_id'], $this->tenantId()]);
+                    $skippedPaid++;
+                    continue;
+                }
+                $this->db->prepare("UPDATE plots SET status = 'available', held_by = NULL, held_at = NULL, hold_expires_at = NULL WHERE id = ? AND status = 'hold' AND tenant_id = ?")
+                    ->execute([(int)$r['plot_id'], $this->tenantId()]);
+                $note = ' | Auto-released: 48h hold expired with token unpaid';
+                $this->db->prepare("UPDATE bookings SET status = 'cancelled', notes = CONCAT(COALESCE(notes,''), ?) WHERE id = ? AND status = 'pending' AND tenant_id = ?")
+                    ->execute([$note, (int)$r['booking_id'], $this->tenantId()]);
+                error_log("BookingCompliance: Expired hold released for plot #{$r['plot_id']} (booking #{$r['booking_id']}).");
+                $released++;
+            } catch (\Throwable $e) {
+                error_log("BookingCompliance::releaseExpiredHolds row: " . $e->getMessage());
+                $warnings++;
+            }
+        }
+
+        return ['released_plots' => $released, 'skipped_paid' => $skippedPaid, 'warnings' => $warnings];
     }
 
     public function recordPayment(int $bookingId, float $amount, string $mode = 'cash'): array
