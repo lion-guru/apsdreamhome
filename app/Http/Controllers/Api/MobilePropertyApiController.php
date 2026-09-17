@@ -1503,7 +1503,11 @@ class MobilePropertyApiController extends BaseController
                 echo json_encode(['success' => false, 'error' => 'Plot is not available']);
                 return;
             }
-            $stmt = $this->db->prepare("UPDATE plots SET status = 'hold', held_by = ?, held_at = NOW() WHERE id = ? AND tenant_id = ?");
+            $holdHours = 48;
+            try {
+                $holdHours = (new \App\Services\Booking\BookingComplianceService())->getHoldHours();
+            } catch (\Throwable $e) { error_log('holdPlot hold_hours fallback: ' . $e->getMessage()); }
+            $stmt = $this->db->prepare("UPDATE plots SET status = 'hold', held_by = ?, held_at = NOW(), hold_expires_at = DATE_ADD(NOW(), INTERVAL {$holdHours} HOUR) WHERE id = ? AND tenant_id = ?");
             $stmt->execute([$userId, $id, $tid]);
             echo json_encode(['success' => true, 'message' => 'Plot held successfully']);
         } catch (\Exception $e) {
@@ -1523,7 +1527,7 @@ class MobilePropertyApiController extends BaseController
         }
         $tid = (int)$this->tenantId();
         try {
-            $stmt = $this->db->prepare("UPDATE plots SET status = 'available', held_by = NULL, held_at = NULL WHERE id = ? AND held_by = ? AND tenant_id = ?");
+            $stmt = $this->db->prepare("UPDATE plots SET status = 'available', held_by = NULL, held_at = NULL, hold_expires_at = NULL WHERE id = ? AND held_by = ? AND tenant_id = ?");
             $stmt->execute([$id, $userId, $tid]);
             echo json_encode(['success' => true, 'message' => 'Plot released successfully']);
         } catch (\Exception $e) {

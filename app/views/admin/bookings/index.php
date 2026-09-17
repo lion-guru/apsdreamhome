@@ -9,8 +9,11 @@ $active_page = 'bookings';
         <a href="<?php echo BASE_URL; ?>/admin/bookings/create" class="btn btn-primary me-2">
             <i class="fas fa-plus"></i> <?= __('admin_new_booking') ?>
         </a>
-        <a href="<?php echo BASE_URL; ?>/admin/bookings/export?format=csv" class="btn btn-outline-secondary">
+        <a href="<?php echo BASE_URL; ?>/admin/bookings/export?format=csv" class="btn btn-outline-secondary me-2">
             <i class="fas fa-file-csv"></i> Export CSV
+        </a>
+        <a href="<?php echo BASE_URL; ?>/admin/delete-approvals" class="btn btn-outline-warning">
+            <i class="fas fa-shield-alt"></i> Delete Approvals
         </a>
     </div>
 </div>

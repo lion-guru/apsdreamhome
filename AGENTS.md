@@ -1,4 +1,41 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-17 — Session 108: View & UI Integrity Audit)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-17 — Session 109: CEO Blind-Spots — 4 Real Gaps Built)
+
+## Session 109: CEO Ground-Realities — Verified Claims, Built 4 Real Gaps (2026-09-17)
+
+### Ground-Truth Audit (7 forwarded claims checked against code)
+| # | Claim | Verdict |
+|---|-------|---------|
+| 1 | No hold/lock system | ❌ FALSE — `PlotBookingController:121,157` FOR UPDATE + atomic hold, `plot_locks`, 30-min hold button all exist |
+| 2 | No transfer/clawback | ⚠️ HALF — transfer (`PlotManagementController:1188` + `plot_transfers`) + clawback (`mlm_clawback_log` + UI) exist; **SWAP wizard missing** → built |
+| 3 | No WhatsApp/SMS | ❌ FALSE — sender/template services + login alerts exist; **real gaps: receipt WhatsApp + pre-due WhatsApp** → built |
+| 4 | No reconciliation | ❌ FALSE — bank/collection/3-way recon services exist; cheque-bounce penalty left as known gap |
+| 5 | No audit trail | ❌ FALSE — `user_activity_logs_unified` + IP logging exist; **delete-approval gate missing** → built |
+| 6 | No SVG map | ❌ FALSE — `admin/plots/map.php` interactive SVG exists |
+| 7 | Manual Word/Excel docs | ❌ FALSE — PdfService + allotment/receipt/possession automation exists; kit-bundle button left as known gap |
+
+### Built (4/4, all probe-verified + E2E green)
+| # | Feature | Implementation | Probe |
+|---|---------|----------------|-------|
+| 3a | **Receipt WhatsApp** | `BookingNotificationService::sendPaymentReceipt` +`whatsapp` channel (balance + receipt URL, graceful when unconfigured); `recordPayment` computes balance from schedules | code path live (Meta unconfigured on dev → loggedskip) |
+| 3b | **Pre-due EMI WhatsApp** | `EMIAutomationService::sendUpcomingPaymentReminders` +`sendWhatsappReminder` (due ≤3d, `reminder_count` gate, dunning_log both channels) | 4 eligible rows found; helper unit-verified, 0 sends (unconfigured) |
+| 1 | **48h hold + auto-release** | `plots.hold_expires_at` (idempotent guard) set at both hold writers; fixed `enforceTokenRule` dead path (`'Available'`→`'available'` enum + real `plot_id` col vs dead JSON extract); new `releaseExpiredHolds()` (skips paid); wired into `cron_daily_compliance` | **4/4**: release unpaid+cancel, keep paid+clear expiry, 0 scratch rows |
+| 2 | **Plot SWAP wizard** | `BookingLifecycleService::swapBookingPlot` (row locks, retotal, audit `booking_swaps`, receipts intact) + admin form/store + routes + detail button | **8/8**: guards (same/unavailable/cancelled), move+retotal, audit, 0 scratch rows |
+| 4 | **Delete-approval gate** | `DeleteApprovalService` (`delete_approvals`, 6 critical entities, super-admin executes, dup-pending blocked) + inbox controller/view/routes + `BookingController::destroy` interception | **6/6**: file→approve-executes→reject-keeps, 0 scratch rows |
+
+### Verification
+- E2E **374/374**, health **ok:true** (797 tables: +`booking_swaps`, +`delete_approvals`), hygiene 5/5 zero-scratch
+- Compliance cron live-run prints new section, 0 releases (correct — no stale holds)
+
+### Key Lessons (carried)
+_257. **Verify forwarded analyses with grep before building** — 4/7 CEO claims were already implemented; building on false premises wastes sessions. Evidence table first, code second.
+_258. **`plots.status` enum is lowercase-only** — `'Available'` violates it; `enforceTokenRule`'s release path was dead-on-arrival (strict-mode throw swallowed per-item). Always match enum case.
+_259. **`bookings.plot_id` is a real column** — `enforceTokenRule` read it from `JSON_EXTRACT(notes)` which the current flow never writes; plot release never fired. Prefer real columns over JSON-note conventions.
+_260. **Dual lifecycles bite probes too** — `booking_payment_receipts.booking_id` FKs to `bookings`, not `plot_bookings`; receipts can't attach in swap probes. Use run-unique scratch IDs (`SW<time>`) to avoid cross-run pollution.
+_261. **Non-admin SaaS pages can't POST to admin endpoints** — `requireAdmin()` 403s builders; compose-style modals (wa.me) or role-aware links instead.
+
+---
+
+## Session 108: Comprehensive View & UI Integrity Audit — Dead Clicks, Missing Modals, Inquiry Flow (2026-09-17)
 
 ## Session 108: Comprehensive View & UI Integrity Audit — Dead Clicks, Missing Modals, Inquiry Flow (2026-09-17)
 

@@ -1374,6 +1374,11 @@ $router->post('/admin/bookings/{id}/payment',
 $router->post('/admin/bookings/bulk-action', 
 'App\\Http\\Controllers\\Admin\\BookingController@bulkAction');
 
+// Delete approval inbox (super-admin gate for critical deletes)
+$router->get('/admin/delete-approvals', 'App\\Http\\Controllers\\Admin\\DeleteApprovalController@index');
+$router->post('/admin/delete-approvals/{id}/approve', 'App\\Http\\Controllers\\Admin\\DeleteApprovalController@approve');
+$router->post('/admin/delete-approvals/{id}/reject', 'App\\Http\\Controllers\\Admin\\DeleteApprovalController@reject');
+
 // Admin Bookings Export
 $router->get('/admin/bookings/export', 'App\\Http\\Controllers\\Admin\\BookingController@export');
 
@@ -1574,6 +1579,12 @@ $router->post('/admin/menu-permissions/update-user', 'App\\Http\\Controllers\\Ad
 $router->post('/admin/menu-permissions/revoke-user', 'App\\Http\\Controllers\\Admin\\AdminMenuPermissionController@revokeUserPermission');
 $router->get('/admin/menu-permissions/get-users', 'App\\Http\\Controllers\\Admin\\AdminMenuPermissionController@getUsers');
 $router->get('/admin/menu-permissions/get-user-permissions', 'App\\Http\\Controllers\\Admin\\AdminMenuPermissionController@getUserPermissions');
+
+// Workspace Hubs (Role-Based Dashboards)
+$router->get('/admin/workspace-hubs', 'App\\Http\\Controllers\\Admin\\WorkspaceHubController@index');
+$router->get('/admin/workspace-hubs/{hubKey}', 'App\\Http\\Controllers\\Admin\\WorkspaceHubController@show');
+$router->get('/admin/workspace-hubs/api/{hubKey}', 'App\\Http\\Controllers\\Admin\\WorkspaceHubController@getHubData');
+$router->get('/admin/workspace-hubs/api/my-hub', 'App\\Http\\Controllers\\Admin\\WorkspaceHubController@getMyHub');
 
 // ============================================================
 // AI & SENIOR DEVELOPER
@@ -2368,6 +2379,8 @@ $router->post('/admin/sales/bookings/{id}/cancel',                'App\\Http\\Co
 $router->get('/admin/sales/bookings/{id}/cancel',                 'App\\Http\\Controllers\\Admin\\BookingLifecycleController@cancelBookingForm');
 $router->post('/admin/sales/bookings/{id}/transfer',              'App\\Http\\Controllers\\Admin\\BookingLifecycleController@transferBookingStore');
 $router->get('/admin/sales/bookings/{id}/transfer',               'App\\Http\\Controllers\\Admin\\BookingLifecycleController@transferBookingForm');
+$router->post('/admin/sales/bookings/{id}/swap',                  'App\\Http\\Controllers\\Admin\\BookingLifecycleController@swapBookingStore');
+$router->get('/admin/sales/bookings/{id}/swap',                   'App\\Http\\Controllers\\Admin\\BookingLifecycleController@swapBookingForm');
 $router->get('/admin/sales/installments/{installmentId}/pay',      'App\\Http\\Controllers\\Admin\\BookingLifecycleController@recordPaymentForm');
 $router->post('/admin/sales/installments/{installmentId}/pay',     'App\\Http\\Controllers\\Admin\\BookingLifecycleController@recordPaymentStore');
 $router->get('/admin/sales/installments/{installmentId}/demand-letter', 'App\\Http\\Controllers\\Admin\\BookingLifecycleController@demandLetter');

@@ -19,4 +19,10 @@ $tokenResult = $bookingService->enforceTokenRule();
 echo "   Released plots: {$tokenResult['released_plots']}\n";
 echo "   Warnings: {$tokenResult['warnings']}\n\n";
 
+echo "2. Releasing expired 48h plot holds...\n";
+$holdResult = $bookingService->releaseExpiredHolds();
+echo "   Released plots: {$holdResult['released_plots']}\n";
+echo "   Skipped (token paid): {$holdResult['skipped_paid']}\n";
+echo "   Warnings: {$holdResult['warnings']}\n\n";
+
 echo "[" . date('Y-m-d H:i:s') . "] Compliance cron completed.\n";?>

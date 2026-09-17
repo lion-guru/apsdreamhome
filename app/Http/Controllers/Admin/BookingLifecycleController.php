@@ -447,6 +447,59 @@ class BookingLifecycleController extends AdminController
     }
 
     /* =========================================================
+     *  Swap booking plot (same customer, Plot A -> Plot B)
+     * ========================================================= */
+
+    public function swapBookingForm($bookingId)
+    {
+        $this->requireAdmin();
+        $bookingId = (int)$bookingId;
+        $booking = $this->service->getBookingById($bookingId);
+        if (!$booking) {
+            $this->setFlash('error', 'Booking not found');
+            return $this->redirect('/admin/sales/bookings');
+        }
+        try {
+            $plotStmt = $this->db->prepare(
+                "SELECT p.id, p.plot_number, p.total_price, p.area_sqft, c.name AS colony_name
+                 FROM plots p LEFT JOIN colonies c ON c.id = p.colony_id
+                 WHERE p.status = 'available' AND p.id != ?
+                 ORDER BY c.name, p.plot_number LIMIT 200"
+            );
+            $plotStmt->execute([(int)($booking['plot_id'] ?? 0)]);
+            $plots = $plotStmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            $plots = [];
+        }
+        $this->render('admin/sales/swap-form', [
+            'page_title'   => 'Swap Plot',
+            'page_heading' => 'Swap Plot — ' . htmlspecialchars((string)($booking['booking_number'] ?? '')),
+            'booking'      => $booking,
+            'plots'        => $plots,
+        ]);
+    }
+
+    public function swapBookingStore($bookingId)
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+        $bookingId = (int)$bookingId;
+        $newPlotId = (int)($_POST['new_plot_id'] ?? 0);
+        $reason    = (string)($_POST['reason'] ?? 'Customer requested swap');
+        $charge    = (float)($_POST['swap_charge'] ?? 0);
+        $result = $this->service->swapBookingPlot($bookingId, $newPlotId, $reason, $charge);
+        if (!empty($result['success'])) {
+            $msg = 'Plot swapped. Paid Rs.' . number_format((float)($result['paid_carried'] ?? 0))
+                . ' carried over. Balance difference: Rs.' . number_format((float)($result['balance_diff'] ?? 0))
+                . ' — please regenerate the EMI schedule.';
+            $this->setFlash('success', $msg);
+        } else {
+            $this->setFlash('error', $result['error'] ?? 'Swap failed');
+        }
+        return $this->redirect('/admin/sales/bookings/' . $bookingId);
+    }
+
+    /* =========================================================
      *  Booking Approval (associate-submitted bookings)
      * ========================================================= */
 

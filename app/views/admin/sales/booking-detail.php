@@ -49,6 +49,7 @@ $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0
             <a href="<?= htmlspecialchars($base ?? '') ?>/admin/finance/allotment/<?= (int)($booking['id'] ?? 0) ?>" class="btn btn-sm btn-outline-success"><i class="fas fa-file-pdf me-1"></i><?= __('sale_allotment') ?></a>
             <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelModal"><i class="fas fa-ban me-1"></i><?= __('sale_cancel') ?></button>
             <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#transferModal"><i class="fas fa-exchange-alt me-1"></i><?= __('sale_transfer') ?></button>
+            <a href="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/swap" class="btn btn-sm btn-outline-primary"><i class="fas fa-right-left me-1"></i>Swap Plot</a>
         </div>
     </div>
     <div class="aps-cp-card-body">

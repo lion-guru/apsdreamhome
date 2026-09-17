@@ -21,6 +21,13 @@ class PlotBookingController extends PlotBaseController
         $plotId = (int)$plotId;
         $tid = (int)$this->tenantId();
 
+        // ═══ Capture referral code from URL (?ref=CODE or ?sponsor=CODE) ═══
+        $refCode = trim($_GET['ref'] ?? $_GET['sponsor'] ?? '');
+        if (!empty($refCode)) {
+            $_SESSION['referral_code'] = $refCode;
+            setcookie('aps_referral', $refCode, time() + (86400 * 30), '/', '', false, true); // 30-day attribution
+        }
+
         $plotParams = [$plotId];
         $tidScope = '';
         if ($tid > 1) { $tidScope = ' AND p.tenant_id = ?'; $plotParams[] = $tid; }
@@ -88,6 +95,23 @@ class PlotBookingController extends PlotBaseController
         }
         $tid = (int)$this->tenantId();
 
+        // ═══ Handle Referral Code (Associate Binding) ═══
+        $referralCode = trim($_POST['referral_code'] ?? '');
+        // Fallback to session/cookie if not in POST
+        if (empty($referralCode)) {
+            $referralCode = trim($_SESSION['referral_code'] ?? $_COOKIE['aps_referral'] ?? '');
+        }
+        $associateId = null;
+        if (!empty($referralCode)) {
+            $assoc = $this->db->fetchRow(
+                "SELECT u.id FROM users u JOIN mlm_profiles p ON u.id = p.user_id WHERE u.referral_code = ? AND u.role IN ('associate','agent') AND p.status = 'active' LIMIT 1",
+                [$referralCode]
+            );
+            if ($assoc) {
+                $associateId = (int)$assoc['id'];
+            }
+        }
+
         $this->db->beginTransaction();
         try {
             $pdo = $this->db->getPdo();
@@ -123,12 +147,17 @@ class PlotBookingController extends PlotBaseController
                 'amount' => 0,
                 'negotiated_price' => $dealPrice,
                 'notes' => $notes,
+                'channel' => $associateId ? 'associate' : 'direct',
+                'associate_id' => $associateId,
                 'tenant_id' => $tid,
                 'created_at' => date('Y-m-d H:i:s'),
             ]);
 
             // 3. Atomically hold the plot — rowCount 0 means we lost the race.
-            $holdSql = "UPDATE plots SET status = 'hold', held_by = ?, held_at = NOW() WHERE id = ? AND status = 'available'"
+            //    48h expiry (configurable via booking.hold_hours) auto-releases unpaid holds.
+            $complianceHold = new BookingComplianceService();
+            $holdHours = $complianceHold->getHoldHours();
+            $holdSql = "UPDATE plots SET status = 'hold', held_by = ?, held_at = NOW(), hold_expires_at = DATE_ADD(NOW(), INTERVAL {$holdHours} HOUR) WHERE id = ? AND status = 'available'"
                 . ($tid > 1 ? ' AND tenant_id = ?' : '');
             $holdStmt = $pdo->prepare($holdSql);
             $holdStmt->execute($tid > 1 ? [$user['id'], $plot['id'], $tid] : [$user['id'], $plot['id']]);

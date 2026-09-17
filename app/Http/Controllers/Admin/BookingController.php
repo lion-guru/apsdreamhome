@@ -314,10 +314,16 @@ class BookingController extends AdminController
     public function destroy($id)
     {
         try {
-            $tid = (int)$this->tenantId();
-            $stmt = $this->db->prepare("DELETE FROM plot_bookings WHERE id = ? AND tenant_id = ?");
-            $stmt->execute([$id, $tid]);
-            $_SESSION['success'] = 'Booking deleted successfully.';
+            // Super-admin approval gate: non-super-admins file a request instead.
+            $gate = new \App\Services\DeleteApprovalService();
+            $res = $gate->requestDelete('plot_bookings', (int)$id, 'Booking delete from admin bookings list');
+            if (!empty($res['executed'])) {
+                $_SESSION['success'] = 'Booking deleted successfully.';
+            } elseif (!empty($res['approval_id'])) {
+                $_SESSION['success'] = 'Delete request #' . $res['approval_id'] . ' sent for super-admin approval. The booking is untouched until approved.';
+            } else {
+                $_SESSION['error'] = $res['message'] ?? 'Delete not permitted';
+            }
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
