@@ -1066,6 +1066,63 @@ class BookingLifecycleService
     }
 
     /* ====================================================================
+     * 10c. markReceiptBounced — cheque bounce reversal engine.
+     * Receipt -> bounced; installment paid_amount reversed, status pushed
+     * back to pending/overdue/partial; Rs.500 bounce penalty accrued.
+     * Single transaction.
+     * ================================================================== */
+
+    public const CHEQUE_BOUNCE_PENALTY = 500.0;
+
+    public function markReceiptBounced(int $receiptId, string $reason = ''): array
+    {
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM booking_payment_receipts WHERE id = ?");
+            $stmt->execute([$receiptId]);
+            $rcpt = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$rcpt) return ['success' => false, 'error' => 'Receipt not found'];
+            if (($rcpt['payment_mode'] ?? '') !== 'cheque') {
+                return ['success' => false, 'error' => 'Only cheque receipts can bounce'];
+            }
+            if (($rcpt['status'] ?? '') !== 'cleared') {
+                return ['success' => false, 'error' => 'Only cleared receipts can bounce (status: ' . ($rcpt['status'] ?? '?') . ')'];
+            }
+
+            $this->db->beginTransaction();
+
+            $this->db->prepare("UPDATE booking_payment_receipts SET status = 'bounced', bounce_date = CURDATE(), bounce_reason = ? WHERE id = ?")
+                ->execute([substr($reason, 0, 500), $receiptId]);
+
+            $instId = (int)($rcpt['installment_id'] ?? 0);
+            $newStatus = null;
+            if ($instId > 0) {
+                $istmt = $this->db->prepare("SELECT * FROM booking_payment_schedules WHERE id = ?");
+                $istmt->execute([$instId]);
+                $inst = $istmt->fetch(PDO::FETCH_ASSOC);
+                if ($inst) {
+                    $newPaid = max(0.0, (float)($inst['paid_amount'] ?? 0) - (float)($rcpt['amount'] ?? 0));
+                    $isOverdue = !empty($inst['due_date']) && strtotime($inst['due_date']) < time();
+                    $newStatus = $newPaid <= 0 ? ($isOverdue ? 'overdue' : 'pending') : 'partial';
+                    $this->db->prepare("UPDATE booking_payment_schedules SET paid_amount = ?, status = ?, accrued_penalty = COALESCE(accrued_penalty, 0) + ? WHERE id = ?")
+                        ->execute([$newPaid, $newStatus, self::CHEQUE_BOUNCE_PENALTY, $instId]);
+                }
+            }
+
+            $this->logStatusHistory((int)($rcpt['booking_id'] ?? 0), null, 'cheque_bounced', $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? null,
+                "Receipt #{$rcpt['receipt_number']} bounced (Rs." . number_format((float)($rcpt['amount'] ?? 0), 2) . ", +Rs.500 penalty). {$reason}");
+
+            $this->db->commit();
+            return ['success' => true, 'new_status' => $newStatus];
+        } catch (\Throwable $e) {
+            if ($this->db && $this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
+            error_log('[BookingLifecycleService::markReceiptBounced] ' . $e->getMessage());
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /* ====================================================================
      * 11. calculateCommission
      * ================================================================== */
 

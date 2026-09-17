@@ -73,8 +73,23 @@ class PayoutBatchService
      * Auto-populate a batch from pending ledger entries.
      * Filters by commission type, date range, and status.
      */
+    /** Admin/processing fee % deducted on every payout (over TDS). */
+    public const ADMIN_FEE_PCT = 5.0;
+
+    /** Idempotent guard for the admin_fee breakdown column (DDL outside txn). */
+    private function ensureAdminFeeColumn(): void
+    {
+        try {
+            $cols = $this->pdo->query("SHOW COLUMNS FROM payout_entries LIKE 'admin_fee'")->fetchAll(\PDO::FETCH_ASSOC);
+            if (empty($cols)) {
+                $this->pdo->exec("ALTER TABLE payout_entries ADD COLUMN admin_fee DECIMAL(15,2) NOT NULL DEFAULT 0 AFTER tds_amount");
+            }
+        } catch (\Throwable $e) { error_log('[PayoutBatch] ensureAdminFeeColumn: ' . $e->getMessage()); }
+    }
+
     public function autoPopulateBatch(int $batchId, string $commissionType = '', string $fromDate = '', string $toDate = ''): array
     {
+        $this->ensureAdminFeeColumn();
         try {
             $this->pdo->beginTransaction();
             $tid = $this->tenantId();
@@ -160,8 +175,8 @@ class PayoutBatchService
             $ins = $this->pdo->prepare("
                 INSERT INTO payout_entries
                     (batch_id, ledger_id, beneficiary_user_id, beneficiary_name,
-                     commission_type, amount, tds_amount, net_amount, status, created_at, tenant_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW(), ?)
+                     commission_type, amount, tds_amount, admin_fee, net_amount, status, created_at, tenant_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW(), ?)
             ");
 
             foreach ($entries as $entry) {
@@ -172,7 +187,8 @@ class PayoutBatchService
                 $amount = (float)$entry['amount'];
                 $tdsResult = $tdsConfig->calculateForCommission($amount);
                 $tds = $tdsResult['tds_amount'];
-                $net = $amount - $tds;
+                $adminFee = round($amount * self::ADMIN_FEE_PCT / 100, 2);
+                $net = $amount - $tds - $adminFee;
 
                 $ins->execute([
                     $batchId,
@@ -182,6 +198,7 @@ class PayoutBatchService
                     $entry['commission_type'],
                     $amount,
                     $tds,
+                    $adminFee,
                     round($net, 2),
                     $this->tenantId(),
                 ]);
