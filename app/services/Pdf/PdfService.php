@@ -68,6 +68,7 @@ class PdfService
     public function __construct($db = null)
     {
         $this->db = $this->normalizeDb($db) ?: $this->resolveDb();
+        error_log('[PdfService] Constructor - db resolved: ' . ($this->db instanceof \PDO ? 'PDO OK' : 'NULL'));
         if (defined('STORAGE_PATH')) {
             $this->storagePath = STORAGE_PATH . '/pdfs';
         } else {
@@ -947,12 +948,13 @@ class PdfService
         try {
             $stmt = $this->db->prepare("
                 INSERT INTO gateway_logs
-                  (gateway, action, recipient, status, request_payload, response_payload, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, NOW())
+                  (gateway, action, method, endpoint, recipient, status, request_payload, response_payload, created_at)
+                VALUES (?, ?, 'LOCAL', ?, ?, ?, ?, ?, NOW())
             ");
             $stmt->execute([
                 'pdf',
                 'generate_' . $type,
+                'pdf/' . $type,
                 'id:' . $id,
                 'success',
                 json_encode(['type' => $type, 'id' => $id]),
@@ -1004,12 +1006,16 @@ class PdfService
     protected function resolveDb()
     {
         try {
-            if (class_exists('\App\Core\Database', false) ||
-                class_exists('\App\Core\Database\Database', false)) {
-                $cls = class_exists('\App\Core\Database', false)
-                    ? '\App\Core\Database'
-                    : '\App\Core\Database\Database';
-                $instance = $cls::getInstance();
+            // Prefer the actual Database class directly (not the shim)
+            if (class_exists('\App\Core\Database\Database', false)) {
+                $instance = \App\Core\Database\Database::getInstance();
+                if (method_exists($instance, 'getConnection')) return $instance->getConnection();
+                if (method_exists($instance, 'getPdo')) return $instance->getPdo();
+                if (property_exists($instance, 'pdo')) return $instance->pdo;
+            }
+            // Fallback to shim if needed
+            if (class_exists('\App\Core\Database', false)) {
+                $instance = \App\Core\Database::getInstance();
                 if (method_exists($instance, 'getConnection')) return $instance->getConnection();
                 if (method_exists($instance, 'getPdo')) return $instance->getPdo();
                 if (property_exists($instance, 'pdo')) return $instance->pdo;
@@ -1019,8 +1025,7 @@ class PdfService
                 if (method_exists($instance, 'getConnection')) return $instance->getConnection();
             }
         } catch (\Throwable $e) {
-        // fall through
-        error_log($e->getMessage());
+            error_log($e->getMessage());
         }
         return null;
     }

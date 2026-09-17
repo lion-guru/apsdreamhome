@@ -125,7 +125,7 @@ class ToolsAdminController extends AdminController
 
         $configs = [];
         try {
-            $configs = $db->query("SELECT * FROM stamp_duty_config ORDER BY state_code, property_type")->fetchAll(PDO::FETCH_ASSOC);
+            $configs = $db->query("SELECT * FROM stamp_duty_config ORDER BY state_code")->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Exception $e) { error_log("ToolsAdminController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $rates = [];
@@ -212,7 +212,7 @@ class ToolsAdminController extends AdminController
 
         $landmarks = [];
         try {
-            $landmarks = $db->query("SELECT l.*, (SELECT COUNT(*) FROM colony_landmark_distances WHERE landmark_id = l.id) as linked_colonies FROM landmarks l ORDER BY l.type, l.name")->fetchAll(PDO::FETCH_ASSOC);
+            $landmarks = $db->query("SELECT l.*, l.type AS category, (SELECT COUNT(*) FROM colony_landmark_distances WHERE landmark_id = l.id) as linked_colonies FROM landmarks l ORDER BY l.type, l.name")->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Exception $e) { error_log("ToolsAdminController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $colonies = [];
@@ -233,7 +233,7 @@ class ToolsAdminController extends AdminController
 
         $categories = [];
         try {
-            $categories = $db->query("SELECT DISTINCT category FROM landmarks ORDER BY category")->fetchAll(PDO::FETCH_COLUMN);
+            $categories = $db->query("SELECT DISTINCT type AS category FROM landmarks ORDER BY type")->fetchAll(PDO::FETCH_COLUMN);
         } catch (\Exception $e) { error_log("ToolsAdminController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         return $this->render('admin/tools/landmarks', [

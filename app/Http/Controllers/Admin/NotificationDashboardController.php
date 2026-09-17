@@ -217,7 +217,7 @@ class NotificationDashboardController extends AdminController
 
         try {
             $stats['whatsapp'] = $db->query(
-                "SELECT template_name, category, status, usage_count FROM whatsapp_templates WHERE status = 'active' ORDER BY template_name"
+                "SELECT template_name, category, status, 0 as usage_count FROM whatsapp_templates WHERE status = 'active' ORDER BY template_name"
             )->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) { error_log("NotificationDashboardController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 

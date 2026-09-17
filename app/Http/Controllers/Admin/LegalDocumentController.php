@@ -165,7 +165,12 @@ class LegalDocumentController extends AdminController
             $cats = [];
         }
 
-        $merge_fields = ['{{name}}', '{{email}}', '{{phone}}', '{{address}}', '{{date}}', '{{company}}', '{{document_number}}'];
+        $merge_fields = [
+            'customer' => ['{{customer_name}}' => 'Customer name', '{{phone}}' => 'Phone', '{{email}}' => 'Email', '{{address}}' => 'Address'],
+            'plot'     => ['{{plot_no}}' => 'Plot number', '{{colony}}' => 'Colony', '{{area}}' => 'Area'],
+            'document' => ['{{date}}' => 'Date', '{{document_number}}' => 'Document number'],
+            'company'  => ['{{company}}' => 'Company name'],
+        ];
 
         return $this->render('admin/legal/templates', [
             'page_title'   => 'Document Templates',
@@ -468,7 +473,12 @@ class LegalDocumentController extends AdminController
             $colonies = [];
         }
 
-        $merge_fields = ['{{name}}', '{{email}}', '{{phone}}', '{{address}}', '{{date}}', '{{company}}', '{{document_number}}'];
+        $merge_fields = [
+            'customer' => ['{{customer_name}}' => 'Customer name', '{{phone}}' => 'Phone', '{{email}}' => 'Email', '{{address}}' => 'Address'],
+            'plot'     => ['{{plot_no}}' => 'Plot number', '{{colony}}' => 'Colony', '{{area}}' => 'Area'],
+            'document' => ['{{date}}' => 'Date', '{{document_number}}' => 'Document number'],
+            'company'  => ['{{company}}' => 'Company name'],
+        ];
 
         return $this->render('admin/legal/document_create', [
             'page_title'   => 'Create Document',
@@ -863,7 +873,12 @@ class LegalDocumentController extends AdminController
             $customers = [];
         }
 
-        $merge_fields = ['{{name}}', '{{email}}', '{{phone}}', '{{address}}', '{{date}}', '{{company}}', '{{document_number}}'];
+        $merge_fields = [
+            'customer' => ['{{customer_name}}' => 'Customer name', '{{phone}}' => 'Phone', '{{email}}' => 'Email', '{{address}}' => 'Address'],
+            'plot'     => ['{{plot_no}}' => 'Plot number', '{{colony}}' => 'Colony', '{{area}}' => 'Area'],
+            'document' => ['{{date}}' => 'Date', '{{document_number}}' => 'Document number'],
+            'company'  => ['{{company}}' => 'Company name'],
+        ];
 
         return $this->render('admin/legal/ai_composer', [
             'page_title'   => 'AI Document Composer',

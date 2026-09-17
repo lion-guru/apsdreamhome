@@ -560,12 +560,12 @@ class AIAgentApiController extends BaseController
             // Get engine distribution
             try {
                 $rows = $this->db->fetchAll(
-                    "SELECT engine, COUNT(*) as count FROM ai_api_logs 
-                     WHERE created_at > DATE_SUB(NOW(), INTERVAL 7 DAY) 
-                     GROUP BY engine ORDER BY count DESC LIMIT 10"
+                    "SELECT COALESCE(NULLIF(engine_used,''), service) AS engine, COUNT(*) as count FROM ai_api_logs
+                     WHERE created_at > DATE_SUB(NOW(), INTERVAL 7 DAY)
+                     GROUP BY COALESCE(NULLIF(engine_used,''), service) ORDER BY count DESC LIMIT 10"
                 );
                 foreach ($rows as $r) {
-                    $analytics['engine_distribution'][$r['engine']] = intval($r['count']);
+                    $analytics['engine_distribution'][$r['engine'] ?? 'unknown'] = intval($r['count']);
                 }
             } catch (\Throwable $e) { error_log("AIAgentApiController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
@@ -584,12 +584,12 @@ class AIAgentApiController extends BaseController
                 }
             } catch (\Throwable $e) { error_log("AIAgentApiController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
-            // Get top intents
+            // Get top endpoints (ai_api_logs has no task column; endpoint is the activity grain)
             try {
                 $rows = $this->db->fetchAll(
-                    "SELECT task, COUNT(*) as count FROM ai_api_logs 
-                     WHERE task IS NOT NULL AND created_at > DATE_SUB(NOW(), INTERVAL 7 DAY)
-                     GROUP BY task ORDER BY count DESC LIMIT 5"
+                    "SELECT endpoint AS task, COUNT(*) as count FROM ai_api_logs
+                     WHERE endpoint IS NOT NULL AND created_at > DATE_SUB(NOW(), INTERVAL 7 DAY)
+                     GROUP BY endpoint ORDER BY count DESC LIMIT 5"
                 );
                 foreach ($rows as $r) {
                     $analytics['top_intents'][] = [

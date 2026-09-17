@@ -96,10 +96,10 @@ $total_circle_rates = $total_circle_rates ?? 0;
                                     <?php foreach ($configs as $c): ?>
                                     <tr>
                                         <td><strong><?= htmlspecialchars($c['state_code'] ?? '') ?></strong></td>
-                                        <td><span class="badge bg-info"><?= ucfirst($c['property_type']) ?></span></td>
-                                        <td><span class="text-primary fw-bold"><?= $c['stamp_rate'] ?>%</span></td>
-                                        <td><?= $c['registration_rate'] ?>%</td>
-                                        <td><span class="text-success fw-bold"><?= ($c['stamp_rate'] + $c['registration_rate']) ?>%</span></td>
+                                        <td><span class="badge bg-info"><?= ucfirst($c['property_type'] ?? 'all') ?></span></td>
+                                        <td><span class="text-primary fw-bold"><?= ($c['male_rate'] ?? 0) ?>%</span></td>
+                                        <td><?= ($c['registration_rate'] ?? 0) ?>%</td>
+                                        <td><span class="text-success fw-bold"><?= (($c['male_rate'] ?? 0) + ($c['registration_rate'] ?? 0)) ?>%</span></td>
                                         <td><small class="text-muted"><?= date('d M Y', strtotime($c['updated_at'] ?? $c['created_at'] ?? '')) ?></small></td>
                                     </tr>
                                     <?php endforeach; ?>
