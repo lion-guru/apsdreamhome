@@ -388,15 +388,16 @@ class ExecutiveAIService
      */
     private function logInteraction(int $userId, string $role, string $message, string $response): void
     {
+        // NOTE: ai_api_logs has engine_used/service/endpoint (no engine/task/token cols).
         try {
             $logInsertData = $this->tenantInsertData();
-        $logCols = 'user_id, engine, task, input_tokens, output_tokens, response_time_ms, created_at' . (count($logInsertData) > 0 ? ', tenant_id' : '');
-        $logPh = '?, ?, ?, ?, ?, 0, NOW()' . (count($logInsertData) > 0 ? ', ?' : '');
-        $logParams = [$userId, 'executive_ai', 'chat', mb_strlen($message), mb_strlen($response)];
-        if (!empty($logInsertData)) $logParams = array_merge($logParams, array_values($logInsertData));
-        $this->db->getConnection()->prepare(
-            "INSERT INTO ai_api_logs ($logCols) VALUES ($logPh)"
-        )->execute($logParams);
+            $logCols = 'user_id, engine_used, service, endpoint, status_code, response_time_ms, created_at' . (count($logInsertData) > 0 ? ', tenant_id' : '');
+            $logPh = '?, ?, ?, ?, 200, 0, NOW()' . (count($logInsertData) > 0 ? ', ?' : '');
+            $logParams = [$userId, 'executive_ai', substr($role, 0, 50), 'chat'];
+            if (!empty($logInsertData)) $logParams = array_merge($logParams, array_values($logInsertData));
+            $this->db->getConnection()->prepare(
+                "INSERT INTO ai_api_logs ($logCols) VALUES ($logPh)"
+            )->execute($logParams);
         } catch (\Throwable $e) {
         // Non-critical — don't break the flow
         error_log($e->getMessage());
