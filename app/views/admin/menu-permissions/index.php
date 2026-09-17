@@ -2,148 +2,220 @@
 $page_title = 'Menu Permissions Management';
 $active_page = 'menu-permissions';
 ?>
-
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Menu Permissions Management</h1>
+    <h1 class="h2"><i class="fas fa-shield-alt me-2"></i>Menu Permissions Matrix</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <button type="button" class="btn btn-outline-primary me-2" id="btnExpandAll">
+            <i class="fas fa-expand-alt"></i> Expand All
+        </button>
+        <button type="button" class="btn btn-outline-secondary me-2" id="btnCollapseAll">
+            <i class="fas fa-compress-alt"></i> Collapse All
+        </button>
+        <button type="button" class="btn btn-success" id="btnSaveAll">
+            <i class="fas fa-save"></i> Save All Changes
+        </button>
+    </div>
 </div>
 
-<div class="row">
-    <div class="col-md-12">
-        <div class="card mb-4">
-            <div class="card-header aps-cp-card-header">
-                <ul class="nav nav-tabs card-header-tabs" id="permissionsTabs" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" id="role-permissions-tab" data-bs-toggle="tab" href="#role-permissions" role="tab">Role Permissions</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="user-permissions-tab" data-bs-toggle="tab" href="#user-permissions" role="tab">User Permissions</a>
-                    </li>
-                </ul>
-            </div>
-            <div class="card-body aps-cp-card-body">
-                <div class="tab-content" id="permissionsTabsContent">
-                    <!-- Role Permissions Tab -->
-                    <div class="tab-pane fade show active" id="role-permissions" role="tabpanel">
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle"></i> Manage which roles can access which menu items. Super Admin and Admin automatically have full access.
-                        </div>
-                        
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-hover" id="rolePermissionsTable">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th>Menu Item</th>
-                                        <th>URL</th>
-                                        <th>Super Admin</th>
-                                        <th>Admin</th>
-                                        <th>Manager</th>
-                                        <th>Associate</th>
-                                        <th>Agent</th>
-                                        <th>User</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($menuItems as $item): ?>
-                                        <?php if (empty($item['children'])): ?>
-                                            <tr data-menu-id="<?php echo e($item['id']); ?>">
-                                                <td>
-                                                    <i class="fas <?php echo htmlspecialchars($item['icon'] ?? ''); ?> me-2"></i>
-                                                    <?php echo htmlspecialchars($item['name'] ?? ''); ?>
-                                                </td>
-                                                <td><code><?php echo htmlspecialchars($item['url'] ?? ''); ?></code></td>
-                                                <?php
-                                                $roles = ['super_admin', 'admin', 'manager', 'associate', 'agent', 'user'];
-                                                foreach ($roles as $role): ?>
-                                                    <td>
-                                                        <div class="form-check form-switch">
-                                                            <input class="form-check-input role-permission-check" 
-                                                                   type="checkbox" 
-                                                                   role="switch"
-                                                                   data-role="<?php echo e($role); ?>"
-                                                                   data-menu-id="<?php echo e($item['id']); ?>"
-                                                                   <?php echo isset($item['role_permissions'][$role]) && $item['role_permissions'][$role]['can_view'] ? 'checked' : ''; ?>>
-                                                        </div>
-                                                    </td>
-                                                <?php endforeach; ?>
-                                            </tr>
-                                        <?php else: ?>
-                                            <!-- Parent menu item with children -->
-                                            <tr class="table-primary font-weight-bold" data-menu-id="<?php echo e($item['id']); ?>">
-                                                <td colspan="8">
-                                                    <i class="fas <?php echo htmlspecialchars($item['icon'] ?? ''); ?> me-2"></i>
-                                                    <?php echo htmlspecialchars($item['name'] ?? ''); ?> (Parent)
-                                                </td>
-                                            </tr>
-                                            <?php foreach ($item['children'] as $child): ?>
-                                                <tr class="ms-4" data-menu-id="<?php echo e($child['id']); ?>">
-                                                    <td>
-                                                        <i class="fas <?php echo htmlspecialchars($child['icon'] ?? ''); ?> me-2"></i>
-                                                        <?php echo htmlspecialchars($child['name'] ?? ''); ?>
-                                                    </td>
-                                                    <td><code><?php echo htmlspecialchars($child['url'] ?? ''); ?></code></td>
-                                                    <?php
-                                                    foreach ($roles as $role): ?>
-                                                        <td>
-                                                            <div class="form-check form-switch">
-                                                                <input class="form-check-input role-permission-check" 
-                                                                       type="checkbox" 
-                                                                       role="switch"
-                                                                       data-role="<?php echo e($role); ?>"
-                                                                       data-menu-id="<?php echo e($child['id']); ?>"
-                                                                       <?php echo isset($child['role_permissions'][$role]) && $child['role_permissions'][$role]['can_view'] ? 'checked' : ''; ?>>
-                                                            </div>
-                                                        </td>
-                                                    <?php endforeach; ?>
-                                                </tr>
-                                            <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
+<!-- Info Alert -->
+<div class="alert alert-info mb-4">
+    <i class="fas fa-info-circle me-2"></i>
+    <strong>Role-Based Menu Permissions Matrix</strong> — Configure which roles can access which menu items.
+    <ul class="mb-0 mt-2">
+        <li><strong>Can View</strong> — Menu item appears in sidebar</li>
+        <li><strong>Can Create</strong> — Allows CREATE actions on that module</li>
+        <li><strong>Can Edit</strong> — Allows EDIT actions on that module</li>
+        <li><strong>Can Delete</strong> — Allows DELETE actions on that module</li>
+        <li>Super Admin always has full access (cannot be modified)</li>
+        <li>Changes are saved instantly via AJAX with toast notifications</li>
+    </ul>
+</div>
+
+<!-- Role Category Tabs -->
+<ul class="nav nav-tabs mb-4" id="roleCategoryTabs" role="tablist">
+    <?php foreach ($categoryOrder as $catIndex => $category): ?>
+        <?php if (!empty($rolesByCategory[$category])): ?>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link <?= $catIndex === 0 ? 'active' : '' ?>" 
+                        data-bs-toggle="tab" 
+                        data-bs-target="#cat-<?= strtolower(str_replace(' ', '-', $category)) ?>" 
+                        role="tab" 
+                        aria-selected="<?= $catIndex === 0 ? 'true' : 'false' ?>">
+                    <i class="fas fa-<?= $categoryIcons[$category] ?? 'users' ?> me-1"></i>
+                    <?= $category ?>
+                    <span class="badge bg-light text-dark ms-1"><?= count($rolesByCategory[$category]) ?></span>
+                </button>
+            </li>
+        <?php endif; ?>
+    <?php endforeach; ?>
+</ul>
+
+<!-- Tab Panes -->
+<div class="tab-content" id="roleCategoryTabsContent">
+    <?php foreach ($categoryOrder as $catIndex => $category): ?>
+        <?php if (!empty($rolesByCategory[$category])): ?>
+            <div class="tab-pane fade <?= $catIndex === 0 ? 'show active' : '' ?>" 
+                 id="cat-<?= strtolower(str_replace(' ', '-', $category)) ?>" 
+                 role="tabpanel">
+                
+                <div class="card aps-cp-card mb-4">
+                    <div class="card-header aps-cp-card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-<?= $categoryIcons[$category] ?? 'users' ?> me-2"></i>
+                            <?= $category ?> Roles
+                        </h5>
                     </div>
-
-                    <!-- User Permissions Tab -->
-                    <div class="tab-pane fade" id="user-permissions" role="tabpanel">
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle"></i> Grant custom menu permissions to specific users. These permissions override role-based permissions.
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Select User</label>
-                                <select class="form-select" id="userSelect">
-                                    <option value="">-- Select a user --</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div id="userPermissionsContent" >
-                            <div class="card aps-cp-card">
-                                <div class="card-header aps-cp-card-header">
-                                    <strong>Custom Permissions for: <span id="selectedUserName"></span></strong>
-                                </div>
-                                <div class="card-body aps-cp-card-body">
+                    <div class="card-body aps-cp-card-body">
+                        <?php foreach ($rolesByCategory[$category] as $roleKey => $roleInfo): ?>
+                            <div class="role-matrix-section mb-4">
+                                <h6 class="d-flex align-items-center mb-3">
+                                    <span class="badge bg-<?= $roleBadgeColors[$category] ?? 'primary' ?> me-2">
+                                        <?= $roleInfo['level'] ?? '?' ?>
+                                    </span>
+                                    <span class="fw-bold"><?= $roleInfo['name'] ?></span>
+                                    <span class="text-muted ms-2">(<code><?= $roleKey ?></code>)</span>
+                                    <?php if ($roleKey === 'super_admin'): ?>
+                                        <span class="badge bg-danger ms-2">Full Access</span>
+                                    <?php endif; ?>
+                                </h6>
+                                
+                                <?php if ($roleKey === 'super_admin'): ?>
+                                    <div class="alert alert-warning mb-0">
+                                        <i class="fas fa-lock me-2"></i> Super Admin has unrestricted access to all menu items. Permissions cannot be modified.
+                                    </div>
+                                <?php else: ?>
                                     <div class="table-responsive">
-                                        <table class="table table-bordered table-hover" id="userPermissionsTable">
+                                        <table class="table table-bordered table-hover permission-matrix" data-role="<?= $roleKey ?>">
                                             <thead class="table-dark">
                                                 <tr>
-                                                    <th>Menu Item</th>
-                                                    <th>View</th>
-                                                    <th>Create</th>
-                                                    <th>Edit</th>
-                                                    <th>Delete</th>
-                                                    <th>Action</th>
+                                                    <th style="width: 35%;">Menu Item</th>
+                                                    <th style="width: 20%;">URL</th>
+                                                    <th class="text-center" style="width: 11%;">
+                                                        <i class="fas fa-eye" title="Can View - Menu visibility"></i>
+                                                    </th>
+                                                    <th class="text-center" style="width: 11%;">
+                                                        <i class="fas fa-plus" title="Can Create"></i>
+                                                    </th>
+                                                    <th class="text-center" style="width: 11%;">
+                                                        <i class="fas fa-edit" title="Can Edit"></i>
+                                                    </th>
+                                                    <th class="text-center" style="width: 12%;">
+                                                        <i class="fas fa-trash" title="Can Delete"></i>
+                                                    </th>
                                                 </tr>
                                             </thead>
-                                            <tbody id="userPermissionsBody">
-                                                <!-- Dynamic content -->
+                                            <tbody>
+                                                <?php 
+                                                // Flatten menu items for this role
+                                                $flatItems = flattenMenuItems($menuItems);
+                                                foreach ($flatItems as $item): 
+                                                    $perms = $item['role_permissions'][$roleKey] ?? ['can_view'=>0,'can_create'=>0,'can_edit'=>0,'can_delete'=>0];
+                                                    $isParent = !empty($item['children']);
+                                                ?>
+                                                    <tr data-menu-id="<?= $item['id'] ?>" class="<?= $isParent ? 'table-primary fw-bold parent-row' : '' ?>" <?= $isParent ? 'data-has-children="true"' : '' ?>>
+                                                        <td>
+                                                            <i class="fas <?= htmlspecialchars($item['icon'] ?? 'fa-circle') ?> me-2 text-muted"></i>
+                                                            <?= str_repeat('&nbsp;&nbsp;&nbsp;', $item['depth'] ?? 0) ?>
+                                                            <?= htmlspecialchars($item['name'] ?? '') ?>
+                                                            <?php if ($isParent): ?>
+                                                                <i class="fas fa-chevron-down toggle-children ms-2" style="cursor:pointer;"></i>
+                                                            <?php endif; ?>
+                                                        </td>
+                                                        <td><code class="small"><?= htmlspecialchars($item['url'] ?? '') ?></code></td>
+                                                        <td class="text-center">
+                                                            <div class="form-check form-switch d-inline-block">
+                                                                <input class="form-check-input perm-check" type="checkbox" role="switch"
+                                                                       name="can_view" data-perm="can_view"
+                                                                       data-role="<?= $roleKey ?>" data-menu-id="<?= $item['id'] ?>"
+                                                                       <?= $perms['can_view'] ? 'checked' : '' ?>
+                                                                       <?= $roleKey === 'super_admin' ? 'disabled' : '' ?>>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <div class="form-check form-switch d-inline-block">
+                                                                <input class="form-check-input perm-check" type="checkbox" role="switch"
+                                                                       name="can_create" data-perm="can_create"
+                                                                       data-role="<?= $roleKey ?>" data-menu-id="<?= $item['id'] ?>"
+                                                                       <?= $perms['can_create'] ? 'checked' : '' ?>
+                                                                       <?= !$perms['can_view'] || $roleKey === 'super_admin' ? 'disabled' : '' ?>>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <div class="form-check form-switch d-inline-block">
+                                                                <input class="form-check-input perm-check" type="checkbox" role="switch"
+                                                                       name="can_edit" data-perm="can_edit"
+                                                                       data-role="<?= $roleKey ?>" data-menu-id="<?= $item['id'] ?>"
+                                                                       <?= $perms['can_edit'] ? 'checked' : '' ?>
+                                                                       <?= !$perms['can_view'] || $roleKey === 'super_admin' ? 'disabled' : '' ?>>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <div class="form-check form-switch d-inline-block">
+                                                                <input class="form-check-input perm-check" type="checkbox" role="switch"
+                                                                       name="can_delete" data-perm="can_delete"
+                                                                       data-role="<?= $roleKey ?>" data-menu-id="<?= $item['id'] ?>"
+                                                                       <?= $perms['can_delete'] ? 'checked' : '' ?>
+                                                                       <?= !$perms['can_view'] || $roleKey === 'super_admin' ? 'disabled' : '' ?>>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                <?php endforeach; ?>
                                             </tbody>
                                         </table>
                                     </div>
-                                </div>
+                                <?php endif; ?>
                             </div>
-                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+    <?php endforeach; ?>
+</div>
+
+<!-- User Custom Permissions Section -->
+<div class="card aps-cp-card mt-5">
+    <div class="card-header aps-cp-card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-user-cog me-2"></i>Custom User Permissions</h5>
+        <span class="badge bg-info">Overrides role permissions</span>
+    </div>
+    <div class="card-body aps-cp-card-body">
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Select User</label>
+                <select class="form-select select2" id="userSelect" style="width: 100%;">
+                    <option value="">-- Select a user --</option>
+                </select>
+            </div>
+            <div class="col-md-6 d-flex align-items-end">
+                <button type="button" class="btn btn-outline-secondary" id="btnLoadUserPerms" disabled>
+                    <i class="fas fa-folder-open me-1"></i> Load Permissions
+                </button>
+            </div>
+        </div>
+        
+        <div id="userPermissionsContent" style="display: none;">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
+                    <strong>Custom Permissions for: <span id="selectedUserName" class="text-primary"></span></strong>
+                    <small class="text-muted ms-3">These override role-based permissions</small>
+                </div>
+                <div class="card-body aps-cp-card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover" id="userPermissionsTable">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th style="width: 40%;">Menu Item</th>
+                                    <th class="text-center" style="width: 15%;">View</th>
+                                    <th class="text-center" style="width: 15%;">Create</th>
+                                    <th class="text-center" style="width: 15%;">Edit</th>
+                                    <th class="text-center" style="width: 15%;">Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userPermissionsBody">
+                                <!-- Dynamic content -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -151,221 +223,375 @@ $active_page = 'menu-permissions';
     </div>
 </div>
 
+<?php
+// Helper function to flatten menu items with depth
+function flattenMenuItems($items, $depth = 0) {
+    $result = [];
+    foreach ($items as $item) {
+        $item['depth'] = $depth;
+        $result[] = $item;
+        if (!empty($item['children'])) {
+            $result = array_merge($result, flattenMenuItems($item['children'], $depth + 1));
+        }
+    }
+    return $result;
+}
+
+// Category icons
+$categoryIcons = [
+    'Executive' => 'crown',
+    'Management' => 'briefcase',
+    'Departmental' => 'building',
+    'Team Lead' => 'user-tie',
+    'Senior Staff' => 'star',
+    'Staff' => 'user',
+    'Telecalling' => 'headset',
+    'MLM' => 'sitemap',
+    'Agent' => 'id-badge',
+    'Franchise' => 'store',
+    'Customer' => 'user-check',
+    'Lead' => 'magnifying-glass',
+    'Guest' => 'user-clock',
+    'Legacy' => 'archive',
+];
+
+// Role badge colors by category
+$roleBadgeColors = [
+    'Executive' => 'danger',
+    'Management' => 'warning',
+    'Departmental' => 'info',
+    'Team Lead' => 'success',
+    'Senior Staff' => 'primary',
+    'Staff' => 'secondary',
+    'Telecalling' => 'purple',
+    'MLM' => 'orange',
+    'Agent' => 'teal',
+    'Franchise' => 'pink',
+    'Customer' => 'green',
+    'Lead' => 'indigo',
+    'Guest' => 'dark',
+    'Legacy' => 'light',
+];
+?>
+
 <script>
+// Global variables
+const BASE_URL = '<?= defined('BASE_URL') ? BASE_URL : '' ?>';
+const CSRF_TOKEN = '<?= $_SESSION['csrf_token'] ?? '' ?>';
+
+// Toast notification system
+function showToast(message, type = 'success') {
+    const toastContainer = document.getElementById('toastContainer') || createToastContainer();
+    const toast = document.createElement('div');
+    toast.className = `toast align-items-center text-white bg-${type} border-0`;
+    toast.setAttribute('role', 'alert');
+    toast.setAttribute('aria-live', 'assertive');
+    toast.setAttribute('aria-atomic', 'true');
+    toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">${message}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    `;
+    toastContainer.appendChild(toast);
+    const bsToast = new bootstrap.Toast(toast, { delay: 3000 });
+    bsToast.show();
+    toast.addEventListener('hidden.bs.toast', () => toast.remove());
+}
+
+function createToastContainer() {
+    const container = document.createElement('div');
+    container.id = 'toastContainer';
+    container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+    container.style.zIndex = '9999';
+    document.body.appendChild(container);
+    return container;
+}
+
+// Show loader
+function showLoader() {
+    if (!document.getElementById('global-loader')) {
+        const loader = document.createElement('div');
+        loader.id = 'global-loader';
+        loader.innerHTML = '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>';
+        document.body.appendChild(loader);
+        document.body.classList.add('loading-shim');
+    }
+}
+
+function hideLoader() {
+    const loader = document.getElementById('global-loader');
+    if (loader) { loader.remove(); document.body.classList.remove('loading-shim'); }
+}
+
+// Permission toggle handler
 document.addEventListener('DOMContentLoaded', function() {
-    // Handle role permission toggle
-    document.querySelectorAll('.role-permission-check').forEach(checkbox => {
+    // Expand/Collapse all
+    document.getElementById('btnExpandAll')?.addEventListener('click', function() {
+        document.querySelectorAll('.permission-matrix tbody tr[data-has-children="true"]').forEach(row => {
+            const toggle = row.querySelector('.toggle-children');
+            if (toggle && toggle.classList.contains('fa-chevron-down')) {
+                toggle.click();
+            }
+        });
+    });
+    
+    document.getElementById('btnCollapseAll')?.addEventListener('click', function() {
+        document.querySelectorAll('.permission-matrix tbody tr[data-has-children="true"]').forEach(row => {
+            const toggle = row.querySelector('.toggle-children');
+            if (toggle && !toggle.classList.contains('fa-chevron-down')) {
+                toggle.click();
+            }
+        });
+    });
+
+    // Toggle children rows
+    document.querySelectorAll('.toggle-children').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const row = this.closest('tr');
+            const menuId = row.dataset.menuId;
+            const isExpanded = this.classList.toggle('fa-chevron-up');
+            this.classList.toggle('fa-chevron-down', !isExpanded);
+            
+            // Show/hide child rows
+            document.querySelectorAll(`.permission-matrix tbody tr[data-parent-id="${menuId}"]`).forEach(childRow => {
+                childRow.style.display = isExpanded ? '' : 'none';
+            });
+        });
+    });
+
+    // Permission checkbox changes
+    document.querySelectorAll('.perm-check').forEach(checkbox => {
         checkbox.addEventListener('change', function() {
             const role = this.dataset.role;
             const menuId = this.dataset.menuId;
-            const canView = this.checked ? 1 : 0;
-
+            const perm = this.dataset.perm;
+            const checked = this.checked;
+            
+            // If enabling a child permission, ensure View is also enabled
+            if (checked && perm !== 'can_view') {
+                const viewCheck = document.querySelector(`.perm-check[data-role="${role}"][data-menu-id="${menuId}"][data-perm="can_view"]`);
+                if (viewCheck && !viewCheck.checked) {
+                    viewCheck.checked = true;
+                    viewCheck.dispatchEvent(new Event('change'));
+                }
+            }
+            
+            // If disabling View, disable all child permissions
+            if (!checked && perm === 'can_view') {
+                ['can_create', 'can_edit', 'can_delete'].forEach(p => {
+                    const childCheck = document.querySelector(`.perm-check[data-role="${role}"][data-menu-id="${menuId}"][data-perm="${p}"]`);
+                    if (childCheck && childCheck.checked) {
+                        childCheck.checked = false;
+                        childCheck.dispatchEvent(new Event('change'));
+                    }
+                    childCheck.disabled = true;
+                });
+            } else if (checked && perm === 'can_view') {
+                ['can_create', 'can_edit', 'can_delete'].forEach(p => {
+                    const childCheck = document.querySelector(`.perm-check[data-role="${role}"][data-menu-id="${menuId}"][data-perm="${p}"]`);
+                    if (childCheck) {
+                        childCheck.disabled = false;
+                    }
+                });
+            }
+            
+            // Send AJAX request
             showLoader();
-            fetch('<?php echo BASE_URL; ?>/admin/menu-permissions/update-role', {
+            fetch(BASE_URL + '/admin/menu-permissions/update-role', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: `role=${role}&menu_item_id=${menuId}&can_view=${canView}&can_create=${canView}&can_edit=${canView}&can_delete=${canView}`
+                body: `role=${encodeURIComponent(role)}&menu_item_id=${menuId}&can_view=${document.querySelector(`.perm-check[data-role="${role}"][data-menu-id="${menuId}"][data-perm="can_view"]`)?.checked ? 1 : 0}&can_create=${document.querySelector(`.perm-check[data-role="${role}"][data-menu-id="${menuId}"][data-perm="can_create"]`)?.checked ? 1 : 0}&can_edit=${document.querySelector(`.perm-check[data-role="${role}"][data-menu-id="${menuId}"][data-perm="can_edit"]`)?.checked ? 1 : 0}&can_delete=${document.querySelector(`.perm-check[data-role="${role}"][data-menu-id="${menuId}"][data-perm="can_delete"]`)?.checked ? 1 : 0}`
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Show success message
-                    const alert = document.createElement('div');
-                    .catch(err => console.error('Request failed:', err));
-                    alert.className = 'alert alert-success alert-dismissible fade show';
-                    alert.innerHTML = `
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        Permission updated successfully!
-                    `;
-                    document.querySelector('.card-body').prepend(alert);
-                    setTimeout(() => alert.remove(), 3000);
+                    showToast('Permission updated successfully', 'success');
                 } else {
-                    showToast('Failed to update permission', 'danger');
+                    showToast('Failed to update permission: ' + (data.message || 'Unknown error'), 'danger');
+                    // Revert checkbox
+                    this.checked = !checked;
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 showToast('Error updating permission', 'danger');
-            ).finally(() => hideLoader());
+                this.checked = !checked;
+            })
+            .finally(() => hideLoader());
         });
     });
 
-    // Load users for user permissions tab
-    document.getElementById('user-permissions-tab').addEventListener('click', function() {
-        showLoader();
-        fetch('<?php echo BASE_URL; ?>/admin/menu-permissions/get-users')
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    .catch(err => console.error('Request failed:', err));
-                    const select = document.getElementById('userSelect');
-                    select.innerHTML = '<option value="">-- Select a user --</option>';
-                    data.users.forEach(user => {
-                        const option = document.createElement('option');
-                        option.value = user.id;
-                        option.textContent = `${user.name} (${user.role})`;
-                        select.appendChild(option);
-                    ).finally(() => hideLoader());
-                }
-            });
-    });
-
-    // Handle user selection
-    document.getElementById('userSelect').addEventListener('change', function() {
-        const userId = this.value;
-        if (!userId) {
-            document.getElementById('userPermissionsContent').style.display = 'none';
-            return;
-        }
-
-        document.getElementById('selectedUserName').textContent = this.options[this.selectedIndex].text;
-        document.getElementById('userPermissionsContent').style.display = 'block';
-
-        // Load user's custom permissions
-        showLoader();
-        fetch('<?php echo BASE_URL; ?>/admin/menu-permissions/get-user-permissions?user_id=' + userId)
-            .then(response => response.json())
-            .then(data => {
-                    .catch(err => console.error('Request failed:', err));
-                if (data.success) {
-                    const tbody = document.getElementById('userPermissionsBody');
-                    tbody.innerHTML = '';
-
-                    // Get all menu items
-                    const menuItems = <?php echo json_encode($menuItems); ?>;
-                    
-                    function renderMenuItems(items, level = 0) {
-                        items.forEach(item => {
-                            if (item.children && item.children.length > 0) {
-                                // Render parent
-                                const row = document.createElement('tr');
-                                row.className = 'table-primary';
-                                row.innerHTML = `
-                                    <td colspan="6">
-                                        <i class="fas ${item.icon} me-2"></i>
-                                        ${item.name} (Parent)
-                                    </td>
-                                `;
-                                tbody.appendChild(row);
-                                
-                                // Render children
-                                renderMenuItems(item.children, level + 1);
-                            } else {
-                                // Render item
-                                const permission = data.permissions.find(p => p.menu_item_id == item.id) || {};
-                                const row = document.createElement('tr');
-                                row.innerHTML = `
-                                    <td >
-                                        <i class="fas ${item.icon} me-2"></i>
-                                        ${item.name}
-                                    </td>
-                                    <td>
-                                        <input type="checkbox" class="user-perm-check" data-perm="can_view" 
-                                               data-user-id="${userId}" data-menu-id="${item.id}"
-                                               ${permission.can_view ? 'checked' : ''}>
-                                    </td>
-                                    <td>
-                                        <input type="checkbox" class="user-perm-check" data-perm="can_create" 
-                                               data-user-id="${userId}" data-menu-id="${item.id}"
-                                               ${permission.can_create ? 'checked' : ''}>
-                                    </td>
-                                    <td>
-                                        <input type="checkbox" class="user-perm-check" data-perm="can_edit" 
-                                               data-user-id="${userId}" data-menu-id="${item.id}"
-                                               ${permission.can_edit ? 'checked' : ''}>
-                                    </td>
-                                    <td>
-                                        <input type="checkbox" class="user-perm-check" data-perm="can_delete" 
-                                               data-user-id="${userId}" data-menu-id="${item.id}"
-                                               ${permission.can_delete ? 'checked' : ''}>
-                                    </td>
-                                    <td>
-                                        ${Object.keys(permission).length > 0 ? 
-                                            `<button class="btn btn-sm btn-danger revoke-perm-btn" 
-                                                    data-user-id="${userId}" data-menu-id="${item.id}">Revoke</button>` : 
-                                            '<span class="text-muted">No custom permission</span>'}
-                                    </td>
-                                `;
-                                tbody.appendChild(row);
-                            }
-                        ).finally(() => hideLoader());
-                    }
-                    
-                    renderMenuItems(menuItems);
-
-                    // Add event listeners for user permission checkboxes
-                    document.querySelectorAll('.user-perm-check').forEach(checkbox => {
-                        checkbox.addEventListener('change', function() {
-                            const userId = this.dataset.userId;
-                            const menuId = this.dataset.menuId;
-                            const perm = this.dataset.perm;
-                            const value = this.checked ? 1 : 0;
-
-                            // Get all permission values for this menu item
-                            const row = this.closest('tr');
-                            const canView = row.querySelector('[data-perm="can_view"]').checked ? 1 : 0;
-                            const canCreate = row.querySelector('[data-perm="can_create"]').checked ? 1 : 0;
-                            const canEdit = row.querySelector('[data-perm="can_edit"]').checked ? 1 : 0;
-                            const canDelete = row.querySelector('[data-perm="can_delete"]').checked ? 1 : 0;
-
-                            showLoader();
-                            fetch('<?php echo BASE_URL; ?>/admin/menu-permissions/update-user', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/x-www-form-urlencoded',
-                                },
-                                body: `user_id=${userId}&menu_item_id=${menuId}&can_view=${canView}&can_create=${canCreate}&can_edit=${canEdit}&can_delete=${canDelete}`
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                    .catch(err => console.error('Request failed:', err));
-                                if (data.success) {
-                                    // Update revoke button
-                                    const actionCell = row.querySelector('td:last-child');
-                                    if (canView || canCreate || canEdit || canDelete) {
-                                        actionCell.innerHTML = `<button class="btn btn-sm btn-danger revoke-perm-btn" 
-                                            data-user-id="${userId}" data-menu-id="${menuId}">Revoke</button>`;
-                                        // Add event listener to new button
-                                        actionCell.querySelector('.revoke-perm-btn').addEventListener('click', handleRevoke);
-                                    } else {
-                                        actionCell.innerHTML = '<span class="text-muted">No custom permission</span>';
-                                    }
-                                }
-                            ).finally(() => hideLoader());
-                        });
-                    });
-
-                    // Add event listeners for revoke buttons
-                    document.querySelectorAll('.revoke-perm-btn').forEach(btn => {
-                        btn.addEventListener('click', handleRevoke);
-                    });
-                }
-            });
-    });
-
-    function handleRevoke(e) {
-        const userId = e.target.dataset.userId;
-        const menuId = e.target.dataset.menuId;
-
-        apsConfirm('Are you sure you want to revoke this custom permission?').then(function(ok) {
-            if (!ok) return;
-            showLoader();
-            fetch('<?php echo BASE_URL; ?>/admin/menu-permissions/revoke-user', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
+    // Initialize Select2 for user dropdown
+    if (typeof $.fn.select2 !== 'undefined') {
+        $('#userSelect').select2({
+            placeholder: 'Search for a user...',
+            allowClear: true,
+            ajax: {
+                url: BASE_URL + '/admin/menu-permissions/get-users',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return { q: params.term };
                 },
-                body: `user_id=${userId}&menu_item_id=${menuId}`
-            })
+                processResults: function(data) {
+                    return {
+                        results: data.users.map(u => ({ id: u.id, text: u.name + ' (' + u.role + ') - ' + u.email }))
+                    };
+                },
+                cache: true
+            }
+        }).on('select2:select', function(e) {
+            document.getElementById('btnLoadUserPerms').disabled = false;
+        });
+    } else {
+        // Fallback without Select2
+        document.getElementById('userSelect').addEventListener('change', function() {
+            document.getElementById('btnLoadUserPerms').disabled = !this.value;
+        });
+    }
+
+    // Load user permissions
+    document.getElementById('btnLoadUserPerms')?.addEventListener('click', function() {
+        const userId = document.getElementById('userSelect').value;
+        if (!userId) return;
+        
+        showLoader();
+        fetch(BASE_URL + '/admin/menu-permissions/get-user-permissions?user_id=' + userId)
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    document.getElementById('userSelect').dispatchEvent(new Event('change'));
+                    document.getElementById('selectedUserName').textContent = document.getElementById('userSelect').options[document.getElementById('userSelect').selectedIndex].text;
+                    document.getElementById('userPermissionsContent').style.display = 'block';
+                    renderUserPermissions(data.permissions);
+                } else {
+                    showToast('Failed to load permissions', 'danger');
                 }
-            }).finally(() => hideLoader());
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Error loading permissions', 'danger');
+            })
+            .finally(() => hideLoader());
+    });
+
+    function renderUserPermissions(permissions) {
+        const tbody = document.getElementById('userPermissionsBody');
+        tbody.innerHTML = '';
+        
+        // Get all menu items from the page
+        const menuItems = [];
+        document.querySelectorAll('.permission-matrix').forEach(table => {
+            table.querySelectorAll('tbody tr:not([data-has-children="true"])').forEach(row => {
+                const menuId = row.dataset.menuId;
+                const nameCell = row.querySelector('td:first-child');
+                const urlCell = row.querySelector('td:nth-child(2)');
+                const iconEl = row.querySelector('i.fa');
+                menuItems.push({
+                    id: menuId,
+                    name: nameCell ? nameCell.textContent.trim() : '',
+                    url: urlCell ? urlCell.textContent.trim() : '',
+                    icon: iconEl ? iconEl.className.replace('fas ', '').replace('fa-', 'fa-') : 'fa-circle',
+                    isParent: row.hasAttribute('data-has-children')
+                });
+            });
+        });
+        
+        // Build permission map
+        const permMap = {};
+        permissions.forEach(p => {
+            permMap[p.menu_item_id] = p;
+        });
+        
+        menuItems.forEach(item => {
+            const perm = permMap[item.id] || {};
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>
+                    <i class="fas ${item.icon} me-2 text-muted"></i>
+                    ${item.name}
+                </td>
+                <td class="text-center">
+                    <input type="checkbox" class="user-perm-check" data-perm="can_view" 
+                           data-user-id="${userId}" data-menu-id="${item.id}"
+                           ${perm.can_view ? 'checked' : ''}>
+                </td>
+                <td class="text-center">
+                    <input type="checkbox" class="user-perm-check" data-perm="can_create" 
+                           data-user-id="${userId}" data-menu-id="${item.id}"
+                           ${perm.can_create ? 'checked' : ''} ${!perm.can_view ? 'disabled' : ''}>
+                </td>
+                <td class="text-center">
+                    <input type="checkbox" class="user-perm-check" data-perm="can_edit" 
+                           data-user-id="${userId}" data-menu-id="${item.id}"
+                           ${perm.can_edit ? 'checked' : ''} ${!perm.can_view ? 'disabled' : ''}>
+                </td>
+                <td class="text-center">
+                    <input type="checkbox" class="user-perm-check" data-perm="can_delete" 
+                           data-user-id="${userId}" data-menu-id="${item.id}"
+                           ${perm.can_delete ? 'checked' : ''} ${!perm.can_view ? 'disabled' : ''}>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+        
+        // Add event listeners for user permission checkboxes
+        document.querySelectorAll('.user-perm-check').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const userId = this.dataset.userId;
+                const menuId = this.dataset.menuId;
+                
+                const row = this.closest('tr');
+                const canView = row.querySelector('[data-perm="can_view"]').checked ? 1 : 0;
+                const canCreate = row.querySelector('[data-perm="can_create"]').checked ? 1 : 0;
+                const canEdit = row.querySelector('[data-perm="can_edit"]').checked ? 1 : 0;
+                const canDelete = row.querySelector('[data-perm="can_delete"]').checked ? 1 : 0;
+                
+                // If view is disabled, disable others
+                if (this.dataset.perm === 'can_view' && !this.checked) {
+                    row.querySelectorAll('[data-perm="can_create"], [data-perm="can_edit"], [data-perm="can_delete"]').forEach(cb => {
+                        cb.checked = false;
+                        cb.disabled = true;
+                    });
+                } else if (this.dataset.perm === 'can_view' && this.checked) {
+                    row.querySelectorAll('[data-perm="can_create"], [data-perm="can_edit"], [data-perm="can_delete"]').forEach(cb => {
+                        cb.disabled = false;
+                    });
+                }
+                
+                showLoader();
+                fetch(BASE_URL + '/admin/menu-permissions/update-user', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `user_id=${userId}&menu_item_id=${menuId}&can_view=${canView}&can_create=${canCreate}&can_edit=${canEdit}&can_delete=${canDelete}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast('User permission updated', 'success');
+                    } else {
+                        showToast('Failed to update permission', 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('Error updating permission', 'danger');
+                })
+                .finally(() => hideLoader());
+            });
         });
     }
 });
+
+// Save all changes button (optional - for batch saving if needed)
+document.getElementById('btnSaveAll')?.addEventListener('click', function() {
+    showToast('All changes are auto-saved instantly via AJAX', 'info');
+});
 </script>
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>

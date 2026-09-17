@@ -35,6 +35,26 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                         <span class="badge bg-success fs-6"><?= __('browse_available') ?></span>
                     </div>
 
+                    <!-- 360° Quick Actions Bar -->
+                    <div class="d-flex flex-wrap gap-2 mt-3" style="border-top: 1px solid #e9ecef; padding-top: 1rem;">
+                        <h6 class="fw-bold mb-0 me-3 align-self-center"><i class="fas fa-link me-1"></i> Quick Links:</h6>
+                        <a href="<?= $baseUrl ?>/plots/<?= $plot['id'] ?>/book" class="btn btn-sm btn-primary" title="Book This Plot">
+                            <i class="fas fa-check-circle me-1"></i> Book Now
+                        </a>
+                        <a href="<?= $baseUrl ?>/plots/<?= $plot['id'] ?>/emi-schedule" class="btn btn-sm btn-outline-info" title="View EMI Schedule">
+                            <i class="fas fa-calendar-check me-1"></i> EMI Schedule
+                        </a>
+                        <a href="<?= $baseUrl ?>/plots/<?= $plot['id'] ?>/location" class="btn btn-sm btn-outline-secondary" title="View on Map">
+                            <i class="fas fa-map-marker-alt me-1"></i> Map
+                        </a>
+                        <a href="<?= $baseUrl ?>/plots/<?= $plot['id'] ?>/share" class="btn btn-sm btn-outline-secondary" title="Share Plot">
+                            <i class="fas fa-share-alt me-1"></i> Share
+                        </a>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="comparePlots(<?= $plot['id'] ?>)" title="Compare with Other Plots">
+                            <i class="fas fa-balance-scale me-1"></i> Compare
+                        </button>
+                    </div>
+
                     <div class="row g-3 mb-3">
                         <div class="col-sm-3 col-6">
                             <div class="bg-light rounded p-3 text-center">

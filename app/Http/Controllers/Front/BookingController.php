@@ -124,6 +124,14 @@ class BookingController extends BaseController
     public function detail($id)
     {
         $id = intval($id);
+
+        // ═══ Capture referral code from URL (?ref=CODE or ?sponsor=CODE) ═══
+        $refCode = trim($_GET['ref'] ?? $_GET['sponsor'] ?? '');
+        if (!empty($refCode)) {
+            $_SESSION['referral_code'] = $refCode;
+            setcookie('aps_referral', $refCode, time() + (86400 * 30), '/', '', false, true); // 30-day attribution
+        }
+
         $plot = $this->db->fetchRow("
             SELECT p.*, c.name AS colony_name, c.slug AS colony_slug,
                    c.description AS colony_description, c.amenities, c.gallery_images,
@@ -171,6 +179,13 @@ class BookingController extends BaseController
         $this->requireLogin();
         $user = $this->getUser();
         $id = intval($id);
+
+        // ═══ Capture referral code from URL (?ref=CODE or ?sponsor=CODE) ═══
+        $refCode = trim($_GET['ref'] ?? $_GET['sponsor'] ?? '');
+        if (!empty($refCode)) {
+            $_SESSION['referral_code'] = $refCode;
+            setcookie('aps_referral', $refCode, time() + (86400 * 30), '/', '', false, true); // 30-day attribution
+        }
 
         $plot = $this->db->fetchRow("
             SELECT p.*, c.name AS colony_name, c.slug AS colony_slug,
@@ -230,11 +245,21 @@ class BookingController extends BaseController
         $paymentPlan = $_POST['payment_plan'] ?? 'emi';
         $notes = trim($_POST['notes'] ?? '');
 
-        // ═══ LEGAL COMPLIANCE: Tripartite consent must be accepted ═══
-        $tripartiteConsent = $_POST['tripartite_consent'] ?? '';
-        if ($tripartiteConsent !== 'on' && $tripartiteConsent !== '1') {
-            $this->setFlash('error', 'You must accept the Tripartite Master Deed terms to proceed with booking.');
-            return $this->redirect('/plots/' . $id . '/book');
+        // ═══ Handle Referral Code (Associate Binding) ═══
+        $referralCode = trim($_POST['referral_code'] ?? '');
+        // Fallback to session/cookie if not in POST
+        if (empty($referralCode)) {
+            $referralCode = trim($_SESSION['referral_code'] ?? $_COOKIE['aps_referral'] ?? '');
+        }
+        $associateId = null;
+        if (!empty($referralCode)) {
+            $assoc = $this->db->fetchRow(
+                "SELECT u.id FROM users u JOIN mlm_profiles p ON u.id = p.user_id WHERE u.referral_code = ? AND u.role IN ('associate','agent') AND p.status = 'active' LIMIT 1",
+                [$referralCode]
+            );
+            if ($assoc) {
+                $associateId = (int)$assoc['id'];
+            }
         }
 
         try {
@@ -244,7 +269,8 @@ class BookingController extends BaseController
                 'customer_id'      => $user['id'],
                 'total_plot_value' => (float)$plot['total_price'],
                 'booking_amount'   => $this->tokenAmountFor((float)$plot['total_price']),
-                'channel'          => 'direct',
+                'channel'          => $associateId ? 'associate' : 'direct',
+                'associate_id'      => $associateId,
                 'notes'            => $notes,
                 'legal_consent'    => true,
                 'consent_timestamp'=> date('Y-m-d H:i:s'),

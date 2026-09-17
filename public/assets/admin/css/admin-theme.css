@@ -3481,3 +3481,184 @@ footer ul li a,
 .bg-primary .aps-cp-stat-label {
   color: rgba(255, 255, 255, 0.95) !important;
 }
+
+/* ===================================================================
+   SIDEBAR SEARCH & 5 ENTERPRISE HUBS
+   =================================================================== */
+
+/* Sidebar Search */
+.sidebar-search {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--sidebar-border);
+}
+.sidebar-search .input-group-text {
+  background: transparent;
+  border-color: var(--sidebar-border);
+  color: var(--sidebar-text);
+}
+.sidebar-search .form-control {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--sidebar-border);
+  color: var(--sidebar-text);
+}
+.sidebar-search .form-control::placeholder {
+  color: var(--text-muted);
+}
+.sidebar-search .form-control:focus {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--sidebar-accent);
+  box-shadow: 0 0 0 0.2rem rgba(20, 184, 166, 0.25);
+  color: var(--sidebar-text);
+}
+
+/* 5 Enterprise Hubs */
+.sidebar-hub {
+  border-bottom: 1px solid var(--sidebar-border);
+}
+.sidebar-hub-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  cursor: pointer;
+  border-radius: 6px;
+  margin: 4px 8px;
+  transition: background 0.15s ease;
+}
+.sidebar-hub-header:hover {
+  background: var(--sidebar-hover);
+}
+.sidebar-hub-header span {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--sidebar-text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.sidebar-hub-header i {
+  font-size: 1rem;
+}
+.sidebar-hub-header .sidebar-sec-arrow {
+  transition: transform 0.2s ease;
+  color: var(--text-muted);
+}
+.sidebar-hub-header .sidebar-sec-arrow.collapsed {
+  transform: rotate(-90deg);
+}
+.sidebar-hub-content {
+  overflow: hidden;
+  transition: max-height 0.25s ease;
+}
+
+/* Section within hub */
+.sidebar-sec {
+  padding: 8px 14px;
+  cursor: pointer;
+  border-radius: 6px;
+  margin: 2px 8px;
+  transition: background 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--sidebar-text);
+}
+.sidebar-sec:hover {
+  background: var(--sidebar-hover);
+}
+.sidebar-sec .sidebar-sec-arrow {
+  transition: transform 0.2s ease;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+.sidebar-sec .sidebar-sec-arrow.collapsed {
+  transform: rotate(-90deg);
+}
+
+/* Sidebar menu items */
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.sidebar-item {
+  margin: 0;
+}
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  color: var(--sidebar-text);
+  font-size: 0.875rem;
+  transition: background 0.15s ease, color 0.15s ease;
+  margin: 2px 8px;
+}
+.sidebar-link:hover {
+  background: var(--sidebar-hover);
+  color: var(--sidebar-text-hover);
+}
+.sidebar-link.active {
+  background: var(--sidebar-active);
+  color: var(--sidebar-accent);
+  font-weight: 600;
+}
+.sidebar-link i {
+  width: 18px;
+  text-align: center;
+  font-size: 1rem;
+}
+
+/* Expand All / Collapse All */
+.sidebar-sec:first-child {
+  border-top: 1px solid var(--sidebar-border);
+  padding-top: 12px;
+  margin-top: 8px;
+}
+
+/* Search input highlights */
+.sidebar-search .form-control:focus {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--sidebar-accent);
+  box-shadow: 0 0 0 0.2rem rgba(20, 184, 166, 0.25);
+  color: var(--sidebar-text);
+}
+
+/* Hide sidebar search on mobile (too narrow) */
+@media (max-width: 768px) {
+  .sidebar-search {
+    display: none;
+  }
+}
+
+/* Clear search button */
+#clearSearchBtn {
+  cursor: pointer;
+  padding: 0 8px;
+}
+#clearSearchBtn:hover {
+  color: var(--sidebar-text);
+}
+
+/* Ensure hub content is visible by default */
+.sidebar-hub-content {
+  display: block;
+}
+
+/* Arrow transitions */
+.sidebar-sec-arrow {
+  transition: transform 0.2s ease;
+}
+.sidebar-sec-arrow.collapsed {
+  transform: rotate(-90deg);
+}
+
+/* Hub collapsed state */
+.sidebar-hub-header .sidebar-sec-arrow.collapsed {
+  transform: rotate(-90deg);
+}

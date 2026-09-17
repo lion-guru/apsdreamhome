@@ -52,6 +52,35 @@ $csrfToken = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
                     </div>
                 </div>
 
+                <!-- Associate / Referral Details (Optional) -->
+                <div class="aps-cp-card mb-4">
+                    <div class="aps-cp-card-header bg-light">
+                        <span><i class="fas fa-handshake me-2 text-primary"></i><?= __('book_associate_referral') ?></span>
+                    </div>
+                    <div class="aps-cp-card-body">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold"><?= __('book_referral_code') ?></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-id-badge"></i></span>
+                                    <input type="text" class="form-control" name="referral_code" id="referralCodeInput"
+                                           placeholder="<?= __('book_referral_placeholder') ?>"
+                                           value="<?= htmlspecialchars($_SESSION['referral_code'] ?? $_COOKIE['aps_referral'] ?? '') ?>">
+                                    <button class="btn btn-outline-primary" type="button" id="btnVerifyReferral"><?= __('book_verify') ?></button>
+                                </div>
+                                <div class="form-text text-muted small"><?= __('book_referral_help') ?></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div id="referralBadge" class="p-2 rounded border bg-light d-none">
+                                    <small class="text-muted d-block"><?= __('book_associate_name') ?></small>
+                                    <strong id="associateNameText" class="text-success">—</strong>
+                                    <span id="associateRankBadge" class="badge bg-primary ms-2"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Payment Plan -->
                 <div class="aps-cp-card mb-4">
                     <div class="aps-cp-card-header">
@@ -273,6 +302,47 @@ $csrfToken = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
     const CSRF = '<?= htmlspecialchars($csrfToken ?? '') ?>';
     let lockInterval = null;
     let lockExpiresAt = null;
+
+    // ═══ Referral Code Verification ═══
+    const referralInput = document.getElementById('referralCodeInput');
+    const verifyBtn = document.getElementById('btnVerifyReferral');
+    const referralBadge = document.getElementById('referralBadge');
+    const associateNameText = document.getElementById('associateNameText');
+    const associateRankBadge = document.getElementById('associateRankBadge');
+
+    if (verifyBtn && referralInput) {
+        verifyBtn.addEventListener('click', function() {
+            const code = referralInput.value.trim().toUpperCase();
+            if (!code) {
+                alert('<?= addslashes(__('book_referral_empty')) ?>');
+                return;
+            }
+            verifyBtn.disabled = true;
+            verifyBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span><?= addslashes(__('book_verifying')) ?>';
+            fetch(BASE + '/api/v2/verify-referral?code=' + encodeURIComponent(code), {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(r => r.json())
+            .then(data => {
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = '<?= addslashes(__('book_verify')) ?>';
+                if (data.success && data.associate) {
+                    associateNameText.textContent = data.associate.name;
+                    associateRankBadge.textContent = data.associate.rank;
+                    referralBadge.classList.remove('d-none');
+                    referralInput.value = code;
+                } else {
+                    alert(data.message || '<?= addslashes(__('book_referral_invalid')) ?>');
+                    referralBadge.classList.add('d-none');
+                }
+            })
+            .catch(() => {
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = '<?= addslashes(__('book_verify')) ?>';
+                alert('<?= addslashes(__('book_referral_error')) ?>');
+            });
+        });
+    }
 
     // —€—€ Plot Lock on page load —€—€
     fetch(BASE + '/plots/' + PLOT_ID + '/lock', {

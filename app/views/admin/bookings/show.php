@@ -1,5 +1,5 @@
 <?php
-$page_title = __('admin_booking_details');
+$page_title = $page_title ?? __('admin_booking_details');
 $active_page = 'bookings';
 $extraHead = '<style>
     .status-badge {
@@ -12,6 +12,30 @@ $extraHead = '<style>
     .commission-row:hover {
         background-color: #f0f8ff;
     }
+    .nav-tabs .nav-link {
+        border: none;
+        color: #64748b;
+        font-weight: 500;
+        padding: 12px 20px;
+        border-radius: 8px 8px 0 0;
+        margin-right: 4px;
+    }
+    .nav-tabs .nav-link.active {
+        background: linear-gradient(135deg, #198754, #20c997);
+        color: #fff;
+    }
+    .nav-tabs .nav-link:hover:not(.active) {
+        background: #f1f5f9;
+        color: #1e293b;
+    }
+    .tab-content { padding: 24px 0; }
+    .badge-status {
+        font-size: 0.75rem;
+        padding: 0.375rem 0.75rem;
+    }
+    .payment-row:hover { background-color: #f8f9fa; }
+    .commission-row:hover { background-color: #f0f8ff; }
+    .action-btns .btn { margin-right: 8px; margin-bottom: 8px; }
 </style>';
 ?>
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -28,6 +52,101 @@ $extraHead = '<style>
         </button>
     </div>
 </div>
+
+<!-- 360° Quick Actions Bar -->
+<div class="card aps-cp-card mb-4" style="border-left: 4px solid #198754;">
+    <div class="card-body aps-cp-card-body">
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <h6 class="fw-bold mb-0 me-3"><i class="fas fa-link me-1"></i> 360° Quick Links:</h6>
+            <?php 
+            $bookingId = $booking['id'] ?? 0;
+            $plotId = $booking['plot_id'] ?? 0;
+            $customerId = $booking['customer_id'] ?? 0;
+            $associateId = $booking['associate_id'] ?? 0;
+            ?>
+            <a href="#tab-booking" class="btn btn-sm btn-outline-success active" title="Booking Details" data-bs-toggle="tab" data-bs-target="#tab-booking">
+                <i class="fas fa-file-contract me-1"></i> Booking Details
+            </a>
+            <?php if ($plotId): ?>
+                <a href="#tab-plot" class="btn btn-sm btn-outline-primary" title="View Assigned Plot" data-bs-toggle="tab" data-bs-target="#tab-plot">
+                    <i class="fas fa-th me-1"></i> Plot
+                </a>
+            <?php endif; ?>
+            <?php if ($customerId): ?>
+                <a href="#tab-customer" class="btn btn-sm btn-outline-info" title="View Customer Profile" data-bs-toggle="tab" data-bs-target="#tab-customer">
+                    <i class="fas fa-user me-1"></i> Customer
+                </a>
+            <?php endif; ?>
+            <?php if ($associateId): ?>
+                <a href="#tab-associate" class="btn btn-sm btn-outline-warning" title="View Associate Details" data-bs-toggle="tab" data-bs-target="#tab-associate">
+                    <i class="fas fa-user-tie me-1"></i> Associate
+                </a>
+            <?php endif; ?>
+            <a href="#tab-payments" class="btn btn-sm btn-outline-secondary" title="Payments & EMI" data-bs-toggle="tab" data-bs-target="#tab-payments">
+                <i class="fas fa-money-bill-wave me-1"></i> Payments
+            </a>
+            <a href="#tab-commissions" class="btn btn-sm btn-outline-success" title="Commission Details" data-bs-toggle="tab" data-bs-target="#tab-commissions">
+                <i class="fas fa-percent me-1"></i> Commissions
+            </a>
+            <a href="#tab-documents" class="btn btn-sm btn-outline-dark" title="Documents & Registry" data-bs-toggle="tab" data-bs-target="#tab-documents">
+                <i class="fas fa-file-alt me-1"></i> Documents
+            </a>
+            <a href="#tab-history" class="btn btn-sm btn-outline-dark" title="Status History" data-bs-toggle="tab" data-bs-target="#tab-history">
+                <i class="fas fa-history me-1"></i> History
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- 360° Tabbed Interface -->
+<ul class="nav nav-tabs mb-4" id="bookingTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="tab-booking-btn" data-bs-toggle="tab" data-bs-target="#tab-booking" type="button" role="tab">
+            <i class="fas fa-file-contract me-1"></i> Booking Details
+        </button>
+    </li>
+    <?php if ($plotId): ?>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tab-plot-btn" data-bs-toggle="tab" data-bs-target="#tab-plot" type="button" role="tab">
+            <i class="fas fa-th me-1"></i> Plot
+        </button>
+    </li>
+    <?php endif; ?>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tab-customer-btn" data-bs-toggle="tab" data-bs-target="#tab-customer" type="button" role="tab">
+            <i class="fas fa-user me-1"></i> Customer
+        </button>
+    </li>
+    <?php if ($associateId): ?>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tab-associate-btn" data-bs-toggle="tab" data-bs-target="#tab-associate" type="button" role="tab">
+            <i class="fas fa-user-tie me-1"></i> Associate
+        </button>
+    </li>
+    <?php endif; ?>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tab-payments-btn" data-bs-toggle="tab" data-bs-target="#tab-payments" type="button" role="tab">
+            <i class="fas fa-money-bill-wave me-1"></i> Payments & EMI
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tab-commissions-btn" data-bs-toggle="tab" data-bs-target="#tab-commissions" type="button" role="tab">
+            <i class="fas fa-percent me-1"></i> Commissions
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tab-documents-btn" data-bs-toggle="tab" data-bs-target="#tab-documents" type="button" role="tab">
+            <i class="fas fa-file-alt me-1"></i> Documents
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tab-history-btn" data-bs-toggle="tab" data-bs-target="#tab-history" type="button" role="tab">
+            <i class="fas fa-history me-1"></i> History
+        </button>
+    </li>
+</ul>
+
+<div class="tab-content" id="bookingTabsContent">
 
 <!-- Flash Messages -->
 <?php if (isset($_SESSION['flash_message'])): ?>
@@ -299,6 +418,227 @@ $extraHead = '<style>
                 </table>
             </div>
         <?php endif; ?>
+    </div>
+</div>
+
+<!-- Booking 360° Tabs -->
+<div class="row mb-4">
+    <div class="col-12">
+        <ul class="nav nav-tabs nav-tabs-custom" id="booking360Tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="emi-tab" data-bs-toggle="tab" data-bs-target="#emi-schedule" type="button" role="tab" aria-controls="emi-schedule" aria-selected="true">
+                    <i class="fas fa-calendar-check me-2"></i> EMI Schedule & Overdue
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="payments-tab" data-bs-toggle="tab" data-bs-target="#payment-receipts" type="button" role="tab" aria-controls="payment-receipts" aria-selected="false">
+                    <i class="fas fa-receipt me-2"></i> Payment Receipts
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="commissions-tab" data-bs-toggle="tab" data-bs-target="#commission-payouts" type="button" role="tab" aria-controls="commission-payouts" aria-selected="false">
+                    <i class="fas fa-percent me-2"></i> Commission Payouts
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="documents-tab" data-bs-toggle="tab" data-bs-target="#documents" type="button" role="tab" aria-controls="documents" aria-selected="false">
+                    <i class="fas fa-file-alt me-2"></i> Documents
+                </button>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="tab-content" id="booking360TabContent">
+    <!-- Tab 1: EMI Schedule & Overdue -->
+    <div class="tab-pane fade show active" id="emi-schedule" role="tabpanel" aria-labelledby="emi-tab">
+        <div class="row g-4">
+            <div class="col-12">
+                <h5><i class="fas fa-calendar-check me-2"></i> EMI Schedule</h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Due Date</th>
+                            <th>EMI Amount</th>
+                            <th>Paid Amount</th>
+                            <th>Balance</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($emi_schedules)): ?>
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">No EMI schedules found</td>
+                        </tr>
+                        <?php else: ?>
+                        <?php foreach ($emi_schedules as $emi): ?>
+                        <tr>
+                            <td><?= date('d M Y', strtotime($emi['due_date'] ?? '')) ?></td>
+                            <td>₹<?= number_format(floatval($emi['emi_amount'] ?? 0), 2) ?></td>
+                            <td>₹<?= number_format(floatval($emi['paid_amount'] ?? 0), 2) ?></td>
+                            <td>₹<?= number_format(floatval($emi['balance'] ?? 0), 2) ?></td>
+                            <td>
+                                <span class="badge bg-<?= $emi['status'] === 'paid' ? 'success' : ($emi['status'] === 'overdue' ? 'danger' : ($emi['status'] === 'pending' ? 'warning' : 'secondary')) ?> fs-6">
+                                    <?= ucfirst($emi['status'] ?? '') ?>
+                                </span>
+                            </td>
+                            <td>
+                                <a href="<?= BASE_URL ?>/admin/bookings/<?= $emi['booking_id'] ?>" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+            <?php if (!empty($emi_schedules)): ?>
+            <div class="mt-3">
+                <div class="row">
+                    <div class="col-6">
+                        <p><strong>Total EMIs:</strong> <?= count($emi_schedules) ?></p>
+                        <p><strong>Total Overdue:</strong> <?= count(array_filter($emi_schedules, fn($e) => $e['status'] === 'overdue')) ?></p>
+                    </div>
+                    <div class="col-6 text-end">
+                        <p><strong>Total Paid:</strong> ₹<?= number_format(array_sum(array_map(fn($e) => $e['paid_amount'] ?? 0, $emi_schedules)), 2) ?></p>
+                        <p><strong>Total Balance:</strong> ₹<?= number_format(array_sum(array_map(fn($e) => $e['balance'] ?? 0, $emi_schedules)), 2) ?></p>
+                    </div>
+                </div>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Tab 2: Payment Receipts -->
+    <div class="tab-pane fade" id="payment-receipts" role="tabpanel" aria-labelledby="payments-tab">
+        <div class="row g-4">
+            <div class="col-12">
+                <h5><i class="fas fa-receipt me-2"></i> Payment Receipts</h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Receipt #</th>
+                            <th>Date</th>
+                            <th>Mode</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($payments)): ?>
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">No payment receipts recorded</td>
+                        </tr>
+                        <?php else: ?>
+                        <?php foreach ($payments as $payment): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($payment['receipt_number'] ?? 'N/A') ?></td>
+                            <td><?= date('d M Y h:i A', strtotime($payment['created_at'])) ?></td>
+                            <td><?= ucfirst(htmlspecialchars($payment['payment_method'] ?? '')) ?></td>
+                            <td>₹<?= number_format(floatval($payment['amount'] ?? 0), 2) ?></td>
+                            <td>
+                                <span class="badge bg-<?= $payment['status'] === 'completed' ? 'success' : 'warning' ?> fs-6">
+                                    <?= ucfirst($payment['status'] ?? '') ?>
+                                </span>
+                            </td>
+                            <td>
+                                <a href="javascript:void(0)" class="btn btn-sm btn-outline-primary" onclick="printReceipt('<?= $payment['receipt_number'] ?>')">
+                                    <i class="fas fa-print"></i> Print
+                                </a>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab 3: Commission Payouts -->
+    <div class="tab-pane fade" id="commission-payouts" role="tabpanel" aria-labelledby="commissions-tab">
+        <div class="row g-4">
+            <div class="col-12">
+                <h5><i class="fas fa-percent me-2"></i> Commission Payouts</h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Date</th>
+                            <th>Associate</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($commissions)): ?>
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">No commissions recorded</td>
+                        </tr>
+                        <?php else: ?>
+                        <?php foreach ($commissions as $commission): ?>
+                        <tr>
+                            <td><?= date('d M Y h:i A', strtotime($commission['created_at'])) ?></td>
+                            <td><?= htmlspecialchars($commission['user_id'] ?? '') ?></td>
+                            <td><?= ucfirst(htmlspecialchars($commission['commission_type'] ?? '')) ?></td>
+                            <td class="fw-bold text-info">₹<?= number_format(floatval($commission['amount'] ?? 0), 2) ?></td>
+                            <td>
+                                <span class="badge bg-<?= $commission['status'] == 'paid' ? 'success' : 'warning' ?>">
+                                    <?= ucfirst($commission['status'] ?? '') ?>
+                                </span>
+                            </td>
+                            <td><?= htmlspecialchars($commission['description'] ?? '') ?></td>
+                        </tr>
+                        <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab 4: Documents -->
+    <div class="tab-pane fade" id="documents" role="tabpanel" aria-labelledby="documents-tab">
+        <div class="row g-4">
+            <div class="col-12">
+                <h5><i class="fas fa-file-alt me-2"></i> Documents & Registry</h5>
+            </div>
+            <div class="row g-3">
+                <?php if (empty($documents)): ?>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i> No documents found for this booking.
+                </div>
+                <?php else: ?>
+                <?php foreach ($documents as $doc): ?>
+                <div class="col-12 col-md-6 col-lg-4 mb-3">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header bg-white py-3">
+                            <h6 class="mb-0"><i class="fas fa-file-alt me-2"></i><?= htmlspecialchars($doc['document_type'] ?? 'Document') ?></h6>
+                        </div>
+                        <div class="card-body aps-cp-card-body">
+                            <p class="text-muted small"><strong>Document No:</strong> <?= htmlspecialchars($doc['document_number'] ?? 'N/A') ?></p>
+                            <p class="text-muted small"><strong>Date:</strong> <?= date('d M Y', strtotime($doc['created_at'] ?? '')) ?></p>
+                            <p class="text-muted small"><strong>Status:</strong> <span class="badge bg-<?= $doc['status'] === 'approved' ? 'success' : ($doc['status'] === 'pending' ? 'warning' : 'secondary') ?>"><?= ucfirst($doc['status'] ?? '') ?></span></p>
+                            <a href="<?= $doc['download_url'] ?? BASE_URL ?>/admin/documents/download/<?= $doc['id'] ?? 0 ?>" class="btn btn-sm btn-outline-primary w-100">
+                                <i class="fas fa-download me-1"></i> Download
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+        </div>
     </div>
 </div>
 

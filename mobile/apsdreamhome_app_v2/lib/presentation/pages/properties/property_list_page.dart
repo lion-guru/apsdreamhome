@@ -33,7 +33,7 @@ class _PropertyListPageState extends ConsumerState<PropertyListPage> {
   @override
   Widget build(BuildContext context) {
     final propertiesAsync = ref.watch(propertiesProvider(null));
-    final connectivity = ref.watch(connectivityProvider);
+    final isOnline = ref.watch(isOnlineProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -143,7 +143,7 @@ class _PropertyListPageState extends ConsumerState<PropertyListPage> {
                       return PropertyCard(
                         property: property,
                         onTap: () => _showPropertyDetails(property),
-                        onStatusChange: connectivity.value ?? false
+                        onStatusChange: isOnline
                             ? (newStatus) =>
                                 _updatePropertyStatus(property, newStatus)
                             : null,
@@ -177,7 +177,7 @@ class _PropertyListPageState extends ConsumerState<PropertyListPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: connectivity.value ?? false ? _addProperty : null,
+        onPressed: isOnline ? _addProperty : null,
         child: const Icon(Icons.add),
       ),
     );

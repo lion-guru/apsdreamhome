@@ -22,7 +22,7 @@ class MLMDashboardPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(authProvider);
     final commissionsAsync = ref.watch(commissionsProvider);
-    final connectivity = ref.watch(connectivityProvider);
+    final isOnline = ref.watch(isOnlineProvider);
     final mlmSummaryAsync = ref.watch(mlmSummaryProvider);
     final rankProgressAsync = ref.watch(rankProgressProvider);
 
@@ -31,7 +31,7 @@ class MLMDashboardPage extends ConsumerWidget {
         title: const Text('MLM Dashboard'),
         actions: [
           IconButton(
-            onPressed: connectivity.value ?? false
+            onPressed: isOnline
                 ? () =>
                     ref.read(commissionsProvider.notifier).refreshCommissions()
                 : null,

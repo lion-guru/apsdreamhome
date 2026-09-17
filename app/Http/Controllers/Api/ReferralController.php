@@ -19,6 +19,61 @@ class ReferralController extends BaseController
         return true;
     }
 
+    /**
+     * Public endpoint to verify a referral code (no auth required)
+     * GET /api/v2/verify-referral?code=CODE
+     */
+    public function verify()
+    {
+        header('Content-Type: application/json');
+        
+        $code = trim($_GET['code'] ?? '');
+        if (empty($code)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Referral code is required']);
+            return;
+        }
+
+        $code = strtoupper($code);
+        $tid = (int)$this->tenantId();
+        $tidScope = $tid > 1 ? ' AND u.tenant_id = ?' : '';
+        $params = [$code];
+        if ($tid > 1) $params[] = $tid;
+
+        try {
+            $stmt = $this->db->prepare("
+                SELECT u.id, u.name, u.email, u.phone, u.referral_code, u.mlm_rank,
+                       p.current_level as rank_name
+                FROM users u
+                JOIN mlm_profiles p ON u.id = p.user_id
+                WHERE u.referral_code = ? AND u.role IN ('associate','agent') AND p.status = 'active' {$tidScope}
+                LIMIT 1
+            ");
+            $stmt->execute($params);
+            $assoc = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if ($assoc) {
+                echo json_encode([
+                    'success' => true,
+                    'associate' => [
+                        'id' => (int)$assoc['id'],
+                        'name' => $assoc['name'],
+                        'email' => $assoc['email'],
+                        'phone' => $assoc['phone'],
+                        'referral_code' => $assoc['referral_code'],
+                        'rank' => $assoc['rank_name'] ?? $assoc['mlm_rank'] ?? 'Associate'
+                    ]
+                ]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Invalid or inactive referral code']);
+            }
+        } catch (\Throwable $e) {
+            error_log('ReferralController::verify error: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Internal server error']);
+        }
+    }
+
     public function dashboard()
     {
         header('Content-Type: application/json');

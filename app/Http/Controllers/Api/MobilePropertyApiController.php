@@ -1691,10 +1691,11 @@ class MobilePropertyApiController extends BaseController
             return;
         }
 
+        // Query properties table (FK target for property_inquiries.property_id)
         $property = $this->db->query(
-            "SELECT up.*, u.name as owner_name FROM user_properties up 
-             LEFT JOIN users u ON up.user_id = u.id 
-             WHERE up.id = ? AND up.tenant_id = 1",
+            "SELECT p.*, u.name as owner_name, u.id as owner_id FROM properties p 
+             LEFT JOIN users u ON p.created_by = u.id 
+             WHERE p.id = ? AND p.tenant_id = 1",
             [$propertyId]
         )->fetch();
 
@@ -1711,14 +1712,14 @@ class MobilePropertyApiController extends BaseController
 
         $inquiryId = $this->db->query("SELECT LAST_INSERT_ID() as id")->fetch()['id'];
 
-        if (!empty($property['user_id'])) {
+        if (!empty($property['owner_id'])) {
             try {
                 $pushService = new \App\Services\Communication\PushNotificationService();
                 $pushService->sendToUser(
-                    (int)$property['user_id'],
+                    (int)$property['owner_id'],
                     [
                         'title' => 'New Property Inquiry',
-                        'body' => "{$name} inquired about {$property['name']}",
+                        'body' => "{$name} inquired about {$property['title']}",
                         'data' => [
                             'type' => 'property_inquiry',
                             'inquiry_id' => (string)$inquiryId,

@@ -12,7 +12,7 @@ class AdminToolsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final connectivity = ref.watch(connectivityProvider);
+    final isOnline = ref.watch(isOnlineProvider);
 
     return SingleChildScrollView(
         padding: const EdgeInsets.all(AppConstants.defaultPadding),
@@ -94,7 +94,7 @@ class AdminToolsPage extends ConsumerWidget {
                   'Change plot status',
                   Icons.edit,
                   Colors.blue,
-                  connectivity.value ?? false
+                  isOnline
                       ? () => _showStatusUpdateDialog(context)
                       : null,
                 ),
@@ -104,7 +104,7 @@ class AdminToolsPage extends ConsumerWidget {
                   'Update multiple plots',
                   Icons.batch_prediction,
                   Colors.green,
-                  connectivity.value ?? false
+                  isOnline
                       ? () => _showBulkUpdateDialog(context)
                       : null,
                 ),
@@ -114,7 +114,7 @@ class AdminToolsPage extends ConsumerWidget {
                   'Add new property',
                   Icons.add_circle,
                   AppTheme.primaryColor,
-                  connectivity.value ?? false
+                  isOnline
                       ? () => _showAddPropertyDialog(context)
                       : null,
                 ),
@@ -124,7 +124,7 @@ class AdminToolsPage extends ConsumerWidget {
                   'Remove property',
                   Icons.delete,
                   Colors.red,
-                  connectivity.value ?? false
+                  isOnline
                       ? () => _showDeletePropertyDialog(context)
                       : null,
                 ),
@@ -151,7 +151,7 @@ class AdminToolsPage extends ConsumerWidget {
                     'Synchronize all pending data',
                     Icons.sync,
                     Colors.blue,
-                    connectivity.value ?? false
+                    isOnline
                         ? () => _forceSyncAll(context)
                         : null,
                   ),

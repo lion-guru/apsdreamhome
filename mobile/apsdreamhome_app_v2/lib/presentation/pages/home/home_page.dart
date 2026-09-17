@@ -18,7 +18,7 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(authProvider);
     final syncState = ref.watch(syncStateProvider);
-    final connectivity = ref.watch(connectivityProvider);
+    final isOnline = ref.watch(isOnlineProvider);
 
     return Scaffold(
       body: RefreshIndicator(
@@ -134,7 +134,7 @@ class HomePage extends ConsumerWidget {
               const SizedBox(height: 24),
 
               // Quick Actions Grid
-              _buildQuickActions(context, connectivity.value ?? false),
+              _buildQuickActions(context, isOnline),
 
               const SizedBox(height: 24),
 

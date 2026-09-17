@@ -308,8 +308,19 @@ class MoneyWorkflowController extends AdminController
             $id = (int)($_POST['id'] ?? 0);
             $status = $_POST['status'] ?? 'cleared';
             $reason = $_POST['reason'] ?? '';
-            $this->service->markChequeStatus($id, $status, $reason);
-            $this->setFlash('success', 'Cheque status updated');
+            
+            if ($status === 'bounced') {
+                // Use enhanced bounce with reversal logic
+                $result = $this->service->getChequeService()->markChequeBouncedWithReversal($id, $reason);
+                if ($result['success']) {
+                    $this->setFlash('success', 'Cheque marked as bounced. Payment schedule reverted to overdue with ₹500 penalty applied.');
+                } else {
+                    $this->setFlash('error', 'Failed: ' . ($result['error'] ?? 'Unknown error'));
+                }
+            } else {
+                $this->service->markChequeStatus($id, $status, $reason);
+                $this->setFlash('success', 'Cheque status updated');
+            }
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }

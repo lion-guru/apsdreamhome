@@ -205,6 +205,11 @@ class MoneyWorkflowService
         return $this->chequeService->getChequeSummary($filters);
     }
 
+    public function getChequeService(): \App\Services\Accounting\ChequeService
+    {
+        return $this->chequeService;
+    }
+
     /* ============================================================
        BANK RECONCILIATION (delegates to BankReconciliationService)
        ============================================================ */

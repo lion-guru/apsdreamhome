@@ -32,7 +32,7 @@ class _LeadListPageState extends ConsumerState<LeadListPage> {
   @override
   Widget build(BuildContext context) {
     final leadsAsync = ref.watch(leadsProvider);
-    final connectivity = ref.watch(connectivityProvider);
+    final isOnline = ref.watch(isOnlineProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -44,7 +44,7 @@ class _LeadListPageState extends ConsumerState<LeadListPage> {
             tooltip: 'Voice-to-Lead',
           ),
           IconButton(
-            onPressed: connectivity.value ?? false ? _addLead : null,
+            onPressed: isOnline ? _addLead : null,
             icon: const Icon(Icons.add),
           ),
         ],
@@ -147,7 +147,7 @@ class _LeadListPageState extends ConsumerState<LeadListPage> {
                       return LeadCard(
                         lead: lead,
                         onTap: () => _showLeadDetails(lead),
-                        onStatusUpdate: connectivity.value ?? false
+                        onStatusUpdate: isOnline
                             ? (newStatus) => _updateLeadStatus(lead, newStatus)
                             : null,
                       );
@@ -181,7 +181,7 @@ class _LeadListPageState extends ConsumerState<LeadListPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: connectivity.value ?? false ? _addLead : null,
+        onPressed: isOnline ? _addLead : null,
         child: const Icon(Icons.add),
       ),
     );

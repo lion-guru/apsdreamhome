@@ -213,7 +213,7 @@ class BookingController extends AdminController
         }
     }
 
-    public function show($id)
+public function show($id)
     {
         try {
             $stmt = $this->db->prepare(
@@ -221,12 +221,12 @@ class BookingController extends AdminController
                         c.name as colony_name,
                         u.name as customer_name, u.email as customer_email, u.phone as customer_phone,
                         a.name as associate_name
-                 FROM plot_bookings b
-                 LEFT JOIN plots pl ON b.plot_id = pl.id
-                 LEFT JOIN colonies c ON pl.colony_id = c.id
-                 LEFT JOIN users u ON b.customer_id = u.id
-                 LEFT JOIN users a ON b.associate_id = a.id
-                 WHERE b.id = ?"
+                     FROM plot_bookings b
+                     LEFT JOIN plots pl ON b.plot_id = pl.id
+                     LEFT JOIN colonies c ON pl.colony_id = c.id
+                     LEFT JOIN users u ON b.customer_id = u.id
+                     LEFT JOIN users a ON b.associate_id = a.id
+                     WHERE b.id = ?"
             );
             $stmt->execute([$id]);
             $booking = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -267,6 +267,97 @@ class BookingController extends AdminController
                 'commissions' => [], 'total_commission' => 0,
                 'error' => $e->getMessage()
             ]);
+        }
+    }
+
+    /**
+     * Generate and download Legal Kit (Allotment Letter + Receipt + Passbook/Schedule) as ZIP
+     */
+    public function legalKit($id)
+    {
+        try {
+            // Verify booking exists
+            $stmt = $this->db->prepare(
+                "SELECT b.*, pl.plot_number, pl.area_sqft,
+                        c.name as colony_name,
+                        u.name as customer_name, u.email as customer_email, u.phone as customer_phone
+                     FROM plot_bookings b
+                     LEFT JOIN plots pl ON b.plot_id = pl.id
+                     LEFT JOIN colonies c ON pl.colony_id = c.id
+                     LEFT JOIN users u ON b.customer_id = u.id
+                     WHERE b.id = ?"
+            );
+            $stmt->execute([$id]);
+            $booking = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$booking) {
+                $_SESSION['error'] = 'Booking not found.';
+                $this->redirect('/admin/bookings');
+                return;
+            }
+
+            // Load PdfService
+            $pdfService = new \App\Services\Pdf\PdfService();
+            
+            $zipName = 'legal-kit-booking-' . $booking['booking_number'] . '-' . date('Ymd') . '.zip';
+            $tempDir = sys_get_temp_dir() . '/legal_kit_' . $id . '_' . time();
+            @mkdir($tempDir, 0755, true);
+            
+            $files = [];
+            
+            // 1. Generate Allotment Letter (using agreement type)
+            $allotmentResult = $pdfService->generate(\App\Services\Pdf\PdfService::TYPE_AGREEMENT, $id);
+            if ($allotmentResult['success']) {
+                $allotmentPath = $tempDir . '/1-Allotment-Letter.pdf';
+                copy($allotmentResult['data']['path'], $allotmentPath);
+                $files[] = $allotmentPath;
+            }
+            
+            // 2. Generate Payment Receipt
+            $receiptResult = $pdfService->generate(\App\Services\Pdf\PdfService::TYPE_RECEIPT, $id);
+            if ($receiptResult['success']) {
+                $receiptPath = $tempDir . '/2-Payment-Receipt.pdf';
+                copy($receiptResult['data']['path'], $receiptPath);
+                $files[] = $receiptPath;
+            }
+            
+            // 3. Generate Passbook / EMI Schedule (using possession type which has schedule info)
+            $possessionResult = $pdfService->generate(\App\Services\Pdf\PdfService::TYPE_POSSESSION, $id);
+            if ($possessionResult['success']) {
+                $passbookPath = $tempDir . '/3-Passbook-Schedule.pdf';
+                copy($possessionResult['data']['path'], $passbookPath);
+                $files[] = $passbookPath;
+            }
+            
+            // Create ZIP
+            $zip = new \ZipArchive();
+            $zipPath = $tempDir . '/' . $zipName;
+            if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === TRUE) {
+                foreach ($files as $file) {
+                    $zip->addFile($file, basename($file));
+                }
+                $zip->close();
+            } else {
+                throw new \Exception('Failed to create ZIP archive');
+            }
+            
+            // Stream the ZIP file
+            header('Content-Type: application/zip');
+            header('Content-Disposition: attachment; filename="' . $zipName . '"');
+            header('Content-Length: ' . filesize($zipPath));
+            readfile($zipPath);
+            
+            // Cleanup
+            @unlink($zipPath);
+            foreach ($files as $file) @unlink($file);
+            @rmdir($tempDir);
+            
+            exit;
+            
+        } catch (\Throwable $e) {
+            error_log('BookingController::legalKit error: ' . $e->getMessage());
+            $_SESSION['error'] = 'Failed to generate legal kit: ' . $e->getMessage();
+            $this->redirect('/admin/bookings/' . $id);
         }
     }
 

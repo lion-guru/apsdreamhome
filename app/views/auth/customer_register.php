@@ -93,14 +93,15 @@ $base = BASE_URL;
                             <label class="form-label"><?= __('register_label_confirm_password') ?> *</label>
                             <input type="password" class="form-control" name="confirm_password" placeholder="<?= __('register_ph_confirm_password') ?>" <?= $formVariant === 'minimal' ? '' : 'required' ?>>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label"><?= __('register_label_referral') ?></label>
-                            <input type="text" class="form-control" name="referral_code" value="<?php echo htmlspecialchars($old['referral_code'] ?? $ref ?? ''); ?>" placeholder="<?= __('register_ph_referral') ?>">
-                            <small class="text-success">
-                                <i class="fas fa-gift me-1"></i>
-                                <?= __('register_referral_bonus', ['percent' => 5]) ?>
-                            </small>
-                        </div>
+<div class="mb-3">
+                             <label class="form-label"><?= __('register_label_referral') ?></label>
+                             <input type="text" class="form-control" name="referral_code" value="<?php echo htmlspecialchars($old['referral_code'] ?? $ref ?? ''); ?>" placeholder="<?= __('register_ph_referral') ?>">
+                             <div id="referral_name_display" class="mt-2"></div>
+                             <small class="text-success">
+                                 <i class="fas fa-gift me-1"></i>
+                                 <?= __('register_referral_bonus', ['percent' => 5]) ?>
+                             </small>
+                         </div>
                     </div>
                     <?php if ($formVariant === 'minimal'): ?>
                         <button type="button" class="btn btn-primary w-100 py-2 reg-step-1-btn" id="reg-step-1-continue" >
@@ -111,22 +112,55 @@ $base = BASE_URL;
 <button type="submit" class="btn btn-primary w-100 py-2 reg-step-2-btn" id="reg-step-2-submit" >
                             <i class="fas fa-user-plus me-2"></i><?= __('register_button_submit') ?>
                         </button>
-                        <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
-                        (function(){
-                            var btn1 = document.getElementById('reg-step-1-continue');
-                            var btn2 = document.getElementById('reg-step-2-submit');
-                            var step2 = document.querySelectorAll('.reg-step-2');
-                            if (btn1 && btn2 && step2.length) {
-                                btn1.addEventListener('click', function(){
-                                    step2.forEach(function(s){ s.style.display = ''; });
-                                    btn1.style.display = 'none';
-                                    btn2.style.display = '';
-                                    // Track step transition
-                                    if (window.ABTracker) window.ABTracker.track('registration_form_length', '<?= htmlspecialchars($formVariant, ENT_QUOTES) ?>', 'step_continue', {step: 1});
-                                });
-                            }
-                        })();
-                        </script>
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+                         (function(){
+                             var btn1 = document.getElementById('reg-step-1-continue');
+                             var btn2 = document.getElementById('reg-step-2-submit');
+                             var step2 = document.querySelectorAll('.reg-step-2');
+                             if (btn1 && btn2 && step2.length) {
+                                 btn1.addEventListener('click', function(){
+                                     step2.forEach(function(s){ s.style.display = ''; });
+                                     btn1.style.display = 'none';
+                                     btn2.style.display = '';
+                                     // Track step transition
+                                     if (window.ABTracker) window.ABTracker.track('registration_form_length', '<?= htmlspecialchars($formVariant, ENT_QUOTES) ?>', 'step_continue', {step: 1});
+                                 });
+                             }
+                             
+                             // Referral name resolution
+                             function resolveReferralName() {
+                                 var referralCode = document.getElementsByName('referral_code')[0].value.trim();
+                                 var display = document.getElementById('referral_name_display');
+                                 if (!referralCode) {
+                                     display.innerHTML = '';
+                                     return;
+                                 }
+                                 display.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resolving...';
+                                 fetch('/apsdreamhome/api/user/resolve-sponsor?code=' + encodeURIComponent(referralCode))
+.then(response => response.json())
+                                      .then(data => {
+                                          if (data.success) {
+                                              var name = data.name || 'Unknown';
+                                              var role = data.role || '';
+                                              var displayText = '<strong>' + name + '</strong> (' + role + ')';
+                                              display.innerHTML = displayText;
+                                          } else {
+                                              display.innerHTML = '<span class="text-danger">Invalid referral code</span>';
+                                          }
+                                      })
+                                      .catch(() => {
+                                          display.innerHTML = '<span class="text-danger">Error validating referral</span>';
+                                      });
+                             }
+                             
+                             // Attach listener to referral_code input
+                             var referralInput = document.querySelector('input[name="referral_code"]');
+                             if (referralInput) {
+                                 referralInput.addEventListener('input', resolveReferralName);
+                                 referralInput.addEventListener('blur', resolveReferralName);
+                             }
+                         })();
+                     </script>
                     <?php else: ?>
                         <button type="submit" class="btn btn-primary w-100 py-2">
                             <i class="fas fa-user-plus me-2"></i><?= __('register_button_submit') ?>

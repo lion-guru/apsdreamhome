@@ -349,15 +349,15 @@ class AdminMenuService
     }
 
     /**
-     * Check if user has permission for a specific menu item
+     * Check if user has permission for a specific menu item by ID
      */
     public function hasMenuAccess(int $menuItemId, ?string $role = null, ?int $userId = null): bool
     {
         $role = $role ?? $this->currentRole;
         $userId = $userId ?? $this->currentUserId;
 
-        // Super admin and admin have access to everything
-        if ($role === RBACManager::ROLE_SUPER_ADMIN || $role === RBACManager::ROLE_ADMIN) {
+        // Super admin has access to everything
+        if ($role === RBACManager::ROLE_SUPER_ADMIN) {
             return true;
         }
 
@@ -394,6 +394,28 @@ class AdminMenuService
         }
 
         return $rolePermission['can_view'] == 1;
+    }
+
+    /**
+     * Check if user has permission for a menu item by URL
+     */
+    public function hasMenuAccessByUrl(string $url, ?string $role = null, ?int $userId = null): bool
+    {
+        $role = $role ?? $this->currentRole;
+        $userId = $userId ?? $this->currentUserId;
+
+        // Super admin has access to everything
+        if ($role === RBACManager::ROLE_SUPER_ADMIN) {
+            return true;
+        }
+
+        // Get menu item by URL
+        $menuItem = $this->db->fetchRow("SELECT id FROM admin_menu_items WHERE url = ? AND is_active = 1 LIMIT 1", [$url]);
+        if (!$menuItem) {
+            return false;
+        }
+
+        return $this->hasMenuAccess($menuItem['id'], $role, $userId);
     }
 
     /**

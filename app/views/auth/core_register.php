@@ -244,13 +244,14 @@ $selectedRole = $selectedRole ?? 'customer';
                     </div>
                 </div>
 
-                <div class="form-group" id="referralGroup" style="display:<?= ($selectedRole === 'associate' || $selectedRole === 'agent') ? 'block' : 'none' ?>">
-                    <label><i class="fas fa-gift"></i> Referral Code</label>
-                    <div class="input-wrap">
-                        <input type="text" name="referral_code" id="referralCodeInput" value="<?= htmlspecialchars($ref ?? '') ?>" placeholder="Enter sponsor's referral code">
-                        <i class="fas fa-gift field-icon"></i>
-                    </div>
-                </div>
+<div class="form-group" id="referralGroup" style="display:<?= ($selectedRole === 'associate' || $selectedRole === 'agent') ? 'block' : 'none' ?>">
+                     <label><i class="fas fa-gift"></i> Referral Code</label>
+                     <div class="input-wrap">
+                         <input type="text" name="referral_code" id="referralCodeInput" value="<?= htmlspecialchars($ref ?? '') ?>" placeholder="Enter sponsor's referral code">
+                         <i class="fas fa-gift field-icon"></i>
+                     </div>
+                     <div id="referral_name_display" class="mt-2"></div>
+                 </div>
 
                 <div class="terms-row">
                     <input type="checkbox" name="terms" id="terms" required>
@@ -314,22 +315,56 @@ $selectedRole = $selectedRole ?? 'customer';
             const colors = ['', '#ef4444', '#f59e0b', '#22c55e'];
             const labels = ['', 'Weak', 'Fair', 'Strong'];
             
-            if (val.length === 0) {
-                strength = 0;
-                label = 'Enter at least 6 characters';
-                color = '#64748b';
-            } else {
-                color = colors[strength];
-                label = labels[strength];
-            }
-            
-            strengthBar.style.width = (strength / 3 * 100) + '%';
-            strengthBar.style.background = color;
-            strengthText.textContent = label;
-            strengthText.style.color = color;
-        });
-
-        // Form Validation
+if (val.length === 0) {
+                 strength = 0;
+                 label = 'Enter at least 6 characters';
+                 color = '#64748b';
+             } else {
+                 color = colors[strength];
+                 label = labels[strength];
+             }
+             
+             strengthBar.style.width = (strength / 3 * 100) + '%';
+             strengthBar.style.background = color;
+             strengthText.textContent = label;
+             strengthText.style.color = color;
+         });
+         
+         // Referral name resolution
+         function resolveReferralName() {
+             var referralInput = document.getElementById('referralCodeInput');
+             var referralCode = referralInput ? referralInput.value.trim() : '';
+             var display = document.getElementById('referral_name_display');
+             if (!referralCode) {
+                 display.innerHTML = '';
+                 return;
+             }
+             display.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resolving...';
+fetch('/apsdreamhome/api/user/resolve-sponsor?code=' + encodeURIComponent(referralCode))
+                  .then(response => response.json())
+                  .then(data => {
+                      if (data.success) {
+                          var name = data.name || 'Unknown';
+                          var role = data.role || '';
+                          var displayText = '<strong>' + name + '</strong> (' + role + ')';
+                          display.innerHTML = displayText;
+                      } else {
+                          display.innerHTML = '<span class="text-danger">Invalid referral code</span>';
+                      }
+                  })
+                  .catch(() => {
+                      display.innerHTML = '<span class="text-danger">Error validating referral</span>';
+                  });
+         }
+         
+         // Attach listener to referral_code input (if exists)
+         var referralInput = document.getElementById('referralCodeInput');
+         if (referralInput) {
+             referralInput.addEventListener('input', resolveReferralName);
+             referralInput.addEventListener('blur', resolveReferralName);
+         }
+         
+         // Form Validation
         document.getElementById('registerForm').addEventListener('submit', function(e) {
             const pwd = document.getElementById('password').value;
             const confirm = document.getElementById('confirmPassword').value;

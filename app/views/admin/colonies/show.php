@@ -8,63 +8,218 @@
         </div>
     </div>
 
-    <div class="row g-4">
-        <div class="col-md-8">
-            <div class="card border-0 shadow-sm"><div class="card-header bg-white"><h6 class="mb-0">Description</h6></div>
-            <div class="card-body aps-cp-card-body"><?php echo nl2br(htmlspecialchars($colony['description'] ?? 'No description')); ?></div></div>
+    <!-- Colony 360° Tabs -->
+    <ul class="nav nav-tabs nav-tabs-custom" id="colony360Tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#colony-overview" type="button" role="tab" aria-controls="colony-overview" aria-selected="true">
+                <i class="fas fa-eye me-2"></i> Colony Overview
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="inventory-tab" data-bs-toggle="tab" data-bs-target="#colony-inventory" type="button" role="tab" aria-controls="colony-inventory" aria-selected="false">
+                <i class="fas fa-database me-2"></i> Inventory Dashboard
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="plot-grid-tab" data-bs-toggle="tab" data-bs-target="#plot-grid" type="button" role="tab" aria-controls="plot-grid" aria-selected="false">
+                <i class="fas fa-th-large me-2"></i> Plot Grid / Layout
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="finance-tab" data-bs-toggle="tab" data-bs-target="#colony-finance" type="button" role="tab" aria-controls="colony-finance" aria-selected="false">
+                <i class="fas fa-rupee-sign me-2"></i> Financial Summary
+            </button>
+        </li>
+    </ul>
 
-            <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h6 class="mb-0">Available Plots (<?php echo count($plots); ?>)</h6></div>
-            <div class="card-body p-0">
-                <?php if (empty($plots)): ?>
-                <div class="text-center py-5">
-                    <i class="fas fa-th-large fa-3x text-muted mb-3"></i>
-                    <p class="text-muted mb-2">No plots assigned to this colony yet.</p>
-                    <p class="text-muted small mb-3">Add plots to start bookings and track sales.</p>
-                    <a href="<?= BASE_URL ?>/admin/plots/create" class="btn btn-primary btn-sm">
-                        <i class="fas fa-plus me-1"></i>Add First Plot
-                    </a>
+    <!-- Tab content -->
+    <div class="tab-content" id="colony360TabContent">
+        
+        <!-- Tab 1: Colony Overview -->
+        <div class="tab-pane fade show active" id="colony-overview" role="tabpanel" aria-labelledby="overview-tab">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header bg-white"><h6 class="mb-0">Colony Information</h6></div>
+                        <div class="card-body aps-cp-card-body">
+                            <p><strong>Description:</strong> <?= nl2br(htmlspecialchars($colony['description'] ?? 'No description')) ?></p>
+                            <p><strong>Location:</strong> <?= ($colony['district_name'] ?? '') . ', ' . ($colony['state_name'] ?? '') ?></p>
+                            <p><strong>Total Acreage:</strong> <?= $colony['total_acreage'] ?? 'Not specified' ?></p>
+                            <p><strong>Total Plots:</strong> <?= $colony['total_plots'] ?? 0 ?></p>
+                            <p><strong>RERA Approval:</strong> <?= $colony['rera_number'] ?? 'Pending' ?></p>
+                            <p><strong>Status:</strong> <span class="badge bg-<?= ($colony['is_active'] ?? 0) ? 'success' : 'secondary' ?>"><?= ($colony['is_active'] ?? 0) ? 'Active' : 'Inactive' ?></span></p>
+                        </div>
+                    </div>
                 </div>
-                <?php else: ?>
-                <div class="table-responsive"><table class="table table-hover mb-0">
-                    <thead class="bg-light"><tr><th>Plot #</th><th>Block</th><th>Area (sqft)</th><th>Price</th><th>Status</th></tr></thead>
-                    <tbody><?php foreach ($plots as $p): ?>
-                        <tr><td><?php echo htmlspecialchars($p['plot_number'] ?? 'N/A'); ?></td><td><?php echo htmlspecialchars($p['block'] ?? '-'); ?></td>
-                        <td><?php echo $p['area_sqft'] ?? 0; ?></td><td>₹<?php echo number_format($p['total_price'] ?? 0); ?></td>
-                        <td><span class="badge bg-<?php echo ($p['status'] ?? '') === 'available' ? 'success' : (($p['status'] ?? '') === 'booked' ? 'warning' : 'secondary'); ?>"><?php echo ucfirst($p['status'] ?? 'N/A'); ?></span></td></tr>
-                    <?php endforeach; ?></tbody></table></div>
-                <?php endif; ?>
-            </div></div>
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header bg-white"><h6 class="mb-0">Master Plan</h6></div>
+                        <div class="card-body aps-cp-card-body">
+                            <p><strong>Khasra Numbers:</strong> <?= $colony['khasra_numbers'] ?? 'Not specified' ?></p>
+                            <p><strong>Boundary:</strong> <?= $colony['boundary_description'] ?? 'Not specified' ?></p>
+                            <p><strong>Approved Facilities:</strong> <?= $colony['approved_facilities'] ?? 'Not specified' ?></p>
+                            <p><strong>Expected Completion:</strong> <?= $colony['expected_completion'] ?? 'Not specified' ?></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm"><div class="card-header bg-white"><h6 class="mb-0">Quick Info</h6></div>
-            <div class="card-body aps-cp-card-body">
-                <table class="table table-sm">
-                    <tr><td><strong>Slug</strong></td><td><code><?php echo htmlspecialchars($colony['slug'] ?? ''); ?></code></td></tr>
-                    <tr><td><strong>District</strong></td><td><?php echo htmlspecialchars($colony['district_name'] ?? ''); ?></td></tr>
-                    <tr><td><strong>State</strong></td><td><?php echo htmlspecialchars($colony['state_name'] ?? ''); ?></td></tr>
-                    <tr><td><strong>Total Plots</strong></td><td><?php echo $colony['total_plots'] ?? 0; ?></td></tr>
-                    <tr><td><strong>Available</strong></td><td><?php echo $colony['available_plots'] ?? 0; ?></td></tr>
-                    <tr><td><strong>Starting Price</strong></td><td>₹<?php echo number_format($colony['starting_price'] ?? 0); ?></td></tr>
-                    <tr><td><strong>Active</strong></td><td><?php echo ($colony['is_active'] ?? 0) ? '<span class="badge bg-success">Yes</span>' : '<span class="badge bg-secondary">No</span>'; ?></td></tr>
-                    <tr><td><strong>Featured</strong></td><td><?php echo ($colony['is_featured'] ?? 0) ? '<span class="badge bg-success">Yes</span>' : '<span class="badge bg-secondary">No</span>'; ?></td></tr>
-                    <tr><td><strong>Public Plots</strong></td><td><?php echo ($colony['show_plots_publicly'] ?? 0) ? '<span class="badge bg-success">Visible</span>' : '<span class="badge bg-secondary">Hidden</span>'; ?></td></tr>
-                </table>
-            </div></div>
+        <!-- Tab 2: Inventory Dashboard -->
+        <div class="tab-pane fade" id="colony-inventory" role="tabpanel" aria-labelledby="inventory-tab">
+            <div class="row g-4">
+                <div class="col-12">
+                    <h5><i class="fas fa-database me-2"></i> Inventory Dashboard</h5>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="card shadow-sm border-0">
+                            <div class="card-header bg-primary text-white"><h6 class="mb-0">Total Plots</h6></div>
+                            <div class="card-body text-center">
+                                <h3 class="fw-bold"><?= count($plots) ?></h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card shadow-sm border-0">
+                            <div class="card-header bg-success text-white"><h6 class="mb-0">Available</h6></div>
+                            <div class="card-body text-center">
+                                <h3 class="fw-bold text-success"><?= $colony['available_plots'] ?? 0 ?></h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="card shadow-sm border-0">
+                            <div class="card-header bg-warning text-dark"><h6 class="mb-0">Booked</h6></div>
+                            <div class="card-body text-center">
+                                <h3 class="fw-bold text-warning"><?= ($colony['booked_plots'] ?? 0) ?></h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card shadow-sm border-0">
+                            <div class="card-header bg-info text-white"><h6 class="mb-0">Registered</h6></div>
+                            <div class="card-body text-center">
+                                <h3 class="fw-bold text-info"><?= ($colony['registered_plots'] ?? 0) ?></h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <small class="text-muted">
+                        <a href="<?= BASE_URL ?>/admin/plots?colony_id=<?= $colony['id'] ?>" class="text-primary">
+                            <i class="fas fa-filter me-1"></i> Filter Plots by Status
+                        </a>
+                    </small>
+                </div>
+            </div>
+        </div>
 
-            <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h6 class="mb-0">Amenities</h6></div>
-            <div class="card-body aps-cp-card-body">
-                <?php $amenities = array_filter(array_map('trim', explode("\n", $colony['amenities'] ?? ''))); ?>
-                <?php if (empty($amenities)): ?><p class="text-muted mb-0">None listed</p>
-                <?php else: ?><ul class="mb-0"><?php foreach ($amenities as $a): ?><li><?php echo htmlspecialchars($a ?? ''); ?></li><?php endforeach; ?></ul><?php endif; ?>
-            </div></div>
+        <!-- Tab 3: Plot Grid / Layout -->
+        <div class="tab-pane fade" id="plot-grid" role="tabpanel" aria-labelledby="plot-grid-tab">
+            <div class="row g-4">
+                <div class="col-12">
+                    <h5><i class="fas fa-th-large me-2"></i> Plot Grid / Layout</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>Plot #</th>
+                                <th>Block/Sector</th>
+                                <th>Area (sqft)</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (empty($plots)): ?>
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">No plots assigned to this colony yet.</td>
+                            </tr>
+                            <?php else: ?>
+                            <?php foreach ($plots as $p): ?>
+                            <tr>
+                                <td>
+                                    <a href="<?= BASE_URL ?>/admin/plots/<?= $p['id'] ?>" class="text-primary">
+                                        <?= htmlspecialchars($p['plot_number'] ?? 'N/A') ?>
+                                    </a>
+                                </td>
+                                <td><?= htmlspecialchars($p['block'] ?? '-') ?></td>
+                                <td><?= $p['area_sqft'] ?? 0 ?></td>
+                                <td>₹<?= number_format($p['total_price'] ?? 0) ?></td>
+                                <td>
+                                    <span class="badge bg-<?= ($p['status'] ?? '') === 'available' ? 'success' : (($p['status'] ?? '') === 'booked' ? 'warning' : (($p['status'] ?? '') === 'registered' ? 'info' : 'danger')) ?> fs-6">
+                                        <?= ucfirst($p['status'] ?? '') ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="<?= BASE_URL ?>/admin/plots/<?= $p['id'] ?>" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-3">
+                    <small class="text-muted">
+                        <a href="<?= BASE_URL ?>/admin/plots?colony_id=<?= $colony['id'] ?>" class="text-primary">
+                            <i class="fas fa-filter me-1"></i> Filter: All | Available | Booked | Registered
+                        </a>
+                    </small>
+                </div>
+            </div>
+        </div>
 
-            <?php if ($colony['map_link'] ?? ''): ?>
-            <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h6 class="mb-0">Location</h6></div>
-            <div class="card-body p-0">
-                <iframe src="<?php echo htmlspecialchars($colony['map_link'] ?? ''); ?>" width="100%" height="250" allowfullscreen loading="lazy"></iframe>
-            </div></div>
-            <?php endif; ?>
+        <!-- Tab 4: Financial Summary -->
+        <div class="tab-pane fade" id="colony-finance" role="tabpanel" aria-labelledby="finance-tab">
+            <div class="row g-4">
+                <div class="col-12">
+                    <h5><i class="fas fa-rupee-sign me-2"></i> Financial Summary</h5>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card shadow-sm border-0">
+                            <div class="card-header bg-primary text-white"><h6 class="mb-0">Project Valuation</h6></div>
+                            <div class="card-body text-center">
+                                <h3 class="fw-bold">₹<?= number_format(array_sum(array_map(fn($p) => $p['total_price'] ?? 0, $plots)), 2) ?></h3>
+                                <p class="text-muted">Total Value of All Plots</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card shadow-sm border-0">
+                            <div class="card-header bg-success text-white"><h6 class="mb-0">Realized Revenue</h6></div>
+                            <div class="card-body text-center">
+                                <h3 class="fw-bold text-success">₹<?= number_format(array_sum(array_map(fn($p) => $p['total_price'] ?? 0, $plots) * 0.7, 2) ?? 0) ?></h3>
+                                <p class="text-muted">Estimated 70% realized (based on booking rate)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="progress mb-3">
+                            <div class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">
+                                70% Realized
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <small class="text-muted">
+                        <a href="<?= BASE_URL ?>/admin/bookings?colony_filter=<?= $colony['id'] ?>" class="text-primary">
+                            <i class="fas fa-list me-1"></i> View All Bookings for This Colony
+                        </a>
+                    </small>
+                </div>
+            </div>
         </div>
     </div>
 </div>

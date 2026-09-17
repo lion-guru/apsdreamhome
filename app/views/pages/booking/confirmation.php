@@ -39,6 +39,40 @@ foreach ($statusSteps as $i => $step) {
         </div>
     </div>
 
+    <!-- 360° Quick Actions Bar -->
+    <div class="card aps-cp-card mb-4" style="border-left: 4px solid #198754;">
+        <div class="card-body aps-cp-card-body">
+            <div class="d-flex flex-wrap gap-2 align-items-center">
+                <h6 class="fw-bold mb-0 me-3"><i class="fas fa-link me-1"></i> 360° Quick Links:</h6>
+                <?php 
+                $bookingId = $booking['id'] ?? 0;
+                $plotId = $booking['plot_id'] ?? 0;
+                $customerId = $booking['customer_id'] ?? 0;
+                ?>
+                <a href="<?= $baseUrl ?>/user/bookings/<?= $bookingId ?>" class="btn btn-sm btn-outline-success active" title="Booking Details">
+                    <i class="fas fa-file-contract me-1"></i> My Booking
+                </a>
+                <?php if ($plotId): ?>
+                    <a href="<?= $baseUrl ?>/plots/<?= $plotId ?>/detail" class="btn btn-sm btn-outline-primary" title="View Plot">
+                        <i class="fas fa-th me-1"></i> Plot
+                    </a>
+                <?php endif; ?>
+                <a href="<?= $baseUrl ?>/user/profile" class="btn btn-sm btn-outline-info" title="My Profile">
+                    <i class="fas fa-user me-1"></i> Profile
+                </a>
+                <a href="<?= $baseUrl ?>/user/bookings/<?= $bookingId ?>/emi-schedule" class="btn btn-sm btn-outline-dark" title="EMI Schedule">
+                    <i class="fas fa-calendar-check me-1"></i> EMI Schedule
+                </a>
+                <a href="<?= $baseUrl ?>/user/bookings/<?= $bookingId ?>/documents" class="btn btn-sm btn-outline-dark" title="Documents">
+                    <i class="fas fa-file-alt me-1"></i> Documents
+                </a>
+                <a href="<?= $baseUrl ?>/user/bookings/<?= $bookingId ?>/receipt" class="btn btn-sm btn-outline-secondary" title="Download Receipt" target="_blank">
+                    <i class="fas fa-download me-1"></i> Receipt
+                </a>
+            </div>
+        </div>
+    </div>
+
     <div class="row g-4">
 
         <!-- Left: Booking Progress + Details -->

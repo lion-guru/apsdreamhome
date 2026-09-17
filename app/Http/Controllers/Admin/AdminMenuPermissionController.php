@@ -20,17 +20,33 @@ class AdminMenuPermissionController extends AdminController
      */
     public function index()
     {
-        // Check if user is super admin or admin
+        // Check if user is super admin
         $currentRole = RBACManager::getUserRole();
-        if ($currentRole !== RBACManager::ROLE_SUPER_ADMIN && $currentRole !== RBACManager::ROLE_ADMIN) {
+        if ($currentRole !== RBACManager::ROLE_SUPER_ADMIN) {
             header('Location: ' . BASE_URL . '/admin/dashboard');
             exit;
         }
 
         $menuItems = $this->menuService->getAllMenuItemsWithPermissions();
+        $roles = RBACManager::getRoles();
+        
+        // Group roles by category
+        $rolesByCategory = [];
+        foreach ($roles as $roleKey => $roleInfo) {
+            $cat = $roleInfo['category'] ?? 'Other';
+            if (!isset($rolesByCategory[$cat])) {
+                $rolesByCategory[$cat] = [];
+            }
+            $rolesByCategory[$cat][$roleKey] = $roleInfo;
+        }
+        
+        // Category order for display
+        $categoryOrder = ['Executive', 'Management', 'Departmental', 'Team Lead', 'Senior Staff', 'Staff', 'Telecalling', 'MLM', 'Agent', 'Franchise', 'Customer', 'Lead', 'Guest', 'Legacy'];
         
         $this->render('admin/menu-permissions/index', [
             'menuItems' => $menuItems,
+            'rolesByCategory' => $rolesByCategory,
+            'categoryOrder' => $categoryOrder,
         ]);
     }
 
@@ -39,9 +55,9 @@ class AdminMenuPermissionController extends AdminController
      */
     public function updateRolePermissions()
     {
-        // Check if user is super admin or admin
+        // Check if user is super admin
         $currentRole = RBACManager::getUserRole();
-        if ($currentRole !== RBACManager::ROLE_SUPER_ADMIN && $currentRole !== RBACManager::ROLE_ADMIN) {
+        if ($currentRole !== RBACManager::ROLE_SUPER_ADMIN) {
             echo json_encode(['success' => false, 'message' => 'Unauthorized']);
             exit;
         }
@@ -71,9 +87,9 @@ class AdminMenuPermissionController extends AdminController
      */
     public function updateUserPermissions()
     {
-        // Check if user is super admin or admin
+        // Check if user is super admin
         $currentRole = RBACManager::getUserRole();
-        if ($currentRole !== RBACManager::ROLE_SUPER_ADMIN && $currentRole !== RBACManager::ROLE_ADMIN) {
+        if ($currentRole !== RBACManager::ROLE_SUPER_ADMIN) {
             echo json_encode(['success' => false, 'message' => 'Unauthorized']);
             exit;
         }
@@ -103,9 +119,9 @@ class AdminMenuPermissionController extends AdminController
      */
     public function revokeUserPermission()
     {
-        // Check if user is super admin or admin
+        // Check if user is super admin
         $currentRole = RBACManager::getUserRole();
-        if ($currentRole !== RBACManager::ROLE_SUPER_ADMIN && $currentRole !== RBACManager::ROLE_ADMIN) {
+        if ($currentRole !== RBACManager::ROLE_SUPER_ADMIN) {
             echo json_encode(['success' => false, 'message' => 'Unauthorized']);
             exit;
         }
@@ -124,9 +140,9 @@ class AdminMenuPermissionController extends AdminController
      */
     public function getUsers()
     {
-        // Check if user is super admin or admin
+        // Check if user is super admin
         $currentRole = RBACManager::getUserRole();
-        if ($currentRole !== RBACManager::ROLE_SUPER_ADMIN && $currentRole !== RBACManager::ROLE_ADMIN) {
+        if ($currentRole !== RBACManager::ROLE_SUPER_ADMIN) {
             echo json_encode(['success' => false, 'message' => 'Unauthorized']);
             exit;
         }
@@ -144,9 +160,9 @@ class AdminMenuPermissionController extends AdminController
      */
     public function getUserPermissions()
     {
-        // Check if user is super admin or admin
+        // Check if user is super admin
         $currentRole = RBACManager::getUserRole();
-        if ($currentRole !== RBACManager::ROLE_SUPER_ADMIN && $currentRole !== RBACManager::ROLE_ADMIN) {
+        if ($currentRole !== RBACManager::ROLE_SUPER_ADMIN) {
             echo json_encode(['success' => false, 'message' => 'Unauthorized']);
             exit;
         }

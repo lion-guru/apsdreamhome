@@ -276,6 +276,7 @@ $router->get('/api/whatsapp-templates/stats', 'App\\Http\\Controllers\\WhatsAppT
 $router->get('/api/whatsapp-templates/preview/{id}', 'App\\Http\\Controllers\\WhatsAppTemplateController@previewTemplate');
 
 // Referral API Routes
+$router->get('/api/v2/verify-referral', 'Api\ReferralController@verify');
 $router->get('/api/referral/dashboard', 'Api\ReferralController@dashboard');
 $router->get('/api/referral/stats', 'Api\ReferralController@stats');
 $router->get('/api/referral/list', 'Api\ReferralController@index');

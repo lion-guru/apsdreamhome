@@ -18,14 +18,14 @@ class ProfilePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(authProvider);
-    final connectivity = ref.watch(connectivityProvider);
+    final isOnline = ref.watch(isOnlineProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
         actions: [
           IconButton(
-            onPressed: connectivity.value ?? false ? _editProfile : null,
+            onPressed: isOnline ? _editProfile : null,
             icon: const Icon(Icons.edit),
           ),
         ],

@@ -225,16 +225,17 @@
 
         <div class="referral-section" id="referralSection">
             <h6 class="mb-3"><i class="fas fa-ticket-alt me-2"></i><?php echo __('auth_referral_code', 'Referral Code'); ?></h6>
-            <div class="d-flex align-items-center mb-3">
-                <input type="text" class="form-control" id="referralCode" placeholder="<?php echo __('auth_enter_referral', 'Enter referral code'); ?>">
-                <span class="company-code-badge ms-2" onclick="useCompanyCode()">
-                    <i class="fas fa-building me-1"></i>Use Company Code
-                </span>
-            </div>
-            <small class="text-muted">
-                <i class="fas fa-info-circle me-1"></i>
-                <?php echo __('auth_referral_note', 'Associate/Agent require referral code. Use company code to join directly.'); ?>
-            </small>
+<div class="d-flex align-items-center mb-3">
+                 <input type="text" class="form-control" id="referralCode" placeholder="<?php echo __('auth_enter_referral', 'Enter referral code'); ?>">
+                 <span class="company-code-badge ms-2" onclick="useCompanyCode()">
+                     <i class="fas fa-building me-1"></i>Use Company Code
+                 </span>
+             </div>
+             <div id="referral_name_display" class="mt-2"></div>
+             <small class="text-muted">
+                 <i class="fas fa-info-circle me-1"></i>
+                 <?php echo __('auth_referral_note', 'Associate/Agent require referral code. Use company code to join directly.'); ?>
+             </small>
         </div>
 
         <div class="mb-3 mt-4" id="phoneSection" >
@@ -289,9 +290,43 @@
             document.getElementById('completeBtn').disabled = false;
         }
 
-        function useCompanyCode() {
-            document.getElementById('referralCode').value = companyReferralCode;
-        }
+function useCompanyCode() {
+             document.getElementById('referralCode').value = companyReferralCode;
+         }
+         
+         // Referral name resolution
+         function resolveReferralName() {
+             var referralInput = document.getElementById('referralCode');
+             var referralCode = referralInput ? referralInput.value.trim() : '';
+             var display = document.getElementById('referral_name_display');
+             if (!referralCode) {
+                 display.innerHTML = '';
+                 return;
+             }
+             display.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resolving...';
+fetch('/apsdreamhome/api/user/resolve-sponsor?code=' + encodeURIComponent(referralCode))
+                  .then(response => response.json())
+                  .then(data => {
+                      if (data.success) {
+                          var name = data.name || 'Unknown';
+                          var role = data.role || '';
+                          var displayText = '<strong>' + name + '</strong> (' + role + ')';
+                          display.innerHTML = displayText;
+                      } else {
+                          display.innerHTML = '<span class="text-danger">Invalid referral code</span>';
+                      }
+                  })
+                  .catch(() => {
+                      display.innerHTML = '<span class="text-danger">Error validating referral</span>';
+                  });
+         }
+         
+         // Attach listener to referralCode input
+         var referralInput = document.getElementById('referralCode');
+         if (referralInput) {
+             referralInput.addEventListener('input', resolveReferralName);
+             referralInput.addEventListener('blur', resolveReferralName);
+         }
 
         function completeRegistration() {
             const phone = document.getElementById('phone').value;

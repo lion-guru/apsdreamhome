@@ -12,7 +12,7 @@ class CampaignTemplateController extends AdminController {
     }
 
     private function pdo(): \PDO {
-        return $this->db;
+        return \App\Core\Database\Database::getInstance()->getPdo();
     }
 
     public function index() {

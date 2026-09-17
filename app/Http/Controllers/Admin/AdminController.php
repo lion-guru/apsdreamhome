@@ -931,4 +931,113 @@ class AdminController extends BaseController
             ]);
         }
     }
+
+    /**
+     * GET /admin/api/omni-search
+     * Global search for plots, customers, bookings
+     * Returns JSON for Ctrl+K command palette
+     */
+    public function omniSearch()
+    {
+        $this->requireAdmin();
+        $q = trim($_GET['q'] ?? '');
+        if (strlen($q) < 2) {
+            echo json_encode(['success' => true, 'results' => []]);
+            exit;
+        }
+
+        $limit = 5;
+        $results = [];
+        $tid = (int)$this->tenantId();
+        $tidWhere = $tid > 1 ? " AND tenant_id = $tid" : "";
+        $tidJoin = $tid > 1 ? " AND b.tenant_id = $tid" : "";
+
+        // 1. Search Plots (by plot_number, colony name)
+        try {
+            $plots = $this->db->fetchAll(
+                "SELECT p.id, p.plot_number, p.area_sqft, p.total_price, c.name as colony_name
+                 FROM plots p
+                 LEFT JOIN colonies c ON p.colony_id = c.id
+                 WHERE (p.plot_number LIKE ? OR c.name LIKE ?) AND p.is_active = 1 $tidWhere
+                 LIMIT ?",
+                ["%$q%", "%$q%", $limit]
+            );
+            foreach ($plots as $p) {
+                $results[] = [
+                    'title' => 'Plot #' . htmlspecialchars($p['plot_number']),
+                    'subtitle' => htmlspecialchars($p['colony_name'] ?? '') . ' • ' . number_format($p['area_sqft']) . ' sqft • ₹' . number_format($p['total_price']),
+                    'url' => BASE_URL . '/admin/plots/' . $p['id'],
+                    'category' => 'Plots',
+                    'icon' => 'fas fa-th',
+                ];
+            }
+        } catch (\Throwable $e) { error_log('omniSearch plots error: ' . $e->getMessage()); }
+
+        // 2. Search Customers/Users (by name, email, phone, referral_code)
+        try {
+            $users = $this->db->fetchAll(
+                "SELECT id, name, email, phone, referral_code, role
+                 FROM users
+                 WHERE (name LIKE ? OR email LIKE ? OR phone LIKE ? OR referral_code LIKE ?) AND role IN ('customer','user') $tidWhere
+                 LIMIT ?",
+                ["%$q%", "%$q%", "%$q%", "%$q%", $limit]
+            );
+            foreach ($users as $u) {
+                $results[] = [
+                    'title' => htmlspecialchars($u['name']),
+                    'subtitle' => htmlspecialchars($u['email'] ?? '') . ' • ' . htmlspecialchars($u['phone'] ?? '') . ($u['referral_code'] ? ' • Ref: ' . $u['referral_code'] : ''),
+                    'url' => BASE_URL . '/admin/users/' . $u['id'],
+                    'category' => 'Customers',
+                    'icon' => 'fas fa-user',
+                ];
+            }
+        } catch (\Throwable $e) { error_log('omniSearch users error: ' . $e->getMessage()); }
+
+        // 3. Search Bookings (by booking_number, customer name, plot)
+        try {
+            $bookings = $this->db->fetchAll(
+                "SELECT b.id, b.booking_number, b.status, b.total_plot_value,
+                        pl.plot_number, u.name as customer_name
+                 FROM plot_bookings b
+                 LEFT JOIN plots pl ON b.plot_id = pl.id
+                 LEFT JOIN users u ON b.customer_id = u.id
+                 WHERE (b.booking_number LIKE ? OR u.name LIKE ? OR pl.plot_number LIKE ?) $tidJoin
+                 LIMIT ?",
+                ["%$q%", "%$q%", "%$q%", $limit]
+            );
+            foreach ($bookings as $b) {
+                $results[] = [
+                    'title' => 'Booking ' . htmlspecialchars($b['booking_number']),
+                    'subtitle' => htmlspecialchars($b['customer_name'] ?? '') . ' • Plot #' . htmlspecialchars($b['plot_number'] ?? '') . ' • ₹' . number_format($b['total_plot_value']),
+                    'url' => BASE_URL . '/admin/bookings/' . $b['id'],
+                    'category' => 'Bookings',
+                    'icon' => 'fas fa-file-contract',
+                ];
+            }
+        } catch (\Throwable $e) { error_log('omniSearch bookings error: ' . $e->getMessage()); }
+
+        // 4. Search Associates/Agents (by name, referral_code)
+        try {
+            $associates = $this->db->fetchAll(
+                "SELECT u.id, u.name, u.email, u.phone, u.referral_code, u.role
+                 FROM users u
+                 LEFT JOIN mlm_profiles p ON u.id = p.user_id
+                 WHERE (u.name LIKE ? OR u.email LIKE ? OR u.referral_code LIKE ?) AND u.role IN ('associate','agent') AND (p.status = 'active' OR p.status IS NULL) $tidWhere
+                 LIMIT ?",
+                ["%$q%", "%$q%", "%$q%", $limit]
+            );
+            foreach ($associates as $a) {
+                $results[] = [
+                    'title' => htmlspecialchars($a['name']) . ' (' . ucfirst($a['role']) . ')',
+                    'subtitle' => htmlspecialchars($a['email'] ?? '') . ' • ' . htmlspecialchars($a['phone'] ?? '') . ($a['referral_code'] ? ' • Ref: ' . $a['referral_code'] : ''),
+                    'url' => BASE_URL . '/admin/users/' . $a['id'],
+                    'category' => 'Associates',
+                    'icon' => 'fas fa-user-tie',
+                ];
+            }
+        } catch (\Throwable $e) { error_log('omniSearch associates error: ' . $e->getMessage()); }
+
+        echo json_encode(['success' => true, 'results' => $results]);
+        exit;
+    }
 }

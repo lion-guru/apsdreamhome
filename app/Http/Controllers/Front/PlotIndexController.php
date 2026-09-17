@@ -215,6 +215,14 @@ class PlotIndexController extends PlotBaseController
         if ($id <= 0) {
             return $this->redirect('/plots');
         }
+
+        // ═══ Capture referral code from URL (?ref=CODE or ?sponsor=CODE) ═══
+        $refCode = trim($_GET['ref'] ?? $_GET['sponsor'] ?? '');
+        if (!empty($refCode)) {
+            $_SESSION['referral_code'] = $refCode;
+            setcookie('aps_referral', $refCode, time() + (86400 * 30), '/', '', false, true); // 30-day attribution
+        }
+
         $tid = (int)$this->tenantId();
         $plotParams = [$id];
         $tidScope = '';
