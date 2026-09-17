@@ -130,6 +130,47 @@ $blocks = $blocks ?? [];
   </div>
   <?php endif; ?>
 
+  <div class="card aps-cp-card mb-4">
+    <div class="card-header aps-cp-card-header d-flex justify-content-between align-items-center">
+      <strong><i class="fas fa-hard-hat me-2"></i>Site Development &amp; Photos</strong>
+      <a href="<?= BASE_URL ?>/admin/construction/colony-progress?colony_id=<?= (int)($colony['id'] ?? 0) ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-pen me-1"></i>Manage</a>
+    </div>
+    <div class="card-body aps-cp-card-body">
+      <?php $milestones = $milestones ?? []; ?>
+      <?php if (empty($milestones)): ?>
+        <div class="text-center py-4 text-muted">
+          <i class="fas fa-hard-hat fa-2x mb-2"></i>
+          <p class="mb-2">No development milestones tracked yet.</p>
+          <a href="<?= BASE_URL ?>/admin/construction/colony-progress?colony_id=<?= (int)($colony['id'] ?? 0) ?>" class="btn btn-sm btn-primary">Add First Milestone</a>
+        </div>
+      <?php else: ?>
+        <div class="row g-3">
+          <?php foreach ($milestones as $ms):
+            $pct = max(0, min(100, (float)($ms['progress_pct'] ?? 0)));
+            $st = $ms['status'] ?? 'not_started';
+            $badge = $st === 'completed' ? 'success' : ($st === 'in_progress' ? 'primary' : ($st === 'on_hold' ? 'warning' : 'secondary'));
+          ?>
+          <div class="col-md-6 col-lg-4">
+            <div class="border rounded p-3 h-100">
+              <?php if (!empty($ms['site_photo_path'])): ?>
+                <img src="<?= BASE_URL ?>/<?= ltrim(htmlspecialchars($ms['site_photo_path']), '/') ?>" class="img-fluid rounded mb-2" alt="<?= htmlspecialchars($ms['milestone_name'] ?? 'Site photo') ?>" loading="lazy" onerror="this.style.display='none'">
+              <?php endif; ?>
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <strong><?= htmlspecialchars($ms['milestone_name'] ?? ucfirst($ms['category'] ?? 'Milestone')) ?></strong>
+                <span class="badge bg-<?= $badge ?>"><?= ucfirst(str_replace('_', ' ', $st)) ?></span>
+              </div>
+              <small class="text-muted d-block mb-1"><?= htmlspecialchars(ucfirst($ms['category'] ?? '')) ?><?= !empty($ms['expected_completion']) ? ' · due ' . htmlspecialchars($ms['expected_completion']) : '' ?></small>
+              <div class="progress" style="height: 10px;">
+                <div class="progress-bar bg-success" role="progressbar" style="width: <?= $pct ?>%" aria-valuenow="<?= $pct ?>" aria-valuemin="0" aria-valuemax="100"><?= $pct ?>%</div>
+              </div>
+            </div>
+          </div>
+          <?php endforeach; ?>
+        </div>
+      <?php endif; ?>
+    </div>
+  </div>
+
   <h5 class="mb-3"><?= __('cp_quick_actions') ?></h5>
   <div class="row g-3 mb-4">
     <div class="col-md-3">

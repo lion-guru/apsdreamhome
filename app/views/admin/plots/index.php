@@ -20,6 +20,12 @@
             <a href="<?= BASE_URL ?>/admin/plots/categories" class="btn btn-secondary">
                 <i class="fas fa-tags"></i> Categories
             </a>
+            <a href="<?= BASE_URL ?>/admin/plots/batch-pricing" class="btn btn-warning">
+                <i class="fas fa-percent"></i> Batch Pricing
+            </a>
+            <a href="<?= BASE_URL ?>/admin/plots/aging-report" class="btn btn-info">
+                <i class="fas fa-hourglass-half"></i> Aging Report
+            </a>
         </div>
     </div>
     

@@ -118,12 +118,21 @@ class ColonyPipelineController extends AdminController
                  GROUP BY block ORDER BY block",
                 [$id]
             );
+
+            // Site development milestones + photos (colony_milestones; absent table = empty list)
+            try {
+                $milestones = $this->db->fetchAll(
+                    "SELECT * FROM colony_milestones WHERE colony_id = ? ORDER BY category, created_at DESC",
+                    [$id]
+                ) ?: [];
+            } catch (\Throwable $e) { $milestones = []; }
         } catch (\Exception $e) {
             $colony = [];
             $plotStats = ['total' => 0, 'available' => 0, 'booked' => 0, 'sold' => 0, 'hold' => 0, 'total_value' => 0, 'avg_area' => 0];
             $devCost = ['total_cost' => 0, 'total_gst' => 0, 'total_paid' => 0, 'total_balance' => 0];
             $layout = null;
             $blocks = [];
+            $milestones = [];
             error_log('ColonyPipeline colonyDetail error: ' . $e->getMessage());
         }
 
@@ -133,7 +142,8 @@ class ColonyPipelineController extends AdminController
             'plot_stats' => $plotStats,
             'dev_cost' => $devCost,
             'layout' => $layout,
-            'blocks' => $blocks
+            'blocks' => $blocks,
+            'milestones' => $milestones ?? []
         ]);
     }
 

@@ -133,7 +133,7 @@
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">Road Width (ft)</label>
-                                        <input type="number" class="form-control" name="road_width_ft" step="0.01" value="0">
+                                        <input type="number" class="form-control" name="road_width_ft" step="0.01" value="0" id="road_width_ft" onchange="calcCreatePps()">
                                     </div>
                                 </div>
                                 <div class="alert alert-info">
@@ -164,6 +164,7 @@
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">Total Price</label>
                                         <input type="number" class="form-control" name="total_price" min="0" step="0.01" id="total_price" readonly>
+                                        <small class="text-muted" id="plc_breakdown"></small>
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">Negotiated / Deal Price</label>
@@ -220,15 +221,28 @@ function calcCreateDim() {
         calcCreatePps();
     }
 }
+const PLC_RATES = <?= json_encode($plc_rates ?? ['corner_pct' => 10, 'park_pct' => 5, 'wideroad_pct' => 5, 'wideroad_min_ft' => 40]) ?>;
 function calcCreatePps() {
     const area = parseFloat(document.getElementById('area_sqft').value) || 0;
-    const pps = parseFloat(document.getElementById('price_per_sqft').value) || 0;
-    document.getElementById('total_price').value = (area * pps).toFixed(2);
-    if (!document.getElementById('price_per_sqft').value) {
-        document.getElementById('price_per_sqft').value = document.getElementById('base_pps').value || 1500;
-        calcCreatePps();
-    }
+    const base = parseFloat(document.getElementById('base_pps').value) || 0;
+    const corner = document.getElementById('corner_plot') && document.getElementById('corner_plot').checked;
+    const park = document.getElementById('park_facing') && document.getElementById('park_facing').checked;
+    const road = parseFloat(document.getElementById('road_width_ft').value) || 0;
+    let pct = 0;
+    const parts = [];
+    if (corner) { pct += parseFloat(PLC_RATES.corner_pct) || 0; parts.push('Corner +' + (parseFloat(PLC_RATES.corner_pct) || 0) + '%'); }
+    if (park) { pct += parseFloat(PLC_RATES.park_pct) || 0; parts.push('Park +' + (parseFloat(PLC_RATES.park_pct) || 0) + '%'); }
+    if (road >= (parseFloat(PLC_RATES.wideroad_min_ft) || 40)) { pct += parseFloat(PLC_RATES.wideroad_pct) || 0; parts.push('Wide road +' + (parseFloat(PLC_RATES.wideroad_pct) || 0) + '%'); }
+    const finalPps = base * (1 + pct / 100);
+    document.getElementById('price_per_sqft').value = finalPps.toFixed(2);
+    document.getElementById('total_price').value = (area * finalPps).toFixed(2);
+    const bd = document.getElementById('plc_breakdown');
+    if (bd) bd.textContent = parts.length ? ('Base + PLC: ' + parts.join(', ')) : 'No PLC applied';
 }
+['corner_plot', 'park_facing'].forEach(function(id) {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('change', calcCreatePps);
+});
 function setCreateDims(w, l) {
     document.getElementById('width_ft').value = w;
     document.getElementById('length_ft').value = l;

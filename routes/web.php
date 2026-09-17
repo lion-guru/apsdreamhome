@@ -1371,6 +1371,7 @@ $router->post('/admin/bookings/{id}/update', 'App\\Http\\Controllers\\Admin\\Boo
 $router->post('/admin/bookings/{id}/destroy', 'App\\Http\\Controllers\\Admin\\BookingController@destroy');
 $router->post('/admin/bookings/{id}/payment', 
 'App\\Http\\Controllers\\Admin\\BookingController@processPayment');
+$router->get('/admin/bookings/{id}/legal-kit', 'App\\Http\\Controllers\\Admin\\BookingController@legalKit');
 $router->post('/admin/bookings/bulk-action', 
 'App\\Http\\Controllers\\Admin\\BookingController@bulkAction');
 
@@ -1433,6 +1434,9 @@ $router->get('/admin/plots/layout', 'Front\\ProjectController@plotMap');
 $router->get('/admin/plots/availability', 'App\\Http\\Controllers\\Admin\\PlotManagementController@availability');
 $router->get('/admin/plots/availability-data', 'App\\Http\\Controllers\\Admin\\PlotManagementController@availabilityData');
 $router->get('/admin/plots/map', 'App\\Http\\Controllers\\Admin\\PlotManagementController@map');
+$router->get('/admin/plots/batch-pricing', 'App\\Http\\Controllers\\Admin\\PlotManagementController@batchPricingForm');
+$router->post('/admin/plots/batch-pricing/apply', 'App\\Http\\Controllers\\Admin\\PlotManagementController@batchPricingApply');
+$router->get('/admin/plots/aging-report', 'App\\Http\\Controllers\\Admin\\PlotManagementController@agingReport');
 $router->get('/admin/plots/{id}', 'App\\Http\\Controllers\\Admin\\PlotManagementController@show');
 $router->get('/admin/plots/{id}/edit', 'App\\Http\\Controllers\\Admin\\PlotManagementController@edit');
 $router->post('/admin/plots/{id}/update', 'App\\Http\\Controllers\\Admin\\PlotManagementController@update');

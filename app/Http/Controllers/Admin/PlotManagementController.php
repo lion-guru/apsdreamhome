@@ -50,7 +50,8 @@ class PlotManagementController extends AdminController
         }
         $this->render('admin/plots/create', [
             'page_title' => 'Create New Plot',
-            'colonies' => $sites
+            'colonies' => $sites,
+            'plc_rates' => \App\Services\Pricing\PlcService::rates()
         ]);
     }
 
@@ -78,21 +79,36 @@ class PlotManagementController extends AdminController
                 }
             }
 
-            $cols = "colony_id, plot_number, plot_type, area_sqft, width_ft, length_ft, dimension_label, price_per_sqft, total_price, road_width_ft, status, is_active, created_by, created_at";
-            $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, NOW()";
+            // PLC breakdown — always computed server-side (client total is display-only).
+            \App\Services\Pricing\PlcService::ensureColumns($this->db);
+            $areaSqft = floatval($data['area_sqft'] ?? $data['total_area'] ?? 0);
+            $basePps = floatval($data['base_price_per_sqft'] ?? $data['price_per_sqft'] ?? $data['price'] ?? 0);
+            $plc = \App\Services\Pricing\PlcService::calculate(
+                $basePps, $areaSqft,
+                !empty($data['corner_plot']), !empty($data['park_facing']),
+                floatval($data['road_width_ft'] ?? 0)
+            );
+
+            $cols = "colony_id, plot_number, plot_type, area_sqft, width_ft, length_ft, dimension_label, base_price_per_sqft, plc_amount, final_price_per_sqft, price_per_sqft, total_price, road_width_ft, facing, corner_plot, park_facing, status, is_active, created_at";
+            $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, NOW()";
             $insertParams = [
                 intval($data['colony_id']),
                 CoreFunctionsServiceCustom::validateInput($data['plot_number'], 'string'),
                 $data['plot_type'] ?? 'residential',
-                floatval($data['area_sqft'] ?? $data['total_area'] ?? 0),
+                $areaSqft,
                 floatval($data['width_ft'] ?? 0),
                 floatval($data['length_ft'] ?? 0),
                 trim($data['dimension_label'] ?? ($data['width_ft'] ?? '0') . 'x' . ($data['length_ft'] ?? '0')),
-                floatval($data['price_per_sqft'] ?? $data['price'] ?? 0),
-                floatval($data['total_price'] ?? 0),
+                $basePps,
+                $plc['plc_amount'],
+                $plc['final_pps'],
+                $plc['final_pps'],
+                $plc['total'],
                 floatval($data['road_width_ft'] ?? 30),
-                $data['status'] ?? 'available',
-                $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 1
+                trim((string)($data['facing'] ?? '')),
+                !empty($data['corner_plot']) ? 1 : 0,
+                !empty($data['park_facing']) ? 1 : 0,
+                $data['status'] ?? 'available'
             ];
             $insertExtra = $this->tenantInsertData();
             if (!empty($insertExtra)) { $cols .= ", tenant_id"; $vals .= ", ?"; $insertParams[] = $insertExtra['tenant_id']; }
@@ -100,11 +116,26 @@ class PlotManagementController extends AdminController
             $result = $stmt->execute($insertParams);
 
             if ($result) {
+                $plotId = (int)$this->db->lastInsertId();
                 $this->tenantTrackUsage('properties');
                 $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'plot_created', [
                     'plot_number' => $data['plot_number'],
                     'colony_id' => $data['colony_id']
                 ]);
+                try {
+                    $this->db->insert('price_history', [
+                        'plot_id' => $plotId,
+                        'old_price' => 0, 'new_price' => $plc['total'],
+                        'old_price_per_sqft' => 0, 'new_price_per_sqft' => $plc['final_pps'],
+                        'change_type' => $plc['plc_amount'] > 0 ? 'plc' : 'base',
+                        'reason' => $plc['plc_amount'] > 0
+                            ? 'Initial pricing with PLC (' . implode(', ', $plc['breakdown']) . ')'
+                            : 'Initial pricing',
+                        'changed_by' => $_SESSION['user_id'] ?? 1,
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'tenant_id' => (int)$this->tenantId(),
+                    ]);
+                } catch (\Throwable $e) { error_log('[Plot store] price_history: ' . $e->getMessage()); }
                 $this->setFlash('success', 'Plot created successfully');
                 return $this->redirect('/admin/plots');
             }
@@ -829,6 +860,7 @@ class PlotManagementController extends AdminController
         $phStmt = $this->db->prepare("SELECT * FROM price_history WHERE plot_id = ? ORDER BY created_at DESC LIMIT 10");
         $phStmt->execute([$id]);
         $this->data['priceHistory'] = $phStmt->fetchAll() ?: [];
+        $this->data['plc_rates'] = \App\Services\Pricing\PlcService::rates();
 
         $this->render('admin/plots/edit');
     }
@@ -857,16 +889,24 @@ class PlotManagementController extends AdminController
                 $dimLabel = $width . 'x' . $length;
             }
             $areaSqft = floatval($data['area_sqft'] ?? ($width * $length));
-            $pricePerSqft = floatval($data['price_per_sqft'] ?? $old['price_per_sqft']);
-            $totalPrice = floatval($data['total_price'] ?? ($areaSqft * $pricePerSqft));
+            // PLC breakdown — server-side recompute from base + flags.
+            \App\Services\Pricing\PlcService::ensureColumns($this->db);
+            $basePps = floatval($data['base_price_per_sqft'] ?? $old['price_per_sqft']);
+            $plc = \App\Services\Pricing\PlcService::calculate(
+                $basePps, $areaSqft,
+                !empty($data['corner_plot']), !empty($data['park_facing']),
+                floatval($data['road_width_ft'] ?? 0)
+            );
+            $pricePerSqft = $plc['final_pps'];
+            $totalPrice = $plc['total'];
 
             $tid = (int)$this->tenantId();
 
-            $this->db->execute("UPDATE plots SET 
-                plot_number = ?, block = ?, sector = ?, plot_type = ?, 
+            $this->db->execute("UPDATE plots SET
+                plot_number = ?, block = ?, sector = ?, plot_type = ?,
                 area_sqft = ?, area_sqm = ?, width_ft = ?, length_ft = ?, dimension_label = ?,
                 frontage_ft = ?, depth_ft = ?, road_width_ft = ?,
-                base_price_per_sqft = ?, price_per_sqft = ?, total_price = ?,
+                base_price_per_sqft = ?, plc_amount = ?, final_price_per_sqft = ?, price_per_sqft = ?, total_price = ?,
                 negotiated_price = ?, price_override_reason = ?, status = ?,
                 facing = ?, corner_plot = ?, park_facing = ?,
                 booking_amount = ?, total_paid = ?, payment_status = ?,
@@ -875,7 +915,7 @@ class PlotManagementController extends AdminController
                 $data['plot_number'], $data['block'] ?? '', $data['sector'] ?? '', $data['plot_type'] ?? 'residential',
                 $areaSqft, floatval($data['area_sqm'] ?? 0), $width, $length, $dimLabel,
                 floatval($data['frontage_ft'] ?? 0), floatval($data['depth_ft'] ?? 0), floatval($data['road_width_ft'] ?? 0),
-                floatval($data['base_price_per_sqft'] ?? $pricePerSqft), $pricePerSqft, $totalPrice,
+                $basePps, $plc['plc_amount'], $plc['final_pps'], $pricePerSqft, $totalPrice,
                 !empty($data['negotiated_price']) ? floatval($data['negotiated_price']) : null,
                 $data['price_override_reason'] ?? '', $data['status'] ?? 'available',
                 $data['facing'] ?? '', !empty($data['corner_plot']) ? 1 : 0, !empty($data['park_facing']) ? 1 : 0,
@@ -886,7 +926,8 @@ class PlotManagementController extends AdminController
             // Log price change to price_history
             $newTotal = $totalPrice;
             if (floatval($old['total_price']) != $newTotal) {
-                $changeType = (!empty($data['negotiated_price']) && floatval($data['negotiated_price']) > 0) ? 'negotiated' : 'override';
+                $changeType = $plc['plc_amount'] > 0 ? 'plc'
+                    : ((!empty($data['negotiated_price']) && floatval($data['negotiated_price']) > 0) ? 'negotiated' : 'override');
                 $this->db->insert('price_history', [
                     'plot_id' => $id,
                     'old_price' => $old['total_price'],
@@ -894,7 +935,8 @@ class PlotManagementController extends AdminController
                     'old_price_per_sqft' => $old['price_per_sqft'],
                     'new_price_per_sqft' => $pricePerSqft,
                     'change_type' => $changeType,
-                    'reason' => $data['price_override_reason'] ?? 'Price updated by admin',
+                    'reason' => trim(($data['price_override_reason'] ?? 'Price updated by admin')
+                        . ($plc['plc_amount'] > 0 ? ' [PLC: ' . implode(', ', $plc['breakdown']) . ']' : '')),
                     'changed_by' => $_SESSION['user_id'] ?? 1,
                     'created_at' => date('Y-m-d H:i:s'),
                     'tenant_id' => $tid,
@@ -980,6 +1022,183 @@ class PlotManagementController extends AdminController
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         exit;
+    }
+
+    /**
+     * Batch price revision wizard — preview (GET).
+     * GET /admin/plots/batch-pricing?colony_id=&status=available&mode=flat|pct&value=
+     */
+    public function batchPricingForm()
+    {
+        $this->requireAdmin();
+        try {
+            $colonies = $this->db->fetchAll("SELECT id, name FROM colonies ORDER BY name") ?: [];
+        } catch (\Throwable $e) { $colonies = []; }
+        $preview = [];
+        $params = [
+            'colony_id' => (int)($_GET['colony_id'] ?? 0),
+            'status' => (string)($_GET['status'] ?? 'available'),
+            'mode' => (string)($_GET['mode'] ?? 'flat'),
+            'value' => (float)($_GET['value'] ?? 0),
+        ];
+        if ($params['colony_id'] > 0 && $params['value'] != 0) {
+            $preview = $this->computeBatchPreview($params['colony_id'], $params['status'], $params['mode'], $params['value']);
+        }
+        $this->render('admin/plots/batch-pricing', [
+            'page_title' => 'Batch Price Revision',
+            'colonies' => $colonies,
+            'params' => $params,
+            'preview' => $preview,
+        ]);
+    }
+
+    /**
+     * Batch price revision — atomic apply (POST).
+     * Applies the hike to BASE rate, then recomputes PLC per plot so the
+     * breakdown stays consistent. All-or-nothing transaction + audit rows.
+     */
+    public function batchPricingApply()
+    {
+        $this->requireAdmin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
+        }
+        $this->validateCsrfOrFail();
+        $colonyId = (int)($_POST['colony_id'] ?? 0);
+        $status = (string)($_POST['status'] ?? 'available');
+        $mode = (string)($_POST['mode'] ?? 'flat');
+        $value = (float)($_POST['value'] ?? 0);
+        if ($colonyId <= 0 || $value == 0) {
+            $this->setFlash('error', 'Colony and a non-zero adjustment are required.');
+            return $this->redirect('/admin/plots/batch-pricing');
+        }
+        \App\Services\Pricing\PlcService::ensureColumns($this->db);
+        $rows = $this->computeBatchPreview($colonyId, $status, $mode, $value);
+        if (empty($rows)) {
+            $this->setFlash('error', 'No plots match the selected colony/status.');
+            return $this->redirect('/admin/plots/batch-pricing');
+        }
+        $tid = (int)$this->tenantId();
+        $me = $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? 1;
+        $inTxn = false;
+        $this->db->beginTransaction();
+        $inTxn = true;
+        try {
+            foreach ($rows as $r) {
+                $this->db->execute(
+                    "UPDATE plots SET base_price_per_sqft = ?, plc_amount = ?, final_price_per_sqft = ?, price_per_sqft = ?, total_price = ? WHERE id = ? AND tenant_id = ?",
+                    [$r['new_base'], $r['new_plc'], $r['new_final_pps'], $r['new_final_pps'], $r['new_total'], $r['id'], $tid]
+                );
+                $this->db->insert('price_history', [
+                    'plot_id' => $r['id'],
+                    'old_price' => $r['old_total'], 'new_price' => $r['new_total'],
+                    'old_price_per_sqft' => $r['old_pps'], 'new_price_per_sqft' => $r['new_final_pps'],
+                    'change_type' => 'bulk_update',
+                    'reason' => 'Batch Price Revision (' . $mode . ' ' . $value . ')',
+                    'changed_by' => $me,
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'tenant_id' => $tid,
+                ]);
+            }
+            $this->db->commit();
+            $inTxn = false;
+            $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'batch_price_revision', [
+                'colony_id' => $colonyId, 'status' => $status, 'mode' => $mode, 'value' => $value, 'count' => count($rows),
+            ]);
+            $this->setFlash('success', count($rows) . ' plots revised successfully.');
+        } catch (\Throwable $e) {
+            if ($inTxn) { try { $this->db->rollBack(); } catch (\Throwable $ignored) {} }
+            $this->loggingService->error('Batch pricing apply: ' . $e->getMessage());
+            $this->setFlash('error', 'Batch revision failed — no prices changed: ' . $e->getMessage());
+        }
+        return $this->redirect('/admin/plots/batch-pricing?colony_id=' . $colonyId . '&status=' . urlencode($status));
+    }
+
+    /**
+     * Shared preview math (used by both preview + apply so they always agree).
+     */
+    private function computeBatchPreview(int $colonyId, string $status, string $mode, float $value): array
+    {
+        $where = "colony_id = ? AND is_active = 1";
+        $params = [$colonyId];
+        if ($status !== '' && $status !== 'all') { $where .= " AND status = ?"; $params[] = $status; }
+        list($tSql, $tParams) = $this->tenantWhere();
+        $plots = $this->db->fetchAll(
+            "SELECT id, plot_number, base_price_per_sqft, price_per_sqft, total_price, area_sqft, corner_plot, park_facing, road_width_ft FROM plots WHERE $where" . $tSql . " ORDER BY plot_number",
+            array_merge($params, $tParams)
+        ) ?: [];
+        $out = [];
+        foreach ($plots as $p) {
+            $oldBase = (float)($p['base_price_per_sqft'] ?? 0) > 0 ? (float)$p['base_price_per_sqft'] : (float)($p['price_per_sqft'] ?? 0);
+            $newBase = ($mode === 'pct') ? $oldBase * (1 + $value / 100) : $oldBase + $value;
+            if ($newBase < 0) $newBase = 0;
+            $plc = \App\Services\Pricing\PlcService::calculate(
+                $newBase, (float)($p['area_sqft'] ?? 0),
+                !empty($p['corner_plot']), !empty($p['park_facing']), (float)($p['road_width_ft'] ?? 0)
+            );
+            $out[] = [
+                'id' => (int)$p['id'],
+                'plot_number' => $p['plot_number'] ?? '',
+                'old_base' => round($oldBase, 2),
+                'new_base' => round($newBase, 2),
+                'old_pps' => (float)($p['price_per_sqft'] ?? 0),
+                'new_final_pps' => $plc['final_pps'],
+                'old_total' => (float)($p['total_price'] ?? 0),
+                'new_total' => $plc['total'],
+                'new_plc' => $plc['plc_amount'],
+            ];
+        }
+        return $out;
+    }
+
+    /**
+     * Inventory aging & sales velocity report.
+     * GET /admin/plots/aging-report?colony_id=&bucket=
+     * Buckets: fast (<30d), normal (30-90d), slow (90-180d), stagnant (>180d).
+     */
+    public function agingReport()
+    {
+        $this->requireAdmin();
+        try {
+            $colonies = $this->db->fetchAll("SELECT id, name FROM colonies ORDER BY name") ?: [];
+        } catch (\Throwable $e) { $colonies = []; }
+        $colonyId = (int)($_GET['colony_id'] ?? 0);
+        $bucket = (string)($_GET['bucket'] ?? '');
+        $where = "p.is_active = 1 AND p.status = 'available'";
+        $params = [];
+        if ($colonyId > 0) { $where .= " AND p.colony_id = ?"; $params[] = $colonyId; }
+        list($tSql, $tParams) = $this->tenantWhere();
+        try {
+            $rows = $this->db->fetchAll(
+                "SELECT p.id, p.plot_number, p.total_price, p.created_at, p.colony_id,
+                        c.name AS colony_name, DATEDIFF(NOW(), p.created_at) AS age_in_days
+                 FROM plots p LEFT JOIN colonies c ON c.id = p.colony_id
+                 WHERE $where" . $tSql . " ORDER BY age_in_days DESC",
+                array_merge($params, $tParams)
+            ) ?: [];
+        } catch (\Throwable $e) { $rows = []; }
+        $buckets = ['fast' => 0, 'normal' => 0, 'slow' => 0, 'stagnant' => 0];
+        $values = ['fast' => 0, 'normal' => 0, 'slow' => 0, 'stagnant' => 0];
+        foreach ($rows as &$r) {
+            $age = (int)($r['age_in_days'] ?? 0);
+            $b = $age < 30 ? 'fast' : ($age <= 90 ? 'normal' : ($age <= 180 ? 'slow' : 'stagnant'));
+            $r['bucket'] = $b;
+            $buckets[$b]++;
+            $values[$b] += (float)($r['total_price'] ?? 0);
+        }
+        unset($r);
+        if ($bucket !== '' && isset($buckets[$bucket])) {
+            $rows = array_values(array_filter($rows, function ($r) use ($bucket) { return $r['bucket'] === $bucket; }));
+        }
+        $this->render('admin/plots/aging-report', [
+            'page_title' => 'Inventory Aging Report',
+            'colonies' => $colonies,
+            'colony_id' => $colonyId,
+            'bucket' => $bucket,
+            'buckets' => $buckets,
+            'values' => $values,
+            'rows' => $rows,
+        ]);
     }
 
     /**

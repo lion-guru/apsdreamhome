@@ -1,4 +1,34 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-17 — Session 109: CEO Blind-Spots — 4 Real Gaps Built)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-17 — Session 110: Inventory & Projects Hub Enterprise Upgrade)
+
+## Session 110: Inventory & Projects Hub — PLC Engine, Batch Pricing, Milestones, Aging (2026-09-17)
+
+### Ground Truth First (spec-vs-reality deltas found via DESCRIBE)
+- `plots` HAS `corner_plot/park_facing/road_width_ft/facing/base_price_per_sqft` but NO `plc_amount`/`final_price_per_sqft` → added idempotently
+- `price_history` EXISTS (with `change_type` enum incl. `plc`+`bulk_update`) → F2 audits there; NO new `plot_price_history` table (reuse-first)
+- `colony_milestones` table MISSING while `ProjectProgressController` reads/writes it (dead page) → created with exact contract; F3 widgets it into colonyDetail instead of duplicating
+- `store()` was broken pre-existing: inserted non-existent `created_by` col (every admin plot create failed) → fixed by dropping it
+- Workflow probe now **15/15** (marketplace data appeared via second actor; no seeding by me)
+
+### Built (4/4, probe-verified)
+| # | Feature | Implementation | Probe |
+|---|---------|----------------|-------|
+| F1 | **PLC engine** | `Pricing\PlcService` (config `pricing.*` 10/5/5/40ft + idempotent cols/seed); `store()`/`update()` server-side recompute + `price_history(change_type=plc)` | live store: 2000 base corner+40ft → 2400/24L/4L PLC, 0 scratch rows |
+| F2 | **Batch pricing wizard** | `batchPricingForm/Apply` + shared `computeBatchPreview` (hike applies to BASE, PLC recomputed; single txn; audit `bulk_update`); routes before `{id}` | **6/6** on scratch colony (isolated blast radius): preview, apply, corner math, audit, full cleanup |
+| F3 | **Milestone tracker** | `colony_development_milestones` NOT created (dup) — used existing `colony_milestones` contract; colonyDetail widget (progress bars + photos + Manage link) | 2/2 render + cleanup |
+| F4 | **Aging report** | `agingReport` (fast<30/normal≤90/slow≤180/stagnant + locked-value cards + bucket filter) + index links | 2/2 render |
+
+### Verification
+- E2E **374/374**, health **ok:true** (798 tables), workflow **15/15**, `php -l` clean, hygiene zero-scratch
+
+### Key Lessons (carried)
+_262. **DESCRIBE beats spec** — task said "check columns"; 3/4 tables differed (`plc_amount` absent, `created_by` phantom, `colony_milestones` missing). Spec tables ≠ live tables, every time.
+_263. **Reuse-first kills duplication** — `price_history` already had `plc`+`bulk_update` change types; `colony_milestones` code already existed table-less. New tables only when nothing matches.
+_264. **Probe blast-radius isolation** — batch apply on a real colony would reprice live inventory; scratch colony + full teardown is the only safe pattern.
+_265. **Wrapper ≠ PDO** — `Database` wrapper has no `inTransaction()`; use a local txn flag in controllers (raw-PDO services differ).
+
+---
+
+## Session 109: CEO Ground-Realities — Verified Claims, Built 4 Real Gaps (2026-09-17)
 
 ## Session 109: CEO Ground-Realities — Verified Claims, Built 4 Real Gaps (2026-09-17)
 

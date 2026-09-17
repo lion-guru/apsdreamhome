@@ -109,7 +109,7 @@
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">Road Width (ft)</label>
-                                        <input type="number" class="form-control" name="road_width_ft" step="0.01" value="<?= $plot['road_width_ft'] ?? 0 ?>">
+                                        <input type="number" class="form-control" name="road_width_ft" step="0.01" value="<?= $plot['road_width_ft'] ?? 0 ?>" id="road_width_ft" onchange="calcPlcPrice()">
                                     </div>
                                 </div>
                                 <div class="alert alert-info">
@@ -140,6 +140,8 @@
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label">Total Price</label>
                                         <input type="number" class="form-control" name="total_price" step="0.01" value="<?= $plot['total_price'] ?? 0 ?>" id="total_price" onchange="calcPpsFromTotal()">
+                                        <small class="text-muted" id="plc_breakdown"></small>
+                                        <div class="mt-1"><button type="button" class="btn btn-sm btn-outline-primary" onclick="calcPlcPrice()">Apply PLC from Base</button></div>
                                     </div>
                                 </div>
 
@@ -261,6 +263,33 @@ function calcTotalPrice() {
     const pps = parseFloat(document.getElementById('curr_pps').value) || 0;
     document.getElementById('total_price').value = (area * pps).toFixed(2);
 }
+const PLC_RATES = <?= json_encode($plc_rates ?? ['corner_pct' => 10, 'park_pct' => 5, 'wideroad_pct' => 5, 'wideroad_min_ft' => 40]) ?>;
+function calcPlcPrice() {
+    const area = parseFloat(document.getElementById('area_sqft').value) || 0;
+    const base = parseFloat(document.getElementById('base_pps').value) || 0;
+    const corner = document.getElementById('corner_plot') && document.getElementById('corner_plot').checked;
+    const park = document.getElementById('park_facing') && document.getElementById('park_facing').checked;
+    const roadEl = document.getElementById('road_width_ft');
+    const road = roadEl ? (parseFloat(roadEl.value) || 0) : 0;
+    let pct = 0;
+    const parts = [];
+    if (corner) { pct += parseFloat(PLC_RATES.corner_pct) || 0; parts.push('Corner +' + (parseFloat(PLC_RATES.corner_pct) || 0) + '%'); }
+    if (park) { pct += parseFloat(PLC_RATES.park_pct) || 0; parts.push('Park +' + (parseFloat(PLC_RATES.park_pct) || 0) + '%'); }
+    if (road >= (parseFloat(PLC_RATES.wideroad_min_ft) || 40)) { pct += parseFloat(PLC_RATES.wideroad_pct) || 0; parts.push('Wide road +' + (parseFloat(PLC_RATES.wideroad_pct) || 0) + '%'); }
+    const finalPps = base * (1 + pct / 100);
+    document.getElementById('curr_pps').value = finalPps.toFixed(2);
+    document.getElementById('total_price').value = (area * finalPps).toFixed(2);
+    const bd = document.getElementById('plc_breakdown');
+    if (bd) bd.textContent = parts.length ? ('Base + PLC: ' + parts.join(', ')) : 'No PLC applied';
+}
+['corner_plot', 'park_facing'].forEach(function(id) {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('change', calcPlcPrice);
+});
+(function() {
+    const base = document.getElementById('base_pps');
+    if (base) base.addEventListener('change', calcPlcPrice);
+})();
 function calcPpsFromTotal() {
     const area = parseFloat(document.getElementById('area_sqft').value) || 0;
     const total = parseFloat(document.getElementById('total_price').value) || 0;
