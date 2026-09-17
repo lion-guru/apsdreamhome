@@ -59,9 +59,7 @@ class CustomFeaturesService
                 )
             ");
 
-            // Feature usage table
-            $this->db->execute("
-                ");
+            // Feature usage table (tracked via user_activity_logs_unified; no separate table needed)
 
             // Activity log table
             $this->db->execute("
