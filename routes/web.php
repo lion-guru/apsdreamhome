@@ -2068,6 +2068,7 @@ $router->post('/admin/emails/cancel', 'App\\Http\\Controllers\\Admin\\AdminWorkf
 $router->post('/admin/emails/retry', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@retryFailedEmails');
 $router->get('/admin/api-docs', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@apiDocs');
 $router->get('/admin/api-docs/export/{format}', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@exportApiSpec');
+$router->get('/admin/api/omni-search', 'App\\Http\\Controllers\\Admin\\AdminController@omniSearch');
 
 // Admin Pages Management (CMS)
 $router->get('/admin/pages', 'App\\Http\\Controllers\\Admin\\PagesController@index');
@@ -2385,6 +2386,7 @@ $router->post('/admin/sales/bookings/{id}/transfer',              'App\\Http\\Co
 $router->get('/admin/sales/bookings/{id}/transfer',               'App\\Http\\Controllers\\Admin\\BookingLifecycleController@transferBookingForm');
 $router->post('/admin/sales/bookings/{id}/swap',                  'App\\Http\\Controllers\\Admin\\BookingLifecycleController@swapBookingStore');
 $router->get('/admin/sales/bookings/{id}/swap',                   'App\\Http\\Controllers\\Admin\\BookingLifecycleController@swapBookingForm');
+$router->post('/admin/sales/receipts/{receiptId}/bounce',         'App\\Http\\Controllers\\Admin\\BookingLifecycleController@markReceiptBounced');
 $router->get('/admin/sales/installments/{installmentId}/pay',      'App\\Http\\Controllers\\Admin\\BookingLifecycleController@recordPaymentForm');
 $router->post('/admin/sales/installments/{installmentId}/pay',     'App\\Http\\Controllers\\Admin\\BookingLifecycleController@recordPaymentStore');
 $router->get('/admin/sales/installments/{installmentId}/demand-letter', 'App\\Http\\Controllers\\Admin\\BookingLifecycleController@demandLetter');
@@ -4907,6 +4909,7 @@ $router->post('/admin/company-credentials/{id}/delete',              'Admin\\Com
 $router->get('/admin/cash-collections',                                    'Admin\\CashCollectionController@index');
 $router->get('/admin/cash-collections/create',                             'Admin\\CashCollectionController@create');
 $router->post('/admin/cash-collections/store',                             'Admin\\CashCollectionController@store');
+$router->get('/admin/cash-collections/handover-slip',                      'Admin\\CashCollectionController@handoverSlip');
 $router->get('/admin/cash-collections/{id}',                               'Admin\\CashCollectionController@show');
 $router->post('/admin/cash-collections/verify',                            'Admin\\CashCollectionController@verify');
 $router->post('/admin/cash-collections/reject',                            'Admin\\CashCollectionController@reject');

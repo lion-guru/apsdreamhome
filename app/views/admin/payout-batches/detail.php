@@ -54,41 +54,58 @@
 
     <!-- Summary Cards -->
     <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card">
+        <div class="col">
+            <div class="card h-100">
                 <div class="card-body text-center">
                     <h3 ><?= number_format($batch['total_entries']) ?></h3>
                     <small >Total Entries</small>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card">
+        <div class="col">
+            <div class="card h-100">
                 <div class="card-body text-center">
                     <h3 >₹<?= number_format((float)$batch['total_amount']) ?></h3>
                     <small >Gross Amount</small>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card">
+        <div class="col">
+            <div class="card h-100">
                 <div class="card-body text-center">
                     <?php
                     $entries = $entries ?? [];
                     $totalTds = array_sum(array_map(function($e) { return (float)($e['tds_amount'] ?? 0); }, $entries));
+                    $totalAdmin = array_sum(array_map(function($e) { return (float)($e['admin_fee'] ?? 0); }, $entries));
                     $totalNet = array_sum(array_map(function($e) { return (float)($e['net_amount'] ?? 0); }, $entries));
                     ?>
                     <h3 >₹<?= number_format($totalTds) ?></h3>
-                    <small >TDS Deducted</small>
+                    <small >TDS Deducted (194H)</small>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card">
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h3 >₹<?= number_format($totalAdmin) ?></h3>
+                    <small >Admin Fee (5%)</small>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100">
                 <div class="card-body text-center">
                     <h3 >₹<?= number_format($totalNet) ?></h3>
                     <small >Net Payout</small>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="row g-3 mb-4">
+        <div class="col-12">
+            <div class="alert alert-light border mb-0 small">
+                <i class="fas fa-receipt me-1"></i>
+                Voucher formula per entry: <strong>Gross − 5% TDS (194H) − 5% Admin fee = Net payable</strong>.
             </div>
         </div>
     </div>
@@ -177,6 +194,7 @@
                                 <th >Type</th>
                                 <th >Gross (₹)</th>
                                 <th >TDS (₹)</th>
+                                <th >Admin (₹)</th>
                                 <th >Net (₹)</th>
                                 <th >Status</th>
                                 <th >Ref</th>
@@ -193,6 +211,7 @@
                                     <td><span class="badge bg-info"><?= $e['commission_type'] ?? 'N/A' ?></span></td>
                                     <td>₹<?= number_format((float)$e['amount']) ?></td>
                                     <td >₹<?= number_format((float)$e['tds_amount']) ?></td>
+                                    <td >₹<?= number_format((float)($e['admin_fee'] ?? 0)) ?></td>
                                     <td >₹<?= number_format((float)$e['net_amount']) ?></td>
                                     <td>
                                         <?php
@@ -219,6 +238,7 @@
                                 <td colspan="3"><strong >Total</strong></td>
                                 <td><strong>₹<?= number_format(array_sum(array_map(fn($e) => (float)$e['amount'], $entries))) ?></strong></td>
                                 <td><strong >₹<?= number_format(array_sum(array_map(fn($e) => (float)$e['tds_amount'], $entries))) ?></strong></td>
+                                <td><strong >₹<?= number_format(array_sum(array_map(fn($e) => (float)($e['admin_fee'] ?? 0), $entries))) ?></strong></td>
                                 <td><strong >₹<?= number_format(array_sum(array_map(fn($e) => (float)$e['net_amount'], $entries))) ?></strong></td>
                                 <td colspan="3"></td>
                             </tr>

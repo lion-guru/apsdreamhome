@@ -148,10 +148,10 @@ $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0
     <div class="tab-pane fade" id="rcpt">
         <div class="aps-cp-card"><div class="aps-cp-card-body p-0">
             <div class="table-responsive"><table class="table table-sm m-0">
-                <thead><tr><th><?= __('sale_receipt_num') ?></th><th><?= __('sale_date') ?></th><th><?= __('sale_mode') ?></th><th><?= __('sale_status') ?></th><th class="text-end"><?= __('sale_amount') ?></th><th><?= __('sale_collected_by') ?></th></tr></thead>
+                <thead><tr><th><?= __('sale_receipt_num') ?></th><th><?= __('sale_date') ?></th><th><?= __('sale_mode') ?></th><th><?= __('sale_status') ?></th><th class="text-end"><?= __('sale_amount') ?></th><th><?= __('sale_collected_by') ?></th><th></th></tr></thead>
                 <tbody>
                 <?php if (empty($receipts)): ?>
-                    <tr><td colspan="6" class="text-center text-muted py-3"><?= __('sale_no_receipts') ?></td></tr>
+                    <tr><td colspan="7" class="text-center text-muted py-3"><?= __('sale_no_receipts') ?></td></tr>
                 <?php else: foreach ($receipts as $r): ?>
                     <tr>
                         <td><?= htmlspecialchars((string)($r['receipt_number'] ?? '')) ?></td>
@@ -160,6 +160,16 @@ $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0
                         <td><span class="badge bg-light text-dark"><?= htmlspecialchars((string)($r['status'] ?? '')) ?></span></td>
                         <td class="text-end">&#8377;<?= number_format((float)($r['amount'] ?? 0)) ?></td>
                         <td><?= htmlspecialchars((string)($r['collected_by'] ?? '—')) ?></td>
+                        <td class="text-end">
+                            <?php if (($r['payment_mode'] ?? '') === 'cheque' && ($r['status'] ?? '') === 'cleared'): ?>
+                                <form method="POST" action="<?= htmlspecialchars($base ?? '') ?>/admin/sales/receipts/<?= (int)($r['id'] ?? 0) ?>/bounce" class="d-inline">
+                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                                    <input type="hidden" name="booking_id" value="<?= (int)($booking['id'] ?? 0) ?>">
+                                    <input type="hidden" name="bounce_reason" value="Cheque bounced by bank">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Mark cheque bounced (reverts installment + Rs.500 penalty)" data-aps-confirm="Mark this cheque as bounced? Installment reverts and Rs.500 penalty accrues."><i class="fas fa-undo me-1"></i>Bounce</button>
+                                </form>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                 <?php endforeach; endif; ?>
                 </tbody>

@@ -36,6 +36,9 @@
                 <form method="POST" action="<?= BASE_URL ?>/plot/book">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <input type="hidden" name="plot_id" value="<?= $plot['id'] ?>">
+                    <?php if (!empty($lead_id)): ?>
+                    <input type="hidden" name="lead_id" value="<?= (int)$lead_id ?>">
+                    <?php endif; ?>
 
                     <div class="mb-3">
                         <label class="form-label"><?= __('plot_book_proceed', [], 'How would you like to proceed?') ?></label>

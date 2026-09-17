@@ -90,6 +90,39 @@ class CashCollectionController extends AdminController
         return $this->redirect(BASE_URL . '/admin/cash-collections');
     }
 
+    /**
+     * Daily cash handover slip (printable): cashier-wise cash collected
+     * for a date, with handover-to and signature blocks.
+     * GET /admin/cash-collections/handover-slip?date=&collector_id=
+     */
+    public function handoverSlip()
+    {
+        $date = trim($_GET['date'] ?? date('Y-m-d'));
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) $date = date('Y-m-d');
+        $collectorId = !empty($_GET['collector_id']) ? (int)$_GET['collector_id'] : null;
+        $rows = $this->service ? $this->service->getCollections('', $collectorId, $date, $date, 500) : [];
+        $cashRows = array_values(array_filter($rows, function ($r) {
+            return strtolower((string)($r['payment_method'] ?? 'cash')) === 'cash';
+        }));
+        $byCashier = [];
+        $grand = 0;
+        foreach ($cashRows as $r) {
+            $cid = (int)($r['collector_id'] ?? 0);
+            $name = $r['collector_name'] ?? ('Collector #' . $cid);
+            if (!isset($byCashier[$cid])) $byCashier[$cid] = ['name' => $name, 'count' => 0, 'total' => 0];
+            $byCashier[$cid]['count']++;
+            $byCashier[$cid]['total'] += (float)($r['amount'] ?? 0);
+            $grand += (float)($r['amount'] ?? 0);
+        }
+        return $this->render('admin/cash-collections/handover-slip', [
+            'page_title' => 'Cash Handover Slip - ' . $date,
+            'date' => $date,
+            'rows' => $cashRows,
+            'by_cashier' => $byCashier,
+            'grand_total' => $grand,
+        ]);
+    }
+
     public function show()
     {
         $id = (int)($_GET['id'] ?? 0);

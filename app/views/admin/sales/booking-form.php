@@ -81,6 +81,17 @@ if ($selectedPlotId) {
                         <i class="fas fa-info-circle me-1"></i>Select a colony first to see available plots. <a href="<?= $base ?>/admin/plots/create" target="_blank">Add Plot</a>
                     </small>
                 </div>
+                <?php $prefillName = $prefill_name ?? ''; $prefillPhone = $prefill_phone ?? ''; ?>
+                <?php if ($mode === 'create' && ($prefillName !== '' || $prefillPhone !== '')): ?>
+                <div class="col-12">
+                    <div class="alert alert-info py-2">
+                        <i class="fas fa-link me-1"></i>
+                        Converting site visit — visitor: <strong><?= htmlspecialchars($prefillName !== '' ? $prefillName : $prefillPhone) ?></strong>
+                        <?php if ($prefillPhone !== ''): ?>(<?= htmlspecialchars($prefillPhone) ?>)<?php endif; ?>
+                        — pick the matching customer below (or register them first).
+                    </div>
+                </div>
+                <?php endif; ?>
                 <div class="col-md-6">
                     <label class="form-label"><?= __('sale_customer_label') ?></label>
                     <select name="customer_id" class="form-select" required <?= $mode === 'edit' ? 'disabled' : '' ?>>
@@ -96,6 +107,22 @@ if ($selectedPlotId) {
                     </select>
                     <?php if (empty($customers)): ?>
                         <small class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>No customers yet. Register one from <a href="<?= $base ?>/admin/users" target="_blank">User Management</a>.</small>
+                    <?php endif; ?>
+                    <?php if ($mode === 'create' && $prefillPhone !== ''): ?>
+                    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+                    (function() {
+                        var phone = <?= json_encode(preg_replace('/[^0-9]/', '', $prefillPhone)) ?>;
+                        if (!phone) return;
+                        var sel = document.querySelector('select[name="customer_id"]');
+                        if (!sel) return;
+                        for (var i = 0; i < sel.options.length; i++) {
+                            if ((sel.options[i].textContent || '').replace(/[^0-9]/g, '').indexOf(phone.slice(-10)) !== -1) {
+                                sel.selectedIndex = i;
+                                break;
+                            }
+                        }
+                    })();
+                    </script>
                     <?php endif; ?>
                 </div>
                 <div class="col-md-4">

@@ -57,7 +57,40 @@ class PlotBookingController extends PlotBaseController
             'plot' => $plot,
             'user' => $user,
             'userBookings' => $userBookings,
+            'lead_id' => (int)($_GET['lead_id'] ?? 0),
         ]);
+    }
+
+    /**
+     * Lead-to-booking continuity: mark a lead closed_won + converted with
+     * audit trail. Best-effort — never fails the booking. Uses the real
+     * leads.status enum (closed_won) plus is_converted/converted_at/by.
+     */
+    private function markLeadConverted(int $leadId, int $bookingId, int $userId): void
+    {
+        try {
+            $lead = $this->db->fetchRow("SELECT id, status FROM leads WHERE id = ?", [$leadId]);
+            if (!$lead) return;
+            $this->db->execute(
+                "UPDATE leads SET status = 'closed_won', is_converted = 1, converted_at = NOW(), converted_by = ? WHERE id = ?",
+                [$userId, $leadId]
+            );
+            $note = "Converted to Booking #{$bookingId}";
+            try {
+                $this->db->execute(
+                    "INSERT INTO lead_notes (lead_id, note, content, created_by) VALUES (?, ?, ?, ?)",
+                    [$leadId, $note, $note, $userId]
+                );
+            } catch (\Throwable $e) { error_log('markLeadConverted note: ' . $e->getMessage()); }
+            try {
+                $this->db->execute(
+                    "INSERT INTO lead_activities (lead_id, activity_type, description, old_value, new_value, created_by) VALUES (?, 'status_change', ?, ?, ?, ?)",
+                    [$leadId, $note, (string)($lead['status'] ?? ''), 'closed_won', $userId]
+                );
+            } catch (\Throwable $e) { error_log('markLeadConverted activity: ' . $e->getMessage()); }
+        } catch (\Throwable $e) {
+            error_log('PlotBookingController::markLeadConverted: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -189,6 +222,16 @@ class PlotBookingController extends PlotBaseController
                 $notifService->notifyBookingCreated($bookingId, ['id' => $bookingId], $user);
             } catch (\Throwable $e) {
                 error_log('PlotBookingController::storeBooking notify: ' . $e->getMessage());
+            }
+
+            // Lead-to-booking continuity: optional lead_id carries forward.
+            try {
+                $leadId = (int)($_POST['lead_id'] ?? 0);
+                if ($leadId > 0) {
+                    $this->markLeadConverted($leadId, (int)$bookingId, (int)$user['id']);
+                }
+            } catch (\Throwable $e) {
+                error_log('PlotBookingController::storeBooking lead link: ' . $e->getMessage());
             }
 
             $planNote = '';

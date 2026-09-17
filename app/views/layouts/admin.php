@@ -262,6 +262,17 @@ $GLOBALS['_html_doc_started'] = true;
                     <span class="badge"><?php echo e($newInquiriesCount); ?></span>
                 </button>
 
+                <!-- Omni-Search Trigger (Ctrl+K) -->
+                <button class="nav-icon" id="omniSearchTrigger" onclick="openOmniSearch()" title="Search everywhere (Ctrl+K)">
+                    <i class="fas fa-search"></i>
+                    <span class="badge" id="omniSearchBadge" style="display:none;">5</span>
+                </button>
+
+                <!-- My Workspace (role hub) -->
+                <a class="nav-icon" href="<?php echo e($base); ?>/admin/workspace-hubs" title="My Workspace">
+                    <i class="fas fa-th-large"></i>
+                </a>
+
                 <!-- Profile Dropdown (Bootstrap native) -->
                 <div class="dropdown">
                     <div class="user-box dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" >
@@ -486,11 +497,18 @@ $GLOBALS['_html_doc_started'] = true;
         }
         
         document.addEventListener('keydown', function(e) {
-            // Ctrl/Cmd + K = Search
+            // Ctrl/Cmd + K = Search (Omni-Search)
             if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
                 e.preventDefault();
-                const searchInput = document.querySelector('input[type="search"], input[name="search"], #searchBox');
-                if (searchInput) { searchInput.focus(); }
+                const modalEl = document.getElementById('omniSearchModal');
+                if (modalEl) {
+                    const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                    modal.show();
+                    setTimeout(() => {
+                        const input = document.getElementById('omniSearchInput');
+                        if (input) { input.focus(); input.select(); }
+                    }, 150);
+                }
             }
             // Ctrl/Cmd + N = New booking (on bookings page)
             if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
@@ -512,6 +530,242 @@ $GLOBALS['_html_doc_started'] = true;
             }
         });
         </script>
+
+        <!-- Omni-Search JavaScript -->
+        <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+        (function() {
+            const modalEl = document.getElementById('omniSearchModal');
+            const inputEl = document.getElementById('omniSearchInput');
+            const resultsEl = document.getElementById('omniSearchResults');
+            const emptyEl = document.getElementById('omniSearchEmpty');
+            const triggerBtn = document.getElementById('omniSearchTrigger');
+            let debounceTimer = null;
+            let modalInstance = null;
+            let selectedIndex = -1;
+            let currentResults = [];
+
+            function openOmniSearch() {
+                if (!modalInstance) {
+                    modalInstance = new bootstrap.Modal(modalEl);
+                }
+                modalInstance.show();
+                // Focus input after modal animation
+                setTimeout(() => {
+                    inputEl.focus();
+                    inputEl.select();
+                }, 150);
+            }
+
+            function closeOmniSearch() {
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+                inputEl.value = '';
+                renderResults([]);
+            }
+
+            function renderResults(results) {
+                currentResults = results;
+                selectedIndex = -1;
+                
+                if (results.length === 0) {
+                    if (inputEl.value.trim().length >= 2) {
+                        resultsEl.innerHTML = `
+                            <div class="text-center text-muted py-4" id="omniSearchEmpty">
+                                <i class="fas fa-search fa-2x mb-2" style="color: #334155;"></i>
+                                <p class="fw-medium" style="color: #475569;">No results found</p>
+                                <p class="small" style="color: #64748b;">Try a different search term</p>
+                            </div>
+                        `;
+                    } else {
+                        resultsEl.innerHTML = `
+                            <div class="text-center text-muted py-5" id="omniSearchEmpty">
+                                <i class="fas fa-search fa-3x mb-3" style="color: #334155;"></i>
+                                <p class="fw-medium" style="color: #475569;">Start typing to search plots, customers, bookings...</p>
+                                <p class="small" style="color: #64748b;">Search by plot number, customer name, booking number, email, phone, or referral code</p>
+                            </div>
+                        `;
+                    }
+                    return;
+                }
+
+                // Group by category
+                const byCategory = {};
+                results.forEach(r => {
+                    if (!byCategory[r.category]) byCategory[r.category] = [];
+                    byCategory[r.category].push(r);
+                });
+
+                let html = '';
+                const categoryOrder = ['Plots', 'Bookings', 'Customers', 'Associates'];
+                
+                categoryOrder.forEach(cat => {
+                    if (!byCategory[cat]) return;
+                    const icon = byCategory[cat][0]?.icon || 'fas fa-circle';
+                    html += `
+                        <div class="mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="text-muted small text-uppercase fw-bold me-2" style="letter-spacing: 0.05em;">${cat}</span>
+                                <div class="flex-grow-1 divider"></div>
+                            </div>
+                            <div class="list-group list-group-flush">
+                    `;
+                    byCategory[cat].forEach((item, idx) => {
+                        html += `
+                            <a href="${item.url}" class="list-group-item list-group-item-action px-3 py-2 omni-result-item" data-index="${results.indexOf(item)}">
+                                <div class="d-flex align-items-center">
+                                    <div class="omni-icon me-3" style="width: 36px; height: 36px; border-radius: 8px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #1e293b; flex-shrink: 0;">
+                                        <i class="${item.icon}"></i>
+                                    </div>
+                                    <div class="flex-grow-1 min-width-0">
+                                        <div class="fw-medium text-truncate" style="color: #1e293b;">${item.title}</div>
+                                        <div class="text-truncate small" style="color: #64748b;">${item.subtitle}</div>
+                                    </div>
+                                    <kbd class="text-muted small ms-2" style="background: #f1f5f9; color: #64748b; border-radius: 4px; padding: 0.1rem 0.35rem; font-size: 0.7rem;">Enter</kbd>
+                                </div>
+                            </a>
+                        `;
+                    });
+                    html += `
+                            </div>
+                        </div>
+                    `;
+                });
+                resultsEl.innerHTML = html;
+            }
+
+            // Debounced search
+            inputEl.addEventListener('input', function() {
+                const q = this.value.trim();
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    if (q.length < 2) {
+                        renderResults([]);
+                        return;
+                    }
+                    fetch(BASE_URL + '/admin/api/omni-search?q=' + encodeURIComponent(q))
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.success) {
+                                renderResults(data.results || []);
+                            }
+                        })
+                        .catch(err => console.error('Omni-search error:', err));
+                }, 150);
+            });
+
+            // Keyboard navigation
+            inputEl.addEventListener('keydown', function(e) {
+                const items = resultsEl.querySelectorAll('.omni-result-item');
+                if (items.length === 0) return;
+
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+                    updateSelection(items);
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    selectedIndex = Math.max(selectedIndex - 1, 0);
+                    updateSelection(items);
+                } else if (e.key === 'Enter' && selectedIndex >= 0) {
+                    e.preventDefault();
+                    items[selectedIndex].click();
+                } else if (e.key === 'Escape') {
+                    closeOmniSearch();
+                }
+            });
+
+            function updateSelection(items) {
+                items.forEach((item, idx) => {
+                    if (idx === selectedIndex) {
+                        item.classList.add('active');
+                        item.style.background = '#f0f4f8';
+                        item.scrollIntoView({ block: 'nearest' });
+                    } else {
+                        item.classList.remove('active');
+                        item.style.background = '';
+                    }
+                });
+            }
+
+            // Trigger button
+            if (triggerBtn) {
+                triggerBtn.addEventListener('click', openOmniSearch);
+            }
+
+            // Ctrl/Cmd + K handler
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                    e.preventDefault();
+                    openOmniSearch();
+                }
+            });
+
+            // Clean up on modal hide
+            modalEl.addEventListener('hidden.bs.modal', function() {
+                inputEl.value = '';
+                renderResults([]);
+            });
+
+            // Focus input when modal shows
+            modalEl.addEventListener('shown.bs.modal', function() {
+                inputEl.focus();
+                inputEl.select();
+            });
+        })();
+        </script>
+
+        <!-- APS Confirm Modal -->
+        <div class="modal fade" id="apsConfirmModal" tabindex="-1" aria-labelledby="apsConfirmModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content" style="border: none; border-radius: 12px; overflow: hidden;">
+                    <div class="modal-header border-0 pb-0" id="apsConfirmHeader" style="background: linear-gradient(135deg, #1e293b, #334155); color: #fff; border-radius: 12px 12px 0 0;">
+                        <h6 class="modal-title fw-semibold" id="apsConfirmModalLabel">Confirm Action</h6>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center py-4">
+                        <div id="apsConfirmIcon" class="mb-3" style="font-size: 2.5rem; color: #f59e0b;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <p id="apsConfirmMessage" class="mb-0 fw-medium" style="color: #1e293b; font-size: 0.95rem;"></p>
+                    </div>
+                    <div class="modal-footer border-0 justify-content-center gap-2 pt-0 pb-3">
+                        <button type="button" class="btn btn-light px-3" data-bs-dismiss="modal" style="border-radius: 8px;">Cancel</button>
+                        <button type="button" class="btn px-3 fw-semibold" id="apsConfirmBtn" style="border-radius: 8px;">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Omni-Search Modal (Ctrl+K) -->
+        <div class="modal fade" id="omniSearchModal" tabindex="-1" aria-labelledby="omniSearchModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content" style="border: none; border-radius: 16px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);">
+                    <div class="modal-header border-0 pb-0" id="omniSearchHeader" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #fff; border-radius: 16px 16px 0 0; padding: 1.5rem;">
+                        <div class="d-flex align-items-center w-100">
+                            <div class="position-relative flex-grow-1">
+                                <i class="fas fa-search position-absolute" style="left: 1rem; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 1.1rem;"></i>
+                                <input type="text" id="omniSearchInput" class="form-control form-control-lg ps-5 pe-5 bg-slate-800 border-0 text-white" placeholder="Search plots, customers, bookings, associates..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="background: rgba(30,41,59,0.8); color: #fff; font-size: 1.1rem; height: 3.5rem;">
+                                <span id="omniSearchHint" class="position-absolute text-muted small" style="right: 1rem; top: 50%; transform: translateY(-50%); pointer-events: none;">
+                                    <kbd style="background: #334155; color: #94a3b8; border-radius: 4px; padding: 0.15rem 0.4rem; font-size: 0.75rem;">⌘K</kbd> to open • <kbd style="background: #334155; color: #94a3b8; border-radius: 4px; padding: 0.15rem 0.4rem; font-size: 0.75rem;">Esc</kbd> to close
+                                </span>
+                            </div>
+                            <button type="button" class="btn-close btn-close-white ms-3" data-bs-dismiss="modal" aria-label="Close" style="opacity: 0.7;"></button>
+                        </div>
+                    </div>
+                    <div class="modal-body p-0" style="max-height: 65vh; overflow-y: auto;">
+                        <div id="omniSearchResults" class="p-3">
+                            <!-- Results rendered here -->
+                            <div class="text-center text-muted py-5" id="omniSearchEmpty">
+                                <i class="fas fa-search fa-3x mb-3" style="color: #334155;"></i>
+                                <p class="fw-medium" style="color: #475569;">Start typing to search plots, customers, bookings...</p>
+                                <p class="small" style="color: #64748b;">Search by plot number, customer name, booking number, email, phone, or referral code</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- APS Confirm Modal -->
         <div class="modal fade" id="apsConfirmModal" tabindex="-1" aria-labelledby="apsConfirmModalLabel" aria-hidden="true">

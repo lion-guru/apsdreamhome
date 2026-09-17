@@ -309,6 +309,17 @@ class PossessionController extends AdminController
             $defectPeriod = intval($_POST['defect_liability_period'] ?? 365);
             $notes = trim($_POST['handover_notes'] ?? '');
 
+            // No-dues gate: all EMIs must be paid (bookings.amount >= total_amount).
+            $due = $this->db->prepare("SELECT total_amount, amount FROM bookings WHERE id = ? AND tenant_id = ?");
+            $due->execute([$id, $this->tenantId()]);
+            $dueRow = $due->fetch(\PDO::FETCH_ASSOC);
+            if ($dueRow && (float)($dueRow['total_amount'] ?? 0) > 0
+                && (float)($dueRow['amount'] ?? 0) < (float)$dueRow['total_amount']) {
+                $outstanding = (float)$dueRow['total_amount'] - (float)($dueRow['amount'] ?? 0);
+                $this->setFlash('error', 'Handover blocked: Rs.' . number_format($outstanding, 2) . ' still outstanding on this booking. Collect all dues first.');
+                $this->redirect('/admin/possession/show/' . $id);
+            }
+
             $letterNumber = 'POSS-' . date('Y') . '-' . str_pad($id, 5, '0', STR_PAD_LEFT);
             $defectEnd = date('Y-m-d', strtotime($possessionDate . ' + ' . $defectPeriod . ' days'));
 

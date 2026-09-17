@@ -308,6 +308,31 @@ body {
     </div>
 </div>
 
+<!-- Team Monthly Sales Volume (L1/L2/L3) -->
+<?php $teamVolume = $team_volume ?? ['L1' => ['sqft' => 0, 'value' => 0, 'deals' => 0], 'L2' => ['sqft' => 0, 'value' => 0, 'deals' => 0], 'L3' => ['sqft' => 0, 'value' => 0, 'deals' => 0]]; ?>
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="list-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold m-0"><i class="fas fa-chart-bar text-success me-2"></i>Team Volume — <?= date('F Y') ?></h5>
+                <a href="<?= BASE_URL ?>/associate/network/tree" class="btn btn-sm btn-light rounded-pill px-3 fw-bold">View Team</a>
+            </div>
+            <div class="row g-3 text-center">
+                <?php foreach (['L1', 'L2', 'L3'] as $gen):
+                    $gv = $teamVolume[$gen] ?? ['sqft' => 0, 'value' => 0, 'deals' => 0]; ?>
+                <div class="col-4">
+                    <div class="border rounded-3 p-3 h-100">
+                        <div class="badge bg-primary mb-2"><?= $gen ?></div>
+                        <div class="fw-bold fs-5"><?= number_format((float)($gv['sqft'] ?? 0)) ?> <small class="text-muted fs-6">sqft</small></div>
+                        <div class="small text-muted">Rs.<?= number_format((float)($gv['value'] ?? 0)) ?> · <?= (int)($gv['deals'] ?? 0) ?> deals</div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- FOMO & Rank Progress Section -->
 <div class="row mb-4">
     <div class="col-12">

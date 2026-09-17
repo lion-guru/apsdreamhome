@@ -16,6 +16,7 @@ ob_start();
         <div class="btn-group">
             <a href="<?= BASE_URL ?>/admin/cash-collections/create" class="btn btn-primary"><i class="fas fa-plus me-2"></i>Submit Receipt</a>
             <a href="<?= BASE_URL ?>/admin/cash-collections/reconciliations" class="btn btn-outline-secondary"><i class="fas fa-balance-scale me-2"></i>Reconciliation</a>
+            <a href="<?= BASE_URL ?>/admin/cash-collections/handover-slip" class="btn btn-outline-success"><i class="fas fa-print me-2"></i>Handover Slip</a>
         </div>
     </div>
 

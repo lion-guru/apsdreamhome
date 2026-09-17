@@ -151,6 +151,9 @@ class BookingLifecycleController extends AdminController
         $associates = $this->fetchAssociates();
         $salesManagers = $this->fetchSalesManagers();
 
+        // Site-visit conversion prefill (?visitor_name=&visitor_phone=).
+        $prefillName = trim((string)($_GET['visitor_name'] ?? ''));
+        $prefillPhone = trim((string)($_GET['visitor_phone'] ?? ''));
         $this->render('admin/sales/booking-form', [
             'page_title'     => 'New Booking',
             'page_heading'   => 'Create New Plot Booking',
@@ -160,6 +163,8 @@ class BookingLifecycleController extends AdminController
             'customers'      => $customers,
             'associates'     => $associates,
             'sales_managers' => $salesManagers,
+            'prefill_name'   => $prefillName,
+            'prefill_phone'  => $prefillPhone,
         ]);
     }
 
@@ -497,6 +502,26 @@ class BookingLifecycleController extends AdminController
             $this->setFlash('error', $result['error'] ?? 'Swap failed');
         }
         return $this->redirect('/admin/sales/bookings/' . $bookingId);
+    }
+
+    /* =========================================================
+     *  Mark cheque receipt bounced
+     * ========================================================= */
+
+    public function markReceiptBounced($receiptId)
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+        $receiptId = (int)$receiptId;
+        $reason = trim((string)($_POST['bounce_reason'] ?? 'Cheque bounced by bank'));
+        $result = $this->service->markReceiptBounced($receiptId, $reason);
+        if (!empty($result['success'])) {
+            $this->setFlash('success', 'Cheque marked bounced. Installment reverted' . (!empty($result['new_status']) ? ' to ' . $result['new_status'] : '') . '; Rs.500 penalty accrued.');
+        } else {
+            $this->setFlash('error', $result['error'] ?? 'Bounce failed');
+        }
+        $bookingId = (int)($_POST['booking_id'] ?? 0);
+        return $this->redirect($bookingId > 0 ? '/admin/sales/bookings/' . $bookingId : '/admin/sales/bookings');
     }
 
     /* =========================================================

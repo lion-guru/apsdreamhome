@@ -136,6 +136,7 @@ $executives = $executives ?? [];
                                         <?php if (!empty($v['visitor_phone'])): ?>
                                             <a href="tel:<?= htmlspecialchars($v['visitor_phone'] ?? '') ?>" class="btn btn-outline-success" title="Call"><i class="fas fa-phone"></i></a>
                                         <?php endif; ?>
+                                        <a href="<?= BASE_URL ?>/admin/sales/bookings/new?visitor_name=<?= urlencode($v['visitor_name'] ?? '') ?>&visitor_phone=<?= urlencode($v['visitor_phone'] ?? '') ?>" class="btn btn-outline-info" title="Convert to Booking"><i class="fas fa-file-signature"></i></a>
                                         <button class="btn btn-outline-primary" title="Assign Executive &amp; Cab" onclick="openAssignModal(<?= (int)$v['id'] ?>, '<?= htmlspecialchars(addslashes($v['visitor_name'] ?? ''), ENT_QUOTES) ?>')"><i class="fas fa-user-check"></i></button>
                                         <button class="btn btn-outline-success" title="Send WhatsApp Pin" onclick="sendVisitPin(<?= (int)$v['id'] ?>, this)"><i class="fab fa-whatsapp"></i></button>
                                         <button class="btn btn-outline-warning" title="Record Outcome" onclick="openOutcomeModal(<?= (int)$v['id'] ?>, '<?= htmlspecialchars(addslashes($v['visitor_name'] ?? ''), ENT_QUOTES) ?>')"><i class="fas fa-clipboard-check"></i></button>

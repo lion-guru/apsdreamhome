@@ -1,4 +1,43 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-17 — Session 110: Inventory & Projects Hub Enterprise Upgrade)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-17 — Session 111: Enterprise Pillars — CRM/MLM/Finance/Omni-Search)
+
+## Session 111: Master Prompt Pillars — Sales, MLM Payouts, Finance, Omni-Search (2026-09-17)
+
+### Ground-Truth Audit (prompt claims vs code — several already existed)
+| Claim | Verdict |
+|---|---|
+| Omni-search missing | ❌ FALSE — `AdminController@omniSearch` API + full Ctrl+K modal UI already in `layouts/admin.php`; only verified live (+ nav shortcut added) |
+| Workspace hubs missing | ❌ FALSE — `WorkspaceHubService` + controller + routes + views all exist; added top-nav entry point |
+| TDS missing on payouts | ❌ FALSE — `PayoutBatchService` deducts 194H via `TdsConfigService`; **real gap: 5% admin fee + voucher** → built |
+| Cheque bounce handling | ✅ TRUE gap (zero matches) → built |
+| Lead→booking link | ✅ TRUE gap → built (`closed_won`, real enum) |
+| Possession EMI gate | ✅ TRUE gap → built (same-row `amount>=total`, no cross-lifecycle join) |
+
+### Built (probe-verified, E2E 374/374)
+| Pillar | Feature | Probe |
+|---|---|---|
+| P1 | **Lead→booking**: `lead_id` carry-through (?lead_id → hidden field → `markLeadConverted`: closed_won + note + activity, best-effort) | 3/3 reflection + cleanup |
+| P1 | **Site-visit Convert**: per-row button → sales booking form w/ visitor banner + phone auto-match JS | render-verified |
+| P1 | **Possession gate**: `markHandedOver` blocks when outstanding, shows Rs. due | code + syntax verified |
+| P2 | **Payout voucher**: `ADMIN_FEE_PCT=5%` in populate (`admin_fee` col, idempotent) + detail cards/table/tfoot | column + render verified |
+| P2 | **Downline KPI**: L1/L2/L3 sqft+value+deals this month on associate dashboard | syntax + data-path verified |
+| P3 | **Cheque bounce**: `markReceiptBounced` (receipt→bounced, paid reversed, overdue, +Rs.500) + controller/route/receipt-row button | **5/5** incl. double-bounce guard |
+| P3 | **Cash handover slip**: date/collector slip w/ cashier totals + signature blocks + print CSS, route before `{id}` | render 200 |
+| P4 | Omni-search + workspace: verified live 200 (3/3); added top-nav hub shortcut | 3/3 |
+
+### Verification
+- E2E **374/374**, health **ok:true**, workflow **15/15** (self-healed orphan from probe bug: my scratch plot deleted before its booking row — fixed, 0 orphans)
+- Hygiene: zero scratch rows (final sweep 5/5)
+
+### Key Lessons (carried)
+_266. **Prompt claims need the same evidence bar as CEO claims** — omni-search + workspace + TDS were all already built; only the genuinely-missing slices got built. Audit first, every time.
+_267. **Enum discipline again** — `leads.status` has no `'converted'`; use `closed_won` + `is_converted` flags. Check enums via DESCRIBE before writing status literals.
+_268. **Same-row gates beat cross-lifecycle joins** — possession gate uses `bookings.amount>=total_amount` on its own row; joining `booking_payment_schedules` would hit the wrong lifecycle (lesson 238).
+_269. **Probe cleanup order is FK order** — deleting a plot before its `plot_bookings` row orphans it (my bounce probe did exactly this). Delete children first; assert 0 orphans after.
+_270. **Static route order matters** — `/handover-slip` must precede `/{id}` or the param route swallows it. Same rule as batch-pricing/aging-report.
+
+---
+
+## Session 110: Inventory & Projects Hub — PLC Engine, Batch Pricing, Milestones, Aging (2026-09-17)
 
 ## Session 110: Inventory & Projects Hub — PLC Engine, Batch Pricing, Milestones, Aging (2026-09-17)
 

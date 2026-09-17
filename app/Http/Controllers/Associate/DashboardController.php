@@ -100,6 +100,40 @@ class DashboardController extends BaseController
             $stmt->execute($params);
             $recentLeads = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 
+            // Team monthly sales volume per generation (L1/L2/L3): sqft + value + deals
+            // closed this month by downline associates (plot_bookings via associates.user_id).
+            $teamVolume = ['L1' => ['sqft' => 0, 'value' => 0, 'deals' => 0], 'L2' => ['sqft' => 0, 'value' => 0, 'deals' => 0], 'L3' => ['sqft' => 0, 'value' => 0, 'deals' => 0]];
+            try {
+                $genIds = [$userId];
+                for ($gen = 1; $gen <= 3; $gen++) {
+                    if (empty($genIds)) break;
+                    $ph = implode(',', array_fill(0, count($genIds), '?'));
+                    $tSql = $tid > 1 ? " AND tenant_id = ?" : "";
+                    $stmt = $db->prepare("SELECT associate_id FROM mlm_network_tree WHERE sponsor_id IN ($ph)" . $tSql);
+                    $gp = $genIds;
+                    if ($tid > 1) $gp[] = $tid;
+                    $stmt->execute($gp);
+                    $genIds = array_map('intval', $stmt->fetchAll(\PDO::FETCH_COLUMN) ?: []);
+                    if (empty($genIds)) break;
+                    $ph2 = implode(',', array_fill(0, count($genIds), '?'));
+                    $vSql = "SELECT COUNT(DISTINCT pb.id) AS deals, COALESCE(SUM(p.area_sqft),0) AS sqft, COALESCE(SUM(pb.total_plot_value),0) AS value
+                             FROM associates a
+                             JOIN plot_bookings pb ON pb.associate_id = a.id
+                             LEFT JOIN plots p ON p.id = pb.plot_id
+                             WHERE a.user_id IN ($ph2) AND pb.status NOT IN ('cancelled')
+                               AND YEAR(pb.created_at) = YEAR(CURDATE()) AND MONTH(pb.created_at) = MONTH(CURDATE())";
+                    $vp = $genIds;
+                    $vStmt = $db->prepare($vSql);
+                    $vStmt->execute($vp);
+                    $vr = $vStmt->fetch(\PDO::FETCH_ASSOC) ?: [];
+                    $teamVolume['L' . $gen] = [
+                        'sqft' => (float)($vr['sqft'] ?? 0),
+                        'value' => (float)($vr['value'] ?? 0),
+                        'deals' => (int)($vr['deals'] ?? 0),
+                    ];
+                }
+            } catch (\Throwable $e) { error_log('Associate dashboard team volume: ' . $e->getMessage()); }
+
             $this->render('associate/dashboard', [
                 'page_title' => 'Associate Dashboard - APS Dream Home',
                 'page_description' => 'Welcome to your Associate Dashboard',
@@ -112,6 +146,7 @@ class DashboardController extends BaseController
                 'recent_commissions' => $recentCommissions,
                 'my_properties' => $myProperties,
                 'recent_leads' => $recentLeads,
+                'team_volume' => $teamVolume ?? ['L1' => ['sqft' => 0, 'value' => 0, 'deals' => 0], 'L2' => ['sqft' => 0, 'value' => 0, 'deals' => 0], 'L3' => ['sqft' => 0, 'value' => 0, 'deals' => 0]],
             ], 'layouts/associate');
 
         } catch (\Throwable $e) {
@@ -127,6 +162,7 @@ class DashboardController extends BaseController
                 'recent_commissions' => [],
                 'my_properties' => [],
                 'recent_leads' => [],
+                'team_volume' => ['L1' => ['sqft' => 0, 'value' => 0, 'deals' => 0], 'L2' => ['sqft' => 0, 'value' => 0, 'deals' => 0], 'L3' => ['sqft' => 0, 'value' => 0, 'deals' => 0]],
             ], 'layouts/associate');
         }
     }
