@@ -1,7 +1,9 @@
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="mb-0"><i class="fas fa-photo-video me-2"></i>Media Gallery</h4>
-        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#uploadMediaModal"><i class="fas fa-upload me-1"></i>Upload Media</button>
+        <?php if (isset($_SESSION['admin_id'])): ?>
+            <a href="<?= BASE_URL ?>/admin/media-library/upload" class="btn btn-primary btn-sm"><i class="fas fa-upload me-1"></i>Upload Media</a>
+        <?php endif; ?>
     </div>
 
     <div class="card border-0 shadow-sm mb-4">
@@ -43,9 +45,9 @@
 
     <div class="d-flex justify-content-center mt-4">
         <nav><ul class="pagination pagination-sm">
-            <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-            <li class="page-item active"><a class="page-link" href="#"><?= ($page ?? 1) ?></a></li>
-            <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+            <li class="page-item disabled"><span class="page-link" aria-disabled="true">Previous</span></li>
+            <li class="page-item active" aria-current="page"><span class="page-link"><?= ($page ?? 1) ?></span></li>
+            <li class="page-item disabled"><span class="page-link" aria-disabled="true">Next</span></li>
         </ul></nav>
     </div>
 </div>

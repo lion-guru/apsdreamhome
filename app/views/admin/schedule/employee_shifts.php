@@ -75,7 +75,7 @@ $filters = $filters ?? [];
                                 <td><?= htmlspecialchars($a['status'] ?? '') ?></td>
                                 <td>
                                     <button class="btn btn-sm btn-outline-primary edit-assignment" data-id="<?= $a['id'] ?>"><i class="fas fa-edit"></i></button>
-                                    <form method="POST" action="<?= BASE_URL ?>/admin/schedule/assignments/<?= $a['id'] ?>/delete" class="d-inline" data-aps-confirm="Delete this shift assignment?">
+                                    <form method="POST" action="<?= BASE_URL ?>/admin/schedule/assignments/remove/<?= $a['id'] ?>" class="d-inline" data-aps-confirm="Delete this shift assignment?">
                                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                         <button type="submit" class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                     </form>
@@ -89,3 +89,74 @@ $filters = $filters ?? [];
         </div>
     </div>
 </div>
+
+<!-- Assign Shift Modal -->
+<div class="modal fade" id="assignShiftModal" tabindex="-1" aria-labelledby="assignShiftModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="assignShiftModalLabel"><i class="fas fa-user-clock me-2"></i>Assign Shift</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="<?= BASE_URL ?>/admin/schedule/assign-shift">
+                <div class="modal-body">
+                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+                    <div class="mb-3">
+                        <label class="form-label" for="asEmployee">Employee *</label>
+                        <select class="form-select" id="asEmployee" name="employee_id" required>
+                            <option value="">Select employee</option>
+                            <?php foreach ($users as $emp): ?>
+                                <option value="<?= (int)$emp['id'] ?>"><?= htmlspecialchars($emp['name'] ?? ('ID ' . $emp['id'])) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="asShiftType">Shift Type *</label>
+                        <select class="form-select" id="asShiftType" name="shift_type_id" required>
+                            <option value="">Select shift type</option>
+                            <?php foreach ($shift_types as $st): ?>
+                                <option value="<?= (int)$st['id'] ?>" data-start="<?= htmlspecialchars($st['start_time'] ?? '') ?>" data-end="<?= htmlspecialchars($st['end_time'] ?? '') ?>"><?= htmlspecialchars($st['name'] ?? '') ?><?= !empty($st['start_time']) ? ' (' . htmlspecialchars($st['start_time'] . '-' . ($st['end_time'] ?? '')) . ')' : '' ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="asDate">Shift Date *</label>
+                        <input type="date" class="form-control" id="asDate" name="shift_date" required value="<?= date('Y-m-d') ?>">
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="asStart">Start Time</label>
+                            <input type="time" class="form-control" id="asStart" name="start_time">
+                            <div class="form-text">Defaults to shift type hours.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="asEnd">End Time</label>
+                            <input type="time" class="form-control" id="asEnd" name="end_time">
+                        </div>
+                    </div>
+                    <div class="mb-3 mt-3">
+                        <label class="form-label" for="asNotes">Notes</label>
+                        <input type="text" class="form-control" id="asNotes" name="notes" maxlength="255">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-plus me-1"></i>Assign Shift</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+(function() {
+    var shiftSelect = document.getElementById('asShiftType');
+    if (!shiftSelect) return;
+    shiftSelect.addEventListener('change', function() {
+        var opt = shiftSelect.options[shiftSelect.selectedIndex];
+        if (!opt) return;
+        if (opt.getAttribute('data-start')) document.getElementById('asStart').value = opt.getAttribute('data-start').substring(0, 5);
+        if (opt.getAttribute('data-end')) document.getElementById('asEnd').value = opt.getAttribute('data-end').substring(0, 5);
+    });
+})();
+</script>

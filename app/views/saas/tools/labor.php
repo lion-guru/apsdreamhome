@@ -1,7 +1,9 @@
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="mb-0"><i class="fas fa-users me-2"></i><?= ($page_title ?? 'Labor Management') ?></h4>
-        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addLaborModal"><i class="fas fa-plus me-1"></i>Add Labor</button>
+        <?php if (isset($_SESSION['admin_id'])): ?>
+            <a href="<?= BASE_URL ?>/admin/hr/users/create" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Add Labor</a>
+        <?php endif; ?>
     </div>
 
     <div class="card border-0 shadow-sm">
@@ -27,7 +29,13 @@
                             <td><?= htmlspecialchars($labor['phone'] ?? '') ?></td>
                             <td>₹<?= number_format($labor['wage'] ?? 0) ?></td>
                             <td><span class="badge bg-<?= ($labor['status'] ?? 'active') === 'active' ? 'success' : 'danger' ?>"><?= ucfirst($labor['status'] ?? 'active') ?></span></td>
-                            <td><a href="#" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a></td>
+                            <td>
+                                <?php if (isset($_SESSION['admin_id'])): ?>
+                                    <a href="<?= BASE_URL ?>/admin/hr/users" class="btn btn-sm btn-outline-primary" title="Manage in HR"><i class="fas fa-edit"></i></a>
+                                <?php else: ?>
+                                    <span class="text-muted">-</span>
+                                <?php endif; ?>
+                            </td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>

@@ -58,7 +58,7 @@ $role = $role ?? '';
                         <?php else: ?>
                             <div class="list-group list-group-flush">
                                 <?php foreach ($users as $user): ?>
-                                    <a href="#" class="list-group-item list-group-item-action user-item"
+                                    <a href="javascript:void(0)" class="list-group-item list-group-item-action user-item"
                                        data-user-id="<?= $user['id'] ?>"
                                        data-user-name="<?= htmlspecialchars($user['name'] ?? '') ?>"
                                        data-user-role="<?= $user['role'] ?? 'user' ?>"
@@ -169,7 +169,7 @@ function searchUsers(query) {
                     var color = colors[u.role] || '#6c757d';
                     var badge = badges[u.role] || 'secondary';
                     var initial = (u.name || '?').charAt(0).toUpperCase();
-                    html += '<a href="#" class="list-group-item list-group-item-action user-item"'
+                    html += '<a href="javascript:void(0)" class="list-group-item list-group-item-action user-item"'
                         + ' data-user-id="' + u.id + '" data-user-name="' + escapeHtml(u.name || '') + '" data-user-role="' + (u.role || 'user') + '"'
                         + ' onclick="selectUser(this)">'
                         + '<div class="d-flex align-items-center">'

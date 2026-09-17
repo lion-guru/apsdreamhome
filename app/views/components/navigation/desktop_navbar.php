@@ -76,7 +76,7 @@ if (!function_exists('navUrl')) {
 
                         <?php if ($hasChildren): ?>
                             <a class="nav-link dropdown-toggle <?php echo $isActive ? 'active' : ''; ?>"
-                             href="#"
+                             href="javascript:void(0)"
                                 id="navDrop<?= (int)$index ?>"
                                role="button"
                                data-bs-toggle="dropdown"
@@ -262,7 +262,7 @@ if (!function_exists('navUrl')) {
                 <li class="nav-item dropdown">
                     <?php if ($nav->isLoggedIn()): ?>
                         <a class="nav-link dropdown-toggle"
-                           href="#"
+                           href="javascript:void(0)"
                            id="userDropdownDesktop"
                            role="button"
                            data-bs-toggle="dropdown"
@@ -308,7 +308,7 @@ if (!function_exists('navUrl')) {
 
                 <!-- Language Switcher -->
                 <li class="nav-item dropdown ms-1">
-                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" title="<?= __('language') ?>" aria-label="<?= __('language') ?>">
+                    <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-bs-toggle="dropdown" title="<?= __('language') ?>" aria-label="<?= __('language') ?>">
                         <i class="fas fa-globe" aria-hidden="true"></i>
                         <span class="d-none"><?= ($GLOBALS['app_lang'] ?? 'en') === 'hi' ? 'हिन्दी' : 'English' ?></span>
                     </a>

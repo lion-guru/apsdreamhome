@@ -47,3 +47,59 @@ $day_names = $day_names ?? ['Sunday','Monday','Tuesday','Wednesday','Thursday','
         </div>
     </div>
 </div>
+
+<!-- Add Work Schedule Modal -->
+<div class="modal fade" id="addWorkScheduleModal" tabindex="-1" aria-labelledby="addWorkScheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addWorkScheduleModalLabel"><i class="fas fa-briefcase me-2"></i>Add Work Schedule</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="<?= BASE_URL ?>/admin/schedule/work-schedules/store">
+                <div class="modal-body">
+                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+                    <input type="hidden" name="ws_id" value="0">
+                    <div class="mb-3">
+                        <label class="form-label" for="wsEmployee">Employee *</label>
+                        <select class="form-select" id="wsEmployee" name="employee_id" required>
+                            <option value="">Select employee</option>
+                            <?php foreach ($users as $u): ?>
+                                <option value="<?= (int)$u['id'] ?>"><?= htmlspecialchars($u['name'] ?? ('ID ' . $u['id'])) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Work Days *</label>
+                        <div class="d-flex flex-wrap gap-2">
+                            <?php foreach ($day_names as $di => $dn): ?>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="wsDay<?= $di ?>" name="work_days[]" value="<?= $di ?>" <?= $di >= 1 && $di <= 6 ? 'checked' : '' ?>>
+                                    <label class="form-check-label" for="wsDay<?= $di ?>"><?= htmlspecialchars(substr($dn, 0, 3)) ?></label>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="wsStart">Shift Start *</label>
+                            <input type="time" class="form-control" id="wsStart" name="shift_start" required value="09:00">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="wsEnd">Shift End *</label>
+                            <input type="time" class="form-control" id="wsEnd" name="shift_end" required value="18:00">
+                        </div>
+                    </div>
+                    <div class="form-check mt-3">
+                        <input type="checkbox" class="form-check-input" id="wsActive" name="is_active" value="1" checked>
+                        <label class="form-check-label" for="wsActive">Active</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-plus me-1"></i>Add Schedule</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

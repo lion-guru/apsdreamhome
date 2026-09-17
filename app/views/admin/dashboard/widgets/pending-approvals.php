@@ -25,10 +25,12 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         </div>
                     </div>
                     <div class="btn-group btn-group-sm">
-                        <a href="<?php echo $base . ($approval['url'] ?? '#'); ?>" class="btn btn-sm btn-success">
+                        <a href="<?php echo $base . ($approval['url'] ?? '/admin/dashboard'); ?>" class="btn btn-sm btn-success">
                             <i class="fas fa-check me-1"></i> Approve
                         </a>
-                        <a href="#" class="btn btn-sm btn-danger">Reject</a>
+                        <a href="<?php echo $base . ($approval['reject_url'] ?? $approval['url'] ?? '/admin/dashboard'); ?>" class="btn btn-sm btn-danger">
+                            <i class="fas fa-times me-1"></i> Reject
+                        </a>
                     </div>
                 </div>
             </div>

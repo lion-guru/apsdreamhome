@@ -4078,6 +4078,7 @@ return array(
   'oldest_first' => 'Oldest First',
   'sq_ft' => 'sq ft',
   'bhk' => 'BHK',
+  'facing' => 'Facing',
   'per_month' => '/month',
   'added' => 'Added',
   'failed_to_add' => 'Failed to Add',

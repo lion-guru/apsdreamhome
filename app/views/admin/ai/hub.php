@@ -745,3 +745,21 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
     function saveWorkflow() { showToast('Use the Workflows tab to manage workflows', 'info'); }
     function executeWorkflow() { showToast('Select a workflow from the list and click Run', 'info'); }
 </script>
+
+<!-- AI Language Modal -->
+<div class="modal fade" id="langModal" tabindex="-1" aria-labelledby="langModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-secondary">
+                <h6 class="modal-title" id="langModalLabel"><i class="fas fa-globe me-2"></i><?= h($mlSupport->translate('Language')) ?></h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-grid gap-2">
+                    <a href="<?= BASE_URL ?>/language/set/en" class="btn btn-outline-light"><span class="me-2">🇬🇧</span>English</a>
+                    <a href="<?= BASE_URL ?>/language/set/hi" class="btn btn-outline-light"><span class="me-2">🇮🇳</span>हिन्दी (Hindi)</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

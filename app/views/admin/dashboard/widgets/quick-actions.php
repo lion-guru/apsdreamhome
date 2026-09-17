@@ -6,7 +6,7 @@ $actions = $widgetData['actions'] ?? [
     ['label' => 'New Booking', 'icon' => 'plus', 'url' => '/admin/booking/create', 'color' => 'primary'],
     ['label' => 'New Lead', 'icon' => 'user-plus', 'url' => '/admin/leads/create', 'color' => 'success'],
     ['label' => 'New Property', 'icon' => 'home', 'url' => '/admin/properties/create', 'color' => 'info'],
-    ['label' => 'New Lead', 'icon' => 'user-plus', 'url' => '/associate/leads/add', 'color' => 'success'],
+    ['label' => 'Add Colony', 'icon' => 'city', 'url' => '/admin/colonies/create', 'color' => 'warning'],
 ];
 $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 ?>

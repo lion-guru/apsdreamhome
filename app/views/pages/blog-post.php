@@ -34,8 +34,7 @@
                 <div class="sidebar">
                     <h4><?php echo __('blog_recent_posts', [], 'Recent Posts'); ?></h4>
                     <ul class="list-unstyled">
-                        <li><a href="#"><?php echo __('blog_recent_post_1', [], 'Recent Post 1'); ?></a></li>
-                        <li><a href="#"><?php echo __('blog_recent_post_2', [], 'Recent Post 2'); ?></a></li>
+                        <li><a href="<?= BASE_URL ?>/blog"><?php echo __('blog_view_all_posts', [], 'View All Posts'); ?></a></li>
                     </ul>
                 </div>
             </div>

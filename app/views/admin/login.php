@@ -72,7 +72,7 @@
 
             <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>
             <div class="text-center">
-                <a href="#" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">Forgot Password?</a>
+                <a href="<?= BASE_URL ?>/forgot-password">Forgot Password?</a>
             </div>
         </form>
     </div>

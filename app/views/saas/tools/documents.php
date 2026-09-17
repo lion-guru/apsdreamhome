@@ -1,7 +1,9 @@
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="mb-0"><i class="fas fa-folder-open me-2"></i><?= ($page_title ?? 'Document Vault') ?></h4>
-        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#uploadModal"><i class="fas fa-upload me-1"></i>Upload Document</button>
+        <?php if (isset($_SESSION['admin_id'])): ?>
+            <a href="<?= BASE_URL ?>/admin/documents/upload" class="btn btn-primary btn-sm"><i class="fas fa-upload me-1"></i>Upload Document</a>
+        <?php endif; ?>
     </div>
 
     <div class="card border-0 shadow-sm">
@@ -15,9 +17,11 @@
                             <i class="fas fa-file-<?= ($doc['type'] ?? 'file') === 'pdf' ? 'pdf' : (in_array($doc['type'] ?? '', ['doc','docx']) ? 'word' : 'file') ?> fa-3x text-muted mb-2"></i>
                             <h6 class="card-title small"><?= htmlspecialchars($doc['name'] ?? 'Untitled') ?></h6>
                             <small class="text-muted"><?= htmlspecialchars($doc['size'] ?? '') ?></small>
+                            <?php if (!empty($doc['url'])): ?>
                             <div class="mt-2">
-                                <a href="<?= htmlspecialchars($doc['url'] ?? '#') ?>" class="btn btn-sm btn-outline-primary" target="_blank"><i class="fas fa-download"></i></a>
+                                <a href="<?= htmlspecialchars($doc['url']) ?>" class="btn btn-sm btn-outline-primary" target="_blank" rel="noopener"><i class="fas fa-download"></i></a>
                             </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>

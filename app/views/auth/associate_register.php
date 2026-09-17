@@ -276,18 +276,19 @@ $ref = $ref ?? $_GET['ref'] ?? $old['sponsor_code'] ?? '';
 
                     <div class="form-section-title"><i class="fa-solid fa-sitemap"></i> Sponsor Info</div>
 
-                    <div class="input-group-custom">
-                        <i class="fa-solid fa-ticket"></i>
-                        <label class="form-label-custom">Sponsor Code <span class="required-badge">*</span></label>
-                        <input type="text" class="form-control" name="sponsor_code" placeholder="Enter your sponsor's code" required value="<?php echo htmlspecialchars($ref ?? ''); ?>">
-                    </div>
-                    <div class="sponsor-note">
-                        <i class="fa-solid fa-circle-info"></i>
-                        <span><strong>Required:</strong> Your sponsor code connects you to the network tree and enables auto-approval.</span>
-                    </div>
+<div class="input-group-custom">
+                         <i class="fa-solid fa-ticket"></i>
+                         <label class="form-label-custom">Sponsor Code <span class="required-badge">*</span></label>
+                         <input type="text" class="form-control" name="sponsor_code" placeholder="Enter your sponsor's code" required value="<?php echo htmlspecialchars($ref ?? ''); ?>">
+                     </div>
+                     <div id="sponsor_name_display" class="mt-2"></div>
+                     <div class="sponsor-note">
+                         <i class="fa-solid fa-circle-info"></i>
+                         <span><strong>Required:</strong> Your sponsor code connects you to the network tree and enables auto-approval.</span>
+                     </div>
 
                     <div class="terms-text">
-                        By registering, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+                        By registering, you agree to our <a href="<?php echo e($base); ?>/terms" target="_blank" rel="noopener">Terms of Service</a> and <a href="<?php echo e($base); ?>/privacy" target="_blank" rel="noopener">Privacy Policy</a>.
                     </div>
 
                     
@@ -312,12 +313,45 @@ $ref = $ref ?? $_GET['ref'] ?? $old['sponsor_code'] ?? '';
     <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         document.addEventListener('DOMContentLoaded', function() {
             var form = document.getElementById('associateRegisterForm');
-            var phoneInput = form.querySelector('input[name="phone"]');
-            if (phoneInput) {
-                phoneInput.addEventListener('input', function() {
-                    this.value = this.value.replace(/[^0-9]/g, '').substring(0, 10);
-                });
-            }
+var phoneInput = form.querySelector('input[name="phone"]');
+             if (phoneInput) {
+                 phoneInput.addEventListener('input', function() {
+                     this.value = this.value.replace(/[^0-9]/g, '').substring(0, 10);
+                 });
+             }
+
+             // Sponsor name resolution
+             function resolveSponsorName() {
+                 var sponsorCode = document.getElementsByName('sponsor_code')[0].value.trim();
+                 var display = document.getElementById('sponsor_name_display');
+                 if (!sponsorCode) {
+                     display.innerHTML = '';
+                     return;
+                 }
+                 display.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resolving...';
+fetch('/apsdreamhome/api/user/resolve-sponsor?code=' + encodeURIComponent(sponsorCode))
+                      .then(response => response.json())
+                      .then(data => {
+                          if (data.success) {
+                              var name = data.name || 'Unknown';
+                              var role = data.role || '';
+                              var displayText = '<strong>' + name + '</strong> (' + role + ')';
+                              display.innerHTML = displayText;
+                          } else {
+                              display.innerHTML = '<span class="text-danger">Invalid sponsor code</span>';
+                          }
+                      })
+                      .catch(() => {
+                          display.innerHTML = '<span class="text-danger">Error validating sponsor</span>';
+                      });
+             }
+
+             // Attach listener to sponsor_code input
+             var sponsorInput = form.querySelector('input[name="sponsor_code"]');
+             if (sponsorInput) {
+                 sponsorInput.addEventListener('input', resolveSponsorName);
+                 sponsorInput.addEventListener('blur', resolveSponsorName);
+             }
 
             var confirmPwd = document.getElementById('regConfirmPassword');
             var pwd = document.getElementById('regPassword');

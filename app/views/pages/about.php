@@ -550,7 +550,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
         </div>
         <div class="service-modal-footer">
             <button class="service-modal-btn-secondary" id="serviceModalClose2">Close</button>
-            <a class="service-modal-btn-primary" id="serviceModalLink" href="#" aria-label="Learn more about this service">Learn More &nbsp;<i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+            <a class="service-modal-btn-primary" id="serviceModalLink" href="javascript:void(0)" aria-label="Learn more about this service">Learn More &nbsp;<i class="fas fa-arrow-right" aria-hidden="true"></i></a>
         </div>
     </div>
 </div>

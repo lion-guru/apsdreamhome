@@ -19,8 +19,8 @@ $bookings = $bookings ?? [];
         </div>
         <div class="card-body p-0">
             <?php if (empty($bookings)): ?>
-            <div class="text-center py-5 text-muted">
-                <i class="fas fa-file-invoice fa-4x mb-3"></i>
+            <div class="aps-cp-empty py-5">
+                <div class="aps-cp-empty-icon"><i class="fas fa-file-invoice"></i></div>
                 <h5><?php echo __('bookings_empty_title', [], 'No Bookings Yet'); ?></h5>
                 <p><?php echo __('bookings_empty_desc', [], 'Browse available plots and book your dream plot today!'); ?></p>
                 <a href="<?= BASE_URL ?>/plots" class="btn btn-primary"><i class="fas fa-search me-1"></i><?php echo __('browse_plots', [], 'Browse Plots'); ?></a>

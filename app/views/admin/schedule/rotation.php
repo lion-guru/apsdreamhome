@@ -8,7 +8,7 @@ $departments = $departments ?? [];
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="mb-0"><i class="fas fa-sync-alt me-2"></i><?= htmlspecialchars($page_heading ?? '') ?></h4>
-        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addRotationModal"><i class="fas fa-plus"></i> Add Rotation</button>
+        <a href="<?= BASE_URL ?>/admin/schedule/employee-shifts" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Assign Shifts</a>
     </div>
     <div class="card border-0 shadow-sm">
         <div class="card-body p-0">
@@ -28,11 +28,7 @@ $departments = $departments ?? [];
                                 <td><?= htmlspecialchars($r['end_date'] ?? 'N/A') ?></td>
                                 <td><?= $r['assigned_count'] ?? 0 ?></td>
                                 <td>
-                                    <button class="btn btn-sm btn-outline-primary" aria-label="Edit"><i class="fas fa-edit"></i></button>
-                                    <form method="POST" action="<?= BASE_URL ?>/admin/schedule/rotations/<?= $r['id'] ?>/delete" class="d-inline" data-aps-confirm="Delete this rotation schedule?">
-                                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
-                                    </form>
+                                    <a href="<?= BASE_URL ?>/admin/schedule/employee-shifts" class="btn btn-sm btn-outline-primary" title="Manage shift assignments"><i class="fas fa-edit"></i></a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

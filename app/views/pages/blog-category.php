@@ -31,7 +31,7 @@
                                     <h5><?php echo __('blog_post_title_1', [], 'Blog Post Title 1'); ?></h5>
                                     <p class="text-muted"><?php echo __('blog_posted_on', [], 'Posted on:'); ?> <?php echo date('F j, Y'); ?></p>
                                     <p><?php echo __('blog_excerpt_placeholder', [], 'Excerpt of blog post...'); ?></p>
-                                    <a href="#" class="btn btn-primary"><?php echo __('blog_read_more', [], 'Read More'); ?></a>
+                                    <a href="<?php echo BASE_URL; ?>/blog" class="btn btn-primary"><?php echo __('blog_read_more', [], 'Read More'); ?></a>
                                 </div>
                             </div>
                         </div>
@@ -41,7 +41,7 @@
                                     <h5><?php echo __('blog_post_title_2', [], 'Blog Post Title 2'); ?></h5>
                                     <p class="text-muted"><?php echo __('blog_posted_on', [], 'Posted on:'); ?> <?php echo date('F j, Y'); ?></p>
                                     <p><?php echo __('blog_excerpt_placeholder', [], 'Excerpt of blog post...'); ?></p>
-                                    <a href="#" class="btn btn-primary"><?php echo __('blog_read_more', [], 'Read More'); ?></a>
+                                    <a href="<?php echo BASE_URL; ?>/blog" class="btn btn-primary"><?php echo __('blog_read_more', [], 'Read More'); ?></a>
                                 </div>
                             </div>
                         </div>
@@ -52,9 +52,9 @@
                 <div class="sidebar">
                     <h4><?php echo __('blog_categories', [], 'Categories'); ?></h4>
                     <ul class="list-unstyled">
-                        <li><a href="#"><?php echo __('blog_cat_real_estate', [], 'Real Estate'); ?></a></li>
-                        <li><a href="#"><?php echo __('blog_cat_property_tips', [], 'Property Tips'); ?></a></li>
-                        <li><a href="#"><?php echo __('blog_cat_market_news', [], 'Market News'); ?></a></li>
+                        <li><a href="<?php echo BASE_URL; ?>/blog"><?php echo __('blog_cat_real_estate', [], 'Real Estate'); ?></a></li>
+                        <li><a href="<?php echo BASE_URL; ?>/blog"><?php echo __('blog_cat_property_tips', [], 'Property Tips'); ?></a></li>
+                        <li><a href="<?php echo BASE_URL; ?>/blog"><?php echo __('blog_cat_market_news', [], 'Market News'); ?></a></li>
                     </ul>
                 </div>
             </div>

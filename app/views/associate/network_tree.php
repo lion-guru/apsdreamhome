@@ -65,7 +65,12 @@ foreach ($nodes as $n) {
 @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(99,102,241,0.3); } 50% { box-shadow: 0 0 0 8px rgba(99,102,241,0); } }
 .leg-badge { font-size:0.6rem; padding:2px 8px; border-radius:10px; font-weight:700; letter-spacing:0.5px; }
 .gen-badge { font-size:0.55rem; padding:1px 6px; border-radius:8px; font-weight:700; background:rgba(99,102,241,0.15); color:#6366f1; }
-.overflow-x-auto { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.overflow-x-auto { overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; scrollbar-width: thin; touch-action: pan-x pan-y; }
+.tree-scroll-hint { display: none; }
+@media (max-width: 768px) {
+    .tree-scroll-hint { display: block; }
+    .tree-node .card { min-width: 150px; }
+}
 .tree-tooltip {
     display: none; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
     background: #1e293b; color: #fff; padding: 8px 12px; border-radius: 8px;
@@ -162,13 +167,15 @@ foreach ($nodes as $n) {
     <div id="treeView">
         <?php if (empty($rootNodes) && empty($nodes)): ?>
             <div class="card border-0 shadow-sm">
-                <div class="card-body text-center py-5">
-                    <i class="fas fa-project-diagram fa-4x text-muted mb-3"></i>
-                    <h4 class="text-muted"><?php echo __('assoc_net_no_network', [], 'No Network Yet'); ?></h4>
-                    <p class="text-muted mb-3"><?php echo __('assoc_net_no_network_desc', [], 'Start building your network by sharing your referral code.'); ?></p>
+                <div class="card-body">
+                    <div class="aps-cp-empty py-4">
+                    <div class="aps-cp-empty-icon"><i class="fas fa-project-diagram"></i></div>
+                    <h5><?php echo __('assoc_net_no_network', [], 'No Network Yet'); ?></h5>
+                    <p><?php echo __('assoc_net_no_network_desc', [], 'Start building your network by sharing your referral code.'); ?></p>
                     <div class="d-flex justify-content-center gap-2">
                         <a href="<?= BASE_URL ?>/associate/dashboard" class="btn btn-primary"><i class="fas fa-tachometer-alt me-1"></i> <?php echo __('assoc_net_go_dashboard', [], 'Go to Dashboard'); ?></a>
                         <a href="<?= BASE_URL ?>/become-associate" class="btn btn-outline-primary" target="_blank"><i class="fas fa-share-alt me-1"></i> <?php echo __('assoc_net_share_referral', [], 'Share Referral'); ?></a>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -176,6 +183,7 @@ foreach ($nodes as $n) {
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="m-0 fw-bold"><i class="fas fa-sitemap text-primary me-2"></i><?php echo __('assoc_net_hierarchy_view', [], 'Hierarchy View'); ?></h5>
+                    <small class="tree-scroll-hint text-muted"><i class="fas fa-arrows-alt-h me-1"></i><?php echo __('assoc_net_swipe_hint', [], 'Swipe sideways to explore the tree'); ?></small>
                 </div>
                 <div class="card-body overflow-x-auto">
                     <?php foreach ($rootNodes as $root):

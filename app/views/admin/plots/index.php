@@ -61,10 +61,11 @@
     <div class="card aps-cp-card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">All Plots</h5>
-            <div class="btn-group">
-                <button class="btn btn-sm btn-outline-secondary">Available</button>
-                <button class="btn btn-sm btn-outline-secondary">Booked</button>
-                <button class="btn btn-sm btn-outline-secondary">Sold</button>
+            <div class="btn-group" role="group" aria-label="Filter plots by status">
+                <button type="button" class="btn btn-sm btn-secondary plot-filter-btn active" data-status="all">All</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary plot-filter-btn" data-status="available">Available</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary plot-filter-btn" data-status="booked">Booked</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary plot-filter-btn" data-status="sold">Sold</button>
             </div>
         </div>
         <div class="card-body aps-cp-card-body">
@@ -90,7 +91,7 @@
                         </thead>
                         <tbody>
                             <?php foreach ($plots as $plot): ?>
-                            <tr>
+                            <tr data-plot-status="<?= htmlspecialchars(strtolower($plot['status'] ?? 'available')) ?>">
                                 <td><strong><?= htmlspecialchars($plot['plot_number'] ?? $plot['id']) ?></strong></td>
                                 <td><?= $plot['area_sqft'] ?? 0 ?> sqft</td>
                                 <td><?= htmlspecialchars($plot['colony_name'] ?? 'N/A') ?></td>
@@ -107,6 +108,9 @@
                                 </td>
                             </tr>
                             <?php endforeach; ?>
+                            <tr id="plotFilterEmpty" style="display:none;">
+                                <td colspan="7" class="text-center py-4 text-muted">No plots match this status filter.</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -114,3 +118,29 @@
         </div>
     </div>
 </div>
+
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+(function() {
+    var buttons = document.querySelectorAll('.plot-filter-btn');
+    if (!buttons.length) return;
+    buttons.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var status = btn.getAttribute('data-status');
+            buttons.forEach(function(b) {
+                var active = b === btn;
+                b.classList.toggle('active', active);
+                b.classList.toggle('btn-secondary', active);
+                b.classList.toggle('btn-outline-secondary', !active);
+            });
+            var visible = 0;
+            document.querySelectorAll('tr[data-plot-status]').forEach(function(row) {
+                var show = status === 'all' || row.getAttribute('data-plot-status') === status;
+                row.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+            var emptyRow = document.getElementById('plotFilterEmpty');
+            if (emptyRow) emptyRow.style.display = visible === 0 ? '' : 'none';
+        });
+    });
+})();
+</script>

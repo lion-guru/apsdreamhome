@@ -10,7 +10,7 @@ $criteria = $criteria ?? [];
             <h1 class="h3 mb-2"><i class="fas fa-trophy me-2"></i>Rank Criteria</h1>
             <p class="text-muted">Define MLM rank requirements for users</p>
         </div>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCriteriaModal">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#criteriaModal">
             <i class="fas fa-plus me-1"></i>Add Criteria
         </button>
     </div>
@@ -125,7 +125,7 @@ function editCriteria(data) {
     new bootstrap.Modal(document.getElementById('criteriaModal')).show();
 }
 
-document.querySelector('[data-bs-target="#addCriteriaModal"]')?.addEventListener('click', function() {
+document.querySelector('[data-bs-target="#criteriaModal"]')?.addEventListener('click', function() {
     document.getElementById('criteriaId').value = 0;
     document.getElementById('criteriaRank').value = '';
     document.getElementById('criteriaSales').value = 0;

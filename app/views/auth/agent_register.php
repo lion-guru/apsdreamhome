@@ -478,14 +478,15 @@ $base = BASE_URL;
                     </select>
                 </div>
 
-                <div class="input-group-custom">
-                    <i class="fa-solid fa-ticket"></i>
-                    <label class="form-label-custom"><?php echo __('auth_referral_code', 'Referral Code'); ?> <span class="required-badge">*</span></label>
-                    <input type="text" class="form-control" name="referral_code" placeholder="<?php echo __('auth_enter_referral', 'Enter referral code'); ?>" required value="<?php echo htmlspecialchars($old['referral_code'] ?? ''); ?>">
-                </div>
+<div class="input-group-custom">
+                     <i class="fa-solid fa-ticket"></i>
+                     <label class="form-label-custom"><?php echo __('auth_referral_code', 'Referral Code'); ?> <span class="required-badge">*</span></label>
+                     <input type="text" class="form-control" name="referral_code" placeholder="<?php echo __('auth_enter_referral', 'Enter referral code'); ?>" required value="<?php echo htmlspecialchars($old['referral_code'] ?? ''); ?>">
+                 </div>
+                 <div id="sponsor_name_display" class="mt-2"></div>
 
                 <div class="terms-text text-center mb-3">
-                    <?php echo __('auth_terms_prefix', 'By registering, you agree to our'); ?> <a href="#"><?php echo __('auth_terms', 'Terms of Service'); ?></a> and <a href="#"><?php echo __('auth_privacy_policy', 'Privacy Policy'); ?></a>.
+                    <?php echo __('auth_terms_prefix', 'By registering, you agree to our'); ?> <a href="<?php echo e($base); ?>/terms" target="_blank" rel="noopener"><?php echo __('auth_terms', 'Terms of Service'); ?></a> and <a href="<?php echo e($base); ?>/privacy" target="_blank" rel="noopener"><?php echo __('auth_privacy_policy', 'Privacy Policy'); ?></a>.
                 </div>
 
                 
@@ -528,13 +529,46 @@ $base = BASE_URL;
                 });
             }
 
-            // Phone validation — strip non-digits
-            const phoneInput = form.querySelector('input[name="phone"]');
-            if (phoneInput) {
-                phoneInput.addEventListener('input', function() {
-                    this.value = this.value.replace(/[^0-9]/g, '').substring(0, 10);
-                });
-            }
+// Phone validation — strip non-digits
+             const phoneInput = form.querySelector('input[name="phone"]');
+             if (phoneInput) {
+                 phoneInput.addEventListener('input', function() {
+                     this.value = this.value.replace(/[^0-9]/g, '').substring(0, 10);
+                 });
+             }
+
+             // Sponsor name resolution
+             function resolveSponsorName() {
+                 const sponsorCode = document.getElementsByName('referral_code')[0].value.trim();
+                 const display = document.getElementById('sponsor_name_display');
+                 if (!sponsorCode) {
+                     display.innerHTML = '';
+                     return;
+                 }
+                 display.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resolving...';
+fetch(`/api/user/resolve-sponsor?code=${encodeURIComponent(sponsorCode)}`)
+                      .then(response => response.json())
+                      .then(data => {
+                          if (data.success) {
+                              const name = data.name || 'Unknown';
+                              const role = data.role || '';
+                              const displayText = `<strong>${name}</strong> (${role})`;
+                              display.innerHTML = displayText;
+                          } else {
+                              display.innerHTML = '<span class="text-danger">Invalid sponsor code</span>';
+                          }
+                      })
+                      .catch(() => {
+                          display.innerHTML = '<span class="text-danger">Error validating sponsor</span>';
+                      });
+             }
+
+             // Attach listener to referral_code input
+             const sponsorInput = form.querySelector('input[name="referral_code"]');
+             if (sponsorInput) {
+                 sponsorInput.addEventListener('input', resolveSponsorName);
+                 sponsorInput.addEventListener('blur', resolveSponsorName);
+             }
 
             // Form submission with loading state
             form.addEventListener('submit', function(e) {

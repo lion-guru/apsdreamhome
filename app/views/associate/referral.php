@@ -209,9 +209,9 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
     </div>
     <div class="card-body p-0">
         <?php if (empty($referred_users)): ?>
-        <div class="text-center py-5">
-            <i class="fas fa-user-plus fa-3x text-muted mb-3"></i>
-            <p class="text-muted"><?= __('assoc_ref_no_referrals_yet', [], 'No referrals yet. Share your code to get started!') ?></p>
+        <div class="aps-cp-empty py-5">
+            <div class="aps-cp-empty-icon"><i class="fas fa-user-plus"></i></div>
+            <p><?= __('assoc_ref_no_referrals_yet', [], 'No referrals yet. Share your code to get started!') ?></p>
         </div>
         <?php else: ?>
         <div class="table-responsive">

@@ -27,8 +27,7 @@
                             </div>
                             <p class="mb-1 text-muted small"><?php echo h($template['content']); ?></p>
                             <div class="mt-2">
-                                <button class="btn btn-sm btn-outline-primary me-2">Use Template</button>
-                                <button class="btn btn-sm btn-link text-decoration-none">Edit</button>
+                                <button class="btn btn-sm btn-outline-primary me-2 use-template-btn" data-template="<?= htmlspecialchars($template['content'], ENT_QUOTES) ?>">Use Template</button>
                             </div>
                         </div>
                         <?php endforeach; ?>
@@ -87,7 +86,11 @@
                         <input type="text" class="form-control form-control-sm" value="PH_192837465" readonly>
                     </div>
                     <div class="d-grid">
-                        <button class="btn btn-sm btn-outline-secondary">Manage API Keys</button>
+                        <?php if (($user['role'] ?? '') === 'admin' || isset($_SESSION['admin_id'])): ?>
+                            <a class="btn btn-sm btn-outline-secondary" href="<?= BASE_URL ?>/admin/whatsapp-broadcast"><i class="fas fa-paper-plane me-1"></i>Open Broadcast Center</a>
+                        <?php else: ?>
+                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#newBroadcastModal"><i class="fas fa-paper-plane me-1"></i>Compose Broadcast</button>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -101,3 +104,56 @@
         </div>
     </div>
 </div>
+
+<!-- New Broadcast Modal (compose + send via WhatsApp) -->
+<div class="modal fade" id="newBroadcastModal" tabindex="-1" aria-labelledby="newBroadcastModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newBroadcastModalLabel"><i class="fab fa-whatsapp text-success me-2"></i>New Broadcast</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label" for="broadcastMessage">Message</label>
+                    <textarea class="form-control" id="broadcastMessage" rows="5" maxlength="2000" placeholder="Type your broadcast message..."></textarea>
+                    <div class="form-text">Opens WhatsApp with this text pre-filled — pick recipients there to send.</div>
+                </div>
+                <div id="broadcastStatus" class="small"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-outline-success" id="copyBroadcastBtn"><i class="fas fa-copy me-1"></i>Copy Text</button>
+                <button type="button" class="btn btn-success" id="sendBroadcastBtn"><i class="fab fa-whatsapp me-1"></i>Open in WhatsApp</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+(function() {
+    var msgEl = document.getElementById('broadcastMessage');
+    var statusEl = document.getElementById('broadcastStatus');
+    if (!msgEl) return;
+    document.querySelectorAll('.use-template-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            msgEl.value = btn.getAttribute('data-template') || '';
+            statusEl.innerHTML = '';
+            new bootstrap.Modal(document.getElementById('newBroadcastModal')).show();
+        });
+    });
+    document.getElementById('sendBroadcastBtn').addEventListener('click', function() {
+        var text = msgEl.value.trim();
+        if (!text) { statusEl.innerHTML = '<span class="text-danger">Please type a message first.</span>'; return; }
+        window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank', 'noopener');
+        statusEl.innerHTML = '<span class="text-success">WhatsApp opened — choose recipients to send.</span>';
+    });
+    document.getElementById('copyBroadcastBtn').addEventListener('click', function() {
+        var text = msgEl.value.trim();
+        if (!text) { statusEl.innerHTML = '<span class="text-danger">Nothing to copy.</span>'; return; }
+        navigator.clipboard.writeText(text).then(function() {
+            statusEl.innerHTML = '<span class="text-success">Copied to clipboard.</span>';
+        });
+    });
+})();
+</script>

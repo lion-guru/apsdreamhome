@@ -4073,6 +4073,7 @@ return array(
   'oldest_first' => 'सबसे पुराना पहले',
   'sq_ft' => 'वर्ग फ़ुट',
   'bhk' => 'BHK',
+  'facing' => 'मुख',
   'per_month' => '/महीना',
   'added' => 'जोड़ा गया',
   'failed_to_add' => 'जोड़ने में विफल',

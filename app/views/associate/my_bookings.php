@@ -51,10 +51,10 @@ $stats = $stats ?? ['total' => 0, 'confirmed' => 0, 'pending' => 0, 'total_value
     </div>
     <div class="card-body p-0">
         <?php if (empty($bookings)): ?>
-            <div class="text-center py-5">
-                <i class="fas fa-file-contract fa-3x text-muted mb-3 opacity-50"></i>
-                <h5 class="text-muted"><?= __('assoc_book_empty', [], 'No bookings yet') ?></h5>
-                <p class="text-muted"><?= __('assoc_book_empty_desc', [], 'Your bookings will appear here once you make a sale.') ?></p>
+            <div class="aps-cp-empty py-5">
+                <div class="aps-cp-empty-icon"><i class="fas fa-file-contract"></i></div>
+                <h5><?= __('assoc_book_empty', [], 'No bookings yet') ?></h5>
+                <p><?= __('assoc_book_empty_desc', [], 'Your bookings will appear here once you make a sale.') ?></p>
             </div>
         <?php else: ?>
             <div class="table-responsive">

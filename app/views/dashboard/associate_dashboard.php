@@ -365,7 +365,7 @@ $formatRank = function (?string $rank): string {
                                         </span>
                                     </td>
                                     <td><?php echo date('M d', strtotime($lead['date'])); ?></td>
-                                    <td><a href="#" class="btn btn-sm btn-outline-primary" aria-label="View lead details"><i class="fas fa-eye" aria-hidden="true"></i></a></td>
+                                    <td><?php if (!empty($lead['id'])): ?><a href="<?= BASE_URL ?>/associate/leads/<?= (int)$lead['id'] ?>" class="btn btn-sm btn-outline-primary" aria-label="View lead details"><i class="fas fa-eye" aria-hidden="true"></i></a><?php else: ?><span class="text-muted">-</span><?php endif; ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>

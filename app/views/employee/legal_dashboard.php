@@ -1,4 +1,8 @@
-<?php $pageTitle = 'Legal Advisor Dashboard'; ?>
+<?php
+$pageTitle = 'Legal Advisor Dashboard';
+// Controller passes `pending_documents`; fall back so the review queue renders.
+$documents = $documents ?? $pending_documents ?? [];
+?>
 <div class="container-fluid py-4">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -63,7 +67,7 @@
                                     <td class="small"><?= htmlspecialchars($doc['submitted_by'] ?? '') ?></td>
                                     <td class="small"><?= htmlspecialchars($doc['created_at'] ?? '') ?></td>
                                     <td><span class="badge bg-<?= ($doc['priority'] ?? '') === 'high' ? 'danger' : (($doc['priority'] ?? '') === 'medium' ? 'warning' : 'info') ?>"><?= ucfirst($doc['priority'] ?? '') ?></span></td>
-                                    <td><a href="#" class="btn btn-sm btn-outline-primary">Review</a></td>
+                                    <td><button type="button" class="btn btn-sm btn-outline-primary review-doc-btn" data-doc-id="<?= (int)($doc['id'] ?? 0) ?>" data-doc-title="<?= htmlspecialchars($doc['title'] ?? '', ENT_QUOTES) ?>">Review</button></td>
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -93,3 +97,74 @@
         </div>
     </div>
 </div>
+
+<!-- Review Document Modal -->
+<div class="modal fade" id="reviewDocModal" tabindex="-1" aria-labelledby="reviewDocModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reviewDocModalLabel"><i class="fas fa-file-signature me-2"></i>Review Document</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="reviewDocForm">
+                <div class="modal-body">
+                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+                    <input type="hidden" name="document_id" id="reviewDocId" value="0">
+                    <p class="text-muted small mb-3">Reviewing: <strong id="reviewDocTitle"></strong></p>
+                    <div class="mb-3">
+                        <label class="form-label" for="reviewDocDecision">Decision *</label>
+                        <select class="form-select" id="reviewDocDecision" name="status" required>
+                            <option value="active">Approve</option>
+                            <option value="draft">Request Changes</option>
+                            <option value="rejected">Reject</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="reviewDocNotes">Review Notes</label>
+                        <textarea class="form-control" id="reviewDocNotes" name="review_notes" rows="3" maxlength="2000" placeholder="Notes for the submitter..."></textarea>
+                    </div>
+                    <div id="reviewDocMsg" class="small"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="reviewDocSubmitBtn"><i class="fas fa-check me-1"></i>Submit Review</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+(function() {
+    var modalEl = document.getElementById('reviewDocModal');
+    if (!modalEl) return;
+    document.querySelectorAll('.review-doc-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            document.getElementById('reviewDocId').value = btn.getAttribute('data-doc-id') || 0;
+            document.getElementById('reviewDocTitle').textContent = btn.getAttribute('data-doc-title') || '';
+            document.getElementById('reviewDocMsg').innerHTML = '';
+            new bootstrap.Modal(modalEl).show();
+        });
+    });
+    document.getElementById('reviewDocForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var btn = document.getElementById('reviewDocSubmitBtn');
+        var statusEl = document.getElementById('reviewDocMsg');
+        btn.disabled = true;
+        statusEl.innerHTML = '<span class="text-muted">Submitting...</span>';
+        fetch('<?= BASE_URL ?>/employee/legal/review-document', {
+            method: 'POST',
+            body: new FormData(e.target),
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(function() {
+            statusEl.innerHTML = '<span class="text-success">Review submitted. Reloading...</span>';
+            setTimeout(function() { window.location.reload(); }, 900);
+        })
+        .catch(function() {
+            statusEl.innerHTML = '<span class="text-danger">Network error. Please try again.</span>';
+            btn.disabled = false;
+        });
+    });
+})();
+</script>

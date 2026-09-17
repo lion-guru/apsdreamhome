@@ -46,10 +46,10 @@ $stats = $stats ?? ['total_pending' => 0, 'overdue' => 0, 'collected' => 0, 'tot
     </div>
     <div class="card-body p-0">
         <?php if (empty($emiData)): ?>
-            <div class="text-center py-5">
-                <i class="fas fa-check-circle fa-3x text-success mb-3 opacity-50"></i>
-                <h5 class="text-muted"><?= __('assoc_emi_empty', [], 'No pending EMIs!') ?></h5>
-                <p class="text-muted"><?= __('assoc_emi_empty_desc', [], 'All your customers\' EMIs are up to date.') ?></p>
+            <div class="aps-cp-empty py-5">
+                <div class="aps-cp-empty-icon"><i class="fas fa-check-circle"></i></div>
+                <h5><?= __('assoc_emi_empty', [], 'No pending EMIs!') ?></h5>
+                <p><?= __('assoc_emi_empty_desc', [], 'All your customers\' EMIs are up to date.') ?></p>
             </div>
         <?php else: ?>
             <div class="table-responsive">
@@ -62,6 +62,7 @@ $stats = $stats ?? ['total_pending' => 0, 'overdue' => 0, 'collected' => 0, 'tot
                             <th><?= __('assoc_emi_th_amount', [], 'Amount') ?></th>
                             <th><?= __('assoc_emi_th_due', [], 'Due Date') ?></th>
                             <th><?= __('assoc_emi_th_status', [], 'Status') ?></th>
+                            <th><?= __('assoc_emi_th_paid_date', [], 'Paid Date') ?></th>
                             <th><?= __('assoc_emi_th_action', [], 'Action') ?></th>
                         </tr>
                     </thead>
@@ -100,6 +101,14 @@ $stats = $stats ?? ['total_pending' => 0, 'overdue' => 0, 'collected' => 0, 'tot
                                         <span class="badge bg-danger"><?= __('assoc_emi_overdue', [], 'Overdue') ?></span>
                                     <?php else: ?>
                                         <span class="badge bg-warning text-dark"><?= __('assoc_emi_pending_status', [], 'Pending') ?></span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <?php $paidDate = $emi['paid_date'] ?? $emi['paid_at'] ?? null; ?>
+                                    <?php if (!empty($paidDate) && $paidDate !== '0000-00-00' && $paidDate !== '0000-00-00 00:00:00'): ?>
+                                        <span class="text-success"><?= date('d M Y', strtotime($paidDate)) ?></span>
+                                    <?php else: ?>
+                                        <span class="text-muted">-</span>
                                     <?php endif; ?>
                                 </td>
                                 <td>

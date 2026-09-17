@@ -289,10 +289,75 @@ class PropertyPageController extends BaseController
 
     public function propertyInterest()
     {
-        $this->render('pages/property_interest', [
-            'page_title' => 'Property Interest - APS Dream Home',
-            'page_description' => 'Express interest in a property.',
-        ]);
+        // POST /property/interest — save a property inquiry (listing modal + detail modal).
+        // Accepts form-encoded (name, phone, property_id, message/budget/source) or JSON bodies.
+        // Returns JSON for XHR/fetch callers, flash + redirect-back for normal form posts.
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->redirect('/properties');
+        }
+
+        $input = $_POST;
+        $rawJson = file_get_contents('php://input');
+        if (empty($input) && !empty($rawJson)) {
+            $decoded = json_decode($rawJson, true);
+            if (is_array($decoded)) {
+                $input = $decoded;
+            }
+        }
+
+        $propertyId = (int)($input['property_id'] ?? 0);
+        $name = trim((string)($input['name'] ?? ''));
+        $phone = trim((string)($input['phone'] ?? ''));
+        $message = trim((string)($input['message'] ?? ''));
+        if ($message === '' && !empty($input['budget'])) {
+            $message = 'Budget: ' . trim((string)$input['budget']);
+        }
+        if (!empty($input['source'])) {
+            $message = trim($message . ' [source: ' . trim((string)$input['source']) . ']');
+        }
+
+        $isXhr = !empty($_SERVER['HTTP_X_REQUESTED_WITH'])
+            || (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false);
+
+        if ($propertyId <= 0 || $name === '' || $phone === '') {
+            if ($isXhr) {
+                return $this->jsonResponse(['success' => false, 'message' => 'Please provide name, phone and a valid property.'], 400);
+            }
+            $_SESSION['flash_error'] = 'Please provide your name, phone number and a valid property.';
+            return $this->redirect($_SERVER['HTTP_REFERER'] ?? '/properties');
+        }
+
+        try {
+            $tid = (int)$this->tenantId();
+            $exists = $this->db->fetchOne(
+                "SELECT id FROM properties WHERE id = ? LIMIT 1",
+                [$propertyId]
+            );
+            if (!$exists) {
+                if ($isXhr) {
+                    return $this->jsonResponse(['success' => false, 'message' => 'Property not found.'], 404);
+                }
+                $_SESSION['flash_error'] = 'Property not found.';
+                return $this->redirect($_SERVER['HTTP_REFERER'] ?? '/properties');
+            }
+            $stmt = $this->db->prepare(
+                "INSERT INTO property_inquiries (property_id, name, phone, message, tenant_id) VALUES (?, ?, ?, ?, ?)"
+            );
+            $stmt->execute([$propertyId, $name, $phone, $message, $tid]);
+
+            if ($isXhr) {
+                return $this->jsonResponse(['success' => true, 'message' => 'Interest recorded! Our team will contact you shortly.']);
+            }
+            $_SESSION['flash_success'] = 'Thank you! Your interest has been recorded. Our team will contact you shortly.';
+            return $this->redirect($_SERVER['HTTP_REFERER'] ?? '/properties');
+        } catch (\Exception $e) {
+            error_log('PropertyPageController::propertyInterest error: ' . $e->getMessage());
+            if ($isXhr) {
+                return $this->jsonResponse(['success' => false, 'message' => 'Something went wrong. Please try again.'], 500);
+            }
+            $_SESSION['flash_error'] = 'Something went wrong. Please try again.';
+            return $this->redirect($_SERVER['HTTP_REFERER'] ?? '/properties');
+        }
     }
 
     public function propertyInquiry()

@@ -338,6 +338,84 @@ min-width: auto;
 })();
 </script>
 
+<!-- Inquiry Modal (wired to POST /property/interest) -->
+<div class="modal fade" id="inquiryModal" tabindex="-1" aria-labelledby="inquiryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="inquiryModalLabel"><i class="bi bi-chat-dots me-2"></i>Send Inquiry</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted small mb-3">Interested in <strong><?= htmlspecialchars($property['title'] ?? 'this property') ?></strong>? Share your details and our team will contact you.</p>
+                <form id="detailInquiryForm">
+                    <?php echo CSRFProtection::csrfField(); ?>
+                    <input type="hidden" name="property_id" value="<?= (int)($property['id'] ?? 0) ?>">
+                    <input type="hidden" name="source" value="property_detail">
+                    <div class="mb-3">
+                        <label class="form-label" for="inquiryName">Your Name *</label>
+                        <input type="text" class="form-control" id="inquiryName" name="name" required maxlength="255" value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="inquiryPhone">Phone Number *</label>
+                        <input type="tel" class="form-control" id="inquiryPhone" name="phone" required maxlength="20" pattern="[0-9+\-\s]{10,20}" value="<?= htmlspecialchars($_SESSION['user_phone'] ?? '') ?>">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="inquiryMessage">Message</label>
+                        <textarea class="form-control" id="inquiryMessage" name="message" rows="3" maxlength="2000" placeholder="I would like to know more about this property..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100" id="inquirySubmitBtn">
+                        <i class="bi bi-send me-1"></i>Submit Inquiry
+                    </button>
+                </form>
+                <div id="detailInquirySuccess" class="text-center py-3 d-none">
+                    <i class="bi bi-check-circle-fill text-success fs-1 mb-2"></i>
+                    <h6 class="fw-bold">Inquiry Sent!</h6>
+                    <p class="text-muted small mb-0">Our team will contact you shortly.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+(function() {
+    var form = document.getElementById('detailInquiryForm');
+    if (!form) return;
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var btn = document.getElementById('inquirySubmitBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Sending...';
+        fetch('<?= BASE_URL ?>/property/interest', {
+            method: 'POST',
+            body: new FormData(form),
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data && data.success) {
+                form.classList.add('d-none');
+                document.getElementById('detailInquirySuccess').classList.remove('d-none');
+                setTimeout(function() {
+                    var modal = bootstrap.Modal.getInstance(document.getElementById('inquiryModal'));
+                    if (modal) modal.hide();
+                }, 2500);
+            } else {
+                alert((data && data.message) || 'Something went wrong. Please try again.');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-send me-1"></i>Submit Inquiry';
+            }
+        })
+        .catch(function() {
+            alert('Network error. Please try again.');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-send me-1"></i>Submit Inquiry';
+        });
+    });
+})();
+</script>
+
 //
 // PERFORMANCE OPTIMIZATION GUIDELINES
 //

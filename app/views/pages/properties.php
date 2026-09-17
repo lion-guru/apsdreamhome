@@ -373,6 +373,20 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                                     <?= __('sq_ft') ?>
                                 </div>
                                 <?php endif; ?>
+                                <?php if (!empty($property['width_ft']) && !empty($property['length_ft'])): ?>
+                                <div class="feat">
+                                    <i class="fas fa-ruler-combined"></i>
+                                    <strong><?= htmlspecialchars($property['width_ft'] . 'x' . $property['length_ft']) ?></strong>
+                                    ft
+                                </div>
+                                <?php endif; ?>
+                                <?php if (!empty($property['facing'])): ?>
+                                <div class="feat">
+                                    <i class="fas fa-compass"></i>
+                                    <strong><?= htmlspecialchars(ucfirst($property['facing'])) ?></strong>
+                                    <?= __('facing') ?>
+                                </div>
+                                <?php endif; ?>
                                 <?php if (!empty($property['bedrooms'])): ?>
                                 <div class="feat">
                                     <i class="fas fa-bed"></i>
