@@ -1116,7 +1116,8 @@ class MobileUserApiController extends BaseController
 
     private function getNotificationsData($userId)
     {
-        $stmt = $this->db->prepare("SELECT id, title, message, type, data, action_url, is_read, created_at FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 50");
+        // NOTE: notifications has no `data` column; template_data (TEXT, JSON payload) is its equivalent.
+        $stmt = $this->db->prepare("SELECT id, title, message, type, template_data AS data, action_url, is_read, created_at FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 50");
         $stmt->execute([$userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

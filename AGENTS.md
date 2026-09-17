@@ -1,4 +1,63 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-16 — Session 107: All Remaining Features Complete + DB Recovery)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-17 — Session 108: View & UI Integrity Audit)
+
+## Session 108: Comprehensive View & UI Integrity Audit — Dead Clicks, Missing Modals, Inquiry Flow (2026-09-17)
+
+### Goal
+Deep UI/UX & data-completeness audit of all 1,773 views: broken assets, raw PHP, missing CSRF, dead buttons/links, role-view completeness, mobile responsiveness. Fix everything found. Final: E2E 374/374 + smoke 11/11.
+
+### P0 Fixes (8/8)
+| # | File | Fix |
+|---|------|-----|
+| 1 | `auth/associate_register.php:290` | Terms/Privacy `#` → live `/terms` + `/privacy` (new tab) |
+| 2 | `auth/agent_register.php:488` | Same Terms/Privacy fix |
+| 3 | `components/navigation/desktop_navbar.php:79,265,311` | 3 dropdown toggles `#` → `javascript:void(0)` (Bootstrap behavior unchanged) |
+| 4 | `pages/blog-category.php` | Read More + 3 category links → real `/blog` listing |
+| 5 | `pages/about.php:553` | Service modal link `#` → `javascript:void(0)` (JS overwrites href on open) |
+| 6 | `admin/dashboard/widgets/pending-approvals.php:31` | Reject `#` → `reject_url` w/ fallback to approval URL |
+| 7 | `admin/mlm/commissions.php` | **Bulk actions added**: select-all + per-row checkboxes (pending only), Approve/Reject Selected bar → `POST /admin/commission/action` w/ CSRF + auto-reload |
+| 8 | `admin/plots/index.php` | **Filters functional**: All/Available/Booked/Sold w/ active styling, per-row `data-plot-status`, empty-filter message |
+
+### P1 Fixes (4/4)
+| # | File | Fix |
+|---|------|-----|
+| 1 | `admin/dashboard/widgets/quick-actions.php` | Duplicate "New Lead" (wrong `/associate/*` URL) → **Add Colony** → `/admin/colonies/create` |
+| 2 | `pages/properties.php` | Cards show **dimensions** (WxL ft) + **facing** when available; `facing` key added to `en.php`/`hi.php` |
+| 3 | `associate/emi_tracker.php` | New **Paid Date** column (`paid_date`/`paid_at`, zero-date guarded) |
+| 4 | CSRF audit | `farmer/profile.php` + `auto-reply.php` already had CSRF (false positives); `media/index.php` dead pagination → disabled `<span>` w/ `aria-disabled` |
+
+### P2 Polish (3/3)
+- **Empty states**: 5 views → canonical `aps-cp-empty` (`associate/my_bookings`, `pages/user_bookings`, `associate/emi_tracker`, `associate/network_tree` incl. missing-`</div>` fix, `associate/referral`)
+- **Tree mobile scroll**: `overscroll-behavior-x`, `touch-action`, thin scrollbars, swipe hint ≤768px
+- **Modal audit**: scripted same-file cross-check 17 → **0 missing**. Fixes: new `#inquiryModal` + `#addShiftTypeModal` + `#addWorkScheduleModal` + `#assignShiftModal` + `#publishEventModal` + `#langModal` + `#reviewDocModal` + broadcast compose; 3 delete-URL mismatches corrected to match routes; rank-criteria Add retargeted; role-aware SaaS/IoT/media links
+
+### Root-Cause Backend Fix (inquiry flow was dead end-to-end)
+- `PropertyPageController::propertyInterest` rendered non-existent `pages/property_interest` view → **every** listing inquiry POST failed. Rewrote: validates → FK-checks `properties` → inserts `property_inquiries` → JSON (XHR) / flash+redirect (forms). Verified schema live. Also fixes listing modal (already sent CSRF via `csrfField()`).
+- Bonus bug found via wiring: `employee/legal_dashboard.php` read `$documents` but controller passes `$pending_documents` (queue never rendered) — view-level fallback added + working Review modal → `POST /employee/legal/review-document`.
+
+### Pre-existing Probe Failure Fixed (bonus)
+- `GET /api/v2/mobile/user/notifications` **500** → `Unknown column 'data'` — query selected phantom `data` col. Fixed to `template_data AS data` (only instance; all other reads use `SELECT *`). Probe 11/15 → **12/15**.
+
+### Verification Results
+| Gate | Result |
+|------|--------|
+| **E2E Master** | **374/374 PASS** |
+| **Targeted smoke** | **11/11 PASS** (400/404/200 inquiry paths, bulk UI + filters render, 0 scratch rows) |
+| **Health** | **ok:true** (795 tables) |
+| **php -l** | All 38 touched files clean |
+| **Workflow probe** | 12/15 — 2 remaining fails are **data-state, not code**: `properties` + `user_properties` tables are 100% empty (0 rows) vs 743 plots; favorites/inquiry need marketplace rows. Insert path proven working w/ scratch property + full cleanup. Do NOT seed fake listings. |
+
+### Commit
+- `3f708a944` — 37 files, +921/−104, pushed. Second actor's changes (auth views, Flutter, scratch `check_*.php`) deliberately left unstaged/uncommitted.
+
+### Key Lessons (carried)
+_251. **Router CSRF runs before controller `skipCsrfProtection()`** — `routes/router.php:105-164` rejects POSTs missing `csrf_token`/`X-CSRF-Token` unless path-excluded. Listing modal worked only because its form embeds `csrfField()`; any new fetch-POST must send the token (meta tag or field).
+_252. **Controller `catch (\Exception)` misses `\Error`** — null-DB-handle fatals bypass it silently (no log). Prefer `catch (\Throwable)` on new handlers; check Apache log when app log is silent.
+_253. **DESCRIBE before INSERT, even for "known" tables** — `property_inquiries.property_id` has a real FK (`fk_property_inquiries_property_id → properties.id`); test inserts with fake IDs 500. Existence-check first, return 404.
+_254. **Modal scan must resolve dynamic IDs** — regex flags `#approveModal<?=...?>` as missing; verify `id="approveModal<?=` definitions before "fixing". Same-file script + manual review caught 5 false positives out of 17.
+_255. **Orphaned views still deserve working links** — `iot/*`, `pages/blog-post.php`, `dashboard/associate_dashboard.php` have no routes, but their `#` links become real the moment anything includes them. Point at real targets; never delete per checklist rules.
+_256. **Empty marketplace tables ≠ bug** — `properties`/`user_properties` at 0 rows with 743 plots is plausible dev-state (plots = inventory, properties = user listings). Prove code paths with scratch rows + cleanup instead of seeding.
+
+---
 
 ## Session 107: Full Remaining Features Completion + DB Recovery (2026-09-16)
 
