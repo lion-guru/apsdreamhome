@@ -5,7 +5,7 @@
 ### Ground-Truth Audit (prompt claims vs code — several already existed)
 | Claim | Verdict |
 |---|---|
-| Omni-search missing | ❌ FALSE — `AdminController@omniSearch` API + full Ctrl+K modal UI already in `layouts/admin.php`; only verified live (+ nav shortcut added) |
+| Omni-search missing | ⚠️ HALF — API (`AdminController@omniSearch` + route) was committed; the Ctrl+K modal UI in `layouts/admin.php` was **uncommitted second-actor work** swept into `b27641040` (verified live 200, E2E green; attribution noted here) |
 | Workspace hubs missing | ❌ FALSE — `WorkspaceHubService` + controller + routes + views all exist; added top-nav entry point |
 | TDS missing on payouts | ❌ FALSE — `PayoutBatchService` deducts 194H via `TdsConfigService`; **real gap: 5% admin fee + voucher** → built |
 | Cheque bounce handling | ✅ TRUE gap (zero matches) → built |
