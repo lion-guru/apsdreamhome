@@ -133,7 +133,7 @@ class AgreementPDFService extends ServiceTenantTrait
                 return ['success' => false, 'error' => 'Booking not found'];
             }
 
-            $customer = $this->fetchCustomer($booking['user_id']);
+            $customer = $this->fetchCustomer((int)($booking['user_id'] ?? $booking['customer_id'] ?? 0));
             $plot = $this->fetchPlot($booking['plot_id']);
             $colony = $this->fetchColony($plot['colony_id'] ?? 0);
             $schedule = $this->fetchSchedule($bookingId);
@@ -176,7 +176,7 @@ class AgreementPDFService extends ServiceTenantTrait
             }
 
             $booking = $this->fetchBooking($installment['booking_id']);
-            $customer = $this->fetchCustomer($booking['user_id']);
+            $customer = $this->fetchCustomer((int)($booking['user_id'] ?? $booking['customer_id'] ?? 0));
             $plot = $this->fetchPlot($booking['plot_id']);
             $colony = $this->fetchColony($plot['colony_id'] ?? 0);
 
@@ -215,7 +215,7 @@ class AgreementPDFService extends ServiceTenantTrait
                 return ['success' => false, 'error' => 'Booking not found'];
             }
 
-            $customer = $this->fetchCustomer($booking['user_id']);
+            $customer = $this->fetchCustomer((int)($booking['user_id'] ?? $booking['customer_id'] ?? 0));
             $plot = $this->fetchPlot($booking['plot_id']);
             $colony = $this->fetchColony($plot['colony_id'] ?? 0);
 
@@ -255,7 +255,7 @@ class AgreementPDFService extends ServiceTenantTrait
             }
 
             $booking = $this->fetchBooking($refund['booking_id']);
-            $customer = $this->fetchCustomer($booking['user_id']);
+            $customer = $this->fetchCustomer((int)($booking['user_id'] ?? $booking['customer_id'] ?? 0));
 
             $pdf = $this->createPdfObject('Refund Voucher');
             $pdf->AddPage();
@@ -294,8 +294,8 @@ class AgreementPDFService extends ServiceTenantTrait
         $pdf->SetCreator(self::$companyName);
         $pdf->SetTitle($title);
         $pdf->SetHeaderData('', 0, self::$companyName, 'CIN: ' . self::$cin . ' | GSTIN: ' . self::$gstin);
-        $pdf->setHeaderFont(['helvetica' => '', 8]);
-        $pdf->setFooterFont(['helvetica' => '', 8]);
+        $pdf->setHeaderFont(['helvetica', '', 8]);
+        $pdf->setFooterFont(['helvetica', '', 8]);
         $pdf->SetMargins(20, 35, 20);
         $pdf->SetHeaderMargin(5);
         $pdf->SetFooterMargin(15);
@@ -975,11 +975,12 @@ class AgreementPDFService extends ServiceTenantTrait
         if (!$this->db) return;
         try {
             $stmt = $this->db->prepare(
-                "INSERT INTO gateway_logs (gateway, action, recipient, status, cost, error_message, request_payload, response_payload, duration_ms, created_at)
-                 VALUES ('pdf_generator', ?, ?, 'success', 0, NULL, ?, ?, 0, NOW())"
+                "INSERT INTO gateway_logs (gateway, action, method, endpoint, recipient, status, cost, error_message, request_payload, response_payload, duration_ms, created_at)
+                 VALUES ('pdf_generator', ?, 'LOCAL', ?, ?, 'success', 0, NULL, ?, ?, 0, NOW())"
             );
             $stmt->execute([
                 $type,
+                'pdf/' . $type,
                 'entity_' . $entityId,
                 json_encode(['entity_id' => $entityId, 'type' => $type]),
                 json_encode(['filename' => $filename, 'size' => $size]),

@@ -2391,6 +2391,7 @@ $router->post('/admin/sales/bookings/{id}/transfer',              'App\\Http\\Co
 $router->get('/admin/sales/bookings/{id}/transfer',               'App\\Http\\Controllers\\Admin\\BookingLifecycleController@transferBookingForm');
 $router->post('/admin/sales/bookings/{id}/swap',                  'App\\Http\\Controllers\\Admin\\BookingLifecycleController@swapBookingStore');
 $router->get('/admin/sales/bookings/{id}/swap',                   'App\\Http\\Controllers\\Admin\\BookingLifecycleController@swapBookingForm');
+$router->get('/admin/sales/bookings/{id}/legal-kit',              'App\\Http\\Controllers\\Admin\\BookingLifecycleController@legalKit');
 $router->post('/admin/sales/receipts/{receiptId}/bounce',         'App\\Http\\Controllers\\Admin\\BookingLifecycleController@markReceiptBounced');
 $router->get('/admin/sales/installments/{installmentId}/pay',      'App\\Http\\Controllers\\Admin\\BookingLifecycleController@recordPaymentForm');
 $router->post('/admin/sales/installments/{installmentId}/pay',     'App\\Http\\Controllers\\Admin\\BookingLifecycleController@recordPaymentStore');

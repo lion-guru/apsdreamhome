@@ -525,6 +525,69 @@ class BookingLifecycleController extends AdminController
     }
 
     /* =========================================================
+     *  Legal Kit — allotment + agreement PDFs bundled as ZIP
+     * ========================================================= */
+
+    public function legalKit($bookingId)
+    {
+        $this->requireAdmin();
+        $bookingId = (int)$bookingId;
+        $booking = $this->service->getBookingById($bookingId);
+        if (!$booking) {
+            $this->setFlash('error', 'Booking not found');
+            return $this->redirect('/admin/sales/bookings');
+        }
+        try {
+            $pdfService = new \App\Services\PDF\AgreementPDFService(
+                $this->db instanceof \PDO ? $this->db : null
+            );
+            $docs = [];
+            $allot = $pdfService->generateAllotmentLetter($bookingId);
+            if (!empty($allot['success']) && !empty($allot['pdf_path']) && is_file($allot['pdf_path'])) {
+                $docs['allotment-letter.pdf'] = $allot['pdf_path'];
+            }
+            $agree = $pdfService->generateBookingAgreement($bookingId);
+            if (!empty($agree['success']) && !empty($agree['pdf_path']) && is_file($agree['pdf_path'])) {
+                $docs['sale-agreement.pdf'] = $agree['pdf_path'];
+            }
+            if (empty($docs)) {
+                $this->setFlash('error', 'Could not generate legal documents for this booking.');
+                return $this->redirect('/admin/sales/bookings/' . $bookingId);
+            }
+            if (!class_exists('ZipArchive')) {
+                $this->setFlash('error', 'ZIP extension not available on server.');
+                return $this->redirect('/admin/sales/bookings/' . $bookingId);
+            }
+            $zipPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'legal-kit-' . $bookingId . '-' . time() . '.zip';
+            $zip = new \ZipArchive();
+            if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
+                $this->setFlash('error', 'Could not create legal kit archive.');
+                return $this->redirect('/admin/sales/bookings/' . $bookingId);
+            }
+            foreach ($docs as $name => $path) {
+                $zip->addFile($path, $name);
+            }
+            $zip->close();
+            if (isset($this->loggingService)) {
+                $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'legal_kit_download', [
+                    'booking_id' => $bookingId, 'docs' => array_keys($docs),
+                ]);
+            }
+            header('Content-Type: application/zip');
+            header('Content-Disposition: attachment; filename="legal-kit-booking-' . $bookingId . '.zip"');
+            header('Content-Length: ' . filesize($zipPath));
+            header('Cache-Control: no-cache, must-revalidate');
+            readfile($zipPath);
+            @unlink($zipPath);
+            exit;
+        } catch (\Throwable $e) {
+            error_log('[BookingLifecycleController::legalKit] ' . $e->getMessage());
+            $this->setFlash('error', 'Legal kit failed: ' . $e->getMessage());
+            return $this->redirect('/admin/sales/bookings/' . $bookingId);
+        }
+    }
+
+    /* =========================================================
      *  Booking Approval (associate-submitted bookings)
      * ========================================================= */
 

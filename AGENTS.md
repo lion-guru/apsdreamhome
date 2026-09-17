@@ -1,4 +1,28 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-17 — Session 114: Monthly Collection Sheet)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-09-17 — Session 115: Legal Kit Bundle + PDF Fatal Fix)
+
+## Session 115: 1-Click Legal Kit — Bundle Download + TCPDF Font Fatal (2026-09-17)
+
+### Built
+- `BookingLifecycleController::legalKit()` — Allotment + Agreement via `AgreementPDFService` → ZIP stream w/ temp cleanup; route `GET /admin/sales/bookings/{id}/legal-kit`; detail-page button
+
+### Root-Cause Fixes (kit probe exposed dead PDF pipeline)
+| # | Bug | Fix |
+|---|-----|-----|
+| 1 | `fetchCustomer($booking['user_id'])` — plot_bookings has `customer_id`, so `null` hit `int` type-hint → **uncaught `\Error` (255, silent)** in all 4 generators | `(int)($booking['user_id'] ?? $booking['customer_id'] ?? 0)` ×4 |
+| 2 | `setHeaderFont(['helvetica' => '', 8])` passed **empty font name** → `TCPDF ERROR: Could not include font definition file` | `['helvetica', '', 8]` |
+
+### Verification
+- Live kit probe **3/3**: ZIP download (PK magic, 12KB, both PDFs inside), unknown-booking 302, 0 scratch rows
+- E2E **374/374**, health **ok:true**, `php -l` clean
+
+### Key Lessons (carried)
+_279. **`catch (Exception)` misses `\Error`** — the PDF fatal was a TypeError, invisible to every catch block in the chain (lesson 252 again, this time fatal not silent). Widen to `\Throwable` on generation boundaries.
+_280. **TCPDF font arrays are positional** — `['helvetica' => '', 8]` yields font name `''`. Always `['name', 'style', size]`.
+_281. **Probe the artifact, not just the status** — kit returned 302-with-flash (looked "handled"); only ZIP-magic assertion exposed the dead pipeline.
+
+---
+
+## Session 114: Monthly Collection Sheet — Due vs Collected vs Market (2026-09-17)
 
 ## Session 114: Monthly Collection Sheet — Due vs Collected vs Market (2026-09-17)
 
