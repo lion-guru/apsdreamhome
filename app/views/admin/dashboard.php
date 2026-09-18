@@ -180,6 +180,76 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
         </div>
     </div>
 
+    <!-- 360° Interlinking Summary Widget -->
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header bg-primary text-white">
+                    <h5 class="card-title"><i class="fas fa-link me-2"></i><?= __('admin_360_interlinking', null, '360° Interlinking Summary') ?></h5>
+                </div>
+                <div class="card-body aps-cp-card-body">
+                    <div class="row g-3">
+                        <!-- Customer 360° Card -->
+                        <div class="col-md-3">
+                            <div class="aps-cp-stat aps-cp-stat--lime">
+                                <div class="aps-cp-stat-icon"><i class="fas fa-user-friends"></i></div>
+                                <div class="aps-cp-stat-body">
+                                    <div class="aps-cp-stat-label"><?= __('admin_customer_360', null, 'Customer 360°') ?></div>
+                                    <div class="aps-cp-stat-value" id="customer360-stat">0</div>
+                                    <div class="aps-cp-stat-trend up" id="customer360-trend">0/5</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Associate 360° Card -->
+                        <div class="col-md-3">
+                            <div class="aps-cp-stat aps-cp-stat--cyan">
+                                <div class="aps-cp-stat-icon"><i class="fas fa-user-tie"></i></div>
+                                <div class="aps-cp-stat-body">
+                                    <div class="aps-cp-stat-label"><?= __('admin_associate_360', null, 'Associate 360°') ?></div>
+                                    <div class="aps-cp-stat-value" id="associate360-stat">0</div>
+                                    <div class="aps-cp-stat-trend up" id="associate360-trend">0/5</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Plot 360° Card -->
+                        <div class="col-md-3">
+                            <div class="aps-cp-stat aps-cp-stat--teal">
+                                <div class="aps-cp-stat-icon"><i class="fas fa-map-marker-alt"></i></div>
+                                <div class="aps-cp-stat-body">
+                                    <div class="aps-cp-stat-label"><?= __('admin_plot_360', null, 'Plot 360°') ?></div>
+                                    <div class="aps-cp-stat-value" id="plot360-stat">0</div>
+                                    <div class="aps-cp-stat-trend up" id="plot360-trend">0/5</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Booking 360° Card -->
+                        <div class="col-md-3">
+                            <div class="aps-cp-stat aps-cp-stat--purple">
+                                <div class="aps-cp-stat-icon"><i class="fas fa-exchange-alt"></i></div>
+                                <div class="aps-cp-stat-body">
+                                    <div class="aps-cp-stat-label"><?= __('admin_booking_360', null, 'Booking 360°') ?></div>
+                                    <div class="aps-cp-stat-value" id="booking360-stat">0</div>
+                                    <div class="aps-cp-stat-trend up" id="booking360-trend">0/5</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Colony 360° (full width) -->
+                    <div class="col-12 mt-3">
+                        <div class="aps-cp-stat aps-cp-stat--gold">
+                            <div class="aps-cp-stat-icon"><i class="fas fa-building"></i></div>
+                            <div class="aps-cp-stat-body">
+                                <div class="aps-cp-stat-label"><?= __('admin_colony_360', null, 'Colony 360°') ?></div>
+                                <div class="aps-cp-stat-value" id="colony360-stat">0</div>
+                                <small class="text-muted d-block"><?= __('admin_colony_360_desc', null, '5 colonies with full interlinking') ?></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Quick Actions -->
     <div class="row mb-4">
         <div class="col-12">

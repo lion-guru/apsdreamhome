@@ -51,6 +51,7 @@ $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0
             <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#transferModal"><i class="fas fa-exchange-alt me-1"></i><?= __('sale_transfer') ?></button>
             <a href="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/swap" class="btn btn-sm btn-outline-primary"><i class="fas fa-right-left me-1"></i>Swap Plot</a>
             <a href="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/legal-kit" class="btn btn-sm btn-outline-success"><i class="fas fa-file-archive me-1"></i>Legal Kit</a>
+            <a href="<?= htmlspecialchars($base ?? '') ?>/admin/bookings/<?= (int)($booking['id'] ?? 0) ?>/legal-kit" class="btn btn-sm btn-outline-success" title="Legal Kit (Admin Booking Lifecycle)"><i class="fas fa-file-archive me-1"></i>Admin Legal Kit</a>
         </div>
     </div>
     <div class="aps-cp-card-body">

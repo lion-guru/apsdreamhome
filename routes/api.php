@@ -950,6 +950,16 @@ $router->get('/api/v2/mobile/construction/materials', 'Api\ConstructionApiContro
 $router->post('/api/v2/mobile/construction/materials/usage', 'Api\ConstructionApiController@logUsage')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // ============================================================
+// 360° INTERLINKING API
+// ============================================================
+$router->get('/api/v2/admin/360-degree/dashboard', 'Api\ThreeSixtyDegreeApiController@dashboard')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/admin/360-degree/customer', 'Api\ThreeSixtyDegreeApiController@customer')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/admin/360-degree/associate', 'Api\ThreeSixtyDegreeApiController@associate')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/admin/360-degree/plot', 'Api\ThreeSixtyDegreeApiController@plot')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/admin/360-degree/booking', 'Api\ThreeSixtyDegreeApiController@booking')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/admin/360-degree/colony', 'Api\ThreeSixtyDegreeApiController@colony')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ============================================================
 // QUERY ANALYZER API
 // ============================================================
 $router->get('/api/v2/admin/query-analyzer/slow-queries', 'Api\QueryAnalyzerController@slowQueries')->middleware('App\Http\Middleware\ApiAuthMiddleware');

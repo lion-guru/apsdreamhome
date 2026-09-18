@@ -100,6 +100,45 @@ class DashboardController extends BaseController
             $stmt->execute($params);
             $recentLeads = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 
+            // Get associate_id for this user
+            $stmt = $db->prepare("SELECT id FROM associates WHERE user_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " LIMIT 1");
+            $params = [$userId];
+            if ($tid > 1) $params[] = $tid;
+            $stmt->execute($params);
+            $associateRow = $stmt->fetch(\PDO::FETCH_ASSOC);
+            $associateId = $associateRow ? (int)$associateRow['id'] : 0;
+
+            // My bookings count
+            $myBookings = 0;
+            $overdueEmis = 0;
+            $emiThisMonth = 0.0;
+            if ($associateId > 0) {
+                $stmt = $db->prepare("SELECT COUNT(*) FROM plot_bookings WHERE associate_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " AND status NOT IN ('cancelled')");
+                $params = [$associateId];
+                if ($tid > 1) $params[] = $tid;
+                $stmt->execute($params);
+                $myBookings = (int)$stmt->fetchColumn();
+
+                // Overdue EMIs
+                $stmt = $db->prepare("SELECT COUNT(*) FROM booking_payment_schedules bps
+                    JOIN plot_bookings pb ON pb.id = bps.booking_id
+                    WHERE pb.associate_id = ? AND bps.status = 'overdue'" . ($tid > 1 ? " AND bps.tenant_id = ?" : ""));
+                $params = [$associateId];
+                if ($tid > 1) $params[] = $tid;
+                $stmt->execute($params);
+                $overdueEmis = (int)$stmt->fetchColumn();
+
+                // EMI due this month (pending + overdue)
+                $stmt = $db->prepare("SELECT COALESCE(SUM(bps.amount), 0) FROM booking_payment_schedules bps
+                    JOIN plot_bookings pb ON pb.id = bps.booking_id
+                    WHERE pb.associate_id = ? AND bps.status IN ('pending','overdue')
+                    AND YEAR(bps.due_date) = YEAR(CURDATE()) AND MONTH(bps.due_date) = MONTH(CURDATE())" . ($tid > 1 ? " AND bps.tenant_id = ?" : ""));
+                $params = [$associateId];
+                if ($tid > 1) $params[] = $tid;
+                $stmt->execute($params);
+                $emiThisMonth = (float)$stmt->fetchColumn();
+            }
+
             // Team monthly sales volume per generation (L1/L2/L3): sqft + value + deals
             // closed this month by downline associates (plot_bookings via associates.user_id).
             $teamVolume = ['L1' => ['sqft' => 0, 'value' => 0, 'deals' => 0], 'L2' => ['sqft' => 0, 'value' => 0, 'deals' => 0], 'L3' => ['sqft' => 0, 'value' => 0, 'deals' => 0]];
@@ -147,6 +186,9 @@ class DashboardController extends BaseController
                 'my_properties' => $myProperties,
                 'recent_leads' => $recentLeads,
                 'team_volume' => $teamVolume ?? ['L1' => ['sqft' => 0, 'value' => 0, 'deals' => 0], 'L2' => ['sqft' => 0, 'value' => 0, 'deals' => 0], 'L3' => ['sqft' => 0, 'value' => 0, 'deals' => 0]],
+                'my_bookings' => $myBookings,
+                'overdue_emis' => $overdueEmis,
+                'emi_this_month' => $emiThisMonth,
             ], 'layouts/associate');
 
         } catch (\Throwable $e) {
@@ -163,6 +205,9 @@ class DashboardController extends BaseController
                 'my_properties' => [],
                 'recent_leads' => [],
                 'team_volume' => ['L1' => ['sqft' => 0, 'value' => 0, 'deals' => 0], 'L2' => ['sqft' => 0, 'value' => 0, 'deals' => 0], 'L3' => ['sqft' => 0, 'value' => 0, 'deals' => 0]],
+                'my_bookings' => 0,
+                'overdue_emis' => 0,
+                'emi_this_month' => 0.0,
             ], 'layouts/associate');
         }
     }

@@ -96,7 +96,14 @@ class AdminController extends BaseController
                 'active_properties' => $this->getActiveProperties(),
                 'new_users_today' => $this->getNewUsersToday(),
                 'pending_approvals' => $this->getPendingApprovals(),
-                'system_health' => $this->getSystemHealth()
+                'system_health' => $this->getSystemHealth(),
+
+                // 360° Interlinking Summary Stats
+                'customer_360_complete' => $this->getCustomer360Complete(),
+                'associate_360_complete' => $this->getAssociate360Complete(),
+                'plot_360_complete' => $this->getPlot360Complete(),
+                'booking_360_complete' => $this->getBooking360Complete(),
+                'colony_360_complete' => $this->getColony360Complete()
             ];
 
             // Get recent activities
@@ -247,7 +254,7 @@ class AdminController extends BaseController
 
         // Module 5: Backoffice + Daily Operations
         try {
-            $stats['backoffice_active_leads'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM lead_pipeline WHERE status NOT IN ('closed_won','closed_lost')")['cnt'] ?? 0);
+            $stats['backoffice_active_leads'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM lead_pipeline WHERE stage NOT IN ('closed_won','closed_lost')")['cnt'] ?? 0);
         } catch (\Exception $e) { $stats['backoffice_active_leads'] = 0; }
 
         try {
@@ -1039,5 +1046,80 @@ class AdminController extends BaseController
 
         echo json_encode(['success' => true, 'results' => $results]);
         exit;
+    }
+
+    /**
+     * Get Customer 360° Complete percentage
+     */
+    private function getCustomer360Complete()
+    {
+        try {
+            $totalCustomers = (int)($this->db->fetch("SELECT COUNT(*) AS cnt FROM users WHERE role = 'customer'")['cnt'] ?? 0);
+            $completeCustomers = (int)($this->db->fetch("SELECT COUNT(*) AS cnt FROM users WHERE role = 'customer' AND is_active = 1")['cnt'] ?? 0);
+            if ($totalCustomers > 0) {
+                return round(($completeCustomers / $totalCustomers) * 100, 1);
+            }
+            return 0;
+        } catch (\Exception $e) { error_log("Customer360 Error: " . $e->getMessage()); return 0; }
+    }
+
+    /**
+     * Get Associate 360° Complete percentage
+     */
+    private function getAssociate360Complete()
+    {
+        try {
+            $totalAssociates = (int)($this->db->fetch("SELECT COUNT(*) AS cnt FROM users WHERE role = 'associate'")['cnt'] ?? 0);
+            $completeAssociates = (int)($this->db->fetch("SELECT COUNT(*) AS cnt FROM users WHERE role = 'associate' AND is_active = 1")['cnt'] ?? 0);
+            if ($totalAssociates > 0) {
+                return round(($completeAssociates / $totalAssociates) * 100, 1);
+            }
+            return 0;
+        } catch (\Exception $e) { error_log("Associate360 Error: " . $e->getMessage()); return 0; }
+    }
+
+    /**
+     * Get Plot 360° Complete percentage
+     */
+    private function getPlot360Complete()
+    {
+        try {
+            $totalPlots = (int)($this->db->fetch("SELECT COUNT(*) AS cnt FROM plots")['cnt'] ?? 0);
+            $activePlots = (int)($this->db->fetch("SELECT COUNT(*) AS cnt FROM plots WHERE status = 'active'")['cnt'] ?? 0);
+            if ($totalPlots > 0) {
+                return round(($activePlots / $totalPlots) * 100, 1);
+            }
+            return 0;
+        } catch (\Exception $e) { error_log("Plot360 Error: " . $e->getMessage()); return 0; }
+    }
+
+    /**
+     * Get Booking 360° Complete percentage
+     */
+    private function getBooking360Complete()
+    {
+        try {
+            $totalBookings = (int)($this->db->fetch("SELECT COUNT(*) AS cnt FROM plot_bookings")['cnt'] ?? 0);
+            $activeBookings = (int)($this->db->fetch("SELECT COUNT(*) AS cnt FROM plot_bookings WHERE status NOT IN ('cancelled','transferred')")['cnt'] ?? 0);
+            if ($totalBookings > 0) {
+                return round(($activeBookings / $totalBookings) * 100, 1);
+            }
+            return 0;
+        } catch (\Exception $e) { error_log("Booking360 Error: " . $e->getMessage()); return 0; }
+    }
+
+    /**
+     * Get Colony 360° Complete percentage
+     */
+    private function getColony360Complete()
+    {
+        try {
+            $totalColonies = (int)($this->db->fetch("SELECT COUNT(*) AS cnt FROM colonies")['cnt'] ?? 0);
+            $activeColonies = (int)($this->db->fetch("SELECT COUNT(*) AS cnt FROM colonies WHERE status = 'active'")['cnt'] ?? 0);
+            if ($totalColonies > 0) {
+                return round(($activeColonies / $totalColonies) * 100, 1);
+            }
+            return 0;
+        } catch (\Exception $e) { error_log("Colony360 Error: " . $e->getMessage()); return 0; }
     }
 }

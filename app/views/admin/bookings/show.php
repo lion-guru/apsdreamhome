@@ -47,6 +47,12 @@ $extraHead = '<style>
         <a href="<?= BASE_URL ?>admin/bookings/<?= $booking['id'] ?>/edit" class="btn btn-primary ms-2">
             <i class="fas fa-edit"></i> <?= __('admin_edit_booking') ?>
         </a>
+        <a href="<?= BASE_URL ?>admin/bookings/<?= $booking['id'] ?>/legal-kit" class="btn btn-success ms-2">
+            <i class="fas fa-file-archive me-1"></i> Legal Kit
+        </a>
+        <a href="<?= BASE_URL ?>admin/sales/bookings/<?= $booking['id'] ?>/legal-kit" class="btn btn-outline-success ms-2" title="Legal Kit (Sales Lifecycle)">
+            <i class="fas fa-file-archive me-1"></i> Sales Legal Kit
+        </a>
         <button type="button" class="btn btn-danger ms-2" onclick="confirmDelete()">
             <i class="fas fa-trash"></i> <?= __('admin_delete') ?>
         </button>

@@ -13,7 +13,7 @@ class ServiceTenantTrait
         try {
             $tid = TenantContext::getId();
             return $tid > 0 ? $tid : 1;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 1;
         }
     }
@@ -47,7 +47,7 @@ class AgreementPDFService extends ServiceTenantTrait
         try {
             $tid = TenantContext::getId();
             return $tid > 0 ? $tid : 1;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 1;
         }
     }
@@ -98,7 +98,7 @@ class AgreementPDFService extends ServiceTenantTrait
                 $stmt->execute([$tid]);
                 $cRow = $stmt->fetch(\PDO::FETCH_ASSOC);
                 if ($cRow && !empty($cRow['company_name'])) $companyName = $cRow['company_name'];
-            } catch (\Exception $e) { error_log('AgreementPDFService::getBankDetails DB fallback: ' . $e->getMessage()); }
+            } catch (\Throwable $e) { error_log('AgreementPDFService::getBankDetails DB fallback: ' . $e->getMessage()); }
         }
         return ['bankName' => $bankName, 'bankAccount' => $bankAccount, 'bankIfsc' => $bankIfsc, 'bankUpi' => $bankUpi, 'companyName' => $companyName];
     }
@@ -113,7 +113,7 @@ class AgreementPDFService extends ServiceTenantTrait
                 if (method_exists($this->db, 'getPdo')) {
                     $this->db = $this->db->getPdo();
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $this->db = null;
             }
         }
@@ -161,7 +161,7 @@ class AgreementPDFService extends ServiceTenantTrait
                 'filename' => $filename,
                 'file_size' => filesize($path),
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AgreementPDFService::generateBookingAgreement error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -201,7 +201,7 @@ class AgreementPDFService extends ServiceTenantTrait
                 'filename' => $filename,
                 'file_size' => filesize($path),
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AgreementPDFService::generateDemandLetter error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -240,7 +240,7 @@ class AgreementPDFService extends ServiceTenantTrait
                 'filename' => $filename,
                 'file_size' => filesize($path),
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AgreementPDFService::generateAllotmentLetter error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -278,7 +278,7 @@ class AgreementPDFService extends ServiceTenantTrait
                 'filename' => $filename,
                 'file_size' => filesize($path),
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AgreementPDFService::generateRefundVoucher error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -791,7 +791,7 @@ class AgreementPDFService extends ServiceTenantTrait
             $pdf->SetFont('helvetica', '', 8);
             $pdf->MultiCell(120, 5, "UPI ID: " . $bank['bankUpi'] . "\nScan with any UPI app (GPay / PhonePe / Paytm)\nAuthorized Signatory: " . $bank['companyName'], 0, 'L');
             $pdf->SetXY(20, $y + 30);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AgreementPDFService::renderPaymentInstructions QR error: ' . $e->getMessage());
         }
 
@@ -840,7 +840,7 @@ class AgreementPDFService extends ServiceTenantTrait
             $stmt->execute($params);
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
             return $row ?: null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -859,7 +859,7 @@ class AgreementPDFService extends ServiceTenantTrait
             }
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
             return $row ?: null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -876,7 +876,7 @@ class AgreementPDFService extends ServiceTenantTrait
             $stmt->execute($params);
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
             return $row ?: null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -895,7 +895,7 @@ class AgreementPDFService extends ServiceTenantTrait
             $stmt->execute($params);
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
             return $row ?: null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -911,7 +911,7 @@ class AgreementPDFService extends ServiceTenantTrait
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -928,7 +928,7 @@ class AgreementPDFService extends ServiceTenantTrait
             $stmt->execute($params);
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
             return $row ?: null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -945,7 +945,7 @@ class AgreementPDFService extends ServiceTenantTrait
             $stmt->execute($params);
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
             return $row ?: null;
-} catch (Exception $e) {
+} catch (\Throwable $e) {
             return null;
         }
     }
@@ -985,7 +985,7 @@ class AgreementPDFService extends ServiceTenantTrait
                 json_encode(['entity_id' => $entityId, 'type' => $type]),
                 json_encode(['filename' => $filename, 'size' => $size]),
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AgreementPDFService::logPdfGeneration error: ' . $e->getMessage());
         }
     }

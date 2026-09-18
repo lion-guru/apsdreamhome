@@ -399,7 +399,7 @@ class DailyOperationsService
         $sql = "SELECT lp.*,u.name AS assigned_name FROM lead_pipeline lp LEFT JOIN users u ON lp.assigned_to=u.id{$this->tJoin('u')}";
         $params = $this->tVal();
         $wh = [];
-        if (!empty($filters['status'])) { $wh[]="lp.status=?"; $params[]=$filters['status']; }
+        if (!empty($filters['status'])) { $wh[]="lp.stage=?"; $params[]=$filters['status']; }
         if (!empty($filters['source'])) { $wh[]="lp.lead_source=?"; $params[]=$filters['source']; }
         if (!empty($filters['type'])) { $wh[]="lp.lead_type=?"; $params[]=$filters['type']; }
         if (!empty($filters['priority'])) { $wh[]="lp.priority=?"; $params[]=$filters['priority']; }
@@ -478,9 +478,9 @@ class DailyOperationsService
     {
         $tsql = $this->tenantSql();
         $tparams = $this->tVal();
-        $stages = $this->fetchAll("SELECT status,COUNT(*) AS count,AVG(score) AS avg_score,AVG(DATEDIFF(COALESCE(closed_date,CURDATE()),created_at)) AS avg_days FROM lead_pipeline WHERE 1=1 {$tsql} GROUP BY status ORDER BY FIELD(status,'new','contacted','qualified','viewing','negotiation','closed_won','closed_lost','on_hold')", $tparams);
+        $stages = $this->fetchAll("SELECT stage,COUNT(*) AS count,AVG(score) AS avg_score,AVG(DATEDIFF(COALESCE(closed_date,CURDATE()),created_at)) AS avg_days FROM lead_pipeline WHERE 1=1 {$tsql} GROUP BY stage ORDER BY FIELD(stage,'new','contacted','qualified','viewing','negotiation','closed_won','closed_lost','on_hold')", $tparams);
         $total = $this->fetchOne("SELECT COUNT(*) AS cnt FROM lead_pipeline WHERE 1=1 {$tsql}", $tparams);
-        $won = $this->fetchOne("SELECT COUNT(*) AS cnt FROM lead_pipeline WHERE status='closed_won' {$tsql}", $tparams);
+        $won = $this->fetchOne("SELECT COUNT(*) AS cnt FROM lead_pipeline WHERE stage='closed_won' {$tsql}", $tparams);
         $rate = ($total['cnt']??0) > 0 ? round(($won['cnt']??0)/($total['cnt']??1)*100,1) : 0;
         return ['stages'=>$stages,'total'=>(int)($total['cnt']??0),'won'=>(int)($won['cnt']??0),'conversion_rate'=>$rate];
     }
@@ -492,7 +492,7 @@ class DailyOperationsService
         return [
             'by_source' => $this->fetchAll("SELECT lead_source,COUNT(*) AS count FROM lead_pipeline WHERE 1=1 {$tsql} GROUP BY lead_source ORDER BY count DESC", $tparams),
             'by_priority' => $this->fetchAll("SELECT priority,COUNT(*) AS count FROM lead_pipeline WHERE 1=1 {$tsql} GROUP BY priority ORDER BY FIELD(priority,'hot','warm','cold','dead')", $tparams),
-            'by_status' => $this->fetchAll("SELECT status,COUNT(*) AS count FROM lead_pipeline WHERE 1=1 {$tsql} GROUP BY status ORDER BY FIELD(status,'new','contacted','qualified','viewing','negotiation','closed_won','closed_lost','on_hold')", $tparams),
+            'by_status' => $this->fetchAll("SELECT stage,COUNT(*) AS count FROM lead_pipeline WHERE 1=1 {$tsql} GROUP BY stage ORDER BY FIELD(stage,'new','contacted','qualified','viewing','negotiation','closed_won','closed_lost','on_hold')", $tparams),
         ];
     }
 
@@ -585,7 +585,7 @@ class DailyOperationsService
         $tsql = $this->tenantSql();
         $tparams = $this->tVal();
         $todayOps = $this->fetchOne("SELECT COUNT(*) AS cnt FROM daily_operations_log WHERE log_date=?" . $tsql, array_merge([$today], $tparams));
-        $activeLeads = $this->fetchOne("SELECT COUNT(*) AS cnt FROM lead_pipeline WHERE status NOT IN ('closed_won','closed_lost')" . $tsql, $tparams);
+        $activeLeads = $this->fetchOne("SELECT COUNT(*) AS cnt FROM lead_pipeline WHERE stage NOT IN ('closed_won','closed_lost')" . $tsql, $tparams);
         $pendingLeaves = $this->fetchOne("SELECT COUNT(*) AS cnt FROM employee_leave_requests WHERE status='pending'" . $tsql, $tparams);
         $presentToday = $this->fetchOne("SELECT COUNT(*) AS cnt FROM employee_attendance WHERE attendance_date=?" . $tsql, array_merge([$today], $tparams));
         $totalEmp = $this->fetchOne("SELECT COUNT(*) AS cnt FROM users WHERE role='employee'" . $tsql, $tparams);

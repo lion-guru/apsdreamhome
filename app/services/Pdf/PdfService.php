@@ -1006,27 +1006,33 @@ class PdfService
     protected function resolveDb()
     {
         try {
-            // Prefer the actual Database class directly (not the shim)
-            if (class_exists('\App\Core\Database\Database', false)) {
+            // Force autoload by using the classes (triggers autoloader)
+            $instance = null;
+            
+            // Try the actual Database class directly
+            if (class_exists('\App\Core\Database\Database') || @class_exists('\App\Core\Database\Database', true)) {
                 $instance = \App\Core\Database\Database::getInstance();
                 if (method_exists($instance, 'getConnection')) return $instance->getConnection();
                 if (method_exists($instance, 'getPdo')) return $instance->getPdo();
                 if (property_exists($instance, 'pdo')) return $instance->pdo;
             }
-            // Fallback to shim if needed
-            if (class_exists('\App\Core\Database', false)) {
+            
+            // Fallback to shim
+            if (class_exists('\App\Core\Database') || @class_exists('\App\Core\Database', true)) {
                 $instance = \App\Core\Database::getInstance();
                 if (method_exists($instance, 'getConnection')) return $instance->getConnection();
                 if (method_exists($instance, 'getPdo')) return $instance->getPdo();
                 if (property_exists($instance, 'pdo')) return $instance->pdo;
             }
-            if (class_exists('Database', false)) {
+            
+            if (class_exists('Database') || @class_exists('Database', true)) {
                 $instance = \Database::getInstance();
                 if (method_exists($instance, 'getConnection')) return $instance->getConnection();
             }
         } catch (\Throwable $e) {
-            error_log($e->getMessage());
+            error_log('[PdfService] resolveDb ERROR: ' . $e->getMessage());
         }
+        error_log('[PdfService] resolveDb: All attempts failed, returning null');
         return null;
     }
 

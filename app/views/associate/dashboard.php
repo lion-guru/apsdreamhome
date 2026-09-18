@@ -308,6 +308,53 @@ body {
     </div>
 </div>
 
+<!-- Booking & EMI Quick Stats -->
+<div class="row g-4 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="stat-card-glass">
+            <div class="d-flex align-items-center gap-3">
+                <div><i class="fas fa-file-contract text-primary"></i></div>
+                <div>
+                    <div class="stat-value"><?= number_format($my_bookings ?? 0) ?></div>
+                    <div class="stat-label">My Bookings</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="stat-card-glass">
+            <div class="d-flex align-items-center gap-3">
+                <div><i class="fas fa-exclamation-triangle text-danger"></i></div>
+                <div>
+                    <div class="stat-value"><?= number_format($overdue_emis ?? 0) ?></div>
+                    <div class="stat-label">Overdue EMIs</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="stat-card-glass">
+            <div class="d-flex align-items-center gap-3">
+                <div><i class="fas fa-calendar-alt text-warning"></i></div>
+                <div>
+                    <div class="stat-value">₹<?= number_format($emi_this_month ?? 0) ?></div>
+                    <div class="stat-label">EMI This Month</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="stat-card-glass">
+            <div class="d-flex align-items-center gap-3">
+                <div><i class="fas fa-arrow-right text-info"></i></div>
+                <div>
+                    <a href="<?= BASE_URL ?>/associate/my-bookings" class="btn btn-sm btn-outline-primary fw-bold">View All</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Team Monthly Sales Volume (L1/L2/L3) -->
 <?php $teamVolume = $team_volume ?? ['L1' => ['sqft' => 0, 'value' => 0, 'deals' => 0], 'L2' => ['sqft' => 0, 'value' => 0, 'deals' => 0], 'L3' => ['sqft' => 0, 'value' => 0, 'deals' => 0]]; ?>
 <div class="row mb-4">
