@@ -123,8 +123,14 @@ class BackupManager
             $tableNames = $stmt->fetchAll(\PDO::FETCH_COLUMN);
 
             foreach ($tableNames as $tableName) {
+                // Validate table name
+                if (!preg_match('/^[a-zA-Z0-9_]+$/', $tableName)) {
+                    continue; // Skip invalid table names
+                }
+                $safeTable = "`$tableName`";
+
                 // Get table structure
-                $createStmt = $pdo->query("SHOW CREATE TABLE `$tableName`");
+                $createStmt = $pdo->query("SHOW CREATE TABLE $safeTable");
                 $createTable = $createStmt->fetch(\PDO::FETCH_ASSOC);
 
                 $tableData = [
@@ -134,11 +140,11 @@ class BackupManager
                 ];
 
                 // Get table data (limit to prevent memory issues)
-                $countStmt = $pdo->query("SELECT COUNT(*) as count FROM `$tableName`");
+                $countStmt = $pdo->query("SELECT COUNT(*) as count FROM $safeTable");
                 $rowCount = $countStmt->fetch(\PDO::FETCH_ASSOC)['count'];
 
                 if ($rowCount < 10000) { // Only backup small tables to prevent memory issues
-                    $dataStmt = $pdo->query("SELECT * FROM `$tableName`");
+                    $dataStmt = $pdo->query("SELECT * FROM $safeTable");
                     $tableData['data'] = $dataStmt->fetchAll(\PDO::FETCH_ASSOC);
                 } else {
                     $tableData['data_count'] = $rowCount;
@@ -377,8 +383,14 @@ class BackupManager
             foreach ($databaseBackup['tables'] as $table) {
                 $tableName = $table['name'];
 
+                // Validate table name
+                if (!preg_match('/^[a-zA-Z0-9_]+$/', $tableName)) {
+                    throw new \Exception("Invalid table name: $tableName");
+                }
+                $safeTable = "`$tableName`";
+
                 // Drop existing table
-                $pdo->exec("DROP TABLE IF EXISTS `$tableName`");
+                $pdo->exec("DROP TABLE IF EXISTS $safeTable");
 
                 // Create table structure
                 $pdo->exec($table['structure']);
@@ -390,7 +402,7 @@ class BackupManager
                     $columnsStr = '`' . implode('`, `', $columns) . '`';
                     $placeholdersStr = implode(', ', $placeholders);
 
-                    $insertStmt = $pdo->prepare("INSERT INTO `$tableName` ($columnsStr) VALUES ($placeholdersStr)");
+                    $insertStmt = $pdo->prepare("INSERT INTO $safeTable ($columnsStr) VALUES ($placeholdersStr)");
 
                     foreach ($table['data'] as $row) {
                         $insertStmt->execute(array_values($row));

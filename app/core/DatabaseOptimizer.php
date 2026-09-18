@@ -60,22 +60,35 @@ class DatabaseOptimizer
     }
 
     /**
+     * Validate and escape table name to prevent SQL injection
+     */
+    private function validateTableName($tableName)
+    {
+        // Only allow alphanumeric, underscore
+        if (!preg_match('/^[a-zA-Z0-9_]+$/', $tableName)) {
+            throw new \InvalidArgumentException("Invalid table name: $tableName");
+        }
+        return "`" . $tableName . "`";
+    }
+
+    /**
      * Analyze a specific table
      */
     private function analyzeTable($tableName)
     {
         $info = [];
+        $safeTable = $this->validateTableName($tableName);
 
         // Get table structure
-        $stmt = $this->pdo->query("DESCRIBE `$tableName`");
+        $stmt = $this->pdo->query("DESCRIBE $safeTable");
         $columns = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         // Get table status
-        $stmt = $this->pdo->query("SHOW TABLE STATUS LIKE '$tableName'");
+        $stmt = $this->pdo->query("SHOW TABLE STATUS LIKE " . $this->pdo->quote($tableName));
         $status = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         // Get row count
-        $stmt = $this->pdo->query("SELECT COUNT(*) as count FROM `$tableName`");
+        $stmt = $this->pdo->query("SELECT COUNT(*) as count FROM $safeTable");
         $rowCount = $stmt->fetch(\PDO::FETCH_ASSOC)['count'];
 
         $info = [
@@ -101,7 +114,8 @@ class DatabaseOptimizer
         $tableNames = $stmt->fetchAll(\PDO::FETCH_COLUMN);
 
         foreach ($tableNames as $tableName) {
-            $stmt = $this->pdo->query("SHOW INDEX FROM `$tableName`");
+            $safeTable = $this->validateTableName($tableName);
+            $stmt = $this->pdo->query("SHOW INDEX FROM $safeTable");
             $tableIndexes = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             if (!empty($tableIndexes)) {
@@ -224,7 +238,8 @@ class DatabaseOptimizer
     private function getExistingIndexes($tableName)
     {
         $indexes = [];
-        $stmt = $this->pdo->query("SHOW INDEX FROM `$tableName`");
+        $safeTable = $this->validateTableName($tableName);
+        $stmt = $this->pdo->query("SHOW INDEX FROM $safeTable");
         $indexData = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         foreach ($indexData as $index) {
@@ -299,8 +314,10 @@ class DatabaseOptimizer
      */
     private function addIndex($tableName, $columnName)
     {
+        $safeTable = $this->validateTableName($tableName);
+        $safeColumn = $this->validateColumnName($columnName);
         $indexName = "idx_{$tableName}_{$columnName}";
-        $sql = "CREATE INDEX `{$indexName}` ON `{$tableName}` (`{$columnName}`)";
+        $sql = "CREATE INDEX `{$indexName}` ON $safeTable ($safeColumn)";
 
         try {
             $this->pdo->exec($sql);
@@ -312,12 +329,24 @@ class DatabaseOptimizer
     }
 
     /**
+     * Validate and escape column name to prevent SQL injection
+     */
+    private function validateColumnName($columnName)
+    {
+        if (!preg_match('/^[a-zA-Z0-9_]+$/', $columnName)) {
+            throw new \InvalidArgumentException("Invalid column name: $columnName");
+        }
+        return "`" . $columnName . "`";
+    }
+
+    /**
      * Optimize table
      */
     private function optimizeTable($tableName)
     {
+        $safeTable = $this->validateTableName($tableName);
         try {
-            $this->pdo->exec("OPTIMIZE TABLE `{$tableName}`");
+            $this->pdo->exec("OPTIMIZE TABLE $safeTable");
             return true;
         } catch (\Exception $e) {
             return false;
@@ -347,19 +376,23 @@ class DatabaseOptimizer
         $script .= "-- Generated on: " . date('Y-m-d H:i:s') . "\n\n";
 
         // Add common maintenance operations
+        $tables = $this->analyzeTables();
+        $safeTables = array_map([$this, 'validateTableName'], array_keys($tables));
+
+        // Add common maintenance operations
         $script .= "-- 1. Check and repair tables\n";
-        $script .= "CHECK TABLE " . implode(", ", array_keys($this->analyzeTables())) . ";\n\n";
+        $script .= "CHECK TABLE " . implode(", ", $safeTables) . ";\n\n";
 
         $script .= "-- 2. Optimize tables with high fragmentation\n";
-        $tables = $this->analyzeTables();
         foreach ($tables as $tableName => $tableInfo) {
             if ($tableInfo['row_count'] > 1000) {
-                $script .= "OPTIMIZE TABLE `{$tableName}`;\n";
+                $safeTable = $this->validateTableName($tableName);
+                $script .= "OPTIMIZE TABLE $safeTable;\n";
             }
         }
 
         $script .= "\n-- 3. Update table statistics\n";
-        $script .= "ANALYZE TABLE " . implode(", ", array_keys($tables)) . ";\n";
+        $script .= "ANALYZE TABLE " . implode(", ", $safeTables) . ";\n";
 
         return $script;
     }

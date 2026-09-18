@@ -20,9 +20,11 @@ class Sentinel
     private $blockedIPs = [];
     private $suspiciousThreshold = 10; // Max attempts per minute
     private $slowQueryThreshold = 0.5; // seconds
+    private $tenantId = 1;
     
-    public function __construct()
+    public function __construct($tenantId = 1)
     {
+        $this->tenantId = (int)$tenantId;
         // Database connection
         $this->db = new PDO(
             "mysql:host=" . (isset($_ENV['DB_HOST']) ? $_ENV['DB_HOST'] : '127.0.0.1') . 
@@ -48,6 +50,21 @@ class Sentinel
         }
         
         $this->loadBlockedIPs();
+    }
+
+    public function tenantSql(): string
+    {
+        return $this->tenantId > 1 ? " AND tenant_id = ?" : "";
+    }
+    
+    public function tVal(): array
+    {
+        return $this->tenantId > 1 ? [$this->tenantId] : [];
+    }
+    
+    public function tenantId(): int
+    {
+        return $this->tenantId;
     }
     
     /**
@@ -227,8 +244,10 @@ class Sentinel
         $this->blockedIPs[] = $ip;
         
         // Save to database
-        $stmt = $this->db->prepare("INSERT INTO blocked_ips (ip_address, reason, blocked_at) VALUES (?, ?, NOW())");
-        $stmt->execute([$ip, 'Automatic security block']);
+        $stmt = $this->db->prepare("INSERT INTO blocked_ips (ip_address, reason, blocked_at) VALUES (?, ?, NOW())" . $this->tenantSql());
+        $params = [$ip, 'Automatic security block'];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         
         // Add to .htaccess for server-level blocking
         $this->addToHtaccessBlock($ip);

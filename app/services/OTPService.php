@@ -135,8 +135,17 @@ class OTPService
      */
     private function storeOTP($identifier, $otpCode, $type, $purpose, $expiresAt)
     {
-        $query = "INSERT INTO otp_verifications (identifier, otp_code, type, purpose, expires_at) VALUES (?, ?, ?, ?, ?)";
-        $this->db->execute($query, [$identifier, $otpCode, $type, $purpose, $expiresAt]);
+        $insertData = $this->tenantInsertData();
+        $columns = ['identifier', 'otp_code', 'type', 'purpose', 'expires_at'];
+        $placeholders = array_fill(0, count($columns), '?');
+        if (!empty($insertData)) {
+            $columns = array_merge($columns, array_keys($insertData));
+            $placeholders = array_merge(array_fill(0, count($columns) - count($insertData), '?'), array_fill(0, count($insertData), '?'));
+        }
+        $params = [$identifier, $otpCode, $type, $purpose, $expiresAt];
+        $params = array_merge($params, array_values($insertData));
+        $sql = "INSERT INTO otp_verifications (" . implode(',', $columns) . ") VALUES (" . implode(',', array_fill(0, count($columns), '?')) . ")" . $this->tenantSql();
+        $this->db->execute($sql, $params);
     }
 
     /**
@@ -144,8 +153,10 @@ class OTPService
      */
     private function getStoredOTP($identifier, $otpCode, $purpose)
     {
-        $query = "SELECT * FROM otp_verifications WHERE identifier = ? AND otp_code = ? AND purpose = ? AND used_at IS NULL ORDER BY created_at DESC LIMIT 1";
-        return $this->db->fetch($query, [$identifier, $otpCode, $purpose]);
+        return $this->db->fetch(
+            "SELECT * FROM otp_verifications WHERE identifier = ? AND otp_code = ? AND purpose = ? AND used_at IS NULL" . $this->tenantSql() . " ORDER BY created_at DESC LIMIT 1",
+            array_merge([$identifier, $otpCode, $purpose], $this->tVal())
+        );
     }
 
     /**
@@ -153,8 +164,7 @@ class OTPService
      */
     private function markOTPAsUsed($otpId)
     {
-        $query = "UPDATE otp_verifications SET used_at = NOW() WHERE id = ?";
-        $this->db->execute($query, [$otpId]);
+        $this->db->execute("UPDATE otp_verifications SET used_at = NOW() WHERE id = ?" . $this->tenantSql(), array_merge([$otpId], $this->tVal()));
     }
 
     /**
@@ -162,8 +172,7 @@ class OTPService
      */
     private function incrementOTPAttempts($otpId)
     {
-        $query = "UPDATE otp_verifications SET attempts = attempts + 1 WHERE id = ?";
-        $this->db->execute($query, [$otpId]);
+        $this->db->execute("UPDATE otp_verifications SET attempts = attempts + 1 WHERE id = ?" . $this->tenantSql(), array_merge([$otpId], $this->tVal()));
     }
 
     /**
@@ -171,8 +180,7 @@ class OTPService
      */
     private function cleanupOldOTPs($identifier)
     {
-        $query = "DELETE FROM otp_verifications WHERE identifier = ? AND used_at IS NULL";
-        $this->db->execute($query, [$identifier]);
+        $this->db->execute("DELETE FROM otp_verifications WHERE identifier = ? AND used_at IS NULL" . $this->tenantSql(), array_merge([$identifier], $this->tVal()));
     }
 
     /**
@@ -347,8 +355,8 @@ class OTPService
      */
     public function canRequestNewOTP($identifier, $type)
     {
-        $query = "SELECT COUNT(*) as count FROM otp_verifications WHERE identifier = ? AND type = ? AND created_at > DATE_SUB(NOW(), INTERVAL 1 MINUTE)";
-        $result = $this->db->fetch($query, [$identifier, $type]);
+        $query = "SELECT COUNT(*) as count FROM otp_verifications WHERE identifier = ? AND type = ? AND created_at > DATE_SUB(NOW(), INTERVAL 1 MINUTE)" . $this->tenantSql();
+        $result = $this->db->fetch($query, array_merge([$identifier, $type], $this->tVal()));
 
         return $result['count'] == 0;
     }
@@ -358,8 +366,8 @@ class OTPService
      */
     public function getOTPExpiryTime($identifier, $type, $purpose)
     {
-        $query = "SELECT expires_at FROM otp_verifications WHERE identifier = ? AND type = ? AND purpose = ? AND used_at IS NULL ORDER BY created_at DESC LIMIT 1";
-        $result = $this->db->fetch($query, [$identifier, $type, $purpose]);
+        $query = "SELECT expires_at FROM otp_verifications WHERE identifier = ? AND type = ? AND purpose = ? AND used_at IS NULL" . $this->tenantSql() . " ORDER BY created_at DESC LIMIT 1";
+        $result = $this->db->fetch($query, array_merge([$identifier, $type, $purpose], $this->tVal()));
 
         if (!$result) {
             return 0;
@@ -374,7 +382,6 @@ class OTPService
      */
     public function cleanupExpiredOTPs()
     {
-        $query = "DELETE FROM otp_verifications WHERE expires_at < NOW() OR used_at IS NOT NULL";
-        $this->db->execute($query);
+        $this->db->execute("DELETE FROM otp_verifications WHERE expires_at < NOW() OR used_at IS NOT NULL" . $this->tenantSql(), $this->tVal());
     }
 }

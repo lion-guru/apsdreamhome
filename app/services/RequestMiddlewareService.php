@@ -67,32 +67,30 @@ class RequestMiddlewareService
     public function addMiddlewareRule($rule)
     {
         try {
-            $ruleData = [
-                'id' => uniqid('rule_'),
-                'name' => Security::sanitize($rule['name'] ?? ''),
-                'type' => Security::sanitize($rule['type'] ?? 'filter'),
-                'conditions' => Security::sanitize($rule['conditions'] ?? []),
-                'actions' => Security::sanitize($rule['actions'] ?? []),
-                'priority' => intval($rule['priority'] ?? 5),
-                'status' => 'active',
-                'created_at' => date('Y-m-d H:i:s')
+            $insertData = $this->tenantInsertData();
+            $columns = ['id', 'name', 'type', 'conditions', 'actions', 'priority', 'status', 'created_at'];
+            $placeholders = array_fill(0, count($columns), '?');
+            if (!empty($insertData)) {
+                $columns = array_merge($columns, array_keys($insertData));
+                $placeholders = array_merge(array_fill(0, count($columns) - count($insertData), '?'), array_fill(0, count($insertData), '?'));
+            }
+            $params = [
+                uniqid('rule_'),
+                Security::sanitize($rule['name'] ?? ''),
+                Security::sanitize($rule['type'] ?? 'filter'),
+                json_encode($rule['conditions'] ?? []),
+                json_encode($rule['actions'] ?? []),
+                intval($rule['priority'] ?? 5),
+                'active',
+                date('Y-m-d H:i:s')
             ];
-
+            $params = array_merge($params, array_values($insertData));
             $this->db->execute(
-                "INSERT INTO middleware_rules (id, name, type, conditions, actions, priority, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                [
-                    $ruleData['id'],
-                    $ruleData['name'],
-                    $ruleData['type'],
-                    json_encode($ruleData['conditions']),
-                    json_encode($ruleData['actions']),
-                    $ruleData['priority'],
-                    $ruleData['status'],
-                    $ruleData['created_at']
-                ]
+                "INSERT INTO middleware_rules (" . implode(',', $columns) . ") VALUES (" . implode(',', array_fill(0, count($columns), '?')) . ")" . $this->tenantSql(),
+                array_merge($params, array_values($insertData))
             );
 
-            return $ruleData;
+            return ['id' => $params[0], 'name' => $params[1], 'type' => $params[2], 'priority' => $params[5], 'status' => $params[6], 'created_at' => $params[7]];
 
         } catch (Exception $e) {
             error_log("Add Middleware Rule Error: " . $e->getMessage());
@@ -119,8 +117,9 @@ class RequestMiddlewareService
                     priority,
                     status,
                     created_at
-                 FROM middleware_rules 
-                 ORDER BY priority ASC, created_at DESC"
+                 FROM middleware_rules " . $this->tenantSql() . "
+                 ORDER BY priority ASC, created_at DESC",
+                $this->tVal()
             );
 
             return $rules;
@@ -146,17 +145,11 @@ class RequestMiddlewareService
                 'updated_at' => date('Y-m-d H:i:s')
             ];
 
+            $params = [$data['name'], $data['type'], json_encode($data['conditions']), json_encode($data['actions']), $data['priority'], $data['updated_at'], $ruleId];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
             $this->db->execute(
-                "UPDATE middleware_rules SET name = ?, type = ?, conditions = ?, actions = ?, priority = ?, updated_at = ? WHERE id = ?",
-                [
-                    $data['name'],
-                    $data['type'],
-                    json_encode($data['conditions']),
-                    json_encode($data['actions']),
-                    $data['priority'],
-                    $data['updated_at'],
-                    $ruleId
-                ]
+                "UPDATE middleware_rules SET name = ?, type = ?, conditions = ?, actions = ?, priority = ?, updated_at = ? WHERE id = ?" . $this->tenantSql(),
+                $params
             );
 
             return array_merge(['id' => $ruleId], $data);
@@ -177,8 +170,8 @@ class RequestMiddlewareService
     {
         try {
             $this->db->execute(
-                "DELETE FROM middleware_rules WHERE id = ?",
-                [$ruleId]
+                "DELETE FROM middleware_rules WHERE id = ?" . $this->tenantSql(),
+                array_merge([$ruleId], $this->tVal())
             );
 
             return [
@@ -204,8 +197,8 @@ class RequestMiddlewareService
         try {
             // Get the rule to test
             $rule = $this->db->fetchOne(
-                "SELECT * FROM middleware_rules WHERE id = ?",
-                [$ruleId]
+                "SELECT * FROM middleware_rules WHERE id = ?" . $this->tenantSql() . " LIMIT 1",
+                array_merge([$ruleId], $this->tVal())
             );
 
             if (!$rule) {
