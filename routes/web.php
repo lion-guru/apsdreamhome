@@ -977,6 +977,7 @@ $router->get('/associate/tools', 'App\\Http\\Controllers\\AssociateController@to
 $router->post('/associate/tools/emi', 'App\\Http\\Controllers\\AssociateController@emiCalculator');
 $router->post('/associate/tools/stamp-duty', 'App\\Http\\Controllers\\AssociateController@stampDutyCalculator');
 $router->post('/associate/tools/plot-converter', 'App\\Http\\Controllers\\AssociateController@plotConverter');
+$router->get('/associate/tools/commission', 'App\\Http\\Controllers\\AssociateController@commissionCalculator');
 $router->post('/associate/tools/commission', 'App\\Http\\Controllers\\AssociateController@commissionCalculator');
 
 // Farmer Management

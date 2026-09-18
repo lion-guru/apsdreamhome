@@ -117,12 +117,12 @@ class MLMController extends BaseController
             $totalDownline = (int)($stmt->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0);
 
             // Get monthly commission from mlm_commission_ledger
-            $stmt = $db->prepare("SELECT COALESCE(SUM(amount), 0) as total FROM mlm_commission_ledger WHERE user_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH) AND status = 'approved'");
+            $stmt = $db->prepare("SELECT COALESCE(SUM(amount), 0) as total FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH) AND status = 'approved'");
             $stmt->execute([$userId]);
             $monthlyCommission = (float)($stmt->fetch(\PDO::FETCH_ASSOC)['total'] ?? 0);
 
             // Get total commission
-            $stmt = $db->prepare("SELECT COALESCE(SUM(amount), 0) as total FROM mlm_commission_ledger WHERE user_id = ? AND status = 'approved'");
+            $stmt = $db->prepare("SELECT COALESCE(SUM(amount), 0) as total FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND status = 'approved'");
             $stmt->execute([$userId]);
             $totalCommission = (float)($stmt->fetch(\PDO::FETCH_ASSOC)['total'] ?? 0);
 

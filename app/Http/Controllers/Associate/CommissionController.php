@@ -134,7 +134,7 @@ class CommissionController extends BaseController
                 }
 
                 // Get rank rate
-                $stmt = $db->prepare("SELECT rate FROM mlm_rank_slabs WHERE rank_slug = ?{$tidSql} LIMIT 1");
+                $stmt = $db->prepare("SELECT commission_rate AS rate FROM mlm_rank_slabs WHERE rank_slug = ?{$tidSql} LIMIT 1");
                 $stmt->execute([$myRank]);
                 $rank = $stmt->fetch(\PDO::FETCH_ASSOC);
                 $myRate = $rank ? (float)$rank['rate'] : 5.0;
@@ -177,7 +177,7 @@ class CommissionController extends BaseController
         $db = \App\Core\Database\Database::getInstance()->getConnection();
         $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
         $params = TenantContext::getId() > 1 ? [TenantContext::getId()] : [];
-        $ranks = $db->fetchAll("SELECT rank_slug, rate FROM mlm_rank_slabs{$tidSql} ORDER BY min_gbv", $params) ?: [
+        $ranks = $db->fetchAll("SELECT rank_slug, commission_rate AS rate FROM mlm_rank_slabs{$tidSql} ORDER BY min_gbv", $params) ?: [
             ['rank_slug' => 'associate', 'rate' => 5],
             ['rank_slug' => 'sr_associate', 'rate' => 7],
             ['rank_slug' => 'bdm', 'rate' => 10],
