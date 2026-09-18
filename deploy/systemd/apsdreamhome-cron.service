@@ -1,0 +1,28 @@
+# APS Dream Home - Daily Cron Runner
+# Copy to: /etc/systemd/system/apsdreamhome-cron.service
+
+[Unit]
+Description=APS Dream Home Daily Cron Jobs
+After=network.target mysql.service
+Requires=mysql.service
+
+[Service]
+Type=oneshot
+User=www-data
+WorkingDirectory=/var/www/apsdreamhome
+ExecStart=/usr/bin/php scripts/run_all_crons.php
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=apsdreamhome-cron
+
+Environment=APP_ENV=production
+
+# Run as www-data with limited privileges
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/www/apsdreamhome/storage /var/www/apsdreamhome/logs /var/www/apsdreamhome/scripts
+
+[Install]
+WantedBy=multi-user.target

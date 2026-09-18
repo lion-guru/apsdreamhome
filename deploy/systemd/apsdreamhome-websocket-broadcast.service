@@ -1,0 +1,29 @@
+# APS Dream Home - WebSocket Broadcast Server
+# Copy to: /etc/systemd/system/apsdreamhome-websocket-broadcast.service
+
+[Unit]
+Description=APS Dream Home WebSocket Broadcast Server
+After=network.target mysql.service apsdreamhome-websocket.service
+Requires=mysql.service
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/apsdreamhome
+ExecStart=/usr/bin/php websocket_broadcast_server.php
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=apsdreamhome-websocket-broadcast
+
+Environment=APP_ENV=production
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/www/apsdreamhome/storage /var/www/apsdreamhome/logs
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,13 @@
+# APS Dream Home - Daily Cron Timer
+# Copy to: /etc/systemd/system/apsdreamhome-cron.timer
+
+[Unit]
+Description=Run APS Dream Home cron jobs daily at 2:00 AM
+
+[Timer]
+OnCalendar=*-*-* 02:00:00
+Persistent=true
+RandomizedDelaySec=15m
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,31 @@
+# APS Dream Home - WebSocket Server (Ratchet)
+# Copy to: /etc/systemd/system/apsdreamhome-websocket.service
+
+[Unit]
+Description=APS Dream Home WebSocket Server
+After=network.target mysql.service
+Requires=mysql.service
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/apsdreamhome
+ExecStart=/usr/bin/php websocket_server.php
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=apsdreamhome-websocket
+
+# Environment
+Environment=APP_ENV=production
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/www/apsdreamhome/storage /var/www/apsdreamhome/logs
+
+[Install]
+WantedBy=multi-user.target
