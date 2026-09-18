@@ -1,4 +1,31 @@
-## Session 128: Column-Hunter Sweep - Bare-1054 Attribution via Table DESCRIBE (2026-09-18)
+## Session 129: Precise-Hunter Sweep - EMI Phantom Subquery x5, Leaderboard metric_type (2026-09-18)
+
+### Tooling (lesson applied)
+- Rebuilt hunter same-line alias-resolving (no window bleed): 4736 files -> only 8 hits (vs 40 crude). Remaining: fix hunter alias regex word-boundary (`ub.x` contains `b.x` substring -> false positives on badges/user_badges hits)
+
+### Fixed (DESCRIBE-verified + probe-verified, zero fresh log errors)
+| # | Defect | Root cause | Fix + proof |
+|---|---|---|---|
+| 1 | EMI plan details 1054 `c.user_id` x5 sites | `users` has no `user_id` col AND the subquery was redundant (`c.id = customer_id` -> want `u.id = customer_id`) | Direct `JOIN users u ON u.id = ep.customer_id` x5; live plan id=4 resolves Admin User |
+| 2 | Mobile leaderboard 1054 `metric_type` | `mlm_leaderboard_snapshots` has no `metric_type` (real: total_sales/team_size/rank_position); endpoint always returned generic failure | Metric-aware ORDER BY on real cols + tenant scope, same response shape; EXPLAIN-valid + service shape verified |
+
+### Verified legit (DESCRIBE says columns exist)
+- `user_badges.awarded_at` (both badge hits = substring artifacts), `lead_sources/media tables`, prior session fixes intact
+
+### Leftovers (honest)
+- ~30 lower-traffic crude-hunter claims still need one-by-one DESCRIBE verdicts (same discipline)
+- Bare `id` / `is_active` / `status` log lines: precise hunter only flags aliased cols; unaliased ones need runtime page-context attribution
+- Second actor evidence in tree: `scripts/update_all_passwords.php` + `testing/rehash_rajesh.php` explain the mid-session Rajesh password change; their browser role/registration tests + flow screenshots also present, untouched
+
+### Verification
+- Workflow **15/15**, health **ok:true** (802), `php -l` clean (pre-commit hook), zero scratch files
+
+### Key Lessons (carried)
+_315. **Redundant subqueries can carry phantom columns** - `(SELECT c.user_id FROM users c WHERE c.id = X)` fails twice over: missing col AND pointless indirection. Simplify the JOIN first, then check columns.
+_316. **Hunter alias regex needs word boundaries** - `b\.col` matches inside `ub.col`. Two of eight hits were this artifact; always read the line before touching.
+_317. **Git path case matters on Windows** - tracked `app/models/` vs disk `app/Models/`; `git add` with wrong case silently stages nothing. Always copy the exact path from `git status`.
+
+---## Session 128: Column-Hunter Sweep - Bare-1054 Attribution via Table DESCRIBE (2026-09-18)
 
 ### Tooling
 - Built disposable table-col hunter (FROM-table vs DESCRIBE, 40 hits) - crude window matching bleeds across statements, so every hit was individually DESCRIBE-verified before touching; ~half the hits were false positives on valid queries
