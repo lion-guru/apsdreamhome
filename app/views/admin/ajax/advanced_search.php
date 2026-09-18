@@ -33,6 +33,15 @@ try {
     $sortBy = Security::sanitize($_GET['sort']) ?? 'date';
     $searchQuery = trim(Security::sanitize($_GET['q']) ?? '');
 
+    // Whitelist allowed sort columns per module (prevent SQL injection in ORDER BY)
+    $allowedSortColumns = [
+        'users' => ['date' => 'u.created_at', 'name' => 'u.name', 'email' => 'u.email', 'role' => 'u.role'],
+        'properties' => ['date' => 'created_at', 'title' => 'title', 'location' => 'location', 'price' => 'price'],
+        'projects' => ['date' => 'created_at', 'name' => 'project_name', 'location' => 'location', 'status' => 'status'],
+        'bookings' => ['date' => 'created_at', 'customer' => 'customer_name', 'amount' => 'total_amount', 'status' => 'status'],
+    ];
+    $sortColumn = $allowedSortColumns[$module][$sortBy] ?? $allowedSortColumns[$module]['date'];
+
     // Establish database connection
     $db = $db ?? \App\Core\App::database();
     $results = [];
@@ -93,19 +102,15 @@ try {
     $sql = "";
     switch ($module) {
         case 'users':
-            $sortColumn = ($sortBy === 'date') ? 'u.created_at' : 'u.name';
             $sql = "SELECT u.id as id, u.name as name, u.email as email, u.role as role, COALESCE(a.status, 'active') as status, u.created_at as created_at FROM users u LEFT JOIN users a ON u.id = a.user_id $whereClause ORDER BY $sortColumn DESC LIMIT 20";
             break;
         case 'properties':
-            $sortColumn = ($sortBy === 'date') ? 'created_at' : 'title';
             $sql = "SELECT id, title, location, price, status, created_at FROM properties $whereClause ORDER BY $sortColumn DESC LIMIT 20";
             break;
         case 'projects':
-            $sortColumn = ($sortBy === 'date') ? 'created_at' : 'project_name';
             $sql = "SELECT id, project_name, location, status, created_at FROM projects $whereClause ORDER BY $sortColumn DESC LIMIT 20";
             break;
         case 'bookings':
-            $sortColumn = ($sortBy === 'date') ? 'created_at' : 'customer_name';
             $sql = "SELECT id, customer_name, property_title, total_amount, status, created_at FROM bookings $whereClause ORDER BY $sortColumn DESC LIMIT 20";
             break;
         default: // All modules
