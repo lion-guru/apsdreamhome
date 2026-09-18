@@ -882,6 +882,7 @@ $router->get('/associate/logout', 'Auth\\AssociateAuthController@logout');
 $router->get('/associate/legal-consent/status', 'App\\Http\\Controllers\\Associate\\LegalConsentController@status');
 $router->post('/associate/legal-consent/accept', 'App\\Http\\Controllers\\Associate\\LegalConsentController@accept');
 $router->get('/associate/dashboard', 'App\\Http\\Controllers\\AssociateController@dashboard');
+$router->get('/associate/share', function() { header('Location: ' . BASE_URL . '/associate/dashboard'); exit; });
 $router->get('/associate/add-property', 'App\\Http\\Controllers\\AssociateController@addProperty');
 $router->post('/associate/add-property', 'App\\Http\\Controllers\\AssociateController@storeAddProperty');
 $router->get('/associate/leads', 'App\\Http\\Controllers\\AssociateController@leads');
@@ -4653,6 +4654,9 @@ $router->post('/admin/api-keys/delete/{id}', 'Admin\\ApiKeyController@delete');
 
 $router->get('/admin/system-health', 'Admin\\SystemHealthController@index');
 $router->get('/api/v2/system/health', 'Admin\\SystemHealthController@api');
+$router->get('/admin/cron-health', 'Admin\\CronHealthController@index');
+$router->post('/admin/cron-health/run', 'Admin\\CronHealthController@run');
+$router->get('/admin/cron-health/status', 'Admin\\CronHealthController@status');
 $router->get('/admin/features/agent-tasks', 'Admin\\NewFeaturesController@agentTasks');
 $router->get('/admin/features/ocr', 'Admin\\NewFeaturesController@ocrCenter');
 $router->get('/admin/features/maintenance', 'Admin\\NewFeaturesController@propertyMaintenance');
@@ -5141,18 +5145,11 @@ $router->get('/api/landmarks/colony/{colonyId}', 'Api\\LandmarksApiController@by
 // ============================================================
 // ADMIN COMMUNICATION AUTOMATION
 // ============================================================
-$router->get('/admin/communication/automation',       'App\\Http\\Controllers\\Admin\\CommunicationAdminController@automation');
-$router->get('/admin/communication/whatsapp-setup',   'App\\Http\\Controllers\\Admin\\CommunicationAdminController@whatsappSetup');
 $router->post('/admin/communication/whatsapp-setup',  'App\\Http\\Controllers\\Admin\\CommunicationAdminController@whatsappSetupSave');
-$router->get('/admin/communication/telegram-setup',   'App\\Http\\Controllers\\Admin\\CommunicationAdminController@telegramSetup');
 $router->post('/admin/communication/telegram-setup',  'App\\Http\\Controllers\\Admin\\CommunicationAdminController@telegramSetupSave');
-$router->get('/admin/communication/sms-setup',        'App\\Http\\Controllers\\Admin\\CommunicationAdminController@smsSetup');
 $router->post('/admin/communication/sms-setup',       'App\\Http\\Controllers\\Admin\\CommunicationAdminController@smsSetupSave');
-$router->get('/admin/communication/email-templates',  'App\\Http\\Controllers\\Admin\\CommunicationAdminController@emailTemplates');
 $router->post('/admin/communication/email-templates', 'App\\Http\\Controllers\\Admin\\CommunicationAdminController@emailTemplatesSave');
 $router->post('/admin/communication/email-templates/{id}/delete', 'App\\Http\\Controllers\\Admin\\CommunicationAdminController@emailTemplatesDelete');
-$router->get('/admin/communication/logs',             'App\\Http\\Controllers\\Admin\\CommunicationAdminController@logs');
-$router->post('/admin/communication/test-send',       'App\\Http\\Controllers\\Admin\\CommunicationAdminController@testSend');
 
 // ============================================================
 // SAAS TENANT MANAGEMENT (Super Admin)
@@ -5209,7 +5206,6 @@ $router->get('/admin/department-requests/my-requests',        'App\\Http\\Contro
 // ============================================================
 // FINANCIAL REPORTS
 // ============================================================
-$router->get('/admin/reports/financial', 'App\\Http\\Controllers\\Admin\\FinancialReportController@index');
 $router->get('/admin/reports/financial/profit-loss', 'App\\Http\\Controllers\\Admin\\FinancialReportController@profitLoss');
 $router->get('/admin/reports/financial/balance-sheet', 'App\\Http\\Controllers\\Admin\\FinancialReportController@balanceSheet');
 $router->get('/admin/reports/financial/cash-flow', 'App\\Http\\Controllers\\Admin\\FinancialReportController@cashFlow');
@@ -5221,7 +5217,6 @@ $router->get('/admin/reports/profit-loss', 'App\\Http\\Controllers\\Admin\\Finan
 // ============================================================
 // BULK OPERATIONS
 // ============================================================
-$router->post('/admin/leads/bulk-action', 'App\\Http\\Controllers\\Admin\\LeadController@bulkAction');
 
 // ============================================================
 // AGENT COMMISSION DASHBOARD
@@ -5264,7 +5259,6 @@ $router->get('/admin/legal-documents/{id}/acceptance-stats', 'App\\Http\\Control
 $router->get('/admin/legal-documents/{id}/export', 'App\\Http\\Controllers\\Admin\\LegalDocumentController@exportPdf');
 
 // Public Legal Pages
-$router->get('/legal', 'App\\Http\\Controllers\\Front\\LegalDocumentController@index');
 $router->get('/legal/{category}', 'App\\Http\\Controllers\\Front\\LegalDocumentController@index');
 $router->get('/legal/{slug}', 'App\\Http\\Controllers\\Front\\LegalDocumentController@show');
 $router->post('/legal/accept', 'App\\Http\\Controllers\\Front\\LegalDocumentController@accept');
