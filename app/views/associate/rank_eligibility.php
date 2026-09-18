@@ -15,6 +15,7 @@ $lifetimeVolume = $lifetime_volume ?? 0;
 $rankConfig = [
     'associate' => ['color' => '#6b7280', 'icon' => 'fas fa-user', 'reward' => __('assoc_rank_rwd_assoc', [], 'Mobile')],
     'senior_associate' => ['color' => '#3b82f6', 'icon' => 'fas fa-user-shield', 'reward' => __('assoc_rank_rwd_sr_assoc', [], 'Tablet')],
+    'sr_associate' => ['color' => '#3b82f6', 'icon' => 'fas fa-user-shield', 'reward' => __('assoc_rank_rwd_sr_assoc', [], 'Tablet')],
     'bdm' => ['color' => '#14b8a6', 'icon' => 'fas fa-user-tie', 'reward' => __('assoc_rank_rwd_bdm', [], 'Laptop')],
     'sr_bdm' => ['color' => '#ec4899', 'icon' => 'fas fa-star', 'reward' => __('assoc_rank_rwd_sr_bdm', [], 'Tour Package')],
     'vice_president' => ['color' => '#f59e0b', 'icon' => 'fas fa-crown', 'reward' => __('assoc_rank_rwd_vp', [], 'Bike')],
@@ -91,7 +92,7 @@ $nextConfig = $nextRank ? ($rankConfig[$nextRank] ?? null) : null;
 <?php
     $nextRankInfo = null;
     foreach ($allRanks as $ar) {
-        if (strtolower($ar['rank_name']) === $nextRank) {
+        if (($ar['rank_slug'] ?? strtolower($ar['rank_name'])) === $nextRank) {
             $nextRankInfo = $ar;
             break;
         }
@@ -120,7 +121,7 @@ $nextConfig = $nextRank ? ($rankConfig[$nextRank] ?? null) : null;
                     </div>
                 </div>
                 <?php if ($volumePct < 100): ?>
-                    <small class="text-muted"><?= __('assoc_rank_more_needed', [], '₹%s more needed') ?></small>
+                    <small class="text-muted"><?= sprintf(__('assoc_rank_more_needed', null, '₹%s more needed'), number_format(max(0, $targetVolume - $lifetimeVolume))) ?></small>
                 <?php else: ?>
                     <small class="text-success"><i class="fas fa-check-circle"></i> <?= __('assoc_rank_target_achieved', [], 'Target achieved!') ?></small>
                 <?php endif; ?>
@@ -180,7 +181,7 @@ $nextConfig = $nextRank ? ($rankConfig[$nextRank] ?? null) : null;
                 <tbody>
                     <?php foreach ($allRanks as $rank): ?>
                         <?php
-                        $rankName = strtolower($rank['rank_name']);
+                        $rankName = $rank['rank_slug'] ?? strtolower($rank['rank_name']);
                         $isCurrent = ($rankName === $currentRank);
                         $isAchieved = ($lifetimeVolume >= $rank['min_qualifying_volume']);
                         $config = $rankConfig[$rankName] ?? $rankConfig['associate'];

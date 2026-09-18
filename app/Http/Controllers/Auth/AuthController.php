@@ -510,6 +510,7 @@ class AuthController extends BaseController
         $_SESSION['user_email'] = $user['email'];
         $_SESSION['user_phone'] = $user['phone'] ?? '';
         $_SESSION['role'] = $user['role'] ?? 'customer';
+        $_SESSION['referral_code'] = $user['referral_code'] ?? '';
         $_SESSION['logged_in'] = true;
 
         $db = Database::getInstance();
@@ -530,8 +531,13 @@ class AuthController extends BaseController
             try {
                 $params = array_merge([(int)$user['id']], $tParams);
                 $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ?" . $tSql . " LIMIT 1", $params);
-                if ($emp) $_SESSION['employee_id'] = (int)$emp['id'];
-            } catch (\Throwable $e) { error_log("AuthController employee lookup error: " . $e->getMessage()); }
+                $_SESSION['employee_id'] = (int)($emp['id'] ?? $user['id']);
+                $_SESSION['employee_role'] = $role;
+            } catch (\Throwable $e) { 
+                error_log("AuthController employee lookup error: " . $e->getMessage()); 
+                $_SESSION['employee_id'] = (int)$user['id'];
+                $_SESSION['employee_role'] = $role;
+            }
         }
 
         // Admin-level roles get admin_id

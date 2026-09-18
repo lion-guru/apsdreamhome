@@ -211,55 +211,69 @@ class CommissionController extends BaseController
             if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
 
             // Get current rank and GBV
-            $stmt = $db->prepare("SELECT current_level, lifetime_sales FROM mlm_profiles WHERE user_id = ?{$tidSql} LIMIT 1");
+            $stmt = $db->prepare("SELECT current_level, lifetime_sales, direct_referrals, total_team_size FROM mlm_profiles WHERE user_id = ?{$tidSql} LIMIT 1");
             $stmt->execute($params);
             $profile = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             $currentRank = $profile['current_level'] ?? 'associate';
             $gbv = (float)($profile['lifetime_sales'] ?? 0);
 
-            // Get rank slabs
-            $ranks = $db->fetchAll("SELECT * FROM mlm_rank_slabs{$tidSql} ORDER BY min_gbv", $params) ?: [];
+            // Get rank slabs (slab query has no user placeholder — bind tenant only)
+            $slabParams = array_slice($params, 1);
+            $slabs = $db->fetchAll("SELECT * FROM mlm_rank_slabs{$tidSql} ORDER BY min_gbv", $slabParams) ?: [];
 
-            $eligible = [];
-            foreach ($ranks as $rank) {
-                $minGbv = (float)$rank['min_gbv'];
-                $eligible[] = [
-                    'rank' => $rank['rank_slug'],
-                    'name' => $rank['rank_name'] ?? $rank['rank_slug'],
-                    'rate' => (float)$rank['rate'],
-                    'min_gbv' => $minGbv,
-                    'eligible' => $gbv >= $minGbv,
-                    'shortfall' => max(0, $minGbv - $gbv),
+            // Map slabs to the view contract (view reads rank_name / min_qualifying_volume / min_leg_count)
+            $allRanks = [];
+            foreach ($slabs as $rank) {
+                $allRanks[] = [
+                    'rank_slug' => $rank['rank_slug'],
+                    'rank_name' => $rank['rank_name'] ?? $rank['rank_slug'],
+                    'min_qualifying_volume' => (float)($rank['min_gbv'] ?? 0),
+                    'min_leg_count' => 0,
+                    'direct_sale_pct' => (float)($rank['commission_rate'] ?? 0),
                 ];
             }
 
-            $currentRankInfo = null;
-            foreach ($eligible as $e) {
-                if ($e['rank'] === $currentRank) {
-                    $currentRankInfo = $e;
+            $nextRank = null;
+            foreach ($slabs as $rank) {
+                if ((float)($rank['min_gbv'] ?? 0) > $gbv) {
+                    $nextRank = $rank['rank_slug'];
                     break;
                 }
             }
 
-            $nextRank = null;
-            foreach ($eligible as $e) {
-                if (!$e['eligible']) {
-                    $nextRank = $e;
-                    break;
-                }
-            }
+            // This-month commission volume for the monthly card
+            $monthVol = 0.0;
+            try {
+                $mRow = $db->fetchOne("SELECT COALESCE(SUM(amount),0) AS v FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND YEAR(created_at) = YEAR(CURDATE()) AND MONTH(created_at) = MONTH(CURDATE())", [$userId]);
+                $monthVol = (float)($mRow['v'] ?? 0);
+            } catch (\Throwable $e) { error_log('Rank eligibility month volume: ' . $e->getMessage()); }
 
             $this->render('associate/rank_eligibility', [
                 'page_title' => 'Rank Eligibility - Associate Portal',
                 'page_description' => 'Check your rank progress',
-                'current_rank' => $currentRankInfo,
+                'current_rank' => $currentRank,
                 'next_rank' => $nextRank,
-                'gbv' => $gbv,
-                'all_ranks' => $eligible,
+                'all_ranks' => $allRanks,
+                'lifetime_volume' => $gbv,
+                'monthly_volume' => $monthVol,
+                'direct_legs' => (int)($profile['direct_referrals'] ?? 0),
+                'team_size' => (int)($profile['total_team_size'] ?? 0),
             ], 'layouts/associate');
         } catch (\Throwable $e) {
             error_log('Rank eligibility error: ' . $e->getMessage());
+            // Fail-soft: never blank the page — render with empty progress
+            $this->render('associate/rank_eligibility', [
+                'page_title' => 'Rank Eligibility - Associate Portal',
+                'page_description' => 'Check your rank progress',
+                'current_rank' => 'associate',
+                'next_rank' => null,
+                'all_ranks' => [],
+                'lifetime_volume' => 0,
+                'monthly_volume' => 0,
+                'direct_legs' => 0,
+                'team_size' => 0,
+            ], 'layouts/associate');
         }
     }
 }

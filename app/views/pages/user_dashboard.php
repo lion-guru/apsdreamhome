@@ -17,7 +17,7 @@ $kycStatus = $kycStatus ?? 'not_started';
 <div class="aps-cp-hero">
     <div class="row align-items-center">
         <div class="col-md-8">
-            <h2><i class="fas fa-hand-sparkles me-2"></i><?= __('dash_welcome_back', ['name' => htmlspecialchars($_SESSION['user_name'] ?? $user['name'] ?? '')], 'Welcome back, %s!') ?></h2>
+            <h2><i class="fas fa-hand-sparkles me-2"></i><?= sprintf(__('dash_welcome_back', null, 'Welcome back, %s!'), htmlspecialchars($_SESSION['user_name'] ?? $user['name'] ?? '')) ?></h2>
             <p><?= __('dash_hero_subtitle', null, 'Manage your properties, track inquiries, bookings and payments — all in one place.') ?></p>
         </div>
         <div class="col-md-4 mt-3 mt-md-0">
