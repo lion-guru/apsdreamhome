@@ -1,4 +1,36 @@
-## Session 126: Screenshot Proof Audit + Dashboard Deficiency Sweep (2026-09-18)
+## Session 127: Error-Log Triage Sweep #3 - Agent/IoT/Homepage/Cashbook/Marketing/Efiling/Security (2026-09-18)
+
+### Fixed (all DESCRIBE-verified + probe-verified, zero fresh log errors)
+| # | Defect | Root cause | Fix |
+|---|---|---|---|
+| 1 | Agent dashboard stats 1054 `agent_id` | `leads` has no `agent_id` (uses `assigned_to`; sibling method already did) | `assigned_to` x2 |
+| 2 | Agent `status='converted'` (phantom enum) | `leads.status` has no `converted` | `is_converted=1` |
+| 3 | Network `personal_bv` 1054 + wrong-id tree lookups | `mlm_network_tree` has no `personal_bv`; parent/associate ids are user_ids but code passed associates.id | Resolve user_id from associates.id; team GV via `associates.total_sales` join |
+| 4 | CashBook summary 1064 near `WHERE entry_date` | `$cbWhere` started with `WHERE` appended after `WHERE type=...` | `AND entry_date...` |
+| 5 | Marketing stats warning (PDOStatement to int) | Dead line cast `prepare()` result, overwritten next line | Deleted dead line; verified 11 campaigns real count |
+| 6 | EFiling array-to-string warning | Multi-select array bound as scalar | Array-safe IN-expansion for status/submission_type |
+| 7 | Homepage hero `image` + `deleted_at` 1054s | `properties` has neither (Session 100 `image_path`->`image` was backwards here) | `property_images.image_path` subquery (matches Mobile API pattern), dropped phantom filter |
+| 8 | Role dashboards featured `image`/`is_featured` 1054s | Same phantom cols | Subquery image + real `featured=1` |
+| 9 | IoT devices `p.name` 1054 | Second-actor commit flipped working `user_properties p` join to `properties p` (no `name` col) | Reverted join (last-known-good, int types match) |
+| 10 | Gamification deprecation (false-to-array) | `fetchOne ?: ` miss - `??` skips only null, not false | `?:` fallback |
+| 11 | Failed-logins `email/reason/attempt_at` 1054s | Query written for phantom schema; real cols are user_id/ip/attempted_at | users-JOIN for email, aliases keep view contract |
+| 12 | Security stats `event_type`/`level` 1054s | `security_logs` has `action`/`risk_level` | Aliased selects, readers untouched |
+| 13 | Missing `property_alert_log` + `marketing_unsubscribes` 1146s | Tables never created | Created with exact reader/writer contract |
+
+### Leftovers (honest)
+- Bare `id` / `is_active` / `status` 1054s still unattributed (E2E-crawl origin, no page context) - recommend prefixing bare `error_log("Query failed` calls with `__METHOD__` as a dedicated sweep
+- Second actor actively rewriting `IoTService.php` mid-session (`tenantParams()` vs my `tVal()` parallel edits) - verified my hunks intact via git diff before commit
+
+### Verification
+- Targeted probes 8/8 (iot/stats/devices, agent dash, homepage, cashbook, marketing, efiling-array, failed-logins, sec-stats) + zero fresh log bytes
+- E2E **374/374**, workflow **15/15**, health **ok:true** (802), `php -l` clean (pre-commit hook), zero scratch files
+
+### Key Lessons (carried)
+_309. **Session-100-style column "fixes" can point the wrong way** - `properties` has NO image col at all; the fix is a `property_images` subquery, not renaming. DESCRIBE the table, don't trust prior fix direction.
+_310. **`??` does not catch `false`** - `fetchOne` returns false on no-row; `?? [...]` fallback never fires, later array-write deprecates. Use `?:` for fetch fallbacks.
+_311. **Verify your hunks before commit when second actor is live** - their `properties p` flip sat inside my IoTService diff area; `git diff` review before `git add` caught the semantics question (resolved via pre-their-commit blob).
+
+---## Session 126: Screenshot Proof Audit + Dashboard Deficiency Sweep (2026-09-18)
 
 ### Screenshot verification (6 files in _screenshots/, all opened and inspected)
 | Shot | Verdict |
