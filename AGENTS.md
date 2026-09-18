@@ -6,7 +6,7 @@
 | 01 super_admin ERP | OK - real data (9 leads, 12 bookings, Rs.4.07Cr), Admin User |
 | 02 associate Rajesh | RIGHT PAGE, 3 defects -> fixed (referral N/A, zeros verified legit fresh-user) |
 | 03 freelancer agent | RIGHT PAGE, zeros legit (fresh user, ledger 0/downline 0) |
-| 04 "employee agent" | WRONG PROOF - pixel-identical duplicate of 03 (same user, same zeros); no genuine employee-agent capture, needs re-capture |
+| 04 employee agent | RE-CAPTURED - genuine proof: Pooja Mishra (Employee Agent) on /agent/dashboard via real form login; zeros legit (ledger 0) |
 | 05 employee | RIGHT PAGE, zeros legit (fresh user) |
 | 06 customer | RIGHT PAGE + 1 real bug -> fixed (`Welcome back, %s!` raw placeholder) |
 
