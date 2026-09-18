@@ -61,9 +61,9 @@ class EmployeeController extends BaseController
                 throw new Exception('Please fill in all fields');
             }
 
-            // Authenticate against unified users table (include manager role too)
+            // Authenticate against unified users table (employee + manager + telecaller share the employee portal)
             [$tidSql, $tidParams] = $this->tenantWhere();
-            $query = "SELECT * FROM users WHERE email = ? AND role IN ('employee','manager') AND status = 'active'{$tidSql} LIMIT 1";
+            $query = "SELECT * FROM users WHERE email = ? AND role IN ('employee','manager','telecaller') AND status = 'active'{$tidSql} LIMIT 1";
             $employee = $this->db->fetchOne($query, array_merge([$email], $tidParams));
 
             if ($employee && password_verify($password, $employee['password'])) {

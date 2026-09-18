@@ -3,7 +3,7 @@
 /**
  * Agent Authentication Controller
  *
- * @deprecated Use CoreAuthController instead. Kept for backward compatibility.
+ * Live controller for agent web login/registration (CoreAuthController is archived/dead).
  *             Registration now delegates to UserRegistrationService.
  */
 
@@ -46,13 +46,13 @@ class AgentAuthController extends BaseController
     {
         @session_start();
 
-        $name = trim($_POST['name'] ?? '');
+        $name = trim($_POST['full_name'] ?? $_POST['name'] ?? '');
         $email = trim($_POST['email'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
         $password = $_POST['password'] ?? '';
         $confirm = $_POST['confirm_password'] ?? '';
         $experience = $_POST['experience'] ?? '';
-        $referral = trim($_POST['referral_code'] ?? '');
+        $referral = trim($_POST['referral_code'] ?? $_POST['sponsor_code'] ?? '');
 
         $errors = [];
         if (empty($name)) $errors[] = "Name is required";
@@ -60,6 +60,15 @@ class AgentAuthController extends BaseController
         if (empty($phone) || !preg_match('/^[0-9]{10}$/', $phone)) $errors[] = "Valid 10-digit phone required";
         if (strlen($password) < 6) $errors[] = "Password must be at least 6 characters";
         if ($password !== $confirm) $errors[] = "Passwords do not match";
+
+        // CAPTCHA validation
+        $captcha_code = trim($_POST['captcha_code'] ?? '');
+        if (!empty($captcha_code)) {
+            require_once __DIR__ . '/../../../Helpers/SimpleCaptcha.php';
+            if (!\SimpleCaptcha::validate($captcha_code)) {
+                $errors[] = 'Invalid or expired security code. Please try again.';
+            }
+        }
 
         if (!empty($errors)) {
             $_SESSION['errors'] = $errors;

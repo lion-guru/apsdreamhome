@@ -3,7 +3,7 @@
 /**
  * Associate Authentication Controller
  *
- * @deprecated Use CoreAuthController instead. Kept for backward compatibility.
+ * Live controller for associate web login/registration (CoreAuthController is archived/dead).
  *             Registration now delegates to UserRegistrationService.
  */
 
@@ -74,7 +74,7 @@ class AssociateAuthController extends BaseController
         $phone = trim($_POST['phone'] ?? '');
         $password = $_POST['password'] ?? '';
         $confirm = $_POST['confirm_password'] ?? '';
-        $referral = trim($_POST['sponsor_code'] ?? '');
+        $referral = trim($_POST['sponsor_code'] ?? $_POST['referral_code'] ?? '');
 
         $errors = [];
         if (empty($name)) $errors[] = "Name is required";
@@ -112,9 +112,11 @@ class AssociateAuthController extends BaseController
 
             // Mark visitor as converted
             try {
-                $visitorTracking = new \App\Services\VisitorTrackingService();
-                $visitorTracking->markAsConverted($result['user_id']);
-            } catch (\Exception $e) {
+                if (class_exists('\App\Services\VisitorTrackingService')) {
+                    $visitorTracking = new \App\Services\VisitorTrackingService();
+                    $visitorTracking->markAsConverted($result['user_id']);
+                }
+            } catch (\Throwable $e) {
                 error_log("Visitor conversion tracking failed: " . $e->getMessage());
             }
 

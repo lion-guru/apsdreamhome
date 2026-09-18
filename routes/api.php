@@ -38,20 +38,20 @@ $router->post('/api/v2/mobile/auth/air-login', 'Api\MobileAuthApiController@requ
 $router->post('/api/v2/mobile/auth/air-login/verify', 'Api\MobileAuthApiController@verifyAirLoginOtp')
     ->middleware(applyRateLimit('auth.otp'));
 
-// Web auth routes
-$router->post('/auth/login', 'Auth\CustomerAuthController@login')
+// Web auth routes (must mirror routes/web.php live handlers — CoreAuthController is archived/dead)
+$router->post('/auth/login', 'Auth\AuthController@authenticate')
     ->middleware(applyRateLimit('auth.login'));
-$router->post('/auth/register', 'Auth\CustomerAuthController@register')
+$router->post('/auth/register', 'Auth\RegisterController@handleRegister')
     ->middleware(applyRateLimit('auth.register'));
-$router->post('/auth/forgot-password', 'Auth\CustomerAuthController@forgotPassword')
+$router->post('/auth/forgot-password', 'Auth\AuthController@forgotPassword')
     ->middleware(applyRateLimit('auth.password'));
-$router->post('/auth/reset-password', 'Auth\CustomerAuthController@resetPassword')
+$router->post('/auth/reset-password', 'Auth\AuthController@resetPassword')
     ->middleware(applyRateLimit('auth.password'));
-$router->post('/auth/verify-otp', 'Auth\CustomerAuthController@verifyOtp')
+$router->post('/auth/verify-otp', 'Auth\OtpAuthController@verifyOtp')
     ->middleware(applyRateLimit('auth.otp'));
-$router->post('/auth/air-login', 'Auth\CoreAuthController@requestAirLoginOtp')
+$router->post('/auth/air-login', 'Auth\OtpAuthController@requestAirLoginOtp')
     ->middleware(applyRateLimit('auth.air_login'));
-$router->post('/auth/air-login/verify', 'Auth\CoreAuthController@verifyAirLoginOtp')
+$router->post('/auth/air-login/verify', 'Auth\OtpAuthController@verifyAirLoginOtp')
     ->middleware(applyRateLimit('auth.otp'));
 
 // ============================================================
@@ -969,6 +969,23 @@ $router->get('/api/v2/admin/query-analyzer/missing-indexes', 'Api\QueryAnalyzerC
 $router->get('/api/v2/admin/query-analyzer/processes', 'Api\QueryAnalyzerController@processList')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/admin/query-analyzer/kill/{id}', 'Api\QueryAnalyzerController@killProcess')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/admin/query-analyzer/explain', 'Api\QueryAnalyzerController@explainQuery')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ============================================================
+// LEGAL KIT API (Mobile — download legal kit ZIP)
+// ============================================================
+
+$router->get('/api/v2/mobile/legal-kit/{bookingId}', 'Api\LegalKitApiController@download')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/legal-kit/{bookingId}/admin', 'Api\LegalKitApiController@download')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/legal-kit/{bookingId}/sales', 'Api\LegalKitApiController@download')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ============================================================
+// COMMISSION RECALCULATION API (Mobile — staff)
+// ============================================================
+
+$router->get('/api/v2/mobile/commission-recalculations', 'Api\CommissionRecalculationApiController@index')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/commission-recalculations/{id}', 'Api\CommissionRecalculationApiController@detail')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/commission-recalculations/request', 'Api\CommissionRecalculationApiController@request')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/commission-recalculations/bulk-request', 'Api\CommissionRecalculationApiController@bulkRequest')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // ============================================================
 // INFRASTRUCTURE & DEBUGGING API (Admin Tools)
