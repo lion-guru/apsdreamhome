@@ -174,12 +174,12 @@ class AgentDashboardController extends BaseController
     {
         try {
             $totalLeads = $this->db->fetchOne(
-                "SELECT COUNT(*) as count FROM leads WHERE agent_id = ?",
+                "SELECT COUNT(*) as count FROM leads WHERE assigned_to = ?",
                 [$userId]
             );
 
             $convertedLeads = $this->db->fetchOne(
-                "SELECT COUNT(*) as count FROM leads WHERE agent_id = ? AND status = 'converted'",
+                "SELECT COUNT(*) as count FROM leads WHERE assigned_to = ? AND is_converted = 1",
                 [$userId]
             );
 
@@ -397,6 +397,10 @@ class AgentDashboardController extends BaseController
     private function getNetworkStats($associateId)
     {
         try {
+            // mlm_network_tree.parent_id/associate_id store user_ids; resolve member user_id first
+            $uidRow = $this->db->fetchOne("SELECT user_id FROM associates WHERE id = ?", [$associateId]);
+            $uid = (int)($uidRow['user_id'] ?? 0);
+
             $directCount = $this->db->fetchOne(
                 "SELECT COUNT(*) as count FROM associates WHERE sponsor_id = ? AND status = 'active'",
                 [$associateId]
@@ -404,17 +408,15 @@ class AgentDashboardController extends BaseController
 
             $teamSize = $this->db->fetchOne(
                 "SELECT COUNT(*) as count FROM mlm_network_tree WHERE parent_id = ? AND level > 0",
-                [$associateId]
+                [$uid]
             );
 
             $teamGV = $this->db->fetchOne(
-                "SELECT COALESCE(SUM(total_bv), 0) as gv FROM (
-                    SELECT associate_id, SUM(personal_bv) as total_bv 
-                    FROM mlm_network_tree 
-                    WHERE parent_id = ? 
-                    GROUP BY associate_id
-                ) t",
-                [$associateId]
+                "SELECT COALESCE(SUM(a.total_sales), 0) as gv
+                 FROM mlm_network_tree nt
+                 JOIN associates a ON a.user_id = nt.associate_id
+                 WHERE nt.parent_id = ?",
+                [$uid]
             );
 
             return [

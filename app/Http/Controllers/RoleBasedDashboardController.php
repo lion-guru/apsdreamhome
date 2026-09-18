@@ -1085,7 +1085,7 @@ class RoleBasedDashboardController extends AdminController
     private function getFeaturedListingsData()
     {
         try {
-            $rows = $this->db->fetchAll("SELECT id, title, price, location, image FROM properties WHERE status='active' AND is_featured=1 LIMIT 5");
+            $rows = $this->db->fetchAll("SELECT p.id, p.title, p.price, p.location, (SELECT image_path FROM property_images WHERE property_id = p.id ORDER BY is_primary DESC, id ASC LIMIT 1) AS image FROM properties p WHERE p.status='active' AND p.featured=1 LIMIT 5");
             return $rows;
         } catch (\Exception $e) { return []; }
     }

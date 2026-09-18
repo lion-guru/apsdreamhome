@@ -49,14 +49,15 @@ class SecurityService extends ModernSecurityService
     public function getFailedAttempts(string $email = '', int $hours = 24): array
     {
         try {
-            $sql = "SELECT email, ip_address, reason, attempt_at FROM failed_login_attempts 
-                    WHERE attempt_at > DATE_SUB(NOW(), INTERVAL ? HOUR)";
+            $sql = "SELECT u.email AS email, f.ip_address, '' AS reason, f.attempted_at AS attempt_at FROM failed_login_attempts f
+                    LEFT JOIN users u ON u.id = f.user_id
+                    WHERE f.attempted_at > DATE_SUB(NOW(), INTERVAL ? HOUR)";
             $params = [$hours];
             if ($email) {
-                $sql .= " AND email = ?";
+                $sql .= " AND u.email = ?";
                 $params[] = $email;
             }
-            $sql .= " ORDER BY attempt_at DESC LIMIT 100";
+            $sql .= " ORDER BY f.attempted_at DESC LIMIT 100";
             return $this->db->fetchAll($sql, $params) ?: [];
         } catch (\Exception $e) {
             error_log("Failed to get failed login attempts: " . $e->getMessage());

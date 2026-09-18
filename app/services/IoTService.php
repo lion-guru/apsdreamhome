@@ -70,10 +70,10 @@ class IoTService
     {
         $tidSql = $this->tenantSql();
         $tParams = $this->tenantParams();
-        $sql = "SELECT d.*, c.name as catalog_name, COALESCE(p.title, p.name, '') as property_name
+        $sql = "SELECT d.*, c.name as catalog_name, COALESCE(p.name, '') as property_name
                 FROM iot_devices d
                 LEFT JOIN iot_device_catalog c ON c.id = d.catalog_id
-                LEFT JOIN properties p ON p.id = d.property_id
+                LEFT JOIN user_properties p ON p.id = d.property_id
                 WHERE 1=1" . $tidSql;
         $params = $tParams;
         if (!empty($filters['status'])) { $sql .= " AND d.status = ?"; $params[] = $filters['status']; }

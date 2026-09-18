@@ -102,13 +102,17 @@ class EFilingService
         $where = ['1=1'];
         $params = [];
 
-        if (!empty($filters['submission_type'])) {
-            $where[] = "submission_type = ?";
-            $params[] = $filters['submission_type'];
-        }
-        if (!empty($filters['status'])) {
-            $where[] = "status = ?";
-            $params[] = $filters['status'];
+        foreach (['submission_type' => 'submission_type', 'status' => 'status'] as $f => $col) {
+            if (!empty($filters[$f])) {
+                $vals = is_array($filters[$f]) ? array_values($filters[$f]) : [$filters[$f]];
+                if (count($vals) > 1) {
+                    $where[] = "$col IN (" . implode(',', array_fill(0, count($vals), '?')) . ")";
+                    $params = array_merge($params, $vals);
+                } else {
+                    $where[] = "$col = ?";
+                    $params[] = $vals[0];
+                }
+            }
         }
         if (!empty($filters['financial_year'])) {
             $where[] = "financial_year = ?";

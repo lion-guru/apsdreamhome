@@ -297,7 +297,6 @@ class MarketingCampaignService
             $stats['total_recipients'] = (int)$this->pdo->query("SELECT COUNT(*) FROM marketing_campaign_recipients WHERE 1=1" . $this->tenantSql())->fetchColumn();
             $params = [];
             if ($tid > 1) $params[] = $tid;
-            $stats['total_sent'] = (int)$this->pdo->prepare("SELECT COUNT(*) FROM marketing_campaign_recipients WHERE status IN ('sent','delivered','opened','clicked')" . $this->tenantSql());
             $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM marketing_campaign_recipients WHERE status IN ('sent','delivered','opened','clicked')" . $this->tenantSql());
             $stmt->execute($params);
             $stats['total_sent'] = (int)$stmt->fetchColumn();

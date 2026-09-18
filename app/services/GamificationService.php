@@ -114,7 +114,7 @@ class GamificationService
         $stats = $this->db->fetchOne(
             "SELECT * FROM gamification_user_stats WHERE user_id = ? {$tSql}",
             $params
-        ) ?? ['user_id' => $userId, 'total_points' => 0, 'current_level' => 1];
+        ) ?: ['user_id' => $userId, 'total_points' => 0, 'current_level' => 1];
 
         $level = $this->getLevel($stats['current_level'] ?? 1);
         $nextLevel = $this->getLevel(($stats['current_level'] ?? 1) + 1);

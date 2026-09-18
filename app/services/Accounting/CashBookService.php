@@ -222,7 +222,7 @@ class CashBookService
         if ($tid > 1) $params[] = $tid;
 
         try {
-            $cbWhere = "WHERE entry_date BETWEEN ? AND ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+            $cbWhere = "AND entry_date BETWEEN ? AND ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
             $cbParams = $params;
             $receipts = $this->db->fetchOne("SELECT COALESCE(SUM(amount), 0) AS total FROM cash_book_entries WHERE type = 'credit' $cbWhere", $cbParams);
             $payments = $this->db->fetchOne("SELECT COALESCE(SUM(amount), 0) AS total FROM cash_book_entries WHERE type = 'debit' $cbWhere", $cbParams);

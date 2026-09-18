@@ -401,11 +401,11 @@ class SecurityService
                 "SELECT COUNT(*) FROM security_logs WHERE DATE(created_at) = CURDATE()"
             ) ?? 0;
 
-            // Events by type
+            // Events by type (real column is `action`)
             $typeStats = $this->db->fetchAll(
-                "SELECT event_type, COUNT(*) as count FROM security_logs 
+                "SELECT action AS event_type, COUNT(*) as count FROM security_logs
                  WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
-                 GROUP BY event_type"
+                 GROUP BY action"
             );
 
             $stats['by_type'] = [];
@@ -413,11 +413,11 @@ class SecurityService
                 $stats['by_type'][$stat['event_type']] = $stat['count'];
             }
 
-            // Events by level
+            // Events by level (real column is `risk_level`)
             $levelStats = $this->db->fetchAll(
-                "SELECT level, COUNT(*) as count FROM security_logs 
+                "SELECT risk_level AS level, COUNT(*) as count FROM security_logs
                  WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
-                 GROUP BY level"
+                 GROUP BY risk_level"
             );
 
             $stats['by_level'] = [];
@@ -427,9 +427,9 @@ class SecurityService
 
             // Recent threats
             $stats['recent_threats'] = $this->db->fetchAll(
-                "SELECT * FROM security_logs 
-                 WHERE level >= 3 
-                 ORDER BY created_at DESC 
+                "SELECT * FROM security_logs
+                 WHERE risk_level >= 3
+                 ORDER BY created_at DESC
                  LIMIT 10"
             );
 
