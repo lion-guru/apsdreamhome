@@ -1,4 +1,33 @@
-## Session 125: Dead /auth Routes (Screenshot Text) + All-Role Login Sweep (2026-09-18)
+## Session 126: Screenshot Proof Audit + Dashboard Deficiency Sweep (2026-09-18)
+
+### Screenshot verification (6 files in _screenshots/, all opened and inspected)
+| Shot | Verdict |
+|---|---|
+| 01 super_admin ERP | OK - real data (9 leads, 12 bookings, Rs.4.07Cr), Admin User |
+| 02 associate Rajesh | RIGHT PAGE, 3 defects -> fixed (referral N/A, zeros verified legit fresh-user) |
+| 03 freelancer agent | RIGHT PAGE, zeros legit (fresh user, ledger 0/downline 0) |
+| 04 "employee agent" | WRONG PROOF - pixel-identical duplicate of 03 (same user, same zeros); no genuine employee-agent capture, needs re-capture |
+| 05 employee | RIGHT PAGE, zeros legit (fresh user) |
+| 06 customer | RIGHT PAGE + 1 real bug -> fixed (`Welcome back, %s!` raw placeholder) |
+
+### Password reset (explicit user order)
+- All 106 `users` rows -> `Aps@2026` (argon2id, single hash); pre-reset hashes backed up to Temp/opencode/pw_backup_*.json (outside repo, kept for rollback); post-reset 8/8 logins green incl. manager
+
+### Defects found and fixed (all probe-verified, zero fresh log errors)
+| # | Defect | Root cause | Fix |
+|---|---|---|---|
+| 1 | Customer dashboard `Welcome back, %s!` | `__()` returns raw default when key missing (`dash_welcome_back` absent in en/hi) and service only substitutes `{key}` style; view passed assoc params + `%s` default with no sprintf | sprintf-wrap (matches sibling lines 456/496-498 convention) -> "Welcome back, Customer!" |
+| 2 | Same latent pattern `rank_eligibility.php:123` (`Rs.%s more needed`) | Same | sprintf-wrap with number_format |
+| 3 | Associate `Referral Code: N/A` despite row having code | Unified `/login` (`AuthController::establishSession`) never set `$_SESSION['referral_code']` (only AssociateAuthController did) | One line in establishSession from `$user['referral_code']` -> RAJ260918870 renders |
+| 4 | `/associate/rank-eligibility` BLANK (200, 0 bytes) for everyone | Triple fault: (a) HY093 - slab query bound 1 param to 0 placeholders on tid=1, (b) controller passed camelCase/array keys vs snake_case view contract + array as current_rank, (c) DB slug `sr_associate` vs view `$rankConfig` key `senior_associate` hid next-rank section; silent catch -> blank | Rebuilt render data to view contract, tenant-only slab params, added `sr_associate` config key + `rank_slug` matching, fail-soft catch renders empty progress; verified 199KB + correct Rs.10,00,000 math + zero warnings |
+
+### Key Lessons (carried)
+_305. **`__()` default path drops params** - missing key returns raw `$default`; `{key}` substitution only runs on found values. Any `%s` in a default MUST be sprintf-wrapped at the call site.
+_306. **Slug-vs-label drift kills matching silently** - DB `sr_associate` vs view `senior_associate`: two lookups failed independently (config key + rank_name compare). Match on slug, display via label map.
+_307. **Silent catch + contract mismatch = blank 200** - the rank page died from HY093 AND would have died again on array-as-key; catch logged only. Fail-soft catch must render empty state, never void.
+_308. **Never `echo "" >` a log in PowerShell** - writes UTF-16LE BOM; mixes encodings. Truncate via PHP `file_put_contents`.
+
+---## Session 125: Dead /auth Routes (Screenshot Text) + All-Role Login Sweep (2026-09-18)
 
 ### Root cause of screenshot ("This controller is no longer in use.")
 - `CoreAuthController.php` is archived (top-level `die()`); `routes/api.php:42-55` still pointed 6 POST routes at it -> every hit died before dispatch. HEAD had 4 routes -> nonexistent `CustomerAuthController` (500s); second actor's uncommitted edit repointed them to CoreAuthController (die-text). Fixed all 6 to web.php-mirrored live handlers: `login/forgot/reset` -> `AuthController`, `verify-otp/air-login/air-login-verify` -> `OtpAuthController`. Pre-probe 6/6 die-text -> post-probe 6/6 302 to live handlers
