@@ -1,4 +1,32 @@
-## Session 127: Error-Log Triage Sweep #3 - Agent/IoT/Homepage/Cashbook/Marketing/Efiling/Security (2026-09-18)
+## Session 128: Column-Hunter Sweep - Bare-1054 Attribution via Table DESCRIBE (2026-09-18)
+
+### Tooling
+- Built disposable table-col hunter (FROM-table vs DESCRIBE, 40 hits) - crude window matching bleeds across statements, so every hit was individually DESCRIBE-verified before touching; ~half the hits were false positives on valid queries
+
+### Fixed (all probe-verified, zero fresh log errors)
+| # | Defect | Root cause | Fix + proof |
+|---|---|---|---|
+| 1 | Commission calculator always used 5% default rate | `mlm_rank_slabs` has no `rate` col (real: `commission_rate`); fail-soft fallback hid it | `commission_rate AS rate` x2; live POST 10L @bdm -> Rs.100,000 direct + Rs.140,000 total |
+| 2 | MLM dashboard commission sums 1054 `user_id` | `mlm_commission_ledger` has `beneficiary_user_id`, no `user_id` | Swapped x2 (method currently unrouted - preventive) |
+| 3 | Calculator endpoint dead end-to-end | POST-only route + `associate/commission_calculator` view never existed (rendered "View not found", no form anywhere posts to it) | Created minimal result+form view, added GET route; full flow 200, zero errors |
+
+### Verified legit (no fix - DESCRIBE says columns exist)
+- `lead_sources.is_active`, `user_packages.is_active`, `whatsapp/sms_templates`, `notification_logs.status`, `vulnerability_scans.status`, DailyOps `lead_pipeline.stage` fixes intact
+
+### Leftovers (honest)
+- ~30 lower-traffic hunter claims still unverified one-by-one (careers/projects/cities/documents/salary/land/bank/shifts/favorites/ranks/activities/campaigns/payments/gst) - same verify-before-touch discipline applies
+- Bare `id` / `is_active` / `status` log lines now have a proven attribution tool (the hunter) for next sweep
+- Second actor changed a *.test password mid-session (rajesh.associate) - probes switched to stable testassociate@ account; never reset others password without explicit order
+
+### Verification
+- Workflow **15/15**, health **ok:true** (802), `php -l` clean (pre-commit hook), zero scratch files
+
+### Key Lessons (carried)
+_312. **Fallback defaults hide wrong math, not just empty pages** - calculator silently used 5% for every rank; fail-soft + hardcoded fallback = plausible-but-wrong output. Probe the NUMBERS, not just the status.
+_313. **Orphaned endpoints need view+route+form, all three** - calculator had live POST + working math but no GET route, no form, no result view. An endpoint is only done when a user can reach it and see output.
+_314. **Window-bleed makes hunters lie** - 400-char FROM..WHERE windows attribute cols to the wrong table; DESCRIBE-verdict per hit is mandatory, never batch-fix from hunter output.
+
+---## Session 127: Error-Log Triage Sweep #3 - Agent/IoT/Homepage/Cashbook/Marketing/Efiling/Security (2026-09-18)
 
 ### Fixed (all DESCRIBE-verified + probe-verified, zero fresh log errors)
 | # | Defect | Root cause | Fix |
