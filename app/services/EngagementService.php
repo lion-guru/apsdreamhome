@@ -44,16 +44,21 @@ class EngagementService
         $metricType = trim($metricType);
         if ($metricType === '') throw new InvalidArgumentException('metricType is required');
 
+        // Table has no metric_type column: rank by metric-appropriate real column instead
+        $orderCol = ($metricType === 'team') ? 'ls.team_size' : 'ls.total_sales';
+        $tid = $this->tenantId();
+        $tSql = $tid > 1 ? ' AND ls.tenant_id = ?' : '';
+        $tParams = $tid > 1 ? [$tid] : [];
         if ($snapshotDate === null) {
-            $stmt = $this->conn->prepare('SELECT MAX(snapshot_date) AS latest_date FROM mlm_leaderboard_snapshots WHERE metric_type = ?');
-            $stmt->execute([$metricType]);
+            $stmt = $this->conn->prepare('SELECT MAX(snapshot_date) AS latest_date FROM mlm_leaderboard_snapshots WHERE 1=1' . $tSql);
+            $stmt->execute($tParams);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$row || empty($row['latest_date'])) return ['metric_type' => $metricType, 'snapshot_date' => null, 'records' => []];
             $snapshotDate = $row['latest_date'];
         }
 
-        $stmt = $this->conn->prepare('SELECT ls.*, u.name AS user_name FROM mlm_leaderboard_snapshots ls JOIN users u ON ls.user_id = u.id WHERE ls.metric_type = ? AND ls.snapshot_date = ? ORDER BY ls.rank_position ASC LIMIT ?');
-        $stmt->execute([$metricType, $snapshotDate, $limit]);
+        $stmt = $this->conn->prepare('SELECT ls.*, u.name AS user_name FROM mlm_leaderboard_snapshots ls JOIN users u ON ls.user_id = u.id WHERE ls.snapshot_date = ?' . $tSql . ' ORDER BY ' . $orderCol . ' DESC LIMIT ?');
+        $stmt->execute(array_merge([$snapshotDate], $tParams, [$limit]));
         return ['metric_type' => $metricType, 'snapshot_date' => $snapshotDate, 'records' => $stmt->fetchAll(PDO::FETCH_ASSOC)];
     }
 
