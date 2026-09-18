@@ -80,7 +80,7 @@ echo "\n🔐 AUTHENTICATION SYSTEM:\n";
 $authFiles = [
     'app/Http/Controllers/Auth/AdminAuthController.php',
     'app/Http/Controllers/Auth/AssociateAuthController.php', 
-    'app/Http/Controllers/Auth/CustomerAuthController.php',
+    'app/Http/Controllers/Auth/OtpAuthController.php',
     'app/Http/Controllers/Auth/AuthController.php'
 ];
 
