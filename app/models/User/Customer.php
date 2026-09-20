@@ -81,7 +81,7 @@ class Customer extends Model
 
         $sql = "SELECT u.*, cp.phone as profile_phone, cp.city, cp.state 
                 FROM users u
-                LEFT JOIN users cp ON u.id = cp.user_id
+                LEFT JOIN users cp ON u.id = cp.id
                 WHERE u.role = 'customer'";
 
         $params = [];
@@ -115,8 +115,8 @@ class Customer extends Model
                        (SELECT COUNT(*) FROM customer_favorites cf WHERE cf.customer_id = u.id) as total_favorites,
                        (SELECT COUNT(*) FROM customer_alerts ca WHERE ca.customer_id = u.id AND ca.status = 'active') as active_alerts
                 FROM {$this->table} u
-                LEFT JOIN users c ON u.id = c.user_id
-                LEFT JOIN property_views pv ON u.id = pv.customer_id
+                 LEFT JOIN users c ON u.id = c.id
+                 LEFT JOIN property_views pv ON u.id = pv.customer_id
                 LEFT JOIN properties p ON pv.property_id = p.id
                 LEFT JOIN bookings b ON u.id = b.customer_id
                 LEFT JOIN payments pay ON u.id = pay.user_id
@@ -166,7 +166,7 @@ class Customer extends Model
 
             $sql = "SELECT u.*, cp.phone as profile_phone, cp.city 
                     FROM users u
-                    LEFT JOIN users cp ON u.id = cp.user_id
+                    LEFT JOIN users cp ON u.id = cp.id
                     {$where_clause} 
                     {$order_clause} 
                     LIMIT :limit OFFSET :offset";
@@ -234,7 +234,7 @@ class Customer extends Model
         $sql = "
             SELECT u.*, c.phone, c.address, c.city, c.state, c.pincode
             FROM {$this->table} u
-            LEFT JOIN users c ON u.id = c.user_id
+            LEFT JOIN users c ON u.id = c.id
             WHERE u.email = :email AND u.role = 'customer' AND u.status = 'active'
         ";
 
@@ -1191,7 +1191,7 @@ class Customer extends Model
                    COUNT(DISTINCT pr.id) as total_reviews,
                    u.created_at as registration_date
             FROM {$this->table} u
-            LEFT JOIN users c ON u.id = c.user_id
+            LEFT JOIN users c ON u.id = c.id
             LEFT JOIN property_views pv ON u.id = pv.customer_id
             LEFT JOIN customer_favorites cf ON u.id = cf.customer_id
             LEFT JOIN bookings b ON u.id = b.customer_id
@@ -1393,7 +1393,7 @@ class Customer extends Model
                    COALESCE((SELECT COUNT(*) FROM property_views WHERE customer_id = u.id), 0) as total_views,
                    u.created_at as registration_date
             FROM {$this->table} u
-            LEFT JOIN users c ON u.id = c.user_id
+            LEFT JOIN users c ON u.id = c.id
             {$whereClause}
             ORDER BY total_spent DESC, total_bookings DESC
             LIMIT {$offset}, {$limit}
@@ -1474,7 +1474,7 @@ class Customer extends Model
             SELECT ai.*, u.name as sponsor_name, u.email as sponsor_email,
                    a.associate_code as sponsor_code
             FROM associate_invitations ai
-            JOIN users a ON ai.sponsor_id = a.associate_id
+            JOIN users a ON ai.sponsor_id = a.id
             JOIN users u ON a.user_id = u.id
             WHERE ai.customer_id = :customer_id AND ai.status = 'pending'
             AND ai.expires_at > NOW()

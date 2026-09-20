@@ -437,7 +437,7 @@ class EmailService
                 'tenant_id' => TenantContext::getId(),
                 'recipient' => $to,
                 'subject' => $subject,
-                'body' => substr($body, 0, 1000), // Truncate for storage
+                'message' => substr($body, 0, 1000), // Truncate for storage (col is `message`, not `body`)
                 'status' => $status,
                 'error_message' => $error,
                 'created_at' => date('Y-m-d H:i:s')

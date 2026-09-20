@@ -53,7 +53,7 @@ class ProfileController extends BaseController
             $assoc = $db->fetchOne("SELECT * FROM associates WHERE user_id = ?{$tidSql} LIMIT 1", $params);
 
             // Get wallet
-            $wallet = $db->fetchOne("SELECT balance FROM wallet_points WHERE user_id = ?{$tidSql} LIMIT 1", $params);
+            $wallet = $db->fetchOne("SELECT points_balance AS balance FROM wallet_points WHERE user_id = ?{$tidSql} LIMIT 1", $params);
             $walletBalance = $wallet ? (float)$wallet['balance'] : 0.0;
 
             // Get commission summary

@@ -72,6 +72,7 @@ class AdminMenuService
         // This ensures CEO/CFO/Finance Director dashboards are only visible to those roles
 
         // Employee role: resolve designation → sub-role for granular access
+        $baseRole = $role;
         if ($role === 'employee') {
             $subRole = $this->resolveEmployeeSubRole($userId);
             if ($subRole) {
@@ -82,6 +83,11 @@ class AdminMenuService
         // Get menu items based on role permissions
         if ($role) {
             $menuItems = $this->getMenuItemsByRole($role);
+            // Unmapped designation (e.g. sub-role 'employee_general' with zero
+            // permissions): fall back to base-role items instead of an empty sidebar.
+            if (empty($menuItems) && $role !== $baseRole) {
+                $menuItems = $this->getMenuItemsByRole($baseRole);
+            }
         } else {
             // If no role, return empty menu
             $menuItems = [];

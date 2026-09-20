@@ -106,6 +106,7 @@ class PortalMenuService
             case 'agent':
                 return $this->agentItems();
             case 'employee':
+            case 'telecaller':
                 return $this->employeeItems();
             case 'admin':
             case 'super_admin':
@@ -465,6 +466,7 @@ class PortalMenuService
     {
         $role = strtolower(trim($role));
         if ($role === 'user') return 'customer';
+        if ($role === 'telecaller') return 'employee';
         if (in_array($role, ['admin', 'super_admin', 'manager', 'ceo', 'cfo', 'coo', 'cto', 'cmo', 'chro', 'director', 'builder', 'investor'], true)) {
             return 'admin';
         }

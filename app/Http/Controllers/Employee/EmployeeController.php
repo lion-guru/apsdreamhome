@@ -6,6 +6,7 @@ require_once __DIR__ . '/../BaseController.php';
 
 use App\Http\Controllers\BaseController;
 use App\Traits\TenantAwareTrait;
+use App\Traits\AuthSessionTrait;
 use Exception;
 
 /**
@@ -14,7 +15,7 @@ use Exception;
  */
 class EmployeeController extends BaseController
 {
-    use TenantAwareTrait;
+    use TenantAwareTrait, AuthSessionTrait;
 
     protected $db;
 
@@ -61,12 +62,20 @@ class EmployeeController extends BaseController
                 throw new Exception('Please fill in all fields');
             }
 
+            // Rate limiting: 5 attempts per minute per IP
+            require_once __DIR__ . '/../../../Middleware/RateLimiter.php';
+            \App\Middleware\RateLimiter::check('employee_login_' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'), 5, 60);
+
             // Authenticate against unified users table (employee + manager + telecaller share the employee portal)
             [$tidSql, $tidParams] = $this->tenantWhere();
             $query = "SELECT * FROM users WHERE email = ? AND role IN ('employee','manager','telecaller') AND status = 'active'{$tidSql} LIMIT 1";
             $employee = $this->db->fetchOne($query, array_merge([$email], $tidParams));
 
             if ($employee && password_verify($password, $employee['password'])) {
+                // Establish session using trait (includes audit log + login notifications)
+                $this->establishSession($employee, $email, 'password');
+                
+                // Employee portal specific session data
                 $_SESSION['employee_id'] = $employee['id'];
                 $_SESSION['employee_email'] = $employee['email'];
                 $_SESSION['employee_name'] = $employee['name'];

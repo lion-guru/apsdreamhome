@@ -528,8 +528,8 @@ $GLOBALS['_html_doc_started'] = true;
             <div class="user-avatar">
                 <i class="fas fa-handshake"></i>
             </div>
-            <div class="user-name"><?php echo htmlspecialchars($_SESSION['associate_name'] ?? 'Associate'); ?></div>
-            <div class="user-role"><?php echo htmlspecialchars($_SESSION['associate_role'] ?? 'Associate'); ?></div>
+            <div class="user-name"><?php echo htmlspecialchars($_SESSION['user_name'] ?? $_SESSION['associate_name'] ?? 'Associate'); ?></div>
+            <div class="user-role"><?php echo htmlspecialchars($_SESSION['user_email'] ?? $_SESSION['associate_role'] ?? 'Associate'); ?></div>
         </div>
 
         <!-- RBAC-Driven Portal Menu (associate role) -->

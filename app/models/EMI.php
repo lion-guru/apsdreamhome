@@ -756,7 +756,7 @@ class EMI extends Model
                 LEFT JOIN users u ON u.id = ep.customer_id
                 LEFT JOIN properties p ON ep.property_id = p.id
                 LEFT JOIN payments pay ON ep.foreclosure_payment_id = pay.id
-                LEFT JOIN admin ad ON pay.created_by = ad.aid
+                LEFT JOIN admin ad ON pay.created_by = ad.id
                 WHERE ep.status = 'completed' AND ep.foreclosure_date IS NOT NULL";
 
         $params = [];

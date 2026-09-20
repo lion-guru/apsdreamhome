@@ -16,6 +16,15 @@ $gamify = $gamify ?? [];
 $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 $agent_name = $_SESSION['user_name'] ?? 'Agent';
 $active_page = 'dashboard';
+// Role-driven sidebar (single source of truth: PortalMenuService). Falls back to
+// the static list below only if the service is unavailable.
+$portalMenu = [];
+try {
+    if (!class_exists('App\Services\PortalMenuService')) {
+        require_once __DIR__ . '/../../Services/PortalMenuService.php';
+    }
+    $portalMenu = App\Services\PortalMenuService::forSession();
+} catch (\Throwable $e) { error_log('agent dashboard menu: ' . $e->getMessage()); }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -46,6 +55,8 @@ $active_page = 'dashboard';
         .sidebar-link:hover{background:rgba(255,255,255,.15);color:#fff}
         .sidebar-link.active{background:#fff;color:#15803d}
         .sidebar-link i{width:24px;margin-right:12px;font-size:1rem;color:#dcfce7;text-align:center}
+        .sidebar-sec{padding:14px 20px 6px;font-size:.7rem;text-transform:uppercase;color:rgba(255,255,255,.55);font-weight:700;letter-spacing:.06em}
+        .sidebar-badge{margin-left:auto;background:rgba(255,255,255,.25);color:#fff;padding:1px 8px;border-radius:10px;font-size:.7rem;font-weight:700}
         .sidebar-link.active i,.sidebar-link:hover i{color:#15803d}
         
         .main-content{margin-left:260px;min-height:100vh;transition:margin-left .3s}
@@ -152,6 +163,23 @@ $active_page = 'dashboard';
         </div>
         
         <ul class="sidebar-menu">
+            <?php if (!empty($portalMenu)): ?>
+            <?php foreach ($portalMenu as $section): ?>
+            <?php if (empty($section['items'])) continue; ?>
+            <div class="sidebar-sec"><?php echo htmlspecialchars($section['name']); ?></div>
+            <?php foreach ($section['items'] as $menuItem):
+                $mActive = (($active_page ?? '') === ($menuItem['key'] ?? ''));
+                $mBadge = $menuItem['badge'] ?? null;
+            ?>
+            <li class="sidebar-item">
+                <a href="<?php echo e($base) . htmlspecialchars($menuItem['url'] ?? ''); ?>" class="sidebar-link <?php echo $mActive ? 'active' : ''; ?>" data-menu-key="<?php echo htmlspecialchars($menuItem['key'] ?? ''); ?>">
+                    <i class="<?php echo htmlspecialchars($menuItem['icon'] ?? ''); ?>"></i> <?php echo htmlspecialchars($menuItem['label'] ?? ''); ?>
+                    <?php if ($mBadge !== null && $mBadge > 0): ?><span class="sidebar-badge"><?php echo (int)$mBadge; ?></span><?php endif; ?>
+                </a>
+            </li>
+            <?php endforeach; ?>
+            <?php endforeach; ?>
+            <?php else: ?>
             <li class="sidebar-item">
                 <a href="<?php echo e($base); ?>/agent/dashboard" class="sidebar-link active">
                     <i class="fas fa-tachometer-alt"></i> Dashboard
@@ -197,6 +225,7 @@ $active_page = 'dashboard';
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </a>
             </li>
+            <?php endif; ?>
         </ul>
     </aside>
 

@@ -316,22 +316,27 @@ class SMSService
      */
     private function saveOTP($mobile, $otp)
     {
-        // Invalidate old OTPs
-        $this->db->query(
-            "UPDATE notifications_unified SET status = 'expired' WHERE mobile = ? AND status = 'pending'",
-            [$mobile]
-        );
+        // Invalidate old OTPs (expire pending codes for this mobile)
+        try {
+            $this->db->query(
+                "UPDATE otp_verifications SET expires_at = NOW() WHERE identifier = ? AND used_at IS NULL AND expires_at > NOW()",
+                [$mobile]
+            );
+        } catch (\Throwable $e) { error_log("SmsService saveOTP invalidate failed: ".$e->getMessage()); }
         
-        // Save new OTP
-        $this->db->insert('notifications_unified', [
-            
-            'tenant_id' => TenantContext::getId(),
-            'mobile' => $mobile,
-            'otp' => $otp,
-            'status' => 'pending',
-            'created_at' => date('Y-m-d H:i:s'),
-            'expires_at' => date('Y-m-d H:i:s', strtotime('+10 minutes'))
-        ]);
+        // Save new OTP (real table: otp_verifications, cols: identifier/otp_code/type/purpose/expires_at)
+        try {
+            $tid = method_exists($this, 'tenantId') ? $this->tenantId() : 1;
+            $this->db->insert('otp_verifications', [
+                'tenant_id' => $tid,
+                'identifier' => $mobile,
+                'otp_code' => $otp,
+                'type' => 'sms',
+                'purpose' => 'account_verification',
+                'expires_at' => date('Y-m-d H:i:s', strtotime('+10 minutes')),
+                'created_at' => date('Y-m-d H:i:s')
+            ]);
+        } catch (\Throwable $e) { error_log("SmsService saveOTP insert failed: ".$e->getMessage()); }
     }
     
     /**
@@ -340,11 +345,12 @@ class SMSService
     private function logSMS($mobile, $type, $message, $status)
     {
         try {
+            $tid = method_exists($this, 'tenantId') ? $this->tenantId() : 1;
             $this->db->insert('notifications_unified', [
-                
-                'tenant_id' => TenantContext::getId(),
-                'mobile' => $mobile,
-                'type' => $type,
+                'tenant_id' => $tid,
+                'recipient' => $mobile,
+                'notification_type' => 'sms',
+                'subject' => $type,
                 'message' => substr($message, 0, 500),
                 'status' => $status,
                 'created_at' => date('Y-m-d H:i:s')

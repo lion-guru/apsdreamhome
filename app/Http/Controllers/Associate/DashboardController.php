@@ -51,7 +51,7 @@ class DashboardController extends BaseController
             $user = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             // Get wallet balance
-            $stmt = $db->prepare("SELECT balance FROM wallet_points WHERE user_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " LIMIT 1");
+            $stmt = $db->prepare("SELECT points_balance AS balance FROM wallet_points WHERE user_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " LIMIT 1");
             $params = [$userId];
             if ($tid > 1) $params[] = $tid;
             $stmt->execute($params);
