@@ -298,6 +298,8 @@ class PortalMenuService
 
     private function adminItems(): array
     {
+        // Portal fallback for admin/manager when viewed via portal layout (e.g. /user/* as admin).
+        // Admin panel itself uses AdminMenuService (246 items), this is only the portal header shortcut (7 items).
         return [
             $this->item('dashboard', 'Main', 'Admin Dashboard', '/admin/dashboard', 'fas fa-tachometer-alt'),
             $this->item('leads', 'Main', 'All Leads', '/admin/leads', 'fas fa-users', $this->countTable('leads')),
@@ -409,6 +411,7 @@ class PortalMenuService
         return match ($this->normalizeRole($this->role)) {
             'admin', 'super_admin' => '/admin/kyc',
             'employee' => '/employee/profile',
+            'associate' => '/associate/kyc',
             default => '/user/kyc',
         };
     }

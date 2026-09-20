@@ -111,7 +111,7 @@ class RBACManager
     const ROLE_ADMIN = 'admin';
     const ROLE_MANAGER = 'manager';
     const ROLE_USER = 'user';
-    const ROLE_ASSOCOCIATE = 'associate';
+    const ROLE_ASSOCOCIATE = 'associate'; // @deprecated typo, use ROLE_ASSOCIATE (defined at line 83)
 
     // ============================================
     // PERMISSION CATEGORIES
