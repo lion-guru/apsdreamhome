@@ -193,7 +193,7 @@ class GamificationService
     private function getBadgeByCode(string $code): ?array
     {
         return $this->db->query(
-            "SELECT * FROM badges WHERE code = ? AND status = 'active'",
+            "SELECT * FROM badges WHERE name = ? AND is_active = 1",
             [$code]
         )->fetch(\PDO::FETCH_ASSOC) ?: null;
     }

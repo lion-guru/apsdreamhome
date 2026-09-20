@@ -1561,15 +1561,20 @@ class Customer extends Model
             $emiSql = "
                 SELECT ei.*, b.customer_id, b.property_id,
                        DATEDIFF(ei.due_date, CURDATE()) as days_until_due,
-                       CASE 
-                           WHEN ei.status = 'paid' THEN 'paid'
-                           WHEN ei.due_date < CURDATE() AND ei.status != 'paid' THEN 'overdue'
-                           ELSE 'pending'
-                       END as computed_status
-                FROM emi_installments ei
-                JOIN bookings b ON ei.booking_id = b.id
-                WHERE ei.booking_id = :booking_id
-                ORDER BY ei.emi_number ASC
+                       CASE
+                            WHEN ei.payment_status = 'paid' THEN 'paid'
+                            WHEN ei.due_date < CURDATE() AND ei.payment_status != 'paid' THEN 'overdue'
+                            ELSE 'pending'
+                        END as status,
+                       CASE
+                            WHEN ei.payment_status = 'paid' THEN 'paid'
+                            WHEN ei.due_date < CURDATE() AND ei.payment_status != 'paid' THEN 'overdue'
+                            ELSE 'pending'
+                        END as computed_status
+                 FROM emi_installments ei
+                 JOIN bookings b ON ei.booking_id = b.id
+                 WHERE ei.booking_id = :booking_id
+                 ORDER BY ei.emi_number ASC
             ";
             $emiStmt = $this->db->prepare($emiSql);
             $emiStmt->execute(['booking_id' => $bookingId]);

@@ -252,7 +252,7 @@ class HomePageController extends BaseController
 
         // Fetch team groups for the competition/battle groups section
         try {
-            $stmt = $this->db->query("SELECT * FROM team_groups WHERE status = 'active' ORDER BY score DESC");
+            $stmt = $this->db->query("SELECT * FROM team_groups WHERE is_active = 1 ORDER BY score DESC");
             $teamGroups = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Exception $e) {
             $teamGroups = [];

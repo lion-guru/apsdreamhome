@@ -130,7 +130,7 @@ class ContentPageController extends BaseController
 
         $documents = $this->db->fetchAll("
             SELECT * FROM documents
-            WHERE status = 'published'{$tidSql}
+            WHERE verification_status = 'verified'{$tidSql}
             ORDER BY created_at DESC
         ", $params) ?: [];
 
@@ -189,7 +189,7 @@ class ContentPageController extends BaseController
 
             $services = $this->db->fetchAll("
                 SELECT * FROM construction_services
-                WHERE status = 'active'{$tidSql}
+                WHERE is_active = 1{$tidSql}
                 ORDER BY sort_order
             ", $params) ?: [];
         } catch (\Exception $e) {
@@ -230,7 +230,7 @@ class ContentPageController extends BaseController
 
             $designs = $this->db->fetchAll("
                 SELECT * FROM interior_designs
-                WHERE status = 'active'{$tidSql}
+                WHERE is_active = 1{$tidSql}
                 ORDER BY created_at DESC
             ", $params) ?: [];
         } catch (\Exception $e) {
@@ -240,7 +240,7 @@ class ContentPageController extends BaseController
         try {
             $portfolio = $this->db->fetchAll("
                 SELECT * FROM interior_designs
-                WHERE status = 'active'
+                WHERE is_active = 1
                 ORDER BY created_at DESC
                 LIMIT 6
             ") ?: [];
@@ -288,7 +288,7 @@ class ContentPageController extends BaseController
             return;
         }
 
-        $project = $this->db->fetchOne("SELECT * FROM gallery_projects WHERE id = ? AND status = 'active' LIMIT 1", [$projectId]);
+        $project = $this->db->fetchOne("SELECT * FROM gallery_projects WHERE id = ? LIMIT 1", [$projectId]);
 
         if (!$project) {
             $this->render('pages/404', [
@@ -362,7 +362,7 @@ class ContentPageController extends BaseController
 
         $downloads = $this->db->fetchAll("
             SELECT * FROM downloads
-            WHERE status = 'active'{$tidSql}
+            WHERE 1=1{$tidSql}
             ORDER BY created_at DESC
         ", $params) ?: [];
 
