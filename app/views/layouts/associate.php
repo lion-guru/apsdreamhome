@@ -14,6 +14,7 @@ $GLOBALS['_html_doc_started'] = true;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $page_title ?? 'Associate Dashboard - APS Dream Home'; ?></title>
     <meta name="description" content="<?php echo $page_description ?? 'Associate Portal'; ?>">
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">window.BASE_URL = '<?= defined('BASE_URL') ? BASE_URL : '' ?>';</script>
 
     <!-- Bootstrap CSS -->
     <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
@@ -675,7 +676,6 @@ $GLOBALS['_html_doc_started'] = true;
             </div>
         </div>
     </div>
-</script>
     <!-- ═══ LEGAL COMPLIANCE: Associate Code of Conduct Consent Modal ═══ -->
     <div id="legalConsentModal" class="modal fade" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="legalConsentModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-scrollable">
@@ -823,6 +823,8 @@ $GLOBALS['_html_doc_started'] = true;
         };
     })();
     </script>
+    <!-- Customer & Portal Component Library JS -->
+    <script defer src="<?= BASE_URL ?>/assets/js/customer-pages.js"></script>
     <!-- Dark Mode Toggle -->
     
 </body>

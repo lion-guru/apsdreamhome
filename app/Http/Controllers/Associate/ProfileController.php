@@ -47,6 +47,36 @@ class ProfileController extends BaseController
             $params = [$userId];
             if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
 
+            if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+                $token = $_POST['csrf_token'] ?? '';
+                if (empty($token) || !hash_equals($_SESSION['csrf_token'] ?? '', $token)) {
+                    $_SESSION['flash_error'] = 'Invalid or expired session token. Please try again.';
+                    $this->redirect('/associate/profile');
+                    return;
+                }
+
+                $name = trim($_POST['name'] ?? '');
+                $phone = trim($_POST['phone'] ?? '');
+                $address = trim($_POST['address'] ?? '');
+                $city = trim($_POST['city'] ?? '');
+                $state = trim($_POST['state'] ?? '');
+                $pincode = trim($_POST['pincode'] ?? '');
+
+                if (empty($name)) {
+                    $_SESSION['flash_error'] = 'Name is required.';
+                    $this->redirect('/associate/profile');
+                    return;
+                }
+
+                $updateSql = "UPDATE users SET name = ?, phone = ?, address = ?, city = ?, state = ?, pincode = ?, updated_at = NOW() WHERE id = ?{$tidSql}";
+                $upParams = array_merge([$name, $phone, $address, $city, $state, $pincode, $userId], TenantContext::getId() > 1 ? [TenantContext::getId()] : []);
+                $db->prepare($updateSql)->execute($upParams);
+                $_SESSION['user_name'] = $name;
+                $_SESSION['flash_success'] = 'Profile updated successfully.';
+                $this->redirect('/associate/profile');
+                return;
+            }
+
             $user = $db->fetchOne("SELECT * FROM users WHERE id = ?{$tidSql} LIMIT 1", $params);
 
             // Get associate info
@@ -80,6 +110,8 @@ class ProfileController extends BaseController
             ], 'layouts/associate');
         } catch (\Throwable $e) {
             error_log('AssociateProfileController error: ' . $e->getMessage());
+            $_SESSION['flash_error'] = 'An unexpected error occurred. Please try again.';
+            $this->redirect('/associate/dashboard');
         }
     }
 
@@ -96,6 +128,77 @@ class ProfileController extends BaseController
         $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
         $params = [$userId];
         if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
+
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+            $token = $_POST['csrf_token'] ?? '';
+            if (empty($token) || !hash_equals($_SESSION['csrf_token'] ?? '', $token)) {
+                $_SESSION['flash_error'] = 'Invalid or expired session token. Please try again.';
+                $this->redirect('/associate/settings');
+                return;
+            }
+
+            $action = $_POST['action'] ?? '';
+
+            if ($action === 'change_password') {
+                $currentPassword = $_POST['current_password'] ?? '';
+                $newPassword = $_POST['new_password'] ?? '';
+                $confirmPassword = $_POST['confirm_password'] ?? '';
+
+                $currentUser = $db->fetchOne("SELECT password FROM users WHERE id = ?{$tidSql} LIMIT 1", $params);
+                if (!$currentUser || !password_verify($currentPassword, $currentUser['password'])) {
+                    $_SESSION['flash_error'] = 'Current password is incorrect.';
+                    $this->redirect('/associate/settings');
+                    return;
+                }
+
+                if (strlen($newPassword) < 8) {
+                    $_SESSION['flash_error'] = 'New password must be at least 8 characters long.';
+                    $this->redirect('/associate/settings');
+                    return;
+                }
+
+                if ($newPassword !== $confirmPassword) {
+                    $_SESSION['flash_error'] = 'New passwords do not match.';
+                    $this->redirect('/associate/settings');
+                    return;
+                }
+
+                $hashed = password_hash($newPassword, PASSWORD_BCRYPT);
+                $upParams = array_merge([$hashed, $userId], TenantContext::getId() > 1 ? [TenantContext::getId()] : []);
+                $db->prepare("UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?{$tidSql}")->execute($upParams);
+                $_SESSION['flash_success'] = 'Password updated successfully.';
+                $this->redirect('/associate/settings');
+                return;
+            }
+
+            if ($action === 'update_notifications') {
+                $notifs = [
+                    'email_leads' => !empty($_POST['email_leads']) ? 1 : 0,
+                    'email_commissions' => !empty($_POST['email_commissions']) ? 1 : 0,
+                    'whatsapp_alerts' => !empty($_POST['whatsapp_alerts']) ? 1 : 0,
+                    'sms_important' => !empty($_POST['sms_important']) ? 1 : 0,
+                    'marketing_emails' => !empty($_POST['marketing_emails']) ? 1 : 0,
+                ];
+                $json = json_encode($notifs);
+                $upParams = array_merge([$json, $userId], TenantContext::getId() > 1 ? [TenantContext::getId()] : []);
+                $db->prepare("UPDATE users SET notification_preferences = ?, updated_at = NOW() WHERE id = ?{$tidSql}")->execute($upParams);
+                $_SESSION['flash_success'] = 'Notification preferences updated successfully.';
+                $this->redirect('/associate/settings');
+                return;
+            }
+
+            if ($action === 'toggle_2fa') {
+                $enable = !empty($_POST['enable']) ? 1 : 0;
+                $upParams = array_merge([$enable, $userId], TenantContext::getId() > 1 ? [TenantContext::getId()] : []);
+                $db->prepare("UPDATE users SET two_factor_enabled = ?, updated_at = NOW() WHERE id = ?{$tidSql}")->execute($upParams);
+                $_SESSION['flash_success'] = $enable ? 'Two-factor authentication enabled.' : 'Two-factor authentication disabled.';
+                $this->redirect('/associate/settings');
+                return;
+            }
+
+            $this->redirect('/associate/settings');
+            return;
+        }
 
         $user = $db->fetchOne("SELECT * FROM users WHERE id = ?{$tidSql} LIMIT 1", $params);
 

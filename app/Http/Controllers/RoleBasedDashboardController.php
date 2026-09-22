@@ -77,8 +77,29 @@ class RoleBasedDashboardController extends AdminController
         $role = $_SESSION['role'] ?? $_SESSION['admin_role'] ?? 'admin';
         $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? 'User';
 
+        // Non-admin portal roles: redirect to their respective dedicated portals
+        if (in_array($role, ['associate', 'partner'])) {
+            header('Location: ' . BASE_URL . '/associate/dashboard');
+            exit;
+        }
+
+        if (in_array($role, ['agent', 'freelancer', 'employee_agent'])) {
+            header('Location: ' . BASE_URL . '/agent/dashboard');
+            exit;
+        }
+
+        if (in_array($role, ['customer', 'user', 'buyer', 'client'])) {
+            header('Location: ' . BASE_URL . '/user/dashboard');
+            exit;
+        }
+
+        if (in_array($role, ['employee', 'telecaller', 'staff', 'support_executive', 'telecalling_executive'])) {
+            header('Location: ' . BASE_URL . '/employee/dashboard');
+            exit;
+        }
+
         // For admin/super_admin, redirect to comprehensive ERP Overview
-        if (in_array($role, ['super_admin', 'admin'])) {
+        if (in_array($role, ['super_admin', 'admin', 'administrator'])) {
             header('Location: ' . BASE_URL . '/admin/erp');
             exit;
         }

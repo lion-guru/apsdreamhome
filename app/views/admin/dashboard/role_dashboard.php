@@ -116,10 +116,10 @@ if ($role === 'associate') {
                     <?php
                     $quickActions = match(true) {
                         $role === 'associate' => [
-                            ['icon' => 'fas fa-user-plus', 'color' => '#3b82f6', 'label' => 'My Team', 'url' => '/associate/team'],
+                            ['icon' => 'fas fa-sitemap', 'color' => '#3b82f6', 'label' => 'Network Tree', 'url' => '/associate/genealogy'],
                             ['icon' => 'fas fa-list', 'color' => '#8b5cf6', 'label' => 'My Leads', 'url' => '/associate/leads'],
                             ['icon' => 'fas fa-rupee-sign', 'color' => '#10b981', 'label' => 'Commissions', 'url' => '/associate/commissions'],
-                            ['icon' => 'fas fa-share-alt', 'color' => '#f59e0b', 'label' => 'Share & Earn', 'url' => '/associate/share'],
+                            ['icon' => 'fas fa-wallet', 'color' => '#f59e0b', 'label' => 'My Wallet', 'url' => '/associate/wallet'],
                         ],
                         $role === 'agent' => [
                             ['icon' => 'fas fa-user-plus', 'color' => '#3b82f6', 'label' => 'My Leads', 'url' => '/agent/leads'],

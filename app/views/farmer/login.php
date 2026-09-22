@@ -58,6 +58,16 @@ $GLOBALS['_html_doc_started'] = true;
                                 <small class="text-muted">Enter the phone number registered with us</small>
                             </div>
 
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-2">
+                                        <i class="fas fa-lock text-success"></i>
+                                    </span>
+                                    <input type="password" name="password" class="form-control" placeholder="Enter your password" required>
+                                </div>
+                            </div>
+
                             <button type="submit" class="btn btn-login mb-3">
                                 <i class="fas fa-sign-in-alt me-2"></i>Login
                             </button>

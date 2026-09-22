@@ -92,6 +92,14 @@ $pendingAmt = max(0, $totalVal - $total_paid);
 $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
 ?>
 
+<div class="alert alert-danger py-2 px-3 mb-4 small border-start border-4 border-danger d-flex align-items-center justify-content-between flex-wrap gap-2" style="background-color:#fff5f5;">
+    <div>
+        <i class="fas fa-shield-alt text-danger me-2"></i>
+        <strong>मास्टर डीड वैधानिक नियम (धारा 2.1 व 2.9):</strong> टोकन बुकिंग राशि (₹<?= number_format($paidAmt > 0 ? $paidAmt : 51000) ?>) पूर्णतः <strong>नॉन-रिफंडेबल (गैर-वापसी योग्य / वापस नहीं होगी)</strong> है।
+    </div>
+    <span class="badge bg-danger">Non-Refundable Token</span>
+</div>
+
 <div class="row g-4 mb-4">
     <div class="col-lg-4">
         <div class="aps-cp-card">
@@ -172,6 +180,11 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
                     <div class="col-sm-6">
                         <small class="text-muted d-block"><?= __('user_booking_detail_label_channel', 'Channel') ?></small>
                         <strong class="fs-6"><?= ucfirst(str_replace('_', ' ', $booking['channel'] ?? 'Direct')) ?></strong>
+                    </div>
+                    <div class="col-sm-6">
+                        <small class="text-muted d-block">टोकन राशि (Token Amount Paid)</small>
+                        <strong class="fs-6 text-success">₹<?= number_format($paidAmt > 0 ? $paidAmt : 51000) ?></strong>
+                        <span class="badge bg-danger ms-1" style="font-size: 0.72rem;">Non-Refundable (वापस नहीं होगी)</span>
                     </div>
                 </div>
                 <div class="mt-3">

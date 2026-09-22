@@ -570,7 +570,7 @@ class SelfLearningAI
                 "We provide complete financing assistance including loan comparison and documentation support. What's your preferred loan amount?"
             ],
             'booking' => [
-                "Great choice! To book a property:\n1. Select your preferred plot/property\n2. Pay booking amount (₹25,000 onwards)\n3. Complete documentation\n4. Choose payment plan\n\nShall I help you start the booking process?",
+                "Great choice! To book a property:\n1. Select your preferred plot/property\n2. Pay booking amount (₹51,000 non-refundable token as per Master Deed)\n3. Complete documentation\n4. Choose payment plan\n\nShall I help you start the booking process?",
                 "Booking is simple! Pay a small token amount and the property is reserved for you. We offer flexible payment plans: Full payment, Installments, or Bank loan. Which do you prefer?",
                 "I'd love to help you book your dream property! First, let me understand your requirements. What type of property and what budget are you looking at?"
             ],

@@ -52,12 +52,12 @@ class AgreementPDFService extends ServiceTenantTrait
         }
     }
 
-    private static $companyName = 'APS Dream Home Pvt. Ltd.';
-    private static $cin = 'U70109UP2020PTC123456';
+    private static $companyName = 'APS Dream Homes Pvt. Ltd.';
+    private static $cin = 'U70109UP2022PTC163047';
     private static $gstin = '09AABCA1234C1Z5';
-    private static $address = 'Head Office: 123, Civil Lines, Gorakhpur, Uttar Pradesh - 273001, India';
+    private static $address = '1st Floor, APS Building, Near Ganpati Lawn, Singhariya Chauraha, Kunraghat, Gorakhpur, Uttar Pradesh - 273008';
     private static $phone = '+91 92771 21112';
-    private static $email = 'info@apsdreamhome.com';
+    private static $email = 'official@apsdreamhomes.com';
     private static $website = 'www.apsdreamhome.com';
     private static $bankName = 'HDFC Bank Ltd., Gorakhpur Branch';
     private static $bankAccount = '50100234567890';

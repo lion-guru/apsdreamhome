@@ -1,0 +1,75 @@
+{
+  "testedAt": "2026-09-20T16:02:16.440Z",
+  "pagesTested": 40,
+  "consoleErrors": [],
+  "networkErrors": [],
+  "brokenImages": [
+    {
+      "page": "01_homepage",
+      "src": "http://localhost/apsdreamhome/assets/images/projects/gorakhpur/suryoday.jpg",
+      "alt": "APS Heights"
+    },
+    {
+      "page": "01_homepage",
+      "src": "http://localhost/apsdreamhome/assets/images/projects/lucknow/aps-valley.jpg",
+      "alt": "APS Valley"
+    },
+    {
+      "page": "01_homepage",
+      "src": "http://localhost/apsdreamhome/assets/images/projects/placeholder/property.svg",
+      "alt": "Awadhpuri"
+    },
+    {
+      "page": "01_homepage",
+      "src": "http://localhost/apsdreamhome/assets/images/projects/gorakhpur/braj-radha-nagri.jpg",
+      "alt": "Braj Radha Nagri"
+    },
+    {
+      "page": "01_homepage",
+      "src": "http://localhost/apsdreamhome/assets/images/projects/kushinagar/budh-bihar.jpg",
+      "alt": "Budh Bihar Colony"
+    },
+    {
+      "page": "01_homepage",
+      "src": "http://localhost/apsdreamhome/assets/images/projects/gorakhpur/raghunath-nagri-motiram.jpg",
+      "alt": "Raghunath Nagri"
+    },
+    {
+      "page": "07_about_page",
+      "src": "http://localhost/apsdreamhome/assets/images/leaders/leader-1.jpg",
+      "alt": "Abhaay Singh"
+    },
+    {
+      "page": "07_about_page",
+      "src": "http://localhost/apsdreamhome/assets/images/leaders/leader-2.jpg",
+      "alt": "Praveen Prabhat"
+    },
+    {
+      "page": "07_about_page",
+      "src": "http://localhost/apsdreamhome/assets/images/leaders/leader-3.jpg",
+      "alt": "Vijay Verma"
+    },
+    {
+      "page": "07_about_page",
+      "src": "http://localhost/apsdreamhome/assets/images/leaders/leader-4.jpg",
+      "alt": "Shushant Srivastava"
+    },
+    {
+      "page": "07_about_page",
+      "src": "http://localhost/apsdreamhome/assets/images/leaders/leader-5.jpg",
+      "alt": "Anuj Srivastava"
+    },
+    {
+      "page": "07_about_page",
+      "src": "http://localhost/apsdreamhome/assets/images/leaders/leader-6.jpg",
+      "alt": "Pramod Sharma"
+    }
+  ],
+  "uiFlaws": [],
+  "functionalChecks": [
+    {
+      "feature": "Chat Widget Toggle",
+      "working": false
+    }
+  ]
+}

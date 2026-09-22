@@ -41,7 +41,7 @@ $properties = $properties ?? [];
     <?php endif; ?>
 
     <form action="<?= BASE_URL ?>/associate/leads/store" method="POST" id="addLeadForm">
-        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+        <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? ($_SESSION['csrf_token'] ?? '') ?>">
 
         <div class="form-section">
             <div class="form-section-title"><i class="fas fa-user"></i><?= __('assoc_al_contact_info', [], 'Contact Information') ?></div>

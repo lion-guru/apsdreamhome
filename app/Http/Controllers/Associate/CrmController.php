@@ -42,7 +42,7 @@ class CrmController extends BaseController
         $tid = TenantContext::getId();
 
         try {
-            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $db = \App\Core\Database\Database::getInstance();
             $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
             $params = [$userId];
             if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
@@ -85,7 +85,7 @@ class CrmController extends BaseController
         $userId = $_SESSION['user_id'];
         $tid = TenantContext::getId();
 
-        $db = \App\Core\Database\Database::getInstance()->getConnection();
+        $db = \App\Core\Database\Database::getInstance();
         $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
         $params = [$userId];
         if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
@@ -95,8 +95,8 @@ class CrmController extends BaseController
         $page = max(1, (int)($_GET['page'] ?? 1));
         $perPage = 20;
 
-        $where = "WHERE l.assigned_to = ?{$tidSql}";
-        $params = [$userId];
+        $where = "WHERE (l.assigned_to = ? OR l.created_by = ?){$tidSql}";
+        $params = [$userId, $userId];
         if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
 
         if ($status) {
@@ -110,12 +110,12 @@ class CrmController extends BaseController
             $params[] = "%{$search}%";
         }
 
-        $total = (int)$db->fetchOne("SELECT COUNT(*) as count FROM leads l WHERE {$where}", $params)['count'] ?? 0;
+        $total = (int)$db->fetchOne("SELECT COUNT(*) as count FROM leads l {$where}", $params)['count'] ?? 0;
         $totalPages = max(1, ceil($total / $perPage));
         $page = min($page, $totalPages);
         $offset = ($page - 1) * $perPage;
 
-        $leads = $db->fetchAll("SELECT l.*, u.name as assigned_name FROM leads l LEFT JOIN users u ON u.id = l.assigned_to WHERE {$where} ORDER BY l.created_at DESC LIMIT {$perPage} OFFSET {$offset}", $params) ?: [];
+        $leads = $db->fetchAll("SELECT l.*, u.name as assigned_name FROM leads l LEFT JOIN users u ON u.id = l.assigned_to {$where} ORDER BY l.created_at DESC LIMIT {$perPage} OFFSET {$offset}", $params) ?: [];
 
         $this->render('associate/leads', [
             'page_title' => 'My Leads - Associate Portal',
@@ -139,12 +139,12 @@ class CrmController extends BaseController
         $userId = $_SESSION['user_id'];
         $tid = TenantContext::getId();
 
-        $db = \App\Core\Database\Database::getInstance()->getConnection();
+        $db = \App\Core\Database\Database::getInstance();
         $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
         $params = TenantContext::getId() > 1 ? [TenantContext::getId()] : [];
 
         // Get sources
-        $sources = $db->fetchAll("SELECT * FROM lead_sources WHERE active = 1{$tidSql} ORDER BY name", $params) ?: [];
+        $sources = $db->fetchAll("SELECT * FROM lead_sources WHERE is_active = 1 ORDER BY name") ?: [];
 
         $this->render('associate/add_lead', [
             'page_title' => 'Add Lead - Associate Portal',
@@ -168,30 +168,55 @@ class CrmController extends BaseController
         }
 
         try {
-            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $db = \App\Core\Database\Database::getInstance();
+
+            $phone = trim($_POST['phone'] ?? '');
+            $budgetMin = (float)($_POST['budget_min'] ?? 0);
+            $budgetMax = (float)($_POST['budget_max'] ?? 0);
+            $budget = $budgetMax > 0 ? $budgetMax : $budgetMin;
+            $budgetRange = ($budgetMin || $budgetMax) ? "₹" . number_format($budgetMin) . " - ₹" . number_format($budgetMax) : '';
+            $propertyInterest = trim($_POST['property_type'] ?? ($_POST['property_interest'] ?? ''));
 
             // Check for duplicate phone
-            $phone = trim($_POST['phone'] ?? '');
-            $existing = $db->fetchOne("SELECT id FROM leads WHERE phone = ? AND tenant_id = ?", [$phone, $tid]);
+            $existing = $db->fetchOne("SELECT id, assigned_to FROM leads WHERE phone = ? AND tenant_id = ?", [$phone, $tid]);
             if ($existing) {
-                $_SESSION['info'] = 'Lead with this phone already exists';
-                $this->redirect("/associate/leads/detail/{$existing['id']}");
-                return;
+                if (empty($existing['assigned_to']) || (int)$existing['assigned_to'] === (int)$_SESSION['user_id']) {
+                    $db->query("UPDATE leads SET assigned_to = ?, created_by = COALESCE(created_by, ?), name = ?, email = ?, property_interest = ?, budget = ?, budget_range = ?, location_preference = ?, notes = ?, updated_at = NOW() WHERE id = ?", [
+                        $_SESSION['user_id'],
+                        $_SESSION['user_id'],
+                        trim($_POST['name'] ?? ''),
+                        trim($_POST['email'] ?? ''),
+                        $propertyInterest,
+                        $budget,
+                        $budgetRange,
+                        trim($_POST['location_preference'] ?? ''),
+                        trim($_POST['notes'] ?? ''),
+                        $existing['id']
+                    ]);
+                    $_SESSION['success'] = 'Lead updated successfully!';
+                    $this->redirect("/associate/leads/{$existing['id']}");
+                    return;
+                } else {
+                    $_SESSION['info'] = 'Lead with this phone already exists';
+                    $this->redirect("/associate/leads/{$existing['id']}");
+                    return;
+                }
             }
 
-            $tid = TenantContext::getId();
             $data = [
                 'name' => trim($_POST['name'] ?? ''),
                 'phone' => $phone,
                 'email' => trim($_POST['email'] ?? ''),
                 'city' => $_POST['city'] ?? '',
-                'budget_min' => (float)($_POST['budget_min'] ?? 0),
-                'budget_max' => (float)($_POST['budget_max'] ?? 0),
-                'property_type' => $_POST['property_type'] ?? '',
-                'source_id' => (int)($_POST['source_id'] ?? 0),
+                'budget' => $budget,
+                'budget_range' => $budgetRange,
+                'property_interest' => $propertyInterest,
+                'source_id' => (int)($_POST['source_id'] ?? 0) ?: null,
+                'priority' => in_array($_POST['priority'] ?? '', ['low','medium','high']) ? $_POST['priority'] : 'medium',
                 'notes' => trim($_POST['notes'] ?? ''),
                 'message' => trim($_POST['message'] ?? ''),
                 'assigned_to' => $_SESSION['user_id'],
+                'created_by' => $_SESSION['user_id'],
                 'status' => 'new',
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
@@ -208,18 +233,19 @@ class CrmController extends BaseController
             if (!empty($_POST['notes'])) {
                 $db->insert('lead_notes', [
                     'lead_id' => $leadId,
-                    'user_id' => $_SESSION['user_id'],
+                    'created_by' => $_SESSION['user_id'],
                     'note' => trim($_POST['notes']),
+                    'content' => trim($_POST['notes']),
                     'created_at' => date('Y-m-d H:i:s'),
                     'tenant_id' => $tid,
                 ]);
             }
 
             // Add activity
-            $this->logActivity($userId, 'lead_created', ['lead_id' => $leadId]);
+            $this->logActivity('lead_created', json_encode(['lead_id' => $leadId]));
 
             $_SESSION['success'] = 'Lead added successfully!';
-            $this->redirect("/associate/leads/detail/{$leadId}");
+            $this->redirect("/associate/leads/{$leadId}");
         } catch (\Throwable $e) {
             error_log('AssociateCrmController::storeLead error: ' . $e->getMessage());
             $_SESSION['error'] = 'Failed to add lead: ' . $e->getMessage();
@@ -236,12 +262,12 @@ class CrmController extends BaseController
         $userId = $_SESSION['user_id'];
         $tid = TenantContext::getId();
 
-        $db = \App\Core\Database\Database::getInstance()->getConnection();
+        $db = \App\Core\Database\Database::getInstance();
         $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
-        $params = [$id, $userId];
+        $params = [$id, $userId, $userId];
         if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
 
-        $lead = $db->fetchOne("SELECT l.*, u.name as assigned_name FROM leads l LEFT JOIN users u ON u.id = l.assigned_to WHERE l.id = ? AND l.assigned_to = ?{$tidSql} LIMIT 1", $params);
+        $lead = $db->fetchOne("SELECT l.*, u.name as assigned_name FROM leads l LEFT JOIN users u ON u.id = l.assigned_to WHERE l.id = ? AND (l.assigned_to = ? OR l.created_by = ?){$tidSql} LIMIT 1", $params);
 
         if (!$lead) {
             $_SESSION['error'] = 'Lead not found or access denied';
@@ -258,10 +284,7 @@ class CrmController extends BaseController
         // Get followups
         $followups = $db->fetchAll("SELECT * FROM followups WHERE lead_id = ? ORDER BY followup_date DESC", [$id]) ?: [];
 
-        // Get sources
-        $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
-        $params = TenantContext::getId() > 1 ? [TenantContext::getId()] : [];
-        $sources = $db->fetchAll("SELECT * FROM lead_sources WHERE active = 1{$tidSql} ORDER BY name", $params) ?: [];
+        $sources = $db->fetchAll("SELECT * FROM lead_sources WHERE is_active = 1 ORDER BY name") ?: [];
 
         $this->render('associate/lead_detail', [
             'page_title' => 'Lead Detail - Associate Portal',
@@ -296,7 +319,7 @@ class CrmController extends BaseController
             return;
         }
 
-        $db = \App\Core\Database\Database::getInstance()->getConnection();
+        $db = \App\Core\Database\Database::getInstance();
         $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
         $params = [$status, $id, $userId];
         if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
@@ -335,7 +358,7 @@ class CrmController extends BaseController
             return;
         }
 
-        $db = \App\Core\Database\Database::getInstance()->getConnection();
+        $db = \App\Core\Database\Database::getInstance();
         $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
         $params = [$id, $userId];
         if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
@@ -372,7 +395,7 @@ class CrmController extends BaseController
         $userId = $_SESSION['user_id'];
         $tid = TenantContext::getId();
 
-        $db = \App\Core\Database\Database::getInstance()->getConnection();
+        $db = \App\Core\Database\Database::getInstance();
         $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
         $params = [$id, $userId];
         if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
@@ -399,7 +422,7 @@ class CrmController extends BaseController
         $userId = $_SESSION['user_id'];
         $tid = TenantContext::getId();
 
-        $db = \App\Core\Database\Database::getInstance()->getConnection();
+        $db = \App\Core\Database\Database::getInstance();
         $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
         $params = [$userId];
         if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
@@ -437,7 +460,7 @@ class CrmController extends BaseController
         $notes = trim($_POST['notes'] ?? '');
         $nextDate = $_POST['next_followup_date'] ?? null;
 
-        $db = \App\Core\Database\Database::getInstance()->getConnection();
+        $db = \App\Core\Database\Database::getInstance();
         $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
         $params = [$status];
         if ($nextDate) $params[] = $nextDate;

@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
+use App\Traits\AuthSessionTrait;
 
 class FarmerAuthController extends BaseController
 {
+    use AuthSessionTrait;
+
     protected function skipCsrfProtection(): bool
     {
         return true;
@@ -49,6 +52,7 @@ class FarmerAuthController extends BaseController
         @session_start();
 
         $phone = trim($_POST['phone'] ?? '');
+        $password = $_POST['password'] ?? '';
 
         if (empty($phone)) {
             $_SESSION['flash_error'] = 'Please enter your phone number';
@@ -56,22 +60,54 @@ class FarmerAuthController extends BaseController
             exit;
         }
 
+        if (empty($password)) {
+            $_SESSION['flash_error'] = 'Please enter your password';
+            header('Location: ' . BASE_URL . '/farmer/login');
+            exit;
+        }
+
+        // Rate limiting: 5 attempts per minute per IP
+        require_once __DIR__ . '/../../../Middleware/RateLimiter.php';
+        \App\Middleware\RateLimiter::check('farmer_login_' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'), 5, 60);
+
         try {
             $db = Database::getInstance();
             [$tSql, $tParams] = $this->getTenantSql();
-            $farmer = $db->fetchOne("SELECT * FROM farmers WHERE phone = ? $tSql LIMIT 1", array_merge([$phone], $tParams));
+            
+            // Look up user in unified users table with role='farmer'
+            $user = $db->fetchOne("SELECT * FROM users WHERE phone = ? AND role = 'farmer' AND status = 'active' $tSql LIMIT 1", array_merge([$phone], $tParams));
 
-            if ($farmer) {
-                $_SESSION['farmer_id'] = $farmer['id'];
-                $_SESSION['farmer_name'] = $farmer['name'];
-                $_SESSION['farmer_phone'] = $farmer['phone'];
-                $_SESSION['farmer_email'] = $farmer['email'] ?? '';
-                $_SESSION['farmer_role'] = 'farmer';
+            if ($user && password_verify($password, $user['password'])) {
+                // Check registration status
+                if (($user['registration_status'] ?? 'approved') === 'pending') {
+                    $_SESSION['flash_error'] = 'Your account is pending admin approval. You will be notified once approved.';
+                    header('Location: ' . BASE_URL . '/farmer/login');
+                    exit;
+                }
+                if (($user['registration_status'] ?? 'approved') === 'rejected') {
+                    $_SESSION['flash_error'] = 'Registration has been rejected. Please contact support.';
+                    header('Location: ' . BASE_URL . '/farmer/login');
+                    exit;
+                }
+                if (($user['status'] ?? 'active') !== 'active') {
+                    $_SESSION['flash_error'] = 'Your account has been ' . ($user['status'] ?? 'inactive') . '. Please contact support.';
+                    header('Location: ' . BASE_URL . '/farmer/login');
+                    exit;
+                }
+
+                // Establish session using trait
+                $this->establishSession($user, $phone, 'password');
+                
+                // Sync farmer profile if exists
+                $farmer = $db->fetchOne("SELECT * FROM farmers WHERE user_id = ? $tSql LIMIT 1", array_merge([$user['id']], $tParams));
+                if ($farmer) {
+                    $db->execute("UPDATE farmers SET user_id = ? WHERE id = ?", [$user['id'], $farmer['id']]);
+                }
 
                 header('Location: ' . BASE_URL . '/farmer/dashboard');
                 exit;
             } else {
-                $_SESSION['flash_error'] = 'No farmer account found with this phone number. Please contact admin.';
+                $_SESSION['flash_error'] = 'Invalid phone number or password';
                 header('Location: ' . BASE_URL . '/farmer/login');
                 exit;
             }

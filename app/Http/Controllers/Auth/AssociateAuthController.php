@@ -4,7 +4,7 @@
  * Associate Authentication Controller
  *
  * Live controller for associate web login/registration (CoreAuthController is archived/dead).
- *             Registration now delegates to UserRegistrationService.
+ * Registration now delegates to UserRegistrationService.
  */
 
 namespace App\Http\Controllers\Auth;
@@ -15,9 +15,12 @@ use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
 use App\Services\UserRegistrationService;
 use App\Core\Middleware\TenantContext;
+use App\Traits\AuthSessionTrait;
 
 class AssociateAuthController extends BaseController
 {
+    use AuthSessionTrait;
+
     protected function skipCsrfProtection(): bool
     {
         return true;
@@ -26,14 +29,18 @@ class AssociateAuthController extends BaseController
     private function getTenantSql(): array
     {
         $tid = TenantContext::getId();
-        if ($tid > 1) return [" AND tenant_id = ?", [$tid]];
+        if ($tid > 1) {
+            return [" AND tenant_id = ?", [$tid]];
+        }
         return ["", []];
     }
 
     private function getPublicStats(): array
     {
         static $cached = null;
-        if ($cached !== null) return $cached;
+        if ($cached !== null) {
+            return $cached;
+        }
         try {
             $db = Database::getInstance();
             $totalPaid = $db->fetchOne("SELECT COALESCE(SUM(amount), 0) as total FROM mlm_commission_ledger WHERE status IN ('approved','paid','pending')")['total'] ?? 0;
@@ -59,10 +66,9 @@ class AssociateAuthController extends BaseController
         $errors = $_SESSION['errors'] ?? [];
         $old = $_SESSION['old_input'] ?? [];
         unset($_SESSION['errors'], $_SESSION['old_input']);
-        $base = BASE_URL;
         $stats = $this->getPublicStats();
         extract(compact('csrf_token', 'errors', 'old', 'stats'));
-        include __DIR__ . '/../../../views/auth/associate_register.php';
+        include_once __DIR__ . '/../../../views/auth/associate_register.php';
     }
 
     public function handleAssociateRegister()
@@ -77,11 +83,21 @@ class AssociateAuthController extends BaseController
         $referral = trim($_POST['sponsor_code'] ?? $_POST['referral_code'] ?? '');
 
         $errors = [];
-        if (empty($name)) $errors[] = "Name is required";
-        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = "Valid email is required";
-        if (empty($phone) || !preg_match('/^[0-9]{10}$/', $phone)) $errors[] = "Valid 10-digit phone required";
-        if (strlen($password) < 6) $errors[] = "Password must be at least 6 characters";
-        if ($password !== $confirm) $errors[] = "Passwords do not match";
+        if (empty($name)) {
+            $errors[] = "Name is required";
+        }
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errors[] = "Valid email is required";
+        }
+        if (empty($phone) || !preg_match('/^\d{10}$/', $phone)) {
+            $errors[] = "Valid 10-digit phone required";
+        }
+        if (strlen($password) < 6) {
+            $errors[] = "Password must be at least 6 characters";
+        }
+        if ($password !== $confirm) {
+            $errors[] = "Passwords do not match";
+        }
 
         if (!empty($errors)) {
             $_SESSION['errors'] = $errors;
@@ -141,10 +157,9 @@ class AssociateAuthController extends BaseController
         $error = $_SESSION['errors'][0] ?? $_SESSION['error'] ?? null;
         $success = $_SESSION['success'] ?? null;
         unset($_SESSION['errors'], $_SESSION['error'], $_SESSION['success']);
-        $base = BASE_URL;
         $stats = $this->getPublicStats();
         extract(compact('csrf_token', 'error', 'success', 'stats'));
-        include __DIR__ . '/../../../views/auth/associate_login.php';
+        include_once __DIR__ . '/../../../views/auth/associate_login.php';
     }
 
     public function authenticateAssociate()
@@ -158,6 +173,10 @@ class AssociateAuthController extends BaseController
             header('Location: ' . BASE_URL . '/associate/login');
             exit;
         }
+
+        // Rate limiting: 5 attempts per minute per IP
+        require_once __DIR__ . '/../../../Middleware/RateLimiter.php';
+        \App\Middleware\RateLimiter::check('associate_login_' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'), 5, 60);
 
         try {
             $db = Database::getInstance();
@@ -181,30 +200,9 @@ class AssociateAuthController extends BaseController
                     exit;
                 }
 
-                $_SESSION['user_id'] = $user['id'];
-                
-                // Fetch associate_id from associates table
-                try {
-                    $ass = $db->fetchOne("SELECT id FROM associates WHERE user_id = ?" . $tSql . " LIMIT 1", array_merge([$user['id']], $tParams));
-                    if ($ass) {
-                        $_SESSION['associate_id'] = (int)$ass['id'];
-                    } else {
-                        // Fallback (though usually it should exist)
-                    }
-                } catch (\Exception $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
-
-                $_SESSION['customer_id'] = $user['customer_id'] ?? $user['id'];
-                $_SESSION['user_name'] = $user['name'];
-                $_SESSION['user_email'] = $user['email'];
-                $_SESSION['user_phone'] = $user['phone'] ?? '';
-                $_SESSION['role'] = $user['role'] ?? 'associate';
-                $_SESSION['referral_code'] = $user['referral_code'] ?? '';
-                $_SESSION['associate_logged_in'] = true;
-                $_SESSION['logged_in'] = true;
-
-                // Force redirect to associate dashboard when logging in via associate login
-                header('Location: ' . BASE_URL . '/associate/dashboard');
-                exit;
+                // Establish session using trait (includes audit log + login notifications)
+                $this->establishSession($user, $email, 'password');
+                $this->redirectToDashboard('associate');
             }
             $_SESSION['errors'] = ["Invalid email or password"];
             header('Location: ' . BASE_URL . '/associate/login');
@@ -222,41 +220,5 @@ class AssociateAuthController extends BaseController
         session_destroy();
         header('Location: ' . BASE_URL . '/auth/login');
         exit;
-    }
-
-    /**
-     * Get redirect URL based on user type and role
-     */
-    private function getRedirectUrl($userType, $role)
-    {
-        // Executive Level
-        if (in_array($role, ['super_admin', 'ceo', 'cfo', 'coo', 'cto', 'cmo', 'chro'])) {
-            return '/admin/dashboard';
-        }
-
-        // Management Level
-        if (in_array($role, ['director', 'sales_director', 'marketing_director', 'construction_director'])) {
-            return '/admin/dashboard';
-        }
-
-        // Departmental Level
-        if (in_array($role, ['department_manager', 'project_manager', 'sales_manager', 'hr_manager', 'marketing_manager', 'finance_manager', 'property_manager', 'it_manager', 'operations_manager'])) {
-            return '/admin/dashboard';
-        }
-
-        // User Type Based Redirect
-        switch ($userType) {
-            case 'admin':
-                return '/admin/dashboard';
-            case 'associate':
-                return '/associate/dashboard';
-            case 'agent':
-                return '/agent/dashboard';
-            case 'employee':
-                return '/employee/dashboard';
-            case 'customer':
-            default:
-                return '/user/dashboard';
-        }
     }
 }

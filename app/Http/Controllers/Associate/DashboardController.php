@@ -171,7 +171,28 @@ class DashboardController extends BaseController
                         'deals' => (int)($vr['deals'] ?? 0),
                     ];
                 }
-            } catch (\Throwable $e) { error_log('Associate dashboard team volume: ' . $e->getMessage()); }
+            } catch (\Throwable $e) {
+                error_log('Associate dashboard team volume: ' . $e->getMessage());
+            }
+
+            // Load gamification badges and level metrics
+            $userBadges = [];
+            $allBadges = [];
+            $userRank = 1;
+            $userPoints = (int)($user['total_points'] ?? 0);
+            $userLevel = (int)($user['current_level'] ?? 1);
+            try {
+                if (class_exists('\App\Services\Gamification\GamificationService')) {
+                    $gamificationService = new \App\Services\Gamification\GamificationService();
+                    $userBadges = $gamificationService->getUserBadges($userId);
+                    $userRank = $gamificationService->getUserRank($userId);
+                }
+                $bStmt = $db->prepare("SELECT * FROM badges WHERE is_active = 1 ORDER BY points_required ASC LIMIT 8");
+                $bStmt->execute();
+                $allBadges = $bStmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            } catch (\Throwable $e) {
+                error_log('Associate dashboard gamification: ' . $e->getMessage());
+            }
 
             $this->render('associate/dashboard', [
                 'page_title' => 'Associate Dashboard - APS Dream Home',
@@ -189,6 +210,11 @@ class DashboardController extends BaseController
                 'my_bookings' => $myBookings,
                 'overdue_emis' => $overdueEmis,
                 'emi_this_month' => $emiThisMonth,
+                'user_badges' => $userBadges,
+                'all_badges' => $allBadges,
+                'user_rank' => $userRank,
+                'user_points' => $userPoints,
+                'user_level' => $userLevel,
             ], 'layouts/associate');
 
         } catch (\Throwable $e) {

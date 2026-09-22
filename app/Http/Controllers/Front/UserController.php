@@ -534,6 +534,11 @@ class UserController extends BaseController
         ]);
     }
 
+    public function tickets()
+    {
+        return $this->myTickets();
+    }
+
     public function createTicket()
     {
         $this->requireCustomerLogin();
@@ -1293,7 +1298,8 @@ class UserController extends BaseController
 
         $bookingNumber = 'APS-BK-' . date('Ymd') . '-' . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
         $totalAmount = (float)$plot['total_price'];
-        $tokenAmount = 25000.00;
+        $compliance = new \App\Services\Booking\BookingComplianceService();
+        $tokenAmount = $compliance->getTokenFlatAmount() ?: 51000.00;
 
         try {
             $this->db->beginTransaction();

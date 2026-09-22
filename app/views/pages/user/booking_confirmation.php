@@ -75,6 +75,15 @@ $statusColors = [
             <?php endif; ?>
         </div>
 
+        <div class="alert alert-danger py-2 px-3 mb-4 small border-start border-4 border-danger text-start" style="background-color: #fff8f8;">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-triangle text-danger me-2 flex-shrink-0"></i>
+                <div>
+                    <strong>वैधानिक सूचना (Master Deed धारा 2.1 व 2.9):</strong> टोकन बुकिंग राशि <strong>₹<?= number_format((float)($booking['booking_amount'] ?? 51000)) ?></strong> पूर्णतः <strong>नॉन-रिफंडेबल (गैर-वापसी योग्य / वापस नहीं होगी)</strong> है। आवंटन पक्का करने हेतु 15 दिनों में 25% राशि जमा करना अनिवार्य है।
+                </div>
+            </div>
+        </div>
+
         <div class="aps-cp-card mb-4">
             <div class="aps-cp-card-header">
                 <h5 class="mb-0"><i class="fas fa-map-marker-alt text-primary me-2"></i><?= __('user_booking_confirm_plot_details', 'Plot Details') ?></h5>
@@ -94,9 +103,14 @@ $statusColors = [
                     <div class="col-md-6">
                         <div class="bg-light rounded-3 p-3 h-100">
                             <h6 class="text-muted small mb-2"><?= __('user_booking_confirm_plot_info', 'PLOT INFO') ?></h6>
-                            <p class="mb-1"><strong><?= __('user_booking_confirm_plot_hash', 'Plot') ?>#<?= htmlspecialchars($booking['plot_number'] ?? 'N/A') ?></strong> &middot; <?= __('user_booking_confirm_block', 'Block') ?> <?= htmlspecialchars($booking['block'] ?? 'N/A') ?></p>
+                            <p class="mb-1 fw-bold fs-5">
+                                <?= __('user_booking_confirm_plot', 'Plot') ?> <?= htmlspecialchars($booking['plot_number'] ?? 'N/A') ?>
+                                <?php if (!empty($booking['block'])): ?>
+                                    (<?= __('user_booking_confirm_block', 'Block') ?> <?= htmlspecialchars($booking['block']) ?>)
+                                <?php endif; ?>
+                            </p>
                             <p class="mb-0 text-muted">
-                                <?= number_format((float)($booking['area_sqft'] ?? 0)) ?> sqft
+                                <?= number_format((float)($booking['area_sqft'] ?? 0), 0) ?> sq ft
                                 <?php if (!empty($booking['width_ft']) && !empty($booking['length_ft'])): ?>
                                     &middot; <?= number_format((float)$booking['width_ft'], 0) ?> x <?= number_format((float)$booking['length_ft'], 0) ?> ft
                                 <?php endif; ?>
@@ -131,7 +145,8 @@ $statusColors = [
                     <div class="col-sm-6 col-md-3">
                         <div class="text-center">
                             <div class="text-muted small"><?= __('user_booking_confirm_label_token_paid', 'Token Paid') ?></div>
-                            <div class="fw-bold text-success">&#8377;<?= number_format((float)($booking['booking_amount'] ?? 0)) ?></div>
+                            <div class="fw-bold text-success">&#8377;<?= number_format((float)($booking['booking_amount'] ?? 51000)) ?></div>
+                            <span class="badge bg-danger text-wrap mt-1" style="font-size: 0.7rem;">Non-Refundable (वापस नहीं होगी)</span>
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-3">
@@ -156,7 +171,7 @@ $statusColors = [
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="mb-1"><?= __('user_booking_confirm_step_pay_token', 'Pay Token Amount') ?></h6>
-                            <p class="text-muted small mb-2"><?= __('user_booking_confirm_step_pay_token_desc', 'Complete your token payment of &#8377;25,000 to confirm the booking.') ?></p>
+                            <p class="text-muted small mb-2">Complete your non-refundable token payment of &#8377;<?= number_format((float)($booking['booking_amount'] ?? 51000)) ?> to confirm the booking (टोकन बुकिंग राशि वापस नहीं होगी).</p>
                             <button class="btn btn-primary btn-sm" onclick="window.location.href='<?= BASE_URL ?>/payments'">
                                 <i class="fas fa-rupee-sign me-1"></i><?= __('user_booking_confirm_pay_now', 'Pay Now') ?> (Razorpay)
                             </button>

@@ -372,23 +372,40 @@ class GamificationService
     public function initializeBadges(): void
     {
         $badges = [
-            ['code' => 'first_sale', 'name' => 'First Sale', 'description' => 'Completed first property sale', 'points' => 50, 'category' => self::CATEGORY_SALES, 'icon' => 'trophy'],
-            ['code' => 'sales_10', 'name' => 'Sales Star', 'description' => 'Completed 10 property sales', 'points' => 200, 'category' => self::CATEGORY_SALES, 'icon' => 'star'],
-            ['code' => 'sales_50', 'name' => 'Sales Champion', 'description' => 'Completed 50 property sales', 'points' => 500, 'category' => self::CATEGORY_SALES, 'icon' => 'crown'],
-            ['code' => 'lead_master', 'name' => 'Lead Master', 'description' => 'Generated 100 leads', 'points' => 150, 'category' => self::CATEGORY_LEADS, 'icon' => 'users'],
-            ['code' => 'site_visitor', 'name' => 'Site Visitor Pro', 'description' => 'Completed 50 site visits', 'points' => 100, 'category' => self::CATEGORY_VISITS, 'icon' => 'map-marker'],
-            ['code' => 'rising_star', 'name' => 'Rising Star', 'description' => 'Reached Level 3', 'points' => 100, 'category' => self::CATEGORY_MILESTONE, 'icon' => 'rocket'],
-            ['code' => 'property_pro', 'name' => 'Property Pro', 'description' => 'Reached Level 5', 'points' => 200, 'category' => self::CATEGORY_MILESTONE, 'icon' => 'building'],
-            ['code' => 'elite_seller', 'name' => 'Elite Seller', 'description' => 'Reached Level 9', 'points' => 500, 'category' => self::CATEGORY_MILESTONE, 'icon' => 'gem'],
-            ['code' => 'legend', 'name' => 'Legend', 'description' => 'Reached Level 10', 'points' => 1000, 'category' => self::CATEGORY_MILESTONE, 'icon' => 'medal'],
-            ['code' => 'consistent_30', 'name' => 'Consistent', 'description' => '30 day login streak', 'points' => 75, 'category' => self::CATEGORY_ENGAGEMENT, 'icon' => 'calendar-check'],
+            ['name' => 'first_sale', 'display_name' => 'First Sale', 'description' => 'Completed first property sale', 'points_required' => 50, 'category' => 'achievement', 'icon' => 'trophy', 'rarity' => 'uncommon'],
+            ['name' => 'sales_10', 'display_name' => 'Sales Star', 'description' => 'Completed 10 property sales', 'points_required' => 200, 'category' => 'achievement', 'icon' => 'star', 'rarity' => 'rare'],
+            ['name' => 'sales_50', 'display_name' => 'Sales Champion', 'description' => 'Completed 50 property sales', 'points_required' => 500, 'category' => 'achievement', 'icon' => 'crown', 'rarity' => 'epic'],
+            ['name' => 'sales_champion', 'display_name' => 'Sales Champion L7', 'description' => 'Reached Level 7 sales milestone', 'points_required' => 2500, 'category' => 'milestone', 'icon' => 'crown', 'rarity' => 'epic'],
+            ['name' => 'lead_master', 'display_name' => 'Lead Master', 'description' => 'Generated 100 leads', 'points_required' => 150, 'category' => 'achievement', 'icon' => 'user-plus', 'rarity' => 'rare'],
+            ['name' => 'site_visitor', 'display_name' => 'Site Visitor', 'description' => 'Completed site visits', 'points_required' => 50, 'category' => 'achievement', 'icon' => 'map-marker-alt', 'rarity' => 'rare'],
+            ['name' => 'rising_star', 'display_name' => 'Rising Star', 'description' => 'Reached Level 3', 'points_required' => 300, 'category' => 'milestone', 'icon' => 'rocket', 'rarity' => 'uncommon'],
+            ['name' => 'property_pro', 'display_name' => 'Property Pro', 'description' => 'Reached Level 5', 'points_required' => 1000, 'category' => 'milestone', 'icon' => 'building', 'rarity' => 'rare'],
+            ['name' => 'elite_seller', 'display_name' => 'Elite Seller', 'description' => 'Reached Level 9', 'points_required' => 6000, 'category' => 'milestone', 'icon' => 'gem', 'rarity' => 'epic'],
+            ['name' => 'legend', 'display_name' => 'Legend', 'description' => 'Reached Level 10', 'points_required' => 10000, 'category' => 'milestone', 'icon' => 'medal', 'rarity' => 'legendary'],
+            ['name' => 'consistent_30', 'display_name' => 'Consistent Achiever', 'description' => '30 day login streak', 'points_required' => 75, 'category' => 'loyalty', 'icon' => 'calendar-check', 'rarity' => 'uncommon'],
         ];
 
-        foreach ($badges as $badge) {
+        foreach ($badges as $b) {
             $this->db->query(
-                "INSERT IGNORE INTO badges (code, name, description, points, category, icon, status, created_at)
-                 VALUES (?, ?, ?, ?, ?, ?, 'active', NOW())",
-                array_values($badge)
+                "INSERT INTO badges (name, display_name, description, points_required, category, icon, rarity, is_active, tenant_id, created_at, updated_at)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, 1, 1, NOW(), NOW())
+                 ON DUPLICATE KEY UPDATE
+                    display_name = VALUES(display_name),
+                    description = VALUES(description),
+                    points_required = VALUES(points_required),
+                    category = VALUES(category),
+                    icon = VALUES(icon),
+                    rarity = VALUES(rarity),
+                    is_active = 1",
+                [
+                    $b['name'],
+                    $b['display_name'],
+                    $b['description'],
+                    $b['points_required'],
+                    $b['category'],
+                    $b['icon'],
+                    $b['rarity'],
+                ]
             );
         }
     }

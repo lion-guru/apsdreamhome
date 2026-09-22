@@ -1,8 +1,12 @@
 <?php
-// Agent Dashboard - Supports MLM Company Agents & Freelancer/Independent Agents
+/**
+ * Agent Dashboard View - APS Dream Home
+ * Supports MLM Company Agents & Freelancer/Independent Agents
+ * Renders inside layouts/agent.php
+ */
 $page_title = $page_title ?? 'Agent Dashboard - APS Dream Home';
 $page_description = $page_description ?? 'Manage your real estate business';
-$agent_type = $agent_type ?? ($_SESSION['agent_type'] ?? 'mlm_company');
+$agent_type = $agent_type ?? ($_SESSION['agent_type'] ?? 'freelancer');
 $agent_stats = $agent_stats ?? [];
 $recent_leads = $recent_leads ?? [];
 $assigned_properties = $assigned_properties ?? [];
@@ -12,775 +16,433 @@ $network_stats = $network_stats ?? [];
 $site_visits = $site_visits ?? [];
 $performance = $performance ?? [];
 $gamify = $gamify ?? [];
+$user_badges = $user_badges ?? [];
+$all_badges = $all_badges ?? [];
+$user_rank = $user_rank ?? 1;
+$user_points = $user_points ?? 0;
+$user_level = $user_level ?? 1;
 
-$base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
-$agent_name = $_SESSION['user_name'] ?? 'Agent';
-$active_page = 'dashboard';
-// Role-driven sidebar (single source of truth: PortalMenuService). Falls back to
-// the static list below only if the service is unavailable.
-$portalMenu = [];
-try {
-    if (!class_exists('App\Services\PortalMenuService')) {
-        require_once __DIR__ . '/../../Services/PortalMenuService.php';
-    }
-    $portalMenu = App\Services\PortalMenuService::forSession();
-} catch (\Throwable $e) { error_log('agent dashboard menu: ' . $e->getMessage()); }
+$base = defined('BASE_URL') ? BASE_URL : ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
+$agent_name = $_SESSION['user_name'] ?? $_SESSION['agent_name'] ?? 'Agent';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($page_title ?? ''); ?></title>
-    <link rel="icon" type="image/png" href="<?= $base ?>/app/views/admin/assets/img/favicon.png">
-    <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <meta name="csrf-token" content="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'Inter',sans-serif;background:#f8fafc;overflow-x:hidden}
-        
-        /* Sidebar Styles */
-        .sidebar{position:fixed;top:0;left:0;width:260px;height:100vh;background:linear-gradient(180deg, #15803d 0%, #22c55e 100%);z-index:1000;overflow-y:auto;transition:transform .3s;box-shadow:4px 0 15px rgba(0,0,0,0.1)}
-        .sidebar::-webkit-scrollbar{width:4px}
-        .sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.3);border-radius:2px}
-        .sidebar-header{padding:24px 20px;border-bottom:1px solid rgba(255,255,255,.1)}
-        .sidebar-logo{color:#fff;font-size:1.1rem;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:10px}
-        .sidebar-logo i{font-size:1.4rem;color:#dcfce7}
-        .sidebar-sub{color:rgba(255,255,255,.7);font-size:.75rem;margin-top:6px}
-        .sidebar-menu{list-style:none;padding:15px 10px;margin:0}
-        .sidebar-item{margin-bottom:2px}
-        .sidebar-link{display:flex;align-items:center;padding:12px 14px;color:#dcfce7;text-decoration:none;border-radius:10px;font-size:.9rem;font-weight:500;transition:all .2s}
-        .sidebar-link:hover{background:rgba(255,255,255,.15);color:#fff}
-        .sidebar-link.active{background:#fff;color:#15803d}
-        .sidebar-link i{width:24px;margin-right:12px;font-size:1rem;color:#dcfce7;text-align:center}
-        .sidebar-sec{padding:14px 20px 6px;font-size:.7rem;text-transform:uppercase;color:rgba(255,255,255,.55);font-weight:700;letter-spacing:.06em}
-        .sidebar-badge{margin-left:auto;background:rgba(255,255,255,.25);color:#fff;padding:1px 8px;border-radius:10px;font-size:.7rem;font-weight:700}
-        .sidebar-link.active i,.sidebar-link:hover i{color:#15803d}
-        
-        .main-content{margin-left:260px;min-height:100vh;transition:margin-left .3s}
-        .top-nav{background:#fff;height:64px;padding:0 28px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e2e8f0;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-        .nav-left{display:flex;align-items:center;gap:16px}
-        .toggle-btn{background:none;border:none;font-size:1.3rem;color:#64748b;cursor:pointer;display:none;padding:8px;border-radius:8px}
-        .toggle-btn:hover{background:#f1f5f9}
-        .nav-right{display:flex;align-items:center;gap:16px}
-        .nav-icon{position:relative;background:none;border:none;font-size:1.1rem;color:#64748b;cursor:pointer;padding:8px;border-radius:8px}
-        .nav-icon:hover{background:#f1f5f9}
-        .user-box{display:flex;align-items:center;gap:12px;padding:8px 14px;border-radius:10px;cursor:pointer;transition:background .2s}
-        .user-box:hover{background:#f1f5f9}
-        .user-av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg, #15803d, #22c55e);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:.9rem}
-        .page-content{padding:28px}
-        .card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-        .btn-primary{background:#15803d;border-color:#15803d}
-        .btn-primary:hover{background:#14532d;border-color:#14532d}
-        .btn-outline-primary{border-color:#15803d;color:#15803d}
-        .btn-outline-primary:hover{background:#15803d;color:#fff}
-        
-        /* Stat Cards */
-        .stat-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;transition:all .2s}
-        .stat-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.08)}
-        .stat-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.25rem}
-        .stat-icon.green{background:#dcfce7;color:#15803d}
-        .stat-icon.blue{background:#dbeafe;color:#2563eb}
-        .stat-icon.orange{background:#ffedd5;color:#ea580c}
-        .stat-icon.purple{background:#f3e8ff;color:#9333ea}
-        .stat-icon.red{background:#fee2e2;color:#dc2626}
-        .stat-icon.gold{background:#fef3c7;color:#d97706}
-        
-        /* Agent Type Badge */
-        .agent-type-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;font-size:.75rem;font-weight:600}
-        .agent-type-badge.mlm{background:#dcfce7;color:#15803d}
-        .agent-type-badge.freelancer{background:#dbeafe;color:#2563eb}
-        .agent-type-badge.independent{background:#fef3c7;color:#d97706}
-        
-        /* Commission breakdown */
-        .commission-breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:16px}
-        .commission-item{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px}
-        .commission-item.primary{border-color:#15803d;background:#f0fdf4}
-        .commission-item.secondary{border-color:#2563eb;background:#eff6ff}
-        
-        /* Network stats */
-        .network-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
-        .network-stat{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px;text-align:center}
-        .network-stat.highlight{border-color:#15803d;background:#f0fdf4}
-        
-        /* Lead/Property lists */
-        .list-group-item{border:none;border-bottom:1px solid #f1f5f9;padding:12px 16px;transition:background .2s}
-        .list-group-item:last-child{border-bottom:none}
-        .list-group-item:hover{background:#f8fafc}
-        .lead-status{display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:6px;font-size:.7rem;font-weight:600}
-        .lead-status.new{background:#dbeafe;color:#2563eb}
-        .lead-status.contacted{background:#ffedd5;color:#ea580c}
-        .lead-status.qualified{background:#dcfce7;color:#15803d}
-        .lead-status.proposal{background:#f3e8ff;color:#9333ea}
-        .lead-status.negotiation{background:#fef3c7;color:#d97706}
-        .lead-status.converted{background:#dcfce7;color:#15803d}
-        .lead-status.lost{background:#fee2e2;color:#dc2626}
-        
-        .property-status{display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:6px;font-size:.7rem;font-weight:600}
-        .property-status.available{background:#dcfce7;color:#15803d}
-        .property-status.booked{background:#fef3c7;color:#d97706}
-        .property-status.sold{background:#dbeafe;color:#2563eb}
-        .property-status.reserved{background:#f3e8ff;color:#9333ea}
-        
-        /* Performance metrics */
-        .perf-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px}
-        .perf-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;text-align:center}
-        .perf-card.highlight{border-color:#15803d;background:#f0fdf4}
-        
-        /* Site visits */
-        .visit-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px;margin-bottom:12px;transition:all .2s}
-        .visit-card:hover{transform:translateX(4px);box-shadow:0 4px 12px rgba(0,0,0,.08)}
-        .visit-time{background:#15803d;color:#fff;padding:4px 10px;border-radius:6px;font-size:.75rem;font-weight:600}
-        .visit-date{color:#64748b;font-size:.8rem}
-        
-        @media(max-width:991px){
-            .sidebar{transform:translateX(-100%)}
-            .sidebar.show{transform:translateX(0)}
-            .main-content{margin-left:0}
-            .toggle-btn{display:block}
-        }
-    </style>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
-</head>
-<body>
-    <!-- Agent Sidebar -->
-    <aside class="sidebar" id="sidebarMenu">
-        <div class="sidebar-header">
-            <a href="<?php echo e($base); ?>/agent/dashboard" class="sidebar-logo">
-                <i class="fas fa-home"></i>
-                <span>APS Dream Home</span>
-            </a>
-            <div class="sidebar-sub">Agent Portal
-                <span class="agent-type-badge <?= e($agent_type) ?>">
-                    <?php 
-                        echo $agent_type === 'freelancer' ? 'Freelancer' : 
-                            ($agent_type === 'independent' ? 'Independent' : 'MLM Company');
-                    ?>
+
+<div class="agent-dashboard-content">
+    <?php if (!empty($commission_summary['missed_commissions'])): ?>
+    <!-- Missed Commissions Alert -->
+    <div class="alert alert-danger alert-dismissible fade show mb-4 border-0 d-flex align-items-center rounded-3 shadow-sm" role="alert">
+        <div class="rounded-circle bg-danger bg-opacity-10 text-danger p-3 me-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+            <i class="fas fa-exclamation-triangle fa-lg"></i>
+        </div>
+        <div>
+            <h6 class="alert-heading fw-bold mb-1">Attention: ₹<?= e($commission_summary['total_missed'] ?? '0.00') ?> in Commissions Pending Activation</h6>
+            <p class="mb-0 text-dark small">Your agent tier requires active verification to claim multi-tier network bonuses. 
+                <a href="<?= $base ?>/agent/subscription" class="fw-bold text-danger text-decoration-underline ms-1">Activate Now</a>
+            </p>
+        </div>
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <?php endif; ?>
+
+    <!-- Header Action Bar -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <h3 class="fw-bold mb-0 text-dark">Agent Cockpit</h3>
+                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-1 fw-semibold small">
+                    <?= $agent_type === 'freelancer' ? 'Freelancer Agent' : ($agent_type === 'employee_agent' ? 'Employee Agent' : 'Associate Partner') ?>
                 </span>
             </div>
+            <p class="text-muted small mb-0">Live overview of your pipeline, listings, network volumes, and commissions</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="<?= $base ?>/agent/leads/add" class="btn btn-primary px-3 py-2 rounded-pill fw-medium shadow-sm">
+                <i class="fas fa-user-plus me-1"></i> Add Lead
+            </a>
+            <a href="<?= $base ?>/agent/deals" class="btn btn-outline-primary px-3 py-2 rounded-pill fw-medium">
+                <i class="fas fa-handshake me-1"></i> My Deals
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Metric Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <span class="text-muted small fw-semibold text-uppercase">Total Leads</span>
+                        <div class="d-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary" style="width: 44px; height: 44px;">
+                            <i class="fas fa-bullseye fa-lg"></i>
+                        </div>
+                    </div>
+                    <h3 class="fw-bold mb-1 text-dark"><?= (int)($agent_stats['total_leads'] ?? 0) ?></h3>
+                    <small class="text-success fw-medium">
+                        <i class="fas fa-check me-1"></i><?= (int)($agent_stats['converted_leads'] ?? 0) ?> converted
+                        (<?= htmlspecialchars($agent_stats['conversion_rate'] ?? '0%') ?>)
+                    </small>
+                </div>
+            </div>
         </div>
         
-        <ul class="sidebar-menu">
-            <?php if (!empty($portalMenu)): ?>
-            <?php foreach ($portalMenu as $section): ?>
-            <?php if (empty($section['items'])) continue; ?>
-            <div class="sidebar-sec"><?php echo htmlspecialchars($section['name']); ?></div>
-            <?php foreach ($section['items'] as $menuItem):
-                $mActive = (($active_page ?? '') === ($menuItem['key'] ?? ''));
-                $mBadge = $menuItem['badge'] ?? null;
-            ?>
-            <li class="sidebar-item">
-                <a href="<?php echo e($base) . htmlspecialchars($menuItem['url'] ?? ''); ?>" class="sidebar-link <?php echo $mActive ? 'active' : ''; ?>" data-menu-key="<?php echo htmlspecialchars($menuItem['key'] ?? ''); ?>">
-                    <i class="<?php echo htmlspecialchars($menuItem['icon'] ?? ''); ?>"></i> <?php echo htmlspecialchars($menuItem['label'] ?? ''); ?>
-                    <?php if ($mBadge !== null && $mBadge > 0): ?><span class="sidebar-badge"><?php echo (int)$mBadge; ?></span><?php endif; ?>
-                </a>
-            </li>
-            <?php endforeach; ?>
-            <?php endforeach; ?>
-            <?php else: ?>
-            <li class="sidebar-item">
-                <a href="<?php echo e($base); ?>/agent/dashboard" class="sidebar-link active">
-                    <i class="fas fa-tachometer-alt"></i> Dashboard
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo e($base); ?>/agent/leads" class="sidebar-link">
-                    <i class="fas fa-users"></i> My Leads
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo e($base); ?>/agent/properties" class="sidebar-link">
-                    <i class="fas fa-building"></i> My Properties
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo e($base); ?>/agent/commissions" class="sidebar-link">
-                    <i class="fas fa-rupee-sign"></i> Commissions
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo e($base); ?>/agent/wallet" class="sidebar-link">
-                    <i class="fas fa-wallet"></i> Wallet
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo e($base); ?>/agent/deals" class="sidebar-link">
-                    <i class="fas fa-handshake"></i> My Deals
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo e($base); ?>/properties" class="sidebar-link">
-                    <i class="fas fa-search"></i> Browse Properties
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo e($base); ?>/agent/profile" class="sidebar-link">
-                    <i class="fas fa-user"></i> Profile
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo e($base); ?>/agent/logout" class="sidebar-link">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </a>
-            </li>
-            <?php endif; ?>
-        </ul>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="main-content">
-        <!-- Top Navigation -->
-        <nav class="top-nav">
-            <div class="nav-left">
-                <button class="toggle-btn" onclick="document.getElementById('sidebarMenu').classList.toggle('show')" aria-label="Toggle sidebar" aria-expanded="false">
-                    <i class="fas fa-bars" aria-hidden="true"></i>
-                </button>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="<?php echo e($base); ?>/agent/dashboard">Agent</a></li>
-                        <li class="breadcrumb-item active">Dashboard</li>
-                    </ol>
-                </nav>
-            </div>
-            <div class="nav-right">
-                <button class="nav-icon" title="Notifications" onclick="window.location.href='<?php echo e($base); ?>/user/notifications'"><i class="fas fa-bell"></i></button>
-                <button class="nav-icon" title="Messages" onclick="window.location.href='<?php echo e($base); ?>/user/notifications'"><i class="fas fa-envelope"></i></button>
-                <div class="dropdown">
-                    <div class="user-box" data-bs-toggle="dropdown">
-                        <div class="user-av"><?php echo strtoupper(substr($agent_name,0,1)); ?></div>
-                        <div>
-                            <div ><?php echo htmlspecialchars($agent_name ?? ''); ?></div>
-                            <div ><?php echo htmlspecialchars($_SESSION['user_email'] ?? ''); ?></div>
-                        </div>
-                        <i class="fas fa-chevron-down ms-2"></i>
-                    </div>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="<?php echo e($base); ?>/agent/profile"><i class="fas fa-user me-2"></i>Profile</a></li>
-                        <li><a class="dropdown-item" href="<?php echo e($base); ?>/agent/profile"><i class="fas fa-cog me-2"></i>Settings</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="<?php echo e($base); ?>/agent/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-
-        <!-- Page Content -->
-        <div class="page-content">
-            
-            <?php if (!empty($commission_summary['missed_commissions'])): ?>
-            <!-- FOMO Strategy: Missed Commissions Banner -->
-            <div class="alert alert-danger alert-dismissible fade show mb-4 border-0 d-flex align-items-center" role="alert" >
-                <div class="stat-icon red me-3 flex-shrink-0">
-                    <i class="fas fa-exclamation-triangle"></i>
-                </div>
-                <div>
-                    <h5 class="alert-heading fw-bold mb-1">You Missed ₹<?= e($commission_summary['total_missed']) ?> in Commissions!</h5>
-                    <p class="mb-0 text-danger">Your account is currently inactive. You missed out on commissions this month because of it. 
-                        <a href="<?php echo e($base); ?>/agent/renew" class="fw-bold text-decoration-underline">Activate your account now</a> to prevent losing more money!
-                    </p>
-                </div>
-                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            <?php endif; ?>
-
-            <!-- Stat Cards -->
-            <?php if (!empty($_SESSION['success'])): ?>
-            <div class="alert alert-success alert-dismissible fade show mb-4">
-                <i class="fas fa-check-circle me-2"></i>
-                <?php echo htmlspecialchars($_SESSION['success'] ?? ''); unset($_SESSION['success']); ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            <?php endif; ?>
-            
-            <?php if (!empty($_SESSION['error'])): ?>
-            <div class="alert alert-danger alert-dismissible fade show mb-4">
-                <i class="fas fa-exclamation-circle me-2"></i>
-                <?php echo htmlspecialchars($_SESSION['error'] ?? ''); unset($_SESSION['error']); ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            <?php endif; ?>
-
-            <!-- Header with Stats -->
-            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-                <div>
-                    <h2 class="mb-1"><?php echo htmlspecialchars($page_title ?? ''); ?></h2>
-                    <p class="text-muted mb-0"><?php echo htmlspecialchars($page_description ?? ''); ?></p>
-                </div>
-                <div class="d-flex gap-2 flex-wrap">
-                    <a href="<?php echo e($base); ?>/agent/leads" class="btn btn-primary">
-                        <i class="fas fa-plus me-1"></i> Add Lead
-                    </a>
-                    <a href="<?php echo e($base); ?>/agent/deals" class="btn btn-outline-primary">
-                        <i class="fas fa-handshake me-1"></i> My Deals
-                    </a>
-                </div>
-            </div>
-
-            <!-- FOMO Strategy: Missed Commissions Banner -->
-            <?php if (!empty($commission_summary['missed_commissions']) && count($commission_summary['missed_commissions']) > 0): ?>
-            <div class="alert alert-warning alert-dismissible fade show mb-4 d-flex align-items-center">
-                <div class="me-3 fs-3 text-warning">
-                    <i class="fas fa-exclamation-triangle"></i>
-                </div>
-                <div>
-                    <h5 class="alert-heading text-warning mb-1">Action Required: Missed Commissions!</h5>
-                    <p class="mb-0 text-dark">
-                        You have missed out on <strong>₹<?= e($commission_summary['total_missed'] ?? '0.00') ?></strong> in network commissions this month because your ID is currently inactive.
-                        <br>
-                        <small>Activate your ID or renew your subscription to start earning from your team's sales again.</small>
-                    </p>
-                </div>
-                <div class="ms-auto ps-3 border-start border-warning d-none d-md-block">
-                    <a href="<?php echo e($base); ?>/agent/subscription" class="btn btn-warning fw-bold text-dark">Activate Now</a>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            <?php endif; ?>
-
-            <!-- Main Stats Row -->
-            <div class="row g-3 mb-4">
-                <div class="col-md-6 col-lg-3">
-                    <div class="stat-card">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <p class="text-muted mb-1 small">Total Leads</p>
-                                <h4 class="mb-0"><?= e($agent_stats['total_leads'] ?? 0) ?></h4>
-                            </div>
-                            <div class="stat-icon green"><i class="fas fa-bullseye"></i></div>
-                        </div>
-                        <small class="text-success">
-                            <i class="fas fa-check me-1"></i><?= e($agent_stats['converted_leads'] ?? 0) ?> converted 
-                            (<?= e($agent_stats['conversion_rate'] ?? '0%') ?>)
-                        </small>
-                    </div>
-                </div>
-                
-                <div class="col-md-6 col-lg-3">
-                    <div class="stat-card">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <p class="text-muted mb-1 small"><?php echo $agent_type === 'freelancer' ? 'My Listings' : 'Properties'; ?></p>
-                                <h4 class="mb-0"><?= e($agent_stats['total_properties'] ?? 0) ?></h4>
-                            </div>
-                            <div class="stat-icon blue"><i class="fas fa-building"></i></div>
-                        </div>
-                        <small class="text-info">
-                            <i class="fas fa-check-circle me-1"></i><?= e($agent_stats['sold_properties'] ?? 0) ?> sold
-                        </small>
-                    </div>
-                </div>
-                
-                <div class="col-md-6 col-lg-3">
-                    <div class="stat-card">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <p class="text-muted mb-1 small">Total Commission</p>
-                                <h4 class="mb-0 text-warning">₹<?= e($commission_summary['total_commission'] ?? ($agent_stats['total_commission'] ?? 0)) ?></h4>
-                            </div>
-                            <div class="stat-icon gold"><i class="fas fa-rupee-sign"></i></div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <span class="text-muted small fw-semibold text-uppercase"><?= $agent_type === 'freelancer' ? 'My Listings' : 'Properties' ?></span>
+                        <div class="d-flex align-items-center justify-content-center rounded-3 bg-info bg-opacity-10 text-info" style="width: 44px; height: 44px;">
+                            <i class="fas fa-building fa-lg"></i>
                         </div>
                     </div>
-                </div>
-                
-                <div class="col-md-6 col-lg-3">
-                    <div class="stat-card">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <p class="text-muted mb-1 small">
-                                    <?php 
-                                        if ($agent_type === 'freelancer' || $agent_type === 'independent') {
-                                            echo 'This Month Sales';
-                                        } else {
-                                            echo 'Direct Team';
-                                        }
-                                    ?>
-                                </p>
-                                <h4 class="mb-0">
-                                    <?php 
-                                        if ($agent_type === 'freelancer' || $agent_type === 'independent') {
-                                            echo e($performance['this_month']['count'] ?? 0);
-                                        } else {
-                                            echo e($network_stats['direct_count'] ?? 0);
-                                        }
-                                    ?>
-                                </h4>
-                            </div>
-                            <div class="stat-icon <?php echo ($agent_type === 'freelancer' || $agent_type === 'independent') ? 'purple' : 'green'; ?>">
-                                <i class="fas <?php echo ($agent_type === 'freelancer' || $agent_type === 'independent') ? 'fa-chart-line' : 'fa-users'; ?>"></i>
-                            </div>
-                        </div>
-                    </div>
+                    <h3 class="fw-bold mb-1 text-dark"><?= (int)($agent_stats['total_properties'] ?? 0) ?></h3>
+                    <small class="text-info fw-medium">
+                        <i class="fas fa-check-circle me-1"></i><?= (int)($agent_stats['sold_properties'] ?? 0) ?> sold
+                    </small>
                 </div>
             </div>
-
-            <!-- Agent Type Specific Sections -->
-            <?php if ($agent_type === 'mlm_company'): ?>
-            <!-- MLM Company Agent Sections -->
-            <div class="row g-3 mb-4">
-                <!-- Network/Team Stats -->
-                <div class="col-lg-8">
-                    <div class="card">
-                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0"><i class="fas fa-sitemap text-success me-2"></i>Network Overview</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="network-stats">
-                                <div class="network-stat highlight">
-                                    <h4 class="mb-1 text-success"><?= e($network_stats['direct_count'] ?? 0) ?></h4>
-                                    <p class="text-muted mb-0 small">Direct Referrals</p>
-                                </div>
-                                <div class="network-stat">
-                                    <h4 class="mb-1 text-primary"><?= e($network_stats['team_size'] ?? 0) ?></h4>
-                                    <p class="text-muted mb-0 small">Total Team Size</p>
-                                </div>
-                                <div class="network-stat">
-                                    <h4 class="mb-1 text-info">₹<?= e($network_stats['team_gv'] ?? '0.00') ?></h4>
-                                    <p class="text-muted mb-0 small">Team Group Volume</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Commission Breakdown -->
-                <div class="col-lg-4">
-                    <div class="card">
-                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0"><i class="fas fa-chart-pie text-warning me-2"></i>Commission Breakdown</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="commission-breakdown">
-                                <div class="commission-item primary">
-                                    <div class="text-muted small">Direct Sales</div>
-                                    <div class="fw-bold text-success">₹<?= e($commission_summary['total_direct'] ?? '0.00') ?></div>
-                                </div>
-                                <div class="commission-item secondary">
-                                    <div class="text-muted small">Network/Override</div>
-                                    <div class="fw-bold text-info">₹<?= e($commission_summary['total_network'] ?? '0.00') ?></div>
-                                </div>
-                                <?php if (!empty($commission_summary['total_missed']) && $commission_summary['total_missed'] > 0): ?>
-                                <div class="commission-item">
-                                    <div class="text-muted small">Missed (Inactive ID)</div>
-                                    <div class="fw-bold text-danger">₹<?= e($commission_summary['total_missed']) ?></div>
-                                </div>
-                                <?php endif; ?>
-                            </div>
-                            <hr>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="fw-bold">Total Earned</span>
-                                <span class="fw-bold text-success fs-5">₹<?= e($commission_summary['total_commission'] ?? '0.00') ?></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Recent Commissions -->
-            <div class="row g-3 mb-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0"><i class="fas fa-history text-warning me-2"></i>Recent Commissions</h5>
-                            <a href="<?php echo e($base); ?>/agent/commissions" class="btn btn-sm btn-outline-primary">View All</a>
-                        </div>
-                        <div class="card-body p-0">
-                            <?php if (empty($commission_summary['direct_commissions']) && empty($commission_summary['network_commissions'])): ?>
-                            <div class="text-center py-4 text-muted">
-                                <i class="fas fa-rupee-sign fa-2x mb-2 d-block"></i>
-                                No commissions yet
-                            </div>
-                            <?php else: ?>
-                            <div class="list-group list-group-flush">
-                                <?php 
-                                $allCommissions = array_merge(
-                                    array_slice($commission_summary['direct_commissions'] ?? [], 0, 5),
-                                    array_slice($commission_summary['network_commissions'] ?? [], 0, 5)
-                                );
-                                usort($allCommissions, fn($a, $b) => strtotime($b['created_at']) - strtotime($a['created_at']));
-                                $allCommissions = array_slice($allCommissions, 0, 10);
-                                foreach ($allCommissions as $comm): 
-                                    $isDirect = in_array($comm['type'] ?? '', ['direct_sale', 'level_bonus']);
-                                ?>
-                                <div class="list-group-item border-0 px-3 py-2">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <span class="badge <?php echo $isDirect ? 'bg-success' : 'bg-info'; ?> me-2">
-                                                <?php echo $isDirect ? 'Direct' : 'Network'; ?>
-                                            </span>
-                                            <strong><?= e(ucfirst(str_replace('_', ' ', $comm['type'] ?? 'Commission'))) ?></strong>
-                                            <?php if (!empty($comm['description'])): ?>
-                                            <small class="text-muted ms-2"><?php echo htmlspecialchars($comm['description'] ?? ''); ?></small>
-                                            <?php endif; ?>
-                                        </div>
-                                        <div class="text-end">
-                                            <div class="fw-bold text-<?php echo $isDirect ? 'success' : 'info'; ?>">
-                                                ₹<?php echo number_format($comm['amount'] ?? 0, 2); ?>
-                                            </div>
-                                            <small class="text-muted"><?php echo date('d M Y', strtotime($comm['created_at'])); ?></small>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php endforeach; ?>
-                            </div>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <?php else: ?>
-            <!-- Freelancer/Independent Agent Sections -->
-            <div class="row g-3 mb-4">
-                <!-- Performance Metrics -->
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header bg-white">
-                            <h5 class="mb-0"><i class="fas fa-chart-line text-primary me-2"></i>Performance Metrics</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="perf-grid">
-                                <div class="perf-card highlight">
-                                    <h4 class="text-primary mb-1"><?= e($performance['this_month']['count'] ?? 0) ?></h4>
-                                     <p class="text-muted mb-0 small">This Month Sales</p>
-                                     <small class="text-success">₹<?= e($performance['this_month']['volume'] ?? '0.00') ?></small>
-                                </div>
-                                <div class="perf-card">
-                                    <h4 class="text-info mb-1"><?= e($performance['last_month']['count'] ?? 0) ?></h4>
-                                     <p class="text-muted mb-0 small">Last Month Sales</p>
-                                     <small class="text-info">₹<?= e($performance['last_month']['volume'] ?? '0.00') ?></small>
-                                </div>
-                                <div class="perf-card">
-                                    <h4 class="text-warning mb-1"><?= e($performance['career']['count'] ?? 0) ?></h4>
-                                     <p class="text-muted mb-0 small">Career Total Sales</p>
-                                     <small class="text-warning">₹<?= e($performance['career']['volume'] ?? '0.00') ?></small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Brokerage Info -->
-            <div class="row g-3 mb-4">
-                <div class="col-lg-6">
-                    <div class="card">
-                        <div class="card-header bg-white">
-                            <h5 class="mb-0"><i class="fas fa-percent text-primary me-2"></i>Brokerage Model</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <p class="text-muted mb-1 small">Model</p>
-                                    <h6><?= e(ucfirst(str_replace('_', ' ', $commission_summary['brokerage_model'] ?? 'flat_percentage'))) ?></h6>
-                                </div>
-                                <div class="col-md-6">
-                                    <p class="text-muted mb-1 small"><?php 
-                                        $model = $commission_summary['brokerage_model'] ?? 'flat_percentage';
-                                        if ($model === 'flat_percentage') echo 'Rate %';
-                                        elseif ($model === 'flat_rate_sqft') echo 'Rate/sqft';
-                                        else echo 'Flat Fee';
-                                    ?></p>
-                                    <h6>
-                                        <?php 
-                                            $model = $commission_summary['brokerage_model'] ?? 'flat_percentage';
-                                            if ($model === 'flat_percentage') echo e($commission_summary['brokerage_rate'] ?? 0) . '%';
-                                            elseif ($model === 'flat_rate_sqft') echo '₹' . e(number_format($commission_summary['brokerage_rate'] ?? 0, 2)) . '/sqft';
-                                            else echo '₹' . e(number_format($commission_summary['flat_fee'] ?? 0, 2));
-                                        ?>
-                                    </h6>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-lg-6">
-                    <div class="card">
-                        <div class="card-header bg-white">
-                            <h5 class="mb-0"><i class="fas fa-calendar-check text-success me-2"></i>Upcoming Site Visits</h5>
-                        </div>
-                        <div class="card-body p-0">
-                            <?php if (empty($site_visits)): ?>
-                            <div class="text-center py-4 text-muted">
-                                <i class="fas fa-calendar fa-2x mb-2 d-block"></i>
-                                No upcoming visits
-                            </div>
-                            <?php else: ?>
-                            <div class="list-group list-group-flush">
-                                <?php foreach ($site_visits as $visit): ?>
-                                <div class="visit-card list-group-item border-0 px-3 py-2">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <div class="d-flex align-items-center gap-2 mb-1">
-                                                <span class="visit-time"><?php echo date('H:i', strtotime($visit['visit_time'])); ?></span>
-                                                <span class="visit-date"><?php echo date('d M Y', strtotime($visit['visit_date'])); ?></span>
-                                            </div>
-                                            <strong><?php echo htmlspecialchars($visit['visitor_name'] ?? $visit['lead_name'] ?? 'Client'); ?></strong>
-                                            <small class="text-muted ms-2"><?php echo htmlspecialchars($visit['visitor_phone'] ?? $visit['lead_phone'] ?? ''); ?></small>
-                                        </div>
-                                        <?php if (!empty($visit['colony_name'])): ?>
-                                        <span class="badge bg-success"><?php echo htmlspecialchars($visit['colony_name'] ?? ''); ?></span>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
-                                <?php endforeach; ?>
-                            </div>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent Commissions -->
-            <div class="row g-3 mb-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0"><i class="fas fa-history text-warning me-2"></i>Recent Commissions</h5>
-                            <a href="<?php echo e($base); ?>/agent/commissions" class="btn btn-sm btn-outline-primary">View All</a>
-                        </div>
-                        <div class="card-body p-0">
-                            <?php if (empty($commission_summary['commissions'])): ?>
-                            <div class="text-center py-4 text-muted">
-                                <i class="fas fa-rupee-sign fa-2x mb-2 d-block"></i>
-                                No commissions yet
-                            </div>
-                            <?php else: ?>
-                            <div class="list-group list-group-flush">
-                                <?php 
-                                $comms = array_slice($commission_summary['commissions'] ?? [], 0, 10);
-                                foreach ($comms as $comm): 
-                                ?>
-                                <div class="list-group-item border-0 px-3 py-2">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <strong><?php echo htmlspecialchars($comm['property_title'] ?? 'Property Sale'); ?></strong>
-                                            <?php if (!empty($comm['description'])): ?>
-                                            <small class="text-muted ms-2"><?php echo htmlspecialchars($comm['description'] ?? ''); ?></small>
-                                            <?php endif; ?>
-                                        </div>
-                                        <div class="text-end">
-                                            <div class="fw-bold text-success">₹<?php echo number_format($comm['amount'] ?? 0, 2); ?></div>
-                                            <small class="text-muted"><?php echo date('d M Y', strtotime($comm['created_at'])); ?></small>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php endforeach; ?>
-                            </div>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <?php endif; ?>
-
-            <!-- Recent Leads (Common for both) -->
-            <div class="row g-3 mb-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0"><i class="fas fa-bullseye text-primary me-2"></i>Recent Leads</h5>
-                            <a href="<?php echo e($base); ?>/agent/leads" class="btn btn-sm btn-outline-primary">View All</a>
-                        </div>
-                        <div class="card-body p-0">
-                            <?php if (empty($recent_leads)): ?>
-                            <div class="text-center py-4 text-muted">
-                                <i class="fas fa-bullseye fa-2x mb-2 d-block"></i>
-                                No leads yet. Contact your admin to assign leads.
-                            </div>
-                            <?php else: ?>
-                            <div class="list-group list-group-flush">
-                                <?php foreach (array_slice($recent_leads, 0, 10) as $lead): ?>
-                                <div class="list-group-item border-0 px-3 py-2">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <strong><?php echo htmlspecialchars($lead['name'] ?? 'Unknown'); ?></strong>
-                                            <span class="lead-status <?= e(strtolower($lead['status'] ?? 'new')) ?> ms-2">
-                                                <?= e(ucfirst($lead['status'] ?? 'New')) ?>
-                                            </span>
-                                        </div>
-                                        <div class="text-end">
-                                            <small class="text-muted d-block"><?php echo htmlspecialchars($lead['phone'] ?? ''); ?></small>
-                                            <small class="text-muted"><?php echo date('d M Y', strtotime($lead['created_at'])); ?></small>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php endforeach; ?>
-                            </div>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Properties/Listings (Common for both) -->
-            <div class="row g-3 mb-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0"><i class="fas fa-building text-info me-2"></i><?php echo $agent_type === 'freelancer' ? 'My Listings' : 'Assigned Properties'; ?></h5>
-                            <a href="<?php echo e($base); ?>/agent/properties" class="btn btn-sm btn-outline-primary">View All</a>
-                        </div>
-                        <div class="card-body p-0">
-                            <?php 
-                            $props = $agent_type === 'freelancer' ? ($my_properties ?? []) : ($assigned_properties ?? []);
-                            if (empty($props)): 
-                            ?>
-                            <div class="text-center py-4 text-muted">
-                                <i class="fas fa-building fa-2x mb-2 d-block"></i>
-                                No properties <?php echo $agent_type === 'freelancer' ? 'listed' : 'assigned'; ?> yet
-                            </div>
-                            <?php else: ?>
-                            <div class="list-group list-group-flush">
-                                <?php foreach (array_slice($props, 0, 10) as $prop): ?>
-                                <div class="list-group-item border-0 px-3 py-2">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="d-flex align-items-center gap-3">
-                                            <?php if (!empty($prop['image'])): ?>
-                                            <img src="<?php echo htmlspecialchars($prop['image'] ?? '');?>" alt="" >
-                                            <?php else: ?>
-                                            <div >
-                                                <i class="fas fa-building text-muted"></i>
-                                            </div>
-                                            <?php endif; ?>
-                                            <div>
-                                                <strong><?php echo htmlspecialchars($prop['title'] ?? 'Property'); ?></strong>
-                                                <?php if (!empty($prop['colony_name']) || !empty($prop['location'])): ?>
-                                                <small class="text-muted d-block"><?php echo htmlspecialchars($prop['colony_name'] ?? $prop['location'] ?? ''); ?></small>
-                                                <?php endif; ?>
-                                            </div>
-                                        </div>
-                                        <div class="text-end">
-                                            <div class="fw-bold text-primary">₹<?php echo number_format($prop['price'] ?? 0); ?></div>
-                                            <span class="property-status <?= e(strtolower($prop['status'] ?? 'available')) ?>">
-                                                <?= e(ucfirst($prop['status'] ?? 'Available')) ?>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php endforeach; ?>
-                            </div>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
-    </main>
+        
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <span class="text-muted small fw-semibold text-uppercase">Total Earnings</span>
+                        <div class="d-flex align-items-center justify-content-center rounded-3 bg-warning bg-opacity-10 text-warning" style="width: 44px; height: 44px;">
+                            <i class="fas fa-rupee-sign fa-lg"></i>
+                        </div>
+                    </div>
+                    <h3 class="fw-bold mb-1 text-dark">₹<?= number_format((float)($commission_summary['total_commission'] ?? ($agent_stats['total_commission'] ?? 0)), 2) ?></h3>
+                    <a href="<?= $base ?>/agent/commissions" class="small text-warning text-decoration-none fw-semibold">
+                        Earnings Breakdown <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <span class="text-muted small fw-semibold text-uppercase">
+                            <?= ($agent_type === 'freelancer' || $agent_type === 'independent') ? 'This Month Sales' : 'Direct Team' ?>
+                        </span>
+                        <div class="d-flex align-items-center justify-content-center rounded-3 bg-success bg-opacity-10 text-success" style="width: 44px; height: 44px;">
+                            <i class="fas <?= ($agent_type === 'freelancer' || $agent_type === 'independent') ? 'fa-chart-line' : 'fa-users' ?> fa-lg"></i>
+                        </div>
+                    </div>
+                    <h3 class="fw-bold mb-1 text-dark">
+                        <?= ($agent_type === 'freelancer' || $agent_type === 'independent') ? (int)($performance['this_month']['count'] ?? 0) : (int)($network_stats['direct_count'] ?? 0) ?>
+                    </h3>
+                    <small class="text-muted small">
+                        <?= ($agent_type === 'freelancer' || $agent_type === 'independent') ? 'Active deals in closing' : 'Direct team associates' ?>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <script src="<?= BASE_URL ?>/assets/js/bootstrap.bundle.min.js"></script>
-    <script>
-    // Auto-dismiss alerts
-    setTimeout(function(){
-        document.querySelectorAll('.alert').forEach(function(alert){
-            alert.classList.remove('show');
-            setTimeout(function(){ alert.remove(); }, 150);
-        });
-    }, 5000);
-    </script>
-</body>
-</html>
+    <!-- Gamification & Badges Showcase -->
+    <?php
+    $earnedBadgeIds = !empty($user_badges) ? array_column($user_badges, 'badge_id') : [];
+    $earnedBadgeNames = !empty($user_badges) ? array_column($user_badges, 'name') : [];
+    $displayBadges = !empty($all_badges) ? $all_badges : [];
+    $points = $user_points ?? (int)($gamify['stats']['total_points'] ?? 0);
+    $level = $user_level ?? (int)($gamify['stats']['current_level'] ?? 1);
+    $nextLevelPoints = ($level >= 10) ? 10000 : max(100, $level * 300);
+    $progressPct = min(100, round(($points / max(1, $nextLevelPoints)) * 100));
+    $rankNumber = $user_rank ?? (!empty($gamify['rank']) && $gamify['rank'] > 0 ? $gamify['rank'] : 1);
+    ?>
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm" style="border-radius: 14px; background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);">
+                <div class="card-body p-4">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 pb-3 border-bottom gap-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 52px; height: 52px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; font-size: 22px;">
+                                <i class="fas fa-medal"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+                                    Achievements & Milestones
+                                    <span class="badge bg-warning text-dark rounded-pill px-2.5 py-1 small">Level <?= $level ?></span>
+                                </h5>
+                                <small class="text-muted">Earned <?= count($earnedBadgeIds) ?> badges · <?= number_format($points) ?> XP Points</small>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3 py-2 rounded-pill fw-bold">
+                                <i class="fas fa-trophy text-warning me-1"></i> Rank #<?= $rankNumber ?> on Leaderboard
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Level Progress Bar -->
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between text-muted small fw-bold mb-1">
+                            <span><i class="fas fa-flag text-primary me-1"></i> Level <?= $level ?> Progress</span>
+                            <span class="text-dark"><?= number_format($points) ?> / <?= number_format($nextLevelPoints) ?> XP (<?= $progressPct ?>%)</span>
+                        </div>
+                        <div class="progress" style="height: 10px; border-radius: 6px; background-color: #e2e8f0;">
+                            <div class="progress-bar" role="progressbar" style="width: <?= $progressPct ?>%; background: linear-gradient(90deg, #3b82f6, #f59e0b);" aria-valuenow="<?= $progressPct ?>" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+
+                    <!-- Badges Grid -->
+                    <?php if (!empty($displayBadges)): ?>
+                    <div class="d-flex flex-wrap gap-2">
+                        <?php foreach (array_slice($displayBadges, 0, 8) as $b): 
+                            $isEarned = in_array($b['id'] ?? 0, $earnedBadgeIds) || in_array($b['name'] ?? '', $earnedBadgeNames);
+                            $icon = !empty($b['icon']) ? $b['icon'] : 'award';
+                        ?>
+                        <div class="d-flex align-items-center gap-2 px-3 py-2 rounded-3 border <?= $isEarned ? 'border-warning border-opacity-50 bg-warning bg-opacity-10 shadow-sm' : 'border-light bg-light opacity-75' ?>" style="transition: all 0.2s ease;">
+                            <i class="fas fa-<?= htmlspecialchars($icon) ?> <?= $isEarned ? 'text-warning' : 'text-secondary' ?> fs-5"></i>
+                            <div>
+                                <div class="fw-bold small text-dark"><?= htmlspecialchars($b['display_name'] ?? $b['name']) ?></div>
+                                <small class="text-muted" style="font-size: 11px;"><?= $isEarned ? '✓ Unlocked' : htmlspecialchars($b['points_required'] ?? 0) . ' XP' ?></small>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Agent Sub-Role Specific Cockpit Section -->
+    <?php if ($agent_type === 'mlm_company'): ?>
+    <!-- ═══ MLM COMPANY AGENT: Network Overview & Multi-Tier Commission ═══ -->
+    <div class="row g-3 mb-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
+                <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-sitemap text-success me-2"></i>Network Overview</h5>
+                    <a href="<?= $base ?>/agent/network" class="btn btn-sm btn-outline-success rounded-pill px-3">Network Tree</a>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-3 text-center">
+                        <div class="col-4">
+                            <div class="p-3 rounded-3 bg-success bg-opacity-10 border border-success border-opacity-25">
+                                <h4 class="fw-bold text-success mb-1"><?= (int)($network_stats['direct_count'] ?? 0) ?></h4>
+                                <div class="text-muted small">Direct Referrals</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-3 rounded-3 bg-primary bg-opacity-10 border border-primary border-opacity-25">
+                                <h4 class="fw-bold text-primary mb-1"><?= (int)($network_stats['team_size'] ?? 0) ?></h4>
+                                <div class="text-muted small">Total Team Size</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-3 rounded-3 bg-info bg-opacity-10 border border-info border-opacity-25">
+                                <h4 class="fw-bold text-info mb-1">₹<?= number_format((float)($network_stats['team_gv'] ?? 0), 2) ?></h4>
+                                <div class="text-muted small">Team Group Volume</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
+                <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0">
+                    <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-chart-pie text-warning me-2"></i>Commission Split</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded-2 bg-light">
+                        <span class="text-muted small">Direct Sales</span>
+                        <span class="fw-bold text-success">₹<?= number_format((float)($commission_summary['total_direct'] ?? 0), 2) ?></span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3 p-2 rounded-2 bg-light">
+                        <span class="text-muted small">Network Override</span>
+                        <span class="fw-bold text-info">₹<?= number_format((float)($commission_summary['total_network'] ?? 0), 2) ?></span>
+                    </div>
+                    <hr class="my-2">
+                    <div class="d-flex justify-content-between align-items-center pt-1">
+                        <span class="fw-bold text-dark">Total Net Earned</span>
+                        <span class="fw-bold text-success fs-5">₹<?= number_format((float)($commission_summary['total_commission'] ?? 0), 2) ?></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php else: ?>
+    <!-- ═══ FREELANCER / INDEPENDENT: Performance Metrics, Brokerage & Site Visits ═══ -->
+    <div class="row g-3 mb-4">
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
+                <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-chart-line text-primary me-2"></i>Sales Performance Metrics</h5>
+                    <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-1 rounded-pill">Volume Tracker</span>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-3 text-center">
+                        <div class="col-4">
+                            <div class="p-3 rounded-3 bg-primary bg-opacity-10 border border-primary border-opacity-25">
+                                <h4 class="fw-bold text-primary mb-1"><?= (int)($performance['this_month']['count'] ?? 0) ?></h4>
+                                <div class="text-muted small mb-1">This Month Sales</div>
+                                <div class="fw-semibold text-success small">₹<?= number_format((float)($performance['this_month']['volume'] ?? 0), 2) ?></div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-3 rounded-3 bg-info bg-opacity-10 border border-info border-opacity-25">
+                                <h4 class="fw-bold text-info mb-1"><?= (int)($performance['last_month']['count'] ?? 0) ?></h4>
+                                <div class="text-muted small mb-1">Last Month Sales</div>
+                                <div class="fw-semibold text-info small">₹<?= number_format((float)($performance['last_month']['volume'] ?? 0), 2) ?></div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-3 rounded-3 bg-warning bg-opacity-10 border border-warning border-opacity-25">
+                                <h4 class="fw-bold text-warning mb-1"><?= (int)($performance['career']['count'] ?? 0) ?></h4>
+                                <div class="text-muted small mb-1">Career Deals</div>
+                                <div class="fw-semibold text-warning small">₹<?= number_format((float)($performance['career']['volume'] ?? 0), 2) ?></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
+                <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-calendar-check text-success me-2"></i>Upcoming Site Visits</h5>
+                    <a href="<?= $base ?>/agent/site-visits" class="btn btn-sm btn-outline-success rounded-pill px-3">Schedule</a>
+                </div>
+                <div class="card-body p-4">
+                    <?php if (empty($site_visits)): ?>
+                        <div class="text-center py-4 text-muted">
+                            <i class="fas fa-calendar-alt fa-2x mb-2 d-block opacity-50"></i>
+                            <div class="small">No upcoming client site visits scheduled</div>
+                        </div>
+                    <?php else: ?>
+                        <div class="d-flex flex-column gap-2">
+                            <?php foreach (array_slice($site_visits, 0, 3) as $visit): ?>
+                                <div class="d-flex justify-content-between align-items-center p-2 rounded-2 bg-light border">
+                                    <div>
+                                        <div class="small fw-bold text-dark"><?= htmlspecialchars($visit['visitor_name'] ?? $visit['lead_name'] ?? 'Client') ?></div>
+                                        <div class="small text-muted" style="font-size: 0.75rem;">
+                                            <i class="fas fa-clock me-1"></i><?= !empty($visit['visit_time']) ? date('H:i', strtotime($visit['visit_time'])) : '' ?> | 
+                                            <?= !empty($visit['visit_date']) ? date('d M Y', strtotime($visit['visit_date'])) : '' ?>
+                                        </div>
+                                    </div>
+                                    <?php if (!empty($visit['colony_name'])): ?>
+                                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-1 small" style="font-size: 0.7rem;">
+                                            <?= htmlspecialchars($visit['colony_name']) ?>
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- 2-Column Main Content: Recent Leads & Properties -->
+    <div class="row g-4 mb-4">
+        <!-- Recent Leads List -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
+                <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="fw-bold mb-1 text-dark"><i class="fas fa-bullseye text-primary me-2"></i>Recent Leads Pipeline</h5>
+                        <p class="text-muted small mb-0">Active inquiries assigned to your portfolio</p>
+                    </div>
+                    <a href="<?= $base ?>/agent/leads" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                        View All (<?= count($recent_leads) ?>)
+                    </a>
+                </div>
+                <div class="card-body p-4">
+                    <?php if (empty($recent_leads)): ?>
+                        <div class="text-center py-5 text-muted">
+                            <div class="rounded-circle bg-light d-inline-flex p-3 mb-2 text-muted">
+                                <i class="fas fa-user-plus fa-2x"></i>
+                            </div>
+                            <h6 class="fw-semibold">No Leads Assigned Yet</h6>
+                            <p class="small mb-3">Add prospective buyers to begin tracking inquiries.</p>
+                            <a href="<?= $base ?>/agent/leads/add" class="btn btn-sm btn-primary rounded-pill px-3">Add New Lead</a>
+                        </div>
+                    <?php else: ?>
+                        <div class="d-flex flex-column gap-2">
+                            <?php foreach (array_slice($recent_leads, 0, 5) as $lead): ?>
+                                <div class="d-flex justify-content-between align-items-center p-3 rounded-3 border bg-light bg-opacity-50">
+                                    <div>
+                                        <div class="fw-bold text-dark mb-1"><?= htmlspecialchars($lead['name'] ?? 'Unknown Lead') ?></div>
+                                        <div class="small text-muted">
+                                            <i class="fas fa-phone me-1"></i><?= htmlspecialchars($lead['phone'] ?? 'N/A') ?>
+                                            <?php if (!empty($lead['colony_name'])): ?>
+                                                <span class="mx-1">•</span> <i class="fas fa-map-marker-alt me-1 text-danger"></i><?= htmlspecialchars($lead['colony_name']) ?>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2 py-1 rounded-pill small mb-1">
+                                            <?= htmlspecialchars(ucfirst($lead['status'] ?? 'New')) ?>
+                                        </span>
+                                        <div class="small text-muted" style="font-size: 0.75rem;">
+                                            <?= !empty($lead['created_at']) ? date('d M Y', strtotime($lead['created_at'])) : '' ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+
+        <!-- Properties & Listings -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
+                <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="fw-bold mb-1 text-dark"><i class="fas fa-building text-info me-2"></i><?= $agent_type === 'freelancer' ? 'My Listings' : 'Assigned Plots' ?></h5>
+                        <p class="text-muted small mb-0">Active inventory in your scope</p>
+                    </div>
+                    <a href="<?= $base ?>/agent/properties" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                        View All
+                    </a>
+                </div>
+                <div class="card-body p-4">
+                    <?php 
+                    $props = $agent_type === 'freelancer' ? ($my_properties ?? []) : ($assigned_properties ?? []);
+                    if (empty($props)): 
+                    ?>
+                        <div class="text-center py-5 text-muted">
+                            <div class="rounded-circle bg-light d-inline-flex p-3 mb-2 text-muted">
+                                <i class="fas fa-home fa-2x"></i>
+                            </div>
+                            <h6 class="fw-semibold">No Properties Available</h6>
+                            <p class="small mb-0">Check back once listings are assigned to your profile.</p>
+                        </div>
+                    <?php else: ?>
+                        <div class="d-flex flex-column gap-2">
+                            <?php foreach (array_slice($props, 0, 4) as $prop): ?>
+                                <div class="d-flex justify-content-between align-items-center p-3 rounded-3 border bg-light bg-opacity-50">
+                                    <div class="d-flex align-items-center gap-3 overflow-hidden">
+                                        <div class="rounded-3 bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; flex-shrink: 0;">
+                                            <i class="fas fa-map-marked text-muted"></i>
+                                        </div>
+                                        <div class="overflow-hidden">
+                                            <div class="fw-bold text-dark text-truncate mb-1"><?= htmlspecialchars($prop['title'] ?? 'Colony Plot') ?></div>
+                                            <div class="small text-muted text-truncate"><?= htmlspecialchars($prop['colony_name'] ?? $prop['location'] ?? 'Ayodhya Road') ?></div>
+                                        </div>
+                                    </div>
+                                    <div class="text-end text-nowrap ms-2">
+                                        <div class="fw-bold text-primary small">₹<?= number_format((float)($prop['price'] ?? 0)) ?></div>
+                                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-0 small" style="font-size: 0.7rem;">
+                                            <?= htmlspecialchars(ucfirst($prop['status'] ?? 'Available')) ?>
+                                        </span>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

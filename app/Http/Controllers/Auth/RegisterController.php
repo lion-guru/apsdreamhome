@@ -63,6 +63,7 @@ class RegisterController extends BaseController
         $confirm = $_POST['confirm_password'] ?? '';
         $role = trim($_POST['role'] ?? 'customer');
         $referral = trim($_POST['referral_code'] ?? $_GET['ref'] ?? '');
+        $agentType = trim($_POST['agent_type'] ?? '');
 
         $errors = [];
         if (empty($name)) $errors[] = 'Name is required';
@@ -98,6 +99,7 @@ class RegisterController extends BaseController
                 'password' => $password,
                 'referral_code' => $referral,
                 'registration_method' => 'web',
+                'agent_type' => $agentType,
             ]);
 
             if (!$result['success']) {
@@ -140,9 +142,11 @@ class RegisterController extends BaseController
 
             // Mark visitor as converted
             try {
-                $visitorTracking = new \App\Services\VisitorTrackingService();
-                $visitorTracking->markAsConverted($result['user_id']);
-            } catch (\Exception $e) {
+                if (class_exists('\App\Services\VisitorTrackingService')) {
+                    $visitorTracking = new \App\Services\VisitorTrackingService();
+                    $visitorTracking->markAsConverted($result['user_id']);
+                }
+            } catch (\Throwable $e) {
                 error_log("Visitor conversion tracking failed: " . $e->getMessage());
             }
 

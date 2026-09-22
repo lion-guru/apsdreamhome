@@ -210,19 +210,19 @@ $supportedRoles = [
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
 
                     <div class="form-group">
-                        <label>Email or Phone</label>
+                        <label for="identity">Email or Phone</label>
                         <div class="input-wrap">
-                            <input type="text" name="identity" placeholder="Enter email or phone number" required autofocus>
+                            <input type="text" name="identity" id="identity" placeholder="Enter email or phone number" required autofocus>
                             <i class="fas fa-user field-icon"></i>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Password</label>
+                        <label for="password">Password</label>
                         <div class="input-wrap">
-                            <input type="password" name="password" placeholder="Enter your password" required>
+                            <input type="password" name="password" id="password" placeholder="Enter your password" required>
                             <i class="fas fa-lock field-icon"></i>
-                            <button type="button" class="pwd-toggle" onclick="togglePwd()" tabindex="-1">
+                            <button type="button" class="pwd-toggle" onclick="togglePwd()" tabindex="-1" aria-label="Toggle password visibility">
                                 <i class="fas fa-eye" id="pwdIcon"></i>
                             </button>
                         </div>

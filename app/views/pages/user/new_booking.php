@@ -207,7 +207,7 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
                     <div class="col-md-6">
                         <div class="bg-light rounded-3 p-3">
                             <h6 class="text-muted small mb-2"><?= __('user_new_booking_modal_booking_summary', 'BOOKING SUMMARY') ?></h6>
-                            <p class="mb-1"><?= __('user_new_booking_modal_token_amount', 'Token Amount') ?>: <strong>₹25,000</strong></p>
+                            <p class="mb-1"><?= __('user_new_booking_modal_token_amount', 'Token Amount') ?>: <strong>₹51,000</strong> <span class="badge bg-danger ms-1">Non-Refundable</span></p>
                             <p class="mb-1"><?= __('user_new_booking_modal_total_price', 'Total Price') ?>: <strong id="modal-price"></strong></p>
                             <p class="mb-0"><?= __('user_new_booking_modal_status', 'Status') ?>: <span class="badge bg-primary"><?= __('user_new_booking_modal_token_paid', 'Token Paid') ?></span></p>
                         </div>
@@ -238,10 +238,15 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
                         </div>
                     </div>
 
-                    <div class="alert alert-warning mt-3 mb-0 small">
-                        <i class="fas fa-info-circle me-1"></i>
-                        <?= __('user_new_booking_terms', 'By confirming, you agree to pay the token amount of') ?> <strong>₹25,000</strong> <?= __('user_new_booking_terms_towards', 'towards the booking.') ?>
-                        <?= __('user_new_booking_terms_emi', 'The remaining amount can be paid via EMI or lump sum as per your payment plan.') ?>
+                    <div class="alert alert-warning mt-3 mb-0 small border-start border-4 border-danger">
+                        <i class="fas fa-exclamation-triangle text-danger me-1"></i>
+                        <?= __('user_new_booking_terms', 'By confirming, you agree to pay the token amount of') ?> <strong>₹51,000</strong> <?= __('user_new_booking_terms_towards', 'towards the booking.') ?>
+                        <div class="text-danger fw-bold mt-1">
+                            ⚠️ मास्टर लीगल डीड (धारा 2.1 व 2.9) के अनुसार: टोकन बुकिंग राशि ₹51,000 पूर्णतः गैर-वापसी योग्य (Non-Refundable / वापस नहीं होगी) है।
+                        </div>
+                        <div class="text-muted mt-1">
+                            <?= __('user_new_booking_terms_emi', 'The remaining amount can be paid via EMI or lump sum as per your payment plan.') ?>
+                        </div>
                     </div>
                 </form>
             </div>

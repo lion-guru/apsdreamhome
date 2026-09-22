@@ -74,16 +74,26 @@ class NotificationSystem {
     return 'unknown';
   }
 
+  getBaseUrl() {
+    if (typeof window !== 'undefined' && window.BASE_URL) {
+      return window.BASE_URL.replace(/\/+$/, '');
+    }
+    if (typeof window !== 'undefined' && window.location.pathname.startsWith('/apsdreamhome')) {
+      return '/apsdreamhome';
+    }
+    return '';
+  }
+
   /**
    * Load notifications from API
    */
   async loadNotifications() {
     try {
-    const response = await fetch((window.BASE_URL || '').replace(/\/+$/,'') + '/api/notifications', {
+      const response = await fetch(this.getBaseUrl() + '/api/notifications', {
         method: 'GET',
         headers: {
           'X-CSRF-Token': getCsrfToken(),
-        'Content-Type': 'application/json',
+          'Content-Type': 'application/json',
         },
       });
 
@@ -105,11 +115,11 @@ class NotificationSystem {
    */
   async loadPopups() {
     try {
-      const response = await fetch((window.BASE_URL || '').replace(/\/+$/,'') + '/api/popups?page=' + this.currentPage, {
+      const response = await fetch(this.getBaseUrl() + '/api/popups?page=' + this.currentPage, {
         method: 'GET',
         headers: {
           'X-CSRF-Token': getCsrfToken(),
-        'Content-Type': 'application/json',
+          'Content-Type': 'application/json',
         },
       });
 
@@ -196,11 +206,11 @@ class NotificationSystem {
    */
   async dismissPopup(popupId) {
     try {
-      const response = await fetch((window.BASE_URL || '').replace(/\/+$/,'') + '/api/popups/dismiss', {
+      const response = await fetch(this.getBaseUrl() + '/api/popups/dismiss', {
         method: 'POST',
         headers: {
           'X-CSRF-Token': getCsrfToken(),
-        'Content-Type': 'application/json',
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           popup_id: popupId,
@@ -221,6 +231,11 @@ class NotificationSystem {
    */
   createNotificationUI() {
     if (document.getElementById('notification-bell-root')) return;
+
+    // Check if the page already has its own dedicated notification bell (e.g. customer/associate portal)
+    if (document.getElementById('notifBadge') && !document.getElementById('notification-bell-placeholder')) {
+      return;
+    }
 
     const placeholder =
       document.getElementById('notification-bell-placeholder') ||
@@ -371,11 +386,11 @@ class NotificationSystem {
    */
   async markAsRead(notificationId) {
     try {
-      const response = await fetch((window.BASE_URL || '').replace(/\/+$/,'') + '/api/notifications/mark-read', {
+      const response = await fetch(this.getBaseUrl() + '/api/notifications/mark-read', {
         method: 'POST',
         headers: {
           'X-CSRF-Token': getCsrfToken(),
-        'Content-Type': 'application/json',
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           notification_id: notificationId,

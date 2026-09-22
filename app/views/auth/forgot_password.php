@@ -1,5 +1,4 @@
 <?php
-$page_title = $page_title ?? '';
 if (session_status() === PHP_SESSION_NONE) {
     @session_start();
 }
@@ -9,10 +8,31 @@ if (!function_exists('__')) {
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
-$page_title = $page_title ?? __('forgot_password_page_title') . ' - APS Dream Home';
-$page_description = __('forgot_password_page_description');
-
+$titleText = function_exists('__') ? __('forgot_password_page_title') : 'Forgot Password';
+if ($titleText === 'forgot_password_page_title' || empty($titleText)) {
+    $titleText = 'Forgot Password';
+}
+$page_title = !empty($page_title) ? $page_title : $titleText . ' - APS Dream Home';
+$page_description = function_exists('__') ? __('forgot_password_page_description') : 'Reset your password';
+if ($page_description === 'forgot_password_page_description' || empty($page_description)) {
+    $page_description = 'Reset your password on APS Dream Home';
+}
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= htmlspecialchars($page_title) ?></title>
+    <meta name="description" content="<?= htmlspecialchars($page_description) ?>">
+    <meta name="csrf-token" content="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
+    <link href="<?= BASE_URL ?>/assets/css/style.css?v=7" rel="stylesheet">
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">window.BASE_URL = '<?= BASE_URL ?>';</script>
+</head>
+<body class="forgot-password-page">
 
 <!-- Forgot Password Section -->
 <div class="forgot-password-section">
@@ -164,12 +184,12 @@ $page_description = __('forgot_password_page_description');
                     <div class="quick-links">
                         <div class="row">
                             <div class="col-md-6">
-                                <a href="<?= BASE_URL ?>login" class="quick-link">
+                                <a href="<?= BASE_URL ?>/auth/login" class="quick-link">
                                     <i class="fas fa-sign-in-alt me-2"></i><?= __('forgot_password_link_login') ?>
                                 </a>
                             </div>
                             <div class="col-md-6">
-                                <a href="<?= BASE_URL ?>auth/register" class="quick-link">
+                                <a href="<?= BASE_URL ?>/auth/register" class="quick-link">
                                     <i class="fas fa-user-plus me-2"></i><?= __('forgot_password_link_register') ?>
                                 </a>
                             </div>
@@ -325,6 +345,7 @@ $page_description = __('forgot_password_page_description');
     }
 </style>
 
+<script src="<?= BASE_URL ?>/assets/js/bootstrap.bundle.min.js"></script>
 <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
     // Tab switching
     function switchToResetTab(tabId) {

@@ -28,6 +28,31 @@ class CRMService
         return TenantScopeService::isolationEnabled() ? TenantScopeService::tenantId() : null;
     }
 
+    /**
+     * Get tenant WHERE clause for tenant-scoped models.
+     * Returns [' AND tenant_id = ?', [tenantId]] or ['', []] when not scoped.
+     */
+    private function tenantClause(): array
+    {
+        if (!TenantScopeService::isolationEnabled()) return ['', []];
+        $tid = $this->tid();
+        if ($tid <= 1) return ['', []];
+        return [' AND tenant_id = ?', [$tid]];
+    }
+
+    /**
+     * Get tenant INSERT data (adds tenant_id column if scoped).
+     * @return array ['columns' => [...], 'values' => [...]]
+     */
+    private function tenantInsertData(array $data): array
+    {
+        if (!TenantScopeService::isolationEnabled()) return ['columns' => array_keys($data), 'values' => array_values($data)];
+        $tid = $this->tid();
+        if ($tid <= 1) return ['columns' => array_keys($data), 'values' => array_values($data)];
+        $data['tenant_id'] = $tid;
+        return ['columns' => array_keys($data), 'values' => array_values($data)];
+    }
+
     // ─────────── Pipeline Stages ───────────────────────────────────────
 
     public function getPipelineStages($role = 'all') {
@@ -205,42 +230,55 @@ class CRMService
             }
         }
 
-        try {
+try {
             $leadNumber = 'CR-' . date('Ymd') . '-' . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
-            $tid = $this->tid();
-
+            
             // Sanitize lead data to prevent stored XSS
             $s = function($v) { return \App\Core\Security::sanitize($v ?? ''); };
-            $stmt = $this->db->query(
-                "INSERT INTO leads (lead_number, name, email, phone, company, address, city, state, pincode,
-                 source, property_interest, budget, budget_range, location_preference, notes, tags,
-                 assigned_to, created_by, status, priority, lead_score, lead_category" . ($tid ? ", tenant_id" : "") . ")
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', ?, ?, ?" . ($tid ? ", ?" : "") . ")",
-                [
-                    $leadNumber,
-                    $s($data['name']),
-                    $data['email'] ?? null ? filter_var($data['email'], FILTER_SANITIZE_EMAIL) : null,
-                    $data['phone'] ?? null ? preg_replace('/[^0-9+\-\s()]/', '', $data['phone']) : null,
-                    $s($data['company'] ?? null),
-                    $s($data['address'] ?? null),
-                    $s($data['city'] ?? null),
-                    $s($data['state'] ?? null),
-                    $s($data['pincode'] ?? null),
-                    $s($data['source']) ?: 'website',
-                    $s($data['property_interest'] ?? null),
-                    (float)($data['budget'] ?? 0),
-                    $s($data['budget_range'] ?? null),
-                    $s($data['location_preference'] ?? null),
-                    $s($data['notes'] ?? null),
-                    $s($data['tags'] ?? null),
-                    (int)($data['assigned_to'] ?? 0) ?: null,
-                    (int)($data['created_by'] ?? 0) ?: null,
-                    $s($data['priority'] ?? null) ?: 'medium',
-                    (int)($data['lead_score'] ?? 0),
-                    $s($data['lead_category'] ?? null) ?: 'cold',
-                    ...($tid ? [$tid] : []),
-                ]
-            );
+            
+            $insertData = $this->tenantInsertData();
+            $columns = ['lead_number', 'name', 'email', 'phone', 'company', 'address', 'city', 'state', 'pincode',
+                'source', 'property_interest', 'budget', 'budget_range', 'location_preference', 'notes', 'tags',
+                'assigned_to', 'created_by', 'status', 'priority', 'lead_score', 'lead_category'];
+            $placeholders = array_fill(0, count($columns), '?');
+            
+            if (!empty($insertData)) {
+                $columns = array_merge($columns, array_keys($insertData));
+                $placeholders = array_merge($placeholders, array_fill(0, count($insertData), '?'));
+            }
+            
+            $params = [
+                $leadNumber,
+                $s($data['name']),
+                $data['email'] ?? null ? filter_var($data['email'], FILTER_SANITIZE_EMAIL) : null,
+                $data['phone'] ?? null ? preg_replace('/[^0-9+\-\s()]/', '', $data['phone']) : null,
+                $s($data['company'] ?? null),
+                $s($data['address'] ?? null),
+                $s($data['city'] ?? null),
+                $s($data['state'] ?? null),
+                $s($data['pincode'] ?? null),
+                $s($data['source']) ?: 'website',
+                $s($data['property_interest'] ?? null),
+                (float)($data['budget'] ?? 0),
+                $s($data['budget_range'] ?? null),
+                $s($data['location_preference'] ?? null),
+                $s($data['notes'] ?? null),
+                $s($data['tags'] ?? null),
+                (int)($data['assigned_to'] ?? 0) ?: null,
+                (int)($data['created_by'] ?? 0) ?: null,
+                'new',
+                $s($data['priority'] ?? null) ?: 'medium',
+                (int)($data['lead_score'] ?? 0),
+                $s($data['lead_category'] ?? null) ?: 'cold',
+            ];
+            
+            if (!empty($insertData)) {
+                $params = array_merge($params, array_values($insertData));
+            }
+            
+            $sql = "INSERT INTO leads (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ")";
+            
+            $this->db->query($sql, $params);
             $leadId = $this->db->lastInsertId();
 
             // Log assignment if assigned
@@ -302,8 +340,9 @@ class CRMService
             }
             if (empty($fields)) return ['success' => false, 'error' => 'No fields to update'];
             $params[] = $id;
-            $whereClause = "id = ?";
-            if ($tid = $this->tid()) { $whereClause .= " AND tenant_id = ?"; $params[] = $tid; }
+            [$tSql, $tParams] = $this->tenantClause();
+            $whereClause = "id = ?" . $tSql;
+            $params = array_merge($params, $tParams);
 
             $this->db->query("UPDATE leads SET " . implode(', ', $fields) . " WHERE $whereClause", $params);
             return ['success' => true];
@@ -322,9 +361,10 @@ class CRMService
             return ['success' => false, 'error' => 'Your role does not have permission to delete leads'];
         }
         try {
-            $where = "id = ?";
             $params = [$id];
-            if ($tid = $this->tid()) { $where .= " AND tenant_id = ?"; $params[] = $tid; }
+            [$tSql, $tParams] = $this->tenantClause();
+            $where = "id = ?" . $tSql;
+            $params = array_merge($params, $tParams);
             $this->db->query("UPDATE leads SET deleted_at = NOW() WHERE $where", $params);
             return ['success' => true];
         } catch (\Exception $e) {
@@ -334,9 +374,10 @@ class CRMService
 
     public function restoreLead($id) {
         try {
-            $where = "id = ?";
             $params = [$id];
-            if ($tid = $this->tid()) { $where .= " AND tenant_id = ?"; $params[] = $tid; }
+            [$tSql, $tParams] = $this->tenantClause();
+            $where = "id = ?" . $tSql;
+            $params = array_merge($params, $tParams);
             $this->db->query("UPDATE leads SET deleted_at = NULL WHERE $where", $params);
             return ['success' => true];
         } catch (\Exception $e) {

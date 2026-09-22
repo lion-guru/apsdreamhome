@@ -63,23 +63,23 @@ $base = BASE_URL;
                 <input type="hidden" name="token" value="<?= htmlspecialchars($_GET['token'] ?? '') ?>">
                 <input type="hidden" name="role" id="selectedRole" value="customer">
 
-                <div class="role-grid">
-                    <div class="role-card selected" data-role="customer" onclick="selectRole(this, 'customer')">
+<div class="role-grid">
+                    <button class="role-card selected" data-role="customer" tabindex="0" role="button" aria-label="Customer - Browse & buy properties, track bookings, manage EMI" onclick="selectRole(this, 'customer')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectRole(this, 'customer');}">
                         <div class="icon customer"><i class="fas fa-user"></i></div>
                         <h3>Customer</h3>
                         <p>Browse & buy properties, track bookings, manage EMI</p>
                         <span class="badge">Most Popular</span>
-                    </div>
-                    <div class="role-card" data-role="associate" onclick="selectRole(this, 'associate')">
+                    </button>
+                    <button class="role-card" data-role="associate" tabindex="0" role="button" aria-label="Associate - Earn commissions, build team, refer properties" onclick="selectRole(this, 'associate')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectRole(this, 'associate');}">
                         <div class="icon associate"><i class="fas fa-handshake"></i></div>
                         <h3>Associate</h3>
                         <p>Earn commissions, build team, refer properties</p>
-                    </div>
-                    <div class="role-card" data-role="agent" onclick="selectRole(this, 'agent')">
+                    </button>
+                    <button class="role-card" data-role="agent" tabindex="0" role="button" aria-label="Agent - Professional real estate agent with team features" onclick="selectRole(this, 'agent')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectRole(this, 'agent');}">
                         <div class="icon agent"><i class="fas fa-star"></i></div>
                         <h3>Agent</h3>
                         <p>Professional real estate agent with team features</p>
-                    </div>
+                    </button>
                 </div>
 
                 <button type="submit" class="btn-continue" id="continueBtn"><i class="fas fa-arrow-right"></i> Continue as Customer</button>

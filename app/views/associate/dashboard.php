@@ -380,6 +380,71 @@ body {
     </div>
 </div>
 
+<!-- Gamification & Badges Showcase -->
+<?php
+$earnedBadgeIds = !empty($user_badges) ? array_column($user_badges, 'badge_id') : [];
+$earnedBadgeNames = !empty($user_badges) ? array_column($user_badges, 'name') : [];
+$displayBadges = !empty($all_badges) ? $all_badges : [];
+$points = $user_points ?? (int)($associate['total_points'] ?? 0);
+$level = $user_level ?? (int)($associate['current_level'] ?? 1);
+$nextLevelPoints = ($level >= 10) ? 10000 : max(100, $level * 300);
+$progressPct = min(100, round(($points / max(1, $nextLevelPoints)) * 100));
+?>
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="list-card border-0 shadow-sm" style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 pb-3 border-bottom gap-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 52px; height: 52px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; font-size: 22px;">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+                            Achievements & Milestones
+                            <span class="badge bg-warning text-dark rounded-pill px-2.5 py-1 small">Level <?= $level ?></span>
+                        </h5>
+                        <small class="text-muted">Earned <?= count($earnedBadgeIds) ?> badges · <?= number_format($points) ?> XP Points</small>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill fw-bold">
+                        <i class="fas fa-trophy text-warning me-1"></i> Rank #<?= $user_rank ?? 1 ?> on Leaderboard
+                    </span>
+                </div>
+            </div>
+
+            <!-- Level Progress Bar -->
+            <div class="mb-4">
+                <div class="d-flex justify-content-between text-muted small fw-bold mb-1">
+                    <span><i class="fas fa-flag text-primary me-1"></i> Level <?= $level ?> Progress</span>
+                    <span class="text-dark"><?= number_format($points) ?> / <?= number_format($nextLevelPoints) ?> XP (<?= $progressPct ?>%)</span>
+                </div>
+                <div class="progress" style="height: 10px; border-radius: 6px; background-color: #e2e8f0;">
+                    <div class="progress-bar bg-gradient-warning" role="progressbar" style="width: <?= $progressPct ?>%; background: linear-gradient(90deg, #3b82f6, #f59e0b);" aria-valuenow="<?= $progressPct ?>" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+
+            <!-- Badges Grid -->
+            <?php if (!empty($displayBadges)): ?>
+            <div class="d-flex flex-wrap gap-2">
+                <?php foreach (array_slice($displayBadges, 0, 8) as $b): 
+                    $isEarned = in_array($b['id'] ?? 0, $earnedBadgeIds) || in_array($b['name'] ?? '', $earnedBadgeNames);
+                    $icon = !empty($b['icon']) ? $b['icon'] : 'award';
+                ?>
+                <div class="d-flex align-items-center gap-2 px-3 py-2 rounded-3 border <?= $isEarned ? 'border-warning-subtle bg-warning-subtle shadow-sm' : 'border-light bg-light opacity-60' ?>" style="transition: all 0.2s ease;">
+                    <i class="fas fa-<?= htmlspecialchars($icon) ?> <?= $isEarned ? 'text-warning' : 'text-secondary' ?> fs-5"></i>
+                    <div>
+                        <div class="fw-bold small text-dark"><?= htmlspecialchars($b['display_name'] ?? $b['name']) ?></div>
+                        <small class="text-muted" style="font-size: 11px;"><?= $isEarned ? '✓ Unlocked' : htmlspecialchars($b['points_required'] ?? 0) . ' XP' ?></small>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+
 <!-- FOMO & Rank Progress Section -->
 <div class="row mb-4">
     <div class="col-12">
@@ -389,15 +454,15 @@ body {
             </div>
             <div class="d-flex flex-column flex-md-row align-items-md-center position-relative z-1">
                 <div class="me-md-4 mb-3 mb-md-0 text-center text-md-start">
-                    <div class="bg-warning-subtle text-warning rounded-circle d-inline-flex align-items-center justify-content-center mb-2 shadow-sm">
+                    <div class="bg-warning-subtle text-warning rounded-circle d-inline-flex align-items-center justify-content-center mb-2 shadow-sm" style="width: 48px; height: 48px;">
                         <i class="fas fa-level-up-alt fa-2x"></i>
                     </div>
                 </div>
                 <div class="flex-grow-1">
                     <h5 class="fw-bold mb-1 text-dark">Unlock Next Tier Earnings! <span class="badge bg-danger ms-2 shadow-sm pulse-badge"><i class="fas fa-fire me-1"></i> Don't Miss Out!</span></h5>
                     <p class="text-muted mb-2">You are currently a <strong class="text-primary"><?= ucfirst(str_replace('_', ' ', $rank)) ?></strong>. Your team is growing fast! Upgrade to the next rank to unlock <strong>higher commission percentages</strong> and exclusive pool bonuses.</p>
-                    <div class="progress mb-2 shadow-sm">
-                        <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated" role="progressbar" ></div>
+                    <div class="progress mb-2 shadow-sm" style="height: 8px;">
+                        <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated" role="progressbar" style="width: <?= min(100, max(20, $progressPct)) ?>%"></div>
                     </div>
                     <div class="d-flex justify-content-between text-muted small fw-bold">
                         <span class="text-primary"><i class="fas fa-check-circle me-1"></i> Current: <?= ucfirst(str_replace('_', ' ', $rank)) ?></span>

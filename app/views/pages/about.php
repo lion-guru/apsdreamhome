@@ -447,67 +447,67 @@ function aboutContent($sc, $key, $fallbackKey = '') {
         </div>
         <div class="row g-4">
             <div class="col-md-3 col-6">
-                <div class="highlight-card service-card scroll-reveal" data-service="plot-selling" role="button" tabindex="0">
+                <button type="button" class="highlight-card service-card scroll-reveal" data-service="plot-selling" tabindex="0">
                     <div class="icon-wrap">
                         <i class="fas fa-map-marked-alt"></i>
                     </div>
                     <h5>Plot Selling</h5>
                     <p>Residential & commercial plots in gated colonies across Gorakhpur, Lucknow, Kushinagar & Prayagraj. RERA registered with clear titles.</p>
                     <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
-                </div>
+                </button>
             </div>
             <div class="col-md-3 col-6">
-                <div class="highlight-card service-card scroll-reveal" data-service="construction" role="button" tabindex="0">
+                <button type="button" class="highlight-card service-card scroll-reveal" data-service="construction" tabindex="0">
                     <div class="icon-wrap">
                         <i class="fas fa-hard-hat"></i>
                     </div>
                     <h5>Construction & Development</h5>
                     <p>Complete colony development with roads, drainage, water supply, electricity, parks and community spaces. From raw land to livable neighborhoods.</p>
                     <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
-                </div>
+                </button>
             </div>
             <div class="col-md-3 col-6">
-                <div class="highlight-card service-card scroll-reveal" data-service="legal" role="button" tabindex="0">
+                <button type="button" class="highlight-card service-card scroll-reveal" data-service="legal" tabindex="0">
                     <div class="icon-wrap">
                         <i class="fas fa-file-contract"></i>
                     </div>
                     <h5>Legal & Documentation</h5>
                     <p>In-house legal team handles title verification, sale agreements, registry, mutation, and all paperwork. Every deal is legally airtight.</p>
                     <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
-                </div>
+                </button>
             </div>
             <div class="col-md-3 col-6">
-                <div class="highlight-card service-card scroll-reveal" data-service="payment" role="button" tabindex="0">
+                <button type="button" class="highlight-card service-card scroll-reveal" data-service="payment" tabindex="0">
                     <div class="icon-wrap">
                         <i class="fas fa-hand-holding-usd"></i>
                     </div>
                     <h5>Flexible Payment Plans</h5>
                     <p>EMI options, easy installment plans, and transparent pricing. No hidden charges — what you see is what you pay.</p>
                     <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
-                </div>
+                </button>
             </div>
             <div class="col-md-3 col-6">
-                <div class="highlight-card service-card scroll-reveal" data-service="resale" role="button" tabindex="0">
+                <button type="button" class="highlight-card service-card scroll-reveal" data-service="resale" tabindex="0">
                     <div class="icon-wrap">
                         <i class="fas fa-home"></i>
                     </div>
                     <h5>Resale & Resale Assistance</h5>
                     <p>Want to sell your plot? We help you find genuine buyers, handle documentation, and ensure fair market value for your property.</p>
                     <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
-                </div>
+                </button>
             </div>
             <div class="col-md-3 col-6">
-                <div class="highlight-card service-card scroll-reveal" data-service="site-visit" role="button" tabindex="0">
+                <button type="button" class="highlight-card service-card scroll-reveal" data-service="site-visit" tabindex="0">
                     <div class="icon-wrap">
                         <i class="fas fa-car"></i>
                     </div>
                     <h5>Free Site Visits</h5>
                     <p>Visit any of our colonies before you buy. Our team arranges guided site visits with transport from Gorakhpur, Lucknow or nearby areas.</p>
                     <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
-                </div>
+                </button>
             </div>
             <div class="col-md-3 col-6">
-                <div class="highlight-card service-card scroll-reveal" data-service="flats" role="button" tabindex="0">
+                <button type="button" class="highlight-card service-card scroll-reveal" data-service="flats" tabindex="0">
                     <div class="icon-wrap">
                         <i class="fas fa-couch"></i>
                     </div>
@@ -517,14 +517,14 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                 </div>
             </div>
             <div class="col-md-3 col-6">
-                <div class="highlight-card service-card scroll-reveal" data-service="community" role="button" tabindex="0">
+                <button type="button" class="highlight-card service-card scroll-reveal" data-service="community" tabindex="0">
                     <div class="icon-wrap">
                         <i class="fas fa-users"></i>
                     </div>
                     <h5>Community Building</h5>
                     <p>We don't just sell plots — we build neighborhoods. Parks, temples, schools nearby, and community events for all residents.</p>
                     <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
-                </div>
+                </button>
             </div>
         </div>
     </div>
@@ -570,14 +570,19 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                 <div class="leader-card scroll-reveal">
                     <div class="leader-img-wrap">
                         <?php 
-                        $photo = aboutContent($sc, "leader_{$i}_photo");
+                        $defaultPhotos = [
+                            1 => 'assets/images/team/abhaay-singh.jpg',
+                            2 => 'assets/images/team/praveen-singh.jpg',
+                            3 => 'assets/images/team/vijay-verma.jpg'
+                        ];
+                        $photo = aboutContent($sc, "leader_{$i}_photo") ?: ($defaultPhotos[$i] ?? 'assets/images/team/team-1.jpg');
                         $name = aboutContent($sc, "leader_{$i}_name", "about_leader_{$i}_name");
                         $role = aboutContent($sc, "leader_{$i}_role", "about_leader_{$i}_role");
                         $exp = aboutContent($sc, "leader_{$i}_exp", "about_leader_{$i}_exp");
                         $bio = aboutContent($sc, "leader_{$i}_bio", "about_leader_{$i}_bio");
                         ?>
                          <?php $imgRaw = $photo ?? '';
-                               $imgSrc = (str_starts_with($imgRaw, 'http://') || str_starts_with($imgRaw, 'https://')) ? $imgRaw : BASE_URL . '/' . $imgRaw; ?>
+                               $imgSrc = (str_starts_with($imgRaw, 'http://') || str_starts_with($imgRaw, 'https://')) ? $imgRaw : BASE_URL . '/' . ltrim($imgRaw, '/'); ?>
                          <img loading="lazy" 
                               src="<?= htmlspecialchars($imgSrc ?? '')?>" 
                               alt="<?= htmlspecialchars($name ?? '') ?>">
@@ -614,20 +619,50 @@ function aboutContent($sc, $key, $fallbackKey = '') {
         </div>
         
         <div class="row g-4 justify-content-center">
+            <?php 
+            $deptDefaults = [
+                4 => [
+                    'name' => 'Sushant Srivastava',
+                    'role' => 'Head of Sales & Marketing',
+                    'dept' => 'Sales & Marketing',
+                    'exp'  => '12+ Years Experience',
+                    'bio'  => 'Leading strategic sales operations, customer relationships, and agent network growth across Uttar Pradesh.',
+                    'photo'=> 'assets/images/team/shushant-srivastava.jpg'
+                ],
+                5 => [
+                    'name' => 'Anuj Srivastava',
+                    'role' => 'Head of Legal & Operations',
+                    'dept' => 'Legal & Compliance',
+                    'exp'  => '14+ Years Experience',
+                    'bio'  => 'Overseeing land due diligence, registry verification, title clear checks, and regulatory compliance.',
+                    'photo'=> 'assets/images/team/anuj-srivastava.jpg'
+                ],
+                6 => [
+                    'name' => 'Pramod Sharma',
+                    'role' => 'Head of Finance & Accounts',
+                    'dept' => 'Finance & Banking',
+                    'exp'  => '15+ Years Experience',
+                    'bio'  => 'Managing project financing, financial planning, customer payment reconciliations, and banking partnerships.',
+                    'photo'=> 'assets/images/team/pramod-sharma.jpg'
+                ]
+            ];
+            ?>
             <?php for ($i = 4; $i <= 6; $i++): ?>
             <?php
-            $dName = aboutContent($sc, "leader_{$i}_name");
-            $dRole = aboutContent($sc, "leader_{$i}_role");
-            $dExp = aboutContent($sc, "leader_{$i}_exp");
-            $dBio = aboutContent($sc, "leader_{$i}_bio");
-            $dPhoto = aboutContent($sc, "leader_{$i}_photo");
-            $dDept = aboutContent($sc, "leader_{$i}_dept");
+            $dDef = $deptDefaults[$i] ?? [];
+            $dName = aboutContent($sc, "leader_{$i}_name") ?: ($dDef['name'] ?? '');
+            $dRole = aboutContent($sc, "leader_{$i}_role") ?: ($dDef['role'] ?? '');
+            $dExp = aboutContent($sc, "leader_{$i}_exp") ?: ($dDef['exp'] ?? '');
+            $dBio = aboutContent($sc, "leader_{$i}_bio") ?: ($dDef['bio'] ?? '');
+            $dPhoto = aboutContent($sc, "leader_{$i}_photo") ?: ($dDef['photo'] ?? 'assets/images/team/team-1.jpg');
+            $dDept = aboutContent($sc, "leader_{$i}_dept") ?: ($dDef['dept'] ?? '');
+            $dImgSrc = (str_starts_with($dPhoto, 'http://') || str_starts_with($dPhoto, 'https://')) ? $dPhoto : BASE_URL . '/' . ltrim($dPhoto, '/');
             ?>
             <div class="col-lg-4 col-md-6">
                 <div class="dept-card scroll-reveal">
                     <div class="dept-avatar">
                         <img loading="lazy" 
-                             src="<?= BASE_URL ?>/<?= htmlspecialchars($dPhoto ?? '') ?>" 
+                             src="<?= htmlspecialchars($dImgSrc) ?>" 
                              alt="<?= htmlspecialchars($dName ?? '') ?>">
                     </div>
                     <h5><?= htmlspecialchars($dName ?? '') ?></h5>

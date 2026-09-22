@@ -212,6 +212,17 @@ class AppConstants {
   static const String payoutBatchDetailEndpoint = '/api/v2/mobile/payout-batches/';
   static const String payoutBatchExportSuffix = '/export-bank-csv';
 
+  // Legal Kit (download legal kit ZIP for bookings)
+  static const String legalKitEndpoint = '/api/v2/mobile/legal-kit/';
+  static const String legalKitAdminSuffix = '/admin';
+  static const String legalKitSalesSuffix = '/sales';
+
+  // Commission Recalculation (staff)
+  static const String commissionRecalculationsEndpoint = '/api/v2/mobile/commission-recalculations';
+  static const String commissionRecalculationDetailEndpoint = '/api/v2/mobile/commission-recalculations/';
+  static const String commissionRecalculationRequestEndpoint = '/api/v2/mobile/commission-recalculations/request';
+  static const String commissionRecalculationBulkRequestEndpoint = '/api/v2/mobile/commission-recalculations/bulk-request';
+
   // Site Visit Dispatch (staff assign/outcome/send-pin)
   static const String siteVisitDispatchEndpoint = '/api/v2/mobile/site-visits/';
   static const String siteVisitAssignSuffix = '/assign';

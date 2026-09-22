@@ -2,13 +2,23 @@ var PushNotifications = {
     swRegistration: null,
     isSubscribed: false,
 
+    getBaseUrl: function() {
+        if (typeof window !== 'undefined' && window.BASE_URL) {
+            return window.BASE_URL.replace(/\/+$/, '');
+        }
+        if (typeof window !== 'undefined' && window.location.pathname.startsWith('/apsdreamhome')) {
+            return '/apsdreamhome';
+        }
+        return '';
+    },
+
     init: function() {
         if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
             console.log('[Push] Not supported');
             return;
         }
 
-        navigator.serviceWorker.register('/sw.js')
+        navigator.serviceWorker.register(PushNotifications.getBaseUrl() + '/sw.js')
             .then(function(reg) {
                 PushNotifications.swRegistration = reg;
                 PushNotifications.checkSubscription();
@@ -36,7 +46,7 @@ var PushNotifications = {
         Notification.requestPermission().then(function(permission) {
             if (permission !== 'granted') return;
 
-            fetch('/api/push/vapid-key')
+            fetch(PushNotifications.getBaseUrl() + '/api/push/vapid-key')
                 .then(function(r) { return r.json(); })
                 .then(function(data) {
                     if (!data.publicKey) {
@@ -58,7 +68,7 @@ var PushNotifications = {
                             auth: PushNotifications.arrayBufferToBase64(subscription.getKey('auth'))
                         }
                     };
-                    return fetch('/api/push/subscribe', {
+                    return fetch(PushNotifications.getBaseUrl() + '/api/push/subscribe', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -86,7 +96,7 @@ var PushNotifications = {
                 if (!subscription) return;
                 var endpoint = subscription.endpoint;
                 return subscription.unsubscribe().then(function() {
-                    return fetch('/api/push/unsubscribe', {
+                    return fetch(PushNotifications.getBaseUrl() + '/api/push/unsubscribe', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

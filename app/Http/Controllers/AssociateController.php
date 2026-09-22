@@ -289,6 +289,11 @@ class AssociateController extends BaseController
         return $this->siteVisitController->siteVisits();
     }
 
+    public function schedule()
+    {
+        return $this->siteVisitController->schedule();
+    }
+
     public function scheduleSiteVisit()
     {
         return $this->siteVisitController->scheduleSiteVisit();
@@ -521,6 +526,30 @@ class AssociateController extends BaseController
                 $db->update('plots', ['status' => 'booked', 'updated_at' => date('Y-m-d H:i:s')], "id = ?{$tidSql}", array_merge([$plotId], $tid > 1 ? [$tid] : []));
 
                 $db->commit();
+
+                // Send booking confirmation notification to customer (SMS + WhatsApp + Email)
+                try {
+                    $notifier = new \App\Services\BookingNotificationService();
+                    $colony = $db->fetch("SELECT * FROM colonies WHERE id = ?", [$colonyId]);
+                    $notifier->sendBookingConfirmation(
+                        [
+                            'booking_number' => $bookingNumber,
+                            'total_plot_value' => (float)($plot['total_price'] ?? $bookingAmount),
+                            'booking_amount' => $bookingAmount,
+                        ],
+                        [
+                            'id' => 0,
+                            'name' => $customerName,
+                            'phone' => $customerPhone,
+                            'email' => $customerEmail,
+                        ],
+                        $plot,
+                        $colony ?: ['name' => $plot['colony_name'] ?? 'APS Colony']
+                    );
+                } catch (\Throwable $notifEx) {
+                    error_log('AssociateController::bookPlot notification error: ' . $notifEx->getMessage());
+                }
+
                 $_SESSION['flash_success'] = 'Plot booking submitted successfully! Booking #' . $bookingNumber . '. Waiting for admin approval.';
                 $this->redirect('/associate/dashboard');
             } catch (Exception $e) {

@@ -23,10 +23,10 @@ $districts = $districts ?? [];
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">State</label>
-                        <select name="state_id" class="form-select" onchange="loadDistricts(this.value)">
+                        <select name="state" class="form-select" onchange="loadDistricts(this.value)">
                             <option value="">Select State</option>
                             <?php foreach ($states as $s): ?>
-                            <option value="<?php echo $s['id']; ?>" <?php echo ($colony['district_id'] ?? 0) == $s['id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($s['name'] ?? ''); ?></option>
+                            <option value="<?php echo $s['name']; ?>" <?php echo ($colony['state'] ?? '') == $s['name'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($s['name'] ?? ''); ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -39,6 +39,16 @@ $districts = $districts ?? [];
                         </select>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">City</label>
+                        <input name="city" class="form-control" value="<?php echo htmlspecialchars($colony['city'] ?? ''); ?>" placeholder="e.g., Gorakhpur">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Pincode</label>
+                        <input name="pincode" class="form-control" value="<?php echo htmlspecialchars($colony['pincode'] ?? ''); ?>" placeholder="273001" pattern="[0-9]{6}" maxlength="6">
+                    </div>
+                </div>
                 <div class="mb-3">
                     <label class="form-label">Description</label>
                     <textarea name="description" class="form-control" rows="4"><?php echo htmlspecialchars($colony['description'] ?? ''); ?></textarea>
@@ -46,6 +56,44 @@ $districts = $districts ?? [];
                 <div class="mb-3">
                     <label class="form-label">Amenities (one per line)</label>
                     <textarea name="amenities" class="form-control" rows="3"><?php echo htmlspecialchars($colony['amenities'] ?? ''); ?></textarea>
+                </div>
+            </div></div>
+
+            <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h6 class="mb-0">Land & Pricing</h6></div>
+            <div class="card-body aps-cp-card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Land Cost (₹)</label>
+                        <input name="land_cost" type="number" step="0.01" class="form-control" value="<?php echo $colony['land_cost'] ?? 0; ?>">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Min Price per Sqft (₹)</label>
+                        <input name="min_price_per_sqft" type="number" step="0.01" class="form-control" value="<?php echo $colony['min_price_per_sqft'] ?? 0; ?>">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Block Count</label>
+                        <input name="block_count" type="number" class="form-control" value="<?php echo $colony['block_count'] ?? 1; ?>" min="1">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Phase</label>
+                        <input name="phase" class="form-control" value="<?php echo htmlspecialchars($colony['phase'] ?? 'Phase 1'); ?>" placeholder="Phase 1">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Pipeline Stage</label>
+                        <select name="pipeline_stage" class="form-select">
+                            <option value="planning" <?php echo ($colony['pipeline_stage'] ?? '') == 'planning' ? 'selected' : ''; ?>>Planning</option>
+                            <option value="approval" <?php echo ($colony['pipeline_stage'] ?? '') == 'approval' ? 'selected' : ''; ?>>Approval</option>
+                            <option value="development" <?php echo ($colony['pipeline_stage'] ?? '') == 'development' ? 'selected' : ''; ?>>Development</option>
+                            <option value="sales" <?php echo ($colony['pipeline_stage'] ?? '') == 'sales' ? 'selected' : ''; ?>>Sales Ready</option>
+                            <option value="completed" <?php echo ($colony['pipeline_stage'] ?? '') == 'completed' ? 'selected' : ''; ?>>Completed</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Development Cost (₹)</label>
+                    <input name="development_cost" type="number" step="0.01" class="form-control" value="<?php echo $colony['development_cost'] ?? 0; ?>">
                 </div>
             </div></div>
 
@@ -151,9 +199,9 @@ $districts = $districts ?? [];
 </div>
 
 <script>
-function loadDistricts(stateId) {
-    if (!stateId) return;
-    fetch('<?php echo BASE_URL; ?>/api/locations/districts?state_id=' + stateId)
+function loadDistricts(stateName) {
+    if (!stateName) return;
+    fetch('<?php echo BASE_URL; ?>/api/locations/districts?state=' + encodeURIComponent(stateName))
         .then(r => r.json())
         .then(data => {
             const sel = document.getElementById('district_select');

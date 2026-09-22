@@ -14,9 +14,30 @@ $GLOBALS['_html_doc_started'] = true;
     <link rel="icon" type="image/jpeg" href="<?= BASE_URL ?>/assets/images/logo/apslogonew.jpg">
     <meta name="description" content="<?php echo $page_description ?? 'Admin Panel'; ?>">
     <meta name="csrf-token" content="<?= $_SESSION['csrf_token'] ?? '' ?>">
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">window.BASE_URL = '<?= defined('BASE_URL') ? BASE_URL : '' ?>';</script>
     <?php if (isset($_SESSION['admin_id']) || isset($_SESSION['user_id'])): ?>
     <meta name="user-id" content="<?= (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0) ?>">
+    <meta name="user-role" content="<?= htmlspecialchars($_SESSION['admin_role'] ?? $_SESSION['role'] ?? 'admin') ?>">
+    <?php
+        // Generate JWT token for WebSocket authentication
+        $jwtSecret = $_ENV['JWT_SECRET'] ?? getenv('JWT_SECRET') ?? 'apsdreamhome-dev-key-2025-super-secret';
+        $payload = [
+            'user_id' => (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0),
+            'role' => $_SESSION['admin_role'] ?? $_SESSION['role'] ?? 'admin',
+            'iat' => time(),
+            'exp' => time() + 3600 * 24 // 24 hours
+        ];
+        $header = json_encode(['typ' => 'JWT', 'alg' => 'HS256']);
+        $encodedHeader = rtrim(strtr(base64_encode($header), '+/', '-_'), '=');
+        $encodedPayload = rtrim(strtr(base64_encode(json_encode($payload)), '+/', '-_'), '=');
+        $signature = hash_hmac('sha256', "$encodedHeader.$encodedPayload", $jwtSecret, true);
+        $encodedSignature = rtrim(strtr(base64_encode($signature), '+/', '-_'), '=');
+        $jwtToken = "$encodedHeader.$encodedPayload.$encodedSignature";
+    ?>
+    <meta name="ws-token" content="<?= htmlspecialchars($jwtToken) ?>">
     <?php endif; ?>
+    <!-- WebSocket URL for real-time notifications -->
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">window.WS_URL = '<?= defined('WS_URL') ? WS_URL : 'ws://localhost:8080' ?>';</script>
 
     <!-- Preconnect for CDN performance -->
     
@@ -33,6 +54,8 @@ $GLOBALS['_html_doc_started'] = true;
 
     <!-- Admin Theme (consolidated: admin.css + responsive-fixes + uiux-fixes) -->
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/css/admin-theme.css?v=1" rel="stylesheet">
+    <!-- Shared aps-cp-* component system (systematic UI: cards, stats, empty, pills, wizard) -->
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/consolidated/aps-components.css?v=2" rel="stylesheet">
     <!-- Utility classes (display, min-width, visibility) -->
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/utils.css?v=1" rel="stylesheet">
     <!-- Notification system CSS (dropdowns, toasts, popups) -->
@@ -539,6 +562,7 @@ $GLOBALS['_html_doc_started'] = true;
             const resultsEl = document.getElementById('omniSearchResults');
             const emptyEl = document.getElementById('omniSearchEmpty');
             const triggerBtn = document.getElementById('omniSearchTrigger');
+            if (!modalEl || !inputEl || !resultsEl) return;
             let debounceTimer = null;
             let modalInstance = null;
             let selectedIndex = -1;
@@ -767,28 +791,6 @@ $GLOBALS['_html_doc_started'] = true;
             </div>
         </div>
 
-        <!-- APS Confirm Modal -->
-        <div class="modal fade" id="apsConfirmModal" tabindex="-1" aria-labelledby="apsConfirmModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-sm">
-                <div class="modal-content" style="border: none; border-radius: 12px; overflow: hidden;">
-                    <div class="modal-header border-0 pb-0" id="apsConfirmHeader" style="background: linear-gradient(135deg, #1e293b, #334155); color: #fff; border-radius: 12px 12px 0 0;">
-                        <h6 class="modal-title fw-semibold" id="apsConfirmModalLabel">Confirm Action</h6>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body text-center py-4">
-                        <div id="apsConfirmIcon" class="mb-3" style="font-size: 2.5rem; color: #f59e0b;">
-                            <i class="fas fa-exclamation-triangle"></i>
-                        </div>
-                        <p id="apsConfirmMessage" class="mb-0 fw-medium" style="color: #1e293b; font-size: 0.95rem;"></p>
-                    </div>
-                    <div class="modal-footer border-0 justify-content-center gap-2 pt-0 pb-3">
-                        <button type="button" class="btn btn-light px-3" data-bs-dismiss="modal" style="border-radius: 8px;">Cancel</button>
-                        <button type="button" class="btn px-3 fw-semibold" id="apsConfirmBtn" style="border-radius: 8px;">Confirm</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         /* APS Confirm Modal — replaces native confirm() across admin panel
          * Usage: apsConfirm('Delete this item?').then(ok => { if (ok) ... })
@@ -834,6 +836,8 @@ $GLOBALS['_html_doc_started'] = true;
             };
         })();
         </script>
+        <!-- Customer & Portal Component Library JS -->
+        <script defer src="<?= defined('BASE_URL') ? BASE_URL : '' ?>/assets/js/customer-pages.js"></script>
 </body>
 
 </html>

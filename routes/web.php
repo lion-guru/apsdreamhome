@@ -734,7 +734,35 @@ $router->post('/property-comparison/clear', 'App\\Http\\Controllers\\Front\\Prop
 $router->get('/property-comparison/share', 'App\\Http\\Controllers\\Front\\PropertyComparisonController@share');
 
 $router->get('/user/referral', 'App\\Http\\Controllers\\Front\\ReferralController@index');
-$router->get('/api/referral/share', 'App\\Http\\Controllers\\Front\\ReferralController@share');
+
+// ============================================================
+// CUSTOMER / USER PORTAL ROUTES (/user/*)
+// Views exist in app/views/user/ — routes were missing!
+// ============================================================
+$router->get('/user/dashboard',          'App\\Http\\Controllers\\DashboardController@customer');
+$router->get('/user/profile',            'App\\Http\\Controllers\\DashboardController@profile');
+$router->post('/user/profile',           'App\\Http\\Controllers\\DashboardController@updateProfile');
+$router->get('/user/favorites',          'App\\Http\\Controllers\\DashboardController@favorites');
+$router->post('/user/favorites/add',     'App\\Http\\Controllers\\DashboardController@addFavorite');
+$router->post('/user/favorites/remove',  'App\\Http\\Controllers\\DashboardController@removeFavorite');
+$router->get('/user/saved-properties',   'App\\Http\\Controllers\\DashboardController@favorites'); // alias
+$router->get('/user/inquiries',          'App\\Http\\Controllers\\DashboardController@inquiries');
+$router->post('/user/inquiries/submit',  'App\\Http\\Controllers\\DashboardController@submitInquiry');
+$router->get('/user/settings',           'Front\\UserController@profile');
+$router->get('/user/investments',        'Front\\UserDashboardController@userInvestments');
+$router->get('/user/change-password',    'Front\\UserController@profile');
+
+// Customer-specific portal pages (route to existing CustomerPassbookController and Front\UserController)
+$router->get('/user/bookings',           'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
+$router->get('/user/emi-tracker',        'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
+$router->get('/user/payment-history',    'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
+$router->get('/user/site-visits',        'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
+$router->get('/user/tickets',            'Front\\UserController@myTickets');
+$router->post('/user/tickets',           'Front\\UserController@createTicket');
+$router->post('/user/tickets/create',    'Front\\UserController@createTicket');
+$router->get('/user/insurance',          'Front\\UserController@insurance');
+$router->get('/user/investment-plans',   'Front\\UserController@investmentPlans');
+
 $router->post('/property/inquire', 'Front\\PropertyController@propertyInquiry');
 $router->get('/dashboard', 'App\\Http\\Controllers\\DashboardController@index');
 $router->get('/dashboard/profile', 'App\\Http\\Controllers\\DashboardController@profile');
@@ -900,8 +928,14 @@ $router->get('/associate/genealogy', 'App\\Http\\Controllers\\MLMTreeController@
 $router->get('/associate/wallet', 'App\\Http\\Controllers\\WalletController@associateWallet');
 $router->get('/associate/bank-details', 'App\\Http\\Controllers\\WalletController@bankAccounts');
 $router->get('/associate/settings', 'App\\Http\\Controllers\\AssociateController@settings');
+$router->post('/associate/settings', 'App\\Http\\Controllers\\AssociateController@settings');
+$router->post('/associate/settings/update', 'App\\Http\\Controllers\\AssociateController@settings');
+$router->post('/associate/settings/password', 'App\\Http\\Controllers\\AssociateController@settings');
+$router->post('/associate/settings/notifications', 'App\\Http\\Controllers\\AssociateController@settings');
+$router->post('/associate/settings/2fa', 'App\\Http\\Controllers\\AssociateController@settings');
 $router->get('/associate/mlm-plan', 'App\\Http\\Controllers\\AssociateController@mlmPlan');
 $router->get('/associate/documents', 'App\\Http\\Controllers\\AssociateController@documents');
+$router->get('/associate/kyc', 'App\\Http\\Controllers\\AssociateController@documents');
 $router->post('/associate/documents/upload', 'App\\Http\\Controllers\\AssociateController@uploadDocument');
 $router->get('/associate/browse', 'App\\Http\\Controllers\\AssociateController@browse');
 $router->get('/associate/list-property', 'App\\Http\\Controllers\\AssociateController@listProperty');
@@ -927,6 +961,7 @@ $router->get('/associate/commissions/history', 'App\\Http\\Controllers\\Associat
 $router->get('/associate/wallet/withdraw', 'App\\Http\\Controllers\\WalletController@withdrawal');
 $router->get('/associate/network/tree', 'App\\Http\\Controllers\\MLMTreeController@tree');
 $router->get('/associate/team', 'App\\Http\\Controllers\\AssociateController@team');
+$router->get('/associate/network', 'App\\Http\\Controllers\\MLMTreeController@genealogy');
 
 
 // Associate Cash Collections
@@ -1272,6 +1307,7 @@ $router->post('/admin/users/bulk-approve', 'App\\Http\\Controllers\\Admin\\UserC
 $router->get('/admin/users/{id}', 'App\\Http\\Controllers\\Admin\\UserController@show');
 $router->get('/admin/users/{id}/edit', 'App\\Http\\Controllers\\Admin\\UserController@edit');
 $router->post('/admin/users/{id}/update', 'App\\Http\\Controllers\\Admin\\UserController@update');
+$router->post('/admin/users/{id}/inline-update', 'App\\Http\\Controllers\\Admin\\UserController@inlineUpdate');
 $router->post('/admin/users/{id}/destroy', 'App\\Http\\Controllers\\Admin\\UserController@destroy');
 
 // Admin Users â€” Enhanced Management (Wallet, Commissions, Team, Sponsor)
@@ -1285,6 +1321,29 @@ $router->get('/admin/users/{id}/commissions', 'App\\Http\\Controllers\\Admin\\Us
 $router->get('/admin/users/{id}/activity-log', 'App\\Http\\Controllers\\Admin\\UserController@viewActivityLog');
 $router->post('/admin/users/{id}/soft-delete', 'App\\Http\\Controllers\\Admin\\UserController@softDelete');
 $router->post('/admin/users/bulk-operation', 'App\\Http\\Controllers\\Admin\\UserController@bulkOperation');
+
+// Admin Users â€” New Features (Impersonation, Import, Sessions, Password Reset, 2FA, Notes, Avatar)
+$router->get('/admin/users/{id}/impersonate', 'App\\Http\\Controllers\\Admin\\UserController@impersonate');
+$router->get('/admin/users/stop-impersonation', 'App\\Http\\Controllers\\Admin\\UserController@stopImpersonation');
+$router->post('/admin/users/{id}/force-password-reset', 'App\\Http\\Controllers\\Admin\\UserController@forcePasswordReset');
+$router->get('/admin/users/import', 'App\\Http\\Controllers\\Admin\\UserController@import');
+$router->post('/admin/users/import', 'App\\Http\\Controllers\\Admin\\UserController@importProcess');
+$router->get('/admin/users/{id}/sessions', 'App\\Http\\Controllers\\Admin\\UserController@viewSessions');
+$router->post('/admin/users/sessions/{id}/revoke', 'App\\Http\\Controllers\\Admin\\UserController@revokeSession');
+$router->post('/admin/users/{id}/sessions/revoke-all', 'App\\Http\\Controllers\\Admin\\UserController@revokeAllSessions');
+$router->get('/admin/users/{id}/two-factor', 'App\\Http\\Controllers\\Admin\\UserController@viewTwoFactor');
+$router->post('/admin/users/{id}/two-factor', 'App\\Http\\Controllers\\Admin\\UserController@toggleTwoFactor');
+$router->get('/admin/users/{id}/notes', 'App\\Http\\Controllers\\Admin\\UserController@viewNotes');
+$router->post('/admin/users/{id}/notes', 'App\\Http\\Controllers\\Admin\\UserController@addNote');
+$router->post('/admin/users/notes/{id}/update', 'App\\Http\\Controllers\\Admin\\UserController@updateNote');
+$router->post('/admin/users/notes/{id}/delete', 'App\\Http\\Controllers\\Admin\\UserController@deleteNote');
+$router->post('/admin/users/{id}/avatar', 'App\\Http\\Controllers\\Admin\\UserController@uploadAvatar');
+$router->post('/admin/users/{id}/avatar/delete', 'App\\Http\\Controllers\\Admin\\UserController@deleteAvatar');
+
+// Admin Activity Feed API
+$router->get('/admin/api/activity-feed', 'App\\Http\\Controllers\\Admin\\UserController@getActivityFeed');
+$router->get('/admin/api/user-analytics', 'App\\Http\\Controllers\\Admin\\UserController@getUserAnalytics');
+$router->post('/admin/users/export-selected', 'App\\Http\\Controllers\\Admin\\UserController@exportSelected');
 
 // Admin Leads/CRM
 $router->get('/admin/leads', 'App\\Http\\Controllers\\Admin\\LeadController@index');
@@ -1463,6 +1522,9 @@ $router->post('/admin/locations/states/create', 'App\Http\Controllers\Admin\Loca
 $router->get('/admin/locations/states/edit/{id}', 'App\Http\Controllers\Admin\LocationAdminController@editState');
 $router->post('/admin/locations/states/edit/{id}', 'App\Http\Controllers\Admin\LocationAdminController@editState');
 $router->get('/admin/locations/states/delete/{id}', 'App\Http\Controllers\Admin\LocationAdminController@deleteState');
+$router->get('/admin/locations/states/export', 'App\Http\Controllers\Admin\LocationAdminController@exportStates');
+$router->post('/admin/locations/states/import', 'App\Http\Controllers\Admin\LocationAdminController@importStates');
+$router->post('/admin/locations/states/bulk-action', 'App\Http\Controllers\Admin\LocationAdminController@bulkActionStates');
 
 $router->get('/admin/locations/districts', 'App\Http\Controllers\Admin\LocationAdminController@districts');
 $router->get('/admin/locations/districts/create', 'App\Http\Controllers\Admin\LocationAdminController@createDistrict');
@@ -1470,19 +1532,34 @@ $router->post('/admin/locations/districts/create', 'App\Http\Controllers\Admin\L
 $router->get('/admin/locations/districts/edit/{id}', 'App\Http\Controllers\Admin\LocationAdminController@editDistrict');
 $router->post('/admin/locations/districts/edit/{id}', 'App\Http\Controllers\Admin\LocationAdminController@editDistrict');
 $router->get('/admin/locations/districts/delete/{id}', 'App\Http\Controllers\Admin\LocationAdminController@deleteDistrict');
+$router->get('/admin/locations/districts/export', 'App\Http\Controllers\Admin\LocationAdminController@exportDistricts');
+$router->post('/admin/locations/districts/import', 'App\Http\Controllers\Admin\LocationAdminController@importDistricts');
+$router->post('/admin/locations/districts/bulk-action', 'App\Http\Controllers\Admin\LocationAdminController@bulkActionDistricts');
 
-$router->get('/admin/locations/colonies', 'App\Http\Controllers\Admin\LocationAdminController@colonies');
-$router->get('/admin/locations/colonies/create', 'App\Http\Controllers\Admin\LocationAdminController@createColony');
-$router->post('/admin/locations/colonies/create', 'App\Http\Controllers\Admin\LocationAdminController@createColony');
-$router->get('/admin/locations/colonies/edit/{id}', 'App\Http\Controllers\Admin\LocationAdminController@editColony');
-$router->post('/admin/locations/colonies/edit/{id}', 'App\Http\Controllers\Admin\LocationAdminController@editColony');
-$router->get('/admin/locations/colonies/delete/{id}', 'App\Http\Controllers\Admin\LocationAdminController@deleteColony');
+/* UNIFIED Colony Management — single entry point /admin/colonies/ */
+$router->get('/admin/colonies', 'App\Http\Controllers\Admin\ColonyController@index');
+$router->get('/admin/colonies/create', 'App\Http\Controllers\Admin\ColonyController@create');
+$router->post('/admin/colonies/store', 'App\Http\Controllers\Admin\ColonyController@store');
+$router->get('/admin/colonies/{id}', 'App\Http\Controllers\Admin\ColonyController@show');
+$router->get('/admin/colonies/{id}/edit', 'App\Http\Controllers\Admin\ColonyController@edit');
+$router->post('/admin/colonies/update/{id}', 'App\Http\Controllers\Admin\ColonyController@update');
+$router->post('/admin/colonies/destroy/{id}', 'App\Http\Controllers\Admin\ColonyController@destroy');
 
-// Location API endpoints
-$router->get('/admin/locations/api/districts/{state_id}', 'App\Http\Controllers\Admin\LocationAdminController@getDistrictsByState');
-$router->get('/admin/locations/api/colonies/{district_id}', 'App\Http\Controllers\Admin\LocationAdminController@getColoniesByDistrict');
+/* Pipeline sub-panels under each colony */
+$router->get('/admin/colonies/{id}/pipeline/layout', 'App\Http\Controllers\Admin\ColonyController@layout');
+$router->post('/admin/colonies/{id}/pipeline/layout/save', 'App\Http\Controllers\Admin\ColonyController@saveLayout');
+$router->get('/admin/colonies/{id}/pipeline/pricing', 'App\Http\Controllers\Admin\ColonyController@pricing');
+$router->post('/admin/colonies/{id}/pipeline/pricing/save', 'App\Http\Controllers\Admin\ColonyController@savePricing');
+$router->get('/admin/colonies/{id}/pipeline/plots', 'App\Http\Controllers\Admin\ColonyController@plots');
+$router->get('/admin/colonies/{id}/pipeline/map', 'App\Http\Controllers\Admin\ColonyController@map');
+$router->get('/admin/colonies/{id}/pipeline/milestones', 'App\Http\Controllers\Admin\ColonyController@milestones');
+$router->post('/admin/colonies/{id}/pipeline/milestones', 'App\Http\Controllers\Admin\ColonyController@addMilestone');
+$router->get('/admin/colonies/{id}/pipeline/milestones/delete/{milestoneId}', 'App\Http\Controllers\Admin\ColonyController@deleteMilestone');
 
-// Admin News/Blog
+/* API endpoints */
+$router->get('/admin/colonies/api/by-district/{district_id}', 'App\Http\Controllers\Admin\ColonyController@getColoniesByDistrict');
+
+/* Admin News/Blog */
 $router->get('/admin/news', 'App\\Http\\Controllers\\Admin\\NewsController@index');
 $router->get('/admin/news/create', 'App\\Http\\Controllers\\Admin\\NewsController@create');
 $router->post('/admin/news', 'App\\Http\\Controllers\\Admin\\NewsController@store');
@@ -1556,6 +1633,7 @@ $router->get('/admin/settings/stats', 'App\\Http\\Controllers\\Admin\\SiteSettin
 $router->get('/admin/legal-pages', 'App\\Http\\Controllers\\Admin\\LegalPagesController@index');
 $router->post('/admin/legal-pages/update-terms', 'App\\Http\\Controllers\\Admin\\LegalPagesController@updateTerms');
 $router->post('/admin/legal-pages/update-privacy', 'App\\Http\\Controllers\\Admin\\LegalPagesController@updatePrivacy');
+$router->post('/admin/legal-pages/update-page/{id}', 'App\\Http\\Controllers\\Admin\\LegalPagesController@updatePage');
 $router->get('/admin/layout-manager', 'App\\Http\\Controllers\\Admin\\LayoutController@layoutManager');
 $router->post('/admin/layout-manager', 'App\\Http\\Controllers\\Admin\\LayoutController@updateLayoutSettings');
 $router->get('/admin/ai-settings', 'App\\Http\\Controllers\\Admin\\AISettingsController@index');
@@ -2179,6 +2257,18 @@ $router->get('/admin/vendors/edit/{id}', 'App\\Http\\Controllers\\Admin\\VendorC
 $router->post('/admin/vendors/update/{id}', 'App\\Http\\Controllers\\Admin\\VendorController@update');
 $router->post('/admin/vendors/delete/{id}', 'App\\Http\\Controllers\\Admin\\VendorController@delete');
 $router->get('/admin/vendors/contracts/{id}', 'App\\Http\\Controllers\\Admin\\VendorController@contracts');
+
+// ============================================================
+// CONTRACTS & AMC TRACKER
+// ============================================================
+$router->get('/admin/contracts-amc', 'App\\Http\\Controllers\\Admin\\ContractsAmcController@index');
+$router->get('/admin/contracts-amc/create', 'App\\Http\\Controllers\\Admin\\ContractsAmcController@create');
+$router->post('/admin/contracts-amc/store', 'App\\Http\\Controllers\\Admin\\ContractsAmcController@store');
+$router->get('/admin/contracts-amc/{id}', 'App\\Http\\Controllers\\Admin\\ContractsAmcController@show');
+$router->get('/admin/contracts-amc/{id}/edit', 'App\\Http\\Controllers\\Admin\\ContractsAmcController@edit');
+$router->post('/admin/contracts-amc/{id}/update', 'App\\Http\\Controllers\\Admin\\ContractsAmcController@update');
+$router->post('/admin/contracts-amc/{id}/renew', 'App\\Http\\Controllers\\Admin\\ContractsAmcController@renew');
+$router->post('/admin/contracts-amc/{id}/delete', 'App\\Http\\Controllers\\Admin\\ContractsAmcController@delete');
 
 // Admin Settings Sub-pages
 $router->get('/admin/settings/payment', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@index');
@@ -5171,6 +5261,12 @@ $router->get('/admin/tenants/onboard',                 'App\\Http\\Controllers\\
 $router->post('/admin/tenants/onboard/save',            'App\\Http\\Controllers\\Admin\\TenantController@onboardSave');
 $router->post('/admin/tenants/onboard/launch',          'App\\Http\\Controllers\\Admin\\TenantController@onboardLaunch');
 
+// System Setup & Onboarding Wizard (Company -> Users -> Colonies -> Plots -> Leads)
+$router->get('/admin/onboarding',                       'App\\Http\\Controllers\\Admin\\OnboardingController@index');
+$router->post('/admin/onboarding/save-step',            'App\\Http\\Controllers\\Admin\\OnboardingController@saveStep');
+$router->post('/admin/onboarding/complete',             'App\\Http\\Controllers\\Admin\\OnboardingController@complete');
+$router->get('/admin/onboarding/readiness',             'App\\Http\\Controllers\\Admin\\OnboardingController@readiness');
+
 // ============================================================
 // SAAS BILLING & SUBSCRIPTIONS (Super Admin)
 // ============================================================
@@ -5277,6 +5373,14 @@ $router->get('/customer/receipt/{id}', 'App\\Http\\Controllers\\Front\\CustomerP
 // ============================================================
 $router->get('/customer/registry/{bookingId}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@registryTimeline');
 $router->get('/customer/possession-certificate/{bookingId}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadPossessionCertificate');
+
+// ============================================================
+// CUSTOMER UNIFIED JOURNEY (Payment Ledger + Registry Timeline)
+// ============================================================
+$router->get('/customer/journey/{bookingId}', 'App\\Http\\Controllers\\Front\\CustomerJourneyController@journey');
+$router->post('/customer/journey/{bookingId}/stage', 'App\\Http\\Controllers\\Front\\CustomerJourneyController@updateStage');
+$router->post('/customer/journey/{bookingId}/payment-thank-you', 'App\\Http\\Controllers\\Front\\CustomerJourneyController@paymentThankYou');
+$router->post('/customer/journey/{bookingId}/payment-received', 'App\\Http\\Controllers\\Front\\CustomerJourneyController@paymentReceived');
 
 // ============================================================
 // DEMAND LETTERS (Finance) & CONSTRUCTION PROGRESS (Ops) MODULES

@@ -11,8 +11,8 @@ $desc = __($tool['desc_key'] ?? '', [], $tool['desc_default'] ?? 'Description');
 $toolSlug = basename($url); // e.g., 'calc', 'stamp-duty-calculator', etc.
 ?>
 <div class="col-lg-3 col-md-4 col-sm-6">
-    <div class="tool-card h-100 p-4 text-white text-decoration-none" style="background: <?= $gradient ?>; border-radius: 16px; transition: all 0.3s ease; cursor: pointer;" 
-         onclick="openToolModal('<?= $toolSlug ?>')" role="button" tabindex="0" aria-label="<?= $title ?>">
+    <button type="button" class="tool-card h-100 p-4 text-white text-decoration-none" style="background: <?= $gradient ?>; border-radius: 16px; transition: all 0.3s ease; cursor: pointer;" 
+         onclick="openToolModal('<?= $toolSlug ?>')" aria-label="<?= $title ?>">
         <div style="height: 4px; width: 100%; background: rgba(255,255,255,0.3); border-radius: 8px 8px 0 0; margin: -1rem -1rem 1rem -1rem;"></div>
         <div class="p-4 h-100 d-flex flex-column">
             <div style="width: 56px; height: 56px; border-radius: 14px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
@@ -25,6 +25,6 @@ $toolSlug = basename($url); // e.g., 'calc', 'stamp-duty-calculator', etc.
                     <i class="fas fa-arrow-right me-1"></i><?= __('try_now', [], 'Try Now') ?>
                 </span>
             </div>
-        </div>
+        </button>
     </div>
 </div>

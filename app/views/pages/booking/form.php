@@ -113,6 +113,7 @@ $csrfToken = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
                                 <div class="col">
                                     <small class="text-muted d-block"><?= __('book_token_amount') ?></small>
                                     <strong class="text-primary">₹<?= number_format($tokenAmount) ?></strong>
+                                    <div><span class="badge bg-danger mt-1" style="font-size:0.7rem;">Non-Refundable (वापस नहीं होगी)</span></div>
                                 </div>
                                 <div class="col">
                                     <small class="text-muted d-block"><?= __('book_balance') ?></small>
@@ -198,7 +199,7 @@ $csrfToken = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
                                     <i class="fas fa-gavel text-danger me-1"></i>
                                     I have read, understood, and unconditionally agree to the
                                     <a href="<?= $baseUrl ?>/terms-conditions" target="_blank" class="fw-bold text-decoration-underline">Master Agreement Terms</a>,
-                                    the <a href="<?= $baseUrl ?>/cancellation-policy" target="_blank" class="fw-bold text-decoration-underline">Cancellation Policy</a> (100% non-refundable token, 25%/10%/5% admin slabs),
+                                    the <a href="<?= $baseUrl ?>/cancellation-policy" target="_blank" class="fw-bold text-decoration-underline">Cancellation Policy</a> (टोकन बुकिंग राशि पूर्णतः गैर-वापसी योग्य है / 100% strictly non-refundable token, 25%/10%/5% admin slabs),
                                     the <a href="<?= $baseUrl ?>/refund-policy" target="_blank" class="fw-bold text-decoration-underline">Refund Policy</a> (180-working-day staggered payout, zero cash),
                                     and the <strong>18% penal interest on 3-month EMI default</strong>.
                                 </label>

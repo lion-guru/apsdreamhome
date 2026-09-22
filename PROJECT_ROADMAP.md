@@ -167,3 +167,70 @@ dart run build_runner build
    `AppConstants.<name>` across lib/ BEFORE removing any constant.
 4. **Dart records `(String, int, IconData, Color)` beat helper classes** for local
    widget data lists — no duplicate class definitions possible.
+
+---
+
+## SESSION 140: DEEP VIEW/CODE AUDIT (2026-09-20)
+
+### Audit Scope
+- Full scan of 1787 view files across 62 directories
+- Controller structure (71 controllers, 25 subdirs)
+- Route file analysis (5313 lines, 451KB)
+- Layout system verification (5 portal layouts)
+- Menu system vs actual view coverage mapping
+
+### Critical Findings
+
+#### ⚠️ Customer Portal — Near Empty (CRITICAL)
+`app/views/customer/` has only 2 files (`journey.php`, `registry_timeline.php`).
+PortalMenuService references 7+ customer pages that have no view. Every customer
+login lands on a missing-view error. This is the #1 priority fix.
+
+#### ⚠️ Fragmented Directories (5 duplicate pairs)
+| Canonical | Duplicate to merge |
+|-----------|-------------------|
+| `employee/` | `employees/` (admin panel) |
+| `farmer/` | `farmers/` |
+| `language/` | `languages/` |
+| `payment/` | `payments/` |
+| `user/` | `users/` |
+Root-level `careers.*.php` files also need moving into `careers/` dir.
+
+#### ⚠️ 112 Standalone Full-HTML Views
+Files with `<!DOCTYPE html>` bypass the layout system entirely — auth guards,
+sidebar menus, and header fixes don't propagate to them.
+
+### Fixed This Session
+| # | Fix | File |
+|---|-----|------|
+| 1 | AuthController 9 critical errors (Flash/View/Redirect facades replaced) | `AuthController.php` |
+| 2 | Associate layout stray `</script>` tag | `layouts/associate.php` |
+| 3 | Admin layout duplicate `apsConfirmModal` IDs | `layouts/admin.php` |
+| 4 | customer/agent/employee layouts sidebar loop curly brace syntax | 3 layout files |
+| 5 | `/associate/kyc` missing route added | `routes/web.php` |
+
+### Master Improvement Plan
+See full plan at: `implementation_plan.md` (8 phases, tracked)
+
+| Phase | Priority | Description |
+|-------|----------|-------------|
+| 1 | 🔴 CRITICAL | Customer portal views (7 missing views) |
+| 2 | 🟡 MEDIUM | Associate portal gaps (wallet, notifications) |
+| 3 | 🟡 MEDIUM | Agent portal gaps (6 missing views) |
+| 4 | 🟡 MEDIUM | Employee portal gaps (5 missing views) |
+| 5 | 🟡 MEDIUM | Directory fragmentation cleanup (5 pairs) |
+| 6 | 🟢 LOW | Standalone HTML view conversion |
+| 7 | 🟢 LOW | Code quality / linter warnings |
+| 8 | 🟢 LOW | Route file split (5313 lines → 7 files) |
+
+### Key Lessons (carried)
+_340. **Customer portal empty = silent 500s on every login** — PortalMenuService renders
+menu items but if view files don't exist, render() throws. Map menu → view → route
+as a triangle: all 3 must exist together.
+_341. **View audit before any menu work** — list actual files in each portal dir first,
+compare to PortalMenuService item list, create a gap matrix. Don't assume views exist.
+_342. **451KB route file = unmaintainable** — split by portal prefix. `/admin/*` → `routes/web/admin.php`,
+`/associate/*` → `routes/web/associate.php` etc. Router must `require_once` each file.
+_343. **62 view dirs with 5 duplicate pairs = ambiguous resolution** — when controller
+calls `render('employee/dashboard')` and both `employee/` and `employees/` exist,
+the first match wins. Always consolidate to canonical before adding new views.

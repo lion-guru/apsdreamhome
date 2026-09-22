@@ -21,16 +21,16 @@ require_once __DIR__ . '/../BaseController.php';
 
 use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
-use App\Core\View;
-use App\Core\Flash;
-use App\Core\Redirect;
 use App\Services\Auth\AuthenticationService;
 use App\Services\Auth\PasswordOtpService;
 use App\Services\Communication\LoginNotificationService;
 use App\Core\Middleware\TenantContext;
+use App\Traits\AuthSessionTrait;
 
 class AuthController extends BaseController
 {
+    use AuthSessionTrait;
+
     protected function skipCsrfProtection(): bool
     {
         return true;
@@ -59,7 +59,8 @@ class AuthController extends BaseController
     {
         @session_start();
 
-        if (isset($_SESSION['user_id'])) {
+        // Check if user is already logged in (but not admin - admins have separate session)
+        if (isset($_SESSION['user_id']) && empty($_SESSION['admin_id'])) {
             $role = $_SESSION['role'] ?? 'customer';
             $this->redirectToDashboard($role);
             exit;
@@ -188,31 +189,8 @@ class AuthController extends BaseController
                 exit;
             }
 
-            // Establish session
-            $this->establishSession($user, $identity);
-
-            // Audit log
-            try {
-                require_once __DIR__ . '/../../../Services/AuditService.php';
-                $audit = new \App\Services\AuditService($db);
-                $audit->log('login', (int)$user['id'], $user['role'] ?? 'customer', 'user', (int)$user['id'], 'User logged in', [
-                    'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
-                    'ua' => $_SERVER['HTTP_USER_AGENT'] ?? '',
-                ]);
-            } catch (\Throwable $e) { error_log("AuthController::authenticate audit error: " . $e->getMessage()); }
-
-            // Login notifications
-            try {
-                require_once __DIR__ . '/../../../Services/Communication/LoginNotificationService.php';
-                $notifier = new LoginNotificationService();
-                $isMobile = !empty($_SERVER['HTTP_USER_AGENT']) && preg_match('/(Android|iPhone|iPad)/i', $_SERVER['HTTP_USER_AGENT']);
-                $notifier->sendLoginAlerts(
-                    (int)$user['id'], $user['role'] ?? 'customer',
-                    $_SERVER['REMOTE_ADDR'] ?? '', $_SERVER['HTTP_USER_AGENT'] ?? '',
-                    $isMobile, 'email'
-                );
-            } catch (\Throwable $e) { error_log("AuthController login notification failed: " . $e->getMessage()); }
-
+            // Establish session (includes audit log + login notifications)
+            $this->establishSession($user, $identity, 'password');
             $this->redirectToDashboard($user['role'] ?? 'customer');
             exit;
         } catch (\Exception $e) {
@@ -497,79 +475,6 @@ class AuthController extends BaseController
     }
 
     /**
-     * Establish user session after successful login
-     */
-    private function establishSession(array $user, string $identity): void
-    {
-        session_regenerate_id(true);
-        $_SESSION['last_regenerate'] = time();
-
-        $_SESSION['user_id'] = (int)$user['id'];
-        $_SESSION['customer_id'] = $user['customer_id'] ?? $user['id'];
-        $_SESSION['user_name'] = $user['name'];
-        $_SESSION['user_email'] = $user['email'];
-        $_SESSION['user_phone'] = $user['phone'] ?? '';
-        $_SESSION['role'] = $user['role'] ?? 'customer';
-        $_SESSION['referral_code'] = $user['referral_code'] ?? '';
-        $_SESSION['logged_in'] = true;
-
-        $db = Database::getInstance();
-        [$tSql, $tParams] = $this->getTenantSql();
-
-        // Role-specific session IDs
-        $role = $_SESSION['role'];
-        if (in_array($role, ['agent', 'associate'], true)) {
-            try {
-                $params = array_merge([(int)$user['id']], $tParams);
-                $ass = $db->fetchOne("SELECT id FROM associates WHERE user_id = ?" . $tSql . " LIMIT 1", $params);
-                if ($ass) {
-                    $_SESSION['associate_id'] = (int)$ass['id'];
-                    if ($role === 'agent') $_SESSION['agent_id'] = (int)$ass['id'];
-                }
-            } catch (\Throwable $e) { error_log("AuthController associate lookup error: " . $e->getMessage()); }
-        } elseif ($role === 'employee' || $role === 'telecaller') {
-            try {
-                $params = array_merge([(int)$user['id']], $tParams);
-                $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ?" . $tSql . " LIMIT 1", $params);
-                $_SESSION['employee_id'] = (int)($emp['id'] ?? $user['id']);
-                $_SESSION['employee_role'] = $role;
-            } catch (\Throwable $e) { 
-                error_log("AuthController employee lookup error: " . $e->getMessage()); 
-                $_SESSION['employee_id'] = (int)$user['id'];
-                $_SESSION['employee_role'] = $role;
-            }
-        }
-
-        // Admin-level roles get admin_id
-        $adminRoles = [
-            'admin', 'super_admin', 'manager', 'employee', 'telecaller',
-            'ceo', 'cfo', 'coo', 'cto', 'cmo', 'chro',
-            'sales_director', 'marketing_director', 'construction_director',
-            'finance_director', 'hr_director', 'operations_director',
-            'legal_head', 'finance_head', 'hr_head', 'operations_head',
-            'department_manager', 'project_manager', 'sales_manager',
-            'hr_manager', 'marketing_manager', 'finance_manager',
-            'property_manager', 'it_manager', 'operations_manager',
-            'legal_advisor', 'chartered_accountant', 'senior_developer',
-            'team_lead', 'telecalling_lead', 'sales_team_lead', 'support_lead',
-            'senior_accountant', 'developer', 'content_writer', 'graphic_designer',
-            'data_entry_operator', 'backoffice_staff', 'telecalling_executive',
-            'support_executive', 'senior_associate', 'associate_team_lead',
-            'senior_agent', 'franchise_owner', 'premium_customer',
-            'verified_customer', 'guest_customer',
-        ];
-
-        if (in_array($role, $adminRoles, true)) {
-            $_SESSION['admin_id']       = (int)$user['id'];
-            $_SESSION['admin_user_id']  = (int)$user['id'];
-            $_SESSION['admin_email']    = $user['email'] ?? '';
-            $_SESSION['admin_role']     = $role;
-            $_SESSION['admin_name']     = $user['name'] ?? 'Admin';
-            $_SESSION['admin_username'] = $user['name'] ?? 'admin';
-        }
-    }
-
-    /**
      * Handle test_login bypass (dev only)
      */
     private function handleTestLogin(string $mode): void
@@ -633,127 +538,8 @@ class AuthController extends BaseController
             $_SESSION['admin_username'] = $admin['name'] ?? 'admin';
         }
 
-        $this->redirectToDashboard($admin['role']);
+$this->redirectToDashboard($admin['role']);
         exit;
-    }
-
-    /**
-     * Redirect to role-specific dashboard (merged map from LoginController + CustomerAuthController)
-     */
-    private function redirectToDashboard(string $role): void
-    {
-        $map = [
-            'admin'                  => '/admin/dashboard',
-            'super_admin'            => '/admin/dashboard',
-            'manager'                => '/admin/dashboard',
-            'employee'               => '/employee/dashboard',
-            'telecaller'             => '/employee/dashboard',
-            'associate'              => '/associate/dashboard',
-            'agent'                  => '/agent/dashboard',
-            'customer'               => '/user/dashboard',
-            'ceo'                    => '/admin/dashboard/ceo',
-            'cfo'                    => '/admin/dashboard/cfo',
-            'cto'                    => '/admin/dashboard/cto',
-            'coo'                    => '/admin/dashboard/coo',
-            'cmo'                    => '/admin/dashboard/cmo',
-            'chro'                   => '/admin/dashboard/chro',
-            'sales_director'         => '/admin/dashboard/sales',
-            'marketing_director'     => '/admin/dashboard/marketing',
-            'construction_director'  => '/admin/dashboard/operations',
-            'finance_director'       => '/admin/dashboard/finance',
-            'hr_director'            => '/admin/dashboard/hr',
-            'department_manager'     => '/admin/dashboard/sales',
-            'project_manager'        => '/admin/dashboard/operations',
-            'sales_manager'          => '/admin/dashboard/sales',
-            'hr_manager'             => '/admin/dashboard/hr',
-            'marketing_manager'      => '/admin/dashboard/marketing',
-            'finance_manager'        => '/admin/dashboard/finance',
-            'property_manager'       => '/admin/dashboard/operations',
-            'it_manager'             => '/admin/dashboard/it',
-            'operations_manager'     => '/admin/dashboard/operations',
-            'team_lead'              => '/admin/dashboard',
-            'telecalling_lead'       => '/admin/dashboard',
-            'sales_team_lead'        => '/admin/dashboard/sales',
-            'support_lead'           => '/admin/dashboard',
-            'senior_accountant'      => '/admin/dashboard/finance',
-            'senior_developer'       => '/admin/dashboard/it',
-            'legal_advisor'          => '/admin/dashboard/operations',
-            'chartered_accountant'   => '/admin/dashboard/finance',
-            'accountant'             => '/admin/dashboard/finance',
-            'developer'              => '/admin/dashboard/it',
-            'content_writer'         => '/admin/dashboard/marketing',
-            'graphic_designer'       => '/admin/dashboard/marketing',
-            'data_entry_operator'    => '/admin/dashboard',
-            'backoffice_staff'       => '/admin/dashboard',
-            'telecalling_executive'  => '/employee/dashboard',
-            'support_executive'      => '/employee/dashboard',
-            'senior_associate'       => '/associate/dashboard',
-            'associate_team_lead'    => '/associate/dashboard',
-            'senior_agent'           => '/agent/dashboard',
-            'franchise_owner'        => '/admin/dashboard/sales',
-            'premium_customer'       => '/user/dashboard',
-            'verified_customer'      => '/user/dashboard',
-            'guest_customer'         => '/user/dashboard',
-        ];
-        $redirect = $map[$role] ?? '/admin/dashboard';
-
-        $roleLabels = [
-            'admin'       => 'Admin Panel',
-            'super_admin' => 'Super Admin Panel',
-            'manager'     => 'Manager Dashboard',
-            'employee'    => 'Employee Dashboard',
-            'telecaller'  => 'Telecaller Dashboard',
-            'associate'   => 'Associate Dashboard',
-            'agent'       => 'Agent Dashboard',
-            'customer'    => 'User Dashboard',
-            'ceo'         => 'CEO Dashboard',
-            'cfo'         => 'CFO Dashboard',
-            'cto'         => 'CTO Dashboard',
-            'coo'         => 'COO Dashboard',
-            'cmo'         => 'CMO Dashboard',
-            'chro'        => 'CHRO Dashboard',
-            'sales_director'        => 'Sales Director Dashboard',
-            'marketing_director'    => 'Marketing Director Dashboard',
-            'construction_director' => 'Construction Director Dashboard',
-            'finance_director'      => 'Finance Director Dashboard',
-            'hr_director'           => 'HR Director Dashboard',
-            'department_manager'    => 'Department Manager Dashboard',
-            'project_manager'       => 'Project Manager Dashboard',
-            'sales_manager'         => 'Sales Manager Dashboard',
-            'hr_manager'            => 'HR Manager Dashboard',
-            'marketing_manager'     => 'Marketing Manager Dashboard',
-            'finance_manager'       => 'Finance Manager Dashboard',
-            'property_manager'      => 'Property Manager Dashboard',
-            'it_manager'            => 'IT Manager Dashboard',
-            'operations_manager'    => 'Operations Manager Dashboard',
-            'team_lead'             => 'Team Dashboard',
-            'telecalling_lead'      => 'Telecalling Dashboard',
-            'sales_team_lead'       => 'Sales Team Dashboard',
-            'support_lead'          => 'Support Dashboard',
-            'senior_accountant'     => 'Senior Accountant Dashboard',
-            'senior_developer'      => 'Senior Developer Dashboard',
-            'legal_advisor'         => 'Legal Advisor Dashboard',
-            'chartered_accountant'  => 'Chartered Accountant Dashboard',
-            'accountant'            => 'Accountant Dashboard',
-            'developer'             => 'Developer Dashboard',
-            'content_writer'        => 'Content Writer Dashboard',
-            'graphic_designer'      => 'Graphic Designer Dashboard',
-            'data_entry_operator'   => 'Data Entry Dashboard',
-            'backoffice_staff'      => 'Backoffice Dashboard',
-            'telecalling_executive' => 'Telecalling Executive Dashboard',
-            'support_executive'     => 'Support Executive Dashboard',
-            'senior_associate'      => 'Senior Associate Dashboard',
-            'associate_team_lead'   => 'Associate Team Lead Dashboard',
-            'senior_agent'          => 'Senior Agent Dashboard',
-            'franchise_owner'       => 'Franchise Owner Dashboard',
-            'premium_customer'      => 'Premium Customer Dashboard',
-            'verified_customer'     => 'Verified Customer Dashboard',
-            'guest_customer'        => 'Customer Dashboard',
-        ];
-
-        $label = $roleLabels[$role] ?? 'Dashboard';
-        $_SESSION['login_success'] = "Welcome! Redirecting to {$label}...";
-        header('Location: ' . BASE_URL . $redirect);
     }
 
     /**
@@ -831,7 +617,7 @@ class AuthController extends BaseController
 
     public function verifyEmail()
     {
-        View::render('auth/verify_email');
+        include __DIR__ . '/../../../views/auth/verify_email.php';
     }
 
     public function verifyEmailPost()
@@ -842,8 +628,8 @@ class AuthController extends BaseController
             $token = trim($_POST['token'] ?? '');
 
             if (empty($email) || empty($token)) {
-                Flash::error(__('Email and token are required'));
-                View::render('auth/verify_email');
+                $_SESSION['error'] = __('Email and token are required');
+                include __DIR__ . '/../../../views/auth/verify_email.php';
                 return;
             }
 
@@ -854,8 +640,8 @@ class AuthController extends BaseController
             );
 
             if (!$user) {
-                Flash::error(__('Invalid verification link'));
-                View::render('auth/verify_email');
+                $_SESSION['error'] = __('Invalid verification link');
+                include __DIR__ . '/../../../views/auth/verify_email.php';
                 return;
             }
 
@@ -864,12 +650,14 @@ class AuthController extends BaseController
                 [$user['id']]
             );
 
-            Flash::success(__('Email verified successfully'));
-            Redirect::to('/login?verified=1');
+            $_SESSION['success'] = __('Email verified successfully');
+            $redirectUrl = (defined('BASE_URL') ? BASE_URL : '') . '/login?verified=1';
+            header("Location: {$redirectUrl}");
+            exit;
         } catch (\Throwable $e) {
             error_log("AuthController::verifyEmailPost error: " . $e->getMessage());
-            Flash::error(__('Verification failed'));
-            View::render('auth/verify_email');
+            $_SESSION['error'] = __('Verification failed');
+            include __DIR__ . '/../../../views/auth/verify_email.php';
         }
     }
 }

@@ -9,7 +9,7 @@ $base = $base ?? BASE_URL;
     <button id="ai-popup-toggle" class="ai-popup-toggle" onclick="togglePopupChat()" aria-label="Open AI Helper chat">
         <i class="fas fa-robot" aria-hidden="true"></i>
     </button>
-    <div id="ai-popup-chat" class="ai-popup-chat">
+    <div id="ai-popup-chat" class="ai-popup-chat" style="display: none;">
         <div class="ai-popup-header">
             <div class="d-flex align-items-center">
                 <span class="ai-popup-avatar me-2">ðŸ¤–</span>

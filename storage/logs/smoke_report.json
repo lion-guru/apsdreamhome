@@ -1,0 +1,226 @@
+{
+    "generated_at": "2026-09-22T13:04:31+02:00",
+    "base": "http://localhost/apsdreamhome",
+    "total": 24,
+    "passed": 24,
+    "failed": 0,
+    "overall": "PASS",
+    "probes": [
+        {
+            "label": "home",
+            "url": "/",
+            "code": 200,
+            "ms": 122.5,
+            "pass": true,
+            "note": "",
+            "bytes": 311400
+        },
+        {
+            "label": "properties",
+            "url": "/properties",
+            "code": 200,
+            "ms": 113,
+            "pass": true,
+            "note": "",
+            "bytes": 282935
+        },
+        {
+            "label": "colonies",
+            "url": "/colonies",
+            "code": 200,
+            "ms": 113.8,
+            "pass": true,
+            "note": "",
+            "bytes": 206444
+        },
+        {
+            "label": "login",
+            "url": "/login",
+            "code": 200,
+            "ms": 96.2,
+            "pass": true,
+            "note": "",
+            "bytes": 18516
+        },
+        {
+            "label": "register",
+            "url": "/register",
+            "code": 200,
+            "ms": 94,
+            "pass": true,
+            "note": "",
+            "bytes": 21598
+        },
+        {
+            "label": "become-associate",
+            "url": "/become-associate",
+            "code": 200,
+            "ms": 101.9,
+            "pass": true,
+            "note": "",
+            "bytes": 25937
+        },
+        {
+            "label": "contact",
+            "url": "/contact",
+            "code": 200,
+            "ms": 110.2,
+            "pass": true,
+            "note": "",
+            "bytes": 198689
+        },
+        {
+            "label": "terms",
+            "url": "/terms",
+            "code": 200,
+            "ms": 92.6,
+            "pass": true,
+            "note": "",
+            "bytes": 12495
+        },
+        {
+            "label": "privacy",
+            "url": "/privacy",
+            "code": 200,
+            "ms": 118.7,
+            "pass": true,
+            "note": "",
+            "bytes": 186898
+        },
+        {
+            "label": "assoc-login",
+            "url": "/associate/login",
+            "code": 200,
+            "ms": 96,
+            "pass": true,
+            "note": "",
+            "bytes": 22135
+        },
+        {
+            "label": "assoc-dashboard",
+            "url": "/associate/dashboard",
+            "code": 200,
+            "ms": 131.9,
+            "pass": true,
+            "note": "",
+            "bytes": 70486
+        },
+        {
+            "label": "assoc-leads",
+            "url": "/associate/leads",
+            "code": 200,
+            "ms": 217.6,
+            "pass": true,
+            "note": "",
+            "bytes": 80590
+        },
+        {
+            "label": "assoc-genealogy",
+            "url": "/associate/genealogy",
+            "code": 200,
+            "ms": 96.2,
+            "pass": true,
+            "note": "",
+            "bytes": 34374
+        },
+        {
+            "label": "assoc-wallet",
+            "url": "/associate/wallet",
+            "code": 200,
+            "ms": 104,
+            "pass": true,
+            "note": "",
+            "bytes": 61948
+        },
+        {
+            "label": "admin-login",
+            "url": "/admin/login",
+            "code": 200,
+            "ms": 96,
+            "pass": true,
+            "note": "",
+            "bytes": 14434
+        },
+        {
+            "label": "admin-dashboard",
+            "url": "/admin/dashboard",
+            "code": 200,
+            "ms": 207,
+            "pass": true,
+            "note": "",
+            "bytes": 217638
+        },
+        {
+            "label": "admin-plots",
+            "url": "/admin/plots",
+            "code": 200,
+            "ms": 108.5,
+            "pass": true,
+            "note": "",
+            "bytes": 248958
+        },
+        {
+            "label": "admin-bookings",
+            "url": "/admin/bookings",
+            "code": 200,
+            "ms": 105.5,
+            "pass": true,
+            "note": "",
+            "bytes": 248022
+        },
+        {
+            "label": "admin-payout-batches",
+            "url": "/admin/payout-batches",
+            "code": 200,
+            "ms": 97.2,
+            "pass": true,
+            "note": "",
+            "bytes": 207781
+        },
+        {
+            "label": "admin-leads",
+            "url": "/admin/leads",
+            "code": 200,
+            "ms": 269.3,
+            "pass": true,
+            "note": "",
+            "bytes": 283370
+        },
+        {
+            "label": "admin-users",
+            "url": "/admin/users",
+            "code": 200,
+            "ms": 108.6,
+            "pass": true,
+            "note": "",
+            "bytes": 401705
+        },
+        {
+            "label": "api-health",
+            "url": "/api/health",
+            "code": 200,
+            "ms": 94.9,
+            "pass": true,
+            "note": "",
+            "bytes": 114
+        },
+        {
+            "label": "api-colonies",
+            "url": "/api/v2/mobile/colonies",
+            "code": 200,
+            "ms": 96.5,
+            "pass": true,
+            "note": "",
+            "bytes": 4665
+        },
+        {
+            "label": "api-plots",
+            "url": "/api/v2/mobile/plots/all",
+            "code": 200,
+            "ms": 101.9,
+            "pass": true,
+            "note": "",
+            "bytes": 6725
+        }
+    ]
+}

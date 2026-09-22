@@ -12,97 +12,111 @@ $GLOBALS['_html_doc_started'] = true;
     <?php if (isset($_SESSION['employee_id'])): ?>
     <meta name="user-id" content="<?= (int)$_SESSION['employee_id'] ?>">
     <?php endif; ?>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">window.BASE_URL = '<?= defined('BASE_URL') ? BASE_URL : '' ?>';</script>
 
     <a href="#aps-main-content" class="aps-skip-link">Skip to main content</a>
 
+    <!-- Fonts & Bootstrap -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
-    <!-- Design Tokens (Single Source of Truth) -->
+    <!-- Design Tokens & Components -->
     <link href="<?php echo BASE_URL; ?>/assets/css/style.css?v=7" rel="stylesheet">
-    <!-- Consolidated APS CSS Bundles -->
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css?v=2" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-layout.css?v=2" rel="stylesheet">
-    <!-- Universal mobile-first responsive overrides -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/notification-system.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css?v=3" rel="stylesheet">
 
     <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f8fafc; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: #f8fafc; color: #1e293b; }
 
+        /* Unified Dark Slate Sidebar with Blue/Indigo Accents */
         .sidebar {
             position: fixed; top: 0; left: 0; width: 260px; height: 100vh;
-            background: linear-gradient(180deg, #7c2d12 0%, #9a3412 100%);
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
             z-index: 1000; overflow-y: auto; transition: transform 0.3s ease;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
         }
         .sidebar::-webkit-scrollbar { width: 4px; }
         .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
-        .sidebar-header { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
         .sidebar-logo { color: #fff; font-size: 1.1rem; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 10px; }
-        .sidebar-logo i { font-size: 1.3rem; color: #fdba74; }
-        .sidebar-sub { color: rgba(255,255,255,0.5); font-size: 0.7rem; margin-top: 4px; }
-        .user-card { padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); color: #fff; }
-        .user-avatar { width: 45px; height: 45px; background: linear-gradient(135deg, #fb923c 0%, #f97316 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-bottom: 10px; }
-        .user-name { font-weight: 600; font-size: 0.95rem; margin-bottom: 3px; }
-        .user-role { font-size: 0.75rem; color: rgba(255,255,255,0.6); }
-        .sidebar-section { padding: 15px 20px 5px; font-size: 0.7rem; text-transform: uppercase; color: rgba(255,255,255,0.5); font-weight: 600; letter-spacing: 0.05em; }
-        .sidebar-menu { list-style: none; padding: 0 10px; margin: 0; }
+        .sidebar-logo i { font-size: 1.3rem; color: #38bdf8; }
+        .sidebar-sub { color: rgba(255,255,255,0.6); font-size: 0.72rem; margin-top: 4px; }
+        
+        .user-card { padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); color: #fff; }
+        .user-avatar { width: 44px; height: 44px; background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 8px; color: #fff; }
+        .user-name { font-weight: 600; font-size: 0.92rem; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .user-role { font-size: 0.75rem; color: rgba(255,255,255,0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        .sidebar-section { padding: 14px 20px 4px; font-size: 0.68rem; text-transform: uppercase; color: rgba(255,255,255,0.45); font-weight: 700; letter-spacing: 0.05em; }
+        .sidebar-menu { list-style: none; padding: 0 10px; margin: 0 0 8px; }
         .sidebar-item { margin-bottom: 2px; }
-        .sidebar-link { display: flex; align-items: center; padding: 10px 15px; color: #cbd5e1; text-decoration: none; border-radius: 8px; transition: all 0.2s ease; font-size: 0.9rem; }
+        .sidebar-link { display: flex; align-items: center; padding: 9px 14px; color: #cbd5e1; text-decoration: none; border-radius: 8px; transition: all 0.2s ease; font-size: 0.88rem; }
         .sidebar-link:hover, .sidebar-link.active { background: rgba(255,255,255,0.1); color: #fff; }
-        .sidebar-link i { width: 22px; margin-right: 10px; font-size: 1rem; }
-        .sidebar-badge { margin-left: auto; background: rgba(255,255,255,0.2); color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; }
+        .sidebar-link.active { background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-weight: 600; }
+        .sidebar-link i { width: 22px; margin-right: 10px; font-size: 0.95rem; text-align: center; }
+        .sidebar-badge { margin-left: auto; background: rgba(56, 189, 248, 0.25); color: #38bdf8; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 600; }
 
+        /* Main Content Layout */
         .main-content { margin-left: 260px; min-height: 100vh; transition: margin-left 0.3s ease; }
-        .top-header { background: #fff; padding: 15px 25px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
-        .page-title { font-size: 1.4rem; font-weight: 700; color: #1e293b; margin: 0; }
-        .breadcrumb { margin: 0; font-size: 0.85rem; }
-        .header-actions { display: flex; gap: 10px; align-items: center; }
-        .btn-icon { width: 40px; height: 40px; border-radius: 10px; border: 1px solid #e2e8f0; background: #fff; color: #64748b; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
-        .btn-icon:hover { background: #f1f5f9; color: #1e293b; }
-        .content-wrapper { padding: 25px; }
-        .sidebar-toggle { display: none; position: fixed; top: 20px; left: 20px; z-index: 1001; width: 45px; height: 45px; background: linear-gradient(135deg, #f97316 0%, #c2410c 100%); border: none; border-radius: 10px; color: #fff; font-size: 1.2rem; cursor: pointer; }
+        .top-header { background: #fff; padding: 14px 28px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .page-title { font-size: 1.3rem; font-weight: 700; color: #0f172a; margin: 0; }
+        .breadcrumb { margin: 0; font-size: 0.82rem; }
+        .header-actions { display: flex; gap: 12px; align-items: center; }
+        .btn-icon { width: 38px; height: 38px; border-radius: 10px; border: 1px solid #e2e8f0; background: #fff; color: #64748b; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; text-decoration: none; position: relative; }
+        .btn-icon:hover { background: #f1f5f9; color: #0f172a; }
+        .content-wrapper { padding: 28px; }
+        
+        .sidebar-toggle { display: none; position: fixed; top: 16px; left: 16px; z-index: 1001; width: 40px; height: 40px; background: #0f172a; border: none; border-radius: 8px; color: #fff; font-size: 1.1rem; cursor: pointer; align-items: center; justify-content: center; }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; }
+        .sidebar-overlay.show { display: block; }
+
         @media (max-width: 1024px) {
             .sidebar { transform: translateX(-100%); }
             .sidebar.show { transform: translateX(0); }
             .main-content { margin-left: 0; }
-            .sidebar-toggle { display: flex; align-items: center; justify-content: center; }
-            .top-header { padding-left: 70px; }
+            .sidebar-toggle { display: flex; }
+            .top-header { padding-left: 68px; }
+            .content-wrapper { padding: 16px; }
         }
-        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; }
-        .sidebar-overlay.show { display: block; }
     </style>
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=3">
 </head>
 <body>
-    <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar" aria-expanded="false">
+    <!-- Mobile Sidebar Toggle -->
+    <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar menu">
         <i class="fas fa-bars"></i>
     </button>
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
+    <!-- Employee Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <a href="<?php echo BASE_URL; ?>" class="sidebar-logo">
                 <i class="fas fa-briefcase"></i>
                 <span>APS Dream Home</span>
             </a>
-            <div class="sidebar-sub"><?= htmlspecialchars(PortalMenuService::roleLabel()) ?></div>
+            <div class="sidebar-sub">Employee Operations Portal</div>
         </div>
 
+        <!-- User Info Card -->
         <div class="user-card">
             <div class="user-avatar">
                 <i class="fas fa-user-tie"></i>
             </div>
-            <div class="user-name"><?php echo htmlspecialchars($_SESSION['user_name'] ?? $_SESSION['employee_name'] ?? 'Employee'); ?></div>
+            <div class="user-name"><?php echo htmlspecialchars($_SESSION['user_name'] ?? $_SESSION['employee_name'] ?? 'Staff Member'); ?></div>
             <div class="user-role"><?php echo htmlspecialchars($_SESSION['user_email'] ?? $_SESSION['employee_email'] ?? 'employee@example.com'); ?></div>
         </div>
 
+        <!-- RBAC Menu -->
         <?php
         try {
             $portalMenu = PortalMenuService::forSession();
         } catch (\Throwable $e) {
             $portalMenu = [];
         }
-        $activeKey = $current_page ?? '';
+        $activeKey = $current_page ?? 'dashboard';
         foreach ($portalMenu as $section):
             if (empty($section['items'])) continue;
         ?>
@@ -127,35 +141,65 @@ $GLOBALS['_html_doc_started'] = true;
         <?php endforeach; ?>
     </aside>
 
+    <!-- Main Content -->
     <main class="main-content">
+        <!-- Top Header -->
         <header class="top-header">
             <div>
-                <h1 class="page-title"><?php echo preg_replace('/\s*-\s*APS Dream Home\s*$/', '', $page_title ?? 'Employee Portal'); ?></h1>
+                <h1 class="page-title"><?php echo preg_replace('/\s*-\s*APS Dream Home\s*$/', '', $page_title ?? 'Employee Dashboard'); ?></h1>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/employee/dashboard">Home</a></li>
-                        <li class="breadcrumb-item active"><?php echo $page_title ?? 'Dashboard'; ?></li>
+                        <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/employee/dashboard" class="text-decoration-none">Home</a></li>
+                        <li class="breadcrumb-item active"><?php echo preg_replace('/\s*-\s*APS Dream Home\s*$/', '', $page_title ?? 'Dashboard'); ?></li>
                     </ol>
                 </nav>
             </div>
             <div class="header-actions">
-                <a href="<?= BASE_URL ?>/employee/notifications" class="btn-icon" title="Notifications"><i class="fas fa-bell"></i></a>
+                <a href="<?= BASE_URL ?>/employee/notifications" class="btn-icon" title="Notifications">
+                    <i class="fas fa-bell"></i>
+                </a>
+                <a href="<?= BASE_URL ?>/user/messages" class="btn-icon" title="Messages">
+                    <i class="fas fa-envelope"></i>
+                </a>
+                <div class="dropdown">
+                    <button class="btn-icon" data-bs-toggle="dropdown" aria-expanded="false" title="Account Menu">
+                        <i class="fas fa-user-circle"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" style="border-radius: 12px; min-width: 180px;">
+                        <li><a class="dropdown-item" href="<?= BASE_URL ?>/employee/profile"><i class="fas fa-user me-2 text-muted"></i>My Profile</a></li>
+                        <li><a class="dropdown-item" href="<?= BASE_URL ?>/employee/attendance"><i class="fas fa-clock me-2 text-muted"></i>Attendance</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="<?= BASE_URL ?>/auth/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
             </div>
         </header>
+
+        <!-- Content Body -->
         <div class="content-wrapper" id="aps-main-content">
             <?php echo $content ?? ''; ?>
         </div>
     </main>
 
+    <!-- Scripts -->
     <script src="<?= BASE_URL ?>/assets/js/bootstrap.bundle.min.js"></script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/frontend-enhancements.js"></script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/customer-pages.js"></script>
-    <!-- Notification System + WebSocket Widget -->
-    <script>window.NOTIFY_USER = { id: <?php echo isset($_SESSION['employee_id']) ? (int)$_SESSION['employee_id'] : 'null'; ?>, role: 'employee' };</script>
-    <link href="<?php echo BASE_URL; ?>/assets/css/notification-system.css" rel="stylesheet">
-    <script defer src="<?php echo BASE_URL; ?>/assets/js/notification-system.js"></script>
-    <link href="<?php echo BASE_URL; ?>/assets/css/notification-widget.css" rel="stylesheet">
-    <script defer src="<?php echo BASE_URL; ?>/assets/js/notification-widget.js"></script>
-    
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+        }
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 1024) {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.querySelector('.sidebar-overlay');
+                if (sidebar) sidebar.classList.remove('show');
+                if (overlay) overlay.classList.remove('show');
+            }
+        });
+    </script>
 </body>
 </html>

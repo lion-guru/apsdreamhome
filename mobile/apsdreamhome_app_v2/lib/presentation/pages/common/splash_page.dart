@@ -104,7 +104,7 @@ class _SplashPageState extends State<SplashPage>
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(32),
                       child: Image.asset(
-                        'assets/images/aps_logo.png',
+                        'assets/images/aps_logo.webp',
                         fit: BoxFit.cover,
                         errorBuilder: (_, _, _) => const Icon(
                           Icons.home_rounded,

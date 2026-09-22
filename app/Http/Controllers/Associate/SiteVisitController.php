@@ -42,7 +42,7 @@ class SiteVisitController extends BaseController
         $tid = TenantContext::getId();
 
         try {
-            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $db = \App\Core\Database\Database::getInstance();
             $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
             $params = [$userId];
             if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
@@ -62,7 +62,7 @@ class SiteVisitController extends BaseController
                 FROM site_visits sv
                 JOIN plots pl ON pl.id = sv.plot_id
                 LEFT JOIN users u ON u.id = sv.user_id
-                WHERE {$where}
+                {$where}
                 ORDER BY sv.visit_date DESC, sv.visit_time DESC
             ", $params) ?: [];
 
@@ -75,6 +75,76 @@ class SiteVisitController extends BaseController
         } catch (\Throwable $e) {
             error_log('AssociateSiteVisitController error: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * My Schedule page (List & Calendar view)
+     */
+    public function schedule()
+    {
+        $this->requireAuth();
+        $userId = $_SESSION['user_id'];
+        $tid = TenantContext::getId();
+        $db = \App\Core\Database\Database::getInstance();
+        $events = [];
+
+        try {
+            $tidSql = $tid > 1 ? " AND sv.tenant_id = ?" : "";
+            $params = [$userId];
+            if ($tid > 1) $params[] = $tid;
+
+            // 1. Site visits
+            $visits = $db->fetchAll("
+                SELECT sv.id, sv.visit_date as event_date, sv.visit_time as event_time, 'site_visit' as event_type,
+                       CONCAT('Plot ', COALESCE(pl.plot_number, 'N/A'), ' - ', COALESCE(u.name, 'Customer')) as title,
+                       'high' as priority, sv.status, COALESCE(sv.notes, '') as notes
+                FROM site_visits sv
+                JOIN plots pl ON pl.id = sv.plot_id
+                LEFT JOIN users u ON u.id = sv.user_id
+                WHERE sv.agent_id = ?{$tidSql}
+                ORDER BY sv.visit_date ASC, sv.visit_time ASC
+            ", $params) ?: [];
+            foreach ($visits as $v) {
+                $events[] = $v;
+            }
+
+            // 2. Follow-ups
+            $fTidSql = $tid > 1 ? " AND f.tenant_id = ?" : "";
+            $fParams = [$userId];
+            if ($tid > 1) $fParams[] = $tid;
+
+            $followups = $db->fetchAll("
+                SELECT f.id, f.followup_date as event_date, COALESCE(f.followup_time, '10:00:00') as event_time, 'task' as event_type,
+                       CONCAT('Follow-up: ', COALESCE(l.name, 'Lead')) as title,
+                       'medium' as priority, f.status, COALESCE(f.notes, '') as notes
+                FROM followups f
+                JOIN leads l ON l.id = f.lead_id
+                WHERE f.assigned_to = ?{$fTidSql}
+                ORDER BY f.followup_date ASC
+            ", $fParams) ?: [];
+            foreach ($followups as $f) {
+                $events[] = $f;
+            }
+
+            // Sort combined events
+            usort($events, function($a, $b) {
+                $dtA = ($a['event_date'] ?? '') . ' ' . ($a['event_time'] ?? '00:00:00');
+                $dtB = ($b['event_date'] ?? '') . ' ' . ($b['event_time'] ?? '00:00:00');
+                return strcmp($dtA, $dtB);
+            });
+        } catch (\Throwable $e) {
+            error_log('SiteVisitController::schedule error: ' . $e->getMessage());
+        }
+
+        $month = (int)($_GET['month'] ?? date('m'));
+        $year = (int)($_GET['year'] ?? date('Y'));
+
+        $this->render('associate/schedule', [
+            'page_title' => 'My Schedule - Associate Portal',
+            'events' => $events,
+            'month' => $month,
+            'year' => $year,
+        ], 'layouts/associate');
     }
 
     /**
@@ -92,7 +162,7 @@ class SiteVisitController extends BaseController
         }
 
         try {
-            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $db = \App\Core\Database\Database::getInstance();
 
             $data = [
                 'agent_id' => $userId,
@@ -153,7 +223,7 @@ class SiteVisitController extends BaseController
         }
 
         try {
-            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $db = \App\Core\Database\Database::getInstance();
             $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
             $params = [$id, $userId];
             if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
@@ -161,7 +231,7 @@ class SiteVisitController extends BaseController
             $feedback = trim($_POST['feedback'] ?? '');
 
             $stmt = $db->prepare("UPDATE site_visits SET status = 'completed', feedback = ?, completed_at = NOW() WHERE id = ? AND agent_id = ?{$tidSql}");
-            $params = array_merge([$feedback, $nextAction, $id, $userId], TenantContext::getId() > 1 ? [TenantContext::getId()] : []);
+            $params = array_merge([$feedback, $id, $userId], TenantContext::getId() > 1 ? [TenantContext::getId()] : []);
             $stmt->execute($params);
 
             if ($stmt->rowCount() > 0) {
@@ -194,7 +264,7 @@ class SiteVisitController extends BaseController
         }
 
         try {
-            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $db = \App\Core\Database\Database::getInstance();
             $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
             $params = [$id, $userId];
             if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
@@ -235,7 +305,7 @@ class SiteVisitController extends BaseController
         }
 
         try {
-            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $db = \App\Core\Database\Database::getInstance();
             $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
             $params = [$id, $userId];
             if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
@@ -245,7 +315,7 @@ class SiteVisitController extends BaseController
 
             if (empty($newDate)) throw new Exception('New date is required');
 
-            $stmt = $db->prepare("UPDATE site_visits SET visit_date = ?, visit_time = ?, status = 'rescheduled', rescheduled_at = NOW() WHERE id = ? AND associate_id = ?{$tidSql}");
+            $stmt = $db->prepare("UPDATE site_visits SET visit_date = ?, visit_time = ?, status = 'rescheduled', rescheduled_at = NOW() WHERE id = ? AND agent_id = ?{$tidSql}");
             $params = array_merge([$newDate, $newTime, $id, $userId], TenantContext::getId() > 1 ? [TenantContext::getId()] : []);
             $stmt->execute($params);
 
@@ -273,7 +343,7 @@ class SiteVisitController extends BaseController
         $userId = $_SESSION['user_id'];
         $tid = TenantContext::getId();
 
-        $db = \App\Core\Database\Database::getInstance()->getConnection();
+        $db = \App\Core\Database\Database::getInstance();
         $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
         $params = [$userId];
         if (TenantContext::getId() > 1) $params[] = TenantContext::getId();

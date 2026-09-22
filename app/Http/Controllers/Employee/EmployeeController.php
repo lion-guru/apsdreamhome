@@ -175,11 +175,38 @@ class EmployeeController extends BaseController
         $dashboardData = $this->getEmployeeDashboardData($employeeId);
         $gamify = $this->safeGamify('forEmployee', (int)$employeeId);
 
+        // Load gamification badges and level metrics
+        $userBadges = [];
+        $allBadges = [];
+        $userRank = 1;
+        $userPoints = 0;
+        $userLevel = 1;
+        try {
+            $uStmt = $this->db->fetchOne("SELECT total_points, current_level FROM users WHERE id = ?", [$employeeId]);
+            if ($uStmt) {
+                $userPoints = (int)($uStmt['total_points'] ?? 0);
+                $userLevel = (int)($uStmt['current_level'] ?? 1);
+            }
+            if (class_exists('\App\Services\Gamification\GamificationService')) {
+                $gamificationService = new \App\Services\Gamification\GamificationService();
+                $userBadges = $gamificationService->getUserBadges($employeeId);
+                $userRank = $gamificationService->getUserRank($employeeId);
+            }
+            $allBadges = $this->db->fetchAll("SELECT * FROM badges WHERE is_active = 1 ORDER BY points_required ASC LIMIT 8") ?: [];
+        } catch (\Throwable $e) {
+            error_log('Employee dashboard gamification: ' . $e->getMessage());
+        }
+
         $data = [
             'page_title' => 'Employee Dashboard',
             'page_description' => 'Employee portal dashboard for APS Dream Home',
             'dashboardData' => $dashboardData,
             'gamify' => $gamify,
+            'user_badges' => $userBadges,
+            'all_badges' => $allBadges,
+            'user_rank' => $userRank,
+            'user_points' => $userPoints,
+            'user_level' => $userLevel,
         ];
         $this->render('employees/dashboard', $data);
     }

@@ -223,6 +223,23 @@ class NocRegistryService
         $stmt = $pdo->prepare("UPDATE noc_requests SET status = 'approved', approved_by = ?, processed_at = NOW(), notes = IFNULL(CONCAT(notes, '\n'), '') WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""));
         $stmt->execute($tid > 1 ? [$approvedBy, $nocId, $tid] : [$approvedBy, $nocId]);
 
+        // Dispatch journey stage notification to customer
+        try {
+            $booking = $this->getBooking((int)$noc['booking_id']);
+            if ($booking && !empty($booking['customer_id'])) {
+                $user = [
+                    'id' => (int)$booking['customer_id'],
+                    'name' => $booking['customer_name'] ?? 'Customer',
+                    'email' => $booking['customer_email'] ?? '',
+                    'phone' => $booking['customer_phone'] ?? '',
+                ];
+                $bns = new \App\Services\BookingNotificationService();
+                $bns->sendNocApprovedNotification($booking, $user, $noc);
+            }
+        } catch (\Throwable $e) {
+            error_log("[NocRegistryService::approveNoc] notification error: " . $e->getMessage());
+        }
+
         return ['success' => true, 'message' => "NOC #{$nocId} approved"];
     }
 
@@ -343,6 +360,27 @@ class NocRegistryService
         // If completed, update booking status
         if ($newStatus === 'completed') {
             $pdo->prepare("UPDATE plot_bookings SET status = 'registration_done' WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""))->execute($tid > 1 ? [$reg['booking_id'], $tid] : [$reg['booking_id']]);
+        }
+
+        // Dispatch journey stage notifications on key transitions
+        try {
+            $booking = $this->getBooking((int)$reg['booking_id']);
+            if ($booking && !empty($booking['customer_id'])) {
+                $user = [
+                    'id' => (int)$booking['customer_id'],
+                    'name' => $booking['customer_name'] ?? 'Customer',
+                    'email' => $booking['customer_email'] ?? '',
+                    'phone' => $booking['customer_phone'] ?? '',
+                ];
+                $bns = new \App\Services\BookingNotificationService();
+                if ($newStatus === 'appointment_scheduled') {
+                    $bns->sendRegistryScheduledNotification($booking, $user, $notes ?? date('Y-m-d'), $reg['sub_registrar_office'] ?? 'Sub-Registrar Office');
+                } elseif ($newStatus === 'completed') {
+                    $bns->sendRegistryCompletedNotification($booking, $user, $regNo ?? ($reg['registration_no'] ?? ''));
+                }
+            }
+        } catch (\Throwable $e) {
+            error_log("[NocRegistryService::updateRegistryStatus] notification error: " . $e->getMessage());
         }
 
         return ['success' => true, 'message' => "Registry #{$registryId} updated to '{$newStatus}'"];

@@ -70,15 +70,29 @@ class DashboardController extends BaseController
     public function customer()
     {
         $this->requireLogin();
-        $userId = $_SESSION['user_id'];
+        $this->layout = 'layouts/customer';
+        $userId = (int)$_SESSION['user_id'];
 
         try {
-            // Get live stats
+            // Get live user data
+            $user = $this->db->fetchOne("SELECT id, name, email, phone, role, created_at, avatar FROM users WHERE id = ?", [$userId]) ?: [];
+            $userName = !empty($user['name']) ? $user['name'] : ($_SESSION['user_name'] ?? 'Valued Customer');
+            $createdAt = !empty($user['created_at']) ? date('M Y', strtotime($user['created_at'])) : date('M Y');
+
+            // Live counts
+            $favCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM property_favorites WHERE user_id = ?", [$userId]);
+            $bookingsCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM bookings WHERE user_id = ?", [$userId]);
+            $visitsCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM site_visits WHERE user_id = ?", [$userId]);
+            $savedSearchesCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM saved_searches WHERE user_id = ?", [$userId]);
+            $myPropsCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM user_properties WHERE user_id = ?", [$userId]);
+
             $stats = [
-                'favorites_count' => $this->db->fetchColumn("SELECT COUNT(*) FROM property_favorites WHERE user_id = ?", [$userId]),
-                'inquiries_count' => 0, // property_inquiries has no user_id column
-                'views_count' => 12, // Mock for now
-                'saved_searches_count' => 3 // Mock for now
+                'favorites_count' => $favCount,
+                'bookings_count' => $bookingsCount,
+                'visits_count' => $visitsCount,
+                'saved_searches_count' => $savedSearchesCount,
+                'my_properties_count' => $myPropsCount,
+                'views_count' => 12,
             ];
 
             // Get favorite properties
@@ -89,43 +103,69 @@ class DashboardController extends BaseController
                 WHERE f.user_id = ?
                 ORDER BY f.created_at DESC
                 LIMIT 5
-            ", [$userId]);
-
-            // Get recent activities (Favorites — property_inquiries has no user_id column)
-            $activities = [];
-
-            // Fetch favorites
-            $recent_activities = $this->db->fetchAll("
-                SELECT 'favorite' as type, p.title as property, f.created_at as date
-                FROM property_favorites f
-                JOIN properties p ON f.property_id = p.id
-                WHERE f.user_id = ?
-                ORDER BY f.created_at DESC
-                LIMIT 5
             ", [$userId]) ?: [];
+
+            // Get recent activities (Favorites & Bookings)
+            $recent_activities = [];
+            foreach ($favorite_properties as $fav) {
+                $recent_activities[] = [
+                    'type' => 'favorite',
+                    'title' => 'Shortlisted ' . ($fav['title'] ?? 'Property #' . $fav['id']),
+                    'date' => $fav['favorited_at'] ?? date('Y-m-d H:i:s'),
+                    'icon' => 'fas fa-heart',
+                    'color' => 'text-danger'
+                ];
+            }
+
+            // Get recent bookings if any
+            $recent_bookings = $this->db->fetchAll("
+                SELECT b.*, p.plot_number
+                FROM bookings b
+                LEFT JOIN plots p ON b.plot_id = p.id
+                WHERE b.user_id = ?
+                ORDER BY b.created_at DESC
+                LIMIT 3
+            ", [$userId]) ?: [];
+
+            foreach ($recent_bookings as $b) {
+                $recent_activities[] = [
+                    'type' => 'booking',
+                    'title' => 'Booked Plot ' . ($b['plot_number'] ?? '#' . $b['id']) . ' (' . ucfirst($b['status'] ?? 'pending') . ')',
+                    'date' => $b['created_at'] ?? date('Y-m-d H:i:s'),
+                    'icon' => 'fas fa-file-contract',
+                    'color' => 'text-success'
+                ];
+            }
+
             usort($recent_activities, function ($a, $b) {
                 return strtotime($b['date'] ?? 'now') - strtotime($a['date'] ?? 'now');
             });
             $recent_activities = array_slice($recent_activities, 0, 5);
 
-            // Get recommended properties - select only needed columns for performance
+            // Recommended featured properties
             $recommended_properties = $this->db->fetchAll("
                 SELECT id, title, property_type, location, price, status, created_at
                 FROM properties
                 WHERE status = 'available'
                 ORDER BY created_at DESC
                 LIMIT 4
-            ");
+            ") ?: [];
 
             $data = [
                 'page_title' => 'Customer Dashboard - APS Dream Home',
+                'current_page' => 'dashboard',
                 'user' => [
-                    'name' => $_SESSION['user_name'] ?? 'Guest',
-                    'customer_id' => 'CUST-' . str_pad($userId, 5, '0', STR_PAD_LEFT),
-                    'join_date' => $_SESSION['join_date'] ?? date('Y-m-d')
+                    'id' => $userId,
+                    'name' => $userName,
+                    'email' => $user['email'] ?? ($_SESSION['user_email'] ?? ''),
+                    'phone' => $user['phone'] ?? '',
+                    'customer_id' => 'CUST-' . str_pad((string)$userId, 5, '0', STR_PAD_LEFT),
+                    'join_date' => $createdAt,
+                    'avatar' => $user['avatar'] ?? null
                 ],
                 'stats' => $stats,
                 'favorite_properties' => $favorite_properties,
+                'recent_bookings' => $recent_bookings,
                 'recent_activities' => $recent_activities,
                 'recommended_properties' => $recommended_properties
             ];
@@ -135,6 +175,19 @@ class DashboardController extends BaseController
             error_log("Error loading customer dashboard: " . $e->getMessage());
             $this->render('dashboard/customer', [
                 'page_title' => 'Customer Dashboard',
+                'current_page' => 'dashboard',
+                'user' => [
+                    'name' => $_SESSION['user_name'] ?? 'Valued Customer',
+                    'customer_id' => 'CUST-' . str_pad((string)$userId, 5, '0', STR_PAD_LEFT),
+                    'join_date' => date('M Y')
+                ],
+                'stats' => [
+                    'favorites_count' => 0,
+                    'bookings_count' => 0,
+                    'visits_count' => 0,
+                    'saved_searches_count' => 0,
+                    'my_properties_count' => 0,
+                ],
                 'error' => "Could not load dashboard data."
             ]);
         }

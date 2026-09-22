@@ -147,7 +147,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
 <div class="container">
     <!-- Filters -->
     <div class="props-filter-glass mb-4">
-        <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#advancedFilters" role="button">
+        <button type="button" class="filter-header" data-bs-toggle="collapse" data-bs-target="#advancedFilters" aria-expanded="false" aria-controls="advancedFilters">
             <h6><i class="fas fa-sliders-h me-2"></i><?= __('advanced_search') ?></h6>
             <div class="d-flex align-items-center gap-2">
                 <?php if (!empty($_SESSION['user_id']) && $hasActiveFilters): ?>
@@ -159,7 +159,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                     <i class="fas fa-redo" aria-hidden="true"></i>
                 </button>
                 <i class="fas fa-chevron-down" id="filterChevron"></i>
-            </div>
+            </button>
         </div>
         <div class="collapse" id="advancedFilters">
             <div class="filter-body">

@@ -45,14 +45,27 @@ $tabs = [
 
 <div class="container-fluid py-4 site-settings-wrap">
     <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
         <div>
-            <h3 class="h3 mb-0"><i class="fas fa-cog me-2 text-primary"></i><?= $page_title ?></h3>
-            <small class="text-muted">Manage all site-wide content, branding, and SEO from one place</small>
+            <h3 class="h3 mb-1"><i class="fas fa-cog me-2 text-primary"></i><?= $page_title ?></h3>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 small">
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/erp">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Site Settings</li>
+                </ol>
+            </nav>
         </div>
-        <a href="<?= BASE_URL ?>/admin/site-content" class="btn btn-outline-secondary btn-sm">
-            <i class="fas fa-layer-group me-1"></i> Content Manager
-        </a>
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="<?= BASE_URL ?>/admin/site-content" class="btn btn-outline-info btn-sm">
+                <i class="fas fa-layer-group me-1"></i>Content Manager
+            </a>
+            <a href="<?= BASE_URL ?>/admin/pages" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-file-alt me-1"></i>CMS Pages
+            </a>
+            <a href="<?= BASE_URL ?>/admin/gallery" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-images me-1"></i>Gallery
+            </a>
+        </div>
     </div>
 
     <?php if (!empty($success)): ?>

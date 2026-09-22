@@ -27,8 +27,14 @@
     poll: BASE + '/api/v2/notifications/poll',
     read: BASE + '/api/v2/notifications/read',
   };
-  const WS_URL =
-    window.WS_URL || ''; // Disabled to prevent 404 errors on missing websocket_server.php
+  // WebSocket URL - configure in admin.php or set via window.WS_URL before script loads
+  const WS_URL = window.WS_URL || 'ws://localhost:8080';
+
+  const escape = s =>
+    String(s || '')
+      .replace(/&/g, '&')
+      .replace(/</g, '<')
+      .replace(/>/g, '>');
 
   const escape = s =>
     String(s || '')
@@ -427,8 +433,13 @@
 
     /* ─── Helpers ─── */
     getAuthToken() {
-      const meta = document.querySelector('meta[name="csrf-token"]');
-      if (meta) return meta.getAttribute('content');
+      // Use ws-token meta tag for WebSocket authentication
+      const wsMeta = document.querySelector('meta[name="ws-token"]');
+      if (wsMeta) return wsMeta.getAttribute('content');
+      
+      // Fallback to CSRF token for HTTP APIs
+      const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+      if (csrfMeta) return csrfMeta.getAttribute('content');
       return sessionStorage.getItem('auth_token') || '';
     }
 

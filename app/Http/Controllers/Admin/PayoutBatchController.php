@@ -241,7 +241,7 @@ class PayoutBatchController extends AdminController
         $this->requireAdmin();
         $id = (int)$id;
         $format = strtolower(trim($_GET['format'] ?? 'generic'));
-        if (!in_array($format, ['generic', 'icici', 'hdfc'], true)) {
+        if (!in_array($format, ['generic', 'icici', 'hdfc', 'sbi'], true)) {
             $format = 'generic';
         }
 
@@ -353,7 +353,13 @@ class PayoutBatchController extends AdminController
             ];
         }
 
-        if ($format === 'icici') {
+        if ($format === 'sbi') {
+            $header = ['Payment Type', 'Beneficiary Account No', 'Beneficiary IFSC', 'Amount', 'Beneficiary Name', 'Customer Reference', 'Narration'];
+            $csvRows = [$header];
+            foreach ($rows as $r) {
+                $csvRows[] = [$r['type'], $r['account'], $r['ifsc'], number_format($r['amount'], 2, '.', ''), $r['name'], $r['ref'], $r['remarks']];
+            }
+        } elseif ($format === 'icici') {
             $header = ['Beneficiary Name', 'Account Number', 'IFSC Code', 'Amount', 'Payment Type(NEFT/RTGS/IMPS)', 'Customer Reference', 'Remarks'];
             $csvRows = [$header];
             foreach ($rows as $r) {

@@ -225,4 +225,6 @@ if (!isset($sc)) {
     </script>
 
     <!-- Additional Scripts -->
+    <!-- Chart.js for analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <!-- Bootstrap JS already loaded in admin.php layout -->

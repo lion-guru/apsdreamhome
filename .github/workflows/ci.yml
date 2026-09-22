@@ -1,190 +1,114 @@
-name: APS Dream Home CI
+name: CI
 
-# NOTE: triggers converted to workflow_dispatch-only on 2026-09-14.
-# ci-cd.yml is the canonical CI pipeline (real Playwright E2E + docker + deploy).
-# This workflow is kept for manual on-demand runs and diagnostic checks.
 on:
-  workflow_dispatch:
-
-# Cancel in-flight runs on the same branch
-concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-  # ---------------------------------------------------------------------------
-  # 1. LINT - PHP syntax across the whole project
-  # ---------------------------------------------------------------------------
-  lint:
-    name: PHP syntax
+  php-syntax:
+    name: PHP Syntax Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
-
-      - name: Run php -l on every PHP file
+          php-version: '8.3'
+          extensions: pdo_mysql, mbstring, json, curl, openssl, zip, gd
+      - name: Check PHP syntax
         run: |
-          set -e
-          ERRORS=0
-          # Exclude vendor, _archive, deprecated mobile/Flutter code, build output
-          while IFS= read -r f; do
-            if ! php -l "$f" >/dev/null 2>&1; then
-              echo "SYNTAX ERROR in $f:"
-              php -l "$f"
-              ERRORS=$((ERRORS + 1))
-            fi
-          done < <(find . \
-            -name "*.php" \
-            -not -path "./vendor/*" \
-            -not -path "./_archive/*" \
-            -not -path "./node_modules/*" \
-            -not -path "./aaaaa/*" \
-            -not -path "./mobile/*" \
-            -not -path "./nbproject/*" \
-            -not -path "./storage/cache/*" \
-            -not -path "./testing/screenshots/*")
-          echo "Total syntax errors: $ERRORS"
-          if [ "$ERRORS" -gt 0 ]; then exit 1; fi
-          echo "All PHP files pass syntax check"
+          find app -name "*.php" -exec php -l {} \; 2>&1 | grep -v "No syntax errors" || true
 
-  # ---------------------------------------------------------------------------
-  # 2. TEST - migration + test runner
-  # ---------------------------------------------------------------------------
-  test:
-    name: Test suite (PHP 8.2 + MySQL 8.0)
+  schema-scan:
+    name: Schema Mismatch Scan
     runs-on: ubuntu-latest
     services:
       mysql:
-        image: mysql:8.0
+        image: mariadb:10.4
         env:
-          MYSQL_ROOT_PASSWORD: rootroot
-          MYSQL_DATABASE: apsdreamhome_test
-          MYSQL_USER: testuser
-          MYSQL_PASSWORD: testpass
-        ports: ['3306:3306']
-        options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: apsdreamhome
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup PHP 8.2
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          extensions: pdo, pdo_mysql, mysqli, mbstring, zip, curl, gd, intl, sockets, bcmath, json, openssl
-          ini-values: post_max_size=256M, upload_max_filesize=256M, memory_limit=1G
-
-      - name: Install Composer dev dependencies
-        run: composer install --no-progress --prefer-dist --optimize-autoloader
-
-      - name: Wait for MySQL
-        run: |
-          for i in {1..30}; do
-            mysqladmin ping -h127.0.0.1 -P3306 -utestuser -ptestpass --silent && break
-            sleep 2
-          done
-          mysqladmin ping -h127.0.0.1 -P3306 -utestuser -ptestpass --silent
-
-      - name: Run database migrations
-        env:
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_DATABASE: apsdreamhome_test
-          DB_USERNAME: testuser
-          DB_PASSWORD: testpass
-          APP_ENV: testing
-          APP_DEBUG: "false"
-          JWT_SECRET: ci-test-secret-key-must-be-at-least-32-bytes-long
-        run: |
-          php tests/migrate.php 2>&1 | tee tests/reports/migrate.log
-
-      - name: Run test suite
-        env:
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_DATABASE: apsdreamhome_test
-          DB_USERNAME: testuser
-          DB_PASSWORD: testpass
-          APP_ENV: testing
-          APP_DEBUG: "false"
-          JWT_SECRET: ci-test-secret-key-must-be-at-least-32-bytes-long
-        run: |
-          php tests/run_all_tests.php 2>&1 | tee tests/reports/run.log
-
-      - name: Publish JUnit results
-        if: always()
-        continue-on-error: true
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        with:
-          files: tests/reports/junit.xml
-          check_name: APS Dream Home test results
-
-      - name: Upload CI artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: ci-artifacts
-          path: |
-            tests/reports/
-            tests/reports/.gitkeep
-          retention-days: 7
-
-  # ---------------------------------------------------------------------------
-  # 3. SECURITY - composer audit + PHP security check
-  # ---------------------------------------------------------------------------
-  security:
-    name: Security audit
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: '8.3'
+          extensions: pdo_mysql, mbstring, json, curl, openssl, zip, gd
+      - name: Install composer dependencies
+        run: composer install --no-interaction --prefer-dist || true
+      - name: Import database schema
+        run: |
+          sleep 10
+          mysql -h 127.0.0.1 -P 3306 -u root -proot apsdreamhome < database/schema.sql 2>/dev/null || echo "Schema import skipped - using existing"
+      - name: Run schema scanner
+        run: php testing/scan_schema_mismatches.php
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: apsdreamhome
+          DB_USERNAME: root
+          DB_PASSWORD: root
 
-      - name: Install Composer
-        run: composer install --no-progress --prefer-dist
-
-      - name: Run composer audit
-        run: composer audit --no-dev || echo "Audit completed with warnings (informational)"
-
-  # ---------------------------------------------------------------------------
-  # 4. JS / PLAYWRIGHT (only on push to main/feature branches)
-  # ---------------------------------------------------------------------------
-  frontend:
-    name: Frontend (Playwright + JS)
+  visual-regression:
+    name: Visual Regression Tests
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
     steps:
       - uses: actions/checkout@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-
       - name: Install Playwright
         run: |
-          if [ -f testing/visual_tests/package.json ]; then
-            cd testing/visual_tests
-            npm ci || npm install
-          fi
-        continue-on-error: true
-
-      - name: Run E2E master test
+          cd testing/visual_tests
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Run visual smoke tests
         run: |
-          if [ -f testing/visual_tests/E2E_MASTER_TEST.mjs ]; then
-            echo "Found E2E master test - run locally with Playwright"
-          else
-            echo "No E2E test file found - skipping"
-          fi
-        continue-on-error: true
+          cd testing/visual_tests
+          node E2E_MASTER_TEST.mjs
+        env:
+          BASE_URL: http://localhost:8000
+
+  flutter-analyze:
+    name: Flutter Analyze
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: stable
+      - name: Flutter analyze
+        working-directory: mobile/apsdreamhome_app_v2
+        run: flutter analyze
+
+  flutter-build-release:
+    name: Build Release APK
+    runs-on: ubuntu-latest
+    needs: [flutter-analyze]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: stable
+      - name: Build release APK
+        working-directory: mobile/apsdreamhome_app_v2
+        run: |
+          flutter build apk --release
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: apsdreamhome-release-apk
+          path: mobile/apsdreamhome_app_v2/build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 7

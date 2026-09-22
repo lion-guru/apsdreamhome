@@ -232,7 +232,12 @@ class PortalMenuService
                     
                     if (!empty($rows)) {
                         $items = [];
+                        $skipCommon = ['my profile', 'profile', 'settings', 'logout'];
                         foreach ($rows as $row) {
+                            $lowerName = strtolower(trim($row['name']));
+                            if (in_array($lowerName, $skipCommon)) {
+                                continue;
+                            }
                             $section = 'Work';
                             $key = strtolower(str_replace(' ', '_', $row['name']));
                             
@@ -267,7 +272,6 @@ class PortalMenuService
             $this->item('leaves', 'Work', 'Leaves', '/employee/leaves', 'fas fa-umbrella-beach'),
             $this->item('payroll', 'Earnings', 'Payroll', '/employee/payroll', 'fas fa-money-check-alt'),
             $this->item('performance', 'Earnings', 'Performance', '/employee/performance', 'fas fa-chart-line'),
-            $this->item('profile', 'Work', 'My Profile', '/employee/profile', 'fas fa-user'),
         ];
     }
 
@@ -306,6 +310,7 @@ class PortalMenuService
             $this->item('properties', 'Main', 'All Properties', '/admin/properties', 'fas fa-building', $this->countTable('user_properties')),
             $this->item('bookings', 'Main', 'All Bookings', '/admin/bookings', 'fas fa-file-contract', $this->countTable('bookings')),
             $this->item('users', 'Main', 'All Users', '/admin/users', 'fas fa-user-friends', $this->countTable('users')),
+            $this->item('onboarding', 'Tools', 'Setup Wizard', '/admin/onboarding', 'fas fa-magic'),
             $this->item('admin-tools', 'Tools', 'Admin Tools', '/admin/dev-tools', 'fas fa-tools'),
             $this->item('admin-kyc', 'Tools', 'KYC Reviews', '/admin/kyc', 'fas fa-id-card', $this->countTable('kyc_requests', null, 'status', 'pending')),
         ];

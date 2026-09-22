@@ -105,37 +105,75 @@ if (in_array($user['role'] ?? '', ['associate','agent','telecaller'])) $tabs['ml
 
 <?php elseif ($activeTab === 'profile'): ?>
 <!-- PROFILE TAB -->
-<div class="card border-0 shadow-sm">
-    <div class="card-body">
-        <h5 class="mb-3"><i class="fas fa-user-edit me-2"></i>Edit Profile</h5>
-        <form id="profileForm">
-            <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-            <div class="row g-3">
-                <div class="col-md-6"><label class="form-label">Name</label><input type="text" class="form-control" name="name" value="<?= htmlspecialchars($user['name'] ?? '') ?>"></div>
-                <div class="col-md-6"><label class="form-label">Email</label><input type="email" class="form-control" name="email" value="<?= htmlspecialchars($user['email'] ?? '') ?>"></div>
-                <div class="col-md-6"><label class="form-label">Phone</label><input type="text" class="form-control" name="phone" value="<?= htmlspecialchars($user['phone'] ?? '') ?>"></div>
-                <div class="col-md-6"><label class="form-label">City</label><input type="text" class="form-control" name="city" value="<?= htmlspecialchars($user['city'] ?? '') ?>"></div>
-                <div class="col-md-6">
-                    <label class="form-label">Role</label>
-                    <select class="form-select" name="role">
-                        <?php foreach (['admin','super_admin','manager','employee','telecaller','associate','agent','customer','user'] as $r): ?>
-                        <option value="<?= $r ?>" <?= ($user['role'] ?? '') === $r ? 'selected' : '' ?>><?= ucfirst($r) ?></option>
-                        <?php endforeach; ?>
-                    </select>
+<div class="row g-4">
+    <!-- Avatar Section -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-user-circle me-2"></i>Profile Picture</h6></div>
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <?php if (!empty($user['profile_image'])): ?>
+                    <img src="<?= $base . $user['profile_image'] ?>" alt="Avatar" class="rounded-circle border" style="width: 120px; height: 120px; object-fit: cover;" id="avatarPreview">
+                    <?php else: ?>
+                    <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 120px; height: 120px; font-size: 3rem;">
+                        <?= strtoupper(substr($user['name'] ?? 'U', 0, 1)) ?>
+                    </div>
+                    <?php endif; ?>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Status</label>
-                    <select class="form-select" name="status">
-                        <?php foreach (['active','inactive','suspended'] as $s): ?>
-                        <option value="<?= $s ?>" <?= ($user['status'] ?? '') === $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="col-md-6"><label class="form-label">New Password (leave blank to keep)</label><input type="text" class="form-control" name="password" placeholder="Min 6 chars"></div>
-                <div class="col-12"><label class="form-label">Address</label><textarea class="form-control" name="address" rows="2"><?= htmlspecialchars($user['address'] ?? '') ?></textarea></div>
+                
+                <form id="avatarForm" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+                    <div class="mb-3">
+                        <label class="form-label">Upload New Avatar</label>
+                        <input type="file" name="avatar" class="form-control" accept="image/jpeg,image/png,image/webp,image/gif" id="avatarInput" required>
+                        <div class="form-text">Max 5MB. JPG, PNG, WebP, GIF</div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-fill" id="uploadAvatarBtn"><i class="fas fa-upload me-1"></i>Upload</button>
+                        <?php if (!empty($user['profile_image'])): ?>
+                        <button type="button" class="btn btn-outline-danger flex-fill" onclick="deleteAvatar()"><i class="fas fa-trash me-1"></i>Delete</button>
+                        <?php endif; ?>
+                    </div>
+                </form>
             </div>
-            <div class="mt-3"><button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Save Changes</button></div>
-        </form>
+        </div>
+    </div>
+
+    <!-- Profile Edit Section -->
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h5 class="mb-3"><i class="fas fa-user-edit me-2"></i>Edit Profile</h5>
+                <form id="profileForm">
+                    <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="form-label">Name</label><input type="text" class="form-control" name="name" value="<?= htmlspecialchars($user['name'] ?? '') ?>"></div>
+                        <div class="col-md-6"><label class="form-label">Email</label><input type="email" class="form-control" name="email" value="<?= htmlspecialchars($user['email'] ?? '') ?>"></div>
+                        <div class="col-md-6"><label class="form-label">Phone</label><input type="text" class="form-control" name="phone" value="<?= htmlspecialchars($user['phone'] ?? '') ?>"></div>
+                        <div class="col-md-6"><label class="form-label">City</label><input type="text" class="form-control" name="city" value="<?= htmlspecialchars($user['city'] ?? '') ?>"></div>
+                        <div class="col-md-6">
+                            <label class="form-label">Role</label>
+                            <select class="form-select" name="role">
+                                <?php foreach (['admin','super_admin','manager','employee','telecaller','associate','agent','customer','user'] as $r): ?>
+                                <option value="<?= $r ?>" <?= ($user['role'] ?? '') === $r ? 'selected' : '' ?>><?= ucfirst($r) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" name="status">
+                                <?php foreach (['active','inactive','suspended'] as $s): ?>
+                                <option value="<?= $s ?>" <?= ($user['status'] ?? '') === $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-6"><label class="form-label">New Password (leave blank to keep)</label><input type="text" class="form-control" name="password" placeholder="Min 6 chars"></div>
+                        <div class="col-12"><label class="form-label">Address</label><textarea class="form-control" name="address" rows="2"><?= htmlspecialchars($user['address'] ?? '') ?></textarea></div>
+                    </div>
+                    <div class="mt-3"><button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Save Changes</button></div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 <script>
@@ -149,6 +187,48 @@ document.getElementById('profileForm').addEventListener('submit', function(e) {
         if (d.success) { showToast('Updated!', 'success'); location.reload(); } else { showToast(d.message || 'Failed', 'danger'); }
     }).catch(() => showToast('Network error', 'danger')).finally(() => hideLoader());
 });
+
+// Avatar Upload
+document.getElementById('avatarForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const file = document.getElementById('avatarInput').files[0];
+    if (!file) return showToast('Select a file', 'warning');
+    
+    const btn = document.getElementById('uploadAvatarBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Uploading...';
+    
+    const fd = new FormData(this);
+    fetch('<?= $base ?>/admin/users/<?= $user['id'] ?>/avatar', {
+        method: 'POST', headers: {'X-Requested-With': 'XMLHttpRequest'}, body: fd
+    }).then(r => r.json()).then(d => {
+        if (d.success) {
+            showToast('Avatar uploaded!', 'success');
+            document.getElementById('avatarPreview').src = d.avatar_url + '?t=' + Date.now();
+        } else {
+            showToast(d.message || 'Failed', 'danger');
+        }
+    }).catch(() => showToast('Network error', 'danger')).finally(() => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-upload me-1"></i>Upload';
+    });
+});
+
+function deleteAvatar() {
+    if (!confirm('Delete avatar?')) return;
+    showLoader();
+    fetch('<?= $base ?>/admin/users/<?= $user['id'] ?>/avatar/delete', {
+        method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest'},
+        body: 'csrf_token=<?= $csrf ?>'
+    }).then(r => r.json()).then(d => {
+        if (d.success) {
+            showToast('Avatar deleted', 'success');
+            location.reload();
+        } else {
+            showToast(d.message || 'Failed', 'danger');
+        }
+    }).catch(() => showToast('Network error', 'danger')).finally(() => hideLoader());
+}
 </script>
 
 <?php elseif ($activeTab === 'mlm'): ?>

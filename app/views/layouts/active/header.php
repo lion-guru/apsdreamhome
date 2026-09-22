@@ -29,8 +29,8 @@ $sc = function ($key, $default = '') {
     return $GLOBALS['_site_settings_cache'][$key] ?? $default;
 };
 
-// Check authentication
-$isLoggedIn = isset($_SESSION['user_id']) || isset($_SESSION['associate_id']) || isset($_SESSION['agent_id']) || isset($_SESSION['employee_id']) || isset($_SESSION['admin_id']);
+// Check authentication - Admin sessions NOT exposed in public header (they belong in admin panel)
+$isLoggedIn = isset($_SESSION['user_id']) || isset($_SESSION['associate_id']) || isset($_SESSION['agent_id']) || isset($_SESSION['employee_id']);
 
 // NavigationHelper for mobile drawer + bottom nav
 // Class is autoloaded via App namespace — no require_once needed

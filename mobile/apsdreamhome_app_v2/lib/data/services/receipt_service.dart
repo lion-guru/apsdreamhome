@@ -50,7 +50,7 @@ class ReceiptService {
       // Load logo (if available)
       pw.ImageProvider? logo;
       try {
-        final logoData = await rootBundle.load('assets/images/logo.png');
+        final logoData = await rootBundle.load('assets/images/aps_logo.webp');
         logo = pw.MemoryImage(logoData.buffer.asUint8List());
       } catch (e) {
         AppLogger.warning('Logo not found, using text header');

@@ -1,289 +1,271 @@
 <?php
 /**
- * Customer Dashboard - APS Dream Home
+ * Customer Dashboard View - APS Dream Home
+ * Renders inside layouts/customer.php
  */
+$user = $user ?? [];
+$stats = $stats ?? [];
+$recent_activities = $recent_activities ?? [];
+$favorite_properties = $favorite_properties ?? [];
+$recommended_properties = $recommended_properties ?? [];
 
-$layout = 'layouts/base';
-$page_title = $page_title ?? 'Customer Dashboard - APS Dream Home';
-$page_description = $page_description ?? 'Your personalized real estate dashboard';
+$userName = htmlspecialchars($user['name'] ?? $_SESSION['user_name'] ?? 'Valued Customer');
+$customerId = htmlspecialchars($user['customer_id'] ?? ('APS-CUST-' . str_pad((string)($_SESSION['user_id'] ?? 1), 4, '0', STR_PAD_LEFT)));
+$joinDate = !empty($user['join_date']) ? date('M Y', strtotime($user['join_date'])) : date('M Y');
 ?>
 
-    <style>
-        :root {
-            --primary-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --glass-bg: rgba(255, 255, 255, 0.9);
-            --glass-border: rgba(255, 255, 255, 0.3);
-            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-        }
-
-        .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            box-shadow: var(--glass-shadow);
-            padding: 1.5rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            height: 100%;
-        }
-
-        .glass-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.25);
-        }
-
-        .dashboard-header {
-            background: var(--primary-gradient);
-            border-radius: 24px;
-            padding: 2.5rem;
-            color: white;
-            margin-bottom: 2rem;
-            box-shadow: 0 10px 20px rgba(0, 242, 254, 0.2);
-        }
-
-        .stat-icon {
-            width: 45px;
-            height: 45px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            color: white;
-            margin-bottom: 1rem;
-        }
-
-        .bg-gradient-blue { background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); }
-        .bg-gradient-green { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
-        .bg-gradient-orange { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
-        .bg-gradient-purple { background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%); }
-
-        .property-thumb {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            object-fit: cover;
-            margin-right: 1rem;
-        }
-
-        .badge-pill {
-            border-radius: 50px;
-            padding: 0.5rem 1rem;
-            font-weight: 500;
-        }
-    </style>
-
-<section class="py-5 bg-light min-vh-100">
-    <div class="container">
-        <!-- Welcome Header -->
-        <div class="dashboard-header animate-fade-in">
+<div class="customer-dashboard-wrapper">
+    <!-- Welcome Hero Banner -->
+    <div class="card border-0 mb-4 overflow-hidden text-white" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 16px; box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);">
+        <div class="card-body p-4 p-md-5 position-relative">
             <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h1 class="fw-bold mb-2">Hello, <?php echo htmlspecialchars($user['name'] ?? ''); ?>!</h1>
-                    <p class="mb-0 opacity-75">
-                        <i class="fas fa-id-badge me-2"></i><?php echo htmlspecialchars($user['customer_id'] ?? ''); ?> 
-                        <span class="mx-2">|</span> 
-                        <i class="fas fa-calendar-alt me-2"></i>Member since <?php echo date('M Y', strtotime($user['join_date'])); ?>
+                <div class="col-lg-8">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="badge bg-primary bg-opacity-25 text-info border border-info border-opacity-25 px-3 py-1 rounded-pill fw-medium">
+                            <i class="fas fa-crown me-1 text-warning"></i> Customer Portal
+                        </span>
+                        <span class="text-white-50 small">| ID: <?= $customerId ?></span>
+                    </div>
+                    <h2 class="display-6 fw-bold mb-2 text-white">Welcome back, <?= $userName ?>!</h2>
+                    <p class="text-white-50 mb-4 mb-lg-0" style="max-width: 600px;">
+                        Manage your real estate journey, track booked plots, monitor EMI payment schedules, and schedule site visits effortlessly from your dedicated portal.
                     </p>
                 </div>
-                <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                    <a href="/dashboard/profile" class="btn btn-white bg-white text-primary rounded-pill px-4 py-2 fw-medium shadow-sm transition-hover">
-                        <i class="fas fa-edit me-2"></i>Edit Profile
+                <div class="col-lg-4 text-lg-end">
+                    <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
+                        <a href="<?= BASE_URL ?>/properties" class="btn btn-primary px-4 py-2 rounded-pill fw-semibold shadow-sm">
+                            <i class="fas fa-search me-2"></i>Browse Plots
+                        </a>
+                        <a href="<?= BASE_URL ?>/user/profile" class="btn btn-outline-light px-4 py-2 rounded-pill fw-medium">
+                            <i class="fas fa-user-cog me-2"></i>My Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats Grid -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="card border-0 h-100 shadow-sm" style="border-radius: 14px; transition: transform 0.2s ease;">
+                <div class="card-body p-3 p-md-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <span class="text-muted small fw-semibold text-uppercase">Booked Plots</span>
+                        <div class="d-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary" style="width: 44px; height: 44px;">
+                            <i class="fas fa-file-signature fa-lg"></i>
+                        </div>
+                    </div>
+                    <h3 class="fw-bold mb-1 text-dark"><?= (int)($stats['bookings_count'] ?? 0) ?></h3>
+                    <a href="<?= BASE_URL ?>/user/bookings" class="small text-primary text-decoration-none fw-medium">
+                        View Bookings <i class="fas fa-arrow-right ms-1"></i>
                     </a>
                 </div>
             </div>
         </div>
 
-        <!-- Metric Grid -->
-        <div class="row g-4 mb-5">
-            <div class="col-md-3">
-                <div class="glass-card">
-                    <div class="stat-icon bg-gradient-blue"><i class="fas fa-heart"></i></div>
-                    <h3 class="fw-bold mb-1"><?php echo e($stats['favorites_count']); ?></h3>
-                    <p class="text-muted small mb-0">Saved Properties</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="glass-card">
-                    <div class="stat-icon bg-gradient-green"><i class="fas fa-envelope"></i></div>
-                    <h3 class="fw-bold mb-1"><?php echo e($stats['inquiries_count']); ?></h3>
-                    <p class="text-muted small mb-0">Active Inquiries</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="glass-card">
-                    <div class="stat-icon bg-gradient-orange"><i class="fas fa-eye"></i></div>
-                    <h3 class="fw-bold mb-1"><?php echo e($stats['views_count']); ?></h3>
-                    <p class="text-muted small mb-0">Recent Views</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="glass-card">
-                    <div class="stat-icon bg-gradient-purple"><i class="fas fa-search"></i></div>
-                    <h3 class="fw-bold mb-1"><?php echo e($stats['saved_searches_count']); ?></h3>
-                    <p class="text-muted small mb-0">Custom Alerts</p>
+        <div class="col-6 col-md-3">
+            <div class="card border-0 h-100 shadow-sm" style="border-radius: 14px; transition: transform 0.2s ease;">
+                <div class="card-body p-3 p-md-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <span class="text-muted small fw-semibold text-uppercase">Saved Properties</span>
+                        <div class="d-flex align-items-center justify-content-center rounded-3 bg-danger bg-opacity-10 text-danger" style="width: 44px; height: 44px;">
+                            <i class="fas fa-heart fa-lg"></i>
+                        </div>
+                    </div>
+                    <h3 class="fw-bold mb-1 text-dark"><?= (int)($stats['favorites_count'] ?? 0) ?></h3>
+                    <a href="<?= BASE_URL ?>/user/favorites" class="small text-danger text-decoration-none fw-medium">
+                        View Favorites <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
                 </div>
             </div>
         </div>
 
-        <div class="row g-4 mb-5">
-            <!-- Recent Activities -->
-            <div class="col-md-7">
-                <div class="glass-card">
-                    <h5 class="fw-bold mb-4">Market Timeline</h5>
-                    <div class="timeline-feed">
-                        <?php if (!empty($recent_activities)): ?>
-                            <?php foreach ($recent_activities as $activity): ?>
-                                <div class="d-flex align-items-center p-3 mb-3 border-bottom border-opacity-10 last-child-no-border">
-                                    <div class="activity-icon me-3">
-                                        <?php if ($activity['type'] === 'favorite'): ?>
-                                            <span class="badge bg-primary bg-opacity-10 text-primary p-2 rounded-circle"><i class="fas fa-heart"></i></span>
-                                        <?php elseif ($activity['type'] === 'inquiry'): ?>
-                                            <span class="badge bg-success bg-opacity-10 text-success p-2 rounded-circle"><i class="fas fa-envelope"></i></span>
-                                        <?php else: ?>
-                                            <span class="badge bg-info bg-opacity-10 text-info p-2 rounded-circle"><i class="fas fa-eye"></i></span>
-                                        <?php endif; ?>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <p class="mb-0 fw-medium">
-                                            <?php echo htmlspecialchars($activity['property'] ?? ''); ?>
-                                        </p>
-                                        <small class="text-muted"><?php echo htmlspecialchars(($activity['type'] ?? '') === 'favorite' ? 'Added to favorites' : (($activity['type'] ?? '') === 'inquiry' ? 'Sent an inquiry' : 'Viewed recently')); ?></small>
-                                    </div>
-                                    <small class="text-muted"><?php echo htmlspecialchars($activity['date'] ?? ''); ?></small>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <div class="text-center py-4">
-                                <p class="text-muted">No recent activity found.</p>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Favorites Sidebar -->
-            <div class="col-md-5">
-                <div class="glass-card">
-                    <h5 class="fw-bold mb-4">Quick Collection</h5>
-                    <?php if (!empty($favorite_properties)): ?>
-                        <?php foreach ($favorite_properties as $property): ?>
-                            <div class="d-flex align-items-center p-3 mb-3 bg-white bg-opacity-50 rounded-4 border">
-                                <img src="<?php echo htmlspecialchars($property['image'] ?? '');?>" alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>" class="rounded-3 me-3" loading="lazy">
-                                <div class="flex-grow-1 overflow-hidden">
-                                    <h6 class="mb-1 text-truncate fw-bold"><?php echo htmlspecialchars($property['title'] ?? ''); ?></h6>
-                                    <p class="text-muted small mb-0 text-truncate"><?php echo htmlspecialchars($property['location'] ?? ''); ?></p>
-                                    <p class="text-primary fw-bold small mb-0"><?php echo htmlspecialchars($property['price'] ?? ''); ?></p>
-                                </div>
-                                <a href="/property/<?php echo e($property['id']); ?>" class="btn btn-sm btn-light rounded-circle shadow-sm ms-2"><i class="fas fa-arrow-right"></i></a>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <div class="text-center py-4">
-                            <i class="fas fa-heart text-muted mb-3 opacity-25 fa-2x"></i>
-                            <p class="text-muted small">Your collection is empty.</p>
+        <div class="col-6 col-md-3">
+            <div class="card border-0 h-100 shadow-sm" style="border-radius: 14px; transition: transform 0.2s ease;">
+                <div class="card-body p-3 p-md-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <span class="text-muted small fw-semibold text-uppercase">Site Visits</span>
+                        <div class="d-flex align-items-center justify-content-center rounded-3 bg-success bg-opacity-10 text-success" style="width: 44px; height: 44px;">
+                            <i class="fas fa-map-marked-alt fa-lg"></i>
                         </div>
-                    <?php endif; ?>
-                    <button class="btn btn-outline-primary w-100 mt-3 rounded-pill">View All Favorites</button>
+                    </div>
+                    <h3 class="fw-bold mb-1 text-dark"><?= (int)($stats['visits_count'] ?? 0) ?></h3>
+                    <a href="<?= BASE_URL ?>/user/site-visits" class="small text-success text-decoration-none fw-medium">
+                        Visit Details <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
                 </div>
             </div>
         </div>
 
-        <!-- Curated Recommendations -->
-        <h5 class="fw-bold mb-4">Inspired by your preferences</h5>
-        <div class="row g-4">
-            <?php if (!empty($recommended_properties)): ?>
-                <?php foreach ($recommended_properties as $property): ?>
-                    <div class="col-md-3">
-                        <div class="glass-card p-0 overflow-hidden">
-                            <div class="position-relative">
-                                <img src="<?php echo htmlspecialchars($property['image'] ?? '');?>" alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>" class="w-100" loading="lazy">
-                                <span class="badge bg-white text-dark position-absolute top-0 end-0 m-3 shadow-sm rounded-pill py-2 px-3 fw-bold"><?php echo htmlspecialchars($property['price'] ?? ''); ?></span>
-                            </div>
-                            <div class="p-4">
-                                <h6 class="fw-bold mb-1"><?php echo htmlspecialchars($property['title'] ?? ''); ?></h6>
-                                <p class="text-muted small mb-3"><i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($property['location'] ?? ''); ?></p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <button class="btn btn-sm btn-outline-danger border-0 rounded-circle"><i class="far fa-heart"></i></button>
-                                    <a href="/property/<?php echo e($property['id']); ?>" class="btn btn-primary btn-sm rounded-pill px-3 fw-medium">View Details</a>
-                                </div>
-                            </div>
+        <div class="col-6 col-md-3">
+            <div class="card border-0 h-100 shadow-sm" style="border-radius: 14px; transition: transform 0.2s ease;">
+                <div class="card-body p-3 p-md-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <span class="text-muted small fw-semibold text-uppercase">Active Inquiries</span>
+                        <div class="d-flex align-items-center justify-content-center rounded-3 bg-warning bg-opacity-10 text-warning" style="width: 44px; height: 44px;">
+                            <i class="fas fa-envelope-open-text fa-lg"></i>
                         </div>
                     </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <div class="col-12">
-                    <div class="glass-card text-center py-5">
-                        <p class="text-muted mb-0">Browse properties to get personalized recommendations.</p>
-                    </div>
+                    <h3 class="fw-bold mb-1 text-dark"><?= (int)($stats['inquiries_count'] ?? 0) ?></h3>
+                    <a href="<?= BASE_URL ?>/user/inquiries" class="small text-warning text-decoration-none fw-medium">
+                        Track Inquiries <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
                 </div>
-            <?php endif; ?>
+            </div>
         </div>
     </div>
-</section>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Remove from favorites
-    document.querySelectorAll('.remove-favorite').forEach(button => {
-        button.addEventListener('click', function() {
-            const propertyId = this.dataset.propertyId;
-            if (confirm('Remove this property from favorites?')) {
-                // AJAX call to remove favorite
-                fetch('<?php echo BASE_URL; ?>/dashboard/favorites/remove', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        property_id: propertyId
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        location.reload();
-                    } else {
-                        alert(data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred. Please try again.');
-                });
-            }
-        });
-    });
+    <!-- Quick Action Hub -->
+    <div class="card border-0 shadow-sm mb-4" style="border-radius: 14px;">
+        <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0">
+            <h5 class="fw-bold mb-1 text-dark"><i class="fas fa-bolt text-warning me-2"></i>Quick Actions</h5>
+            <p class="text-muted small mb-0">Fast shortcuts for common tasks</p>
+        </div>
+        <div class="card-body p-4">
+            <div class="row g-3">
+                <div class="col-md-3 col-6">
+                    <a href="<?= BASE_URL ?>/properties" class="btn btn-light w-100 p-3 text-start border d-flex align-items-center gap-3 rounded-3 transition-hover h-100">
+                        <div class="rounded-circle bg-primary bg-opacity-10 p-3 text-primary d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                            <i class="fas fa-search fa-lg"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold text-dark">Find Properties</div>
+                            <div class="small text-muted">Browse colonies & plots</div>
+                        </div>
+                    </a>
+                </div>
 
-    // Add to favorites
-    document.querySelectorAll('.add-favorite').forEach(button => {
-        button.addEventListener('click', function() {
-            const propertyId = this.dataset.propertyId;
-            
-            // AJAX call to add favorite
-            fetch('<?php echo BASE_URL; ?>/dashboard/favorites/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    property_id: propertyId
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert(data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred. Please try again.');
-            });
-        });
-    });
-});
-</script>
+                <div class="col-md-3 col-6">
+                    <a href="<?= BASE_URL ?>/user/emi-tracker" class="btn btn-light w-100 p-3 text-start border d-flex align-items-center gap-3 rounded-3 transition-hover h-100">
+                        <div class="rounded-circle bg-success bg-opacity-10 p-3 text-success d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                            <i class="fas fa-calculator fa-lg"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold text-dark">EMI Tracker</div>
+                            <div class="small text-muted">View upcoming dues</div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-3 col-6">
+                    <a href="<?= BASE_URL ?>/user/payment-history" class="btn btn-light w-100 p-3 text-start border d-flex align-items-center gap-3 rounded-3 transition-hover h-100">
+                        <div class="rounded-circle bg-info bg-opacity-10 p-3 text-info d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                            <i class="fas fa-receipt fa-lg"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold text-dark">Payment History</div>
+                            <div class="small text-muted">Download receipts</div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-3 col-6">
+                    <a href="<?= BASE_URL ?>/user/tickets" class="btn btn-light w-100 p-3 text-start border d-flex align-items-center gap-3 rounded-3 transition-hover h-100">
+                        <div class="rounded-circle bg-purple bg-opacity-10 p-3 text-purple d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                            <i class="fas fa-headset fa-lg"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold text-dark">Customer Support</div>
+                            <div class="small text-muted">Raise a help ticket</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main 2-Column Content Row -->
+    <div class="row g-4 mb-4">
+        <!-- Shortlisted Properties -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
+                <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="fw-bold mb-1 text-dark"><i class="fas fa-heart text-danger me-2"></i>Shortlisted Properties</h5>
+                        <p class="text-muted small mb-0">Your saved favorites</p>
+                    </div>
+                    <a href="<?= BASE_URL ?>/user/favorites" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                        View All (<?= count($favorite_properties) ?>)
+                    </a>
+                </div>
+                <div class="card-body p-4">
+                    <?php if (!empty($favorite_properties)): ?>
+                        <div class="d-flex flex-column gap-3">
+                            <?php foreach (array_slice($favorite_properties, 0, 4) as $property): ?>
+                                <div class="d-flex align-items-center p-3 rounded-3 border bg-light bg-opacity-50">
+                                    <div class="rounded-3 overflow-hidden me-3 bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center" style="width: 70px; height: 70px; flex-shrink: 0;">
+                                        <?php if (!empty($property['image'])): ?>
+                                            <img src="<?= htmlspecialchars($property['image']) ?>" alt="<?= htmlspecialchars($property['title'] ?? '') ?>" style="width: 100%; height: 100%; object-fit: cover;">
+                                        <?php else: ?>
+                                            <i class="fas fa-building text-muted fa-2x"></i>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="flex-grow-1 overflow-hidden">
+                                        <h6 class="mb-1 text-truncate fw-bold text-dark"><?= htmlspecialchars($property['title'] ?? 'Prime Colony Plot') ?></h6>
+                                        <div class="small text-muted text-truncate mb-1">
+                                            <i class="fas fa-map-marker-alt text-danger me-1"></i><?= htmlspecialchars($property['location'] ?? 'Ayodhya Road, Lucknow') ?>
+                                        </div>
+                                        <div class="fw-bold text-primary small">
+                                            <?= htmlspecialchars($property['price'] ?? '₹ 15,00,000') ?>
+                                        </div>
+                                    </div>
+                                    <a href="<?= BASE_URL ?>/property/<?= (int)($property['id'] ?? 1) ?>" class="btn btn-sm btn-primary rounded-pill px-3 ms-2 text-nowrap">
+                                        Details
+                                    </a>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php else: ?>
+                        <div class="text-center py-5">
+                            <div class="rounded-circle bg-light d-inline-flex p-4 mb-3 text-muted">
+                                <i class="far fa-heart fa-2x"></i>
+                            </div>
+                            <h6 class="fw-semibold text-muted">No Saved Properties Yet</h6>
+                            <p class="text-muted small mb-3">Explore our colony plots and tap the heart icon to shortlist properties.</p>
+                            <a href="<?= BASE_URL ?>/properties" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                                Explore Plots Now
+                            </a>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity Feed -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
+                <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0">
+                    <h5 class="fw-bold mb-1 text-dark"><i class="fas fa-stream text-primary me-2"></i>Recent Activity</h5>
+                    <p class="text-muted small mb-0">Your latest actions and updates</p>
+                </div>
+                <div class="card-body p-4">
+                    <?php if (!empty($recent_activities)): ?>
+                        <div class="timeline-feed">
+                            <?php foreach (array_slice($recent_activities, 0, 5) as $activity): ?>
+                                <div class="d-flex align-items-start gap-3 mb-3 pb-3 border-bottom">
+                                    <div class="rounded-circle bg-primary bg-opacity-10 text-primary p-2 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; flex-shrink: 0;">
+                                        <i class="fas fa-bell small"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="small fw-semibold text-dark"><?= htmlspecialchars($activity['property'] ?? 'Property update') ?></div>
+                                        <div class="small text-muted"><?= htmlspecialchars($activity['type'] ?? 'Viewed') ?></div>
+                                    </div>
+                                    <span class="small text-muted"><?= htmlspecialchars($activity['date'] ?? 'Recently') ?></span>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php else: ?>
+                        <div class="text-center py-5">
+                            <div class="rounded-circle bg-light d-inline-flex p-4 mb-3 text-muted">
+                                <i class="fas fa-history fa-2x"></i>
+                            </div>
+                            <h6 class="fw-semibold text-muted">No Activity Logged</h6>
+                            <p class="text-muted small mb-0">Your recent views and inquiries will appear here automatically.</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

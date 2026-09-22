@@ -1,0 +1,17 @@
+[Unit]
+Description=APS Dream Home Real-Time WebSocket Daemon
+After=network.target mysql.service
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/apsdreamhome
+ExecStart=/usr/bin/php /var/www/apsdreamhome/websocket_broadcast_server.php
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

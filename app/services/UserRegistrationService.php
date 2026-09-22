@@ -94,15 +94,20 @@ class UserRegistrationService
         $city = trim($data['city'] ?? '');
         $occupation = trim($data['occupation'] ?? '');
         $regMethod = trim($data['registration_method'] ?? 'web');
+        $agentType = trim($data['agent_type'] ?? '');
 
-        if (empty($name)) return ['success' => false, 'message' => 'Name is required'];
-        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            if (empty($email)) return ['success' => false, 'message' => 'Email is required'];
+        if (empty($name)) {
+            return ['success' => false, 'message' => 'Name is required'];
         }
-        if (empty($phone) || !preg_match('/^[0-9]{10}$/', $phone)) {
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return ['success' => false, 'message' => 'Valid email is required'];
+        }
+        if (empty($phone) || !preg_match('/^\d{10}$/', $phone)) {
             return ['success' => false, 'message' => 'Valid 10-digit phone is required'];
         }
-        if (strlen($password) < 6) return ['success' => false, 'message' => 'Password must be at least 6 characters'];
+        if (strlen($password) < 6) {
+            return ['success' => false, 'message' => 'Password must be at least 6 characters'];
+        }
 
         try {
             $tid = $this->getTenantId();
@@ -119,8 +124,8 @@ class UserRegistrationService
         }
 
         $prefix = self::ROLE_PREFIXES[$role];
-        $displayId = $prefix . date('Y') . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
-        $refCode = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $name), 0, 3)) . date('ymd') . rand(100, 999);
+        $displayId = $prefix . date('Y') . str_pad((string)random_int(1, 9999), 4, '0', STR_PAD_LEFT);
+        $refCode = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $name), 0, 3)) . date('ymd') . random_int(100, 999);
 
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
@@ -182,7 +187,7 @@ class UserRegistrationService
             if ($isMlmRole) {
                 $this->createMlmProfile($userId, $finalRefCode, $resolvedSponsorId, $role);
                 $this->createNetworkTreeEntry($userId, $resolvedSponsorId, $mlmPosition);
-                $this->createAssociatesRecord($userId, $name, $email, $phone, $finalRefCode, $resolvedSponsorId, $role);
+                $this->createAssociatesRecord($userId, $name, $email, $phone, $finalRefCode, $resolvedSponsorId, $role, $agentType);
 
                 // Update referrer's direct_referrals count
                 if ($resolvedSponsorId) {
@@ -361,8 +366,12 @@ class UserRegistrationService
         ]);
     }
 
-    private function createAssociatesRecord(int $userId, string $name, string $email, string $phone, string $referralCode, ?int $sponsorId, string $role): void
+    private function createAssociatesRecord(int $userId, string $name, string $email, string $phone, string $referralCode, ?int $sponsorId, string $role, string $agentType = ''): void
     {
+        $validType = in_array($agentType, ['mlm_company', 'freelancer', 'independent'], true)
+            ? $agentType
+            : ($role === 'agent' ? 'freelancer' : 'mlm_company');
+
         $this->db->insert('associates', [
             'user_id' => $userId,
             'name' => $name,
@@ -370,7 +379,9 @@ class UserRegistrationService
             'phone' => $phone,
             'referral_code' => $referralCode,
             'sponsor_id' => $sponsorId,
-            'level' => $role === 'agent' ? 'agent' : 'associate',
+            'level' => 'associate',
+            'agent_type' => $validType,
+            'agent_track' => ($role === 'agent' && $validType !== 'mlm_company') ? 'independent' : 'mlm',
             'status' => 'active',
             'joining_date' => date('Y-m-d'),
             'created_at' => date('Y-m-d H:i:s'),
@@ -395,7 +406,7 @@ class UserRegistrationService
         foreach ($allowedFields as $field) {
             if (array_key_exists($field, $data)) {
                 $val = trim((string)$data[$field]);
-                if ($field === 'phone' && !empty($val) && !preg_match('/^[0-9]{10}$/', $val)) {
+                if ($field === 'phone' && !empty($val) && !preg_match('/^\d{10}$/', $val)) {
                     return ['success' => false, 'message' => 'Valid 10-digit phone is required'];
                 }
                 $updates[] = "`{$field}` = ?";

@@ -36,10 +36,20 @@ class LegalPagesController extends AdminController
         $terms_content = $this->getTermsContent();
         $privacy_content = $this->getPrivacyContent();
 
+        // Get structural pages from pages table (ids 7, 8, 9)
+        $pages = [];
+        $stmt = $this->db->prepare("SELECT id, slug, title, content, updated_at FROM pages WHERE id IN (7, 8, 9) ORDER BY id");
+        $stmt->execute();
+        foreach ($stmt->fetchAll(\PDO::FETCH_ASSOC) as $row) {
+            $pages[$row['id']] = $row;
+            $pages[$row['slug']] = $row;
+        }
+
         $data = [
             'page_title' => 'Legal Pages Management - Admin',
             'terms_content' => $terms_content,
             'privacy_content' => $privacy_content,
+            'pages' => $pages,
             'last_updated' => date('Y-m-d H:i:s')
         ];
 
@@ -268,5 +278,62 @@ class LegalPagesController extends AdminController
         return "<h1>Privacy Policy</h1>
 <p>At APS Dream Home, accessible from apsdreamhome.com, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by APS Dream Home and how we use it.</p>
 <p>If you have additional questions or require more information about our Privacy Policy, do not hesitate to contact us.</p>";
+    }
+
+    /**
+     * Update structural page content (disclaimer, cancellation-policy, associate-rules)
+     */
+    public function updatePage($id)
+    {
+        if (!isset($_SESSION['admin_id'])) {
+            $this->jsonResponse(['success' => false, 'message' => 'Unauthorized access']);
+            return;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->jsonResponse(['success' => false, 'message' => 'Invalid request method']);
+            return;
+        }
+
+        try {
+            $content = $_POST['content'] ?? '';
+            $title = $_POST['title'] ?? '';
+
+            // Validate content
+            if (empty($content)) {
+                $this->jsonResponse(['success' => false, 'message' => 'Content cannot be empty']);
+                return;
+            }
+
+            // Validate page id is one of the structural pages
+            $allowedIds = [7, 8, 9];
+            if (!in_array($id, $allowedIds)) {
+                $this->jsonResponse(['success' => false, 'message' => 'Invalid page ID']);
+                return;
+            }
+
+            // Update content in pages table
+            $stmt = $this->db->prepare("SELECT id FROM pages WHERE id = ? LIMIT 1");
+            $stmt->execute([$id]);
+            if (!$stmt->fetch()) {
+                $this->jsonResponse(['success' => false, 'message' => 'Page not found']);
+                return;
+            }
+
+            $stmt = $this->db->prepare("UPDATE pages SET content = ?, title = ?, updated_at = ? WHERE id = ?");
+            $success = $stmt->execute([$content, $title, date('Y-m-d H:i:s'), $id]);
+
+            if ($success) {
+                $this->jsonResponse([
+                    'success' => true,
+                    'message' => 'Page updated successfully',
+                    'last_updated' => date('Y-m-d H:i:s')
+                ]);
+            } else {
+                $this->jsonResponse(['success' => false, 'message' => 'Failed to update content']);
+            }
+        } catch (\Exception $e) {
+            $this->jsonResponse(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+        }
     }
 }

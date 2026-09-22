@@ -1,256 +1,387 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\AdminController;
+use App\Models\Colony;
+use App\Models\District;
+use App\Models\Plot;
+use App\Models\Milestone;
+use App\Models\PriceSlab;
+use Illuminate\Support\Str;
 
 class ColonyController extends AdminController
 {
+    /**
+     * Dashboard — all colonies with stats, total value, development status
+     * Includes state/district filters from LocationAdminController
+     */
     public function index()
     {
         $this->requireAdmin();
-        $colonies = $this->db->fetchAll("
-            SELECT c.*, d.name as district_name, s.name as state_name
-            FROM colonies c
-            LEFT JOIN districts d ON c.district_id = d.id
-            LEFT JOIN states s ON d.state_id = s.id
-            ORDER BY c.name ASC
-        ");
-        $this->render('admin/colonies/index', [
-            'page_title' => 'Colonies - Admin',
-            'colonies' => $colonies,
+
+        try {
+            // Simple query first to verify connection
+            $colonies = Colony::all();
+            $count = $colonies->count();
+
+            // Get states/districts
+            $states = \App\Models\District::distinct()->orderBy('state')->pluck('state', 'state')->toArray();
+            $districts = District::whereIn('state', array_keys($states))->get();
+
+            // Calculate total value
+            $totalValue = 0;
+            foreach ($colonies as $c) {
+                $totalValue += $c->plots->sum(fn ($p) => $p->price);
+            }
+
+            return $this->render('admin.colonies.index', [
+                'colonies' => $colonies,
+                'states' => $states,
+                'districts' => $districts,
+                'totalValue' => $totalValue,
+                'selectedState' => null,
+                'selectedDistrict' => null,
+            ]);
+        } catch (\Exception $e) {
+            error_log("Colony index error: " . $e->getMessage());
+            return $this->render('admin.errors.500', ['error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Show — tabbed view combining ColonyController + ColonyPipelineController
+     * Tabs: Overview | Development | Pricing | Plots | Milestones
+     */
+    public function show($slug)
+    {
+        $this->requireAdmin();
+
+        $colony = Colony::with([
+            'district',
+            'plots' => function ($q) {
+                $q->orderBy('plot_number');
+            },
+            'milestones',
+            'priceSlabs',
+            'layoutConfig',
+            'pipelineStats' => function ($q) {
+                $q->selectRaw('count(*) as total, sum(case when status="completed" then 1 else 0 end) as completed')
+                  ->from('milestones');
+            },
+        ])->where('slug', $slug)->firstOrFail();
+
+        // Development tab data (from ColonyPipelineController)
+        $layoutForm = $colony->layoutConfig ? json_decode($colony->layoutConfig, true) : [];
+        $developmentCosts = $colony->pipelineStats ?: (object)['total' => 0, 'completed' => 0];
+
+        // Pricing tab data
+        $priceSlabs = $colony->priceSlabs->keyBy('rank');
+
+        // Plots tab data
+        $allPlots = $colony->plots()->paginate(20);
+
+        // Milestones tab data
+        $milestones = $colony->milestones()->orderBy('level')->get();
+
+        return $this->render('admin.colonies.show', [
+            'colony' => $colony,
+            'layoutForm' => $layoutForm,
+            'developmentCosts' => $developmentCosts,
+            'priceSlabs' => $priceSlabs,
+            'allPlots' => $allPlots,
+            'milestones' => $milestones,
         ]);
     }
 
+    /**
+     * Create — form combining basic fields from all systems
+     */
     public function create()
     {
         $this->requireAdmin();
-        $states = $this->db->fetchAll("SELECT id, name FROM states ORDER BY name");
-        $this->render('admin/colonies/create', [
-            'page_title' => 'New Colony - Admin',
-            'states' => $states,
+        $districts = District::all();
+        $returnUrl = route('admin.colonies.store');
+
+        return $this->render('admin.colonies.create', [
+            'districts' => $districts,
+            'returnUrl' => $returnUrl,
         ]);
     }
 
+    /**
+     * Store — handle form with all fields
+     */
     public function store()
     {
         $this->requireAdmin();
-        $name = $_POST['name'] ?? '';
-        $districtId = (int)($_POST['district_id'] ?? 0);
-        $slug = $_POST['slug'] ?? strtolower(trim(preg_replace('/[^a-z0-9]+/', '-', strtolower($name)), '-'));
-        $slug = preg_replace('/-+/', '-', $slug);
 
-        // Check slug uniqueness
-        $existing = $this->db->fetch("SELECT id FROM colonies WHERE slug = ? AND id != ?", [$slug, 0]);
-        if ($existing) $slug .= '-' . time();
-
-        $latitude = $_POST['latitude'] !== '' ? (float)$_POST['latitude'] : null;
-        $longitude = $_POST['longitude'] !== '' ? (float)$_POST['longitude'] : null;
-        $mapLink = trim($_POST['map_link'] ?? '');
-        if (empty($mapLink) && $latitude !== null && $longitude !== null) {
-            $mapLink = "https://maps.google.com/?q={$latitude},{$longitude}";
-        }
-
-        $tid = $this->tenantId();
-        $this->db->query("INSERT INTO colonies (district_id, name, slug, description, amenities, key_highlights, nearby_places, map_link, total_plots, available_plots, starting_price, image_path, banner_image, brochure_path, gallery_images, youtube_video_url, layout_image, virtual_tour_url, latitude, longitude, contact_phone, contact_email, meta_title, meta_description, show_plots_publicly, is_featured, is_active, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [
-            $districtId, $name, $slug,
-            $_POST['description'] ?? '', $_POST['amenities'] ?? '', $_POST['key_highlights'] ?? '', $_POST['nearby_places'] ?? '',
-            $mapLink, (int)($_POST['total_plots'] ?? 0), (int)($_POST['available_plots'] ?? 0),
-            (float)($_POST['starting_price'] ?? 0), $_POST['image_path'] ?? '', $_POST['banner_image'] ?? '',
-            $_POST['brochure_path'] ?? '', $_POST['gallery_images'] ?? '', $_POST['youtube_video_url'] ?? '',
-            $_POST['layout_image'] ?? '', $_POST['virtual_tour_url'] ?? '',
-            $latitude, $longitude,
-            $_POST['contact_phone'] ?? '', $_POST['contact_email'] ?? '',
-            $_POST['meta_title'] ?? '', $_POST['meta_description'] ?? '',
-            isset($_POST['show_plots_publicly']) ? 1 : 0,
-            isset($_POST['is_featured']) ? 1 : 0,
-            isset($_POST['is_active']) ? 1 : 0,
-            $tid,
+        $validated = request()->validate([
+            'name' => 'required|string|max255',
+            'slug' => 'required|string|unique:colonies,slug',
+            'state' => 'required|string',
+            'district_id' => 'required|integer',
+            'city' => 'required|string',
+            'pincode' => 'required|string|size:6',
+            'land_cost' => 'required|numeric',
+            'min_price_per_sqft' => 'required|numeric',
+            'block_count' => 'required|integer',
+            'phase' => 'required|string',
+            // Full schema fields from ColonyController
+            'description' => 'nullable|string',
+            'amenities' => 'nullable|string',
+            'key_highlights' => 'nullable|string',
+            'gallery' => 'nullable|string', // JSON
+            'youtube' => 'nullable|url',
+            'latitude' => 'nullable|string',
+            'longitude' => 'nullable|string',
+            'meta_description' => 'nullable|string',
+            'show_plots_publicly' => 'boolean',
+            'is_featured' => 'boolean',
+            // Pipeline fields from ColonyPipelineController
+            'pipeline_stage' => 'nullable|string',
+            'layout_config' => 'nullable|string', // JSON
+            'development_cost' => 'nullable|numeric',
         ]);
-        $newId = $this->db->lastInsertId();
-        $this->setFlash('success', 'Colony "' . htmlspecialchars($name) . '" created! Next: add plots to start bookings.');
-        $this->redirect('/admin/colonies/' . $newId);
+
+        $colony = Colony::create(array_merge($validated, [
+            'user_id' => auth()->user()->id,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]));
+
+        return redirect()
+            ->route('admin.colonies.show', $colony->slug)
+            ->with('success', 'Colony created successfully.');
     }
 
-    public function show($id)
+    /**
+     * Edit — form with all fields
+     */
+    public function edit($slug)
     {
         $this->requireAdmin();
-        $colony = $this->db->fetch("
-            SELECT c.*, d.name as district_name, s.name as state_name
-            FROM colonies c
-            LEFT JOIN districts d ON c.district_id = d.id
-            LEFT JOIN states s ON d.state_id = s.id
-            WHERE c.id = ?
-        ", [$id]);
-        if (!$colony) {
-            $this->setFlash('error', 'Colony not found');
-            $this->redirect('/admin/colonies');
-            return;
-        }
 
-        // Plot statistics
-        $plotStats = $this->db->fetchOne("
-            SELECT 
-                COUNT(*) as total_plots,
-                SUM(CASE WHEN status = 'available' THEN 1 ELSE 0 END) as available_plots,
-                SUM(CASE WHEN status = 'booked' THEN 1 ELSE 0 END) as booked_plots,
-                SUM(CASE WHEN status = 'sold' THEN 1 ELSE 0 END) as sold_plots,
-                SUM(CASE WHEN status = 'hold' THEN 1 ELSE 0 END) as hold_plots,
-                SUM(total_price) as total_value,
-                AVG(price_per_sqft) as avg_price_per_sqft,
-                AVG(area_sqft) as avg_area_sqft,
-                SUM(CASE WHEN corner_plot = 1 THEN 1 ELSE 0 END) as corner_plots,
-                SUM(CASE WHEN park_facing = 1 THEN 1 ELSE 0 END) as park_facing_plots,
-                SUM(CASE WHEN road_width_ft >= 40 THEN 1 ELSE 0 END) as wide_road_plots
-            FROM plots WHERE colony_id = ?
-        ", [$id]);
+        $colony = Colony::with('district')->where('slug', $slug)->firstOrFail();
+        $districts = District::all();
 
-        // Block-wise breakdown
-        $blockStats = $this->db->fetchAll("
-            SELECT 
-                COALESCE(block, 'Unassigned') as block,
-                COUNT(*) as count,
-                SUM(CASE WHEN status = 'available' THEN 1 ELSE 0 END) as available,
-                SUM(total_price) as block_value,
-                AVG(price_per_sqft) as avg_ppsft
-            FROM plots WHERE colony_id = ?
-            GROUP BY block
-            ORDER BY block
-        ", [$id]);
+        return $this->render('admin.colonies.edit', [
+            'colony' => $colony,
+            'districts' => $districts,
+        ]);
+    }
 
-        // Development costs
-        $devCosts = $this->db->fetchAll("
-            SELECT 
-                cost_type,
-                SUM(amount) as total_amount,
-                COUNT(*) as entries,
-                SUM(CASE WHEN payment_status = 'paid' THEN amount ELSE 0 END) as paid_amount,
-                SUM(CASE WHEN payment_status = 'partial' THEN amount ELSE 0 END) as partial_amount,
-                SUM(CASE WHEN payment_status = 'unpaid' THEN amount ELSE 0 END) as unpaid_amount
-            FROM colony_development_costs
-            WHERE colony_id = ?
-            GROUP BY cost_type
-            ORDER BY cost_type
-        ", [$id]);
+    /**
+     * Update — handle all fields including pipeline
+     */
+    public function update($slug)
+    {
+        $this->requireAdmin();
 
-        $totalDevCost = 0;
-        $paidDevCost = 0;
-        foreach ($devCosts as &$dc) {
-            $totalDevCost += $dc['total_amount'];
-            $paidDevCost += $dc['paid_amount'];
-        }
+        $colony = Colony::where('slug', $slug)->firstOrFail();
 
-        // Current layout
-        $layout = $this->db->fetch("
-            SELECT cl.*, 
-                   COUNT(p.id) as generated_plots
-            FROM colony_layouts cl
-            LEFT JOIN plots p ON p.layout_id = cl.id
-            WHERE cl.colony_id = ? AND cl.is_current = 1
-            GROUP BY cl.id
-        ", [$id]);
+        $validated = request()->validate([
+            'name' => 'sometimes|required|string|max255',
+            'slug' => 'sometimes|required|string|unique:colonies,slug,' . $colony->id,
+            'state' => 'sometimes|required|string',
+            'district_id' => 'sometimes|required|integer',
+            'city' => 'sometimes|required|string',
+            'pincode' => 'sometimes|required|string|size:6',
+            'land_cost' => 'sometimes|required|numeric',
+            'min_price_per_sqft' => 'sometimes|required|numeric',
+            'block_count' => 'sometimes|required|integer',
+            'phase' => 'sometimes|required|string',
+            'description' => 'nullable|string',
+            'amenities' => 'nullable|string',
+            'key_highlights' => 'nullable|string',
+            'gallery' => 'nullable|string',
+            'youtube' => 'nullable|url',
+            'latitude' => 'nullable|string',
+            'longitude' => 'nullable|string',
+            'meta_description' => 'nullable|string',
+            'show_plots_publicly' => 'sometimes|boolean',
+            'is_featured' => 'sometimes|boolean',
+            'pipeline_stage' => 'nullable|string',
+            'layout_config' => 'nullable|string',
+            'development_cost' => 'nullable|numeric',
+        ]);
 
-        // Plots
-        $plots = $this->db->fetchAll("SELECT * FROM plots WHERE colony_id = ? ORDER BY block, plot_number", [$id]);
+        $colony->update($validated);
 
-        // Price history count
-        $priceHistoryCount = (int) $this->db->fetchColumn("
-            SELECT COUNT(*) FROM price_history ph
-            JOIN plots p ON ph.plot_id = p.id
-            WHERE p.colony_id = ?
-        ", [$id]);
+        return redirect()
+            ->route('admin.colonies.show', $colony->slug)
+            ->with('success', 'Colony updated successfully.');
+    }
 
-        $this->render('admin/colonies/show', [
-            'page_title' => $colony['name'] . ' - Admin',
+    /**
+     * Destroy
+     */
+    public function destroy($slug)
+    {
+        $this->requireAdmin();
+
+        $colony = Colony::where('slug', $slug)->firstOrFail();
+        $colony->delete();
+
+        return redirect()
+            ->route('admin.colonies.index')
+            ->with('success', 'Colony deleted successfully.');
+    }
+
+    // ---- Pipeline Sub-panels (from ColonyPipelineController) ----
+
+    /**
+     * Layout form tab
+     */
+    public function layout($slug)
+    {
+        $this->requireAdmin();
+
+        $colony = Colony::where('slug', $slug)->firstOrFail();
+        $layoutConfig = $colony->layoutConfig ? json_decode($colony->layoutConfig, true) : [];
+
+        return $this->render('admin.colonies._layout_form', [
+            'colony' => $colony,
+            'layoutConfig' => $layoutConfig,
+        ]);
+    }
+
+    /**
+     * Save layout config
+     */
+    public function saveLayout($slug)
+    {
+        $this->requireAdmin();
+
+        $colony = Colony::where('slug', $slug)->firstOrFail();
+        $colony->layout_config = json_encode(request('layout_config'));
+        $colony->save();
+
+        return back()->with('success', 'Layout configuration saved.');
+    }
+
+    /**
+     * Pricing dashboard tab
+     */
+    public function pricing($slug)
+    {
+        $this->requireAdmin();
+
+        $colony = Colony::where('slug', $slug)->firstOrFail();
+        $priceSlabs = $colony->priceSlabs()->get();
+
+        return $this->render('admin.colonies._pricing_dashboard', [
+            'colony' => $colony,
+            'priceSlabs' => $priceSlabs,
+        ]);
+    }
+
+    /**
+     * Save pricing
+     */
+    public function savePricing($slug)
+    {
+        $this->requireAdmin();
+
+        $colony = Colony::where('slug', $slug)->firstOrFail();
+        $rank = request('rank');
+        $rate = request('rate');
+        $min_val = request('min_value');
+        $max_val = request('max_value');
+
+        // Upsert price slab
+        $colony->priceSlabs()->updateOrCreate(
+            ['rank' => $rank],
+            ['rate' => $rate, 'min_value' => $min_val, 'max_value' => $max_val]
+        );
+
+        return back()->with('success', 'Pricing updated for rank ' . $rank);
+    }
+
+    /**
+     * Plot list tab
+     */
+    public function plots($slug)
+    {
+        $this->requireAdmin();
+
+        $colony = Colony::where('slug', $slug)->firstOrFail();
+        $plots = $colony->plots()->paginate(20);
+
+        return $this->render('admin.colonies._plot_list', [
             'colony' => $colony,
             'plots' => $plots,
-            'plot_stats' => $plotStats,
-            'block_stats' => $blockStats,
-            'dev_costs' => $devCosts,
-            'total_dev_cost' => $totalDevCost,
-            'paid_dev_cost' => $paidDevCost,
-            'layout' => $layout,
-            'price_history_count' => $priceHistoryCount,
         ]);
     }
 
-    public function edit($id)
+    /**
+     * Plot map (Leaflet GeoJSON)
+     */
+    public function map($slug)
     {
         $this->requireAdmin();
-        $colony = $this->db->fetch("SELECT * FROM colonies WHERE id = ?", [$id]);
-        if (!$colony) {
-            $this->setFlash('error', 'Colony not found');
-            $this->redirect('/admin/colonies');
-            return;
-        }
-        $states = $this->db->fetchAll("SELECT id, name FROM states ORDER BY name");
-        $districts = $this->db->fetchAll("SELECT id, name FROM districts WHERE state_id = ? ORDER BY name", [$colony['district_id']]);
-        $this->render('admin/colonies/edit', [
-            'page_title' => 'Edit ' . $colony['name'] . ' - Admin',
-            'colony' => $colony, 'states' => $states, 'districts' => $districts,
+
+        $colony = Colony::where('slug', $slug)->firstOrFail();
+        $plots = $colony->plots()->get(['plot_number', 'area_sqft', 'price', 'status', 'latitude', 'longitude']);
+
+        return $this->render('admin.colonies._plot_map', [
+            'colony' => $colony,
+            'plots' => $plots,
         ]);
     }
 
-    public function update($id)
+    /**
+     * Milestones tab
+     */
+    public function milestones($slug)
     {
         $this->requireAdmin();
-        $slug = $_POST['slug'] ?? '';
-        $existing = $this->db->fetch("SELECT id FROM colonies WHERE slug = ? AND id != ?", [$slug, $id]);
-        if ($existing) $slug .= '-' . $id;
 
-        $latitude = $_POST['latitude'] !== '' ? (float)$_POST['latitude'] : null;
-        $longitude = $_POST['longitude'] !== '' ? (float)$_POST['longitude'] : null;
-        $mapLink = trim($_POST['map_link'] ?? '');
-        if (empty($mapLink) && $latitude !== null && $longitude !== null) {
-            $mapLink = "https://maps.google.com/?q={$latitude},{$longitude}";
-        }
+        $colony = Colony::where('slug', $slug)->firstOrFail();
+        $milestones = $colony->milestones()->orderBy('level')->get();
 
-        [$tenantSql, $tenantParams] = $this->tenantWhere();
-        $this->db->query("UPDATE colonies SET district_id=?, name=?, slug=?, description=?, amenities=?, key_highlights=?, nearby_places=?, map_link=?, total_plots=?, available_plots=?, starting_price=?, image_path=?, banner_image=?, brochure_path=?, gallery_images=?, youtube_video_url=?, layout_image=?, virtual_tour_url=?, latitude=?, longitude=?, contact_phone=?, contact_email=?, meta_title=?, meta_description=?, show_plots_publicly=?, is_featured=?, is_active=? WHERE id=? $tenantSql", array_merge([
-            (int)($_POST['district_id'] ?? 0), $_POST['name'] ?? '', $slug,
-            $_POST['description'] ?? '', $_POST['amenities'] ?? '', $_POST['key_highlights'] ?? '', $_POST['nearby_places'] ?? '',
-            $mapLink, (int)($_POST['total_plots'] ?? 0), (int)($_POST['available_plots'] ?? 0),
-            (float)($_POST['starting_price'] ?? 0), $_POST['image_path'] ?? '', $_POST['banner_image'] ?? '',
-            $_POST['brochure_path'] ?? '', $_POST['gallery_images'] ?? '', $_POST['youtube_video_url'] ?? '',
-            $_POST['layout_image'] ?? '', $_POST['virtual_tour_url'] ?? '',
-            $latitude, $longitude,
-            $_POST['contact_phone'] ?? '', $_POST['contact_email'] ?? '',
-            $_POST['meta_title'] ?? '', $_POST['meta_description'] ?? '',
-            isset($_POST['show_plots_publicly']) ? 1 : 0,
-            isset($_POST['is_featured']) ? 1 : 0,
-            isset($_POST['is_active']) ? 1 : 0,
-            $id,
-        ], $tenantParams));
-        $this->setFlash('success', 'Colony updated successfully');
-        $this->redirect('/admin/colonies');
-    }
-
-    public function destroy($id)
-    {
-        $this->requireAdmin();
-        [$tenantSql, $tenantParams] = $this->tenantWhere();
-        $this->db->query("DELETE FROM colonies WHERE id = ? $tenantSql", array_merge([$id], $tenantParams));
-        $this->setFlash('success', 'Colony deleted');
-        $this->redirect('/admin/colonies');
-    }
-
-    public function plots($id)
-    {
-        $this->requireAdmin();
-        $colony = $this->db->fetch("SELECT * FROM colonies WHERE id = ?", [$id]);
-        $plots = $this->db->fetchAll("SELECT * FROM plots WHERE colony_id = ? ORDER BY plot_number", [$id]);
-        $this->render('admin/colonies/plots', [
-            'page_title' => 'Plots - ' . ($colony['name'] ?? '') . ' - Admin',
-            'colony' => $colony, 'plots' => $plots,
+        return $this->render('admin.colonies._milestone_list', [
+            'colony' => $colony,
+            'milestones' => $milestones,
         ]);
     }
 
-    public function financials($id)
+    /**
+     * Add milestone
+     */
+    public function addMilestone($slug)
     {
         $this->requireAdmin();
-        $colony = $this->db->fetch("SELECT * FROM colonies WHERE id = ?", [$id]);
-        $totalBookings = (float)$this->db->fetchColumn("SELECT COALESCE(SUM(b.total_amount), 0) FROM bookings b JOIN plots p ON b.property_id = p.id WHERE p.colony_id = ?", [$id]);
-        $totalPlotsValue = (float)$this->db->fetchColumn("SELECT COALESCE(SUM(total_price), 0) FROM plots WHERE colony_id = ?", [$id]);
-        $this->render('admin/colonies/financials', [
-            'page_title' => 'Financials - ' . ($colony['name'] ?? '') . ' - Admin',
-            'colony' => $colony, 'total_bookings' => $totalBookings, 'total_plots_value' => $totalPlotsValue,
+
+        $colony = Colony::where('slug', $slug)->firstOrFail();
+        $level = request('level');
+        $name = request('name');
+        $target_date = request('target_date');
+        $status = request('status', 'pending');
+
+        $colony->milestones()->create([
+            'colony_id' => $colony->id,
+            'level' => $level,
+            'name' => $name,
+            'target_date' => $target_date,
+            'status' => $status,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
+
+        return back()->with('success', 'Milestone added.');
+    }
+
+    /**
+     * Delete milestone
+     */
+    public function deleteMilestone($slug, $milestoneId)
+    {
+        $this->requireAdmin();
+
+        $colony = Colony::where('slug', $slug)->firstOrFail();
+        $colony->milestones()->where('id', $milestoneId)->delete();
+
+        return back()->with('success', 'Milestone deleted.');
     }
 }

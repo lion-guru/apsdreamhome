@@ -1,4 +1,13 @@
-ï»¿<div class="container-fluid">
+<?php
+/**
+ * @var array $batch
+ * @var array $entries
+ * @var int $total_entries
+ * @var int $entry_page
+ * @var int $entry_total_pages
+ */
+?>
+<div class="container-fluid">
     <div class="row mb-4">
         <div class="col-8">
             <a href="<?= BASE_URL ?>/admin/payout-batches" class="btn btn-sm btn-outline-secondary mb-2"><i class="fas fa-arrow-left me-1"></i> Back</a>
@@ -38,11 +47,14 @@
 
     <!-- Status Banner -->
     <?php
+    if (!defined('PAYOUT_COLOR_MUTED')) {
+        define('PAYOUT_COLOR_MUTED', '#6c757d');
+    }
     $statusColors = [
-        'draft' => '#6c757d', 'pending_approval' => '#ffc107', 'approved' => '#28a745',
+        'draft' => PAYOUT_COLOR_MUTED, 'pending_approval' => '#ffc107', 'approved' => '#28a745',
         'processing' => '#17a2b8', 'completed' => '#20c997', 'rejected' => '#dc3545',
     ];
-    $sc = $statusColors[$batch['status']] ?? '#6c757d';
+    $sc = $statusColors[$batch['status']] ?? PAYOUT_COLOR_MUTED;
     ?>
     <div class="alert mb-4">
         <i class="fas fa-info-circle me-2"></i>
@@ -65,7 +77,7 @@
         <div class="col">
             <div class="card h-100">
                 <div class="card-body text-center">
-                    <h3 >₹<?= number_format((float)$batch['total_amount']) ?></h3>
+                    <h3 >₹<?= number_format(floatval($batch['total_amount'])) ?></h3>
                     <small >Gross Amount</small>
                 </div>
             </div>
@@ -75,9 +87,9 @@
                 <div class="card-body text-center">
                     <?php
                     $entries = $entries ?? [];
-                    $totalTds = array_sum(array_map(function($e) { return (float)($e['tds_amount'] ?? 0); }, $entries));
-                    $totalAdmin = array_sum(array_map(function($e) { return (float)($e['admin_fee'] ?? 0); }, $entries));
-                    $totalNet = array_sum(array_map(function($e) { return (float)($e['net_amount'] ?? 0); }, $entries));
+                    $totalTds = array_sum(array_map(function($e) { return floatval($e['tds_amount'] ?? 0); }, $entries));
+                    $totalAdmin = array_sum(array_map(function($e) { return floatval($e['admin_fee'] ?? 0); }, $entries));
+                    $totalNet = array_sum(array_map(function($e) { return floatval($e['net_amount'] ?? 0); }, $entries));
                     ?>
                     <h3 >₹<?= number_format($totalTds) ?></h3>
                     <small >TDS Deducted (194H)</small>
@@ -120,10 +132,11 @@
                 <div class="row align-items-center">
                     <div class="col-md-7">
                         <p class="mb-2"><strong>Step 1 — Export Bank File:</strong> download the Corporate NetBanking bulk-upload CSV (Beneficiary, Account, IFSC, Net Amount after 194H TDS, NEFT/RTGS split, Reference <code>APS-COMM-{batch}-{entry}</code>).</p>
-                        <div class="btn-group" role="group" aria-label="Export bank file">
-                            <a href="<?= BASE_URL ?>/admin/payout-batches/<?= (int)$batch['id'] ?>/export-bank-csv?format=generic" class="btn btn-sm btn-outline-success"><i class="fas fa-download me-1"></i>Generic CSV</a>
-                            <a href="<?= BASE_URL ?>/admin/payout-batches/<?= (int)$batch['id'] ?>/export-bank-csv?format=icici" class="btn btn-sm btn-outline-success"><i class="fas fa-download me-1"></i>ICICI Bank</a>
-                            <a href="<?= BASE_URL ?>/admin/payout-batches/<?= (int)$batch['id'] ?>/export-bank-csv?format=hdfc" class="btn btn-sm btn-outline-success"><i class="fas fa-download me-1"></i>HDFC</a>
+                        <div class="btn-group" aria-label="Export bank file">
+                            <a href="<?= BASE_URL ?>/admin/payout-batches/<?= intval($batch['id']) ?>/export-bank-csv?format=generic" class="btn btn-sm btn-outline-success"><i class="fas fa-download me-1"></i>Generic CSV</a>
+                            <a href="<?= BASE_URL ?>/admin/payout-batches/<?= intval($batch['id']) ?>/export-bank-csv?format=sbi" class="btn btn-sm btn-outline-success"><i class="fas fa-download me-1"></i>SBI CMP</a>
+                            <a href="<?= BASE_URL ?>/admin/payout-batches/<?= intval($batch['id']) ?>/export-bank-csv?format=icici" class="btn btn-sm btn-outline-success"><i class="fas fa-download me-1"></i>ICICI Bank</a>
+                            <a href="<?= BASE_URL ?>/admin/payout-batches/<?= intval($batch['id']) ?>/export-bank-csv?format=hdfc" class="btn btn-sm btn-outline-success"><i class="fas fa-download me-1"></i>HDFC</a>
                         </div>
                     </div>
                     <div class="col-md-5 text-md-end mt-3 mt-md-0">
@@ -146,8 +159,8 @@
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <div class="row">
                         <div class="col-md-3">
-                            <label >Type Filter</label>
-                            <select name="populate_type" class="form-select form-select-sm">
+                            <label for="populate_type" class="form-label">Type Filter</label>
+                            <select id="populate_type" name="populate_type" class="form-select form-select-sm">
                                 <option value="">All Types</option>
                                 <option value="direct_sale">Direct Sale</option>
                                 <option value="override">Override</option>
@@ -157,12 +170,12 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label >Date From</label>
-                            <input type="date" name="populate_from" class="form-control form-control-sm">
+                            <label for="populate_from" class="form-label">Date From</label>
+                            <input type="date" id="populate_from" name="populate_from" class="form-control form-control-sm">
                         </div>
                         <div class="col-md-3">
-                            <label >Date To</label>
-                            <input type="date" name="populate_to" class="form-control form-control-sm">
+                            <label for="populate_to" class="form-label">Date To</label>
+                            <input type="date" id="populate_to" name="populate_to" class="form-control form-control-sm">
                         </div>
                         <div class="col-md-3 d-flex align-items-end">
                             <button type="submit" class="btn btn-success btn-sm w-100"><i class="fas fa-plus me-1"></i> Add Entries</button>
@@ -209,14 +222,14 @@
                                     <td><?= $e['id'] ?></td>
                                     <td><?= htmlspecialchars($e['beneficiary_name'] ?? 'User #' . $e['beneficiary_user_id']) ?></td>
                                     <td><span class="badge bg-info"><?= $e['commission_type'] ?? 'N/A' ?></span></td>
-                                    <td>₹<?= number_format((float)$e['amount']) ?></td>
-                                    <td >₹<?= number_format((float)$e['tds_amount']) ?></td>
-                                    <td >₹<?= number_format((float)($e['admin_fee'] ?? 0)) ?></td>
-                                    <td >₹<?= number_format((float)$e['net_amount']) ?></td>
+                                    <td>₹<?= number_format(floatval($e['amount'])) ?></td>
+                                    <td >₹<?= number_format(floatval($e['tds_amount'])) ?></td>
+                                    <td >₹<?= number_format(floatval($e['admin_fee'] ?? 0)) ?></td>
+                                    <td >₹<?= number_format(floatval($e['net_amount'])) ?></td>
                                     <td>
                                         <?php
-                                        $eColors = ['pending' => '#ffc107', 'processing' => '#17a2b8', 'completed' => '#28a745', 'failed' => '#dc3545', 'cancelled' => '#6c757d'];
-                                        $ec = $eColors[$e['status']] ?? '#6c757d';
+                                        $eColors = ['pending' => '#ffc107', 'processing' => '#17a2b8', 'completed' => '#28a745', 'failed' => '#dc3545', 'cancelled' => PAYOUT_COLOR_MUTED];
+                                        $ec = $eColors[$e['status']] ?? PAYOUT_COLOR_MUTED;
                                         ?>
                                         <span ><?= ucfirst($e['status']) ?></span>
                                     </td>
@@ -236,10 +249,10 @@
                         <tfoot>
                             <tr >
                                 <td colspan="3"><strong >Total</strong></td>
-                                <td><strong>₹<?= number_format(array_sum(array_map(fn($e) => (float)$e['amount'], $entries))) ?></strong></td>
-                                <td><strong >₹<?= number_format(array_sum(array_map(fn($e) => (float)$e['tds_amount'], $entries))) ?></strong></td>
-                                <td><strong >₹<?= number_format(array_sum(array_map(fn($e) => (float)($e['admin_fee'] ?? 0), $entries))) ?></strong></td>
-                                <td><strong >₹<?= number_format(array_sum(array_map(fn($e) => (float)$e['net_amount'], $entries))) ?></strong></td>
+                                <td><strong>₹<?= number_format(array_sum(array_map(fn($e) => floatval($e['amount']), $entries))) ?></strong></td>
+                                <td><strong >₹<?= number_format(array_sum(array_map(fn($e) => floatval($e['tds_amount']), $entries))) ?></strong></td>
+                                <td><strong >₹<?= number_format(array_sum(array_map(fn($e) => floatval($e['admin_fee'] ?? 0), $entries))) ?></strong></td>
+                                <td><strong >₹<?= number_format(array_sum(array_map(fn($e) => floatval($e['net_amount']), $entries))) ?></strong></td>
                                 <td colspan="3"></td>
                             </tr>
                         </tfoot>
@@ -272,8 +285,8 @@
             <form method="POST" action="<?= BASE_URL ?>/admin/payout-batches/reject/<?= $batch['id'] ?>">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <div class="modal-body">
-                    <label >Reason for rejection</label>
-                    <textarea name="reason" class="form-control" rows="3" required ></textarea>
+                    <label for="reject_reason" class="form-label">Reason for rejection</label>
+                    <textarea id="reject_reason" name="reason" class="form-control" rows="3" required></textarea>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -298,8 +311,8 @@
                 <input type="hidden" name="entry_id" id="completeEntryId">
                 <div class="modal-body">
                     <p >Mark payment for: <strong id="completeEntryName"></strong></p>
-                    <label >Payment Reference (UTR/Ref No)</label>
-                    <input type="text" name="payment_ref" class="form-control" placeholder="e.g. UTR123456789" >
+                    <label for="complete_payment_ref" class="form-label">Payment Reference (UTR/Ref No)</label>
+                    <input type="text" id="complete_payment_ref" name="payment_ref" class="form-control" placeholder="e.g. UTR123456789">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -326,12 +339,12 @@ function completeEntry(id, name) {
                 <h5 class="modal-title"><i class="fas fa-upload me-2"></i>Import Bank UTR Reconciliation File</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST" action="<?= BASE_URL ?>/admin/payout-batches/<?= (int)$batch['id'] ?>/import-utr" enctype="multipart/form-data">
+            <form method="POST" action="<?= BASE_URL ?>/admin/payout-batches/<?= intval($batch['id']) ?>/import-utr" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <div class="modal-body">
                     <p class="text-muted small">Upload the bank's processed-report CSV. Rows match on <code>Payment Reference</code> (APS-COMM-{batch}-{entry}) or <code>Account Number + Amount</code>. Matched payouts flip to completed with UTR + auto SMS/WhatsApp alerts.</p>
-                    <label class="form-label">UTR CSV File (max 10MB)</label>
-                    <input type="file" name="utr_file" class="form-control" accept=".csv" required>
+                    <label for="utr_file_input" class="form-label">UTR CSV File (max 10MB)</label>
+                    <input type="file" id="utr_file_input" name="utr_file" class="form-control" accept=".csv" required>
                     <small class="text-muted">Expected columns: Reference, UTR, Amount, Account (header names are flexible).</small>
                 </div>
                 <div class="modal-footer">

@@ -4,17 +4,25 @@ ob_start();
 $st = $stats ?? [];
 ?>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
     <div>
-        <h4 class="mb-1"><i class="fas fa-file-contract me-2"></i><?= htmlspecialchars($page_title ?? '') ?></h4>
-        <span class="text-muted"><?= __('admin_pipeline_subtitle') ?></span>
+        <h4 class="mb-1"><i class="fas fa-file-contract text-primary me-2"></i><?= htmlspecialchars($page_title ?? '') ?></h4>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 small">
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/erp">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/bookings">Bookings</a></li>
+                <li class="breadcrumb-item active">NOC &amp; Registry</li>
+            </ol>
+        </nav>
     </div>
-    <div class="d-flex gap-2">
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="<?= BASE_URL ?>/admin/bookings" class="btn btn-outline-secondary btn-sm"><i class="fas fa-calendar me-1"></i>Bookings</a>
         <a href="<?= BASE_URL ?>/admin/noc-registry/eligibility" class="btn btn-outline-warning btn-sm"><i class="fas fa-check-double me-1"></i><?= __('admin_eligibility_check') ?></a>
         <a href="<?= BASE_URL ?>/admin/noc-registry/nocs/create" class="btn btn-outline-danger btn-sm"><i class="fas fa-plus me-1"></i><?= __('admin_new_noc') ?></a>
-        <a href="<?= BASE_URL ?>/admin/noc-registry/registries/create" class="btn btn-outline-primary btn-sm"><i class="fas fa-plus me-1"></i><?= __('admin_new_registry') ?></a>
+        <a href="<?= BASE_URL ?>/admin/noc-registry/registries/create" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i><?= __('admin_new_registry') ?></a>
     </div>
 </div>
+<p class="text-muted small mb-4"><?= __('admin_pipeline_subtitle') ?></p>
 
 <?php if (!empty($_SESSION['flash_success'])): ?>
     <div class="alert alert-success alert-dismissible fade show"><i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($_SESSION['flash_success'] ?? ''); unset($_SESSION['flash_success']); ?></div>
@@ -85,36 +93,36 @@ $st = $stats ?? [];
     <div class="card-header bg-white border-bottom">
         <h6 class="mb-0"><i class="fas fa-project-diagram me-2"></i><?= __('admin_registration_pipeline_flow') ?></h6>
     </div>
-    <div class="card-body aps-cp-card-body">
-        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+    <div class="card-body py-4 px-4">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
             <div class="text-center">
-                <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center">1</div>
-                <div class="small fw-bold mt-2"><?= __('admin_booking_fully_paid') ?></div>
+                <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center fw-bold" style="width:40px;height:40px;font-size:.9rem;">1</div>
+                <div class="small fw-semibold mt-2 text-muted" style="max-width:80px;"><?= __('admin_booking_fully_paid') ?></div>
             </div>
-            <i class="fas fa-arrow-right text-muted"></i>
+            <i class="fas fa-chevron-right text-muted d-none d-md-block"></i>
             <div class="text-center">
-                <div class="rounded-circle bg-warning text-white d-inline-flex align-items-center justify-content-center">2</div>
-                <div class="small fw-bold mt-2"><?= __('admin_noc_requested') ?></div>
+                <div class="rounded-circle bg-warning text-white d-inline-flex align-items-center justify-content-center fw-bold" style="width:40px;height:40px;font-size:.9rem;">2</div>
+                <div class="small fw-semibold mt-2 text-muted" style="max-width:80px;"><?= __('admin_noc_requested') ?></div>
             </div>
-            <i class="fas fa-arrow-right text-muted"></i>
+            <i class="fas fa-chevron-right text-muted d-none d-md-block"></i>
             <div class="text-center">
-                <div class="rounded-circle bg-info text-white d-inline-flex align-items-center justify-content-center">3</div>
-                <div class="small fw-bold mt-2"><?= __('admin_noc_approved') ?></div>
+                <div class="rounded-circle bg-info text-white d-inline-flex align-items-center justify-content-center fw-bold" style="width:40px;height:40px;font-size:.9rem;">3</div>
+                <div class="small fw-semibold mt-2 text-muted" style="max-width:80px;"><?= __('admin_noc_approved') ?></div>
             </div>
-            <i class="fas fa-arrow-right text-muted"></i>
+            <i class="fas fa-chevron-right text-muted d-none d-md-block"></i>
             <div class="text-center">
-                <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center">4</div>
-                <div class="small fw-bold mt-2"><?= __('admin_registry_created') ?></div>
+                <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center fw-bold" style="width:40px;height:40px;font-size:.9rem;">4</div>
+                <div class="small fw-semibold mt-2 text-muted" style="max-width:80px;"><?= __('admin_registry_created') ?></div>
             </div>
-            <i class="fas fa-arrow-right text-muted"></i>
+            <i class="fas fa-chevron-right text-muted d-none d-md-block"></i>
             <div class="text-center">
-                <div class="rounded-circle bg-secondary text-white d-inline-flex align-items-center justify-content-center">5</div>
-                <div class="small fw-bold mt-2"><?= __('admin_sro_appointment') ?></div>
+                <div class="rounded-circle bg-secondary text-white d-inline-flex align-items-center justify-content-center fw-bold" style="width:40px;height:40px;font-size:.9rem;">5</div>
+                <div class="small fw-semibold mt-2 text-muted" style="max-width:80px;"><?= __('admin_sro_appointment') ?></div>
             </div>
-            <i class="fas fa-arrow-right text-muted"></i>
+            <i class="fas fa-chevron-right text-muted d-none d-md-block"></i>
             <div class="text-center">
-                <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center">6</div>
-                <div class="small fw-bold mt-2"><?= __('admin_registration_done') ?></div>
+                <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center fw-bold" style="width:40px;height:40px;font-size:.9rem;">6</div>
+                <div class="small fw-semibold mt-2 text-muted" style="max-width:80px;"><?= __('admin_registration_done') ?></div>
             </div>
         </div>
     </div>

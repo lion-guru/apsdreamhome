@@ -199,6 +199,7 @@ $base = BASE_URL;
         }
         .role-option:hover { border-color: var(--role-color); transform: translateY(-2px); }
         .role-option:hover::before { opacity: 0.1; }
+        .role-option:focus { outline: none; box-shadow: 0 0 0 3px var(--primary); }
         .role-option.active {
             border-color: var(--role-color);
             background: rgba(255,255,255,0.06);
@@ -643,23 +644,23 @@ $base = BASE_URL;
         <!-- Main Card -->
         <div class="reg-card">
             <!-- Role Picker -->
-            <div class="role-picker">
-                <div class="role-option <?php echo $role === 'customer' ? 'active' : ''; ?>" data-role="customer" onclick="pickRole('customer')">
-                    <div class="role-icon"><i class="fas fa-home"></i></div>
-                    <span class="role-name">Buyer</span>
-                    <span class="role-desc">Find Your Dream Home</span>
-                </div>
-                <div class="role-option <?php echo $role === 'agent' ? 'active' : ''; ?>" data-role="agent" onclick="pickRole('agent')">
-                    <div class="role-icon"><i class="fas fa-handshake"></i></div>
-                    <span class="role-name">Agent</span>
-                    <span class="role-desc">Earn 5% Commission</span>
-                </div>
-                <div class="role-option <?php echo $role === 'associate' ? 'active' : ''; ?>" data-role="associate" onclick="pickRole('associate')">
-                    <div class="role-icon"><i class="fas fa-network-wired"></i></div>
-                    <span class="role-name">Associate</span>
-                    <span class="role-desc">Up to 20% Commission</span>
-                </div>
-            </div>
+<div class="role-picker">
+            <button class="role-option <?php echo $role === 'customer' ? 'active' : ''; ?>" data-role="customer" tabindex="0" role="button" aria-label="Buyer - Find Your Dream Home" onclick="pickRole('customer')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();pickRole('customer');}">
+                <div class="role-icon"><i class="fas fa-home"></i></div>
+                <span class="role-name">Buyer</span>
+                <span class="role-desc">Find Your Dream Home</span>
+            </button>
+            <button class="role-option <?php echo $role === 'agent' ? 'active' : ''; ?>" data-role="agent" tabindex="0" role="button" aria-label="Agent - Earn 5% Commission" onclick="pickRole('agent')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();pickRole('agent');}">
+                <div class="role-icon"><i class="fas fa-handshake"></i></div>
+                <span class="role-name">Agent</span>
+                <span class="role-desc">Earn 5% Commission</span>
+            </button>
+            <button class="role-option <?php echo $role === 'associate' ? 'active' : ''; ?>" data-role="associate" tabindex="0" role="button" aria-label="Associate - Up to 20% Commission" onclick="pickRole('associate')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();pickRole('associate');}">
+                <div class="role-icon"><i class="fas fa-network-wired"></i></div>
+                <span class="role-name">Associate</span>
+                <span class="role-desc">Up to 20% Commission</span>
+            </button>
+        </div>
 
             <!-- Benefits Strip -->
             <div class="benefits-strip" id="benefitsStrip">
@@ -691,7 +692,7 @@ $base = BASE_URL;
                         <div class="section-label"><i class="fas fa-user"></i> Personal Details</div>
 
                         <div class="field-group" id="fg-name">
-                            <label>Full Name <span class="req">*</span></label>
+                            <label for="regName">Full Name <span class="req">*</span></label>
                             <div class="input-wrap">
                                 <input type="text" class="form-control" name="name" id="regName" placeholder="e.g. Rahul Sharma" value="<?php echo htmlspecialchars($old['name'] ?? $old['full_name'] ?? ''); ?>" required autocomplete="name">
                                 <i class="fas fa-user field-icon"></i>
@@ -702,7 +703,7 @@ $base = BASE_URL;
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <div class="field-group" id="fg-email">
-                                    <label>Email <span class="req">*</span></label>
+                                    <label for="regEmail">Email <span class="req">*</span></label>
                                     <div class="input-wrap">
                                         <input type="email" class="form-control" name="email" id="regEmail" placeholder="you@example.com" value="<?php echo htmlspecialchars($old['email'] ?? ''); ?>" required autocomplete="email">
                                         <i class="fas fa-envelope field-icon"></i>
@@ -712,7 +713,7 @@ $base = BASE_URL;
                             </div>
                             <div class="col-md-6">
                                 <div class="field-group" id="fg-phone">
-                                    <label>Phone <span class="req">*</span></label>
+                                    <label for="regPhone">Phone <span class="req">*</span></label>
                                     <div class="input-wrap">
                                         <input type="tel" class="form-control" name="phone" id="regPhone" placeholder="10-digit mobile" pattern="[0-9]{10}" maxlength="10" value="<?php echo htmlspecialchars($old['phone'] ?? ''); ?>" required autocomplete="tel">
                                         <i class="fas fa-phone field-icon"></i>
@@ -730,11 +731,11 @@ $base = BASE_URL;
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <div class="field-group" id="fg-password">
-                                    <label>Password <span class="req">*</span></label>
+                                    <label for="regPassword">Password <span class="req">*</span></label>
                                     <div class="input-wrap">
                                         <input type="password" class="form-control" name="password" id="regPassword" placeholder="Min 6 characters" required minlength="6" autocomplete="new-password">
                                         <i class="fas fa-lock field-icon"></i>
-                                        <button type="button" class="pwd-toggle" onclick="togglePwd('regPassword', this)" tabindex="-1"><i class="fas fa-eye"></i></button>
+                                        <button type="button" class="pwd-toggle" onclick="togglePwd('regPassword', this)" tabindex="-1" aria-label="Toggle password visibility"><i class="fas fa-eye"></i></button>
                                     </div>
                                     <div class="pwd-strength" id="pwdStrength">
                                         <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
@@ -744,11 +745,11 @@ $base = BASE_URL;
                             </div>
                             <div class="col-md-6">
                                 <div class="field-group" id="fg-confirm">
-                                    <label>Confirm Password <span class="req">*</span></label>
+                                    <label for="regConfirm">Confirm Password <span class="req">*</span></label>
                                     <div class="input-wrap">
                                         <input type="password" class="form-control" name="confirm_password" id="regConfirm" placeholder="Re-enter password" required autocomplete="new-password">
                                         <i class="fas fa-check-double field-icon"></i>
-                                        <button type="button" class="pwd-toggle" onclick="togglePwd('regConfirm', this)" tabindex="-1"><i class="fas fa-eye"></i></button>
+                                        <button type="button" class="pwd-toggle" onclick="togglePwd('regConfirm', this)" tabindex="-1" aria-label="Toggle password visibility"><i class="fas fa-eye"></i></button>
                                     </div>
                                     <div class="field-msg" id="msg-confirm"></div>
                                 </div>
@@ -787,9 +788,9 @@ $base = BASE_URL;
                                 </div>
                             </div>
                             <div class="field-group" id="fg-ref-agent">
-                                <label>Referral Code <span class="req">*</span></label>
+                                <label for="regRefAgent">Referral Code <span class="req">*</span></label>
                                 <div class="input-wrap">
-                                    <input type="text" class="form-control" name="referral_code" placeholder="Enter referrer's code" required value="<?php echo htmlspecialchars($ref ?? ''); ?>" autocomplete="off">
+                                    <input type="text" class="form-control" name="referral_code" id="regRefAgent" placeholder="Enter referrer's code" required value="<?php echo htmlspecialchars($ref ?? ''); ?>" autocomplete="off">
                                     <i class="fas fa-ticket field-icon"></i>
                                 </div>
                                 <div class="field-msg error" id="msg-ref-agent"><i class="fas fa-info-circle"></i> Required to join as Agent</div>
@@ -815,7 +816,7 @@ $base = BASE_URL;
 
                             <div class="section-label"><i class="fas fa-sitemap"></i> Sponsor Info</div>
                             <div class="field-group" id="fg-sponsor">
-                                <label>Sponsor Code <span class="req">*</span></label>
+                                <label for="sponsorCode">Sponsor Code <span class="req">*</span></label>
                                 <div class="input-wrap">
                                     <input type="text" class="form-control" name="sponsor_code" id="sponsorCode" placeholder="Enter your sponsor's code" required value="<?php echo htmlspecialchars($ref ?? ''); ?>" autocomplete="off">
                                     <i class="fas fa-link field-icon"></i>

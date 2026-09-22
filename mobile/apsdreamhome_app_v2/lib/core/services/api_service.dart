@@ -536,6 +536,54 @@ class ApiService {
   Future<Map<String, dynamic>> completeSiteVisit({required int visitId}) async {
     return post('/site-visit/complete', data: {'visit_id': visitId});
   }
+
+  // Legal Kit (download legal kit ZIP)
+  Future<Map<String, dynamic>> downloadLegalKit(int bookingId, {String type = 'auto'}) async {
+    return get('${AppConstants.legalKitEndpoint}$bookingId', queryParameters: {'type': type});
+  }
+
+  /// Download URL for the legal kit ZIP (Bearer header required).
+  String legalKitDownloadUrl(int bookingId, {String type = 'auto'}) {
+    return '${AppConstants.baseUrl}${AppConstants.apiVersion}${AppConstants.legalKitEndpoint}$bookingId?type=$type';
+  }
+
+  // Commission Recalculation (staff)
+  Future<List<Map<String, dynamic>>> getCommissionRecalculations({
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    final response = await get(
+      AppConstants.commissionRecalculationsEndpoint,
+      queryParameters: queryParameters,
+    );
+    return (response['data'] ?? []) as List<Map<String, dynamic>>;
+  }
+
+  Future<Map<String, dynamic>> getCommissionRecalculationDetail(String id) async {
+    final response = await get('${AppConstants.commissionRecalculationDetailEndpoint}$id');
+    return (response['data'] ?? {}) as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> requestCommissionRecalculation({
+    required int ledgerId,
+    required String reason,
+  }) async {
+    return post(
+      AppConstants.commissionRecalculationRequestEndpoint,
+      data: {'ledger_id': ledgerId, 'reason': reason},
+    );
+  }
+
+  Future<Map<String, dynamic>> bulkRequestCommissionRecalculation({
+    required String type,
+    required String from,
+    required String to,
+    required String reason,
+  }) async {
+    return post(
+      AppConstants.commissionRecalculationBulkRequestEndpoint,
+      data: {'type': type, 'from': from, 'to': to, 'reason': reason},
+    );
+  }
 }
 
 // Offline EMI Result wrapper

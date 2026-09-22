@@ -233,12 +233,15 @@ class BookingController extends BaseController
             return;
         }
 
+        // ═══ Concurrency & Double Booking Lock (SELECT FOR UPDATE) ═══
+        $this->db->beginTransaction();
         $plot = $this->db->fetchRow(
-            "SELECT * FROM plots WHERE id = ? AND is_active = 1 AND status = 'available'",
+            "SELECT * FROM plots WHERE id = ? AND is_active = 1 AND status = 'available' FOR UPDATE",
             [$id]
         );
         if (!$plot) {
-            $this->setFlash('error', 'Plot is no longer available.');
+            $this->db->rollBack();
+            $this->setFlash('error', 'Plot is no longer available or currently being reserved by another buyer.');
             return $this->redirect('/plots/browse');
         }
 
@@ -277,9 +280,19 @@ class BookingController extends BaseController
             ]);
 
             if (!$result['success']) {
+                $this->db->rollBack();
                 $this->setFlash('error', 'Booking failed: ' . ($result['error'] ?? 'Unknown error'));
                 return $this->redirect('/plots/' . $id . '/book');
             }
+
+            // Atomically update plot status to booked
+            $this->db->execute(
+                "UPDATE plots SET status = 'booked', customer_id = ?, booking_date = CURDATE(), updated_at = NOW() WHERE id = ?",
+                [$user['id'], $id]
+            );
+
+            // Commit the transaction - plot is now securely locked & booked
+            $this->db->commit();
 
             if ($paymentPlan === 'emi') {
                 $svc->generatePaymentSchedule($result['id'], 12, 10.0);
@@ -298,6 +311,9 @@ class BookingController extends BaseController
 
             $this->redirect('/booking/confirmation/' . $result['id']);
         } catch (\Throwable $e) {
+            if ($this->db->getPdo()->inTransaction()) {
+                $this->db->rollBack();
+            }
             error_log('[BookingController::submitBooking] ' . $e->getMessage());
             $this->setFlash('error', 'Something went wrong. Please try again.');
             return $this->redirect('/plots/' . $id . '/book');

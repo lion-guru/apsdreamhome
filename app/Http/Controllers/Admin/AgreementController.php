@@ -285,7 +285,7 @@ class AgreementController extends AdminController
 
             // Send status-based email notifications
             try {
-                $agRow = $this->db->fetchOne("SELECT ag.*, pb.customer_id, pb.booking_number, p.plot_number, c.name as colony_name FROM agreements ag LEFT JOIN plot_bookings pb ON ag.booking_id = pb.id LEFT JOIN plots p ON ag.plot_id = p.id LEFT JOIN colonies c ON p.colony_id = c.id WHERE ag.id = ?", [(int)$id]);
+                $agRow = $this->db->fetchOne("SELECT ag.*, pb.customer_id, pb.booking_number, p.plot_number, c.name as colony_name, u.name as customer_name, u.email as customer_email, u.phone as customer_phone FROM agreements ag LEFT JOIN plot_bookings pb ON ag.booking_id = pb.id LEFT JOIN plots p ON ag.plot_id = p.id LEFT JOIN colonies c ON p.colony_id = c.id LEFT JOIN users u ON pb.customer_id = u.id WHERE ag.id = ?", [(int)$id]);
                 if (!empty($agRow['customer_id'])) {
                     $emailSvc = new \App\Services\EmailTemplateService();
                     $bookingData = [
@@ -299,6 +299,18 @@ class AgreementController extends AdminController
                         $emailSvc->sendAgreementPending((int)$agRow['customer_id'], $bookingData);
                     } elseif ($newStatus === 'signed') {
                         $emailSvc->sendAgreementSigned((int)$agRow['customer_id'], $bookingData);
+                        try {
+                            $bns = new \App\Services\BookingNotificationService();
+                            $u = [
+                                'id' => (int)$agRow['customer_id'],
+                                'name' => $agRow['customer_name'] ?? 'Customer',
+                                'email' => $agRow['customer_email'] ?? '',
+                                'phone' => $agRow['customer_phone'] ?? '',
+                            ];
+                            $bns->sendAgreementExecutedNotification($agRow, $u, $agRow);
+                        } catch (\Throwable $ne) {
+                            error_log("[AgreementController] multi-channel notify failed: " . $ne->getMessage());
+                        }
                     }
                 }
             } catch (\Throwable $e) {

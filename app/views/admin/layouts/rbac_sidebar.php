@@ -44,27 +44,27 @@ foreach ($menuItems as $item) {
 // Hub definitions — map legacy sections to 5 hubs
 $hubDefinitions = [
     'inventory' => [
-        'label' => '🏢 1. Inventory & Projects',
+        'label' => '1. Inventory & Projects',
         'icon' => 'fas fa-building',
-        'sections' => ['properties', 'locations', 'land', 'colonies', 'plots', 'sites', 'cms'],
+        'sections' => ['properties', 'colonies', 'land', 'plots', 'sites', 'cms'],
     ],
     'sales' => [
-        'label' => '🎯 2. Sales & CRM Pipeline',
+        'label' => '2. Sales & CRM Pipeline',
         'icon' => 'fas fa-funnel-dollar',
         'sections' => ['crm', 'sales', 'legal', 'leads', 'inquiries', 'site_visits', 'bookings', 'registry', 'possession'],
     ],
     'mlm' => [
-        'label' => '🌲 3. MLM Network & Team',
+        'label' => '3. MLM Network & Team',
         'icon' => 'fas fa-sitemap',
         'sections' => ['mlm', 'commission', 'associates', 'payouts', 'rewards', 'mlm_settings', 'referrals'],
     ],
     'finance' => [
-        'label' => '💳 4. Finance & Collections',
+        'label' => '4. Finance & Collections',
         'icon' => 'fas fa-coins',
         'sections' => ['finance', 'commission', 'cashbook', 'expenses', 'banking', 'gst', 'tds', 'efiling', 'collections', 'penalties', 'emi_auto_pay', 'plot_costs', 'payroll', 'billing'],
     ],
     'control' => [
-        'label' => '⚙️ 5. Enterprise Control',
+        'label' => '5. Enterprise Control',
         'icon' => 'fas fa-cogs',
         'sections' => ['users', 'roles', 'settings', 'system', 'hrm', 'security', 'ai_tech', 'communication', 'saas', 'operations', 'reports', 'analytics', 'audit_log', 'backup', 'cache', 'webhooks', 'api', 'company', 'menu_permissions', 'services', 'marketing', 'employee', 'hr', 'training', 'quality', 'health'],
     ],

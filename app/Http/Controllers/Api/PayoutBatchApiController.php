@@ -97,7 +97,7 @@ class PayoutBatchApiController extends BaseController
     }
 
     /**
-     * GET /api/v2/mobile/payout-batches/{id}/export-bank-csv?format=generic|icici|hdfc
+     * GET /api/v2/mobile/payout-batches/{id}/export-bank-csv?format=generic|icici|hdfc|sbi
      * Streams the Corporate NetBanking bulk-upload CSV.
      */
     public function exportCsv($id)
@@ -108,7 +108,7 @@ class PayoutBatchApiController extends BaseController
             }
             $id = (int)$id;
             $format = strtolower(trim($_GET['format'] ?? 'generic'));
-            if (!in_array($format, ['generic', 'icici', 'hdfc'], true)) $format = 'generic';
+            if (!in_array($format, ['generic', 'icici', 'hdfc', 'sbi'], true)) $format = 'generic';
 
             $service = new PayoutBatchService();
             $batch = $service->getBatch($id);
@@ -126,7 +126,8 @@ class PayoutBatchApiController extends BaseController
                         COALESCE(uba.ifsc_code, pe.beneficiary_ifsc, '') AS ifsc_code
                  FROM payout_entries pe
                  LEFT JOIN users u ON u.id = pe.beneficiary_user_id
-                 LEFT JOIN user_bank_accounts uba ON uba.user_id = pe.beneficiary_user_id AND uba.is_primary = 1
+                 LEFT JOIN user_bank_accounts uba
+                       ON uba.user_id = pe.beneficiary_user_id AND uba.is_primary = 1
                  WHERE pe.batch_id = ? AND pe.status != 'cancelled'{$tWhere}
                  ORDER BY pe.id ASC"
             );
@@ -157,13 +158,42 @@ class PayoutBatchApiController extends BaseController
                     }
                 }
                 $sr++;
-                $rows[] = [$sr, trim((string)($e['bene_name'] ?? '')), trim((string)($e['account_no'] ?? '')),
-                    strtoupper(trim((string)($e['ifsc_code'] ?? ''))), number_format($net, 2, '.', ''),
-                    $net >= 200000 ? 'RTGS' : 'NEFT', $ref . ' | APS Commission ' . ($batch['batch_name'] ?? ('Batch ' . $id))];
+                $rows[] = [
+                    'sr'      => $sr,
+                    'name'    => trim((string)($e['bene_name'] ?? '')),
+                    'account' => trim((string)($e['account_no'] ?? '')),
+                    'ifsc'    => strtoupper(trim((string)($e['ifsc_code'] ?? ''))),
+                    'amount'  => $net,
+                    'type'    => $net >= 200000 ? 'RTGS' : 'NEFT',
+                    'ref'     => $ref,
+                    'remarks' => 'APS Commission ' . ($batch['batch_name'] ?? ('Batch ' . $id)),
+                ];
             }
-            $csvRows = [['SrNo', 'BeneficiaryName', 'AccountNo', 'IFSC', 'Amount', 'PaymentType', 'Remarks']];
-            foreach ($rows as $r) {
-                $csvRows[] = $r;
+
+            if ($format === 'sbi') {
+                $header = ['Payment Type', 'Beneficiary Account No', 'Beneficiary IFSC', 'Amount', 'Beneficiary Name', 'Customer Reference', 'Narration'];
+                $csvRows = [$header];
+                foreach ($rows as $r) {
+                    $csvRows[] = [$r['type'], $r['account'], $r['ifsc'], number_format($r['amount'], 2, '.', ''), $r['name'], $r['ref'], $r['remarks']];
+                }
+            } elseif ($format === 'icici') {
+                $header = ['Beneficiary Name', 'Account Number', 'IFSC Code', 'Amount', 'Payment Type(NEFT/RTGS/IMPS)', 'Customer Reference', 'Remarks'];
+                $csvRows = [$header];
+                foreach ($rows as $r) {
+                    $csvRows[] = [$r['name'], $r['account'], $r['ifsc'], number_format($r['amount'], 2, '.', ''), $r['type'], $r['ref'], $r['remarks']];
+                }
+            } elseif ($format === 'hdfc') {
+                $header = ['Sr No', 'Beneficiary Name', 'Beneficiary Account No', 'IFSC', 'Amount', 'Payment Type', 'Reference No', 'Narration'];
+                $csvRows = [$header];
+                foreach ($rows as $r) {
+                    $csvRows[] = [$r['sr'], $r['name'], $r['account'], $r['ifsc'], number_format($r['amount'], 2, '.', ''), $r['type'], $r['ref'], $r['remarks']];
+                }
+            } else {
+                $header = ['SrNo', 'BeneficiaryName', 'AccountNo', 'IFSC', 'Amount', 'PaymentType', 'Remarks'];
+                $csvRows = [$header];
+                foreach ($rows as $r) {
+                    $csvRows[] = [$r['sr'], $r['name'], $r['account'], $r['ifsc'], number_format($r['amount'], 2, '.', ''), $r['type'], $r['ref'] . ' | ' . $r['remarks']];
+                }
             }
 
             while (ob_get_level() > 0) {

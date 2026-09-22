@@ -73,35 +73,38 @@ $base = BASE_URL;
                         $formVariant = $_SESSION['experiments']['registration_form_length'] ?? 'full';
                     ?>
                     <div class="mb-3">
-                        <label class="form-label"><?= __('register_label_name') ?> *</label>
-                        <input type="text" class="form-control" name="name" value="<?php echo htmlspecialchars($old['name'] ?? ''); ?>" placeholder="<?= __('register_ph_name') ?>" required>
+                        <label class="form-label" for="regName"><?= __('register_label_name') ?> *</label>
+                        <input type="text" class="form-control" name="name" id="regName" value="<?php echo htmlspecialchars($old['name'] ?? ''); ?>" placeholder="<?= __('register_ph_name') ?>" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label"><?= __('register_label_email') ?> *</label>
-                        <input type="email" class="form-control" name="email" value="<?php echo htmlspecialchars($old['email'] ?? ''); ?>" placeholder="<?= __('register_ph_email') ?>" required>
+                        <label class="form-label" for="regEmail"><?= __('register_label_email') ?> *</label>
+                        <input type="email" class="form-control" name="email" id="regEmail" value="<?php echo htmlspecialchars($old['email'] ?? ''); ?>" placeholder="<?= __('register_ph_email') ?>" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label"><?= __('register_label_phone') ?> *</label>
-                        <input type="text" class="form-control" name="phone" value="<?php echo htmlspecialchars($old['phone'] ?? ''); ?>" placeholder="<?= __('register_ph_phone') ?>" required>
+                        <label class="form-label" for="regPhone"><?= __('register_label_phone') ?> *</label>
+                        <input type="tel" class="form-control" name="phone" id="regPhone" value="<?php echo htmlspecialchars($old['phone'] ?? ''); ?>" placeholder="<?= __('register_ph_phone') ?>" required>
                     </div>
                     <div class="reg-step-2" <?= $formVariant === 'minimal' ? 'class=""' : '' ?>>
                         <div class="mb-3">
-                            <label class="form-label"><?= __('register_label_password') ?> *</label>
-                            <input type="password" class="form-control" name="password" placeholder="<?= __('register_ph_password') ?>" <?= $formVariant === 'minimal' ? '' : 'required' ?>>
+                            <label class="form-label" for="regPassword"><?= __('register_label_password') ?> *</label>
+                            <input type="password" class="form-control" name="password" id="regPassword" placeholder="<?= __('register_ph_password') ?>" <?= $formVariant === 'minimal' ? '' : 'required' ?>>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label"><?= __('register_label_confirm_password') ?> *</label>
-                            <input type="password" class="form-control" name="confirm_password" placeholder="<?= __('register_ph_confirm_password') ?>" <?= $formVariant === 'minimal' ? '' : 'required' ?>>
+                            <label class="form-label" for="regConfirm"><?= __('register_label_confirm_password') ?> *</label>
+                            <input type="password" class="form-control" name="confirm_password" id="regConfirm" placeholder="<?= __('register_ph_confirm_password') ?>" <?= $formVariant === 'minimal' ? '' : 'required' ?>>
                         </div>
-<div class="mb-3">
-                             <label class="form-label"><?= __('register_label_referral') ?></label>
-                             <input type="text" class="form-control" name="referral_code" value="<?php echo htmlspecialchars($old['referral_code'] ?? $ref ?? ''); ?>" placeholder="<?= __('register_ph_referral') ?>">
-                             <div id="referral_name_display" class="mt-2"></div>
-                             <small class="text-success">
-                                 <i class="fas fa-gift me-1"></i>
-                                 <?= __('register_referral_bonus', ['percent' => 5]) ?>
-                             </small>
-                         </div>
+<div class="field-group">
+                                <label for="refCode">Referral Code <span class="opt">(optional)</span></label>
+                                <div class="input-wrap">
+                                    <input type="text" class="form-control" name="referral_code" id="refCode" placeholder="Got a code? Enter it here" value="<?php echo htmlspecialchars($old['referral_code'] ?? $ref ?? ''); ?>" autocomplete="off">
+                                    <i class="fas fa-ticket field-icon"></i>
+                                </div>
+                                <div id="referral_name_display" class="mt-2"></div>
+                                <small class="text-success">
+                                    <i class="fas fa-gift me-1"></i>
+                                    <?= __('register_referral_bonus', ['percent' => 5]) ?>
+                                </small>
+                            </div>
                     </div>
                     <?php if ($formVariant === 'minimal'): ?>
                         <button type="button" class="btn btn-primary w-100 py-2 reg-step-1-btn" id="reg-step-1-continue" >

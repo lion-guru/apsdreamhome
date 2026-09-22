@@ -94,7 +94,10 @@ $colonies = $colonies ?? [];
             <div class="row g-3 mb-4">
                 <div class="col-md-6">
                     <label class="form-label fw-bold"><?= __('assoc_bp_booking_amount', [], 'Booking Amount') ?> *</label>
-                    <input type="number" name="booking_amount" id="bookingAmount" class="form-control" required min="1" step="0.01" placeholder="<?= __('assoc_bp_booking_amount_placeholder', [], 'Token/advance amount') ?>">
+                    <input type="number" name="booking_amount" id="bookingAmount" class="form-control" required min="1" step="0.01" value="51000" placeholder="51000">
+                    <div class="form-text text-danger fw-bold small mt-1">
+                        <i class="fas fa-exclamation-triangle me-1"></i> वैधानिक सूचना: टोकन बुकिंग राशि ₹51,000 पूर्णतः गैर-वापसी योग्य (Non-Refundable / वापस नहीं होगी) है (मास्टर डीड धारा 2.1 व 2.9)।
+                    </div>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-bold"><?= __('assoc_bp_payment_mode', [], 'Payment Mode') ?> *</label>
@@ -133,7 +136,7 @@ $colonies = $colonies ?? [];
                         <h6 class="mb-0"><i class="fas fa-file-contract me-2"></i>Master Deed & Agreement</h6>
                     </div>
                     <div class="card-body">
-                        <p class="text-muted small mb-2">The Master Deed governs all terms of the plot booking. Both the associate and customer must accept these terms.</p>
+                        <p class="text-muted small mb-2">The Master Deed governs all terms of the plot booking. Both the associate and customer must accept these terms. <strong>Booking token amount (₹51,000) is strictly non-refundable.</strong></p>
                         <div class="d-flex gap-2 mb-2 flex-wrap">
                             <a href="<?= BASE_URL ?>/assets/documents/APS Group - Tripartite Master Legal Deed & Agreement (English Ultimate V8).docx" target="_blank" class="btn btn-sm btn-outline-primary">
                                 <i class="fas fa-download me-1"></i> Download Master Deed (English)
@@ -145,7 +148,7 @@ $colonies = $colonies ?? [];
                         <div class="form-check mb-2">
                             <input class="form-check-input" type="checkbox" id="masterDeedAccepted" name="master_deed_accepted" required>
                             <label class="form-check-label" for="masterDeedAccepted">
-                                I confirm that I have read, understood, and unconditionally agree to the <strong>Master Deed & Agreement</strong> (both English and Hindi versions available above). *
+                                I confirm that I and the customer have read, understood, and unconditionally agree to the <strong>Master Deed & Agreement</strong>, and agree that the <strong>₹51,000 Token Booking Amount is strictly NON-REFUNDABLE (टोकन बुकिंग राशि वापस नहीं होगी)</strong>. *
                             </label>
                             <div class="invalid-feedback">You must accept the Master Deed to proceed.</div>
                         </div>

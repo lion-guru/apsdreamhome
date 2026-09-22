@@ -96,26 +96,22 @@ class SMSService
         try {
             $mobile = $this->cleanMobileNumber($mobile);
             
-            // Get stored OTP
+            // Get stored OTP from otp_verifications table
             $record = $this->db->fetchOne(
-                "SELECT * FROM notifications_unified 
-                 WHERE mobile = ? AND status = 'pending' 
-                 AND created_at > DATE_SUB(NOW(), INTERVAL 10 MINUTE)
+                "SELECT * FROM otp_verifications 
+                 WHERE identifier = ? AND otp_code = ? AND used_at IS NULL 
+                 AND expires_at > NOW()
                  ORDER BY created_at DESC LIMIT 1",
-                [$mobile]
+                [$mobile, $otp]
             );
             
             if (!$record) {
-                return ['success' => false, 'error' => 'OTP expired or not found'];
+                return ['success' => false, 'error' => 'OTP expired, invalid, or already used'];
             }
             
-            if ($record['otp'] !== $otp) {
-                return ['success' => false, 'error' => 'Invalid OTP'];
-            }
-            
-            // Mark as verified
+            // Mark as used
             $this->db->query(
-                "UPDATE notifications_unified SET status = 'verified' WHERE id = ?",
+                "UPDATE otp_verifications SET used_at = NOW() WHERE id = ?",
                 [$record['id']]
             );
             

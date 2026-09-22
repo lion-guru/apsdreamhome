@@ -8,6 +8,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  # Kept: a plugin references the CupertinoIcons font family; removing this
+  # dep drops the font and logs a build warning (blank glyph risk)
   cupertino_icons: ^1.0.2
   flutter_localizations:
     sdk: flutter
@@ -15,7 +17,6 @@ dependencies:
   # State management
   flutter_riverpod: ^3.3.2
   go_router: ^17.3.0
-  provider: ^6.1.1
 
   # Networking
   dio: ^5.4.0
@@ -60,8 +61,6 @@ dependencies:
 
   # UI
   shimmer: ^3.0.0
-  fl_chart: ^1.2.0
-  qr_flutter: ^4.1.0
   cached_network_image: ^3.4.0
   font_awesome_flutter: ^11.0.0
 

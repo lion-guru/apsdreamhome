@@ -144,6 +144,7 @@ class Router
                 '/firebase-login',
                 '/tenant-signup',
                 '/track/',
+                '/customer/journey/',
             ];
             $skip = false;
             foreach ($excludedPaths as $path) {

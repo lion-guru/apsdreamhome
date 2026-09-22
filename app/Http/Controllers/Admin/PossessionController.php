@@ -339,6 +339,16 @@ class PossessionController extends AdminController
 
             try {
                 $this->notificationService->sendPossessionCompleted($id);
+
+                // Rich HTML, SMS & WhatsApp communication log
+                $bRow = $this->db->prepare("SELECT b.*, u.name as customer_name, u.email as customer_email, u.phone as customer_phone, p.plot_number, c.name as colony_name FROM bookings b LEFT JOIN users u ON b.customer_id = u.id LEFT JOIN plots p ON b.plot_id = p.id LEFT JOIN colonies c ON p.colony_id = c.id WHERE b.id = ?");
+                $bRow->execute([$id]);
+                $bk = $bRow->fetch(\PDO::FETCH_ASSOC);
+                if ($bk && !empty($bk['customer_id'])) {
+                    $bns = new \App\Services\BookingNotificationService();
+                    $u = ['id' => (int)$bk['customer_id'], 'name' => $bk['customer_name'] ?? 'Customer', 'email' => $bk['customer_email'] ?? '', 'phone' => $bk['customer_phone'] ?? ''];
+                    $bns->sendPossessionHandedOverNotification($bk, $u, $letterNumber, $possessionDate);
+                }
             } catch (\Exception $e) {
                 error_log("PossessionController: notification failed: " . $e->getMessage());
             }

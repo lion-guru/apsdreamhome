@@ -155,13 +155,15 @@ class NavigationHelper
         $isEmployee = isset($_SESSION['employee_id']) && $_SESSION['employee_id'];
         $isAdmin = isset($_SESSION['admin_id']) && $_SESSION['admin_id'];
 
+        // Admin sessions should NOT be exposed in public header - they belong in admin panel only
+        // If admin is logged in, treat as not logged in for public header purposes
         $this->auth = [
-            'is_logged_in'  => $isCustomer || $isAssociate || $isAgent || $isEmployee || $isAdmin,
+            'is_logged_in'  => $isCustomer || $isAssociate || $isAgent || $isEmployee,
             'is_customer'   => $isCustomer,
             'is_associate'  => $isAssociate,
             'is_agent'      => $isAgent,
             'is_employee'   => $isEmployee,
-            'is_admin'      => $isAdmin,
+            'is_admin'      => false, // Never expose admin in public header
         ];
     }
 
@@ -179,7 +181,6 @@ class NavigationHelper
     {
         if ($this->auth['is_associate'])    return $_SESSION['associate_name'] ?? 'Associate';
         if ($this->auth['is_agent'])        return $_SESSION['agent_name'] ?? 'Agent';
-        if ($this->auth['is_admin'])        return $_SESSION['admin_name'] ?? 'Admin';
         if ($this->auth['is_employee'])     return $_SESSION['employee_name'] ?? 'Employee';
         if ($this->auth['is_customer'])     return $_SESSION['user_name'] ?? 'Customer';
         return '';
@@ -189,7 +190,6 @@ class NavigationHelper
     {
         if ($this->auth['is_associate']) return 'Associate';
         if ($this->auth['is_agent'])     return 'Agent';
-        if ($this->auth['is_admin'])     return 'Admin';
         if ($this->auth['is_employee'])  return 'Employee';
         if ($this->auth['is_customer'])  return 'Customer';
         return '';
@@ -199,7 +199,6 @@ class NavigationHelper
     {
         if ($this->auth['is_associate']) return 'fa-handshake';
         if ($this->auth['is_agent'])     return 'fa-briefcase';
-        if ($this->auth['is_admin'])     return 'fa-user-shield';
         if ($this->auth['is_employee'])  return 'fa-user-tie';
         return 'fa-user';
     }
@@ -208,7 +207,6 @@ class NavigationHelper
     {
         if ($this->auth['is_associate']) return '/associate/dashboard';
         if ($this->auth['is_agent'])     return '/agent/dashboard';
-        if ($this->auth['is_admin'])     return '/admin/dashboard';
         if ($this->auth['is_employee'])  return '/employee/dashboard';
         if ($this->auth['is_customer'])  return '/user/dashboard';
         return '/login';
@@ -218,20 +216,19 @@ class NavigationHelper
     {
         if ($this->auth['is_associate']) return '/associate/logout';
         if ($this->auth['is_agent'])     return '/agent/logout';
-        if ($this->auth['is_admin'])     return '/admin/logout';
         if ($this->auth['is_employee'])  return '/employee/logout';
         return '/logout';
     }
 
     public function roleColorClass(): string
     {
-        return $this->auth['is_admin']
-            ? 'bg-danger'
-            : ($this->auth['is_associate'] ? 'bg-success' : 'bg-primary');
+        // Admin is not exposed in public header
+        return $this->auth['is_associate'] ? 'bg-success' : 'bg-primary';
     }
 
     /**
      * Role-specific dropdown menu items for the user/profile menu.
+     * Admin is intentionally excluded - admin users should use the admin panel layout.
      */
     public function getUserMenuItems(): array
     {
@@ -254,15 +251,6 @@ class NavigationHelper
                 ['label' => __('properties'),            'url' => '/agent/properties',           'icon' => 'fa-building'],
                 ['label' => __('commissions'),           'url' => '/agent/commissions',          'icon' => 'fa-money-bill-wave'],
                 ['label' => __('my_profile'),           'url' => '/agent/profile',              'icon' => 'fa-user-cog'],
-            ];
-        }
-        if ($this->auth['is_admin']) {
-            return [
-                ['label' => __('dashboard'),            'url' => '/admin/dashboard',            'icon' => 'fa-tachometer-alt'],
-                ['label' => __('leads'),                'url' => '/admin/leads',                'icon' => 'fa-users'],
-                ['label' => __('properties'),           'url' => '/admin/properties',           'icon' => 'fa-building'],
-                ['label' => __('god_mode'),             'url' => '/admin/godmode',             'icon' => 'fa-crown'],
-                ['label' => __('my_profile'),           'url' => '/admin/profile',             'icon' => 'fa-user-cog'],
             ];
         }
         if ($this->auth['is_employee']) {
@@ -565,6 +553,7 @@ class NavigationHelper
 
     /**
      * Items for the mobile sticky bottom navigation.
+     * Admin is intentionally excluded - admin users should use the admin panel layout.
      */
     public function getMobileBottomNavItems(): array
     {
@@ -580,9 +569,6 @@ class NavigationHelper
         } elseif ($this->auth['is_agent']) {
             $items[] = ['label' => 'Dashboard', 'url' => '/agent/dashboard',      'icon' => 'fas fa-tachometer-alt', 'key' => 'dashboard'];
             $items[] = ['label' => 'Profile',   'url' => '/agent/profile',        'icon' => 'fas fa-user',           'key' => 'profile'];
-        } elseif ($this->auth['is_admin']) {
-            $items[] = ['label' => 'Dashboard', 'url' => '/admin/dashboard',      'icon' => 'fas fa-tachometer-alt', 'key' => 'dashboard'];
-            $items[] = ['label' => 'Profile',   'url' => '/admin/profile',        'icon' => 'fas fa-user',           'key' => 'profile'];
         } elseif ($this->auth['is_employee']) {
             $items[] = ['label' => 'Dashboard', 'url' => '/employee/dashboard',   'icon' => 'fas fa-tachometer-alt', 'key' => 'dashboard'];
             $items[] = ['label' => 'Profile',   'url' => '/employee/profile',     'icon' => 'fas fa-user',           'key' => 'profile'];

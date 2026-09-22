@@ -6,20 +6,62 @@ class LocationAdminController extends AdminController
 {
     use \App\Traits\TenantAwareTrait;
 
+    private const PER_PAGE = 25;
 
     // States Management
     public function index()
     {
-        // Get all states with district count
+        $this->requireAdmin();
+
+        $search = trim($_GET['search'] ?? '');
+        $status = $_GET['status'] ?? '';
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $offset = ($page - 1) * self::PER_PAGE;
+
+        // Build WHERE clause
+        $where = [];
+        $params = [];
+
+        if ($search) {
+            $where[] = "(s.name LIKE ? OR s.code LIKE ?)";
+            $params[] = "%$search%";
+            $params[] = "%$search%";
+        }
+        if ($status !== '') {
+            $where[] = "s.is_active = ?";
+            $params[] = (int)$status;
+        }
+
+        $whereClause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
+
+        // Get total count for pagination
+        $countSql = "SELECT COUNT(*) FROM states s $whereClause";
+        $countStmt = $this->db->prepare($countSql);
+        $countStmt->execute($params);
+        $total = (int)$countStmt->fetchColumn();
+
+        // Get states with pagination
         $sql = "SELECT s.*, COUNT(d.id) as district_count 
                 FROM states s 
                 LEFT JOIN districts d ON s.id = d.state_id 
+                $whereClause
                 GROUP BY s.id 
-                ORDER BY s.name";
-        $stmt = $this->db->query($sql);
+                ORDER BY s.name
+                LIMIT " . self::PER_PAGE . " OFFSET $offset";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
         $states = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        $this->render('admin/locations/states/index', ['states' => $states]);
+        $totalPages = ceil($total / self::PER_PAGE);
+
+        $this->render('admin/locations/states/index', [
+            'states' => $states,
+            'search' => $search,
+            'status' => $status,
+            'page' => $page,
+            'totalPages' => $totalPages,
+            'total' => $total,
+        ]);
     }
 
     public function createState()
@@ -112,40 +154,231 @@ class LocationAdminController extends AdminController
         return;
     }
 
+    // CSV Export - States
+    public function exportStates()
+    {
+        $this->requireAdmin();
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="states_' . date('Y-m-d') . '.csv"');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+
+        $output = fopen('php://output', 'w');
+        // BOM for UTF-8
+        fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+        
+        // Headers
+        fputcsv($output, ['ID', 'Name', 'Code', 'Is Active', 'Created At']);
+
+        // Fetch all states
+        $sql = "SELECT id, name, code, is_active, created_at FROM states ORDER BY name";
+        $stmt = $this->db->query($sql);
+        $states = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        foreach ($states as $state) {
+            fputcsv($output, [
+                $state['id'],
+                $state['name'],
+                $state['code'],
+                $state['is_active'] ? 'Active' : 'Inactive',
+                $state['created_at']
+            ]);
+        }
+
+        fclose($output);
+        exit;
+    }
+
+    // CSV Import - States
+    public function importStates()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+
+        if (!isset($_FILES['csv_file']) || $_FILES['csv_file']['error'] !== UPLOAD_ERR_OK) {
+            $_SESSION['error'] = 'Please upload a valid CSV file';
+            redirect('/admin/locations/states');
+            return;
+        }
+
+        $file = $_FILES['csv_file']['tmp_name'];
+        $handle = fopen($file, 'r');
+        
+        if (!$handle) {
+            $_SESSION['error'] = 'Could not read CSV file';
+            redirect('/admin/locations/states');
+            return;
+        }
+
+        // Skip header row
+        $header = fgetcsv($handle);
+        $imported = 0;
+        $skipped = 0;
+        $errors = [];
+
+        while (($row = fgetcsv($handle)) !== false) {
+            if (count($row) < 2) {
+                $skipped++;
+                continue;
+            }
+
+            $name = trim($row[0]);
+            $code = strtoupper(trim($row[1]));
+            $is_active = isset($row[2]) ? (strtolower($row[2]) === 'active' ? 1 : 0) : 1;
+
+            if (empty($name) || empty($code)) {
+                $skipped++;
+                continue;
+            }
+
+            // Check for duplicate
+            $checkStmt = $this->db->prepare("SELECT id FROM states WHERE code = ? OR name = ?");
+            $checkStmt->execute([$code, $name]);
+            if ($checkStmt->fetch()) {
+                $errors[] = "Duplicate: $name ($code)";
+                $skipped++;
+                continue;
+            }
+
+            try {
+                $stmt = $this->db->prepare("INSERT INTO states (name, code, is_active) VALUES (?, ?, ?)");
+                $stmt->execute([$name, $code, $is_active]);
+                $imported++;
+            } catch (\PDOException $e) {
+                $errors[] = "Error inserting $name ($code): " . $e->getMessage();
+                $skipped++;
+            }
+        }
+
+        fclose($handle);
+
+        $message = "Imported: $imported, Skipped: $skipped";
+        if ($errors) {
+            $message .= ". Errors: " . implode('; ', array_slice($errors, 0, 5));
+        }
+        
+        if ($imported > 0) {
+            $_SESSION['success'] = $message;
+        } else {
+            $_SESSION['error'] = $message;
+        }
+
+        redirect('/admin/locations/states');
+    }
+
+    // Bulk Actions - States
+    public function bulkActionStates()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+
+        $action = $_POST['action'] ?? '';
+        $ids = $_POST['ids'] ?? [];
+
+        if (empty($action) || empty($ids)) {
+            $_SESSION['error'] = 'No action or items selected';
+            redirect('/admin/locations/states');
+            return;
+        }
+
+        $ids = array_map('intval', $ids);
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+
+        try {
+            switch ($action) {
+                case 'activate':
+                    $stmt = $this->db->prepare("UPDATE states SET is_active = 1 WHERE id IN ($placeholders)");
+                    $stmt->execute($ids);
+                    $_SESSION['success'] = count($ids) . ' state(s) activated';
+                    break;
+                case 'deactivate':
+                    $stmt = $this->db->prepare("UPDATE states SET is_active = 0 WHERE id IN ($placeholders)");
+                    $stmt->execute($ids);
+                    $_SESSION['success'] = count($ids) . ' state(s) deactivated';
+                    break;
+                case 'delete':
+                    $stmt = $this->db->prepare("DELETE FROM states WHERE id IN ($placeholders)");
+                    $stmt->execute($ids);
+                    $_SESSION['success'] = count($ids) . ' state(s) deleted';
+                    break;
+                default:
+                    $_SESSION['error'] = 'Invalid action';
+            }
+        } catch (\PDOException $e) {
+            $_SESSION['error'] = 'Error: ' . $e->getMessage();
+        }
+
+        redirect('/admin/locations/states');
+    }
+
     // Districts Management
     public function districts()
     {
-        
+        $this->requireAdmin();
 
-        $state_id = $_GET['state_id'] ?? null;
+        $search = trim($_GET['search'] ?? '');
+        $status = $_GET['status'] ?? '';
+        $state_id = $_GET['state_id'] ?? '';
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $offset = ($page - 1) * self::PER_PAGE;
 
+        // Build WHERE clause
+        $where = [];
+        $params = [];
+
+        if ($search) {
+            $where[] = "(d.name LIKE ? OR d.code LIKE ?)";
+            $params[] = "%$search%";
+            $params[] = "%$search%";
+        }
+        if ($status !== '') {
+            $where[] = "d.is_active = ?";
+            $params[] = (int)$status;
+        }
         if ($state_id) {
-            $sql = "SELECT d.*, s.name as state_name, COUNT(c.id) as colony_count 
-                    FROM districts d 
-                    LEFT JOIN states s ON d.state_id = s.id 
-                    LEFT JOIN colonies c ON d.id = c.district_id 
-                    WHERE d.state_id = ? AND d.is_active = 1 
-                    GROUP BY d.id 
-                    ORDER BY d.name";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([$state_id]);
-        } else {
-            $sql = "SELECT d.*, s.name as state_name, COUNT(c.id) as colony_count 
-                    FROM districts d 
-                    LEFT JOIN states s ON d.state_id = s.id 
-                    LEFT JOIN colonies c ON d.id = c.district_id 
-                    WHERE d.is_active = 1 
-                    GROUP BY d.id 
-                    ORDER BY s.name, d.name";
-            $stmt = $this->db->query($sql);
+            $where[] = "d.state_id = ?";
+            $params[] = (int)$state_id;
         }
 
+        $whereClause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
+
+        // Get total count for pagination
+        $countSql = "SELECT COUNT(*) FROM districts d 
+                     LEFT JOIN states s ON d.state_id = s.id 
+                     $whereClause";
+        $countStmt = $this->db->prepare($countSql);
+        $countStmt->execute($params);
+        $total = (int)$countStmt->fetchColumn();
+
+        // Get districts with pagination
+        $sql = "SELECT d.*, s.name as state_name, COUNT(c.id) as colony_count 
+                FROM districts d 
+                LEFT JOIN states s ON d.state_id = s.id 
+                LEFT JOIN colonies c ON d.id = c.district_id 
+                $whereClause
+                GROUP BY d.id 
+                ORDER BY s.name, d.name
+                LIMIT " . self::PER_PAGE . " OFFSET $offset";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
         $districts = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        // Get all states for filter using models
-        $states = \App\Models\State::getActive(['id', 'name', 'code']);
+        $totalPages = ceil($total / self::PER_PAGE);
 
-        $this->render('admin/locations/districts/index', ['districts' => $districts, 'states' => $states]);
+        // Get all states for filter
+        $statesList = \App\Models\State::getActive(['id', 'name', 'code']);
+
+        $this->render('admin/locations/districts/index', [
+            'districts' => $districts,
+            'states' => $statesList,
+            'search' => $search,
+            'status' => $status,
+            'state_id' => $state_id,
+            'page' => $page,
+            'totalPages' => $totalPages,
+            'total' => $total,
+        ]);
     }
 
     public function createDistrict()
@@ -244,49 +477,213 @@ class LocationAdminController extends AdminController
         return;
     }
 
-    // Colonies Management
-    public function colonies()
+    // CSV Export - Districts
+    public function exportDistricts()
     {
         $this->requireAdmin();
 
-        $district_id = $_GET['district_id'] ?? null;
-        $state_id = $_GET['state_id'] ?? null;
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="districts_' . date('Y-m-d') . '.csv"');
+        header('Pragma: no-cache');
+        header('Expires: 0');
 
-        if ($district_id) {
-            $sql = "SELECT c.*, d.name as district_name, s.name as state_name 
-                    FROM colonies c 
-                    LEFT JOIN districts d ON c.district_id = d.id 
-                    LEFT JOIN states s ON d.state_id = s.id 
-                    WHERE c.district_id = ? AND c.is_active = 1 
-                    ORDER BY c.name";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([$district_id]);
-        } elseif ($state_id) {
-            $sql = "SELECT c.*, d.name as district_name, s.name as state_name 
-                    FROM colonies c 
-                    LEFT JOIN districts d ON c.district_id = d.id 
-                    LEFT JOIN states s ON d.state_id = s.id 
-                    WHERE d.state_id = ? AND c.is_active = 1 
-                    ORDER BY s.name, d.name, c.name";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([$state_id]);
-        } else {
-            $sql = "SELECT c.*, d.name as district_name, s.name as state_name
-                    FROM colonies c
-                    LEFT JOIN districts d ON c.district_id = d.id
-                    LEFT JOIN states s ON d.state_id = s.id
-                    WHERE c.is_active = 1
-                    ORDER BY s.name, d.name, c.name";
-            $stmt = $this->db->query($sql);
+        $output = fopen('php://output', 'w');
+        fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+        
+        fputcsv($output, ['ID', 'Name', 'Code', 'State', 'State Code', 'Is Active', 'Created At']);
+
+        $sql = "SELECT d.id, d.name, d.code, s.name as state_name, s.code as state_code, d.is_active, d.created_at 
+                FROM districts d 
+                LEFT JOIN states s ON d.state_id = s.id 
+                ORDER BY s.name, d.name";
+        $stmt = $this->db->query($sql);
+        $districts = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        foreach ($districts as $district) {
+            fputcsv($output, [
+                $district['id'],
+                $district['name'],
+                $district['code'],
+                $district['state_name'] ?? '',
+                $district['state_code'] ?? '',
+                $district['is_active'] ? 'Active' : 'Inactive',
+                $district['created_at']
+            ]);
         }
 
+        fclose($output);
+        exit;
+    }
+
+    // CSV Import - Districts
+    public function importDistricts()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+
+        if (!isset($_FILES['csv_file']) || $_FILES['csv_file']['error'] !== UPLOAD_ERR_OK) {
+            $_SESSION['error'] = 'Please upload a valid CSV file';
+            redirect('/admin/locations/districts');
+            return;
+        }
+
+        $file = $_FILES['csv_file']['tmp_name'];
+        $handle = fopen($file, 'r');
+        
+        if (!$handle) {
+            $_SESSION['error'] = 'Could not read CSV file';
+            redirect('/admin/locations/districts');
+            return;
+        }
+
+        $header = fgetcsv($handle);
+        $imported = 0;
+        $skipped = 0;
+        $errors = [];
+
+        while (($row = fgetcsv($handle)) !== false) {
+            if (count($row) < 3) {
+                $skipped++;
+                continue;
+            }
+
+            $state_name = trim($row[0]);
+            $name = trim($row[1]);
+            $code = strtoupper(trim($row[2]));
+            $is_active = isset($row[3]) ? (strtolower($row[3]) === 'active' ? 1 : 0) : 1;
+
+            if (empty($state_name) || empty($name) || empty($code)) {
+                $skipped++;
+                continue;
+            }
+
+            // Find state by name
+            $stateStmt = $this->db->prepare("SELECT id FROM states WHERE name = ?");
+            $stateStmt->execute([$state_name]);
+            $state = $stateStmt->fetch(\PDO::FETCH_ASSOC);
+            
+            if (!$state) {
+                $errors[] = "State not found: $state_name";
+                $skipped++;
+                continue;
+            }
+
+            // Check for duplicate
+            $checkStmt = $this->db->prepare("SELECT id FROM districts WHERE code = ? AND state_id = ?");
+            $checkStmt->execute([$code, $state['id']]);
+            if ($checkStmt->fetch()) {
+                $errors[] = "Duplicate district: $name ($code) in $state_name";
+                $skipped++;
+                continue;
+            }
+
+            try {
+                $stmt = $this->db->prepare("INSERT INTO districts (state_id, name, code, is_active) VALUES (?, ?, ?, ?)");
+                $stmt->execute([$state['id'], $name, $code, $is_active]);
+                $imported++;
+            } catch (\PDOException $e) {
+                $errors[] = "Error inserting $name ($code): " . $e->getMessage();
+                $skipped++;
+            }
+        }
+
+        fclose($handle);
+
+        $message = "Imported: $imported, Skipped: $skipped";
+        if ($errors) {
+            $message .= ". Errors: " . implode('; ', array_slice($errors, 0, 5));
+        }
+        
+        if ($imported > 0) {
+            $_SESSION['success'] = $message;
+        } else {
+            $_SESSION['error'] = $message;
+        }
+
+        redirect('/admin/locations/districts');
+    }
+
+    // Bulk Actions - Districts
+    public function bulkActionDistricts()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+
+        $action = $_POST['action'] ?? '';
+        $ids = $_POST['ids'] ?? [];
+
+        if (empty($action) || empty($ids)) {
+            $_SESSION['error'] = 'No action or items selected';
+            redirect('/admin/locations/districts');
+            return;
+        }
+
+        $ids = array_map('intval', $ids);
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+
+        try {
+            switch ($action) {
+                case 'activate':
+                    $stmt = $this->db->prepare("UPDATE districts SET is_active = 1 WHERE id IN ($placeholders)");
+                    $stmt->execute($ids);
+                    $_SESSION['success'] = count($ids) . ' district(s) activated';
+                    break;
+                case 'deactivate':
+                    $stmt = $this->db->prepare("UPDATE districts SET is_active = 0 WHERE id IN ($placeholders)");
+                    $stmt->execute($ids);
+                    $_SESSION['success'] = count($ids) . ' district(s) deactivated';
+                    break;
+                case 'delete':
+                    $stmt = $this->db->prepare("DELETE FROM districts WHERE id IN ($placeholders)");
+                    $stmt->execute($ids);
+                    $_SESSION['success'] = count($ids) . ' district(s) deleted';
+                    break;
+                default:
+                    $_SESSION['error'] = 'Invalid action';
+            }
+        } catch (\PDOException $e) {
+            $_SESSION['error'] = 'Error: ' . $e->getMessage();
+        }
+
+        redirect('/admin/locations/districts');
+    }
+
+    // API endpoints for AJAX calls
+    public function getDistrictsByState($state_id)
+    {
+        header('Content-Type: application/json');
+
+        $districts = \App\Models\District::getByState($state_id, ['*'], true);
+
+        echo json_encode($districts);
+        return;
+    }
+}
+                $whereClause
+                ORDER BY s.name, d.name, c.name
+                LIMIT " . self::PER_PAGE . " OFFSET $offset";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
         $colonies = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        $totalPages = ceil($total / self::PER_PAGE);
 
         // Get filters using models
         $states = \App\Models\State::getActive(['id', 'name', 'code']);
         $districts = \App\Models\District::getWithStateName(['id', 'name', 'state_id'], true);
 
-        $this->render('admin/locations/colonies/index', ['colonies' => $colonies, 'districts' => $districts, 'states' => $states]);
+        $this->render('admin/locations/colonies/index', [
+            'colonies' => $colonies,
+            'districts' => $districts,
+            'states' => $states,
+            'search' => $search,
+            'status' => $status,
+            'state_id' => $state_id,
+            'district_id' => $district_id,
+            'page' => $page,
+            'totalPages' => $totalPages,
+            'total' => $total,
+        ]);
     }
 
     public function createColony()
@@ -412,6 +809,197 @@ class LocationAdminController extends AdminController
         return;
     }
 
+    // CSV Export - Colonies
+    public function exportColonies()
+    {
+        $this->requireAdmin();
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="colonies_' . date('Y-m-d') . '.csv"');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+
+        $output = fopen('php://output', 'w');
+        fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+        
+        fputcsv($output, ['ID', 'Name', 'District', 'State', 'Total Plots', 'Available Plots', 'Starting Price', 'Featured', 'Status', 'Created At']);
+
+        $sql = "SELECT c.id, c.name, d.name as district_name, s.name as state_name, 
+                       c.total_plots, c.available_plots, c.starting_price, c.is_featured, c.is_active, c.created_at
+                FROM colonies c
+                LEFT JOIN districts d ON c.district_id = d.id
+                LEFT JOIN states s ON d.state_id = s.id
+                ORDER BY s.name, d.name, c.name";
+        $stmt = $this->db->query($sql);
+        $colonies = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        foreach ($colonies as $colony) {
+            fputcsv($output, [
+                $colony['id'],
+                $colony['name'],
+                $colony['district_name'] ?? '',
+                $colony['state_name'] ?? '',
+                $colony['total_plots'],
+                $colony['available_plots'],
+                '₹' . number_format($colony['starting_price'], 2),
+                $colony['is_featured'] ? 'Yes' : 'No',
+                $colony['is_active'] ? 'Active' : 'Inactive',
+                $colony['created_at']
+            ]);
+        }
+
+        fclose($output);
+        exit;
+    }
+
+    // CSV Import - Colonies
+    public function importColonies()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+
+        if (!isset($_FILES['csv_file']) || $_FILES['csv_file']['error'] !== UPLOAD_ERR_OK) {
+            $_SESSION['error'] = 'Please upload a valid CSV file';
+            redirect('/admin/locations/colonies');
+            return;
+        }
+
+        $file = $_FILES['csv_file']['tmp_name'];
+        $handle = fopen($file, 'r');
+        
+        if (!$handle) {
+            $_SESSION['error'] = 'Could not read CSV file';
+            redirect('/admin/locations/colonies');
+            return;
+        }
+
+        $header = fgetcsv($handle);
+        $imported = 0;
+        $skipped = 0;
+        $errors = [];
+
+        while (($row = fgetcsv($handle)) !== false) {
+            if (count($row) < 4) {
+                $skipped++;
+                continue;
+            }
+
+            $state_name = trim($row[0]);
+            $district_name = trim($row[1]);
+            $name = trim($row[2]);
+            $total_plots = (int)($row[3] ?? 0);
+            $available_plots = (int)($row[4] ?? 0);
+            $starting_price = (float)($row[5] ?? 0);
+            $is_featured = isset($row[6]) ? (strtolower($row[6]) === 'yes' ? 1 : 0) : 0;
+            $is_active = isset($row[7]) ? (strtolower($row[7]) === 'active' ? 1 : 0) : 1;
+
+            if (empty($state_name) || empty($district_name) || empty($name)) {
+                $skipped++;
+                continue;
+            }
+
+            // Find state
+            $stateStmt = $this->db->prepare("SELECT id FROM states WHERE name = ?");
+            $stateStmt->execute([$state_name]);
+            $state = $stateStmt->fetch(\PDO::FETCH_ASSOC);
+            
+            if (!$state) {
+                $errors[] = "State not found: $state_name";
+                $skipped++;
+                continue;
+            }
+
+            // Find district
+            $districtStmt = $this->db->prepare("SELECT id FROM districts WHERE name = ? AND state_id = ?");
+            $districtStmt->execute([$district_name, $state['id']]);
+            $district = $districtStmt->fetch(\PDO::FETCH_ASSOC);
+            
+            if (!$district) {
+                $errors[] = "District not found: $district_name in $state_name";
+                $skipped++;
+                continue;
+            }
+
+            // Check for duplicate
+            $checkStmt = $this->db->prepare("SELECT id FROM colonies WHERE name = ? AND district_id = ?");
+            $checkStmt->execute([$name, $district['id']]);
+            if ($checkStmt->fetch()) {
+                $errors[] = "Duplicate colony: $name in $district_name";
+                $skipped++;
+                continue;
+            }
+
+            try {
+                $stmt = $this->db->prepare("INSERT INTO colonies (district_id, name, total_plots, available_plots, starting_price, is_featured, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$district['id'], $name, $total_plots, $available_plots, $starting_price, $is_featured, $is_active]);
+                $imported++;
+            } catch (\PDOException $e) {
+                $errors[] = "Error inserting $name: " . $e->getMessage();
+                $skipped++;
+            }
+        }
+
+        fclose($handle);
+
+        $message = "Imported: $imported, Skipped: $skipped";
+        if ($errors) {
+            $message .= ". Errors: " . implode('; ', array_slice($errors, 0, 5));
+        }
+        
+        if ($imported > 0) {
+            $_SESSION['success'] = $message;
+        } else {
+            $_SESSION['error'] = $message;
+        }
+
+        redirect('/admin/locations/colonies');
+    }
+
+    // Bulk Actions - Colonies
+    public function bulkActionColonies()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+
+        $action = $_POST['action'] ?? '';
+        $ids = $_POST['ids'] ?? [];
+
+        if (empty($action) || empty($ids)) {
+            $_SESSION['error'] = 'No action or items selected';
+            redirect('/admin/locations/colonies');
+            return;
+        }
+
+        $ids = array_map('intval', $ids);
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+
+        try {
+            switch ($action) {
+                case 'activate':
+                    $stmt = $this->db->prepare("UPDATE colonies SET is_active = 1 WHERE id IN ($placeholders) AND tenant_id = ?");
+                    $stmt->execute(array_merge($ids, [$this->tenantId()]));
+                    $_SESSION['success'] = count($ids) . ' colony(s) activated';
+                    break;
+                case 'deactivate':
+                    $stmt = $this->db->prepare("UPDATE colonies SET is_active = 0 WHERE id IN ($placeholders) AND tenant_id = ?");
+                    $stmt->execute(array_merge($ids, [$this->tenantId()]));
+                    $_SESSION['success'] = count($ids) . ' colony(s) deactivated';
+                    break;
+                case 'delete':
+                    $stmt = $this->db->prepare("DELETE FROM colonies WHERE id IN ($placeholders) AND tenant_id = ?");
+                    $stmt->execute(array_merge($ids, [$this->tenantId()]));
+                    $_SESSION['success'] = count($ids) . ' colony(s) deleted';
+                    break;
+                default:
+                    $_SESSION['error'] = 'Invalid action';
+            }
+        } catch (\PDOException $e) {
+            $_SESSION['error'] = 'Error: ' . $e->getMessage();
+        }
+
+        redirect('/admin/locations/colonies');
+    }
+
     // API endpoints for AJAX calls
     public function getDistrictsByState($state_id)
     {
@@ -436,6 +1024,36 @@ class LocationAdminController extends AdminController
         $colonies = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         echo json_encode($colonies);
+        return;
+    }
+
+    // API: Check if colony name exists in district
+    public function checkColonyName()
+    {
+        header('Content-Type: application/json');
+        
+        $name = trim($_GET['name'] ?? '');
+        $district_id = (int)($_GET['district_id'] ?? 0);
+        $exclude_id = (int)($_GET['exclude_id'] ?? 0);
+
+        if (empty($name) || !$district_id) {
+            echo json_encode(['exists' => false, 'message' => 'Invalid parameters']);
+            return;
+        }
+
+        $sql = "SELECT id FROM colonies WHERE name = ? AND district_id = ?";
+        $params = [$name, $district_id];
+        
+        if ($exclude_id) {
+            $sql .= " AND id != ?";
+            $params[] = $exclude_id;
+        }
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        $exists = $stmt->fetch() !== false;
+
+        echo json_encode(['exists' => $exists]);
         return;
     }
 }

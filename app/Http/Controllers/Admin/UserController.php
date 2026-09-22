@@ -37,18 +37,25 @@ class UserController extends AdminController
             $search = $_GET['search'] ?? '';
             $role = $_GET['role'] ?? '';
             $status = $_GET['status'] ?? '';
+            $dateFrom = $_GET['date_from'] ?? '';
+            $dateTo = $_GET['date_to'] ?? '';
+            $sortBy = $_GET['sort_by'] ?? 'created_at';
+            $sortOrder = strtoupper($_GET['sort_order'] ?? 'DESC');
             $page = (int)($_GET['page'] ?? 1);
             $perPage = (int)($_GET['per_page'] ?? 20);
+
+            // Validate sort parameters
+            $allowedSort = ['name', 'email', 'role', 'status', 'registration_status', 'created_at', 'last_login_at'];
+            if (!in_array($sortBy, $allowedSort)) $sortBy = 'created_at';
+            if (!in_array($sortOrder, ['ASC', 'DESC'])) $sortOrder = 'DESC';
 
             $offset = ($page - 1) * $perPage;
 
             // Build query
-            $sql = "SELECT u.*,
-                           COUNT(p.id) as property_count,
-                           (SELECT COUNT(*) FROM bookings WHERE customer_id = u.id) as booking_count
-                    FROM users u
-                    LEFT JOIN properties p ON u.id = p.created_by
-                    WHERE 1=1";
+            $select = "SELECT u.*, COUNT(p.id) as property_count, (SELECT COUNT(*) FROM bookings WHERE customer_id = u.id) as booking_count";
+            $from = "FROM users u LEFT JOIN properties p ON u.id = p.created_by WHERE 1=1";
+
+            $sql = $select . "\n" . $from;
             $params = [];
 
             list($tSql, $tParams) = $this->tenantWhere();
@@ -74,12 +81,50 @@ class UserController extends AdminController
                 $params[] = $status;
             }
 
-            $sql .= " ORDER BY u.created_at DESC";
+            if (!empty($dateFrom)) {
+                $sql .= " AND u.created_at >= ?";
+                $params[] = $dateFrom . ' 00:00:00';
+            }
 
-            // Count total
-            $countSql = str_replace("SELECT u.*, COUNT(p.id) as property_count, (SELECT COUNT(*) FROM bookings WHERE customer_id = u.id) as booking_count", "SELECT COUNT(DISTINCT u.id) as total", $sql);
+            if (!empty($dateTo)) {
+                $sql .= " AND u.created_at <= ?";
+                $params[] = $dateTo . ' 23:59:59';
+            }
+
+            $sql .= " GROUP BY u.id ORDER BY u.$sortBy $sortOrder";
+
+            // Count total - use separate clean count query
+            $countSql = "SELECT COUNT(DISTINCT u.id) as total " . $from;
+            $countParams = [];
+            if (!empty($tSql)) {
+                $countSql .= $tSql;
+                $countParams = $tParams;
+            }
+            if (!empty($search)) {
+                $countSql .= " AND (u.name LIKE ? OR u.email LIKE ? OR u.phone LIKE ?)";
+                $searchParam = '%' . $search . '%';
+                $countParams[] = $searchParam;
+                $countParams[] = $searchParam;
+                $countParams[] = $searchParam;
+            }
+            if (!empty($role)) {
+                $countSql .= " AND u.role = ?";
+                $countParams[] = $role;
+            }
+            if (!empty($status)) {
+                $countSql .= " AND u.status = ?";
+                $countParams[] = $status;
+            }
+            if (!empty($dateFrom)) {
+                $countSql .= " AND u.created_at >= ?";
+                $countParams[] = $dateFrom . ' 00:00:00';
+            }
+            if (!empty($dateTo)) {
+                $countSql .= " AND u.created_at <= ?";
+                $countParams[] = $dateTo . ' 23:59:59';
+            }
             $countStmt = $this->db->prepare($countSql);
-            $countStmt->execute($params);
+            $countStmt->execute($countParams);
             $total = $countStmt->fetch(\PDO::FETCH_ASSOC)['total'] ?? 0;
 
             // Apply pagination
@@ -90,6 +135,9 @@ class UserController extends AdminController
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             $users = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Get stats for cards
+            $stats = $this->getUserStats($tParams);
 
             $data = [
                 'page_title' => 'User Management - APS Dream Home',
@@ -102,8 +150,14 @@ class UserController extends AdminController
                 'filters' => [
                     'search' => $search,
                     'role' => $role,
-                    'status' => $status
-                ]
+                    'status' => $status,
+                    'date_from' => $dateFrom,
+                    'date_to' => $dateTo,
+                    'sort_by' => $sortBy,
+                    'sort_order' => $sortOrder
+                ],
+                'stats' => $stats,
+                'per_page_options' => [10, 20, 50, 100]
             ];
 
             return $this->render('admin/users/index', $data);
@@ -451,6 +505,66 @@ class UserController extends AdminController
     }
 
     /**
+     * Inline update single field (for inline editing)
+     */
+    public function inlineUpdate($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
+        try {
+            $userId = intval($id);
+            $field = $_POST['field'] ?? '';
+            $value = $_POST['value'] ?? '';
+            
+            $allowedFields = ['name', 'phone', 'status', 'role'];
+            if (!in_array($field, $allowedFields)) {
+                return $this->jsonError('Field not allowed for inline edit', 400);
+            }
+
+            list($tSql, $tParams) = $this->tenantWhere();
+            $user = $this->db->fetchOne("SELECT * FROM users WHERE id = ?" . $tSql, array_merge([$userId], $tParams));
+            if (!$user) return $this->jsonError('User not found', 404);
+
+            // Validate based on field
+            if ($field === 'status') {
+                if (!in_array($value, ['active', 'inactive', 'suspended'])) {
+                    return $this->jsonError('Invalid status', 400);
+                }
+            }
+            if ($field === 'role') {
+                $validRoles = ['admin', 'super_admin', 'manager', 'employee', 'telecaller', 'associate', 'agent', 'customer', 'user'];
+                if (!in_array($value, $validRoles)) {
+                    return $this->jsonError('Invalid role', 400);
+                }
+            }
+            if ($field === 'phone') {
+                $value = trim($value);
+            }
+            if ($field === 'name') {
+                $value = trim($value);
+                if (empty($value)) return $this->jsonError('Name cannot be empty', 400);
+            }
+
+            $this->db->execute("UPDATE users SET $field = ?, updated_at = NOW() WHERE id = ?" . $tSql, array_merge([$value, $userId], $tParams));
+
+            $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+            $this->loggingService->logUserActivity($adminId, 'user_inline_update', [
+                'user_id' => $userId,
+                'field' => $field,
+                'old_value' => $user[$field],
+                'new_value' => $value
+            ]);
+
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => ucfirst($field) . ' updated',
+                'value' => $value
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonError('Failed: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
      * Remove the specified user
      */
     public function destroy($id)
@@ -522,17 +636,15 @@ class UserController extends AdminController
             $perPage = (int)($_GET['per_page'] ?? 20);
             $offset = ($page - 1) * $perPage;
 
-            $sql = "SELECT u.*,
-                           COUNT(p.id) as property_count,
-                           (SELECT COUNT(*) FROM bookings WHERE customer_id = u.id) as booking_count
-                    FROM users u
-                    LEFT JOIN properties p ON u.id = p.created_by
-                    WHERE u.registration_status = 'pending'";
+            $select = "SELECT u.*, COUNT(p.id) as property_count, (SELECT COUNT(*) FROM bookings WHERE customer_id = u.id) as booking_count";
+            $from = "FROM users u LEFT JOIN properties p ON u.id = p.created_by WHERE u.registration_status = 'pending'";
+
+            $sql = $select . "\n" . $from;
             list($tSql, $tParams) = $this->tenantWhere();
             $sql .= $tSql;
-            $sql .= " ORDER BY u.created_at DESC";
+            $sql .= " GROUP BY u.id ORDER BY u.created_at DESC";
 
-            $countSql = "SELECT COUNT(*) as total FROM users WHERE registration_status = 'pending'" . $tSql;
+            $countSql = "SELECT COUNT(*) as total " . $from;
             $countResult = $this->db->fetchOne($countSql, $tParams);
             $total = (int)($countResult['total'] ?? 0);
 
@@ -743,6 +855,52 @@ class UserController extends AdminController
                 'success' => false,
                 'message' => 'Failed to fetch stats'
             ], 500);
+        }
+    }
+
+    /**
+     * Get user stats for index page cards
+     */
+    protected function getUserStats(array $tParams = []): array
+    {
+        try {
+            list($tSql) = $this->tenantWhere();
+
+            // Total users
+            $total = $this->db->fetchOne("SELECT COUNT(*) as c FROM users WHERE 1=1" . $tSql, $tParams);
+            $totalUsers = (int)($total['c'] ?? 0);
+
+            // Active users
+            $active = $this->db->fetchOne("SELECT COUNT(*) as c FROM users WHERE status = 'active'" . $tSql, $tParams);
+            $activeUsers = (int)($active['c'] ?? 0);
+
+            // New this month
+            $newMonth = $this->db->fetchOne("SELECT COUNT(*) as c FROM users WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)" . $tSql, $tParams);
+            $newThisMonth = (int)($newMonth['c'] ?? 0);
+
+            // Pending approval
+            $pending = $this->db->fetchOne("SELECT COUNT(*) as c FROM users WHERE registration_status = 'pending'" . $tSql, $tParams);
+            $pendingCount = (int)($pending['c'] ?? 0);
+
+            // By role (for chart)
+            $byRole = $this->db->fetchAll("SELECT role, COUNT(*) as count FROM users WHERE 1=1" . $tSql . " GROUP BY role", $tParams);
+
+            // By status
+            $byStatus = $this->db->fetchAll("SELECT status, COUNT(*) as count FROM users WHERE 1=1" . $tSql . " GROUP BY status", $tParams);
+
+            return [
+                'total' => $totalUsers,
+                'active' => $activeUsers,
+                'new_this_month' => $newThisMonth,
+                'pending' => $pendingCount,
+                'by_role' => $byRole ?: [],
+                'by_status' => $byStatus ?: []
+            ];
+        } catch (\Exception $e) {
+            return [
+                'total' => 0, 'active' => 0, 'new_this_month' => 0, 'pending' => 0,
+                'by_role' => [], 'by_status' => []
+            ];
         }
     }
 
@@ -1205,6 +1363,10 @@ class UserController extends AdminController
             $search = $_GET['search'] ?? '';
             $role = $_GET['role'] ?? '';
             $status = $_GET['status'] ?? '';
+            $format = strtolower($_GET['format'] ?? 'csv');
+            
+            // Validate format
+            if (!in_array($format, ['csv', 'xlsx', 'excel'])) $format = 'csv';
 
             $sql = "SELECT u.id, u.name, u.email, u.phone, u.role, u.status, u.created_at,
                            (SELECT COUNT(*) FROM properties WHERE created_by = u.id) as property_count,
@@ -1237,9 +1399,38 @@ class UserController extends AdminController
             $stmt->execute($params);
             $users = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
+            $filename = 'users-' . date('Y-m-d');
+
+            if ($format === 'xlsx' || $format === 'excel') {
+                // Excel export using simple HTML table approach (works without external library)
+                header('Content-Type: application/vnd.ms-excel; charset=utf-8');
+                header('Content-Disposition: attachment; filename=' . $filename . '.xls');
+                
+                echo '<table border="1">';
+                echo '<tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Status</th><th>Properties</th><th>Bookings</th><th>Registered</th></tr>';
+                foreach ($users as $u) {
+                    echo '<tr>';
+                    echo '<td>' . htmlspecialchars($u['id']) . '</td>';
+                    echo '<td>' . htmlspecialchars($u['name']) . '</td>';
+                    echo '<td>' . htmlspecialchars($u['email']) . '</td>';
+                    echo '<td>' . htmlspecialchars($u['phone']) . '</td>';
+                    echo '<td>' . htmlspecialchars($u['role']) . '</td>';
+                    echo '<td>' . htmlspecialchars($u['status']) . '</td>';
+                    echo '<td>' . htmlspecialchars($u['property_count']) . '</td>';
+                    echo '<td>' . htmlspecialchars($u['booking_count']) . '</td>';
+                    echo '<td>' . htmlspecialchars($u['created_at']) . '</td>';
+                    echo '</tr>';
+                }
+                echo '</table>';
+                exit;
+            }
+
+            // Default CSV
             header('Content-Type: text/csv; charset=utf-8');
-            header('Content-Disposition: attachment; filename=users-' . date('Y-m-d') . '.csv');
+            header('Content-Disposition: attachment; filename=' . $filename . '.csv');
             $output = fopen('php://output', 'w');
+            // Add BOM for UTF-8 Excel compatibility
+            fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
             fputcsv($output, ['ID', 'Name', 'Email', 'Phone', 'Role', 'Status', 'Properties', 'Bookings', 'Registered']);
             foreach ($users as $u) {
                 fputcsv($output, [$u['id'], $u['name'], $u['email'], $u['phone'], $u['role'], $u['status'], $u['property_count'], $u['booking_count'], $u['created_at']]);
@@ -1252,4 +1443,770 @@ class UserController extends AdminController
             return $this->redirect('admin/users');
         }
     }
+
+    /**
+     * Export selected users
+     */
+    public function exportSelected()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
+        try {
+            $this->requireAdmin();
+            
+            $format = strtolower($_POST['format'] ?? 'csv');
+            $userIds = $_POST['user_ids'] ?? [];
+            
+            if (!in_array($format, ['csv', 'xlsx', 'excel'])) $format = 'csv';
+            if (empty($userIds)) return $this->jsonError('No users selected', 400);
+
+            list($tSql, $tParams) = $this->tenantWhere();
+            $placeholders = implode(',', array_fill(0, count($userIds), '?'));
+            
+            $sql = "SELECT u.id, u.name, u.email, u.phone, u.role, u.status, u.created_at,
+                           (SELECT COUNT(*) FROM properties WHERE created_by = u.id) as property_count,
+                           (SELECT COUNT(*) FROM plot_bookings WHERE customer_id = u.id) as booking_count
+                    FROM users u
+                    WHERE u.id IN ($placeholders)" . $tSql;
+            
+            $params = array_merge($userIds, $tParams);
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $users = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            $filename = 'users-selected-' . date('Y-m-d');
+
+            if ($format === 'xlsx' || $format === 'excel') {
+                header('Content-Type: application/vnd.ms-excel; charset=utf-8');
+                header('Content-Disposition: attachment; filename=' . $filename . '.xls');
+                
+                echo '<table border="1">';
+                echo '<tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Status</th><th>Properties</th><th>Bookings</th><th>Registered</th></tr>';
+                foreach ($users as $u) {
+                    echo '<tr>';
+                    echo '<td>' . htmlspecialchars($u['id']) . '</td>';
+                    echo '<td>' . htmlspecialchars($u['name']) . '</td>';
+                    echo '<td>' . htmlspecialchars($u['email']) . '</td>';
+                    echo '<td>' . htmlspecialchars($u['phone']) . '</td>';
+                    echo '<td>' . htmlspecialchars($u['role']) . '</td>';
+                    echo '<td>' . htmlspecialchars($u['status']) . '</td>';
+                    echo '<td>' . htmlspecialchars($u['property_count']) . '</td>';
+                    echo '<td>' . htmlspecialchars($u['booking_count']) . '</td>';
+                    echo '<td>' . htmlspecialchars($u['created_at']) . '</td>';
+                    echo '</tr>';
+                }
+                echo '</table>';
+                exit;
+            }
+
+            // Default CSV
+            header('Content-Type: text/csv; charset=utf-8');
+            header('Content-Disposition: attachment; filename=' . $filename . '.csv');
+            $output = fopen('php://output', 'w');
+            fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+            fputcsv($output, ['ID', 'Name', 'Email', 'Phone', 'Role', 'Status', 'Properties', 'Bookings', 'Registered']);
+            foreach ($users as $u) {
+                fputcsv($output, [$u['id'], $u['name'], $u['email'], $u['phone'], $u['role'], $u['status'], $u['property_count'], $u['booking_count'], $u['created_at']]);
+            }
+            fclose($output);
+            exit;
+        } catch (\Exception $e) {
+            error_log('UserController::exportSelected error: ' . $e->getMessage());
+            $this->setFlash('error', 'Export failed');
+            return $this->redirect('admin/users');
+        }
+    }
+
+    /**
+     * Impersonate user (Login as user)
+     */
+    public function impersonate($id)
+    {
+        try {
+            $userId = intval($id);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $user = $this->db->fetchOne("SELECT * FROM users WHERE id = ?" . $tSql, array_merge([$userId], $tParams));
+            if (!$user) { $this->setFlash('error', 'User not found'); return $this->redirect('admin/users'); }
+            if ($user['role'] === 'admin' || $user['role'] === 'super_admin') { $this->setFlash('error', 'Cannot impersonate admin users'); return $this->redirect('admin/users'); }
+
+            $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+            $adminRole = $_SESSION['role'] ?? 'admin';
+
+            // Store admin session for return
+            $_SESSION['impersonated_from'] = [
+                'admin_id' => $adminId,
+                'admin_role' => $adminRole,
+                'admin_name' => $_SESSION['name'] ?? 'Admin',
+                'impersonated_at' => date('Y-m-d H:i:s')
+            ];
+
+            // Set user session
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['name'] = $user['name'];
+            $_SESSION['email'] = $user['email'];
+            $_SESSION['role'] = $user['role'];
+            $_SESSION['phone'] = $user['phone'] ?? '';
+            $_SESSION['customer_id'] = $user['customer_id'] ?? $user['id'];
+
+            // Role-specific session vars
+            if ($user['role'] === 'associate') {
+                $assoc = $this->db->fetchOne("SELECT id FROM associates WHERE user_id = ?", [$userId]);
+                if ($assoc) $_SESSION['associate_id'] = $assoc['id'];
+            } elseif ($user['role'] === 'agent') {
+                $_SESSION['agent_id'] = $userId;
+            } elseif ($user['role'] === 'employee' || $user['role'] === 'telecaller') {
+                $_SESSION['employee_id'] = $userId;
+            } elseif ($user['role'] === 'customer') {
+                $_SESSION['customer_id'] = $user['customer_id'] ?? $userId;
+            }
+
+            $this->loggingService->logUserActivity($adminId, 'user_impersonated', [
+                'impersonated_user_id' => $userId,
+                'impersonated_user_email' => $user['email'],
+                'impersonated_user_role' => $user['role']
+            ]);
+
+            // Redirect to user's dashboard based on role
+            $dashboards = [
+                'customer' => 'user/dashboard',
+                'associate' => 'associate/dashboard',
+                'agent' => 'agent/dashboard',
+                'employee' => 'employee/dashboard',
+                'telecaller' => 'employee/dashboard',
+                'user' => 'user/dashboard'
+            ];
+            $redirect = $dashboards[$user['role']] ?? 'user/dashboard';
+
+            return $this->redirect($redirect);
+        } catch (\Exception $e) {
+            $this->loggingService->error("Impersonate error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to impersonate user');
+            return $this->redirect('admin/users');
+        }
+    }
+
+    /**
+     * Stop impersonation and return to admin
+     */
+    public function stopImpersonation()
+    {
+        if (empty($_SESSION['impersonated_from'])) {
+            return $this->redirect('admin/users');
+        }
+
+        $admin = $_SESSION['impersonated_from'];
+        $adminId = $admin['admin_id'];
+
+        // Restore admin session
+        $_SESSION['user_id'] = $adminId;
+        $_SESSION['admin_id'] = $adminId;
+        $_SESSION['role'] = $admin['admin_role'];
+        $_SESSION['name'] = $admin['admin_name'];
+
+        unset($_SESSION['impersonated_from']);
+        unset($_SESSION['associate_id']);
+        unset($_SESSION['agent_id']);
+        unset($_SESSION['employee_id']);
+        unset($_SESSION['customer_id']);
+
+        $this->loggingService->logUserActivity($adminId, 'impersonation_stopped', []);
+
+        return $this->redirect('admin/users');
+    }
+
+    /**
+     * Force password reset for user
+     */
+    public function forcePasswordReset($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
+        try {
+            $userId = intval($id);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $user = $this->db->fetchOne("SELECT id, email, name FROM users WHERE id = ?" . $tSql, array_merge([$userId], $tParams));
+            if (!$user) return $this->jsonError('User not found', 404);
+
+            // Generate temporary password
+            $tempPass = 'Temp@' . bin2hex(random_bytes(4));
+            $hashed = password_hash($tempPass, PASSWORD_DEFAULT);
+
+            $this->db->execute("UPDATE users SET password = ?, password_reset_required = 1, updated_at = NOW() WHERE id = ?", [$hashed, $userId]);
+
+            // Log activity
+            $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+            $this->loggingService->logUserActivity($adminId, 'password_force_reset', [
+                'user_id' => $userId,
+                'user_email' => $user['email']
+            ]);
+
+            // TODO: Send email with temp password (integrate with notification service)
+
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => "Password reset. Temporary password: {$tempPass} (user must change on next login)"
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonError('Failed: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Import users page
+     */
+    public function import()
+    {
+        try {
+            $data = [
+                'page_title' => 'Import Users - APS Dream Home',
+                'active_page' => 'users',
+                'roles' => ['customer', 'associate', 'agent', 'employee', 'telecaller', 'user']
+            ];
+            return $this->render('admin/users/import', $data);
+        } catch (\Exception $e) {
+            $this->loggingService->error("Import page error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load import page');
+            return $this->redirect('admin/users');
+        }
+    }
+
+    /**
+     * Process CSV import
+     */
+    public function importProcess()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
+        try {
+            if (empty($_FILES['csv_file']) || $_FILES['csv_file']['error'] !== UPLOAD_ERR_OK) {
+                return $this->jsonError('No file uploaded or upload error', 400);
+            }
+
+            $file = $_FILES['csv_file']['tmp_name'];
+            $handle = fopen($file, 'r');
+            if (!$handle) return $this->jsonError('Cannot read CSV file', 400);
+
+            $header = fgetcsv($handle);
+            if (!$header) return $this->jsonError('Empty CSV file', 400);
+
+            // Normalize header
+            $header = array_map('strtolower', array_map('trim', $header));
+            $required = ['name', 'email', 'password', 'role'];
+            foreach ($required as $req) {
+                if (!in_array($req, $header)) {
+                    fclose($handle);
+                    return $this->jsonError("Missing required column: {$req}", 400);
+                }
+            }
+
+            $regService = new \App\Services\UserRegistrationService();
+            $imported = 0;
+            $errors = [];
+            $rowNum = 1;
+
+            while (($row = fgetcsv($handle)) !== false) {
+                $rowNum++;
+                $data = array_combine($header, $row);
+
+                // Validate
+                if (empty($data['name']) || empty($data['email']) || empty($data['password']) || empty($data['role'])) {
+                    $errors[] = "Row {$rowNum}: Missing required fields";
+                    continue;
+                }
+                if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+                    $errors[] = "Row {$rowNum}: Invalid email";
+                    continue;
+                }
+                $validRoles = ['customer', 'associate', 'agent', 'employee', 'telecaller', 'user'];
+                if (!in_array(strtolower($data['role']), $validRoles)) {
+                    $errors[] = "Row {$rowNum}: Invalid role";
+                    continue;
+                }
+
+                $result = $regService->createUser(strtolower($data['role']), [
+                    'name' => $data['name'],
+                    'email' => $data['email'],
+                    'phone' => $data['phone'] ?? '',
+                    'password' => $data['password'],
+                    'city' => $data['city'] ?? '',
+                    'occupation' => $data['occupation'] ?? '',
+                    'registration_method' => 'csv_import',
+                ], $user);
+
+                if ($result['success']) {
+                    $imported++;
+                } else {
+                    $errors[] = "Row {$rowNum}: " . $result['message'];
+                }
+            }
+            fclose($handle);
+
+            $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+            $this->loggingService->logUserActivity($adminId, 'users_imported', [
+                'imported' => $imported,
+                'errors' => count($errors)
+            ]);
+
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => "Imported {$imported} users" . ($errors ? " ({$errors['count']} errors)" : ''),
+                'imported' => $imported,
+                'errors' => $errors
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonError('Import failed: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * View user sessions
+     */
+    public function viewSessions($id)
+    {
+        try {
+            $userId = intval($id);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $user = $this->db->fetchOne("SELECT id, name, email, phone, role FROM users WHERE id = ?" . $tSql, array_merge([$userId], $tParams));
+            if (!$user) { $this->setFlash('error', 'User not found'); return $this->redirect('admin/users'); }
+
+            $sessions = $this->db->fetchAll(
+                "SELECT * FROM user_sessions WHERE user_id = ? ORDER BY created_at DESC",
+                [$userId]
+            );
+
+            $data = [
+                'page_title' => "Sessions: {$user['name']} - APS Dream Home",
+                'active_page' => 'users',
+                'user' => $user,
+                'sessions' => $sessions ?? []
+            ];
+            return $this->render('admin/users/sessions', $data);
+        } catch (\Exception $e) {
+            $this->loggingService->error("View Sessions error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load sessions');
+            return $this->redirect('admin/users');
+        }
+    }
+
+    /**
+     * Revoke user session
+     */
+    public function revokeSession($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
+        try {
+            $sessionId = intval($id);
+            $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+
+            $session = $this->db->fetchOne("SELECT * FROM user_sessions WHERE id = ?", [$sessionId]);
+            if (!$session) return $this->jsonError('Session not found', 404);
+
+            $this->db->execute("DELETE FROM user_sessions WHERE id = ?", [$sessionId]);
+
+            $this->loggingService->logUserActivity($adminId, 'session_revoked', [
+                'session_id' => $sessionId,
+                'user_id' => $session['user_id']
+            ]);
+
+            return $this->jsonResponse(['success' => true, 'message' => 'Session revoked']);
+        } catch (\Exception $e) {
+            return $this->jsonError('Failed: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Revoke all user sessions except current
+     */
+    public function revokeAllSessions($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
+        try {
+            $userId = intval($id);
+            $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+
+            $this->db->execute("DELETE FROM user_sessions WHERE user_id = ?", [$userId]);
+
+            $this->loggingService->logUserActivity($adminId, 'all_sessions_revoked', [
+                'user_id' => $userId
+            ]);
+
+            return $this->jsonResponse(['success' => true, 'message' => 'All sessions revoked']);
+        } catch (\Exception $e) {
+            return $this->jsonError('Failed: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * View/Manage 2FA for user
+     */
+    public function viewTwoFactor($id)
+    {
+        try {
+            $userId = intval($id);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $user = $this->db->fetchOne("SELECT id, name, email, phone, role, two_factor_enabled, two_factor_secret FROM users WHERE id = ?" . $tSql, array_merge([$userId], $tParams));
+            if (!$user) { $this->setFlash('error', 'User not found'); return $this->redirect('admin/users'); }
+
+            $data = [
+                'page_title' => "2FA: {$user['name']} - APS Dream Home",
+                'active_page' => 'users',
+                'user' => $user
+            ];
+            return $this->render('admin/users/two_factor', $data);
+        } catch (\Exception $e) {
+            $this->loggingService->error("View 2FA error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load 2FA');
+            return $this->redirect('admin/users');
+        }
+    }
+
+    /**
+     * Enable/Disable 2FA
+     */
+    public function toggleTwoFactor($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
+        try {
+            $userId = intval($id);
+            $action = $_POST['action'] ?? '';
+            list($tSql, $tParams) = $this->tenantWhere();
+            $user = $this->db->fetchOne("SELECT id, name, email FROM users WHERE id = ?" . $tSql, array_merge([$userId], $tParams));
+            if (!$user) return $this->jsonError('User not found', 404);
+
+            $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+
+            if ($action === 'enable') {
+                // Generate new secret (RFC 3548 base32)
+                $secret = $this->base32Encode(random_bytes(20));
+                $this->db->execute("UPDATE users SET two_factor_enabled = 1, two_factor_secret = ?, updated_at = NOW() WHERE id = ?", [$secret, $userId]);
+                
+                $this->loggingService->logUserActivity($adminId, '2fa_enabled', ['user_id' => $userId]);
+                return $this->jsonResponse(['success' => true, 'message' => '2FA enabled', 'secret' => $secret, 'qr' => 'otpauth://totp/APS%20Dream%20Home:' . urlencode($user['email']) . '?secret=' . $secret . '&issuer=APS%20Dream%20Home']);
+            } elseif ($action === 'disable') {
+                $this->db->execute("UPDATE users SET two_factor_enabled = 0, two_factor_secret = NULL, updated_at = NOW() WHERE id = ?", [$userId]);
+                
+                $this->loggingService->logUserActivity($adminId, '2fa_disabled', ['user_id' => $userId]);
+                return $this->jsonResponse(['success' => true, 'message' => '2FA disabled']);
+            } elseif ($action === 'regenerate_backup') {
+                $codes = [];
+                for ($i = 0; $i < 8; $i++) {
+                    $codes[] = strtoupper(substr(bin2hex(random_bytes(4)), 0, 8));
+                }
+                $this->db->execute("UPDATE users SET two_factor_backup_codes = ?, updated_at = NOW() WHERE id = ?", [json_encode($codes), $userId]);
+                return $this->jsonResponse(['success' => true, 'message' => 'Backup codes regenerated', 'codes' => $codes]);
+            }
+
+            return $this->jsonError('Invalid action', 400);
+        } catch (\Exception $e) {
+            return $this->jsonError('Failed: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * View user notes/tags
+     */
+    public function viewNotes($id)
+    {
+        try {
+            $userId = intval($id);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $user = $this->db->fetchOne("SELECT id, name, email, phone, role FROM users WHERE id = ?" . $tSql, array_merge([$userId], $tParams));
+            if (!$user) { $this->setFlash('error', 'User not found'); return $this->redirect('admin/users'); }
+
+            // Ensure notes table exists
+            $this->db->execute("CREATE TABLE IF NOT EXISTS user_admin_notes (
+                id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                user_id BIGINT UNSIGNED NOT NULL,
+                admin_id BIGINT UNSIGNED NOT NULL,
+                note TEXT NOT NULL,
+                tags JSON DEFAULT NULL,
+                is_important TINYINT(1) DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                INDEX idx_user_id (user_id),
+                INDEX idx_admin_id (admin_id)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+            $notes = $this->db->fetchAll(
+                "SELECT n.*, a.name as admin_name FROM user_admin_notes n LEFT JOIN users a ON a.id = n.admin_id WHERE n.user_id = ? ORDER BY n.created_at DESC",
+                [$userId]
+            );
+
+            $data = [
+                'page_title' => "Notes: {$user['name']} - APS Dream Home",
+                'active_page' => 'users',
+                'user' => $user,
+                'notes' => $notes ?? []
+            ];
+            return $this->render('admin/users/notes', $data);
+        } catch (\Exception $e) {
+            $this->loggingService->error("View Notes error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load notes');
+            return $this->redirect('admin/users');
+        }
+    }
+
+    /**
+     * Add note for user
+     */
+    public function addNote($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
+        try {
+            $userId = intval($id);
+            $note = trim($_POST['note'] ?? '');
+            $tags = $_POST['tags'] ?? [];
+            $isImportant = isset($_POST['is_important']) ? 1 : 0;
+
+            if (empty($note)) return $this->jsonError('Note cannot be empty', 400);
+
+            list($tSql, $tParams) = $this->tenantWhere();
+            $user = $this->db->fetchOne("SELECT id FROM users WHERE id = ?" . $tSql, array_merge([$userId], $tParams));
+            if (!$user) return $this->jsonError('User not found', 404);
+
+            $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+            $tagsJson = json_encode($tags);
+
+            $this->db->execute(
+                "INSERT INTO user_admin_notes (user_id, admin_id, note, tags, is_important, created_at) VALUES (?, ?, ?, ?, ?, NOW())",
+                [$userId, $adminId, $note, $tagsJson, $isImportant]
+            );
+
+            $noteId = $this->db->getConnection()->lastInsertId();
+            $newNote = $this->db->fetchOne(
+                "SELECT n.*, a.name as admin_name FROM user_admin_notes n LEFT JOIN users a ON a.id = n.admin_id WHERE n.id = ?",
+                [$noteId]
+            );
+
+            $this->loggingService->logUserActivity($adminId, 'user_note_added', ['user_id' => $userId, 'note_id' => $noteId]);
+
+            return $this->jsonResponse(['success' => true, 'message' => 'Note added', 'note' => $newNote]);
+        } catch (\Exception $e) {
+            return $this->jsonError('Failed: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Update note
+     */
+    public function updateNote($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
+        try {
+            $noteId = intval($id);
+            $note = trim($_POST['note'] ?? '');
+            $tags = $_POST['tags'] ?? [];
+            $isImportant = isset($_POST['is_important']) ? 1 : 0;
+
+            if (empty($note)) return $this->jsonError('Note cannot be empty', 400);
+
+            $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+            $tagsJson = json_encode($tags);
+
+            $this->db->execute(
+                "UPDATE user_admin_notes SET note = ?, tags = ?, is_important = ?, updated_at = NOW() WHERE id = ?",
+                [$note, $tagsJson, $isImportant, $noteId]
+            );
+
+            $updatedNote = $this->db->fetchOne(
+                "SELECT n.*, a.name as admin_name FROM user_admin_notes n LEFT JOIN users a ON a.id = n.admin_id WHERE n.id = ?",
+                [$noteId]
+            );
+
+            $this->loggingService->logUserActivity($adminId, 'user_note_updated', ['note_id' => $noteId]);
+
+            return $this->jsonResponse(['success' => true, 'message' => 'Note updated', 'note' => $updatedNote]);
+        } catch (\Exception $e) {
+            return $this->jsonError('Failed: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Delete note
+     */
+    public function deleteNote($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
+        try {
+            $noteId = intval($id);
+            $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+
+            $this->db->execute("DELETE FROM user_admin_notes WHERE id = ?", [$noteId]);
+
+            $this->loggingService->logUserActivity($adminId, 'user_note_deleted', ['note_id' => $noteId]);
+
+            return $this->jsonResponse(['success' => true, 'message' => 'Note deleted']);
+        } catch (\Exception $e) {
+            return $this->jsonError('Failed: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Get activity feed for dashboard widget
+     */
+    public function getActivityFeed()
+    {
+        try {
+            $limit = min((int)($_GET['limit'] ?? 10), 50);
+            list($tSql, $tParams) = $this->tenantWhere();
+            
+            $activities = $this->db->fetchAll(
+                "SELECT l.*, u.name as admin_name, u2.name as user_name
+                 FROM user_activity_logs_unified l
+                 LEFT JOIN users u ON u.id = l.user_id
+                 LEFT JOIN users u2 ON JSON_EXTRACT(l.context, '$.user_id') = u2.id OR l.user_id = u2.id
+                 WHERE 1=1" . $tSql . "
+                 ORDER BY l.created_at DESC
+                 LIMIT ?",
+                array_merge($tParams, [$limit])
+            );
+
+            return $this->jsonResponse([
+                'success' => true,
+                'activities' => $activities ?? []
+            ]);
+        } catch (\Exception $e) {
+            $this->loggingService->error("Get Activity Feed error: " . $e->getMessage());
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to fetch activity feed',
+                'activities' => []
+            ], 500);
+        }
+    }
+
+    /**
+     * Base32 encode (RFC 3548) for TOTP secrets
+     */
+    public function uploadAvatar($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
+        try {
+            $userId = intval($id);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $user = $this->db->fetchOne("SELECT id, name, email, profile_image FROM users WHERE id = ?" . $tSql, array_merge([$userId], $tParams));
+            if (!$user) return $this->jsonError('User not found', 404);
+
+            if (empty($_FILES['avatar']) || $_FILES['avatar']['error'] !== UPLOAD_ERR_OK) {
+                return $this->jsonError('No file uploaded or upload error', 400);
+            }
+
+            $file = $_FILES['avatar'];
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+            $maxSize = 5 * 1024 * 1024; // 5MB
+
+            if (!in_array($file['type'], $allowedTypes)) {
+                return $this->jsonError('Invalid file type. Allowed: JPG, PNG, WebP, GIF', 400);
+            }
+            if ($file['size'] > $maxSize) {
+                return $this->jsonError('File too large. Maximum 5MB', 400);
+            }
+
+            // Create upload directory
+            $uploadDir = 'public/uploads/avatars/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+
+            // Generate unique filename
+            $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $filename = 'avatar_' . $userId . '_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+            $filepath = $uploadDir . $filename;
+
+            if (!move_uploaded_file($file['tmp_name'], $filepath)) {
+                return $this->jsonError('Failed to move uploaded file', 500);
+            }
+
+            // Delete old avatar if exists
+            if (!empty($user['profile_image']) && file_exists($user['profile_image'])) {
+                @unlink($user['profile_image']);
+            }
+
+            // Update user record
+            $relativePath = '/' . $filepath;
+            $this->db->execute("UPDATE users SET profile_image = ?, updated_at = NOW() WHERE id = ?" . $tSql, array_merge([$relativePath, $userId], $tParams));
+
+            $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+            $this->loggingService->logUserActivity($adminId, 'avatar_uploaded', ['user_id' => $userId, 'file' => $filename]);
+
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => 'Avatar uploaded successfully',
+                'avatar_url' => BASE_URL . $relativePath
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonError('Failed: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Delete user avatar
+     */
+    public function deleteAvatar($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
+        try {
+            $userId = intval($id);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $user = $this->db->fetchOne("SELECT id, profile_image FROM users WHERE id = ?" . $tSql, array_merge([$userId], $tParams));
+            if (!$user) return $this->jsonError('User not found', 404);
+
+            if (!empty($user['profile_image']) && file_exists($user['profile_image'])) {
+                @unlink($user['profile_image']);
+            }
+
+            $this->db->execute("UPDATE users SET profile_image = NULL, updated_at = NOW() WHERE id = ?" . $tSql, array_merge([$userId], $tParams));
+
+            $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+            $this->loggingService->logUserActivity($adminId, 'avatar_deleted', ['user_id' => $userId]);
+
+            return $this->jsonResponse(['success' => true, 'message' => 'Avatar deleted']);
+        } catch (\Exception $e) {
+            return $this->jsonError('Failed: ' . $e->getMessage(), 500);
+        }
+}
+
+    /**
+     * Get user analytics for dashboard charts
+     */
+    public function getUserAnalytics()
+    {
+        try {
+            list($tSql, $tParams) = $this->tenantWhere();
+            
+            // Users by role
+            $byRole = $this->db->fetchAll(
+                "SELECT role, COUNT(*) as count FROM users WHERE 1=1" . $tSql . " GROUP BY role ORDER BY count DESC",
+                $tParams
+            );
+            
+            // Users by status
+            $byStatus = $this->db->fetchAll(
+                "SELECT status, COUNT(*) as count FROM users WHERE 1=1" . $tSql . " GROUP BY status",
+                $tParams
+            );
+            
+            // Registrations trend (last 30 days)
+            $trend = $this->db->fetchAll(
+                "SELECT DATE(created_at) as date, COUNT(*) as count 
+                 FROM users WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)" . $tSql . "
+                 GROUP BY DATE(created_at) ORDER BY date ASC",
+                $tParams
+            );
+            
+            return $this->jsonResponse([
+                'success' => true,
+                'by_role' => $byRole ?: [],
+                'by_status' => $byStatus ?: [],
+                'trend' => $trend ?: []
+            ]);
+        } catch (\Exception $e) {
+            $this->loggingService->error("Get User Analytics error: " . $e->getMessage());
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to fetch analytics',
+                'by_role' => [],
+                'by_status' => [],
+                'trend' => []
+            ], 500);
+        }
+    }
+
 }

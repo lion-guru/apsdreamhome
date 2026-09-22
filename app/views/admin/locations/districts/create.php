@@ -1,4 +1,5 @@
-ï»¿
+<?php
+?>
 
 <div class="container-fluid">
     <div class="row">
@@ -13,16 +14,16 @@
             <div class="card aps-cp-card">
                 <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/locations/districts/create">
-                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="state_id" class="form-label">State *</label>
+                                    <label for="state_id" class="form-label">State <span class="text-danger">*</span></label>
                                     <select class="form-select" id="state_id" name="state_id" required>
                                         <option value="">Select State</option>
                                         <?php foreach ($states as $state): ?>
-                                            <option value="<?php echo e($state['id']); ?>">
-                                                <?php echo htmlspecialchars($state['name'] ?? ''); ?>
+                                            <option value="<?= e($state['id']) ?>">
+                                                <?= htmlspecialchars($state['name'] ?? '') ?>
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
@@ -30,7 +31,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="name" class="form-label">District Name *</label>
+                                    <label for="name" class="form-label">District Name <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="name" name="name" required>
                                 </div>
                             </div>
@@ -39,18 +40,16 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="code" class="form-label">District Code *</label>
-                                    <input type="text" class="form-control" id="code" name="code" maxlength="10" required >
-                                    <small class="form-text text-muted">e.g., GKP, LKO, BPL</small>
+                                    <label for="code" class="form-label">Code <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="code" name="code" maxlength="10" required style="text-transform: uppercase;">
+                                    <small class="form-text text-muted">e.g. GKP, LKO, BPL</small>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <div class="form-check mt-4">
                                         <input class="form-check-input" type="checkbox" id="is_active" name="is_active" checked>
-                                        <label class="form-check-label" for="is_active">
-                                            Active
-                                        </label>
+                                        <label class="form-check-label" for="is_active">Active</label>
                                     </div>
                                 </div>
                             </div>
@@ -76,5 +75,3 @@ document.getElementById('code').addEventListener('input', function() {
     this.value = this.value.toUpperCase();
 });
 </script>
-
-

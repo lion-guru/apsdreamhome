@@ -25,7 +25,7 @@ foreach ($statusSteps as $i => $step) {
 <div class="container py-4">
 
     <!-- Success Banner -->
-    <div class="alert alert-success py-4 mb-4 text-center">
+    <div class="alert alert-success py-4 mb-3 text-center">
         <i class="fas fa-check-circle fa-3x mb-2"></i>
         <h3 class="fw-bold mb-1"><?= __('booking_conf_heading', [], 'Booking Confirmed!') ?></h3>
         <p class="mb-0">
@@ -36,6 +36,24 @@ foreach ($statusSteps as $i => $step) {
             <span class="badge bg-dark fs-6">
                 <i class="fas fa-hashtag me-1"></i><?= htmlspecialchars($booking['booking_number'] ?? 'N/A') ?>
             </span>
+        </div>
+    </div>
+
+    <!-- Non-Refundable Token Legal Alert (Master Deed Clause 2.1 & 2.9) -->
+    <div class="alert alert-danger py-3 mb-4 shadow-sm border-start border-4 border-danger" role="alert" style="background-color: #fff8f8;">
+        <div class="d-flex align-items-start">
+            <i class="fas fa-exclamation-triangle fa-2x text-danger me-3 mt-1 flex-shrink-0"></i>
+            <div>
+                <h5 class="alert-heading fw-bold mb-1 text-danger">
+                    टोकन बुकिंग राशि गैर-वापसी योग्य है (Token Booking Amount is Strictly Non-Refundable)
+                </h5>
+                <p class="mb-1 text-dark small" style="line-height: 1.5;">
+                    त्रि-पक्षीय मास्टर लीगल डीड (Tripartite Master Deed) की धारा <strong>2.1 एवं 2.9</strong> के अनुसार, इस प्लॉट के लिए जमा की गई टोकन बुकिंग राशि (<strong>₹<?= number_format((float)($booking['booking_amount'] ?? 51000)) ?></strong>) पूर्णतः <strong>नॉन-रिफंडेबल (गैर-वापसी योग्य / वापस नहीं होगी)</strong> है। किसी भी परिस्थिति या रद्दीकरण की दशा में टोकन राशि वापस नहीं की जाएगी।
+                </p>
+                <div class="small text-muted">
+                    <i class="fas fa-info-circle me-1"></i> आवंटन एवं प्लॉट रजिस्ट्री की प्रक्रिया जारी रखने हेतु 15 दिनों के भीतर अनिवार्य 25% आवंटन राशि जमा करना आवश्यक है।
+                </div>
+            </div>
         </div>
     </div>
 
@@ -133,6 +151,11 @@ foreach ($statusSteps as $i => $step) {
                         <div class="col-sm-6">
                             <small class="text-muted d-block"><?= __('booking_conf_dimensions', [], 'Dimensions') ?></small>
                             <strong><?= htmlspecialchars($booking['dimension_label'] ?? '—') ?></strong>
+                        </div>
+                        <div class="col-sm-6">
+                            <small class="text-muted d-block">टोकन बुकिंग राशि (Token Amount Paid)</small>
+                            <strong class="fs-6 text-success">₹<?= number_format((float)($booking['booking_amount'] ?? 51000)) ?></strong>
+                            <span class="badge bg-danger ms-1" style="font-size:0.75rem;">Non-Refundable (वापस नहीं होगी)</span>
                         </div>
                         <div class="col-12">
                             <small class="text-muted d-block"><?= __('booking_conf_total_amount', [], 'Total Amount') ?></small>

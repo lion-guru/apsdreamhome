@@ -502,6 +502,11 @@ class NotificationService
             $st = $this->db->prepare("SELECT customer_id, user_id FROM bookings WHERE id = ?");
             $st->execute([$bookingId]);
             $booking = $st->fetch(PDO::FETCH_ASSOC);
+            if (!$booking) {
+                $st2 = $this->db->prepare("SELECT customer_id FROM plot_bookings WHERE id = ?");
+                $st2->execute([$bookingId]);
+                $booking = $st2->fetch(PDO::FETCH_ASSOC);
+            }
             if (!$booking) return null;
             return (int)($booking['customer_id'] ?? $booking['user_id'] ?? 0) ?: null;
         } catch (\Throwable $e) {
@@ -531,6 +536,20 @@ class NotificationService
     public function sendBookingConfirmedEmail(int $bookingId): void
     {
         $this->sendBookingConfirmed($bookingId);
+    }
+
+    public function sendNocApproved(int $bookingId): void
+    {
+        $userId = $this->getBookingCustomerUserId($bookingId);
+        if (!$userId) return;
+
+        $title = 'NOC Approved';
+        $message = 'No Objection Certificate (NOC) has been approved for your booking. The property is now cleared for registry scheduling.';
+        $data = ['event_type' => 'noc', 'booking_id' => $bookingId, 'noc_status' => 'approved', 'action_url' => '/user/bookings/' . $bookingId, 'priority' => 'high'];
+
+        $this->send($userId, 'email', $title, $message, $data);
+        $this->send($userId, 'whatsapp', $title, $message, $data);
+        $this->send($userId, 'sms', $title, $message, $data);
     }
 
     public function sendAgreementGenerated(int $bookingId, string $agreementType): void

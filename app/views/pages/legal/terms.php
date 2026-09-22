@@ -1,5 +1,6 @@
 <?php
 // app/views/pages/terms-of-service.php
+$breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => defined('BASE_URL') ? BASE_URL : ''], ['title' => 'Terms of Service', 'url' => '']];
 ?>
 
 <!-- Hero Section -->
@@ -32,7 +33,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-10">
-                <div class="cms-content p-4"><?php echo e($pageContent); ?></div>
+                <div class="cms-content p-4"><?= $pageContent; ?></div>
             </div>
         </div>
     </div>

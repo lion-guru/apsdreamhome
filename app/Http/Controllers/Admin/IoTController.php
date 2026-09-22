@@ -18,9 +18,16 @@ class IoTController extends AdminController
     public function index()
     {
         $this->requireAdmin();
-        $stats = $this->service->getStats();
-        $devices = $this->service->getDevices([], 1, 8)['data'];
-        $automations = $this->service->getAutomations([], 1, 5)['data'];
+        try {
+            $stats = $this->service->getStats();
+            $devices = $this->service->getDevices([], 1, 8)['data'] ?? [];
+            $automations = $this->service->getAutomations([], 1, 5)['data'] ?? [];
+        } catch (\Throwable $e) {
+            error_log('IoT index error: ' . $e->getMessage());
+            $stats = [];
+            $devices = [];
+            $automations = [];
+        }
 
         $this->render('admin/iot/index', [
             'page_title' => 'IoT Smart Property',

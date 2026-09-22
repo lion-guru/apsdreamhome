@@ -4,7 +4,7 @@
  * Agent Authentication Controller
  *
  * Live controller for agent web login/registration (CoreAuthController is archived/dead).
- *             Registration now delegates to UserRegistrationService.
+ * Registration now delegates to UserRegistrationService.
  */
 
 namespace App\Http\Controllers\Auth;
@@ -15,9 +15,13 @@ use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
 use App\Services\UserRegistrationService;
 use App\Core\Middleware\TenantContext;
+use App\Traits\AuthSessionTrait;
+use App\Helpers\SimpleCaptcha;
 
 class AgentAuthController extends BaseController
 {
+    use AuthSessionTrait;
+
     protected function skipCsrfProtection(): bool
     {
         return true;
@@ -26,7 +30,9 @@ class AgentAuthController extends BaseController
     private function getTenantSql(): array
     {
         $tid = TenantContext::getId();
-        if ($tid > 1) return [" AND tenant_id = ?", [$tid]];
+        if ($tid > 1) {
+            return [" AND tenant_id = ?", [$tid]];
+        }
         return ["", []];
     }
 
@@ -37,9 +43,8 @@ class AgentAuthController extends BaseController
         $errors = $_SESSION['errors'] ?? [];
         $old = $_SESSION['old_input'] ?? [];
         unset($_SESSION['errors'], $_SESSION['old_input']);
-        $base = BASE_URL;
         extract(compact('csrf_token', 'errors', 'old'));
-        include __DIR__ . '/../../../views/auth/agent_register.php';
+        include_once __DIR__ . '/../../../views/auth/agent_register.php';
     }
 
     public function handleRegister()
@@ -51,21 +56,29 @@ class AgentAuthController extends BaseController
         $phone = trim($_POST['phone'] ?? '');
         $password = $_POST['password'] ?? '';
         $confirm = $_POST['confirm_password'] ?? '';
-        $experience = $_POST['experience'] ?? '';
         $referral = trim($_POST['referral_code'] ?? $_POST['sponsor_code'] ?? '');
 
         $errors = [];
-        if (empty($name)) $errors[] = "Name is required";
-        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = "Valid email is required";
-        if (empty($phone) || !preg_match('/^[0-9]{10}$/', $phone)) $errors[] = "Valid 10-digit phone required";
-        if (strlen($password) < 6) $errors[] = "Password must be at least 6 characters";
-        if ($password !== $confirm) $errors[] = "Passwords do not match";
+        if (empty($name)) {
+            $errors[] = "Name is required";
+        }
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errors[] = "Valid email is required";
+        }
+        if (empty($phone) || !preg_match('/^\d{10}$/', $phone)) {
+            $errors[] = "Valid 10-digit phone required";
+        }
+        if (strlen($password) < 6) {
+            $errors[] = "Password must be at least 6 characters";
+        }
+        if ($password !== $confirm) {
+            $errors[] = "Passwords do not match";
+        }
 
         // CAPTCHA validation
         $captcha_code = trim($_POST['captcha_code'] ?? '');
         if (!empty($captcha_code)) {
-            require_once __DIR__ . '/../../../Helpers/SimpleCaptcha.php';
-            if (!\SimpleCaptcha::validate($captcha_code)) {
+            if (!SimpleCaptcha::validate($captcha_code)) {
                 $errors[] = 'Invalid or expired security code. Please try again.';
             }
         }
@@ -117,9 +130,8 @@ class AgentAuthController extends BaseController
         $error = $_SESSION['errors'][0] ?? $_SESSION['error'] ?? null;
         $success = $_SESSION['success'] ?? null;
         unset($_SESSION['errors'], $_SESSION['error'], $_SESSION['success']);
-        $base = BASE_URL;
         extract(compact('csrf_token', 'error', 'success'));
-        include __DIR__ . '/../../../views/auth/agent_login.php';
+        include_once __DIR__ . '/../../../views/auth/agent_login.php';
     }
 
     public function authenticate()
@@ -133,6 +145,10 @@ class AgentAuthController extends BaseController
             header('Location: ' . BASE_URL . '/agent/login');
             exit;
         }
+
+        // Rate limiting: 5 attempts per minute per IP
+        require_once __DIR__ . '/../../../Middleware/RateLimiter.php';
+        \App\Middleware\RateLimiter::check('agent_login_' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'), 5, 60);
 
         try {
             $db = Database::getInstance();
@@ -156,28 +172,9 @@ class AgentAuthController extends BaseController
                     exit;
                 }
 
-                $_SESSION['user_id'] = $user['id'];
-                
-                // Fetch agent_id from associates table
-                try {
-                    $ass = $db->fetchOne("SELECT id FROM associates WHERE user_id = ?" . $tSql . " LIMIT 1", array_merge([$user['id']], $tParams));
-                    if ($ass) {
-                        $_SESSION['agent_id'] = (int)$ass['id'];
-                        $_SESSION['associate_id'] = (int)$ass['id'];
-                    } else {
-                        $_SESSION['agent_id'] = $user['customer_id'];
-                    }
-                } catch (\Exception $e) {
-                    $_SESSION['agent_id'] = $user['customer_id'];
-                }
-
-                $_SESSION['user_name'] = $user['name'];
-                $_SESSION['user_email'] = $user['email'];
-                $_SESSION['user_phone'] = $user['phone'] ?? '';
-                $_SESSION['role'] = 'agent';
-                $_SESSION['logged_in'] = true;
-                header('Location: ' . BASE_URL . '/agent/dashboard');
-                exit;
+                // Establish session using trait (includes audit log + login notifications)
+                $this->establishSession($user, $email, 'password');
+                $this->redirectToDashboard('agent');
             }
             $_SESSION['errors'] = ["Invalid email or password"];
             header('Location: ' . BASE_URL . '/agent/login');

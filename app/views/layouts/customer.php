@@ -1,12 +1,13 @@
 <?php
 $GLOBALS['_html_doc_started'] = true;
+use App\Services\PortalMenuService;
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $page_title ?? 'My Account - APS Dream Home'; ?></title>
+    <title><?php echo $page_title ?? 'Customer Portal - APS Dream Home'; ?></title>
     <meta name="description" content="<?php echo $page_description ?? 'Customer Portal'; ?>">
     <?php if (isset($_SESSION['user_id'])): ?>
     <meta name="user-id" content="<?= (int)$_SESSION['user_id'] ?>">
@@ -19,51 +20,83 @@ $GLOBALS['_html_doc_started'] = true;
     }
     ?>
     <meta name="csrf-token" content="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES); ?>">
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">window.BASE_URL = '<?= defined('BASE_URL') ? BASE_URL : '' ?>';</script>
 
     <!-- Skip to content link (a11y) -->
     <a href="#aps-main-content" class="aps-skip-link">Skip to main content</a>
 
-    <!-- Bootstrap CSS -->
+    <!-- Fonts & Bootstrap -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
-    <!-- Design Tokens (Single Source of Truth) -->
+    <!-- Design Tokens & Components -->
     <link href="<?php echo BASE_URL; ?>/assets/css/style.css?v=7" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/header.css?v=8" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css?v=2" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/notification-system.css" rel="stylesheet">
-    <!-- Universal mobile-first responsive overrides -->
     <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css?v=3" rel="stylesheet">
+
     <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
-        /* ===== CUSTOMER PORTAL MOBILE RESPONSIVENESS ===== */
-        @media (max-width: 768px) {
-            .top-header { padding: 10px 12px 10px 65px !important; flex-wrap: wrap; }
-            .page-title { font-size: 1rem !important; }
-            .breadcrumb { font-size: 0.72rem !important; }
-            .header-actions { gap: 6px; }
-            .content-wrapper { padding: 12px !important; }
-            .sidebar-toggle { display: flex !important; }
-            .aps-cp-card, .card { border-radius: 10px !important; }
-            .table-responsive { font-size: 0.8rem; }
-            .table th, .table td { padding: 6px 8px !important; }
-            .btn { padding: 6px 12px !important; font-size: 0.8rem !important; }
-            .row.g-3 > [class*="col-"] { padding: 6px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: #f8fafc; color: #1e293b; }
+
+        /* Unified Dark Sidebar */
+        .sidebar {
+            position: fixed; top: 0; left: 0; width: 260px; height: 100vh;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            z-index: 1000; overflow-y: auto; transition: transform 0.3s ease;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
         }
-        @media (max-width: 480px) {
-            .breadcrumb { display: none !important; }
-            .page-title { font-size: 0.9rem !important; }
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .sidebar-logo { color: #fff; font-size: 1.1rem; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .sidebar-logo i { font-size: 1.3rem; color: #38bdf8; }
+        .sidebar-sub { color: rgba(255,255,255,0.6); font-size: 0.72rem; margin-top: 4px; }
+        
+        .user-card { padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); color: #fff; }
+        .user-avatar { width: 44px; height: 44px; background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 8px; color: #fff; }
+        .user-name { font-weight: 600; font-size: 0.92rem; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .user-role { font-size: 0.75rem; color: rgba(255,255,255,0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        .sidebar-section { padding: 14px 20px 4px; font-size: 0.68rem; text-transform: uppercase; color: rgba(255,255,255,0.45); font-weight: 700; letter-spacing: 0.05em; }
+        .sidebar-menu { list-style: none; padding: 0 10px; margin: 0 0 8px; }
+        .sidebar-item { margin-bottom: 2px; }
+        .sidebar-link { display: flex; align-items: center; padding: 9px 14px; color: #cbd5e1; text-decoration: none; border-radius: 8px; transition: all 0.2s ease; font-size: 0.88rem; }
+        .sidebar-link:hover, .sidebar-link.active { background: rgba(255,255,255,0.1); color: #fff; }
+        .sidebar-link.active { background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-weight: 600; }
+        .sidebar-link i { width: 22px; margin-right: 10px; font-size: 0.95rem; text-align: center; }
+        .sidebar-badge { margin-left: auto; background: rgba(56, 189, 248, 0.25); color: #38bdf8; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 600; }
+
+        /* Main Content Layout */
+        .main-content { margin-left: 260px; min-height: 100vh; transition: margin-left 0.3s ease; }
+        .top-header { background: #fff; padding: 14px 28px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .page-title { font-size: 1.3rem; font-weight: 700; color: #0f172a; margin: 0; }
+        .breadcrumb { margin: 0; font-size: 0.82rem; }
+        .header-actions { display: flex; gap: 12px; align-items: center; }
+        .btn-icon { width: 38px; height: 38px; border-radius: 10px; border: 1px solid #e2e8f0; background: #fff; color: #64748b; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; text-decoration: none; position: relative; }
+        .btn-icon:hover { background: #f1f5f9; color: #0f172a; }
+        .content-wrapper { padding: 28px; }
+        
+        .sidebar-toggle { display: none; position: fixed; top: 16px; left: 16px; z-index: 1001; width: 40px; height: 40px; background: #0f172a; border: none; border-radius: 8px; color: #fff; font-size: 1.1rem; cursor: pointer; align-items: center; justify-content: center; }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; }
+        .sidebar-overlay.show { display: block; }
+
+        @media (max-width: 1024px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.show { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .sidebar-toggle { display: flex; }
+            .top-header { padding-left: 68px; }
+            .content-wrapper { padding: 16px; }
         }
     </style>
-
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=3">
 </head>
 <body>
-    <!-- Sidebar Toggle Button (Mobile) -->
-    <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar" aria-expanded="false">
+    <!-- Mobile Sidebar Toggle -->
+    <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar menu">
         <i class="fas fa-bars"></i>
     </button>
-
-    <!-- Sidebar Overlay -->
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <!-- Sidebar -->
@@ -73,7 +106,7 @@ $GLOBALS['_html_doc_started'] = true;
                 <i class="fas fa-home"></i>
                 <span>APS Dream Home</span>
             </a>
-            <div class="sidebar-sub"><?= __('cust_sidebar_sub', null, 'My Account Portal') ?></div>
+            <div class="sidebar-sub">Customer Account Portal</div>
         </div>
 
         <!-- User Info Card -->
@@ -87,13 +120,12 @@ $GLOBALS['_html_doc_started'] = true;
 
         <!-- RBAC-Driven Portal Menu -->
         <?php
-        use App\Services\PortalMenuService;
         try {
             $portalMenu = PortalMenuService::forSession();
         } catch (\Throwable $e) {
             $portalMenu = [];
         }
-        $activeKey = $current_page ?? '';
+        $activeKey = $current_page ?? 'dashboard';
         foreach ($portalMenu as $section):
             if (empty($section['items'])) continue;
         ?>
@@ -123,81 +155,74 @@ $GLOBALS['_html_doc_started'] = true;
         <!-- Top Header -->
         <header class="top-header">
             <div>
-                <h1 class="page-title"><?php echo preg_replace('/\s*-\s*APS Dream Home\s*$/', '', $page_title ?? 'Dashboard'); ?></h1>
+                <h1 class="page-title"><?php echo preg_replace('/\s*-\s*APS Dream Home\s*$/', '', $page_title ?? 'Customer Dashboard'); ?></h1>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/user/dashboard"><?= __('nav_home', null, 'Home') ?></a></li>
-                        <li class="breadcrumb-item active"><?php echo $page_title ?? 'Dashboard'; ?></li>
+                        <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/user/dashboard" class="text-decoration-none">Home</a></li>
+                        <li class="breadcrumb-item active"><?php echo preg_replace('/\s*-\s*APS Dream Home\s*$/', '', $page_title ?? 'Dashboard'); ?></li>
                     </ol>
                 </nav>
             </div>
             <div class="header-actions">
-                <a href="<?= BASE_URL ?>/user/notifications" class="btn btn-sm btn-outline-primary position-relative me-2">
+                <a href="<?= BASE_URL ?>/user/notifications" class="btn-icon" title="Notifications">
                     <i class="fas fa-bell"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notifBadge" >0</span>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notifBadge" style="display:none; font-size: 0.65rem;">0</span>
                 </a>
                 <a href="<?= BASE_URL ?>/user/messages" class="btn-icon" title="Messages">
                     <i class="fas fa-envelope"></i>
                 </a>
-                <a href="<?php echo BASE_URL; ?>/user/profile" class="btn-icon" title="Profile">
-                    <i class="fas fa-user"></i>
-                </a>
+                <div class="dropdown">
+                    <button class="btn-icon" data-bs-toggle="dropdown" aria-expanded="false" title="Account Menu">
+                        <i class="fas fa-user-circle"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" style="border-radius: 12px; min-width: 180px;">
+                        <li><a class="dropdown-item" href="<?= BASE_URL ?>/user/profile"><i class="fas fa-user me-2 text-muted"></i>My Profile</a></li>
+                        <li><a class="dropdown-item" href="<?= BASE_URL ?>/user/settings"><i class="fas fa-cog me-2 text-muted"></i>Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="<?= BASE_URL ?>/auth/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
             </div>
         </header>
 
-        <!-- Content Wrapper -->
-        <div class="content-wrapper">
+        <!-- Content Body -->
+        <div class="content-wrapper" id="aps-main-content">
             <?php echo $content ?? ''; ?>
         </div>
     </main>
 
-    <!-- Bootstrap JS -->
+    <!-- Scripts -->
     <script src="<?= BASE_URL ?>/assets/js/bootstrap.bundle.min.js"></script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/frontend-enhancements.js"></script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/customer-pages.js"></script>
-
-    <!-- Real-time WebSocket Notifications -->
     <script>
-        window.NOTIFY_USER = {
-            id: <?php echo isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : (isset($_SESSION['admin_id']) ? (int)$_SESSION['admin_id'] : 'null'); ?>,
-            role: '<?php echo isset($_SESSION['admin_id']) ? 'admin' : (isset($_SESSION['role']) ? htmlspecialchars($_SESSION['role'] ?? '', ENT_QUOTES) : (isset($_SESSION['user_id']) ? 'customer' : 'guest')); ?>'
-        };
-    </script>
-    <script defer src="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/js/notification-system.js"></script>
-    <!-- WebSocket Notification Widget (real-time push) -->
-    <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/notification-widget.css" rel="stylesheet">
-    <script defer src="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/js/notification-widget.js"></script>
-
-    <!-- Sidebar Toggle Script -->
-    <script>
-function checkNotifications() {
-    fetch('<?= BASE_URL ?>/api/notifications/unread-count')
-        .then(r => r.json())
-        .then(d => { const b = document.getElementById('notifBadge'); if(b) { b.textContent = d.count || 0; b.style.display = (d.count > 0) ? 'inline' : 'none'; } })
-        .catch(() => {});
-}
-document.addEventListener('DOMContentLoaded', checkNotifications);
-setInterval(checkNotifications, 30000);
-</script>
-<script>
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.querySelector('.sidebar-overlay');
             sidebar.classList.toggle('show');
             overlay.classList.toggle('show');
         }
-
-        // Close sidebar on window resize if open
         window.addEventListener('resize', function() {
             if (window.innerWidth > 1024) {
                 const sidebar = document.getElementById('sidebar');
                 const overlay = document.querySelector('.sidebar-overlay');
-                sidebar.classList.remove('show');
-                overlay.classList.remove('show');
+                if (sidebar) sidebar.classList.remove('show');
+                if (overlay) overlay.classList.remove('show');
             }
         });
+        function checkNotifications() {
+            fetch('<?= BASE_URL ?>/api/notifications/unread-count')
+                .then(r => r.json())
+                .then(d => { 
+                    const b = document.getElementById('notifBadge'); 
+                    if(b) { 
+                        b.textContent = d.count || 0; 
+                        b.style.display = (d.count > 0) ? 'inline' : 'none'; 
+                    } 
+                })
+                .catch(() => {});
+        }
+        document.addEventListener('DOMContentLoaded', checkNotifications);
     </script>
-<script src="<?= BASE_URL ?>/assets/js/push-notifications.js"></script>
-
 </body>
 </html>

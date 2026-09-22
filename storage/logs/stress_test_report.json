@@ -1,0 +1,95 @@
+{
+    "generated_at": "2026-09-21T12:05:38+02:00",
+    "sla_ms_per_query": 50,
+    "suites": {
+        "S1_plot_search": {
+            "n": 200,
+            "total_ms": 75.8,
+            "avg_ms": 0.379,
+            "max_ms": 3.787,
+            "p95_ms": 1.105,
+            "rows_touched": 270,
+            "pass": true
+        },
+        "S1b_memory_plots": {
+            "n": 200,
+            "total_ms": 18.73,
+            "avg_ms": 0.094,
+            "max_ms": 1.06,
+            "p95_ms": 0.158,
+            "pool": 1000,
+            "hits_total": 3520,
+            "pass": true
+        },
+        "S2_genealogy": {
+            "real_rows": 58,
+            "real_roots_probed": 1,
+            "real_visited": 36,
+            "real_max_depth": 4,
+            "real_ms": 0.02,
+            "sim_nodes": 500,
+            "sim_visited": 500,
+            "sim_max_depth": 9,
+            "sim_levels": {
+                "1": 1,
+                "2": 2,
+                "3": 4,
+                "4": 8,
+                "5": 16,
+                "6": 32,
+                "7": 64,
+                "8": 128,
+                "9": 245
+            },
+            "sim_rollup": 135304750,
+            "sim_ms": 0.188,
+            "pass": true
+        },
+        "S3_payout_calc": {
+            "rows": 500,
+            "ms": 0.192,
+            "avg_ms": 0.0004,
+            "tot_gross": 126575250,
+            "tot_admin_fee": 6328762.5,
+            "tot_tds": 6012325,
+            "tot_net": 114234162.5,
+            "math_sample_ok": true,
+            "live_ledger_by_status": [
+                {
+                    "status": "pending",
+                    "c": 3,
+                    "s": "4000.00"
+                },
+                {
+                    "status": "approved",
+                    "c": 27,
+                    "s": "-2450700.00"
+                },
+                {
+                    "status": "paid",
+                    "c": 204,
+                    "s": "9986218.99"
+                },
+                {
+                    "status": "cancelled",
+                    "c": 125,
+                    "s": "1658639.00"
+                }
+            ],
+            "pass": true
+        },
+        "S4_lead_ingest": {
+            "inserted": 50,
+            "insert_ms": 63.8,
+            "avg_insert_ms": 1.276,
+            "queried_found": 50,
+            "query_ms": 59.409,
+            "explain_rows": 1,
+            "pass": true,
+            "cleanup_deleted": 50,
+            "cleanup_left": 0
+        }
+    },
+    "memory_peak_mb": 2,
+    "overall": "PASS"
+}

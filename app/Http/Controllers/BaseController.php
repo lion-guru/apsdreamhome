@@ -21,7 +21,7 @@ class BaseController
 {
     /** Canonical list of roles with admin panel access */
     const ADMIN_ROLES = [
-        'super_admin', 'admin', 'manager', 'associate', 'agent', 'employee', 'telecaller',
+        'super_admin', 'admin', 'manager', 'telecaller','employee',
         'ceo', 'cfo', 'cto', 'coo', 'cmo', 'chro',
         'sales_director', 'marketing_director', 'construction_director', 'finance_director', 'hr_director', 'operations_director',
         'legal_head', 'finance_head', 'hr_head', 'operations_head',
@@ -446,8 +446,12 @@ class BaseController
      * Auto-injects SEO meta tags via generateSEO() if not already provided
      * in $data['seo'] — gives every page proper OG / Twitter / JSON-LD.
      */
-    protected function render($view, $data = [])
+    protected function render($view, $data = [], $layout = null)
     {
+        if ($layout !== null) {
+            $this->layout = $layout;
+        }
+
         // Normalize dot-notation (admin.users.index) to slash-notation (admin/users/index)
         $view = str_replace('.', '/', $view);
 

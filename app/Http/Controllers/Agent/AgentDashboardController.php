@@ -76,11 +76,38 @@ class AgentDashboardController extends BaseController
                 $dashboardData = $this->getMLMCompanyDashboardData();
             }
 
+            // Load gamification badges and level metrics
+            $userBadges = [];
+            $allBadges = [];
+            $userRank = 1;
+            $userPoints = 0;
+            $userLevel = 1;
+            try {
+                $uStmt = $this->db->fetchOne("SELECT total_points, current_level FROM users WHERE id = ?", [$this->userId]);
+                if ($uStmt) {
+                    $userPoints = (int)($uStmt['total_points'] ?? 0);
+                    $userLevel = (int)($uStmt['current_level'] ?? 1);
+                }
+                if (class_exists('\App\Services\Gamification\GamificationService')) {
+                    $gamificationService = new \App\Services\Gamification\GamificationService();
+                    $userBadges = $gamificationService->getUserBadges($this->userId);
+                    $userRank = $gamificationService->getUserRank($this->userId);
+                }
+                $allBadges = $this->db->fetchAll("SELECT * FROM badges WHERE is_active = 1 ORDER BY points_required ASC LIMIT 8") ?: [];
+            } catch (\Throwable $e) {
+                error_log('Agent dashboard gamification: ' . $e->getMessage());
+            }
+
             $this->render('agent/dashboard', array_merge([
                 'page_title' => 'Agent Dashboard - APS Dream Home',
                 'page_description' => $this->agentType === 'freelancer' ? 'Freelancer Agent Dashboard' : 'MLM Company Agent Dashboard',
                 'agent_type' => $this->agentType,
                 'associate_id' => $this->associateId,
+                'user_badges' => $userBadges,
+                'all_badges' => $allBadges,
+                'user_rank' => $userRank,
+                'user_points' => $userPoints,
+                'user_level' => $userLevel,
             ], $dashboardData));
 
         } catch (Exception $e) {

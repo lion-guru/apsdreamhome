@@ -1,4 +1,14 @@
 <?php
+/**
+ * @var array $booking
+ * @var float|int $total_paid
+ * @var float|int $total_commission
+ * @var array $payments
+ * @var array $emis
+ * @var array $commissions
+ * @var array $documents
+ * @var array $activity_logs
+ */
 $page_title = $page_title ?? __('admin_booking_details');
 $active_page = 'bookings';
 $extraHead = '<style>
@@ -41,16 +51,16 @@ $extraHead = '<style>
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2"><?= __('admin_booking_details') ?></h1>
     <div class="btn-toolbar mb-2 mb-md-0">
-        <a href="<?= BASE_URL ?>admin/bookings" class="btn btn-secondary">
+        <a href="<?= BASE_URL ?>/admin/bookings" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> <?= __('admin_back_to_bookings') ?>
         </a>
-        <a href="<?= BASE_URL ?>admin/bookings/<?= $booking['id'] ?>/edit" class="btn btn-primary ms-2">
+        <a href="<?= BASE_URL ?>/admin/bookings/<?= $booking['id'] ?>/edit" class="btn btn-primary ms-2">
             <i class="fas fa-edit"></i> <?= __('admin_edit_booking') ?>
         </a>
-        <a href="<?= BASE_URL ?>admin/bookings/<?= $booking['id'] ?>/legal-kit" class="btn btn-success ms-2">
+        <a href="<?= BASE_URL ?>/admin/bookings/<?= $booking['id'] ?>/legal-kit" class="btn btn-success ms-2">
             <i class="fas fa-file-archive me-1"></i> Legal Kit
         </a>
-        <a href="<?= BASE_URL ?>admin/sales/bookings/<?= $booking['id'] ?>/legal-kit" class="btn btn-outline-success ms-2" title="Legal Kit (Sales Lifecycle)">
+        <a href="<?= BASE_URL ?>/admin/sales/bookings/<?= $booking['id'] ?>/legal-kit" class="btn btn-outline-success ms-2" title="Legal Kit (Sales Lifecycle)">
             <i class="fas fa-file-archive me-1"></i> Sales Legal Kit
         </a>
         <button type="button" class="btn btn-danger ms-2" onclick="confirmDelete()">
@@ -662,7 +672,7 @@ $extraHead = '<style>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('admin_cancel') ?></button>
-                <form method="POST" action="<?= BASE_URL ?>admin/bookings/<?= $booking['id'] ?>/destroy" >
+                <form method="POST" action="<?= BASE_URL ?>/admin/bookings/<?= $booking['id'] ?>/destroy" >
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                     <button type="submit" class="btn btn-danger"><?= __('admin_delete') ?></button>
                 </form>
@@ -679,7 +689,7 @@ $extraHead = '<style>
                 <h5 class="modal-title" id="paymentModalLabel"><?= __('admin_add_payment') ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form method="POST" action="<?= BASE_URL ?>admin/bookings/<?= $booking['id'] ?>/payment">
+            <form method="POST" action="<?= BASE_URL ?>/admin/bookings/<?= $booking['id'] ?>/payment">
                 <div class="modal-body">
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
 

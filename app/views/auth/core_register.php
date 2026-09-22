@@ -178,54 +178,55 @@ $selectedRole = $selectedRole ?? 'customer';
                 <div class="ref-info"><i class="fas fa-gift"></i> Referral code applied: <strong><?= htmlspecialchars($ref ?? '') ?></strong></div>
             <?php endif; ?>
 
-            <form method="POST" action="<?= $base ?>/auth/register" id="registerForm" novalidate>
+            <form method="POST" action="<?= $base ?>/register" id="registerForm" novalidate>
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
                 <input type="hidden" name="role" id="selectedRole" value="<?= htmlspecialchars($selectedRole ?? '') ?>">
-                <input type="hidden" name="referral_code" value="<?= htmlspecialchars($ref ?? '') ?>">
 
                 <!-- Role Selection Cards -->
-                <div class="role-selector">
+<div class="role-selector">
                     <?php foreach ($roleOptions as $roleKey => $roleData): ?>
-                    <div class="role-card <?= e($roleKey) ?> <?= $selectedRole === $roleKey ? 'selected' : '' ?>" 
-                         data-role="<?= e($roleKey) ?>" onclick="selectRole(this, '<?= e($roleKey) ?>')">
+                    <button class="role-card <?= e($roleKey) ?> <?= $selectedRole === $roleKey ? 'selected' : '' ?>" 
+                         data-role="<?= e($roleKey) ?>" role="button" tabindex="0"
+                         onclick="selectRole(this, '<?= e($roleKey) ?>')"
+                         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectRole(this, '<?= e($roleKey) ?>');}">
                         <i class="<?= e($roleData['icon']) ?> role-icon"></i>
                         <span class="role-label"><?= e($roleData['label']) ?></span>
                         <span class="role-desc"><?= e($roleData['desc']) ?></span>
-                    </div>
+                    </button>
                     <?php endforeach; ?>
                 </div>
 
                 <div class="form-group">
-                    <label><i class="fas fa-user"></i> Full Name</label>
+                    <label for="reg_name"><i class="fas fa-user"></i> Full Name</label>
                     <div class="input-wrap">
-                        <input type="text" name="name" value="<?= htmlspecialchars($old['name'] ?? '') ?>" placeholder="Enter your full name" required autofocus>
+                        <input type="text" name="name" id="reg_name" value="<?= htmlspecialchars($old['name'] ?? '') ?>" placeholder="Enter your full name" required autofocus>
                         <i class="fas fa-user field-icon"></i>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label><i class="fas fa-envelope"></i> Email</label>
+                        <label for="reg_email"><i class="fas fa-envelope"></i> Email</label>
                         <div class="input-wrap">
-                            <input type="email" name="email" value="<?= htmlspecialchars($old['email'] ?? '') ?>" placeholder="your@email.com" required>
+                            <input type="email" name="email" id="reg_email" value="<?= htmlspecialchars($old['email'] ?? '') ?>" placeholder="your@email.com" required>
                             <i class="fas fa-envelope field-icon"></i>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label><i class="fas fa-phone"></i> Phone</label>
+                        <label for="reg_phone"><i class="fas fa-phone"></i> Phone</label>
                         <div class="input-wrap">
-                            <input type="tel" name="phone" value="<?= htmlspecialchars($old['phone'] ?? '') ?>" placeholder="10-digit number" pattern="[0-9]{10}" required>
+                            <input type="tel" name="phone" id="reg_phone" value="<?= htmlspecialchars($old['phone'] ?? '') ?>" placeholder="10-digit number" pattern="[0-9]{10}" required>
                             <i class="fas fa-phone field-icon"></i>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label><i class="fas fa-lock"></i> Password</label>
+                    <label for="password"><i class="fas fa-lock"></i> Password</label>
                     <div class="input-wrap">
                         <input type="password" name="password" id="password" placeholder="Min 6 characters" minlength="6" required autocomplete="new-password">
                         <i class="fas fa-lock field-icon"></i>
-                        <button type="button" class="pwd-toggle" onclick="togglePwd('password')" tabindex="-1">
+<button type="button" class="pwd-toggle" onclick="togglePwd('password')" tabindex="-1" aria-label="Toggle password visibility">
                             <i class="fas fa-eye" id="pwdIcon"></i>
                         </button>
                     </div>
@@ -234,24 +235,38 @@ $selectedRole = $selectedRole ?? 'customer';
                 </div>
 
                 <div class="form-group">
-                    <label><i class="fas fa-lock"></i> Confirm Password</label>
+                    <label for="confirmPassword"><i class="fas fa-lock"></i> Confirm Password</label>
                     <div class="input-wrap">
                         <input type="password" name="confirm_password" id="confirmPassword" placeholder="Re-enter password" required autocomplete="new-password">
                         <i class="fas fa-lock field-icon"></i>
-                        <button type="button" class="pwd-toggle" onclick="togglePwd('confirmPassword')" tabindex="-1">
+<button type="button" class="pwd-toggle" onclick="togglePwd('confirmPassword')" tabindex="-1" aria-label="Toggle password visibility">
                             <i class="fas fa-eye" id="confirmPwdIcon"></i>
                         </button>
                     </div>
                 </div>
 
-<div class="form-group" id="referralGroup" style="display:<?= ($selectedRole === 'associate' || $selectedRole === 'agent') ? 'block' : 'none' ?>">
-                     <label><i class="fas fa-gift"></i> Referral Code</label>
+                <div class="form-group" id="referralGroup" style="display:<?= ($selectedRole === 'associate' || $selectedRole === 'agent') ? 'block' : 'none' ?>">
+                     <label for="referralCodeInput"><i class="fas fa-gift"></i> Referral Code</label>
                      <div class="input-wrap">
                          <input type="text" name="referral_code" id="referralCodeInput" value="<?= htmlspecialchars($ref ?? '') ?>" placeholder="Enter sponsor's referral code">
                          <i class="fas fa-gift field-icon"></i>
                      </div>
                      <div id="referral_name_display" class="mt-2"></div>
-                 </div>
+                </div>
+
+                <div class="form-group" id="agentTypeGroup" style="display:<?= ($selectedRole === 'agent') ? 'block' : 'none' ?>; margin-bottom: 16px;">
+                    <label><i class="fas fa-id-badge"></i> Agent Type / Engagement</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px;">
+                        <label style="display: flex; align-items: center; gap: 8px; background: #0f172a; border: 1px solid #334155; padding: 10px 12px; border-radius: 10px; cursor: pointer; color: #cbd5e1; font-size: 13px;">
+                            <input type="radio" name="agent_type" id="agent_type_freelancer" value="freelancer" checked style="accent-color: #2563eb;">
+                            <span><strong>Freelancer Agent</strong><br><small style="color: #94a3b8; font-size: 11px;">Independent & flat commission</small></span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; background: #0f172a; border: 1px solid #334155; padding: 10px 12px; border-radius: 10px; cursor: pointer; color: #cbd5e1; font-size: 13px;">
+                            <input type="radio" name="agent_type" id="agent_type_employee" value="mlm_company" style="accent-color: #2563eb;">
+                            <span><strong>Employee Agent</strong><br><small style="color: #94a3b8; font-size: 11px;">In-House & team structure</small></span>
+                        </label>
+                    </div>
+                </div>
 
                 <div class="terms-row">
                     <input type="checkbox" name="terms" id="terms" required>
@@ -259,7 +274,7 @@ $selectedRole = $selectedRole ?? 'customer';
                 </div>
 
 <?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>
-<button type="submit" class="btn-submit">
+<button type="submit" class="btn-submit" id="btnSubmit">
                     <i class="fas fa-user-plus"></i> Create Account
                 </button>
             </form>
@@ -278,7 +293,9 @@ $selectedRole = $selectedRole ?? 'customer';
             document.getElementById('selectedRole').value = role;
             // Show referral field only for associate/agent
             var refGroup = document.getElementById('referralGroup');
-            refGroup.style.display = (role === 'associate' || role === 'agent') ? 'block' : 'none';
+            if (refGroup) refGroup.style.display = (role === 'associate' || role === 'agent') ? 'block' : 'none';
+            var agentGroup = document.getElementById('agentTypeGroup');
+            if (agentGroup) agentGroup.style.display = (role === 'agent') ? 'block' : 'none';
         }
 
         // Password Toggle

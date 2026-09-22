@@ -13,9 +13,12 @@ use App\Services\UserRegistrationService;
 use App\Services\OTPService;
 use App\Services\ProgressiveRegistrationService;
 use App\Core\Middleware\TenantContext;
+use App\Traits\AuthSessionTrait;
 
 class OtpAuthController extends BaseController
 {
+    use AuthSessionTrait;
+
     private UserRegistrationService $regService;
     private OTPService $otpService;
     private ProgressiveRegistrationService $progressiveService;
@@ -316,63 +319,10 @@ class OtpAuthController extends BaseController
                 exit;
             }
 
-            session_regenerate_id(true);
-            $_SESSION['last_regenerate'] = time();
-
-            $role = $user['role'] ?? 'customer';
-            $_SESSION['user_id'] = (int)$user['id'];
-            $_SESSION['customer_id'] = $user['customer_id'] ?? $user['id'];
-            $_SESSION['user_name'] = $user['name'];
-            $_SESSION['user_email'] = $user['email'];
-            $_SESSION['user_phone'] = $user['phone'] ?? '';
-            $_SESSION['role'] = $role;
-            $_SESSION['logged_in'] = true;
-
-            $adminRoles = ['admin', 'super_admin', 'manager', 'ceo', 'cfo', 'coo', 'cto', 'cmo', 'chro', 'sales_director', 'marketing_director', 'construction_director', 'finance_director', 'hr_director', 'operations_director', 'legal_head', 'finance_head', 'hr_head', 'operations_head', 'department_manager', 'project_manager', 'sales_manager', 'hr_manager', 'marketing_manager', 'finance_manager', 'property_manager', 'it_manager', 'operations_manager', 'legal_advisor', 'chartered_accountant', 'senior_developer', 'employee', 'telecaller'];
-
-            if (in_array($role, ['agent', 'associate'], true)) {
-                try {
-                    $assParams = [$user['id']];
-                    if ($tid > 1) $assParams[] = $tid;
-                    $ass = $db->fetchOne("SELECT id FROM associates WHERE user_id = ?" . $tenantSql . " LIMIT 1", $assParams);
-                    if ($ass) {
-                        $_SESSION['associate_id'] = (int)$ass['id'];
-                        if ($role === 'agent') $_SESSION['agent_id'] = (int)$ass['id'];
-                    }
-                } catch (\Throwable $e) { error_log("Associate ID error: " . $e->getMessage()); }
-            } elseif ($role === 'employee' || $role === 'telecaller') {
-                try {
-                    $empParams = [$user['id']];
-                    if ($tid > 1) $empParams[] = $tid;
-                    $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ?" . $tenantSql . " LIMIT 1", $empParams);
-                    if ($emp) $_SESSION['employee_id'] = (int)$emp['id'];
-                } catch (\Throwable $e) { error_log("Employee ID error: " . $e->getMessage()); }
-            }
-
-            if (in_array($role, $adminRoles, true)) {
-                $_SESSION['admin_id'] = (int)$user['id'];
-                $_SESSION['admin_user_id'] = (int)$user['id'];
-                $_SESSION['admin_email'] = $user['email'] ?? '';
-                $_SESSION['admin_role'] = $role;
-                $_SESSION['admin_name'] = $user['name'] ?? 'Admin';
-                $_SESSION['admin_username'] = $user['name'] ?? 'admin';
-            }
-
-            try {
-                require_once __DIR__ . '/../../../Services/AuditService.php';
-                (new \App\Services\AuditService($db))->log('login', (int)$user['id'], $role, 'user', (int)$user['id'], 'Air Login (OTP)');
-            } catch (\Throwable $e) { error_log("Audit log error: " . $e->getMessage()); }
-
-            try {
-                require_once __DIR__ . '/../../../Services/Communication/LoginNotificationService.php';
-                $loginNotifier = new \App\Services\Communication\LoginNotificationService();
-                $isMobile = !empty($_SERVER['HTTP_USER_AGENT']) && preg_match('/(Android|iPhone|iPad)/i', $_SERVER['HTTP_USER_AGENT']);
-                $loginNotifier->sendLoginAlerts((int)$user['id'], $role, $_SERVER['REMOTE_ADDR'] ?? '', $_SERVER['HTTP_USER_AGENT'] ?? '', $isMobile, 'otp');
-            } catch (\Throwable $e) { error_log("Login notification error: " . $e->getMessage()); }
-
+            // Establish session using trait (includes audit log + login notifications)
             unset($_SESSION['air_login_context']);
-            $_SESSION['login_success'] = "Welcome back, {$user['name']}!";
-            $this->redirectToDashboard($role);
+            $this->establishSession($user, $context['identifier'], 'otp');
+            $this->redirectToDashboard($user['role'] ?? 'customer');
             exit;
 
         } catch (\Exception $e) {
@@ -417,22 +367,6 @@ class OtpAuthController extends BaseController
         $visibleEnd = 4;
         $maskedPart = str_repeat('*', strlen($digits) - $visibleEnd);
         return $maskedPart . substr($digits, -$visibleEnd);
-    }
-
-    private function redirectToDashboard(string $role): void
-    {
-        $map = [
-            'admin' => '/admin/dashboard',
-            'super_admin' => '/admin/dashboard',
-            'manager' => '/admin/dashboard',
-            'employee' => '/employee/dashboard',
-            'associate' => '/associate/dashboard',
-            'agent' => '/agent/dashboard',
-            'telecaller' => '/employee/dashboard',
-            'customer' => '/dashboard',
-        ];
-        $redirect = $map[$role] ?? '/admin/dashboard';
-        header('Location: ' . BASE_URL . $redirect);
     }
 
     private function createMlmRecordsForExistingUser(int $userId, array $user, string $role): void
