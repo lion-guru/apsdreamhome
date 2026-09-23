@@ -106,6 +106,15 @@ $statusLabels = [
         </div>
     </div>
 
+    <!-- Master Deed Statutory Token Policy Banner -->
+    <div class="alert alert-danger py-2 px-3 mb-4 small border-start border-4 border-danger d-flex align-items-center justify-content-between flex-wrap gap-2" style="background-color: #fff8f8;">
+        <div>
+            <i class="fas fa-shield-alt text-danger me-2"></i>
+            <strong>वैधानिक सूचना (Master Deed धारा 2.1 व 2.9):</strong> सभी प्लॉट बुकिंग हेतु जमा की गई टोकन राशि (₹51,000) पूर्णतः <strong>नॉन-रिफंडेबल (Non-Refundable / वापस नहीं होगी)</strong> है। आवंटन पक्का करने हेतु 15 दिनों के भीतर अनिवार्य 25% आवंटन राशि जमा करना आवश्यक है।
+        </div>
+        <span class="badge bg-danger">Non-Refundable Token Policy</span>
+    </div>
+
     <div class="aps-cp-card">
         <div class="aps-cp-card-header">
             <h5><i class="fas fa-list"></i> <?= __('user_bookings_all_bookings', 'All Bookings') ?> (<?= $totalBookings ?>)</h5>
@@ -154,7 +163,9 @@ $statusLabels = [
                             <td>₹<?= number_format($totalVal) ?></td>
                             <td>
                                 <span class="text-success fw-semibold">₹<?= number_format($paid) ?></span>
-                                <?php if ($totalVal > 0): ?>
+                                <?php if ($bStatus === 'token_paid'): ?>
+                                    <br><span class="badge bg-danger-subtle text-danger border border-danger-subtle" style="font-size:0.68rem;">Non-Refundable Token</span>
+                                <?php elseif ($totalVal > 0): ?>
                                     <br><small class="text-muted"><?= round(($paid / $totalVal) * 100) ?>%</small>
                                 <?php endif; ?>
                             </td>

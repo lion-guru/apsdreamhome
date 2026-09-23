@@ -330,7 +330,7 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
                 $colonies = $this->db->fetchOne(
                     "SELECT COUNT(*) as total,
                             SUM(CASE WHEN status = 'launching' THEN 1 ELSE 0 END) as launching
-                     FROM colonies WHERE status IN ('active', 'launching', 'development')"
+                     FROM colonies WHERE is_active = 1"
                 );
                 $reports['colonies'] = [
                     'value' => (string)($colonies['total'] ?? 0),

@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>बुकिंग रद्दीकरण और पूर्ण समझौता विलेख - APS Dream Homes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Times New Roman', 'Mangal', 'Nirmala UI', Times, serif, Arial;
+            font-size: 13.5px;
+            line-height: 1.6;
+            color: #000;
+            background-color: #f1f5f9;
+            margin: 0;
+            padding: 20px 0;
+        }
+        .action-bar {
+            max-width: 920px;
+            margin: 0 auto 20px auto;
+            padding: 14px 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .document-page {
+            max-width: 920px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 40px 50px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            position: relative;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .header p {
+            margin: 3px 0;
+            font-size: 12px;
+        }
+        h2 {
+            text-align: center;
+            font-size: 16px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-top: 15px;
+            margin-bottom: 4px;
+            text-decoration: underline;
+        }
+        .subtitle {
+            text-align: center;
+            font-style: italic;
+            font-size: 12px;
+            margin-bottom: 15px;
+            color: #444;
+        }
+        .section-title {
+            font-weight: bold;
+            margin-top: 16px;
+            margin-bottom: 6px;
+            text-decoration: underline;
+            font-size: 14.5px;
+        }
+        p, li {
+            text-align: justify;
+            margin-bottom: 6px;
+        }
+        ul, ol {
+            margin-top: 4px;
+            margin-bottom: 12px;
+            padding-left: 24px;
+        }
+        table.party-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+        }
+        table.party-table td {
+            border: 1px solid #000;
+            padding: 8px 12px;
+            font-size: 13px;
+        }
+        .signature-box {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            page-break-inside: avoid;
+        }
+        .sig-column {
+            width: 46%;
+            border: 1px solid #555;
+            padding: 15px;
+            text-align: center;
+            background: #fafafa;
+        }
+        .witness-section {
+            margin-top: 30px;
+            page-break-inside: avoid;
+        }
+        table.witness-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+        }
+        table.witness-table td {
+            border: 1px solid #777;
+            padding: 10px 14px;
+            font-size: 12.5px;
+            vertical-align: top;
+        }
+        .stamp-spacer {
+            display: none;
+            height: 380px;
+            border: 2px dashed #999;
+            margin-bottom: 25px;
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+            color: #777;
+            font-weight: bold;
+        }
+
+        @media print {
+            body {
+                background: #fff;
+                padding: 0;
+                margin: 0;
+            }
+            .action-bar {
+                display: none !important;
+            }
+            .document-page {
+                box-shadow: none;
+                padding: 15px;
+                margin: 0;
+                max-width: 100%;
+                border-radius: 0;
+            }
+            .stamp-mode .header {
+                display: none !important;
+            }
+            .stamp-mode .stamp-spacer {
+                display: block !important;
+                border: none;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="action-bar">
+        <div>
+            <h6 class="m-0 fw-bold text-dark"><i class="fa-solid fa-file-contract text-primary me-2"></i>बुकिंग रद्दीकरण एवं पूर्ण समझौता विलेख</h6>
+            <small class="text-muted">Fillable Blank Format • Master Deed Statutory Compliance</small>
+        </div>
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <div class="btn-group btn-group-sm" role="group">
+                <button type="button" class="btn btn-dark active" id="btnLangHi" onclick="switchLanguage('hi')">हिंदी (Hindi)</button>
+                <button type="button" class="btn btn-outline-dark" id="btnLangEn" onclick="switchLanguage('en')">English</button>
+            </div>
+            <button class="btn btn-outline-danger btn-sm" onclick="toggleStampMode(this)">
+                <i class="fa-solid fa-stamp me-1"></i> <span id="stamp-btn-text">₹100/₹500 स्टाम्प पेपर मोड</span>
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="window.print()">
+                <i class="fa-solid fa-print me-1"></i> सीधे प्रिंट करें (Ctrl+P)
+            </button>
+            <div class="dropdown">
+                <button class="btn btn-success btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="fa-solid fa-file-word me-1"></i> Word (.doc)
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="../downloads/cancellation_settlement_deed_hindi.doc" download><i class="fa-solid fa-file-word text-success me-2"></i>हिंदी फॉर्मेट (.doc)</a></li>
+                    <li><a class="dropdown-item" href="../downloads/cancellation_settlement_deed_english.doc" download><i class="fa-solid fa-file-word text-primary me-2"></i>English Format (.doc)</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- HINDI VIEW -->
+    <div class="document-page" id="docPageHi">
+
+        <div class="stamp-spacer" id="stampSpacerHi">
+            [ ₹100/- अथवा ₹500/- के नॉन-जुडिशियल स्टाम्प पेपर हेतु आरक्षित स्थान ]
+        </div>
+
+        <div class="header" id="docHeaderHi">
+            <h1>APS DREAM HOMES PVT. LTD.</h1>
+            <p><strong>CIN:</strong> U70109UP2022PTC163047 | <strong>Email:</strong> official@apsdreamhomes.com</p>
+            <p><strong>पंजीकृत कार्यालय:</strong> प्रथम तल, एपीएस बिल्डिंग, गणपति लॉन के पास, सिंघरिया चौराहा, कुनराघाट, गोरखपुर, उत्तर प्रदेश - 273008</p>
+        </div>
+
+        <h2>बुकिंग रद्दीकरण, रसीद समर्पण एवं पूर्ण समझौता विलेख</h2>
+        <p class="subtitle">(नॉन-जुडिशियल स्टाम्प पेपर के साथ संलग्न करने अथवा सीधे स्टाम्प पर प्रिंट करने हेतु)</p>
+
+        <p>यह रद्दीकरण, रसीद समर्पण और पूर्ण समझौता विलेख (Deed) आज दिनांक ______ माह ____________, 2026 को गोरखपुर, उत्तर प्रदेश में निम्नलिखित पक्षों के बीच निष्पादित किया जाता है:</p>
+        
+        <table class="party-table">
+            <tr>
+                <td style="width: 25%; font-weight: bold; background: #f8f9fa;">प्रथम पक्ष<br><small class="fw-normal text-muted">(कंपनी / डेवलपर)</small></td>
+                <td style="width: 75%;">
+                    <strong>APS DREAM HOMES PVT. LTD.</strong> (CIN: U70109UP2022PTC163047), पंजीकृत कार्यालय: प्रथम तल, एपीएस बिल्डिंग, गणपति लॉन के पास, सिंघरिया चौराहा, कुनराघाट, गोरखपुर, उत्तर प्रदेश - 273008 (अधिकृत हस्ताक्षरकर्ता के माध्यम से, जिसे इसके बाद <strong>"कंपनी / प्रथम पक्ष"</strong> कहा जाएगा)।
+                </td>
+            </tr>
+            <tr>
+                <td style="font-weight: bold; background: #f8f9fa;">द्वितीय पक्ष<br><small class="fw-normal text-muted">(ग्राहक / आबंटिती)</small></td>
+                <td>
+                    <strong>श्री/श्रीमती/सुश्री ____________________________________________________________________</strong><br>
+                    पुत्र/पत्नी/पुत्री: _________________________________________________________________________<br>
+                    स्थायी पता: _______________________________________________________________________________<br>
+                    मोबाइल नंबर: _____________________________ | आधार / पैन: _______________________________<br>
+                    (जिसे इसके बाद <strong>"आबंटिती / द्वितीय पक्ष"</strong> कहा जाएगा)।
+                </td>
+            </tr>
+        </table>
+
+        <div class="section-title">1. प्लॉट और बुकिंग का विवरण:</div>
+        <ul>
+            <li><strong>प्रोजेक्ट / टाउनशिप का नाम:</strong> __________________________________________________</li>
+            <li><strong>प्लॉट नंबर व ब्लॉक:</strong> प्लॉट सं. ______________ | ब्लॉक: ______________ | क्षेत्रफल: ______________ वर्ग फीट</li>
+            <li><strong>कुल प्लॉट मूल्य:</strong> ₹ ________________/- (शब्दों में: ________________________________________________________)</li>
+            <li><strong>बुकिंग से बीता समय:</strong> लगभग ________ वर्ष / माह (Elapsed Duration)</li>
+            <li><strong>बुकिंग / टोकन रसीद संख्या:</strong> __________________ | <strong>बुकिंग तिथि:</strong> ____/____/20____</li>
+            <li><strong>जमा कुल टोकन राशि:</strong> <strong>₹ ________________/-</strong> (शब्दों में: ________________________________________________________)</li>
+        </ul>
+
+        <div class="section-title">2. रद्दीकरण, नीतिगत शर्तें और मूल दस्तावेजों का समर्पण:</div>
+        <ol>
+            <li><strong>स्वैच्छिक रद्दीकरण:</strong> द्वितीय पक्ष (आबंटिती) ने उपर्युक्त प्लॉट को टोकन राशि <strong>₹ ________________/- (शब्दों में: ________________________________________________________)</strong> जमा करके बुक किया था। व्यक्तिगत/वित्तीय कारणों और समय बीत जाने के कारण, आबंटिती इस खरीद को आगे जारी रखने में असमर्थ है और स्वेच्छा से इस बुकिंग को पूरी तरह रद्द करने का औपचारिक अनुरोध करता/करती है।</li>
+            <li><strong>मूल दस्तावेजों का समर्पण:</strong> आबंटिती द्वारा कंपनी को सभी <strong>मूल भुगतान रसीदें (Original Receipts)</strong>, मूल <strong>बुकिंग फॉर्म</strong>, आबंटन पत्र एवं कंपनी द्वारा जारी अन्य सभी मूल कागजात भौतिक रूप से सौंपे और समर्पित किए जा रहे हैं। आबंटिती पुष्टि करता/करती है कि इसकी कोई भी डिजिटल, फोटोकॉपी या छायाप्रति अपने पास नहीं रखी गई है और उक्त प्लॉट पर उनके सभी अधिकार हमेशा के लिए समाप्त हो चुके हैं।</li>
+            <li><strong>नॉन-रिफंडेबल पॉलिसी और भारी बकाये/ब्याज की माफी (पूर्ण छूट):</strong> दोनों पक्ष स्पष्ट रूप से स्वीकार करते हैं कि कंपनी के मास्टर नियमों और आधिकारिक रिफंड नीति (Master Deed Sections 2.1 & 2.9) के अनुसार, टोकन राशि पूर्णतः गैर-वापसी योग्य (Non-Refundable) है। इसके अलावा, आबंटिती स्वीकार करता/करती है कि बुकिंग के बाद कोई भी अगली किस्त (Installment) या नियमित भुगतान नहीं किया गया। अनुबंध के नियमों के अनुसार, कुल प्लॉट मूल्य (₹ ________________/-) पर भारी ब्याज, विलंब शुल्क (18% वार्षिक penal interest) और डिफॉल्ट पेनल्टी का बहुत बड़ा वित्तीय दायित्व बनता था। परंतु, मानवीय आधार और पारस्परिक सद्भाव के तहत, <strong>कंपनी द्वारा ऐसे सभी संचित ब्याज, जुर्माने और डिफॉल्ट भुगतान के बकाए को आधिकारिक रिकॉर्ड में दिखाते हुए पूरी तरह माफ और क्षमा कर दिया गया है।</strong></li>
+        </ol>
+
+        <div class="section-title">3. विशेष समझौता, एक्स-ग्रेशिया रिफंड और भुगतान प्रक्रिया (Timeline):</div>
+        <ol>
+            <li><strong>विशेष एक्स-ग्रेशिया विचार:</strong> आबंटिती के विशेष लिखित अनुरोध, आर्थिक कठिनाई और मानवीय विचार पर, कंपनी ने टोकन राशि गैर-वापसी योग्य होने और भारी संचित ब्याज माफ किए जाने के बावजूद, विशेष सद्भावना के तहत आंशिक समझौते के रूप में:<br>
+            <strong>₹ ________________/- (शब्दों में: ________________________________________________________)</strong><br>
+            की राशि पूर्ण और अंतिम रिफंड (Ex-Gratia Settlement) के रूप में जारी करने की असाधारण सहमति दी है।</li>
+            <li><strong>नकदी प्रवाह और प्रसंस्करण समय (बिना दबाव खंड):</strong> आबंटिती अच्छी तरह समझता/समझती है, सहमत है और स्वीकार करता/करती है कि कॉर्पोरेट वित्तीय लेखांकन, आंतरिक ऑडिट और वित्तीय समाशोधन प्रक्रियाओं में समय लगता है। इसलिए, सहमत रिफंड राशि तुरंत देय नहीं होगी। यह भुगतान आधिकारिक कॉर्पोरेट बैंकिंग चैनलों के माध्यम से कंपनी के नकदी प्रवाह (Cash-flow) की गति के आधार पर <strong>अधिकतम 180 कार्य दिवसों (Working Days) के चक्र</strong> में किस्तों में संसाधित और वितरित किया जाएगा। आबंटिती इस प्रसंस्करण अवधि के दौरान कोई भी विवाद, कानूनी नोटिस या अनुचित दबाव नहीं बनाने के लिए वचनबद्ध है।</li>
+            <li><strong>भुगतान का माध्यम:</strong> समझौता राशि (प्रसंस्करण अवधि की परिपक्वता पर):<br>
+            [ ] अकाउंट पेई चेक &nbsp;&nbsp;&nbsp;&nbsp; [ ] ऑनलाइन बैंक ट्रांसफर (NEFT/RTGS/IMPS/UPI) &nbsp;&nbsp;&nbsp;&nbsp; [ ] नकद<br>
+            चेक / यूटीआर / ट्रांजैक्शन संख्या: ____________________________________ दिनांक: ____/____/2026<br>
+            बैंक का नाम व शाखा: ____________________________________________________________________ के माध्यम से दी जाएगी।</li>
+            <li><strong>मूल्य वृद्धि (Appreciation) का त्याग:</strong> आबंटिती जमा राशि पर बाजार मूल्य वृद्धि (Appreciation), ब्याज या अतिरिक्त मुआवजे के किसी भी दावे को पूरी तरह से त्यागता/त्यागती है।</li>
+        </ol>
+
+        <div class="section-title">4. पूर्ण और अंतिम समाधान (Full & Final Release):</div>
+        <p>उचित प्रक्रिया के माध्यम से उपर्युक्त आंशिक रिफंड राशि प्राप्त होने पर, आबंटिती यह घोषणा करता/करती है कि इस बुकिंग से संबंधित सभी वित्तीय खाते, दावे, अधिकार और विवाद हमेशा के लिए समाप्त हो चुके हैं। भविष्य में आबंटिती या उनके कानूनी उत्तराधिकारियों का कंपनी, उसके निदेशकों या उसके प्रोजेक्ट्स के खिलाफ किसी भी न्यायालय, रेरा (RERA), उपभोक्ता फोरम या पुलिस प्राधिकार में कोई भी दावा, वाद या मांग करने का अधिकार नहीं रहेगा। इस विलेख पर गोरखपुर न्यायालय का अनन्य क्षेत्राधिकार होगा।</p>
+
+        <br>
+        <p><strong>साक्षी के रूप में,</strong> दोनों पक्षों ने पूरी तरह से सभी शर्तों को समझकर अपनी स्वेच्छा से इस रद्दीकरण और समझौता विलेख पर हस्ताक्षर किए हैं।</p>
+
+        <div class="signature-box">
+            <div class="sig-column">
+                <p class="m-0"><strong>प्रथम पक्ष (First Party):</strong><br>For APS Dream Homes Pvt. Ltd.</p>
+                <div style="height: 60px;"></div>
+                <p class="m-0 border-top border-dark pt-2"><strong>अधिकृत हस्ताक्षरकर्ता और सील</strong><br><small>दिनांक: ____ / ____ / 2026 | स्थान: गोरखपुर</small></p>
+            </div>
+            <div class="sig-column">
+                <p class="m-0"><strong>द्वितीय पक्ष (Second Party):</strong><br>ग्राहक / आबंटिती (Customer / Allottee)</p>
+                <div style="height: 60px;"></div>
+                <p class="m-0 border-top border-dark pt-2"><strong>हस्ताक्षर / अंगूठा निशानी</strong><br><small>दिनांक: ____ / ____ / 2026 | स्थान: गोरखपुर</small></p>
+            </div>
+        </div>
+
+        <div class="witness-section">
+            <p class="fw-bold mb-1">साक्षी गण (Witnesses - दोनों पक्षों की उपस्थिति में):</p>
+            <table class="witness-table">
+                <tr>
+                    <td style="width: 48%;">
+                        <strong>1. प्रथम साक्षी:</strong><br>
+                        नाम: ___________________________________<br>
+                        पुत्र/पुत्री/पत्नी: ______________________<br>
+                        पता: ____________________________________<br>
+                        मोबाइल: _________________________________<br>
+                        हस्ताक्षर: ______________________________
+                    </td>
+                    <td style="width: 4%; border: none;"></td>
+                    <td style="width: 48%;">
+                        <strong>2. द्वितीय साक्षी:</strong><br>
+                        नाम: ___________________________________<br>
+                        पुत्र/पुत्री/पत्नी: ______________________<br>
+                        पता: ____________________________________<br>
+                        मोबाइल: _________________________________<br>
+                        हस्ताक्षर: ______________________________
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- ENGLISH VIEW -->
+    <div class="document-page" id="docPageEn" style="display: none;">
+
+        <div class="stamp-spacer" id="stampSpacerEn">
+            [ SPACE RESERVED FOR ₹100 / ₹500 NON-JUDICIAL STAMP PAPER ]
+        </div>
+
+        <div class="header" id="docHeaderEn">
+            <h1>APS DREAM HOMES PVT. LTD.</h1>
+            <p><strong>Corporate Identification No. (CIN):</strong> U70109UP2022PTC163047 | <strong>Email:</strong> official@apsdreamhomes.com</p>
+            <p><strong>Registered Office:</strong> 1st Floor, APS Building, Near Ganpati Lawn, Singhariya Chauraha, Kunraghat, Gorakhpur, UP - 273008</p>
+        </div>
+
+        <h2>BOOKING CANCELLATION, RECEIPT SURRENDER &amp; FULL SETTLEMENT DEED</h2>
+        <p class="subtitle">(To be executed on Non-Judicial Stamp Paper or appended with Stamp Paper)</p>
+
+        <p>This Deed of Cancellation, Receipt Surrender and Full Settlement is executed on this <strong>______ day of __________________, 2026</strong> at Gorakhpur, Uttar Pradesh, by and between:</p>
+        
+        <table class="party-table">
+            <tr>
+                <td style="width: 25%; font-weight: bold; background: #f8f9fa;">FIRST PARTY<br><small class="fw-normal text-muted">(Developer / Company)</small></td>
+                <td style="width: 75%;">
+                    <strong>APS DREAM HOMES PVT. LTD.</strong> (CIN: U70109UP2022PTC163047), having its Registered Office at 1st Floor, APS Building, Near Ganpati Lawn, Singhariya Chauraha, Kunraghat, Gorakhpur, UP - 273008, represented through its Authorized Signatory (hereinafter referred to as the <strong>"Company / First Party"</strong>).
+                </td>
+            </tr>
+            <tr>
+                <td style="font-weight: bold; background: #f8f9fa;">SECOND PARTY<br><small class="fw-normal text-muted">(Customer / Allottee)</small></td>
+                <td>
+                    <strong>Mr./Mrs./Ms. ____________________________________________________________________</strong><br>
+                    Son / Wife / Daughter of: _______________________________________________________________<br>
+                    Permanent Address: ____________________________________________________________________<br>
+                    Mobile No: ________________________________ | Aadhaar / PAN: ________________________<br>
+                    (hereinafter referred to as the <strong>"Allottee / Second Party"</strong>).
+                </td>
+            </tr>
+        </table>
+
+        <div class="section-title">1. Plot &amp; Booking Particulars:</div>
+        <ul>
+            <li><strong>Project / Township Name:</strong> __________________________________________________</li>
+            <li><strong>Plot Number &amp; Block:</strong> Plot No.: ______________ | Block: ______________ | Area: ______________ Sq. Ft.</li>
+            <li><strong>Total Agreed Plot Value:</strong> ₹ ________________/- (Rupees ________________________________________________________)</li>
+            <li><strong>Duration Elapsed Since Booking:</strong> Approx. ________ Years / Months (Elapsed Time)</li>
+            <li><strong>Booking / Token Receipt No.:</strong> __________________ | <strong>Booking Date:</strong> ____/____/20____</li>
+            <li><strong>Total Token Amount Deposited:</strong> <strong>₹ ________________/-</strong> (Rupees ________________________________________________________)</li>
+        </ul>
+
+        <div class="section-title">2. Cancellation, Policy Terms &amp; Surrender of Original Documents:</div>
+        <ol>
+            <li><strong>Voluntary Cancellation:</strong> The Second Party (Allottee) had booked the aforesaid plot by paying an initial booking/token advance of <strong>₹ ________________/- (Rupees ________________________________________________________)</strong>. Due to personal, financial constraints, and considerable lapse of time, the Allottee is unable to proceed with the transaction and has formally and voluntarily requested the complete cancellation and termination of the booking.</li>
+            <li><strong>Mandatory Physical Surrender of Originals:</strong> The Allottee hereby physically delivers, hands over, and irrevocably surrenders to the Company all <strong>Original Payment Receipts</strong>, Money Vouchers, the original <strong>Booking Application Form</strong>, Allotment Letters, and any provisional papers issued by the Company. The Allottee expressly confirms that no photocopies, digital images, or duplicates have been retained, and all rights or liens over the subject plot stand permanently surrendered and extinguished.</li>
+            <li><strong>Non-Refundable Policy &amp; Complete Waiver of Heavy Default Penalties/Interest:</strong> Both parties explicitly acknowledge that as per the Company's statutory terms and official Refund Policy (Tripartite Master Deed Sections 2.1 &amp; 2.9), booking token amounts are strictly non-refundable. Furthermore, the Allottee acknowledges that following the initial token deposit, no regular monthly installments, EMI balances, or scheduled dues were cleared. Under standard contract terms, accumulated 18% penal interest, delay fees, and administrative default charges on the total plot value (₹ ________________/-) would have accumulated to a massive financial liability. However, for complete accounting clarity and on compassionate humanitarian grounds, <strong>all such accumulated interest, penalties, and defaulted liabilities are officially recorded but completely waived off and forgiven by the Company.</strong></li>
+        </ol>
+
+        <div class="section-title">3. Special Settlement, Ex-Gratia Refund &amp; Processing Timeline:</div>
+        <ol>
+            <li><strong>Special Ex-Gratia Consideration:</strong> Upon the special written appeal, economic hardship, and compassionate consideration of the Allottee, the Company has exceptionally agreed to release an ex-gratia partial settlement sum of:<br>
+            <strong>₹ ________________/- (Rupees ________________________________________________________)</strong><br>
+            as full, final, and absolute settlement, notwithstanding the non-refundable token clause and heavy interest waiver.</li>
+            <li><strong>Strict Cash-Flow &amp; Processing Timeline (No Pressure Clause):</strong> The Allottee expressly understands, agrees, and acknowledges that corporate financial accounting, internal audit, and banking clearance cycles require procedural time. Therefore, the agreed settlement amount shall not be demanded immediately. The disbursement shall be processed through official corporate channels and cleared in staggered installments over a <strong>staggered liquidation cycle of up to 180 working days</strong> based on company cash-flow velocity. The Allottee explicitly covenants not to issue any legal notice, raise disputes, or exert undue coercion during this processing period.</li>
+            <li><strong>Mode of Payment Realization:</strong> The settlement amount (upon maturity of processing timeline) shall be disbursed via:<br>
+            [ ] Account Payee Cheque &nbsp;&nbsp;&nbsp;&nbsp; [ ] Online Bank Transfer (NEFT/RTGS/IMPS/UPI) &nbsp;&nbsp;&nbsp;&nbsp; [ ] Cash<br>
+            Cheque / UTR / Transaction No.: ____________________________________ Dated: ____/____/2026<br>
+            Drawn on Bank &amp; Branch: ____________________________________________________________________</li>
+            <li><strong>Waiver of Appreciation &amp; Additional Claims:</strong> The Allottee completely waives and relinquishes all claims toward market price appreciation, penal interest, compensation, or allotment rights over the aforesaid plot.</li>
+        </ol>
+
+        <div class="section-title">4. Full &amp; Final Release (Irrevocable Discharge):</div>
+        <p>Upon receipt of the aforesaid partial settlement amount through the due corporate process mentioned, the Allottee declares that all financial accounts, claims, rights, and disputes regarding this plot booking stand permanently and irrevocably closed. The Allottee or their legal heirs, successors, and assigns shall have no further claims, demands, suits, or rights whatsoever against the Company, its Directors, Promoters, or its projects before any Civil Court, RERA Authority, Consumer Forum, or Arbitration Tribunal in future. This Deed shall be subject to the exclusive jurisdiction of the competent Courts at <strong>Gorakhpur, Uttar Pradesh</strong>.</p>
+
+        <br>
+        <p><strong>IN WITNESS WHEREOF,</strong> the parties hereto have signed this Cancellation and Settlement Deed on the day, month, and year first written above, having understood all terms fully in their sound state of mind.</p>
+
+        <div class="signature-box">
+            <div class="sig-column">
+                <p class="m-0"><strong>FIRST PARTY:</strong><br>For APS Dream Homes Pvt. Ltd.</p>
+                <div style="height: 60px;"></div>
+                <p class="m-0 border-top border-dark pt-2"><strong>Authorized Signatory &amp; Company Seal</strong><br><small>Date: ____ / ____ / 2026 | Place: Gorakhpur</small></p>
+            </div>
+            <div class="sig-column">
+                <p class="m-0"><strong>SECOND PARTY:</strong><br>Customer / Allottee</p>
+                <div style="height: 60px;"></div>
+                <p class="m-0 border-top border-dark pt-2"><strong>Signature / Thumb Impression</strong><br><small>Date: ____ / ____ / 2026 | Place: Gorakhpur</small></p>
+            </div>
+        </div>
+
+        <div class="witness-section">
+            <p class="fw-bold mb-1">WITNESSES (Attesting in Presence of Both Parties):</p>
+            <table class="witness-table">
+                <tr>
+                    <td style="width: 48%;">
+                        <strong>1. WITNESS 1:</strong><br>
+                        Name: __________________________________________<br>
+                        Son / Daughter / Wife of: _______________________<br>
+                        Address: _______________________________________<br>
+                        Mobile No.: ____________________________________<br>
+                        Signature: _____________________________________
+                    </td>
+                    <td style="width: 4%; border: none;"></td>
+                    <td style="width: 48%;">
+                        <strong>2. WITNESS 2:</strong><br>
+                        Name: __________________________________________<br>
+                        Son / Daughter / Wife of: _______________________<br>
+                        Address: _______________________________________<br>
+                        Mobile No.: ____________________________________<br>
+                        Signature: _____________________________________
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    let currentLang = 'hi';
+    let stampMode = false;
+
+    function switchLanguage(lang) {
+        currentLang = lang;
+        const pageHi = document.getElementById('docPageHi');
+        const pageEn = document.getElementById('docPageEn');
+        const btnHi = document.getElementById('btnLangHi');
+        const btnEn = document.getElementById('btnLangEn');
+
+        if (lang === 'hi') {
+            pageHi.style.display = 'block';
+            pageEn.style.display = 'none';
+            btnHi.classList.add('btn-dark', 'active');
+            btnHi.classList.remove('btn-outline-dark');
+            btnEn.classList.remove('btn-dark', 'active');
+            btnEn.classList.add('btn-outline-dark');
+        } else {
+            pageHi.style.display = 'none';
+            pageEn.style.display = 'block';
+            btnEn.classList.add('btn-dark', 'active');
+            btnEn.classList.remove('btn-outline-dark');
+            btnHi.classList.remove('btn-dark', 'active');
+            btnHi.classList.add('btn-outline-dark');
+        }
+    }
+
+    function toggleStampMode(btn) {
+        stampMode = !stampMode;
+        const btnText = document.getElementById('stamp-btn-text');
+
+        const headerHi = document.getElementById('docHeaderHi');
+        const spacerHi = document.getElementById('stampSpacerHi');
+        const headerEn = document.getElementById('docHeaderEn');
+        const spacerEn = document.getElementById('stampSpacerEn');
+
+        if (stampMode) {
+            document.body.classList.add('stamp-mode');
+            spacerHi.style.display = 'flex';
+            headerHi.style.display = 'none';
+            spacerEn.style.display = 'flex';
+            headerEn.style.display = 'none';
+            btnText.innerText = 'स्टैंडर्ड A4 मोड पर वापस आएं';
+            btn.classList.replace('btn-outline-danger', 'btn-warning');
+        } else {
+            document.body.classList.remove('stamp-mode');
+            spacerHi.style.display = 'none';
+            headerHi.style.display = 'block';
+            spacerEn.style.display = 'none';
+            headerEn.style.display = 'block';
+            btnText.innerText = '₹100/₹500 स्टाम्प पेपर मोड';
+            btn.classList.replace('btn-warning', 'btn-outline-danger');
+        }
+    }
+    </script>
+
+</body>
+</html>

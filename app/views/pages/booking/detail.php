@@ -156,7 +156,10 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                     </div>
                     <div class="d-flex justify-content-between mb-2">
                         <span><?= __('detail_token_amount') ?></span>
-                        <strong>₹<?= number_format($tokenAmount) ?></strong>
+                        <div class="text-end">
+                            <strong>₹<?= number_format($tokenAmount) ?></strong>
+                            <div><span class="badge bg-danger" style="font-size:0.68rem;">Non-Refundable / गैर-वापसी योग्य</span></div>
+                        </div>
                     </div>
                     <div class="d-flex justify-content-between mb-2">
                         <span><?= __('detail_stamp_duty') ?></span>
@@ -166,6 +169,10 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                     <div class="d-flex justify-content-between">
                         <span><?= __('detail_balance_after_token') ?></span>
                         <strong>₹<?= number_format($plot['total_price'] - $tokenAmount) ?></strong>
+                    </div>
+                    <div class="alert alert-danger py-2 px-2 mt-3 mb-0 small text-start border-start border-3 border-danger" style="background-color: #fff8f8; font-size: 0.75rem; line-height: 1.4;">
+                        <i class="fas fa-shield-alt text-danger me-1"></i>
+                        <strong>Master Deed (धारा 2.1 व 2.9):</strong> टोकन राशि (₹<?= number_format($tokenAmount) ?>) पूर्णतः गैर-वापसी योग्य (वापस नहीं होगी) है।
                     </div>
                 </div>
             </div>

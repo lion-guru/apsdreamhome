@@ -1,8 +1,22 @@
 <?php $project = $project ?? []; $milestones = $milestones ?? []; ?>
 <div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0"><i class="fas fa-chart-line me-2"></i><?= htmlspecialchars($project['name'] ?? 'Project') ?></h1>
-        <a href="<?= BASE_URL ?>/admin/projects/progress" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back</a>
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h1 class="h3 mb-1 fw-bold"><i class="fas fa-chart-line text-info me-2"></i><?= htmlspecialchars($project['name'] ?? 'Project') ?></h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 small">
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/erp">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/projects">Projects</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/projects/progress">Progress Tracker</a></li>
+                    <li class="breadcrumb-item active"><?= htmlspecialchars($project['name'] ?? '') ?></li>
+                </ol>
+            </nav>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="<?= BASE_URL ?>/admin/projects/view/<?= (int)($project['id'] ?? 0) ?>" class="btn btn-outline-secondary btn-sm"><i class="fas fa-building me-1"></i>Project Detail</a>
+            <a href="<?= BASE_URL ?>/admin/projects/edit/<?= (int)($project['id'] ?? 0) ?>" class="btn btn-outline-warning btn-sm"><i class="fas fa-edit me-1"></i>Edit Project</a>
+            <a href="<?= BASE_URL ?>/admin/projects/progress" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
+        </div>
     </div>
     <div class="row">
         <div class="col-md-8">
@@ -10,8 +24,11 @@
                 <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-tachometer-alt me-2"></i>Progress Overview</h5></div>
                 <div class="card-body aps-cp-card-body">
                     <h2 class="text-center mb-3"><?= (int)($project['progress_pct'] ?? 0) ?>% Complete</h2>
-                    <div class="progress mb-4">
-                        <div class="progress-bar bg-<?= ($project['progress_pct'] ?? 0) >= 100 ? 'success' : (($project['progress_pct'] ?? 0) >= 50 ? 'info' : 'warning') ?>"></div>
+                    <div class="progress mb-4" style="height:14px;border-radius:8px;">
+                        <?php $pct = (int)($project['progress_pct'] ?? 0); ?>
+                        <div class="progress-bar bg-<?= $pct >= 100 ? 'success' : ($pct >= 50 ? 'info' : 'warning') ?>"
+                             style="width:<?= $pct ?>%;" role="progressbar" aria-valuenow="<?= $pct ?>" aria-valuemin="0" aria-valuemax="100">
+                        </div>
                     </div>
                     <div class="row text-center">
                         <div class="col-md-4"><strong>Budget:</strong> ₹<?= number_format((float)($project['project_budget'] ?? 0), 2) ?></div>

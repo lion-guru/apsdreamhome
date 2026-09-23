@@ -224,31 +224,36 @@ foreach ($statusSteps as $i => $step) {
                 <div class="aps-cp-card-body">
                     <ol class="list-unstyled mb-0">
                         <li class="mb-3 d-flex">
-                            <span class="badge bg-primary rounded-circle me-2 flex-shrink-0">1</span>
+                            <span class="badge bg-success rounded-circle me-2 flex-shrink-0"><i class="fas fa-check"></i></span>
                             <div>
-                                <strong><?= __('booking_conf_step1_title', [], 'Admin Confirmation') ?></strong>
-                                <small class="d-block text-muted"><?= __('booking_conf_step1_desc', [], 'Our team will review and confirm your booking within 24 hours.') ?></small>
+                                <strong>1. <?= __('booking_conf_step1_title', [], 'Token Registration') ?></strong>
+                                <small class="d-block text-muted">₹<?= number_format((float)($booking['booking_amount'] ?? 51000)) ?> Non-Refundable Token recorded under Master Deed Sec 2.1.</small>
                             </div>
                         </li>
                         <li class="mb-3 d-flex">
-                            <span class="badge bg-primary rounded-circle me-2 flex-shrink-0">2</span>
+                            <span class="badge bg-warning text-dark rounded-circle me-2 flex-shrink-0">2</span>
                             <div>
-                                <strong><?= __('booking_conf_step2_title', [], 'Pay Token Amount') ?></strong>
-                                <small class="d-block text-muted"><?= __('booking_conf_step2_prefix', [], 'Pay 25% token') ?> (₹<?= number_format((float)($booking['total_plot_value'] ?? 0) * 0.25) ?>) <?= __('booking_conf_step2_suffix', [], 'to confirm your spot.') ?></small>
+                                <strong>2. 15-Day Mandatory 25% Payment</strong>
+                                <?php 
+                                $totalVal = (float)($booking['total_plot_value'] ?? 0);
+                                $tokenVal = (float)($booking['booking_amount'] ?? 51000);
+                                $bal25 = max(0, ($totalVal * 0.25) - $tokenVal);
+                                ?>
+                                <small class="d-block text-danger fw-semibold">Pay balance ₹<?= number_format($bal25) ?> within 15 calendar days to confirm plot allotment.</small>
                             </div>
                         </li>
                         <li class="mb-3 d-flex">
                             <span class="badge bg-primary rounded-circle me-2 flex-shrink-0">3</span>
                             <div>
-                                <strong><?= __('booking_conf_step3_title', [], 'Sign Agreement') ?></strong>
-                                <small class="d-block text-muted"><?= __('booking_conf_step3_desc', [], 'Visit our office or complete online agreement signing.') ?></small>
+                                <strong>3. <?= __('booking_conf_step3_title', [], 'Sign Master Agreement') ?></strong>
+                                <small class="d-block text-muted">Sign Tripartite Registered Agreement & 4 Corner Pillar Demarcation.</small>
                             </div>
                         </li>
                         <li class="mb-3 d-flex">
                             <span class="badge bg-primary rounded-circle me-2 flex-shrink-0">4</span>
                             <div>
-                                <strong><?= __('booking_conf_step4_title', [], 'Registration') ?></strong>
-                                <small class="d-block text-muted"><?= __('booking_conf_step4_desc', [], 'Complete registration at the Sub-Registrar office.') ?></small>
+                                <strong>4. <?= __('booking_conf_step4_title', [], 'Registry & Possession') ?></strong>
+                                <small class="d-block text-muted">Sub-Registrar office registry & immediate physical possession handover.</small>
                             </div>
                         </li>
                     </ol>

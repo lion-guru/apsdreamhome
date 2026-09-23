@@ -45,6 +45,14 @@ $receipts = $receipts ?? [];
         </div>
     </div>
 
+    <div class="alert alert-danger py-2 px-3 mb-4 small border-start border-4 border-danger d-flex align-items-center justify-content-between flex-wrap gap-2" style="background-color: #fff8f8;">
+        <div>
+            <i class="fas fa-shield-alt text-danger me-2"></i>
+            <strong>वैधानिक सूचना (Master Deed धारा 2.1 व 2.9):</strong> बुकिंग हेतु जमा की गई टोकन बुकिंग राशि (₹51,000) पूर्णतः <strong>नॉन-रिफंडेबल (Non-Refundable / वापस नहीं होगी)</strong> है।
+        </div>
+        <span class="badge bg-danger">Non-Refundable Token</span>
+    </div>
+
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white py-3">
             <h5 class="mb-0"><i class="fas fa-receipt me-2 text-success"></i><?= __('assoc_br_receipts', ['count' => count($receipts)], 'Payment Receipts (%count%)') ?></h5>

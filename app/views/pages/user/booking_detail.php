@@ -345,6 +345,33 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
 </div>
 <?php endif; ?>
 
+<!-- Statutory Deeds & Documents Access -->
+<div class="aps-cp-card mb-4 border-0 shadow-sm" style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-left: 4px solid #0d6efd !important;">
+    <div class="aps-cp-card-body p-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+                <h5 class="fw-bold mb-1 text-primary">
+                    <i class="fas fa-balance-scale me-2"></i> वैधानिक विलेख व आधिकारिक प्रारूप (Legal Deeds & Statutory Deeds)
+                </h5>
+                <p class="text-muted small mb-0">
+                    त्रिपक्षीय मास्टर डीड की शर्तें, स्टाम्प पेपर प्रारूप एवं अधिकृत रद्दीकरण समझौता विलेख यहाँ से प्राप्त करें।
+                </p>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="<?= BASE_URL ?>/documents/cancellation_settlement_deed.html" target="_blank" class="btn btn-sm btn-outline-danger">
+                    <i class="fas fa-print me-1"></i> रद्दीकरण विलेख (Printable Stamp Paper)
+                </a>
+                <a href="<?= BASE_URL ?>/downloads/cancellation_settlement_deed_hindi.doc" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-file-word me-1"></i> भरणीय प्रारूप (.DOC Hindi)
+                </a>
+                <a href="<?= BASE_URL ?>/downloads/cancellation_settlement_deed_english.doc" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-file-word me-1"></i> Fillable Deed (.DOC English)
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <?php if (!empty($documents)): ?>
 <div class="aps-cp-card mb-4">
     <div class="aps-cp-card-header">

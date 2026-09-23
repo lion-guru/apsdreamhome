@@ -4,7 +4,7 @@ $current_page = 'bookings';
 $user = $user ?? [];
 $booking = $booking ?? null;
 $payment = $payment ?? null;
-$token_amount = $token_amount ?? 25000;
+$token_amount = $token_amount ?? 51000;
 ?>
 
 <div class="aps-cp-hero">
@@ -49,6 +49,7 @@ $token_amount = $token_amount ?? 25000;
                     <div class="col-sm-6">
                         <small class="text-muted d-block"><?= __('user_payment_success_amount_paid', 'Amount Paid') ?></small>
                         <strong class="text-success fs-5">₹<?= number_format((float)($payment['amount'] ?? $token_amount)) ?></strong>
+                        <span class="badge bg-danger ms-2" style="font-size:0.72rem;">Non-Refundable / गैर-वापसी योग्य</span>
                     </div>
                     <div class="col-sm-6">
                         <small class="text-muted d-block"><?= __('user_payment_success_payment_method', 'Payment Method') ?></small>
@@ -74,6 +75,15 @@ $token_amount = $token_amount ?? 25000;
                         <small class="text-muted d-block"><?= __('user_payment_success_plot', 'Plot') ?></small>
                         <strong><?= htmlspecialchars($booking['plot_number'] ?? 'N/A') ?></strong> <?= __('user_payment_success_plot_at', 'at') ?> <?= htmlspecialchars($booking['colony_name'] ?? 'N/A') ?>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="alert alert-danger py-2 px-3 mb-4 small border-start border-4 border-danger" style="background-color: #fff8f8;">
+            <div class="d-flex align-items-start">
+                <i class="fas fa-shield-alt text-danger me-2 mt-1 flex-shrink-0"></i>
+                <div>
+                    <strong>वैधानिक सूचना (Master Deed धारा 2.1 व 2.9):</strong> यह टोकन बुकिंग राशि पूर्णतः <strong>नॉन-रिफंडेबल (Non-Refundable / गैर-वापसी योग्य)</strong> है। किसी भी परिस्थिति या रद्दीकरण पर टोकन राशि वापस नहीं होगी। आवंटन प्रक्रिया जारी रखने हेतु 15 दिनों के भीतर अनिवार्य 25% आवंटन राशि जमा करना अनिवार्य है।
                 </div>
             </div>
         </div>

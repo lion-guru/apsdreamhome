@@ -21,6 +21,9 @@
                         <tr><th class="bg-light">Transaction ID</th><td><code><?= h($receipt['transaction_id'] ?? 'N/A') ?></code></td></tr>
                         <tr><th class="bg-light">Payment Method</th><td><?= h(ucfirst($receipt['payment_method'] ?? 'N/A')) ?></td></tr>
                     </table></div>
+                    <div class="alert alert-danger py-2 px-3 mt-3 mb-0 small text-start border-start border-4 border-danger" style="background-color: #fff8f8; color: #721c24;">
+                        <strong>वैधानिक सूचना (Master Deed धारा 2.1 व 2.9):</strong> यदि यह भुगतान प्लॉट बुकिंग/टोकन राशि का है, तो यह राशि पूर्णतः <strong>नॉन-रिफंडेबल (Non-Refundable / वापस नहीं होगी)</strong> है।
+                    </div>
                     <div class="text-center mt-4">
                         <a href="<?= BASE_URL ?>payment/history" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back to History</a>
                     </div>

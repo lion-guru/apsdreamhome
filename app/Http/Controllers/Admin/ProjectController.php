@@ -52,7 +52,7 @@ class ProjectController extends AdminController
 
             // Apply filters
             if (!empty($search)) {
-                $sql .= " AND (p.name LIKE ? OR p.location LIKE ? OR p.description LIKE ?)";
+                $sql .= " AND (p.name LIKE ? OR p.address LIKE ? OR p.description LIKE ?)";
                 $searchParam = '%' . $search . '%';
                 $params[] = $searchParam;
                 $params[] = $searchParam;

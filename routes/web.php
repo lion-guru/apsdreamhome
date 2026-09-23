@@ -1433,6 +1433,8 @@ $router->post('/admin/bookings/{id}/destroy', 'App\\Http\\Controllers\\Admin\\Bo
 $router->post('/admin/bookings/{id}/payment', 
 'App\\Http\\Controllers\\Admin\\BookingController@processPayment');
 $router->get('/admin/bookings/{id}/legal-kit', 'App\\Http\\Controllers\\Admin\\BookingController@legalKit');
+$router->post('/admin/bookings/{id}/upload-document', 'App\\Http\\Controllers\\Admin\\BookingController@uploadExecutedDocument');
+$router->get('/admin/bookings/documents/{docId}/download', 'App\\Http\\Controllers\\Admin\\BookingController@downloadDocument');
 $router->post('/admin/bookings/bulk-action', 
 'App\\Http\\Controllers\\Admin\\BookingController@bulkAction');
 
@@ -1536,28 +1538,15 @@ $router->get('/admin/locations/districts/export', 'App\Http\Controllers\Admin\Lo
 $router->post('/admin/locations/districts/import', 'App\Http\Controllers\Admin\LocationAdminController@importDistricts');
 $router->post('/admin/locations/districts/bulk-action', 'App\Http\Controllers\Admin\LocationAdminController@bulkActionDistricts');
 
-/* UNIFIED Colony Management — single entry point /admin/colonies/ */
-$router->get('/admin/colonies', 'App\Http\Controllers\Admin\ColonyController@index');
-$router->get('/admin/colonies/create', 'App\Http\Controllers\Admin\ColonyController@create');
-$router->post('/admin/colonies/store', 'App\Http\Controllers\Admin\ColonyController@store');
-$router->get('/admin/colonies/{id}', 'App\Http\Controllers\Admin\ColonyController@show');
-$router->get('/admin/colonies/{id}/edit', 'App\Http\Controllers\Admin\ColonyController@edit');
-$router->post('/admin/colonies/update/{id}', 'App\Http\Controllers\Admin\ColonyController@update');
-$router->post('/admin/colonies/destroy/{id}', 'App\Http\Controllers\Admin\ColonyController@destroy');
+/* NOTE: Unified colony routes live under "Admin Colony Management" below
+   (single entry point /admin/colonies/ via ColonyController).
+   Development workflow stays in ColonyPipelineController (/admin/colony-pipeline/*).
+   Old /admin/locations/colonies/* routes were removed in the colony merge;
+   the States -> Districts -> Colonies drill-down now lands on
+   /admin/colonies?district_id={id}. */
 
-/* Pipeline sub-panels under each colony */
-$router->get('/admin/colonies/{id}/pipeline/layout', 'App\Http\Controllers\Admin\ColonyController@layout');
-$router->post('/admin/colonies/{id}/pipeline/layout/save', 'App\Http\Controllers\Admin\ColonyController@saveLayout');
-$router->get('/admin/colonies/{id}/pipeline/pricing', 'App\Http\Controllers\Admin\ColonyController@pricing');
-$router->post('/admin/colonies/{id}/pipeline/pricing/save', 'App\Http\Controllers\Admin\ColonyController@savePricing');
-$router->get('/admin/colonies/{id}/pipeline/plots', 'App\Http\Controllers\Admin\ColonyController@plots');
-$router->get('/admin/colonies/{id}/pipeline/map', 'App\Http\Controllers\Admin\ColonyController@map');
-$router->get('/admin/colonies/{id}/pipeline/milestones', 'App\Http\Controllers\Admin\ColonyController@milestones');
-$router->post('/admin/colonies/{id}/pipeline/milestones', 'App\Http\Controllers\Admin\ColonyController@addMilestone');
-$router->get('/admin/colonies/{id}/pipeline/milestones/delete/{milestoneId}', 'App\Http\Controllers\Admin\ColonyController@deleteMilestone');
-
-/* API endpoints */
-$router->get('/admin/colonies/api/by-district/{district_id}', 'App\Http\Controllers\Admin\ColonyController@getColoniesByDistrict');
+// Location API endpoints (cascading dropdowns)
+$router->get('/admin/locations/api/districts/{state_id}', 'App\Http\Controllers\Admin\LocationAdminController@getDistrictsByState');
 
 /* Admin News/Blog */
 $router->get('/admin/news', 'App\\Http\\Controllers\\Admin\\NewsController@index');
@@ -2169,6 +2158,7 @@ $router->post('/admin/colonies/update/{id}', 'App\\Http\\Controllers\\Admin\\Col
 $router->post('/admin/colonies/destroy/{id}', 'App\\Http\\Controllers\\Admin\\ColonyController@destroy');
 $router->get('/admin/colonies/{id}/plots', 'App\\Http\\Controllers\\Admin\\ColonyController@plots');
 $router->get('/admin/colonies/{id}/financials', 'App\\Http\\Controllers\\Admin\\ColonyController@financials');
+$router->get('/admin/colonies/api/by-district/{district_id}', 'App\\Http\\Controllers\\Admin\\ColonyController@getColoniesByDistrict');
 
 // Admin ERP Dashboard (Cross-Module Reports)
 $router->get('/admin/erp/inventory', 'App\\Http\\Controllers\\Admin\\ErpDashboardController@inventory');
@@ -3719,10 +3709,14 @@ $router->post('/admin/farmers/gata/store', 'App\\Http\\Controllers\\Admin\\Farme
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // PROJECT PROGRESS TRACKING
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-$router->get('/admin/projects/progress', 'App\\Http\\Controllers\\Admin\\ProjectProgressController@index');
-$router->get('/admin/projects/progress/{id}', 'App\\Http\\Controllers\\Admin\\ProjectProgressController@show');
-$router->post('/admin/projects/progress/{id}/update', 'App\\Http\\Controllers\\Admin\\ProjectProgressController@updateProgress');
-$router->get('/admin/projects/progress/{id}/budget', 'App\\Http\\Controllers\\Admin\\ProjectProgressController@budget');
+$router->get('/admin/projects/progress', 'App\Http\Controllers\Admin\ProjectProgressController@index');
+$router->get('/admin/projects/progress/{id}', 'App\Http\Controllers\Admin\ProjectProgressController@show');
+$router->get('/admin/projects/progress/show/{id}', 'App\Http\Controllers\Admin\ProjectProgressController@show');
+$router->post('/admin/projects/progress/{id}/update', 'App\Http\Controllers\Admin\ProjectProgressController@updateProgress');
+$router->post('/admin/projects/progress/update/{id}', 'App\Http\Controllers\Admin\ProjectProgressController@updateProgress');
+$router->get('/admin/projects/progress/{id}/budget', 'App\Http\Controllers\Admin\ProjectProgressController@budget');
+$router->post('/admin/projects/progress/{id}/budget', 'App\Http\Controllers\Admin\ProjectProgressController@budget');
+$router->post('/admin/projects/progress/budget/{id}', 'App\Http\Controllers\Admin\ProjectProgressController@budget');
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // PROPERTY FEATURES (Ratings, Reviews, Favorites, Maintenance)

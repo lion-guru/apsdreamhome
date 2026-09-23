@@ -3,7 +3,7 @@ $page_title = $page_title ?? __('user_pay_token_page_title', 'Pay Token Amount')
 $current_page = 'bookings';
 $user = $user ?? [];
 $booking = $booking ?? null;
-$token_amount = $token_amount ?? 25000;
+$token_amount = $token_amount ?? 51000;
 $order_id = $order_id ?? null;
 $razorpay = $razorpay ?? ['key_id' => '', 'test' => true];
 ?>
@@ -127,6 +127,15 @@ $razorpay = $razorpay ?? ['key_id' => '', 'test' => true];
                         <i class="fas fa-flask me-1"></i> <?= __('user_pay_token_test_mode', 'Test Mode — No real money will be charged') ?>
                     </div>
                 <?php endif; ?>
+
+                <div class="alert alert-danger py-2 px-3 mb-3 small text-start border-start border-4 border-danger" style="background-color: #fff8f8;">
+                    <div class="d-flex align-items-start">
+                        <i class="fas fa-exclamation-triangle text-danger me-2 mt-1 flex-shrink-0"></i>
+                        <div>
+                            <strong>वैधानिक सूचना (Master Deed धारा 2.1 व 2.9):</strong> यह टोकन बुकिंग राशि (<strong>₹<?= number_format($token_amount) ?></strong>) पूर्णतः <strong>नॉन-रिफंडेबल (Non-Refundable / वापस नहीं होगी)</strong> है। 15 दिनों के भीतर अनिवार्य 25% आवंटन राशि जमा करना अनिवार्य है।
+                        </div>
+                    </div>
+                </div>
 
                 <button id="pay-btn" class="btn btn-primary btn-lg px-5 py-3">
                     <i class="fas fa-lock me-2"></i><?= __('user_pay_token_pay_now_prefix', 'Pay') ?> ₹<?= number_format($token_amount) ?> <?= __('user_pay_token_pay_now_suffix', 'Now') ?>

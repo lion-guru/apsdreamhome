@@ -105,7 +105,10 @@ async function run() {
     ['/admin/colony-pipeline', 'Colony Pipeline Dashboard'],
     ['/admin/colony-pipeline/2', 'Colony Pipeline Detail (Suryoday)'],
     ['/admin/colony-pipeline/2/map', 'Colony Interactive Map'],
-    ['/admin/locations/colonies', 'Location Colonies'],
+    ['/admin/colonies/2', 'Colony Detail (Suryoday)'],
+    ['/admin/colonies/2/edit', 'Edit Colony Form'],
+    ['/admin/colonies/2/plots', 'Colony Plots'],
+    ['/admin/colonies/2/financials', 'Colony Financials'],
   ];
   for (const [path, name] of colonyUrls) {
     try {

@@ -234,3 +234,23 @@ _342. **451KB route file = unmaintainable** — split by portal prefix. `/admin/
 _343. **62 view dirs with 5 duplicate pairs = ambiguous resolution** — when controller
 calls `render('employee/dashboard')` and both `employee/` and `employees/` exist,
 the first match wins. Always consolidate to canonical before adding new views.
+
+---
+
+## PHASE 16 — ENTERPRISE LEGAL & COMPLIANCE WORKFLOW: HARD & SOFT COPY DUAL LIFECYCLE
+
+> Added: 2026-09-23 (Session 153). Aligned with Master Deed 23 Covenants, RERA & UP Stamp Registration Act.
+
+### 16A. Dual Document Lifecycle Architecture (Soft Copy + Physical Hard Copy)
+- [x] **Fillable Soft-Copy Deeds Generated**: Bilingual Cancellation & Settlement Deeds (`cancellation_settlement_deed_hindi.doc`, `cancellation_settlement_deed_english.doc`, and HTML printable hub).
+- [x] **Stamp Paper Mode**: 95mm top margin toggle in print styles for direct feeding onto ₹100/₹500 Non-Judicial Stamp Papers.
+- [x] **Master Deed 23 Covenants Alignment**: Standardized across booking forms, pay token pages, customer confirmation, and CMS terms.
+- [x] **Document Management Engine**: `Admin\DocumentController.php` with categories, types, template engine (`document_templates`), and entity linkage (`entity_type`: booking, plot, project, customer, employee).
+- [x] **NOC & Sub-Registrar Registry Engine**: `Admin\NocRegistryController.php` tracking stamp paper values, serial numbers, and registry appointments.
+
+### 16B. Roadmap TODO for Legal Team & Physical Archive Management
+- [ ] **Physical Hard Copy Scan Upload Action**: Add 1-click "Upload Executed Stamp Paper Scan (हस्ताक्षरित भौतिक विलेख)" directly on Booking Details (`admin/bookings/show`, `pages/booking/detail.php`) to archive PDF/JPG scans of signed deeds.
+- [ ] **Physical Archive Location Tagging**: Add `physical_rack_no`, `locker_shelf_id`, and `folder_bar_code` metadata fields so office staff can locate the physical paper file in the Gorakhpur head office archive.
+- [ ] **Legal Team Quick Action Hub**: In Employee Portal (`role='legal'`), provide a 1-click dashboard for pending deed executions, stamp paper verification, and customer cancellation settlements.
+- [ ] **Digital Signature & Stamp Verification**: Expand `DocumentEsignService.php` to generate verification QR codes on printed deeds linking back to the verified system transaction hash.
+

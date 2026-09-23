@@ -46,8 +46,17 @@ $documents = $documents ?? [];
 </style>
     <div class="row">
         <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2><i class="fas fa-th"></i> Plot Details: <?= htmlspecialchars($plot['plot_number'] ?? '') ?></h2>
+            <div class="d-flex justify-content-between align-items-start mb-4">
+                <div>
+                    <h2><i class="fas fa-th text-teal me-2"></i> Plot Details: <?= htmlspecialchars($plot['plot_number'] ?? '') ?></h2>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0 small">
+                            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/erp">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/plots">Plots</a></li>
+                            <li class="breadcrumb-item active"><?= htmlspecialchars($plot['plot_number'] ?? 'Detail') ?></li>
+                        </ol>
+                    </nav>
+                </div>
                 <div>
                     <a href="<?= BASE_URL ?>/admin/plots" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Back to Plots

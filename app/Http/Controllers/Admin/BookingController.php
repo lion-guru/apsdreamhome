@@ -254,8 +254,16 @@ public function show($id)
                 }
             } catch (\Exception $e) { error_log('BookingController::show commission error: ' . $e->getMessage()); }
 
+            $documents = [];
+            try {
+                $dStmt = $this->db->prepare("SELECT * FROM booking_documents WHERE booking_id = ? ORDER BY id DESC");
+                $dStmt->execute([$id]);
+                $documents = $dStmt->fetchAll(\PDO::FETCH_ASSOC);
+            } catch (\Exception $e) { error_log('BookingController::show documents error: ' . $e->getMessage()); }
+
             return $this->render('admin/bookings/show', [
                 'booking'          => $booking,
+                'documents'        => $documents,
                 'payments'         => $payments,
                 'total_paid'       => $total_paid,
                 'commissions'      => $commissions,
@@ -358,6 +366,128 @@ public function show($id)
             error_log('BookingController::legalKit error: ' . $e->getMessage());
             $_SESSION['error'] = 'Failed to generate legal kit: ' . $e->getMessage();
             $this->redirect('/admin/bookings/' . $id);
+        }
+    }
+
+    /**
+     * Upload executed physical scan or legal document for a booking
+     */
+    public function uploadExecutedDocument($id)
+    {
+        $this->requireAdmin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect("/admin/bookings/{$id}");
+            return;
+        }
+
+        try {
+            $bookingId = (int)$id;
+            if ($bookingId <= 0) {
+                throw new \Exception('Invalid booking ID.');
+            }
+
+            if (!isset($_FILES['document_file']) || $_FILES['document_file']['error'] !== UPLOAD_ERR_OK) {
+                throw new \Exception('Please select a valid document file to upload.');
+            }
+
+            $file = $_FILES['document_file'];
+            $docType = trim($_POST['document_type'] ?? 'other');
+            $docName = trim($_POST['document_name'] ?? '');
+            if ($docName === '') {
+                $docName = pathinfo($file['name'], PATHINFO_FILENAME);
+            }
+            $docNumber = trim($_POST['document_number'] ?? ('DOC-BK' . $bookingId . '-' . time()));
+            $physicalLocation = trim($_POST['physical_location'] ?? '');
+            $notes = trim($_POST['notes'] ?? '');
+            $status = trim($_POST['status'] ?? 'verified');
+
+            // Storage directory
+            $uploadDir = STORAGE_PATH . '/uploads/bookings/' . $bookingId . '/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+
+            $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+            $allowedExts = ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx'];
+            if (!in_array($ext, $allowedExts)) {
+                throw new \Exception('Only PDF, JPG, PNG, and DOC/DOCX files are permitted.');
+            }
+
+            $safeFileName = 'executed_' . time() . '_' . preg_replace('/[^a-zA-Z0-9_\-\.]/', '_', $file['name']);
+            $targetPath = $uploadDir . $safeFileName;
+
+            if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
+                throw new \Exception('Failed to save the uploaded document file.');
+            }
+
+            $fileUrl = BASE_URL . '/storage/uploads/bookings/' . $bookingId . '/' . $safeFileName;
+            $fileSize = (int)($file['size'] ?? 0);
+            $mimeType = $file['type'] ?? 'application/octet-stream';
+            $tid = (int)$this->tenantId();
+            $uploadedBy = (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 1);
+
+            $stmt = $this->db->prepare("
+                INSERT INTO booking_documents 
+                (booking_id, document_name, document_type, document_number, file_path, file_url, file_size, mime_type, status, physical_location, notes, uploaded_by, tenant_id, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+            ");
+            $stmt->execute([
+                $bookingId,
+                $docName,
+                $docType,
+                $docNumber,
+                $targetPath,
+                $fileUrl,
+                $fileSize,
+                $mimeType,
+                $status,
+                $physicalLocation,
+                $notes,
+                $uploadedBy,
+                $tid
+            ]);
+
+            $_SESSION['flash_message'] = 'Executed physical document / scan uploaded and archived successfully.';
+            $_SESSION['flash_type'] = 'success';
+        } catch (\Exception $e) {
+            $_SESSION['flash_message'] = 'Upload Error: ' . $e->getMessage();
+            $_SESSION['flash_type'] = 'danger';
+        }
+
+        $this->redirect("/admin/bookings/{$id}#tab-documents");
+    }
+
+    /**
+     * Download or view an archived booking document
+     */
+    public function downloadDocument($docId)
+    {
+        $this->requireAdmin();
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM booking_documents WHERE id = ?");
+            $stmt->execute([(int)$docId]);
+            $doc = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$doc || empty($doc['file_path']) || !file_exists($doc['file_path'])) {
+                $_SESSION['flash_message'] = 'File not found on storage server.';
+                $_SESSION['flash_type'] = 'danger';
+                $this->redirect('/admin/bookings/' . ($doc['booking_id'] ?? ''));
+                return;
+            }
+
+            header('Content-Description: File Transfer');
+            header('Content-Type: ' . ($doc['mime_type'] ?: 'application/octet-stream'));
+            header('Content-Disposition: attachment; filename="' . basename($doc['file_path']) . '"');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize($doc['file_path']));
+            readfile($doc['file_path']);
+            exit;
+        } catch (\Exception $e) {
+            $_SESSION['flash_message'] = 'Error downloading: ' . $e->getMessage();
+            $_SESSION['flash_type'] = 'danger';
+            $this->redirect('/admin/bookings');
         }
     }
 

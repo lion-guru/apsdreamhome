@@ -1,9 +1,12 @@
 <?php
 
 /**
- * Admin Sidebar - 100% DB-Driven
- * All menu items come from admin_menu_items table.
- * NO hardcoded fallback — if DB is empty, sidebar shows a helpful error.
+ * Admin Sidebar - DB-driven with future-proof fallback.
+ * Primary: admin_menu_items table (RBAC-filtered). If the DB menu is
+ * unreachable or empty (crash/restore gaps), the service self-heals
+ * missing rows from the static manifest, and as a last resort the
+ * sidebar renders the manifest directly — the menu never goes blank.
+ * Route guards (requireAdmin/checkMenuPermission) stay the enforcer.
  */
 
 use App\Services\AdminMenuService;
@@ -16,12 +19,34 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
 // Initialize menu service
 $menuItems = [];
 $menuError = null;
+$menuOffline = false;
 try {
     $menuService = new AdminMenuService();
     $menuItems = $menuService->getMenuItems();
+    if (empty($menuItems)) {
+        // Self-heal: re-seed missing rows from the static manifest, then re-read
+        try {
+            $menuService->ensureMenuIntegrity();
+            $menuItems = $menuService->getMenuItems();
+        } catch (\Throwable $healError) {
+            error_log('Sidebar: menu self-heal failed: ' . $healError->getMessage());
+        }
+    }
+    if (empty($menuItems)) {
+        // Last resort: static manifest fallback — menu never goes blank
+        $menuItems = $menuService->fallbackMenuItems();
+        $menuOffline = !empty($menuItems);
+    }
 } catch (\Throwable $e) {
     $menuError = $e->getMessage();
     error_log('Sidebar: AdminMenuService failed: ' . $e->getMessage());
+    try {
+        $menuItems = (new AdminMenuService())->fallbackMenuItems();
+        $menuOffline = !empty($menuItems);
+        if ($menuOffline) $menuError = null;
+    } catch (\Throwable $fbError) {
+        error_log('Sidebar: manifest fallback failed: ' . $fbError->getMessage());
+    }
 }
 
 // Group menu items by section
@@ -46,12 +71,12 @@ $hubDefinitions = [
     'inventory' => [
         'label' => '1. Inventory & Projects',
         'icon' => 'fas fa-building',
-        'sections' => ['properties', 'colonies', 'land', 'plots', 'sites', 'cms'],
+        'sections' => ['projects', 'colonies', 'plots', 'land', 'properties', 'valuations', 'sites', 'cms'],
     ],
     'sales' => [
         'label' => '2. Sales & CRM Pipeline',
         'icon' => 'fas fa-funnel-dollar',
-        'sections' => ['crm', 'sales', 'legal', 'leads', 'inquiries', 'site_visits', 'bookings', 'registry', 'possession'],
+        'sections' => ['crm', 'sales', 'leads', 'inquiries', 'site_visits', 'bookings', 'legal', 'registry', 'possession'],
     ],
     'mlm' => [
         'label' => '3. MLM Network & Team',
@@ -85,7 +110,12 @@ $defaultHub = 'control';
 $sectionNames = [
     'dashboards'  => '📊 Dashboards',
     'crm'         => '👥 CRM & Leads',
-    'properties'  => '🏠 Properties & Land',
+    'projects'    => '🏗️ Projects & Townships',
+    'colonies'    => '🏘️ Colonies & Planning',
+    'plots'       => '📐 Plots & Inventory',
+    'land'        => '🏞️ Land Bank & Acquisitions',
+    'properties'  => '🏠 Properties & Resale',
+    'valuations'  => '📊 Property Valuations',
     'mlm'         => '📜 MLM Network',
     'finance'     => '💰 Finance & Accounting',
     'commission'  => '💸 Commission Engine',
@@ -99,7 +129,7 @@ $sectionNames = [
     'hrm'         => '👨‍💼 HR & Payroll',
     'legal'       => '⚖️ Legal & Compliance',
     'sales'       => '🏷️ Sales & Bookings',
-    'services'    => '🛠️ Services',
+    'services'    => '🛠️ Local Services & Directory',
     'system'      => '🔧 System Admin',
     'ai_tech'     => '🤖 AI & Technology',
     'security'    => '🔒 Security',
@@ -139,34 +169,59 @@ $sectionNames = [
     'training'    => '🎓 Training',
     'quality'     => '✅ Quality',
     'health'      => '🏥 Health',
-    'services'    => '🛠️ Services',
     'hr'          => '👨‍💼 HR',
 ];
 
 // Hub sort order
 $hubOrder = ['inventory', 'sales', 'mlm', 'finance', 'control'];
 
+// Flatten the menu tree: getMenuItems() nests children inside parents for
+// RBAC roles (admin/manager), but the sidebar groups by section — without
+// flattening, nested children (e.g. Locations submenu) never render.
+$flatItems = [];
+$flattenMenu = function ($items, $parentSection = null) use (&$flattenMenu, &$flatItems) {
+    foreach ($items as $item) {
+        if (empty($item['section']) && $parentSection) {
+            $item['section'] = $parentSection;
+        }
+        $flatItems[] = $item;
+        if (!empty($item['children']) && is_array($item['children'])) {
+            $flattenMenu($item['children'], $item['section'] ?? $parentSection);
+        }
+    }
+};
+$flattenMenu($menuItems);
+
 // Group menu items by hub (using 5 Enterprise Hubs)
 $hubbedItems = [];
-foreach ($menuItems as $item) {
+foreach ($flatItems as $item) {
     $section = strtolower($item['section'] ?? 'main');
     $hub = $sectionToHub[$section] ?? $defaultHub;
     $hubbedItems[$hub][$section][] = $item;
 }
 
-// Sort hubs by defined order
+// Sort hubs by defined order, and preserve defined section order within each hub
 $sortedHubbed = [];
 foreach ($hubOrder as $hub) {
     if (isset($hubbedItems[$hub])) {
-        // Sort sections within each hub alphabetically (or keep original order)
-        ksort($hubbedItems[$hub]);
-        $sortedHubbed[$hub] = $hubbedItems[$hub];
+        $orderedSections = [];
+        $hubSections = $hubDefinitions[$hub]['sections'] ?? [];
+        foreach ($hubSections as $sec) {
+            if (isset($hubbedItems[$hub][$sec])) {
+                $orderedSections[$sec] = $hubbedItems[$hub][$sec];
+            }
+        }
+        foreach ($hubbedItems[$hub] as $sec => $items) {
+            if (!isset($orderedSections[$sec])) {
+                $orderedSections[$sec] = $items;
+            }
+        }
+        $sortedHubbed[$hub] = $orderedSections;
     }
 }
 // Append any hubs not in the order list
 foreach ($hubbedItems as $hub => $sections) {
     if (!isset($sortedHubbed[$hub])) {
-        ksort($sections);
         $sortedHubbed[$hub] = $sections;
     }
 }
@@ -266,6 +321,14 @@ $hubbedItems = $sortedHubbed;
         <div >
             <i class="fas fa-exclamation-triangle"></i> Sidebar error:<br>
             <code><?php echo htmlspecialchars($menuError ?? ''); ?></code>
+        </div>
+    <?php endif; ?>
+
+    <?php if (!empty($menuOffline)): ?>
+        <div class="px-2 pb-2">
+            <span class="badge bg-warning text-dark w-100" title="Menu served from built-in manifest while the database menu is unavailable">
+                <i class="fas fa-shield-alt me-1"></i>Offline menu — DB sync pending
+            </span>
         </div>
     <?php endif; ?>
 

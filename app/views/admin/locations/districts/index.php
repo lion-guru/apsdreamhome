@@ -119,7 +119,7 @@
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="<?= BASE_URL ?>/admin/locations/colonies?district_id=<?= e($district['id']) ?>" class="btn btn-sm btn-outline-success">
+                                        <a href="<?= BASE_URL ?>/admin/colonies?district_id=<?= e($district['id']) ?>" class="btn btn-sm btn-outline-success">
                                             <?= e($district['colony_count']) ?> Colonies
                                         </a>
                                     </td>
@@ -130,7 +130,7 @@
                                     </td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
-                                            <a href="<?= BASE_URL ?>/admin/locations/colonies?district_id=<?= e($district['id']) ?>" class="btn btn-outline-success" title="View Colonies">
+                                            <a href="<?= BASE_URL ?>/admin/colonies?district_id=<?= e($district['id']) ?>" class="btn btn-outline-success" title="View Colonies">
                                                 <i class="fas fa-home"></i>
                                             </a>
                                             <a href="<?= BASE_URL ?>/admin/locations/districts/edit/<?= e($district['id']) ?>" class="btn btn-outline-primary" title="Edit">

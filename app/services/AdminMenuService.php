@@ -348,6 +348,13 @@ class AdminMenuService
         foreach ($children as $parentId => $childItems) {
             if (isset($tree[$parentId])) {
                 $tree[$parentId]['children'] = $childItems;
+            } else {
+                // Orphaned children (role can see the child but not its parent):
+                // promote to top level instead of silently dropping them.
+                foreach ($childItems as $child) {
+                    $child['children'] = [];
+                    $tree[$child['id']] = $child;
+                }
             }
         }
 
@@ -514,6 +521,114 @@ class AdminMenuService
             error_log("AdminMenuService::grantRolePermission error: " . $e->getMessage());
             return false;
         }
+    }
+
+    /**
+     * Static menu manifest (config/admin_menu_manifest.php) — future-proof
+     * snapshot of admin_menu_items keyed by URL. Used for sidebar fallback
+     * and self-heal re-seeding when DB menu rows go missing.
+     */
+    private static ?array $manifestCache = null;
+
+    public static function manifest(): array
+    {
+        if (self::$manifestCache === null) {
+            $file = dirname(__DIR__, 2) . '/config/admin_menu_manifest.php';
+            self::$manifestCache = is_readable($file) ? (require $file) : [];
+            if (!is_array(self::$manifestCache)) self::$manifestCache = [];
+        }
+        return self::$manifestCache;
+    }
+
+    /**
+     * Self-heal: re-seed any manifest menu rows / role permissions missing
+     * from the DB (crash restores, partial deletes). Idempotent — only
+     * INSERTs what is absent. Returns report; $dryRun writes nothing.
+     */
+    public function ensureMenuIntegrity(bool $dryRun = false): array
+    {
+        $report = ['missing_items' => [], 'missing_perms' => 0, 'wrote' => false];
+        $manifest = self::manifest();
+        if (empty($manifest)) return $report;
+
+        $existing = [];
+        foreach ($this->db->fetchAll("SELECT id, url FROM admin_menu_items") as $row) {
+            $existing[$row['url']] = (int)$row['id'];
+        }
+        $havePerms = [];
+        foreach ($this->db->fetchAll("SELECT role, menu_item_id FROM admin_role_menu_permissions") as $row) {
+            $havePerms[$row['role'] . ':' . $row['menu_item_id']] = true;
+        }
+
+        $itemStmt = $this->db->prepare(
+            "INSERT INTO admin_menu_items (name, icon, url, parent_id, section, order_index, permission_key, is_active)
+             VALUES (?, ?, ?, ?, ?, ?, ?, 1)"
+        );
+        $permStmt = $this->db->prepare(
+            "INSERT IGNORE INTO admin_role_menu_permissions (role, menu_item_id, can_view, can_create, can_edit, can_delete)
+             VALUES (?, ?, ?, ?, ?, ?)"
+        );
+
+        foreach ($manifest as $url => $m) {
+            if (!isset($existing[$url])) {
+                $report['missing_items'][] = $url;
+                if ($dryRun) continue;
+                $parentId = (!empty($m['parent_url']) && isset($existing[$m['parent_url']]))
+                    ? $existing[$m['parent_url']] : null;
+                $itemStmt->execute([
+                    $m['name'], $m['icon'], $url, $parentId,
+                    $m['section'], (int)$m['order'], $m['perm'],
+                ]);
+                $id = (int)$this->db->lastInsertId();
+                if ($id > 0) $existing[$url] = $id;
+                $report['wrote'] = true;
+            }
+            if (isset($existing[$url]) && !empty($m['roles'])) {
+                foreach ($m['roles'] as $role => $p) {
+                    if (isset($havePerms[$role . ':' . $existing[$url]])) continue;
+                    $report['missing_perms']++;
+                    if ($dryRun) continue;
+                    $permStmt->execute([
+                        $role, $existing[$url],
+                        (int)$p['view'], (int)$p['create'], (int)$p['edit'], (int)$p['delete'],
+                    ]);
+                    $havePerms[$role . ':' . $existing[$url]] = true;
+                    $report['wrote'] = true;
+                }
+            }
+        }
+
+        if ($report['wrote']) $this->clearMenuCache();
+        return $report;
+    }
+
+    /**
+     * Fallback menu items from the static manifest (DB unreachable/empty).
+     * Shaped like DB rows so the sidebar renders unchanged. Route guards
+     * (requireAdmin/checkMenuPermission) remain the authorization enforcer.
+     */
+    public function fallbackMenuItems(?string $role = null): array
+    {
+        $role = $role ?? $this->currentRole;
+        $items = [];
+        $order = 0;
+        foreach (self::manifest() as $url => $m) {
+            if (!in_array($role, ['super_admin', 'admin'], true) && !isset($m['roles'][$role])) {
+                continue;
+            }
+            $items[] = [
+                'id' => 0,
+                'name' => $m['name'],
+                'icon' => $m['icon'] ?: 'fas fa-circle',
+                'url' => $url,
+                'parent_id' => null,
+                'section' => $m['section'],
+                'order_index' => $order++,
+                'permission_key' => $m['perm'],
+                'is_active' => 1,
+            ];
+        }
+        return $items;
     }
 
     /**

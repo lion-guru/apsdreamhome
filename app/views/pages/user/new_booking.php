@@ -168,6 +168,7 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
                                         data-area="<?= number_format((float)$plot['area_sqft']) ?>"
                                         data-dims="<?= htmlspecialchars($plot['dimension_label'] ?: ($plot['width_ft'] . 'x' . $plot['length_ft'])) ?>"
                                         data-price="<?= number_format((float)$plot['total_price']) ?>"
+                                        data-raw-price="<?= (float)$plot['total_price'] ?>"
                                         data-colony="<?= htmlspecialchars($plot['colony_name'] ?? '') ?>"
                                         data-facing="<?= htmlspecialchars($plot['facing'] ?? '-') ?>">
                                     <i class="fas fa-check me-1"></i><?= __('user_new_booking_book_now', 'Book Now') ?>
@@ -206,10 +207,23 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
                     </div>
                     <div class="col-md-6">
                         <div class="bg-light rounded-3 p-3">
-                            <h6 class="text-muted small mb-2"><?= __('user_new_booking_modal_booking_summary', 'BOOKING SUMMARY') ?></h6>
-                            <p class="mb-1"><?= __('user_new_booking_modal_token_amount', 'Token Amount') ?>: <strong>₹51,000</strong> <span class="badge bg-danger ms-1">Non-Refundable</span></p>
-                            <p class="mb-1"><?= __('user_new_booking_modal_total_price', 'Total Price') ?>: <strong id="modal-price"></strong></p>
-                            <p class="mb-0"><?= __('user_new_booking_modal_status', 'Status') ?>: <span class="badge bg-primary"><?= __('user_new_booking_modal_token_paid', 'Token Paid') ?></span></p>
+                            <h6 class="text-muted small mb-2"><?= __('user_new_booking_modal_booking_summary', 'BOOKING & FINANCIAL SUMMARY') ?></h6>
+                            <p class="mb-1 d-flex justify-content-between">
+                                <span><?= __('user_new_booking_modal_total_price', 'Total Price') ?>:</span>
+                                <strong id="modal-price" class="text-dark"></strong>
+                            </p>
+                            <p class="mb-1 d-flex justify-content-between p-2 bg-danger bg-opacity-10 rounded">
+                                <span class="text-danger fw-bold">Token Due Now:</span>
+                                <strong class="text-danger">₹51,000 <small>(Non-Refundable)</small></strong>
+                            </p>
+                            <p class="mb-1 d-flex justify-content-between p-2 bg-warning bg-opacity-10 rounded">
+                                <span class="text-dark fw-bold">Mandatory 25% (15 Days):</span>
+                                <strong id="modal-balance-15days" class="text-dark"></strong>
+                            </p>
+                            <p class="mb-0 d-flex justify-content-between pt-1 border-top">
+                                <span class="text-primary fw-bold">36-Month EMI (Approx):</span>
+                                <strong id="modal-emi-36" class="text-primary"></strong>
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -238,14 +252,15 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
                         </div>
                     </div>
 
-                    <div class="alert alert-warning mt-3 mb-0 small border-start border-4 border-danger">
-                        <i class="fas fa-exclamation-triangle text-danger me-1"></i>
-                        <?= __('user_new_booking_terms', 'By confirming, you agree to pay the token amount of') ?> <strong>₹51,000</strong> <?= __('user_new_booking_terms_towards', 'towards the booking.') ?>
-                        <div class="text-danger fw-bold mt-1">
-                            ⚠️ मास्टर लीगल डीड (धारा 2.1 व 2.9) के अनुसार: टोकन बुकिंग राशि ₹51,000 पूर्णतः गैर-वापसी योग्य (Non-Refundable / वापस नहीं होगी) है।
-                        </div>
-                        <div class="text-muted mt-1">
-                            <?= __('user_new_booking_terms_emi', 'The remaining amount can be paid via EMI or lump sum as per your payment plan.') ?>
+                    <div class="p-3 rounded-3 border border-danger mt-3 bg-danger bg-opacity-10">
+                        <div class="form-check mb-0">
+                            <input class="form-check-input border-danger" type="checkbox" id="modalConsentCheck" required checked>
+                            <label class="form-check-label small fw-bold text-danger ms-1" for="modalConsentCheck">
+                                <i class="fas fa-gavel me-1"></i>Master Deed (Section 2.1 &amp; 2.9) Statutory Consent:
+                            </label>
+                            <p class="small text-dark mb-0 mt-1" style="font-size: 0.85rem; line-height: 1.4;">
+                                I acknowledge that the booking token of <strong>₹51,000 is 100% Non-Refundable / गैर-वापसी योग्य</strong>. I agree to pay the mandatory 25% down payment within 15 calendar days to prevent allotment forfeiture.
+                            </p>
                         </div>
                     </div>
                 </form>
@@ -319,6 +334,22 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('modal-colony').textContent = this.dataset.colony;
             document.getElementById('modal-facing').textContent = this.dataset.facing;
             document.getElementById('modal-notes').value = '';
+
+            var rawPrice = parseFloat(this.dataset.rawPrice || this.dataset.price.replace(/,/g, '')) || 0;
+            var tokenAmt = 51000;
+            var mandatory25 = Math.round(rawPrice * 0.25);
+            var balance15 = Math.max(0, mandatory25 - tokenAmt);
+            var remaining75 = Math.max(0, rawPrice - tokenAmt - balance15);
+            var emi36 = Math.round(remaining75 / 36);
+
+            var elBal15 = document.getElementById('modal-balance-15days');
+            if (elBal15) {
+                elBal15.textContent = '₹' + balance15.toLocaleString('en-IN') + ' (25% minus ₹51k)';
+            }
+            var elEmi36 = document.getElementById('modal-emi-36');
+            if (elEmi36) {
+                elEmi36.textContent = '₹' + emi36.toLocaleString('en-IN') + ' / mo (36 Mos)';
+            }
 
             var modal = new bootstrap.Modal(document.getElementById('bookingModal'));
             modal.show();

@@ -19,28 +19,18 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">State</label>
-                        <select name="state" class="form-select" onchange="loadDistricts(this.value)">
+                        <select name="state_id" class="form-select" onchange="loadDistricts(this.value)">
                             <option value="">Select State</option>
                             <?php foreach ($states as $s): ?>
-                            <option value="<?php echo $s['name']; ?>"><?php echo htmlspecialchars($s['name'] ?? ''); ?></option>
+                            <option value="<?php echo $s['id']; ?>"><?php echo htmlspecialchars($s['name'] ?? ''); ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">District</label>
+                        <label class="form-label">District *</label>
                         <select name="district_id" class="form-select" id="district_select">
                             <option value="">Select State First</option>
                         </select>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">City</label>
-                        <input name="city" class="form-control" placeholder="e.g., Gorakhpur">
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Pincode</label>
-                        <input name="pincode" class="form-control" placeholder="273001" pattern="[0-9]{6}" maxlength="6">
                     </div>
                 </div>
                 <div class="mb-3">
@@ -84,10 +74,6 @@
                             <option value="completed">Completed</option>
                         </select>
                     </div>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Development Cost (₹)</label>
-                    <input name="development_cost" type="number" step="0.01" class="form-control" placeholder="0.00">
                 </div>
             </div></div>
 
@@ -213,9 +199,9 @@
 </div>
 
 <script>
-function loadDistricts(stateName) {
-    if (!stateName) return;
-    fetch('<?php echo BASE_URL; ?>/api/locations/districts?state=' + encodeURIComponent(stateName))
+function loadDistricts(stateId) {
+    if (!stateId) return;
+    fetch('<?php echo BASE_URL; ?>/api/locations/districts?state_id=' + stateId)
         .then(r => r.json())
         .then(data => {
             const sel = document.getElementById('district_select');

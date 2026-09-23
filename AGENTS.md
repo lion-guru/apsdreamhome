@@ -1,3 +1,26 @@
+## Session 157: Location Menu Restoration, Centralized LocationService & Future-Proof Menu System (2026-09-23)
+
+### Work Done
+
+| # | Fix | Root cause | Resolution |
+|---|-----|------------|-----------|
+| 1 | Location submenu invisible for admin role | `AdminMenuService::getMenuItems()` nests children for RBAC roles but `rbac_sidebar.php` iterated flat — nested children never rendered (super_admin unaffected, hence late discovery) | Added recursive tree-flatten in sidebar (parent-section fallback); verified live HTML shows all 4 children for admin + super_admin ✅ |
+| 2 | Manager role lost permitted menu items | `buildMenuTree()` silently dropped children whose parent the role can't see (manager had perms on 304-307 but not parent 82) | Orphan promotion: permitted orphans render top-level; manager 44➔60 items ✅ |
+| 3 | Future-proof menu (DB-crash safe) | 100% DB-driven sidebar goes blank if menu rows are lost (crash restores, partial deletes) | `config/admin_menu_manifest.php` (289 items + full role perms, URL-keyed) + `ensureMenuIntegrity()` self-heal + manifest fallback with offline badge; route guards stay enforcer ✅ |
+| 4 | 41 missing role grants restored | Snapshot diff found 41 permission rows vanished (company-loans ×19, site-visits ×8, cash-flow ×6, kyc ×5, locations parent ×3) incl. super_admin rows — accidental, not deliberate tightening | Re-inserted via self-heal; re-dry-run 0 missing; spot-checks RESTORED ✅ |
+| 5 | Centralized `LocationService` | Address data free-text per form (no FKs/coords); Haversine + pincode logic scattered | New `App\Services\LocationService` (master data, pincode lookup w/ India-Post table, cached Nominatim geocode, distance, nearby landmarks); repointed `ToolsAdminController::haversineDistance` + `AddressService::lookupByPincode`; shared `components/address-form.php` partial; `scripts/import_pincodes.php` for 19k seed ✅ |
+| 6 | Landmarks `status` vs `is_active` bug (+2 dashboards) | `colonies.status` holds pipeline stage (`planning`), visibility is `is_active` — landmarks page showed 0 colonies/distances; same bug in Colony-360 stat + mobile report | Fixed 4 queries; backfilled 164 distance rows (matrix 5×41=205); states `country_id` NULL backfill (API returned 15/36 states) ✅ |
+| 7 | MySQL recovery verified + ngrok cleared | User suspected ngrok port conflict | Verified: mysqld :3306, Apache :80, no overlap; ngrok absent; transactions 5 rows ₹17.6L CHECK OK (no post-backup entries to re-enter); started ngrok tunnel, 10/10 page hits via local+tunnel, same mysqld PID, zero fresh err errors ✅ |
+| 8 | Master Test Suite 100% Pass | Validate zero regressions | `testing/master_test_runner.php`: 6/6 in ~14-18s (100% HEALTHY) ✅ |
+
+### Key Lessons (carried)
+_373. **Sidebar must consume the menu tree, not assume flat lists** — RBAC services nest children for non-superadmin roles; any flat `foreach` over menu items silently hides entire submenu levels. Flatten (or recurse) at render.
+_374. **Never drop orphaned permitted children** — if a role can see a child but not its parent, promote the child; deleting it from the tree revokes access the RBAC table explicitly granted.
+_375. **Snapshot RBAC tables to code (URL-keyed) for crash-proofing** — auto-increment ids don't survive restores; URL keys + INSERT-only heal make menu loss self-repairing without touching anyone's deliberate changes.
+_376. **Missing super_admin rows prove accidental permission loss** — deliberate tightening never removes super_admin (it bypasses all checks); when super_admin grants vanish alongside role grants, restore rather than re-baseline.
+_377. **ngrok http-forwarding cannot port-conflict MySQL** — ngrok listens on :4040 (dashboard) and forwards localhost:80 outbound; crashes coinciding with ngrok are traffic-triggered (external hits exercising corrupt pages), proven via netstat + PID survival tests.
+
+---
 ## Session 156: Admin Menu Re-Architecture, Properties & Land Disaggregation & Enterprise Real Estate Taxonomy (2026-09-23)
 
 ### Work Done

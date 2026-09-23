@@ -45,7 +45,7 @@ async function comprehensiveAdminTest() {
             // Testimonials, Blog, Jobs
             '/admin/testimonials', '/admin/blog', '/admin/jobs',
             // Locations
-            '/admin/locations/states', '/admin/locations/districts', '/admin/locations/colonies',
+            '/admin/locations/states', '/admin/locations/districts', '/admin/colonies', '/admin/colonies/create',
             // Campaigns & Reports
             '/admin/campaigns', '/admin/reports', '/admin/analytics',
             // Other

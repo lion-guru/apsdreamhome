@@ -471,6 +471,15 @@ if (!$activeBooking && !empty($bookings)) {
         </span>
     </div>
     <div class="pb-card-body">
+        <!-- Master Deed Token Policy Alert -->
+        <div class="alert alert-danger py-2 px-3 mb-3 small border-start border-4 border-danger d-flex align-items-center justify-content-between flex-wrap gap-2" style="background-color:#fff5f5;">
+            <div>
+                <i class="fas fa-shield-alt text-danger me-2"></i>
+                <strong>वैधानिक सूचना (Master Deed धारा 2.1 व 2.9):</strong> बुकिंग हेतु जमा की गई टोकन बुकिंग राशि (₹51,000) पूर्णतः <strong>नॉन-रिफंडेबल (Non-Refundable / वापस नहीं होगी)</strong> है।
+            </div>
+            <span class="badge bg-danger">Non-Refundable Token</span>
+        </div>
+
         <div class="pb-info-grid">
             <div class="pb-info-item">
                 <small>Plot Number</small>

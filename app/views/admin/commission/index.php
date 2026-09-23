@@ -1,8 +1,19 @@
-ï»¿<div class="container-fluid">
+<?php
+$stats = $stats ?? [];
+?>
+<div class="container-fluid">
     <div class="row mb-4">
         <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <h2><i class="fas fa-coins"></i> Commission Management System</h2>
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h2><i class="fas fa-coins text-warning me-2"></i> Commission Management System</h2>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0 small">
+                            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/erp">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Commission</li>
+                        </ol>
+                    </nav>
+                </div>
                 <div>
                     <a href="<?= BASE_URL ?>/admin/commission/agent-rates" class="btn btn-sm btn-outline-primary"><i class="fas fa-dollar-sign"></i> Agent Rates</a>
                     <a href="<?= BASE_URL ?>/admin/commission/associate/structure" class="btn btn-sm btn-outline-success"><i class="fas fa-layer-group"></i> Structure</a>

@@ -4,7 +4,15 @@ $active_page = 'bookings';
 ?>
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2"><?= __('admin_bookings_management') ?></h1>
+    <div>
+        <h1 class="h2"><i class="fas fa-file-contract text-primary me-2"></i><?= __('admin_bookings_management') ?></h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 small">
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/erp">Dashboard</a></li>
+                <li class="breadcrumb-item active">Bookings</li>
+            </ol>
+        </nav>
+    </div>
     <div class="btn-toolbar mb-2 mb-md-0">
         <a href="<?php echo BASE_URL; ?>/admin/bookings/create" class="btn btn-primary me-2">
             <i class="fas fa-plus"></i> <?= __('admin_new_booking') ?>

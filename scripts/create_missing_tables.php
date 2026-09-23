@@ -6,6 +6,7 @@
 require __DIR__ . '/../config/bootstrap.php';
 
 $db = \App\Core\Database\Database::getInstance();
+$pdo = $db->getConnection();
 
 $tables = [
     // CRM form submissions (embedded forms on landing pages)
@@ -121,12 +122,35 @@ $tables = [
         INDEX idx_date (collection_date),
         INDEX idx_tenant (tenant_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
+
+    // Booking documents (Dual soft/hard copy lifecycle)
+    "CREATE TABLE IF NOT EXISTS booking_documents (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        booking_id INT NOT NULL,
+        document_name VARCHAR(255) NOT NULL,
+        document_type VARCHAR(64) NOT NULL DEFAULT 'other',
+        document_number VARCHAR(100) DEFAULT NULL,
+        file_path VARCHAR(500) DEFAULT NULL,
+        file_url VARCHAR(500) DEFAULT NULL,
+        file_size INT DEFAULT 0,
+        mime_type VARCHAR(100) DEFAULT NULL,
+        status ENUM('pending', 'verified', 'approved', 'rejected') NOT NULL DEFAULT 'pending',
+        physical_location VARCHAR(255) DEFAULT NULL,
+        notes TEXT DEFAULT NULL,
+        uploaded_by INT DEFAULT NULL,
+        tenant_id INT UNSIGNED NOT NULL DEFAULT 1,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        INDEX idx_bk_doc_booking (booking_id),
+        INDEX idx_bk_doc_type (document_type),
+        INDEX idx_bk_doc_tenant (tenant_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
 ];
 
 $created = 0;
 foreach ($tables as $sql) {
     try {
-        $db->query($sql);
+        $pdo->exec($sql);
         if (preg_match('/CREATE TABLE IF NOT EXISTS `?(\w+)`?/i', $sql, $m)) {
             echo "Created: {$m[1]}\n";
             $created++;
@@ -138,4 +162,4 @@ foreach ($tables as $sql) {
     }
 }
 
-echo "\nTotal tables created: $created\n";?>
+echo "\nTotal tables created: $created\n";

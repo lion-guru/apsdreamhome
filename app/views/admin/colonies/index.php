@@ -2,9 +2,9 @@
 $colonies = $colonies ?? [];
 $states   = $states ?? [];
 $districts = $districts ?? [];
-$totalValue = $totalValue ?? 0;
-$selectedState = $selectedState ?? null;
-$selectedDistrict = $selectedDistrict ?? null;
+$search   = $search ?? '';
+$state_id = $state_id ?? 0;
+$district_id = $district_id ?? 0;
 
 $total    = count($colonies);
 $active   = 0; $inactive = 0; $totalPlots = 0; $availPlots = 0;
@@ -35,15 +35,15 @@ foreach ($colonies as $c) {
     </div>
 </div>
 
-<!-- State/District Filter Form -->
-<form method="GET" class="row g-2 mb-4 align-items-end">
+<!-- State/District Filter Form (server-side; matches ColonyController@index) -->
+<form method="GET" action="<?= BASE_URL ?>/admin/colonies" class="row g-2 mb-4 align-items-end">
     <div class="col-md-3">
         <label class="form-label small mb-1">State</label>
-        <select name="state" class="form-select form-select-sm" onchange="this.form.submit()">
-            <option value="">All States</option>
-            <?php foreach ($states as $state): ?>
-                <option value="<?= htmlspecialchars($state) ?>" <?= $selectedState === $state ? 'selected' : '' ?>>
-                    <?= htmlspecialchars($state) ?>
+        <select name="state_id" class="form-select form-select-sm" onchange="this.form.submit()">
+            <option value="0">All States</option>
+            <?php foreach ($states as $s): ?>
+                <option value="<?= (int)($s['id'] ?? 0) ?>" <?= ((int)$state_id === (int)($s['id'] ?? 0) && (int)$state_id > 0) ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($s['name'] ?? '') ?>
                 </option>
             <?php endforeach; ?>
         </select>
@@ -51,17 +51,21 @@ foreach ($colonies as $c) {
     <div class="col-md-3">
         <label class="form-label small mb-1">District</label>
         <select name="district_id" class="form-select form-select-sm" onchange="this.form.submit()">
-            <option value="">All Districts</option>
+            <option value="0">All Districts</option>
             <?php foreach ($districts as $d): ?>
-                <option value="<?= $d->id ?>" <?= $selectedDistrict == $d->id ? 'selected' : '' ?>>
-                    <?= htmlspecialchars($d->name) ?>
+                <option value="<?= (int)($d['id'] ?? 0) ?>" <?= ((int)$district_id === (int)($d['id'] ?? 0) && (int)$district_id > 0) ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($d['name'] ?? '') ?>
                 </option>
             <?php endforeach; ?>
         </select>
     </div>
-    <div class="col-md-2">
-        <label class="form-label small mb-1 d-none d-md-block"> </label>
-        <a href="<?= BASE_URL ?>/admin/colonies" class="btn btn-outline-secondary btn-sm w-100">Clear Filters</a>
+    <div class="col-md-3">
+        <label class="form-label small mb-1">Search</label>
+        <input type="text" name="search" class="form-control form-control-sm" placeholder="Name or slug..." value="<?= htmlspecialchars($search) ?>">
+    </div>
+    <div class="col-md-3 d-flex gap-2">
+        <button type="submit" class="btn btn-primary btn-sm flex-fill">Apply</button>
+        <a href="<?= BASE_URL ?>/admin/colonies" class="btn btn-outline-secondary btn-sm flex-fill">Clear</a>
     </div>
 </form>
 

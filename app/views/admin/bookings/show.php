@@ -49,7 +49,20 @@ $extraHead = '<style>
 </style>';
 ?>
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2"><?= __('admin_booking_details') ?></h1>
+    <div>
+        <h1 class="h2"><i class="fas fa-file-contract text-primary me-2"></i><?= __('admin_booking_details') ?>
+            <?php if (!empty($booking['booking_number'])): ?>
+            <small class="fs-6 text-muted fw-normal">&nbsp;#<?= htmlspecialchars($booking['booking_number']) ?></small>
+            <?php endif; ?>
+        </h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 small">
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/erp">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/bookings">Bookings</a></li>
+                <li class="breadcrumb-item active"><?= htmlspecialchars($booking['booking_number'] ?? 'Detail') ?></li>
+            </ol>
+        </nav>
+    </div>
     <div class="btn-toolbar mb-2 mb-md-0">
         <a href="<?= BASE_URL ?>/admin/bookings" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> <?= __('admin_back_to_bookings') ?>
@@ -623,36 +636,122 @@ $extraHead = '<style>
         </div>
     </div>
 
-    <!-- Tab 4: Documents -->
-    <div class="tab-pane fade" id="documents" role="tabpanel" aria-labelledby="documents-tab">
+    <!-- Tab 4: Documents (Dual Soft & Hard Copy Lifecycle) -->
+    <div class="tab-pane fade" id="tab-documents" role="tabpanel" aria-labelledby="tab-documents-btn">
         <div class="row g-4">
+            <!-- Statutory Legal Deeds & Downloads Box -->
             <div class="col-12">
-                <h5><i class="fas fa-file-alt me-2"></i> Documents & Registry</h5>
-            </div>
-            <div class="row g-3">
-                <?php if (empty($documents)): ?>
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle me-2"></i> No documents found for this booking.
-                </div>
-                <?php else: ?>
-                <?php foreach ($documents as $doc): ?>
-                <div class="col-12 col-md-6 col-lg-4 mb-3">
-                    <div class="card shadow-sm border-0">
-                        <div class="card-header bg-white py-3">
-                            <h6 class="mb-0"><i class="fas fa-file-alt me-2"></i><?= htmlspecialchars($doc['document_type'] ?? 'Document') ?></h6>
+                <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #f8fafc 0%, #eef2f6 100%); border-left: 5px solid #0d6efd !important;">
+                    <div class="card-body p-4">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+                            <div>
+                                <h5 class="fw-bold mb-1 text-primary">
+                                    <i class="fas fa-balance-scale me-2"></i> वैधानिक विलेख व डिजिटल प्रारूप (Statutory Legal Deeds & Soft Copies)
+                                </h5>
+                                <p class="text-muted small mb-0">
+                                    त्रिपक्षीय मास्टर डीड (Master Deed) एवं रद्दीकरण समझौता विलेख (Cancellation & Settlement Deeds) को ₹100/₹500 स्टाम्प पेपर अथवा भरणीय (Fillable) प्रारूप में प्राप्त करें।
+                                </p>
+                            </div>
+                            <div class="d-flex flex-wrap gap-2">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadExecutedDocModal">
+                                    <i class="fas fa-file-upload me-1"></i> हस्ताक्षरित भौतिक विलेख अपलोड करें (Upload Executed Scan)
+                                </button>
+                            </div>
                         </div>
-                        <div class="card-body aps-cp-card-body">
-                            <p class="text-muted small"><strong>Document No:</strong> <?= htmlspecialchars($doc['document_number'] ?? 'N/A') ?></p>
-                            <p class="text-muted small"><strong>Date:</strong> <?= date('d M Y', strtotime($doc['created_at'] ?? '')) ?></p>
-                            <p class="text-muted small"><strong>Status:</strong> <span class="badge bg-<?= $doc['status'] === 'approved' ? 'success' : ($doc['status'] === 'pending' ? 'warning' : 'secondary') ?>"><?= ucfirst($doc['status'] ?? '') ?></span></p>
-                            <a href="<?= $doc['download_url'] ?? BASE_URL ?>/admin/documents/download/<?= $doc['id'] ?? 0 ?>" class="btn btn-sm btn-outline-primary w-100">
-                                <i class="fas fa-download me-1"></i> Download
+
+                        <div class="d-flex flex-wrap gap-2 pt-2 border-top">
+                            <a href="<?= BASE_URL ?>/documents/cancellation_settlement_deed.html" target="_blank" class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-print me-1"></i> रद्दीकरण विलेख (Printable Stamp Paper Mode - 95mm)
+                            </a>
+                            <a href="<?= BASE_URL ?>/downloads/cancellation_settlement_deed_hindi.doc" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-file-word me-1"></i> भरणीय रद्दीकरण विलेख (.DOC Hindi)
+                            </a>
+                            <a href="<?= BASE_URL ?>/downloads/cancellation_settlement_deed_english.doc" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-file-word me-1"></i> Fillable Cancellation Deed (.DOC English)
+                            </a>
+                            <a href="<?= BASE_URL ?>/admin/bookings/<?= $booking['id'] ?>/legal-kit" class="btn btn-sm btn-outline-success">
+                                <i class="fas fa-file-archive me-1"></i> Complete Legal Kit (ZIP)
                             </a>
                         </div>
                     </div>
                 </div>
-                <?php endforeach; ?>
-                <?php endif; ?>
+            </div>
+
+            <!-- Documents Table & Physical Archive Info -->
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0"><i class="fas fa-folder-open me-2 text-warning"></i> संलग्न विलेख व भौतिक फाइल ट्रैकिंग (Booking Documents & Archive)</h5>
+                    <span class="badge bg-light text-dark border px-3 py-2">
+                        <i class="fas fa-archive text-info me-1"></i> दोहरी सुरक्षा: डिजिटल स्कैन + कार्यालय लॉकर ट्रैकिंग
+                    </span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle bg-white shadow-sm">
+                        <thead class="table-light">
+                            <tr>
+                                <th>दस्तावेज़ का नाम (Document)</th>
+                                <th>प्रकार (Type)</th>
+                                <th>दस्तावेज़ संख्या (Doc No.)</th>
+                                <th>कार्यालय भौतिक स्थान (Hard Copy Archive)</th>
+                                <th>दिनांक</th>
+                                <th>स्थिति (Status)</th>
+                                <th class="text-center">कार्रवाई (Action)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (empty($documents)): ?>
+                            <tr>
+                                <td colspan="7" class="text-center py-4 text-muted">
+                                    <i class="fas fa-folder-open fa-2x mb-2 d-block text-secondary"></i>
+                                    इस बुकिंग के लिए अभी तक कोई हस्ताक्षरित भौतिक विलेख या स्कैन संलग्न नहीं है।
+                                    <br>
+                                    <button type="button" class="btn btn-sm btn-outline-primary mt-2" data-bs-toggle="modal" data-bs-target="#uploadExecutedDocModal">
+                                        <i class="fas fa-upload me-1"></i> प्रथम विलेख अपलोड करें
+                                    </button>
+                                </td>
+                            </tr>
+                            <?php else: ?>
+                            <?php foreach ($documents as $doc): ?>
+                            <tr>
+                                <td>
+                                    <strong><i class="fas fa-file-pdf text-danger me-2"></i><?= htmlspecialchars($doc['document_name'] ?? 'Document') ?></strong>
+                                    <?php if (!empty($doc['notes'])): ?>
+                                        <div class="small text-muted mt-1"><?= htmlspecialchars($doc['notes']) ?></div>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">
+                                        <?= ucfirst(str_replace('_', ' ', $doc['document_type'] ?? 'General')) ?>
+                                    </span>
+                                </td>
+                                <td><code><?= htmlspecialchars($doc['document_number'] ?? 'N/A') ?></code></td>
+                                <td>
+                                    <?php if (!empty($doc['physical_location'])): ?>
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                            <i class="fas fa-archive me-1"></i> <?= htmlspecialchars($doc['physical_location']) ?>
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="badge bg-secondary-subtle text-secondary">डिजिटल केवल / Not Archived</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td><?= date('d M Y', strtotime($doc['created_at'] ?? 'now')) ?></td>
+                                <td>
+                                    <span class="badge bg-<?= ($doc['status'] ?? '') === 'approved' || ($doc['status'] ?? '') === 'verified' ? 'success' : (($doc['status'] ?? '') === 'rejected' ? 'danger' : 'warning') ?>">
+                                        <?= ucfirst($doc['status'] ?? 'pending') ?>
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <a href="<?= BASE_URL ?>/admin/bookings/documents/<?= $doc['id'] ?>/download" class="btn btn-sm btn-outline-primary" title="डाउनलोड / देखें">
+                                        <i class="fas fa-download me-1"></i> Download
+                                    </a>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -723,6 +822,86 @@ $extraHead = '<style>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('admin_cancel') ?></button>
                     <button type="submit" class="btn btn-primary"><?= __('admin_add_payment') ?></button>
+                </div>
+            </form>
+        </div>
+    </div>
+<!-- Upload Executed Document Modal -->
+<div class="modal fade" id="uploadExecutedDocModal" tabindex="-1" aria-labelledby="uploadExecutedDocModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="uploadExecutedDocModalLabel">
+                    <i class="fas fa-file-signature me-2"></i> हस्ताक्षरित भौतिक विलेख / स्कैन अपलोड करें
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="<?= BASE_URL ?>/admin/bookings/<?= $booking['id'] ?>/upload-document" enctype="multipart/form-data">
+                <div class="modal-body p-4">
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+
+                    <div class="alert alert-info py-2 px-3 small border-start border-4 border-info mb-3">
+                        <i class="fas fa-info-circle me-1"></i> स्टाम्प पेपर पर हस्ताक्षरित त्रिपक्षीय मास्टर डीड अथवा रद्दीकरण समझौता विलेख की स्कैन प्रति (PDF/JPG) अपलोड करें और कार्यालय में इसके भौतिक फाइल स्थान (Cabinet/Shelf) को दर्ज करें।
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-7">
+                            <label for="doc_name" class="form-label fw-semibold">विलेख का शीर्षक / दस्तावेज़ का नाम <span class="text-danger">*</span></label>
+                            <input type="text" id="doc_name" name="document_name" class="form-control" placeholder="उदा: Signed Tripartite Master Deed on Rs.500 Stamp Paper" required>
+                        </div>
+
+                        <div class="col-md-5">
+                            <label for="doc_type" class="form-label fw-semibold">विलेख का प्रकार (Type) <span class="text-danger">*</span></label>
+                            <select id="doc_type" name="document_type" class="form-select" required>
+                                <option value="signed_master_deed">हस्ताक्षरित मास्टर डीड (Signed Master Deed)</option>
+                                <option value="cancellation_settlement_deed">रद्दीकरण व समझौता विलेख (Cancellation Deed)</option>
+                                <option value="stamp_paper_agreement">स्टाम्प पेपर अनुबंध (Stamp Paper Agreement)</option>
+                                <option value="allotment_letter">आवंटन पत्र (Allotment Letter)</option>
+                                <option value="noc">अनापत्ति प्रमाण पत्र (NOC)</option>
+                                <option value="possession_handover">कब्जा हस्तांतरण पत्र (Possession Handover)</option>
+                                <option value="registry_deed">रजिस्ट्री बैनामा (Registry Deed)</option>
+                                <option value="other">अन्य विलेख (Other)</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="doc_number" class="form-label fw-semibold">स्टाम्प / विलेख संख्या (Stamp / Document No.)</label>
+                            <input type="text" id="doc_number" name="document_number" class="form-control" placeholder="उदा: STAMP-UP-2026-0089">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="doc_status" class="form-label fw-semibold">सत्यापन स्थिति (Status)</label>
+                            <select id="doc_status" name="status" class="form-select">
+                                <option value="verified" selected>सत्यापित (Verified & Archived)</option>
+                                <option value="approved">स्वीकृत (Approved)</option>
+                                <option value="pending">लंबित (Pending Verification)</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="physical_loc" class="form-label fw-semibold">
+                                <i class="fas fa-archive text-primary me-1"></i> कार्यालय में हार्ड कॉपी का भौतिक स्थान (Hard Copy Physical Rack / Locker)
+                            </label>
+                            <input type="text" id="physical_loc" name="physical_location" class="form-control" placeholder="उदा: Gorakhpur HQ — Legal Cabinet 2, Shelf B, Folder #<?= htmlspecialchars($booking['booking_number'] ?? '') ?>">
+                            <small class="text-muted">कार्यालय में मूल हार्ड कॉपी किस अलमारी/शेल्फ/बॉक्स में रखी गई है ताकि त्वरित रूप से मिल सके।</small>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="doc_file" class="form-label fw-semibold">स्कैन फ़ाइल चुनें (PDF, JPG, PNG, DOC) <span class="text-danger">*</span></label>
+                            <input type="file" id="doc_file" name="document_file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="doc_notes" class="form-label fw-semibold">अतिरिक्त विवरण / गवाह व नोट (Internal Notes)</label>
+                            <textarea id="doc_notes" name="notes" class="form-control" rows="2" placeholder="गवाहों के नाम, उप-निबंधक बही संख्या या अन्य प्रासंगिक विवरण..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">रद्द करें</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-upload me-1"></i> सुरक्षित रूप से अपलोड व आर्काइव करें
+                    </button>
                 </div>
             </form>
         </div>

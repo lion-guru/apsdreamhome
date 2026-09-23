@@ -73,7 +73,11 @@
                 <div class="col-6 text-end">
                     <div class="label"><?= __('receipt_amount_paid', [], 'Amount Paid') ?></div>
                     <div class="value">&#8377;<?= number_format(intval($booking['amount'] ?? 0)) ?></div>
+                    <span class="badge bg-danger" style="font-size:0.75rem;">Non-Refundable Token</span>
                 </div>
+            </div>
+            <div class="alert alert-danger py-2 px-3 mt-3 mb-0 small text-start border-start border-4 border-danger" style="background-color: #fff8f8; color: #721c24;">
+                <strong>वैधानिक सूचना (Master Deed धारा 2.1 व 2.9):</strong> यह टोकन राशि (₹<?= number_format(intval($booking['amount'] ?? 51000)) ?>) पूर्णतः <strong>नॉन-रिफंडेबल (Non-Refundable / गैर-वापसी योग्य)</strong> है। किसी भी परिस्थिति में टोकन राशि वापस नहीं की जाएगी।
             </div>
             <?php if (!empty($emis)): ?>
             <hr>

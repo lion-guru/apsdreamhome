@@ -1,19 +1,30 @@
 
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2><i class="fas fa-building"></i> Edit Project: <?php echo htmlspecialchars($project['name'] ?? ''); ?></h2>
-                <div>
-                    <a href="<?= BASE_URL ?>/admin/projects" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i> Projects
-                    </a>
-                </div>
-            </div>
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h1 class="h3 mb-1 fw-bold"><i class="fas fa-edit text-warning me-2"></i>Edit Project: <?php echo htmlspecialchars($project['name'] ?? ''); ?></h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 small">
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/erp">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/projects">Projects</a></li>
+                <li class="breadcrumb-item active">Edit</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="d-flex gap-2">
+        <?php if (!empty($project['id'])): ?>
+        <a href="<?= BASE_URL ?>/admin/projects/view/<?php echo $project['id']; ?>" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-eye me-1"></i>View Project
+        </a>
+        <?php endif; ?>
+        <a href="<?= BASE_URL ?>/admin/projects" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left me-1"></i>Back to Projects
+        </a>
+    </div>
+</div>
 
-            <div class="card aps-cp-card">
-                <div class="card-body aps-cp-card-body">
+<div class="card border-0 shadow-sm" style="border-radius:12px;">
+    <div class="card-body px-4 py-4">
                     <form method="POST" action="<?= BASE_URL ?>/admin/projects/update/<?php echo $project['id'] ?? ''; ?>">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <h5 class="mb-3">Basic Information</h5>
@@ -219,18 +230,68 @@
                             </div>
                         </div>
 
+
+                        <h5 class="mb-3 mt-4"><i class="fas fa-certificate me-2 text-success"></i>Compliance &amp; Construction</h5>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="rera_number" class="form-label">RERA Number</label>
+                                    <input type="text" class="form-control" id="rera_number" name="rera_number" value="<?php echo htmlspecialchars($project['rera_number'] ?? ''); ?>" placeholder="e.g. UP-RERA-2024-001235">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="progress_pct" class="form-label">Construction Progress (%)</label>
+                                    <input type="number" class="form-control" id="progress_pct" name="progress_pct" min="0" max="100" step="1" value="<?php echo (int)($project['progress_pct'] ?? 0); ?>">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="project_budget" class="form-label">Project Budget (₹)</label>
+                                    <input type="number" class="form-control" id="project_budget" name="project_budget" step="0.01" value="<?php echo $project['project_budget'] ?? ''; ?>">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="amount_spent" class="form-label">Amount Spent (₹)</label>
+                                    <input type="number" class="form-control" id="amount_spent" name="amount_spent" step="0.01" value="<?php echo $project['amount_spent'] ?? ''; ?>">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="project_manager" class="form-label">Project Manager</label>
+                                    <input type="text" class="form-control" id="project_manager" name="project_manager" value="<?php echo htmlspecialchars($project['project_manager'] ?? ''); ?>">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="site_supervisor" class="form-label">Site Supervisor</label>
+                                    <input type="text" class="form-control" id="site_supervisor" name="site_supervisor" value="<?php echo htmlspecialchars($project['site_supervisor'] ?? ''); ?>">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="contractor_name" class="form-label">Contractor Name</label>
+                                    <input type="text" class="form-control" id="contractor_name" name="contractor_name" value="<?php echo htmlspecialchars($project['contractor_name'] ?? ''); ?>">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="risk_flags" class="form-label">Risk Flags / Notes</label>
+                            <textarea class="form-control" id="risk_flags" name="risk_flags" rows="2" placeholder="Describe any risks, delays, or issues..."><?php echo htmlspecialchars($project['risk_flags'] ?? ''); ?></textarea>
+                        </div>
+
                         <div class="d-flex justify-content-between mt-4">
-                            <a href="<?= BASE_URL ?>/admin/projects" class="btn btn-secondary">
+                            <a href="<?= BASE_URL ?>/admin/projects" class="btn btn-outline-secondary">
                                 <i class="fas fa-times"></i> Cancel
                             </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Update Project
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="fas fa-save me-1"></i>Update Project
                             </button>
                         </div>
                     </form>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 

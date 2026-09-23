@@ -131,11 +131,46 @@ if ($selectedPlotId) {
                 </div>
                 <div class="col-md-4">
                     <label class="form-label"><?= __('sale_token_amount_label') ?></label>
-                    <input type="number" step="0.01" name="booking_amount" value="<?= htmlspecialchars((string)($booking['booking_amount'] ?? '')) ?>" class="form-control" required>
+                    <input type="number" step="0.01" name="booking_amount" value="<?= htmlspecialchars((string)($booking['booking_amount'] ?? '51000')) ?>" class="form-control" placeholder="51000" required>
+                    <small class="text-danger fw-semibold d-block mt-1"><i class="fas fa-shield-alt me-1"></i>मास्टर डीड (धारा 2.1 व 2.9): टोकन राशि ₹51,000 पूर्णतः गैर-वापसी योग्य (Non-Refundable) है।</small>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label"><?= __('sale_agreement_value_label') ?></label>
                     <input type="number" step="0.01" name="agreement_value" value="<?= htmlspecialchars((string)($booking['agreement_value'] ?? $booking['total_plot_value'] ?? '')) ?>" class="form-control" required>
+                </div>
+                <div class="col-12" id="statutory_financial_box">
+                    <div class="card bg-light border-primary p-3 rounded-3 shadow-sm">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold text-primary"><i class="fas fa-coins me-1"></i>Master Deed (Sec 2.1 &amp; 2.9) Payment Breakdown</span>
+                            <span class="badge bg-danger">₹51,000 Non-Refundable Token</span>
+                        </div>
+                        <div class="row g-2 text-center">
+                            <div class="col-md-3">
+                                <div class="bg-white p-2 rounded border">
+                                    <small class="text-muted d-block">Stage 1: Token Due Now</small>
+                                    <strong class="text-danger" id="summary_token">₹51,000</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="bg-white p-2 rounded border">
+                                    <small class="text-muted d-block">Stage 2: 15-Day 25% Balance</small>
+                                    <strong class="text-dark fw-bold" id="summary_balance_15">₹0</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="bg-white p-2 rounded border">
+                                    <small class="text-muted d-block">Stage 3: Remaining 75% Financed</small>
+                                    <strong class="text-dark" id="summary_remaining_75">₹0</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="bg-white p-2 rounded border">
+                                    <small class="text-muted d-block">Approx 36-Month EMI</small>
+                                    <strong class="text-primary" id="summary_emi_36">₹0 / mo</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label"><?= __('sale_channel_label') ?></label>
@@ -359,27 +394,65 @@ if (associateSelect) {
     });
 }
 
+// Financial Summary Calculator (Master Deed Sec 2.1 & 2.9)
+function updateFinancialSummary() {
+    const valField = document.querySelector('input[name="total_plot_value"]');
+    const tokenField = document.querySelector('input[name="booking_amount"]');
+    const totalVal = parseFloat(valField ? valField.value : 0) || 0;
+    const tokenAmt = parseFloat(tokenField ? tokenField.value : 51000) || 51000;
+    const mandatory25 = Math.round(totalVal * 0.25);
+    const balance15 = Math.max(0, mandatory25 - tokenAmt);
+    const rem75 = Math.max(0, totalVal - tokenAmt - balance15);
+    const emi36 = Math.round(rem75 / 36);
+
+    const elToken = document.getElementById('summary_token');
+    const elBal = document.getElementById('summary_balance_15');
+    const elRem = document.getElementById('summary_remaining_75');
+    const elEmi = document.getElementById('summary_emi_36');
+
+    if (elToken) elToken.textContent = '₹' + tokenAmt.toLocaleString('en-IN');
+    if (elBal) elBal.textContent = '₹' + balance15.toLocaleString('en-IN');
+    if (elRem) elRem.textContent = '₹' + rem75.toLocaleString('en-IN');
+    if (elEmi) elEmi.textContent = '₹' + emi36.toLocaleString('en-IN') + ' / mo';
+}
+
+const plotValInput = document.querySelector('input[name="total_plot_value"]');
+const tokenAmtInput = document.querySelector('input[name="booking_amount"]');
+if (plotValInput) {
+    plotValInput.addEventListener('input', updateFinancialSummary);
+}
+if (tokenAmtInput) {
+    tokenAmtInput.addEventListener('input', updateFinancialSummary);
+}
+
 // Auto-fill plot value when plot is selected
-plotSelect.addEventListener('change', function() {
-    const selected = this.options[this.selectedIndex];
-    if (selected && selected.value) {
-        const plotId = selected.value;
-        // Find in plotsByColony
-        for (const cId in plotsByColony) {
-            const plot = plotsByColony[cId].find(function(p) { return String(p.id) === plotId; });
-            if (plot && plot.total_price) {
-                const valueField = document.querySelector('input[name="total_plot_value"]');
-                if (valueField && !valueField.value) {
-                    valueField.value = plot.total_price;
+if (plotSelect) {
+    plotSelect.addEventListener('change', function() {
+        const selected = this.options[this.selectedIndex];
+        if (selected && selected.value) {
+            const plotId = selected.value;
+            // Find in plotsByColony
+            for (const cId in plotsByColony) {
+                const plot = plotsByColony[cId].find(function(p) { return String(p.id) === plotId; });
+                if (plot && plot.total_price) {
+                    const valueField = document.querySelector('input[name="total_plot_value"]');
+                    if (valueField) {
+                        valueField.value = plot.total_price;
+                    }
+                    const agreementField = document.querySelector('input[name="agreement_value"]');
+                    if (agreementField) {
+                        agreementField.value = plot.total_price;
+                    }
+                    updateFinancialSummary();
+                    break;
                 }
-                const agreementField = document.querySelector('input[name="agreement_value"]');
-                if (agreementField && !agreementField.value) {
-                    agreementField.value = plot.total_price;
-                }
-                break;
             }
         }
-    }
-});
+    });
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', updateFinancialSummary);
+updateFinancialSummary();
 </script>
 <?php endif; ?>

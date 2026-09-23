@@ -1115,7 +1115,7 @@ class AdminController extends BaseController
     {
         try {
             $totalColonies = (int)($this->db->fetch("SELECT COUNT(*) AS cnt FROM colonies")['cnt'] ?? 0);
-            $activeColonies = (int)($this->db->fetch("SELECT COUNT(*) AS cnt FROM colonies WHERE status = 'active'")['cnt'] ?? 0);
+            $activeColonies = (int)($this->db->fetch("SELECT COUNT(*) AS cnt FROM colonies WHERE is_active = 1")['cnt'] ?? 0);
             if ($totalColonies > 0) {
                 return round(($activeColonies / $totalColonies) * 100, 1);
             }

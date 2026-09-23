@@ -21,14 +21,19 @@ class ProjectController extends PageController
             $db = Database::getInstance()->getConnection();
             $tid = $this->tenantId();
 
-            $sql = "SELECT p.*, c.name as colony_name, c.slug as colony_slug
+            $sql = "SELECT p.*, c.name as colony_name, c.slug as colony_slug,
+                           d.name as district_name, s.name as state_name,
+                           (SELECT COUNT(*) FROM plots WHERE colony_id = p.colony_id AND tenant_id = ?) as colony_total_plots,
+                           (SELECT COUNT(*) FROM plots WHERE colony_id = p.colony_id AND status = 'available' AND tenant_id = ?) as colony_available_plots
                     FROM projects p
                     LEFT JOIN colonies c ON p.colony_id = c.id
+                    LEFT JOIN districts d ON p.district_id = d.id
+                    LEFT JOIN states s ON p.state_id = s.id
                     WHERE (p.id = ? OR LOWER(REPLACE(p.name, ' ', '-')) = LOWER(?))
                     AND p.tenant_id = ?
                     LIMIT 1";
             $stmt = $db->prepare($sql);
-            $stmt->execute([(int)$slug, $slug, $tid]);
+            $stmt->execute([$tid, $tid, (int)$slug, $slug, $tid]);
             $project = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if (!$project) {
@@ -43,10 +48,31 @@ class ProjectController extends PageController
                 if (is_array($decoded)) $images = $decoded;
             }
 
+            $milestones = [];
+            if (!empty($project['milestone_json'])) {
+                $mDecoded = json_decode($project['milestone_json'], true);
+                if (is_array($mDecoded)) $milestones = $mDecoded;
+            }
+
+            // Fetch related active projects
+            $relStmt = $db->prepare("
+                SELECT p.*, c.name as colony_name, c.slug as colony_slug, d.name as district_name
+                FROM projects p
+                LEFT JOIN colonies c ON p.colony_id = c.id
+                LEFT JOIN districts d ON p.district_id = d.id
+                WHERE p.id != ? AND p.tenant_id = ? AND p.status != 'cancelled'
+                ORDER BY p.is_featured DESC, p.created_at DESC
+                LIMIT 3
+            ");
+            $relStmt->execute([$project['id'], $tid]);
+            $related_projects = $relStmt->fetchAll(\PDO::FETCH_ASSOC);
+
             $this->render('pages/project_detail', [
                 'page_title' => $project['name'] . ' - APS Dream Home',
                 'project' => $project,
                 'images' => $images,
+                'milestones' => $milestones,
+                'related_projects' => $related_projects,
             ]);
         } catch (\Exception $e) {
             error_log("ProjectController::projectDetails: " . $e->getMessage());

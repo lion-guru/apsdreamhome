@@ -217,7 +217,7 @@ class ToolsAdminController extends AdminController
 
         $colonies = [];
         try {
-            $colonies = $db->query("SELECT id, name FROM colonies WHERE status = 'active' ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
+            $colonies = $db->query("SELECT id, name FROM colonies WHERE is_active = 1 ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Exception $e) { error_log("ToolsAdminController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $distances = [];
@@ -271,7 +271,7 @@ class ToolsAdminController extends AdminController
             $landmarkId = (int)$db->lastInsertId();
 
             // Auto-calculate distances to all active colonies
-            $colonies = $db->query("SELECT id, latitude, longitude FROM colonies WHERE status = 'active' AND latitude IS NOT NULL AND longitude IS NOT NULL")->fetchAll(PDO::FETCH_ASSOC);
+            $colonies = $db->query("SELECT id, latitude, longitude FROM colonies WHERE is_active = 1 AND latitude IS NOT NULL AND longitude IS NOT NULL")->fetchAll(PDO::FETCH_ASSOC);
             foreach ($colonies as $colony) {
                 $distance = $this->haversineDistance($latitude, $longitude, (float)$colony['latitude'], (float)$colony['longitude']);
                 $stmt2 = $db->prepare("INSERT IGNORE INTO colony_landmark_distances (colony_id, landmark_id, distance_km, created_at, tenant_id) VALUES (?, ?, ?, NOW(), ?)");
@@ -387,11 +387,7 @@ class ToolsAdminController extends AdminController
 
     private function haversineDistance(float $lat1, float $lon1, float $lat2, float $lon2): float
     {
-        $earthRadius = 6371; // km
-        $dLat = deg2rad($lat2 - $lat1);
-        $dLon = deg2rad($lon2 - $lon1);
-        $a = sin($dLat / 2) * sin($dLat / 2) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLon / 2) * sin($dLon / 2);
-        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-        return $earthRadius * $c;
+        // Centralized in LocationService (single formula for the whole project)
+        return (new \App\Services\LocationService($this->getDb()))->distanceKm($lat1, $lon1, $lat2, $lon2);
     }
 }

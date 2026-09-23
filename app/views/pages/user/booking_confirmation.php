@@ -129,30 +129,41 @@ $statusColors = [
                 <h5 class="mb-0"><i class="fas fa-receipt text-success me-2"></i><?= __('user_booking_confirm_booking_summary', 'Booking Summary') ?></h5>
             </div>
             <div class="aps-cp-card-body">
+                <?php
+                $totalVal = (float)($booking['total_plot_value'] ?? 0);
+                $tokenVal = (float)($booking['booking_amount'] ?? 51000);
+                $mand25 = round($totalVal * 0.25);
+                $bal15 = max(0, $mand25 - $tokenVal);
+                $rem75 = max(0, $totalVal - $tokenVal - $bal15);
+                $emi36 = round($rem75 / 36);
+                ?>
                 <div class="row g-3">
                     <div class="col-sm-6 col-md-3">
-                        <div class="text-center">
+                        <div class="text-center p-2 bg-light rounded">
                             <div class="text-muted small"><?= __('user_booking_confirm_label_booking_number', 'Booking Number') ?></div>
                             <div class="fw-bold"><?= htmlspecialchars($booking['booking_number'] ?? 'N/A') ?></div>
+                            <div class="text-muted small mt-1"><?= date('M d, Y', strtotime($booking['booking_date'] ?? 'now')) ?></div>
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-3">
-                        <div class="text-center">
-                            <div class="text-muted small"><?= __('user_booking_confirm_label_booking_date', 'Booking Date') ?></div>
-                            <div class="fw-bold"><?= date('M d, Y', strtotime($booking['booking_date'] ?? 'now')) ?></div>
+                        <div class="text-center p-2 bg-danger bg-opacity-10 rounded">
+                            <div class="text-danger small fw-bold">Stage 1: Token Paid/Due</div>
+                            <div class="fw-bold text-danger fs-5">&#8377;<?= number_format($tokenVal) ?></div>
+                            <span class="badge bg-danger text-wrap" style="font-size: 0.68rem;">Non-Refundable (गैर-वापसी)</span>
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-3">
-                        <div class="text-center">
-                            <div class="text-muted small"><?= __('user_booking_confirm_label_token_paid', 'Token Paid') ?></div>
-                            <div class="fw-bold text-success">&#8377;<?= number_format((float)($booking['booking_amount'] ?? 51000)) ?></div>
-                            <span class="badge bg-danger text-wrap mt-1" style="font-size: 0.7rem;">Non-Refundable (वापस नहीं होगी)</span>
+                        <div class="text-center p-2 bg-warning bg-opacity-10 rounded">
+                            <div class="text-dark small fw-bold">Stage 2: 15-Day 25% Balance</div>
+                            <div class="fw-bold text-dark fs-5">&#8377;<?= number_format($bal15) ?></div>
+                            <span class="text-muted small d-block" style="font-size: 0.72rem;">Due in 15 Calendar Days</span>
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-3">
-                        <div class="text-center">
-                            <div class="text-muted small"><?= __('user_booking_confirm_label_total_amount', 'Total Amount') ?></div>
-                            <div class="fw-bold text-primary">&#8377;<?= number_format((float)($booking['total_plot_value'] ?? 0)) ?></div>
+                        <div class="text-center p-2 bg-primary bg-opacity-10 rounded">
+                            <div class="text-primary small fw-bold">Stage 3: Total / 36-Mo EMI</div>
+                            <div class="fw-bold text-primary fs-5">&#8377;<?= number_format($totalVal) ?></div>
+                            <span class="text-primary small d-block" style="font-size: 0.72rem;">Approx &#8377;<?= number_format($emi36) ?>/mo</span>
                         </div>
                     </div>
                 </div>
@@ -166,38 +177,45 @@ $statusColors = [
             <div class="aps-cp-card-body">
                 <div class="d-flex flex-column gap-3">
                     <div class="d-flex align-items-start gap-3 p-3 bg-light rounded-3">
-                        <div class="aps-cp-stat-icon flex-shrink-0">
-                            <i class="fas fa-credit-card"></i>
+                        <div class="aps-cp-stat-icon flex-shrink-0 text-success">
+                            <i class="fas fa-check-circle"></i>
                         </div>
                         <div class="flex-grow-1">
-                            <h6 class="mb-1"><?= __('user_booking_confirm_step_pay_token', 'Pay Token Amount') ?></h6>
-                            <p class="text-muted small mb-2">Complete your non-refundable token payment of &#8377;<?= number_format((float)($booking['booking_amount'] ?? 51000)) ?> to confirm the booking (टोकन बुकिंग राशि वापस नहीं होगी).</p>
-                            <button class="btn btn-primary btn-sm" onclick="window.location.href='<?= BASE_URL ?>/payments'">
-                                <i class="fas fa-rupee-sign me-1"></i><?= __('user_booking_confirm_pay_now', 'Pay Now') ?> (Razorpay)
+                            <h6 class="mb-1 text-success fw-bold">1. ₹51,000 Non-Refundable Token Recorded</h6>
+                            <p class="text-muted small mb-0">Your initial ₹<?= number_format($tokenVal) ?> token allotment is recorded under Master Deed Section 2.1 &amp; 2.9 (Non-refundable / गैर-वापसी योग्य).</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-start gap-3 p-3 bg-light rounded-3 border-start border-4 border-warning">
+                        <div class="aps-cp-stat-icon flex-shrink-0 text-warning">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1 text-dark fw-bold">2. Pay Mandatory 25% Balance within 15 Days</h6>
+                            <p class="text-muted small mb-2">Pay balance ₹<?= number_format($bal15) ?> within 15 calendar days from booking date to confirm allotment and avoid statutory cancellation.</p>
+                            <button class="btn btn-warning btn-sm text-dark fw-bold" onclick="window.location.href='<?= BASE_URL ?>/payments'">
+                                <i class="fas fa-rupee-sign me-1"></i>Pay 25% Balance (&#8377;<?= number_format($bal15) ?>)
                             </button>
                         </div>
                     </div>
 
                     <div class="d-flex align-items-start gap-3 p-3 bg-light rounded-3">
-                        <div class="aps-cp-stat-icon flex-shrink-0">
-                            <i class="fas fa-file-download"></i>
-                        </div>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-1"><?= __('user_booking_confirm_step_download_receipt', 'Download Booking Receipt') ?></h6>
-                            <p class="text-muted small mb-2"><?= __('user_booking_confirm_step_download_receipt_desc', 'Save a copy of your booking confirmation for your records.') ?></p>
-                            <button class="btn btn-outline-success btn-sm" onclick="window.print()">
-                                <i class="fas fa-download me-1"></i><?= __('user_booking_confirm_download_receipt', 'Download Receipt') ?>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="d-flex align-items-start gap-3 p-3 bg-light rounded-3">
-                        <div class="aps-cp-stat-icon flex-shrink-0">
+                        <div class="aps-cp-stat-icon flex-shrink-0 text-primary">
                             <i class="fas fa-file-signature"></i>
                         </div>
                         <div class="flex-grow-1">
-                            <h6 class="mb-1"><?= __('user_booking_confirm_step_sign_agreement', 'Sign Agreement') ?></h6>
-                            <p class="text-muted small mb-0"><?= __('user_booking_confirm_step_sign_agreement_desc', 'Visit our office or schedule a call to complete the agreement process.') ?></p>
+                            <h6 class="mb-1 fw-bold">3. Sign Tripartite Master Deed &amp; 4 Corner Pillars Demarcation</h6>
+                            <p class="text-muted small mb-0">Visit our corporate office to execute the registered agreement and inspect the 4 concrete corner pillars on your plot site.</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-start gap-3 p-3 bg-light rounded-3">
+                        <div class="aps-cp-stat-icon flex-shrink-0 text-secondary">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1 fw-bold">4. Sub-Registrar Registry &amp; Possession Handover</h6>
+                            <p class="text-muted small mb-0">Registry completion at the Sub-Registrar office with immediate physical possession upon payment completion or EMI activation.</p>
                         </div>
                     </div>
                 </div>

@@ -142,17 +142,20 @@ class AddressService
 
     public function lookupByPincode(string $pincode): ?array
     {
-        $clean = preg_replace('/\D/', '', $pincode);
-        if (strlen($clean) < 4) return null;
-        $stmt = $this->pdo->prepare("SELECT * FROM user_addresses WHERE pincode = ? AND city != '' AND state != '' ORDER BY id DESC LIMIT 1");
-        $stmt->execute([$clean]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        if (!$row) return null;
+        // Centralized in LocationService: official pincodes table first,
+        // learned user-input fallback second. Same return shape as before
+        // (city/state/country/pincode) plus district/coords/source when known.
+        $res = (new \App\Services\LocationService($this->pdo))->pincodeLookup($pincode);
+        if (!$res) return null;
         return [
-            'city' => $row['city'],
-            'state' => $row['state'],
-            'country' => $row['country'],
-            'pincode' => $row['pincode'],
+            'city' => $res['city'] ?? null,
+            'state' => $res['state'] ?? null,
+            'country' => 'India',
+            'pincode' => $res['pincode'] ?? preg_replace('/\D/', '', $pincode),
+            'district' => $res['district'] ?? null,
+            'latitude' => $res['latitude'] ?? null,
+            'longitude' => $res['longitude'] ?? null,
+            'source' => $res['source'] ?? null,
         ];
     }
 

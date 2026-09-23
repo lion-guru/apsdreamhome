@@ -8,8 +8,16 @@ $filters = $filters ?? [];
 $base = BASE_URL ?? '';
 ?>
 <div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-bullseye me-2"></i>Lead Management</h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h2><i class="fas fa-bullseye text-danger me-2"></i>Lead Management</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 small">
+                    <li class="breadcrumb-item"><a href="<?= $base ?>/admin/erp">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Leads</li>
+                </ol>
+            </nav>
+        </div>
         <div class="d-flex gap-2">
             <a href="<?= $base ?>/admin/leads/trash" class="btn btn-outline-danger btn-sm"><i class="fas fa-trash-alt me-1"></i>Trash</a>
             <a href="<?= $base ?>/admin/leads/import" class="btn btn-success btn-sm"><i class="fas fa-upload me-1"></i>Import</a>

@@ -7,49 +7,121 @@
 $project = $project ?? null;
 $baseUrl = rtrim(BASE_URL, '/');
 
+if (is_array($project)) {
+    $pObj = new \stdClass();
+    foreach ($project as $k => $v) {
+        $pObj->$k = $v;
+    }
+    $project = $pObj;
+}
+
 if ($project) {
+    if (empty($project->site_name)) {
+        $project->site_name = $project->name ?? 'APS Project';
+    }
+    if (empty($project->site_type)) {
+        $project->site_type = $project->project_type ?? 'residential';
+    }
+    if (empty($project->location)) {
+        $project->location = !empty($project->address) ? $project->address : (!empty($project->colony_name) ? $project->colony_name : 'Gorakhpur');
+    }
+    if (empty($project->city)) {
+        $project->city = $project->district_name ?? 'Gorakhpur';
+    }
+    if (empty($project->district)) {
+        $project->district = $project->district_name ?? 'Gorakhpur';
+    }
+    if (empty($project->status)) {
+        $project->status = 'active';
+    }
+    $project->progress_pct = (int)($project->progress_pct ?? 0);
+
     $slug = strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $project->site_name));
     $district = strtolower($project->district ?? 'gorakhpur');
-    
+
     // Dynamic image priority
     $heroImg = '/assets/images/projects/placeholder/property.svg';
     if (!empty($project->image)) {
         $heroImg = '/' . ltrim($project->image, '/');
+    } elseif (!empty($images[0])) {
+        $heroImg = '/' . ltrim($images[0], '/');
     }
 }
+
+// Normalize related projects
+$related_projects = $related_projects ?? [];
+$normRelated = [];
+foreach ($related_projects as $rel) {
+    if (is_array($rel)) {
+        $rObj = new \stdClass();
+        foreach ($rel as $rk => $rv) {
+            $rObj->$rk = $rv;
+        }
+        $rel = $rObj;
+    }
+    if (empty($rel->site_name)) {
+        $rel->site_name = $rel->name ?? 'APS Project';
+    }
+    if (empty($rel->district)) {
+        $rel->district = $rel->district_name ?? 'Gorakhpur';
+    }
+    $normRelated[] = $rel;
+}
+$related_projects = $normRelated;
 ?>
 
 <?php if ($project): ?>
 <!-- Project Hero -->
-<section class="hero-section text-white py-5 position-relative">
+<section class="hero-section text-white py-5 position-relative" style="background: linear-gradient(135deg, #0d3b66 0%, #001e3d 100%);">
     <div class="container">
-        <div class="row">
+        <div class="row align-items-center">
             <div class="col-lg-8">
                 <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="<?php echo e($baseUrl); ?>/" class="text-white"><?= __('breadcrumb_home') ?></a></li>
-                        <li class="breadcrumb-item"><a href="<?php echo e($baseUrl); ?>/company/projects" class="text-white"><?= __('breadcrumb_projects') ?></a></li>
-                        <li class="breadcrumb-item text-white active"><?php echo htmlspecialchars($project->site_name); ?></li>
+                    <ol class="breadcrumb mb-2">
+                        <li class="breadcrumb-item"><a href="<?php echo e($baseUrl); ?>/" class="text-white opacity-75 text-decoration-none"><?= __('breadcrumb_home') ?></a></li>
+                        <li class="breadcrumb-item"><a href="<?php echo e($baseUrl); ?>/company/projects" class="text-white opacity-75 text-decoration-none"><?= __('breadcrumb_projects') ?></a></li>
+                        <li class="breadcrumb-item text-white active fw-semibold"><?php echo htmlspecialchars($project->site_name); ?></li>
                     </ol>
                 </nav>
-                <h1 class="display-4 fw-bold mb-3"><?php echo htmlspecialchars($project->site_name); ?></h1>
-                <p class="lead mb-3">
-                    <i class="fas fa-map-marker-alt me-2"></i>
-                    <?php echo htmlspecialchars(($project->location ?? '') . ', ' . ($project->city ?? '')); ?>
+                <h1 class="display-4 fw-bold mb-3 text-white"><?php echo htmlspecialchars($project->site_name); ?></h1>
+                <p class="lead mb-3 text-white opacity-90">
+                    <i class="fas fa-map-marker-alt text-warning me-2"></i>
+                    <?php echo htmlspecialchars(($project->location ?? '') . (!empty($project->city) ? ', ' . $project->city : '')); ?>
                 </p>
-                <div class="d-flex gap-2 flex-wrap">
-                    <span class="badge bg-<?php echo $project->site_type === 'residential' ? 'success' : ($project->site_type === 'commercial' ? 'primary' : 'warning'); ?> fs-6">
-                        <?php echo ucfirst($project->site_type ?? 'Residential'); ?>
+                <div class="d-flex gap-2 flex-wrap align-items-center">
+                    <span class="badge bg-<?php echo $project->site_type === 'residential' ? 'success' : ($project->site_type === 'commercial' ? 'primary' : 'warning'); ?> fs-6 px-3 py-2">
+                        <i class="fas fa-home me-1"></i><?php echo ucfirst($project->site_type ?? 'Residential'); ?>
                     </span>
-                    <span class="badge bg-<?php echo $project->status === 'active' ? 'success' : 'secondary'; ?> fs-6">
+                    <span class="badge bg-<?php echo $project->status === 'active' ? 'success' : 'secondary'; ?> fs-6 px-3 py-2">
                         <?php echo $project->status === 'active' ? __('colony_available') : e(ucfirst($project->status ?? 'Active')); ?>
                     </span>
+                    <?php if (!empty($project->rera_number)): ?>
+                    <span class="badge bg-light text-dark fs-6 px-3 py-2 shadow-sm border border-warning">
+                        <i class="fas fa-certificate text-warning me-1"></i> RERA: <?= htmlspecialchars($project->rera_number) ?>
+                    </span>
+                    <?php endif; ?>
                     <?php if (!empty($project->total_area)): ?>
-                    <span class="badge bg-info fs-6">
+                    <span class="badge bg-info text-dark fs-6 px-3 py-2">
                         <i class="fas fa-expand me-1"></i><?php echo htmlspecialchars($project->total_area); ?> Acres
                     </span>
                     <?php endif; ?>
+                    <?php if (!empty($project->progress_pct) && $project->progress_pct > 0): ?>
+                    <span class="badge bg-warning text-dark fs-6 px-3 py-2">
+                        <i class="fas fa-tasks me-1"></i> <?= $project->progress_pct ?>% Completed
+                    </span>
+                    <?php endif; ?>
                 </div>
+            </div>
+            <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+                <?php if (!empty($project->colony_id)): ?>
+                <div class="bg-white bg-opacity-10 p-3 rounded-3 border border-white border-opacity-25 text-start d-inline-block">
+                    <div class="small text-uppercase tracking-wider text-warning fw-bold mb-1"><i class="fas fa-layer-group me-1"></i> Online Plot Reservation</div>
+                    <div class="h5 text-white mb-2"><?= !empty($project->colony_available_plots) ? $project->colony_available_plots . ' Plots Available' : 'Immediate Registry' ?></div>
+                    <a href="<?= BASE_URL ?>/booking?colony_id=<?= $project->colony_id ?>" class="btn btn-warning fw-bold text-dark w-100 shadow-sm">
+                        <i class="fas fa-bolt me-1"></i> Book Plot Now (₹51,000 Token)
+                    </a>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>

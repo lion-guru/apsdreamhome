@@ -1,6 +1,17 @@
+<?php $projects = $projects ?? []; ?>
 <div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0"><i class="fas fa-chart-line me-2"></i>Project Progress</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h1 class="h3 mb-1 fw-bold"><i class="fas fa-chart-line text-info me-2"></i>Project Progress Tracker</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 small">
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/erp">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/projects">Projects</a></li>
+                    <li class="breadcrumb-item active">Progress Tracker</li>
+                </ol>
+            </nav>
+        </div>
+        <a href="<?= BASE_URL ?>/admin/projects" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to Projects</a>
     </div>
     <div class="card shadow-sm">
         <div class="card-body p-0">
@@ -34,11 +45,14 @@
                                     <td><?= $p['id'] ?? '' ?></td>
                                     <td><strong><?= htmlspecialchars($p['name'] ?? '') ?></strong></td>
                                     <td><?= htmlspecialchars($p['district_name'] ?? '') ?></td>
-                                    <td>
-                                        <div class="progress">
-                                            <div class="progress-bar bg-<?= ($p['progress_pct'] ?? 0) >= 100 ? 'success' : (($p['progress_pct'] ?? 0) >= 50 ? 'info' : 'warning') ?>">
-                                                <?= (int)($p['progress_pct'] ?? 0) ?>%
+                                    <td style="min-width:120px;">
+                                        <?php $pct = (int)($p['progress_pct'] ?? 0); ?>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="progress flex-grow-1" style="height:6px;border-radius:4px;">
+                                                <div class="progress-bar bg-<?= $pct >= 100 ? 'success' : ($pct >= 50 ? 'info' : 'warning') ?>"
+                                                     role="progressbar" style="width:<?= $pct ?>%;" aria-valuenow="<?= $pct ?>" aria-valuemin="0" aria-valuemax="100"></div>
                                             </div>
+                                            <span class="small text-muted"><?= $pct ?>%</span>
                                         </div>
                                     </td>
                                     <td><?= isset($p['progress_last_updated']) ? date('d M Y', strtotime($p['progress_last_updated'])) : '—' ?></td>
@@ -50,7 +64,11 @@
                                         <span class="badge bg-<?= empty($flags) ? 'success' : 'danger' ?>"><?= empty($flags) ? 'None' : htmlspecialchars($flags ?? '') ?></span>
                                     </td>
                                     <td>
-                                        <a href="<?= BASE_URL ?>/admin/projects/progress/show/<?= $p['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="<?= BASE_URL ?>/admin/projects/view/<?= $p['id'] ?>" class="btn btn-outline-secondary" title="Project"><i class="fas fa-building"></i></a>
+                                            <a href="<?= BASE_URL ?>/admin/projects/progress/show/<?= $p['id'] ?>" class="btn btn-outline-primary" title="Progress Detail"><i class="fas fa-chart-line"></i></a>
+                                            <a href="<?= BASE_URL ?>/admin/projects/edit/<?= $p['id'] ?>" class="btn btn-outline-warning" title="Edit"><i class="fas fa-edit"></i></a>
+                                        </div>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
