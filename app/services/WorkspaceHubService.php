@@ -103,7 +103,6 @@ class WorkspaceHubService
                         '/admin/colony-pipeline',
                         '/admin/colony-feasibility',
                         '/admin/colonies',
-                        '/admin/locations/colonies',
                         '/admin/legal-colony-pipeline',
                         '/admin/legal-colony-pipeline/health',
                         '/admin/legal-colony-pipeline/analytics-all',

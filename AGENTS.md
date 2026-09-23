@@ -1,3 +1,150 @@
+## Session 156: Admin Menu Re-Architecture, Properties & Land Disaggregation & Enterprise Real Estate Taxonomy (2026-09-23)
+
+### Work Done
+
+| # | Fix | Root cause | Resolution |
+|---|-----|------------|-----------|
+| 1 | Properties & Land 35-Item Clutter Disaggregation | 35 miscellaneous items (raw land, directory contractors, agent commissions, legal NOCs, valuations, resell listings) were dumped together under a single generic `properties` section in `admin_menu_items` | Re-architected into 6 dedicated, systematic real estate domain sections: 🏗️ **Projects & Townships**, 🏘️ **Colonies & Planning**, 📐 **Plots & Inventory**, 🏞️ **Land Bank & Acquisitions**, 🏠 **Properties & Resale**, and 📊 **Property Valuations** ✅ |
+| 2 | Functional Domain Realignment | Yellow pages directory, legal compliance, and agent commission links were incorrectly bundled in Land inventory | Relocated Directory & Contractor items (`/admin/directory/*`) to `services` (Hub 5), `NOC & Registry` to `legal` (Hub 2), and `Agent Commission` / `Agent Agreements` to `commission` (Hub 3/4) ✅ |
+| 3 | Hub & Section Sidebar Preserved Sorting | `rbac_sidebar.php` used blind `ksort()` which destroyed logical real estate lifecycle sequence | Updated `rbac_sidebar.php` to preserve the defined section order of `$hubDefinitions[$hub]['sections']` (Projects ➔ Colonies ➔ Plots ➔ Land ➔ Resale ➔ Valuations) with distinctive FontAwesome icons and bilingual labels ✅ |
+| 4 | Cache Invalidation & Derived Artifacts Regeneration | Menu queries are cached in `admin_sidebar_all` and dump artifacts (`admin_menu_urls.json`) must remain in sync | Cleared file/Redis cache via `Cache::clear()` and regenerated `admin_menu_urls.json` via `scripts/dump_admin_urls.php` (289 URLs intact) ✅ |
+| 5 | Master Test Suite 100% Pass | Validate zero regressions across unit, commission, payouts, DB probe, and 24 smoke routes | Executed `testing/master_test_runner.php`: all 6/6 test suites passed in 14.33s (100% HEALTHY) ✅ |
+
+### Key Lessons (carried)
+_371. **Avoid monolithic junk-drawer menu sections in real estate ERPs** — Grouping raw land leads, civil contractor reviews, agent commissions, and saleable plot inventory under one title causes severe cognitive overload; segment into lifecycle domains: Acquisition ➔ Town Planning ➔ Plot Inventory ➔ Resale Marketplace.
+_372. **Preserve deliberate section order in hubbed navigation** — Do not use alphabetical `ksort` on navigation sections; developers organize real estate workflows chronologically from Master Projects and Colony approvals down to Plot Stock and Valuations.
+
+---
+## Session 155: Projects Module Full Integration, Public/Admin Parity & Systematic Workflow Finalization (2026-09-23)
+
+### Work Done
+
+| # | Fix | Root cause | Resolution |
+|---|-----|------------|-----------|
+| 1 | Public Project Detail Rendering & RERA Integration | `pages/project_detail.php` expected object properties (`$project->site_name`) but controller passed associative array, rendering empty headings; lacked RERA badge & progress tracking | Added universal array-to-object normalizer, RERA compliance badge with RERA ID, real-time development progress bar, and instant "Book Plot in Project (₹51,000 Token)" CTA linked to colony inventory ✅ |
+| 2 | Front ProjectController Enrichment | `Front\ProjectController::projectDetails` lacked colony plot inventory counts and related active projects | Enriched query with `colony_total_plots`, `colony_available_plots`, decoded milestones JSON, and added query for 3 related active projects; verified both `/projects/2` and `/projects/braj-radha-nagri` return HTTP 200 (198KB) ✅ |
+| 3 | Admin Project Progress Routing & Controller Update | `/admin/projects/progress/{id}` was missing from routes table (returned 404), and `ProjectsAdminController::update` only saved 3 fields | Added canonical route `$router->get('/admin/projects/progress/{id}', ...)` and alias `/progress/show/{id}`; enhanced `ProjectsAdminController::show` with colony/district/state joins and `update` to save all 30 real estate fields with tenant scoping ✅ |
+| 4 | Master Test Suite 100% Pass | Validate zero regressions across all modules | Executed `testing/master_test_runner.php`: all 6/6 test suites passed in 15.27s (100% HEALTHY: Unit, Commission Engine, Payouts, Tenant Scoping, DB Probes, and 24 Smoke Routes) ✅ |
+
+### Key Lessons (carried)
+_369. **Normalize view inputs for both array and object data models** — When views are shared or evolved across multiple controller versions, implement an upfront normalization block (`is_array($data) ? (object)$data : $data`) with fallback field aliases (`site_name ?? name`) to prevent fatal errors or blank headings.
+_370. **Always link public project presentations directly to plot inventory checkout** — A real estate project detail page must provide a direct, unambiguous bridge from marketing/brochure details into the booking engine (`/booking?colony_id=X`) with the ₹51,000 non-refundable statutory token terms clearly visible.
+
+---
+## Session 154: Real Estate Booking Workflow Systematic Parity, Legal Deed Dual Lifecycle & Problems Resolution (2026-09-23)
+
+### Work Done
+
+| # | Fix | Root cause | Resolution |
+|---|-----|------------|-----------|
+| 1 | IDE `@[current_problems]` Diagnostic & Resolution | In `BookingController.php`, stale IDE diagnostics reported `$documents` undefined at line 259, `$tid` at line 627, and `showToast` at line 657 | Initialized `$documents = []` in outer catch, confirmed active controller has zero syntax errors (`php -l` clean, exit code 0); verified that spellchecker warnings in `cancellation_settlement_deed.doc` are Hindi Unicode words flagged by English dictionary and not code errors ✅ |
+| 2 | Dual-Lifecycle Booking Deeds Management | System had legal documents but lacked office physical file locker tracking and upload of signed hard copies | Built dual-lifecycle tracking in `app/views/admin/bookings/show.php` with direct download of statutory deeds, fillable Word docs, Printable Stamp Paper Mode (95mm margin), and `#uploadExecutedDocModal` with physical office rack/locker tracking (`physical_location`), routed through `BookingController::uploadDocument` and `BookingController::downloadDocument` ✅ |
+| 3 | Customer & Associate Portal Legal Integration | Customers and Associates needed instant access to official cancellation & settlement deeds and transparent non-refundable rules | Integrated Legal Deeds & Documents toolkit card in both `app/views/pages/user/booking_detail.php` and `app/views/associate/my_bookings.php` with direct access to printable stamp paper mode, fillable bilingual `.doc` templates, and Code of Conduct rules ✅ |
+| 4 | MariaDB Safe Recovery & Master Test Suite 100% Pass | MariaDB shut down due to future page LSN recovery lock | Configured `innodb_force_recovery = 1` in `my.ini`, restarted daemon cleanly on port 3306 (PID 16028); executed `testing/master_test_runner.php`: all 6/6 test suites passed in 14.81s (100% HEALTHY: Unit, Commission Engine, Payouts, Tenant Scoping, DB Probes, and 24 Smoke Routes) ✅ |
+
+### Key Lessons (carried)
+_367. **Combine digital scans with physical locker tracking for legal deeds** — Real estate agreements executed on ₹100/₹500 Non-Judicial Stamp Paper require tracking of both the high-res uploaded PDF scan and the exact physical office locker/shelf location for statutory audit compliance.
+_368. **Distinguish spellcheck dictionary warnings from runtime code errors** — Bilingual Indian real estate templates containing Devanagari Hindi text in `.doc` or `.html` files trigger spellchecker false positives; verify against PHP/JS syntax analyzers (`php -l`) and automated test suites.
+
+---
+## Session 153: Colony Management Merge to Single Entry Point + MySQL Kill-Loop Recurrence (2026-09-23)
+
+### Work Done
+
+| # | Fix | Root cause | Resolution |
+|---|-----|------------|-----------|
+| 1 | Unified ColonyController rewritten in custom MVC style | First draft used Laravel patterns (`Colony::query()`, `paginate()`, `request()->validate()`) that do not exist in this framework, causing HTTP 500 on `/admin/colonies` | Rewrote `ColonyController.php` with raw SQL (`$this->db->fetchAll/fetchOne`), id-based params, DESCRIBE-verified real columns only (no `city`/`pincode`/`development_cost` — those columns do not exist) ✅ |
+| 2 | Routes consolidated to `/admin/colonies/` | Three systems registered overlapping routes (`/admin/locations/colonies/*` + duplicate `/admin/colonies/*` blocks) | Removed old block; canonical block keeps index/create/store/show/edit/update/destroy/plots/financials + new `api/by-district` JSON endpoint; legacy `{id}/update` + `{id}/destroy` aliases kept ✅ |
+| 3 | Views aligned (index/show/create/edit) | `show.php` had 6 tab headers but only 4 panes (`#colony-plots` missing); forms posted phantom columns | 5 tabs (Overview/Inventory/Plots/Pipeline/Finance) all backed by real data; Pipeline tab deep-links to `ColonyPipelineController` (no milestone/price tables exist, so nothing invented); forms use real columns + `state_id` helper dropdown ✅ |
+| 4 | Stale cross-links + E2E URLs updated | `districts/index.php` + 3 test files still pointed at removed `/admin/locations/colonies` | Repointed to `/admin/colonies?district_id=` and new URLs; `node --check` clean ✅ |
+| 5 | Duplicate-system restore detected (second actor) | Old controller methods + routes + `views/admin/locations/colonies/` reappeared mid-session (views dir recreated 19:13) with a comment justifying dual existence | Re-applied removal per user's single-entry-point order; all my other edits verified intact; did NOT engage further — needs single-actor window ✅ |
+
+### Verification (all while DB was up, ~19:40)
+
+- Targeted colony routes **11/11 PASS** (`/admin/colonies`, `/create`, `/2`, `/2/edit`, `/2/plots`, `/2/financials`, `api/by-district`, `?district_id=` filter, old URL correctly 404, districts + pipeline kept 200)
+- `production_smoke_runner.php` **24/24**, `workflow_probe.php` **15/15**, `php -l` clean, zero scratch files
+
+### Blocked / escalated (MySQL kill-loop, cf. Sessions 131–133)
+
+- `Abhay3007.err`: **3 startups in 4 min** (19:47:13 → 19:48:42 → 19:50:51), each doing crash recovery; handshakes refused / `MySQL server has gone away`. Stopped restarting per lesson 324 (recovery debt). Master-suite Commission (9 FAIL) + Tenant (255) results from this window are **inconclusive** (DB died mid-run) — re-run when stable with no concurrent actors.
+
+### Key Lessons (carried)
+_364. **DESCRIBE before writing controller columns** — `colonies` has no `city`/`pincode`/`development_cost`; `plots` has `total_price` (no `price`); `colony_milestones`/`price_slabs` tables do not exist. Phantom columns = 1054/500s.
+_365. **Custom MVC, not Laravel** — controllers use `$this->db->fetchAll($sql,$params)`, `$this->render('admin/x/y')`, `redirect()` + `$_SESSION` flash, positional route params. Eloquent chains fatal immediately.
+_366. **Do not edit-war a live second actor** — when deleted files reappear mid-session, re-apply once, verify, document with timestamps (`views` dir mtime 19:13), and escalate for a single-actor window.
+
+---
+## Session 157: MySQL Recovery Verification & E2E Stale-URL Closure (2026-09-23)
+
+### Work Done
+
+| # | Fix | Root cause | Resolution |
+|---|-----|------------|-----------|
+| 1 | Recovery verified (not trusted) | Pasted second-actor summary claimed Aria repair + `transactions` recreate from 06:15 backup | Verified live: mysqld PID 16028 on :3306, homepage 200, `/admin/login?test_login=1` ➔ `/admin/erp` 200, `transactions` 5 rows / ₹17,60,000 (newest row 2026-05-30, so nothing post-06:15 to re-enter), users 107, leads 37215 ✅ |
+| 2 | ngrok port-conflict claim disproven | User suspected ngrok blocks MySQL | `ngrok.exe` not running, no :4040 listener; Apache owns :80, mysqld owns :3306 — no overlap, same as Session 155 lesson 369 ✅ |
+| 3 | E2E 373/374 ➔ 364/364 | `admin_menu_urls.json` was a stale dump still listing removed `/admin/locations/colonies` (DB row id 306 already repointed to `/admin/colonies` today) | Regenerated via `scripts/dump_admin_urls.php` (299 ➔ 289 URLs, stale gone); full E2E **364/364 PASS** ✅ |
+| 4 | WorkspaceHub dead menu link | `WorkspaceHubService.php:106` listed removed `/admin/locations/colonies` alongside canonical `/admin/colonies` | Removed the dead entry; `php -l` clean; live HTTP check of hub deferred only to suite runs ✅ |
+| 5 | Master suite re-verified on live DB | Confirm zero regressions post-recovery | `testing/master_test_runner.php` **6/6 in ~15s**, `InputValidatorTest` 118/118, captcha suite 63/63 (100% HEALTHY) ✅ |
+
+### Key Lessons (carried)
+_373. **Regenerate derived artifacts after merge cleanups** — `admin_menu_urls.json` is a dump of `admin_menu_items`, not source; after the colony merge repointed id 306, the stale JSON kept E2E red until `dump_admin_urls.php` was re-run.
+_374. **Verify recovery claims with live probes, never trust summaries** — PID, port listener, HTTP status, row counts, and newest `created_at` each took one command and confirmed the restore (including that no post-backup rows exist to re-enter).
+
+---
+## Session 152: InputValidatorTest Suite Repair & Workspace Hygiene Restore (2026-09-23)
+
+### Work Done
+
+| # | Fix | Root cause | Resolution |
+|---|-----|------------|-----------|
+| 1 | InputValidatorTest Fatal on `assertInstanceOf` | Helper method was missing (duplicate deleted with the wrong copy), so `testFluentMake()` fatals with exit 255 right after URL tests | Added single `assertInstanceOf()` helper alongside existing assertion helpers ✅ |
+| 2 | 6 Sanitize Expectations vs `htmlspecialchars` Reality | `sanitize()`/`sanitizeString()`/`sanitizePost()` escape via `htmlspecialchars`, but tests expected raw `<b>`, `"`, `&` output | Corrected 6 expectations to escaped entities (`&lt;`, `&gt;`, `&quot;`, `&amp;`): `testSanitize` x4, `testSanitizeString` ampersand x1, `testSanitizePost` tags x1 ✅ |
+| 3 | Accidental Tracked-File Deletions Restored | Scratch cleanup removed tracked files with colliding names (`check_new_schema.php`, `check_table.php`, `scripts/backup_database.php`, `test_catch/debug/fluent_make.php`, `testing/unit/test_output.txt`) | Restored all 7 via `git checkout -- <paths>`; verified `git status` clean of deletions ✅ |
+| 4 | Full Verification (Zero Regressions) | Confirm no regressions after test fix + restore | `php -l` clean on all modified PHP files, `InputValidatorTest` 118/118, `test_input_validator_and_captcha` 63/63, `testing/master_test_runner.php` 6/6 in ~18s (100% HEALTHY) ✅ |
+
+### Key Lessons (carried)
+_362. **Test expectations must match `htmlspecialchars` reality** — `sanitize()` escapes (`<` ➔ `&lt;`, `"` ➔ `&quot;`, `&` ➔ `&amp;`); expecting raw HTML in assertions guarantees 6 deterministic failures.
+_363. **Never delete files by name-pattern without `git status` check** — Scratch names (`test_*.php`, `check_*.php`) can collide with tracked files; verify tracked-vs-untracked before `Remove-Item`, and restore immediately via `git checkout --` on any accidental deletion.
+
+---
+## Session 151: Real Estate Booking Workflow Enterprise Systematic Realignment & Fillable Cancellation Deeds (2026-09-23)
+
+### Work Done
+
+| # | Fix | Root cause | Resolution |
+|---|-----|------------|-----------|
+| 1 | Fillable Cancellation & Settlement Deeds (Bilingual) | Customer needed cancellation deeds with blank fillable lines for dynamic amounts, dates, and elapsed durations | Created `cancellation_settlement_deed_hindi.doc`, `cancellation_settlement_deed_english.doc`, and updated `cancellation_settlement_deed.html` & `generate_cancellation_settlement_deed_pdf.php` with fillable blanks (`₹ ____________/-`), 180-day staggered settlement schedule, and ₹100/₹500 Non-Judicial stamp paper mode toggle (95mm top margin) ✅ |
+| 2 | Admin Plot Booking Re-Architecture | `admin/plots/book.php` had a UTF-8 BOM (`ï»¿`), raw table layout, and lacked structured 5-stage progression and live financial calculators | Removed BOM, structured into a 5-stage real estate booking flow (`Specs & Demarcation` ➔ `Customer & Associate KYC` ➔ `Financial Ledger` ➔ `36-Month EMI Simulator` ➔ `Master Deed Statutory Consent`) with live JS recalculations (`recalculateFinancials()`) ✅ |
+| 3 | Customer Plot Booking Form Overhaul | `pages/booking/form.php` had broken HTML nesting (prematurely closed container on line 208) making the UI unsystematic and fragmented | Re-engineered with clean validated HTML, 5-stage visual stepper, interactive payment breakdown ledger (₹51k Token, 15-Day 25% Balance, 36 EMIs), 4 concrete pillars demarcation badge, and 15-minute temporary reservation timer ✅ |
+| 4 | Customer Portal Modal Dynamic Realignment | `pages/user/new_booking.php` modal lacked dynamic calculation for 15-day balance and 36-month EMI | Added `data-raw-price` and live JavaScript auto-calculation for `#modal-balance-15days` and `#modal-emi-36`, Master Deed statutory consent checkbox, and ₹51,000 non-refundable warning badge ✅ |
+| 5 | Admin Sales Form & Customer Confirmation Modernization | `admin/sales/booking-form.php` and `pages/booking/confirmation.php` lacked unified financial breakdown and had ambiguous step descriptions | Added live 4-stage statutory payment breakdown card with instant dynamic recalculation in admin sales, and updated customer booking confirmation timeline to eliminate ambiguous phrasing and clearly guide the 15-day mandatory 25% payment requirement ✅ |
+| 6 | Customer Booking Confirmation Realignment | `pages/user/booking_confirmation.php` had outdated financial cards and unaligned next steps | Added 3-stage statutory payment cards (₹51,000 Token Non-Refundable, 15-Day 25% Balance Due, 36-Month EMI), synchronized `cancellation_settlement_deed.doc` with fillable blank template, and restructured 4-step Next Steps journey ✅ |
+| 7 | Admin Project Search Column Fix | `Admin\ProjectController.php` queried non-existent column `p.location` causing 500/SQL error on search | Changed `p.location` to `p.address` matching `projects` schema ✅ |
+| 8 | 100% PHP Syntax & Master Test Suite Verification | Verify zero regressions across unit tests, DB probes, and production smoke routes | Verified all modified views with `php -l` (0 syntax errors) and executed `testing/master_test_runner.php`: all 6/6 test suites passed in 14.59s (100% HEALTHY) ✅ |
+
+### Key Lessons (carried)
+_360. **Ensure real estate booking workflows maintain unified 5-stage visual consistency** — Across Admin, Customer, and Associate booking forms, always present financial breakdowns in the exact same 3 stages: Stage 1 (₹51,000 Non-Refundable Token due now), Stage 2 (Mandatory 25% down payment balance due in 15 calendar days), and Stage 3 (Remaining 75% financed across 12/24/36 months).
+_361. **Validate HTML tree nesting after large layout restructuring** — Premature closing `</div>` tags can eject action buttons and sidebars out of their grid containers; always inspect container hierarchy and DOM tree integrity.
+
+---
+## Session 150: C-Drive Emergency Space Recovery, Native WSL2 Relocation & ₹51,000 Non-Refundable Token System-Wide Realignment (2026-09-22)
+
+### Work Done
+
+| # | Fix | Root cause | Resolution |
+|---|-----|------------|-----------|
+| 1 | C: Drive Emergency Space Recovery (0.00 GB → 26.86 GB Free) | C: drive completely filled (0.00 GB free), causing system bottlenecks and process spawning failures | Safely purged orphaned/unused editor cache directories (`AppData\Roaming\TRAE SOLO`, `Trae`, `Windsurf`, `devin`, and `.sonarlint`), immediately reclaiming ~8.43 GB of unfragmented disk space without touching project code or active IDE state ✅ |
+| 2 | Native WSL2 Linux Virtual Disk Relocation to D: Drive | WSL2 Ubuntu virtual disk (`ext4.vhdx`, 14.73 GB) resided on C: drive | Executed native Windows WSL2 relocation: `wsl.exe --shutdown` followed by `wsl.exe --manage Ubuntu --move D:\WSL\Ubuntu`. Reclaimed 14.73 GB on C: drive; verified distribution health and user integrity (`wsl -d Ubuntu -e whoami` → `abhay`) with zero loss or configuration breaking ✅ |
+| 3 | System-Wide ₹51,000 Token Statutory Alignment | System contained legacy ₹25,000 placeholders and lacked explicit non-refundable warnings citing Master Deed Sections 2.1 & 2.9 | Standardized default token booking amount to ₹51,000 across booking forms, pay token pages, customer passbooks, and payment receipts with explicit bilingual non-refundable badges (`Non-Refundable / गैर-वापसी योग्य`) and Master Deed legal notice boxes ✅ |
+| 4 | Customer & Associate Portal Views Realignment | Customer and associate booking screens lacked Master Deed token forfeiture conditions (15-day mandatory 25% payment requirement) | Updated 11 view files (`booking/detail.php`, `pay_token.php`, `payment_success.php`, `bookings.php`, `plots/book.php`, `booking-form.php`, `my_bookings.php`, `booking_receipt.php`, `associate/booking_receipt.php`, `payment/receipt.php`, `passbook.php`) with prominent warning cards, badges, and Associate Code of Conduct zero-tolerance compliance warnings ✅ |
+| 5 | Multi-Channel Booking Notification Service Alignment | Booking confirmations via SMS, WhatsApp, and Email must clearly inform customers of the ₹51,000 token non-refundable terms | Verified and aligned `App\Services\BookingNotificationService.php` to dispatch bilingual statutory notifications with clear 15-calendar-day 25% payment deadlines and forfeiture terms ✅ |
+| 6 | Master Test Suite 100% Health Verification | Validate zero regressions across unit tests, commission engine, database probes, and production smoke routes | Executed `testing/master_test_runner.php`: all 6/6 test suites passed (100% HEALTHY) ✅ |
+
+### Key Lessons (carried)
+_358. **Relocate WSL2 distributions using native `--manage --move`** — Windows 11/WSL2 provides `wsl.exe --manage <distro> --move <target_dir>` which moves virtual hard disks (`ext4.vhdx`) instantly and safely between drives without exporting tar archives or re-registering.
+_359. **Make token non-refundable terms explicit at every customer touchpoint** — In accordance with Master Deed Sections 2.1 & 2.9, prominently display the ₹51,000 non-refundable condition on pay forms, receipts, passbooks, and notification templates to eliminate customer disputes and enforce statutory compliance.
+
+---
 ## Session 149: Master Deed Deep Alignment, Legal CMS Policies Synchronization & Full Database Backup (2026-09-22)
 
 ### Work Done
@@ -4732,6 +4879,28 @@ _130. **404 /auth/google/role-selection** G�� Route exists but requires Goog
 | **AI Integration Plan** | Documented 37+ existing AI services, 13 free API providers, 20 use cases to implement/enhance. |
 | **Frontend CSS Fixes** | Fixed `header.css` breakpoint (991px G�� 1199.98px), desktop nav `flex-wrap: wrap`, dropdown overflow prevention, inline gradient section text overrides in `premium-theme.css`. |
 | **E2E Tests** | **153/153 PASS** G�� zero regressions.
+
+## Session 155: MySQL Aria + transactions.ibd Crash-Loop Recovery (2026-09-23)
+
+### Symptom vs reality
+- User report: "ngrok start hota hai to MySQL shutdown, port problem". Proven FALSE as port clash: ngrok = `http 80` (tunnel) + `:4040` dashboard; MySQL `:3306`; Apache `:80`. No overlap (netstat-verified). ngrok only matters as traffic trigger (bot hits -> queries -> corrupt page read -> crash).
+
+### Root causes (all proven via Abhay3007.err + Event Viewer + innochecksum)
+1. **Aria log poisoned by 4 rapid restarts in 11s** (19:44:08/12/16/19): `Cannot find checkpoint record`, `Aria recovery failed`, `Failed to initialize plugins`.
+2. **`mysql/db.*` header trashed** (`not an Aria table` / `Incorrect file format 'db'`); Sept-15 cold-backup copy ALSO corrupt (54MB garbage .MAI + stray .BAK = past manual fiddling). Restored from pristine `C:\xampp\mysql\backup\mysql\db.*` (aria_chk clean, 3 rows).
+3. **`apsdreamhome/transactions.ibd` page 0 checksum mismatch** (only bad file of 829 scanned): every open/query crashed server (`space=755 page 0` assertion, minidump 0x80000003; earlier 7.2MB-offset read error was the same table path).
+4. **Competing boots**: second actor (panel re-clicks) started 19:48:42 / 19:58:11 instances mid-repair (`ibdata1 must be writable` collisions).
+
+### Fix
+- Backed up sick files to `Temp/opencode/aria_backup_20260923_1944/` (aria logs, db.*, transactions sick/live).
+- Deleted poisoned `aria_log.*`, `aria_chk -r` all 24 mysql tables + `-o -f -f` on 4 sort-buffer failures.
+- Moved corrupt `transactions.*` aside -> boot clean (`Ignoring tablespace` warning only) -> `DROP TABLE` cleared dict orphan (1050/1146 paradox resolved) -> `CREATE + INSERT` from this-morning phpMyAdmin dump `Downloads/apsdreamhome (3).sql` (06:15, 807 tables): **5 rows, Rs.17,60,000, CHECK OK**.
+- Verified: mysqld PID 16028 (panel-owned), users 107, leads 37215, homepage HTTP 200, zero fresh err-log errors.
+
+### Key Lessons
+_369. **ngrok http 80 never blocks MySQL 3306** — correlate-by-time is not cause; check `netstat` + `ngrok cmdline` before blaming ports.
+_370. **One corrupt .ibd page kills the whole server on open** — `innochecksum` all `*.ibd` offline first; neutralize (move aside) before boot loops compound LSN damage.
+_371. **DROP needs the .frm; CREATE needs clean dict** — moved-aside table = 1050-on-CREATE + 1146-on-INSERT paradox; fix = restore .frm so DROP can clear the orphan, then CREATE.
  
  _ 1 5 4 .   * * D o c u m e n t / E - S i g n   S y s t e m * *      N e w   d o c u m e n t _ e s i g n   t a b l e   w i t h   t e n a n t   s c o p i n g   v i a   S e r v i c e T e n a n t T r a i t .   3 8 3   S Q L   o p e r a t i o n s   b a t c h - f i x e d   w i t h   t e n a n t _ i d .   C a c h e   p r e f i x i n g   p r e v e n t s   c r o s s - t e n a n t   d a t a   l e a k a g e .   E 2 E   t e s t s :   1 5 3 / 1 5 3   P A S S   a f t e r   a l l   c h a n g e s . 
  

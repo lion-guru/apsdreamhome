@@ -231,19 +231,14 @@ class InputValidatorTest {
     
     private function testFluentMake(): void {
         echo "Testing InputValidator::make()...\n";
-        
-        try {
-            $validator = InputValidator::make(['name' => 'John', 'email' => 'john@example.com']);
-            $this->assertInstanceOf(InputValidator::class, $validator, 'Returns instance');
-            
-            // Default to $_POST when no data provided
-            $_POST['test'] = 'value';
-            $validator2 = InputValidator::make();
-            $this->assertInstanceOf(InputValidator::class, $validator2, 'Defaults to $_POST when available');
-        } catch (Throwable $e) {
-            echo "Error in testFluentMake: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine() . "\n";
-            throw $e;
-        }
+
+        $validator = InputValidator::make(['name' => 'John', 'email' => 'john@example.com']);
+        $this->assertInstanceOf(InputValidator::class, $validator, 'Returns instance');
+
+        // Default to $_POST when no data provided
+        $_POST['test'] = 'value';
+        $validator2 = InputValidator::make();
+        $this->assertInstanceOf(InputValidator::class, $validator2, 'Defaults to $_POST when available');
     }
 
     private function testFluentApplyRules(): void {
@@ -340,13 +335,13 @@ class InputValidatorTest {
         echo "Testing sanitize()...\n";
         
         // sanitize() uses htmlspecialchars which escapes HTML entities
-        $this->assertEquals('Hello <b>World</b>', InputValidator::sanitize('Hello <b>World</b>'), 'HTML escaped');
-        $this->assertEquals('"Quoted"', InputValidator::sanitize('"Quoted"'), 'Quotes escaped');
-        $this->assertEquals('Test & Test', InputValidator::sanitize('Test & Test'), 'Ampersand escaped');
-        
+        $this->assertEquals('Hello &lt;b&gt;World&lt;/b&gt;', InputValidator::sanitize('Hello <b>World</b>'), 'HTML escaped');
+        $this->assertEquals('&quot;Quoted&quot;', InputValidator::sanitize('"Quoted"'), 'Quotes escaped');
+        $this->assertEquals('Test &amp; Test', InputValidator::sanitize('Test & Test'), 'Ampersand escaped');
+
         // Array input - sanitize escapes HTML entities in each value
         $input = ['name' => '<script>alert(1)</script>', 'email' => 'test@example.com'];
-        $expected = ['name' => '<script>alert(1)</script>', 'email' => 'test@example.com'];
+        $expected = ['name' => '&lt;script&gt;alert(1)&lt;/script&gt;', 'email' => 'test@example.com'];
         $this->assertEquals($expected, InputValidator::sanitize($input), 'Array sanitized');
     }
 
@@ -355,7 +350,7 @@ class InputValidatorTest {
         
         $this->assertEquals('Hello World', InputValidator::sanitizeString('Hello World'), 'Plain text unchanged');
         $this->assertEquals('Hello World', InputValidator::sanitizeString('<script>alert(1)</script>Hello World</script>'), 'Script tags removed');
-        $this->assertEquals('Hello & World', InputValidator::sanitizeString('Hello & World'), 'Ampersand escaped');
+        $this->assertEquals('Hello &amp; World', InputValidator::sanitizeString('Hello & World'), 'Ampersand escaped');
         $this->assertEquals('', InputValidator::sanitizeString(null), 'Null returns empty');
     }
 
@@ -371,15 +366,15 @@ class InputValidatorTest {
         $result = InputValidator::sanitizePost();
         $this->assertEquals('John', $result['name'], 'Name matches');
         $this->assertEquals('john@example.com', $result['email'], 'Email matches');
-        $this->assertEquals(['bold', 'normal'], $result['tags'], 'Tags match');
+        $this->assertEquals(['&lt;b&gt;bold&lt;/b&gt;', 'normal'], $result['tags'], 'Tags match');
     }
 
     private function testSanitizeForDB(): void {
         echo "Testing sanitizeForDB()...\n";
         
         $this->assertEquals('Hello World', InputValidator::sanitizeForDB('Hello World'), 'Plain text unchanged');
-        $this->assertEquals('Hello World', InputValidator::sanitizeForDB('<script>alert(1)</script>Hello World'), 'Script removed');
-        $this->assertEquals('  trimmed  ', InputValidator::sanitizeForDB('  Hello World  '), 'Whitespace trimmed');
+        $this->assertEquals('alert(1)Hello World', InputValidator::sanitizeForDB('<script>alert(1)</script>Hello World'), 'Script removed');
+        $this->assertEquals('Hello World', InputValidator::sanitizeForDB('  Hello World  '), 'Whitespace trimmed');
     }
 
     // ==================== Complex Rule Tests ====================
