@@ -54,6 +54,10 @@ class LocationAdminController extends AdminController
 
         $totalPages = ceil($total / self::PER_PAGE);
 
+        // Global stats (not paginated) — for top cards
+        $totalDistricts = (int)$this->db->query("SELECT COUNT(*) FROM districts")->fetchColumn();
+        $totalColonies = (int)$this->db->query("SELECT COUNT(*) FROM colonies WHERE is_active = 1")->fetchColumn();
+
         $this->render('admin/locations/states/index', [
             'states' => $states,
             'search' => $search,
@@ -61,6 +65,8 @@ class LocationAdminController extends AdminController
             'page' => $page,
             'totalPages' => $totalPages,
             'total' => $total,
+            'totalDistricts' => $totalDistricts,
+            'totalColonies' => $totalColonies,
         ]);
     }
 

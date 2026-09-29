@@ -1,7 +1,7 @@
 <?php
 /**
  * Admin menu manifest — future-proof static snapshot of admin_menu_items.
- * Generated: 2026-09-23 18:05:17 | items: 289
+ * Generated: 2026-09-29 18:30:43 | items: 289
  *
  * Used for: (1) sidebar fallback when DB menu is unreachable/empty,
  * (2) self-heal re-seeding of missing menu rows + role permissions.
@@ -766,7 +766,7 @@ return array (
     'name' => 'Colonies Board',
     'icon' => 'fa-city',
     'section' => 'locations',
-    'parent_url' => '/admin/locations/states',
+    'parent_url' => NULL,
     'order' => 3,
     'perm' => 'locations.colonies',
     'roles' => 
@@ -2499,14 +2499,21 @@ return array (
   ),
   '/admin/locations/states' => 
   array (
-    'name' => 'Locations',
+    'name' => 'States Management',
     'icon' => 'fa-map',
     'section' => 'locations',
     'parent_url' => NULL,
-    'order' => 10,
-    'perm' => 'locations.view',
+    'order' => 1,
+    'perm' => 'locations.states',
     'roles' => 
     array (
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
       'admin' => 
       array (
         'view' => 1,
@@ -2514,12 +2521,12 @@ return array (
         'edit' => 1,
         'delete' => 1,
       ),
-      'super_admin' => 
+      'manager' => 
       array (
         'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
       ),
       'construction_director' => 
       array (
@@ -4204,7 +4211,7 @@ return array (
     'name' => 'Districts Board',
     'icon' => 'fa-map-marked-alt',
     'section' => 'locations',
-    'parent_url' => '/admin/locations/states',
+    'parent_url' => NULL,
     'order' => 2,
     'perm' => 'locations.districts',
     'roles' => 
@@ -7082,7 +7089,7 @@ return array (
     'name' => 'Landmarks & Distances',
     'icon' => 'fa-map-marker-alt',
     'section' => 'locations',
-    'parent_url' => '/admin/locations/states',
+    'parent_url' => NULL,
     'order' => 4,
     'perm' => 'tools.landmarks',
     'roles' => 

@@ -98,8 +98,24 @@ class AgentAuthController extends BaseController
                 'phone' => $phone,
                 'password' => $password,
                 'referral_code' => $referral,
+                'city' => trim($_POST['city'] ?? ''),
+                'state' => trim($_POST['state'] ?? ''),
+                'pincode' => preg_replace('/\D/', '', $_POST['pincode'] ?? ''),
+                'address' => trim($_POST['address'] ?? ''),
                 'registration_method' => 'web',
             ]);
+            if (!empty($result['user_id']) && (!empty($_POST['city']) || !empty($_POST['pincode']) || !empty($_POST['address']))) {
+                try {
+                    (new \App\Services\AddressService())->create((int)$result['user_id'], [
+                        'label' => 'Primary',
+                        'address_line1' => trim($_POST['address'] ?? $_POST['city'] ?? 'N/A'),
+                        'city' => trim($_POST['city'] ?? ''),
+                        'state' => trim($_POST['state'] ?? ''),
+                        'pincode' => preg_replace('/\D/', '', $_POST['pincode'] ?? ''),
+                        'is_primary' => 1,
+                    ]);
+                } catch (\Throwable $e) { error_log('Agent register address save failed: ' . $e->getMessage()); }
+            }
 
             if (!$result['success']) {
                 $_SESSION['errors'] = [$result['message']];

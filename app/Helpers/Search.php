@@ -22,7 +22,7 @@ class Search
         $params = [];
 
         if (!empty($filters['keyword'])) {
-            $where[] = "(p.title LIKE ? OR p.description LIKE ? OR p.location LIKE ?)";
+            $where[] = "(p.plot_number LIKE ? OR p.description LIKE ? OR c.name LIKE ?)";
             $keyword = '%' . $filters['keyword'] . '%';
             $params[] = $keyword;
             $params[] = $keyword;
@@ -35,22 +35,22 @@ class Search
         }
 
         if (!empty($filters['min_price'])) {
-            $where[] = "p.price >= ?";
+            $where[] = "p.total_price >= ?";
             $params[] = (float) $filters['min_price'];
         }
 
         if (!empty($filters['max_price'])) {
-            $where[] = "p.price <= ?";
+            $where[] = "p.total_price <= ?";
             $params[] = (float) $filters['max_price'];
         }
 
         if (!empty($filters['property_type'])) {
-            $where[] = "p.property_type = ?";
+            $where[] = "p.plot_type = ?";
             $params[] = $filters['property_type'];
         }
 
         if (!empty($filters['min_area'])) {
-            $where[] = "p.area >= ?";
+            $where[] = "p.area_sqft >= ?";
             $params[] = (float) $filters['min_area'];
         }
 
@@ -147,12 +147,12 @@ class Search
         }
 
         if (!empty($filters['min_size'])) {
-            $where[] = "p.area >= ?";
+            $where[] = "p.area_sqft >= ?";
             $params[] = (float) $filters['min_size'];
         }
 
         if (!empty($filters['max_size'])) {
-            $where[] = "p.area <= ?";
+            $where[] = "p.area_sqft <= ?";
             $params[] = (float) $filters['max_size'];
         }
 
@@ -207,10 +207,10 @@ class Search
     private static function getOrderBy(string $sort): string
     {
         return match ($sort) {
-            'price_low' => 'p.price ASC',
-            'price_high' => 'p.price DESC',
-            'area_large' => 'p.area DESC',
-            'area_small' => 'p.area ASC',
+            'price_low' => 'p.total_price ASC',
+            'price_high' => 'p.total_price DESC',
+            'area_large' => 'p.area_sqft DESC',
+            'area_small' => 'p.area_sqft ASC',
             'oldest' => 'p.created_at ASC',
             default => 'p.created_at DESC',
         };

@@ -76,7 +76,7 @@ class AutomationTriggerService
                 );
                 $stmt->execute(array_merge([$leadId, "Status changed from $oldStatus to $newStatus", $oldStatus, $newStatus], $tidParams));
             } catch (\Exception $e) {
-            error_log($e->getMessage());
+                error_log('AutomationTriggerService::onLeadStatusChange timeline error: ' . $e->getMessage());
             }
 
             if ($newStatus === 'closed_won') {
@@ -249,32 +249,30 @@ class AutomationTriggerService
     {
         if ($tid === null) $tid = $this->tenantId();
         try {
-            $budget = floatval($lead['budget'] ?? 0);
+            // Real schema: campaigns PK is campaign_id (no target_budget_* cols);
+            // enrollment lives in campaign_leads (no campaign_members table).
             $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
             $tidParams = $tid > 1 ? [$tid] : [];
             $stmt = $this->pdo()->prepare(
-                "SELECT id FROM campaigns
+                "SELECT campaign_id FROM campaigns
                  WHERE status = 'active'
-                 AND (target_budget_min IS NULL OR target_budget_min <= ?)
-                 AND (target_budget_max IS NULL OR target_budget_max >= ?){$tidSql}
-                 LIMIT 1"
+                 AND target_audience IN ('all', 'customers'){$tidSql}
+                 ORDER BY campaign_id LIMIT 1"
             );
-            $stmt->execute(array_merge([$budget, $budget], $tidParams));
+            $stmt->execute($tidParams);
             $campaign = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if ($campaign) {
-                $insCols = $tid > 1 ? "(campaign_id, lead_id, added_at, tenant_id)" : "(campaign_id, lead_id, added_at)";
-                $insVals = $tid > 1 ? "(?, ?, NOW(), ?)" : "(?, ?, NOW())";
-                $insParams = $tid > 1 ? [$campaign['id'], $leadId, $tid] : [$campaign['id'], $leadId];
+                $insCols = $tid > 1 ? "(campaign_id, lead_id, status, tenant_id)" : "(campaign_id, lead_id, status)";
+                $insVals = $tid > 1 ? "(?, ?, 'sent', ?)" : "(?, ?, 'sent')";
+                $insParams = $tid > 1 ? [$campaign['campaign_id'], $leadId, $tid] : [$campaign['campaign_id'], $leadId];
                 $ins = $this->pdo()->prepare(
-                    "INSERT INTO campaign_members {$insCols} VALUES {$insVals}
-                     ON DUPLICATE KEY UPDATE added_at = NOW()"
+                    "INSERT IGNORE INTO campaign_leads {$insCols} VALUES {$insVals}"
                 );
                 $ins->execute($insParams);
             }
         } catch (\Exception $e) {
-        // Tables may not exist — silent fail
-        error_log($e->getMessage());
+            error_log('AutomationTriggerService::addToCampaign error: ' . $e->getMessage());
         }
     }
 

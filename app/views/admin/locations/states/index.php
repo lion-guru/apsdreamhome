@@ -61,7 +61,7 @@
                     <div class="card bg-info text-white">
                         <div class="card-body aps-cp-card-body">
                             <h5 class="card-title">Total Districts</h5>
-                            <h3><?= array_sum(array_column($states, 'district_count')) ?></h3>
+                            <h3><?= $totalDistricts ?? array_sum(array_column($states, 'district_count')) ?></h3>
                         </div>
                     </div>
                 </div>
@@ -69,17 +69,7 @@
                     <div class="card bg-success text-white">
                         <div class="card-body aps-cp-card-body">
                             <h5 class="card-title">Total Colonies</h5>
-                            <h3>
-                                <?php 
-                                $totalColonies = 0;
-                                foreach ($states as $state) {
-                                    $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM colonies c LEFT JOIN districts d ON c.district_id = d.id WHERE d.state_id = ? AND c.is_active = 1");
-                                    $stmt->execute([$state['id']]);
-                                    $totalColonies += $stmt->fetch()['count'];
-                                }
-                                echo $totalColonies;
-                                ?>
-                            </h3>
+                            <h3><?= $totalColonies ?? 0 ?></h3>
                         </div>
                     </div>
                 </div>

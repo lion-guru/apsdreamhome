@@ -38,6 +38,22 @@ class LocationService
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function stateName(int $stateId): ?string
+    {
+        $stmt = $this->pdo->prepare("SELECT name FROM states WHERE id = ? LIMIT 1");
+        $stmt->execute([$stateId]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row['name'] ?? null;
+    }
+
+    public function districtName(int $districtId): ?string
+    {
+        $stmt = $this->pdo->prepare("SELECT name FROM districts WHERE id = ? LIMIT 1");
+        $stmt->execute([$districtId]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row['name'] ?? null;
+    }
+
     public function citiesByDistrict(int $districtId): array
     {
         $stmt = $this->pdo->prepare(

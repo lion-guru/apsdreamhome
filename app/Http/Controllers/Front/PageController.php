@@ -517,6 +517,20 @@ class PageController extends BaseController
     {
         $viewPath = APP_PATH . '/views/pages/become_associate.php';
         if (file_exists($viewPath)) {
+            // Referral context the view expects (was undefined => log warnings)
+            $isLoggedIn = isset($_SESSION['user_id']) && ($_SESSION['role'] ?? '') === 'associate';
+            $loggedInReferralCode = $isLoggedIn ? ($_SESSION['referral_code'] ?? null) : null;
+            if ($isLoggedIn && empty($loggedInReferralCode) && !empty($_SESSION['user_id'])) {
+                try {
+                    $db = \App\Core\Database\Database::getInstance()->getConnection();
+                    $stmt = $db->prepare("SELECT referral_code FROM users WHERE id = ? LIMIT 1");
+                    $stmt->execute([(int)$_SESSION['user_id']]);
+                    $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+                    $loggedInReferralCode = $row['referral_code'] ?? null;
+                } catch (\Throwable $e) { error_log('PageController::becomeAssociate referral lookup failed: ' . $e->getMessage()); }
+            }
+            $companyCode = getenv('COMPANY_REFERRAL_CODE') ?: 'APSREF';
+            $referral_code = trim($_GET['ref'] ?? '') ?: ($loggedInReferralCode ?: $companyCode);
             extract($_GET + ['base' => defined('BASE_URL') ? BASE_URL : '/apsdreamhome']);
             include $viewPath;
         } else {

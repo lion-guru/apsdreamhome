@@ -255,6 +255,37 @@ $ref = $ref ?? $_GET['ref'] ?? $old['sponsor_code'] ?? '';
                         </div>
                     </div>
 
+                    <div class="form-section-title"><i class="fa-solid fa-location-dot"></i> Location</div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="input-group-custom">
+                                <i class="fa-solid fa-map-pin"></i>
+                                <label class="form-label-custom">Pincode</label>
+                                <input type="text" class="form-control" name="pincode" id="regPincode" placeholder="6-digit pincode" maxlength="6" inputmode="numeric" value="<?= htmlspecialchars($old['pincode'] ?? '') ?>">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group-custom">
+                                <i class="fa-solid fa-city"></i>
+                                <label class="form-label-custom">City</label>
+                                <input type="text" class="form-control" name="city" id="regCity" placeholder="City" value="<?= htmlspecialchars($old['city'] ?? '') ?>">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group-custom">
+                                <i class="fa-solid fa-map"></i>
+                                <label class="form-label-custom">State</label>
+                                <input type="text" class="form-control" name="state" id="regState" placeholder="State" value="<?= htmlspecialchars($old['state'] ?? '') ?>">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group-custom">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <label class="form-label-custom">Full Address</label>
+                        <input type="text" class="form-control" name="address" placeholder="House/Street, Area" value="<?= htmlspecialchars($old['address'] ?? '') ?>">
+                    </div>
+
                     <div class="form-section-title"><i class="fa-solid fa-lock"></i> Security</div>
 
                     <div class="row">
@@ -320,8 +351,31 @@ var phoneInput = form.querySelector('input[name="phone"]');
                  });
              }
 
-             // Sponsor name resolution
-             function resolveSponsorName() {
+              // Pincode -> city/state auto-fill (LocationService)
+              var pinInput = document.getElementById('regPincode');
+              var cityInput = document.getElementById('regCity');
+              var stateInput = document.getElementById('regState');
+              if (pinInput) {
+                  var pinTimer = null;
+                  pinInput.addEventListener('input', function() {
+                      clearTimeout(pinTimer);
+                      var pin = this.value.replace(/\D/g, '').slice(0, 6);
+                      if (pin.length !== 6) return;
+                      pinTimer = setTimeout(function() {
+                          fetch('/apsdreamhome/api/locations/pincode/' + pin)
+                              .then(function(r){ return r.json(); })
+                              .then(function(d){
+                                  if (d && d.found) {
+                                      if (cityInput && !cityInput.value) cityInput.value = d.city || d.district || '';
+                                      if (stateInput && !stateInput.value) stateInput.value = d.state || '';
+                                  }
+                              }).catch(function(){});
+                      }, 500);
+                  });
+              }
+
+              // Sponsor name resolution
+              function resolveSponsorName() {
                  var sponsorCode = document.getElementsByName('sponsor_code')[0].value.trim();
                  var display = document.getElementById('sponsor_name_display');
                  if (!sponsorCode) {

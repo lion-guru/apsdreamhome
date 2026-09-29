@@ -54,9 +54,32 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                 </div>
                             </div>
                             
-                            <div class="mb-3">
-                                <label for="address" class="form-label">Address</label>
-                                <textarea class="form-control" id="address" name="address" rows="2"><?php echo htmlspecialchars($user['address'] ?? ''); ?></textarea>
+                            <div class="p-3 bg-light rounded mb-3">
+                                <h6 class="fw-semibold mb-3"><i class="fas fa-map-marker-alt me-2"></i>Address</h6>
+                                <?php
+                                $addressPrefix = 'user';
+                                $addressValues = [
+                                    'city' => $user['city'] ?? '',
+                                    'pincode' => $user['pincode'] ?? '',
+                                    'address_line' => $user['address'] ?? '',
+                                ];
+                                // Try to load structured address if exists
+                                if (!empty($user['id'])) {
+                                    try {
+                                        $addrRow = (new \App\Services\AddressService())->listForUser((int)$user['id']);
+                                        if (!empty($addrRow[0])) {
+                                            $addressValues = [
+                                                'city' => $addrRow[0]['city'] ?? $addressValues['city'],
+                                                'pincode' => $addrRow[0]['pincode'] ?? $addressValues['pincode'],
+                                                'address_line' => $addrRow[0]['address_line1'] ?? $addressValues['address_line'],
+                                            ];
+                                        }
+                                    } catch (\Throwable $e) {}
+                                }
+                                $addressShowMap = false;
+                                $addressRequired = false;
+                                include __DIR__ . '/../../components/address-form.php';
+                                ?>
                             </div>
                             
                             <div class="row">

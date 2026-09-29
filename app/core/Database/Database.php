@@ -108,7 +108,11 @@ class Database
 
             return $stmt;
         } catch (PDOException $e) {
-            throw new \RuntimeException("Query failed: " . $e->getMessage());
+            // Single source of truth for every 1054/23000/08004: log the SQL, surface it in the
+            // exception, and let the app-wrapper layer handle user messaging (lesson 246).
+            error_log("DB Query failed [{$e->getCode()}]: {$e->getMessage()} | SQL: {$sql}");
+            $preview = mb_substr(preg_replace('/\s+/', ' ', trim($sql)), 0, 600);
+            throw new \RuntimeException("Query failed: " . $e->getMessage() . " | SQL: {$preview}");
         }
     }
 

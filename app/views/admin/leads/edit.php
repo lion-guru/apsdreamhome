@@ -101,7 +101,26 @@ $assignees = $assignees ?? [];
                         <textarea class="form-control" name="message" rows="4"><?= htmlspecialchars($lead['message'] ?? '') ?></textarea>
                     </div>
                 </div>
-                
+
+                <div class="mb-4">
+                    <h6 class="fw-semibold mb-3"><i class="fas fa-map-marker-alt me-2"></i>Address & Location</h6>
+                    <?php
+                    $addressPrefix = 'lead';
+                    $addressValues = [
+                        'state_id' => $lead['state_id'] ?? null,
+                        'district_id' => $lead['district_id'] ?? null,
+                        'city' => $lead['city'] ?? '',
+                        'pincode' => $lead['pincode'] ?? '',
+                        'address_line' => $lead['address'] ?? '',
+                        'latitude' => $lead['latitude'] ?? '',
+                        'longitude' => $lead['longitude'] ?? '',
+                    ];
+                    $addressShowMap = true;
+                    $addressRequired = false;
+                    include __DIR__ . '/../../components/address-form.php';
+                    ?>
+                </div>
+
                 <div class="d-flex justify-content-between">
                     <a href="<?= BASE_URL ?>/admin/leads/<?= $lead['id'] ?>" class="btn btn-secondary">
                         <i class="fas fa-times"></i> Cancel

@@ -66,6 +66,17 @@
                         <textarea class="form-control" id="message" name="message" rows="3" placeholder="Lead requirements or message..."></textarea>
                     </div>
 
+                    <div class="mb-4">
+                        <h6 class="fw-semibold mb-3"><i class="fas fa-map-marker-alt me-2"></i>Address & Location</h6>
+                        <?php
+                        $addressPrefix = 'lead';
+                        $addressValues = [];
+                        $addressShowMap = true;
+                        $addressRequired = false;
+                        include __DIR__ . '/../../components/address-form.php';
+                        ?>
+                    </div>
+
                     <div class="d-flex gap-3">
                         <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Create Lead</button>
                         <a href="<?php echo BASE_URL; ?>/admin/leads" class="btn btn-outline-secondary">Cancel</a>

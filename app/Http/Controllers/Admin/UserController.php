@@ -238,6 +238,25 @@ class UserController extends AdminController
 
             $userId = $result['user_id'];
 
+            // Save address if provided (centralized LocationService via AddressService)
+            $hasAddr = !empty($data['user_city']) || !empty($data['user_pincode']) || !empty($data['user_address_line']);
+            if ($hasAddr) {
+                try {
+                    $stateName = '';
+                    if (!empty($data['user_state_id'])) {
+                        $stateName = (new \App\Services\LocationService())->stateName((int)$data['user_state_id']) ?? '';
+                    }
+                    (new \App\Services\AddressService())->create($userId, [
+                        'label' => 'Primary',
+                        'address_line1' => trim($data['user_address_line'] ?? $data['user_city'] ?? 'N/A'),
+                        'city' => trim($data['user_city'] ?? ''),
+                        'state' => $stateName ?: trim($data['user_state'] ?? ''),
+                        'pincode' => preg_replace('/\D/', '', $data['user_pincode'] ?? ''),
+                        'is_primary' => 1,
+                    ]);
+                } catch (\Throwable $e) { error_log('UserController::store address save failed: ' . $e->getMessage()); }
+            }
+
             // If employee role, also create employees table row
             if ($data['role'] === 'employee' || $data['role'] === 'telecaller') {
                 $this->db->execute(
@@ -449,6 +468,40 @@ class UserController extends AdminController
             if (isset($data['address'])) {
                 $updateFields[] = "address = ?";
                 $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['address'], 'string');
+            }
+            // Structured address from shared address-form partial (user_* fields)
+            $hasAddr = !empty($data['user_city']) || !empty($data['user_pincode']) || !empty($data['user_address_line']);
+            if ($hasAddr) {
+                try {
+                    $stateName = '';
+                    if (!empty($data['user_state_id'])) {
+                        $stateName = (new \App\Services\LocationService())->stateName((int)$data['user_state_id']) ?? '';
+                    }
+                    $addrSvc = new \App\Services\AddressService();
+                    $existing = $addrSvc->listForUser($userId);
+                    $addrData = [
+                        'label' => 'Primary',
+                        'address_line1' => trim($data['user_address_line'] ?? $data['address'] ?? 'N/A'),
+                        'city' => trim($data['user_city'] ?? ''),
+                        'state' => $stateName ?: trim($data['user_state'] ?? ''),
+                        'pincode' => preg_replace('/\D/', '', $data['user_pincode'] ?? ''),
+                        'is_primary' => 1,
+                    ];
+                    if (!empty($existing)) {
+                        $addrSvc->update((int)$existing[0]['id'], $userId, $addrData);
+                    } else {
+                        $addrSvc->create($userId, $addrData);
+                    }
+                    // Also keep users.address/city in sync for legacy views
+                    if (!empty($addrData['city'])) {
+                        $updateFields[] = "city = ?";
+                        $updateValues[] = $addrData['city'];
+                    }
+                    if (!empty($addrData['address_line1'])) {
+                        $updateFields[] = "address = ?";
+                        $updateValues[] = $addrData['address_line1'];
+                    }
+                } catch (\Throwable $e) { error_log('UserController::update address save failed: ' . $e->getMessage()); }
             }
 
             if (isset($data['role'])) {

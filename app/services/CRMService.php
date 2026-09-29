@@ -40,18 +40,9 @@ class CRMService
         return [' AND tenant_id = ?', [$tid]];
     }
 
-    /**
-     * Get tenant INSERT data (adds tenant_id column if scoped).
-     * @return array ['columns' => [...], 'values' => [...]]
-     */
-    private function tenantInsertData(array $data): array
-    {
-        if (!TenantScopeService::isolationEnabled()) return ['columns' => array_keys($data), 'values' => array_values($data)];
-        $tid = $this->tid();
-        if ($tid <= 1) return ['columns' => array_keys($data), 'values' => array_values($data)];
-        $data['tenant_id'] = $tid;
-        return ['columns' => array_keys($data), 'values' => array_values($data)];
-    }
+    // NOTE: tenantInsertData() resolves to ServiceTenantTrait (zero-arg,
+    // returns ['tenant_id' => $tid] or []). Do NOT add a same-named method
+    // here — it would shadow the trait and fatal every createLead call.
 
     // ─────────── Pipeline Stages ───────────────────────────────────────
 
@@ -238,6 +229,7 @@ try {
             
             $insertData = $this->tenantInsertData();
             $columns = ['lead_number', 'name', 'email', 'phone', 'company', 'address', 'city', 'state', 'pincode',
+                'state_id', 'district_id', 'latitude', 'longitude',
                 'source', 'property_interest', 'budget', 'budget_range', 'location_preference', 'notes', 'tags',
                 'assigned_to', 'created_by', 'status', 'priority', 'lead_score', 'lead_category'];
             $placeholders = array_fill(0, count($columns), '?');
@@ -257,6 +249,10 @@ try {
                 $s($data['city'] ?? null),
                 $s($data['state'] ?? null),
                 $s($data['pincode'] ?? null),
+                !empty($data['state_id']) ? (int)$data['state_id'] : null,
+                !empty($data['district_id']) ? (int)$data['district_id'] : null,
+                (isset($data['latitude']) && $data['latitude'] !== '' && is_numeric($data['latitude'])) ? $data['latitude'] : null,
+                (isset($data['longitude']) && $data['longitude'] !== '' && is_numeric($data['longitude'])) ? $data['longitude'] : null,
                 $s($data['source']) ?: 'website',
                 $s($data['property_interest'] ?? null),
                 (float)($data['budget'] ?? 0),
@@ -328,7 +324,8 @@ try {
         try {
             $fields = [];
             $params = [];
-            $allowed = ['name','email','phone','company','address','city','state','pincode','source',
+            $allowed = ['name','email','phone','company','address','city','state','pincode',
+                         'state_id','district_id','latitude','longitude','source',
                          'property_interest','budget','budget_range','location_preference','notes','tags',
                          'assigned_to','status','priority','lead_score','lead_category','is_converted',
                          'conversion_probability','total_purchase_value'];
@@ -742,9 +739,12 @@ try {
 
     public function logAssignment($leadId, $from, $to, $by, $reason = null, $notes = null) {
         try {
+            if (empty($leadId) || empty($to)) return; // nothing meaningful to log
+            if (empty($by)) $by = $to; // system/auto assignment: attribute to assignee
+            if (empty($by)) $by = 1; // last resort: system admin (col is NOT NULL, no FK)
             $cols = "lead_id, assigned_from, assigned_to, assigned_by, reason, notes";
             $vals = "?, ?, ?, ?, ?, ?";
-            $params = [$leadId, $from, $to, $by, $reason, $notes];
+            $params = [$leadId, $from ?: null, $to, $by, $reason, $notes];
             if ($tid = $this->tid()) { $cols .= ", tenant_id"; $vals .= ", ?"; $params[] = $tid; }
             $this->db->query(
                 "INSERT INTO crm_assignments ($cols) VALUES ($vals)",

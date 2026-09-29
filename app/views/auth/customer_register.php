@@ -84,6 +84,27 @@ $base = BASE_URL;
                         <label class="form-label" for="regPhone"><?= __('register_label_phone') ?> *</label>
                         <input type="tel" class="form-control" name="phone" id="regPhone" value="<?php echo htmlspecialchars($old['phone'] ?? ''); ?>" placeholder="<?= __('register_ph_phone') ?>" required>
                     </div>
+                    <div class="mb-4 p-3 bg-light rounded">
+                        <h6 class="fw-semibold mb-3"><i class="fas fa-map-marker-alt me-2"></i>Location</h6>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label" for="regPincode">Pincode</label>
+                                <input type="text" class="form-control" name="pincode" id="regPincode" placeholder="6-digit pincode" maxlength="6" inputmode="numeric" value="<?= htmlspecialchars($old['pincode'] ?? '') ?>">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label" for="regCity">City</label>
+                                <input type="text" class="form-control" name="city" id="regCity" placeholder="City" value="<?= htmlspecialchars($old['city'] ?? '') ?>">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label" for="regState">State</label>
+                                <input type="text" class="form-control" name="state" id="regState" placeholder="State" value="<?= htmlspecialchars($old['state'] ?? '') ?>">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="regAddress">Full Address</label>
+                            <input type="text" class="form-control" name="address" id="regAddress" placeholder="House/Street, Area" value="<?= htmlspecialchars($old['address'] ?? '') ?>">
+                        </div>
+                    </div>
                     <div class="reg-step-2" <?= $formVariant === 'minimal' ? 'class=""' : '' ?>>
                         <div class="mb-3">
                             <label class="form-label" for="regPassword"><?= __('register_label_password') ?> *</label>
@@ -157,12 +178,35 @@ $base = BASE_URL;
                              }
                              
                              // Attach listener to referral_code input
-                             var referralInput = document.querySelector('input[name="referral_code"]');
-                             if (referralInput) {
-                                 referralInput.addEventListener('input', resolveReferralName);
-                                 referralInput.addEventListener('blur', resolveReferralName);
-                             }
-                         })();
+                              var referralInput = document.querySelector('input[name="referral_code"]');
+                              if (referralInput) {
+                                  referralInput.addEventListener('input', resolveReferralName);
+                                  referralInput.addEventListener('blur', resolveReferralName);
+                              }
+
+                              // Pincode -> city/state auto-fill
+                              var pinInput = document.getElementById('regPincode');
+                              var cityInput = document.getElementById('regCity');
+                              var stateInput = document.getElementById('regState');
+                              if (pinInput) {
+                                  var pinTimer = null;
+                                  pinInput.addEventListener('input', function() {
+                                      clearTimeout(pinTimer);
+                                      var pin = this.value.replace(/\D/g, '').slice(0, 6);
+                                      if (pin.length !== 6) return;
+                                      pinTimer = setTimeout(function() {
+                                          fetch('/apsdreamhome/api/locations/pincode/' + pin)
+                                              .then(function(r){ return r.json(); })
+                                              .then(function(d){
+                                                  if (d && d.found) {
+                                                      if (cityInput && !cityInput.value) cityInput.value = d.city || d.district || '';
+                                                      if (stateInput && !stateInput.value) stateInput.value = d.state || '';
+                                                  }
+                                              }).catch(function(){});
+                                      }, 500);
+                                  });
+                              }
+                          })();
                      </script>
                     <?php else: ?>
                         <button type="submit" class="btn btn-primary w-100 py-2">

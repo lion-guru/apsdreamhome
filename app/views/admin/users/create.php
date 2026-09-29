@@ -52,9 +52,17 @@
                                 </optgroup>
                             </select>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">City</label>
-                            <input type="text" class="form-control" name="city">
+                        <div class="col-12">
+                            <div class="p-3 bg-light rounded mt-2">
+                                <h6 class="fw-semibold mb-3"><i class="fas fa-map-marker-alt me-2"></i>Address</h6>
+                                <?php
+                                $addressPrefix = 'user';
+                                $addressValues = [];
+                                $addressShowMap = false;
+                                $addressRequired = false;
+                                include __DIR__ . '/../../components/address-form.php';
+                                ?>
+                            </div>
                         </div>
 
                         <!-- Employee-specific fields (shown for employee/telecaller/manager) -->

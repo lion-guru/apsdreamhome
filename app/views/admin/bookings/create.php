@@ -25,6 +25,16 @@ $active_page = 'bookings';
 <?php endif; ?>
 
 <!-- Booking Form -->
+<?php if (!empty($lead)): ?>
+<div class="alert alert-info d-flex align-items-center gap-3 mb-3">
+    <i class="fas fa-user-check fa-2x"></i>
+    <div>
+        <strong>Booking from Lead #<?= $lead['id'] ?> — <?= htmlspecialchars($lead['name'] ?? '') ?></strong><br>
+        <small><?= htmlspecialchars($lead['phone'] ?? '') ?> · <?= htmlspecialchars($lead['city'] ?? '') ?> · Budget <?= $lead['budget'] ? '₹' . number_format($lead['budget']) : '—' ?></small>
+    </div>
+    <a href="<?= BASE_URL ?>/admin/leads/<?= $lead['id'] ?>" class="btn btn-sm btn-outline-primary ms-auto">View Lead</a>
+</div>
+<?php endif; ?>
 <div class="card aps-cp-card shadow-sm border-0 mb-4">
     <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
         <h5 class="card-title mb-0 text-primary fw-bold">
@@ -34,6 +44,10 @@ $active_page = 'bookings';
     <div class="card-body">
         <form action="<?php echo BASE_URL; ?>/admin/bookings" method="POST" id="bookingForm" class="needs-validation" novalidate>
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+            <?php if (!empty($lead)): ?>
+            <input type="hidden" name="lead_id" value="<?= $lead['id'] ?>">
+            <input type="hidden" name="lead_name" value="<?= htmlspecialchars($lead['name'] ?? '') ?>">
+            <?php endif; ?>
 
             <div class="row g-4">
                 <!-- Plot Selection -->
@@ -145,6 +159,16 @@ $active_page = 'bookings';
                                 <label for="new_customer_email">Email Address <span class="text-muted">(Optional)</span></label>
                             </div>
                         </div>
+                    </div>
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <h6 class="fw-semibold mb-3"><i class="fas fa-map-marker-alt me-2"></i>Customer Address</h6>
+                        <?php
+                        $addressPrefix = 'new_customer';
+                        $addressValues = [];
+                        $addressShowMap = false;
+                        $addressRequired = false;
+                        include __DIR__ . '/../../components/address-form.php';
+                        ?>
                     </div>
                 </div>
 

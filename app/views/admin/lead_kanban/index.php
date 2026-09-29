@@ -243,6 +243,11 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
                     <span ><?= $assigned ?></span>
                   </div>
                 <?php endif; ?>
+                <?php if (!in_array($slug ?? '', ['won', 'lost'])): ?>
+                  <a href="<?= $base ?>/admin/bookings/create?lead_id=<?= $lid ?>" class="btn btn-sm btn-success w-100 mt-2 py-1" onclick="event.stopPropagation()" title="Book Plot for this lead">
+                    <i class="fas fa-calendar-check me-1"></i>Book Plot
+                  </a>
+                <?php endif; ?>
               </div>
             <?php endforeach; ?>
           <?php endif; ?>
@@ -478,9 +483,10 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
           </div>
           ${notes ? '<div class="mb-3"><small class="text-muted d-block mb-1">Notes</small><p >' + notes + '</p></div>' : ''}
           ${interactions ? '<div class="mb-3"><small class="text-muted d-block mb-2">Recent Activity</small>' + interactions + '</div>' : ''}
-          <div class="d-flex gap-2 mt-3">
+          <div class="d-flex gap-2 mt-3 flex-wrap">
             <a href="${BASE}/admin/leads/${lead.id}" class="btn btn-sm btn-primary"><i class="fas fa-external-link-alt me-1"></i>Full Detail</a>
             <a href="${BASE}/admin/leads/${lead.id}/edit" class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit me-1"></i>Edit</a>
+            <a href="${BASE}/admin/bookings/create?lead_id=${lead.id}" class="btn btn-sm btn-success"><i class="fas fa-calendar-check me-1"></i>Book Plot</a>
             <a href="tel:${phone.replace(/\D/g, '')}" class="btn btn-sm btn-outline-success"><i class="fas fa-phone me-1"></i>Call</a>
           </div>
         `;

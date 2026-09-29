@@ -111,9 +111,15 @@ class BookingController extends AdminController
             [$tidSql, $tidParams] = $this->tenantWhere();
             $users = $this->db->fetchAll("SELECT id, name, email, phone FROM users WHERE role IN ('customer','agent'){$tidSql} ORDER BY name", $tidParams) ?: [];
             $properties = $this->db->query("SELECT id, title, location FROM properties WHERE status = 'active' ORDER BY title")->fetchAll(\PDO::FETCH_ASSOC);
-            return $this->render('admin/bookings/create', ['users' => $users, 'properties' => $properties]);
+            $lead = null;
+            if (!empty($_GET['lead_id'])) {
+                try {
+                    $lead = (new \App\Services\CRMService())->getLeadById((int)$_GET['lead_id']);
+                } catch (\Throwable $e) { error_log('BookingController::create lead lookup failed: ' . $e->getMessage()); }
+            }
+            return $this->render('admin/bookings/create', ['users' => $users, 'properties' => $properties, 'lead' => $lead]);
         } catch (\Exception $e) {
-            return $this->render('admin/bookings/create', ['users' => [], 'properties' => [], 'error' => $e->getMessage()]);
+            return $this->render('admin/bookings/create', ['users' => [], 'properties' => [], 'lead' => null, 'error' => $e->getMessage()]);
         }
     }
 
@@ -149,6 +155,21 @@ class BookingController extends AdminController
                         $walletService = new \App\Services\WalletService();
                         $walletService->ensureWallet($customerId);
                     }
+                    // Save customer address if provided (centralized LocationService via AddressService)
+                    $hasAddr = !empty($data['new_customer_city']) || !empty($data['new_customer_pincode']) || !empty($data['new_customer_address_line']);
+                    if ($hasAddr && class_exists('\\App\\Services\\AddressService')) {
+                        try {
+                            $addrSvc = new \App\Services\AddressService();
+                            $addrSvc->create($customerId, [
+                                'label' => 'Booking Address',
+                                'address_line1' => trim($data['new_customer_address_line'] ?? $data['new_customer_city'] ?? 'N/A'),
+                                'city' => trim($data['new_customer_city'] ?? ''),
+                                'state' => trim($data['new_customer_state'] ?? (!empty($data['new_customer_state_id']) ? ((new \App\Services\LocationService())->stateName((int)$data['new_customer_state_id']) ?? '') : '')),
+                                'pincode' => preg_replace('/\D/', '', $data['new_customer_pincode'] ?? ''),
+                                'is_primary' => 1,
+                            ]);
+                        } catch (\Throwable $e) { error_log('BookingController::store address save failed: ' . $e->getMessage()); }
+                    }
                 }
             }
 
@@ -170,6 +191,12 @@ class BookingController extends AdminController
                 $data['notes'] ?? ''
             ]);
             $bookingId = (int)$this->db->lastInsertId();
+            // If booked from Kanban lead, mark lead as won (3-click flow: Lead → Booking)
+            if (!empty($data['lead_id'])) {
+                try {
+                    (new \App\Services\CRMService())->updateLead((int)$data['lead_id'], ['status' => 'closed_won']);
+                } catch (\Throwable $e) { error_log('BookingController::store lead convert failed: ' . $e->getMessage()); }
+            }
             $_SESSION['success'] = 'Booking created successfully.';
 
             try {
