@@ -410,7 +410,7 @@ class PossessionController extends AdminController
         }
     }
 
-    public function defectReports($id)
+public function defectReports($id)
     {
         $this->requireAdmin();
         try {
@@ -419,14 +419,13 @@ class PossessionController extends AdminController
             $booking = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             try {
-                $defects = $this->db->prepare("SELECT d.*, u.name as reported_by_name, ru.name as resolved_by_name
+                $defects = $this->db->prepare("SELECT d.*, u.name as reported_by_name
                     FROM defect_reports d
                     LEFT JOIN users u ON d.reported_by = u.id
-                    LEFT JOIN users ru ON d.resolved_by = ru.id
-                    WHERE d.booking_id = ? ORDER BY d.created_at DESC");
+                    WHERE d.property_id = ? ORDER BY d.created_at DESC");
             } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-            error_log($e->getMessage());
+                // Gracefully handle dropped table ref
+                error_log($e->getMessage());
             }
             $defects->execute([$id]);
             $defects = $defects->fetchAll(\PDO::FETCH_ASSOC);
@@ -460,7 +459,7 @@ class PossessionController extends AdminController
 
             try {
                 $tid = $this->tenantId();
-                $stmt = $this->db->prepare("INSERT INTO defect_reports (booking_id, reported_by, defect_type, description, priority, tenant_id) VALUES (?, ?, ?, ?, ?, ?)");
+                $stmt = $this->db->prepare("INSERT INTO defect_reports (property_id, reported_by, defect_type, description, priority, tenant_id) VALUES (?, ?, ?, ?, ?, ?)");
             } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
             error_log($e->getMessage());
@@ -500,8 +499,8 @@ class PossessionController extends AdminController
                 $this->redirect('/admin/possession');
             }
 
-            $stmt = $this->db->prepare("UPDATE defect_reports SET status = 'resolved', resolution_notes = ?, resolved_by = ?, resolved_at = NOW() WHERE id = ? AND tenant_id = ?");
-            $stmt->execute([$resolutionNotes, $_SESSION['admin_id'] ?? null, $defectId, $this->tenantId()]);
+            $stmt = $this->db->prepare("UPDATE defect_reports SET status = 'resolved', resolution_notes = ? WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$resolutionNotes, $defectId, $this->tenantId()]);
 
             $this->setFlash('success', 'Defect marked as resolved');
             $this->redirect('/admin/possession/show/' . $defect['booking_id']);

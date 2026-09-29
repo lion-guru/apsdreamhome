@@ -281,10 +281,10 @@ class EmployeeDashboardController extends BaseController
         
         $monthlySummary = $this->db->fetchOne($monthlyQuery);
         
-        // Pending invoices
+        // Pending invoices (draft + sent + viewed = actionable)
         $invoicesQuery = "SELECT COUNT(*) as count
                           FROM invoices 
-                          WHERE status = 'pending'
+                          WHERE status IN ('draft', 'sent', 'viewed')
                           AND due_date <= DATE_ADD(CURDATE(), INTERVAL 7 DAY)";
         
         $pendingInvoices = $this->db->fetchOne($invoicesQuery);
@@ -700,7 +700,7 @@ class EmployeeDashboardController extends BaseController
         try {
             $totalIncome       = (float)($this->db->fetchOne("SELECT COALESCE(SUM(amount),0) as t FROM financial_transactions WHERE type = 'income' AND YEAR(transaction_date) = YEAR(CURDATE())")['t'] ?? 0);
             $totalExpenses     = (float)($this->db->fetchOne("SELECT COALESCE(SUM(amount),0) as t FROM financial_transactions WHERE type = 'expense' AND YEAR(transaction_date) = YEAR(CURDATE())")['t'] ?? 0);
-            $pendingInvoices   = (int)($this->db->fetchOne("SELECT COUNT(*) as c FROM invoices WHERE status = 'pending'")['c'] ?? 0);
+            $pendingInvoices   = (int)($this->db->fetchOne("SELECT COUNT(*) as c FROM invoices WHERE status IN ('draft', 'sent', 'viewed')")['c'] ?? 0);
             $taxDeadlines      = (int)($this->db->fetchOne("SELECT COUNT(*) as c FROM efiling_deadlines WHERE due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY) AND status <> 'filed'")['c'] ?? 0);
             $recentTransactions = $this->db->fetchAll("SELECT DATE(transaction_date) as date, description, amount, status FROM financial_transactions ORDER BY transaction_date DESC LIMIT 5");
             $budgetVariance    = $this->db->fetchAll("SELECT d.name AS department, (b.allocated_amount - b.spent_amount) AS variance FROM budgets b LEFT JOIN departments d ON b.department_id = d.id WHERE b.fiscal_year = YEAR(CURDATE()) LIMIT 5");

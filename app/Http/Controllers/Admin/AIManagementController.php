@@ -120,9 +120,8 @@ class AIManagementController extends AdminController
         $this->requireAdmin();
         try {
             $contents = $this->db->fetchAll("
-                SELECT g.*, u.name as user_name, u.email as user_email
+                SELECT g.*
                 FROM ai_generated_content g
-                LEFT JOIN users u ON g.user_id = u.id
                 ORDER BY g.created_at DESC
                 LIMIT 100
             ") ?: [];

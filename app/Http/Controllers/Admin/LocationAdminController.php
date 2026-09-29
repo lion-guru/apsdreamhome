@@ -490,28 +490,26 @@ class LocationAdminController extends AdminController
         header('Expires: 0');
 
         $output = fopen('php://output', 'w');
-        fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
-        
-        fputcsv($output, ['ID', 'Name', 'Code', 'State', 'State Code', 'Is Active', 'Created At']);
-
-        $sql = "SELECT d.id, d.name, d.code, s.name as state_name, s.code as state_code, d.is_active, d.created_at 
+$sql = "SELECT d.id, d.name, d.code, s.name as state_name, s.code as state_code, d.is_active
                 FROM districts d 
                 LEFT JOIN states s ON d.state_id = s.id 
                 ORDER BY s.name, d.name";
-        $stmt = $this->db->query($sql);
-        $districts = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+$stmt = $this->db->query($sql);
+$districts = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        foreach ($districts as $district) {
-            fputcsv($output, [
-                $district['id'],
-                $district['name'],
-                $district['code'],
-                $district['state_name'] ?? '',
-                $district['state_code'] ?? '',
-                $district['is_active'] ? 'Active' : 'Inactive',
-                $district['created_at']
-            ]);
-        }
+fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+fputcsv($output, ['ID', 'Name', 'Code', 'State', 'State Code', 'Is Active']);
+
+foreach ($districts as $district) {
+    fputcsv($output, [
+        $district['id'],
+        $district['name'],
+        $district['code'],
+        $district['state_name'] ?? '',
+        $district['state_code'] ?? '',
+        $district['is_active'] ? 'Active' : 'Inactive',
+    ]);
+}
 
         fclose($output);
         exit;
