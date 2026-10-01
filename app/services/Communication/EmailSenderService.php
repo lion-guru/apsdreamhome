@@ -34,11 +34,8 @@ class EmailSenderService
             'from_name' => $_ENV['SMTP_FROM_NAME'] ?? 'APS Dream Home',
         ];
 
-        try {
-            $row = $this->db->fetchOne("SELECT `key`, `value` FROM email_config WHERE `key` IN ('smtp_host','smtp_port','smtp_user','smtp_pass','smtp_encryption','from_email','from_name')");
-        } catch (\Exception $e) {
-            return;
-        }
+        // NOTE: legacy email_config table never existed; SMTP comes from
+        // env above. No DB lookup (previously logged 1146 on every send path).
     }
 
     private function initMailer()

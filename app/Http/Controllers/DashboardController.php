@@ -75,7 +75,7 @@ class DashboardController extends BaseController
 
         try {
             // Get live user data
-            $user = $this->db->fetchOne("SELECT id, name, email, phone, role, created_at, avatar FROM users WHERE id = ?", [$userId]) ?: [];
+            $user = $this->db->fetchOne("SELECT id, name, email, phone, role, created_at, profile_image AS avatar FROM users WHERE id = ?", [$userId]) ?: [];
             $userName = !empty($user['name']) ? $user['name'] : ($_SESSION['user_name'] ?? 'Valued Customer');
             $createdAt = !empty($user['created_at']) ? date('M Y', strtotime($user['created_at'])) : date('M Y');
 
@@ -144,7 +144,7 @@ class DashboardController extends BaseController
 
             // Recommended featured properties
             $recommended_properties = $this->db->fetchAll("
-                SELECT id, title, property_type, location, price, status, created_at
+                SELECT id, title, type AS property_type, location, price, status, created_at
                 FROM properties
                 WHERE status = 'available'
                 ORDER BY created_at DESC
@@ -203,7 +203,7 @@ class DashboardController extends BaseController
         // Fetch real user data from DB
         try {
             $db = \App\Core\Database::getInstance()->getConnection();
-            $stmt = $db->prepare("SELECT name, email, phone, address, created_at FROM users WHERE id = ?");
+            $stmt = $db->prepare("SELECT id, name, email, phone, address, created_at FROM users WHERE id = ?");
             $stmt->execute([$userId]);
             $user = $stmt->fetch(\PDO::FETCH_ASSOC);
             if (!$user) {

@@ -273,10 +273,10 @@ class AdminController extends BaseController
         $recentActivity = [];
         try {
             $recentActivity = $this->db->fetchAll("
-                SELECT 'operation' AS source, id, log_date AS activity_date, operation_type AS type, description, status
+                SELECT 'operation' AS source, id, log_date AS activity_date, log_type AS type, description, status
                 FROM daily_operations_log
                 UNION ALL
-                SELECT 'finance' AS source, id, transaction_date AS activity_date, transaction_type AS type, description, transaction_mode AS status
+                SELECT 'finance' AS source, id, transaction_date AS activity_date, transaction_type COLLATE utf8mb4_general_ci AS type, narration COLLATE utf8mb4_general_ci AS description, payment_mode COLLATE utf8mb4_general_ci AS status
                 FROM daily_cash_book
                 ORDER BY activity_date DESC
                 LIMIT 10
@@ -301,32 +301,33 @@ class AdminController extends BaseController
         $leadPipelineChart = [];
         try {
             $leadPipelineChart = $this->db->fetchAll("
-                SELECT status, COUNT(*) AS cnt
+                SELECT stage AS status, COUNT(*) AS cnt
                 FROM lead_pipeline
-                GROUP BY status
+                GROUP BY stage
                 ORDER BY cnt DESC
             ") ?? [];
         } catch (\Exception $e) { $leadPipelineChart = []; }
 
         // Department Requests stats
         try {
-            $stats['dept_pending'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM department_requests WHERE status IN ('pending','assigned')")['cnt'] ?? 0);
+            $stats['dept_pending'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM department_requests WHERE status IN ('open','in_progress')")['cnt'] ?? 0);
         } catch (\Exception $e) { $stats['dept_pending'] = 0; }
 
         try {
-            $stats['dept_high_priority'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM department_requests WHERE priority = 'high' AND status IN ('pending','assigned')")['cnt'] ?? 0);
+            $stats['dept_high_priority'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM department_requests WHERE priority = 'high' AND status IN ('open','in_progress')")['cnt'] ?? 0);
         } catch (\Exception $e) { $stats['dept_high_priority'] = 0; }
 
         try {
-            $stats['dept_overdue'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM department_requests WHERE due_date < CURDATE() AND status NOT IN ('closed','completed','rejected')")['cnt'] ?? 0);
+            $stats['dept_overdue'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM department_requests WHERE due_date < CURDATE() AND status NOT IN ('closed','resolved','rejected')")['cnt'] ?? 0);
         } catch (\Exception $e) { $stats['dept_overdue'] = 0; }
 
         try {
             $stats['dept_by_department'] = $this->db->fetchAll("
-                SELECT department_code, COUNT(*) AS cnt
-                FROM department_requests
-                WHERE status NOT IN ('closed','completed','rejected')
-                GROUP BY department_code
+                SELECT d.name AS department_code, COUNT(*) AS cnt
+                FROM department_requests dr
+                LEFT JOIN departments d ON d.id = dr.department_id
+                WHERE dr.status NOT IN ('closed','resolved','rejected')
+                GROUP BY dr.department_id
                 ORDER BY cnt DESC
             ") ?? [];
         } catch (\Exception $e) { $stats['dept_by_department'] = []; }

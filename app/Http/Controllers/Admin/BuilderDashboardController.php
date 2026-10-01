@@ -41,29 +41,30 @@ class BuilderDashboardController extends AdminController
                 $construction_stats = ['total_projects' => 0, 'completed_projects' => 0, 'ongoing_projects' => 0, 'planned_projects' => 0];
             }
 
-            // Get material statistics
+            // Get material statistics (real table: material_inventory)
             try {
                 $material_stats = $this->db->fetchOne(
-                    "SELECT 
+                    "SELECT
                         COUNT(*) as total_materials,
-                        COALESCE(SUM(quantity * unit_price), 0) as total_material_cost,
-                        COUNT(CASE WHEN stock_quantity <= reorder_level THEN 1 END) as low_stock_materials
-                    FROM materials"
+                        COALESCE(SUM(current_stock * unit_cost), 0) as total_material_cost,
+                        COUNT(CASE WHEN current_stock <= minimum_stock THEN 1 END) as low_stock_materials
+                    FROM material_inventory"
                 );
             } catch (\Exception $e) {
                 $material_stats = ['total_materials' => 0, 'total_material_cost' => 0, 'low_stock_materials' => 0];
             }
 
-            // Get workforce statistics
+            // Get workforce statistics (no dedicated workforce table;
+            // headcount from employees, trade split untracked => 0)
             try {
                 $workforce_stats = $this->db->fetchOne(
-                    "SELECT 
+                    "SELECT
                         COUNT(*) as total_workers,
                         COUNT(CASE WHEN status = 'active' THEN 1 END) as active_workers,
-                        COUNT(CASE WHEN specialization = 'mason' THEN 1 END) as masons,
-                        COUNT(CASE WHEN specialization = 'carpenter' THEN 1 END) as carpenters,
-                        COUNT(CASE WHEN specialization = 'electrician' THEN 1 END) as electricians
-                    FROM workforce"
+                        0 as masons,
+                        0 as carpenters,
+                        0 as electricians
+                    FROM employees"
                 );
             } catch (\Exception $e) {
                 $workforce_stats = ['total_workers' => 0, 'active_workers' => 0, 'masons' => 0, 'carpenters' => 0, 'electricians' => 0];
@@ -72,9 +73,9 @@ class BuilderDashboardController extends AdminController
             // Get recent activities
             try {
                 $activities = $this->db->fetchAll(
-                    "SELECT id, activity_type as description, created_at
-                     FROM activity_logs_unified 
-                     ORDER BY created_at DESC 
+                    "SELECT id, description, created_at
+                     FROM activity_logs_unified
+                     ORDER BY created_at DESC
                      LIMIT 10"
                 );
             } catch (\Exception $e) {
@@ -129,15 +130,15 @@ class BuilderDashboardController extends AdminController
         header('Content-Type: application/json');
         try {
             $result = $this->db->query(
-                "SELECT 
-                    name,
-                    category,
-                    stock_quantity,
-                    reorder_level,
-                    unit_price,
-                    (stock_quantity - reorder_level) as stock_status
-                FROM materials
-                ORDER BY stock_quantity ASC
+                "SELECT
+                    material_name AS name,
+                    material_category AS category,
+                    current_stock AS stock_quantity,
+                    minimum_stock AS reorder_level,
+                    unit_cost AS unit_price,
+                    (current_stock - minimum_stock) as stock_status
+                FROM material_inventory
+                ORDER BY current_stock ASC
                 LIMIT 20"
             );
             $materials = $result->fetchAll(\PDO::FETCH_ASSOC);

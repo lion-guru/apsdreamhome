@@ -78,7 +78,6 @@
     "\/admin\/legal\/disputes",
     "\/admin\/legal\/deadlines",
     "\/admin\/sales\/rera",
-    "\/admin\/locations\/states",
     "\/admin\/marketing\/strategies",
     "\/admin\/marketing\/marketplace",
     "\/admin\/voice-scheduler",
@@ -286,6 +285,7 @@
     "\/admin\/mlm-settings\/levels",
     "\/admin\/knowledge-base-new",
     "\/admin\/contracts-amc",
+    "\/admin\/locations\/states",
     "\/admin\/locations\/districts",
     "\/admin\/tools\/landmarks"
 ]

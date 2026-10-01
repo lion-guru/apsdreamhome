@@ -1,3 +1,24 @@
+## Session 158: Dashboard Sweep — Customer/Builder/ERP 1054 Fixes, construction_projects Table (2026-10-01)
+
+### Work Done
+
+| # | Fix | Root cause | Resolution |
+|---|-----|------------|-----------|
+| 1 | Customer dashboard dead (`users.avatar`) | `users` has `profile_image`, no `avatar` — fatal inside try moved page to error path | `profile_image AS avatar` (view contract intact) ✅ |
+| 2 | Profile warnings (`$user['id']`) | `DashboardController::profile()` SELECT omitted `id` | Added `id` to SELECT ✅ |
+| 3 | Builder materials/workforce/activity phantom queries | `materials`/`workforce` tables don't exist; `activity_logs_unified.activity_type` doesn't exist | Remapped to `material_inventory` (real stock math), `employees` headcount (trades honestly 0), real `description` column ✅ |
+| 4 | Email log spam (`email_config` missing) | `EmailSenderService::loadConfig()` queried never-existing table; result unused (env defaults rule) | Deleted dead query ✅ |
+| 5 | Customer reco (`properties.property_type`) | `properties` has `type`, no `property_type` | `type AS property_type` ✅ |
+| 6 | Builder projects (`construction_projects` missing) | Table never existed; 2 dashboard queries fail-soft to zeros + log spam | Created with exact reader contract (empty = honest) ✅ |
+| 7 | ERP overview deep fix (ADMIN) | `lead_pipeline.status` (real: `stage`), dept `pending/assigned/completed/department_code` phantoms, activity UNION phantom cols + UNION collation clash | Fixed 6 queries (aliased to view contracts) + explicit COLLATE; ERP 200 zero fresh errors ✅ |
+| 8 | Master Test Suite 100% Pass | Validate zero regressions | `testing/master_test_runner.php`: 6/6 ✅ |
+
+### Key Lessons (carried)
+_378. **New DB-wrapper error format pays off immediately** — `| SQL:` suffix turned the next 1054 hunt from guesswork into direct attribution (ERP UNION + collation bugs found in one pass).
+_379. **Fail-soft + log-spam is still a bug** — builder dashboard "worked" (200) while 4 queries died per hit; assert zero fresh log bytes, not just HTTP status.
+_380. **Missing whole tables need exact-contract creation, not query deletion** — `construction_projects` readers are legitimate; an empty table with the real contract keeps dashboards truthful and future module work unblocked.
+
+---
 ## Session 157: Location Menu Restoration, Centralized LocationService & Future-Proof Menu System (2026-09-23)
 
 ### Work Done
