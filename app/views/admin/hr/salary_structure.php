@@ -19,6 +19,7 @@ $es = $edit_structure ?? [];
                 <div class="row g-3">
                     <div class="col-md-4"><label class="form-label">Basic Salary (₹)</label><input type="number" name="basic_salary" class="form-control" step="0.01" value="<?= htmlspecialchars($es['basic_salary'] ?? '') ?>"></div>
                     <div class="col-md-4"><label class="form-label">HRA (%)</label><input type="number" name="hra_percent" class="form-control" step="0.01" value="<?= $es['basic_salary'] > 0 ? round(($es['hra'] ?? 0) / $es['basic_salary'] * 100, 2) : 0 ?>"></div>
+                    <div class="col-md-4"><label class="form-label">DA (%)</label><input type="number" name="da_percent" class="form-control" step="0.01" value="<?= $es['basic_salary'] > 0 ? round(($es['da'] ?? 0) / $es['basic_salary'] * 100, 2) : 0 ?>"></div>
                     <div class="col-md-4"><label class="form-label">Travel Allowance</label><input type="number" name="travel_allowance" class="form-control" step="0.01" value="<?= htmlspecialchars($es['ta'] ?? '') ?>"></div>
                     <div class="col-md-4"><label class="form-label">Medical Allowance</label><input type="number" name="medical_allowance" class="form-control" step="0.01" value="<?= htmlspecialchars($es['medical_allowance'] ?? '') ?>"></div>
                     <div class="col-md-4"><label class="form-label">Special Allowance</label><input type="number" name="special_allowance" class="form-control" step="0.01" value="<?= htmlspecialchars($es['special_allowance'] ?? '') ?>"></div>

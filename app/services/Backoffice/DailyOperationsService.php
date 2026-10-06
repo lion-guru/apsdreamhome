@@ -193,6 +193,12 @@ class DailyOperationsService
 
     public function generatePayslip($employeeId, $month, $year)
     {
+        // Check payroll period lock
+        $period = $this->fetchOne("SELECT status FROM payroll_periods WHERE tenant_id=? AND period_month=? AND period_year=?", [$this->tenantId(), $month, $year]);
+        if ($period && in_array($period['status'], ['locked', 'closed'])) {
+            return ['error' => "Payroll period $month/$year is {$period['status']}. Cannot generate payslip."];
+        }
+
         $emp = $this->fetchOne("SELECT * FROM users WHERE id=?{$this->tEnd()}", array_merge([$employeeId], $this->tVal()));
         if (!$emp) return ['error' => 'Employee not found'];
 
@@ -202,27 +208,46 @@ class DailyOperationsService
         $empTableId = (int)$empExt['id'];
         $ctc = isset($empExt['salary']) ? (float)$empExt['salary'] : 50000.0;
 
-        $basic = round($ctc * 0.60, 2);
-        $hra = round($basic * 0.40, 2);
-        $allowances = 15000.00;
-        $pf = round($basic * 0.12, 2);
-        $esi = $ctc < 21000 ? round($ctc * 0.0075, 2) : 0;
-        $pt = $ctc > 15000 ? 200.00 : 0;
+        // Prefer the approved salary_structures row when one exists (either id
+        // space — legacy rows use users.id, newer rows use employees.id).
+        // Falls back to the legacy CTC formula when no structure is found.
+        $struct = $this->fetchOne("SELECT * FROM salary_structures WHERE employee_id IN (?,?) AND status='active'" . $this->tenantSql() . " ORDER BY effective_date DESC LIMIT 1", array_merge([$empTableId, $employeeId], $this->tVal()));
+        if ($struct) {
+            $basic = round((float)($struct['basic_salary'] ?? 0), 2);
+            $hra = round((float)($struct['hra'] ?? 0), 2);
+            $allowances = round((float)($struct['conveyance'] ?? 0) + (float)($struct['medical_allowance'] ?? 0) + (float)($struct['special_allowance'] ?? 0) + (float)($struct['other_allowances'] ?? 0) + (float)($struct['da'] ?? 0), 2);
+            $pf = round((float)($struct['pf_employee'] ?? 0), 2);
+            $esi = round((float)($struct['esi_employee'] ?? 0), 2);
+            $pt = round((float)($struct['professional_tax'] ?? 0), 2);
+            $tds = round((float)($struct['tds'] ?? 0), 2);
+        } else {
+            $basic = round($ctc * 0.60, 2);
+            $hra = round($basic * 0.40, 2);
+            $allowances = 15000.00;
+            $pf = round($basic * 0.12, 2);
+            $esi = $ctc < 21000 ? round($ctc * 0.0075, 2) : 0;
+            $pt = $ctc > 15000 ? 200.00 : 0;
 
-        $annual = $ctc * 12;
-        $tds = 0.0;
-        if ($annual > 1500000) $tds = round((($annual - 1500000) * 0.30 + 187500) / 12, 2);
-        elseif ($annual > 1200000) $tds = round((($annual - 1200000) * 0.20 + 112500) / 12, 2);
-        elseif ($annual > 900000) $tds = round((($annual - 900000) * 0.15 + 67500) / 12, 2);
-        elseif ($annual > 600000) $tds = round((($annual - 600000) * 0.10 + 30000) / 12, 2);
-        elseif ($annual > 300000) $tds = round((($annual - 300000) * 0.05) / 12, 2);
+            $annual = $ctc * 12;
+            $tds = 0.0;
+            if ($annual > 1500000) $tds = round((($annual - 1500000) * 0.30 + 187500) / 12, 2);
+            elseif ($annual > 1200000) $tds = round((($annual - 1200000) * 0.20 + 112500) / 12, 2);
+            elseif ($annual > 900000) $tds = round((($annual - 900000) * 0.15 + 67500) / 12, 2);
+            elseif ($annual > 600000) $tds = round((($annual - 600000) * 0.10 + 30000) / 12, 2);
+            elseif ($annual > 300000) $tds = round((($annual - 300000) * 0.05) / 12, 2);
+        }
 
         $daysInMonth = (int)date('t', mktime(0,0,0,$month,1,$year));
-        $leaves = $this->fetchAll("SELECT total_days FROM employee_leave_requests WHERE employee_id=? AND status='approved' AND MONTH(start_date)=? AND YEAR(start_date)=?" . $this->tenantSql(), array_merge([$employeeId, $month, $year], $this->tVal()));
+        // Canonical id space is employees.id (FK-proven); callers pass users.id.
+        // $empTableId (resolved above from employees.user_id) is authoritative.
+        $eid = (int)$empTableId;
+        // LOP must see BOTH leave pipelines: backoffice requests AND HR-portal leaves.
+        $leaves = $this->fetchAll("SELECT total_days FROM employee_leave_requests WHERE employee_id=? AND status='approved' AND MONTH(start_date)=? AND YEAR(start_date)=?" . $this->tenantSql(), array_merge([$eid, $month, $year], $this->tVal()));
+        $leaves2 = $this->fetchAll("SELECT total_days FROM employee_leaves WHERE employee_id=? AND status='approved' AND MONTH(start_date)=? AND YEAR(start_date)=?" . $this->tenantSql(), array_merge([$eid, $month, $year], $this->tVal()));
         $lopDays = 0;
-        foreach ($leaves as $l) $lopDays += (int)$l['total_days'];
+        foreach (array_merge($leaves, $leaves2) as $l) $lopDays += (int)$l['total_days'];
 
-        $att = $this->fetchOne("SELECT COUNT(*) AS cnt FROM employee_attendance WHERE employee_id=? AND status='present' AND MONTH(attendance_date)=? AND YEAR(attendance_date)=?", [$employeeId, $month, $year]);
+        $att = $this->fetchOne("SELECT COUNT(*) AS cnt FROM employee_attendance WHERE employee_id=? AND status='present' AND MONTH(attendance_date)=? AND YEAR(attendance_date)=?", [$eid, $month, $year]);
         $daysPresent = (int)($att['cnt'] ?? 0);
         if ($daysPresent === 0) $daysPresent = $daysInMonth - $lopDays;
 
@@ -233,30 +258,39 @@ class DailyOperationsService
         $gross = round($basic + $hra + $allowances, 2);
         $net = max(0, round($gross - $totalDeductions, 2));
 
-         $existing = $this->fetchOne("SELECT id, status FROM employee_payslips WHERE employee_id=? AND period_month=? AND period_year=?" . $this->tenantSql(), array_merge([$empTableId, $month, $year], $this->tVal()));
+        // Get or create payroll period (hoisted: both branches link to it)
+        $period = $this->fetchOne("SELECT id FROM payroll_periods WHERE tenant_id=? AND period_month=? AND period_year=?", [$this->tenantId(), $month, $year]);
+        $periodId = $period['id'] ?? null;
+        if (!$periodId) {
+            $this->execute("INSERT INTO payroll_periods (tenant_id, period_month, period_year, status) VALUES (?,?,?,'open')", [$this->tenantId(), $month, $year]);
+            $periodId = (int)$this->pdo->lastInsertId();
+        }
+
+        $existing = $this->fetchOne("SELECT id, status FROM employee_payslips WHERE employee_id=? AND period_month=? AND period_year=?" . $this->tenantSql(), array_merge([$empTableId, $month, $year], $this->tVal()));
 
         if ($existing) {
-            // Paid slips are immutable: never overwrite amounts or reset to draft.
+            // PAID SLIPS ARE IMMUTABLE - never touch them. One row per
+            // (employee, period) per uniq_emp_period, so drafts update in place.
             if (($existing['status'] ?? '') === 'paid') {
-                return ['error' => 'Payslip already paid for ' . $month . '/' . $year . ' — paid slips cannot be regenerated'];
+                return ['error' => 'Payslip already paid for ' . $month . '/' . $year . ' — paid slips cannot be modified'];
             }
-            $sql = "UPDATE employee_payslips SET basic_salary=?,hra=?,allowances=?,deductions=?,tds=?,pf=?,esi=?,professional_tax=?,net_salary=?,days_present=?,lop_days=?,status='draft' WHERE id=?" . $this->tenantSql();
-            $params = [$basic,$hra,$allowances,$deductions,$tds,$pf,$esi,$pt,$net,$daysPresent,$lopDays,$existing['id']];
+            $sql = "UPDATE employee_payslips SET basic_salary=?,hra=?,allowances=?,deductions=?,tds=?,pf=?,esi=?,professional_tax=?,net_salary=?,days_present=?,lop_days=?,payroll_period_id=?,status='draft' WHERE id=?" . $this->tenantSql();
+            $params = [$basic,$hra,$allowances,$deductions,$tds,$pf,$esi,$pt,$net,$daysPresent,$lopDays,$periodId,$existing['id']];
             $params = array_merge($params, $this->tVal());
             $this->execute($sql, $params);
             $payslipId = (int)$existing['id'];
         } else {
-            $insertData = $this->tenantInsertData();
-            $columns = "employee_id,period_month,period_year,basic_salary,hra,allowances,deductions,tds,pf,esi,professional_tax,net_salary,days_present,lop_days,status";
-            $values = str_repeat('?,', 13) . "'draft'";
-            $params = [$empTableId,$month,$year,$basic,$hra,$allowances,$deductions,$tds,$pf,$esi,$pt,$net,$daysPresent,$lopDays];
-            if (!empty($insertData)) {
-                $columns .= ", " . implode(', ', array_keys($insertData));
-                $values .= ", ?";
-                $params = array_merge($params, array_values($insertData));
-            }
-            $payslipId = $this->execute("INSERT INTO employee_payslips ($columns) VALUES ($values)", $params);
+        $insertData = $this->tenantInsertData();
+        $columns = "employee_id,period_month,period_year,basic_salary,hra,allowances,deductions,tds,pf,esi,professional_tax,net_salary,days_present,lop_days,status,payroll_period_id";
+        $values = str_repeat('?,', 14) . "'draft',?";
+        $params = [$empTableId,$month,$year,$basic,$hra,$allowances,$deductions,$tds,$pf,$esi,$pt,$net,$daysPresent,$lopDays,$periodId];
+        if (!empty($insertData)) {
+            $columns .= ", " . implode(', ', array_keys($insertData));
+            $values .= ", ?";
+            $params = array_merge($params, array_values($insertData));
         }
+        $payslipId = $this->execute("INSERT INTO employee_payslips ($columns) VALUES ($values)", $params);
+    }
 
         return ['id'=>$payslipId,'employee_id'=>$employeeId,'period_month'=>$month,'period_year'=>$year,'basic_salary'=>$basic,'hra'=>$hra,'allowances'=>$allowances,'deductions'=>$deductions,'tds'=>$tds,'pf'=>$pf,'esi'=>$esi,'professional_tax'=>$pt,'net_salary'=>$net,'days_present'=>$daysPresent,'lop_days'=>$lopDays,'status'=>'draft'];
     }

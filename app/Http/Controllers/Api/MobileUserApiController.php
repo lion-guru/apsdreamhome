@@ -1691,4 +1691,1090 @@ class MobileUserApiController extends BaseController
         }
         return $sanitized;
     }
+
+    // ============================================================
+    // WALLET ACTIVATION PACKAGES
+    // ============================================================
+
+    public function walletActivationPackages() {
+        $this->setCorsHeaders();
+        try {
+            $service = new \App\Services\WalletActivationService();
+            $packages = $service->getActivePackages();
+            
+            $data = [];
+            foreach ($packages as $pkg) {
+                $data[] = [
+                    'id' => $pkg['id'],
+                    'name' => $pkg['name'],
+                    'slug' => $pkg['slug'],
+                    'description' => $pkg['description'],
+                    'price' => (float)$pkg['price'],
+                    'referral_reward' => (float)($pkg['referral_reward'] ?? 0),
+                    'referral_pct_l1' => (float)($pkg['referral_pct_l1'] ?? 0),
+                    'referral_pct_l2' => (float)($pkg['referral_pct_l2'] ?? 0),
+                    'features' => $pkg['features'],
+                    'is_popular' => $pkg['slug'] === 'pro',
+                ];
+            }
+            echo json_encode(['success' => true, 'data' => $data]);
+        } catch (\Throwable $e) {
+            error_log('walletActivationPackages error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch packages']);
+        }
+    }
+
+    public function walletActivationMyWallet() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+                return;
+            }
+
+            $service = new \App\Services\WalletActivationService();
+            $isActivated = $service->isWalletActivated($userId);
+            $userPurchase = $service->getUserPurchase($userId);
+            $packages = $service->getActivePackages();
+
+            $data = [
+                'is_activated' => $isActivated,
+                'current_package' => $userPurchase ? [
+                    'id' => $userPurchase['id'],
+                    'name' => $userPurchase['package_name'],
+                    'slug' => $userPurchase['slug'],
+                    'activated_at' => $userPurchase['activated_at'],
+                    'expires_at' => $userPurchase['activation_expires_at'],
+                    'features' => $userPurchase['features'],
+                ] : null,
+                'packages' => array_map(function($pkg) {
+                    $pkg['features'] = $pkg['features'] ?? [];
+                    $pkg['is_owned'] = $userPurchase && $userPurchase['package_id'] == $pkg['id'];
+                    $pkg['is_higher_tier'] = $userPurchase && in_array($userPurchase['slug'], ['pro', 'premium']) && $pkg['slug'] === 'basic';
+                    return $pkg;
+                }, $packages),
+            ];
+
+            echo json_encode(['success' => true, 'data' => $data]);
+        } catch (\Throwable $e) {
+            error_log('walletActivationMyWallet error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch wallet data']);
+        }
+    }
+
+    public function walletActivationPurchase() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+                return;
+            }
+
+            $input = json_decode(file_get_contents('php://input'), true);
+            $packageId = (int)($input['package_id'] ?? 0);
+            $paymentMode = $input['payment_mode'] ?? 'razorpay';
+
+            if (!$packageId) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Invalid package']);
+                return;
+            }
+
+            $service = new \App\Services\WalletActivationService();
+            $result = $service->purchasePackage($userId, $packageId, $paymentMode);
+
+            echo json_encode($result);
+        } catch (\Throwable $e) {
+            error_log('walletActivationPurchase error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Purchase failed']);
+        }
+    }
+
+    public function walletActivationVerifyPayment() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+                return;
+            }
+
+            $input = json_decode(file_get_contents('php://input'), true);
+            $purchaseId = (int)($input['purchase_id'] ?? 0);
+            $razorpayPaymentId = $input['razorpay_payment_id'] ?? '';
+            $razorpayOrderId = $input['razorpay_order_id'] ?? '';
+            $razorpaySignature = $input['razorpay_signature'] ?? '';
+
+            if (!$purchaseId || !$razorpayPaymentId || !$razorpayOrderId || !$razorpaySignature) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Invalid payment data']);
+                return;
+            }
+
+            $service = new \App\Services\WalletActivationService();
+            $result = $service->activatePurchase($purchaseId, $userId);
+
+            echo json_encode($result);
+        } catch (\Throwable $e) {
+            error_log('walletActivationVerifyPayment error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Activation failed']);
+        }
+    }
+
+    // ============================================================
+    // REFERRAL EARNINGS
+    // ============================================================
+
+    public function referralEarnings() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+                return;
+            }
+
+            $service = new \App\Services\ReferralService();
+            $breakdown = $service->getReferralEarningsBreakdown($userId);
+
+            // Format for mobile
+            $data = [
+                'summary' => [
+                    'total_referrals' => (int)($breakdown['summary']['total_referrals'] ?? 0),
+                    'active_referrals' => (int)($breakdown['summary']['active_referrals'] ?? 0),
+                    'total_earned' => (float)($breakdown['summary']['total_earned'] ?? 0),
+                    'pending_earned' => (float)($breakdown['summary']['pending_earned'] ?? 0),
+                    'this_month' => (float)($breakdown['summary']['this_month'] ?? 0),
+                ],
+                'by_type' => [],
+                'recent' => [],
+            ];
+
+            foreach ($breakdown['by_type'] as $type => $row) {
+                if (($row['count'] ?? 0) > 0) {
+                    $data['by_type'][] = [
+                        'type' => $type,
+                        'label' => $row['label'],
+                        'count' => (int)$row['count'],
+                        'amount' => (float)$row['amount'],
+                    ];
+                }
+            }
+
+            foreach (array_slice($breakdown['recent'] ?? [], 0, 10) as $item) {
+                $data['recent'][] = [
+                    'type' => $item['commission_type'] ?? 'referral',
+                    'amount' => (float)($item['amount'] ?? 0),
+                    'status' => $item['status'] ?? 'pending',
+                    'created_at' => $item['created_at'] ?? '',
+                    'booking_id' => (int)($item['booking_id'] ?? 0),
+                    'notes' => $item['notes'] ?? '',
+                ];
+            }
+
+            echo json_encode(['success' => true, 'data' => $data]);
+        } catch (\Throwable $e) {
+            error_log('referralEarnings error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch earnings']);
+        }
+    }
+
+    public function referralLeaderboard() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+                return;
+            }
+
+            $service = new \App\Services\ReferralService();
+            $leaderboard = $service->getLeaderboard(20, 'all');
+            $userRank = $service->getUserRank($userId);
+
+            $data = [
+                'leaderboard' => array_map(function($item) {
+                    return [
+                        'rank' => (int)($item['rank'] ?? 0),
+                        'name' => $item['name'] ?? 'Unknown',
+                        'referral_code' => $item['referral_code'] ?? '',
+                        'total_referrals' => (int)($item['total_referrals'] ?? 0),
+                        'total_earned' => (float)($item['total_earned'] ?? 0),
+                        'tier' => $item['tier'] ?? 'bronze',
+                    ];
+                }, $leaderboard),
+                'my_rank' => [
+                    'rank' => $userRank['rank'] ?? 0,
+                    'total' => $userRank['total'] ?? 0,
+                    'referral_count' => $userRank['referral_count'] ?? 0,
+                    'tier' => $userRank['tier'] ?? 'bronze',
+                ],
+            ];
+
+            echo json_encode(['success' => true, 'data' => $data]);
+        } catch (\Throwable $e) {
+            error_log('referralLeaderboard error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch leaderboard']);
+        }
+    }
+
+    public function referralShareUrl() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+                return;
+            }
+
+            $service = new \App\Services\ReferralService();
+            $code = $service->getReferralCode($userId);
+            $url = $service->getShareUrl($code);
+            $qr = $service->getQRCode($url);
+
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'referral_code' => $code,
+                    'share_url' => $url,
+                    'qr_code' => $qr,
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            error_log('referralShareUrl error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to generate share URL']);
+        }
+    }
+
+    // ============================================================
+    // WALLET BALANCE
+    // ============================================================
+
+    public function walletBalance() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+                return;
+            }
+
+            $service = new \App\Services\WalletService();
+            $balance = $service->getBalance($userId);
+            $transactions = $service->getTransactions($userId, 10);
+
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'balance' => (float)$balance,
+                    'recent_transactions' => array_map(function($txn) {
+                        return [
+                            'id' => $txn['id'] ?? 0,
+                            'type' => $txn['transaction_type'] ?? '',
+                            'category' => $txn['transaction_category'] ?? '',
+                            'amount' => (float)($txn['amount'] ?? 0),
+                            'balance_after' => (float)($txn['balance_after'] ?? 0),
+                            'description' => $txn['description'] ?? '',
+                            'created_at' => $txn['created_at'] ?? '',
+                        ];
+                    }, $transactions),
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            error_log('walletBalance error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch wallet']);
+        }
+    }
+
+    // ============================================================
+    // EMPLOYEE SELF-SERVICE PORTAL API
+    // ============================================================
+
+    public function getTaxRegime() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            $service = new \App\Services\EmployeeSelfServiceService();
+            $currentYear = (int)date('Y');
+            $regime = $service->getTaxRegime($userId, $currentYear);
+
+            echo json_encode(['success' => true, 'data' => $regime]);
+        } catch (\Throwable $e) {
+            error_log('getTaxRegime error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch tax regime']);
+        }
+    }
+
+    public function setTaxRegime() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $regime = $input['regime'] ?? 'new';
+            $financialYear = (int)($input['financial_year'] ?? date('Y'));
+
+            if (!in_array($regime, ['old', 'new'])) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Invalid regime']);
+                return;
+            }
+
+            $service = new \App\Services\EmployeeSelfServiceService();
+            $result = $service->setTaxRegime($userId, $financialYear, $regime);
+            echo json_encode($result);
+        } catch (\Throwable $e) {
+            error_log('setTaxRegime error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to set tax regime']);
+        }
+    }
+
+    public function getInvestmentDeclaration() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            $financialYear = (int)($_GET['financial_year'] ?? date('Y'));
+            $service = new \App\Services\EmployeeSelfServiceService();
+            $declarations = $service->getInvestmentDeclaration($userId, $financialYear);
+
+            // Section limits
+            $sectionLimits = [
+                '80C' => 150000, '80CCD1B' => 50000, '80D' => 25000, 'HRA' => 0,
+                '24B' => 200000, '80E' => 0, '80G' => 0, '80TTA' => 10000,
+            ];
+
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'financial_year' => $financialYear,
+                    'declarations' => $declarations,
+                    'section_limits' => $sectionLimits,
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            error_log('getInvestmentDeclaration error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch declarations']);
+        }
+    }
+
+    public function saveInvestmentDeclaration() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $financialYear = (int)($input['financial_year'] ?? date('Y'));
+            $declarations = $input['declarations'] ?? [];
+
+            $service = new \App\Services\EmployeeSelfServiceService();
+            $result = $service->saveInvestmentDeclaration($userId, $financialYear, $declarations);
+            echo json_encode($result);
+        } catch (\Throwable $e) {
+            error_log('saveInvestmentDeclaration error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to save declarations']);
+        }
+    }
+
+    public function uploadInvestmentProof() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            $financialYear = (int)($_POST['financial_year'] ?? date('Y'));
+            $section = $_POST['section'] ?? '';
+
+            if (!$section || empty($_FILES['proof_file']['tmp_name'])) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Section and file required']);
+                return;
+            }
+
+            $service = new \App\Services\EmployeeSelfServiceService();
+            $result = $service->uploadInvestmentProof($userId, $financialYear, $section, $_FILES['proof_file']);
+            echo json_encode($result);
+        } catch (\Throwable $e) {
+            error_log('uploadInvestmentProof error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to upload proof']);
+        }
+    }
+
+    public function getForm16List() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            $service = new \App\Services\EmployeeSelfServiceService();
+            $form16List = $service->getForm16List($userId);
+
+            echo json_encode(['success' => true, 'data' => $form16List]);
+        } catch (\Throwable $e) {
+            error_log('getForm16List error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch Form 16 list']);
+        }
+    }
+
+    public function generateForm16() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $financialYear = (int)($input['financial_year'] ?? 0);
+            if (!$financialYear) { http_response_code(400); echo json_encode(['success'=>false,'error'=>'Financial year required']); return; }
+
+            $service = new \App\Services\EmployeeSelfServiceService();
+            $result = $service->generateForm16($userId, $financialYear);
+            echo json_encode($result);
+        } catch (\Throwable $e) {
+            error_log('generateForm16 error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to generate Form 16']);
+        }
+    }
+
+    public function downloadForm16($financialYear) {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            $service = new \App\Services\EmployeeSelfServiceService();
+            $result = $service->generateForm16($userId, (int)$financialYear);
+            if (!$result['success']) { http_response_code(404); echo json_encode($result); return; }
+
+            // Return download URL
+            echo json_encode(['success' => true, 'download_url' => BASE_URL . '/employee/self-service/form16/download/' . $financialYear]);
+        } catch (\Throwable $e) {
+            error_log('downloadForm16 error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to download Form 16']);
+        }
+    }
+
+    public function getPayslips() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            $limit = (int)($_GET['limit'] ?? 24);
+            $service = new \App\Services\EmployeeSelfServiceService();
+            $payslips = $service->getPayslipHistory($userId, $limit);
+
+            echo json_encode(['success' => true, 'data' => $payslips]);
+        } catch (\Throwable $e) {
+            error_log('getPayslips error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch payslips']);
+        }
+    }
+
+    public function downloadPayslip($id) {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            $service = new \App\Services\EmployeeSelfServiceService();
+            $pdfPath = $service->getPayslipPdf((int)$id);
+
+            if (!$pdfPath || !file_exists(APP_PATH . '/' . $pdfPath)) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'Payslip PDF not found']);
+                return;
+            }
+
+            header('Content-Type: application/pdf');
+            header('Content-Disposition: attachment; filename="Payslip_' . $id . '.pdf"');
+            header('Content-Length: ' . filesize(APP_PATH . '/' . $pdfPath));
+            readfile(APP_PATH . '/' . $pdfPath);
+            exit;
+        } catch (\Throwable $e) {
+            error_log('downloadPayslip error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to download payslip']);
+        }
+    }
+
+    public function getLeaveBalances() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            $year = (int)($_GET['year'] ?? date('Y'));
+            $service = new \App\Services\EmployeeSelfServiceService();
+            $balances = $service->getLeaveBalances($userId, $year);
+
+            echo json_encode(['success' => true, 'data' => $balances]);
+        } catch (\Throwable $e) {
+            error_log('getLeaveBalances error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch leave balances']);
+        }
+    }
+
+    public function applyLeave() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $service = new \App\Services\EmployeeSelfServiceService();
+            $result = $service->applyLeave($userId, $input);
+            echo json_encode($result);
+        } catch (\Throwable $e) {
+            error_log('applyLeave error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to apply leave']);
+        }
+    }
+
+    public function getLeaveHistory() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            $limit = (int)($_GET['limit'] ?? 50);
+            $service = new \App\Services\EmployeeSelfServiceService();
+            $history = $service->getLeaveHistory($userId, $limit);
+
+            echo json_encode(['success' => true, 'data' => $history]);
+        } catch (\Throwable $e) {
+            error_log('getLeaveHistory error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch leave history']);
+        }
+    }
+
+    public function getReimbursements() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            $limit = (int)($_GET['limit'] ?? 50);
+            $service = new \App\Services\EmployeeSelfServiceService();
+            $reimbursements = $service->getReimbursementHistory($userId, $limit);
+
+            // Claim types for dropdown
+            $claimTypes = [
+                'medical' => 'Medical Reimbursement',
+                'lta' => 'Leave Travel Allowance (LTA)',
+                'fuel' => 'Fuel / Conveyance',
+                'phone' => 'Phone / Mobile',
+                'internet' => 'Internet / Broadband',
+                'books' => 'Books & Periodicals',
+                'training' => 'Training & Development',
+                'other' => 'Other',
+            ];
+
+            echo json_encode(['success' => true, 'data' => $reimbursements, 'claim_types' => $claimTypes]);
+        } catch (\Throwable $e) {
+            error_log('getReimbursements error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch reimbursements']);
+        }
+    }
+
+    public function submitReimbursement() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            // Handle multipart/form-data
+            $data = $_POST;
+            $data['receipt_file'] = $_FILES['receipt_file'] ?? null;
+
+            $service = new \App\Services\EmployeeSelfServiceService();
+            $result = $service->submitReimbursement($userId, $data);
+            echo json_encode($result);
+        } catch (\Throwable $e) {
+            error_log('submitReimbursement error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to submit reimbursement']);
+        }
+    }
+
+    public function getProfile() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            $stmt = $this->db->prepare("SELECT u.id, u.name, u.email, u.phone, u.role, u.date_of_birth, u.address, u.emergency_contact, u.pan_number, u.aadhaar_number, u.bank_account, u.bank_ifsc, e.employee_code, e.designation, e.department, e.joining_date, e.status as employment_status FROM users u LEFT JOIN employees e ON e.user_id = u.id WHERE u.id = ? LIMIT 1");
+            $stmt->execute([$userId]);
+            $profile = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+
+            echo json_encode(['success' => true, 'data' => $profile]);
+        } catch (\Throwable $e) {
+            error_log('getProfile error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch profile']);
+        }
+    }
+
+    public function getLeaveTypes() {
+        $this->setCorsHeaders();
+        try {
+            $stmt = $this->db->prepare("SELECT id, name, code, days_per_year, color, description FROM leave_types WHERE status = 'active' ORDER BY name");
+            $stmt->execute();
+            echo json_encode(['success' => true, 'data' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
+        } catch (\Throwable $e) {
+            error_log('getLeaveTypes error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch leave types']);
+        }
+    }
+
+    public function getSelfServiceDashboard() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            $service = new \App\Services\EmployeeSelfServiceService();
+            $year = (int)date('Y');
+            $month = date('Y-m');
+            echo json_encode(['success' => true, 'data' => [
+                'tax_regime' => $service->getTaxRegime($userId, $year),
+                'leave_balances' => $service->getLeaveBalances($userId, $year),
+                'payslips' => $service->getPayslipHistory($userId, 6),
+                'reimbursements' => $service->getReimbursementHistory($userId, 5),
+                'attendance_stats' => $service->getAttendanceStats($userId, $month),
+            ]]);
+        } catch (\Throwable $e) {
+            error_log('getSelfServiceDashboard error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch dashboard']);
+        }
+    }
+
+    public function updateProfile() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $service = new \App\Services\EmployeeSelfServiceService();
+            $result = $service->updateProfile($userId, $input);
+            echo json_encode($result);
+        } catch (\Throwable $e) {
+            error_log('updateProfile error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to update profile']);
+        }
+    }
+
+    public function changePassword() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $currentPassword = $input['current_password'] ?? '';
+            $newPassword = $input['new_password'] ?? '';
+
+            $service = new \App\Services\EmployeeSelfServiceService();
+            $result = $service->changePassword($userId, $currentPassword, $newPassword);
+            echo json_encode($result);
+        } catch (\Throwable $e) {
+            error_log('changePassword error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to change password']);
+        }
+    }
+
+    public function getAttendance() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            $month = $_GET['month'] ?? date('Y-m');
+            $service = new \App\Services\EmployeeSelfServiceService();
+            $attendance = $service->getAttendance($userId, $month);
+
+            echo json_encode(['success' => true, 'data' => $attendance]);
+        } catch (\Throwable $e) {
+            error_log('getAttendance error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch attendance']);
+        }
+    }
+
+    public function getAttendanceStats() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            $month = $_GET['month'] ?? date('Y-m');
+            $service = new \App\Services\EmployeeSelfServiceService();
+            $stats = $service->getAttendanceStats($userId, $month);
+
+            echo json_encode(['success' => true, 'data' => $stats]);
+        } catch (\Throwable $e) {
+            error_log('getAttendanceStats error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch attendance stats']);
+        }
+    }
+
+    // ============================================================
+    // GRATUITY CALCULATOR
+    // ============================================================
+
+    public function gratuityCalculator() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            $calculationDate = $_GET['calculation_date'] ?? date('Y-m-d');
+            $service = new \App\Services\GratuityService();
+            $result = $service->calculateGratuity($userId, $calculationDate);
+            echo json_encode($result);
+        } catch (\Throwable $e) {
+            error_log('gratuityCalculator error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to calculate gratuity']);
+        }
+    }
+
+    public function gratuityEligibilityReport() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            $service = new \App\Services\GratuityService();
+            $report = $service->getLiabilityReport();
+            echo json_encode(['success' => true, 'data' => $report]);
+        } catch (\Throwable $e) {
+            error_log('gratuityEligibilityReport error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch report']);
+        }
+    }
+
+    public function gratuityDetail($id) {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            $service = new \App\Services\GratuityService();
+            $result = $service->calculateGratuity((int)$id, date('Y-m-d'));
+            echo json_encode($result);
+        } catch (\Throwable $e) {
+            error_log('gratuityDetail error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch detail']);
+        }
+    }
+
+    // ============================================================
+    // FULL & FINAL SETTLEMENT
+    // ============================================================
+
+    public function fnfCalculator() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $params = [
+                'last_working_day' => $input['last_working_day'] ?? date('Y-m-d'),
+                'resignation_date' => $input['resignation_date'] ?? date('Y-m-d'),
+                'notice_period_days' => (int)($input['notice_period_days'] ?? 30),
+                'notice_served_days' => (int)($input['notice_served_days'] ?? 0),
+                'exit_type' => $input['exit_type'] ?? 'resignation',
+            ];
+
+            $service = new \App\Services\FullAndFinalSettlementService();
+            $result = $service->calculateSettlement((int)$input['employee_id'] ?? 0, $params);
+            echo json_encode($result);
+        } catch (\Throwable $e) {
+            error_log('fnfCalculator error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to calculate settlement']);
+        }
+    }
+
+    public function fnfProcess() {
+        $this->setCorsHeaders();
+        try {
+            $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $employeeId = (int)($input['employee_id'] ?? 0);
+            $params = [
+                'last_working_day' => $input['last_working_day'] ?? date('Y-m-d'),
+                'resignation_date' => $input['resignation_date'] ?? date('Y-m-d'),
+                'notice_period_days' => (int)($input['notice_period_days'] ?? 30),
+                'notice_served_days' => (int)($input['notice_served_days'] ?? 0),
+                'exit_type' => $input['exit_type'] ?? 'resignation',
+            ];
+
+            $service = new \App\Services\FullAndFinalSettlementService();
+            $result = $service->processSettlement($employeeId, $params);
+            echo json_encode($result);
+        } catch (\Throwable $e) {
+            error_log('fnfProcess error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to process settlement']);
+        }
+    }
+
+    // ============================================================
+    // SHIFT ROSTER & OVERTIME
+    // ============================================================
+
+    public function shiftTypes() {
+        $this->setCorsHeaders();
+        try {
+            $service = new \App\Services\ShiftRosterService();
+            $shiftTypes = $service->getShiftTypes();
+            echo json_encode(['success' => true, 'data' => $shiftTypes]);
+        } catch (\Throwable $e) {
+            error_log('shiftTypes error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch shift types']);
+        }
+    }
+
+    public function getRoster() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            $startDate = $_GET['start_date'] ?? date('Y-m-d');
+            $endDate = $_GET['end_date'] ?? date('Y-m-d', strtotime('+7 days'));
+            $employeeId = (int)($_GET['employee_id'] ?? 0);
+
+            $service = new \App\Services\ShiftRosterService();
+            $roster = $service->getRoster($startDate, $endDate, $employeeId);
+            echo json_encode(['success' => true, 'data' => $roster]);
+        } catch (\Throwable $e) {
+            error_log('getRoster error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch roster']);
+        }
+    }
+
+    public function assignShift() {
+        $this->setCorsHeaders();
+        try {
+            $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $service = new \App\Services\ShiftRosterService();
+            $result = $service->assignShift($input);
+            echo json_encode($result);
+        } catch (\Throwable $e) {
+            error_log('assignShift error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to assign shift']);
+        }
+    }
+
+    public function overtimeRequests() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            $status = $_GET['status'] ?? 'pending';
+            $service = new \App\Services\ShiftRosterService();
+            if ($status === 'pending') {
+                $requests = $service->getPendingOvertime();
+            } else {
+                // Service works on employees.id, not users.id — resolve first
+                $emp = $this->db->fetch("SELECT id FROM employees WHERE user_id=? LIMIT 1", [$userId]);
+                $requests = $emp ? $service->getEmployeeOvertime((int)$emp['id']) : [];
+            }
+            echo json_encode(['success' => true, 'data' => $requests]);
+        } catch (\Throwable $e) {
+            error_log('overtimeRequests error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch OT requests']);
+        }
+    }
+
+    public function requestOvertime() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+
+            $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $emp = $this->db->fetch("SELECT id FROM employees WHERE user_id=? LIMIT 1", [$userId]);
+            if (!$emp) { http_response_code(404); echo json_encode(['success'=>false,'error'=>'Employee record not found']); return; }
+
+            $service = new \App\Services\ShiftRosterService();
+            $result = $service->requestOvertime((int)$emp['id'], [
+                'overtime_date' => $input['overtime_date'] ?? date('Y-m-d'),
+                'hours' => (float)($input['hours'] ?? 0),
+                'reason' => trim($input['reason'] ?? ''),
+            ]);
+            echo json_encode($result);
+        } catch (\Throwable $e) {
+            error_log('requestOvertime error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to request OT']);
+        }
+    }
+
+    public function processOvertime($id) {
+        $this->setCorsHeaders();
+        try {
+            $approverId = (int)($GLOBALS['api_user_id'] ?? 0);
+            // Approval is an HR/admin action: employees must not self-approve via API.
+            $approver = $this->db->fetch("SELECT role FROM users WHERE id=? LIMIT 1", [$approverId]);
+            if (!$approver || !in_array($approver['role'] ?? '', ['admin', 'super_admin', 'manager'], true)) {
+                http_response_code(403);
+                echo json_encode(['success' => false, 'error' => 'Only admin/manager can approve overtime']);
+                return;
+            }
+            $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $action = $input['action'] ?? '';
+            $remarks = $input['remarks'] ?? '';
+
+            $service = new \App\Services\ShiftRosterService();
+            $result = $service->processOvertime((int)$id, $action, $approverId, $remarks);
+            echo json_encode($result);
+        } catch (\Throwable $e) {
+            error_log('processOvertime error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to process OT']);
+        }
+    }
+
+    public function overtimeReports() {
+        $this->setCorsHeaders();
+        try {
+            $startDate = $_GET['start_date'] ?? date('Y-m-01');
+            $endDate = $_GET['end_date'] ?? date('Y-m-t');
+
+            $service = new \App\Services\ShiftRosterService();
+            $summary = $service->getOvertimeSummaryReport($startDate, $endDate);
+            echo json_encode(['success' => true, 'data' => $summary]);
+        } catch (\Throwable $e) {
+            error_log('overtimeReports error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch OT report']);
+        }
+    }
+
+    public function shiftCoverage() {
+        $this->setCorsHeaders();
+        try {
+            $startDate = $_GET['start_date'] ?? date('Y-m-01');
+            $endDate = $_GET['end_date'] ?? date('Y-m-t');
+
+            $service = new \App\Services\ShiftRosterService();
+            $coverage = $service->getShiftCoverageReport($startDate, $endDate);
+            echo json_encode(['success' => true, 'data' => $coverage]);
+        } catch (\Throwable $e) {
+            error_log('shiftCoverage error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch coverage']);
+        }
+    }
+
+    // ── CUSTOMER INVESTMENTS ──────────────────────────────────────
+    public function investmentPlans() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+                return;
+            }
+            $service = new \App\Services\InvestmentService();
+            $plans = $service->listPlans();
+            echo json_encode(['success' => true, 'data' => $plans]);
+        } catch (\Throwable $e) {
+            error_log('investmentPlans error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch plans']);
+        }
+    }
+
+    public function userInvestments() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+                return;
+            }
+            $service = new \App\Services\InvestmentService();
+            $investments = $service->getUserInvestments($userId);
+            $stats = $service->getStats($userId);
+            echo json_encode(['success' => true, 'data' => ['investments' => $investments, 'stats' => $stats]]);
+        } catch (\Throwable $e) {
+            error_log('userInvestments error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch investments']);
+        }
+    }
+
+    public function investmentCreate() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+                return;
+            }
+            $in = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $planId = (int)($in['plan_id'] ?? 0);
+            $amount = (float)($in['amount'] ?? 0);
+            if (!$planId || $amount <= 0) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'plan_id and amount are required']);
+                return;
+            }
+            $service = new \App\Services\InvestmentService();
+            $result = $service->invest($userId, $planId, [
+                'amount' => $amount,
+                'payment_mode' => $in['payment_mode'] ?? 'wallet',
+                'referrer_user_id' => (int)($in['referrer_user_id'] ?? 0),
+            ]);
+            if (empty($result['success'])) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => $result['error'] ?? 'Investment failed']);
+                return;
+            }
+            echo json_encode(['success' => true, 'data' => $result]);
+        } catch (\Throwable $e) {
+            error_log('investmentCreate error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Investment failed']);
+        }
+    }
+
+    public function investmentCancel() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+                return;
+            }
+            $in = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $investmentId = (int)($in['investment_id'] ?? 0);
+            if (!$investmentId) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'investment_id is required']);
+                return;
+            }
+            $service = new \App\Services\InvestmentService();
+            $result = $service->cancelInvestment($userId, $investmentId, trim((string)($in['reason'] ?? 'Cancelled from mobile app')));
+            if (empty($result['success'])) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => $result['error'] ?? 'Cancellation failed']);
+                return;
+            }
+            echo json_encode(['success' => true, 'data' => $result]);
+        } catch (\Throwable $e) {
+            error_log('investmentCancel error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Cancellation failed']);
+        }
+    }
 }

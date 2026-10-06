@@ -25,12 +25,13 @@ class SalaryCalculationService
     {
         $basic = (float)($input['basic_salary'] ?? 0);
         $hra = (float)($input['hra'] ?? 0);
+        $da = (float)($input['da'] ?? 0);
         $conveyance = (float)($input['conveyance'] ?? 0);
         $medical = (float)($input['medical_allowance'] ?? 0);
         $special = (float)($input['special_allowance'] ?? 0);
         $other = (float)($input['other_allowances'] ?? 0);
 
-        $gross = $basic + $hra + $conveyance + $medical + $special + $other;
+        $gross = $basic + $hra + $da + $conveyance + $medical + $special + $other;
 
         // PF: 12% of basic (capped at ₹15,000 basic)
         $pfBasic = min($basic, self::PF_CAP);
@@ -57,6 +58,7 @@ class SalaryCalculationService
         return [
             'basic_salary'       => $basic,
             'hra'                => $hra,
+            'da'                 => $da,
             'conveyance'         => $conveyance,
             'medical_allowance'  => $medical,
             'special_allowance'  => $special,

@@ -256,24 +256,22 @@ class SalaryController extends AdminController
     {
         $this->requireAdmin();
         $employee_id = (int)($_POST['employee_id'] ?? 0);
-        $basic = (float)($_POST['basic_salary'] ?? 0);
-        $hra = (float)($_POST['hra'] ?? 0);
-        $conveyance = (float)($_POST['conveyance'] ?? 0);
-        $medical = (float)($_POST['medical_allowance'] ?? 0);
-        $special = (float)($_POST['special_allowance'] ?? 0);
-        $other_allowances = (float)($_POST['other_allowances'] ?? 0);
-        $pf_employee = (float)($_POST['pf_employee'] ?? 0);
-        $tds = (float)($_POST['tds'] ?? 0);
-        
-        $gross = $basic + $hra + $conveyance + $medical + $special + $other_allowances;
-        $deductions = $pf_employee + $tds;
-        $net = $gross - $deductions;
-        
+        $basic = ($_POST['basic_salary'] ?? '') === '' ? null : (float)($_POST['basic_salary'] ?? 0);
+        $hra = ($_POST['hra'] ?? '') === '' ? null : (float)($_POST['hra'] ?? 0);
+        $conveyance = ($_POST['conveyance'] ?? '') === '' ? null : (float)($_POST['conveyance'] ?? 0);
+        $medical = ($_POST['medical_allowance'] ?? '') === '' ? null : (float)($_POST['medical_allowance'] ?? 0);
+        $special = ($_POST['special_allowance'] ?? '') === '' ? null : (float)($_POST['special_allowance'] ?? 0);
+        $other_allowances = ($_POST['other_allowances'] ?? '') === '' ? null : (float)($_POST['other_allowances'] ?? 0);
+        $pf_employee = ($_POST['pf_employee'] ?? '') === '' ? null : (float)($_POST['pf_employee'] ?? 0);
+        $tds = ($_POST['tds'] ?? '') === '' ? null : (float)($_POST['tds'] ?? 0);
+
+        // NOTE: gross_salary/total_deductions/net_salary are STORED GENERATED
+        // columns — never write them; MySQL computes them from the base columns.
         $eff = $_POST['effective_date'] ?? date('Y-m-d');
         $tid = (int)$this->tenantId();
         try {
-            $stmt = $this->db->prepare("INSERT INTO salary_structures (employee_id, basic_salary, hra, conveyance, medical_allowance, special_allowance, other_allowances, pf_employee, tds, gross_salary, total_deductions, net_salary, effective_date, status, tenant_id, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,'active',?,NOW())");
-            $stmt->execute([$employee_id, $basic, $hra, $conveyance, $medical, $special, $other_allowances, $pf_employee, $tds, $gross, $deductions, $net, $eff, $tid]);
+            $stmt = $this->db->prepare("INSERT INTO salary_structures (employee_id, basic_salary, hra, conveyance, medical_allowance, special_allowance, other_allowances, pf_employee, tds, effective_date, status, tenant_id, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,'active',?,NOW())");
+            $stmt->execute([$employee_id, $basic, $hra, $conveyance, $medical, $special, $other_allowances, $pf_employee, $tds, $eff, $tid]);
             $sid = $this->db->lastInsertId();
             $this->logHistory($employee_id, 'salary_structure_created', '0', (string)$sid, (int)($_SESSION['admin_id'] ?? 0));
             $this->setFlash('success', 'Salary structure created');
@@ -305,23 +303,21 @@ class SalaryController extends AdminController
     public function updateStructure($id)
     {
         $this->requireAdmin();
-        $basic = (float)($_POST['basic_salary'] ?? 0);
-        $hra = (float)($_POST['hra'] ?? 0);
-        $conveyance = (float)($_POST['conveyance'] ?? 0);
-        $medical = (float)($_POST['medical_allowance'] ?? 0);
-        $special = (float)($_POST['special_allowance'] ?? 0);
-        $other_allowances = (float)($_POST['other_allowances'] ?? 0);
-        $pf_employee = (float)($_POST['pf_employee'] ?? 0);
-        $tds = (float)($_POST['tds'] ?? 0);
-        
-        $gross = $basic + $hra + $conveyance + $medical + $special + $other_allowances;
-        $deductions = $pf_employee + $tds;
-        $net = $gross - $deductions;
-        
+        $basic = ($_POST['basic_salary'] ?? '') === '' ? null : (float)($_POST['basic_salary'] ?? 0);
+        $hra = ($_POST['hra'] ?? '') === '' ? null : (float)($_POST['hra'] ?? 0);
+        $conveyance = ($_POST['conveyance'] ?? '') === '' ? null : (float)($_POST['conveyance'] ?? 0);
+        $medical = ($_POST['medical_allowance'] ?? '') === '' ? null : (float)($_POST['medical_allowance'] ?? 0);
+        $special = ($_POST['special_allowance'] ?? '') === '' ? null : (float)($_POST['special_allowance'] ?? 0);
+        $other_allowances = ($_POST['other_allowances'] ?? '') === '' ? null : (float)($_POST['other_allowances'] ?? 0);
+        $pf_employee = ($_POST['pf_employee'] ?? '') === '' ? null : (float)($_POST['pf_employee'] ?? 0);
+        $tds = ($_POST['tds'] ?? '') === '' ? null : (float)($_POST['tds'] ?? 0);
+
+        // NOTE: gross_salary/total_deductions/net_salary are STORED GENERATED
+        // columns — never write them; MySQL recomputes them automatically.
         $eff = $_POST['effective_date'] ?? date('Y-m-d');
         $tid = (int)$this->tenantId();
         try {
-            $this->db->execute("UPDATE salary_structures SET basic_salary=?, hra=?, conveyance=?, medical_allowance=?, special_allowance=?, other_allowances=?, pf_employee=?, tds=?, gross_salary=?, total_deductions=?, net_salary=?, effective_date=? WHERE id=? AND tenant_id=?", [$basic, $hra, $conveyance, $medical, $special, $other_allowances, $pf_employee, $tds, $gross, $deductions, $net, $eff, $id, $tid]);
+            $this->db->execute("UPDATE salary_structures SET basic_salary=?, hra=?, conveyance=?, medical_allowance=?, special_allowance=?, other_allowances=?, pf_employee=?, tds=?, effective_date=? WHERE id=? AND tenant_id=?", [$basic, $hra, $conveyance, $medical, $special, $other_allowances, $pf_employee, $tds, $eff, $id, $tid]);
             $this->setFlash('success', 'Structure updated');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
@@ -422,12 +418,55 @@ class SalaryController extends AdminController
         ]);
     }
 
+    public function markPaymentPaid($id)
+    {
+        $this->requireAdmin();
+        $tid = (int)$this->tenantId();
+        try {
+            $p = $this->db->fetch("SELECT id, payment_status FROM salary_payments WHERE id=? AND tenant_id=?", [$id, $tid]);
+            if (!$p) { $this->setFlash('error', 'Payment not found'); $this->redirect('/admin/salary/payments'); }
+            if ($p['payment_status'] === 'paid') { $this->setFlash('error', 'Payment is already paid'); $this->redirect('/admin/salary/payments'); }
+            if ($p['payment_status'] === 'cancelled') { $this->setFlash('error', 'Cancelled payment cannot be marked paid'); $this->redirect('/admin/salary/payments'); }
+            $this->db->execute("UPDATE salary_payments SET payment_status='paid', payment_date=CURDATE() WHERE id=? AND tenant_id=?", [$id, $tid]);
+            $this->setFlash('success', 'Payment #' . (int)$id . ' marked as paid');
+        } catch (\Exception $e) {
+            error_log("[SalaryController] " . __METHOD__ . "() exception: " . $e->getMessage());
+            $this->setFlash('error', 'Error: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/salary/payments');
+    }
+
+    public function cancelPayment($id)
+    {
+        $this->requireAdmin();
+        $tid = (int)$this->tenantId();
+        try {
+            $p = $this->db->fetch("SELECT id, payment_status FROM salary_payments WHERE id=? AND tenant_id=?", [$id, $tid]);
+            if (!$p) { $this->setFlash('error', 'Payment not found'); $this->redirect('/admin/salary/payments'); }
+            if ($p['payment_status'] === 'paid') { $this->setFlash('error', 'Paid payment cannot be cancelled'); $this->redirect('/admin/salary/payments'); }
+            if ($p['payment_status'] === 'cancelled') { $this->setFlash('error', 'Payment is already cancelled'); $this->redirect('/admin/salary/payments'); }
+            $this->db->execute("UPDATE salary_payments SET payment_status='cancelled' WHERE id=? AND tenant_id=?", [$id, $tid]);
+            $this->setFlash('success', 'Payment #' . (int)$id . ' cancelled');
+        } catch (\Exception $e) {
+            error_log("[SalaryController] " . __METHOD__ . "() exception: " . $e->getMessage());
+            $this->setFlash('error', 'Error: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/salary/payments');
+    }
+
     public function processBulk()
     {
         $this->requireAdmin();
         $month = (int)($_POST['month'] ?? 0);
         $year = (int)($_POST['year'] ?? 0);
         if (!$month || !$year) { $this->setFlash('error', 'Month and year required'); $this->redirect('/admin/salary/payments'); }
+        
+        // Check payroll period lock
+        $period = $this->db->fetch("SELECT status FROM payroll_periods WHERE tenant_id=? AND period_month=? AND period_year=?", [(int)$this->tenantId(), $month, $year]);
+        if ($period && in_array($period['status'], ['locked', 'closed'])) {
+            $this->setFlash('error', "Payroll period $month/$year is {$period['status']}. Cannot process payments.");
+            $this->redirect('/admin/salary/payments');
+        }
         
         $tid = (int)$this->tenantId();
         // Fallback defaults for settings if not in DB
@@ -488,15 +527,33 @@ class SalaryController extends AdminController
                     $crmBonus = $convertedLeads * $bonusPerLead;
                 }
                 
-                // 3. Finalize Net Salary
-                // Gross = Base Gross - LOP + CRM Bonus
-                $finalGross = ($gross - $lopAmount) + $crmBonus;
-                $net = $finalGross - $deductions;
-                
-                $remarks = sprintf("Bulk processed. LOP: -%.2f (%s absent). CRM Bonus: +%.2f (%d leads).", 
-                                    $lopAmount, $totalAbsences, $crmBonus, $convertedLeads);
+                // 3. Advance/Loan Recovery (logs recovery row for this month)
+                $advanceRecovery = 0;
+                try {
+                    $advService = new \App\Services\AdvanceRecoveryService();
+                    $advanceRecovery = $advService->calculateRecovery($employeeId, $month, $year);
+                } catch (\Throwable $e) {
+                    error_log('SalaryController::processBulk advance recovery: ' . $e->getMessage());
+                }
 
-                $this->db->execute("INSERT INTO salary_payments (employee_id, salary_structure_id, payment_month, payment_year, payment_date, basic_amount, gross_amount, deduction_amount, net_amount, payment_status, created_by, remarks, tenant_id, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,NOW())", [$employeeId, $emp['structure_id'], $month, $year, $year . '-' . str_pad($month,2,'0',STR_PAD_LEFT) . '-01', $basic, $finalGross, $deductions, $net, 'pending', (int)($_SESSION['admin_id'] ?? 0), $remarks, $tid]);
+                // 4. Finalize Net Salary
+                // Gross = Base Gross - LOP + CRM Bonus; Deductions += Advance Recovery
+                $finalGross = ($gross - $lopAmount) + $crmBonus;
+                $finalDeductions = $deductions + $advanceRecovery;
+                $net = $finalGross - $finalDeductions;
+
+                $remarks = sprintf("Bulk processed. LOP: -%.2f (%s absent). CRM Bonus: +%.2f (%d leads). Advance Recovery: -%.2f.",
+                                    $lopAmount, $totalAbsences, $crmBonus, $convertedLeads, $advanceRecovery);
+
+                // Get or create payroll period
+                $period = $this->db->fetch("SELECT id FROM payroll_periods WHERE tenant_id=? AND period_month=? AND period_year=?", [$tid, $month, $year]);
+                $periodId = $period['id'] ?? null;
+                if (!$periodId) {
+                    $this->db->execute("INSERT INTO payroll_periods (tenant_id, period_month, period_year, status) VALUES (?,?,?,'open')", [$tid, $month, $year]);
+                    $periodId = (int)$this->db->lastInsertId();
+                }
+
+                $this->db->execute("INSERT INTO salary_payments (employee_id, salary_structure_id, payment_month, payment_year, payment_date, basic_amount, gross_amount, deduction_amount, net_amount, payment_status, created_by, remarks, tenant_id, payroll_period_id, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW())", [$employeeId, $emp['structure_id'], $month, $year, $year . '-' . str_pad($month,2,'0',STR_PAD_LEFT) . '-01', $basic, $finalGross, $finalDeductions, $net, 'pending', (int)($_SESSION['admin_id'] ?? 0), $remarks, $tid, $periodId]);
                 $count++;
             }
             $this->setFlash('success', "Bulk processed $count users with LOP & CRM Bonuses");
@@ -571,6 +628,159 @@ class SalaryController extends AdminController
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/salary/payouts');
+    }
+
+    // ──────────────────────────────────────────────
+    // ADVANCES (salary advance / loan: create + approve/reject)
+    // ──────────────────────────────────────────────
+
+    public function advances()
+    {
+        $this->requireAdmin();
+        $status = $_GET['status'] ?? '';
+        [$tidSql, $tidParams] = $this->tenantWhere();
+        try {
+            $where = []; $params = [];
+            if ($status) { $where[] = 'a.status=?'; $params[] = $status; }
+            $sql = "SELECT a.*, u.name as employee_name, e.employee_code FROM employee_advances a LEFT JOIN employees e ON a.employee_id=e.id LEFT JOIN users u ON e.user_id=u.id";
+            if ($where) $sql .= " WHERE " . implode(' AND ', $where);
+            $sql .= " ORDER BY a.created_at DESC LIMIT 200";
+            $advances = $this->db->fetchAll($sql, $params) ?? [];
+            $users = $this->db->fetchAll("SELECT e.id, u.name, e.employee_code FROM employees e JOIN users u ON e.user_id=u.id WHERE e.status='active' {$tidSql} ORDER BY u.name", $tidParams) ?? [];
+            $summary = $this->db->fetch("SELECT COUNT(*) as total, COALESCE(SUM(CASE WHEN status='pending' THEN amount ELSE 0 END),0) as pending_amount, COALESCE(SUM(CASE WHEN status='active' THEN amount ELSE 0 END),0) as active_amount FROM employee_advances") ?? [];
+        } catch (\Exception $e) {
+            $advances = []; $users = []; $summary = [];
+        }
+        return $this->render('admin/salary/advances', [
+            'page_title' => 'Salary Advances',
+            'advances' => $advances,
+            'users' => $users,
+            'summary' => $summary,
+            'filter_status' => $status,
+        ]);
+    }
+
+    public function createAdvance()
+    {
+        $this->requireAdmin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { $this->redirect('/admin/salary/advances'); }
+        try {
+            $svc = new \App\Services\AdvanceRecoveryService();
+            $result = $svc->createAdvance([
+                'employee_id' => (int)($_POST['employee_id'] ?? 0),
+                'amount' => (float)($_POST['amount'] ?? 0),
+                'reason' => trim($_POST['reason'] ?? ''),
+                'repay_months' => (int)($_POST['repay_months'] ?? 0),
+                'interest_rate' => (float)($_POST['interest_rate'] ?? 0),
+                'start_month' => (int)($_POST['start_month'] ?? date('n')),
+                'start_year' => (int)($_POST['start_year'] ?? date('Y')),
+            ]);
+            if ($result['success']) {
+                $this->setFlash('success', "Advance {$result['advance_no']} created. EMI: ₹" . number_format($result['emi'], 2));
+            } else {
+                $this->setFlash('error', 'Failed: ' . $result['message']);
+            }
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/salary/advances');
+    }
+
+    public function approveAdvance($id)
+    {
+        $this->requireAdmin();
+        try {
+            $svc = new \App\Services\AdvanceRecoveryService();
+            if ($svc->approveAdvance((int)$id, (int)($_SESSION['admin_id'] ?? 0))) {
+                $this->setFlash('success', 'Advance approved. Recovery starts from its start month.');
+            } else {
+                $this->setFlash('error', 'Advance not found or already processed');
+            }
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/salary/advances');
+    }
+
+    public function rejectAdvance($id)
+    {
+        $this->requireAdmin();
+        try {
+            $tid = (int)$this->tenantId();
+            $this->db->execute("UPDATE employee_advances SET status='rejected' WHERE id=? AND status='pending' AND tenant_id=?", [(int)$id, $tid]);
+            $this->setFlash('success', 'Advance rejected');
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/salary/advances');
+    }
+
+    // ──────────────────────────────────────────────
+    // REIMBURSEMENTS (claims: approve/reject/mark-paid)
+    // ──────────────────────────────────────────────
+
+    public function reimbursements()
+    {
+        $this->requireAdmin();
+        $status = $_GET['status'] ?? '';
+        try {
+            $where = []; $params = [];
+            if ($status) { $where[] = 'r.status=?'; $params[] = $status; }
+            $sql = "SELECT r.*, u.name as employee_name, e.employee_code FROM employee_reimbursements r LEFT JOIN employees e ON r.employee_id=e.id LEFT JOIN users u ON e.user_id=u.id";
+            if ($where) $sql .= " WHERE " . implode(' AND ', $where);
+            $sql .= " ORDER BY r.created_at DESC LIMIT 200";
+            $claims = $this->db->fetchAll($sql, $params) ?? [];
+            $summary = $this->db->fetch("SELECT COUNT(*) as total, COALESCE(SUM(CASE WHEN status='pending' THEN amount ELSE 0 END),0) as pending_amount, COALESCE(SUM(CASE WHEN status='paid' THEN amount ELSE 0 END),0) as paid_amount FROM employee_reimbursements") ?? [];
+        } catch (\Exception $e) {
+            $claims = []; $summary = [];
+        }
+        return $this->render('admin/salary/reimbursements', [
+            'page_title' => 'Reimbursement Claims',
+            'claims' => $claims,
+            'summary' => $summary,
+            'filter_status' => $status,
+        ]);
+    }
+
+    public function approveReimbursement($id)
+    {
+        $this->requireAdmin();
+        try {
+            $tid = (int)$this->tenantId();
+            $this->db->execute("UPDATE employee_reimbursements SET status='approved', approved_by=?, approved_at=NOW() WHERE id=? AND status='pending' AND tenant_id=?", [(int)($_SESSION['admin_id'] ?? 0), (int)$id, $tid]);
+            $this->setFlash('success', 'Claim approved');
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/salary/reimbursements');
+    }
+
+    public function rejectReimbursement($id)
+    {
+        $this->requireAdmin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { $this->redirect('/admin/salary/reimbursements'); }
+        try {
+            $tid = (int)$this->tenantId();
+            $this->db->execute("UPDATE employee_reimbursements SET status='rejected', rejection_reason=?, approved_by=?, approved_at=NOW() WHERE id=? AND status='pending' AND tenant_id=?", [trim($_POST['rejection_reason'] ?? ''), (int)($_SESSION['admin_id'] ?? 0), (int)$id, $tid]);
+            $this->setFlash('success', 'Claim rejected');
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/salary/reimbursements');
+    }
+
+    public function payReimbursement($id)
+    {
+        $this->requireAdmin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { $this->redirect('/admin/salary/reimbursements'); }
+        try {
+            $tid = (int)$this->tenantId();
+            $this->db->execute("UPDATE employee_reimbursements SET status='paid', paid_at=NOW(), payment_reference=? WHERE id=? AND status='approved' AND tenant_id=?", [trim($_POST['payment_reference'] ?? ('PAY-' . date('YmdHis'))), (int)$id, $tid]);
+            $this->setFlash('success', 'Claim marked as paid');
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/salary/reimbursements');
     }
 
     // ──────────────────────────────────────────────
@@ -959,8 +1169,21 @@ class SalaryController extends AdminController
 
     private function logHistory($employee_id, $field, $old, $new, $changed_by)
     {
+        // Real salary_history schema: change_type is a strict ENUM, amounts are
+        // DECIMAL, effective_date is NOT NULL. Map internal event names so the
+        // audit trail actually writes instead of dying on 1265/1364.
+        $map = [
+            'salary_structure_created' => 'revision',
+            'payment_created' => 'adjustment',
+            'contract_created' => 'adjustment',
+            'contract_terminated' => 'adjustment',
+            'tracker_updated' => 'adjustment',
+        ];
+        $type = $map[$field] ?? 'adjustment';
+        $oldNum = is_numeric($old) ? (float)$old : null;
+        $newNum = is_numeric(str_replace([','], [''], (string)$new)) ? (float)str_replace([','], [''], (string)$new) : 0;
         try {
-            $this->db->execute("INSERT INTO salary_history (employee_id, change_type, old_salary, new_salary, approved_by, tenant_id, created_at) VALUES (?,?,?,?,?,?,NOW())", [$employee_id, $field, $old, $new, $changed_by, (int)$this->tenantId()]);
+            $this->db->execute("INSERT INTO salary_history (employee_id, change_type, old_salary, new_salary, effective_date, reason, approved_by, tenant_id, created_at) VALUES (?,?,?,?,CURDATE(),?,?,?,?,NOW())", [$employee_id, $type, $oldNum, $newNum, "event=$field old=$old new=$new", $changed_by, (int)$this->tenantId()]);
         } catch (\Exception $e) { error_log('SalaryController logHistory: ' . $e->getMessage()); }
     }
 
@@ -1058,6 +1281,135 @@ class SalaryController extends AdminController
         return $this->render('admin/salary/batch_history', [
             'page_title' => 'Payroll Batch History',
             'history' => $history,
+        ]);
+    }
+
+    // ──────────────────────────────────────────────
+    // ARREARS ENGINE (Mid-year Salary Revision)
+    // ──────────────────────────────────────────────
+
+    public function arrearsPreview()
+    {
+        $this->requireAdmin();
+        // Preview form POSTs these fields (no query string on its action).
+        $employeeId = (int)($_GET['employee_id'] ?? $_POST['employee_id'] ?? 0);
+        $month = (int)($_GET['month'] ?? $_POST['month'] ?? date('n'));
+        $year = (int)($_GET['year'] ?? $_POST['year'] ?? date('Y'));
+
+        if (!$employeeId) {
+            $this->setFlash('error', 'Employee ID required');
+            $this->redirect('/admin/salary/structures');
+        }
+
+        try {
+            // Get employee's current structure for preview form
+            $currentStructure = $this->db->fetch("
+                SELECT * FROM salary_structures 
+                WHERE employee_id=? AND status='active' 
+                ORDER BY effective_date DESC LIMIT 1
+            ", [$employeeId]);
+
+            $employee = $this->db->fetch("SELECT id, name FROM users WHERE id=?", [$employeeId]);
+            
+            // If preview POST, calculate arrears
+            $arrears = null;
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $newStructure = [
+                    'basic_salary' => (float)($_POST['basic_salary'] ?? 0),
+                    'hra' => (float)($_POST['hra'] ?? 0),
+                    'conveyance' => (float)($_POST['conveyance'] ?? 0),
+                    'medical_allowance' => (float)($_POST['medical_allowance'] ?? 0),
+                    'special_allowance' => (float)($_POST['special_allowance'] ?? 0),
+                    'other_allowances' => (float)($_POST['other_allowances'] ?? 0),
+                    'pf_employee' => (float)($_POST['pf_employee'] ?? 0),
+                    'tds' => (float)($_POST['tds'] ?? 0),
+                ];
+                
+                $arrearsEngine = new \App\Services\ArrearsEngine();
+                $arrears = $arrearsEngine->calculateArrears($employeeId, $month, $year, $newStructure);
+            }
+
+        } catch (\Exception $e) {
+            $arrears = ['success' => false, 'message' => $e->getMessage()];
+        }
+
+        return $this->render('admin/salary/arrears_preview', [
+            'page_title' => 'Arrears Preview - Salary Revision',
+            'employee' => $employee,
+            'current_structure' => $currentStructure,
+            'arrears' => $arrears,
+            'preview_month' => $month,
+            'preview_year' => $year,
+        ]);
+    }
+
+    public function arrearsProcess()
+    {
+        $this->requireAdmin();
+        
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/admin/salary/arrears/preview');
+            exit;
+        }
+
+        $employeeId = (int)($_POST['employee_id'] ?? 0);
+        $month = (int)($_POST['month'] ?? date('n'));
+        $year = (int)($_POST['year'] ?? date('Y'));
+        $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+
+        if (!$employeeId) {
+            $_SESSION['error'] = 'Employee ID required';
+            $this->redirect('/admin/salary/structures');
+            exit;
+        }
+
+        $newStructure = [
+            'basic_salary' => (float)($_POST['basic_salary'] ?? 0),
+            'hra' => (float)($_POST['hra'] ?? 0),
+            'conveyance' => (float)($_POST['conveyance'] ?? 0),
+            'medical_allowance' => (float)($_POST['medical_allowance'] ?? 0),
+            'special_allowance' => (float)($_POST['special_allowance'] ?? 0),
+            'other_allowances' => (float)($_POST['other_allowances'] ?? 0),
+            'pf_employee' => (float)($_POST['pf_employee'] ?? 0),
+            'tds' => (float)($_POST['tds'] ?? 0),
+        ];
+
+        try {
+            $arrearsEngine = new \App\Services\ArrearsEngine();
+            $result = $arrearsEngine->processArrears($employeeId, $month, $year, $newStructure, $adminId);
+            
+            if ($result['success']) {
+                $_SESSION['success'] = $result['message'] . ". Total Arrears: ₹" . number_format($result['total_arrears'], 2);
+            } else {
+                $_SESSION['error'] = $result['message'];
+            }
+        } catch (\Exception $e) {
+            $_SESSION['error'] = $e->getMessage();
+        }
+
+        $this->redirect('/admin/salary/structures');
+        exit;
+    }
+
+    public function arrearsHistory()
+    {
+        $this->requireAdmin();
+        
+        try {
+            $arrears = $this->db->fetchAll("
+                SELECT sp.*, u.name as employee_name
+                FROM salary_payments sp
+                LEFT JOIN users u ON sp.employee_id = u.id
+                WHERE sp.payment_type = 'arrears' OR sp.remarks LIKE '%Arrears%'
+                ORDER BY sp.created_at DESC
+            ") ?? [];
+        } catch (\Exception $e) {
+            $arrears = [];
+        }
+
+        return $this->render('admin/salary/arrears_history', [
+            'page_title' => 'Arrears History',
+            'arrears' => $arrears,
         ]);
     }
 }

@@ -21,9 +21,9 @@ class HRController extends AdminController
     {
         $this->requireAdmin();
         try {
-            $totalEmployees = $this->db->fetch("SELECT COUNT(*) as c FROM users WHERE status='active'")['c'] ?? 0;
+            $totalEmployees = $this->db->fetch("SELECT COUNT(*) as c FROM employees WHERE status='active'")['c'] ?? 0;
             $totalUsers = $this->db->fetch("SELECT COUNT(*) as c FROM users WHERE role='employee' AND status='active'")['c'] ?? 0;
-            $presentToday = $this->db->fetch("SELECT COUNT(*) as c FROM employee_attendance WHERE attendance_date=CURDATE() AND attendance_status='present'")['c'] ?? 0;
+            $presentToday = $this->db->fetch("SELECT COUNT(*) as c FROM employee_attendance WHERE attendance_date=CURDATE() AND status='present'")['c'] ?? 0;
             $onLeave = $this->db->fetch("SELECT COUNT(*) as c FROM employee_leaves WHERE CURDATE() BETWEEN start_date AND end_date AND status='approved'")['c'] ?? 0;
             $pendingLeaves = $this->db->fetch("SELECT COUNT(*) as c FROM employee_leaves WHERE status='pending'")['c'] ?? 0;
             $attendanceRate = $totalEmployees > 0 ? round(($presentToday / $totalEmployees) * 100, 1) : 0;
@@ -64,8 +64,8 @@ class HRController extends AdminController
         if ($department) { $where .= " AND e.department=?"; $params[] = $department; }
         if ($status) { $where .= " AND e.status=?"; $params[] = $status; }
         try {
-            $total = $this->db->fetch("SELECT COUNT(*) as c FROM users e JOIN users u ON e.id=u.id $where", $params)['c'] ?? 0;
-            $users = $this->db->fetchAll("SELECT e.*, u.email, u.phone FROM users e JOIN users u ON e.id=u.id $where ORDER BY e.id DESC LIMIT $perPage OFFSET $offset", $params);
+            $total = $this->db->fetch("SELECT COUNT(*) as c FROM employees e JOIN users u ON e.user_id=u.id $where", $params)['c'] ?? 0;
+            $users = $this->db->fetchAll("SELECT e.*, u.email, u.phone FROM employees e JOIN users u ON e.user_id=u.id $where ORDER BY e.id DESC LIMIT $perPage OFFSET $offset", $params);
             $departments = $this->db->fetchAll("SELECT DISTINCT department FROM employees WHERE department IS NOT NULL AND department!='' ORDER BY department");
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
@@ -95,52 +95,44 @@ class HRController extends AdminController
     public function storeEmployee()
     {
         $this->requireAdmin();
-        $name = $_POST['name'] ?? '';
-        $email = $_POST['email'] ?? '';
-        $phone = $_POST['phone'] ?? '';
-        $department = $_POST['department'] ?? 'General';
-        $designation = $_POST['designation'] ?? '';
-        $salary = $_POST['salary'] ?? 0;
-        $incentiveModel = $_POST['incentive_model'] ?? 'salary_only';
-        $commissionRate = $_POST['commission_rate'] ?? 0.00;
-        $commissionType = $_POST['commission_type'] ?? 'percentage';
-        $joinDate = $_POST['join_date'] ?? date('Y-m-d');
-        $password = $_POST['password'] ?? 'employee@123';
-        if (!$name || !$email) { $this->setFlash('error', 'Name and Email are required'); header('Location: ' . BASE_URL . '/admin/hr/users/create'); exit; }
+        $data = [
+            'name' => $_POST['name'] ?? '',
+            'email' => $_POST['email'] ?? '',
+            'phone' => $_POST['phone'] ?? '',
+            'department' => $_POST['department'] ?? 'General',
+            'designation' => $_POST['designation'] ?? '',
+            'salary' => ($_POST['salary'] ?? '') === '' ? null : ($_POST['salary'] ?? 0),
+            'incentive_model' => $_POST['incentive_model'] ?? 'salary_only',
+            'commission_rate' => ($_POST['commission_rate'] ?? '') === '' ? null : ($_POST['commission_rate'] ?? 0.00),
+            'commission_type' => $_POST['commission_type'] ?? 'percentage',
+            'joining_date' => $_POST['join_date'] ?? date('Y-m-d'),
+            'password' => $_POST['password'] ?? 'employee@123',
+            'address' => $_POST['address'] ?? null,
+            'emergency_contact' => $_POST['emergency_contact'] ?? null,
+            'date_of_birth' => $_POST['date_of_birth'] ?? null,
+            'pan_number' => $_POST['pan_number'] ?? null,
+            'aadhaar_number' => $_POST['aadhaar_number'] ?? null,
+            'bank_account' => $_POST['bank_account'] ?? null,
+            'bank_ifsc' => $_POST['bank_ifsc'] ?? null,
+        ];
+        
+        if (!$data['name'] || !$data['email']) { 
+            $this->setFlash('error', 'Name and Email are required'); 
+            header('Location: ' . BASE_URL . '/admin/hr/users/create'); 
+            exit; 
+        }
+
         try {
-            $exists = $this->db->fetch("SELECT id FROM users WHERE email=?", [$email]);
-            if ($exists) { $this->setFlash('error', 'Email already exists'); header('Location: ' . BASE_URL . '/admin/hr/users/create'); exit; }
-
-            // Use UserRegistrationService for complete record creation
-            $regService = new \App\Services\UserRegistrationService();
-            $user = null;
-            $result = $regService->createUser('employee', [
-                'name' => $name,
-                'email' => $email,
-                'phone' => $phone,
-                'password' => $password,
-                'registration_method' => 'admin',
-            ], $user);
-
+            $empService = new \App\Services\EmployeeService();
+            $result = $empService->createEmployee($data);
+            
             if (!$result['success']) {
                 $this->setFlash('error', 'Error: ' . $result['message']);
-                header('Location: ' . BASE_URL . '/admin/hr/users/create');
-                exit;
+            } else {
+                $this->setFlash('success', 'Employee created successfully. ID: ' . $result['user_id'] . ', Code: ' . $result['employee_code']);
             }
-
-            $userId = $result['user_id'];
-
-            // Create employees table row with employment details
-            $employeeCode = 'EMP' . str_pad($userId, 4, '0', STR_PAD_LEFT);
-            $this->db->execute(
-                "INSERT INTO employees (user_id, name, email, phone, role, department, designation, employee_code, salary, incentive_model, commission_rate, commission_type, joining_date, status, created_at) VALUES (?, ?, ?, ?, 'employee', ?, ?, ?, ?, ?, ?, ?, ?, 'active', NOW())",
-                [$userId, $name, $email, $phone, $department, $designation, $employeeCode, $salary, $incentiveModel, $commissionRate, $commissionType, $joinDate]
-            );
-
-            $this->setFlash('success', 'Employee created successfully. ID: ' . $userId);
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
-
             $this->setFlash('error', 'Error: ' . $e->getMessage());
         }
         header('Location: ' . BASE_URL . '/admin/hr/users');
@@ -162,37 +154,41 @@ class HRController extends AdminController
     public function updateEmployee($id)
     {
         $this->requireAdmin();
-        $tid = (int)$this->tenantId();
-        $name = $_POST['name'] ?? '';
-        $email = $_POST['email'] ?? '';
-        $phone = $_POST['phone'] ?? '';
-        $department = $_POST['department'] ?? 'General';
-        $designation = $_POST['designation'] ?? '';
-        $salary = $_POST['salary'] ?? 0;
-        $incentiveModel = $_POST['incentive_model'] ?? 'salary_only';
-        $commissionRate = $_POST['commission_rate'] ?? 0.00;
-        $commissionType = $_POST['commission_type'] ?? 'percentage';
-        $status = $_POST['status'] ?? 'active';
-        $joinDate = $_POST['join_date'] ?? '';
-        if (!$name) { $this->setFlash('error', 'Name is required'); header('Location: ' . BASE_URL . "/admin/hr/users/edit/$id"); exit; }
+        $data = [
+            'name' => $_POST['name'] ?? '',
+            'email' => $_POST['email'] ?? '',
+            'phone' => $_POST['phone'] ?? '',
+            'department' => $_POST['department'] ?? 'General',
+            'designation' => $_POST['designation'] ?? '',
+            'salary' => ($_POST['salary'] ?? '') === '' ? null : ($_POST['salary'] ?? 0),
+            'incentive_model' => $_POST['incentive_model'] ?? 'salary_only',
+            'commission_rate' => ($_POST['commission_rate'] ?? '') === '' ? null : ($_POST['commission_rate'] ?? 0.00),
+            'commission_type' => $_POST['commission_type'] ?? 'percentage',
+            'joining_date' => $_POST['join_date'] ?? '',
+            'status' => $_POST['status'] ?? 'active',
+            'address' => $_POST['address'] ?? null,
+            'emergency_contact' => $_POST['emergency_contact'] ?? null,
+            'date_of_birth' => $_POST['date_of_birth'] ?? null,
+            'pan_number' => $_POST['pan_number'] ?? null,
+            'aadhaar_number' => $_POST['aadhaar_number'] ?? null,
+            'bank_account' => $_POST['bank_account'] ?? null,
+            'bank_ifsc' => $_POST['bank_ifsc'] ?? null,
+            'password' => $_POST['password'] ?? null,
+        ];
+        
+        if (!$data['name']) { $this->setFlash('error', 'Name is required'); header('Location: ' . BASE_URL . "/admin/hr/users/edit/$id"); exit; }
+
         try {
-            $emp = $this->db->fetch("SELECT id, user_id FROM employees WHERE id=?", [$id]);
-            if (!$emp) { $this->setFlash('error', 'Employee not found'); header('Location: ' . BASE_URL . '/admin/hr/users'); exit; }
+            $empService = new \App\Services\EmployeeService();
+            $result = $empService->updateEmployee($id, $data);
             
-            // Update employees table
-            $this->db->execute("UPDATE employees SET name=?, email=?, phone=?, department=?, designation=?, salary=?, incentive_model=?, commission_rate=?, commission_type=?, joining_date=?, status=? WHERE id=?", 
-                [$name, $email, $phone, $department, $designation, $salary, $incentiveModel, $commissionRate, $commissionType, $joinDate, $status, $id]);
-            
-            // Sync users table
-            if (!empty($emp['user_id'])) {
-                $this->db->execute("UPDATE users SET name=?, email=?, phone=?, status=? WHERE id=? AND tenant_id=?", 
-                    [$name, $email, $phone, $status, $emp['user_id'], $tid]);
+            if (!$result['success']) {
+                $this->setFlash('error', 'Error: ' . $result['message']);
+            } else {
+                $this->setFlash('success', 'Employee updated successfully');
             }
-            
-            $this->setFlash('success', 'Employee updated successfully');
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
-
             $this->setFlash('error', 'Error: ' . $e->getMessage());
         }
         header('Location: ' . BASE_URL . '/admin/hr/users');
@@ -202,30 +198,38 @@ class HRController extends AdminController
     public function deleteEmployee($id)
     {
         $this->requireAdmin();
-        $tid = (int)$this->tenantId();
         try {
-            $this->db->execute("UPDATE users SET status='deleted' WHERE id=? AND tenant_id=?", [$id, $tid]);
-            $this->setFlash('success', 'Employee deleted');
+            $empService = new \App\Services\EmployeeService();
+            $result = $empService->deleteEmployee($id);
+            
+            if (!$result['success']) {
+                $this->setFlash('error', 'Error: ' . $result['message']);
+            } else {
+                $this->setFlash('success', 'Employee deactivated successfully');
+            }
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
-
             $this->setFlash('error', 'Error: ' . $e->getMessage());
         }
         header('Location: ' . BASE_URL . '/admin/hr/users');
         exit;
     }
 
-    public function viewEmployee($id)
+public function viewEmployee($id)
     {
         $this->requireAdmin();
         try {
-            $employee = $this->db->fetch("SELECT e.*, u.email, u.phone, u.created_at as user_since FROM users e JOIN users u ON e.id=u.id WHERE e.id=?", [$id]);
+            $empService = new \App\Services\EmployeeService();
+            $employee = $empService->getEmployeeWithUser($id);
+            
             if (!$employee) { $this->setFlash('error', 'Employee not found'); header('Location: ' . BASE_URL . '/admin/hr/users'); exit; }
+            
             $attendance = $this->db->fetchAll("SELECT * FROM employee_attendance WHERE employee_id=? ORDER BY attendance_date DESC LIMIT 10", [$employee['id']]);
             $leaves = $this->db->fetchAll("SELECT el.*, lt.name as leave_type_name FROM employee_leaves el LEFT JOIN leave_types lt ON el.leave_type_id=lt.id WHERE el.employee_id=? ORDER BY el.created_at DESC LIMIT 5", [$id]);
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
- $employee = null; $attendance = []; $leaves = []; }
+            $employee = null; $attendance = []; $leaves = []; 
+        }
         return $this->render('admin/hr/employee_view', [
             'page_title' => 'Employee: ' . ($employee['name'] ?? ''),
             'employee' => $employee,
@@ -248,11 +252,12 @@ class HRController extends AdminController
         $offset = ($page - 1) * $perPage;
         $where = "WHERE a.attendance_date=?";
         $params = [$date];
-        if ($statusFilter) { $where .= " AND a.attendance_status=?"; $params[] = $statusFilter; }
+        if ($statusFilter) { $where .= " AND a.status=?"; $params[] = $statusFilter; }
         try {
             $total = $this->db->fetch("SELECT COUNT(*) as c FROM employee_attendance a $where", $params)['c'] ?? 0;
-            $records = $this->db->fetchAll("SELECT a.*, u.name as employee_name, u.email, u.phone FROM employee_attendance a JOIN users u ON a.employee_id=u.id $where ORDER BY u.name LIMIT $perPage OFFSET $offset", $params);
-            $users = $this->db->fetchAll("SELECT u.id, u.name FROM users u JOIN users e ON e.id=u.id WHERE e.status='active' ORDER BY u.name");
+            // employee_attendance.employee_id FK -> employees.id (never users.id)
+            $records = $this->db->fetchAll("SELECT a.*, a.status AS attendance_status, u.name as employee_name, u.email, u.phone FROM employee_attendance a JOIN employees e ON a.employee_id=e.id JOIN users u ON e.user_id=u.id $where ORDER BY u.name LIMIT $perPage OFFSET $offset", $params);
+            $users = $this->db->fetchAll("SELECT e.id, u.name FROM employees e JOIN users u ON e.user_id=u.id WHERE e.status='active' ORDER BY u.name");
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
  $total = 0; $records = []; $users = []; }
@@ -276,15 +281,19 @@ class HRController extends AdminController
         $employeeId = (int)($_POST['employee_id'] ?? 0);
         $date = $_POST['date'] ?? date('Y-m-d');
         $status = $_POST['status'] ?? 'present';
-        $checkIn = $_POST['check_in'] ?? date('H:i:s');
+        // Form sends TIME-only; columns are DATETIME. check_out was silently dropped.
+        $checkInRaw = trim($_POST['check_in'] ?? '');
+        $checkOutRaw = trim($_POST['check_out'] ?? '');
+        $checkIn = $checkInRaw !== '' ? $date . ' ' . (strlen($checkInRaw) === 5 ? $checkInRaw . ':00' : $checkInRaw) : null;
+        $checkOut = $checkOutRaw !== '' ? $date . ' ' . (strlen($checkOutRaw) === 5 ? $checkOutRaw . ':00' : $checkOutRaw) : null;
         $notes = $_POST['notes'] ?? '';
         if (!$employeeId) { $this->setFlash('error', 'Select an employee'); header('Location: ' . BASE_URL . '/admin/hr/attendance'); exit; }
         try {
             $existing = $this->db->fetch("SELECT id FROM employee_attendance WHERE employee_id=? AND attendance_date=? AND tenant_id=?", [$employeeId, $date, $tid]);
             if ($existing) {
-                $this->db->execute("UPDATE employee_attendance SET status=?, check_in_time=?, remarks=? WHERE id=? AND tenant_id=?", [$status, $checkIn, $notes, $existing['id'], $tid]);
+                $this->db->execute("UPDATE employee_attendance SET status=?, check_in_time=?, check_out_time=?, remarks=? WHERE id=? AND tenant_id=?", [$status, $checkIn, $checkOut, $notes, $existing['id'], $tid]);
             } else {
-                $this->db->execute("INSERT INTO employee_attendance (employee_id, attendance_date, status, check_in_time, remarks, tenant_id, created_at) VALUES (?,?,?,?,?,?,NOW())", [$employeeId, $date, $status, $checkIn, $notes, $tid]);
+                $this->db->execute("INSERT INTO employee_attendance (employee_id, attendance_date, status, check_in_time, check_out_time, remarks, tenant_id, created_at) VALUES (?,?,?,?,?,?,?,NOW())", [$employeeId, $date, $status, $checkIn, $checkOut, $notes, $tid]);
             }
             $this->setFlash('success', 'Attendance marked');
         } catch (\Exception $e) {
@@ -311,7 +320,7 @@ class HRController extends AdminController
                 SUM(CASE WHEN a.status='on_leave' THEN 1 ELSE 0 END) as leave_count,
                 SUM(CASE WHEN a.status='work_from_home' THEN 1 ELSE 0 END) as holiday,
                 COUNT(a.id) as total_days
-                FROM employee_attendance a JOIN users u ON a.employee_id=u.id
+                FROM employee_attendance a JOIN employees e ON a.employee_id=e.id JOIN users u ON e.user_id=u.id
                 WHERE a.attendance_date BETWEEN ? AND ?
                 GROUP BY u.id, u.name ORDER BY u.name", [$firstDay, $lastDay]);
         } catch (\Exception $e) {
@@ -341,11 +350,12 @@ class HRController extends AdminController
         if ($statusFilter) { $where .= " AND el.status=?"; $params[] = $statusFilter; }
         try {
             $total = $this->db->fetch("SELECT COUNT(*) as c FROM employee_leaves el $where", $params)['c'] ?? 0;
+            // employee_leaves.employee_id is employees.id (portal applyLeave maps user->employee)
             $leaves = $this->db->fetchAll("SELECT el.*, lt.name as leave_type_name, u.name as employee_name
                 FROM employee_leaves el
                 LEFT JOIN leave_types lt ON el.leave_type_id=lt.id
-                JOIN users e ON el.employee_id=e.id
-                JOIN users u ON e.id=u.id
+                JOIN employees e ON el.employee_id=e.id
+                JOIN users u ON e.user_id=u.id
                 $where ORDER BY el.created_at DESC LIMIT $perPage OFFSET $offset", $params);
         } catch (\Exception $e) {
             error_log("[HRController] leaves() exception: " . $e->getMessage());
@@ -547,7 +557,7 @@ class HRController extends AdminController
             exit;
         }
         try {
-            $users = $this->db->fetchAll("SELECT e.id, u.name FROM users e JOIN users u ON e.id=u.id WHERE e.status='active' ORDER BY u.name");
+            $users = $this->db->fetchAll("SELECT e.id, u.name FROM employees e JOIN users u ON e.user_id=u.id WHERE e.status='active' ORDER BY u.name");
             $shiftTypes = $this->db->fetchAll("SELECT * FROM shift_types WHERE is_active=1 ORDER BY name");
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
@@ -635,7 +645,7 @@ class HRController extends AdminController
  $total = 0; $reviews = []; }
         $totalPages = $perPage > 0 ? max(1, ceil($total / $perPage)) : 1;
         try {
-            $users = $this->db->fetchAll("SELECT e.id, u.name FROM users e JOIN users u ON e.id=u.id WHERE e.status='active' ORDER BY u.name");
+            $users = $this->db->fetchAll("SELECT e.id, u.name FROM employees e JOIN users u ON e.user_id=u.id WHERE e.status='active' ORDER BY u.name");
             $kpis_list = $this->db->fetchAll("SELECT id, name FROM kpis WHERE is_active=1 ORDER BY name");
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
@@ -741,18 +751,24 @@ class HRController extends AdminController
         $page = max(1, (int)($_GET['page'] ?? 1));
         $perPage = 25;
         $offset = ($page - 1) * $perPage;
+        // Canonical table is salary_structures (read by payroll batch, arrears,
+        // gratuity, F&F, statutory + payslip generator). The legacy
+        // employee_salary_structure table is no longer written by any UI.
         try {
-            $total = $this->db->fetch("SELECT COUNT(*) as c FROM employee_salary_structure")['c'] ?? 0;
-            $structures = $this->db->fetchAll("SELECT s.*, u.name as employee_name
-                FROM employee_salary_structure s
-                JOIN users u ON s.employee_id=u.id
+            $total = $this->db->fetch("SELECT COUNT(*) as c FROM salary_structures")['c'] ?? 0;
+            $structures = $this->db->fetchAll("SELECT s.*, u.name as employee_name,
+                    s.conveyance AS ta, s.pf_employee AS pf_deduction, s.tds AS tds_deduction,
+                    s.effective_date AS effective_from,
+                    CASE WHEN s.status='active' THEN 1 ELSE 0 END AS is_active
+                FROM salary_structures s
+                LEFT JOIN users u ON s.employee_id=u.id
                 ORDER BY s.created_at DESC LIMIT $perPage OFFSET $offset", []);
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
  $total = 0; $structures = []; }
         $totalPages = $perPage > 0 ? max(1, ceil($total / $perPage)) : 1;
         try {
-            $users = $this->db->fetchAll("SELECT u.id, u.name FROM users u JOIN users e ON e.id=u.id WHERE e.status='active' ORDER BY u.name");
+            $users = $this->db->fetchAll("SELECT u.id, u.name FROM users u JOIN employees e ON e.user_id=u.id WHERE u.status='active' ORDER BY u.name");
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
  $users = []; }
@@ -785,9 +801,10 @@ class HRController extends AdminController
             $hra = $basic * ($hraPct / 100);
             $da = $basic * ($daPct / 100);
             $pf = $basic * ($pfPct / 100);
-            $gross = $basic + $hra + $da + $ta + $medical + $special;
-            $net = $gross - $pf - $tds;
-            $this->db->execute("INSERT INTO employee_salary_structure (employee_id, basic_salary, hra, da, ta, medical_allowance, special_allowance, pf_deduction, tds_deduction, gross_salary, net_salary, effective_from, is_active, created_by, tenant_id, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,1,?,?,NOW())", [$employeeId, $basic, $hra, $da, $ta, $medical, $special, $pf, $tds, $gross, $net, $effFrom, (int)($_SESSION['admin_id'] ?? 0), $tid]);
+            // Write canonical salary_structures (gross/net are STORED GENERATED).
+            // Field map: travel_allowance->conveyance, pf_deduction->pf_employee,
+            // tds_deduction->tds, effective_from->effective_date.
+            $this->db->execute("INSERT INTO salary_structures (employee_id, basic_salary, hra, da, conveyance, medical_allowance, special_allowance, pf_employee, tds, effective_date, status, tenant_id, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,'active',?,NOW())", [$employeeId, $basic, $hra, $da, $ta, $medical, $special, $pf, $tds, $effFrom, $tid]);
             $this->setFlash('success', 'Salary structure created');
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
@@ -800,7 +817,7 @@ class HRController extends AdminController
     {
         $this->requireAdmin();
         try {
-            $structure = $this->db->fetch("SELECT s.*, u.name as employee_name FROM employee_salary_structure s JOIN users u ON s.employee_id=u.id WHERE s.id=?", [$id]);
+            $structure = $this->db->fetch("SELECT s.*, u.name as employee_name, s.conveyance AS ta, s.pf_employee AS pf_deduction, s.tds AS tds_deduction, s.effective_date AS effective_from FROM salary_structures s LEFT JOIN users u ON s.employee_id=u.id WHERE s.id=?", [$id]);
             if (!$structure) { $this->setFlash('error', 'Not found'); header('Location: ' . BASE_URL . '/admin/hr/salary-structure'); exit; }
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
@@ -812,20 +829,20 @@ class HRController extends AdminController
     {
         $this->requireAdmin();
         $tid = (int)$this->tenantId();
-        $basic = $_POST['basic_salary'] ?? 0;
-        $hraPct = $_POST['hra_percent'] ?? 0;
-        $ta = $_POST['travel_allowance'] ?? 0;
-        $medical = $_POST['medical_allowance'] ?? 0;
-        $special = $_POST['special_allowance'] ?? 0;
-        $pfPct = $_POST['pf_percent'] ?? 0;
-        $tds = $_POST['tds_deduction'] ?? 0;
+        $basic = ($_POST['basic_salary'] ?? '') === '' ? null : ($_POST['basic_salary'] ?? 0);
+        $hraPct = ($_POST['hra_percent'] ?? '') === '' ? null : ($_POST['hra_percent'] ?? 0);
+        $daPct = ($_POST['da_percent'] ?? '') === '' ? null : ($_POST['da_percent'] ?? 0);
+        $ta = ($_POST['travel_allowance'] ?? '') === '' ? null : ($_POST['travel_allowance'] ?? 0);
+        $medical = ($_POST['medical_allowance'] ?? '') === '' ? null : ($_POST['medical_allowance'] ?? 0);
+        $special = ($_POST['special_allowance'] ?? '') === '' ? null : ($_POST['special_allowance'] ?? 0);
+        $pfPct = ($_POST['pf_percent'] ?? '') === '' ? null : ($_POST['pf_percent'] ?? 0);
+        $tds = ($_POST['tds_deduction'] ?? '') === '' ? null : ($_POST['tds_deduction'] ?? 0);
         $effFrom = $_POST['effective_from'] ?? date('Y-m-d');
         try {
             $hra = $basic * ($hraPct / 100);
+            $da = $basic * ($daPct / 100);
             $pf = $basic * ($pfPct / 100);
-            $gross = $basic + $hra + $ta + $medical + $special;
-            $net = $gross - $pf - $tds;
-            $this->db->execute("UPDATE employee_salary_structure SET basic_salary=?, hra=?, ta=?, medical_allowance=?, special_allowance=?, pf_deduction=?, tds_deduction=?, gross_salary=?, net_salary=?, effective_from=? WHERE id=? AND tenant_id=?", [$basic, $hra, $ta, $medical, $special, $pf, $tds, $gross, $net, $effFrom, $id, $tid]);
+            $this->db->execute("UPDATE salary_structures SET basic_salary=?, hra=?, da=?, conveyance=?, medical_allowance=?, special_allowance=?, pf_employee=?, tds=?, effective_date=? WHERE id=? AND tenant_id=?", [$basic, $hra, $da, $ta, $medical, $special, $pf, $tds, $effFrom, $id, $tid]);
             $this->setFlash('success', 'Salary structure updated');
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
@@ -851,7 +868,7 @@ class HRController extends AdminController
         try {
             $total = $this->db->fetch("SELECT COUNT(*) as c FROM documents d $where", $params)['c'] ?? 0;
             $documents = $this->db->fetchAll("SELECT d.*, u.name as employee_name FROM documents d JOIN users u ON d.entity_id=u.id $where ORDER BY d.uploaded_on DESC LIMIT $perPage OFFSET $offset", $params);
-            $users = $this->db->fetchAll("SELECT e.id, u.name FROM users e JOIN users u ON e.id=u.id WHERE e.status='active' ORDER BY u.name");
+            $users = $this->db->fetchAll("SELECT e.id, u.name FROM employees e JOIN users u ON e.user_id=u.id WHERE e.status='active' ORDER BY u.name");
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
  $total = 0; $documents = []; $users = []; }
@@ -935,13 +952,13 @@ class HRController extends AdminController
         $this->requireAdmin();
         $empId = (int)($_GET['employee_id'] ?? 0);
         try {
-            $users = $this->db->fetchAll("SELECT e.id, u.name FROM users e JOIN users u ON e.id=u.id WHERE e.status='active' ORDER BY u.name");
+            $users = $this->db->fetchAll("SELECT e.id, u.name FROM employees e JOIN users u ON e.user_id=u.id WHERE e.status='active' ORDER BY u.name");
             $report = null;
             $attendances = []; $leaves = []; $bonuses = [];
             if ($empId) {
-                $report = $this->db->fetch("SELECT e.*, u.email, u.phone, u.created_at as user_since FROM users e JOIN users u ON e.id=u.id WHERE e.id=?", [$empId]);
+                $report = $this->db->fetch("SELECT e.*, u.email, u.phone, u.created_at as user_since FROM employees e JOIN users u ON e.user_id=u.id WHERE e.id=?", [$empId]);
                 if ($report) {
-                    $attendances = $this->db->fetchAll("SELECT attendance_date, attendance_status, check_in_time, check_out_time FROM employee_attendance WHERE employee_id=? ORDER BY attendance_date DESC LIMIT 30", [$report['id']]);
+                    $attendances = $this->db->fetchAll("SELECT attendance_date, status AS attendance_status, check_in_time, check_out_time FROM employee_attendance WHERE employee_id=? ORDER BY attendance_date DESC LIMIT 30", [$report['id']]);
                     $leaves = $this->db->fetchAll("SELECT el.*, lt.name as leave_type_name FROM employee_leaves el LEFT JOIN leave_types lt ON el.leave_type_id=lt.id WHERE el.employee_id=? ORDER BY el.created_at DESC LIMIT 10", [$empId]);
                     $bonuses = $this->db->fetchAll("SELECT * FROM employee_bonuses WHERE employee_id=? ORDER BY created_at DESC LIMIT 10", [$report['id']]);
                 }

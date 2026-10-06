@@ -115,6 +115,16 @@
                                     <a href="<?= BASE_URL ?>/admin/salary/payments/view/<?= $p['id'] ?>" class="btn btn-sm btn-outline-info" title="View Details">
                                         <i class="fas fa-eye"></i> View
                                     </a>
+                                    <?php if (($p['payment_status'] ?? '') === 'pending' || ($p['payment_status'] ?? '') === 'processed'): ?>
+                                    <form method="post" action="<?= BASE_URL ?>/admin/salary/payments/mark-paid/<?= $p['id'] ?>" class="d-inline" onsubmit="return confirm('Mark payment #<?= $p['id'] ?> as paid?');">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                                        <button type="submit" class="btn btn-sm btn-success" title="Mark as Paid"><i class="fas fa-check"></i></button>
+                                    </form>
+                                    <form method="post" action="<?= BASE_URL ?>/admin/salary/payments/cancel/<?= $p['id'] ?>" class="d-inline" onsubmit="return confirm('Cancel payment #<?= $p['id'] ?>?');">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Cancel Payment"><i class="fas fa-times"></i></button>
+                                    </form>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                             <?php endforeach; ?>

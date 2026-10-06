@@ -83,6 +83,16 @@ class Database
                 $this->config['password'],
                 $this->config['options']
             );
+
+            // Lock MySQL session clock to PHP's clock. Server OS TZ and PHP TZ
+            // differ here (SYSTEM=next-day vs Europe/Berlin), so CURDATE()/NOW()
+            // and PHP date() disagreed around midnight. Offset format needs no
+            // mysql.time_zone tables. Fail-soft: never break boot on this.
+            try {
+                $this->pdo->exec("SET time_zone = '" . date('P') . "'");
+            } catch (\Throwable $tzEx) {
+                error_log("Database: SET time_zone skipped: " . $tzEx->getMessage());
+            }
         } catch (PDOException $e) {
             throw new \RuntimeException("Database connection failed: " . $e->getMessage());
         }

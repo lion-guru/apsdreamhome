@@ -122,7 +122,6 @@ $router->get('/admin/visitor-stats', 'App\\Http\\Controllers\\VisitorTrackingCon
 $router->post('/admin/send-follow-ups', 'Admin\\LeadFollowUpController@sendFollowUps');
 $router->get('/admin/follow-up-stats', 'Admin\\LeadFollowUpController@getFollowUpStats');
 $router->get('/user-ai-suggestions', 'Front\\AIController@userAiSuggestions');
-$router->get('/user/investments', 'Front\\UserDashboardController@userInvestments');
 $router->get('/builder-registration', 'Front\\PageController@builderRegistration');
 $router->post('/builder-registration', 'Front\\PageController@builderRegistration');
 $router->get('/plots-availability', 'Front\\PropertyController@plotsAvailability');
@@ -353,6 +352,10 @@ $router->get('/rent', 'Front\\PropertyController@rentProperty');
 $router->get('/invest', 'Front\\PropertyController@investProperty');
 
 // Property Listing (User)
+$router->get('/investment-plans', 'App\\Http\\Controllers\\Front\\InvestmentController@plans');
+$router->get('/user/investments', 'App\\Http\\Controllers\\Front\\InvestmentController@myInvestments');
+$router->post('/user/invest', 'App\\Http\\Controllers\\Front\\InvestmentController@invest');
+$router->post('/user/investment/cancel', 'App\\Http\\Controllers\\Front\\InvestmentController@cancel');
 $router->get('/list-property', 'Front\\PropertyController@listProperty');
 $router->post('/list-property/submit', 'Front\\PropertyController@handlePropertyListing');
 $router->get('/properties/submit', 'Front\\PropertyController@listProperty');
@@ -749,7 +752,6 @@ $router->get('/user/saved-properties',   'App\\Http\\Controllers\\DashboardContr
 $router->get('/user/inquiries',          'App\\Http\\Controllers\\DashboardController@inquiries');
 $router->post('/user/inquiries/submit',  'App\\Http\\Controllers\\DashboardController@submitInquiry');
 $router->get('/user/settings',           'Front\\UserController@profile');
-$router->get('/user/investments',        'Front\\UserDashboardController@userInvestments');
 $router->get('/user/change-password',    'Front\\UserController@profile');
 
 // Customer-specific portal pages (route to existing CustomerPassbookController and Front\UserController)
@@ -3461,6 +3463,8 @@ $router->get('/admin/salary/payments/create', 'App\\Http\\Controllers\\Admin\\Sa
 $router->post('/admin/salary/payments/store', 'App\\Http\\Controllers\\Admin\\SalaryController@storePayment');
 $router->get('/admin/salary/payments/view/{id}', 'App\\Http\\Controllers\\Admin\\SalaryController@viewPayment');
 $router->post('/admin/salary/payments/bulk', 'App\\Http\\Controllers\\Admin\\SalaryController@processBulk');
+$router->post('/admin/salary/payments/mark-paid/{id}', 'App\\Http\\Controllers\\Admin\\SalaryController@markPaymentPaid');
+$router->post('/admin/salary/payments/cancel/{id}', 'App\\Http\\Controllers\\Admin\\SalaryController@cancelPayment');
 $router->get('/admin/salary/payouts', 'App\\Http\\Controllers\\Admin\\SalaryController@payouts');
 $router->post('/admin/salary/payouts/create', 'App\\Http\\Controllers\\Admin\\SalaryController@createPayout');
 $router->post('/admin/salary/payouts/process/{id}', 'App\\Http\\Controllers\\Admin\\SalaryController@processPayout');

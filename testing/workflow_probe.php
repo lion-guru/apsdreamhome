@@ -6,8 +6,6 @@
 require_once __DIR__ . '/../config/bootstrap.php';
 
 $base = 'http://localhost/apsdreamhome';
-$jar = sys_get_temp_dir() . '/wf_cookie.txt';
-@unlink($jar);
 $pass = 0; $fail = 0;
 
 function check(bool $ok, string $label, string $detail = ''): void {
@@ -17,30 +15,39 @@ function check(bool $ok, string $label, string $detail = ''): void {
     echo "\n";
 }
 
-function req(string $method, string $url, ?array $json = null, array $form = null) {
-    global $base, $jar;
+function req(string $method, string $url, $data = null, array $headers = []) {
+    global $base;
     $ch = curl_init($base . $url);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
-    if ($json !== null) {
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($json));
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-    } elseif ($form !== null) {
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($form));
+    if ($data !== null) {
+        if (is_array($data)) {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+        } else {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            $headers[] = 'Content-Type: application/json';
+        }
     }
-    curl_setopt($ch, CURLOPT_COOKIEJAR, $jar);
-    curl_setopt($ch, CURLOPT_COOKIEFILE, $jar);
+    if (!empty($headers)) curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    // No cookie jar for mobile API - it uses Bearer tokens, not cookies
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
     curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-    $body = curl_exec($ch);
+    curl_setopt($ch, CURLOPT_HEADER, true);
+    $raw = curl_exec($ch);
+    if ($raw === false) {
+        error_log("curl_error: " . curl_error($ch));
+    }
     $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $hs = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+    $body = ltrim(substr($raw, $hs), "\xEF\xBB\xBF");
     curl_close($ch);
     return [$code, json_decode((string)$body, true) ?: [], (string)$body];
 }
 
 // 1. Customer login
-[$code, $d] = req('POST', '/api/v2/mobile/auth/login', ['email' => 'testuser@example.com', 'password' => 'Aps@2026']);
-$token = $d['token'] ?? $d['data']['token'] ?? '';
+[$code, $d] = req('POST', '/api/v2/mobile/auth/login', json_encode(['email' => 'testuser@example.com', 'password' => 'Aps@2026']), ['Content-Type: application/json']);
+$token = $d['data']['token'] ?? $d['token'] ?? '';
+$token = ltrim($token, "\xEF\xBB\xBF"); // remove BOM
 check(!empty($token), 'Customer login', 'HTTP ' . $code . ' token=' . substr($token, 0, 12) . '...');
 
 // Authed helper
@@ -56,10 +63,13 @@ function areq(string $method, string $url, string $token, ?array $json = null): 
     }
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-    $body = curl_exec($ch);
+    curl_setopt($ch, CURLOPT_HEADER, true);
+    $raw = curl_exec($ch);
     $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $hs = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+    $body = ltrim(substr($raw, $hs), "\xEF\xBB\xBF");
     curl_close($ch);
-    return [$code, json_decode((string)$body, true) ?: []];
+    return [$code, json_decode($body, true) ?: []];
 }
 
 // 2. Properties list
@@ -86,7 +96,7 @@ if ($propId) {
 // 4. Property inquiry (public) — targets properties table (FK to properties.id)
 $propId = null;
 try { $propId = \App\Core\Database\Database::getInstance()->getConnection()->query("SELECT id FROM properties WHERE status='active' AND tenant_id=1 LIMIT 1")->fetchColumn(); } catch (\Throwable $e) {}
-[$code, $d] = req('POST', '/api/v2/mobile/properties/inquiry', ['property_id' => (int)$propId ?: 1, 'name' => 'WF Probe', 'phone' => '9999990001', 'message' => 'Workflow smoke test']);
+[$code, $d] = req('POST', '/api/v2/mobile/properties/inquiry', json_encode(['property_id' => (int)$propId ?: 1, 'name' => 'WF Probe', 'phone' => '9999990001', 'message' => 'Workflow smoke test']), ['Content-Type: application/json']);
 check(($d['success'] ?? false) === true || $code === 200, 'Property inquiry', 'HTTP ' . $code . ' ' . ($d['error'] ?? ($d['message'] ?? '')));
 
 // 5. Colonies + plots

@@ -11,7 +11,7 @@
             <div class="card shadow-sm">
                 <div class="card-header bg-white d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Payment Information</h5>
-                    <span class="badge bg-<?= match($payment['status']??'pending') { 'paid'=>'success', 'pending'=>'warning', 'cancelled'=>'danger', default=>'secondary' } ?> fs-6"><?= ucfirst($payment['status'] ?? 'pending') ?></span>
+                    <span class="badge bg-<?= match($payment['payment_status']??'pending') { 'paid'=>'success', 'pending'=>'warning', 'processed'=>'info', 'failed'=>'danger', 'cancelled'=>'danger', default=>'secondary' } ?> fs-6"><?= ucfirst($payment['payment_status'] ?? 'pending') ?></span>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <div class="row mb-3">
@@ -24,15 +24,27 @@
                     </div>
                     <div class="table-responsive"><table class="table table-bordered mt-3">
                         <tr><th>Description</th><th class="text-end">Amount</th></tr>
-                        <tr><td>Gross Salary</td><td class="text-end">₹<?= number_format($payment['gross_salary'] ?? 0, 2) ?></td></tr>
-                        <tr><td>Total Deductions</td><td class="text-end text-danger">- ₹<?= number_format($payment['total_deductions'] ?? 0, 2) ?></td></tr>
-                        <tr class="table-success"><td><strong>Net Salary</strong></td><td class="text-end"><strong>₹<?= number_format($payment['net_salary'] ?? 0, 2) ?></strong></td></tr>
+                        <tr><td>Gross Salary</td><td class="text-end">₹<?= number_format($payment['gross_amount'] ?? 0, 2) ?></td></tr>
+                        <tr><td>Total Deductions</td><td class="text-end text-danger">- ₹<?= number_format($payment['deduction_amount'] ?? 0, 2) ?></td></tr>
+                        <tr class="table-success"><td><strong>Net Salary</strong></td><td class="text-end"><strong>₹<?= number_format($payment['net_amount'] ?? 0, 2) ?></strong></td></tr>
                     </table></div>
                     <div class="row mt-3">
                         <div class="col-md-4"><strong>Method:</strong> <?= ucfirst(str_replace('_',' ', $payment['payment_method'] ?? 'bank_transfer')) ?></div>
                         <div class="col-md-4"><strong>Transaction ID:</strong> <?= htmlspecialchars($payment['transaction_id'] ?? '-') ?></div>
-                        <div class="col-md-4"><strong>Paid By:</strong> Admin #<?= $payment['paid_by'] ?? 0 ?></div>
+                        <div class="col-md-4"><strong>Created By:</strong> Admin #<?= $payment['created_by'] ?? 0 ?></div>
                     </div>
+                    <?php if (($payment['payment_status'] ?? '') === 'pending' || ($payment['payment_status'] ?? '') === 'processed'): ?>
+                    <div class="mt-3 d-flex gap-2">
+                        <form method="post" action="<?= BASE_URL ?>/admin/salary/payments/mark-paid/<?= $payment['id'] ?>" onsubmit="return confirm('Mark this payment as paid?');">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                            <button type="submit" class="btn btn-success"><i class="fas fa-check me-1"></i>Mark as Paid</button>
+                        </form>
+                        <form method="post" action="<?= BASE_URL ?>/admin/salary/payments/cancel/<?= $payment['id'] ?>" onsubmit="return confirm('Cancel this payment?');">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                            <button type="submit" class="btn btn-outline-danger"><i class="fas fa-times me-1"></i>Cancel Payment</button>
+                        </form>
+                    </div>
+                    <?php endif; ?>
                     <?php if ($payment['notes'] ?? ''): ?>
                     <div class="mt-3"><strong>Notes:</strong><br><?= nl2br(htmlspecialchars($payment['notes'] ?? '')) ?></div>
                     <?php endif; ?>
@@ -45,9 +57,9 @@
                 <div class="card-body aps-cp-card-body">
                     <ul class="list-unstyled">
                         <li class="mb-2"><i class="fas fa-user me-2 text-primary"></i>Employee: <?= htmlspecialchars($payment['employee_name'] ?? '') ?></li>
-                        <li class="mb-2"><i class="fas fa-calculator me-2 text-info"></i>Gross: ₹<?= number_format($payment['gross_salary'] ?? 0, 2) ?></li>
-                        <li class="mb-2"><i class="fas fa-minus-circle me-2 text-danger"></i>Deductions: ₹<?= number_format($payment['total_deductions'] ?? 0, 2) ?></li>
-                        <li class="mb-2"><i class="fas fa-check-circle me-2 text-success"></i>Net: <strong>₹<?= number_format($payment['net_salary'] ?? 0, 2) ?></strong></li>
+                        <li class="mb-2"><i class="fas fa-calculator me-2 text-info"></i>Gross: ₹<?= number_format($payment['gross_amount'] ?? 0, 2) ?></li>
+                        <li class="mb-2"><i class="fas fa-minus-circle me-2 text-danger"></i>Deductions: ₹<?= number_format($payment['deduction_amount'] ?? 0, 2) ?></li>
+                        <li class="mb-2"><i class="fas fa-check-circle me-2 text-success"></i>Net: <strong>₹<?= number_format($payment['net_amount'] ?? 0, 2) ?></strong></li>
                         <li class="mb-2"><i class="fas fa-calendar me-2 text-warning"></i>Paid on: <?= htmlspecialchars($payment['payment_date'] ?? '-') ?></li>
                     </ul>
                 </div>
