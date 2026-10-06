@@ -608,7 +608,7 @@ return array (
   array (
     'name' => 'Plots Inventory',
     'icon' => 'fas fa-th-large',
-    'section' => 'plots',
+    'section' => 'land',
     'parent_url' => NULL,
     'order' => 1,
     'perm' => 'plots.view',
@@ -2747,7 +2747,7 @@ return array (
   array (
     'name' => 'Plot Categories',
     'icon' => 'fas fa-tags',
-    'section' => 'plots',
+    'section' => 'land',
     'parent_url' => NULL,
     'order' => 2,
     'perm' => 'plots.view',
@@ -5221,7 +5221,7 @@ return array (
   array (
     'name' => 'Bulk Property Import',
     'icon' => 'fas fa-file-import',
-    'section' => 'plots',
+    'section' => 'land',
     'parent_url' => NULL,
     'order' => 3,
     'perm' => 'property.import',

@@ -101,17 +101,22 @@ class AdminAuthController extends BaseController
             }
             $_SESSION['csrf_token_expires'] = time() + 3600;
 
-            // For employee/telecaller: also set employee_id session key
+            // For employee/telecaller: also set employee_id (employees.id) and employee_user_id (users.id)
             if (in_array($admin['role'], ['employee', 'telecaller'])) {
                 try {
                     $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ? $tSql", array_merge([$admin['id']], $tParams));
                     if ($emp) {
-                        $_SESSION['employee_id'] = $emp['id'];
+                        $_SESSION['employee_id'] = (int)$emp['id'];        // PK of employees table
+                        $_SESSION['employee_user_id'] = (int)$admin['id']; // FK to users table
                     } else {
-                        $_SESSION['employee_id'] = $admin['id'];
+                        // No employees row yet
+                        $_SESSION['employee_id'] = (int)$admin['id'];
+                        $_SESSION['employee_user_id'] = (int)$admin['id'];
+                        $_SESSION['employee_needs_resolution'] = true;
                     }
                 } catch (\Exception $e) {
-                    $_SESSION['employee_id'] = $admin['id'];
+                    $_SESSION['employee_id'] = (int)$admin['id'];
+                    $_SESSION['employee_user_id'] = (int)$admin['id'];
                 }
             }
 
@@ -247,17 +252,24 @@ class AdminAuthController extends BaseController
                 $_SESSION['user_phone'] = $user['phone'] ?? '';
                 $_SESSION['logged_in'] = true;
 
-                // For employee/telecaller: also set employee_id for EmployeeDashboardController
+// For employee/telecaller: also set employee_id (employees.id) and employee_user_id (users.id)
                 if (in_array($user['role'], ['employee', 'telecaller'])) {
                     try {
                         [$tSql2, $tParams2] = $this->getTenantSql();
                         $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ? $tSql2", array_merge([$user['id']], $tParams2));
                         if ($emp) {
-                            $_SESSION['employee_id'] = $emp['id'];
+                            $_SESSION['employee_id'] = (int)$emp['id'];
+                            $_SESSION['employee_user_id'] = (int)$user['id'];
+                        } else {
+                            $_SESSION['employee_id'] = (int)$user['id'];
+                            $_SESSION['employee_user_id'] = (int)$user['id'];
+                            $_SESSION['employee_needs_resolution'] = true;
                         }
                     } catch (\Exception $e) {
-                    // employees table may not exist; skip
-                    error_log($e->getMessage());
+                        // employees table may not exist; skip
+                        error_log($e->getMessage());
+                        $_SESSION['employee_id'] = (int)$user['id'];
+                        $_SESSION['employee_user_id'] = (int)$user['id'];
                     }
                 }
 

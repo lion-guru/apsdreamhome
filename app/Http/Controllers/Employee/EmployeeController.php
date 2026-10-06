@@ -72,15 +72,38 @@ class EmployeeController extends BaseController
             $employee = $this->db->fetchOne($query, array_merge([$email], $tidParams));
 
             if ($employee && password_verify($password, $employee['password'])) {
+                // 2FA check
+                if (!empty($employee['two_factor_enabled']) && !empty($employee['two_factor_secret'])) {
+                    $_SESSION['pending_2fa_user'] = [
+                        'id'    => (int)$employee['id'],
+                        'email' => $employee['email'],
+                        'role'  => $employee['role'],
+                    ];
+                    $_SESSION['pending_2fa_attempts'] = 0;
+                    session_regenerate_id(true);
+                    header('Location: ' . BASE_URL . '/user/two-factor/verify');
+                    exit;
+                }
+
                 // Establish session using trait (includes audit log + login notifications)
+                // This sets: user_id, employee_id (employees.id), employee_user_id (users.id), employee_role, admin_id, etc.
                 $this->establishSession($employee, $email, 'password');
                 
-                // Employee portal specific session data
-                $_SESSION['employee_id'] = $employee['id'];
+                // Fetch employee record for additional data
+                [$tidSql, $tidParams] = $this->tenantWhere();
+                $empRecord = $this->db->fetchOne(
+                    "SELECT id, department, designation, employee_code FROM employees WHERE user_id = ?{$tidSql} LIMIT 1",
+                    array_merge([$employee['id']], $tidParams)
+                );
+                
+                // Employee portal specific session data (employee_id already set by trait to employees.id)
+                $_SESSION['employee_user_id'] = (int)$employee['id'];     // users.id for reference
                 $_SESSION['employee_email'] = $employee['email'];
                 $_SESSION['employee_name'] = $employee['name'];
                 $_SESSION['employee_role'] = $employee['role'];
-                $_SESSION['employee_department'] = $employee['department'] ?? '';
+                $_SESSION['employee_department'] = $empRecord['department'] ?? $employee['department'] ?? '';
+                $_SESSION['employee_designation'] = $empRecord['designation'] ?? '';
+                $_SESSION['employee_code'] = $empRecord['employee_code'] ?? '';
                 $_SESSION['login_time'] = time();
                 $_SESSION['csrf_token'] = $this->getCsrfToken();
 
@@ -644,23 +667,6 @@ class EmployeeController extends BaseController
     }
 
     /**
-     * Resolve the canonical employees.id for a portal session.
-     * Portal sessions carry users.id, but employee_* tables are keyed by
-     * employees.id (FK-proven). Falls back to the session id so portal-only
-     * roles (manager/telecaller without an employees row) keep working.
-     */
-    private function resolveEmployeeTableId($sessionUserId)
-    {
-        try {
-            $row = $this->db->fetch("SELECT id FROM employees WHERE user_id = ? LIMIT 1", [(int)$sessionUserId]);
-            if ($row && !empty($row['id'])) return (int)$row['id'];
-        } catch (\Exception $e) {
-            error_log("EmployeeController::" . __FUNCTION__ . " resolve failed: " . $e->getMessage());
-        }
-        return (int)$sessionUserId;
-    }
-
-    /**
      * Check if employee is logged in
      */
     private function isEmployeeLoggedIn()
@@ -757,7 +763,7 @@ class EmployeeController extends BaseController
 
     public function attendance()
     {
-        $employeeId = $this->resolveEmployeeTableId($_SESSION['employee_id'] ?? 0);
+        $employeeId = (int)($_SESSION['employee_id'] ?? 0);
         $attendance = [];
         $stats = ['present' => 0, 'absent' => 0, 'late' => 0, 'half_day' => 0, 'total_hours' => 0];
         $month = $_GET['month'] ?? date('Y-m');
@@ -813,7 +819,7 @@ class EmployeeController extends BaseController
                     $overall['rating'] = round($totalRating / count($reviews), 1);
                 }
 
-                $attEid = $this->resolveEmployeeTableId($employeeId);
+                $attEid = $employeeId;
                 $att = $this->db->fetch("SELECT COUNT(*) as present FROM employee_attendance WHERE employee_id = ? AND status = 'present' AND attendance_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)", [$attEid]);
                 $totalDays = (int)($this->db->fetch("SELECT COUNT(*) as cnt FROM employee_attendance WHERE employee_id = ? AND attendance_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)", [$attEid])['cnt'] ?? 0);
                 $presentDays = (int)($att['present'] ?? 0);
@@ -929,7 +935,7 @@ class EmployeeController extends BaseController
 
     public function leaves()
     {
-        $employeeId = $this->resolveEmployeeTableId($_SESSION['employee_id'] ?? 0);
+        $employeeId = (int)($_SESSION['employee_id'] ?? 0);
         $leaveTypes = [];
         $leaveBalance = [];
         $leaves = [];
@@ -977,7 +983,7 @@ class EmployeeController extends BaseController
 
     public function leaveApply()
     {
-        $employeeId = $this->resolveEmployeeTableId($_SESSION['employee_id'] ?? 0);
+        $employeeId = (int)($_SESSION['employee_id'] ?? 0);
         if ($employeeId <= 0) {
             $_SESSION['flash_error'] = 'Invalid session.';
             $this->redirect('/employee/leaves');
@@ -1041,7 +1047,7 @@ class EmployeeController extends BaseController
 
     public function leaveDetail($id = 0)
     {
-        $employeeId = $this->resolveEmployeeTableId($_SESSION['employee_id'] ?? 0);
+        $employeeId = (int)($_SESSION['employee_id'] ?? 0);
         $id = (int)$id;
         if ($id <= 0 || $employeeId <= 0) {
             $_SESSION['flash_error'] = 'Invalid request.';
@@ -1076,7 +1082,7 @@ class EmployeeController extends BaseController
 
     public function leaveCancel($id = 0)
     {
-        $employeeId = $this->resolveEmployeeTableId($_SESSION['employee_id'] ?? 0);
+        $employeeId = (int)($_SESSION['employee_id'] ?? 0);
         $id = (int)$id;
         if ($id <= 0 || $employeeId <= 0) {
             $_SESSION['flash_error'] = 'Invalid request.';

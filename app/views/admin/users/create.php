@@ -109,6 +109,17 @@
                                     <label class="form-label fw-semibold">Occupation</label>
                                     <input type="text" class="form-control" name="occupation" placeholder="e.g. Real Estate Advisor">
                                 </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Sponsor/Referral Code <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="referral_code" id="adminReferralCode" placeholder="Enter sponsor's referral code" required>
+                                </div>
+                                <div class="col-12">
+                                    <div id="adminReferralNameDisplay" class="mt-2"></div>
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Required for Associate/Agent to join the MLM network tree.
+                                    </small>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -160,4 +171,37 @@ document.getElementById('roleSelect').addEventListener('change', function() {
 
 // Trigger on load
 document.getElementById('roleSelect').dispatchEvent(new Event('change'));
+
+// Referral name resolution for admin create
+function resolveAdminReferralName() {
+    var referralInput = document.getElementById('adminReferralCode');
+    var referralCode = referralInput ? referralInput.value.trim() : '';
+    var display = document.getElementById('adminReferralNameDisplay');
+    if (!referralCode) {
+        display.innerHTML = '';
+        return;
+    }
+    display.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resolving...';
+    fetch('<?= BASE_URL ?>/api/user/resolve-sponsor?code=' + encodeURIComponent(referralCode))
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                var name = data.name || 'Unknown';
+                var role = data.role || '';
+                var displayText = '<strong class="text-success">' + name + '</strong> <span class="text-muted">(' + role + ')</span>';
+                display.innerHTML = displayText;
+            } else {
+                display.innerHTML = '<span class="text-danger">Invalid referral code</span>';
+            }
+        })
+        .catch(() => {
+            display.innerHTML = '<span class="text-danger">Error validating referral</span>';
+        });
+}
+
+var adminReferralInput = document.getElementById('adminReferralCode');
+if (adminReferralInput) {
+    adminReferralInput.addEventListener('input', resolveAdminReferralName);
+    adminReferralInput.addEventListener('blur', resolveAdminReferralName);
+}
 </script>

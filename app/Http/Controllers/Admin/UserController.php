@@ -233,6 +233,7 @@ class UserController extends AdminController
                 'password' => $data['password'],
                 'city' => $data['city'] ?? '',
                 'occupation' => $data['occupation'] ?? '',
+                'referral_code' => $data['referral_code'] ?? '',
                 'registration_method' => 'admin',
             ], $user);
 
@@ -285,6 +286,22 @@ class UserController extends AdminController
                 'email' => $data['email'],
                 'role' => $data['role']
             ]);
+
+            // Send welcome notifications to the new user (email, SMS, WhatsApp, Push)
+            try {
+                require_once __DIR__ . '/../../../Services/Communication/LoginNotificationService.php';
+                $loginNotifier = new \App\Services\Communication\LoginNotificationService();
+                $loginNotifier->sendWelcomeNotifications(
+                    (int)$userId,
+                    $data['name'],
+                    $data['email'],
+                    $data['phone'] ?? '',
+                    $data['role'],
+                    false // not mobile
+                );
+            } catch (\Throwable $e) {
+                error_log("[AdminUserController] Welcome notification failed: " . $e->getMessage());
+            }
 
             $this->setFlash('success', ucfirst($data['role']) . ' created successfully. Customer ID: ' . ($user['customer_id'] ?? $userId));
             return $this->redirect('admin/users');

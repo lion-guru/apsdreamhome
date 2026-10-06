@@ -98,7 +98,16 @@ class GoogleAuthController extends BaseController
 
         $googleUserData = $_SESSION['google_user_data'];
         $role = $_POST['role'] ?? 'customer';
+        
+        // Referral priority: POST > ?ref= > cookie > session (same as public/index.php)
         $referralCode = trim((string)($_POST['referral_code'] ?? $_GET['ref'] ?? $_COOKIE['aps_ref'] ?? $_SESSION['aps_ref'] ?? ''));
+        
+        // For associate/agent, referral is MANDATORY
+        if (in_array($role, ['associate', 'agent'], true) && empty($referralCode)) {
+            echo json_encode(['success' => false, 'message' => 'Referral code is required for Associate/Agent registration']);
+            exit;
+        }
+        
         $phone = $_POST['phone'] ?? '';
 
         try {

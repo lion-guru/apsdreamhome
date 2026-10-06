@@ -69,9 +69,19 @@ class OtpAuthController extends BaseController
         @session_start();
         $token = $_POST['token'] ?? '';
         $role = trim($_POST['role'] ?? 'customer');
+        
+        // Get referral code (POST > ?ref= > cookie > session)
+        $referralCode = trim((string)($_POST['referral_code'] ?? $_GET['ref'] ?? $_COOKIE['aps_ref'] ?? $_SESSION['aps_ref'] ?? ''));
 
         if (!in_array($role, ['customer', 'associate', 'agent'], true)) {
             $role = 'customer';
+        }
+
+        // For associate/agent, referral code is MANDATORY
+        if (in_array($role, ['associate', 'agent'], true) && empty($referralCode)) {
+            $_SESSION['error'] = 'Referral code is required for Associate/Agent registration';
+            header('Location: ' . BASE_URL . '/register/smart/role?token=' . urlencode($token));
+            exit;
         }
 
         if (empty($token)) {
@@ -95,13 +105,33 @@ class OtpAuthController extends BaseController
                 exit;
             }
 
-            // Update user role
+            // Update user role and referral
             $userParams = [$role, $session['user_id']];
             if ($tid > 1) $userParams[] = $tid;
-            $db->query(
-                "UPDATE users SET role = ?, updated_at = NOW() WHERE id = ?" . $tenantSql,
-                $userParams
-            );
+            
+            // Update referred_by if referral code provided
+            if (!empty($referralCode)) {
+                $referrer = $db->fetchOne("SELECT id FROM users WHERE referral_code = ?" . $tenantSql . " LIMIT 1", array_merge([$referralCode], $tenantParams));
+                if ($referrer) {
+                    $db->query(
+                        "UPDATE users SET role = ?, referred_by = ?, updated_at = NOW() WHERE id = ?" . $tenantSql,
+                        array_merge([$role, $referrer['id'], $session['user_id']], $tenantParams)
+                    );
+                    
+                    // Apply referral attribution
+                    try {
+                        $referralSvc = new \App\Services\ReferralService();
+                        $referralSvc->applyReferral((int)$session['user_id'], $referralCode);
+                    } catch (\Throwable $e) {
+                        error_log("Smart registration referral attribution failed: " . $e->getMessage());
+                    }
+                }
+            } else {
+                $db->query(
+                    "UPDATE users SET role = ?, updated_at = NOW() WHERE id = ?" . $tenantSql,
+                    $userParams
+                );
+            }
 
             // If MLM role, create mlm_profiles + network_tree + associates (if not already created)
             if (in_array($role, ['associate', 'agent'], true)) {
@@ -695,6 +725,7 @@ class OtpAuthController extends BaseController
             $newUserId = $db->lastInsertId();
 
             // Referral attribution for smart-OTP signups (POST > ?ref= > cookie > session).
+            // For customer: optional. For associate/agent: will be handled in role selection step.
             try {
                 $otpRef = trim((string)($_POST['referral_code'] ?? $_GET['ref'] ?? $_COOKIE['aps_ref'] ?? $_SESSION['aps_ref'] ?? ''));
                 if ($otpRef !== '') {

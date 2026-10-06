@@ -114,8 +114,15 @@ $statusColors = [
                                 <small class="text-muted"><?= htmlspecialchars($l['district'] ?? '') ?>, <?= htmlspecialchars($l['state'] ?? '') ?></small>
                             </td>
                             <td>
-                                <?= number_format((float)($l['area_sqft'] ?? 0)) ?> sqft<br>
-                                <small class="text-muted"><?= number_format((float)($l['area_acres'] ?? 0), 2) ?> ac</small>
+                                <?php 
+                                $sqft = (float)($l['area_sqft'] ?? 0);
+                                $acres = (float)($l['area_acres'] ?? 0);
+                                // Auto-compute if one is missing
+                                if ($sqft <= 0 && $acres > 0) $sqft = round($acres * 43560);
+                                if ($acres <= 0 && $sqft > 0) $acres = round($sqft / 43560, 2);
+                                ?>
+                                <?= number_format($sqft) ?> sqft<br>
+                                <small class="text-muted"><?= number_format($acres, 2) ?> ac</small>
                             </td>
                             <td>₹<?= number_format((float)($l['expected_price'] ?? 0)) ?></td>
                             <td>

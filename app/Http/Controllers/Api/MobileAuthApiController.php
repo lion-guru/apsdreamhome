@@ -355,8 +355,13 @@ class MobileAuthApiController extends BaseController
             $params = [$identity, $identity];
             if ($tid > 1) $params[] = $tid;
 
+            // Fetch user with employee_id from employees table via LEFT JOIN
             $user = $db->fetchOne(
-                "SELECT id, email, phone, name, role, status, customer_id, associate_id, employee_id, agent_id, farmer_id FROM users WHERE (email = ? OR phone = ?) AND status != 'deleted'" . $tidSql . " LIMIT 1",
+                "SELECT u.id, u.email, u.phone, u.name, u.role, u.status, u.customer_id, u.associate_id, u.agent_id, u.farmer_id,
+                        e.id as employee_id
+                 FROM users u
+                 LEFT JOIN employees e ON e.user_id = u.id AND e.tenant_id = u.tenant_id
+                 WHERE (u.email = ? OR u.phone = ?) AND u.status != 'deleted'" . $tidSql . " LIMIT 1",
                 $params
             );
 
@@ -387,7 +392,8 @@ class MobileAuthApiController extends BaseController
                 $_SESSION['agent_id'] = (int)$user['agent_id'];
             }
             if (isset($user['employee_id']) && $user['employee_id']) {
-                $_SESSION['employee_id'] = (int)$user['employee_id'];
+                $_SESSION['employee_id'] = (int)$user['employee_id'];        // PK of employees table
+                $_SESSION['employee_user_id'] = (int)$user['id'];             // FK to users table
             }
             if (isset($user['farmer_id']) && $user['farmer_id']) {
                 $_SESSION['farmer_id'] = (int)$user['farmer_id'];

@@ -15,7 +15,7 @@ use Exception;
 /**
  * Legal Colony Pipeline Controller
  * 7-phase legal colony development pipeline admin interface.
- * Phases: Land Acquisition → Master Planning → Plot Cutting → RERA → Development → Pricing → Sales Ready
+ * Phases: Land Acquisition â†’ Master Planning â†’ Plot Cutting â†’ RERA â†’ Development â†’ Pricing â†’ Sales Ready
  */
 class LegalColonyPipelineController extends AdminController
 {
@@ -54,10 +54,10 @@ class LegalColonyPipelineController extends AdminController
         $this->health         = new ColonyHealthService();
     }
 
-    // ── Pipeline Overview ──────────────────────────────────────
+    // â”€â”€ Pipeline Overview â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
-     * Pipeline dashboard — all colonies with their pipeline stage, progress, quick stats
+     * Pipeline dashboard â€” all colonies with their pipeline stage, progress, quick stats
      */
     public function index()
     {
@@ -123,7 +123,7 @@ class LegalColonyPipelineController extends AdminController
         ]);
     }
 
-    // ── Colony Pipeline Detail ─────────────────────────────────
+    // â”€â”€ Colony Pipeline Detail â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Show full pipeline status for a single colony
@@ -139,7 +139,7 @@ class LegalColonyPipelineController extends AdminController
 
             if (!$result['success'] || !$colony) {
                 $_SESSION['flash_error'] = $result['error'] ?? 'Colony not found';
-                header('Location: /admin/legal-colony-pipeline');
+                header('Location: ' . BASE_URL . '/admin/legal-colony-pipeline');
                 exit;
             }
 
@@ -208,7 +208,7 @@ class LegalColonyPipelineController extends AdminController
         }
 
         return $this->render('admin/legal-colony-pipeline/detail', [
-            'page_title'  => 'Colony Pipeline — ' . ($colony['name'] ?? ''),
+            'page_title'  => 'Colony Pipeline â€” ' . ($colony['name'] ?? ''),
             'colony'      => $colony,
             'pipeline'    => $result,
             'acquisition' => $acquisition,
@@ -222,7 +222,7 @@ class LegalColonyPipelineController extends AdminController
         ]);
     }
 
-    // ── Phase 1: Land Acquisition ──────────────────────────────
+    // â”€â”€ Phase 1: Land Acquisition â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Form to start a new land acquisition
@@ -256,7 +256,7 @@ class LegalColonyPipelineController extends AdminController
             header("Location: /admin/legal-colony-pipeline/detail/{$result['colony_id']}");
         } else {
             $_SESSION['flash_error'] = $result['error'] ?? 'Failed to start acquisition';
-            header('Location: /admin/legal-colony-pipeline/start-acquisition');
+            header('Location: ' . BASE_URL . '/admin/legal-colony-pipeline/start-acquisition');
         }
         exit;
     }
@@ -285,7 +285,7 @@ class LegalColonyPipelineController extends AdminController
         exit;
     }
 
-    // ── Phase 2: Master Planning ───────────────────────────────
+    // â”€â”€ Phase 2: Master Planning â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Form to create a master plan
@@ -296,7 +296,7 @@ class LegalColonyPipelineController extends AdminController
         $colony = $this->db->fetchOne("SELECT * FROM colonies WHERE id = ?", [intval($colonyId)]);
 
         return $this->render('admin/legal-colony-pipeline/master_plan_form', [
-            'page_title' => 'Create Master Plan — ' . ($colony['name'] ?? ''),
+            'page_title' => 'Create Master Plan â€” ' . ($colony['name'] ?? ''),
             'colony'     => $colony,
         ]);
     }
@@ -335,7 +335,7 @@ class LegalColonyPipelineController extends AdminController
         exit;
     }
 
-    // ── Phase 3: Plot Cutting ──────────────────────────────────
+    // â”€â”€ Phase 3: Plot Cutting â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Form for legal plot cutting
@@ -346,7 +346,7 @@ class LegalColonyPipelineController extends AdminController
         $colony = $this->db->fetchOne("SELECT * FROM colonies WHERE id = ?", [intval($colonyId)]);
 
         return $this->render('admin/legal-colony-pipeline/plot_cutting_form', [
-            'page_title' => 'Legal Plot Cutting — ' . ($colony['name'] ?? ''),
+            'page_title' => 'Legal Plot Cutting â€” ' . ($colony['name'] ?? ''),
             'colony'     => $colony,
         ]);
     }
@@ -387,7 +387,7 @@ class LegalColonyPipelineController extends AdminController
         exit;
     }
 
-    // ── Phase 4: RERA Registration ─────────────────────────────
+    // â”€â”€ Phase 4: RERA Registration â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Form for RERA registration
@@ -398,7 +398,7 @@ class LegalColonyPipelineController extends AdminController
         $colony = $this->db->fetchOne("SELECT * FROM colonies WHERE id = ?", [intval($colonyId)]);
 
         return $this->render('admin/legal-colony-pipeline/rera_form', [
-            'page_title' => 'RERA Registration — ' . ($colony['name'] ?? ''),
+            'page_title' => 'RERA Registration â€” ' . ($colony['name'] ?? ''),
             'colony'     => $colony,
         ]);
     }
@@ -433,7 +433,7 @@ class LegalColonyPipelineController extends AdminController
         exit;
     }
 
-    // ── Phase 5: Development Cost Tracking ──────────────────────
+    // â”€â”€ Phase 5: Development Cost Tracking â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Form to record a development cost
@@ -450,7 +450,7 @@ class LegalColonyPipelineController extends AdminController
         ) ?: [];
 
         return $this->render('admin/legal-colony-pipeline/development_form', [
-            'page_title' => 'Development Costs — ' . ($colony['name'] ?? ''),
+            'page_title' => 'Development Costs â€” ' . ($colony['name'] ?? ''),
             'colony'     => $colony,
             'costs'      => $costs,
         ]);
@@ -479,7 +479,7 @@ class LegalColonyPipelineController extends AdminController
         ]);
 
         if ($result['success']) {
-            $_SESSION['flash_success'] = "Development cost recorded. Total with GST: ₹" . number_format($result['total_with_gst']);
+            $_SESSION['flash_success'] = "Development cost recorded. Total with GST: â‚¹" . number_format($result['total_with_gst']);
             header("Location: /admin/legal-colony-pipeline/development/{$colonyId}");
         } else {
             $_SESSION['flash_error'] = $result['error'] ?? 'Failed to record cost';
@@ -488,7 +488,7 @@ class LegalColonyPipelineController extends AdminController
         exit;
     }
 
-    // ── Phase 6: Pricing ───────────────────────────────────────
+    // â”€â”€ Phase 6: Pricing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Apply legal pricing to colony
@@ -499,7 +499,7 @@ class LegalColonyPipelineController extends AdminController
         $colony = $this->db->fetchOne("SELECT * FROM colonies WHERE id = ?", [intval($colonyId)]);
 
         return $this->render('admin/legal-colony-pipeline/pricing_form', [
-            'page_title' => 'Apply Pricing — ' . ($colony['name'] ?? ''),
+            'page_title' => 'Apply Pricing â€” ' . ($colony['name'] ?? ''),
             'colony'     => $colony,
         ]);
     }
@@ -522,7 +522,7 @@ class LegalColonyPipelineController extends AdminController
         ]);
 
         if ($result['success']) {
-            $_SESSION['flash_success'] = "Pricing applied. Base: ₹{$result['base_price']}/sqft";
+            $_SESSION['flash_success'] = "Pricing applied. Base: â‚¹{$result['base_price']}/sqft";
             header("Location: /admin/legal-colony-pipeline/detail/{$colonyId}");
         } else {
             $_SESSION['flash_error'] = $result['error'] ?? 'Failed to apply pricing';
@@ -531,7 +531,7 @@ class LegalColonyPipelineController extends AdminController
         exit;
     }
 
-    // ── Phase 7: Sales Readiness ───────────────────────────────
+    // â”€â”€ Phase 7: Sales Readiness â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Show sales readiness checklist
@@ -550,13 +550,13 @@ class LegalColonyPipelineController extends AdminController
         }
 
         return $this->render('admin/legal-colony-pipeline/readiness', [
-            'page_title' => 'Sales Readiness — ' . ($colony['name'] ?? ''),
+            'page_title' => 'Sales Readiness â€” ' . ($colony['name'] ?? ''),
             'colony'     => $colony,
             'readiness'  => $readiness,
         ]);
     }
 
-    // ── Compliance Check (AJAX) ────────────────────────────────
+    // â”€â”€ Compliance Check (AJAX) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Run compliance checks (AJAX)
@@ -579,7 +579,7 @@ class LegalColonyPipelineController extends AdminController
         exit;
     }
 
-    // ── Pipeline Workflow: Auto-Advance ────────────────────────
+    // â”€â”€ Pipeline Workflow: Auto-Advance â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Check if colony can advance + advance it (POST)
@@ -636,7 +636,7 @@ class LegalColonyPipelineController extends AdminController
         exit;
     }
 
-    // ── Colony Analytics ───────────────────────────────────────
+    // â”€â”€ Colony Analytics â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Colony-wise analytics dashboard
@@ -650,12 +650,12 @@ class LegalColonyPipelineController extends AdminController
 
         if (!$data['success']) {
             $_SESSION['flash_error'] = $data['error'] ?? 'Analytics unavailable';
-            header('Location: /admin/legal-colony-pipeline');
+            header('Location: ' . BASE_URL . '/admin/legal-colony-pipeline');
             exit;
         }
 
         return $this->render('admin/legal-colony-pipeline/analytics', [
-            'page_title' => 'Analytics — ' . ($data['colony']['name'] ?? ''),
+            'page_title' => 'Analytics â€” ' . ($data['colony']['name'] ?? ''),
             'data'       => $data,
         ]);
     }
@@ -693,7 +693,7 @@ class LegalColonyPipelineController extends AdminController
         ]);
     }
 
-    // ── RERA Milestone Tracker ─────────────────────────────────
+    // â”€â”€ RERA Milestone Tracker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * RERA milestone tracker for a colony
@@ -706,7 +706,7 @@ class LegalColonyPipelineController extends AdminController
         $colony = $this->db->fetchOne("SELECT * FROM colonies WHERE id = ?", [$colonyId]);
         if (!$colony) {
             $_SESSION['flash_error'] = 'Colony not found';
-            header('Location: /admin/legal-colony-pipeline');
+            header('Location: ' . BASE_URL . '/admin/legal-colony-pipeline');
             exit;
         }
 
@@ -746,7 +746,7 @@ class LegalColonyPipelineController extends AdminController
         }
 
         return $this->render('admin/legal-colony-pipeline/milestones', [
-            'page_title' => 'RERA Milestones — ' . ($colony['name'] ?? ''),
+            'page_title' => 'RERA Milestones â€” ' . ($colony['name'] ?? ''),
             'colony'     => $colony,
             'rera'       => $rera,
             'milestones' => $milestones,
@@ -807,10 +807,10 @@ class LegalColonyPipelineController extends AdminController
         exit;
     }
 
-    // ── Colony Health Dashboard ──────────────────────────────────
+    // â”€â”€ Colony Health Dashboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
-     * Colony health overview — all colonies with scores, grades, risks
+     * Colony health overview â€” all colonies with scores, grades, risks
      */
     public function healthOverview()
     {
@@ -843,7 +843,7 @@ class LegalColonyPipelineController extends AdminController
     }
 
     /**
-     * Health alerts — colonies below threshold (JSON)
+     * Health alerts â€” colonies below threshold (JSON)
      */
     public function healthAlerts()
     {

@@ -100,6 +100,12 @@ $totalValue = array_sum(array_column($plotList, 'total_price'));
     <a href="<?= BASE_URL ?>/admin/colonies" class="btn btn-sm btn-outline-primary">
         <i class="fas fa-city me-1"></i>Colonies
     </a>
+    <a href="<?= BASE_URL ?>/admin/land-inventory/acquisitions" class="btn btn-sm btn-outline-info">
+        <i class="fas fa-handshake me-1"></i>Land Acquisitions
+    </a>
+    <a href="<?= BASE_URL ?>/admin/land-inventory/leads" class="btn btn-sm btn-outline-secondary">
+        <i class="fas fa-mountain me-1"></i>Land Leads
+    </a>
     <a href="<?= BASE_URL ?>/admin/noc-registry" class="btn btn-sm btn-outline-warning">
         <i class="fas fa-file-contract me-1"></i>NOC & Registry
     </a>

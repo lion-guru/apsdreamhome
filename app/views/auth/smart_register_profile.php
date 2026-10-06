@@ -212,6 +212,19 @@ $completionPct = $session['profile_completion_pct'] ?? 0;
                         </select>
                     </div>
 
+                    <div class="form-section-title"><i class="fa-solid fa-ticket-alt"></i> Referral</div>
+
+                    <div class="input-group-custom">
+                        <i class="fa-solid fa-ticket-alt"></i>
+                        <label class="form-label-custom">Referral Code <span class="opt">(optional)</span></label>
+                        <input type="text" class="form-control" name="referral_code" id="referralCode" placeholder="Got a referral code? Enter it here" value="<?php echo htmlspecialchars($_COOKIE['aps_ref'] ?? $_SESSION['aps_ref'] ?? ''); ?>" autocomplete="off">
+                        <div id="referral_name_display" class="mt-2"></div>
+                        <small class="text-success">
+                            <i class="fas fa-gift me-1"></i>
+                            Earn 5% discount on your first booking with a valid referral!
+                        </small>
+                    </div>
+
                     <button type="submit" class="btn-save mt-3" id="saveBtn">
                         <i class="fas fa-check-circle me-2"></i>Save & Continue
                     </button>
@@ -251,6 +264,40 @@ $completionPct = $session['profile_completion_pct'] ?? 0;
         inputs.forEach(input => {
             input.addEventListener('change', saveProgress);
         });
+
+        // Referral name resolution
+        function resolveReferralName() {
+            var referralInput = document.getElementsByName('referral_code')[0];
+            var referralCode = referralInput ? referralInput.value.trim() : '';
+            var display = document.getElementById('referral_name_display');
+            if (!referralCode) {
+                display.innerHTML = '';
+                return;
+            }
+            display.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resolving...';
+            fetch('<?php echo e($base); ?>/api/user/resolve-sponsor?code=' + encodeURIComponent(referralCode))
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        var name = data.name || 'Unknown';
+                        var role = data.role || '';
+                        var displayText = '<strong>' + name + '</strong> (' + role + ')';
+                        display.innerHTML = displayText;
+                    } else {
+                        display.innerHTML = '<span class="text-danger">Invalid referral code</span>';
+                    }
+                })
+                .catch(() => {
+                    display.innerHTML = '<span class="text-danger">Error validating referral</span>';
+                });
+        }
+
+        // Attach listener to referral_code input
+        var referralInput = document.querySelector('input[name="referral_code"]');
+        if (referralInput) {
+            referralInput.addEventListener('input', resolveReferralName);
+            referralInput.addEventListener('blur', resolveReferralName);
+        }
 
         function saveProgress() {
             const formData = new FormData(form);

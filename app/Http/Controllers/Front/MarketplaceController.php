@@ -1,138 +1,284 @@
 <?php
-
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\BaseController;
-use App\Traits\TenantAwareTrait;
+use App\Services\MarketplaceService;
+use App\Services\ResellTransactionService;
+use App\Services\NotificationService;
 
 class MarketplaceController extends BaseController
 {
-    use TenantAwareTrait;
+    private $marketplaceService;
+    private $resellTxnService;
 
     public function __construct()
     {
         parent::__construct();
+        $this->marketplaceService = new MarketplaceService($this->db);
+        $this->resellTxnService = new ResellTransactionService($this->db);
     }
 
-    public function index()
+    /**
+     * Track buyer interest (AJAX)
+     */
+    public function trackInterest()
     {
-        $page = max(1, (int)($_GET['page'] ?? 1));
-        $perPage = 12;
-        $offset = ($page - 1) * $perPage;
-
-        $where = "WHERE up.status = 'approved'";
-        $params = [];
-
-        if (!empty($_GET['type'])) {
-            $where .= " AND up.property_type = ?";
-            $params[] = $_GET['type'];
-        }
-        if (!empty($_GET['listing_type'])) {
-            $where .= " AND up.listing_type = ?";
-            $params[] = $_GET['listing_type'];
-        }
-        if (!empty($_GET['min_price'])) {
-            $where .= " AND up.price >= ?";
-            $params[] = (float)$_GET['min_price'];
-        }
-        if (!empty($_GET['max_price'])) {
-            $where .= " AND up.price <= ?";
-            $params[] = (float)$_GET['max_price'];
-        }
-        if (!empty($_GET['location'])) {
-            $loc = '%' . $_GET['location'] . '%';
-            $where .= " AND (up.city_name LIKE ? OR up.location LIKE ? OR up.address LIKE ?)";
-            $params[] = $loc;
-            $params[] = $loc;
-            $params[] = $loc;
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 400);
         }
 
-        try {
-            // Premium listings (premium/featured/urgent) — shown in separate section, no pagination
-            $premiumWhere = $where . " AND (up.is_premium = 1 OR up.is_featured = 1 OR up.is_urgent = 1)";
-            $premiumListings = $this->db->fetchAll(
-                "SELECT up.*, s.name as state_name, d.name as district_name
-                 FROM user_properties up
-                 LEFT JOIN states s ON up.state_id = s.id
-                 LEFT JOIN districts d ON up.district_id = d.id
-                 $premiumWhere
-                 ORDER BY up.is_premium DESC, up.is_featured DESC, up.created_at DESC
-                 LIMIT 6",
-                $params
-            );
+        $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+        $data['user_id'] = $_SESSION['user_id'] ?? null;
+        $data['session_id'] = session_id();
 
-            // Regular listings (non-premium) — paginated
-            $regularWhere = $where . " AND (up.is_premium = 0 AND up.is_featured = 0 AND up.is_urgent = 0)";
-            $total = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM user_properties up $regularWhere", $params);
-            $totalPages = max(1, ceil($total / $perPage));
-
-            $regularListings = $this->db->fetchAll(
-                "SELECT up.*, s.name as state_name, d.name as district_name
-                 FROM user_properties up
-                 LEFT JOIN states s ON up.state_id = s.id
-                 LEFT JOIN districts d ON up.district_id = d.id
-                 $regularWhere
-                 ORDER BY up.created_at DESC
-                 LIMIT $perPage OFFSET $offset",
-                $params
-            );
-
-            // Get active premium packages for info banner
-            $packages = $this->db->fetchAll(
-                "SELECT * FROM premium_packages WHERE is_active = 1 ORDER BY priority_order ASC"
-            );
-        } catch (\Exception $e) {
-            $premiumListings = [];
-            $regularListings = [];
-            $packages = [];
-            $total = 0;
-            $totalPages = 1;
-            error_log('MarketplaceController error: ' . $e->getMessage());
-        }
-
-        $data = [
-            'page_title' => 'Property Marketplace - APS Dream Home',
-            'page_description' => 'Browse properties listed by owners. Plots, houses, flats, shops for sale, rent, or lease.',
-            'premiumListings' => $premiumListings,
-            'listings' => $regularListings,
-            'packages' => $packages,
-            'filters' => $_GET,
-            'total' => $total,
-            'totalPages' => $totalPages,
-            'currentPage' => $page,
-        ];
-
-        $this->render('pages/marketplace', $data);
+        $result = $this->marketplaceService->trackInterest($data);
+        return $this->jsonResponse($result);
     }
 
-    public function detail($id)
+    /**
+     * Save/unsave property to shortlist (AJAX)
+     */
+    public function toggleSave()
     {
-        try {
-            $prop = $this->db->fetch(
-                "SELECT up.*, s.name as state_name, d.name as district_name
-                 FROM user_properties up
-                 LEFT JOIN states s ON up.state_id = s.id
-                 LEFT JOIN districts d ON up.district_id = d.id
-                 WHERE up.id = ? AND up.status = 'approved'",
-                [$id]
-            );
-            if (!$prop) {
-                header('HTTP/1.0 404 Not Found');
-                echo '<h2>Listing not found</h2>';
-                exit;
-            }
-            $tid = (int)$this->tenantId();
-            $this->db->execute("UPDATE user_properties SET views = views + 1 WHERE id = ? AND tenant_id = ?", [$id, $tid]);
-        } catch (\Exception $e) {
-            error_log('Marketplace detail error: ' . $e->getMessage());
-            header('HTTP/1.0 404 Not Found');
-            echo '<h2>Listing not found</h2>';
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 400);
+        }
+
+        if (empty($_SESSION['user_id'])) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Please login first'], 401);
+        }
+
+        $propertyId = (int)($_POST['property_id'] ?? 0);
+        $listingType = $_POST['listing_type'] ?? 'user';
+        $notes = $_POST['notes'] ?? null;
+
+        if ($propertyId <= 0) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid property'], 400);
+        }
+
+        $result = $this->marketplaceService->toggleSaveProperty((int)$_SESSION['user_id'], $propertyId, $listingType, $notes);
+        return $this->jsonResponse($result);
+    }
+
+    /**
+     * User's saved properties page
+     */
+    public function savedProperties()
+    {
+        if (empty($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/login');
             exit;
         }
 
-        $this->render('pages/marketplace-detail', [
-            'page_title' => $prop['name'] . ' - APS Dream Home',
-            'property' => $prop,
+        $listingType = $_GET['type'] ?? '';
+        $properties = $this->marketplaceService->getSavedProperties((int)$_SESSION['user_id'], $listingType);
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user/saved_properties', [
+            'page_title' => 'Saved Properties - APS Dream Home',
+            'properties' => $properties,
+            'current_page' => 'saved',
         ]);
+    }
+
+    /**
+     * Capture lead from inquiry (called by PropertyPageController)
+     */
+    public function captureLead()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 400);
+        }
+
+        $data = $_POST;
+        $data['user_id'] = $_SESSION['user_id'] ?? null;
+        $data['created_by'] = $_SESSION['user_id'] ?? 0;
+
+        $result = $this->marketplaceService->captureLeadFromInquiry($data);
+        return $this->jsonResponse($result);
+    }
+
+    /**
+     * Follow-up schedule page (for agents/associates)
+     */
+    public function followups()
+    {
+        if (empty($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
+
+        $todayFollowups = $this->marketplaceService->getTodayFollowups((int)$_SESSION['user_id']);
+        $overdueFollowups = $this->marketplaceService->getOverdueFollowups((int)$_SESSION['user_id']);
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user/followups', [
+            'page_title' => 'Follow-ups - APS Dream Home',
+            'today_followups' => $todayFollowups,
+            'overdue_followups' => $overdueFollowups,
+            'current_page' => 'followups',
+        ]);
+    }
+
+    /**
+     * Complete follow-up (AJAX)
+     */
+    public function completeFollowup()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 400);
+        }
+
+        $followupId = (int)($_POST['followup_id'] ?? 0);
+        $outcome = $_POST['outcome'] ?? '';
+        $notes = $_POST['notes'] ?? '';
+
+        if ($followupId <= 0 || empty($outcome)) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid data'], 400);
+        }
+
+        $result = $this->marketplaceService->completeFollowup($followupId, $outcome, $notes, (int)($_SESSION['user_id'] ?? 0));
+        return $this->jsonResponse($result);
+    }
+
+    /**
+     * Close resale deal (admin/seller)
+     */
+    public function closeDeal()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 400);
+        }
+
+        $data = [
+            'property_id' => (int)($_POST['property_id'] ?? 0),
+            'buyer_id' => (int)($_POST['buyer_id'] ?? 0),
+            'final_price' => (float)($_POST['final_price'] ?? 0),
+            'payment_method' => $_POST['payment_method'] ?? 'bank_transfer',
+            'payment_reference' => $_POST['payment_reference'] ?? '',
+            'notes' => $_POST['notes'] ?? '',
+            'created_by' => $_SESSION['user_id'] ?? 0,
+        ];
+
+        if ($data['property_id'] <= 0 || $data['buyer_id'] <= 0 || $data['final_price'] <= 0) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid data'], 400);
+        }
+
+        $result = $this->resellTxnService->closeResellDeal($data);
+        return $this->jsonResponse($result);
+    }
+
+    /**
+     * Close user property deal (admin/seller)
+     */
+    public function closeUserPropertyDeal()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 400);
+        }
+
+        $data = [
+            'property_id' => (int)($_POST['property_id'] ?? 0),
+            'buyer_id' => (int)($_POST['buyer_id'] ?? 0),
+            'final_price' => (float)($_POST['final_price'] ?? 0),
+            'payment_method' => $_POST['payment_method'] ?? 'bank_transfer',
+            'payment_reference' => $_POST['payment_reference'] ?? '',
+            'notes' => $_POST['notes'] ?? '',
+            'created_by' => $_SESSION['user_id'] ?? 0,
+        ];
+
+        if ($data['property_id'] <= 0 || $data['buyer_id'] <= 0 || $data['final_price'] <= 0) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid data'], 400);
+        }
+
+        $result = $this->resellTxnService->closeUserPropertyDeal($data);
+        return $this->jsonResponse($result);
+    }
+
+    /**
+     * Get user transactions
+     */
+    public function myTransactions()
+    {
+        if (empty($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
+
+        $role = $_GET['role'] ?? 'all';
+        $transactions = $this->resellTxnService->getUserTransactions((int)$_SESSION['user_id'], $role);
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user/transactions', [
+            'page_title' => 'My Transactions - APS Dream Home',
+            'transactions' => $transactions,
+            'current_page' => 'transactions',
+        ]);
+    }
+
+    /**
+     * Boost property listing
+     */
+    public function boostProperty()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 400);
+        }
+
+        if (empty($_SESSION['user_id'])) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Please login'], 401);
+        }
+
+        $propertyId = (int)($_POST['property_id'] ?? 0);
+        $boostType = $_POST['boost_type'] ?? 'featured';
+        $duration = (int)($_POST['duration'] ?? 7);
+
+        if ($propertyId <= 0) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid property'], 400);
+        }
+
+        try {
+            $tid = $this->tenantId();
+            $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+            $tenantParams = $tid > 1 ? [$tid] : [];
+
+            $boostAmount = match($boostType) {
+                'featured' => 499,
+                'urgent' => 299,
+                'premium' => 999,
+                default => 499,
+            };
+
+            $expiresAt = date('Y-m-d H:i:s', strtotime("+{$duration} days"));
+
+            $stmt = $this->db->prepare("
+                UPDATE user_properties 
+                SET is_featured = CASE WHEN ? = 'featured' THEN 1 ELSE is_featured END,
+                    is_urgent = CASE WHEN ? = 'urgent' THEN 1 ELSE is_urgent END,
+                    is_premium = CASE WHEN ? = 'premium' THEN 1 ELSE is_premium END,
+                    boosted_at = NOW(),
+                    boost_expires_at = ?,
+                    boost_amount = ?,
+                    promoted_until = ?,
+                    updated_at = NOW()
+                WHERE id = ? AND user_id = ?{$tenantWhere}
+            ");
+            $stmt->execute(array_merge([$boostType, $boostType, $boostType, $expiresAt, $boostAmount, $expiresAt, $propertyId, $_SESSION['user_id']], $tenantParams));
+
+            if ($stmt->rowCount() > 0) {
+                // Track revenue
+                $this->db->prepare("
+                    INSERT INTO platform_revenue (source_type, source_id, amount, description, recorded_at)
+                    VALUES ('boost', ?, ?, ?, NOW())
+                ")->execute([$propertyId, $boostAmount, "Property boost: {$boostType} for {$duration} days"]);
+
+                return $this->jsonResponse(['success' => true, 'message' => 'Property boosted successfully!']);
+            }
+
+            return $this->jsonResponse(['success' => false, 'message' => 'Property not found or not owned by you'], 404);
+        } catch (\Throwable $e) {
+            error_log("MarketplaceController::boostProperty: " . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'message' => 'Failed to boost property'], 500);
+        }
     }
 }

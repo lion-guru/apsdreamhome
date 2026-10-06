@@ -188,6 +188,19 @@ class AgentAuthController extends BaseController
                     exit;
                 }
 
+                // 2FA check
+                if (!empty($user['two_factor_enabled']) && !empty($user['two_factor_secret'])) {
+                    $_SESSION['pending_2fa_user'] = [
+                        'id'    => (int)$user['id'],
+                        'email' => $user['email'],
+                        'role'  => 'agent',
+                    ];
+                    $_SESSION['pending_2fa_attempts'] = 0;
+                    session_regenerate_id(true);
+                    header('Location: ' . BASE_URL . '/user/two-factor/verify');
+                    exit;
+                }
+
                 // Establish session using trait (includes audit log + login notifications)
                 $this->establishSession($user, $email, 'password');
                 $this->redirectToDashboard('agent');

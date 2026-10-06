@@ -1029,6 +1029,15 @@ class UserController extends BaseController
             }
         }
 
+        // Fetch linked social accounts
+        $social_accounts = [];
+        try {
+            $socialSvc = new \App\Services\SocialLoginService();
+            $social_accounts = $socialSvc->getUserSocialAccounts((int)$user['id']);
+        } catch (\Throwable $e) {
+            error_log("UserController::profile - social accounts: " . $e->getMessage());
+        }
+
         // Define BASE_PATH for shared view
         if (!defined('BASE_PATH')) {
             define('BASE_PATH', dirname(__DIR__, 3));
@@ -1045,6 +1054,7 @@ class UserController extends BaseController
         
         $this->render('pages/user_profile', [
             'user' => $user,
+            'social_accounts' => $social_accounts,
             'error' => $error,
             'success' => $success,
             'current_page' => 'profile'
@@ -1168,6 +1178,38 @@ class UserController extends BaseController
 
         $_SESSION['success'] = 'Bank details saved successfully!';
         header('Location: ' . BASE_URL . '/user/bank-details');
+        exit;
+    }
+
+    /**
+     * Unlink social account
+     */
+    public function unlinkSocialAccount()
+    {
+        $this->requireCustomerLogin();
+        
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . BASE_URL . '/user/profile');
+            exit;
+        }
+
+        $provider = $_POST['provider'] ?? '';
+        if (empty($provider) || !in_array($provider, ['google', 'facebook', 'linkedin'], true)) {
+            $_SESSION['error'] = 'Invalid provider';
+            header('Location: ' . BASE_URL . '/user/profile');
+            exit;
+        }
+
+        try {
+            $socialSvc = new \App\Services\SocialLoginService();
+            $socialSvc->unlinkSocialAccount((int)$_SESSION['user_id'], $provider);
+            $_SESSION['success'] = ucfirst($provider) . ' account unlinked successfully!';
+        } catch (\Throwable $e) {
+            error_log("UserController::unlinkSocialAccount: " . $e->getMessage());
+            $_SESSION['error'] = 'Failed to unlink account';
+        }
+
+        header('Location: ' . BASE_URL . '/user/profile');
         exit;
     }
 

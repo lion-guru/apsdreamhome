@@ -74,7 +74,7 @@ class RegisterController extends BaseController
         if (empty($phone) || !preg_match('/^[0-9]{10}$/', $phone)) $errors[] = 'Valid 10-digit phone required';
         if (strlen($password) < 6) $errors[] = 'Password must be at least 6 characters';
         if ($password !== $confirm) $errors[] = 'Passwords do not match';
-        if (!in_array($role, ['customer', 'associate', 'agent'], true)) $errors[] = 'Invalid role selected';
+        if (!in_array($role, ['customer', 'associate', 'agent', 'employee', 'telecaller'], true)) $errors[] = 'Invalid role selected';
 
         // CAPTCHA validation
         $captcha_code = trim($_POST['captcha_code'] ?? '');
@@ -139,7 +139,14 @@ class RegisterController extends BaseController
             } elseif ($role === 'employee' || $role === 'telecaller') {
                 try {
                     $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ?" . $tenantSql . " LIMIT 1", $params);
-                    if ($emp) $_SESSION['employee_id'] = (int)$emp['id'];
+                    if ($emp) {
+                        $_SESSION['employee_id'] = (int)$emp['id'];
+                        $_SESSION['employee_user_id'] = (int)$result['user_id'];
+                    } else {
+                        $_SESSION['employee_id'] = (int)$result['user_id'];
+                        $_SESSION['employee_user_id'] = (int)$result['user_id'];
+                        $_SESSION['employee_needs_resolution'] = true;
+                    }
                 } catch (\Throwable $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
             }
 

@@ -16,10 +16,11 @@ $stats = $stats ?? ['total'=>0,'open'=>0,'registered'=>0,'lost'=>0,'pipeline_val
         </nav>
     </div>
     <div class="d-flex gap-2 flex-wrap">
-        <a href="<?= BASE_URL ?>/admin/land-inventory/leads"   class="btn btn-outline-primary btn-sm"><i class="fas fa-mountain me-1"></i>Land Leads</a>
-        <a href="<?= BASE_URL ?>/admin/land-inventory/brokers" class="btn btn-outline-secondary btn-sm"><i class="fas fa-handshake me-1"></i>Brokers</a>
-        <a href="<?= BASE_URL ?>/admin/land/records"           class="btn btn-outline-info btn-sm"><i class="fas fa-scroll me-1"></i>Land Records</a>
-        <a href="<?= BASE_URL ?>/admin/colony-pipeline"        class="btn btn-outline-success btn-sm"><i class="fas fa-sitemap me-1"></i>Colony Pipeline</a>
+<a href="<?= BASE_URL ?>/admin/land-inventory/leads"   class="btn btn-outline-primary btn-sm"><i class="fas fa-mountain me-1"></i>Land Leads</a>
+    <a href="<?= BASE_URL ?>/admin/land-inventory/brokers" class="btn btn-outline-secondary btn-sm"><i class="fas fa-handshake me-1"></i>Brokers</a>
+    <a href="<?= BASE_URL ?>/admin/land/records"           class="btn btn-outline-info btn-sm"><i class="fas fa-scroll me-1"></i>Land Records</a>
+    <a href="<?= BASE_URL ?>/admin/colony-pipeline"        class="btn btn-outline-success btn-sm"><i class="fas fa-sitemap me-1"></i>Colony Pipeline</a>
+    <a href="<?= BASE_URL ?>/admin/plots" class="btn btn-sm btn-outline-primary"><i class="fas fa-th me-1"></i>Plots Inventory</a>
     </div>
 </div>
 

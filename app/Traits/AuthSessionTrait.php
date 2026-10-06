@@ -56,16 +56,25 @@ trait AuthSessionTrait
                 error_log("AuthSessionTrait associate lookup error: " . $e->getMessage()); 
             }
         } 
-        // Employee/Telecaller: fetch employee_id from employees table
+        // Employee/Telecaller: fetch employee_id from employees table (PK of employees table)
         elseif ($role === 'employee' || $role === 'telecaller') {
             try {
                 $params = array_merge([(int)$user['id']], $tParams);
                 $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ?" . $tSql . " LIMIT 1", $params);
-                $_SESSION['employee_id'] = (int)($emp['id'] ?? $user['id']);
+                if ($emp) {
+                    $_SESSION['employee_id'] = (int)$emp['id'];          // PK of employees table
+                    $_SESSION['employee_user_id'] = (int)$user['id'];    // FK to users table
+                } else {
+                    // No employees row yet — fallback to users.id but mark for resolution
+                    $_SESSION['employee_id'] = (int)$user['id'];
+                    $_SESSION['employee_user_id'] = (int)$user['id'];
+                    $_SESSION['employee_needs_resolution'] = true;
+                }
                 $_SESSION['employee_role'] = $role;
             } catch (\Throwable $e) { 
                 error_log("AuthSessionTrait employee lookup error: " . $e->getMessage()); 
                 $_SESSION['employee_id'] = (int)$user['id'];
+                $_SESSION['employee_user_id'] = (int)$user['id'];
                 $_SESSION['employee_role'] = $role;
             }
         }

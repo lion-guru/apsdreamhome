@@ -223,10 +223,10 @@
             </div>
         </div>
 
-        <div class="referral-section" id="referralSection">
+<div class="referral-section" id="referralSection">
             <h6 class="mb-3"><i class="fas fa-ticket-alt me-2"></i><?php echo __('auth_referral_code', 'Referral Code'); ?></h6>
 <div class="d-flex align-items-center mb-3">
-                 <input type="text" class="form-control" id="referralCode" placeholder="<?php echo __('auth_enter_referral', 'Enter referral code'); ?>">
+                 <input type="text" class="form-control" id="referralCode" placeholder="<?php echo __('auth_enter_referral', 'Enter referral code'); ?>" value="<?php echo htmlspecialchars($_GET['ref'] ?? $_COOKIE['aps_ref'] ?? $_SESSION['aps_ref'] ?? ''); ?>">
                  <span class="company-code-badge ms-2" onclick="useCompanyCode()">
                      <i class="fas fa-building me-1"></i>Use Company Code
                  </span>

@@ -58,7 +58,7 @@ $base = BASE_URL;
             <h2>Choose Your Role</h2>
             <p class="subtitle">You can change this later from your profile settings.</p>
 
-            <form method="POST" action="<?= $base ?>/auth/smart/role" id="roleForm">
+<form method="POST" action="<?= $base ?>/auth/smart/role" id="roleForm">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
                 <input type="hidden" name="token" value="<?= htmlspecialchars($_GET['token'] ?? '') ?>">
                 <input type="hidden" name="role" id="selectedRole" value="customer">
@@ -82,6 +82,26 @@ $base = BASE_URL;
                     </button>
                 </div>
 
+                <!-- Referral Code Section (shown for Associate/Agent) -->
+                <div id="referralSection" style="display:none; margin-top:20px;">
+                    <label style="display:block; color:#e2e8f0; font-size:14px; font-weight:600; margin-bottom:8px;">
+                        <i class="fas fa-ticket-alt"></i> Sponsor/Referral Code <span style="color:#f59e0b;">*</span>
+                    </label>
+                    <div style="display:flex; gap:8px;">
+                        <input type="text" name="referral_code" id="referralCodeInput" class="form-control" 
+                               placeholder="Enter your sponsor's code" 
+                               style="flex:1; background:#0f172a; border:2px solid #1e293b; border-radius:10px; color:#e2e8f0; padding:10px 12px;"
+                               value="<?= htmlspecialchars($_GET['ref'] ?? $_COOKIE['aps_ref'] ?? $_SESSION['aps_ref'] ?? '') ?>">
+                        <span class="company-code-badge" onclick="useCompanyCode()" style="background:#28a745; color:white; padding:10px 15px; border-radius:8px; cursor:pointer; font-size:12px; font-weight:600; white-space:nowrap;">
+                            <i class="fas fa-building"></i> Company Code
+                        </span>
+                    </div>
+                    <div id="referral_name_display" style="margin-top:8px; min-height:20px;"></div>
+                    <small style="color:#64748b;">
+                        <i class="fas fa-info-circle"></i> Required for Associate/Agent to join the MLM network.
+                    </small>
+                </div>
+
                 <button type="submit" class="btn-continue" id="continueBtn"><i class="fas fa-arrow-right"></i> Continue as Customer</button>
             </form>
 
@@ -91,13 +111,61 @@ $base = BASE_URL;
         </div>
     </div>
 
-    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         function selectRole(el, role) {
             document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
             el.classList.add('selected');
             document.getElementById('selectedRole').value = role;
             const names = { customer: 'Customer', associate: 'Associate', agent: 'Agent' };
             document.getElementById('continueBtn').innerHTML = '<i class="fas fa-arrow-right"></i> Continue as ' + (names[role] || role);
+
+            // Show/hide referral section
+            const referralSection = document.getElementById('referralSection');
+            if (role === 'customer') {
+                referralSection.style.display = 'none';
+            } else {
+                referralSection.style.display = 'block';
+            }
+        }
+
+        function useCompanyCode() {
+            const companyCode = '<?= htmlspecialchars(getenv("COMPANY_REFERRAL_CODE") ?: ($_ENV["COMPANY_REFERRAL_CODE"] ?? "APSREF")) ?>';
+            document.getElementById('referralCodeInput').value = companyCode;
+            resolveReferralName();
+        }
+
+        // Referral name resolution
+        function resolveReferralName() {
+            var referralInput = document.getElementById('referralCodeInput');
+            var referralCode = referralInput ? referralInput.value.trim() : '';
+            var display = document.getElementById('referral_name_display');
+            if (!referralCode) {
+                display.innerHTML = '';
+                return;
+            }
+            display.innerHTML = '<i class="fas fa-spinner fa-spin" style="color:#f59e0b;"></i> Resolving...';
+            fetch('<?= BASE_URL ?>/api/user/resolve-sponsor?code=' + encodeURIComponent(referralCode))
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        var name = data.name || 'Unknown';
+                        var role = data.role || '';
+                        var displayText = '<strong style="color:#34d399;">' + name + '</strong> <span style="color:#64748b;">(' + role + ')</span>';
+                        display.innerHTML = displayText;
+                    } else {
+                        display.innerHTML = '<span style="color:#ef4444;">Invalid referral code</span>';
+                    }
+                })
+                .catch(() => {
+                    display.innerHTML = '<span style="color:#ef4444;">Error validating referral</span>';
+                });
+        }
+
+        // Attach listener to referralCode input
+        var referralInput = document.getElementById('referralCodeInput');
+        if (referralInput) {
+            referralInput.addEventListener('input', resolveReferralName);
+            referralInput.addEventListener('blur', resolveReferralName);
         }
     </script>
 </body>
