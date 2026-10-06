@@ -156,11 +156,25 @@ class MlmRewardsController extends AdminController
             [$tenantSql, $tenantParams] = $this->tenantWhere();
             if ($status === 'rejected') {
                 $update['rejection_reason'] = $adminNotes;
-                // Refund the user wallet — tenant-scoped
-                $this->db->query(
-                    "UPDATE user_wallets SET balance = balance + ?, updated_at = NOW() WHERE user_id = ? AND user_type = 'associate'" . $tenantSql,
-                    array_merge([$request['amount'], $request['user_id']], $tenantParams)
-                );
+                // Refund the same wallet system that was debited at request time.
+                // Role-discriminated so a dual-role user_id can never double-refund.
+                $reqRole = '';
+                try {
+                    $roleRow = $this->db->fetchOne("SELECT role FROM users WHERE id = ? LIMIT 1", [$request['user_id']]);
+                    $reqRole = $roleRow['role'] ?? '';
+                } catch (\Throwable $e) { error_log('Withdrawal refund role lookup: ' . $e->getMessage()); }
+                if ($reqRole === 'customer') {
+                    $this->db->query(
+                        "UPDATE wallet_points SET points_balance = points_balance + ?, total_used = GREATEST(total_used - ?, 0) WHERE user_id = ?" . $tenantSql,
+                        array_merge([$request['amount'], $request['amount'], $request['user_id']], $tenantParams)
+                    );
+                } else {
+                    // Refund the user wallet - tenant-scoped
+                    $this->db->query(
+                        "UPDATE user_wallets SET balance = balance + ?, updated_at = NOW() WHERE user_id = ? AND user_type = 'associate'" . $tenantSql,
+                        array_merge([$request['amount'], $request['user_id']], $tenantParams)
+                    );
+                }
             } else {
                 $update['remarks'] = $adminNotes;
             }

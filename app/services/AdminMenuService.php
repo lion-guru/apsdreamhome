@@ -93,8 +93,10 @@ class AdminMenuService
             $menuItems = [];
         }
 
-        // Apply custom user permissions if any
+        // Apply custom user permissions if any (additive grants first,
+        // then per-item overrides/restrictions)
         if ($userId) {
+            $menuItems = $this->mergeCustomGrantedItems($menuItems, $userId);
             $menuItems = $this->applyCustomUserPermissions($menuItems, $userId);
         }
 
@@ -277,8 +279,54 @@ class AdminMenuService
     }
 
     /**
-     * Apply custom user permissions to menu items
+     * Merge items granted to this specific user (can_view=1) that the user's
+     * role does NOT include. Without this, custom grants only restrict —
+     * they can never ADD a menu (the role INNER JOIN drops unknown ids).
      */
+    private function mergeCustomGrantedItems(array $menuItems, int $userId): array
+    {
+        $customPermissions = $this->getCustomUserPermissions($userId);
+        $grantedIds = [];
+        foreach ($customPermissions as $menuItemId => $perm) {
+            if ((int)($perm['can_view'] ?? 0) === 1) {
+                $grantedIds[] = (int)$menuItemId;
+            }
+        }
+        if (empty($grantedIds)) {
+            return $menuItems;
+        }
+
+        $haveIds = [];
+        foreach ($menuItems as $item) {
+            $haveIds[(int)($item['id'] ?? 0)] = true;
+        }
+        $missingIds = array_values(array_diff($grantedIds, array_keys($haveIds)));
+        if (empty($missingIds)) {
+            return $menuItems;
+        }
+
+        try {
+            $placeholders = implode(',', array_fill(0, count($missingIds), '?'));
+            $extra = $this->db->fetchAll(
+                "SELECT mi.*, 1 AS can_view, 0 AS can_create, 0 AS can_edit, 0 AS can_delete
+                 FROM admin_menu_items mi
+                 WHERE mi.is_active = 1 AND mi.id IN ($placeholders)",
+                $missingIds
+            );
+        } catch (\Throwable $e) {
+            error_log("AdminMenuService::mergeCustomGrantedItems error: " . $e->getMessage());
+            return $menuItems;
+        }
+
+        foreach ($extra as $item) {
+            $menuItems[] = $item;
+        }
+        return $menuItems;
+    }
+
+    /**
+      * Apply custom user permissions to menu items
+      */
     private function applyCustomUserPermissions(array $menuItems, int $userId): array
     {
         $customPermissions = $this->getCustomUserPermissions($userId);
@@ -465,6 +513,9 @@ class AdminMenuService
             ];
             if (!empty($insertData)) $params = array_merge($params, array_values($insertData));
             $this->db->query($query, $params);
+            // Deterministic per-user invalidation (pattern-based cache clears
+            // are not guaranteed on every layer) + global menu refresh.
+            Cache::delete("admin_menu_perms_{$userId}");
             $this->clearMenuCache();
             return true;
         } catch (\Exception $e) {
@@ -482,6 +533,7 @@ class AdminMenuService
 
         try {
             $this->db->query($query, [$userId, $menuItemId]);
+            Cache::delete("admin_menu_perms_{$userId}");
             $this->clearMenuCache();
             return true;
         } catch (\Exception $e) {

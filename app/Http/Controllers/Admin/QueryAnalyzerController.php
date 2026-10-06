@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\AdminController;
+use App\Traits\TenantAwareTrait;
 
 class QueryAnalyzerController extends AdminController
 {
+    use TenantAwareTrait;
+
     public function __construct()
     {
         parent::__construct();
@@ -29,17 +31,14 @@ class QueryAnalyzerController extends AdminController
 
             $queries = $db->fetchAll("
                 SELECT 
-                    QUERY_TIME, 
-                    LOCK_TIME, 
-                    ROWS_SENT, 
-                    ROWS_EXAMINED,
-                    SQL_TEXT,
-                    DB,
-                    USER_HOST,
-                    EXEC_COUNT,
+                    DIGEST_TEXT as SQL_TEXT,
+                    SCHEMA_NAME as DB,
+                    COUNT_STAR as EXEC_COUNT,
                     AVG_TIMER_WAIT,
                     MAX_TIMER_WAIT,
-                    SUM_TIMER_WAIT
+                    SUM_TIMER_WAIT,
+                    SUM_ROWS_SENT as ROWS_SENT,
+                    SUM_ROWS_EXAMINED as ROWS_EXAMINED
                 FROM performance_schema.events_statements_summary_by_digest
                 WHERE SCHEMA_NAME = DATABASE() $tidSql
                 ORDER BY AVG_TIMER_WAIT DESC
@@ -196,6 +195,9 @@ class QueryAnalyzerController extends AdminController
 
     public function explainQuery()
     {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+
         $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
         $query = $input['query'] ?? '';
 

@@ -74,7 +74,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                                 'address_line' => $addrRow[0]['address_line1'] ?? $addressValues['address_line'],
                                             ];
                                         }
-                                    } catch (\Throwable $e) {}
+                                    } catch (\Throwable $e) { error_log('Admin user edit address fetch: ' . $e->getMessage()); }
                                 }
                                 $addressShowMap = false;
                                 $addressRequired = false;

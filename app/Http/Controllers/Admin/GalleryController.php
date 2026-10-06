@@ -9,6 +9,7 @@ class GalleryController extends AdminController
     use \App\Traits\TenantAwareTrait;
     public function index()
     {
+    $this->requireAdmin();
         $category = $_GET['category'] ?? '';
         $sql = "SELECT * FROM gallery WHERE 1=1";
         $params = [];
@@ -45,6 +46,7 @@ class GalleryController extends AdminController
 
     public function create()
     {
+        $this->requireAdmin();
         $data = [
             'page_title' => 'Add Gallery Image',
             'active_page' => 'gallery',
@@ -55,6 +57,7 @@ class GalleryController extends AdminController
 
     public function store()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->redirect('/admin/gallery');
             return;
@@ -102,6 +105,7 @@ class GalleryController extends AdminController
 
     public function edit($id = null)
     {
+        $this->requireAdmin();
         try {
             $stmt = $this->db->prepare("SELECT * FROM gallery WHERE id = ?");
             $stmt->execute([$id]);
@@ -126,6 +130,7 @@ class GalleryController extends AdminController
 
     public function update($id = null)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->redirect('/admin/gallery');
             return;
@@ -177,6 +182,7 @@ class GalleryController extends AdminController
 
     public function destroy($id = null)
     {
+        $this->requireAdmin();
         try {
             $stmt = $this->db->prepare("SELECT image_path FROM gallery WHERE id = ?");
             $stmt->execute([$id]);

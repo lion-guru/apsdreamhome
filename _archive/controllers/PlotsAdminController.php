@@ -17,7 +17,7 @@ class PlotsAdminController extends AdminController
             return;
         }
 
-        if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'employee') {
+        if (!in_array($_SESSION['role'], ['admin', 'super_admin', 'manager', 'employee'], true)) {
             redirect('/admin/login');
             return;
         }
@@ -73,7 +73,12 @@ class PlotsAdminController extends AdminController
         // Get statistics
         $stats = $this->getPlotsStatistics();
 
-        include __DIR__ . '/../../../views/admin/plots/index.php';
+        return $this->render('admin/plots/index', [
+            'page_title' => 'Manage Plots',
+            'plots' => $plots,
+            'colonies' => $colonies,
+            'stats' => $stats,
+        ]);
     }
 
     // Create new plot
@@ -89,19 +94,19 @@ class PlotsAdminController extends AdminController
             $block = trim($_POST['block']);
             $sector = trim($_POST['sector']);
             $plot_type = $_POST['plot_type'];
-            $area_sqft = (float)$_POST['area_sqft'];
-            $area_sqm = (float)$_POST['area_sqm'];
-            $frontage_ft = (float)$_POST['frontage_ft'];
-            $depth_ft = (float)$_POST['depth_ft'];
-            $price_per_sqft = (float)$_POST['price_per_sqft'];
-            $total_price = (float)$_POST['total_price'];
+            $area_sqft = ($_POST['area_sqft'] ?? '') === '' ? null : (float)$_POST['area_sqft'];
+            $area_sqm = ($_POST['area_sqm'] ?? '') === '' ? null : (float)$_POST['area_sqm'];
+            $frontage_ft = ($_POST['frontage_ft'] ?? '') === '' ? null : (float)$_POST['frontage_ft'];
+            $depth_ft = ($_POST['depth_ft'] ?? '') === '' ? null : (float)$_POST['depth_ft'];
+            $price_per_sqft = ($_POST['price_per_sqft'] ?? '') === '' ? null : (float)$_POST['price_per_sqft'];
+            $total_price = ($_POST['total_price'] ?? '') === '' ? null : (float)$_POST['total_price'];
             $status = $_POST['status'];
             $description = trim($_POST['description']);
             $features = trim($_POST['features']);
             $facing = $_POST['facing'];
             $corner_plot = isset($_POST['corner_plot']) ? 1 : 0;
             $park_facing = isset($_POST['park_facing']) ? 1 : 0;
-            $road_width_ft = (float)$_POST['road_width_ft'];
+            $road_width_ft = ($_POST['road_width_ft'] ?? '') === '' ? null : (float)$_POST['road_width_ft'];
             $latitude = !empty($_POST['latitude']) ? (float)$_POST['latitude'] : null;
             $longitude = !empty($_POST['longitude']) ? (float)$_POST['longitude'] : null;
             $image_path = trim($_POST['image_path']);
@@ -129,7 +134,10 @@ class PlotsAdminController extends AdminController
             }
         }
 
-        include __DIR__ . '/../../../views/admin/plots/create.php';
+        return $this->render('admin/plots/create', [
+            'page_title' => 'Create New Plot',
+            'colonies' => $colonies,
+        ]);
     }
 
     // Edit plot
@@ -155,14 +163,14 @@ class PlotsAdminController extends AdminController
             $block = trim($_POST['block']);
             $sector = trim($_POST['sector']);
             $plot_type = $_POST['plot_type'];
-            $area_sqft = (float)$_POST['area_sqft'];
-            $area_sqm = (float)$_POST['area_sqm'];
-            $frontage_ft = (float)$_POST['frontage_ft'];
-            $depth_ft = (float)$_POST['depth_ft'];
-            $price_per_sqft = (float)$_POST['price_per_sqft'];
-            $total_price = (float)$_POST['total_price'];
+            $area_sqft = ($_POST['area_sqft'] ?? '') === '' ? null : (float)$_POST['area_sqft'];
+            $area_sqm = ($_POST['area_sqm'] ?? '') === '' ? null : (float)$_POST['area_sqm'];
+            $frontage_ft = ($_POST['frontage_ft'] ?? '') === '' ? null : (float)$_POST['frontage_ft'];
+            $depth_ft = ($_POST['depth_ft'] ?? '') === '' ? null : (float)$_POST['depth_ft'];
+            $price_per_sqft = ($_POST['price_per_sqft'] ?? '') === '' ? null : (float)$_POST['price_per_sqft'];
+            $total_price = ($_POST['total_price'] ?? '') === '' ? null : (float)$_POST['total_price'];
             $status = $_POST['status'];
-            $booking_amount = (float)$_POST['booking_amount'];
+            $booking_amount = ($_POST['booking_amount'] ?? '') === '' ? null : (float)$_POST['booking_amount'];
             $total_paid = (float)$_POST['total_paid'];
             $payment_status = $_POST['payment_status'];
             $customer_id = !empty($_POST['customer_id']) ? (int)$_POST['customer_id'] : null;
@@ -174,7 +182,7 @@ class PlotsAdminController extends AdminController
             $facing = $_POST['facing'];
             $corner_plot = isset($_POST['corner_plot']) ? 1 : 0;
             $park_facing = isset($_POST['park_facing']) ? 1 : 0;
-            $road_width_ft = (float)$_POST['road_width_ft'];
+            $road_width_ft = ($_POST['road_width_ft'] ?? '') === '' ? null : (float)$_POST['road_width_ft'];
             $latitude = !empty($_POST['latitude']) ? (float)$_POST['latitude'] : null;
             $longitude = !empty($_POST['longitude']) ? (float)$_POST['longitude'] : null;
             $image_path = trim($_POST['image_path']);
@@ -210,7 +218,11 @@ class PlotsAdminController extends AdminController
             }
         }
 
-        include __DIR__ . '/../../../views/admin/plots/edit.php';
+        return $this->render('admin/plots/edit', [
+            'page_title' => 'Edit Plot',
+            'plot' => $plot,
+            'colonies' => $colonies,
+        ]);
     }
 
     // Delete plot
@@ -218,7 +230,21 @@ class PlotsAdminController extends AdminController
     {
         $this->checkAuth();
 
+        // Require explicit confirmation token for destructive action
+        $confirmToken = $_POST['confirm_delete'] ?? '';
+        if ($confirmToken !== 'DELETE_PLOT_CONFIRMED') {
+            $_SESSION['error'] = 'Confirmation required: "DELETE_PLOT_CONFIRMED" token required';
+            redirect('/admin/plots');
+            return;
+        }
+
         try {
+            $booking = $this->db->fetch("SELECT COUNT(*) as c FROM plot_bookings WHERE plot_id = ?", [$id]);
+            if (($booking['c'] ?? 0) > 0) {
+                $_SESSION['error'] = 'Cannot delete plot - it has associated bookings';
+                redirect('/admin/plots');
+                return;
+            }
             $stmt = $this->db->prepare("DELETE FROM plots WHERE id = ? AND tenant_id = ?");
             $stmt->execute([$id, $this->tenantId()]);
 
@@ -241,34 +267,11 @@ class PlotsAdminController extends AdminController
         $new_status = $_POST['status'] ?? '';
         $reason = $_POST['reason'] ?? '';
 
-        if (empty($new_status)) {
-            echo json_encode(['success' => false, 'message' => 'Status is required']);
-            return;
-        }
-
         try {
-            // Get current status
-            $stmt = $this->db->prepare("SELECT status FROM plots WHERE id = ?");
-            $stmt->execute([$id]);
-            $plot = $stmt->fetch(\PDO::FETCH_ASSOC);
-
-            if (!$plot) {
-                echo json_encode(['success' => false, 'message' => 'Plot not found']);
-                return;
-            }
-
-            $old_status = $plot['status'];
-
-            // Update plot status
-            $stmt = $this->db->prepare("UPDATE plots SET status = ? WHERE id = ? AND tenant_id = ?");
-            $stmt->execute([$new_status, $id, $this->tenantId()]);
-
-            // Log status change
-            $this->logStatusChange($id, $old_status, $new_status, $_SESSION['user_id'], $reason);
-
+            \App\Models\Plot::updateStatus($id, $new_status, $_SESSION['user_id'] ?? 0, $reason);
             echo json_encode(['success' => true, 'message' => 'Status updated successfully']);
-        } catch (\PDOException $e) {
-            echo json_encode(['success' => false, 'message' => 'Error updating status: ' . $e->getMessage()]);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         return;
     }
@@ -308,7 +311,12 @@ class PlotsAdminController extends AdminController
         error_log($e->getMessage());
         }
 
-        include __DIR__ . '/../../../views/admin/plots/show.php';
+        return $this->render('admin/plots/show', [
+            'page_title' => 'Plot Details',
+            'plot' => $plot,
+            'history' => $history,
+            'images' => $images,
+        ]);
     }
 
     // Bulk operations
@@ -457,10 +465,9 @@ class PlotsAdminController extends AdminController
         try {
             $tid = $this->tenantId();
             $stmt = $this->db->prepare("INSERT INTO plot_status_history (plot_id, old_status, new_status, changed_by, change_reason, tenant_id) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$plot_id, $old_status, $new_status, $changed_by, $reason, $tid]);
         } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
+            error_log($e->getMessage());
         }
-        $stmt->execute([$plot_id, $old_status, $new_status, $changed_by, $reason, $tid]);
     }
 }

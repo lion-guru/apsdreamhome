@@ -27,6 +27,7 @@ class AnalyticsController extends AdminController
      */
     public function index()
     {
+        $this->requireAdmin();
         try {
             $data = [
                 'page_title' => 'Commission Analytics - APS Dream Home',
@@ -49,6 +50,7 @@ class AnalyticsController extends AdminController
      */
     public function associatePerformance()
     {
+        $this->requireAdmin();
         try {
             $data = [
                 'page_title' => 'Associate Performance - APS Dream Home',
@@ -71,6 +73,7 @@ class AnalyticsController extends AdminController
      */
     public function sales()
     {
+        $this->requireAdmin();
         try {
             $data = [
                 'page_title' => 'Sales Analytics - APS Dream Home',
@@ -93,6 +96,7 @@ class AnalyticsController extends AdminController
      */
     public function property()
     {
+        $this->requireAdmin();
         try {
             $data = [
                 'page_title' => 'Property Analytics - APS Dream Home',
@@ -115,6 +119,7 @@ class AnalyticsController extends AdminController
      */
     public function financial()
     {
+        $this->requireAdmin();
         try {
             $data = [
                 'page_title' => 'Financial Analytics - APS Dream Home',
@@ -137,6 +142,7 @@ class AnalyticsController extends AdminController
      */
     public function export()
     {
+        $this->requireAdmin();
         try {
             $type = $_GET['type'] ?? 'commission';
             $format = $_GET['format'] ?? 'csv';
@@ -564,6 +570,7 @@ class AnalyticsController extends AdminController
      */
     public function advanced()
     {
+        $this->requireAdmin();
         $totalBookings = $totalRevenue = $totalLeads = $convertedLeads = $totalProperties = $totalPayments = 0;
         $monthlyRevenue = $leadSources = $propertyTypes = $bookingStatus = $leadStatus = [];
         $conversionRate = 0;

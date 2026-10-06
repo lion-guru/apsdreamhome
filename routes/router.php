@@ -103,7 +103,7 @@ class Router
         }
 
         // Step 5b: Global CSRF validation for POST/PUT/DELETE
-        if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'DELETE'])) {
+        if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'DELETE'])) {
             $excludedPaths = [
                 '/subscribe',
                 '/api/',
@@ -118,6 +118,12 @@ class Router
                 '/associate/login',
                 '/associate/register',
                 '/associate/logout',
+                '/associate/wallet/process-withdrawal',
+                '/associate/wallet/purchase',
+                '/associate/wallet/verify-payment',
+                '/agent/wallet/purchase',
+                '/agent/wallet/verify-payment',
+                '/wallet/withdrawal/process',
                 '/agent/login',
                 '/agent/register',
                 '/agent/logout',

@@ -164,6 +164,10 @@ class LiveChatWidgetController extends BaseController
 
     public function poll()
     {
+        // Token-based read-only poller (fires every few seconds per open tab):
+        // release the session lock immediately so tabs never block each other
+        // nor overwrite fresher session data at shutdown.
+        if (function_exists('session_status') && session_status() === PHP_SESSION_ACTIVE) session_write_close();
         $token = $_GET['token'] ?? '';
         $lastId = (int)($_GET['last_id'] ?? 0);
         if (!$token) {
@@ -200,6 +204,7 @@ class LiveChatWidgetController extends BaseController
         $userId = (int)($_SESSION['user_id'] ?? $_SESSION['customer_id'] ?? 0);
         $userName = $_SESSION['user_name'] ?? '';
         $userEmail = $_SESSION['user_email'] ?? '';
+        if (function_exists('session_status') && session_status() === PHP_SESSION_ACTIVE) session_write_close();
 
         if ($this->service === null) {
             $settings = [
@@ -232,6 +237,7 @@ class LiveChatWidgetController extends BaseController
     {
         $userId = (int)($_SESSION['user_id'] ?? $_SESSION['customer_id'] ?? 0);
         $sessionId = $_GET['session_id'] ?? '';
+        if (function_exists('session_status') && session_status() === PHP_SESSION_ACTIVE) session_write_close();
         if (!$userId || !$sessionId) {
             header('Content-Type: application/json');
             echo json_encode(['success' => false, 'error' => 'Missing params']);

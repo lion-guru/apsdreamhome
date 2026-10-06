@@ -23,6 +23,24 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Referral attribution net: persist ?ref= into a 30-day cookie + session so
+// browse-first-register-later flows (forms, Google OAuth, smart OTP, claim,
+// inquiries) never lose the referrer. Read everywhere via $_COOKIE['aps_ref'].
+if (!empty($_GET['ref'])) {
+    $refCookie = substr(preg_replace('/[^A-Za-z0-9\-_]/', '', (string)$_GET['ref']), 0, 50);
+    if ($refCookie !== '') {
+        setcookie('aps_ref', $refCookie, [
+            'expires' => time() + (30 * 24 * 60 * 60),
+            'path' => '/',
+            'secure' => false,
+            'httponly' => true,
+            'samesite' => 'Lax',
+        ]);
+        $_COOKIE['aps_ref'] = $refCookie;
+        $_SESSION['aps_ref'] = $refCookie;
+    }
+}
+
 // Error reporting — gated by env (never expose traces in prod)
 error_reporting(E_ALL);
 if ((defined('APP_ENV') && APP_ENV === 'production') || getenv('APP_ENV') === 'production') {

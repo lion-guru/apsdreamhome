@@ -77,6 +77,7 @@ class PushNotificationAdminController extends AdminController
 
     public function index()
     {
+    $this->requireAdmin();
         $service = new \App\Services\Communication\PushNotificationService();
         $stats = $service->getStats();
         $log = $service->getLog(20);
@@ -90,6 +91,7 @@ class PushNotificationAdminController extends AdminController
 
     public function sendForm()
     {
+        $this->requireAdmin();
         $service = new \App\Services\Communication\PushNotificationService();
         $stats = $service->getStats();
 
@@ -101,6 +103,7 @@ class PushNotificationAdminController extends AdminController
 
     public function send()
     {
+    $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->json(['success' => false, 'error' => 'POST required'], 405);
             return;
@@ -141,6 +144,7 @@ class PushNotificationAdminController extends AdminController
 
     public function log()
     {
+        $this->requireAdmin();
         $service = new \App\Services\Communication\PushNotificationService();
         $log = $service->getLog(100);
 
@@ -152,6 +156,7 @@ class PushNotificationAdminController extends AdminController
 
     public function stats()
     {
+    $this->requireAdmin();
         $service = new \App\Services\Communication\PushNotificationService();
         $stats = $service->getStats();
         $this->json($stats);
@@ -163,6 +168,7 @@ class PushNotificationAdminController extends AdminController
 
     public function templates()
     {
+        $this->requireAdmin();
         $db = $this->db();
         $templates = $db->fetchAll(
             "SELECT * FROM push_notification_templates WHERE is_active = 1 ORDER BY created_at DESC"
@@ -176,6 +182,7 @@ class PushNotificationAdminController extends AdminController
 
     public function templateForm($id = null)
     {
+    $this->requireAdmin();
         $template = null;
         if ($id) {
             $db = $this->db();
@@ -198,6 +205,7 @@ class PushNotificationAdminController extends AdminController
 
     public function templateStore()
     {
+    $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->redirect('/admin/push-notifications/templates');
             return;
@@ -238,6 +246,7 @@ class PushNotificationAdminController extends AdminController
 
     public function templateDelete($id)
     {
+        $this->requireAdmin();
         $db = $this->db();
         $db->query(
             "UPDATE push_notification_templates SET is_active = 0, updated_at = NOW() WHERE id = ?",
@@ -253,6 +262,7 @@ class PushNotificationAdminController extends AdminController
 
     public function campaigns()
     {
+    $this->requireAdmin();
         $db = $this->db();
         $campaigns = $db->fetchAll(
             "SELECT c.*, t.name AS template_name FROM push_notification_campaigns c LEFT JOIN push_notification_templates t ON t.id = c.template_id ORDER BY c.created_at DESC"
@@ -277,6 +287,7 @@ class PushNotificationAdminController extends AdminController
 
     public function campaignForm($id = null)
     {
+    $this->requireAdmin();
         $campaign = null;
         if ($id) {
             $db = $this->db();
@@ -308,6 +319,7 @@ class PushNotificationAdminController extends AdminController
 
     public function campaignStore()
     {
+    $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->redirect('/admin/push-notifications/campaigns');
             return;
@@ -352,6 +364,7 @@ class PushNotificationAdminController extends AdminController
 
     public function campaignLaunch($id)
     {
+    $this->requireAdmin();
         $db = $this->db();
         $campaign = $db->fetchOne(
             "SELECT * FROM push_notification_campaigns WHERE id = ?",
@@ -443,6 +456,7 @@ class PushNotificationAdminController extends AdminController
 
     public function campaignPause($id)
     {
+    $this->requireAdmin();
         $db = $this->db();
         $db->query(
             "UPDATE push_notification_campaigns SET status = 'paused', updated_at = NOW() WHERE id = ? AND status = 'running'",
@@ -459,6 +473,7 @@ class PushNotificationAdminController extends AdminController
 
     public function campaignDetail($id)
     {
+    $this->requireAdmin();
         $db = $this->db();
         $campaign = $db->fetchOne(
             "SELECT c.*, t.name AS template_name FROM push_notification_campaigns c LEFT JOIN push_notification_templates t ON t.id = c.template_id WHERE c.id = ?",
@@ -501,6 +516,7 @@ class PushNotificationAdminController extends AdminController
 
     public function processQueue()
     {
+    $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->json(['success' => false, 'error' => 'POST required'], 405);
             return;
@@ -524,6 +540,7 @@ class PushNotificationAdminController extends AdminController
 
     public function queueStatus()
     {
+    $this->requireAdmin();
         $db = $this->db();
         $stats = $db->fetchOne(
             "SELECT

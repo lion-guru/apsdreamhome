@@ -12,6 +12,7 @@ class CommissionAdminController extends AdminController
 
     public function index()
     {
+        $this->requireAdmin();
         try {
             $stats = [];
 
@@ -81,6 +82,7 @@ class CommissionAdminController extends AdminController
     // ===== Agent Commission Rates =====
     public function agentRates()
     {
+        $this->requireAdmin();
         try {
             $this->data['rates'] = $this->db->fetchAll(
                 "SELECT acr.*, u.name as agent_name FROM agent_commission_rates acr
@@ -97,12 +99,13 @@ class CommissionAdminController extends AdminController
 
     public function agentRateStore()
     {
+        $this->requireAdmin();
         $this->validateCsrfOrFail();
         try {
             $tid = $this->tenantId();
             $this->db->query("INSERT INTO agent_commission_rates (agent_id, property_type, base_rate_pct, override_pct, bonus_rate_pct, effective_from, effective_to, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [
-                (int)$_POST['agent_id'], $_POST['property_type'] ?? 'plot', (float)($_POST['base_rate_pct'] ?? 0),
-                (float)($_POST['override_pct'] ?? 0), (float)($_POST['bonus_rate_pct'] ?? 0),
+                (int)$_POST['agent_id'], $_POST['property_type'] ?? 'plot', ($_POST['base_rate_pct'] ?? '') === '' ? null : (float)($_POST['base_rate_pct'] ?? 0),
+                ($_POST['override_pct'] ?? '') === '' ? null : (float)($_POST['override_pct'] ?? 0), ($_POST['bonus_rate_pct'] ?? '') === '' ? null : (float)($_POST['bonus_rate_pct'] ?? 0),
                 $_POST['effective_from'] ?? date('Y-m-d'), $_POST['effective_to'] ?? null, $tid
             ]);
             $this->setFlash('success', 'Agent rate created');
@@ -114,6 +117,7 @@ class CommissionAdminController extends AdminController
 
     public function agentRateDelete($id)
     {
+        $this->requireAdmin();
         try {
             $this->db->query("DELETE FROM agent_commission_rates WHERE id = ? AND tenant_id = ?", [(int)$id, $this->tenantId()]);
             $this->setFlash('success', 'Rate deleted');
@@ -126,6 +130,7 @@ class CommissionAdminController extends AdminController
     // ===== Rank Benefits (replaces Associate Commission Structure) =====
     public function associateStructure()
     {
+        $this->requireAdmin();
         try {
             $this->data['levels'] = $this->db->fetchAll("SELECT id, rank_name, direct_sale_pct as commission_percentage, l1_pct as gen1_override_pct, l2_pct as gen2_override_pct, l3_pct as gen3_override_pct FROM mlm_rank_benefits ORDER BY FIELD(rank_name, 'associate','bronze','silver','gold','platinum','diamond')");
             $this->data['page_title'] = 'Rank Commission Benefits';
@@ -138,6 +143,7 @@ class CommissionAdminController extends AdminController
 
     public function associateStructureStore()
     {
+        $this->requireAdmin();
         $this->validateCsrfOrFail();
         try {
             $rankName = $_POST['level_name'] ?? $_POST['rank_name'] ?? '';
@@ -159,6 +165,7 @@ class CommissionAdminController extends AdminController
 
     public function associateStructureDelete($id)
     {
+        $this->requireAdmin();
         $this->setFlash('warning', 'Rank benefits cannot be deleted — use edit to modify rates.');
         return $this->redirect('admin/commission/associate/structure');
     }
@@ -166,6 +173,7 @@ class CommissionAdminController extends AdminController
     // ===== Commission Calculations (from mlm_commission_ledger) =====
     public function associateCalculations()
     {
+        $this->requireAdmin();
         try {
             $this->data['calculations'] = $this->db->fetchAll(
                 "SELECT mcl.*, u.name as associate_name FROM mlm_commission_ledger mcl
@@ -183,6 +191,7 @@ class CommissionAdminController extends AdminController
 
     public function associateCalcStatus($id)
     {
+        $this->requireAdmin();
         $status = $_POST['status'] ?? 'confirmed';
         if (!in_array($status, ['confirmed','paid'])) { $status = 'confirmed'; }
         try {
@@ -198,6 +207,7 @@ class CommissionAdminController extends AdminController
     // ===== Performance Bonuses (from mlm_commission_ledger) =====
     public function bonuses()
     {
+        $this->requireAdmin();
         try {
             $this->data['bonuses'] = $this->db->fetchAll(
                 "SELECT mcl.*, u.name as associate_name FROM mlm_commission_ledger mcl
@@ -216,6 +226,7 @@ class CommissionAdminController extends AdminController
 
     public function bonusStore()
     {
+        $this->requireAdmin();
         $this->validateCsrfOrFail();
         try {
             $bonusAmount = (float)$_POST['bonus_amount'];
@@ -235,6 +246,7 @@ class CommissionAdminController extends AdminController
 
     public function bonusDelete($id)
     {
+        $this->requireAdmin();
         try {
             $this->db->query("UPDATE mlm_commission_ledger SET status = 'reversed' WHERE id = ? AND commission_type = 'performance_bonus' AND tenant_id = ?", [(int)$id, $this->tenantId()]);
             $this->setFlash('success', 'Bonus reversed');
@@ -247,6 +259,7 @@ class CommissionAdminController extends AdminController
     // ===== Commission Calculations (Agent Resell — from ledger) =====
     public function commissionCalculations()
     {
+        $this->requireAdmin();
         try {
             $this->data['calculations'] = $this->db->fetchAll(
                 "SELECT mcl.*, u.name as agent_name FROM mlm_commission_ledger mcl
@@ -264,6 +277,7 @@ class CommissionAdminController extends AdminController
     // ===== MLM Commission Levels (reads from mlm_rank_benefits — single source of truth) =====
     public function mlmLevels()
     {
+        $this->requireAdmin();
         try {
             $this->data['levels'] = $this->db->fetchAll("SELECT id, rank_name as name, min_leg_count as min_associates, min_qualifying_volume as min_business, direct_sale_pct as commission_rate, direct_sale_pct as direct_percentage FROM mlm_rank_benefits ORDER BY id");
             $this->data['page_title'] = 'MLM Commission Levels';
@@ -276,6 +290,7 @@ class CommissionAdminController extends AdminController
 
 public function mlmLevelStore()
     {
+        $this->requireAdmin();
         $this->validateCsrfOrFail();
         try {
             $this->db->query("INSERT INTO mlm_rank_benefits (rank_name, min_leg_count, min_qualifying_volume, direct_sale_pct, l1_pct, l2_pct, l3_pct, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [
@@ -296,6 +311,7 @@ public function mlmLevelStore()
 
     public function mlmLevelDelete($id)
     {
+        $this->requireAdmin();
         try {
             list($tSql, $tParams) = $this->tenantWhere();
             $this->db->query("DELETE FROM mlm_rank_benefits WHERE id = ?" . $tSql, [(int)$id, ...$tParams]);
@@ -309,6 +325,7 @@ public function mlmLevelStore()
     // ===== MLM Commission Ledger =====
     public function mlmRecords()
     {
+        $this->requireAdmin();
         try {
             $this->data['records'] = $this->db->fetchAll(
                 "SELECT mcl.*, u.name as associate_name FROM mlm_commission_ledger mcl
@@ -324,6 +341,7 @@ public function mlmLevelStore()
 
     public function mlmRecordStatus($id)
     {
+        $this->requireAdmin();
         $status = $_POST['status'] ?? 'approved';
         if (!in_array($status, ['approved','paid','cancelled'])) { $status = 'approved'; }
         try {
@@ -338,6 +356,7 @@ public function mlmLevelStore()
     // ===== MLM Commission Analytics (aggregated from ledger) =====
     public function mlmAnalytics()
     {
+        $this->requireAdmin();
         try {
             // Per-user commission summary from ledger
             $this->data['analytics'] = $this->db->fetchAll(
@@ -369,6 +388,7 @@ public function mlmLevelStore()
     // Legacy table was dropped during ledger consolidation — redirects to live ledger
     public function mlmLedgerLegacy()
     {
+        $this->requireAdmin();
         try {
             $this->data['ledger'] = $this->db->fetchAll(
                 "SELECT mcl.*, u.name as associate_name FROM mlm_commission_ledger mcl
@@ -387,6 +407,7 @@ public function mlmLevelStore()
     // Aggregates daily commission from mlm_commission_ledger (no separate table needed)
     public function revenueDaily()
     {
+        $this->requireAdmin();
         try {
             $this->data['daily'] = $this->db->fetchAll(
                 "SELECT DATE(mcl.created_at) as stat_date, mcl.beneficiary_user_id, u.name as agent_name,
@@ -411,6 +432,7 @@ public function mlmLevelStore()
 
     public function revenueDailyStore()
     {
+        $this->requireAdmin();
         $this->validateCsrfOrFail();
         $this->setFlash('info', 'Daily revenue is auto-calculated from commission ledger entries. No manual entry needed.');
         return $this->redirect('admin/commission/revenue/daily');
@@ -418,6 +440,7 @@ public function mlmLevelStore()
 
     public function revenueDailyDelete($id)
     {
+        $this->requireAdmin();
         $this->setFlash('info', 'Revenue records are auto-generated from the commission ledger and cannot be deleted individually.');
         return $this->redirect('admin/commission/revenue/daily');
     }
@@ -425,6 +448,7 @@ public function mlmLevelStore()
     // ===== Telecaller Commission Rules =====
     public function telecallerRules()
     {
+        $this->requireAdmin();
         try {
             $this->data['rules'] = $this->db->fetchAll("SELECT * FROM telecaller_commission_rules ORDER BY commission_type");
             $this->data['page_title'] = 'Telecaller Commission Rules';
@@ -437,6 +461,7 @@ public function mlmLevelStore()
 
     public function telecallerRuleStore()
     {
+        $this->requireAdmin();
         $this->validateCsrfOrFail();
         try {
             $tid = $this->tenantId();
@@ -455,6 +480,7 @@ public function mlmLevelStore()
 
     public function telecallerRuleToggle($id)
     {
+        $this->requireAdmin();
         try {
             $r = $this->db->fetchOne("SELECT is_active FROM telecaller_commission_rules WHERE id = ?", [(int)$id]);
             $new = $r ? ($r['is_active'] ? 0 : 1) : 0;
@@ -468,6 +494,7 @@ public function mlmLevelStore()
 
     public function telecallerRuleDelete($id)
     {
+        $this->requireAdmin();
         try {
             $this->db->query("DELETE FROM telecaller_commission_rules WHERE id = ? AND tenant_id = ?", [(int)$id, $this->tenantId()]);
             $this->setFlash('success', 'Rule deleted');
@@ -480,6 +507,7 @@ public function mlmLevelStore()
     // ===== Telecaller Commissions =====
     public function telecallerCommissions()
     {
+        $this->requireAdmin();
         try {
             $this->data['commissions'] = $this->db->fetchAll(
                 "SELECT tc.*, u.name as telecaller_name, l.name as lead_name, tcr.rule_name
@@ -501,6 +529,7 @@ public function mlmLevelStore()
 
     public function telecallerCommissionApprove($id)
     {
+        $this->requireAdmin();
         try {
             $this->db->query("UPDATE telecaller_commissions SET status = 'approved', approved_by = ?, approved_at = NOW() WHERE id = ? AND tenant_id = ?", [
                 (int)($_SESSION['admin_id'] ?? 0), (int)$id, $this->tenantId()
@@ -514,6 +543,7 @@ public function mlmLevelStore()
 
     public function telecallerCommissionPay($id)
     {
+        $this->requireAdmin();
         try {
             $this->db->query("UPDATE telecaller_commissions SET status = 'paid', approved_at = NOW() WHERE id = ? AND status = 'approved' AND tenant_id = ?", [(int)$id, $this->tenantId()]);
             $this->setFlash('success', 'Commission marked as paid');
@@ -526,6 +556,7 @@ public function mlmLevelStore()
     // Legacy method stubs (keep for backward compat) - NOW WIRED TO REAL DATA
     public function rules()
     {
+        $this->requireAdmin();
         $this->data['page_title'] = 'Commission Rules';
         try {
             $this->data['rules'] = $this->db->fetchAll("SELECT * FROM telecaller_commission_rules ORDER BY commission_type");
@@ -538,12 +569,14 @@ public function mlmLevelStore()
     }
     public function createRule()
     {
+        $this->requireAdmin();
         $this->data['page_title'] = 'Create Commission Rule';
         $this->data['rule_types'] = ['direct_sale','mlm_level_1','mlm_level_2','mlm_level_3','performance_bonus','team_bonus','royalty_pool'];
         return $this->render('admin/commission/create_rule', $this->data);
     }
     public function editRule($id)
     {
+        $this->requireAdmin();
         $this->data['page_title'] = 'Edit Commission Rule';
         try {
             $this->data['rule'] = $this->db->fetch("SELECT * FROM telecaller_commission_rules WHERE id=?", [(int)$id]);
@@ -555,6 +588,7 @@ public function mlmLevelStore()
     }
     public function calculations()
     {
+        $this->requireAdmin();
         $this->data['page_title'] = 'Commission Calculations';
         try {
             $this->data['calculations'] = $this->db->fetchAll(
@@ -569,6 +603,7 @@ public function mlmLevelStore()
     }
     public function payments()
     {
+        $this->requireAdmin();
         $this->data['page_title'] = 'Commission Payments';
         try {
             $this->data['payouts'] = $this->db->fetchAll(
@@ -583,6 +618,7 @@ public function mlmLevelStore()
     }
     public function reports()
     {
+        $this->requireAdmin();
         $this->data['page_title'] = 'Commission Reports';
         try {
             $this->data['summary'] = $this->db->fetch("
@@ -606,6 +642,7 @@ public function mlmLevelStore()
     }
     public function payouts()
     {
+        $this->requireAdmin();
         try {
             $this->data['page_title'] = 'Commission Payouts';
 
@@ -649,6 +686,7 @@ public function mlmLevelStore()
     }
     public function commissionsList()
     {
+        $this->requireAdmin();
         try {
             // Real stats from mlm_commission_ledger
             $ledger = $this->db->fetchOne("SELECT COUNT(*) as c, COALESCE(SUM(amount),0) as total, COALESCE(SUM(CASE WHEN status='paid' THEN amount ELSE 0 END),0) as paid, COALESCE(SUM(CASE WHEN status='pending' THEN amount ELSE 0 END),0) as pending FROM mlm_commission_ledger") ?? ['c'=>0,'total'=>0,'paid'=>0,'pending'=>0];
@@ -670,6 +708,7 @@ public function mlmLevelStore()
 
     public function reconciliation()
     {
+        $this->requireAdmin();
         try {
             $service = new \App\Services\MLM\CommissionReconciliationService();
             $this->data['data'] = $service->reconcile();

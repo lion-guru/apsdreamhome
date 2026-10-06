@@ -29,6 +29,7 @@ class PaymentController extends AdminController
      */
     public function index()
     {
+        $this->requireAdmin();
         try {
             $search = $_GET['search'] ?? '';
             $status = $_GET['status'] ?? '';
@@ -108,6 +109,7 @@ class PaymentController extends AdminController
      */
     public function dashboardStats()
     {
+        $this->requireAdmin();
         try {
             $stats = $this->getDashboardStats();
             return $this->jsonResponse([
@@ -128,6 +130,7 @@ class PaymentController extends AdminController
      */
     public function show($id)
     {
+        $this->requireAdmin();
         try {
             $paymentId = intval($id);
             if ($paymentId <= 0) {
@@ -192,6 +195,7 @@ class PaymentController extends AdminController
      */
     public function processPayment($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -272,6 +276,7 @@ class PaymentController extends AdminController
      */
     public function refundPayment($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -351,6 +356,7 @@ class PaymentController extends AdminController
      */
     public function analytics()
     {
+        $this->requireAdmin();
         try {
             $data = [
                 'page_title' => 'Payment Analytics - APS Dream Home',
@@ -500,6 +506,7 @@ class PaymentController extends AdminController
      */
     public function export()
     {
+        $this->requireAdmin();
         try {
             $format = $_GET['format'] ?? 'csv';
             $type = $_GET['type'] ?? 'all';

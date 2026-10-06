@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\AdminController;
 use App\Services\WorkspaceHubService;
 use App\Http\Middleware\RBACManager;
 

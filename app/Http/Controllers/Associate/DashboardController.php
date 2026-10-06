@@ -139,7 +139,7 @@ class DashboardController extends BaseController
                 $emiThisMonth = (float)$stmt->fetchColumn();
             }
 
-            // Team monthly sales volume per generation (L1/L2/L3): sqft + value + deals
+// Team monthly sales volume per generation (L1/L2/L3): sqft + value + deals
             // closed this month by downline associates (plot_bookings via associates.user_id).
             $teamVolume = ['L1' => ['sqft' => 0, 'value' => 0, 'deals' => 0], 'L2' => ['sqft' => 0, 'value' => 0, 'deals' => 0], 'L3' => ['sqft' => 0, 'value' => 0, 'deals' => 0]];
             try {
@@ -173,6 +173,15 @@ class DashboardController extends BaseController
                 }
             } catch (\Throwable $e) {
                 error_log('Associate dashboard team volume: ' . $e->getMessage());
+            }
+
+            // Referral Earnings Breakdown
+            $referralEarningsBreakdown = [];
+            try {
+                $referralSvc = new \App\Services\ReferralService();
+                $referralEarningsBreakdown = $referralSvc->getReferralEarningsBreakdown($userId);
+            } catch (\Throwable $e) {
+                error_log('Associate dashboard referral earnings: ' . $e->getMessage());
             }
 
             // Load gamification badges and level metrics
@@ -215,6 +224,7 @@ class DashboardController extends BaseController
                 'user_rank' => $userRank,
                 'user_points' => $userPoints,
                 'user_level' => $userLevel,
+                'referral_earnings_breakdown' => $referralEarningsBreakdown,
             ], 'layouts/associate');
 
         } catch (\Throwable $e) {

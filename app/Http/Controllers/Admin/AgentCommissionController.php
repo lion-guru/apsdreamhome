@@ -1,7 +1,6 @@
 <?php
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\AdminController;
 use App\Traits\TenantAwareTrait;
 
 class AgentCommissionController extends AdminController {
@@ -107,7 +106,7 @@ class AgentCommissionController extends AdminController {
         $tid = (int)$this->tenantId();
         $propertyId = (int)($_POST['property_id'] ?? 0);
         $agentId = (int)($_POST['agent_user_id'] ?? 0);
-        $commissionPct = (float)($_POST['commission_pct'] ?? 0);
+        $commissionPct = ($_POST['commission_pct'] ?? '') === '' ? null : (float)($_POST['commission_pct'] ?? 0);
 
         if ($propertyId > 0 && $agentId > 0) {
             $this->db->query(

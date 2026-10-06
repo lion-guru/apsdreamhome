@@ -30,6 +30,7 @@ class EngagementController extends AdminController
      */
     public function index()
     {
+        $this->requireAdmin();
         try {
             // Get engagement metrics
             $sql = "SELECT 
@@ -105,6 +106,7 @@ class EngagementController extends AdminController
      */
     public function goals()
     {
+        $this->requireAdmin();
         try {
             $sql = "SELECT * FROM engagement_goals ORDER BY priority ASC";
             $stmt = $this->db->prepare($sql);
@@ -135,6 +137,7 @@ class EngagementController extends AdminController
      */
     public function createGoal()
     {
+        $this->requireAdmin();
         try {
             $data = [
                 'page_title' => 'Create Engagement Goal - APS Dream Home',
@@ -156,6 +159,7 @@ class EngagementController extends AdminController
      */
     public function storeGoal()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -237,6 +241,7 @@ class EngagementController extends AdminController
      */
     public function updateGoalProgress($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }

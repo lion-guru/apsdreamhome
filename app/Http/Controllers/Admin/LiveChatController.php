@@ -18,6 +18,7 @@ class LiveChatController extends AdminController
 
     public function index()
     {
+        $this->requireAdmin();
         $status = $_GET['status'] ?? 'open';
         $sessions = $this->service ? $this->service->getSessions($status, 100) : [];
         $stats = $this->service ? $this->service->getStats() : [];
@@ -34,6 +35,7 @@ class LiveChatController extends AdminController
 
     public function open($id = 0)
     {
+        $this->requireAdmin();
         $id = is_numeric($id) ? (int)$id : (int)($_GET['id'] ?? 0);
         if (!$this->service || !$id) {
             return $this->redirect(BASE_URL . '/admin/live-chat');
@@ -57,6 +59,7 @@ class LiveChatController extends AdminController
 
     public function send()
     {
+        $this->requireAdmin();
         $sessionId = (int)($_POST['session_id'] ?? 0);
         $message = trim($_POST['message'] ?? '');
         $isInternal = !empty($_POST['is_internal']);
@@ -77,6 +80,7 @@ class LiveChatController extends AdminController
 
     public function poll()
     {
+        $this->requireAdmin();
         $sessionId = (int)($_GET['session_id'] ?? 0);
         $lastId = (int)($_GET['last_id'] ?? 0);
         if (!$this->service || !$sessionId) {
@@ -100,6 +104,7 @@ class LiveChatController extends AdminController
 
     public function assign()
     {
+    $this->requireAdmin();
         $sessionId = (int)($_GET['id'] ?? 0);
         if ($this->service && $sessionId) {
             $this->service->assignAgent($sessionId, $this->getUserId(), $this->getUserName());
@@ -109,6 +114,7 @@ class LiveChatController extends AdminController
 
     public function close()
     {
+        $this->requireAdmin();
         $sessionId = (int)($_GET['id'] ?? 0);
         $reason = $_GET['reason'] ?? null;
         if ($this->service && $sessionId) {
@@ -119,6 +125,7 @@ class LiveChatController extends AdminController
 
     public function settings()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $allowed = ['widget_enabled','widget_position','widget_color','widget_title','widget_subtitle','business_hours_only','business_hours_start','business_hours_end','auto_assign','welcome_message','offline_message'];
             foreach ($allowed as $k) {
@@ -143,6 +150,7 @@ class LiveChatController extends AdminController
 
     public function quickReplies()
     {
+        $this->requireAdmin();
         $replies = $this->service ? $this->service->getQuickReplies() : [];
         return $this->render('admin.live_chat.quick_replies', [
             'page_title' => 'Quick Replies',
@@ -153,6 +161,7 @@ class LiveChatController extends AdminController
 
     public function api()
     {
+        $this->requireAdmin();
         header('Content-Type: application/json');
         $action = $_GET['action'] ?? '';
         switch ($action) {

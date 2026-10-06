@@ -6,6 +6,7 @@ class AIAnalyticsController extends AdminController
 {
     public function index()
     {
+        $this->requireAdmin();
         $this->data['page_title'] = 'AI Analytics';
         $this->data['analytics'] = [];
         $this->render('admin/ai/analytics');
@@ -13,6 +14,7 @@ class AIAnalyticsController extends AdminController
 
     public function reports()
     {
+        $this->requireAdmin();
         $this->data['page_title'] = 'AI Reports';
         try {
             $db = $this->db;
@@ -51,6 +53,7 @@ class AIAnalyticsController extends AdminController
 
     public function insights()
     {
+        $this->requireAdmin();
         $this->data['page_title'] = 'AI Insights';
         try {
             $db = $this->db;

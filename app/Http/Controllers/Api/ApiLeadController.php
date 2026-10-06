@@ -1,4 +1,4 @@
-<?php
+?php
 
 namespace App\Http\Controllers\Api;
 
@@ -342,7 +342,7 @@ class ApiLeadController extends BaseController
 
             $file = $_FILES['file'];
 
-            $v = UploadValidator::validate($file, ['types' => 'documents']);
+            $v = \UploadValidator::validate($file, ['types' => 'documents']);
             if (empty($v['valid'])) {
                 $this->jsonError($v['error'] ?? 'Invalid file', 422);
             }
@@ -350,7 +350,7 @@ class ApiLeadController extends BaseController
             $currentUser = $this->getCurrentUser();
 
             // Generate unique filename
-            $safeName = UploadValidator::safeFilename($file['name']);
+            $safeName = \UploadValidator::safeFilename($file['name']);
             $filename = 'lead_' . $lead->id . '_' . time() . '_' . $safeName;
 
             // Create upload directory if it doesn't exist

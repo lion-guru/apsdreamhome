@@ -6,8 +6,12 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Traits\TenantAwareTrait;
+
 class BankController extends BaseApiController
 {
+    use TenantAwareTrait;
+    
     public function __construct()
     {
         parent::__construct();
@@ -22,12 +26,17 @@ class BankController extends BaseApiController
     {
         $search = substr($_GET['q'] ?? '', 0, 200);
         
-        $sql = "SELECT id, name, short_name FROM banks WHERE is_active = 1";
+        $tid = (int)$this->tenantId();
+        $tidSql = $tid > 1 ? ' AND tenant_id = ?' : '';
         $params = [];
+        if ($tid > 1) $params[] = $tid;
+        
+        $sql = "SELECT id, name, short_name FROM banks WHERE is_active = 1{$tidSql}";
         
         if ($search) {
             $sql .= " AND (name LIKE ? OR short_name LIKE ?)";
-            $params = ["%$search%", "%$search%"];
+            $params[] = "%$search%";
+            $params[] = "%$search%";
         }
         
         $sql .= " ORDER BY name LIMIT 30";
@@ -47,10 +56,16 @@ class BankController extends BaseApiController
         $bankId = intval($bankId);
         
         try {
+            $tid = (int)$this->tenantId();
+            $tidSql = $tid > 1 ? ' AND tenant_id = ?' : '';
+            $params = [$bankId];
+            if ($tid > 1) $params[] = $tid;
+            
             $sql = "SELECT id, ifsc_code as ifsc, branch_name as branch, city, district, state, pincode, address
                     FROM bank_branches 
-                    WHERE is_active = 1";
-            $params = [];
+                    WHERE is_active = 1 AND bank_id = ?{$tidSql}";
+            $params = [$bankId];
+            if ($tid > 1) $params[] = $tid;
             
             if ($search) {
                 $sql .= " AND (branch_name LIKE ? OR city LIKE ?)";
@@ -81,13 +96,18 @@ class BankController extends BaseApiController
         }
         
         try {
-            $result = \App\Services\LookupCacheService::remember("ifsc:$ifsc", 3600, function() use ($ifsc) {
+            $tid = (int)$this->tenantId();
+            $tidSql = $tid > 1 ? ' AND bb.tenant_id = ?' : '';
+            $params = [$ifsc];
+            if ($tid > 1) $params[] = $tid;
+            
+            $result = \App\Services\LookupCacheService::remember("ifsc:$ifsc", 3600, function() use ($ifsc, $tidSql, $params) {
                 $sql = "SELECT bb.ifsc_code as ifsc, bb.branch_name as branch, bb.address, bb.city, bb.district, bb.state, bb.pincode,
-                               b.id as bank_id, b.name as bank_name, b.short_name as bank_short
-                        FROM bank_branches bb
-                        LEFT JOIN banks b ON bb.bank_id = b.id
-                        WHERE bb.ifsc_code = ? AND bb.is_active = 1";
-                return $this->db->fetch($sql, [$ifsc]);
+                           b.id as bank_id, b.name as bank_name, b.short_name as bank_short
+                     FROM bank_branches bb
+                     LEFT JOIN banks b ON bb.bank_id = b.id
+                     WHERE bb.ifsc_code = ? AND bb.is_active = 1{$tidSql}";
+                return $this->db->fetch($sql, $params);
             });
         } catch (\Exception $e) {
             $result = null;
@@ -108,9 +128,13 @@ class BankController extends BaseApiController
             ]);
         } else {
             try {
+                $tid = (int)$this->tenantId();
+                $tidSql = $tid > 1 ? ' AND tenant_id = ?' : '';
+                $params = [substr($ifsc, 0, 4)];
+                if ($tid > 1) $params[] = $tid;
                 $sql2 = "SELECT b.name as bank_name FROM banks b 
-                         WHERE b.is_active = 1 AND b.short_name = ?";
-                $bank = $this->db->fetch($sql2, [substr($ifsc, 0, 4)]);
+                         WHERE b.is_active = 1 AND b.short_name = ?{$tidSql}";
+                $bank = $this->db->fetch($sql2, $params);
             } catch (\Exception $e) {
                 $bank = null;
             }
@@ -138,17 +162,24 @@ class BankController extends BaseApiController
         }
         
         try {
+            $tid = (int)$this->tenantId();
+            $tidSql = $tid > 1 ? ' AND bb.tenant_id = ?' : '';
+            $params = [];
+            if ($tid > 1) $params[] = $tid;
+            
             $sql = "SELECT bb.id, bb.ifsc_code as ifsc, bb.branch_name as branch, bb.city, b.name as bank_name
                     FROM bank_branches bb
                     LEFT JOIN banks b ON bb.bank_id = b.id
                     WHERE bb.is_active = 1 AND (
                         bb.ifsc_code LIKE ? OR bb.branch_name LIKE ? OR b.name LIKE ? OR bb.city LIKE ?
-                    )
+                    ){$tidSql}
                     ORDER BY bb.branch_name
                     LIMIT 30";
             
             $searchParam = "%$search%";
-            $branches = $this->db->fetchAll($sql, [$searchParam, $searchParam, $searchParam, $searchParam]);
+            $params = [$searchParam, $searchParam, $searchParam, $searchParam];
+            if ($tid > 1) $params[] = $tid;
+            $branches = $this->db->fetchAll($sql, $params);
         } catch (\Exception $e) {
             $branches = [];
         }

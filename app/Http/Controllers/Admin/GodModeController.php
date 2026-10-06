@@ -26,6 +26,7 @@ class GodModeController extends AdminController
      */
     public function dashboard()
     {
+        $this->requireAdmin();
         // Check if super admin
         if (!$this->isSuperAdmin()) {
             return $this->redirect('/admin', ['error' => 'Access denied. God Mode requires Super Admin privileges.']);
@@ -157,7 +158,7 @@ class GodModeController extends AdminController
         }
 
         $role = $_POST['role'] ?? null;
-        $allowedRoles = ['superadmin', 'admin', 'manager', 'agent', 'associate', 'customer', 'employee'];
+        $allowedRoles = ['super_admin', 'admin', 'manager', 'agent', 'associate', 'customer', 'employee'];
 
         if (!in_array($role, $allowedRoles)) {
             return $this->json(['error' => 'Invalid role'], 400);
@@ -446,7 +447,7 @@ class GodModeController extends AdminController
             'agent' => '/agent/dashboard',
             'employee' => '/employee/dashboard',
             'admin' => '/admin/dashboard',
-            'superadmin' => '/admin/dashboard'
+            'super_admin' => '/admin/dashboard'
         ];
 
         return $dashboards[$role] ?? '/user/dashboard';

@@ -17,6 +17,7 @@ class AuctionController extends AdminController
 
     public function index()
     {
+        $this->requireAdmin();
         $status = $_GET['status'] ?? null;
         $auctions = $this->service ? $this->service->getAllAuctions($status) : [];
         $stats = $this->service ? $this->service->getStats() : [];
@@ -32,6 +33,7 @@ class AuctionController extends AdminController
 
     public function create()
     {
+        $this->requireAdmin();
         $properties = $this->fetchProperties();
         return $this->render('admin.auctions.create', [
             'page_title' => 'Create Auction',
@@ -42,15 +44,16 @@ class AuctionController extends AdminController
 
     public function store()
     {
+        $this->requireAdmin();
         if (!$this->service) return $this->redirect(BASE_URL . '/admin/auctions');
         $data = [
             'property_id' => $_POST['property_id'] ?: null,
             'title' => $_POST['title'] ?? '',
             'description' => $_POST['description'] ?? null,
             'auction_type' => $_POST['auction_type'] ?? 'english',
-            'start_price' => (float)($_POST['start_price'] ?? 0),
+            'start_price' => ($_POST['start_price'] ?? '') === '' ? null : (float)($_POST['start_price'] ?? 0),
             'reserve_price' => $_POST['reserve_price'] ? (float)$_POST['reserve_price'] : null,
-            'bid_increment' => (float)($_POST['bid_increment'] ?? 1000),
+            'bid_increment' => ($_POST['bid_increment'] ?? '') === '' ? null : (float)($_POST['bid_increment'] ?? 1000),
             'buy_now_price' => $_POST['buy_now_price'] ? (float)$_POST['buy_now_price'] : null,
             'deposit_amount' => $_POST['deposit_amount'] ? (float)$_POST['deposit_amount'] : null,
             'starts_at' => $_POST['starts_at'] ?? date('Y-m-d H:i:s'),
@@ -80,6 +83,7 @@ class AuctionController extends AdminController
 
     public function show($id = 0)
     {
+        $this->requireAdmin();
         $id = is_numeric($id) ? (int)$id : 0;
         if (!$this->service || !$id) return $this->redirect(BASE_URL . '/admin/auctions');
         $auction = $this->service->getAuctionById($id);
@@ -100,6 +104,7 @@ class AuctionController extends AdminController
 
     public function start($id = 0)
     {
+        $this->requireAdmin();
         $id = is_numeric($id) ? (int)$id : (int)($_GET['id'] ?? 0);
         if ($this->service && $id) $this->service->startAuction($id);
         return $this->redirect(BASE_URL . '/admin/auctions/show/' . $id);
@@ -107,6 +112,7 @@ class AuctionController extends AdminController
 
     public function end($id = 0)
     {
+        $this->requireAdmin();
         $id = is_numeric($id) ? (int)$id : (int)($_GET['id'] ?? 0);
         if ($this->service && $id) {
             $result = $this->service->endAuction($id);
@@ -117,6 +123,7 @@ class AuctionController extends AdminController
 
     public function cancel($id = 0)
     {
+        $this->requireAdmin();
         $id = is_numeric($id) ? (int)$id : (int)($_GET['id'] ?? 0);
         if ($this->service && $id) {
             $this->service->cancelAuction($id, $_GET['reason'] ?? null);
@@ -127,6 +134,7 @@ class AuctionController extends AdminController
 
     public function delete($id = 0)
     {
+        $this->requireAdmin();
         $id = is_numeric($id) ? (int)$id : (int)($_GET['id'] ?? 0);
         if ($id) {
             try {
@@ -146,6 +154,7 @@ class AuctionController extends AdminController
 
     public function processEnding()
     {
+        $this->requireAdmin();
         if ($this->service) {
             $count = $this->service->processEndingAuctions();
             $this->setFlash('success', "Processed $count ending auctions");

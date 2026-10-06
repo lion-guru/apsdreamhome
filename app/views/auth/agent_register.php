@@ -363,6 +363,58 @@ $base = BASE_URL;
             color: rgba(255, 255, 255, 0.7);
         }
 
+        /* Social Login Buttons */
+        .social-divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0
+        }
+        .social-divider::before,
+        .social-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #e0e0e0, transparent)
+        }
+        .social-divider span {
+            padding: 0 1rem;
+            font-size: .85rem;
+            color: #6c757d;
+            font-weight: 500
+        }
+        .social-buttons {
+            display: flex;
+            gap: .75rem
+        }
+        .social-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            padding: 10px 14px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            background: #fff;
+            cursor: pointer;
+            font-size: .8rem;
+            color: #475569;
+            font-weight: 500;
+            font-family: inherit;
+            text-decoration: none;
+            transition: all .2s
+        }
+        .social-btn:hover {
+            border-color: #059669;
+            background: #f0fdfa;
+            color: #059669
+        }
+        .social-btn.google {
+            color: #ea4335
+        }
+        .social-btn.facebook {
+            color: #1877f2
+        }
+
         @media (max-width: 576px) {
             body {
                 padding: 1rem 0.75rem;
@@ -512,12 +564,24 @@ $base = BASE_URL;
 <div class="input-group-custom">
                      <i class="fa-solid fa-ticket"></i>
                      <label class="form-label-custom"><?php echo __('auth_referral_code', 'Referral Code'); ?> <span class="required-badge">*</span></label>
-                     <input type="text" class="form-control" name="referral_code" placeholder="<?php echo __('auth_enter_referral', 'Enter referral code'); ?>" required value="<?php echo htmlspecialchars($old['referral_code'] ?? ''); ?>">
+                     <input type="text" class="form-control" name="referral_code" placeholder="<?php echo __('auth_enter_referral', 'Enter referral code'); ?>" required value="<?php echo htmlspecialchars($old['referral_code'] ?? $_GET['ref'] ?? $_COOKIE['aps_ref'] ?? (isset($_SESSION) ? ($_SESSION['aps_ref'] ?? '') : '')); ?>">
                  </div>
                  <div id="sponsor_name_display" class="mt-2"></div>
 
                 <div class="terms-text text-center mb-3">
                     <?php echo __('auth_terms_prefix', 'By registering, you agree to our'); ?> <a href="<?php echo e($base); ?>/terms" target="_blank" rel="noopener"><?php echo __('auth_terms', 'Terms of Service'); ?></a> and <a href="<?php echo e($base); ?>/privacy" target="_blank" rel="noopener"><?php echo __('auth_privacy_policy', 'Privacy Policy'); ?></a>.
+                </div>
+
+                <div class="social-divider">
+                    <span>OR CONTINUE WITH</span>
+                </div>
+                <div class="social-buttons">
+                    <a href="<?php echo e($base); ?>/auth/google" class="social-btn google">
+                        <i class="fab fa-google"></i> Google
+                    </a>
+                    <a href="<?php echo e($base); ?>/auth/facebook" class="social-btn facebook">
+                        <i class="fab fa-facebook-f"></i> Facebook
+                    </a>
                 </div>
 
                 

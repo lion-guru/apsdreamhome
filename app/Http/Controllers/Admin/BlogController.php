@@ -13,6 +13,7 @@ class BlogController extends AdminController
 
     public function index()
     {
+    $this->requireAdmin();
         try {
             $stmt = $this->db->query("SELECT * FROM blog_posts ORDER BY created_at DESC");
             $blogs = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -24,11 +25,13 @@ class BlogController extends AdminController
 
     public function create()
     {
+        $this->requireAdmin();
         $this->render("admin/blogs/create", ['page_title' => 'Create Blog Post']);
     }
 
     public function store()
     {
+        $this->requireAdmin();
         $title = $_POST['title'] ?? '';
         $content = $_POST['content'] ?? '';
         $status = $_POST['status'] ?? 'draft';
@@ -46,6 +49,7 @@ class BlogController extends AdminController
 
     public function edit($id)
     {
+        $this->requireAdmin();
         try {
             $stmt = $this->db->prepare("SELECT * FROM blog_posts WHERE id = ?");
             $stmt->execute([$id]);
@@ -63,6 +67,7 @@ class BlogController extends AdminController
 
     public function update($id)
     {
+        $this->requireAdmin();
         $title = $_POST['title'] ?? '';
         $content = $_POST['content'] ?? '';
         $status = $_POST['status'] ?? 'draft';
@@ -79,6 +84,7 @@ class BlogController extends AdminController
 
     public function destroy($id)
     {
+        $this->requireAdmin();
         try {
             [$tenantSql, $tenantParams] = $this->tenantWhere();
             $stmt = $this->db->prepare("DELETE FROM blog_posts WHERE id = ? $tenantSql");

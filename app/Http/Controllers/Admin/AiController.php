@@ -41,6 +41,7 @@ class AiController extends AdminController
      */
     public function hub()
     {
+        $this->requireAdmin();
         try {
             $db = \App\Core\Database\Database::getInstance();
             $campaigns = [];
@@ -67,6 +68,7 @@ class AiController extends AdminController
      */
     public function analytics()
     {
+        $this->requireAdmin();
         try {
             $data = [
                 'page_title' => 'AI Analytics - APS Dream Home',
@@ -88,6 +90,7 @@ class AiController extends AdminController
      */
     public function leadScoring()
     {
+        $this->requireAdmin();
         try {
             $data = [
                 'page_title' => 'AI Lead Scoring - APS Dream Home',
@@ -109,6 +112,7 @@ class AiController extends AdminController
      */
     public function propertyRecommendations()
     {
+        $this->requireAdmin();
         try {
             $data = [
                 'page_title' => 'AI Property Recommendations - APS Dream Home',
@@ -130,6 +134,7 @@ class AiController extends AdminController
      */
     public function chatbot()
     {
+        $this->requireAdmin();
         try {
             $data = [
                 'page_title' => 'AI Chatbot Management - APS Dream Home',
@@ -151,6 +156,7 @@ class AiController extends AdminController
      */
     public function settings()
     {
+        $this->requireAdmin();
         try {
             $data = [
                 'page_title' => 'AI Settings - APS Dream Home',
@@ -171,6 +177,7 @@ class AiController extends AdminController
      */
     public function processRequest()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonResponse(['success' => false, 'message' => 'Invalid request method'], 400);
         }

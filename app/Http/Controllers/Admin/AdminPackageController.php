@@ -29,11 +29,11 @@ class AdminPackageController extends AdminController
             $this->validateCsrfOrFail();
             $name = trim($_POST['name'] ?? '');
             $slug = trim($_POST['slug'] ?? '');
-            $price = (float)($_POST['price'] ?? 0);
-            $durationDays = (int)($_POST['duration_days'] ?? 30);
+            $price = ($_POST['price'] ?? '') === '' ? null : (float)($_POST['price'] ?? 0);
+            $durationDays = ($_POST['duration_days'] ?? '') === '' ? null : (int)($_POST['duration_days'] ?? 30);
             $badgeLabel = trim($_POST['badge_label'] ?? 'Featured');
             $badgeColor = trim($_POST['badge_color'] ?? '#ff6b35');
-            $priority = (int)($_POST['priority_order'] ?? 0);
+            $priority = ($_POST['priority_order'] ?? '') === '' ? null : (int)($_POST['priority_order'] ?? 0);
             $isActive = isset($_POST['is_active']) ? 1 : 0;
             $features = [];
             for ($i = 1; $i <= 10; $i++) {

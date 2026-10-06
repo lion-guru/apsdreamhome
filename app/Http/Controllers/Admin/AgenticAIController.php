@@ -51,6 +51,7 @@ class AgenticAIController extends AdminController
      */
     public function index()
     {
+        $this->requireAdmin();
         $db = $this->db;
         $userId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
 
@@ -120,6 +121,7 @@ class AgenticAIController extends AdminController
      */
     public function agent($agentType)
     {
+        $this->requireAdmin();
         if (!isset($this->agents[$agentType])) {
             header('Location: /admin/agentic-ai');
             exit;
@@ -166,6 +168,7 @@ class AgenticAIController extends AdminController
      */
     public function autoReply()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $settings = [
                 'auto_reply_enabled' => isset($_POST['auto_reply_enabled']) ? 1 : 0,
@@ -209,6 +212,7 @@ class AgenticAIController extends AdminController
      */
     public function conversations()
     {
+        $this->requireAdmin();
         $db = $this->db;
         try {
             $conversations = $db->fetchAll("SELECT ac.*, l.name as lead_name, l.phone as lead_phone,
@@ -230,6 +234,7 @@ class AgenticAIController extends AdminController
      */
     public function conversation($id)
     {
+        $this->requireAdmin();
         $db = $this->db;
         try {
             $conv = $db->fetch("SELECT ac.*, l.name as lead_name, l.phone as lead_phone
@@ -251,6 +256,7 @@ class AgenticAIController extends AdminController
      */
     public function logs()
     {
+        $this->requireAdmin();
         $db = $this->db;
         $filter = $_GET['agent'] ?? '';
         $date = $_GET['date'] ?? date('Y-m-d');
@@ -320,6 +326,7 @@ class AgenticAIController extends AdminController
 
     public function sendMessage()
     {
+        $this->requireAdmin();
         header('Content-Type: application/json');
         $input = json_decode(file_get_contents('php://input'), true);
         $convId = $input['conversation_id'] ?? 0;
@@ -347,6 +354,7 @@ class AgenticAIController extends AdminController
 
     public function claimConversation()
     {
+        $this->requireAdmin();
         header('Content-Type: application/json');
         $input = json_decode(file_get_contents('php://input'), true);
         $convId = $input['conversation_id'] ?? 0;
@@ -365,6 +373,7 @@ class AgenticAIController extends AdminController
 
     public function resolveConversation()
     {
+        $this->requireAdmin();
         header('Content-Type: application/json');
         $input = json_decode(file_get_contents('php://input'), true);
         $convId = $input['conversation_id'] ?? 0;
@@ -381,6 +390,7 @@ class AgenticAIController extends AdminController
 
     public function getMessages()
     {
+        $this->requireAdmin();
         header('Content-Type: application/json');
         $convId = $_GET['conversation_id'] ?? 0;
         $after = $_GET['after'] ?? '0000-00-00 00:00:00';

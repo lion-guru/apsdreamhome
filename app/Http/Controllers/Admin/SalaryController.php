@@ -47,6 +47,44 @@ class SalaryController extends AdminController
     }
 
     // ──────────────────────────────────────────────
+    // PAYROLL PERIODS (lock guard visibility + reopen)
+    // ──────────────────────────────────────────────
+
+    public function periods()
+    {
+        $this->requireAdmin();
+        try {
+            $svc = new \App\Services\PayrollPeriodService();
+            $periods = $svc->getAllPeriods();
+        } catch (\Exception $e) {
+            $periods = [];
+        }
+        return $this->render('admin/salary/periods', [
+            'page_title' => 'Payroll Periods',
+            'periods' => $periods
+        ]);
+    }
+
+    public function reopenPeriod()
+    {
+        $this->requireAdmin();
+        $month = (int)($_POST['month'] ?? 0);
+        $year = (int)($_POST['year'] ?? 0);
+        if (!$month || !$year) { $this->setFlash('error', 'Month and year required'); $this->redirect('/admin/salary/periods'); }
+        try {
+            $svc = new \App\Services\PayrollPeriodService();
+            if ($svc->reopenPeriod($month, $year)) {
+                $this->setFlash('success', "Period $month/$year reopened");
+            } else {
+                $this->setFlash('error', 'Period not found');
+            }
+        } catch (\Exception $e) {
+            $this->setFlash('error', $e->getMessage());
+        }
+        $this->redirect('/admin/salary/periods');
+    }
+
+    // ──────────────────────────────────────────────
     // ASSOCIATE SALARY DASHBOARD
     // ──────────────────────────────────────────────
 
@@ -865,9 +903,12 @@ class SalaryController extends AdminController
         $amount = (float)($_POST['salary_amount'] ?? 0);
         $bonus = (float)($_POST['signing_bonus'] ?? 0);
         $terms = $_POST['terms'] ?? '';
+        // signing_bonus has no column: preserve it inside terms instead of dropping it.
+        if ($bonus > 0) $terms .= ($terms !== '' ? "\n" : '') . 'Signing bonus: Rs.' . number_format($bonus, 2);
         $tid = (int)$this->tenantId();
         try {
-            $this->db->execute("INSERT INTO salary_contracts (employee_id, start_date, end_date, basic_salary, terms, status, tenant_id, created_at) VALUES (?,?,?,?,?,'active',?,NOW())", [$employee_id, $start, $end ?: null, $amount, $terms, $tid]);
+            $contractNo = 'CNT-' . date('Ym') . '-' . str_pad((string)random_int(1, 9999), 4, '0', STR_PAD_LEFT);
+            $this->db->execute("INSERT INTO salary_contracts (contract_number, employee_id, start_date, end_date, ctc, basic_salary, terms, status, tenant_id, created_at) VALUES (?,?,?,?,?,?,?,'active',?,NOW())", [$contractNo, $employee_id, $start, $end ?: null, $amount, $amount, $terms, $tid]);
             $this->logHistory($employee_id, 'contract_created', '0', "type=$type amount=$amount", (int)($_SESSION['admin_id'] ?? 0));
             $this->setFlash('success', 'Contract created');
         } catch (\Exception $e) {
@@ -1033,13 +1074,15 @@ class SalaryController extends AdminController
         $year = (int)($_GET['year'] ?? 0);
         [$tidSql, $tidParams] = $this->tenantWhere();
         try {
+            // salary_tracker table belongs to the MLM leadership system; the payroll
+            // tracker reads the canonical salary_payments ledger with view-compatible aliases.
+            $sql = "SELECT sp.*, u.name as employee_name, sp.payment_month AS month, sp.payment_year AS year, sp.gross_amount AS total_earnings, sp.deduction_amount AS total_deductions, sp.net_amount AS net_pay, CASE WHEN sp.payment_status='paid' THEN sp.net_amount ELSE 0 END AS paid_amount, CASE WHEN sp.payment_status='paid' THEN 0 ELSE sp.net_amount END AS due_amount FROM salary_payments sp LEFT JOIN users u ON sp.employee_id=u.id";
             $where = []; $params = [];
-            if ($employee_id) { $where[] = 't.user_id=?'; $params[] = $employee_id; }
-            if ($month) { $where[] = 't.month=?'; $params[] = $month; }
-            if ($year) { $where[] = 't.year=?'; $params[] = $year; }
-            $sql = "SELECT t.*, u.name as employee_name FROM salary_tracker t LEFT JOIN users u ON t.user_id=u.id";
+            if ($employee_id) { $where[] = 'sp.employee_id=?'; $params[] = $employee_id; }
+            if ($month) { $where[] = 'sp.payment_month=?'; $params[] = $month; }
+            if ($year) { $where[] = 'sp.payment_year=?'; $params[] = $year; }
             if ($where) $sql .= " WHERE " . implode(' AND ', $where);
-            $sql .= " ORDER BY t.year DESC, t.month DESC LIMIT 200";
+            $sql .= " ORDER BY sp.payment_year DESC, sp.payment_month DESC LIMIT 200";
             $tracker = $this->db->fetchAll($sql, $params) ?? [];
             $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' {$tidSql} ORDER BY name", $tidParams) ?? [];
         } catch (\Exception $e) {
@@ -1058,15 +1101,17 @@ class SalaryController extends AdminController
     public function updateTracker($id)
     {
         $this->requireAdmin();
-        $paid = (float)($_POST['paid_amount'] ?? 0);
         $status = $_POST['payment_status'] ?? 'pending';
+        // salary_payments.payment_status enum: pending/processed/paid/failed/cancelled
+        $allowed = ['pending', 'processed', 'paid', 'failed', 'cancelled'];
+        if (!in_array($status, $allowed, true)) $status = 'pending';
         $date = $_POST['payment_date'] ?? date('Y-m-d');
         try {
-            $current = $this->db->fetch("SELECT * FROM salary_tracker WHERE id=?", [$id]);
+            $current = $this->db->fetch("SELECT * FROM salary_payments WHERE id=?", [$id]);
             if (!$current) { $this->setFlash('error', 'Not found'); $this->redirect('/admin/salary/tracker'); }
             $tid = (int)$this->tenantId();
-            $this->db->execute("UPDATE salary_tracker SET status=? WHERE id=? AND tenant_id=?", [$status, $id, $tid]);
-            $this->logHistory($current['employee_id'], 'tracker_updated', $current['status'] ?? '', $status, (int)($_SESSION['admin_id'] ?? 0));
+            $this->db->execute("UPDATE salary_payments SET payment_status=?, payment_date=? WHERE id=? AND tenant_id=?", [$status, $date, $id, $tid]);
+            $this->logHistory($current['employee_id'], 'tracker_updated', $current['payment_status'] ?? '', $status, (int)($_SESSION['admin_id'] ?? 0));
             $this->setFlash('success', 'Tracker updated');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
@@ -1094,9 +1139,17 @@ class SalaryController extends AdminController
             if ($where) $sql .= " WHERE " . implode(' AND ', $where);
             $sql .= " ORDER BY sp.payment_date DESC";
             $payments = $this->db->fetchAll($sql, $params) ?? [];
-            $total_gross = array_sum(array_column($payments, 'gross_salary'));
-            $total_net = array_sum(array_column($payments, 'net_salary'));
-            $total_ded = array_sum(array_column($payments, 'total_deductions'));
+            // View compat: report.php reads legacy keys.
+            foreach ($payments as &$pr) {
+                $pr['gross_salary'] = $pr['gross_amount'] ?? 0;
+                $pr['total_deductions'] = $pr['deduction_amount'] ?? 0;
+                $pr['net_salary'] = $pr['net_amount'] ?? 0;
+                $pr['status'] = $pr['payment_status'] ?? 'pending';
+            }
+            unset($pr);
+            $total_gross = array_sum(array_column($payments, 'gross_amount'));
+            $total_net = array_sum(array_column($payments, 'net_amount'));
+            $total_ded = array_sum(array_column($payments, 'deduction_amount'));
             $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' {$tidSql} ORDER BY name", $tidParams) ?? [];
         } catch (\Exception $e) {
             $payments = []; $total_gross = 0; $total_net = 0; $total_ded = 0; $users = [];
@@ -1129,6 +1182,14 @@ class SalaryController extends AdminController
             if ($where) $sql .= " WHERE " . implode(' AND ', $where);
             $sql .= " ORDER BY sp.payment_date DESC";
             $rows = $this->db->fetchAll($sql, $params) ?? [];
+            // View compat: report.php reads legacy keys.
+            foreach ($rows as &$rr) {
+                $rr['gross_salary'] = $rr['gross_amount'] ?? 0;
+                $rr['total_deductions'] = $rr['deduction_amount'] ?? 0;
+                $rr['net_salary'] = $rr['net_amount'] ?? 0;
+                $rr['status'] = $rr['payment_status'] ?? 'pending';
+            }
+            unset($rr);
         } catch (\Exception $e) {
             $rows = [];
         }
@@ -1137,7 +1198,7 @@ class SalaryController extends AdminController
         $out = fopen('php://output', 'w');
         fputcsv($out, ['ID', 'Employee', 'Email', 'Gross', 'Deductions', 'Net', 'Date', 'Method', 'Status']);
         foreach ($rows as $r) {
-            fputcsv($out, [$r['id'], $r['employee_name'] ?? '', $r['employee_email'] ?? '', $r['gross_salary'] ?? 0, $r['total_deductions'] ?? 0, $r['net_salary'] ?? 0, $r['payment_date'] ?? '', $r['payment_method'] ?? '', $r['status'] ?? '']);
+            fputcsv($out, [$r['id'], $r['employee_name'] ?? '', $r['employee_email'] ?? '', $r['gross_amount'] ?? 0, $r['deduction_amount'] ?? 0, $r['net_amount'] ?? 0, $r['payment_date'] ?? '', $r['payment_method'] ?? '', $r['payment_status'] ?? '']);
         }
         fclose($out);
         exit;

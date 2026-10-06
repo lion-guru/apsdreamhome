@@ -84,6 +84,7 @@ $GLOBALS['_html_doc_started'] = true;
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=3">
 </head>
 <body>
+    <?php include __DIR__ . '/../components/impersonation-banner.php'; ?>
     <!-- Mobile Sidebar Toggle -->
     <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar menu">
         <i class="fas fa-bars"></i>

@@ -8,6 +8,7 @@ class ServiceController extends AdminController
 {
     public function index()
     {
+        $this->requireAdmin();
         $page = (int)($_GET['page'] ?? 1);
         $serviceType = $_GET['service'] ?? '';
         $status = $_GET['status'] ?? '';
@@ -107,6 +108,7 @@ class ServiceController extends AdminController
 
     public function show($id = null)
     {
+        $this->requireAdmin();
         if (!$id) {
             $this->redirect('/admin/services');
             return;
@@ -213,6 +215,7 @@ class ServiceController extends AdminController
 
     public function updateStatus()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $id = $_POST['id'] ?? 0;
             $status = $_POST['status'] ?? 'new';

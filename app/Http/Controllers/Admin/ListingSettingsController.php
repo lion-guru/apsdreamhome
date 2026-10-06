@@ -1,7 +1,6 @@
 <?php
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\AdminController;
 use App\Traits\TenantAwareTrait;
 
 class ListingSettingsController extends AdminController {
@@ -58,12 +57,12 @@ class ListingSettingsController extends AdminController {
         $id = (int)($_POST['id'] ?? 0);
         $name = trim($_POST['name'] ?? '');
         $description = trim($_POST['description'] ?? '');
-        $price = (float)($_POST['price'] ?? 0);
-        $duration = (int)($_POST['duration_days'] ?? 30);
+        $price = ($_POST['price'] ?? '') === '' ? null : (float)($_POST['price'] ?? 0);
+        $duration = ($_POST['duration_days'] ?? '') === '' ? null : (int)($_POST['duration_days'] ?? 30);
         $isFeatured = isset($_POST['is_featured']) ? 1 : 0;
         $isPremium = isset($_POST['is_premium']) ? 1 : 0;
         $isUrgent = isset($_POST['is_urgent']) ? 1 : 0;
-        $boostScore = (int)($_POST['boost_score'] ?? 0);
+        $boostScore = ($_POST['boost_score'] ?? '') === '' ? null : (int)($_POST['boost_score'] ?? 0);
         $status = $_POST['status'] ?? 'active';
 
         if ($id > 0) {

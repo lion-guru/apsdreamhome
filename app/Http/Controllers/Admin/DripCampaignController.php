@@ -30,6 +30,7 @@ class DripCampaignController extends AdminController
 
     public function index()
     {
+        $this->requireAdmin();
         $stats = $this->service ? $this->service->getStats() : [];
         $campaigns = $this->service ? $this->service->getAllCampaigns(20) : [];
         $result = $this->service ? $this->service->processQueue(50) : [];
@@ -44,6 +45,7 @@ class DripCampaignController extends AdminController
 
     public function show($id = 0)
     {
+        $this->requireAdmin();
         $id = $id ?: (int)($_GET['id'] ?? 0);
         if (!$this->service || !$id) {
             return $this->redirect(BASE_URL . '/admin/drip-campaigns');
@@ -66,6 +68,7 @@ class DripCampaignController extends AdminController
 
     public function create()
     {
+        $this->requireAdmin();
         return $this->render('admin.drip_campaigns.create', [
             'page_title' => 'Create Drip Campaign',
             'page_heading' => 'Create Drip Campaign'
@@ -74,6 +77,7 @@ class DripCampaignController extends AdminController
 
     public function store()
     {
+        $this->requireAdmin();
         if (!$this->service) {
             $this->setFlash('error', 'Service unavailable');
             return $this->redirect(BASE_URL . '/admin/drip-campaigns');
@@ -117,6 +121,7 @@ class DripCampaignController extends AdminController
 
     public function process()
     {
+        $this->requireAdmin();
         if ($this->service) {
             $result = $this->service->processQueue(200);
             $this->setFlash('success', "Processed {$result['processed']} enrollments, sent {$result['sent']} emails, completed {$result['completed']}");
@@ -126,6 +131,7 @@ class DripCampaignController extends AdminController
 
     public function toggle()
     {
+        $this->requireAdmin();
         $id = (int)($_GET['id'] ?? 0);
         if ($this->service && $id) {
             $campaign = $this->service->getCampaignById($id);
@@ -140,6 +146,7 @@ class DripCampaignController extends AdminController
 
     public function delete()
     {
+        $this->requireAdmin();
         $id = (int)($_GET['id'] ?? 0);
         if ($this->service && $id) {
             try {

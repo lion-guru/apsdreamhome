@@ -1754,6 +1754,18 @@ class _MoreFeaturesSection extends StatelessWidget {
         '/projects',
         const Color(0xFF1565C0),
       ),
+      _FeatureItem(
+        Icons.card_giftcard_outlined,
+        'Referral Earnings',
+        '/referral-earnings',
+        const Color(0xFFF59E0B),
+      ),
+      _FeatureItem(
+        Icons.account_balance_wallet_outlined,
+        'Activate Wallet',
+        '/wallet-activation',
+        const Color(0xFF0D9488),
+      ),
     ];
 
     return Card(

@@ -40,6 +40,7 @@ class PropertyAlertController extends AdminController
 
     public function index()
     {
+        $this->requireAdmin();
         $stats = ['total' => 0, 'active' => 0, 'instant' => 0, 'daily' => 0, 'weekly' => 0, 'notifications_sent' => 0, 'top_property_types' => []];
         $subscriptions = [];
         $recent_notifications = [];
@@ -64,6 +65,7 @@ class PropertyAlertController extends AdminController
 
     public function delete()
     {
+        $this->requireAdmin();
         $id = (int)($_GET['id'] ?? 0);
         if ($id > 0 && $this->alerts) {
             try {
@@ -83,6 +85,7 @@ class PropertyAlertController extends AdminController
 
     public function toggle()
     {
+        $this->requireAdmin();
         $id = (int)($_POST['id'] ?? 0);
         $active = (int)($_POST['active'] ?? 0);
         if ($id > 0 && $this->alerts) {
@@ -103,6 +106,7 @@ class PropertyAlertController extends AdminController
 
     public function testMatch()
     {
+        $this->requireAdmin();
         $id = (int)($_GET['id'] ?? 0);
         if (!$id || !$this->alerts) {
             return $this->json(['error' => 'Invalid id'], 400);

@@ -38,7 +38,7 @@ class ExpensesController extends AdminController
             $stmt = $db->prepare("INSERT INTO expenses (category, amount, description, payment_mode, expense_date, status, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, 'pending', ?, NOW())");
             $stmt->execute([
                 $_POST['category'] ?? '',
-                $_POST['amount'] ?? 0,
+                ($_POST['amount'] ?? '') === '' ? null : ($_POST['amount'] ?? 0),
                 $_POST['description'] ?? '',
                 $_POST['payment_mode'] ?? 'cash',
                 $_POST['expense_date'] ?? date('Y-m-d'),

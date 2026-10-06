@@ -24,7 +24,7 @@ class SimpleCaptcha
             $code .= $characters[random_int(0, $maxIndex)];
         }
 
-        if (session_status() !== PHP_SESSION_ACTIVE) {
+        if (session_status() !== PHP_SESSION_ACTIVE && !headers_sent()) {
             session_start();
         }
         $_SESSION[self::$sessionKey] = $code;
@@ -39,7 +39,7 @@ class SimpleCaptcha
     public static function generateImage(?string $code = null): void
     {
         if (empty($code)) {
-            if (session_status() !== PHP_SESSION_ACTIVE) {
+            if (session_status() !== PHP_SESSION_ACTIVE && !headers_sent()) {
                 session_start();
             }
             $code = $_SESSION[self::$sessionKey] ?? self::generate();
@@ -88,7 +88,7 @@ class SimpleCaptcha
             return true;
         }
 
-        if (session_status() !== PHP_SESSION_ACTIVE) {
+        if (session_status() !== PHP_SESSION_ACTIVE && !headers_sent()) {
             session_start();
         }
 

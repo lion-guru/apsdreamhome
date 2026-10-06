@@ -12,6 +12,8 @@ $recommended_properties = $recommended_properties ?? [];
 $userName = htmlspecialchars($user['name'] ?? $_SESSION['user_name'] ?? 'Valued Customer');
 $customerId = htmlspecialchars($user['customer_id'] ?? ('APS-CUST-' . str_pad((string)($_SESSION['user_id'] ?? 1), 4, '0', STR_PAD_LEFT)));
 $joinDate = !empty($user['join_date']) ? date('M Y', strtotime($user['join_date'])) : date('M Y');
+$referral_tier = $referral_tier ?? [];
+$referral_code = $referral_code ?? '';
 ?>
 
 <div class="customer-dashboard-wrapper">
@@ -20,11 +22,16 @@ $joinDate = !empty($user['join_date']) ? date('M Y', strtotime($user['join_date'
         <div class="card-body p-4 p-md-5 position-relative">
             <div class="row align-items-center">
                 <div class="col-lg-8">
-                    <div class="d-flex align-items-center gap-2 mb-2">
+                    <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
                         <span class="badge bg-primary bg-opacity-25 text-info border border-info border-opacity-25 px-3 py-1 rounded-pill fw-medium">
                             <i class="fas fa-crown me-1 text-warning"></i> Customer Portal
                         </span>
                         <span class="text-white-50 small">| ID: <?= $customerId ?></span>
+                        <?php if (!empty($referral_tier)): ?>
+                        <a href="<?= BASE_URL ?>/user/referrals/leaderboard" class="badge px-3 py-1 rounded-pill fw-medium text-decoration-none" style="background:<?= htmlspecialchars($referral_tier['color'] ?? '#CD7F32') ?>;color:#fff" title="Your referral tier — view leaderboard">
+                            <i class="<?= htmlspecialchars($referral_tier['icon'] ?? 'fas fa-medal') ?> me-1"></i><?= htmlspecialchars($referral_tier['label'] ?? 'Bronze') ?> Tier
+                        </a>
+                        <?php endif; ?>
                     </div>
                     <h2 class="display-6 fw-bold mb-2 text-white">Welcome back, <?= $userName ?>!</h2>
                     <p class="text-white-50 mb-4 mb-lg-0" style="max-width: 600px;">

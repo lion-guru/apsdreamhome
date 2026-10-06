@@ -30,6 +30,7 @@ class LandController extends AdminController
      */
     public function index()
     {
+        $this->requireAdmin();
         try {
             $search = $_GET['search'] ?? '';
             $status = $_GET['status'] ?? '';
@@ -108,6 +109,7 @@ class LandController extends AdminController
      */
     public function create()
     {
+        $this->requireAdmin();
         try {
             $data = [
                 'page_title' => 'Add New Land Record - APS Dream Home',
@@ -127,6 +129,7 @@ class LandController extends AdminController
      */
     public function store()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -209,6 +212,7 @@ class LandController extends AdminController
      */
     public function show($id)
     {
+        $this->requireAdmin();
         try {
             $landId = intval($id);
             if ($landId <= 0) {
@@ -265,6 +269,7 @@ class LandController extends AdminController
      */
     public function edit($id)
     {
+        $this->requireAdmin();
         try {
             $landId = intval($id);
             if ($landId <= 0) {
@@ -302,6 +307,7 @@ class LandController extends AdminController
      */
     public function update($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -420,6 +426,7 @@ class LandController extends AdminController
      */
     public function destroy($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -481,6 +488,7 @@ class LandController extends AdminController
      */
     public function storeTransaction($landId)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -504,6 +512,11 @@ class LandController extends AdminController
             $amount = (float)$data['amount'];
             if ($amount <= 0) {
                 return $this->jsonError('Amount must be greater than 0', 400);
+            }
+
+            $transactionDate = $data['transaction_date'] ?? '';
+            if ($transactionDate && strtotime($transactionDate) > time()) {
+                return $this->jsonError('Transaction date cannot be in the future', 400);
             }
 
             // Validate transaction type
@@ -566,6 +579,10 @@ class LandController extends AdminController
             }
             // Note: land_type column doesn't exist in land_acquisitions, use mutation_status instead if needed
             $sql .= " ORDER BY a.created_at DESC";
+            $page = max(1, (int)($_GET['page'] ?? 1));
+            $perPage = 20;
+            $offset = ($page - 1) * $perPage;
+            $sql .= " LIMIT $perPage OFFSET $offset";
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             $acquisitions = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -622,7 +639,8 @@ class LandController extends AdminController
     public function storeAcquisition()
     {
         $this->requireAdmin();
-        $acquisition_number = $_POST['acquisition_number'] ?? ('ACQ' . date('Ymd') . rand(100, 999));
+        $this->validateCsrfOrFail();
+        $acquisition_number = $_POST['acquisition_number'] ?? ('ACQ' . date('Ymd') . strtoupper(substr(uniqid(), -6)));
         $land_lead_id = !empty($_POST['land_lead_id']) ? (int)$_POST['land_lead_id'] : null;
         $colony_id = !empty($_POST['colony_id']) ? (int)$_POST['colony_id'] : null;
         $total_area_sqft = (float)($_POST['total_area_sqft'] ?? 0);
@@ -665,7 +683,10 @@ class LandController extends AdminController
     {
         $this->requireAdmin();
         try {
-            $stmt = $this->db->query("SELECT * FROM land_records ORDER BY created_at DESC");
+            $page = max(1, (int)($_GET['page'] ?? 1));
+            $perPage = 20;
+            $offset = ($page - 1) * $perPage;
+            $stmt = $this->db->query("SELECT * FROM land_records ORDER BY created_at DESC LIMIT $perPage OFFSET $offset");
             $landRecords = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             $this->loggingService->error("Land Records error: " . $e->getMessage());
@@ -683,9 +704,10 @@ class LandController extends AdminController
     public function storeRecord()
     {
         $this->requireAdmin();
+        $this->validateCsrfOrFail();
         $survey_number = $_POST['survey_number'] ?? '';
         $location = $_POST['location'] ?? '';
-        $land_area = (float)($_POST['land_area'] ?? 0);
+        $land_area = ($_POST['land_area'] ?? '') === '' ? null : (float)($_POST['land_area'] ?? 0);
         $land_type = $_POST['land_type'] ?? '';
         $owner_name = $_POST['owner_name'] ?? '';
         $owner_contact = $_POST['owner_contact'] ?? '';
@@ -708,6 +730,7 @@ class LandController extends AdminController
      */
     public function getStats()
     {
+        $this->requireAdmin();
         try {
             $stats = [];
 

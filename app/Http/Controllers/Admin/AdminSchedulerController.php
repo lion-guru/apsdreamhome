@@ -23,6 +23,7 @@ class AdminSchedulerController extends AdminController
      */
     public function index(): void
     {
+        $this->requireAdmin();
         $tasks = $this->schedulerService->getTasks(false);
         $health = $this->schedulerService->getHealth();
         
@@ -38,6 +39,7 @@ class AdminSchedulerController extends AdminController
      */
     public function taskDetails(int $taskId): void
     {
+        $this->requireAdmin();
         $db = \App\Core\Database\Database::getInstance();
         
         // Get task
@@ -71,6 +73,7 @@ class AdminSchedulerController extends AdminController
      */
     public function create(): void
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $name = $_POST['name'] ?? '';
             $command = $_POST['command'] ?? '';
@@ -109,6 +112,7 @@ class AdminSchedulerController extends AdminController
      */
     public function edit(int $taskId): void
     {
+        $this->requireAdmin();
         $db = \App\Core\Database\Database::getInstance();
         
         $sql = "SELECT * FROM scheduled_tasks WHERE id = ?";
@@ -155,6 +159,7 @@ class AdminSchedulerController extends AdminController
      */
     public function delete(int $taskId): void
     {
+        $this->requireAdmin();
         $this->schedulerService->deleteTask($taskId);
         $_SESSION['success'] = 'Task deleted successfully';
         redirect('/admin/scheduler');
@@ -166,6 +171,7 @@ class AdminSchedulerController extends AdminController
      */
     public function runTask(int $taskId): void
     {
+        $this->requireAdmin();
         $result = $this->schedulerService->executeTask($taskId);
         
         if ($result['success']) {
@@ -183,6 +189,7 @@ class AdminSchedulerController extends AdminController
      */
     public function logs(): void
     {
+        $this->requireAdmin();
         $page = $_GET['page'] ?? 1;
         $perPage = 100;
         
@@ -220,6 +227,7 @@ class AdminSchedulerController extends AdminController
      */
     public function health(): void
     {
+        $this->requireAdmin();
         $health = $this->schedulerService->getHealth();
         
         // Get recent executions
@@ -247,6 +255,7 @@ class AdminSchedulerController extends AdminController
      */
     public function cleanup(): void
     {
+        $this->requireAdmin();
         $days = (int) ($_POST['days'] ?? 30);
         $deleted = $this->schedulerService->cleanupLogs($days);
         

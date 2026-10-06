@@ -316,4 +316,99 @@ class CommissionSimulator
             'results' => $results,
         ];
     }
+
+    /**
+     * Referral sweep — replay paid bookings from the last N days at a
+     * candidate customer-referral % and compare against current policy.
+     * Pure reads; never writes.
+     */
+    public function referralSweep(float $candidatePct, int $days = 90): array
+    {
+        $candidatePct = min(max($candidatePct, 0.0), 5.0);
+        $currentPct = (float)\App\Services\ServiceConfigService::getVal('referral', 'customer_booking_pct', 2.0);
+        $currentPct = min(max($currentPct, 0.0), 5.0);
+        try {
+            $stmt = $this->pdo->prepare(
+                "SELECT COUNT(*) AS n, COALESCE(SUM(total_plot_value),0) AS volume,
+                        COUNT(DISTINCT customer_id) AS buyers
+                 FROM plot_bookings
+                 WHERE status IN ('token_paid','agreement_signed','emi_active','partially_paid','fully_paid','registration_done')
+                   AND created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)"
+            );
+            $stmt->execute([$days]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+            $volume = (float)($row['volume'] ?? 0);
+            $projected = round($volume * $candidatePct / 100, 2);
+            $baseline = round($volume * $currentPct / 100, 2);
+            return [
+                'success' => true,
+                'window_days' => $days,
+                'paid_bookings' => (int)($row['n'] ?? 0),
+                'buyers' => (int)($row['buyers'] ?? 0),
+                'volume' => $volume,
+                'current_pct' => $currentPct,
+                'candidate_pct' => $candidatePct,
+                'baseline_payout' => $baseline,
+                'projected_payout' => $projected,
+                'delta' => round($projected - $baseline, 2),
+                'warnings' => $candidatePct > 5.0 ? ['Candidate exceeds 5% guardrail'] : [],
+            ];
+        } catch (\Throwable $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Wallet sweep — replay completed activations from the last N days at
+     * candidate L1/L2 % and show company margin. Pure reads; never writes.
+     */
+    public function walletSweep(float $candidateL1, float $candidateL2, int $days = 90): array
+    {
+        $candidateL1 = min(max($candidateL1, 0.0), 30.0);
+        $candidateL2 = min(max($candidateL2, 0.0), max(0.0, 30.0 - $candidateL1));
+        try {
+            $stmt = $this->pdo->prepare(
+                "SELECT wap.package_id, wapk.name, wapk.price, COUNT(*) AS n
+                 FROM wallet_activation_purchases wap
+                 JOIN wallet_activation_packages wapk ON wapk.id = wap.package_id
+                 WHERE wap.status = 'completed'
+                   AND wap.activated_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
+                 GROUP BY wap.package_id, wapk.name, wapk.price
+                 ORDER BY wapk.price"
+            );
+            $stmt->execute([$days]);
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+            $perPackage = [];
+            $revenue = 0.0;
+            $payout = 0.0;
+            foreach ($rows as $r) {
+                $rev = (float)$r['price'] * (int)$r['n'];
+                $pay = round($rev * ($candidateL1 + $candidateL2) / 100, 2);
+                $perPackage[] = [
+                    'package' => $r['name'],
+                    'activations' => (int)$r['n'],
+                    'revenue' => $rev,
+                    'l1_payout' => round($rev * $candidateL1 / 100, 2),
+                    'l2_payout' => round($rev * $candidateL2 / 100, 2),
+                    'total_payout' => $pay,
+                ];
+                $revenue += $rev;
+                $payout += $pay;
+            }
+            return [
+                'success' => true,
+                'window_days' => $days,
+                'candidate_l1' => $candidateL1,
+                'candidate_l2' => $candidateL2,
+                'per_package' => $perPackage,
+                'total_revenue' => round($revenue, 2),
+                'total_payout' => round($payout, 2),
+                'company_keeps' => round($revenue - $payout, 2),
+                'company_margin_pct' => $revenue > 0 ? round(($revenue - $payout) / $revenue * 100, 1) : 100.0,
+                'warnings' => ($candidateL1 + $candidateL2 > 30.0) ? ['L1+L2 exceeds 30% guardrail'] : [],
+            ];
+        } catch (\Throwable $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
 }

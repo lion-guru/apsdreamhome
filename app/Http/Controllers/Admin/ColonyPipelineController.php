@@ -1145,4 +1145,182 @@ class ColonyPipelineController extends AdminController
             $this->json(['type' => 'FeatureCollection', 'features' => []], 500);
         }
     }
+
+    // ================================================================
+    //  PRICING VERSIONING API
+    // ================================================================
+
+    /**
+     * Save a new pricing plan version
+     */
+    public function savePricingPlan($id)
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+
+        try {
+            $colony = $this->db->fetchOne("SELECT * FROM colonies WHERE id = ?", [$id]);
+            if (!$colony) {
+                $this->setFlash('error', 'Colony not found');
+                $this->redirect('/admin/colony-pipeline');
+            }
+
+            $service = new \App\Services\Land\ColonyPricingService();
+            
+            // First calculate pricing to get the base price and premiums
+            $result = $service->calculateColonyPricing($id);
+            if (!$result['success']) {
+                $this->setFlash('error', 'Failed to calculate pricing: ' . ($result['error'] ?? 'Unknown error'));
+                $this->redirect('/admin/colony-pipeline/' . $id . '/pricing');
+            }
+
+            $name = trim($_POST['plan_name'] ?? 'Pricing Plan v' . ($result['version'] ?? 1));
+            $description = trim($_POST['plan_description'] ?? '');
+            $parentVersionId = !empty($_POST['parent_version_id']) ? (int)$_POST['parent_version_id'] : null;
+
+            $premiums = $service->getPremiumConfig();
+            $config = [
+                'base_price_per_sqft' => $result['base_price_per_sqft'] ?? 0,
+                'premiums' => $premiums,
+                'corner_premium_pct' => $premiums['corner_premium_pct'],
+                'park_facing_premium_pct' => $premiums['park_facing_premium_pct'],
+                'wide_road_premium_pct' => $premiums['wide_road_premium_pct'],
+                'wide_road_threshold_ft' => $premiums['wide_road_threshold_ft'],
+            ];
+
+            $result = $service->savePricingPlan(
+                $id,
+                $result['base_price_per_sqft'] ?? 0,
+                $premiums,
+                $config,
+                $name,
+                $description,
+                $parentVersionId,
+                $_SESSION['user_id'] ?? 0
+            );
+
+            if ($result['success']) {
+                $this->setFlash('success', 'Pricing plan v' . $result['version'] . ' saved successfully');
+            } else {
+                $this->setFlash('error', $result['error'] ?? 'Failed to save pricing plan');
+            }
+            $this->redirect('/admin/colony-pipeline/' . $id . '/pricing');
+        } catch (\Exception $e) {
+            error_log('ColonyPipeline savePricingPlan error: ' . $e->getMessage());
+            $this->setFlash('error', 'Failed to save pricing plan: ' . $e->getMessage());
+            $this->redirect('/admin/colony-pipeline/' . $id . '/pricing');
+        }
+    }
+
+    /**
+     * Activate a pricing plan version
+     */
+    public function activatePricingPlan($id, $planId)
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+
+        try {
+            $service = new \App\Services\Land\ColonyPricingService();
+            $result = $service->activatePricingPlan((int)$planId);
+            
+            if ($result['success']) {
+                $this->setFlash('success', 'Pricing plan activated');
+            } else {
+                $this->setFlash('error', $result['error'] ?? 'Failed to activate plan');
+            }
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed to activate plan: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/colony-pipeline/' . $id . '/pricing');
+    }
+
+    /**
+     * Apply a pricing plan version
+     */
+    public function applyPricingPlan($id, $planId)
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+
+        try {
+            $service = new \App\Services\Land\ColonyPricingService();
+            $result = $service->applyPricingPlan((int)$planId, $_SESSION['user_id'] ?? 0);
+            
+            if ($result['success']) {
+                $this->setFlash('success', $result['plots_updated'] . ' plots updated. Total value: ₹' . number_format($result['total_value'] ?? 0, 2));
+            } else {
+                $this->setFlash('error', $result['error'] ?? 'Failed to apply plan');
+            }
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed to apply plan: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/colony-pipeline/' . $id . '/pricing');
+    }
+
+    /**
+     * View pricing plan history
+     */
+    public function pricingPlanHistory($id)
+    {
+        $this->requireAdmin();
+
+        try {
+            $colony = $this->db->fetchOne("SELECT * FROM colonies WHERE id = ?", [$id]);
+            if (!$colony) {
+                $this->setFlash('error', 'Colony not found');
+                $this->redirect('/admin/colony-pipeline');
+            }
+
+            $service = new \App\Services\Land\ColonyPricingService();
+            $result = $service->getPricingPlanHistory($id);
+            
+            if (!$result['success']) {
+                $this->setFlash('error', $result['error'] ?? 'Failed to load history');
+                $this->redirect('/admin/colony-pipeline/' . $id . '/pricing');
+            }
+
+            return $this->render('admin/colony-pipeline/pricing-history', [
+                'page_title' => 'Pricing Plan History — ' . ($colony['name'] ?? ''),
+                'colony' => $colony,
+                'plans' => $result['plans'] ?? []
+            ]);
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed to load history: ' . $e->getMessage());
+            $this->redirect('/admin/colony-pipeline');
+        }
+    }
+
+    /**
+     * View pricing plan application history
+     */
+    public function pricingPlanApplications($id)
+    {
+        $this->requireAdmin();
+
+        try {
+            $colony = $this->db->fetchOne("SELECT * FROM colonies WHERE id = ?", [$id]);
+            if (!$colony) {
+                $this->setFlash('error', 'Colony not found');
+                $this->redirect('/admin/colony-pipeline');
+            }
+
+            $service = new \App\Services\Land\ColonyPricingService();
+            $result = $service->getApplicationHistory($id);
+            
+            if (!$result['success']) {
+                $this->setFlash('error', $result['error'] ?? 'Failed to load applications');
+                $this->redirect('/admin/colony-pipeline/' . $id . '/pricing');
+            }
+
+            return $this->render('admin/colony-pipeline/pricing-applications', [
+                'page_title' => 'Pricing Applications — ' . ($colony['name'] ?? ''),
+                'colony' => $colony,
+                'applications' => $result['applications'] ?? []
+            ]);
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed to load applications: ' . $e->getMessage());
+            $this->redirect('/admin/colony-pipeline');
+        }
+    }
 }

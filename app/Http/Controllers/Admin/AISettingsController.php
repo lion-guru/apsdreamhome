@@ -24,6 +24,7 @@ class AISettingsController extends AdminController
      */
     public function index()
     {
+        $this->requireAdmin();
         $this->data['page_title'] = 'AI Provider Settings';
 
         $config = [
@@ -98,6 +99,7 @@ class AISettingsController extends AdminController
      */
     public function saveConfig()
     {
+        $this->requireAdmin();
         if (!$this->isAdmin()) {
             $this->jsonResponse(['success' => false, 'message' => 'Unauthorized'], 401);
             return;
@@ -173,6 +175,7 @@ class AISettingsController extends AdminController
      */
     public function testProvider()
     {
+        $this->requireAdmin();
         if (!$this->isAdmin()) {
             $this->jsonResponse(['success' => false, 'message' => 'Unauthorized'], 401);
             return;
@@ -264,6 +267,7 @@ class AISettingsController extends AdminController
      */
     public function updateApiKey()
     {
+        $this->requireAdmin();
         if (!$this->isAdmin()) {
             $this->jsonResponse(['success' => false, 'message' => 'Unauthorized'], 401);
             return;
@@ -352,6 +356,7 @@ class AISettingsController extends AdminController
      */
     public function testConnection()
     {
+        $this->requireAdmin();
         if (!$this->isAdmin()) {
             $this->jsonResponse(['success' => false, 'message' => 'Unauthorized'], 401);
             return;
@@ -367,6 +372,7 @@ class AISettingsController extends AdminController
      */
     public function generateSampleContent()
     {
+        $this->requireAdmin();
         if (!$this->isAdmin()) {
             $this->jsonResponse(['success' => false, 'message' => 'Unauthorized'], 401);
             return;
@@ -405,6 +411,7 @@ class AISettingsController extends AdminController
      */
     public function getUsageAnalytics()
     {
+        $this->requireAdmin();
         if (!$this->isAdmin()) {
             $this->jsonResponse(['success' => false, 'message' => 'Unauthorized'], 401);
             return;
@@ -451,6 +458,7 @@ class AISettingsController extends AdminController
      */
     public function clearLogs()
     {
+        $this->requireAdmin();
         if (!$this->isAdmin()) {
             $this->jsonResponse(['success' => false, 'message' => 'Unauthorized'], 401);
             return;
@@ -483,6 +491,7 @@ class AISettingsController extends AdminController
      */
     public function exportUsageReport()
     {
+        $this->requireAdmin();
         if (!$this->isAdmin()) {
             $this->jsonResponse(['success' => false, 'message' => 'Unauthorized'], 401);
             return;
@@ -528,6 +537,7 @@ class AISettingsController extends AdminController
      */
     public function chat()
     {
+        $this->requireAdmin();
         if (!$this->isAdmin()) {
             $this->jsonResponse(['success' => false, 'message' => 'Unauthorized'], 401);
             return;

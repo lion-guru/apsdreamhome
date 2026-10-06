@@ -23,6 +23,7 @@ class AdminFileController extends AdminController
      */
     public function index(): void
     {
+        $this->requireAdmin();
         $page = $_GET['page'] ?? 1;
         $category = $_GET['category'] ?? null;
         $search = $_GET['search'] ?? null;
@@ -49,6 +50,7 @@ class AdminFileController extends AdminController
      */
     public function upload(): void
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) { $this->validateCsrfOrFail();
             $options = [
                 'category' => $_POST['category'] ?? 'general',
@@ -81,6 +83,7 @@ class AdminFileController extends AdminController
      */
     public function fileDetails(string $uuid): void
     {
+        $this->requireAdmin();
         $file = $this->fileService->getFile($uuid);
         
         if (!$file) {
@@ -107,6 +110,7 @@ class AdminFileController extends AdminController
      */
     public function download(string $uuid): void
     {
+        $this->requireAdmin();
         $result = $this->fileService->download($uuid, $_SESSION['admin_id'] ?? 1, 'admin');
         
         if ($result['success']) {
@@ -133,6 +137,7 @@ class AdminFileController extends AdminController
      */
     public function delete(string $uuid): void
     {
+        $this->requireAdmin();
         $result = $this->fileService->delete($uuid, $_SESSION['admin_id'] ?? 1, 'admin');
         
         if ($result['success']) {
@@ -150,6 +155,7 @@ class AdminFileController extends AdminController
      */
     public function uploadVersion(string $uuid): void
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) { $this->validateCsrfOrFail();
             $options = [
                 'uploaded_by' => $_SESSION['admin_id'] ?? 1,
@@ -175,6 +181,7 @@ class AdminFileController extends AdminController
      */
     public function browse(): void
     {
+        $this->requireAdmin();
         $category = $_GET['category'] ?? 'general';
         $page = $_GET['page'] ?? 1;
         
@@ -193,6 +200,7 @@ class AdminFileController extends AdminController
      */
     public function storage(): void
     {
+        $this->requireAdmin();
         $stats = $this->fileService->getStorageStats();
         
         // Get file type breakdown

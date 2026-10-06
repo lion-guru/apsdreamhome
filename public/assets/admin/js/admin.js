@@ -14,10 +14,10 @@ window.toggleSidebarSection = function (id) {
   ul.style.display = hidden ? '' : 'none';
   var arrow = document.getElementById('arrow-' + id);
   if (arrow) arrow.classList.toggle('collapsed', !hidden);
-  var saved = localStorage.getItem('adminSidebarSections');
+  var saved = sessionStorage.getItem('adminSidebarSections');
   var state = saved ? JSON.parse(saved) : {};
   state[id] = hidden;
-  localStorage.setItem('adminSidebarSections', JSON.stringify(state));
+  sessionStorage.setItem('adminSidebarSections', JSON.stringify(state));
 };
 
 window.toggleAllSidebarSections = function () {
@@ -27,10 +27,10 @@ window.toggleAllSidebarSections = function () {
   var anyHidden = Array.from(menus).some(function (el) { return el.style.display === 'none'; });
   menus.forEach(function (el) {
     el.style.display = anyHidden ? '' : 'none';
-    var saved = localStorage.getItem('adminSidebarSections');
+    var saved = sessionStorage.getItem('adminSidebarSections');
     var state = saved ? JSON.parse(saved) : {};
     state[el.id] = anyHidden;
-    localStorage.setItem('adminSidebarSections', JSON.stringify(state));
+    sessionStorage.setItem('adminSidebarSections', JSON.stringify(state));
   });
   document.querySelectorAll('.sidebar-sec-arrow[id^="arrow-sec-"]').forEach(function (arr) {
     arr.classList.toggle('collapsed', !anyHidden);
@@ -40,7 +40,17 @@ window.toggleAllSidebarSections = function () {
 // Load saved state — only if APS didn't already handle it
 document.addEventListener('DOMContentLoaded', function () {
   if (window.APS && APS._init) return; // APS handles its own restore
-  var saved = localStorage.getItem('adminSidebarSections');
+  // One-time migration from the old shared localStorage key.
+  try {
+    if (!sessionStorage.getItem('adminSidebarSections')) {
+      var legacy = localStorage.getItem('adminSidebarSections');
+      if (legacy) {
+        sessionStorage.setItem('adminSidebarSections', legacy);
+        localStorage.removeItem('adminSidebarSections');
+      }
+    }
+  } catch (e) {}
+  var saved = sessionStorage.getItem('adminSidebarSections');
   if (!saved) return;
   try {
     var state = JSON.parse(saved);

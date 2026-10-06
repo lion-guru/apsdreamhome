@@ -8,12 +8,14 @@ class AICallingController extends AdminController
 
     public function index()
     {
+        $this->requireAdmin();
         header('Location: ' . BASE_URL . '/admin/ai-calling/dashboard');
         exit;
     }
 
     public function campaign()
     {
+        $this->requireAdmin();
         $this->data['page_title'] = 'Calling Campaigns';
         try {
             $db = $this->db;
@@ -38,6 +40,7 @@ class AICallingController extends AdminController
 
     public function history()
     {
+        $this->requireAdmin();
         $this->data['page_title'] = 'Call History';
         try {
             $db = $this->db;
@@ -88,6 +91,7 @@ class AICallingController extends AdminController
 
     public function analytics()
     {
+        $this->requireAdmin();
         $this->data['page_title'] = 'Calling Analytics';
         $days = intval($_GET['days'] ?? 30);
         $since = date('Y-m-d', strtotime("-$days days"));
@@ -128,6 +132,7 @@ class AICallingController extends AdminController
 
     public function dashboard()
     {
+        $this->requireAdmin();
         $this->data['page_title'] = 'AI Calling Dashboard';
         try {
             $db = $this->db;
@@ -156,6 +161,7 @@ class AICallingController extends AdminController
 
     public function schedule()
     {
+        $this->requireAdmin();
         $this->data['page_title'] = 'Calling Schedule';
         try {
             $db = $this->db;
@@ -176,6 +182,7 @@ class AICallingController extends AdminController
 
     public function sessions()
     {
+        $this->requireAdmin();
         $this->data['page_title'] = 'Call Sessions';
         try {
             $db = $this->db;
@@ -208,6 +215,7 @@ class AICallingController extends AdminController
 
     public function extractedLeads()
     {
+        $this->requireAdmin();
         $this->data['page_title'] = 'Extracted Leads';
         try {
             $db = $this->db;
@@ -226,6 +234,7 @@ class AICallingController extends AdminController
 
     public function training()
     {
+        $this->requireAdmin();
         $this->data['page_title'] = 'AI Calling Training';
         try {
             $db = $this->db;
@@ -260,6 +269,7 @@ class AICallingController extends AdminController
 
     public function saveVoiceModel()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); exit; }
         $this->validateCsrfOrFail();
         $db = $this->db;
@@ -289,6 +299,7 @@ class AICallingController extends AdminController
 
     public function saveScript()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); exit; }
         $this->validateCsrfOrFail();
         $db = $this->db;
@@ -324,6 +335,7 @@ class AICallingController extends AdminController
 
     public function saveIntent()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); exit; }
         $this->validateCsrfOrFail();
         $db = $this->db;
@@ -356,6 +368,7 @@ class AICallingController extends AdminController
 
     public function autoDialer()
     {
+        $this->requireAdmin();
         $this->data['page_title'] = 'Auto Dialer';
         try {
             $db = $this->db;
@@ -404,6 +417,7 @@ class AICallingController extends AdminController
 
     public function callAnalytics()
     {
+        $this->requireAdmin();
         $this->data['page_title'] = 'Call Analytics';
         $days = intval($_GET['days'] ?? 30);
         $since = date('Y-m-d', strtotime("-$days days"));
@@ -455,6 +469,7 @@ class AICallingController extends AdminController
 
     public function autoDialerProcess()
     {
+        $this->requireAdmin();
         try {
             $controller = new \App\Http\Controllers\Api\AutoDialerController();
             $result = $controller->processQueue();
@@ -470,6 +485,7 @@ class AICallingController extends AdminController
 
     public function autoDialerAiSchedule()
     {
+        $this->requireAdmin();
         try {
             $minScore = intval($_POST['min_score'] ?? 70);
             $controller = new \App\Http\Controllers\Api\AutoDialerController();
@@ -487,6 +503,7 @@ class AICallingController extends AdminController
 
     public function healthCheck()
     {
+        $this->requireAdmin();
         $results = [];
 
         // Database
@@ -553,6 +570,7 @@ class AICallingController extends AdminController
 
     public function callLogs()
     {
+        $this->requireAdmin();
         $this->data['page_title'] = 'Voice Call Logs';
         try {
             $db = $this->db;
@@ -621,6 +639,7 @@ class AICallingController extends AdminController
 
     public function callDetail()
     {
+        $this->requireAdmin();
         $id = intval($_GET['id'] ?? 0);
         if (!$id) {
             header('Content-Type: application/json');

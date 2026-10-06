@@ -108,6 +108,7 @@ class AgentDashboardController extends BaseController
                 'user_rank' => $userRank,
                 'user_points' => $userPoints,
                 'user_level' => $userLevel,
+                'referral_earnings_breakdown' => $referralEarningsBreakdown,
             ], $dashboardData));
 
         } catch (Exception $e) {
@@ -144,17 +145,27 @@ class AgentDashboardController extends BaseController
         // Network/Team stats (only for MLM)
         $networkStats = $this->getNetworkStats($associateId);
 
-        // Gamification
-        $gamify = $this->safeGamify('forAgent', (int)$userId, (int)$associateId);
+// Gamification
+            $gamify = $this->safeGamify('forAgent', (int)$userId, (int)$associateId);
 
-        return [
-            'agent_stats' => $agentStats,
-            'recent_leads' => $recentLeads,
-            'assigned_properties' => $assignedProperties,
-            'commission_summary' => $commissionSummary,
-            'network_stats' => $networkStats,
-            'gamify' => $gamify,
-        ];
+            // Referral Earnings Breakdown
+            $referralEarningsBreakdown = [];
+            try {
+                $referralSvc = new \App\Services\ReferralService();
+                $referralEarningsBreakdown = $referralSvc->getReferralEarningsBreakdown($userId);
+            } catch (\Throwable $e) {
+                error_log('Agent dashboard referral earnings: ' . $e->getMessage());
+            }
+
+return [
+                'agent_stats' => $agentStats,
+                'recent_leads' => $recentLeads,
+                'assigned_properties' => $assignedProperties,
+                'commission_summary' => $commissionSummary,
+                'network_stats' => $networkStats,
+                'gamify' => $gamify,
+                'referral_earnings_breakdown' => $referralEarningsBreakdown,
+            ];
     }
 
     /**
@@ -183,15 +194,16 @@ class AgentDashboardController extends BaseController
         // Performance metrics
         $performance = $this->getFreelancerPerformance($associateId);
 
-        return [
-            'agent_stats' => $agentStats,
-            'recent_leads' => $recentLeads,
-            'my_properties' => $myProperties,
-            'commission_summary' => $commissionSummary,
-            'site_visits' => $siteVisits,
-            'performance' => $performance,
-            'gamify' => $this->safeGamify('forAgent', (int)$userId, (int)$associateId),
-        ];
+return [
+                'agent_stats' => $agentStats,
+                'recent_leads' => $recentLeads,
+                'my_properties' => $myProperties,
+                'commission_summary' => $commissionSummary,
+                'site_visits' => $siteVisits,
+                'performance' => $performance,
+                'gamify' => $this->safeGamify('forAgent', (int)$userId, (int)$associateId),
+                'referral_earnings_breakdown' => $referralEarningsBreakdown,
+            ];
     }
 
     /**

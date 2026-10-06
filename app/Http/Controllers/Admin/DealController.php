@@ -24,6 +24,7 @@ class DealController extends AdminController
      */
     public function index()
     {
+        $this->requireAdmin();
         $base = BASE_URL;
         $stages = [];
         $dealsByStage = [];
@@ -97,6 +98,7 @@ class DealController extends AdminController
      */
     public function kanban()
     {
+        $this->requireAdmin();
         $base = BASE_URL;
         $deals = []; $stages = []; $stats = [];
 
@@ -152,6 +154,7 @@ class DealController extends AdminController
      */
     public function create()
     {
+        $this->requireAdmin();
         $base = BASE_URL;
         $leads = []; $users = []; $properties = []; $stages = []; $users = [];
 
@@ -184,6 +187,7 @@ class DealController extends AdminController
      */
     public function store()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: ' . (BASE_URL) . '/admin/deals');
             exit;
@@ -251,6 +255,7 @@ class DealController extends AdminController
      */
     public function show($id)
     {
+        $this->requireAdmin();
         $base = BASE_URL;
         $dealId = intval($id);
 
@@ -328,6 +333,7 @@ class DealController extends AdminController
      */
     public function update($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: ' . (BASE_URL) . '/admin/deals');
             exit;
@@ -402,6 +408,7 @@ class DealController extends AdminController
      */
     public function moveStage()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             echo json_encode(['success' => false, 'message' => 'Method not allowed']);
             exit;
@@ -461,6 +468,7 @@ class DealController extends AdminController
      */
     public function delete($id)
     {
+        $this->requireAdmin();
         $base = BASE_URL;
         $dealId = intval($id);
         $tid = (int)$this->tenantId();
@@ -481,6 +489,7 @@ class DealController extends AdminController
      */
     public function addActivity($dealId)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: ' . (BASE_URL) . '/admin/deals');
             exit;
@@ -571,5 +580,8 @@ class DealController extends AdminController
         }
     }
 
-    public function updateStage($id) { try { $stage = $_POST['stage'] ?? 'new'; $tid = (int)$this->tenantId(); $this->db->query("UPDATE deals SET stage_id = ? WHERE id = ? AND tenant_id = ?", [$stage, $id, $tid]); $this->setFlash('success', 'Stage updated'); } catch (\Exception $e) { $this->setFlash('error', $e->getMessage()); } return $this->redirect("/admin/deals/show/$id"); }
+    public function updateStage($id) {
+        $this->requireAdmin();
+        try { $stage = $_POST['stage'] ?? 'new'; $tid = (int)$this->tenantId(); $this->db->query("UPDATE deals SET stage_id = ? WHERE id = ? AND tenant_id = ?", [$stage, $id, $tid]); $this->setFlash('success', 'Stage updated'); } catch (\Exception $e) { $this->setFlash('error', $e->getMessage()); } return $this->redirect("/admin/deals/show/$id");
+    }
 }

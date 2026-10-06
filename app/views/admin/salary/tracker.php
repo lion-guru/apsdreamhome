@@ -56,7 +56,7 @@
                                 <td class="text-success">₹<?= number_format($t['paid_amount'] ?? 0, 2) ?></td>
                                 <td class="text-warning">₹<?= number_format($t['due_amount'] ?? 0, 2) ?></td>
                                 <td><?= htmlspecialchars($t['payment_date'] ?? '-') ?></td>
-                                <td><span class="badge bg-<?= match($t['payment_status']??'pending') { 'paid'=>'success', 'partial'=>'warning', 'overdue'=>'danger', 'pending'=>'secondary', default=>'secondary' } ?>"><?= ucfirst($t['payment_status'] ?? 'pending') ?></span></td>
+                                <td><span class="badge bg-<?= match($t['payment_status']??'pending') { 'paid'=>'success', 'processed'=>'info', 'failed'=>'danger', 'cancelled'=>'dark', 'pending'=>'secondary', default=>'secondary' } ?>"><?= ucfirst($t['payment_status'] ?? 'pending') ?></span></td>
                                 <td>
                                     <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#updateModal<?= $t['id'] ?>"><i class="fas fa-edit"></i></button>
                                 </td>
@@ -75,9 +75,10 @@
                                                 <div class="mb-3"><label class="form-label">Status</label>
                                                     <select name="payment_status" class="form-select">
                                                         <option value="pending" <?= ($t['payment_status']??'')==='pending'?'selected':'' ?>>Pending</option>
+                                                        <option value="processed" <?= ($t['payment_status']??'')==='processed'?'selected':'' ?>>Processed</option>
                                                         <option value="paid" <?= ($t['payment_status']??'')==='paid'?'selected':'' ?>>Paid</option>
-                                                        <option value="partial" <?= ($t['payment_status']??'')==='partial'?'selected':'' ?>>Partial</option>
-                                                        <option value="overdue" <?= ($t['payment_status']??'')==='overdue'?'selected':'' ?>>Overdue</option>
+                                                        <option value="failed" <?= ($t['payment_status']??'')==='failed'?'selected':'' ?>>Failed</option>
+                                                        <option value="cancelled" <?= ($t['payment_status']??'')==='cancelled'?'selected':'' ?>>Cancelled</option>
                                                     </select>
                                                 </div>
                                             </div>

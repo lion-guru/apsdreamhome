@@ -22,6 +22,7 @@ class CEODashboardController extends AdminController
      */
     public function index()
     {
+    $this->requireAdmin();
         try {
             // Get overall business statistics
             $business_stats = $this->db->fetchOne(
@@ -120,6 +121,7 @@ class CEODashboardController extends AdminController
      */
     public function getRevenueAnalytics()
     {
+        $this->requireAdmin();
         header('Content-Type: application/json');
         try {
             $analytics = $this->db->fetchAll(
@@ -144,6 +146,7 @@ class CEODashboardController extends AdminController
      */
     public function getTeamPerformance()
     {
+        $this->requireAdmin();
         header('Content-Type: application/json');
         try {
             $performance = $this->db->fetchAll(

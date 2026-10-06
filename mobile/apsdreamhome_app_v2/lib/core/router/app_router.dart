@@ -83,6 +83,9 @@ import '../../presentation/pages/common/resell_properties_page.dart';
 import '../../presentation/pages/common/rent_page.dart';
 import '../../presentation/pages/common/invest_page.dart';
 import '../../presentation/pages/common/gallery_page.dart';
+import '../../presentation/pages/customer/investment_plans_page.dart';
+import '../../presentation/pages/customer/investment_form_page.dart';
+import '../../presentation/pages/customer/customer_investments_page.dart';
 import '../../presentation/pages/common/welcome_screen_page.dart';
 import '../../presentation/pages/common/inbox_page.dart';
 import '../../presentation/pages/common/chat_detail_page.dart';
@@ -209,6 +212,10 @@ import '../../presentation/pages/telecaller/voice_call_page.dart';
 import '../../presentation/pages/customer/demand_letters_page.dart';
 import '../../presentation/pages/admin/colony_progress_page.dart';
 import '../../presentation/pages/admin/material_inventory_page.dart';
+
+// Wallet Activation & Referral Earnings
+import '../../presentation/pages/customer/wallet_activation_page.dart';
+import '../../presentation/pages/customer/referral_earnings_page.dart';
 
 // User model
 import '../../data/models/user_model.dart';
@@ -529,6 +536,20 @@ isDisclaimer ||
       ),
       GoRoute(path: '/rent', builder: (context, state) => const RentPage()),
       GoRoute(path: '/invest', builder: (context, state) => const InvestPage()),
+      GoRoute(
+        path: '/investment-plans',
+        builder: (context, state) => const InvestmentPlansPage(),
+      ),
+      GoRoute(
+        path: '/user/investments',
+        builder: (context, state) => const CustomerInvestmentsPage(),
+      ),
+      GoRoute(
+        path: '/user/investments/new/:id',
+        builder: (context, state) => InvestmentFormPage(
+          planId: state.pathParameters['id']!,
+        ),
+      ),
       GoRoute(
         path: '/gallery',
         builder: (context, state) => const GalleryPage(),
@@ -1058,6 +1079,14 @@ isDisclaimer ||
       GoRoute(
         path: '/referral',
         builder: (context, state) => const ReferralPage(),
+      ),
+      GoRoute(
+        path: '/referral-earnings',
+        builder: (context, state) => const ReferralEarningsPage(),
+      ),
+      GoRoute(
+        path: '/wallet-activation',
+        builder: (context, state) => const WalletActivationPage(),
       ),
       GoRoute(
         path: '/language',

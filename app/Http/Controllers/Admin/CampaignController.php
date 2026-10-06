@@ -23,6 +23,8 @@ class CampaignController extends AdminController
      */
     public function index()
     {
+
+        $this->requireAdmin();
         $campaigns = $this->campaignService->getActiveCampaigns();
 
         $this->data['campaigns'] = $campaigns;
@@ -36,6 +38,7 @@ class CampaignController extends AdminController
      */
     public function create()
     {
+        $this->requireAdmin();
         $this->middleware('admin.auth');
 
         $this->data['page_title'] = 'Create Campaign - APS Dream Home';
@@ -50,6 +53,7 @@ class CampaignController extends AdminController
      */
     public function store()
     {
+        $this->requireAdmin();
         $this->middleware('admin.auth');
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -97,6 +101,7 @@ class CampaignController extends AdminController
      */
     public function edit($campaignId)
     {
+        $this->requireAdmin();
         $this->middleware('admin.auth');
 
         // Get campaign details
@@ -120,6 +125,7 @@ class CampaignController extends AdminController
      */
     public function update($campaignId)
     {
+        $this->requireAdmin();
         $this->middleware('admin.auth');
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -166,6 +172,7 @@ class CampaignController extends AdminController
      */
     public function delete($campaignId)
     {
+        $this->requireAdmin();
         $this->middleware('admin.auth');
 
         try {
@@ -189,6 +196,7 @@ class CampaignController extends AdminController
      */
     public function analytics($campaignId)
     {
+        $this->requireAdmin();
         $this->middleware('admin.auth');
 
         $campaign = $this->getCampaignById($campaignId);
@@ -276,6 +284,7 @@ class CampaignController extends AdminController
      */
     public function launch($campaignId)
     {
+        $this->requireAdmin();
         $this->middleware('admin.auth');
 
         try {
@@ -370,6 +379,7 @@ class CampaignController extends AdminController
      */
     public function emailTemplates()
     {
+        $this->requireAdmin();
         $this->data['page_title'] = 'Email Templates';
         try {
             $this->data['templates'] = $this->db->fetchAll(
@@ -386,6 +396,7 @@ class CampaignController extends AdminController
      */
     public function templateEditor()
     {
+        $this->requireAdmin();
         $this->middleware('admin.auth');
         $this->data['page_title'] = 'Email Template Editor';
 
@@ -406,6 +417,7 @@ class CampaignController extends AdminController
      */
     public function saveTemplate()
     {
+        $this->requireAdmin();
         $this->middleware('admin.auth');
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -452,6 +464,7 @@ class CampaignController extends AdminController
      */
     public function logs()
     {
+        $this->requireAdmin();
         $this->middleware('admin.auth');
         $this->data['page_title'] = 'Email Logs';
 
@@ -500,6 +513,7 @@ class CampaignController extends AdminController
      */
     public function smsCampaigns()
     {
+        $this->requireAdmin();
         $this->data['page_title'] = 'SMS Campaigns';
         try {
             $this->data['campaigns'] = $this->db->fetchAll(

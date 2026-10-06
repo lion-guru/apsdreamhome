@@ -23,6 +23,7 @@ class AdminProfileController extends AdminController
      */
     public function index()
     {
+        $this->requireAdmin();
         // Start session if not started
         if (session_status() === PHP_SESSION_NONE) {
             @session_start();
@@ -67,6 +68,7 @@ class AdminProfileController extends AdminController
      */
     public function update()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: ' . BASE_URL . '/admin/profile');
             exit;
@@ -121,6 +123,7 @@ class AdminProfileController extends AdminController
      */
     public function security()
     {
+        $this->requireAdmin();
         $this->data['active_page'] = 'profile';
         $this->data['page_title'] = 'Security Settings';
         $this->data['page_description'] = 'Manage your account security';
@@ -133,6 +136,7 @@ class AdminProfileController extends AdminController
      */
     public function changePassword()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: ' . BASE_URL . '/admin/profile/security');
             exit;

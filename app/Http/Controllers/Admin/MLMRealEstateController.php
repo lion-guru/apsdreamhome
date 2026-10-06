@@ -70,10 +70,10 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
                 $id = (int)($_POST['id'] ?? 0);
                 $data = [
                     'name' => $_POST['name'],
-                    'price' => (float)$_POST['price'],
-                    'direct_reward' => (float)$_POST['direct_reward'],
-                    'level_reward' => (float)$_POST['level_reward'],
-                    'daily_capping' => (float)$_POST['daily_capping'],
+                    'price' => ($_POST['price'] ?? '') === '' ? null : (float)$_POST['price'],
+                    'direct_reward' => ($_POST['direct_reward'] ?? '') === '' ? null : (float)$_POST['direct_reward'],
+                    'level_reward' => ($_POST['level_reward'] ?? '') === '' ? null : (float)$_POST['level_reward'],
+                    'daily_capping' => ($_POST['daily_capping'] ?? '') === '' ? null : (float)$_POST['daily_capping'],
                     'description' => $_POST['description'] ?? '',
                     'is_active' => (int)($_POST['is_active'] ?? 1),
                 ];

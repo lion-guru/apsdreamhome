@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Middleware\RBACManager;
 use App\Services\CoreFunctionsServiceCustom;
 use App\Services\LoggingService;
 use App\Services\UserRegistrationService;
@@ -33,6 +34,7 @@ class UserController extends AdminController
      */
     public function index()
     {
+        $this->requireAdmin();
         try {
             $search = $_GET['search'] ?? '';
             $role = $_GET['role'] ?? '';
@@ -173,6 +175,7 @@ class UserController extends AdminController
      */
     public function create()
     {
+        $this->requireAdmin();
         try {
             $data = [
                 'page_title' => 'Create User - APS Dream Home',
@@ -193,6 +196,7 @@ class UserController extends AdminController
      */
     public function store()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -296,6 +300,7 @@ class UserController extends AdminController
      */
     public function show($id)
     {
+        $this->requireAdmin();
         try {
             $userId = intval($id);
             if ($userId <= 0) {
@@ -365,6 +370,7 @@ class UserController extends AdminController
      */
     public function edit($id)
     {
+        $this->requireAdmin();
         try {
             $userId = intval($id);
             if ($userId <= 0) {
@@ -406,6 +412,7 @@ class UserController extends AdminController
      */
     public function update($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -562,6 +569,7 @@ class UserController extends AdminController
      */
     public function inlineUpdate($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
         try {
             $userId = intval($id);
@@ -622,6 +630,7 @@ class UserController extends AdminController
      */
     public function destroy($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -684,6 +693,7 @@ class UserController extends AdminController
      */
     public function pending()
     {
+        $this->requireAdmin();
         try {
             $page = (int)($_GET['page'] ?? 1);
             $perPage = (int)($_GET['per_page'] ?? 20);
@@ -731,6 +741,7 @@ class UserController extends AdminController
      */
     public function approve($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -780,6 +791,7 @@ class UserController extends AdminController
      */
     public function reject($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -830,6 +842,7 @@ class UserController extends AdminController
      */
     public function bulkApprove()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -868,6 +881,7 @@ class UserController extends AdminController
      */
     public function getStats()
     {
+        $this->requireAdmin();
         try {
             $stats = [];
 
@@ -966,6 +980,7 @@ class UserController extends AdminController
      */
     public function viewWallet($id)
     {
+        $this->requireAdmin();
         try {
             $userId = intval($id);
             list($tSql, $tParams) = $this->tenantWhere();
@@ -1009,6 +1024,7 @@ class UserController extends AdminController
      */
     public function creditWallet($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
         try {
             $userId = intval($id);
@@ -1051,6 +1067,7 @@ class UserController extends AdminController
      */
     public function debitWallet($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
         try {
             $userId = intval($id);
@@ -1090,6 +1107,7 @@ class UserController extends AdminController
      */
     public function changeSponsor($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
         try {
             $userId = intval($id);
@@ -1145,6 +1163,7 @@ class UserController extends AdminController
      */
     public function changeReferralCode($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
         try {
             $userId = intval($id);
@@ -1177,6 +1196,7 @@ class UserController extends AdminController
      */
     public function viewTeam($id)
     {
+        $this->requireAdmin();
         try {
             $userId = intval($id);
             list($tSql, $tParams) = $this->tenantWhere();
@@ -1244,6 +1264,7 @@ class UserController extends AdminController
      */
     public function softDelete($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
         try {
             $userId = intval($id);
@@ -1271,6 +1292,7 @@ class UserController extends AdminController
      */
     public function bulkOperation()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
         try {
             $userIds = $_POST['user_ids'] ?? [];
@@ -1318,6 +1340,7 @@ class UserController extends AdminController
      */
     public function viewActivityLog($id)
     {
+        $this->requireAdmin();
         try {
             $userId = intval($id);
             list($tSql, $tParams) = $this->tenantWhere();
@@ -1369,6 +1392,7 @@ class UserController extends AdminController
      */
     public function viewCommissions($id)
     {
+        $this->requireAdmin();
         try {
             $userId = intval($id);
             list($tSql, $tParams) = $this->tenantWhere();
@@ -1574,6 +1598,7 @@ class UserController extends AdminController
      */
     public function impersonate($id)
     {
+        $this->requireAdmin();
         try {
             $userId = intval($id);
             list($tSql, $tParams) = $this->tenantWhere();
@@ -1582,12 +1607,16 @@ class UserController extends AdminController
             if ($user['role'] === 'admin' || $user['role'] === 'super_admin') { $this->setFlash('error', 'Cannot impersonate admin users'); return $this->redirect('admin/users'); }
 
             $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
-            $adminRole = $_SESSION['role'] ?? 'admin';
+            // Effective admin role via the single-source resolver (admin_role-first),
+            // so a mixed session (e.g. GodMode temp role) restores faithfully.
+            $adminRole = RBACManager::getUserRole() ?? 'admin';
 
-            // Store admin session for return
+            // Store admin session for return (both role keys, for exact restore)
             $_SESSION['impersonated_from'] = [
                 'admin_id' => $adminId,
                 'admin_role' => $adminRole,
+                'orig_role_key' => $_SESSION['role'] ?? null,
+                'orig_admin_role_key' => $_SESSION['admin_role'] ?? null,
                 'admin_name' => $_SESSION['name'] ?? 'Admin',
                 'impersonated_at' => date('Y-m-d H:i:s')
             ];
@@ -1642,6 +1671,7 @@ class UserController extends AdminController
      */
     public function stopImpersonation()
     {
+        $this->requireAdmin();
         if (empty($_SESSION['impersonated_from'])) {
             return $this->redirect('admin/users');
         }
@@ -1649,10 +1679,15 @@ class UserController extends AdminController
         $admin = $_SESSION['impersonated_from'];
         $adminId = $admin['admin_id'];
 
-        // Restore admin session
+        // Restore admin session (both role keys, exactly as stored)
         $_SESSION['user_id'] = $adminId;
         $_SESSION['admin_id'] = $adminId;
-        $_SESSION['role'] = $admin['admin_role'];
+        $_SESSION['role'] = $admin['orig_role_key'] ?? $admin['admin_role'];
+        if (isset($admin['orig_admin_role_key'])) {
+            $_SESSION['admin_role'] = $admin['orig_admin_role_key'];
+        } else {
+            $_SESSION['admin_role'] = $admin['admin_role'];
+        }
         $_SESSION['name'] = $admin['admin_name'];
 
         unset($_SESSION['impersonated_from']);
@@ -1671,6 +1706,7 @@ class UserController extends AdminController
      */
     public function forcePasswordReset($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
         try {
             $userId = intval($id);
@@ -1707,6 +1743,7 @@ class UserController extends AdminController
      */
     public function import()
     {
+        $this->requireAdmin();
         try {
             $data = [
                 'page_title' => 'Import Users - APS Dream Home',
@@ -1726,6 +1763,7 @@ class UserController extends AdminController
      */
     public function importProcess()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
         try {
             if (empty($_FILES['csv_file']) || $_FILES['csv_file']['error'] !== UPLOAD_ERR_OK) {
@@ -1813,6 +1851,7 @@ class UserController extends AdminController
      */
     public function viewSessions($id)
     {
+        $this->requireAdmin();
         try {
             $userId = intval($id);
             list($tSql, $tParams) = $this->tenantWhere();
@@ -1843,6 +1882,7 @@ class UserController extends AdminController
      */
     public function revokeSession($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
         try {
             $sessionId = intval($id);
@@ -1869,6 +1909,7 @@ class UserController extends AdminController
      */
     public function revokeAllSessions($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
         try {
             $userId = intval($id);
@@ -1891,6 +1932,7 @@ class UserController extends AdminController
      */
     public function viewTwoFactor($id)
     {
+        $this->requireAdmin();
         try {
             $userId = intval($id);
             list($tSql, $tParams) = $this->tenantWhere();
@@ -1915,6 +1957,7 @@ class UserController extends AdminController
      */
     public function toggleTwoFactor($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
         try {
             $userId = intval($id);
@@ -1957,6 +2000,7 @@ class UserController extends AdminController
      */
     public function viewNotes($id)
     {
+        $this->requireAdmin();
         try {
             $userId = intval($id);
             list($tSql, $tParams) = $this->tenantWhere();
@@ -2001,6 +2045,7 @@ class UserController extends AdminController
      */
     public function addNote($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
         try {
             $userId = intval($id);
@@ -2041,6 +2086,7 @@ class UserController extends AdminController
      */
     public function updateNote($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
         try {
             $noteId = intval($id);
@@ -2076,6 +2122,7 @@ class UserController extends AdminController
      */
     public function deleteNote($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
         try {
             $noteId = intval($id);
@@ -2096,6 +2143,7 @@ class UserController extends AdminController
      */
     public function getActivityFeed()
     {
+        $this->requireAdmin();
         try {
             $limit = min((int)($_GET['limit'] ?? 10), 50);
             list($tSql, $tParams) = $this->tenantWhere();
@@ -2130,6 +2178,7 @@ class UserController extends AdminController
      */
     public function uploadAvatar($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
         try {
             $userId = intval($id);
@@ -2194,6 +2243,7 @@ class UserController extends AdminController
      */
     public function deleteAvatar($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
         try {
             $userId = intval($id);
@@ -2221,6 +2271,7 @@ class UserController extends AdminController
      */
     public function getUserAnalytics()
     {
+        $this->requireAdmin();
         try {
             list($tSql, $tParams) = $this->tenantWhere();
             

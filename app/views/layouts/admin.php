@@ -154,10 +154,10 @@ $GLOBALS['_html_doc_started'] = true;
                 ul.style.display = hidden ? '' : 'none';
                 var arrow = document.getElementById('arrow-' + id);
                 if (arrow) arrow.classList.toggle('collapsed', !hidden);
-                var saved = localStorage.getItem('adminSidebarSections');
+                var saved = sessionStorage.getItem('adminSidebarSections');
                 var state = saved ? JSON.parse(saved) : {};
                 state[id] = hidden;
-                localStorage.setItem('adminSidebarSections', JSON.stringify(state));
+                sessionStorage.setItem('adminSidebarSections', JSON.stringify(state));
             };
 
             APS.toggleAllSections = function() {
@@ -167,10 +167,10 @@ $GLOBALS['_html_doc_started'] = true;
                 });
                 menus.forEach(function(el) {
                     el.style.display = anyHidden ? '' : 'none';
-                    var saved = localStorage.getItem('adminSidebarSections');
+                    var saved = sessionStorage.getItem('adminSidebarSections');
                     var state = saved ? JSON.parse(saved) : {};
                     state[el.id] = anyHidden;
-                    localStorage.setItem('adminSidebarSections', JSON.stringify(state));
+                    sessionStorage.setItem('adminSidebarSections', JSON.stringify(state));
                 });
                 document.querySelectorAll('.sidebar-sec-arrow[id^="arrow-sec-"]').forEach(function(arr) {
                     arr.classList.toggle('collapsed', !anyHidden);
@@ -178,7 +178,17 @@ $GLOBALS['_html_doc_started'] = true;
             };
 
             APS._restoreSections = function() {
-                var saved = localStorage.getItem('adminSidebarSections');
+                // One-time migration from the old shared localStorage key.
+                try {
+                    if (!sessionStorage.getItem('adminSidebarSections')) {
+                        var legacy = localStorage.getItem('adminSidebarSections');
+                        if (legacy) {
+                            sessionStorage.setItem('adminSidebarSections', legacy);
+                            localStorage.removeItem('adminSidebarSections');
+                        }
+                    }
+                } catch (e) { /* ignore */ }
+                var saved = sessionStorage.getItem('adminSidebarSections');
                 if (!saved) return;
                 try {
                     var state = JSON.parse(saved);
@@ -303,6 +313,23 @@ $GLOBALS['_html_doc_started'] = true;
                         <div class="user-info">
                             <div class="user-name"><?php echo htmlspecialchars($adminName ?? ''); ?></div>
                             <div class="user-role"><?php echo ucfirst(str_replace('_', ' ', $adminRole)); ?></div>
+                            <?php
+                            // "Acting as" indicator — any session-wide switch (impersonation,
+                            // GodMode role, tenant view) reshapes the sidebar on ALL open tabs.
+                            // These badges explain a suddenly-different menu at a glance.
+                            $__imp = !empty($_SESSION['impersonated_from']);
+                            $__godRole = !empty($_SESSION['god_mode_role_switched']);
+                            $__godImp = !empty($_SESSION['god_mode_impersonating']);
+                            $__tenSw = !empty($_SESSION['tenant_switch_active']);
+                            ?>
+                            <?php if ($__imp || $__godRole || $__godImp || $__tenSw): ?>
+                            <div class="d-flex flex-wrap gap-1 mt-1">
+                                <?php if ($__imp): ?><span class="badge bg-info" title="Menus on all tabs follow this user"><i class="fas fa-user-secret"></i> As <?= htmlspecialchars($_SESSION['role'] ?? '') ?></span><?php endif; ?>
+                                <?php if ($__godRole): ?><span class="badge bg-warning text-dark" title="GodMode temporary role"><i class="fas fa-random"></i> <?= htmlspecialchars($_SESSION['god_mode_temp_role'] ?? 'switched') ?></span><?php endif; ?>
+                                <?php if ($__godImp): ?><span class="badge bg-danger" title="GodMode impersonation active"><i class="fas fa-mask"></i> Impersonating</span><?php endif; ?>
+                                <?php if ($__tenSw): ?><span class="badge bg-secondary" title="Viewing another tenant"><i class="fas fa-exchange-alt"></i> <?= htmlspecialchars($_SESSION['tenant_switch_name'] ?? '') ?></span><?php endif; ?>
+                            </div>
+                            <?php endif; ?>
                         </div>
                         <i class="fas fa-chevron-down"></i>
                     </div>

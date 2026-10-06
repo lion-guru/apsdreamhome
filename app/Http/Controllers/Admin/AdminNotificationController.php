@@ -12,6 +12,7 @@ class AdminNotificationController extends AdminController
     }
 
     public function index() {
+        $this->requireAdmin();
         $notifications = $this->notificationService->getUnread();
         $this->render('admin/notifications/index', [
             'page_title' => 'Notifications',
@@ -21,6 +22,7 @@ class AdminNotificationController extends AdminController
     }
 
     public function panel() {
+        $this->requireAdmin();
         $notifications = $this->notificationService->getUnread();
         $this->render('admin/notifications/panel', [
             'page_title' => 'Notifications Panel',
@@ -30,12 +32,14 @@ class AdminNotificationController extends AdminController
     }
 
     public function markRead($id) {
+        $this->requireAdmin();
         $this->notificationService->markRead($id);
         header('Location: ' . BASE_URL . '/admin/notifications');
         exit;
     }
 
     public function markAllRead() {
+        $this->requireAdmin();
         $this->notificationService->markAllRead();
         header('Location: ' . BASE_URL . '/admin/notifications');
         exit;

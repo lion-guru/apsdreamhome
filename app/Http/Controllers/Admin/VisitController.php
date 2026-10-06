@@ -21,6 +21,7 @@ class VisitController extends AdminController
 
     public function index()
     {
+        $this->requireAdmin();
         $stats = $this->service ? $this->service->getStats() : [];
         $visits = $this->service ? $this->service->getAll('', '', 50) : [];
         $slots = $this->service ? $this->service->getAvailableSlots(date('Y-m-d'), date('Y-m-d', strtotime('+14 days'))) : [];
@@ -36,6 +37,7 @@ class VisitController extends AdminController
 
     public function calendar()
     {
+        $this->requireAdmin();
         $month = (int)($_GET['month'] ?? date('m'));
         $year = (int)($_GET['year'] ?? date('Y'));
         $visits = $this->service ? $this->service->getAll('', '', 500) : [];
@@ -49,6 +51,7 @@ class VisitController extends AdminController
 
     public function create()
     {
+        $this->requireAdmin();
         $leads = [];
         $properties = [];
         $users = [];
@@ -78,6 +81,7 @@ class VisitController extends AdminController
 
     public function store()
     {
+        $this->requireAdmin();
         $token = $_POST['csrf_token'] ?? '';
         if (!$this->validateCsrfToken($token)) {
             $this->json(['success' => false, 'error' => 'Invalid CSRF token'], 403);
@@ -112,6 +116,7 @@ class VisitController extends AdminController
 
     public function show()
     {
+        $this->requireAdmin();
         $id = (int)($_GET['id'] ?? $_GET['visit_id'] ?? 0);
         $visit = $this->service ? $this->service->getById($id) : null;
         if (!$visit) {
@@ -126,6 +131,7 @@ class VisitController extends AdminController
 
     public function edit()
     {
+        $this->requireAdmin();
         $id = (int)($_GET['id'] ?? 0);
         $visit = $this->service ? $this->service->getById($id) : null;
         if (!$visit) {
@@ -148,6 +154,7 @@ class VisitController extends AdminController
 
     public function update()
     {
+        $this->requireAdmin();
         $token = $_POST['csrf_token'] ?? '';
         if (!$this->validateCsrfToken($token)) {
             $this->json(['success' => false, 'error' => 'Invalid CSRF token'], 403);
@@ -186,6 +193,7 @@ class VisitController extends AdminController
 
     public function destroy()
     {
+        $this->requireAdmin();
         $token = $_POST['csrf_token'] ?? $_GET['csrf_token'] ?? '';
         if (!$this->validateCsrfToken($token)) {
             $this->json(['success' => false, 'error' => 'Invalid CSRF token'], 403);
@@ -202,6 +210,7 @@ class VisitController extends AdminController
 
     public function confirm()
     {
+        $this->requireAdmin();
         $id = (int)($_GET['id'] ?? 0);
         if ($this->service && $id) {
             $this->service->updateStatus($id, 'confirmed');
@@ -213,6 +222,7 @@ class VisitController extends AdminController
 
     public function complete()
     {
+        $this->requireAdmin();
         $id = (int)($_GET['id'] ?? 0);
         if ($this->service && $id) {
             $this->service->updateStatus($id, 'completed');
@@ -223,6 +233,7 @@ class VisitController extends AdminController
 
     public function cancel()
     {
+        $this->requireAdmin();
         $id = (int)($_GET['id'] ?? 0);
         $reason = $_POST['reason'] ?? $_GET['reason'] ?? 'Cancelled by admin';
         if ($this->service && $id) {
@@ -235,6 +246,7 @@ class VisitController extends AdminController
 
     public function noshow()
     {
+        $this->requireAdmin();
         $id = (int)($_GET['id'] ?? 0);
         if ($this->service && $id) {
             $this->service->updateStatus($id, 'no_show');
@@ -245,6 +257,7 @@ class VisitController extends AdminController
 
     public function updateStatus()
     {
+        $this->requireAdmin();
         $id = (int)($_POST['id'] ?? $_GET['id'] ?? 0);
         $status = $_POST['status'] ?? $_GET['status'] ?? '';
         $notes = $_POST['notes'] ?? null;

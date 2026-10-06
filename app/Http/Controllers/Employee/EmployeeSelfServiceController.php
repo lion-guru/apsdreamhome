@@ -220,9 +220,23 @@ class EmployeeSelfServiceController extends BaseController
     public function downloadPayslip($payslipId)
     {
         $this->requireEmployeeLogin();
+        $employeeId = $_SESSION['employee_id'];
+        // Ownership gate: employees must only download their own payslips.
+        $emp = $this->db->fetchOne("SELECT id FROM employees WHERE user_id=?", [$employeeId]);
+        $mine = $emp ? $this->db->fetchOne("SELECT id FROM employee_payslips WHERE id=? AND employee_id=?", [(int)$payslipId, (int)$emp['id']]) : null;
+        if (!$mine) {
+            $_SESSION['error'] = 'Payslip not found';
+            $this->redirect(BASE_URL . '/employee/self-service/payslips');
+            exit;
+        }
         $pdfPath = $this->service->getPayslipPdf((int)$payslipId);
 
-        if (!$pdfPath || !file_exists(APP_PATH . '/' . $pdfPath)) {
+        // PdfService returns ABSOLUTE storage paths; older rows may be APP-relative.
+        $diskPath = $pdfPath ?? '';
+        if ($diskPath !== '' && !is_file($diskPath)) {
+            $diskPath = APP_PATH . '/' . ltrim($diskPath, '/');
+        }
+        if (!$diskPath || !is_file($diskPath)) {
             $_SESSION['error'] = 'Payslip PDF not found';
             $this->redirect(BASE_URL . '/employee/self-service/payslips');
             exit;
@@ -230,8 +244,8 @@ class EmployeeSelfServiceController extends BaseController
 
         header('Content-Type: application/pdf');
         header('Content-Disposition: attachment; filename="Payslip_' . $payslipId . '.pdf"');
-        header('Content-Length: ' . filesize(APP_PATH . '/' . $pdfPath));
-        readfile(APP_PATH . '/' . $pdfPath);
+        header('Content-Length: ' . filesize($diskPath));
+        readfile($diskPath);
         exit;
     }
 

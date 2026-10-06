@@ -506,6 +506,7 @@ $GLOBALS['_html_doc_started'] = true;
 </head>
 
 <body>
+    <?php include __DIR__ . '/../components/impersonation-banner.php'; ?>
     <!-- Sidebar Toggle Button (Mobile) -->
     <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar" aria-expanded="false">
         <i class="fas fa-bars"></i>

@@ -19,6 +19,7 @@ class CashCollectionController extends AdminController
 
     public function index()
     {
+        $this->requireAdmin();
         $status = $_GET['status'] ?? '';
         $collectorId = !empty($_GET['collector_id']) ? (int)$_GET['collector_id'] : null;
         $fromDate = $_GET['from'] ?? '';
@@ -38,6 +39,7 @@ class CashCollectionController extends AdminController
 
     public function create()
     {
+        $this->requireAdmin();
         $collectors = $this->getUsers();
         $bookings = $this->getBookings();
         return $this->render('admin/cash-collections/create', [
@@ -49,6 +51,7 @@ class CashCollectionController extends AdminController
 
     public function store()
     {
+        $this->requireAdmin();
         $token = $_POST['csrf_token'] ?? '';
         if (!$this->validateCsrfToken($token)) {
             $this->json(['success' => false, 'error' => 'Invalid CSRF token'], 403);
@@ -97,6 +100,7 @@ class CashCollectionController extends AdminController
      */
     public function handoverSlip()
     {
+        $this->requireAdmin();
         $date = trim($_GET['date'] ?? date('Y-m-d'));
         if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) $date = date('Y-m-d');
         $collectorId = !empty($_GET['collector_id']) ? (int)$_GET['collector_id'] : null;
@@ -125,6 +129,7 @@ class CashCollectionController extends AdminController
 
     public function show()
     {
+        $this->requireAdmin();
         $id = (int)($_GET['id'] ?? 0);
         $collection = $this->service ? $this->service->getById($id) : null;
         if (!$collection) {
@@ -139,6 +144,7 @@ class CashCollectionController extends AdminController
 
     public function verify()
     {
+        $this->requireAdmin();
         $token = $_POST['csrf_token'] ?? $_GET['csrf_token'] ?? '';
         if (!$this->validateCsrfToken($token)) {
             $this->json(['success' => false, 'error' => 'Invalid CSRF token'], 403);
@@ -157,6 +163,7 @@ class CashCollectionController extends AdminController
 
     public function reject()
     {
+        $this->requireAdmin();
         $token = $_POST['csrf_token'] ?? '';
         if (!$this->validateCsrfToken($token)) {
             $this->json(['success' => false, 'error' => 'Invalid CSRF token'], 403);
@@ -180,6 +187,7 @@ class CashCollectionController extends AdminController
 
     public function bulkVerify()
     {
+        $this->requireAdmin();
         $token = $_POST['csrf_token'] ?? '';
         if (!$this->validateCsrfToken($token)) {
             $this->json(['success' => false, 'error' => 'Invalid CSRF token'], 403);
@@ -196,6 +204,7 @@ class CashCollectionController extends AdminController
 
     public function reconciliations()
     {
+        $this->requireAdmin();
         $status = $_GET['status'] ?? '';
         $reconciliations = $this->service ? $this->service->getReconciliations($status) : [];
         $collectors = $this->service ? $this->service->getCollectors() : [];
@@ -209,6 +218,7 @@ class CashCollectionController extends AdminController
 
     public function reconciliationForm()
     {
+        $this->requireAdmin();
         $collectors = $this->service ? $this->service->getCollectors() : [];
         return $this->render('admin/cash-collections/reconciliation-create', [
             'page_title' => 'Start Reconciliation',
@@ -219,6 +229,7 @@ class CashCollectionController extends AdminController
 
     public function reconciliationCreate()
     {
+        $this->requireAdmin();
         $token = $_POST['csrf_token'] ?? '';
         if (!$this->validateCsrfToken($token)) {
             $this->json(['success' => false, 'error' => 'Invalid CSRF token'], 403);
@@ -246,6 +257,7 @@ class CashCollectionController extends AdminController
 
     public function reconciliationClose()
     {
+        $this->requireAdmin();
         $token = $_POST['csrf_token'] ?? $_GET['csrf_token'] ?? '';
         if (!$this->validateCsrfToken($token)) {
             $this->json(['success' => false, 'error' => 'Invalid CSRF token'], 403);
@@ -273,6 +285,7 @@ class CashCollectionController extends AdminController
 
     public function reconcile()
     {
+        $this->requireAdmin();
         $token = $_POST['csrf_token'] ?? $_GET['csrf_token'] ?? '';
         if (!$this->validateCsrfToken($token)) {
             $this->json(['success' => false, 'error' => 'Invalid CSRF token'], 403);

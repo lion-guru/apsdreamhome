@@ -29,6 +29,7 @@ class PayoutController extends AdminController
      */
     public function index()
     {
+        $this->requireAdmin();
         try {
             $data = [
                 'page_title' => 'MLM Payout Management - APS Dream Home',
@@ -51,6 +52,7 @@ class PayoutController extends AdminController
      */
     public function list()
     {
+        $this->requireAdmin();
         try {
             $search = $_GET['search'] ?? '';
             $status = $_GET['status'] ?? '';
@@ -128,6 +130,7 @@ class PayoutController extends AdminController
      */
     public function show($id)
     {
+        $this->requireAdmin();
         try {
             $payoutId = intval($id);
             if ($payoutId <= 0) {
@@ -188,6 +191,7 @@ class PayoutController extends AdminController
      */
     public function processPayout($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -295,6 +299,7 @@ class PayoutController extends AdminController
      */
     public function batchProcess()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -350,6 +355,7 @@ class PayoutController extends AdminController
      */
     public function create()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -403,6 +409,7 @@ class PayoutController extends AdminController
      */
     public function analytics()
     {
+        $this->requireAdmin();
         try {
             $data = [
                 'page_title' => 'Payout Analytics - APS Dream Home',

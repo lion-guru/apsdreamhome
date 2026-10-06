@@ -83,12 +83,12 @@ class GstController extends AdminController
         $due_date = $_POST['due_date'] ?? date('Y-m-d', strtotime('+30 days'));
         $client_name = $_POST['client_name'] ?? '';
         $client_gstin = $_POST['client_gstin'] ?? '';
-        $total_amount = $_POST['total_amount'] ?? 0;
+        $total_amount = ($_POST['total_amount'] ?? '') === '' ? null : ($_POST['total_amount'] ?? 0);
         $gst_type = $_POST['gst_type'] ?? 'cgst_sgst';
-        $gst_rate = $_POST['gst_rate'] ?? 18;
-        $cgst_amount = $_POST['cgst_amount'] ?? 0;
-        $sgst_amount = $_POST['sgst_amount'] ?? 0;
-        $igst_amount = $_POST['igst_amount'] ?? 0;
+        $gst_rate = ($_POST['gst_rate'] ?? '') === '' ? null : ($_POST['gst_rate'] ?? 18);
+        $cgst_amount = ($_POST['cgst_amount'] ?? '') === '' ? null : ($_POST['cgst_amount'] ?? 0);
+        $sgst_amount = ($_POST['sgst_amount'] ?? '') === '' ? null : ($_POST['sgst_amount'] ?? 0);
+        $igst_amount = ($_POST['igst_amount'] ?? '') === '' ? null : ($_POST['igst_amount'] ?? 0);
         $gstin = $_POST['gstin'] ?? '';
         $hsn_code = $_POST['hsn_code'] ?? '';
         $place_of_supply = $_POST['place_of_supply'] ?? '';

@@ -208,6 +208,15 @@ $agent_name = $_SESSION['user_name'] ?? $_SESSION['agent_name'] ?? 'Agent';
         </div>
     </div>
 
+    <!-- Referral Earnings Widget -->
+    <?php if (!empty($referral_earnings_breakdown)): ?>
+        <?php 
+            $userId = $userId ?? $_SESSION['user_id'] ?? 0;
+            $base = BASE_URL;
+            include __DIR__ . '/../../components/referral_earnings_widget.php';
+        ?>
+    <?php endif; ?>
+
     <!-- Agent Sub-Role Specific Cockpit Section -->
     <?php if ($agent_type === 'mlm_company'): ?>
     <!-- ═══ MLM COMPANY AGENT: Network Overview & Multi-Tier Commission ═══ -->

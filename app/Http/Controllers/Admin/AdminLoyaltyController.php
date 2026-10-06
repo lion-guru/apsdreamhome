@@ -23,6 +23,8 @@ class AdminLoyaltyController extends AdminController
      */
     public function index(): void
     {
+
+        $this->requireAdmin();
         $stats = $this->loyaltyService->getAdminStats();
         $tiers = $this->loyaltyService->getAllTiers();
         
@@ -38,6 +40,7 @@ class AdminLoyaltyController extends AdminController
      */
     public function members(): void
     {
+        $this->requireAdmin();
         $page = $_GET['page'] ?? 1;
         $perPage = 50;
         
@@ -74,6 +77,7 @@ class AdminLoyaltyController extends AdminController
      */
     public function memberDetails(int $userId): void
     {
+        $this->requireAdmin();
         // Build member data for the view
         $member = [];
         try {
@@ -110,6 +114,7 @@ class AdminLoyaltyController extends AdminController
      */
     public function addPoints(): void
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $userId = (int) ($_POST['user_id'] ?? 0);
             $points = (int) ($_POST['points'] ?? 0);
@@ -150,6 +155,7 @@ class AdminLoyaltyController extends AdminController
      */
     public function rewards(): void
     {
+        $this->requireAdmin();
         $db = \App\Core\Database\Database::getInstance();
         
         $sql = "SELECT * FROM rewards_catalog ORDER BY points_cost ASC";
@@ -166,6 +172,7 @@ class AdminLoyaltyController extends AdminController
      */
     public function editReward(?int $id = null): void
     {
+        $this->requireAdmin();
         $db = \App\Core\Database\Database::getInstance();
         $reward = null;
         
@@ -234,6 +241,7 @@ class AdminLoyaltyController extends AdminController
      */
     public function redemptions(): void
     {
+        $this->requireAdmin();
         $page = $_GET['page'] ?? 1;
         $perPage = 50;
         
@@ -282,6 +290,7 @@ class AdminLoyaltyController extends AdminController
      */
     public function updateRedemptionStatus(): void
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $id = (int)($_POST['id'] ?? 0);
             $status = $_POST['status'] ?? '';
@@ -308,6 +317,7 @@ class AdminLoyaltyController extends AdminController
      */
     public function rules(): void
     {
+        $this->requireAdmin();
         $db = \App\Core\Database\Database::getInstance();
         $sql = "SELECT * FROM points_rules ORDER BY action_type";
         $rules = $db->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
@@ -323,6 +333,7 @@ class AdminLoyaltyController extends AdminController
      */
     public function tierBenefits(): void
     {
+        $this->requireAdmin();
         $db = \App\Core\Database\Database::getInstance();
         
         $tiers = ['bronze', 'silver', 'gold', 'platinum', 'diamond'];

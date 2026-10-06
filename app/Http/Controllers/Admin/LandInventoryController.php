@@ -34,9 +34,9 @@ class LandInventoryController extends AdminController
         }
         try {
             $this->service = new LandAcquisitionService();
-        } catch (\Throwable $e) {
+        } catch (\Exception $e) {
             error_log("LandInventoryController: service failed: " . $e->getMessage());
-            throw $e;
+            $this->service = null;
         }
 
         // File upload path for land documents
@@ -373,7 +373,14 @@ class LandInventoryController extends AdminController
             ]);
         } catch (\Throwable $e) {
             error_log("LandInventory acquisitions error: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
-            throw $e;
+            $this->setFlash('error', 'Failed to load acquisitions: ' . $e->getMessage());
+            return $this->render('admin/land-inventory/acquisitions', [
+                'page_title'   => 'Land Acquisitions',
+                'page_heading' => 'Land Acquisitions',
+                'deals'        => [],
+                'filters'      => [],
+                'statuses'     => ['in_progress','registered','mutated','closed','cancelled'],
+            ]);
         }
     }
 
@@ -518,8 +525,9 @@ class LandInventoryController extends AdminController
         $this->redirect('/admin/land-inventory/leads/' . $leadId);
     }
 
-    private function decOrZero($val): float
+    private function decOrZero($val): ?float
     {
+        if ($val === '' || $val === null) return null;
         return (float)str_replace(',', '', $val);
     }
 
@@ -755,13 +763,10 @@ class LandInventoryController extends AdminController
     {
         $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
         if ($token === '' || !isset($_SESSION['csrf_token'])) {
-            return; // soft-skip — let the global middleware catch if present
+            throw new \Exception('CSRF token missing');
         }
         if (!hash_equals((string)$_SESSION['csrf_token'], (string)$token)) {
-            $this->setFlash('error', 'Invalid CSRF token');
-            $back = $_SERVER['HTTP_REFERER'] ?? '/admin/land/leads';
-            header('Location: ' . $back);
-            exit;
+            throw new \Exception('Invalid CSRF token');
         }
     }
 

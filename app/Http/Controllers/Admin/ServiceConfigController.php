@@ -85,6 +85,25 @@ class ServiceConfigController extends AdminController
     }
 
     /**
+     * Config change history (who/when/old/new). Read-only audit.
+     */
+    public function history()
+    {
+        $this->requireAdmin();
+
+        $svc = ServiceConfigService::getInstance();
+        $service = trim((string)($_GET['service'] ?? ''));
+        $history = $svc->getAuditHistory($service !== '' ? $service : null, 100);
+
+        return $this->render('admin/service-configs/history', [
+            'page_title'   => 'Configuration History',
+            'page_heading' => 'Configuration History',
+            'history'      => $history,
+            'service'      => $service,
+        ]);
+    }
+
+    /**
      * Test a service's API connection (stub — extend per service).
      */
     public function testConnection(string $service)

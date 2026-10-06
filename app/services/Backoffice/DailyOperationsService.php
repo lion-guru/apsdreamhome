@@ -177,12 +177,13 @@ class DailyOperationsService
 
     public function getPendingLeaves()
     {
-        return $this->fetchAll("SELECT lr.*,u.name AS employee_name FROM employee_leave_requests lr LEFT JOIN users u ON lr.employee_id=u.id{$this->tJoin('u')} WHERE lr.status='pending' ORDER BY lr.created_at DESC", $this->tVal());
+        // employee_leave_requests.employee_id FK -> employees.id (never users.id)
+        return $this->fetchAll("SELECT lr.*,u.name AS employee_name FROM employee_leave_requests lr LEFT JOIN employees e ON lr.employee_id=e.id LEFT JOIN users u ON e.user_id=u.id{$this->tJoin('u')} WHERE lr.status='pending' ORDER BY lr.created_at DESC", $this->tVal());
     }
 
     public function getAllLeaves($status = '')
     {
-        $sql = "SELECT lr.*,u.name AS employee_name,a.name AS approver_name FROM employee_leave_requests lr LEFT JOIN users u ON lr.employee_id=u.id{$this->tJoin('u')} LEFT JOIN users a ON lr.approved_by=a.id{$this->tJoin('a')}";
+        $sql = "SELECT lr.*,u.name AS employee_name,a.name AS approver_name FROM employee_leave_requests lr LEFT JOIN employees e ON lr.employee_id=e.id LEFT JOIN users u ON e.user_id=u.id{$this->tJoin('u')} LEFT JOIN users a ON lr.approved_by=a.id{$this->tJoin('a')}";
         $params = array_merge($this->tVal(), $this->tVal());
         if ($status) { $sql .= " WHERE lr.status=?"; $params[] = $status; }
         $sql .= " ORDER BY lr.created_at DESC";

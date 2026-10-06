@@ -98,7 +98,7 @@ class GoogleAuthController extends BaseController
 
         $googleUserData = $_SESSION['google_user_data'];
         $role = $_POST['role'] ?? 'customer';
-        $referralCode = $_POST['referral_code'] ?? '';
+        $referralCode = trim((string)($_POST['referral_code'] ?? $_GET['ref'] ?? $_COOKIE['aps_ref'] ?? $_SESSION['aps_ref'] ?? ''));
         $phone = $_POST['phone'] ?? '';
 
         try {

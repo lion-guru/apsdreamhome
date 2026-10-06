@@ -770,4 +770,511 @@ class NotificationService
     {
         return $this->send($userId, $channel, $title, $message, $data);
     }
+
+    /**
+     * Notify when a pricing plan is created/saved.
+     */
+    public function pricingPlanCreated(int $colonyId, int $planId, int $version, int $createdBy): bool
+    {
+        $title = 'New Pricing Plan Created';
+        $message = "Pricing plan v{$version} has been created for colony. Base price: ₹" . number_format($basePrice, 2) . "/sqft";
+        $data = ['event_type' => 'pricing_plan', 'colony_id' => $colonyId, 'plan_id' => $planId, 'version' => $version, 'action' => 'created', 'action_url' => '/admin/colony-pipeline/' . $colonyId . '/pricing'];
+
+        // Notify admins
+        $this->notify('pricing_plan', $message, null, '/admin/colony-pipeline/' . $colonyId . '/pricing', $title);
+
+        // Notify relevant users (colony team, pricing team)
+        $this->sendToRole('admin', 'email', $title, $message, ['event_type' => 'pricing_plan_created', 'colony_id' => $colonyId, 'plan_id' => $planId]);
+        $this->sendToRole('pricing_manager', 'email', $title, $message, ['event_type' => 'pricing_plan_created', 'colony_id' => $colonyId, 'plan_id' => $planId]);
+
+        return true;
+    }
+
+    /**
+     * Notify when a pricing plan is activated.
+     */
+    public function pricingPlanActivated(int $colonyId, int $planId, int $version, int $activatedBy): bool
+    {
+        $title = 'Pricing Plan Activated';
+        $message = "Pricing plan v{$version} has been activated for the colony. This plan is now live for pricing calculations.";
+        $data = ['event_type' => 'pricing_plan', 'colony_id' => $colonyId, 'plan_id' => $planId, 'version' => $version, 'action' => 'activated', 'action_url' => '/admin/colony-pipeline/' . $colonyId . '/pricing'];
+
+        $this->notify('pricing_plan', $message, null, '/admin/colony-pipeline/' . $colonyId . '/pricing', $title);
+        $this->sendToRole('admin', 'email', 'Pricing Plan Activated', $message, ['event_type' => 'pricing_plan_activated', 'colony_id' => $colonyId, 'plan_id' => $planId]);
+        $this->sendToRole('pricing_manager', 'email', 'Pricing Plan Activated', $message, ['event_type' => 'pricing_plan_activated', 'colony_id' => $colonyId, 'plan_id' => $planId]);
+
+        return true;
+    }
+
+    /**
+     * Notify when a pricing plan is applied to plots.
+     */
+    public function pricingPlanApplied(int $colonyId, int $planId, int $version, int $plotsUpdated, float $totalValue, int $appliedBy): bool
+    {
+        $title = 'Pricing Plan Applied';
+        $message = "Pricing plan v{$version} has been applied to {$plotsUpdated} plots. Total inventory value: ₹" . number_format($totalValue, 2);
+        $data = ['event_type' => 'pricing_plan', 'colony_id' => $colonyId, 'plan_id' => $planId, 'version' => $version, 'action' => 'applied', 'plots_updated' => $plotsUpdated, 'total_value' => $totalValue, 'action_url' => '/admin/colony-pipeline/' . $colonyId . '/pricing'];
+
+        $this->notify('pricing_plan', $message, null, '/admin/colony-pipeline/' . $colonyId . '/pricing', $title);
+        $this->sendToRole('admin', 'email', 'Pricing Plan Applied', $message, ['event_type' => 'pricing_plan_applied', 'colony_id' => $colonyId, 'plots_updated' => $plotsUpdated, 'total_value' => $totalValue]);
+        $this->sendToRole('pricing_manager', 'email', 'Pricing Plan Applied', $message, ['event_type' => 'pricing_plan_applied', 'colony_id' => $colonyId, 'plots_updated' => $plotsUpdated, 'total_value' => $totalValue]);
+        $this->sendToRole('sales_manager', 'email', 'Pricing Plan Applied', $message, ['event_type' => 'pricing_plan_applied', 'colony_id' => $colonyId, 'plots_updated' => $plotsUpdated, 'total_value' => $totalValue]);
+
+        return true;
+    }
+
+    /**
+     * Notify when a plot status changes.
+     */
+    public function plotStatusChanged(int $plotId, string $oldStatus, string $newStatus, int $changedBy): bool
+    {
+        $plot = $this->db->fetchOne("SELECT plot_number, colony_id FROM plots WHERE id = ?", [$plotId]);
+        if (!$plot) return false;
+
+        $statusLabels = [
+            'available' => 'Available',
+            'hold' => 'On Hold',
+            'booked' => 'Booked',
+            'sold' => 'Sold',
+            'reserved' => 'Reserved',
+            'under_construction' => 'Under Construction',
+            'developed' => 'Developed',
+        ];
+        $oldLabel = $statusLabels[$oldStatus] ?? ucwords(str_replace('_', ' ', $oldStatus));
+        $newLabel = $statusLabels[$newStatus] ?? ucwords(str_replace('_', ' ', $newStatus));
+
+        $title = 'Plot Status Updated';
+        $message = "Plot {$plot['plot_number']} status changed from {$oldLabel} to {$newLabel}.";
+        $data = ['event_type' => 'plot_status', 'plot_id' => $plotId, 'plot_number' => $plot['plot_number'], 'old_status' => $oldStatus, 'new_status' => $newStatus, 'action_url' => '/admin/plots/' . $plotId];
+
+        $this->notify('plot_status', $message, null, '/admin/plots/' . $plotId, $title);
+        $this->sendToRole('admin', 'email', 'Plot Status Updated', $message, ['event_type' => 'plot_status_changed', 'plot_id' => $plotId, 'old_status' => $oldStatus, 'new_status' => $newStatus]);
+        $this->sendToRole('sales_manager', 'email', 'Plot Status Updated', $message, ['event_type' => 'plot_status_changed', 'plot_id' => $plotId, 'old_status' => $oldStatus, 'new_status' => $newStatus]);
+
+        return true;
+    }
+
+    /**
+     * Notify when a colony is created.
+     */
+    public function colonyCreated(int $colonyId, string $colonyName, int $createdBy): bool
+    {
+        $title = 'New Colony Created';
+        $message = "New colony '{$colonyName}' has been created.";
+        $data = ['event_type' => 'colony', 'colony_id' => $colonyId, 'action' => 'created', 'action_url' => '/admin/colonies/' . $colonyId];
+
+        $this->notify('colony', $message, null, '/admin/colonies/' . $colonyId, $title);
+        $this->sendToRole('admin', 'email', 'New Colony Created', $message, ['event_type' => 'colony_created', 'colony_id' => $colonyId]);
+        $this->sendToRole('land_manager', 'email', 'New Colony Created', $message, ['event_type' => 'colony_created', 'colony_id' => $colonyId]);
+        $this->sendToRole('sales_manager', 'email', 'New Colony Created', $message, ['event_type' => 'colony_created', 'colony_id' => $colonyId]);
+
+        return true;
+    }
+
+    /**
+     * Notify when a colony is updated.
+     */
+    public function colonyUpdated(int $colonyId, string $colonyName, int $updatedBy, array $changedFields = []): bool
+    {
+        $title = 'Colony Updated';
+        $message = "Colony '{$colonyName}' has been updated.";
+        if (!empty($changedFields)) {
+            $message .= ' Changed fields: ' . implode(', ', $changedFields);
+        }
+        $data = ['event_type' => 'colony', 'colony_id' => $colonyId, 'action' => 'updated', 'changed_fields' => $changedFields, 'action_url' => '/admin/colonies/' . $colonyId];
+
+        $this->notify('colony', $message, null, '/admin/colonies/' . $colonyId, $title);
+        $this->sendToRole('admin', 'email', 'Colony Updated', $message, ['event_type' => 'colony_updated', 'colony_id' => $colonyId, 'changed_fields' => $changedFields]);
+        $this->sendToRole('land_manager', 'email', 'Colony Updated', $message, ['event_type' => 'colony_updated', 'colony_id' => $colonyId, 'changed_fields' => $changedFields]);
+
+        return true;
+    }
+
+    /**
+     * Notify when plots are generated for a colony.
+     */
+    public function plotsGenerated(int $colonyId, string $colonyName, int $plotsCount, int $generatedBy): bool
+    {
+        $title = 'Plots Generated';
+        $message = "{$plotsCount} plots have been generated for colony '{$colonyName}'.";
+        $data = ['event_type' => 'plots', 'colony_id' => $colonyId, 'plots_count' => $plotsCount, 'action' => 'generated', 'action_url' => '/admin/colony-pipeline/' . $colonyId . '/plots'];
+
+        $this->notify('plots', $message, null, '/admin/colony-pipeline/' . $colonyId . '/plots', $title);
+        $this->sendToRole('admin', 'email', 'Plots Generated', $message, ['event_type' => 'plots_generated', 'colony_id' => $colonyId, 'plots_count' => $plotsCount]);
+        $this->sendToRole('land_manager', 'email', 'Plots Generated', $message, ['event_type' => 'plots_generated', 'colony_id' => $colonyId, 'plots_count' => $plotsCount]);
+        $this->sendToRole('sales_manager', 'email', 'Plots Generated', $message, ['event_type' => 'plots_generated', 'colony_id' => $colonyId, 'plots_count' => $plotsCount]);
+
+        return true;
+    }
+
+    /**
+     * Notify when plots are deleted.
+     */
+    public function plotsDeleted(int $colonyId, string $colonyName, int $deletedCount, int $deletedBy): bool
+    {
+        $title = 'Plots Deleted';
+        $message = "{$deletedCount} plots have been deleted from colony '{$colonyName}'.";
+        $data = ['event_type' => 'plots', 'colony_id' => $colonyId, 'deleted_count' => $deletedCount, 'action' => 'deleted', 'action_url' => '/admin/colony-pipeline/' . $colonyId . '/layout'];
+
+        $this->notify('plots', $message, null, '/admin/colony-pipeline/' . $colonyId . '/layout', $title);
+        $this->sendToRole('admin', 'email', 'Plots Deleted', $message, ['event_type' => 'plots_deleted', 'colony_id' => $colonyId, 'deleted_count' => $deletedCount]);
+        $this->sendToRole('land_manager', 'email', 'Plots Deleted', $message, ['event_type' => 'plots_deleted', 'colony_id' => $colonyId, 'deleted_count' => $deletedCount]);
+
+        return true;
+    }
+
+    /**
+     * Notify when pricing is applied to a colony.
+     */
+    public function colonyPricingApplied(int $colonyId, string $colonyName, float $basePrice, int $plotsUpdated, float $totalValue, int $appliedBy): bool
+    {
+        $title = 'Colony Pricing Applied';
+        $message = "Pricing has been applied to colony '{$colonyName}' at ₹" . number_format($basePrice, 2) . "/sqft. {$plotsUpdated} plots updated. Total inventory value: ₹" . number_format($totalValue, 2);
+        $data = ['event_type' => 'pricing', 'colony_id' => $colonyId, 'base_price' => $basePrice, 'plots_updated' => $plotsUpdated, 'total_value' => $totalValue, 'action_url' => '/admin/colony-pipeline/' . $colonyId . '/pricing'];
+
+        $this->notify('pricing', $message, null, '/admin/colony-pipeline/' . $colonyId . '/pricing', $title);
+        $this->sendToRole('admin', 'email', 'Colony Pricing Applied', $message, ['event_type' => 'colony_pricing_applied', 'colony_id' => $colonyId, 'base_price' => $basePrice, 'plots_updated' => $plotsUpdated, 'total_value' => $totalValue]);
+        $this->sendToRole('sales_manager', 'email', 'Colony Pricing Applied', $message, ['event_type' => 'colony_pricing_applied', 'colony_id' => $colonyId, 'plots_updated' => $plotsUpdated, 'total_value' => $totalValue]);
+        $this->sendToRole('pricing_manager', 'email', 'Colony Pricing Applied', $message, ['event_type' => 'colony_pricing_applied', 'colony_id' => $colonyId, 'base_price' => $basePrice, 'plots_updated' => $plotsUpdated, 'total_value' => $totalValue]);
+
+        return true;
+    }
+
+    /**
+     * Send notification to users with a specific role.
+     */
+    private function sendToRole(string $role, string $channel, string $title, string $message, array $data = []): void
+    {
+        try {
+            $tid = $this->getTenantId();
+            $st = $this->db->prepare("SELECT id FROM users WHERE role = ? AND status = 'active'");
+            $st->execute([$role]);
+            $users = $st->fetchAll(PDO::FETCH_COLUMN);
+
+            foreach ($users as $userId) {
+                $this->send((int)$userId, $channel, $title, $message, $data);
+            }
+        } catch (\Throwable $e) {
+            error_log('NotificationService::sendToRole error: ' . $e->getMessage());
+        }
+    }
+
+    // =====================================================================
+    // CRITICAL ACTION NOTIFICATIONS
+    // =====================================================================
+
+    /**
+     * Notify customer + associate when booking is confirmed.
+     */
+    public function notifyBookingConfirmed(int $bookingId): void
+    {
+        try {
+            $userId = $this->getBookingCustomerUserId($bookingId);
+            if (!$userId) return;
+
+            $booking = $this->db->fetchOne("SELECT id, plot_id, total_amount, booking_date FROM bookings WHERE id = ?", [$bookingId]);
+            if (!$booking) {
+                $booking = $this->db->fetchOne("SELECT id, plot_id, total_plot_value AS total_amount, created_at AS booking_date FROM plot_bookings WHERE id = ?", [$bookingId]);
+            }
+
+            $plotInfo = '';
+            if (!empty($booking['plot_id'])) {
+                $plot = $this->db->fetchOne("SELECT plot_number, colony_id FROM plots WHERE id = ?", [$booking['plot_id']]);
+                if ($plot) $plotInfo = " Plot: {$plot['plot_number']}.";
+            }
+
+            $amount = $booking['total_amount'] ?? 0;
+            $date = $booking['booking_date'] ?? date('Y-m-d');
+
+            $title = 'Booking Confirmed';
+            $message = "Your booking #{$bookingId} has been confirmed.{$plotInfo} Amount: ₹" . number_format((float)$amount, 2) . ". Date: " . date('d F Y', strtotime($date)) . ".";
+            $data = ['event_type' => 'booking_confirmed', 'booking_id' => $bookingId, 'plot_id' => $booking['plot_id'] ?? null, 'amount' => $amount, 'action_url' => '/user/bookings/' . $bookingId, 'priority' => 'high'];
+
+            $this->send($userId, 'email', $title, $message, $data);
+            $this->send($userId, 'sms', $title, $message, $data);
+            $this->send($userId, 'push', $title, $message, $data);
+            $this->send($userId, 'whatsapp', $title, $message, $data);
+
+            $this->notify('booking', "Booking #{$bookingId} confirmed for user #{$userId}.{$plotInfo} Amount: ₹" . number_format((float)$amount, 2), null, '/admin/bookings/' . $bookingId, 'Booking Confirmed');
+            $this->sendToRole('admin', 'email', 'Booking Confirmed', "Booking #{$bookingId} confirmed.{$plotInfo} Amount: ₹" . number_format((float)$amount, 2), ['event_type' => 'booking_confirmed', 'booking_id' => $bookingId]);
+            $this->sendToRole('sales_manager', 'email', 'Booking Confirmed', "Booking #{$bookingId} confirmed.{$plotInfo} Amount: ₹" . number_format((float)$amount, 2), ['event_type' => 'booking_confirmed', 'booking_id' => $bookingId]);
+        } catch (\Throwable $e) {
+            error_log('NotificationService::notifyBookingConfirmed error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Notify customer + admin when payment is received.
+     */
+    public function notifyPaymentReceived(int $paymentId): void
+    {
+        try {
+            $payment = $this->db->fetchOne("SELECT id, booking_id, amount, payment_method, transaction_id, created_at FROM payments WHERE id = ?", [$paymentId]);
+            if (!$payment) {
+                $payment = $this->db->fetchOne("SELECT id, booking_id, amount, payment_method, transaction_id, created_at FROM booking_payment_receipts WHERE id = ?", [$paymentId]);
+            }
+            if (!$payment) return;
+
+            $userId = $this->getBookingCustomerUserId((int)$payment['booking_id']);
+            $amount = (float)$payment['amount'];
+            $method = $payment['payment_method'] ?? 'online';
+            $txnId = $payment['transaction_id'] ?? 'N/A';
+
+            $title = 'Payment Received';
+            $message = "Payment of ₹" . number_format($amount, 2) . " received for booking #{$payment['booking_id']}. Method: " . ucfirst($method) . ". Txn ID: {$txnId}.";
+            $data = ['event_type' => 'payment_received', 'payment_id' => $paymentId, 'booking_id' => $payment['booking_id'], 'amount' => $amount, 'payment_method' => $method, 'transaction_id' => $txnId, 'action_url' => '/user/bookings/' . $payment['booking_id'], 'priority' => 'high'];
+
+            if ($userId) {
+                $this->send($userId, 'email', $title, $message, $data);
+                $this->send($userId, 'sms', $title, $message, $data);
+                $this->send($userId, 'whatsapp', $title, $message, $data);
+            }
+
+            $this->notify('payment', "Payment #{$paymentId} received: ₹" . number_format($amount, 2) . " for booking #{$payment['booking_id']}. Method: " . ucfirst($method), null, '/admin/payments/' . $paymentId, 'Payment Received');
+            $this->sendToRole('admin', 'email', 'Payment Received', "Payment #{$paymentId}: ₹" . number_format($amount, 2) . " for booking #{$payment['booking_id']}. Method: " . ucfirst($method), ['event_type' => 'payment_received', 'payment_id' => $paymentId, 'booking_id' => $payment['booking_id'], 'amount' => $amount]);
+            $this->sendToRole('finance_manager', 'email', 'Payment Received', "Payment #{$paymentId}: ₹" . number_format($amount, 2) . " for booking #{$payment['booking_id']}. Method: " . ucfirst($method), ['event_type' => 'payment_received', 'payment_id' => $paymentId, 'booking_id' => $payment['booking_id'], 'amount' => $amount]);
+        } catch (\Throwable $e) {
+            error_log('NotificationService::notifyPaymentReceived error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Notify customer when EMI is due (3 days before).
+     */
+    public function notifyEmiDue(int $emiId): void
+    {
+        try {
+            $emi = $this->db->fetchOne("SELECT id, booking_id, installment_number, due_date, amount, pending_amount FROM booking_payment_schedules WHERE id = ?", [$emiId]);
+            if (!$emi) {
+                $emi = $this->db->fetchOne("SELECT id, booking_id, emi_number AS installment_number, due_date, emi_amount AS amount, emi_amount AS pending_amount FROM emi_schedule WHERE id = ?", [$emiId]);
+            }
+            if (!$emi) return;
+
+            $userId = $this->getBookingCustomerUserId((int)$emi['booking_id']);
+            if (!$userId) return;
+
+            $amount = (float)($emi['pending_amount'] ?? $emi['amount']);
+            $dueDate = $emi['due_date'];
+            $daysLeft = (int)((strtotime($dueDate) - time()) / 86400);
+
+            $title = 'EMI Due Soon';
+            $message = "EMI #{$emi['installment_number']} of ₹" . number_format($amount, 2) . " is due in {$daysLeft} day(s) on " . date('d F Y', strtotime($dueDate)) . ". Please ensure timely payment to avoid penalties.";
+            $data = ['event_type' => 'emi_due', 'emi_id' => $emiId, 'booking_id' => $emi['booking_id'], 'installment_number' => $emi['installment_number'], 'amount' => $amount, 'due_date' => $dueDate, 'days_remaining' => $daysLeft, 'action_url' => '/user/emi-schedule', 'priority' => 'high'];
+
+            $this->send($userId, 'email', $title, $message, $data);
+            $this->send($userId, 'sms', $title, $message, $data);
+            $this->send($userId, 'push', $title, $message, $data);
+            $this->send($userId, 'whatsapp', $title, $message, $data);
+        } catch (\Throwable $e) {
+            error_log('NotificationService::notifyEmiDue error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Notify customer + associate when EMI is overdue.
+     */
+    public function notifyEmiOverdue(int $emiId): void
+    {
+        try {
+            $emi = $this->db->fetchOne("SELECT id, booking_id, installment_number, due_date, amount, pending_amount FROM booking_payment_schedules WHERE id = ?", [$emiId]);
+            if (!$emi) {
+                $emi = $this->db->fetchOne("SELECT id, booking_id, emi_number AS installment_number, due_date, emi_amount AS amount, emi_amount AS pending_amount FROM emi_schedule WHERE id = ?", [$emiId]);
+            }
+            if (!$emi) return;
+
+            $userId = $this->getBookingCustomerUserId((int)$emi['booking_id']);
+            $amount = (float)($emi['pending_amount'] ?? $emi['amount']);
+            $dueDate = $emi['due_date'];
+            $daysOverdue = (int)((time() - strtotime($dueDate)) / 86400);
+
+            $title = 'EMI Overdue';
+            $message = "EMI #{$emi['installment_number']} of ₹" . number_format($amount, 2) . " is overdue by {$daysOverdue} day(s). Due date was " . date('d F Y', strtotime($dueDate)) . ". Please pay immediately to avoid penalties.";
+            $data = ['event_type' => 'emi_overdue', 'emi_id' => $emiId, 'booking_id' => $emi['booking_id'], 'installment_number' => $emi['installment_number'], 'amount' => $amount, 'due_date' => $dueDate, 'days_overdue' => $daysOverdue, 'action_url' => '/user/emi-schedule', 'priority' => 'high'];
+
+            if ($userId) {
+                $this->send($userId, 'email', $title, $message, $data);
+                $this->send($userId, 'sms', $title, $message, $data);
+                $this->send($userId, 'push', $title, $message, $data);
+                $this->send($userId, 'whatsapp', $title, $message, $data);
+            }
+
+            $this->notify('emi_overdue', "EMI #{$emiId} overdue by {$daysOverdue} days. Booking #{$emi['booking_id']}, Amount: ₹" . number_format($amount, 2), null, '/admin/emi/overdue', 'EMI Overdue');
+            $this->sendToRole('admin', 'email', 'EMI Overdue', "EMI #{$emiId} overdue by {$daysOverdue} days. Booking #{$emi['booking_id']}, Amount: ₹" . number_format($amount, 2), ['event_type' => 'emi_overdue', 'emi_id' => $emiId, 'booking_id' => $emi['booking_id'], 'days_overdue' => $daysOverdue]);
+            $this->sendToRole('finance_manager', 'email', 'EMI Overdue', "EMI #{$emiId} overdue by {$daysOverdue} days. Booking #{$emi['booking_id']}, Amount: ₹" . number_format($amount, 2), ['event_type' => 'emi_overdue', 'emi_id' => $emiId, 'booking_id' => $emi['booking_id'], 'days_overdue' => $daysOverdue]);
+        } catch (\Throwable $e) {
+            error_log('NotificationService::notifyEmiOverdue error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Notify associate when promoted to a new rank.
+     */
+    public function notifyRankPromotion(int $userId, string $newRank): void
+    {
+        try {
+            $user = $this->db->fetchOne("SELECT id, name, email, phone, mlm_rank FROM users WHERE id = ?", [$userId]);
+            if (!$user) return;
+
+            $oldRank = $user['mlm_rank'] ?? 'N/A';
+
+            $title = 'Congratulations on Your Promotion!';
+            $message = "Dear {$user['name']}, congratulations on being promoted from {$oldRank} to {$newRank}. Your hard work and dedication have been recognized. Keep up the excellent work!";
+            $data = ['event_type' => 'rank_promotion', 'user_id' => $userId, 'old_rank' => $oldRank, 'new_rank' => $newRank, 'action_url' => '/associate/rank-eligibility', 'priority' => 'high'];
+
+            $this->send($userId, 'email', $title, $message, $data);
+            $this->send($userId, 'sms', $title, $message, $data);
+            $this->send($userId, 'push', $title, $message, $data);
+            $this->send($userId, 'whatsapp', $title, $message, $data);
+
+            $this->notify('rank_promotion', "User #{$userId} ({$user['name']}) promoted from {$oldRank} to {$newRank}", null, '/admin/mlm/rank-promotions', 'Rank Promotion');
+            $this->sendToRole('admin', 'email', 'Rank Promotion', "{$user['name']} promoted from {$oldRank} to {$newRank}", ['event_type' => 'rank_promotion', 'user_id' => $userId, 'old_rank' => $oldRank, 'new_rank' => $newRank]);
+        } catch (\Throwable $e) {
+            error_log('NotificationService::notifyRankPromotion error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Notify referrer when someone joins through their referral.
+     */
+    public function notifyReferralJoined(int $referrerUserId, string $newUserName): void
+    {
+        try {
+            $referrer = $this->db->fetchOne("SELECT id, name, email, phone, referral_code FROM users WHERE id = ?", [$referrerUserId]);
+            if (!$referrer) return;
+
+            $title = 'New Referral Joined';
+            $message = "Great news {$referrer['name']}! {$newUserName} has joined using your referral code {$referrer['referral_code']}. You will receive your referral bonus when they complete their first booking.";
+            $data = ['event_type' => 'referral_joined', 'referrer_user_id' => $referrerUserId, 'new_user_name' => $newUserName, 'referral_code' => $referrer['referral_code'], 'action_url' => '/associate/referral', 'priority' => 'normal'];
+
+            $this->send($referrerUserId, 'email', $title, $message, $data);
+            $this->send($referrerUserId, 'sms', $title, $message, $data);
+            $this->send($referrerUserId, 'push', $title, $message, $data);
+            $this->send($referrerUserId, 'whatsapp', $title, $message, $data);
+
+            $this->notify('referral', "New referral {$newUserName} joined via {$referrer['name']} (code: {$referrer['referral_code']})", null, '/admin/referrals', 'New Referral');
+        } catch (\Throwable $e) {
+            error_log('NotificationService::notifyReferralJoined error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Notify relevant parties when plot status changes.
+     */
+    public function notifyPlotStatusChange(int $plotId, string $oldStatus, string $newStatus): void
+    {
+        try {
+            $plot = $this->db->fetchOne("SELECT id, plot_number, colony_id, status FROM plots WHERE id = ?", [$plotId]);
+            if (!$plot) return;
+
+            $statusLabels = [
+                'available' => 'Available',
+                'hold' => 'On Hold',
+                'booked' => 'Booked',
+                'sold' => 'Sold',
+                'reserved' => 'Reserved',
+                'under_construction' => 'Under Construction',
+                'developed' => 'Developed',
+            ];
+            $oldLabel = $statusLabels[$oldStatus] ?? ucwords(str_replace('_', ' ', $oldStatus));
+            $newLabel = $statusLabels[$newStatus] ?? ucwords(str_replace('_', ' ', $newStatus));
+
+            $title = 'Plot Status Changed';
+            $message = "Plot {$plot['plot_number']} status changed from {$oldLabel} to {$newLabel}.";
+            $data = ['event_type' => 'plot_status_change', 'plot_id' => $plotId, 'plot_number' => $plot['plot_number'], 'colony_id' => $plot['colony_id'], 'old_status' => $oldStatus, 'new_status' => $newStatus, 'action_url' => '/admin/plots/' . $plotId, 'priority' => 'high'];
+
+            $this->notify('plot_status', $message, null, '/admin/plots/' . $plotId, 'Plot Status Changed');
+            $this->sendToRole('admin', 'email', 'Plot Status Changed', $message, $data);
+            $this->sendToRole('sales_manager', 'email', 'Plot Status Changed', $message, $data);
+            $this->sendToRole('land_manager', 'email', 'Plot Status Changed', $message, $data);
+        } catch (\Throwable $e) {
+            error_log('NotificationService::notifyPlotStatusChange error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Notify approvers when approval is required.
+     */
+    public function notifyApprovalRequired(string $approvalType, int $approvalId, string $approverRole): void
+    {
+        try {
+            $typeLabels = [
+                'booking' => 'Booking',
+                'payment' => 'Payment',
+                'refund' => 'Refund',
+                'cancellation' => 'Cancellation',
+                'plot_transfer' => 'Plot Transfer',
+                'price_change' => 'Price Change',
+                'expense' => 'Expense',
+                'payout' => 'Payout',
+                'kyc' => 'KYC',
+                'document' => 'Document',
+            ];
+            $typeLabel = $typeLabels[$approvalType] ?? ucwords(str_replace('_', ' ', $approvalType));
+
+            $title = "Approval Required: {$typeLabel}";
+            $message = "A {$typeLabel} request (ID: {$approvalId}) requires your approval. Please review and take action.";
+            $data = ['event_type' => 'approval_required', 'approval_type' => $approvalType, 'approval_id' => $approvalId, 'approver_role' => $approverRole, 'action_url' => '/admin/approvals/' . $approvalId, 'priority' => 'high'];
+
+            $this->notify('approval_required', $message, null, '/admin/approvals/' . $approvalId, $title);
+            $this->sendToRole($approverRole, 'email', $title, $message, $data);
+            $this->sendToRole('admin', 'email', $title, $message, $data);
+        } catch (\Throwable $e) {
+            error_log('NotificationService::notifyApprovalRequired error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Notify requester when approval is resolved.
+     */
+    public function notifyApprovalResolved(int $approvalId, bool $approved): void
+    {
+        try {
+            $approval = $this->db->fetchOne("SELECT id, type, requested_by, entity_id, entity_type FROM approvals WHERE id = ?", [$approvalId]);
+            if (!$approval) {
+                $approval = $this->db->fetchOne("SELECT id, approval_type AS type, requester_id AS requested_by, entity_id, entity_type FROM approval_requests WHERE id = ?", [$approvalId]);
+            }
+
+            $userId = $approval['requested_by'] ?? null;
+            $type = $approval['type'] ?? 'request';
+            $status = $approved ? 'Approved' : 'Rejected';
+
+            $title = "Approval {$status}";
+            $message = "Your {$type} request (ID: {$approvalId}) has been {$status}.";
+            $data = ['event_type' => 'approval_resolved', 'approval_id' => $approvalId, 'approval_type' => $type, 'approved' => $approved, 'status' => strtolower($status), 'action_url' => '/user/approvals', 'priority' => 'high'];
+
+            if ($userId) {
+                $this->send((int)$userId, 'email', $title, $message, $data);
+                $this->send((int)$userId, 'sms', $title, $message, $data);
+                $this->send((int)$userId, 'push', $title, $message, $data);
+                $this->send((int)$userId, 'whatsapp', $title, $message, $data);
+            }
+
+            $this->notify('approval_resolved', "Approval #{$approvalId} ({$type}) {$status}", null, '/admin/approvals', "Approval {$status}");
+        } catch (\Throwable $e) {
+            error_log('NotificationService::notifyApprovalResolved error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Notify team when colony milestone is reached.
+     */
+    public function notifyMilestoneReached(int $colonyId, string $milestoneName): void
+    {
+        try {
+            $colony = $this->db->fetchOne("SELECT id, name, slug FROM colonies WHERE id = ?", [$colonyId]);
+            if (!$colony) return;
+
+            $title = 'Milestone Reached';
+            $message = "Colony '{$colony['name']}' has reached the milestone: {$milestoneName}. Great progress!";
+            $data = ['event_type' => 'milestone_reached', 'colony_id' => $colonyId, 'colony_name' => $colony['name'], 'milestone_name' => $milestoneName, 'action_url' => '/admin/colonies/' . $colonyId, 'priority' => 'normal'];
+
+            $this->notify('milestone', $message, null, '/admin/colonies/' . $colonyId, 'Milestone Reached');
+            $this->sendToRole('admin', 'email', 'Milestone Reached', $message, $data);
+            $this->sendToRole('land_manager', 'email', 'Milestone Reached', $message, $data);
+            $this->sendToRole('sales_manager', 'email', 'Milestone Reached', $message, $data);
+            $this->sendToRole('project_manager', 'email', 'Milestone Reached', $message, $data);
+        } catch (\Throwable $e) {
+            error_log('NotificationService::notifyMilestoneReached error: ' . $e->getMessage());
+        }
+    }
 }

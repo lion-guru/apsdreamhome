@@ -267,6 +267,41 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
+                
+                <!-- Pagination -->
+                <?php if (!empty($pagination) && $pagination['total_pages'] > 1): ?>
+                    <nav aria-label="Withdrawal history pagination" class="mt-4">
+                        <ul class="pagination pagination-sm justify-content-center mb-0">
+                            <?php 
+                            $page = $pagination['current_page'] ?? 1;
+                            $totalPages = $pagination['total_pages'] ?? 1;
+                            $baseUrl = BASE_URL . '/wallet/withdrawal';
+                            ?>
+                            <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">
+                                <a class="page-link" href="<?= $baseUrl ?>?page=<?= $page - 1 ?>" aria-label="Previous">
+                                    <i class="fas fa-chevron-left"></i>
+                                </a>
+                            </li>
+                            <?php
+                            $start = max(1, $page - 2);
+                            $end = min($totalPages, $page + 2);
+                            for ($i = $start; $i <= $end; $i++):
+                            ?>
+                                <li class="page-item <?= $i == $page ? 'active' : '' ?>">
+                                    <a class="page-link" href="<?= $baseUrl ?>?page=<?= $i ?>"><?= $i ?></a>
+                                </li>
+                            <?php endfor; ?>
+                            <li class="page-item <?= $page >= $totalPages ? 'disabled' : '' ?>">
+                                <a class="page-link" href="<?= $baseUrl ?>?page=<?= $page + 1 ?>" aria-label="Next">
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <div class="text-center text-muted small mt-2">
+                        Showing page <?= $page ?> of <?= $totalPages ?> (<?= $pagination['total'] ?? 0 ?> total records)
+                    </div>
+                <?php endif; ?>
             <?php else: ?>
                 <div class="card border-0 shadow-sm">
                     <div class="card-body text-center py-4">

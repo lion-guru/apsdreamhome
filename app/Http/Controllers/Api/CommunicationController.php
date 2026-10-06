@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use \Exception;
 use App\Http\Middleware\RateLimitMiddleware;
+use App\Traits\TenantAwareTrait;
 
 class CommunicationController extends BaseApiController
 {
+    use TenantAwareTrait;
+    
     private $rateLimiter;
     private $automationService;
 

@@ -7,9 +7,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Services\VoiceAssistantService;
 use App\Http\Controllers\BaseController;
+use App\Traits\TenantAwareTrait;
 
 class VoiceAssistantController extends BaseController
 {
+    use TenantAwareTrait;
+    
     private $assistant;
 
     public function skipCsrfProtection(): bool

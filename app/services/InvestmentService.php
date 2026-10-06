@@ -270,6 +270,205 @@ class InvestmentService
         return ['name' => $current['name'], 'progress_pct' => $progress, 'next' => $current['next'], 'next_threshold' => $nextThreshold];
     }
 
+    /**
+     * Create installment records for SIP investments
+     * Run once after investment creation or on demand
+     */
+    public function createInstallmentsForInvestment(int $investmentId): array
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM investments WHERE id = ? {$this->tenantSql()} LIMIT 1");
+        $stmt->execute([$investmentId]);
+        $inv = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$inv) return ['success' => false, 'error' => 'Investment not found'];
+
+        if ((int)$inv['auto_invest'] !== 1 || !$inv['monthly_amount'] || !$inv['sip_date']) {
+            return ['success' => false, 'error' => 'Investment is not a SIP or missing SIP details'];
+        }
+
+        $monthlyAmount = (float)$inv['monthly_amount'];
+        $sipDate = (int)$inv['sip_date'];
+        $startDate = new \DateTime($inv['start_date']);
+        $maturityDate = $inv['maturity_date'] ? new \DateTime($inv['maturity_date']) : null;
+
+        // Calculate total installments
+        $totalMonths = 0;
+        if ($maturityDate) {
+            $diff = $startDate->diff($maturityDate);
+            $totalMonths = $diff->y * 12 + $diff->m;
+            if ($diff->d >= $sipDate) $totalMonths++;
+        } else {
+            // Default to plan tenure if available
+            $planStmt = $this->pdo->prepare("SELECT tenure_months FROM investment_plans WHERE id = ? LIMIT 1");
+            $planStmt->execute([$inv['plan_id']]);
+            $plan = $planStmt->fetch(PDO::FETCH_ASSOC);
+            $totalMonths = (int)($plan['tenure_months'] ?? 12);
+        }
+
+        $this->pdo->beginTransaction();
+        try {
+            for ($i = 1; $i <= $totalMonths; $i++) {
+                $dueDate = clone $startDate;
+                $dueDate->setDate($dueDate->format('Y'), $dueDate->format('m'), min($sipDate, cal_days_in_month(CAL_GREGORIAN, $dueDate->format('m'), $dueDate->format('Y'))));
+                $dueDate->modify("+{$i} months");
+                
+                // Skip if due date is in the past
+                if ($dueDate < new \DateTime('today')) continue;
+
+                $stmt = $this->pdo->prepare("
+                    INSERT INTO investment_installments 
+                    (investment_id, installment_number, amount, due_date, status, tenant_id)
+                    VALUES (?, ?, ?, ?, 'pending', ?)
+                    ON DUPLICATE KEY UPDATE amount = VALUES(amount), due_date = VALUES(due_date)
+                ");
+                $stmt->execute([$inv['id'], $i, $monthlyAmount, $dueDate->format('Y-m-d'), $this->tenantId()]);
+            }
+            $this->pdo->commit();
+            return ['success' => true, 'created' => $totalMonths];
+        } catch (\Throwable $e) {
+            $this->pdo->rollBack();
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Get due installments for processing
+     */
+    public function getDueInstallments(\DateTime $date = null): array
+    {
+        $date = $date ?? new \DateTime('today');
+        $dateStr = $date->format('Y-m-d');
+
+        $stmt = $this->pdo->prepare("
+            SELECT ii.*, i.user_id, i.monthly_amount, i.plan_id, u.name as user_name, u.email, u.phone
+            FROM investment_installments ii
+            JOIN investments i ON ii.investment_id = i.id
+            JOIN users u ON i.user_id = u.id
+            WHERE ii.status = 'pending' 
+            AND ii.due_date <= ?
+            AND i.status = 'active'
+            AND i.auto_invest = 1
+            {$this->tenantSqlForAlias('ii')}
+            ORDER BY ii.due_date ASC
+        ");
+        $stmt->execute([$dateStr]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    }
+
+    /**
+     * Process a single installment payment
+     */
+    public function processInstallment(int $installmentId): array
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT ii.*, i.user_id, i.monthly_amount, i.auto_invest
+            FROM investment_installments ii
+            JOIN investments i ON ii.investment_id = i.id
+            WHERE ii.id = ? {$this->tenantSqlForAlias('ii')} LIMIT 1
+        ");
+        $stmt->execute([$installmentId]);
+        $inst = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$inst) return ['success' => false, 'error' => 'Installment not found'];
+
+        if ($inst['status'] !== 'pending') {
+            return ['success' => false, 'error' => 'Installment already processed'];
+        }
+
+        $userId = (int)$inst['user_id'];
+        $amount = (float)$inst['amount'];
+        $tid = $this->tenantId();
+
+        try {
+            $this->pdo->beginTransaction();
+
+            // Check wallet balance
+            $wallet = $this->pdo->prepare("SELECT points_balance FROM wallet_points WHERE user_id = ? LIMIT 1");
+            $wallet->execute([$userId]);
+            $walletRow = $wallet->fetch(PDO::FETCH_ASSOC);
+            if (!$walletRow || (float)$walletRow['points_balance'] < $amount) {
+                $this->pdo->rollBack();
+                $this->markInstallmentFailed($installmentId, 'Insufficient wallet balance');
+                return ['success' => false, 'error' => 'Insufficient wallet balance'];
+            }
+
+            // Deduct from wallet
+            $newBalance = (float)$walletRow['points_balance'] - $amount;
+            $this->pdo->query(
+                "UPDATE wallet_points SET points_balance = ?, total_used = total_used + ? WHERE user_id = ?",
+                [$newBalance, $amount, $userId]
+            );
+
+            // Record wallet transaction
+            $tid = $this->tenantId();
+            $this->pdo->insert('wallet_transactions', array_merge([
+                'user_id' => $inst['user_id'],
+                'transaction_type' => 'debit',
+                'transaction_category' => 'investment',
+                'amount' => $amount,
+                'balance_before' => (float)$walletRow['points_balance'],
+                'balance_after' => $newBalance,
+                'description' => "SIP installment for investment #{$inst['investment_id']} (installment #{$inst['installment_number']})",
+                'reference_id' => $installmentId,
+                'reference_type' => 'investment_installment',
+            ], $this->tenantInsertData()));
+
+            // Update investment current_value
+            $this->pdo->query(
+                "UPDATE investments SET current_value = current_value + ?, updated_at = NOW() WHERE id = ?",
+                [$amount, $inst['investment_id']]
+            );
+
+            // Mark installment as paid
+            $this->markInstallmentPaid($installmentId);
+
+            $this->pdo->commit();
+
+            return ['success' => true, 'new_balance' => $newBalance];
+
+        } catch (\Throwable $e) {
+            $this->pdo->rollBack();
+            $this->markInstallmentFailed($installmentId, $e->getMessage());
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    private function markInstallmentPaid(int $installmentId): void
+    {
+        $this->pdo->query(
+            "UPDATE investment_installments SET status = 'paid', paid_at = NOW(), updated_at = NOW() WHERE id = ?",
+            [(int)$installmentId]
+        );
+    }
+
+    private function markInstallmentFailed(int $installmentId, string $reason): void
+    {
+        $this->pdo->query(
+            "UPDATE investment_installments SET status = 'failed', failure_reason = ?, retry_count = retry_count + 1, updated_at = NOW() WHERE id = ?",
+            [$reason, (int)$installmentId]
+        );
+    }
+
+    /**
+     * Process all due SIP installments (called by cron)
+     */
+    public function processDueSipInstallments(): array
+    {
+        $due = $this->getDueInstallments();
+        $results = ['processed' => 0, 'paid' => 0, 'failed' => 0, 'skipped' => 0, 'errors' => []];
+
+        foreach ($due as $inst) {
+            $result = $this->processInstallment((int)$inst['id']);
+            $results['processed']++;
+            if ($result['success']) {
+                $results['paid']++;
+            } else {
+                $results['failed']++;
+                $results['errors'][] = "Installment #{$inst['id']}: " . ($result['error'] ?? 'Unknown error');
+            }
+        }
+
+        return $results;
+    }
+
     private function resolvePdo(): PDO
     {
         return \App\Core\Database\Database::getInstance()->getConnection();

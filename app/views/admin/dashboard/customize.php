@@ -214,14 +214,17 @@ document.addEventListener('DOMContentLoaded', function() {
         renderWidgets();
     }
 
+    const widgetTemplates = <?php echo json_encode($widgets ?? []); ?>;
     function renderWidgets() {
         grid.engine.nodes.forEach(node => {
             const el = node.el.querySelector('.grid-stack-item-content');
             if (el && !el.dataset.rendered) {
                 el.dataset.rendered = 'true';
                 const widgetType = node.content;
-                el.innerHTML = '<?php echo $this->renderWidget("' + widgetType + '"); ?>';
-                // Note: In production, use proper template rendering
+                const tpl = widgetTemplates[widgetType] || {};
+                const icon = (tpl.icon || 'cube').replace(/[^a-z0-9-]/gi, '');
+                const name = (tpl.name || widgetType).replace(/</g, '&lt;');
+                el.innerHTML = '<div class="text-center text-muted p-3"><i class="fas fa-' + icon + ' fa-2x mb-2"></i><div>' + name + '</div></div>';
             }
         });
     }

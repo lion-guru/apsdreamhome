@@ -97,6 +97,7 @@ class ServiceConfigService
     {
         $this->loadAll();
         $existing = $this->find($service, $key);
+        $oldValue = $existing['config_value'] ?? null;
         $pdo = $this->requirePdo();
 
         if ($existing !== null) {
@@ -128,7 +129,120 @@ class ServiceConfigService
         }
 
         $this->invalidateCache();
+        $this->auditChange($service, $key, $oldValue, (string) $value);
         return true;
+    }
+
+    /**
+     * Best-effort audit trail for config changes (who/when/old/new).
+     * Never throws — audit must not break the write it records.
+     */
+    private function auditChange(string $service, string $key, ?string $oldValue, string $newValue): void
+    {
+        try {
+            if ($oldValue !== null && $oldValue === $newValue) {
+                return; // no-op writes are not history
+            }
+            if ($this->pdo === null) {
+                return;
+            }
+            $chk = $this->pdo->query("SHOW TABLES LIKE 'service_config_audit'");
+            if ($chk->fetch() === false) {
+                return; // audit table not installed yet
+            }
+            $changedBy = 0;
+            $changedByName = null;
+            if (isset($_SESSION) && is_array($_SESSION)) {
+                $changedBy = (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0);
+                $changedByName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? null;
+            }
+            $tid = $this->tenantId();
+            $cols = ['tenant_id', 'service_name', 'config_key', 'old_value', 'new_value', 'changed_by', 'changed_by_name', 'ip_address'];
+            $stmt = $this->pdo->prepare(
+                "INSERT INTO `service_config_audit`
+                 (`tenant_id`, `service_name`, `config_key`, `old_value`, `new_value`, `changed_by`, `changed_by_name`, `ip_address`)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+            );
+            $stmt->execute([
+                $tid,
+                $service,
+                $key,
+                $oldValue,
+                $newValue,
+                $changedBy > 0 ? $changedBy : null,
+                $changedByName,
+                $_SERVER['REMOTE_ADDR'] ?? null,
+            ]);
+        } catch (\Throwable $e) {
+            error_log('[ServiceConfigService] auditChange failed: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Log a manual/out-of-band change (e.g. bulk package updates that mirror
+     * a config knob)._feat: same audit trail as set(). Never throws.
+     */
+    public function auditManual(string $service, string $key, ?string $oldValue, string $newValue, string $notes = ''): void
+    {
+        try {
+            if ($this->pdo === null) {
+                return;
+            }
+            $chk = $this->pdo->query("SHOW TABLES LIKE 'service_config_audit'");
+            if ($chk->fetch() === false) {
+                return;
+            }
+            $changedBy = 0;
+            $changedByName = null;
+            if (isset($_SESSION) && is_array($_SESSION)) {
+                $changedBy = (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0);
+                $changedByName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? null;
+            }
+            $tid = $this->tenantId();
+            $stmt = $this->pdo->prepare(
+                "INSERT INTO `service_config_audit`
+                 (`tenant_id`, `service_name`, `config_key`, `old_value`, `new_value`, `changed_by`, `changed_by_name`, `ip_address`, `notes`)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+            );
+            // notes column may not exist on older installs — retry without it
+            try {
+                $stmt->execute([$tid, $service, $key, $oldValue, $newValue, $changedBy > 0 ? $changedBy : null, $changedByName, $_SERVER['REMOTE_ADDR'] ?? null, $notes !== '' ? $notes : null]);
+            } catch (\Throwable $e) {
+                $stmt = $this->pdo->prepare(
+                    "INSERT INTO `service_config_audit`
+                     (`tenant_id`, `service_name`, `config_key`, `old_value`, `new_value`, `changed_by`, `changed_by_name`, `ip_address`)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+                );
+                $stmt->execute([$tid, $service, $key, $oldValue, $newValue, $changedBy > 0 ? $changedBy : null, $changedByName, $_SERVER['REMOTE_ADDR'] ?? null]);
+            }
+        } catch (\Throwable $e) {
+            error_log('[ServiceConfigService] auditManual failed: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Read recent audit rows (newest first). Never throws.
+     */
+    public function getAuditHistory(?string $service = null, int $limit = 50): array
+    {
+        try {
+            if ($this->pdo === null) {
+                return [];
+            }
+            $sql = "SELECT * FROM `service_config_audit`";
+            $params = [];
+            if ($service !== null && $service !== '') {
+                $sql .= " WHERE `service_name` = ?";
+                $params[] = $service;
+            }
+            $sql .= " ORDER BY `id` DESC LIMIT " . max(1, min($limit, 200));
+            // tenant scoping intentionally omitted: audit is cross-tenant admin record
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     /**

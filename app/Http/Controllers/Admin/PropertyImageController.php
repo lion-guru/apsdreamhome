@@ -37,6 +37,7 @@ class PropertyImageController extends AdminController
      */
     public function manage($propertyId)
     {
+        $this->requireAdmin();
         // Check admin auth
         @session_start();
         if (!isset($_SESSION['admin_id'])) {
@@ -74,6 +75,7 @@ class PropertyImageController extends AdminController
      */
     public function upload()
     {
+        $this->requireAdmin();
         @session_start();
         
         $propertyId = $_POST['property_id'] ?? null;
@@ -103,7 +105,7 @@ class PropertyImageController extends AdminController
             }
             
             // Validate file using UploadValidator
-            $v = UploadValidator::validate($file, ['types' => 'images', 'max_size' => 10]);
+            $v = \UploadValidator::validate($file, ['types' => 'images', 'max_size' => 10]);
             if (!$v['valid']) {
                 $errors[] = $file['name'] . ": " . $v['error'];
                 continue;
@@ -201,6 +203,7 @@ class PropertyImageController extends AdminController
      */
     public function ajaxUpload()
     {
+        $this->requireAdmin();
         header('Content-Type: application/json');
         
         $propertyId = $_POST['property_id'] ?? null;
@@ -213,7 +216,7 @@ class PropertyImageController extends AdminController
         $file = $_FILES['file'];
         
         // Validate using UploadValidator
-        $v = UploadValidator::validate($file, ['types' => 'images', 'max_size' => 10]);
+        $v = \UploadValidator::validate($file, ['types' => 'images', 'max_size' => 10]);
         if (!$v['valid']) {
             echo json_encode(['success' => false, 'error' => $v['error']]);
             exit;
@@ -303,6 +306,7 @@ class PropertyImageController extends AdminController
      */
     public function setPrimary()
     {
+        $this->requireAdmin();
         @session_start();
         
         $imageId = $_POST['image_id'] ?? null;
@@ -337,6 +341,7 @@ class PropertyImageController extends AdminController
      */
     public function updateCaption()
     {
+        $this->requireAdmin();
         header('Content-Type: application/json');
         
         $imageId = $_POST['image_id'] ?? null;
@@ -362,6 +367,7 @@ class PropertyImageController extends AdminController
      */
     public function delete()
     {
+        $this->requireAdmin();
         @session_start();
         
         $imageId = $_POST['image_id'] ?? null;
@@ -414,6 +420,7 @@ class PropertyImageController extends AdminController
      */
     public function reorder()
     {
+        $this->requireAdmin();
         header('Content-Type: application/json');
         
         $order = $_POST['order'] ?? [];

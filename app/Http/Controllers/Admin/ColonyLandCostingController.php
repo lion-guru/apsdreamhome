@@ -64,9 +64,10 @@ class ColonyLandCostingController extends AdminController
     public function store(): void
     {
         $this->requireAdmin();
+        $this->validateCsrfOrFail();
 
         $colonyId   = (int)($_POST['colony_id'] ?? 0);
-        $finalPrice = (float)($_POST['final_price_sqft'] ?? 0);
+        $finalPrice = ($_POST['final_price_sqft'] ?? '') === '' ? null : (float)($_POST['final_price_sqft'] ?? 0);
         $userId     = (int)($_SESSION['user_id'] ?? 0);
 
         if ($colonyId <= 0) {
@@ -95,6 +96,12 @@ class ColonyLandCostingController extends AdminController
             'marketing_commission_pct' => (float)($_POST['marketing_commission_pct']  ?? 20),
             'target_profit_pct'        => (float)($_POST['target_profit_pct']         ?? 20),
         ];
+
+        $totalWastage = $inputs['road_wastage_pct'] + $inputs['drainage_wastage_pct'] + $inputs['park_wastage_pct'] + $inputs['other_wastage_pct'];
+        if ($totalWastage > 50) {
+            $this->setFlash('error', 'Total wastage percentage cannot exceed 50%');
+            $this->redirect('/admin/colony-costing/create/' . $colonyId);
+        }
 
         $result = $this->service->saveCosting($colonyId, $inputs, $finalPrice, $userId);
 
@@ -147,6 +154,7 @@ class ColonyLandCostingController extends AdminController
     public function calculate(): void
     {
         $this->requireAdmin();
+        $this->validateCsrfOrFail();
         header('Content-Type: application/json');
 
         $inputs = json_decode(file_get_contents('php://input'), true) ?? [];
@@ -163,11 +171,14 @@ class ColonyLandCostingController extends AdminController
     public function approve(int $costingId): void
     {
         $this->requireAdmin();
+        $this->validateCsrfOrFail();
 
-        $finalPrice  = (float)($_POST['final_price_sqft'] ?? 0);
+        $finalPrice  = ($_POST['final_price_sqft'] ?? '') === '' ? null : (float)($_POST['final_price_sqft'] ?? 0);
         $adminUserId = (int)($_SESSION['user_id'] ?? 0);
 
         $ok = $this->service->approveCosting($costingId, $finalPrice, $adminUserId);
+
+        $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'costing_approved', ['costing_id' => $costingId, 'final_price' => $finalPrice]);
 
         if ($ok) {
             $this->setFlash('success', 'Costing approved. Final price: ₹' . number_format($finalPrice, 2) . '/SqFt');

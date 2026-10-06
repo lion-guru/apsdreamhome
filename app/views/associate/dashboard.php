@@ -490,6 +490,17 @@ $progressPct = min(100, round(($points / max(1, $nextLevelPoints)) * 100));
 }
 </style>
 
+<!-- Referral Earnings Widget -->
+<?php if (!empty($referral_earnings_breakdown)): ?>
+    <?php 
+        $userId = $user['id'] ?? $_SESSION['user_id'] ?? 0;
+        $base = BASE_URL;
+        if (file_exists(__DIR__ . '/../../components/referral_earnings_widget.php')) {
+            include __DIR__ . '/../../components/referral_earnings_widget.php';
+        }
+    ?>
+<?php endif; ?>
+
 <!-- Details Area -->
 <div class="row g-4">
     <div class="col-lg-8">

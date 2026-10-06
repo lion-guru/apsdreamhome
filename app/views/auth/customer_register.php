@@ -44,6 +44,16 @@ $base = BASE_URL;
         .card-body {
             padding: 2rem
         }
+
+        .social-divider{display:flex;align-items:center;margin:1.25rem 0}
+        .social-divider::before,.social-divider::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,#e0e0e0,transparent)}
+        .social-divider span{padding:0 1rem;font-size:.82rem;color:#6c757d;font-weight:500}
+        .social-buttons{display:flex;gap:.75rem}
+        .social-btn{flex:1;height:48px;border:2px solid #e2e8f0;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;gap:.5rem;font-size:.85rem;font-weight:600;color:#1e293b;cursor:pointer;transition:all .2s;text-decoration:none}
+        .social-btn:hover{border-color:#0d9488;background:#f8fafc}
+        .social-btn.google{color:#ea4335}
+        .social-btn.facebook{color:#1877f2}
+        @media(max-width:480px){.social-buttons{flex-direction:column}}
     </style>
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
@@ -65,6 +75,18 @@ $base = BASE_URL;
                         <ul class="mb-0"><?php foreach ($errors as $e): ?><li><?php echo htmlspecialchars($e ?? ''); ?></li><?php endforeach; ?></ul>
                     </div>
                 <?php endif; ?>
+
+                <div class="social-buttons">
+                    <a href="<?php echo e($base); ?>/auth/google" class="social-btn google">
+                        <i class="fab fa-google"></i> Google
+                    </a>
+                    <a href="<?php echo e($base); ?>/auth/facebook" class="social-btn facebook">
+                        <i class="fab fa-facebook-f"></i> Facebook
+                    </a>
+                </div>
+                <div class="social-divider">
+                    <span>OR REGISTER WITH EMAIL</span>
+                </div>
 
                 <form method="POST" action="<?php echo e($base); ?>/register" id="customer-register-form" data-experiment="registration_form_length" data-variant="<?= htmlspecialchars($_SESSION['experiments']['registration_form_length'] ?? 'full', ENT_QUOTES) ?>">
                     <input type="hidden" name="csrf_token" value="<?php echo e($csrf_token); ?>">

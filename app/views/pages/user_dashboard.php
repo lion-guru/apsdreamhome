@@ -470,6 +470,16 @@ $dashBookingCount = count($dashBookings);
                         <?= htmlspecialchars($referral_code ?? '') ?>
                     </div>
                     <small class="text-muted"><?= __('dash_your_referral_code', null, 'Your Referral Code') ?></small>
+                    
+                    <!-- Referral Tier Badge -->
+                    <?php if (!empty($referral_tier)): ?>
+                    <div class="mt-2">
+                        <span class="badge px-3 py-2" style="background:<?= htmlspecialchars($referral_tier['color'] ?? '#CD7F32') ?>;font-size:.8rem">
+                            <i class="fas fa-<?= htmlspecialchars($referral_tier['icon'] ?? 'fas fa-medal') ?> me-1"></i>
+                            <?= htmlspecialchars($referral_tier['label'] ?? 'Bronze') ?> Tier
+                        </span>
+                    </div>
+                    <?php endif; ?>
                 </div>
                 <div class="row text-center g-2 mb-3">
                     <div class="col-6">
@@ -511,6 +521,14 @@ $dashBookingCount = count($dashBookings);
             }
         }
         </script>
+        <?php endif; ?>
+
+        <!-- Referral Earnings Widget -->
+        <?php if (!empty($referral_earnings_breakdown)): ?>
+            <?php 
+                $userId = $user['id'] ?? $_SESSION['user_id'] ?? 0;
+                include __DIR__ . '/../../components/referral_earnings_widget.php';
+            ?>
         <?php endif; ?>
 
         <div class="aps-cp-card mb-4">

@@ -214,7 +214,7 @@ class ColonyController extends AdminController
                 trim($_POST['map_link'] ?? ''),
                 (int)($_POST['total_plots'] ?? 0),
                 (int)($_POST['available_plots'] ?? 0),
-                (float)($_POST['starting_price'] ?? 0),
+                ($_POST['starting_price'] ?? '') === '' ? null : (float)($_POST['starting_price'] ?? 0),
                 trim($_POST['image_path'] ?? ''),
                 trim($_POST['layout_image'] ?? ''),
                 trim($_POST['banner_image'] ?? ''),
@@ -334,7 +334,7 @@ class ColonyController extends AdminController
                 trim($_POST['map_link'] ?? ''),
                 (int)($_POST['total_plots'] ?? 0),
                 (int)($_POST['available_plots'] ?? 0),
-                (float)($_POST['starting_price'] ?? 0),
+                ($_POST['starting_price'] ?? '') === '' ? null : (float)($_POST['starting_price'] ?? 0),
                 trim($_POST['image_path'] ?? ''),
                 trim($_POST['layout_image'] ?? ''),
                 trim($_POST['banner_image'] ?? ''),
@@ -382,8 +382,15 @@ class ColonyController extends AdminController
         $this->validateCsrfOrFail();
 
         try {
+            $plotCount = $this->db->fetch("SELECT COUNT(*) as c FROM plots WHERE colony_id = ?", [$id]);
+            if (($plotCount['c'] ?? 0) > 0) {
+                $_SESSION['error'] = 'Cannot delete colony - it has ' . $plotCount['c'] . ' associated plots';
+                redirect('/admin/colonies');
+                return;
+            }
             $stmt = $this->db->prepare("DELETE FROM colonies WHERE id = ? AND tenant_id = ?");
             $stmt->execute([$id, $this->tenantId()]);
+            $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'colony_deleted', ['colony_id' => $id]);
             $_SESSION['success'] = 'Colony deleted successfully';
         } catch (\Throwable $e) {
             error_log("ColonyController@destroy: " . $e->getMessage());

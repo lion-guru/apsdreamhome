@@ -32,6 +32,7 @@ class PropertyManagementController extends AdminController
      */
     public function index()
     {
+        $this->requireAdmin();
         try {
             $page = (int)($_GET['page'] ?? 1);
             $search = trim($_GET['search'] ?? '');
@@ -144,6 +145,7 @@ class PropertyManagementController extends AdminController
      */
     public function create()
     {
+        $this->requireAdmin();
         try {
             $data = [
                 'page_title' => 'Add New Property - APS Dream Home',
@@ -166,6 +168,7 @@ class PropertyManagementController extends AdminController
      */
     public function store()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -231,6 +234,7 @@ class PropertyManagementController extends AdminController
      */
     public function dashboard()
     {
+        $this->requireAdmin();
         try {
             $data = [
                 'page_title' => 'Property Management Dashboard - APS Dream Home',
@@ -253,6 +257,7 @@ class PropertyManagementController extends AdminController
      */
     public function allocation()
     {
+        $this->requireAdmin();
         try {
             $search = $_GET['search'] ?? '';
             $status = $_GET['status'] ?? '';
@@ -331,6 +336,7 @@ class PropertyManagementController extends AdminController
      */
     public function processAllocation($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -415,6 +421,7 @@ class PropertyManagementController extends AdminController
      */
     public function maintenance()
     {
+        $this->requireAdmin();
         try {
             $search = $_GET['search'] ?? '';
             $status = $_GET['status'] ?? '';
@@ -493,6 +500,7 @@ class PropertyManagementController extends AdminController
      */
     public function bulkUpdate()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -658,6 +666,7 @@ class PropertyManagementController extends AdminController
      */
     public function export()
     {
+        $this->requireAdmin();
         try {
             $format = $_GET['format'] ?? 'csv';
             $type = $_GET['type'] ?? 'properties';
@@ -809,6 +818,7 @@ class PropertyManagementController extends AdminController
 
     public function show($id = null)
     {
+        $this->requireAdmin();
         if (!$id) { $this->redirect('/admin/properties'); return; }
         $data = [];
         try {
@@ -827,6 +837,7 @@ class PropertyManagementController extends AdminController
 
     public function edit($id = null)
     {
+        $this->requireAdmin();
         if (!$id) { $this->redirect('/admin/properties'); return; }
         $data = ['sites' => [], 'property_types' => [], 'property_statuses' => [], 'categories' => []];
         try {
@@ -841,17 +852,18 @@ class PropertyManagementController extends AdminController
 
     public function update($id)
     {
+        $this->requireAdmin();
         $id = (int)$id;
         try {
             $title = trim($_POST['title'] ?? '');
             $description = trim($_POST['description'] ?? '');
-            $price = (float)($_POST['price'] ?? 0);
+            $price = ($_POST['price'] ?? '') === '' ? null : (float)($_POST['price'] ?? 0);
             $property_type = $_POST['property_type'] ?? '';
             $status = $_POST['status'] ?? '';
             $site_id = (int)($_POST['site_id'] ?? 0);
             $bedrooms = (int)($_POST['bedrooms'] ?? 0);
             $bathrooms = (int)($_POST['bathrooms'] ?? 0);
-            $area = (float)($_POST['area'] ?? 0);
+            $area = ($_POST['area'] ?? '') === '' ? null : (float)($_POST['area'] ?? 0);
             $address = trim($_POST['address'] ?? '');
             $city = trim($_POST['city'] ?? '');
 
@@ -881,6 +893,7 @@ class PropertyManagementController extends AdminController
 
     public function destroy($id)
     {
+        $this->requireAdmin();
         $id = (int)$id;
         try {
             list($tSql, $tParams) = $this->tenantWhere();
@@ -896,6 +909,7 @@ class PropertyManagementController extends AdminController
 
     public function checkAvailability()
     {
+        $this->requireAdmin();
         header('Content-Type: application/json');
         echo json_encode(['available' => true]);
         exit;

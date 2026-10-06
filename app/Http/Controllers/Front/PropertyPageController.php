@@ -287,10 +287,36 @@ class PropertyPageController extends BaseController
         $this->redirect('/list-property');
     }
 
+    /**
+     * Ensure buyer-seller tracking columns exist (idempotent self-heal).
+     */
+    private function ensureInquiryColumns(): void
+    {
+        try {
+            $cols = $this->db->fetchAll("SHOW COLUMNS FROM property_inquiries") ?: [];
+            $names = array_column($cols, 'Field');
+            $add = [
+                'user_id' => 'ADD COLUMN user_id BIGINT UNSIGNED NULL AFTER phone',
+                'listing_type' => "ADD COLUMN listing_type VARCHAR(20) NULL DEFAULT 'company' AFTER user_id",
+                'listing_id' => 'ADD COLUMN listing_id BIGINT UNSIGNED NULL AFTER listing_type',
+                'referral_code' => 'ADD COLUMN referral_code VARCHAR(50) NULL AFTER listing_id',
+            ];
+            foreach ($add as $col => $ddl) {
+                if (!in_array($col, $names, true)) {
+                    $this->db->query("ALTER TABLE property_inquiries {$ddl}");
+                }
+            }
+        } catch (\Throwable $e) {
+            error_log('PropertyPageController::ensureInquiryColumns: ' . $e->getMessage());
+        }
+    }
+
     public function propertyInterest()
     {
         // POST /property/interest — save a property inquiry (listing modal + detail modal).
         // Accepts form-encoded (name, phone, property_id, message/budget/source) or JSON bodies.
+        // Works for BOTH company inventory (properties) and user listings
+        // (user_properties); opens a buyer-seller chat thread when possible.
         // Returns JSON for XHR/fetch callers, flash + redirect-back for normal form posts.
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->redirect('/properties');
@@ -308,6 +334,7 @@ class PropertyPageController extends BaseController
         $propertyId = (int)($input['property_id'] ?? 0);
         $name = trim((string)($input['name'] ?? ''));
         $phone = trim((string)($input['phone'] ?? ''));
+        $email = trim((string)($input['email'] ?? ''));
         $message = trim((string)($input['message'] ?? ''));
         if ($message === '' && !empty($input['budget'])) {
             $message = 'Budget: ' . trim((string)$input['budget']);
@@ -315,6 +342,9 @@ class PropertyPageController extends BaseController
         if (!empty($input['source'])) {
             $message = trim($message . ' [source: ' . trim((string)$input['source']) . ']');
         }
+        // Referral attribution: explicit field, ?ref=, then 30-day cookie (P1c writer).
+        $refCode = trim((string)($input['referral_code'] ?? $_GET['ref'] ?? $_COOKIE['aps_ref'] ?? ''));
+        $inquirerId = (int)($_SESSION['user_id'] ?? 0);
 
         $isXhr = !empty($_SERVER['HTTP_X_REQUESTED_WITH'])
             || (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false);
@@ -329,26 +359,83 @@ class PropertyPageController extends BaseController
 
         try {
             $tid = (int)$this->tenantId();
-            $exists = $this->db->fetchOne(
-                "SELECT id FROM properties WHERE id = ? LIMIT 1",
+            $this->ensureInquiryColumns();
+
+            // Resolve against BOTH marketplaces (FK only allows properties.id).
+            $listingType = 'company';
+            $listingId = null;
+            $ownerId = 0;
+            $propTitle = '';
+            $companyRow = $this->db->fetchOne(
+                "SELECT id, title FROM properties WHERE id = ? LIMIT 1",
                 [$propertyId]
             );
-            if (!$exists) {
-                if ($isXhr) {
-                    return $this->jsonResponse(['success' => false, 'message' => 'Property not found.'], 404);
+            if ($companyRow) {
+                $propTitle = $companyRow['title'] ?? ('Property #' . $propertyId);
+            } else {
+                $userRow = $this->db->fetchOne(
+                    "SELECT id, name, user_id FROM user_properties WHERE id = ? LIMIT 1",
+                    [$propertyId]
+                );
+                if (!$userRow) {
+                    if ($isXhr) {
+                        return $this->jsonResponse(['success' => false, 'message' => 'Property not found.'], 404);
+                    }
+                    $_SESSION['flash_error'] = 'Property not found.';
+                    return $this->redirect($_SERVER['HTTP_REFERER'] ?? '/properties');
                 }
-                $_SESSION['flash_error'] = 'Property not found.';
-                return $this->redirect($_SERVER['HTTP_REFERER'] ?? '/properties');
+                // FK-safe: property_id stays NULL for user listings; id rides in listing_id.
+                $listingType = 'user';
+                $listingId = (int)$userRow['id'];
+                $propertyId = null;
+                $ownerId = (int)($userRow['user_id'] ?? 0);
+                $propTitle = $userRow['name'] ?? ('Listing #' . $listingId);
             }
             $stmt = $this->db->prepare(
-                "INSERT INTO property_inquiries (property_id, name, phone, message, tenant_id) VALUES (?, ?, ?, ?, ?)"
+                "INSERT INTO property_inquiries (property_id, name, phone, email, message, user_id, listing_type, listing_id, referral_code, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
             );
-            $stmt->execute([$propertyId, $name, $phone, $message, $tid]);
+            $stmt->execute([$propertyId, $name, $phone, ($email !== '' ? $email : null), $message, ($inquirerId > 0 ? $inquirerId : null), $listingType, $listingId, ($refCode !== '' ? $refCode : null), $tid]);
+            $inquiryId = (int)$this->db->lastInsertId();
+
+            // Buyer-seller thread: auto-open on first inquiry (logged-in buyer + known owner).
+            // property_messages.property_id has no FK; user-listing ids ride with a marker.
+            $threadId = 0;
+            if ($inquirerId > 0 && $ownerId > 0 && $inquirerId !== $ownerId) {
+                try {
+                    $threadMsg = ($listingType === 'user' ? "[Listing #{$listingId}] " : '') . ($message !== '' ? $message : "Hi! I'm interested in '{$propTitle}'. Please share details.");
+                    $stmt = $this->db->prepare(
+                        "INSERT INTO property_messages (property_id, sender_id, receiver_id, message, tenant_id) VALUES (?, ?, ?, ?, ?)"
+                    );
+                    $stmt->execute([($listingType === 'company' ? $propertyId : $listingId), $inquirerId, $ownerId, $threadMsg, $tid]);
+                    $threadId = (int)$this->db->lastInsertId();
+                } catch (\Throwable $e) {
+                    error_log('PropertyPageController::propertyInterest thread: ' . $e->getMessage());
+                }
+            }
+
+            // Notify the seller/owner (best-effort push; team flow unchanged for company stock).
+            if ($ownerId > 0) {
+                try {
+                    $pushService = new \App\Services\Communication\PushNotificationService();
+                    $pushService->sendToUser($ownerId, [
+                        'title' => 'New Property Inquiry',
+                        'body' => "{$name} is interested in '{$propTitle}'" . ($threadId > 0 ? ' — reply in chat' : ''),
+                        'data' => [
+                            'type' => 'property_inquiry',
+                            'inquiry_id' => (string)$inquiryId,
+                            'thread_id' => (string)$threadId,
+                        ],
+                        'click_action' => 'FLUTTER_NOTIFICATION_CLICK',
+                    ]);
+                } catch (\Throwable $e) {
+                    error_log('PropertyPageController::propertyInterest push: ' . $e->getMessage());
+                }
+            }
 
             if ($isXhr) {
-                return $this->jsonResponse(['success' => true, 'message' => 'Interest recorded! Our team will contact you shortly.']);
+                return $this->jsonResponse(['success' => true, 'message' => 'Interest recorded! ' . ($ownerId > 0 ? 'The seller has been notified.' : 'Our team will contact you shortly.'), 'inquiry_id' => $inquiryId, 'thread_id' => $threadId]);
             }
-            $_SESSION['flash_success'] = 'Thank you! Your interest has been recorded. Our team will contact you shortly.';
+            $_SESSION['flash_success'] = 'Thank you! Your interest has been recorded. ' . ($ownerId > 0 ? 'The seller has been notified.' : 'Our team will contact you shortly.');
             return $this->redirect($_SERVER['HTTP_REFERER'] ?? '/properties');
         } catch (\Exception $e) {
             error_log('PropertyPageController::propertyInterest error: ' . $e->getMessage());
@@ -362,11 +449,35 @@ class PropertyPageController extends BaseController
 
     public function propertyInquiry()
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Handle inquiry submission
-            $_SESSION['success'] = 'Thank you for your inquiry! We will contact you soon.';
+        // GET /property/inquire?id=X — render a standalone inquiry form
+        // (used by compare page + shared links); POSTs to /property/interest.
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+            return $this->propertyInterest();
         }
-        $this->redirect('/contact');
+        $id = (int)($_GET['id'] ?? 0);
+        $prop = null;
+        $listingType = 'company';
+        if ($id > 0) {
+            try {
+                $prop = $this->db->fetchOne("SELECT id, title FROM properties WHERE id = ? LIMIT 1", [$id]);
+                if (!$prop) {
+                    $u = $this->db->fetchOne("SELECT id, name AS title, user_id FROM user_properties WHERE id = ? LIMIT 1", [$id]);
+                    if ($u) {
+                        $prop = $u;
+                        $listingType = 'user';
+                    }
+                }
+            } catch (\Throwable $e) {
+                error_log('PropertyPageController::propertyInquiry lookup: ' . $e->getMessage());
+            }
+        }
+        $this->render('pages/property_inquire', [
+            'page_title' => 'Send Inquiry - APS Dream Home',
+            'property' => $prop,
+            'property_id' => $id,
+            'listing_type' => $listingType,
+            'ref' => trim((string)($_GET['ref'] ?? '')),
+        ]);
     }
 
     public function getFeaturedProperties()

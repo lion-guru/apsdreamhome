@@ -25,6 +25,7 @@ class DealPipelineController extends AdminController
      */
     public function index()
     {
+        $this->requireAdmin();
         try {
             $conn = $this->db->getConnection();
             
@@ -96,6 +97,7 @@ class DealPipelineController extends AdminController
      */
     public function create()
     {
+        $this->requireAdmin();
         try {
             $conn = $this->db->getConnection();
             
@@ -130,6 +132,7 @@ class DealPipelineController extends AdminController
      */
     public function store()
     {
+        $this->requireAdmin();
         try {
             $conn = $this->db->getConnection();
             
@@ -167,6 +170,7 @@ class DealPipelineController extends AdminController
      */
     public function show($id)
     {
+        $this->requireAdmin();
         try {
             $conn = $this->db->getConnection();
             
@@ -225,6 +229,7 @@ class DealPipelineController extends AdminController
      */
     public function moveStage($id)
     {
+        $this->requireAdmin();
         try {
             $conn = $this->db->getConnection();
             
@@ -271,6 +276,7 @@ class DealPipelineController extends AdminController
      */
     public function updateProbability($id)
     {
+        $this->requireAdmin();
         try {
             $conn = $this->db->getConnection();
             
@@ -300,6 +306,7 @@ class DealPipelineController extends AdminController
      */
     public function markWon($id)
     {
+        $this->requireAdmin();
         try {
             $conn = $this->db->getConnection();
             
@@ -332,6 +339,7 @@ class DealPipelineController extends AdminController
      */
     public function markLost($id)
     {
+        $this->requireAdmin();
         try {
             $conn = $this->db->getConnection();
             
@@ -364,6 +372,7 @@ class DealPipelineController extends AdminController
      */
     public function timeline($id)
     {
+        $this->requireAdmin();
         try {
             $conn = $this->db->getConnection();
             

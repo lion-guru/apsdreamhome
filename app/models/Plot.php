@@ -116,23 +116,74 @@ class Plot extends Model
     }
 
     /**
-     * Get plot statistics for a colony
+     * Valid status transitions for plots
+     * Enforces workflow: available -> hold/reserved -> booked -> sold
+     * sold is terminal (no transitions out)
      */
-    public static function getColonyStats($colonyId)
+    public static function canTransition(string $fromStatus, string $toStatus): bool
+    {
+        $validTransitions = [
+            'available' => ['hold', 'reserved'],
+            'hold'      => ['available', 'booked'],
+            'reserved'  => ['available', 'booked'],
+            'booked'    => ['sold'],
+            'sold'      => [],
+        ];
+
+        return in_array($toStatus, $validTransitions[$fromStatus] ?? [], true);
+    }
+
+    /**
+     * Update plot status with transition validation
+     */
+    public static function updateStatus(int $plotId, string $newStatus, int $changedBy = 0, string $reason = ''): bool
     {
         $db = \App\Core\Database::getInstance();
-        return $db->fetch(
-            "SELECT 
-                COUNT(*) as total_plots,
-                SUM(CASE WHEN status = 'available' THEN 1 ELSE 0 END) as available,
-                SUM(CASE WHEN status = 'booked' THEN 1 ELSE 0 END) as booked,
-                SUM(CASE WHEN status = 'sold' THEN 1 ELSE 0 END) as sold,
-                SUM(CASE WHEN status = 'blocked' THEN 1 ELSE 0 END) as blocked,
-                SUM(area_sqft) as total_area,
-                AVG(price_per_sqft) as avg_price_per_sqft,
-                SUM(total_price) as total_value
-             FROM plots WHERE colony_id = ?",
-            [$colonyId]
+        
+        // Get current status
+        $current = $db->fetchOne("SELECT status FROM plots WHERE id = ?", [$plotId]);
+        if (!$current) {
+            throw new \Exception('Plot not found');
+        }
+        
+        $oldStatus = $current['status'];
+        
+        if ($oldStatus === $newStatus) {
+            throw new \Exception("Plot is already $newStatus");
+        }
+        
+        if (!self::canTransition($oldStatus, $newStatus)) {
+            throw new \Exception("Cannot transition from $oldStatus to $newStatus");
+        }
+        
+        // Update status
+        $db->query(
+            "UPDATE plots SET status = ?, updated_at = NOW() WHERE id = ?",
+            [$newStatus, $plotId]
         );
+        
+        // Log status change
+        $db->query(
+            "INSERT INTO plot_status_history (plot_id, old_status, new_status, changed_by, change_reason, tenant_id) VALUES (?, ?, ?, ?, ?, ?)",
+            [$plotId, $oldStatus, $newStatus, $changedBy, 'Model update', \App\Core\TenantContext::getId()]
+        );
+        
+        return true;
+    }
+
+    /**
+     * Get valid next statuses for current status
+     */
+    public static function getValidNextStatuses(string $currentStatus): array
+    {
+        $validTransitions = [
+            'available' => ['hold', 'reserved'],
+            'hold'      => ['available', 'booked'],
+            'reserved'  => ['available', 'booked'],
+            'booked'    => ['sold'],
+            'sold'      => [],
+        ];
+
+        return $validTransitions[$currentStatus] ?? [];
     }
 }

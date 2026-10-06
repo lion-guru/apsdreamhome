@@ -43,7 +43,7 @@ class RegisterController extends BaseController
         $success = $_SESSION['success'] ?? null;
         unset($_SESSION['errors'], $_SESSION['old_input'], $_SESSION['success']);
 
-        $ref = trim($_GET['ref'] ?? $old['referral_code'] ?? '');
+        $ref = trim($_GET['ref'] ?? $old['referral_code'] ?? $_COOKIE['aps_ref'] ?? $_SESSION['aps_ref'] ?? '');
         $selectedRole = trim($_GET['role'] ?? $old['role'] ?? 'customer');
 
         include __DIR__ . '/../../../views/auth/core_register.php';
@@ -62,8 +62,11 @@ class RegisterController extends BaseController
         $password = $_POST['password'] ?? '';
         $confirm = $_POST['confirm_password'] ?? '';
         $role = trim($_POST['role'] ?? 'customer');
-        $referral = trim($_POST['referral_code'] ?? $_GET['ref'] ?? '');
+        $referral = trim($_POST['referral_code'] ?? $_GET['ref'] ?? $_COOKIE['aps_ref'] ?? $_SESSION['aps_ref'] ?? '');
         $agentType = trim($_POST['agent_type'] ?? '');
+        if ($agentType !== 'freelancer') {
+            $agentType = 'freelancer';
+        }
 
         $errors = [];
         if (empty($name)) $errors[] = 'Name is required';

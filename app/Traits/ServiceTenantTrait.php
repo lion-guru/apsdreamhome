@@ -132,4 +132,14 @@ trait ServiceTenantTrait
     {
         return $this->tenantId() > 1 ? array_merge($params, [$this->tenantId()]) : $params;
     }
+
+    /**
+     * Short alias for tenantParams([]) — many services call $this->tVal().
+     * Classes defining their own private tVal() keep precedence; this only
+     * fills the gap for callers that would otherwise fatal.
+     */
+    protected function tVal(): array
+    {
+        return $this->tenantParams();
+    }
 }

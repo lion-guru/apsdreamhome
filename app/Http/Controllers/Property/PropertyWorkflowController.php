@@ -543,11 +543,11 @@ class PropertyWorkflowController extends BaseController
     private function getPriceRanges(): array
     {
         return [
-            ['min' => 0, 'max' => 1000000, 'label' => 'Under ₹10L'],
-            ['min' => 1000000, 'max' => 2500000, 'label' => '₹10L - ₹25L'],
-            ['min' => 2500000, 'max' => 5000000, 'label' => '₹25L - ₹50L'],
-            ['min' => 5000000, 'max' => 10000000, 'label' => '₹50L - ₹1Cr'],
-            ['min' => 10000000, 'max' => 0, 'label' => 'Above ₹1Cr']
+            ['min' => 0, 'max' => 1000000, 'label' => 'Under â‚¹10L'],
+            ['min' => 1000000, 'max' => 2500000, 'label' => 'â‚¹10L - â‚¹25L'],
+            ['min' => 2500000, 'max' => 5000000, 'label' => 'â‚¹25L - â‚¹50L'],
+            ['min' => 5000000, 'max' => 10000000, 'label' => 'â‚¹50L - â‚¹1Cr'],
+            ['min' => 10000000, 'max' => 0, 'label' => 'Above â‚¹1Cr']
         ];
     }
 
@@ -637,9 +637,9 @@ class PropertyWorkflowController extends BaseController
                         'size'     => $_FILES['images']['size'][$key],
                         'error'    => $_FILES['images']['error'][$key],
                     ];
-                    $v = UploadValidator::validate($fileData, ['types' => 'images', 'max_size' => 10]);
+                    $v = \UploadValidator::validate($fileData, ['types' => 'images', 'max_size' => 10]);
                     if ($v['valid']) {
-                        $safeName = UploadValidator::safeFilename($name);
+                        $safeName = \UploadValidator::safeFilename($name);
                         $fileName = time() . '_' . $safeName;
                         $uploadPath = 'uploads/properties/' . $fileName;
                         if (move_uploaded_file($fileData['tmp_name'], $uploadPath)) {

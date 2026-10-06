@@ -667,6 +667,16 @@ $base = BASE_URL;
                 <!-- Populated by JS based on role -->
             </div>
 
+            <!-- Social Login -->
+            <div style="display:flex;gap:.75rem;margin-bottom:1.25rem">
+                <a href="<?php echo e($base); ?>/auth/google" style="flex:1;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.7rem;border:2px solid #e2e8f0;border-radius:12px;background:#fff;font-size:.85rem;font-weight:600;color:#1e293b;text-decoration:none">
+                    <i class="fab fa-google" style="color:#ea4335"></i> Google
+                </a>
+                <a href="<?php echo e($base); ?>/auth/facebook" style="flex:1;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.7rem;border:2px solid #e2e8f0;border-radius:12px;background:#fff;font-size:.85rem;font-weight:600;color:#1e293b;text-decoration:none">
+                    <i class="fab fa-facebook-f" style="color:#1877f2"></i> Facebook
+                </a>
+            </div>
+
             <!-- Error Box -->
             <?php if (!empty($errors)): ?>
                 <div >

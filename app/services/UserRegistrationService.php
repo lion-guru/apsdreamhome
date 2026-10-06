@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
+use PDO;
 
 class UserRegistrationService
 {
@@ -197,27 +198,14 @@ class UserRegistrationService
                     );
                 }
 
-                // Referral reward for sponsor (wallet credit, NOT referral_rewards table)
-                if ($resolvedSponsorId) {
-                    $rewardAmount = 200.00;
-                    $this->walletService->credit(
-                        $resolvedSponsorId,
-                        $rewardAmount,
-                        'referral',
-                        "Referral reward for {$role}: {$name}",
-                        $userId
-                    );
-                }
+                // NOTE: no money moves at registration (anti fake-reg). The Rs.200
+                // sponsor wallet credit + tier signup bonus are deferred to the
+                // referred user's first booking via
+                // ReferralService::processSignupRewardsOnFirstBooking().
             }
 
-            // Process tiered signup bonus via ReferralService
+            // Linkage + tracking stay at registration (no money).
             if ($resolvedSponsorId) {
-                try {
-                    $this->referralService->processTieredSignupBonus($resolvedSponsorId, $userId);
-                } catch (\Throwable $e) {
-                    error_log("UserRegistrationService: tiered signup bonus failed: " . $e->getMessage());
-                }
-
                 // Apply referral link in users.referred_by
                 try {
                     $this->referralService->applyReferral($userId, $referralCode);
@@ -364,6 +352,11 @@ class UserRegistrationService
             'parent_id' => $mlmParentId,
             'level' => $level,
         ]);
+
+        // Check if sponsor (associate/agent) gets activation bonus for first team member
+        if ($sponsorId) {
+            $this->checkSponsorTeamActivation($sponsorId);
+        }
     }
 
     private function createAssociatesRecord(int $userId, string $name, string $email, string $phone, string $referralCode, ?int $sponsorId, string $role, string $agentType = ''): void
@@ -473,5 +466,46 @@ class UserRegistrationService
     public static function getPrefixForRole(string $role): string
     {
         return self::ROLE_PREFIXES[strtolower($role)] ?? 'USR';
+    }
+
+    /**
+     * Check if sponsor gets activation bonus for first team member
+     * Called after a new team member is added to the network tree
+     */
+    private function checkSponsorTeamActivation(int $sponsorId): void
+    {
+        try {
+            $tid = $this->getTenantId();
+            $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+            $tenantParams = $tid > 1 ? [$tid] : [];
+
+            // Get sponsor info
+            $stmt = $this->db->prepare("SELECT id, role, referred_by FROM users WHERE id = ?" . $tenantWhere . " LIMIT 1");
+            $params = array_merge([$sponsorId], $tenantParams);
+            $stmt->execute($params);
+            $sponsor = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$sponsor || !in_array($sponsor['role'] ?? '', ['associate', 'agent'], true)) {
+                return; // Only for associate/agent sponsors
+            }
+
+            // Count existing team members (downline) for this sponsor
+            $stmt = $this->db->prepare("SELECT COUNT(*) FROM mlm_network_tree WHERE parent_id = ?" . $tenantWhere);
+            $params = array_merge([$sponsorId], $tenantParams);
+            $stmt->execute($params);
+            $teamCount = (int)$stmt->fetchColumn();
+
+            // If this is the first team member (count was 0 before, now 1)
+            if ($teamCount === 1) {
+                // Trigger associate activation bonus for first team member
+                $referralSvc = new \App\Services\ReferralService();
+                $result = $referralSvc->processAssociateActivationBonus($sponsorId, 'first_team_member');
+                if ($result['success']) {
+                    error_log("[UserRegistrationService] Sponsor #{$sponsorId} activation bonus processed for first team member: " . json_encode($result));
+                }
+            }
+        } catch (\Throwable $e) {
+            error_log("[UserRegistrationService] Sponsor team activation check failed: " . $e->getMessage());
+        }
     }
 }

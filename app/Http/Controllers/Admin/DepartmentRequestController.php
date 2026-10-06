@@ -28,6 +28,7 @@ class DepartmentRequestController extends AdminController
      */
     public function dashboard()
     {
+        $this->requireAdmin();
         $stats = $this->requestService->getAllDepartmentsWithCounts();
         $pending = $this->requestService->getAllPending(50);
 
@@ -43,6 +44,7 @@ class DepartmentRequestController extends AdminController
      */
     public function index()
     {
+        $this->requireAdmin();
         $departmentCode = $_GET['department'] ?? null;
         $statusFilter = $_GET['status'] ?? null;
 
@@ -94,6 +96,7 @@ class DepartmentRequestController extends AdminController
      */
     public function submit()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->validateCsrfFail();
 
@@ -133,6 +136,7 @@ class DepartmentRequestController extends AdminController
      */
     public function show(int $id)
     {
+        $this->requireAdmin();
         $request = $this->requestService->getRequest($id);
 
         if (!$request) {
@@ -157,6 +161,7 @@ class DepartmentRequestController extends AdminController
      */
     public function updateStatus(int $id)
     {
+        $this->requireAdmin();
         $this->validateCsrfOrFail();
 
         $status = $_POST['status'] ?? 'submitted';
@@ -184,6 +189,7 @@ class DepartmentRequestController extends AdminController
      */
     public function assign(int $id)
     {
+        $this->requireAdmin();
         $this->validateCsrfOrFail();
 
         $userId = $_POST['user_id'] ?? null;
@@ -206,6 +212,7 @@ class DepartmentRequestController extends AdminController
      */
     public function addComment(int $id)
     {
+        $this->requireAdmin();
         $this->validateCsrfOrFail();
 
         $comment = $_POST['comment'] ?? '';
@@ -229,6 +236,7 @@ class DepartmentRequestController extends AdminController
      */
     public function myRequests()
     {
+        $this->requireAdmin();
         $userId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
         $requests = $this->requestService->getRequestsByUser($userId);
 

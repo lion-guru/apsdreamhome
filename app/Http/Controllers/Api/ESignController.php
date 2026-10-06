@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Services\Legal\ESignService;
+use App\Traits\TenantAwareTrait;
 
 class ESignController extends BaseApiController
 {
+    use TenantAwareTrait;
+    
     protected ESignService $service;
 
     public function __construct()

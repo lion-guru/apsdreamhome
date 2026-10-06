@@ -7,6 +7,7 @@
 namespace App\Services;
 
 use App\Traits\ServiceTenantTrait;
+use App\Services\AdvanceRecoveryService;
 
 class PayrollBatchService
 {
@@ -14,11 +15,13 @@ class PayrollBatchService
 
     private ?\PDO $pdo = null;
     private SalaryCalculationService $calc;
+    private AdvanceRecoveryService $advanceRecovery;
 
     public function __construct(?\PDO $pdo = null)
     {
         $this->pdo = $pdo ?? \App\Core\Database\Database::getInstance()->getPdo();
         $this->calc = new SalaryCalculationService();
+        $this->advanceRecovery = new AdvanceRecoveryService($this->pdo);
     }
 
     /**
@@ -57,15 +60,22 @@ class PayrollBatchService
                 $paymentDate = date("Y-" . str_pad($month, 2, '0', STR_PAD_LEFT) . "-28");
                 $allowances = $breakdown['hra'] + $breakdown['conveyance'] + $breakdown['medical_allowance'] + $breakdown['special_allowance'] + $breakdown['other_allowances'];
 
+                // Calculate advance/loan recovery for this employee
+                $advanceRecovery = $this->advanceRecovery->calculateRecovery($s['employee_id'], $month, $year);
+                
+                // Adjust net salary for advance recovery
+                $adjustedNet = max(0, $breakdown['net_salary'] - $advanceRecovery);
+                $adjustedDeductions = $breakdown['total_deductions'] + $advanceRecovery;
+
                 $params = [
                     $s['employee_id'], $s['id'], $month, $year, $paymentDate,
                     $breakdown['basic_salary'], $allowances, $breakdown['gross_salary'],
-                    $breakdown['total_deductions'], $breakdown['net_salary'], $processedBy,
+                    $adjustedDeductions, $adjustedNet, $processedBy,
                 ];
                 if ($tid > 1) $params[] = $tid;
                 $stmt->execute($params);
                 $generated++;
-                $totalNet += $breakdown['net_salary'];
+                $totalNet += $adjustedNet;
             } catch (\Exception $e) {
                 $errors[] = "Employee #{$s['employee_id']}: " . $e->getMessage();
                 $skipped++;
@@ -141,26 +151,36 @@ class PayrollBatchService
         $totalGross = 0;
         $totalDeductions = 0;
         $totalNet = 0;
+        $totalAdvanceRecovery = 0;
 
         foreach ($structures as $s) {
             $breakdown = $this->calc->calculate($s);
+            $advanceRecovery = $this->advanceRecovery->calculateRecovery($s['employee_id'], $month, $year, false);
+            $adjustedNet = max(0, $breakdown['net_salary'] - $advanceRecovery);
+            $adjustedDeductions = $breakdown['total_deductions'] + $advanceRecovery;
+            
             $entries[] = array_merge($breakdown, [
-                'employee_id'   => $s['employee_id'],
-                'employee_name' => $s['employee_name'] ?? 'Employee #' . $s['employee_id'],
-                'designation'   => $s['designation'] ?? '',
-                'department'    => $s['department'] ?? '',
+                'employee_id'         => $s['employee_id'],
+                'employee_name'       => $s['employee_name'] ?? 'Employee #' . $s['employee_id'],
+                'designation'         => $s['designation'] ?? '',
+                'department'          => $s['department'] ?? '',
+                'advance_recovery'    => $advanceRecovery,
+                'adjusted_net_salary' => $adjustedNet,
+                'adjusted_deductions' => $adjustedDeductions,
             ]);
             $totalGross += $breakdown['gross_salary'];
-            $totalDeductions += $breakdown['total_deductions'];
-            $totalNet += $breakdown['net_salary'];
+            $totalDeductions += $adjustedDeductions;
+            $totalNet += $adjustedNet;
+            $totalAdvanceRecovery += $advanceRecovery;
         }
 
         return [
-            'entries'        => $entries,
-            'total_employees' => count($entries),
-            'total_gross'    => $totalGross,
-            'total_deductions' => $totalDeductions,
-            'total_net'      => $totalNet,
+            'entries'              => $entries,
+            'total_employees'      => count($entries),
+            'total_gross'          => $totalGross,
+            'total_deductions'     => $totalDeductions,
+            'total_net'            => $totalNet,
+            'total_advance_recovery' => $totalAdvanceRecovery,
         ];
     }
 

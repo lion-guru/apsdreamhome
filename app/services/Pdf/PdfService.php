@@ -38,11 +38,12 @@ class PdfService
     const TYPE_BROCHURE  = 'brochure';
     const TYPE_PAYSLIP   = 'payslip';
     const TYPE_POSSESSION = 'possession';
+    const TYPE_FORM16    = 'form16';
 
     const ALL_TYPES = [
         self::TYPE_RECEIPT, self::TYPE_INVOICE, self::TYPE_AGREEMENT,
         self::TYPE_REPORT, self::TYPE_BROCHURE, self::TYPE_PAYSLIP,
-        self::TYPE_POSSESSION,
+        self::TYPE_POSSESSION, self::TYPE_FORM16,
     ];
 
     /** @var \PDO|null */
@@ -58,7 +59,7 @@ class PdfService
             self::TYPE_RECEIPT => 0, self::TYPE_INVOICE => 0,
             self::TYPE_AGREEMENT => 0, self::TYPE_REPORT => 0,
             self::TYPE_BROCHURE => 0, self::TYPE_PAYSLIP => 0,
-            self::TYPE_POSSESSION => 0,
+            self::TYPE_POSSESSION => 0, self::TYPE_FORM16 => 0,
         ],
     ];
 
@@ -85,7 +86,7 @@ class PdfService
      * @param int    $id     entity id
      * @return array        {success, data|error}
      */
-    public function generate($type, $id)
+    public function generate($type, $id, $extra = [])
     {
         if (!in_array($type, self::ALL_TYPES, true)) {
             return ['success' => false, 'error' => "Unknown PDF type: $type"];
@@ -99,7 +100,7 @@ class PdfService
         }
 
         try {
-            $result = $this->$method($id);
+            $result = $this->$method($id, is_array($extra) ? $extra : []);
             if ($result['success'] ?? false) {
                 $this->stats['generated']++;
                 $this->stats['by_type'][$type] = ($this->stats['by_type'][$type] ?? 0) + 1;
@@ -671,6 +672,95 @@ class PdfService
             $stmt->execute([(int)$payslipId]);
             return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
         } catch (\Throwable $e) { return null; }
+    }
+
+    /* ------------------------------------------------------------------ */
+    /*  6b. Form 16 - TDS Certificate (employee + financial year)         */
+    /* ------------------------------------------------------------------ */
+
+    public function form16($employeeId, $extra = [])
+    {
+        $this->lastType = self::TYPE_FORM16;
+        $employeeId = (int)$employeeId;
+        if ($employeeId <= 0) return ['success' => false, 'error' => 'Invalid employee ID'];
+
+        $fy = (int)(is_array($extra) ? ($extra['financial_year'] ?? 0) : 0);
+        if ($fy <= 0) {
+            $y = (int)date('Y');
+            $fy = ((int)date('n') >= 4) ? $y - 1 : $y - 2;
+        }
+
+        if (!class_exists('\App\Services\StatutoryComplianceService')) {
+            return ['success' => false, 'error' => 'Statutory service unavailable'];
+        }
+        try {
+            $statutory = new \App\Services\StatutoryComplianceService(
+                $this->db instanceof \PDO ? $this->db : null
+            );
+            $data = $statutory->generateForm16($employeeId, $fy);
+        } catch (\Throwable $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+
+        $cached = $this->checkCache(self::TYPE_FORM16, $employeeId, $fy);
+        if ($cached) return $cached;
+
+        $emp = $data['employee'] ?? [];
+        $totals = $data['totals'] ?? [];
+        $f = function ($v) { return number_format((float)$v, 2); };
+
+        $pdf = new MinimalPDF();
+        $this->renderHeader($pdf, 'Form 16 - TDS Certificate');
+
+        $this->renderKvBlock($pdf, 110, [
+            'Form 16 No'       => $data['form16_no'] ?? ('F16-' . $fy . '-' . str_pad((string)$employeeId, 4, '0', STR_PAD_LEFT)),
+            'Financial Year'   => $data['financial_year'] ?? ($fy . '-' . ($fy + 1)),
+            'Assessment Year'  => ($fy + 1) . '-' . ($fy + 2),
+            'Employer'         => 'APS Dream Home',
+            'Employee'         => ($emp['name'] ?? 'Employee')
+                . ' (' . ($emp['employee_code'] ?: 'N/A') . ')',
+            'PAN'              => ($emp['pan_number'] ?: 'N/A'),
+            'Period'           => $data['period'] ?? ('April ' . $fy . ' to March ' . ($fy + 1)),
+            'Generated On'     => date('d-M-Y'),
+        ]);
+
+        $this->renderTable($pdf, 290,
+            ['Salary Head', 'Amount (Rs.)'],
+            [
+                ['Basic Salary', $f($totals['basic_salary'] ?? 0)],
+                ['House Rent Allowance', $f($totals['hra'] ?? 0)],
+                ['Conveyance', $f($totals['conveyance'] ?? 0)],
+                ['Medical Allowance', $f($totals['medical_allowance'] ?? 0)],
+                ['Special Allowance', $f($totals['special_allowance'] ?? 0)],
+                ['Other Allowances', $f($totals['other_allowances'] ?? 0)],
+                ['Gross Salary', $f($totals['gross_salary'] ?? 0)],
+            ],
+            [330, 150]
+        );
+
+        $this->renderTable($pdf, 470,
+            ['Deductions & Exemptions', 'Amount (Rs.)'],
+            [
+                ['Standard Deduction (u/s 16)', $f($data['standard_deduction'] ?? 50000)],
+                ['Provident Fund', $f($totals['pf'] ?? 0)],
+                ['ESI Contribution', $f($totals['esi'] ?? 0)],
+                ['HRA Exempt (u/s 10(13A))', $f($data['hra_exempt'] ?? 0)],
+                ['Professional Tax', $f($totals['professional_tax'] ?? 0)],
+                ['Taxable Income', $f($data['taxable_income'] ?? 0)],
+                ['TDS Deducted', $f($totals['tds'] ?? 0)],
+            ],
+            [330, 150]
+        );
+
+        $pdf->setFont('Helvetica', 'I', 9);
+        $pdf->multiText(40, 700,
+            "This is a computer-generated TDS certificate under Section 203 of the Income Tax Act.\n" .
+            "Verify investment proofs before filing. For queries: support@apsdreamhome.com | +91 92771 21112",
+            515
+        );
+
+        $path = $this->writePdf($pdf, self::TYPE_FORM16, $employeeId, $fy);
+        return $this->returnResult($path, $employeeId, $fy);
     }
 
     /* ------------------------------------------------------------------ */

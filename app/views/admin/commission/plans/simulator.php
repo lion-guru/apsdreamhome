@@ -33,7 +33,10 @@ $simMode = $_POST['sim_mode'] ?? 'single';
 <div class="cp-card">
     <div class="cp-card-header">
         <h5 class="m-0"><i class="fas fa-flask me-2"></i>Commission What-If Simulator</h5>
-        <a href="<?= $base ?>/admin/commission-plans" class="cp-btn cp-btn-outline"><i class="fas fa-arrow-left me-1"></i>Back</a>
+        <div class="d-flex gap-2">
+            <button type="button" class="cp-btn cp-btn-outline" data-bs-toggle="modal" data-bs-target="#savePresetModal"><i class="fas fa-save me-1"></i>Save Preset</button>
+            <a href="<?= $base ?>/admin/commission-plans" class="cp-btn cp-btn-outline"><i class="fas fa-arrow-left me-1"></i>Back</a>
+        </div>
     </div>
     <div class="cp-card-body">
         <form method="POST" id="simForm">
@@ -62,15 +65,28 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="col-md-2">
-                    <label class="cp-label">Mode</label>
-                    <div class="d-flex gap-1">
-                        <button type="button" class="mode-tab <?= $simMode === 'single' ? 'active' : '' ?>" onclick="setMode('single')">Single</button>
-                        <button type="button" class="mode-tab <?= $simMode === 'bulk' ? 'active' : '' ?>" onclick="setMode('bulk')">All Ranks</button>
-                        <button type="button" class="mode-tab <?= $simMode === 'compare' ? 'active' : '' ?>" onclick="setMode('compare')">Compare</button>
-                    </div>
+<div class="col-md-2">
+                <label class="cp-label">Mode</label>
+                <div class="d-flex gap-1 flex-wrap">
+                    <button type="button" class="mode-tab <?= $simMode === 'single' ? 'active' : '' ?>" onclick="setMode('single')">Single</button>
+                    <button type="button" class="mode-tab <?= $simMode === 'bulk' ? 'active' : '' ?>" onclick="setMode('bulk')">All Ranks</button>
+                    <button type="button" class="mode-tab <?= $simMode === 'compare' ? 'active' : '' ?>" onclick="setMode('compare')">Compare</button>
+                    <button type="button" class="mode-tab <?= $simMode === 'referral_sweep' ? 'active' : '' ?>" onclick="setMode('referral_sweep')">Referral %</button>
+                    <button type="button" class="mode-tab <?= $simMode === 'wallet_sweep' ? 'active' : '' ?>" onclick="setMode('wallet_sweep')">Wallet %</button>
                 </div>
-                <?php if ($simMode === 'compare'): ?>
+            </div>
+            <div class="col-md-2">
+                <label class="cp-label">Presets</label>
+                <select name="preset_id" class="cp-input" id="presetSelect" onchange="loadPreset(this.value)">
+                    <option value="">-- Load Preset --</option>
+                    <?php foreach (($presets ?? []) as $pr): ?>
+                        <option value="<?= $pr['id'] ?>" data-mode="<?= htmlspecialchars($pr['sim_mode']) ?>" data-params='<?= htmlspecialchars($pr['params_json'], ENT_QUOTES) ?>'>
+                            <?= htmlspecialchars($pr['name']) ?> <span class="cp-version"><?= $pr['sim_mode'] ?></span>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <?php if ($simMode === 'compare'): ?>
                 <div class="col-md-2">
                     <label class="cp-label">Plan B</label>
                     <select name="plan_id_b" class="cp-input">
@@ -87,6 +103,33 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                     <button type="submit" name="sim_mode" value="<?= $simMode ?>" class="cp-btn cp-btn-primary"><i class="fas fa-play me-1"></i>Simulate</button>
                 </div>
             </div>
+            <?php if (in_array($simMode, ['referral_sweep', 'wallet_sweep'], true)): ?>
+            <div class="row mb-3">
+                <?php if ($simMode === 'referral_sweep'): ?>
+                <div class="col-md-3">
+                    <label class="cp-label">Candidate Customer % (guard ≤5)</label>
+                    <input type="number" name="candidate_pct" class="cp-input" value="<?= htmlspecialchars($_POST['candidate_pct'] ?? 2.0, ENT_QUOTES, 'UTF-8') ?>" step="0.1" min="0" max="5">
+                </div>
+                <?php else: ?>
+                <div class="col-md-3">
+                    <label class="cp-label">Candidate L1 % (guard L1+L2≤30)</label>
+                    <input type="number" name="candidate_l1" class="cp-input" value="<?= htmlspecialchars($_POST['candidate_l1'] ?? 20.0, ENT_QUOTES, 'UTF-8') ?>" step="0.5" min="0" max="30">
+                </div>
+                <div class="col-md-3">
+                    <label class="cp-label">Candidate L2 %</label>
+                    <input type="number" name="candidate_l2" class="cp-input" value="<?= htmlspecialchars($_POST['candidate_l2'] ?? 5.0, ENT_QUOTES, 'UTF-8') ?>" step="0.5" min="0" max="30">
+                </div>
+                <?php endif; ?>
+                <div class="col-md-3">
+                    <label class="cp-label">History Window (days)</label>
+                    <input type="number" name="window_days" class="cp-input" value="<?= htmlspecialchars($_POST['window_days'] ?? 90, ENT_QUOTES, 'UTF-8') ?>" step="30" min="7" max="365">
+                </div>
+                <div class="col-md-3">
+                    <label class="cp-label">&nbsp;</label>
+                    <div class="small" style="color:#8892b0">Replays real history. Nothing is written — Apply happens in service-configs.</div>
+                </div>
+            </div>
+            <?php endif; ?>
         </form>
 
         <?php if ($result && ($result['success'] ?? false)): ?>
@@ -217,6 +260,69 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                     <div ><?= $diffTotal > 0 ? 'Plan B pays MORE' : ($diffTotal < 0 ? 'Plan A pays MORE' : 'Same payout') ?></div>
                 </div>
 
+            <?php elseif ($simMode === 'referral_sweep'): ?>
+                <?php $rs = $result; ?>
+                <h6>Customer Referral @ <?= htmlspecialchars($rs['candidate_pct']) ?>% — last <?= (int)$rs['window_days'] ?> days of paid bookings</h6>
+                <?php if (!empty($rs['warnings'])): ?>
+                    <?php foreach ($rs['warnings'] as $w): ?>
+                        <div class="alert alert-danger"><?= htmlspecialchars($w) ?></div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+                <div class="row mb-4">
+                    <div class="col-md-2"><div class="result-card"><div class="result-num"><?= number_format($rs['paid_bookings']) ?></div><div class="result-label">Paid Bookings</div></div></div>
+                    <div class="col-md-2"><div class="result-card"><div class="result-num">₹<?= number_format($rs['volume']) ?></div><div class="result-label">Volume</div></div></div>
+                    <div class="col-md-2"><div class="result-card"><div class="result-num"><?= htmlspecialchars($rs['current_pct']) ?>%</div><div class="result-label">Current Policy</div></div></div>
+                    <div class="col-md-2"><div class="result-card"><div class="result-num">₹<?= number_format($rs['baseline_payout']) ?></div><div class="result-label">Baseline Payout</div></div></div>
+                    <div class="col-md-2"><div class="result-card"><div class="result-num">₹<?= number_format($rs['projected_payout']) ?></div><div class="result-label">Projected @ <?= htmlspecialchars($rs['candidate_pct']) ?>%</div></div></div>
+                    <div class="col-md-2"><div class="result-card"><div class="result-num">₹<?= number_format($rs['delta']) ?></div><div class="result-label">Delta vs Baseline</div></div></div>
+                </div>
+                <form method="POST" action="<?= $base ?>/admin/service-configs/update" onsubmit="return confirm('Apply <?= htmlspecialchars($rs['candidate_pct']) ?>% as the live customer-referral rate? Past payouts are NOT recalculated.');">
+                    <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
+                    <input type="hidden" name="configs[referral][customer_booking_pct]" value="<?= htmlspecialchars($rs['candidate_pct']) ?>">
+                    <button type="submit" class="cp-btn cp-btn-primary"><i class="fas fa-check me-1"></i>Apply <?= htmlspecialchars($rs['candidate_pct']) ?>% as Live Rate</button>
+                    <span class="small" style="color:#8892b0">Writes service_configs (audited) · prospective only · current: <?= htmlspecialchars($rs['current_pct']) ?>%</span>
+                </form>
+
+            <?php elseif ($simMode === 'wallet_sweep'): ?>
+                <?php $ws = $result; ?>
+                <h6>Wallet Activation L1 <?= htmlspecialchars($ws['candidate_l1']) ?>% + L2 <?= htmlspecialchars($ws['candidate_l2']) ?>% — last <?= (int)$ws['window_days'] ?> days</h6>
+                <?php if (!empty($ws['warnings'])): ?>
+                    <?php foreach ($ws['warnings'] as $w): ?>
+                        <div class="alert alert-danger"><?= htmlspecialchars($w) ?></div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+                <div class="row mb-4">
+                    <div class="col-md-3"><div class="result-card"><div class="result-num">₹<?= number_format($ws['total_revenue']) ?></div><div class="result-label">Activation Revenue</div></div></div>
+                    <div class="col-md-3"><div class="result-card"><div class="result-num">₹<?= number_format($ws['total_payout']) ?></div><div class="result-label">Referral Payout</div></div></div>
+                    <div class="col-md-3"><div class="result-card"><div class="result-num">₹<?= number_format($ws['company_keeps']) ?></div><div class="result-label">Company Keeps</div></div></div>
+                    <div class="col-md-3"><div class="result-card"><div class="result-num"><?= htmlspecialchars($ws['company_margin_pct']) ?>%</div><div class="result-label">Margin</div></div></div>
+                </div>
+                <?php if (!empty($ws['per_package'])): ?>
+                <table class="table sim-table">
+                    <thead><tr><th>Package</th><th>Activations</th><th>Revenue</th><th>L1 Payout</th><th>L2 Payout</th><th>Total</th></tr></thead>
+                    <tbody>
+                        <?php foreach ($ws['per_package'] as $pp): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($pp['package']) ?></td>
+                            <td><?= number_format($pp['activations']) ?></td>
+                            <td>₹<?= number_format($pp['revenue']) ?></td>
+                            <td>₹<?= number_format($pp['l1_payout']) ?></td>
+                            <td>₹<?= number_format($pp['l2_payout']) ?></td>
+                            <td>₹<?= number_format($pp['total_payout']) ?></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+                <?php endif; ?>
+                <?php $pkgCount = count($ws['per_package'] ?? []); ?>
+                <form method="POST" action="<?= $base ?>/admin/commission-plans/apply-wallet-pct" onsubmit="return confirm('Set L1=<?= htmlspecialchars($ws['candidate_l1']) ?>% L2=<?= htmlspecialchars($ws['candidate_l2']) ?>% on ALL active wallet packages (<?= $pkgCount ?>)? Past activations are NOT recalculated.');">
+                    <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
+                    <input type="hidden" name="candidate_l1" value="<?= htmlspecialchars($ws['candidate_l1']) ?>">
+                    <input type="hidden" name="candidate_l2" value="<?= htmlspecialchars($ws['candidate_l2']) ?>">
+                    <button type="submit" class="cp-btn cp-btn-primary"><i class="fas fa-check me-1"></i>Apply L1/L2 to All Packages</button>
+                    <span class="small" style="color:#8892b0">Bulk-updates package rows (audited) · prospective only</span>
+                </form>
+
             <?php endif; ?>
         <?php elseif ($result && !($result['success'] ?? false)): ?>
             <div >
@@ -231,11 +337,178 @@ $simMode = $_POST['sim_mode'] ?? 'single';
     </div>
 </div>
 
+</form>
+    </div>
+</div>
+
+<!-- Save Preset Modal -->
+<div class="modal fade" id="savePresetModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background:#1a1f36;border:1px solid #2a2f4a;border-radius:12px">
+            <div class="modal-header" style="border-bottom:1px solid #2a2f4a;background:#141829">
+                <h5 class="modal-title"><i class="fas fa-save me-2"></i>Save Simulation Preset</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="<?= $base ?>/admin/commission-plans/save-preset" onsubmit="return savePreset(event)">
+                <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
+                <input type="hidden" name="sim_mode" id="saveSimMode" value="<?= $simMode ?>">
+                <input type="hidden" name="params_json" id="saveParamsJson" value="">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label text-white">Preset Name</label>
+                        <input type="text" name="name" class="cp-input" required placeholder="e.g., Diwali 2026 Push, Monsoon Slowdown">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-white">Description</label>
+                        <textarea name="description" class="cp-input" rows="3" placeholder="Optional notes about this scenario..."></textarea>
+                    </div>
+                    <div class="alert alert-info small mb-0">Current mode: <strong id="currentMode"><?= $simMode ?></strong> — will be saved with all current parameters</div>
+                </div>
+                <div class="modal-footer" style="border-top:1px solid #2a2f4a;background:#141829">
+                    <button type="button" class="cp-btn cp-btn-outline" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="cp-btn cp-btn-primary"><i class="fas fa-save me-1"></i>Save Preset</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Presets Management Modal -->
+<div class="modal fade" id="managePresetsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content" style="background:#1a1f36;border:1px solid #2a2f4a;border-radius:12px">
+            <div class="modal-header" style="border-bottom:1px solid #2a2f4a;background:#141829">
+                <h5 class="modal-title"><i class="fas fa-layer-group me-2"></i>Saved Presets</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <?php if (!empty($presets)): ?>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Mode</th>
+                                    <th>Description</th>
+                                    <th>Created</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($presets as $pr): ?>
+                                <tr>
+                                    <td><strong><?= htmlspecialchars($pr['name']) ?></strong></td>
+                                    <td><span class="cp-version"><?= $pr['sim_mode'] ?></span></td>
+                                    <td class="text-muted small"><?= htmlspecialchars($pr['description'] ?? '-') ?></td>
+                                    <td class="small"><?= date('d M Y', strtotime($pr['created_at'])) ?></td>
+                                    <td class="text-end">
+                                        <button class="cp-btn cp-btn-outline cp-btn-sm" onclick="loadPresetById(<?= $pr['id'] ?>); bootstrap.Modal.getInstance(document.getElementById('managePresetsModal')).hide();"><i class="fas fa-play me-1"></i>Load</button>
+                                        <button class="cp-btn cp-btn-outline cp-btn-sm" onclick="deletePreset(<?= $pr['id'] ?>)" style="background:#dc262622;border-color:#dc2626;color:#f87171"><i class="fas fa-trash me-1"></i>Delete</button>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php else: ?>
+                    <div class="text-center py-4 text-muted">No saved presets yet</div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 function setMode(mode) {
     document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
     event.target.classList.add('active');
     document.querySelector('input[name="sim_mode"]').value = mode;
     document.getElementById('simForm').submit();
+}
+
+function loadPreset(presetId) {
+    if (!presetId) return;
+    const opt = document.querySelector('#presetSelect option[value="' + presetId + '"]');
+    if (!opt) return;
+    const params = JSON.parse(opt.dataset.params || '{}');
+    const mode = opt.dataset.mode;
+    
+    // Set mode
+    document.querySelector('input[name="sim_mode"]').value = mode;
+    document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector('.mode-tab[onclick*="' + mode + '"]')?.classList.add('active');
+    
+    // Fill form fields
+    Object.entries(params).forEach(([key, val]) => {
+        const el = document.querySelector('[name="' + key + '"]');
+        if (el) el.value = val;
+    });
+    
+    // Submit to refresh page with new mode
+    document.getElementById('simForm').submit();
+}
+
+async function loadPresetById(presetId) {
+    try {
+        const res = await fetch('<?= $base ?>/admin/commission-plans/preset/' + presetId, {
+            headers: { 'X-CSRF-Token': '<?= $csrf_token ?>' }
+        });
+        const data = await res.json();
+        if (data.success) {
+            loadPreset(data.preset.id); // uses existing logic
+        }
+    } catch (e) { console.error(e); }
+}
+
+async function savePreset(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    
+    // Capture all current form values
+    const params = {};
+    document.querySelectorAll('#simForm input, #simForm select').forEach(el => {
+        if (el.name && el.name !== 'csrf_token' && el.name !== 'sim_mode' && el.name !== 'preset_id') {
+            params[el.name] = el.value;
+        }
+    });
+    formData.set('params_json', JSON.stringify(params));
+    
+    try {
+        const res = await fetch('<?= $base ?>/admin/commission-plans/save-preset', {
+            method: 'POST',
+            headers: { 'X-CSRF-Token': '<?= $csrf_token ?>' },
+            body: formData
+        });
+        const data = await res.json();
+        if (data.success) {
+            alert('Preset saved!');
+            location.reload();
+        } else {
+            alert('Error: ' + (data.message || 'Failed to save'));
+        }
+    } catch (e) {
+        console.error(e);
+        alert('Error saving preset');
+    }
+}
+
+async function deletePreset(presetId) {
+    if (!confirm('Delete this preset?')) return;
+    try {
+        const res = await fetch('<?= $base ?>/admin/commission-plans/preset/' + presetId + '/delete', {
+            method: 'POST',
+            headers: { 'X-CSRF-Token': '<?= $csrf_token ?>' }
+        });
+        const data = await res.json();
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Error: ' + (data.message || 'Failed to delete'));
+        }
+    } catch (e) {
+        console.error(e);
+        alert('Error deleting preset');
+    }
 }
 </script>

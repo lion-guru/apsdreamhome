@@ -31,6 +31,7 @@ class JobsAdminController extends AdminController
      */
     public function index()
     {
+        $this->requireAdmin();
         try {
             $sql = "SELECT j.* 
                     FROM jobs j 
@@ -56,6 +57,7 @@ class JobsAdminController extends AdminController
      */
     public function create()
     {
+        $this->requireAdmin();
         $this->view('admin/jobs/create', [
             'page_title' => 'Post New Job',
             'departments' => $this->getDepartments(),
@@ -68,6 +70,7 @@ class JobsAdminController extends AdminController
      */
     public function store()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonFail('Invalid request method', 405);
         }
@@ -114,6 +117,7 @@ class JobsAdminController extends AdminController
      */
     public function edit($id)
     {
+        $this->requireAdmin();
         try {
             $sql = "SELECT * FROM jobs WHERE id = ?";
             $stmt = $this->db->prepare($sql);
@@ -142,6 +146,7 @@ class JobsAdminController extends AdminController
      */
     public function update($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonFail('Invalid request method', 405);
         }
@@ -172,6 +177,7 @@ class JobsAdminController extends AdminController
      */
     public function delete($id)
     {
+        $this->requireAdmin();
         try {
             $sql = "DELETE FROM jobs WHERE id = ?";
             $stmt = $this->db->prepare($sql);
@@ -188,6 +194,7 @@ class JobsAdminController extends AdminController
      */
     public function applications($jobId = null)
     {
+        $this->requireAdmin();
         try {
             if ($jobId) {
                 // Applications for specific job
@@ -233,6 +240,7 @@ class JobsAdminController extends AdminController
      */
     public function viewApplication($id)
     {
+        $this->requireAdmin();
         try {
             $sql = "SELECT ja.* 
                     FROM job_applications ja 
@@ -262,6 +270,7 @@ class JobsAdminController extends AdminController
      */
     public function updateApplicationStatus($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonFail('Invalid request method', 405);
         }

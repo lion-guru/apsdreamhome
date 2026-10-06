@@ -136,6 +136,7 @@ class UserController extends BaseController
         $referralCount = 0;
         $referralEarnings = 0;
         $referralLink = $referralCode ? (defined('BASE_URL') ? BASE_URL : '') . '/register?ref=' . $referralCode : '';
+        $referralTier = ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '#CD7F32', 'icon' => 'fas fa-medal'];
         $twoFactorEnabled = false;
         $savedCount = 0;
         $kycStatus = 'not_started';
@@ -147,6 +148,9 @@ class UserController extends BaseController
             if ($profile) {
                 $referralCount = (int)($profile['direct_referrals'] ?? 0);
             }
+            // Referral tier
+            $referralSvc = new \App\Services\ReferralService();
+            $referralTier = $referralSvc->getUserTier((int)$user['id']);
             $stmt = $this->db->prepare("SELECT referral_earnings FROM wallet_points WHERE user_id = ?");
             $stmt->execute([$user['id']]);
             $wallet = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -173,6 +177,15 @@ class UserController extends BaseController
                 $kycStatus = $kycRow['status'] ?? 'not_started';
             } catch (\Exception $e) {
                 $kycStatus = 'not_started';
+            }
+
+            // Referral Earnings Breakdown
+            $referralEarningsBreakdown = [];
+            try {
+                $referralSvc = new \App\Services\ReferralService();
+                $referralEarningsBreakdown = $referralSvc->getReferralEarningsBreakdown((int)$user['id']);
+            } catch (\Throwable $e) {
+                error_log("UserController::dashboard - referralEarningsBreakdown: " . $e->getMessage());
             }
         } catch (\Exception $e) {
             error_log("UserController.php: " . $e->getMessage());
@@ -210,6 +223,8 @@ class UserController extends BaseController
             'referral_link' => $referralLink,
             'referral_count' => $referralCount,
             'referral_earnings' => $referralEarnings,
+            'referral_earnings_breakdown' => $referralEarningsBreakdown,
+            'referral_tier' => $referralTier,
             'unread_notifications' => $unreadNotifCount,
             'investor_stats' => $this->safeInvestorStats((int)$user['id']),
             'twoFactorEnabled' => $twoFactorEnabled,
@@ -481,6 +496,215 @@ class UserController extends BaseController
 
         $this->layout = 'layouts/customer';
         $this->render('pages/user_inquiries', $data);
+    }
+
+    public function markAllInquiriesRead()
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+
+        try {
+            $stmt = $this->db->prepare("UPDATE inquiries SET is_read = 1 WHERE email = ? AND is_read = 0");
+            $stmt->execute([$user['email']]);
+            $count = $stmt->rowCount();
+            header('Content-Type: application/json');
+            echo json_encode(['success' => true, 'marked' => $count, 'message' => "{$count} inquiries marked as read"]);
+        } catch (\Throwable $e) {
+            error_log('UserController::markAllInquiriesRead: ' . $e->getMessage());
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Failed to mark as read']);
+        }
+    }
+
+    /**
+     * Buyer-seller chat threads: inquiries I sent + inquiries on my listings.
+     */
+    public function inquiryThreads()
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+        $uid = (int)$user['id'];
+
+        try {
+            $sent = $this->db->fetchAll("
+                SELECT pi.*, up.name AS listing_title, up.user_id AS owner_id, u.name AS owner_name,
+                       (SELECT COUNT(*) FROM property_messages pm
+                         WHERE pm.receiver_id = ?
+                           AND pm.property_id = COALESCE(pi.property_id, pi.listing_id)) AS unread_count,
+                       (SELECT pm.message FROM property_messages pm
+                         WHERE pm.property_id = COALESCE(pi.property_id, pi.listing_id)
+                           AND (pm.sender_id = ? OR pm.receiver_id = ?)
+                         ORDER BY pm.created_at DESC LIMIT 1) AS last_message
+                FROM property_inquiries pi
+                LEFT JOIN user_properties up ON up.id = pi.listing_id AND pi.listing_type = 'user'
+                LEFT JOIN users u ON u.id = up.user_id
+                WHERE pi.user_id = ?
+                ORDER BY pi.created_at DESC LIMIT 50
+            ", [$uid, $uid, $uid, $uid]);
+        } catch (\Throwable $e) {
+            error_log('UserController::inquiryThreads sent: ' . $e->getMessage());
+            $sent = [];
+        }
+
+        try {
+            $received = $this->db->fetchAll("
+                SELECT pi.*, u.name AS inquirer_name,
+                       (SELECT COUNT(*) FROM property_messages pm
+                         WHERE pm.receiver_id = ?
+                           AND pm.property_id = pi.listing_id) AS unread_count
+                FROM property_inquiries pi
+                LEFT JOIN users u ON u.id = pi.user_id
+                WHERE pi.listing_type = 'user'
+                  AND pi.listing_id IN (SELECT id FROM user_properties WHERE user_id = ?)
+                ORDER BY pi.created_at DESC LIMIT 50
+            ", [$uid, $uid]);
+        } catch (\Throwable $e) {
+            error_log('UserController::inquiryThreads received: ' . $e->getMessage());
+            $received = [];
+        }
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user/inquiry_threads', [
+            'page_title' => 'Message Threads - APS Dream Home',
+            'user' => $user,
+            'sent' => $sent,
+            'received' => $received,
+        ]);
+    }
+
+    /**
+     * Single thread: inquiry + its messages. Marks inbound as read.
+     */
+    public function inquiryThreadDetail($id = null)
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+        $uid = (int)$user['id'];
+        $inquiryId = (int)$id;
+
+        try {
+            $inquiry = $this->db->fetch("
+                SELECT pi.*, up.name AS listing_title, up.user_id AS owner_id, u.name AS owner_name,
+                       p.title AS property_title
+                FROM property_inquiries pi
+                LEFT JOIN user_properties up ON up.id = pi.listing_id AND pi.listing_type = 'user'
+                LEFT JOIN users u ON u.id = up.user_id
+                LEFT JOIN properties p ON p.id = pi.property_id
+                WHERE pi.id = ?
+            ", [$inquiryId]);
+        } catch (\Throwable $e) {
+            error_log('UserController::inquiryThreadDetail: ' . $e->getMessage());
+            $inquiry = null;
+        }
+
+        if (!$inquiry) {
+            $_SESSION['error'] = 'Thread not found.';
+            header('Location: ' . BASE_URL . '/user/inquiries/threads');
+            exit;
+        }
+
+        $isOwner = ((int)($inquiry['owner_id'] ?? 0)) === $uid;
+        $isInquirer = ((int)($inquiry['user_id'] ?? 0)) === $uid;
+        if (!$isOwner && !$isInquirer) {
+            $_SESSION['error'] = 'You are not part of this conversation.';
+            header('Location: ' . BASE_URL . '/user/inquiries/threads');
+            exit;
+        }
+
+        $propKey = $inquiry['property_id'] ?? $inquiry['listing_id'];
+        try {
+            $messages = $this->db->fetchAll("
+                SELECT pm.*, u.name AS sender_name FROM property_messages pm
+                LEFT JOIN users u ON u.id = pm.sender_id
+                WHERE pm.property_id = ? AND (pm.sender_id = ? OR pm.receiver_id = ?)
+                ORDER BY pm.created_at ASC LIMIT 100
+            ", [$propKey, $uid, $uid]);
+            $this->db->query(
+                "UPDATE property_messages SET is_read = 1 WHERE receiver_id = ? AND property_id = ? AND (is_read IS NULL OR is_read = 0)",
+                [$uid, $propKey]
+            );
+        } catch (\Throwable $e) {
+            error_log('UserController::inquiryThreadDetail messages: ' . $e->getMessage());
+            $messages = [];
+        }
+
+        // Reply target: the other party (inquirer <-> owner).
+        $otherId = $isOwner ? (int)($inquiry['user_id'] ?? 0) : (int)($inquiry['owner_id'] ?? 0);
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user/inquiry_thread_detail', [
+            'page_title' => 'Conversation - APS Dream Home',
+            'user' => $user,
+            'inquiry' => $inquiry,
+            'messages' => $messages,
+            'other_id' => $otherId,
+            'error' => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['error']);
+    }
+
+    /**
+     * Post a reply inside a thread the user belongs to.
+     */
+    public function inquiryThreadReply($id = null)
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+        $uid = (int)$user['id'];
+        $inquiryId = (int)$id;
+        $message = trim((string)($_POST['message'] ?? ''));
+
+        if ($message === '') {
+            $_SESSION['error'] = 'Message cannot be empty.';
+            header('Location: ' . BASE_URL . '/user/inquiries/threads/' . $inquiryId);
+            exit;
+        }
+
+        try {
+            $inquiry = $this->db->fetch("
+                SELECT pi.*, up.user_id AS owner_id FROM property_inquiries pi
+                LEFT JOIN user_properties up ON up.id = pi.listing_id AND pi.listing_type = 'user'
+                WHERE pi.id = ?
+            ", [$inquiryId]);
+            if (!$inquiry) {
+                $_SESSION['error'] = 'Thread not found.';
+                header('Location: ' . BASE_URL . '/user/inquiries/threads');
+                exit;
+            }
+            $isOwner = ((int)($inquiry['owner_id'] ?? 0)) === $uid;
+            $isInquirer = ((int)($inquiry['user_id'] ?? 0)) === $uid;
+            if (!$isOwner && !$isInquirer) {
+                $_SESSION['error'] = 'You are not part of this conversation.';
+                header('Location: ' . BASE_URL . '/user/inquiries/threads');
+                exit;
+            }
+            $otherId = $isOwner ? (int)($inquiry['user_id'] ?? 0) : (int)($inquiry['owner_id'] ?? 0);
+            if ($otherId <= 0) {
+                $_SESSION['error'] = 'The other party has no account yet — they will be notified by SMS/WhatsApp.';
+                header('Location: ' . BASE_URL . '/user/inquiries/threads/' . $inquiryId);
+                exit;
+            }
+            $propKey = $inquiry['property_id'] ?? $inquiry['listing_id'];
+            $this->db->query(
+                "INSERT INTO property_messages (property_id, sender_id, receiver_id, message, tenant_id) VALUES (?, ?, ?, ?, ?)",
+                [$propKey, $uid, $otherId, mb_substr($message, 0, 2000), 1]
+            );
+            try {
+                (new \App\Services\Communication\PushNotificationService())->sendToUser($otherId, [
+                    'title' => 'New Message',
+                    'body' => ($user['name'] ?? 'Someone') . ': ' . mb_substr($message, 0, 50),
+                    'data' => ['type' => 'property_message', 'property_id' => (string)$propKey],
+                    'click_action' => 'FLUTTER_NOTIFICATION_CLICK',
+                ]);
+            } catch (\Throwable $e) {
+                error_log('UserController::inquiryThreadReply push: ' . $e->getMessage());
+            }
+        } catch (\Throwable $e) {
+            error_log('UserController::inquiryThreadReply: ' . $e->getMessage());
+            $_SESSION['error'] = 'Failed to send. Please try again.';
+        }
+        header('Location: ' . BASE_URL . '/user/inquiries/threads/' . $inquiryId);
+        exit;
     }
 
     public function myTickets()

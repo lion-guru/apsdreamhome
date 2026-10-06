@@ -1,4 +1,4 @@
-<?php
+?php
 
 namespace App\Http\Controllers\Admin;
 
@@ -78,7 +78,7 @@ class DocumentController extends AdminController
                 }
 
                 // Validate upload before processing
-                $validation = UploadValidator::validate($file, ['types' => 'documents', 'max_size' => 25]);
+                $validation = \UploadValidator::validate($file, ['types' => 'documents', 'max_size' => 25]);
                 if (!$validation['valid']) {
                     $_SESSION['error'] = 'Upload rejected: ' . $validation['error'];
                     header('Location: ' . BASE_URL . '/admin/documents');

@@ -145,7 +145,16 @@ $selectedRole = $selectedRole ?? 'customer';
         .terms-row label { color: #94a3b8; font-size: 13px; line-height: 1.5; cursor: pointer; }
         .terms-row a { color: #f59e0b; text-decoration: none; }
         .terms-row a:hover { text-decoration: underline; }
-        
+
+        .social-divider{display:flex;align-items:center;margin:0 0 16px}
+        .social-divider::before,.social-divider::after{content:'';flex:1;height:1px;background:#334155}
+        .social-divider span{padding:0 12px;font-size:11px;color:#64748b;font-weight:600;letter-spacing:1px}
+        .social-buttons{display:flex;gap:10px;margin-bottom:20px}
+        .social-btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 14px;border:1.5px solid #334155;border-radius:10px;background:#0f172a;cursor:pointer;font-size:.82rem;color:#cbd5e1;font-weight:600;font-family:inherit;text-decoration:none;transition:all .2s}
+        .social-btn:hover{border-color:#f59e0b;background:#111827;color:#fff}
+        .social-btn.google i{color:#ea4335}
+        .social-btn.facebook i{color:#1877f2}
+
         @media (max-width: 480px) { 
             .card { padding: 24px; } 
             .form-row { grid-template-columns: 1fr; }
@@ -182,10 +191,10 @@ $selectedRole = $selectedRole ?? 'customer';
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
                 <input type="hidden" name="role" id="selectedRole" value="<?= htmlspecialchars($selectedRole ?? '') ?>">
 
-                <!-- Role Selection Cards -->
+<!-- Role Selection Cards -->
 <div class="role-selector">
                     <?php foreach ($roleOptions as $roleKey => $roleData): ?>
-                    <button class="role-card <?= e($roleKey) ?> <?= $selectedRole === $roleKey ? 'selected' : '' ?>" 
+                    <button type="button" class="role-card <?= e($roleKey) ?> <?= $selectedRole === $roleKey ? 'selected' : '' ?>" 
                          data-role="<?= e($roleKey) ?>" role="button" tabindex="0"
                          onclick="selectRole(this, '<?= e($roleKey) ?>')"
                          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectRole(this, '<?= e($roleKey) ?>');}">
@@ -194,6 +203,18 @@ $selectedRole = $selectedRole ?? 'customer';
                         <span class="role-desc"><?= e($roleData['desc']) ?></span>
                     </button>
                     <?php endforeach; ?>
+                </div>
+
+                <div class="social-buttons">
+                    <a href="<?= $base ?>/auth/google" class="social-btn google">
+                        <i class="fab fa-google"></i> Google
+                    </a>
+                    <a href="<?= $base ?>/auth/facebook" class="social-btn facebook">
+                        <i class="fab fa-facebook-f"></i> Facebook
+                    </a>
+                </div>
+                <div class="social-divider">
+                    <span>OR CONTINUE WITH EMAIL</span>
                 </div>
 
                 <div class="form-group">
@@ -254,18 +275,17 @@ $selectedRole = $selectedRole ?? 'customer';
                      <div id="referral_name_display" class="mt-2"></div>
                 </div>
 
-                <div class="form-group" id="agentTypeGroup" style="display:<?= ($selectedRole === 'agent') ? 'block' : 'none' ?>; margin-bottom: 16px;">
+<div class="form-group" id="agentTypeGroup" style="display:<?= ($selectedRole === 'agent') ? 'block' : 'none' ?>; margin-bottom: 16px;">
                     <label><i class="fas fa-id-badge"></i> Agent Type / Engagement</label>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px;">
                         <label style="display: flex; align-items: center; gap: 8px; background: #0f172a; border: 1px solid #334155; padding: 10px 12px; border-radius: 10px; cursor: pointer; color: #cbd5e1; font-size: 13px;">
                             <input type="radio" name="agent_type" id="agent_type_freelancer" value="freelancer" checked style="accent-color: #2563eb;">
                             <span><strong>Freelancer Agent</strong><br><small style="color: #94a3b8; font-size: 11px;">Independent & flat commission</small></span>
                         </label>
-                        <label style="display: flex; align-items: center; gap: 8px; background: #0f172a; border: 1px solid #334155; padding: 10px 12px; border-radius: 10px; cursor: pointer; color: #cbd5e1; font-size: 13px;">
-                            <input type="radio" name="agent_type" id="agent_type_employee" value="mlm_company" style="accent-color: #2563eb;">
-                            <span><strong>Employee Agent</strong><br><small style="color: #94a3b8; font-size: 11px;">In-House & team structure</small></span>
-                        </label>
                     </div>
+                    <p style="margin-top: 8px; font-size: 12px; color: #64748b;">
+                        <i class="fas fa-info-circle me-1"></i> Employee Agent roles are hired through HR/Admin. Apply via <a href="<?= $base ?>/careers" style="color: #2563eb;">Careers</a> portal.
+                    </p>
                 </div>
 
                 <div class="terms-row">

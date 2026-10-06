@@ -30,6 +30,7 @@ class MediaController extends AdminController
      */
     public function index()
     {
+        $this->requireAdmin();
         try {
             $search = $_GET['search'] ?? '';
             $type = $_GET['type'] ?? '';
@@ -107,6 +108,7 @@ class MediaController extends AdminController
      */
     public function create()
     {
+        $this->requireAdmin();
         try {
             $data = [
                 'page_title' => 'Upload Media - APS Dream Home',
@@ -126,6 +128,7 @@ class MediaController extends AdminController
      */
     public function store()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -214,6 +217,7 @@ class MediaController extends AdminController
      */
     public function show($id)
     {
+        $this->requireAdmin();
         try {
             $mediaId = intval($id);
             if ($mediaId <= 0) {
@@ -254,6 +258,7 @@ class MediaController extends AdminController
      */
     public function edit($id)
     {
+        $this->requireAdmin();
         try {
             $mediaId = intval($id);
             if ($mediaId <= 0) {
@@ -291,6 +296,7 @@ class MediaController extends AdminController
      */
     public function update($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -363,6 +369,7 @@ class MediaController extends AdminController
      */
     public function destroy($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -471,6 +478,7 @@ class MediaController extends AdminController
      */
     public function getStats()
     {
+        $this->requireAdmin();
         try {
             $stats = [];
 

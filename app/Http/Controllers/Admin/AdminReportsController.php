@@ -24,6 +24,7 @@ class AdminReportsController extends AdminController
      */
     public function index()
     {
+        $this->requireAdmin();
         $this->render('admin/reports', [
             'page_title' => 'Reports',
             'page_description' => 'Generate and view various reports'
@@ -35,6 +36,7 @@ class AdminReportsController extends AdminController
      */
     public function dailyReport()
     {
+        $this->requireAdmin();
         $date = $_GET['date'] ?? date('Y-m-d');
         
         $reportData = [
@@ -58,6 +60,7 @@ class AdminReportsController extends AdminController
      */
     public function weeklyReport()
     {
+        $this->requireAdmin();
         $weekStart = $_GET['week_start'] ?? date('Y-m-d', strtotime('monday this week'));
         $weekEnd = $_GET['week_end'] ?? date('Y-m-d', strtotime('sunday this week'));
 
@@ -83,6 +86,7 @@ class AdminReportsController extends AdminController
      */
     public function monthlyReport()
     {
+        $this->requireAdmin();
         $month = $_GET['month'] ?? date('Y-m');
         $startDate = $month . '-01';
         $endDate = date('Y-m-t', strtotime($startDate));
@@ -111,6 +115,7 @@ class AdminReportsController extends AdminController
      */
     public function salesReport()
     {
+        $this->requireAdmin();
         $startDate = $_GET['start_date'] ?? date('Y-m-01');
         $endDate = $_GET['end_date'] ?? date('Y-m-d');
 
@@ -130,6 +135,7 @@ class AdminReportsController extends AdminController
      */
     public function leadReport()
     {
+        $this->requireAdmin();
         $startDate = $_GET['start_date'] ?? date('Y-m-01');
         $endDate = $_GET['end_date'] ?? date('Y-m-d');
 
@@ -345,6 +351,7 @@ class AdminReportsController extends AdminController
      */
     public function export()
     {
+        $this->requireAdmin();
         $reportType = $_GET['type'] ?? 'sales';
         $startDate = $_GET['start_date'] ?? date('Y-m-01');
         $endDate = $_GET['end_date'] ?? date('Y-m-d');

@@ -10,6 +10,15 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-body p-4">
                     <h4 class="text-center mb-4"><i class="fas fa-user-plus me-2"></i>Create Account</h4>
+                    <div class="d-flex gap-2 mb-3">
+                        <a href="<?= BASE_URL ?>/auth/google" class="btn btn-outline-secondary flex-fill">
+                            <i class="fab fa-google me-1" style="color:#ea4335"></i> Google
+                        </a>
+                        <a href="<?= BASE_URL ?>/auth/facebook" class="btn btn-outline-secondary flex-fill">
+                            <i class="fab fa-facebook-f me-1" style="color:#1877f2"></i> Facebook
+                        </a>
+                    </div>
+                    <div class="text-center text-muted small mb-3">— OR —</div>
                     <form method="POST" action="<?= BASE_URL ?>/register">
                         <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? $_SESSION['csrf_token'] ?? '' ?>">
                         <div class="row g-3">

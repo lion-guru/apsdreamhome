@@ -22,6 +22,7 @@ class AgreementController extends AdminController
 
     public function index()
     {
+        $this->requireAdmin();
         try {
             $page = max(1, intval($_GET['page'] ?? 1));
             $perPage = 20;
@@ -108,6 +109,7 @@ class AgreementController extends AdminController
 
     public function create()
     {
+        $this->requireAdmin();
         $bookings = [];
         try {
             $stmt = $this->db->prepare("
@@ -200,6 +202,7 @@ class AgreementController extends AdminController
 
     public function show($id)
     {
+        $this->requireAdmin();
         try {
             $stmt = $this->db->prepare("
                 SELECT a.*, 
@@ -325,6 +328,7 @@ class AgreementController extends AdminController
 
     public function generate($id, $type = null)
     {
+        $this->requireAdmin();
         if ($type === null && is_numeric($id)) {
             $type = $_GET['type'] ?? 'allotment';
         }
@@ -371,6 +375,7 @@ class AgreementController extends AdminController
 
     public function download($id)
     {
+        $this->requireAdmin();
         try {
             $doc = $this->agreementService->getDocumentById($id);
             if (!$doc || empty($doc['file_path'])) {
@@ -404,6 +409,7 @@ class AgreementController extends AdminController
 
     public function preview($bookingId, $type)
     {
+        $this->requireAdmin();
         try {
             $validTypes = ['allotment', 'sale_agreement', 'payment_plan'];
             if (!in_array($type, $validTypes)) {
@@ -429,6 +435,7 @@ class AgreementController extends AdminController
 
     public function sendToCustomer($id)
     {
+        $this->requireAdmin();
         try {
             $doc = $this->agreementService->getDocumentById($id);
             if (!$doc) {

@@ -123,6 +123,7 @@ class PortalMenuService
             $this->item('dashboard', 'Main', 'Dashboard', '/user/dashboard', 'fas fa-tachometer-alt'),
             $this->item('properties', 'Main', 'My Properties', '/user/properties', 'fas fa-building', $this->countTable('user_properties', 'user_id')),
             $this->item('inquiries', 'Main', 'My Inquiries', '/user/inquiries', 'fas fa-envelope-open-text', $this->countTable('inquiries', 'user_id')),
+            $this->item('threads', 'Main', 'Message Threads', '/user/inquiries/threads', 'fas fa-comments'),
             $this->item('bookings', 'Main', 'My Bookings', '/user/bookings', 'fas fa-file-contract', $this->countTable('bookings', 'user_id')),
             $this->item('favorites', 'Main', 'Favorites', '/user/favorites', 'fas fa-heart', $this->countTable('favorites', 'user_id')),
             $this->item('saved-searches', 'Main', 'Saved Searches', '/user/saved-searches', 'fas fa-bookmark', $this->countTable('saved_searches', 'user_id')),
@@ -131,6 +132,8 @@ class PortalMenuService
             $this->item('emi-tracker', 'Finance', 'EMI Tracker', '/user/emi-tracker', 'fas fa-calendar-check'),
             $this->item('payment-history', 'Finance', 'Payment History', '/user/payment-history', 'fas fa-receipt'),
             $this->item('site-visits', 'Finance', 'Site Visits', '/user/site-visits', 'fas fa-map-marker-alt'),
+            $this->item('wallet', 'Finance', 'My Wallet', '/auth/wallet', 'fas fa-wallet'),
+            $this->item('wallet-packages', 'Finance', 'Activate Wallet', '/auth/wallet/packages', 'fas fa-bolt'),
 
             // Support
             $this->item('tickets', 'Support', 'Support Tickets', '/user/tickets', 'fas fa-life-ring', $this->countTable('support_tickets', 'user_id')),

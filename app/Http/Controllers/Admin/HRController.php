@@ -867,16 +867,27 @@ public function viewEmployee($id)
         if ($empId) { $where .= " AND d.entity_id=? AND d.entity_type='employee'"; $params[] = $empId; }
         try {
             $total = $this->db->fetch("SELECT COUNT(*) as c FROM documents d $where", $params)['c'] ?? 0;
-            $documents = $this->db->fetchAll("SELECT d.*, u.name as employee_name FROM documents d JOIN users u ON d.entity_id=u.id $where ORDER BY d.uploaded_on DESC LIMIT $perPage OFFSET $offset", $params);
+            // entity_id is employees.id (dropdown uses e.id); url is the file column.
+            $documents = $this->db->fetchAll("SELECT d.*, d.url AS file_path, u.name as employee_name FROM documents d JOIN employees e ON d.entity_id=e.id AND d.entity_type='employee' JOIN users u ON e.user_id=u.id $where ORDER BY d.uploaded_on DESC LIMIT $perPage OFFSET $offset", $params);
             $users = $this->db->fetchAll("SELECT e.id, u.name FROM employees e JOIN users u ON e.user_id=u.id WHERE e.status='active' ORDER BY u.name");
+            // Investment proofs uploaded by employees (stored keyed on users.id) — HR verifies these for TDS.
+            $pw = "WHERE 1=1";
+            $pp = [];
+            if ($empId) {
+                $empUser = $this->db->fetch("SELECT user_id FROM employees WHERE id=?", [$empId]);
+                $pw .= " AND p.employee_id=?";
+                $pp[] = $empUser ? (int)$empUser['user_id'] : -1;
+            }
+            $proofs = $this->db->fetchAll("SELECT p.*, u.name as employee_name FROM employee_investment_proofs p JOIN users u ON p.employee_id=u.id $pw ORDER BY p.uploaded_at DESC LIMIT 50", $pp);
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
- $total = 0; $documents = []; $users = []; }
+ $total = 0; $documents = []; $users = []; $proofs = []; }
         $totalPages = $perPage > 0 ? max(1, ceil($total / $perPage)) : 1;
         return $this->render('admin/hr/employee_documents', [
             'page_title' => 'Employee Documents',
             'documents' => $documents,
             'users' => $users,
+            'proofs' => $proofs ?? [],
             'emp_id' => $empId,
             'page' => $page,
             'total_pages' => $totalPages,
@@ -894,9 +905,10 @@ public function viewEmployee($id)
         if (!$employeeId || !$docType) { $this->setFlash('error', 'Employee and document type required'); header('Location: ' . BASE_URL . '/admin/hr/documents'); exit; }
         $filePath = '';
         if (isset($_FILES['document_file']) && $_FILES['document_file']['error'] === UPLOAD_ERR_OK) {
-            $validation = UploadValidator::validate($_FILES['document_file'], ['types' => 'documents', 'max_size' => 10]);
+            $validation = \UploadValidator::validate($_FILES['document_file'], ['types' => 'documents', 'max_size' => 10]);
             if ($validation['valid']) {
-                $uploadDir = APP_PATH . '/assets/uploads/documents/';
+                // PUBLIC_PATH = webroot: list page links BASE_URL + stored path.
+                $uploadDir = PUBLIC_PATH . '/assets/uploads/documents/';
                 if (!is_dir($uploadDir)) { mkdir($uploadDir, 0755, true); }
                 $fileName = $validation['sanitized_name'];
                 move_uploaded_file($_FILES['document_file']['tmp_name'], $uploadDir . $fileName);

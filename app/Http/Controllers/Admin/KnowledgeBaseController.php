@@ -25,6 +25,7 @@ class KnowledgeBaseController extends AdminController
      */
     public function index()
     {
+    $this->requireAdmin();
         try {
             $stmt = $this->db->query("SELECT * FROM knowledge_base ORDER BY created_at DESC");
             $articles = $stmt->fetchAll();
@@ -44,6 +45,7 @@ class KnowledgeBaseController extends AdminController
      */
     public function create()
     {
+        $this->requireAdmin();
         $this->render('admin/knowledge-base/create', [
             'page_title' => 'Add Knowledge Base Article',
             'page_description' => 'Add a new knowledge base article'
@@ -55,6 +57,7 @@ class KnowledgeBaseController extends AdminController
      */
     public function store()
     {
+        $this->requireAdmin();
         $data = [
             'title' => $_POST['title'] ?? '',
             'content' => $_POST['content'] ?? '',
@@ -92,6 +95,7 @@ class KnowledgeBaseController extends AdminController
      */
     public function show($id)
     {
+        $this->requireAdmin();
         try {
             try {
                 // Increment view count
@@ -130,6 +134,7 @@ class KnowledgeBaseController extends AdminController
      */
     public function edit($id)
     {
+        $this->requireAdmin();
         try {
             try {
                 $stmt = $this->db->prepare("SELECT * FROM knowledge_base WHERE id = ?");
@@ -163,6 +168,7 @@ class KnowledgeBaseController extends AdminController
      */
     public function update($id)
     {
+        $this->requireAdmin();
         $data = [
             'title' => $_POST['title'] ?? '',
             'content' => $_POST['content'] ?? '',
@@ -198,6 +204,7 @@ class KnowledgeBaseController extends AdminController
      */
     public function delete($id)
     {
+        $this->requireAdmin();
         try {
             try {
                 [$tw, $tp] = $this->tenantWhere();

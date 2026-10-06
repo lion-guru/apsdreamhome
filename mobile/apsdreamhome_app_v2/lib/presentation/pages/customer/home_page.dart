@@ -690,6 +690,18 @@ class _HomePageState extends ConsumerState<HomePage>
         Color(0xFF6A1B9A),
       ),
       const _ToolItem(
+        Icons.card_giftcard_outlined,
+        'Referral Earnings',
+        '/referral-earnings',
+        Color(0xFFF59E0B),
+      ),
+      const _ToolItem(
+        Icons.account_balance_wallet_outlined,
+        'Activate Wallet',
+        '/wallet-activation',
+        Color(0xFF0D9488),
+      ),
+      const _ToolItem(
         Icons.photo_library_outlined,
         'Gallery',
         '/gallery',

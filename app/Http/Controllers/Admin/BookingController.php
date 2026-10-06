@@ -543,8 +543,8 @@ public function show($id)
             $stmt->execute([
                 $data['customer_id'],
                 $data['plot_id'],
-                $data['booking_amount'] ?? 0,
-                $data['total_plot_value'] ?? 0,
+                ($data['booking_amount'] ?? '') === '' ? null : ($data['booking_amount'] ?? 0),
+                ($data['total_plot_value'] ?? '') === '' ? null : ($data['total_plot_value'] ?? 0),
                 $data['status'] ?? 'pending',
                 $data['notes'] ?? '',
                 $id

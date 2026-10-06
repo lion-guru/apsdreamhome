@@ -147,9 +147,9 @@ public function showAgreement($id)
         $startDate = $_POST['start_date'] ?? date('Y-m-d');
         $endDate = $_POST['end_date'] ?? '';
         $terms = $_POST['terms_conditions'] ?? '';
-        $totalAmount = (float)($_POST['total_amount'] ?? 0);
-        $advanceAmount = (float)($_POST['advance_amount'] ?? 0);
-        $commissionRate = (float)($_POST['commission_rate'] ?? 0);
+        $totalAmount = ($_POST['total_amount'] ?? '') === '' ? null : (float)($_POST['total_amount'] ?? 0);
+        $advanceAmount = ($_POST['advance_amount'] ?? '') === '' ? null : (float)($_POST['advance_amount'] ?? 0);
+        $commissionRate = ($_POST['commission_rate'] ?? '') === '' ? null : (float)($_POST['commission_rate'] ?? 0);
         $remarks = $_POST['remarks'] ?? '';
         $tid = $this->tenantId();
         $this->db->query("INSERT INTO farmer_agreements (farmer_id, agreement_number, agreement_type, start_date, end_date, terms_conditions, total_amount, advance_amount, commission_rate, status, created_by, created_at, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft', ?, NOW(), ?)", [

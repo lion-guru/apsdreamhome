@@ -8,6 +8,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\BaseController;
+use App\Http\Middleware\RBACManager;
 use App\Core\Cache;
 use App\Models\Property;
 use App\Models\User;
@@ -737,8 +738,10 @@ class AdminController extends BaseController
      */
     public function requireAdmin()
     {
-        // Allow any role with RBAC menu permissions — sidebar handles item-level filtering
-        $role = $_SESSION['role'] ?? $_SESSION['admin_role'] ?? '';
+        // Single source of truth for the effective role (same resolver the
+        // sidebar menu service uses) — keeps guard, menu items and hub
+        // collapse state from disagreeing after GodMode/impersonate switches.
+        $role = RBACManager::getUserRole() ?? '';
         if (!$this->isLoggedIn() || !in_array($role, self::ADMIN_ROLES)) {
             $this->setFlash('error', 'Admin access required');
             $this->redirect('/admin/login');

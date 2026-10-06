@@ -31,6 +31,7 @@ class NewsController extends AdminController
      */
     public function index()
     {
+        $this->requireAdmin();
         try {
             $search = $_GET['search'] ?? '';
             $status = $_GET['status'] ?? '';
@@ -61,8 +62,15 @@ class NewsController extends AdminController
 
             $sql .= " ORDER BY n.created_at DESC";
 
-            // Count total
-            $countSql = preg_replace('/SELECT .* FROM/', 'SELECT COUNT(*) as total FROM', $sql, 1);
+            // Count total - build count query safely
+            $countSql = "SELECT COUNT(*) as total FROM news n " .
+                "LEFT JOIN users u ON n.author_id = u.id WHERE 1=1";
+            if (!empty($search)) {
+                $countSql .= " AND (n.title LIKE ? OR n.slug LIKE ?)";
+            }
+            if (!empty($status) && in_array($status, ['published', 'draft', 'archived'])) {
+                $countSql .= " AND n.status = ?";
+            }
             $countResult = $this->db->fetch($countSql, $params);
             $total = $countResult['total'] ?? 0;
 
@@ -101,6 +109,7 @@ class NewsController extends AdminController
      */
     public function create()
     {
+        $this->requireAdmin();
         try {
             $data = [
                 'page_title' => 'Create News Article - APS Dream Home',
@@ -120,6 +129,7 @@ class NewsController extends AdminController
      */
     public function store()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -198,6 +208,7 @@ class NewsController extends AdminController
      */
     public function show($id)
     {
+        $this->requireAdmin();
         try {
             $newsId = intval($id);
             if ($newsId <= 0) {
@@ -238,6 +249,7 @@ class NewsController extends AdminController
      */
     public function edit($id)
     {
+        $this->requireAdmin();
         try {
             $newsId = intval($id);
             if ($newsId <= 0) {
@@ -275,6 +287,7 @@ class NewsController extends AdminController
      */
     public function update($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -386,6 +399,7 @@ class NewsController extends AdminController
      */
     public function destroy($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -462,11 +476,11 @@ class NewsController extends AdminController
     private function uploadImage(array $file): ?string
     {
         try {
-            $v = UploadValidator::validate($file, ['types' => 'images', 'max_size' => 10]);
+            $v = \UploadValidator::validate($file, ['types' => 'images', 'max_size' => 10]);
             if (!$v['valid']) {
                 return null;
             }
-            $safeName = UploadValidator::safeFilename($file['name']);
+            $safeName = \UploadValidator::safeFilename($file['name']);
             $extension = pathinfo($safeName, PATHINFO_EXTENSION);
             $fileName = uniqid('news_') . '.' . $extension;
 
@@ -494,6 +508,7 @@ class NewsController extends AdminController
      */
     public function delete($id)
     {
+        $this->requireAdmin();
         return $this->destroy($id);
     }
 
@@ -502,6 +517,7 @@ class NewsController extends AdminController
      */
     public function categories()
     {
+        $this->requireAdmin();
         try {
             $this->data['page_title'] = 'News Categories';
             $this->data['categories'] = $this->db->fetchAll(
@@ -518,6 +534,7 @@ class NewsController extends AdminController
      */
     public function getStats()
     {
+    $this->requireAdmin();
         try {
             $stats = [];
 

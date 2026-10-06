@@ -151,6 +151,15 @@ class DashboardController extends BaseController
                 LIMIT 4
             ") ?: [];
 
+            // Referral tier badge (DB-driven tiers, hardcoded fallback)
+            $referralTier = ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '#CD7F32', 'icon' => 'fas fa-medal'];
+            $referralCode = '';
+            try {
+                $refRow = $this->db->fetchOne("SELECT referral_code FROM users WHERE id = ? LIMIT 1", [$userId]);
+                $referralCode = $refRow['referral_code'] ?? '';
+                $referralTier = (new \App\Services\ReferralService())->getUserTier($userId);
+            } catch (\Throwable $e) { error_log('DashboardController::customer tier: ' . $e->getMessage()); }
+
             $data = [
                 'page_title' => 'Customer Dashboard - APS Dream Home',
                 'current_page' => 'dashboard',
@@ -163,6 +172,8 @@ class DashboardController extends BaseController
                     'join_date' => $createdAt,
                     'avatar' => $user['avatar'] ?? null
                 ],
+                'referral_code' => $referralCode,
+                'referral_tier' => $referralTier,
                 'stats' => $stats,
                 'favorite_properties' => $favorite_properties,
                 'recent_bookings' => $recent_bookings,
@@ -321,16 +332,23 @@ class DashboardController extends BaseController
     {
         $userId = $_SESSION['user_id'];
 
-        $inquiries = [
-            ['property_title' => 'Braj Radha Nagri', 'price' => '₹6.5 Lakhs', 'location' => 'Gorakhpur', 'status' => 'Pending', 'created_at' => '2024-03-01'],
-            ['property_title' => 'Budh Bihar Colony', 'price' => '₹5.5 Lakhs', 'location' => 'Kushinagar', 'status' => 'Responded', 'created_at' => '2024-02-28']
-        ];
+        // Real user inquiries (is_read powers the Mark-All-Read badge/button)
+        $inquiries = [];
+        try {
+            $u = $this->db->fetchOne("SELECT email FROM users WHERE id = ? LIMIT 1", [$userId]);
+            if (!empty($u['email'])) {
+                $inquiries = $this->db->fetchAll(
+                    "SELECT * FROM inquiries WHERE email = ? ORDER BY created_at DESC",
+                    [$u['email']]
+                ) ?: [];
+            }
+        } catch (\Throwable $e) { error_log('DashboardController::inquiries: ' . $e->getMessage()); }
 
         $this->layout = 'layouts/base';
         $this->render('pages/user_inquiries', [
             'page_title' => 'My Inquiries - APS Dream Home',
             'page_description' => 'Your property inquiry history',
-            'enquiries' => $inquiries
+            'inquiries' => $inquiries
         ]);
     }
 

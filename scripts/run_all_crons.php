@@ -15,6 +15,8 @@
  *     6. Milestone Bonus Auto-Credit (25/50/75/100% payment milestones)
  *     7. Follow-up Reminders / 8. EMI Auto-Payment / 9. NACH Auto-Debit
  *    10. Log Retention Purge (ab_events 90d, visitor_page_views 60d, csp_violations 30d)
+ *    11. Leave Accrual (per leave-type frequency)
+ *    12. Payroll Auto-Lock (2+ mo) / Auto-Close (6+ mo)
  *
  *   MONTHLY (1st of each month):
  *     7. Royalty Pool Distribution (2% â†’ qualified site managers)
@@ -102,6 +104,8 @@ if ($statusOnly || $dryRun) {
         echo "    8. EMI Auto-Payment" . PHP_EOL;
         echo "    9. NACH Auto-Debit" . PHP_EOL;
         echo "   10. Log Retention Purge" . PHP_EOL;
+        echo "   11. Leave Accrual" . PHP_EOL;
+        echo "   12. Payroll Auto-Lock/Close" . PHP_EOL;
     }
     if (in_array($mode, ['monthly', 'all'])) {
         echo "  MONTHLY:" . PHP_EOL;
@@ -465,6 +469,39 @@ try {
             $errors[] = 'log_retention: ' . $e->getMessage();
         }
         echo PHP_EOL;
+
+        // 11. LEAVE ACCRUAL (monthly/quarterly/half-yearly/yearly per leave type)
+        $taskNum++;
+        echo "===============================================================" . PHP_EOL;
+        echo "{$taskNum}/15  Leave Accrual" . PHP_EOL;
+        echo "===============================================================" . PHP_EOL;
+        try {
+            require_once $root . '/scripts/cron_leave_accrual.php';
+            $leaveResult = cron_leave_accrual($pdo, $tenantId);
+            echo "  [OK] {$leaveResult['accrued']} balances updated, {$leaveResult['errors']} errors" . PHP_EOL;
+            $log['leave_accrual'] = $leaveResult;
+        } catch (\Throwable $e) {
+            echo "  [FAIL] " . $e->getMessage() . PHP_EOL;
+            $errors[] = 'leave_accrual: ' . $e->getMessage();
+        }
+        echo PHP_EOL;
+
+        // 12. PAYROLL AUTO-LOCK/CLOSE (lock 2+ month old open periods, close 6+ month old locked)
+        $taskNum++;
+        echo "===============================================================" . PHP_EOL;
+        echo "{$taskNum}/15  Payroll Auto-Lock/Close" . PHP_EOL;
+        echo "===============================================================" . PHP_EOL;
+        try {
+            $periodService = new \App\Services\PayrollPeriodService($pdo);
+            $locked = $periodService->autoLockOldPeriods(2);
+            $closed = $periodService->autoCloseOldPeriods(6);
+            echo "  [OK] {$locked} period(s) locked, {$closed} closed" . PHP_EOL;
+            $log['payroll_periods'] = ['locked' => $locked, 'closed' => $closed];
+        } catch (\Throwable $e) {
+            echo "  [FAIL] " . $e->getMessage() . PHP_EOL;
+            $errors[] = 'payroll_periods: ' . $e->getMessage();
+        }
+        echo PHP_EOL;
     }
 
     // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
@@ -620,14 +657,31 @@ echo PHP_EOL;
             } else {
                 echo "  [INFO] No active salary targets this month" . PHP_EOL;
             }
-        } catch (\Throwable $e) {
+} catch (\Throwable $e) {
             echo "  [FAIL] " . $e->getMessage() . PHP_EOL;
             $errors[] = 'leadership_salary: ' . $e->getMessage();
         }
         echo PHP_EOL;
     }
 
-    // A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����A��?����
+    // 14. SIP AUTO-DEBIT (Daily in daily mode, monthly in monthly mode for reconciliation)
+    if (in_array($mode, ['daily', 'monthly', 'all'])) {
+        $taskNum++;
+        echo "==========================================================================================================" . PHP_EOL;
+        echo "{$taskNum}/15  SIP Auto-Debit Processing" . PHP_EOL;
+        echo "==========================================================================================================" . PHP_EOL;
+        try {
+            require_once $root . '/scripts/cron_investment_sip.php';
+            // The script runs and outputs its own logging
+            $log['sip_autodebit'] = ['status' => 'completed'];
+            echo "  [OK] SIP auto-debit processing completed" . PHP_EOL;
+        } catch (\Throwable $e) {
+            echo "  [FAIL] " . $e->getMessage() . PHP_EOL;
+            $errors[] = 'sip_autodebit: ' . $e->getMessage();
+        }
+        echo PHP_EOL;
+    }
+
     // SUMMARY
     // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     $elapsed = round(microtime(true) - $startTime, 2);
@@ -636,7 +690,7 @@ echo PHP_EOL;
     echo "â•”â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•—" . PHP_EOL;
     echo "â•‘    SUMMARY                                              â•‘" . PHP_EOL;
     echo "â• â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•£" . PHP_EOL;
-    echo "â•‘  Tasks run:     {$totalTasks}" . PHP_EOL;
+    echo "â•‘  Tasks run:     {$totalTasks} (includes SIP Auto-Debit)" . PHP_EOL;
     echo "â•‘  Errors:        " . count($errors) . PHP_EOL;
     echo "â•‘  Elapsed:       {$elapsed}s" . PHP_EOL;
     echo "â•šâ•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�" . PHP_EOL;

@@ -36,11 +36,11 @@ class ColonyPricingService
     /** @var \PDO|null */
     private $pdo;
 
-    // ── Default premium percentages ─────────────────────────────
-    private const PREMIUM_CORNER      = 0.10;
-    private const PREMIUM_PARK_FACING = 0.15;
-    private const PREMIUM_WIDE_ROAD   = 0.08;
-    private const WIDE_ROAD_THRESHOLD = 40.0;
+    // ── Default premium percentages (loaded from config or fallback) ─────────────────────────────
+    private float $cornerPremium      = 0.10;
+    private float $parkFacingPremium  = 0.15;
+    private float $wideRoadPremium    = 0.08;
+    private float $wideRoadThreshold  = 40.0;
 
     public function __construct()
     {
@@ -48,6 +48,9 @@ class ColonyPricingService
             $this->db     = Database::getInstance();
             $this->pdo    = $this->db->getPdo();
             $this->logger = new SystemLogger();
+            
+            // Load premiums from config if available
+            $this->loadPremiumsFromConfig();
         } catch (Exception $e) {
             if ($this->logger) {
                 $this->logger->error('ColonyPricingService init failed', ['error' => $e->getMessage()]);
@@ -56,6 +59,33 @@ class ColonyPricingService
             $this->pdo    = null;
             $this->logger = null;
         }
+    }
+
+    private function loadPremiumsFromConfig(): void
+    {
+        try {
+            $cfg = $this->db->fetchAll("SELECT config_key, config_value FROM service_configs WHERE config_group = 'pricing_premiums' AND is_active = 1");
+            foreach ($cfg as $row) {
+                $key = $row['config_key'];
+                $val = (float)$row['config_value'];
+                if ($key === 'corner_premium_pct') $this->cornerPremium = $val / 100;
+                elseif ($key === 'park_facing_premium_pct') $this->parkFacingPremium = $val / 100;
+                elseif ($key === 'wide_road_premium_pct') $this->wideRoadPremium = $val / 100;
+                elseif ($key === 'wide_road_threshold_ft') $this->wideRoadThreshold = $val;
+            }
+        } catch (Exception $e) {
+            // Use defaults if config not available
+        }
+    }
+
+    public function getPremiumConfig(): array
+    {
+        return [
+            'corner_premium_pct' => $this->cornerPremium * 100,
+            'park_facing_premium_pct' => $this->parkFacingPremium * 100,
+            'wide_road_premium_pct' => $this->wideRoadPremium * 100,
+            'wide_road_threshold_ft' => $this->wideRoadThreshold,
+        ];
     }
 
     // ================================================================
@@ -206,10 +236,10 @@ class ColonyPricingService
             }
 
             // Merge caller premiums with defaults
-            $cornerPct      = $premiums['corner_plot']      ?? self::PREMIUM_CORNER;
-            $parkPct        = $premiums['park_facing']      ?? self::PREMIUM_PARK_FACING;
-            $wideRoadPct    = $premiums['road_width_ft']    ?? self::PREMIUM_WIDE_ROAD;
-            $wideRoadThresh = $premiums['wide_road_threshold'] ?? self::WIDE_ROAD_THRESHOLD;
+            $cornerPct      = $premiums['corner_plot']      ?? $this->cornerPremium;
+            $parkPct        = $premiums['park_facing']      ?? $this->parkFacingPremium;
+            $wideRoadPct    = $premiums['road_width_ft']    ?? $this->wideRoadPremium;
+            $wideRoadThresh = $premiums['wide_road_threshold'] ?? $this->wideRoadThreshold;
             $blockPremiums  = $premiums['block']            ?? [];
             $phasePremiums  = $premiums['phase']            ?? [];
 
@@ -1092,7 +1122,7 @@ class ColonyPricingService
         }
     }
 
-    /**
+/**
      * Log via SystemLogger with safe fallback.
      */
     private function log(string $level, string $message, array $context = []): void
@@ -1102,8 +1132,254 @@ class ColonyPricingService
                 $this->logger->log($level, $message, $context);
             }
         } catch (Exception $ignored) {
-        // Never let logging break the caller
-        error_log($ignored->getMessage());
+            // Never let logging break the caller
+            error_log($ignored->getMessage());
+        }
+    }
+
+    // ================================================================
+    //  PRICING VERSIONING
+    // ================================================================
+
+    /**
+     * Save a new pricing plan version for a colony.
+     *
+     * @param int $colonyId
+     * @param float $basePricePerSqft
+     * @param array $premiums
+     * @param array $config
+     * @param string $name
+     * @param string|null $description
+     * @param int|null $parentVersionId
+     * @param int $createdBy
+     * @return array{success: bool, id?: int, version?: int, error?: string}
+     */
+    public function savePricingPlan(int $colonyId, float $basePricePerSqft, array $premiums, array $config, string $name, ?string $description = null, ?int $parentVersionId = null, int $createdBy = 0): array
+    {
+        try {
+            $tid = $this->tenantId();
+            
+            // Get next version number
+            $maxVersion = $this->db->fetchOne(
+                "SELECT MAX(version) as max_v FROM pricing_plans WHERE colony_id = ? AND tenant_id = ?",
+                [$colonyId, $tid]
+            );
+            $nextVersion = (int)($maxVersion['max_v'] ?? 0) + 1;
+
+            $premiumsJson = json_encode($premiums);
+            $configJson = json_encode($config);
+
+            $this->db->beginTransaction();
+            try {
+                $stmt = $this->pdo->prepare(
+                    "INSERT INTO pricing_plans (colony_id, name, description, base_price_per_sqft, premiums, config, version, parent_version_id, is_active, created_by, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)"
+                );
+                $stmt->execute([$colonyId, $name, $description, $basePricePerSqft, $premiumsJson, $configJson, $nextVersion, $parentVersionId, $createdBy, $tid]);
+                $planId = (int)$this->pdo->lastInsertId();
+                $this->db->commit();
+                
+                $this->log('info', 'Pricing plan created', [
+                    'plan_id' => $planId,
+                    'colony_id' => $colonyId,
+                    'version' => $nextVersion,
+                    'created_by' => $createdBy
+                ]);
+
+                return ['success' => true, 'id' => $planId, 'version' => $nextVersion];
+            } catch (Exception $e) {
+                $this->safeRollback();
+                throw $e;
+            }
+        } catch (Exception $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Activate a specific pricing plan version for a colony.
+     * Deactivates all other versions for this colony.
+     *
+     * @param int $planId
+     * @return array{success: bool, error?: string}
+     */
+    public function activatePricingPlan(int $planId): array
+    {
+        try {
+            $tid = $this->tenantId();
+            
+            // Get the plan
+            $plan = $this->db->fetchOne(
+                "SELECT * FROM pricing_plans WHERE id = ? AND tenant_id = ?",
+                [(int)$planId, $this->tenantId()]
+            );
+            if (!$plan) {
+                return ['success' => false, 'error' => 'Pricing plan not found'];
+            }
+
+            $this->db->beginTransaction();
+            try {
+                // Deactivate all other versions for this colony
+                $this->pdo->prepare("UPDATE pricing_plans SET is_active = 0 WHERE colony_id = ? AND tenant_id = ?")
+                    ->execute([$plan['colony_id'], $this->tenantId()]);
+                
+                // Activate this version
+                $this->pdo->prepare("UPDATE pricing_plans SET is_active = 1 WHERE id = ?")
+                    ->execute([$planId]);
+                
+                $this->db->commit();
+                
+                $this->log('info', 'Pricing plan activated', [
+                    'plan_id' => $planId,
+                    'colony_id' => $plan['colony_id'],
+                    'version' => $plan['version']
+                ]);
+
+                return ['success' => true];
+            } catch (Exception $e) {
+                $this->safeRollback();
+                throw $e;
+            }
+        } catch (Exception $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Get all pricing plan versions for a colony.
+     *
+     * @param int $colonyId
+     * @return array{success: bool, plans?: array, error?: string}
+     */
+    public function getPricingPlanHistory(int $colonyId): array
+    {
+        try {
+            $tid = $this->tenantId();
+            $plans = $this->db->fetchAll(
+                "SELECT * FROM pricing_plans WHERE colony_id = ? AND tenant_id = ? ORDER BY version DESC",
+                [$colonyId, $tid]
+            );
+            return ['success' => true, 'plans' => $plans];
+        } catch (Exception $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Apply a specific pricing plan version to the colony.
+     * Creates an application record and updates plot prices.
+     *
+     * @param int $planId
+     * @param int $appliedBy
+     * @return array{success: bool, error?: string, plots_updated?: int, total_value?: float}
+     */
+    public function applyPricingPlan(int $planId, int $appliedBy = 0): array
+    {
+        try {
+            $tid = $this->tenantId();
+            
+            $plan = $this->db->fetchOne(
+                "SELECT * FROM pricing_plans WHERE id = ? AND tenant_id = ?",
+                [(int)$planId, $tid]
+            );
+            if (!$plan) {
+                return ['success' => false, 'error' => 'Pricing plan not found'];
+            }
+
+            if (!$plan['is_active']) {
+                return ['success' => false, 'error' => 'Pricing plan is not active'];
+            }
+
+            $premiums = json_decode($plan['premiums'], true);
+            $config = json_decode($plan['config'], true);
+            
+            $this->db->beginTransaction();
+            try {
+                // Apply pricing to colony
+                $result = $this->applyPricingToColony($plan['colony_id'], $plan['base_price_per_sqft'], $premiums, $config);
+                
+                if ($result['success']) {
+                    // Record application
+                    $stmt = $this->pdo->prepare(
+                        "INSERT INTO pricing_plan_applications (pricing_plan_id, colony_id, applied_by, plots_updated, total_value) VALUES (?, ?, ?, ?, ?)"
+                    );
+                    $stmt->execute([
+                        $planId,
+                        $plan['colony_id'],
+                        $appliedBy,
+                        $result['plots_updated'] ?? 0,
+                        $result['total_value'] ?? 0
+                    ]);
+                    
+                    $this->db->commit();
+                    
+                    $this->log('info', 'Pricing plan applied', [
+                        'plan_id' => $planId,
+                        'colony_id' => $plan['colony_id'],
+                        'plots_updated' => $result['plots_updated'] ?? 0,
+                        'total_value' => $result['total_value'] ?? 0,
+                        'applied_by' => $appliedBy
+                    ]);
+
+                    return ['success' => true, 'plots_updated' => $result['plots_updated'] ?? 0, 'total_value' => $result['total_value'] ?? 0];
+                } else {
+                    $this->safeRollback();
+                    return ['success' => false, 'error' => $result['error'] ?? 'Failed to apply pricing'];
+                }
+            } catch (Exception $e) {
+                $this->safeRollback();
+                throw $e;
+            }
+        } catch (Exception $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Get application history for a colony.
+     *
+     * @param int $colonyId
+     * @return array{success: bool, applications?: array, error?: string}
+     */
+    public function getApplicationHistory(int $colonyId): array
+    {
+        try {
+            $tid = $this->tenantId();
+            $applications = $this->db->fetchAll(
+                "SELECT pa.*, pp.name as plan_name, pp.version as plan_version, pp.base_price_per_sqft
+                 FROM pricing_plan_applications pa
+                 JOIN pricing_plans pp ON pa.pricing_plan_id = pp.id
+                 WHERE pa.colony_id = ? AND pa.tenant_id = ?
+                 ORDER BY pa.applied_at DESC",
+                [$colonyId, $tid]
+            );
+            return ['success' => true, 'applications' => $applications];
+        } catch (Exception $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Get a specific pricing plan by ID.
+     *
+     * @param int $planId
+     * @return array{success: bool, plan?: array, error?: string}
+     */
+    public function getPricingPlan(int $planId): array
+    {
+        try {
+            $tid = $this->tenantId();
+            $plan = $this->db->fetchOne(
+                "SELECT * FROM pricing_plans WHERE id = ? AND tenant_id = ?",
+                [(int)$planId, $tid]
+            );
+            if (!$plan) {
+                return ['success' => false, 'error' => 'Pricing plan not found'];
+            }
+            $plan['premiums'] = json_decode($plan['premiums'], true);
+            $plan['config'] = json_decode($plan['config'], true);
+            return ['success' => true, 'plan' => $plan];
+        } catch (Exception $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
         }
     }
 }

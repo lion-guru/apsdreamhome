@@ -31,6 +31,7 @@ class ProjectController extends AdminController
      */
     public function index()
     {
+        $this->requireAdmin();
         try {
             $search = $_GET['search'] ?? '';
             $status = $_GET['status'] ?? '';
@@ -114,6 +115,7 @@ class ProjectController extends AdminController
      */
     public function create()
     {
+        $this->requireAdmin();
         try {
             $data = [
                 'page_title' => 'Create Project - APS Dream Home',
@@ -133,6 +135,7 @@ class ProjectController extends AdminController
      */
     public function store()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -204,7 +207,7 @@ class ProjectController extends AdminController
                 ]);
             }
 
-            // Project list changed — drop the header projects cache.
+            // Project list changed â€” drop the header projects cache.
             $this->invalidateHeaderProjectsCache();
 
             // Clean up uploaded image if database insert failed
@@ -224,6 +227,7 @@ class ProjectController extends AdminController
      */
     public function show($id)
     {
+        $this->requireAdmin();
         try {
             $projectId = intval($id);
             if ($projectId <= 0) {
@@ -282,6 +286,7 @@ class ProjectController extends AdminController
      */
     public function edit($id)
     {
+        $this->requireAdmin();
         try {
             $projectId = intval($id);
             if ($projectId <= 0) {
@@ -319,6 +324,7 @@ class ProjectController extends AdminController
      */
     public function update($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -440,7 +446,7 @@ class ProjectController extends AdminController
                 ]);
             }
 
-            // Project list changed — drop the header projects cache.
+            // Project list changed â€” drop the header projects cache.
             $this->invalidateHeaderProjectsCache();
 
             return $this->jsonError('Failed to update project', 500);
@@ -474,6 +480,7 @@ class ProjectController extends AdminController
      */
     public function destroy($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -527,7 +534,7 @@ class ProjectController extends AdminController
                 ]);
             }
 
-            // Project list changed — drop the header projects cache.
+            // Project list changed â€” drop the header projects cache.
             $this->invalidateHeaderProjectsCache();
 
             return $this->jsonError('Failed to delete project', 500);
@@ -542,6 +549,7 @@ class ProjectController extends AdminController
      */
     public function analytics()
     {
+        $this->requireAdmin();
         try {
             $data = [
                 'page_title' => 'Project Analytics - APS Dream Home',
@@ -583,11 +591,11 @@ class ProjectController extends AdminController
     private function uploadImage(array $file): ?string
     {
         try {
-            $v = UploadValidator::validate($file, ['types' => 'images', 'max_size' => 10]);
+            $v = \UploadValidator::validate($file, ['types' => 'images', 'max_size' => 10]);
             if (!$v['valid']) {
                 return null;
             }
-            $safeName = UploadValidator::safeFilename($file['name']);
+            $safeName = \UploadValidator::safeFilename($file['name']);
             $extension = pathinfo($safeName, PATHINFO_EXTENSION);
             $fileName = uniqid('project_') . '.' . $extension;
 
@@ -656,6 +664,7 @@ class ProjectController extends AdminController
      */
     public function getStats()
     {
+        $this->requireAdmin();
         try {
             $stats = [];
 

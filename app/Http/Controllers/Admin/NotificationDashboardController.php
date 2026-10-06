@@ -21,6 +21,7 @@ class NotificationDashboardController extends AdminController
      */
     public function index()
     {
+        $this->requireAdmin();
         $db = Database::getInstance();
         $stats = $this->getNotificationStats($db);
         $recentLogs = $this->getRecentLogs($db);
@@ -45,6 +46,7 @@ class NotificationDashboardController extends AdminController
      */
     public function smsTemplates()
     {
+        $this->requireAdmin();
         $db = Database::getInstance();
         $templates = $db->query("SELECT * FROM sms_templates ORDER BY template_code")->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -59,6 +61,7 @@ class NotificationDashboardController extends AdminController
      */
     public function whatsappTemplates()
     {
+        $this->requireAdmin();
         $db = Database::getInstance();
         $templates = $db->query("SELECT * FROM whatsapp_templates ORDER BY template_name")->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -73,6 +76,7 @@ class NotificationDashboardController extends AdminController
      */
     public function sendTest()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: ' . BASE_URL . '/admin/notifications');
             exit;

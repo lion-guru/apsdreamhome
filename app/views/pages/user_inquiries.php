@@ -5,7 +5,22 @@ $extraHead = '<style>
 ?>
 
 <div class="container py-5">
-    <h3 class="mb-4"><i class="fas fa-envelope me-2 text-success"></i><?= __('user_inquiries_heading') ?></h3>
+    <?php $unreadCount = 0; foreach (($inquiries ?? []) as $qi) { if (empty($qi['is_read'])) $unreadCount++; } ?>
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <h3 class="mb-0"><i class="fas fa-envelope me-2 text-success"></i><?= __('user_inquiries_heading') ?>
+            <?php if ($unreadCount > 0): ?><span class="badge bg-primary ms-2"><?= $unreadCount ?> new</span><?php endif; ?>
+        </h3>
+        <div class="d-flex gap-2 flex-wrap">
+            <?php if ($unreadCount > 0): ?>
+            <button type="button" class="btn btn-outline-primary btn-sm" onclick="markAllRead()">
+                <i class="fas fa-check-double me-1"></i>Mark All Read (<?= $unreadCount ?>)
+            </button>
+            <?php endif; ?>
+            <a href="<?php echo BASE_URL; ?>/user/inquiries/threads" class="btn btn-outline-success btn-sm">
+                <i class="fas fa-comments me-1"></i>Property Message Threads
+            </a>
+        </div>
+    </div>
 
     <?php if (empty($inquiries)): ?>
         <div class="card aps-cp-card">
@@ -34,7 +49,7 @@ $extraHead = '<style>
                         </thead>
                         <tbody>
                             <?php foreach ($inquiries as $inq): ?>
-                                <tr>
+                                <tr class="<?= empty($inq['is_read']) ? 'table-primary' : '' ?>">
                                     <td>
                                         <span class="badge bg-<?php echo ($inq['type'] ?? '') === 'property_listing' ? 'success' : 'info'; ?>">
                                             <?php echo ucfirst(str_replace('_', ' ', __((!empty($inq['type']) ? 'inq_type_' . $inq['type'] : 'inq_type_general'), null, ucfirst(str_replace('_', ' ', $inq['type'] ?? 'General'))))); ?>
@@ -84,3 +99,26 @@ $extraHead = '<style>
         </div>
     <?php endif; ?>
 </div>
+
+<script>
+function markAllRead() {
+    if (!confirm('Mark all inquiries as read?')) return;
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '<?= $_SESSION["csrf_token"] ?? "" ?>';
+    fetch('<?= BASE_URL ?>/user/inquiries/mark-all-read', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': csrfToken
+        }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Failed: ' + (data.message || 'Unknown error'));
+        }
+    })
+    .catch(e => alert('Error: ' + e.message));
+}
+</script>

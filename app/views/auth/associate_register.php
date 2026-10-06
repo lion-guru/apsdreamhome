@@ -11,7 +11,7 @@ $errors = $errors ?? $_SESSION['errors'] ?? [];
 $old = $old ?? $_SESSION['old_input'] ?? [];
 unset($_SESSION['errors'], $_SESSION['old_input']);
 $base = BASE_URL;
-$ref = $ref ?? $_GET['ref'] ?? $old['sponsor_code'] ?? '';
+$ref = $ref ?? $_GET['ref'] ?? $old['sponsor_code'] ?? $_COOKIE['aps_ref'] ?? (isset($_SESSION) ? ($_SESSION['aps_ref'] ?? '') : '');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -108,6 +108,16 @@ $ref = $ref ?? $_GET['ref'] ?? $old['sponsor_code'] ?? '';
 
         .back-home{display:block;text-align:center;margin-top:.75rem;color:rgba(255,255,255,.4);text-decoration:none;font-size:.82rem;transition:color .2s}
         .back-home:hover{color:rgba(255,255,255,.7)}
+
+        /* Social Login Buttons */
+        .social-divider{display:flex;align-items:center;margin:1.5rem 0}
+        .social-divider::before,.social-divider::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,#e0e0e0,transparent)}
+        .social-divider span{padding:0 1rem;font-size:.85rem;color:#6c757d;font-weight:500}
+        .social-buttons{display:flex;gap:.75rem}
+        .social-btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;background:#fff;cursor:pointer;font-size:.8rem;color:#475569;font-weight:500;font-family:inherit;text-decoration:none;transition:all .2s}
+        .social-btn:hover{border-color:#ea580c;background:#fef7ed;color:#ea580c}
+        .social-btn.google{color:#ea4335}
+        .social-btn.facebook{color:#1877f2}
 
         @media(max-width:992px){
             .register-wrapper{flex-direction:column}
@@ -320,6 +330,18 @@ $ref = $ref ?? $_GET['ref'] ?? $old['sponsor_code'] ?? '';
 
                     <div class="terms-text">
                         By registering, you agree to our <a href="<?php echo e($base); ?>/terms" target="_blank" rel="noopener">Terms of Service</a> and <a href="<?php echo e($base); ?>/privacy" target="_blank" rel="noopener">Privacy Policy</a>.
+                    </div>
+
+                    <div class="social-divider">
+                        <span>OR CONTINUE WITH</span>
+                    </div>
+                    <div class="social-buttons">
+                        <a href="<?php echo e($base); ?>/auth/google" class="social-btn google">
+                            <i class="fab fa-google"></i> Google
+                        </a>
+                        <a href="<?php echo e($base); ?>/auth/facebook" class="social-btn facebook">
+                            <i class="fab fa-facebook-f"></i> Facebook
+                        </a>
                     </div>
 
                     

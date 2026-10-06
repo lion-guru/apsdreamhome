@@ -248,11 +248,19 @@ $supportedRoles = [
                 <div class="divider"><span>or</span></div>
 
                 <div class="social-row">
-                    <a href="<?= $base ?>/auth/air-login?method=email" class="social-btn">
+                    <a href="<?= $base ?>/auth/google" class="social-btn">
                         <i class="fab fa-google"></i> Google
                     </a>
+                    <a href="<?= $base ?>/auth/facebook" class="social-btn">
+                        <i class="fab fa-facebook-f"></i> Facebook
+                    </a>
+                </div>
+                <div class="social-row">
+                    <a href="<?= $base ?>/auth/air-login?method=email" class="social-btn">
+                        <i class="fas fa-envelope"></i> Email OTP
+                    </a>
                     <a href="<?= $base ?>/auth/air-login?method=phone" class="social-btn">
-                        <i class="fas fa-phone"></i> Phone
+                        <i class="fas fa-phone"></i> Phone OTP
                     </a>
                 </div>
 

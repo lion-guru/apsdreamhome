@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\BaseController;
 use App\Services\Payment\PhonePeGateway;
 use App\Services\Payment\GPayGateway;
+use App\Traits\TenantAwareTrait;
 
 /**
  * Payment Gateway API Controller
@@ -12,6 +13,8 @@ use App\Services\Payment\GPayGateway;
  */
 class PaymentGatewayController extends BaseController
 {
+    use TenantAwareTrait;
+    
     public function __construct()
     {
         parent::__construct();

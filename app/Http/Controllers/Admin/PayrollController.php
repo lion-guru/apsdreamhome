@@ -63,10 +63,10 @@ class PayrollController extends AdminController
     {
         $this->requireAdmin();
         $employee_id = $_POST['employee_id'] ?? 0;
-        $basic_salary = $_POST['basic_salary'] ?? 0;
-        $hra = $_POST['hra'] ?? 0;
-        $allowance = $_POST['allowance'] ?? 0;
-        $deduction = $_POST['deduction'] ?? 0;
+        $basic_salary = ($_POST['basic_salary'] ?? '') === '' ? null : ($_POST['basic_salary'] ?? 0);
+        $hra = ($_POST['hra'] ?? '') === '' ? null : ($_POST['hra'] ?? 0);
+        $allowance = ($_POST['allowance'] ?? '') === '' ? null : ($_POST['allowance'] ?? 0);
+        $deduction = ($_POST['deduction'] ?? '') === '' ? null : ($_POST['deduction'] ?? 0);
         $net_salary = ($basic_salary + $hra + $allowance) - $deduction;
         $payment_date = $_POST['payment_date'] ?? date('Y-m-d');
         $payment_status = $_POST['payment_status'] ?? 'pending';
@@ -113,10 +113,10 @@ class PayrollController extends AdminController
     {
         $this->requireAdmin();
         $employee_id = $_POST['employee_id'] ?? 0;
-        $basic_salary = $_POST['basic_salary'] ?? 0;
-        $hra = $_POST['hra'] ?? 0;
-        $allowance = $_POST['allowance'] ?? 0;
-        $deduction = $_POST['deduction'] ?? 0;
+        $basic_salary = ($_POST['basic_salary'] ?? '') === '' ? null : ($_POST['basic_salary'] ?? 0);
+        $hra = ($_POST['hra'] ?? '') === '' ? null : ($_POST['hra'] ?? 0);
+        $allowance = ($_POST['allowance'] ?? '') === '' ? null : ($_POST['allowance'] ?? 0);
+        $deduction = ($_POST['deduction'] ?? '') === '' ? null : ($_POST['deduction'] ?? 0);
         $net_salary = ($basic_salary + $hra + $allowance) - $deduction;
         $payment_date = $_POST['payment_date'] ?? date('Y-m-d');
         $payment_status = $_POST['payment_status'] ?? 'pending';
@@ -137,9 +137,10 @@ class PayrollController extends AdminController
         $this->requireAdmin();
         try {
             $stmt = $this->db->prepare("
-                SELECT ep.*, u.name as employee_name
+                SELECT ep.*, u.name as employee_name, a.name as approved_by_name
                 FROM employee_payroll ep
                 LEFT JOIN users u ON ep.employee_id = u.id
+                LEFT JOIN users a ON ep.advance_approved_by = a.id
                 WHERE ep.advance_amount IS NOT NULL AND ep.advance_amount > 0
                 ORDER BY ep.created_at DESC
             ");
@@ -148,9 +149,17 @@ class PayrollController extends AdminController
         } catch (\Exception $e) {
             $advances = [];
         }
+        try {
+            $empStmt = $this->db->prepare("SELECT id, name FROM users WHERE role='employee' AND status='active' ORDER BY name ASC");
+            $empStmt->execute();
+            $users = $empStmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            $users = [];
+        }
         return $this->render('admin/payroll/advances', [
             'page_title' => 'Salary Advances',
-            'advances' => $advances
+            'advances' => $advances,
+            'users' => $users
         ]);
     }
 
@@ -160,7 +169,8 @@ class PayrollController extends AdminController
         $employee_id = (int)($_POST['employee_id'] ?? 0);
         $advance_amount = $_POST['advance_amount'] ?? 0;
         $advance_reason = $_POST['advance_reason'] ?? '';
-        $advance_approved_by = $_POST['advance_approved_by'] ?? '';
+        // advance_approved_by is INT (admin user id), not a name string.
+        $advance_approved_by = (int)($_POST['advance_approved_by'] ?? 0) ?: (int)($_SESSION['admin_id'] ?? 0);
         $advance_repay_emi = $_POST['advance_repay_emi'] ?? 0;
         if (!$employee_id) { $this->setFlash('error', 'Employee ID required'); $this->redirect('/admin/payroll/advances'); }
         try {

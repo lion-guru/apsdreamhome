@@ -584,6 +584,386 @@ class ApiService {
       data: {'type': type, 'from': from, 'to': to, 'reason': reason},
     );
   }
+
+  // ============================================================
+  // EMPLOYEE SELF-SERVICE PORTAL
+  // ============================================================
+
+  Future<Map<String, dynamic>> getTaxRegime() async {
+    return await request(method: 'GET', endpoint: AppConstants.taxRegimeEndpoint);
+  }
+
+  Future<Map<String, dynamic>> setTaxRegime({required String regime, required int financialYear}) async {
+    return await request(
+      method: 'POST',
+      endpoint: AppConstants.taxRegimeEndpoint,
+      data: {'regime': regime, 'financial_year': financialYear},
+    );
+  }
+
+  Future<Map<String, dynamic>> getInvestmentDeclaration({int? financialYear}) async {
+    return await request(
+      method: 'GET',
+      endpoint: AppConstants.investmentDeclarationEndpoint,
+      queryParameters: {'financial_year': financialYear ?? DateTime.now().year},
+    );
+  }
+
+  Future<Map<String, dynamic>> saveInvestmentDeclaration({
+    required int financialYear,
+    required List<Map<String, dynamic>> declarations,
+  }) async {
+    return await request(
+      method: 'POST',
+      endpoint: AppConstants.investmentDeclarationEndpoint,
+      data: {'financial_year': financialYear, 'declarations': declarations},
+    );
+  }
+
+  Future<Map<String, dynamic>> uploadInvestmentProof({
+    required int financialYear,
+    required String section,
+    required String filePath,
+  }) async {
+    final formData = FormData.fromMap({
+      'financial_year': financialYear,
+      'section': section,
+      'proof_file': await MultipartFile.fromFile(filePath, filename: 'proof_${DateTime.now().millisecondsSinceEpoch}.pdf'),
+    });
+    return await request(
+      method: 'POST',
+      endpoint: AppConstants.uploadInvestmentProofEndpoint,
+      data: formData,
+      options: Options(headers: {'Content-Type': 'multipart/form-data'}),
+    );
+  }
+
+  Future<Map<String, dynamic>> getForm16List() async {
+    return await request(method: 'GET', endpoint: AppConstants.form16Endpoint);
+  }
+
+  Future<Map<String, dynamic>> generateForm16({required int financialYear}) async {
+    return await request(
+      method: 'POST',
+      endpoint: AppConstants.form16GenerateEndpoint,
+      data: {'financial_year': financialYear},
+    );
+  }
+
+  Future<Map<String, dynamic>> downloadForm16(int financialYear) async {
+    return await request(
+      method: 'GET',
+      endpoint: '${AppConstants.form16DownloadEndpoint}$financialYear',
+    );
+  }
+
+  Future<Map<String, dynamic>> getPayslips({int limit = 24}) async {
+    return await request(
+      method: 'GET',
+      endpoint: AppConstants.payslipsEndpoint,
+      queryParameters: {'limit': limit},
+    );
+  }
+
+  Future<Map<String, dynamic>> downloadPayslip(int id) async {
+    final response = await _dio.get(
+      '${AppConstants.payslipDownloadEndpoint}$id${AppConstants.payslipDownloadSuffix}',
+      options: Options(responseType: ResponseType.bytes, headers: {'Accept': 'application/pdf'}),
+    );
+    return {'success': true, 'bytes': response.data, 'filename': 'Payslip_$id.pdf'};
+  }
+
+  Future<Map<String, dynamic>> getLeaveBalances({int? year}) async {
+    return await request(
+      method: 'GET',
+      endpoint: AppConstants.leaveBalancesEndpoint,
+      queryParameters: {'year': year ?? DateTime.now().year},
+    );
+  }
+
+  Future<Map<String, dynamic>> getLeaveTypes() async {
+    return await request(method: 'GET', endpoint: AppConstants.leaveTypesEndpoint);
+  }
+
+  Future<Map<String, dynamic>> applyLeave({
+    required int leaveTypeId,
+    required String startDate,
+    required String endDate,
+    required String reason,
+    String? emergencyContact,
+    String? workCoverage,
+  }) async {
+    return await request(
+      method: 'POST',
+      endpoint: AppConstants.leaveApplyEndpoint,
+      data: {
+        'leave_type_id': leaveTypeId,
+        'start_date': startDate,
+        'end_date': endDate,
+        'reason': reason,
+        'emergency_contact': emergencyContact,
+        'work_coverage': workCoverage,
+      },
+    );
+  }
+
+  Future<Map<String, dynamic>> getLeaveHistory({int limit = 50}) async {
+    return await request(
+      method: 'GET',
+      endpoint: AppConstants.leaveHistoryEndpoint,
+      queryParameters: {'limit': limit},
+    );
+  }
+
+  Future<Map<String, dynamic>> getReimbursements({int limit = 50}) async {
+    return await request(
+      method: 'GET',
+      endpoint: AppConstants.reimbursementsEndpoint,
+      queryParameters: {'limit': limit},
+    );
+  }
+
+  Future<Map<String, dynamic>> submitReimbursement({
+    required String claimType,
+    required double amount,
+    required String expenseDate,
+    required String description,
+    String? filePath,
+  }) async {
+    final formData = FormData.fromMap({
+      'claim_type': claimType,
+      'amount': amount,
+      'expense_date': expenseDate,
+      'description': description,
+      if (filePath != null) 'receipt_file': await MultipartFile.fromFile(filePath),
+    });
+    return await request(
+      method: 'POST',
+      endpoint: AppConstants.reimbursementsEndpoint,
+      data: formData,
+      options: Options(headers: {'Content-Type': 'multipart/form-data'}),
+    );
+  }
+
+  Future<Map<String, dynamic>> getSelfServiceProfile() async {
+    return await request(method: 'GET', endpoint: AppConstants.selfServiceProfileEndpoint);
+  }
+
+  Future<Map<String, dynamic>> updateSelfServiceProfile(Map<String, dynamic> data) async {
+    return await request(method: 'POST', endpoint: AppConstants.selfServiceProfileEndpoint, data: data);
+  }
+
+  Future<Map<String, dynamic>> selfServiceChangePassword({required String currentPassword, required String newPassword}) async {
+    return await request(
+      method: 'POST',
+      endpoint: AppConstants.changePasswordEndpoint,
+      data: {'current_password': currentPassword, 'new_password': newPassword},
+    );
+  }
+
+  Future<Map<String, dynamic>> getAttendance({String? month}) async {
+    return await request(
+      method: 'GET',
+      endpoint: AppConstants.attendanceEndpoint,
+      queryParameters: {'month': month ?? DateTime.now().toString().substring(0, 7)},
+    );
+  }
+
+  Future<Map<String, dynamic>> getAttendanceStats({String? month}) async {
+    return await request(
+      method: 'GET',
+      endpoint: AppConstants.attendanceStatsEndpoint,
+      queryParameters: {'month': month ?? DateTime.now().toString().substring(0, 7)},
+    );
+  }
+
+  Future<Map<String, dynamic>> getSelfServiceDashboard() async {
+    return await request(method: 'GET', endpoint: AppConstants.selfServiceDashboardEndpoint);
+  }
+
+  // ============================================================
+  // GRATUITY CALCULATOR
+  // ============================================================
+
+  Future<Map<String, dynamic>> gratuityCalculator({String? calculationDate}) async {
+    return await request(
+      method: 'GET',
+      endpoint: AppConstants.gratuityCalculatorEndpoint,
+      queryParameters: {'calculation_date': calculationDate ?? DateTime.now().toIso8601String().substring(0, 10)},
+    );
+  }
+
+  Future<Map<String, dynamic>> gratuityEligibilityReport() async {
+    return await request(method: 'GET', endpoint: AppConstants.gratuityReportEndpoint);
+  }
+
+  Future<Map<String, dynamic>> gratuityDetail(int id) async {
+    return await request(method: 'GET', endpoint: '${AppConstants.gratuityDetailEndpoint}$id');
+  }
+
+  // ============================================================
+  // FULL & FINAL SETTLEMENT
+  // ============================================================
+
+  Future<Map<String, dynamic>> fnfCalculator({
+    required int employeeId,
+    required String lastWorkingDay,
+    String? resignationDate,
+    int noticePeriodDays = 30,
+    int noticeServedDays = 0,
+    String exitType = 'resignation',
+  }) async {
+    return await request(
+      method: 'POST',
+      endpoint: AppConstants.fnfCalculatorEndpoint,
+      data: {
+        'employee_id': employeeId,
+        'last_working_day': lastWorkingDay,
+        'resignation_date': resignationDate ?? DateTime.now().toIso8601String().substring(0, 10),
+        'notice_period_days': noticePeriodDays,
+        'notice_served_days': noticeServedDays,
+        'exit_type': exitType,
+      },
+    );
+  }
+
+  Future<Map<String, dynamic>> fnfProcess({
+    required int employeeId,
+    required String lastWorkingDay,
+    String? resignationDate,
+    int noticePeriodDays = 30,
+    int noticeServedDays = 0,
+    String exitType = 'resignation',
+  }) async {
+    return await request(
+      method: 'POST',
+      endpoint: AppConstants.fnfProcessEndpoint,
+      data: {
+        'employee_id': employeeId,
+        'last_working_day': lastWorkingDay,
+        'resignation_date': resignationDate ?? DateTime.now().toIso8601String().substring(0, 10),
+        'notice_period_days': noticePeriodDays,
+        'notice_served_days': noticeServedDays,
+        'exit_type': exitType,
+      },
+    );
+  }
+
+  // ============================================================
+  // SHIFT ROSTER & OVERTIME
+  // ============================================================
+
+  Future<Map<String, dynamic>> getShiftTypes() async {
+    return await request(method: 'GET', endpoint: AppConstants.shiftTypesEndpoint);
+  }
+
+  Future<Map<String, dynamic>> getRoster({required String startDate, required String endDate, int? employeeId}) async {
+    return await request(
+      method: 'GET',
+      endpoint: AppConstants.rosterEndpoint,
+      queryParameters: {'start_date': startDate, 'end_date': endDate, if (employeeId != null) 'employee_id': employeeId},
+    );
+  }
+
+  Future<Map<String, dynamic>> assignShift({
+    required int employeeId,
+    required int shiftTypeId,
+    required String shiftDate,
+    String? startTime,
+    String? endTime,
+    String? remarks,
+  }) async {
+    return await request(
+      method: 'POST',
+      endpoint: AppConstants.assignShiftEndpoint,
+      data: {
+        'employee_id': employeeId,
+        'shift_type_id': shiftTypeId,
+        'shift_date': shiftDate,
+        'start_time': startTime,
+        'end_time': endTime,
+        'remarks': remarks,
+      },
+    );
+  }
+
+  Future<Map<String, dynamic>> getOvertimeRequests({String status = 'pending'}) async {
+    return await request(
+      method: 'GET',
+      endpoint: AppConstants.overtimeRequestsEndpoint,
+      queryParameters: {'status': status},
+    );
+  }
+
+  Future<Map<String, dynamic>> requestOvertime({required String overtimeDate, required double hours, required String reason}) async {
+    return await request(
+      method: 'POST',
+      endpoint: AppConstants.overtimeRequestEndpoint,
+      data: {'overtime_date': overtimeDate, 'hours': hours, 'reason': reason},
+    );
+  }
+
+  Future<Map<String, dynamic>> processOvertime({required int id, required String action, String? remarks}) async {
+    return await request(
+      method: 'POST',
+      endpoint: '${AppConstants.processOvertimeEndpoint}$id',
+      data: {'action': action, 'remarks': remarks},
+    );
+  }
+
+  Future<Map<String, dynamic>> getOvertimeReports({required String startDate, required String endDate}) async {
+    return await request(
+      method: 'GET',
+      endpoint: AppConstants.overtimeReportsEndpoint,
+      queryParameters: {'start_date': startDate, 'end_date': endDate},
+    );
+  }
+
+  Future<Map<String, dynamic>> getShiftCoverage({required String startDate, required String endDate}) async {
+    return await request(
+      method: 'GET',
+      endpoint: AppConstants.shiftCoverageEndpoint,
+      queryParameters: {'start_date': startDate, 'end_date': endDate},
+    );
+  }
+
+  // ============================================================
+  // INVESTMENT (Customer)
+  // ============================================================
+
+  Future<List<Map<String, dynamic>>> getInvestmentPlans() async {
+    final response = await get(AppConstants.investmentPlansEndpoint);
+    return (response['data'] ?? []) as List<Map<String, dynamic>>;
+  }
+
+  Future<List<Map<String, dynamic>>> getUserInvestments() async {
+    final response = await get(AppConstants.userInvestmentsEndpoint);
+    return (response['data'] ?? []) as List<Map<String, dynamic>>;
+  }
+
+  Future<Map<String, dynamic>> createInvestment({
+    required int planId,
+    required double amount,
+    String? paymentMode,
+    int? referrerUserId,
+  }) async {
+    return await post(
+      AppConstants.investmentCreateEndpoint,
+      data: {
+        'plan_id': planId,
+        'amount': amount,
+        'payment_mode': paymentMode ?? 'wallet',
+        if (referrerUserId != null) 'referrer_user_id': referrerUserId,
+      },
+    );
+  }
+
+  Future<Map<String, dynamic>> cancelInvestment(int investmentId, String reason) async {
+    return await post(
+      AppConstants.investmentCancelEndpoint,
+      data: {'investment_id': investmentId, 'reason': reason},
+    );
+  }
 }
 
 // Offline EMI Result wrapper

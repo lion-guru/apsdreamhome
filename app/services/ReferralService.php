@@ -568,6 +568,115 @@ class ReferralService
     }
 
     /**
+     * Get referral earnings breakdown for dashboard widget
+     */
+    public function getReferralEarningsBreakdown(int $userId): array
+    {
+        // Live knob labels (admin-tunable; fallbacks = current policy)
+        $custPct = min(max((float)\App\Services\ServiceConfigService::getVal('referral', 'customer_booking_pct', 2.0), 0.0), 5.0);
+        $teamBonus = min(max((float)\App\Services\ServiceConfigService::getVal('referral', 'associate_team_bonus', 500.00), 0.0), 2000.0);
+        $fmtPct = rtrim(rtrim(number_format($custPct, 2), '0'), '.');
+        $breakdown = [
+            'summary' => [
+                'total_referrals' => 0,
+                'active_referrals' => 0,
+                'total_earned' => 0.0,
+                'pending_earned' => 0.0,
+                'this_month' => 0.0,
+            ],
+            'by_type' => [
+                'customer_referral' => ['count' => 0, 'amount' => 0.0, 'label' => "Customer Referrals ({$fmtPct}%)"],
+                'associate_activation_team' => ['count' => 0, 'amount' => 0.0, 'label' => 'Associate 1st Team Member (₹' . number_format($teamBonus, 2) . ')'],
+                'wallet_activation_referral' => ['count' => 0, 'amount' => 0.0, 'label' => 'Wallet Activation Referral (L1)'],
+                'wallet_activation_referral_l2' => ['count' => 0, 'amount' => 0.0, 'label' => 'Wallet Activation Referral (L2)'],
+                'referral_signup' => ['count' => 0, 'amount' => 0.0, 'label' => 'Signup Bonuses (Tier)'],
+                'referral_booking' => ['count' => 0, 'amount' => 0.0, 'label' => 'Booking Bonuses (Tier)'],
+            ],
+            'recent' => [],
+        ];
+
+        try {
+            $tid = $this->tenantId();
+            $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+            $tenantParams = $tid > 1 ? [$tid] : [];
+
+            // Total referrals (direct)
+            $stmt = $this->conn->prepare("SELECT COUNT(*) FROM users WHERE referred_by = ?" . $tenantWhere);
+            $params = array_merge([$userId], $tenantParams);
+            $stmt->execute($params);
+            $breakdown['summary']['total_referrals'] = (int)$stmt->fetchColumn();
+
+            // Active referrals (with bookings)
+            $stmt = $this->conn->prepare("
+                SELECT COUNT(DISTINCT u.id) FROM users u
+                INNER JOIN plot_bookings pb ON pb.customer_id = u.id
+                WHERE u.referred_by = ? AND pb.status NOT IN ('cancelled')" . $tenantWhere
+            );
+            $params = array_merge([$userId], $tenantParams);
+            $stmt->execute($params);
+            $breakdown['summary']['active_referrals'] = (int)$stmt->fetchColumn();
+
+            // Commission breakdown by type
+            $types = array_keys($breakdown['by_type']);
+            foreach ($types as $type) {
+                $stmt = $this->conn->prepare(
+                    "SELECT COUNT(*), COALESCE(SUM(amount), 0) FROM mlm_commission_ledger 
+                     WHERE beneficiary_user_id = ? AND commission_type = ?" . $tenantWhere
+                );
+                $params = array_merge([$userId, $type], $tenantParams);
+                $stmt->execute($params);
+                $row = $stmt->fetch(PDO::FETCH_NUM);
+                $breakdown['by_type'][$type]['count'] = (int)($row[0] ?? 0);
+                $breakdown['by_type'][$type]['amount'] = (float)($row[1] ?? 0);
+            }
+
+            // Total earned (paid)
+            $stmt = $this->conn->prepare("
+                SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger 
+                WHERE beneficiary_user_id = ? AND status = 'paid'" . $tenantWhere
+            );
+            $params = array_merge([$userId], $tenantParams);
+            $stmt->execute($params);
+            $breakdown['summary']['total_earned'] = (float)$stmt->fetchColumn();
+
+            // Pending earned
+            $stmt = $this->conn->prepare("
+                SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger 
+                WHERE beneficiary_user_id = ? AND status = 'pending'" . $tenantWhere
+            );
+            $params = array_merge([$userId], $tenantParams);
+            $stmt->execute($params);
+            $breakdown['summary']['pending_earned'] = (float)$stmt->fetchColumn();
+
+            // This month earnings
+            $stmt = $this->conn->prepare("
+                SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger 
+                WHERE beneficiary_user_id = ? AND status = 'paid' 
+                AND MONTH(created_at) = MONTH(NOW()) AND YEAR(created_at) = YEAR(NOW())" . $tenantWhere
+            );
+            $params = array_merge([$userId], $tenantParams);
+            $stmt->execute($params);
+            $breakdown['summary']['this_month'] = (float)$stmt->fetchColumn();
+
+            // Recent commissions (last 10)
+            $stmt = $this->conn->prepare("
+                SELECT commission_type, amount, status, created_at, booking_id, notes
+                FROM mlm_commission_ledger
+                WHERE beneficiary_user_id = ?" . $tenantWhere . "
+                ORDER BY created_at DESC LIMIT 10
+            ");
+            $params = array_merge([$userId], $tenantParams);
+            $stmt->execute($params);
+            $breakdown['recent'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        } catch (\Throwable $e) {
+            error_log("[ReferralService] getReferralEarningsBreakdown error: " . $e->getMessage());
+        }
+
+        return $breakdown;
+    }
+
+    /**
      * Get list of referred users
      */
     public function getReferredUsers(int $userId): array
@@ -679,6 +788,147 @@ class ReferralService
             ];
         } catch (\Throwable $e) {
             error_log("[ReferralService] processReferralCommission failed: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Commission processing failed'];
+        }
+    }
+
+    /**
+     * Process customer referral commission on booking
+     * Called when a customer's referral makes a booking/purchase
+     * Commission: 2% of booking amount credited to referrer's wallet
+     */
+    public function processCustomerReferralCommission(int $bookingId): array
+    {
+        try {
+            $tid = $this->tenantId();
+            $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+            $tenantParams = $tid > 1 ? [$tid] : [];
+
+            // Get booking details
+            $stmt = $this->conn->prepare("
+                SELECT pb.*, u.referred_by, u.name as customer_name, u.phone as customer_phone
+                FROM plot_bookings pb
+                JOIN users u ON pb.customer_id = u.id
+                WHERE pb.id = ?" . $tenantWhere . " LIMIT 1
+            ");
+            $params = array_merge([$bookingId], $tenantParams);
+            $stmt->execute($params);
+            $booking = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$booking) {
+                return ['success' => false, 'message' => 'Booking not found'];
+            }
+
+            // Check if customer was referred by someone
+            $referrerId = $booking['referred_by'] ?? null;
+            if (!$referrerId) {
+                return ['success' => false, 'message' => 'No referrer found for this customer'];
+            }
+
+            // Check if commission already processed for this booking
+            $stmt = $this->conn->prepare("
+                SELECT id FROM mlm_commission_ledger 
+                WHERE source_user_id = ? AND commission_type = 'customer_referral' 
+                AND booking_id = ?" . $tenantWhere . " LIMIT 1
+            ");
+            $params = [$booking['customer_id'], $bookingId];
+            if ($tid > 1) $params[] = $tid;
+            $stmt->execute($params);
+            if ($stmt->fetch()) {
+                return ['success' => false, 'message' => 'Customer referral commission already processed'];
+            }
+
+            // Only process once real money is in (matches plot_bookings.status enum)
+            $validStatuses = ['token_paid', 'agreement_signed', 'emi_active', 'partially_paid', 'fully_paid', 'registration_done'];
+            if (!in_array($booking['status'] ?? '', $validStatuses, true)) {
+                return ['success' => false, 'message' => 'Booking not in valid status for commission'];
+            }
+
+            $bookingAmount = (float)($booking['total_amount'] ?? $booking['total_plot_value'] ?? 0);
+            if ($bookingAmount <= 0) {
+                return ['success' => false, 'message' => 'Invalid booking amount'];
+            }
+
+            // Customer referral commission % is admin-tunable (service_configs:
+            // referral.customer_booking_pct); clamped to 5% guardrail in code.
+            $pct = (float)\App\Services\ServiceConfigService::getVal('referral', 'customer_booking_pct', 2.0);
+            $pct = min(max($pct, 0.0), 5.0);
+            $commissionAmount = round($bookingAmount * $pct / 100, 2);
+
+            // Get referrer details
+            $stmt = $this->conn->prepare("SELECT name, email, role FROM users WHERE id = ?" . $tenantWhere . " LIMIT 1");
+            $params = [$referrerId];
+            if ($tid > 1) $params[] = $tid;
+            $stmt->execute($params);
+            $referrer = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$referrer) {
+                return ['success' => false, 'message' => 'Referrer not found'];
+            }
+
+            // MLM members earn via slab/level commissions on the same booking —
+            // the 2% customer program is for non-MLM (customer) referrers only.
+            if (in_array($referrer['role'] ?? '', ['associate', 'agent'], true)) {
+                return ['success' => false, 'message' => 'MLM referrer covered by slab commissions'];
+            }
+
+            // Insert commission ledger entry
+            $bookingNumber = $booking['booking_number'] ?? "#{$bookingId}";
+            $insertData = $this->tenantInsertData();
+            $columns = "beneficiary_user_id, source_user_id, commission_type, amount, status, booking_id, notes, created_at";
+            $values = "?, ?, 'customer_referral', ?, 'approved', ?, ?, NOW()";
+            $insertParams = [
+                $referrerId,
+                $booking['customer_id'],
+                $commissionAmount,
+                $bookingId,
+                "Customer referral commission ({$pct}%) for booking {$bookingNumber} by {$booking['customer_name']}"
+            ];
+            if (!empty($insertData)) {
+                $columns .= ", " . implode(', ', array_keys($insertData));
+                $values .= ", " . implode(', ', array_fill(0, count($insertData), '?'));
+                $insertParams = array_merge($insertParams, array_values($insertData));
+            }
+            $this->conn->prepare("INSERT INTO mlm_commission_ledger ($columns) VALUES ($values)")->execute($insertParams);
+
+            // Credit to referrer's wallet (category must be a valid wallet_transactions enum)
+            try {
+                $walletService = new \App\Services\WalletService();
+                $walletService->credit(
+                    $referrerId,
+                    $commissionAmount,
+                    'referral',
+                    "Customer referral commission ({$pct}%) for booking {$bookingNumber}",
+                    $bookingId,
+                    'booking'
+                );
+            } catch (\Throwable $e) {
+                error_log("[ReferralService] wallet credit failed: " . $e->getMessage());
+            }
+
+            // Send notification to referrer
+            try {
+                $emailSvc = new \App\Services\EmailTemplateService();
+                $emailSvc->sendReferralCommission($referrerId, [
+                    'referrer_name' => $referrer['name'] ?? 'User',
+                    'commission_amount' => number_format($commissionAmount, 2),
+                    'booking_number' => $bookingNumber,
+                    'customer_name' => $booking['customer_name'],
+                ]);
+            } catch (\Throwable $e) {
+                error_log("[ReferralService] commission email failed: " . $e->getMessage());
+            }
+
+            return [
+                'success' => true,
+                'referrer_id' => $referrerId,
+                'referrer_name' => $referrer['name'] ?? 'User',
+                'commission_amount' => $commissionAmount,
+                'booking_number' => $bookingNumber,
+            ];
+
+        } catch (\Throwable $e) {
+            error_log("[ReferralService] processCustomerReferralCommission failed: " . $e->getMessage());
             return ['success' => false, 'message' => 'Commission processing failed'];
         }
     }
@@ -871,9 +1121,53 @@ class ReferralService
     // ── Tiered Referral Bonuses ───────────────────────────────────
 
     /**
-     * Referral tier definitions
+     * Referral tier definitions — DB-first (admin-tunable), hardcoded
+     * fallback so scoring never breaks when the table is missing/empty.
      */
+    private static ?array $tiersCache = null;
+
     public static function getTiers(): array
+    {
+        if (self::$tiersCache !== null) {
+            return self::$tiersCache;
+        }
+        try {
+            $db = Database::getInstance()->getConnection();
+            $rows = $db->query(
+                "SELECT tier_key AS tier, label, min_referrals, bonus_per_referral, bonus_on_booking, color, icon, perks
+                 FROM referral_tiers WHERE is_active = 1 ORDER BY sort_order, min_referrals"
+            )->fetchAll(PDO::FETCH_ASSOC) ?: [];
+            if (!empty($rows)) {
+                foreach ($rows as &$r) {
+                    $r['min_referrals'] = (int)$r['min_referrals'];
+                    $r['bonus_per_referral'] = (float)$r['bonus_per_referral'];
+                    $r['bonus_on_booking'] = (float)$r['bonus_on_booking'];
+                    $decoded = json_decode($r['perks'] ?? '[]', true);
+                    $r['perks'] = is_array($decoded) ? $decoded : [];
+                }
+                unset($r);
+                self::$tiersCache = $rows;
+                return $rows;
+            }
+        } catch (\Throwable $e) {
+            error_log('[ReferralService] getTiers DB fallback: ' . $e->getMessage());
+        }
+        self::$tiersCache = self::defaultTiers();
+        return self::$tiersCache;
+    }
+
+    /**
+     * Clear the in-request tier cache (call after admin tier edits).
+     */
+    public static function clearTiersCache(): void
+    {
+        self::$tiersCache = null;
+    }
+
+    /**
+     * Built-in tier definitions (fallback + seed source).
+     */
+    public static function defaultTiers(): array
     {
         return [
             [
@@ -1118,6 +1412,219 @@ class ReferralService
         } catch (\Throwable $e) {
             error_log("[ReferralService] processTieredBookingBonus error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Booking bonus processing failed'];
+        }
+    }
+
+    /**
+     * Deferred signup rewards — called on first business (booking creation),
+     * NEVER on registration (fake-reg incentive otherwise).
+     *
+     * Pays, idempotently, for a referred user with >=1 non-cancelled booking:
+     *  1. tier signup bonus (ledger, existing idempotency inside), and
+     *  2. Rs.200 sponsor wallet credit for MLM-role signups (idempotent via
+     *     wallet_transactions lookup), mirroring the old instant reward.
+     */
+    public function processSignupRewardsOnFirstBooking(int $customerId): array
+    {
+        try {
+            $tid = $this->tenantId();
+            $tWhere = $tid > 1 ? ' AND tenant_id = ?' : '';
+            $tParams = $tid > 1 ? [$tid] : [];
+
+            $user = $this->conn->prepare("SELECT id, role, referred_by FROM users WHERE id = ?{$tWhere} LIMIT 1");
+            $user->execute(array_merge([$customerId], $tParams));
+            $u = $user->fetch(PDO::FETCH_ASSOC);
+            if (!$u || empty($u['referred_by'])) {
+                return ['success' => false, 'message' => 'No referrer'];
+            }
+            $referrerId = (int)$u['referred_by'];
+            if ($referrerId === $customerId) {
+                return ['success' => false, 'message' => 'Self-referral'];
+            }
+
+            $cnt = $this->conn->prepare(
+                "SELECT COUNT(*) FROM plot_bookings WHERE customer_id = ? AND status NOT IN ('cancelled'){$tWhere}"
+            );
+            $cnt->execute(array_merge([$customerId], $tParams));
+            if ((int)$cnt->fetchColumn() < 1) {
+                return ['success' => false, 'message' => 'No business yet'];
+            }
+
+            $out = ['success' => true, 'tier_signup' => null, 'sponsor_wallet' => null];
+
+            $tierRes = $this->processTieredSignupBonus($referrerId, $customerId);
+            $out['tier_signup'] = $tierRes;
+
+            // Sponsor Rs.200 wallet credit, MLM-role signups only (as before),
+            // now deferred to first business. Idempotent via txn lookup.
+            if (in_array($u['role'] ?? '', ['associate', 'agent'], true)) {
+                $dup = $this->conn->prepare(
+                    "SELECT id FROM wallet_transactions WHERE user_id = ? AND related_user_id = ? AND transaction_category = 'referral' AND reference_type = 'sponsor_activation'{$tWhere} LIMIT 1"
+                );
+                $dup->execute(array_merge([$referrerId, $customerId], $tParams));
+                if (!$dup->fetch()) {
+                    try {
+                        $uname = $this->conn->prepare("SELECT name FROM users WHERE id = ?{$tWhere}");
+                        $uname->execute(array_merge([$customerId], $tParams));
+                        $nm = $uname->fetch(PDO::FETCH_ASSOC);
+                        $ok = (new \App\Services\WalletService())->credit(
+                            $referrerId,
+                            200.00,
+                            'referral',
+                            'Sponsor activation reward for ' . ($u['role'] ?? 'associate') . ': ' . ($nm['name'] ?? ('#' . $customerId)),
+                            $customerId,
+                            'sponsor_activation'
+                        );
+                        $out['sponsor_wallet'] = ['success' => $ok, 'amount' => $ok ? 200.00 : 0.0];
+                    } catch (\Throwable $e) {
+                        error_log('[ReferralService] sponsor wallet credit failed: ' . $e->getMessage());
+                        $out['sponsor_wallet'] = ['success' => false, 'message' => 'Wallet credit failed'];
+                    }
+                } else {
+                    $out['sponsor_wallet'] = ['success' => false, 'message' => 'Already credited'];
+                }
+            }
+
+            return $out;
+        } catch (\Throwable $e) {
+            error_log('[ReferralService] processSignupRewardsOnFirstBooking error: ' . $e->getMessage());
+            return ['success' => false, 'message' => 'Processing failed'];
+        }
+    }
+
+    // ── Associate/Agent Activation Bonus ─────────────────────────────
+
+    /**
+     * Process activation bonus when a referred associate/agent adds their
+     * first team member. Bonus (admin-tunable via referral.associate_team_bonus,
+     * default ₹500) credited to referrer's wallet.
+     *
+     * NOTE: there is intentionally NO first-booking bonus — the upline
+     * already earns slab/level commission on that booking via the MLM
+     * engine, so a flat bonus there would double-pay the same event.
+     */
+    public function processAssociateActivationBonus(int $associateUserId, string $triggerType = 'first_team_member'): array
+    {
+        if ($triggerType !== 'first_team_member') {
+            return ['success' => false, 'message' => 'Unsupported trigger (first_booking retired: MLM covers it)'];
+        }
+        try {
+            $tid = $this->tenantId();
+            $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+            $tenantParams = $tid > 1 ? [$tid] : [];
+
+            // Get associate's referrer
+            $stmt = $this->conn->prepare("SELECT referred_by, role, name FROM users WHERE id = ?" . $tenantWhere . " LIMIT 1");
+            $params = array_merge([$associateUserId], $tenantParams);
+            $stmt->execute($params);
+            $associate = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$associate) {
+                return ['success' => false, 'message' => 'Associate not found'];
+            }
+
+            $referrerId = $associate['referred_by'] ?? null;
+            if (!$referrerId) {
+                return ['success' => false, 'message' => 'No referrer found'];
+            }
+
+            // Only for associate/agent roles
+            if (!in_array($associate['role'] ?? '', ['associate', 'agent'], true)) {
+                return ['success' => false, 'message' => 'Not an associate/agent'];
+            }
+
+            // Fixed ledger type (ledger has no trigger_type column; only
+            // first_team_member reaches here — first_booking is MLM-covered)
+            $ledgerType = 'associate_activation_team';
+
+            // Check if already processed for this associate + trigger
+            $stmt = $this->conn->prepare(
+                "SELECT id FROM mlm_commission_ledger
+                 WHERE beneficiary_user_id = ? AND source_user_id = ?
+                 AND commission_type = ?" . $tenantWhere . " LIMIT 1"
+            );
+            $params = [$referrerId, $associateUserId, $ledgerType];
+            if ($tid > 1) $params[] = $tid;
+            $stmt->execute($params);
+            if ($stmt->fetch()) {
+                return ['success' => false, 'message' => 'Activation bonus already processed for this trigger'];
+            }
+
+            // Team bonus is admin-tunable (service_configs:
+            // referral.associate_team_bonus); clamped to ₹2000 guardrail.
+            $bonusAmount = (float)\App\Services\ServiceConfigService::getVal('referral', 'associate_team_bonus', 500.00);
+            $bonusAmount = round(min(max($bonusAmount, 0.0), 2000.0), 2);
+
+            // Get referrer details
+            $stmt = $this->conn->prepare("SELECT name FROM users WHERE id = ?" . $tenantWhere . " LIMIT 1");
+            $params = [$referrerId];
+            if ($tid > 1) $params[] = $tid;
+            $stmt->execute($params);
+            $referrer = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$referrer) {
+                return ['success' => false, 'message' => 'Referrer not found'];
+            }
+
+            // Insert commission ledger entry (real columns only; trigger rides in notes)
+            $insertData = $this->tenantInsertData();
+            $columns = "beneficiary_user_id, source_user_id, commission_type, amount, status, notes, created_at";
+            $values = "?, ?, ?, ?, 'approved', ?, NOW()";
+            $insertParams = [
+                $referrerId,
+                $associateUserId,
+                $ledgerType,
+                $bonusAmount,
+                "Associate/Agent activation bonus (₹{$bonusAmount}) for {$associate['name']}'s {$triggerType}"
+            ];
+            if (!empty($insertData)) {
+                $columns .= ", " . implode(', ', array_keys($insertData));
+                $values .= ", " . implode(', ', array_fill(0, count($insertData), '?'));
+                $insertParams = array_merge($insertParams, array_values($insertData));
+            }
+            $this->conn->prepare("INSERT INTO mlm_commission_ledger ($columns) VALUES ($values)")->execute($insertParams);
+
+            // Credit to referrer's wallet (category must be a valid wallet_transactions enum)
+            try {
+                $walletService = new \App\Services\WalletService();
+                $walletService->credit(
+                    $referrerId,
+                    $bonusAmount,
+                    'referral',
+                    "Associate/Agent activation bonus for {$associate['name']}'s {$triggerType}",
+                    $associateUserId,
+                    'user'
+                );
+            } catch (\Throwable $e) {
+                error_log("[ReferralService] wallet credit failed for associate activation: " . $e->getMessage());
+            }
+
+            // Send notification to referrer
+            try {
+                $emailSvc = new \App\Services\EmailTemplateService();
+                $emailSvc->sendReferralCommission($referrerId, [
+                    'referrer_name' => $referrer['name'] ?? 'User',
+                    'commission_amount' => number_format($bonusAmount, 2),
+                    'booking_number' => "ACT-{$associateUserId}",
+                    'booking_amount' => number_format($bonusAmount, 2),
+                    'custom_note' => "Your referral {$associate['name']} completed their {$triggerType}! You earned ₹{$bonusAmount} activation bonus."
+                ]);
+            } catch (\Throwable $e) {
+                error_log("[ReferralService] activation bonus email failed: " . $e->getMessage());
+            }
+
+            return [
+                'success' => true,
+                'referrer_id' => $referrerId,
+                'referrer_name' => $referrer['name'] ?? 'User',
+                'associate_name' => $associate['name'],
+                'trigger_type' => $triggerType,
+                'bonus_amount' => $bonusAmount,
+            ];
+
+        } catch (\Throwable $e) {
+            error_log("[ReferralService] processAssociateActivationBonus error: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Activation bonus processing failed'];
         }
     }
 

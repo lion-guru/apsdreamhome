@@ -200,10 +200,10 @@ class CustomerJourneyController extends PlotBaseController
 
             // Fetch extras: agreement, NOC, registry deed, possession record
             $extras = [];
-            try { $extras['agreement'] = $db->fetch("SELECT * FROM booking_agreements WHERE booking_id = ? ORDER BY created_at DESC LIMIT 1", [$bookingId]); } catch (\Throwable $e) {}
-            try { $extras['noc'] = $db->fetch("SELECT * FROM noc_requests WHERE booking_id = ? ORDER BY created_at DESC LIMIT 1", [$bookingId]); } catch (\Throwable $e) {}
-            try { $extras['deed'] = $db->fetch("SELECT * FROM booking_documents WHERE booking_id = ? AND document_type = 'registry_deed' ORDER BY created_at DESC LIMIT 1", [$bookingId]); } catch (\Throwable $e) {}
-            try { $extras['possession'] = $db->fetch("SELECT * FROM possession_records WHERE booking_id = ? ORDER BY created_at DESC LIMIT 1", [$bookingId]); } catch (\Throwable $e) {}
+            try { $extras['agreement'] = $db->fetch("SELECT * FROM booking_agreements WHERE booking_id = ? ORDER BY created_at DESC LIMIT 1", [$bookingId]); } catch (\Throwable $e) { error_log('CustomerJourneyController agreement fetch: ' . $e->getMessage()); }
+            try { $extras['noc'] = $db->fetch("SELECT * FROM noc_requests WHERE booking_id = ? ORDER BY created_at DESC LIMIT 1", [$bookingId]); } catch (\Throwable $e) { error_log('CustomerJourneyController noc fetch: ' . $e->getMessage()); }
+            try { $extras['deed'] = $db->fetch("SELECT * FROM booking_documents WHERE booking_id = ? AND document_type = 'registry_deed' ORDER BY created_at DESC LIMIT 1", [$bookingId]); } catch (\Throwable $e) { error_log('CustomerJourneyController deed fetch: ' . $e->getMessage()); }
+            try { $extras['possession'] = $db->fetch("SELECT * FROM possession_records WHERE booking_id = ? ORDER BY created_at DESC LIMIT 1", [$bookingId]); } catch (\Throwable $e) { error_log('CustomerJourneyController possession fetch: ' . $e->getMessage()); }
 
             return $this->render('customer/journey', [
                 'page_title' => 'Booking Journey',

@@ -214,6 +214,15 @@ class BookingLifecycleService
             // Track property usage for tenant
             $this->trackBookingUsage();
 
+            // Deferred signup rewards: tier bonus + sponsor wallet now pay out
+            // on first business (never on registration). Best-effort, idempotent.
+            try {
+                $referralSvc = new \App\Services\ReferralService();
+                $referralSvc->processSignupRewardsOnFirstBooking((int)$customerId);
+            } catch (\Throwable $e) {
+                error_log('[BookingLifecycleService] signup rewards hook failed: ' . $e->getMessage());
+            }
+
             return [
                 'success'           => true,
                 'id'                => $bookingId,
@@ -681,6 +690,14 @@ class BookingLifecycleService
                 $this->calculateCommission((int)$inst['booking_id']);
             } catch (\Throwable $e) {
                 error_log("[BookingLifecycleService::recordPayment] commission calculation failed: " . $e->getMessage());
+            }
+
+            // Process customer referral commission (2% to referrer's wallet)
+            try {
+                $referralSvc = new \App\Services\ReferralService();
+                $referralSvc->processCustomerReferralCommission((int)$inst['booking_id']);
+            } catch (\Throwable $e) {
+                error_log("[BookingLifecycleService::recordPayment] customer referral commission failed: " . $e->getMessage());
             }
 
             return [

@@ -190,8 +190,12 @@ class MobileBookingApiController extends BaseController
         try {
             $slots = [];
             $times = ['09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00'];
-            $stmt = $this->db->prepare("SELECT visit_time, COUNT(*) as booked FROM site_visits WHERE visit_date = ? AND status IN ('scheduled', 'confirmed') GROUP BY visit_time");
-            $stmt->execute([$date]);
+            $tid = (int)$this->tenantId();
+            $tidSql = $tid > 1 ? ' AND tenant_id = ?' : '';
+            $params = [$date];
+            if ($tid > 1) $params[] = $tid;
+            $stmt = $this->db->prepare("SELECT visit_time, COUNT(*) as booked FROM site_visits WHERE visit_date = ? AND status IN ('scheduled', 'confirmed'){$tidSql} GROUP BY visit_time");
+            $stmt->execute($params);
             $booked = [];
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $booked[$row['visit_time']] = $row['booked'];
@@ -207,19 +211,23 @@ class MobileBookingApiController extends BaseController
         }
     }
 
-    private function getUserSiteVisits($userId)
+private function getUserSiteVisits($userId)
     {
         try {
+            $tid = (int)$this->tenantId();
+            $tidSql = $tid > 1 ? ' AND sv.tenant_id = ?' : '';
+            $params = [$userId];
+            if ($tid > 1) $params[] = $tid;
             $stmt = $this->db->prepare("
                 SELECT sv.id, sv.visit_date, sv.visit_time, sv.status, sv.notes,
                        p.title as property_title, p.city as location
                 FROM site_visits sv
                 LEFT JOIN properties p ON sv.property_id = p.id
-                WHERE sv.user_id = ?
+                WHERE sv.user_id = ?{$tidSql}
                 ORDER BY sv.visit_date DESC
                 LIMIT 20
             ");
-            $stmt->execute([$userId]);
+            $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             error_log("[MobileBookingApiController] getUserSiteVisits error: " . $e->getMessage());
@@ -229,14 +237,22 @@ class MobileBookingApiController extends BaseController
 
     private function cancelVisitSession($visitId)
     {
-        $stmt = $this->db->prepare("UPDATE site_visits SET status = 'cancelled' WHERE id = ?");
-        $stmt->execute([$visitId]);
+        $tid = (int)$this->tenantId();
+        $tidSql = $tid > 1 ? ' AND tenant_id = ?' : '';
+        $params = [$visitId];
+        if ($tid > 1) $params[] = $tid;
+        $stmt = $this->db->prepare("UPDATE site_visits SET status = 'cancelled' WHERE id = ?{$tidSql}");
+        $stmt->execute($params);
     }
 
     private function rescheduleVisitSession($visitId, $newDate, $newSlot)
     {
-        $stmt = $this->db->prepare("UPDATE site_visits SET visit_date = ?, visit_time = ?, status = 'rescheduled' WHERE id = ?");
-        $stmt->execute([$newDate, $newSlot, $visitId]);
+        $tid = (int)$this->tenantId();
+        $tidSql = $tid > 1 ? ' AND tenant_id = ?' : '';
+        $params = [$newDate, $newSlot, $visitId];
+        if ($tid > 1) $params[] = $tid;
+        $stmt = $this->db->prepare("UPDATE site_visits SET visit_date = ?, visit_time = ?, status = 'rescheduled' WHERE id = ?{$tidSql}");
+        $stmt->execute($params);
     }
 
     public function cancelSiteVisitApi()
@@ -404,43 +420,59 @@ class MobileBookingApiController extends BaseController
 
     private function getBookingsData($userId)
     {
+        $tid = (int)$this->tenantId();
+        $tidSql = $tid > 1 ? ' AND b.tenant_id = ?' : '';
+        $params = [$userId];
+        if ($tid > 1) $params[] = $tid;
         $stmt = $this->db->prepare("
             SELECT b.id, b.booking_date, b.amount, b.status, b.created_at,
                    p.title as property_title,
                    p.price as property_price
             FROM bookings b
             LEFT JOIN properties p ON b.property_id = p.id
-            WHERE b.customer_id = ?
+            WHERE b.customer_id = ?{$tidSql}
             ORDER BY b.created_at DESC
         ");
-        $stmt->execute([$userId]);
+        $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     private function getBookingDetailData($userId, $bookingId)
     {
+        $tid = (int)$this->tenantId();
+        $tidSql = $tid > 1 ? ' AND b.tenant_id = ?' : '';
+        $params = [$bookingId, $userId];
+        if ($tid > 1) $params[] = $tid;
         $stmt = $this->db->prepare("
             SELECT b.*, p.title as property_title, p.price as property_price,
                    u.name as customer_name, u.email as customer_email
             FROM bookings b
             LEFT JOIN properties p ON b.property_id = p.id
             LEFT JOIN users u ON b.customer_id = u.id
-            WHERE b.id = ? AND b.customer_id = ?
+            WHERE b.id = ? AND b.customer_id = ?{$tidSql}
         ");
-        $stmt->execute([$bookingId, $userId]);
+        $stmt->execute($params);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     private function recordPayment($userId, $bookingId, $amount, $paymentMethod)
     {
+        $tid = (int)$this->tenantId();
         $this->db->beginTransaction();
         try {
-            $stmt = $this->db->prepare("INSERT INTO payments (booking_id, user_id, amount, gateway, status, created_at) VALUES (?, ?, ?, ?, 'completed', NOW())");
-            $stmt->execute([$bookingId, $userId, $amount, $paymentMethod]);
+            $tidSql = $tid > 1 ? ', tenant_id' : '';
+            $tidVal = $tid > 1 ? ', ?' : '';
+            $stmt = $this->db->prepare("INSERT INTO payments (booking_id, user_id, amount, gateway, status, created_at{$tidSql}) VALUES (?, ?, ?, ?, 'completed', NOW(){$tidVal})");
+            $params = [$bookingId, $userId, $amount, $paymentMethod];
+            if ($tid > 1) $params[] = $tid;
+            $stmt->execute($params);
             $paymentId = $this->db->lastInsertId();
 
-            $stmt = $this->db->prepare("UPDATE bookings SET amount = amount + ?, status = CASE WHEN amount >= total_amount THEN 'completed' ELSE 'partial' END WHERE id = ? AND customer_id = ?");
-            $stmt->execute([$amount, $bookingId, $userId]);
+            $tidSql = $tid > 1 ? ' AND tenant_id = ?' : '';
+            $params = [$amount, $bookingId, $userId];
+            if ($tid > 1) $params[] = $tid;
+            $stmt = $this->db->prepare("UPDATE bookings SET amount = amount + ?, status = CASE WHEN amount >= total_amount THEN 'completed' ELSE 'partial' END WHERE id = ? AND customer_id = ?{$tidSql}");
+            $stmt->execute($params);
 
             $this->db->commit();
             return $paymentId;
@@ -452,13 +484,19 @@ class MobileBookingApiController extends BaseController
 
     private function createBooking($userId, $data)
     {
-        $stmt = $this->db->prepare("INSERT INTO bookings (customer_id, property_id, booking_date, amount, status, created_at) VALUES (?, ?, ?, 0, 'pending', NOW())");
-        $stmt->execute([$userId, $data['property_id'], $data['booking_date'] ?? date('Y-m-d')]);
+        $tid = (int)$this->tenantId();
+        $tidSql = $tid > 1 ? ', tenant_id' : '';
+        $tidVal = $tid > 1 ? ', ?' : '';
+        $params = [$userId, $data['property_id'], $data['booking_date'] ?? date('Y-m-d')];
+        if ($tid > 1) $params[] = $tid;
+        $stmt = $this->db->prepare("INSERT INTO bookings (customer_id, property_id, booking_date, amount, status, created_at{$tidSql}) VALUES (?, ?, ?, 0, 'pending', NOW(){$tidVal})");
+        $stmt->execute($params);
         return $this->db->lastInsertId();
     }
 
     private function updateBookingRecord($userId, $bookingId, $data)
     {
+        $tid = (int)$this->tenantId();
         $updates = [];
         $params = [];
         $allowed = ['booking_date', 'amount', 'status'];
@@ -469,16 +507,23 @@ class MobileBookingApiController extends BaseController
             }
         }
         if (!empty($updates)) {
+            $tid = (int)$this->tenantId();
+            $tidSql = $tid > 1 ? ' AND tenant_id = ?' : '';
             $params[] = $userId;
             $params[] = $bookingId;
-            $stmt = $this->db->prepare("UPDATE bookings SET " . implode(', ', $updates) . " WHERE customer_id = ? AND id = ?");
+            if ($tid > 1) $params[] = $tid;
+            $stmt = $this->db->prepare("UPDATE bookings SET " . implode(', ', $updates) . " WHERE customer_id = ? AND id = ?{$tidSql}");
             $stmt->execute($params);
         }
     }
 
     private function cancelBookingRecord($userId, $bookingId)
     {
-        $stmt = $this->db->prepare("UPDATE bookings SET status = 'cancelled' WHERE id = ? AND customer_id = ?");
-        $stmt->execute([$bookingId, $userId]);
+        $tid = (int)$this->tenantId();
+        $tidSql = $tid > 1 ? ' AND tenant_id = ?' : '';
+        $params = [$bookingId, $userId];
+        if ($tid > 1) $params[] = $tid;
+        $stmt = $this->db->prepare("UPDATE bookings SET status = 'cancelled' WHERE id = ? AND customer_id = ?{$tidSql}");
+        $stmt->execute($params);
     }
 }

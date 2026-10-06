@@ -30,6 +30,7 @@ class AccountingController extends AdminController
      */
     public function index()
     {
+        $this->requireAdmin();
         try {
             $today = date('Y-m-d');
             $thisMonth = date('Y-m-01');
@@ -108,6 +109,7 @@ class AccountingController extends AdminController
      */
     public function income()
     {
+        $this->requireAdmin();
         try {
             $search = $_GET['search'] ?? '';
             $category = $_GET['category'] ?? '';
@@ -177,6 +179,7 @@ class AccountingController extends AdminController
      */
     public function expenses()
     {
+        $this->requireAdmin();
         try {
             $search = $_GET['search'] ?? '';
             $category = $_GET['category'] ?? '';
@@ -246,6 +249,7 @@ class AccountingController extends AdminController
      */
     public function storeIncome()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -314,6 +318,7 @@ class AccountingController extends AdminController
      */
     public function storeExpense()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -382,6 +387,7 @@ class AccountingController extends AdminController
      */
     public function getStats()
     {
+        $this->requireAdmin();
         try {
             $stats = [];
 
@@ -440,6 +446,7 @@ class AccountingController extends AdminController
      */
     public function export()
     {
+        $this->requireAdmin();
         try {
             $type = $_GET['type'] ?? 'all';
             $format = $_GET['format'] ?? 'json';

@@ -710,9 +710,177 @@ class PlotManagementController extends AdminController
     }
 
     /**
-     * Get plots data for export
+     * Import plots from CSV
      */
-    private function getPlotsExport(string $startDate, string $endDate): array
+    public function import()
+    {
+        $this->requireAdmin();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            return $this->render('admin/plots/import', [
+                'page_title' => 'Import Plots',
+            ]);
+        }
+
+        $this->validateCsrfOrFail();
+
+        if (!isset($_FILES['import_file']) || $_FILES['import_file']['error'] !== UPLOAD_ERR_OK) {
+            $this->setFlash('error', 'Please select a valid CSV file');
+            return $this->redirect('/admin/plots/import');
+        }
+
+        $file = $_FILES['import_file']['tmp_name'];
+        $handle = fopen($file, 'r');
+        if (!$handle) {
+            $this->setFlash('error', 'Could not read the uploaded file');
+            return $this->redirect('/admin/plots/import');
+        }
+
+        $headers = fgetcsv($handle);
+        if (!$headers) {
+            fclose($handle);
+            $this->setFlash('error', 'Empty or invalid CSV file');
+            return $this->redirect('/admin/plots/import');
+        }
+
+        $required = ['plot_number', 'colony_id', 'area_sqft'];
+        $missing = array_diff($required, $headers);
+        if (!empty($missing)) {
+            fclose($handle);
+            $this->setFlash('error', 'Missing required columns: ' . implode(', ', $missing));
+            return $this->redirect('/admin/plots/import');
+        }
+
+        $imported = 0;
+        $skipped = 0;
+        $errors = [];
+
+        $tid = $this->tenantId();
+
+        while (($row = fgetcsv($handle)) !== false) {
+            if (count($row) !== count($headers)) {
+                $errors[] = 'Row ' . ($imported + $skipped + 1) . ': Column count mismatch';
+                $skipped++;
+                continue;
+            }
+
+            $data = array_combine($headers, $row);
+
+            // Validate required fields
+            if (empty($data['plot_number']) || empty($data['colony_id']) || empty($data['area_sqft'])) {
+                $errors[] = 'Row ' . ($imported + $skipped + 1) . ': Missing required fields';
+                $skipped++;
+                continue;
+            }
+
+            // Check if plot already exists
+            $existing = $this->db->fetchOne(
+                "SELECT id FROM plots WHERE plot_number = ? AND colony_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                array_merge([$data['plot_number'], (int)$data['colony_id']], $tid > 1 ? [$tid] : [])
+            );
+
+            if ($existing) {
+                $errors[] = "Row " . ($imported + $skipped + 1) . ": Plot {$data['plot_number']} already exists in this colony";
+                $skipped++;
+                continue;
+            }
+
+            // Prepare plot data
+            $plotData = [
+                'colony_id' => (int)$data['colony_id'],
+                'plot_number' => trim($data['plot_number']),
+                'block' => trim($data['block'] ?? ''),
+                'sector' => trim($data['sector'] ?? ''),
+                'plot_type' => trim($data['plot_type'] ?? 'residential'),
+                'area_sqft' => (float)($data['area_sqft'] ?? 0),
+                'area_sqm' => (float)($data['area_sqm'] ?? 0),
+                'frontage_ft' => (float)($data['frontage_ft'] ?? 0),
+                'depth_ft' => (float)($data['depth_ft'] ?? 0),
+                'price_per_sqft' => (float)($data['price_per_sqft'] ?? 0),
+                'total_price' => (float)($data['total_price'] ?? 0),
+                'status' => $data['status'] ?? 'available',
+                'description' => trim($data['description'] ?? ''),
+                'features' => trim($data['features'] ?? ''),
+                'facing' => trim($data['facing'] ?? ''),
+                'corner_plot' => !empty($data['corner_plot']) ? 1 : 0,
+                'park_facing' => !empty($data['park_facing']) ? 1 : 0,
+                'road_width_ft' => (float)($data['road_width_ft'] ?? 0),
+                'latitude' => !empty($data['latitude']) ? (float)$data['latitude'] : null,
+                'longitude' => !empty($data['longitude']) ? (float)$data['longitude'] : null,
+                'is_featured' => !empty($data['is_featured']) ? 1 : 0,
+                'is_active' => !empty($data['is_active']) ? 1 : 0,
+            ];
+
+            $cols = implode(', ', array_keys($plotData));
+            $placeholders = ':' . implode(', :', array_keys($plotData));
+            $sql = "INSERT INTO plots ($cols, tenant_id) VALUES ($placeholders, ?)";
+            $params = array_values($plotData);
+            $params[] = $tid;
+
+            try {
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute($params);
+                $imported++;
+            } catch (\PDOException $e) {
+                $errors[] = 'Row ' . ($imported + $skipped + 1) . ': ' . $e->getMessage();
+                $skipped++;
+            }
+        }
+
+        fclose($handle);
+
+        if (!empty($errors)) {
+            $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'plots_import', [
+                'imported' => $imported,
+                'skipped' => $skipped,
+                'errors' => $errors,
+            ]);
+            $this->setFlash('warning', "Imported: $imported, Skipped: $skipped. Errors: " . count($errors));
+        } else {
+            $this->setFlash('success', "Successfully imported $imported plots");
+        }
+
+        return $this->redirect('/admin/plots/import');
+    }
+
+    /**
+     * Download import template
+     */
+    public function downloadTemplate()
+    {
+        $filename = 'plots_import_template.csv';
+
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+        $output = fopen('php://output', 'w');
+
+        // Required columns
+        $required = ['plot_number', 'colony_id', 'area_sqft'];
+        // Optional columns
+        $optional = [
+            'block', 'sector', 'plot_type', 'area_sqm', 'frontage_ft', 'depth_ft',
+            'price_per_sqft', 'total_price', 'status', 'description', 'features',
+            'facing', 'corner_plot', 'park_facing', 'road_width_ft',
+            'latitude', 'longitude', 'is_featured', 'is_active'
+        ];
+
+        $headers = array_merge($required, $optional);
+        fputcsv($output, $headers);
+
+        // Example row
+        $example = array_merge(
+            ['101', '1', '1200'],
+            array_fill(0, count($optional), '')
+        );
+        fputcsv($output, $example);
+
+        fclose($output);
+        exit;
+    }
+
+    /**
+     * Get plots data for export(string $startDate, string $endDate): array
     {
         try {
             list($tSql, $tParams) = $this->tenantWhere();

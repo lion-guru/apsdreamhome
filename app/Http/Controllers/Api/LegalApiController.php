@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Core\Database;
 use App\Services\Legal\LegalDocumentService;
 use PDO;
+use App\Traits\TenantAwareTrait;
 
 class LegalApiController extends BaseApiController
 {
+    use TenantAwareTrait;
+    
     protected $docService;
 
     public function __construct()

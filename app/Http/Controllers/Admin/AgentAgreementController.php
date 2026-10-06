@@ -1,7 +1,6 @@
 <?php
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\AdminController;
 use App\Traits\TenantAwareTrait;
 
 class AgentAgreementController extends AdminController {

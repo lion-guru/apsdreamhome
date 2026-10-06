@@ -17,6 +17,11 @@ class WalletController extends BaseController
         parent::__construct();
     }
 
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
+    }
+
     /**
      * Wallet Dashboard - Main wallet page
      */
@@ -288,6 +293,11 @@ class WalletController extends BaseController
 
         $userId = $_SESSION['user_id'];
 
+        // Pagination parameters
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $perPage = 10;
+        $offset = ($page - 1) * $perPage;
+
         // Get wallet balance
         $wallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1", [$userId]);
 
@@ -302,23 +312,36 @@ class WalletController extends BaseController
             error_log('WalletController bank accounts: ' . $e->getMessage());
         }
 
-        // Get withdrawal history
+        // Get withdrawal history with pagination
         $withdrawals = [];
+        $totalWithdrawals = 0;
         try {
+            $totalStmt = $this->db->fetchOne("SELECT COUNT(*) FROM withdrawal_requests WHERE user_id = ?", [$userId]);
+            $totalWithdrawals = (int)($totalStmt['COUNT(*)'] ?? 0);
+
             $withdrawals = $this->db->fetchAll(
-                "SELECT * FROM withdrawal_requests WHERE user_id = ? ORDER BY created_at DESC LIMIT 10",
-                [$userId]
+                "SELECT * FROM withdrawal_requests WHERE user_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?",
+                [$userId, $perPage, $offset]
             );
         } catch (\Exception $e) {
             error_log('WalletController withdrawals: ' . $e->getMessage());
         }
+
+        $totalPages = ceil($totalWithdrawals / $perPage);
 
         $data = [
             'wallet' => $wallet,
             'bankAccounts' => $bankAccounts,
             'withdrawals' => $withdrawals,
             'user_name' => $_SESSION['user_name'] ?? 'User',
-            'page_title' => 'Withdrawal Request'
+            'page_title' => 'Withdrawal Request',
+            'pagination' => [
+                'current_page' => $page,
+                'per_page' => $perPage,
+                'total' => $totalWithdrawals,
+                'total_pages' => $totalPages,
+                'offset' => $offset,
+            ],
         ];
 
         $this->layout = ($_SESSION['role'] ?? '') === 'associate' ? 'layouts/associate' : 'layouts/base';
@@ -358,15 +381,40 @@ class WalletController extends BaseController
                 exit;
             }
 
+            // Verify bank account belongs to user
+            $bankAccount = $this->db->fetchOne("SELECT * FROM user_bank_accounts WHERE id = ? AND user_id = ? AND status = 'active'", [$bankAccountId, $userId]);
+            if (!$bankAccount) {
+                echo json_encode(['success' => false, 'message' => 'Invalid bank account']);
+                exit;
+            }
+
+            // Deduct at request time (admin approve only flips status; reject refunds)
+            $newBalance = (float)$wallet['points_balance'] - $amount;
+            $this->db->query("UPDATE wallet_points SET points_balance = ?, total_used = total_used + ? WHERE user_id = ?", [$newBalance, $amount, $userId]);
+
             // Create withdrawal request
             $tid = (int)$this->tenantId();
-            $this->db->insert('withdrawal_requests', [
+            $withdrawalId = $this->db->insert('withdrawal_requests', [
                 'user_id' => $userId,
                 'bank_account_id' => $bankAccountId,
                 'amount' => $amount,
                 'status' => 'pending',
                 'tenant_id' => $tid,
                 'created_at' => date('Y-m-d H:i:s')
+            ]);
+
+            // Ledger row (real wallet_transactions schema)
+            $this->db->insert('wallet_transactions', [
+                'user_id' => $userId,
+                'transaction_type' => 'debit',
+                'transaction_category' => 'withdrawal',
+                'amount' => $amount,
+                'balance_before' => (float)$wallet['points_balance'],
+                'balance_after' => $newBalance,
+                'description' => 'Withdrawal to bank: ' . ($bankAccount['account_holder_name'] ?? '') . ' - ' . substr($bankAccount['account_number'] ?? '', -4),
+                'reference_id' => (int)$withdrawalId,
+                'reference_type' => 'withdrawal_request',
+                'tenant_id' => $tid,
             ]);
 
             echo json_encode(['success' => true, 'message' => 'Withdrawal request submitted successfully']);

@@ -100,6 +100,31 @@ $router->get('/api/v2/mobile/user/profile', 'Api\MobileUserApiController@getUser
 $router->get('/api/v2/mobile/payouts/pending', 'Api\MobileUserApiController@getPendingPayouts')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/payouts/process', 'Api\MobileUserApiController@processPayouts')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/payouts/history', 'Api\MobileUserApiController@getPayoutHistory')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ============================================================
+// WALLET ACTIVATION PACKAGES
+// ============================================================
+$router->get('/api/v2/mobile/wallet/activation/packages', 'Api\MobileUserApiController@walletActivationPackages')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/wallet/activation/my-wallet', 'Api\MobileUserApiController@walletActivationMyWallet')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/wallet/activation/purchase', 'Api\MobileUserApiController@walletActivationPurchase')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/wallet/activation/verify-payment', 'Api\MobileUserApiController@walletActivationVerifyPayment')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/wallet/balance', 'Api\MobileUserApiController@walletBalance')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ============================================================
+// REFERRAL EARNINGS
+// ============================================================
+$router->get('/api/v2/mobile/referral/earnings', 'Api\MobileUserApiController@referralEarnings')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/referral/leaderboard', 'Api\MobileUserApiController@referralLeaderboard')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/referral/share-url', 'Api\MobileUserApiController@referralShareUrl')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ============================================================
+// CUSTOMER INVESTMENTS
+// ============================================================
+$router->get('/api/v2/mobile/investment-plans', 'Api\MobileUserApiController@investmentPlans')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/user/investments', 'Api\MobileUserApiController@userInvestments')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/user/invest', 'Api\MobileUserApiController@investmentCreate')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/user/investment/cancel', 'Api\MobileUserApiController@investmentCancel')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
 $router->get('/api/v2/mobile/mlm/genealogy', 'Api\MobileMLMApiController@getGenealogy')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/mlm/business-breakdown', 'Api\MobileMLMApiController@getBusinessBreakdown')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/mlm/my-team', 'Api\MobileMLMApiController@getMyTeam')->middleware('App\Http\Middleware\ApiAuthMiddleware');
@@ -135,7 +160,75 @@ $router->get('/api/v2/mobile/user/notifications', 'Api\MobileUserApiController@g
 $router->post('/api/v2/mobile/user/notifications/read', 'Api\MobileUserApiController@markNotificationsRead')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // ============================================================
-// MOBILE API V2 â€” FCM Token Registration
+// MOBILE API V2 — User Notifications
+// ============================================================
+$router->get('/api/v2/mobile/user/notifications', 'Api\MobileUserApiController@getCustomerNotifications')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/user/notifications/read', 'Api\MobileUserApiController@markNotificationsRead')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ============================================================
+// MOBILE API V2 — Employee Self-Service Portal
+// ============================================================
+// Tax Regime
+$router->get('/api/v2/mobile/self-service/tax-regime', 'Api\MobileUserApiController@getTaxRegime')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/self-service/tax-regime', 'Api\MobileUserApiController@setTaxRegime')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Investment Declaration
+$router->get('/api/v2/mobile/self-service/investment-declaration', 'Api\MobileUserApiController@getInvestmentDeclaration')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/self-service/investment-declaration', 'Api\MobileUserApiController@saveInvestmentDeclaration')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/self-service/investment-declaration/upload-proof', 'Api\MobileUserApiController@uploadInvestmentProof')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Form 16
+$router->get('/api/v2/mobile/self-service/form16', 'Api\MobileUserApiController@getForm16List')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/self-service/form16/generate', 'Api\MobileUserApiController@generateForm16')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/self-service/form16/download/{financialYear}', 'Api\MobileUserApiController@downloadForm16')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Payslips
+$router->get('/api/v2/mobile/self-service/payslips', 'Api\MobileUserApiController@getPayslips')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/self-service/payslips/{id}/download', 'Api\MobileUserApiController@downloadPayslip')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Leave Management
+$router->get('/api/v2/mobile/self-service/leave', 'Api\MobileUserApiController@getLeaveBalances')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/self-service/leave-types', 'Api\MobileUserApiController@getLeaveTypes')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/self-service/leave/apply', 'Api\MobileUserApiController@applyLeave')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/self-service/leave/history', 'Api\MobileUserApiController@getLeaveHistory')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Dashboard (composite)
+$router->get('/api/v2/mobile/self-service/dashboard', 'Api\MobileUserApiController@getSelfServiceDashboard')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Reimbursement
+$router->get('/api/v2/mobile/self-service/reimbursement', 'Api\MobileUserApiController@getReimbursements')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/self-service/reimbursement', 'Api\MobileUserApiController@submitReimbursement')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Profile
+$router->get('/api/v2/mobile/self-service/profile', 'Api\MobileUserApiController@getProfile')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/self-service/profile', 'Api\MobileUserApiController@updateProfile')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/self-service/profile/change-password', 'Api\MobileUserApiController@changePassword')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Attendance
+$router->get('/api/v2/mobile/self-service/attendance', 'Api\MobileUserApiController@getAttendance')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/self-service/attendance/stats', 'Api\MobileUserApiController@getAttendanceStats')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Gratuity
+$router->get('/api/v2/mobile/gratuity/calculator', 'Api\MobileUserApiController@gratuityCalculator')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/gratuity/report', 'Api\MobileUserApiController@gratuityEligibilityReport')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/gratuity/detail/{id}', 'Api\MobileUserApiController@gratuityDetail')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Full & Final Settlement
+$router->post('/api/v2/mobile/fnf/calculator', 'Api\MobileUserApiController@fnfCalculator')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/fnf/process', 'Api\MobileUserApiController@fnfProcess')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Shift Roster & Overtime
+$router->get('/api/v2/mobile/shift-roster/shift-types', 'Api\MobileUserApiController@shiftTypes')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/shift-roster/roster', 'Api\MobileUserApiController@getRoster')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/shift-roster/assign-shift', 'Api\MobileUserApiController@assignShift')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/shift-roster/overtime-requests', 'Api\MobileUserApiController@overtimeRequests')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/shift-roster/overtime-request', 'Api\MobileUserApiController@requestOvertime')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/shift-roster/overtime-requests/{id}', 'Api\MobileUserApiController@processOvertime')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/shift-roster/overtime-reports', 'Api\MobileUserApiController@overtimeReports')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/shift-roster/shift-coverage', 'Api\MobileUserApiController@shiftCoverage')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ============================================================
+// MOBILE API V2 — FCM Token Registration
 // ============================================================
 $router->post('/api/v2/mobile/fcm/register', 'Api\MobileAuthApiController@registerFcmToken')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
@@ -994,6 +1087,32 @@ $router->post('/api/v2/mobile/commission-recalculations/bulk-request', 'Api\Comm
 // ============================================================
 // INFRASTRUCTURE & DEBUGGING API (Admin Tools)
 // ============================================================
+// ============================================================
+// COLONY PIPELINE MOBILE API
+// ============================================================
+$router->get('/api/v2/mobile/colony-pipeline/dashboard', 'Api\MobileAdminApiController@colonyPipelineDashboard')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/colony-pipeline/detail/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineDetail')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/colony-pipeline/layout/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineLayout')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/colony-pipeline/generate-plots/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineGeneratePlots')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/colony-pipeline/save-layout/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineSaveLayout')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/colony-pipeline/delete-plots/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineDeletePlots')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/colony-pipeline/pricing/{colonyId}', 'Api\MobileAdminApiController@colonyPipelinePricing')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/colony-pipeline/calculate-pricing/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineCalculatePricing')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/colony-pipeline/apply-pricing/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineApplyPricing')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/colony-pipeline/costs/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineCosts')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/colony-pipeline/costs/store/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineStoreCost')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/colony-pipeline/plots/{colonyId}', 'Api\MobileAdminApiController@colonyPipelinePlots')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/colony-pipeline/plots/stats/{colonyId}', 'Api\MobileAdminApiController@colonyPipelinePlotsStats')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/colony-pipeline/map/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineMap')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/colony-pipeline/map/geojson/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineMapGeoJson')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/colony-pipeline/pricing-plan/save/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineSavePricingPlan')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/colony-pipeline/pricing-plan/activate/{colonyId}/{planId}', 'Api\MobileAdminApiController@colonyPipelineActivatePricingPlan')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/colony-pipeline/pricing-plan/apply/{colonyId}/{planId}', 'Api\MobileAdminApiController@colonyPipelineApplyPricingPlan')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/colony-pipeline/pricing-plan/history/{colonyId}', 'Api\MobileAdminApiController@colonyPipelinePricingPlanHistory')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/colony-pipeline/pricing-plan/applications/{colonyId}', 'Api\MobileAdminApiController@colonyPipelinePricingPlanApplications')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/colony-pipeline/map/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineMap')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/colony-pipeline/map/geojson/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineMapGeoJson')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
 require_once __DIR__ . '/container.php';
 require_once __DIR__ . '/performance-cache.php';
 require_once __DIR__ . '/request-middleware.php';

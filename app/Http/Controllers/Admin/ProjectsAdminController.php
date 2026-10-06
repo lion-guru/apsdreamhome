@@ -193,13 +193,24 @@ class ProjectsAdminController extends AdminController
                 'project_manager', 'site_supervisor', 'contractor_name', 'risk_flags',
             ];
 
+            $numericFields = [
+                'total_area', 'total_plots', 'available_plots', 'booked_plots', 'sold_plots',
+                'price_range_min', 'price_range_max', 'avg_price_per_sqft', 'progress_pct',
+                'project_budget', 'amount_spent',
+            ];
+
             $updates = [];
             $data    = [];
             foreach ($fields as $field) {
                 $value = $_POST[$field] ?? null;
                 if ($field === 'is_featured' || $field === 'is_hot_deal') {
                     $value = !empty($value) ? 1 : 0;
-                } elseif ($value === '' && in_array($field, ['state_id', 'district_id', 'colony_id', 'launch_date', 'completion_date', 'possession_date'])) {
+                } elseif ($value === '') {
+                    if (in_array($field, ['state_id', 'district_id', 'colony_id', 'launch_date', 'completion_date', 'possession_date', 'progress_pct'], true)
+                        || in_array($field, $numericFields, true)) {
+                        $value = null;
+                    }
+                } elseif (in_array($field, $numericFields, true) && !is_numeric($value)) {
                     $value = null;
                 }
                 $updates[] = "`$field` = ?";

@@ -95,6 +95,12 @@ class AdminAuthController extends BaseController
                 $_SESSION['admin_username'] = $admin['name'] ?? 'admin';
             }
 
+            // Generate CSRF token for the session (needed for API POST requests)
+            if (!isset($_SESSION['csrf_token'])) {
+                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+            }
+            $_SESSION['csrf_token_expires'] = time() + 3600;
+
             // For employee/telecaller: also set employee_id session key
             if (in_array($admin['role'], ['employee', 'telecaller'])) {
                 try {

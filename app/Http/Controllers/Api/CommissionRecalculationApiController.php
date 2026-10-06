@@ -25,9 +25,13 @@ class CommissionRecalculationApiController extends BaseController
         $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if ($userId <= 0) return null;
         try {
+            $tid = (int)$this->tenantId();
             $pdo = \App\Core\Database\Database::getInstance()->getConnection();
-            $stmt = $pdo->prepare("SELECT id, name, role, status FROM users WHERE id = ? LIMIT 1");
-            $stmt->execute([$userId]);
+            $tidSql = $tid > 1 ? ' AND tenant_id = ?' : '';
+            $params = [$userId];
+            if ($tid > 1) $params[] = $tid;
+            $stmt = $pdo->prepare("SELECT id, name, role, status FROM users WHERE id = ?{$tidSql} LIMIT 1");
+            $stmt->execute($params);
             $user = $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
         } catch (\Throwable $e) {
             error_log('CommissionRecalculationApiController::staffUser: ' . $e->getMessage());

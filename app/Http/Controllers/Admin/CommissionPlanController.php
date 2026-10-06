@@ -194,6 +194,18 @@ class CommissionPlanController extends AdminController
         $activePlan = $this->planService->getActivePlan();
         $result = null;
 
+        // Fetch saved presets
+        $presets = [];
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+            $tid = \App\Core\Middleware\TenantContext::getId();
+            $stmt = $pdo->prepare("SELECT * FROM commission_simulator_presets WHERE tenant_id = ? ORDER BY created_at DESC");
+            $stmt->execute([$tid]);
+            $presets = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            error_log('CommissionPlanController::simulator presets error: ' . $e->getMessage());
+        }
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $saleAmount = (float)($_POST['sale_amount'] ?? 1500000);
             $planId = (int)($_POST['plan_id'] ?? ($activePlan['id'] ?? 0));
@@ -208,12 +220,159 @@ class CommissionPlanController extends AdminController
                 $result = $this->simulator->bulkSimulate($saleAmount, $planId);
             } elseif ($mode === 'sensitivity') {
                 $result = $this->simulator->sensitivityAnalysis($planId, $rankIdx);
+            } elseif ($mode === 'referral_sweep') {
+                $result = $this->simulator->referralSweep(
+                    (float)($_POST['candidate_pct'] ?? 2.0),
+                    max(1, (int)($_POST['window_days'] ?? 90))
+                );
+                $result['sim_kind'] = 'referral_sweep';
+            } elseif ($mode === 'wallet_sweep') {
+                $result = $this->simulator->walletSweep(
+                    (float)($_POST['candidate_l1'] ?? 20.0),
+                    (float)($_POST['candidate_l2'] ?? 5.0),
+                    max(1, (int)($_POST['window_days'] ?? 90))
+                );
+                $result['sim_kind'] = 'wallet_sweep';
             } else {
                 $result = $this->simulator->simulateSale($saleAmount, $planId, $rankIdx);
             }
         }
 
-        $this->render('admin/commission/plans/simulator', compact('plans', 'activePlan', 'result'));
+        $this->render('admin/commission/plans/simulator', compact('plans', 'activePlan', 'result', 'presets'));
+    }
+
+    /* ── APPLY WALLET SWEEP (bulk package pct update, audited) ── */
+    public function applyWalletPct()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+            $this->redirect('/admin/commission-plans/simulator');
+            return;
+        }
+
+        try {
+            $l1 = min(max((float)($_POST['candidate_l1'] ?? 20.0), 0.0), 30.0);
+            $l2 = min(max((float)($_POST['candidate_l2'] ?? 5.0), 0.0), max(0.0, 30.0 - $l1));
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+            $before = $pdo->query(
+                "SELECT COUNT(*) AS n, GROUP_CONCAT(DISTINCT referral_pct_l1) AS l1s, GROUP_CONCAT(DISTINCT referral_pct_l2) AS l2s
+                 FROM wallet_activation_packages WHERE is_active = 1"
+            )->fetch(\PDO::FETCH_ASSOC) ?: [];
+            $count = (int)($before['n'] ?? 0);
+            if ($count <= 0) {
+                $_SESSION['error'] = 'No active wallet packages to update.';
+                $this->redirect('/admin/commission-plans/simulator');
+                return;
+            }
+            $stmt = $pdo->prepare(
+                "UPDATE wallet_activation_packages SET referral_pct_l1 = ?, referral_pct_l2 = ?, updated_at = NOW() WHERE is_active = 1"
+            );
+            $stmt->execute([$l1, $l2]);
+            $cfg = \App\Services\ServiceConfigService::getInstance();
+            $cfg->auditManual(
+                'wallet_packages',
+                'referral_pct_l1/l2 (bulk)',
+                'L1 in (' . ($before['l1s'] ?? '?') . ') L2 in (' . ($before['l2s'] ?? '?') . ") on {$count} package(s)",
+                "L1={$l1}% L2={$l2}% on {$count} package(s)",
+                'Applied from commission simulator wallet sweep'
+            );
+            $_SESSION['success'] = "Applied L1={$l1}% L2={$l2}% to {$count} package(s). Past activations unchanged.";
+            $this->redirect('/admin/commission-plans/simulator');
+        } catch (\Throwable $e) {
+            error_log('CommissionPlanController::applyWalletPct error: ' . $e->getMessage());
+            $_SESSION['error'] = 'Failed to apply: ' . $e->getMessage();
+            $this->redirect('/admin/commission-plans/simulator');
+        }
+    }
+
+    /* ── PRESETS: Save ── */
+    public function savePreset()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+
+        $name = trim((string)($_POST['name'] ?? ''));
+        $description = trim((string)($_POST['description'] ?? ''));
+        $simMode = $_POST['sim_mode'] ?? 'single';
+        $paramsJson = $_POST['params_json'] ?? '{}';
+
+        if (!$name) {
+            $_SESSION['error'] = 'Preset name is required';
+            $this->redirect('/admin/commission-plans/simulator');
+            return;
+        }
+
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+            $tid = \App\Core\Middleware\TenantContext::getId();
+            $userId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 1;
+
+            $stmt = $pdo->prepare(
+                "INSERT INTO commission_simulator_presets (name, description, sim_mode, params_json, tenant_id, created_by) VALUES (?, ?, ?, ?, ?, ?)"
+            );
+            $stmt->execute([$name, $description, $simMode, $paramsJson, $tid, $userId]);
+
+            $_SESSION['success'] = "Preset '{$name}' saved";
+        } catch (\Throwable $e) {
+            if ($e->getCode() === 23000) {
+                $_SESSION['error'] = 'A preset with this name already exists';
+            } else {
+                error_log('CommissionPlanController::savePreset error: ' . $e->getMessage());
+                $_SESSION['error'] = 'Failed to save preset: ' . $e->getMessage();
+            }
+        }
+        $this->redirect('/admin/commission-plans/simulator');
+    }
+
+    /* ── PRESETS: Load (AJAX) ── */
+    public function getPreset($id)
+    {
+        $this->requireAdmin();
+        header('Content-Type: application/json');
+
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+            $tid = \App\Core\Middleware\TenantContext::getId();
+            $stmt = $pdo->prepare("SELECT * FROM commission_simulator_presets WHERE id = ? AND tenant_id = ? LIMIT 1");
+            $stmt->execute([(int)$id, $tid]);
+            $preset = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$preset) {
+                echo json_encode(['success' => false, 'message' => 'Preset not found']);
+                return;
+            }
+
+            echo json_encode(['success' => true, 'preset' => $preset]);
+        } catch (\Throwable $e) {
+            error_log('CommissionPlanController::getPreset error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'message' => 'Failed to load preset']);
+        }
+    }
+
+    /* ── PRESETS: Delete ── */
+    public function deletePreset($id)
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+        header('Content-Type: application/json');
+
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+            $tid = \App\Core\Middleware\TenantContext::getId();
+            $stmt = $pdo->prepare("DELETE FROM commission_simulator_presets WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([(int)$id, $tid]);
+
+            if ($stmt->rowCount() > 0) {
+                echo json_encode(['success' => true, 'message' => 'Preset deleted']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Preset not found']);
+            }
+        } catch (\Throwable $e) {
+            error_log('CommissionPlanController::deletePreset error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'message' => 'Failed to delete preset']);
+        }
     }
 
     /* ── CALCULATOR ── */

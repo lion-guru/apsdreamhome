@@ -169,10 +169,60 @@ class ReferralController extends AdminController
             }
         } catch (\Throwable $e) { error_log("ReferralController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
+        $csrf_token = $_SESSION['csrf_token'] ?? '';
         return $this->render('admin/referrals/tiers', [
             'tiers' => $tiers,
             'tier_counts' => $tierCounts,
             'page_title' => 'Referral Tiers',
+            'csrf_token' => $csrf_token,
         ]);
+    }
+
+    /**
+     * Update one tier's numeric knobs (min referrals, bonuses). Audited.
+     * POST /admin/referrals/tiers/update
+     */
+    public function updateTier()
+    {
+        $this->requireAdmin();
+        if (!$this->validateCsrfToken($_POST['csrf_token'] ?? '')) {
+            $_SESSION['error'] = 'Invalid CSRF token';
+            $this->redirect(BASE_URL . '/admin/referrals/tiers');
+            return;
+        }
+        $key = trim((string)($_POST['tier_key'] ?? ''));
+        $min = max(0, (int)($_POST['min_referrals'] ?? 0));
+        $perRef = round(min(max((float)($_POST['bonus_per_referral'] ?? 0), 0.0), 10000.0), 2);
+        $onBook = round(min(max((float)($_POST['bonus_on_booking'] ?? 0), 0.0), 50000.0), 2);
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $old = $db->prepare("SELECT * FROM referral_tiers WHERE tier_key = ? LIMIT 1");
+            $old->execute([$key]);
+            $oldRow = $old->fetch(\PDO::FETCH_ASSOC);
+            if (!$oldRow) {
+                $_SESSION['error'] = 'Unknown tier.';
+                $this->redirect(BASE_URL . '/admin/referrals/tiers');
+                return;
+            }
+            $stmt = $db->prepare(
+                "UPDATE referral_tiers SET min_referrals = ?, bonus_per_referral = ?, bonus_on_booking = ?, updated_at = NOW() WHERE tier_key = ?"
+            );
+            $stmt->execute([$min, $perRef, $onBook, $key]);
+            ReferralService::clearTiersCache();
+            try {
+                \App\Services\ServiceConfigService::getInstance()->auditManual(
+                    'referral_tiers',
+                    $key,
+                    "min={$oldRow['min_referrals']} perRef={$oldRow['bonus_per_referral']} onBook={$oldRow['bonus_on_booking']}",
+                    "min={$min} perRef={$perRef} onBook={$onBook}",
+                    'Tier edit from referrals admin page'
+                );
+            } catch (\Throwable $e) { error_log('Tier audit failed: ' . $e->getMessage()); }
+            $_SESSION['success'] = "Tier '{$key}' updated. Applies to future bonuses only.";
+        } catch (\Throwable $e) {
+            error_log('ReferralController::updateTier: ' . $e->getMessage());
+            $_SESSION['error'] = 'Failed to update tier.';
+        }
+        $this->redirect(BASE_URL . '/admin/referrals/tiers');
     }
 }

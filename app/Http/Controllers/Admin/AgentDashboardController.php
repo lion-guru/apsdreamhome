@@ -26,6 +26,7 @@ class AgentDashboardController extends AdminController
      */
     public function index()
     {
+        $this->requireAdmin();
         // For admin users, check admin_id; for regular users, check user_id
         $user_id = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
         
@@ -106,6 +107,7 @@ class AgentDashboardController extends AdminController
      */
     public function getPerformanceData()
     {
+        $this->requireAdmin();
         $user_id = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
         
         if (!$user_id) {
@@ -138,6 +140,7 @@ class AgentDashboardController extends AdminController
      */
     public function getNetworkTree()
     {
+        $this->requireAdmin();
         try {
             $user_id = $_SESSION['user_id'] ?? 1;
 

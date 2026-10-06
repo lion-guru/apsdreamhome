@@ -9,6 +9,7 @@ class AIAggregatorController extends AdminController
 {
     public function triggerFetch()
     {
+    $this->requireAdmin();
         // Run the aggregator service manually via Admin Panel
         $service = new AIAggregatorService();
         $result = $service->runAggregator(2); // Fetch 2 at a time

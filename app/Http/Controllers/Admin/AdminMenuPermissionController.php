@@ -20,9 +20,10 @@ class AdminMenuPermissionController extends AdminController
      */
     public function index()
     {
-        // Check if user is super admin
+        // Super admins and admins may manage menu permissions (admins need this
+        // to grant extra, work-related menus to their team members).
         $currentRole = RBACManager::getUserRole();
-        if ($currentRole !== RBACManager::ROLE_SUPER_ADMIN) {
+        if (!in_array($currentRole, [RBACManager::ROLE_SUPER_ADMIN, RBACManager::ROLE_ADMIN], true)) {
             header('Location: ' . BASE_URL . '/admin/dashboard');
             exit;
         }
@@ -55,9 +56,10 @@ class AdminMenuPermissionController extends AdminController
      */
     public function updateRolePermissions()
     {
-        // Check if user is super admin
+        // Super admins and admins may manage menu permissions (admins need this
+        // to grant extra, work-related menus to their team members).
         $currentRole = RBACManager::getUserRole();
-        if ($currentRole !== RBACManager::ROLE_SUPER_ADMIN) {
+        if (!in_array($currentRole, [RBACManager::ROLE_SUPER_ADMIN, RBACManager::ROLE_ADMIN], true)) {
             echo json_encode(['success' => false, 'message' => 'Unauthorized']);
             exit;
         }
@@ -87,9 +89,10 @@ class AdminMenuPermissionController extends AdminController
      */
     public function updateUserPermissions()
     {
-        // Check if user is super admin
+        // Super admins and admins may manage menu permissions (admins need this
+        // to grant extra, work-related menus to their team members).
         $currentRole = RBACManager::getUserRole();
-        if ($currentRole !== RBACManager::ROLE_SUPER_ADMIN) {
+        if (!in_array($currentRole, [RBACManager::ROLE_SUPER_ADMIN, RBACManager::ROLE_ADMIN], true)) {
             echo json_encode(['success' => false, 'message' => 'Unauthorized']);
             exit;
         }
@@ -119,9 +122,10 @@ class AdminMenuPermissionController extends AdminController
      */
     public function revokeUserPermission()
     {
-        // Check if user is super admin
+        // Super admins and admins may manage menu permissions (admins need this
+        // to grant extra, work-related menus to their team members).
         $currentRole = RBACManager::getUserRole();
-        if ($currentRole !== RBACManager::ROLE_SUPER_ADMIN) {
+        if (!in_array($currentRole, [RBACManager::ROLE_SUPER_ADMIN, RBACManager::ROLE_ADMIN], true)) {
             echo json_encode(['success' => false, 'message' => 'Unauthorized']);
             exit;
         }
@@ -140,9 +144,10 @@ class AdminMenuPermissionController extends AdminController
      */
     public function getUsers()
     {
-        // Check if user is super admin
+        // Super admins and admins may manage menu permissions (admins need this
+        // to grant extra, work-related menus to their team members).
         $currentRole = RBACManager::getUserRole();
-        if ($currentRole !== RBACManager::ROLE_SUPER_ADMIN) {
+        if (!in_array($currentRole, [RBACManager::ROLE_SUPER_ADMIN, RBACManager::ROLE_ADMIN], true)) {
             echo json_encode(['success' => false, 'message' => 'Unauthorized']);
             exit;
         }
@@ -160,9 +165,10 @@ class AdminMenuPermissionController extends AdminController
      */
     public function getUserPermissions()
     {
-        // Check if user is super admin
+        // Super admins and admins may manage menu permissions (admins need this
+        // to grant extra, work-related menus to their team members).
         $currentRole = RBACManager::getUserRole();
-        if ($currentRole !== RBACManager::ROLE_SUPER_ADMIN) {
+        if (!in_array($currentRole, [RBACManager::ROLE_SUPER_ADMIN, RBACManager::ROLE_ADMIN], true)) {
             echo json_encode(['success' => false, 'message' => 'Unauthorized']);
             exit;
         }

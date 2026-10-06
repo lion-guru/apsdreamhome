@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Services\Communication\DigiLockerService;
+use App\Traits\TenantAwareTrait;
 
 class DigiLockerController extends BaseApiController
 {
+    use TenantAwareTrait;
+    
     protected DigiLockerService $service;
 
     public function __construct()

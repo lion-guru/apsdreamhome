@@ -22,6 +22,7 @@ class SavedSearchController extends AdminController
 
     public function index()
     {
+    $this->requireAdmin();
         try {
             if (!isset($_SESSION['admin_id'])) $_SESSION['admin_id'] = 1;
             $userId = (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0);

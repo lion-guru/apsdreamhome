@@ -57,7 +57,7 @@ $hubKey = $hub['key'] ?? '';
                             try {
                                 $db = \App\Core\Database\Database::getInstance();
                                 $menuItem = $db->fetchRow("SELECT * FROM admin_menu_items WHERE url = ? AND is_active = 1 LIMIT 1", [$menuUrl]);
-                            } catch (\Throwable $e) {}
+                            } catch (\Throwable $e) { error_log('Workspace hub menu fetch: ' . $e->getMessage()); }
                         ?>
                         <div class="col-xl-4 col-lg-6">
                             <a href="<?= BASE_URL . $menuUrl ?>" class="card aps-cp-card h-100 hub-menu-card text-decoration-none" 

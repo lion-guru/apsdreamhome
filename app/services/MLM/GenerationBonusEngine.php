@@ -370,7 +370,27 @@ class GenerationBonusEngine
     protected function getGenerationRates(): array
     {
         $rates = self::DEFAULT_GEN_RATES;
-        // Could read from mlm_settings if needed
+        if (!$this->db) return $rates;
+
+        try {
+            $tid = $this->getTenantId();
+            $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+            $params = $tid > 1 ? [$tid] : [];
+            $stmt = $this->db->prepare(
+                "SELECT setting_key, setting_value FROM mlm_settings WHERE setting_key LIKE 'gen_rate_%' $tenantWhere"
+            );
+            $stmt->execute($params);
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+            foreach ($rows as $row) {
+                $key = $row['setting_key'];
+                if (preg_match('/gen_rate_(\d+)/', $key, $m)) {
+                    $gen = (int)$m[1];
+                    $rates[$gen] = (float)$row['setting_value'];
+                }
+            }
+        } catch (\Throwable $e) {
+            error_log("[GenerationBonusEngine] getGenerationRates DB error: " . $e->getMessage());
+        }
         return $rates;
     }
 

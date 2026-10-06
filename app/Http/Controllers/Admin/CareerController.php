@@ -30,6 +30,7 @@ class CareerController extends AdminController
      */
     public function index()
     {
+        $this->requireAdmin();
         try {
             $search = $_GET['search'] ?? '';
             $status = $_GET['status'] ?? '';
@@ -111,6 +112,7 @@ class CareerController extends AdminController
      */
     public function create()
     {
+        $this->requireAdmin();
         try {
             $data = [
                 'page_title' => 'Create Career - APS Dream Home',
@@ -132,6 +134,7 @@ class CareerController extends AdminController
      */
     public function store()
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -200,6 +203,7 @@ class CareerController extends AdminController
      */
     public function show($id)
     {
+        $this->requireAdmin();
         try {
             $careerId = intval($id);
             if ($careerId <= 0) {
@@ -257,6 +261,7 @@ class CareerController extends AdminController
      */
     public function edit($id)
     {
+        $this->requireAdmin();
         try {
             $careerId = intval($id);
             if ($careerId <= 0) {
@@ -296,6 +301,7 @@ class CareerController extends AdminController
      */
     public function update($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -414,6 +420,7 @@ class CareerController extends AdminController
      */
     public function destroy($id)
     {
+        $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonError('Invalid request method', 400);
         }
@@ -472,6 +479,7 @@ class CareerController extends AdminController
 
     public function applicants()
     {
+        $this->requireAdmin();
         try {
             $search = $_GET['search'] ?? '';
             $status = $_GET['status'] ?? '';
@@ -560,6 +568,7 @@ class CareerController extends AdminController
      */
     public function getStats()
     {
+        $this->requireAdmin();
         try {
             $stats = [];
 

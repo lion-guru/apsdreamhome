@@ -693,7 +693,18 @@ class OtpAuthController extends BaseController
             
             $db->insert('users', $userData);
             $newUserId = $db->lastInsertId();
-            
+
+            // Referral attribution for smart-OTP signups (POST > ?ref= > cookie > session).
+            try {
+                $otpRef = trim((string)($_POST['referral_code'] ?? $_GET['ref'] ?? $_COOKIE['aps_ref'] ?? $_SESSION['aps_ref'] ?? ''));
+                if ($otpRef !== '') {
+                    $referralSvc = new \App\Services\ReferralService();
+                    $referralSvc->applyReferral((int)$newUserId, $otpRef);
+                }
+            } catch (\Throwable $e) {
+                error_log("Smart OTP referral attribution failed: " . $e->getMessage());
+            }
+
             $db->insert('wallet_points', array_merge([
                 'user_id' => $newUserId,
                 'points_balance' => 0.00,

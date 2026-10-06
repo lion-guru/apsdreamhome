@@ -39,6 +39,7 @@ class MarketingCampaignController extends AdminController
 
     public function index()
     {
+    $this->requireAdmin();
         $stats = $this->service ? $this->service->getStats() : [];
         $campaigns = $this->service ? $this->service->getAll(50) : [];
         $templates = $this->service ? $this->service->getTemplates() : [];
@@ -53,6 +54,7 @@ class MarketingCampaignController extends AdminController
 
     public function create()
     {
+        $this->requireAdmin();
         $templates = $this->service ? $this->service->getTemplates() : [];
         $audience = $this->service ? $this->service->getAudienceList([]) : [];
         return $this->render('admin.marketing_campaigns.create', [
@@ -66,6 +68,7 @@ class MarketingCampaignController extends AdminController
 
     public function store()
     {
+    $this->requireAdmin();
         if (!$this->service) {
             $this->setFlash('error', 'Service unavailable');
             return $this->redirect(BASE_URL . '/admin/marketing-campaigns');
@@ -117,6 +120,7 @@ class MarketingCampaignController extends AdminController
 
     public function show($id = 0)
     {
+    $this->requireAdmin();
         $id = $id ?: (int)($_GET['id'] ?? 0);
         if (!$this->service || !$id) {
             return $this->redirect(BASE_URL . '/admin/marketing-campaigns');
@@ -143,6 +147,7 @@ class MarketingCampaignController extends AdminController
 
     public function send($id = 0)
     {
+    $this->requireAdmin();
         $id = $id ?: (int)($_POST['id'] ?? $_GET['id'] ?? 0);
         if (!$this->service || !$id) {
             return $this->redirect(BASE_URL . '/admin/marketing-campaigns');
@@ -194,6 +199,7 @@ class MarketingCampaignController extends AdminController
 
     public function delete()
     {
+    $this->requireAdmin();
         $id = (int)($_GET['id'] ?? $_POST['id'] ?? 0);
         if ($id > 0 && $this->service) {
             try {
@@ -213,6 +219,7 @@ class MarketingCampaignController extends AdminController
 
     public function templates()
     {
+    $this->requireAdmin();
         $templates = $this->service ? $this->service->getTemplates() : [];
         return $this->render('admin.marketing_campaigns.templates', [
             'page_title' => 'Campaign Templates',
@@ -228,6 +235,7 @@ class MarketingCampaignController extends AdminController
 
     public function edit($id = 0)
     {
+    $this->requireAdmin();
         $id = (int) $id ?: (int) ($_GET['id'] ?? 0);
         if (!$id) {
             return $this->redirect(BASE_URL . '/admin/marketing-campaigns');
@@ -250,6 +258,7 @@ class MarketingCampaignController extends AdminController
 
     public function update($id = 0)
     {
+    $this->requireAdmin();
         $id = (int) $id ?: (int) ($_POST['id'] ?? 0);
         if (!$id || !$this->service) {
             return $this->redirect(BASE_URL . '/admin/marketing-campaigns');
@@ -273,6 +282,7 @@ class MarketingCampaignController extends AdminController
 
     public function pause($id = 0)
     {
+    $this->requireAdmin();
         $id = (int) $id ?: (int) ($_POST['id'] ?? 0);
         if ($id && $this->service) {
             $this->service->pauseCampaign($id);
@@ -283,6 +293,7 @@ class MarketingCampaignController extends AdminController
 
     public function resume($id = 0)
     {
+        $this->requireAdmin();
         $id = (int) $id ?: (int) ($_POST['id'] ?? 0);
         if ($id && $this->service) {
             $this->service->resumeCampaign($id);
@@ -293,6 +304,7 @@ class MarketingCampaignController extends AdminController
 
     public function cancel($id = 0)
     {
+    $this->requireAdmin();
         $id = (int) $id ?: (int) ($_POST['id'] ?? 0);
         if ($id && $this->service) {
             $this->service->cancelCampaign($id);
@@ -303,6 +315,7 @@ class MarketingCampaignController extends AdminController
 
     public function clone($id = 0)
     {
+        $this->requireAdmin();
         $id = (int) $id ?: (int) ($_POST['id'] ?? 0);
         if ($id && $this->service) {
             $newId = $this->service->cloneCampaign($id);
@@ -316,6 +329,7 @@ class MarketingCampaignController extends AdminController
 
     public function testSend($id = 0)
     {
+    $this->requireAdmin();
         $id = (int) $id ?: (int) ($_POST['id'] ?? 0);
         if (!$id || !$this->service) {
             return $this->redirect(BASE_URL . '/admin/marketing-campaigns');
@@ -331,6 +345,7 @@ class MarketingCampaignController extends AdminController
 
     public function schedule($id = 0)
     {
+        $this->requireAdmin();
         $id = (int) $id ?: (int) ($_POST['id'] ?? 0);
         $sendAt = $_POST['scheduled_at'] ?? '';
         if ($id && $sendAt && $this->service) {
@@ -342,6 +357,7 @@ class MarketingCampaignController extends AdminController
 
     public function stats($id = 0)
     {
+        $this->requireAdmin();
         $id = (int) $id ?: (int) ($_GET['id'] ?? 0);
         if (!$id || !$this->service) {
             return $this->redirect(BASE_URL . '/admin/marketing-campaigns');
@@ -363,6 +379,7 @@ class MarketingCampaignController extends AdminController
 
     public function exportRecipients($id = 0)
     {
+    $this->requireAdmin();
         $id = (int) $id ?: (int) ($_GET['id'] ?? 0);
         if (!$id || !$this->service) {
             return $this->redirect(BASE_URL . '/admin/marketing-campaigns');

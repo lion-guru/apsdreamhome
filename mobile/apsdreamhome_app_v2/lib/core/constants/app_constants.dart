@@ -53,6 +53,32 @@ class AppConstants {
   static const String referralDashboardEndpoint = '/referral/dashboard';
   static const String referralListEndpoint = '/referral/list';
   static const String referralStatsEndpoint = '/referral/stats';
+  
+  // Wallet Activation Packages
+  static const String walletActivationPackagesEndpoint = '/wallet/activation/packages';
+  static const String walletActivationMyWalletEndpoint = '/wallet/activation/my-wallet';
+  static const String walletActivationPurchaseEndpoint = '/wallet/activation/purchase';
+  static const String walletActivationVerifyPaymentEndpoint = '/wallet/activation/verify-payment';
+  static const String walletBalanceEndpoint = '/wallet/balance';
+  
+  // Referral Earnings
+  static const String referralEarningsEndpoint = '/referral/earnings';
+  static const String referralLeaderboardEndpoint = '/referral/leaderboard';
+  static const String referralShareUrlEndpoint = '/referral/share-url';
+  
+  // Wallet Activation
+  static const String walletActivationPackagesEndpointV2 = '/api/v2/mobile/wallet/activation/packages';
+  static const String walletActivationMyWalletEndpointV2 = '/api/v2/mobile/wallet/activation/my-wallet';
+  static const String walletActivationPurchaseEndpointV2 = '/api/v2/mobile/wallet/activation/purchase';
+  static const String walletActivationVerifyPaymentEndpointV2 = '/api/v2/mobile/wallet/activation/verify-payment';
+  static const String walletBalanceEndpointV2 = '/api/v2/mobile/wallet/balance';
+  
+  // Referral Earnings V2
+  static const String referralEarningsEndpointV2 = '/api/v2/mobile/referral/earnings';
+  static const String referralLeaderboardEndpointV2 = '/api/v2/mobile/referral/leaderboard';
+  static const String referralShareUrlEndpointV2 = '/api/v2/mobile/referral/share-url';
+
+  // Referral
 
   // Agent Portal
   static const String agentMyTeamEndpoint = '/my-team';
@@ -239,6 +265,31 @@ class AppConstants {
   static const String constructionMaterialsEndpoint = '/construction/materials';
   static const String constructionMaterialUsageEndpoint = '/construction/materials/usage';
 
+  // Colony Pipeline Mobile
+  static const String colonyPipelineDashboardEndpoint = '/colony-pipeline/dashboard';
+  static const String colonyPipelineDetailEndpoint = '/colony-pipeline/detail';
+  static const String colonyPipelineLayoutEndpoint = '/colony-pipeline/layout';
+  static const String colonyPipelineGeneratePlotsEndpoint = '/colony-pipeline/generate-plots';
+  static const String colonyPipelineSaveLayoutEndpoint = '/colony-pipeline/save-layout';
+  static const String colonyPipelineDeletePlotsEndpoint = '/colony-pipeline/delete-plots';
+  static const String colonyPipelinePricingEndpoint = '/colony-pipeline/pricing';
+  static const String colonyPipelineCalculatePricingEndpoint = '/colony-pipeline/calculate-pricing';
+  static const String colonyPipelineApplyPricingEndpoint = '/colony-pipeline/apply-pricing';
+  static const String colonyPipelineCostsEndpoint = '/colony-pipeline/costs';
+  static const String colonyPipelineStoreCostEndpoint = '/colony-pipeline/costs/store';
+  static const String colonyPipelinePlotsEndpoint = '/colony-pipeline/plots';
+  static const String colonyPipelinePlotsStatsEndpoint = '/colony-pipeline/plots/stats';
+  static const String colonyPipelineMapEndpoint = '/colony-pipeline/map';
+  static const String colonyPipelineMapGeoJsonEndpoint = '/colony-pipeline/map/geojson';
+  static const String colonyPipelinePricingPlanSaveEndpoint = '/colony-pipeline/pricing-plan/save';
+  static const String colonyPipelinePricingPlanActivateEndpoint = '/colony-pipeline/pricing-plan/activate';
+  static const String colonyPipelinePricingPlanApplyEndpoint = '/colony-pipeline/pricing-plan/apply';
+  static const String colonyPipelinePricingPlanHistoryEndpoint = '/colony-pipeline/pricing-plan/history';
+  static const String colonyPipelinePricingPlanApplicationsEndpoint = '/colony-pipeline/pricing-plan/applications';
+  static const String colonyPipelineCostsStoreEndpoint = '/colony-pipeline/costs/store';
+  static const String colonyPipelinePlotMapEndpoint = '/colony-pipeline/map';
+  static const String colonyPipelinePlotMapGeoJsonEndpoint = '/colony-pipeline/map/geojson';
+
   // Database
   static const String databaseName = 'aps_dream_home.db';
   static const int databaseVersion = 2;
@@ -366,4 +417,67 @@ class AppConstants {
 
   // Validation Constants
   static const int minPasswordLength = 6;
+
+  // ============================================================
+  // SELF-SERVICE PORTAL (Employee)
+  // ============================================================
+  // Tax Regime
+  static const String taxRegimeEndpoint = '/api/v2/mobile/self-service/tax-regime';
+
+  // Investment Declaration
+  static const String investmentDeclarationEndpoint = '/api/v2/mobile/self-service/investment-declaration';
+  static const String uploadInvestmentProofEndpoint = '/api/v2/mobile/self-service/investment-declaration/upload-proof';
+
+  // Form 16
+  static const String form16Endpoint = '/api/v2/mobile/self-service/form16';
+  static const String form16GenerateEndpoint = '/api/v2/mobile/self-service/form16/generate';
+  static const String form16DownloadEndpoint = '/api/v2/mobile/self-service/form16/download/';
+
+  // Payslips
+  static const String payslipsEndpoint = '/api/v2/mobile/self-service/payslips';
+  static const String payslipDownloadEndpoint = '/api/v2/mobile/self-service/payslips/';
+  static const String payslipDownloadSuffix = '/download';
+
+  // Leave
+  static const String leaveBalancesEndpoint = '/api/v2/mobile/self-service/leave';
+  static const String leaveTypesEndpoint = '/api/v2/mobile/self-service/leave-types';
+  static const String leaveApplyEndpoint = '/api/v2/mobile/self-service/leave/apply';
+  static const String leaveHistoryEndpoint = '/api/v2/mobile/self-service/leave/history';
+
+  // Reimbursement
+  static const String reimbursementsEndpoint = '/api/v2/mobile/self-service/reimbursement';
+
+  // Profile (self-service)
+  static const String selfServiceProfileEndpoint = '/api/v2/mobile/self-service/profile';
+  static const String changePasswordEndpoint = '/api/v2/mobile/self-service/profile/change-password';
+  static const String selfServiceDashboardEndpoint = '/api/v2/mobile/self-service/dashboard';
+
+  // Attendance
+  static const String attendanceEndpoint = '/api/v2/mobile/self-service/attendance';
+  static const String attendanceStatsEndpoint = '/api/v2/mobile/self-service/attendance/stats';
+
+  // Gratuity
+  static const String gratuityCalculatorEndpoint = '/api/v2/mobile/gratuity/calculator';
+  static const String gratuityReportEndpoint = '/api/v2/mobile/gratuity/report';
+  static const String gratuityDetailEndpoint = '/api/v2/mobile/gratuity/detail/';
+
+  // F&F Settlement
+  static const String fnfCalculatorEndpoint = '/api/v2/mobile/fnf/calculator';
+  static const String fnfProcessEndpoint = '/api/v2/mobile/fnf/process';
+
+  // Shift Roster & OT
+  static const String shiftTypesEndpoint = '/api/v2/mobile/shift-roster/shift-types';
+  static const String rosterEndpoint = '/api/v2/mobile/shift-roster/roster';
+  static const String assignShiftEndpoint = '/api/v2/mobile/shift-roster/assign-shift';
+  static const String overtimeRequestsEndpoint = '/api/v2/mobile/shift-roster/overtime-requests';
+  static const String overtimeRequestEndpoint = '/api/v2/mobile/shift-roster/overtime-request';
+  static const String processOvertimeEndpoint = '/api/v2/mobile/shift-roster/overtime-requests/';
+  static const String overtimeReportsEndpoint = '/api/v2/mobile/shift-roster/overtime-reports';
+  static const String shiftCoverageEndpoint = '/api/v2/mobile/shift-roster/shift-coverage';
+
+  // Investment (Customer)
+  static const String investmentPlansEndpoint = '/investment-plans';
+  static const String userInvestmentsEndpoint = '/user/investments';
+  static const String investmentCreateEndpoint = '/user/invest';
+  static const String investmentCancelEndpoint = '/user/investment/cancel';
 }

@@ -281,6 +281,27 @@ $hubbedItems = $sortedHubbed;
     </div>
     <?php endif; ?>
 
+    <?php
+    // User-Impersonation Banner — "Login as user" rewrites the session role
+    // globally, so EVERY open admin tab starts rendering that user's menu.
+    // This banner explains the shrunken menu and offers a one-click way back.
+    $impFrom = $_SESSION['impersonated_from'] ?? null;
+    ?>
+    <?php if (!empty($impFrom)): ?>
+    <div class="px-2 pb-2">
+        <div class="alert alert-info py-2 px-2 mb-0" role="status">
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <i class="fas fa-user-secret"></i>
+                <strong>Viewing as <?= htmlspecialchars($_SESSION['name'] ?? 'user') ?> (<?= htmlspecialchars($_SESSION['role'] ?? '') ?>)</strong>
+            </div>
+            <div class="small mb-2">Admin: <?= htmlspecialchars($impFrom['admin_name'] ?? '') ?> — open tabs follow this user until you switch back.</div>
+            <a href="<?= $base ?>/admin/users/stop-impersonation" class="btn btn-sm btn-primary w-100">
+                <i class="fas fa-undo me-1"></i>Back to Admin
+            </a>
+        </div>
+    </div>
+    <?php endif; ?>
+
     <!-- Tenant CSS Variables for white-labeling -->
     <style>
         :root {
@@ -308,6 +329,24 @@ $hubbedItems = $sortedHubbed;
             }
         }
     }
+
+    // Role-based default hub collapse: non-privileged roles see only their
+    // primary hub open (active page hub wins, else the hub with most items).
+    // Privileged roles keep everything open. Toggle still works per click.
+    // Effective role via the same single-source resolver the menu service
+    // and the admin route guard use (admin_role-first). Keeps hub
+    // collapse behaviour consistent with the rendered menu items.
+    $sidebarRole = \App\Http\Middleware\RBACManager::getUserRole() ?? '';
+    $sidebarPrivileged = in_array($sidebarRole, ['super_admin', 'admin'], true);
+    $hubItemCounts = [];
+    foreach ($hubbedItems as $hub => $sections) {
+        $hubItemCounts[$hub] = 0;
+        foreach ($sections as $items) $hubItemCounts[$hub] += count($items);
+    }
+    $sidebarPrimaryHub = null;
+    foreach ($hubItemCounts as $hub => $cnt) {
+        if ($sidebarPrimaryHub === null || $cnt > $hubItemCounts[$sidebarPrimaryHub]) $sidebarPrimaryHub = $hub;
+    }
     ?>
 
 
@@ -315,6 +354,13 @@ $hubbedItems = $sortedHubbed;
     <div class="sidebar-sec" onclick="toggleAllSidebarSections()">
         <span><i class="fas fa-layer-group"></i> All Sections</span>
         <i class="fas fa-chevron-down sidebar-sec-arrow" id="arrow-expand-all"></i>
+    </div>
+
+    <!-- Reset View: clears per-tab fold state + search filter, expands all.
+         Fold state is per-tab (sessionStorage); this restores the full menu
+         in one click when it ever looks "changed" or incomplete. -->
+    <div class="sidebar-sec" onclick="resetSidebarView()" title="Clear search, expand all sections">
+        <span><i class="fas fa-undo"></i> Reset View</span>
     </div>
 
     <?php if (!empty($menuError)): ?>
@@ -338,7 +384,8 @@ $hubbedItems = $sortedHubbed;
                 <?php
                 $hubId = 'hub-' . preg_replace('/[^a-z0-9]/', '', $hub);
                 $hubDef = $hubDefinitions[$hub] ?? ['label' => ucfirst($hub), 'icon' => 'fas fa-folder'];
-                $hubHasActive = !empty($hubHasActive[$hub]);
+                $isHubActive = !empty($hubHasActive[$hub]);
+                $isHubOpen = $sidebarPrivileged || $isHubActive || $hub === $sidebarPrimaryHub;
                 ?>
                 <!-- Hub: <?php echo $hubDef['label']; ?> -->
                 <div class="sidebar-hub mb-3">
@@ -347,9 +394,9 @@ $hubbedItems = $sortedHubbed;
                             <i class="<?php echo $hubDef['icon']; ?> text-primary"></i>
                             <strong><?php echo $hubDef['label']; ?></strong>
                         </span>
-                        <i class="fas fa-chevron-down sidebar-sec-arrow <?php echo $hubHasActive ? '' : 'collapsed'; ?>" id="arrow-<?php echo e($hubId); ?>"></i>
+                        <i class="fas fa-chevron-down sidebar-sec-arrow <?php echo $isHubOpen ? '' : 'collapsed'; ?>" id="arrow-<?php echo e($hubId); ?>"></i>
                     </div>
-                    <div class="sidebar-hub-content" id="<?php echo e($hubId); ?>" >
+                    <div class="sidebar-hub-content" id="<?php echo e($hubId); ?>" <?php echo $isHubOpen ? '' : 'style="display:none"'; ?>>
                         <?php foreach ($sections as $section => $items): ?>
                             <?php if (!empty($items)): ?>
                                 <?php
@@ -471,7 +518,17 @@ $hubbedItems = $sortedHubbed;
 
     function restoreCollapsedState() {
         try {
-            const saved = localStorage.getItem('adminSidebarSections');
+            // One-time migration: pre-fix fold state lived in localStorage
+            // (shared across tabs). Move it to per-tab sessionStorage once,
+            // then drop the shared copy so tabs stop affecting each other.
+            if (!sessionStorage.getItem('adminSidebarSections')) {
+                const legacy = localStorage.getItem('adminSidebarSections');
+                if (legacy) {
+                    sessionStorage.setItem('adminSidebarSections', legacy);
+                    localStorage.removeItem('adminSidebarSections');
+                }
+            }
+            const saved = sessionStorage.getItem('adminSidebarSections');
             if (!saved) return;
             const state = JSON.parse(saved);
             Object.keys(state).forEach(id => {
@@ -480,7 +537,7 @@ $hubbedItems = $sortedHubbed;
                 if (menu) menu.style.display = state[id] ? '' : 'none';
                 if (arrow) arrow.classList.toggle('collapsed', !state[id]);
             });
-        } catch (e) {}
+        } catch (e) { console.error('Sidebar state restore error:', e); }
     }
 
     searchInput.addEventListener('input', function() {
@@ -515,5 +572,22 @@ function toggleSidebarHub(hubId) {
     const hidden = content.style.display === 'none';
     content.style.display = hidden ? '' : 'none';
     if (arrow) arrow.classList.toggle('collapsed', !hidden);
+}
+
+function resetSidebarView() {
+    try { sessionStorage.removeItem('adminSidebarSections'); } catch (e) { console.error('Sidebar state restore error:', e); }
+    const si = document.getElementById('sidebarSearch');
+    if (si) si.value = '';
+    const clearBtn = document.getElementById('clearSearchBtn');
+    if (clearBtn) clearBtn.style.display = 'none';
+    document.querySelectorAll('.sidebar-hub, .sidebar-sec, .sidebar-menu, .sidebar-item').forEach(function(el) {
+        el.style.display = '';
+    });
+    document.querySelectorAll('.sidebar-hub-content').forEach(function(el) {
+        el.style.display = '';
+    });
+    document.querySelectorAll('.sidebar-sec-arrow').forEach(function(a) {
+        a.classList.remove('collapsed');
+    });
 }
 </script>

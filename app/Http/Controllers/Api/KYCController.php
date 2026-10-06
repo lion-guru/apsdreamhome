@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\BaseApiController;
 use App\Services\KYCService;
+use App\Traits\TenantAwareTrait;
 
 /**
  * KYC API Controller
@@ -11,6 +12,8 @@ use App\Services\KYCService;
  */
 class KYCController extends BaseApiController
 {
+    use TenantAwareTrait;
+    
     private $kycService;
 
     public function __construct()

@@ -171,11 +171,19 @@ private function getTenantSql(): array
     }
 
     /**
-     * Auto-generate user during booking/lead conversion
+     * Auto-generate user during booking/lead conversion.
+     * Requires a logged-in session (anti fake-reg: blocks anonymous
+     * Rs.100 minting to arbitrary associate ids; no in-app caller exists
+     * that runs logged-out, verified by grep).
      */
     public function autoGenerateUser()
     {
         @session_start();
+
+        if (empty($_SESSION['user_id'])) {
+            echo json_encode(['success' => false, 'message' => 'Authentication required']);
+            exit;
+        }
 
         $name = $_POST['name'] ?? '';
         $email = $_POST['email'] ?? '';

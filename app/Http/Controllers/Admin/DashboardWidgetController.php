@@ -2,24 +2,34 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\AdminController;
-use App\Models\UserDashboardLayout;
-use App\Models\User;
+use App\Traits\TenantAwareTrait;
 
 class DashboardWidgetController extends AdminController
 {
+    use TenantAwareTrait;
+
     public function __construct()
     {
         parent::__construct();
         $this->layout = 'layouts/admin';
     }
 
+    private function currentUserId(): int
+    {
+        return (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0);
+    }
+
     public function index()
     {
-        $userId = session('admin_id') ?? session('user_id');
-        $layouts = UserDashboardLayout::where('user_id', $userId)
-            ->orderBy('is_default', 'desc')
-            ->get();
+        $this->requireAdmin();
+        try {
+            $layouts = $this->db->fetchAll(
+                "SELECT * FROM user_dashboard_layouts WHERE user_id = ? ORDER BY is_default DESC, id ASC",
+                [$this->currentUserId()]
+            );
+        } catch (\Throwable $e) {
+            $layouts = [];
+        }
 
         $widgets = $this->getAvailableWidgets();
 
@@ -32,67 +42,111 @@ class DashboardWidgetController extends AdminController
 
     public function getWidgets()
     {
-        $userId = session('admin_id') ?? session('user_id');
-        $layout = UserDashboardLayout::where('user_id', $userId)
-            ->where('is_default', true)
-            ->first();
+        $this->requireAdmin();
+        try {
+            $layout = $this->db->fetchOne(
+                "SELECT * FROM user_dashboard_layouts WHERE user_id = ? AND is_default = 1 ORDER BY id DESC LIMIT 1",
+                [$this->currentUserId()]
+            );
+            $widgets = $layout && !empty($layout['layout_config'])
+                ? (json_decode($layout['layout_config'], true) ?: $this->getDefaultLayout())
+                : $this->getDefaultLayout();
+        } catch (\Throwable $e) {
+            $widgets = $this->getDefaultLayout();
+        }
 
-        return response()->json([
-            'success' => true,
-            'widgets' => $layout ? $layout->layout_config : $this->getDefaultLayout(),
-        ]);
+        return $this->jsonResponse(['success' => true, 'widgets' => $widgets]);
+    }
+
+    public function getLayout($id)
+    {
+        $this->requireAdmin();
+        try {
+            $layout = $this->db->fetchOne(
+                "SELECT * FROM user_dashboard_layouts WHERE id = ? AND user_id = ? LIMIT 1",
+                [(int)$id, $this->currentUserId()]
+            );
+        } catch (\Throwable $e) {
+            $layout = null;
+        }
+
+        if (!$layout) {
+            return $this->jsonError('Layout not found', 404);
+        }
+        if (!empty($layout['layout_config']) && is_string($layout['layout_config'])) {
+            $layout['layout_config'] = json_decode($layout['layout_config'], true);
+        }
+        return $this->jsonResponse(['success' => true, 'layout' => $layout]);
     }
 
     public function saveLayout()
     {
-        $userId = session('admin_id') ?? session('user_id');
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+        $userId = $this->currentUserId();
         $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;
 
         $layoutConfig = $data['layout_config'] ?? [];
-        $layoutName = $data['layout_name'] ?? 'Default';
-        $isDefault = isset($data['is_default']) ? (bool)$data['is_default'] : true;
+        $layoutName = trim($data['layout_name'] ?? 'Default') ?: 'Default';
+        $isDefault = isset($data['is_default']) ? (int)(bool)$data['is_default'] : 1;
 
-        if ($isDefault) {
-            UserDashboardLayout::where('user_id', $userId)
-                ->update(['is_default' => false]);
+        try {
+            if ($isDefault) {
+                $this->db->execute(
+                    "UPDATE user_dashboard_layouts SET is_default = 0 WHERE user_id = ?",
+                    [$userId]
+                );
+            }
+            $existing = $this->db->fetchOne(
+                "SELECT id FROM user_dashboard_layouts WHERE user_id = ? AND layout_name = ? LIMIT 1",
+                [$userId, $layoutName]
+            );
+            $row = [
+                'layout_config' => json_encode($layoutConfig),
+                'widgets_order' => json_encode($data['widgets_order'] ?? []),
+                'is_default' => $isDefault,
+            ];
+            if ($existing) {
+                $row['updated_at'] = date('Y-m-d H:i:s');
+                $this->db->update('user_dashboard_layouts', $row, 'id = :wid', ['wid' => $existing['id']]);
+                $layoutId = (int)$existing['id'];
+            } else {
+                $row['user_id'] = $userId;
+                $row['layout_name'] = $layoutName;
+                $row['created_at'] = date('Y-m-d H:i:s');
+                $row['updated_at'] = date('Y-m-d H:i:s');
+                $this->db->insert('user_dashboard_layouts', $row);
+                $layoutId = (int)$this->db->lastInsertId();
+            }
+        } catch (\Throwable $e) {
+            return $this->jsonError('Server error: ' . $e->getMessage(), 500);
         }
 
-        $layout = UserDashboardLayout::updateOrCreate(
-            ['user_id' => $userId, 'layout_name' => $layoutName],
-            [
-                'layout_config' => $layoutConfig,
-                'widgets_order' => $data['widgets_order'] ?? [],
-                'is_default' => $isDefault,
-            ]
-        );
-
-        return response()->json([
+        return $this->jsonResponse([
             'success' => true,
             'message' => 'Layout saved successfully',
-            'layout' => $layout,
+            'layout_id' => $layoutId,
         ]);
     }
 
     public function deleteLayout($id)
     {
-        $userId = session('admin_id') ?? session('user_id');
-        $layout = UserDashboardLayout::where('user_id', $userId)
-            ->where('id', $id)
-            ->first();
-
-        if (!$layout) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Layout not found',
-            ], 404);
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+        try {
+            $deleted = $this->db->execute(
+                "DELETE FROM user_dashboard_layouts WHERE id = ? AND user_id = ?",
+                [(int)$id, $this->currentUserId()]
+            )->rowCount() > 0;
+        } catch (\Throwable $e) {
+            return $this->jsonError('Server error: ' . $e->getMessage(), 500);
         }
 
-        $layout->delete();
+        if (!$deleted) {
+            return $this->jsonError('Layout not found', 404);
+        }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Layout deleted',
-        ]);
+        return $this->jsonResponse(['success' => true, 'message' => 'Layout deleted']);
     }
 
     private function getAvailableWidgets()

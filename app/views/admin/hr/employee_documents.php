@@ -37,7 +37,7 @@ $page_title = $page_title ?? 'Employee Documents';
                             <tr>
                                 <td class="fw-medium"><?= htmlspecialchars($d['employee_name'] ?? '') ?></td>
                                 <td><span class="badge bg-secondary"><?= htmlspecialchars($d['document_type'] ?? '') ?></span></td>
-                                <td><?= htmlspecialchars($d['document_name'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($d['document_name'] ?? basename($d['file_path'] ?? '') ?: '-') ?></td>
                                 <td>
                                     <?php if ($d['file_path'] ?? ''): ?>
                                         <a href="<?= BASE_URL ?>/<?= htmlspecialchars($d['file_path'] ?? '') ?>" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-download"></i></a>
@@ -62,6 +62,41 @@ $page_title = $page_title ?? 'Employee Documents';
             </ul></nav>
         </div>
     <?php endif; ?>
+</div>
+
+<div class="card border-0 shadow-sm mt-4">
+    <div class="card-body p-0">
+        <h6 class="fw-bold px-3 pt-3"><i class="fas fa-receipt me-2"></i>Investment Proofs (uploaded by employees for TDS verification)</h6>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr><th>Employee</th><th>FY</th><th>Section</th><th>File</th><th>Size</th><th>Uploaded At</th></tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($proofs ?? [])): ?>
+                        <tr><td colspan="6" class="text-center text-muted py-4">No investment proofs uploaded</td></tr>
+                    <?php else: ?>
+                        <?php foreach ($proofs as $p): ?>
+                            <tr>
+                                <td class="fw-medium"><?= htmlspecialchars($p['employee_name'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($p['financial_year'] ?? '') ?></td>
+                                <td><span class="badge bg-info"><?= htmlspecialchars($p['section'] ?? '') ?></span></td>
+                                <td>
+                                    <?php if (!empty($p['file_path'])): ?>
+                                        <a href="<?= BASE_URL ?>/<?= htmlspecialchars($p['file_path']) ?>" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-download"></i> <?= htmlspecialchars($p['original_name'] ?? basename($p['file_path'])) ?></a>
+                                    <?php else: ?>
+                                        <span class="text-muted">No file</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td><?= $p['file_size'] ? number_format($p['file_size'] / 1024, 1) . ' KB' : '-' ?></td>
+                                <td><?= htmlspecialchars($p['uploaded_at'] ?? '') ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <!-- Upload Modal -->

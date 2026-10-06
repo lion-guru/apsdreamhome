@@ -25,6 +25,7 @@ class EmailSettingsController extends AdminController
      */
     public function smtpSettings()
     {
+       $this->requireAdmin();
         @session_start();
 
         if (!isset($_SESSION['admin_id'])) {
@@ -42,6 +43,7 @@ class EmailSettingsController extends AdminController
      */
     public function saveSmtp()
     {
+        $this->requireAdmin();
         @session_start();
 
         if (!isset($_SESSION['admin_id'])) {
@@ -104,6 +106,7 @@ class EmailSettingsController extends AdminController
      */
     public function index()
     {
+        $this->requireAdmin();
         @session_start();
         
         // Check admin auth
@@ -125,6 +128,7 @@ class EmailSettingsController extends AdminController
      */
     public function save()
     {
+        $this->requireAdmin();
         @session_start();
         
         if (!isset($_SESSION['admin_id'])) {
@@ -158,6 +162,7 @@ class EmailSettingsController extends AdminController
      */
     public function test()
     {
+        $this->requireAdmin();
         @session_start();
         
         header('Content-Type: application/json');

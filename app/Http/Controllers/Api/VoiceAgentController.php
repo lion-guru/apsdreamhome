@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\BaseController;
+use App\Traits\TenantAwareTrait;
 
 class VoiceAgentController extends BaseController
 {
+    use TenantAwareTrait;
+    
     protected $db;
 
     public function __construct()

@@ -80,7 +80,7 @@ class AssociateAuthController extends BaseController
         $phone = trim($_POST['phone'] ?? '');
         $password = $_POST['password'] ?? '';
         $confirm = $_POST['confirm_password'] ?? '';
-        $referral = trim($_POST['sponsor_code'] ?? $_POST['referral_code'] ?? '');
+        $referral = trim($_POST['sponsor_code'] ?? $_POST['referral_code'] ?? $_GET['ref'] ?? $_COOKIE['aps_ref'] ?? $_SESSION['aps_ref'] ?? '');
 
         $errors = [];
         if (empty($name)) {

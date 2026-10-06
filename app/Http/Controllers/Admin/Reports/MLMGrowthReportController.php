@@ -23,7 +23,7 @@ class MLMGrowthReportController extends \App\Http\Controllers\Admin\AdminControl
      */
     public function index(): void
     {
-        $this->requireLogin();
+        $this->requireAdmin();
         
         $reportData = $this->generateGrowthReport();
         
@@ -210,7 +210,7 @@ class MLMGrowthReportController extends \App\Http\Controllers\Admin\AdminControl
      */
     public function exportPdf(): void
     {
-        $this->requireLogin();
+        $this->requireAdmin();
         
         $reportData = $this->generateGrowthReport();
         
@@ -225,7 +225,7 @@ class MLMGrowthReportController extends \App\Http\Controllers\Admin\AdminControl
      */
     public function apiChartData(): void
     {
-        $this->requireLogin();
+        $this->requireAdmin();
         
         $reportData = $this->generateGrowthReport();
         

@@ -644,6 +644,23 @@ class EmployeeController extends BaseController
     }
 
     /**
+     * Resolve the canonical employees.id for a portal session.
+     * Portal sessions carry users.id, but employee_* tables are keyed by
+     * employees.id (FK-proven). Falls back to the session id so portal-only
+     * roles (manager/telecaller without an employees row) keep working.
+     */
+    private function resolveEmployeeTableId($sessionUserId)
+    {
+        try {
+            $row = $this->db->fetch("SELECT id FROM employees WHERE user_id = ? LIMIT 1", [(int)$sessionUserId]);
+            if ($row && !empty($row['id'])) return (int)$row['id'];
+        } catch (\Exception $e) {
+            error_log("EmployeeController::" . __FUNCTION__ . " resolve failed: " . $e->getMessage());
+        }
+        return (int)$sessionUserId;
+    }
+
+    /**
      * Check if employee is logged in
      */
     private function isEmployeeLoggedIn()
@@ -740,7 +757,7 @@ class EmployeeController extends BaseController
 
     public function attendance()
     {
-        $employeeId = $_SESSION['employee_id'] ?? 0;
+        $employeeId = $this->resolveEmployeeTableId($_SESSION['employee_id'] ?? 0);
         $attendance = [];
         $stats = ['present' => 0, 'absent' => 0, 'late' => 0, 'half_day' => 0, 'total_hours' => 0];
         $month = $_GET['month'] ?? date('Y-m');
@@ -796,8 +813,9 @@ class EmployeeController extends BaseController
                     $overall['rating'] = round($totalRating / count($reviews), 1);
                 }
 
-                $att = $this->db->fetch("SELECT COUNT(*) as present FROM employee_attendance WHERE employee_id = ? AND status = 'present' AND attendance_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)", [$employeeId]);
-                $totalDays = (int)($this->db->fetch("SELECT COUNT(*) as cnt FROM employee_attendance WHERE employee_id = ? AND attendance_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)", [$employeeId])['cnt'] ?? 0);
+                $attEid = $this->resolveEmployeeTableId($employeeId);
+                $att = $this->db->fetch("SELECT COUNT(*) as present FROM employee_attendance WHERE employee_id = ? AND status = 'present' AND attendance_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)", [$attEid]);
+                $totalDays = (int)($this->db->fetch("SELECT COUNT(*) as cnt FROM employee_attendance WHERE employee_id = ? AND attendance_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)", [$attEid])['cnt'] ?? 0);
                 $presentDays = (int)($att['present'] ?? 0);
                 $overall['attendance_percent'] = $totalDays > 0 ? round(($presentDays / $totalDays) * 100) : 0;
 
@@ -911,7 +929,7 @@ class EmployeeController extends BaseController
 
     public function leaves()
     {
-        $employeeId = $_SESSION['employee_id'] ?? 0;
+        $employeeId = $this->resolveEmployeeTableId($_SESSION['employee_id'] ?? 0);
         $leaveTypes = [];
         $leaveBalance = [];
         $leaves = [];
@@ -959,7 +977,7 @@ class EmployeeController extends BaseController
 
     public function leaveApply()
     {
-        $employeeId = $_SESSION['employee_id'] ?? 0;
+        $employeeId = $this->resolveEmployeeTableId($_SESSION['employee_id'] ?? 0);
         if ($employeeId <= 0) {
             $_SESSION['flash_error'] = 'Invalid session.';
             $this->redirect('/employee/leaves');
@@ -1023,7 +1041,7 @@ class EmployeeController extends BaseController
 
     public function leaveDetail($id = 0)
     {
-        $employeeId = $_SESSION['employee_id'] ?? 0;
+        $employeeId = $this->resolveEmployeeTableId($_SESSION['employee_id'] ?? 0);
         $id = (int)$id;
         if ($id <= 0 || $employeeId <= 0) {
             $_SESSION['flash_error'] = 'Invalid request.';
@@ -1058,7 +1076,7 @@ class EmployeeController extends BaseController
 
     public function leaveCancel($id = 0)
     {
-        $employeeId = $_SESSION['employee_id'] ?? 0;
+        $employeeId = $this->resolveEmployeeTableId($_SESSION['employee_id'] ?? 0);
         $id = (int)$id;
         if ($id <= 0 || $employeeId <= 0) {
             $_SESSION['flash_error'] = 'Invalid request.';

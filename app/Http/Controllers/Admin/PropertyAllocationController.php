@@ -25,6 +25,7 @@ class PropertyAllocationController extends AdminController
      */
     public function index()
     {
+        $this->requireAdmin();
         try {
             $conn = $this->db->getConnection();
             
@@ -74,6 +75,7 @@ class PropertyAllocationController extends AdminController
      */
     public function create()
     {
+        $this->requireAdmin();
         try {
             $conn = $this->db->getConnection();
             
@@ -108,6 +110,7 @@ class PropertyAllocationController extends AdminController
      */
     public function store()
     {
+        $this->requireAdmin();
         try {
             $conn = $this->db->getConnection();
             
@@ -150,6 +153,7 @@ class PropertyAllocationController extends AdminController
      */
     public function show($id)
     {
+        $this->requireAdmin();
         try {
             $conn = $this->db->getConnection();
             
@@ -203,6 +207,7 @@ class PropertyAllocationController extends AdminController
      */
     public function confirm($id)
     {
+        $this->requireAdmin();
         try {
             $conn = $this->db->getConnection();
             
@@ -232,6 +237,7 @@ class PropertyAllocationController extends AdminController
      */
     public function cancel($id)
     {
+        $this->requireAdmin();
         try {
             $conn = $this->db->getConnection();
             
@@ -265,6 +271,7 @@ class PropertyAllocationController extends AdminController
      */
     public function calendar()
     {
+        $this->requireAdmin();
         try {
             $conn = $this->db->getConnection();
             

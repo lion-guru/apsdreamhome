@@ -3191,6 +3191,555 @@ return array (
       ),
     ),
   ),
+  '/admin/salary/advances' =>
+  array (
+    'name' => 'Salary Advances',
+    'icon' => 'fas fa-hand-holding-usd',
+    'section' => 'hrm',
+    'parent_url' => NULL,
+    'order' => 12,
+    'perm' => 'payroll.view',
+    'roles' =>
+    array (
+      'admin' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'ceo' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chro' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_director' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_manager' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/salary/reimbursements' =>
+  array (
+    'name' => 'Reimbursements',
+    'icon' => 'fas fa-receipt',
+    'section' => 'hrm',
+    'parent_url' => NULL,
+    'order' => 13,
+    'perm' => 'payroll.view',
+    'roles' =>
+    array (
+      'admin' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'ceo' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chro' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_director' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_manager' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/salary/arrears/history' =>
+  array (
+    'name' => 'Salary Arrears',
+    'icon' => 'fas fa-history',
+    'section' => 'hrm',
+    'parent_url' => NULL,
+    'order' => 14,
+    'perm' => 'payroll.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chro' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/fnf/history' => 
+  array (
+    'name' => 'F&F Settlements',
+    'icon' => 'fas fa-file-invoice-dollar',
+    'section' => 'hrm',
+    'parent_url' => NULL,
+    'order' => 15,
+    'perm' => 'payroll.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chro' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/fnf/calculator' => 
+  array (
+    'name' => 'F&F Calculator',
+    'icon' => 'fas fa-calculator',
+    'section' => 'hrm',
+    'parent_url' => NULL,
+    'order' => 16,
+    'perm' => 'payroll.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chro' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/fnf/assets' => 
+  array (
+    'name' => 'Employee Assets',
+    'icon' => 'fas fa-laptop',
+    'section' => 'hrm',
+    'parent_url' => NULL,
+    'order' => 17,
+    'perm' => 'payroll.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chro' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/gratuity/report' => 
+  array (
+    'name' => 'Gratuity',
+    'icon' => 'fas fa-award',
+    'section' => 'hrm',
+    'parent_url' => NULL,
+    'order' => 18,
+    'perm' => 'payroll.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chro' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/shift-roster/roster' => 
+  array (
+    'name' => 'Shift Roster',
+    'icon' => 'fas fa-calendar-alt',
+    'section' => 'hrm',
+    'parent_url' => NULL,
+    'order' => 19,
+    'perm' => 'hrm.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chro' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/shift-roster/overtime-requests' => 
+  array (
+    'name' => 'Overtime Requests',
+    'icon' => 'fas fa-clock',
+    'section' => 'hrm',
+    'parent_url' => NULL,
+    'order' => 20,
+    'perm' => 'hrm.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chro' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
   '/admin/legal/deadlines' => 
   array (
     'name' => 'Legal Deadlines',

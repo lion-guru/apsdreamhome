@@ -14,6 +14,7 @@ class EventController extends AdminController
 
     public function index()
     {
+    $this->requireAdmin();
         try {
             $stmt = $this->db->query("SELECT * FROM events ORDER BY event_date DESC");
             $events = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -28,6 +29,7 @@ class EventController extends AdminController
 
     public function create()
     {
+        $this->requireAdmin();
         $this->render('admin/events/create', [
             'page_title' => 'Create Event'
         ]);
@@ -35,6 +37,7 @@ class EventController extends AdminController
 
     public function store()
     {
+        $this->requireAdmin();
         $title = $_POST['title'] ?? '';
         $description = $_POST['description'] ?? '';
         $event_date = $_POST['event_date'] ?? '';
@@ -52,6 +55,7 @@ class EventController extends AdminController
 
     public function show($id)
     {
+        $this->requireAdmin();
         try {
             $stmt = $this->db->prepare("SELECT * FROM events WHERE id = ?");
             $stmt->execute([$id]);
@@ -71,6 +75,7 @@ class EventController extends AdminController
 
     public function edit($id)
     {
+        $this->requireAdmin();
         try {
             $stmt = $this->db->prepare("SELECT * FROM events WHERE id = ?");
             $stmt->execute([$id]);
@@ -90,6 +95,7 @@ class EventController extends AdminController
 
     public function update($id)
     {
+        $this->requireAdmin();
         $title = $_POST['title'] ?? '';
         $description = $_POST['description'] ?? '';
         $event_date = $_POST['event_date'] ?? '';
@@ -108,6 +114,7 @@ class EventController extends AdminController
 
     public function destroy($id)
     {
+        $this->requireAdmin();
         try {
             [$tw, $tp] = $this->tenantWhere();
             $stmt = $this->db->prepare("DELETE FROM events WHERE id = ?" . $tw);

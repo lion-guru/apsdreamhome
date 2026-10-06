@@ -3,6 +3,7 @@ $page_title = $page_title ?? 'Referral Tiers';
 $base = defined('BASE_URL') ? BASE_URL : '';
 $tiers = $tiers ?? [];
 $tier_counts = $tier_counts ?? [];
+$csrf_token = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
 ?>
 <div class="container-fluid px-4 py-3">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -38,9 +39,19 @@ $tier_counts = $tier_counts ?? [];
                     </div>
                 </div>
                 <div class="card-footer bg-white text-center">
-                    <div class="small text-muted">
+                    <div class="small text-muted mb-2">
                         <strong><?= $tier_counts[$tier['tier']] ?? 0 ?></strong> users at this tier
                     </div>
+                    <form method="POST" action="<?= $base ?>/admin/referrals/tiers/update" onsubmit="return confirm('Update <?= htmlspecialchars($tier['label']) ?> tier? Applies to future bonuses only.');">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
+                        <input type="hidden" name="tier_key" value="<?= htmlspecialchars($tier['tier']) ?>">
+                        <div class="row g-1 text-start">
+                            <div class="col-4"><label class="small text-muted">Min refs</label><input type="number" name="min_referrals" class="form-control form-control-sm" value="<?= (int)$tier['min_referrals'] ?>" min="0"></div>
+                            <div class="col-4"><label class="small text-muted">₹/signup</label><input type="number" name="bonus_per_referral" class="form-control form-control-sm" value="<?= htmlspecialchars($tier['bonus_per_referral']) ?>" min="0" step="1"></div>
+                            <div class="col-4"><label class="small text-muted">₹/booking</label><input type="number" name="bonus_on_booking" class="form-control form-control-sm" value="<?= htmlspecialchars($tier['bonus_on_booking']) ?>" min="0" step="1"></div>
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-outline-primary w-100 mt-2">Save Tier</button>
+                    </form>
                 </div>
             </div>
         </div>

@@ -8,6 +8,7 @@ use App\Http\Middleware\ExperimentMiddleware;
 use App\Services\Monitoring\ErrorTrackerService;
 use App\Services\Localization\LocalizationService;
 use App\Core\Middleware\TenantContext;
+use App\Http\Middleware\RBACManager;
 use App\Services\TenantEnforcement;
 use App\Services\Log;
 use App\Core\ErrorHandler;
@@ -619,6 +620,14 @@ class BaseController
     }
 
     /**
+     * Check flash message exists (non-destructive; getFlash consumes)
+     */
+    protected function hasFlash($key)
+    {
+        return isset($_SESSION[$key]);
+    }
+
+    /**
      * Get session value
      */
     public function get($key, $default = null)
@@ -723,7 +732,7 @@ class BaseController
      */
     protected function hasRole($role)
     {
-        return ($_SESSION['role'] ?? $_SESSION['admin_role'] ?? '') === $role;
+        return (RBACManager::getUserRole() ?? '') === $role;
     }
 
     /**
@@ -933,7 +942,7 @@ class BaseController
         if (!isset($_SESSION['admin_id'])) return false;
         // Admin, super_admin, manager, employee, telecaller — all can access admin panel
         // Sidebar filtering via AdminMenuService shows only their department's menus
-        $role = $_SESSION['role'] ?? $_SESSION['admin_role'] ?? '';
+        $role = RBACManager::getUserRole() ?? '';
         return in_array($role, ['admin', 'super_admin', 'manager', 'employee', 'telecaller']);
     }
 

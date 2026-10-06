@@ -63,6 +63,7 @@ class NotificationController extends AdminController
 
     public function index()
     {
+        $this->requireAdmin();
         $data = $this->getDashboardData();
         $data['page_title'] = 'Notification Management';
         $this->render('notification/index', $data);
@@ -75,6 +76,7 @@ class NotificationController extends AdminController
 
     public function templates()
     {
+        $this->requireAdmin();
         $data = $this->getDashboardData();
         $data['page_title'] = 'Notification Templates';
         $this->render('notification/templates', $data);
@@ -82,16 +84,19 @@ class NotificationController extends AdminController
 
     public function createTemplate()
     {
+        $this->requireAdmin();
         $this->render('notification/create_template', ['page_title' => 'Create Template']);
     }
 
     public function editTemplate($id)
     {
+        $this->requireAdmin();
         $this->render('notification/edit_template', ['page_title' => 'Edit Template']);
     }
 
     public function emailLogs()
     {
+        $this->requireAdmin();
         $data = $this->getDashboardData();
         $data['page_title'] = 'Email Logs';
         $this->render('notification/email_logs', $data);
@@ -99,6 +104,7 @@ class NotificationController extends AdminController
 
     public function smsLogs()
     {
+        $this->requireAdmin();
         $data = $this->getDashboardData();
         $data['page_title'] = 'SMS Logs';
         $this->render('notification/sms_logs', $data);
@@ -106,6 +112,7 @@ class NotificationController extends AdminController
 
     public function settings()
     {
+        $this->requireAdmin();
         $data = $this->getDashboardData();
         $data['page_title'] = 'Notification Settings';
         $this->render('notification/settings', $data);
@@ -113,11 +120,13 @@ class NotificationController extends AdminController
 
     public function sendTest()
     {
+        $this->requireAdmin();
         $this->render('notification/send_test', ['page_title' => 'Send Test Notification']);
     }
 
     public function preview()
     {
+        $this->requireAdmin();
         $this->render('notification/preview', ['page_title' => 'Preview Template']);
     }
 
@@ -137,6 +146,9 @@ class NotificationController extends AdminController
             echo json_encode(['success' => false, 'message' => 'Not authenticated']);
             exit;
         }
+        // Read-only poller: release the session lock immediately so concurrent
+        // tabs never queue behind it nor overwrite fresher session data.
+        if (function_exists('session_status') && session_status() === PHP_SESSION_ACTIVE) session_write_close();
         try {
             $stmt = $this->db->prepare("SELECT * FROM notifications WHERE (user_id = ? OR user_id IS NULL) ORDER BY created_at DESC LIMIT 50");
             $stmt->execute([$userId]);
@@ -188,6 +200,8 @@ class NotificationController extends AdminController
             echo json_encode(['success' => false, 'message' => 'Not authenticated']);
             exit;
         }
+        // Read-only poller: release the session lock immediately (see above).
+        if (function_exists('session_status') && session_status() === PHP_SESSION_ACTIVE) session_write_close();
         try {
             $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM notifications WHERE is_read = 0 AND (user_id = ? OR user_id IS NULL)");
             $stmt->execute([$userId]);

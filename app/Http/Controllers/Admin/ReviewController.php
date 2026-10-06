@@ -30,6 +30,7 @@ class ReviewController extends AdminController
 
     public function index()
     {
+        $this->requireAdmin();
         $stats = $this->reviews ? $this->reviews->getStats() : [];
         $reviews = $this->reviews ? $this->reviews->getAllReviews('', 30) : [];
         $testimonials = $this->reviews ? $this->reviews->getAllTestimonials('', 20) : [];
@@ -44,6 +45,7 @@ class ReviewController extends AdminController
 
     public function approve()
     {
+        $this->requireAdmin();
         $id = (int)($_GET['id'] ?? $_POST['id'] ?? 0);
         if ($this->reviews && $id) {
             $this->reviews->approve($id);
@@ -55,6 +57,7 @@ class ReviewController extends AdminController
 
     public function reject()
     {
+        $this->requireAdmin();
         $id = (int)($_GET['id'] ?? $_POST['id'] ?? 0);
         if ($this->reviews && $id) {
             $this->reviews->reject($id);
@@ -66,6 +69,7 @@ class ReviewController extends AdminController
 
     public function respond()
     {
+        $this->requireAdmin();
         $id = (int)($_POST['id'] ?? 0);
         $response = trim($_POST['response'] ?? '');
         if ($this->reviews && $id && $response) {
@@ -78,6 +82,7 @@ class ReviewController extends AdminController
 
     public function delete()
     {
+        $this->requireAdmin();
         $id = (int)($_GET['id'] ?? $_POST['id'] ?? 0);
         if ($this->reviews && $id) {
             $this->reviews->delete($id);
@@ -89,6 +94,7 @@ class ReviewController extends AdminController
 
     public function featureTestimonial()
     {
+        $this->requireAdmin();
         $id = (int)($_GET['id'] ?? 0);
         if ($this->reviews && $id) {
             $this->reviews->toggleFeaturedTestimonial($id);
@@ -99,6 +105,7 @@ class ReviewController extends AdminController
 
     public function approveTestimonial()
     {
+        $this->requireAdmin();
         $id = (int)($_GET['id'] ?? 0);
         if ($this->reviews && $id) {
             $this->reviews->approveTestimonial($id);
@@ -109,6 +116,7 @@ class ReviewController extends AdminController
 
     public function rejectTestimonial()
     {
+        $this->requireAdmin();
         $id = (int)($_GET['id'] ?? 0);
         if ($this->reviews && $id) {
             $this->reviews->rejectTestimonial($id);
@@ -119,6 +127,7 @@ class ReviewController extends AdminController
 
     public function deleteTestimonial()
     {
+        $this->requireAdmin();
         $id = (int)($_GET['id'] ?? 0);
         if ($this->reviews && $id) {
             $this->reviews->deleteTestimonial($id);

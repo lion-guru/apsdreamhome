@@ -1,4 +1,4 @@
-ï»¿<?php $pageTitle = 'Plot Development Tracking'; ?>
+<?php $pageTitle = 'Plot Development Tracking'; ?>
 <div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">

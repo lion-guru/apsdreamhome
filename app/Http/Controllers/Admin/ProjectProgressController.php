@@ -177,14 +177,14 @@ class ProjectProgressController extends AdminController
         $milestoneName = trim($_POST['milestone_name'] ?? '');
         $category = $_POST['category'] ?? 'other';
         $status = $_POST['status'] ?? 'not_started';
-        $progressPct = isset($_POST['progress_pct']) ? (float)$_POST['progress_pct'] : 0;
+        $progressPct = ($_POST['progress_pct'] ?? '') === '' ? null : (isset($_POST['progress_pct']) ? (float)$_POST['progress_pct'] : 0);
         $startDate = !empty($_POST['start_date']) ? $_POST['start_date'] : null;
         $expectedCompletion = !empty($_POST['expected_completion']) ? $_POST['expected_completion'] : null;
         $actualCompletion = !empty($_POST['actual_completion']) ? $_POST['actual_completion'] : null;
         $contractorName = trim($_POST['contractor_name'] ?? '');
         $contractorContact = trim($_POST['contractor_contact'] ?? '');
-        $estimatedCost = isset($_POST['estimated_cost']) ? (float)$_POST['estimated_cost'] : 0;
-        $actualCost = isset($_POST['actual_cost']) ? (float)$_POST['actual_cost'] : 0;
+        $estimatedCost = ($_POST['estimated_cost'] ?? '') === '' ? null : (isset($_POST['estimated_cost']) ? (float)$_POST['estimated_cost'] : 0);
+        $actualCost = ($_POST['actual_cost'] ?? '') === '' ? null : (isset($_POST['actual_cost']) ? (float)$_POST['actual_cost'] : 0);
         $notes = trim($_POST['notes'] ?? '');
         $remarks = trim($_POST['remarks'] ?? $notes);
 
