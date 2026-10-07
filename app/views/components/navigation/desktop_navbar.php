@@ -299,10 +299,16 @@ if (!function_exists('navUrl')) {
                             </li>
                         </ul>
                     <?php else: ?>
-                        <a class="nav-link btn btn-primary btn-sm text-white ms-3"
-                           href="<?php echo BASE_URL; ?>/login">
-                            <i class="fas fa-sign-in-alt me-1"></i> <?php echo __('login'); ?> / <?php echo __('register'); ?>
-                        </a>
+                        <div class="d-flex gap-2 ms-3">
+                            <a class="nav-link btn btn-outline-primary btn-sm text-primary"
+                               href="<?php echo BASE_URL; ?>/login">
+                                <i class="fas fa-sign-in-alt me-1"></i> <?php echo __('login'); ?>
+                            </a>
+                            <a class="nav-link btn btn-primary btn-sm text-white"
+                               href="<?php echo BASE_URL; ?>/register">
+                                <i class="fas fa-user-plus me-1"></i> <?php echo __('register'); ?>
+                            </a>
+                        </div>
                     <?php endif; ?>
                 </li>
 
