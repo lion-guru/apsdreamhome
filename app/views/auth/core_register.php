@@ -15,18 +15,35 @@ $roleOptions = [
         'icon' => 'fas fa-user',
         'desc' => 'Browse properties, book plots, track applications',
         'color' => '#0d9488',
+        'badge' => 'Most Popular',
     ],
     'associate' => [
         'label' => 'Associate',
         'icon' => 'fas fa-handshake',
-        'desc' => 'MLM network, team building, commissions',
+        'desc' => 'MLM network, team building, commissions up to 20%',
         'color' => '#f59e0b',
+        'badge' => 'Earn More',
     ],
     'agent' => [
         'label' => 'Agent',
         'icon' => 'fas fa-star',
-        'desc' => 'Property sales, client management, flat commission',
+        'desc' => 'Property sales, client management, flat 5% commission',
         'color' => '#2563eb',
+        'badge' => 'Professional',
+    ],
+    'employee' => [
+        'label' => 'Employee',
+        'icon' => 'fas fa-id-badge',
+        'desc' => 'Join our team, salary + benefits, career growth',
+        'color' => '#6366f1',
+        'badge' => 'Career',
+    ],
+    'telecaller' => [
+        'label' => 'Telecaller',
+        'icon' => 'fas fa-headset',
+        'desc' => 'Work from office, lead calling, incentives + salary',
+        'color' => '#ec4899',
+        'badge' => 'Hiring',
     ],
 ];
 $selectedRole = $selectedRole ?? 'customer';
@@ -57,8 +74,8 @@ $selectedRole = $selectedRole ?? 'customer';
         .brand p { color: #94a3b8; font-size: 14px; margin-top: 4px; }
         .card { background: #1e293b; border-radius: 16px; padding: 32px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
         
-        /* Role Selection Cards */
-        .role-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+/* Role Selection Cards */
+        .role-selector { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px; }
         .role-card { 
             border: 2px solid #334155; border-radius: 12px; padding: 16px 12px; cursor: pointer; 
             background: #0f172a; color: #94a3b8; transition: all 0.3s ease;
@@ -68,15 +85,30 @@ $selectedRole = $selectedRole ?? 'customer';
         .role-card.selected { 
             border-color: currentColor; color: currentColor; 
         }
-        .role-card.selected.customer { background: rgba(13,148,136,0.15); }
+.role-card.selected.customer { background: rgba(13,148,136,0.15); }
         .role-card.selected.associate { background: rgba(245,158,11,0.15); }
         .role-card.selected.agent { background: rgba(37,99,235,0.15); }
+        .role-card.selected.employee { background: rgba(99,102,241,0.15); }
+        .role-card.selected.telecaller { background: rgba(236,72,153,0.15); }
         .role-card .role-icon { font-size: 28px; display: block; margin-bottom: 8px; }
         .role-card .role-label { font-size: 13px; font-weight: 600; display: block; }
+        .role-card .role-badge { 
+            display: inline-block; 
+            font-size: 8px; 
+            font-weight: 700; 
+            padding: 2px 6px; 
+            border-radius: 999px; 
+            margin-left: 6px; 
+            text-transform: uppercase;
+            background: currentColor;
+            color: #fff;
+        }
         .role-card .role-desc { font-size: 10px; margin-top: 4px; opacity: 0.8; }
         .role-card.customer { color: #0d9488; }
         .role-card.associate { color: #f59e0b; }
         .role-card.agent { color: #2563eb; }
+        .role-card.employee { color: #6366f1; }
+        .role-card.telecaller { color: #ec4899; }
         
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; color: #94a3b8; font-size: 13px; font-weight: 500; margin-bottom: 6px; }
@@ -155,14 +187,18 @@ $selectedRole = $selectedRole ?? 'customer';
         .social-btn.google i{color:#ea4335}
         .social-btn.facebook i{color:#1877f2}
 
-        @media (max-width: 480px) { 
+@media (max-width: 480px) { 
             .card { padding: 24px; } 
             .form-row { grid-template-columns: 1fr; }
-            .role-selector { gap: 8px; }
+            .role-selector { grid-template-columns: repeat(2, 1fr); gap: 8px; }
             .role-card { padding: 12px 8px; }
             .role-card .role-icon { font-size: 24px; }
             .role-card .role-label { font-size: 12px; }
             .role-card .role-desc { font-size: 9px; }
+            .role-card .role-badge { font-size: 7px; padding: 1px 4px; }
+        }
+        @media (max-width: 360px) {
+            .role-selector { grid-template-columns: 1fr; }
         }
     </style>
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
@@ -199,7 +235,11 @@ $selectedRole = $selectedRole ?? 'customer';
                          onclick="selectRole(this, '<?= e($roleKey) ?>')"
                          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectRole(this, '<?= e($roleKey) ?>');}">
                         <i class="<?= e($roleData['icon']) ?> role-icon"></i>
-                        <span class="role-label"><?= e($roleData['label']) ?></span>
+                        <span class="role-label"><?= e($roleData['label']) ?>
+                            <?php if (!empty($roleData['badge'])): ?>
+                                <span class="role-badge"><?= e($roleData['badge']) ?></span>
+                            <?php endif; ?>
+                        </span>
                         <span class="role-desc"><?= e($roleData['desc']) ?></span>
                     </button>
                     <?php endforeach; ?>

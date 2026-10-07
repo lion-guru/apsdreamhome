@@ -1,6 +1,6 @@
 <!-- Quick Register Modal -->
 <div class="modal fade" id="quickRegisterModal" tabindex="-1" aria-labelledby="quickRegisterModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header border-0">
                 <h5 class="modal-title fw-bold" id="quickRegisterModalLabel">
@@ -9,10 +9,32 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p class="text-muted mb-4"><?= __('component_join_aps_seconds', 'Join APS Dream Home in seconds! No password needed.') ?></p>
+                <p class="text-muted mb-4"><?= __('component_join_aps_seconds', 'Join APS Dream Home in seconds! Choose your role and register.') ?></p>
                 
                 <form id="quickRegisterForm">
     <?php echo CSRFProtection::csrfField(); ?>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold"><?= __('component_role', 'Role') ?> *</label>
+                        <div class="d-flex gap-2 flex-wrap" id="qrRoleSelector">
+                            <button type="button" class="btn btn-outline-primary flex-fill role-btn-qr active" data-role="customer" onclick="selectQrRole(this,'customer')">
+                                <i class="fas fa-user me-1"></i> Customer
+                            </button>
+                            <button type="button" class="btn btn-outline-warning flex-fill role-btn-qr" data-role="associate" onclick="selectQrRole(this,'associate')">
+                                <i class="fas fa-handshake me-1"></i> Associate
+                            </button>
+                            <button type="button" class="btn btn-outline-primary flex-fill role-btn-qr" data-role="agent" onclick="selectQrRole(this,'agent')">
+                                <i class="fas fa-star me-1"></i> Agent
+                            </button>
+                            <button type="button" class="btn btn-outline-purple flex-fill role-btn-qr" data-role="employee" onclick="selectQrRole(this,'employee')">
+                                <i class="fas fa-id-badge me-1"></i> Employee
+                            </button>
+                            <button type="button" class="btn btn-outline-pink flex-fill role-btn-qr" data-role="telecaller" onclick="selectQrRole(this,'telecaller')">
+                                <i class="fas fa-headset me-1"></i> Telecaller
+                            </button>
+                        </div>
+                        <input type="hidden" name="role" id="qrSelectedRole" value="customer">
+                    </div>
+                    
                     <div class="mb-3">
                         <label class="form-label fw-bold"><?= __('component_full_name', 'Full Name') ?> *</label>
                         <input type="text" class="form-control" id="qrName" name="name" required placeholder="<?= htmlspecialchars(__('component_enter_full_name', 'Enter your full name')) ?>">
@@ -129,11 +151,18 @@ function showQuickRegisterModal() {
     modal.show();
 }
 
+function selectQrRole(btn, role) {
+    document.querySelectorAll('.role-btn-qr').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('qrSelectedRole').value = role;
+}
+
 function submitQuickRegister() {
     const name = document.getElementById('qrName').value;
     const email = document.getElementById('qrEmail').value;
     const phone = document.getElementById('qrPhone').value;
     const referralCode = document.getElementById('qrReferralCode').value;
+    const role = document.getElementById('qrSelectedRole').value;
     
     if (!name || !email || !phone) {
         alert('Please fill all required fields');
@@ -154,6 +183,7 @@ function submitQuickRegister() {
     formData.append('email', email);
     formData.append('phone', phone);
     formData.append('referral_code', referralCode);
+    formData.append('role', role);
     
     fetch('<?= BASE_URL ?>/auth/quick-register', {
         method: 'POST',
@@ -232,4 +262,29 @@ function submitReferralRequest() {
         document.getElementById('rrLoading').style.display = 'none';
     });
 }
+.catch(error => {
+        alert('Error: ' + error);
+        document.getElementById('quickRegisterForm').style.display = 'block';
+        document.getElementById('qrLoading').style.display = 'none';
+    });
+}
+
+function selectQrRole(btn, role) {
+    document.querySelectorAll('.role-btn-qr').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('qrSelectedRole').value = role;
+}
 </script>
+
+<style>
+    .role-btn-qr { transition: all 0.2s; flex: 1; min-width: 100px; }
+    .role-btn-qr.active { background: var(--bs-btn-active-bg); color: var(--bs-btn-active-color); border-color: var(--bs-btn-active-border-color); }
+    .btn-outline-purple { color: #6366f1; border-color: #6366f1; }
+    .btn-outline-purple.active, .btn-outline-purple:hover { background: #6366f1; color: white; }
+    .btn-outline-pink { color: #ec4899; border-color: #ec4899; }
+    .btn-outline-pink.active, .btn-outline-pink:hover { background: #ec4899; color: white; }
+    @media (max-width: 576px) {
+        #qrRoleSelector { flex-direction: column; }
+        .role-btn-qr { width: 100%; }
+    }
+</style>
