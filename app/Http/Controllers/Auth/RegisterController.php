@@ -74,7 +74,7 @@ class RegisterController extends BaseController
         if (empty($phone) || !preg_match('/^[0-9]{10}$/', $phone)) $errors[] = 'Valid 10-digit phone required';
         if (strlen($password) < 6) $errors[] = 'Password must be at least 6 characters';
         if ($password !== $confirm) $errors[] = 'Passwords do not match';
-        if (!in_array($role, ['customer', 'associate', 'agent', 'employee', 'telecaller'], true)) $errors[] = 'Invalid role selected';
+        if (!in_array($role, ['customer', 'associate', 'agent'], true)) $errors[] = 'Invalid role selected';
 
         // CAPTCHA validation
         $captcha_code = trim($_POST['captcha_code'] ?? '');

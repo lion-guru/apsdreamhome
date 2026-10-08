@@ -64,10 +64,10 @@ $base = BASE_URL;
                 <input type="hidden" name="role" id="selectedRole" value="customer">
 
 <div class="role-grid">
-                    <button type="button" class="role-card selected" data-role="customer" tabindex="0" role="button" aria-label="Customer - Browse & buy properties, track bookings, manage EMI" onclick="selectRole(this, 'customer')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectRole(this, 'customer');}">
+                    <button type="button" class="role-card selected" data-role="customer" tabindex="0" role="button" aria-label="Customer - Browse, buy and sell properties, track bookings, manage EMI" onclick="selectRole(this, 'customer')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectRole(this, 'customer');}">
                         <div class="icon customer"><i class="fas fa-user"></i></div>
                         <h3>Customer</h3>
-                        <p>Browse & buy properties, track bookings, manage EMI</p>
+                        <p>Browse, buy & sell properties, track bookings, manage EMI</p>
                         <span class="badge">Most Popular</span>
                     </button>
                     <button type="button" class="role-card" data-role="associate" tabindex="0" role="button" aria-label="Associate - Earn commissions, build team, refer properties" onclick="selectRole(this, 'associate')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectRole(this, 'associate');}">

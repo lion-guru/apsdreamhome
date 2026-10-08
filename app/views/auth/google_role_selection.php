@@ -194,7 +194,7 @@
                 </div>
                 <div class="info">
                     <h5><?php echo __('auth_role_customer', 'Customer'); ?></h5>
-                    <small><?php echo __('auth_role_customer_desc', 'Search properties, buy/rent, get 5% discount with referral'); ?></small>
+                    <small><?php echo __('auth_role_customer_desc', 'Buy, sell & rent properties, get 5% discount with referral'); ?></small>
                 </div>
             </div>
         </div>

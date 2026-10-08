@@ -1,6 +1,53 @@
 <?php
-header('Location: ' . BASE_URL . '/register?role=agent');
-exit;
+if (!defined('BASE_URL')) {
+    $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $basePath = preg_replace('#/public$#', '', dirname($_SERVER['SCRIPT_NAME'] ?? '/'));
+    define('BASE_URL', $protocol . '://' . $host . $basePath);
+}
+if (session_status() === PHP_SESSION_NONE) @session_start();
+$csrf_token = $csrf_token ?? $_SESSION['csrf_token'] ?? '';
+$errors = $errors ?? $_SESSION['errors'] ?? [];
+$old = $old ?? $_SESSION['old_input'] ?? [];
+unset($_SESSION['errors'], $_SESSION['old_input']);
+$base = BASE_URL;
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo __('auth_agent_registration', 'Agent Registration'); ?> - APS Dream Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
+    <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #059669 0%, #047857 25%, #065f46 50%, #064e3b 75%, #022c22 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, transparent 70%);
+            top: -200px;
             right: -100px;
             border-radius: 50%;
         }
@@ -548,6 +595,9 @@ exit;
 
             <p class="text-center mb-0">
                 <?php echo __('auth_already_have_account', 'Already have an account?'); ?> <a href="<?php echo $base; ?>/agent/login" class="login-link"><?php echo __('auth_login_here', 'Login here'); ?></a>
+            </p>
+            <p class="text-center mb-0 mt-2" style="font-size:.82rem;color:#94a3b8">
+                <?php echo __('auth_prefer_unified', 'Prefer one form for all roles?'); ?> <a href="<?php echo $base; ?>/register?role=agent" style="color:#2563eb"><?php echo __('auth_unified_register', 'Unified registration'); ?></a>
             </p>
         </div>
 

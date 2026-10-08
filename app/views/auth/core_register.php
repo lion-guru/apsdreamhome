@@ -11,9 +11,9 @@
 $base = BASE_URL;
 $roleOptions = [
     'customer' => [
-        'label' => 'Customer / Buyer',
+        'label' => 'Customer / Buyer & Seller',
         'icon' => 'fas fa-user',
-        'desc' => 'Browse properties, book plots, track applications',
+        'desc' => 'Buy plots, sell property, track applications',
         'color' => '#0d9488',
         'badge' => 'Most Popular',
     ],
@@ -30,20 +30,6 @@ $roleOptions = [
         'desc' => 'Property sales, client management, flat 5% commission',
         'color' => '#2563eb',
         'badge' => 'Professional',
-    ],
-    'employee' => [
-        'label' => 'Employee',
-        'icon' => 'fas fa-id-badge',
-        'desc' => 'Join our team, salary + benefits, career growth',
-        'color' => '#6366f1',
-        'badge' => 'Career',
-    ],
-    'telecaller' => [
-        'label' => 'Telecaller',
-        'icon' => 'fas fa-headset',
-        'desc' => 'Work from office, lead calling, incentives + salary',
-        'color' => '#ec4899',
-        'badge' => 'Hiring',
     ],
 ];
 $selectedRole = $selectedRole ?? 'customer';
@@ -75,7 +61,7 @@ $selectedRole = $selectedRole ?? 'customer';
         .card { background: #1e293b; border-radius: 16px; padding: 32px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
         
 /* Role Selection Cards */
-        .role-selector { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px; }
+        .role-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
         .role-card { 
             border: 2px solid #334155; border-radius: 12px; padding: 16px 12px; cursor: pointer; 
             background: #0f172a; color: #94a3b8; transition: all 0.3s ease;
@@ -88,8 +74,6 @@ $selectedRole = $selectedRole ?? 'customer';
 .role-card.selected.customer { background: rgba(13,148,136,0.15); }
         .role-card.selected.associate { background: rgba(245,158,11,0.15); }
         .role-card.selected.agent { background: rgba(37,99,235,0.15); }
-        .role-card.selected.employee { background: rgba(99,102,241,0.15); }
-        .role-card.selected.telecaller { background: rgba(236,72,153,0.15); }
         .role-card .role-icon { font-size: 28px; display: block; margin-bottom: 8px; }
         .role-card .role-label { font-size: 13px; font-weight: 600; display: block; }
         .role-card .role-badge { 
@@ -100,15 +84,14 @@ $selectedRole = $selectedRole ?? 'customer';
             border-radius: 999px; 
             margin-left: 6px; 
             text-transform: uppercase;
-            background: currentColor;
-            color: #fff;
+            border: 1px solid currentColor;
+            opacity: 0.9;
+            vertical-align: middle;
         }
         .role-card .role-desc { font-size: 10px; margin-top: 4px; opacity: 0.8; }
         .role-card.customer { color: #0d9488; }
         .role-card.associate { color: #f59e0b; }
         .role-card.agent { color: #2563eb; }
-        .role-card.employee { color: #6366f1; }
-        .role-card.telecaller { color: #ec4899; }
         
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; color: #94a3b8; font-size: 13px; font-weight: 500; margin-bottom: 6px; }
@@ -156,9 +139,20 @@ $selectedRole = $selectedRole ?? 'customer';
         .ref-info { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); border-radius: 8px; padding: 10px 12px; margin-bottom: 20px; color: #fbbf24; font-size: 13px; display: flex; align-items: center; gap: 8px; }
         .password-hint { color: #64748b; font-size: 12px; margin-top: 4px; }
         
-        .login-link { text-align: center; margin-top: 24px; color: #64748b; font-size: 14px; }
+.login-link { text-align: center; margin-top: 24px; color: #64748b; font-size: 14px; }
         .login-link a { color: #f59e0b; text-decoration: none; font-weight: 600; }
         .login-link a:hover { text-decoration: underline; }
+
+        .alt-methods { margin-top: 18px; padding-top: 16px; border-top: 1px solid #334155; text-align: center; }
+        .alt-title { color: #64748b; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .alt-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; font-size: 13px; }
+        .alt-links a { color: #38bdf8; text-decoration: none; font-weight: 600; }
+        .alt-links a:hover { text-decoration: underline; }
+        .alt-sub { font-weight: 400; color: #64748b; }
+        .alt-sep { color: #475569; }
+        .alt-note { margin-top: 8px; color: #64748b; font-size: 12px; }
+        .alt-note a { color: #f59e0b; text-decoration: none; font-weight: 600; }
+        .alt-note a:hover { text-decoration: underline; }
 
         /* CAPTCHA styling */
         .captcha-wrap { display: flex; gap: 8px; align-items: stretch; }
@@ -306,14 +300,15 @@ $selectedRole = $selectedRole ?? 'customer';
                     </div>
                 </div>
 
-                <div class="form-group" id="referralGroup" style="display:<?= ($selectedRole === 'associate' || $selectedRole === 'agent') ? 'block' : 'none' ?>">
-                     <label for="referralCodeInput"><i class="fas fa-gift"></i> Referral Code</label>
+<div class="form-group" id="referralGroup" style="display:block">
+                     <label for="referralCodeInput"><i class="fas fa-gift"></i> Referral Code <span id="referralRequired" class="text-muted">(Optional)</span></label>
                      <div class="input-wrap">
                          <input type="text" name="referral_code" id="referralCodeInput" value="<?= htmlspecialchars($ref ?? '') ?>" placeholder="Enter sponsor's referral code">
                          <i class="fas fa-gift field-icon"></i>
                      </div>
                      <div id="referral_name_display" class="mt-2"></div>
-                </div>
+                     <small id="referralNote" class="text-muted">Enter referral code for 5% discount on first booking</small>
+                 </div>
 
 <div class="form-group" id="agentTypeGroup" style="display:<?= ($selectedRole === 'agent') ? 'block' : 'none' ?>; margin-bottom: 16px;">
                     <label><i class="fas fa-id-badge"></i> Agent Type / Engagement</label>
@@ -329,7 +324,7 @@ $selectedRole = $selectedRole ?? 'customer';
                 </div>
 
                 <div class="terms-row">
-                    <input type="checkbox" name="terms" id="terms" required>
+                    <input type="checkbox" name="terms" id="terms" required <?= !empty($old['terms']) ? 'checked' : '' ?>>
                     <label for="terms">I agree to the <a href="<?= BASE_URL ?>/terms">Terms of Service</a> and <a href="<?= BASE_URL ?>/privacy">Privacy Policy</a> *</label>
                 </div>
 
@@ -339,8 +334,19 @@ $selectedRole = $selectedRole ?? 'customer';
                 </button>
             </form>
 
-            <div class="login-link">
+<div class="login-link">
                 Already have an account? <a href="<?= $base ?>/auth/login">Login</a>
+            </div>
+            <div class="alt-methods">
+                <div class="alt-title">Other ways to join</div>
+                <div class="alt-links">
+                    <a href="<?= $base ?>/agent/register">Dedicated Agent page</a>
+                    <span class="alt-sep">·</span>
+                    <a href="<?= $base ?>/associate/register">Dedicated Associate page</a>
+                    <span class="alt-sep">·</span>
+                    <a href="<?= $base ?>/register/smart">OTP <span class="alt-sub">(no password)</span></a>
+                </div>
+                <div class="alt-note">Employee / Telecaller accounts are created by HR/Admin — apply via <a href="<?= $base ?>/careers">Careers</a>.</div>
             </div>
         </div>
     </div>
@@ -350,13 +356,30 @@ $selectedRole = $selectedRole ?? 'customer';
         function selectRole(el, role) {
             document.querySelectorAll('.role-card').forEach(t => t.classList.remove('selected'));
             el.classList.add('selected');
-            document.getElementById('selectedRole').value = role;
-            // Show referral field only for associate/agent
+document.getElementById('selectedRole').value = role;
+            // Show referral field for all public roles (customer=optional, associate/agent=required)
             var refGroup = document.getElementById('referralGroup');
-            if (refGroup) refGroup.style.display = (role === 'associate' || role === 'agent') ? 'block' : 'none';
+            var refRequired = document.getElementById('referralRequired');
+            var refNote = document.getElementById('referralNote');
+            if (refGroup) refGroup.style.display = 'block';
+            if (role === 'customer') {
+                if (refRequired) { refRequired.textContent = '(Optional)'; refRequired.className = 'text-muted'; }
+                if (refNote) refNote.textContent = 'Enter referral code for 5% discount on first booking';
+            } else if (role === 'associate' || role === 'agent') {
+                if (refRequired) { refRequired.textContent = '*'; refRequired.className = 'text-danger'; }
+                if (refNote) refNote.textContent = 'Referral code is required to join as Associate/Agent';
+            }
             var agentGroup = document.getElementById('agentTypeGroup');
             if (agentGroup) agentGroup.style.display = (role === 'agent') ? 'block' : 'none';
         }
+
+        // Sync referral UI with server-preselected role (?role=... deep links)
+        document.addEventListener('DOMContentLoaded', function() {
+            var hidden = document.getElementById('selectedRole');
+            var role = hidden ? hidden.value : 'customer';
+            var card = document.querySelector('.role-card[data-role="' + role + '"]');
+            if (card) selectRole(card, role);
+        });
 
         // Password Toggle
         function togglePwd(fieldId) {

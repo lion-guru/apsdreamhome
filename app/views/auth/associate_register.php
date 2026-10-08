@@ -354,6 +354,7 @@ $ref = $ref ?? $_GET['ref'] ?? $old['sponsor_code'] ?? $_COOKIE['aps_ref'] ?? (i
 
             <div class="login-section">
                 <p>Already have an account? <a href="<?php echo e($base); ?>/associate/login">Sign in here</a></p>
+                <p style="font-size:.82rem;color:#94a3b8;margin-top:.35rem">Prefer one form for all roles? <a href="<?php echo e($base); ?>/register?role=associate">Unified registration</a></p>
             </div>
         </div>
     </div>
