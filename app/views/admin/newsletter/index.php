@@ -7,7 +7,10 @@ $page_title = $page_title ?? 'Newsletter Subscribers';
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <h4 class="mb-0"><i class="fas fa-envelope-open-text me-2"></i>Newsletter Subscribers</h4>
+                <div class="d-flex gap-2 align-items-center">
+                <a href="<?= BASE_URL ?>/admin/promotional-offers" class="btn btn-outline-danger btn-sm"><i class="fas fa-percent me-1"></i>Promotional Offers</a>
                 <span class="badge bg-primary rounded-pill fs-6"><?= count($subscribers) ?> Total</span>
+                </div>
             </div>
         </div>
     </div>

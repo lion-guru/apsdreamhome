@@ -78,6 +78,12 @@ class AppConstants {
   static const String referralLeaderboardEndpointV2 = '/api/v2/mobile/referral/leaderboard';
   static const String referralShareUrlEndpointV2 = '/api/v2/mobile/referral/share-url';
 
+  // Associate / Agent Offers V2
+  static const String associateOffersEndpointV2 = '/api/v2/mobile/associate/offers';
+  static const String agentOffersEndpointV2 = '/api/v2/mobile/agent/offers';
+  static const String agentSalaryEndpointV2 = '/api/v2/mobile/agent/salary';
+  static const String promotionalOffersEndpointV2 = '/api/v2/mobile/promotional-offers';
+
   // Referral
 
   // Agent Portal

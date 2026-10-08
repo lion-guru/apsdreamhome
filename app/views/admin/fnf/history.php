@@ -156,9 +156,10 @@ $total = $total ?? 0;
                                         <i class="fas fa-eye"></i>
                                     </a>
                                     <?php if ($s['status'] === 'calculated'): ?>
-                                    <a href="<?= BASE_URL ?>/admin/fnf/approve/<?= $s['id'] ?>" class="btn btn-outline-success" title="Approve" onclick="return confirm('Approve this settlement?');">
-                                        <i class="fas fa-check"></i>
-                                    </a>
+                                    <form method="POST" action="<?= BASE_URL ?>/admin/fnf/approve/<?= $s['id'] ?>" class="d-inline" onsubmit="return confirm('Approve this settlement?');">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                                        <button type="submit" class="btn btn-outline-success" title="Approve"><i class="fas fa-check"></i></button>
+                                    </form>
                                     <?php endif; ?>
                                     <?php if ($s['status'] === 'approved'): ?>
                                     <form method="POST" action="<?= BASE_URL ?>/admin/fnf/mark-paid/<?= $s['id'] ?>" class="d-inline" onsubmit="return confirm('Mark as paid?');">

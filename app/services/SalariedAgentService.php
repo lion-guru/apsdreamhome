@@ -233,16 +233,18 @@ class SalariedAgentService
             $other     = (float)$structure['other_allowance'];
             $grossFixed = $basic + $hra + $tada + $other;
 
-            // Count plots sold this month
+            // Count plots sold this month.
+            // plot_bookings.associate_id stores users.id; booking_date is the
+            // business date (populated at booking time). Statuses are the live
+            // ENUM: token_paid/agreement_signed/emi_active/... — cancelled,
+            // defaulted and transferred bookings earn no incentive.
             $monthStr  = sprintf('%04d-%02d', $year, $month);
             $stmt = $this->pdo->prepare("
                 SELECT COUNT(*) AS plots_sold, COALESCE(SUM(pb.total_plot_value), 0) AS total_sale_value
                 FROM plot_bookings pb
-                WHERE pb.associate_id = (
-                    SELECT id FROM associates WHERE user_id = ? LIMIT 1
-                )
+                WHERE pb.associate_id = ?
                 AND DATE_FORMAT(pb.booking_date, '%Y-%m') = ?
-                AND pb.status IN ('confirmed','completed','registered')
+                AND pb.status NOT IN ('cancelled', 'defaulted', 'transferred')
             ");
             $stmt->execute([$userId, $monthStr]);
             $saleRow = $stmt->fetch(PDO::FETCH_ASSOC);

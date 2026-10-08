@@ -20,7 +20,7 @@ class SalariedAgentController extends AdminController
     public function __construct()
     {
         parent::__construct();
-        $this->service = new SalariedAgentService($this->db);
+        $this->service = new SalariedAgentService($this->db->getPdo());
     }
 
     /* ── List all salaried agents ─────────────────────────────────── */
@@ -65,6 +65,7 @@ class SalariedAgentController extends AdminController
     public function store(): void
     {
         $this->requireAdmin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { $this->redirect('/admin/agents/salaried'); }
 
         $userId        = (int)($_POST['user_id']         ?? 0);
         $effectiveFrom = $_POST['effective_from']         ?? date('Y-m-d');

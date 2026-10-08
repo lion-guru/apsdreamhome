@@ -32,9 +32,10 @@ $components = is_array($components) ? $components : [];
             </div>
             <div class="d-flex gap-2">
                 <?php if ($st === 'calculated'): ?>
-                <a href="<?= BASE_URL ?>/admin/fnf/approve/<?= (int)$settlement['id'] ?>" class="btn btn-success" onclick="return confirm('Approve this settlement?');">
-                    <i class="fas fa-check me-1"></i> Approve
-                </a>
+                <form method="POST" action="<?= BASE_URL ?>/admin/fnf/approve/<?= (int)$settlement['id'] ?>" class="d-inline" onsubmit="return confirm('Approve this settlement?');">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                    <button type="submit" class="btn btn-success"><i class="fas fa-check me-1"></i> Approve</button>
+                </form>
                 <?php endif; ?>
                 <?php if ($st === 'approved'): ?>
                 <form method="POST" action="<?= BASE_URL ?>/admin/fnf/mark-paid/<?= (int)$settlement['id'] ?>" class="d-inline" onsubmit="return confirm('Mark as paid?');">

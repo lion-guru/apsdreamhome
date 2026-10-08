@@ -149,6 +149,7 @@ import '../../presentation/pages/associate/payout_page.dart';
 import '../../presentation/pages/associate/my_team_page.dart';
 import '../../presentation/pages/associate/genealogy_page.dart';
 import '../../presentation/pages/associate/associate_emi_tracker_page.dart';
+import '../../presentation/pages/associate/associate_offers_page.dart';
 
 // Agent
 import '../../presentation/pages/agent/agent_dashboard_page.dart';
@@ -165,6 +166,8 @@ import '../../presentation/pages/agent/agent_properties_page.dart';
 import '../../presentation/pages/agent/agent_site_visits_page.dart';
 import '../../presentation/pages/agent/agent_my_team_page.dart';
 import '../../presentation/pages/agent/agent_rank_progress_page.dart';
+import '../../presentation/pages/agent/agent_offers_page.dart';
+import '../../presentation/pages/agent/agent_salary_page.dart';
 
 // Employee
 import '../../presentation/pages/employee/employee_shell.dart';
@@ -216,6 +219,7 @@ import '../../presentation/pages/admin/material_inventory_page.dart';
 // Wallet Activation & Referral Earnings
 import '../../presentation/pages/customer/wallet_activation_page.dart';
 import '../../presentation/pages/customer/referral_earnings_page.dart';
+import '../../presentation/pages/customer/offers_page.dart';
 
 // User model
 import '../../data/models/user_model.dart';
@@ -1085,6 +1089,10 @@ isDisclaimer ||
         builder: (context, state) => const ReferralEarningsPage(),
       ),
       GoRoute(
+        path: '/offers',
+        builder: (context, state) => const OffersPage(),
+      ),
+      GoRoute(
         path: '/wallet-activation',
         builder: (context, state) => const WalletActivationPage(),
       ),
@@ -1226,6 +1234,10 @@ isDisclaimer ||
         path: '/associate/emi-tracker',
         builder: (context, state) => const AssociateEmiTrackerPage(),
       ),
+      GoRoute(
+        path: '/associate/offers',
+        builder: (context, state) => const AssociateOffersPage(),
+      ),
 
       // Legacy MLM routes (redirect to associate routes)
       GoRoute(
@@ -1300,6 +1312,14 @@ isDisclaimer ||
       GoRoute(
         path: '/agent/rank-progress',
         builder: (context, state) => const AgentRankProgressPage(),
+      ),
+      GoRoute(
+        path: '/agent/offers',
+        builder: (context, state) => const AgentOffersPage(),
+      ),
+      GoRoute(
+        path: '/agent/salary',
+        builder: (context, state) => const AgentSalaryPage(),
       ),
 
       // Lead creation (full-page form for agents/associates)

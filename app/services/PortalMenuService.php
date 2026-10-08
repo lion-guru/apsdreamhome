@@ -164,6 +164,7 @@ class PortalMenuService
 
             // Earnings & Finance
             $this->item('commissions', 'Earnings', 'Commissions', '/associate/commissions', 'fas fa-rupee-sign'),
+            $this->item('offers', 'Earnings', 'Offers', '/associate/offers', 'fas fa-tags'),
             $this->item('wallet', 'Earnings', 'Wallet', '/associate/wallet', 'fas fa-wallet'),
             $this->item('withdraw', 'Earnings', 'Withdraw', '/associate/wallet/withdraw', 'fas fa-money-bill-wave'),
 
@@ -208,6 +209,8 @@ class PortalMenuService
             $this->item('deals', 'CRM', 'My Deals', '/agent/deals', 'fas fa-handshake'),
             $this->item('properties', 'Main', 'My Properties', '/agent/properties', 'fas fa-building', $this->countTable('user_properties', 'posted_by')),
             $this->item('commissions', 'Earnings', 'Commissions', '/agent/commissions', 'fas fa-rupee-sign'),
+            $this->item('salary', 'Earnings', 'My Salary', '/agent/salary', 'fas fa-money-check-alt'),
+            $this->item('offers', 'Earnings', 'Offers', '/agent/offers', 'fas fa-tags'),
             $this->item('wallet', 'Earnings', 'Wallet', '/agent/wallet', 'fas fa-wallet'),
             $this->item('browse', 'Explore', 'Browse Properties', '/properties', 'fas fa-search'),
         ];

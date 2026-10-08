@@ -1903,6 +1903,29 @@ class MobileUserApiController extends BaseController
         }
     }
 
+    public function promotionalOffers() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+                return;
+            }
+            $stmt = $this->db->prepare("
+                SELECT id, title, description, discount_percentage, valid_until
+                FROM promotional_offers
+                WHERE status = 'active' AND valid_until >= CURDATE()
+                ORDER BY valid_until ASC LIMIT 20
+            ");
+            $stmt->execute();
+            echo json_encode(['success' => true, 'data' => $stmt->fetchAll(PDO::FETCH_ASSOC) ?: []]);
+        } catch (\Throwable $e) {
+            error_log('promotionalOffers error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch offers']);
+        }
+    }
+
     public function referralLeaderboard() {
         $this->setCorsHeaders();
         try {

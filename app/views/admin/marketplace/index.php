@@ -12,6 +12,16 @@ $premiumStats = $premiumStats ?? ['featured' => 0, 'urgent' => 0, 'premium' => 0
 $featuredListings = $featuredListings ?? [];
 $urgentListings = $urgentListings ?? [];
 $base = defined('BASE_URL') ? BASE_URL : '';
+
+// Transaction & Revenue
+$boostTransactions = $boostTransactions ?? 0;
+$boostRevenue = $boostRevenue ?? 0;
+$transactionFees = $transactionFees ?? 0;
+$totalPlatformRevenue = $totalPlatformRevenue ?? 0;
+$recentBoostTransactions = $recentBoostTransactions ?? [];
+
+// Builder Stats
+$builderStats = $builderStats ?? ['total_builders' => 0, 'active_subscriptions' => 0, 'total_listings_by_builders' => 0, 'subscription_revenue' => 0, 'top_builders' => []];
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
@@ -29,6 +39,22 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         <div class="col-md-2"><div class="aps-cp-card"><div class="aps-cp-card-body text-center"><div class="aps-cp-stat-label">Avg Price</div><div class="aps-cp-stat-value">₹<?= $avgPrice > 100000 ? number_format($avgPrice/100000,1).'L' : number_format($avgPrice) ?></div></div></div></div>
         <div class="col-md-2"><div class="aps-cp-card"><div class="aps-cp-card-body text-center"><div class="aps-cp-stat-label">Total Views</div><div class="aps-cp-stat-value"><?= number_format($totalViews) ?></div></div></div></div>
         <div class="col-md-2"><div class="aps-cp-card"><div class="aps-cp-card-body text-center"><div class="aps-cp-stat-label">Total Listings</div><div class="aps-cp-stat-value"><?= $activeListings + $pendingApprovals + $soldCount ?></div></div></div></div>
+    </div>
+
+    <!-- Transaction & Revenue Stats -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3"><div class="aps-cp-card"><div class="aps-cp-card-body text-center"><div class="aps-cp-stat-label">Boost Transactions</div><div class="aps-cp-stat-value text-primary"><?= $boostTransactions ?></div></div></div></div>
+        <div class="col-md-3"><div class="aps-cp-card"><div class="aps-cp-card-body text-center"><div class="aps-cp-stat-label">Boost Revenue</div><div class="aps-cp-stat-value text-success">₹<?= number_format($boostRevenue) ?></div></div></div></div>
+        <div class="col-md-3"><div class="aps-cp-card"><div class="aps-cp-card-body text-center"><div class="aps-cp-stat-label">Transaction Fees</div><div class="aps-cp-stat-value text-warning">₹<?= number_format($transactionFees) ?></div></div></div></div>
+        <div class="col-md-3"><div class="aps-cp-card"><div class="aps-cp-card-body text-center"><div class="aps-cp-stat-label">Total Revenue</div><div class="aps-cp-stat-value text-primary">₹<?= number_format($totalPlatformRevenue) ?></div></div></div></div>
+    </div>
+
+    <!-- Builder Stats -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3"><div class="aps-cp-card"><div class="aps-cp-card-body text-center"><div class="aps-cp-stat-label">Builders</div><div class="aps-cp-stat-value text-primary"><?= $builderStats['total_builders'] ?></div></div></div></div>
+        <div class="col-md-3"><div class="aps-cp-card"><div class="aps-cp-card-body text-center"><div class="aps-cp-stat-label">Active Subscriptions</div><div class="aps-cp-stat-value text-success"><?= $builderStats['active_subscriptions'] ?></div></div></div></div>
+        <div class="col-md-3"><div class="aps-cp-card"><div class="aps-cp-card-body text-center"><div class="aps-cp-stat-label">Builder Listings</div><div class="aps-cp-stat-value text-info"><?= $builderStats['total_listings_by_builders'] ?></div></div></div></div>
+        <div class="col-md-3"><div class="aps-cp-card"><div class="aps-cp-card-body text-center"><div class="aps-cp-stat-label">Subscription Revenue</div><div class="aps-cp-stat-value text-success">₹<?= number_format($builderStats['subscription_revenue']) ?></div></div></div></div>
     </div>
 
     <div class="row g-3 mb-4">
@@ -162,4 +188,86 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             <?php endif; ?>
         </div>
     </div>
+</div>
+
+    <!-- Recent Boost Transactions -->
+    <div class="aps-cp-card mt-3">
+        <div class="aps-cp-card-header d-flex justify-content-between align-items-center">
+            <span><i class="fas fa-bolt me-2 text-warning"></i>Recent Boost Transactions</span>
+            <small class="text-muted">Latest 10 boost payments</small>
+        </div>
+        <div class="aps-cp-card-body">
+            <?php if (empty($recentBoostTransactions)): ?>
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-bolt fa-2x mb-2 text-muted"></i>
+                    <p>No boost transactions yet</p>
+                </div>
+            <?php else: ?>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Property</th>
+                                <th>Seller</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($recentBoostTransactions as $txn): ?>
+                                <tr>
+                                    <td>#<?= $txn['id'] ?></td>
+                                    <td><strong><?= htmlspecialchars(mb_substr($txn['property_name'] ?? '', 0, 30)) ?></strong></td>
+                                    <td class="small"><?= htmlspecialchars($txn['seller_name'] ?? 'N/A') ?></td>
+                                    <td>₹<?= number_format($txn['amount']) ?></td>
+                                    <td class="small"><?= date('d M Y H:i', strtotime($txn['recorded_at'])) ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Top Builders -->
+    <div class="aps-cp-card mt-3">
+        <div class="aps-cp-card-header d-flex justify-content-between align-items-center">
+            <span><i class="fas fa-building me-2 text-primary"></i>Top Builders</span>
+            <small class="text-muted">By listing count</small>
+        </div>
+        <div class="aps-cp-card-body">
+            <?php if (empty($builderStats['top_builders'])): ?>
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-building fa-2x mb-2 text-muted"></i>
+                    <p>No builder data available</p>
+                </div>
+            <?php else: ?>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Builder</th>
+                                <th>Email</th>
+                                <th>Listings</th>
+                                <th>Total Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($builderStats['top_builders'] as $builder): ?>
+                                <tr>
+                                    <td><strong><?= htmlspecialchars($builder['name'] ?? 'N/A') ?></strong></td>
+                                    <td class="small"><?= htmlspecialchars($builder['email'] ?? 'N/A') ?></td>
+                                    <td><span class="badge bg-primary"><?= (int)$builder['listing_count'] ?></span></td>
+                                    <td>₹<?= number_format($builder['total_value']) ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
 </div>

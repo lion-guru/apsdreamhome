@@ -114,39 +114,71 @@ class SalaryIncentiveService
             }
 
             $tier = $eligibility['tier'];
+            // Map tier to real schema columns (monthly_amount/months_total/activated_at).
+            $tierIndex = 0;
+            foreach (self::SALARY_TIERS as $i => $t) {
+                if ($t['volume_threshold'] === $tier['volume_threshold']) { $tierIndex = $i; break; }
+            }
+
+            // NOTE: DDL (CREATE TABLE) implicitly commits in MySQL — the log-table
+            // ensure must run OUTSIDE the transaction or it destroys it.
+            try {
+                $this->pdo->exec("CREATE TABLE IF NOT EXISTS mlm_salary_grant_logs (
+                    id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                    tenant_id INT UNSIGNED NOT NULL DEFAULT 1,
+                    user_id BIGINT UNSIGNED NOT NULL,
+                    grant_id INT UNSIGNED NOT NULL,
+                    action VARCHAR(30) NOT NULL DEFAULT 'activated',
+                    details TEXT NULL,
+                    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    INDEX idx_grant (grant_id)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+            } catch (\Throwable $logEx) {
+                error_log("[SalaryIncentiveService] grant log table ensure skipped: " . $logEx->getMessage());
+            }
 
             $this->pdo->beginTransaction();
             try {
                 // Create salary grant record
                 $stmt = $this->pdo->prepare("
-                    INSERT INTO mlm_salary_grants (tenant_id, user_id, volume_threshold, monthly_grant, grant_months, start_date, end_date, status, created_at)
-                    VALUES (?, ?, ?, ?, ?, CURDATE(), DATE_ADD(CURDATE(), INTERVAL ? MONTH), 'active', NOW())
+                    INSERT INTO mlm_salary_grants (tenant_id, user_id, tier_index, volume_threshold, monthly_amount, months_total, months_paid, status, activated_at, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, 0, 'active', NOW(), NOW())
                 ");
                 $stmt->execute([
                     $this->getTenantId(),
                     $agentId,
+                    $tierIndex,
                     $tier['volume_threshold'],
                     $tier['monthly_grant'],
-                    $tier['months'],
                     $tier['months']
                 ]);
+                $grantId = (int)$this->pdo->lastInsertId();
 
-                // Log the activation
-                $stmt = $this->pdo->prepare("
-                    INSERT INTO mlm_salary_grant_logs (tenant_id, user_id, grant_id, action, details, created_at)
-                    VALUES (?, ?, LAST_INSERT_ID(), 'activated', ?, NOW())
-                ");
-                $stmt->execute([
-                    $this->getTenantId(),
-                    $agentId,
-                    "Salary grant activated for volume ≥ ₹" . number_format($tier['volume_threshold']) . " — ₹{$tier['monthly_grant']}/month for {$tier['months']} months"
-                ]);
+                // Log the activation (best-effort; table ensured above, outside txn)
+                try {
+                    $stmt = $this->pdo->prepare("
+                        INSERT INTO mlm_salary_grant_logs (tenant_id, user_id, grant_id, action, details, created_at)
+                        VALUES (?, ?, ?, 'activated', ?, NOW())
+                    ");
+                    $stmt->execute([
+                        $this->getTenantId(),
+                        $agentId,
+                        $grantId,
+                        "Salary grant activated for volume ≥ ₹" . number_format($tier['volume_threshold']) . " — ₹{$tier['monthly_grant']}/month for {$tier['months']} months"
+                    ]);
+                } catch (\Throwable $logEx) {
+                    error_log("[SalaryIncentiveService] grant log skipped: " . $logEx->getMessage());
+                }
 
                 $this->pdo->commit();
                 return true;
             } catch (\Throwable $e) {
-                $this->pdo->rollBack();
                 error_log("[SalaryIncentiveService] activateSalaryGrant FAILED: " . $e->getMessage());
+                try {
+                    if ($this->pdo->inTransaction()) $this->pdo->rollBack();
+                } catch (\Throwable $rbEx) {
+                    error_log("[SalaryIncentiveService] rollback skipped: " . $rbEx->getMessage());
+                }
                 return false;
             }
         } catch (\Throwable $e) {
@@ -161,13 +193,15 @@ class SalaryIncentiveService
     public function processMonthlyGrants(string $monthYear): array
     {
         try {
-            // Find all active grants for this month
+            // Active window derived from activated_at + months_total (no end_date column).
             $stmt = $this->pdo->prepare("
-                SELECT id, user_id, monthly_grant
+                SELECT id, user_id, monthly_amount, months_total, months_paid, activated_at
                 FROM mlm_salary_grants
                 WHERE status = 'active'
                 AND tenant_id = ?
-                AND CURDATE() BETWEEN start_date AND end_date
+                AND activated_at <= NOW()
+                AND DATE_ADD(activated_at, INTERVAL months_total MONTH) > NOW()
+                AND months_paid < months_total
             ");
             $stmt->execute([$this->getTenantId()]);
             $grants = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -198,7 +232,7 @@ class SalaryIncentiveService
                     $grant['user_id'],
                     0, // no sale amount for salary grant
                     0,
-                    $grant['monthly_grant'],
+                    (float)$grant['monthly_amount'],
                     'salary_grant',
                     0,
                     0,
@@ -207,11 +241,15 @@ class SalaryIncentiveService
                     false
                 );
 
+                // Advance schedule; complete the grant when fully paid.
+                $paid = (int)$grant['months_paid'] + 1;
+                $done = $paid >= (int)$grant['months_total'] ? ", status='completed'" : "";
+                $this->pdo->prepare("UPDATE mlm_salary_grants SET months_paid=? $done WHERE id=?")->execute([$paid, $grant['id']]);
+
                 $results['processed']++;
-                $results['amount'] += $grant['monthly_grant'];
+                $results['amount'] += (float)$grant['monthly_amount'];
             }
 
-            $this->pdo->commit();
             return ['success' => true, ...$results];
         } catch (\Throwable $e) {
             if ($this->pdo->inTransaction()) {

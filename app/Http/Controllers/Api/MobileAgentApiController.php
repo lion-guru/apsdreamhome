@@ -476,4 +476,50 @@ class MobileAgentApiController extends BaseController
             $this->jsonError('Server error: ' . $e->getMessage(), 500);
         }
     }
+
+    public function offers()
+    {
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                return $this->jsonError('Unauthorized', 401);
+            }
+            $offers = [];
+            try {
+                // NOTE: plot_bookings.associate_id stores users.id.
+                $offers = (new \App\Services\AssociateOfferService())->visibleOffers($userId);
+            } catch (\Throwable $e) {
+                error_log("Agent offers error: " . $e->getMessage());
+            }
+            $this->jsonResponse(['success' => true, 'data' => $offers]);
+        } catch (\Throwable $e) {
+            $this->jsonError('Server error: ' . $e->getMessage(), 500);
+        }
+    }
+
+    public function salary()
+    {
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                return $this->jsonError('Unauthorized', 401);
+            }
+            $data = ['is_salaried' => false, 'structure' => null, 'payroll' => null, 'history' => []];
+            try {
+                $svc = new \App\Services\SalariedAgentService();
+                $structure = $svc->getSalaryStructure($userId);
+                if ($structure) {
+                    $data['is_salaried'] = true;
+                    $data['structure'] = $structure;
+                    $data['history'] = $svc->getSalaryHistory($userId);
+                    $data['payroll'] = $svc->calculateMonthlyPayroll($userId, (int)date('n'), (int)date('Y'));
+                }
+            } catch (\Throwable $e) {
+                error_log("Agent salary error: " . $e->getMessage());
+            }
+            $this->jsonResponse(['success' => true, 'data' => $data]);
+        } catch (\Throwable $e) {
+            $this->jsonError('Server error: ' . $e->getMessage(), 500);
+        }
+    }
 }

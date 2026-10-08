@@ -113,12 +113,14 @@
                                     <td class="text-end pe-4">
                                         <?php if (($l['status'] ?? '') === 'pending'): ?>
                                             <div class="btn-group shadow-sm" role="group">
-                                                <a href="<?= BASE_URL ?>/admin/hr/leaves/approve/<?= $l['id'] ?>" class="btn btn-sm btn-success" title="Approve" data-aps-confirm="Are you sure you want to approve this leave request?">
-                                                    <i class="fas fa-check me-1"></i> Approve
-                                                </a>
-                                                <a href="<?= BASE_URL ?>/admin/hr/leaves/reject/<?= $l['id'] ?>" class="btn btn-sm btn-danger" title="Reject" data-aps-confirm="Are you sure you want to reject this leave request?">
-                                                    <i class="fas fa-times me-1"></i> Reject
-                                                </a>
+                                                <form method="POST" action="<?= BASE_URL ?>/admin/hr/leaves/approve/<?= $l['id'] ?>" class="d-inline" onsubmit="return confirm('Are you sure you want to approve this leave request?');">
+                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                                                    <button type="submit" class="btn btn-sm btn-success" title="Approve"><i class="fas fa-check me-1"></i> Approve</button>
+                                                </form>
+                                                <form method="POST" action="<?= BASE_URL ?>/admin/hr/leaves/reject/<?= $l['id'] ?>" class="d-inline" onsubmit="return confirm('Are you sure you want to reject this leave request?');">
+                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                                                    <button type="submit" class="btn btn-sm btn-danger" title="Reject"><i class="fas fa-times me-1"></i> Reject</button>
+                                                </form>
                                             </div>
                                         <?php else: ?>
                                             <span class="text-muted small fst-italic"><i class="fas fa-check text-success"></i> Processed</span>

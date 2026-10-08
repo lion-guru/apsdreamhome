@@ -25,6 +25,11 @@ echo "║          APS DREAM HOME — MASTER TEST SUITE RUNNER                  
 echo "╚══════════════════════════════════════════════════════════════════════╝\n\n";
 
 $suites = [
+    'Syntax & File Health' => [
+        // Catches the corruption class php -l CANNOT see: a file missing its
+        // opening <?php executes as plain text (source echo + fatal 500).
+        'PHP Open-Tag Scan' => 'php testing/open_tag_scan.php',
+    ],
     'Unit Tests' => [
         'InputValidator & Captcha' => 'php testing/unit/test_input_validator_and_captcha.php',
         'Commission Engine'        => 'php testing/unit/test_commission.php',

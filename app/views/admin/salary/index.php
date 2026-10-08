@@ -67,6 +67,8 @@
                         <a href="<?= BASE_URL ?>/admin/salary/payments/create" class="btn btn-outline-info"><i class="fas fa-plus-circle me-1"></i>New Payment</a>
                         <a href="<?= BASE_URL ?>/admin/salary/contracts" class="btn btn-outline-warning"><i class="fas fa-file-signature me-1"></i>Contracts</a>
                         <a href="<?= BASE_URL ?>/admin/salary/tracker" class="btn btn-outline-secondary"><i class="fas fa-tachometer-alt me-1"></i>Tracker</a>
+                        <a href="<?= BASE_URL ?>/admin/salary/salary-grants" class="btn btn-outline-success"><i class="fas fa-hand-holding-usd me-1"></i>Salary Grants</a>
+                        <a href="<?= BASE_URL ?>/admin/associate-offers" class="btn btn-outline-danger"><i class="fas fa-tags me-1"></i>Offer Campaigns</a>
                         <a href="<?= BASE_URL ?>/admin/salary/periods" class="btn btn-outline-dark"><i class="fas fa-calendar-lock me-1"></i>Payroll Periods</a>
                     </div>
                 </div>

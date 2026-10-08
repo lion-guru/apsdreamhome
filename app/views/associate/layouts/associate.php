@@ -104,6 +104,11 @@ $current_page = $active_page ?? basename(esc_url($_SERVER['REQUEST_URI'] ?? ''))
                 </a>
             </li>
             <li class="sidebar-item">
+                <a href="<?php echo e($base); ?>/associate/offers" class="sidebar-link <?php echo $current_page == 'offers' ? 'active' : ''; ?>">
+                    <i class="fas fa-tags"></i> Offers
+                </a>
+            </li>
+            <li class="sidebar-item">
                 <a href="<?php echo e($base); ?>/associate/tools" class="sidebar-link <?php echo $current_page == 'tools' ? 'active' : ''; ?>">
                     <i class="fas fa-toolbox"></i> Tools
                 </a>

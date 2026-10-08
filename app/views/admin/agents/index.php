@@ -7,7 +7,10 @@ $activeAgents = $activeAgents ?? 0;
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <h2 class="mb-0"><i class="fas fa-user-tie me-2 text-primary"></i>Agent Management</h2>
+        <div class="d-flex gap-2">
+        <a href="<?= BASE_URL ?>/admin/agents/salaried" class="btn btn-outline-success btn-sm"><i class="fas fa-money-check-alt me-1"></i>Salaried Agents</a>
         <a href="<?= BASE_URL ?>/admin/users?role=agent" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Add Agent</a>
+        </div>
     </div>
 
     <div class="row g-3 mb-4">

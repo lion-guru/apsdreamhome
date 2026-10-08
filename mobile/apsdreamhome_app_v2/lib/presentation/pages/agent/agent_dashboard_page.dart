@@ -431,6 +431,18 @@ class AgentDashboardPage extends ConsumerWidget {
         'route': '/agent/rank-progress',
         'color': AppTheme.warningColor,
       },
+      {
+        'icon': Icons.local_offer_outlined,
+        'label': 'Offers',
+        'route': '/agent/offers',
+        'color': AppTheme.errorColor,
+      },
+      {
+        'icon': Icons.payments_outlined,
+        'label': 'Salary',
+        'route': '/agent/salary',
+        'color': AppTheme.successColor,
+      },
     ];
 
     Widget actionRow(List<Map<String, Object>> rows) {

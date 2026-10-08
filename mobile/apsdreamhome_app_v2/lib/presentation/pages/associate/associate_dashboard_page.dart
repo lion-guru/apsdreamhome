@@ -468,6 +468,12 @@ class AssociateDashboardPage extends ConsumerWidget {
         'route': '/associate/emi-tracker',
         'color': AppTheme.errorColor,
       },
+      {
+        'icon': Icons.local_offer_outlined,
+        'label': 'Offers',
+        'route': '/associate/offers',
+        'color': AppTheme.warningColor,
+      },
     ];
 
     return Padding(

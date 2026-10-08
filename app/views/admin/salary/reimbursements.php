@@ -91,7 +91,7 @@ $filter_status = $filter_status ?? '';
                 <td class="text-center">
                     <?php if ($st === 'pending'): ?>
                     <div class="btn-group btn-group-sm">
-                        <a href="<?= BASE_URL ?>/admin/salary/reimbursements/approve/<?= (int)$c['id'] ?>" class="btn btn-outline-success" title="Approve" onclick="return confirm('Approve this claim?');"><i class="fas fa-check"></i></a>
+                        <form method="POST" action="<?= BASE_URL ?>/admin/salary/reimbursements/approve/<?= (int)$c['id'] ?>" class="d-inline" onsubmit="return confirm('Approve this claim?');"><input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"><button type="submit" class="btn btn-outline-success" title="Approve"><i class="fas fa-check"></i></button></form>
                         <button type="button" class="btn btn-outline-danger" title="Reject" data-bs-toggle="modal" data-bs-target="#rejectClaim<?= (int)$c['id'] ?>"><i class="fas fa-times"></i></button>
                     </div>
                     <div class="modal fade" id="rejectClaim<?= (int)$c['id'] ?>" tabindex="-1">

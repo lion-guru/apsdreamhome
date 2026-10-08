@@ -964,6 +964,55 @@ class ApiService {
       data: {'investment_id': investmentId, 'reason': reason},
     );
   }
+
+  // ============================================================
+  // REFERRAL (Customer / Associate)
+  // ============================================================
+
+  Future<Map<String, dynamic>> getReferralEarnings() async {
+    final response = await get(AppConstants.referralEarningsEndpointV2);
+    return Map<String, dynamic>.from(response['data'] as Map? ?? {});
+  }
+
+  Future<Map<String, dynamic>> getReferralShareUrl() async {
+    final response = await get(AppConstants.referralShareUrlEndpointV2);
+    return Map<String, dynamic>.from(response['data'] as Map? ?? {});
+  }
+
+  Future<Map<String, dynamic>> getReferralLeaderboard() async {
+    final response = await get(AppConstants.referralLeaderboardEndpointV2);
+    return Map<String, dynamic>.from(response['data'] as Map? ?? {});
+  }
+
+  // ============================================================
+  // OFFERS (Associate / Agent campaigns with progress)
+  // ============================================================
+
+  Future<List<Map<String, dynamic>>> getAssociateOffers() async {
+    final response = await get(AppConstants.associateOffersEndpointV2);
+    return ((response['data'] as List?) ?? [])
+        .map((e) => Map<String, dynamic>.from(e as Map))
+        .toList();
+  }
+
+  Future<List<Map<String, dynamic>>> getAgentOffers() async {
+    final response = await get(AppConstants.agentOffersEndpointV2);
+    return ((response['data'] as List?) ?? [])
+        .map((e) => Map<String, dynamic>.from(e as Map))
+        .toList();
+  }
+
+  Future<Map<String, dynamic>> getAgentSalary() async {
+    final response = await get(AppConstants.agentSalaryEndpointV2);
+    return Map<String, dynamic>.from(response['data'] as Map? ?? {});
+  }
+
+  Future<List<Map<String, dynamic>>> getPromotionalOffers() async {
+    final response = await get(AppConstants.promotionalOffersEndpointV2);
+    return ((response['data'] as List?) ?? [])
+        .map((e) => Map<String, dynamic>.from(e as Map))
+        .toList();
+  }
 }
 
 // Offline EMI Result wrapper

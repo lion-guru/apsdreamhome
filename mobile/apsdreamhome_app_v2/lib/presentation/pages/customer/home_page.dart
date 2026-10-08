@@ -696,6 +696,12 @@ class _HomePageState extends ConsumerState<HomePage>
         Color(0xFFF59E0B),
       ),
       const _ToolItem(
+        Icons.local_offer_outlined,
+        'Offers',
+        '/offers',
+        Color(0xFFE91E63),
+      ),
+      const _ToolItem(
         Icons.account_balance_wallet_outlined,
         'Activate Wallet',
         '/wallet-activation',

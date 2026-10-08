@@ -247,6 +247,53 @@ class SalaryController extends AdminController
         exit;
     }
 
+    // ──────────────────────────────────────────────
+    // MLM SALARY GRANTS (GBV-tier monthly grants)
+    // ──────────────────────────────────────────────
+
+    public function salaryGrants()
+    {
+        $this->requireAdmin();
+        try {
+            $svc = new \App\Services\MLM\SalaryIncentiveService();
+            $grants = $this->db->fetchAll("
+                SELECT g.*, u.name as associate_name
+                FROM mlm_salary_grants g
+                LEFT JOIN users u ON g.user_id = u.id
+                ORDER BY g.created_at DESC LIMIT 200
+            ") ?? [];
+            $tiers = $svc->getSalaryTiers();
+            $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role IN ('associate','agent') AND status='active' ORDER BY name") ?? [];
+        } catch (\Exception $e) {
+            $grants = []; $tiers = []; $users = [];
+        }
+        return $this->render('admin/salary/salary_grants', [
+            'page_title' => 'Salary Grants',
+            'grants' => $grants,
+            'tiers' => $tiers,
+            'users' => $users
+        ]);
+    }
+
+    public function activateSalaryGrant()
+    {
+        $this->requireAdmin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { $this->redirect('/admin/salary/salary-grants'); }
+        $userId = (int)($_POST['user_id'] ?? 0);
+        if (!$userId) { $this->setFlash('error', 'Associate required'); $this->redirect('/admin/salary/salary-grants'); }
+        try {
+            $svc = new \App\Services\MLM\SalaryIncentiveService();
+            if ($svc->activateSalaryGrant($userId)) {
+                $this->setFlash('success', 'Salary grant activated');
+            } else {
+                $this->setFlash('error', 'Not eligible or grant already active');
+            }
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/salary/salary-grants');
+    }
+
     public function stats()
     {
         $this->requireAdmin();
@@ -876,8 +923,10 @@ class SalaryController extends AdminController
         $this->requireAdmin();
         [$tidSql, $tidParams] = $this->tenantWhere();
         try {
+            // View compat: list view reads legacy keys (table has ctc/basic_salary).
             $contracts = $this->db->fetchAll("
-                SELECT c.*, u.name as employee_name
+                SELECT c.*, u.name as employee_name,
+                    c.ctc AS salary_amount, 'permanent' AS contract_type
                 FROM salary_contracts c
                 LEFT JOIN users u ON c.employee_id = u.id
                 ORDER BY c.created_at DESC
@@ -921,7 +970,7 @@ class SalaryController extends AdminController
     {
         $this->requireAdmin();
         try {
-            $contract = $this->db->fetch("SELECT c.*, u.name as employee_name, u.email as employee_email FROM salary_contracts c LEFT JOIN users u ON c.employee_id=u.id WHERE c.id=?", [$id]);
+            $contract = $this->db->fetch("SELECT c.*, u.name as employee_name, u.email as employee_email, c.ctc AS salary_amount, 'permanent' AS contract_type FROM salary_contracts c LEFT JOIN users u ON c.employee_id=u.id WHERE c.id=?", [$id]);
         } catch (\Exception $e) {
             $contract = null;
         }

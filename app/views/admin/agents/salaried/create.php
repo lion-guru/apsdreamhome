@@ -27,7 +27,7 @@ $preselect      = (int)($_GET['user_id'] ?? 0);
                                 <?= $preselect === (int)$assoc['user_id'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($assoc['name'] ?? '') ?>
                                 (<?= htmlspecialchars($assoc['email'] ?? '') ?>)
-                                <?= $assoc['agent_type'] === 'salaried' ? 'âœ” Salaried' : '' ?>
+                                <?= $assoc['agent_type'] === 'salaried' ? '✓ Salaried' : '' ?>
                             </option>
                         <?php endforeach; ?>
                     </select>

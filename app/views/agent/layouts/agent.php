@@ -112,6 +112,16 @@ $current_page = $active_page ?? basename(esc_url($_SERVER['REQUEST_URI'] ?? ''))
                 </a>
             </li>
             <li class="sidebar-item">
+                <a href="<?php echo e($base); ?>/agent/salary" class="sidebar-link <?php echo $current_page == 'salary' ? 'active' : ''; ?>">
+                    <i class="fas fa-money-check-alt"></i> My Salary
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="<?php echo e($base); ?>/agent/offers" class="sidebar-link <?php echo $current_page == 'offers' ? 'active' : ''; ?>">
+                    <i class="fas fa-tags"></i> Offers
+                </a>
+            </li>
+            <li class="sidebar-item">
                 <a href="<?php echo e($base); ?>/agent/profile" class="sidebar-link <?php echo $current_page == 'profile' ? 'active' : ''; ?>">
                     <i class="fas fa-user"></i> Profile
                 </a>

@@ -116,6 +116,8 @@ $router->get('/api/v2/mobile/wallet/balance', 'Api\MobileUserApiController@walle
 $router->get('/api/v2/mobile/referral/earnings', 'Api\MobileUserApiController@referralEarnings')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/referral/leaderboard', 'Api\MobileUserApiController@referralLeaderboard')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/referral/share-url', 'Api\MobileUserApiController@referralShareUrl')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/associate/offers', 'Api\MobileUserApiController@associateOffers')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/promotional-offers', 'Api\MobileUserApiController@promotionalOffers')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // ============================================================
 // CUSTOMER INVESTMENTS
@@ -751,6 +753,8 @@ $router->get('/api/v2/mobile/agent/properties', 'Api\MobileAgentApiController@pr
 $router->get('/api/v2/mobile/agent/site-visits', 'Api\MobileAgentApiController@siteVisits')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/agent/my-team', 'Api\MobileAgentApiController@myTeam')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/agent/rank-progress', 'Api\MobileAgentApiController@rankProgress')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/agent/offers', 'Api\MobileAgentApiController@offers')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/agent/salary', 'Api\MobileAgentApiController@salary')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/associate/bookings', 'Api\MobileAgentApiController@associateBookings')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/associate/emi-tracker', 'Api\MobileAgentApiController@associateEmiTracker')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
@@ -1112,6 +1116,16 @@ $router->get('/api/v2/mobile/colony-pipeline/pricing-plan/history/{colonyId}', '
 $router->get('/api/v2/mobile/colony-pipeline/pricing-plan/applications/{colonyId}', 'Api\MobileAdminApiController@colonyPipelinePricingPlanApplications')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/colony-pipeline/map/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineMap')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/colony-pipeline/map/geojson/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineMapGeoJson')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// --- Marketplace Mobile API ---
+$router->get('/api/v2/mobile/marketplace/saved-properties', 'Api\MobileUserApiController@getSavedProperties')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/marketplace/save-property', 'Api\MobileUserApiController@saveProperty')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->delete('/api/v2/mobile/marketplace/saved-property/{id}', 'Api\MobileUserApiController@removeSavedProperty')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/marketplace/followups', 'Api\MobileUserApiController@getFollowups')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/marketplace/followup/{id}/complete', 'Api\MobileUserApiController@completeFollowup')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/marketplace/transactions', 'Api\MobileUserApiController@getTransactions')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/marketplace/boost/initiate-payment', 'Api\MobileUserApiController@initiateBoostPayment')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/marketplace/boost/verify-payment', 'Api\MobileUserApiController@verifyBoostPayment')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 require_once __DIR__ . '/container.php';
 require_once __DIR__ . '/performance-cache.php';
