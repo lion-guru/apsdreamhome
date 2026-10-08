@@ -594,4 +594,92 @@ class MarketplaceService
             'followup_stats' => $followupStats,
         ];
     }
+
+    /**
+     * Get boost amount for a given boost type.
+     * Centralized to avoid duplication across controllers.
+     */
+    public static function getBoostAmount(string $boostType): int
+    {
+        return match($boostType) {
+            'featured' => 499,
+            'urgent' => 299,
+            'premium' => 999,
+            default => 499,
+        };
+    }
+
+    /**
+     * Apply boost to a property after successful payment.
+     * Shared by MarketplaceController::verifyBoostPayment() and
+     * MobileUserApiController::verifyBoostPayment() to avoid duplication.
+     *
+     * @param int $propertyId
+     * @param int $userId Owner user ID
+     * @param string $boostType featured|urgent|premium
+     * @param int $duration Days
+     * @param string $paymentId Razorpay payment ID
+     * @param string $orderId Razorpay order ID
+     * @return array ['success' => bool, 'message' => string, 'payment_id' => ?string]
+     */
+    public function applyBoostAfterPayment(int $propertyId, int $userId, string $boostType, int $duration, string $paymentId, string $orderId): array
+    {
+        $tid = $this->getTenantId();
+        $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+        $tenantParams = $tid > 1 ? [$tid] : [];
+
+        if ($propertyId <= 0 || $userId <= 0) {
+            return ['success' => false, 'message' => 'Invalid property or user'];
+        }
+
+        // Verify property ownership
+        $stmt = $this->pdo->prepare("SELECT id FROM user_properties WHERE id = ? AND user_id = ?{$tenantWhere}");
+        $stmt->execute(array_merge([$propertyId, $userId], $tenantParams));
+        if (!$stmt->fetch()) {
+            return ['success' => false, 'message' => 'Property not found or not owned by you'];
+        }
+
+        $boostAmount = self::getBoostAmount($boostType);
+        $expiresAt = date('Y-m-d H:i:s', strtotime("+{$duration} days"));
+
+        try {
+            // Apply boost
+            $stmt = $this->pdo->prepare("
+                UPDATE user_properties
+                SET is_featured = CASE WHEN ? = 'featured' THEN 1 ELSE is_featured END,
+                    is_urgent = CASE WHEN ? = 'urgent' THEN 1 ELSE is_urgent END,
+                    is_premium = CASE WHEN ? = 'premium' THEN 1 ELSE is_premium END,
+                    boosted_at = NOW(),
+                    boost_expires_at = ?,
+                    boost_amount = ?,
+                    promoted_until = ?,
+                    updated_at = NOW()
+                WHERE id = ? AND user_id = ?{$tenantWhere}
+            ");
+            $stmt->execute(array_merge([$boostType, $boostType, $boostType, $expiresAt, $boostAmount, $expiresAt, $propertyId, $userId], $tenantParams));
+
+            if ($stmt->rowCount() <= 0) {
+                return ['success' => false, 'message' => 'Failed to apply boost'];
+            }
+
+            // Track revenue
+            $this->pdo->prepare("
+                INSERT INTO platform_revenue (source_type, source_id, amount, description, recorded_at)
+                VALUES ('boost', ?, ?, ?, NOW())
+            ")->execute([$propertyId, $boostAmount, "Property boost: {$boostType} for {$duration} days"]);
+
+            // Record payment in payments table
+            $boostAmountFloat = (float)$boostAmount;
+            $this->pdo->prepare("
+                INSERT INTO payments (booking_id, user_id, amount, payment_method, transaction_id, order_id, status, payment_date, created_at)
+                VALUES (?, ?, ?, 'razorpay', ?, ?, 'completed', CURDATE(), NOW())
+            ")->execute([$propertyId, $userId, $boostAmountFloat, $paymentId, $orderId]);
+
+            return ['success' => true, 'message' => 'Property boosted successfully!', 'payment_id' => $paymentId];
+
+        } catch (\Throwable $e) {
+            error_log("MarketplaceService::applyBoostAfterPayment: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Failed to apply boost'];
+        }
+    }
 }
