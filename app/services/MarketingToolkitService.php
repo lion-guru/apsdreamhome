@@ -381,6 +381,521 @@ class MarketingToolkitService
         }
     }
 
+    /* ── V2: Personal Branding ── */
+
+    /**
+     * Save personal branding (name/phone/photo). Applied auto to all outputs.
+     */
+    public function saveBranding(int $userId, array $data): array
+    {
+        $tid = $this->getTenantId();
+        try {
+            $stmt = $this->pdo->prepare("
+                INSERT INTO user_branding (user_id, display_name, phone, photo_path, tagline, tenant_id, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, NOW())
+                ON DUPLICATE KEY UPDATE display_name = VALUES(display_name), phone = VALUES(phone),
+                    photo_path = VALUES(photo_path), tagline = VALUES(tagline), updated_at = NOW()
+            ");
+            $stmt->execute([
+                $userId,
+                mb_substr(trim($data['display_name'] ?? ''), 0, 100),
+                mb_substr(preg_replace('/[^0-9+\- ]/', '', $data['phone'] ?? ''), 0, 20),
+                mb_substr(trim($data['photo_path'] ?? ''), 0, 500),
+                mb_substr(trim($data['tagline'] ?? ''), 0, 200),
+                $tid,
+            ]);
+            return ['success' => true, 'message' => 'Branding saved'];
+        } catch (\Throwable $e) {
+            // Table may not exist — try creating it
+            try {
+                $this->pdo->exec("
+                    CREATE TABLE IF NOT EXISTS `user_branding` (
+                        `user_id` BIGINT UNSIGNED NOT NULL,
+                        `tenant_id` INT UNSIGNED NOT NULL DEFAULT 1,
+                        `display_name` VARCHAR(100) NULL,
+                        `phone` VARCHAR(20) NULL,
+                        `photo_path` VARCHAR(500) NULL,
+                        `tagline` VARCHAR(200) NULL,
+                        `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                        PRIMARY KEY (`user_id`),
+                        KEY `idx_tenant` (`tenant_id`)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+                ");
+                $stmt = $this->pdo->prepare("
+                    INSERT INTO user_branding (user_id, display_name, phone, photo_path, tagline, tenant_id, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?, NOW())
+                    ON DUPLICATE KEY UPDATE display_name = VALUES(display_name), phone = VALUES(phone),
+                        photo_path = VALUES(photo_path), tagline = VALUES(tagline), updated_at = NOW()
+                ");
+                $stmt->execute([$userId, mb_substr(trim($data['display_name'] ?? ''), 0, 100), mb_substr(trim($data['phone'] ?? ''), 0, 20), mb_substr(trim($data['photo_path'] ?? ''), 0, 500), mb_substr(trim($data['tagline'] ?? ''), 0, 200), $tid]);
+                return ['success' => true, 'message' => 'Branding saved'];
+            } catch (\Throwable $e2) {
+                error_log("MarketingToolkit::saveBranding: " . $e2->getMessage());
+                return ['success' => false, 'message' => 'Failed to save branding'];
+            }
+        }
+    }
+
+    /**
+     * Get personal branding for a user (falls back to users table).
+     */
+    public function getBranding(int $userId): array
+    {
+        $tid = $this->getTenantId();
+        try {
+            $stmt = $this->pdo->prepare("SELECT * FROM user_branding WHERE user_id = ? LIMIT 1");
+            $stmt->execute([$userId]);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if ($row) return $row;
+        } catch (\Throwable $e) {
+            // table missing — fall through
+        }
+        // Fallback to users table
+        try {
+            $stmt = $this->pdo->prepare("SELECT name as display_name, phone FROM users WHERE id = ? LIMIT 1");
+            $stmt->execute([$userId]);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if ($row) {
+                return ['user_id' => $userId, 'display_name' => $row['display_name'] ?? '', 'phone' => $row['phone'] ?? '', 'photo_path' => '', 'tagline' => ''];
+            }
+        } catch (\Throwable $e) {
+            // ignore
+        }
+        return ['user_id' => $userId, 'display_name' => '', 'phone' => '', 'photo_path' => '', 'tagline' => ''];
+    }
+
+    /* ── V2: Stickers / Badges ── */
+
+    /**
+     * Add sticker badge (NEW LAUNCH / PRICE DROP / SOLD / OFFER / URGENT) to photo.
+     */
+    public function addSticker(string $sourcePath, string $stickerType, string $customText = ''): array
+    {
+        if (!file_exists($sourcePath)) {
+            return ['success' => false, 'message' => 'Source image not found'];
+        }
+
+        $stickers = [
+            'new_launch' => ['text' => 'NEW LAUNCH', 'bg' => [16, 185, 129]],
+            'price_drop' => ['text' => 'PRICE DROP', 'bg' => [244, 63, 94]],
+            'sold' => ['text' => 'SOLD OUT', 'bg' => [100, 116, 139]],
+            'offer' => ['text' => $customText ?: 'SPECIAL OFFER', 'bg' => [245, 158, 11]],
+            'urgent' => ['text' => 'URGENT SALE', 'bg' => [220, 38, 38]],
+            'verified' => ['text' => 'VERIFIED', 'bg' => [37, 99, 235]],
+        ];
+
+        $sticker = $stickers[$stickerType] ?? $stickers['offer'];
+
+        try {
+            $img = $this->loadImage($sourcePath);
+            if (!$img) return ['success' => false, 'message' => 'Unsupported image format'];
+
+            $w = imagesx($img);
+            $h = imagesy($img);
+
+            // Ribbon banner across top
+            $bg = imagecolorallocate($img, ...$sticker['bg']);
+            $white = imagecolorallocate($img, 255, 255, 255);
+            $ribbonH = (int)($h * 0.09);
+            imagefilledrectangle($img, 0, 0, $w, $ribbonH, $bg);
+
+            // Centered text (font 5, approx centering)
+            $text = mb_substr($sticker['text'], 0, 40);
+            $fontW = imagefontwidth(5);
+            $tx = (int)(($w - strlen($text) * $fontW) / 2);
+            $ty = (int)(($ribbonH - imagefontheight(5)) / 2);
+            imagestring($img, 5, max(10, $tx), max(5, $ty), $text, $white);
+
+            $outputDir = $this->getOutputDir();
+            $filename = 'sticker_' . time() . '_' . bin2hex(random_bytes(4)) . '.jpg';
+            $outputPath = $outputDir . '/' . $filename;
+            imagejpeg($img, $outputPath, 90);
+            imagedestroy($img);
+
+            $this->logToolkitUsage('sticker', $outputPath);
+
+            return ['success' => true, 'path' => $outputPath, 'url' => $this->pathToUrl($outputPath), 'filename' => $filename, 'message' => 'Sticker added'];
+        } catch (\Throwable $e) {
+            error_log("MarketingToolkit::addSticker: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Sticker failed'];
+        }
+    }
+
+    /* ── V2: Collage Maker ── */
+
+    /**
+     * Combine 2-4 photos into one branded collage.
+     * @param array $paths Absolute paths (2-4 images)
+     * @param string $layout 'grid2x2'|'row3'|'row2'
+     */
+    public function makeCollage(array $paths, string $layout = 'grid2x2', array $branding = []): array
+    {
+        $paths = array_values(array_filter($paths, 'file_exists'));
+        $paths = array_slice($paths, 0, 4);
+        if (count($paths) < 2) {
+            return ['success' => false, 'message' => 'Need at least 2 photos'];
+        }
+
+        try {
+            $cellW = 540;
+            $cellH = 540;
+            $footerH = 140;
+
+            if ($layout === 'row3' || count($paths) === 3) {
+                $canvasW = $cellW * 3;
+                $canvasH = $cellH + $footerH;
+                $cols = 3;
+            } elseif ($layout === 'row2' || count($paths) === 2) {
+                $canvasW = $cellW * 2;
+                $canvasH = $cellH + $footerH;
+                $cols = 2;
+            } else {
+                $canvasW = $cellW * 2;
+                $canvasH = $cellH * 2 + $footerH;
+                $cols = 2;
+            }
+
+            $canvas = imagecreatetruecolor($canvasW, $canvasH);
+            $dark = imagecolorallocate($canvas, ...self::BRAND_DARK);
+            imagefill($canvas, 0, 0, $dark);
+
+            foreach ($paths as $i => $p) {
+                $photo = $this->loadImage($p);
+                if (!$photo) continue;
+                $cx = ($i % $cols) * $cellW;
+                $cy = (int)($i / $cols) * $cellH;
+                $this->fillAreaWithImage($canvas, $photo, $cx, $cy, $cellW, $cellH);
+                imagedestroy($photo);
+                // White divider
+                $white = imagecolorallocate($canvas, 255, 255, 255);
+                imagerectangle($canvas, $cx, $cy, $cx + $cellW - 1, $cy + $cellH - 1, $white);
+            }
+
+            // Footer with branding
+            $fy = $canvasH - $footerH;
+            $gold = imagecolorallocate($canvas, ...self::BRAND_GOLD);
+            imagefilledrectangle($canvas, 0, $fy, $canvasW, $fy + 6, $gold);
+            $white = imagecolorallocate($canvas, ...self::WHITE);
+            $name = mb_substr($branding['display_name'] ?? 'APS Dream Home', 0, 50);
+            $phone = mb_substr($branding['phone'] ?? '+91 73092 68077', 0, 25);
+            $this->drawText($canvas, $name . '  |  ' . $phone, 5, 30, $fy + 40, $gold);
+            $this->drawText($canvas, 'APS Dream Homes Pvt. Ltd., Gorakhpur', 3, 30, $fy + 80, $white);
+
+            $outputDir = $this->getOutputDir();
+            $filename = 'collage_' . time() . '_' . bin2hex(random_bytes(4)) . '.jpg';
+            $outputPath = $outputDir . '/' . $filename;
+            imagejpeg($canvas, $outputPath, 88);
+            imagedestroy($canvas);
+
+            $this->logToolkitUsage('collage', $outputPath);
+
+            return ['success' => true, 'path' => $outputPath, 'url' => $this->pathToUrl($outputPath), 'filename' => $filename, 'whatsapp_share' => $this->getWhatsAppShareLink("Check these properties from APS Dream Home! {$phone}"), 'message' => 'Collage created'];
+        } catch (\Throwable $e) {
+            error_log("MarketingToolkit::makeCollage: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Collage failed'];
+        }
+    }
+
+    /* ── V2: Festival / Greeting Posts ── */
+
+    /**
+     * Generate festival greeting post (1080x1080 square).
+     */
+    public function generateFestivalPost(string $festival, array $branding = []): array
+    {
+        $festivals = [
+            'diwali' => ['title' => 'Happy Diwali', 'subtitle' => 'शुभ दीपावली', 'bg' => [60, 20, 0], 'accent' => [250, 204, 21], 'emoji' => '🪔'],
+            'holi' => ['title' => 'Happy Holi', 'subtitle' => 'रंगों का त्योहार', 'bg' => [80, 10, 60], 'accent' => [244, 114, 182], 'emoji' => '🎨'],
+            'newyear' => ['title' => 'Happy New Year', 'subtitle' => 'नव वर्ष की शुभकामनाएं', 'bg' => [7, 12, 40], 'accent' => [96, 165, 250], 'emoji' => '🎉'],
+            'dussehra' => ['title' => 'Happy Dussehra', 'subtitle' => 'विजयादशमी की शुभकामनाएं', 'bg' => [50, 10, 10], 'accent' => [251, 146, 60], 'emoji' => '🏹'],
+            'eid' => ['title' => 'Eid Mubarak', 'subtitle' => 'ईद मुबारक', 'bg' => [5, 50, 30], 'accent' => [52, 211, 153], 'emoji' => '🌙'],
+            'independence' => ['title' => 'Happy Independence Day', 'subtitle' => 'स्वतंत्रता दिवस', 'bg' => [10, 30, 60], 'accent' => [250, 204, 21], 'emoji' => '🇮🇳'],
+        ];
+
+        $f = $festivals[$festival] ?? $festivals['diwali'];
+
+        try {
+            $W = 1080;
+            $H = 1080;
+            $canvas = imagecreatetruecolor($W, $H);
+            $bg = imagecolorallocate($canvas, ...$f['bg']);
+            imagefill($canvas, 0, 0, $bg);
+
+            // Decorative border
+            $accent = imagecolorallocate($canvas, ...$f['accent']);
+            imagerectangle($canvas, 20, 20, $W - 21, $H - 21, $accent);
+            imagerectangle($canvas, 30, 30, $W - 31, $H - 31, $accent);
+
+            $white = imagecolorallocate($canvas, ...self::WHITE);
+            $gold = imagecolorallocate($canvas, ...self::BRAND_GOLD);
+
+            // Company header
+            $this->drawCentered($canvas, 'APS DREAM HOMES', 5, 200, $gold, $W);
+            // Festival title
+            $this->drawCentered($canvas, $f['title'], 5, 420, $white, $W);
+            $this->drawCentered($canvas, $f['subtitle'], 4, 500, $accent, $W);
+            // Greeting message
+            $this->drawCentered($canvas, 'Wishing you prosperity', 3, 620, $white, $W);
+            $this->drawCentered($canvas, 'and your dream home!', 3, 660, $white, $W);
+
+            // Associate branding at bottom
+            $name = mb_substr($branding['display_name'] ?? '', 0, 50);
+            $phone = mb_substr($branding['phone'] ?? '', 0, 25);
+            if ($name || $phone) {
+                $this->drawCentered($canvas, trim($name . '  |  ' . $phone, ' |'), 4, 850, $gold, $W);
+            }
+            $this->drawCentered($canvas, '+91 73092 68077 | Gorakhpur', 3, 920, $white, $W);
+
+            $outputDir = $this->getOutputDir();
+            $filename = 'festival_' . $festival . '_' . time() . '.jpg';
+            $outputPath = $outputDir . '/' . $filename;
+            imagejpeg($canvas, $outputPath, 88);
+            imagedestroy($canvas);
+
+            $this->logToolkitUsage('festival', $outputPath);
+
+            return ['success' => true, 'path' => $outputPath, 'url' => $this->pathToUrl($outputPath), 'filename' => $filename, 'whatsapp_share' => $this->getWhatsAppShareLink("{$f['title']} - {$f['subtitle']}! APS Dream Home, Gorakhpur"), 'message' => 'Festival post created'];
+        } catch (\Throwable $e) {
+            error_log("MarketingToolkit::festival: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Festival post failed'];
+        }
+    }
+
+    /* ── V2: QR Code ── */
+
+    /**
+     * Generate QR code PNG with referral link using bacon matrix + GD.
+     */
+    public function generateQR(string $text, int $size = 300): array
+    {
+        try {
+            if (!class_exists('BaconQrCode\Encoder\Encoder')) {
+                if (file_exists((defined('APS_ROOT') ? APS_ROOT : dirname(__DIR__, 2)) . '/vendor/autoload.php')) {
+                    require_once (defined('APS_ROOT') ? APS_ROOT : dirname(__DIR__, 2)) . '/vendor/autoload.php';
+                }
+            }
+
+            $qr = \BaconQrCode\Encoder\Encoder::encode($text, \BaconQrCode\Common\ErrorCorrectionLevel::M());
+            $matrix = $qr->getMatrix();
+            $modules = $matrix->getWidth();
+
+            $scale = max(2, (int)($size / ($modules + 8)));
+            $margin = 4;
+            $imgSize = ($modules + $margin * 2) * $scale;
+            $img = imagecreatetruecolor($imgSize, $imgSize);
+            $white = imagecolorallocate($img, 255, 255, 255);
+            $black = imagecolorallocate($img, 0, 0, 0);
+            imagefill($img, 0, 0, $white);
+            for ($y = 0; $y < $modules; $y++) {
+                for ($x = 0; $x < $modules; $x++) {
+                    if ($matrix->get($x, $y) === 1) {
+                        imagefilledrectangle($img, ($x + $margin) * $scale, ($y + $margin) * $scale, ($x + $margin + 1) * $scale - 1, ($y + $margin + 1) * $scale - 1, $black);
+                    }
+                }
+            }
+
+            $outputDir = $this->getOutputDir();
+            $filename = 'qr_' . time() . '_' . bin2hex(random_bytes(4)) . '.png';
+            $outputPath = $outputDir . '/' . $filename;
+            imagepng($img, $outputPath);
+            imagedestroy($img);
+
+            $this->logToolkitUsage('qr', $outputPath);
+
+            return ['success' => true, 'path' => $outputPath, 'url' => $this->pathToUrl($outputPath), 'filename' => $filename, 'message' => 'QR generated'];
+        } catch (\Throwable $e) {
+            error_log("MarketingToolkit::generateQR: " . $e->getMessage());
+            return ['success' => false, 'message' => 'QR failed: ' . $e->getMessage()];
+        }
+    }
+
+    /**
+     * Add QR code (referral link) overlay to a photo.
+     */
+    public function addQRToPhoto(string $sourcePath, string $qrText, int $userId = 0): array
+    {
+        $qr = $this->generateQR($qrText, 200);
+        if (!$qr['success']) return $qr;
+
+        try {
+            $img = $this->loadImage($sourcePath);
+            if (!$img) return ['success' => false, 'message' => 'Invalid photo'];
+            $qrImg = $this->loadImage($qr['path']);
+            if (!$qrImg) {
+                imagedestroy($img);
+                return ['success' => false, 'message' => 'QR render failed'];
+            }
+
+            $w = imagesx($img);
+            $h = imagesy($img);
+            $qrSize = (int)($w * 0.18);
+            $tmp = imagecreatetruecolor($qrSize, $qrSize);
+            // White background for QR scannability
+            $white = imagecolorallocate($tmp, 255, 255, 255);
+            imagefill($tmp, 0, 0, $white);
+            imagecopyresampled($tmp, $qrImg, 0, 0, 0, 0, $qrSize, $qrSize, imagesx($qrImg), imagesy($qrImg));
+
+            // Bottom-left with white padding
+            $pad = 12;
+            $bx = 20;
+            $by = $h - $qrSize - 20;
+            imagefilledrectangle($img, $bx - $pad, $by - $pad, $bx + $qrSize + $pad, $by + $qrSize + $pad, $white);
+            imagecopy($img, $tmp, $bx, $by, 0, 0, $qrSize, $qrSize);
+            imagedestroy($tmp);
+            imagedestroy($qrImg);
+
+            // "Scan to Enquire" label
+            $black = imagecolorallocate($img, 0, 0, 0);
+            $this->drawText($img, 'Scan to Enquire', 2, $bx, $by + $qrSize + $pad + 4, $black);
+
+            $outputDir = $this->getOutputDir();
+            $filename = 'qrphoto_' . time() . '_' . bin2hex(random_bytes(4)) . '.jpg';
+            $outputPath = $outputDir . '/' . $filename;
+            imagejpeg($img, $outputPath, 90);
+            imagedestroy($img);
+
+            $this->logToolkitUsage('qr_photo', $outputPath);
+
+            return ['success' => true, 'path' => $outputPath, 'url' => $this->pathToUrl($outputPath), 'filename' => $filename, 'message' => 'QR added to photo'];
+        } catch (\Throwable $e) {
+            error_log("MarketingToolkit::addQRToPhoto: " . $e->getMessage());
+            return ['success' => false, 'message' => 'QR overlay failed'];
+        }
+    }
+
+    /* ── V2: Video Slideshow (animated GIF, no ffmpeg needed) ── */
+
+    /**
+     * Create animated GIF slideshow from 2-5 photos.
+     * Works with GD only — no ffmpeg required.
+     */
+    public function makeSlideshow(array $paths, int $delayCs = 150, array $branding = []): array
+    {
+        $paths = array_values(array_filter(array_slice($paths, 0, 5), 'file_exists'));
+        if (count($paths) < 2) {
+            return ['success' => false, 'message' => 'Need at least 2 photos'];
+        }
+
+        try {
+            $W = 640;
+            $H = 640;
+            $frames = [];
+            $delays = [];
+
+            foreach ($paths as $p) {
+                $photo = $this->loadImage($p);
+                if (!$photo) continue;
+                $frame = imagecreatetruecolor($W, $H);
+                $this->fillAreaWithImage($frame, $photo, 0, 0, $W, $H);
+                imagedestroy($photo);
+
+                // Branding bar at bottom
+                $dark = imagecolorallocate($frame, ...self::BRAND_DARK);
+                imagefilledrectangle($frame, 0, $H - 60, $W, $H, $dark);
+                $gold = imagecolorallocate($frame, ...self::BRAND_GOLD);
+                $name = mb_substr(($branding['display_name'] ?? 'APS Dream Home') . ' | ' . ($branding['phone'] ?? '+91 73092 68077'), 0, 55);
+                imagestring($frame, 3, 15, $H - 40, $name, $gold);
+
+                // Convert frame to GIF binary for encoder
+                ob_start();
+                imagegif($frame);
+                $frames[] = ob_get_clean();
+                $delays[] = $delayCs;
+                imagedestroy($frame);
+            }
+
+            if (count($frames) < 2) {
+                return ['success' => false, 'message' => 'Could not process photos'];
+            }
+
+            $gifBinary = $this->encodeAnimatedGif($frames, $delays);
+            if (!$gifBinary) {
+                return ['success' => false, 'message' => 'GIF encoding failed'];
+            }
+
+            $outputDir = $this->getOutputDir();
+            $filename = 'slideshow_' . time() . '_' . bin2hex(random_bytes(4)) . '.gif';
+            $outputPath = $outputDir . '/' . $filename;
+            file_put_contents($outputPath, $gifBinary);
+
+            $this->logToolkitUsage('slideshow', $outputPath);
+
+            return ['success' => true, 'path' => $outputPath, 'url' => $this->pathToUrl($outputPath), 'filename' => $filename, 'frames' => count($frames), 'whatsapp_share' => $this->getWhatsAppShareLink("Check this property slideshow from APS Dream Home!"), 'message' => 'Slideshow created (' . count($frames) . ' photos)'];
+        } catch (\Throwable $e) {
+            error_log("MarketingToolkit::makeSlideshow: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Slideshow failed'];
+        }
+    }
+
+    /* ── V2: Visiting Card ── */
+
+    /**
+     * Generate digital visiting card (1080x600).
+     */
+    public function generateVisitingCard(array $branding): array
+    {
+        try {
+            $W = 1080;
+            $H = 600;
+            $canvas = imagecreatetruecolor($W, $H);
+            $dark = imagecolorallocate($canvas, ...self::BRAND_DARK);
+            imagefill($canvas, 0, 0, $dark);
+
+            // Gold left stripe
+            $gold = imagecolorallocate($canvas, ...self::BRAND_GOLD);
+            imagefilledrectangle($canvas, 0, 0, 24, $H, $gold);
+
+            $white = imagecolorallocate($canvas, ...self::WHITE);
+
+            $name = mb_substr($branding['display_name'] ?? 'Your Name', 0, 40);
+            $phone = mb_substr($branding['phone'] ?? '', 0, 25);
+            $tagline = mb_substr($branding['tagline'] ?? 'Associate | APS Dream Home', 0, 60);
+
+            $this->drawText($canvas, 'APS DREAM HOMES', 4, 70, 60, $gold);
+            $this->drawText($canvas, $name, 5, 70, 150, $white);
+            $this->drawText($canvas, $tagline, 3, 70, 220, $white);
+            if ($phone) {
+                $this->drawText($canvas, 'Call/WhatsApp: ' . $phone, 4, 70, 320, $gold);
+            }
+            $this->drawText($canvas, 'Gorakhpur | Plots | EMI 0%', 3, 70, 400, $white);
+            $this->drawText($canvas, '+91 73092 68077', 3, 70, 460, $white);
+
+            // QR of referral link on right side
+            $refCode = $branding['referral_code'] ?? '';
+            if ($refCode) {
+                $qrUrl = (defined('BASE_URL') ? BASE_URL : '') . '/register?ref=' . urlencode($refCode);
+                $qr = $this->generateQR($qrUrl, 160);
+                if ($qr['success']) {
+                    $qrImg = $this->loadImage($qr['path']);
+                    if ($qrImg) {
+                        $qs = 160;
+                        $tmp = imagecreatetruecolor($qs, $qs);
+                        $white2 = imagecolorallocate($tmp, 255, 255, 255);
+                        imagefill($tmp, 0, 0, $white2);
+                        imagecopyresampled($tmp, $qrImg, 0, 0, 0, 0, $qs, $qs, imagesx($qrImg), imagesy($qrImg));
+                        imagecopy($canvas, $tmp, $W - $qs - 60, (int)(($H - $qs) / 2), 0, 0, $qs, $qs);
+                        imagedestroy($tmp);
+                        imagedestroy($qrImg);
+                        $this->drawText($canvas, 'Scan to Join', 2, $W - $qs - 60, (int)(($H - $qs) / 2) + $qs + 10, $white);
+                    }
+                }
+            }
+
+            $outputDir = $this->getOutputDir();
+            $filename = 'vcard_' . time() . '_' . bin2hex(random_bytes(4)) . '.jpg';
+            $outputPath = $outputDir . '/' . $filename;
+            imagejpeg($canvas, $outputPath, 90);
+            imagedestroy($canvas);
+
+            $this->logToolkitUsage('visiting_card', $outputPath);
+
+            return ['success' => true, 'path' => $outputPath, 'url' => $this->pathToUrl($outputPath), 'filename' => $filename, 'message' => 'Visiting card created'];
+        } catch (\Throwable $e) {
+            error_log("MarketingToolkit::visitingCard: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Visiting card failed'];
+        }
+    }
+
     /* ── Helpers ── */
 
     private function loadImage(string $path)
@@ -421,6 +936,74 @@ class MarketingToolkitService
             $text = mb_substr($text, 0, $maxChars - 3) . '...';
         }
         imagestring($canvas, $font, $x, $y, $text, $color);
+    }
+
+    private function drawCentered($canvas, string $text, int $font, int $y, int $color, int $canvasW): void
+    {
+        $text = mb_substr($text, 0, 80);
+        $fontW = imagefontwidth($font);
+        $tx = (int)(($canvasW - strlen($text) * $fontW) / 2);
+        imagestring($canvas, $font, max(10, $tx), $y, $text, $color);
+    }
+
+    /**
+     * Encode multiple GIF frames into one animated GIF binary.
+     * Pure-PHP GIF89a encoder (NETSCAPE loop extension). No external deps.
+     */
+    private function encodeAnimatedGif(array $frames, array $delays): ?string
+    {
+        if (count($frames) < 2) return null;
+
+        // Parse first frame header to reuse global color table
+        $first = $frames[0];
+        if (substr($first, 0, 6) !== 'GIF89a' && substr($first, 0, 6) !== 'GIF87a') {
+            return null;
+        }
+
+        $width = ord($first[6]) + (ord($first[7]) << 8);
+        $height = ord($first[8]) + (ord($first[9]) << 8);
+        $packed = ord($first[10]);
+        $hasGCT = ($packed & 0x80) !== 0;
+        $gctSize = 0;
+        $header = 'GIF89a' . substr($first, 6, 7); // width/height/packed/bg/aspect
+
+        $offset = 13;
+        $gct = '';
+        if ($hasGCT) {
+            $gctSize = 2 << ($packed & 0x07);
+            $gct = substr($first, $offset, 3 * $gctSize);
+            $offset += 3 * $gctSize;
+        }
+
+        // NETSCAPE2.0 loop forever
+        $out = $header . $gct . "!\xFF\x0BNETSCAPE2.0\x03\x01\x00\x00\x00";
+
+        foreach ($frames as $i => $frame) {
+            $delay = (int)($delays[$i] ?? 100);
+            // Graphic Control Extension
+            $out .= "!\xF9\x04\x00" . chr($delay & 0xFF) . chr(($delay >> 8) & 0xFF) . "\x00\x00";
+            // Find image descriptor in frame
+            $pos = strpos($frame, "\x2C");
+            if ($pos === false) continue;
+            // Image descriptor (10 bytes) + LZW data until trailer
+            $imgEnd = strrpos($frame, "\x3B");
+            if ($imgEnd === false || $imgEnd <= $pos) continue;
+            $imgBlock = substr($frame, $pos, $imgEnd - $pos);
+            // Strip local color table if present (use global instead)
+            $descriptor = substr($imgBlock, 0, 10);
+            $dPacked = ord($descriptor[9]);
+            $dataStart = 10;
+            if (($dPacked & 0x80) !== 0) {
+                $lctSize = 2 << ($dPacked & 0x07);
+                $dataStart += 3 * $lctSize;
+                // Clear LCT flag, keep other bits
+                $descriptor[9] = chr($dPacked & 0x7F);
+            }
+            $out .= $descriptor . substr($imgBlock, $dataStart);
+        }
+
+        $out .= "\x3B"; // trailer
+        return strlen($out) > 100 ? $out : null;
     }
 
     private function getOutputDir(): string
