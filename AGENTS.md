@@ -567,3 +567,41 @@ _430. **Re-probe churn-adjacent pages on every autonomous round** � 13 cheap H
 ### State at close
 - This chat''s todos: all completed. Sessions 165�171 recorded. No debug leftovers, no temp files, no pending probes.
 - Session closed by user instruction; no further autonomous work.
+
+## Session 174: Pending Ops Owner Action (2026-10-08)
+
+### Trigger
+User requested completion of pending operational tasks that require server/admin access.
+
+### Pending Tasks (Owner Action Required)
+
+| Task | Details | Files Created |
+|------|---------|---------------|
+| **Windows Task Scheduler** | Run `scripts\setup_salary_grants_task.ps1` as Administrator to schedule monthly cron (1st at 02:00) | `scripts\setup_salary_grants_task.ps1` |
+| **HR First Salary Structure** | Admin login → `/admin/agents/salaried/create` → select salaried agent → Save (one-time) | — |
+| **Cron Test Verification** | `php scripts/cron_salary_grants.php` → should output `month=YYYY-MM processed=0 amount=0` | `scripts/cron_salary_grants.php` |
+
+### Files Added This Session
+- `docs/WINDOWS_TASK_SCHEDULER.md` — PowerShell command for Task Scheduler
+- `scripts/cron_salary_grants.php` — Monthly payout cron (idempotent)
+- `scripts/setup_salary_grants_task.ps1` — Ready-to-run Task Scheduler setup
+
+### Commits This Session
+- `ce11af161` — docs: Windows Task Scheduler guide
+- `ea2f85cd7` — feat(Sales): auto-create salary structure on first booking for salaried agents
+
+### Verification
+- Master 7/7 ✅
+- All probes 54+ passing ✅
+- Cron test: `php scripts/cron_salary_grants.php` → `month=2026-10 processed=0 amount=0` ✅
+- HR onboarding probe: 9/9 PASS ✅
+- All probes 54+ passing ✅
+
+### Owner Action Required
+1. **Server**: Run `scripts\setup_salary_grants_task.ps1` as Administrator (PowerShell)
+2. **Admin UI**: Login → `/admin/agents/salaried/create` → create first structure
+
+### State
+- All code complete, tested, pushed (`ea2f85cd7`)
+- Master 7/7 ✅
+- Remote synced `origin/main` = `ea2f85cd7`

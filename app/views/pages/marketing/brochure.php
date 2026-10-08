@@ -4,6 +4,7 @@ $summary = $summary ?? ['count' => 0, 'min_price' => 0, 'max_price' => 0, 'avg_p
 $branding = $branding ?? ['display_name' => 'APS Dream Home', 'phone' => '+91 73092 68077', 'referral_code' => ''];
 $base = defined('BASE_URL') ? BASE_URL : '';
 $refLink = $base . '/register' . (!empty($branding['referral_code']) ? '?ref=' . urlencode($branding['referral_code']) : '');
+$colony_name = $colony_name ?? 'All Colonies';
 ?>
 <!DOCTYPE html>
 <html lang="hi">
@@ -23,6 +24,9 @@ $refLink = $base . '/register' . (!empty($branding['referral_code']) ? '?ref=' .
   th { background: #070C18; color: #FACC15; }
   .footer { margin-top: 16px; text-align: center; border-top: 3px solid #FACC15; padding-top: 12px; }
   .no-print { margin-bottom: 16px; text-align: center; }
+  .property-row:hover { background: #f5f5f5; }
+  .qr-cell { text-align: center; }
+  .qr-img { width: 60px; height: 60px; }
   @media print {
     .no-print { display: none !important; }
     body { padding: 0; }
@@ -38,7 +42,7 @@ $refLink = $base . '/register' . (!empty($branding['referral_code']) ? '?ref=' .
 
 <div class="header">
     <h1>🏡 APS DREAM HOMES PVT. LTD.</h1>
-    <p>Colony Property Brochure — Gorakhpur</p>
+    <p>Colony Property Brochure — <?= htmlspecialchars($colony_name) ?></p>
     <p><strong><?= (int)$summary['count'] ?> listings</strong>
     <?php if ($summary['min_price'] > 0): ?>
     | Min ₹<?= number_format($summary['min_price']) ?> | Max ₹<?= number_format($summary['max_price']) ?> | Avg ₹<?= number_format($summary['avg_price']) ?>
@@ -53,20 +57,25 @@ $refLink = $base . '/register' . (!empty($branding['referral_code']) ? '?ref=' .
 </div>
 
 <table>
-    <thead><tr><th>#</th><th>Property</th><th>Type</th><th>Area</th><th>Price</th><th>Location</th></tr></thead>
+    <thead><tr><th>#</th><th>Property</th><th>Type</th><th>Area</th><th>Price</th><th>Location</th><th>QR</th></tr></thead>
     <tbody>
     <?php foreach ($listings as $i => $p): ?>
-        <tr>
+        <tr class="property-row">
             <td><?= $i + 1 ?></td>
             <td><?= htmlspecialchars(mb_substr($p['name'] ?? '', 0, 40)) ?></td>
             <td><?= htmlspecialchars($p['property_type'] ?? '') ?></td>
             <td><?= number_format($p['area_sqft'] ?? 0) ?> sqft</td>
             <td><strong>₹<?= number_format($p['price'] ?? 0) ?></strong></td>
             <td><?= htmlspecialchars(mb_substr($p['location'] ?? $p['city_name'] ?? '', 0, 30)) ?></td>
+            <td class="qr-cell">
+                <?php if (!empty($p['qr_code'])): ?>
+                    <img class="qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=<?= urlencode($p['qr_code'] ?? '') ?>" alt="QR" loading="lazy">
+                <?php endif; ?>
+            </td>
         </tr>
     <?php endforeach; ?>
     <?php if (empty($listings)): ?>
-        <tr><td colspan="6" style="text-align:center">Koi approved listing nahi mili.</td></tr>
+        <tr><td colspan="7" style="text-align:center">Koi approved listing nahi mili.</td></tr>
     <?php endif; ?>
     </tbody>
 </table>

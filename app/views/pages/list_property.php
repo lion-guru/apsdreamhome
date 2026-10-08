@@ -427,6 +427,7 @@ LPHEAD;
         }
         function show(i) {
             if (i < 0 || i >= total) return;
+            var prevStep = current;
             current = i;
             panels.forEach(function(p, k) { p.classList.toggle('active', k === i); });
             steps.forEach(function(s, k) {
@@ -440,6 +441,15 @@ LPHEAD;
             if (nextBtn) nextBtn.style.display = (i === total - 1) ? 'none' : '';
             if (submitBtn) submitBtn.style.display = (i === total - 1) ? '' : 'none';
             wizard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // GA4 event for step change
+            if (i !== prevStep && typeof gtagEvent === 'function') {
+                gtagEvent('wizard_step_changed', { 
+                    step: i + 1, 
+                    step_name: steps[i]?.querySelector('.aps-cp-wizard-step-label')?.textContent?.trim() || 'Step ' + (i + 1),
+                    direction: i > prevStep ? 'forward' : 'backward'
+                });
+            }
         }
         function validPanel(panel) {
             var ok = true;
@@ -729,7 +739,15 @@ LPHEAD;
     if (lpForm) lpForm.addEventListener('submit', function() { 
         clearDraft(); 
         trackEvent('listing_submitted');
+        gtagEvent('listing_submitted', { method: 'form' });
     });
+
+    // GA4 event tracking helper
+    function gtagEvent(eventName, params) {
+        if (typeof gtag === 'function') {
+            gtag('event', eventName, params);
+        }
+    }
 
     // Analytics tracking helper
     function trackEvent(eventType, data) {
@@ -808,6 +826,7 @@ LPHEAD;
                     clearDraft(); // draft saved server-side, clear local
                     if (window.APS && APS.toast) APS.toast(d.message || 'Draft saved successfully', 'success');
                     trackEvent('draft_saved');
+                    gtagEvent('draft_saved', { method: 'save_draft_button' });
                 } else {
                     if (window.APS && APS.toast) APS.toast(d.message || 'Failed to save draft', 'error');
                 }
@@ -831,6 +850,7 @@ LPHEAD;
             e.preventDefault();
             buildPreview();
             previewModal.show();
+            gtagEvent('listing_preview_viewed', { method: 'preview_button' });
         });
         if (prevEditBtn) {
             prevEditBtn.addEventListener('click', function() {

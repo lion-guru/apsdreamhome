@@ -366,7 +366,8 @@ $router->get('/admin/investment/installment-report', 'App\\Http\\Controllers\\Ad
 $router->get('/admin/investment/installment-report/export', 'App\\Http\\Controllers\\Admin\\InvestmentAnalyticsController@exportInstallmentReport');
 $router->get('/property/list', 'Front\\PropertyController@listProperty'); // Property Listing (User)
 $router->get('/list-property', 'Front\\PropertyController@listProperty');
-$router->post('/list-property/submit', 'Front\\PropertyController@handlePropertyListing');
+$router->post('/list-property/submit', 'Front\\PropertyController@handlePropertyListing')
+    ->middleware('App\\Middleware\\AjaxRateLimitMiddleware');
 $router->get('/properties/submit', 'Front\\PropertyController@listProperty');
 
 // Multi-step Property Listing Wizard (8 steps + draft + publish + image upload)
@@ -637,6 +638,12 @@ $router->get('/user/transactions', 'Front\\MarketplaceController@myTransactions'
 $router->post('/marketplace/boost-property', 'Front\\MarketplaceController@boostProperty');
 $router->post('/marketplace/boost/initiate-payment', 'Front\\MarketplaceController@initiateBoostPayment');
 $router->post('/marketplace/boost/verify-payment', 'Front\\MarketplaceController@verifyBoostPayment');
+
+// Smart Follow-up Sequences
+$router->get('/marketing/followup-templates', 'Front\\MarketplaceController@getFollowupTemplates');
+$router->post('/marketing/smart-followup', 'Front\\MarketplaceController@createSmartFollowup');
+$router->post('/marketing/trigger-followup', 'Front\\MarketplaceController@triggerActivityFollowup');
+$router->post('/marketing/auto-reschedule', 'Front\\MarketplaceController@autoRescheduleFollowups');
 
 // Marketing Toolkit (watermark, banner, AI writer + v2)
 $router->get('/marketing/toolkit', 'Front\\MarketingToolkitController@index');

@@ -1486,16 +1486,16 @@ class MarketingToolkitService
         if ($tid > 1) $params[] = $tid;
 
         $where = "up.status = 'approved'";
+        $colonyName = '';
         if ($colonyId) {
-            // user_properties may not have colony_id — match by location text fallback
             $where .= " AND (up.location LIKE ? OR up.city_name LIKE ?)";
-            // Resolve colony name
             try {
                 $cstmt = $this->pdo->prepare("SELECT name FROM colonies WHERE id = ? LIMIT 1");
                 $cstmt->execute([$colonyId]);
                 $cname = $cstmt->fetchColumn() ?: '';
                 $params[] = '%' . $cname . '%';
                 $params[] = '%' . $cname . '%';
+                $colonyName = $cname;
             } catch (\Throwable $e) {
                 $params[] = '%';
                 $params[] = '%';
@@ -1517,6 +1517,13 @@ class MarketingToolkitService
             $listings = [];
         }
 
+        // Add QR codes to each listing
+        foreach ($listings as &$listing) {
+            $listing['qr_code'] = (defined('BASE_URL') ? BASE_URL : '') . '/register?ref=' . urlencode($listing['referral_code'] ?? '');
+            $listing['share_url'] = (defined('BASE_URL') ? BASE_URL : '') . '/property/' . $listing['id'];
+        }
+        unset($listing);
+
         // Price summary
         $prices = array_filter(array_column($listings, 'price'), fn($p) => $p > 0);
         $summary = [
@@ -1526,7 +1533,19 @@ class MarketingToolkitService
             'avg_price' => $prices ? (int)(array_sum($prices) / count($prices)) : 0,
         ];
 
-        return ['listings' => $listings, 'summary' => $summary, 'colony_id' => $colonyId];
+        // Colony info
+        $colonyInfo = [
+            'id' => $colonyId,
+            'name' => $colonyName ?? 'All Colonies',
+        ];
+
+        return [
+            'listings' => $listings,
+            'summary' => $summary,
+            'colony_id' => $colonyId,
+            'colony_name' => $colonyName,
+            'colony_info' => $colonyInfo,
+        ];
     }
 
     /**

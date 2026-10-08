@@ -95,6 +95,7 @@
                     <li><a class="dropdown-item text-success" href="#" data-bulk-action="approve"><i class="fas fa-check me-2"></i> Approve Selected</a></li>
                     <li><a class="dropdown-item text-danger" href="#" data-bulk-action="reject"><i class="fas fa-times me-2"></i> Reject Selected</a></li>
                     <li><a class="dropdown-item text-primary" href="#" data-bulk-action="verify"><i class="fas fa-check-circle me-2"></i> Verify Selected</a></li>
+                    <li><a class="dropdown-item text-warning" href="#" data-bulk-action="update-price"><i class="fas fa-tag me-2"></i> Update Price (Bulk)</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item text-secondary" href="#" data-bulk-action="export"><i class="fas fa-file-export me-2"></i> Export CSV</a></li>
                 </ul>
@@ -287,6 +288,144 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!confirm(this.getAttribute('data-aps-confirm'))) e.preventDefault();
         });
     });
+
+    // Bulk price update modal
+    var bulkPriceModalEl = document.getElementById('bulkPriceModal');
+    if (bulkPriceModalEl) {
+        var bulkPriceModal = bootstrap.Modal.getOrCreateInstance(bulkPriceModalEl);
+        var priceTypeSelect = document.getElementById('bulkPriceType');
+        var priceValueInput = document.getElementById('bulkPriceValue');
+        var pricePercentInput = document.getElementById('bulkPricePercent');
+        var priceAdjustSelect = document.getElementById('bulkPriceAdjust');
+
+        function showBulkPriceModal() {
+            bulkPriceModal.show();
+        }
+
+        function handleBulkPriceAction() {
+            var action = priceTypeSelect.value; // 'set' | 'adjust'
+            var value = priceTypeSelect.value === 'set' ? priceValueInput.value : pricePercentInput.value;
+            var adjust = priceAdjustSelect.value; // 'increase' | 'decrease'
+
+            if (!value || parseFloat(value) <= 0) {
+                alert('Please enter a valid amount/percentage');
+                return;
+            }
+
+            var checked = document.querySelectorAll('.rowCheckbox:checked');
+            if (checked.length === 0) return;
+
+            var ids = Array.from(checked).map(function(cb) { return cb.value; });
+
+            var form = document.getElementById('bulkActionFormSubmit');
+            form.querySelectorAll('input[name="bulk_action"]').forEach(function(el) { el.remove(); });
+            
+            var actionInput = document.createElement('input');
+            actionInput.type = 'hidden';
+            actionInput.name = 'bulk_action';
+            actionInput.value = 'update-price';
+            form.appendChild(actionInput);
+
+            var priceInput = document.createElement('input');
+            priceInput.type = 'hidden';
+            priceInput.name = 'price_value';
+            priceInput.value = value;
+            form.appendChild(priceInput);
+
+            var priceTypeInput = document.createElement('input');
+            priceTypeInput.type = 'hidden';
+            priceTypeInput.name = 'price_type';
+            priceTypeInput.value = priceTypeSelect.value; // 'set' | 'adjust'
+            form.appendChild(priceTypeInput);
+
+            var priceAdjustInput = document.createElement('input');
+            priceAdjustInput.type = 'hidden';
+            priceAdjustInput.name = 'price_adjust';
+            priceAdjustInput.value = priceAdjustSelect.value;
+            form.appendChild(priceAdjustInput);
+
+            bulkPriceModal.hide();
+            form.submit();
+        }
+
+        // Listen for bulk price update dropdown click
+        document.querySelectorAll('[data-bulk-action="update-price"]').forEach(function(item) {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                var checked = document.querySelectorAll('.rowCheckbox:checked');
+                if (checked.length === 0) return;
+                showBulkPriceModal();
+});
+</script>
+
+<!-- Bulk Price Update Modal -->
+<div class="modal fade" id="bulkPriceModal" tabindex="-1" aria-labelledby="bulkPriceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="bulkPriceModalLabel">
+                    <i class="fas fa-tags me-2 text-warning"></i> Bulk Price Update
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted mb-4">Apply price changes to <span id="bulkPriceCount" class="fw-bold">0</span> selected properties.</p>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Update Type</label>
+                    <select class="form-select" id="bulkPriceType" onchange="toggleBulkPriceInputs()">
+                        <option value="set">Set Fixed Price</option>
+                        <option value="adjust">Adjust by Percentage</option>
+                    </select>
+                </div>
+
+                <div id="setPriceGroup" class="mb-3">
+                    <label for="bulkPriceValue" class="form-label fw-bold">New Price (₹)</label>
+                    <input type="number" class="form-control" id="bulkPriceValue" placeholder="e.g., 5000000" min="0" step="1000">
+                </div>
+
+                <div id="adjustPriceGroup" class="mb-3" style="display: none;">
+                    <label for="bulkPricePercent" class="form-label fw-bold">Percentage (%)</label>
+                    <input type="number" class="form-control" id="bulkPricePercent" placeholder="e.g., 10" min="0.01" max="100" step="0.01">
+                    <div class="mt-2">
+                        <label class="form-label fw-bold">Adjustment</label>
+                        <select class="form-select" id="bulkPriceAdjust">
+                            <option value="increase">Increase by %</option>
+                            <option value="decrease">Decrease by %</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="alert alert-info small mt-3">
+                    <i class="fas fa-info-circle me-1"></i>
+                    This will update the <strong>price</strong> field for all selected properties. The <code>price_type</code> field remains unchanged.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-warning" onclick="handleBulkPriceAction()">
+                    <i class="fas fa-tags me-1"></i> Apply Price Update
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleBulkPriceInputs() {
+    var type = document.getElementById('bulkPriceType').value;
+    document.getElementById('setPriceGroup').style.display = type === 'set' ? 'block' : 'none';
+    document.getElementById('adjustPriceGroup').style.display = type === 'adjust' ? 'block' : 'none';
+}
+
+function updateBulkPriceCount() {
+    var count = document.querySelectorAll('.rowCheckbox:checked').length;
+    var countEl = document.getElementById('bulkPriceCount');
+    if (countEl) countEl.textContent = count;
+}
+</script>
+        });
+    }
 });
 </script>
 

@@ -247,3 +247,32 @@ if (!function_exists('esc_html')) {
     }
 }
 ?>
+
+<?php
+// OPcache preload configuration for production
+if (APP_ENV === 'production' && function_exists('opcache_compile_file')) {
+    $preloadFiles = [
+        APP_ROOT . '/config/bootstrap.php',
+        APP_ROOT . '/config/database.php',
+        APP_ROOT . '/config/cache.php',
+        APP_ROOT . '/app/Core/Database/Database.php',
+        APP_ROOT . '/app/Core/Http/Request.php',
+        APP_ROOT . '/app/Core/Http/Response.php',
+        APP_ROOT . '/app/Http/Controllers/BaseController.php',
+        APP_ROOT . '/app/Http/Controllers/Front/MarketplaceController.php',
+        APP_ROOT . '/app/Http/Controllers/Front/PropertyPageController.php',
+        APP_ROOT . '/app/Http/Controllers/Front/UserController.php',
+        APP_ROOT . '/app/Services/CacheService.php',
+        APP_ROOT . '/app/Services/MarketplaceService.php',
+        APP_ROOT . '/app/Services/NotificationService.php',
+        APP_ROOT . '/app/Helpers/TranslationHelper.php',
+        APP_ROOT . '/app/Helpers/ViewHelper.php',
+    ];
+
+    foreach ($preloadFiles as $file) {
+        if (file_exists($file)) {
+            opcache_compile_file($file);
+        }
+    }
+}
+?>

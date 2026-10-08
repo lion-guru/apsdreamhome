@@ -1,0 +1,88 @@
+{
+  "manifest_version": 3,
+  "name": "APS Dream Home AI Assistant",
+  "short_name": "APS AI",
+  "version": "1.0.0",
+  "description": "APS Dream Home AI Assistant - Property queries, lead management, marketing content generation",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "APS Dream Home AI Assistant",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*/*property*",
+        "*://*/*lead*",
+        "*://*/*property*",
+        "*://*/*listing*",
+        "*://localhost/apsdreamhome/*",
+        "*://apsdreamhome.com/*",
+        "*://*.apsdreamhome.com/*"
+      ],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "contextMenus",
+    "clipboardWrite",
+    "clipboardRead"
+  ],
+  "host_permissions": [
+    "http://localhost/apsdreamhome/*",
+    "https://apsdreamhome.com/*",
+    "https://*.apsdreamhome.com/*"
+  ],
+  "commands": {
+    "toggle-assistant": {
+      "suggested_key": {
+        "default": "Alt+Shift+A",
+        "mac": "Alt+Shift+A"
+      },
+      "description": "Toggle APS AI Assistant"
+    },
+    "quick-share": {
+      "suggested_key": {
+        "default": "Alt+Shift+S",
+        "mac": "Alt+Shift+S"
+      },
+      "description": "Quick share current property"
+    }
+  },
+  "options_page": "options.html",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/*.png", "styles/*.css"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  }
+}

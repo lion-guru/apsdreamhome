@@ -558,9 +558,61 @@ $progressPct = min(100, round(($points / max(1, $nextLevelPoints)) * 100));
         </div>
     </div>
     
-    <div class="col-lg-4">
-        <div class="list-card h-100">
-            <h5 class="fw-bold mb-4"><i class="fas fa-history text-primary me-2"></i>Recent Earnings</h5>
+    <!-- Lead Attribution Dashboard -->
+        <div class="col-lg-4 mb-4">
+            <div class="list-card h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0"><i class="fas fa-chart-line text-info me-2"></i>Lead Attribution</h5>
+                    <a href="<?= BASE_URL ?>/associate/attribution" class="btn btn-sm btn-outline-primary"><i class="fas fa-chart-bar me-1"></i>Details</a>
+                </div>
+                <div class="d-flex gap-2 flex-wrap mb-3">
+                    <div class="badge bg-info-subtle text-info border border-info-subtle px-3 py-1 small">
+                        <i class="fas fa-share-alt me-1"></i>Direct: <strong><?= number_format($attribution_stats['direct'] ?? 0) ?></strong>
+                    </div>
+                    <div class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 small">
+                        <i class="fas fa-users me-1"></i>Referral: <strong><?= number_format($attribution_stats['referral'] ?? 0) ?></strong>
+                    </div>
+                    <div class="badge bg-warning-subtle text-warning border border-warning-subtle px-3 py-1 small">
+                        <i class="fas fa-search me-1"></i>Organic: <strong><?= number_format($attribution_stats['organic'] ?? 0) ?></strong>
+                    </div>
+                    <div class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 small">
+                        <i class="fas fa-ad me-1"></i>Paid: <strong><?= number_format($attribution_stats['paid'] ?? 0) ?></strong>
+                    </div>
+                </div>
+                <div class="d-flex gap-2 flex-wrap mb-3">
+                    <div class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-3 py-1 small">
+                        <i class="fas fa-share me-1"></i>Social: <strong><?= number_format($attribution_stats['social'] ?? 0) ?></strong>
+                    </div>
+                    <div class="badge bg-info-subtle text-info border border-info-subtle px-3 py-1 small">
+                        <i class="fas fa-envelope me-1"></i>Email: <strong><?= number_format($attribution_stats['email'] ?? 0) ?></strong>
+                    </div>
+                    <div class="badge bg-dark-subtle text-dark border border-dark-subtle px-3 py-1 small">
+                        <i class="fas fa-link me-1"></i>Direct: <strong><?= number_format($attribution_stats['direct_traffic'] ?? 0) ?></strong>
+                    </div>
+                </div>
+                
+                <div class="mt-3 p-3 rounded-3" style="background: linear-gradient(135deg, #eef2ff 0%, #fce7f3 100%); border: 1px solid #e0e7ff;">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <strong class="text-dark">Conversion Rate</strong>
+                            <div class="small text-muted">Leads → Bookings</div>
+                        </div>
+                        <div class="text-end">
+                            <span class="fw-bold fs-4 text-success"><?= number_format($attribution_stats['conversion_rate'] ?? 0, 1) ?>%</span>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between small text-muted">
+                        <span>Total Leads: <strong><?= number_format($attribution_stats['total_leads'] ?? 0) ?></strong></span>
+                        <span>Bookings: <strong><?= number_format($attribution_stats['total_bookings'] ?? 0) ?></strong></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Earnings -->
+        <div class="col-lg-4">
+            <div class="list-card h-100">
+                <h5 class="fw-bold mb-4"><i class="fas fa-history text-primary me-2"></i>Recent Earnings</h5>
             <?php if (!empty($commissions)): ?>
                 <?php foreach (array_slice($commissions, 0, 5) as $c): ?>
                     <div class="list-item-row px-0">

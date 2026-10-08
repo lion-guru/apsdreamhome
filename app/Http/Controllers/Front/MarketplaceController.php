@@ -7,6 +7,7 @@ use App\Services\ResellTransactionService;
 use App\Services\NotificationService;
 use App\Services\Gateway\RazorpayService;
 use App\Core\Database\Database;
+use App\Services\CacheService;
 
 class MarketplaceController extends BaseController
 {
@@ -50,14 +51,23 @@ class MarketplaceController extends BaseController
         $whereSql = implode(' AND ', $where) . $tWhere;
         $allParams = array_merge($params, $tParams);
 
+        // Cache key based on filters + page
+        $cacheKey = 'marketplace_listings_' . md5(serialize([$filters, $_GET['page'] ?? 1, $tid]));
+        $facetCacheKey = 'marketplace_facets_' . $tid;
+        $countCacheKey = 'marketplace_count_' . md5(serialize([$filters, $tid]));
+
         $listings = [];
         $premiumListings = [];
         $total = 0;
         $propertyTypes = [];
         $listingTypes = [];
         $packages = [];
+
         try {
-            $total = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM user_properties up WHERE {$whereSql}", $allParams);
+            // Cache total count (1 hour)
+            $total = (int)CacheService::cache($countCacheKey, 3600, function() use ($whereSql, $allParams) {
+                return (int)$this->db->fetchColumn("SELECT COUNT(*) FROM user_properties up WHERE {$whereSql}", $allParams);
+            });
 
             $currentPage = max(1, (int)($_GET['page'] ?? 1));
             $perPage = 24;
@@ -65,37 +75,47 @@ class MarketplaceController extends BaseController
             if ($currentPage > $totalPages) $currentPage = $totalPages;
             $offset = ($currentPage - 1) * $perPage;
 
-            $stmt = $this->db->prepare("
-                SELECT up.*, u.name as seller_name
-                FROM user_properties up
-                LEFT JOIN users u ON up.user_id = u.id
-                WHERE {$whereSql}
-                ORDER BY up.is_premium DESC, up.is_featured DESC, up.is_urgent DESC, up.created_at DESC
-                LIMIT {$perPage} OFFSET {$offset}
-            ");
-            $stmt->execute($allParams);
-            $listings = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-
-            // Premium carousel: boosted/featured approved listings (unfiltered)
-            try {
+            // Cache listings per page (5 minutes)
+            $listings = CacheService::cache($cacheKey, 300, function() use ($whereSql, $allParams, $perPage, $offset) {
                 $stmt = $this->db->prepare("
                     SELECT up.*, u.name as seller_name
                     FROM user_properties up
                     LEFT JOIN users u ON up.user_id = u.id
-                    WHERE up.status = 'approved' AND (up.is_premium = 1 OR up.is_featured = 1 OR up.is_urgent = 1){$tWhere}
-                    ORDER BY up.is_premium DESC, up.created_at DESC
-                    LIMIT 10
+                    WHERE {$whereSql}
+                    ORDER BY up.is_premium DESC, up.is_featured DESC, up.is_urgent DESC, up.created_at DESC
+                    LIMIT {$perPage} OFFSET {$offset}
                 ");
-                $stmt->execute($tParams);
-                $premiumListings = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-            } catch (\Throwable $e) { error_log("MarketplaceController::index premium: " . $e->getMessage()); }
+                $stmt->execute($allParams);
+                return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            });
 
-            try {
-                $propertyTypes = $this->db->fetchAll("SELECT DISTINCT up.property_type FROM user_properties up WHERE up.status = 'approved'{$tWhere} ORDER BY up.property_type", $tParams);
-                $propertyTypes = array_column($propertyTypes ?: [], 'property_type');
-                $listingTypes = $this->db->fetchAll("SELECT DISTINCT up.listing_type FROM user_properties up WHERE up.status = 'approved'{$tWhere} ORDER BY up.listing_type", $tParams);
-                $listingTypes = array_column($listingTypes ?: [], 'listing_type');
-            } catch (\Throwable $e) { error_log("MarketplaceController::index facets: " . $e->getMessage()); }
+            // Premium carousel: boosted/featured approved listings (unfiltered) - cached 10 min
+            $premiumListings = CacheService::cache('marketplace_premium_' . $tid, 600, function() use ($tWhere, $tParams) {
+                try {
+                    $stmt = $this->db->prepare("
+                        SELECT up.*, u.name as seller_name
+                        FROM user_properties up
+                        LEFT JOIN users u ON up.user_id = u.id
+                        WHERE up.status = 'approved' AND (up.is_premium = 1 OR up.is_featured = 1 OR up.is_urgent = 1){$tWhere}
+                        ORDER BY up.is_premium DESC, up.created_at DESC
+                        LIMIT 10
+                    ");
+                    $stmt->execute($tParams);
+                    return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+                } catch (\Throwable $e) { error_log("MarketplaceController::index premium: " . $e->getMessage()); return []; }
+            });
+
+            // Facets cached 1 hour
+            $propertyTypes = CacheService::cache('marketplace_property_types_' . $tid, 3600, function() use ($tWhere, $tParams) {
+                try {
+                    return array_column($this->db->fetchAll("SELECT DISTINCT up.property_type FROM user_properties up WHERE up.status = 'approved'{$tWhere} ORDER BY up.property_type", $tParams) ?: [], 'property_type');
+                } catch (\Throwable $e) { error_log("MarketplaceController::index facets: " . $e->getMessage()); return []; }
+            });
+            $listingTypes = CacheService::cache('marketplace_listing_types_' . $tid, 3600, function() use ($tWhere, $tParams) {
+                try {
+                    return array_column($this->db->fetchAll("SELECT DISTINCT up.listing_type FROM user_properties up WHERE up.status = 'approved'{$tWhere} ORDER BY up.listing_type", $tParams) ?: [], 'listing_type');
+                } catch (\Throwable $e) { error_log("MarketplaceController::index facets: " . $e->getMessage()); return []; }
+            });
 
             try {
                 $packages = $this->db->fetchAll("SELECT name, price, badge_label FROM premium_packages WHERE is_active = 1 ORDER BY priority_order ASC, price ASC LIMIT 5") ?: [];
@@ -393,6 +413,87 @@ class MarketplaceController extends BaseController
             'current_page' => 'transactions',
         ]);
     }
+
+    /**
+     * Get smart follow-up templates for a lead
+     */
+    public function getFollowupTemplates()
+    {
+        $this->requireLogin();
+        $leadId = (int)($_GET['lead_id'] ?? 0);
+        $channel = $_GET['channel'] ?? 'all';
+        
+        if ($leadId <= 0) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Lead ID required'], 400);
+        }
+        
+        $result = $this->marketplaceService->getFollowupTemplates($leadId, $channel);
+        return $this->jsonResponse(['success' => true, 'data' => $result]);
+    }
+
+    /**
+     * Create smart follow-up sequence for a lead
+     */
+    public function createSmartFollowup()
+    {
+        $this->requireLogin();
+        
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 400);
+        }
+        
+        $leadId = (int)($_POST['lead_id'] ?? 0);
+        if ($leadId <= 0) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Lead ID required'], 400);
+        }
+        
+        $result = $this->marketplaceService->createSmartFollowupSequence($leadId, (int)$_SESSION['user_id']);
+        return $this->jsonResponse($result);
+    }
+
+/**
+     * Trigger activity-based follow-up
+     */
+    public function triggerActivityFollowup()
+    {
+        $this->requireLogin();
+        
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 400);
+        }
+        
+        $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+        $leadId = (int)($input['lead_id'] ?? 0);
+        $activity = $input['activity'] ?? '';
+        
+        if ($leadId <= 0 || $activity === '') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Lead ID and activity required'], 400);
+        }
+        
+        $data = $input;
+        $data['user_id'] = $_SESSION['user_id'] ?? 0;
+        
+        $result = $this->marketplaceService->triggerActivityFollowup($leadId, $activity, $data);
+        return $this->jsonResponse($result);
+    }
+
+    /**
+     * Auto-reschedule overdue follow-ups
+     */
+    public function autoRescheduleFollowups()
+    {
+        $this->requireLogin();
+        
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 400);
+        }
+        
+        $result = $this->marketplaceService->autoRescheduleOverdue((int)($_SESSION['user_id'] ?? 0));
+        return $this->jsonResponse($result);
+    }
+
+    /**
+     * Get follow-up templates for a lead
 
     /**
      * Boost property listing

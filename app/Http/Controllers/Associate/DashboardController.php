@@ -203,6 +203,9 @@ class DashboardController extends BaseController
                 error_log('Associate dashboard gamification: ' . $e->getMessage());
             }
 
+            // Get lead attribution stats for associate dashboard
+            $attributionStats = $this->getLeadAttributionStats($userId);
+
             $this->render('associate/dashboard', [
                 'page_title' => 'Associate Dashboard - APS Dream Home',
                 'page_description' => 'Welcome to your Associate Dashboard',
@@ -225,6 +228,7 @@ class DashboardController extends BaseController
                 'user_points' => $userPoints,
                 'user_level' => $userLevel,
                 'referral_earnings_breakdown' => $referralEarningsBreakdown,
+                'attribution_stats' => $attributionStats,
             ], 'layouts/associate');
 
         } catch (\Throwable $e) {
@@ -245,6 +249,76 @@ class DashboardController extends BaseController
                 'overdue_emis' => 0,
                 'emi_this_month' => 0.0,
             ], 'layouts/associate');
+        }
+    }
+
+    /**
+     * Get lead attribution stats for associate dashboard
+     */
+    private function getLeadAttributionStats(int $userId): array
+    {
+        $tid = TenantContext::getId();
+        $tenantWhere = $tid > 1 ? " AND l.tenant_id = ?" : "";
+        $tenantParams = $tid > 1 ? [$tid] : [];
+
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            
+            // Total leads by source
+            $sourceStats = $db->fetchAll("
+                SELECT 
+                    COALESCE(source, 'unknown') as source,
+                    COUNT(*) as count
+                FROM leads l
+                WHERE l.user_id = ?{$tenantWhere} AND l.status != 'deleted'
+                GROUP BY source
+            ", array_merge([$this->getCurrentUserId()], $tid > 1 ? [$tid] : []));
+            
+            $sourceMap = [];
+            foreach ($sourceStats as $stat) {
+                $sourceMap[$stat['source']] = (int)$stat['count'];
+            }
+
+            // Total leads and bookings
+            $totalLeads = (int)$this->db->fetchColumn("
+                SELECT COUNT(*) FROM leads 
+                WHERE user_id = ?{$tenantWhere} AND status != 'deleted'
+            ", array_merge([$this->getCurrentUserId()], $tid > 1 ? [$tid] : []));
+            
+            $totalBookings = (int)$this->db->fetchColumn("
+                SELECT COUNT(*) FROM bookings 
+                WHERE user_id = ?{$tenantWhere} AND status NOT IN ('cancelled', 'rejected')
+            ", array_merge([$this->getCurrentUserId()], $tid > 1 ? [$tid] : []));
+
+            // Conversion rate
+            $conversionRate = $totalLeads > 0 ? round(($totalBookings / $totalLeads) * 100, 1) : 0;
+
+            return [
+                'direct' => $sourceMap['direct'] ?? 0,
+                'referral' => $sourceMap['referral'] ?? 0,
+                'organic' => $sourceMap['organic'] ?? 0,
+                'paid' => $sourceMap['paid'] ?? 0,
+                'social' => $sourceMap['social'] ?? 0,
+                'email' => $sourceMap['email'] ?? 0,
+                'direct_traffic' => $sourceMap['direct'] ?? 0,
+                'total_leads' => $totalLeads,
+                'total_bookings' => $totalBookings,
+                'conversion_rate' => $conversionRate,
+            ];
+        } catch (\Throwable $e) {
+            error_log("DashboardController::getLeadAttributionStats: " . $e->getMessage());
+            return [
+                'direct' => 0,
+                'referral' => 0,
+                'organic' => 0,
+                'paid' => 0,
+                'social' => 0,
+                'email' => 0,
+                'direct_traffic' => 0,
+                'total_leads' => 0,
+                'total_bookings' => 0,
+                'conversion_rate' => 0,
+            ];
         }
     }
 }

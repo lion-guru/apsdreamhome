@@ -268,6 +268,7 @@ class MarketplaceService
 
     /**
      * Create initial follow-up schedule for new lead
+     * Supports smart sequences based on lead score, property type, and budget
      */
     private function createInitialFollowup(int $leadId, array $data): void
     {
@@ -276,34 +277,140 @@ class MarketplaceService
             $extraCol = $tid > 1 ? ', tenant_id' : '';
             $extraVal = $tid > 1 ? ', ?' : '';
 
-            // Schedule first follow-up in 2 hours
-            $insStmt = $this->pdo->prepare("
-                INSERT INTO followup_schedules 
-                (lead_id, property_id, listing_type, buyer_id, scheduled_for, followup_type, priority, status, notes, created_by, created_at{$extraCol})
-                VALUES (?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 2 HOUR), 'call', 'high', 'pending', 'Initial follow-up for new inquiry', ?, NOW(){$extraVal})
-            ");
+            // Get lead details for smart sequencing
+            $lead = $this->getLeadDetails($leadId);
+            $sequence = $this->determineFollowupSequence($lead, $data);
 
-            $params = [
-                $leadId,
-                $data['property_id'] ?? null,
-                $data['listing_type'] ?? 'user',
-                $data['user_id'] ?? null,
-                $data['created_by'] ?? 0,
-            ];
-            if ($tid > 1) $params[] = $tid;
-            $insStmt->execute($params);
+            foreach ($sequence as $index => $step) {
+                $delay = $step['delay_hours'] ?? 0;
+                $scheduled = $delay > 0 ? "DATE_ADD(NOW(), INTERVAL {$delay} HOUR)" : "NOW()";
+                
+                $insStmt = $this->pdo->prepare("
+                    INSERT INTO followup_schedules 
+                    (lead_id, property_id, listing_type, buyer_id, scheduled_for, followup_type, priority, status, notes, created_by, created_at{$extraCol})
+                    VALUES (?, ?, ?, ?, {$scheduled}, ?, ?, 'pending', ?, ?, NOW(){$extraVal})
+                ");
 
-            // Schedule second follow-up (WhatsApp) in 24 hours
-            $insStmt2 = $this->pdo->prepare("
-                INSERT INTO followup_schedules 
-                (lead_id, property_id, listing_type, buyer_id, scheduled_for, followup_type, priority, status, notes, created_by, created_at{$extraCol})
-                VALUES (?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 24 HOUR), 'whatsapp', 'medium', 'pending', 'WhatsApp follow-up', ?, NOW(){$extraVal})
-            ");
-            $insStmt2->execute($params);
+                $params = [
+                    $leadId,
+                    $data['property_id'] ?? null,
+                    $data['listing_type'] ?? 'user',
+                    $data['user_id'] ?? null,
+                    $step['type'],
+                    $step['priority'] ?? 'medium',
+                    $step['notes'] ?? '',
+                    $data['created_by'] ?? 0,
+                ];
+                if ($tid > 1) $params[] = $tid;
+                $insStmt->execute($params);
+            }
 
         } catch (\Throwable $e) {
             error_log("MarketplaceService::createInitialFollowup: " . $e->getMessage());
         }
+    }
+
+    /**
+     * Determine smart follow-up sequence based on lead profile
+     */
+    private function determineFollowupSequence(array $lead, array $data): array
+    {
+        $budget = (float)($lead['budget'] ?? $data['budget'] ?? 0);
+        $leadScore = (int)($lead['lead_score'] ?? 0);
+        $propertyType = $data['listing_type'] ?? 'user';
+        $isHot = $leadScore >= 70 || $budget >= 5000000;
+        $isHighValue = $budget >= 10000000;
+
+        $sequence = [];
+
+        // Step 1: Immediate call (within 2 hours) - always
+        $sequence[] = [
+            'type' => 'call',
+            'delay_hours' => 2,
+            'priority' => 'high',
+            'notes' => 'Initial contact - introduce APS Dream Home, understand requirements',
+        ];
+
+        // Step 2: WhatsApp follow-up (24 hours) - always
+        $sequence[] = [
+            'type' => 'whatsapp',
+            'delay_hours' => 24,
+            'priority' => 'high',
+            'notes' => 'Send property options via WhatsApp with images & pricing',
+        ];
+
+        // Hot leads: aggressive follow-up
+        if ($isHot) {
+            $sequence[] = [
+                'type' => 'call',
+                'delay_hours' => 48,
+                'priority' => 'high',
+                'notes' => 'Hot lead - schedule site visit, discuss financing options',
+            ];
+            $sequence[] = [
+                'type' => 'whatsapp',
+                'delay_hours' => 72,
+                'priority' => 'medium',
+                'notes' => 'Send property brochure, payment plan options',
+            ];
+            $sequence[] = [
+                'type' => 'site_visit',
+                'delay_hours' => 96,
+                'priority' => 'high',
+                'notes' => 'Schedule site visit, involve senior sales if needed',
+            ];
+        } else {
+            // Warm/Cold leads: nurturing sequence
+            $sequence[] = [
+                'type' => 'whatsapp',
+                'delay_hours' => 72,
+                'priority' => 'medium',
+                'notes' => 'Send property catalog, EMI calculator link',
+            ];
+            $sequence[] = [
+                'type' => 'email',
+                'delay_hours' => 120,
+                'priority' => 'low',
+                'notes' => 'Send market report, similar properties, investment guide',
+            ];
+            $sequence[] = [
+                'type' => 'call',
+                'delay_hours' => 168,
+                'priority' => 'medium',
+                'notes' => 'Check interest, address objections, offer site visit',
+            ];
+        }
+
+        // High-value properties: add premium touches
+        if ($isHighValue) {
+            $sequence[] = [
+                'type' => 'meeting',
+                'delay_hours' => 24,
+                'priority' => 'urgent',
+                'notes' => 'VIP treatment - arrange manager call, premium brochure',
+            ];
+        }
+
+        return $sequence;
+    }
+
+    /**
+     * Get lead details for smart sequencing
+     */
+    private function getLeadDetails(int $leadId): array
+    {
+        $tid = $this->getTenantId();
+        $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+        $params = [$leadId];
+        if ($tid > 1) $params[] = $tid;
+
+        $stmt = $this->pdo->prepare("
+            SELECT id, name, phone, email, budget, lead_score, status, property_interest, 
+                   location_preference, lead_score, priority, source
+            FROM leads WHERE id = ?{$tenantWhere} LIMIT 1
+        ");
+        $stmt->execute(array_merge([$leadId], $tid > 1 ? [$this->getTenantId()] : []));
+        return $stmt->fetch(\PDO::FETCH_ASSOC) ?: [];
     }
 
     /**
