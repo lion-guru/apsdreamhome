@@ -48,20 +48,28 @@ if ($page_description === 'forgot_password_page_description' || empty($page_desc
                         <p class="forgot-subtitle"><?= __('forgot_password_subtitle') ?></p>
                     </div>
 
-                    <?php if (isset($_SESSION['error'])): ?>
+                    <?php
+                    // Controller passes $errors (array) + $success and unsets the
+                    // session keys before include — prefer locals, fall back to session.
+                    $flashErrors = $errors ?? [];
+                    if (isset($_SESSION['error'])) { $flashErrors[] = $_SESSION['error']; unset($_SESSION['error']); }
+                    $flashSuccess = $success ?? ($_SESSION['success'] ?? null);
+                    unset($_SESSION['success']);
+                    ?>
+                    <?php if (!empty($flashErrors)): ?>
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <i class="fas fa-exclamation-triangle me-2"></i>
-                            <?php echo htmlspecialchars($_SESSION['error'] ?? '');
-                            unset($_SESSION['error']); ?>
+                            <?php foreach ((array)$flashErrors as $fe): ?>
+                                <div><?= htmlspecialchars($fe ?? '') ?></div>
+                            <?php endforeach; ?>
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
                     <?php endif; ?>
 
-                    <?php if (isset($_SESSION['success'])): ?>
+                    <?php if (!empty($flashSuccess)): ?>
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
                             <i class="fas fa-check-circle me-2"></i>
-                            <?php echo htmlspecialchars($_SESSION['success'] ?? '');
-                            unset($_SESSION['success']); ?>
+                            <?php echo htmlspecialchars($flashSuccess ?? ''); ?>
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
                     <?php endif; ?>

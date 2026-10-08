@@ -385,7 +385,10 @@ class PropertyPageController extends BaseController
             // ---- Photo upload (single image) ----
             $imagePath = null;
             if (!empty($_FILES['property_image']['tmp_name']) && (int)($_FILES['property_image']['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK) {
-                $imagePath = $this->saveListingImage($_FILES['property_image']);
+                $imagePath = null;
+            $imagePaths = $this->saveListingImages($_FILES['property_images'] ?? []);
+            // First image as main image
+            $imagePath = $imagePaths[0] ?? null;
             }
 
             // ---- Location names for human-readable address ----
@@ -449,6 +452,27 @@ class PropertyPageController extends BaseController
             }
             if ($newId <= 0) { $fail('Could not save your listing. Please try again.'); return; }
 
+            // Save additional images to property_images table
+            if (!empty($imagePaths)) {
+                foreach ($imagePaths as $index => $path) {
+                    try {
+                        $this->db->insert('property_images', [
+                            'property_id' => $newId,
+                            'image_path' => $path,
+                            'image_type' => 'gallery',
+                            'is_primary' => ($index === 0 ? 1 : 0),
+                            'sort_order' => $index,
+                            'is_active' => 1,
+                            'tenant_id' => $tenantId,
+                            'created_at' => date('Y-m-d H:i:s'),
+                            'updated_at' => date('Y-m-d H:i:s'),
+                        ]);
+                    } catch (\Throwable $e) {
+                        error_log("PropertyPageController: property_images insert failed: " . $e->getMessage());
+                    }
+                }
+            }
+
             $this->listingSuccess($newId, $ownerRole, $isXhr, false);
         } catch (\Throwable $e) {
             error_log('handlePropertyListing failed: ' . $e->getMessage());
@@ -457,33 +481,60 @@ class PropertyPageController extends BaseController
     }
 
     /**
-     * Store the listing photo under public/uploads/user_properties/.
-     * Returns the web path (e.g. /uploads/user_properties/x.jpg) or null.
+     * Store listing photos under public/uploads/user_properties/.
+     * Saves all images to property_images table.
+     * Returns array of web paths (first is primary).
      */
-    private function saveListingImage(array $file): ?string
+    private function saveListingImages(array $files): array
     {
-        $tmp = $file['tmp_name'] ?? '';
-        if (!is_uploaded_file($tmp)) return null;
-        if ((int)($file['size'] ?? 0) > 5 * 1024 * 1024) {
-            throw new \Exception('Photo must be under 5MB.');
+        $paths = [];
+        $fileArray = $this->normalizeFilesArray($files);
+
+        foreach ($fileArray as $index => $file) {
+            $tmp = $file['tmp_name'] ?? '';
+            if (!is_uploaded_file($tmp)) continue;
+            if ((int)($file['size'] ?? 0) > 5 * 1024 * 1024) continue;
+            $ext = strtolower(pathinfo($file['name'] ?? '', PATHINFO_EXTENSION));
+            if (!in_array($ext, ['jpg', 'jpeg', 'png', 'webp'], true)) continue;
+            $info = @getimagesize($tmp);
+            if ($info === false || strpos($info['mime'] ?? '', 'image/') !== 0) continue;
+
+            $dir = __DIR__ . '/../../../public/uploads/user_properties/';
+            if (!is_dir($dir) && !mkdir($dir, 0755, true)) continue;
+
+            $fileName = 'lp_' . date('YmdHis') . '_' . bin2hex(random_bytes(4)) . '_' . $index . '.' . $ext;
+            if (!move_uploaded_file($tmp, $dir . $fileName)) continue;
+
+            $webPath = '/uploads/user_properties/' . $fileName;
+            $paths[] = $webPath;
         }
-        $ext = strtolower(pathinfo($file['name'] ?? '', PATHINFO_EXTENSION));
-        if (!in_array($ext, ['jpg', 'jpeg', 'png', 'webp'], true)) {
-            throw new \Exception('Photo must be JPG, PNG or WebP.');
+        return $paths;
+    }
+
+    /**
+     * Normalize $_FILES array to handle both single and multiple file uploads.
+     * Returns array of file arrays with keys: tmp_name, name, size, error, type.
+     */
+    private function normalizeFilesArray(array $files): array
+    {
+        // If already indexed by numeric keys (multiple attribute)
+        if (isset($files[0]['tmp_name'])) {
+            return $files;
         }
-        $info = @getimagesize($tmp);
-        if ($info === false || strpos($info['mime'] ?? '', 'image/') !== 0) {
-            throw new \Exception('Uploaded file is not a valid image.');
+        // Single file or old format: convert to array of file arrays
+        $normalized = [];
+        $keys = ['tmp_name', 'name', 'size', 'error', 'type'];
+        $count = count($files['tmp_name'] ?? []);
+        if (!is_array($files['tmp_name'])) {
+            // Single file
+            $normalized[] = array_combine($keys, array_map(fn($k) => $files[$k], $keys));
+        } else {
+            // Multiple files
+            for ($i = 0; $i < $count; $i++) {
+                $normalized[] = array_combine($keys, array_map(fn($k) => $files[$k][$i], $keys));
+            }
         }
-        $dir = __DIR__ . '/../../../public/uploads/user_properties/';
-        if (!is_dir($dir) && !mkdir($dir, 0755, true)) {
-            throw new \Exception('Upload directory unavailable.');
-        }
-        $fileName = 'lp_' . date('YmdHis') . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
-        if (!move_uploaded_file($tmp, $dir . $fileName)) {
-            throw new \Exception('Could not store the uploaded photo.');
-        }
-        return '/uploads/user_properties/' . $fileName;
+        return $normalized;
     }
 
     /**
@@ -498,6 +549,16 @@ class PropertyPageController extends BaseController
         $target = '/user/properties';
         if ($ownerRole === 'associate') $target = '/associate/properties';
         elseif ($ownerRole === 'agent') $target = '/agent/properties';
+
+        // Notify user (only on new submissions, not duplicates)
+        if (!$duplicate) {
+            try {
+                $this->sendPropertyNotification($id, 'submitted');
+            } catch (\Throwable $e) {
+                error_log('PropertyPageController: notification error: ' . $e->getMessage());
+            }
+        }
+
         if ($isXhr) {
             $this->jsonResponse(['success' => true, 'message' => $msg, 'id' => $id, 'redirect' => (defined('BASE_URL') ? BASE_URL : '') . $target]);
             return;
@@ -976,5 +1037,44 @@ class PropertyPageController extends BaseController
             'projects' => $projects,
             'project_stats' => $stats,
         ]);
+    }
+
+    /**
+     * Send property listing notification (email + SMS)
+     */
+    private function sendPropertyNotification(int $propertyId, string $event = 'submitted'): void
+    {
+        $subjectMap = [
+            'submitted' => 'Your property listing has been submitted for review!',
+            'approved' => 'Your property listing has been approved!',
+            'rejected' => 'Your property listing has been rejected',
+        ];
+        $msgMap = [
+            'submitted' => "Thank you for listing your property with APS Dream Home!\n\nYour listing has been received and is now under review by our team.\n\nListing ID: {$propertyId}\n\nOur team will verify the details and contact you shortly. Once approved, your property will be visible to buyers.\n\nFor queries: +91 92771 21112 | info@apsdreamhome.com",
+            'approved' => "Congratulations! Your property listing has been approved and is now visible to buyers on APS Dream Home.\n\nListing ID: {$propertyId}\n\nBuyers can now see and inquire about your property.\n\nContact: +91 92771 21112 | info@apsdreamhome.com",
+            'rejected' => "Your property listing has been rejected. Please contact our support team for more details.\n\nListing ID: {$propertyId}\n\nContact: +91 92771 21112 | info@apsdreamhome.com",
+        ];
+
+        $subject = $subjectMap[$event] ?? 'Property Status Update';
+        $message = $msgMap[$event] ?? "Your property listing status has been updated.\n\nListing ID: {$propertyId}\n\nContact: +91 92771 21112 | info@apsdreamhome.com";
+
+        // Email (use session user email if available)
+        $email = $_SESSION['user_email'] ?? '';
+        if ($email && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $subject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
+            $headers = "From: info@apsdreamhome.com\r\nReply-To: info@apsdreamhome.com\r\nContent-Type: text/plain; charset=UTF-8\r\n";
+            @mail($email, $subject, $message, $headers);
+        }
+
+        // SMS (logged for gateway integration)
+        $phone = $_SESSION['user_phone'] ?? '';
+        if ($phone) {
+            $cleanPhone = preg_replace('/\D/', '', $phone);
+            if (strlen($cleanPhone) === 10) $cleanPhone = '91' . $cleanPhone;
+            if (strlen($cleanPhone) >= 12) {
+                $smsMsg = "APS Dream Home: Your property listing has been " . ucfirst($event) . ". Listing ID: {$propertyId}. Contact: +91 92771 21112";
+                error_log("SMS TO: {$cleanPhone} - {$smsMsg}");
+            }
+        }
     }
 }

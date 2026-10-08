@@ -278,6 +278,11 @@ class AuthController extends BaseController
 
     public function forgotPassword()
     {
+        // Rate limiting: 10 reset requests per minute per IP (mail-bomb protection;
+        // per-email 5/hour throttle additionally enforced inside sendOtp)
+        require_once __DIR__ . '/../../../Middleware/RateLimiter.php';
+        \App\Middleware\RateLimiter::check('forgot_password_' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'), 10, 60);
+
         $email = trim($_POST['email'] ?? '');
 
         if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {

@@ -214,6 +214,91 @@ class UserPropertyController extends AdminController
         exit;
     }
 
+    public function bulkAction()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            redirect('/admin/user-properties');
+            exit;
+        }
+
+        $ids = $_POST['ids'] ?? [];
+        $bulkAction = $_POST['bulk_action'] ?? '';
+
+        if (empty($ids) || !in_array($bulkAction, ['approve', 'reject', 'verify'])) {
+            redirect('/admin/user-properties?error=invalid_bulk_action');
+            exit;
+        }
+
+        $adminId = $_SESSION['admin_id'] ?? 1;
+        $statusMap = [
+            'approve' => 'approved',
+            'reject' => 'rejected',
+            'verify' => 'verified',
+        ];
+        $status = $statusMap[$bulkAction];
+
+        [$tenantSql, $tenantParams] = $this->tenantWhere();
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        $sql = "UPDATE user_properties SET status = ?, verified_by = ?, verified_at = NOW(), updated_at = NOW() WHERE id IN ($placeholders)" . $tenantSql;
+        $params = array_merge([$status, $adminId], $ids, $tenantParams);
+
+        try {
+            $this->db->execute($sql, $params);
+        } catch (\Throwable $e) {
+            error_log('Bulk action failed: ' . $e->getMessage());
+            redirect('/admin/user-properties?error=bulk_failed');
+            exit;
+        }
+
+        // Send notifications for each updated property
+        try {
+            $placeholders = implode(',', array_fill(0, count($ids), '?'));
+            $stmt = $this->db->prepare("SELECT id, name, phone, email FROM user_properties WHERE id IN ($placeholders)" . $tenantSql);
+            $stmt->execute(array_merge($ids, $tenantParams));
+            $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            foreach ($properties as $property) {
+                $subjectMap = [
+                    'approved' => 'Your property listing has been approved!',
+                    'rejected' => 'Your property listing has been rejected',
+                    'verified' => 'Your property listing has been verified'
+                ];
+                $msgMap = [
+                    'approved' => "Congratulations! Your property listing '{$property['name']}' has been approved and is now visible to buyers on APS Dream Home.",
+                    'rejected' => "Your property listing '{$property['name']}' has been rejected. Please contact us for more information.",
+                    'verified' => "Your property listing '{$property['name']}' has been verified by our team."
+                ];
+
+                if (!empty($property['email']) && filter_var($property['email'], FILTER_VALIDATE_EMAIL)) {
+                    $subject = $subjectMap[$bulkAction] ?? 'Property Status Update';
+                    $message = $msgMap[$bulkAction] ?? 'Your property status has been updated.';
+                    $subject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
+                    $headers = "From: info@apsdreamhome.com\r\nReply-To: info@apsdreamhome.com\r\nContent-Type: text/plain; charset=UTF-8\r\n";
+                    @mail($property['email'], $subject, $message, $headers);
+                }
+
+                if (!empty($property['phone'])) {
+                    $phone = preg_replace('/\D/', '', $property['phone']);
+                    if (strlen($phone) === 10) $phone = '91' . $phone;
+                    if (strlen($phone) >= 12) {
+                        $smsMsg = "APS Dream Home: Your property '{$property['name']}' has been " . ucfirst($bulkAction) . ". Contact: +91 92771 21112";
+                        error_log("SMS TO: {$phone} - {$smsMsg}");
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            error_log("Bulk action notification error: " . $e->getMessage());
+        }
+
+        \App\Services\CacheService::invalidateAdminDashboard();
+        \App\Services\CacheService::invalidatePropertyFilters();
+        \App\Services\Cache\HotPathCacheService::invalidatePropertyList();
+        \App\Services\Cache\HotPathCacheService::invalidateHomeFeatured();
+
+        redirect('/admin/user-properties?success=bulk_' . $bulkAction);
+        exit;
+    }
+
     private function getPropertyStatusCounts()
     {
         $sql = "SELECT status, COUNT(*) as count FROM user_properties GROUP BY status";

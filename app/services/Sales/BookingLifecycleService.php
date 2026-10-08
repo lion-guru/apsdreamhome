@@ -223,6 +223,76 @@ class BookingLifecycleService
                 error_log('[BookingLifecycleService] signup rewards hook failed: ' . $e->getMessage());
             }
 
+            // HR onboarding trigger: if associate is 'salaried' but has no salary structure, auto-create default
+            try {
+                if (!empty($data['associate_id'])) {
+                    $associateId = (int)$data['associate_id'];
+                    $stmt = $this->db->prepare("SELECT u.id, u.name, a.agent_type FROM users u JOIN associates a ON a.user_id=u.id WHERE a.id=? LIMIT 1");
+                    $stmt->execute([$associateId]);
+                    $agent = $stmt->fetch(\PDO::FETCH_ASSOC);
+                    if ($agent && ($agent['agent_type'] ?? '') === 'salaried') {
+                        // Check if structure exists
+                        $check = $this->db->prepare("SELECT id FROM salaried_agent_structures WHERE user_id=? AND effective_to IS NULL");
+                        $check->execute([$agent['id']]);
+                        if (!$check->fetchColumn()) {
+                            // Auto-create default structure (HR can revise later)
+                            $default = [
+                                'basic_salary'    => 25000,
+                                'hra'             => 10000,
+                                'ta_da'           => 3000,
+                                'other_allowance' => 2000,
+                                'incentive_type'  => 'flat_per_plot',
+                                'incentive_value' => 1500,
+                                'tds_applicable'  => 0,
+                                'effective_from'  => date('Y-m-d'),
+                                'remarks'         => 'Auto-created on first booking for salaried agent',
+                                'set_by_user_id'  => 1, // system/HR
+                            ];
+                            $pdo = $this->db;
+                            $pdo->exec("CREATE TABLE IF NOT EXISTS salaried_agent_structures (
+                                id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                                user_id INT UNSIGNED NOT NULL,
+                                basic_salary DECIMAL(10,2) NOT NULL DEFAULT 0,
+                                hra DECIMAL(10,2) NOT NULL DEFAULT 0,
+                                ta_da DECIMAL(10,2) NOT NULL DEFAULT 0,
+                                other_allowance DECIMAL(10,2) NOT NULL DEFAULT 0,
+                                incentive_type ENUM('percentage','flat_per_plot') NOT NULL DEFAULT 'flat_per_plot',
+                                incentive_value DECIMAL(10,4) NOT NULL DEFAULT 0,
+                                tds_applicable TINYINT(1) NOT NULL DEFAULT 1,
+                                effective_from DATE NOT NULL,
+                                effective_to DATE NULL,
+                                set_by_user_id INT UNSIGNED NOT NULL,
+                                remarks VARCHAR(1000) NULL,
+                                tenant_id INT UNSIGNED NOT NULL DEFAULT 1,
+                                created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                INDEX idx_user (user_id)
+                            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+                            $stmt = $pdo->prepare("INSERT INTO salaried_agent_structures (user_id, basic_salary, hra, ta_da, other_allowance, incentive_type, incentive_value, tds_applicable, effective_from, effective_to, set_by_user_id, remarks, tenant_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, NOW(), NOW())");
+                            $stmt->execute([
+                                $agent['id'],
+                                $default['basic_salary'],
+                                $default['hra'],
+                                $default['ta_da'],
+                                $default['other_allowance'],
+                                $default['incentive_type'],
+                                $default['incentive_value'],
+                                $default['tds_applicable'],
+                                $default['effective_from'],
+                                $default['set_by_user_id'],
+                                $default['remarks'],
+                                $this->tid() ?? 1,
+                            ]);
+                            // Mark associate as salary-eligible
+                            $pdo->prepare("UPDATE associates SET agent_type='salaried' WHERE id=?")->execute([$associateId]);
+                            error_log('[BookingLifecycleService] Auto-created salary structure for user ' . $agent['id'] . ' on first booking');
+                        }
+                    }
+                }
+            } catch (\Throwable $e) {
+                error_log('[BookingLifecycleService] salaried onboarding hook failed: ' . $e->getMessage());
+            }
+
             return [
                 'success'           => true,
                 'id'                => $bookingId,

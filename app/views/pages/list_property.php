@@ -33,7 +33,11 @@ try {
 // Page-scoped assets: the public layout does NOT load aps-components.css /
 // customer-pages.js, so the wizard + pickers ship their own styles + behavior.
 $extraHead = ($extraHead ?? '')
-    . '<link href="' . BASE_URL . '/assets/css/consolidated/aps-components.css?v=2" rel="stylesheet">'
+    // Critical CSS inlined for fast first paint
+    . '<style>' . file_get_contents(__DIR__ . '/../../../public/assets/css/critical/list-property.css') . '</style>'
+    // Full CSS loaded asynchronously (non-blocking)
+    . '<link rel="preload" href="' . BASE_URL . '/assets/css/consolidated/aps-components.css?v=2" as="style" onload="this.onload=null;this.rel=\'stylesheet\'">'
+    . '<noscript><link href="' . BASE_URL . '/assets/css/consolidated/aps-components.css?v=2" rel="stylesheet"></noscript>'
     . <<<'LPHEAD'
 <style>
 .lp-hero{position:relative;background:linear-gradient(120deg,#312e81 0%,#6d28d9 55%,#9333ea 100%);color:#fff;overflow:hidden}
@@ -216,7 +220,12 @@ LPHEAD;
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="city" class="form-label fw-bold"><?= __('list_property_label_city') ?></label>
-                                <input type="text" name="city" id="city" class="form-control" placeholder="<?= __('list_property_ph_city') ?>" aria-label="<?= __('list_property_label_city') ?>" data-autofill="city">
+                                <div class="input-group">
+                                    <input type="text" name="city" id="city" class="form-control" placeholder="<?= __('list_property_ph_city') ?>" aria-label="<?= __('list_property_label_city') ?>" data-autofill="city">
+                                    <button type="button" class="btn btn-outline-secondary" data-action="map-picker" title="<?= __('list_property_map_picker_title', null, 'Pick on Map') ?>">
+                                        <i class="fas fa-map-marked-alt"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="pincode" class="form-label fw-bold"><?= __('list_property_label_pincode') ?></label>
@@ -258,7 +267,7 @@ LPHEAD;
                             <span class="aps-cp-dropzone-icon"><i class="fas fa-cloud-upload-alt"></i></span>
                             <p class="aps-cp-dropzone-text"><?= __('list_property_dropzone_text', null, 'Click to upload or drag images here') ?></p>
                             <p class="aps-cp-dropzone-hint"><?= __('list_property_image_hint') ?></p>
-                            <input type="file" name="property_image" id="property_image" accept="image/jpeg,image/png,image/webp" data-aps-image-preview="#property_image_preview" data-max-files="5" aria-label="<?= __('list_property_label_image') ?>">
+                            <input type="file" name="property_images[]" id="property_image" accept="image/jpeg,image/png,image/webp" data-aps-image-preview="#property_image_preview" data-max-files="5" aria-label="<?= __('list_property_label_image') ?>" multiple>
                         </div>
                         <div class="aps-cp-image-grid" id="property_image_preview"></div>
 
@@ -310,6 +319,9 @@ LPHEAD;
                         <?php if ($isLoggedIn): ?>
                             <button type="button" class="btn btn-outline-primary" id="saveDraftBtn" title="<?= __('list_property_save_draft_title', null, 'Save as draft to continue later') ?>">
                                 <i class="fas fa-save me-1"></i><?= __('list_property_save_draft', null, 'Save Draft') ?>
+                            </button>
+                            <button type="button" class="btn btn-outline-info" id="previewListingBtn" title="<?= __('list_property_preview_title', null, 'Preview your listing') ?>">
+                                <i class="fas fa-eye me-1"></i><?= __('list_property_preview', null, 'Preview') ?>
                             </button>
                             <button type="submit" class="btn btn-success" data-wizard-submit >
                                 <i class="fas fa-paper-plane me-1"></i><?= __('list_property_button_submit') ?>
@@ -694,7 +706,10 @@ LPHEAD;
                 }
                 if (!els[0].value) { els[0].value = data[name]; restored = true; }
             });
-            if (restored && window.APS && APS.toast) APS.toast('Your previous details were restored — just hit Submit', 'info');
+            if (restored && window.APS && APS.toast) {
+                var fields = Object.keys(data).filter(function(k) { return data[k]; }).length;
+                APS.toast('Restored ' + fields + ' field' + (fields !== 1 ? 's' : '') + ' from your last session — just hit Submit', 'info');
+            }
         } catch (e) { /* corrupt draft */ }
         return restored;
     }
@@ -711,7 +726,26 @@ LPHEAD;
     });
     restoreDraft();
     var lpForm = document.getElementById('listPropertyForm');
-    if (lpForm) lpForm.addEventListener('submit', function() { clearDraft(); });
+    if (lpForm) lpForm.addEventListener('submit', function() { 
+        clearDraft(); 
+        trackEvent('listing_submitted');
+    });
+
+    // Analytics tracking helper
+    function trackEvent(eventType, data) {
+        var token = (document.cookie.match('(^|;)\\s*smart_reg_token\\s*=\\s*([^;]+)') || [])[2];
+        if (!token && eventType === 'listing_submitted') {
+            // For listing submissions without smart_reg_token, still track
+        }
+        try {
+            var payload = { event_type: eventType, event_data: data || {}, page_url: window.location.href, timestamp: Date.now() };
+            if (token) payload.token = token;
+            var x = new XMLHttpRequest();
+            x.open('POST', '<?= BASE_URL ?>/api/smart-register/track', true);
+            x.setRequestHeader('Content-Type', 'application/json');
+            x.send(JSON.stringify(payload));
+        } catch (e) { console.error("Analytics error:", e); }
+    }
 
     // ----- Guest submit: stash draft, then register via modal -----
     var guestSubmit = document.getElementById('guestSubmitBtn');
@@ -773,6 +807,7 @@ LPHEAD;
                 if (d.success) {
                     clearDraft(); // draft saved server-side, clear local
                     if (window.APS && APS.toast) APS.toast(d.message || 'Draft saved successfully', 'success');
+                    trackEvent('draft_saved');
                 } else {
                     if (window.APS && APS.toast) APS.toast(d.message || 'Failed to save draft', 'error');
                 }
@@ -785,6 +820,93 @@ LPHEAD;
                 saveDraftBtn.innerHTML = originalHtml;
             });
         });
+
+// ----- Listing Preview Modal -----
+    var previewBtn = document.getElementById('previewListingBtn');
+    var previewModalEl = document.getElementById('previewListingModal');
+    if (previewBtn && previewModalEl) {
+        var previewModal = bootstrap.Modal.getOrCreateInstance(previewModalEl);
+        var prevEditBtn = document.getElementById('prevEditBtn');
+        previewBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            buildPreview();
+            previewModal.show();
+        });
+        if (prevEditBtn) {
+            prevEditBtn.addEventListener('click', function() {
+                previewModal.hide();
+                // Scroll to top of wizard
+                var wizard = document.querySelector('[data-aps-wizard]');
+                if (wizard) wizard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        }
+    }
+    function buildPreview() {
+        // Listing type
+        var listingType = document.getElementById('listing_type')?.value || 'sell';
+        document.getElementById('prevListingType').textContent = listingType.charAt(0).toUpperCase() + listingType.slice(1);
+        // Property type
+        var propTypeEl = document.querySelector('input[name="property_type"]:checked');
+        var propType = propTypeEl ? propTypeEl.value : 'plot';
+        document.getElementById('prevPropertyType').textContent = propType.charAt(0).toUpperCase() + propType.slice(1);
+        // Name
+        var name = document.getElementById('name')?.value || '';
+        document.getElementById('prevName').textContent = name || 'Your Property';
+        // Location
+        var city = document.getElementById('city')?.value || '';
+        var district = document.getElementById('district_id')?.value || '';
+        var state = document.getElementById('state_id')?.value || '';
+        var pincode = document.getElementById('pincode')?.value || '';
+        var locParts = [city, district].filter(Boolean);
+        if (state) {
+            var stateSelect = document.getElementById('state_id');
+            var stateName = stateSelect ? stateSelect.options[stateSelect.selectedIndex]?.text : '';
+            if (stateName) locParts.push(stateName);
+        }
+        if (pincode) locParts.push(pincode);
+        document.getElementById('prevLocation').textContent = locParts.join(', ') || '—';
+        // Price
+        var price = document.getElementById('price')?.value || '';
+        document.getElementById('prevPrice').textContent = price ? '₹' + price.replace(/\D/g, '').replace(/\B(?=(\d{2})+(?!\d))/g, ',') : '—';
+        // Area
+        var area = document.getElementById('area')?.value || '';
+        document.getElementById('prevArea').textContent = area ? area + ' sqft' : '—';
+        // Description
+        var desc = document.getElementById('description')?.value || '';
+        document.getElementById('prevDescription').textContent = desc || 'No description provided.';
+        // Contact
+        var phone = document.getElementById('phone')?.value || '';
+        var email = document.getElementById('email')?.value || '';
+        var name = document.getElementById('name')?.value || '';
+        var contactParts = [];
+        if (name) contactParts.push('<i class="fas fa-user me-1"></i>' + name);
+        if (phone) contactParts.push('<i class="fas fa-phone me-1"></i>' + phone);
+        if (email) contactParts.push('<i class="fas fa-envelope me-1"></i>' + email);
+        document.getElementById('prevContact').innerHTML = contactParts.join(' | ') || '—';
+        // Images
+        var previewInner = document.getElementById('prevCarouselInner');
+        var prevIndicators = document.getElementById('prevIndicators');
+        previewInner.innerHTML = '';
+        prevIndicators.innerHTML = '';
+        var thumbs = document.querySelectorAll('#property_image_preview .aps-cp-image-thumb img');
+        if (thumbs.length === 0) {
+            previewInner.innerHTML = '<div class="carousel-item active"><div class="d-flex align-items-center justify-content-center" style="height:300px;background:#f8f9fa;color:#6c757d"><i class="fas fa-image fa-3x"></i></div></div>';
+        } else {
+            thumbs.forEach(function(img, idx) {
+                var item = document.createElement('div');
+                item.className = 'carousel-item' + (idx === 0 ? ' active' : '');
+                item.innerHTML = '<img src="' + img.src + '" class="d-block w-100" style="height:300px;object-fit:cover" alt="Photo ' + (idx+1) + '">';
+                previewInner.appendChild(item);
+                var ind = document.createElement('button');
+                ind.type = 'button';
+                ind.setAttribute('data-bs-target', '#previewCarousel');
+                ind.setAttribute('data-bs-slide-to', idx);
+                ind.setAttribute('aria-label', 'Slide ' + (idx+1));
+                if (idx === 0) ind.className = 'active';
+                ind.setAttribute('aria-current', idx === 0 ? 'true' : 'false');
+                prevIndicators.appendChild(ind);
+            });
+        }
     }
 })();
 </script>
@@ -805,6 +927,67 @@ LPHEAD;
     track('page_view', { action: 'list_property_page' });
 })();
 </script>
+
+</script>
+
+<!-- Listing Preview Modal -->
+<div class="modal fade" id="previewListingModal" tabindex="-1" aria-labelledby="previewListingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-xl">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold" id="previewListingModalLabel">
+                    <i class="fas fa-eye me-2 text-primary"></i><?= __('list_property_preview_title', null, 'Listing Preview') ?>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="card border-0 shadow-none" id="previewCard">
+                    <div class="card-header bg-light border-0 py-3 px-4">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <span class="badge bg-primary fs-6"><i class="fas fa-tag me-1"></i><span id="prevListingType"></span></span>
+                            <span class="badge bg-success fs-6"><i class="fas fa-building me-1"></i><span id="prevPropertyType"></span></span>
+                        </div>
+                    </div>
+                    <div id="previewCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-indicators" id="prevIndicators"></div>
+                        <div class="carousel-inner" id="prevCarouselInner"></div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#previewCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#previewCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                    <div class="card-body p-4">
+                        <h3 class="fw-bold mb-2" id="prevName"></h3>
+                        <div class="d-flex flex-wrap gap-3 mb-3 text-muted small" id="prevLocation"></div>
+                        <div class="d-flex flex-wrap gap-3 mb-3">
+                            <span class="fw-bold text-primary fs-5" id="prevPrice"></span>
+                            <span class="text-muted align-self-center" id="prevArea"></span>
+                        </div>
+                        <hr>
+                        <p class="text-muted" id="prevDescription"></p>
+                        <hr>
+                        <div class="d-flex flex-wrap gap-3 small text-muted" id="prevContact"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i><?= __('close', null, 'Close') ?>
+                </button>
+                <button type="button" class="btn btn-primary" id="prevEditBtn">
+                    <i class="fas fa-edit me-1"></i><?= __('list_property_preview_edit', null, 'Edit Listing') ?>
+                </button>
+                <button type="submit" form="listPropertyForm" class="btn btn-success" data-wizard-submit>
+                    <i class="fas fa-paper-plane me-1"></i><?= __('list_property_button_submit') ?>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <?php include __DIR__ . '/../components/quick_register_modal.php'; ?>
 

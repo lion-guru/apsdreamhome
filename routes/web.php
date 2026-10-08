@@ -407,6 +407,7 @@ $router->post('/admin/services/update-status', 'App\\Http\\Controllers\\Admin\\S
 $router->get('/admin/user-properties', 'App\\Http\\Controllers\\Admin\\UserPropertyController@index');
 $router->get('/admin/user-properties/verify/{id}', 'App\\Http\\Controllers\\Admin\\UserPropertyController@verify');
 $router->post('/admin/user-properties/action', 'App\\Http\\Controllers\\Admin\\UserPropertyController@action');
+$router->post('/admin/user-properties/bulk-action', 'App\\Http\\Controllers\\Admin\\UserPropertyController@bulkAction');
 
 // Admin API Keys Management - additional routes (index/create/revoke/activate/delete defined at line ~4380)
 $router->get('/admin/api-keys/guide', 'App\\Http\\Controllers\\Admin\\ApiKeyController@guide');
@@ -880,7 +881,7 @@ $router->get('/register', 'Auth\\RegisterController@showRegister');
 $router->post('/register', 'Auth\\RegisterController@handleRegister');
 
 // Step-by-step premium registration (modern alternative to the hub above)
-$router->get('/register/step-by-step', 'Auth\\RegisterController@showUnified');
+$router->get('/register/step-by-step', 'Auth\\RegisterController@showStepByStep');
 $router->post('/register/step-by-step', 'Auth\\RegisterController@handleRegister');
 // Legacy alias (backward compatibility) — old URL keeps working
 $router->get('/register/unified', function() { header('Location: ' . BASE_URL . '/register/step-by-step', true, 301); exit; });

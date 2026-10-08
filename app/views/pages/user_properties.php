@@ -101,6 +101,19 @@ $extraHead = '<style>
                                         <a href="<?php echo BASE_URL; ?>/user/boost-property/<?php echo (int)$p['id']; ?>" class="btn btn-outline-warning">
                                             <i class="fas fa-crown"></i> Boost
                                         </a>
+                                        <div class="btn-group dropstart">
+                                            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fas fa-share-alt"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li><a class="dropdown-item" href="https://wa.me/?text=<?= urlencode('Check out this property: ' . ($p['name'] ?? '') . ' - ' . BASE_URL . '/listing/' . (int)$p['id']) ?>" target="_blank"><i class="fab fa-whatsapp me-2 text-success"></i> WhatsApp</a></li>
+                                                <li><a class="dropdown-item" href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode(BASE_URL . '/listing/' . (int)$p['id']) ?>" target="_blank"><i class="fab fa-facebook-f me-2 text-primary"></i> Facebook</a></li>
+                                                <li><a class="dropdown-item" href="https://twitter.com/intent/tweet?url=<?= urlencode(BASE_URL . '/listing/' . (int)$p['id']) ?>&text=<?= urlencode('Check out this property: ' . ($p['name'] ?? '')) ?>" target="_blank"><i class="fab fa-twitter me-2 text-info"></i> Twitter</a></li>
+                                                <li><a class="dropdown-item" href="mailto:?subject=<?= urlencode('Property: ' . ($p['name'] ?? '')) ?>&body=<?= urlencode(BASE_URL . '/listing/' . (int)$p['id']) ?>" target="_blank"><i class="fas fa-envelope me-2 text-muted"></i> Email</a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li><a class="dropdown-item" href="#" onclick="navigator.share && navigator.share({title: '<?= addslashes($p['name'] ?? '') ?>', url: '<?= BASE_URL . '/listing/' . (int)$p['id'] ?>'}).catch(()=>{}); return false;"><?= __('user_properties_share_native', ['icon' => '<i class="fas fa-share-alt me-2"></i>']) ?? 'Native Share' ?></a></li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 <?php elseif ($p['status'] === 'rejected'): ?>
                                     <span class="badge bg-danger"><?= __('status_rejected') ?></span>

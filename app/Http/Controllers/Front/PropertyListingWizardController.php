@@ -287,6 +287,27 @@ class PropertyListingWizardController extends BaseController
                 header('Location: ' . BASE_URL . '/list-property/step1');
                 exit;
             }
+            $tenantId = $this->tenantId();
+
+            // Move uploaded images from draft folder to permanent location
+            $imagePaths = [];
+            $images = $d['images'] ?? [];
+            if (!empty($images)) {
+                $draftDir = __DIR__ . '/../../../public/uploads/property-draft/';
+                $permDir = __DIR__ . '/../../../public/uploads/user_properties/';
+                if (!is_dir($permDir)) @mkdir($permDir, 0755, true);
+                
+                foreach ($images as $index => $img) {
+                    $draftPath = $draftDir . basename($img);
+                    $permPath = $permDir . 'lp_' . date('YmdHis') . '_' . bin2hex(random_bytes(4)) . '_' . $index . '.jpg';
+                    if (file_exists($draftPath)) {
+                        if (rename($draftPath, $permPath)) {
+                            $imagePaths[] = '/uploads/user_properties/' . basename($permPath);
+                        }
+                    }
+                }
+            }
+
             $this->db->execute(
                 "INSERT INTO user_properties
                     (name, phone, email, property_type, listing_type, address, location, area_sqft, price, price_type, description, status, tenant_id, created_at)
@@ -303,12 +324,42 @@ class PropertyListingWizardController extends BaseController
                     (float)($d['price'] ?? 0),
                     $d['priceType'] ?? 'lakh',
                     $this->buildDescription($d),
-                    $this->tenantId(),
+                    $tenantId,
                 ]
             );
             $newId = (int)$this->db->lastInsertId();
+
+            // Save images to property_images table
+            if (!empty($imagePaths)) {
+                foreach ($imagePaths as $index => $path) {
+                    try {
+                        $this->db->insert('property_images', [
+                            'property_id' => $newId,
+                            'image_path' => $path,
+                            'image_type' => 'gallery',
+                            'is_primary' => ($index === 0 ? 1 : 0),
+                            'sort_order' => $index,
+                            'is_active' => 1,
+                            'tenant_id' => $tenantId,
+                            'created_at' => date('Y-m-d H:i:s'),
+                            'updated_at' => date('Y-m-d H:i:s'),
+                        ]);
+                    } catch (\Throwable $e) {
+                        error_log("PropertyListingWizard: property_images insert failed: " . $e->getMessage());
+                    }
+                }
+            }
+
             $this->clearDraft();
             $_SESSION['listing_published_id'] = $newId;
+
+            // Notify user: listing submitted (pending review)
+            try {
+                $this->sendPropertyNotification($newId, 'submitted', $d['name'] ?? 'Anonymous', $d['email'] ?? null, $d['phone'] ?? '', $d['propertyType'] ?? '', $d['listingType'] ?? '');
+            } catch (\Throwable $e) {
+                error_log('PropertyListingWizard: notification error: ' . $e->getMessage());
+            }
+
             header('Location: ' . BASE_URL . '/list-property/step8?published=' . $newId);
             exit;
         } catch (\Throwable $e) {
@@ -369,5 +420,42 @@ class PropertyListingWizardController extends BaseController
             'filename' => $filename,
             'size' => filesize($target),
         ]);
+    }
+
+    /**
+     * Send property listing notification (email + SMS)
+     */
+    private function sendPropertyNotification(int $propertyId, string $event, string $ownerName, ?string $email, string $phone, string $propertyType, string $listingType): void
+    {
+        $subjectMap = [
+            'submitted' => 'Your property listing has been submitted for review!',
+            'approved' => 'Your property listing has been approved!',
+            'rejected' => 'Your property listing has been rejected',
+        ];
+        $msgMap = [
+            'submitted' => "Thank you for listing your property with APS Dream Home!\n\nYour listing (Type: {$listingType}, Property: {$propertyType}) has been received and is now under review by our team.\n\nListing ID: {$propertyId}\n\nOur team will verify the details and contact you shortly. Once approved, your property will be visible to buyers.\n\nFor queries: +91 92771 21112 | info@apsdreamhome.com",
+            'approved' => "Congratulations! Your property listing has been approved and is now visible to buyers on APS Dream Home.\n\nListing ID: {$propertyId}\n\nBuyers can now see and inquire about your property.\n\nContact: +91 92771 21112 | info@apsdreamhome.com",
+            'rejected' => "Your property listing has been rejected. Please contact our support team for more details.\n\nListing ID: {$propertyId}\n\nContact: +91 92771 21112 | info@apsdreamhome.com",
+        ];
+
+        $subject = $subjectMap[$event] ?? 'Property Status Update';
+        $message = $msgMap[$event] ?? "Your property listing status has been updated.\n\nListing ID: {$propertyId}\n\nContact: +91 92771 21112 | info@apsdreamhome.com";
+
+        // Email
+        if ($email && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $subject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
+            $headers = "From: info@apsdreamhome.com\r\nReply-To: info@apsdreamhome.com\r\nContent-Type: text/plain; charset=UTF-8\r\n";
+            @mail($email, $subject, $message, $headers);
+        }
+
+        // SMS (logged for gateway integration)
+        if ($phone) {
+            $cleanPhone = preg_replace('/\D/', '', $phone);
+            if (strlen($cleanPhone) === 10) $cleanPhone = '91' . $cleanPhone;
+            if (strlen($cleanPhone) >= 12) {
+                $smsMsg = "APS Dream Home: Your property listing has been " . ucfirst($event) . ". Listing ID: {$propertyId}. Contact: +91 92771 21112";
+                error_log("SMS TO: {$cleanPhone} - {$smsMsg}");
+            }
+        }
     }
 }

@@ -16,16 +16,16 @@ class FreeAIEngines
 {
     private static $instance = null;
 
-    // Ollama (local)
+// Ollama (local)
     private $ollamaUrl = 'http://localhost:11434';
     private $ollamaModel = 'llama3.2:3b';
 
-// Groq (free tier: 30 RPM, 14,400 RPD) - models may change, check console.groq.com
+    // Groq (free tier: 30 RPM, 14,400 RPD) - models may change, check console.groq.com
     private $groqKey = '';
     private $groqUrl = 'https://api.groq.com/openai/v1/chat/completions';
     private $groqModel = 'groq/compound-mini';
 
-    // OpenRouter (paid models, low-cost fallback - free tier deprecated 2026)
+    // OpenRouter (free tier: deprecated 2026, used as last resort)
     private $openRouterKey = '';
     private $openRouterUrl = 'https://openrouter.ai/api/v1/chat/completions';
 
@@ -33,6 +33,31 @@ class FreeAIEngines
     private $geminiKey = '';
     private $geminiModel = 'gemini-2.5-flash';
     private $geminiUrlBase = 'https://generativelanguage.googleapis.com/v1beta/models/';
+
+    // xAI Grok (free tier: available via xAI API)
+    private $xaiKey = '';
+    private $xaiUrl = 'https://api.x.ai/v1/chat/completions';
+    private $xaiModel = 'grok-beta';
+
+    // Hugging Face Inference API (free tier: 30k tokens/day)
+    private $hfKey = '';
+    private $hfUrl = 'https://api-inference.huggingface.co/models/';
+    private $hfModel = 'meta-llama/Meta-Llama-3.1-8B-Instruct';
+
+    // Together.ai (free tier)
+    private $togetherKey = '';
+    private $togetherUrl = 'https://api.together.xyz/v1/chat/completions';
+    private $togetherModel = 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo';
+
+    // DeepSeek (free tier via their API)
+    private $deepseekKey = '';
+    private $deepseekUrl = 'https://api.deepseek.com/v1/chat/completions';
+    private $deepseekModel = 'deepseek-chat';
+
+    // Cohere (free tier: 100 calls/min)
+    private $cohereKey = '';
+    private $cohereUrl = 'https://api.cohere.ai/v1/chat';
+    private $cohereModel = 'command-r-plus';
 
     private function __construct()
     {
@@ -57,6 +82,13 @@ class FreeAIEngines
             $this->groqKey = $settings['groq_api_key'] ?? getenv('GROQ_API_KEY') ?: '';
             $this->openRouterKey = $settings['openrouter_api_key'] ?? getenv('OPENROUTER_API_KEY') ?: '';
             $this->geminiKey = $settings['api_key'] ?? getenv('GEMINI_API_KEY') ?: '';
+            // New free cloud AI providers
+            $this->xaiKey = $settings['xai_api_key'] ?? getenv('XAI_API_KEY') ?: '';
+            $this->hfKey = $settings['hf_api_key'] ?? getenv('HF_API_KEY') ?: '';
+            $this->togetherKey = $settings['together_api_key'] ?? getenv('TOGETHER_API_KEY') ?: '';
+            $this->deepseekKey = $settings['deepseek_api_key'] ?? getenv('DEEPSEEK_API_KEY') ?: '';
+            $this->togetherAiKey = $settings['together_api_key'] ?? getenv('TOGETHER_API_KEY') ?: '';
+            $this->cohereKey = $settings['cohere_api_key'] ?? getenv('COHERE_API_KEY') ?: '';
             // Model saved by the AI Provider Settings dashboard (settings JSON column)
             $cfg = json_decode($settings['settings'] ?? '', true);
             if (is_array($cfg) && !empty($cfg['model']) && is_string($cfg['model'])) {
@@ -66,6 +98,12 @@ class FreeAIEngines
             $this->groqKey = getenv('GROQ_API_KEY') ?: '';
             $this->openRouterKey = getenv('OPENROUTER_API_KEY') ?: '';
             $this->geminiKey = getenv('GEMINI_API_KEY') ?: '';
+            $this->xaiKey = getenv('XAI_API_KEY') ?: '';
+            $this->hfKey = getenv('HF_API_KEY') ?: '';
+            $this->togetherKey = getenv('TOGETHER_API_KEY') ?: '';
+            $this->deepseekKey = getenv('DEEPSEEK_API_KEY') ?: '';
+            $this->togetherAiKey = getenv('TOGETHER_API_KEY') ?: '';
+            $this->cohereKey = getenv('COHERE_API_KEY') ?: '';
         }
     }
 
@@ -73,7 +111,7 @@ class FreeAIEngines
 
     /**
      * Generate text using best available free engine
-     * Priority: Ollama (local) → Groq (fastest) → OpenRouter (free models)
+     * Priority: Ollama (local) → Groq (fastest) → xAI Grok → HuggingFace → Together.ai → DeepSeek → Together.ai → Cohere → OpenRouter (free models) → Google Gemini
      * @param string $prompt
      * @param array $options  ['temperature' => 0.7, 'max_tokens' => 1024, 'system' => '...']
      * @param string $purpose  'chat', 'qualify', 'match', 'analyze', 'translate'
@@ -97,13 +135,49 @@ class FreeAIEngines
             if ($result) return ['text' => $result, 'engine' => 'groq', 'model' => $this->groqModel, 'tokens' => 0];
         }
 
-        // 3. Try OpenRouter (free models) - free tier deprecated
+        // 3. Try xAI Grok (free tier: available via xAI API)
+        if (!empty($this->xaiKey)) {
+            $result = $this->xaiGenerate($prompt, $system, $temperature, $maxTokens);
+            if ($result) return ['text' => $result, 'engine' => 'xai_grok', 'model' => $this->xaiModel, 'tokens' => 0];
+        }
+
+        // 4. Try Hugging Face Inference API (free tier: 30k tokens/day)
+        if (!empty($this->hfKey)) {
+            $result = $this->hfGenerate($prompt, $system, $temperature, $maxTokens);
+            if ($result) return ['text' => $result, 'engine' => 'huggingface', 'model' => $this->hfModel, 'tokens' => 0];
+        }
+
+        // 5. Try Together.ai (free tier: 100k tokens/day)
+        if (!empty($this->togetherAiKey)) {
+            $result = $this->togetherAiGenerate($prompt, $system, $temperature, $maxTokens);
+            if ($result) return ['text' => $result, 'engine' => 'together_ai', 'model' => $this->togetherModel, 'tokens' => 0];
+        }
+
+        // 6. Try DeepSeek (free tier via their API)
+        if (!empty($this->deepseekKey)) {
+            $result = $this->deepseekGenerate($prompt, $system, $temperature, $maxTokens);
+            if ($result) return ['text' => $result, 'engine' => 'deepseek', 'model' => $this->deepseekModel, 'tokens' => 0];
+        }
+
+        // 7. Try Together.ai (free tier: 100k tokens/day)
+        if (!empty($this->togetherAiKey)) {
+            $result = $this->togetherGenerate($prompt, $system, $temperature, $maxTokens);
+            if ($result) return ['text' => $result, 'engine' => 'together', 'model' => $this->togetherModel, 'tokens' => 0];
+        }
+
+        // 8. Try Cohere (free tier: 100 calls/min)
+        if (!empty($this->cohereKey)) {
+            $result = $this->cohereGenerate($prompt, $system, $temperature, $maxTokens);
+            if ($result) return ['text' => $result, 'engine' => 'cohere', 'model' => $this->cohereModel, 'tokens' => 0];
+        }
+
+        // 9. Try OpenRouter (free tier: deprecated 2026, used as last resort)
         if (!empty($this->openRouterKey)) {
             $result = $this->openRouterGenerate($prompt, $system, $temperature, $maxTokens);
             if ($result) return ['text' => $result, 'engine' => 'openrouter', 'model' => 'free-model', 'tokens' => 0];
         }
 
-        // 4. Try Google Gemini (free tier: 15 RPM, 1M tokens/day)
+        // 10. Try Google Gemini (free tier: 15 RPM, 1M tokens/day)
         if (!empty($this->geminiKey)) {
             $result = $this->geminiGenerate($prompt, $system, $temperature, $maxTokens);
             if ($result) return ['text' => $result, 'engine' => 'gemini', 'model' => $this->geminiModel, 'tokens' => 0];
@@ -300,6 +374,171 @@ class FreeAIEngines
         return null;
     }
 
+    // xAI Grok (free tier: available via xAI API)
+    private function xaiGenerate(string $prompt, string $system, float $temp, int $maxTokens): ?string
+    {
+        if (empty($this->xaiKey)) return null;
+
+        $messages = [];
+        if ($system) $messages[] = ['role' => 'system', 'content' => $system];
+        $messages[] = ['role' => 'user', 'content' => $prompt];
+
+        $payload = [
+            'model' => $this->xaiModel,
+            'messages' => $messages,
+            'temperature' => $temp,
+            'max_tokens' => $maxTokens,
+            'stream' => false,
+        ];
+
+        $response = $this->httpPost($this->xaiUrl, $payload, 20, [
+            'Authorization: Bearer ' . $this->xaiKey,
+            'Content-Type: application/json',
+        ]);
+
+        if ($response && isset($response['choices'][0]['message']['content'])) {
+            return $response['choices'][0]['message']['content'];
+        }
+        return null;
+    }
+
+    // Hugging Face Inference API (free tier: 30k tokens/day)
+    private function hfGenerate(string $prompt, string $system, float $temp, int $maxTokens): ?string
+    {
+        if (empty($this->hfKey)) return null;
+
+        $messages = [];
+        if ($system) $messages[] = ['role' => 'system', 'content' => $system];
+        $messages[] = ['role' => 'user', 'content' => $prompt];
+
+        $payload = [
+            'model' => $this->hfModel,
+            'messages' => $messages,
+            'temperature' => $temp,
+            'max_tokens' => $maxTokens,
+            'stream' => false,
+        ];
+
+        $response = $this->httpPost($this->hfUrl . $this->hfModel, $payload, 25, [
+            'Authorization: Bearer ' . $this->hfKey,
+            'Content-Type: application/json',
+        ]);
+
+        if ($response && isset($response[0]['generated_text'])) {
+            return $response[0]['generated_text'];
+        }
+        return null;
+    }
+
+    // Together.ai (free tier: 100k tokens/day)
+    private function togetherGenerate(string $prompt, string $system, float $temp, int $maxTokens): ?string
+    {
+        if (empty($this->togetherKey)) return null;
+
+        $messages = [];
+        if ($system) $messages[] = ['role' => 'system', 'content' => $system];
+        $messages[] = ['role' => 'user', 'content' => $prompt];
+
+        $payload = [
+            'model' => $this->togetherModel,
+            'messages' => $messages,
+            'temperature' => $temp,
+            'max_tokens' => $maxTokens,
+            'stream' => false,
+        ];
+
+        $response = $this->httpPost($this->togetherUrl, $payload, 20, [
+            'Authorization: Bearer ' . $this->togetherKey,
+            'Content-Type: application/json',
+        ]);
+
+        if ($response && isset($response['choices'][0]['message']['content'])) {
+            return $response['choices'][0]['message']['content'];
+        }
+        return null;
+    }
+
+    // DeepSeek (free tier via their API)
+    private function deepseekGenerate(string $prompt, string $system, float $temp, int $maxTokens): ?string
+    {
+        if (empty($this->deepseekKey)) return null;
+
+        $messages = [];
+        if ($system) $messages[] = ['role' => 'system', 'content' => $system];
+        $messages[] = ['role' => 'user', 'content' => $prompt];
+
+        $payload = [
+            'model' => $this->deepseekModel,
+            'messages' => $messages,
+            'temperature' => $temp,
+            'max_tokens' => $maxTokens,
+            'stream' => false,
+        ];
+
+        $response = $this->httpPost($this->deepseekUrl, $payload, 20, [
+            'Authorization: Bearer ' . $this->deepseekKey,
+            'Content-Type: application/json',
+        ]);
+
+        if ($response && isset($response['choices'][0]['message']['content'])) {
+            return $response['choices'][0]['message']['content'];
+        }
+        return null;
+    }
+
+    // Together.ai (free tier: 100k tokens/day)
+    private function togetherAiGenerate(string $prompt, string $system, float $temp, int $maxTokens): ?string
+    {
+        if (empty($this->togetherAiKey)) return null;
+
+        $messages = [];
+        if ($system) $messages[] = ['role' => 'system', 'content' => $system];
+        $messages[] = ['role' => 'user', 'content' => $prompt];
+
+        $payload = [
+            'model' => $this->togetherModel,
+            'messages' => $messages,
+            'temperature' => $temp,
+            'max_tokens' => $maxTokens,
+            'stream' => false,
+        ];
+
+        $response = $this->httpPost($this->togetherUrl, $payload, 20, [
+            'Authorization: Bearer ' . $this->togetherAiKey,
+            'Content-Type: application/json',
+        ]);
+
+        if ($response && isset($response['choices'][0]['message']['content'])) {
+            return $response['choices'][0]['message']['content'];
+        }
+        return null;
+    }
+
+    // Cohere (free tier: 100 calls/min)
+    private function cohereGenerate(string $prompt, string $system, float $temp, int $maxTokens): ?string
+    {
+        if (empty($this->cohereKey)) return null;
+
+        $payload = [
+            'model' => $this->cohereModel,
+            'messages' => [
+                ['role' => 'user', 'content' => $system . "\n\n" . $prompt]
+            ],
+            'temperature' => $temp,
+            'max_tokens' => $maxTokens,
+        ];
+
+        $response = $this->httpPost($this->cohereUrl, $payload, 20, [
+            'Authorization: Bearer ' . $this->cohereKey,
+            'Content-Type: application/json',
+        ]);
+
+        if ($response && isset($response['text'])) {
+            return $response['text'];
+        }
+        return null;
+    }
+
     // ─────────── System Prompts by Purpose ────────────────────────────
 
     private function getSystemPrompt(string $purpose): string
@@ -402,6 +641,42 @@ class FreeAIEngines
                 'model' => $this->groqModel,
                 'cost' => 'Free tier: 30 RPM',
                 'speed' => '~500 tokens/sec',
+            ],
+            'xai_grok' => [
+                'available' => !empty($this->xaiKey),
+                'model' => $this->xaiModel,
+                'cost' => 'Free tier: xAI API',
+                'speed' => '~200 tokens/sec',
+            ],
+            'huggingface' => [
+                'available' => !empty($this->hfKey),
+                'model' => $this->hfModel,
+                'cost' => 'Free: 30k tokens/day',
+                'speed' => '~100 tokens/sec',
+            ],
+            'together_ai' => [
+                'available' => !empty($this->togetherAiKey),
+                'model' => $this->togetherModel,
+                'cost' => 'Free: 100k tokens/day',
+                'speed' => '~100 tokens/sec',
+            ],
+            'deepseek' => [
+                'available' => !empty($this->deepseekKey),
+                'model' => $this->deepseekModel,
+                'cost' => 'Free tier: DeepSeek API',
+                'speed' => '~150 tokens/sec',
+            ],
+            'together' => [
+                'available' => !empty($this->togetherKey),
+                'model' => $this->togetherModel,
+                'cost' => 'Free: 100k tokens/day',
+                'speed' => '~100 tokens/sec',
+            ],
+            'cohere' => [
+                'available' => !empty($this->cohereKey),
+                'model' => $this->cohereModel,
+                'cost' => 'Free: 100 calls/min',
+                'speed' => '~200 tokens/sec',
             ],
             'openrouter' => [
                 'available' => !empty($this->openRouterKey),

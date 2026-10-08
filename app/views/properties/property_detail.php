@@ -417,19 +417,146 @@ min-width: auto;
 </script>
 
 //
-// PERFORMANCE OPTIMIZATION GUIDELINES
-//
-// This file contains 815 lines. Consider optimizations:
-//
-// 1. Use database indexing
-// 2. Implement caching
-// 3. Use prepared statements
-// 4. Optimize loops
-// 5. Use lazy loading
-// 6. Implement pagination
-// 7. Use connection pooling
-// 8. Consider Redis for sessions
-// 9. Implement output buffering
-// 10. Use gzip compression
-//
+// ─────────────────────────────────────────────────────────────────────────────
+// SHARE PROPERTY FUNCTIONALITY
+// ─────────────────────────────────────────────────────────────────────────────
+
+function shareProperty() {
+    const propertyId = <?= (int)($property['id'] ?? 0) ?>;
+    const propertyTitle = <?= json_encode($property['title'] ?? '') ?>;
+    const propertyPrice = <?= (int)($property['price'] ?? 0) ?>;
+    const propertyLocation = <?= json_encode($property['location'] ?? $property['address'] ?? '') ?>;
+    const propertyImage = <?= json_encode($heroImgSrc) ?>;
+    const propertyType = <?= json_encode($property['property_type'] ?? '') ?>;
+    const propertyId = <?= (int)($property['id'] ?? 0) ?>;
+    
+    // Get user's referral code if logged in
+    let referralCode = '';
+    let userName = '';
+    let userPhone = '';
+    try {
+        const branding = JSON.parse(localStorage.getItem('user_branding') || '{}');
+        if (branding.display_name) {
+            userName = branding.display_name;
+        }
+        if (branding.phone) {
+            userPhone = branding.phone;
+        }
+        // Fallback to referral code from meta tag or session
+        const refMeta = document.querySelector('meta[name="referral-code"]');
+        if (refMeta) {
+            referralCode = refMeta.getAttribute('content');
+        }
+    } catch (e) {
+        console.warn('Could not read branding from localStorage:', e);
+    }
+    
+    // Build share message
+    const propertyUrl = '<?= BASE_URL ?>/property/' + propertyId;
+    const referralLink = referralCode ? '<?= BASE_URL ?>/register?ref=' + encodeURIComponent(referralCode) : '';
+    
+    let shareMessage = '🏡 ' + propertyTitle + '\n\n';
+    shareMessage += '💰 Price: ₹' + propertyPrice.toLocaleString('en-IN') + '\n';
+    shareMessage += '📍 Location: ' + propertyLocation + '\n\n';
+    shareMessage += '🏡 View Property: ' + propertyUrl + '\n';
+    if (referralLink) {
+        shareMessage += '🔗 Register with my referral: ' + referralLink + '\n';
+    }
+    shareMessage += '\n📞 Contact: ' + '<?= addslashes($phoneDisplay) ?>' + '\n';
+    shareMessage += '🌐 ' + '<?= BASE_URL ?>';
+    
+    // Generate WhatsApp share link
+    const waUrl = 'https://wa.me/?text=' + encodeURIComponent(shareMessage);
+    const smsUrl = 'sms:?body=' + encodeURIComponent(shareMessage);
+    const emailUrl = 'mailto:?subject=' + encodeURIComponent('Property: ' + propertyTitle) + '&body=' + encodeURIComponent(shareMessage);
+    const callUrl = 'tel:<?= addslashes($phoneRaw) ?>';
+    const fbUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(propertyUrl);
+    const instaUrl = 'https://www.instagram.com/';
+    const copyUrl = propertyUrl;
+
+    // Create share modal
+    const modalHtml = `
+        <div class="modal fade" id="sharePropertyModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content glass-card" style="border: 1px solid rgba(250,204,21,0.3);">
+                    <div class="modal-header bg-royal-900 text-white border-0" style="border-radius: 12px 12px 0 0;">
+                        <h5 class="modal-title"><i class="fas fa-share-alt me-2"></i>Share Property</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="row g-3">
+                            <div class="col-md-5">
+                                <img src="${propertyImage || '<?= BASE_URL ?>/assets/images/placeholder/property.svg'}" class="img-fluid rounded" alt="${propertyTitle}" style="max-height: 250px; object-fit: cover;">
+                            </div>
+                            <div class="col-md-7">
+                                <h5 class="text-primary fw-bold">${propertyTitle}</h5>
+                                <p class="text-muted small mb-1"><i class="bi bi-map-marker-alt me-1"></i>${propertyLocation}</p>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="badge bg-info">${propertyType || 'Property'}</span>
+                                    <span class="badge bg-warning text-dark">ID: ${propertyId}</span>
+                                </div>
+                                <h5 class="text-success fw-bold">₹${propertyPrice.toLocaleString('en-IN')}</h5>
+                            </div>
+                        </div>
+                        <hr class="border-secondary">
+                        <h6 class="fw-bold mb-3"><i class="fas fa-share-alt me-2"></i>Share Options</h6>
+                        <div class="d-grid gap-2">
+                            <a href="#" class="btn btn-success btn-lg d-flex align-items-center justify-content-center gap-2" onclick="navigator.clipboard.writeText('${shareMessage.replace(/'/g, "\\'")}').then(() => { alert('Copied to clipboard!'); }); event.preventDefault();">
+                                <i class="fab fa-whatsapp text-white me-2"></i> WhatsApp
+                            </a>
+                            <a href="sms:?body=${encodeURIComponent(shareMessage)}" class="btn btn-outline-success w-100 d-flex align-items-center justify-content-center gap-2">
+                                <i class="bi bi-chat-dots me-2"></i> SMS
+                            </a>
+                            <a href="mailto:?subject=${encodeURIComponent('Property: ' + propertyTitle)}&body=${encodeURIComponent(shareMessage)}" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-2">
+                                <i class="bi bi-envelope me-2"></i> Email
+                            </a>
+                            <a href="tel:<?= addslashes($phoneRaw) ?>" class="btn btn-outline-dark w-100 d-flex align-items-center justify-content-center gap-2">
+                                <i class="bi bi-telephone me-2"></i> Call
+                            </a>
+                            <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(propertyUrl)}" target="_blank" class="btn btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-2">
+                                <i class="fab fa-facebook me-2"></i> Facebook
+                            </a>
+                            <a href="https://www.instagram.com/" target="_blank" class="btn btn-outline-dark w-100 d-flex align-items-center justify-content-center gap-2">
+                                <i class="fab fa-instagram me-2"></i> Instagram
+                            </a>
+                            <button class="btn btn-outline-info w-100 d-flex align-items-center justify-content-center gap-2" onclick="navigator.clipboard.writeText('${copyUrl.replace(/'/g, "\\'")}').then(() => { alert('Link copied!'); }); event.preventDefault();">
+                                <i class="bi bi-link-45deg me-2"></i> Copy Link
+                            </button>
+                        </div>
+                        <hr>
+                        <div class="text-center">
+                            <img id="qrCodeImg" src="" alt="QR Code" style="max-width: 180px;">
+                            <p class="text-muted small mt-2">Scan to open on mobile</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Inject modal into body
+    const modalContainer = document.createElement('div');
+    modalContainer.innerHTML = modalHtml;
+    document.body.appendChild(modalContainer.firstElementChild);
+    
+    const modal = new bootstrap.Modal(document.getElementById('sharePropertyModal'));
+    modal.show();
+    
+    // Generate QR code after modal is shown
+    document.getElementById('sharePropertyModal').addEventListener('shown.bs.modal', function() {
+        const qrText = '<?= BASE_URL ?>/property/' + propertyId;
+        const qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(qrText);
+        document.getElementById('qrCodeImg').src = qrApiUrl;
+    });
+    
+    // Clean up modal on hide
+    document.getElementById('sharePropertyModal').addEventListener('hidden.bs.modal', function() {
+        this.remove();
+    });
+    
+    modal.show();
+}
 //

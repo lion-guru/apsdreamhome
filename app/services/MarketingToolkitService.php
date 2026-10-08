@@ -464,6 +464,75 @@ class MarketingToolkitService
         return ['user_id' => $userId, 'display_name' => '', 'phone' => '', 'photo_path' => '', 'tagline' => ''];
     }
 
+    /**
+     * Save AI provider settings for a user.
+     */
+    public function saveAiProvider(int $userId, array $data): array
+    {
+        $tid = $this->getTenantId();
+        try {
+            // Ensure user_ai_provider table exists
+            $this->pdo->exec("
+                CREATE TABLE IF NOT EXISTS `user_ai_provider` (
+                    `user_id` BIGINT UNSIGNED NOT NULL,
+                    `tenant_id` INT UNSIGNED NOT NULL DEFAULT 1,
+                    `ai_provider` VARCHAR(50) NOT NULL DEFAULT 'ollama',
+                    `ai_api_key` VARCHAR(500) NULL,
+                    `ai_model` VARCHAR(100) NULL,
+                    `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    PRIMARY KEY (`user_id`),
+                    KEY `idx_tenant` (`tenant_id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='User AI provider settings'
+            ");
+
+            $stmt = $this->pdo->prepare("
+                INSERT INTO `user_ai_provider` (user_id, tenant_id, ai_provider, ai_api_key, ai_model, updated_at)
+                VALUES (?, ?, ?, ?, ?, NOW())
+                ON DUPLICATE KEY UPDATE ai_provider = VALUES(ai_provider), ai_api_key = VALUES(ai_api_key), ai_model = VALUES(ai_model), updated_at = NOW()
+            ");
+            $stmt->execute([
+                $userId,
+                $tid,
+                $data['ai_provider'] ?? 'ollama',
+                $data['ai_api_key'] ?? '',
+                $data['ai_model'] ?? '',
+            ]);
+
+            return ['success' => true, 'message' => 'AI provider settings saved'];
+        } catch (\Throwable $e) {
+            error_log("MarketingToolkit::saveAiProvider: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Failed to save AI provider settings'];
+        }
+    }
+
+    /**
+     * Get AI provider settings for a user.
+     */
+    public function getAiProvider(int $userId): array
+    {
+        $tid = $this->getTenantId();
+        try {
+            $stmt = $this->pdo->prepare("SELECT ai_provider, ai_api_key, ai_model FROM user_ai_provider WHERE user_id = ? AND tenant_id = ? LIMIT 1");
+            $stmt->execute([$userId, $tid]);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if ($row) {
+                return [
+                    'ai_provider' => $row['ai_provider'] ?? 'ollama',
+                    'ai_api_key' => $row['ai_api_key'] ?? '',
+                    'ai_model' => $row['ai_model'] ?? '',
+                ];
+            }
+        } catch (\Throwable $e) {
+            // Table might not exist yet
+        }
+        // Default values
+        return [
+            'ai_provider' => 'ollama',
+            'ai_api_key' => '',
+            'ai_model' => '',
+        ];
+    }
+
     /* ── V2: Stickers / Badges ── */
 
     /**
