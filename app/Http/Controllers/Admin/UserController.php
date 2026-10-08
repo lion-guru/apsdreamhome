@@ -171,6 +171,49 @@ class UserController extends AdminController
     }
 
     /**
+     * Role groups for the admin create/edit dropdowns. Single source of truth
+     * derived from BaseController::ADMIN_ROLES (panel access) plus the portal
+     * roles, so every role the system understands can actually be assigned.
+     */
+    public static function assignableRoleGroups(): array
+    {
+        return [
+            'Executive (C-Suite)' => ['ceo', 'cfo', 'cto', 'coo', 'cmo', 'chro'],
+            'Directors & Heads' => [
+                'sales_director', 'marketing_director', 'construction_director',
+                'finance_director', 'hr_director', 'operations_director',
+                'legal_head', 'finance_head', 'hr_head', 'operations_head',
+            ],
+            'Managers' => [
+                'manager', 'department_manager', 'project_manager', 'sales_manager',
+                'hr_manager', 'marketing_manager', 'finance_manager', 'property_manager',
+                'it_manager', 'operations_manager',
+            ],
+            'Specialists' => ['legal_advisor', 'chartered_accountant', 'senior_developer'],
+            'Office Staff' => ['employee', 'telecaller'],
+            'Field Team' => ['associate', 'agent'],
+            'Customers' => ['customer', 'user'],
+            'System' => ['admin', 'super_admin'],
+        ];
+    }
+
+    /**
+     * Flat list of assignable roles. $forCreate excludes super_admin so a
+     * plain admin cannot mint new super-admins from the create form
+     * (matches the historical store() restriction).
+     */
+    public static function assignableRoles(bool $forCreate = false): array
+    {
+        $flat = [];
+        foreach (self::assignableRoleGroups() as $roles) {
+            foreach ($roles as $r) $flat[] = $r;
+        }
+        $flat = array_values(array_unique($flat));
+        if ($forCreate) $flat = array_values(array_diff($flat, ['super_admin']));
+        return $flat;
+    }
+
+    /**
      * Show the form for creating a new user
      */
     public function create()
@@ -180,7 +223,8 @@ class UserController extends AdminController
             $data = [
                 'page_title' => 'Create User - APS Dream Home',
                 'active_page' => 'users',
-                'roles' => ['admin', 'manager', 'associate', 'agent', 'customer', 'user']
+                'roles' => self::assignableRoles(),
+                'roleGroups' => self::assignableRoleGroups(),
             ];
 
             return $this->render('admin/users/create', $data);
@@ -217,8 +261,8 @@ class UserController extends AdminController
                 return $this->jsonError('Invalid email address', 400);
             }
 
-            // Validate role
-            $validRoles = ['admin', 'manager', 'associate', 'agent', 'customer', 'user', 'employee', 'telecaller'];
+            // Validate role (super_admin excluded on create — see assignableRoles())
+            $validRoles = self::assignableRoles(true);
             if (!in_array($data['role'], $validRoles)) {
                 return $this->jsonError('Invalid role', 400);
             }
@@ -413,7 +457,7 @@ class UserController extends AdminController
                 'page_title' => 'Edit User - APS Dream Home',
                 'active_page' => 'users',
                 'user' => $user,
-                'roles' => ['admin', 'super_admin', 'manager', 'employee', 'telecaller', 'associate', 'agent', 'customer', 'user']
+                'roles' => self::assignableRoles()
             ];
 
             return $this->render('admin/users/edit', $data);
@@ -529,7 +573,7 @@ class UserController extends AdminController
             }
 
             if (isset($data['role'])) {
-                $validRoles = ['admin', 'super_admin', 'manager', 'employee', 'telecaller', 'associate', 'agent', 'customer', 'user'];
+                $validRoles = self::assignableRoles();
                 if (in_array($data['role'], $validRoles)) {
                     $updateFields[] = "role = ?";
                     $updateValues[] = $data['role'];
@@ -609,7 +653,7 @@ class UserController extends AdminController
                 }
             }
             if ($field === 'role') {
-                $validRoles = ['admin', 'super_admin', 'manager', 'employee', 'telecaller', 'associate', 'agent', 'customer', 'user'];
+                $validRoles = self::assignableRoles();
                 if (!in_array($value, $validRoles)) {
                     return $this->jsonError('Invalid role', 400);
                 }

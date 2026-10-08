@@ -35,21 +35,36 @@
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Role <span class="text-danger">*</span></label>
                             <select class="form-select" name="role" id="roleSelect" required>
-                                <optgroup label="Office Staff">
-                                    <option value="employee">Employee</option>
-                                    <option value="telecaller">Telecaller</option>
-                                    <option value="manager">Manager</option>
-                                </optgroup>
-                                <optgroup label="Field Team">
-                                    <option value="associate">Associate (MLM)</option>
-                                    <option value="agent">Agent</option>
-                                </optgroup>
-                                <optgroup label="Customers">
-                                    <option value="customer">Customer</option>
-                                </optgroup>
-                                <optgroup label="System">
-                                    <option value="admin">Admin</option>
-                                </optgroup>
+                                <?php if (!empty($roleGroups) && is_array($roleGroups)): ?>
+                                    <?php foreach ($roleGroups as $groupLabel => $groupRoles): ?>
+                                        <?php
+                                        // Super-admins are never minted from the create form
+                                        $groupRoles = array_values(array_diff($groupRoles, ['super_admin']));
+                                        if (empty($groupRoles)) continue;
+                                        ?>
+                                        <optgroup label="<?= htmlspecialchars($groupLabel ?? '') ?>">
+                                            <?php foreach ($groupRoles as $r): ?>
+                                                <option value="<?= htmlspecialchars($r ?? '') ?>"><?= htmlspecialchars(ucwords(str_replace('_', ' ', $r ?? ''))) ?></option>
+                                            <?php endforeach; ?>
+                                        </optgroup>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <optgroup label="Office Staff">
+                                        <option value="employee">Employee</option>
+                                        <option value="telecaller">Telecaller</option>
+                                        <option value="manager">Manager</option>
+                                    </optgroup>
+                                    <optgroup label="Field Team">
+                                        <option value="associate">Associate (MLM)</option>
+                                        <option value="agent">Agent</option>
+                                    </optgroup>
+                                    <optgroup label="Customers">
+                                        <option value="customer">Customer</option>
+                                    </optgroup>
+                                    <optgroup label="System">
+                                        <option value="admin">Admin</option>
+                                    </optgroup>
+                                <?php endif; ?>
                             </select>
                         </div>
                         <div class="col-12">
