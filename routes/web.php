@@ -637,6 +637,13 @@ $router->post('/marketplace/boost-property', 'Front\\MarketplaceController@boost
 $router->post('/marketplace/boost/initiate-payment', 'Front\\MarketplaceController@initiateBoostPayment');
 $router->post('/marketplace/boost/verify-payment', 'Front\\MarketplaceController@verifyBoostPayment');
 
+// Marketing Toolkit (watermark, banner, AI writer)
+$router->get('/marketing/toolkit', 'Front\\MarketingToolkitController@index');
+$router->post('/marketing/watermark', 'Front\\MarketingToolkitController@watermark');
+$router->post('/marketing/banner', 'Front\\MarketingToolkitController@banner');
+$router->post('/marketing/ai-writer', 'Front\\MarketingToolkitController@aiWriter');
+$router->post('/marketing/whatsapp-share', 'Front\\MarketingToolkitController@whatsappShare');
+
 $router->get('/admin/saved-searches', 'App\\Http\\Controllers\\Admin\\SavedSearchController@index');
 $router->post('/admin/saved-searches/store', 'App\\Http\\Controllers\\Admin\\SavedSearchController@store');
 $router->post('/admin/saved-searches/update/{id}', 'App\\Http\\Controllers\\Admin\\SavedSearchController@update');
