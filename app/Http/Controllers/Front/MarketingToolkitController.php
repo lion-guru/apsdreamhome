@@ -580,6 +580,63 @@ class MarketingToolkitController extends BaseController
     }
 
     /**
+     * Colony brochure page (print-friendly HTML → browser PDF)
+     */
+    public function brochure()
+    {
+        $this->requireLogin();
+        $colonyId = !empty($_GET['colony_id']) ? (int)$_GET['colony_id'] : null;
+        $data = $this->toolkit->getColonyBrochureData($colonyId);
+
+        $role = $_SESSION['role'] ?? 'customer';
+        $this->layout = in_array($role, ['associate', 'agent'], true) ? 'layouts/' . $role : 'layouts/customer';
+
+        // Attach user branding + referral for QR
+        $branding = $this->toolkit->getBranding((int)$_SESSION['user_id']);
+        try {
+            $stmt = $this->db->prepare("SELECT referral_code FROM users WHERE id = ? LIMIT 1");
+            $stmt->execute([(int)$_SESSION['user_id']]);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            $branding['referral_code'] = $row['referral_code'] ?? '';
+        } catch (\Throwable $e) {
+            $branding['referral_code'] = '';
+        }
+
+        $this->render('pages/marketing/brochure', [
+            'page_title' => 'Colony Brochure - APS Dream Home',
+            'listings' => $data['listings'],
+            'summary' => $data['summary'],
+            'colony_id' => $data['colony_id'],
+            'branding' => $branding,
+        ]);
+    }
+
+    /**
+     * Customer refer & earn card (POST)
+     */
+    public function referEarn()
+    {
+        $this->requireLogin();
+        $result = $this->toolkit->generateReferEarnCard((int)$_SESSION['user_id']);
+        return $this->jsonResponse($result, $result['success'] ? 200 : 500);
+    }
+
+    /**
+     * Follow-up WhatsApp pack for telecaller (POST: lead_id)
+     */
+    public function followupPack()
+    {
+        $this->requireLogin();
+        $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+        $leadId = (int)($input['lead_id'] ?? 0);
+        if ($leadId <= 0) {
+            return $this->jsonResponse(['success' => false, 'message' => 'lead_id required'], 400);
+        }
+        $result = $this->toolkit->makeFollowupPack($leadId, (int)$_SESSION['user_id']);
+        return $this->jsonResponse($result, $result['success'] ? 200 : 500);
+    }
+
+    /**
      * Admin: save template (POST, admin only)
      */
     public function saveTemplate()

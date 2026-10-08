@@ -351,6 +351,9 @@ $agent_name = $_SESSION['user_name'] ?? $_SESSION['agent_name'] ?? 'Agent';
     <?php endif; ?>
 
     <!-- 2-Column Main Content: Recent Leads & Properties -->
+    <!-- Morning Post Widget (marketing) -->
+    <?php include __DIR__ . '/../components/marketing/morning_widget.php'; ?>
+
     <div class="row g-4 mb-4">
         <!-- Recent Leads List -->
         <div class="col-lg-7">

@@ -1403,6 +1403,139 @@ class MarketingToolkitService
         return $this->generateFestivalPost('newyear', $branding);
     }
 
+    /* ── V5: Colony Brochure + Refer-Earn ── */
+
+    /**
+     * Get colony brochure data: listings + price summary + QR.
+     * Rendered as print-friendly HTML view (browser → PDF).
+     */
+    public function getColonyBrochureData(?int $colonyId = null, int $limit = 20): array
+    {
+        $tid = $this->getTenantId();
+        $tenantWhere = $tid > 1 ? " AND up.tenant_id = ?" : "";
+        $params = [];
+        if ($tid > 1) $params[] = $tid;
+
+        $where = "up.status = 'approved'";
+        if ($colonyId) {
+            // user_properties may not have colony_id — match by location text fallback
+            $where .= " AND (up.location LIKE ? OR up.city_name LIKE ?)";
+            // Resolve colony name
+            try {
+                $cstmt = $this->pdo->prepare("SELECT name FROM colonies WHERE id = ? LIMIT 1");
+                $cstmt->execute([$colonyId]);
+                $cname = $cstmt->fetchColumn() ?: '';
+                $params[] = '%' . $cname . '%';
+                $params[] = '%' . $cname . '%';
+            } catch (\Throwable $e) {
+                $params[] = '%';
+                $params[] = '%';
+            }
+        }
+
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT up.*, u.name as seller_name, u.phone as seller_phone
+                FROM user_properties up
+                LEFT JOIN users u ON up.user_id = u.id
+                WHERE {$where}{$tenantWhere}
+                ORDER BY up.is_featured DESC, up.price ASC
+                LIMIT {$limit}
+            ");
+            $stmt->execute($params);
+            $listings = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            $listings = [];
+        }
+
+        // Price summary
+        $prices = array_filter(array_column($listings, 'price'), fn($p) => $p > 0);
+        $summary = [
+            'count' => count($listings),
+            'min_price' => $prices ? min($prices) : 0,
+            'max_price' => $prices ? max($prices) : 0,
+            'avg_price' => $prices ? (int)(array_sum($prices) / count($prices)) : 0,
+        ];
+
+        return ['listings' => $listings, 'summary' => $summary, 'colony_id' => $colonyId];
+    }
+
+    /**
+     * Customer refer & earn card: referral QR + both-side benefit text.
+     * Reuses visiting card generator with customer-friendly copy.
+     */
+    public function generateReferEarnCard(int $userId): array
+    {
+        try {
+            $stmt = $this->pdo->prepare("SELECT name, phone, referral_code FROM users WHERE id = ? LIMIT 1");
+            $stmt->execute([$userId]);
+            $user = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if (!$user) {
+                return ['success' => false, 'message' => 'User not found'];
+            }
+
+            $branding = [
+                'display_name' => $user['name'] ?? 'APS Customer',
+                'phone' => $user['phone'] ?? '',
+                'tagline' => 'Refer & Earn | APS Dream Home',
+                'referral_code' => $user['referral_code'] ?? '',
+            ];
+
+            $result = $this->generateVisitingCard($branding);
+            if ($result['success']) {
+                $this->logToolkitUsage('refer_earn', $result['path']);
+                $link = (defined('BASE_URL') ? BASE_URL : '') . '/register' . (!empty($user['referral_code']) ? '?ref=' . urlencode($user['referral_code']) : '');
+                $result['referral_link'] = $link;
+                $result['whatsapp_share'] = $this->getWhatsAppShareLink("Dost ko plot dilao, dono fayda pao! Mere link se join karo: {$link}");
+                $result['message'] = 'Refer & Earn card ready — doston ko bhejo, dono ko fayda!';
+            }
+            return $result;
+        } catch (\Throwable $e) {
+            error_log("MarketingToolkit::referEarn: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Card failed'];
+        }
+    }
+
+    /**
+     * Follow-up WhatsApp pack for telecaller: property image + pre-filled message + deep links.
+     */
+    public function makeFollowupPack(int $leadId, int $userId): array
+    {
+        try {
+            $tid = $this->getTenantId();
+            $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+            $params = [$leadId];
+            if ($tid > 1) $params[] = $tid;
+
+            $stmt = $this->pdo->prepare("SELECT * FROM leads WHERE id = ?{$tenantWhere} LIMIT 1");
+            $stmt->execute($params);
+            $lead = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if (!$lead) {
+                return ['success' => false, 'message' => 'Lead not found'];
+            }
+
+            $branding = $this->getBranding($userId);
+            $message = $this->fillTemplate('followup', [
+                'property' => $lead['property_interest'] ?? 'property',
+                'location' => $lead['location_preference'] ?? 'Gorakhpur',
+                'offer' => 'special offer',
+            ], $branding);
+
+            $phone = preg_replace('/[^0-9]/', '', $lead['phone'] ?? '');
+
+            return [
+                'success' => true,
+                'lead_name' => $lead['name'] ?? '',
+                'lead_phone' => $lead['phone'] ?? '',
+                'message' => $message,
+                'links' => $this->getAllShareLinks($message, $phone),
+            ];
+        } catch (\Throwable $e) {
+            error_log("MarketingToolkit::followupPack: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Pack failed'];
+        }
+    }
+
     /* ── Helpers ── */
 
     private function loadImage(string $path)

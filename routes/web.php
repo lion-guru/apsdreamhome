@@ -664,6 +664,10 @@ $router->post('/marketing/share-links', 'Front\\MarketingToolkitController@share
 $router->get('/marketing/text-templates', 'Front\\MarketingToolkitController@textTemplates');
 $router->post('/marketing/fill-template', 'Front\\MarketingToolkitController@fillTemplate');
 $router->post('/marketing/morning-post', 'Front\\MarketingToolkitController@morningPost');
+// V5: brochure, refer-earn, followup pack
+$router->get('/marketing/brochure', 'Front\\MarketingToolkitController@brochure');
+$router->post('/marketing/refer-earn', 'Front\\MarketingToolkitController@referEarn');
+$router->post('/marketing/followup-pack', 'Front\\MarketingToolkitController@followupPack');
 
 $router->get('/admin/saved-searches', 'App\\Http\\Controllers\\Admin\\SavedSearchController@index');
 $router->post('/admin/saved-searches/store', 'App\\Http\\Controllers\\Admin\\SavedSearchController@store');

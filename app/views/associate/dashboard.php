@@ -260,6 +260,9 @@ body {
     </div>
 </div>
 
+<!-- Morning Post Widget (marketing) -->
+<?php include __DIR__ . '/../components/marketing/morning_widget.php'; ?>
+
 <!-- Secondary Stats -->
 <div class="row g-4 mb-5">
     <div class="col-6 col-lg-3">
