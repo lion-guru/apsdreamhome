@@ -292,6 +292,15 @@ class AdminAuthController extends BaseController
     public function logout()
     {
         @session_start();
+        // Kill persistent login too, else auto-login resurrects the session
+        if (!empty($_COOKIE['remember_token'])) {
+            try {
+                require_once __DIR__ . '/../../../Services/Auth/RememberMeService.php';
+                $parts = explode(':', (string)$_COOKIE['remember_token'], 2);
+                if (count($parts) === 2) (new \App\Services\Auth\RememberMeService())->invalidateToken($parts[0]);
+            } catch (\Throwable $e) { error_log('remember-me invalidate: ' . $e->getMessage()); }
+            setcookie('remember_token', '', ['expires' => time() - 3600, 'path' => '/', 'httponly' => true, 'samesite' => 'Lax']);
+        }
         session_destroy();
         header('Location: ' . BASE_URL . '/auth/login');
         exit;

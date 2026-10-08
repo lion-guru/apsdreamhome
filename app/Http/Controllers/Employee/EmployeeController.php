@@ -88,6 +88,13 @@ class EmployeeController extends BaseController
                 // Establish session using trait (includes audit log + login notifications)
                 // This sets: user_id, employee_id (employees.id), employee_user_id (users.id), employee_role, admin_id, etc.
                 $this->establishSession($employee, $email, 'password');
+                // Remember-me: persistent token only when the checkbox was ticked
+                if (!empty($_POST['remember'])) {
+                    try {
+                        require_once __DIR__ . '/../../../Services/Auth/RememberMeService.php';
+                        (new \App\Services\Auth\RememberMeService())->createToken((int)$employee['id']);
+                    } catch (\Throwable $e) { error_log('remember-me create: ' . $e->getMessage()); }
+                }
                 
                 // Fetch employee record for additional data
                 [$tidSql, $tidParams] = $this->tenantWhere();
@@ -661,6 +668,15 @@ class EmployeeController extends BaseController
     {
         if (isset($_SESSION['employee_email'])) {
             $this->logLoginAttempt($_SESSION['employee_email'], true, 'logout');
+        }
+        // Kill persistent login too, else auto-login resurrects the session
+        if (!empty($_COOKIE['remember_token'])) {
+            try {
+                require_once __DIR__ . '/../../../Services/Auth/RememberMeService.php';
+                $parts = explode(':', (string)$_COOKIE['remember_token'], 2);
+                if (count($parts) === 2) (new \App\Services\Auth\RememberMeService())->invalidateToken($parts[0]);
+            } catch (\Throwable $e) { error_log('remember-me invalidate: ' . $e->getMessage()); }
+            setcookie('remember_token', '', ['expires' => time() - 3600, 'path' => '/', 'httponly' => true, 'samesite' => 'Lax']);
         }
         session_destroy();
         $this->redirect('/employee/login');

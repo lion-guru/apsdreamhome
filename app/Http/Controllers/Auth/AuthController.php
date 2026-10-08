@@ -207,6 +207,13 @@ class AuthController extends BaseController
 
             // Establish session (includes audit log + login notifications)
             $this->establishSession($user, $identity, 'password');
+            // Remember-me: persistent token only when the checkbox was ticked
+            if ($remember) {
+                try {
+                    require_once __DIR__ . '/../../../Services/Auth/RememberMeService.php';
+                    (new \App\Services\Auth\RememberMeService())->createToken((int)$user['id']);
+                } catch (\Throwable $e) { error_log('remember-me create: ' . $e->getMessage()); }
+            }
             $this->redirectToDashboard($user['role'] ?? 'customer');
             exit;
         } catch (\Exception $e) {
@@ -237,6 +244,13 @@ class AuthController extends BaseController
         $_SESSION = [];
 
         if (isset($_COOKIE['remember_token'])) {
+            // Invalidate server-side persistent tokens too (else auto-login
+            // would resurrect the session right after logout).
+            try {
+                require_once __DIR__ . '/../../../Services/Auth/RememberMeService.php';
+                $parts = explode(':', (string)$_COOKIE['remember_token'], 2);
+                if (count($parts) === 2) (new \App\Services\Auth\RememberMeService())->invalidateToken($parts[0]);
+            } catch (\Throwable $e) { error_log('remember-me invalidate: ' . $e->getMessage()); }
             setcookie('remember_token', '', [
                 'expires' => time() - 3600,
                 'path' => '/',

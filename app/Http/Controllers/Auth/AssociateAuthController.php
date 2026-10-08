@@ -248,6 +248,13 @@ class AssociateAuthController extends BaseController
 
                 // Establish session using trait (includes audit log + login notifications)
                 $this->establishSession($user, $email, 'password');
+                // Remember-me: persistent token only when the checkbox was ticked
+                if (!empty($_POST['remember'])) {
+                    try {
+                        require_once __DIR__ . '/../../../Services/Auth/RememberMeService.php';
+                        (new \App\Services\Auth\RememberMeService())->createToken((int)$user['id']);
+                    } catch (\Throwable $e) { error_log('remember-me create: ' . $e->getMessage()); }
+                }
                 $this->redirectToDashboard('associate');
             }
             $_SESSION['errors'] = ["Invalid email or password"];
@@ -263,6 +270,15 @@ class AssociateAuthController extends BaseController
     public function logout()
     {
         @session_start();
+        // Kill persistent login too, else auto-login resurrects the session
+        if (!empty($_COOKIE['remember_token'])) {
+            try {
+                require_once __DIR__ . '/../../../Services/Auth/RememberMeService.php';
+                $parts = explode(':', (string)$_COOKIE['remember_token'], 2);
+                if (count($parts) === 2) (new \App\Services\Auth\RememberMeService())->invalidateToken($parts[0]);
+            } catch (\Throwable $e) { error_log('remember-me invalidate: ' . $e->getMessage()); }
+            setcookie('remember_token', '', ['expires' => time() - 3600, 'path' => '/', 'httponly' => true, 'samesite' => 'Lax']);
+        }
         session_destroy();
         header('Location: ' . BASE_URL . '/auth/login');
         exit;

@@ -23,6 +23,31 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Remember-me auto-login: a valid persistent cookie restores the session.
+// Only active + approved accounts; token rotates on every use inside the service.
+if (empty($_SESSION['user_id']) && !empty($_COOKIE['remember_token'])) {
+    try {
+        require_once APS_ROOT . '/app/Services/Auth/RememberMeService.php';
+        $rememberUserId = (new \App\Services\Auth\RememberMeService())->validateToken();
+        if ($rememberUserId) {
+            $rmDb = \App\Core\Database\Database::getInstance();
+            $rmUser = $rmDb->fetchOne(
+                "SELECT id, name, email, role FROM users WHERE id = ? AND status = 'active' AND registration_status = 'approved' LIMIT 1",
+                [$rememberUserId]
+            );
+            if ($rmUser) {
+                session_regenerate_id(true);
+                $_SESSION['user_id'] = (int)$rmUser['id'];
+                $_SESSION['user_name'] = $rmUser['name'];
+                $_SESSION['user_email'] = $rmUser['email'];
+                $_SESSION['role'] = $rmUser['role'] ?? 'customer';
+                $_SESSION['logged_in'] = true;
+                $_SESSION['remembered'] = true;
+            }
+        }
+    } catch (\Throwable $e) { error_log('remember-me auto-login: ' . $e->getMessage()); }
+}
+
 // Referral attribution net: persist ?ref= into a 30-day cookie + session so
 // browse-first-register-later flows (forms, Google OAuth, smart OTP, claim,
 // inquiries) never lose the referrer. Read everywhere via $_COOKIE['aps_ref'].
