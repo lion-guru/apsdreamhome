@@ -303,11 +303,14 @@ LPHEAD;
                     <div class="aps-cp-wizard-progress" role="progressbar" aria-valuemin="1" aria-valuemax="3" aria-valuenow="1" aria-label="<?= __('list_property_progress_label', null, 'Listing progress') ?>">
                         <div class="aps-cp-wizard-progress-bar"></div>
                     </div>
-                    <div class="d-flex gap-2">
+                    <div class="d-flex gap-2 flex-wrap">
                         <button type="button" class="btn btn-primary" data-wizard-next>
                             <?= __('next', null, 'Next') ?> <i class="fas fa-arrow-right ms-1"></i>
                         </button>
                         <?php if ($isLoggedIn): ?>
+                            <button type="button" class="btn btn-outline-primary" id="saveDraftBtn" title="<?= __('list_property_save_draft_title', null, 'Save as draft to continue later') ?>">
+                                <i class="fas fa-save me-1"></i><?= __('list_property_save_draft', null, 'Save Draft') ?>
+                            </button>
                             <button type="submit" class="btn btn-success" data-wizard-submit >
                                 <i class="fas fa-paper-plane me-1"></i><?= __('list_property_button_submit') ?>
                             </button>
@@ -650,8 +653,9 @@ LPHEAD;
         });
     }
 
-    // ----- Listing draft: stash before register/login detours, restore on return -----
+    // ----- Listing draft: persist across sessions (localStorage + 7-day expiry) -----
     var DRAFT_KEY = 'lp_draft_v1';
+    var DRAFT_TTL = 7 * 24 * 60 * 60 * 1000; // 7 days
     function stashDraft() {
         try {
             var data = {};
@@ -660,16 +664,19 @@ LPHEAD;
                 if ((el.type === 'radio' || el.type === 'checkbox')) { if (el.checked) data[el.name] = el.value; return; }
                 data[el.name] = el.value;
             });
-            sessionStorage.setItem(DRAFT_KEY, JSON.stringify(data));
+            var payload = { data: data, ts: Date.now() };
+            localStorage.setItem(DRAFT_KEY, JSON.stringify(payload));
         } catch (e) { /* storage unavailable */ }
     }
     function restoreDraft() {
         var raw = null;
-        try { raw = sessionStorage.getItem(DRAFT_KEY); } catch (e) { return false; }
+        try { raw = localStorage.getItem(DRAFT_KEY); } catch (e) { return false; }
         if (!raw) return false;
         var restored = false;
         try {
-            var data = JSON.parse(raw);
+            var payload = JSON.parse(raw);
+            if (payload.ts && Date.now() - payload.ts > DRAFT_TTL) { clearDraft(); return false; }
+            var data = payload.data || payload; // backward compat
             Object.keys(data).forEach(function(name) {
                 var els = document.querySelectorAll('#listPropertyForm [name="' + name + '"]');
                 if (!els.length) return;
@@ -691,7 +698,17 @@ LPHEAD;
         } catch (e) { /* corrupt draft */ }
         return restored;
     }
-    function clearDraft() { try { sessionStorage.removeItem(DRAFT_KEY); } catch (e) {} }
+    function clearDraft() { try { localStorage.removeItem(DRAFT_KEY); } catch (e) {} }
+    // Auto-stash on every input change (debounced)
+    var stashTimer;
+    document.querySelectorAll('#listPropertyForm input, #listPropertyForm select, #listPropertyForm textarea').forEach(function(el) {
+        if (el.type === 'file') return;
+        el.addEventListener('input', function() {
+            clearTimeout(stashTimer);
+            stashTimer = setTimeout(stashDraft, 800);
+        });
+        el.addEventListener('change', stashDraft); // for selects/radios
+    });
     restoreDraft();
     var lpForm = document.getElementById('listPropertyForm');
     if (lpForm) lpForm.addEventListener('submit', function() { clearDraft(); });
@@ -732,6 +749,41 @@ LPHEAD;
                 // Fallback: submit form directly
                 document.getElementById('listPropertyForm').submit();
             }
+        });
+    }
+
+    // ----- Save Draft (logged-in users) -----
+    var saveDraftBtn = document.getElementById('saveDraftBtn');
+    if (saveDraftBtn) {
+        saveDraftBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            var form = document.getElementById('listPropertyForm');
+            var fd = new FormData(form);
+            fd.append('action', 'save_draft');
+            var originalHtml = saveDraftBtn.innerHTML;
+            saveDraftBtn.disabled = true;
+            saveDraftBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Saving...';
+            fetch((window.BASE_URL || '<?= BASE_URL ?>') + '/list-property/save-draft', {
+                method: 'POST',
+                body: fd,
+                credentials: 'same-origin'
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+                if (d.success) {
+                    clearDraft(); // draft saved server-side, clear local
+                    if (window.APS && APS.toast) APS.toast(d.message || 'Draft saved successfully', 'success');
+                } else {
+                    if (window.APS && APS.toast) APS.toast(d.message || 'Failed to save draft', 'error');
+                }
+            })
+            .catch(function() {
+                if (window.APS && APS.toast) APS.toast('Network error', 'error');
+            })
+            .finally(function() {
+                saveDraftBtn.disabled = false;
+                saveDraftBtn.innerHTML = originalHtml;
+            });
         });
     }
 })();

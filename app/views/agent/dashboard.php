@@ -64,6 +64,28 @@ $agent_name = $_SESSION['user_name'] ?? $_SESSION['agent_name'] ?? 'Agent';
         </div>
     </div>
 
+<?php
+// Approval status badge for agent
+$regStatus = $_SESSION['registration_status'] ?? 'pending';
+$statusConfig = [
+    'approved' => ['label' => 'Approved', 'class' => 'bg-success', 'icon' => 'fa-check-circle'],
+    'pending' => ['label' => 'Pending Approval', 'class' => 'bg-warning text-dark', 'icon' => 'fa-clock'],
+    'rejected' => ['label' => 'Rejected', 'class' => 'bg-danger', 'icon' => 'fa-times-circle'],
+];
+$sc = $statusConfig[$regStatus] ?? $statusConfig['pending'];
+?>
+<div class="alert alert-<?= $sc['class'] ?> d-flex align-items-center gap-3 mb-4" role="alert">
+    <i class="fas <?= $sc['icon'] ?> fa-lg"></i>
+    <div>
+        <strong>Account Status: <?= $sc['label'] ?></strong>
+        <?php if ($regStatus === 'pending'): ?>
+            <div class="small text-muted mt-1">Your agent account is under review. You can add leads and properties, but commission withdrawals will be enabled after approval.</div>
+        <?php elseif ($regStatus === 'rejected'): ?>
+            <div class="small text-muted mt-1">Please contact support for more information.</div>
+        <?php endif; ?>
+    </div>
+</div>
+
     <!-- Main Metric Cards -->
     <div class="row g-3 mb-4">
         <div class="col-md-6 col-lg-3">

@@ -1130,7 +1130,18 @@
     font-size: 0.75rem;
   }
   .aps-cp-wizard-step-label {
-    display: none;
+    display: inline-block;
+    max-width: 70px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.65rem;
+    line-height: 1.2;
+  }
+  .aps-cp-wizard-step-num {
+    width: 24px;
+    height: 24px;
+    font-size: 0.7rem;
   }
   .aps-cp-wizard-body {
     padding: 1.2rem;

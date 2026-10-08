@@ -228,6 +228,28 @@ body {
     </div>
 </div>
 
+<?php
+// Approval status badge for associate/agent
+$regStatus = $user['registration_status'] ?? 'pending';
+$statusConfig = [
+    'approved' => ['label' => 'Approved', 'class' => 'bg-success', 'icon' => 'fa-check-circle'],
+    'pending' => ['label' => 'Pending Approval', 'class' => 'bg-warning text-dark', 'icon' => 'fa-clock'],
+    'rejected' => ['label' => 'Rejected', 'class' => 'bg-danger', 'icon' => 'fa-times-circle'],
+];
+$sc = $statusConfig[$regStatus] ?? $statusConfig['pending'];
+?>
+<div class="alert alert-<?= $sc['class'] ?> d-flex align-items-center gap-3 mb-4" role="alert">
+    <i class="fas <?= $sc['icon'] ?> fa-lg"></i>
+    <div>
+        <strong>Account Status: <?= $sc['label'] ?></strong>
+        <?php if ($regStatus === 'pending'): ?>
+            <div class="small text-muted mt-1">Your associate account is under review. You can browse and add properties, but commissions and withdrawals will be enabled after approval.</div>
+        <?php elseif ($regStatus === 'rejected'): ?>
+            <div class="small text-muted mt-1">Please contact support for more information.</div>
+        <?php endif; ?>
+    </div>
+</div>
+
 <!-- Primary Stats -->
 <div class="row g-4 mb-4">
     <div class="col-6 col-lg-3">

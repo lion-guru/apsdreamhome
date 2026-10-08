@@ -146,6 +146,25 @@
 </div>
 
 <script>
+// Ensure referral modal is always hidden on page load (prevents bfcache/restore showing stale "Referral Code Sent" state)
+document.addEventListener('DOMContentLoaded', function () {
+    var rrModalEl = document.getElementById('referralRequestModal');
+    if (rrModalEl) {
+        // Force hide via Bootstrap if shown
+        var rrModal = bootstrap.Modal.getInstance(rrModalEl);
+        if (rrModal) rrModal.hide();
+        // Reset internal state
+        var rrForm = document.getElementById('referralRequestForm');
+        if (rrForm) rrForm.style.display = 'block';
+        var rrLoading = document.getElementById('rrLoading');
+        if (rrLoading) rrLoading.style.display = 'none';
+        var rrResult = document.getElementById('rrResult');
+        if (rrResult) rrResult.style.display = 'none';
+        var rrCode = document.getElementById('rrReferralCode');
+        if (rrCode) rrCode.textContent = '';
+    }
+});
+
 // Quick Register Functions
 function showQuickRegisterModal() {
     resetQuickRegisterModal();
