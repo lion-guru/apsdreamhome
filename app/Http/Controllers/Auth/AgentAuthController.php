@@ -39,12 +39,13 @@ class AgentAuthController extends BaseController
     public function register()
     {
         @session_start();
-        $csrf_token = $this->getCsrfToken();
-        $errors = $_SESSION['errors'] ?? [];
-        $old = $_SESSION['old_input'] ?? [];
-        unset($_SESSION['errors'], $_SESSION['old_input']);
-        extract(compact('csrf_token', 'errors', 'old'));
-        include_once __DIR__ . '/../../../views/auth/agent_register.php';
+        // Consolidated into the unified hub (same handler, same validation).
+        // POST /agent/register stays live for backward compatibility.
+        $url = BASE_URL . '/register?role=agent';
+        $ref = trim($_GET['ref'] ?? $_COOKIE['aps_ref'] ?? $_SESSION['aps_ref'] ?? '');
+        if ($ref !== '') $url .= '&ref=' . urlencode($ref);
+        header('Location: ' . $url, true, 301);
+        exit;
     }
 
     public function handleRegister()

@@ -591,7 +591,7 @@ $base = BASE_URL;
         </div>
 
         <div class="register-section">
-            <p><?php echo __('auth_no_account', "Don't have an account?"); ?> <a href="<?php echo $base; ?>/agent/register"><?php echo __('auth_register', 'Register'); ?></a></p>
+            <p><?php echo __('auth_no_account', "Don't have an account?"); ?> <a href="<?php echo $base; ?>/register?role=agent"><?php echo __('auth_register', 'Register'); ?></a></p>
         </div>
 
         <a href="<?php echo e($base); ?>/" class="back-home">

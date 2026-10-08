@@ -50,6 +50,30 @@ class RegisterController extends BaseController
     }
 
     /**
+     * Show premium step-by-step unified register page (modern alternative
+     * to the hub above; same POST handler, same validation rules).
+     */
+    public function showUnified()
+    {
+        @session_start();
+        if (isset($_SESSION['user_id'])) {
+            $this->redirectToDashboard($_SESSION['role'] ?? 'customer');
+            exit;
+        }
+
+        $csrf_token = $this->getCsrfToken();
+        $errors = $_SESSION['errors'] ?? [];
+        $old = $_SESSION['old_input'] ?? [];
+        unset($_SESSION['errors'], $_SESSION['old_input']);
+
+        $ref = trim($_GET['ref'] ?? $old['referral_code'] ?? $old['sponsor_code'] ?? $_COOKIE['aps_ref'] ?? $_SESSION['aps_ref'] ?? '');
+        $role = trim($_GET['role'] ?? $old['role'] ?? 'customer');
+        if (!in_array($role, ['customer', 'associate', 'agent'], true)) $role = 'customer';
+
+        include __DIR__ . '/../../../views/auth/unified_register.php';
+    }
+
+    /**
      * Handle unified registration (POST)
      */
     public function handleRegister()
@@ -62,7 +86,7 @@ class RegisterController extends BaseController
         $password = $_POST['password'] ?? '';
         $confirm = $_POST['confirm_password'] ?? '';
         $role = trim($_POST['role'] ?? 'customer');
-        $referral = trim($_POST['referral_code'] ?? $_GET['ref'] ?? $_COOKIE['aps_ref'] ?? $_SESSION['aps_ref'] ?? '');
+        $referral = trim($_POST['referral_code'] ?? $_POST['sponsor_code'] ?? $_GET['ref'] ?? $_COOKIE['aps_ref'] ?? $_SESSION['aps_ref'] ?? '');
         $agentType = trim($_POST['agent_type'] ?? '');
         if ($agentType !== 'freelancer') {
             $agentType = 'freelancer';

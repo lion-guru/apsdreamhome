@@ -380,9 +380,7 @@ $selectedRole = $selectedRole ?? 'customer';
             <div class="alt-methods">
                 <div class="alt-title">Other ways to join</div>
                 <div class="alt-links">
-                    <a href="<?= $base ?>/agent/register">Dedicated Agent page</a>
-                    <span class="alt-sep">·</span>
-                    <a href="<?= $base ?>/associate/register">Dedicated Associate page</a>
+                    <a href="<?= $base ?>/register/step-by-step">Step-by-step form</a>
                     <span class="alt-sep">·</span>
                     <a href="<?= $base ?>/register/smart">OTP <span class="alt-sub">(no password)</span></a>
                 </div>

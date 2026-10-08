@@ -693,7 +693,7 @@ $base = BASE_URL;
 
             <!-- Form -->
             <div class="form-body">
-                <form method="POST" action="<?php echo e($base); ?>/register/unified" id="regForm" novalidate>
+                <form method="POST" action="<?php echo e($base); ?>/register/step-by-step" id="regForm" novalidate>
                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token ?? ''); ?>">
                     <input type="hidden" name="role" id="selectedRole" value="<?php echo htmlspecialchars($role ?? ''); ?>">
 
@@ -842,6 +842,10 @@ $base = BASE_URL;
                     <!-- Terms -->
                     <div class="terms">
                         By registering, you agree to our <a href="<?php echo e($base); ?>/terms">Terms of Service</a> and <a href="<?php echo e($base); ?>/privacy">Privacy Policy</a>
+                    </div>
+
+                    <div style="margin-top:1rem">
+                        <?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>
                     </div>
 
                     <!-- Submit -->

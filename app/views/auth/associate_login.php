@@ -300,7 +300,7 @@ $base = BASE_URL;
             </div>
 
             <div class="register-section">
-                <p><?php echo __('auth_not_registered_yet', 'Not registered yet?'); ?> <a href="<?php echo $base; ?>/associate/register"><?php echo __('auth_register_as_associate', 'Register as Associate'); ?></a></p>
+                <p><?php echo __('auth_not_registered_yet', 'Not registered yet?'); ?> <a href="<?php echo $base; ?>/register?role=associate"><?php echo __('auth_register_as_associate', 'Register as Associate'); ?></a></p>
             </div>
         </div>
     </div>
