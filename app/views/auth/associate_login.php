@@ -162,8 +162,8 @@ $base = BASE_URL;
             <div class="benefit-item">
                 <div class="benefit-icon"><i class="fas fa-sitemap"></i></div>
                 <div class="benefit-text">
-                    <h4>Binary Network Tree</h4>
-                    <p>Build left and right teams with matching bonuses up to 3 generations</p>
+                    <h4>Hybrid Matrix Plan</h4>
+                    <p>Grow your network team with matching bonuses up to 3 generations</p>
                 </div>
             </div>
 

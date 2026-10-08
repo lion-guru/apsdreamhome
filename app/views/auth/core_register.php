@@ -433,7 +433,7 @@ document.getElementById('selectedRole').value = role;
             associate: [
                 { icon: 'fas fa-money-bill-wave', text: 'Up to 20% Commission', highlight: true },
                 { icon: 'fas fa-layer-group', text: '4 Revenue Streams' },
-                { icon: 'fas fa-sitemap', text: 'Binary Network Tree' },
+                { icon: 'fas fa-sitemap', text: 'Hybrid Matrix Plan' },
                 { icon: 'fas fa-crown', text: 'Royalty Pool Access' }
             ],
             agent: [
