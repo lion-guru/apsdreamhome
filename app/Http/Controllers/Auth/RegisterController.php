@@ -50,10 +50,10 @@ class RegisterController extends BaseController
     }
 
     /**
-     * Show premium step-by-step unified register page (modern alternative
+     * Show premium step-by-step register page (modern alternative
      * to the hub above; same POST handler, same validation rules).
      */
-    public function showUnified()
+    public function showStepByStep()
     {
         @session_start();
         if (isset($_SESSION['user_id'])) {
@@ -70,7 +70,7 @@ class RegisterController extends BaseController
         $role = trim($_GET['role'] ?? $old['role'] ?? 'customer');
         if (!in_array($role, ['customer', 'associate', 'agent'], true)) $role = 'customer';
 
-        include __DIR__ . '/../../../views/auth/unified_register.php';
+        include __DIR__ . '/../../../views/auth/step_register.php';
     }
 
     /**

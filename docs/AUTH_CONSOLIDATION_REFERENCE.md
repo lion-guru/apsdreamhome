@@ -152,7 +152,7 @@ AuthenticationController handles POST `/forgot-password` and GET/POST `/reset-pa
 | POST /register | RegisterController@handleRegister | POST /register | **RegisterController@handleRegister** (unchanged) |
 | GET /register/customer | CustomerAuthController@register | GET /register?role=customer | **RegisterController@showRegister** (redirect) |
 | POST /register/customer | CustomerAuthController@handleRegister | POST /register?role=customer | **RegisterController@handleRegister** (redirect) |
-| GET /register/unified | RegisterController@showRegister | GET /register/step-by-step | **RegisterController@showUnified** (premium step form; old URL 301-redirects) |
+| GET /register/unified | RegisterController@showRegister | GET /register/step-by-step | **RegisterController@showStepByStep** (premium step form `step_register.php`; old URL 301-redirects) |
 | POST /register/unified | RegisterController@handleRegister | POST /register/step-by-step | **RegisterController@handleRegister** (old POST URL kept working) |
 
 ---
