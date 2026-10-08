@@ -21,6 +21,94 @@ class MarketplaceController extends BaseController
     }
 
     /**
+     * Marketplace listing page
+     */
+    public function index()
+    {
+        try {
+            $tid = $this->tenantId();
+            $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+            $tenantParams = $tid > 1 ? [$tid] : [];
+
+            $stmt = $this->db->prepare("
+                SELECT up.*, u.name as seller_name
+                FROM user_properties up
+                LEFT JOIN users u ON up.user_id = u.id
+                WHERE up.status = 'approved'{$tenantWhere}
+                ORDER BY up.is_featured DESC, up.is_premium DESC, up.created_at DESC
+                LIMIT 50
+            ");
+            $stmt->execute($tenantParams);
+            $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            error_log("MarketplaceController::index: " . $e->getMessage());
+            $properties = [];
+        }
+
+        $this->layout = 'layouts/base';
+        $this->render('pages/marketplace', [
+            'page_title' => 'Marketplace - APS Dream Home',
+            'properties' => $properties,
+        ]);
+    }
+
+    /**
+     * Marketplace property detail page
+     */
+    public function detail($id)
+    {
+        $propertyId = (int)$id;
+        if ($propertyId <= 0) {
+            header('Location: ' . BASE_URL . '/marketplace');
+            exit;
+        }
+
+        try {
+            $tid = $this->tenantId();
+            $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+            $tenantParams = $tid > 1 ? [$tid] : [];
+
+            $stmt = $this->db->prepare("
+                SELECT up.*, u.name as seller_name, u.phone as seller_phone
+                FROM user_properties up
+                LEFT JOIN users u ON up.user_id = u.id
+                WHERE up.id = ?{$tenantWhere}
+                LIMIT 1
+            ");
+            $stmt->execute(array_merge([$propertyId], $tenantParams));
+            $property = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$property) {
+                header('Location: ' . BASE_URL . '/marketplace');
+                exit;
+            }
+
+            // Track view
+            try {
+                $this->marketplaceService->trackInterest([
+                    'property_id' => $propertyId,
+                    'listing_type' => 'user',
+                    'user_id' => $_SESSION['user_id'] ?? null,
+                    'session_id' => session_id(),
+                    'interest_type' => 'view',
+                ]);
+            } catch (\Throwable $e) {
+                // Non-fatal
+            }
+        } catch (\Throwable $e) {
+            error_log("MarketplaceController::detail: " . $e->getMessage());
+            header('Location: ' . BASE_URL . '/marketplace');
+            exit;
+        }
+
+        $this->layout = 'layouts/base';
+        $this->render('pages/marketplace-detail', [
+            'page_title' => ($property['name'] ?? 'Property') . ' - APS Dream Home',
+            'property' => $property,
+        ]);
+    }
+
+    /**
      * Track buyer interest (AJAX)
      */
     public function trackInterest()

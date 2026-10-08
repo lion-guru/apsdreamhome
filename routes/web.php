@@ -624,6 +624,18 @@ $router->get('/property/{id}', 'Front\\PropertyController@propertyDetails');
 $router->get('/listing/{id}', 'Front\\PageController@userPropertyDetail');
 $router->get('/marketplace', 'Front\\MarketplaceController@index');
 $router->get('/marketplace/{id}', 'Front\\MarketplaceController@detail');
+$router->post('/marketplace/track-interest', 'Front\\MarketplaceController@trackInterest');
+$router->post('/marketplace/toggle-save', 'Front\\MarketplaceController@toggleSave');
+$router->get('/user/saved-properties', 'Front\\MarketplaceController@savedProperties');
+$router->post('/marketplace/capture-lead', 'Front\\MarketplaceController@captureLead');
+$router->get('/user/followups', 'Front\\MarketplaceController@followups');
+$router->post('/marketplace/complete-followup', 'Front\\MarketplaceController@completeFollowup');
+$router->post('/marketplace/close-deal', 'Front\\MarketplaceController@closeDeal');
+$router->post('/marketplace/close-user-property-deal', 'Front\\MarketplaceController@closeUserPropertyDeal');
+$router->get('/user/transactions', 'Front\\MarketplaceController@myTransactions');
+$router->post('/marketplace/boost-property', 'Front\\MarketplaceController@boostProperty');
+$router->post('/marketplace/boost/initiate-payment', 'Front\\MarketplaceController@initiateBoostPayment');
+$router->post('/marketplace/boost/verify-payment', 'Front\\MarketplaceController@verifyBoostPayment');
 
 $router->get('/admin/saved-searches', 'App\\Http\\Controllers\\Admin\\SavedSearchController@index');
 $router->post('/admin/saved-searches/store', 'App\\Http\\Controllers\\Admin\\SavedSearchController@store');
@@ -884,6 +896,7 @@ $router->post('/auth/register', 'Auth\\RegisterController@handleRegister');
 $router->get('/auth/logout', 'Auth\\AuthController@logout');
 
 // CoreAuth â€” Unified Auth (replaces all role-specific auth over time)
+$router->get('/auth/smart/role', 'Auth\\OtpAuthController@showRoleSelection');
 $router->post('/auth/smart/role', 'Auth\\OtpAuthController@saveRoleSelection');
 
 // // Air Login ” OTP-based login without password
@@ -921,6 +934,8 @@ $router->post('/agent/leads/{id}/status', 'Agent\\AgentDashboardController@updat
 $router->post('/agent/leads/{id}/note', 'Agent\\AgentDashboardController@addLeadNote');
 $router->get('/agent/properties', 'Agent\\AgentDashboardController@properties');
 $router->get('/agent/commissions', 'Agent\\AgentDashboardController@commissions');
+$router->get('/agent/offers', 'App\\Http\\Controllers\\Agent\\OfferController@index');
+$router->get('/agent/salary', 'App\\Http\\Controllers\\Agent\\SalaryController@index');
 $router->get('/agent/profile', 'Agent\\AgentDashboardController@profile');
 $router->post('/agent/profile', 'Agent\\AgentDashboardController@updateProfile');
 $router->get('/agent/wallet', 'Agent\\AgentDashboardController@wallet');
@@ -955,6 +970,7 @@ $router->post('/associate/add-property', 'App\\Http\\Controllers\\Associate\\Pro
 $router->get('/associate/leads', 'App\\Http\\Controllers\\Associate\\CrmController@leads');
 $router->get('/associate/crm', 'App\\Http\\Controllers\\Associate\\CrmController@crmDashboard');
 $router->get('/associate/commissions', 'App\\Http\\Controllers\\Associate\\CommissionController@commissions');
+$router->get('/associate/offers', 'App\\Http\\Controllers\\Associate\\OfferController@index');
 $router->get('/associate/properties', 'App\\Http\\Controllers\\Associate\\PropertyController@properties');
 $router->get('/associate/properties/edit/{id}', 'App\\Http\\Controllers\\Associate\\PropertyController@editProperty');
 $router->post('/associate/properties/update/{id}', 'App\\Http\\Controllers\\Associate\\PropertyController@updateProperty');
@@ -1248,7 +1264,7 @@ $router->post('/admin/fnf/calculator', 'Admin\\FnfSettlementController@calculato
 $router->post('/admin/fnf/process', 'Admin\\FnfSettlementController@process');
 $router->get('/admin/fnf/history', 'Admin\\FnfSettlementController@history');
 $router->get('/admin/fnf/view/{id}', 'Admin\\FnfSettlementController@viewSettlement');
-$router->get('/admin/fnf/approve/{id}', 'Admin\\FnfSettlementController@approve');
+$router->post('/admin/fnf/approve/{id}', 'Admin\\FnfSettlementController@approve');
 $router->post('/admin/fnf/mark-paid/{id}', 'Admin\\FnfSettlementController@markPaid');
 $router->get('/admin/fnf/assets', 'Admin\\FnfSettlementController@assets');
 $router->post('/admin/fnf/assets', 'Admin\\FnfSettlementController@assets');
@@ -3450,6 +3466,10 @@ $router->post('/admin/company-loans/offers/{id}/update', 'App\\Http\\Controllers
 $router->get('/admin/company-loans/early-incentives', 'App\\Http\\Controllers\\Admin\\CompanyLoanController@earlyIncentives');
 $router->post('/admin/company-loans/early-incentives/create', 'App\\Http\\Controllers\\Admin\\CompanyLoanController@earlyIncentiveCreate');
 $router->get('/admin/company-loans/calculator', 'App\\Http\\Controllers\\Admin\\CompanyLoanController@calculator');
+$router->get('/admin/promotional-offers', 'App\\Http\\Controllers\\Admin\\PromotionalOfferController@index');
+$router->post('/admin/promotional-offers/store', 'App\\Http\\Controllers\\Admin\\PromotionalOfferController@store');
+$router->post('/admin/promotional-offers/status', 'App\\Http\\Controllers\\Admin\\PromotionalOfferController@setStatus');
+$router->post('/admin/promotional-offers/delete', 'App\\Http\\Controllers\\Admin\\PromotionalOfferController@delete');
 $router->get('/admin/company-loans/check-eligibility', 'App\\Http\\Controllers\\Admin\\CompanyLoanController@checkEligibility');
 $router->post('/admin/company-loans/run-penalties', 'App\\Http\\Controllers\\Admin\\CompanyLoanController@runPenalties');
 
@@ -3619,8 +3639,8 @@ $router->get('/admin/hr/attendance/report', 'App\\Http\\Controllers\\Admin\\HRCo
 $router->get('/admin/hr/leave', 'App\\Http\\Controllers\\Admin\\HRController@leaves');
 $router->get('/admin/hr/leaves', 'App\\Http\\Controllers\\Admin\\HRController@leaves');
 $router->post('/admin/hr/leaves/store', 'App\\Http\\Controllers\\Admin\\HRController@storeLeave');
-$router->get('/admin/hr/leaves/approve/{id}', 'App\\Http\\Controllers\\Admin\\HRController@approveLeave');
-$router->get('/admin/hr/leaves/reject/{id}', 'App\\Http\\Controllers\\Admin\\HRController@rejectLeave');
+$router->post('/admin/hr/leaves/approve/{id}', 'App\\Http\\Controllers\\Admin\\HRController@approveLeave');
+$router->post('/admin/hr/leaves/reject/{id}', 'App\\Http\\Controllers\\Admin\\HRController@rejectLeave');
 $router->get('/admin/hr/leave-types', 'App\\Http\\Controllers\\Admin\\HRController@leaveTypes');
 $router->post('/admin/hr/leave-types/store', 'App\\Http\\Controllers\\Admin\\HRController@storeLeaveType');
 $router->get('/admin/hr/leave-balances', 'App\\Http\\Controllers\\Admin\\HRController@leaveBalances');
@@ -3669,6 +3689,13 @@ $router->get('/admin/schedule/rotation', 'App\\Http\\Controllers\\Admin\\Schedul
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 $router->get('/admin/salary', 'App\\Http\\Controllers\\Admin\\SalaryController@index');
 $router->get('/admin/salary/stats', 'App\\Http\\Controllers\\Admin\\SalaryController@stats');
+$router->get('/admin/salary/salary-grants', 'App\\Http\\Controllers\\Admin\\SalaryController@salaryGrants');
+$router->post('/admin/salary/salary-grants/activate', 'App\\Http\\Controllers\\Admin\\SalaryController@activateSalaryGrant');
+$router->get('/admin/associate-offers', 'App\\Http\\Controllers\\Admin\\AssociateOfferController@index');
+$router->post('/admin/associate-offers/store', 'App\\Http\\Controllers\\Admin\\AssociateOfferController@store');
+$router->post('/admin/associate-offers/activate', 'App\\Http\\Controllers\\Admin\\AssociateOfferController@activate');
+$router->post('/admin/associate-offers/close', 'App\\Http\\Controllers\\Admin\\AssociateOfferController@close');
+$router->post('/admin/associate-offers/delete', 'App\\Http\\Controllers\\Admin\\AssociateOfferController@delete');
 $router->get('/admin/salary/periods', 'App\\Http\\Controllers\\Admin\\SalaryController@periods');
 $router->post('/admin/salary/periods/reopen', 'App\\Http\\Controllers\\Admin\\SalaryController@reopenPeriod');
 $router->get('/admin/salary/structures', 'App\\Http\\Controllers\\Admin\\SalaryController@structures');
@@ -3687,10 +3714,10 @@ $router->post('/admin/salary/payouts/create', 'App\\Http\\Controllers\\Admin\\Sa
 $router->post('/admin/salary/payouts/process/{id}', 'App\\Http\\Controllers\\Admin\\SalaryController@processPayout');
 $router->get('/admin/salary/advances', 'App\\Http\\Controllers\\Admin\\SalaryController@advances');
 $router->post('/admin/salary/advances/create', 'App\\Http\\Controllers\\Admin\\SalaryController@createAdvance');
-$router->get('/admin/salary/advances/approve/{id}', 'App\\Http\\Controllers\\Admin\\SalaryController@approveAdvance');
+$router->post('/admin/salary/advances/approve/{id}', 'App\\Http\\Controllers\\Admin\\SalaryController@approveAdvance');
 $router->post('/admin/salary/advances/reject/{id}', 'App\\Http\\Controllers\\Admin\\SalaryController@rejectAdvance');
 $router->get('/admin/salary/reimbursements', 'App\\Http\\Controllers\\Admin\\SalaryController@reimbursements');
-$router->get('/admin/salary/reimbursements/approve/{id}', 'App\\Http\\Controllers\\Admin\\SalaryController@approveReimbursement');
+$router->post('/admin/salary/reimbursements/approve/{id}', 'App\\Http\\Controllers\\Admin\\SalaryController@approveReimbursement');
 $router->post('/admin/salary/reimbursements/reject/{id}', 'App\\Http\\Controllers\\Admin\\SalaryController@rejectReimbursement');
 $router->post('/admin/salary/reimbursements/pay/{id}', 'App\\Http\\Controllers\\Admin\\SalaryController@payReimbursement');
 $router->get('/admin/salary/history', 'App\\Http\\Controllers\\Admin\\SalaryController@history');
