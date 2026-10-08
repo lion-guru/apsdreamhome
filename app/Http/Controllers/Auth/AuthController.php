@@ -652,13 +652,27 @@ $this->redirectToDashboard($admin['role']);
 
     public function verifyEmail()
     {
+        // Ensure a CSRF token exists for the manual form below (/verify-email
+        // is NOT on the router's global CSRF-exempt list).
+        $this->getCsrfToken();
+        // Emailed links land here as GET (?email=&token=) — verify inline.
+        $email = trim($_GET['email'] ?? '');
+        $token = trim($_GET['token'] ?? '');
+        if ($email !== '' && $token !== '') {
+            if ($this->doVerifyEmail($email, $token)) {
+                $_SESSION['success'] = __('Email verified successfully');
+                header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login?verified=1');
+                exit;
+            }
+            $_SESSION['error'] = __('Invalid verification link');
+            // fall through to the form with the error set
+        }
         include __DIR__ . '/../../../views/auth/verify_email.php';
     }
 
     public function verifyEmailPost()
     {
         try {
-            $db = Database::getInstance();
             $email = trim($_POST['email'] ?? '');
             $token = trim($_POST['token'] ?? '');
 
@@ -668,31 +682,39 @@ $this->redirectToDashboard($admin['role']);
                 return;
             }
 
-            [$tSql, $tParams] = $this->getTenantSql();
-            $user = $db->fetchOne(
-                "SELECT id FROM users WHERE email = ? AND verify_token = ? AND verify_sent_at IS NOT NULL" . $tSql,
-                array_merge([$email, $token], $tParams)
-            );
-
-            if (!$user) {
-                $_SESSION['error'] = __('Invalid verification link');
-                include __DIR__ . '/../../../views/auth/verify_email.php';
-                return;
+            if ($this->doVerifyEmail($email, $token)) {
+                $_SESSION['success'] = __('Email verified successfully');
+                $redirectUrl = (defined('BASE_URL') ? BASE_URL : '') . '/login?verified=1';
+                header("Location: {$redirectUrl}");
+                exit;
             }
 
-            $db->execute(
-                "UPDATE users SET email_verified_at = NOW(), reset_token = NULL, reset_token_expiry = NULL WHERE id = ?",
-                [$user['id']]
-            );
-
-            $_SESSION['success'] = __('Email verified successfully');
-            $redirectUrl = (defined('BASE_URL') ? BASE_URL : '') . '/login?verified=1';
-            header("Location: {$redirectUrl}");
-            exit;
+            $_SESSION['error'] = __('Invalid verification link');
+            include __DIR__ . '/../../../views/auth/verify_email.php';
         } catch (\Throwable $e) {
             error_log("AuthController::verifyEmailPost error: " . $e->getMessage());
             $_SESSION['error'] = __('Verification failed');
             include __DIR__ . '/../../../views/auth/verify_email.php';
         }
+    }
+
+    /**
+     * Shared email-verification check. Marks verified and burns the token
+     * (single-use) so emailed links cannot be replayed.
+     */
+    private function doVerifyEmail(string $email, string $token): bool
+    {
+        $db = Database::getInstance();
+        [$tSql, $tParams] = $this->getTenantSql();
+        $user = $db->fetchOne(
+            "SELECT id FROM users WHERE email = ? AND verify_token = ? AND verify_sent_at IS NOT NULL" . $tSql,
+            array_merge([$email, $token], $tParams)
+        );
+        if (!$user) return false;
+        $db->execute(
+            "UPDATE users SET email_verified_at = NOW(), verify_token = NULL, verify_sent_at = NULL, reset_token = NULL, reset_token_expiry = NULL WHERE id = ?",
+            [$user['id']]
+        );
+        return true;
     }
 }

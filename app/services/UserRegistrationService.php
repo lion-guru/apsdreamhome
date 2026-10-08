@@ -184,6 +184,10 @@ class UserRegistrationService
                 $finalRefCode = $refCode . $counter;
             }
 
+            // Email verification token (powers /verify-email; login is NOT gated
+            // on it — purely informational until product decides otherwise)
+            $verifyToken = bin2hex(random_bytes(32));
+
             $userId = $this->db->insert('users', [
                 'customer_id' => $displayId,
                 'name' => $name,
@@ -196,6 +200,8 @@ class UserRegistrationService
                 'city' => $city ?: null,
                 'occupation' => $occupation ?: null,
                 'agent_experience_years' => $agentExpYears,
+                'verify_token' => $verifyToken,
+                'verify_sent_at' => date('Y-m-d H:i:s'),
                 'status' => $userStatus,
                 'registration_status' => $regStatus,
                 'registration_method' => $regMethod,
@@ -269,6 +275,26 @@ class UserRegistrationService
                 } catch (\Throwable $e) {
                     error_log('UserRegistrationService: incrementUsage failed: ' . $e->getMessage());
                 }
+            }
+
+            // Send verification email (best-effort: never breaks registration)
+            try {
+                if (class_exists('\App\Services\Communication\EmailSenderService')) {
+                    $base = defined('BASE_URL') ? BASE_URL : '';
+                    $link = $base . '/verify-email?email=' . urlencode($email) . '&token=' . urlencode($verifyToken);
+                    $mailer = new \App\Services\Communication\EmailSenderService();
+                    $mailer->send(
+                        $email,
+                        'Verify your email - APS Dream Home',
+                        '<p>Hi ' . htmlspecialchars($name) . ',</p>'
+                            . '<p>Please verify your email address by clicking the link below:</p>'
+                            . '<p><a href="' . htmlspecialchars($link) . '">Verify Email</a></p>'
+                            . '<p>If you did not create this account, please ignore this email.</p>',
+                        "Hi {$name},\nVerify your email: {$link}\nIf you did not create this account, please ignore this email."
+                    );
+                }
+            } catch (\Throwable $e) {
+                error_log('UserRegistrationService: verification email failed: ' . $e->getMessage());
             }
 
             $user = [
