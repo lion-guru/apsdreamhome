@@ -1116,6 +1116,293 @@ class MarketingToolkitService
         }
     }
 
+    /* ── V4: Video Share Pack (no ffmpeg needed) ── */
+
+    /**
+     * Create video share pack: store video + branded cover title card + caption.
+     * User downloads all three and posts manually (video + cover + text).
+     */
+    public function makeVideoPack(string $videoTmpPath, string $originalName, array $data, array $branding): array
+    {
+        try {
+            $allowed = ['mp4', 'mov', 'avi', 'webm', '3gp', 'mkv'];
+            $ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+            if (!in_array($ext, $allowed, true)) {
+                return ['success' => false, 'message' => 'Video format not supported (mp4/mov/avi/webm)'];
+            }
+
+            $outputDir = $this->getOutputDir();
+            $videoDir = $outputDir . '/videos';
+            if (!is_dir($videoDir)) @mkdir($videoDir, 0777, true);
+
+            $filename = 'video_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+            $videoPath = $videoDir . '/' . $filename;
+
+            // Move uploaded video (or copy if already moved)
+            if (!@move_uploaded_file($videoTmpPath, $videoPath)) {
+                if (!@copy($videoTmpPath, $videoPath)) {
+                    return ['success' => false, 'message' => 'Video save failed'];
+                }
+            }
+
+            // Branded cover title card (1080x1080)
+            $cover = $this->makeVideoCover($data, $branding);
+            if (!$cover['success']) {
+                return ['success' => false, 'message' => 'Cover failed: ' . $cover['message']];
+            }
+
+            // Caption text
+            $caption = $this->makeVideoCaption($data, $branding);
+
+            $this->logToolkitUsage('video_pack', $videoPath);
+
+            return [
+                'success' => true,
+                'video_url' => $this->pathToUrl($videoPath),
+                'cover_url' => $cover['url'],
+                'caption' => $caption,
+                'whatsapp_share' => $this->getWhatsAppShareLink($caption),
+                'sms_share' => $this->getSmsShareLink($caption),
+                'message' => 'Video pack ready — video + cover + caption download karo, phir post karo',
+            ];
+        } catch (\Throwable $e) {
+            error_log("MarketingToolkit::makeVideoPack: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Video pack failed'];
+        }
+    }
+
+    /**
+     * Branded title card to use as video cover/thumbnail.
+     */
+    public function makeVideoCover(array $data, array $branding): array
+    {
+        try {
+            $W = 1080;
+            $H = 1080;
+            $canvas = imagecreatetruecolor($W, $H);
+            $dark = imagecolorallocate($canvas, ...self::BRAND_DARK);
+            imagefill($canvas, 0, 0, $dark);
+
+            // Gold frame
+            $gold = imagecolorallocate($canvas, ...self::BRAND_GOLD);
+            imagerectangle($canvas, 15, 15, $W - 16, $H - 16, $gold);
+            imagerectangle($canvas, 25, 25, $W - 26, $H - 26, $gold);
+
+            $white = imagecolorallocate($canvas, ...self::WHITE);
+
+            // Play button circle (center)
+            $cx = (int)($W / 2);
+            $cy = 380;
+            imagefilledellipse($canvas, $cx, $cy, 180, 180, $gold);
+            $darkInner = imagecolorallocate($canvas, ...self::BRAND_DARK);
+            // Triangle (play icon)
+            $tri = [$cx - 25, $cy - 35, $cx - 25, $cy + 35, $cx + 35, $cy];
+            imagefilledpolygon($canvas, $tri, $darkInner);
+
+            $this->drawCentered($canvas, 'APS DREAM HOMES', 4, 120, $gold, $W);
+
+            $title = mb_substr($data['title'] ?? $data['property_type'] ?? 'Property Video', 0, 50);
+            $this->drawCentered($canvas, $title, 5, 560, $white, $W);
+
+            if (!empty($data['price'])) {
+                $this->drawCentered($canvas, mb_substr($data['price'], 0, 40), 5, 640, $gold, $W);
+            }
+            if (!empty($data['location'])) {
+                $this->drawCentered($canvas, mb_substr($data['location'], 0, 60), 4, 720, $white, $W);
+            }
+
+            $name = mb_substr($branding['display_name'] ?? '', 0, 45);
+            $phone = mb_substr($branding['phone'] ?? '', 0, 25);
+            if ($name || $phone) {
+                $this->drawCentered($canvas, trim($name . ' | ' . $phone, ' |'), 4, 880, $gold, $W);
+            }
+            $this->drawCentered($canvas, 'Video dekho + share karo', 3, 950, $white, $W);
+
+            $outputDir = $this->getOutputDir();
+            $filename = 'videocover_' . time() . '_' . bin2hex(random_bytes(4)) . '.jpg';
+            $outputPath = $outputDir . '/' . $filename;
+            imagejpeg($canvas, $outputPath, 88);
+            imagedestroy($canvas);
+
+            return ['success' => true, 'path' => $outputPath, 'url' => $this->pathToUrl($outputPath), 'filename' => $filename];
+        } catch (\Throwable $e) {
+            error_log("MarketingToolkit::makeVideoCover: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Cover failed'];
+        }
+    }
+
+    /**
+     * Caption text for video posts.
+     */
+    public function makeVideoCaption(array $data, array $branding): string
+    {
+        $lines = [];
+        $lines[] = '🎬 ' . ($data['title'] ?? ($data['property_type'] ?? 'Property') . ' Video');
+        if (!empty($data['price'])) $lines[] = "💰 {$data['price']}";
+        if (!empty($data['location'])) $lines[] = "📍 {$data['location']}";
+        if (!empty($data['offer'])) $lines[] = "🎁 {$data['offer']}";
+        $lines[] = '';
+        $lines[] = 'APS Dream Home, Gorakhpur';
+        if (!empty($branding['display_name']) || !empty($branding['phone'])) {
+            $lines[] = "📞 {$branding['display_name']} - {$branding['phone']}";
+        } else {
+            $lines[] = '📞 +91 73092 68077';
+        }
+        $lines[] = '#APSDreamHome #GorakhpurPlots #RealEstate';
+        return implode("\n", $lines);
+    }
+
+    /* ── V4: Deep Links (user ke phone se — no TRAI/API issue) ── */
+
+    /**
+     * SMS deep link — opens user's own SMS app with pre-filled text.
+     * Uses user's own SMS quota (roz ke 300 free SMS). No server SMS, no TRAI block
+     * because the USER sends from THEIR phone, not our gateway.
+     */
+    public function getSmsShareLink(string $message, string $phone = ''): string
+    {
+        $base = 'sms:' . ($phone ? preg_replace('/[^0-9+]/', '', $phone) : '');
+        // iOS uses &body, Android uses ?body — ?body works on both modern versions
+        return $base . '?body=' . urlencode($message);
+    }
+
+    /**
+     * Email deep link — opens user's email app.
+     */
+    public function getEmailShareLink(string $subject, string $body, string $to = ''): string
+    {
+        return 'mailto:' . $to . '?subject=' . urlencode($subject) . '&body=' . urlencode($body);
+    }
+
+    /**
+     * Instagram app-open link. (No auto-post API — user uploads manually.)
+     * Returns profile/app link; image must be downloaded first.
+     */
+    public function getInstagramLink(): string
+    {
+        return 'https://www.instagram.com/';
+    }
+
+    /**
+     * Facebook app-open link.
+     */
+    public function getFacebookLink(): string
+    {
+        return 'https://www.facebook.com/';
+    }
+
+    /**
+     * Get all share links for a message at once (for dashboard widgets).
+     */
+    public function getAllShareLinks(string $message, string $phone = ''): array
+    {
+        return [
+            'whatsapp' => $this->getWhatsAppShareLink($message, $phone),
+            'sms' => $this->getSmsShareLink($message, $phone),
+            'email' => $this->getEmailShareLink('APS Dream Home - Property', $message),
+            'instagram' => $this->getInstagramLink(),
+            'facebook' => $this->getFacebookLink(),
+            'call' => $phone ? 'tel:' . preg_replace('/[^0-9+]/', '', $phone) : 'tel:+917309268077',
+        ];
+    }
+
+    /* ── V4: Copy-Paste Text Templates ── */
+
+    /**
+     * Ready text templates (Hindi+English) for copy-paste into SMS/WhatsApp.
+     */
+    public function getTextTemplates(string $category = ''): array
+    {
+        $all = [
+            'new_launch' => [
+                'category' => 'launch', 'name' => 'New Launch',
+                'text' => "🏡 NEW LAUNCH!\nAPS Dream Home lekar aaya hai {location} me shandaar {property}!\n💰 Price: {price}\n📐 Size: {size}\n📞 {name} - {phone}\n✅ 0% EMI | ✅ Turant Registry",
+            ],
+            'price_drop' => [
+                'category' => 'offer', 'name' => 'Price Drop',
+                'text' => "📉 PRICE DROP ALERT!\n{property}, {location}\nPehle: {old_price} → Ab sirf: {price}\nJaldi karein, limited plots!\n📞 {name} - {phone}",
+            ],
+            'emi_reminder' => [
+                'category' => 'offer', 'name' => 'EMI Offer',
+                'text' => "💳 0% BYAAJ EMI!\n{property} sirf {emi}/mahine me!\n50% jama karke turant kabza paayein.\n📞 {name} - {phone}\nAPS Dream Home, Gorakhpur",
+            ],
+            'site_visit' => [
+                'category' => 'invite', 'name' => 'Site Visit Invite',
+                'text' => "🚗 FREE SITE VISIT!\n{property}, {location} dekhne aaiye.\nFree pick-up & drop suvidha.\nDate fix karein: 📞 {name} - {phone}",
+            ],
+            'festival' => [
+                'category' => 'festival', 'name' => 'Festival Wish + Offer',
+                'text' => "🪔 {festival} ki shubhkamnayein!\nIs tyohar apna plot book karein — {offer}\n{property}, {location} | {price}\n📞 {name} - {phone}",
+            ],
+            'followup' => [
+                'category' => 'followup', 'name' => 'Follow-up Nudge',
+                'text' => "Namaste! 🙏\nAapne {property} dekha tha. Koi sawal ho to poochiye.\nAbhi {offer} chal raha hai — jaldi fayda uthayein!\n📞 {name} - {phone}",
+            ],
+            'sold_fomo' => [
+                'category' => 'status', 'name' => 'Sold FOMO',
+                'text' => "🔥 {location} me {sold_count} plots SOLD!\nSirf kuch bache hain. Aaj hi book karein!\n📞 {name} - {phone}\nAPS Dream Home",
+            ],
+            'referral' => [
+                'category' => 'referral', 'name' => 'Refer & Earn',
+                'text' => "💰 Dost ko plot dilao, commission pao!\nMere link se join karo: {link}\nDono ko fayda — tumko discount, mujhe reward!\n📞 {name} - {phone}",
+            ],
+        ];
+
+        if ($category !== '') {
+            return array_filter($all, fn($t) => $t['category'] === $category);
+        }
+        return $all;
+    }
+
+    /**
+     * Fill template placeholders with branding + data.
+     */
+    public function fillTemplate(string $templateKey, array $data, array $branding): string
+    {
+        $templates = $this->getTextTemplates();
+        if (!isset($templates[$templateKey])) return '';
+
+        $text = $templates[$templateKey]['text'];
+        $replace = [
+            '{name}' => $branding['display_name'] ?? '',
+            '{phone}' => $branding['phone'] ?? '+91 73092 68077',
+            '{location}' => $data['location'] ?? 'Gorakhpur',
+            '{property}' => $data['property'] ?? $data['property_type'] ?? 'Plot',
+            '{price}' => $data['price'] ?? '',
+            '{offer}' => $data['offer'] ?? '',
+            '{size}' => $data['size'] ?? $data['size_sqft'] ?? '',
+            '{emi}' => $data['emi'] ?? '',
+            '{old_price}' => $data['old_price'] ?? '',
+            '{festival}' => $data['festival'] ?? 'Diwali',
+            '{sold_count}' => $data['sold_count'] ?? '',
+            '{link}' => $data['link'] ?? ((defined('BASE_URL') ? BASE_URL : '') . '/register'),
+        ];
+        return str_replace(array_keys($replace), array_values($replace), $text);
+    }
+
+    /**
+     * 1-click morning post: auto-render Good Morning template with branding.
+     */
+    public function makeMorningPost(array $branding): array
+    {
+        // Find good-morning template, fallback to greeting render
+        try {
+            $stmt = $this->pdo->prepare("SELECT * FROM marketing_templates WHERE slug = 'good-morning' AND is_active = 1 LIMIT 1");
+            $stmt->execute();
+            $tpl = $stmt->fetch(\PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            $tpl = null;
+        }
+
+        if ($tpl) {
+            return $this->renderTemplate('good-morning', null, [], $branding);
+        }
+
+        // Fallback: generate festival-style greeting
+        $branding['display_name'] = $branding['display_name'] ?? 'APS Dream Home';
+        return $this->generateFestivalPost('newyear', $branding);
+    }
+
     /* ── Helpers ── */
 
     private function loadImage(string $path)

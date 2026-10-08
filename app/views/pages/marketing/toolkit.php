@@ -286,6 +286,79 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         </div>
     </div>
 
+    <!-- V4 Tools Row -->
+    <div class="row g-4 mt-1">
+        <!-- 10. Video Pack -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-video me-2 text-danger"></i>10. Video Share Pack</h5></div>
+                <div class="card-body">
+                    <p class="text-muted small">Apna video upload karo (Gemini/mobile se bana hua) → branded cover + caption milega → download karke post karo.</p>
+                    <form id="videoForm" enctype="multipart/form-data">
+                        <div class="mb-2"><input type="file" class="form-control" name="video" accept="video/*" required><small class="text-muted">mp4/mov, max 100MB</small></div>
+                        <div class="mb-2"><input type="text" class="form-control" name="title" placeholder="Video title"></div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6"><input type="text" class="form-control" name="price" placeholder="Price"></div>
+                            <div class="col-6"><input type="text" class="form-control" name="location" placeholder="Location"></div>
+                        </div>
+                        <button type="submit" class="btn btn-danger w-100"><i class="fas fa-clapperboard me-2"></i>Make Pack</button>
+                    </form>
+                    <div id="videoResult" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+        <!-- 11. Copy-Paste Text Templates -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-clipboard-list me-2 text-info"></i>11. Ready SMS Text</h5></div>
+                <div class="card-body">
+                    <p class="text-muted small">Template chuno → tumhara naam/number auto → <strong>Copy</strong> karke SMS/WhatsApp me paste karo. Tumhare phone ke 300 free SMS kaam aayenge — <strong>koi TRAI block nahi</strong> (tum khud bhej rahe ho).</p>
+                    <div class="mb-2">
+                        <select class="form-select" id="textTplSelect">
+                            <option value="new_launch">New Launch</option>
+                            <option value="price_drop">Price Drop</option>
+                            <option value="emi_reminder">EMI Offer</option>
+                            <option value="site_visit">Site Visit Invite</option>
+                            <option value="festival">Festival Wish</option>
+                            <option value="followup">Follow-up Nudge</option>
+                            <option value="sold_fomo">Sold FOMO</option>
+                            <option value="referral">Refer & Earn</option>
+                        </select>
+                    </div>
+                    <div class="mb-3"><input type="text" class="form-control" id="textTplPrice" placeholder="Price (optional)"></div>
+                    <button class="btn btn-info w-100 text-white" onclick="fillTextTpl()"><i class="fas fa-fill-drip me-2"></i>Fill + Copy</button>
+                    <div id="textTplResult" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+        <!-- 12. Morning Post -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100" style="border:2px solid #FACC15 !important">
+                <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-sun me-2 text-warning"></i>12. Aaj Ka Post (1-Click)</h5></div>
+                <div class="card-body text-center">
+                    <p class="text-muted small">Roz subah ek click → Good Morning post tumhari branding ke saath taiyaar → status lagao.</p>
+                    <div class="display-6 mb-2">🌅</div>
+                    <button class="btn btn-warning btn-lg w-100" onclick="morningPost()"><i class="fas fa-bolt me-2"></i>Aaj Ka Post Banao</button>
+                    <div id="morningResult" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share explainer -->
+    <div class="card border-0 shadow-sm mt-4">
+        <div class="card-body">
+            <h6><i class="fas fa-share-nodes me-2 text-primary"></i>Share kaise karein (non-technical ke liye)</h6>
+            <div class="row g-2 mt-2">
+                <div class="col-md-3"><a class="btn btn-success btn-sm w-100" href="#" onclick="return false"><i class="fab fa-whatsapp me-1"></i>WhatsApp: button dabao → chat chuno → bhejo</a></div>
+                <div class="col-md-3"><a class="btn btn-outline-success btn-sm w-100" href="sms:?body=APS%20Dream%20Home"><i class="fas fa-sms me-1"></i>SMS: tumhare phone se jayega</a></div>
+                <div class="col-md-3"><a class="btn btn-outline-dark btn-sm w-100" href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram me-1"></i>Instagram: download → app kholo → post</a></div>
+                <div class="col-md-3"><a class="btn btn-outline-primary btn-sm w-100" href="https://www.facebook.com/" target="_blank"><i class="fab fa-facebook me-1"></i>Facebook: download → post</a></div>
+            </div>
+            <small class="text-muted d-block mt-2">SMS tumhare phone ke 300 roz free SMS se jayega — server se nahi, isliye TRAI block nahi karega. Instagram/FB me direct auto-post ke liye Meta approval chahiye (hafte lagte hain) — isliye download + manual post, 30 second ka kaam.</small>
+        </div>
+    </div>
+
     <div class="alert alert-info mt-4">
         <strong><i class="fas fa-share-alt me-1"></i>WhatsApp / Instagram par kaise share karein?</strong>
         <ol class="mb-0 mt-2">
@@ -459,5 +532,61 @@ $base = defined('BASE_URL') ? BASE_URL : '';
     submitJson('festivalForm', 'festivalResult', '/marketing/festival', 'Creating...');
     submitJson('qrForm', 'qrResult', '/marketing/qr', 'Generating QR...');
     submitJson('vcardForm', 'vcardResult', '/marketing/visiting-card', 'Creating card...');
+    submitMultipart('videoForm', 'videoResult', '/marketing/video-pack', 'Uploading video...');
+
+    // Text template fill + copy
+    window.fillTextTpl = async function() {
+        const el = document.getElementById('textTplResult');
+        el.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Filling...</div>';
+        try {
+            const resp = await fetch(base + '/marketing/fill-template', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    template: document.getElementById('textTplSelect').value,
+                    price: document.getElementById('textTplPrice').value
+                })
+            });
+            const r = await resp.json();
+            if (!r.success) {
+                el.innerHTML = '<div class="alert alert-danger">' + escapeHtml(r.message) + '</div>';
+                return;
+            }
+            let html = '<div class="card"><div class="card-body">';
+            html += '<p class="small" style="white-space:pre-wrap">' + escapeHtml(r.text) + '</p>';
+            html += '<div class="d-flex gap-1 flex-wrap">';
+            html += '<button class="btn btn-sm btn-outline-primary" onclick="copyTplText(this)">Copy</button>';
+            if (r.links) {
+                if (r.links.whatsapp) html += '<a href="' + escapeHtml(r.links.whatsapp) + '" target="_blank" class="btn btn-success btn-sm">WhatsApp</a>';
+                if (r.links.sms) html += '<a href="' + escapeHtml(r.links.sms) + '" class="btn btn-outline-success btn-sm">SMS</a>';
+                if (r.links.email) html += '<a href="' + escapeHtml(r.links.email) + '" class="btn btn-outline-secondary btn-sm">Email</a>';
+                html += '<a href="https://www.instagram.com/" target="_blank" class="btn btn-outline-dark btn-sm">Instagram</a>';
+            }
+            html += '</div><div style="display:none" class="tpl-text">' + escapeHtml(r.text) + '</div>';
+            html += '</div></div>';
+            el.innerHTML = html;
+        } catch (err) {
+            el.innerHTML = '<div class="alert alert-danger">Network error</div>';
+        }
+    };
+
+    window.copyTplText = function(btn) {
+        const text = btn.closest('.card-body').querySelector('.tpl-text').textContent;
+        navigator.clipboard.writeText(text).then(() => {
+            btn.textContent = 'Copied!';
+            setTimeout(() => btn.textContent = 'Copy', 2000);
+        });
+    };
+
+    // Morning post
+    window.morningPost = async function() {
+        const el = document.getElementById('morningResult');
+        el.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Bana rahe hain...</div>';
+        try {
+            const resp = await fetch(base + '/marketing/morning-post', { method: 'POST' });
+            showResult('morningResult', await resp.json());
+        } catch (err) {
+            el.innerHTML = '<div class="alert alert-danger">Network error</div>';
+        }
+    };
 })();
 </script>

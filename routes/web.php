@@ -658,6 +658,12 @@ $router->get('/marketing/templates', 'Front\\MarketingToolkitController@template
 $router->get('/marketing/templates/list', 'Front\\MarketingToolkitController@listTemplates');
 $router->post('/marketing/template/render', 'Front\\MarketingToolkitController@renderTemplate');
 $router->post('/marketing/template/save', 'Front\\MarketingToolkitController@saveTemplate');
+// V4: video pack, deep links, text templates, morning post
+$router->post('/marketing/video-pack', 'Front\\MarketingToolkitController@videoPack');
+$router->post('/marketing/share-links', 'Front\\MarketingToolkitController@shareLinks');
+$router->get('/marketing/text-templates', 'Front\\MarketingToolkitController@textTemplates');
+$router->post('/marketing/fill-template', 'Front\\MarketingToolkitController@fillTemplate');
+$router->post('/marketing/morning-post', 'Front\\MarketingToolkitController@morningPost');
 
 $router->get('/admin/saved-searches', 'App\\Http\\Controllers\\Admin\\SavedSearchController@index');
 $router->post('/admin/saved-searches/store', 'App\\Http\\Controllers\\Admin\\SavedSearchController@store');

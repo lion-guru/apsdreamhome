@@ -470,6 +470,116 @@ class MarketingToolkitController extends BaseController
     }
 
     /**
+     * Video share pack: upload video → branded cover + caption (POST, multipart)
+     */
+    public function videoPack()
+    {
+        $this->requireLogin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 400);
+        }
+        if (empty($_FILES['video']) || $_FILES['video']['error'] !== UPLOAD_ERR_OK) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Please upload a video (mp4/mov)'], 400);
+        }
+        if ($_FILES['video']['size'] > 100 * 1024 * 1024) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Video must be under 100MB'], 400);
+        }
+        $branding = $this->toolkit->getBranding((int)$_SESSION['user_id']);
+        $data = [
+            'title' => trim($_POST['title'] ?? ''),
+            'property_type' => trim($_POST['property_type'] ?? 'Property'),
+            'price' => trim($_POST['price'] ?? ''),
+            'location' => trim($_POST['location'] ?? ''),
+            'offer' => trim($_POST['offer'] ?? ''),
+        ];
+        $result = $this->toolkit->makeVideoPack($_FILES['video']['tmp_name'], $_FILES['video']['name'], $data, $branding);
+        if ($result['success']) {
+            $result['sms_share'] = $this->toolkit->getSmsShareLink($result['caption'] ?? '');
+        }
+        return $this->jsonResponse($result, $result['success'] ? 200 : 500);
+    }
+
+    /**
+     * Get all share deep-links for a message (POST)
+     * Returns: whatsapp, sms, email, instagram, facebook, call
+     */
+    public function shareLinks()
+    {
+        $this->requireLogin();
+        $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+        $message = trim($input['message'] ?? '');
+        if ($message === '') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Message required'], 400);
+        }
+        $branding = $this->toolkit->getBranding((int)$_SESSION['user_id']);
+        $phone = trim($input['phone'] ?? $branding['phone'] ?? '');
+        return $this->jsonResponse(['success' => true, 'links' => $this->toolkit->getAllShareLinks($message, $phone)]);
+    }
+
+    /**
+     * List copy-paste text templates (GET)
+     */
+    public function textTemplates()
+    {
+        $this->requireLogin();
+        $category = $_GET['category'] ?? '';
+        return $this->jsonResponse(['success' => true, 'data' => array_values($this->toolkit->getTextTemplates($category))]);
+    }
+
+    /**
+     * Fill a text template with branding + data (POST)
+     */
+    public function fillTemplate()
+    {
+        $this->requireLogin();
+        $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+        $key = trim($input['template'] ?? '');
+        if ($key === '') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Template required'], 400);
+        }
+        $branding = $this->toolkit->getBranding((int)$_SESSION['user_id']);
+        // Add referral link for referral template
+        $link = (defined('BASE_URL') ? BASE_URL : '') . '/register';
+        try {
+            $stmt = $this->db->prepare("SELECT referral_code FROM users WHERE id = ? LIMIT 1");
+            $stmt->execute([(int)$_SESSION['user_id']]);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if (!empty($row['referral_code'])) $link .= '?ref=' . urlencode($row['referral_code']);
+        } catch (\Throwable $e) {
+            // ignore
+        }
+        $data = $input;
+        $data['link'] = $link;
+        $text = $this->toolkit->fillTemplate($key, $data, $branding);
+        if ($text === '') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Unknown template'], 400);
+        }
+        return $this->jsonResponse([
+            'success' => true, 'text' => $text,
+            'links' => $this->toolkit->getAllShareLinks($text, $branding['phone'] ?? ''),
+        ]);
+    }
+
+    /**
+     * 1-click morning post (POST) — auto-render with branding
+     */
+    public function morningPost()
+    {
+        $this->requireLogin();
+        $branding = $this->toolkit->getBranding((int)$_SESSION['user_id']);
+        try {
+            $stmt = $this->db->prepare("SELECT referral_code FROM users WHERE id = ? LIMIT 1");
+            $stmt->execute([(int)$_SESSION['user_id']]);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            $branding['referral_code'] = $row['referral_code'] ?? '';
+        } catch (\Throwable $e) {
+            $branding['referral_code'] = '';
+        }
+        $result = $this->toolkit->makeMorningPost($branding);
+        return $this->jsonResponse($result, $result['success'] ? 200 : 500);
+    }
+
+    /**
      * Admin: save template (POST, admin only)
      */
     public function saveTemplate()
