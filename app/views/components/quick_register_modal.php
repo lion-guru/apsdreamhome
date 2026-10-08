@@ -60,7 +60,12 @@
                         </div>
                         <small class="text-muted"><?= __('component_get_referral_small', 'Get referral code if you want to join as Associate/Agent') ?></small>
                     </div>
-                    
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold"><?= __('component_security_code', 'Security Code') ?> *</label>
+                        <?php echo \App\Helpers\SimpleCaptcha::renderField("Enter Security Code"); ?>
+                    </div>
+
                     <button type="button" class="btn btn-primary w-100 py-3 fw-bold" onclick="submitQuickRegister()">
                         <i class="fas fa-check-circle me-2"></i><?= __('component_register_now', 'Register Now') ?>
                     </button>
@@ -243,12 +248,20 @@ function submitQuickRegister() {
     const errBox = document.getElementById('qrError');
     if (errBox) errBox.style.display = 'none';
 
+    const captchaInput = document.querySelector('#quickRegisterForm input[name="captcha_code"]');
+    const captchaCode = captchaInput ? captchaInput.value.trim() : '';
+    if (!captchaCode) {
+        qrShowError('Please enter the security code');
+        return;
+    }
+
     const formData = new FormData();
     formData.append('name', name);
     formData.append('email', email);
     formData.append('phone', phone);
     formData.append('referral_code', referralCode);
     formData.append('role', role);
+    formData.append('captcha_code', captchaCode);
     formData.append('csrf_token', qrCsrfToken());
 
     fetch((window.BASE_URL || '<?= BASE_URL ?>') + '/auth/quick-register', {

@@ -2,6 +2,19 @@
 # APS Dream Home - Git Pre-commit Hook
 # Runs PHP syntax check on changed .php files
 
+# Block live secrets FIRST (before any early exit): .env files must never be
+# committed (even with -f). .gitignore already lists them; this is the second
+# layer after the .env.production incident (live Google/OpenRouter keys
+# nearly pushed).
+blocked_env=$(git diff --cached --name-only --diff-filter=ACM | grep -E '(^|/)\.env($|\.)' | grep -v '\.example$' || true)
+if [ -n "$blocked_env" ]; then
+    echo "❌ Commit blocked: live env files must never be committed:"
+    echo "$blocked_env"
+    echo "Remove them from the commit (git reset HEAD -- <file>) and try again."
+    exit 1
+fi
+echo "✅ No live env files staged"
+
 echo "🔍 Running PHP syntax check..."
 
 # Get list of changed PHP files

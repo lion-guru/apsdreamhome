@@ -66,6 +66,10 @@ private function getTenantSql(): array
     {
         @session_start();
 
+        // Rate limiting: 5 quick-registrations per minute per IP (fake-reg flood protection)
+        require_once __DIR__ . '/../../../Middleware/RateLimiter.php';
+        \App\Middleware\RateLimiter::check('quick_register_' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'), 5, 60);
+
         $name = trim($_POST['name'] ?? '');
         $email = trim($_POST['email'] ?? '');
         $phone = $this->normalizePhone($_POST['phone'] ?? '');
@@ -80,6 +84,13 @@ private function getTenantSql(): array
             }
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $this->quickJson(['success' => false, 'message' => 'Please enter a valid email address']);
+            }
+
+            // CAPTCHA validation (quick modal is anonymous — must match main register)
+            $captcha_code = trim($_POST['captcha_code'] ?? '');
+            require_once __DIR__ . '/../../../Helpers/SimpleCaptcha.php';
+            if (empty($captcha_code) || !\SimpleCaptcha::validate($captcha_code)) {
+                $this->quickJson(['success' => false, 'message' => 'Invalid or expired security code. Please try again.']);
             }
 
             if ($role === 'employee' || $role === 'telecaller') {
@@ -147,7 +158,11 @@ private function getTenantSql(): array
             
             $this->db->insert('users', $userData);
 
-            $newUserId = $this->db->fetchOne("SELECT id FROM users WHERE email = ?" . $tSql . " LIMIT 1", array_merge([$email], $tParams))['id'];
+            $newUserRow = $this->db->fetchOne("SELECT id FROM users WHERE email = ?" . $tSql . " LIMIT 1", array_merge([$email], $tParams));
+            if (empty($newUserRow) || empty($newUserRow['id'])) {
+                throw new \Exception('Account record not found after insert.');
+            }
+            $newUserId = (int)$newUserRow['id'];
 
             // Create wallet entry
             $this->db->insert('wallet_points', array_merge([
@@ -244,6 +259,10 @@ private function getTenantSql(): array
     {
         @session_start();
 
+        // Throttle: enumeration protection — 10 lookups per minute per IP
+        require_once __DIR__ . '/../../../Middleware/RateLimiter.php';
+        \App\Middleware\RateLimiter::check('referral_lookup_' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'), 10, 60);
+
         $identifier = $_POST['email'] ?? $_POST['phone'] ?? '';
 
         try {
@@ -291,6 +310,10 @@ private function getTenantSql(): array
             echo json_encode(['success' => false, 'message' => 'Authentication required']);
             exit;
         }
+
+        // Throttle: minting endpoint — 10 calls per minute per user
+        require_once __DIR__ . '/../../../Middleware/RateLimiter.php';
+        \App\Middleware\RateLimiter::check('auto_gen_user_' . (int)$_SESSION['user_id'], 10, 60);
 
         $name = $_POST['name'] ?? '';
         $email = $_POST['email'] ?? '';
