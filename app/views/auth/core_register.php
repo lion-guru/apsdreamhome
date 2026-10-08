@@ -172,6 +172,14 @@ $selectedRole = $selectedRole ?? 'customer';
         .terms-row a { color: #f59e0b; text-decoration: none; }
         .terms-row a:hover { text-decoration: underline; }
 
+        .benefits-strip{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+        .benefit-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:#0f172a;border:1px solid #334155;border-radius:999px;font-size:12px;color:#cbd5e1}
+        .benefit-chip i{color:#f59e0b;font-size:11px}
+        .benefit-chip.highlight{background:rgba(13,148,136,.12);border-color:rgba(13,148,136,.4);color:#5eead4}
+        .benefit-chip.highlight i{color:#5eead4}
+        .trust-strip{display:flex;justify-content:center;flex-wrap:wrap;gap:16px;margin-top:18px;padding-top:16px;border-top:1px solid #334155;font-size:12px;color:#64748b}
+        .trust-strip i{color:#0d9488;margin-right:4px}
+
         .social-divider{display:flex;align-items:center;margin:0 0 16px}
         .social-divider::before,.social-divider::after{content:'';flex:1;height:1px;background:#334155}
         .social-divider span{padding:0 12px;font-size:11px;color:#64748b;font-weight:600;letter-spacing:1px}
@@ -239,6 +247,8 @@ $selectedRole = $selectedRole ?? 'customer';
                     <?php endforeach; ?>
                 </div>
 
+                <div class="benefits-strip" id="benefitsStrip"></div>
+
                 <div class="social-buttons">
                     <a href="<?= $base ?>/auth/google" class="social-btn google">
                         <i class="fab fa-google"></i> Google
@@ -274,6 +284,29 @@ $selectedRole = $selectedRole ?? 'customer';
                             <i class="fas fa-phone field-icon"></i>
                         </div>
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-map-marker-alt"></i> Location <span class="text-muted" style="font-weight:400">(optional — helps us show nearby properties)</span></label>
+                    <div class="form-row" style="grid-template-columns:1fr 1fr 1fr">
+                        <div class="input-wrap">
+                            <input type="text" name="pincode" id="reg_pincode" value="<?= htmlspecialchars($old['pincode'] ?? '') ?>" placeholder="Pincode" maxlength="6" inputmode="numeric">
+                            <i class="fas fa-thumbtack field-icon"></i>
+                        </div>
+                        <div class="input-wrap">
+                            <input type="text" name="city" id="reg_city" value="<?= htmlspecialchars($old['city'] ?? '') ?>" placeholder="City">
+                            <i class="fas fa-city field-icon"></i>
+                        </div>
+                        <div class="input-wrap">
+                            <input type="text" name="state" id="reg_state" value="<?= htmlspecialchars($old['state'] ?? '') ?>" placeholder="State">
+                            <i class="fas fa-flag field-icon"></i>
+                        </div>
+                    </div>
+                    <div class="input-wrap" style="margin-top:12px">
+                        <input type="text" name="address" id="reg_address" value="<?= htmlspecialchars($old['address'] ?? '') ?>" placeholder="House/Street, Area">
+                        <i class="fas fa-home field-icon"></i>
+                    </div>
+                    <div class="password-hint" id="pinHint"></div>
                 </div>
 
                 <div class="form-group">
@@ -334,6 +367,13 @@ $selectedRole = $selectedRole ?? 'customer';
                 </button>
             </form>
 
+            <div class="trust-strip">
+                <span><i class="fas fa-shield-halved"></i>256-bit SSL</span>
+                <span><i class="fas fa-lock"></i>Encrypted</span>
+                <span><i class="fas fa-check-circle"></i>RERA Approved</span>
+                <span><i class="fas fa-users"></i>5,000+ Members</span>
+            </div>
+
 <div class="login-link">
                 Already have an account? <a href="<?= $base ?>/auth/login">Login</a>
             </div>
@@ -371,6 +411,36 @@ document.getElementById('selectedRole').value = role;
             }
             var agentGroup = document.getElementById('agentTypeGroup');
             if (agentGroup) agentGroup.style.display = (role === 'agent') ? 'block' : 'none';
+            renderBenefits(role);
+        }
+
+        // Per-role benefit chips (mirrors standalone associate/agent selling points)
+        var roleBenefits = {
+            customer: [
+                { icon: 'fas fa-shield-halved', text: 'RERA Approved', highlight: true },
+                { icon: 'fas fa-percent', text: 'EMI from ₹8,333/mo' },
+                { icon: 'fas fa-gift', text: 'Refer & Earn Points' },
+                { icon: 'fas fa-map-marker-alt', text: '200+ Plots Available' }
+            ],
+            associate: [
+                { icon: 'fas fa-money-bill-wave', text: 'Up to 20% Commission', highlight: true },
+                { icon: 'fas fa-layer-group', text: '4 Revenue Streams' },
+                { icon: 'fas fa-sitemap', text: 'Binary Network Tree' },
+                { icon: 'fas fa-crown', text: 'Royalty Pool Access' }
+            ],
+            agent: [
+                { icon: 'fas fa-coins', text: 'Up to 5% Commission', highlight: true },
+                { icon: 'fas fa-chart-line', text: 'Monthly Bonuses' },
+                { icon: 'fas fa-users', text: 'Build Your Team' },
+                { icon: 'fas fa-graduation-cap', text: 'Free Training' }
+            ]
+        };
+        function renderBenefits(role) {
+            var strip = document.getElementById('benefitsStrip');
+            if (!strip || !roleBenefits[role]) return;
+            strip.innerHTML = roleBenefits[role].map(function(b) {
+                return '<span class="benefit-chip' + (b.highlight ? ' highlight' : '') + '"><i class="' + b.icon + '"></i>' + b.text + '</span>';
+            }).join('');
         }
 
         // Sync referral UI with server-preselected role (?role=... deep links)
@@ -379,7 +449,40 @@ document.getElementById('selectedRole').value = role;
             var role = hidden ? hidden.value : 'customer';
             var card = document.querySelector('.role-card[data-role="' + role + '"]');
             if (card) selectRole(card, role);
+            else renderBenefits(role);
         });
+
+        // Pincode → city/state autofill (fills only empty fields so user edits win)
+        (function() {
+            var pinInput = document.getElementById('reg_pincode');
+            var cityInput = document.getElementById('reg_city');
+            var stateInput = document.getElementById('reg_state');
+            var pinHint = document.getElementById('pinHint');
+            if (!pinInput) return;
+            var pinTimer = null;
+            pinInput.addEventListener('input', function() {
+                this.value = this.value.replace(/\D/g, '').slice(0, 6);
+                clearTimeout(pinTimer);
+                if (pinHint) pinHint.textContent = '';
+                if (this.value.length !== 6) return;
+                var pin = this.value;
+                pinTimer = setTimeout(function() {
+                    fetch('<?= $base ?>/api/locations/pincode/' + encodeURIComponent(pin))
+                        .then(function(r) { return r.json(); })
+                        .then(function(d) {
+                            if (d && d.found) {
+                                if (cityInput && !cityInput.value && d.city) cityInput.value = d.city;
+                                if (stateInput && !stateInput.value && d.state) stateInput.value = d.state;
+                                if (pinHint) { pinHint.textContent = 'Location detected' + (d.area ? ': ' + d.area : ''); pinHint.style.color = '#22c55e'; }
+                            } else if (pinHint) {
+                                pinHint.textContent = 'Pincode not found — please enter city/state manually';
+                                pinHint.style.color = '#f59e0b';
+                            }
+                        })
+                        .catch(function() {});
+                }, 500);
+            });
+        })();
 
         // Password Toggle
         function togglePwd(fieldId) {
