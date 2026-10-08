@@ -52,8 +52,21 @@ class WalletService
         }
     }
 
+    private const VALID_CATEGORIES = ['referral', 'commission', 'bonus', 'emi_transfer', 'withdrawal', 'adjustment'];
+
     public function credit(int $userId, float $amount, string $category, string $description, ?int $referenceId = null, string $referenceType = 'user'): bool
     {
+        // Fail closed BEFORE any DB write: non-positive amounts and unknown
+        // categories must never move money (ledger ENUM would throw after the
+        // balance UPDATE, leaving money without a ledger row).
+        if ($amount <= 0) {
+            error_log("WalletService::credit rejected: non-positive amount {$amount} for user {$userId}");
+            return false;
+        }
+        if (!in_array($category, self::VALID_CATEGORIES, true)) {
+            error_log("WalletService::credit rejected: invalid category '{$category}' for user {$userId}");
+            return false;
+        }
         try {
             $wallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1" . $this->tenantSql(), array_merge([$userId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
             if (!$wallet) {
@@ -64,27 +77,34 @@ class WalletService
             $newBalance = (float)$wallet['points_balance'] + $amount;
             $newTotalEarned = (float)$wallet['total_earned'] + $amount;
             $field = $category === 'referral' ? 'referral_earnings' : ($category === 'commission' ? 'commission_earnings' : 'bonus_earnings');
-            $this->db->query(
-                "UPDATE wallet_points SET points_balance = ?, total_earned = ?, {$field} = {$field} + ?, updated_at = NOW() WHERE user_id = ?" . $this->tenantSql(),
-                array_merge([$newBalance, $newTotalEarned, $amount, $userId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
-            );
-            $txn = array_merge([
-                'user_id' => $userId,
-                'transaction_type' => 'credit',
-                'transaction_category' => $category,
-                'amount' => $amount,
-                'balance_before' => $wallet['points_balance'],
-                'balance_after' => $newBalance,
-                'description' => $description,
-                'status' => 'completed',
-                'created_at' => date('Y-m-d H:i:s')
-            ], $this->tenantInsertData());
-            if ($referenceId) {
-                $txn['reference_id'] = $referenceId;
-                $txn['reference_type'] = $referenceType;
-                $txn['related_user_id'] = $referenceId;
+            $this->db->beginTransaction();
+            try {
+                $this->db->query(
+                    "UPDATE wallet_points SET points_balance = ?, total_earned = ?, {$field} = {$field} + ?, updated_at = NOW() WHERE user_id = ?" . $this->tenantSql(),
+                    array_merge([$newBalance, $newTotalEarned, $amount, $userId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
+                );
+                $txn = array_merge([
+                    'user_id' => $userId,
+                    'transaction_type' => 'credit',
+                    'transaction_category' => $category,
+                    'amount' => $amount,
+                    'balance_before' => $wallet['points_balance'],
+                    'balance_after' => $newBalance,
+                    'description' => $description,
+                    'status' => 'completed',
+                    'created_at' => date('Y-m-d H:i:s')
+                ], $this->tenantInsertData());
+                if ($referenceId) {
+                    $txn['reference_id'] = $referenceId;
+                    $txn['reference_type'] = $referenceType;
+                    $txn['related_user_id'] = $referenceId;
+                }
+                $this->db->insert('wallet_transactions', $txn);
+                $this->db->commit();
+            } catch (\Throwable $e) {
+                $this->db->rollBack();
+                throw $e;
             }
-            $this->db->insert('wallet_transactions', $txn);
             return true;
         } catch (\Exception $e) {
             error_log("WalletService::credit error: " . $e->getMessage());
@@ -94,26 +114,44 @@ class WalletService
 
     public function debit(int $userId, float $amount, string $description, string $category = 'withdrawal'): bool
     {
+        // Fail closed: negative/zero amounts would ADD money (balance check
+        // passes since balance < negative is false); unknown categories would
+        // throw on the ledger ENUM after the balance UPDATE.
+        if ($amount <= 0) {
+            error_log("WalletService::debit rejected: non-positive amount {$amount} for user {$userId}");
+            return false;
+        }
+        if (!in_array($category, self::VALID_CATEGORIES, true)) {
+            error_log("WalletService::debit rejected: invalid category '{$category}' for user {$userId}");
+            return false;
+        }
         try {
             $wallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1" . $this->tenantSql(), array_merge([$userId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
             if (!$wallet || (float)$wallet['points_balance'] < $amount) return false;
             $newBalance = (float)$wallet['points_balance'] - $amount;
             $newTotalUsed = (float)$wallet['total_used'] + $amount;
-            $this->db->query(
-                "UPDATE wallet_points SET points_balance = ?, total_used = ?, updated_at = NOW() WHERE user_id = ?" . $this->tenantSql(),
-                array_merge([$newBalance, $newTotalUsed, $userId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
-            );
-            $this->db->insert('wallet_transactions', array_merge([
-                'user_id' => $userId,
-                'transaction_type' => 'debit',
-                'transaction_category' => $category,
-                'amount' => $amount,
-                'balance_before' => $wallet['points_balance'],
-                'balance_after' => $newBalance,
-                'description' => $description,
-                'status' => 'completed',
-                'created_at' => date('Y-m-d H:i:s')
-            ], $this->tenantInsertData()));
+            $this->db->beginTransaction();
+            try {
+                $this->db->query(
+                    "UPDATE wallet_points SET points_balance = ?, total_used = ?, updated_at = NOW() WHERE user_id = ?" . $this->tenantSql(),
+                    array_merge([$newBalance, $newTotalUsed, $userId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
+                );
+                $this->db->insert('wallet_transactions', array_merge([
+                    'user_id' => $userId,
+                    'transaction_type' => 'debit',
+                    'transaction_category' => $category,
+                    'amount' => $amount,
+                    'balance_before' => $wallet['points_balance'],
+                    'balance_after' => $newBalance,
+                    'description' => $description,
+                    'status' => 'completed',
+                    'created_at' => date('Y-m-d H:i:s')
+                ], $this->tenantInsertData()));
+                $this->db->commit();
+            } catch (\Throwable $e) {
+                $this->db->rollBack();
+                throw $e;
+            }
             return true;
         } catch (\Exception $e) {
             error_log("WalletService::debit error: " . $e->getMessage());
