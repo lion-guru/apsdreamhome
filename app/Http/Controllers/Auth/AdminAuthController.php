@@ -239,6 +239,19 @@ class AdminAuthController extends BaseController
             $roleList = "'" . implode("','", BaseController::ADMIN_ROLES) . "'";
             $user = $db->fetchOne("SELECT * FROM users WHERE (name = ? OR email = ?) AND role IN ($roleList) $tSql LIMIT 1", array_merge([$email, $email], $tParams));
             if ($user && password_verify($password, $user['password'])) {
+                // 2FA check (same as other portals — admins must not bypass it)
+                if (!empty($user['two_factor_enabled']) && !empty($user['two_factor_secret'])) {
+                    $_SESSION['pending_2fa_user'] = [
+                        'id'    => (int)$user['id'],
+                        'email' => $user['email'],
+                        'role'  => $user['role'],
+                    ];
+                    $_SESSION['pending_2fa_attempts'] = 0;
+                    session_regenerate_id(true);
+                    header('Location: ' . BASE_URL . '/user/two-factor/verify');
+                    exit;
+                }
+
                 // Prevent session fixation: rotate session ID on successful login
                 session_regenerate_id(true);
                 $_SESSION['last_regenerate'] = time();
@@ -276,6 +289,17 @@ class AdminAuthController extends BaseController
                         $_SESSION['employee_user_id'] = (int)$user['id'];
                     }
                 }
+
+                // Audit log (other portals do this inside establishSession)
+                try {
+                    require_once __DIR__ . '/../../../Services/AuditService.php';
+                    $audit = new \App\Services\AuditService($db);
+                    $audit->log('login', (int)$user['id'], $user['role'] ?? 'admin', 'user', (int)$user['id'], 'Admin logged in', [
+                        'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
+                        'ua' => $_SERVER['HTTP_USER_AGENT'] ?? '',
+                        'login_type' => 'password',
+                    ]);
+                } catch (\Throwable $e) { error_log("AdminAuth audit error: " . $e->getMessage()); }
 
                 header('Location: ' . BASE_URL . '/admin/dashboard');
                 exit;
