@@ -5,6 +5,8 @@ use App\Http\Controllers\BaseController;
 use App\Services\MarketplaceService;
 use App\Services\ResellTransactionService;
 use App\Services\NotificationService;
+use App\Services\Gateway\RazorpayService;
+use App\Core\Database\Database;
 
 class MarketplaceController extends BaseController
 {
@@ -57,6 +59,22 @@ class MarketplaceController extends BaseController
         }
 
         $result = $this->marketplaceService->toggleSaveProperty((int)$_SESSION['user_id'], $propertyId, $listingType, $notes);
+
+        // Send notification if property was saved
+        if ($result['success'] && $result['action'] === 'saved') {
+            try {
+                $notif = new \App\Services\NotificationService($this->db);
+                $notif->send((int)$_SESSION['user_id'], 'push', 'Property Saved', 'Property has been added to your saved list.', [
+                    'template_code' => 'property_saved',
+                    'event_type' => 'property_saved',
+                    'property_id' => $propertyId,
+                    'listing_type' => $listingType,
+                ]);
+            } catch (\Throwable $e) {
+                error_log('toggleSave notification error: ' . $e->getMessage());
+            }
+        }
+
         return $this->jsonResponse($result);
     }
 
@@ -279,6 +297,172 @@ class MarketplaceController extends BaseController
         } catch (\Throwable $e) {
             error_log("MarketplaceController::boostProperty: " . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'message' => 'Failed to boost property'], 500);
+        }
+    }
+
+    /**
+     * Initiate payment for property boost
+     */
+    public function initiateBoostPayment()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 400);
+        }
+
+        if (empty($_SESSION['user_id'])) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Please login'], 401);
+        }
+
+        $propertyId = (int)($_POST['property_id'] ?? 0);
+        $boostType = $_POST['boost_type'] ?? 'featured';
+        $duration = (int)($_POST['duration'] ?? 7);
+
+        if ($propertyId <= 0) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid property'], 400);
+        }
+
+        try {
+            $tid = $this->tenantId();
+            $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+            $tenantParams = $tid > 1 ? [$tid] : [];
+
+            // Verify property ownership
+            $stmt = $this->db->prepare("SELECT id, user_id FROM user_properties WHERE id = ? AND user_id = ?{$tenantWhere}");
+            $stmt->execute(array_merge([$propertyId, $_SESSION['user_id']], $tenantParams));
+            $property = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$property) {
+                return $this->jsonResponse(['success' => false, 'message' => 'Property not found or not owned by you'], 404);
+            }
+
+            $boostAmount = match($boostType) {
+                'featured' => 499,
+                'urgent' => 299,
+                'premium' => 999,
+                default => 499,
+            };
+
+            $service = new RazorpayService();
+            $resp = $service->createOrder($boostAmount, 'INR', 'BOOST_' . $propertyId . '_' . time(), [
+                'property_id' => $propertyId,
+                'user_id' => $_SESSION['user_id'],
+                'boost_type' => $boostType,
+                'duration' => $duration,
+                'description' => "Property boost: {$boostType} for {$duration} days",
+            ]);
+
+            if (!$resp['success']) {
+                return $this->jsonResponse(['success' => false, 'message' => $resp['error'] ?? 'Failed to create payment order'], 502);
+            }
+
+            return $this->jsonResponse([
+                'success' => true,
+                'order_id' => $resp['data']['id'],
+                'amount_paise' => $resp['data']['amount'],
+                'amount' => $boostAmount,
+                'currency' => $resp['data']['currency'] ?? 'INR',
+                'key_id' => $service->getKeyId(),
+                'property_id' => $propertyId,
+                'boost_type' => $boostType,
+                'duration' => $duration,
+            ]);
+
+        } catch (\Throwable $e) {
+            error_log("MarketplaceController::initiateBoostPayment: " . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'message' => 'Failed to initiate payment'], 500);
+        }
+    }
+
+    /**
+     * Verify payment for property boost
+     */
+    public function verifyBoostPayment()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 400);
+        }
+
+        $orderId = $_POST['razorpay_order_id'] ?? '';
+        $paymentId = $_POST['razorpay_payment_id'] ?? '';
+        $signature = $_POST['razorpay_signature'] ?? '';
+
+        if (!$orderId || !$paymentId || !$signature) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Missing payment parameters'], 400);
+        }
+
+        try {
+            $service = new RazorpayService();
+
+            if (!$service->verifyPaymentSignature($orderId, $paymentId, $signature)) {
+                return $this->jsonResponse(['success' => false, 'message' => 'Invalid payment signature'], 400);
+            }
+
+            // Extract property_id and boost info from order notes or receipt
+            $tid = $this->tenantId();
+            $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+            $tenantParams = $tid > 1 ? [$tid] : [];
+
+            // Fetch order details from Razorpay to get notes
+            $orderResp = $service->fetchOrder($orderId);
+            if (!$orderResp['success'] || !isset($orderResp['data']['notes'])) {
+                return $this->jsonResponse(['success' => false, 'message' => 'Failed to fetch order details'], 500);
+            }
+
+            $notes = $orderResp['data']['notes'] ?? [];
+            $propertyId = (int)($notes['property_id'] ?? 0);
+            $boostType = $notes['boost_type'] ?? 'featured';
+            $duration = (int)($notes['duration'] ?? 7);
+
+            if ($propertyId <= 0) {
+                return $this->jsonResponse(['success' => false, 'message' => 'Invalid property in payment order'], 400);
+            }
+
+            // Apply boost via shared service (deduplicated logic)
+            $result = $this->marketplaceService->applyBoostAfterPayment(
+                $propertyId,
+                (int)$_SESSION['user_id'],
+                $boostType,
+                $duration,
+                $paymentId,
+                $orderId
+            );
+
+            if (!$result['success']) {
+                $code = str_contains($result['message'], 'not found') ? 404 : 500;
+                return $this->jsonResponse(['success' => false, 'message' => $result['message']], $code);
+            }
+
+            $boostAmount = \App\Services\MarketplaceService::getBoostAmount($boostType);
+
+            // Send notification
+            try {
+                $notif = new \App\Services\NotificationService($this->db);
+                $notif->send((int)$_SESSION['user_id'], 'email', 'Property Boost Activated Successfully', "Your {$boostType} boost for {$duration} days has been activated!", [
+                    'template_code' => 'boost_payment_success',
+                    'event_type' => 'boost_payment_success',
+                    'property_id' => $propertyId,
+                    'boost_type' => $boostType,
+                    'duration' => $duration,
+                    'amount' => $boostAmount,
+                    'payment_id' => $paymentId,
+                ]);
+                $notif->send((int)$_SESSION['user_id'], 'sms', 'Boost Activated', "Your {$boostType} boost is now active! Paid ₹{$boostAmount}.", [
+                    'template_code' => 'boost_payment_success',
+                    'event_type' => 'boost_payment_success',
+                ]);
+                $notif->send((int)$_SESSION['user_id'], 'push', 'Boost Activated', "Your {$boostType} boost is now active!", [
+                    'template_code' => 'boost_payment_success',
+                    'event_type' => 'boost_payment_success',
+                ]);
+            } catch (\Throwable $e) {
+                error_log('verifyBoostPayment notification error: ' . $e->getMessage());
+            }
+
+            return $this->jsonResponse(['success' => true, 'message' => 'Property boosted successfully!', 'payment_id' => $paymentId]);
+
+        } catch (\Throwable $e) {
+            error_log("MarketplaceController::verifyBoostPayment: " . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'message' => 'Payment verification failed'], 500);
         }
     }
 }

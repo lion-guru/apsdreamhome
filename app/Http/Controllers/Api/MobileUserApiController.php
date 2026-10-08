@@ -1885,6 +1885,24 @@ class MobileUserApiController extends BaseController
         }
     }
 
+    public function associateOffers() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+                return;
+            }
+            // NOTE: plot_bookings.associate_id stores users.id, so pass $userId.
+            $offers = (new \App\Services\AssociateOfferService())->visibleOffers($userId);
+            echo json_encode(['success' => true, 'data' => $offers]);
+        } catch (\Throwable $e) {
+            error_log('associateOffers error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch offers']);
+        }
+    }
+
     public function referralLeaderboard() {
         $this->setCorsHeaders();
         try {
@@ -2748,7 +2766,14 @@ class MobileUserApiController extends BaseController
         }
     }
 
-    public function investmentCancel() {
+    // ============================================================
+    // MARKETPLACE MOBILE API
+    // ============================================================
+
+    /**
+     * Get user's saved properties
+     */
+    public function getSavedProperties() {
         $this->setCorsHeaders();
         try {
             $userId = (int)($GLOBALS['api_user_id'] ?? 0);
@@ -2757,24 +2782,337 @@ class MobileUserApiController extends BaseController
                 echo json_encode(['success' => false, 'error' => 'Unauthorized']);
                 return;
             }
-            $in = json_decode(file_get_contents('php://input'), true) ?: $_POST;
-            $investmentId = (int)($in['investment_id'] ?? 0);
-            if (!$investmentId) {
-                http_response_code(400);
-                echo json_encode(['success' => false, 'error' => 'investment_id is required']);
-                return;
-            }
-            $service = new \App\Services\InvestmentService();
-            $result = $service->cancelInvestment($userId, $investmentId, trim((string)($in['reason'] ?? 'Cancelled from mobile app')));
-            if (empty($result['success'])) {
-                http_response_code(400);
-                echo json_encode(['success' => false, 'error' => $result['error'] ?? 'Cancellation failed']);
-                return;
-            }
-            echo json_encode(['success' => true, 'data' => $result]);
+
+            $listingType = $_GET['type'] ?? '';
+            $marketplace = new \App\Services\MarketplaceService();
+            $properties = $marketplace->getSavedProperties($userId, $listingType);
+
+            echo json_encode(['success' => true, 'data' => $properties]);
         } catch (\Throwable $e) {
-            error_log('investmentCancel error: ' . $e->getMessage());
-            echo json_encode(['success' => false, 'error' => 'Cancellation failed']);
+            error_log('getSavedProperties error: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch saved properties']);
+        }
+    }
+
+    /**
+     * Save/unsave property to shortlist
+     */
+    public function saveProperty() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+                return;
+            }
+
+            $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+            $propertyId = (int)($data['property_id'] ?? 0);
+            $listingType = $data['listing_type'] ?? 'user';
+            $notes = $data['notes'] ?? null;
+
+            if ($propertyId <= 0) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Invalid property']);
+                return;
+            }
+
+            $marketplace = new \App\Services\MarketplaceService();
+            $result = $marketplace->toggleSaveProperty($userId, $propertyId, $listingType, $notes);
+
+            echo json_encode($result);
+        } catch (\Throwable $e) {
+            error_log('saveProperty error: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Failed to save property']);
+        }
+    }
+
+    /**
+     * Remove saved property
+     */
+    public function removeSavedProperty($id) {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+                return;
+            }
+
+            $savedId = (int)$id;
+            if ($savedId <= 0) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Invalid saved property ID']);
+                return;
+            }
+
+            $tid = $this->tenantId();
+            $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+            $tenantParams = $tid > 1 ? [$tid] : [];
+
+            $stmt = $this->db->prepare("DELETE FROM user_saved_properties WHERE id = ? AND user_id = ?{$tenantWhere}");
+            $stmt->execute(array_merge([$savedId, $userId], $tenantParams));
+
+            if ($stmt->rowCount() > 0) {
+                echo json_encode(['success' => true, 'message' => 'Property removed from saved list']);
+            } else {
+                echo json_encode(['success' => false, 'error' => 'Saved property not found']);
+            }
+        } catch (\Throwable $e) {
+            error_log('removeSavedProperty error: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Failed to remove saved property']);
+        }
+    }
+
+    /**
+     * Get user's followups
+     */
+    public function getFollowups() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+                return;
+            }
+
+            $marketplace = new \App\Services\MarketplaceService();
+            $todayFollowups = $marketplace->getTodayFollowups($userId);
+            $overdueFollowups = $marketplace->getOverdueFollowups($userId);
+
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'today' => $todayFollowups,
+                    'overdue' => $overdueFollowups,
+                ]
+            ]);
+        } catch (\Throwable $e) {
+            error_log('getFollowups error: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch followups']);
+        }
+    }
+
+    /**
+     * Complete a followup
+     */
+    public function completeFollowup($id) {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+                return;
+            }
+
+            $followupId = (int)$id;
+            if ($followupId <= 0) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Invalid followup ID']);
+                return;
+            }
+
+            $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+            $outcome = $data['outcome'] ?? '';
+            $notes = $data['notes'] ?? '';
+
+            if (empty($outcome)) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Outcome is required']);
+                return;
+            }
+
+            $marketplace = new \App\Services\MarketplaceService();
+            $result = $marketplace->completeFollowup($followupId, $outcome, $notes, $userId);
+
+            echo json_encode($result);
+        } catch (\Throwable $e) {
+            error_log('completeFollowup error: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Failed to complete followup']);
+        }
+    }
+
+    /**
+     * Get user transactions
+     */
+    public function getTransactions() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+                return;
+            }
+
+            $role = $_GET['role'] ?? 'all';
+            $resellTxnService = new \App\Services\ResellTransactionService();
+            $transactions = $resellTxnService->getUserTransactions($userId, $role);
+
+            echo json_encode(['success' => true, 'data' => $transactions]);
+        } catch (\Throwable $e) {
+            error_log('getTransactions error: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch transactions']);
+        }
+    }
+
+    /**
+     * Initiate boost payment
+     */
+    public function initiateBoostPayment() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+                return;
+            }
+
+            $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+            $propertyId = (int)($data['property_id'] ?? 0);
+            $boostType = $data['boost_type'] ?? 'featured';
+            $duration = (int)($data['duration'] ?? 7);
+
+            if ($propertyId <= 0) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Invalid property']);
+                return;
+            }
+
+            $tid = $this->tenantId();
+            $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+            $tenantParams = $tid > 1 ? [$tid] : [];
+
+            // Verify property ownership
+            $stmt = $this->db->prepare("SELECT id, user_id FROM user_properties WHERE id = ? AND user_id = ?{$tenantWhere}");
+            $stmt->execute(array_merge([$data['property_id'], $userId], $tenantParams));
+            $property = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$property) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'Property not found or not owned by you']);
+                return;
+            }
+
+            $boostAmount = match($boostType) {
+                'featured' => 499,
+                'urgent' => 299,
+                'premium' => 999,
+                default => 499,
+            };
+
+            $service = new \App\Services\Gateway\RazorpayService();
+            $resp = $service->createOrder($boostAmount, 'INR', 'BOOST_' . $propertyId . '_' . time(), [
+                'property_id' => $propertyId,
+                'user_id' => $userId,
+                'boost_type' => $boostType,
+                'duration' => $duration,
+                'description' => "Property boost: {$boostType} for {$duration} days",
+            ]);
+
+            if (!$resp['success']) {
+                echo json_encode(['success' => false, 'error' => $resp['error'] ?? 'Failed to create payment order']);
+                return;
+            }
+
+            echo json_encode([
+                'success' => true,
+                'order_id' => $resp['data']['id'],
+                'amount_paise' => $resp['data']['amount'],
+                'amount' => $boostAmount,
+                'currency' => $resp['data']['currency'] ?? 'INR',
+                'key_id' => $service->getKeyId(),
+                'property_id' => $propertyId,
+                'boost_type' => $boostType,
+                'duration' => $duration,
+            ]);
+
+        } catch (\Throwable $e) {
+            error_log("initiateBoostPayment error: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Failed to initiate payment']);
+        }
+    }
+
+    /**
+     * Verify boost payment
+     */
+    public function verifyBoostPayment() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+                return;
+            }
+
+            $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+            $orderId = $data['razorpay_order_id'] ?? '';
+            $paymentId = $data['razorpay_payment_id'] ?? '';
+            $signature = $data['razorpay_signature'] ?? '';
+
+            if (!$orderId || !$paymentId || !$signature) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Missing payment parameters']);
+                return;
+            }
+
+            $service = new \App\Services\Gateway\RazorpayService();
+
+            if (!$service->verifyPaymentSignature($orderId, $paymentId, $signature)) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Invalid payment signature']);
+                return;
+            }
+
+            $tid = $this->tenantId();
+            $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+            $tenantParams = $tid > 1 ? [$tid] : [];
+
+            // Fetch order details from Razorpay to get notes
+            $orderResp = $service->fetchOrder($orderId);
+            if (!$orderResp['success'] || !isset($orderResp['data']['notes'])) {
+                echo json_encode(['success' => false, 'error' => 'Failed to fetch order details']);
+                return;
+            }
+
+            $notes = $orderResp['data']['notes'] ?? [];
+            $propertyId = (int)($notes['property_id'] ?? 0);
+            $boostType = $notes['boost_type'] ?? 'featured';
+            $duration = (int)($notes['duration'] ?? 7);
+
+            if ($propertyId <= 0) {
+                echo json_encode(['success' => false, 'error' => 'Invalid property in payment order']);
+                return;
+            }
+
+            // Apply boost via shared service (deduplicated logic)
+            $marketplace = new \App\Services\MarketplaceService();
+            $result = $marketplace->applyBoostAfterPayment($propertyId, $userId, $boostType, $duration, $paymentId, $orderId);
+
+            if ($result['success']) {
+                echo json_encode(['success' => true, 'message' => 'Property boosted successfully!', 'payment_id' => $paymentId]);
+                return;
+            }
+
+            echo json_encode(['success' => false, 'error' => $result['message'] ?? 'Failed to apply boost']);
+
+        } catch (\Throwable $e) {
+            error_log("verifyBoostPayment error: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Payment verification failed']);
         }
     }
 }
