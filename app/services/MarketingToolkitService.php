@@ -896,6 +896,226 @@ class MarketingToolkitService
         }
     }
 
+    /* ── V3: Template System ── */
+
+    /**
+     * List active templates, optionally filtered by category.
+     */
+    public function listTemplates(string $category = ''): array
+    {
+        $tid = $this->getTenantId();
+        try {
+            $sql = "SELECT * FROM marketing_templates WHERE is_active = 1";
+            $params = [];
+            if ($category !== '') {
+                $sql .= " AND category = ?";
+                $params[] = $category;
+            }
+            $sql .= " ORDER BY sort_order ASC";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Render a template with photo + data into a branded post.
+     *
+     * @param string $slug Template slug
+     * @param string|null $photoPath Optional property photo
+     * @param array $data {price, location, offer, property_type}
+     * @param array $branding {display_name, phone, referral_code}
+     */
+    public function renderTemplate(string $slug, ?string $photoPath, array $data, array $branding): array
+    {
+        try {
+            $stmt = $this->pdo->prepare("SELECT * FROM marketing_templates WHERE slug = ? AND is_active = 1 LIMIT 1");
+            $stmt->execute([$slug]);
+            $tpl = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if (!$tpl) {
+                return ['success' => false, 'message' => 'Template not found'];
+            }
+
+            $W = (int)$tpl['canvas_w'];
+            $H = (int)$tpl['canvas_h'];
+            $canvas = imagecreatetruecolor($W, $H);
+
+            $bg = $this->hexToColor($canvas, $tpl['bg_color'] ?: '#070C18');
+            imagefill($canvas, 0, 0, $bg);
+            $accent = $this->hexToColor($canvas, $tpl['accent_color'] ?: '#FACC15');
+            $white = imagecolorallocate($canvas, 255, 255, 255);
+
+            $layout = $tpl['photo_layout'] ?? 'top';
+            $photoH = 0;
+
+            // Photo area
+            if ($layout !== 'none' && $photoPath && file_exists($photoPath)) {
+                $photo = $this->loadImage($photoPath);
+                if ($photo) {
+                    if ($layout === 'background') {
+                        // Full-bleed background with dark overlay for text readability
+                        $this->fillAreaWithImage($canvas, $photo, 0, 0, $W, $H);
+                        $overlay = imagecolorallocatealpha($canvas, 0, 0, 0, 70);
+                        imagefilledrectangle($canvas, 0, 0, $W, $H, $overlay);
+                    } elseif ($layout === 'side') {
+                        $pw = (int)($W * 0.45);
+                        $this->fillAreaWithImage($canvas, $photo, 0, 0, $pw, $H);
+                        // Text starts after photo
+                    } else { // top
+                        $photoH = (int)($H * 0.55);
+                        $this->fillAreaWithImage($canvas, $photo, 0, 0, $W, $photoH);
+                        // Accent divider
+                        imagefilledrectangle($canvas, 0, $photoH, $W, $photoH + 8, $accent);
+                    }
+                    imagedestroy($photo);
+                }
+            }
+
+            // Text origin depends on layout
+            $tx = ($layout === 'side') ? (int)($W * 0.45) + 40 : 60;
+            $maxW = $W - $tx - 40;
+            $y = ($layout === 'top' && $photoH > 0) ? $photoH + 50 : 120;
+            if ($layout === 'background') {
+                $y = (int)($H * 0.25);
+            }
+
+            // Title
+            if (!empty($tpl['title_text'])) {
+                $this->drawTextFit($canvas, $tpl['title_text'], 5, $tx, $y, $accent, $maxW);
+                $y += 70;
+            }
+            // Subtitle
+            if (!empty($tpl['subtitle_text'])) {
+                $this->drawTextFit($canvas, $tpl['subtitle_text'], 4, $tx, $y, $white, $maxW);
+                $y += 60;
+            }
+            // Price
+            if (!empty($tpl['show_price']) && !empty($data['price'])) {
+                $this->drawTextFit($canvas, $data['price'], 5, $tx, $y, $white, $maxW);
+                $y += 70;
+            }
+            // Location
+            if (!empty($tpl['show_location']) && !empty($data['location'])) {
+                $this->drawTextFit($canvas, $data['location'], 4, $tx, $y, $white, $maxW);
+                $y += 60;
+            }
+            // Offer badge
+            if (!empty($tpl['show_offer']) && !empty($data['offer'])) {
+                $offerBg = imagecolorallocate($canvas, 16, 185, 129);
+                $oy2 = $y + 55;
+                if ($oy2 > $H - 170) $oy2 = $H - 170;
+                imagefilledrectangle($canvas, $tx, $y, min($tx + 600, $W - 40), $oy2, $offerBg);
+                $this->drawTextFit($canvas, mb_substr($data['offer'], 0, 50), 4, $tx + 15, $y + 12, $white, 560);
+                $y = $oy2 + 25;
+            }
+
+            // Branding footer
+            if (!empty($tpl['show_branding'])) {
+                $name = mb_substr($branding['display_name'] ?? 'APS Dream Home', 0, 45);
+                $phone = mb_substr($branding['phone'] ?? '+91 73092 68077', 0, 25);
+                $this->drawTextFit($canvas, trim($name . ' | ' . $phone, ' |'), 4, $tx, $H - 90, $accent, $maxW);
+            }
+
+            // QR (referral link)
+            if (!empty($tpl['show_qr'])) {
+                $refCode = $branding['referral_code'] ?? '';
+                $qrUrl = (defined('BASE_URL') ? BASE_URL : '') . '/register' . ($refCode ? '?ref=' . urlencode($refCode) : '');
+                $qr = $this->generateQR($qrUrl, 140);
+                if ($qr['success']) {
+                    $qrImg = $this->loadImage($qr['path']);
+                    if ($qrImg) {
+                        $qs = 140;
+                        $tmp = imagecreatetruecolor($qs, $qs);
+                        $w2 = imagecolorallocate($tmp, 255, 255, 255);
+                        imagefill($tmp, 0, 0, $w2);
+                        imagecopyresampled($tmp, $qrImg, 0, 0, 0, 0, $qs, $qs, imagesx($qrImg), imagesy($qrImg));
+                        $qx = $W - $qs - 40;
+                        $qy = $H - $qs - 40;
+                        // White padding for scannability
+                        imagefilledrectangle($canvas, $qx - 8, $qy - 8, $qx + $qs + 8, $qy + $qs + 8, $w2);
+                        imagecopy($canvas, $tmp, $qx, $qy, 0, 0, $qs, $qs);
+                        imagedestroy($tmp);
+                        imagedestroy($qrImg);
+                    }
+                }
+            }
+
+            $outputDir = $this->getOutputDir();
+            $filename = 'tpl_' . preg_replace('/[^a-z0-9]/', '', $slug) . '_' . time() . '.jpg';
+            $outputPath = $outputDir . '/' . $filename;
+            imagejpeg($canvas, $outputPath, 88);
+            imagedestroy($canvas);
+
+            // Bump use count
+            try {
+                $this->pdo->prepare("UPDATE marketing_templates SET use_count = use_count + 1 WHERE slug = ?")->execute([$slug]);
+            } catch (\Throwable $e) {
+                // ignore
+            }
+            $this->logToolkitUsage('template', $outputPath);
+
+            $shareText = trim(($tpl['title_text'] ?? '') . ' ' . ($data['price'] ?? '') . ' ' . ($data['location'] ?? ''));
+            return [
+                'success' => true, 'path' => $outputPath, 'url' => $this->pathToUrl($outputPath),
+                'filename' => $filename, 'template' => $tpl['name'],
+                'whatsapp_share' => $this->getWhatsAppShareLink($shareText . ' - APS Dream Home'),
+                'message' => 'Template rendered',
+            ];
+        } catch (\Throwable $e) {
+            error_log("MarketingToolkit::renderTemplate: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Template render failed'];
+        }
+    }
+
+    /**
+     * Admin: create or update a template.
+     */
+    public function saveTemplate(array $data, int $userId = 0): array
+    {
+        $tid = $this->getTenantId();
+        try {
+            $slug = strtolower(trim(preg_replace('/[^a-z0-9]+/', '-', $data['slug'] ?? $data['name'] ?? ''), '-'));
+            if ($slug === '') return ['success' => false, 'message' => 'Name/slug required'];
+
+            $stmt = $this->pdo->prepare("
+                INSERT INTO marketing_templates
+                (name, slug, category, description, canvas_w, canvas_h, bg_color, accent_color, title_text, subtitle_text, show_price, show_location, show_offer, show_branding, show_qr, photo_layout, is_active, is_system, sort_order, created_by, tenant_id, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, NOW())
+                ON DUPLICATE KEY UPDATE name = VALUES(name), category = VALUES(category), description = VALUES(description),
+                    canvas_w = VALUES(canvas_w), canvas_h = VALUES(canvas_h), bg_color = VALUES(bg_color), accent_color = VALUES(accent_color),
+                    title_text = VALUES(title_text), subtitle_text = VALUES(subtitle_text), show_price = VALUES(show_price),
+                    show_location = VALUES(show_location), show_offer = VALUES(show_offer), show_branding = VALUES(show_branding),
+                    show_qr = VALUES(show_qr), photo_layout = VALUES(photo_layout), is_active = VALUES(is_active), sort_order = VALUES(sort_order)
+            ");
+            $stmt->execute([
+                mb_substr($data['name'], 0, 100), $slug,
+                in_array($data['category'] ?? '', ['festival', 'offer', 'launch', 'status', 'greeting', 'info'], true) ? $data['category'] : 'offer',
+                mb_substr($data['description'] ?? '', 0, 255),
+                max(300, min(2000, (int)($data['canvas_w'] ?? 1080))),
+                max(300, min(2500, (int)($data['canvas_h'] ?? 1080))),
+                $this->sanitizeHex($data['bg_color'] ?? '#070C18'),
+                $this->sanitizeHex($data['accent_color'] ?? '#FACC15'),
+                mb_substr($data['title_text'] ?? '', 0, 200),
+                mb_substr($data['subtitle_text'] ?? '', 0, 200),
+                !empty($data['show_price']) ? 1 : 0,
+                !empty($data['show_location']) ? 1 : 0,
+                !empty($data['show_offer']) ? 1 : 0,
+                !empty($data['show_branding']) ? 1 : 0,
+                !empty($data['show_qr']) ? 1 : 0,
+                in_array($data['photo_layout'] ?? '', ['top', 'background', 'side', 'none'], true) ? $data['photo_layout'] : 'top',
+                isset($data['is_active']) ? (int)$data['is_active'] : 1,
+                (int)($data['sort_order'] ?? 0),
+                $userId, $tid,
+            ]);
+            return ['success' => true, 'slug' => $slug, 'message' => 'Template saved'];
+        } catch (\Throwable $e) {
+            error_log("MarketingToolkit::saveTemplate: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Save failed'];
+        }
+    }
+
     /* ── Helpers ── */
 
     private function loadImage(string $path)
@@ -944,6 +1164,40 @@ class MarketingToolkitService
         $fontW = imagefontwidth($font);
         $tx = (int)(($canvasW - strlen($text) * $fontW) / 2);
         imagestring($canvas, $font, max(10, $tx), $y, $text, $color);
+    }
+
+    private function hexToColor($canvas, string $hex): int
+    {
+        $hex = ltrim($hex, '#');
+        if (strlen($hex) === 3) {
+            $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+        }
+        if (!preg_match('/^[0-9a-fA-F]{6}$/', $hex)) {
+            $hex = '070C18';
+        }
+        return imagecolorallocate($canvas, hexdec(substr($hex, 0, 2)), hexdec(substr($hex, 2, 2)), hexdec(substr($hex, 4, 2)));
+    }
+
+    private function sanitizeHex(string $hex): string
+    {
+        $hex = trim($hex);
+        if (!str_starts_with($hex, '#')) $hex = '#' . $hex;
+        if (!preg_match('/^#[0-9a-fA-F]{6}$/', $hex) && !preg_match('/^#[0-9a-fA-F]{3}$/', $hex)) {
+            return '#070C18';
+        }
+        return strtoupper($hex);
+    }
+
+    private function drawTextFit($canvas, string $text, int $font, int $x, int $y, int $color, int $maxW): void
+    {
+        $text = trim(mb_substr($text, 0, 100));
+        if ($text === '') return;
+        $fontW = imagefontwidth($font);
+        $maxChars = max(10, (int)($maxW / max(1, $fontW)));
+        if (mb_strlen($text) > $maxChars) {
+            $text = mb_substr($text, 0, $maxChars - 3) . '...';
+        }
+        imagestring($canvas, $font, $x, $y, $text, $color);
     }
 
     /**

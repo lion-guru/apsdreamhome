@@ -653,6 +653,11 @@ $router->post('/marketing/qr', 'Front\\MarketingToolkitController@qr');
 $router->post('/marketing/qr-photo', 'Front\\MarketingToolkitController@qrPhoto');
 $router->post('/marketing/slideshow', 'Front\\MarketingToolkitController@slideshow');
 $router->post('/marketing/visiting-card', 'Front\\MarketingToolkitController@visitingCard');
+// V3: template gallery + render + admin builder
+$router->get('/marketing/templates', 'Front\\MarketingToolkitController@templates');
+$router->get('/marketing/templates/list', 'Front\\MarketingToolkitController@listTemplates');
+$router->post('/marketing/template/render', 'Front\\MarketingToolkitController@renderTemplate');
+$router->post('/marketing/template/save', 'Front\\MarketingToolkitController@saveTemplate');
 
 $router->get('/admin/saved-searches', 'App\\Http\\Controllers\\Admin\\SavedSearchController@index');
 $router->post('/admin/saved-searches/store', 'App\\Http\\Controllers\\Admin\\SavedSearchController@store');
@@ -3708,6 +3713,7 @@ $router->get('/admin/salary', 'App\\Http\\Controllers\\Admin\\SalaryController@i
 $router->get('/admin/salary/stats', 'App\\Http\\Controllers\\Admin\\SalaryController@stats');
 $router->get('/admin/salary/salary-grants', 'App\\Http\\Controllers\\Admin\\SalaryController@salaryGrants');
 $router->post('/admin/salary/salary-grants/activate', 'App\\Http\\Controllers\\Admin\\SalaryController@activateSalaryGrant');
+$router->post('/admin/salary/salary-grants/process', 'App\\Http\\Controllers\\Admin\\SalaryController@processSalaryGrants');
 $router->get('/admin/associate-offers', 'App\\Http\\Controllers\\Admin\\AssociateOfferController@index');
 $router->post('/admin/associate-offers/store', 'App\\Http\\Controllers\\Admin\\AssociateOfferController@store');
 $router->post('/admin/associate-offers/activate', 'App\\Http\\Controllers\\Admin\\AssociateOfferController@activate');

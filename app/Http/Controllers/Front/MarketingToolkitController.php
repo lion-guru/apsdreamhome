@@ -397,6 +397,97 @@ class MarketingToolkitController extends BaseController
     }
 
     /**
+     * Template gallery page
+     */
+    public function templates()
+    {
+        $this->requireLogin();
+
+        $category = $_GET['category'] ?? '';
+        $templates = $this->toolkit->listTemplates($category);
+
+        $role = $_SESSION['role'] ?? 'customer';
+        $this->layout = in_array($role, ['associate', 'agent'], true) ? 'layouts/' . $role : 'layouts/customer';
+
+        $this->render('pages/marketing/templates', [
+            'page_title' => 'Template Gallery - APS Dream Home',
+            'templates' => $templates,
+            'category' => $category,
+            'current_page' => 'marketing',
+        ]);
+    }
+
+    /**
+     * List templates (JSON, for gallery filter)
+     */
+    public function listTemplates()
+    {
+        $this->requireLogin();
+        $category = $_GET['category'] ?? '';
+        return $this->jsonResponse(['success' => true, 'data' => $this->toolkit->listTemplates($category)]);
+    }
+
+    /**
+     * Render template with photo + data (POST, multipart)
+     */
+    public function renderTemplate()
+    {
+        $this->requireLogin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 400);
+        }
+
+        $slug = trim($_POST['slug'] ?? '');
+        if ($slug === '') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Template required'], 400);
+        }
+
+        $photoPath = null;
+        if (!empty($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
+            $photoPath = $_FILES['photo']['tmp_name'];
+        }
+
+        $data = [
+            'price' => trim($_POST['price'] ?? ''),
+            'location' => trim($_POST['location'] ?? ''),
+            'offer' => trim($_POST['offer'] ?? ''),
+            'property_type' => trim($_POST['property_type'] ?? ''),
+        ];
+
+        // Merge saved branding + referral code
+        $branding = $this->toolkit->getBranding((int)$_SESSION['user_id']);
+        try {
+            $stmt = $this->db->prepare("SELECT referral_code FROM users WHERE id = ? LIMIT 1");
+            $stmt->execute([(int)$_SESSION['user_id']]);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            $branding['referral_code'] = $row['referral_code'] ?? '';
+        } catch (\Throwable $e) {
+            $branding['referral_code'] = '';
+        }
+
+        $result = $this->toolkit->renderTemplate($slug, $photoPath, $data, $branding);
+        return $this->jsonResponse($result, $result['success'] ? 200 : 500);
+    }
+
+    /**
+     * Admin: save template (POST, admin only)
+     */
+    public function saveTemplate()
+    {
+        $this->requireLogin();
+        $role = $_SESSION['role'] ?? '';
+        if (!in_array($role, ['admin', 'super_admin', 'manager'], true)) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Admin only'], 403);
+        }
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 400);
+        }
+        $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+        $result = $this->toolkit->saveTemplate($input, (int)$_SESSION['user_id']);
+        return $this->jsonResponse($result, $result['success'] ? 200 : 500);
+    }
+
+    /**
      * Generate digital visiting card (POST)
      */
     public function visitingCard()
