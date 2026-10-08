@@ -240,6 +240,15 @@ class TwoFactorController extends BaseController
 
         $totp = new TotpService($this->db);
         if (!$totp->verifyBackupCode($userId, $code)) {
+            // Increment attempts; lock out after 5 failed tries to thwart brute force
+            // (mirrors verify() TOTP lockout above).
+            $_SESSION['pending_2fa_attempts'] = (int)($_SESSION['pending_2fa_attempts'] ?? 0) + 1;
+            if ($_SESSION['pending_2fa_attempts'] >= 5) {
+                unset($_SESSION['pending_2fa_user'], $_SESSION['pending_2fa_secret'], $_SESSION['pending_2fa_role'], $_SESSION['pending_2fa_attempts']);
+                $_SESSION['flash_error'] = 'Too many failed attempts. Please log in again.';
+                header('Location: ' . BASE_URL . '/login');
+                exit;
+            }
             $_SESSION['flash_error'] = 'Invalid or already-used backup code. Please try another.';
             header('Location: ' . BASE_URL . '/user/two-factor/recovery');
             exit;
