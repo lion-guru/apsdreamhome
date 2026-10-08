@@ -1013,6 +1013,50 @@ class ApiService {
         .map((e) => Map<String, dynamic>.from(e as Map))
         .toList();
   }
+
+  // ============================================================
+  // WALLET ACTIVATION (Customer)
+  // ============================================================
+
+  Future<List<Map<String, dynamic>>> getWalletActivationPackages() async {
+    final response =
+        await get(AppConstants.walletActivationPackagesEndpointV2);
+    return ((response['data'] as List?) ?? [])
+        .map((e) => Map<String, dynamic>.from(e as Map))
+        .toList();
+  }
+
+  Future<Map<String, dynamic>> getMyWalletActivation() async {
+    final response =
+        await get(AppConstants.walletActivationMyWalletEndpointV2);
+    return Map<String, dynamic>.from(response['data'] as Map? ?? {});
+  }
+
+  Future<Map<String, dynamic>> purchaseWalletActivation({
+    required int packageId,
+  }) async {
+    return await post(
+      AppConstants.walletActivationPurchaseEndpointV2,
+      data: {'package_id': packageId, 'payment_mode': 'razorpay'},
+    );
+  }
+
+  Future<Map<String, dynamic>> verifyWalletActivationPayment({
+    required int purchaseId,
+    required String razorpayPaymentId,
+    required String razorpayOrderId,
+    required String razorpaySignature,
+  }) async {
+    return await post(
+      AppConstants.walletActivationVerifyPaymentEndpointV2,
+      data: {
+        'purchase_id': purchaseId,
+        'razorpay_payment_id': razorpayPaymentId,
+        'razorpay_order_id': razorpayOrderId,
+        'razorpay_signature': razorpaySignature,
+      },
+    );
+  }
 }
 
 // Offline EMI Result wrapper

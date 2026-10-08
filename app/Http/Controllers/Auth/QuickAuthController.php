@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
+use App\Services\UserRegistrationService;
 
 class QuickAuthController extends BaseController
 {
@@ -36,32 +37,83 @@ private function getTenantSql(): array
     }
 
     /**
-     * Quick registration for casual visitors
+     * Normalize Indian mobile: strips spaces/+91/leading 0 -> 10 digits.
+     * Returns '' when the number is not a valid Indian mobile.
+     */
+    private function normalizePhone(string $raw): string
+    {
+        $d = preg_replace('/\D/', '', $raw ?? '');
+        if (strlen($d) === 12 && substr($d, 0, 2) === '91') $d = substr($d, 2);
+        if (strlen($d) === 11 && $d[0] === '0') $d = substr($d, 1);
+        if (!preg_match('/^[6-9]\d{9}$/', $d)) return '';
+        return $d;
+    }
+
+    private function quickJson(array $payload): void
+    {
+        if (!headers_sent()) header('Content-Type: application/json');
+        echo json_encode($payload);
+        exit;
+    }
+
+    /**
+     * Quick registration for casual visitors (passwordless UX).
+     * customer -> instant active account (legacy behaviour, preserved).
+     * associate/agent -> canonical UserRegistrationService (wallets, MLM, associates row).
+     * employee/telecaller -> HR onboarding only, redirected to careers.
      */
     public function quickRegister()
     {
         @session_start();
 
-        $name = $_POST['name'] ?? '';
-        $email = $_POST['email'] ?? '';
-        $phone = $_POST['phone'] ?? '';
-        $referralCode = $_POST['referral_code'] ?? '';
+        $name = trim($_POST['name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $phone = $this->normalizePhone($_POST['phone'] ?? '');
+        $referralCode = trim($_POST['referral_code'] ?? '');
+        $role = strtolower(trim($_POST['role'] ?? 'customer'));
+        if (!in_array($role, ['customer', 'associate', 'agent', 'employee', 'telecaller'], true)) $role = 'customer';
 
         try {
             // Validate inputs
             if (empty($name) || empty($email) || empty($phone)) {
-                echo json_encode(['success' => false, 'message' => 'All fields are required']);
-                exit;
+                $this->quickJson(['success' => false, 'message' => 'Please fill name, valid email and 10-digit mobile number']);
+            }
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $this->quickJson(['success' => false, 'message' => 'Please enter a valid email address']);
             }
 
+            if ($role === 'employee' || $role === 'telecaller') {
+                $this->quickJson(['success' => false, 'message' => 'Employee/Telecaller onboarding is done by HR. Please apply via the Careers page.']);
+            }
+
+            if ($role === 'associate' || $role === 'agent') {
+                $this->quickRegisterMlm($role, $name, $email, $phone, $referralCode);
+            }
+
+            $this->quickRegisterCustomer($name, $email, $phone, $referralCode);
+
+        } catch (\Exception $e) {
+            error_log('QuickAuthController::quickRegister error: ' . $e->getMessage());
+            $this->quickJson(['success' => false, 'message' => 'Request failed. Please try again.']);
+        }
+    }
+
+    /**
+     * Legacy customer path (active + approved instantly). Behaviour preserved.
+     */
+    private function quickRegisterCustomer(string $name, string $email, string $phone, string $referralCode): void
+    {
+        try {
             [$tSql, $tParams] = $this->getTenantSql();
-            [$tInsert] = $this->getTenantInsert();
+            $tInsert = $this->getTenantInsert();
+
+            [$tSql, $tParams] = $this->getTenantSql();
+            $tInsert = $this->getTenantInsert();
             
             // Check if user already exists
             $existingUser = $this->db->fetchOne("SELECT id FROM users WHERE (email = ? OR phone = ?)" . $tSql . " LIMIT 1", array_merge([$email, $phone], $tParams));
             if ($existingUser) {
-                echo json_encode(['success' => false, 'message' => 'User already exists with this email or phone']);
-                exit;
+                $this->quickJson(['success' => false, 'message' => 'An account already exists with this email or phone. Please login to continue.', 'login_url' => (defined('BASE_URL') ? BASE_URL : '') . '/login']);
             }
 
             // Find referrer if referral code provided
@@ -121,13 +173,68 @@ private function getTenantSql(): array
             $_SESSION['logged_in'] = true;
             $_SESSION['success'] = 'Account created successfully! Welcome to APS Dream Home.';
 
-            echo json_encode(['success' => true, 'redirect' => '/user/dashboard']);
-            exit;
+            $this->quickJson(['success' => true, 'redirect' => (defined('BASE_URL') ? BASE_URL : '') . '/user/dashboard', 'message' => 'Account created successfully! Welcome to APS Dream Home.']);
 
         } catch (\Exception $e) {
-            echo json_encode(['success' => false, 'message' => 'Request failed: ' . $e->getMessage()]);
-            exit;
+            error_log('QuickAuthController::quickRegisterCustomer error: ' . $e->getMessage());
+            $this->quickJson(['success' => false, 'message' => 'Request failed. Please try again.']);
         }
+    }
+
+    /**
+     * Associate/Agent path via the canonical registration service so wallets,
+     * MLM profiles, network tree and associates rows are all created correctly.
+     * Passwordless UX is preserved: a random password is generated server-side
+     * (user can reset it later via forgot-password / OTP).
+     */
+    private function quickRegisterMlm(string $role, string $name, string $email, string $phone, string $referralCode): void
+    {
+        $service = new UserRegistrationService();
+        $result = $service->createUser($role, [
+            'name' => $name,
+            'email' => $email,
+            'phone' => $phone,
+            'password' => bin2hex(random_bytes(12)),
+            'referral_code' => $referralCode,
+            'registration_method' => 'quick_modal',
+        ]);
+
+        if (empty($result['success'])) {
+            $payload = ['success' => false, 'message' => $result['message'] ?? 'Registration failed'];
+            if (!empty($result['existing_user_id'])) {
+                $payload['message'] .= ' Please login to continue.';
+                $payload['login_url'] = (defined('BASE_URL') ? BASE_URL : '') . '/login';
+            }
+            $this->quickJson($payload);
+        }
+
+        $newUserId = (int)($result['user_id'] ?? 0);
+
+        // Resolve associates row id for portal sessions
+        $assocId = 0;
+        try {
+            $row = $this->db->fetchOne("SELECT id FROM associates WHERE user_id = ? LIMIT 1", [$newUserId]);
+            if ($row) $assocId = (int)$row['id'];
+        } catch (\Throwable $e) { error_log('QuickAuthController: associates lookup failed: ' . $e->getMessage()); }
+
+        $_SESSION['user_id'] = $newUserId;
+        $_SESSION['user_name'] = $name;
+        $_SESSION['user_email'] = $email;
+        $_SESSION['user_phone'] = $phone;
+        $_SESSION['role'] = $role;
+        $_SESSION['logged_in'] = true;
+        if ($assocId) {
+            $_SESSION['associate_id'] = $assocId;
+            if ($role === 'agent') $_SESSION['agent_id'] = $assocId;
+        }
+        $_SESSION['success'] = $result['message'] ?? 'Account created successfully!';
+
+        $dashboard = $role === 'agent' ? '/agent/dashboard' : '/associate/dashboard';
+        $this->quickJson([
+            'success' => true,
+            'redirect' => (defined('BASE_URL') ? BASE_URL : '') . $dashboard,
+            'message' => $result['message'] ?? 'Account created successfully!',
+        ]);
     }
 
     /**
@@ -197,7 +304,7 @@ private function getTenantSql(): array
             }
 
             [$tSql, $tParams] = $this->getTenantSql();
-            [$tInsert] = $this->getTenantInsert();
+            $tInsert = $this->getTenantInsert();
 
             // Check if user already exists by phone
             $existingUser = $this->db->fetchOne("SELECT * FROM users WHERE phone = ?" . $tSql . " LIMIT 1", array_merge([$phone], $tParams));

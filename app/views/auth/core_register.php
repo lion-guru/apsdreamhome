@@ -351,6 +351,16 @@ $selectedRole = $selectedRole ?? 'customer';
                             <span><strong>Freelancer Agent</strong><br><small style="color: #94a3b8; font-size: 11px;">Independent & flat commission</small></span>
                         </label>
                     </div>
+                    <div class="input-wrap" style="margin-top:10px">
+                        <select name="experience" id="reg_experience" style="width:100%;padding:12px 16px 12px 48px;background:#0f172a;border:1px solid #334155;border-radius:10px;color:#e2e8f0;font-size:14px;height:52px;appearance:none">
+                            <option value="">Experience (optional)</option>
+                            <option value="fresher" <?= ($old['experience'] ?? '') === 'fresher' ? 'selected' : '' ?>>Fresher (0 years)</option>
+                            <option value="1-2" <?= ($old['experience'] ?? '') === '1-2' ? 'selected' : '' ?>>1-2 years</option>
+                            <option value="3-5" <?= ($old['experience'] ?? '') === '3-5' ? 'selected' : '' ?>>3-5 years</option>
+                            <option value="5+" <?= ($old['experience'] ?? '') === '5+' ? 'selected' : '' ?>>5+ years</option>
+                        </select>
+                        <i class="fas fa-clock field-icon"></i>
+                    </div>
                     <p style="margin-top: 8px; font-size: 12px; color: #64748b;">
                         <i class="fas fa-info-circle me-1"></i> Employee Agent roles are hired through HR/Admin. Apply via <a href="<?= $base ?>/careers" style="color: #2563eb;">Careers</a> portal.
                     </p>

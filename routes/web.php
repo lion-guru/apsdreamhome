@@ -879,14 +879,17 @@ $router->get('/api/achievements/badges', 'App\\Http\\Controllers\\AchievementCon
 $router->get('/register', 'Auth\\RegisterController@showRegister');
 $router->post('/register', 'Auth\\RegisterController@handleRegister');
 
-// Unified Registration alias (backward compatibility)
-$router->get('/register/unified', 'Auth\\RegisterController@showRegister');
+// Step-by-step premium registration (modern alternative to the hub above)
+$router->get('/register/step-by-step', 'Auth\\RegisterController@showUnified');
+$router->post('/register/step-by-step', 'Auth\\RegisterController@handleRegister');
+// Legacy alias (backward compatibility) — old URL keeps working
+$router->get('/register/unified', function() { header('Location: ' . BASE_URL . '/register/step-by-step', true, 301); exit; });
 $router->post('/register/unified', 'Auth\\RegisterController@handleRegister');
 $router->get('/onboarding-success', 'Auth\\RegisterController@showOnboardingSuccess');
 
 // Direct Customer-only registration â€” redirect to unified register with role=customer
 $router->get('/register/customer', function() { header('Location: ' . BASE_URL . '/register?role=customer'); exit; });
-$router->post('/register/customer', function() { $_POST['role'] = 'customer'; header('Location: ' . BASE_URL . '/register'); exit; });
+$router->post('/register/customer', function() { header('Location: ' . BASE_URL . '/register?role=customer', true, 301); exit; });
 
 // Smart Registration (Phone-First One-Click)
 $router->get('/register/smart', 'Auth\\OtpAuthController@showPhoneInput');

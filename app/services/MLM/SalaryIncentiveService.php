@@ -226,6 +226,14 @@ class SalaryIncentiveService
                     continue;
                 }
 
+                // Idempotency: never pay the same grant twice for one month.
+                $dup = $this->pdo->prepare("SELECT COUNT(*) FROM mlm_salary_grant_logs WHERE grant_id = ? AND action = 'paid' AND payout_month = ?");
+                $dup->execute([$grant['id'], $monthYear]);
+                if ((int)$dup->fetchColumn() > 0) {
+                    $results['errors'][] = "Grant {$grant['id']} already paid for $monthYear — skipped";
+                    continue;
+                }
+
                 // Credit the monthly grant
                 $this->ledgerService->writeLedger(
                     $grant['user_id'],
@@ -240,6 +248,11 @@ class SalaryIncentiveService
                     "Monthly salary grant — $monthYear",
                     false
                 );
+
+                // Mark paid for this month (idempotency record)
+                $this->pdo->prepare("INSERT INTO mlm_salary_grant_logs (tenant_id, user_id, grant_id, action, payout_month, details, created_at) VALUES (?, ?, ?, 'paid', ?, ?, NOW())")->execute([
+                    $this->getTenantId(), $grant['user_id'], $grant['id'], $monthYear, "Monthly salary grant paid — $monthYear (₹{$grant['monthly_amount']})"
+                ]);
 
                 // Advance schedule; complete the grant when fully paid.
                 $paid = (int)$grant['months_paid'] + 1;
@@ -266,15 +279,16 @@ class SalaryIncentiveService
     public function checkMonthlyMaintenance(int $agentId, string $monthYear): array
     {
         try {
+            // plot_bookings.associate_id stores users.id (not associates.id).
+            // Statuses are the live ENUM — cancelled/defaulted/transferred
+            // bookings do not count toward maintenance volume.
             $stmt = $this->pdo->prepare("
                 SELECT COALESCE(SUM(pb.booking_amount), 0) AS monthly_volume
                 FROM plot_bookings pb
-                WHERE pb.associate_id = (
-                    SELECT id FROM associates WHERE user_id = ? LIMIT 1
-                )
+                WHERE pb.associate_id = ?
                 AND YEAR(pb.created_at) = YEAR(CONCAT(?, '-01'))
                 AND MONTH(pb.created_at) = MONTH(CONCAT(?, '-01'))
-                AND pb.status IN ('confirmed', 'completed')
+                AND pb.status NOT IN ('cancelled', 'defaulted', 'transferred')
             ");
             $stmt->execute([$agentId, $monthYear, $monthYear]);
             $volume = (float) $stmt->fetchColumn();

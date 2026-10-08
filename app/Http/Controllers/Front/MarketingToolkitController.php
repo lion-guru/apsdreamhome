@@ -18,7 +18,7 @@ class MarketingToolkitController extends BaseController
         $this->toolkit = new MarketingToolkitService($this->db);
     }
 
-    private function requireLogin()
+    protected function requireLogin()
     {
         @session_start();
         if (empty($_SESSION['user_id'])) {

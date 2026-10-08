@@ -29,28 +29,76 @@ try {
 } catch (\Throwable $e) {
     $states = [];
 }
+
+// Page-scoped assets: the public layout does NOT load aps-components.css /
+// customer-pages.js, so the wizard + pickers ship their own styles + behavior.
+$extraHead = ($extraHead ?? '')
+    . '<link href="' . BASE_URL . '/assets/css/consolidated/aps-components.css?v=2" rel="stylesheet">'
+    . <<<'LPHEAD'
+<style>
+.lp-hero{position:relative;background:linear-gradient(120deg,#312e81 0%,#6d28d9 55%,#9333ea 100%);color:#fff;overflow:hidden}
+.lp-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(600px 300px at 85% 10%,rgba(255,255,255,.18),transparent 60%),radial-gradient(500px 260px at 5% 95%,rgba(0,0,0,.25),transparent 60%);pointer-events:none}
+.lp-hero .container{position:relative;z-index:1}
+.lp-eyebrow{display:inline-flex;align-items:center;gap:.45rem;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);color:#fff;font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:.4rem .9rem;border-radius:999px;margin-bottom:1rem}
+.lp-hero h1{font-weight:800;letter-spacing:-.01em;margin-bottom:.6rem}
+.lp-lead{color:rgba(255,255,255,.85);font-size:1.08rem;max-width:34rem}
+.lp-stats{display:flex;gap:1.4rem;flex-wrap:wrap;margin-top:1.2rem}
+.lp-stat{display:flex;align-items:center;gap:.6rem}
+.lp-stat i{width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);display:inline-flex;align-items:center;justify-content:center;font-size:1rem}
+.lp-stat b{display:block;font-size:.95rem;line-height:1.1}
+.lp-stat small{color:rgba(255,255,255,.75);font-size:.75rem}
+.lp-cta-card{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);border-radius:18px;padding:1.4rem;backdrop-filter:blur(6px)}
+.lp-cta-card .btn-call{background:#fbbf24;border-color:#fbbf24;color:#3b2f04;font-weight:800}
+.lp-cta-card .btn-call:hover{background:#f59e0b;border-color:#f59e0b;color:#fff}
+.lp-container{padding-top:1.6rem;padding-bottom:2.5rem}
+.aps-cp-wizard{scroll-margin-top:90px}
+.lp-sticky{position:sticky;top:90px}
+.lp-steps{list-style:none;margin:0;padding:0;counter-reset:lpstep;display:flex;flex-direction:column;gap:.9rem}
+.lp-steps li{position:relative;padding-left:2.9rem}
+.lp-steps li::before{counter-increment:lpstep;content:counter(lpstep);position:absolute;left:0;top:0;width:2.1rem;height:2.1rem;border-radius:50%;background:rgba(79,70,229,.12);color:#4f46e5;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:.9rem}
+.lp-steps li::after{content:'';position:absolute;left:1.02rem;top:2.3rem;bottom:-.7rem;width:2px;background:#e2e8f0}
+.lp-steps li:last-child::after{display:none}
+.lp-steps b{display:block;font-size:.92rem}
+.lp-steps small{color:#64748b}
+.btn-ai-generate{background:linear-gradient(135deg,#667eea,#764ba2);border:none;color:#fff;font-weight:600;white-space:nowrap}
+.btn-ai-generate:hover{color:#fff;filter:brightness(1.08)}
+.btn-ai-generate:disabled{opacity:.65}
+.aps-cp-type-option:focus-within{outline:2px solid #4f46e5;outline-offset:2px}
+.aps-cp-wizard-step{cursor:pointer}
+.was-validated .form-control:invalid,.form-control.is-invalid{border-color:#ef4444}
+@media(max-width:575.98px){.lp-stats{gap:.9rem}.aps-cp-wizard-body{padding:1.1rem}.aps-cp-wizard-footer{flex-direction:column;align-items:stretch}.aps-cp-wizard-progress{max-width:none;margin:0}.lp-sticky{position:static}}
+</style>
+LPHEAD;
 ?>
 
-<div class="aps-cp-hero" style="background: linear-gradient(135deg, #0a192f 0%, #1e3a5f 100%); color: white;">
+<div class="lp-hero">
     <div class="container">
-        <div class="row align-items-center py-5">
-            <div class="col-lg-8">
-                <h2 class="display-5 fw-bold mb-3"><i class="fas fa-paper-plane me-2 text-warning"></i><?= __('list_property_hero_title') ?></h2>
-                <p class="lead text-white-50 mb-4"><?= __('list_property_hero_lead') ?></p>
-                <div class="d-flex gap-3 flex-wrap">
-                    <span class="badge bg-success px-3 py-2"><i class="fas fa-check me-1"></i> Free Listing</span>
-                    <span class="badge bg-info px-3 py-2"><i class="fas fa-shield-alt me-1"></i> Verified Leads</span>
-                    <span class="badge bg-warning text-dark px-3 py-2"><i class="fas fa-bolt me-1"></i> Quick Approval</span>
+        <div class="row align-items-center g-4 py-4 py-lg-5">
+            <div class="col-lg-7">
+                <span class="lp-eyebrow"><i class="fas fa-bolt"></i><?= __('list_property_eyebrow', null, '100% Free &bull; No Commission') ?></span>
+                <h1 class="display-6"><?= __('list_property_hero_title') ?></h1>
+                <p class="lp-lead mb-0"><?= __('list_property_hero_lead') ?></p>
+                <div class="lp-stats">
+                    <div class="lp-stat"><i class="fas fa-stopwatch"></i><div><b><?= __('list_property_stat_time', null, '1 Minute') ?></b><small><?= __('list_property_stat_time_sub', null, 'to list your property') ?></small></div></div>
+                    <div class="lp-stat"><i class="fas fa-badge-check"></i><div><b><?= __('list_property_stat_leads', null, 'Verified Buyers') ?></b><small><?= __('list_property_stat_leads_sub', null, 'genuine enquiries only') ?></small></div></div>
+                    <div class="lp-stat"><i class="fas fa-headset"></i><div><b><?= __('list_property_stat_help', null, 'Free Assistance') ?></b><small><?= __('list_property_stat_help_sub', null, 'help with photos & price') ?></small></div></div>
                 </div>
             </div>
-            <div class="col-lg-4 mt-4 mt-lg-0 text-center text-lg-end">
-                <a href="tel:<?= $phoneRaw ?>" class="btn btn-warning btn-lg px-4 py-3">
-                    <i class="fas fa-phone me-2"></i><?= __('list_property_call_label') ?><br><small><?= $phoneDisplay ?></small>
-                </a>
+            <div class="col-lg-5">
+                <div class="lp-cta-card">
+                    <h5 class="fw-bold mb-1"><i class="fas fa-phone-volume me-2"></i><?= __('list_property_cta_title', null, 'Prefer to talk to us?') ?></h5>
+                    <p class="mb-3 small" style="color:rgba(255,255,255,.8)"><?= __('list_property_cta_desc', null, 'Our team will list the property for you on call.') ?></p>
+                    <div class="d-grid gap-2">
+                        <a href="tel:<?= $phoneRaw ?>" class="btn btn-call btn-lg"><i class="fas fa-phone me-2"></i><?= __('list_property_call_label') ?>: <?= $phoneDisplay ?></a>
+                        <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I want to list my property" target="_blank" rel="noopener" class="btn btn-success btn-lg"><i class="fab fa-whatsapp me-2"></i><?= __('list_property_whatsapp_button') ?></a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<div class="container lp-container">
 
 <?php if ($success): ?>
     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -200,7 +248,7 @@ try {
                             <label for="description" class="form-label fw-bold"><?= __('list_property_label_description') ?></label>
                             <textarea name="description" id="description" class="form-control" rows="3" maxlength="500" placeholder="<?= __('list_property_ph_description') ?>" data-aps-counter="#description_counter" aria-label="<?= __('list_property_label_description') ?>"></textarea>
                             <small id="description_counter" class="text-muted">0 / 500</small>
-                            <button type="button" id="aiGenDesc" class="btn btn-sm mt-2"><i class="fas fa-magic"></i> <?= __('ai_generate_description', null, 'Generate with AI') ?></button>
+                            <button type="button" id="aiGenDesc" class="btn btn-ai-generate btn-sm mt-2"><i class="fas fa-wand-magic-sparkles me-1"></i> <?= __('ai_generate_description', null, 'Generate with AI') ?></button>
                         </div>
                     </div>
 
@@ -218,7 +266,7 @@ try {
                             <label for="image_alt_text" class="form-label fw-bold"><?= __('list_property_alt_label', null, 'Image Alt Text (SEO)') ?></label>
                             <div class="input-group">
                                 <input type="text" name="image_alt_text" id="image_alt_text" class="form-control" placeholder="<?= __('list_property_alt_ph', null, 'Auto-generate SEO alt text with AI') ?>" maxlength="160" aria-label="<?= __('list_property_alt_label', null, 'Image Alt Text') ?>">
-                                <button type="button" id="aiGenAlt" class="btn btn-sm"><i class="fas fa-magic"></i> <?= __('ai_alt_text', null, 'AI Alt') ?></button>
+                                <button type="button" id="aiGenAlt" class="btn btn-ai-generate btn-sm"><i class="fas fa-wand-magic-sparkles me-1"></i> <?= __('ai_alt_text', null, 'AI Alt') ?></button>
                             </div>
                             <small class="text-muted"><?= __('list_property_alt_hint', null, 'Improves accessibility & Google image search ranking.') ?></small>
                         </div>
@@ -252,6 +300,9 @@ try {
                     <button type="button" class="btn btn-outline-secondary" data-wizard-prev disabled>
                         <i class="fas fa-arrow-left me-1"></i><?= __('back', null, 'Back') ?>
                     </button>
+                    <div class="aps-cp-wizard-progress" role="progressbar" aria-valuemin="1" aria-valuemax="3" aria-valuenow="1" aria-label="<?= __('list_property_progress_label', null, 'Listing progress') ?>">
+                        <div class="aps-cp-wizard-progress-bar"></div>
+                    </div>
                     <div class="d-flex gap-2">
                         <button type="button" class="btn btn-primary" data-wizard-next>
                             <?= __('next', null, 'Next') ?> <i class="fas fa-arrow-right ms-1"></i>
@@ -276,6 +327,20 @@ try {
     </div>
 
     <div class="col-lg-5">
+        <div class="lp-sticky">
+        <div class="aps-cp-card mb-3">
+            <div class="aps-cp-card-header">
+                <h5><i class="fas fa-route"></i><?= __('list_property_how_title', null, 'How it works') ?></h5>
+            </div>
+            <div class="aps-cp-card-body">
+                <ol class="lp-steps">
+                    <li><b><?= __('list_property_how_1', null, 'Fill the 3-step form') ?></b><small><?= __('list_property_how_1_sub', null, 'Type, location, photos & contact — done in 1 minute') ?></small></li>
+                    <li><b><?= __('list_property_how_2', null, 'Quick verification call') ?></b><small><?= __('list_property_how_2_sub', null, 'Our team confirms details & helps with price') ?></small></li>
+                    <li><b><?= __('list_property_how_3', null, 'Get verified buyer calls') ?></b><small><?= __('list_property_how_3_sub', null, 'Your property goes live for genuine buyers') ?></small></li>
+                </ol>
+            </div>
+        </div>
+
         <div class="aps-cp-card mb-3">
             <div class="aps-cp-card-header">
                 <h5><i class="fas fa-star"></i><?= __('list_property_free_title') ?></h5>
@@ -321,8 +386,164 @@ try {
                 </div>
             </div>
         </div>
+        </div>
     </div>
 </div>
+</div>
+
+<script>
+/* List-Property wizard: public layout does not load customer-pages.js,
+   so steps / progress / photo preview / counters are wired here. */
+(function() {
+    'use strict';
+    var wizard = document.querySelector('[data-aps-wizard]');
+    if (wizard) {
+        var panels = wizard.querySelectorAll('.aps-cp-wizard-panel');
+        var steps = wizard.querySelectorAll('.aps-cp-wizard-step');
+        var bar = wizard.querySelector('.aps-cp-wizard-progress-bar');
+        var progress = wizard.querySelector('.aps-cp-wizard-progress');
+        var prevBtn = wizard.querySelector('[data-wizard-prev]');
+        var nextBtn = wizard.querySelector('[data-wizard-next]');
+        var submitBtn = wizard.querySelector('[data-wizard-submit]');
+        var current = 0, total = panels.length;
+        function toast(msg, type) {
+            if (window.APS && typeof APS.toast === 'function') APS.toast(msg, type || 'warning');
+            else if (type === 'warning' || type === 'error') alert(msg);
+        }
+        function show(i) {
+            if (i < 0 || i >= total) return;
+            current = i;
+            panels.forEach(function(p, k) { p.classList.toggle('active', k === i); });
+            steps.forEach(function(s, k) {
+                s.classList.remove('active', 'completed');
+                if (k < i) s.classList.add('completed');
+                else if (k === i) s.classList.add('active');
+            });
+            if (bar) bar.style.width = (((i + 1) / total) * 100) + '%';
+            if (progress) progress.setAttribute('aria-valuenow', String(i + 1));
+            if (prevBtn) prevBtn.disabled = (i === 0);
+            if (nextBtn) nextBtn.style.display = (i === total - 1) ? 'none' : '';
+            if (submitBtn) submitBtn.style.display = (i === total - 1) ? '' : 'none';
+            wizard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        function validPanel(panel) {
+            var ok = true;
+            panel.querySelectorAll('input[required], select[required], textarea[required]').forEach(function(f) {
+                var v = (f.type === 'radio' || f.type === 'checkbox')
+                    ? wizard.querySelector('input[name="' + f.name + '"]:checked')
+                    : f.value.trim();
+                f.classList.remove('is-invalid');
+                if (!v) { f.classList.add('is-invalid'); ok = false; }
+            });
+            var phone = panel.querySelector('#phone');
+            if (phone && phone.value.trim() !== '' && !/^[6-9]\d{9}$/.test(phone.value.replace(/\D/g, '').slice(-10))) {
+                phone.classList.add('is-invalid'); ok = false;
+                toast('Please enter a valid 10-digit mobile number', 'warning');
+                return false;
+            }
+            return ok;
+        }
+        if (nextBtn) nextBtn.addEventListener('click', function() {
+            if (validPanel(panels[current])) show(current + 1);
+            else toast('Please fill all required fields in this step');
+        });
+        if (prevBtn) prevBtn.addEventListener('click', function() { show(current - 1); });
+        steps.forEach(function(s, k) {
+            s.addEventListener('click', function() {
+                if (k <= current) show(k);
+                else if (k === current + 1 && validPanel(panels[current])) show(k);
+                else if (k > current + 1) toast('Please complete the current step first');
+            });
+        });
+        show(0);
+    }
+
+    // ----- Photo preview + drag-drop (mirrors customer-pages.js) -----
+    var fileInput = document.getElementById('property_image');
+    var preview = document.getElementById('property_image_preview');
+    var dropzone = document.getElementById('property_image_dropzone');
+    if (fileInput && preview) {
+        var files = [], MAX = 5;
+        function render() {
+            preview.innerHTML = '';
+            files.forEach(function(item, idx) {
+                var thumb = document.createElement('div');
+                thumb.className = 'aps-cp-image-thumb' + (idx === 0 ? ' is-primary' : '');
+                var img = document.createElement('img');
+                img.src = item.url; img.alt = item.name; img.loading = 'lazy';
+                var rm = document.createElement('button');
+                rm.type = 'button'; rm.className = 'aps-cp-image-thumb-remove';
+                rm.setAttribute('aria-label', 'Remove photo');
+                rm.innerHTML = '<i class="fas fa-times"></i>';
+                rm.addEventListener('click', function(e) { e.preventDefault(); e.stopPropagation(); files.splice(idx, 1); sync(); render(); });
+                thumb.appendChild(img); thumb.appendChild(rm); preview.appendChild(thumb);
+            });
+        }
+        function sync() {
+            try {
+                var dt = new DataTransfer();
+                files.forEach(function(it) { dt.items.add(it.file); });
+                fileInput.files = dt.files;
+            } catch (e) { /* older browsers: keep input as-is */ }
+        }
+        function add(list) {
+            Array.from(list || []).forEach(function(f) {
+                if (files.length >= MAX) return;
+                if (['image/jpeg', 'image/png', 'image/webp'].indexOf(f.type) === -1) return;
+                if (f.size > 5 * 1024 * 1024) return;
+                (function(file) {
+                    var r = new FileReader();
+                    r.onload = function(e) { files.push({ file: file, name: file.name, url: e.target.result }); sync(); render(); };
+                    r.readAsDataURL(file);
+                })(f);
+            });
+        }
+        fileInput.addEventListener('change', function() { add(fileInput.files); });
+        if (dropzone) {
+            dropzone.addEventListener('click', function(e) { if (e.target.tagName !== 'INPUT') fileInput.click(); });
+            ['dragenter', 'dragover'].forEach(function(ev) { dropzone.addEventListener(ev, function(e) { e.preventDefault(); dropzone.classList.add('is-dragging'); }); });
+            ['dragleave', 'drop'].forEach(function(ev) { dropzone.addEventListener(ev, function(e) { e.preventDefault(); dropzone.classList.remove('is-dragging'); }); });
+            dropzone.addEventListener('drop', function(e) { e.preventDefault(); add(e.dataTransfer.files); });
+        }
+    }
+
+    // ----- Live description counter (data-aps-counter has no public handler) -----
+    var desc = document.getElementById('description');
+    var counter = document.getElementById('description_counter');
+    if (desc && counter) desc.addEventListener('input', function() { counter.textContent = desc.value.length + ' / 500'; });
+
+    // ----- Indian price grouping: display 1,50,000 but submit raw digits -----
+    var price = document.getElementById('price');
+    var form = document.getElementById('listPropertyForm');
+    function inr(n) {
+        var s = String(n).replace(/\D/g, '').replace(/^0+(?=\d)/, '');
+        if (!s) return '';
+        var last3 = s.slice(-3), rest = s.slice(0, -3);
+        if (rest) last3 = ',' + last3;
+        return rest.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + last3;
+    }
+    if (price) {
+        price.addEventListener('input', function() {
+            var pos = price.selectionStart, before = price.value.length;
+            price.value = inr(price.value);
+            pos += price.value.length - before;
+            try { price.setSelectionRange(pos, pos); } catch (e) {}
+        });
+        price.addEventListener('blur', function() { price.value = inr(price.value); });
+    }
+    if (form) {
+        form.addEventListener('submit', function() {
+            if (price) price.value = price.value.replace(/\D/g, '');
+            var btn = form.querySelector('[data-wizard-submit]');
+            if (btn && !btn.disabled) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Submitting...';
+                setTimeout(function() { btn.disabled = false; }, 8000);
+            }
+        });
+    }
+})();
+</script>
 
 <script>
 (function() {
@@ -429,7 +650,53 @@ try {
         });
     }
 
-    // ----- Guest submit: redirect to quick register modal -----
+    // ----- Listing draft: stash before register/login detours, restore on return -----
+    var DRAFT_KEY = 'lp_draft_v1';
+    function stashDraft() {
+        try {
+            var data = {};
+            document.querySelectorAll('#listPropertyForm input, #listPropertyForm select, #listPropertyForm textarea').forEach(function(el) {
+                if (!el.name || el.type === 'file') return;
+                if ((el.type === 'radio' || el.type === 'checkbox')) { if (el.checked) data[el.name] = el.value; return; }
+                data[el.name] = el.value;
+            });
+            sessionStorage.setItem(DRAFT_KEY, JSON.stringify(data));
+        } catch (e) { /* storage unavailable */ }
+    }
+    function restoreDraft() {
+        var raw = null;
+        try { raw = sessionStorage.getItem(DRAFT_KEY); } catch (e) { return false; }
+        if (!raw) return false;
+        var restored = false;
+        try {
+            var data = JSON.parse(raw);
+            Object.keys(data).forEach(function(name) {
+                var els = document.querySelectorAll('#listPropertyForm [name="' + name + '"]');
+                if (!els.length) return;
+                if (els[0].type === 'radio') {
+                    els.forEach(function(r) {
+                        if (r.value === data[name]) {
+                            r.checked = true;
+                            r.closest('.aps-cp-type-option') && r.closest('.aps-cp-type-option').classList.add('is-selected');
+                        } else if (r.closest('.aps-cp-type-option')) {
+                            r.closest('.aps-cp-type-option').classList.remove('is-selected');
+                        }
+                    });
+                    restored = true;
+                    return;
+                }
+                if (!els[0].value) { els[0].value = data[name]; restored = true; }
+            });
+            if (restored && window.APS && APS.toast) APS.toast('Your previous details were restored — just hit Submit', 'info');
+        } catch (e) { /* corrupt draft */ }
+        return restored;
+    }
+    function clearDraft() { try { sessionStorage.removeItem(DRAFT_KEY); } catch (e) {} }
+    restoreDraft();
+    var lpForm = document.getElementById('listPropertyForm');
+    if (lpForm) lpForm.addEventListener('submit', function() { clearDraft(); });
+
+    // ----- Guest submit: stash draft, then register via modal -----
     var guestSubmit = document.getElementById('guestSubmitBtn');
     if (guestSubmit) {
         guestSubmit.addEventListener('click', function(e) {
@@ -441,6 +708,7 @@ try {
                 if (window.APS && APS.toast) APS.toast('Please fill in your name and phone number first', 'warning');
                 return;
             }
+            stashDraft();
             var qrName = document.getElementById('qrName');
             var qrPhone = document.getElementById('qrPhone');
             var qrEmail = document.getElementById('qrEmail');
@@ -449,8 +717,15 @@ try {
             if (qrEmail) qrEmail.value = emailInput ? emailInput.value : '';
             var qrReferral = document.getElementById('qrReferralCode');
             if (qrReferral) qrReferral.value = '';
+            // After successful registration the session exists -> submit the listing
+            window.__qrAfterSuccess = function() {
+                window.__qrAfterSuccess = null;
+                clearDraft();
+                document.getElementById('listPropertyForm').submit();
+            };
             var modalEl = document.getElementById('quickRegisterModal');
             if (modalEl && window.bootstrap) {
+                if (typeof resetQuickRegisterModal === 'function') resetQuickRegisterModal();
                 var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
                 modal.show();
             } else {
@@ -510,7 +785,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(function () { alert('AI generation failed. Please try again.'); })
             .finally(function () {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-magic"></i> <?= __('ai_generate_description', null, 'Generate with AI') ?>';
+                btn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> <?= __('ai_generate_description', null, 'Generate with AI') ?>';
             });
     });
 
@@ -540,7 +815,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 .catch(function () { alert('AI alt-text generation failed. Please try again.'); })
                 .finally(function () {
                     altBtn.disabled = false;
-                    altBtn.innerHTML = '<i class="fas fa-magic"></i> <?= __('ai_alt_text', null, 'AI Alt') ?>';
+                    altBtn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> <?= __('ai_alt_text', null, 'AI Alt') ?>';
                 });
         });
     }

@@ -1,5 +1,5 @@
 {
-    "generated_at": "2026-09-22T13:04:31+02:00",
+    "generated_at": "2026-10-08T16:16:31+02:00",
     "base": "http://localhost/apsdreamhome",
     "total": 24,
     "passed": 24,
@@ -10,115 +10,115 @@
             "label": "home",
             "url": "/",
             "code": 200,
-            "ms": 122.5,
+            "ms": 147.8,
             "pass": true,
             "note": "",
-            "bytes": 311400
+            "bytes": 309207
         },
         {
             "label": "properties",
             "url": "/properties",
             "code": 200,
-            "ms": 113,
+            "ms": 110.7,
             "pass": true,
             "note": "",
-            "bytes": 282935
+            "bytes": 280742
         },
         {
             "label": "colonies",
             "url": "/colonies",
             "code": 200,
-            "ms": 113.8,
+            "ms": 148.3,
             "pass": true,
             "note": "",
-            "bytes": 206444
+            "bytes": 204251
         },
         {
             "label": "login",
             "url": "/login",
             "code": 200,
-            "ms": 96.2,
+            "ms": 91.5,
             "pass": true,
             "note": "",
-            "bytes": 18516
+            "bytes": 18961
         },
         {
             "label": "register",
             "url": "/register",
             "code": 200,
-            "ms": 94,
+            "ms": 87.4,
             "pass": true,
             "note": "",
-            "bytes": 21598
+            "bytes": 33669
         },
         {
             "label": "become-associate",
             "url": "/become-associate",
             "code": 200,
-            "ms": 101.9,
+            "ms": 98.1,
             "pass": true,
             "note": "",
-            "bytes": 25937
+            "bytes": 25961
         },
         {
             "label": "contact",
             "url": "/contact",
             "code": 200,
-            "ms": 110.2,
+            "ms": 102.3,
             "pass": true,
             "note": "",
-            "bytes": 198689
+            "bytes": 196496
         },
         {
             "label": "terms",
             "url": "/terms",
             "code": 200,
-            "ms": 92.6,
+            "ms": 83.8,
             "pass": true,
             "note": "",
-            "bytes": 12495
+            "bytes": 12493
         },
         {
             "label": "privacy",
             "url": "/privacy",
             "code": 200,
-            "ms": 118.7,
+            "ms": 113.6,
             "pass": true,
             "note": "",
-            "bytes": 186898
+            "bytes": 184705
         },
         {
             "label": "assoc-login",
             "url": "/associate/login",
             "code": 200,
-            "ms": 96,
+            "ms": 92.1,
             "pass": true,
             "note": "",
-            "bytes": 22135
+            "bytes": 22140
         },
         {
             "label": "assoc-dashboard",
             "url": "/associate/dashboard",
             "code": 200,
-            "ms": 131.9,
+            "ms": 118.6,
             "pass": true,
             "note": "",
-            "bytes": 70486
+            "bytes": 73346
         },
         {
             "label": "assoc-leads",
             "url": "/associate/leads",
             "code": 200,
-            "ms": 217.6,
+            "ms": 259.2,
             "pass": true,
             "note": "",
-            "bytes": 80590
+            "bytes": 80917
         },
         {
             "label": "assoc-genealogy",
             "url": "/associate/genealogy",
             "code": 200,
-            "ms": 96.2,
+            "ms": 107.2,
             "pass": true,
             "note": "",
             "bytes": 34374
@@ -127,16 +127,16 @@
             "label": "assoc-wallet",
             "url": "/associate/wallet",
             "code": 200,
-            "ms": 104,
+            "ms": 97.7,
             "pass": true,
             "note": "",
-            "bytes": 61948
+            "bytes": 62275
         },
         {
             "label": "admin-login",
             "url": "/admin/login",
             "code": 200,
-            "ms": 96,
+            "ms": 96.5,
             "pass": true,
             "note": "",
             "bytes": 14434
@@ -145,61 +145,61 @@
             "label": "admin-dashboard",
             "url": "/admin/dashboard",
             "code": 200,
-            "ms": 207,
+            "ms": 245.9,
             "pass": true,
             "note": "",
-            "bytes": 217638
+            "bytes": 253388
         },
         {
             "label": "admin-plots",
             "url": "/admin/plots",
             "code": 200,
-            "ms": 108.5,
+            "ms": 106.3,
             "pass": true,
             "note": "",
-            "bytes": 248958
+            "bytes": 282114
         },
         {
             "label": "admin-bookings",
             "url": "/admin/bookings",
             "code": 200,
-            "ms": 105.5,
+            "ms": 111.8,
             "pass": true,
             "note": "",
-            "bytes": 248022
+            "bytes": 264589
         },
         {
             "label": "admin-payout-batches",
             "url": "/admin/payout-batches",
             "code": 200,
-            "ms": 97.2,
+            "ms": 89.1,
             "pass": true,
             "note": "",
-            "bytes": 207781
+            "bytes": 240573
         },
         {
             "label": "admin-leads",
             "url": "/admin/leads",
             "code": 200,
-            "ms": 269.3,
+            "ms": 418.2,
             "pass": true,
             "note": "",
-            "bytes": 283370
+            "bytes": 316830
         },
         {
             "label": "admin-users",
             "url": "/admin/users",
             "code": 200,
-            "ms": 108.6,
+            "ms": 132.3,
             "pass": true,
             "note": "",
-            "bytes": 401705
+            "bytes": 434515
         },
         {
             "label": "api-health",
             "url": "/api/health",
             "code": 200,
-            "ms": 94.9,
+            "ms": 85,
             "pass": true,
             "note": "",
             "bytes": 114
@@ -208,16 +208,16 @@
             "label": "api-colonies",
             "url": "/api/v2/mobile/colonies",
             "code": 200,
-            "ms": 96.5,
+            "ms": 126.2,
             "pass": true,
             "note": "",
-            "bytes": 4665
+            "bytes": 4662
         },
         {
             "label": "api-plots",
             "url": "/api/v2/mobile/plots/all",
             "code": 200,
-            "ms": 101.9,
+            "ms": 125.3,
             "pass": true,
             "note": "",
             "bytes": 6725

@@ -294,6 +294,25 @@ class SalaryController extends AdminController
         $this->redirect('/admin/salary/salary-grants');
     }
 
+    public function processSalaryGrants()
+    {
+        $this->requireAdmin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { $this->redirect('/admin/salary/salary-grants'); }
+        $month = preg_match('/^\d{4}-\d{2}$/', $_POST['month'] ?? '') ? $_POST['month'] : date('Y-m');
+        try {
+            $svc = new \App\Services\MLM\SalaryIncentiveService();
+            $res = $svc->processMonthlyGrants($month);
+            if (!empty($res['success'])) {
+                $this->setFlash('success', "Grants processed for $month: {$res['processed']} paid (₹" . number_format($res['amount'] ?? 0, 0) . ")" . (!empty($res['errors']) ? ' — ' . count($res['errors']) . ' skipped' : ''));
+            } else {
+                $this->setFlash('error', 'Processing failed: ' . ($res['error'] ?? 'unknown'));
+            }
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/salary/salary-grants');
+    }
+
     public function stats()
     {
         $this->requireAdmin();

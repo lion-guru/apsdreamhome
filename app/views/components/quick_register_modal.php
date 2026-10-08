@@ -67,14 +67,14 @@
                     
                     <div class="text-center mt-3">
                         <small class="text-muted">
-                            By registering, you agree to our 
-                            <a href="/terms" class="text-primary">Terms</a> and 
-                            <a href="/privacy" class="text-primary">Privacy Policy</a>
+                            By registering, you agree to our
+                            <a href="<?= BASE_URL ?>/terms" class="text-primary">Terms</a> and
+                            <a href="<?= BASE_URL ?>/privacy" class="text-primary">Privacy Policy</a>
                         </small>
                     </div>
                 </form>
                 
-                <div id="qrLoading" >
+                <div id="qrLoading" style="display:none">
                     <div class="text-center py-4">
                         <div class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
@@ -82,6 +82,7 @@
                         <p class="mt-3"><?= __('component_creating_account', 'Creating your account...') ?></p>
                     </div>
                 </div>
+                <div id="qrError" class="alert alert-danger mt-3" style="display:none" role="alert"></div>
             </div>
         </div>
     </div>
@@ -122,7 +123,7 @@
                     </button>
                 </form>
                 
-                <div id="rrLoading" >
+                <div id="rrLoading" style="display:none">
                     <div class="text-center py-4">
                         <div class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
@@ -130,8 +131,8 @@
                         <p class="mt-3"><?= __('component_processing_request', 'Processing your request...') ?></p>
                     </div>
                 </div>
-                
-                <div id="rrResult" >
+
+                <div id="rrResult" style="display:none">
                     <div class="alert alert-success mt-3">
                         <h6 class="fw-bold"><i class="fas fa-check-circle me-2"></i><?= __('component_referral_code_sent', 'Referral Code Sent!') ?></h6>
                         <p class="mb-2"><?= __('component_your_referral_code', 'Your company referral code:') ?></p>
@@ -147,8 +148,46 @@
 <script>
 // Quick Register Functions
 function showQuickRegisterModal() {
-    const modal = new bootstrap.Modal(document.getElementById('quickRegisterModal'));
+    resetQuickRegisterModal();
+    const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('quickRegisterModal'));
     modal.show();
+}
+
+function resetQuickRegisterModal() {
+    const form = document.getElementById('quickRegisterForm');
+    if (form) form.style.display = 'block';
+    const loading = document.getElementById('qrLoading');
+    if (loading) loading.style.display = 'none';
+    const err = document.getElementById('qrError');
+    if (err) { err.style.display = 'none'; err.innerHTML = ''; }
+    // Reset referral sub-modal state so a previous "code sent" result never lingers
+    const rrForm = document.getElementById('referralRequestForm');
+    if (rrForm) rrForm.style.display = 'block';
+    const rrLoading = document.getElementById('rrLoading');
+    if (rrLoading) rrLoading.style.display = 'none';
+    const rrResult = document.getElementById('rrResult');
+    if (rrResult) rrResult.style.display = 'none';
+}
+
+function qrShowError(msg, loginUrl) {
+    const err = document.getElementById('qrError');
+    if (!err) { alert(msg); return; }
+    err.innerHTML = msg + (loginUrl ? ' <a href="' + loginUrl + '" class="alert-link">Login here</a>' : '');
+    err.style.display = 'block';
+    err.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// Normalize Indian mobile numbers: strips spaces/+91/leading 0 -> 10 digits
+function qrNormalizePhone(raw) {
+    let d = String(raw || '').replace(/\D/g, '');
+    if (d.length === 12 && d.indexOf('91') === 0) d = d.slice(2);
+    if (d.length === 11 && d.charAt(0) === '0') d = d.slice(1);
+    return d;
+}
+
+function qrCsrfToken() {
+    const input = document.querySelector('#quickRegisterForm input[name="csrf_token"]');
+    return input ? input.value : '';
 }
 
 function selectQrRole(btn, role) {
@@ -158,49 +197,64 @@ function selectQrRole(btn, role) {
 }
 
 function submitQuickRegister() {
-    const name = document.getElementById('qrName').value;
-    const email = document.getElementById('qrEmail').value;
-    const phone = document.getElementById('qrPhone').value;
-    const referralCode = document.getElementById('qrReferralCode').value;
+    const name = document.getElementById('qrName').value.trim();
+    const email = document.getElementById('qrEmail').value.trim();
+    const phone = qrNormalizePhone(document.getElementById('qrPhone').value);
+    const referralCode = document.getElementById('qrReferralCode').value.trim();
     const role = document.getElementById('qrSelectedRole').value;
-    
+
     if (!name || !email || !phone) {
-        alert('Please fill all required fields');
+        qrShowError('Please fill all required fields');
         return;
     }
-    
-    if (phone.length !== 10) {
-        alert('Please enter a valid 10-digit phone number');
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        qrShowError('Please enter a valid email address');
         return;
     }
-    
+
+    if (!/^[6-9]\d{9}$/.test(phone)) {
+        qrShowError('Please enter a valid 10-digit mobile number');
+        return;
+    }
+
     // Show loading
     document.getElementById('quickRegisterForm').style.display = 'none';
     document.getElementById('qrLoading').style.display = 'block';
-    
+    const errBox = document.getElementById('qrError');
+    if (errBox) errBox.style.display = 'none';
+
     const formData = new FormData();
     formData.append('name', name);
     formData.append('email', email);
     formData.append('phone', phone);
     formData.append('referral_code', referralCode);
     formData.append('role', role);
-    
-    fetch('<?= BASE_URL ?>/auth/quick-register', {
+    formData.append('csrf_token', qrCsrfToken());
+
+    fetch((window.BASE_URL || '<?= BASE_URL ?>') + '/auth/quick-register', {
         method: 'POST',
-        body: formData
+        body: formData,
+        credentials: 'same-origin'
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            window.location.href = data.redirect;
+            // Page-specific continuation (e.g. list-property auto-submits the listing)
+            if (typeof window.__qrAfterSuccess === 'function') {
+                try { window.__qrAfterSuccess(data); return; } catch (e) { console.error(e); }
+            }
+            let target = data.redirect || '/user/dashboard';
+            if (target.charAt(0) === '/' && window.BASE_URL) target = window.BASE_URL + target;
+            window.location.href = target;
         } else {
-            alert('Registration failed: ' + data.message);
+            qrShowError('Registration failed: ' + (data.message || 'Unknown error'), data.login_url || null);
             document.getElementById('quickRegisterForm').style.display = 'block';
             document.getElementById('qrLoading').style.display = 'none';
         }
     })
     .catch(error => {
-        alert('Error: ' + error);
+        qrShowError('Network error, please try again.');
         document.getElementById('quickRegisterForm').style.display = 'block';
         document.getElementById('qrLoading').style.display = 'none';
     });
@@ -208,41 +262,47 @@ function submitQuickRegister() {
 
 function requestReferralCode() {
     // Hide quick register modal
-    const quickRegisterModal = bootstrap.Modal.getInstance(document.getElementById('quickRegisterModal'));
-    quickRegisterModal.hide();
-    
-    // Show referral request modal
+    const qrEl = document.getElementById('quickRegisterModal');
+    const qrInstance = bootstrap.Modal.getInstance(qrEl);
+    if (qrInstance) qrInstance.hide();
+
+    // Reset + show referral request modal
+    document.getElementById('referralRequestForm').style.display = 'block';
+    document.getElementById('rrLoading').style.display = 'none';
+    document.getElementById('rrResult').style.display = 'none';
     const modal = new bootstrap.Modal(document.getElementById('referralRequestModal'));
     modal.show();
 }
 
 function submitReferralRequest() {
-    const name = document.getElementById('rrName').value;
-    const email = document.getElementById('rrEmail').value;
-    const phone = document.getElementById('rrPhone').value;
-    
+    const name = document.getElementById('rrName').value.trim();
+    const email = document.getElementById('rrEmail').value.trim();
+    const phone = qrNormalizePhone(document.getElementById('rrPhone').value);
+
     if (!name || !email || !phone) {
         alert('Please fill all required fields');
         return;
     }
-    
-    if (phone.length !== 10) {
-        alert('Please enter a valid 10-digit phone number');
+
+    if (!/^[6-9]\d{9}$/.test(phone)) {
+        alert('Please enter a valid 10-digit mobile number');
         return;
     }
-    
+
     // Show loading
     document.getElementById('referralRequestForm').style.display = 'none';
     document.getElementById('rrLoading').style.display = 'block';
-    
+
     const formData = new FormData();
     formData.append('name', name);
     formData.append('email', email);
     formData.append('phone', phone);
-    
-    fetch('<?= BASE_URL ?>/auth/request-referral-code', {
+    formData.append('csrf_token', qrCsrfToken());
+
+    fetch((window.BASE_URL || '<?= BASE_URL ?>') + '/auth/request-referral-code', {
         method: 'POST',
-        body: formData
+        body: formData,
+        credentials: 'same-origin'
     })
     .then(response => response.json())
     .then(data => {
@@ -251,28 +311,16 @@ function submitReferralRequest() {
             document.getElementById('rrResult').style.display = 'block';
             document.getElementById('rrReferralCode').textContent = data.referral_code;
         } else {
-            alert('Request failed: ' + data.message);
+            alert('Request failed: ' + (data.message || 'Unknown error'));
             document.getElementById('referralRequestForm').style.display = 'block';
             document.getElementById('rrLoading').style.display = 'none';
         }
     })
     .catch(error => {
-        alert('Error: ' + error);
+        alert('Network error, please try again.');
         document.getElementById('referralRequestForm').style.display = 'block';
         document.getElementById('rrLoading').style.display = 'none';
     });
-}
-.catch(error => {
-        alert('Error: ' + error);
-        document.getElementById('quickRegisterForm').style.display = 'block';
-        document.getElementById('qrLoading').style.display = 'none';
-    });
-}
-
-function selectQrRole(btn, role) {
-    document.querySelectorAll('.role-btn-qr').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('qrSelectedRole').value = role;
 }
 </script>
 

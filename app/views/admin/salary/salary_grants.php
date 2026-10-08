@@ -6,7 +6,14 @@ $users = $users ?? [];
 ?>
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="mb-0"><i class="fas fa-hand-holding-usd me-2"></i><?= htmlspecialchars($page_title) ?></h4>
+    <div class="d-flex gap-2">
+    <form method="POST" action="<?= BASE_URL ?>/admin/salary/salary-grants/process" class="d-inline">
+        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+        <input type="hidden" name="month" value="<?= date('Y-m') ?>">
+        <button class="btn btn-success" onclick="return confirm('Run monthly payout for <?= date('Y-m') ?>? Already-paid grants are skipped.')"><i class="fas fa-play me-1"></i>Process <?= date('M Y') ?> Payout</button>
+    </form>
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#grantModal"><i class="fas fa-plus me-1"></i>Activate Grant</button>
+    </div>
 </div>
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white fw-bold">Salary Tiers (lifetime business volume → monthly grant)</div>

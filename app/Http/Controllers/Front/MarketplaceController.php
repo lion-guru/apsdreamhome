@@ -25,30 +25,102 @@ class MarketplaceController extends BaseController
      */
     public function index()
     {
+        // NOTE: BaseController has no tenantId() helper (it would fatal), so
+        // resolve the tenant id safely here instead of calling $this->tenantId().
+        $tid = 1;
+        try { $tid = \App\Core\Middleware\TenantContext::getId(); } catch (\Throwable $e) { $tid = 1; }
+        $tWhere = $tid > 1 ? " AND up.tenant_id = ?" : "";
+        $tParams = $tid > 1 ? [$tid] : [];
+
+        // Filters from query string (match the view's filter form names)
+        $filters = [
+            'type' => trim($_GET['type'] ?? ''),
+            'listing_type' => trim($_GET['listing_type'] ?? ''),
+            'min_price' => trim($_GET['min_price'] ?? ''),
+            'max_price' => trim($_GET['max_price'] ?? ''),
+            'location' => trim($_GET['location'] ?? ''),
+        ];
+        $where = ["up.status = 'approved'"];
+        $params = [];
+        if ($filters['type'] !== '') { $where[] = "up.property_type = ?"; $params[] = $filters['type']; }
+        if ($filters['listing_type'] !== '') { $where[] = "up.listing_type = ?"; $params[] = $filters['listing_type']; }
+        if (is_numeric($filters['min_price'])) { $where[] = "up.price >= ?"; $params[] = (float)$filters['min_price']; }
+        if (is_numeric($filters['max_price'])) { $where[] = "up.price <= ?"; $params[] = (float)$filters['max_price']; }
+        if ($filters['location'] !== '') { $where[] = "(up.location LIKE ? OR up.city_name LIKE ? OR up.address LIKE ?)"; $params[] = "%{$filters['location']}%"; $params[] = "%{$filters['location']}%"; $params[] = "%{$filters['location']}%"; }
+        $whereSql = implode(' AND ', $where) . $tWhere;
+        $allParams = array_merge($params, $tParams);
+
+        $listings = [];
+        $premiumListings = [];
+        $total = 0;
+        $propertyTypes = [];
+        $listingTypes = [];
+        $packages = [];
         try {
-            $tid = $this->tenantId();
-            $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
-            $tenantParams = $tid > 1 ? [$tid] : [];
+            $total = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM user_properties up WHERE {$whereSql}", $allParams);
+
+            $currentPage = max(1, (int)($_GET['page'] ?? 1));
+            $perPage = 24;
+            $totalPages = max(1, (int)ceil($total / $perPage));
+            if ($currentPage > $totalPages) $currentPage = $totalPages;
+            $offset = ($currentPage - 1) * $perPage;
 
             $stmt = $this->db->prepare("
                 SELECT up.*, u.name as seller_name
                 FROM user_properties up
                 LEFT JOIN users u ON up.user_id = u.id
-                WHERE up.status = 'approved'{$tenantWhere}
-                ORDER BY up.is_featured DESC, up.is_premium DESC, up.created_at DESC
-                LIMIT 50
+                WHERE {$whereSql}
+                ORDER BY up.is_premium DESC, up.is_featured DESC, up.is_urgent DESC, up.created_at DESC
+                LIMIT {$perPage} OFFSET {$offset}
             ");
-            $stmt->execute($tenantParams);
-            $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $stmt->execute($allParams);
+            $listings = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+            // Premium carousel: boosted/featured approved listings (unfiltered)
+            try {
+                $stmt = $this->db->prepare("
+                    SELECT up.*, u.name as seller_name
+                    FROM user_properties up
+                    LEFT JOIN users u ON up.user_id = u.id
+                    WHERE up.status = 'approved' AND (up.is_premium = 1 OR up.is_featured = 1 OR up.is_urgent = 1){$tWhere}
+                    ORDER BY up.is_premium DESC, up.created_at DESC
+                    LIMIT 10
+                ");
+                $stmt->execute($tParams);
+                $premiumListings = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            } catch (\Throwable $e) { error_log("MarketplaceController::index premium: " . $e->getMessage()); }
+
+            try {
+                $propertyTypes = $this->db->fetchAll("SELECT DISTINCT up.property_type FROM user_properties up WHERE up.status = 'approved'{$tWhere} ORDER BY up.property_type", $tParams);
+                $propertyTypes = array_column($propertyTypes ?: [], 'property_type');
+                $listingTypes = $this->db->fetchAll("SELECT DISTINCT up.listing_type FROM user_properties up WHERE up.status = 'approved'{$tWhere} ORDER BY up.listing_type", $tParams);
+                $listingTypes = array_column($listingTypes ?: [], 'listing_type');
+            } catch (\Throwable $e) { error_log("MarketplaceController::index facets: " . $e->getMessage()); }
+
+            try {
+                $packages = $this->db->fetchAll("SELECT name, price, badge_label FROM premium_packages WHERE is_active = 1 ORDER BY priority_order ASC, price ASC LIMIT 5") ?: [];
+            } catch (\Throwable $e) { /* packages table optional */ }
         } catch (\Throwable $e) {
             error_log("MarketplaceController::index: " . $e->getMessage());
-            $properties = [];
+            $listings = [];
+            $currentPage = 1;
+            $totalPages = 1;
         }
 
         $this->layout = 'layouts/base';
         $this->render('pages/marketplace', [
             'page_title' => 'Marketplace - APS Dream Home',
-            'properties' => $properties,
+            'base' => defined('BASE_URL') ? BASE_URL : '',
+            'properties' => $listings,
+            'listings' => $listings,
+            'premiumListings' => $premiumListings,
+            'packages' => $packages,
+            'propertyTypes' => $propertyTypes,
+            'listingTypes' => $listingTypes,
+            'filters' => $filters,
+            'total' => $total,
+            'currentPage' => $currentPage ?? 1,
+            'totalPages' => $totalPages ?? 1,
         ]);
     }
 

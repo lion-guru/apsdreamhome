@@ -52,8 +52,11 @@ class UserController extends BaseController
         $this->requireCustomerLogin();
         $user = $this->getUser();
 
-        $stmt = $this->db->prepare("SELECT * FROM user_properties WHERE email = ? ORDER BY created_at DESC");
-        $stmt->execute([$user['email']]);
+        // Owner match by account id OR contact email: listings saved under the
+        // logged-in account always surface here even if a different contact
+        // email was typed on the listing form.
+        $stmt = $this->db->prepare("SELECT * FROM user_properties WHERE user_id = ? OR email = ? ORDER BY created_at DESC");
+        $stmt->execute([(int)$user['id'], $user['email']]);
         $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         $stmt = $this->db->prepare("SELECT * FROM inquiries WHERE email = ? ORDER BY created_at DESC LIMIT 10");
@@ -242,8 +245,11 @@ class UserController extends BaseController
         $this->requireCustomerLogin();
         $user = $this->getUser();
 
-        $stmt = $this->db->prepare("SELECT * FROM user_properties WHERE email = ? ORDER BY created_at DESC");
-        $stmt->execute([$user['email']]);
+        // Owner match by account id OR contact email: listings saved under the
+        // logged-in account always surface here even if a different contact
+        // email was typed on the listing form.
+        $stmt = $this->db->prepare("SELECT * FROM user_properties WHERE user_id = ? OR email = ? ORDER BY created_at DESC");
+        $stmt->execute([(int)$user['id'], $user['email']]);
         $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         $data = [

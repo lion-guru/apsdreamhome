@@ -127,6 +127,7 @@ class RegisterController extends BaseController
                 'referral_code' => $referral,
                 'registration_method' => 'web',
                 'agent_type' => $agentType,
+                'experience' => trim($_POST['experience'] ?? ''),
                 'city' => trim($_POST['city'] ?? ''),
                 'state' => trim($_POST['state'] ?? ''),
                 'pincode' => preg_replace('/\D/', '', $_POST['pincode'] ?? ''),

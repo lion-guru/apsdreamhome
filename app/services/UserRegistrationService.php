@@ -114,6 +114,13 @@ class UserRegistrationService
         $occupation = trim($data['occupation'] ?? '');
         $regMethod = trim($data['registration_method'] ?? 'web');
         $agentType = trim($data['agent_type'] ?? '');
+        // Agent experience (form sends fresher|1-2|3-5|5+; column is INT years, nullable)
+        $agentExpYears = null;
+        if ($role === 'agent') {
+            $expMap = ['fresher' => 0, '1-2' => 1, '3-5' => 3, '5+' => 5];
+            $expKey = trim($data['experience'] ?? '');
+            if (array_key_exists($expKey, $expMap)) $agentExpYears = $expMap[$expKey];
+        }
 
         if (empty($name)) {
             return ['success' => false, 'message' => 'Name is required'];
@@ -188,6 +195,7 @@ class UserRegistrationService
                 'role' => $role,
                 'city' => $city ?: null,
                 'occupation' => $occupation ?: null,
+                'agent_experience_years' => $agentExpYears,
                 'status' => $userStatus,
                 'registration_status' => $regStatus,
                 'registration_method' => $regMethod,

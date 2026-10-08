@@ -102,6 +102,7 @@ class AgentAuthController extends BaseController
                 'pincode' => preg_replace('/\D/', '', $_POST['pincode'] ?? ''),
                 'address' => trim($_POST['address'] ?? ''),
                 'registration_method' => 'web',
+                'experience' => trim($_POST['experience'] ?? ''),
             ]);
             if (!empty($result['user_id']) && (!empty($_POST['city']) || !empty($_POST['pincode']) || !empty($_POST['address']))) {
                 try {

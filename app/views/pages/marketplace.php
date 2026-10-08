@@ -150,7 +150,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         if (!empty($p['is_premium'])) { $ptype = 'PREMIUM'; $pColor = '#f59e0b'; }
         elseif (!empty($p['is_urgent'])) { $ptype = 'URGENT'; $pColor = '#ef4444'; }
         elseif (!empty($p['is_featured'])) { $ptype = 'Featured'; $pColor = '#ff6b35'; }
-        $img = !empty($p['image']) ? ($base . '/' . $p['image']) : '';
+        $img = !empty($p['image']) ? ($base . '/' . ltrim($p['image'], '/')) : '';
       ?>
       <a href="<?= $base ?>/marketplace/<?= $p['id'] ?>" class="text-decoration-none text-dark premium-card">
         <div class="ribbon"><?= $ptype ?></div>
@@ -205,7 +205,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
           if (!empty($prop['is_premium'])) { $badge = 'Premium'; $bc = 'bg-warning text-dark'; }
           elseif (!empty($prop['is_urgent'])) { $badge = 'Urgent'; $bc = 'bg-danger'; }
           elseif (!empty($prop['is_featured'])) { $badge = 'Featured'; $bc = 'bg-warning text-dark'; }
-          $img = !empty($prop['image']) ? ($base . '/' . $prop['image']) : '';
+            $img = !empty($prop['image']) ? ($base . '/' . ltrim($prop['image'], '/')) : '';
         ?>
         <div class="col-lg-4 col-md-6">
           <div class="reg-card">

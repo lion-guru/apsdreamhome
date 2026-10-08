@@ -283,8 +283,227 @@ class PropertyPageController extends BaseController
 
     public function handlePropertyListing()
     {
-        // Legacy method - redirect to listProperty
-        $this->redirect('/list-property');
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+            $this->redirect('/list-property');
+            return;
+        }
+
+        $isXhr = !empty($_SERVER['HTTP_X_REQUESTED_WITH'])
+            || (strpos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') !== false);
+
+        $fail = function (string $msg, int $code = 422) use ($isXhr) {
+            if ($isXhr) {
+                $this->jsonResponse(['success' => false, 'message' => $msg], $code);
+                return;
+            }
+            $_SESSION['error'] = $msg;
+            $this->redirect('/list-property');
+        };
+
+        // ---- Owner identity: customer(user_id) > associate/agent (resolve users.id) ----
+        $ownerId = 0;
+        $ownerRole = 'customer';
+        if (!empty($_SESSION['user_id'])) {
+            $ownerId = (int)$_SESSION['user_id'];
+            $ownerRole = $_SESSION['role'] ?? 'customer';
+        } else {
+            $refAssocId = (int)($_SESSION['agent_id'] ?? $_SESSION['associate_id'] ?? 0);
+            if ($refAssocId > 0) {
+                try {
+                    $row = $this->db->fetchOne("SELECT user_id FROM associates WHERE id = ? LIMIT 1", [$refAssocId]);
+                    if ($row && !empty($row['user_id'])) {
+                        $ownerId = (int)$row['user_id'];
+                        $ownerRole = !empty($_SESSION['agent_id']) ? 'agent' : 'associate';
+                    }
+                } catch (\Throwable $e) { error_log('handlePropertyListing owner resolve failed: ' . $e->getMessage()); }
+            }
+        }
+        if ($ownerId <= 0) {
+            $fail('Please login or register first to list your property.');
+            return;
+        }
+
+        // ---- Inputs ----
+        $listingType = strtolower(trim($_POST['listing_type'] ?? 'sell'));
+        $propertyType = strtolower(trim($_POST['property_type'] ?? ''));
+        $stateId = (int)($_POST['selected_state_id'] ?? $_POST['state_id'] ?? 0);
+        $districtId = (int)($_POST['selected_district_id'] ?? 0);
+        $district = trim($_POST['location'] ?? '');
+        $city = trim($_POST['city'] ?? ($_POST['selected_city_name'] ?? ''));
+        $pincode = preg_replace('/\D/', '', $_POST['pincode'] ?? '');
+        $price = (float)preg_replace('/[^\d.]/', '', (string)($_POST['price'] ?? ''));
+        $areaRaw = preg_replace('/[^\d.]/', '', (string)($_POST['area'] ?? ''));
+        $area = $areaRaw === '' ? 0 : (int)round((float)$areaRaw);
+        $name = trim($_POST['name'] ?? '');
+        $phone = preg_replace('/\D/', '', (string)($_POST['phone'] ?? ''));
+        if (strlen($phone) === 12 && substr($phone, 0, 2) === '91') $phone = substr($phone, 2);
+        if (strlen($phone) === 11 && $phone[0] === '0') $phone = substr($phone, 1);
+        $email = trim($_POST['email'] ?? '');
+        $description = trim(mb_substr($_POST['description'] ?? '', 0, 2000));
+        $imageAlt = trim(mb_substr($_POST['image_alt_text'] ?? '', 0, 200));
+
+        // ---- Validation ----
+        if (!in_array($listingType, ['sell', 'rent', 'lease'], true)) $listingType = 'sell';
+        $allowedTypes = ['plot', 'house', 'flat', 'shop', 'farmhouse', 'land', 'apartment', 'villa'];
+        if (!in_array($propertyType, $allowedTypes, true)) { $fail('Please select a valid property type.'); return; }
+        if ($stateId <= 0) { $fail('Please select your state.'); return; }
+        if ($district === '') { $fail('Please select your district.'); return; }
+        if ($price <= 0) { $fail('Please enter a valid price.'); return; }
+        if ($area <= 0) { $fail('Please enter a valid area in sqft.'); return; }
+        if ($name === '') { $fail('Please enter your name.'); return; }
+        if (!preg_match('/^[6-9]\d{9}$/', $phone)) { $fail('Please enter a valid 10-digit mobile number.'); return; }
+        if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) { $fail('Please enter a valid email address.'); return; }
+        if ($pincode !== '' && !preg_match('/^\d{6}$/', $pincode)) { $fail('Please enter a valid 6-digit pincode.'); return; }
+
+        try {
+            if (!$this->tenantEnforce('create_property')) {
+                $fail('Your account is not authorized to list properties. Please contact support.');
+                return;
+            }
+            $tenantId = $this->tenantId();
+
+            // Owner email (keeps /user/properties email-match working even if a
+            // different contact email was typed)
+            $ownerEmail = '';
+            try {
+                $ownerRow = $this->db->fetchOne("SELECT email FROM users WHERE id = ? LIMIT 1", [$ownerId]);
+                if ($ownerRow) $ownerEmail = $ownerRow['email'] ?? '';
+            } catch (\Throwable $e) { /* non-fatal */ }
+
+            // ---- Idempotency: same owner+phone+price+type within 15 min -> reuse ----
+            try {
+                $dup = $this->db->fetchOne(
+                    "SELECT id FROM user_properties WHERE user_id = ? AND phone = ? AND price = ? AND property_type = ? AND listing_type = ? AND created_at >= (NOW() - INTERVAL 15 MINUTE) ORDER BY id DESC LIMIT 1",
+                    [$ownerId, $phone, $price, $propertyType, $listingType]
+                );
+                if ($dup) {
+                    $this->listingSuccess((int)$dup['id'], $ownerRole, $isXhr, true);
+                    return;
+                }
+            } catch (\Throwable $e) { /* non-fatal */ }
+
+            // ---- Photo upload (single image) ----
+            $imagePath = null;
+            if (!empty($_FILES['property_image']['tmp_name']) && (int)($_FILES['property_image']['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK) {
+                $imagePath = $this->saveListingImage($_FILES['property_image']);
+            }
+
+            // ---- Location names for human-readable address ----
+            // Validate FK ids up-front so a stale/unknown id becomes a friendly
+            // message instead of a 1452 constraint failure.
+            $stateName = '';
+            try {
+                $sRow = $this->db->fetchOne("SELECT name FROM states WHERE id = ? LIMIT 1", [$stateId]);
+                if (!$sRow) { $fail('The selected state is invalid. Please re-select your location.'); return; }
+                $stateName = $sRow['name'] ?? '';
+            } catch (\Throwable $e) { $fail('Could not verify your location. Please try again.'); return; }
+            if ($districtId > 0) {
+                try {
+                    $dRow = $this->db->fetchOne("SELECT id FROM districts WHERE id = ? AND state_id = ? LIMIT 1", [$districtId, $stateId]);
+                    if (!$dRow) $districtId = 0; // stale id -> store district by name only
+                } catch (\Throwable $e) { $districtId = 0; }
+            }
+            $addressParts = array_filter([$city !== '' ? $city : $district, $stateName]);
+            if ($pincode !== '') $addressParts[] = $pincode;
+
+            $desc = $description;
+            if ($desc === '') {
+                $desc = ucfirst($propertyType) . ' for ' . ucfirst($listingType) . ' in ' . implode(', ', $addressParts)
+                    . ' | Area: ' . number_format($area) . ' sqft | Price: Rs.' . number_format($price);
+            }
+
+            $data = [
+                'user_id' => $ownerId,
+                'posted_by' => $ownerId,
+                'posted_by_type' => in_array($ownerRole, ['associate', 'agent'], true) ? $ownerRole : 'customer',
+                'name' => $name,
+                'phone' => $phone,
+                'email' => $email !== '' ? $email : ($ownerEmail !== '' ? $ownerEmail : null),
+                'property_type' => $propertyType,
+                'listing_type' => $listingType,
+                'address' => implode(', ', $addressParts),
+                'location' => $district,
+                'city_name' => $city !== '' ? $city : $district,
+                'state_id' => $stateId,
+                'district_id' => $districtId > 0 ? $districtId : null,
+                'pincode' => $pincode !== '' ? $pincode : null,
+                'area_sqft' => $area,
+                'price' => $price,
+                'price_type' => 'lakh',
+                'description' => $desc,
+                'image' => $imagePath,
+                'metadata' => json_encode(['image_alt_text' => $imageAlt, 'source' => 'list_property_page']),
+                'status' => 'pending',
+                'tenant_id' => $tenantId,
+            ];
+            // Drop nulls so strict-mode columns with defaults apply cleanly
+            foreach ($data as $k => $v) { if ($v === null) unset($data[$k]); }
+
+            $newId = (int)$this->db->insert('user_properties', $data);
+            if ($newId <= 0) {
+                $row = $this->db->fetchOne(
+                    "SELECT id FROM user_properties WHERE user_id = ? AND phone = ? AND price = ? ORDER BY id DESC LIMIT 1",
+                    [$ownerId, $phone, $price]
+                );
+                $newId = $row ? (int)$row['id'] : 0;
+            }
+            if ($newId <= 0) { $fail('Could not save your listing. Please try again.'); return; }
+
+            $this->listingSuccess($newId, $ownerRole, $isXhr, false);
+        } catch (\Throwable $e) {
+            error_log('handlePropertyListing failed: ' . $e->getMessage());
+            $fail('Something went wrong while saving your listing. Please try again.');
+        }
+    }
+
+    /**
+     * Store the listing photo under public/uploads/user_properties/.
+     * Returns the web path (e.g. /uploads/user_properties/x.jpg) or null.
+     */
+    private function saveListingImage(array $file): ?string
+    {
+        $tmp = $file['tmp_name'] ?? '';
+        if (!is_uploaded_file($tmp)) return null;
+        if ((int)($file['size'] ?? 0) > 5 * 1024 * 1024) {
+            throw new \Exception('Photo must be under 5MB.');
+        }
+        $ext = strtolower(pathinfo($file['name'] ?? '', PATHINFO_EXTENSION));
+        if (!in_array($ext, ['jpg', 'jpeg', 'png', 'webp'], true)) {
+            throw new \Exception('Photo must be JPG, PNG or WebP.');
+        }
+        $info = @getimagesize($tmp);
+        if ($info === false || strpos($info['mime'] ?? '', 'image/') !== 0) {
+            throw new \Exception('Uploaded file is not a valid image.');
+        }
+        $dir = __DIR__ . '/../../../public/uploads/user_properties/';
+        if (!is_dir($dir) && !mkdir($dir, 0755, true)) {
+            throw new \Exception('Upload directory unavailable.');
+        }
+        $fileName = 'lp_' . date('YmdHis') . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+        if (!move_uploaded_file($tmp, $dir . $fileName)) {
+            throw new \Exception('Could not store the uploaded photo.');
+        }
+        return '/uploads/user_properties/' . $fileName;
+    }
+
+    /**
+     * Success response for a saved listing: JSON for XHR, flash + owner-list
+     * redirect for normal posts.
+     */
+    private function listingSuccess(int $id, string $ownerRole, bool $isXhr, bool $duplicate): void
+    {
+        $msg = $duplicate
+            ? 'This listing was already submitted and is under review.'
+            : 'Property submitted successfully! Our team will verify it shortly.';
+        $target = '/user/properties';
+        if ($ownerRole === 'associate') $target = '/associate/properties';
+        elseif ($ownerRole === 'agent') $target = '/agent/properties';
+        if ($isXhr) {
+            $this->jsonResponse(['success' => true, 'message' => $msg, 'id' => $id, 'redirect' => (defined('BASE_URL') ? BASE_URL : '') . $target]);
+            return;
+        }
+        $_SESSION['success'] = $msg;
+        $this->redirect($target);
     }
 
     /**
