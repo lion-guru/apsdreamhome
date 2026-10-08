@@ -75,12 +75,10 @@ class AgentAuthController extends BaseController
             $errors[] = "Passwords do not match";
         }
 
-        // CAPTCHA validation
+        // CAPTCHA validation (mandatory — brute-force protection)
         $captcha_code = trim($_POST['captcha_code'] ?? '');
-        if (!empty($captcha_code)) {
-            if (!SimpleCaptcha::validate($captcha_code)) {
-                $errors[] = 'Invalid or expired security code. Please try again.';
-            }
+        if (empty($captcha_code) || !SimpleCaptcha::validate($captcha_code)) {
+            $errors[] = 'Invalid or expired security code. Please try again.';
         }
 
         if (!empty($errors)) {
@@ -158,6 +156,14 @@ class AgentAuthController extends BaseController
 
         if (empty($email) || empty($password)) {
             $_SESSION['errors'] = ["Email and password are required"];
+            header('Location: ' . BASE_URL . '/agent/login');
+            exit;
+        }
+
+        // ── CAPTCHA validation (brute-force protection) ──
+        $captcha_code = trim($_POST['captcha_code'] ?? '');
+        if (empty($captcha_code) || !SimpleCaptcha::validate($captcha_code)) {
+            $_SESSION['errors'] = ["Invalid or expired security code. Please try again."];
             header('Location: ' . BASE_URL . '/agent/login');
             exit;
         }

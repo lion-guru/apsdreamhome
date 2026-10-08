@@ -508,6 +508,15 @@ class OtpAuthController extends BaseController
             header('Location: ' . BASE_URL . '/register/smart');
             exit;
         }
+
+        // ── CAPTCHA validation (OTP-bombing protection) ──
+        $captcha_code = trim($_POST['captcha_code'] ?? '');
+        require_once __DIR__ . '/../../../Helpers/SimpleCaptcha.php';
+        if (empty($captcha_code) || !\SimpleCaptcha::validate($captcha_code)) {
+            $_SESSION['error'] = 'Invalid or expired security code. Please try again.';
+            header('Location: ' . BASE_URL . '/register/smart');
+            exit;
+        }
         
         if (empty($phone) || !preg_match('/^[0-9]{10}$/', $phone)) {
             $_SESSION['error'] = 'Please enter a valid 10-digit phone number.';

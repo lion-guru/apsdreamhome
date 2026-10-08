@@ -203,6 +203,10 @@ class AdminAuthController extends BaseController
         }
 
         try {
+            // Rate limiting: 5 attempts per minute per IP (brute-force protection)
+            require_once __DIR__ . '/../../../Middleware/RateLimiter.php';
+            \App\Middleware\RateLimiter::check('admin_login_' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'), 5, 60);
+
             // Validate CSRF
             $submittedToken = $_POST['csrf_token'] ?? '';
             $sessionToken = $_SESSION['csrf_token'] ?? '';

@@ -99,6 +99,13 @@ class AssociateAuthController extends BaseController
             $errors[] = "Passwords do not match";
         }
 
+        // CAPTCHA validation (mandatory — brute-force protection)
+        $captcha_code = trim($_POST['captcha_code'] ?? '');
+        require_once __DIR__ . '/../../../Helpers/SimpleCaptcha.php';
+        if (empty($captcha_code) || !\SimpleCaptcha::validate($captcha_code)) {
+            $errors[] = 'Invalid or expired security code. Please try again.';
+        }
+
         if (!empty($errors)) {
             $_SESSION['errors'] = $errors;
             $_SESSION['old_input'] = $_POST;
@@ -187,6 +194,15 @@ class AssociateAuthController extends BaseController
 
         if (empty($email) || empty($password)) {
             $_SESSION['errors'] = ["Email and password are required"];
+            header('Location: ' . BASE_URL . '/associate/login');
+            exit;
+        }
+
+        // ── CAPTCHA validation (brute-force protection) ──
+        $captcha_code = trim($_POST['captcha_code'] ?? '');
+        require_once __DIR__ . '/../../../Helpers/SimpleCaptcha.php';
+        if (empty($captcha_code) || !\SimpleCaptcha::validate($captcha_code)) {
+            $_SESSION['errors'] = ["Invalid or expired security code. Please try again."];
             header('Location: ' . BASE_URL . '/associate/login');
             exit;
         }
