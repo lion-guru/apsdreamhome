@@ -1,0 +1,580 @@
+openapi: 3.0.3
+info:
+  title: APS Dream Home - Marketplace API
+  description: |
+    Marketplace, referral, and property boost APIs for web + mobile clients.
+
+    ## Auth
+    All `/api/v2/mobile/*` endpoints require Bearer token via `ApiAuthMiddleware`.
+    The authenticated user ID is available as `$GLOBALS['api_user_id']`.
+
+    ## Web Routes (session-based)
+    Web marketplace routes use PHP session auth (`$_SESSION['user_id']`).
+
+    ## Boost Pricing
+    | Type     | Amount (INR) |
+    |----------|--------------|
+    | featured | 499          |
+    | urgent   | 299          |
+    | premium  | 999          |
+
+    Centralized in `MarketplaceService::getBoostAmount()`.
+  version: 1.0.0
+servers:
+  - url: http://localhost/apsdreamhome
+    description: Local dev
+  - url: https://apsdreamhome.com
+    description: Production
+
+tags:
+  - name: Marketplace Web
+    description: Session-based web endpoints (Front\MarketplaceController)
+  - name: Marketplace Mobile
+    description: Token-based mobile endpoints (Api\MobileUserApiController)
+  - name: Registration
+    description: Referral-aware registration flows
+  - name: Admin Marketplace
+    description: Admin marketplace dashboard + moderation
+
+paths:
+  # ── WEB: Marketplace pages ──
+  /marketplace:
+    get:
+      tags: [Marketplace Web]
+      summary: Marketplace listing page
+      responses:
+        '200':
+          description: HTML listing page (approved properties, featured first)
+  /marketplace/{id}:
+    get:
+      tags: [Marketplace Web]
+      summary: Marketplace property detail page
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: HTML detail page }
+        '302': { description: Redirect to /marketplace if not found }
+  /marketplace/track-interest:
+    post:
+      tags: [Marketplace Web]
+      summary: Track buyer interest signal (view/save/share/inquire)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [property_id, interest_type]
+              properties:
+                property_id: { type: integer }
+                listing_type: { type: string, enum: [user, company, resell], default: user }
+                interest_type:
+                  type: string
+                  enum: [view, save, share, inquire, site_visit_request, offer, callback_request, download_brochure]
+                referral_code: { type: string, nullable: true }
+                metadata: { type: object, nullable: true }
+      responses:
+        '200':
+          description: Interest tracked
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  id: { type: integer }
+  /marketplace/toggle-save:
+    post:
+      tags: [Marketplace Web]
+      summary: Save/unsave property to shortlist (toggles)
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [property_id]
+              properties:
+                property_id: { type: integer }
+                listing_type: { type: string, enum: [user, company, resell], default: user }
+                notes: { type: string, nullable: true, maxLength: 500 }
+      responses:
+        '200':
+          description: Toggled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  action: { type: string, enum: [saved, removed] }
+        '401': { description: Login required }
+  /user/saved-properties:
+    get:
+      tags: [Marketplace Web]
+      summary: User's saved properties page
+      parameters:
+        - name: type
+          in: query
+          schema: { type: string, enum: [user, company, resell] }
+      responses:
+        '200': { description: HTML saved properties page }
+        '302': { description: Redirect to login }
+  /marketplace/capture-lead:
+    post:
+      tags: [Marketplace Web]
+      summary: Capture lead from property inquiry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, phone]
+              properties:
+                name: { type: string }
+                email: { type: string }
+                phone: { type: string }
+                property_id: { type: integer }
+                property_name: { type: string }
+                listing_type: { type: string }
+                budget: { type: number }
+                budget_range: { type: string }
+                message: { type: string }
+                referral_code: { type: string }
+      responses:
+        '200':
+          description: Lead captured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  lead_id: { type: integer }
+                  action: { type: string, enum: [created, updated] }
+                  lead_number: { type: string }
+  /user/followups:
+    get:
+      tags: [Marketplace Web]
+      summary: Follow-up schedule page
+      responses:
+        '200': { description: HTML followups page (today + overdue) }
+        '302': { description: Redirect to login }
+  /marketplace/complete-followup:
+    post:
+      tags: [Marketplace Web]
+      summary: Mark follow-up as complete
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [followup_id, outcome]
+              properties:
+                followup_id: { type: integer }
+                outcome:
+                  type: string
+                  enum: [interested, not_interested, callback_later, site_visit_booked, deal_closed, wrong_number, no_response]
+                notes: { type: string }
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+  /marketplace/close-deal:
+    post:
+      tags: [Marketplace Web]
+      summary: Close a resell deal (admin/seller)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [property_id, buyer_id, final_price]
+              properties:
+                property_id: { type: integer, description: resell_properties.id }
+                buyer_id: { type: integer }
+                final_price: { type: number }
+                payment_method: { type: string, default: bank_transfer }
+                payment_reference: { type: string }
+                notes: { type: string }
+      responses:
+        '200':
+          description: Deal closed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  transaction_id: { type: integer }
+                  platform_fee: { type: number }
+                  referral_commission: { type: number }
+                  referrer_id: { type: integer, nullable: true }
+  /marketplace/close-user-property-deal:
+    post:
+      tags: [Marketplace Web]
+      summary: Close a user_properties marketplace deal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [property_id, buyer_id, final_price]
+              properties:
+                property_id: { type: integer, description: user_properties.id }
+                buyer_id: { type: integer }
+                final_price: { type: number }
+                payment_method: { type: string, default: bank_transfer }
+                payment_reference: { type: string }
+                notes: { type: string }
+      responses:
+        '200':
+          description: Deal closed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  transaction_id: { type: integer }
+                  platform_fee: { type: number }
+                  referral_commission: { type: number }
+  /user/transactions:
+    get:
+      tags: [Marketplace Web]
+      summary: User transaction history page
+      parameters:
+        - name: role
+          in: query
+          schema: { type: string, enum: [all, seller, buyer, referrer], default: all }
+      responses:
+        '200': { description: HTML transactions page }
+        '302': { description: Redirect to login }
+  /marketplace/boost-property:
+    post:
+      tags: [Marketplace Web]
+      summary: Apply boost directly (legacy, no payment — prefer initiate/verify flow)
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [property_id]
+              properties:
+                property_id: { type: integer }
+                boost_type: { type: string, enum: [featured, urgent, premium], default: featured }
+                duration: { type: integer, default: 7 }
+      responses:
+        '200':
+          description: Boost applied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  message: { type: string }
+  /marketplace/boost/initiate-payment:
+    post:
+      tags: [Marketplace Web]
+      summary: Create Razorpay order for property boost
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [property_id]
+              properties:
+                property_id: { type: integer }
+                boost_type: { type: string, enum: [featured, urgent, premium], default: featured }
+                duration: { type: integer, default: 7 }
+      responses:
+        '200':
+          description: Razorpay order created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  order_id: { type: string }
+                  amount_paise: { type: integer }
+                  amount: { type: number }
+                  currency: { type: string }
+                  key_id: { type: string }
+                  property_id: { type: integer }
+                  boost_type: { type: string }
+                  duration: { type: integer }
+        '401': { description: Login required }
+        '404': { description: Property not found or not owned }
+  /marketplace/boost/verify-payment:
+    post:
+      tags: [Marketplace Web]
+      summary: Verify Razorpay payment + apply boost
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [razorpay_order_id, razorpay_payment_id, razorpay_signature]
+              properties:
+                razorpay_order_id: { type: string }
+                razorpay_payment_id: { type: string }
+                razorpay_signature: { type: string }
+      responses:
+        '200':
+          description: Boost applied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  message: { type: string }
+                  payment_id: { type: string }
+
+  # ── MOBILE: Marketplace API ──
+  /api/v2/mobile/marketplace/saved-properties:
+    get:
+      tags: [Marketplace Mobile]
+      summary: Get user's saved properties
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: type
+          in: query
+          schema: { type: string, enum: [user, company, resell] }
+      responses:
+        '200':
+          description: Saved properties list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data: { type: array, items: { type: object } }
+        '401': { description: Unauthorized }
+  /api/v2/mobile/marketplace/save-property:
+    post:
+      tags: [Marketplace Mobile]
+      summary: Save/unsave property (toggles)
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [property_id]
+              properties:
+                property_id: { type: integer }
+                listing_type: { type: string, default: user }
+                notes: { type: string, nullable: true }
+      responses:
+        '200':
+          description: Toggled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  action: { type: string, enum: [saved, removed] }
+  /api/v2/mobile/marketplace/saved-property/{id}:
+    delete:
+      tags: [Marketplace Mobile]
+      summary: Remove saved property by saved-record ID
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Removed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  message: { type: string }
+  /api/v2/mobile/marketplace/followups:
+    get:
+      tags: [Marketplace Mobile]
+      summary: Get today's + overdue followups
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Followups
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      today: { type: array, items: { type: object } }
+                      overdue: { type: array, items: { type: object } }
+  /api/v2/mobile/marketplace/followup/{id}/complete:
+    post:
+      tags: [Marketplace Mobile]
+      summary: Complete a followup
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [outcome]
+              properties:
+                outcome:
+                  type: string
+                  enum: [interested, not_interested, callback_later, site_visit_booked, deal_closed, wrong_number, no_response]
+                notes: { type: string }
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+  /api/v2/mobile/marketplace/transactions:
+    get:
+      tags: [Marketplace Mobile]
+      summary: Get user transactions
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: role
+          in: query
+          schema: { type: string, enum: [all, seller, buyer, referrer], default: all }
+      responses:
+        '200':
+          description: Transactions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data: { type: array, items: { type: object } }
+  /api/v2/mobile/marketplace/boost/initiate-payment:
+    post:
+      tags: [Marketplace Mobile]
+      summary: Create Razorpay order for boost (mobile)
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [property_id]
+              properties:
+                property_id: { type: integer }
+                boost_type: { type: string, default: featured }
+                duration: { type: integer, default: 7 }
+      responses:
+        '200':
+          description: Order created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  order_id: { type: string }
+                  amount_paise: { type: integer }
+                  key_id: { type: string }
+  /api/v2/mobile/marketplace/boost/verify-payment:
+    post:
+      tags: [Marketplace Mobile]
+      summary: Verify Razorpay payment + apply boost (mobile)
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [razorpay_order_id, razorpay_payment_id, razorpay_signature]
+              properties:
+                razorpay_order_id: { type: string }
+                razorpay_payment_id: { type: string }
+                razorpay_signature: { type: string }
+      responses:
+        '200':
+          description: Boost applied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  message: { type: string }
+                  payment_id: { type: string }
+
+  # ── Registration + Referral ──
+  /api/user/resolve-sponsor:
+    get:
+      tags: [Registration]
+      summary: Validate referral code, return sponsor name/role
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Sponsor lookup result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  name: { type: string }
+                  role: { type: string }
+                  message: { type: string }
+
+  # ── Admin Marketplace ──
+  /admin/marketplace:
+    get:
+      tags: [Admin Marketplace]
+      summary: Admin marketplace dashboard (listings, revenue, builders)
+      responses:
+        '200': { description: HTML dashboard }
+        '302': { description: Redirect to admin login }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
