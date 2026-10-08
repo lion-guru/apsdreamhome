@@ -210,4 +210,224 @@ class MarketingToolkitController extends BaseController
             'share_url' => $this->toolkit->getWhatsAppShareLink($message, $phone),
         ]);
     }
+
+    /**
+     * Save personal branding (POST)
+     */
+    public function saveBranding()
+    {
+        $this->requireLogin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 400);
+        }
+        $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+        $result = $this->toolkit->saveBranding((int)$_SESSION['user_id'], [
+            'display_name' => $input['display_name'] ?? '',
+            'phone' => $input['phone'] ?? '',
+            'photo_path' => $input['photo_path'] ?? '',
+            'tagline' => $input['tagline'] ?? '',
+        ]);
+        return $this->jsonResponse($result);
+    }
+
+    /**
+     * Get personal branding (GET)
+     */
+    public function getBranding()
+    {
+        $this->requireLogin();
+        $result = $this->toolkit->getBranding((int)$_SESSION['user_id']);
+        return $this->jsonResponse(['success' => true, 'data' => $result]);
+    }
+
+    /**
+     * Add sticker badge to photo (POST, multipart)
+     */
+    public function sticker()
+    {
+        $this->requireLogin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 400);
+        }
+        if (empty($_FILES['photo']) || $_FILES['photo']['error'] !== UPLOAD_ERR_OK) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Please upload a photo'], 400);
+        }
+        $stickerType = $_POST['sticker_type'] ?? 'offer';
+        $customText = trim($_POST['custom_text'] ?? '');
+        $result = $this->toolkit->addSticker($_FILES['photo']['tmp_name'], $stickerType, $customText);
+        if ($result['success']) {
+            $result['whatsapp_share'] = $this->toolkit->getWhatsAppShareLink('Check this property from APS Dream Home!');
+        }
+        return $this->jsonResponse($result, $result['success'] ? 200 : 500);
+    }
+
+    /**
+     * Make collage from 2-4 photos (POST, multipart)
+     */
+    public function collage()
+    {
+        $this->requireLogin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 400);
+        }
+        $paths = [];
+        if (!empty($_FILES['photos'])) {
+            $files = $_FILES['photos'];
+            // Normalize single vs multiple upload structure
+            if (is_array($files['tmp_name'])) {
+                foreach ($files['tmp_name'] as $i => $tmp) {
+                    if (($files['error'][$i] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK) {
+                        $paths[] = $tmp;
+                    }
+                }
+            } elseif (($files['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK) {
+                $paths[] = $files['tmp_name'];
+            }
+        }
+        if (count($paths) < 2) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Upload at least 2 photos'], 400);
+        }
+        $branding = $this->toolkit->getBranding((int)$_SESSION['user_id']);
+        $result = $this->toolkit->makeCollage($paths, $_POST['layout'] ?? 'grid2x2', $branding);
+        return $this->jsonResponse($result, $result['success'] ? 200 : 500);
+    }
+
+    /**
+     * Generate festival post (POST)
+     */
+    public function festival()
+    {
+        $this->requireLogin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 400);
+        }
+        $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+        $branding = $this->toolkit->getBranding((int)$_SESSION['user_id']);
+        $result = $this->toolkit->generateFestivalPost($input['festival'] ?? 'diwali', $branding);
+        return $this->jsonResponse($result, $result['success'] ? 200 : 500);
+    }
+
+    /**
+     * Generate QR code for referral link (POST)
+     */
+    public function qr()
+    {
+        $this->requireLogin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 400);
+        }
+        $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+        $text = trim($input['text'] ?? '');
+        // Default: user's referral link
+        if ($text === '') {
+            try {
+                $stmt = $this->db->prepare("SELECT referral_code FROM users WHERE id = ? LIMIT 1");
+                $stmt->execute([(int)$_SESSION['user_id']]);
+                $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+                $refCode = $row['referral_code'] ?? '';
+                $text = (defined('BASE_URL') ? BASE_URL : '') . '/register' . ($refCode ? '?ref=' . urlencode($refCode) : '');
+            } catch (\Throwable $e) {
+                $text = (defined('BASE_URL') ? BASE_URL : '') . '/register';
+            }
+        }
+        $result = $this->toolkit->generateQR($text, 300);
+        return $this->jsonResponse($result, $result['success'] ? 200 : 500);
+    }
+
+    /**
+     * Add QR (referral link) overlay to photo (POST, multipart)
+     */
+    public function qrPhoto()
+    {
+        $this->requireLogin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 400);
+        }
+        if (empty($_FILES['photo']) || $_FILES['photo']['error'] !== UPLOAD_ERR_OK) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Please upload a photo'], 400);
+        }
+        // Build referral link
+        $qrText = trim($_POST['qr_text'] ?? '');
+        if ($qrText === '') {
+            try {
+                $stmt = $this->db->prepare("SELECT referral_code FROM users WHERE id = ? LIMIT 1");
+                $stmt->execute([(int)$_SESSION['user_id']]);
+                $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+                $refCode = $row['referral_code'] ?? '';
+                $qrText = (defined('BASE_URL') ? BASE_URL : '') . '/register' . ($refCode ? '?ref=' . urlencode($refCode) : '');
+            } catch (\Throwable $e) {
+                $qrText = (defined('BASE_URL') ? BASE_URL : '') . '/register';
+            }
+        }
+        $result = $this->toolkit->addQRToPhoto($_FILES['photo']['tmp_name'], $qrText, (int)$_SESSION['user_id']);
+        if ($result['success']) {
+            $result['whatsapp_share'] = $this->toolkit->getWhatsAppShareLink('Scan karo aur APS Dream Home se judo! ' . $qrText);
+        }
+        return $this->jsonResponse($result, $result['success'] ? 200 : 500);
+    }
+
+    /**
+     * Make animated GIF slideshow (POST, multipart, 2-5 photos)
+     */
+    public function slideshow()
+    {
+        $this->requireLogin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 400);
+        }
+        $paths = [];
+        if (!empty($_FILES['photos'])) {
+            $files = $_FILES['photos'];
+            if (is_array($files['tmp_name'])) {
+                foreach ($files['tmp_name'] as $i => $tmp) {
+                    if (($files['error'][$i] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK) {
+                        $paths[] = $tmp;
+                    }
+                }
+            } elseif (($files['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK) {
+                $paths[] = $files['tmp_name'];
+            }
+        }
+        if (count($paths) < 2) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Upload at least 2 photos'], 400);
+        }
+        $branding = $this->toolkit->getBranding((int)$_SESSION['user_id']);
+        $result = $this->toolkit->makeSlideshow($paths, 150, $branding);
+        return $this->jsonResponse($result, $result['success'] ? 200 : 500);
+    }
+
+    /**
+     * Generate digital visiting card (POST)
+     */
+    public function visitingCard()
+    {
+        $this->requireLogin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 400);
+        }
+        $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+
+        // Merge with saved branding (POST overrides saved)
+        $saved = $this->toolkit->getBranding((int)$_SESSION['user_id']);
+        $branding = [
+            'display_name' => trim($input['display_name'] ?? $saved['display_name'] ?? ''),
+            'phone' => trim($input['phone'] ?? $saved['phone'] ?? ''),
+            'tagline' => trim($input['tagline'] ?? $saved['tagline'] ?? 'Associate | APS Dream Home'),
+            'referral_code' => '',
+        ];
+        try {
+            $stmt = $this->db->prepare("SELECT referral_code FROM users WHERE id = ? LIMIT 1");
+            $stmt->execute([(int)$_SESSION['user_id']]);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            $branding['referral_code'] = $row['referral_code'] ?? '';
+        } catch (\Throwable $e) {
+            // ignore
+        }
+
+        $result = $this->toolkit->generateVisitingCard($branding);
+        if ($result['success']) {
+            $result['whatsapp_share'] = $this->toolkit->getWhatsAppShareLink("Mera digital visiting card — {$branding['display_name']}, {$branding['phone']}, APS Dream Home");
+        }
+        return $this->jsonResponse($result, $result['success'] ? 200 : 500);
+    }
 }

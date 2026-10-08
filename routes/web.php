@@ -637,12 +637,22 @@ $router->post('/marketplace/boost-property', 'Front\\MarketplaceController@boost
 $router->post('/marketplace/boost/initiate-payment', 'Front\\MarketplaceController@initiateBoostPayment');
 $router->post('/marketplace/boost/verify-payment', 'Front\\MarketplaceController@verifyBoostPayment');
 
-// Marketing Toolkit (watermark, banner, AI writer)
+// Marketing Toolkit (watermark, banner, AI writer + v2)
 $router->get('/marketing/toolkit', 'Front\\MarketingToolkitController@index');
 $router->post('/marketing/watermark', 'Front\\MarketingToolkitController@watermark');
 $router->post('/marketing/banner', 'Front\\MarketingToolkitController@banner');
 $router->post('/marketing/ai-writer', 'Front\\MarketingToolkitController@aiWriter');
 $router->post('/marketing/whatsapp-share', 'Front\\MarketingToolkitController@whatsappShare');
+// V2: personal branding, stickers, collage, festival, QR, slideshow, visiting card
+$router->post('/marketing/branding/save', 'Front\\MarketingToolkitController@saveBranding');
+$router->get('/marketing/branding', 'Front\\MarketingToolkitController@getBranding');
+$router->post('/marketing/sticker', 'Front\\MarketingToolkitController@sticker');
+$router->post('/marketing/collage', 'Front\\MarketingToolkitController@collage');
+$router->post('/marketing/festival', 'Front\\MarketingToolkitController@festival');
+$router->post('/marketing/qr', 'Front\\MarketingToolkitController@qr');
+$router->post('/marketing/qr-photo', 'Front\\MarketingToolkitController@qrPhoto');
+$router->post('/marketing/slideshow', 'Front\\MarketingToolkitController@slideshow');
+$router->post('/marketing/visiting-card', 'Front\\MarketingToolkitController@visitingCard');
 
 $router->get('/admin/saved-searches', 'App\\Http\\Controllers\\Admin\\SavedSearchController@index');
 $router->post('/admin/saved-searches/store', 'App\\Http\\Controllers\\Admin\\SavedSearchController@store');

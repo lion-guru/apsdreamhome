@@ -30,6 +30,21 @@ $base = defined('BASE_URL') ? BASE_URL : '';
     </div>
     <?php endif; ?>
 
+    <!-- Personal Branding (apna naam/number ek baar save karo, har post par auto) -->
+    <div class="card border-0 shadow-sm mb-4" style="border-left:4px solid #FACC15 !important">
+        <div class="card-body">
+            <h5 class="mb-1"><i class="fas fa-id-card me-2 text-warning"></i>Apni Branding (ek baar save karo)</h5>
+            <p class="text-muted small mb-3">Naam + number yahan save karo — collage, festival post, visiting card, slideshow me <strong>auto</strong> lag jayega. Lead direct tumko aayega.</p>
+            <form id="brandingForm" class="row g-2">
+                <div class="col-md-3"><input type="text" class="form-control" name="display_name" id="brandName" placeholder="Apna naam"></div>
+                <div class="col-md-3"><input type="text" class="form-control" name="phone" id="brandPhone" placeholder="Mobile number"></div>
+                <div class="col-md-4"><input type="text" class="form-control" name="tagline" id="brandTagline" placeholder="Tagline (e.g. Associate | Gorakhpur)"></div>
+                <div class="col-md-2"><button type="submit" class="btn btn-warning w-100"><i class="fas fa-save me-1"></i>Save</button></div>
+            </form>
+            <div id="brandingResult" class="mt-2"></div>
+        </div>
+    </div>
+
     <div class="row g-4">
         <!-- 1. Watermark Tool -->
         <div class="col-lg-4">
@@ -144,6 +159,133 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         </div>
     </div>
 
+    <!-- V2 Tools Row -->
+    <div class="row g-4 mt-1">
+        <!-- 4. Sticker -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-tags me-2 text-danger"></i>4. Sticker / Badge</h5></div>
+                <div class="card-body">
+                    <p class="text-muted small">NEW LAUNCH, PRICE DROP, SOLD, OFFER ribbon lagao.</p>
+                    <form id="stickerForm" enctype="multipart/form-data">
+                        <div class="mb-2"><input type="file" class="form-control" name="photo" accept="image/*" required></div>
+                        <div class="mb-2">
+                            <select class="form-select" name="sticker_type">
+                                <option value="new_launch">NEW LAUNCH</option>
+                                <option value="price_drop">PRICE DROP</option>
+                                <option value="offer">SPECIAL OFFER</option>
+                                <option value="urgent">URGENT SALE</option>
+                                <option value="sold">SOLD OUT</option>
+                                <option value="verified">VERIFIED</option>
+                            </select>
+                        </div>
+                        <div class="mb-3"><input type="text" class="form-control" name="custom_text" placeholder="Custom text (offer ke liye)"></div>
+                        <button type="submit" class="btn btn-danger w-100"><i class="fas fa-tag me-2"></i>Add Sticker</button>
+                    </form>
+                    <div id="stickerResult" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+        <!-- 5. Collage -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-th me-2 text-info"></i>5. Collage Maker</h5></div>
+                <div class="card-body">
+                    <p class="text-muted small">2-4 photos ek image me + apna naam/number auto.</p>
+                    <form id="collageForm" enctype="multipart/form-data">
+                        <div class="mb-2"><input type="file" class="form-control" name="photos[]" accept="image/*" multiple required></div>
+                        <div class="mb-3">
+                            <select class="form-select" name="layout">
+                                <option value="grid2x2">2x2 Grid (4 photos)</option>
+                                <option value="row2">Side by side (2 photos)</option>
+                                <option value="row3">3 in a row</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-info w-100 text-white"><i class="fas fa-th-large me-2"></i>Make Collage</button>
+                    </form>
+                    <div id="collageResult" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+        <!-- 6. Festival -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-gifts me-2 text-success"></i>6. Festival Post</h5></div>
+                <div class="card-body">
+                    <p class="text-muted small">Diwali/Holi/New Year greeting + apni branding auto.</p>
+                    <form id="festivalForm">
+                        <div class="mb-3">
+                            <select class="form-select" name="festival">
+                                <option value="diwali">Diwali 🪔</option>
+                                <option value="holi">Holi 🎨</option>
+                                <option value="newyear">New Year 🎉</option>
+                                <option value="dussehra">Dussehra 🏹</option>
+                                <option value="eid">Eid 🌙</option>
+                                <option value="independence">Independence Day 🇮🇳</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100"><i class="fas fa-gift me-2"></i>Create Post</button>
+                    </form>
+                    <div id="festivalResult" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-1">
+        <!-- 7. QR Code -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-qrcode me-2 text-dark"></i>7. QR Code</h5></div>
+                <div class="card-body">
+                    <p class="text-muted small">Apne referral link ka QR banao. Khali chhodo to auto (tumhara link).</p>
+                    <form id="qrForm">
+                        <div class="mb-3"><input type="text" class="form-control" name="text" placeholder="Link (khali = mera referral link)"></div>
+                        <button type="submit" class="btn btn-dark w-100"><i class="fas fa-qrcode me-2"></i>Generate QR</button>
+                    </form>
+                    <div id="qrResult" class="mt-3"></div>
+                    <hr>
+                    <p class="text-muted small mb-2"><strong>Photo par QR lagao</strong> (scan → tumhara link)</p>
+                    <form id="qrPhotoForm" enctype="multipart/form-data">
+                        <div class="mb-2"><input type="file" class="form-control" name="photo" accept="image/*" required></div>
+                        <button type="submit" class="btn btn-outline-dark w-100 btn-sm"><i class="fas fa-camera me-1"></i>Photo + QR</button>
+                    </form>
+                    <div id="qrPhotoResult" class="mt-2"></div>
+                </div>
+            </div>
+        </div>
+        <!-- 8. Slideshow GIF -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-film me-2 text-primary"></i>8. Slideshow GIF</h5></div>
+                <div class="card-body">
+                    <p class="text-muted small">2-5 photos → animated GIF (WhatsApp par video jaise chalega).</p>
+                    <form id="slideshowForm" enctype="multipart/form-data">
+                        <div class="mb-3"><input type="file" class="form-control" name="photos[]" accept="image/*" multiple required></div>
+                        <button type="submit" class="btn btn-primary w-100"><i class="fas fa-play me-2"></i>Make GIF</button>
+                    </form>
+                    <div id="slideshowResult" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+        <!-- 9. Visiting Card -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-id-card me-2 text-warning"></i>9. Visiting Card</h5></div>
+                <div class="card-body">
+                    <p class="text-muted small">Digital card + referral QR. Branding se auto-bharega.</p>
+                    <form id="vcardForm">
+                        <div class="mb-2"><input type="text" class="form-control" name="display_name" placeholder="Naam (khali = saved)"></div>
+                        <div class="mb-2"><input type="text" class="form-control" name="phone" placeholder="Number (khali = saved)"></div>
+                        <div class="mb-3"><input type="text" class="form-control" name="tagline" placeholder="Tagline"></div>
+                        <button type="submit" class="btn btn-warning w-100"><i class="fas fa-id-badge me-2"></i>Generate Card</button>
+                    </form>
+                    <div id="vcardResult" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="alert alert-info mt-4">
         <strong><i class="fas fa-share-alt me-1"></i>WhatsApp / Instagram par kaise share karein?</strong>
         <ol class="mb-0 mt-2">
@@ -248,5 +390,74 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             setTimeout(() => btn.textContent = 'Copy Post', 2000);
         });
     };
+
+    // Load saved branding on page load
+    fetch(base + '/marketing/branding').then(r => r.json()).then(d => {
+        if (d.success && d.data) {
+            if (d.data.display_name) document.getElementById('brandName').value = d.data.display_name;
+            if (d.data.phone) document.getElementById('brandPhone').value = d.data.phone;
+            if (d.data.tagline) document.getElementById('brandTagline').value = d.data.tagline;
+        }
+    }).catch(() => {});
+
+    // Branding form
+    document.getElementById('brandingForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const el = document.getElementById('brandingResult');
+        try {
+            const fd = new FormData(this);
+            const data = {};
+            fd.forEach((v, k) => data[k] = v);
+            const resp = await fetch(base + '/marketing/branding/save', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+            });
+            const r = await resp.json();
+            el.innerHTML = r.success ? '<div class="alert alert-success py-1 small">Saved! Ab har post par auto lagega.</div>' : '<div class="alert alert-danger py-1 small">' + escapeHtml(r.message) + '</div>';
+        } catch (err) {
+            el.innerHTML = '<div class="alert alert-danger py-1 small">Network error</div>';
+        }
+    });
+
+    // Generic multipart handler
+    async function submitMultipart(formId, resultId, endpoint, loadingText) {
+        document.getElementById(formId).addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const el = document.getElementById(resultId);
+            el.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> ' + (loadingText || 'Processing...') + '</div>';
+            try {
+                const resp = await fetch(base + endpoint, { method: 'POST', body: new FormData(this) });
+                showResult(resultId, await resp.json());
+            } catch (err) {
+                el.innerHTML = '<div class="alert alert-danger">Network error</div>';
+            }
+        });
+    }
+    submitMultipart('stickerForm', 'stickerResult', '/marketing/sticker');
+    submitMultipart('collageForm', 'collageResult', '/marketing/collage', 'Making collage...');
+    submitMultipart('qrPhotoForm', 'qrPhotoResult', '/marketing/qr-photo');
+    submitMultipart('slideshowForm', 'slideshowResult', '/marketing/slideshow', 'Making GIF...');
+
+    // Generic JSON handler
+    async function submitJson(formId, resultId, endpoint, loadingText) {
+        document.getElementById(formId).addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const el = document.getElementById(resultId);
+            el.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> ' + (loadingText || 'Processing...') + '</div>';
+            try {
+                const fd = new FormData(this);
+                const data = {};
+                fd.forEach((v, k) => data[k] = v);
+                const resp = await fetch(base + endpoint, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+                });
+                showResult(resultId, await resp.json());
+            } catch (err) {
+                el.innerHTML = '<div class="alert alert-danger">Network error</div>';
+            }
+        });
+    }
+    submitJson('festivalForm', 'festivalResult', '/marketing/festival', 'Creating...');
+    submitJson('qrForm', 'qrResult', '/marketing/qr', 'Generating QR...');
+    submitJson('vcardForm', 'vcardResult', '/marketing/visiting-card', 'Creating card...');
 })();
 </script>
