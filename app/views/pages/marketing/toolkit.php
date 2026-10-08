@@ -45,6 +45,45 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         </div>
     </div>
 
+    <!-- AI Provider Settings (AI provider choose karo + API key) -->
+    <div class="card border-0 shadow-sm mb-4" style="border-left:4px solid #6366F1 !important">
+        <div class="card-body">
+            <h5 class="mb-1"><i class="fas fa-robot me-2 text-primary"></i>AI Provider Settings</h5>
+            <p class="text-muted small mb-3">Apna preferred AI provider choose karo. API key dalo (optional - Ollama free hai). Ye setting AI Post Writer, Video Caption, Morning Post me kaam aayegi.</            <form id="aiProviderForm" class="row g-2">
+                <div class="col-md-4">
+                    <label class="form-label">AI Provider</label>
+                    <select class="form-select" name="ai_provider" id="aiProviderSelect">
+                        <option value="ollama">Ollama (Local, Free, Unlimited)</option>
+                        <option value="groq">Groq (Fastest, Free tier: 30 RPM)</option>
+                        <option value="xai_grok">xAI Grok (Free tier via xAI API)</option>
+                        <option value="gemini">Google Gemini (Free: 15 RPM, 1M tokens/day)</option>
+                        <option value="deepseek">DeepSeek (Free tier via DeepSeek API)</option>
+                        <option value="huggingface">HuggingFace (Free: 30k tokens/day)</option>
+                        <option value="together_ai">Together.ai (Free: 100k tokens/day)</option>
+                        <option value="deepseek">DeepSeek (Free tier via DeepSeek API)</option>
+                        <option value="together">Together.ai (Free: 100k tokens/day)</option>
+                        <option value="cohere">Cohere (Free: 100 calls/min)</option>
+                        <option value="openrouter">OpenRouter (Free models, last resort)</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">API Key (Optional - Ollama ke liye nahi chahiye)</label>
+                    <input type="password" class="form-control" name="ai_api_key" id="aiApiKey" placeholder="API Key (Groq, Gemini, Grok, etc.)">
+                    <small class="text-muted">Ollama local chal raha ho to khali chhodo</small>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Model (Optional)</label>
+                    <input type="text" class="form-control" name="ai_model" id="aiModel" placeholder="Model name (khali chhodo = default)">
+                    <small class="text-muted">Khali chhodo to default model use hoga</small>
+                </div>
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-primary w-100"><i class="fas fa-brain me-1"></i>Save AI Settings</button>
+                </div>
+            </form>
+            <div id="aiProviderResult" class="mt-2"></div>
+        </div>
+    </div>
+
     <div class="row g-4">
         <!-- 1. Watermark Tool -->
         <div class="col-lg-4">
@@ -588,5 +627,35 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             el.innerHTML = '<div class="alert alert-danger">Network error</div>';
         }
     };
+
+    // AI Provider Settings form
+    document.getElementById('aiProviderForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const el = document.getElementById('aiProviderResult');
+        el.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Saving...</div>';
+        try {
+            const fd = new FormData(this);
+            const data = {};
+            fd.forEach((v, k) => data[k] = v);
+            const resp = await fetch(base + '/marketing/ai-provider/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const r = await resp.json();
+            el.innerHTML = r.success ? '<div class="alert alert-success py-1 small">Saved! Ab AI tools me ye provider use hoga.</div>' : '<div class="alert alert-danger py-1 small">' + escapeHtml(r.message) + '</div>';
+        } catch (err) {
+            el.innerHTML = '<div class="alert alert-danger py-1 small">Network error</div>';
+        }
+    });
+
+    // Load saved AI provider settings on page load
+    fetch(base + '/marketing/ai-provider').then(r => r.json()).then(d => {
+        if (d.success && d.data) {
+            if (d.data.ai_provider) document.getElementById('aiProviderSelect').value = d.data.ai_provider;
+            if (d.data.ai_api_key) document.getElementById('aiApiKey').value = d.data.ai_api_key;
+            if (d.data.ai_model) document.getElementById('aiModel').value = d.data.ai_model;
+        }
+    }).catch(() => {});
 })();
 </script>

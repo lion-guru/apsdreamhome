@@ -241,6 +241,34 @@ class MarketingToolkitController extends BaseController
     }
 
     /**
+     * Save AI provider settings (POST)
+     */
+    public function saveAiProvider()
+    {
+        $this->requireLogin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 400);
+        }
+        $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+        $result = $this->toolkit->saveAiProvider((int)$_SESSION['user_id'], [
+            'ai_provider' => $input['ai_provider'] ?? 'ollama',
+            'ai_api_key' => $input['ai_api_key'] ?? '',
+            'ai_model' => $input['ai_model'] ?? '',
+        ]);
+        return $this->jsonResponse($result, $result['success'] ? 200 : 500);
+    }
+
+    /**
+     * Get AI provider settings (GET)
+     */
+    public function getAiProvider()
+    {
+        $this->requireLogin();
+        $result = $this->toolkit->getAiProvider((int)$_SESSION['user_id']);
+        return $this->jsonResponse(['success' => true, 'data' => $result]);
+    }
+
+    /**
      * Add sticker badge to photo (POST, multipart)
      */
     public function sticker()
