@@ -225,7 +225,7 @@ class RoleBasedDashboardController extends AdminController
                 $stats['pending_payments'] = $safeQuery("SELECT COUNT(*) as c FROM booking_payment_schedules WHERE status='pending'");
             }
             if (in_array($role, ['senior_developer', 'developer', 'it_manager'])) {
-                $stats['active_users_online'] = $safeQuery("SELECT COUNT(*) as c FROM users WHERE last_login >= DATE_SUB(NOW(), INTERVAL 15 MINUTE)");
+                $stats['active_users_online'] = $safeQuery("SELECT COUNT(*) as c FROM users WHERE last_login_at >= DATE_SUB(NOW(), INTERVAL 15 MINUTE)");
             }
             if (in_array($role, ['content_writer', 'graphic_designer', 'marketing_manager'])) {
                 $stats['active_campaigns'] = $safeQuery("SELECT COUNT(*) as c FROM marketing_campaigns WHERE status='active'");
@@ -371,7 +371,7 @@ class RoleBasedDashboardController extends AdminController
         try {
             $db = \App\Core\Database::getInstance()->getConnection();
             $data['uptime'] = '99.9%';
-            try { $data['active_users'] = (int)$db->query("SELECT COUNT(*) as c FROM users WHERE last_login >= DATE_SUB(NOW(), INTERVAL 15 MINUTE)")->fetch(\PDO::FETCH_ASSOC)['c']; } catch (\Throwable $e) { $data['active_users'] = 0; }
+            try { $data['active_users'] = (int)$db->query("SELECT COUNT(*) as c FROM users WHERE last_login_at >= DATE_SUB(NOW(), INTERVAL 15 MINUTE)")->fetch(\PDO::FETCH_ASSOC)['c']; } catch (\Throwable $e) { $data['active_users'] = 0; }
             try { $data['api_calls'] = (int)$db->query("SELECT COUNT(*) as c FROM ai_api_logs WHERE DATE(created_at) = CURDATE()")->fetch(\PDO::FETCH_ASSOC)['c']; } catch (\Throwable $e) { $data['api_calls'] = 0; }
             try { $data['open_tickets'] = (int)$db->query("SELECT COUNT(*) as c FROM support_tickets WHERE status != 'closed'")->fetch(\PDO::FETCH_ASSOC)['c']; } catch (\Throwable $e) { $data['open_tickets'] = 0; }
         } catch (\Exception $e) { error_log('CTO Dashboard error: ' . $e->getMessage()); }

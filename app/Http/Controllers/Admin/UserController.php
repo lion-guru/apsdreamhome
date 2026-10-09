@@ -969,7 +969,7 @@ class UserController extends AdminController
             $stats['new_this_month'] = (int)($result['new_this_month'] ?? 0);
 
             // Active users (logged in within last 7 days)
-            $sql = "SELECT COUNT(*) as active_users FROM users WHERE last_login >= DATE_SUB(NOW(), INTERVAL 7 DAY)" . $tSql;
+            $sql = "SELECT COUNT(*) as active_users FROM users WHERE last_login_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)" . $tSql;
             $result = $this->db->fetchOne($sql, $tParams);
             $stats['active_users'] = (int)($result['active_users'] ?? 0);
 
