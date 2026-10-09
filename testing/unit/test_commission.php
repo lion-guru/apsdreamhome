@@ -56,8 +56,9 @@ $rankNames = array_column($benefits, 'rank_name');
 assert_equals(['Ass.', 'Sr. Ass.', 'BDM', 'Sr. BDM', 'V.P.', 'President', 'Site Manager'], $rankNames, 'Rank names in correct order');
 
 // Verify direct_sale_pct escalation: 5% → 7% → 10% → 12% → 15% → 18% → 20%
-$expectedRates = ['5.00', '7.00', '10.00', '12.00', '15.00', '18.00', '20.00'];
-$actualRates = array_column($benefits, 'direct_sale_pct');
+// NOTE: engine returns numeric (float) rates; compare as floats, not formatted strings.
+$expectedRates = [5.0, 7.0, 10.0, 12.0, 15.0, 18.0, 20.0];
+$actualRates = array_map('floatval', array_column($benefits, 'direct_sale_pct'));
 assert_equals($expectedRates, $actualRates, 'Direct sale pct escalation: 5%→7%→10%→12%→15%→18%→20%');
 
 // Verify Ass. gets 5% and Site Manager gets 20%
@@ -67,12 +68,12 @@ foreach ($benefits as $b) {
     if ($b['rank_name'] === 'Ass.') $ass = $b;
     if ($b['rank_name'] === 'Site Manager') $siteManager = $b;
 }
-assert_equals('5.00', $ass['direct_sale_pct'] ?? null, 'Associate rank gets 5% direct sale');
-assert_equals('20.00', $siteManager['direct_sale_pct'] ?? null, 'Site Manager rank gets 20% direct sale');
+assert_equals(5.0, (float)($ass['direct_sale_pct'] ?? null), 'Associate rank gets 5% direct sale');
+assert_equals(20.0, (float)($siteManager['direct_sale_pct'] ?? null), 'Site Manager rank gets 20% direct sale');
 
 // Verify override rates are set per tier
-assert_equals('2.00', $ass['l1_pct'] ?? null, 'Associate L1 override = 2%');
-assert_equals('0.00', $siteManager['l1_pct'] ?? null, 'Site Manager L1 override = 0% (top rank)');
+assert_equals(2.0, (float)($ass['l1_pct'] ?? null), 'Associate L1 override = 2%');
+assert_equals(0.0, (float)($siteManager['l1_pct'] ?? null), 'Site Manager L1 override = 0% (top rank)');
 
 // ════════════════════════════════════════════════════════════════════
 // 2. RankService — Hardcoded Slabs (used by HybridCommissionEngine)
@@ -315,11 +316,12 @@ assert_equals(30, \App\Services\MLM\MLMCommissionEngine::DEFAULT_CLAWBACK_DAYS, 
 section('RankService — Active Plan Caps (fallback defaults)');
 
 // getActivePlanCaps falls back to hardcoded when DB has no active plan
+// NOTE: caps may come back as int or float depending on source; compare as floats.
 $caps = $rankService->getActivePlanCaps();
-assert_equals(20.0, $caps['global_cap'] ?? null, 'Default global cap = 20%');
-assert_equals(15.0, $caps['track_a'] ?? null, 'Default track_a = 15%');
-assert_equals(3.0, $caps['track_b'] ?? null, 'Default track_b = 3%');
-assert_equals(2.0, $caps['track_c'] ?? null, 'Default track_c = 2%');
+assert_equals(20.0, (float)($caps['global_cap'] ?? null), 'Default global cap = 20%');
+assert_equals(15.0, (float)($caps['track_a'] ?? null), 'Default track_a = 15%');
+assert_equals(3.0, (float)($caps['track_b'] ?? null), 'Default track_b = 3%');
+assert_equals(2.0, (float)($caps['track_c'] ?? null), 'Default track_c = 2%');
 assert_equals(2.0, $caps['same_level_gen1'] ?? null, 'Default same_level_gen1 = 2.0%');
 assert_equals(1.0, $caps['same_level_gen2'] ?? null, 'Default same_level_gen2 = 1.0%');
 
