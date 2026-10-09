@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APS AI Assistant</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
+      width: 360px; min-height: 500px; background: #f8fafc; color: #1e293b; 
+    }
+    .header { 
+      background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); 
+      color: white; padding: 16px; border-radius: 12px 12px 0 0; 
+      display: flex; align-items: center; gap: 12px;
+    }
+    .logo { width: 40px; height: 40px; background: linear-gradient(135deg, #facc15, #f59e0b); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    .title { font-weight: 700; font-size: 16px; }
+    .subtitle { font-size: 12px; opacity: 0.9; margin-top: 2px; }
+    
+    .tabs { display: flex; border-bottom: 1px solid #e2e8f0; padding: 0 12px; }
+    .tab { padding: 12px 16px; cursor: pointer; font-size: 13px; font-weight: 500; color: #64748b; border-bottom: 2px solid transparent; transition: all 0.2s; }
+    .tab.active { color: #0d9488; border-bottom-color: #0d9488; }
+    .tab:hover:not(.active) { color: #334155; }
+    
+    .panel { display: none; padding: 16px; max-height: 400px; overflow-y: auto; }
+    .panel.active { display: block; }
+    
+    .section { margin-bottom: 20px; }
+    .section-title { font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+    
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; text-decoration: none; }
+    .btn-primary { background: linear-gradient(135deg, #0d9488, #0f766e); color: white; }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(13,148,136,0.4); }
+    .btn-secondary { background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; }
+    .btn-secondary:hover { background: #e2e8f0; }
+    .btn-danger { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+    .btn-sm { padding: 8px 12px; font-size: 12px; }
+    .btn-block { display: flex; width: 100%; }
+    
+    .form-group { margin-bottom: 12px; }
+    .form-label { display: block; font-size: 12px; font-weight: 500; color: #334155; margin-bottom: 6px; }
+    .form-input, .form-select { width: 100%; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; font-family: inherit; background: white; color: #1e293b; }
+    .form-input:focus, .form-select:focus { outline: none; border-color: #0d9488; box-shadow: 0 0 0 3px rgba(13,148,136,0.2); }
+    .form-input::placeholder { color: #94a3b8; }
+    
+    .card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+    .card-title { font-weight: 600; color: #1e293b; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .card-title i { color: #0d9488; }
+    
+    .status { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    .status.success { background: #dcfce7; color: #166534; }
+    .status.warning { background: #fef3c7; color: #92400e; }
+    .status.error { background: #fee2e2; color: #991b1b; }
+    .status.info { background: #dbeafe; color: #1e40af; }
+    
+    .setting-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
+    .setting-row:last-child { border-bottom: none; }
+    .setting-info { display: flex; flex-direction: column; gap: 2px; }
+    .setting-label { font-size: 13px; font-weight: 500; color: #1e293b; }
+    .setting-desc { font-size: 11px; color: #64748b; }
+    
+    .toggle { position: relative; width: 44px; height: 24px; background: #e2e8f0; border-radius: 12px; border: none; cursor: pointer; transition: background 0.2s; }
+    .toggle.active { background: linear-gradient(135deg, #0d9488, #0f766e); }
+    .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: white; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: transform 0.2s; }
+    .toggle.active::after { transform: translateX(20px); }
+    
+    .provider-option { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: all 0.2s; margin-bottom: 8px; }
+    .provider-option:hover { border-color: #0d9488; background: #f0fdfa; }
+    .provider-option.selected { border-color: #0d9488; background: #f0fdfa; }
+    .provider-option input { display: none; }
+    .provider-option.selected { border-color: #0d9488; background: #f0fdfa; }
+    .provider-option input:checked + .provider-info { border-color: #0d9488; background: #f0fdfa; }
+    .provider-info { display: flex; align-items: center; gap: 10px; flex: 1; cursor: pointer; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 8px; transition: all 0.2s; }
+    .provider-info:hover { border-color: #0d9488; background: #f0fdfa; }
+    .provider-avatar { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; color: white; }
+    .provider-name { font-weight: 600; color: #1e293b; font-size: 13px; }
+    .provider-desc { font-size: 11px; color: #64748b; margin-top: 2px; }
+    
+    .input-group { display: flex; gap: 8px; }
+    .input-group .form-input { flex: 1; }
+    
+    .divider { height: 1px; background: #e2e8f0; margin: 16px 0; }
+    
+    .footer { padding-top: 16px; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #64748b; }
+    
+    .qr-code { width: 120px; height: 120px; display: block; margin: 0 auto 12px; }
+    
+    .result-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-top: 12px; font-size: 12px; max-height: 200px; overflow-y: auto; white-space: pre-wrap; font-family: monospace; font-size: 11px; line-height: 1.5; }
+    .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 11px; color: #64748b; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+    .badge-success { background: #dcfce7; color: #166534; }
+    .badge-warning { background: #fef3c7; color: #92400e; }
+    .badge-info { background: #dbeafe; color: #1e40af; }
+    
+    .hidden { display: none !important; }
+    
+    .spinner { width: 16px; height: 16px; border: 2px solid #e2e8f0; border-top-color: #0d9488; border-radius: 50%; animation: spin 1s linear infinite; display: inline-block; margin-right: 8px; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    .toast { position: fixed; bottom: 16px; right: 16px; padding: 12px 16px; border-radius: 8px; color: white; font-size: 13px; font-weight: 500; z-index: 10000; animation: slideIn 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .toast.success { background: #10b981; }
+    .toast.error { background: #ef4444; }
+    .toast.info { background: #3b82f6; }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .accordion { border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; margin-bottom: 8px; }
+    .accordion-header { background: #f8fafc; padding: 12px 16px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; font-weight: 500; color: #1e293b; }
+    .accordion-header:hover { background: #f1f5f9; }
+    .accordion-icon { transition: transform 0.2s; }
+    .accordion-content { display: none; padding: 16px; border-top: 1px solid #e2e8f0; }
+    .accordion.open .accordion-content { display: block; }
+    .accordion.open .accordion-icon { transform: rotate(180deg); }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">🤖</div>
+    <div>
+      <div class="title">APS AI Assistant</div>
+      <div class="subtitle">Real Estate AI Assistant</div>
+    </div>
+  </div>
+  
+  <div class="tabs">
+    <button class="tab active" data-tab="chat">💬 Chat</button>
+    <button class="tab" data-tab="tools">🛠 Tools</button>
+    <button class="tab" data-tab="settings">⚙️ Settings</button>
+  </div>
+  
+  <div class="panel active" id="panel-chat">
+    <div class="card">
+      <div class="card-title"><i class="fas fa-comments"></i> AI Chat</div>
+      <div id="chatMessages" style="max-height: 200px; overflow-y: auto; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px;">
+        <div style="text-align: center; color: #94a3b8; font-size: 12px; padding: 20px;">
+          <i class="fas fa-robot" style="font-size: 24px; color: #0d9488; margin-bottom: 8px;"></i>
+          <div>Namaste! I'm your APS AI Assistant.</div>
+          <div style="font-size: 11px; color: #94a3b8; margin-top: 4px;">Ask me about properties, leads, marketing, or anything real estate!</div>
+        </div>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <input type="text" id="chatInput" class="form-input" placeholder="Ask me anything..." style="flex: 1;" placeholder="Ask about properties, leads, commissions...">
+        <button class="btn btn-primary btn-sm" id="sendChat"><i class="fas fa-paper-plane"></i> Send</button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="panel" id="panel-tools">
+    <div class="section">
+      <div class="section-title">AI Tools</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+        <button class="btn btn-secondary btn-sm" onclick="toolAction('summarize')"><i class="fas fa-compress-alt"></i> Summarize</button>
+        <button class="btn btn-secondary btn-sm" onclick="toolAction('rewrite')"><i class="fas fa-magic"></i> Rewrite</button>
+        <button class="btn btn-secondary btn-sm" onclick="toolAction('translate')"><i class="fas fa-language"></i> Translate</button>
+        <button class="btn btn-secondary btn-sm" onclick="toolAction('extract')"><i class="fas fa-list"></i> Extract</button>
+      </div>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <div class="section">
+      <div class="section-title">Quick Actions</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+        <button class="btn btn-primary btn-sm" onclick="quickAction('share')"><i class="fas fa-share-alt"></i> Share Property</button>
+        <button class="btn btn-secondary btn-sm" onclick="toolAction('summarize')"><i class="fas fa-compress-alt"></i> Summarize Page</button>
+        <button class="btn btn-secondary btn-sm" onclick="toolAction('rewrite')"><i class="fas fa-pen"></i> Rewrite Text</button>
+        <button class="btn btn-secondary btn-sm" onclick="toolAction('translate')"><i class="fas fa-language"></i> Translate</button>
+        <button class="btn btn-secondary btn-sm" onclick="toolAction('extract')"><i class="fas fa-list"></i> Extract Info</button>
+        <button class="btn btn-secondary btn-sm" onclick="toolAction('caption')"><i class="fas fa-image"></i> Image Caption</button>
+      </div>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <div class="section">
+      <div class="section-title">Saved Templates</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+        <button class="btn btn-outline-secondary btn-sm" onclick="useTemplate('new_launch')"><i class="fas fa-rocket"></i> New Launch</button>
+        <button class="btn btn-outline-secondary btn-sm" onclick="useTemplate('price_drop')"><i class="fas fa-tag"></i> Price Drop</button>
+        <button class="btn btn-outline-secondary btn-sm" onclick="useTemplate('emi_reminder')"><i class="fas fa-credit-card"></i> EMI Offer</button>
+        <button class="btn btn-outline-secondary btn-sm" onclick="useTemplate('site_visit')"><i class="fas fa-calendar-alt"></i> Site Visit</button>
+        <button class="btn btn-outline-secondary btn-sm" onclick="useTemplate('festival')"><i class="fas fa-gift"></i> Festival Wish</button>
+        <button class="btn btn-outline-secondary btn-sm" onclick="useTemplate('followup')"><i class="fas fa-reply"></i> Follow-up</button>
+        <button class="btn btn-outline-secondary btn-sm" onclick="useTemplate('sold_fomo')"><i class="fas fa-fire"></i> Sold FOMO</button>
+        <button class="btn btn-outline-secondary btn-sm" onclick="useTemplate('referral')"><i class="fas fa-share-alt"></i> Referral</button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="panel" id="panel-settings">
+    <div class="section">
+      <div class="section-title">AI Provider</div>
+      <div id="providerList"></div>
+      <div class="divider"></div>
+      <div class="input-group">
+        <input type="password" class="form-input" id="apiKeyInput" placeholder="API Key (optional for Ollama)">
+        <button class="btn btn-secondary btn-sm" onclick="saveAPIKey()"><i class="fas fa-save"></i> Save Key</button>
+      </div>
+      <div class="input-group" style="margin-top: 8px;">
+        <input type="text" class="form-input" id="modelInput" placeholder="Model name (optional)">
+        <button class="btn btn-secondary btn-sm" onclick="saveModel()"><i class="fas fa-save"></i> Save Model</button>
+      </div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-label">Auto Suggest</div>
+          <div class="setting-desc">Show AI suggestions on property pages</div>
+        </div>
+        <button class="toggle" id="autoSuggestToggle" onclick="toggleAutoSuggest()"></button>
+      </div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-label">Quick Reply</div>
+          <div class="setting-desc">Enable one-click replies in chats</div>
+        </div>
+        <button class="toggle" id="quickReplyToggle" onclick="toggleQuickReply()"></button>
+      </div>
+      <div class="divider"></div>
+      <button class="btn btn-danger btn-sm btn-block" onclick="clearAuth()">Sign Out</button>
+    </div>
+  </div>
+  
+  <div class="footer">
+    <span>APS Dream Home AI Assistant v1.0.0</span>
+    <span>Powered by <a href="#" style="color: #0d9488;">APS Dream Home</a></span>
+  </div>
+  
+  <div id="toastContainer" style="position: fixed; bottom: 16px; right: 16px; z-index: 10000;"></div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

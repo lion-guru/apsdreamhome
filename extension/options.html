@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APS AI Assistant - Options</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
+      background: #f8fafc; color: #1e293b; 
+      line-height: 1.5; min-height: 100vh;
+    }
+    .container { max-width: 720px; margin: 0 auto; padding: 24px; }
+    .header { 
+      background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); 
+      color: white; padding: 32px 24px; border-radius: 16px 16px 0 0;
+      text-align: center; margin: -24px -24px 24px -24px;
+    }
+    .logo { width: 64px; height: 64px; background: linear-gradient(135deg, #facc15, #f59e0b); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 16px; }
+    h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+    .subtitle { opacity: 0.9; font-size: 16px; }
+    
+    .section { background: white; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+    .section-title { font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+    .section-title i { color: #0d9488; }
+    .section-desc { color: #64748b; font-size: 14px; margin-bottom: 20px; }
+    
+    .setting-group { margin-bottom: 24px; }
+    .setting-label { display: block; font-weight: 600; color: #1e293b; margin-bottom: 6px; font-size: 14px; }
+    .setting-desc { color: #64748b; font-size: 13px; margin-top: 2px; margin-bottom: 12px; }
+    
+    .provider-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-top: 12px; }
+    .provider-card { border: 2px solid #e2e8f0; border-radius: 12px; padding: 16px; cursor: pointer; transition: all 0.2s; position: relative; }
+    .provider-card:hover { border-color: #0d9488; box-shadow: 0 4px 12px rgba(13,148,136,0.1); }
+    .provider-card.selected { border-color: #0d9488; background: #f0fdfa; box-shadow: 0 0 0 2px #0d9488; }
+    .provider-card input { position: absolute; opacity: 0; pointer-events: none; }
+    .provider-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .provider-avatar { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: white; flex-shrink: 0; }
+    .provider-info { flex: 1; min-width: 0; }
+    .provider-name { font-weight: 700; color: #1e293b; font-size: 16px; }
+    .provider-desc { font-size: 13px; color: #64748b; margin-top: 2px; }
+    .provider-features { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .feature-tag { font-size: 11px; padding: 4px 8px; border-radius: 6px; background: #f1f5f9; color: #475569; font-weight: 500; }
+    .feature-tag.free { background: #dcfce7; color: #166534; }
+    .provider-card.selected .feature-tag:not(.free) { background: #dcfce7; color: #166534; }
+    
+    .input-group { display: flex; gap: 8px; margin-top: 12px; }
+    .input-group .form-input { flex: 1; }
+    .form-input, .form-select { width: 100%; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; font-family: inherit; background: white; color: #1e293b; transition: all 0.2s; }
+    .form-input:focus, .form-select:focus { outline: none; border-color: #0d9488; box-shadow: 0 0 0 3px rgba(13,148,136,0.2); }
+    .form-input::placeholder { color: #94a3b8; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; text-decoration: none; }
+    .btn-primary { background: linear-gradient(135deg, #0d9488, #0f766e); color: white; border: none; }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(13,148,136,0.4); }
+    .btn-secondary { background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; }
+    .btn-secondary:hover { background: #e2e8f0; }
+    .btn-danger { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+    .btn-block { display: flex; width: 100%; }
+    .btn-sm { padding: 8px 12px; font-size: 12px; }
+    
+    .toggle { position: relative; width: 48px; height: 26px; background: #e2e8f0; border-radius: 13px; border: none; cursor: pointer; transition: background 0.2s; }
+    .toggle.active { background: linear-gradient(135deg, #0d9488, #0f766e); }
+    .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; background: white; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: transform 0.2s; }
+    .toggle.active::after { transform: translateX(22px); }
+    
+    .divider { height: 1px; background: #e2e8f0; margin: 20px 0; }
+    .footer { text-align: center; padding-top: 24px; border-top: 1px solid #e2e8f0; color: #64748b; font-size: 13px; }
+    .footer a { color: #0d9488; text-decoration: none; font-weight: 500; }
+    .footer a:hover { text-decoration: underline; }
+    
+    .toast { position: fixed; bottom: 24px; right: 24px; padding: 14px 20px; border-radius: 10px; color: white; font-weight: 500; font-size: 14px; z-index: 10000; animation: slideIn 0.3s ease; box-shadow: 0 10px 40px rgba(0,0,0,0.15); }
+    .toast.success { background: #10b981; }
+    .toast.error { background: #ef4444; }
+    .toast.info { background: #3b82f6; }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    @media (max-width: 640px) {
+      .container { padding: 16px; }
+      .section { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="logo">🤖</div>
+      <h1>APS AI Assistant</h1>
+      <p class="subtitle">Configure your AI assistant settings</p>
+    </header>
+    
+    <div class="container">
+      <section class="section">
+        <h2 class="section-title"><i class="fas fa-robot"></i> AI Provider</h2>
+        <p class="section-desc">Choose your AI provider. Each provider has different capabilities and pricing.</        <div class="provider-grid" id="providerGrid"></div>
+      </section>
+      
+      <section class="section">
+        <h2 class="section-title"><i class="fas fa-key"></i> API Configuration</h2>
+        <p class="section-desc">Enter your API keys for cloud providers. Keys are stored securely in your browser.</p>
+        
+        <div class="input-group">
+          <input type="password" class="form-input" id="apiKeyInput" placeholder="API Key (required for cloud providers)">
+          <button class="btn btn-primary" onclick="saveAPIKey()"><i class="fas fa-save"></i> Save Key</button>
+        </div>
+        <div class="input-group" style="margin-top: 12px;">
+          <input type="text" class="form-input" id="modelInput" placeholder="Model name (optional - uses provider default)">
+          <button class="btn btn-secondary" onclick="saveModel()"><i class="fas fa-save"></i> Save Model</button>
+        </div>
+      </section>
+      
+      <section class="section">
+        <h2 class="section-title"><i class="fas fa-cog"></i> Preferences</h2>
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label">Auto Suggest</div>
+            <div class="setting-desc">Show AI suggestions on property pages</div>
+          </div>
+          <button class="toggle" id="autoSuggestToggle" onclick="toggleAutoSuggest()"></button>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label">Quick Reply</div>
+            <div class="setting-desc">Enable one-click replies in chats</div>
+          </div>
+          <button class="toggle" id="quickReplyToggle" onclick="toggleQuickReply()"></button>
+        </div>
+        <div class="divider"></div>
+        <button class="btn btn-danger btn-block" onclick="clearAuth()">Sign Out</button>
+      </section>
+      
+      <footer class="footer">
+        <p>APS Dream Home AI Assistant v1.0.0</p>
+        <p>Powered by <a href="#">APS Dream Home</a></p>
+      </footer>
+    </div>
+  </div>
+
+  <div id="toastContainer" style="position: fixed; bottom: 24px; right: 24px; z-index: 10000;"></div>
+
+  <script src="options.js"></script>
+</body>
+</html>

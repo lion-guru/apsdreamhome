@@ -342,7 +342,16 @@ class BaseController
         if (headers_sent()) {
             return;
         }
-        
+
+        // Dedupe: multiple controller instances are constructed per request
+        // while output buffering keeps headers unsent. A second header()
+        // call would stack a SECOND Content-Security-Policy with a DIFFERENT
+        // nonce — browsers enforce ALL CSP headers, so every inline script
+        // would be blocked. Reuse the request's nonce instead.
+        if (!empty($GLOBALS['csp_nonce'])) {
+            return;
+        }
+
         // Generate CSP nonce for this request
         $cspNonce = bin2hex(random_bytes(16));
         $_SESSION['csp_nonce'] = $cspNonce;
@@ -364,8 +373,8 @@ class BaseController
         // Content Security Policy with nonce support
         $base = defined('BASE_URL') ? BASE_URL : '';
         $csp = "default-src 'self'; "
-            . "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.google.com https://www.gstatic.com https://unpkg.com https://www.googletagmanager.com https://code.jquery.com; "
-            . "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com https://unpkg.com; "
+            . "script-src 'self' 'nonce-{$cspNonce}' 'strict-dynamic' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.google.com https://www.gstatic.com https://unpkg.com https://www.googletagmanager.com https://code.jquery.com; "
+            . "style-src 'self' 'nonce-{$cspNonce}' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com https://unpkg.com; "
             . "img-src 'self' data: blob: https:; "
             . "font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; "
             . "frame-src 'self' https://www.google.com; "
