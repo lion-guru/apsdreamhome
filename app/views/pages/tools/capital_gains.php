@@ -11,28 +11,28 @@
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold"><?php echo __('purchase_price_rs', [], 'Purchase Price (₹)'); ?></label>
-                                <input type="number" class="form-control" id="purchasePrice" value="3000000" oninput="calcCG()">
+                                <input type="number" class="form-control" id="purchasePrice" value="3000000">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold"><?php echo __('sale_price_rs', [], 'Sale Price (₹)'); ?></label>
-                                <input type="number" class="form-control" id="salePrice" value="5000000" oninput="calcCG()">
+                                <input type="number" class="form-control" id="salePrice" value="5000000">
                             </div>
                         </div>
                         <div class="row g-3 mb-4">
                             <div class="col-md-4">
                                 <label class="form-label fw-bold"><?php echo __('holding_period', [], 'Holding Period'); ?></label>
-                                <select class="form-select" id="holdPeriod" onchange="calcCG()">
-                                    <option value="short"><?php echo __('short_term', [], 'Short Term (Ã¢â€°Â¤ 2 years)'); ?></option>
+                                <select class="form-select" id="holdPeriod">
+                                    <option value="short"><?php echo __('short_term', [], 'Short Term (≤ 2 years)'); ?></option>
                                     <option value="long" selected><?php echo __('long_term', [], 'Long Term (> 2 years)'); ?></option>
                                 </select>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold"><?php echo __('improvement_cost_rs', [], 'Improvement Cost (₹)'); ?></label>
-                                <input type="number" class="form-control" id="improveCost" value="200000" oninput="calcCG()">
+                                <input type="number" class="form-control" id="improveCost" value="200000">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold"><?php echo __('indexation', [], 'Indexation Benefit?'); ?></label>
-                                <select class="form-select" id="indexation" onchange="calcCG()">
+                                <select class="form-select" id="indexation">
                                     <option value="yes"><?php echo __('yes', [], 'Yes'); ?></option>
                                     <option value="no"><?php echo __('no', [], 'No'); ?></option>
                                 </select>
@@ -65,7 +65,7 @@
         </div>
     </div>
 </section>
-<script>
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 function calcCG() {
     const purchase = parseFloat(document.getElementById('purchasePrice').value) || 0;
     const sale = parseFloat(document.getElementById('salePrice').value) || 0;
@@ -91,6 +91,11 @@ function calcCG() {
     document.getElementById('taxRate').textContent = taxRate;
     document.getElementById('cgTax').textContent = '\u20B9' + Math.round(tax).toLocaleString('en-IN');
 }
+document.getElementById('purchasePrice').addEventListener('input', calcCG);
+document.getElementById('salePrice').addEventListener('input', calcCG);
+document.getElementById('holdPeriod').addEventListener('change', calcCG);
+document.getElementById('improveCost').addEventListener('input', calcCG);
+document.getElementById('indexation').addEventListener('change', calcCG);
 calcCG();
 </script>
 <?php include __DIR__ . '/../partials/related_tools.php'; ?>

@@ -79,7 +79,7 @@ $recent_logs = $recent_logs ?? [];
                             <div class="col-auto">
                                 <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-magic me-1"></i>Run AI</button>
                             </div>
-                            <div class="col-12"><small class="text-muted">AI scores all leads and schedules hot leads (â‰¥ min score) for calling.</small></div>
+                            <div class="col-12"><small class="text-muted">AI scores all leads and schedules hot leads (≥ min score) for calling.</small></div>
                         </form>
                     </div>
                 </div>
@@ -167,7 +167,7 @@ $recent_logs = $recent_logs ?? [];
 <script>
 document.getElementById('btn-process')?.addEventListener('click', function() {
     showLoader();
-    const btn = this; btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Processingâ€¦';
+    const btn = this; btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Processing…';
     fetch('<?= BASE_URL ?>/admin/ai-calling/auto-dialer/process', {method: 'POST', headers:{'X-Requested-With':'XMLHttpRequest'}})
         .then(r => r.json()).then(d => {
             showToast((d.message || 'Done') + (d.processed !== undefined ? ' (Processed: ' + d.processed + ', Failed: ' + d.failed + ')' : ''), 'success');
@@ -177,7 +177,7 @@ document.getElementById('btn-process')?.addEventListener('click', function() {
 document.getElementById('aiScheduleForm')?.addEventListener('submit', function(e) {
     showLoader();
     e.preventDefault();
-    const btn = this.querySelector('button[type=submit]'); btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Runningâ€¦';
+    const btn = this.querySelector('button[type=submit]'); btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Running…';
     const fd = new FormData(this);
     const params = new URLSearchParams();
     fd.forEach((v,k) => params.append(k, v));

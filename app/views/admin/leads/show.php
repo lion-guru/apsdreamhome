@@ -785,10 +785,10 @@ function timeAgo($dt) {
                         <div class="card-body">
                             <h6 class="fw-bold text-muted mb-3"><i class="fas fa-info-circle me-1"></i>How Commission Works</h6>
                             <ul class="list-unstyled">
-                                <li class="mb-2"><span class="badge bg-primary me-2">A</span> <strong>Direct Sale:</strong> Your rank-based rate on the deal value (5%â€“20%)</li>
+                                <li class="mb-2"><span class="badge bg-primary me-2">A</span> <strong>Direct Sale:</strong> Your rank-based rate on the deal value (5%—20%)</li>
                                 <li class="mb-2"><span class="badge bg-success me-2">B</span> <strong>Override:</strong> Differential between your rank and downline's rank</li>
                                 <li class="mb-2"><span class="badge bg-warning me-2">C</span> <strong>Performance:</strong> Team rollup bonus on qualifying deals</li>
-                                <li class="mb-2"><span class="badge bg-info me-2">â˜…</span> <strong>Milestone:</strong> Bonus on achieving rank thresholds</li>
+                                <li class="mb-2"><span class="badge bg-info me-2">★</span> <strong>Milestone:</strong> Bonus on achieving rank thresholds</li>
                                 <li class="mb-2"><span class="badge bg-danger me-2">!</span> <strong>20% Cap:</strong> Per-transaction commission capped at 20% of deal value</li>
                             </ul>
                         </div>

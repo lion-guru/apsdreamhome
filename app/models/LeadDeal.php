@@ -229,9 +229,9 @@ class LeadDeal extends Model
             'SGD' => 'S$',
             'HKD' => 'HK$',
             'NOK' => 'kr',
-            'KRW' => 'â‚©',
-            'TRY' => 'â‚º',
-            'RUB' => 'â‚½',
+            'KRW' => '₩',
+            'TRY' => '₺',
+            'RUB' => '₽',
             'BRL' => 'R$',
             'ZAR' => 'R',
         ];

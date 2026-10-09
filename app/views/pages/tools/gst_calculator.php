@@ -10,12 +10,12 @@
                     <div class="card-body p-4">
                         <div class="mb-3">
                             <label class="form-label fw-bold"><?php echo __('base_price_rs', [], 'Base Price (₹)'); ?></label>
-                            <input type="number" class="form-control form-control-lg" id="basePrice" value="5000000" oninput="calcGST()">
+                            <input type="number" class="form-control form-control-lg" id="basePrice" value="5000000">
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold"><?php echo __('property_type', [], 'Property Type'); ?></label>
-                            <select class="form-select" id="propType" onchange="calcGST()">
-                                <option value="affordable"><?php echo __('affordable_housing', [], 'Affordable Housing (Up to ₹45L, Ã¢â€°Â¤60 sqm)'); ?></option>
+                            <select class="form-select" id="propType">
+                                <option value="affordable"><?php echo __('affordable_housing', [], 'Affordable Housing (Up to ₹45L, ≤60 sqm)'); ?></option>
                                 <option value="under_construction"><?php echo __('under_construction', [], 'Under Construction'); ?></option>
                                 <option value="ready"><?php echo __('ready_to_move', [], 'Ready to Move (No GST)'); ?></option>
                                 <option value="commercial_prop"><?php echo __('commercial_property', [], 'Commercial Property'); ?></option>
@@ -23,7 +23,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold"><?php echo __('input_tax_credit', [], 'Input Tax Credit (ITC)?'); ?></label>
-                            <select class="form-select" id="itcOpt" onchange="calcGST()">
+                            <select class="form-select" id="itcOpt">
                                 <option value="yes"><?php echo __('yes_with_itc', [], 'Yes - ITC Available (1% without ITC)'); ?></option>
                                 <option value="no"><?php echo __('no_itc', [], 'No - Without ITC (5% without ITC)'); ?></option>
                             </select>
@@ -49,7 +49,7 @@
         </div>
     </div>
 </section>
-<script>
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 function calcGST() {
     const base = parseFloat(document.getElementById('basePrice').value) || 0;
     const type = document.getElementById('propType').value;
@@ -63,6 +63,9 @@ function calcGST() {
     document.getElementById('gstAmt').textContent = '\u20B9' + Math.round(gst).toLocaleString('en-IN');
     document.getElementById('totalPrice').textContent = '\u20B9' + Math.round(base + gst).toLocaleString('en-IN');
 }
+document.getElementById('basePrice').addEventListener('input', calcGST);
+document.getElementById('propType').addEventListener('change', calcGST);
+document.getElementById('itcOpt').addEventListener('change', calcGST);
 calcGST();
 </script>
 <?php include __DIR__ . '/../partials/related_tools.php'; ?>

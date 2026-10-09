@@ -242,7 +242,7 @@ $base = BASE_URL ?? '';
                 <!-- Pagination -->
                 <?php if ($total_pages > 1): ?>
                 <div class="d-flex justify-content-between align-items-center px-4 py-3 border-top">
-                    <small class="text-muted">Showing <?= (($page - 1) * $per_page) + 1 ?>â€“<?= min($page * $per_page, $total) ?> of <?= number_format($total) ?> leads</small>
+                    <small class="text-muted">Showing <?= (($page - 1) * $per_page) + 1 ?>—<?= min($page * $per_page, $total) ?> of <?= number_format($total) ?> leads</small>
                     <nav>
                         <ul class="pagination pagination-sm mb-0">
                             <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">

@@ -97,7 +97,7 @@ $focusAreas = $focusAreas ?? [];
             <h4>Quick Queries</h4>
             <button class="quick-query-btn" onclick="sendQuickQuery('What are my top priorities today?')">ðŸŽ¯ Today's Priorities</button>
             <button class="quick-query-btn" onclick="sendQuickQuery('Give me a quick performance summary')">ðŸ“Š Performance Summary</button>
-            <button class="quick-query-btn" onclick="sendQuickQuery('What actions should I take this week?')">âš¡ This Week Actions</button>
+            <button class="quick-query-btn" onclick="sendQuickQuery('What actions should I take this week?')">📅 This Week Actions</button>
             <button class="quick-query-btn" onclick="sendQuickQuery('Show me any alerts or issues')">ðŸš¨ Alerts & Issues</button>
             <button class="quick-query-btn" onclick="sendQuickQuery('Compare this month vs last month')">ðŸ“ˆ Month Comparison</button>
         </div>
@@ -109,7 +109,7 @@ $focusAreas = $focusAreas ?? [];
             <div class="avatar"><i class="fas fa-robot"></i></div>
             <div class="info">
                 <h3>APS AI Assistant</h3>
-                <p>Role-aware â€¢ Real-time data â€¢ Hinglish</p>
+                <p>Role-aware • Real-time data • Hinglish</p>
             </div>
         </div>
         

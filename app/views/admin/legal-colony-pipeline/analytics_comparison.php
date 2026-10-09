@@ -264,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
     new Chart(document.getElementById('healthChart'), {
       type: 'bar',
       data: {
-        labels: healthData.map(d => d.name.length > 12 ? d.name.substring(0,12) + 'â€¦' : d.name),
+        labels: healthData.map(d => d.name.length > 12 ? d.name.substring(0,12) + '…' : d.name),
         datasets: [{
           label: 'Health %',
           data: healthData.map(d => d.score),
@@ -324,7 +324,7 @@ document.addEventListener('DOMContentLoaded', function() {
     new Chart(document.getElementById('roiChart'), {
       type: 'bar',
       data: {
-        labels: roiData.map(d => d.name.length > 12 ? d.name.substring(0,12) + 'â€¦' : d.name),
+        labels: roiData.map(d => d.name.length > 12 ? d.name.substring(0,12) + '…' : d.name),
         datasets: [{
           label: 'Margin %',
           data: roiData.map(d => d.margin),
