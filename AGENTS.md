@@ -1,5 +1,23 @@
 > **COMPLETED (2026-10-06):** Churn-stop verified (snapshots identical), full review done, all work committed + pushed (see Session 171-173 below).
 
+## Session 177: Extension Backend Wiring — 6 Missing AI/Notification Routes (2026-10-09)
+
+### Trigger
+Takeover round: extension called 6 backend routes that did not exist; every AI call ALSO broken client-side (`getAPIBase()` Promise used without `await` → `[object Promise]/api/...` URLs).
+
+### Work (probe-verified, pushed as `cb318154e`)
+- `extension/background.js`: `await getAPIBase()` in `callAPI` + `checkNotifications`.
+- `AIAssistantController`: `rewrite/summarize/translate` (FreeAIEngines + deterministic fallback, success:true offline like `chat()`), `quickShare` (deterministic WA/FB/X links + AI caption clamped to 140 chars after model leaked reasoning text once), `saveLead` (regex phone/email, 400 without contact, INSERT source=extension), `unreadCount` (Bearer `api_tokens` → unread count, 401 without token).
+- `routes/api.php`: 5 POST + 1 GET wired next to existing AI routes (controller already skips CSRF).
+- HR domain spot-check (second tab's area): 13/13 real routes 200 (`/admin/hr*`, `/admin/hrm*`, `/admin/payroll`, `/admin/fnf/*`).
+
+### Verification
+- New endpoints **10/10** (live openrouter: Hindi translation, clean caption; save-lead row created+deleted; 400/401 negatives; one 12–26s slow AI call noted — async background op, acceptable).
+- Master **7/7**. Scratch-DB proof not needed (no DDL this round).
+
+### Key Lessons (carried, continued)
+_450. **An async base-URL helper without `await` breaks every call at once** — `` `${getAPIBase()}/...` `` stringifies the Promise; all endpoints 404-ish together. When ALL calls fail identically, suspect the shared helper, not the endpoints.
+
 ## Session 176: Second-Tab Takeover — CSP/Extension/Salary Review + Fixes (2026-10-09)
 
 ### Trigger
