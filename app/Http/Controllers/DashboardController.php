@@ -65,11 +65,38 @@ class DashboardController extends BaseController
     }
 
     /**
+     * Role gate for customer-portal actions served by this controller.
+     * Customers (and unknown/guest sessions, preserving current behavior)
+     * pass through; any other logged-in role is sent to its own portal —
+     * mirroring index()'s role switch and Front's strict customer guards.
+     */
+    private function redirectNonCustomerToPortal(): void
+    {
+        $role = $_SESSION['role'] ?? '';
+        if ($role === '' || $role === null || $role === 'customer') {
+            return;
+        }
+        $portalMap = [
+            'agent' => '/agent/dashboard',
+            'associate' => '/associate/dashboard',
+            'admin' => '/admin/dashboard',
+            'super_admin' => '/admin/dashboard',
+        ];
+        $target = $portalMap[$role] ?? '/login';
+        if (!isset($portalMap[$role]) && in_array($role, self::ADMIN_ROLES, true)) {
+            $target = '/admin/dashboard';
+        }
+        header('Location: ' . BASE_URL . $target);
+        exit;
+    }
+
+    /**
      * Customer Dashboard
      */
     public function customer()
     {
         $this->requireLogin();
+        $this->redirectNonCustomerToPortal();
         $this->layout = 'layouts/customer';
         $userId = (int)$_SESSION['user_id'];
 
@@ -299,6 +326,7 @@ class DashboardController extends BaseController
      */
     public function favorites()
     {
+        $this->redirectNonCustomerToPortal();
         $userId = $_SESSION['user_id'] ?? 0;
         $favorites = [];
 
@@ -330,6 +358,7 @@ class DashboardController extends BaseController
      */
     public function inquiries()
     {
+        $this->redirectNonCustomerToPortal();
         $userId = $_SESSION['user_id'];
 
         // Real user inquiries (is_read powers the Mark-All-Read badge/button)
