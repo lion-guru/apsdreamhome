@@ -1,5 +1,23 @@
 > **COMPLETED (2026-10-06):** Churn-stop verified (snapshots identical), full review done, all work committed + pushed (see Session 171-173 below).
 
+## Session 178: Crashed-Tab Recovery via 200MB Session JSON + List-Property E2E Proof (2026-10-09)
+
+### Trigger
+User shared dead opencode link (`SessionDataMissingError`) + local `Downloads/new-session---*.json` (200MB, won't open in any editor) from crashed tab "swift-nebula".
+
+### Recovery (jq forensics on the 200MB export)
+- 1204 messages / 45 user turns extracted: crashed tab = list-property overhaul track (commits `b38bde498..1d7aa969a` already in history) + flag/salary/index tail work (already live) + final "do next"+backup loop.
+- Its closing todos: safety-backup ✓ / restore backup ✓ / re-apply schema ✓ / verify counts+master ✓ — all four independently confirmed complete in this session (users=110, properties=627, plots=749, leads=38078, master 7/7).
+- Its uncommitted worktree was already absorbed in Session 176 (`6b0733146`). Nothing outstanding found.
+
+### List-property E2E proof (its flagship flow, DB-asserted)
+- Anonymous submit → 302 back with "login first" (correct guard, `PropertyPageController:321`).
+- Authed submit (testuser) → 302 to `/user/properties` + row present in `user_properties` → deleted after (table back to 0). Flow genuinely persists (prior load test only asserted HTTP).
+
+### Key Lessons (carried, continued)
+_451. **A 200MB session export is still queryable** — editors/chrome choke, but `jq` streams it fine; user-turn extraction + tail-text + last-todo-list reconstructs a dead tab's full state in minutes.
+_452. **HTTP-success load tests don't prove persistence** — 30/30 "success" measured status codes only; one authed submit + row-count + cleanup proves the write path for real.
+
 ## Session 177: Extension Backend Wiring — 6 Missing AI/Notification Routes (2026-10-09)
 
 ### Trigger
