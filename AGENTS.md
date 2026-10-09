@@ -1,5 +1,126 @@
 > **COMPLETED (2026-10-06):** Churn-stop verified (snapshots identical), full review done, all work committed + pushed (see Session 171-173 below).
 
+## Session 180: Project-Wide Mojibake Repair — DB 2000+ Rows + 12 Files (2026-10-09)
+
+### Trigger
+Owner pasted `/properties` dump: `ÔÇö/Ôé╣` garbage on plot cards + inquiry modal "valid property" error. Then clarified: symbols appear in KAI JAGAH (many places).
+
+### Findings (both root-caused, pushed as `1b2178efd`)
+1. **Inquiry error = correct validation** (`PropertyPageController:632`, missing name/phone/property). E2E: authed+CSRF+real property → 302 + row created+cleaned; anonymous → login-guard 302; no-CSRF POST → router 302 by design. No code change needed.
+2. **Mojibake, two families**: (a) DB plots `D4C7F6/D4E9` byte corruption from legacy import (211 rows) + 1824 rows across 41 tables (same two tokens); (b) `utf8_encode()`-signature literals in ~15 code files (`â€™`→—, `â‚¹`→₹, `â‚©/º/½`→₩/₺/₽, `â€¢`→•, `â€¦`→…, `â‰¥`→≥, `→`-variant, ★/📅 binary blobs). Plus: notification titles normalized to canonical twins (1137), ledger divider matched to generator's `÷` format, locales restored from seed hex (11 natives+flags), whatsapp leading-blob strips, `med-2`→`me-2` typo.
+3. **Second tab active again mid-round** (OtpAuth/smart-register/home/animations/FreeAIEngines) — zero file overlap; AI integration re-probed OK after their engine edit. Left their files untouched.
+
+### Verification
+- `/properties` renders 183 em-dashes + 25 rupees, 0 bad signatures (byte-counted); byte-exact re-scans clean everywhere; master **7/7**.
+
+### Key Lessons (carried, continued)
+_454. **Always set PDO DSN charset — missing charset corrupts measurements AND writes** — four scripts agreed on phantom D4 bytes (latin1-connection conversion artifact); one UPDATE latin1-round-tripped a whole column. `charset=utf8mb4` in every DSN, no exceptions.
+_455. **Never eyeball hex dumps from tool output; never HEX-LIKE-substring** — transit mangled hex twice (med-2 window, arrow contexts); HEX-LIKE has nibble-boundary false positives (`9C3A2F` matches `%C3A2%`). Trust only: PHP byte functions on fetched values, match counts, and rendered-page bytes. `POSITION(x'..')` also suspect — same caution.
+_456. **A `\\r` in a double-quoted PHP path eats the cookie jar** — `sys_get_temp_dir() . "\\rm_$mode.txt"` makes `\r` a carriage return; curl silently keeps no cookies and every authed check 302s. Single-quote temp paths; distrust failing-everything matrices via a known-good control page.
+
+## Session 185: Error-Log Triage + Flag-Service Proof (2026-10-09, probe-only)
+
+### Trigger
+"do next" — no new churn (worktree identical to S184), so triaged `php_error_log` instead of re-running the same probes.
+
+### Findings (no app edits)
+- Log tail is almost all scratch noise (Temp/opencode probe scripts, `php -r` quoting artifacts, own `network_tree` cleanup skip — already judged harmless S181).
+- 4× `feature_flags.rollout` 1054-fatals at 10:51–10:53 Berlin: **transient, source gone** — no current code contains that query (service uses `rollout_percentage`); errors stopped hours ago.
+- Flag service proven healthy directly: `wallet_auto_credit=true`, unknown flag=false; `/admin/feature-flags/check` correctly 302s for guests (auth gate, not 500).
+- My probe scripts initially failed on `FeatureFlagService::getInstance()` — **method doesn't exist** (service uses `new`); probe bug, not app bug. Error text only lands in php log (CLI stderr swallowed) — check the log when a CLI probe exits silent-nonzero.
+- Pre-existing, left alone: hourly cron fatals for missing `booking_demand_letters` / `material_inventory` tables; morning DB-connection-refused blips. Schema/ops decisions for owner.
+
+### Key Lessons (carried, continued)
+_466. **A silent-nonzero CLI probe means "read the php log"** — harness swallows stderr; the real error (`Call to undefined method`) was only in `php_error_log`.
+_467. **Suspect the probe before the app** — `getInstance()` never existed on that service; controllers use `new`. Two failed probe variants before questioning my own assumption.
+
+## Session 184: Second-Actor Health Check — 12 Files Lint-Clean, New Pages 200 (2026-10-09, probe-only)
+
+### Trigger
+"do next" — biggest risk right now is the other tab's churn, so audited THEIR files instead of re-probing mine.
+
+### Checks (all green, zero edits to anyone's code)
+- `php -l` on all 12 second-actor files (LegalColonyPipelineController, PropertyWorkflowController, LeadDeal, auto-dialer, executive_assistant, leads/show+index, analytics_comparison, colony_map, colony_plot_map, capital_gains, gst_calculator): **0 errors**.
+- Their 2 new public pages live: `/gst-calculator` 200, `/capital-gains-calculator` 200 (routes pre-exist in `ToolController`).
+- Own markers intact (typedActive×4, particlesActive×2, cleanResponse×11, JSON-body note). Master 7/7 standing from S183 (no app changes since). **No commit.**
+
+## Session 183: Re-verification Sweep — S180-182 Fixes Intact (2026-10-09, probe-only)
+
+### Trigger
+"do next" — no new complaints; verified prior fixes survived ongoing churn.
+
+### Checks (all green, zero app edits)
+- CSP headers on `/` + `/register/smart`: `unsafe-inline` present, no `strict-dynamic`.
+- Real Chromium: hero typing clean mid-cycle (`Trusted by 5`, no pipes), particles owner=`particlesJS`; smart-register channel click → `email` (third channel proven after sms/whatsapp).
+- Master **7/7**. `smoke_report.json` churn reverted.
+- Second-actor churn still active (+`admin/leads/index.php` this round) — untouched. **No commit.**
+
+## Session 182: Root-Cause Hunt — JSON/$_POST Sweep + Triple-Particles Duel + AI Reasoning Leak (2026-10-09, uncommitted)
+
+### Trigger
+Owner: "wajh khojo — unhi wajh se aur jagah problem hogi" + "9000090009 kiska account banaya?" (answered: own E2E test number, "Test E2E User" id 121465, fully deleted, 0 orphans — no real user touched).
+
+### Wajah 1 — JSON POST vs `$_POST` mismatch (site-wide sweep)
+- Scanner over all controllers: 81 read `php://input`; refined to `$_POST`+400/401 hard-fail methods.
+- Result: **only `saveProfileProgress` was broken** (fixed S181). All others clean: Api/Mobile use correct dual-read (`json ?: $_POST`), form handlers (Employee leads, associate/customer withdrawals, legal accept) all receive FormData/URLSearchParams — each caller view verified. AI chat probe live OK.
+- **New find from the same probe round**: `/api/ai/chat` leaked the model's full chain-of-thought ("Here's a thinking process: 1. Analyze…") to end users. Fixed centrally: `FreeAIEngines::cleanResponse()` strips `<think>/<thinking>/<reasoning>` blocks + "…Draft Response:" preambles; applied at all 10 engine return sites (replaceAll, 11 refs total). Unit 3/3 + live re-probe: clean Hinglish greeting, 0 leak markers.
+
+### Wajah 2 — same "two owners" disease as the typer: THREE particle loops on `#particles-canvas`
+- `particlesJS()` (home.php page config, 80 white) + modern-effects rAF (60 indigo+lines) + premium rAF (50 gold) — all `clearRect` + redraw one canvas = flicker duel + 3× cost + conflicting resize sizing.
+- Fixed like the typer: `dataset.particlesActive` first-claim guard in both files; **page-specific config wins** via synchronous claim during parsing (runs before defer/DOMContentLoaded scripts). Nonce added to the 3 nonce-less home.php scripts (future-proofing). Browser proof: owner=`particlesJS`, hero screenshot clean typing, no pipes.
+
+### Wajah 3 — separator pattern: contained (only `data-strings` site-wide = hero, fixed S181).
+
+### Verification
+- Master **7/7** after everything. My markers re-verified intact despite growing second-actor churn (now +LegalColonyPipeline, LeadDeal, auto-dialer, executive_assistant, leads/show, analytics_comparison — untouched).
+- Temp files deleted; `smoke_report.json` churn reverted. **No commit** (not requested).
+
+### Key Lessons (carried, continued)
+_463. **Scan the pattern, not the instance** — one `$_POST`-for-JSON bug → scanner over 81 controllers → proved singleton + found the AI leak in the same round. "Aur jagah?" deserves a script, not a guess.
+_464. **Same wajah, same dawai** — typer-duel fix (first-claim dataset flag) applied verbatim to the particles-triuel; page-specific config claims synchronously to beat defer scripts deterministically.
+_465. **AI responses need a sanitizer at the engine layer, not per-caller** — one `cleanResponse()` at all 10 return sites beats patching every chat/lead/summary caller; empty-after-clean correctly triggers existing canned fallbacks.
+
+## Session 181: Home Hero Typing Fix + Smart-Register Full E2E + Profile-Save 400 Fix (2026-10-09, uncommitted)
+
+### Trigger
+Owner: "register/smart workflow test karo" + home hero animated text ("We offer premium plots...") dead → "bhut se jagah gadbad".
+
+### Work (all browser/DB-proven)
+1. **Hero typing — 2 stacked bugs** in `modern-effects.js` + `premium-animations.js`: (a) BOTH files run competing `setTimeout` type-loops on `#typed-text` (defer vs DOMContentLoaded) → garble/flicker; (b) both split `data-strings` on `'||'` but the `__()` translation chunk uses single `|` → literal pipes on screen ("...Gorakhpur|Smart Investment|..."). Fixed: `dataset.typedActive` first-wins guard + split on single `|` with trim/filter in both files. Cache-bust: `modern-effects.js?v=2`, `premium-animations.js?v=20261009` (else visitors keep old JS).
+2. **Profile-save 400**: `saveProfileProgress()` read `$token = $_POST['token']` but page POSTs JSON (`$_POST` empty for JSON) → EVERY profile save failed. Fixed → token from decoded body. (Sibling `trackBehavior` already did it right.)
+3. **Full E2E in real Chromium** (test phone 9000090009): phone+captcha(123456 dev bypass, real glyphs misread twice) → SMS channel → OTP page → DB-read OTP `154094` → auto-submit → user created → role customer → profile (Mumbai/Salaried/25-50L) → **83% + success overlay** → DB: session `profile_complete`, user name/city/occupation saved, wallet row present. **All test rows deleted, 0 orphan behavior rows.**
+4. Master **7/7** after all fixes. Second-actor churn active again mid-session (5 new files: PropertyWorkflowController, colony_map, colony_plot_map, capital_gains, gst_calculator) — untouched.
+
+### Key Lessons (carried, continued)
+_458. **Two typers on one element = garble, not speed** — defer-script + footer-script both typed `#typed-text`; first-wins flag (`dataset.typedActive`) is the minimal safe arbitration.
+_459. **Split on the weakest separator, filter empties** — `split('|')+trim+filter` handles `|` and `||` and trailing separators; `split('||')` breaks the moment one chunk uses single pipes.
+_460. **Always bump `?v=` with a JS fix** — visitors' browsers cache old JS; without a version bump the fix never reaches them (and your own verification reads stale code).
+_461. **`$_POST` is empty for JSON POSTs** — any PHP endpoint reading `$_POST['x']` while the client sends `application/json` fails 100% of the time. Read the decoded body.
+_462. **Transient `ChildProcess.kill` on first agent-browser call** — immediate retry succeeds; don't investigate before one retry.
+
+## Session 180: Site-Wide JS Blackout — Strict CSP Relaxed + Smart-Register Fixes (2026-10-09, uncommitted)
+
+### Trigger
+Owner: `/register/smart` "scroll nahi ho raha" → then "JS KAAM NHI KAR RAHA" → then "PURE WEBSITE ME... KAI JAGAH JS ME GADBAD, DEEPLY DEKH LO".
+
+### Root causes (all probe-verified)
+1. **Scroll lock**: `body{...overflow:hidden}` in `smart_register_phone/otp/profile.php` cut off taller-than-viewport cards. Fixed → `overflow-y:auto` + `flex-start` + `margin:auto 0` wrappers + `position:fixed` deco glows (4 files incl. role page hardening).
+2. **Site-wide JS blackout**: Session 176's strict CSP (`script-src` nonce-only + `strict-dynamic`, no `unsafe-inline`) silently kills ALL `onclick`/`on*` handlers + all nonce-less scripts. Measured: **459 files / 1322 inline handlers + 517 files / 660 scripts**. `BaseController` ctor sends it on every page → whole site affected. Pre-176 policy had `unsafe-inline` + `unsafe-eval` (site worked for years).
+3. **Fix**: restored `unsafe-inline` (+`unsafe-eval`) to script-src/style-src, **removed `strict-dynamic`** (it makes modern browsers ignore `unsafe-inline` — keeping both would still block everything). Nonce infra kept emitting (defense-in-depth + reports). Re-tightening = separate 459-file conversion project, noted in code comment.
+4. **CSP-correct hardening kept**: smart-register `onclick`/`onkeydown` → `addEventListener` bindings (phone/otp/profile/role), `nonce` added to bootstrap `<script src>` tags.
+
+### Verification
+- Real Chromium (agent-browser): SMS channel click → hidden value `sms` + `selected` class. JS genuinely runs.
+- Master **7/7**, home/login/smart/properties all 200 + fixed CSP header, `php -l` clean.
+- `/csp-report` full cycle: POST → 204 → row in `csp_violations` → test row deleted.
+- Worktree = exactly these 5 files; `storage/logs/smoke_report.json` churn reverted; other-tab scratch (`check_*`, `queryex`) untouched. **No commit** (not requested).
+
+### Key Lessons (carried, continued)
+_454. **A strict CSP is a site-wide kill switch when the codebase is built on inline JS** — count `on*=` handlers + nonce-less scripts BEFORE removing `unsafe-inline`; here it was 1300+ handlers. Aspirational headers must match codebase reality.
+_455. **`strict-dynamic` + `unsafe-inline` = still blocked** — spec says browsers ignore `unsafe-inline` when `strict-dynamic` is present. Relaxing requires removing `strict-dynamic`, not just adding `unsafe-inline`.
+_456. **PowerShell tool-harness strips `"` from commands** — curl `--data-binary '{"a":1}'` arrived as `{a:1}` (proved via echo-server: len=2/raw=`{\`). Send JSON via `--data-binary @file` instead; same for `php -r` (use a file).
+_457. **A 400 from your own endpoint may be your probe's fault** — `/csp-report` 400s were malformed-by-shell JSON, not a controller bug; echo-server + file-based payload proved it in minutes.
+
 ## Session 179: Extension E2E Attempt + Manifest Permission Fix (2026-10-09)
 
 ### Trigger
