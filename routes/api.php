@@ -317,6 +317,13 @@ require_once __DIR__ . '/events.php';
 // Core Functions Management Routes - Now integrated in web.php
 $router->get('/api/ai/recommendations', 'App\\Http\\Controllers\\AIAssistantController@recommendations');
 $router->get('/api/ai/analyze/{id}', 'App\\Http\\Controllers\\AIAssistantController@analyze');
+// Browser-extension endpoints (POST JSON; see extension/background.js)
+$router->post('/api/ai/rewrite', 'App\\Http\\Controllers\\AIAssistantController@rewrite');
+$router->post('/api/ai/summarize', 'App\\Http\\Controllers\\AIAssistantController@summarize');
+$router->post('/api/ai/translate', 'App\\Http\\Controllers\\AIAssistantController@translate');
+$router->post('/api/ai/quick-share', 'App\\Http\\Controllers\\AIAssistantController@quickShare');
+$router->post('/api/ai/save-lead', 'App\\Http\\Controllers\\AIAssistantController@saveLead');
+$router->get('/api/notifications/unread', 'App\\Http\\Controllers\\AIAssistantController@unreadCount');
 
 // Monitoring API Routes
 $router->get('/api/monitoring/health', 'App\\Http\\Controllers\\MonitoringController@healthCheck');

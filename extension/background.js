@@ -150,7 +150,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 
 // API call helper
 async function callAPI(endpoint, data, method = 'POST') {
-  const url = `${getAPIBase()}/api/ai/${endpoint}`;
+  const url = `${await getAPIBase()}/api/ai/${endpoint}`;
   
   const headers = {
     'Content-Type': 'application/json',
@@ -337,7 +337,7 @@ async function checkNotifications() {
   if (!authToken) return;
   
   try {
-    const response = await fetch(`${getAPIBase()}/api/notifications/unread`, {
+    const response = await fetch(`${await getAPIBase()}/api/notifications/unread`, {
       headers: { 'Authorization': `Bearer ${authToken}` }
     });
     

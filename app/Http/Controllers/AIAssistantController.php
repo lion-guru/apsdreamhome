@@ -125,6 +125,186 @@ class AIAssistantController extends BaseController
         }
     }
 
+    /**
+     * Generate text via free engines with a deterministic fallback.
+     * Always resolves (never throws) so browser-extension calls degrade
+     * gracefully when no AI backend is reachable.
+     */
+    private function aiText(string $prompt, string $fallback, int $maxTokens = 300): array
+    {
+        try {
+            $aiResult = \App\Services\AI\FreeAIEngines::getInstance()->generate(
+                $prompt, ['max_tokens' => $maxTokens, 'temperature' => 0.5], 'chat'
+            );
+            $text = trim($aiResult['text'] ?? '');
+            if ($text !== '') {
+                return [$text, $aiResult['engine'] ?? 'ai'];
+            }
+        } catch (\Throwable $e) {
+            error_log('AIAssistantController::aiText: ' . $e->getMessage());
+        }
+        return [$fallback, 'fallback'];
+    }
+
+    private function extInput(): array
+    {
+        return json_decode(file_get_contents('php://input'), true) ?: $_POST;
+    }
+
+    public function rewrite()
+    {
+        header('Content-Type: application/json');
+        $input = $this->extInput();
+        $text = trim($input['text'] ?? '');
+        if ($text === '') {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Text required']);
+            return;
+        }
+        $tone = preg_replace('/[^a-z ]/i', '', (string)($input['tone'] ?? 'professional')) ?: 'professional';
+        [$out, $engine] = $this->aiText(
+            "Rewrite the following text in a {$tone} tone. Return ONLY the rewritten text, no quotes or commentary:\n{$text}",
+            $text
+        );
+        echo json_encode(['success' => true, 'text' => $out, 'engine' => $engine]);
+    }
+
+    public function summarize()
+    {
+        header('Content-Type: application/json');
+        $input = $this->extInput();
+        $text = trim($input['text'] ?? '');
+        if ($text === '') {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Text required']);
+            return;
+        }
+        $maxLength = min(2000, max(50, (int)($input['maxLength'] ?? 200)));
+        [$out, $engine] = $this->aiText(
+            "Summarize the following text in 2-3 sentences (at most {$maxLength} characters). Return ONLY the summary:\n{$text}",
+            mb_substr($text, 0, $maxLength)
+        );
+        echo json_encode(['success' => true, 'summary' => $out, 'engine' => $engine]);
+    }
+
+    public function translate()
+    {
+        header('Content-Type: application/json');
+        $input = $this->extInput();
+        $text = trim($input['text'] ?? '');
+        if ($text === '') {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Text required']);
+            return;
+        }
+        $langs = ['hi' => 'Hindi', 'en' => 'English', 'bn' => 'Bengali', 'te' => 'Telugu',
+            'mr' => 'Marathi', 'ta' => 'Tamil', 'gu' => 'Gujarati', 'kn' => 'Kannada',
+            'ml' => 'Malayalam', 'pa' => 'Punjabi', 'ur' => 'Urdu'];
+        $code = strtolower((string)($input['targetLang'] ?? 'hi'));
+        $langName = $langs[$code] ?? 'Hindi';
+        [$out, $engine] = $this->aiText(
+            "Translate the following text to {$langName}. Return ONLY the translation, no quotes or commentary:\n{$text}",
+            $text
+        );
+        echo json_encode(['success' => true, 'translation' => $out, 'engine' => $engine]);
+    }
+
+    public function quickShare()
+    {
+        header('Content-Type: application/json');
+        $input = $this->extInput();
+        $url = trim($input['url'] ?? '');
+        $selection = trim($input['selection'] ?? '');
+        if ($url === '' && $selection === '') {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'URL or selection required']);
+            return;
+        }
+        $shareText = $selection !== '' ? $selection : $url;
+        [$caption, $engine] = $this->aiText(
+            "Write ONE catchy social-media line (under 140 characters) for this property/listing. "
+            . "Output the line alone with no numbering, no quotes, no explanation, no preamble:\n{$shareText}",
+            mb_substr($shareText, 0, 140)
+        );
+        // Keep share links short even if the model leaks reasoning text.
+        $caption = mb_substr(trim(preg_replace('/\s+/', ' ', $caption)), 0, 140);
+        $enc = rawurlencode($caption . ' ' . $url);
+        echo json_encode(['success' => true, 'engine' => $engine, 'caption' => $caption, 'links' => [
+            'whatsapp' => 'https://wa.me/?text=' . $enc,
+            'facebook' => 'https://www.facebook.com/sharer/sharer.php?u=' . rawurlencode($url),
+            'twitter' => 'https://twitter.com/intent/tweet?text=' . $enc,
+        ]]);
+    }
+
+    public function saveLead()
+    {
+        header('Content-Type: application/json');
+        $input = $this->extInput();
+        $selection = trim($input['selection'] ?? '');
+        $url = trim($input['url'] ?? '');
+        if ($selection === '') {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Selection required']);
+            return;
+        }
+        $phone = '';
+        if (preg_match('/(\+91[\-\s]?)?[6-9]\d{9}/', $selection, $m)) {
+            $phone = preg_replace('/[\s\-]/', '', $m[0]);
+        }
+        $email = '';
+        if (preg_match('/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/', $selection, $m)) {
+            $email = strtolower($m[0]);
+        }
+        if ($phone === '' && $email === '') {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'No phone or email found in selection']);
+            return;
+        }
+        try {
+            $stmt = $this->db->prepare(
+                "INSERT INTO leads (name, email, phone, message, source, status, created_at) VALUES (?, ?, ?, ?, 'extension', 'new', NOW())"
+            );
+            $stmt->execute(['Extension Lead', $email, $phone, mb_substr($selection, 0, 2000) . "\n[via: {$url}]"]);
+            echo json_encode(['success' => true, 'lead_id' => (int)$this->db->lastInsertId()]);
+        } catch (\Throwable $e) {
+            error_log('AIAssistantController::saveLead: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Could not save lead']);
+        }
+    }
+
+    public function unreadCount()
+    {
+        header('Content-Type: application/json');
+        $header = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+        if (strpos($header, 'Bearer ') !== 0) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'message' => 'Authentication required']);
+            return;
+        }
+        try {
+            $stmt = $this->db->prepare(
+                "SELECT t.user_id FROM api_tokens t WHERE t.token = ? AND (t.expires_at IS NULL OR t.expires_at > NOW()) LIMIT 1"
+            );
+            $stmt->execute([substr($header, 7)]);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if (!$row) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'message' => 'Invalid token']);
+                return;
+            }
+            $count = (int)$this->db->fetchColumn(
+                "SELECT COUNT(*) FROM notifications WHERE user_id = ? AND is_read = 0",
+                [(int)$row['user_id']]
+            );
+            echo json_encode(['success' => true, 'count' => $count, 'unread' => $count]);
+        } catch (\Throwable $e) {
+            error_log('AIAssistantController::unreadCount: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Failed to fetch notifications']);
+        }
+    }
+
     public function recommendations()
     {
         header('Content-Type: application/json');
