@@ -51,7 +51,7 @@ $base    = BASE_URL ?? '';
         <div class="card shadow-sm">
             <div class="card-body text-center">
                 <div class="text-info mb-2"><i class="fas fa-rupee-sign fa-2x"></i></div>
-                <h3 class="mb-1">₹<?= number_format(max(array_column($plans, 'price_monthly'))) ?></h3>
+                <h3 class="mb-1">₹<?= number_format(!empty($plans) ? max(array_column($plans, 'price_monthly')) : 0) ?></h3>
                 <small class="text-muted">Highest Plan</small>
             </div>
         </div>

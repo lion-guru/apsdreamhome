@@ -83,7 +83,7 @@ class AgentCommissionController extends AdminController {
         }
 
         $commissions = $this->db->query(
-            "SELECT * FROM mlm_commission_ledger WHERE beneficiary_user_id=? AND type='direct_sale' AND tenant_id=? ORDER BY created_at DESC",
+            "SELECT * FROM mlm_commission_ledger WHERE beneficiary_user_id=? AND commission_type='direct_sale' AND tenant_id=? ORDER BY created_at DESC",
             [$id, $tid]
         )->fetchAll();
 
