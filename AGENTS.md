@@ -1,5 +1,18 @@
 > **COMPLETED (2026-10-06):** Churn-stop verified (snapshots identical), full review done, all work committed + pushed (see Session 171-173 below).
 
+## Session 179: Extension E2E Attempt + Manifest Permission Fix (2026-10-09)
+
+### Trigger
+"do next": prove second tab's extension works end-to-end (backend was proven 10/10 in Session 177, JS syntax clean in 176 — browser-side load/integration unproven).
+
+### Work (pushed as `e08d26379`)
+- **Static chrome.* audit** across all 4 JS files vs manifest: `alarms` + `notifications` permissions were missing (sync cycle + every toast would throw). Added both; all other APIs covered.
+- **MV3 package validation** (scripted): 31/32 — sole flag is the validator's own glob artifact (`icons/*.png` in web_accessible_resources is a glob, not a file).
+- **Live-load E2E BLOCKED, honestly noted**: agent-browser runs headless Chromium where `--load-extension` is ignored (content-script markers absent on matching live URL `/property/inquire`); `--headed` can't launch from the service context (tool call killed). So extension-load-in-Chrome remains a 30-second manual click-test for the owner.
+
+### Key Lessons (carried, continued)
+_453. **Absent content-script markers in headless prove nothing about the extension** — old headless disables the extension system entirely; verify the premise (UA string, matching-URL choice) before concluding breakage. `/property/1`-style guessed URLs 404 — always harvest a real href from the list page first.
+
 ## Session 178: Crashed-Tab Recovery via 200MB Session JSON + List-Property E2E Proof (2026-10-09)
 
 ### Trigger
