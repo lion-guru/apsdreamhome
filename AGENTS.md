@@ -1,5 +1,28 @@
 > **COMPLETED (2026-10-06):** Churn-stop verified (snapshots identical), full review done, all work committed + pushed (see Session 171-173 below).
 
+## Session 175: Fresh-DB Schema Restore + Backup Recovery + All-Role Audit (2026-10-09)
+
+### Trigger
+"do next" ×N autonomous rounds. MariaDB corrupt post-`1d7aa969a`; other tab stuck in salary-FK loop; user supplied `Downloads/apsdreamhome (16).sql` (Oct-08 19:54 full dump, 849 tables).
+
+### Work (all probe-verified, all pushed)
+- **DB recovery**: `mysql_install_db` fresh install → `setup-database.php` base → 3 idempotent probe-green migrations (core API/auth/MLM/wallet tables + seeds). Master 4/7 → **7/7**, workflow 2/11 → **15/15**, smoke 19/24 → **24/24** (`fa74bb5ef`)
+- **Sidebar 248/298 → 298/298**: 50 fresh-DB 500s mapped URL→controller→SQL by 5 parallel research passes → migration part 3 (~78 tables/alters). Menu tables created empty; sidebar self-healed from `admin_menu_manifest.php` (298 items + 2517 role perms, fingerprint-stable). Residuals: billing/plans `max([])` ValueError guard; careers `users.deleted_at` column. (`ce3660de7`)
+- **Backup restore**: safety mysqldump first (`Downloads/apsdreamhome_pre-restore_2026-10-09.sql`), dropped 799 tables, imported 849-table dump clean (no DEFINERs/triggers). Re-set probe passwords, re-ran migrations idempotent.
+- **Enum-narrowing catch**: migration re-run had narrowed `users.role` (11 vs canonical 60), `properties.status`, `users.status`, `leads.status` — restored to canonical/union live + fixed files so future runs can't narrow. Probe seed moved to id=900001 INSERT IGNORE (never touches real rows). (`6bda54918`)
+- **Stale `last_login` reads → `last_login_at`** (5 sites: User model, UserController stats API 500, AuthService stats, RoleBasedDashboard ×2). Split across `bcfeabd40` + `057049dfe` (repo tracks lowercase `app/models`, `app/services`; disk dirs capitalized — same files on Windows).
+- **Customer-portal RBAC gate**: `DashboardController@customer/favorites/inquiries` only checked login → agent sessions rendered customer pages. Added `redirectNonCustomerToPortal()` mirroring `index()` switch. Matrix: customer 200×3, agent/associate/super_admin 302 to own portals. (`8f78e760d`)
+- **All-role audit**: super_admin 298/298, associate 18/18 + manifest gating (263→admin/login by design per `requireAdmin`), customer real-login + 7/7 + negatives, agent 11/11, employee 19/19, telecaller 5/5. Commission test float-tolerant (76/76). Lint 3141 files 0 errors.
+- **Salary-FK diagnosis** (other tab's loop): migration SQL mismatched live types (`salary_structure_id` signed→unsigned parent, `processed_by` INT→BIGINT `users.id`); live tables are canonical-with-data so migration now no-ops green. File left to owning tab.
+
+### Verification
+- Master **7/7**, smoke 24/24, sidebar 298/298, workflow 15/15 — re-verified after every round, incl. final consolidated pass during active second-tab churn (BaseController CSP + package.json), no regressions.
+
+### Key Lessons (carried, continued)
+_444. **Re-running migrations post-restore can narrow ENUMs** — a MODIFY written for a minimal schema silently rewrites canonical value sets; diff live `DESCRIBE` against the dump before *and* after, and write migrations with canonical/union sets from the start.
+_445. **A `"\r"` in a double-quoted PHP path eats the cookie jar** — `sys_get_temp_dir() . "\rm_$mode.txt"` makes `\r` a carriage return; curl silently keeps no cookies and every authed check 302s. Single-quote temp paths; a failing-everything matrix should first be distrusted via a known-good control page.
+_446. **Probe the redirect target, not just the code** — associate→`/admin/login` vs →dashboard distinguishes designed-deny from broken-session; read the guard (`requireAdmin:745-758`) before judging a 302.
+
 ## Session 172: Full-Tree Commit — Both Workstreams Reviewed + Pushed (2026-10-06)
 
 ### Trigger
