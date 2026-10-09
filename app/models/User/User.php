@@ -150,7 +150,7 @@ class User extends Model
                     u.role,
                     u.status,
                     u.created_at,
-                    u.last_login,
+                    u.last_login_at,
                     (SELECT COUNT(*) FROM properties p WHERE p.created_by = u.id) as properties_count
                 FROM users u
                 {$where_clause}

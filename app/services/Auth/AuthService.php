@@ -525,7 +525,7 @@ class AuthService
             // Active users (logged in last 24 hours)
             $tid = $this->getTenantId();
             $stats['active_today'] = $this->db->fetchOne(
-                "SELECT COUNT(*) FROM users WHERE last_login >= DATE_SUB(NOW(), INTERVAL 24 HOUR)" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                "SELECT COUNT(*) FROM users WHERE last_login_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)" . ($tid > 1 ? " AND tenant_id = ?" : ""),
                 $tid > 1 ? [$tid] : []
             ) ?? 0;
 
