@@ -27,7 +27,7 @@ function run(PDO $pdo, string $label, string $sql): void {
 // ── 1. users: tenant_id, referral_code, wider role enum ──
 run($pdo, 'users.tenant_id', "ALTER TABLE `users` ADD COLUMN IF NOT EXISTS `tenant_id` INT NOT NULL DEFAULT 1 AFTER `id`");
 run($pdo, 'users.referral_code', "ALTER TABLE `users` ADD COLUMN IF NOT EXISTS `referral_code` VARCHAR(50) NULL AFTER `phone`");
-run($pdo, 'users.role enum', "ALTER TABLE `users` MODIFY COLUMN `role` ENUM('admin','user','employee','customer','associate','agent','manager','telecaller','ceo','sales_manager','accountant') NOT NULL DEFAULT 'user'");
+run($pdo, 'users.role enum', "ALTER TABLE `users` MODIFY COLUMN `role` ENUM('admin','user','employee','associate','agent','builder','investor','super_admin','ceo','cfo','coo','cto','cmo','chro','director','manager','customer','telecaller','sales_director','marketing_director','construction_director','finance_director','hr_director','department_manager','project_manager','sales_manager','hr_manager','marketing_manager','finance_manager','property_manager','it_manager','operations_manager','team_lead','telecalling_lead','sales_team_lead','support_lead','senior_accountant','senior_developer','legal_advisor','chartered_accountant','accountant','developer','content_writer','graphic_designer','data_entry_operator','backoffice_staff','telecalling_executive','support_executive','senior_associate','associate_team_lead','senior_agent','franchise_owner','legal_head','finance_head','hr_head','operations_head','operations_director') NULL DEFAULT 'user'");
 
 // ── 2. districts (joined by colonies APIs) ──
 run($pdo, 'districts table', "CREATE TABLE IF NOT EXISTS `districts` (
@@ -55,7 +55,7 @@ run($pdo, 'colonies seed', "INSERT IGNORE INTO `colonies`
   (5, 1, 2, 'Sunrise Meadows', 'sunrise-meadows', 'Budget-friendly east-facing plots', 200, 173, 320000, 0, 1, 'active')");
 
 // ── 4. properties: columns required by browse/favorites/inquiry ──
-run($pdo, 'properties.status enum', "ALTER TABLE `properties` MODIFY COLUMN `status` ENUM('available','sold','rented','active','inactive','under_offer') NOT NULL DEFAULT 'available'");
+run($pdo, 'properties.status enum', "ALTER TABLE `properties` MODIFY COLUMN `status` ENUM('active','inactive','sold','rented','pending','draft') NOT NULL DEFAULT 'active'");
 run($pdo, 'properties.city', "ALTER TABLE `properties` ADD COLUMN IF NOT EXISTS `city` VARCHAR(100) NULL AFTER `location`");
 run($pdo, 'properties.state', "ALTER TABLE `properties` ADD COLUMN IF NOT EXISTS `state` VARCHAR(100) NULL AFTER `city`");
 run($pdo, 'properties.bedrooms', "ALTER TABLE `properties` ADD COLUMN IF NOT EXISTS `bedrooms` INT NULL AFTER `type`");
@@ -251,10 +251,11 @@ $testId = (int)$pdo->query("SELECT `id` FROM `users` WHERE `email`='testuser@exa
 $adminId = (int)$pdo->query("SELECT `id` FROM `users` WHERE `email`='admin@apsdreamhome.com' LIMIT 1")->fetchColumn();
 
 // ── 13. seed property (active, tenant 1, owned by admin) ──
-run($pdo, 'properties seed', "INSERT INTO `properties`
+// Dedicated high-id probe row: never collides with real data (INSERT IGNORE,
+// no overwrite). Guarantees >=1 active tenant-1 property for workflow_probe.
+run($pdo, 'properties seed', "INSERT IGNORE INTO `properties`
   (`id`, `tenant_id`, `created_by`, `title`, `description`, `price`, `location`, `city`, `state`, `type`, `bedrooms`, `bathrooms`, `area_sqft`, `featured`, `property_type_id`, `status`)
-  VALUES (1, 1, " . ($adminId ?: 1) . ", 'Probe Villa Gorakhpur', 'Workflow smoke property', 5500000, 'Suryoday Heights', 'Gorakhpur', 'UP', 'villa', 3, 2, 1500, 0, 3, 'active')
-  ON DUPLICATE KEY UPDATE `tenant_id`=1, `created_by`=VALUES(`created_by`), `title`=VALUES(`title`), `city`=VALUES(`city`), `state`=VALUES(`state`), `bedrooms`=VALUES(`bedrooms`), `bathrooms`=VALUES(`bathrooms`), `area_sqft`=VALUES(`area_sqft`), `property_type_id`=VALUES(`property_type_id`), `status`='active'");
+  VALUES (900001, 1, " . ($adminId ?: 1) . ", 'Probe Villa Gorakhpur', 'Workflow smoke property', 5500000, 'Suryoday Heights', 'Gorakhpur', 'UP', 'house', 3, 2, 1500, 0, 3, 'active')");
 
 // ── 14. seed mlm profile + wallet + ledger for testuser ──
 if ($testId > 0) {

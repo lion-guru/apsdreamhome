@@ -526,7 +526,7 @@ run3($pdo, 'leads.lead_number', "ALTER TABLE `leads` ADD COLUMN IF NOT EXISTS `l
 run3($pdo, 'leads.location_preference', "ALTER TABLE `leads` ADD COLUMN IF NOT EXISTS `location_preference` VARCHAR(255) NULL AFTER `lead_number`");
 run3($pdo, 'leads.created_by', "ALTER TABLE `leads` ADD COLUMN IF NOT EXISTS `created_by` INT NULL AFTER `location_preference`");
 run3($pdo, 'leads.priority', "ALTER TABLE `leads` ADD COLUMN IF NOT EXISTS `priority` VARCHAR(20) NULL AFTER `created_by`");
-run3($pdo, 'leads.status enum', "ALTER TABLE `leads` MODIFY COLUMN `status` ENUM('new','contacted','interested','converted','lost','nurture','closed','dead','won','qualified') NOT NULL DEFAULT 'new'");
+run3($pdo, 'leads.status enum', "ALTER TABLE `leads` MODIFY COLUMN `status` ENUM('new','contacted','qualified','proposal','negotiation','closed_won','closed_lost','nurture','interested','converted','lost','closed','dead','won') NOT NULL DEFAULT 'new'");
 
 // ═════════ BILLING / TENANTS / FNF / EFILING / LEGAL ═════════
 run3($pdo, 'tenants', "CREATE TABLE IF NOT EXISTS `tenants` (
@@ -1040,7 +1040,7 @@ run3($pdo, 'bookings.total_amount', "ALTER TABLE `bookings` ADD COLUMN IF NOT EX
 run3($pdo, 'users.address', "ALTER TABLE `users` ADD COLUMN IF NOT EXISTS `address` TEXT NULL AFTER `phone`");
 run3($pdo, 'users.commission_rate', "ALTER TABLE `users` ADD COLUMN IF NOT EXISTS `commission_rate` DECIMAL(5,2) NULL AFTER `address`");
 run3($pdo, 'users.deleted_at', "ALTER TABLE `users` ADD COLUMN IF NOT EXISTS `deleted_at` DATETIME NULL AFTER `updated_at`");
-run3($pdo, 'users.status enum', "ALTER TABLE `users` MODIFY COLUMN `status` ENUM('active','inactive','deleted') NOT NULL DEFAULT 'active'");
+run3($pdo, 'users.status enum', "ALTER TABLE `users` MODIFY COLUMN `status` ENUM('active','inactive','suspended','pending','deleted') NOT NULL DEFAULT 'active'");
 run3($pdo, 'job_applications', "CREATE TABLE IF NOT EXISTS `job_applications` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `name` VARCHAR(255) NULL,

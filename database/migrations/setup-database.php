@@ -80,7 +80,7 @@ try {
             price decimal(10,2) DEFAULT NULL,
             location varchar(255) DEFAULT NULL,
             type varchar(50) DEFAULT NULL,
-            status enum('available','sold','rented') DEFAULT 'available',
+            status enum('available','sold','rented','active','inactive','pending','draft') DEFAULT 'available',
             created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY (id)
@@ -124,7 +124,7 @@ try {
     
     // Insert sample property
     $stmt = $pdo->prepare("INSERT IGNORE INTO properties (title, description, price, location, type, status) VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->execute(['Sample Property', 'A beautiful property for sale', 500000.00, 'Mumbai', 'Apartment', 'available']);
+    $stmt->execute(['Sample Property', 'A beautiful property for sale', 500000.00, 'Mumbai', 'Apartment', 'active']);
     
     echo "Database setup completed successfully!\n";
     echo "Default admin login: admin@apsdreamhome.com / admin123\n";
