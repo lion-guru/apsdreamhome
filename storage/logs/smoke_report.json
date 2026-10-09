@@ -1,5 +1,5 @@
 {
-    "generated_at": "2026-10-08T19:23:00+02:00",
+    "generated_at": "2026-10-09T07:15:39+02:00",
     "base": "http://localhost/apsdreamhome",
     "total": 24,
     "passed": 24,
@@ -10,16 +10,16 @@
             "label": "home",
             "url": "/",
             "code": 200,
-            "ms": 150.6,
+            "ms": 124.9,
             "pass": true,
             "note": "",
-            "bytes": 311355
+            "bytes": 309207
         },
         {
             "label": "properties",
             "url": "/properties",
             "code": 200,
-            "ms": 134.2,
+            "ms": 103.9,
             "pass": true,
             "note": "",
             "bytes": 280744
@@ -28,7 +28,7 @@
             "label": "colonies",
             "url": "/colonies",
             "code": 200,
-            "ms": 120.9,
+            "ms": 102.9,
             "pass": true,
             "note": "",
             "bytes": 204253
@@ -37,7 +37,7 @@
             "label": "login",
             "url": "/login",
             "code": 200,
-            "ms": 98.8,
+            "ms": 85,
             "pass": true,
             "note": "",
             "bytes": 18963
@@ -46,7 +46,7 @@
             "label": "register",
             "url": "/register",
             "code": 200,
-            "ms": 97.3,
+            "ms": 80.5,
             "pass": true,
             "note": "",
             "bytes": 33670
@@ -55,7 +55,7 @@
             "label": "become-associate",
             "url": "/become-associate",
             "code": 200,
-            "ms": 102.5,
+            "ms": 87.7,
             "pass": true,
             "note": "",
             "bytes": 25963
@@ -64,7 +64,7 @@
             "label": "contact",
             "url": "/contact",
             "code": 200,
-            "ms": 113.5,
+            "ms": 97.5,
             "pass": true,
             "note": "",
             "bytes": 196498
@@ -73,7 +73,7 @@
             "label": "terms",
             "url": "/terms",
             "code": 200,
-            "ms": 99.1,
+            "ms": 86.8,
             "pass": true,
             "note": "",
             "bytes": 12495
@@ -82,7 +82,7 @@
             "label": "privacy",
             "url": "/privacy",
             "code": 200,
-            "ms": 112.7,
+            "ms": 98.5,
             "pass": true,
             "note": "",
             "bytes": 184707
@@ -91,7 +91,7 @@
             "label": "assoc-login",
             "url": "/associate/login",
             "code": 200,
-            "ms": 100.9,
+            "ms": 85.8,
             "pass": true,
             "note": "",
             "bytes": 22137
@@ -100,16 +100,16 @@
             "label": "assoc-dashboard",
             "url": "/associate/dashboard",
             "code": 200,
-            "ms": 135.4,
+            "ms": 157.7,
             "pass": true,
             "note": "",
-            "bytes": 76880
+            "bytes": 76878
         },
         {
             "label": "assoc-leads",
             "url": "/associate/leads",
             "code": 200,
-            "ms": 258,
+            "ms": 253,
             "pass": true,
             "note": "",
             "bytes": 80919
@@ -118,7 +118,7 @@
             "label": "assoc-genealogy",
             "url": "/associate/genealogy",
             "code": 200,
-            "ms": 125.4,
+            "ms": 89.5,
             "pass": true,
             "note": "",
             "bytes": 34376
@@ -127,7 +127,7 @@
             "label": "assoc-wallet",
             "url": "/associate/wallet",
             "code": 200,
-            "ms": 108.2,
+            "ms": 94.2,
             "pass": true,
             "note": "",
             "bytes": 62277
@@ -136,70 +136,70 @@
             "label": "admin-login",
             "url": "/admin/login",
             "code": 200,
-            "ms": 100.2,
+            "ms": 81.5,
             "pass": true,
             "note": "",
-            "bytes": 14436
+            "bytes": 14437
         },
         {
             "label": "admin-dashboard",
             "url": "/admin/dashboard",
             "code": 200,
-            "ms": 250.6,
+            "ms": 186.1,
             "pass": true,
             "note": "",
-            "bytes": 253390
+            "bytes": 253389
         },
         {
             "label": "admin-plots",
             "url": "/admin/plots",
             "code": 200,
-            "ms": 117.1,
+            "ms": 97.5,
             "pass": true,
             "note": "",
-            "bytes": 282116
+            "bytes": 282115
         },
         {
             "label": "admin-bookings",
             "url": "/admin/bookings",
             "code": 200,
-            "ms": 111.6,
+            "ms": 93.3,
             "pass": true,
             "note": "",
-            "bytes": 264591
+            "bytes": 264590
         },
         {
             "label": "admin-payout-batches",
             "url": "/admin/payout-batches",
             "code": 200,
-            "ms": 103.3,
+            "ms": 93.5,
             "pass": true,
             "note": "",
-            "bytes": 240575
+            "bytes": 240574
         },
         {
             "label": "admin-leads",
             "url": "/admin/leads",
             "code": 200,
-            "ms": 425,
+            "ms": 384.5,
             "pass": true,
             "note": "",
-            "bytes": 316533
+            "bytes": 316531
         },
         {
             "label": "admin-users",
             "url": "/admin/users",
             "code": 200,
-            "ms": 196.3,
+            "ms": 99.3,
             "pass": true,
             "note": "",
-            "bytes": 434517
+            "bytes": 434516
         },
         {
             "label": "api-health",
             "url": "/api/health",
             "code": 200,
-            "ms": 116.1,
+            "ms": 82.2,
             "pass": true,
             "note": "",
             "bytes": 116
@@ -208,7 +208,7 @@
             "label": "api-colonies",
             "url": "/api/v2/mobile/colonies",
             "code": 200,
-            "ms": 96.9,
+            "ms": 81.7,
             "pass": true,
             "note": "",
             "bytes": 4664
@@ -217,7 +217,7 @@
             "label": "api-plots",
             "url": "/api/v2/mobile/plots/all",
             "code": 200,
-            "ms": 98.9,
+            "ms": 84.6,
             "pass": true,
             "note": "",
             "bytes": 6727
