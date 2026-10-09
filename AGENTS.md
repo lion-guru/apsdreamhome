@@ -1,5 +1,28 @@
 > **COMPLETED (2026-10-06):** Churn-stop verified (snapshots identical), full review done, all work committed + pushed (see Session 171-173 below).
 
+## Session 176: Second-Tab Takeover — CSP/Extension/Salary Review + Fixes (2026-10-09)
+
+### Trigger
+User: other tab hung mid salary-FK loop; "uska bhi kaam tumko hi karna hai, ab tum karo sab" — full ownership of both workstreams.
+
+### Review (hung tab's uncommitted work)
+- `BaseController` CSP nonce cutover (unsafe-inline/eval removed) — layouts already emit nonce attrs; **verified live: 1 CSP header, header nonce == body nonces** (`/admin/plots`, 10 tags). Added dedupe guard against stacked CSP headers on multi-instance dispatch.
+- `package.json` + sharp dep — lockfile consistent, `node_modules/sharp` installed; zero usage in php/js (kept, noted).
+- `extension/` MV3 AI assistant — **3 missing-paren syntax fatals fixed** (`background.js` removeAll/Promise/executeScript closers, `options.js` forEach); all 4 JS `node --check` clean, manifest JSON valid.
+- Salary-FK root cause (their loop): migration SQL mismatched live canonical types — `salary_structure_id` BIGINT-signed vs BIGINT-UNSIGNED parent, `processed_by` INT vs BIGINT `users.id`, `approved_by` BIGINT vs INT; their standalone "success" was `IF NOT EXISTS` no-op confusion. Live tables are canonical-with-data so migration now no-ops green.
+- `create_salary_tables.php` (6 CREATEs) + `create_colonies_table.php` rewritten to **canonical backup schemas**; scratch-DB proof 7/7 CREATEs incl. FKs; live runs all-skipped green.
+
+### Commit
+- `6b0733146` (20 files: BaseController, package.json/lock, extension/*, 2 migrations — pushed). Excluded: root scratch scripts, `queryex` (14-byte fragment), `storage/logs/*.json`.
+
+### Verification
+- Master **7/7**, smoke 24/24, sidebar **298/298** after takeover changes.
+
+### Key Lessons (carried, continued)
+_447. **A redirect chain shows N CSP headers — compare per-response, not per-load** — curl concatenates hop headers; the "nonce mismatch" was hop-1 header vs final body. Single-response check proved 1 header + match; no browser breakage ever existed.
+_448. **Standalone-CREATE success next to migration errno-150 means the SQLs differ** — diff the two statements byte-for-byte before theorizing about server state; here the test file had already-fixed types the migration lacked.
+_449. **`Select-String -Include` silently matches nothing without `-Recurse`/wildcard path** — two false "no usage" reads (test_login, nonce) came from this; use explicit wildcard path lists for single-file searches.
+
 ## Session 175: Fresh-DB Schema Restore + Backup Recovery + All-Role Audit (2026-10-09)
 
 ### Trigger
