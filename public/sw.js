@@ -1,4 +1,4 @@
-const CACHE_NAME = 'apsdreamhome-v1';
+const CACHE_NAME = 'apsdreamhome-v3';
 const STATIC_ASSETS = [
     '/apsdreamhome/',
     '/apsdreamhome/assets/css/bootstrap.min.css',
@@ -30,9 +30,21 @@ self.addEventListener('activate', (event) => {
     self.clients.claim();
 });
 
-// Fetch event - serve from cache, fallback to network
+// Fetch event — cache ONLY static assets. Documents and API responses
+// always go to network: caching them serves stale HTML/JSON (and stale
+// CSP headers), which silently undeploys server-side fixes for visitors.
 self.addEventListener('fetch', (event) => {
     if (event.request.method !== 'GET') return;
+
+    let isStatic = false;
+    try {
+        const url = new URL(event.request.url);
+        isStatic = /\.(css|js|png|jpe?g|gif|svg|webp|ico|woff2?|ttf|eot|otf)$/i.test(url.pathname)
+            || STATIC_ASSETS.indexOf(url.pathname) !== -1;
+    } catch (e) {
+        return;
+    }
+    if (!isStatic) return;
 
     event.respondWith(
         caches.match(event.request).then((cachedResponse) => {

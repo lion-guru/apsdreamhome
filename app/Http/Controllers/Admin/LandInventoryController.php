@@ -788,4 +788,252 @@ class LandInventoryController extends AdminController
             return null;
         }
     }
+
+    // ============================================================
+    //  FARMER LAND BANK ACQUISITION LEDGER
+    // ============================================================
+
+    /**
+     * Farmer Land Bank Acquisition Ledger
+     * Aggregated view of all farmers/land owners with their deals, advances, balances
+     */
+    public function farmerLedger()
+    {
+        $this->requireAdmin();
+        try {
+            // Filters
+            $filters = [
+                'district' => $_GET['district'] ?? '',
+                'status'   => $_GET['status'] ?? '',
+                'search'   => $_GET['search'] ?? '',
+            ];
+
+            // Build query to get aggregated farmer/owner data
+            $sql = "
+                SELECT 
+                    ll.land_owner_name as farmer_name,
+                    ll.owner_phone as farmer_phone,
+                    ll.owner_email as farmer_email,
+                    ll.village,
+                    ll.tehsil,
+                    ll.district,
+                    ll.state,
+                    ll.pincode,
+                    ll.survey_number,
+                    SUM(ll.area_acres) as total_area_acres,
+                    SUM(ll.area_sqft) as total_area_sqft,
+                    COUNT(DISTINCT ll.id) as total_leads,
+                    COUNT(DISTINCT ld.id) as total_deals,
+                    COALESCE(SUM(ld.total_consideration), 0) as total_deal_value,
+                    COALESCE(SUM(ld.advance_paid), 0) as total_advance_paid,
+                    COALESCE(SUM(ld.balance_amount), 0) as total_balance,
+                    MAX(ld.sale_agreement_date) as latest_agreement_date,
+                    MAX(ld.registration_date) as latest_registration_date,
+                    MAX(ld.mutation_date) as latest_mutation_date,
+                    GROUP_CONCAT(DISTINCT ld.status) as deal_statuses,
+                    GROUP_CONCAT(DISTINCT ll.status) as lead_statuses
+                FROM land_leads ll
+                LEFT JOIN land_deals ld ON ld.land_lead_id = ll.id
+                WHERE 1=1
+            ";
+
+            $params = [];
+            
+            if (!empty($filters['district'])) {
+                $sql .= " AND ll.district = ?";
+                $params[] = $filters['district'];
+            }
+            
+            if (!empty($filters['search'])) {
+                $sql .= " AND (ll.land_owner_name LIKE ? OR ll.owner_phone LIKE ? OR ll.village LIKE ? OR ll.survey_number LIKE ?)";
+                $searchParam = '%' . $filters['search'] . '%';
+                $params[] = $searchParam;
+                $params[] = $searchParam;
+                $params[] = $searchParam;
+                $params[] = $searchParam;
+            }
+            
+            if (!empty($filters['status'])) {
+                $sql .= " AND (ld.status = ? OR ll.status = ?)";
+                $params[] = $filters['status'];
+                $params[] = $filters['status'];
+            }
+
+            $sql .= " GROUP BY ll.land_owner_name, ll.owner_phone, ll.village, ll.tehsil, ll.district, ll.state, ll.pincode, ll.survey_number
+                      ORDER BY total_deal_value DESC";
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $farmers = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Get unique districts for filter dropdown
+            $districts = $this->db->fetchAll("SELECT DISTINCT district FROM land_leads WHERE district IS NOT NULL AND district != '' ORDER BY district");
+
+            // Get summary stats
+            $summaryStmt = $this->db->query("
+                SELECT 
+                    COUNT(DISTINCT ll.land_owner_name) as total_farmers,
+                    COUNT(DISTINCT ll.id) as total_leads,
+                    COUNT(DISTINCT ld.id) as total_deals,
+                    COALESCE(SUM(ld.total_consideration), 0) as total_deal_value,
+                    COALESCE(SUM(ld.advance_paid), 0) as total_advance,
+                    COALESCE(SUM(ld.balance_amount), 0) as total_balance,
+                    COALESCE(SUM(ll.area_acres), 0) as total_acres
+                FROM land_leads ll
+                LEFT JOIN land_deals ld ON ld.land_lead_id = ll.id
+            ");
+            $summary = $summaryStmt->fetch(\PDO::FETCH_ASSOC);
+
+            $this->render('admin/land-inventory/farmer-ledger', [
+                'page_title'   => 'Farmer Land Bank Ledger',
+                'page_heading' => 'Farmer / Land Owner Acquisition Ledger',
+                'farmers'      => $farmers,
+                'filters'      => $filters,
+                'districts'    => $districts,
+                'summary'      => $summary,
+            ]);
+        } catch (\Exception $e) {
+            error_log("LandInventoryController::farmerLedger error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load farmer ledger: ' . $e->getMessage());
+            $this->render('admin/land-inventory/farmer-ledger', [
+                'page_title'   => 'Farmer Land Bank Ledger',
+                'page_heading' => 'Farmer / Land Owner Acquisition Ledger',
+                'farmers'      => [],
+                'filters'      => [],
+                'districts'    => [],
+                'summary'      => [],
+            ]);
+        }
+    }
+
+    /**
+     * Farmer Detail View - shows all leads and deals for a specific farmer
+     */
+    public function farmerDetail($farmerName, $village = '')
+    {
+        $this->requireAdmin();
+        try {
+            $sql = "
+                SELECT ll.*, ld.*
+                FROM land_leads ll
+                LEFT JOIN land_deals ld ON ld.land_lead_id = ll.id
+                WHERE ll.land_owner_name = ?
+            ";
+            $params = [$farmerName];
+            
+            if (!empty($village)) {
+                $sql .= " AND ll.village = ?";
+                $params[] = $village;
+            }
+            
+            $sql .= " ORDER BY ll.created_at DESC";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            if (empty($rows)) {
+                $this->setFlash('error', 'Farmer not found');
+                return $this->redirect('/admin/land-inventory/farmer-ledger');
+            }
+
+            // Group by lead
+            $leads = [];
+            $deals = [];
+            foreach ($rows as $row) {
+                $leadId = $row['id'];
+                if (!isset($leads[$leadId])) {
+                    $leads[$leadId] = [
+                        'id' => $row['id'],
+                        'lead_source' => $row['lead_source'],
+                        'broker_id' => $row['broker_id'],
+                        'land_owner_name' => $row['land_owner_name'],
+                        'owner_phone' => $row['owner_phone'],
+                        'owner_email' => $row['owner_email'],
+                        'village' => $row['village'],
+                        'tehsil' => $row['tehsil'],
+                        'district' => $row['district'],
+                        'state' => $row['state'],
+                        'pincode' => $row['pincode'],
+                        'gps_lat' => $row['gps_lat'],
+                        'gps_lng' => $row['gps_lng'],
+                        'survey_number' => $row['survey_number'],
+                        'area_acres' => $row['area_acres'],
+                        'area_sqft' => $row['area_sqft'],
+                        'expected_price' => $row['expected_price'],
+                        'status' => $row['status'],
+                        'assigned_to' => $row['assigned_to'],
+                        'notes' => $row['notes'],
+                        'created_at' => $row['created_at'],
+                        'updated_at' => $row['updated_at'],
+                        'deals' => []
+                    ];
+                }
+                if ($row['id'] !== $leadId && !empty($row['id'])) {
+                    // This is deal data
+                }
+                if (!empty($row['id']) && !empty($row['total_consideration'])) {
+                    $dealId = $row['id']; // This is deal id in the joined query
+                    // Actually we need to be more careful with column names
+                }
+            }
+
+            // Better approach: fetch leads and their deals separately
+            $leadsStmt = $this->db->prepare("
+                SELECT * FROM land_leads WHERE land_owner_name = ?" . ($village ? " AND village = ?" : "") . " ORDER BY created_at DESC
+            ");
+            $leadsParams = [$farmerName];
+            if ($village) $leadsParams[] = $village;
+            $leadsStmt->execute($leadsParams);
+            $leads = $leadsStmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Fetch deals for these leads
+            $leadIds = array_column($leads, 'id');
+            $deals = [];
+            if (!empty($leadIds)) {
+                $placeholders = implode(',', array_fill(0, count($leadIds), '?'));
+                $dealsStmt = $this->db->prepare("
+                    SELECT ld.*, ll.land_owner_name, ll.village
+                    FROM land_deals ld
+                    JOIN land_leads ll ON ll.id = ld.land_lead_id
+                    WHERE ld.land_lead_id IN ($placeholders)
+                    ORDER BY ld.created_at DESC
+                ");
+                $dealsStmt->execute($leadIds);
+                $deals = $dealsStmt->fetchAll(\PDO::FETCH_ASSOC);
+            }
+
+            // Get payments for these deals
+            $dealIds = array_column($deals, 'id');
+            $payments = [];
+            if (!empty($dealIds)) {
+                $placeholders = implode(',', array_fill(0, count($dealIds), '?'));
+                $paymentsStmt = $this->db->prepare("
+                    SELECT * FROM land_deal_payments WHERE deal_id IN ($placeholders) ORDER BY payment_date DESC
+                ");
+                $paymentsStmt->execute($dealIds);
+                $payments = $paymentsStmt->fetchAll(\PDO::FETCH_ASSOC);
+            }
+
+            // Group payments by deal
+            $paymentsByDeal = [];
+            foreach ($payments as $p) {
+                $paymentsByDeal[$p['deal_id']][] = $p;
+            }
+
+            $this->render('admin/land-inventory/farmer-detail', [
+                'page_title'   => 'Farmer Detail — ' . htmlspecialchars($farmerName),
+                'page_heading' => 'Land Owner Detail',
+                'farmer_name'  => $farmerName,
+                'village'      => $village,
+                'leads'        => $leads,
+                'deals'        => $deals,
+                'payments'     => $paymentsByDeal,
+            ]);
+        } catch (\Exception $e) {
+            error_log("LandInventoryController::farmerDetail error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load farmer detail: ' . $e->getMessage());
+            return $this->redirect('/admin/land-inventory/farmer-ledger');
+        }
+    }
 }

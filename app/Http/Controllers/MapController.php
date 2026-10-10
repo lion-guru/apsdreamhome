@@ -155,7 +155,7 @@ class MapController extends BaseController
                 return;
             }
             $plots = $this->db->fetchAll(
-                "SELECT id, plot_number, block, area_sqft, width_ft, length_ft, status, price_per_sqft, total_price, corner_plot, park_facing, road_facing, gata_number
+                "SELECT id, plot_number, block, area_sqft, width_ft, length_ft, status, price_per_sqft, total_price, corner_plot, park_facing, road_width_ft, gata_number
                  FROM plots WHERE colony_id = ? ORDER BY block, plot_number",
                 [$colony['id']]
             );
@@ -184,7 +184,7 @@ class MapController extends BaseController
                 return;
             }
             $plots = $this->db->fetchAll(
-                "SELECT id, plot_number, block, area_sqft, width_ft, length_ft, status, price_per_sqft, total_price, corner_plot, park_facing, road_facing, gata_number
+                "SELECT id, plot_number, block, area_sqft, width_ft, length_ft, status, price_per_sqft, total_price, corner_plot, park_facing, road_width_ft, gata_number
                  FROM plots WHERE colony_id = ? ORDER BY block, plot_number",
                 [$id]
             );
@@ -230,7 +230,8 @@ class MapController extends BaseController
                             'total_price' => $p['total_price'],
                             'corner_plot' => (bool)$p['corner_plot'],
                             'park_facing' => (bool)$p['park_facing'],
-                            'road_facing' => (bool)$p['road_facing'],
+                            'road_facing' => !empty($p['road_width_ft']) && (float)$p['road_width_ft'] > 0,
+                            'road_width_ft' => $p['road_width_ft'],
                             'gata_number' => $p['gata_number'],
                             'marker_color' => $statusColors[$p['status']] ?? '#94a3b8',
                         ],

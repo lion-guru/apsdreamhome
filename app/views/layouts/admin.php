@@ -160,10 +160,33 @@ $GLOBALS['_html_doc_started'] = true;
                 sessionStorage.setItem('adminSidebarSections', JSON.stringify(state));
             };
 
+            APS.toggleSidebarHub = function(hubId) {
+                var content = document.getElementById(hubId);
+                if (!content) return;
+                var hidden = content.style.display === 'none';
+                content.style.display = hidden ? '' : 'none';
+                var arrow = document.getElementById('arrow-' + hubId);
+                if (arrow) arrow.classList.toggle('collapsed', !hidden);
+                var saved = sessionStorage.getItem('adminSidebarSections');
+                var state = saved ? JSON.parse(saved) : {};
+                // Use hubId as key for hub state (e.g., 'hub-inventory')
+                state['hub:' + hubId] = hidden;
+                sessionStorage.setItem('adminSidebarSections', JSON.stringify(state));
+            };
+
             APS.toggleAllSections = function() {
+                var hubs = document.querySelectorAll('.sidebar-hub-content');
                 var menus = document.querySelectorAll('.sidebar-menu[id]');
                 var anyHidden = Array.from(menus).some(function(el) {
                     return el.style.display === 'none';
+                }) || Array.from(hubs).some(function(el) {
+                    return el.style.display === 'none';
+                });
+                hubs.forEach(function(el) {
+                    el.style.display = anyHidden ? '' : 'none';
+                });
+                document.querySelectorAll('.sidebar-hub-header .sidebar-sec-arrow').forEach(function(arr) {
+                    arr.classList.toggle('collapsed', !anyHidden);
                 });
                 menus.forEach(function(el) {
                     el.style.display = anyHidden ? '' : 'none';

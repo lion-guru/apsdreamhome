@@ -73,12 +73,12 @@ $bookingDocCategories = [
                     <p class="mb-2">For all plot bookings, we record a short video confirmation where you acknowledge understanding the terms and conditions. This provides legal protection for both parties.</p>
                     <div class="row g-2">
                         <div class="col-md-6">
-                            <a href="<?= BASE_URL ?>/documents/booking-terms" class="btn btn-sm btn-outline-primary" target="_blank">
+                            <a href="<?= BASE_URL ?>/terms" class="btn btn-sm btn-outline-primary" target="_blank">
                                 <i class="fas fa-file-alt me-1"></i> View Booking Terms & Conditions
                             </a>
                         </div>
                         <div class="col-md-6">
-                            <a href="<?= BASE_URL ?>/documents/privacy-policy" class="btn btn-sm btn-outline-secondary" target="_blank">
+                            <a href="<?= BASE_URL ?>/privacy" class="btn btn-sm btn-outline-secondary" target="_blank">
                                 <i class="fas fa-shield-alt me-1"></i> Privacy Policy
                             </a>
                         </div>
@@ -95,7 +95,7 @@ $bookingDocCategories = [
                     <h5 class="fw-bold mb-2">Physical Document Submission</h5>
                     <p class="mb-2">You can also download, print, and submit physical copies at our office:</p>
                     <ul class="mb-0 small">
-                        <li>Download forms from <a href="<?= BASE_URL ?>/documents/download-forms" target="_blank">here</a></li>
+                        <li>Download forms from <a href="<?= BASE_URL ?>/downloads" target="_blank">here</a></li>
                         <li>Fill, sign, and attach required KYC documents</li>
                         <li>Submit at: APS Dream Home Office, Gorakhpur, UP</li>
                         <li>Associates can also help you fill forms at your location</li>

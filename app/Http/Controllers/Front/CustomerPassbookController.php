@@ -977,11 +977,172 @@ class CustomerPassbookController extends BaseController
         </div>
         <div class="footer">
             <p>This is a computer-generated receipt. For queries, contact support@apsdreamhome.com or call +91-7007444842.</p>
-            <p style="margin-top: 4px;">APS Dream Home &copy; <?= date('Y') ?>. All rights reserved.</p>
+<p style="margin-top: 4px;">APS Dream Home &copy; <?= date('Y') ?>. All rights reserved.</p>
         </div>
     </div>
 </body>
 </html>
         <?php
+    }
+
+    /**
+     * Download Allotment Letter
+     */
+    public function downloadAllotment(int $id): void
+    {
+        $this->requireCustomer();
+        $userId = (int)$_SESSION['user_id'];
+        $tid = (int)$this->tenantId();
+
+        $doc = $this->db->fetchOne("
+            SELECT * FROM allotment_documents
+            WHERE id = ? AND user_id = ? AND tenant_id = ?
+        ", [$id, $userId, (int)$this->tenantId()]);
+
+        if (!$doc) {
+            http_response_code(404);
+            echo 'Document not found';
+            return;
+        }
+
+        // Generate PDF or serve file
+        $filePath = $doc['file_path'] ?? '';
+        if ($filePath && file_exists($filePath)) {
+            header('Content-Type: application/pdf');
+            header('Content-Disposition: inline; filename="' . basename($filePath) . '"');
+            readfile($filePath);
+            return;
+        }
+
+        // Fallback HTML
+        $this->render('customer/allotment_letter', ['doc' => $doc]);
+    }
+
+    /**
+     * Download Payment Passbook
+     */
+    public function downloadPassbook(int $id): void
+    {
+        $this->requireCustomer();
+        $userId = (int)$_SESSION['user_id'];
+        $tid = (int)$this->tenantId();
+
+        $payment = $this->db->fetchOne("
+            SELECT bp.*, b.booking_number, p.plot_number, c.name as colony_name
+            FROM booking_payments bp
+            JOIN plot_bookings b ON bp.booking_id = b.id
+            LEFT JOIN plots p ON b.plot_id = p.id
+            LEFT JOIN colonies c ON p.colony_id = c.id
+            WHERE bp.id = ? AND bp.customer_id = ? AND bp.tenant_id = ?
+        ", [$id, (int)$_SESSION['user_id'], (int)$this->tenantId()]);
+
+        if (!$payment) {
+            http_response_code(404);
+            echo 'Payment not found';
+            return;
+        }
+
+        // Generate PDF receipt
+        $receiptData = [
+            'receipt_number' => 'REC-' . str_pad($payment['id'], 6, '0', STR_PAD_LEFT) . '-' . date('Ym'),
+            'date' => date('d M Y', strtotime($payment['payment_date'])),
+            'booking_number' => $payment['booking_number'],
+            'plot_number' => $payment['plot_number'],
+            'colony_name' => $payment['colony_name'],
+            'customer_name' => $_SESSION['user_name'] ?? 'Customer',
+            'formatted_amount' => '₹' . number_format($payment['payment_amount'], 2),
+            'payment_mode' => $payment['payment_method'] ?? 'Online',
+            'transaction_ref' => $payment['transaction_id'] ?? '',
+        ];
+
+        $this->renderReceiptHtml($payment);
+    }
+
+    /**
+     * Download Agreement
+     */
+    public function downloadAgreement(int $id): void
+    {
+        $this->requireCustomer();
+        $userId = (int)$_SESSION['user_id'];
+        $tid = (int)$this->tenantId();
+
+        $doc = $this->db->fetchOne("
+            SELECT ad.*, b.booking_number, p.plot_number, c.name as colony_name
+            FROM agreement_documents ad
+            LEFT JOIN plot_bookings b ON ad.booking_id = b.id
+            LEFT JOIN plots p ON b.plot_id = p.id
+            LEFT JOIN colonies c ON p.colony_id = c.id
+            WHERE ad.id = ? AND ad.customer_id = ? AND ad.tenant_id = ?
+        ", [$id, (int)$_SESSION['user_id'], (int)$this->tenantId()]);
+
+        if (!$doc) {
+            http_response_code(404);
+            echo 'Document not found';
+            return;
+        }
+
+        $filePath = $doc['file_path'] ?? '';
+        if ($filePath && file_exists($filePath)) {
+            header('Content-Type: application/pdf');
+            header('Content-Disposition: inline; filename="' . basename($filePath) . '"');
+            readfile($filePath);
+            return;
+        }
+
+        // Fallback HTML
+        $this->render('customer/agreement', ['doc' => $doc]);
+    }
+
+    /**
+     * Customer Document Locker
+     * Displays all customer documents: Allotment Letters, Payment Passbooks, Agreements
+     */
+    public function documents(): void
+    {
+        $this->requireCustomer();
+        $userId = (int)$_SESSION['user_id'];
+        $tid = (int)$this->tenantId();
+
+        // Fetch allotment documents
+        $allotmentDocuments = $this->db->fetchAll("
+            SELECT ad.*, c.name as colony_name
+            FROM allotment_documents ad
+            LEFT JOIN colonies c ON ad.colony_id = c.id
+            WHERE ad.user_id = ? AND ad.tenant_id = ?
+            ORDER BY ad.created_at DESC
+        ", [$userId, $tid]);
+
+        // Fetch payment passbooks (booking payments with receipts)
+        $passbookDocuments = $this->db->fetchAll("
+            SELECT bp.*, b.booking_number, p.plot_number, c.name as colony_name,
+                   bp.payment_amount as amount, bp.payment_date as created_at,
+                   'Payment Passbook' as title
+            FROM booking_payments bp
+            JOIN plot_bookings b ON bp.booking_id = b.id
+            LEFT JOIN plots p ON b.plot_id = p.id
+            LEFT JOIN colonies c ON p.colony_id = c.id
+            WHERE bp.customer_id = ? AND bp.tenant_id = ? AND bp.payment_status = 'completed'
+            ORDER BY bp.payment_date DESC
+        ", [$userId, $tid]);
+
+        // Fetch agreement documents
+        $agreementDocuments = $this->db->fetchAll("
+            SELECT ad.*, b.booking_number, p.plot_number, c.name as colony_name
+            FROM agreement_documents ad
+            LEFT JOIN plot_bookings b ON ad.booking_id = b.id
+            LEFT JOIN plots p ON b.plot_id = p.id
+            LEFT JOIN colonies c ON p.colony_id = c.id
+            WHERE ad.customer_id = ? AND ad.tenant_id = ?
+            ORDER BY ad.created_at DESC
+        ", [$userId, $tid]);
+
+        $this->layout = 'layouts/customer';
+        $this->render('customer/documents', [
+            'page_title' => 'My Documents - APS Dream Home',
+            'allotmentDocuments' => $allotmentDocuments,
+            'passbookDocuments' => $passbookDocuments,
+            'agreementDocuments' => $agreementDocuments,
+        ]);
     }
 }

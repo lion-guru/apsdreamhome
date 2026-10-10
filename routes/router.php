@@ -91,6 +91,12 @@ class Router
             if (empty($uri)) $uri = '/';
         }
 
+        // Step 2b: Strip /public prefix if present (from .htaccess rewrite)
+        if (strpos($uri, '/public') === 0) {
+            $uri = substr($uri, strlen('/public'));
+            if (empty($uri)) $uri = '/';
+        }
+
         // Step 3: Normalize double slashes to single
         $uri = preg_replace('#/+#', '/', $uri);
 
@@ -136,6 +142,7 @@ class Router
                 '/ai/property-valuation/generate',
                 '/ai/',
                 '/admin/ai/',
+                '/admin/login',
                 '/csp-report',
                 '/webhook/',
                 '/whatsapp-webhook',

@@ -147,7 +147,10 @@
   /* ---- Particles.js Lightweight ---- */
   function initParticles(canvasId) {
     var canvas = document.getElementById(canvasId);
-    if (!canvas) return;
+    // Guard: premium-animations.js and page-specific particlesJS configs
+    // target the same canvas — first claimant owns it, others skip.
+    if (!canvas || canvas.dataset.particlesActive) return;
+    canvas.dataset.particlesActive = 'modern';
 
     var ctx = canvas.getContext('2d');
     var particles = [];
@@ -329,16 +332,26 @@
     // Particles on hero (if canvas exists)
     initParticles('particles-canvas');
 
-    // Typed.js on hero (if element exists)
+    // Typed.js on hero (if element exists).
+    // Guard: premium-animations.js has its own typer on the same element —
+    // first runner claims it via dataset.typedActive so the two loops never
+    // fight over textContent. Split on single '|' (and filter empties) so
+    // both '|' and '||' separated data-strings work.
     var typedEl = document.getElementById('typed-text');
-    if (typedEl) {
-      var strings = (typedEl.getAttribute('data-strings') || '').split('||');
-      if (strings.length && strings[0]) {
+    if (typedEl && !typedEl.dataset.typedActive) {
+      typedEl.dataset.typedActive = '1';
+      var strings = (typedEl.getAttribute('data-strings') || '')
+        .split('|')
+        .map(function (s) { return s.trim(); })
+        .filter(function (s) { return s.length > 0; });
+      if (strings.length) {
         initTyped('typed-text', strings, {
           typeSpeed: 70,
           deleteSpeed: 40,
           pauseTime: 2500,
         });
+      } else {
+        delete typedEl.dataset.typedActive;
       }
     }
   }

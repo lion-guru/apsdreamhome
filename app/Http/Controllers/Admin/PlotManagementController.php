@@ -1787,26 +1787,174 @@ class PlotManagementController extends AdminController
         exit;
     }
 
+    /**
+     * Interactive SVG Master Plot Map — enterprise edition.
+     * GET /admin/plots/map
+     *
+     * Color code: green=available, yellow=24h hold, red=sold/booked,
+     * blue=registry done, orange=reserved, gray=under_construction/other.
+     * Click any plot for details + 1-click 24h hold / release.
+     */
     public function map()
     {
+        $this->requireAdmin();
         try {
+            $tid = (int)$this->tenantId();
+            // Auto-release expired 24h holds so the map never shows stale locks
+            try {
+                $this->db->execute(
+                    "UPDATE plots SET status = 'available', held_by = NULL, held_at = NULL, hold_expires_at = NULL
+                     WHERE status = 'hold' AND hold_expires_at IS NOT NULL AND hold_expires_at < NOW() AND tenant_id = ?",
+                    [$tid]
+                );
+            } catch (\Exception $e) { error_log('PlotManagementController map auto-release: ' . $e->getMessage()); }
+
             $colonies = $this->db->fetchAll("SELECT id, name FROM colonies ORDER BY name") ?: [];
             list($tSql, $tParams) = $this->tenantWhere();
             $all_plots = $this->db->fetchAll("SELECT p.id, p.plot_number, p.block, p.width_ft, p.length_ft,
-                p.area_sqft, p.total_price, p.status, p.facing, p.colony_id, c.name as colony_name
+                p.area_sqft, p.total_price, p.price_per_sqft, p.status, p.facing, p.corner_plot,
+                p.colony_id, p.held_by, p.held_at, p.hold_expires_at,
+                c.name as colony_name, u.name as held_by_name
                 FROM plots p
                 LEFT JOIN colonies c ON p.colony_id = c.id
+                LEFT JOIN users u ON u.id = p.held_by
                 WHERE 1=1" . $tSql . "
-                ORDER BY c.name, p.plot_number", $tParams) ?: [];
+                ORDER BY c.name, p.block, p.plot_number", $tParams) ?: [];
+
+            // Registry-done lookup: plots with a registration_done booking
+            $registryDone = [];
+            try {
+                $rows = $this->db->fetchAll(
+                    "SELECT DISTINCT plot_id FROM plot_bookings WHERE status = 'registration_done' AND plot_id IS NOT NULL"
+                ) ?: [];
+                foreach ($rows as $r) { $registryDone[(int)$r['plot_id']] = true; }
+            } catch (\Exception $e) { error_log('PlotManagementController map registry lookup: ' . $e->getMessage()); }
+
+            // Countdown text for active holds
+            $now = time();
+            foreach ($all_plots as &$p) {
+                $p['registry_done'] = isset($registryDone[(int)$p['id']]);
+                $p['hold_remaining'] = '';
+                if ($p['status'] === 'hold' && !empty($p['hold_expires_at'])) {
+                    $secs = strtotime($p['hold_expires_at']) - $now;
+                    if ($secs > 0) {
+                        $h = intdiv($secs, 3600);
+                        $m = intdiv($secs % 3600, 60);
+                        $p['hold_remaining'] = ($h > 0 ? $h . 'h ' : '') . $m . 'm left';
+                    } else {
+                        $p['hold_remaining'] = 'expired';
+                    }
+                }
+            }
+            unset($p);
 
             return $this->render('admin/plots/map', [
                 'colonies' => $colonies,
                 'all_plots' => $all_plots,
-                'page_title' => 'Plot Layout Map'
+                'map_statuses' => ['available', 'hold', 'booked', 'sold', 'registry_done', 'reserved', 'under_construction'],
+                'page_title' => 'Master Plot Map'
             ]);
         } catch (\Exception $e) {
             $this->setFlash('error', 'Error loading plot map: ' . $e->getMessage());
             $this->redirect('/admin/plots');
         }
+    }
+
+    /**
+     * 1-click 24-hour hold on an available plot.
+     * POST /admin/plots/{id}/hold
+     */
+    public function holdPlot($id)
+    {
+        $this->requireAdmin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
+        }
+        $this->validateCsrfOrFail();
+        $id = (int)$id;
+        try {
+            $tid = (int)$this->tenantId();
+            $me = $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? 1;
+            $plot = $this->db->fetchOne("SELECT id, status, plot_number FROM plots WHERE id = ? AND tenant_id = ?", [$id, $tid]);
+            if (!$plot) {
+                $this->setFlash('error', 'Plot not found');
+                return $this->redirect('/admin/plots/map');
+            }
+            if ($plot['status'] === 'hold') {
+                // Refresh the existing hold instead of failing — still one active lock
+                $this->db->execute(
+                    "UPDATE plots SET held_by = ?, held_at = NOW(), hold_expires_at = DATE_ADD(NOW(), INTERVAL 24 HOUR)
+                     WHERE id = ? AND tenant_id = ?",
+                    [$me, $id, $tid]
+                );
+                $this->setFlash('success', 'Hold on plot ' . ($plot['plot_number'] ?? $id) . ' extended by 24 hours.');
+                return $this->redirect('/admin/plots/map');
+            }
+            if ($plot['status'] !== 'available') {
+                $this->setFlash('error', 'Only available plots can be held (current: ' . $plot['status'] . ').');
+                return $this->redirect('/admin/plots/map');
+            }
+            $this->db->execute(
+                "UPDATE plots SET status = 'hold', held_by = ?, held_at = NOW(), hold_expires_at = DATE_ADD(NOW(), INTERVAL 24 HOUR)
+                 WHERE id = ? AND tenant_id = ?",
+                [$me, $id, $tid]
+            );
+            try {
+                $this->db->insert('plot_status_log', [
+                    'plot_id' => $id, 'old_status' => 'available', 'new_status' => 'hold',
+                    'changed_by' => $me, 'created_at' => date('Y-m-d H:i:s'),
+                ]);
+            } catch (\Exception $e) { error_log('PlotManagementController holdPlot log: ' . $e->getMessage()); }
+            $this->loggingService->logUserActivity($me, 'plot_hold_24h', ['plot_id' => $id]);
+            $this->setFlash('success', 'Plot ' . ($plot['plot_number'] ?? $id) . ' held for 24 hours. No other agent can show it as available.');
+        } catch (\Exception $e) {
+            $this->loggingService->error('Hold plot error: ' . $e->getMessage());
+            $this->setFlash('error', 'Failed to hold plot: ' . $e->getMessage());
+        }
+        return $this->redirect('/admin/plots/map');
+    }
+
+    /**
+     * Release a 24-hour hold back to available.
+     * POST /admin/plots/{id}/release-hold
+     */
+    public function releaseHold($id)
+    {
+        $this->requireAdmin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
+        }
+        $this->validateCsrfOrFail();
+        $id = (int)$id;
+        try {
+            $tid = (int)$this->tenantId();
+            $me = $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? 1;
+            $plot = $this->db->fetchOne("SELECT id, status, plot_number, held_by FROM plots WHERE id = ? AND tenant_id = ?", [$id, $tid]);
+            if (!$plot) {
+                $this->setFlash('error', 'Plot not found');
+                return $this->redirect('/admin/plots/map');
+            }
+            if ($plot['status'] !== 'hold') {
+                $this->setFlash('error', 'Plot is not on hold.');
+                return $this->redirect('/admin/plots/map');
+            }
+            $this->db->execute(
+                "UPDATE plots SET status = 'available', held_by = NULL, held_at = NULL, hold_expires_at = NULL
+                 WHERE id = ? AND tenant_id = ?",
+                [$id, $tid]
+            );
+            try {
+                $this->db->insert('plot_status_log', [
+                    'plot_id' => $id, 'old_status' => 'hold', 'new_status' => 'available',
+                    'changed_by' => $me, 'created_at' => date('Y-m-d H:i:s'),
+                ]);
+            } catch (\Exception $e) { error_log('PlotManagementController releaseHold log: ' . $e->getMessage()); }
+            $this->loggingService->logUserActivity($me, 'plot_hold_released', ['plot_id' => $id]);
+            $this->setFlash('success', 'Hold released. Plot ' . ($plot['plot_number'] ?? $id) . ' is available again.');
+        } catch (\Exception $e) {
+            $this->loggingService->error('Release hold error: ' . $e->getMessage());
+            $this->setFlash('error', 'Failed to release hold: ' . $e->getMessage());
+        }
+        return $this->redirect('/admin/plots/map');
     }
 }

@@ -177,7 +177,7 @@ require __DIR__ . '/../components/navigation/mobile_bottom_nav.php';
 ?>
 
 <!-- APS Premium Animations (scroll reveal + card tilt) -->
-<script src="<?php echo BASE_URL; ?>/assets/js/premium-animations.js?v=20260725"></script>
+<script src="<?php echo BASE_URL; ?>/assets/js/premium-animations.js?v=20261009"></script>
 <!-- APS Voice Booking Widget (component in base.php) -->
 
 <script>

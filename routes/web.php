@@ -134,7 +134,12 @@ $router->get('/stamp-duty-calculator', 'Front\\ToolController@stampDutyCalculato
 $router->get('/plot-size-converter', 'Front\\PropertyController@plotSizeConverter');
 $router->get('/home-loan-eligibility', 'Front\\ToolController@homeLoanEligibility');
 $router->get('/documents', 'Front\\PageController@documentGallery');
+$router->get('/documents/', 'Front\\PageController@documentGallery');
 $router->get('/documents/download/{id}', 'Front\\PageController@downloadDocument');
+// Legacy document shortcuts (linked from older page revisions) -> canonical pages
+$router->get('/documents/booking-terms', function () { header('Location: /apsdreamhome/terms', true, 301); exit; });
+$router->get('/documents/privacy-policy', function () { header('Location: /apsdreamhome/privacy', true, 301); exit; });
+$router->get('/documents/download-forms', function () { header('Location: /apsdreamhome/downloads', true, 301); exit; });
 $router->get('/property-valuation', 'Front\\ToolController@propertyValuation');
 $router->get('/tools-hub', 'Front\\ToolController@toolsHub');
 $router->get('/partner-tools', 'Front\\ToolController@partnerTools');
@@ -833,6 +838,29 @@ $router->post('/user/tickets',           'Front\\UserController@createTicket');
 $router->post('/user/tickets/create',    'Front\\UserController@createTicket');
 $router->get('/user/insurance',          'Front\\UserController@insurance');
 $router->get('/user/investment-plans',   'Front\\UserController@investmentPlans');
+
+// Customer Portal Aliases (/customer/* -> /user/*)
+$router->get('/customer/dashboard',        'App\\Http\\Controllers\\DashboardController@customer');
+$router->get('/customer/profile',          'App\\Http\\Controllers\\DashboardController@profile');
+$router->post('/customer/profile',         'App\\Http\\Controllers\\DashboardController@updateProfile');
+$router->get('/customer/bookings',         'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
+$router->get('/customer/installments',     'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
+$router->get('/customer/emi-tracker',      'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
+$router->get('/customer/payments',         'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
+$router->get('/customer/payment-history',  'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
+$router->get('/customer/documents',        'App\\Http\\Controllers\\Front\\CustomerPassbookController@documents');
+$router->get('/customer/documents/download/allotment/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadAllotment');
+$router->get('/customer/documents/download/passbook/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadPassbook');
+$router->get('/customer/documents/download/agreement/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadAgreement');
+$router->get('/customer/site-visits',      'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
+$router->get('/customer/support',          'Front\\UserController@myTickets');
+$router->get('/customer/tickets',          'Front\\UserController@myTickets');
+
+// Associate Portal Aliases
+$router->get('/associate/bookings',            'App\\Http\\Controllers\\AssociateController@myBookings');
+$router->get('/associate/marketing-materials', function() { header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/associate/share'); exit; });
+$router->get('/associate/id-card',             
+'App\\Http\\Controllers\\Associate\\ProfileController@idCard');
 
 $router->post('/property/inquire', 'Front\\PropertyController@propertyInquiry');
 $router->get('/property/inquire', 'Front\\PropertyController@propertyInquiry');
@@ -1744,6 +1772,8 @@ $router->get('/admin/plots/{id}/edit', 'App\\Http\\Controllers\\Admin\\PlotManag
 $router->post('/admin/plots/{id}/update', 'App\\Http\\Controllers\\Admin\\PlotManagementController@update');
 $router->post('/admin/plots/{id}/destroy', 'App\\Http\\Controllers\\Admin\\PlotManagementController@destroy');
 $router->post('/admin/plots/{id}/update-status', 'App\\Http\\Controllers\\Admin\\PlotManagementController@updateStatus');
+$router->post('/admin/plots/{id}/hold', 'App\\Http\\Controllers\\Admin\\PlotManagementController@holdPlot');
+$router->post('/admin/plots/{id}/release-hold', 'App\\Http\\Controllers\\Admin\\PlotManagementController@releaseHold');
 $router->get('/admin/plots/{id}/book', 'App\\Http\\Controllers\\Admin\\PlotManagementController@book');
 $router->post('/admin/plots/{id}/book', 'App\\Http\\Controllers\\Admin\\PlotManagementController@storeBooking');
 $router->get('/admin/plots/{id}/transfer', 'App\\Http\\Controllers\\Admin\\PlotManagementController@transfer');
@@ -2170,6 +2200,7 @@ $router->post('/admin/payments/refund/{id}', 'App\\Http\\Controllers\\Admin\\Pay
 $router->get('/admin/payments/dashboard-stats', 'App\\Http\\Controllers\\Admin\\PaymentController@dashboardStats');
 $router->get('/admin/payments/export', 'App\\Http\\Controllers\\Admin\\PaymentController@export')
     ->middleware('App\\Middleware\\AjaxRateLimitMiddleware');
+$router->get('/admin/payments/{id}/receipt', 'App\\Http\\Controllers\\Admin\\PaymentController@printReceipt');
 
 // Admin EMI
 $router->get('/admin/emi', 'App\\Http\\Controllers\\Admin\\EMIController@index');
@@ -2634,10 +2665,37 @@ $router->post('/admin/land-inventory/colonies/{colonyId}/costs/store', 'App\\Htt
 
 $router->get('/admin/land-inventory/colonies/{colonyId}/layouts', 'App\\Http\\Controllers\\Admin\\LandInventoryController@layouts');
 $router->get('/admin/land-inventory/colonies/{colonyId}/layouts/create', 'App\\Http\\Controllers\\Admin\\LandInventoryController@layoutForm');
+
+// ============================================================
+// FARMER & LANDOWNER LEDGER (Land Acquisition UI)
+// ============================================================
+$router->get('/farmers',                              'App\\Http\\Controllers\\User\\FarmerController@index');
+$router->get('/farmers/dashboard',                    'App\\Http\\Controllers\\User\\FarmerController@index');
+$router->get('/farmers/list',                         'App\\Http\\Controllers\\User\\FarmerController@list');
+$router->get('/farmers/create',                       'App\\Http\\Controllers\\User\\FarmerController@create');
+$router->post('/farmers/store',                       'App\\Http\\Controllers\\User\\FarmerController@store');
+$router->get('/farmers/search',                       'App\\Http\\Controllers\\User\\FarmerController@search');
+$router->get('/farmers/{id}',                         'App\\Http\\Controllers\\User\\FarmerController@show');
+$router->get('/farmers/{id}/edit',                    'App\\Http\\Controllers\\User\\FarmerController@edit');
+$router->post('/farmers/{id}/update',                 'App\\Http\\Controllers\\User\\FarmerController@update');
+$router->post('/farmers/{id}/delete',                 'App\\Http\\Controllers\\User\\FarmerController@delete');
+$router->get('/farmers/{id}/add-land-holding',        'App\\Http\\Controllers\\User\\FarmerController@addLandHolding');
+$router->post('/farmers/{id}/store-land-holding',     'App\\Http\\Controllers\\User\\FarmerController@storeLandHolding');
+$router->get('/farmers/{id}/add-purchase',            'App\\Http\\Controllers\\User\\FarmerController@addPurchase');
+$router->post('/farmers/{id}/store-purchase',         'App\\Http\\Controllers\\User\\FarmerController@storePurchase');
+
+// Admin Farmer Aliases
+$router->get('/admin/farmers',                        'App\\Http\\Controllers\\User\\FarmerController@list');
+$router->get('/admin/farmers/create',                 'App\\Http\\Controllers\\User\\FarmerController@create');
+$router->get('/admin/farmers/{id}',                   'App\\Http\\Controllers\\User\\FarmerController@show');
 $router->post('/admin/land-inventory/colonies/{colonyId}/layouts/store', 'App\\Http\\Controllers\\Admin\\LandInventoryController@layoutStore');
 
 $router->get('/admin/land-inventory/brokers', 'App\\Http\\Controllers\\Admin\\LandInventoryController@brokers');
 $router->post('/admin/land-inventory/brokers/store', 'App\\Http\\Controllers\\Admin\\LandInventoryController@brokerStore');
+
+// Farmer Land Bank Acquisition Ledger
+$router->get('/admin/land-inventory/farmer-ledger', 'App\\Http\\Controllers\\Admin\\LandInventoryController@farmerLedger');
+$router->get('/admin/land-inventory/farmer-ledger/detail/{farmerName}/{village?}', 'App\\Http\\Controllers\\Admin\\LandInventoryController@farmerDetail');
 
 // ============================================================
 // COLONY DEVELOPMENT PIPELINE
@@ -2748,10 +2806,14 @@ $router->get('/admin/sales/commissions',                          'App\\Http\\Co
 $router->get('/admin/sales/refunds',                              'App\\Http\\Controllers\\Admin\\BookingLifecycleController@refunds');
 $router->get('/admin/sales/rera',                                 'App\\Http\\Controllers\\Admin\\BookingLifecycleController@reraCompliance');
 $router->post('/admin/sales/rera/store',                          'App\\Http\\Controllers\\Admin\\BookingLifecycleController@reraComplianceStore');
-
-$router->get('/admin/sales/bookings/{id}/registry-check',       'App\\Http\\Controllers\\Admin\\BookingLifecycleController@registryCheck');
-$router->post('/admin/sales/bookings/{id}/generate-noc',        'App\\Http\\Controllers\\Admin\\BookingLifecycleController@generateNoc');
-
+$router->get('/admin/sales/bookings/{id}/registry-check',       
+'App\\Http\\Controllers\\Admin\\BookingLifecycleController@registryCheck');
+$router->post('/admin/sales/bookings/{id}/generate-noc',        
+'App\\Http\\Controllers\\Admin\\BookingLifecycleController@generateNoc');
+$router->get('/admin/sales/bookings/{id}/registry-stepper',       
+'App\\Http\\Controllers\\Admin\\BookingLifecycleController@registryStepper');
+$router->post('/admin/sales/bookings/{id}/registry-milestone/{stage}',        
+'App\\Http\\Controllers\\Admin\\BookingLifecycleController@updateRegistryMilestone');
 // ============================================================
 // MODULE 3: MONEY WORKFLOW + ACCOUNTING
 // URL prefix: /admin/finance/*

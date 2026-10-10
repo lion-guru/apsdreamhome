@@ -12,7 +12,7 @@ SetEnvIf Authorization (.*) HTTP_AUTHORIZATION=$1
     RewriteEngine On
     Options -Indexes
     DirectoryIndex index.php index.html
-    
+
     # Route /admin through the PHP router
     RewriteRule ^admin/?$ public/index.php [L]
     RewriteRule ^admin/(.*)$ public/index.php [L]
@@ -21,7 +21,14 @@ SetEnvIf Authorization (.*) HTTP_AUTHORIZATION=$1
     # For existing files at root (like assets/), serve directly
     RewriteCond %{REQUEST_FILENAME} -f
     RewriteRule ^ - [L]
-    
+
+    # If the public-mirror target is a real directory (e.g. /documents),
+    # route to the PHP router — avoids DirectorySlash 301 + 403 on dirs
+    RewriteCond %{REQUEST_URI} !/public/
+    RewriteCond %{REQUEST_URI} !/testing/
+    RewriteCond %{DOCUMENT_ROOT}/apsdreamhome/public/$1 -d
+    RewriteRule ^(.*)$ public/index.php [L]
+
     RewriteCond %{REQUEST_URI} !/public/
     RewriteCond %{REQUEST_URI} !/testing/
     RewriteRule ^(.*)$ public/$1 [L]

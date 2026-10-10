@@ -370,11 +370,17 @@ class BaseController
             || (isset($_SERVER['SERVER_PORT']) && (int)$_SERVER['SERVER_PORT'] === 443)) {
             header('Strict-Transport-Security: max-age=63072000; includeSubDomains; preload');
         }
-        // Content Security Policy with nonce support
+        // Content Security Policy.
+        // NOTE: If 'nonce-...' or 'strict-dynamic' is in the header, browsers
+        // strictly IGNORE 'unsafe-inline' (W3C CSP Level 2/3 spec).
+        // This codebase has 1300+ onclick/on* handlers and inline styles across
+        // 450+ views, so unsafe-inline and unsafe-eval MUST be allowed without
+        // a nonce in the header string.
         $base = defined('BASE_URL') ? BASE_URL : '';
+        $cspNonce = $GLOBALS['csp_nonce'] ?? '';
         $csp = "default-src 'self'; "
-            . "script-src 'self' 'nonce-{$cspNonce}' 'strict-dynamic' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.google.com https://www.gstatic.com https://unpkg.com https://www.googletagmanager.com https://code.jquery.com; "
-            . "style-src 'self' 'nonce-{$cspNonce}' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com https://unpkg.com; "
+            . "script-src 'self' 'unsafe-inline' 'unsafe-eval' " . ($cspNonce ? "nonce-{$cspNonce} " : "") . "https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.google.com https://www.gstatic.com https://unpkg.com https://www.googletagmanager.com https://code.jquery.com; "
+            . "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com https://unpkg.com; "
             . "img-src 'self' data: blob: https:; "
             . "font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; "
             . "frame-src 'self' https://www.google.com; "

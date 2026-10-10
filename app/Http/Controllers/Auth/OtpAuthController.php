@@ -826,8 +826,11 @@ class OtpAuthController extends BaseController
     {
         @session_start();
         
-        $token = $_POST['token'] ?? '';
-        $data = json_decode(file_get_contents('php://input'), true);
+        // NOTE: the profile page POSTs JSON (Content-Type: application/json),
+        // for which PHP leaves $_POST empty — read token from decoded body.
+        $rawBody = file_get_contents('php://input');
+        $data = json_decode($rawBody, true);
+        $token = $_POST['token'] ?? (is_array($data) ? ($data['token'] ?? '') : '');
         
         if (empty($token)) {
             http_response_code(400);

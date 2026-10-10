@@ -301,6 +301,7 @@ class AdminAuthController extends BaseController
                     ]);
                 } catch (\Throwable $e) { error_log("AdminAuth audit error: " . $e->getMessage()); }
 
+                session_write_close();
                 header('Location: ' . BASE_URL . '/admin/dashboard');
                 exit;
             }

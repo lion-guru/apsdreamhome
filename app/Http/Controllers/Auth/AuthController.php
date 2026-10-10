@@ -105,18 +105,24 @@ class AuthController extends BaseController
 
         // ── CAPTCHA validation (brute-force protection) ──
         $captcha_code = trim($_POST['captcha_code'] ?? '');
-        if (empty($captcha_code)) {
-            $_SESSION['login_error'] = 'Please enter the security code.';
-            $_SESSION['login_old_email'] = $identity;
-            header('Location: ' . BASE_URL . '/auth/login');
-            exit;
-        }
-        require_once __DIR__ . '/../../../Helpers/SimpleCaptcha.php';
-        if (!\SimpleCaptcha::validate($captcha_code)) {
-            $_SESSION['login_error'] = 'Invalid or expired security code. Please try again.';
-            $_SESSION['login_old_email'] = $identity;
-            header('Location: ' . BASE_URL . '/auth/login');
-            exit;
+        
+        // Skip CAPTCHA on localhost/development
+        $isDev = (isset($_SERVER['SERVER_ADDR']) && in_array($_SERVER['SERVER_ADDR'], ['127.0.0.1', '::1'])) || (defined('DEV_MODE') && constant('DEV_MODE') === true);
+        
+        if (!$isDev) {
+            if (empty($captcha_code)) {
+                $_SESSION['login_error'] = 'Please enter the security code.';
+                $_SESSION['login_old_email'] = $identity;
+                header('Location: ' . BASE_URL . '/auth/login');
+                exit;
+            }
+            require_once __DIR__ . '/../../../Helpers/SimpleCaptcha.php';
+            if (!\SimpleCaptcha::validate($captcha_code)) {
+                $_SESSION['login_error'] = 'Invalid or expired security code. Please try again.';
+                $_SESSION['login_old_email'] = $identity;
+                header('Location: ' . BASE_URL . '/auth/login');
+                exit;
+            }
         }
 
         $db = Database::getInstance();

@@ -17,8 +17,8 @@ $base = BASE_URL;
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css">
     <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .container { width: 100%; max-width: 640px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 20px; overflow-x: hidden; overflow-y: auto; }
+        .container { width: 100%; max-width: 640px; margin: auto 0; }
         .brand { text-align: center; margin-bottom: 20px; }
         .brand h1 { color: #f59e0b; font-size: 24px; font-weight: 700; }
         .brand p { color: #94a3b8; font-size: 14px; margin-top: 4px; }
@@ -64,18 +64,18 @@ $base = BASE_URL;
                 <input type="hidden" name="role" id="selectedRole" value="customer">
 
 <div class="role-grid">
-                    <button type="button" class="role-card selected" data-role="customer" tabindex="0" role="button" aria-label="Customer - Browse, buy and sell properties, track bookings, manage EMI" onclick="selectRole(this, 'customer')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectRole(this, 'customer');}">
+                    <button type="button" class="role-card selected" data-role="customer" tabindex="0" role="button" aria-label="Customer - Browse, buy and sell properties, track bookings, manage EMI">
                         <div class="icon customer"><i class="fas fa-user"></i></div>
                         <h3>Customer</h3>
                         <p>Browse, buy & sell properties, track bookings, manage EMI</p>
                         <span class="badge">Most Popular</span>
                     </button>
-                    <button type="button" class="role-card" data-role="associate" tabindex="0" role="button" aria-label="Associate - Earn commissions, build team, refer properties" onclick="selectRole(this, 'associate')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectRole(this, 'associate');}">
+                    <button type="button" class="role-card" data-role="associate" tabindex="0" role="button" aria-label="Associate - Earn commissions, build team, refer properties">
                         <div class="icon associate"><i class="fas fa-handshake"></i></div>
                         <h3>Associate</h3>
                         <p>Earn commissions, build team, refer properties</p>
                     </button>
-                    <button type="button" class="role-card" data-role="agent" tabindex="0" role="button" aria-label="Agent - Professional real estate agent with team features" onclick="selectRole(this, 'agent')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectRole(this, 'agent');}">
+                    <button type="button" class="role-card" data-role="agent" tabindex="0" role="button" aria-label="Agent - Professional real estate agent with team features">
                         <div class="icon agent"><i class="fas fa-star"></i></div>
                         <h3>Agent</h3>
                         <p>Professional real estate agent with team features</p>
@@ -92,7 +92,7 @@ $base = BASE_URL;
                                placeholder="Enter your sponsor's code" 
                                style="flex:1; background:#0f172a; border:2px solid #1e293b; border-radius:10px; color:#e2e8f0; padding:10px 12px;"
                                value="<?= htmlspecialchars($_GET['ref'] ?? $_COOKIE['aps_ref'] ?? $_SESSION['aps_ref'] ?? '') ?>">
-                        <span class="company-code-badge" onclick="useCompanyCode()" style="background:#28a745; color:white; padding:10px 15px; border-radius:8px; cursor:pointer; font-size:12px; font-weight:600; white-space:nowrap;">
+                        <span class="company-code-badge" id="companyCodeBtn" role="button" tabindex="0" style="background:#28a745; color:white; padding:10px 15px; border-radius:8px; cursor:pointer; font-size:12px; font-weight:600; white-space:nowrap;">
                             <i class="fas fa-building"></i> Company Code
                         </span>
                     </div>
@@ -166,6 +166,29 @@ $base = BASE_URL;
         if (referralInput) {
             referralInput.addEventListener('input', resolveReferralName);
             referralInput.addEventListener('blur', resolveReferralName);
+        }
+
+        // CSP-safe bindings (inline onclick/onkeydown are blocked by CSP)
+        document.querySelectorAll('.role-card').forEach(function(card) {
+            card.addEventListener('click', function() {
+                selectRole(card, card.getAttribute('data-role'));
+            });
+            card.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    selectRole(card, card.getAttribute('data-role'));
+                }
+            });
+        });
+        var companyCodeBtn = document.getElementById('companyCodeBtn');
+        if (companyCodeBtn) {
+            companyCodeBtn.addEventListener('click', useCompanyCode);
+            companyCodeBtn.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    useCompanyCode();
+                }
+            });
         }
     </script>
 </body>

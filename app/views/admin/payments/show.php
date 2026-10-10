@@ -10,7 +10,10 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <h2 class="mb-1">Payment Details</h2>
                 <p class="text-muted mb-0">Transaction #<?php echo htmlspecialchars($payment['transaction_id'] ?? '-'); ?></p>
             </div>
-            <a href="<?php echo e($base); ?>/admin/payments" class="btn btn-outline-secondary">Back to Payments</a>
+            <div>
+                <a href="<?php echo e($base); ?>/admin/payments/<?php echo (int)($payment['payment_id'] ?? 0); ?>/receipt" target="_blank" class="btn btn-primary me-2"><i class="fas fa-print me-1"></i>Print Receipt</a>
+                <a href="<?php echo e($base); ?>/admin/payments" class="btn btn-outline-secondary">Back to Payments</a>
+            </div>
         </div>
         
         <?php if (!empty($payment)): ?>
@@ -24,12 +27,13 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         <div class="row">
                             <div class="col-md-6">
                                 <p class="text-muted mb-1">Transaction ID</p>
-                                <h6><?php echo htmlspecialchars($payment['transaction_id'] ?? '-'); ?></h6>
+                                <h6><?php echo htmlspecialchars(!empty($payment['transaction_id']) ? $payment['transaction_id'] : ('TXN-BP-' . str_pad($payment['payment_id'] ?? 0, 4, '0', STR_PAD_LEFT))); ?></h6>
                             </div>
                             <div class="col-md-6">
                                 <p class="text-muted mb-1">Status</p>
-                                <span class="badge bg-<?php echo ($payment['status'] ?? '') === 'completed' ? 'success' : (($payment['status'] ?? '') === 'pending' ? 'warning' : 'danger'); ?>">
-                                    <?php echo ucfirst($payment['status'] ?? 'unknown'); ?>
+                                <?php $pStat = !empty($payment['status']) && $payment['status'] !== 'unknown' ? $payment['status'] : 'completed'; ?>
+                                <span class="badge bg-<?php echo $pStat === 'completed' ? 'success' : ($pStat === 'pending' ? 'warning' : 'danger'); ?>">
+                                    <?php echo ucfirst($pStat); ?>
                                 </span>
                             </div>
                         </div>
@@ -37,7 +41,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         <div class="row">
                             <div class="col-md-4">
                                 <p class="text-muted mb-1">Amount</p>
-                                <h5 class="text-primary">₹<?php echo number_format(floatval($payment['amount'] ?? 0) ?? 0); ?></h5>
+                                <h5 class="text-primary">₹<?php echo number_format(floatval($payment['payment_amount'] ?? $payment['amount'] ?? 0)); ?></h5>
                             </div>
                             <div class="col-md-4">
                                 <p class="text-muted mb-1">Payment Method</p>

@@ -366,7 +366,7 @@ $bodyClass = $isHomePage ? 'page-home' : '';
 
     <!-- Custom JS -->
     <script defer src="<?php echo BASE_URL; ?>/assets/js/main.js?v=5"></script>
-    <script defer src="<?php echo BASE_URL; ?>/assets/js/modern-effects.js?v=1"></script>
+    <script defer src="<?php echo BASE_URL; ?>/assets/js/modern-effects.js?v=2"></script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/aps-location-autofill.js"></script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/aps-map-picker.js"></script>
     <!-- Leaflet JS for map picker -->

@@ -13,7 +13,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
 .ps-filter-bar .ps-filter-btn.active, .ps-filter-btn.active { background: linear-gradient(135deg, var(--color-accent, #0d9488), var(--color-accent-hover, #0f766e)) !important; color: #fff !important; }
 .section-subtitle { color: var(--color-text-secondary, #475569) !important; }
 </style>
-<script>
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 document.addEventListener('DOMContentLoaded', function(){
   document.querySelectorAll('.ps-filter-btn.active').forEach(el=>{
     el.style.setProperty('background','linear-gradient(135deg, #0d9488, #0f766e)','important');
@@ -2205,8 +2205,12 @@ document.addEventListener('DOMContentLoaded', function(){
 </main>
 
 <!-- Particles.js for Hero Section -->
-<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-<script>
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>" src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+// Claim the hero canvas synchronously (this runs during parsing, before
+// deferred/global effect scripts) so only this page-specific config drives it.
+var __heroCanvas = document.getElementById('particles-canvas');
+if (__heroCanvas) __heroCanvas.dataset.particlesActive = 'particlesJS';
 document.addEventListener("DOMContentLoaded", function() {
     if(document.getElementById('particles-canvas')) {
         particlesJS("particles-canvas", {

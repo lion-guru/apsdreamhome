@@ -117,7 +117,7 @@ $related_projects = $normRelated;
                 <div class="bg-white bg-opacity-10 p-3 rounded-3 border border-white border-opacity-25 text-start d-inline-block">
                     <div class="small text-uppercase tracking-wider text-warning fw-bold mb-1"><i class="fas fa-layer-group me-1"></i> Online Plot Reservation</div>
                     <div class="h5 text-white mb-2"><?= !empty($project->colony_available_plots) ? $project->colony_available_plots . ' Plots Available' : 'Immediate Registry' ?></div>
-                    <a href="<?= BASE_URL ?>/booking?colony_id=<?= $project->colony_id ?>" class="btn btn-warning fw-bold text-dark w-100 shadow-sm">
+                    <a href="<?= BASE_URL ?>/colony/<?= htmlspecialchars($project->colony_slug ?? '') ?>/plots" class="btn btn-warning fw-bold text-dark w-100 shadow-sm">
                         <i class="fas fa-bolt me-1"></i> Book Plot Now (₹51,000 Token)
                     </a>
                 </div>

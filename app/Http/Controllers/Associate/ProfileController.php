@@ -42,7 +42,7 @@ class ProfileController extends BaseController
         $tid = TenantContext::getId();
 
         try {
-            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $db = \App\Core\Database\Database::getInstance();
             $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
             $params = [$userId];
             if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
@@ -124,7 +124,7 @@ class ProfileController extends BaseController
         $userId = $_SESSION['user_id'];
         $tid = TenantContext::getId();
 
-        $db = \App\Core\Database\Database::getInstance()->getConnection();
+        $db = \App\Core\Database\Database::getInstance();
         $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
         $params = [$userId];
         if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
@@ -207,6 +207,60 @@ class ProfileController extends BaseController
             'page_description' => 'Manage your account settings',
             'user' => $user,
         ], 'layouts/associate');
+    }
+
+    /**
+     * ID Card view - Branded ID Card for Associate
+     */
+    public function idCard(): void
+    {
+        $this->requireAuth();
+        $userId = $_SESSION['user_id'];
+        $tid = TenantContext::getId();
+
+        try {
+            $db = \App\Core\Database\Database::getInstance();
+            $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
+            $params = [$userId];
+            if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
+
+            $user = $db->fetchOne("SELECT * FROM users WHERE id = ?{$tidSql} LIMIT 1", $params);
+
+            // Get associate info
+            $assoc = $db->fetchOne("SELECT * FROM associates WHERE user_id = ?{$tidSql} LIMIT 1", $params);
+
+            // Get referral code
+            $referralCode = $user['referral_code'] ?? 'APS' . str_pad($userId, 6, '0', STR_PAD_LEFT);
+
+            // Generate QR code for referral link
+            $referralUrl = BASE_URL . '/register?ref=' . $referralCode;
+            $qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' . urlencode($referralUrl);
+
+            // Get current rank
+            $rank = $assoc['current_level'] ?? 'Bronze';
+            $rankBadges = [
+                'Bronze' => ['label' => 'Bronze', 'class' => 'bg-secondary'],
+                'Silver' => ['label' => 'Silver', 'class' => 'bg-secondary'],
+                'Gold' => ['label' => 'Gold', 'class' => 'bg-warning text-dark'],
+                'Diamond' => ['label' => 'Diamond', 'class' => 'bg-info'],
+                'Platinum' => ['label' => 'Platinum', 'class' => 'bg-primary'],
+            ];
+            $rankBadge = $rankBadges[$rank] ?? ['label' => $rank, 'class' => 'bg-secondary'];
+
+            $this->render('associate/id_card', [
+                'page_title' => 'My ID Card - Associate Portal',
+                'page_description' => 'Your branded associate identity card',
+                'user' => $user,
+                'associate' => $assoc,
+                'referralCode' => $referralCode,
+                'qrCodeUrl' => $qrCodeUrl,
+                'rankBadge' => $rankBadge,
+            ], 'layouts/associate');
+        } catch (\Throwable $e) {
+            error_log('AssociateProfileController::idCard error: ' . $e->getMessage());
+            $_SESSION['flash_error'] = 'An unexpected error occurred. Please try again.';
+            $this->redirect('/associate/dashboard');
+}
     }
 }
 

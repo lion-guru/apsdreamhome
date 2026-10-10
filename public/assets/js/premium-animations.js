@@ -277,10 +277,14 @@ document.documentElement.classList.add('js-animations');
   // ============================================================
   function initTypedText() {
     const typedElement = document.getElementById('typed-text');
-    if (!typedElement) return;
+    // Guard: modern-effects.js types the same element — first runner claims
+    // it via dataset.typedActive so the two loops never fight over textContent.
+    if (!typedElement || typedElement.dataset.typedActive) return;
+    typedElement.dataset.typedActive = '1';
 
-    const strings = typedElement.dataset.strings?.split('||') || [];
-    if (strings.length === 0) return;
+    // Split on single '|' (filter empties) so '|' and '||' separators both work.
+    const strings = (typedElement.dataset.strings || '').split('|').map(s => s.trim()).filter(Boolean);
+    if (strings.length === 0) { delete typedElement.dataset.typedActive; return; }
 
     let stringIndex = 0;
     let charIndex = 0;
@@ -320,7 +324,10 @@ document.documentElement.classList.add('js-animations');
   // ============================================================
   function initParticles() {
     const canvas = document.getElementById('particles-canvas');
-    if (!canvas) return;
+    // Guard: modern-effects.js and page-specific particlesJS configs
+    // target the same canvas — first claimant owns it, others skip.
+    if (!canvas || canvas.dataset.particlesActive) return;
+    canvas.dataset.particlesActive = 'premium';
 
     const ctx = canvas.getContext('2d');
     const particles = [];

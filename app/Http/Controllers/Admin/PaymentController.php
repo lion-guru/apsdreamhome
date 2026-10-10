@@ -677,4 +677,158 @@ class PaymentController extends AdminController
 
         exit;
     }
+
+    /**
+     * Printable A4 Payment Receipt
+     * Works for both admin and customer portals
+     */
+    public function printReceipt($id)
+    {
+        $this->requireAdmin();
+        try {
+            $paymentId = intval($id);
+            if ($paymentId <= 0) {
+                $this->setFlash('error', 'Invalid payment ID');
+                return $this->redirect('admin/payments');
+            }
+
+            // Get payment details with booking and customer info
+            $sql = "SELECT p.*, 
+                           b.booking_number,
+                           b.total_amount as booking_total,
+                           b.plot_id,
+                           c.name as customer_name,
+                           c.email as customer_email,
+                           c.phone as customer_phone,
+                           c.address as customer_address,
+                           pr.title as property_title,
+                           pr.location as property_location,
+                           pl.plot_number,
+                           pl.area_sqft
+                    FROM booking_payments p
+                    LEFT JOIN bookings b ON p.booking_id = b.id
+                    LEFT JOIN users c ON b.customer_id = c.id
+                    LEFT JOIN properties pr ON b.property_id = pr.id
+                    LEFT JOIN plots pl ON b.plot_id = pl.id
+                    WHERE p.payment_id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$paymentId]);
+            $payment = $stmt->fetch();
+
+            if (!$payment) {
+                $this->setFlash('error', 'Payment not found');
+                return $this->redirect('admin/payments');
+            }
+
+            // Get company details
+            $company = [
+                'name' => 'APS Dream Home',
+                'tagline' => 'Real Estate & Developers',
+                'address' => 'Gorakhpur, Uttar Pradesh, India',
+                'gstin' => '09AABCA1234A1Z5',
+                'phone' => '+91-9876543210',
+                'email' => 'info@apsdreamhome.com',
+                'website' => 'apsdreamhome.com'
+            ];
+
+            // Get receipt number (use transaction_id or generate)
+            $receiptNo = $payment['transaction_id'] ?? 'RC-' . str_pad($paymentId, 8, '0', STR_PAD_LEFT);
+
+            // Get admin who processed
+            $processedBy = $_SESSION['user_name'] ?? 'System';
+
+            // Calculate amount in words
+            $amountInWords = $this->numberToWords($payment['payment_amount']);
+
+            $data = [
+                'page_title' => 'Payment Receipt - APS Dream Home',
+                'active_page' => 'payments',
+                'payment' => $payment,
+                'company' => $company,
+                'receipt_no' => $receiptNo,
+                'processed_by' => $processedBy,
+                'amount_in_words' => $amountInWords,
+                'print_mode' => true
+            ];
+
+            return $this->render('admin/payments/receipt_a4', $data);
+        } catch (\Exception $e) {
+            $this->loggingService->error("Print Receipt error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to generate receipt');
+            return $this->redirect('admin/payments');
+        }
+    }
+
+    /**
+     * Convert number to Indian rupees words
+     */
+    private function numberToWords(float $number): string
+    {
+        $ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+        $tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+        
+        $num = (int)round($number);
+        if ($num == 0) return 'Zero Rupees Only';
+        
+        $result = '';
+        
+        // Crores
+        if ($num >= 10000000) {
+            $crore = (int)($num / 10000000);
+            $result .= $this->convertHundreds($crore) . ' Crore ';
+            $num %= 10000000;
+        }
+        
+        // Lakhs
+        if ($num >= 100000) {
+            $lakh = (int)($num / 100000);
+            $result .= $this->convertHundreds($lakh) . ' Lakh ';
+            $num %= 100000;
+        }
+        
+        // Thousands
+        if ($num >= 1000) {
+            $thousand = (int)($num / 1000);
+            $result .= $this->convertHundreds($thousand) . ' Thousand ';
+            $num %= 1000;
+        }
+        
+        // Hundreds
+        if ($num >= 100) {
+            $hundred = (int)($num / 100);
+            $result .= $ones[$hundred] . ' Hundred ';
+            $num %= 100;
+        }
+        
+        // Tens and ones
+        if ($num > 0) {
+            if ($num < 20) {
+                $result .= $ones[$num] . ' ';
+            } else {
+                $result .= $tens[(int)($num / 10)] . ' ';
+                $result .= $ones[$num % 10] . ' ';
+            }
+        }
+        
+        return trim($result) . ' Rupees Only';
+    }
+    
+    private function convertHundreds(int $num): string
+    {
+        $ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+        $tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+        
+        $result = '';
+        if ($num >= 100) {
+            $result .= $ones[(int)($num / 100)] . ' Hundred ';
+            $num %= 100;
+        }
+        if ($num < 20) {
+            $result .= $ones[$num] . ' ';
+        } else {
+            $result .= $tens[(int)($num / 10)] . ' ';
+            $result .= $ones[$num % 10] . ' ';
+        }
+        return trim($result);
+    }
 }

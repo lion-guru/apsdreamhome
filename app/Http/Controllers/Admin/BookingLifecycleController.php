@@ -879,6 +879,168 @@ class BookingLifecycleController extends AdminController
         ]);
     }
 
+    /* =========================================================
+     *  7-Stage Registry Milestone Stepper
+     * ========================================================= */
+
+    public function registryStepper($id)
+    {
+        $this->requireAdmin();
+        $id = (int)$id;
+
+        $booking = $this->service->getBookingById($id);
+        if (!$booking) {
+            $this->setFlash('error', 'Booking not found');
+            return $this->redirect('/admin/sales/bookings');
+        }
+
+        // Get payment schedule
+        $schedule = $this->service->getPaymentSchedule($id);
+
+        // Get registry milestones (create if not exist)
+        $milestones = $this->getOrCreateRegistryMilestones($id);
+
+        // Get eligibility for final stage
+        $mwSvc = new \App\Services\Accounting\MoneyWorkflowService();
+        $eligibility = $mwSvc->checkRegistryEligibility($id);
+
+        $this->render('admin/sales/registry_stepper', [
+            'page_title'   => 'Registry Milestone Tracker',
+            'page_heading' => '7-Stage Registry Tracker — ' . htmlspecialchars((string)($booking['booking_number'] ?? '')),
+            'booking'      => $booking,
+            'schedule'     => $schedule,
+            'milestones'   => $milestones,
+            'eligibility'  => $eligibility,
+        ]);
+    }
+
+    /**
+     * Update a registry milestone
+     */
+    public function updateRegistryMilestone($bookingId, $stage)
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+
+        $bookingId = (int)$bookingId;
+        $stage = (int)$stage;
+        $data = [
+            'status'         => $_POST['status'] ?? 'pending',
+            'completed_date' => $_POST['completed_date'] ?? null,
+            'notes'          => $_POST['notes'] ?? '',
+            'document_path'  => $_POST['document_path'] ?? '',
+            'reference_no'   => $_POST['reference_no'] ?? '',
+            'updated_by'     => $_SESSION['admin_id'] ?? null,
+        ];
+
+        $result = $this->updateMilestone($bookingId, $stage, $data);
+
+        if (!empty($result['success'])) {
+            $this->setFlash('success', 'Milestone updated');
+        } else {
+            $this->setFlash('error', $result['error'] ?? 'Failed to update milestone');
+        }
+        return $this->redirect('/admin/sales/bookings/' . $bookingId . '/registry-stepper');
+    }
+
+    /**
+     * Get or create registry milestones for a booking
+     */
+    private function getOrCreateRegistryMilestones(int $bookingId): array
+    {
+        try {
+            $milestones = $this->db->prepare(
+                "SELECT * FROM booking_registry_milestones WHERE booking_id = ? ORDER BY stage_number ASC"
+            );
+            $milestones->execute([$bookingId]);
+            $rows = $milestones->fetchAll(\PDO::FETCH_ASSOC);
+
+            // If no milestones exist, create default 7 stages
+            if (empty($rows)) {
+                $stages = $this->getDefaultRegistryStages();
+                foreach ($stages as $stage) {
+                    $this->db->prepare(
+                        "INSERT INTO booking_registry_milestones (booking_id, stage_number, stage_name, stage_key, description, status, required, sort_order, created_at) VALUES (?, ?, ?, ?, ?, 'pending', ?, ?, NOW())"
+                    )->execute([
+                        $bookingId,
+                        $stage['number'],
+                        $stage['name'],
+                        $stage['key'],
+                        $stage['description'],
+                        $stage['required'] ? 1 : 0,
+                        $stage['number']
+                    ]);
+                }
+                $rows = $stages;
+                foreach ($rows as &$r) {
+                    $r['id'] = 0;
+                    $r['status'] = 'pending';
+                    $r['completed_date'] = null;
+                    $r['notes'] = '';
+                    $r['document_path'] = '';
+                    $r['reference_no'] = '';
+                }
+            }
+
+            return $rows;
+        } catch (\Exception $e) {
+            error_log("[BookingLifecycleController] getOrCreateRegistryMilestones exception: " . $e->getMessage());
+            return $this->getDefaultRegistryStages();
+        }
+    }
+
+    /**
+     * Default 7 registry stages
+     */
+    private function getDefaultRegistryStages(): array
+    {
+        return [
+            ['number' => 1, 'key' => 'token_paid', 'name' => 'Token / Booking Advance', 'description' => 'Initial booking token paid and booking confirmed', 'required' => true],
+            ['number' => 2, 'key' => 'agreement_signed', 'name' => '25% Agreement to Sell (ATS / Biyana)', 'description' => 'Agreement to Sell executed, 25% payment completed', 'required' => true],
+            ['number' => 3, 'key' => 'full_payment_cleared', 'name' => 'Full Payment Clearance / Bank Loan Disbursal', 'description' => '100% payment received or bank loan disbursed', 'required' => true],
+            ['number' => 4, 'key' => 'stamp_duty', 'name' => 'Stamp Duty & Challan Generation', 'description' => 'Stamp duty paid, challan generated and submitted', 'required' => true],
+            ['number' => 5, 'key' => 'sub_registrar_appointment', 'name' => 'Sub-Registrar Office Appointment', 'description' => 'Appointment booked for registry at Sub-Registrar Office', 'required' => true],
+            ['number' => 6, 'key' => 'registry_deed_uploaded', 'name' => 'Registry Deed (Bahi No. & PDF Scan) Upload', 'description' => 'Registry deed executed, Bahi number recorded, PDF uploaded', 'required' => true],
+            ['number' => 7, 'key' => 'mutation_possession', 'name' => 'Dakhil Kharij (Mutation) & Physical Possession', 'description' => 'Mutation completed, physical possession handed over, pillars demarcated', 'required' => true],
+        ];
+    }
+
+    /**
+     * Update a specific milestone
+     */
+    private function updateMilestone(int $bookingId, int $stage, array $data): array
+    {
+        try {
+            $fields = ['status = ?', 'notes = ?', 'document_path = ?', 'reference_no = ?', 'updated_by = ?', 'updated_at = NOW()'];
+            $params = [$data['status'], $data['notes'], $data['document_path'], $data['reference_no'], $data['updated_by']];
+
+            if (!empty($data['completed_date'])) {
+                $fields[] = 'completed_date = ?';
+                $params[] = $data['completed_date'];
+            }
+
+            $params[] = $bookingId;
+            $params[] = $stage;
+
+            $sql = "UPDATE booking_registry_milestones SET " . implode(', ', $fields) . " WHERE booking_id = ? AND stage_number = ?";
+            $this->db->prepare($sql)->execute($params);
+
+            // Log activity
+            if (isset($this->loggingService)) {
+                $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'registry_milestone_updated', [
+                    'booking_id' => $bookingId,
+                    'stage' => $stage,
+                    'status' => $data['status'],
+                ]);
+            }
+
+            return ['success' => true];
+        } catch (\Exception $e) {
+            error_log("[BookingLifecycleController] updateMilestone exception: " . $e->getMessage());
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
     public function generateNoc($id)
     {
         $this->requireAdmin();

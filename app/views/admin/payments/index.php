@@ -61,14 +61,15 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             <tbody>
                                 <?php foreach ($payments as $payment): ?>
                                     <tr>
-                                        <td><?php echo htmlspecialchars($payment['transaction_id'] ?? '-'); ?></td>
+                                        <td><?php echo htmlspecialchars(!empty($payment['transaction_id']) ? $payment['transaction_id'] : ('TXN-BP-' . str_pad($payment['payment_id'] ?? 0, 4, '0', STR_PAD_LEFT))); ?></td>
                                         <td><?php echo htmlspecialchars($payment['booking_number'] ?? '-'); ?></td>
                                         <td><?php echo htmlspecialchars($payment['customer_name'] ?? '-'); ?></td>
-                                        <td>₹<?php echo number_format(floatval($payment['amount'] ?? 0) ?? 0); ?></td>
+                                        <td>₹<?php echo number_format(floatval($payment['payment_amount'] ?? $payment['amount'] ?? 0)); ?></td>
                                         <td><?php echo ucfirst($payment['payment_method'] ?? '-'); ?></td>
                                         <td>
-                                            <span class="badge bg-<?php echo ($payment['status'] ?? '') === 'completed' ? 'success' : (($payment['status'] ?? '') === 'pending' ? 'warning' : 'danger'); ?>">
-                                                <?php echo ucfirst($payment['status'] ?? 'unknown'); ?>
+                                            <?php $pStat = !empty($payment['status']) && $payment['status'] !== 'unknown' ? $payment['status'] : 'completed'; ?>
+                                            <span class="badge bg-<?php echo $pStat === 'completed' ? 'success' : ($pStat === 'pending' ? 'warning' : 'danger'); ?>">
+                                                <?php echo ucfirst($pStat); ?>
                                             </span>
                                         </td>
                                         <td><?php echo isset($payment['payment_date']) ? date('M d, Y', strtotime($payment['payment_date'])) : '-'; ?></td>

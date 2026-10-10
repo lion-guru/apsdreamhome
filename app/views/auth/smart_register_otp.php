@@ -29,11 +29,11 @@ $maskedPhone = $phone ? substr($phone, 0, 2) . '****' . substr($phone, -2) : '**
     <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
     <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1e293b 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:2rem 1rem}
-        body::before{content:'';position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(102,126,234,.3) 0%,transparent 70%);top:-200px;right:-100px;border-radius:50%}
-        body::after{content:'';position:absolute;width:500px;height:500px;background:radial-gradient(circle,rgba(118,75,162,.25) 0%,transparent 70%);bottom:-150px;left:-100px;border-radius:50%}
+        body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1e293b 100%);display:flex;align-items:flex-start;justify-content:center;position:relative;overflow-x:hidden;overflow-y:auto;padding:2rem 1rem}
+        body::before{content:'';position:fixed;width:600px;height:600px;background:radial-gradient(circle,rgba(102,126,234,.3) 0%,transparent 70%);top:-200px;right:-100px;border-radius:50%;pointer-events:none}
+        body::after{content:'';position:fixed;width:500px;height:500px;background:radial-gradient(circle,rgba(118,75,162,.25) 0%,transparent 70%);bottom:-150px;left:-100px;border-radius:50%;pointer-events:none}
 
-        .otp-wrapper{position:relative;z-index:1;width:100%;max-width:440px}
+        .otp-wrapper{position:relative;z-index:1;width:100%;max-width:440px;margin:auto 0}
 
         .brand-section{text-align:center;margin-bottom:1.5rem}
         .brand-logo{width:80px;height:80px;background:linear-gradient(135deg,#0d9488,#0f766e);border-radius:20px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:.75rem;box-shadow:0 10px 30px rgba(102,126,234,.4);animation:float 3s ease-in-out infinite}
@@ -164,7 +164,7 @@ $maskedPhone = $phone ? substr($phone, 0, 2) . '****' . substr($phone, -2) : '**
             <div class="resend-section">
                 <p class="resend-text" id="resendText">
                     Didn't receive the code?
-                    <button class="resend-btn" id="resendBtn" onclick="resendOtp()">
+                    <button class="resend-btn" id="resendBtn" type="button">
                         Resend OTP
                     </button>
                 </p>
@@ -183,8 +183,11 @@ $maskedPhone = $phone ? substr($phone, 0, 2) . '****' . substr($phone, -2) : '**
         </a>
     </div>
 
-    <script src="<?= BASE_URL ?>/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="<?= BASE_URL ?>/assets/js/bootstrap.bundle.min.js" nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>"></script>
     <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+        // CSP-safe: bind Resend click via listener (inline onclick is blocked by CSP)
+        document.getElementById('resendBtn').addEventListener('click', resendOtp);
+
         const otpInputs = document.querySelectorAll('.otp-input');
         const otpHidden = document.getElementById('otpHidden');
         const verifyBtn = document.getElementById('verifyBtn');

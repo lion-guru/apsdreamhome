@@ -389,7 +389,7 @@ $hubbedItems = $sortedHubbed;
                 ?>
                 <!-- Hub: <?php echo $hubDef['label']; ?> -->
                 <div class="sidebar-hub mb-3">
-                    <div class="sidebar-hub-header" onclick="toggleSidebarHub('<?php echo e($hubId); ?>')">
+                    <div class="sidebar-hub-header" onclick="APS.toggleSidebarHub('<?php echo e($hubId); ?>')">
                         <span class="d-flex align-items-center gap-2">
                             <i class="<?php echo $hubDef['icon']; ?> text-primary"></i>
                             <strong><?php echo $hubDef['label']; ?></strong>

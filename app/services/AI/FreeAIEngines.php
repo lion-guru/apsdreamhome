@@ -110,6 +110,27 @@ class FreeAIEngines
     // ─────────── Main: Generate with best available free engine ───────
 
     /**
+     * Strip model reasoning internals before text reaches users.
+     * Reasoning models leak `<think>…</think>` blocks; some free models
+     * instead dump "Here's a thinking process: … Draft Response: <reply>".
+     * Users must only ever see the final reply — never the analysis.
+     */
+    public static function cleanResponse(string $text): string
+    {
+        // 1. Remove <think>/<thinking>/<reasoning> blocks (reasoning models)
+        $cleaned = preg_replace('/<\s*(think|thinking|reasoning)\b.*?<\/\s*\1\s*>/is', '', $text);
+        if (is_string($cleaned)) {
+            $text = $cleaned;
+        }
+        // 2. Remove free-form "thinking process … Draft Response:" preamble, keep the draft
+        if (preg_match('/draft response(?:\s*\(mental\))?\s*:\s*["“]?/i', $text, $m, PREG_OFFSET_CAPTURE)) {
+            $text = substr($text, $m[0][1] + strlen($m[0][0]));
+            $text = rtrim($text, "\"” \t\n\r");
+        }
+        return trim($text);
+    }
+
+    /**
      * Generate text using best available free engine
      * Priority: Ollama (local) → Groq (fastest) → xAI Grok → HuggingFace → Together.ai → DeepSeek → Together.ai → Cohere → OpenRouter (free models) → Google Gemini
      * @param string $prompt
@@ -126,61 +147,61 @@ class FreeAIEngines
         // 1. Try Ollama (local, unlimited, private)
         if ($this->isOllamaAvailable()) {
             $result = $this->ollamaGenerate($prompt, $system, $temperature, $maxTokens);
-            if ($result) return ['text' => $result, 'engine' => 'ollama', 'model' => $this->ollamaModel, 'tokens' => 0];
+            if ($result) return ['text' => self::cleanResponse($result), 'engine' => 'ollama', 'model' => $this->ollamaModel, 'tokens' => 0];
         }
 
         // 2. Try Groq (fastest in world, free tier) - models change frequently
         if (!empty($this->groqKey)) {
             $result = $this->groqGenerate($prompt, $system, $temperature, $maxTokens);
-            if ($result) return ['text' => $result, 'engine' => 'groq', 'model' => $this->groqModel, 'tokens' => 0];
+            if ($result) return ['text' => self::cleanResponse($result), 'engine' => 'groq', 'model' => $this->groqModel, 'tokens' => 0];
         }
 
         // 3. Try xAI Grok (free tier: available via xAI API)
         if (!empty($this->xaiKey)) {
             $result = $this->xaiGenerate($prompt, $system, $temperature, $maxTokens);
-            if ($result) return ['text' => $result, 'engine' => 'xai_grok', 'model' => $this->xaiModel, 'tokens' => 0];
+            if ($result) return ['text' => self::cleanResponse($result), 'engine' => 'xai_grok', 'model' => $this->xaiModel, 'tokens' => 0];
         }
 
         // 4. Try Hugging Face Inference API (free tier: 30k tokens/day)
         if (!empty($this->hfKey)) {
             $result = $this->hfGenerate($prompt, $system, $temperature, $maxTokens);
-            if ($result) return ['text' => $result, 'engine' => 'huggingface', 'model' => $this->hfModel, 'tokens' => 0];
+            if ($result) return ['text' => self::cleanResponse($result), 'engine' => 'huggingface', 'model' => $this->hfModel, 'tokens' => 0];
         }
 
         // 5. Try Together.ai (free tier: 100k tokens/day)
         if (!empty($this->togetherAiKey)) {
             $result = $this->togetherAiGenerate($prompt, $system, $temperature, $maxTokens);
-            if ($result) return ['text' => $result, 'engine' => 'together_ai', 'model' => $this->togetherModel, 'tokens' => 0];
+            if ($result) return ['text' => self::cleanResponse($result), 'engine' => 'together_ai', 'model' => $this->togetherModel, 'tokens' => 0];
         }
 
         // 6. Try DeepSeek (free tier via their API)
         if (!empty($this->deepseekKey)) {
             $result = $this->deepseekGenerate($prompt, $system, $temperature, $maxTokens);
-            if ($result) return ['text' => $result, 'engine' => 'deepseek', 'model' => $this->deepseekModel, 'tokens' => 0];
+            if ($result) return ['text' => self::cleanResponse($result), 'engine' => 'deepseek', 'model' => $this->deepseekModel, 'tokens' => 0];
         }
 
         // 7. Try Together.ai (free tier: 100k tokens/day)
         if (!empty($this->togetherAiKey)) {
             $result = $this->togetherGenerate($prompt, $system, $temperature, $maxTokens);
-            if ($result) return ['text' => $result, 'engine' => 'together', 'model' => $this->togetherModel, 'tokens' => 0];
+            if ($result) return ['text' => self::cleanResponse($result), 'engine' => 'together', 'model' => $this->togetherModel, 'tokens' => 0];
         }
 
         // 8. Try Cohere (free tier: 100 calls/min)
         if (!empty($this->cohereKey)) {
             $result = $this->cohereGenerate($prompt, $system, $temperature, $maxTokens);
-            if ($result) return ['text' => $result, 'engine' => 'cohere', 'model' => $this->cohereModel, 'tokens' => 0];
+            if ($result) return ['text' => self::cleanResponse($result), 'engine' => 'cohere', 'model' => $this->cohereModel, 'tokens' => 0];
         }
 
         // 9. Try OpenRouter (free tier: deprecated 2026, used as last resort)
         if (!empty($this->openRouterKey)) {
             $result = $this->openRouterGenerate($prompt, $system, $temperature, $maxTokens);
-            if ($result) return ['text' => $result, 'engine' => 'openrouter', 'model' => 'free-model', 'tokens' => 0];
+            if ($result) return ['text' => self::cleanResponse($result), 'engine' => 'openrouter', 'model' => 'free-model', 'tokens' => 0];
         }
 
         // 10. Try Google Gemini (free tier: 15 RPM, 1M tokens/day)
         if (!empty($this->geminiKey)) {
             $result = $this->geminiGenerate($prompt, $system, $temperature, $maxTokens);
-            if ($result) return ['text' => $result, 'engine' => 'gemini', 'model' => $this->geminiModel, 'tokens' => 0];
+            if ($result) return ['text' => self::cleanResponse($result), 'engine' => 'gemini', 'model' => $this->geminiModel, 'tokens' => 0];
         }
 
         return ['text' => '', 'engine' => 'none', 'model' => '', 'tokens' => 0];

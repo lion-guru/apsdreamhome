@@ -53,11 +53,19 @@ let apsAIButton = null;
     const path = window.location.pathname;
     const isPropertyPage = window.location.pathname.includes('/property/') ||
                           window.location.pathname.includes('/listing/') ||
-                          window.location.pathname.includes('/lead/');
+                          window.location.pathname.includes('/lead/') ||
+                          window.location.pathname.includes('/plots/') ||
+                          window.location.pathname.includes('/colonies/') ||
+                          window.location.pathname.includes('/leads/');
     
     return isAPSDomain && (isPropertyPage || window.location.pathname.includes('/property/') || 
                            window.location.pathname.includes('/listing/') || 
-                           window.location.pathname.includes('/lead/'));
+                           window.location.pathname.includes('/lead/') ||
+                           window.location.pathname.includes('/plots/') ||
+                           window.location.pathname.includes('/colonies/') ||
+                           window.location.pathname.includes('/leads/') ||
+                           window.location.pathname.includes('/property/') ||
+                           window.location.pathname.includes('/properties/'));
   }
   
   function injectFloatButton() {
