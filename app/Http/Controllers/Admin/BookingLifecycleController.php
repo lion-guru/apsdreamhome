@@ -1034,6 +1034,32 @@ class BookingLifecycleController extends AdminController
                 ]);
             }
 
+            // Customer alert on stage completion (email + SMS + WhatsApp; best-effort)
+            if (($data['status'] ?? '') === 'completed') {
+                try {
+                    $ms = $this->db->prepare("SELECT stage_name FROM booking_registry_milestones WHERE booking_id = ? AND stage_number = ?");
+                    $ms->execute([$bookingId, $stage]);
+                    $stageName = $ms->fetch(\PDO::FETCH_ASSOC)['stage_name'] ?? ('Stage ' . $stage);
+                    $nx = $this->db->prepare("SELECT stage_name FROM booking_registry_milestones WHERE booking_id = ? AND stage_number = ? AND status != 'completed'");
+                    $nx->execute([$bookingId, $stage + 1]);
+                    $nextStage = $nx->fetch(\PDO::FETCH_ASSOC)['stage_name'] ?? '';
+                    $booking = $this->service->getBookingById($bookingId);
+                    if ($booking && !empty($booking['customer_id'])) {
+                        $cu = $this->db->prepare("SELECT id, name, email, phone FROM users WHERE id = ?");
+                        $cu->execute([(int)$booking['customer_id']]);
+                        $customer = $cu->fetch(\PDO::FETCH_ASSOC);
+                        if ($customer) {
+                            (new \App\Services\BookingNotificationService())->sendRegistryMilestoneUpdate(
+                                $booking, $customer, $stage, $stageName,
+                                (string)($data['reference_no'] ?? ''), (string)$nextStage
+                            );
+                        }
+                    }
+                } catch (\Throwable $e) {
+                    error_log("[BookingLifecycleController] milestone alert failed (non-blocking): " . $e->getMessage());
+                }
+            }
+
             return ['success' => true];
         } catch (\Exception $e) {
             error_log("[BookingLifecycleController] updateMilestone exception: " . $e->getMessage());

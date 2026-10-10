@@ -1710,6 +1710,17 @@ $router->post('/admin/site-visits/{id}/assign', 'App\\Http\\Controllers\\Admin\\
 $router->post('/admin/site-visits/{id}/outcome', 'App\\Http\\Controllers\\Admin\\SiteVisitController@markOutcome');
 $router->post('/admin/site-visits/{id}/send-pin', 'App\\Http\\Controllers\\Admin\\SiteVisitController@sendPin');
 
+// Sunday Mega Site-Visit Fleet Manager
+$router->get('/admin/site-visits/fleet', 'App\\Http\\Controllers\\Admin\\FleetController@dashboard');
+$router->get('/admin/site-visits/fleet/vehicles', 'App\\Http\\Controllers\\Admin\\FleetController@vehicles');
+$router->post('/admin/site-visits/fleet/vehicles/store', 'App\\Http\\Controllers\\Admin\\FleetController@vehicleStore');
+$router->post('/admin/site-visits/fleet/vehicles/{id}/toggle', 'App\\Http\\Controllers\\Admin\\FleetController@vehicleToggle');
+$router->get('/admin/site-visits/fleet/trips', 'App\\Http\\Controllers\\Admin\\FleetController@trips');
+$router->post('/admin/site-visits/fleet/trips/store', 'App\\Http\\Controllers\\Admin\\FleetController@tripStore');
+$router->post('/admin/site-visits/fleet/trips/{id}/status', 'App\\Http\\Controllers\\Admin\\FleetController@tripStatus');
+$router->post('/admin/site-visits/fleet/trips/{id}/outcome', 'App\\Http\\Controllers\\Admin\\FleetController@tripOutcome');
+$router->post('/admin/site-visits/fleet/trips/{id}/link-visit', 'App\\Http\\Controllers\\Admin\\FleetController@linkVisit');
+
 // Admin Agreements
 $router->get('/admin/agreements', 'App\\Http\\Controllers\\Admin\\AgreementController@index');
 $router->get('/admin/agreements/create', 'App\\Http\\Controllers\\Admin\\AgreementController@create');
@@ -5767,6 +5778,9 @@ $router->get('/admin/construction/colony-progress', 'App\\Http\\Controllers\\Adm
 $router->post('/admin/construction/colony-progress/update', 'App\\Http\\Controllers\\Admin\\ProjectProgressController@updateColonyProgress');
 $router->get('/admin/construction/material-inventory', 'App\\Http\\Controllers\\Admin\\ProjectProgressController@materialInventory');
 $router->post('/admin/construction/material-inventory/log-usage', 'App\\Http\\Controllers\\Admin\\ProjectProgressController@logMaterialUsage');
+$router->get('/admin/construction/civil-work', 'App\\Http\\Controllers\\Admin\\ProjectProgressController@civilWorkLog');
+$router->post('/admin/construction/civil-work/store', 'App\\Http\\Controllers\\Admin\\ProjectProgressController@civilWorkStore');
+$router->get('/admin/construction/colony-cost-profit', 'App\\Http\\Controllers\\Admin\\ProjectProgressController@colonyCostProfit');
 
 
 // Referral Leaderboard (Customer)

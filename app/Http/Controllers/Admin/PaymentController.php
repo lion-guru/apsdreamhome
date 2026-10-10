@@ -740,6 +740,42 @@ class PaymentController extends AdminController
             // Calculate amount in words
             $amountInWords = $this->numberToWords($payment['payment_amount']);
 
+            // Total paid so far on this booking (for balance + UPI QR)
+            $totalPaid = 0.0;
+            $balanceDue = 0.0;
+            try {
+                if (!empty($payment['booking_id'])) {
+                    $sumStmt = $this->db->prepare(
+                        "SELECT COALESCE(SUM(payment_amount), 0) AS paid FROM booking_payments WHERE booking_id = ?"
+                    );
+                    $sumStmt->execute([(int)$payment['booking_id']]);
+                    $totalPaid = (float)($sumStmt->fetch()['paid'] ?? 0);
+                }
+                $balanceDue = max(0, (float)($payment['booking_total'] ?? 0) - $totalPaid);
+            } catch (\Throwable $e) { error_log('printReceipt balance lookup: ' . $e->getMessage()); }
+
+            // Dynamic UPI pay link for the remaining balance (same VPA as customer passbook flow)
+            $upi = null;
+            if ($balanceDue > 0) {
+                $upiVpa = 'apsdreamhome@icici';
+                $txnRef = 'RC' . date('YmdHis') . $paymentId;
+                $upiString = sprintf(
+                    'upi://pay?pa=%s&pn=%s&am=%.2f&cu=INR&tn=%s&tr=%s',
+                    $upiVpa,
+                    'APS Dream Home',
+                    $balanceDue,
+                    'Bal-' . ($payment['booking_number'] ?? $paymentId),
+                    $txnRef
+                );
+                $upi = [
+                    'vpa'       => $upiVpa,
+                    'link'      => $upiString,
+                    'qr_image'  => 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' . urlencode($upiString),
+                    'amount'    => $balanceDue,
+                    'txn_ref'   => $txnRef,
+                ];
+            }
+
             $data = [
                 'page_title' => 'Payment Receipt - APS Dream Home',
                 'active_page' => 'payments',
@@ -748,6 +784,9 @@ class PaymentController extends AdminController
                 'receipt_no' => $receiptNo,
                 'processed_by' => $processedBy,
                 'amount_in_words' => $amountInWords,
+                'total_paid' => $totalPaid,
+                'balance_due' => $balanceDue,
+                'upi' => $upi,
                 'print_mode' => true
             ];
 

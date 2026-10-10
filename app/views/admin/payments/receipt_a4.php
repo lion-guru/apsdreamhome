@@ -190,6 +190,31 @@
             letter-spacing: 0.5px;
             margin-top: 10px;
         }
+
+        /* UPI pay-balance block */
+        .upi-pay-section {
+            border: 2px dashed #198754;
+            border-radius: 10px;
+            padding: 20px 22px;
+            margin-bottom: 25px;
+            background: #f8fff9;
+        }
+        .upi-pay-grid { display: flex; gap: 22px; align-items: center; }
+        .upi-qr-box img { width: 150px; height: 150px; border: 1px solid #dee2e6; background: #fff; padding: 6px; border-radius: 8px; }
+        .upi-pay-title { font-size: 15px; font-weight: 700; color: #146c43; margin-bottom: 6px; }
+        .upi-pay-amount { font-size: 30px; font-weight: 700; color: #146c43; line-height: 1.1; }
+        .upi-pay-meta { font-size: 11px; color: #6c757d; margin: 6px 0 10px; }
+        .upi-app-btn {
+            display: inline-block; margin: 0 8px 6px 0; padding: 7px 14px;
+            background: #146c43; color: #fff !important; border-radius: 20px;
+            font-size: 12px; font-weight: 600; text-decoration: none;
+        }
+        .upi-pay-hint { font-size: 11px; color: #6c757d; font-style: italic; }
+        .upi-paid-full {
+            border: 2px solid #198754; border-radius: 10px; padding: 14px 20px;
+            margin-bottom: 25px; background: #d1e7dd; color: #0f5132;
+            font-weight: 600; text-align: center;
+        }
         
         /* Property Details */
         .property-section {
@@ -367,6 +392,7 @@
             .watermark { display: block !important; }
             body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .amount-section { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .upi-pay-section, .upi-paid-full { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .receipt-title-bar { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .info-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .btn-print { display: none !important; }
@@ -507,6 +533,35 @@
                 <?php echo ucwords(str_replace('_', ' ', $payment['payment_type'] ?? 'booking')); ?> Payment
             </span>
         </div>
+
+        <!-- UPI Pay-Balance Block (scan & pay next installment from this paper) -->
+        <?php if (!empty($upi)): ?>
+        <div class="upi-pay-section">
+            <div class="upi-pay-grid">
+                <div class="upi-qr-box">
+                    <img src="<?php echo htmlspecialchars($upi['qr_image']); ?>" alt="UPI QR — pay balance">
+                </div>
+                <div class="upi-pay-info">
+                    <div class="upi-pay-title"><i class="fas fa-qrcode me-2"></i>Pay Remaining Balance via UPI</div>
+                    <div class="upi-pay-amount">₹<?php echo number_format(floatval($upi['amount']), 2); ?></div>
+                    <div class="upi-pay-meta">
+                        UPI ID: <strong><?php echo htmlspecialchars($upi['vpa']); ?></strong><br>
+                        Ref: <?php echo htmlspecialchars($upi['txn_ref']); ?> · Booking: <?php echo htmlspecialchars($payment['booking_number'] ?? 'N/A'); ?>
+                    </div>
+                    <div class="upi-pay-apps no-print">
+                        <a class="upi-app-btn" href="<?php echo htmlspecialchars('gpay://upi/pay?pa=' . $upi['vpa'] . '&pn=APS%20Dream%20Home&am=' . number_format($upi['amount'], 2, '.', '') . '&cu=INR&tn=' . urlencode('Bal-' . ($payment['booking_number'] ?? ''))); ?>">GPay</a>
+                        <a class="upi-app-btn" href="<?php echo htmlspecialchars('phonepe://pay?pa=' . $upi['vpa'] . '&pn=APS%20Dream%20Home&am=' . number_format($upi['amount'], 2, '.', '') . '&cu=INR&tn=' . urlencode('Bal-' . ($payment['booking_number'] ?? ''))); ?>">PhonePe</a>
+                        <a class="upi-app-btn" href="<?php echo htmlspecialchars($upi['link']); ?>">Paytm / Any UPI</a>
+                    </div>
+                    <div class="upi-pay-hint">Scan with GPay / PhonePe / Paytm — amount &amp; reference pre-filled</div>
+                </div>
+            </div>
+        </div>
+        <?php else: ?>
+        <div class="upi-paid-full">
+            <i class="fas fa-check-circle me-2"></i>Fully Paid — no balance due on this booking. Thank you!
+        </div>
+        <?php endif; ?>
         
         <!-- Property Card Detail (if available) -->
         <?php if (!empty($payment['plot_number']) || !empty($payment['area_sqft'])): ?>

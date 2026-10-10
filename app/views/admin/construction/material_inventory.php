@@ -14,7 +14,7 @@
                 <select name="category" class="form-select">
                     <option value="">-- All Categories --</option>
                     <?php
-                    $categories = ['cement', 'steel', 'sand', 'bricks', 'tiles', 'paint', 'plumbing', 'electrical', 'wood', 'glass', 'other'];
+                    $categories = ['cement', 'steel', 'sand', 'bricks', 'tiles', 'paint', 'plumbing', 'electrical', 'wood', 'glass', 'morang', 'gitti', 'damar', 'soling_stone', 'electric_pole', 'transformer', 'jcb_diesel', 'other'];
                     foreach ($categories as $cat): ?>
                         <option value="<?= $cat ?>" <?= (($active_category ?? '') === $cat) ? 'selected' : '' ?>>
                             <?= htmlspecialchars(ucfirst($cat)) ?>

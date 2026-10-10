@@ -373,4 +373,164 @@ class ProjectProgressController extends AdminController
         }
         $this->redirect('/admin/construction/material-inventory');
     }
+
+    /* =========================================================
+     *  Civil work log (JCB hours, soling, damar, poles …) —
+     *  machine/site work that has no stock to decrement.
+     * ========================================================= */
+
+    public function civilWorkLog()
+    {
+        $this->requireAdmin();
+        $logs = $colonies = [];
+        $totalMonth = 0;
+        try {
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $cStmt = $this->db->prepare("SELECT id, name FROM colonies WHERE 1=1" . $tenantSql . " ORDER BY name ASC");
+            $cStmt->execute($tenantParams);
+            $colonies = $cStmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $lStmt = $this->db->prepare(
+                "SELECT l.*, c.name AS colony_name FROM civil_work_log l
+                 LEFT JOIN colonies c ON c.id = l.colony_id
+                 WHERE 1=1" . $tenantSql . "
+                 ORDER BY l.work_date DESC, l.id DESC LIMIT 100"
+            );
+            $lStmt->execute($tenantParams);
+            $logs = $lStmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $mStmt = $this->db->prepare(
+                "SELECT COALESCE(SUM(amount),0) AS t FROM civil_work_log
+                 WHERE MONTH(work_date) = MONTH(CURDATE()) AND YEAR(work_date) = YEAR(CURDATE())" . $tenantSql
+            );
+            $mStmt->execute($tenantParams);
+            $totalMonth = (float)($mStmt->fetch(\PDO::FETCH_ASSOC)['t'] ?? 0);
+        } catch (\Exception $e) { error_log('ProjectProgressController::civilWorkLog: ' . $e->getMessage()); }
+        return $this->render('admin/construction/civil_work_log', [
+            'page_title' => 'Civil Work Log',
+            'colonies' => $colonies,
+            'logs' => $logs,
+            'total_month' => $totalMonth,
+            'work_types' => $this->civilWorkTypes(),
+        ]);
+    }
+
+    public function civilWorkStore()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+        try {
+            $types = array_keys($this->civilWorkTypes());
+            $type = in_array($_POST['work_type'] ?? '', $types, true) ? $_POST['work_type'] : 'other';
+            $qty = max(0, (float)($_POST['quantity'] ?? 0));
+            $rate = max(0, (float)($_POST['rate'] ?? 0));
+            $amount = $qty * $rate;
+            if ($amount <= 0) {
+                $this->setFlash('error', 'Quantity × rate must be greater than zero.');
+                return $this->redirect('/admin/construction/civil-work');
+            }
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $tid = (int)$this->tenantId();
+            $st = $this->db->prepare(
+                "INSERT INTO civil_work_log (tenant_id, colony_id, work_date, work_type, description, quantity, unit, rate, amount, vendor_name, recorded_by, notes)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+            );
+            $st->execute([
+                $tid,
+                (int)($_POST['colony_id'] ?? 0) ?: null,
+                $_POST['work_date'] ?? date('Y-m-d'),
+                $type,
+                trim((string)($_POST['description'] ?? '')),
+                $qty,
+                trim((string)($_POST['unit'] ?? 'qty')),
+                $rate, $amount,
+                trim((string)($_POST['vendor_name'] ?? '')),
+                $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? null,
+                trim((string)($_POST['notes'] ?? '')),
+            ]);
+            $this->setFlash('success', 'Civil work logged: ₹' . number_format($amount, 0));
+        } catch (\Exception $e) {
+            error_log('ProjectProgressController::civilWorkStore: ' . $e->getMessage());
+            $this->setFlash('error', 'Failed to log civil work.');
+        }
+        return $this->redirect('/admin/construction/civil-work');
+    }
+
+    private function civilWorkTypes(): array
+    {
+        return [
+            'jcb_hours' => 'JCB / Machine Hours', 'road_soling' => 'Road Soling',
+            'morang' => 'Morang', 'gitti' => 'Gitti', 'damar' => 'Damar / Bitumen',
+            'brickwork' => 'Brickwork (Eent)', 'boundary_wall' => 'Boundary Wall',
+            'pillar_demarcation' => 'Pillar Demarcation', 'cement_work' => 'Cement Work',
+            'electric_pole' => 'Electric Poles', 'transformer' => 'Transformer',
+            'drainage' => 'Drainage', 'gate' => 'Gate / Entry', 'other' => 'Other',
+        ];
+    }
+
+    /* =========================================================
+     *  Colony-wise Actual Cost vs Profit
+     * ========================================================= */
+
+    public function colonyCostProfit()
+    {
+        $this->requireAdmin();
+        $rows = [];
+        $grand = ['civil' => 0, 'material' => 0, 'contracted' => 0, 'collected' => 0];
+        try {
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $cStmt = $this->db->prepare("SELECT id, name FROM colonies WHERE 1=1" . $tenantSql . " ORDER BY name ASC");
+            $cStmt->execute($tenantParams);
+            $colonies = $cStmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            foreach ($colonies as $c) {
+                $cid = (int)$c['id'];
+                // Civil machine/site work
+                $cw = $this->db->prepare("SELECT COALESCE(SUM(amount),0) AS t FROM civil_work_log WHERE colony_id = ?" . $tenantSql);
+                $cw->execute(array_merge([$cid], $tenantParams));
+                $civil = (float)($cw->fetch(\PDO::FETCH_ASSOC)['t'] ?? 0);
+                // Material consumed (qty × unit cost at log time → use current unit_cost)
+                $mu = $this->db->prepare(
+                    "SELECT COALESCE(SUM(l.quantity * m.unit_cost),0) AS t
+                     FROM material_usage_log l JOIN material_inventory m ON m.id = l.material_id
+                     WHERE l.colony_id = ? AND l.tenant_id = ?"
+                );
+                $mu->execute([$cid, (int)$this->tenantId()]);
+                $material = (float)($mu->fetch(\PDO::FETCH_ASSOC)['t'] ?? 0);
+                // Contracted revenue: sold + booked plots
+                $rv = $this->db->prepare(
+                    "SELECT COALESCE(SUM(total_price),0) AS t, COUNT(*) AS n FROM plots
+                     WHERE colony_id = ? AND status IN ('sold','booked')" . $tenantSql
+                );
+                $rv->execute(array_merge([$cid], $tenantParams));
+                $rr = $rv->fetch(\PDO::FETCH_ASSOC);
+                $contracted = (float)($rr['t'] ?? 0);
+                $plotsN = (int)($rr['n'] ?? 0);
+                // Collected cash via booking payments on this colony's plots
+                $collected = 0.0;
+                try {
+                    $cl = $this->db->prepare(
+                        "SELECT COALESCE(SUM(bp.payment_amount),0) AS t
+                         FROM booking_payments bp JOIN bookings b ON b.id = bp.booking_id
+                         JOIN plots p ON p.id = b.plot_id
+                         WHERE p.colony_id = ? AND p.tenant_id = ?"
+                    );
+                    $cl->execute([$cid, (int)$this->tenantId()]);
+                    $collected = (float)($cl->fetch(\PDO::FETCH_ASSOC)['t'] ?? 0);
+                } catch (\Throwable $e) { error_log('colonyCostProfit collected: ' . $e->getMessage()); }
+                $cost = $civil + $material;
+                $profit = $contracted - $cost;
+                $margin = $contracted > 0 ? round($profit * 100 / $contracted, 1) : 0;
+                $rows[] = [
+                    'id' => $cid, 'name' => $c['name'], 'civil' => $civil, 'material' => $material,
+                    'cost' => $cost, 'contracted' => $contracted, 'collected' => $collected,
+                    'profit' => $profit, 'margin' => $margin, 'plots' => $plotsN,
+                ];
+                $grand['civil'] += $civil; $grand['material'] += $material;
+                $grand['contracted'] += $contracted; $grand['collected'] += $collected;
+            }
+        } catch (\Exception $e) { error_log('ProjectProgressController::colonyCostProfit: ' . $e->getMessage()); }
+        return $this->render('admin/construction/colony_cost_profit', [
+            'page_title' => 'Colony Cost vs Profit',
+            'rows' => $rows,
+            'grand' => $grand,
+        ]);
+    }
 }

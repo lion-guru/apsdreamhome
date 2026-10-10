@@ -14,15 +14,10 @@ if not exist "%BACKUP_DIR%" (
     mkdir "%BACKUP_DIR%"
 )
 
-for /f "tokens=2 delims==" %%I in ('wmic os get localdatetime /value') do set "dt=%%I"
-set "YYYY=%dt:~0,4%"
-set "MM=%dt:~4,2%"
-set "DD=%dt:~6,2%"
-set "HH=%dt:~8,2%"
-set "MIN=%dt:~10,2%"
-set "SEC=%dt:~12,2%"
+REM Timestamp via PowerShell (wmic is removed on newer Windows builds)
+for /f %%I in ('powershell -NoProfile -Command "Get-Date -Format yyyy-MM-dd_HH-mm-ss"') do set "TIMESTAMP=%%I"
+if "%TIMESTAMP%"=="" set "TIMESTAMP=manual-%RANDOM%"
 
-set "TIMESTAMP=%YYYY%-%MM%-%DD%_%HH%-%MIN%-%SEC%"
 set "DUMP_FILE=%BACKUP_DIR%\%DB_NAME%_%TIMESTAMP%.sql"
 
 echo [%DATE% %TIME%] Starting MySQL dump for %DB_NAME%...

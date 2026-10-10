@@ -337,6 +337,48 @@ class BookingNotificationService
     }
 
     /**
+     * Send Registry Milestone Stage-Completed notification (email + SMS + WhatsApp).
+     * Called when an admin advances any of the 7 registry tracker stages to completed.
+     */
+    public function sendRegistryMilestoneUpdate(array $booking, array $user, int $stageNumber, string $stageName, string $referenceNo = '', string $nextStage = ''): array
+    {
+        $result = ['email' => false, 'sms' => false, 'whatsapp' => false];
+
+        $userName = $user['name'] ?? 'Customer';
+        $bookingNumber = $booking['booking_number'] ?? 'N/A';
+        $plotNo = $booking['plot_number'] ?? $booking['plot_no'] ?? 'N/A';
+        $colonyName = $booking['colony_name'] ?? 'N/A';
+        $refLine = $referenceNo !== '' ? " Ref: {$referenceNo}." : '';
+        $nextLine = $nextStage !== '' ? " Next step: {$nextStage}." : '';
+
+        // Email
+        $subject = "Registry Update (Stage {$stageNumber}/7): {$stageName} — {$bookingNumber}";
+        $html = "<p>Dear " . htmlspecialchars($userName) . ",</p>"
+            . "<p>Good news! Stage <strong>{$stageNumber} of 7</strong> — <strong>" . htmlspecialchars($stageName) . "</strong> — "
+            . "has been completed for your booking <strong>" . htmlspecialchars($bookingNumber) . "</strong> "
+            . "(Plot " . htmlspecialchars($plotNo) . ", " . htmlspecialchars($colonyName) . ").</p>"
+            . ($referenceNo !== '' ? "<p>Reference: <strong>" . htmlspecialchars($referenceNo) . "</strong></p>" : '')
+            . ($nextStage !== '' ? "<p>Next step: " . htmlspecialchars($nextStage) . ".</p>" : '')
+            . "<p>Track full progress any time from your customer portal.<br>— APS Dream Home</p>";
+        $result['email'] = $this->sendEmail($user['email'] ?? '', $subject, $html);
+
+        // SMS
+        $sms = "Dear {$userName}, registry stage {$stageNumber}/7 ({$stageName}) completed for booking {$bookingNumber} (Plot {$plotNo}).{$refLine}{$nextLine} - APS Dream Home";
+        $result['sms'] = $this->sendSms($user['phone'] ?? '', $sms);
+
+        // WhatsApp
+        $wa = "Dear {$userName}, registry update for Plot #{$plotNo} ({$colonyName}): Stage *{$stageNumber}/7 — {$stageName}* is now complete.{$refLine}{$nextLine}";
+        $result['whatsapp'] = $this->sendWhatsapp($user['phone'] ?? '', $wa);
+
+        // Log
+        $this->logCommunication((int)$user['id'], 'registry_milestone', 'email', $result['email'], $subject, $sms);
+        $this->logCommunication((int)$user['id'], 'registry_milestone', 'sms', $result['sms'], 'Registry Milestone SMS', $sms);
+        $this->logCommunication((int)$user['id'], 'registry_milestone', 'whatsapp', $result['whatsapp'], 'Registry Milestone WhatsApp', $wa);
+
+        return $result;
+    }
+
+    /**
      * Get booking communication log with filters
      */
     public function getBookingLog(array $filters = []): array

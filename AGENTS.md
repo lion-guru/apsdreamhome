@@ -1,5 +1,31 @@
 > **COMPLETED (2026-10-06):** Churn-stop verified (snapshots identical), full review done, all work committed + pushed (see Session 171-173 below).
 
+## Session 192: Antigravity-5 Audit + All-Gap Build (Milestone WA, UPI Receipt, Backup Fix, Fleet, Civil) (2026-10-10)
+
+### Trigger
+User shared Antigravity's 5 next-level suggestions (WhatsApp alerts, UPI QR, fleet, civil ledger, nightly backup) + "ye sab kaam dekho ho gya hai ya karna hai". Audited each against the tree before building anything.
+
+### Audit result (verify-first, 2 presumptions corrected)
+- WhatsApp: payment/NOC/registry/demand/visit alerts ALL pre-existing. EMI 3-day pre-due WhatsApp ALSO pre-existing (`EMIAutomationService::sendUpcomingPaymentReminders`, idempotent via `reminder_count`) — initially mis-reported as gap, corrected by reading code. REAL gap: only registry-stepper stage updates (new module) sent nothing.
+- UPI QR: live only in passbook pay-modal (`/customer/pay-emi/upi-qr`); missing on printed receipts/demand letters.
+- Fleet: no module (only free-text `cab_details` + dispatch WA).
+- Civil: material inventory + usage-logging existed BUT `material_usage_log` table never created (whole usage pipeline dead) + category enum lacked road-work values.
+- Backup: `backup_db.bat` existed BUT broken (`wmic` gone → garbage filenames) and `backups/db/` never created = never ran.
+
+### Work (all probe-verified)
+1. **Milestone WhatsApp**: new `BookingNotificationService::sendRegistryMilestoneUpdate()` (email+SMS+WA, logged, stage X/7 + ref + next-stage hint); wired into `updateMilestone` on `completed` only, best-effort (never fails the save). Direct-call probe: correct 3-channel shape, 3 audit rows written + cleaned, 0 spam. NOTE: `customer_communication_log.user_id` has FK to `users(id)` — probe with uid 0 failed SILENTLY (catch-block error_log never appeared in php log); use real uids when debugging this table.
+2. **Receipt UPI block**: `receipt_a4.php` now shows "Pay Remaining Balance via UPI" (dynamic `upi://pay` QR, same `apsdreamhome@icici` VPA as passbook flow, GPay/PhonePe/Paytm buttons) when balance > 0; green "Fully Paid" strip otherwise. Balance computed in `printReceipt`.
+3. **Backup**: fixed timestamp via PowerShell `Get-Date`; 35MB dump verified valid; new `scripts/setup_backup_task.ps1` (nightly 00:00, SYSTEM). Owner action: run setup script as Administrator.
+4. **Fleet Manager** (`/admin/site-visits/fleet` + `/trips` + `/vehicles`, 9 routes): vehicles/drivers, trip scheduling (pickup points, cab+associate, driver auto-snapshot), outcome close, conversion counter + per-associate leaderboard. Tables: `fleet_vehicles`, `fleet_trips`, `fleet_trip_visits`.
+5. **Civil extension**: `civil_work_log` table + log UI (JCB/soling/morang/gitti/damar/poles/transformer…, auto-amount) + `GET /admin/construction/colony-cost-profit` (civil + material vs contracted + collected, margin %, 7 colonies live). Created missing `material_usage_log`; extended `material_category` enum. Civil write-path E2E proven (5h×₹1200=₹6000, row cleaned).
+
+### Verification
+- `php -l` clean everywhere. Master suite **7/7** (incl. 24/24 smoke) on final tree.
+- Temp probes deleted; test leftovers cleaned (civil probe row, comm-log rows, plot A-1 restored in S191).
+
+### Commit hygiene
+- EXCLUDED (stay local): key-switcher ps1/bats (live keys), `check_*.php`/`create_test_user.php`/`debug_tables.php`/`queryex`, `*.png`, `smoke_report.json`.
+
 ## Session 191: Enterprise Suite Cross-Check, Collision Fixes & Map/Hold E2E (2026-10-10)
 
 ### Trigger
