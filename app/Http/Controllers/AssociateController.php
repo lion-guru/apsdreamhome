@@ -376,6 +376,60 @@ class AssociateController extends BaseController
     }
 
     /* ============================================================
+       SUNDAY CONVERSION LEADERBOARD (+ own spot-bonus total)
+       ============================================================ */
+
+    public function leaderboard()
+    {
+        $this->requireAuth();
+        $me = (int)$_SESSION['user_id'];
+        $board = [];
+        $myRank = 0;
+        $mySpotBonus = 0.0;
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $rows = $db->query(
+                "SELECT ft.associate_id, u.name AS associate_name,
+                        COUNT(*) AS trips, COALESCE(SUM(ft.customers_visited),0) AS visited,
+                        COALESCE(SUM(ft.tokens_collected),0) AS tokens
+                 FROM fleet_trips ft LEFT JOIN users u ON u.id = ft.associate_id
+                 WHERE ft.status = 'completed' AND ft.associate_id IS NOT NULL
+                   AND ft.trip_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+                 GROUP BY ft.associate_id ORDER BY tokens DESC, visited DESC LIMIT 50"
+            )->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $rank = 0;
+            foreach ($rows as $r) {
+                $rank++;
+                $visited = (int)$r['visited'];
+                $conv = $visited > 0 ? round(((int)$r['tokens'] * 100) / $visited, 1) : 0;
+                $badge = $rank === 1 ? 'Gold' : ($rank === 2 ? 'Silver' : ($rank === 3 ? 'Bronze' : ''));
+                $board[] = [
+                    'rank' => $rank, 'name' => $r['associate_name'] ?: ('Associate #' . $r['associate_id']),
+                    'trips' => (int)$r['trips'], 'visited' => $visited,
+                    'tokens' => (int)$r['tokens'], 'conv' => $conv, 'badge' => $badge,
+                    'is_me' => ((int)$r['associate_id'] === $me),
+                ];
+                if ((int)$r['associate_id'] === $me) $myRank = $rank;
+            }
+            $sb = $db->prepare(
+                "SELECT COALESCE(SUM(amount),0) AS t FROM wallet_transactions
+                 WHERE user_id = ? AND reference_type = 'spot_booking_bonus' AND status = 'completed'"
+            );
+            $sb->execute([$me]);
+            $mySpotBonus = (float)($sb->fetch(\PDO::FETCH_ASSOC)['t'] ?? 0);
+        } catch (\Throwable $e) {
+            error_log('AssociateController::leaderboard: ' . $e->getMessage());
+        }
+        $this->render('associate/leaderboard', [
+            'page_title' => 'Sunday Conversion Leaderboard',
+            'page_description' => 'Top site-visit converters + your spot bonuses',
+            'board' => $board,
+            'my_rank' => $myRank,
+            'my_spot_bonus' => $mySpotBonus,
+        ], 'layouts/associate');
+    }
+
+    /* ============================================================
        LEGACY METHODS - Kept for backward compatibility
        ============================================================ */
 

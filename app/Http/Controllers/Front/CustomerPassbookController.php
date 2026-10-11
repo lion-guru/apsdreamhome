@@ -1104,17 +1104,24 @@ class CustomerPassbookController extends BaseController
         $userId = (int)$_SESSION['user_id'];
         $tid = (int)$this->tenantId();
 
-        // Fetch allotment documents
-        $allotmentDocuments = $this->db->fetchAll("
+        // Fetch allotment documents (table may not exist on older installs)
+        try {
+            $allotmentDocuments = $this->db->fetchAll("
             SELECT ad.*, c.name as colony_name
             FROM allotment_documents ad
             LEFT JOIN colonies c ON ad.colony_id = c.id
             WHERE ad.user_id = ? AND ad.tenant_id = ?
             ORDER BY ad.created_at DESC
         ", [$userId, $tid]);
+        } catch (\Throwable $e) {
+            error_log('CustomerPassbookController::documents allotments: ' . $e->getMessage());
+            $allotmentDocuments = [];
+        }
 
-        // Fetch payment passbooks (booking payments with receipts)
-        $passbookDocuments = $this->db->fetchAll("
+        // Fetch payment passbooks (booking_payments has no customer_id/payment_status
+        // columns — resolve the customer through plot_bookings; every recorded row counts)
+        try {
+            $passbookDocuments = $this->db->fetchAll("
             SELECT bp.*, b.booking_number, p.plot_number, c.name as colony_name,
                    bp.payment_amount as amount, bp.payment_date as created_at,
                    'Payment Passbook' as title
@@ -1122,12 +1129,17 @@ class CustomerPassbookController extends BaseController
             JOIN plot_bookings b ON bp.booking_id = b.id
             LEFT JOIN plots p ON b.plot_id = p.id
             LEFT JOIN colonies c ON p.colony_id = c.id
-            WHERE bp.customer_id = ? AND bp.tenant_id = ? AND bp.payment_status = 'completed'
+            WHERE b.customer_id = ? AND bp.tenant_id = ?
             ORDER BY bp.payment_date DESC
         ", [$userId, $tid]);
+        } catch (\Throwable $e) {
+            error_log('CustomerPassbookController::documents passbooks: ' . $e->getMessage());
+            $passbookDocuments = [];
+        }
 
         // Fetch agreement documents
-        $agreementDocuments = $this->db->fetchAll("
+        try {
+            $agreementDocuments = $this->db->fetchAll("
             SELECT ad.*, b.booking_number, p.plot_number, c.name as colony_name
             FROM agreement_documents ad
             LEFT JOIN plot_bookings b ON ad.booking_id = b.id
@@ -1136,6 +1148,26 @@ class CustomerPassbookController extends BaseController
             WHERE ad.customer_id = ? AND ad.tenant_id = ?
             ORDER BY ad.created_at DESC
         ", [$userId, $tid]);
+        } catch (\Throwable $e) {
+            error_log('CustomerPassbookController::documents agreements: ' . $e->getMessage());
+            $agreementDocuments = [];
+        }
+
+        // Fetch title certificates for the customer's booked plots
+        try {
+            $titleCertificates = $this->db->fetchAll("
+                SELECT tc.*, p.plot_number, c.name as colony_name, b.booking_number
+                FROM title_certificates tc
+                LEFT JOIN plots p ON p.id = tc.plot_id
+                LEFT JOIN colonies c ON c.id = tc.colony_id
+                LEFT JOIN plot_bookings b ON b.id = tc.booking_id
+                WHERE (tc.customer_id = ? OR b.customer_id = ?) AND tc.tenant_id = ?
+                ORDER BY tc.created_at DESC
+            ", [$userId, $userId, $tid]);
+        } catch (\Throwable $e) {
+            error_log('CustomerPassbookController::documents title certs: ' . $e->getMessage());
+            $titleCertificates = [];
+        }
 
         $this->layout = 'layouts/customer';
         $this->render('customer/documents', [
@@ -1143,6 +1175,95 @@ class CustomerPassbookController extends BaseController
             'allotmentDocuments' => $allotmentDocuments,
             'passbookDocuments' => $passbookDocuments,
             'agreementDocuments' => $agreementDocuments,
+            'titleCertificates' => $titleCertificates,
         ]);
+    }
+
+    /**
+     * Customer Colony Development Feed — live milestone progress bars +
+     * site photos for the colonies the customer has booked in.
+     * GET /customer/colony-progress
+     */
+    public function colonyProgress(): void
+    {
+        $this->requireCustomer();
+        $userId = (int)$_SESSION['user_id'];
+        $tid = (int)$this->tenantId();
+
+        $colonies = [];
+        try {
+            $tCond = $tid > 1 ? " AND m.tenant_id = {$tid}" : '';
+            $bCond = $tid > 1 ? " AND b.tenant_id = {$tid}" : '';
+            $colonies = $this->db->fetchAll("
+                SELECT DISTINCT c.id, c.name, c.location, d.name AS district_name,
+                    (SELECT COUNT(*) FROM colony_milestones m WHERE m.colony_id = c.id{$tCond}) AS total_milestones,
+                    (SELECT COUNT(*) FROM colony_milestones m WHERE m.colony_id = c.id AND m.status = 'completed'{$tCond}) AS done_milestones,
+                    (SELECT COALESCE(AVG(m.progress_pct),0) FROM colony_milestones m WHERE m.colony_id = c.id{$tCond}) AS avg_progress
+                FROM plot_bookings b
+                JOIN plots p ON p.id = b.plot_id
+                JOIN colonies c ON c.id = p.colony_id
+                LEFT JOIN districts d ON d.id = c.district_id
+                WHERE b.customer_id = ?{$bCond}
+                ORDER BY c.name
+            ", [$userId]);
+            foreach ($colonies as &$c) {
+                $cid = (int)$c['id'];
+                try {
+                    $ms = $this->db->fetchAll("
+                        SELECT category, milestone_name, status, progress_pct, site_photo_path, updated_at
+                        FROM colony_milestones WHERE colony_id = ?" . ($tid > 1 ? " AND tenant_id = {$tid}" : "") . "
+                        ORDER BY category ASC, updated_at DESC
+                    ", [$cid]);
+                } catch (\Throwable $e) { $ms = []; }
+                $c['milestones'] = $ms ?: [];
+                $photos = [];
+                foreach ($c['milestones'] as $m) {
+                    if (!empty($m['site_photo_path'])) $photos[] = $m;
+                }
+                $c['photos'] = array_slice($photos, 0, 12);
+            }
+            unset($c);
+        } catch (\Throwable $e) {
+            error_log('CustomerPassbookController::colonyProgress: ' . $e->getMessage());
+            $colonies = [];
+        }
+
+        $this->layout = 'layouts/customer';
+        $this->render('customer/colony_progress', [
+            'page_title' => 'Colony Development Feed - APS Dream Home',
+            'colonies' => $colonies,
+        ]);
+    }
+
+    public function downloadTitleCertificate(int $id): void
+    {        $this->requireCustomer();
+        $userId = (int)$_SESSION['user_id'];
+
+        $doc = $this->db->fetchOne("
+            SELECT tc.*, p.plot_number, c.name as colony_name
+            FROM title_certificates tc
+            LEFT JOIN plot_bookings b ON b.id = tc.booking_id
+            LEFT JOIN plots p ON p.id = tc.plot_id
+            LEFT JOIN colonies c ON c.id = tc.colony_id
+            WHERE tc.id = ? AND (tc.customer_id = ? OR b.customer_id = ?) AND tc.tenant_id = ?
+        ", [$id, $userId, $userId, (int)$this->tenantId()]);
+
+        if (!$doc) {
+            http_response_code(404);
+            echo 'Document not found';
+            return;
+        }
+
+        $filePath = $doc['file_path'] ?? '';
+        if ($filePath && file_exists($filePath)) {
+            while (ob_get_level() > 0) ob_end_clean();
+            header('Content-Type: application/pdf');
+            header('Content-Disposition: inline; filename="' . basename($filePath) . '"');
+            readfile($filePath);
+            return;
+        }
+
+        http_response_code(404);
+        echo 'Document file missing. Please contact support.';
     }
 }

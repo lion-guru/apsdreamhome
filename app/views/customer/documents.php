@@ -197,6 +197,57 @@ $base = BASE_URL ?? '';
                     <?php endif; ?>
                 </div>
             </div>
+
+            <!-- Title Search Certificates (bank-loan ready) -->
+            <div class="col-12 mt-4">
+                <h5 class="fw-bold mb-3 d-flex align-items-center">
+                    <i class="fas fa-shield-halved text-success me-2"></i> Title Search Certificates
+                    <small class="text-muted fw-normal ms-2">— attach straight into your bank loan file</small>
+                </h5>
+                <div class="row g-3">
+                    <?php $titleCertificates = $titleCertificates ?? []; ?>
+                    <?php if (empty($titleCertificates)): ?>
+                        <div class="col-12">
+                            <div class="card border-0 bg-light">
+                                <div class="card-body text-center py-5">
+                                    <i class="fas fa-shield-halved fa-3x text-muted mb-3"></i>
+                                    <h6 class="text-muted">No Title Certificates Yet</h6>
+                                    <p class="text-muted small">Issued after legal verification of your plot — check back soon.</p>
+                                </div>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($titleCertificates as $doc): ?>
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card document-card h-100 border-0 shadow-sm">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-start justify-content-between mb-3">
+                                            <div class="document-icon bg-success bg-opacity-10 text-success">
+                                                <i class="fas fa-shield-halved"></i>
+                                            </div>
+                                            <span class="doc-type-badge" style="background:#dcfce7;color:#166534">Title Certificate</span>
+                                        </div>
+                                        <h6 class="fw-semibold mb-1"><?= htmlspecialchars($doc['cert_no'] ?? 'Title Certificate') ?></h6>
+                                        <p class="text-muted small mb-2">
+                                            <i class="fas fa-map-pin me-1"></i>
+                                            Plot <?= htmlspecialchars($doc['plot_number'] ?? '') ?> · <?= htmlspecialchars($doc['colony_name'] ?? '') ?>
+                                        </p>
+                                        <p class="text-muted small mb-3">
+                                            <i class="fas fa-calendar me-1"></i>
+                                            <?= !empty($doc['created_at']) ? date('d M Y', strtotime($doc['created_at'])) : '' ?>
+                                        </p>
+                                        <div class="mt-auto document-actions">
+                                            <a href="<?= BASE_URL ?>/customer/documents/download/title-certificate/<?= $doc['id'] ?>" class="btn btn-sm btn-success w-100" target="_blank">
+                                                <i class="fas fa-download me-1"></i> Download Certificate
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
         </div>
     </div>
 </div>

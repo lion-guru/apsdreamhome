@@ -1917,8 +1917,7 @@ class PlotManagementController extends AdminController
     /**
      * Release a 24-hour hold back to available.
      * POST /admin/plots/{id}/release-hold
-     */
-    public function releaseHold($id)
+     */    public function releaseHold($id)
     {
         $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -1956,5 +1955,98 @@ class PlotManagementController extends AdminController
             $this->setFlash('error', 'Failed to release hold: ' . $e->getMessage());
         }
         return $this->redirect('/admin/plots/map');
+    }
+
+    /**
+     * Public hold-request inbox (from /colony/{id}/live-layout).
+     * GET /admin/plots/hold-requests
+     */
+    public function holdRequests()
+    {
+        $this->requireAdmin();
+        try {
+            $rows = $this->db->fetchAll(
+                "SELECT r.*, p.plot_number, p.status AS plot_status, c.name AS colony_name
+                 FROM plot_hold_requests r
+                 LEFT JOIN plots p ON p.id = r.plot_id
+                 LEFT JOIN colonies c ON c.id = r.colony_id
+                 ORDER BY CASE r.status WHEN 'pending' THEN 0 ELSE 1 END, r.id DESC LIMIT 200"
+            ) ?: [];
+            $pending = 0;
+            foreach ($rows as $r) { if (($r['status'] ?? '') === 'pending') $pending++; }
+        } catch (\Exception $e) {
+            $this->loggingService->error('Hold requests error: ' . $e->getMessage());
+            $rows = []; $pending = 0;
+        }
+        return $this->render('admin/plots/hold_requests', [
+            'requests' => $rows,
+            'pending_count' => $pending,
+            'page_title' => 'Plot Hold Requests'
+        ]);
+    }
+
+    /**
+     * Approve a hold request → converts into a real 24h hold.
+     * POST /admin/plots/hold-requests/{id}/approve
+     */
+    public function approveHoldRequest($id)
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+        $id = (int)$id;
+        try {
+            $tid = (int)$this->tenantId();
+            $me = $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? 1;
+            $req = $this->db->fetchOne("SELECT * FROM plot_hold_requests WHERE id = ?", [$id]);
+            if (!$req || ($req['status'] ?? '') !== 'pending') {
+                $this->setFlash('error', 'Request not found or already decided.');
+                return $this->redirect('/admin/plots/hold-requests');
+            }
+            $plot = $this->db->fetchOne("SELECT id, status, plot_number FROM plots WHERE id = ? AND tenant_id = ?", [(int)$req['plot_id'], $tid]);
+            if (!$plot || ($plot['status'] ?? '') !== 'available') {
+                $this->db->execute("UPDATE plot_hold_requests SET status = 'rejected', admin_note = 'Plot no longer available', decided_by = ?, decided_at = NOW() WHERE id = ?", [$me, $id]);
+                $this->setFlash('error', 'Plot is no longer available — request auto-rejected.');
+                return $this->redirect('/admin/plots/hold-requests');
+            }
+            $this->db->execute(
+                "UPDATE plots SET status = 'hold', held_by = ?, held_at = NOW(), hold_expires_at = DATE_ADD(NOW(), INTERVAL 24 HOUR) WHERE id = ? AND tenant_id = ?",
+                [$me, (int)$req['plot_id'], $tid]
+            );
+            $this->db->execute("UPDATE plot_hold_requests SET status = 'approved', decided_by = ?, decided_at = NOW() WHERE id = ?", [$me, $id]);
+            try {
+                $this->db->insert('plot_status_log', [
+                    'plot_id' => (int)$req['plot_id'], 'old_status' => 'available', 'new_status' => 'hold',
+                    'changed_by' => $me, 'created_at' => date('Y-m-d H:i:s'),
+                ]);
+            } catch (\Exception $e) { error_log('approveHoldRequest log: ' . $e->getMessage()); }
+            $this->loggingService->logUserActivity($me, 'hold_request_approved', ['request_id' => $id, 'plot_id' => (int)$req['plot_id']]);
+            $this->setFlash('success', 'Hold approved — plot locked for 24 hours.');
+        } catch (\Exception $e) {
+            $this->loggingService->error('Approve hold request error: ' . $e->getMessage());
+            $this->setFlash('error', 'Approval failed.');
+        }
+        return $this->redirect('/admin/plots/hold-requests');
+    }
+
+    /**
+     * Reject a hold request.
+     * POST /admin/plots/hold-requests/{id}/reject
+     */
+    public function rejectHoldRequest($id)
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+        $id = (int)$id;
+        try {
+            $me = $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? 1;
+            $this->db->execute(
+                "UPDATE plot_hold_requests SET status = 'rejected', admin_note = ?, decided_by = ?, decided_at = NOW() WHERE id = ? AND status = 'pending'",
+                [trim((string)($_POST['admin_note'] ?? '')), $me, $id]
+            );
+            $this->setFlash('success', 'Hold request rejected.');
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Rejection failed.');
+        }
+        return $this->redirect('/admin/plots/hold-requests');
     }
 }

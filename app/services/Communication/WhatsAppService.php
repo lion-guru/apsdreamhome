@@ -347,7 +347,153 @@ class WhatsAppService
         // Store message in database
         $this->storeMessage($processed);
 
+        // 2-way smart menu bot (best-effort; never breaks inbound logging)
+        try {
+            if (in_array($type, ['text', 'interactive'], true)) {
+                $inbound = $type === 'interactive'
+                    ? ($message['interactive']['button_reply']['id'] ?? $message['interactive']['button_reply']['title'] ?? '')
+                    : ($message['text']['body'] ?? '');
+                if (trim((string)$inbound) !== '') {
+                    $reply = $this->autoReply($from, (string)$inbound);
+                    $processed['auto_reply'] = $reply;
+                }
+            }
+        } catch (\Throwable $e) {
+            error_log('[WhatsAppService] autoReply failed: ' . $e->getMessage());
+        }
+
         return $processed;
+    }
+
+    /**
+     * 2-way inbound smart menu bot.
+     *
+     * Stateless keyword menu (no session state to corrupt):
+     *  1/plot  → townships + rates + live map link
+     *  2/visit → Sunday cab visit info + creates a CRM lead
+     *  3/emi   → passbook/booking self-service link
+     *  4/join  → associate onboarding link + earning pitch
+     *  hi/menu → main menu. Anything else → menu + hint.
+     *
+     * Returns ['replied'=>bool, 'intent'=>string]. Sends nothing when the
+     * provider is unconfigured (dev/staging safe).
+     */
+    public function autoReply(string $from, string $text): array
+    {
+        $digits = preg_replace('/[^0-9]/', '', $from);
+        $t = mb_strtolower(trim($text));
+        $intent = 'menu';
+        if (preg_match('/\b(2|visit|cab|site|sunday|tour|dekhna|pickup)\b/u', $t)) {
+            $intent = 'site_visit';
+        } elseif (preg_match('/\b(3|emi|book|payment|passbook|receipt|due|kist)\b/u', $t)) {
+            $intent = 'passbook';
+        } elseif (preg_match('/\b(4|join|associate|agent|earn|job|kamana|commission)\b/u', $t)) {
+            $intent = 'join';
+        } elseif (preg_match('/\b(1|plot|township|colony|rate|price|flat|villa|land|jameen)\b/u', $t)) {
+            $intent = 'plots';
+        } elseif (preg_match('/\b(hi|hii+|hello|hey|namaste|namaskar|ram ram|start|menu|help)\b/u', $t)) {
+            $intent = 'menu';
+        }
+
+        $base = defined('BASE_URL') ? BASE_URL : '';
+        $reply = '';
+        switch ($intent) {
+            case 'plots':
+                $reply = "*APS Dream Home — New Townships*\n" . $this->townshipLines()
+                    . "\nTap a live layout to see vacant plots in green:\n{$base}/properties\n"
+                    . "Reply 2 for a FREE Sunday cab site visit.";
+                break;
+            case 'site_visit':
+                $this->createInboundLead($digits, $t, 'site_visit');
+                $reply = "*FREE Sunday Site Visit booked (request noted)!*\n"
+                    . "Pickup points: Railway Station, Golghar, Medical Road.\n"
+                    . "Our team will call you to confirm cab + time.\n"
+                    . "Meanwhile see live layouts: {$base}/properties";
+                break;
+            case 'passbook':
+                $reply = "*Booking & EMI Passbook*\nCheck dues, receipts & pay online here:\n"
+                    . "{$base}/login\n"
+                    . "For help call our support. Reply 1 for new townships.";
+                break;
+            case 'join':
+                $this->createInboundLead($digits, $t, 'associate_join');
+                $reply = "*Become an Associate & earn up to Rs.50,000/month!*\n"
+                    . "Zero joining fee. Free training + Sunday site-visit leads.\n"
+                    . "Register free: {$base}/register\n"
+                    . "Our team will call you with details.";
+                break;
+            case 'menu':
+            default:
+                $reply = "*Namaste! APS Dream Home* at your service. Reply a number:\n"
+                    . "1 - New Townships & Rates\n"
+                    . "2 - FREE Sunday Cab Site Visit\n"
+                    . "3 - My Booking & EMI Passbook\n"
+                    . "4 - Become Associate (earn Rs.50,000/mo)";
+                break;
+        }
+
+        $sent = false;
+        try {
+            $res = $this->sendTextMessage($from, $reply);
+            $sent = (bool)($res['success'] ?? false);
+        } catch (\Throwable $e) {
+            error_log('[WhatsAppService] autoReply send failed: ' . $e->getMessage());
+        }
+        return ['replied' => $sent, 'intent' => $intent];
+    }
+
+    /**
+     * Top 3 active colonies as menu lines (name + rate + live map link).
+     */
+    private function townshipLines(): string
+    {
+        try {
+            $db = Database::getInstance()->getConnection();
+            $rows = $db->query(
+                "SELECT name, min_price_per_sqft, starting_price, available_plots
+                 FROM colonies WHERE is_active = 1 ORDER BY available_plots DESC LIMIT 3"
+            )->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            if (!$rows) return "Premium townships in Gorakhpur — ask us for today's rates.\n";
+            $out = '';
+            $n = 0;
+            foreach ($rows as $r) {
+                $n++;
+                $rate = 0.0;
+                foreach ([(float)($r['min_price_per_sqft'] ?? 0), (float)($r['starting_price'] ?? 0)] as $cand) {
+                    if ($cand >= 100 && $cand < 100000) { $rate = $cand; break; }
+                }
+                $out .= "{$n}. " . ($r['name'] ?? 'Township')
+                    . ($rate > 0 ? ' — Rs.' . number_format($rate) . '/sqft' : '')
+                    . ' (' . (int)($r['available_plots'] ?? 0) . " plots)\n";
+            }
+            return $out;
+        } catch (\Throwable $e) {
+            return "Premium townships in Gorakhpur — ask us for today's rates.\n";
+        }
+    }
+
+    /**
+     * CRM lead for a new inbound sender (idempotent 30d per number).
+     */
+    private function createInboundLead(string $digits, string $text, string $interest): void
+    {
+        try {
+            if (strlen($digits) < 10) return;
+            $db = Database::getInstance()->getConnection();
+            $chk = $db->prepare(
+                "SELECT id FROM leads WHERE (phone LIKE ? OR whatsapp_number LIKE ?) AND created_at > DATE_SUB(NOW(), INTERVAL 30 DAY) LIMIT 1"
+            );
+            $like = '%' . substr($digits, -10);
+            $chk->execute([$like, $like]);
+            if ($chk->fetchColumn()) return;
+            $ins = $db->prepare(
+                "INSERT INTO leads (name, phone, whatsapp_number, source, property_interest, status, notes, created_at)
+                 VALUES ('WhatsApp User', ?, ?, 'whatsapp', ?, 'new', ?, NOW())"
+            );
+            $ins->execute([$digits, $digits, $interest, mb_substr($text, 0, 500)]);
+        } catch (\Throwable $e) {
+            error_log('[WhatsAppService] inbound lead failed: ' . $e->getMessage());
+        }
     }
 
     /**

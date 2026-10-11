@@ -1024,4 +1024,53 @@ class LegalDocumentController extends AdminController
         }
         $this->redirect($_SERVER['HTTP_REFERER'] ?? '/admin/legal/documents');
     }
+
+    // ── TITLE SEARCH & LINK-CHAIN CERTIFICATE ────────────────────
+
+    /**
+     * Generate + stream the 30-year style title certificate for a plot,
+     * and record it so the customer's locker can offer 1-click download.
+     * GET /admin/legal/title-certificate/{plot_id}
+     */
+    public function titleCertificate($plotId)
+    {
+        $this->requireAdmin();
+        $plotId = (int)$plotId;
+        if ($plotId <= 0) {
+            $this->setFlash('error', 'Invalid plot.');
+            return $this->redirect('/admin/plots');
+        }
+        try {
+            $db = $this->getDb();
+            $svc = new \App\Services\PDF\AgreementPDFService($db instanceof \PDO ? $db : null);
+            $res = $svc->generateTitleCertificate($plotId);
+            if (empty($res['success'])) {
+                $this->setFlash('error', 'Certificate failed: ' . ($res['error'] ?? 'unknown'));
+                return $this->redirect('/admin/plots/' . $plotId);
+            }
+            $tid = (int)$this->tenantId();
+            $plot = $db->fetchOne("SELECT colony_id FROM plots WHERE id = ?", [$plotId]);
+            $ins = $db->prepare(
+                "INSERT INTO title_certificates (tenant_id, plot_id, colony_id, booking_id, customer_id, cert_no, file_path, generated_by)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+            );
+            $ins->execute([
+                $tid, $plotId, $plot['colony_id'] ?? null,
+                $res['booking_id'] ?? null, $res['customer_id'] ?? null,
+                $res['cert_no'] ?? null, $res['pdf_path'] ?? null,
+                $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? null,
+            ]);
+            $this->setFlash('success', 'Title certificate ' . ($res['cert_no'] ?? '') . ' generated.');
+            while (ob_get_level() > 0) ob_end_clean();
+            header('Content-Type: application/pdf');
+            header('Content-Disposition: inline; filename="' . basename($res['pdf_path']) . '"');
+            header('Content-Length: ' . filesize($res['pdf_path']));
+            readfile($res['pdf_path']);
+            exit;
+        } catch (\Exception $e) {
+            error_log('LegalDocumentController::titleCertificate: ' . $e->getMessage());
+            $this->setFlash('error', 'Certificate failed.');
+            return $this->redirect('/admin/plots/' . $plotId);
+        }
+    }
 }

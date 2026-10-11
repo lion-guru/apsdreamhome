@@ -223,6 +223,20 @@ class BookingLifecycleService
                 error_log('[BookingLifecycleService] signup rewards hook failed: ' . $e->getMessage());
             }
 
+            // Sunday spot-booking bonus: token within 48h of a completed site
+            // visit driven by the booking associate. Best-effort, idempotent.
+            try {
+                $spotSvc = new \App\Services\SpotBonusService();
+                $spotSvc->maybeAwardSpotBonus(
+                    $bookingId,
+                    (int)$customerId,
+                    !empty($data['associate_id']) ? (int)$data['associate_id'] : 0,
+                    $bookingNumber
+                );
+            } catch (\Throwable $e) {
+                error_log('[BookingLifecycleService] spot bonus hook failed: ' . $e->getMessage());
+            }
+
             // HR onboarding trigger: if associate is 'salaried' but has no salary structure, auto-create default
             try {
                 if (!empty($data['associate_id'])) {

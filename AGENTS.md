@@ -1,5 +1,24 @@
 > **COMPLETED (2026-10-06):** Churn-stop verified (snapshots identical), full review done, all work committed + pushed (see Session 171-173 below).
 
+## Session 193: Antigravity-5 Round-2 Build (Live-Layout Holds, Poster Studio, Spot Bonus, Title Cert, WA Menu Bot) (2026-10-10)
+
+### Trigger
+User pasted Antigravity's second 5-suggestion set + "do next". Audited all 5 first: 2 claims corrected (EMI pre-due WA + demand pay-links pre-existing; `/api/whatsapp/webhook` only parses+stores, no bot; public map had no ref/hold-request).
+
+### Work (all probe-verified, all leftovers cleaned)
+1. **Live layout link** (`GET /colony/{id}/live-layout?ref=`, `POST /colony/hold-request`, admin inbox + approve/reject): ref banner via intact `aps_ref` net, hold modal, 409 anti-dupe, approve→real 24h hold. E2E on plot 521: request→approved/hold→released/available, rows cleaned. New table `plot_hold_requests`.
+2. **Poster studio** (`/associate/marketing/posters`, GD 1080×1350, 3 themes, QR stamp, WA share, 24h file cache): real PNG visually inspected. Fixed (a) stray `\n` byte from output buffer killing PNG validity (`ob_end_clean` + Content-Length), (b) misleading ₹17 rate from mixed per-sqft/lump-sum semantics (100–100000 range guard → ₹1,400).
+3. **Spot bonus + leaderboard**: new `SpotBonusService` (48h completed-visit match, flat ₹5,000 via atomic fail-closed `WalletService::credit`, idempotent per booking), hooked best-effort into `createBooking`; `/associate/leaderboard` (Gold/Silver/Bronze, own rank + bonus total). Proven without moving money (negative path + match-SQL + idempotency halves, test visit cleaned).
+4. **Title certificate** (`GET /admin/legal/title-certificate/{plot_id}`): TCPDF via existing helpers, chain compiled honestly from live land tables (never invents; "under compilation" fallback), recorded in new `title_certificates` table, 4th locker section + customer download route. Real `%PDF-` generated, row + file cleaned. Fixed own brace-mismatch in LegalDocumentController (diff verified +49/−0).
+5. **WA menu bot**: `WhatsAppService::autoReply()` (stateless Hi/Plot/Visit/EMI/Join intents, townships from live colonies, CRM lead create 30d-idempotent) hooked best-effort into `processIncomingMessage`. 6/6 intents correct, lead created + cleaned, graceful when provider unconfigured.
+
+### Verification
+- `php -l` clean everywhere. Master suite **7/7** (incl. 24/24 smoke) on final tree.
+- NOTE: associate test sessions come from `/admin/login?test_login=5` (not `/associate/login`, which ignores the param); PHP-curl POST flakes code 0 — use `curl.exe`.
+
+### Commit hygiene (for next commit round)
+- EXCLUDE (stay local): `storage/app/` (poster/PDF render cache), key-switcher ps1/bats (live keys), `check_*.php`/`create_test_user.php`/`debug_tables.php`/`queryex`, `*.png`, `smoke_report.json`.
+
 ## Session 192: Antigravity-5 Audit + All-Gap Build (Milestone WA, UPI Receipt, Backup Fix, Fleet, Civil) (2026-10-10)
 
 ### Trigger

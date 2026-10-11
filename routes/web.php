@@ -328,6 +328,8 @@ $router->get('/booking/{id}/receipt', 'Front\\PlotBookingController@receipt');
 $router->get('/colony/{slug}/plots', 'Front\\PlotIndexController@colonyPlots');
 $router->get('/colony/{slug}/map', 'App\\Http\\Controllers\\MapController@colonyPlotMap');
 $router->get('/api/colony/{id}/map/geojson', 'App\\Http\\Controllers\\MapController@colonyGeoJson');
+$router->get('/colony/{id}/live-layout', 'App\\Http\\Controllers\\MapController@liveLayout');
+$router->post('/colony/hold-request', 'App\\Http\\Controllers\\MapController@holdRequest');
 $router->get('/colony/raghunath-nagri/block-c-dashboard', 'Front\\ColonyDashboardController@raghunathBlockC');
 $router->post('/api/colony/raghunath-nagri/sync-booking', 'Front\\ColonyDashboardController@syncBookingFromFirebase');
 $router->get('/api/colony/raghunath-nagri/bookings', 'Front\\ColonyDashboardController@getBlockCBookings');
@@ -852,6 +854,14 @@ $router->get('/customer/documents',        'App\\Http\\Controllers\\Front\\Custo
 $router->get('/customer/documents/download/allotment/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadAllotment');
 $router->get('/customer/documents/download/passbook/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadPassbook');
 $router->get('/customer/documents/download/agreement/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadAgreement');
+$router->get('/customer/documents/download/title-certificate/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadTitleCertificate');
+$router->get('/customer/documents/download/title-certificate/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadTitleCertificate');
+$router->get('/customer/allotment/{id}/accept', 'App\\Http\\Controllers\\Front\\AllotmentAcceptanceController@show');
+$router->post('/customer/allotment/{id}/send-otp', 'App\\Http\\Controllers\\Front\\AllotmentAcceptanceController@sendOtp');
+$router->post('/customer/allotment/{id}/accept', 'App\\Http\\Controllers\\Front\\AllotmentAcceptanceController@accept');
+$router->get('/customer/foreclosure', 'App\\Http\\Controllers\\Front\\ForeclosureController@preview');
+$router->post('/customer/foreclosure/process', 'App\\Http\\Controllers\\Front\\ForeclosureController@process');
+$router->post('/customer/foreclosure/upi-qr', 'App\\Http\\Controllers\\Front\\ForeclosureController@upiQr');
 $router->get('/customer/site-visits',      'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
 $router->get('/customer/support',          'Front\\UserController@myTickets');
 $router->get('/customer/tickets',          'Front\\UserController@myTickets');
@@ -861,6 +871,8 @@ $router->get('/associate/bookings',            'App\\Http\\Controllers\\Associat
 $router->get('/associate/marketing-materials', function() { header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/associate/share'); exit; });
 $router->get('/associate/id-card',             
 'App\\Http\\Controllers\\Associate\\ProfileController@idCard');
+$router->get('/associate/marketing/posters', 'App\\Http\\Controllers\\Associate\\PosterController@index');
+$router->get('/associate/marketing/posters/image', 'App\\Http\\Controllers\\Associate\\PosterController@image');
 
 $router->post('/property/inquire', 'Front\\PropertyController@propertyInquiry');
 $router->get('/property/inquire', 'Front\\PropertyController@propertyInquiry');
@@ -1152,6 +1164,9 @@ $router->get('/associate/emi-tracker', 'App\\Http\\Controllers\\AssociateControl
 $router->get('/associate/payment-history', 'App\\Http\\Controllers\\AssociateController@paymentHistory');
 $router->get('/associate/booking/{id}/receipt', 'App\\Http\\Controllers\\AssociateController@bookingReceipt');
 $router->get('/associate/rank-eligibility', 'App\\Http\\Controllers\\AssociateController@rankEligibility');
+$router->get('/associate/leaderboard', 'App\\Http\\Controllers\\AssociateController@leaderboard');
+$router->get('/associate/tds-slips', 'App\\Http\\Controllers\\Associate\\TdsController@slips');
+$router->get('/associate/tds-slips/certificate', 'App\\Http\\Controllers\\Associate\\TdsController@certificate');
 $router->get('/associate/book-plot', 'App\\Http\\Controllers\\AssociateController@bookPlot');
 $router->post('/associate/book-plot/submit', 'App\\Http\\Controllers\\AssociateController@bookPlot');
 $router->get('/associate/tools', 'App\\Http\\Controllers\\AssociateController@tools');
@@ -1785,6 +1800,9 @@ $router->post('/admin/plots/{id}/destroy', 'App\\Http\\Controllers\\Admin\\PlotM
 $router->post('/admin/plots/{id}/update-status', 'App\\Http\\Controllers\\Admin\\PlotManagementController@updateStatus');
 $router->post('/admin/plots/{id}/hold', 'App\\Http\\Controllers\\Admin\\PlotManagementController@holdPlot');
 $router->post('/admin/plots/{id}/release-hold', 'App\\Http\\Controllers\\Admin\\PlotManagementController@releaseHold');
+$router->get('/admin/plots/hold-requests', 'App\\Http\\Controllers\\Admin\\PlotManagementController@holdRequests');
+$router->post('/admin/plots/hold-requests/{id}/approve', 'App\\Http\\Controllers\\Admin\\PlotManagementController@approveHoldRequest');
+$router->post('/admin/plots/hold-requests/{id}/reject', 'App\\Http\\Controllers\\Admin\\PlotManagementController@rejectHoldRequest');
 $router->get('/admin/plots/{id}/book', 'App\\Http\\Controllers\\Admin\\PlotManagementController@book');
 $router->post('/admin/plots/{id}/book', 'App\\Http\\Controllers\\Admin\\PlotManagementController@storeBooking');
 $router->get('/admin/plots/{id}/transfer', 'App\\Http\\Controllers\\Admin\\PlotManagementController@transfer');
@@ -5521,6 +5539,7 @@ $router->post('/admin/legal/documents/{id}/mark-online',            'App\\Http\\
 $router->post('/admin/legal/documents/{id}/mark-physical',          'App\\Http\\Controllers\\Admin\\LegalDocumentController@archive');
 $router->post('/admin/legal/documents/{id}/kyc-verify',             'App\\Http\\Controllers\\Admin\\LegalDocumentController@kycVerify');
 $router->get('/admin/legal/documents/{id}/preview',                 'App\\Http\\Controllers\\Admin\\LegalDocumentController@documentDetail');
+$router->get('/admin/legal/title-certificate/{plot_id}', 'App\\Http\\Controllers\\Admin\\LegalDocumentController@titleCertificate');
 // Uploads
 $router->post('/admin/legal/uploads/{id}/verify',                   'App\\Http\\Controllers\\Admin\\LegalDocumentController@uploadVerify');
 $router->post('/admin/legal/uploads/{id}/delete',                   'App\\Http\\Controllers\\Admin\\LegalDocumentController@uploadDelete');

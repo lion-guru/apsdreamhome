@@ -1,4 +1,4 @@
-<?php $colony = $colony ?? []; $plots = $plots ?? []; ?>
+<?php $colony = $colony ?? []; $plots = $plots ?? []; $refCode = $ref_code ?? ''; $isLive = !empty($is_live_layout); ?>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.min.css" />
 <style>
 #plotMap { height: 65vh; width: 100%; border-radius: 12px; border: 1px solid #e2e8f0; z-index: 0; }
@@ -31,6 +31,12 @@
             <i class="fas fa-arrow-left me-1"></i>Back to Colony
         </a>
     </div>
+    <?php if ($refCode !== ''): ?>
+    <div class="alert alert-success d-flex align-items-center py-2 mb-3" role="alert">
+        <i class="fas fa-user-check me-2"></i>
+        <div class="small">Shared by associate <strong><?= htmlspecialchars($refCode) ?></strong> — your hold request carries their referral automatically.</div>
+    </div>
+    <?php endif; ?>
     <div class="map-stats-bar" id="mapStats">
         <span class="map-stat" data-status="available"><span class="dot"></span> Available: <strong id="statAvail">0</strong></span>
         <span class="map-stat" data-status="booked"><span class="dot"></span> Booked: <strong id="statBooked">0</strong></span>
@@ -86,7 +92,8 @@
                             (p.total_price ? '<div class="info-row"><span class="label">Price</span><span class="value fw-bold">₹' + Number(p.total_price).toLocaleString() + '</span></div>' : '') +
                             (p.corner_plot ? '<div class="info-row"><span class="label">Corner Plot</span><span class="value">✓</span></div>' : '') +
                             (p.park_facing ? '<div class="info-row"><span class="label">Park Facing</span><span class="value">✓</span></div>' : '') +
-                            '<hr class="my-2"><a href="' + baseUrl + '/colony/' + (colonySlug || '') + '/plots?block=' + encodeURIComponent(p.block || '') + '" class="btn btn-sm btn-outline-primary w-100"><i class="fas fa-eye me-1"></i>View Details</a></div>';
+                            '<hr class="my-2"><a href="' + baseUrl + '/colony/' + (colonySlug || '') + '/plots?block=' + encodeURIComponent(p.block || '') + '" class="btn btn-sm btn-outline-primary w-100"><i class="fas fa-eye me-1"></i>View Details</a>' +
+                            (p.status === 'available' ? '<button onclick="openHoldModal(' + p.plot_id + ', \'' + String(p.plot_number).replace(/'/g, "\\'") + '\')" class="btn btn-sm btn-warning w-100 mt-2"><i class="fas fa-pause-circle me-1"></i>Request 24h Hold</button>' : '') + '</div>';
                         layer.bindPopup(html, { maxWidth: 300 });
                         layer.on('mouseover', function() { this.setStyle({ fillOpacity: 0.95, weight: 2 }); });
                         layer.on('mouseout', function() { if (geojsonLayer) geojsonLayer.resetStyle(this); });
@@ -126,5 +133,76 @@
     });
     window.colonySlug = '<?= addslashes($colony['slug'] ?? '') ?>';
     loadGeoJson();
+})();
+</script>
+
+<!-- 24h Hold Request Modal -->
+<div class="modal fade" id="holdModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+        <div class="modal-header">
+            <h6 class="modal-title"><i class="fas fa-pause-circle me-1"></i>Request 24-Hour Hold — Plot <span id="holdPlotNo"></span></h6>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <p class="small text-muted">Fill your details — our team confirms the hold on call/SMS. <?= $refCode !== '' ? 'Associate ref <strong>' . htmlspecialchars($refCode) . '</strong> auto-attached.' : '' ?></p>
+            <div class="mb-2"><label class="form-label small">Your Name</label>
+                <input type="text" id="holdName" class="form-control form-control-sm" placeholder="Full name"></div>
+            <div class="mb-2"><label class="form-label small">Mobile Number</label>
+                <input type="tel" id="holdPhone" class="form-control form-control-sm" placeholder="10-digit mobile" maxlength="13"></div>
+            <div id="holdMsg" class="small mt-2"></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-warning btn-sm" id="holdSubmit"><i class="fas fa-check me-1"></i>Confirm Hold Request</button>
+        </div>
+    </div></div>
+</div>
+<script>
+(function () {
+    var holdPlotId = 0;
+    var csrfToken = <?= json_encode($_SESSION['csrf_token'] ?? '') ?>;
+    var refCode = <?= json_encode($refCode) ?>;
+    var baseUrl = <?= json_encode(BASE_URL) ?>;
+    window.openHoldModal = function (plotId, plotNo) {
+        holdPlotId = plotId;
+        document.getElementById('holdPlotNo').textContent = plotNo;
+        document.getElementById('holdMsg').innerHTML = '';
+        var m = new bootstrap.Modal(document.getElementById('holdModal'));
+        m.show();
+    };
+    document.getElementById('holdSubmit').addEventListener('click', function () {
+        var btn = this;
+        var name = document.getElementById('holdName').value.trim();
+        var phone = document.getElementById('holdPhone').value.trim();
+        var msg = document.getElementById('holdMsg');
+        if (!name || phone.replace(/\D/g, '').length < 10) {
+            msg.innerHTML = '<span class="text-danger">Please enter your name and a valid 10-digit mobile number.</span>';
+            return;
+        }
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Sending...';
+        fetch(baseUrl + '/colony/hold-request', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest', 'X-CSRF-Token': csrfToken },
+            body: 'plot_id=' + encodeURIComponent(holdPlotId) + '&name=' + encodeURIComponent(name) +
+                  '&phone=' + encodeURIComponent(phone) + '&ref_code=' + encodeURIComponent(refCode) +
+                  '&csrf_token=' + encodeURIComponent(csrfToken)
+        })
+        .then(function (r) { return r.json().then(function (d) { return { code: r.status, body: d }; }); })
+        .then(function (res) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check me-1"></i>Confirm Hold Request';
+            if (res.body && res.body.success) {
+                msg.innerHTML = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>' + res.body.message + '</span>';
+            } else {
+                msg.innerHTML = '<span class="text-danger">' + ((res.body && res.body.error) || 'Failed. Please try again.') + '</span>';
+            }
+        })
+        .catch(function () {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check me-1"></i>Confirm Hold Request';
+            msg.innerHTML = '<span class="text-danger">Network error. Please try again.</span>';
+        });
+    });
 })();
 </script>
