@@ -1,5 +1,23 @@
 > **COMPLETED (2026-10-06):** Churn-stop verified (snapshots identical), full review done, all work committed + pushed (see Session 171-173 below).
 
+## Session 199: "Pending Sab Complete Karo" — Scheduler Attempt, Cron Proof, Script Fix (2026-10-11)
+
+### Trigger
+"aur koi kaam jo tum pending chod diye ho wo bhi kar do complete". Inventoried all pendings; completed everything completable without elevation/production writes.
+
+### Completed
+1. **Cron verified**: `php scripts/cron_salary_grants.php` → `month=2026-10 processed=0 amount=0` (idempotent no-op, 0 salaried associates — matches S174 expectation).
+2. **Scheduler install attempted** → `E_ACCESSDENIED` (shell token filtered, Administrators deny-only — proven owner-only). **Fixed 2 latent bugs in the setup script en route**: battery properties `AllowStartIfOnBatteries`/`DontStopIfGoingOnBatteries` don't exist on the COM object (correct: `DisallowStartIfOnBatteries=$false` / `StopIfGoingOnBatteries=$false`); success message printed UNCONDITIONALLY (lied after access-denied) → now try/catch, exit 1 with elevation hint. Parser 0 errors; re-run fails honestly.
+3. **HR first structure**: moot — 0 salaried associates, nothing to structure.
+
+### Still owner-only (proven, not taken)
+- Run fixed `setup_salary_grants_task.ps1` from elevated PowerShell (only matters once first salaried hire exists).
+- Batch-apply PLC prices (S198 no-go stands: −₹1.32Cr Braj Radha, booked plots).
+- Extension GUI click-test (needs interactive browser).
+
+### Commit (in this round)
+- `scripts/setup_salary_grants_task.ps1` fix + this entry. No app-code changes → master re-run skipped (tree identical to last 7/7).
+
 ## Session 198: "All Pending" — Batch Blast-Radius (No-Go) + S197 Committed (2026-10-11)
 
 ### Trigger
