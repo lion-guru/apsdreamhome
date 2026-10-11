@@ -1,5 +1,19 @@
 > **COMPLETED (2026-10-06):** Churn-stop verified (snapshots identical), full review done, all work committed + pushed (see Session 171-173 below).
 
+## Session 196: PLC Track Committed + Pushed on Delegated Call (2026-10-11)
+
+### Trigger
+"do next" → baseline green (S194+S195 intact, pages 200, preview matches) → asked direction → user: "tum dekh lo apna dimag laga lo" (use your judgment). Judged the pending selective commit the right move (verified ×3 rounds, and S186 lesson: shared worktree risks cross-commits).
+
+### Work
+1. **Reviewed before commit**: my diffs only (PlcService fold +54/−8, controller 3 ctx sites +13, routes +6, AGENTS.md +45 single top hunk, 5 new files). TelecallingController M259 confirmed second-actor (Hinglish objection scripts) — excluded.
+2. **Staged exactly 9 files** (4M + 5A); excluded: TelecallingController, key-switcher bats (live keys), check_*/debug_*, pngs, queryex, storage/. PlcRuleService needed a second `git add -v` with the lowercase path before it staged as `app/services/...` (first chained add silently skipped it — verify staged list, don't trust exit 0).
+3. **Commit `f303418a8`** (`feat(pricing): DB-driven PLC rules manager + live price-calc wiring`, 1112+/8−): pre-commit hook linted all 9 PHP files clean and auto-pushed. Verified `origin/main == f303418a8` via ls-remote; `main...origin/main` in sync.
+4. Post-push worktree = only second-actor M + their junk. DB-only items (plot_plc_rules + 6 rows with seeds 1-3 deactivated, menu 320, perms 319+320) remain DB-side, as documented S194/S195.
+
+### Key Lessons (carried, continued)
+_471. **A chained `git add` can silently skip a pathspec — verify the staged list.** Nine-file add exited 0 but left PlcRuleService unstaged; only `git status` (not the exit code) told the truth. Stage → status → commit, in that order, every time.
+
 ## Session 195: DB-Rules PLC Wired Into Live Price Calc (2026-10-11)
 
 ### Trigger
