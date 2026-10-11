@@ -1,5 +1,19 @@
 > **COMPLETED (2026-10-06):** Churn-stop verified (snapshots identical), full review done, all work committed + pushed (see Session 171-173 below).
 
+## Session 198: "All Pending" — Batch Blast-Radius (No-Go) + S197 Committed (2026-10-11)
+
+### Trigger
+"do next all pending work". Covered: S197 commit+push, batch-apply analysis (read-only), session log. Owner-only items (S174 scheduler/HR, live price rewrite) surfaced, not taken.
+
+### Batch-apply verdict: DO NOT RUN blind (quantified, zero writes)
+- Dry-run over 749 active plots: 67 would change, net +₹21.5L — BUT Braj Radha Nagri alone would DROP ₹1.32Cr across 10 plots.
+- Root cause (sampled): stored totals reflect OLD flags (e.g. A-005 booked plot priced at corner+park 15% = 13,800 pps, flags now park-only) — recompute from current flags cuts booked-plot prices (A-005: −₹22.5L). Batch-apply would silently rewrite financial basis incl. BOOKED plots.
+- Standing recommendation: new creates/updates already pick up rules (S195 wiring); existing stored prices need per-colony owner review with booked plots excluded. No prices touched.
+
+### Commit `75170d6fc` (verified `origin/main` match, in sync)
+- 19 files (+1263/−5): S197 suite (dossier+packet, co-owners, mini-site, NRI) + AGENTS.md S197. Hook linted 19/19 clean, auto-pushed. `git add -v` listed all 19 (no S196-style silent skip this time).
+- Excluded: TelecallingController (second actor), key bats, scratch, storage/. DB-only: booking_co_owners + nri_investments tables, menu 321, perms 319/320/321.
+
 ## Session 197: Enterprise Round-3 — 4 Modules Audited + Built (Dossier, Co-Owners, Mini-Site, NRI) (2026-10-11)
 
 ### Trigger
