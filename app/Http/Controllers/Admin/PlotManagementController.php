@@ -86,7 +86,8 @@ class PlotManagementController extends AdminController
             $plc = \App\Services\Pricing\PlcService::calculate(
                 $basePps, $areaSqft,
                 !empty($data['corner_plot']), !empty($data['park_facing']),
-                floatval($data['road_width_ft'] ?? 0)
+                floatval($data['road_width_ft'] ?? 0),
+                ['colony_id' => intval($data['colony_id']), 'facing' => trim((string)($data['facing'] ?? ''))]
             );
 
             $cols = "colony_id, plot_number, plot_type, area_sqft, width_ft, length_ft, dimension_label, base_price_per_sqft, plc_amount, final_price_per_sqft, price_per_sqft, total_price, road_width_ft, facing, corner_plot, park_facing, status, is_active, created_at";
@@ -1043,7 +1044,7 @@ class PlotManagementController extends AdminController
             $data = $_POST;
 
             // Get old values for price change detection
-            $old = $this->db->fetchRow("SELECT total_price, price_per_sqft, negotiated_price, status FROM plots WHERE id = ?", [$id]);
+            $old = $this->db->fetchRow("SELECT total_price, price_per_sqft, negotiated_price, status, colony_id FROM plots WHERE id = ?", [$id]);
             if (!$old) {
                 $this->setFlash('error', 'Plot not found');
                 return $this->redirect('/admin/plots');
@@ -1063,7 +1064,8 @@ class PlotManagementController extends AdminController
             $plc = \App\Services\Pricing\PlcService::calculate(
                 $basePps, $areaSqft,
                 !empty($data['corner_plot']), !empty($data['park_facing']),
-                floatval($data['road_width_ft'] ?? 0)
+                floatval($data['road_width_ft'] ?? 0),
+                ['colony_id' => (int)($old['colony_id'] ?? 0), 'facing' => trim((string)($data['facing'] ?? ''))]
             );
             $pricePerSqft = $plc['final_pps'];
             $totalPrice = $plc['total'];
@@ -1292,7 +1294,7 @@ class PlotManagementController extends AdminController
         if ($status !== '' && $status !== 'all') { $where .= " AND status = ?"; $params[] = $status; }
         list($tSql, $tParams) = $this->tenantWhere();
         $plots = $this->db->fetchAll(
-            "SELECT id, plot_number, base_price_per_sqft, price_per_sqft, total_price, area_sqft, corner_plot, park_facing, road_width_ft FROM plots WHERE $where" . $tSql . " ORDER BY plot_number",
+            "SELECT id, plot_number, base_price_per_sqft, price_per_sqft, total_price, area_sqft, corner_plot, park_facing, road_width_ft, facing FROM plots WHERE $where" . $tSql . " ORDER BY plot_number",
             array_merge($params, $tParams)
         ) ?: [];
         $out = [];
@@ -1302,7 +1304,8 @@ class PlotManagementController extends AdminController
             if ($newBase < 0) $newBase = 0;
             $plc = \App\Services\Pricing\PlcService::calculate(
                 $newBase, (float)($p['area_sqft'] ?? 0),
-                !empty($p['corner_plot']), !empty($p['park_facing']), (float)($p['road_width_ft'] ?? 0)
+                !empty($p['corner_plot']), !empty($p['park_facing']), (float)($p['road_width_ft'] ?? 0),
+                ['colony_id' => $colonyId, 'facing' => (string)($p['facing'] ?? ''), 'id' => (int)$p['id'], 'plot_number' => $p['plot_number'] ?? '']
             );
             $out[] = [
                 'id' => (int)$p['id'],

@@ -23,9 +23,13 @@ class PlcService
     }
 
     /**
-     * @return array [plc_pct, plc_amount, final_pps, total, breakdown[]]
+     * @param array $plotCtx optional extra plot context for DB-rule evaluation
+     *   (colony_id, facing, id, plot_number, ...). Corner/park/road/area come
+     *   from the scalar args and are injected as corner_plot/park_facing/etc.
+     * @return array [plc_pct, plc_amount, final_pps, total, breakdown[],
+     *   rules_plc_amount, rules_breakdown[]]
      */
-    public static function calculate(float $basePps, float $areaSqft, bool $corner, bool $park, float $roadWidthFt): array
+    public static function calculate(float $basePps, float $areaSqft, bool $corner, bool $park, float $roadWidthFt, array $plotCtx = []): array
     {
         $r = self::rates();
         $pct = 0.0;
@@ -44,12 +48,56 @@ class PlcService
         }
         $finalPps = round($basePps * (1 + $pct / 100), 2);
         $plcAmount = round(($finalPps - $basePps) * $areaSqft, 2);
+        $total = round($finalPps * $areaSqft, 2);
+
+        // DB-driven PLC rules (plot_plc_rules via PlcRuleService) fold in
+        // additively. Fail-open: a missing table / DB hiccup must never break
+        // the stored-price calc (fresh-DB safety). When no rules match, all
+        // numbers below stay byte-identical to the pre-fold behaviour.
+        $rulesAmount = 0.0;
+        $rulesBreakdown = [];
+        try {
+            $ruleSvc = new PlcRuleService();
+            $rulePlot = array_merge($plotCtx, [
+                'corner_plot' => $corner ? 1 : 0,
+                'park_facing' => $park ? 1 : 0,
+                'road_width_ft' => $roadWidthFt,
+                'base_price_per_sqft' => $basePps,
+                'area_sqft' => $areaSqft,
+            ]);
+            $ruleCalc = $ruleSvc->calculatePlotPLC($rulePlot);
+            foreach ($ruleCalc['applicable_rules'] as $ar) {
+                $amt = (float)($ar['calculated_amount'] ?? 0);
+                $rulesAmount += $amt;
+                $cv = (float)($ar['charge_value'] ?? 0);
+                if (($ar['charge_type'] ?? '') === 'percentage') {
+                    $rulesBreakdown[] = $ar['name'] . ' +' . $cv . '%';
+                } elseif (($ar['charge_type'] ?? '') === 'fixed_per_sqft') {
+                    $rulesBreakdown[] = $ar['name'] . ' +Rs.' . $cv . '/sqft';
+                } else {
+                    $rulesBreakdown[] = $ar['name'] . ' +Rs.' . $cv;
+                }
+            }
+        } catch (\Throwable $e) {
+            error_log('[PlcService::rulesFold] ' . $e->getMessage());
+        }
+        if ($rulesAmount != 0.0) {
+            $plcAmount = round($plcAmount + $rulesAmount, 2);
+            $total = round($total + $rulesAmount, 2);
+            $finalPps = $areaSqft > 0 ? round($total / $areaSqft, 2) : $finalPps;
+            foreach ($rulesBreakdown as $rb) {
+                $breakdown[] = $rb;
+            }
+        }
+
         return [
             'plc_pct' => round($pct, 2),
             'plc_amount' => $plcAmount,
             'final_pps' => $finalPps,
-            'total' => round($finalPps * $areaSqft, 2),
+            'total' => $total,
             'breakdown' => $breakdown,
+            'rules_plc_amount' => round($rulesAmount, 2),
+            'rules_breakdown' => $rulesBreakdown,
         ];
     }
 

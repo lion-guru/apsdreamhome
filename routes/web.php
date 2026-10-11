@@ -1802,6 +1802,14 @@ $router->post('/admin/plots/{id}/hold', 'App\\Http\\Controllers\\Admin\\PlotMana
 $router->post('/admin/plots/{id}/release-hold', 'App\\Http\\Controllers\\Admin\\PlotManagementController@releaseHold');
 $router->get('/admin/plots/hold-requests', 'App\\Http\\Controllers\\Admin\\PlotManagementController@holdRequests');
 $router->post('/admin/plots/hold-requests/{id}/approve', 'App\\Http\\Controllers\\Admin\\PlotManagementController@approveHoldRequest');
+
+// Plot PLC Pricing Rules
+$router->get('/admin/plots/pricing-rules', 'App\\Http\\Controllers\\Admin\\PlotPricingController@plcRules');
+$router->post('/admin/plots/pricing-rules/create', 'App\\Http\\Controllers\\Admin\\PlotPricingController@createPlcRule');
+$router->get('/admin/plots/pricing-rules/{id}/edit', 'App\\Http\\Controllers\\Admin\\PlotPricingController@editPlcRule');
+$router->post('/admin/plots/pricing-rules/{id}/update', 'App\\Http\\Controllers\\Admin\\PlotPricingController@updatePlcRule');
+$router->post('/admin/plots/pricing-rules/{id}/delete', 'App\\Http\\Controllers\\Admin\\PlotPricingController@deletePlcRule');
+$router->get('/admin/plots/pricing/preview', 'App\\Http\\Controllers\\Admin\\PlotPricingController@previewPlc');
 $router->post('/admin/plots/hold-requests/{id}/reject', 'App\\Http\\Controllers\\Admin\\PlotManagementController@rejectHoldRequest');
 $router->get('/admin/plots/{id}/book', 'App\\Http\\Controllers\\Admin\\PlotManagementController@book');
 $router->post('/admin/plots/{id}/book', 'App\\Http\\Controllers\\Admin\\PlotManagementController@storeBooking');

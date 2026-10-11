@@ -1,5 +1,50 @@
 > **COMPLETED (2026-10-06):** Churn-stop verified (snapshots identical), full review done, all work committed + pushed (see Session 171-173 below).
 
+## Session 195: DB-Rules PLC Wired Into Live Price Calc (2026-10-11)
+
+### Trigger
+"do next" → user picked "Build next feature": wire DB-rules PLC into booking price calc. Baseline first: S194 intact (pages 200, 6/6 rules, perms, master 7/7).
+
+### Root finding (the wiring was broken before it started)
+- Seeded rules use `is_corner`/`is_park_facing`, but live `plots` rows store `corner_plot`/`park_facing` → DB rules could NEVER match a real plot (A-1 preview 0-rule was this bug, not just unset flags). Fixed with a bidirectional alias map in `PlcRuleService::evaluateCondition` (both spellings resolve); view dropdown now offers real columns first, legacy keys kept for existing rows.
+
+### Work (all probe-verified)
+1. **`PlcService::calculate()`** takes optional `$plotCtx` (colony_id/facing/...) and folds DB-rule amounts additively: `%` on base + flat/sqft, appended to `breakdown`, new `rules_plc_amount`/`rules_breakdown` keys. Fail-open try/catch (fresh-DB safe). **Zero behavior change when no rules match** (recompute guarded by `rulesAmount != 0`).
+2. **Double-count guard**: deactivated the 3 DB `%` seeds (corner 10 / park 5 / wideroad 10) that duplicate the static service_configs engine — active rules are now only fixed ₹150 corner, ₹75 park, 15% commercial (no static counterpart). Static % stays canonical.
+3. **All 3 price-calc sites pass ctx**: plot `store()` (colony+facing), `update()` (colony added to the `$old` SELECT), batch `computeBatchPreview()` (`facing` added to SELECT, colony known).
+4. **Preview endpoint** now returns DB-rules `data` + `combined` (static+rules, the exact stored-price math). No UI callers, backward-compatible.
+5. Propagation is automatic: bookings/compliance/agreements all read `plots.total_price`.
+
+### Verification
+- Fold unit 12/12 exact: no-rule case byte-identical to old static (550×1000→550000); corner 1000×1000 → static 100k + rules 150k = 250k total 12.5L; park+50ft → 100k + 75k = 175k; 5-arg backward-compat OK.
+- Live plot A-001 (corner, base 999): alias matched `is_corner` rule → rules ₹150k; combined plc 249,900 / total 12,48,900, hand-verified. Stored 1098.90 is static-only (pre-wiring) — consistent.
+- Pages 200 (manager + batch), master **7/7**, temp probes deleted, `smoke_report.json` churn reverted.
+
+### Owner decision (NOT run)
+- Stored prices only pick up fixed-rule amounts on next create/update/batch-apply. Batch-apply rewrites live prices — left for owner. Uncommitted: `M PlcService.php` (fold), `M PlotManagementController.php` (3 ctx sites), `M routes/web.php` + S194 files; DB-only: seeds 1-3 deactivated.
+
+## Session 194: DB-Driven PLC Rules Manager + PlcService Overwrite Rescue (2026-10-11)
+
+### Trigger
+"do next" — prior round had scaffolded a PLC rules manager (table + seeds + controller + view + routes) but left it unverified; admin-login probes were 403ing (POST + `test_login=5` associate session).
+
+### Work (all probe-verified)
+1. **View fixes** (`admin/plots/plc_rules.php`): unclosed create-modal div, broken `editRule()` JS (unbalanced braces, missing catch), edit `<a href>` (navigated to JSON) → modal button, colony select `required` blocked Global, missing `editColony` id, removed XHR-hijack of edit form (controller is redirect+flash). `php -l` clean.
+2. **Controller fixes** (`Admin\PlotPricingController`): colony/status filters actually applied, `statusFilter` passed to view, `colony_id` persisted on update.
+3. **Probes (admin session = `GET /admin/login?test_login=1`, NOT 5)**: PLC page 200 (265KB, all 6 seeded rules render); edit JSON 200; preview for plot A-1 200 (honest 0-rule match); synthetic corner+park+50ft plot matches 5 rules, math exact (base 10L → PLC 4.75L → final 14.75L). Full cycle: create→update→deactivate→physical cleanup, 0 leftovers.
+4. **Menu**: new row 320 `PLC Pricing Rules` (child of Plots Inventory) + `admin` role grants for 319 (Plot Development — pre-existing gap, invisible to admin role since S167) and 320; sidebar caches busted; both links render in sidebar.
+5. **Seed idempotent**: `seed_plot_plc_rules.php` skips existing names (6/6 skipped on re-run, no dupes).
+
+### Rescue (caught before commit)
+- New service was written to `app/Services/Pricing/PLCService.php`, which on Windows is the SAME file as tracked `app/services/Pricing/PlcService.php` — clobbered the pre-existing static engine (`rates()/calculate()/ensureColumns()/ensureConfigRows()`, 3 call sites in PlotManagementController). Restored byte-identical via `cmd /c git show` (NOTE: PowerShell `>` redirection writes UTF-16 and corrupts restores — use cmd). New code lives in `PlcRuleService.php` (`class PlcRuleService`) instead. Batch-pricing page re-probed 200, no fatals. COMMIT-TIME NOTE: `git status` shows the new file under `app/Services/` (capital S); add it via lowercase `app/services/` path per repo convention (S171).
+- `TelecallingController.php` M259 = second-actor churn, untouched. `smoke_report.json` churn reverted.
+
+### Verification
+- Master suite **7/7** on final tree (re-run after restore+rename). Temp probes deleted.
+
+### Commit hygiene (uncommitted, not requested)
+- Track: `M routes/web.php` (6 routes only), `?? PlotPricingController.php`, `?? PlcRuleService.php`, `?? plc_rules.php`, `?? create/seed_plot_plc_rules*.php`. DB-only (not in git): `plot_plc_rules` + 6 rows, menu 320, perm rows 319+320.
+
 ## Session 193: Antigravity-5 Round-2 Build (Live-Layout Holds, Poster Studio, Spot Bonus, Title Cert, WA Menu Bot) (2026-10-10)
 
 ### Trigger
