@@ -125,6 +125,8 @@ class BookingLifecycleController extends AdminController
         $docs = $this->fetchDocuments($id);
         $history = $this->fetchStatusHistory($id);
         $commissions = $this->fetchCommissions($id);
+        $coOwners = $this->fetchCoOwners($id);
+        $stampPreview = $this->stampPreview($booking, $coOwners);
 
         $this->render('admin/sales/booking-detail', [
             'page_title'     => 'Booking #' . $id,
@@ -136,7 +138,139 @@ class BookingLifecycleController extends AdminController
             'documents'      => $docs,
             'history'        => $history,
             'commissions'    => $commissions,
+            'co_owners'      => $coOwners,
+            'stamp_preview'  => $stampPreview,
         ]);
+    }
+
+    /* =========================================================
+     *  Joint co-owners (PRO-3)
+     * ========================================================= */
+
+    /**
+     * POST /admin/sales/bookings/{id}/co-owners/add
+     */
+    public function addCoOwner($id)
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+        $id = (int)$id;
+        $booking = $this->service->getBookingById($id);
+        if (!$booking) {
+            $this->setFlash('error', 'Booking not found');
+            return $this->redirect('/admin/sales/bookings');
+        }
+
+        $name = trim((string)($_POST['full_name'] ?? ''));
+        $gender = strtolower(trim((string)($_POST['gender'] ?? 'male')));
+        if ($name === '') {
+            $this->setFlash('error', 'Co-owner name is required');
+            return $this->redirect('/admin/sales/bookings/' . $id);
+        }
+        if (!in_array($gender, ['male', 'female', 'other'], true)) {
+            $gender = 'male';
+        }
+        $share = (float)($_POST['share_percentage'] ?? 50);
+        if ($share < 0) $share = 0;
+        if ($share > 100) $share = 100;
+
+        try {
+            $this->db->insert('booking_co_owners', [
+                'tenant_id' => (int)$this->tenantId(),
+                'booking_id' => $id,
+                'full_name' => mb_substr($name, 0, 150),
+                'relationship' => mb_substr(trim((string)($_POST['relationship'] ?? '')), 0, 50) ?: null,
+                'gender' => $gender,
+                'aadhaar_no' => mb_substr(trim((string)($_POST['aadhaar_no'] ?? '')), 0, 20) ?: null,
+                'pan_no' => mb_substr(trim((string)($_POST['pan_no'] ?? '')), 0, 20) ?: null,
+                'share_percentage' => $share,
+                'is_primary_contact' => !empty($_POST['is_primary_contact']) ? 1 : 0,
+            ]);
+            $this->setFlash('success', 'Co-owner added');
+        } catch (\Throwable $e) {
+            error_log('[BookingLifecycleController::addCoOwner] ' . $e->getMessage());
+            $this->setFlash('error', 'Failed to add co-owner');
+        }
+        return $this->redirect('/admin/sales/bookings/' . $id);
+    }
+
+    /**
+     * POST /admin/sales/bookings/{id}/co-owners/delete/{coOwnerId}
+     */
+    public function deleteCoOwner($id, $coOwnerId)
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+        $id = (int)$id;
+        $coOwnerId = (int)$coOwnerId;
+        try {
+            $tid = (int)$this->tenantId();
+            $stmt = $this->db->prepare(
+                "DELETE FROM booking_co_owners WHERE id = ? AND booking_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "")
+            );
+            $stmt->execute($tid > 1 ? [$coOwnerId, $id, $tid] : [$coOwnerId, $id]);
+            $this->setFlash('success', $stmt->rowCount() > 0 ? 'Co-owner removed' : 'Co-owner not found');
+        } catch (\Throwable $e) {
+            error_log('[BookingLifecycleController::deleteCoOwner] ' . $e->getMessage());
+            $this->setFlash('error', 'Failed to remove co-owner');
+        }
+        return $this->redirect('/admin/sales/bookings/' . $id);
+    }
+
+    private function fetchCoOwners(int $bookingId): array
+    {
+        try {
+            $s = $this->db->prepare(
+                "SELECT * FROM booking_co_owners WHERE booking_id = ? ORDER BY id ASC"
+            );
+            $s->execute([$bookingId]);
+            return $s->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Exception $e) {
+            error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Stamp-duty preview: sole-male duty vs joint duty from LIVE
+     * stamp_duty_config rates. Read-only (no history writes).
+     */
+    private function stampPreview(array $booking, array $coOwners): array
+    {
+        $out = ['show' => false];
+        try {
+            $val = (float)($booking['agreement_value'] ?? 0);
+            if ($val <= 0) $val = (float)($booking['total_plot_value'] ?? 0);
+            if ($val <= 0) $val = (float)($booking['plot_total_price'] ?? 0);
+            if ($val <= 0) return $out;
+            $svc = new \App\Services\Finance\StampDutyService();
+            $rates = $svc->getStateRates('UP');
+            if (!$rates) return $out;
+            $maleRate = (float)($rates['male_rate'] ?? 0);
+            $jointRate = (float)($rates['joint_rate'] ?? $maleRate);
+            $femaleRate = (float)($rates['female_rate'] ?? $maleRate);
+            if ($maleRate <= 0) return $out;
+            $hasFemale = false;
+            foreach ($coOwners as $c) {
+                if (($c['gender'] ?? '') === 'female') { $hasFemale = true; break; }
+            }
+            $dutyMale = round($val * $maleRate / 100, 2);
+            $out = [
+                'show' => true,
+                'valuation' => $val,
+                'male_rate' => $maleRate,
+                'joint_rate' => $jointRate,
+                'female_rate' => $femaleRate,
+                'duty_male' => $dutyMale,
+                'duty_joint' => empty($coOwners) ? null : round($val * $jointRate / 100, 2),
+                'saving' => empty($coOwners) ? null : round($val * ($maleRate - $jointRate) / 100, 2),
+                'has_female' => $hasFemale,
+                'co_count' => count($coOwners),
+            ];
+        } catch (\Throwable $e) {
+            error_log('[BookingLifecycleController::stampPreview] ' . $e->getMessage());
+        }
+        return $out;
     }
 
     /* =========================================================
@@ -911,6 +1045,99 @@ class BookingLifecycleController extends AdminController
             'schedule'     => $schedule,
             'milestones'   => $milestones,
             'eligibility'  => $eligibility,
+        ]);
+    }
+
+    /**
+     * Registry-day dossier packet — single printable A4 compile for the
+     * Sub-Registrar / Tehsil visit. Read-only: every prefilled value comes
+     * from live tables; anything unknown renders as a blank fill-in line
+     * (never invented).
+     * Route: GET /admin/sales/bookings/{id}/registry-packet
+     */
+    public function registryPacket($id)
+    {
+        $this->requireAdmin();
+        $id = (int)$id;
+
+        $booking = $this->service->getBookingById($id);
+        if (!$booking) {
+            $this->setFlash('error', 'Booking not found');
+            return $this->redirect('/admin/sales/bookings');
+        }
+
+        $schedule    = $this->service->getPaymentSchedule($id);
+        $milestones  = $this->getOrCreateRegistryMilestones($id);
+        $mwSvc       = new \App\Services\Accounting\MoneyWorkflowService();
+        $eligibility = $mwSvc->checkRegistryEligibility($id);
+
+        // Full plot row (khasra/survey/facing live here, not in getBookingById).
+        $plot = [];
+        try {
+            $plot = $this->db->fetchOne(
+                "SELECT p.*, c.name AS colony_name FROM plots p
+                 LEFT JOIN colonies c ON c.id = p.colony_id WHERE p.id = ? LIMIT 1",
+                [(int)($booking['plot_id'] ?? 0)]
+            ) ?: [];
+        } catch (\Throwable $e) {
+            error_log('[BookingLifecycleController::registryPacket] plot: ' . $e->getMessage());
+        }
+
+        // Buyer KYC row (only real columns).
+        $customer = [];
+        try {
+            $customer = $this->db->fetchOne(
+                "SELECT id, name, email, phone, address, pan_number, aadhaar_number, kyc_status
+                 FROM users WHERE id = ? LIMIT 1",
+                [(int)($booking['customer_id'] ?? 0)]
+            ) ?: [];
+        } catch (\Throwable $e) {
+            error_log('[BookingLifecycleController::registryPacket] customer: ' . $e->getMessage());
+        }
+
+        // Latest title certificate for this plot, if the legal desk made one.
+        $titleCert = [];
+        try {
+            $titleCert = $this->db->fetchOne(
+                "SELECT * FROM title_certificates WHERE plot_id = ? ORDER BY id DESC LIMIT 1",
+                [(int)($booking['plot_id'] ?? 0)]
+            ) ?: [];
+        } catch (\Throwable $e) {
+            error_log('[BookingLifecycleController::registryPacket] title: ' . $e->getMessage());
+        }
+
+        // Joint co-owners for the deed parties block.
+        $packetCoOwners = $this->fetchCoOwners($id);
+
+        // Sub-registrar appointment = milestone 5 reference/notes, if recorded.
+        $appointment = '';
+        foreach ($milestones as $m) {
+            if (($m['stage_number'] ?? 0) == 5) {
+                $appointment = trim((string)($m['reference_no'] ?? '') . ' ' . (string)($m['notes'] ?? ''));
+                break;
+            }
+        }
+
+        $paid = 0.0;
+        $due = 0.0;
+        foreach ($schedule as $s) {
+            $paid += (float)($s['paid_amount'] ?? $s['amount_paid'] ?? 0);
+            $due  += max(0, (float)($s['amount'] ?? $s['due_amount'] ?? 0) - (float)($s['paid_amount'] ?? $s['amount_paid'] ?? 0));
+        }
+
+        $this->render('admin/sales/registry_packet', [
+            'page_title'  => 'Registry Dossier — ' . ($booking['booking_number'] ?? ''),
+            'booking'     => $booking,
+            'plot'        => $plot,
+            'customer'    => $customer,
+            'schedule'    => $schedule,
+            'milestones'  => $milestones,
+            'eligibility' => $eligibility,
+            'titleCert'   => $titleCert,
+            'appointment' => $appointment,
+            'paid_total'  => $paid,
+            'due_total'   => $due,
+            'co_owners'   => $packetCoOwners,
         ]);
     }
 

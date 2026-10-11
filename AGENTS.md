@@ -1,5 +1,31 @@
 > **COMPLETED (2026-10-06):** Churn-stop verified (snapshots identical), full review done, all work committed + pushed (see Session 171-173 below).
 
+## Session 197: Enterprise Round-3 — 4 Modules Audited + Built (Dossier, Co-Owners, Mini-Site, NRI) (2026-10-11)
+
+### Trigger
+Pasted 5-module proposal from another AI. Audited first: **PRO-1 PLC already shipped** (S194–196, committed) — skipped rebuild. Other 4 were real gaps (PRO-4's `crm_leads` doesn't exist — used live `leads` instead). User picked "All 4 gaps".
+
+### PRO-2 Registry dossier (all probe-verified)
+- `BookingLifecycleController@registryPacket` + `registry_packet.php` (6 A4 sections, print CSS, Hindi headings, blank fill-ins, zero invented data) + route + stepper "Print Registry Dossier" button.
+- **Pre-existing 500 fixed en route**: stepper AND packet both died in `checkRegistryEligibility` → `RegistryNocService::checkNoDues` selected phantom `paid_penalty` col (1054). Canonical model per PenaltyService: `accrued_penalty` is already net — one-line fix. Same method then 1146'd on never-created `maintenance_dues` (sole codebase reference) → narrow 42S02-only tolerance. Stepper resurrected as bonus.
+
+### PRO-3 Co-owners (all probe-verified)
+- `booking_co_owners` table (+tenant_id) + add/delete POST routes + Joint Owners tab on booking-detail + customer locker section + dossier deed-parties line.
+- Concession uses LIVE `stamp_duty_config` UP rates (male 7 / joint 6.5 / female 6) via read-only `getStateRates` — no history writes. Correction: live joint-vs-male delta is **0.5%, not the proposed 1%** (1% is female-vs-male). Booking 1 (₹30L): 210,000 → 195,000 = **₹15,000 saved**, exact. Customer locker card on booking 12 (₹5L): ₹2,500, exact. Full add→banner→dossier→locker→delete cycles, 0 leftovers.
+
+### PRO-4 Mini-site (all probe-verified)
+- `Front\AssociatePageController` + `pages/associate_site.php` (avatar/initials, rank, sales count, WA CTA, live colony availability, CSRF inquiry form) + `/p/{code}` GET/POST (code resolves via users OR associates referral_code) + mini-site card on associate id-card (copy/WA/open).
+- Landing 200 (8/8 needles), unknown code → 404 view (codebase convention). Inquiry → `leads` row with exact `assigned_to` match → cleaned. Probe lesson: same-session CSRF (router 302s mismatched tokens to /).
+- Fix: `CustomerNriController` needed `requireCustomer` locally (Front chain has no shared guard — it's private on CustomerPassbookController).
+
+### PRO-5 NRI desk (all probe-verified)
+- `nri_investments` table + `Admin\NRIController` (list/filter/verify) + `nri_desk.php` + menu row 321 (child of Bookings, admin-granted, sidebar-verified) + `Front\CustomerNriController` (booking ownership check, UploadValidator docs ≤5MB) + `customer/nri_desk.php` + 4 routes.
+- Full cycle: customer upload (FIRC+passport) → pending → admin verify → customer sees verified → row + files cleaned, 0 leftovers.
+- Bug caught: upload dir was `dirname(__DIR__,3)` = `app/assets/...` (web-inaccessible); fixed to 4 levels + removed stray dir, re-ran clean.
+
+### Verification
+- Master **7/7** after each module. Temp probes deleted, smoke churn reverted. **Uncommitted** (not requested): 9M + 9 new files; DB-only: 2 tables, menu 321, admin perms.
+
 ## Session 196: PLC Track Committed + Pushed on Delegated Call (2026-10-11)
 
 ### Trigger

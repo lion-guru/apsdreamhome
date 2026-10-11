@@ -856,6 +856,8 @@ $router->get('/customer/documents/download/passbook/{id}', 'App\\Http\\Controlle
 $router->get('/customer/documents/download/agreement/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadAgreement');
 $router->get('/customer/documents/download/title-certificate/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadTitleCertificate');
 $router->get('/customer/documents/download/title-certificate/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadTitleCertificate');
+$router->get('/customer/nri-desk', 'Front\\CustomerNriController@index');
+$router->post('/customer/nri-desk/save', 'Front\\CustomerNriController@save');
 $router->get('/customer/allotment/{id}/accept', 'App\\Http\\Controllers\\Front\\AllotmentAcceptanceController@show');
 $router->post('/customer/allotment/{id}/send-otp', 'App\\Http\\Controllers\\Front\\AllotmentAcceptanceController@sendOtp');
 $router->post('/customer/allotment/{id}/accept', 'App\\Http\\Controllers\\Front\\AllotmentAcceptanceController@accept');
@@ -873,6 +875,10 @@ $router->get('/associate/id-card',
 'App\\Http\\Controllers\\Associate\\ProfileController@idCard');
 $router->get('/associate/marketing/posters', 'App\\Http\\Controllers\\Associate\\PosterController@index');
 $router->get('/associate/marketing/posters/image', 'App\\Http\\Controllers\\Associate\\PosterController@image');
+
+// Associate branded mini-website (public lead magnet)
+$router->get('/p/{code}', 'Front\\AssociatePageController@landing');
+$router->post('/p/{code}/inquire', 'Front\\AssociatePageController@inquire');
 
 $router->post('/property/inquire', 'Front\\PropertyController@propertyInquiry');
 $router->get('/property/inquire', 'Front\\PropertyController@propertyInquiry');
@@ -2822,7 +2828,12 @@ $router->get('/admin/sales/bookings/new',                         'App\\Http\\Co
 $router->post('/admin/sales/bookings/store',                      'App\\Http\\Controllers\\Admin\\BookingLifecycleController@createBookingStore');
 $router->get('/admin/sales/bookings/{id}',                        'App\\Http\\Controllers\\Admin\\BookingLifecycleController@bookingDetail');
 $router->get('/admin/sales/bookings/{id}/edit',                   'App\\Http\\Controllers\\Admin\\BookingLifecycleController@editBooking');
-$router->post('/admin/sales/bookings/{id}/update',                'App\\Http\\Controllers\\Admin\\BookingLifecycleController@updateBooking');
+$router->post('/admin/sales/bookings/{id}/update',
+'App\\Http\\Controllers\\Admin\\BookingLifecycleController@updateBooking');
+$router->post('/admin/sales/bookings/{id}/co-owners/add',
+'App\\Http\\Controllers\\Admin\\BookingLifecycleController@addCoOwner');
+$router->post('/admin/sales/bookings/{id}/co-owners/delete/{coOwnerId}',
+'App\\Http\\Controllers\\Admin\\BookingLifecycleController@deleteCoOwner');
 $router->get('/admin/sales/bookings/{id}/schedule',               'App\\Http\\Controllers\\Admin\\BookingLifecycleController@paymentSchedule');
 $router->post('/admin/sales/bookings/{id}/schedule/regenerate',   'App\\Http\\Controllers\\Admin\\BookingLifecycleController@regenerateSchedule');
 $router->post('/admin/sales/bookings/{id}/cancel',                'App\\Http\\Controllers\\Admin\\BookingLifecycleController@cancelBookingStore');
@@ -2849,8 +2860,14 @@ $router->post('/admin/sales/bookings/{id}/generate-noc',
 'App\\Http\\Controllers\\Admin\\BookingLifecycleController@generateNoc');
 $router->get('/admin/sales/bookings/{id}/registry-stepper',       
 'App\\Http\\Controllers\\Admin\\BookingLifecycleController@registryStepper');
-$router->post('/admin/sales/bookings/{id}/registry-milestone/{stage}',        
+$router->post('/admin/sales/bookings/{id}/registry-milestone/{stage}',
 'App\\Http\\Controllers\\Admin\\BookingLifecycleController@updateRegistryMilestone');
+$router->get('/admin/sales/bookings/{id}/registry-packet',
+'App\\Http\\Controllers\\Admin\\BookingLifecycleController@registryPacket');
+$router->get('/admin/sales/nri-desk',
+'App\\Http\\Controllers\\Admin\\NRIController@index');
+$router->post('/admin/sales/nri-desk/verify/{id}',
+'App\\Http\\Controllers\\Admin\\NRIController@verify');
 // ============================================================
 // MODULE 3: MONEY WORKFLOW + ACCOUNTING
 // URL prefix: /admin/finance/*

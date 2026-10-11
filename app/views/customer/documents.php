@@ -248,6 +248,57 @@ $base = BASE_URL ?? '';
                     <?php endif; ?>
                 </div>
             </div>
+
+            <!-- Joint Ownerships (female stamp-duty concession) -->
+            <div class="col-12 mt-4">
+                <h5 class="fw-bold mb-3 d-flex align-items-center">
+                    <i class="fas fa-users text-primary me-2"></i> Joint Ownerships
+                    <small class="text-muted fw-normal ms-2">— co-owners on your bookings</small>
+                </h5>
+                <div class="row g-3">
+                    <?php $jointOwnerships = $jointOwnerships ?? []; ?>
+                    <?php $hasJoint = false; foreach ($jointOwnerships as $jo) { if (!empty($jo['co_owners'])) { $hasJoint = true; break; } } ?>
+                    <?php if (!$hasJoint): ?>
+                        <div class="col-12">
+                            <div class="card border-0 bg-light">
+                                <div class="card-body text-center py-5">
+                                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                                    <h6 class="text-muted">Sole Allotments Only</h6>
+                                    <p class="text-muted small">Ask the office to add a co-owner (e.g. spouse) — joint registration with a female co-owner lowers UP stamp duty.</p>
+                                </div>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($jointOwnerships as $jo): if (empty($jo['co_owners'])) continue; ?>
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card document-card h-100 border-0 shadow-sm">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-start justify-content-between mb-3">
+                                            <div class="document-icon bg-primary bg-opacity-10 text-primary">
+                                                <i class="fas fa-users"></i>
+                                            </div>
+                                            <span class="doc-type-badge" style="background:#dbeafe;color:#1e40af">Joint</span>
+                                        </div>
+                                        <h6 class="fw-semibold mb-1"><?= htmlspecialchars($jo['booking_number'] ?? '') ?></h6>
+                                        <p class="text-muted small mb-2">
+                                            <i class="fas fa-map-pin me-1"></i>
+                                            Plot <?= htmlspecialchars($jo['plot_number'] ?? '') ?> · <?= htmlspecialchars($jo['colony_name'] ?? '') ?>
+                                        </p>
+                                        <p class="small mb-2">
+                                            <?php foreach ($jo['co_owners'] as $co): ?>
+                                                <span class="badge bg-light text-dark border me-1"><?= htmlspecialchars($co['full_name'] ?? '') ?> (<?= htmlspecialchars($co['gender'] ?? '') ?>, <?= number_format((float)($co['share_percentage'] ?? 0), 0) ?>%)</span>
+                                            <?php endforeach; ?>
+                                        </p>
+                                        <?php if ($jo['stamp_saving'] !== null && (float)$jo['stamp_saving'] > 0): ?>
+                                            <p class="small text-success fw-semibold mb-0"><i class="fas fa-badge-percent me-1"></i>Female concession active — saving approx ₹<?= number_format((float)$jo['stamp_saving']) ?> on stamp duty.</p>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
         </div>
     </div>
 </div>

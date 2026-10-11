@@ -255,6 +255,7 @@ class ProfileController extends BaseController
                 'referralCode' => $referralCode,
                 'qrCodeUrl' => $qrCodeUrl,
                 'rankBadge' => $rankBadge,
+                'miniSiteUrl' => BASE_URL . '/p/' . $referralCode,
             ], 'layouts/associate');
         } catch (\Throwable $e) {
             error_log('AssociateProfileController::idCard error: ' . $e->getMessage());

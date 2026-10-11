@@ -110,10 +110,26 @@ class RegistryNocService
     {
         $tid = TenantContext::getId();
         // Check for any outstanding penalties, maintenance dues, etc.
-        $penalties = $this->db->fetchOne("SELECT COALESCE(SUM(accrued_penalty - paid_penalty), 0) as pending FROM booking_payment_schedules WHERE booking_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$bookingId, $tid] : [$bookingId]);
-        $maintenance = $this->db->fetchOne("SELECT COALESCE(SUM(amount_due), 0) as pending FROM maintenance_dues WHERE booking_id = ? AND status = 'pending'" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$bookingId, $tid] : [$bookingId]);
+        // NOTE: accrued_penalty is already net of payments (PenaltyService::
+        // recordPenaltyPayment decrements it directly); there is no
+        // paid_penalty column on booking_payment_schedules — referencing it
+        // 1054-fatals this check and every caller (stepper, dossier).
+        $penalties = $this->db->fetchOne("SELECT COALESCE(SUM(accrued_penalty), 0) as pending FROM booking_payment_schedules WHERE booking_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$bookingId, $tid] : [$bookingId]);
+        // maintenance_dues has no writers/migrations anywhere in the tree
+        // (this query is its sole reference) — treat a missing table as
+        // "no dues", but let any other DB error throw.
+        $maintenancePending = 0;
+        try {
+            $maintenance = $this->db->fetchOne("SELECT COALESCE(SUM(amount_due), 0) as pending FROM maintenance_dues WHERE booking_id = ? AND status = 'pending'" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$bookingId, $tid] : [$bookingId]);
+            $maintenancePending = $maintenance['pending'] ?? 0;
+        } catch (\Throwable $e) {
+            if (strpos($e->getMessage(), '42S02') === false) {
+                throw $e;
+            }
+            error_log('RegistryNocService::checkNoDues maintenance_dues missing, assuming 0');
+        }
 
-        return (($penalties['pending'] ?? 0) <= 0) && (($maintenance['pending'] ?? 0) <= 0);
+        return (($penalties['pending'] ?? 0) <= 0) && ($maintenancePending <= 0);
     }
 
     private function checkCustomerKyc(int $customerId): bool

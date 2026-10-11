@@ -13,6 +13,8 @@ $demand_letters = $demand_letters ?? [];
 $documents = $documents ?? [];
 $history = $history ?? [];
 $commissions = $commissions ?? [];
+$co_owners = $co_owners ?? [];
+$stamp_preview = $stamp_preview ?? ['show' => false];
 $csrf_token = $csrf_token ?? '';
 $base = defined('BASE_URL') ? BASE_URL : '';
 $statusBadge = function ($s) {
@@ -105,6 +107,7 @@ $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0
     <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#dl"><?= __('sale_demand_letters') ?> (<?= count($demand_letters) ?>)</a></li>
     <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#comm"><?= __('sale_commissions') ?> (<?= count($commissions) ?>)</a></li>
     <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#doc"><?= __('sale_documents') ?> (<?= count($documents) ?>)</a></li>
+    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#coown">Joint Owners (<?= count($co_owners) ?>)</a></li>
     <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#hist"><?= __('sale_history') ?> (<?= count($history) ?>)</a></li>
 </ul>
 
@@ -235,6 +238,55 @@ $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0
                 <?php endforeach; endif; ?>
                 </tbody>
             </table></div>
+        </div></div>
+    </div>
+    <div class="tab-pane fade" id="coown">
+        <div class="aps-cp-card mb-3"><div class="aps-cp-card-body">
+            <?php if (!empty($stamp_preview['show'])): ?>
+                <div class="alert alert-<?= !empty($co_owners) && !empty($stamp_preview['has_female']) ? 'success' : 'info' ?> py-2">
+                    <strong>UP Stamp Duty preview</strong> on ₹<?= number_format((float)$stamp_preview['valuation']) ?>:
+                    sole-male <?= number_format((float)$stamp_preview['male_rate'], 2) ?>% = <strong>₹<?= number_format((float)$stamp_preview['duty_male']) ?></strong>
+                    <?php if ($stamp_preview['duty_joint'] !== null): ?>
+                        &nbsp;|&nbsp; joint <?= number_format((float)$stamp_preview['joint_rate'], 2) ?>% = <strong>₹<?= number_format((float)$stamp_preview['duty_joint']) ?></strong>
+                        &nbsp;→&nbsp; <strong class="text-success">you save ₹<?= number_format((float)$stamp_preview['saving']) ?></strong>
+                        <?= empty($stamp_preview['has_female']) ? '(no female co-owner yet — add one to unlock the joint rate)' : '(female co-owner on record)' ?>
+                    <?php else: ?>
+                        &nbsp;→&nbsp; add a female co-owner below to unlock the joint <?= number_format((float)$stamp_preview['joint_rate'], 2) ?>% rate.
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+            <div class="table-responsive"><table class="table table-sm m-0">
+                <thead><tr><th>Name</th><th>Relation</th><th>Gender</th><th>Aadhaar</th><th>PAN</th><th class="text-end">Share %</th><th></th></tr></thead>
+                <tbody>
+                <?php if (empty($co_owners)): ?>
+                    <tr><td colspan="7" class="text-center text-muted py-3">No joint owners — sole allotment.</td></tr>
+                <?php else: foreach ($co_owners as $co): ?>
+                    <tr>
+                        <td><?= htmlspecialchars((string)($co['full_name'] ?? '')) ?><?= !empty($co['is_primary_contact']) ? ' <span class="badge bg-info">primary contact</span>' : '' ?></td>
+                        <td><?= htmlspecialchars((string)($co['relationship'] ?? '—')) ?></td>
+                        <td><span class="badge bg-<?= ($co['gender'] ?? '') === 'female' ? 'success' : 'secondary' ?>"><?= htmlspecialchars((string)($co['gender'] ?? '')) ?></span></td>
+                        <td><?= htmlspecialchars((string)($co['aadhaar_no'] ?? '—')) ?></td>
+                        <td><?= htmlspecialchars((string)($co['pan_no'] ?? '—')) ?></td>
+                        <td class="text-end"><?= number_format((float)($co['share_percentage'] ?? 0), 2) ?>%</td>
+                        <td class="text-end">
+                            <form method="post" action="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/co-owners/delete/<?= (int)($co['id'] ?? 0) ?>" class="d-inline">
+                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars((string)$csrf_token) ?>">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" data-aps-confirm="Remove this co-owner?"><i class="fas fa-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php endforeach; endif; ?>
+                </tbody>
+            </table></div>
+            <form method="post" action="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/co-owners/add" class="row g-2 mt-2">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars((string)$csrf_token) ?>">
+                <div class="col-md-3"><input type="text" name="full_name" class="form-control form-control-sm" placeholder="Full name *" required maxlength="150"></div>
+                <div class="col-md-2"><select name="relationship" class="form-select form-select-sm"><option value="">Relation…</option><option>Spouse</option><option>Mother</option><option>Father</option><option>Son</option><option>Daughter</option><option>Brother</option><option>Sister</option></select></div>
+                <div class="col-md-2"><select name="gender" class="form-select form-select-sm"><option value="female">Female</option><option value="male">Male</option><option value="other">Other</option></select></div>
+                <div class="col-md-2"><input type="text" name="aadhaar_no" class="form-control form-control-sm" placeholder="Aadhaar" maxlength="20"></div>
+                <div class="col-md-1"><input type="number" step="0.01" min="0" max="100" name="share_percentage" value="50" class="form-control form-control-sm" title="Share %"></div>
+                <div class="col-md-2"><button type="submit" class="btn btn-sm btn-primary w-100"><i class="fas fa-plus me-1"></i>Add Owner</button></div>
+            </form>
         </div></div>
     </div>
     <div class="tab-pane fade" id="hist">

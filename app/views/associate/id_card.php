@@ -148,6 +148,19 @@ $rankBadge = $rankBadge ?? ['label' => 'Bronze', 'class' => 'bg-secondary'];
         <span class="text-muted ms-3 small">Press Ctrl+P to print or save as PDF</span>
     </div>
 
+    <?php $miniSiteUrl = $miniSiteUrl ?? ((defined('BASE_URL') ? BASE_URL : '') . '/p/' . $referralCode); ?>
+    <div class="no-print card shadow-sm mx-auto mt-3" style="max-width:560px">
+        <div class="card-body d-flex gap-2 align-items-center flex-wrap">
+            <div class="flex-grow-1">
+                <strong><i class="fas fa-globe me-1"></i>My Mini-Website</strong>
+                <div class="small text-muted text-truncate"><?= htmlspecialchars($miniSiteUrl) ?></div>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-primary" onclick="navigator.clipboard.writeText('<?= htmlspecialchars($miniSiteUrl, ENT_QUOTES) ?>').then(()=>alert('Link copied!'))">Copy Link</button>
+            <a class="btn btn-sm btn-success" target="_blank" rel="noopener" href="https://wa.me/?text=<?= urlencode('My plots page: ' . $miniSiteUrl) ?>">Share to WhatsApp</a>
+            <a class="btn btn-sm btn-outline-secondary" target="_blank" href="<?= htmlspecialchars($miniSiteUrl) ?>">Open</a>
+        </div>
+    </div>
+
     <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         // Auto-focus for better UX
         document.addEventListener('keydown', function(e) {

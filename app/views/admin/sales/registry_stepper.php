@@ -58,6 +58,9 @@ $statusBadges = [
         <a href="<?= $base ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/registry-check" class="btn btn-outline-primary">
             <i class="fas fa-clipboard-check me-1"></i> NOC Check
         </a>
+        <a href="<?= $base ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/registry-packet" class="btn btn-primary" target="_blank">
+            <i class="fas fa-print me-1"></i> Print Registry Dossier
+        </a>
     </div>
 </div>
 

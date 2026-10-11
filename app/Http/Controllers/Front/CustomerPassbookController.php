@@ -1169,6 +1169,45 @@ class CustomerPassbookController extends BaseController
             $titleCertificates = [];
         }
 
+        // Joint ownerships: bookings where this customer is the primary buyer,
+        // with co-owners + live UP female-concession indicator.
+        try {
+            $jointOwnerships = $this->db->fetchAll("
+                SELECT b.id AS booking_id, b.booking_number, b.agreement_value, b.total_plot_value,
+                       p.plot_number, c.name AS colony_name
+                FROM plot_bookings b
+                LEFT JOIN plots p ON b.plot_id = p.id
+                LEFT JOIN colonies c ON p.colony_id = c.id
+                WHERE b.customer_id = ? AND b.tenant_id = ?
+                ORDER BY b.id DESC
+            ", [$userId, $tid]);
+            $stampSvc = new \App\Services\Finance\StampDutyService();
+            $upRates = $stampSvc->getStateRates('UP');
+            foreach ($jointOwnerships as &$jo) {
+                try {
+                    $jo['co_owners'] = $this->db->fetchAll(
+                        "SELECT full_name, relationship, gender, share_percentage FROM booking_co_owners WHERE booking_id = ? ORDER BY id ASC",
+                        [(int)$jo['booking_id']]
+                    ) ?: [];
+                } catch (\Throwable $e) {
+                    $jo['co_owners'] = [];
+                }
+                $val = (float)($jo['agreement_value'] ?? 0) > 0 ? (float)$jo['agreement_value'] : (float)($jo['total_plot_value'] ?? 0);
+                $jo['has_female'] = false;
+                foreach ($jo['co_owners'] as $co) {
+                    if (($co['gender'] ?? '') === 'female') { $jo['has_female'] = true; break; }
+                }
+                $jo['stamp_saving'] = null;
+                if ($upRates && $val > 0 && !empty($jo['co_owners']) && $jo['has_female']) {
+                    $jo['stamp_saving'] = round($val * ((float)$upRates['male_rate'] - (float)$upRates['joint_rate']) / 100, 2);
+                }
+            }
+            unset($jo);
+        } catch (\Throwable $e) {
+            error_log('CustomerPassbookController::documents joint ownerships: ' . $e->getMessage());
+            $jointOwnerships = [];
+        }
+
         $this->layout = 'layouts/customer';
         $this->render('customer/documents', [
             'page_title' => 'My Documents - APS Dream Home',
@@ -1176,6 +1215,7 @@ class CustomerPassbookController extends BaseController
             'passbookDocuments' => $passbookDocuments,
             'agreementDocuments' => $agreementDocuments,
             'titleCertificates' => $titleCertificates,
+            'jointOwnerships' => $jointOwnerships,
         ]);
     }
 
