@@ -454,6 +454,128 @@ class ProjectProgressController extends AdminController
         return $this->redirect('/admin/construction/civil-work');
     }
 
+    /* =========================================================
+     *  Daily site labor muster (mason/helper attendance + wages)
+     * ========================================================= */
+
+    public function musterRoll()
+    {
+        $this->requireAdmin();
+        $logs = $colonies = [];
+        $dayTotal = 0.0;
+        $dayHeadcount = 0;
+        try {
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $cStmt = $this->db->prepare("SELECT id, name FROM colonies WHERE 1=1" . $tenantSql . " ORDER BY name ASC");
+            $cStmt->execute($tenantParams);
+            $colonies = $cStmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $workDate = trim((string)($_GET['work_date'] ?? date('Y-m-d')));
+            if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $workDate)) $workDate = date('Y-m-d');
+            $colonyId = (int)($_GET['colony_id'] ?? 0);
+            $where = "l.work_date = ?";
+            $params = [$workDate];
+            if ($colonyId > 0) {
+                $where .= " AND l.colony_id = ?";
+                $params[] = $colonyId;
+            }
+            $lStmt = $this->db->prepare(
+                "SELECT l.*, c.name AS colony_name FROM site_muster_log l
+                 LEFT JOIN colonies c ON c.id = l.colony_id
+                 WHERE $where" . $tenantSql . "
+                 ORDER BY l.colony_id, l.worker_role, l.worker_name"
+            );
+            $lStmt->execute(array_merge($params, $tenantParams));
+            $logs = $lStmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            foreach ($logs as $l) {
+                if (!empty($l['is_present'])) {
+                    $dayHeadcount++;
+                    $dayTotal += (float)($l['daily_wage'] ?? 0);
+                }
+            }
+        } catch (\Exception $e) {
+            error_log('ProjectProgressController::musterRoll: ' . $e->getMessage());
+            $workDate = date('Y-m-d');
+            $colonyId = 0;
+        }
+        return $this->render('admin/construction/muster_roll', [
+            'page_title' => 'Daily Site Muster Roll',
+            'colonies' => $colonies,
+            'logs' => $logs,
+            'work_date' => $workDate ?? date('Y-m-d'),
+            'colony_id' => $colonyId ?? 0,
+            'day_total' => $dayTotal,
+            'day_headcount' => $dayHeadcount,
+            'roles' => $this->musterRoles(),
+        ]);
+    }
+
+    public function musterStore()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+        try {
+            $roles = array_keys($this->musterRoles());
+            $name = trim((string)($_POST['worker_name'] ?? ''));
+            if ($name === '') {
+                $this->setFlash('error', 'Worker name is required.');
+                return $this->redirect('/admin/construction/muster-roll');
+            }
+            $role = in_array($_POST['worker_role'] ?? '', $roles, true) ? $_POST['worker_role'] : 'helper';
+            $wage = max(0, (float)($_POST['daily_wage'] ?? 0));
+            $workDate = trim((string)($_POST['work_date'] ?? date('Y-m-d')));
+            if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $workDate)) $workDate = date('Y-m-d');
+            $tid = (int)$this->tenantId();
+            $st = $this->db->prepare(
+                "INSERT INTO site_muster_log (tenant_id, colony_id, work_date, worker_name, worker_role, daily_wage, is_present, work_done, recorded_by, notes)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+            );
+            $st->execute([
+                $tid,
+                (int)($_POST['colony_id'] ?? 0) ?: null,
+                $workDate,
+                mb_substr($name, 0, 150),
+                $role,
+                $wage,
+                isset($_POST['is_present']) ? 1 : 0,
+                mb_substr(trim((string)($_POST['work_done'] ?? '')), 0, 255) ?: null,
+                $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? null,
+                mb_substr(trim((string)($_POST['notes'] ?? '')), 0, 500) ?: null,
+            ]);
+            $this->setFlash('success', 'Muster entry added: ' . $name . ' (₹' . number_format($wage, 0) . ')');
+        } catch (\Exception $e) {
+            error_log('ProjectProgressController::musterStore: ' . $e->getMessage());
+            $this->setFlash('error', 'Failed to save muster entry.');
+        }
+        $back = '/admin/construction/muster-roll?work_date=' . urlencode($_POST['work_date'] ?? date('Y-m-d'));
+        if (!empty($_POST['colony_id'])) $back .= '&colony_id=' . (int)$_POST['colony_id'];
+        return $this->redirect($back);
+    }
+
+    public function musterDelete($id)
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+        try {
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $st = $this->db->prepare("DELETE FROM site_muster_log WHERE id = ?" . $tenantSql);
+            $params = array_merge([(int)$id], $tenantParams);
+            $st->execute($params);
+            $this->setFlash('success', $st->rowCount() > 0 ? 'Muster entry deleted.' : 'Entry not found.');
+        } catch (\Exception $e) {
+            error_log('ProjectProgressController::musterDelete: ' . $e->getMessage());
+            $this->setFlash('error', 'Delete failed.');
+        }
+        return $this->redirect('/admin/construction/muster-roll');
+    }
+
+    private function musterRoles(): array
+    {
+        return [
+            'mason' => 'Mason (Mistry)', 'helper' => 'Helper (Beldaar)',
+            'operator' => 'Machine Operator', 'supervisor' => 'Supervisor', 'other' => 'Other',
+        ];
+    }
+
     private function civilWorkTypes(): array
     {
         return [

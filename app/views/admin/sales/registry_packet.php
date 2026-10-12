@@ -122,6 +122,7 @@ foreach ($milestones as $m) { if (($m['status'] ?? '') === 'completed') $doneSta
             <tr><td class="k">Address</td><td colspan="3"><?= $e($customer['address'] ?? '') !== '' ? $e($customer['address']) : $blank ?></td></tr>
             <tr><td class="k">Aadhaar</td><td><?= $e($customer['aadhaar_number'] ?? '') !== '' ? $e($customer['aadhaar_number']) : $blank ?></td><td class="k">PAN</td><td><?= $e($customer['pan_number'] ?? '') !== '' ? $e($customer['pan_number']) : $blank ?></td></tr>
             <tr><td class="k">KYC Status</td><td colspan="3"><?= $e($customer['kyc_status'] ?? 'unverified') ?></td></tr>
+            <tr><td class="k">Nominee</td><td colspan="3"><?= $e($booking['nominee_name'] ?? '') !== '' ? $e($booking['nominee_name']) . ' (' . $e($booking['nominee_relation'] ?? '') . ')' : '<span class="note">none recorded</span>' ?></td></tr>
         </table>
         <?php for ($w = 1; $w <= 2; $w++): ?>
         <p><strong>Witness <?= $w ?> (गवाह <?= $w ?>):</strong> Name <?= $blank ?> &nbsp; S/o <?= $blank ?> &nbsp; Aadhaar <?= $blank ?><br>Address: <?= $blank ?></p>

@@ -81,6 +81,45 @@ class AssociatePageController extends PageController
         ]);
     }
 
+    /**
+     * 1-click digital vCard for the associate.
+     * Route: GET /p/{code}/vcard — serves vCard 3.0 download.
+     */
+    public function downloadVcard($code = null)
+    {
+        $assoc = $this->resolveAssociate((string)($code ?? ''));
+        if (!$assoc) {
+            return $this->render('pages/404', ['page_title' => 'Associate Not Found']);
+        }
+        $name = trim((string)($assoc['user_name'] ?? '')) !== ''
+            ? trim((string)$assoc['user_name']) : 'APS Associate';
+        $phone = preg_replace('/\D/', '', (string)($assoc['user_phone'] ?? ''));
+        $email = trim((string)($assoc['user_email'] ?? ''));
+        $rank = trim((string)($assoc['level'] ?? 'Associate'));
+        $ref = $assoc['assoc_code'] ?: ($assoc['user_code'] ?? '');
+        $lines = [
+            'BEGIN:VCARD', 'VERSION:3.0',
+            'FN:' . $name,
+            'TITLE:' . $rank . ' - APS Dream Home',
+        ];
+        if ($phone !== '') {
+            $lines[] = 'TEL;TYPE=CELL,VOICE:+91' . $phone;
+        }
+        if ($email !== '') {
+            $lines[] = 'EMAIL:' . $email;
+        }
+        $lines[] = 'URL:' . (defined('BASE_URL') ? BASE_URL : '') . '/p/' . $ref;
+        $lines[] = 'NOTE:Official Property Advisor at APS Dream Home Pvt Ltd.';
+        $lines[] = 'END:VCARD';
+        $vcf = implode("\r\n", $lines) . "\r\n";
+        while (ob_get_level() > 0) ob_end_clean();
+        header('Content-Type: text/vcard; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . preg_replace('/[^A-Za-z0-9_-]/', '', $ref ?: 'associate') . '.vcf"');
+        header('Content-Length: ' . strlen($vcf));
+        echo $vcf;
+        exit;
+    }
+
     public function inquire($code = null)
     {
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {

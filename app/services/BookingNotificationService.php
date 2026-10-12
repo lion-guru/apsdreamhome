@@ -101,6 +101,22 @@ class BookingNotificationService
         }
         $result['whatsapp'] = $this->sendWhatsapp($user['phone'] ?? '', $waText);
 
+        // Best-effort receipt-PDF document dispatch. Fires only when the
+        // caller supplies a PUBLIC receipt_pdf_url (no public receipt-file
+        // route exists yet, so this is inert today — zero behavior change).
+        // Caption mirrors the Hinglish receipt text customers already get.
+        $result['whatsapp_doc'] = false;
+        if (!empty($extra['receipt_pdf_url'])) {
+            $caption = "Namaste {$userName}, APS Dream Home me aapke plot {$plotNo} ke liye Rs." . number_format($amount) . " ki bhugtan raseed {$transactionId} sanlagn hai. Dhanyavaad!";
+            $result['whatsapp_doc'] = $this->sendWhatsappDocument(
+                $user['phone'] ?? '',
+                $extra['receipt_pdf_url'],
+                'Receipt-' . preg_replace('/[^A-Za-z0-9_-]/', '', $transactionId) . '.pdf',
+                $caption
+            );
+            $this->logCommunication((int)$user['id'], 'payment_receipt', 'whatsapp_doc', $result['whatsapp_doc'], 'Receipt PDF ' . $transactionId, $caption);
+        }
+
         // Log
         $this->logCommunication((int)$user['id'], 'payment_receipt', 'email', $result['email'], $subject, $sms);
         $this->logCommunication((int)$user['id'], 'payment_receipt', 'sms', $result['sms'], 'Payment Receipt SMS', $sms);
@@ -541,6 +557,20 @@ class BookingNotificationService
             return (bool)($result['success'] ?? false);
         } catch (\Throwable $e) {
             error_log("[BookingNotificationService] WhatsApp failed: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    private function sendWhatsappDocument(string $to, string $documentUrl, string $filename, ?string $caption = null): bool
+    {
+        if (empty($to) || empty($documentUrl)) return false;
+        try {
+            $wa = new \App\Services\Communication\WhatsAppService();
+            if (!$wa->isConfigured()) return false;
+            $result = $wa->sendDocumentMessage($to, $documentUrl, $filename, $caption);
+            return (bool)($result['success'] ?? false);
+        } catch (\Throwable $e) {
+            error_log("[BookingNotificationService] WhatsApp document failed: " . $e->getMessage());
             return false;
         }
     }

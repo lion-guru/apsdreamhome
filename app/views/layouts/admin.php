@@ -318,6 +318,8 @@ $GLOBALS['_html_doc_started'] = true;
                     <span class="badge"><?php echo e($newInquiriesCount); ?></span>
                 </button>
 
+
+
                 <!-- Omni-Search Trigger (Ctrl+K) -->
                 <button class="nav-icon" id="omniSearchTrigger" onclick="openOmniSearch()" title="Search everywhere (Ctrl+K)">
                     <i class="fas fa-search"></i>
@@ -456,6 +458,19 @@ $GLOBALS['_html_doc_started'] = true;
     }
     function toggleMessages() {
         window.location.href = '<?php echo $base ?? BASE_URL; ?>/admin/inquiries';
+    }
+    </script>
+    <?php /* Web-Push subscribe button (pre-built component) + SW registration for admin pages.
+             NOTE: do NOT pre-define PUSH_SUBSCRIBE_BTN_LOADED here — the
+             component returns empty when it is already defined. */ ?>
+    <?php include __DIR__ . '/../components/push_subscribe_button.php'; ?>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+            navigator.serviceWorker.register('<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/sw.js').catch(function (err) {
+                console.log('SW registration failed:', err);
+            });
+        });
     }
     </script>
     <?php if (isset($extra_js) && $extra_js): ?><!-- Extra page-specific JS --><?php echo e($extra_js); ?><?php endif; ?>

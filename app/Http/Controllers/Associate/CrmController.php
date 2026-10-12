@@ -493,5 +493,221 @@ class CrmController extends BaseController
 
         $this->redirect('/associate/followups');
     }
+
+    /* =========================================================
+     *  Lead import / export / bulk-WhatsApp (were legacy redirects)
+     * ========================================================= */
+
+    /**
+     * GET /associate/leads/import — renders the import form view.
+     */
+    public function importLeads()
+    {
+        $this->requireAuth();
+        $this->render('associate/import_leads', [
+            'page_title' => 'Import Leads - Associate Portal',
+            'imported' => (int)($_GET['imported'] ?? 0),
+            'skipped' => (int)($_GET['skipped'] ?? 0),
+            'errors' => [],
+        ], 'layouts/associate');
+    }
+
+    /**
+     * POST /associate/leads/import — parse CSV (max 500 rows), validate,
+     * skip duplicate phones, insert the rest as this associate's leads.
+     */
+    public function importLeadsStore()
+    {
+        $this->requireAuth();
+        $userId = $_SESSION['user_id'];
+        $tid = TenantContext::getId();
+
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+            $this->redirect('/associate/leads/import');
+            return;
+        }
+        if (!isset($_FILES['csv_file']) || ($_FILES['csv_file']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+            $_SESSION['flash_error'] = 'Please choose a CSV file to upload.';
+            $this->redirect('/associate/leads/import');
+            return;
+        }
+
+        $db = \App\Core\Database\Database::getInstance();
+        $imported = 0;
+        $skipped = 0;
+        $errors = [];
+        try {
+            $fh = fopen($_FILES['csv_file']['tmp_name'], 'r');
+            if (!$fh) {
+                throw new \RuntimeException('Could not read the uploaded file.');
+            }
+            $header = fgetcsv($fh);
+            if (!$header) {
+                fclose($fh);
+                throw new \RuntimeException('Empty CSV file.');
+            }
+            $map = [];
+            foreach ($header as $i => $h) {
+                $map[strtolower(trim((string)$h))] = $i;
+            }
+            if (!isset($map['name']) || !isset($map['phone'])) {
+                fclose($fh);
+                throw new \RuntimeException('CSV must have name and phone columns.');
+            }
+            $rowNo = 1;
+            while (($row = fgetcsv($fh)) !== false) {
+                $rowNo++;
+                if ($rowNo > 501) {
+                    $errors[] = "Row $rowNo: import capped at 500 leads.";
+                    break;
+                }
+                $name = trim((string)($row[$map['name']] ?? ''));
+                $phone = preg_replace('/\D/', '', (string)($row[$map['phone']] ?? ''));
+                if ($name === '' || !preg_match('/^[6-9]\d{9}$/', $phone)) {
+                    $skipped++;
+                    continue;
+                }
+                $dup = $db->fetchOne(
+                    "SELECT id FROM leads WHERE phone = ? AND tenant_id = ? LIMIT 1",
+                    [$phone, $tid]
+                );
+                if ($dup) {
+                    $skipped++;
+                    continue;
+                }
+                $email = isset($map['email']) ? trim((string)($row[$map['email']] ?? '')) : '';
+                $db->insert('leads', [
+                    'tenant_id' => $tid,
+                    'name' => mb_substr($name, 0, 100),
+                    'phone' => $phone,
+                    'email' => mb_substr($email, 0, 100) ?: null,
+                    'source' => isset($map['source']) && trim((string)($row[$map['source']] ?? '')) !== ''
+                        ? mb_substr(trim((string)$row[$map['source']]), 0, 50) : 'csv_import',
+                    'budget_range' => isset($map['budget']) ? mb_substr(trim((string)($row[$map['budget']] ?? '')), 0, 50) : null,
+                    'location_preference' => isset($map['location']) ? mb_substr(trim((string)($row[$map['location']] ?? '')), 0, 100) : null,
+                    'notes' => isset($map['notes']) ? mb_substr(trim((string)($row[$map['notes']] ?? '')), 0, 500) : null,
+                    'assigned_to' => $userId,
+                    'created_by' => $userId,
+                    'status' => 'new',
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s'),
+                ]);
+                $imported++;
+            }
+            fclose($fh);
+            $this->logActivity('leads_imported', json_encode(['imported' => $imported, 'skipped' => $skipped]));
+            $_SESSION['flash_success'] = "Imported $imported lead(s), skipped $skipped.";
+        } catch (\Throwable $e) {
+            error_log('AssociateCrmController::importLeadsStore error: ' . $e->getMessage());
+            $_SESSION['flash_error'] = 'Import failed: ' . $e->getMessage();
+        }
+        $this->redirect('/associate/leads/import?imported=' . $imported . '&skipped=' . $skipped);
+    }
+
+    /**
+     * GET /associate/leads/export — CSV download of this associate's leads.
+     */
+    public function exportLeads()
+    {
+        $this->requireAuth();
+        $userId = $_SESSION['user_id'];
+        $tid = TenantContext::getId();
+
+        $db = \App\Core\Database\Database::getInstance();
+        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+        $params = [$userId, $userId];
+        if ($tid > 1) $params[] = $tid;
+        $rows = $db->fetchAll(
+            "SELECT name, phone, email, source, budget_range, location_preference, status, created_at
+             FROM leads WHERE (assigned_to = ? OR created_by = ?){$tidSql} ORDER BY id DESC",
+            $params
+        ) ?: [];
+
+        $filename = 'my-leads-' . date('Ymd-His') . '.csv';
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        $out = fopen('php://output', 'w');
+        fputcsv($out, ['name', 'phone', 'email', 'source', 'budget', 'location', 'status', 'created_at']);
+        foreach ($rows as $r) {
+            fputcsv($out, [
+                $r['name'] ?? '', $r['phone'] ?? '', $r['email'] ?? '', $r['source'] ?? '',
+                $r['budget_range'] ?? '', $r['location_preference'] ?? '',
+                $r['status'] ?? '', $r['created_at'] ?? '',
+            ]);
+        }
+        fclose($out);
+        exit;
+    }
+
+    /**
+     * GET /associate/leads/bulk-whatsapp — compose screen for ?ids=1,2,3
+     * (owned leads only). POST builds wa.me links (no auto-sending).
+     */
+    public function bulkWhatsApp()
+    {
+        $this->requireAuth();
+        $userId = $_SESSION['user_id'];
+        $tid = TenantContext::getId();
+        $db = \App\Core\Database\Database::getInstance();
+
+        $ids = [];
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+            foreach ((array)($_POST['lead_ids'] ?? []) as $lid) {
+                $lid = (int)$lid;
+                if ($lid > 0) $ids[] = $lid;
+            }
+        } else {
+            foreach (explode(',', (string)($_GET['ids'] ?? '')) as $part) {
+                $lid = (int)trim($part);
+                if ($lid > 0) $ids[] = $lid;
+            }
+        }
+        $ids = array_values(array_unique($ids));
+
+        $leads = [];
+        if (!empty($ids)) {
+            $placeholders = implode(',', array_fill(0, count($ids), '?'));
+            $params = array_merge($ids, [$userId, $userId]);
+            $tidSql = '';
+            if ($tid > 1) {
+                $tidSql = ' AND tenant_id = ?';
+                $params[] = $tid;
+            }
+            $leads = $db->fetchAll(
+                "SELECT id, name, phone FROM leads
+                 WHERE id IN ($placeholders) AND (assigned_to = ? OR created_by = ?){$tidSql}",
+                $params
+            ) ?: [];
+        }
+
+        $whatsappLinks = [];
+        $message = trim((string)($_POST['message'] ?? ''));
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && $message !== '' && !empty($leads)) {
+            foreach ($leads as $l) {
+                $digits = preg_replace('/\D/', '', (string)($l['phone'] ?? ''));
+                if (!preg_match('/^[6-9]\d{9}$/', $digits)) {
+                    continue;
+                }
+                $text = str_replace(
+                    ['{name}', '{phone}'],
+                    [$l['name'] ?? '', $digits],
+                    $message
+                );
+                $whatsappLinks[] = [
+                    'name' => $l['name'] ?? $digits,
+                    'url' => 'https://wa.me/91' . $digits . '?text=' . urlencode($text),
+                ];
+            }
+            $this->logActivity('bulk_whatsapp_links', json_encode(['count' => count($whatsappLinks)]));
+        }
+
+        $this->render('associate/bulk_whatsapp', [
+            'page_title' => 'Bulk WhatsApp - Associate Portal',
+            'leads' => $leads,
+            'whatsappLinks' => $whatsappLinks,
+            'sent' => count($whatsappLinks),
+            'message' => $message,
+        ], 'layouts/associate');
+    }
 }
 

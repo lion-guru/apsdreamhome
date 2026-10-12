@@ -112,6 +112,7 @@ class Router
         if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'DELETE'])) {
             $excludedPaths = [
                 '/subscribe',
+                '/push/',
                 '/api/',
                 '/api/v2/mobile/',
                 '/apsdreamhome/api/',

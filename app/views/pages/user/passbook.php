@@ -448,6 +448,62 @@ $statusBadgeMap = [
 </div>
 <?php endif; ?>
 
+<?php if (!empty($activeBookingId)): ?>
+<div style="margin:12px 0;">
+    <a class="pb-btn pb-btn-receipt" target="_blank" href="<?= BASE_URL ?>/customer/passbook/<?= (int)$activeBookingId ?>/statement-pdf">
+        <i class="fas fa-file-pdf"></i> Download Official Statement (PDF)
+    </a>
+</div>
+<?php endif; ?>
+<?php if (!empty($activeBookingId)): ?>
+<div class="card shadow-sm" style="margin:12px 0;">
+    <div class="card-body">
+        <h6 class="fw-bold mb-2"><i class="fas fa-piggy-bank me-1"></i>Pre-Pay &amp; Save Tenure</h6>
+        <label class="form-label small">Extra lump-sum: <strong id="prepayAmtLabel">₹50,000</strong></label>
+        <input type="range" class="form-range" id="prepaySlider" min="10000" max="200000" step="5000" value="50000">
+        <div id="prepayResult" class="small text-muted">Slide to simulate months + penalty saved.</div>
+        <button type="button" class="btn btn-success btn-sm mt-2" id="prepaySimBtn">Simulate Savings</button>
+    </div>
+</div>
+<script>
+(function () {
+    var slider = document.getElementById('prepaySlider');
+    var label = document.getElementById('prepayAmtLabel');
+    var out = document.getElementById('prepayResult');
+    if (!slider) return;
+    slider.addEventListener('input', function () {
+        label.textContent = '₹' + Number(slider.value).toLocaleString('en-IN');
+    });
+    document.getElementById('prepaySimBtn').addEventListener('click', function () {
+        out.textContent = 'Calculating…';
+        fetch('<?= BASE_URL ?>/customer/passbook/<?= (int)$activeBookingId ?>/prepay-simulate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'extra_amount=' + encodeURIComponent(slider.value) + '&csrf_token=' + encodeURIComponent('<?= $_SESSION['csrf_token'] ?? '' ?>')
+        }).then(function (r) { return r.json(); }).then(function (d) {
+            if (!d || !d.success) { out.textContent = (d && d.error) || 'Simulation failed.'; return; }
+            out.innerHTML = '🎉 <strong>' + d.months_saved + ' installment(s)</strong> knocked off, <strong>₹' +
+                Number(d.penalty_saved).toLocaleString('en-IN') + '</strong> penalty saved' +
+                (d.new_end_date ? ', new last due: <strong>' + d.new_end_date + '</strong>' : ' — fully cleared!') + '.';
+        }).catch(function () { out.textContent = 'Simulation failed.'; });
+    });
+})();
+</script>
+<?php endif; ?>
+<?php $ots_banner = $ots_banner ?? null; if (!empty($ots_banner)): ?>
+<div class="alert alert-success d-flex justify-content-between align-items-center flex-wrap gap-2" style="margin:12px 0;">
+    <div>
+        <strong><i class="fas fa-badge-percent me-1"></i><?= htmlspecialchars($ots_banner['scheme_name'] ?? 'OTS') ?></strong>
+        <span class="small">— pay overdue in full by <?= htmlspecialchars($ots_banner['end_date'] ?? '') ?> and save <strong>₹<?= number_format((float)($ots_banner['waived'] ?? 0)) ?></strong> in penalties.</span>
+        <?php if ((float)($ots_banner['overdue_principal'] ?? 0) > 0 || (float)($ots_banner['overdue_penalty'] ?? 0) > 0): ?>
+            <div class="small">Your overdue: ₹<?= number_format((float)$ots_banner['overdue_principal']) ?> + ₹<?= number_format((float)$ots_banner['overdue_penalty']) ?> penalty → <strong>OTS payoff ₹<?= number_format((float)$ots_banner['payoff']) ?></strong></div>
+        <?php else: ?>
+            <div class="small">You have no overdue dues — nothing to waive. Keep it that way!</div>
+        <?php endif; ?>
+    </div>
+</div>
+<?php endif; ?>
+
 <?php
 $activeBooking = null;
 foreach ($bookings as $b) {

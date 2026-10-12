@@ -326,6 +326,7 @@ $router->post('/booking/{id}/pay', 'Front\\PlotPaymentController@processPayment'
 $router->get('/booking/{id}/receipt', 'Front\\PlotBookingController@receipt');
 
 $router->get('/colony/{slug}/plots', 'Front\\PlotIndexController@colonyPlots');
+$router->get('/verify/{type}/{ref_no}', 'Front\\PublicVerifyController@verify');
 $router->get('/colony/{slug}/map', 'App\\Http\\Controllers\\MapController@colonyPlotMap');
 $router->get('/api/colony/{id}/map/geojson', 'App\\Http\\Controllers\\MapController@colonyGeoJson');
 $router->get('/colony/{id}/live-layout', 'App\\Http\\Controllers\\MapController@liveLayout');
@@ -856,6 +857,11 @@ $router->get('/customer/documents/download/passbook/{id}', 'App\\Http\\Controlle
 $router->get('/customer/documents/download/agreement/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadAgreement');
 $router->get('/customer/documents/download/title-certificate/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadTitleCertificate');
 $router->get('/customer/documents/download/title-certificate/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadTitleCertificate');
+$router->get('/customer/passbook/{booking_id}/statement-pdf', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@statementPdf');
+$router->post('/customer/passbook/{booking_id}/prepay-simulate', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@simulatePrepay');
+$router->post('/admin/sales/bookings/{id}/nominee', 'App\\Http\\Controllers\\Admin\\BookingLifecycleController@updateNominee');
+$router->post('/customer/bookings/{id}/nominee', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@updateNominee');
+$router->get('/customer/bookings/{id}/nominee-sheet', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@nomineeSheet');
 $router->get('/customer/nri-desk', 'Front\\CustomerNriController@index');
 $router->post('/customer/nri-desk/save', 'Front\\CustomerNriController@save');
 $router->get('/customer/allotment/{id}/accept', 'App\\Http\\Controllers\\Front\\AllotmentAcceptanceController@show');
@@ -879,6 +885,7 @@ $router->get('/associate/marketing/posters/image', 'App\\Http\\Controllers\\Asso
 // Associate branded mini-website (public lead magnet)
 $router->get('/p/{code}', 'Front\\AssociatePageController@landing');
 $router->post('/p/{code}/inquire', 'Front\\AssociatePageController@inquire');
+$router->get('/p/{code}/vcard', 'Front\\AssociatePageController@downloadVcard');
 
 $router->post('/property/inquire', 'Front\\PropertyController@propertyInquiry');
 $router->get('/property/inquire', 'Front\\PropertyController@propertyInquiry');
@@ -1113,14 +1120,14 @@ $router->get('/associate/leads/all', 'App\\Http\\Controllers\\AssociateControlle
 $router->post('/associate/leads/{id}/status', 'App\\Http\\Controllers\\AssociateController@updateLeadStatus');
 $router->post('/associate/leads/{id}/note', 'App\\Http\\Controllers\\AssociateController@addLeadNote');
 $router->get('/associate/leads/{id}', 'App\\Http\\Controllers\\AssociateController@leadDetail');
-$router->get('/associate/leads/import', 'App\\Http\\Controllers\\AssociateController@importLeads');
-$router->post('/associate/leads/import', 'App\\Http\\Controllers\\AssociateController@importLeads');
-$router->get('/associate/leads/bulk-whatsapp', 'App\\Http\\Controllers\\AssociateController@bulkWhatsApp');
-$router->post('/associate/leads/bulk-whatsapp', 'App\\Http\\Controllers\\AssociateController@bulkWhatsApp');
+$router->get('/associate/leads/import', 'App\\Http\\Controllers\\Associate\\CrmController@importLeads');
+$router->post('/associate/leads/import', 'App\\Http\\Controllers\\Associate\\CrmController@importLeadsStore');
+$router->get('/associate/leads/bulk-whatsapp', 'App\\Http\\Controllers\\Associate\\CrmController@bulkWhatsApp');
+$router->post('/associate/leads/bulk-whatsapp', 'App\\Http\\Controllers\\Associate\\CrmController@bulkWhatsApp');
 $router->post('/associate/leads/{id}/assign', 'App\\Http\\Controllers\\AssociateController@assignLead');
 $router->post('/associate/leads/{id}/recalculate-score', 'App\\Http\\Controllers\\AssociateController@recalculateScore');
 $router->post('/associate/leads/recalculate-all-scores', 'App\\Http\\Controllers\\AssociateController@recalculateAllScores');
-$router->get('/associate/leads/export', 'App\\Http\\Controllers\\AssociateController@exportLeads');
+$router->get('/associate/leads/export', 'App\\Http\\Controllers\\Associate\\CrmController@exportLeads');
 $router->get('/associate/commissions/history', 'App\\Http\\Controllers\\AssociateController@commissions');
 $router->get('/associate/wallet/withdraw', 'App\\Http\\Controllers\\WalletController@withdrawal');
 $router->get('/associate/network/tree', 'App\\Http\\Controllers\\MLMTreeController@tree');
@@ -1277,6 +1284,8 @@ $router->post('/employee/legal/report', 'Employee\\LegalAdvisorController@genera
 
 $router->get('/employee/telecalling-dashboard', 'Employee\\TelecallingController@dashboard');
 $router->post('/employee/telecalling/log-call', 'Employee\\TelecallingController@logCall');
+$router->get('/employee/telecalling/desk', 'Employee\\TelecallingController@callingDesk');
+$router->post('/employee/telecalling/book-site-visit', 'Employee\\TelecallingController@bookSiteVisit');
 $router->get('/employee/telecalling/lead/{id}', 'Employee\\TelecallingController@getLeadDetails');
 $router->get('/employee/telecalling/script/{id}', 'Employee\\TelecallingController@getRecommendedScript');
 $router->get('/employee/telecalling/followups', 'Employee\\TelecallingController@getTodayFollowUps');
@@ -1736,7 +1745,10 @@ $router->get('/admin/site-visits/fleet', 'App\\Http\\Controllers\\Admin\\FleetCo
 $router->get('/admin/site-visits/fleet/vehicles', 'App\\Http\\Controllers\\Admin\\FleetController@vehicles');
 $router->post('/admin/site-visits/fleet/vehicles/store', 'App\\Http\\Controllers\\Admin\\FleetController@vehicleStore');
 $router->post('/admin/site-visits/fleet/vehicles/{id}/toggle', 'App\\Http\\Controllers\\Admin\\FleetController@vehicleToggle');
-$router->get('/admin/site-visits/fleet/trips', 'App\\Http\\Controllers\\Admin\\FleetController@trips');
+$router->get('/admin/site-visits/fleet/trips',
+'App\\Http\\Controllers\\Admin\\FleetController@trips');
+$router->get('/admin/site-visits/manifest',
+'App\\Http\\Controllers\\Admin\\FleetController@printSundayManifest');
 $router->post('/admin/site-visits/fleet/trips/store', 'App\\Http\\Controllers\\Admin\\FleetController@tripStore');
 $router->post('/admin/site-visits/fleet/trips/{id}/status', 'App\\Http\\Controllers\\Admin\\FleetController@tripStatus');
 $router->post('/admin/site-visits/fleet/trips/{id}/outcome', 'App\\Http\\Controllers\\Admin\\FleetController@tripOutcome');
@@ -2707,6 +2719,10 @@ $router->get('/admin/land-inventory/colonies/{colonyId}/costs/new', 'App\\Http\\
 $router->post('/admin/land-inventory/colonies/{colonyId}/costs/store', 'App\\Http\\Controllers\\Admin\\LandInventoryController@developmentCostStore');
 
 $router->get('/admin/land-inventory/colonies/{colonyId}/layouts', 'App\\Http\\Controllers\\Admin\\LandInventoryController@layouts');
+$router->get('/admin/land-inventory/litigations', 'App\\Http\\Controllers\\Admin\\LandLitigationController@index');
+$router->post('/admin/land-inventory/litigations/store', 'App\\Http\\Controllers\\Admin\\LandLitigationController@store');
+$router->post('/admin/land-inventory/litigations/update/{id}', 'App\\Http\\Controllers\\Admin\\LandLitigationController@update');
+$router->post('/admin/land-inventory/litigations/delete/{id}', 'App\\Http\\Controllers\\Admin\\LandLitigationController@destroy');
 $router->get('/admin/land-inventory/colonies/{colonyId}/layouts/create', 'App\\Http\\Controllers\\Admin\\LandInventoryController@layoutForm');
 
 // ============================================================
@@ -2864,8 +2880,44 @@ $router->post('/admin/sales/bookings/{id}/registry-milestone/{stage}',
 'App\\Http\\Controllers\\Admin\\BookingLifecycleController@updateRegistryMilestone');
 $router->get('/admin/sales/bookings/{id}/registry-packet',
 'App\\Http\\Controllers\\Admin\\BookingLifecycleController@registryPacket');
+$router->get('/admin/sales/receipts/{id}/legal-notice-138',
+'App\\Http\\Controllers\\Admin\\BookingLifecycleController@legalNotice138');
+$router->get('/admin/sales/token-bookings',
+'App\\Http\\Controllers\\Admin\\TokenBookingController@index');
+$router->get('/admin/sales/token-booking/create/{plot_id}',
+'App\\Http\\Controllers\\Admin\\TokenBookingController@create');
+$router->post('/admin/sales/token-booking/store',
+'App\\Http\\Controllers\\Admin\\TokenBookingController@store');
+$router->get('/admin/sales/token-booking/receipt/{receipt_no}',
+'App\\Http\\Controllers\\Admin\\TokenBookingController@printReceipt');
 $router->get('/admin/sales/nri-desk',
 'App\\Http\\Controllers\\Admin\\NRIController@index');
+$router->get('/admin/sales/bookings/{id}/possession-certificate',
+'App\\Http\\Controllers\\Admin\\PossessionCertController@show');
+$router->get('/admin/colonies/{id}/media-hub',
+'App\\Http\\Controllers\\Admin\\ColonyMediaController@index');
+$router->post('/admin/colonies/{id}/media-hub/upload',
+'App\\Http\\Controllers\\Admin\\ColonyMediaController@store');
+$router->post('/admin/colonies/media/{id}/delete',
+'App\\Http\\Controllers\\Admin\\ColonyMediaController@destroy');
+$router->get('/colony/{id}/media-hub',
+'Front\\ColonyMediaFrontController@show');
+$router->get('/admin/plots/{id}/quotation-pdf',
+'App\\Http\\Controllers\\Admin\\PlotPricingController@quotationPdf');
+$router->get('/associate/plots/{id}/quotation-pdf',
+'App\\Http\\Controllers\\Associate\\PropertyController@quotationPdf');
+$router->get('/admin/colonies/price-revisions',
+'App\\Http\\Controllers\\Admin\\PriceRevisionController@index');
+$router->post('/admin/colonies/price-revisions/store',
+'App\\Http\\Controllers\\Admin\\PriceRevisionController@store');
+$router->post('/admin/colonies/price-revisions/deactivate/{id}',
+'App\\Http\\Controllers\\Admin\\PriceRevisionController@deactivate');
+$router->get('/site-visit/checkin/{id}',
+'Front\\SiteVisitFrontController@showCheckin');
+$router->post('/site-visit/checkin/{id}/submit',
+'Front\\SiteVisitFrontController@submitCheckin');
+$router->post('/admin/sales/bookings/{id}/possession-certificate/issue',
+'App\\Http\\Controllers\\Admin\\PossessionCertController@issue');
 $router->post('/admin/sales/nri-desk/verify/{id}',
 'App\\Http\\Controllers\\Admin\\NRIController@verify');
 // ============================================================
@@ -2952,6 +3004,11 @@ $router->post('/admin/finance/template-delete',                                 
 
 // Voucher audit log
 $router->get('/admin/finance/voucher-log',                                        'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@voucherLog');
+
+// OTS schemes + sanction letters
+$router->get('/admin/finance/ots-schemes', 'App\\Http\\Controllers\\Admin\\OTSController@index');
+$router->post('/admin/finance/ots-schemes/create', 'App\\Http\\Controllers\\Admin\\OTSController@store');
+$router->get('/admin/finance/ots-schemes/letter/{booking_id}', 'App\\Http\\Controllers\\Admin\\OTSController@generateLetter');
 
 // EMI Penalty Engine
 $router->get('/admin/finance/penalties',                                          'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@penaltySummary');
@@ -5824,7 +5881,14 @@ $router->get('/admin/construction/material-inventory', 'App\\Http\\Controllers\\
 $router->post('/admin/construction/material-inventory/log-usage', 'App\\Http\\Controllers\\Admin\\ProjectProgressController@logMaterialUsage');
 $router->get('/admin/construction/civil-work', 'App\\Http\\Controllers\\Admin\\ProjectProgressController@civilWorkLog');
 $router->post('/admin/construction/civil-work/store', 'App\\Http\\Controllers\\Admin\\ProjectProgressController@civilWorkStore');
-$router->get('/admin/construction/colony-cost-profit', 'App\\Http\\Controllers\\Admin\\ProjectProgressController@colonyCostProfit');
+$router->get('/admin/construction/colony-cost-profit',
+'App\\Http\\Controllers\\Admin\\ProjectProgressController@colonyCostProfit');
+$router->get('/admin/construction/muster-roll',
+'App\\Http\\Controllers\\Admin\\ProjectProgressController@musterRoll');
+$router->post('/admin/construction/muster-roll/store',
+'App\\Http\\Controllers\\Admin\\ProjectProgressController@musterStore');
+$router->post('/admin/construction/muster-roll/delete/{id}',
+'App\\Http\\Controllers\\Admin\\ProjectProgressController@musterDelete');
 
 
 // Referral Leaderboard (Customer)

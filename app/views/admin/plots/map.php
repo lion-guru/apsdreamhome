@@ -165,6 +165,13 @@ foreach ($all_plots as $p) { $byColony[$p['colony_id']][] = $p; }
                             <tr id="ppHoldRow" class="d-none"><th>Held By</th><td id="ppHolder"></td></tr>
                             <tr id="ppHoldLeftRow" class="d-none"><th>Hold Left</th><td id="ppHoldLeft" class="text-warning fw-bold"></td></tr>
                         </table>
+                        <div id="ppVastu" class="d-none rounded-3 p-2 mb-2 small" style="background:#fffbeb;border:1px solid #fde68a;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <strong><i class="fas fa-compass me-1"></i>Vastu</strong>
+                                <span id="ppVastuBadge" class="badge"></span>
+                            </div>
+                            <ul id="ppVastuTips" class="mb-0 mt-1 ps-3"></ul>
+                        </div>
                         <div class="d-grid gap-2">
                             <form id="ppHoldForm" method="POST" action="">
                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
@@ -183,6 +190,9 @@ foreach ($all_plots as $p) { $byColony[$p['colony_id']][] = $p; }
                             </a>
                             <a id="ppBookBtn" href="#" class="btn btn-success btn-sm d-none">
                                 <i class="fas fa-file-signature me-1"></i>Book This Plot
+                            </a>
+                            <a id="ppTokenBtn" href="#" class="btn btn-outline-warning btn-sm d-none">
+                                <i class="fas fa-handshake me-1"></i>Book Token (Bayana)
                             </a>
                         </div>
                         <small class="text-muted d-block mt-2">Hold locks the plot as unavailable for every agent for 24 hours — no double-showing on site visits.</small>
@@ -242,6 +252,37 @@ foreach ($all_plots as $p) { $byColony[$p['colony_id']][] = $p; }
         under_construction: 'bg-secondary'
     };
 
+    // Vastu score from facing direction. Numeric/blank facings (legacy data
+    // stores road widths here) honestly report "unknown", never a fake score.
+    function vastuFor(facing) {
+        var f = String(facing || '').toLowerCase().replace(/[\s_-]+/g, '');
+        // NOTE: compounds BEFORE cardinals — 'southwest' contains 'west'/'south'.
+        var table = [
+            { k: ['northeast', 'ne', 'ishan'], score: 98, label: 'Highly Auspicious', cls: 'bg-success',
+              tips: ['Morning sunlight + auspicious entry zone', 'Pitch: premium corner-grade plot'] },
+            { k: ['northwest', 'nw'], score: 85, label: 'Auspicious', cls: 'bg-info text-dark',
+              tips: ['Good cross-ventilation', 'Pleasant evening light'] },
+            { k: ['southeast', 'se'], score: 80, label: 'Auspicious', cls: 'bg-info text-dark',
+              tips: ['Fire-zone corner — ideal kitchen placement', 'Strong morning light'] },
+            { k: ['southwest', 'sw'], score: 62, label: 'Remedies Advised', cls: 'bg-secondary',
+              tips: ['Heaviest zone — best for master-bedroom block', 'Entrance Vastu strip recommended'] },
+            { k: ['east', 'purab'], score: 92, label: 'Very Auspicious', cls: 'bg-success',
+              tips: ['Morning sun all year', 'Ideal main-entrance direction'] },
+            { k: ['north', 'uttar'], score: 90, label: 'Very Auspicious', cls: 'bg-success',
+              tips: ['Wealth-direction facing', 'Steady daylight, low evening heat'] },
+            { k: ['west', 'paschim'], score: 78, label: 'Moderate', cls: 'bg-warning text-dark',
+              tips: ['Evening sun — plan a shaded sit-out', 'Good for rental demand'] },
+            { k: ['south', 'dakshin'], score: 68, label: 'Remedies Advised', cls: 'bg-warning text-dark',
+              tips: ['Vastu entrance plate + Tulsi in NE corner', 'Bright paint offsets evening heat'] }
+        ];
+        for (var i = 0; i < table.length; i++) {
+            for (var j = 0; j < table[i].k.length; j++) {
+                if (f.indexOf(table[i].k[j]) !== -1) return table[i];
+            }
+        }
+        return null;
+    }
+
     document.querySelectorAll('.plot-cell').forEach(function (rect) {
         rect.addEventListener('click', function () {
             document.querySelectorAll('.plot-g.selected').forEach(function (g) { g.classList.remove('selected'); });
@@ -258,6 +299,23 @@ foreach ($all_plots as $p) { $byColony[$p['colony_id']][] = $p; }
             document.getElementById('ppSize').textContent = (d.size || '—') + ' ft';
             document.getElementById('ppFacing').textContent = d.facing || '—';
             document.getElementById('ppCorner').textContent = d.corner || 'No';
+            (function () {
+                var v = vastuFor(d.facing);
+                var card = document.getElementById('ppVastu');
+                if (!v) {
+                    card.classList.remove('d-none');
+                    document.getElementById('ppVastuBadge').textContent = 'Direction not set';
+                    document.getElementById('ppVastuBadge').className = 'badge bg-secondary';
+                    document.getElementById('ppVastuTips').innerHTML = '<li>Update facing for a Vastu score.</li>';
+                    return;
+                }
+                card.classList.remove('d-none');
+                var b = document.getElementById('ppVastuBadge');
+                b.textContent = v.score + '% ' + v.label;
+                b.className = 'badge ' + v.cls;
+                document.getElementById('ppVastuTips').innerHTML =
+                    v.tips.map(function (t) { return '<li>' + t.replace(/</g, '&lt;') + '</li>'; }).join('');
+            })();
             document.getElementById('ppPrice').textContent = '₹' + (d.price || '0');
             document.getElementById('ppPps').textContent = '₹' + (d.pps || '0');
             var isHold = (d.status === 'hold');
@@ -274,6 +332,9 @@ foreach ($all_plots as $p) { $byColony[$p['colony_id']][] = $p; }
             var bookBtn = document.getElementById('ppBookBtn');
             bookBtn.href = base + '/admin/plots/' + d.id + '/book';
             bookBtn.classList.toggle('d-none', !(isAvail || isHold));
+            var tokenBtn = document.getElementById('ppTokenBtn');
+            tokenBtn.href = base + '/admin/sales/token-booking/create/' + d.id;
+            tokenBtn.classList.toggle('d-none', !isAvail);
             document.getElementById('plotPanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         });
     });

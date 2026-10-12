@@ -1,5 +1,97 @@
 > **COMPLETED (2026-10-06):** Churn-stop verified (snapshots identical), full review done, all work committed + pushed (see Session 171-173 below).
 
+## Session 203: All-Night Build — 15 Modules + Telecalling Desk + MySQL Rescue (2026-10-12)
+
+### Trigger
+"karo sab ... bina ruke sare kaam karo ... pc shutdown kar dena ... project tumhare bharose" (owner asleep, full mandate). Built all 15 prompted modules + telecalling desk wiring. Audited each first; 2 proposals corrected (PRO-4 crm_leads→leads S197; UP joint delta 0.5% S197).
+
+### P1 (5 tables, all probe-verified, 0 leftovers)
+- **Token booking**: `plot_token_bookings` + `TokenBookingController` (index/create/store/receipt) + map "Book Token" action. Cycle: form→store ₹11,000→plot hold 7d→receipt print→expiry auto-release→cleanup, A-1 restored.
+- **OTS**: `ots_schemes` + `OTSController` (index/store/letter) + passbook banner (payoff math, honest zeros). Scheme→letter→banner→banner-gone→0 rows.
+- **Possession**: `possession_certificates` + issuance (photo upload) + locker section. Full cycle incl. PNG upload, 0 rows/files left.
+- **Litigation**: `land_litigations` + CRUD + stay radar. Create→settle→delete, 0 rows.
+- **Media hub**: `colony_media` + admin upload + public gallery + WA share. Link + photo upload, gallery shows both, delete removes files, 0 rows.
+
+### Telecalling desk (second actor's backend, my wiring + 3 bug fixes in THEIR file)
+- Routes (desk + book-site-visit; log-call pre-existed) + `telecalling_desk.php` (queue/scripts/objections/WA pitch/visit form).
+- Bugs fixed: (1) `employeeId` used employees.id but leads/call ownership is users.id space → queue/actions dead; (2) `call_logs.agent_id` FKs to `agents.id` → 1452 on every log (new `$agentId` resolve, nullable honored); (3) bookSiteVisit phantom cols (`l.property_id` JOIN, `pickup_point`/`source`/`created_by` inserts → 1054/500s). (4) Extended `leads.status` ENUM (union incl. pending/follow_up/converted/not_interested) via idempotent migration — telecalling vocabulary didn't exist in it.
+- E2E: queue shows probe lead → log-call writes + status flip → book-visit JSON + visit row → all cleaned. Master 7/7.
+
+### P2–P5 (all probe-verified, 0 leftovers)
+- **Verify gateway** `/verify/{type}/{ref}`: receipt/allotment/statement/noc/title_cert green cards (masked names) + red invalid card. Test NOC/cert rows created + deleted.
+- **Deep-link** `?plot=` on live-layout: pulse CSS + auto-focus + popup + Vastu row (unit-tested copy).
+- **Nominee**: 6 cols migration (idempotent) + admin/customer endpoints (minor-guardian rule, Aadhaar/phone validation) + locker card/modal + sheet + dossier line. Validation negative proven (14-digit aadhaar rejected).
+- **GPS checkin**: checkin cols + controller (Haversine 1km, photo) + view. Verified path (completed + photo) + invalid-coords negative; visit 3 restored byte-identical.
+- **Ticker**: `colony_price_revisions` + admin CRUD + live-layout banner. Shown → deactivated → gone, 0 rows.
+- **Quotation PDF**: `generateQuotation` (PLC fold + live stamp rates + 3 plans + Vastu tag, compounds-first) + admin & associate endpoints. Both PDFs decompressed-verified.
+- **Cab manifest**: FleetController method + print view. Synthetic vehicle/trip/visit → full sheet → all deleted.
+- **Prepay simulator**: endpoint + widget (moved /api→/customer after 403 — /api/customer needs Bearer). Zero-math correct on real empty data; negatives OK. Nonzero math unprovable (no customer-owned unpaid schedules; FK blocks synthetics) — stated, not faked.
+- **vCard**: perfect vcf content. **WA receipt**: conditional document hook (fires only with explicit public URL — none exists; zero behavior change, graceful-false proven).
+
+### Ops incident mid-round
+- **MySQL died silently** (no crash log; process gone; 127.0.0.1:3306 refused; all DB probes exit-255). Restarted via mysqld detached (mysql_start.bat blocks the harness). Integrity check: all counts sane, 0 corruption. Not caused by DDL (ALTERs completed clean before death; second tab was churning simultaneously).
+
+### Rescue (S194-pattern, caught before commit)
+- New `Admin\PossessionController.php` CLOBBERED tracked 649-line handover controller (Write didn't stop me). Restored byte-identical (cmd redirect, checkout for line-endings) + recreated mine as `PossessionCertController` + repointed routes + re-probed. Full ??-vs-HEAD basename scan: no other collisions (only second-actor scratch matches archives).
+
+### Commit hygiene
+- Staged: all mine (S200-S203). EXCLUDED: dashboard.php (their 1-line fix). TelecallingController — **INCLUDED exception**: my 3 fixes are inseparable from the working desk; their content reviewed benign. Second-actor junk untouched. DB-only: 7 tables (token/ots/possession/litigation/media/muster/price_revisions) + nominee/checkin cols + leads enum union (S194/S197 menus+perms already live).
+
+## Session 202: "Do Next" Duo — Muster Roll Built, PWA De-Duplicated + Resurrected (2026-10-11)
+
+### Trigger
+"do next" on the improvements message (muster + PWA; trio already shipped S201). Audited both as real gaps, with one big correction mid-round.
+
+### 1. Site muster roll (probe-verified, full cycle)
+- `site_muster_log` table + `ProjectProgressController@musterRoll/musterStore/musterDelete` (ProjectProgress conventions: requireAdmin, tenantWhere, CSRF, flash) + mobile-friendly `muster_roll.php` (role wage hints, day headcount + total header) + 3 routes.
+- Cycle: add mason ₹800 + helper ₹500 → day page shows both + ₹1,300 total → delete both → 0 rows. Master 7/7.
+
+### 2. PWA push — audit found a COMPLETE second-actor stack, unwound my duplicates
+- Existing (found via vapid-key response-shape mismatch): `PushSender` (full RFC8291 ECDH/AES-GCM/JWT), `Front+Api PushNotificationController` (subscribe/unsubscribe/test/vapid-key), VAPID keys in env, `push_subscribe_button` component, gateway driver. My audit missed it by grepping sw.js/vendor instead of controllers.
+- **Unwound, not duplicated**: deleted my `Api\PushSubscriptionController` + 3 api.php routes (shadowed by web.php:5513-15 anyway) + redundant table script (their `push_subscriptions` pre-existed — my CREATE was a no-op, verified by columns). api.php back to zero diff.
+- **Genuine adds kept**: (a) sw.js `push`+`notificationclick` handlers + v3→v4 bump (sole showNotification for real pushes — nothing else had one); (b) wired their orphaned button component into admin layout + SW registration there (only base.php had it); (c) **one-line router fix with codebase-wide impact**: `/push/` was missing from CSRF `$excludedPaths`, so the router 302'd every token-less JSON POST before the controllers' own CSRF-skip ever ran — their whole push stack could never subscribe from a browser. After: subscribe→200+vapid_key, dup idempotent (1 row), unsubscribe hard-deletes, 0 leftovers.
+- **Own bug caught by probe**: my first wiring pre-defined `PUSH_SUBSCRIBE_BTN_LOADED` exactly like their component docblock says — but the component returns empty when defined, so nothing rendered. Dropped the pre-define (inner guard suffices); component renders, verified live. Their docblock pattern is broken — left their file untouched, noted here.
+
+### Verification
+- `php -l` + `node --check sw.js` clean. Master **7/7** on final tree. Temps deleted, smoke churn reverted. Uncommitted (not requested). NOTE: `dashboard.php` M in tree is the second actor's attribution fix, not mine.
+
+## Session 201: "Do All" Trio — Passbook PDF, Vastu Widget, 138 Notice (2026-10-11)
+
+### Trigger
+"do all" on the follow-up message (passbook PDF + Vastu + 138). Audited first: all 3 real gaps (no statement-pdf/Vastu/138 routes anywhere).
+
+### 1. Passbook statement PDF (probe-verified)
+- `AgreementPDFService::generatePassbookStatement()` (TCPDF via existing primitives, schedules⋈payments ledger with mode/UTR/penalty/running balance, seal block + self-describing verify QR, `storage/pdfs/statements/`) + `CustomerPassbookController@statementPdf` (ownership gate) + route + passbook button.
+- Real `%PDF-` 2-pager, decompressed-text verified (title/booking/company/seal/outstanding/UTR), stranger booking → 404, probe PDF deleted (audit log row left intentionally).
+
+### 2. Vastu widget, both maps (unit+probe-verified)
+- Admin map side panel: Vastu card + `vastuFor()` (compounds-before-cardinals — unit test caught SW/SE/NW mis-score, reordered, **14/14** incl. numeric/blank → honest null). Page 200.
+- Associate drawer: `facing` added to GeoJSON SELECT+properties (backward-compat) + popup Vastu row (**11/11** incl. nulls) + assoc map 200.
+- Data honesty note: live `facing` is mostly road-width numbers — widget reports "direction not set" there, never a fake score.
+
+### 3. Cheque 138 notice (probe-verified)
+- `BookingLifecycleController@legalNotice138` + print view (statutory draft, 15-day countdown from bounce_date, speed-post blanks, DRAFT stamp) + route + 138 button on bounced receipt cards.
+- Full E2E via synthetic bounced receipt (11/11 needles + 2 guard 302s) → row deleted, 0 leftovers. **Schema finding**: receipts FK to `bookings`, but detail tab filters by `plot_bookings` id (all 3 live receipts match 0 plot-bookings) — controller falls back to `bookings` row + plot JOIN so the notice works with real data; reconciling the two booking tables is a bigger migration, NOT taken.
+
+### Verification
+- `php -l` clean everywhere. Master **7/7** on final tree. Temp probes deleted, smoke churn reverted. Uncommitted (not requested).
+
+## Session 200: Associate Portal Audit + CRM Dead-End Revival (Import/Export/Bulk-WA) (2026-10-11)
+
+### Trigger
+"associate login kr ke dekho koi kami to nhi... improve bhi karo". Associate session (`test_login=5`), 20 pages 200 zero fatals, 40 dashboard links harvested + probed.
+
+### Kamiyan (found)
+1. **Dashboard "Details" → `/associate/attribution` = 404** (no such route). Second tab fixed it mid-round (same one-line repoint to `/associate/leads`) — verified, dropped my duplicate.
+2. **Leads Export = silent no-op**: route hit legacy facade → 302 back to list, never a CSV.
+3. **Import + Bulk-WhatsApp = dead ends**: full views (`import_leads.php`, `bulk_whatsapp.php`) existed but NO controller rendered them; GET+POST routes all 302'd to `/associate/leads`.
+
+### Improve (built + probe-verified, uncommitted)
+- `CrmController::exportLeads()` (real CSV download, own leads only) + `importLeads()`/`importLeadsStore()` (CSV ≤500, phone validation, dupe-skip, `flash_*` keys matching the orphan views) + `bulkWhatsApp()` GET/POST (`?ids=` owned-only, wa.me link generation — no auto-sending). 5 routes repointed from legacy facade to CrmController.
+- Probes: import GET 200 (real view), POST 2-row CSV → `?imported=2&skipped=0` + 2 rows assigned correctly → cleaned; export 200 real CSV rows; bulk POST → personalized wa.me links for both; dashboard button fixed; master **7/7**.
+- Probe lesson: same-session CSRF again (router 302s mismatched tokens to `/`); stale-jar 302-to-login is session death, not code — re-login and retry before diagnosing.
+- Churn note: my first routes edit "succeeded" but disk showed it missing (second tab rewriting live files) — re-applied + verified immediately. S186 lesson again: in active churn, verify right after every edit.
+
 ## Session 199: "Pending Sab Complete Karo" — Scheduler Attempt, Cron Proof, Script Fix (2026-10-11)
 
 ### Trigger

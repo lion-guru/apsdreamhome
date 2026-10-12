@@ -17,6 +17,9 @@ class TelecallingController extends AdminController
 
     protected $db;
     protected $employeeId;
+    // agents.id for call_logs.agent_id (FK to agents, NULL when the
+    // telecaller has no agent profile — column is nullable).
+    protected $agentId;
 
     public function __construct()
     {
@@ -41,7 +44,10 @@ class TelecallingController extends AdminController
             @session_start();
         }
 
-        $this->employeeId = $_SESSION['employee_id'] ?? null;
+        // Lead ownership (leads.assigned_to) and call_logs.agent_id live in
+        // USERS.id space (assign UI lists users.id). Prefer the user id —
+        // employees.id is HR-internal and matches nothing in those tables.
+        $this->employeeId = $_SESSION['employee_user_id'] ?? $_SESSION['user_id'] ?? $_SESSION['employee_id'] ?? null;
 
         // Detect admin/super-admin/manager session
         $hasAdminSession = isset($_SESSION['admin_id']) && !empty($_SESSION['admin_id']);
@@ -53,6 +59,24 @@ class TelecallingController extends AdminController
         // If admin is accessing without employee_id, use their admin_id so DB queries still work
         if (!$this->employeeId && $hasAdminSession) {
             $this->employeeId = (int)$_SESSION['admin_id'];
+        }
+
+        // Resolve the agent profile for call_logs.agent_id (FK to agents.id).
+        // Stays null for telecallers without an agent profile (nullable col).
+        $this->agentId = null;
+        try {
+            $uid = (int)($this->employeeId ?: 0);
+            if ($uid > 0) {
+                $arow = $this->db->fetchOne(
+                    "SELECT id FROM agents WHERE user_id = ? LIMIT 1",
+                    [$uid]
+                );
+                if (!empty($arow['id'])) {
+                    $this->agentId = (int)$arow['id'];
+                }
+            }
+        } catch (\Throwable $e) {
+            error_log('[TelecallingController] agentId resolve: ' . $e->getMessage());
         }
 
         if (!$this->employeeId && !$isAdmin) {
@@ -166,12 +190,13 @@ class TelecallingController extends AdminController
                      AND l.status IN ('pending', 'follow_up')
                      ORDER BY l.priority DESC, l.created_at ASC
                      LIMIT 20";
+            return $this->db->fetchAll($query, [$this->employeeId]);
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
         }
         
-        return $this->db->fetchAll($query, [$this->employeeId]);
+        return [];
     }
 
     /**
@@ -273,7 +298,260 @@ class TelecallingController extends AdminController
     }
 
     /**
-     * Get follow-up schedule
+     * Get objection handling cheat-sheet
+     */
+    private function getObjectionHandling()
+    {
+        return [
+            'price' => [
+                'label' => 'Rate zyada hai / Budget nahi hai',
+                'scripts' => [
+                    'acknowledge' => '"Samajh sakta hoon, budget important hai. But let me show you value..."',
+                    'value_stack' => 'Plot ki location, amenities, future appreciation, bank loan facility — sab milega.',
+                    'emi_breakdown' => 'EMI ₹X/month — rent se kam, aur asset banta hai.',
+                    'urgency' => 'Price revision next month — today lock karein toh save karein.',
+                ],
+                'rebuttals' => [
+                    'Competitor cheaper' => 'Competitor ki location/amenities check karein — humara colony gated, RERA approved, bank loan ready.',
+                    'Market down' => 'Exactly isliye invest karo — low price me entry, future me high return.',
+                    'Need time' => 'Samajh sakta hoon. 48-hour hold laga deta hoon — aap soch saken, pressure nahi.',
+                ]
+            ],
+            'timing' => [
+                'label' => 'Abhi time nahi hai / Baad me sochenge',
+                'scripts' => [
+                    'acknowledge' => '"Bilkul, decision jaldi nahi karni chahiye. But..."',
+                    'hook' => 'Colony me 15 plots hi bache hain — delay me koi aur book kar lega.',
+                    'action' => '48-hour hold laga deta hoon — aap soch saken, pressure nahi.',
+                ],
+                'rebuttals' => [
+                    'Busy' => 'Sirf 5 minute ka call — sirf details confirm karni hain.',
+                    'Consult family' => 'Family ko bhi confidence aayega jab site visit karenge. Sunday free cab arrange kar dete hain.',
+                ]
+            ],
+            'trust' => [
+                'label' => 'Builder pe bharosa nahi / Kya guarantee hai',
+                'scripts' => [
+                    'acknowledge' => 'Valid sawal. Trust kamana padta hai.',
+                    'proof' => 'RERA registration, bank loan approved, 500+ happy families, 10+ saal se market mein.',
+                    'assurance' => 'Site visit karke khud dekh lijiye. Free Sunday cab arrange kar dete hain.',
+                ],
+                'rebuttals' => [
+                    'Legal issues' => 'RERA registered, clear title, bank approved — legal clean.',
+                    'Delayed possession' => 'Construction on track, RERA timeline binding, penalty clause in agreement.',
+                ]
+            ],
+            'authority' => [
+                'label' => 'Pata karke batana / Partner se puchna padega',
+                'scripts' => [
+                    'acknowledge' => 'Bilkul sahi — bade decision me partner involve hona chahiye.',
+                    'hook' => 'Par information aaj hi le lein, taaki decision informed ho.',
+                    'action' => 'Main partner ko bhi call karke details de deta hoon. Joint call schedule kar dein?',
+                ],
+                'rebuttals' => [
+                    'Busy partner' => 'Sirf 10 minute ka joint call — Saturday/Sunday convenient.',
+                    'Not decision maker' => 'Information aapko mil jaye, partner ko forward kar dein. Main bhi call kar doonga.',
+                ]
+            ]
+        ];
+    }
+    
+    /**
+     * Get calling scripts organized by category
+     */
+    private function getScriptsByCategory()
+    {
+        $scripts = $this->getCallingScripts();
+        $byCategory = [];
+        foreach ($scripts as $script) {
+            $cat = $script['category'] ?? 'general';
+            $byCategory[$cat][] = $script;
+        }
+        return $byCategory;
+    }
+    
+    /**
+     * Get quick access scripts for sidebar
+     */
+    private function getQuickScripts()
+    {
+        $scripts = $this->getCallingScripts();
+        $quick = [];
+        $priorityCategories = ['sales', 'cold_call', 'follow_up', 'objection_handling'];
+        foreach ($priorityCategories as $cat) {
+            foreach ($scripts as $script) {
+                if (($script['category'] ?? '') === $cat) {
+                    $quick[] = $script;
+                    break;
+                }
+            }
+        }
+        return $quick;
+    }
+    
+    /**
+     * Live Calling Desk — main entry point
+     */
+    public function callingDesk()
+    {
+        $this->initializeEmployeeSession();
+        try {
+            $todayStats = $this->getTodayStats();
+            $leadQueue = $this->getLeadQueue();
+            $todaysFollowUps = $this->getTodayFollowUps();
+            $scripts = $this->getCallingScripts();
+            $objections = $this->getObjectionHandling();
+            $scriptsByCategory = $this->getScriptsByCategory();
+            $quickScripts = $this->getQuickScripts();
+            
+            $this->render('employee/telecalling_desk', [
+                'page_title' => 'Telecalling Desk - Live Calling',
+                'page_heading' => 'Live Calling Desk',
+                'today_stats' => $todayStats,
+                'lead_queue' => $leadQueue,
+                'todays_follow_ups' => $todaysFollowUps,
+                'scripts' => $scripts,
+                'objections' => $objections,
+                'scripts_by_category' => $scriptsByCategory,
+                'quick_scripts' => $quickScripts,
+            ]);
+            
+        } catch (\Exception $e) {
+            $this->handleError($e->getMessage());
+        }
+    }
+
+    /**
+     * Book site visit from telecaller's desk (1-click Sunday booking)
+     */
+    public function bookSiteVisit()
+    {
+        try {
+            // Inputs come from POST form (router dispatches with zero args)
+            $leadId = (int)($_POST['lead_id'] ?? 0);
+            $visitDate = $_POST['visit_date'] ?? null; // Expected: next Sunday
+            $pickupPoint = trim((string)($_POST['pickup_point'] ?? ''));
+            $notes = trim((string)($_POST['notes'] ?? ''));
+            
+            if (!$leadId || !$visitDate) {
+                $this->jsonResponse(['success' => false, 'error' => 'Missing required fields'], 400);
+                return;
+            }
+            
+            // Validate lead assignment (leads has no property/colony FKs —
+            // keep to its own columns so the lookup can't 1054).
+            $lead = $this->db->fetchOne(
+                "SELECT l.* FROM leads l
+                 WHERE l.id = ? AND l.assigned_to = ?",
+                [$leadId, $this->employeeId]
+            );
+            
+            if (!$lead) {
+                $this->jsonResponse(['success' => false, 'error' => 'Lead not found or not assigned'], 404);
+                return;
+            }
+            
+            // Determine next Sunday if not specified
+            if (!$visitDate) {
+                $today = new \DateTime();
+                $daysUntilSunday = (7 - $today->format('w')) % 7;
+                if ($daysUntilSunday === 0) $daysUntilSunday = 7; // Next Sunday if today is Sunday
+                $visitDate = $today->modify("+$daysUntilSunday days")->format('Y-m-d');
+            }
+            
+            // Create site visit record
+            // site_visits has pickup_location (not pickup_point) and no
+            // source/created_by columns — insert only real columns.
+            $visitData = [
+                'lead_id' => $leadId,
+                'colony_id' => null,
+                'property_id' => null,
+                'visit_date' => $visitDate,
+                'visit_time' => '10:00:00', // Default 10 AM
+                'pickup_location' => $pickupPoint ?: 'Customer location',
+                'assigned_to' => $this->employeeId,
+                'status' => 'scheduled',
+                'notes' => $notes,
+            ];
+            
+            // Insert site visit
+            $visitId = $this->db->insert('site_visits', $visitData);
+            
+            // Create fleet trip if vehicles available
+            $tripId = $this->createFleetTripForVisit($visitId, $lead, $visitDate);
+            
+            // Log activity
+            $this->logActivity('site_visit_scheduled', [
+                'visit_id' => $visitId,
+                'lead_id' => $leadId,
+                'visit_date' => $visitDate,
+                'assigned_to' => $this->employeeId,
+            ]);
+            
+            $this->jsonResponse([
+                'success' => true,
+                'message' => 'Site visit scheduled for ' . date('l, d M Y', strtotime($visitDate)),
+                'visit_id' => $visitId,
+                'trip_id' => $tripId,
+            ]);
+            
+        } catch (\Exception $e) {
+            error_log('TelecallingController::bookSiteVisit: ' . $e->getMessage());
+            $this->jsonResponse(['success' => false, 'error' => 'Failed to book site visit'], 500);
+        }
+    }
+    
+    /**
+     * Create fleet trip for the site visit (best-effort)
+     */
+    private function createFleetTripForVisit($visitId, $lead, $visitDate)
+    {
+        try {
+            $pdo = $this->db->getConnection();
+            $tid = $this->tenantId();
+            
+            // Find available vehicle for the date
+            $vehicle = $this->db->fetchOne(
+                "SELECT id FROM fleet_vehicles 
+                 WHERE is_active = 1 AND tenant_id = ? 
+                 AND id NOT IN (
+                     SELECT vehicle_id FROM fleet_trips 
+                     WHERE trip_date = ? AND status != 'cancelled' AND tenant_id = ?
+                 )
+                 LIMIT 1", [$this->tenantId(), $visitDate, $this->tenantId()]);
+            
+            if (!$vehicle) return null;
+            
+            // Find associate for this lead
+            $associate = $this->db->fetchOne(
+                "SELECT associate_id FROM leads WHERE id = ?", [$lead['id']]
+            );
+            
+            // Create trip
+            $tripData = [
+                'tenant_id' => $this->tenantId(),
+                'trip_date' => $visitDate,
+                'vehicle_id' => $vehicle['id'],
+                'colony_id' => $lead['colony_id'] ?? null,
+                'associate_id' => $lead['associate_id'] ?? null,
+                'pickup_point' => 'Customer location',
+                'customers_planned' => 1,
+                'notes' => 'Auto-scheduled from telecaller booking',
+                'status' => 'scheduled',
+                'created_by' => $this->employeeId,
+            ];
+            
+            $this->db->insert('fleet_trips', $tripData);
+            return $this->db->lastInsertId();
+            
+        } catch (\Exception $e) {
+            error_log('TelecallingController::createFleetTripForVisit: ' . $e->getMessage());
+            return null;
+        }
+    }
+    
+    /**
+     * Get objection handling cheat-sheet
      */
     private function getFollowUpSchedule()
     {
@@ -335,7 +613,7 @@ class TelecallingController extends AdminController
             
             $params = [
                 $leadId,
-                $this->employeeId,
+                $this->agentId,
                 $callData['duration'] ?? 0,
                 $callData['call_status'] ?? 'connected',
                 $notes
@@ -555,12 +833,13 @@ class TelecallingController extends AdminController
                      AND DATE(t.due_date) = CURDATE()
                      AND t.status IN ('pending', 'in_progress')
                      ORDER BY t.due_date ASC";
+            return $this->db->fetchAll($query, [$this->employeeId]);
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
         }
         
-        return $this->db->fetchAll($query, [$this->employeeId]);
+        return [];
     }
 
     /**

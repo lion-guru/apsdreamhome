@@ -659,6 +659,151 @@ class BookingLifecycleController extends AdminController
     }
 
     /* =========================================================
+     *  Legal nominee endorsement (family succession)
+     * ========================================================= */
+
+    /**
+     * POST /admin/sales/bookings/{id}/nominee
+     */
+    public function updateNominee($id)
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+        $id = (int)$id;
+        $booking = $this->service->getBookingById($id);
+        if (!$booking) {
+            $this->setFlash('error', 'Booking not found');
+            return $this->redirect('/admin/sales/bookings');
+        }
+        $result = $this->saveNominee(
+            $id,
+            trim((string)($_POST['nominee_name'] ?? '')),
+            trim((string)($_POST['nominee_relation'] ?? '')),
+            trim((string)($_POST['nominee_dob'] ?? '')),
+            preg_replace('/\D/', '', (string)($_POST['nominee_aadhaar'] ?? '')),
+            preg_replace('/\D/', '', (string)($_POST['nominee_phone'] ?? '')),
+            trim((string)($_POST['guardian_name'] ?? ''))
+        );
+        $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+        return $this->redirect('/admin/sales/bookings/' . $id);
+    }
+
+    /**
+     * Shared nominee validation + save. Returns [success, message].
+     */
+    public static function saveNominee(int $bookingId, string $name, string $relation, string $dob, string $aadhaar, string $phone, string $guardian): array
+    {
+        $validRelations = ['Spouse', 'Son', 'Daughter', 'Mother', 'Father', 'Brother', 'Sister'];
+        if ($name === '' || !in_array($relation, $validRelations, true)) {
+            return ['success' => false, 'message' => 'Nominee name and valid relation are required.'];
+        }
+        if ($dob !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $dob)) {
+            return ['success' => false, 'message' => 'Nominee DOB must be YYYY-MM-DD.'];
+        }
+        $isMinor = false;
+        if ($dob !== '') {
+            $age = (int)date('Y') - (int)substr($dob, 0, 4);
+            if ($age < 18) $isMinor = true;
+        }
+        if ($isMinor && $guardian === '') {
+            return ['success' => false, 'message' => 'Nominee is a minor — guardian name is required.'];
+        }
+        if ($aadhaar !== '' && !preg_match('/^\d{12}$/', $aadhaar)) {
+            return ['success' => false, 'message' => 'Aadhaar must be 12 digits.'];
+        }
+        if ($phone !== '' && !preg_match('/^[6-9]\d{9}$/', $phone)) {
+            return ['success' => false, 'message' => 'Nominee phone must be a 10-digit mobile.'];
+        }
+        try {
+            $db = \App\Core\Database\Database::getInstance();
+            $db->execute(
+                "UPDATE plot_bookings SET nominee_name = ?, nominee_relation = ?, nominee_dob = ?, nominee_aadhaar = ?, nominee_phone = ?, guardian_name = ? WHERE id = ? LIMIT 1",
+                [
+                    mb_substr($name, 0, 150), $relation,
+                    $dob !== '' ? $dob : null,
+                    $aadhaar !== '' ? $aadhaar : null,
+                    $phone !== '' ? $phone : null,
+                    ($isMinor ? mb_substr($guardian, 0, 150) : null),
+                    $bookingId,
+                ]
+            );
+            return ['success' => true, 'message' => 'Nominee recorded.'];
+        } catch (\Throwable $e) {
+            error_log('[saveNominee] ' . $e->getMessage());
+            return ['success' => false, 'message' => 'Failed to save nominee.'];
+        }
+    }
+
+    /* =========================================================
+     *  Section 138 NI Act legal notice (cheque bounce draft)
+     * ========================================================= */
+
+    /**
+     * GET /admin/sales/receipts/{id}/legal-notice-138 — printable 15-day
+     * demand notice DRAFT for a bounced cheque receipt. Read-only.
+     */
+    public function legalNotice138($receiptId)
+    {
+        $this->requireAdmin();
+        $receiptId = (int)$receiptId;
+        try {
+            $rcpt = $this->db->fetchOne(
+                "SELECT * FROM booking_payment_receipts WHERE id = ? LIMIT 1",
+                [$receiptId]
+            );
+        } catch (\Throwable $e) {
+            error_log('[BookingLifecycleController::legalNotice138] ' . $e->getMessage());
+            $rcpt = null;
+        }
+        if (!$rcpt || ($rcpt['payment_mode'] ?? '') !== 'cheque' || ($rcpt['status'] ?? '') !== 'bounced') {
+            $this->setFlash('error', 'Legal notice needs a bounced cheque receipt.');
+            return $this->redirect('/admin/sales/bookings');
+        }
+        $booking = $this->service->getBookingById((int)($rcpt['booking_id'] ?? 0));
+        if (!$booking) {
+            // Receipts FK to `bookings`, not `plot_bookings` — fall back to
+            // the bookings row (with plot number) so the notice works with
+            // the live schema instead of 302-looping on real data.
+            try {
+                $booking = $this->db->fetchOne(
+                    "SELECT b.*, p.plot_number FROM bookings b
+                     LEFT JOIN plots p ON p.id = b.plot_id WHERE b.id = ? LIMIT 1",
+                    [(int)($rcpt['booking_id'] ?? 0)]
+                ) ?: null;
+            } catch (\Throwable $e) {
+                error_log('[BookingLifecycleController::legalNotice138] fallback: ' . $e->getMessage());
+                $booking = null;
+            }
+        }
+        if (!$booking) {
+            $this->setFlash('error', 'Booking not found');
+            return $this->redirect('/admin/sales/bookings');
+        }
+        $customer = [];
+        try {
+            $customer = $this->db->fetchOne(
+                "SELECT name, phone, email, address FROM users WHERE id = ? LIMIT 1",
+                [(int)($booking['customer_id'] ?? 0)]
+            ) ?: [];
+        } catch (\Throwable $e) {
+            error_log('[BookingLifecycleController::legalNotice138] customer: ' . $e->getMessage());
+        }
+        $bounceDate = (string)($rcpt['bounce_date'] ?? date('Y-m-d'));
+        $cureTs = strtotime($bounceDate . ' +15 days');
+        $daysLeft = (int)ceil(($cureTs - time()) / 86400);
+
+        $this->render('admin/sales/legal_notice_138', [
+            'page_title' => 'Sec-138 Notice — Receipt ' . ($rcpt['receipt_number'] ?? $receiptId),
+            'receipt' => $rcpt,
+            'booking' => $booking,
+            'customer' => $customer,
+            'bounce_date' => $bounceDate,
+            'cure_deadline' => date('Y-m-d', $cureTs),
+            'days_left' => $daysLeft,
+        ]);
+    }
+
+    /* =========================================================
      *  Legal Kit — allotment + agreement PDFs bundled as ZIP
      * ========================================================= */
 

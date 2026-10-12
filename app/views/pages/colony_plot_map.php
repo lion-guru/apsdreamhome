@@ -1,4 +1,4 @@
-<?php $colony = $colony ?? []; $plots = $plots ?? []; $refCode = $ref_code ?? ''; $isLive = !empty($is_live_layout); ?>
+<?php $colony = $colony ?? []; $plots = $plots ?? []; $refCode = $ref_code ?? ''; $isLive = !empty($is_live_layout); $price_revision = $price_revision ?? null; ?>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.min.css" />
 <style>
 #plotMap { height: 65vh; width: 100%; border-radius: 12px; border: 1px solid #e2e8f0; z-index: 0; }
@@ -7,6 +7,8 @@
 .plot-popup .info-row { display: flex; justify-content: space-between; padding: 2px 0; font-size: 13px; }
 .plot-popup .info-row .label { color: #64748b; }
 .plot-popup .info-row .value { font-weight: 500; }
+@keyframes plotGlow { 0%,100% { stroke-opacity: .25; stroke-width: 2; } 50% { stroke-opacity: 1; stroke-width: 5; } }
+.plot-target-pulse { stroke: #f59e0b !important; animation: plotGlow 1.5s infinite; }
 .map-filter-bar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
 .map-filter-bar .btn { font-size: 13px; padding: 4px 16px; border-radius: 20px; cursor: pointer; background: #f1f5f9; border: 1px solid #e2e8f0; }
 .map-filter-bar .btn.active { background: #0d9488; color: white; border-color: #0d9488; }
@@ -36,6 +38,23 @@
         <i class="fas fa-user-check me-2"></i>
         <div class="small">Shared by associate <strong><?= htmlspecialchars($refCode) ?></strong> — your hold request carries their referral automatically.</div>
     </div>
+    <?php endif; ?>
+    <?php if (!empty($price_revision)): ?>
+    <div class="alert alert-danger d-flex align-items-center py-2 mb-3" role="alert" id="priceTicker">
+        <i class="fas fa-fire me-2"></i>
+        <div class="small"><strong>📢 <?= htmlspecialchars($price_revision['announcement_title'] ?? 'Price revision') ?>:</strong>
+            rates ₹<?= number_format((float)($price_revision['new_price'] ?? 0)) ?>/sqft from <?= htmlspecialchars($price_revision['effective_date'] ?? '') ?>
+            (<strong><span id="tickerDays">…</span> days left</strong>) — lock the old rate with a free 24h hold now!
+        </div>
+    </div>
+    <script>
+    (function () {
+        try {
+            var ms = new Date('<?= htmlspecialchars($price_revision['effective_date'] ?? '') ?>T00:00:00') - Date.now();
+            document.getElementById('tickerDays').textContent = Math.max(0, Math.ceil(ms / 86400000));
+        } catch (e) {}
+    })();
+    </script>
     <?php endif; ?>
     <div class="map-stats-bar" id="mapStats">
         <span class="map-stat" data-status="available"><span class="dot"></span> Available: <strong id="statAvail">0</strong></span>
@@ -69,6 +88,33 @@
     var map = L.map('plotMap', { zoomControl: true, attributionControl: false });
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
     var geojsonLayer = null;
+    // Vastu badge (same scale as admin map; unknown facing => no row).
+    function vastuRowPub(facing) {
+        var f = String(facing || '').toLowerCase().replace(/[\s_-]+/g, '');
+        var table = [
+            ['northeast,ne,ishan', 98, 'Highly Auspicious'], ['northwest,nw', 85, 'Auspicious'],
+            ['southeast,se', 80, 'Auspicious'], ['southwest,sw', 62, 'Remedies Advised'],
+            ['east,purab', 92, 'Very Auspicious'], ['north,uttar', 90, 'Very Auspicious'],
+            ['west,paschim', 78, 'Moderate'], ['south,dakshin', 68, 'Remedies Advised']
+        ];
+        for (var i = 0; i < table.length; i++) {
+            var keys = table[i][0].split(',');
+            for (var j = 0; j < keys.length; j++) {
+                if (f.indexOf(keys[j]) !== -1) {
+                    return '<div class="info-row"><span class="label">Vastu</span><span class="value">🧭 ' +
+                        table[i][1] + '% ' + table[i][2] + '</span></div>';
+                }
+            }
+        }
+        return '';
+    }
+    // Deep link: ?plot=A-12 focuses + pulses + opens that plot (ref stays bound).
+    function focusPlotParam() {
+        try {
+            var m = new URLSearchParams(window.location.search).get('plot');
+            return (m || '').trim().toLowerCase();
+        } catch (e) { return ''; }
+    }
     function loadGeoJson() {
         fetch(baseUrl + '/api/colony/' + colonyId + '/map/geojson')
             .then(function(r) { return r.json(); })
@@ -92,6 +138,7 @@
                             (p.total_price ? '<div class="info-row"><span class="label">Price</span><span class="value fw-bold">₹' + Number(p.total_price).toLocaleString() + '</span></div>' : '') +
                             (p.corner_plot ? '<div class="info-row"><span class="label">Corner Plot</span><span class="value">✓</span></div>' : '') +
                             (p.park_facing ? '<div class="info-row"><span class="label">Park Facing</span><span class="value">✓</span></div>' : '') +
+                            vastuRowPub(p.facing) +
                             '<hr class="my-2"><a href="' + baseUrl + '/colony/' + (colonySlug || '') + '/plots?block=' + encodeURIComponent(p.block || '') + '" class="btn btn-sm btn-outline-primary w-100"><i class="fas fa-eye me-1"></i>View Details</a>' +
                             (p.status === 'available' ? '<button onclick="openHoldModal(' + p.plot_id + ', \'' + String(p.plot_number).replace(/'/g, "\\'") + '\')" class="btn btn-sm btn-warning w-100 mt-2"><i class="fas fa-pause-circle me-1"></i>Request 24h Hold</button>' : '') + '</div>';
                         layer.bindPopup(html, { maxWidth: 300 });
@@ -103,6 +150,18 @@
                     map.fitBounds(geojsonLayer.getBounds(), { padding: [30, 30], maxZoom: 18 });
                 } else { map.setView([26.76, 83.37], 13); }
                 updateStats(data.features || []);
+                (function () {
+                    var want = focusPlotParam();
+                    if (!want || !geojsonLayer) return;
+                    geojsonLayer.eachLayer(function (layer) {
+                        var pn = String((layer.feature.properties || {}).plot_number || '').toLowerCase();
+                        if (pn === want) {
+                            if (layer._path) layer._path.classList.add('plot-target-pulse');
+                            try { map.setView(layer.getBounds().getCenter(), 18, { animate: true }); } catch (e) {}
+                            try { layer.openPopup(); } catch (e) {}
+                        }
+                    });
+                })();
             });
     }
     function updateStats(features) {

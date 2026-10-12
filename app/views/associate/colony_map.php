@@ -55,6 +55,26 @@
         return div;
     };
     legend.addTo(map);
+    // Vastu badge from facing (compounds first; numeric/blank => no score).
+    function vastuRow(facing) {
+        var f = String(facing || '').toLowerCase().replace(/[\s_-]+/g, '');
+        var table = [
+            ['northeast,ne,ishan', 98, 'Highly Auspicious'], ['northwest,nw', 85, 'Auspicious'],
+            ['southeast,se', 80, 'Auspicious'], ['southwest,sw', 62, 'Remedies Advised'],
+            ['east,purab', 92, 'Very Auspicious'], ['north,uttar', 90, 'Very Auspicious'],
+            ['west,paschim', 78, 'Moderate'], ['south,dakshin', 68, 'Remedies Advised']
+        ];
+        for (var i = 0; i < table.length; i++) {
+            var keys = table[i][0].split(',');
+            for (var j = 0; j < keys.length; j++) {
+                if (f.indexOf(keys[j]) !== -1) {
+                    return '<div class="info-row"><span class="label">Vastu</span><span class="value">🧭 ' +
+                        table[i][1] + '% ' + table[i][2] + '</span></div>';
+                }
+            }
+        }
+        return '';
+    }
     function loadGeoJson() {
         fetch(baseUrl + '/api/colony/' + colonyId + '/map/geojson')
             .then(function(r) { return r.json(); })
@@ -78,6 +98,7 @@
                             (p.total_price ? '<div class="info-row"><span class="label"><?= __('assoc_cm_price', [], 'Price') ?></span><span class="value fw-bold">₹' + Number(p.total_price).toLocaleString() + '</span></div>' : '') +
                             (p.corner_plot ? '<div class="info-row"><span class="label"><?= __('assoc_cm_corner', [], 'Corner Plot') ?></span><span class="value">✓</span></div>' : '') +
                             (p.park_facing ? '<div class="info-row"><span class="label"><?= __('assoc_cm_park', [], 'Park Facing') ?></span><span class="value">✓</span></div>' : '') +
+                            vastuRow(p.facing) +
                             '<hr class="my-2"><a href="' + baseUrl + '/associate/browse" class="btn btn-sm btn-outline-primary w-100"><?= __('assoc_cm_share', [], 'Share with Customer') ?></a></div>';
                         layer.bindPopup(html, { maxWidth: 300 });
                         layer.on('mouseover', function() { this.setStyle({ fillOpacity: 0.95, weight: 2 }); });

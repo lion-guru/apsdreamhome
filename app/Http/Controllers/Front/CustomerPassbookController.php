@@ -220,6 +220,43 @@ class CustomerPassbookController extends BaseController
             error_log('CustomerPassbookController::passbook error: ' . $e->getMessage());
         }
 
+        // Active OTS scheme + this customer's live overdue payoff (fail-soft).
+        $otsBanner = null;
+        try {
+            $otsScheme = $pdo->prepare(
+                "SELECT * FROM ots_schemes WHERE is_active = 1 AND start_date <= CURDATE() AND end_date >= CURDATE() ORDER BY id DESC LIMIT 1"
+            );
+            $otsScheme->execute();
+            $scheme = $otsScheme->fetch(\PDO::FETCH_ASSOC);
+            if ($scheme && !empty($bookings)) {
+                $odPrincipal = 0.0;
+                $odPenalty = 0.0;
+                foreach ($bookings as $b) {
+                    $odStmt = $pdo->prepare(
+                        "SELECT COALESCE(SUM(GREATEST(amount - paid_amount, 0)), 0) od,
+                                COALESCE(SUM(accrued_penalty), 0) pen
+                         FROM booking_payment_schedules WHERE booking_id = ? AND status = 'overdue'"
+                    );
+                    $odStmt->execute([(int)$b['id']]);
+                    $odRow = $odStmt->fetch(\PDO::FETCH_ASSOC);
+                    $odPrincipal += (float)($odRow['od'] ?? 0);
+                    $odPenalty += (float)($odRow['pen'] ?? 0);
+                }
+                $waiverPct = (float)($scheme['waiver_percentage'] ?? 0);
+                $otsBanner = [
+                    'scheme_name' => $scheme['scheme_name'],
+                    'end_date' => $scheme['end_date'],
+                    'waiver_percentage' => $waiverPct,
+                    'overdue_principal' => $odPrincipal,
+                    'overdue_penalty' => $odPenalty,
+                    'waived' => round($odPenalty * $waiverPct / 100, 2),
+                    'payoff' => round($odPrincipal + $odPenalty * (1 - $waiverPct / 100), 2),
+                ];
+            }
+        } catch (\Throwable $e) {
+            error_log('CustomerPassbookController::passbook OTS banner: ' . $e->getMessage());
+        }
+
         $this->render('pages/user/passbook', [
             'page_title'       => 'My Passbook',
             'bookings'         => $bookings,
@@ -227,6 +264,7 @@ class CustomerPassbookController extends BaseController
             'ledger'           => $ledger,
             'stats'            => $stats,
             'paymentSchedules' => $paymentSchedules,
+            'ots_banner'       => $otsBanner,
         ]);
     }
 
@@ -1174,6 +1212,7 @@ class CustomerPassbookController extends BaseController
         try {
             $jointOwnerships = $this->db->fetchAll("
                 SELECT b.id AS booking_id, b.booking_number, b.agreement_value, b.total_plot_value,
+                       b.nominee_name, b.nominee_relation, b.nominee_dob, b.nominee_aadhaar, b.nominee_phone, b.guardian_name,
                        p.plot_number, c.name AS colony_name
                 FROM plot_bookings b
                 LEFT JOIN plots p ON b.plot_id = p.id
@@ -1208,6 +1247,22 @@ class CustomerPassbookController extends BaseController
             $jointOwnerships = [];
         }
 
+        // Tracked possession certificates issued for the customer's bookings.
+        try {
+            $possessionCerts = $this->db->fetchAll("
+                SELECT pc.*, b.booking_number, p.plot_number, c.name as colony_name
+                FROM possession_certificates pc
+                LEFT JOIN plot_bookings b ON b.id = pc.booking_id
+                LEFT JOIN plots p ON p.id = pc.plot_id
+                LEFT JOIN colonies c ON c.id = p.colony_id
+                WHERE pc.customer_id = ? AND pc.tenant_id = ?
+                ORDER BY pc.id DESC
+            ", [$userId, $tid]);
+        } catch (\Throwable $e) {
+            error_log('CustomerPassbookController::documents possession certs: ' . $e->getMessage());
+            $possessionCerts = [];
+        }
+
         $this->layout = 'layouts/customer';
         $this->render('customer/documents', [
             'page_title' => 'My Documents - APS Dream Home',
@@ -1216,6 +1271,7 @@ class CustomerPassbookController extends BaseController
             'agreementDocuments' => $agreementDocuments,
             'titleCertificates' => $titleCertificates,
             'jointOwnerships' => $jointOwnerships,
+            'possessionCerts' => $possessionCerts,
         ]);
     }
 
@@ -1305,5 +1361,172 @@ class CustomerPassbookController extends BaseController
 
         http_response_code(404);
         echo 'Document file missing. Please contact support.';
+    }
+
+    /**
+     * Update legal nominee for one of the customer's bookings.
+     * Route: POST /customer/bookings/{id}/nominee
+     */
+    public function updateNominee(int $id): void
+    {
+        $this->requireCustomer();
+        $userId = (int)$_SESSION['user_id'];
+        $own = $this->db->fetchOne(
+            "SELECT id FROM plot_bookings WHERE id = ? AND customer_id = ? AND tenant_id = ? LIMIT 1",
+            [$id, $userId, (int)$this->tenantId()]
+        );
+        if (!$own) {
+            $_SESSION['flash_error'] = 'Booking not found.';
+            $this->redirect('/customer/documents');
+            return;
+        }
+        $result = \App\Http\Controllers\Admin\BookingLifecycleController::saveNominee(
+            $id,
+            trim((string)($_POST['nominee_name'] ?? '')),
+            trim((string)($_POST['nominee_relation'] ?? '')),
+            trim((string)($_POST['nominee_dob'] ?? '')),
+            preg_replace('/\D/', '', (string)($_POST['nominee_aadhaar'] ?? '')),
+            preg_replace('/\D/', '', (string)($_POST['nominee_phone'] ?? '')),
+            trim((string)($_POST['guardian_name'] ?? ''))
+        );
+        $_SESSION[$result['success'] ? 'flash_success' : 'flash_error'] = $result['message'];
+        $this->redirect('/customer/documents');
+    }
+
+    /**
+     * Printable family asset succession sheet for one owned booking.
+     * Route: GET /customer/bookings/{id}/nominee-sheet
+     */
+    public function nomineeSheet(int $id): void
+    {
+        $this->requireCustomer();
+        $userId = (int)$_SESSION['user_id'];
+        $booking = $this->db->fetchOne(
+            "SELECT b.*, p.plot_number, p.area_sqft, c.name AS colony_name
+             FROM plot_bookings b
+             LEFT JOIN plots p ON p.id = b.plot_id
+             LEFT JOIN colonies c ON c.id = p.colony_id
+             WHERE b.id = ? AND b.customer_id = ? AND b.tenant_id = ? LIMIT 1",
+            [$id, $userId, (int)$this->tenantId()]
+        );
+        if (!$booking) {
+            http_response_code(404);
+            echo 'Booking not found';
+            return;
+        }
+        $me = $this->db->fetchOne("SELECT name, phone FROM users WHERE id = ? LIMIT 1", [$userId]);
+        $this->render('customer/nominee_sheet', [
+            'page_title' => 'Family Asset Succession Sheet',
+            'booking' => $booking,
+            'me' => $me ?: [],
+        ]);
+    }
+
+    /**
+     * Pre-pay simulator: extra lump-sum against earliest unpaid dues.
+     * Read-only math, no writes. Route: POST /api/customer/passbook/{booking_id}/prepay-simulate
+     * Returns {months_saved, penalty_saved, new_end_date, covered, leftover}.
+     */
+    public function simulatePrepay(int $bookingId): void
+    {
+        header('Content-Type: application/json');
+        $this->requireCustomer();
+        $userId = (int)$_SESSION['user_id'];
+        $extra = (float)($_POST['extra_amount'] ?? 0);
+        if ($bookingId <= 0 || $extra <= 0) {
+            echo json_encode(['success' => false, 'error' => 'Booking and a positive extra_amount are required']);
+            return;
+        }
+        try {
+            $own = $this->db->fetchOne(
+                "SELECT id FROM plot_bookings WHERE id = ? AND customer_id = ? AND tenant_id = ? LIMIT 1",
+                [$bookingId, $userId, (int)$this->tenantId()]
+            );
+            if (!$own) {
+                echo json_encode(['success' => false, 'error' => 'Booking not found']);
+                return;
+            }
+            $rows = $this->db->fetchAll(
+                "SELECT due_date, amount, paid_amount, accrued_penalty
+                 FROM booking_payment_schedules
+                 WHERE booking_id = ? AND status != 'paid'
+                 ORDER BY due_date ASC, id ASC",
+                [$bookingId]
+            ) ?: [];
+            $left = $extra;
+            $covered = 0;
+            $penaltySaved = 0.0;
+            $remainingDues = [];
+            foreach ($rows as $r) {
+                $due = max(0, (float)($r['amount'] ?? 0) - (float)($r['paid_amount'] ?? 0));
+                if ($due <= 0) {
+                    continue;
+                }
+                if ($left >= $due) {
+                    $left -= $due;
+                    $covered++;
+                    $penaltySaved += (float)($r['accrued_penalty'] ?? 0);
+                } else {
+                    $remainingDues[] = $r['due_date'] ?? null;
+                }
+            }
+            $newEndDate = null;
+            foreach (array_reverse($remainingDues) as $d) {
+                if ($d) {
+                    $newEndDate = $d;
+                    break;
+                }
+            }
+            echo json_encode([
+                'success' => true,
+                'months_saved' => $covered,
+                'penalty_saved' => round($penaltySaved, 2),
+                'new_end_date' => $newEndDate,
+                'covered' => $covered,
+                'leftover' => round($left, 2),
+            ]);
+        } catch (\Throwable $e) {
+            error_log('CustomerPassbookController::simulatePrepay: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Simulation failed']);
+        }
+    }
+
+    /**
+     * Bank-grade passbook statement PDF for one of the customer's bookings.
+     * Route: GET /customer/passbook/{booking_id}/statement-pdf
+     */
+    public function statementPdf(int $bookingId): void
+    {
+        $this->requireCustomer();
+        $userId = (int)$_SESSION['user_id'];
+
+        $booking = $this->db->fetchOne(
+            "SELECT id FROM plot_bookings WHERE id = ? AND customer_id = ? AND tenant_id = ? LIMIT 1",
+            [$bookingId, $userId, (int)$this->tenantId()]
+        );
+        if (!$booking) {
+            http_response_code(404);
+            echo 'Booking not found';
+            return;
+        }
+
+        try {
+            $svc = new \App\Services\PDF\AgreementPDFService($this->pdo());
+            $res = $svc->generatePassbookStatement($bookingId);
+        } catch (\Throwable $e) {
+            error_log('CustomerPassbookController::statementPdf: ' . $e->getMessage());
+            $res = ['success' => false];
+        }
+        if (empty($res['success']) || !is_file($res['pdf_path'] ?? '')) {
+            http_response_code(500);
+            echo 'Statement generation failed. Please try again later.';
+            return;
+        }
+
+        while (ob_get_level() > 0) ob_end_clean();
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: inline; filename="' . basename($res['pdf_path']) . '"');
+        header('Content-Length: ' . filesize($res['pdf_path']));
+        readfile($res['pdf_path']);
     }
 }

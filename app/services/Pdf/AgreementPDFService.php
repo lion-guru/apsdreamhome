@@ -1164,6 +1164,220 @@ class AgreementPDFService extends ServiceTenantTrait
      *  UTILITIES
      * ========================================================= */
 
+    /**
+     * Bank-grade account ledger statement for a booking (customer self-serve).
+     * Ownership MUST be checked by the caller (customer_id match).
+     * @return array [success, pdf_path, filename, file_size] / [success=false, error]
+     */
+    public function generatePassbookStatement(int $bookingId): array
+    {
+        try {
+            $booking = $this->fetchBooking($bookingId);
+            if (!$booking) {
+                return ['success' => false, 'error' => 'Booking not found'];
+            }
+            $customer = $this->fetchCustomer((int)($booking['customer_id'] ?? 0));
+            $plot = $this->fetchPlot((int)($booking['plot_id'] ?? 0));
+            $colony = $this->fetchColony((int)($plot['colony_id'] ?? $booking['colony_id'] ?? 0));
+
+            $plotValue = (float)($booking['agreement_value'] ?? 0) > 0
+                ? (float)$booking['agreement_value'] : (float)($booking['total_plot_value'] ?? 0);
+
+            // Chronological ledger: schedules LEFT-joined to their payments.
+            $ledger = [];
+            try {
+                $sql = "SELECT s.installment_no, s.due_date, s.amount, s.status AS sched_status,
+                               s.paid_date, s.paid_amount, s.accrued_penalty,
+                               p.payment_method, p.transaction_id
+                        FROM booking_payment_schedules s
+                        LEFT JOIN booking_payments p
+                          ON p.booking_id = s.booking_id
+                         AND DATE(p.payment_date) = DATE(COALESCE(s.paid_date, s.due_date))
+                        WHERE s.booking_id = ?";
+                $params = [(int)$bookingId];
+                $this->tenantWhere($sql, $params);
+                $sql .= ' ORDER BY s.due_date ASC, s.id ASC';
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute($params);
+                $ledger = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            } catch (\Throwable $e) {
+                error_log('AgreementPDFService::generatePassbookStatement ledger: ' . $e->getMessage());
+            }
+
+            $pdf = $this->createPdfObject('Account Statement');
+            $pdf->AddPage();
+            $this->addWatermark($pdf, 'APS');
+            $this->renderCompanyHeader($pdf, 'Account Ledger Statement');
+
+            $this->renderInfoRow($pdf, 'Booking No', (string)($booking['booking_number'] ?? $bookingId));
+            $this->renderInfoRow($pdf, 'Customer', (string)($customer['name'] ?? $booking['customer_name'] ?? ''));
+            $this->renderInfoRow($pdf, 'Plot', trim(
+                ($plot['plot_number'] ?? '') . ', ' . ($colony['name'] ?? '') .
+                ' (' . ($plot['area_sqft'] ?? '') . ' sqft)'
+            ));
+            $this->renderInfoRow($pdf, 'Agreement Value', 'Rs. ' . number_format($plotValue, 2));
+            $this->renderInfoRow($pdf, 'Generated On', date('d-M-Y H:i'));
+            $pdf->Ln(4);
+
+            $headers = ['#', 'Due Date', 'Paid Date', 'Mode', 'UTR / Receipt', 'Principal', 'Penalty', 'Balance'];
+            $widths = [10, 24, 24, 22, 34, 24, 20, 28];
+            $this->renderTableHeader($pdf, $headers, $widths);
+            $paidTotal = 0.0;
+            $alt = false;
+            foreach ($ledger as $i => $row) {
+                $paid = (float)($row['paid_amount'] ?? 0);
+                $paidTotal += $paid;
+                $balance = max(0, $plotValue - $paidTotal);
+                $this->renderTableRow($pdf, [
+                    (string)($row['installment_no'] ?? ($i + 1)),
+                    (string)($row['due_date'] ?? ''),
+                    (string)($row['paid_date'] ?? ''),
+                    (string)($row['payment_method'] ?? ''),
+                    substr((string)($row['transaction_id'] ?? ''), 0, 18),
+                    number_format($paid, 2),
+                    number_format((float)($row['accrued_penalty'] ?? 0), 2),
+                    number_format($balance, 2),
+                ], $widths, $alt);
+                $alt = !$alt;
+            }
+            $pdf->Ln(4);
+            $this->renderInfoRow($pdf, 'Total Paid', 'Rs. ' . number_format($paidTotal, 2));
+            $this->renderInfoRow($pdf, 'Outstanding', 'Rs. ' . number_format(max(0, $plotValue - $paidTotal), 2));
+            $pdf->Ln(6);
+
+            // Seal block + verify QR (self-describing payload, no fake endpoint).
+            $pdf->SetFont('helvetica', 'B', 10);
+            $pdf->Cell(0, 7, 'For APS Dream Homes Pvt. Ltd.', 0, 1, 'R');
+            $pdf->SetFont('helvetica', '', 9);
+            $pdf->Cell(0, 6, 'Authorised Signatory (digitally generated)', 0, 1, 'R');
+            try {
+                $qrPayload = 'APS-STATEMENT|' . ($booking['booking_number'] ?? $bookingId)
+                    . '|paid:' . number_format($paidTotal, 2)
+                    . '|outstanding:' . number_format(max(0, $plotValue - $paidTotal), 2)
+                    . '|' . date('Y-m-d');
+                $pdf->write2DBarcode($qrPayload, 'QRCODE,H', 160, $pdf->GetY(), 28, 28, [], 'N');
+            } catch (\Throwable $e) {
+                error_log('AgreementPDFService::generatePassbookStatement QR: ' . $e->getMessage());
+            }
+
+            $filename = 'statement_' . preg_replace('/[^A-Za-z0-9_-]/', '', (string)($booking['booking_number'] ?? $bookingId)) . '_' . date('Ymd') . '.pdf';
+            $path = $this->storageDir . '/statements/' . $filename;
+            $pdf->Output($path, 'F');
+            $this->logPdfGeneration('passbook_statement', $bookingId, $filename, filesize($path));
+
+            return ['success' => true, 'pdf_path' => $path, 'filename' => $filename, 'file_size' => filesize($path)];
+        } catch (\Throwable $e) {
+            error_log('AgreementPDFService::generatePassbookStatement error: ' . $e->getMessage());
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Branded 1-page cost-sheet quotation for an available plot.
+     * 3 plans: full-payment 5% off, 50-50 milestone, 36-month 0% plan.
+     * Stamp estimate uses LIVE stamp_duty_config UP rates (read-only).
+     */
+    public function generateQuotation(int $plotId, string $preparedBy): array
+    {
+        try {
+            $plot = $this->fetchPlot($plotId);
+            if (!$plot || ($plot['status'] ?? '') !== 'available') {
+                return ['success' => false, 'error' => 'Plot not available for quotation'];
+            }
+            $colony = $this->fetchColony((int)($plot['colony_id'] ?? 0));
+            $base = (float)($plot['base_price_per_sqft'] ?? 0) > 0
+                ? (float)$plot['base_price_per_sqft'] : (float)($plot['price_per_sqft'] ?? 0);
+            $area = (float)($plot['area_sqft'] ?? 0);
+            $calc = \App\Services\Pricing\PlcService::calculate(
+                $base, $area,
+                !empty($plot['corner_plot']), !empty($plot['park_facing']),
+                (float)($plot['road_width_ft'] ?? 0),
+                ['colony_id' => (int)($plot['colony_id'] ?? 0), 'facing' => (string)($plot['facing'] ?? '')]
+            );
+            $total = (float)$calc['total'];
+            $stampRate = 7.0;
+            try {
+                $rs = (new \App\Services\Finance\StampDutyService())->getStateRates('UP');
+                if ($rs && (float)($rs['male_rate'] ?? 0) > 0) {
+                    $stampRate = (float)$rs['male_rate'];
+                }
+            } catch (\Throwable $e) {
+                error_log('AgreementPDFService::generateQuotation rates: ' . $e->getMessage());
+            }
+            $stampEst = round($total * $stampRate / 100, 2);
+            $regEst = round($total * 0.01, 2);
+            // Plans
+            $opt1 = round($total * 0.95, 2);
+            $opt2a = round($total / 2, 2);
+            $down36 = round($total * 0.1, 2);
+            $emi36 = $area > 0 ? round(($total - $down36) / 36, 2) : 0;
+            $facing = trim((string)($plot['facing'] ?? ''));
+            $vastuTag = $this->vastuLabel($facing);
+
+            $pdf = $this->createPdfObject('Plot Quotation');
+            $pdf->AddPage();
+            $this->renderCompanyHeader($pdf, 'Plot Cost-Sheet & Quotation');
+            $this->renderInfoRow($pdf, 'Plot', ($plot['plot_number'] ?? '') . ', ' . ($colony['name'] ?? ''));
+            $this->renderInfoRow($pdf, 'Area / Facing', $area . ' sqft' . ($facing !== '' ? ' / ' . $facing : '') . $vastuTag);
+            $this->renderInfoRow($pdf, 'Valid Till', date('d-M-Y', strtotime('+7 days')) . ' (7-day price lock)');
+            $pdf->Ln(2);
+            $this->renderSectionTitle($pdf, 'Valuation');
+            $this->renderTableHeader($pdf, ['Item', 'Amount'], [120, 50]);
+            $alt = false;
+            foreach ([
+                ['Base (' . number_format($base, 2) . '/sqft x ' . $area . ')', number_format($base * $area, 2)],
+                ['PLC charges', number_format((float)$calc['plc_amount'], 2)],
+                ['Plot consideration', number_format($total, 2)],
+                ['Stamp duty est. (' . $stampRate . '%)', number_format($stampEst, 2)],
+                ['Registration est. (1%)', number_format($regEst, 2)],
+            ] as $row) {
+                $this->renderTableRow($pdf, $row, [120, 50], $alt);
+                $alt = !$alt;
+            }
+            if (!empty($calc['breakdown'])) {
+                $this->renderBodyText($pdf, 'Includes: ' . implode(', ', $calc['breakdown']) . '.');
+            }
+            $this->renderSectionTitle($pdf, 'Payment Plans');
+            $this->renderTableHeader($pdf, ['Plan', 'Terms'], [60, 110]);
+            $this->renderTableRow($pdf, ['1. Full payment (5% off)', 'Rs. ' . number_format($opt1, 2) . ' one-time'], [60, 110], false);
+            $this->renderTableRow($pdf, ['2. 50-50 milestone', 'Rs. ' . number_format($opt2a, 2) . ' booking + Rs. ' . number_format($opt2a, 2) . ' at registry'], [60, 110], true);
+            $this->renderTableRow($pdf, ['3. 36-month 0% plan', 'Rs. ' . number_format($down36, 2) . ' down + 36 x Rs. ' . number_format($emi36, 2)], [60, 110], false);
+            $pdf->Ln(2);
+            $this->renderBodyText($pdf, 'Prepared by: ' . $preparedBy . '. Stamp/registration are government estimates.');
+            $this->renderSignatureBlock($pdf);
+            $this->renderFooter($pdf, 'quotation');
+
+            $filename = 'quotation_' . preg_replace('/[^A-Za-z0-9_-]/', '', (string)($plot['plot_number'] ?? $plotId)) . '_' . date('Ymd') . '.pdf';
+            $path = $this->storageDir . '/quotations/' . $filename;
+            if (!is_dir($this->storageDir . '/quotations')) {
+                mkdir($this->storageDir . '/quotations', 0755, true);
+            }
+            $pdf->Output($path, 'F');
+            $this->logPdfGeneration('quotation', $plotId, $filename, filesize($path));
+            return ['success' => true, 'pdf_path' => $path, 'filename' => $filename, 'file_size' => filesize($path)];
+        } catch (\Throwable $e) {
+            error_log('AgreementPDFService::generateQuotation error: ' . $e->getMessage());
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    private function vastuLabel(string $facing): string
+    {
+        $f = strtolower(str_replace([' ', '-', '_'], '', $facing));
+        // Compounds before cardinals ('southwest' contains 'west'/'south').
+        foreach ([
+            ['northeast,ne,ishan', ' — Vastu 98%'], ['northwest,nw', ' — Vastu 85%'],
+            ['southeast,se', ' — Vastu 80%'], ['southwest,sw', ' — Vastu 62%'],
+            ['east,purab', ' — Vastu 92%'], ['north,uttar', ' — Vastu 90%'],
+            ['west,paschim', ' — Vastu 78%'], ['south,dakshin', ' — Vastu 68%'],
+        ] as $row) {
+            foreach (explode(',', $row[0]) as $k) {
+                if ($f !== '' && strpos($f, $k) !== false) return $row[1];
+            }
+        }
+        return '';
+    }
+
     private function ensureDirectories(): void
     {
         $dirs = [
@@ -1172,6 +1386,7 @@ class AgreementPDFService extends ServiceTenantTrait
             $this->storageDir . '/demand_letters',
             $this->storageDir . '/allotment_letters',
             $this->storageDir . '/refund_vouchers',
+            $this->storageDir . '/statements',
         ];
         foreach ($dirs as $d) {
             if (!is_dir($d)) {

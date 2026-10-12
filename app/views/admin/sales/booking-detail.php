@@ -174,6 +174,9 @@ $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0
                                     <button type="submit" class="btn btn-sm btn-outline-danger" title="Mark cheque bounced (reverts installment + Rs.500 penalty)" data-aps-confirm="Mark this cheque as bounced? Installment reverts and Rs.500 penalty accrues."><i class="fas fa-undo me-1"></i>Bounce</button>
                                 </form>
                             <?php endif; ?>
+                            <?php if (($r['payment_mode'] ?? '') === 'cheque' && ($r['status'] ?? '') === 'bounced'): ?>
+                                <a href="<?= htmlspecialchars($base ?? '') ?>/admin/sales/receipts/<?= (int)($r['id'] ?? 0) ?>/legal-notice-138" target="_blank" class="btn btn-sm btn-outline-dark" title="Print Section 138 15-day demand notice draft"><i class="fas fa-gavel me-1"></i>138 Notice</a>
+                            <?php endif; ?>
                         </td>
                     </tr>
                 <?php endforeach; endif; ?>
@@ -278,6 +281,22 @@ $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0
                 <?php endforeach; endif; ?>
                 </tbody>
             </table></div>
+            <hr class="my-3">
+            <h6 class="fw-bold mb-2"><i class="fas fa-user-shield me-1"></i>Legal Nominee (वारिसदार)</h6>
+            <?php if (!empty($booking['nominee_name'])): ?>
+                <p class="small mb-2"><strong><?= htmlspecialchars((string)$booking['nominee_name']) ?></strong> (<?= htmlspecialchars((string)($booking['nominee_relation'] ?? '')) ?>)<?= !empty($booking['guardian_name']) ? ' · guardian: ' . htmlspecialchars((string)$booking['guardian_name']) : '' ?></p>
+            <?php else: ?>
+                <p class="small text-muted mb-2">No nominee recorded.</p>
+            <?php endif; ?>
+            <form method="post" action="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/nominee" class="row g-2">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars((string)$csrf_token) ?>">
+                <div class="col-md-3"><input type="text" name="nominee_name" class="form-control form-control-sm" placeholder="Nominee name *" required maxlength="150" value="<?= htmlspecialchars((string)($booking['nominee_name'] ?? '')) ?>"></div>
+                <div class="col-md-2"><select name="nominee_relation" class="form-select form-select-sm"><option value="">Relation…</option><?php foreach (['Spouse','Son','Daughter','Mother','Father','Brother','Sister'] as $rel): ?><option <?= ($booking['nominee_relation'] ?? '') === $rel ? 'selected' : '' ?>><?= $rel ?></option><?php endforeach; ?></select></div>
+                <div class="col-md-2"><input type="date" name="nominee_dob" class="form-control form-control-sm" value="<?= htmlspecialchars((string)($booking['nominee_dob'] ?? '')) ?>" title="DOB"></div>
+                <div class="col-md-2"><input type="text" name="nominee_aadhaar" class="form-control form-control-sm" placeholder="Aadhaar" maxlength="20" value="<?= htmlspecialchars((string)($booking['nominee_aadhaar'] ?? '')) ?>"></div>
+                <div class="col-md-2"><input type="text" name="guardian_name" class="form-control form-control-sm" placeholder="Guardian (if minor)" maxlength="150" value="<?= htmlspecialchars((string)($booking['guardian_name'] ?? '')) ?>"></div>
+                <div class="col-md-1"><button type="submit" class="btn btn-sm btn-secondary w-100">Save</button></div>
+            </form>
             <form method="post" action="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/co-owners/add" class="row g-2 mt-2">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars((string)$csrf_token) ?>">
                 <div class="col-md-3"><input type="text" name="full_name" class="form-control form-control-sm" placeholder="Full name *" required maxlength="150"></div>

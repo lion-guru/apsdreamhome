@@ -148,6 +148,54 @@ class FleetController extends AdminController
      *  Trips
      * ========================================================= */
 
+    /**
+     * Sunday dispatch manifest — printable per-vehicle sheets.
+     * GET /admin/site-visits/manifest?date=YYYY-MM-DD
+     */
+    public function printSundayManifest()
+    {
+        $this->requireAdmin();
+        $date = trim((string)($_GET['date'] ?? date('Y-m-d')));
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) $date = date('Y-m-d');
+        $trips = [];
+        try {
+            [$tSql, $tParams] = $this->tenantWhere();
+            $rows = $this->db->fetchAll(
+                "SELECT t.*, v.vehicle_no, v.vehicle_name, v.capacity, v.driver_name AS v_driver, v.driver_phone AS v_phone,
+                        c.name AS colony_name, a.name AS associate_name
+                 FROM fleet_trips t
+                 LEFT JOIN fleet_vehicles v ON v.id = t.vehicle_id
+                 LEFT JOIN colonies c ON c.id = t.colony_id
+                 LEFT JOIN associates a ON a.id = t.associate_id
+                 WHERE t.trip_date = ?" . $tSql . " ORDER BY v.vehicle_no, t.id",
+                array_merge([$date], $tParams)
+            ) ?: [];
+            foreach ($rows as &$t) {
+                try {
+                    $t['passengers'] = $this->db->fetchAll(
+                        "SELECT v.visitor_name, v.visitor_phone, v.pickup_location
+                         FROM fleet_trip_visits ft JOIN site_visits v ON v.id = ft.site_visit_id
+                         WHERE ft.trip_id = ? ORDER BY v.id",
+                        [(int)$t['id']]
+                    ) ?: [];
+                } catch (\Throwable $e) {
+                    $t['passengers'] = [];
+                }
+                if (empty($t['driver_name'])) $t['driver_name'] = $t['v_driver'] ?? '';
+                if (empty($t['driver_phone'])) $t['driver_phone'] = $t['v_phone'] ?? '';
+            }
+            unset($t);
+            $trips = $rows;
+        } catch (\Throwable $e) {
+            error_log('[FleetController::printSundayManifest] ' . $e->getMessage());
+        }
+        $this->render('admin/site-visits/sunday_manifest', [
+            'page_title' => 'Sunday Manifest — ' . $date,
+            'trips' => $trips,
+            'date' => $date,
+        ]);
+    }
+
     public function trips()
     {
         $this->requireAdmin();

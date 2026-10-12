@@ -37,10 +37,11 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
                 </div>
                 <div class="text-muted small mt-1">Verified APS Dream Home associate · Ref: <?= $e($code) ?></div>
             </div>
-            <div>
+            <div class="d-flex flex-column gap-2">
                 <?php if ($wa !== ''): ?>
                 <a class="btn btn-success" href="<?= $e($wa) ?>" target="_blank" rel="noopener"><i class="fab fa-whatsapp me-1"></i>Talk to <?= $e(explode(' ', trim($display_name))[0]) ?></a>
                 <?php endif; ?>
+                <a class="btn btn-primary" href="<?= $base ?>/p/<?= $e($code) ?>/vcard"><i class="fas fa-address-card me-1"></i>📲 Save to Phone Contacts</a>
             </div>
         </div>
     </div>

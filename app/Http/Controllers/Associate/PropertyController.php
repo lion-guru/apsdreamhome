@@ -445,4 +445,35 @@ class PropertyController extends BaseController
             'properties' => $properties,
         ], 'layouts/associate');
     }
+
+    /**
+     * Branded 1-page quotation PDF for an available plot (associate self-serve).
+     * Route: GET /associate/plots/{id}/quotation-pdf
+     */
+    public function quotationPdf($id)
+    {
+        $this->requireAuth();
+        $id = (int)$id;
+        try {
+            $svc = new \App\Services\PDF\AgreementPDFService();
+            $db = \App\Core\Database\Database::getInstance();
+            $me = $db->fetchOne("SELECT name, phone FROM users WHERE id = ? LIMIT 1", [(int)$_SESSION['user_id']]);
+            $by = trim(($me['name'] ?? 'Associate') . ' ' . ($me['phone'] ?? ''));
+            $res = $svc->generateQuotation($id, $by);
+        } catch (\Throwable $e) {
+            error_log('Associate PropertyController::quotationPdf: ' . $e->getMessage());
+            $res = ['success' => false];
+        }
+        if (empty($res['success']) || !is_file($res['pdf_path'] ?? '')) {
+            $_SESSION['error'] = $res['error'] ?? 'Quotation failed (plot must be available).';
+            $this->redirect('/associate/browse');
+            return;
+        }
+        while (ob_get_level() > 0) ob_end_clean();
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: inline; filename="' . basename($res['pdf_path']) . '"');
+        header('Content-Length: ' . filesize($res['pdf_path']));
+        readfile($res['pdf_path']);
+        exit;
+    }
 }

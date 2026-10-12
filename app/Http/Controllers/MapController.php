@@ -163,6 +163,7 @@ class MapController extends BaseController
                 'page_title' => $colony['name'] . ' — Plot Map',
                 'colony' => $colony,
                 'plots' => $plots,
+                'price_revision' => \App\Http\Controllers\Admin\PriceRevisionController::activeForColony($this->db, (int)$colony['id']),
             ], 'layouts/base');
         } catch (Exception $e) {
             $this->setFlash('error', 'Failed to load map');
@@ -184,7 +185,7 @@ class MapController extends BaseController
                 return;
             }
             $plots = $this->db->fetchAll(
-                "SELECT id, plot_number, block, area_sqft, width_ft, length_ft, status, price_per_sqft, total_price, corner_plot, park_facing, road_width_ft, gata_number
+                "SELECT id, plot_number, block, area_sqft, width_ft, length_ft, status, price_per_sqft, total_price, corner_plot, park_facing, road_width_ft, gata_number, facing
                  FROM plots WHERE colony_id = ? ORDER BY block, plot_number",
                 [$id]
             );
@@ -233,6 +234,7 @@ class MapController extends BaseController
                             'road_facing' => !empty($p['road_width_ft']) && (float)$p['road_width_ft'] > 0,
                             'road_width_ft' => $p['road_width_ft'],
                             'gata_number' => $p['gata_number'],
+                            'facing' => $p['facing'] ?? '',
                             'marker_color' => $statusColors[$p['status']] ?? '#94a3b8',
                         ],
                     ];
@@ -276,6 +278,7 @@ class MapController extends BaseController
                 'plots' => $plots,
                 'ref_code' => $refCode,
                 'is_live_layout' => true,
+                'price_revision' => \App\Http\Controllers\Admin\PriceRevisionController::activeForColony($this->db, (int)$colony['id']),
             ], 'layouts/base');
         } catch (Exception $e) {
             $this->setFlash('error', 'Failed to load map');

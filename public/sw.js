@@ -1,4 +1,41 @@
-const CACHE_NAME = 'apsdreamhome-v3';
+const CACHE_NAME = 'apsdreamhome-v4';
+
+// Web-Push handlers. Subscriptions are stored via /api/push/subscribe;
+// delivery (VAPID sender) is pending server keys — until then pushes
+// simply have no sender, and these handlers stay inert but valid.
+self.addEventListener('push', (event) => {
+    let data = {};
+    try {
+        data = event.data ? event.data.json() : {};
+    } catch (e) {
+        data = { title: event.data ? event.data.text() : '' };
+    }
+    const title = data.title || 'APS Dream Home';
+    const options = {
+        body: data.body || '',
+        icon: '/apsdreamhome/assets/images/logo.png',
+        badge: '/apsdreamhome/assets/images/logo.png',
+        data: { url: data.url || '/apsdreamhome/' },
+        tag: data.tag || 'aps-general',
+    };
+    event.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    const url = (event.notification.data && event.notification.data.url) || '/apsdreamhome/';
+    event.waitUntil(
+        self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
+            for (const c of clients) {
+                if (c.url === url || c.url.startsWith(url)) {
+                    return c.focus();
+                }
+            }
+            return self.clients.openWindow(url);
+        })
+    );
+});
+
 const STATIC_ASSETS = [
     '/apsdreamhome/',
     '/apsdreamhome/assets/css/bootstrap.min.css',

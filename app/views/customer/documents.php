@@ -299,6 +299,110 @@ $base = BASE_URL ?? '';
                     <?php endif; ?>
                 </div>
             </div>
+
+            <!-- Legal Nominee per booking -->
+            <div class="col-12 mt-4">
+                <h5 class="fw-bold mb-3 d-flex align-items-center">
+                    <i class="fas fa-user-shield text-info me-2"></i> Legal Nominee (वारिसदार)
+                    <small class="text-muted fw-normal ms-2">— who inherits your plot</small>
+                </h5>
+                <div class="row g-3">
+                    <?php $nomineeRows = $jointOwnerships ?? []; ?>
+                    <?php if (empty($nomineeRows)): ?>
+                        <div class="col-12"><div class="card border-0 bg-light"><div class="card-body text-center py-4">
+                            <h6 class="text-muted">No bookings yet</h6>
+                        </div></div></div>
+                    <?php else: ?>
+                        <?php foreach ($nomineeRows as $nr): ?>
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card document-card h-100 border-0 shadow-sm">
+                                    <div class="card-body">
+                                        <h6 class="fw-semibold mb-1"><?= htmlspecialchars($nr['booking_number'] ?? '') ?></h6>
+                                        <p class="text-muted small mb-2">Plot <?= htmlspecialchars($nr['plot_number'] ?? '') ?> · <?= htmlspecialchars($nr['colony_name'] ?? '') ?></p>
+                                        <?php if (!empty($nr['nominee_name'])): ?>
+                                            <p class="small mb-1"><strong><?= htmlspecialchars($nr['nominee_name']) ?></strong> (<?= htmlspecialchars($nr['nominee_relation'] ?? '') ?>)</p>
+                                            <?php if (!empty($nr['guardian_name'])): ?><p class="small text-muted mb-1">Guardian: <?= htmlspecialchars($nr['guardian_name']) ?></p><?php endif; ?>
+                                            <a class="btn btn-sm btn-outline-primary" target="_blank" href="<?= BASE_URL ?>/customer/bookings/<?= (int)($nr['booking_id'] ?? 0) ?>/nominee-sheet"><i class="fas fa-print me-1"></i>Succession Sheet</a>
+                                        <?php else: ?>
+                                            <p class="text-muted small mb-2">No nominee recorded.</p>
+                                        <?php endif; ?>
+                                        <button class="btn btn-sm btn-outline-secondary mt-1" data-bs-toggle="modal" data-bs-target="#nomineeModal<?= (int)($nr['booking_id'] ?? 0) ?>"><?= !empty($nr['nominee_name']) ? 'Update' : 'Add' ?> Nominee</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal fade" id="nomineeModal<?= (int)($nr['booking_id'] ?? 0) ?>" tabindex="-1">
+                                <div class="modal-dialog"><div class="modal-content">
+                                    <form method="POST" action="<?= BASE_URL ?>/customer/bookings/<?= (int)($nr['booking_id'] ?? 0) ?>/nominee">
+                                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                                        <div class="modal-header"><h6 class="modal-title">Legal Nominee — <?= htmlspecialchars($nr['booking_number'] ?? '') ?></h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                                        <div class="modal-body row g-2">
+                                            <div class="col-12"><label class="form-label small">Full name *</label><input type="text" name="nominee_name" class="form-control" required maxlength="150" value="<?= htmlspecialchars($nr['nominee_name'] ?? '') ?>"></div>
+                                            <div class="col-6"><label class="form-label small">Relation *</label><select name="nominee_relation" class="form-select"><?php foreach (['Spouse','Son','Daughter','Mother','Father','Brother','Sister'] as $rel): ?><option <?= ($nr['nominee_relation'] ?? '') === $rel ? 'selected' : '' ?>><?= $rel ?></option><?php endforeach; ?></select></div>
+                                            <div class="col-6"><label class="form-label small">DOB</label><input type="date" name="nominee_dob" class="form-control" value="<?= htmlspecialchars($nr['nominee_dob'] ?? '') ?>"></div>
+                                            <div class="col-6"><label class="form-label small">Aadhaar</label><input type="text" name="nominee_aadhaar" class="form-control" maxlength="20" value="<?= htmlspecialchars($nr['nominee_aadhaar'] ?? '') ?>"></div>
+                                            <div class="col-6"><label class="form-label small">Phone</label><input type="text" name="nominee_phone" class="form-control" maxlength="20" value="<?= htmlspecialchars($nr['nominee_phone'] ?? '') ?>"></div>
+                                            <div class="col-12"><label class="form-label small">Guardian (if nominee is minor)</label><input type="text" name="guardian_name" class="form-control" maxlength="150" value="<?= htmlspecialchars($nr['guardian_name'] ?? '') ?>"></div>
+                                        </div>
+                                        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button><button type="submit" class="btn btn-primary">Save Nominee</button></div>
+                                    </form>
+                                </div></div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Tracked Possession Certificates -->
+            <div class="col-12 mt-4">
+                <h5 class="fw-bold mb-3 d-flex align-items-center">
+                    <i class="fas fa-key text-warning me-2"></i> Possession Certificates
+                    <small class="text-muted fw-normal ms-2">— issued handovers with pillar proof</small>
+                </h5>
+                <div class="row g-3">
+                    <?php $possessionCerts = $possessionCerts ?? []; ?>
+                    <?php if (empty($possessionCerts)): ?>
+                        <div class="col-12">
+                            <div class="card border-0 bg-light">
+                                <div class="card-body text-center py-5">
+                                    <i class="fas fa-key fa-3x text-muted mb-3"></i>
+                                    <h6 class="text-muted">No Possession Certificates Yet</h6>
+                                    <p class="text-muted small">Issued after physical handover of your plot — check back soon.</p>
+                                </div>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($possessionCerts as $doc): ?>
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card document-card h-100 border-0 shadow-sm">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-start justify-content-between mb-3">
+                                            <div class="document-icon bg-warning bg-opacity-10 text-warning">
+                                                <i class="fas fa-key"></i>
+                                            </div>
+                                            <span class="doc-type-badge" style="background:#fef3c7;color:#92400e"><?= htmlspecialchars($doc['handover_status'] ?? 'final') ?></span>
+                                        </div>
+                                        <h6 class="fw-semibold mb-1"><?= htmlspecialchars($doc['certificate_no'] ?? 'Possession Certificate') ?></h6>
+                                        <p class="text-muted small mb-2">
+                                            <i class="fas fa-map-pin me-1"></i>
+                                            Plot <?= htmlspecialchars($doc['plot_number'] ?? '') ?> · <?= htmlspecialchars($doc['colony_name'] ?? '') ?>
+                                        </p>
+                                        <p class="text-muted small mb-3">
+                                            <i class="fas fa-calendar me-1"></i>
+                                            <?= htmlspecialchars($doc['handover_date'] ?? '') ?>
+                                            <?= !empty($doc['pillar_photo_path']) ? ' · <a href="' . BASE_URL . '/' . htmlspecialchars($doc['pillar_photo_path']) . '" target="_blank">pillar photo</a>' : '' ?>
+                                        </p>
+                                        <div class="mt-auto document-actions">
+                                            <a href="<?= BASE_URL ?>/customer/possession-certificate/<?= (int)($doc['booking_id'] ?? 0) ?>" class="btn btn-sm btn-warning w-100" target="_blank">
+                                                <i class="fas fa-download me-1"></i> Download Certificate
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
         </div>
     </div>
 </div>

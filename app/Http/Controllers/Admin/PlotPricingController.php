@@ -160,6 +160,36 @@ class PlotPricingController extends AdminController
     }
 
     /**
+     * Branded 1-page quotation PDF for an available plot.
+     * Route: GET /admin/plots/{id}/quotation-pdf
+     */
+    public function quotationPdf($id)
+    {
+        $this->requireAdmin();
+        $id = (int)$id;
+        try {
+            $svc = new \App\Services\PDF\AgreementPDFService(
+                $this->db instanceof \PDO ? $this->db : null
+            );
+            $me = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? 'APS Sales Desk';
+            $res = $svc->generateQuotation($id, (string)$me);
+        } catch (\Throwable $e) {
+            error_log('PlotPricingController::quotationPdf: ' . $e->getMessage());
+            $res = ['success' => false];
+        }
+        if (empty($res['success']) || !is_file($res['pdf_path'] ?? '')) {
+            $this->setFlash('error', $res['error'] ?? 'Quotation failed (plot must be available).');
+            return $this->redirect('/admin/plots/' . $id);
+        }
+        while (ob_get_level() > 0) ob_end_clean();
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: inline; filename="' . basename($res['pdf_path']) . '"');
+        header('Content-Length: ' . filesize($res['pdf_path']));
+        readfile($res['pdf_path']);
+        exit;
+    }
+
+    /**
      * Preview PLC calculation for a plot
      */
     public function previewPlc()
