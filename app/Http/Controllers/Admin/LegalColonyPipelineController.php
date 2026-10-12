@@ -702,10 +702,12 @@ class LegalColonyPipelineController extends AdminController
     {
         $this->requireAdmin();
 
+        // NOTE: colonies.rera_number (general_ci) vs rera_projects.rera_number
+        // (unicode_ci) — explicit COLLATE avoids 1267 illegal-mix errors.
         $colonies = $this->db->fetchAll(
             "SELECT c.id, c.name, c.rera_number,
-                    (SELECT COUNT(*) FROM rera_projects rp WHERE rp.rera_number = c.rera_number) as rera_count,
-                    (SELECT COUNT(*) FROM rera_milestones rm INNER JOIN rera_projects rp2 ON rm.project_id = rp2.id WHERE rp2.rera_number = c.rera_number) as milestone_count
+                    (SELECT COUNT(*) FROM rera_projects rp WHERE rp.rera_number COLLATE utf8mb4_unicode_ci = c.rera_number COLLATE utf8mb4_unicode_ci) as rera_count,
+                    (SELECT COUNT(*) FROM rera_milestones rm INNER JOIN rera_projects rp2 ON rm.project_id = rp2.id WHERE rp2.rera_number COLLATE utf8mb4_unicode_ci = c.rera_number COLLATE utf8mb4_unicode_ci) as milestone_count
              FROM colonies c
              WHERE c.deleted_at IS NULL
              ORDER BY c.name ASC"

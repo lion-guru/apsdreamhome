@@ -21,7 +21,7 @@ User request (Hinglish): "admin me login karke dekho menu sidebar submenu system
 
 ### Verification
 - `php -l` clean on all touched files. Master suite **7/7 PASSED** after every round. Browser-verified: 6 admin hubs render, milestones-list 200, /navigation links → real routes, gated APIs → 401 JSON.
-- Uncommitted in working directory, ready for user review or commit command.
+- Committed + pushed as `66f755d40` (menus/portals/API), `63df6cb01` (badge cache + manifest 322), `ae5bdf3fe` (ApiResponse + lessons), `ea0937b67` (township probe, master now 8/8). `routes/web.php` + 200 unattributed M files + secrets/scratch left uncommitted deliberately.
 
 ### Follow-up (same day): badge caching, manifest regen, ApiResponse standard
 - **Portal badge N+1**: `PortalMenuService::countTable()/countSiteVisits()` now `Cache::remember` 120s per user (admin-layout convention). Probe: cold 54ms → warm 2ms, identical menus.
