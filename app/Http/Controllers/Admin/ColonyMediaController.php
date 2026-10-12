@@ -52,7 +52,7 @@ class ColonyMediaController extends AdminController
         $title = trim((string)($_POST['title'] ?? ''));
         $type = strtolower(trim((string)($_POST['media_type'] ?? '')));
         $url = trim((string)($_POST['media_url'] ?? ''));
-        if ($title === '' || !in_array($type, ['drone_video', 'site_photo', 'layout_3d', 'youtube_embed'], true)) {
+        if ($title === '' || !in_array($type, ['drone_video', 'site_photo', 'layout_3d', 'youtube_embed', 'sajra_scan'], true)) {
             $this->setFlash('error', 'Title and media type are required.');
             return $this->redirect('/admin/colonies/' . $id . '/media-hub');
         }
@@ -75,7 +75,7 @@ class ColonyMediaController extends AdminController
                 return $this->redirect('/admin/colonies/' . $id . '/media-hub');
             }
             $mediaUrl = 'assets/uploads/colony-media/' . $filename;
-            $type = 'site_photo';
+            $type = ($type === 'sajra_scan') ? 'sajra_scan' : 'site_photo';
         }
         if ($mediaUrl === '') {
             $this->setFlash('error', 'Provide a media URL or upload a photo.');

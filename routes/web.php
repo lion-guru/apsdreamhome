@@ -2894,6 +2894,14 @@ $router->get('/admin/sales/nri-desk',
 'App\\Http\\Controllers\\Admin\\NRIController@index');
 $router->get('/admin/sales/bookings/{id}/possession-certificate',
 'App\\Http\\Controllers\\Admin\\PossessionCertController@show');
+$router->get('/admin/sales/bonanza-races',
+'App\\Http\\Controllers\\Admin\\BonanzaController@index');
+$router->post('/admin/sales/bonanza-races/store',
+'App\\Http\\Controllers\\Admin\\BonanzaController@store');
+$router->get('/admin/sales/bonanza-races/{id}/leaderboard',
+'App\\Http\\Controllers\\Admin\\BonanzaController@leaderboard');
+$router->get('/associate/bonanza-races',
+'App\\Http\\Controllers\\Associate\\BonanzaController@races');
 $router->get('/admin/colonies/{id}/media-hub',
 'App\\Http\\Controllers\\Admin\\ColonyMediaController@index');
 $router->post('/admin/colonies/{id}/media-hub/upload',
@@ -5889,6 +5897,10 @@ $router->post('/admin/construction/muster-roll/store',
 'App\\Http\\Controllers\\Admin\\ProjectProgressController@musterStore');
 $router->post('/admin/construction/muster-roll/delete/{id}',
 'App\\Http\\Controllers\\Admin\\ProjectProgressController@musterDelete');
+$router->get('/admin/construction/broadcast-update',
+'App\\Http\\Controllers\\Admin\\ProjectProgressController@broadcastForm');
+$router->post('/admin/construction/broadcast-update/send',
+'App\\Http\\Controllers\\Admin\\ProjectProgressController@broadcastSend');
 
 
 // Referral Leaderboard (Customer)

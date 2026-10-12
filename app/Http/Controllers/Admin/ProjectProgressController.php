@@ -568,6 +568,138 @@ class ProjectProgressController extends AdminController
         return $this->redirect('/admin/construction/muster-roll');
     }
 
+    /* =========================================================
+     *  Milestone broadcast — 1-click WhatsApp to booked buyers
+     * ========================================================= */
+
+    public function broadcastForm()
+    {
+        $this->requireAdmin();
+        try {
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $colonies = $this->db->fetchAll(
+                "SELECT id, name FROM colonies WHERE 1=1" . $tenantSql . " ORDER BY name ASC",
+                $tenantParams
+            ) ?: [];
+            $history = $this->db->fetchAll(
+                "SELECT mb.*, c.name AS colony_name FROM milestone_broadcasts mb
+                 LEFT JOIN colonies c ON c.id = mb.colony_id
+                 WHERE 1=1" . $tenantSql . " ORDER BY mb.id DESC LIMIT 20",
+                $tenantParams
+            ) ?: [];
+        } catch (\Exception $e) {
+            error_log('ProjectProgressController::broadcastForm: ' . $e->getMessage());
+            $colonies = [];
+            $history = [];
+        }
+        return $this->render('admin/construction/broadcast_update', [
+            'page_title' => 'Milestone Broadcast',
+            'colonies' => $colonies,
+            'history' => $history,
+        ]);
+    }
+
+    public function broadcastSend()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+        $colonyId = (int)($_POST['colony_id'] ?? 0);
+        $title = trim((string)($_POST['milestone_title'] ?? ''));
+        if ($colonyId <= 0 || $title === '') {
+            $this->setFlash('error', 'Colony and milestone title are required.');
+            return $this->redirect('/admin/construction/broadcast-update');
+        }
+        $message = trim((string)($_POST['message'] ?? ''));
+        if ($message === '') {
+            $colonyName = (string)($this->db->fetchOne(
+                "SELECT name FROM colonies WHERE id = ? LIMIT 1",
+                [$colonyId]
+            )['name'] ?? 'your township');
+            $message = "Badhaai ho! Aapki colony '{$colonyName}' me aaj {$title} ka kaarya poora ho gaya hai. - APS Dream Home";
+        }
+
+        // Optional site photo (images ≤5MB).
+        $photoPath = null;
+        $photoUrl = '';
+        if (isset($_FILES['site_photo']) && ($_FILES['site_photo']['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK) {
+            $v = \UploadValidator::validate($_FILES['site_photo'], ['types' => 'images', 'max_size' => 5]);
+            if (empty($v['valid'])) {
+                $this->setFlash('error', 'Site photo: ' . ($v['error'] ?? 'invalid file'));
+                return $this->redirect('/admin/construction/broadcast-update');
+            }
+            $dir = dirname(__DIR__, 4) . '/assets/uploads/broadcasts/';
+            if (!is_dir($dir)) {
+                mkdir($dir, 0755, true);
+            }
+            $safe = \UploadValidator::safeFilename($_FILES['site_photo']['name']);
+            $ext = pathinfo($safe, PATHINFO_EXTENSION);
+            $filename = 'milestone_' . $colonyId . '_' . time() . '.' . $ext;
+            if (!move_uploaded_file($_FILES['site_photo']['tmp_name'], $dir . $filename)) {
+                $this->setFlash('error', 'Could not store site photo.');
+                return $this->redirect('/admin/construction/broadcast-update');
+            }
+            $photoPath = 'assets/uploads/broadcasts/' . $filename;
+            $photoUrl = (defined('BASE_URL') ? BASE_URL : '') . '/' . $photoPath;
+        }
+
+        $sent = 0;
+        $failed = 0;
+        $recipients = 0;
+        try {
+            [$tSql, $tParams] = $this->tenantWhere();
+            $buyers = $this->db->fetchAll(
+                "SELECT DISTINCT u.id, u.name, u.phone FROM plot_bookings b
+                 JOIN users u ON u.id = b.customer_id
+                 WHERE b.colony_id = ? AND b.status NOT IN ('cancelled')" . $tSql,
+                array_merge([$colonyId], $tParams)
+            ) ?: [];
+            $recipients = count($buyers);
+            $wa = new \App\Services\Communication\WhatsAppService();
+            $waReady = $wa->isConfigured();
+            foreach ($buyers as $buyer) {
+                $digits = preg_replace('/\D/', '', (string)($buyer['phone'] ?? ''));
+                if (!preg_match('/^[6-9]\d{9}$/', $digits)) {
+                    $failed++;
+                    continue;
+                }
+                $text = 'Namaste ' . ($buyer['name'] ?? 'Customer') . '! ' . $message;
+                if ($photoUrl !== '') {
+                    $text .= ' Photo: ' . $photoUrl;
+                }
+                $ok = false;
+                if ($waReady) {
+                    try {
+                        $res = $wa->sendTextMessage($digits, $text);
+                        $ok = (bool)($res['success'] ?? false);
+                    } catch (\Throwable $e) {
+                        error_log('[Broadcast] send: ' . $e->getMessage());
+                    }
+                }
+                if ($ok) $sent++; else $failed++;
+            }
+            $tid = (int)$this->tenantId();
+            $this->db->execute(
+                "INSERT INTO milestone_broadcasts
+                 (tenant_id, colony_id, milestone_title, message, photo_path, recipients_total, sent_count, failed_count, created_by)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                [
+                    $tid, $colonyId, mb_substr($title, 0, 150),
+                    mb_substr($message, 0, 2000), $photoPath,
+                    $recipients, $sent, $failed,
+                    $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? null,
+                ]
+            );
+            $this->setFlash('success', "Broadcast logged: $sent sent, $failed failed/queued of $recipients buyers.");
+        } catch (\Throwable $e) {
+            error_log('ProjectProgressController::broadcastSend: ' . $e->getMessage());
+            if ($photoPath && is_file(dirname(__DIR__, 4) . '/' . $photoPath)) {
+                unlink(dirname(__DIR__, 4) . '/' . $photoPath);
+            }
+            $this->setFlash('error', 'Broadcast failed.');
+        }
+        return $this->redirect('/admin/construction/broadcast-update');
+    }
+
     private function musterRoles(): array
     {
         return [

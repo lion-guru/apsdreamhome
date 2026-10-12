@@ -164,6 +164,7 @@ class MapController extends BaseController
                 'colony' => $colony,
                 'plots' => $plots,
                 'price_revision' => \App\Http\Controllers\Admin\PriceRevisionController::activeForColony($this->db, (int)$colony['id']),
+                'sajra_url' => $this->featuredSajraUrl((int)$colony['id']),
             ], 'layouts/base');
         } catch (Exception $e) {
             $this->setFlash('error', 'Failed to load map');
@@ -248,6 +249,25 @@ class MapController extends BaseController
     }
 
     /**
+     * Featured revenue-sajra scan URL for a colony (public overlay source).
+     */
+    private function featuredSajraUrl(int $colonyId): string
+    {
+        try {
+            $row = $this->db->fetchOne(
+                "SELECT media_url FROM colony_media
+                 WHERE colony_id = ? AND media_type = 'sajra_scan' ORDER BY is_featured DESC, id DESC LIMIT 1",
+                [$colonyId]
+            );
+            $u = trim((string)($row['media_url'] ?? ''));
+            if ($u === '' || stripos($u, 'http') === 0) return $u;
+            return (defined('BASE_URL') ? rtrim(BASE_URL, '/') : '') . '/' . ltrim($u, '/');
+        } catch (\Exception $e) {
+            return '';
+        }
+    }
+
+    /**
      * Shareable Live Layout — mobile-optimized public map with associate ref.
      * GET /colony/{id}/live-layout?ref=ASSO123  (id or slug accepted)
      * The global aps_ref cookie net persists ?ref= automatically.
@@ -279,6 +299,7 @@ class MapController extends BaseController
                 'ref_code' => $refCode,
                 'is_live_layout' => true,
                 'price_revision' => \App\Http\Controllers\Admin\PriceRevisionController::activeForColony($this->db, (int)$colony['id']),
+                'sajra_url' => $this->featuredSajraUrl((int)$colony['id']),
             ], 'layouts/base');
         } catch (Exception $e) {
             $this->setFlash('error', 'Failed to load map');

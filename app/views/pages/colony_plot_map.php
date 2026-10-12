@@ -1,4 +1,4 @@
-<?php $colony = $colony ?? []; $plots = $plots ?? []; $refCode = $ref_code ?? ''; $isLive = !empty($is_live_layout); $price_revision = $price_revision ?? null; ?>
+<?php $colony = $colony ?? []; $plots = $plots ?? []; $refCode = $ref_code ?? ''; $isLive = !empty($is_live_layout); $price_revision = $price_revision ?? null; $sajra_url = $sajra_url ?? ''; ?>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.min.css" />
 <style>
 #plotMap { height: 65vh; width: 100%; border-radius: 12px; border: 1px solid #e2e8f0; z-index: 0; }
@@ -63,6 +63,13 @@
         <span class="map-stat" data-status="hold"><span class="dot"></span> Hold: <strong id="statHold">0</strong></span>
         <span class="map-stat ms-auto text-muted">Total Value: <strong id="statValue">₹0</strong></span>
     </div>
+    <?php if ($sajra_url !== ''): ?>
+    <div class="alert alert-info d-flex align-items-center gap-2 py-2 mb-3 flex-wrap" role="alert">
+        <button class="btn btn-sm btn-outline-primary" id="sajraToggle" type="button">🗺️ Revenue Sajra Overlay: OFF</button>
+        <label class="small mb-0">Opacity <input type="range" id="sajraOpacity" min="10" max="90" value="50" style="vertical-align:middle;"></label>
+        <span class="small text-muted">Reference alignment — verify khasra on the tehsil record.</span>
+    </div>
+    <?php endif; ?>
     <div class="map-filter-bar mb-3">
         <button class="btn btn-sm active" data-filter="all">All</button>
         <button class="btn btn-sm" data-filter="available" >Available</button>
@@ -150,6 +157,29 @@
                     map.fitBounds(geojsonLayer.getBounds(), { padding: [30, 30], maxZoom: 18 });
                 } else { map.setView([26.76, 83.37], 13); }
                 updateStats(data.features || []);
+                (function () {
+                    var sajraUrl = <?= json_encode($sajra_url) ?>;
+                    var sajraLayer = null;
+                    var tgl = document.getElementById('sajraToggle');
+                    if (tgl && sajraUrl) {
+                        tgl.addEventListener('click', function () {
+                            if (sajraLayer) {
+                                if (map.hasLayer(sajraLayer)) { map.removeLayer(sajraLayer); tgl.textContent = '🗺️ Revenue Sajra Overlay: OFF'; }
+                                else { sajraLayer.addTo(map); tgl.textContent = '🗺️ Revenue Sajra Overlay: ON'; }
+                                return;
+                            }
+                            try {
+                                var b = geojsonLayer ? geojsonLayer.getBounds() : map.getBounds();
+                                sajraLayer = L.imageOverlay(sajraUrl, b, { opacity: 0.5, interactive: true });
+                                sajraLayer.addTo(map);
+                                tgl.textContent = '🗺️ Revenue Sajra Overlay: ON';
+                            } catch (e) {}
+                        });
+                        document.getElementById('sajraOpacity').addEventListener('input', function () {
+                            if (sajraLayer) sajraLayer.setOpacity(this.value / 100);
+                        });
+                    }
+                })();
                 (function () {
                     var want = focusPlotParam();
                     if (!want || !geojsonLayer) return;

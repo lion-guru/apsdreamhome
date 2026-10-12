@@ -1,5 +1,23 @@
 > **COMPLETED (2026-10-06):** Churn-stop verified (snapshots identical), full review done, all work committed + pushed (see Session 171-173 below).
 
+## Session 204: Morning "Do All" — UPI Links, Drip, Broadcast, Bonanza, Sajra (2026-10-12)
+
+### Trigger
+"Shutdown nhi karna... do next" + "do all" on remaining proposals. Built the 5 leftover suggestions, all probe-verified, 0 leftovers.
+
+### Work
+- **UPI intent in EMI WA**: `EMIAutomationService::emiPayLink()` (live `apsdreamhome@icici` VPA — matches passbook/receipt flows, NOT UPIQRService's unused `apsdreamhome@upi` default; VPA mismatch noted, not "fixed" — money routing is owner call). Unit green, message prefix byte-identical.
+- **Site-visit drip**: `site_visit_drips` + `cron_site_visit_drip.php` (+1/+3/+6 day stages, skips converted leads + bad phones, idempotent, --dry-run). Synthetic visit → 3 stage rows → re-run no-op → all cleaned.
+- **Milestone broadcast**: `milestone_broadcasts` + form/history + photo upload + auto-message + buyer query + best-effort WA + audit row. Probe: 1 buyer → failed=1 (provider unconfigured, honest) → photo path verified → all cleaned. **Probe lesson**: curl 000 on multipart = missing local file (pillar.png was cleaned), NOT app hang — verify the file exists before theorizing.
+- **Bonanza races**: `sales_races` + admin CRUD-lite/leaderboard + associate portal page (shared `standings()`). Temporarily attributed booking 12 to assoc 461 → 1/5 progress both sides → restored NULL + race deleted.
+- **Sajra overlay**: `sajra_scan` enum union (idempotent) + upload-as-sajra support + featured-sajra overlay toggle w/ opacity slider on live map. Upload → toggle live → delete → gone. False alarm documented: post-cleanup "toggle still there" was JS string literals, alert div correctly absent (`sajraUrl=""`).
+
+### Verification
+- Master **7/7** on final tree. All temp probes deleted. NOTE: dashboard.php M remains second-actor's.
+
+### Commit hygiene (uncommitted, not requested this round)
+- Track: 7M + 11 new + AGENTS.md. DB-only: 3 tables (drips/broadcasts/races) + sajra enum + (S203 items already committed e5c5c27bd).
+
 ## Session 203: All-Night Build — 15 Modules + Telecalling Desk + MySQL Rescue (2026-10-12)
 
 ### Trigger

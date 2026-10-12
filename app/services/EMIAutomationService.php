@@ -481,12 +481,34 @@ class EMIAutomationService
                 . " for Plot #" . ($row['plot_number'] ?? '') . " (" . ($row['colony_name'] ?? '') . ")"
                 . ", Booking " . ($row['booking_number'] ?? '')
                 . ", is due on {$due}. Please pay on time to avoid penalties. - APS Dream Home";
+            // 1-tap UPI pay link (same live VPA as passbook/admin receipts).
+            $payLink = self::emiPayLink((float)($row['amount'] ?? 0), (string)($row['installment_no'] ?? ''), (string)($row['booking_number'] ?? ''));
+            if ($payLink !== '') {
+                $text .= " Pay now: " . $payLink;
+            }
             $result = $wa->sendTextMessage($phone, $text);
             return (bool)($result['success'] ?? false);
         } catch (\Throwable $e) {
             error_log("sendWhatsappReminder: " . $e->getMessage());
             return false;
         }
+    }
+
+    /**
+     * UPI intent pay-link for an EMI installment. Uses the live collection
+     * VPA (same as passbook/admin-receipt flows). Returns '' on bad amount.
+     */
+    public static function emiPayLink(float $amount, string $installmentNo, string $bookingNumber): string
+    {
+        if ($amount <= 0) return '';
+        $params = [
+            'pa' => 'apsdreamhome@icici',
+            'pn' => 'APS Dream Home',
+            'am' => number_format($amount, 2, '.', ''),
+            'cu' => 'INR',
+            'tn' => substr('EMI Inst ' . $installmentNo . ' ' . $bookingNumber, 0, 80),
+        ];
+        return 'upi://pay?' . http_build_query($params);
     }
 
     private function logDunning(array $row, string $tier, string $channel, string $status = 'sent'): void
