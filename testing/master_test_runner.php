@@ -39,6 +39,7 @@ $suites = [
     'Integration & E2E Workflows' => [
         'Business Workflow & DB Probe' => 'php testing/workflow_probe.php',
         'Township Operations Health (21 Modules)' => 'php testing/township_health_probe.php',
+        'Withdrawal Lifecycle Money Probe' => 'php testing/withdrawal_lifecycle_probe.php',
     ],
     'HTTP Production Smoke Tests' => [
         'Production Smoke Runner (24 Routes)' => 'php testing/production_smoke_runner.php',

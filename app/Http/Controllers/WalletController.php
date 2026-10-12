@@ -84,7 +84,7 @@ class WalletController extends BaseController
         $config = $this->db->fetchAll("SELECT * FROM wallet_configuration");
         $walletConfig = [];
         foreach ($config as $item) {
-            $walletConfig[$item['config_key']] = $item['config_value'];
+            $walletConfig[$item['setting_key']] = $item['setting_value'];
         }
 
         $userReferralCode = '';
@@ -373,8 +373,9 @@ class WalletController extends BaseController
                 exit;
             }
 
-            // Get minimum withdrawal amount from config
-            $minWithdrawal = $this->db->fetchOne("SELECT config_value FROM wallet_configuration WHERE config_key = 'minimum_withdrawal'")['config_value'] ?? 500;
+            // Get minimum withdrawal amount from config (schema: setting_key/setting_value)
+            $minRow = $this->db->fetchOne("SELECT setting_value FROM wallet_configuration WHERE setting_key = 'minimum_withdrawal'");
+            $minWithdrawal = isset($minRow['setting_value']) ? (float)$minRow['setting_value'] : 500;
 
             if ($amount < $minWithdrawal) {
                 echo json_encode(['success' => false, 'message' => "Minimum withdrawal amount is ₹$minWithdrawal"]);
@@ -828,7 +829,7 @@ class WalletController extends BaseController
         }
         $walletConfig = [];
         foreach ($config as $item) {
-            $walletConfig[$item['config_key']] = $item['config_value'];
+            $walletConfig[$item['setting_key']] = $item['setting_value'];
         }
 
         $userReferralCode = '';
