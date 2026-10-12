@@ -15,7 +15,9 @@ if (file_exists($lockFile) && (time() - filemtime($lockFile) < 3600)) { echo "Al
 touch($lockFile);
 
 try {
-    $db = Database::getInstance()->getConnection();
+    // Outage-aware connect: retries blips, suppresses hourly spam while down.
+    $db = \App\Core\Cron\CronDb::connection('overdue_demand');
+    if ($db === null) { echo "DB unreachable, alert suppressed until recovery\n"; exit(0); }
     // Iterate tenants (if multi-tenant)
     $tenants = [1];
     try {

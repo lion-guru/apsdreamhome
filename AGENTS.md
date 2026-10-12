@@ -1,7 +1,24 @@
 > **COMPLETED (2026-10-06):** Churn-stop verified (snapshots identical), full review done, all work committed + pushed (see Session 171-173 below).
 
-## Session 217: Portal-Wide Systematic Audit — Admin Sidebar, Customer, Associate, Agent, Employee, Public Nav & API Security (2026-10-12)
+## Session 218: CEO Round — Collation Unification, Cron Outage Guard, Withdrawal Money Probe (2026-10-12)
 
+### Trigger
+User: "koi suggestion... deeply soach samjh ke" → full mandate ("tumhi senior dev + CEO ho, kar do"). Worked priority list #1 → #4 → #5 (#2 worktree + #3 dual-system need owner decisions).
+
+### Work
+- **#1 Collation audit + unification**: schema scan (general_ci 2537, unicode_ci 1753, bin 249, latin1 1). Cross-table risk map: rera_number (6 tables mixed), referral_code, transaction_id, invoice/receipt_number. Only live 1267 site was rera (fixed). Unified `rera_projects.rera_number` + `land_brokers.rera_number` + `gata_master.gata_no` → `utf8mb4_general_ci` (backup first, 4/0/5 rows, values byte-identical). **latin1 now extinct.** Query-level COLLATE kept as defense. Regression guard added to township probe (asserts unified collations + milestones join executes).
+- **#4 CronDb helper** (`App\Core\Cron\CronDb::connection()`): retry transient blips, log-once-per-outage via flag file, recovery notice, exit(0) preserved. Migrated `cron_low_stock_alert.php` + `cron_overdue_demand_reminders.php`. Proven: healthy PDO_OK, flag-write-once + suppress + clear. Singleton retry verified safe (throwing ctor never assigns instance).
+- **#5 Withdrawal probe + REAL BUG**: new `testing/withdrawal_lifecycle_probe.php` (8/8 PASS, 0 leftovers) caught that `WalletController::processWithdrawal()` queried phantom `config_key/config_value` (schema is `setting_key/setting_value`) — EVERY valid withdrawal 500'd. Fixed 3 sites + seeded `minimum_withdrawal=500`. Wired into master suite (now **9/9**).
+
+### Verification
+- Master **9/9 PASSED**. All probes cleaned. Committed + pushed per item.
+
+### Key Lessons (carried, continued)
+_476. **Single-table `WHERE key = ?` binds are collation-safe; cross-table `=` is where 1267 lives** — audit effort belongs on JOIN/subquery pairs of business keys, not on the 4000+ column census. Rule: new cross-table string comparisons MUST use explicit COLLATE or matching collations.
+_477. **A probe that only asserts the happy path hides dead endpoints** — the withdrawal negative test passed while every real request 500'd. Money probes must assert a full debit lifecycle, not just rejection.
+_478. **Check singleton poisoning before adding retry** — `getInstance()` with throwing ctor never assigns, so retry is safe here; verify this pattern (not the retry count) before wrapping any shared connector.
+
+## Session 217: Portal-Wide Systematic Audit — Admin Sidebar, Customer, Associate, Agent, Employee, Public Nav & API Security (2026-10-12)
 ### Trigger
 User request (Hinglish): "admin me login karke dekho menu sidebar submenu systematic hai ya nahi, deeply analysis karke batao" → "suggestion se sab thik karo" → "ye sabhi [customer, associate, public, API], aur suggestion do" → "do next all". Full sweep across all 6 surfaces.
 

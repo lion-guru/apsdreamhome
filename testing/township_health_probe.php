@@ -62,4 +62,48 @@ foreach ($modules as $name => $m) {
 
 echo "Township health: $pass passed, $fail failed (" . count($modules) . " modules)\n";
 if ($failures) foreach ($failures as $f) echo "  - $f\n";
+
+// Collation regression guard (S217: rera_number 1267 fatal). The business
+// keys below must share one collation wherever they are compared
+// cross-table; latin1 must stay extinct. Fails loudly on drift.
+$collationFails = [];
+try {
+    $rows = $pdo->query(
+        "SELECT TABLE_NAME, COLUMN_NAME, COLLATION_NAME FROM INFORMATION_SCHEMA.COLUMNS
+         WHERE TABLE_SCHEMA = DATABASE() AND (
+           (TABLE_NAME IN ('colonies','projects','rera_projects','rera_requests','land_brokers','users') AND COLUMN_NAME = 'rera_number')
+           OR (TABLE_NAME = 'gata_master' AND COLUMN_NAME = 'gata_no')
+         )"
+    )->fetchAll(PDO::FETCH_ASSOC);
+    $seen = [];
+    foreach ($rows as $r) {
+        if (($r['COLLATION_NAME'] ?? '') !== 'utf8mb4_general_ci') {
+            $collationFails[] = "collation drift: {$r['TABLE_NAME']}.{$r['COLUMN_NAME']} = {$r['COLLATION_NAME']}";
+        }
+        $seen[] = $r['TABLE_NAME'] . '.' . $r['COLUMN_NAME'];
+    }
+    foreach (['colonies.rera_number', 'rera_projects.rera_number', 'gata_master.gata_no'] as $must) {
+        if (!in_array($must, $seen, true)) $collationFails[] = "collation guard: expected column missing $must";
+    }
+    $lat = $pdo->query(
+        "SELECT COUNT(*) AS c FROM INFORMATION_SCHEMA.COLUMNS
+         WHERE TABLE_SCHEMA = DATABASE() AND COLLATION_NAME LIKE 'latin1%'"
+    )->fetch(PDO::FETCH_ASSOC);
+    if ((int)($lat['c'] ?? 0) > 0) $collationFails[] = "collation guard: latin1 columns resurrected ({$lat['c']})";
+    // The exact milestones-list join must execute (was 500 on 1267).
+    $pdo->query(
+        "SELECT (SELECT COUNT(*) FROM rera_projects rp WHERE rp.rera_number COLLATE utf8mb4_unicode_ci = 'UPRERAPRJ11111' COLLATE utf8mb4_unicode_ci) AS c"
+    )->fetch();
+} catch (\Throwable $e) {
+    $collationFails[] = "collation guard error: " . $e->getMessage();
+}
+if ($collationFails) {
+    echo "  FAIL collation-guard\n";
+    foreach ($collationFails as $f) echo "  - $f\n";
+    $fail += count($collationFails);
+} else {
+    echo "  OK collation-guard\n";
+    $pass++;
+}
+
 exit($fail > 0 ? 1 : 0);

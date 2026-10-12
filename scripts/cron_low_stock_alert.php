@@ -9,9 +9,12 @@ require_once __DIR__ . '/../config/bootstrap.php';
 
 use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
+use App\Core\Cron\CronDb;
 
 try {
-    $db = Database::getInstance()->getConnection();
+    // Outage-aware connect: retries blips, suppresses hourly spam while down.
+    $db = CronDb::connection('low_stock');
+    if ($db === null) { echo "DB unreachable, alert suppressed until recovery\n"; exit(0); }
     $tenants = [1];
     try {
         $st = $db->query("SELECT id FROM tenants WHERE status='active' LIMIT 20");
