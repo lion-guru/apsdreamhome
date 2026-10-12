@@ -23,6 +23,17 @@ User request (Hinglish): "admin me login karke dekho menu sidebar submenu system
 - `php -l` clean on all touched files. Master suite **7/7 PASSED** after every round. Browser-verified: 6 admin hubs render, milestones-list 200, /navigation links → real routes, gated APIs → 401 JSON.
 - Uncommitted in working directory, ready for user review or commit command.
 
+### Follow-up (same day): badge caching, manifest regen, ApiResponse standard
+- **Portal badge N+1**: `PortalMenuService::countTable()/countSiteVisits()` now `Cache::remember` 120s per user (admin-layout convention). Probe: cold 54ms → warm 2ms, identical menus.
+- **Manifest regen**: new `scripts/regen_menu_manifest.php` (dry-run default, `--write` with backup); manifest 289 → 322 items; browser-verified 6 hubs, no offline fallback.
+- **API standard**: `BaseApiController::jsonSuccess/jsonError` is canonical; 50/90 Api controllers don't extend it (Mobile* carry ~600 hand-rolled `echo json_encode` sites). Full migration deliberately NOT done (parent switch would silently widen CORS to `*` + add rate-limit behavior — needs per-endpoint review). Instead: new opt-in `App\Helpers\ApiResponse::ok()/fail()` with identical envelope; new API code MUST use it, no new `echo json_encode` sites.
+
+### Key Lessons (carried, continued)
+_472. **Probe the route before fixing the menu** — changing PortalMenuService `/user/*` → `/customer/*` looked right until route probe proved `/customer/properties|wallet|…` don't exist (parallel `/user/*` system is canonical there). Reverted same session; kept `/customer/*` only where routes exist. Menu edits without route evidence create 404s.
+_473. **A "dead API" with zero callers still needs auth before deletion debate** — 54 debug routes (farmers/events/container/cache/middleware) had live PII + remote mutation; gating with existing `ApiAuthMiddleware` (401-verified, public routes unaffected) beats delete-first (no recovery risk, zero caller breakage).
+_474. **A chained `git add` can silently skip a file — verify staged list every time** (PortalMenuService needed lowercase `app/services/` path; S196 lesson again). Stage → status → commit, no exceptions.
+_475. **Untracked-file commits absorb others' bulk content** — 8 session controllers were `??`; committing them tracked full prior-session content + my edits. Honest commit message must say so; AGENTS.md sessions remain the authorship record.
+
 ## Session 216: Street Lighting Uptime & Rainwater Harvesting (RWH) Desks (2026-10-12)
 
 ### Trigger
