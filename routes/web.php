@@ -5248,6 +5248,9 @@ $router->get('/admin/iot/automation/form', 'Admin\IoTController@automationForm')
 $router->get('/admin/iot/automation/form/{id}', 'Admin\IoTController@automationForm');
 $router->post('/admin/iot/automation/save', 'Admin\IoTController@automationSave');
 $router->post('/admin/iot/automation/delete/{id}', 'Admin\IoTController@automationDelete');
+// Session 222 ΓÇö IoT Threshold Alerts desk (complements existing IoT stack).
+$router->get('/admin/iot/alerts', 'Admin\IotAlertController@index');
+$router->post('/admin/iot/alerts/{id}/resolve', 'Admin\IotAlertController@resolve');
 
 // ============================================================
 // NEWLY ROUTED CONTROLLERS (from unrouted scan)

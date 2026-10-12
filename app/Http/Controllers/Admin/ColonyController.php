@@ -127,10 +127,47 @@ class ColonyController extends AdminController
                 error_log("ColonyController@show layout lookup: " . $e->getMessage());
             }
 
+            // Township Operations summary counts
+            $opsSummary = [
+                'water_logs' => 0,
+                'genset_logs' => 0,
+                'security_rosters' => 0,
+                'cctv_logs' => 0,
+                'waste_logs' => 0,
+                'horticulture_logs' => 0,
+                'grievances' => 0,
+                'work_orders' => 0,
+                'lighting_logs' => 0,
+                'rwh_logs' => 0,
+                'stp_logs' => 0,
+                'fire_safety_logs' => 0,
+                'iot_devices' => 0,
+                'iot_alerts' => 0,
+            ];
+            try {
+                $opsSummary['water_logs'] = (int)($this->db->fetchOne("SELECT COUNT(*) AS c FROM township_water_logs WHERE colony_id = ?", [$id])['c'] ?? 0);
+                $opsSummary['genset_logs'] = (int)($this->db->fetchOne("SELECT COUNT(*) AS c FROM township_genset_logs WHERE colony_id = ?", [$id])['c'] ?? 0);
+                $opsSummary['security_rosters'] = (int)($this->db->fetchOne("SELECT COUNT(*) AS c FROM township_security_rosters WHERE colony_id = ?", [$id])['c'] ?? 0);
+                $opsSummary['cctv_logs'] = (int)($this->db->fetchOne("SELECT COUNT(*) AS c FROM township_cctv_logs WHERE colony_id = ?", [$id])['c'] ?? 0);
+                $opsSummary['waste_logs'] = (int)($this->db->fetchOne("SELECT COUNT(*) AS c FROM township_waste_logs WHERE colony_id = ?", [$id])['c'] ?? 0);
+                $opsSummary['horticulture_logs'] = (int)($this->db->fetchOne("SELECT COUNT(*) AS c FROM township_horticulture_logs WHERE colony_id = ?", [$id])['c'] ?? 0);
+                $opsSummary['grievances'] = (int)($this->db->fetchOne("SELECT COUNT(*) AS c FROM township_resident_grievances WHERE colony_id = ?", [$id])['c'] ?? 0);
+                $opsSummary['work_orders'] = (int)($this->db->fetchOne("SELECT COUNT(*) AS c FROM construction_work_orders WHERE colony_id = ?", [$id])['c'] ?? 0);
+                $opsSummary['lighting_logs']    = (int)($this->db->fetchOne("SELECT COUNT(*) AS c FROM township_lighting_logs WHERE colony_id = ?", [$id])['c'] ?? 0);
+                $opsSummary['rwh_logs']          = (int)($this->db->fetchOne("SELECT COUNT(*) AS c FROM township_rwh_logs WHERE colony_id = ?", [$id])['c'] ?? 0);
+                $opsSummary['stp_logs']          = (int)($this->db->fetchOne("SELECT COUNT(*) AS c FROM township_stp_logs WHERE colony_id = ?", [$id])['c'] ?? 0);
+                $opsSummary['fire_safety_logs']  = (int)($this->db->fetchOne("SELECT COUNT(*) AS c FROM township_fire_safety_logs WHERE colony_id = ?", [$id])['c'] ?? 0);
+                $opsSummary['iot_devices']       = (int)($this->db->fetchOne("SELECT COUNT(*) AS c FROM iot_devices WHERE colony_id = ?", [$id])['c'] ?? 0);
+                $opsSummary['iot_alerts']        = (int)($this->db->fetchOne("SELECT COUNT(*) AS c FROM iot_alerts WHERE colony_id = ? AND is_resolved = 0", [$id])['c'] ?? 0);
+            } catch (\Throwable $e) {
+                error_log("ColonyController@show ops counts: " . $e->getMessage());
+            }
+
             $this->render('admin/colonies/show', [
                 'colony' => $colony,
                 'plots' => $plots,
                 'layout' => $layout,
+                'opsSummary' => $opsSummary,
             ]);
         } catch (\Throwable $e) {
             error_log("ColonyController@show: " . $e->getMessage());

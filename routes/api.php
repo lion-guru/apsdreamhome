@@ -1134,6 +1134,10 @@ $router->get('/api/v2/mobile/marketplace/transactions', 'Api\MobileUserApiContro
 $router->post('/api/v2/mobile/marketplace/boost/initiate-payment', 'Api\MobileUserApiController@initiateBoostPayment')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/marketplace/boost/verify-payment', 'Api\MobileUserApiController@verifyBoostPayment')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
+// --- IoT field-device telemetry ingest (Session 222) ---
+// Auth = device_uid in body (no session, no CSRF; /api/ is in router excludedPaths).
+$router->post('/api/iot/ingest', 'Api\IotIngestController@ingest');
+
 require_once __DIR__ . '/container.php';
 require_once __DIR__ . '/performance-cache.php';
 require_once __DIR__ . '/request-middleware.php';

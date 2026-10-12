@@ -41,6 +41,11 @@ $cid = (int)($colony['id'] ?? 0);
                 <i class="fas fa-rupee-sign me-2"></i> Finance
             </button>
         </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="operations-tab" data-bs-toggle="tab" data-bs-target="#colony-operations" type="button" role="tab" aria-controls="colony-operations" aria-selected="false">
+                <i class="fas fa-tools me-2 text-warning"></i> Operations & Utilities
+            </button>
+        </li>
     </ul>
 
     <!-- Tab content -->
@@ -256,6 +261,392 @@ $cid = (int)($colony['id'] ?? 0);
                         </a>
                     </small>
                 </div>
+            </div>
+        </div>
+
+        <!-- Tab 6: Township Utilities & Operations Hub -->
+        <div class="tab-pane fade" id="colony-operations" role="tabpanel" aria-labelledby="operations-tab">
+            <div class="row g-4">
+                <div class="col-12 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <h5 class="mb-1 fw-bold"><i class="fas fa-city text-primary me-2"></i>Township Infrastructure & Operations Hub</h5>
+                        <p class="text-muted small mb-0">Active utilities, sanitation, green canopy, civil maintenance and security operations for <strong><?= htmlspecialchars($colony['name'] ?? 'Colony') ?></strong>.</p>
+                    </div>
+                    <div class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3 py-2 fs-6">
+                        <i class="fas fa-map-marker-alt me-1"></i> Colony ID: #<?= $cid ?>
+                    </div>
+                </div>
+
+                <!-- Utilities Metric Ribbon -->
+                <div class="col-12">
+                    <div class="row g-2">
+                        <div class="col-6 col-md-2">
+                            <div class="p-3 bg-light rounded-3 border text-center">
+                                <div class="text-muted small mb-1"><i class="fas fa-tint text-primary me-1"></i>Water</div>
+                                <div class="fs-4 fw-bold text-dark"><?= (int)($opsSummary['water_logs'] ?? 0) ?></div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-2">
+                            <div class="p-3 bg-light rounded-3 border text-center">
+                                <div class="text-muted small mb-1"><i class="fas fa-bolt text-warning me-1"></i>DG Genset</div>
+                                <div class="fs-4 fw-bold text-dark"><?= (int)($opsSummary['genset_logs'] ?? 0) ?></div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-2">
+                            <div class="p-3 bg-light rounded-3 border text-center">
+                                <div class="text-muted small mb-1"><i class="fas fa-lightbulb text-warning me-1"></i>Street Light</div>
+                                <div class="fs-4 fw-bold text-dark"><?= (int)($opsSummary['lighting_logs'] ?? 0) ?></div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-2">
+                            <div class="p-3 bg-light rounded-3 border text-center">
+                                <div class="text-muted small mb-1"><i class="fas fa-cloud-rain text-info me-1"></i>RWH Pits</div>
+                                <div class="fs-4 fw-bold text-dark"><?= (int)($opsSummary['rwh_logs'] ?? 0) ?></div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-2">
+                            <div class="p-3 bg-light rounded-3 border text-center">
+                                <div class="text-muted small mb-1"><i class="fas fa-vial text-primary me-1"></i>STP Effluent</div>
+                                <div class="fs-4 fw-bold text-dark"><?= (int)($opsSummary['stp_logs'] ?? 0) ?></div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-2">
+                            <div class="p-3 bg-light rounded-3 border text-center">
+                                <div class="text-muted small mb-1"><i class="fas fa-fire-extinguisher text-danger me-1"></i>Fire Safety</div>
+                                <div class="fs-4 fw-bold text-dark"><?= (int)($opsSummary['fire_safety_logs'] ?? 0) ?></div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-2">
+                            <a href="<?= BASE_URL ?>/admin/iot/alerts?colony_id=<?= (int)$cid ?>" class="text-decoration-none d-block h-100">
+                                <div class="p-3 bg-light rounded-3 border text-center h-100">
+                                    <div class="text-muted small mb-1"><i class="fas fa-microchip text-secondary me-1"></i>IoT Devices</div>
+                                    <div class="fs-4 fw-bold text-dark"><?= (int)($opsSummary['iot_devices'] ?? 0) ?></div>
+                                    <?php if ((int)($opsSummary['iot_alerts'] ?? 0) > 0): ?>
+                                        <span class="badge bg-danger rounded-pill"><?= (int)$opsSummary['iot_alerts'] ?> open alert<?= (int)$opsSummary['iot_alerts'] === 1 ? '' : 's' ?></span>
+                                    <?php endif; ?>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-2">
+                            <div class="p-3 bg-light rounded-3 border text-center">
+                                <div class="text-muted small mb-1"><i class="fas fa-shield-alt text-success me-1"></i>Security</div>
+                                <div class="fs-4 fw-bold text-dark"><?= (int)($opsSummary['security_rosters'] ?? 0) ?></div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-2">
+                            <div class="p-3 bg-light rounded-3 border text-center">
+                                <div class="text-muted small mb-1"><i class="fas fa-headset text-danger me-1"></i>Grievances</div>
+                                <div class="fs-4 fw-bold text-dark"><?= (int)($opsSummary['grievances'] ?? 0) ?></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 11 Enterprise Action & Desk Cards -->
+                <!-- 1. Water Supply -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm h-100" style="border-radius:12px; border-left:4px solid #0284c7;">
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="rounded-circle bg-info bg-opacity-10 p-2 text-info d-flex align-items-center justify-content-center" style="width:40px;height:40px;">
+                                    <i class="fas fa-faucet-drip"></i>
+                                </div>
+                                <span class="badge bg-info bg-opacity-15 text-info">BIS 10500 Compliant</span>
+                            </div>
+                            <h6 class="fw-bold mb-1 text-dark">Borewell & Water Supply</h6>
+                            <p class="text-muted small flex-grow-1">Pumping shifts, OHT tank level %, TDS/pH potability tests & chlorination dosing.</p>
+                            <a href="<?= BASE_URL ?>/admin/township-water-supply?colony_id=<?= $cid ?>" class="btn btn-outline-info btn-sm w-100 mt-2">
+                                <i class="fas fa-tint me-1"></i>Open Water Supply Desk
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Central DG Genset Backup -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm h-100" style="border-radius:12px; border-left:4px solid #eab308;">
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="rounded-circle bg-warning bg-opacity-10 p-2 text-warning d-flex align-items-center justify-content-center" style="width:40px;height:40px;">
+                                    <i class="fas fa-bolt"></i>
+                                </div>
+                                <span class="badge bg-warning bg-opacity-15 text-warning">Power Backup</span>
+                            </div>
+                            <h6 class="fw-bold mb-1 text-dark">DG Power Backup & Diesel</h6>
+                            <p class="text-muted small flex-grow-1">Genset run hours, diesel consumption litres, fuel math & kWh/L generation efficiency.</p>
+                            <a href="<?= BASE_URL ?>/admin/township-genset?colony_id=<?= $cid ?>" class="btn btn-outline-warning btn-sm w-100 mt-2">
+                                <i class="fas fa-gas-pump me-1"></i>Open DG Fuel Desk
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Security Rosters & Night Patrol -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm h-100" style="border-radius:12px; border-left:4px solid #10b981;">
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="rounded-circle bg-success bg-opacity-10 p-2 text-success d-flex align-items-center justify-content-center" style="width:40px;height:40px;">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <span class="badge bg-success bg-opacity-15 text-success">24x7 Guard Patrol</span>
+                            </div>
+                            <h6 class="fw-bold mb-1 text-dark">Security Rosters & Incidents</h6>
+                            <p class="text-muted small flex-grow-1">Main gate check-ins, boom barrier uptime, night patrol logs and incident desk.</p>
+                            <a href="<?= BASE_URL ?>/admin/township-security?colony_id=<?= $cid ?>" class="btn btn-outline-success btn-sm w-100 mt-2">
+                                <i class="fas fa-user-shield me-1"></i>Open Security Desk
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. CCTV Surveillance -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm h-100" style="border-radius:12px; border-left:4px solid #6366f1;">
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="rounded-circle bg-primary bg-opacity-10 p-2 text-primary d-flex align-items-center justify-content-center" style="width:40px;height:40px;">
+                                    <i class="fas fa-video"></i>
+                                </div>
+                                <span class="badge bg-primary bg-opacity-15 text-primary">NVR 30-Day Storage</span>
+                            </div>
+                            <h6 class="fw-bold mb-1 text-dark">CCTV Surveillance & Uptime</h6>
+                            <p class="text-muted small flex-grow-1">Camera uptime percentage, offline camera logs, HDD storage health and footage exports.</p>
+                            <a href="<?= BASE_URL ?>/admin/township-cctv?colony_id=<?= $cid ?>" class="btn btn-outline-primary btn-sm w-100 mt-2">
+                                <i class="fas fa-camera me-1"></i>Open CCTV Uptime Desk
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Solid Waste & Sanitation -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm h-100" style="border-radius:12px; border-left:4px solid #14b8a6;">
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="rounded-circle bg-teal bg-opacity-10 p-2 text-teal d-flex align-items-center justify-content-center" style="width:40px;height:40px;">
+                                    <i class="fas fa-recycle text-info"></i>
+                                </div>
+                                <span class="badge bg-info bg-opacity-15 text-info">Green Composting</span>
+                            </div>
+                            <h6 class="fw-bold mb-1 text-dark">Waste & Sanitation Sweeps</h6>
+                            <p class="text-muted small flex-grow-1">Wet/dry segregation, compost pit diversion kg, trolley trips & drain desilting.</p>
+                            <a href="<?= BASE_URL ?>/admin/township-waste?colony_id=<?= $cid ?>" class="btn btn-outline-secondary btn-sm w-100 mt-2">
+                                <i class="fas fa-trash-alt me-1"></i>Open Sanitation Desk
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. Park Horticulture & Tree Census -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm h-100" style="border-radius:12px; border-left:4px solid #22c55e;">
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="rounded-circle bg-success bg-opacity-10 p-2 text-success d-flex align-items-center justify-content-center" style="width:40px;height:40px;">
+                                    <i class="fas fa-tree"></i>
+                                </div>
+                                <span class="badge bg-success bg-opacity-15 text-success">Green Canopy</span>
+                            </div>
+                            <h6 class="fw-bold mb-1 text-dark">Park Horticulture & Trees</h6>
+                            <p class="text-muted small flex-grow-1">Central park maintenance, tree species census, sapling survival % and sprinkler schedules.</p>
+                            <a href="<?= BASE_URL ?>/admin/township-horticulture?colony_id=<?= $cid ?>" class="btn btn-outline-success btn-sm w-100 mt-2">
+                                <i class="fas fa-seedling me-1"></i>Open Horticulture Desk
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. Resident Grievances & AMC -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm h-100" style="border-radius:12px; border-left:4px solid #ef4444;">
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="rounded-circle bg-danger bg-opacity-10 p-2 text-danger d-flex align-items-center justify-content-center" style="width:40px;height:40px;">
+                                    <i class="fas fa-headset"></i>
+                                </div>
+                                <span class="badge bg-danger bg-opacity-15 text-danger">4-Hour SLA Emergency</span>
+                            </div>
+                            <h6 class="fw-bold mb-1 text-dark">Resident Grievances Helpdesk</h6>
+                            <p class="text-muted small flex-grow-1">Society maintenance complaints, AMC civil contractor dispatch and 5-star closure ratings.</p>
+                            <a href="<?= BASE_URL ?>/admin/township-grievances?colony_id=<?= $cid ?>" class="btn btn-outline-danger btn-sm w-100 mt-2">
+                                <i class="fas fa-tools me-1"></i>Open Grievance Desk
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. Civil Work Orders & RA Bills -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm h-100" style="border-radius:12px; border-left:4px solid #f97316;">
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="rounded-circle bg-warning bg-opacity-10 p-2 text-warning d-flex align-items-center justify-content-center" style="width:40px;height:40px;">
+                                    <i class="fas fa-hard-hat text-dark"></i>
+                                </div>
+                                <span class="badge bg-secondary">RA Milestone Billing</span>
+                            </div>
+                            <h6 class="fw-bold mb-1 text-dark">Civil Infrastructure Work Orders</h6>
+                            <p class="text-muted small flex-grow-1">Contractor work orders, Measurement Book (MB) billing, 5% retention holdback & TDS u/s 194C.</p>
+                            <a href="<?= BASE_URL ?>/admin/work-orders?colony_id=<?= $cid ?>" class="btn btn-outline-dark btn-sm w-100 mt-2">
+                                <i class="fas fa-file-invoice-dollar me-1"></i>Open Work Orders Desk
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 9. Plot Demarcations & GPS Geotagging -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm h-100" style="border-radius:12px; border-left:4px solid #8b5cf6;">
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="rounded-circle bg-primary bg-opacity-10 p-2 text-primary d-flex align-items-center justify-content-center" style="width:40px;height:40px;">
+                                    <i class="fas fa-draw-polygon"></i>
+                                </div>
+                                <span class="badge bg-primary bg-opacity-15 text-primary">WGS84 GPS Pegs</span>
+                            </div>
+                            <h6 class="fw-bold mb-1 text-dark">Plot Demarcations & Pillars</h6>
+                            <p class="text-muted small flex-grow-1">4-corner boundary coordinates, surveyor peg handover and civil engineer verification certificates.</p>
+                            <a href="<?= BASE_URL ?>/admin/plots/demarcation?colony_id=<?= $cid ?>" class="btn btn-outline-primary btn-sm w-100 mt-2">
+                                <i class="fas fa-map-pin me-1"></i>Open Demarcation Radar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 10. Commercial Plaza & Retail Leases -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm h-100" style="border-radius:12px; border-left:4px solid #059669;">
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="rounded-circle bg-success bg-opacity-10 p-2 text-success d-flex align-items-center justify-content-center" style="width:40px;height:40px;">
+                                    <i class="fas fa-store"></i>
+                                </div>
+                                <span class="badge bg-success bg-opacity-15 text-success">Retail Rent Roll</span>
+                            </div>
+                            <h6 class="fw-bold mb-1 text-dark">Commercial Plaza & Shops</h6>
+                            <p class="text-muted small flex-grow-1">Shop leases, monthly rent collection notes, submeter electricity units and UPI QR tax invoices.</p>
+                            <a href="<?= BASE_URL ?>/admin/commercial-leases?colony_id=<?= $cid ?>" class="btn btn-outline-success btn-sm w-100 mt-2">
+                                <i class="fas fa-cash-register me-1"></i>Open Commercial Leases
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 11. Construction Timelapse & Drone Progress -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm h-100" style="border-radius:12px; border-left:4px solid #0284c7;">
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="rounded-circle bg-info bg-opacity-10 p-2 text-info d-flex align-items-center justify-content-center" style="width:40px;height:40px;">
+                                    <i class="fas fa-images"></i>
+                                </div>
+                                <span class="badge bg-info bg-opacity-15 text-info">Visual Milestone</span>
+                            </div>
+                            <h6 class="fw-bold mb-1 text-dark">Construction Timelapse</h6>
+                            <p class="text-muted small flex-grow-1">Sequential construction photographic history and drone flyover timeline for this colony.</p>
+                            <a href="<?= BASE_URL ?>/admin/colonies/<?= $cid ?>/timelapse" class="btn btn-outline-info btn-sm w-100 mt-2">
+                                <i class="fas fa-play me-1"></i>View Site Timelapse
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 12. Street Lighting & Illumination Poles -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm h-100" style="border-radius:12px; border-left:4px solid #f59e0b;">
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="rounded-circle bg-warning bg-opacity-10 p-2 text-warning d-flex align-items-center justify-content-center" style="width:40px;height:40px;">
+                                    <i class="fas fa-lightbulb"></i>
+                                </div>
+                                <span class="badge bg-warning bg-opacity-15 text-warning">LED Feeder Timers</span>
+                            </div>
+                            <h6 class="fw-bold mb-1 text-dark">Street Lighting & Illumination</h6>
+                            <p class="text-muted small flex-grow-1">Feeder pillar timers, LED pole uptime %, 3-phase load balance and underground cable audit.</p>
+                            <a href="<?= BASE_URL ?>/admin/township-lighting?colony_id=<?= $cid ?>" class="btn btn-outline-warning btn-sm w-100 mt-2">
+                                <i class="fas fa-lightbulb me-1"></i>Open Street Lighting Desk
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 13. Rainwater Harvesting & Recharge Shafts -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm h-100" style="border-radius:12px; border-left:4px solid #06b6d4;">
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="rounded-circle bg-info bg-opacity-10 p-2 text-info d-flex align-items-center justify-content-center" style="width:40px;height:40px;">
+                                    <i class="fas fa-cloud-rain"></i>
+                                </div>
+                                <span class="badge bg-info bg-opacity-15 text-info">CGWB & UP GW NOC</span>
+                            </div>
+                            <h6 class="fw-bold mb-1 text-dark">Rainwater Harvesting (RWH)</h6>
+                            <p class="text-muted small flex-grow-1">Percolation shafts, desilting chambers, water table depth ft & monsoon readiness audits.</p>
+                            <a href="<?= BASE_URL ?>/admin/township-rwh?colony_id=<?= $cid ?>" class="btn btn-outline-info btn-sm w-100 mt-2">
+                                <i class="fas fa-cloud-showers-heavy me-1"></i>Open RWH Compliance Desk
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 14. STP Sewage Treatment Plant & UPPCB Effluent -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm h-100" style="border-radius:12px; border-left:4px solid #0ea5e9;">
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="rounded-circle bg-primary bg-opacity-10 p-2 text-primary d-flex align-items-center justify-content-center" style="width:40px;height:40px;">
+                                    <i class="fas fa-vial"></i>
+                                </div>
+                                <span class="badge bg-primary bg-opacity-15 text-primary">UPPCB Schedule-VI</span>
+                            </div>
+                            <h6 class="fw-bold mb-1 text-dark">STP Effluent &amp; UPPCB Compliance</h6>
+                            <p class="text-muted small flex-grow-1">Raw sewage inflow, BOD/COD/TSS treated water quality, blower hours &amp; sludge disposal logs.</p>
+                            <a href="<?= BASE_URL ?>/admin/township-stp?colony_id=<?= $cid ?>" class="btn btn-outline-primary btn-sm w-100 mt-2">
+                                <i class="fas fa-vial me-1"></i>Open STP Effluent Desk
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 15. Township Fire Hydrant Network & UP Fire NOC -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm h-100" style="border-radius:12px; border-left:4px solid #dc2626;">
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="rounded-circle bg-danger bg-opacity-10 p-2 text-danger d-flex align-items-center justify-content-center" style="width:40px;height:40px;">
+                                    <i class="fas fa-fire-extinguisher"></i>
+                                </div>
+                                <span class="badge bg-danger bg-opacity-15 text-danger">UP Fire NOC</span>
+                            </div>
+                            <h6 class="fw-bold mb-1 text-dark">Fire Hydrant Network &amp; NOC</h6>
+                            <p class="text-muted small flex-grow-1">Jockey/electric/diesel pump readiness, hydrant valve audits, hose boxes &amp; UP Fire NOC compliance status.</p>
+                            <a href="<?= BASE_URL ?>/admin/township-fire-safety?colony_id=<?= $cid ?>" class="btn btn-outline-danger btn-sm w-100 mt-2">
+                                <i class="fas fa-fire me-1"></i>Open Fire Safety Desk
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 16. Smart IoT Devices & Threshold Alerts -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm h-100" style="border-radius:12px; border-left:4px solid #6f42c1;">
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="rounded-circle bg-secondary bg-opacity-10 p-2 text-secondary d-flex align-items-center justify-content-center" style="width:40px;height:40px;">
+                                    <i class="fas fa-microchip"></i>
+                                </div>
+                                <span class="badge bg-secondary bg-opacity-15 text-secondary"><?= (int)($opsSummary['iot_devices'] ?? 0) ?> Devices</span>
+                            </div>
+                            <h6 class="fw-bold mb-1 text-dark">Smart IoT &amp; Threshold Alerts</h6>
+                            <p class="text-muted small flex-grow-1">Gadgets, solar controllers &amp; barriers telemetry — battery/fault/offline alert queue with device ingest gateway.</p>
+                            <a href="<?= BASE_URL ?>/admin/iot/alerts?colony_id=<?= $cid ?>" class="btn btn-outline-secondary btn-sm w-100 mt-2">
+                                <i class="fas fa-bell me-1"></i>Open IoT Alerts Desk
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
