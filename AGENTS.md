@@ -1,5 +1,66 @@
 > **COMPLETED (2026-10-06):** Churn-stop verified (snapshots identical), full review done, all work committed + pushed (see Session 171-173 below).
 
+## Session 222: GST + PropertyTax Write-Path E2E + PHP-curl Flake Proof (2026-10-12)
+
+### Trigger
+User: "do next". GST + Property Tax modules (committed earlier) had **only ever been page-probed (200s)** — the money paths (invoice store, IRN, HSN write, assessment store) were unverified. This session ran full E2E with byte-exact money assertions + zero leftovers.
+
+### Work
+- **GST invoice full lifecycle (5/5)**: B2B intra-state invoice (100×1000 @18%) → 302 → row exact (taxable 100000 / CGST 9000 / SGST 9000 / total 118000) → 1 item row (HSN 9954) → IRN generated (`IRN…`, status generated) → view 200 with invoice-number needle → items+invoice+einvoice-log rows deleted (0 leftovers).
+- **HSN CRUD (3/3)**: synthetic `PROBE99` @12% → created (id 16) → updated (desc + 18%) → hard-deleted (no delete route — direct DB cleanup in probe).
+- **PropertyTax assessment (3/3)**: per_sqft 2 × (1000+500) −10% → 302 → base 3000 / net 2700 exact → row deleted.
+- **E2E total 11/11**. Master suite **9/9 PASSED** (18.72s). Uncommitted (standing rule); DB-only: none (all probe rows cleaned).
+
+### Key Lessons (carried, continued)
+_488. **S191 re-proven: PHP-curl ext flakes code-0 in this env, curl.exe doesn't** — the PHP-transport probe failed 9/10 deterministically (login code 0, jar never persisted); identical steps via `curl.exe` passed first try. Money E2E MUST use `curl.exe` + file-based token extract; never debug app code for a transport flake.
+_489. **Session CSRF token is stable per session, not single-use** — the same token served 6 consecutive POSTs across GST+HSN+PT flows. Earlier "single-use" reading was session death misdiagnosed; re-login, not re-token, is the fix.
+_490. **Temp-dir purges are real — chain write+exec in one turn** — probe helper scripts vanished between turns (only pre-existing files remained). Write the script and execute it in the same assistant turn, or re-write on `Test-Path False`.
+
+## Session 221: Duplicate-DMS Halt + Clobber Rescue + Doc-Stack Health Proof (2026-10-12)
+
+### Trigger
+User: "do next" → started a parallel **Document Management System** (tables script + service + controller + views). Zero-duplication audit (user's standing order) caught it mid-build: a **complete DMS already lives** here — `documents` + `document_categories/types/templates/esign` + `ocr_documents` + entity tables (booking/registry/legal/loan/rera/user/employee…), served by tracked `Admin\DocumentController` (29 actions) + `DocumentOCRController` + `DocumentEsignController` + 15+ live `/admin/documents/*` routes. Parallel build **halted before damage**.
+
+### Work
+- **Halted, not shipped**: migration script (committed as `8726d01f9`) would have added 6 parallel tables next to the live `document_*` family — `git rm` staged, never executed (all 7 planned tables verified **absent** in DB, zero residue).
+- **Clobber rescue (S203 pattern)**: my `write` had overwritten tracked `app/views/admin/documents/index.php` (169-line original → 250-line parallel version). Restored **byte-identical** via `git show HEAD:path` → UTF-16→UTF-8 conversion → BOM strip → CRLF normalize (status clean, `php -l` clean). Deleted my 3 untracked parallel files (controller/service/form view).
+- **Existing stack proven healthy (13/13, needles not just 200s)**: index/categories/types/templates/search/upload + reviews/ocr/business/customer/property/generated/classification — all 200, zero fatals, restored view renders "Documents Management"+Upload live.
+- Master suite **9/9 PASSED** (17.9s) on final tree. No app-code changes needed — restraint was the deliverable.
+
+### Key Lessons (carried, continued)
+_485. **Grep tables + routes BEFORE writing any "new module"** — `SHOW TABLES LIKE '%doc%'` + route grep would have killed the parallel DMS in 60 seconds; I built 4 files first and paid it back in rescue time. Audit-first is not optional, it's the cheapest step.
+_486. **`write` to an existing path never warns — it clobbers** — the tool reported success overwriting a tracked view; only `git status`/`git diff` told the truth. After EVERY write to a non-new path: immediate `git status --short` on that file.
+_487. **PowerShell `>` redirect writes UTF-16 — again** — `git show HEAD:file > tmp` produced `fffe` LE; byte-check (`bin2hex` head) + `mb_convert_encoding` + BOM-strip + CRLF-normalize needed for a clean restore. S194 lesson re-proven; prefer `git checkout --` only when the whole worktree delta is provably yours.
+
+## Session 220: A/B Pricing Experiment Lab + Backup-Based Price Rescue (2026-10-12)
+
+### Trigger
+User: "do next". Session 219's own schema audit had left `pricing_experiments` + `pricing_experiment_assignments` (from an earlier partial round, committed in `edf047178`) as **empty tables with zero code** — an adhura module. Session 220 completed it end-to-end.
+
+### Work
+- **A/B Pricing Experiment Lab** (`app/Services/Pricing/PricingExperimentService.php` + `Admin/PricingExperimentController` + 2 views `admin/pricing/experiments{,_show}.php` + 7 routes under `/admin/dynamic-pricing/experiments` + interlink button on the Optimizer header):
+  - **Draft**: control anchor + N variants (label/base pps/split%), splits validated to leave control ≥1%, `variant_configs`/`traffic_allocation` JSON; drafts change nothing.
+  - **Start**: every available plot of the colony assigned to control/variant by **deterministic cumulative-split thresholds on ordered plot ids** (reproducible, no randomness to audit later); captures **exact pre-experiment prices** (`original_base_pps`/`original_pps`/`original_total`) per assignment; one pending row per plot, transactional.
+  - **Apply**: available plots only, each repriced to its variant base through live `PlcService::calculate()` (PLC flags folded), one `price_history` row per plot (`reference_type='pricing_experiment'` = rollback trail), non-available plots untouched (probe-asserted).
+  - **Live results** (no booking-path hooks needed): conversion = assigned plot moved to booked/sold/registered/hold/reserved — **plot status IS the conversion signal**; per-variant assigned/converted/conv-rate/avg-realized-pps/revenue; honest note (below min-sample → "directional"; <1pp delta → "within noise"; else "X leads control by Ypp"); results snapshot persisted to `pricing_experiments.results`.
+  - **Restore & Archive**: writes every still-available assigned plot back to its **captured original price** (exact byte restore, incl. legacy NULL-base rows like plot 3 base NULL/pps 850) with fallback PlcService(control) when no original captured; status→archived; lifecycle guards (archived cannot restart; only drafts delete).
+- **Schema upgrades** (idempotent, both live + migration file `create_dynamic_pricing_tables.php`): 3 `original_*` columns + `UNIQUE KEY uniq_experiment_plot (experiment_id, plot_id)` (live table from the partial round was missing it); migration re-run green (4× SKIP).
+
+### Mid-round bug + data rescue (the session's biggest lesson)
+- First full probe run: start() silently failed (status stayed draft, 0 assignments) — my own getExperiment() edit had made `traffic_allocation` an array while `start()` still `json_decode()`d it (TypeError swallowed by the catch). Fixed with is_array guard.
+- **Restore-semantics bug found by the same probe**: `restoreControlPrices()` restored plots to the *control* price, not their *pre-experiment* price — probe ran control=1000 over originals at 999 → 338 Suryoday plots left drifted at base 1000 after restore. Fixed design (capture `original_*` on start, restore those), but the drift had to be repaired first: **fresh pre-drift backup existed** at `backups/db/apsdreamhome_2026-10-10_23-46-14.sql` → extracted only the `plots` table block (grep-style line capture at DROP..UNLOCK), imported to scratch DB `aps_restore_tmp`, cross-DB `UPDATE ... JOIN` restored all 338 rows (base/pps/total incl. PLC-inclusive pps 1098.90/1148.85/1248.75 and NULL-base plot 3 @ 850) → `still_diff=0` vs backup. Scratch DB dropped after.
+
+### Verification
+- **E2E probe 37/37**: guest 302, list/detail/create/start/apply/restore lifecycle, deterministic split ~60% control (338/338 assigned, 0 dupes), original-price capture, apply repriced 338/338 + 338 rollback rows + non-available untouched, honest note rendered, **restore byte-identical to pre-experiment snapshot** (incl. NULL-base row), archived-cannot-restart, interlink button, **0 leftovers** (experiments/assignments/price_history counts identical).
+- **Master suite 9/9 PASSED** (18.74s). `php -l` clean on all new/edited files. Migration re-run idempotent green.
+- Uncommitted for review (standing rule). DB-only: 3 `original_*` columns + unique key, live seed none (probe cleaned).
+
+### Key Lessons (carried, continued)
+_481. **"Restore" must restore what WAS, not what the experiment called the baseline** — control-price restore drifted 338 real plots (control test value ≠ actual original). Capture exact pre-change values (`original_*`) on assignment/start; control is an experiment input, never the restore source. The probe caught it only because it snapshotted pre-state and asserted byte-identical after — money/price code must do the same, always.
+_482. **A dated DB dump + surgical table extraction beats reconstruction from history** — `price_history` rows were stale/cohort-mixed (old lump-sum eras, flag configs changed since) and could NOT have proven exact originals; the Oct-10 dump's `plots` block (extracted via DROP..UNLOCK line capture → scratch DB → cross-DB UPDATE) restored all 338 rows with `still_diff=0`. When values drift: dump first, history only as corroboration.
+_483. **A TypeError inside a try/catch that returns ['error'=>…] looks like a business rejection** — start() failed "silently" (302 flash only) because `json_decode()` received the array my own edit had just decoded. When a method that worked a minute ago starts returning errors, diff YOUR last edit to that method's inputs before hunting schema/state.
+_484. **Status can be the conversion signal — skip booking-path hooks** — A/B results needed no changes to any booking/payment flow: an assigned plot reaching booked/sold/registered is the conversion, queried live. Prefer read-side derivations over write-side hooks when the state machine already records the outcome.
+
 ## Session 219: AI Dynamic Pricing & Yield Optimizer + CSRF Shim Rescue (2026-10-12)
 
 ### Trigger
@@ -39,6 +100,7 @@ User: "koi suggestion... deeply soach samjh ke" → full mandate ("tumhi senior 
 
 ### Verification
 - Master **9/9 PASSED**. All probes cleaned. Committed + pushed per item.
+- **Follow-up: collation-guard caught a revert** — second-actor DB restore wiped the 3 unification ALTERs (guard failed loudly, all 21 modules still OK). Re-applied live + added durable `database/migrations/unify_collations_s218.php` (idempotent: ALTERs only on mismatch, re-runnable after any restore; probe-green with all SKIP).
 
 ### Key Lessons (carried, continued)
 _476. **Single-table `WHERE key = ?` binds are collation-safe; cross-table `=` is where 1267 lives** — audit effort belongs on JOIN/subquery pairs of business keys, not on the 4000+ column census. Rule: new cross-table string comparisons MUST use explicit COLLATE or matching collations.
