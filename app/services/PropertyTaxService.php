@@ -306,10 +306,11 @@ class PropertyTaxService
 
     public function getColonyDemandRegister(int $colonyId, int $year): ?array
     {
-        return $this->db->fetchOne("
+        $row = $this->db->fetchOne("
             SELECT * FROM property_tax_demand_register
             WHERE colony_id = ? AND assessment_year = ? AND tenant_id = ?
         ", [$colonyId, $year, $this->tenantId()]);
+        return $row ?: null;
     }
 
     public function generateDemandRegister(int $colonyId, int $year): array
@@ -364,12 +365,14 @@ class PropertyTaxService
 
     public function getTaxMaster(int $id): ?array
     {
-        return $this->db->fetchOne("SELECT * FROM property_tax_master WHERE id = ? AND tenant_id = ?", [$id, $this->tenantId()]);
+        $row = $this->db->fetchOne("SELECT * FROM property_tax_master WHERE id = ? AND tenant_id = ?", [$id, $this->tenantId()]);
+        return $row ?: null;
     }
 
     public function getPayment(int $id): ?array
     {
-        return $this->db->fetchOne("SELECT * FROM property_tax_payments WHERE id = ? AND tenant_id = ?", [$id, $this->tenantId()]);
+        $row = $this->db->fetchOne("SELECT * FROM property_tax_payments WHERE id = ? AND tenant_id = ?", [$id, $this->tenantId()]);
+        return $row ?: null;
     }
 
     public function getRebateRules(): array

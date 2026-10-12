@@ -1,5 +1,50 @@
 > **COMPLETED (2026-10-06):** Churn-stop verified (snapshots identical), full review done, all work committed + pushed (see Session 171-173 below).
 
+## Session 223: Smart IoT Threshold Alerts + Field Ingest (Zero-Dup Catch) + Parallel-Restore Incident (2026-10-12)
+
+### Trigger
+User: "do next". Doc `NEXT_GEN_EXTRA_INNOVATION_FEATURES.md` #9 (Smart IoT Gate & Solar Telemetry) — parallel build halted after zero-dup catch: full IoT stack already lives here (`IoTService` + `Admin/IoTController` + 18 `/admin/iot/*` routes + `admin/iot/index` + menu 237 + `iot_devices/readings/automations/catalog`).
+
+### Work (all probe-verified)
+- **Zero-dup discipline, enforced twice**: migration's `iot_telemetry` created then DROPPED (duplicate of `iot_readings`); `iot_devices` CREATE was silent `IF NOT EXISTS` no-op. Final migration = `iot_alerts` only.
+- **`App\Services\IoTAlertService`** (new): `evaluateReading()` (battery_pct/battery/soc <25% warning, <10% critical; fault_flag/system_fault/barrier_fault ≥1 → critical), `scanOffline()` (status online/configuring + `last_seen_at` older than 30min), dedupe (one open alert per device+type), `resolveAlert()` (resolver+timestamp), `listAlerts()` (open/resolved + colony filter), `stats()`.
+- **Best-effort hook**: 3-line try/catch call inside existing `IoTService::recordReading()` (lines 125-133 touched, nothing else) — admin manual readings and field ingest share one alert path.
+- **Field ingest** (`Api\IotIngestController@ingest`, POST `/api/iot/ingest` in `routes/api.php`): auth by `device_uid` (no session/CSRF — `/api/` excludedPaths), body `{device_uid, status?, readings[]}`, unknown uid → 401, empty/invalid → 400, returns stored ids + open_alert count. Uses `ApiResponse::ok/fail` (S217 convention).
+- **Alerts desk** (`Admin\IotAlertController` + `admin/iot/alerts.php`, GET `/admin/iot/alerts`, POST `/resolve`): offline scan on every load, stats ribbon, open/resolved toggle, severity badges, CSRF-guarded resolve, back-links to IoT dashboard + Security desk + ingest docs.
+- **Interlinks**: Alerts button on `/admin/iot` header; colony-show ops tile "IoT Devices" (links `alerts?colony_id=`) + action card 16 "Smart IoT & Threshold Alerts"; `ColonyController::show()` gained `iot_devices`/`iot_alerts` counts.
+- **E2E probe 26/26**: guest 302s, ingest 200 (battery 15 → warning, dedupe holds on repeat, fault → critical), negatives 400/401, desk 200 + needles + token, scan-offline raise, colony filter, resolved view, resolve→302→resolved_by→re-raise-after-resolve, colony-360 tile+card, restore byte-identical (`alerts/readings/devices` back to 0/0/3). Master **9/9 PASSED**.
+- Uncommitted (standing rule). DB-only: `iot_alerts` table.
+
+### Incident: parallel actor restored the DB 3× mid-round (user confirmed "db restore ho gya")
+- Symptom trail: `iot_readings`/`iot_devices` 1146'd, then all 916 tables shared one `create_time` (23:18 IST), then `tables_now=0` (full DROP), then second restore (23:23) — importer was `mysql.exe -u root apsdreamhome --force` (pid exited).
+- The restored dump predates S219+: wiped live `iot_alerts`, `original_*` cols (S220), menu 341 (S219). Verified lost via single-statement checks (earlier "restored" reads were multi-statement artifacts).
+- Rebuilt deterministically: iot migration + dynamic-pricing migration (cols re-added; unique key survived) + menu 341 re-inserted mirroring 320's shape (parent 20, section plots, `plots.development`, admin grant `1/1/1/0`) + sidebar cache bust (`admin_sidebar_all` + role md5 keys + perms). Sidebar verified live (Dynamic Pricing AI + PLC + IoT all render on `/admin/erp`).
+
+### Key Lessons (carried, continued)
+_491. **`extract($data)` in render() overwrites same-named params** — data key `'view'` clobbered `$view` path → `View not found: open` with HTTP 200. Never pass keys named `view/layout/data` to this `render()`; renamed to `filterView`. (Sibling of S167's `view($id)` collision lesson.)
+_492. **Manual probe writes must use the app's session `time_zone`** — `Database.php:92` sets `SET time_zone=date('P')` (Berlin); a raw-PDO backdate used server IST, landing "in the future" so `scanOffline` never fired. Probe PDO now runs the same SET. Any manual SQL to time-sensitive columns must do this.
+_493. **Apache SAPI's `error_log` ini is a dead Linux path** (`/var/log/apache2/php_error.log` per served `phpinfo`) — HTTP `error_log()` writes go nowhere. Debug HTTP paths with `file_put_contents` to a controlled file instead.
+_494. **A 200 with "View not found" is a render-path bug, not a missing route** — title/breadcrumb render (controller ran) while content is the error string. Assert content needles, never status alone (S167 lesson again).
+_495. **Never fight a parallel restore — poll, verify loss with single statements, rebuild idempotently.** Multi-statement `mysql -e` mixed results across the drop window and lied twice ("restored" reads). Wait for the actor's "done", then re-run migrations + re-seed menus from worktree-described shapes.
+
+## Session 224: GSTR-1/3B Save + PT Payment Lifecycle E2E + Two Real Bugs (2026-10-12)
+
+### Trigger
+User: "do next". S222 left GST return-save paths + PT payment/verify/receipt/demand-register unprobed. This session E2E'd them all — and the probes caught **two genuine bugs**.
+
+### Work (all probe-verified, 0 leftovers)
+- **BUG 1 — `gst_invoices.id` lost AUTO_INCREMENT**: invoice store 500'd (`Field 'id' doesn't have a default value`). Column was auto_increment in S222; a mid-round parallel migration rewrote the table without it. Fixed via ALTER; sibling GST tables verified intact (all still auto_increment).
+- **BUG 2 — `?array` vs `fetchOne()=false` TypeError**: `PropertyTaxService::getColonyDemandRegister/getTaxMaster/getPayment` + `GstComplianceService::getHsnCode` declared `?array` but returned `fetchOne()` raw (`false` on empty) → 500 on every miss (demand-register page dead). Fixed all 4 with `$row ?: null` (`getInvoice` already guarded). Same family as S167's falsy-return lessons.
+- **GSTR-1 save**: probe invoice (10×5000 @18% → 50000/4500/4500/59000) → POST save → summary row exact → GSTR-1 page 200.
+- **GSTR-3B save**: 3 sections written, values exact (3.1 taxable 50000/cgst 4500, sec-5 liability 9000).
+- **PT payment lifecycle**: assessment (3000 net) → record cash 3000 (penalty 0, pre-due — correct) → verify (status verified) → receipt 200 with number+₹3,000 → demand-register generate on empty colony (0/0/0/generated).
+- **Cleanup 8/8 tables clean**. Master **9/9 PASSED** (18.03s). Uncommitted (standing rule). DB-only: the auto_increment ALTER + 4 null-guard edits are code (uncommitted).
+
+### Key Lessons (carried, continued)
+_496. **A 500 with a flash message is a gift — read the flash**: the store failure's exact SQL error (`id doesn't have a default value`) rendered on the redirect target; one GET + grep named the bug in 30 seconds. Always read the flash before theorizing.
+_497. **`?array` + `fetchOne()` is a TypeError landmine** — `Database::fetchOne` returns `false` on empty, which violates `?array`. Every `?array` getter over `fetchOne` needs `$row ?: null`. Grep the pattern repo-wide when one instance bites (S168's wrong-import family lesson, same shape).
+_498. **CLI probes must echo BEFORE bootstrap** — scripts that `require` first printed nothing on failure (bootstrap's header warning + swallowed stderr); a leading `echo "start"` makes silent deaths visible. Cheap insurance on every probe script.
+
 ## Session 222: GST + PropertyTax Write-Path E2E + PHP-curl Flake Proof (2026-10-12)
 
 ### Trigger
