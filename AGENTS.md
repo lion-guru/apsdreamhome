@@ -1,5 +1,32 @@
 > **COMPLETED (2026-10-06):** Churn-stop verified (snapshots identical), full review done, all work committed + pushed (see Session 171-173 below).
 
+## Session 219: AI Dynamic Pricing & Yield Optimizer + CSRF Shim Rescue (2026-10-12)
+
+### Trigger
+User: "do next" ×N. Zero-duplication audit first: **eNACH/UPI auto-debit EMI already exists** (`EMIAutoPaymentService`, `customer_mandates`, `/admin/finance/emi-auto-pay`, NACH routes + `run_nach_auto_debit.php`) and the **WhatsApp bot already covers** menu/plots/visit/passbook/join + lead capture (`WhatsAppService::autoReply` + `WhatsAppFlowService`) — both candidates skipped, no rebuilds. Real gap: dynamic pricing (5 tables existed empty from an earlier partial round, absorbed into commit `edf047178` as just the migration file).
+
+### Work
+- **AI Dynamic Pricing & Yield Optimization Engine** (`app/Services/Pricing/DynamicPricingService.php` + `Admin/DynamicPricingController` + `admin/pricing/dynamic_pricing.php` + 6 routes under `/admin/dynamic-pricing`):
+  - **Feature engineering from live tables**: 90-day sell-through (booking_date/sale_date), inventory tightness + stock age (available plots), colony-tagged 60d lead demand (neutral 0.5 when untagged — absence of tags ≠ absence of demand), calendar seasonality (Oct–Mar wedding/festival peak vs summer/monsoon), current anchor (colonies.min_price_per_sqft with avg-base fallback). Weighted demand score → bounded ±15% (config) delta, |delta|<1% = within_noise skip, honest per-factor reasoning text + confidence scaled by plot-count adequacy (downside calls penalised −0.05).
+  - **Workflow**: generate per-colony/all (one pending per colony) → approve/reject → apply. **Apply safety (S198 lesson)**: rewrites `available` plots ONLY (booked/sold/registered untouched), recalculates every plot through live `PlcService::calculate()` (static+DB-rules math), writes one `price_history` row per plot (`reference_type=dynamic_pricing` = rollback trail), moves colony anchor, logs to `pricing_optimization_logs` with affected count. Transactional; rejected suggestions cannot apply.
+  - **Honest ML**: `trainModel()` fits trend + month_sin/cos regression on price_history (batch GD, standardised features, metrics in original scale). Refuses below config min_samples with explicit message — colony 2 (392 samples) → R²=0.9814/RMSE 697; colony 1 (0 samples) → "Not enough history: 0 samples, need 30", no model row created. Suggestions work model-less (model_id NULL).
+  - Dashboard: stats ribbon, status-filtered suggestion table (delta/confidence badges, inline approve/apply/reject with confirm), models table, generate/train forms, safety footer.
+- **CSRF shim rescue (pre-existing 500s, found by probing)**: S216 views call `\App\Core\Security\CSRF::generateTokenField()` — **class never existed** → `/admin/township-lighting` and `/admin/township-rwh` have been 500 since S216 (its "probe-verified" claim was service-level, not page-render). Created `app/Core/Security/CSRF.php` as thin delegation to canonical `App\Helpers\SecurityHelper` (field name `csrf_token` = what routes/router.php reads). All 3 pages 200 with csrf fields after.
+- **Menu**: `admin_menu_items` #341 "Dynamic Pricing AI" (sibling of PLC Rules, parent 20, section plots) + admin grant (mirrors PLC #320's role set); sidebar `Cache::remember('admin_sidebar_all', …, 3600)` required explicit bust before the link rendered.
+- **Migration rewrite** (`database/migrations/create_dynamic_pricing_tables.php`): first cut aborted at table 2 (FK errno 150: model_id INT UNSIGNED vs signed models.id) and left `model_id NOT NULL` (later 1452'd every suggestion insert with model_id=0). Rewritten: per-CREATE try/catch, nullable `model_id` (suggestions valid before any model exists), UNIQUE(colony_id,is_active) → INDEX (unique would block inactive model versions).
+
+### Verification
+- **E2E probe 26/26**: guest 302 gate, dashboard 200 + needles + sidebar link, CSRF-block 302, generate 5 suggestions + 5 audit rows, approve→approved, apply on colony 5 (12/12 available plots moved to 1704.06, booked/sold untouched, 12 price_history rollback rows, colony anchor moved, applied audit log), **restore byte-identical** (diff=0), reject→rejected + rejected-cannot-apply, train 392-sample success + honest refusal (flash `Not enough history`), status filter, **0 leftovers** (price_history back to 605).
+- Master suite **9/9 PASSED** (19.08s). `php -l` clean on all new/edited files.
+- Uncommitted for review (standing rule). DB-only: menu 341 + perm, service_configs `dynamic_pricing` group seeds (runtime, via ensureConfigRows), `model_id` ALTER.
+
+### Key Lessons (carried, continued)
+_476. **A NOT NULL FK on an "optional" child column turns every unset reference into a 1452** — suggestions inserted `model_id=0` (no model trained yet) and every generate failed at the FK. Optional associations are NULLable FKs (or no FK); `0` is not a valid parent key. Also: a FK across tables needs matching signedness — the original migration died at errno 150 (INT UNSIGNED vs INT).
+_477. **`php -l` cannot catch a missing class — only a page render can** — three views called `\App\Core\Security\CSRF::generateTokenField()`; lint clean, runtime fatal, two shipped pages (lighting/rwh) sat 500 until this session's page probe hit them. Always assert rendered-body needles for new pages AND re-probe sibling views that share a pattern before copying them.
+_478. **New sidebar menu items need a cache bust, not just a DB insert** — `AdminMenuService` caches `admin_sidebar_all` (+ per-role/per-user keys) for 1h; the menu row + grants were live but invisible until `Cache::delete` ran. Seed → bust → re-render, every time.
+_479. **Flash-message probe assertions must read the POST response, not the next GET** — the POST's follow-redirect body already renders (and consumes) the flash; a separate GET sees it gone and false-fails ("refusal flash missing" was a probe bug, not an app bug).
+_480. **Another actor can append AGENTS.md mid-round — re-read the header before inserting your session number** — this session drafted "Session 218" against a file whose top entry was 217; by insert time a parallel actor had already added their own 218 (CEO Round). Renumbered to 219 instead of clobbering.
+
 ## Session 218: CEO Round — Collation Unification, Cron Outage Guard, Withdrawal Money Probe (2026-10-12)
 
 ### Trigger
@@ -17,6 +44,9 @@ User: "koi suggestion... deeply soach samjh ke" → full mandate ("tumhi senior 
 _476. **Single-table `WHERE key = ?` binds are collation-safe; cross-table `=` is where 1267 lives** — audit effort belongs on JOIN/subquery pairs of business keys, not on the 4000+ column census. Rule: new cross-table string comparisons MUST use explicit COLLATE or matching collations.
 _477. **A probe that only asserts the happy path hides dead endpoints** — the withdrawal negative test passed while every real request 500'd. Money probes must assert a full debit lifecycle, not just rejection.
 _478. **Check singleton poisoning before adding retry** — `getInstance()` with throwing ctor never assigns, so retry is safe here; verify this pattern (not the retry count) before wrapping any shared connector.
+_479. **String roles are canonical — `roles`/`user_roles` tables are a dormant experiment, never migrate** — id-system has 0 callers, 7 rows, id=0 anomaly; string system (ENUM + menu perms + RBACManager) serves 100% traffic. The Temp `role_id` 1054 was a wrong-column query, not missing schema.
+_480. **Count downstream FKs before deleting "test" users** — users 8–12 looked deletable but anchored mlm_commission_ledger rows (₹3.77L on user 9 alone, woven with real users). Deleted only the safe parts (contradictory user_roles, zero-balance wallets); users kept, 17 leads left NULL-assigned (pool state). Record per-lead ownership BEFORE touching assignment columns.
+_481. **ENUM collation change needs exact value restatement** — `users.role` (57 values) unified general_ci → unicode_ci with NULL DEFAULT 'user' preserved; values verified intact after. Backup the table first, always.
 
 ## Session 217: Portal-Wide Systematic Audit — Admin Sidebar, Customer, Associate, Agent, Employee, Public Nav & API Security (2026-10-12)
 ### Trigger
