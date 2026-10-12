@@ -356,38 +356,44 @@ class PortalMenuService
 
     /**
      * Helper: count rows in a table for the current user.
+     * Cached 120s per user (matches admin layout badge convention) —
+     * sidebar badges don't need real-time accuracy, and this turns
+     * ~10-15 COUNT queries per portal page-load into cache hits.
      */
     private function countTable(string $table, ?string $userCol = 'user_id', ?string $extraCol = null, ?string $extraVal = null): ?int
     {
         if (!$this->pdo || !$this->userId) {
             return null;
         }
-        try {
-            $sql = "SELECT COUNT(*) as cnt FROM `$table`";
-            $params = [];
-            $where = [];
-            if ($userCol && $this->userId) {
-                $where[] = "`$userCol` = ?";
-                $params[] = $this->userId;
+        $tid = $this->tenantId();
+        $cacheKey = 'portal_badge_' . $this->userId . '_' . md5($table . '|' . $userCol . '|' . $extraCol . '|' . $extraVal . '|' . $tid);
+        return \App\Core\Cache::remember($cacheKey, function () use ($table, $userCol, $extraCol, $extraVal, $tid) {
+            try {
+                $sql = "SELECT COUNT(*) as cnt FROM `$table`";
+                $params = [];
+                $where = [];
+                if ($userCol && $this->userId) {
+                    $where[] = "`$userCol` = ?";
+                    $params[] = $this->userId;
+                }
+                if ($extraCol && $extraVal) {
+                    $where[] = "`$extraCol` = ?";
+                    $params[] = $extraVal;
+                }
+                if ($tid > 1) {
+                    $where[] = "tenant_id = :tid";
+                    $params[':tid'] = $tid;
+                }
+                if ($where) {
+                    $sql .= ' WHERE ' . implode(' AND ', $where);
+                }
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->execute($params);
+                return (int)$stmt->fetch(\PDO::FETCH_ASSOC)['cnt'];
+            } catch (\Throwable $e) {
+                return null;
             }
-            if ($extraCol && $extraVal) {
-                $where[] = "`$extraCol` = ?";
-                $params[] = $extraVal;
-            }
-            $tid = $this->tenantId();
-            if ($tid > 1) {
-                $where[] = "tenant_id = :tid";
-                $params[':tid'] = $tid;
-            }
-            if ($where) {
-                $sql .= ' WHERE ' . implode(' AND ', $where);
-            }
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->execute($params);
-            return (int)$stmt->fetch(\PDO::FETCH_ASSOC)['cnt'];
-        } catch (\Throwable $e) {
-            return null;
-        }
+        }, 120);
     }
 
     private function countSiteVisits(): ?int
@@ -395,13 +401,16 @@ class PortalMenuService
         if (!$this->pdo || !$this->userId) {
             return null;
         }
-        try {
+        $cacheKey = 'portal_badge_' . $this->userId . '_site_visits_' . $this->tenantId();
+        return \App\Core\Cache::remember($cacheKey, function () {
+            try {
             $stmt = $this->pdo->prepare("SELECT COUNT(*) as cnt FROM site_visits WHERE (assigned_to = ? OR user_id = ?) AND status NOT IN ('cancelled','completed') AND visit_date >= CURDATE() {$this->tenantSql()}");
             $stmt->execute([$this->userId, $this->userId]);
             return (int)$stmt->fetch(\PDO::FETCH_ASSOC)['cnt'];
         } catch (\Throwable $e) {
             return null;
         }
+        }, 120);
     }
 
     /**
