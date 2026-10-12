@@ -1,4 +1,4 @@
-﻿<section class="py-5 text-white" style="background: linear-gradient(135deg, #0a192f 0%, #1e3a5f 100%)">
+<section class="py-5 text-white" style="background: linear-gradient(135deg, #0a192f 0%, #1e3a5f 100%)">
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><?php echo __('tool_property_tax_title', [], 'Property Tax Calculator'); ?></h1>

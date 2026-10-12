@@ -129,6 +129,12 @@ class IoTService
             [$deviceId, $metric, $value, $unit, $recordedAt ?? date('Y-m-d H:i:s')]
         );
         $this->db->execute("UPDATE iot_devices SET last_seen_at = ? WHERE id = ?" . $this->tenantSql(), array_merge([date('Y-m-d H:i:s'), $deviceId], $this->tenantParams()));
+        // Session 222: best-effort threshold alerts — never fails the reading write.
+        try {
+            (new IoTAlertService())->evaluateReading($deviceId, $metric, $value);
+        } catch (\Throwable $e) {
+            error_log('[IoTService::recordReading alert hook] ' . $e->getMessage());
+        }
         return (int)$this->db->lastInsertId();
     }
 

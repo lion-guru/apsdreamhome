@@ -54,7 +54,8 @@ class GstComplianceService
 
     public function getHsnCode(string $hsnCode): ?array
     {
-        return $this->db->fetchOne("SELECT * FROM gst_hsn_codes WHERE hsn_code = ? AND tenant_id = ? AND is_active = 1", [$hsnCode, $this->tenantId()]);
+        $row = $this->db->fetchOne("SELECT * FROM gst_hsn_codes WHERE hsn_code = ? AND tenant_id = ? AND is_active = 1", [$hsnCode, $this->tenantId()]);
+        return $row ?: null;
     }
 
     public function searchHsnCodes(string $query, int $limit = 20): array

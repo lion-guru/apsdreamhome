@@ -1,7 +1,14 @@
 <?php
 /**
- * Dynamic Pricing Engine - Database Migration
- * Creates tables for AI-driven dynamic pricing models and suggestions
+ * Dynamic Pricing Engine - Database Migration (Session 218).
+ * Idempotent: each CREATE is guarded; safe to re-run.
+ *
+ * Notes vs first cut:
+ *  - model_id is NULLABLE (suggestions can exist before any model is trained;
+ *    the original NOT NULL + FK forced model_id=0 which violates the FK).
+ *  - models: one row per colony is kept by the service via UPDATE-or-INSERT;
+ *    the UNIQUE(colony_id, is_active) key is an INDEX (a unique there would
+ *    also block multiple inactive model versions of the same colony).
  */
 
 require_once 'config/bootstrap.php';
@@ -10,8 +17,10 @@ $pdo = \App\Core\Database\Database::getInstance()->getConnection();
 
 echo "=== Creating Dynamic Pricing Tables ===\n\n";
 
-// 1. dynamic_pricing_models - stores trained pricing models per colony/segment
-$sql1 = "CREATE TABLE IF NOT EXISTS dynamic_pricing_models (
+$sqls = [];
+
+// 1. dynamic_pricing_models - trained pricing models per colony
+$sqls['dynamic_pricing_models'] = "CREATE TABLE IF NOT EXISTS dynamic_pricing_models (
     id INT AUTO_INCREMENT PRIMARY KEY,
     tenant_id INT UNSIGNED NOT NULL DEFAULT 1,
     colony_id INT UNSIGNED NOT NULL,
@@ -21,27 +30,22 @@ $sql1 = "CREATE TABLE IF NOT EXISTS dynamic_pricing_models (
     model_data LONGTEXT NOT NULL COMMENT 'Serialized model weights/parameters (JSON)',
     feature_columns JSON NOT NULL COMMENT 'List of feature column names used by model',
     target_column VARCHAR(50) NOT NULL DEFAULT 'final_price_per_sqft',
-    training_metrics JSON COMMENT 'MAE, RMSE, R2, training_date, sample_count',
+    training_metrics JSON COMMENT 'RMSE, R2, samples, trained_at',
     is_active TINYINT(1) NOT NULL DEFAULT 1,
     is_production TINYINT(1) NOT NULL DEFAULT 0,
     trained_at TIMESTAMP NULL DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    UNIQUE KEY uniq_colony_active (colony_id, is_active),
-    INDEX idx_tenant (tenant_id),
-    INDEX idx_colony (colony_id),
-    INDEX idx_active (is_active)
+    INDEX idx_colony_active (colony_id, is_active),
+    INDEX idx_tenant (tenant_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
-$pdo->exec($sql1);
-echo "✓ dynamic_pricing_models created\n";
-
 // 2. dynamic_pricing_suggestions - AI-generated price recommendations
-$sql2 = "CREATE TABLE IF NOT EXISTS dynamic_pricing_suggestions (
+$sqls['dynamic_pricing_suggestions'] = "CREATE TABLE IF NOT EXISTS dynamic_pricing_suggestions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     tenant_id INT UNSIGNED NOT NULL DEFAULT 1,
     colony_id INT UNSIGNED NOT NULL,
-    model_id INT UNSIGNED NOT NULL,
+    model_id INT NULL DEFAULT NULL COMMENT 'Trained model used (NULL = heuristic-only suggestion)',
     plot_id INT UNSIGNED NULL COMMENT 'Specific plot suggestion (NULL = colony-wide base rate)',
     current_base_pps DECIMAL(10,2) NOT NULL,
     suggested_base_pps DECIMAL(10,2) NOT NULL,
@@ -59,15 +63,11 @@ $sql2 = "CREATE TABLE IF NOT EXISTS dynamic_pricing_suggestions (
     INDEX idx_colony (colony_id),
     INDEX idx_model (model_id),
     INDEX idx_status (status),
-    INDEX idx_plot (plot_id),
-    FOREIGN KEY (model_id) REFERENCES dynamic_pricing_models(id) ON DELETE CASCADE
+    INDEX idx_plot (plot_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
-$pdo->exec($sql2);
-echo "✓ dynamic_pricing_suggestions created\n";
-
 // 3. pricing_optimization_logs - audit trail of applied changes
-$sql3 = "CREATE TABLE IF NOT EXISTS pricing_optimization_logs (
+$sqls['pricing_optimization_logs'] = "CREATE TABLE IF NOT EXISTS pricing_optimization_logs (
     id INT AUTO_INCREMENT PRIMARY KEY,
     tenant_id INT UNSIGNED NOT NULL DEFAULT 1,
     colony_id INT UNSIGNED NOT NULL,
@@ -85,11 +85,8 @@ $sql3 = "CREATE TABLE IF NOT EXISTS pricing_optimization_logs (
     INDEX idx_action (action)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
-$pdo->exec($sql3);
-echo "✓ pricing_optimization_logs created\n";
-
 // 4. pricing_experiments - A/B testing framework for pricing strategies
-$sql4 = "CREATE TABLE IF NOT EXISTS pricing_experiments (
+$sqls['pricing_experiments'] = "CREATE TABLE IF NOT EXISTS pricing_experiments (
     id INT AUTO_INCREMENT PRIMARY KEY,
     tenant_id INT UNSIGNED NOT NULL DEFAULT 1,
     colony_id INT UNSIGNED NOT NULL,
@@ -112,17 +109,17 @@ $sql4 = "CREATE TABLE IF NOT EXISTS pricing_experiments (
     INDEX idx_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
-$pdo->exec($sql4);
-echo "✓ pricing_experiments created\n";
-
 // 5. pricing_experiment_assignments - tracks which plot got which variant
-$sql5 = "CREATE TABLE IF NOT EXISTS pricing_experiment_assignments (
+$sqls['pricing_experiment_assignments'] = "CREATE TABLE IF NOT EXISTS pricing_experiment_assignments (
     id INT AUTO_INCREMENT PRIMARY KEY,
     tenant_id INT UNSIGNED NOT NULL DEFAULT 1,
     experiment_id INT UNSIGNED NOT NULL,
     plot_id INT UNSIGNED NOT NULL,
     variant_key VARCHAR(50) NOT NULL COMMENT 'e.g., control, variant_a, variant_b',
     assigned_base_pps DECIMAL(10,2) NOT NULL,
+    original_base_pps DECIMAL(10,2) NULL DEFAULT NULL COMMENT 'pre-experiment base (NULL = legacy no-base row)',
+    original_pps DECIMAL(10,2) NULL DEFAULT NULL COMMENT 'pre-experiment price_per_sqft (exact restore source)',
+    original_total DECIMAL(14,2) NULL DEFAULT NULL COMMENT 'pre-experiment total_price (exact restore source)',
     assigned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     converted_at TIMESTAMP NULL DEFAULT NULL,
     converted_pps DECIMAL(10,2) NULL,
@@ -132,31 +129,35 @@ $sql5 = "CREATE TABLE IF NOT EXISTS pricing_experiment_assignments (
     INDEX idx_variant (variant_key)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
-$pdo->exec($sql5);
-echo "✓ pricing_experiment_assignments created\n";
-
-// 6. Seed default service configs for dynamic pricing
-$defaults = [
-    'dynamic_pricing_enabled' => ['0', 'Master switch for dynamic pricing engine'],
-    'dynamic_pricing_min_confidence' => ['0.75', 'Minimum confidence score to auto-apply suggestions'],
-    'dynamic_pricing_max_change_pct' => ['15', 'Maximum % price change per suggestion'],
-    'dynamic_pricing_retrain_days' => ['30', 'Days between model retraining'],
-    'dynamic_pricing_lookback_days' => ['180', 'Days of historical data for training'],
-    'dynamic_pricing_min_samples' => ['50', 'Minimum booking samples to train'],
-    'dynamic_pricing_features' => ['["sales_velocity","inventory_age_days","corner_ratio","park_ratio","road_width_avg","seasonality_index","competitor_price_index"]', 'Feature columns for ML model'],
-];
-
-try {
-    foreach ($defaults as $key => [$val, $desc]) {
-        $exists = $pdo->prepare("SELECT id FROM service_configs WHERE service_name = 'dynamic_pricing' AND config_key = ? LIMIT 1");
-        $exists->execute([$key]);
-        if (!$exists->fetchColumn()) {
-            $pdo->prepare("INSERT INTO service_configs (service_name, config_key, config_value, config_type, description, group_name) VALUES ('dynamic_pricing', ?, ?, 'json', ?, 'dynamic_pricing')")->execute([$key, $val, $desc]);
-        }
+foreach ($sqls as $name => $sql) {
+    try {
+        $pdo->exec($sql);
+        echo "OK  $name\n";
+    } catch (Throwable $e) {
+        echo "ERR $name: " . $e->getMessage() . "\n";
     }
-    echo "✓ Default service configs seeded\n";
-} catch (Throwable $e) {
-    echo "Note: Service configs seeding skipped: " . $e->getMessage() . "\n";
+}
+
+// Runtime config defaults are seeded by DynamicPricingService::ensureConfigRows()
+// (called from the controller) - no service_configs inserts here.
+
+// Idempotent upgrades for tables created by earlier partial rounds (S218 live DB
+// predates the original-price capture columns and was missing the plot unique key).
+$upgrades = [
+    "ALTER TABLE pricing_experiment_assignments ADD COLUMN original_base_pps DECIMAL(10,2) NULL DEFAULT NULL AFTER assigned_base_pps",
+    "ALTER TABLE pricing_experiment_assignments ADD COLUMN original_pps DECIMAL(10,2) NULL DEFAULT NULL AFTER original_base_pps",
+    "ALTER TABLE pricing_experiment_assignments ADD COLUMN original_total DECIMAL(14,2) NULL DEFAULT NULL AFTER original_pps",
+    "ALTER TABLE pricing_experiment_assignments ADD UNIQUE KEY uniq_experiment_plot (experiment_id, plot_id)",
+];
+foreach ($upgrades as $sql) {
+    try {
+        $pdo->exec($sql);
+        echo "OK  upgrade: " . substr($sql, 0, 70) . "...\n";
+    } catch (Throwable $e) {
+        // 1060 duplicate column / 1061 duplicate key = already applied
+        $code = $e->getCode();
+        echo ($code == '42S21' || $code == '42000' || strpos($e->getMessage(), 'Duplicate') !== false ? "SKIP" : "ERR ") . " upgrade: " . $e->getMessage() . "\n";
+    }
 }
 
 echo "\n=== Dynamic Pricing Migration Complete ===\n";

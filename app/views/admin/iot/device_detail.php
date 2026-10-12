@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 $device = $device ?? [];
 $readings = $readings ?? [];
 $history = $history ?? [];
@@ -31,7 +31,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     <div class="row">
                         <div class="col-5 mb-2"><input type="text" name="metric" class="form-control" placeholder="metric" value="temperature" required></div>
                         <div class="col-4 mb-2"><input type="number" step="0.01" name="value" class="form-control" placeholder="value" required></div>
-                        <div class="col-3 mb-2"><input type="text" name="unit" class="form-control" placeholder="unit" value="Â°C"></div>
+                        <div class="col-3 mb-2"><input type="text" name="unit" class="form-control" placeholder="unit" value="°C"></div>
                     </div>
                     <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save me-1"></i> Record</button>
                 </form>

@@ -6,6 +6,7 @@ $automations = $automations ?? [];
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2><i class="fas fa-microchip me-2 text-primary"></i>IoT Smart Property</h2>
     <div>
+        <a href="<?= BASE_URL ?>/admin/iot/alerts" class="btn btn-outline-danger me-2"><i class="fas fa-bell me-1"></i> Alerts</a>
         <a href="<?= BASE_URL ?>/admin/iot/devices" class="btn btn-outline-primary me-2"><i class="fas fa-server me-1"></i> Devices</a>
         <a href="<?= BASE_URL ?>/admin/iot/automations" class="btn btn-outline-success"><i class="fas fa-robot me-1"></i> Automations</a>
     </div>
