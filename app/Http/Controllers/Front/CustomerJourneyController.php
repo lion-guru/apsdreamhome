@@ -183,7 +183,13 @@ class CustomerJourneyController extends PlotBaseController
             $stats['total_outstanding'] = max(0, $plotPrice - $stats['total_paid']);
 
             // ---- REGISTRY STAGES (from registryTimeline logic) ----
-            $stages = $this->buildRegistryStages($db, $bookingId, $tSql, $tParams);
+            $extras = [];
+            try { $extras['agreement'] = $db->fetch("SELECT * FROM booking_agreements WHERE booking_id = ? ORDER BY created_at DESC LIMIT 1", [$bookingId]); } catch (\Throwable $e) { error_log('CustomerJourneyController agreement fetch: ' . $e->getMessage()); }
+            try { $extras['noc'] = $db->fetch("SELECT * FROM noc_requests WHERE booking_id = ? ORDER BY created_at DESC LIMIT 1", [$bookingId]); } catch (\Throwable $e) { error_log('CustomerJourneyController noc fetch: ' . $e->getMessage()); }
+            try { $extras['deed'] = $db->fetch("SELECT * FROM booking_documents WHERE booking_id = ? AND document_type = 'registry_deed' ORDER BY created_at DESC LIMIT 1", [$bookingId]); } catch (\Throwable $e) { error_log('CustomerJourneyController deed fetch: ' . $e->getMessage()); }
+            try { $extras['possession'] = $db->fetch("SELECT * FROM possession_records WHERE booking_id = ? ORDER BY created_at DESC LIMIT 1", [$bookingId]); } catch (\Throwable $e) { error_log('CustomerJourneyController possession fetch: ' . $e->getMessage()); }
+
+            $stages = $this->buildRegistryStages($db, $bookingId, $tSql, $tParams, $booking, $extras);
             $completedCount = 0;
             $currentIndex = -1;
             foreach ($stages as $i => $s) {
@@ -228,7 +234,7 @@ class CustomerJourneyController extends PlotBaseController
     /**
      * Build registry stages (reused from CustomerPassbookController)
      */
-    private function buildRegistryStages($db, $bookingId, $tSql, $tParams): array
+    private function buildRegistryStages($db, $bookingId, $tSql, $tParams, $booking, $extras): array
     {
         $stages = [];
 

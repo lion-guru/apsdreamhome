@@ -71,13 +71,13 @@ if (!isset($sc)) {
                 </div>
                 <div class="col-md-6 text-end">
                     <div class="admin-footer-actions">
-                        <button class="btn btn-sm btn-outline-light me-2" onclick="window.open('https://github.com', '_blank')">
+                        <a class="btn btn-sm btn-outline-light me-2" href="https://github.com" target="_blank" rel="noopener">
                             <i class="fab fa-github"></i> GitHub
-                        </button>
-                        <button class="btn btn-sm btn-outline-light me-2" onclick="showSystemLogs()">
+                        </a>
+                        <button class="btn btn-sm btn-outline-light me-2" id="adminFooterLogsBtn">
                             <i class="fas fa-file-alt"></i> Logs
                         </button>
-                        <button class="btn btn-sm btn-outline-light" onclick="showSupport()">
+                        <button class="btn btn-sm btn-outline-light" id="adminFooterSupportBtn">
                             <i class="fas fa-life-ring"></i> Support
                         </button>
                     </div>
@@ -152,7 +152,7 @@ if (!isset($sc)) {
         }
     </style>
 
-    <script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         // Update footer stats via API
         function updateFooterStats() {
             fetch('<?php echo BASE_URL; ?>/admin/api/dashboard-stats', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
@@ -204,13 +204,19 @@ if (!isset($sc)) {
         document.addEventListener('DOMContentLoaded', function() {
             updateFooterStats();
             updateUptime();
-            
+
             // Update stats every 10 seconds
             setInterval(updateFooterStats, 10000);
+
+            // CSP-safe footer action bindings (no inline onclick)
+            var logsBtn = document.getElementById('adminFooterLogsBtn');
+            var supportBtn = document.getElementById('adminFooterSupportBtn');
+            if (logsBtn) logsBtn.addEventListener('click', showSystemLogs);
+            if (supportBtn) supportBtn.addEventListener('click', showSupport);
         });
     </script>
 
-    <script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
     function showToast(message, type) {
         if (typeof APS !== 'undefined' && APS.toast) {
             APS.toast(message, type || 'info');

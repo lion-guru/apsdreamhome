@@ -71,7 +71,7 @@ $hubDefinitions = [
     'inventory' => [
         'label' => '1. Inventory & Projects',
         'icon' => 'fas fa-building',
-        'sections' => ['projects', 'colonies', 'plots', 'land', 'properties', 'valuations', 'sites', 'cms'],
+        'sections' => ['projects', 'colonies', 'plots', 'land', 'township_ops', 'properties', 'valuations', 'sites', 'cms'],
     ],
     'sales' => [
         'label' => '2. Sales & CRM Pipeline',
@@ -89,9 +89,14 @@ $hubDefinitions = [
         'sections' => ['finance', 'commission', 'cashbook', 'expenses', 'banking', 'gst', 'tds', 'efiling', 'collections', 'penalties', 'emi_auto_pay', 'plot_costs', 'payroll', 'billing'],
     ],
     'control' => [
-        'label' => '5. Enterprise Control',
+        'label' => '5. System & HR',
         'icon' => 'fas fa-cogs',
-        'sections' => ['users', 'roles', 'settings', 'system', 'hrm', 'security', 'ai_tech', 'communication', 'saas', 'operations', 'reports', 'analytics', 'audit_log', 'backup', 'cache', 'webhooks', 'api', 'company', 'menu_permissions', 'services', 'marketing', 'employee', 'hr', 'training', 'quality', 'health'],
+        'sections' => ['users', 'roles', 'settings', 'system', 'hrm', 'security', 'ai_tech', 'employee', 'hr', 'training', 'quality', 'health', 'audit_log', 'backup', 'cache'],
+    ],
+    'operations' => [
+        'label' => '6. Operations & SaaS',
+        'icon' => 'fas fa-briefcase',
+        'sections' => ['communication', 'saas', 'operations', 'reports', 'analytics', 'webhooks', 'api', 'company', 'menu_permissions', 'services', 'marketing'],
     ],
 ];
 
@@ -114,6 +119,7 @@ $sectionNames = [
     'colonies'    => '🏘️ Colonies & Planning',
     'plots'       => '📐 Plots & Inventory',
     'land'        => '🏞️ Land Bank & Acquisitions',
+    'township_ops'=> '🏙️ Township & Utilities',
     'properties'  => '🏠 Properties & Resale',
     'valuations'  => '📊 Property Valuations',
     'mlm'         => '📜 MLM Network',
@@ -173,22 +179,26 @@ $sectionNames = [
 ];
 
 // Hub sort order
-$hubOrder = ['inventory', 'sales', 'mlm', 'finance', 'control'];
+$hubOrder = ['inventory', 'sales', 'mlm', 'finance', 'control', 'operations'];
 
 // Flatten the menu tree: getMenuItems() nests children inside parents for
 // RBAC roles (admin/manager), but the sidebar groups by section — without
 // flattening, nested children (e.g. Locations submenu) never render.
+// Children are kept as a 'children' array on each parent item for submenu rendering.
 $flatItems = [];
 $flattenMenu = function ($items, $parentSection = null) use (&$flattenMenu, &$flatItems) {
     foreach ($items as $item) {
         if (empty($item['section']) && $parentSection) {
             $item['section'] = $parentSection;
         }
-        $flatItems[] = $item;
         if (!empty($item['children']) && is_array($item['children'])) {
-            $flattenMenu($item['children'], $item['section'] ?? $parentSection);
+            $item['children'] = $flattenMenu($item['children'], $item['section'] ?? $parentSection);
+        } else {
+            $item['children'] = [];
         }
+        $flatItems[] = $item;
     }
+    return $items;
 };
 $flattenMenu($menuItems);
 
@@ -412,13 +422,34 @@ $hubbedItems = $sortedHubbed;
                                         <?php
                                         $itemFullUrl = rtrim($base . $item['url'], '/');
                                         $isActive = ($reqPath === $itemFullUrl) || ($itemFullUrl !== $base && strpos($reqPath, $itemFullUrl . '/') === 0);
+                                        $hasChildren = !empty($item['children']) && is_array($item['children']);
                                         ?>
-                                        <li class="sidebar-item">
+                                        <li class="sidebar-item <?= $hasChildren ? 'has-children' : '' ?>">
                                             <a href="<?php echo $base . htmlspecialchars($item['url'] ?? ''); ?>"
                                                 class="sidebar-link <?php echo $isActive ? 'active' : ''; ?>">
                                                 <i class="<?php echo htmlspecialchars($item['icon'] ?? 'fas fa-circle'); ?>"></i>
                                                 <?php echo htmlspecialchars($item['name'] ?? ''); ?>
+                                                <?php if ($hasChildren): ?>
+                                                    <i class="fas fa-chevron-right sidebar-sub-arrow"></i>
+                                                <?php endif; ?>
                                             </a>
+                                            <?php if ($hasChildren): ?>
+                                                <ul class="sidebar-submenu">
+                                                    <?php foreach ($item['children'] as $child): ?>
+                                                        <?php
+                                                        $childFullUrl = rtrim($base . $child['url'], '/');
+                                                        $childActive = ($reqPath === $childFullUrl) || ($childFullUrl !== $base && strpos($reqPath, $childFullUrl . '/') === 0);
+                                                        ?>
+                                                        <li class="sidebar-subitem">
+                                                            <a href="<?php echo $base . htmlspecialchars($child['url'] ?? ''); ?>"
+                                                                class="sidebar-sublink <?php echo $childActive ? 'active' : ''; ?>">
+                                                                <i class="<?php echo htmlspecialchars($child['icon'] ?? 'fas fa-circle'); ?>"></i>
+                                                                <?php echo htmlspecialchars($child['name'] ?? ''); ?>
+                                                            </a>
+                                                        </li>
+                                                    <?php endforeach; ?>
+                                                </ul>
+                                            <?php endif; ?>
                                         </li>
                                     <?php endforeach; ?>
                                 </ul>

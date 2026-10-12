@@ -95,10 +95,10 @@ use App\Services\PortalMenuService;
 <body>
     <?php include __DIR__ . '/../components/impersonation-banner.php'; ?>
     <!-- Mobile Sidebar Toggle -->
-    <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar menu">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar menu">
         <i class="fas fa-bars"></i>
     </button>
-    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
@@ -159,7 +159,7 @@ use App\Services\PortalMenuService;
                 <h1 class="page-title"><?php echo preg_replace('/\s*-\s*APS Dream Home\s*$/', '', $page_title ?? 'Customer Dashboard'); ?></h1>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/user/dashboard" class="text-decoration-none">Home</a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/customer/dashboard" class="text-decoration-none">Home</a></li>
                         <li class="breadcrumb-item active"><?php echo preg_replace('/\s*-\s*APS Dream Home\s*$/', '', $page_title ?? 'Dashboard'); ?></li>
                     </ol>
                 </nav>
@@ -196,30 +196,39 @@ use App\Services\PortalMenuService;
     <script src="<?= BASE_URL ?>/assets/js/bootstrap.bundle.min.js"></script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/frontend-enhancements.js"></script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/customer-pages.js"></script>
-    <script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
-            const overlay = document.querySelector('.sidebar-overlay');
+            const overlay = document.getElementById('sidebarOverlay');
             sidebar.classList.toggle('show');
             overlay.classList.toggle('show');
         }
-        window.addEventListener('resize', function() {
-            if (window.innerWidth > 1024) {
-                const sidebar = document.getElementById('sidebar');
-                const overlay = document.querySelector('.sidebar-overlay');
-                if (sidebar) sidebar.classList.remove('show');
-                if (overlay) overlay.classList.remove('show');
-            }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (toggleBtn) toggleBtn.addEventListener('click', toggleSidebar);
+            if (overlay) overlay.addEventListener('click', toggleSidebar);
+
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 1024) {
+                    const sidebar = document.getElementById('sidebar');
+                    const overlay = document.getElementById('sidebarOverlay');
+                    if (sidebar) sidebar.classList.remove('show');
+                    if (overlay) overlay.classList.remove('show');
+                }
+            });
         });
+
         function checkNotifications() {
             fetch('<?= BASE_URL ?>/api/notifications/unread-count')
                 .then(r => r.json())
-                .then(d => { 
-                    const b = document.getElementById('notifBadge'); 
-                    if(b) { 
-                        b.textContent = d.count || 0; 
-                        b.style.display = (d.count > 0) ? 'inline' : 'none'; 
-                    } 
+                .then(d => {
+                    const b = document.getElementById('notifBadge');
+                    if (b) {
+                        b.textContent = d.count || 0;
+                        b.style.display = (d.count > 0) ? 'inline' : 'none';
+                    }
                 })
                 .catch(() => {});
         }

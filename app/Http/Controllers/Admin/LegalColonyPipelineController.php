@@ -696,6 +696,28 @@ class LegalColonyPipelineController extends AdminController
     // —— RERA Milestone Tracker —————————————————————————————————
 
     /**
+     * RERA milestone tracker — colony list (entry point from sidebar)
+     */
+    public function milestonesList()
+    {
+        $this->requireAdmin();
+
+        $colonies = $this->db->fetchAll(
+            "SELECT c.id, c.name, c.rera_number,
+                    (SELECT COUNT(*) FROM rera_projects rp WHERE rp.rera_number = c.rera_number) as rera_count,
+                    (SELECT COUNT(*) FROM rera_milestones rm INNER JOIN rera_projects rp2 ON rm.project_id = rp2.id WHERE rp2.rera_number = c.rera_number) as milestone_count
+             FROM colonies c
+             WHERE c.deleted_at IS NULL
+             ORDER BY c.name ASC"
+        ) ?: [];
+
+        return $this->render('admin/legal-colony-pipeline/milestones_list', [
+            'page_title' => 'RERA Milestone Tracker',
+            'colonies'   => $colonies,
+        ]);
+    }
+
+    /**
      * RERA milestone tracker for a colony
      */
     public function milestones($colonyId)

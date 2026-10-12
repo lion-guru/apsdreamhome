@@ -385,31 +385,8 @@ $GLOBALS['_html_doc_started'] = true;
             color: #ef4444;
         }
 
-        /* aps-cp-card styles (used by views but defined nowhere in associate layout) */
-        .aps-cp-card {
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-        }
-        .aps-cp-card-header {
-            background: #fff;
-            border-bottom: 1px solid #e2e8f0;
-            padding: 16px 20px;
-        }
-        .aps-cp-card-body {
-            padding: 20px;
-        }
-
-        /* Custom Bootstrap color extensions (not in standard BS5) */
-        .bg-purple { background-color: #6f42c1 !important; }
-        .text-purple { color: #6f42c1 !important; }
-        .bg-gold { background-color: #d4a843 !important; }
-        .text-gold { color: #d4a843 !important; }
-        .bg-teal { background-color: #20c997 !important; }
-        .text-teal { color: #20c997 !important; }
-        .bg-indigo { background-color: #0d9488 !important; }
-        .text-indigo { color: #0d9488 !important; }
+        /* aps-cp-card, sidebar-badge and portal color utilities live in the
+           shared aps-components.css (loaded above) — not redefined here. */
 
         /* Fix text visibility on colored backgrounds */
         .card.bg-success, .card.bg-warning, .card.bg-info, .card.bg-primary {
@@ -433,16 +410,7 @@ $GLOBALS['_html_doc_started'] = true;
             overflow: visible;
         }
 
-        /* Sidebar badge */
-        .sidebar-badge {
-            background: rgba(255, 255, 255, 0.2);
-            color: #fff;
-            font-size: 0.7rem;
-            padding: 2px 8px;
-            border-radius: 10px;
-            margin-left: auto;
-            font-weight: 600;
-        }
+        /* Sidebar badge comes from shared aps-components.css */
 
         /* Collapsible section toggle */
         .sidebar-section {
@@ -508,12 +476,12 @@ $GLOBALS['_html_doc_started'] = true;
 <body>
     <?php include __DIR__ . '/../components/impersonation-banner.php'; ?>
     <!-- Sidebar Toggle Button (Mobile) -->
-    <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar" aria-expanded="false">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
         <i class="fas fa-bars"></i>
     </button>
 
     <!-- Sidebar Overlay -->
-    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
@@ -557,7 +525,7 @@ $GLOBALS['_html_doc_started'] = true;
             if (empty($section['items'])) continue;
             $isCollapsed = ($activeSection !== '' && $activeSection !== $section['name']);
         ?>
-        <div class="sidebar-section <?= $isCollapsed ? 'collapsed' : '' ?>" onclick="toggleSection(this)">
+        <div class="sidebar-section <?= $isCollapsed ? 'collapsed' : '' ?>" data-section-toggle>
             <span><?= htmlspecialchars(__($section['name'], null, $section['name'])) ?></span>
             <i class="fas fa-chevron-down section-toggle"></i>
         </div>
@@ -595,10 +563,10 @@ $GLOBALS['_html_doc_started'] = true;
                 </nav>
             </div>
             <div class="header-actions">
-                <a href="<?= BASE_URL ?>/user/notifications" class="btn-icon" title="Notifications">
+                <a href="<?= BASE_URL ?>/associate/settings" class="btn-icon" title="Notifications">
                     <i class="fas fa-bell"></i>
                 </a>
-                <a href="<?= BASE_URL ?>/user/messages" class="btn-icon" title="Messages">
+                <a href="<?= BASE_URL ?>/associate/team" class="btn-icon" title="Messages">
                     <i class="fas fa-envelope"></i>
                 </a>
                 <a href="<?= BASE_URL ?>/associate/profile" class="btn-icon" title="My Profile">
@@ -617,7 +585,7 @@ $GLOBALS['_html_doc_started'] = true;
     <script src="<?= BASE_URL ?>/assets/js/bootstrap.bundle.min.js"></script>
 
     <!-- Sidebar Toggle Script -->
-    <script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.querySelector('.sidebar-overlay');
@@ -627,16 +595,39 @@ $GLOBALS['_html_doc_started'] = true;
 
         function toggleSection(el) {
             el.classList.toggle('collapsed');
-            localStorage.setItem('sidebar_section_' + el.querySelector('span').textContent, el.classList.contains('collapsed') ? '1' : '0');
+            try { sessionStorage.setItem('sidebar_section_' + el.querySelector('span').textContent, el.classList.contains('collapsed') ? '1' : '0'); } catch (e) { /* ignore */ }
         }
 
-        // Restore section states from localStorage
+        // Restore section states from sessionStorage (per-tab isolation)
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.sidebar-section').forEach(function(sec) {
-                var key = 'sidebar_section_' + sec.querySelector('span').textContent;
-                var val = localStorage.getItem(key);
-                if (val === '1') sec.classList.add('collapsed');
+                try {
+                    var key = 'sidebar_section_' + sec.querySelector('span').textContent;
+                    var val = sessionStorage.getItem(key);
+                    if (val === '1') sec.classList.add('collapsed');
+                } catch (e) { /* ignore */ }
             });
+            var toggleBtn = document.getElementById('sidebarToggle');
+            var overlay = document.getElementById('sidebarOverlay');
+            if (toggleBtn) toggleBtn.addEventListener('click', toggleSidebar);
+            if (overlay) overlay.addEventListener('click', toggleSidebar);
+            document.querySelectorAll('.sidebar-section').forEach(function(sec) {
+                sec.addEventListener('click', function() { toggleSection(sec); });
+            });
+
+            // AI chat widget bindings (CSP-safe, no inline onclick)
+            var chatToggle = document.getElementById('chatToggle');
+            var chatClose = document.getElementById('chatClose');
+            var chatSend = document.getElementById('assocChatSend');
+            var chatInput = document.getElementById('assocChatInput');
+            if (chatToggle && typeof toggleAssociateChat === 'function') chatToggle.addEventListener('click', toggleAssociateChat);
+            if (chatClose && typeof toggleAssociateChat === 'function') chatClose.addEventListener('click', toggleAssociateChat);
+            if (chatSend && typeof sendAssociateChat === 'function') chatSend.addEventListener('click', sendAssociateChat);
+            if (chatInput && typeof sendAssociateChat === 'function') {
+                chatInput.addEventListener('keypress', function(event) {
+                    if (event.key === 'Enter') sendAssociateChat();
+                });
+            }
         });
 
         // Close sidebar on window resize if open
@@ -652,7 +643,7 @@ $GLOBALS['_html_doc_started'] = true;
 
     <!-- Floating AI Chat Widget -->
     <div id="aiChatWidget" >
-        <button id="chatToggle" onclick="toggleAssociateChat()" aria-label="Open APS Assistant chat">
+        <button id="chatToggle" aria-label="Open APS Assistant chat">
             <i class="fas fa-robot" aria-hidden="true"></i>
         </button>
         <div id="chatPanel" >
@@ -664,7 +655,7 @@ $GLOBALS['_html_doc_started'] = true;
                         <div >Property &amp; MLM Help</div>
                     </div>
                 </div>
-                <button onclick="toggleAssociateChat()" aria-label="Close chat"><i class="fas fa-times" aria-hidden="true"></i></button>
+                <button id="chatClose" aria-label="Close chat"><i class="fas fa-times" aria-hidden="true"></i></button>
             </div>
             <div id="assocChatMessages" >
                 <div >
@@ -672,8 +663,8 @@ $GLOBALS['_html_doc_started'] = true;
                 </div>
             </div>
             <div >
-                <input type="text" id="assocChatInput" placeholder="Type a message..." onkeypress="if(event.key==='Enter')sendAssociateChat()">
-                <button onclick="sendAssociateChat()" aria-label="Send message"><i class="fas fa-paper-plane" aria-hidden="true"></i></button>
+                <input type="text" id="assocChatInput" placeholder="Type a message...">
+                <button id="assocChatSend" aria-label="Send message"><i class="fas fa-paper-plane" aria-hidden="true"></i></button>
             </div>
         </div>
     </div>
@@ -736,10 +727,10 @@ $GLOBALS['_html_doc_started'] = true;
                     </div>
                 </div>
                 <div class="modal-footer" style="border-top: 2px solid #d4af37; background: #f8f9fa;">
-                    <button type="button" class="btn btn-outline-danger px-3" onclick="handleConsentDecline()" id="consentDeclineBtn">
+                    <button type="button" class="btn btn-outline-danger px-3" id="consentDeclineBtn">
                         <i class="fas fa-times me-1"></i>I Decline
                     </button>
-                    <button type="button" class="btn btn-warning fw-bold px-4" onclick="handleConsentAccept()" id="consentAcceptBtn">
+                    <button type="button" class="btn btn-warning fw-bold px-4" id="consentAcceptBtn">
                         <i class="fas fa-gavel me-1"></i>I Accept the Code of Conduct
                     </button>
                 </div>
@@ -822,6 +813,14 @@ $GLOBALS['_html_doc_started'] = true;
                 window.location.href = '<?= BASE_URL ?>/associate/logout';
             }
         };
+
+        // Bind consent buttons (CSP-safe, no inline onclick)
+        document.addEventListener('DOMContentLoaded', function() {
+            var declineBtn = document.getElementById('consentDeclineBtn');
+            var acceptBtn = document.getElementById('consentAcceptBtn');
+            if (declineBtn) declineBtn.addEventListener('click', function() { window.handleConsentDecline(); });
+            if (acceptBtn) acceptBtn.addEventListener('click', function() { window.handleConsentAccept(); });
+        });
     })();
     </script>
     <!-- Customer & Portal Component Library JS -->

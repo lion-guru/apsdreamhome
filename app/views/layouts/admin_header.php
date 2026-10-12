@@ -197,8 +197,8 @@ try {
         </ul>
     </aside>
 
-    <!-- Sidebar Overlay for Mobile -->
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="document.getElementById('sidebar').classList.remove('show'); this.classList.remove('show');"></div>
+    <!-- Sidebar Overlay for Mobile (close handled by document click listener below) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <main class="main-content">
         <nav class="top-navbar">
@@ -231,7 +231,7 @@ try {
     </main>
 
     <script src="<?= BASE_URL ?>/assets/js/bootstrap.bundle.min.js"></script>
-    <script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         document.getElementById('toggleSidebar')?.addEventListener('click', function() {
             document.getElementById('sidebar').classList.toggle('show');
             document.getElementById('sidebarOverlay')?.classList.toggle('show');

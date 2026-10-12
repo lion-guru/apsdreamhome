@@ -2651,6 +2651,16 @@ body {
   font-size: 0.7rem;
 }
 
+/* Custom Bootstrap color extensions (shared portal palette) */
+.bg-purple { background-color: #6f42c1 !important; }
+.text-purple { color: #6f42c1 !important; }
+.bg-gold { background-color: #d4a843 !important; }
+.text-gold { color: #d4a843 !important; }
+.bg-teal { background-color: #20c997 !important; }
+.text-teal { color: #20c997 !important; }
+.bg-indigo { background-color: #0d9488 !important; }
+.text-indigo { color: #0d9488 !important; }
+
 /* Main Content */
 .main-content {
   margin-left: 260px;

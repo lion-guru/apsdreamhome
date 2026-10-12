@@ -255,19 +255,19 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
     <section class="navigation-section">
         <div class="container">
             <div class="quick-actions" data-aos="fade-up">
-                <h2 >ðŸš€ <?php echo __('nav_quick_start', 'Quick Start'); ?></h2>
+                <h2>🚀 <?php echo __('nav_quick_start', 'Quick Start'); ?></h2>
                 <div class="text-center">
-                    <a href="index_improved.php" class="action-btn">
+                    <a href="<?= BASE_URL ?>/" class="action-btn">
                         <i class="fas fa-home me-2"></i><?php echo __('nav_go_to_homepage', 'Go to Homepage'); ?>
                     </a>
-                    <a href="admin/" class="action-btn secondary">
+                    <a href="<?= BASE_URL ?>/admin/dashboard" class="action-btn secondary">
                         <i class="fas fa-cog me-2"></i><?php echo __('nav_admin_panel', 'Admin Panel'); ?>
                     </a>
                 </div>
             </div>
 
             <!-- Main Pages -->
-            <h2 class="category-title" data-aos="fade-up">ðŸ�  <?php echo __('nav_main_pages', 'Main Pages'); ?></h2>
+            <h2 class="category-title" data-aos="fade-up">🏠 <?php echo __('nav_main_pages', 'Main Pages'); ?></h2>
             <div class="row mb-5">
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
                     <div class="nav-card">
@@ -281,7 +281,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
                         <p class="nav-description">
                             <?php echo __('nav_homepage_desc', 'Enhanced homepage with company showcase, team presentation, and featured properties'); ?>
                         </p>
-                        <a href="index_improved.php" class="nav-link">
+                        <a href="<?= BASE_URL ?>/" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_visit_homepage', 'Visit Homepage'); ?>
                         </a>
                     </div>
@@ -317,7 +317,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
                         <p class="nav-description">
                             <?php echo __('nav_about_desc', 'Learn about APS Dream Homes, our team, and our commitment to excellence'); ?>
                         </p>
-                        <a href="about.php" class="nav-link">
+                        <a href="<?= BASE_URL ?>/about" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_about_company', 'About Company'); ?>
                         </a>
                     </div>
@@ -335,7 +335,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
                         <p class="nav-description">
                             <?php echo __('nav_contact_desc', 'Get in touch with us for inquiries, appointments, and property consultations'); ?>
                         </p>
-                        <a href="contact.php" class="nav-link">
+                        <a href="<?= BASE_URL ?>/contact" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i><?php echo __('contact_us', 'Contact Us'); ?>
                         </a>
                     </div>
@@ -353,7 +353,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
                         <p class="nav-description">
                             <?php echo __('nav_careers_desc', 'Join our team! Explore career opportunities and apply for positions'); ?>
                         </p>
-                        <a href="careers.php" class="nav-link">
+                        <a href="<?= BASE_URL ?>/careers" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_view_careers', 'View Careers'); ?>
                         </a>
                     </div>
@@ -371,7 +371,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
                         <p class="nav-description">
                             <?php echo __('nav_faq_desc', 'Find answers to frequently asked questions about our services and properties'); ?>
                         </p>
-                        <a href="faq.php" class="nav-link">
+                        <a href="<?= BASE_URL ?>/faq" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_view_faq', 'View FAQ'); ?>
                         </a>
                     </div>
@@ -379,7 +379,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
             </div>
 
             <!-- Feature Pages -->
-            <h2 class="category-title" data-aos="fade-up">â­� <?php echo __('nav_feature_pages', 'Feature Pages'); ?></h2>
+            <h2 class="category-title" data-aos="fade-up">⭐ <?php echo __('nav_feature_pages', 'Feature Pages'); ?></h2>
             <div class="row mb-5">
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
                     <div class="nav-card">
@@ -393,7 +393,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
                         <p class="nav-description">
                             <?php echo __('nav_reviews_desc', 'Read genuine customer reviews and testimonials about our services'); ?>
                         </p>
-                        <a href="customer-reviews.php" class="nav-link">
+                        <a href="<?= BASE_URL ?>/customer-reviews" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_read_reviews', 'Read Reviews'); ?>
                         </a>
                     </div>
@@ -411,7 +411,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
                         <p class="nav-description">
                             <?php echo __('nav_blog_desc', 'Read our latest articles, tips, and insights about real estate'); ?>
                         </p>
-                        <a href="blog.php" class="nav-link">
+                        <a href="<?= BASE_URL ?>/blog" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_read_blog', 'Read Blog'); ?>
                         </a>
                     </div>
@@ -429,7 +429,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
                         <p class="nav-description">
                             <?php echo __('nav_services_desc', 'Explore our comprehensive real estate services and solutions'); ?>
                         </p>
-                        <a href="services.php" class="nav-link">
+                        <a href="<?= BASE_URL ?>/services" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_our_services', 'Our Services'); ?>
                         </a>
                     </div>
@@ -447,7 +447,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
                         <p class="nav-description">
                             <?php echo __('nav_projects_desc', 'View our completed and ongoing real estate projects'); ?>
                         </p>
-                        <a href="projects.php" class="nav-link">
+                        <a href="<?= BASE_URL ?>/projects" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_view_projects', 'View Projects'); ?>
                         </a>
                     </div>
@@ -465,7 +465,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
                         <p class="nav-description">
                             <?php echo __('nav_team_desc', 'Meet our dedicated team of real estate professionals'); ?>
                         </p>
-                        <a href="team.php" class="nav-link">
+                        <a href="<?= BASE_URL ?>/team" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_our_team', 'Our Team'); ?>
                         </a>
                     </div>
@@ -483,7 +483,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
                         <p class="nav-description">
                             <?php echo __('nav_enhanced_desc', 'Premium features inspired by market leaders with modern amenities'); ?>
                         </p>
-                        <a href="enhanced-features.php" class="nav-link">
+                        <a href="<?= BASE_URL ?>/projects" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_view_features', 'View Features'); ?>
                         </a>
                     </div>
@@ -501,7 +501,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
                         <p class="nav-description">
                             <?php echo __('nav_competitor_desc', 'Market comparison and competitive advantages analysis'); ?>
                         </p>
-                        <a href="competitor-analysis.php" class="nav-link">
+                        <a href="<?= BASE_URL ?>/compare" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_view_analysis', 'View Analysis'); ?>
                         </a>
                     </div>
@@ -509,7 +509,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
             </div>
 
             <!-- Marketing Pages -->
-            <h2 class="category-title" data-aos="fade-up">ðŸ"Š <?php echo __('nav_marketing_admin', 'Marketing & Admin'); ?></h2>
+            <h2 class="category-title" data-aos="fade-up">📠 <?php echo __('nav_marketing_admin', 'Marketing & Admin'); ?></h2>
             <div class="row mb-5">
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
                     <div class="nav-card">
@@ -523,7 +523,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
                         <p class="nav-description">
                             <?php echo __('nav_google_desc', 'Complete setup guide for Google Business Profile optimization'); ?>
                         </p>
-                        <a href="google-business-profile.php" class="nav-link">
+                        <a href="<?= BASE_URL ?>/contact" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_setup_guide', 'Setup Guide'); ?>
                         </a>
                     </div>
@@ -541,7 +541,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
                         <p class="nav-description">
                             <?php echo __('nav_marketing_desc', 'Track your marketing performance and online presence'); ?>
                         </p>
-                        <a href="marketing-dashboard.php" class="nav-link">
+                        <a href="<?= BASE_URL ?>/admin/dashboard" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_view_dashboard', 'View Dashboard'); ?>
                         </a>
                     </div>
@@ -559,7 +559,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
                         <p class="nav-description">
                             <?php echo __('nav_implementation_desc', 'Track complete implementation status and next steps'); ?>
                         </p>
-                        <a href="online-presence-status.php" class="nav-link">
+                        <a href="<?= BASE_URL ?>/sitemap" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_view_status', 'View Status'); ?>
                         </a>
                     </div>
@@ -577,7 +577,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
                         <p class="nav-description">
                             <?php echo __('nav_admin_desc', 'Access admin dashboard for content management'); ?>
                         </p>
-                        <a href="admin/" class="nav-link">
+                        <a href="<?= BASE_URL ?>/admin/dashboard" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_admin_login', 'Admin Login'); ?>
                         </a>
                     </div>
@@ -595,7 +595,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
                         <p class="nav-description">
                             <?php echo __('nav_sitemap_desc', 'XML sitemap for search engine optimization'); ?>
                         </p>
-                        <a href="sitemap.xml.php" class="nav-link">
+                        <a href="<?= BASE_URL ?>/sitemap.xml" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_view_sitemap', 'View Sitemap'); ?>
                         </a>
                     </div>
@@ -613,7 +613,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
                         <p class="nav-description">
                             <?php echo __('nav_robots_desc', 'Search engine crawling instructions'); ?>
                         </p>
-                        <a href="robots.txt" class="nav-link">
+                        <a href="<?= BASE_URL ?>/sitemap" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_view_robots', 'View Robots'); ?>
                         </a>
                     </div>
@@ -622,7 +622,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
 
             <!-- User Section -->
             <div class="text-center mt-5" data-aos="fade-up">
-                <h2 >ðŸ'¤ <?php echo __('nav_user_section', 'User Section'); ?></h2>
+                <h2>👤 <?php echo __('nav_user_section', 'User Section'); ?></h2>
                 <div class="d-flex justify-content-center flex-wrap">
                     <a href="<?= BASE_URL ?>/login" class="action-btn">
                         <i class="fas fa-sign-in-alt me-2"></i><?php echo __('nav_login', 'Login'); ?>
@@ -642,7 +642,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
     <script src="<?= BASE_URL ?>/assets/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
-    <script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         // Initialize AOS
         AOS.init({
             duration: 1000,

@@ -187,17 +187,17 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
                 <h4>APS AI Assistant</h4>
                 <small><span class="cw-dot"></span> Online &middot; Hindi / English</small>
             </div>
-            <button class="cw-close" onclick="cwToggle()" aria-label="Close"><i class="fas fa-times"></i></button>
+            <button class="cw-close" id="cwCloseBtn" aria-label="Close"><i class="fas fa-times"></i></button>
         </div>
         <div class="cw-messages" id="cwMessages">
             <!-- Greeting changes based on role -->
         </div>
         <div class="cw-input-area">
-            <button class="cw-voice-btn" id="cwVoiceBtn" onclick="cwToggleVoice()" title="Voice Mode (speak in Hindi/English)">
+            <button class="cw-voice-btn" id="cwVoiceBtn" title="Voice Mode (speak in Hindi/English)">
                 <i class="fas fa-microphone"></i>
             </button>
             <input type="text" class="cw-input" id="cwInput" placeholder="Type your message..." autocomplete="off">
-            <button class="cw-send" id="cwSendBtn" onclick="cwSend()"><i class="fas fa-paper-plane"></i></button>
+            <button class="cw-send" id="cwSendBtn"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 
@@ -205,17 +205,17 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
     <div class="cw-toggles">
         <a href="https://wa.me/<?= $waPhone ?>?text=<?= urlencode('Hello APS Dream Homes! I would like to know about your properties.') ?>"
            target="_blank" class="cw-toggle" id="cwWhatsAppToggle"
-           onclick="cwTrackWhatsApp('main_button')"
+           data-cw-track="main_button"
            title="Chat on WhatsApp">
             <i class="fab fa-whatsapp"></i>
         </a>
         <a href="tel:<?= $callDigits ?>"
            class="cw-toggle" id="cwCallToggle"
-           onclick="if(typeof ga==='function')ga('send','event','CTA','click','header_call_button');if(window.dataLayer)dataLayer.push({event:'cta_click',cta:'header_call_button',source:'chat_widget'})"
+           data-cw-track-call="header_call_button"
            title="Call Now">
             <i class="fas fa-phone-alt"></i>
         </a>
-        <button class="cw-toggle" id="cwChatToggle" onclick="cwToggle()">
+        <button class="cw-toggle" id="cwChatToggle">
             <span class="cw-pulse"></span>
             <i class="fas fa-comment-dots"></i>
             <span class="cw-badge" id="cwBadge">1</span>
@@ -500,8 +500,10 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
             var c = document.getElementById('cwMessages');
             var f = document.createElement('div');
             f.className = 'cw-lead-form';
-            f.innerHTML = '<input type="text" id="cwLeadName" placeholder="Your Name" value="' + (cwUserName||'') + '"><input type="tel" id="cwLeadPhone" placeholder="Mobile Number"><button onclick="cwSubmitLead()">Request Callback</button>';
+            f.innerHTML = '<input type="text" id="cwLeadName" placeholder="Your Name" value="' + (cwUserName||'') + '"><input type="tel" id="cwLeadPhone" placeholder="Mobile Number"><button id="cwLeadSubmit">Request Callback</button>';
             c.appendChild(f);
+            var leadBtn = document.getElementById('cwLeadSubmit');
+            if (leadBtn) leadBtn.addEventListener('click', function() { window.cwSubmitLead(); });
             c.scrollTop = c.scrollHeight;
         }, 700);
     };
@@ -606,9 +608,9 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
             var btn = document.createElement('button');
             btn.className = 'cw-chip';
             // Style based on chip type
-            if (s.indexOf('âœ…') !== -1 || s.indexOf('Confirm') !== -1) btn.className += ' cw-chip-confirm';
-            else if (s.indexOf('â�Œ') !== -1 || s.indexOf('Cancel') !== -1) btn.className += ' cw-chip-cancel';
-            else if (s.indexOf('âœ�ï¸�') !== -1 || s.indexOf('Edit') !== -1) btn.className += ' cw-chip-action';
+            if (s.indexOf('✓') !== -1 || s.indexOf('Confirm') !== -1) btn.className += ' cw-chip-confirm';
+            else if (s.indexOf('✗') !== -1 || s.indexOf('Cancel') !== -1) btn.className += ' cw-chip-cancel';
+            else if (s.indexOf('✓️') !== -1 || s.indexOf('Edit') !== -1) btn.className += ' cw-chip-action';
             btn.textContent = s;
             btn.onclick = function() {
                 document.getElementById('cwInput').value = s;
@@ -654,8 +656,8 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         if (type === 'bot') {
             var uid = 'fb_' + Math.random().toString(36).substr(2,6);
             fb = '<div class="cw-feedback" id="' + uid + '">'
-                + '<button class="cw-fb-btn" title="Helpful" onclick="cwFeedback(this,1)"><i class="fas fa-thumbs-up"></i></button>'
-                + '<button class="cw-fb-btn cw-fb-down" title="Not helpful" onclick="cwFeedback(this,0)"><i class="fas fa-thumbs-down"></i></button>'
+                + '<button class="cw-fb-btn" title="Helpful" data-cw-feedback="1"><i class="fas fa-thumbs-up"></i></button>'
+                + '<button class="cw-fb-btn cw-fb-down" title="Not helpful" data-cw-feedback="0"><i class="fas fa-thumbs-down"></i></button>'
                 + '</div>';
         }
         d.innerHTML = av + '<div class="cw-bubble">' + cwLinkify(text.replace(/\n/g,'<br>')) + '</div>' + fb;
@@ -703,5 +705,39 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
             }).catch(function(){});
         } catch (e) { console.error("Error:", e); }
     };
+
+    // CSP-safe event bindings (no inline onclick anywhere in this widget)
+    function cwBindStatic() {
+        var closeBtn = document.getElementById('cwCloseBtn');
+        var voiceBtn = document.getElementById('cwVoiceBtn');
+        var sendBtn = document.getElementById('cwSendBtn');
+        var chatToggle = document.getElementById('cwChatToggle');
+        var waToggle = document.getElementById('cwWhatsAppToggle');
+        var callToggle = document.getElementById('cwCallToggle');
+        var input = document.getElementById('cwInput');
+        if (closeBtn) closeBtn.addEventListener('click', function() { window.cwToggle(); });
+        if (voiceBtn) voiceBtn.addEventListener('click', function() { window.cwToggleVoice(); });
+        if (sendBtn) sendBtn.addEventListener('click', function() { window.cwSend(); });
+        if (chatToggle) chatToggle.addEventListener('click', function() { window.cwToggle(); });
+        if (waToggle) waToggle.addEventListener('click', function() { window.cwTrackWhatsApp('main_button'); });
+        if (callToggle) callToggle.addEventListener('click', function() {
+            if (typeof ga === 'function') ga('send', 'event', 'CTA', 'click', 'header_call_button');
+            if (window.dataLayer) dataLayer.push({event: 'cta_click', cta: 'header_call_button', source: 'chat_widget'});
+        });
+        if (input) input.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') window.cwSend();
+        });
+        // Delegated handler for dynamically-added feedback buttons
+        var msgs = document.getElementById('cwMessages');
+        if (msgs) msgs.addEventListener('click', function(event) {
+            var fbBtn = event.target.closest('[data-cw-feedback]');
+            if (fbBtn) window.cwFeedback(fbBtn, parseInt(fbBtn.getAttribute('data-cw-feedback'), 10));
+        });
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', cwBindStatic);
+    } else {
+        cwBindStatic();
+    }
 })();
 </script>

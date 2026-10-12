@@ -86,10 +86,10 @@ $GLOBALS['_html_doc_started'] = true;
 <body>
     <?php include __DIR__ . '/../components/impersonation-banner.php'; ?>
     <!-- Mobile Sidebar Toggle -->
-    <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar menu">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar menu">
         <i class="fas fa-bars"></i>
     </button>
-    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- Employee Sidebar -->
     <aside class="sidebar" id="sidebar">
@@ -159,7 +159,7 @@ $GLOBALS['_html_doc_started'] = true;
                 <a href="<?= BASE_URL ?>/employee/notifications" class="btn-icon" title="Notifications">
                     <i class="fas fa-bell"></i>
                 </a>
-                <a href="<?= BASE_URL ?>/user/messages" class="btn-icon" title="Messages">
+                <a href="<?= BASE_URL ?>/employee/notifications" class="btn-icon" title="Messages">
                     <i class="fas fa-envelope"></i>
                 </a>
                 <div class="dropdown">
@@ -170,7 +170,7 @@ $GLOBALS['_html_doc_started'] = true;
                         <li><a class="dropdown-item" href="<?= BASE_URL ?>/employee/profile"><i class="fas fa-user me-2 text-muted"></i>My Profile</a></li>
                         <li><a class="dropdown-item" href="<?= BASE_URL ?>/employee/attendance"><i class="fas fa-clock me-2 text-muted"></i>Attendance</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="<?= BASE_URL ?>/auth/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        <li><a class="dropdown-item text-danger" href="<?= BASE_URL ?>/employee/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                     </ul>
                 </div>
             </div>
@@ -186,17 +186,23 @@ $GLOBALS['_html_doc_started'] = true;
     <script src="<?= BASE_URL ?>/assets/js/bootstrap.bundle.min.js"></script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/frontend-enhancements.js"></script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/customer-pages.js"></script>
-    <script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
-            const overlay = document.querySelector('.sidebar-overlay');
+            const overlay = document.getElementById('sidebarOverlay');
             sidebar.classList.toggle('show');
             overlay.classList.toggle('show');
         }
+        document.addEventListener('DOMContentLoaded', function() {
+            var toggleBtn = document.getElementById('sidebarToggle');
+            var overlay = document.getElementById('sidebarOverlay');
+            if (toggleBtn) toggleBtn.addEventListener('click', toggleSidebar);
+            if (overlay) overlay.addEventListener('click', toggleSidebar);
+        });
         window.addEventListener('resize', function() {
             if (window.innerWidth > 1024) {
                 const sidebar = document.getElementById('sidebar');
-                const overlay = document.querySelector('.sidebar-overlay');
+                const overlay = document.getElementById('sidebarOverlay');
                 if (sidebar) sidebar.classList.remove('show');
                 if (overlay) overlay.classList.remove('show');
             }

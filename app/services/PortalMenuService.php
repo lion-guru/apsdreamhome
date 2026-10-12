@@ -119,27 +119,42 @@ class PortalMenuService
 
     private function customerItems(): array
     {
+        // NOTE: /user/* routes (UserController/DashboardController) are the canonical
+        // handlers for properties/inquiries/favorites/wallet/referral/etc. Only use
+        // /customer/* URLs where a matching route actually exists in routes/web.php.
         return [
-            $this->item('dashboard', 'Main', 'Dashboard', '/user/dashboard', 'fas fa-tachometer-alt'),
+            $this->item('dashboard', 'Main', 'Dashboard', '/customer/dashboard', 'fas fa-tachometer-alt'),
             $this->item('properties', 'Main', 'My Properties', '/user/properties', 'fas fa-building', $this->countTable('user_properties', 'user_id')),
             $this->item('inquiries', 'Main', 'My Inquiries', '/user/inquiries', 'fas fa-envelope-open-text', $this->countTable('inquiries', 'user_id')),
             $this->item('threads', 'Main', 'Message Threads', '/user/inquiries/threads', 'fas fa-comments'),
-            $this->item('bookings', 'Main', 'My Bookings', '/user/bookings', 'fas fa-file-contract', $this->countTable('bookings', 'user_id')),
+            $this->item('bookings', 'Main', 'My Bookings', '/customer/bookings', 'fas fa-file-contract', $this->countTable('bookings', 'user_id')),
             $this->item('favorites', 'Main', 'Favorites', '/user/favorites', 'fas fa-heart', $this->countTable('favorites', 'user_id')),
             $this->item('saved-searches', 'Main', 'Saved Searches', '/user/saved-searches', 'fas fa-bookmark', $this->countTable('saved_searches', 'user_id')),
 
             // Finance
-            $this->item('emi-tracker', 'Finance', 'EMI Tracker', '/user/emi-tracker', 'fas fa-calendar-check'),
-            $this->item('payment-history', 'Finance', 'Payment History', '/user/payment-history', 'fas fa-receipt'),
-            $this->item('site-visits', 'Finance', 'Site Visits', '/user/site-visits', 'fas fa-map-marker-alt'),
+            $this->item('passbook', 'Finance', 'Payment Passbook', '/customer/passbook', 'fas fa-book'),
+            $this->item('emi-tracker', 'Finance', 'EMI Tracker', '/customer/emi-tracker', 'fas fa-calendar-check'),
+            $this->item('payment-history', 'Finance', 'Payment History', '/customer/payment-history', 'fas fa-receipt'),
+            $this->item('site-visits', 'Finance', 'Site Visits', '/customer/site-visits', 'fas fa-map-marker-alt'),
             $this->item('wallet', 'Finance', 'My Wallet', '/auth/wallet', 'fas fa-wallet'),
             $this->item('wallet-packages', 'Finance', 'Activate Wallet', '/auth/wallet/packages', 'fas fa-bolt'),
+            $this->item('foreclosure', 'Finance', 'Foreclosure', '/customer/foreclosure', 'fas fa-gavel'),
+            $this->item('maintenance', 'Finance', 'Maintenance Dues', '/customer/maintenance-dues', 'fas fa-tools'),
 
             // Support
-            $this->item('tickets', 'Support', 'Support Tickets', '/user/tickets', 'fas fa-life-ring', $this->countTable('support_tickets', 'user_id')),
+            $this->item('tickets', 'Support', 'Support Tickets', '/customer/tickets', 'fas fa-life-ring', $this->countTable('support_tickets', 'user_id')),
             $this->item('referral', 'Support', 'Refer & Earn', '/user/referral', 'fas fa-user-friends'),
             $this->item('insurance', 'Support', 'Insurance', '/user/insurance', 'fas fa-shield-alt'),
             $this->item('investment', 'Support', 'Investments', '/user/investment-plans', 'fas fa-chart-line'),
+
+            // Resident & Township Services
+            $this->item('documents', 'Resident Services', 'My Documents', '/customer/documents', 'fas fa-folder-open'),
+            $this->item('grievances', 'Resident Services', 'Township Grievances', '/customer/township-grievances', 'fas fa-tools'),
+            $this->item('construction', 'Resident Services', 'Construction Permit NOC', '/customer/construction-approvals', 'fas fa-drafting-compass'),
+            $this->item('solar', 'Resident Services', 'PM Surya Ghar Solar', '/customer/solar-calculator', 'fas fa-solar-panel'),
+            $this->item('registry', 'Resident Services', 'SRO Registry Slot', '/customer/registry-appointments', 'fas fa-stamp'),
+            $this->item('plot-transfers', 'Resident Services', 'Plot Transfers', '/customer/plot-transfers', 'fas fa-exchange-alt'),
+            $this->item('nri-desk', 'Resident Services', 'NRI Desk', '/customer/nri-desk', 'fas fa-globe'),
 
             // Explore
             $this->item('browse', 'Explore', 'Browse Properties', '/properties', 'fas fa-search'),
@@ -164,6 +179,7 @@ class PortalMenuService
 
             // Earnings & Finance
             $this->item('commissions', 'Earnings', 'Commissions', '/associate/commissions', 'fas fa-rupee-sign'),
+            $this->item('advances', 'Earnings', 'Festival Advances', '/associate/advances', 'fas fa-hand-holding-usd'),
             $this->item('offers', 'Earnings', 'Offers', '/associate/offers', 'fas fa-tags'),
             $this->item('wallet', 'Earnings', 'Wallet', '/associate/wallet', 'fas fa-wallet'),
             $this->item('withdraw', 'Earnings', 'Withdraw', '/associate/wallet/withdraw', 'fas fa-money-bill-wave'),
