@@ -159,7 +159,7 @@ use App\Services\PortalMenuService;
                 <h1 class="page-title"><?php echo preg_replace('/\s*-\s*APS Dream Home\s*$/', '', $page_title ?? 'Customer Dashboard'); ?></h1>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/customer/dashboard" class="text-decoration-none">Home</a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/user/dashboard" class="text-decoration-none">Home</a></li>
                         <li class="breadcrumb-item active"><?php echo preg_replace('/\s*-\s*APS Dream Home\s*$/', '', $page_title ?? 'Dashboard'); ?></li>
                     </ol>
                 </nav>

@@ -1351,6 +1351,10 @@ $router->post('/employee/legal/compliance', 'Employee\\LegalAdvisorController@up
 $router->post('/employee/legal/dispute', 'Employee\\LegalAdvisorController@handleDispute');
 $router->post('/employee/legal/template', 'Employee\\LegalAdvisorController@createDocumentTemplate');
 $router->post('/employee/legal/report', 'Employee\\LegalAdvisorController@generateLegalReport');
+$router->get('/employee/legal/quick-action-hub', 'Employee\\LegalAdvisorController@getQuickActionHub');
+$router->get('/employee/legal/quick-action-hub/counts', 'Employee\\LegalAdvisorController@getQuickActionHubCountsAjax');
+$router->post('/employee/legal/verify-stamp-paper', 'Employee\\LegalAdvisorController@verifyStampPaper');
+$router->post('/employee/legal/process-cancellation', 'Employee\\LegalAdvisorController@processCancellationSettlement');
 
 $router->get('/employee/telecalling-dashboard', 'Employee\\TelecallingController@dashboard');
 $router->post('/employee/telecalling/log-call', 'Employee\\TelecallingController@logCall');
@@ -6075,6 +6079,17 @@ $router->get('/api/legal/unaccepted', 'App\\Http\\Controllers\\Front\\LegalDocum
 $router->get('/user/passbook', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
 $router->post('/user/pay-emi/upi-qr', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@generateUpiQr');
 $router->get('/user/receipt/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadReceipt');
+// NOTE (S224): these 8 complete the /customer/* → /user/* redirect targets;
+// without them the redirects 404. Handlers verified existing in
+// CustomerPassbookController (no new code).
+$router->get('/user/documents/download/allotment/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadAllotment');
+$router->get('/user/documents/download/passbook/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadPassbook');
+$router->get('/user/documents/download/agreement/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadAgreement');
+$router->get('/user/documents/download/title-certificate/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadTitleCertificate');
+$router->get('/user/passbook/{booking_id}/statement-pdf', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@statementPdf');
+$router->post('/user/passbook/{booking_id}/prepay-simulate', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@simulatePrepay');
+$router->post('/user/bookings/{id}/nominee', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@updateNominee');
+$router->get('/user/bookings/{id}/nominee-sheet', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@nomineeSheet');
 
 // ============================================================
 // CUSTOMER LIVE REGISTRY & HANDOVER TRACKER (Module 1)
