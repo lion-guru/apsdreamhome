@@ -612,6 +612,16 @@ $router->post('/user/notification-preferences', 'Front\\NotificationPreferenceCo
 $router->get('/api/user/notification-preferences', 'Front\\NotificationPreferenceController@getPreferences');
 $router->get('/user/favorites', 'Front\\UserController@favorites');
 
+// Installments list (missing route)
+$router->get('/user/installments', 'Front\\UserController@installments');
+
+// Documents (CustomerPassbookController@documents exists)
+$router->get('/user/documents', 'Front\\CustomerPassbookController@documents');
+
+// Wallet
+$router->get('/user/wallet', 'Front\\CustomerPassbookController@wallet');
+$router->get('/user/wallet/packages', 'Front\\CustomerPassbookController@walletPackages');
+
 // Saved Searches (Phase 56 - Advanced Search Feature)
 $router->get('/user/saved-searches', 'Front\\SavedSearchController@index');
 $router->post('/user/saved-searches', 'Front\\SavedSearchController@store');
@@ -819,7 +829,6 @@ $router->get('/user/referral', 'App\\Http\\Controllers\\Front\\ReferralControlle
 // CUSTOMER / USER PORTAL ROUTES (/user/*)
 // Views exist in app/views/user/ — routes were missing!
 // ============================================================
-$router->get('/user/dashboard',          'App\\Http\\Controllers\\DashboardController@customer');
 $router->get('/user/profile',            'App\\Http\\Controllers\\DashboardController@profile');
 $router->post('/user/profile',           'App\\Http\\Controllers\\DashboardController@updateProfile');
 $router->get('/user/favorites',          'App\\Http\\Controllers\\DashboardController@favorites');
@@ -842,51 +851,93 @@ $router->post('/user/tickets/create',    'Front\\UserController@createTicket');
 $router->get('/user/insurance',          'Front\\UserController@insurance');
 $router->get('/user/investment-plans',   'Front\\UserController@investmentPlans');
 
-// Customer Portal Aliases (/customer/* -> /user/*)
-$router->get('/customer/dashboard',        'App\\Http\\Controllers\\DashboardController@customer');
-$router->get('/customer/profile',          'App\\Http\\Controllers\\DashboardController@profile');
-$router->post('/customer/profile',         'App\\Http\\Controllers\\DashboardController@updateProfile');
-$router->get('/customer/bookings',         'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
-$router->get('/customer/installments',     'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
-$router->get('/customer/emi-tracker',      'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
-$router->get('/customer/payments',         'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
-$router->get('/customer/payment-history',  'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
-$router->get('/customer/documents',        'App\\Http\\Controllers\\Front\\CustomerPassbookController@documents');
-$router->get('/customer/documents/download/allotment/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadAllotment');
-$router->get('/customer/documents/download/passbook/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadPassbook');
-$router->get('/customer/documents/download/agreement/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadAgreement');
-$router->get('/customer/documents/download/title-certificate/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadTitleCertificate');
-$router->get('/customer/documents/download/title-certificate/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadTitleCertificate');
-$router->get('/customer/passbook/{booking_id}/statement-pdf', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@statementPdf');
-$router->post('/customer/passbook/{booking_id}/prepay-simulate', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@simulatePrepay');
-$router->post('/admin/sales/bookings/{id}/nominee', 'App\\Http\\Controllers\\Admin\\BookingLifecycleController@updateNominee');
-$router->post('/customer/bookings/{id}/nominee', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@updateNominee');
-$router->get('/customer/bookings/{id}/nominee-sheet', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@nomineeSheet');
-$router->get('/customer/nri-desk', 'Front\\CustomerNriController@index');
-$router->post('/customer/nri-desk/save', 'Front\\CustomerNriController@save');
-$router->get('/customer/maintenance-dues', 'App\\Http\\Controllers\\Front\\CustomerMaintenanceController@index');
-$router->get('/customer/plot-transfers', 'App\\Http\\Controllers\\Front\\CustomerTransferController@index');
-$router->get('/customer/plot-transfers/apply/{id}', 'App\\Http\\Controllers\\Front\\CustomerTransferController@applyForm');
-$router->post('/customer/plot-transfers/apply', 'App\\Http\\Controllers\\Front\\CustomerTransferController@applyStore');
-$router->get('/customer/plot-transfers/noc/{id}', 'App\\Http\\Controllers\\Front\\CustomerTransferController@nocView');
-$router->get('/customer/registry-appointments', 'App\\Http\\Controllers\\Front\\CustomerRegistryController@index');
-$router->get('/customer/registry-appointments/book/{id}', 'App\\Http\\Controllers\\Front\\CustomerRegistryController@applyForm');
-$router->post('/customer/registry-appointments/book', 'App\\Http\\Controllers\\Front\\CustomerRegistryController@applyStore');
-$router->get('/customer/registry-appointments/slip/{id}', 'App\\Http\\Controllers\\Front\\CustomerRegistryController@slip');
+// Customer Portal Redirects (/customer/* -> /user/* canonical)
+// Dashboard
+$router->get('/customer/dashboard', function () { header('Location: ' . BASE_URL . '/user/dashboard', true, 301); exit; });
+$router->get('/customer/profile', function () { header('Location: ' . BASE_URL . '/user/profile', true, 301); exit; });
+$router->post('/customer/profile', function () { header('Location: ' . BASE_URL . '/user/profile', true, 301); exit; });
+// Bookings
+$router->get('/customer/bookings', function () { header('Location: ' . BASE_URL . '/user/bookings', true, 301); exit; });
+// Installments
+$router->get('/customer/installments', function () { header('Location: ' . BASE_URL . '/user/installments', true, 301); exit; });
+// EMI Tracker
+$router->get('/customer/emi-tracker', function () { header('Location: ' . BASE_URL . '/user/emi-tracker', true, 301); exit; });
+// Payments
+$router->get('/customer/payments', function () { header('Location: ' . BASE_URL . '/user/payment-history', true, 301); exit; });
+// Payment History
+$router->get('/customer/payment-history', function () { header('Location: ' . BASE_URL . '/user/payment-history', true, 301); exit; });
+// Documents
+$router->get('/customer/documents', function () { header('Location: ' . BASE_URL . '/user/documents', true, 301); exit; });
+// Document Downloads
+$router->get('/customer/documents/download/allotment/{id}', function ($id) { header('Location: ' . BASE_URL . '/user/documents/download/allotment/' . $id, true, 301); exit; });
+$router->get('/customer/documents/download/passbook/{id}', function ($id) { header('Location: ' . BASE_URL . '/user/documents/download/passbook/' . $id, true, 301); exit; });
+$router->get('/customer/documents/download/agreement/{id}', function ($id) { header('Location: ' . BASE_URL . '/user/documents/download/agreement/' . $id, true, 301); exit; });
+$router->get('/customer/documents/download/title-certificate/{id}', function ($id) { header('Location: ' . BASE_URL . '/user/documents/download/title-certificate/' . $id, true, 301); exit; });
+$router->get('/customer/passbook/{booking_id}/statement-pdf', function ($booking_id) { header('Location: ' . BASE_URL . '/user/passbook/' . $booking_id . '/statement-pdf', true, 301); exit; });
+$router->post('/customer/passbook/{booking_id}/prepay-simulate', function ($booking_id) { header('Location: ' . BASE_URL . '/user/passbook/' . $booking_id . '/prepay-simulate', true, 301); exit; });
+// Nominee
+$router->post('/customer/bookings/{id}/nominee', function ($id) { header('Location: ' . BASE_URL . '/user/bookings/' . $id . '/nominee', true, 301); exit; });
+$router->get('/customer/bookings/{id}/nominee-sheet', function ($id) { header('Location: ' . BASE_URL . '/user/bookings/' . $id . '/nominee-sheet', true, 301); exit; });
+// Customer Portal Unique Routes (migrated to /user/*)
+$router->get('/user/nri-desk', 'Front\\CustomerNriController@index');
+$router->post('/user/nri-desk/save', 'Front\\CustomerNriController@save');
+
+$router->get('/user/maintenance-dues', 'App\\Http\\Controllers\\Front\\CustomerMaintenanceController@index');
+
+$router->get('/user/plot-transfers', 'App\\Http\\Controllers\\Front\\CustomerTransferController@index');
+$router->get('/user/plot-transfers/apply/{id}', 'App\\Http\\Controllers\\Front\\CustomerTransferController@applyForm');
+$router->post('/user/plot-transfers/apply', 'App\\Http\\Controllers\\Front\\CustomerTransferController@applyStore');
+$router->get('/user/plot-transfers/noc/{id}', 'App\\Http\\Controllers\\Front\\CustomerTransferController@nocView');
+
+$router->get('/user/registry-appointments', 'App\\Http\\Controllers\\Front\\CustomerRegistryController@index');
+$router->get('/user/registry-appointments/book/{id}', 'App\\Http\\Controllers\\Front\\CustomerRegistryController@applyForm');
+$router->post('/user/registry-appointments/book', 'App\\Http\\Controllers\\Front\\CustomerRegistryController@applyStore');
+$router->get('/user/registry-appointments/slip/{id}', 'App\\Http\\Controllers\\Front\\CustomerRegistryController@slip');
 
 // Customer PM Surya Ghar Green Solar & Subsidy Desk
-$router->get('/customer/solar-calculator', 'App\\Http\\Controllers\\Front\\CustomerSolarController@calculator');
-$router->post('/customer/solar/apply', 'App\\Http\\Controllers\\Front\\CustomerSolarController@applyStore');
-$router->get('/customer/solar-desk', 'App\\Http\\Controllers\\Front\\CustomerSolarController@track');
-$router->get('/customer/allotment/{id}/accept', 'App\\Http\\Controllers\\Front\\AllotmentAcceptanceController@show');
-$router->post('/customer/allotment/{id}/send-otp', 'App\\Http\\Controllers\\Front\\AllotmentAcceptanceController@sendOtp');
-$router->post('/customer/allotment/{id}/accept', 'App\\Http\\Controllers\\Front\\AllotmentAcceptanceController@accept');
-$router->get('/customer/foreclosure', 'App\\Http\\Controllers\\Front\\ForeclosureController@preview');
-$router->post('/customer/foreclosure/process', 'App\\Http\\Controllers\\Front\\ForeclosureController@process');
-$router->post('/customer/foreclosure/upi-qr', 'App\\Http\\Controllers\\Front\\ForeclosureController@upiQr');
-$router->get('/customer/site-visits',      'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
-$router->get('/customer/support',          'Front\\UserController@myTickets');
-$router->get('/customer/tickets',          'Front\\UserController@myTickets');
+$router->get('/user/solar-calculator', 'App\\Http\\Controllers\\Front\\CustomerSolarController@calculator');
+$router->post('/user/solar/apply', 'App\\Http\\Controllers\\Front\\CustomerSolarController@applyStore');
+$router->get('/user/solar-desk', 'App\\Http\\Controllers\\Front\\CustomerSolarController@track');
+
+$router->get('/user/allotment/{id}/accept', 'App\\Http\\Controllers\\Front\\AllotmentAcceptanceController@show');
+$router->post('/user/allotment/{id}/send-otp', 'App\\Http\\Controllers\\Front\\AllotmentAcceptanceController@sendOtp');
+$router->post('/user/allotment/{id}/accept', 'App\\Http\\Controllers\\Front\\AllotmentAcceptanceController@accept');
+
+$router->get('/user/foreclosure', 'App\\Http\\Controllers\\Front\\ForeclosureController@preview');
+$router->post('/user/foreclosure/process', 'App\\Http\\Controllers\\Front\\ForeclosureController@process');
+$router->post('/user/foreclosure/upi-qr', 'App\\Http\\Controllers\\Front\\ForeclosureController@upiQr');
+
+// Redirects for old /customer/* unique routes
+$router->get('/customer/nri-desk', function () { header('Location: ' . BASE_URL . '/user/nri-desk', true, 301); exit; });
+$router->post('/customer/nri-desk/save', function () { header('Location: ' . BASE_URL . '/user/nri-desk/save', true, 301); exit; });
+
+$router->get('/customer/maintenance-dues', function () { header('Location: ' . BASE_URL . '/user/maintenance-dues', true, 301); exit; });
+
+$router->get('/customer/plot-transfers', function () { header('Location: ' . BASE_URL . '/user/plot-transfers', true, 301); exit; });
+$router->get('/customer/plot-transfers/apply/{id}', function ($id) { header('Location: ' . BASE_URL . '/user/plot-transfers/apply/' . $id, true, 301); exit; });
+$router->post('/customer/plot-transfers/apply', function () { header('Location: ' . BASE_URL . '/user/plot-transfers/apply', true, 301); exit; });
+$router->get('/customer/plot-transfers/noc/{id}', function ($id) { header('Location: ' . BASE_URL . '/user/plot-transfers/noc/' . $id, true, 301); exit; });
+
+$router->get('/customer/registry-appointments', function () { header('Location: ' . BASE_URL . '/user/registry-appointments', true, 301); exit; });
+$router->get('/customer/registry-appointments/book/{id}', function ($id) { header('Location: ' . BASE_URL . '/user/registry-appointments/book/' . $id, true, 301); exit; });
+$router->post('/customer/registry-appointments/book', function () { header('Location: ' . BASE_URL . '/user/registry-appointments/book', true, 301); exit; });
+$router->get('/customer/registry-appointments/slip/{id}', function ($id) { header('Location: ' . BASE_URL . '/user/registry-appointments/slip/' . $id, true, 301); exit; });
+
+$router->get('/customer/solar-calculator', function () { header('Location: ' . BASE_URL . '/user/solar-calculator', true, 301); exit; });
+$router->post('/customer/solar/apply', function () { header('Location: ' . BASE_URL . '/user/solar/apply', true, 301); exit; });
+$router->get('/customer/solar-desk', function () { header('Location: ' . BASE_URL . '/user/solar-desk', true, 301); exit; });
+
+$router->get('/customer/allotment/{id}/accept', function ($id) { header('Location: ' . BASE_URL . '/user/allotment/' . $id . '/accept', true, 301); exit; });
+$router->post('/customer/allotment/{id}/send-otp', function ($id) { header('Location: ' . BASE_URL . '/user/allotment/' . $id . '/send-otp', true, 301); exit; });
+$router->post('/customer/allotment/{id}/accept', function ($id) { header('Location: ' . BASE_URL . '/user/allotment/' . $id . '/accept', true, 301); exit; });
+
+$router->get('/customer/foreclosure', function () { header('Location: ' . BASE_URL . '/user/foreclosure', true, 301); exit; });
+$router->post('/customer/foreclosure/process', function () { header('Location: ' . BASE_URL . '/user/foreclosure/process', true, 301); exit; });
+$router->post('/customer/foreclosure/upi-qr', function () { header('Location: ' . BASE_URL . '/user/foreclosure/upi-qr', true, 301); exit; });
+
+$router->get('/customer/site-visits', function () { header('Location: ' . BASE_URL . '/user/site-visits', true, 301); exit; });
+$router->get('/customer/support', function () { header('Location: ' . BASE_URL . '/user/support', true, 301); exit; });
+$router->get('/customer/tickets', function () { header('Location: ' . BASE_URL . '/user/tickets', true, 301); exit; });
 
 // Associate Portal Aliases
 $router->get('/associate/bookings',            'App\\Http\\Controllers\\AssociateController@myBookings');
@@ -1197,6 +1248,7 @@ $router->get('/associate/tds-slips/certificate', 'App\\Http\\Controllers\\Associ
 $router->get('/associate/book-plot', 'App\\Http\\Controllers\\AssociateController@bookPlot');
 $router->post('/associate/book-plot/submit', 'App\\Http\\Controllers\\AssociateController@bookPlot');
 $router->get('/associate/tools', 'App\\Http\\Controllers\\AssociateController@tools');
+$router->get('/associate/emi-calculator', 'App\\Http\\Controllers\\AssociateController@emiCalculator');
 $router->post('/associate/tools/emi', 'App\\Http\\Controllers\\AssociateController@emiCalculator');
 $router->post('/associate/tools/stamp-duty', 'App\\Http\\Controllers\\AssociateController@stampDutyCalculator');
 $router->post('/associate/tools/plot-converter', 'App\\Http\\Controllers\\AssociateController@plotConverter');
@@ -1887,6 +1939,24 @@ $router->get('/admin/plots/pricing-rules/{id}/edit', 'App\\Http\\Controllers\\Ad
 $router->post('/admin/plots/pricing-rules/{id}/update', 'App\\Http\\Controllers\\Admin\\PlotPricingController@updatePlcRule');
 $router->post('/admin/plots/pricing-rules/{id}/delete', 'App\\Http\\Controllers\\Admin\\PlotPricingController@deletePlcRule');
 $router->get('/admin/plots/pricing/preview', 'App\\Http\\Controllers\\Admin\\PlotPricingController@previewPlc');
+
+// AI Dynamic Pricing & Yield Optimizer
+$router->get('/admin/dynamic-pricing', 'App\\Http\\Controllers\\Admin\\DynamicPricingController@index');
+$router->post('/admin/dynamic-pricing/generate', 'App\\Http\\Controllers\\Admin\\DynamicPricingController@generate');
+$router->post('/admin/dynamic-pricing/train', 'App\\Http\\Controllers\\Admin\\DynamicPricingController@train');
+$router->post('/admin/dynamic-pricing/{id}/approve', 'App\\Http\\Controllers\\Admin\\DynamicPricingController@approve');
+$router->post('/admin/dynamic-pricing/{id}/reject', 'App\\Http\\Controllers\\Admin\\DynamicPricingController@reject');
+$router->post('/admin/dynamic-pricing/{id}/apply', 'App\\Http\\Controllers\\Admin\\DynamicPricingController@apply');
+
+// A/B Pricing Experiment Lab (extends Dynamic Pricing desk)
+$router->get('/admin/dynamic-pricing/experiments', 'App\\Http\\Controllers\\Admin\\PricingExperimentController@index');
+$router->post('/admin/dynamic-pricing/experiments/store', 'App\\Http\\Controllers\\Admin\\PricingExperimentController@store');
+$router->get('/admin/dynamic-pricing/experiments/{id}', 'App\\Http\\Controllers\\Admin\\PricingExperimentController@show');
+$router->post('/admin/dynamic-pricing/experiments/{id}/start', 'App\\Http\\Controllers\\Admin\\PricingExperimentController@start');
+$router->post('/admin/dynamic-pricing/experiments/{id}/apply', 'App\\Http\\Controllers\\Admin\\PricingExperimentController@apply');
+$router->post('/admin/dynamic-pricing/experiments/{id}/restore', 'App\\Http\\Controllers\\Admin\\PricingExperimentController@restore');
+$router->post('/admin/dynamic-pricing/experiments/{id}/delete', 'App\\Http\\Controllers\\Admin\\PricingExperimentController@delete');
+
 $router->post('/admin/plots/hold-requests/{id}/reject', 'App\\Http\\Controllers\\Admin\\PlotManagementController@rejectHoldRequest');
 $router->get('/admin/plots/{id}/book', 'App\\Http\\Controllers\\Admin\\PlotManagementController@book');
 $router->post('/admin/plots/{id}/book', 'App\\Http\\Controllers\\Admin\\PlotManagementController@storeBooking');
@@ -5248,7 +5318,7 @@ $router->get('/admin/iot/automation/form', 'Admin\IoTController@automationForm')
 $router->get('/admin/iot/automation/form/{id}', 'Admin\IoTController@automationForm');
 $router->post('/admin/iot/automation/save', 'Admin\IoTController@automationSave');
 $router->post('/admin/iot/automation/delete/{id}', 'Admin\IoTController@automationDelete');
-// Session 222 ΓÇö IoT Threshold Alerts desk (complements existing IoT stack).
+// Session 222 — IoT Threshold Alerts desk (complements existing IoT stack).
 $router->get('/admin/iot/alerts', 'Admin\IotAlertController@index');
 $router->post('/admin/iot/alerts/{id}/resolve', 'Admin\IotAlertController@resolve');
 
@@ -5995,25 +6065,40 @@ $router->post('/legal/accept', 'App\\Http\\Controllers\\Front\\LegalDocumentCont
 $router->get('/api/legal/unaccepted', 'App\\Http\\Controllers\\Front\\LegalDocumentController@getUnaccepted');
 
 // ============================================================
-// CUSTOMER PASSBOOK & EMI QR PAYMENT
+// CUSTOMER PASSBOOK & EMI QR PAYMENT (canonical /user/*)
 // ============================================================
-$router->get('/customer/passbook', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
-$router->post('/customer/pay-emi/upi-qr', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@generateUpiQr');
-$router->get('/customer/receipt/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadReceipt');
+$router->get('/user/passbook', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
+$router->post('/user/pay-emi/upi-qr', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@generateUpiQr');
+$router->get('/user/receipt/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadReceipt');
 
 // ============================================================
 // CUSTOMER LIVE REGISTRY & HANDOVER TRACKER (Module 1)
 // ============================================================
-$router->get('/customer/registry/{bookingId}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@registryTimeline');
-$router->get('/customer/possession-certificate/{bookingId}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadPossessionCertificate');
+$router->get('/user/registry/{bookingId}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@registryTimeline');
+$router->get('/user/possession-certificate/{bookingId}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadPossessionCertificate');
 
 // ============================================================
 // CUSTOMER UNIFIED JOURNEY (Payment Ledger + Registry Timeline)
 // ============================================================
-$router->get('/customer/journey/{bookingId}', 'App\\Http\\Controllers\\Front\\CustomerJourneyController@journey');
-$router->post('/customer/journey/{bookingId}/stage', 'App\\Http\\Controllers\\Front\\CustomerJourneyController@updateStage');
-$router->post('/customer/journey/{bookingId}/payment-thank-you', 'App\\Http\\Controllers\\Front\\CustomerJourneyController@paymentThankYou');
-$router->post('/customer/journey/{bookingId}/payment-received', 'App\\Http\\Controllers\\Front\\CustomerJourneyController@paymentReceived');
+$router->get('/user/journey/{bookingId}', 'App\\Http\\Controllers\\Front\\CustomerJourneyController@journey');
+$router->post('/user/journey/{bookingId}/stage', 'App\\Http\\Controllers\\Front\\CustomerJourneyController@updateStage');
+$router->post('/user/journey/{bookingId}/payment-thank-you', 'App\\Http\\Controllers\\Front\\CustomerJourneyController@paymentThankYou');
+$router->post('/user/journey/{bookingId}/payment-received', 'App\\Http\\Controllers\\Front\\CustomerJourneyController@paymentReceived');
+
+// ============================================================
+// REDIRECTS: /customer/* -> /user/* (legacy)
+// ============================================================
+$router->get('/customer/passbook', function () { header('Location: ' . BASE_URL . '/user/passbook', true, 301); exit; });
+$router->post('/customer/pay-emi/upi-qr', function () { header('Location: ' . BASE_URL . '/user/pay-emi/upi-qr', true, 301); exit; });
+$router->get('/customer/receipt/{id}', function ($id) { header('Location: ' . BASE_URL . '/user/receipt/' . $id, true, 301); exit; });
+
+$router->get('/customer/registry/{bookingId}', function ($bookingId) { header('Location: ' . BASE_URL . '/user/registry/' . $bookingId, true, 301); exit; });
+$router->get('/customer/possession-certificate/{bookingId}', function ($bookingId) { header('Location: ' . BASE_URL . '/user/possession-certificate/' . $bookingId, true, 301); exit; });
+
+$router->get('/customer/journey/{bookingId}', function ($bookingId) { header('Location: ' . BASE_URL . '/user/journey/' . $bookingId, true, 301); exit; });
+$router->post('/customer/journey/{bookingId}/stage', function ($bookingId) { header('Location: ' . BASE_URL . '/user/journey/' . $bookingId . '/stage', true, 301); exit; });
+$router->post('/customer/journey/{bookingId}/payment-thank-you', function ($bookingId) { header('Location: ' . BASE_URL . '/user/journey/' . $bookingId . '/payment-thank-you', true, 301); exit; });
+$router->post('/customer/journey/{bookingId}/payment-received', function ($bookingId) { header('Location: ' . BASE_URL . '/user/journey/' . $bookingId . '/payment-received', true, 301); exit; });
 
 // ============================================================
 // DEMAND LETTERS (Finance) & CONSTRUCTION PROGRESS (Ops) MODULES
@@ -6086,7 +6171,9 @@ $router->get('/admin/work-orders/{id}/print', 'App\\Http\\Controllers\\Admin\\Wo
 $router->get('/admin/registry-appointments', 'App\\Http\\Controllers\\Admin\\RegistryAppointmentController@index');
 $router->get('/admin/registry-appointments/{id}', 'App\\Http\\Controllers\\Admin\\RegistryAppointmentController@show');
 $router->post('/admin/registry-appointments/{id}/slot', 'App\\Http\\Controllers\\Admin\\RegistryAppointmentController@assignSlot');
-$router->post('/admin/registry-appointments/{id}/complete', 'App\\Http\\Controllers\\Admin\\RegistryAppointmentController@completeRegistry');
+// NOTE (S224): removed duplicate POST .../{id}/complete → completeRegistry
+// (method never existed → live 500). Canonical handler is complete($id)
+// registered at line ~1855; its form posts deed_registration_number here.
 
 // ============================================================
 // SESSION 209: PLOT DEMARCATION & PM SURYA GHAR SOLAR DESK
@@ -6097,7 +6184,9 @@ $router->post('/admin/plots/demarcation/{id}/verify', 'App\\Http\\Controllers\\A
 $router->get('/admin/plots/demarcation/{id}/print', 'App\\Http\\Controllers\\Admin\\PlotDemarcationController@printCertificate');
 
 $router->get('/admin/green-energy/solar', 'App\\Http\\Controllers\\Admin\\SolarDeskController@index');
-$router->post('/admin/green-energy/solar/{id}/update', 'App\\Http\\Controllers\\Admin\\SolarDeskController@updateStatus');
+// NOTE (S224): removed duplicate POST .../solar/{id}/update → updateStatus
+// (method never existed → live 500). Canonical handler is update(int $id)
+// registered at line ~1866; its form posts status/installer fields here.
 
 // ============================================================
 // SESSION 210: CONSTRUCTION PERMITS & COMMERCIAL LEASE RENT ROLL
@@ -6107,10 +6196,16 @@ $router->post('/admin/construction-approvals/inspect/{id}', 'App\\Http\\Controll
 $router->post('/admin/construction-approvals/approve/{id}', 'App\\Http\\Controllers\\Admin\\ConstructionApprovalController@approve');
 $router->post('/admin/construction-approvals/reject/{id}', 'App\\Http\\Controllers\\Admin\\ConstructionApprovalController@reject');
 $router->get('/admin/construction-approvals/permit/{id}', 'App\\Http\\Controllers\\Admin\\ConstructionApprovalController@permit');
-$router->get('/customer/construction-approvals', 'App\\Http\\Controllers\\Front\\CustomerConstructionController@index');
-$router->get('/customer/construction/apply', 'App\\Http\\Controllers\\Front\\CustomerConstructionController@apply');
-$router->post('/customer/construction/apply', 'App\\Http\\Controllers\\Front\\CustomerConstructionController@store');
-$router->get('/customer/construction/permit/{id}', 'App\\Http\\Controllers\\Front\\CustomerConstructionController@permit');
+$router->get('/user/construction-approvals', 'App\\Http\\Controllers\\Front\\CustomerConstructionController@index');
+$router->get('/user/construction/apply', 'App\\Http\\Controllers\\Front\\CustomerConstructionController@apply');
+$router->post('/user/construction/apply', 'App\\Http\\Controllers\\Front\\CustomerConstructionController@store');
+$router->get('/user/construction/permit/{id}', 'App\\Http\\Controllers\\Front\\CustomerConstructionController@permit');
+
+// Redirects
+$router->get('/customer/construction-approvals', function () { header('Location: ' . BASE_URL . '/user/construction-approvals', true, 301); exit; });
+$router->get('/customer/construction/apply', function () { header('Location: ' . BASE_URL . '/user/construction/apply', true, 301); exit; });
+$router->post('/customer/construction/apply', function () { header('Location: ' . BASE_URL . '/user/construction/apply', true, 301); exit; });
+$router->get('/customer/construction/permit/{id}', function ($id) { header('Location: ' . BASE_URL . '/user/construction/permit/' . $id, true, 301); exit; });
 
 $router->get('/admin/commercial-leases', 'App\\Http\\Controllers\\Admin\\CommercialLeaseController@index');
 $router->post('/admin/commercial-leases', 'App\\Http\\Controllers\\Admin\\CommercialLeaseController@store');
@@ -6133,10 +6228,16 @@ $router->get('/admin/township-grievances', 'App\\Http\\Controllers\\Admin\\Towns
 $router->post('/admin/township-grievances/assign/{id}', 'App\\Http\\Controllers\\Admin\\TownshipGrievanceController@assign');
 $router->post('/admin/township-grievances/resolve/{id}', 'App\\Http\\Controllers\\Admin\\TownshipGrievanceController@resolve');
 
-$router->get('/customer/township-grievances', 'App\\Http\\Controllers\\Front\\CustomerGrievanceController@index');
-$router->get('/customer/township-grievances/create', 'App\\Http\\Controllers\\Front\\CustomerGrievanceController@create');
-$router->post('/customer/township-grievances/create', 'App\\Http\\Controllers\\Front\\CustomerGrievanceController@store');
-$router->post('/customer/township-grievances/close/{id}', 'App\\Http\\Controllers\\Front\\CustomerGrievanceController@close');
+$router->get('/user/township-grievances', 'App\\Http\\Controllers\\Front\\CustomerGrievanceController@index');
+$router->get('/user/township-grievances/create', 'App\\Http\\Controllers\\Front\\CustomerGrievanceController@create');
+$router->post('/user/township-grievances/create', 'App\\Http\\Controllers\\Front\\CustomerGrievanceController@store');
+$router->post('/user/township-grievances/close/{id}', 'App\\Http\\Controllers\\Front\\CustomerGrievanceController@close');
+
+// Redirects
+$router->get('/customer/township-grievances', function () { header('Location: ' . BASE_URL . '/user/township-grievances', true, 301); exit; });
+$router->get('/customer/township-grievances/create', function () { header('Location: ' . BASE_URL . '/user/township-grievances/create', true, 301); exit; });
+$router->post('/customer/township-grievances/create', function () { header('Location: ' . BASE_URL . '/user/township-grievances/create', true, 301); exit; });
+$router->post('/customer/township-grievances/close/{id}', function ($id) { header('Location: ' . BASE_URL . '/user/township-grievances/close/' . $id, true, 301); exit; });
 
 // ============================================================
 // SESSION 212: TOWNSHIP BOREWELL WATER SUPPLY & SECURITY DESK
