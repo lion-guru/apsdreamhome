@@ -1,5 +1,145 @@
 > **COMPLETED (2026-10-06):** Churn-stop verified (snapshots identical), full review done, all work committed + pushed (see Session 171-173 below).
 
+> **⛔ DB RESTORE PROTOCOL (standing rule for ALL actors — human + AI, since S227):**
+> 1. **Restore se PEHLE safety dump LAZMI** — `mysqldump -u root apsdreamhome > backups/db/apsdreamhome_pre-restore_YYYY-MM-DD_HH-MM.sql` (~35MB, 1 min). Bina dump ke restore = DATA LOSS RISK (S223 me live tables wipe hue, S227 me crash).
+> 2. **Restore window announce karo** — kaam shuru karne se pehle AGENTS.md me ek line likho (`Restoring DB from <file> at <time> — do not write DB till done`) ya user ko batao; khatm hone par `done` likho.
+> 3. **Restore ke BAAD verify karo** — `users/plots/leads` counts + `testing/master_test_runner.php` 9/9. Count mismatch = turant safety dump se wapas lao.
+> 4. **Ek time me ek hi actor DB surgery karega** — `tables_now=0` ya shifting `create_time` dikhe to WAIT karo, fight mat karo (S223 lesson _495).
+
+> **📜 STANDING DEV RULES (all actors, since S227 — sab past incidents se nikle):**
+> 1. **Migration-only schema** — har table/column/seed ek **idempotent migration file** me hoga (`database/migrations/`, re-run = sab SKIP). One-off live SQL banned: restore usko wipe kar deta hai (S223 me menu 341 + `original_*` gaye; migration-wali cheezein 2 min me wapas aa gayin).
+> 2. **Money-proof** — price/payment/wallet code me **pre-state snapshot + byte-identical restore assertion** lazmi, probe me 0 leftovers ke saath. Bina snapshot ke price-restore ne 338 live plots drift kiye the (S220 lesson _481).
+> 3. **Zero-dup audit** — naya module likhne se PEHLE `SHOW TABLES LIKE` + route grep + service grep lazmi. Parallel stack = rework + rescue (S221 DMS halt, S223 `iot_telemetry` drop).
+> 4. **Session-number check** — AGENTS.md entry chipkane se PEHLE header dobara padho; parallel actor ne beech me number le liya ho to next free number lo, overwrite/clobber kabhi nahi (S219, S223).
+> 5. **Probe hygiene** — temp scripts sirf `C:\Users\abhay\AppData\Local\Temp\opencode\` me, write+execute **same turn** me (temp purge hota hai), `php -r` one-liners banned, probe ke end me cleanup + counts-verify lazmi (lessons _445, _456, _490).
+
+## Session 233: Maintenance-Commit Verification — 10/10 Green, No Re-Proof Needed (2026-10-13)
+
+### Trigger
+User: "do next". New foreign commit `3efe1ad85` (maintenance dues desk: stats ribbon + filters + receipt buttons; 2 files, no routes).
+
+### Work (verification-only)
+- **Scope check**: stat = `MaintenanceDuesController` + `maintenance_dues.php` only. Zero overlap with my areas; **no routes touched** → per lesson _506, no write-flow re-proof required (that rule is for routes-touching commits).
+- **Master 10/10 PASSED** (21.89s) — foreign claim verified. No app-code or DB changes. Uncommitted: only this entry.
+
+### Key Lessons (carried, continued)
+_507. **Scope the re-proof to the commit's blast radius** — routes touched → write-flow E2E (S230/S232); controller/view-only → suite green suffices. Don't run theater probes.
+
+## Session 234: Write-Flow Re-Proof After Route Surgery — HSN 3/3 (2026-10-13)
+
+### Trigger
+User: "do next". Standing lesson _506: a routes-touching foreign commit (`1762287c0` 166+/65−, `5149c074a`) earns one write-flow re-proof — GETs passed in S233 but POSTs can silently shadow after a reorder.
+
+### Work (probe-only, temps same-turn)
+- **HSN write flow 3/3**: create (`PROBE234` @12%) → 302 → row exact (id 17) → hard-delete (no delete route) → ABSENT. POST binds the right handler post-surgery.
+- No app-code or DB changes (0 leftovers). Master re-run skipped (10/10 on identical tree in S233, no app changes since).
+- Uncommitted: only this entry.
+
+## Session 232: Post-Commit Re-Proof — 5149c074a Absorbed, 10/10 + Flows Green (2026-10-13)
+
+### Trigger
+User: "do next". New foreign commit `5149c074a` (agent logout, associate profile, maintenance receipt + dead-route cleanup, touches `routes/web.php` 28 lines).
+
+### Work (probe-only, self-cleaning, temps deleted same turn)
+- **My areas untouched**: commit stat = MaintenanceDues/cash-drawer/maintenance views + web.php; zero IoT/pricing/colony files. My routes present in HEAD (`iot/alerts` ×2, `iot/ingest`); worktree route-diff clean.
+- **IoT E2E 4/4** on current tree: ingest → alert, desk 200 + row, resolve 302 + resolved, 0 leftovers.
+- **Master 10/10 PASSED** (22.09s) — foreign claim verified. No app-code or DB changes. Uncommitted: only this entry.
+
+### Key Lessons (carried, continued)
+_506. **A routes-touching foreign commit always earns one write-flow re-proof** — cheap (4 checks, 0 leftovers) and the only thing that catches first-match-wins shadow bugs.
+
+## Session 231: Steady-State — Owner-Decision List (No Probes Left to Run) (2026-10-13)
+
+### Trigger
+User: "do next". Verified: no new commits since S230 (`1762287c0` still HEAD), DB steady (users=110), all my flows/pages/suites already green on this exact tree. Re-probing would add zero information — so this round outputs the blocked-decision list instead of theater.
+
+### Owner decisions pending (agent cannot take these)
+1. **Blockchain (#2)**: real chain + gas funding select karo (Polygon/ETH-L2?) — bina iske jo bhi banega wo nakli hash-store hoga. Aapka call.
+2. **Batch-apply PLC prices (S198)**: Braj Radha −₹1.32Cr impact incl. BOOKED plots — per-colony review + booked-exclude aapko karna hai; blind run DO NOT.
+3. **Scheduler elevation (S199)**: `scripts/setup_salary_grants_task.ps1` + backup task — admin PowerShell se aap chalao.
+4. **Extension GUI click-test**: headless me `--load-extension` ignore hota hai — 30-sec manual test aapka.
+5. **Pending commits**: meri AGENTS entries (S226–S231) + rules + seed file uncommitted hain — `commit karo` bolo to karu.
+6. **230-file worktree churn**: parallel tab ka bulk — consolidate/merge strategy aapki.
+
+### Work this round
+- None (deliberately). No app-code or DB changes, no probes. Uncommitted: only this entry.
+
+### Key Lessons (carried, continued)
+_505. **"Do next" with a green tree and exhausted roadmap means report, not invent** — the honest deliverable is the blocked-decision list; a forced module would be theater or a dup.
+
+## Session 230: Post-Consolidation Flow Re-Proof — IoT E2E 5/5 (2026-10-13)
+
+### Trigger
+User: "do next". S229 verified pages; open risk was first-match-wins route reorder breaking POST flows after `1762287c0`'s web.php consolidation (166+/65−).
+
+### Work (probe-only, self-cleaning, temps deleted same turn)
+- **IoT E2E 5/5 on current tree**: ingest battery 8 → 200 + 1 open alert (critical row exact) → desk 200 + row + token → resolve POST 302 + `is_resolved=1` → cleanup byte-identical (`0/0/3`). Both POST flows hit the right handlers post-reorder.
+- Master re-run skipped deliberately (10/10 on identical tree in S229, no app changes since). Uncommitted: only this entry. No app-code or DB changes.
+
+### Key Lessons (carried, continued)
+_504. **Page-200 ≠ flow-alive after a route consolidation** — GETs can render while POSTs silently bind elsewhere; re-prove one write flow per touched route family (ingest + resolve here, 5 minutes).
+
+## Session 229: Foreign-Commit Verification — Routes Consolidation Absorbed Mine, 10/10 Green (2026-10-13)
+
+### Trigger
+User: "do next". Two new foreign commits landed (`9f299c32a` portal-boundary doc + menu-links probe; `1762287c0` web.php consolidation: 2 dead winner routes removed + S219–223 session routes absorbed).
+
+### Work (probe-only, no edits to others' code)
+- **My routes survived consolidation**: `git show HEAD:routes/{web,api}.php` both contain my IoT hunks (`/admin/iot/alerts` ×2, `/api/iot/ingest`); worktree `api.php` M is comment-only churn, no route loss.
+- **6-file open-tag red is GONE**: `routes/web/{admin,agent,associate,employee,public,user}.php` no longer exist on disk (removed in consolidation) — S228's foreign red resolved by owner action, not by me.
+- **Master 10/10 PASSED** (37.08s) on current tree — foreign claim verified, incl. new Portal Menu Links suite. Alerts desk live (`IoT Alerts` needle).
+- Uncommitted: only this log entry. No app-code or DB changes.
+
+### Key Lessons (carried, continued)
+_503. **Verify foreign "green" claims on your own tree before building on** — re-ran master + `git show HEAD:path` for my hunks + live needle; 2 minutes, catches silent route drops (first-match-wins reorder risk).
+
+## Session 228: Tree-Health Check — Foreign Red File + Duplicate-225 Rescue (2026-10-13)
+
+### Trigger
+User: "do next". Roadmap still exhausted (S226); ran tree-health instead of forcing a module.
+
+### Work (probe-only, AGENTS-only edits)
+- **Master 9/10**: sole failure = PHP Open-Tag Scan on 6 UNTRACKED second-actor files (`routes/web/{admin,agent,associate,employee,public,user}.php` — route-split files missing `<?php` open tag, first line is bare `$router->`). Not mine, untouched per standing rule; all 9 other suites green. Owner/second actor must add the open tag.
+- **Duplicate-225 rescue**: my crash-recovery entry and a parallel PT-Rebate entry both filed as "Session 225". Renumbered MINE to **227** (+ `since S225` → `since S227` in both rule blocks); lesson numbers _496–_500 untouched (already unique). Rule 4 dogfooded.
+- Uncommitted (standing rule). No app-code or DB changes.
+
+### Key Lessons (carried, continued)
+_502. **A red suite on foreign untracked files is a report, not a task** — fixing others' 6 missing open tags takes 2 minutes but violates ownership; suite-green is per-tree-state. Report with exact file list, move on.
+
+## Session 226: Post-Commit Clobber Check — Roadmap Exhausted, Tree Healthy (2026-10-13)
+
+### Trigger
+User: "do next". NEXT_GEN doc #5 (AI-calling module live) = dup, #1 ka honest slice (Sajra overlay, S204) = done, #2 (blockchain) bina real chain ke theater hota — skipped with reasoning. Zero new-module scope; consolidation round instead.
+
+### Work (probe-only, no edits)
+- **Post-commit render check** (parallel actor committed my files in `9753d1918`): `/admin/iot/alerts`, `/admin/dynamic-pricing`, `/admin/dynamic-pricing/experiments`, `/admin/colonies/5` — all 200 + content needles (`IoT Alerts`, `Offline Rule`, `Field ingest`, `Smart IoT`, `alerts?colony_id=5`). Zero clobbers.
+- DB healthy (users=110, `iot_alerts` present). Master re-run skipped deliberately (9/9 green on identical tree in S225, no app changes since).
+- Uncommitted: only this log entry (+ standing rules/seed from S225).
+
+### Key Lessons (carried, continued)
+_501. **After any foreign commit touching your files, re-probe rendered needles before building on** — `git show HEAD:path` + live 200+needle is the 2-minute clobber check (S221's rescue would have been unnecessary if done same-day).
+
+## Session 227: MySQL Crash Recovery (Aria + mysql.db Repair) + Artifact Re-Restore (2026-10-13)
+
+> Note: filed as S225 originally; renumbered to 227 — a parallel actor had already taken 225 (PT Rebate entry below). Standing Rule 4, dogfooded.
+
+### Trigger
+User: "do next". Found MySQL DOWN (2002) — no mysqld process. Zero-dup audit of doc `NEXT_GEN_EXTRA_INNOVATION_FEATURES.md` #4/#8/#10 showed mostly-existing stacks (timelapse + drone-player routes, 3 leaderboards + spot bonus, full tenant CRUD + onboard/launch routes), so the round became recovery, not a new module.
+
+### Work
+- **Diagnosis**: `.err` showed crash at 17:57–17:59 (matches the S223 restore window) — stale `aria_log_control` (01:24) vs `aria_log` (17:57), then `mysql.db` (Aria) marked crashed, then Aria registration failure loop. Data dir intact (`apsdreamhome` 1855 files, `mysql` 87 files).
+- **Repair (all reversible, backups in temp)**: `aria_chk --recover --quick` on `mysql/db.MAI` (2 records, indexes fixed) → cleared crashed Aria log set for pristine recreate → server UP (10.4.32, pid 304).
+- **Integrity**: 916 tables, users=110, plots=749, leads=38201 — healthy, no corruption.
+- **Re-applied S223 rebuilds** (wiped by another post-probe drop cycle): `iot_alerts` migration, dynamic-pricing migration (`original_*` re-added; unique key survived), menu 341 + admin grant re-inserted (verified rendering on `/admin/erp` earlier round).
+- **Master 9/9 PASSED** (20.16s) post-recovery. Uncommitted (standing rule). No app-code changes this round.
+
+### Key Lessons (carried, continued)
+_496. **A dead DB turns "do next" into "recover first"** — audit the tree's health (DB up? counts sane?) before scoping new modules; a shaken tree makes every probe result suspect.
+_497. **MariaDB crash triage order: pid → .err tail → aria_control-vs-log timestamps → aria_chk offline → clear log set.** The control/log timestamp skew names the crash instantly; never delete the log before backing it up.
+_498. **`mysql.db` (privileges) crash blocks ALL startups** — repair it offline with `aria_chk` from the data dir (it resolves `.\aria_log_control` relatively); the repair's own control-file warning is benign when run elsewhere but run it in-dir anyway.
+_499. **Keep tool-harness commands short** — `Start-Process` + `Sleep` in one call gets `ChildProcess.kill`; split start and poll into separate calls (S181's transient-kill lesson, same shape).
+_500. **Take the backup BEFORE the restore, and say so** — this crash likely came from a restore cycle with no safety dump in evidence; S175's `pre-restore` dump pattern exists precisely for this.
+
 ## Session 223: Smart IoT Threshold Alerts + Field Ingest (Zero-Dup Catch) + Parallel-Restore Incident (2026-10-12)
 
 ### Trigger
@@ -26,6 +166,41 @@ _492. **Manual probe writes must use the app's session `time_zone`** — `Databa
 _493. **Apache SAPI's `error_log` ini is a dead Linux path** (`/var/log/apache2/php_error.log` per served `phpinfo`) — HTTP `error_log()` writes go nowhere. Debug HTTP paths with `file_put_contents` to a controlled file instead.
 _494. **A 200 with "View not found" is a render-path bug, not a missing route** — title/breadcrumb render (controller ran) while content is the error string. Assert content needles, never status alone (S167 lesson again).
 _495. **Never fight a parallel restore — poll, verify loss with single statements, rebuild idempotently.** Multi-statement `mysql -e` mixed results across the drop window and lied twice ("restored" reads). Wait for the actor's "done", then re-run migrations + re-seed menus from worktree-described shapes.
+
+## Session 233: Foreign-Commit Absorption Check — GST/PT Routes Survived, 10/10 Green (2026-10-13)
+
+> Note: first drafted as "Session 226" from a stale template (wrong number + wrong IoT content); corrected here to next-free 233 per Rule 4. Sits below S228 by placement but is newest — top-of-file is under active parallel append, in-place fix avoids a race.
+
+### Trigger
+User: "do next". Three foreign commits landed since my push (`9f299c32a`, `1762287c0` web.php 166+/65− surgery, `5149c074a` maintenance-receipt + dead-route cleanup incl. an edit to MY `cash_drawer.php` view). Clobber check before any new work.
+
+### Work (probe-only, AGENTS-only edits)
+- **My routes survived the surgery**: all 6 critical POST paths unique in current web.php (maintenance `generate-batch`/`collect/{id}`, cash-drawer `submit-close`, PT `store`/`record-payment/{id}`, GST `invoices/store`) — `5149c074a` even deleted the dead cash-drawer dup block that once forced my rename. No shadowing.
+- **Their `cash_drawer.php` edit is benign**: print-button CSP hardening only (`onclick` → nonce listener); my `submit-close` form action untouched. My PT×3 + GST×1 null-guards intact on disk.
+- **Foreign red resolved by owner action**: the 6 `routes/web/*.php` open-tag-less splits are GONE from disk — suite green without me touching their files.
+- **Pages**: `/admin/gst`, `/admin/property-tax`, `/admin/finance/cash-drawer`, `/admin/maintenance-dues` — all 200. Master **10/10 PASSED** (21.36s).
+- Uncommitted: only this entry. No app-code or DB changes.
+
+### Key Lessons (carried, continued)
+_507. **After any foreign commit touching your files/routes, re-verify before building on** — route-table grep (uniqueness) + one GET per touched family + full suite. 10 minutes that catch silent first-match-wins shadowing.
+
+## Session 225: PT Rebate CRUD + Assessment Update E2E + Foreign Suite Failure (2026-10-13)
+
+### Trigger
+User: "do next do next". S224 left PT rebate-rules CRUD + assessment update + demand-notice generate unprobed. E2E'd all — plus a foreign master-suite regression appeared mid-round.
+
+### Work (all probe-verified, 0 leftovers)
+- **Rebate CRUD (3/3)**: create (`probe225` 7%) → 302 → row exact → update (225U/9%) → row exact → delete → ABSENT.
+- **Assessment update**: store (2/sqft → 3000) → edit page 200 → update rate 2→4 → base/net 6000 exact (recalc on edit proven).
+- **Demand notice**: generate → status `demand_generated` + `TAX-2026-000001` → row deleted.
+- **Cleanup**: PT master + rebate rule + stray HSN `PROBE225` (transport-isolation leftover) — all PASS.
+- **Master 9/10**: sole failure = PHP Open-Tag Scan on 6 UNTRACKED second-actor files (`routes/web/{admin,agent,associate,employee,public,user}.php` — route-split files missing `<?php` open tag, first line is bare `$router->`). Not mine, untouched per standing rule; all 9 other suites green. Owner/second actor must add the open tag.
+- Uncommitted (standing rule). DB-only: none.
+
+### Key Lessons (carried, continued)
+_499. **A 000 is "unknown outcome", not "failed" — always verify DB before retrying a write.** Two rebate-store 000s: first HAD inserted (UNIQUE rule_code saved a dupe), second genuinely hadn't. Retry-then-verify, never verify-then-assume.
+_500. **curl.exe's phantom double-line (instant 000 + real 302 in one invocation) is a local WinNAT quirk, not app behavior.** Verified: the 302 leg is the truth, DB is the proof. Don't chase the 000 leg.
+_501. **Untracked foreign files can red the master suite mid-round** — Open-Tag Scan failed on 6 `??` route splits I never touched. Suite-green is per-tree-state, not per-session; report foreign reds with file list, don't fix others' files.
 
 ## Session 224: GSTR-1/3B Save + PT Payment Lifecycle E2E + Two Real Bugs (2026-10-12)
 
@@ -187,6 +362,7 @@ _472. **Probe the route before fixing the menu** — changing PortalMenuService 
 _473. **A "dead API" with zero callers still needs auth before deletion debate** — 54 debug routes (farmers/events/container/cache/middleware) had live PII + remote mutation; gating with existing `ApiAuthMiddleware` (401-verified, public routes unaffected) beats delete-first (no recovery risk, zero caller breakage).
 _474. **A chained `git add` can silently skip a file — verify staged list every time** (PortalMenuService needed lowercase `app/services/` path; S196 lesson again). Stage → status → commit, no exceptions.
 _475. **Untracked-file commits absorb others' bulk content** — 8 session controllers were `??`; committing them tracked full prior-session content + my edits. Honest commit message must say so; AGENTS.md sessions remain the authorship record.
+_508. **On Windows disk `app/Services` == repo `app/services/`, and git silently picks the wrong one** — `git add` with the disk-case path exits 0 but stages nothing (caught 3 times: PortalMenuService twice, Pricing services once). ALWAYS use lowercase `app/services/` in git commands, then `git diff --cached --name-only` to confirm.
 
 ## Session 216: Street Lighting Uptime & Rainwater Harvesting (RWH) Desks (2026-10-12)
 
