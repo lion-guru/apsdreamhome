@@ -1087,7 +1087,9 @@ $router->get('/agent/register', 'Auth\\AgentAuthController@register');
 $router->post('/agent/register', 'Auth\\AgentAuthController@handleRegister');
 $router->get('/agent/login', 'Auth\\AgentAuthController@login');
 $router->post('/agent/login', 'Auth\\AgentAuthController@authenticate');
-$router->get('/agent/logout', 'Auth\\AgentAuthController@logout');
+// NOTE (S224): was Auth\AgentAuthController@logout (method never existed → 500).
+// AuthController@logout wipes the full session + remember tokens (role-agnostic).
+$router->get('/agent/logout', 'Auth\\AuthController@logout');
 $router->get('/agent/dashboard', 'Agent\\AgentDashboardController@index');
 $router->get('/agent/leads', 'Agent\\AgentDashboardController@leads');
 $router->get('/agent/leads/{id}', 'Agent\\AgentDashboardController@leadDetail');
@@ -1139,7 +1141,9 @@ $router->post('/associate/properties/delete/{id}', 'App\\Http\\Controllers\\Asso
 $router->get('/associate/sold', 'App\\Http\\Controllers\\Associate\\CrmController@sold');
 $router->get('/associate/pending', 'App\\Http\\Controllers\\Associate\\CrmController@pending');
 $router->get('/associate/profile', 'App\\Http\\Controllers\\Associate\\ProfileController@profile');
-$router->post('/associate/profile', 'App\\Http\\Controllers\\Associate\\ProfileController@updateProfile');
+// NOTE (S224): was ...@updateProfile (method never existed → 500 on save).
+// profile() already handles POST internally (CSRF + UPDATE + redirect).
+$router->post('/associate/profile', 'App\\Http\\Controllers\\Associate\\ProfileController@profile');
 $router->get('/associate/genealogy', 'App\\Http\\Controllers\\MLMTreeController@genealogy');
 $router->get('/associate/wallet', 'App\\Http\\Controllers\\WalletController@associateWallet');
 
@@ -3172,15 +3176,16 @@ $router->get('/admin/finance/ots-schemes', 'App\\Http\\Controllers\\Admin\\OTSCo
 $router->post('/admin/finance/ots-schemes/create', 'App\\Http\\Controllers\\Admin\\OTSController@store');
 $router->get('/admin/finance/ots-schemes/letter/{booking_id}', 'App\\Http\\Controllers\\Admin\\OTSController@generateLetter');
 
-// Day-End Cash Drawer & Safe Closing
-$router->get('/admin/finance/cash-drawer', 'App\\Http\\Controllers\\Admin\\CashDrawerController@index');
-$router->post('/admin/finance/cash-drawer/close', 'App\\Http\\Controllers\\Admin\\CashDrawerController@closeShift');
-$router->get('/admin/finance/cash-drawer/print/{id}', 'App\\Http\\Controllers\\Admin\\CashDrawerController@printSheet');
+// NOTE (S224): removed duplicate cash-drawer block (GET index dup of line ~3047;
+// POST close → closeShift() and GET print/{id} → printSheet() never existed).
+// Canonical: index + submit-close → submitClosing() at lines ~3047-3050.
 
 // Colony Society Maintenance Dues & Collection
+// NOTE (S224): removed POST .../generate → generate() and POST .../collect
+// → collect() (methods never existed; the orphan view posting here is also
+// deleted). Canonical: generate-batch → generateBatch(), collect/{id} →
+// collectPayment($id). Receipt route below is live (receipt($id) added).
 $router->get('/admin/maintenance-dues', 'App\\Http\\Controllers\\Admin\\MaintenanceDuesController@index');
-$router->post('/admin/maintenance-dues/generate', 'App\\Http\\Controllers\\Admin\\MaintenanceDuesController@generate');
-$router->post('/admin/maintenance-dues/collect', 'App\\Http\\Controllers\\Admin\\MaintenanceDuesController@collect');
 $router->get('/admin/maintenance-dues/receipt/{id}', 'App\\Http\\Controllers\\Admin\\MaintenanceDuesController@receipt');
 
 // Property Tax Management
@@ -6163,9 +6168,10 @@ $router->get('/admin/health', 'App\\Http\\Controllers\\Admin\\HealthController@i
 $router->get('/admin/work-orders', 'App\\Http\\Controllers\\Admin\\WorkOrderController@index');
 $router->post('/admin/work-orders/store', 'App\\Http\\Controllers\\Admin\\WorkOrderController@store');
 $router->get('/admin/work-orders/{id}', 'App\\Http\\Controllers\\Admin\\WorkOrderController@show');
-$router->post('/admin/work-orders/bills/store', 'App\\Http\\Controllers\\Admin\\WorkOrderController@storeBill');
-$router->post('/admin/work-orders/bills/{id}/approve', 'App\\Http\\Controllers\\Admin\\WorkOrderController@approveBill');
-$router->post('/admin/work-orders/bills/{id}/disburse', 'App\\Http\\Controllers\\Admin\\WorkOrderController@disburseBill');
+// NOTE (S224): removed POST bills/store → storeBill, bills/{id}/approve →
+// approveBill, bills/{id}/disburse → disburseBill (methods never existed).
+// Canonical: {id}/bills/store → billStore(), {id}/bills/{bill_id}/approve →
+// billApprove(), {id}/bills/{bill_id}/disburse → billDisburse().
 $router->get('/admin/work-orders/{id}/print', 'App\\Http\\Controllers\\Admin\\WorkOrderController@printOrder');
 
 $router->get('/admin/registry-appointments', 'App\\Http\\Controllers\\Admin\\RegistryAppointmentController@index');

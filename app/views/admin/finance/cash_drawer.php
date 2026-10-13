@@ -21,7 +21,8 @@ $denoms = [500, 200, 100, 50, 20, 10];
     </div>
     <div class="d-flex gap-2 no-print">
         <form method="GET" class="d-flex"><input type="date" name="date" class="form-control form-control-sm" value="<?= $e($date) ?>" onchange="this.form.submit()"></form>
-        <button class="btn btn-outline-secondary btn-sm" onclick="window.print()"><i class="fas fa-print me-1"></i>Print Sheet</button>
+        <button class="btn btn-outline-secondary btn-sm js-print"><i class="fas fa-print me-1"></i>Print Sheet</button>
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">document.querySelectorAll(".js-print").forEach(function(b){b.addEventListener("click",function(){window.print();});});</script>
     </div>
 </div>
 <?php if ($today): $d = json_decode($today['denominations_json'] ?? '{}', true) ?: []; ?>

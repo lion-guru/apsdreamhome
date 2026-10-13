@@ -171,4 +171,40 @@ class MaintenanceDuesController extends AdminController
         }
         return $this->redirect('/admin/maintenance-dues');
     }
+
+    /**
+     * GET /admin/maintenance-dues/receipt/{id}
+     * Printable payment receipt for a paid dues row.
+     */
+    public function receipt($id)
+    {
+        $this->requireAdmin();
+        $id = (int)$id;
+        try {
+            $tid = (int)$this->tenantId();
+            $row = $this->db->fetchOne(
+                "SELECT d.*, c.name AS colony_name, u.name AS customer_name,
+                        u.phone AS customer_phone, b.booking_number, p.plot_number
+                 FROM maintenance_dues d
+                 LEFT JOIN colonies c ON c.id = d.colony_id
+                 LEFT JOIN users u ON u.id = d.customer_id
+                 LEFT JOIN plot_bookings b ON b.id = d.booking_id
+                 LEFT JOIN plots p ON p.id = d.plot_id
+                 WHERE d.id = ?" . ($tid > 1 ? " AND d.tenant_id = ?" : "") . " LIMIT 1",
+                $tid > 1 ? [$id, $tid] : [$id]
+            );
+            if (!$row) {
+                $this->setFlash('error', 'Receipt not found.');
+                return $this->redirect('/admin/maintenance-dues');
+            }
+        } catch (\Throwable $e) {
+            error_log('[MaintenanceDuesController::receipt] ' . $e->getMessage());
+            $this->setFlash('error', 'Could not load receipt.');
+            return $this->redirect('/admin/maintenance-dues');
+        }
+        $this->render('admin/maintenance/receipt_print', [
+            'page_title' => 'Maintenance Receipt — ' . ($row['receipt_id'] ?? ('#' . $row['id'])),
+            'due' => $row,
+        ]);
+    }
 }
