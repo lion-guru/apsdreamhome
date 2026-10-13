@@ -1,4 +1,4 @@
-ï»¿<div class="container-fluid">
+<div class="container-fluid">
     <div class="row mb-4">
         <div class="col-12">
             <a href="<?= BASE_URL ?>/admin/payout-batches" class="btn btn-sm btn-outline-secondary mb-2"><i class="fas fa-arrow-left me-1"></i> Back</a>

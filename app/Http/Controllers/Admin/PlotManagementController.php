@@ -881,7 +881,9 @@ class PlotManagementController extends AdminController
     }
 
     /**
-     * Get plots data for export(string $startDate, string $endDate): array
+     * Get plots data for export
+     */
+    private function getPlotsExport(string $startDate, string $endDate): array
     {
         try {
             list($tSql, $tParams) = $this->tenantWhere();
@@ -1644,9 +1646,25 @@ class PlotManagementController extends AdminController
 
                 // Ensure plot_transfers table exists
                 try {
-                    $this->db->execute("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+                    $this->db->execute("CREATE TABLE IF NOT EXISTS plot_transfers (
+                        id INT(11) AUTO_INCREMENT PRIMARY KEY,
+                        tenant_id INT(10) UNSIGNED NOT NULL DEFAULT 1,
+                        plot_id INT(11) NOT NULL,
+                        from_customer_id INT(11) NULL,
+                        to_customer_id INT(11) NULL,
+                        transfer_date DATE NULL,
+                        transfer_reason VARCHAR(255) NULL,
+                        transfer_amount DECIMAL(15,2) DEFAULT 0.00,
+                        transfer_fee DECIMAL(15,2) DEFAULT 0.00,
+                        old_status VARCHAR(50) NULL,
+                        new_status VARCHAR(50) NULL,
+                        document_ref VARCHAR(100) NULL,
+                        remarks TEXT NULL,
+                        processed_by INT(11) NULL,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
                 } catch (\Exception $e) {
-                            error_log("PlotManagementController.php: " . $e->getMessage());
+                    error_log("PlotManagementController.php: " . $e->getMessage());
                 }
 
                 // Insert transfer record

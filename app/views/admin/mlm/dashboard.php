@@ -234,14 +234,14 @@ $monthByType = $stats['commission_this_month_by_type'] ?? [];
                 <div class="mb-2"><strong>Model:</strong> Differential (upline earns gap between their rate & downline's)</div>
                 <div class="mb-2"><strong>Global Cap:</strong> 20% per sale</div>
                 <div class="mb-2"><strong>Depth:</strong> 7-level upline walk</div>
-                <div class="mb-2"><strong>Same-Rank Breakaway:</strong> 2% Gen1 â†’ 1% Gen2 â†’ 0% Gen3+</div>
+                <div class="mb-2"><strong>Same-Rank Breakaway:</strong> 2% Gen1 →' 1% Gen2 →' 0% Gen3+</div>
                 <hr>
                 <div class="mb-1"><strong>Monthly Streams:</strong></div>
                 <ul class="list-unstyled ps-3">
-                    <li>ðŸ’Ž <strong>Generation Bonus</strong> — 5% of gen volume (President/SM only)</li>
-                    <li>â™¾ï¸� <strong>Infinity Override</strong> — 1% of deep downline (VP+ only)</li>
-                    <li>ðŸ¤� <strong>Matching Bonus</strong> — 100%/50%/25% match (President+ only)</li>
-                    <li>ðŸ‘‘ <strong>Royalty Pool</strong> — 2% of sales (Site Manager only)</li>
+                    <li>💎 <strong>Generation Bonus</strong> — 5% of gen volume (President/SM only)</li>
+                    <li>⚗️ <strong>Infinity Override</strong> — 1% of deep downline (VP+ only)</li>
+                    <li>💡 <strong>Matching Bonus</strong> — 100%/50%/25% match (President+ only)</li>
+                    <li>💢 <strong>Royalty Pool</strong> — 2% of sales (Site Manager only)</li>
                 </ul>
             </div>
         </div>

@@ -886,6 +886,27 @@ $extraHead = '<style>
                             <small class="text-muted">कार्यालय में मूल हार्ड कॉपी किस अलमारी/शेल्फ/बॉक्स में रखी गई है ताकि त्वरित रूप से मिल सके।</small>
                         </div>
 
+                        <div class="col-md-4">
+                            <label for="rack_no" class="form-label fw-semibold">
+                                <i class="fas fa-cabinet-filing text-secondary me-1"></i> रैक/अलमारी संख्या (Rack / Almirah No.)
+                            </label>
+                            <input type="text" id="rack_no" name="physical_rack_no" class="form-control" placeholder="उदा: Cabinet-2">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="shelf_id" class="form-label fw-semibold">
+                                <i class="fas fa-layer-group text-info me-1"></i> लॉकर/शेल्फ़ ID (Locker / Shelf ID)
+                            </label>
+                            <input type="text" id="shelf_id" name="locker_shelf_id" class="form-control" placeholder="उदा: Shelf-B-3">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="bar_code" class="form-label fw-semibold">
+                                <i class="fas fa-barcode text-success me-1"></i> फोल्डर बारकोड (Folder Bar Code)
+                            </label>
+                            <input type="text" id="bar_code" name="folder_bar_code" class="form-control" placeholder="उदा: FLD-2026-BK-0089">
+                        </div>
+
                         <div class="col-12">
                             <label for="doc_file" class="form-label fw-semibold">स्कैन फ़ाइल चुनें (PDF, JPG, PNG, DOC) <span class="text-danger">*</span></label>
                             <input type="file" id="doc_file" name="document_file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required>

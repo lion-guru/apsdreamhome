@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Raghunath Nagri Project View - APS Dream Homes
  */

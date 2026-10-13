@@ -52,6 +52,57 @@ $documents = $documents ?? $pending_documents ?? [];
             </div>
         </div>
     </div>
+
+    <!-- Quick Action Hub -->
+    <div class="row g-3 mb-4">
+        <div class="col-xl-4 col-md-6">
+            <div class="card border-0 shadow-sm h-100 border-warning">
+                <div class="card-body text-center">
+                    <div class="display-6 text-warning mb-2"><i class="fas fa-file-signature"></i></div>
+                    <h3 class="fw-bold mb-1" id="quickDeedsCount"><?= e($quickActionCounts['pending_deeds'] ?? 0) ?></h3>
+                    <p class="text-muted mb-0">Pending Deed Executions</p>
+                    <a href="<?= BASE_URL ?>/employee/legal/quick-action-hub" class="btn btn-sm btn-outline-warning mt-2" data-tab="deeds">
+                        <i class="fas fa-arrow-right me-1"></i>View & Process
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-md-6">
+            <div class="card border-0 shadow-sm h-100 border-info">
+                <div class="card-body text-center">
+                    <div class="display-6 text-info mb-2"><i class="fas fa-stamp"></i></div>
+                    <h3 class="fw-bold mb-1" id="quickStampsCount"><?= e($quickActionCounts['pending_stamps'] ?? 0) ?></h3>
+                    <p class="text-muted mb-0">Stamp Paper Verification</p>
+                    <a href="<?= BASE_URL ?>/employee/legal/quick-action-hub" class="btn btn-sm btn-outline-info mt-2" data-tab="stamps">
+                        <i class="fas fa-arrow-right me-1"></i>Verify & Approve
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-md-6">
+            <div class="card border-0 shadow-sm h-100 border-danger">
+                <div class="card-body text-center">
+                    <div class="display-6 text-danger mb-2"><i class="fas fa-ban"></i></div>
+                    <h3 class="fw-bold mb-1" id="quickCancellationsCount"><?= e($quickActionCounts['pending_cancellations'] ?? 0) ?></h3>
+                    <p class="text-muted mb-0">Cancellation Settlements</p>
+                    <a href="<?= BASE_URL ?>/employee/legal/quick-action-hub" class="btn btn-sm btn-outline-danger mt-2" data-tab="cancellations">
+                        <i class="fas fa-arrow-right me-1"></i>Process & Settle
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="display-6 text-warning mb-2"><i class="fas fa-file-signature"></i></div>
+                    <h3 class="fw-bold mb-1"><?= e($pendingReview ?? 0) ?></h3>
+                    <p class="text-muted mb-0">Pending Review</p>
+                </div>
+            </div>
+        </div>
     <div class="row g-3">
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm">

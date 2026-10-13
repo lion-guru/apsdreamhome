@@ -28,7 +28,7 @@ $emi_summary = $emi_summary ?? ['total_emi' => 0, 'paid_emi' => 0, 'pending_emi'
 $property_views = $property_views ?? 0;
 $total_inquiries = $total_inquiries ?? 0;
 
-// Format raw DB rank names (e.g. "sr_bdm" â†' "Sr. BDM", "vice_president" â†' "Vice President")
+// Format raw DB rank names (e.g. "sr_bdm" →' "Sr. BDM", "vice_president" →' "Vice President")
 $formatRank = function (?string $rank): string {
     if (!$rank) return '';
     $map = [

@@ -204,7 +204,7 @@ $payout_history = $payout_history ?? [];
                                 $isPassed = ($rb['rank_order'] ?? 99) < ($rankBenefits[array_search($currentRank, array_column($rankBenefits,'rank_name'))]['rank_order'] ?? 0);
                             ?>
                             <span class="badge px-2 py-1">
-                                <?= htmlspecialchars($rb['rank_name'] === $currentRank ? 'â˜… ' : '') ?><?= (float)$rb['direct_sale_pct'] ?>%
+                                <?= htmlspecialchars($rb['rank_name'] === $currentRank ? '★ ' : '') ?><?= (float)$rb['direct_sale_pct'] ?>%
                             </span>
                             <?php endforeach; ?>
                         </div>

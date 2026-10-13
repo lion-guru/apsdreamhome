@@ -56,7 +56,7 @@
                             <p class="text-muted small mb-1"><i class="<?= htmlspecialchars($f['category_icon'] ?? 'fas fa-tag') ?> me-1"></i><?= htmlspecialchars($f['category_name'] ?? '') ?></p>
                             <?php if ($f['city']): ?><p class="text-muted small mb-1"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($f['city'] ?? '') ?></p><?php endif; ?>
                             <?php if ($f['rating'] > 0): ?>
-                                <p class="mb-1"><span class="text-warning"><?= str_repeat('â˜…', (int)$f['rating']) ?></span><span class="text-muted"> (<?= $f['review_count'] ?>)</span></p>
+                                <p class="mb-1"><span class="text-warning"><?= str_repeat('★', (int)$f['rating']) ?></span><span class="text-muted"> (<?= $f['review_count'] ?>)</span></p>
                             <?php endif; ?>
                             <a href="<?= BASE_URL ?>/services/listing/<?= $f['id'] ?>" class="btn btn-sm btn-outline-primary mt-2">View Details</a>
                         </div>

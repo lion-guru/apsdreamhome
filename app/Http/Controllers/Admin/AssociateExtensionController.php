@@ -11,12 +11,14 @@ class AssociateExtensionController extends AdminController
     {
         $this->requireAdmin();
         try {
+            [$tw, $tp] = $this->tenantWhere();
             $stmt = $this->db->prepare("
                 SELECT a.*, a.status as user_status
                 FROM users a
+                WHERE a.role IN ('associate', 'senior_associate', 'associate_team_lead')" . $tw . "
                 ORDER BY a.name ASC
             ");
-            $stmt->execute();
+            $stmt->execute($tp);
             $users = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             $users = [];
@@ -31,13 +33,14 @@ class AssociateExtensionController extends AdminController
     {
         $this->requireAdmin();
         try {
+            [$tw, $tp] = $this->tenantWhere();
             $stmt = $this->db->prepare("
                 SELECT a.*, a.status as user_status,
                     a.created_at as user_created_at
                 FROM users a
-                WHERE a.id = ?
+                WHERE a.id = ? AND a.role IN ('associate', 'senior_associate', 'associate_team_lead')" . $tw . "
             ");
-            $stmt->execute([$id]);
+            $stmt->execute(array_merge([$id], $tp));
             $associate = $stmt->fetch(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             $associate = null;

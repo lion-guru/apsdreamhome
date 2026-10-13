@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 $_conv = $conversation ?? null;
 $_msgs = $messages ?? [];
 $_ag = $agents ?? [];

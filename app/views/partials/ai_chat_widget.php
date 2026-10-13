@@ -42,7 +42,7 @@ $user_role = $this->getUserRole() ?? 'customer';
         <div id="ai-chat-messages" class="ai-chat-messages">
             <div class="ai-message ai-welcome">
                 <div class="ai-message-content">
-                    <strong>ðŸ™� Namaste!</strong><br>
+                    <strong>📢 Namaste!</strong><br>
                     Main APS Dream Home ki AI hoon. Aapki kya madad kar sakta hoon?<br><br>
                     <strong>Available help:</strong><br>
                     —¢ Property information<br>

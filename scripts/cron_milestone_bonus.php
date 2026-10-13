@@ -17,7 +17,7 @@ $today = date('Y-m-d');
 $credited = 0;
 $errors = [];
 
-echo "=== Milestone Bonus Auto-Credit Cron â€” $today ===\n\n";
+echo "=== Milestone Bonus Auto-Credit Cron — $today ===\n\n";
 
 // Set tenant context for TenantContext consumers
 $cronTenantId = 1;
@@ -94,18 +94,18 @@ try {
                             'percentage' => 0,
                             'basis_amount' => $totalValue,
                             'status' => 'pending',
-                            'description' => ucfirst(str_replace('_', ' ', $type)) . " â€” " . $pct . "% of ₹" . number_format($totalValue) . " paid",
+                            'description' => ucfirst(str_replace('_', ' ', $type)) . " — " . $pct . "% of ₹" . number_format($totalValue) . " paid",
                             'created_at' => date('Y-m-d H:i:s'),
                             'updated_at' => date('Y-m-d H:i:s')
                         ];
                         if ($cronTenantId > 1) $milestoneLedgerData['tenant_id'] = $cronTenantId;
                         $db->insert('mlm_commission_ledger', $milestoneLedgerData);
 
-                        echo "  âœ… Booking #{$booking['booking_id']} â€” $type (₹$bonusAmount) â†’ Associate #$associateId\n";
+                        echo "  âœ… Booking #{$booking['booking_id']} — $type (₹$bonusAmount) →' Associate #$associateId\n";
                         $credited++;
                     } catch (\Throwable $e) {
                         $errors[] = "Booking #{$booking['booking_id']} $type: " . $e->getMessage();
-                        echo "  â�Œ Booking #{$booking['booking_id']} â€” ERROR: " . $e->getMessage() . "\n";
+                        echo "  â�Œ Booking #{$booking['booking_id']} — ERROR: " . $e->getMessage() . "\n";
                     }
                 }
             }

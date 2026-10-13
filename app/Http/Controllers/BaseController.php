@@ -716,6 +716,23 @@ class BaseController
     }
 
     /**
+     * Validate CSRF token or terminate with 403
+     */
+    protected function validateCsrfOrFail(): void
+    {
+        $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+        if (!$this->validateCsrfToken($token)) {
+            http_response_code(403);
+            if (isset($_SERVER['HTTP_ACCEPT']) && str_contains($_SERVER['HTTP_ACCEPT'], 'application/json')) {
+                echo json_encode(['success' => false, 'error' => 'Invalid CSRF token']);
+            } else {
+                echo "403 Forbidden: Invalid CSRF token";
+            }
+            exit;
+        }
+    }
+
+    /**
      * Require user to be logged in
      */
     protected function requireLogin()

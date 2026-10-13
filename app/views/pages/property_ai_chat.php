@@ -92,7 +92,7 @@ $base = $base ?? BASE_URL;
                     <div class="card-body p-0">
                         <div id="property-chat-messages" class="p-4">
                             <div class="text-center py-5">
-                                <div class="mb-3"><span class="display-1">ðŸ� </span></div>
+                                <div class="mb-3"><span class="display-1">🏠</span></div>
                                 <h5><?= __('user_property_ai_chat_welcome', 'Ask about this property!') ?></h5>
                                 <p class="text-muted"><?= __('user_property_ai_chat_welcome_desc', 'Get instant answers about pricing, location, amenities, and more.') ?></p>
                             </div>

@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 $certs = $certs ?? [];
 $csrf = $_SESSION['csrf_token'] ?? '';
 ?>

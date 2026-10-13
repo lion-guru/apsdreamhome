@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 $_agent = $agent ?? ['name' => 'Agent', 'color' => '#666', 'icon' => 'fa-robot', 'description' => ''];
 $_type = $agent_type ?? '';
 $_tasks = $tasks ?? [];

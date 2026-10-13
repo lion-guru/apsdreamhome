@@ -306,7 +306,7 @@ $GLOBALS['_html_doc_started'] = true;
             </div>
 
             <div class="nav-right">
-                <!-- Notifications (Leads) â€” replaced by notification-system.js -->
+                <!-- Notifications (Leads) — replaced by notification-system.js -->
                 <button class="nav-icon" id="notification-bell-placeholder" onclick="toggleNotifications()" title="New Leads Today">
                     <i class="fas fa-bell"></i>
                     <span class="badge"><?php echo e($newLeadsCount); ?></span>
@@ -396,7 +396,7 @@ $GLOBALS['_html_doc_started'] = true;
             <?php endif; ?>
 
             <?php
-            // Tenant status banner â€” read-only mode for suspended/cancelled tenants
+            // Tenant status banner — read-only mode for suspended/cancelled tenants
             $tenantBanner = null;
             if (class_exists('\App\Core\Middleware\TenantContext') && class_exists('\App\Services\TenantService')) {
                 try {

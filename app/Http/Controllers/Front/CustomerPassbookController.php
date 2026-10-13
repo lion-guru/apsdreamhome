@@ -1263,6 +1263,22 @@ class CustomerPassbookController extends BaseController
             $possessionCerts = [];
         }
 
+        // Pending maintenance dues with UPI pay links.
+        try {
+            $maintenanceDues = $this->db->fetchAll("
+                SELECT d.*, b.booking_number, p.plot_number, c.name as colony_name
+                FROM maintenance_dues d
+                LEFT JOIN plot_bookings b ON b.id = d.booking_id
+                LEFT JOIN plots p ON p.id = b.plot_id
+                LEFT JOIN colonies c ON c.id = p.colony_id
+                WHERE d.customer_id = ? AND d.status = 'pending' AND d.tenant_id = ?
+                ORDER BY d.bill_year DESC, d.bill_month DESC
+            ", [$userId, $tid]);
+        } catch (\Throwable $e) {
+            error_log('CustomerPassbookController::documents maintenance: ' . $e->getMessage());
+            $maintenanceDues = [];
+        }
+
         $this->layout = 'layouts/customer';
         $this->render('customer/documents', [
             'page_title' => 'My Documents - APS Dream Home',
@@ -1272,6 +1288,86 @@ class CustomerPassbookController extends BaseController
             'titleCertificates' => $titleCertificates,
             'jointOwnerships' => $jointOwnerships,
             'possessionCerts' => $possessionCerts,
+            'maintenanceDues' => $maintenanceDues,
+        ]);
+    }
+
+    /**
+     * Customer Wallet — wallet_points balance, recent transactions, UPI pay link.
+     * GET /user/wallet
+     */
+    public function wallet(): void
+    {
+        $this->requireCustomer();
+        $userId = (int)$_SESSION['user_id'];
+        $tid = (int)$this->tenantId();
+
+        $wallet = null;
+        $transactions = [];
+        $stats = ['balance' => 0, 'total_earned' => 0, 'total_redeemed' => 0];
+
+        try {
+            $wallet = $this->db->fetch("
+                SELECT * FROM wallet_points WHERE user_id = ? AND tenant_id = ?
+            ", [$userId, $tid]);
+
+            if (!$wallet) {
+                $wallet = ['balance' => 0, 'total_earned' => 0, 'total_redeemed' => 0];
+            }
+
+            $transactions = $this->db->fetchAll("
+                SELECT * FROM wallet_transactions
+                WHERE user_id = ? AND tenant_id = ?
+                ORDER BY created_at DESC
+                LIMIT 50
+            ", [$userId, $tid]);
+
+            $stats['balance'] = (float)($wallet['balance'] ?? 0);
+            $stats['total_earned'] = (float)($wallet['total_earned'] ?? 0);
+            $stats['total_redeemed'] = (float)($wallet['total_redeemed'] ?? 0);
+        } catch (\Throwable $e) {
+            error_log('CustomerPassbookController::wallet error: ' . $e->getMessage());
+        }
+
+        $this->layout = 'layouts/customer';
+        $this->render('customer/wallet', [
+            'page_title' => 'My Wallet - APS Dream Home',
+            'page_description' => 'Wallet balance and transaction history',
+            'current_page' => 'wallet',
+            'wallet' => $wallet,
+            'transactions' => $transactions,
+            'stats' => $stats,
+        ]);
+    }
+
+    /**
+     * Wallet Activation Packages — purchase wallet activation.
+     * GET /user/wallet/packages
+     */
+    public function walletPackages(): void
+    {
+        $this->requireCustomer();
+        $userId = (int)$_SESSION['user_id'];
+        $tid = (int)$this->tenantId();
+
+        $packages = [];
+        try {
+            $packages = $this->db->fetchAll("
+                SELECT * FROM wallet_activation_packages
+                WHERE is_active = 1 AND tenant_id = ?
+                ORDER BY sort_order ASC, amount ASC
+            ", [$tid]);
+        } catch (\Throwable $e) {
+            error_log('CustomerPassbookController::walletPackages error: ' . $e->getMessage());
+            $packages = [];
+        }
+
+        $this->layout = 'layouts/customer';
+        $this->render('customer/wallet_packages', [
+            'page_title' => 'Activate Wallet - APS Dream Home',
+            'page_description' => 'Choose a wallet activation package',
+            'current_page' => 'wallet-packages',
+            'packages' => $packages,
         ]);
     }
 

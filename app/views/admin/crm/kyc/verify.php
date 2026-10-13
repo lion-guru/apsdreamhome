@@ -1,4 +1,4 @@
-ï»¿<?php $page_title = $page_title ?? 'Verify KYC'; $result = $result ?? ['pan'=>null,'aadhaar'=>null]; ?>
+<?php $page_title = $page_title ?? 'Verify KYC'; $result = $result ?? ['pan'=>null,'aadhaar'=>null]; ?>
 <div class="container-fluid px-4 py-4">
     <h4 class="fw-bold mb-4"><i class="fas fa-id-card me-2 text-primary"></i>Verify KYC</h4>
     <div class="row g-4">

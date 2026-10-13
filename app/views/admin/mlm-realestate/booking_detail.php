@@ -32,8 +32,8 @@
                             <tr><th>Booking Number</th><td><?= htmlspecialchars($b['booking_number'] ?? 'N/A') ?></td></tr>
                             <tr><th>Customer</th><td>
                                 <?= htmlspecialchars($b['customer_name'] ?? 'N/A') ?>
-                                <?php if ($b['customer_phone'] ?? ''): ?><br><small class="text-muted">ðŸ“ž <?= htmlspecialchars($b['customer_phone'] ?? '') ?></small><?php endif; ?>
-                                <?php if ($b['customer_email'] ?? ''): ?><br><small class="text-muted">âœ‰ <?= htmlspecialchars($b['customer_email'] ?? '') ?></small><?php endif; ?>
+                                <?php if ($b['customer_phone'] ?? ''): ?><br><small class="text-muted">📞 <?= htmlspecialchars($b['customer_phone'] ?? '') ?></small><?php endif; ?>
+                                <?php if ($b['customer_email'] ?? ''): ?><br><small class="text-muted">✓ <?= htmlspecialchars($b['customer_email'] ?? '') ?></small><?php endif; ?>
                             </td></tr>
                             <tr><th>Plot</th><td>
                                 Plot #<?= htmlspecialchars($b['plot_number'] ?? 'N/A') ?>
@@ -55,7 +55,7 @@
                                     <?= $status['token_met'] ? 'Yes (25% paid)' : 'No (pending)' ?>
                                 </span>
                                 <?php if (!$status['token_met'] && $b['status'] === 'pending'): ?>
-                                    <br><small class="text-warning">â�³ Awaiting 25% token payment before approval</small>
+                                    <br><small class="text-warning">✓ Awaiting 25% token payment before approval</small>
                                 <?php endif; ?>
                             </td></tr>
                             <tr><th>Payment Status</th><td><?= htmlspecialchars($b['payment_status'] ?? 'N/A') ?></td></tr>

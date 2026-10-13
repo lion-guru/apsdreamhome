@@ -27,6 +27,7 @@ foreach ($colonies as $c) {
         </nav>
     </div>
     <div class="d-flex gap-2 flex-wrap">
+        <a href="<?= BASE_URL ?>/admin/township-water-supply" class="btn btn-outline-dark btn-sm"><i class="fas fa-tools me-1"></i>Township Operations</a>
         <a href="<?= BASE_URL ?>/admin/colony-pipeline"      class="btn btn-outline-primary btn-sm"><i class="fas fa-sitemap me-1"></i>Pipeline</a>
         <a href="<?= BASE_URL ?>/admin/colony-feasibility"   class="btn btn-outline-secondary btn-sm"><i class="fas fa-chart-bar me-1"></i>Feasibility</a>
         <a href="<?= BASE_URL ?>/admin/legal-colony-pipeline" class="btn btn-outline-warning btn-sm"><i class="fas fa-gavel me-1"></i>Legal</a>
@@ -185,8 +186,11 @@ foreach ($colonies as $c) {
                         </td>
                         <td class="text-end pe-4">
                             <div class="btn-group btn-group-sm">
-                                <a href="<?= BASE_URL ?>/admin/colonies/<?= e($c['id']) ?>" class="btn btn-outline-primary" title="View">
+                                <a href="<?= BASE_URL ?>/admin/colonies/<?= e($c['id']) ?>" class="btn btn-outline-primary" title="View 360°">
                                     <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="<?= BASE_URL ?>/admin/colonies/<?= e($c['id']) ?>#colony-operations" class="btn btn-outline-dark" title="Township Utilities & Ops">
+                                    <i class="fas fa-tools"></i>
                                 </a>
                                 <a href="<?= BASE_URL ?>/admin/colonies/<?= e($c['id']) ?>/edit" class="btn btn-outline-warning" title="Edit">
                                     <i class="fas fa-edit"></i>

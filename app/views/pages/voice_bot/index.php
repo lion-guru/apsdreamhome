@@ -1,7 +1,7 @@
 <?php
 /**
  * APS Dream Homes — Browser Voice Bot
- * Option A: Customer opens link â†’ speaks in Hindi â†’ AI responds
+ * Option A: Customer opens link →' speaks in Hindi →' AI responds
  * 100% free: Web Speech API (STT+TTS) + Groq/Llama (LLM)
  */
 $customer_name = $customer_name ?? '';
@@ -503,7 +503,7 @@ function removeTyping() {
 }
 
 function endSession() {
-    addBotMsg('Dhanyavaad! Aapka din shubh ho. Phir milenge! ðŸ™�');
+    addBotMsg('Dhanyavaad! Aapka din shubh ho. Phir milenge! 📢');
     if (window.speechSynthesis) {
         const utter = new SpeechSynthesisUtterance('Dhanyavaad! Aapka din shubh ho.');
         utter.lang = 'hi-IN';

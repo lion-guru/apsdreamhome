@@ -19,7 +19,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>âœ… Payment Successful!</h1>
+            <h1>✓ Payment Successful!</h1>
             <p>Your payment has been processed successfully</p>
         </div>
 
@@ -53,8 +53,8 @@
             </div>
 
             <p>If you have any questions about your payment, please contact our support team:</p>
-            <p>ðŸ"§ Email: support@apsdreamhome.com<br>
-               ðŸ"ž Phone: {{company_phone}}</p>
+            <p>📧 Email: support@apsdreamhome.com<br>
+               📞 Phone: {{company_phone}}</p>
         </div>
 
         <div class="footer">

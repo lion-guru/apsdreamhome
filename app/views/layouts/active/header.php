@@ -142,9 +142,9 @@ window.BASE_URL = '<?php echo BASE_URL; ?>';
 
 /**
  * Unified drawer toggle — replaces openMenu/closeMenu pattern.
- *   toggleDrawer(event)      â†’ toggles open state
- *   toggleDrawer(null,'close') â†’ closes
- *   toggleDrawer(null,'open')  â†’ opens
+ *   toggleDrawer(event)      →' toggles open state
+ *   toggleDrawer(null,'close') →' closes
+ *   toggleDrawer(null,'open')  →' opens
  */
 var _drawerPreviousFocus = null;
 

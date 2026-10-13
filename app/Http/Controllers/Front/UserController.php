@@ -2979,6 +2979,59 @@ class UserController extends BaseController
         ]);
     }
 
+    public function installments()
+    {
+        $this->requireCustomerLogin();
+        $this->layout = 'layouts/customer';
+        $userId = $_SESSION['user_id'];
+        $db = \App\Core\Database\Database::getInstance();
+        $pdo = $db->getConnection();
+
+        $installments = [];
+        $stats = ['total' => 0, 'paid' => 0, 'pending' => 0, 'overdue' => 0, 'total_due' => 0];
+
+        try {
+            $st = $pdo->prepare("
+                SELECT ips.*, pb.booking_number, p.plot_number, c.name as colony_name,
+                       pb.total_plot_value, pb.status as booking_status
+                FROM booking_payment_schedules ips
+                JOIN plot_bookings pb ON ips.booking_id = pb.id
+                LEFT JOIN plots p ON pb.plot_id = p.id
+                LEFT JOIN colonies c ON p.colony_id = c.id
+                WHERE pb.customer_id = ?
+                ORDER BY ips.due_date ASC
+            ");
+            $st->execute([$userId]);
+            $installments = $st->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+            foreach ($installments as $inst) {
+                $stats['total']++;
+                $due = (float)($inst['amount_due'] ?? 0);
+                $paid = (float)($inst['amount_paid'] ?? 0);
+                $status = $inst['status'] ?? 'pending';
+                if ($status === 'paid') {
+                    $stats['paid']++;
+                } elseif ($status === 'overdue' || ($due > $paid && strtotime($inst['due_date']) < time())) {
+                    $stats['overdue']++;
+                    $stats['total_due'] += $due - $paid;
+                } else {
+                    $stats['pending']++;
+                    $stats['total_due'] += $due - $paid;
+                }
+            }
+        } catch (\Throwable $e) {
+            error_log('installments error: ' . $e->getMessage());
+        }
+
+        $this->render('pages/user_installments', [
+            'page_title' => 'My Installments - APS Dream Home',
+            'page_description' => 'Your payment installment schedule',
+            'current_page' => 'installments',
+            'installments' => $installments,
+            'stats' => $stats,
+        ]);
+    }
+
     public function bookSiteVisitAction()
     {
         $this->requireCustomerLogin();

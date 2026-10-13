@@ -113,9 +113,9 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                         if (!empty($filters['bedrooms'])) $filterBadges[] = ['Beds', $filters['bedrooms'] . '+'];
                         if (!empty($filters['bathrooms'])) $filterBadges[] = ['Baths', $filters['bathrooms'] . '+'];
                         if (!empty($filters['furnished'])) $filterBadges[] = ['Furnished', ucfirst($filters['furnished'])];
-                        if (!empty($filters['year_built'])) $filterBadges[] = ['Year â‰¥', $filters['year_built']];
-                        if (!empty($filters['area_min'])) $filterBadges[] = ['Area â‰¥', $filters['area_min'] . ' sqft'];
-                        if (!empty($filters['area_max'])) $filterBadges[] = ['Area â‰¤', $filters['area_max'] . ' sqft'];
+                        if (!empty($filters['year_built'])) $filterBadges[] = ['Year ≥', $filters['year_built']];
+                        if (!empty($filters['area_min'])) $filterBadges[] = ['Area ≥', $filters['area_min'] . ' sqft'];
+                        if (!empty($filters['area_max'])) $filterBadges[] = ['Area ≤', $filters['area_max'] . ' sqft'];
 
                         $alertsOn = (int)($search['email_alerts'] ?? 0) === 1;
                         $queryString = http_build_query($filters);

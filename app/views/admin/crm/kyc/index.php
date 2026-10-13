@@ -1,4 +1,4 @@
-ï»¿<?php $page_title = $page_title ?? 'KYC Verification'; $requests = $requests ?? []; $stats = $stats ?? []; ?>
+<?php $page_title = $page_title ?? 'KYC Verification'; $requests = $requests ?? []; $stats = $stats ?? []; ?>
 <div class="container-fluid px-4 py-4">
     <h4 class="fw-bold mb-4"><i class="fas fa-id-card me-2 text-primary"></i>KYC Verification</h4>
     <div class="row g-3 mb-4">

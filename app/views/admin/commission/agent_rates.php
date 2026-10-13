@@ -1,4 +1,4 @@
-ï»¿<div class="container-fluid">
+<div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4><i class="fas fa-dollar-sign"></i> Agent Commission Rates</h4>
         <a href="<?= BASE_URL ?>/admin/commission" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>

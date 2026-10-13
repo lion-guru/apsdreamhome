@@ -39,16 +39,14 @@ class SiteController extends AdminController
 
             $offset = ($page - 1) * $perPage;
 
-            // Build query
-            $sql = "SELECT s.*, 
-                           COUNT(p.id) as property_count,
-                           COUNT(pr.id) as project_count,
-                           0 as plot_count,
-                           COALESCE(SUM(p.price), 0) as total_property_value
-                    FROM sites s
-                    LEFT JOIN properties p ON s.id = p.site_id
-                    LEFT JOIN projects pr ON s.id = pr.colony_id
-                    WHERE 1=1";
+            // Build query (correlated subqueries avoid fanout from multiple LEFT JOINs)
+            $sql = "SELECT s.*,
+                           (SELECT COUNT(*) FROM properties p WHERE p.site_id = s.id) as property_count,
+                           (SELECT COUNT(*) FROM projects pr WHERE pr.colony_id = s.id) as project_count,
+                            0 as plot_count,
+                           (SELECT COALESCE(SUM(p.price), 0) FROM properties p WHERE p.site_id = s.id) as total_property_value
+                     FROM sites s
+                     WHERE 1=1";
             $params = [];
 
             // Apply filters
@@ -70,7 +68,7 @@ class SiteController extends AdminController
                 $params[] = $type;
             }
 
-            $sql .= " GROUP BY s.id ORDER BY s.created_at DESC";
+            $sql .= " ORDER BY s.created_at DESC";
 
             // Count total - use subquery approach instead of str_replace
             $countSql = "SELECT COUNT(*) as total FROM sites s WHERE 1=1";
@@ -196,13 +194,15 @@ class SiteController extends AdminController
                 }
             }
 
-            // Insert site
+            // Insert site (status from form, whitelisted, defaults to active)
+            $validStatuses = ['active', 'inactive', 'under_construction', 'completed', 'planning', 'under_development'];
+            $newStatus = in_array($data['status'] ?? '', $validStatuses, true) ? $data['status'] : 'active';
             $sql = "INSERT INTO sites 
                     (site_name, location, site_type, total_area, developed_area, 
                      description, district, city, state, pincode, 
                      manager_id, latitude, longitude, amenities, key_highlights, nearby_places, image, 
                      total_plots, available_plots, status, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', NOW())";
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
 
             $stmt = $this->db->prepare($sql);
             $result = $stmt->execute([
@@ -219,12 +219,13 @@ class SiteController extends AdminController
                 !empty($data['manager_id']) ? (int)$data['manager_id'] : null,
                 !empty($data['latitude']) ? (float)$data['latitude'] : null,
                 !empty($data['longitude']) ? (float)$data['longitude'] : null,
-                CoreFunctionsServiceCustom::validateInput($data['amenities'] ?? '', 'string'),
-                CoreFunctionsServiceCustom::validateInput($data['key_highlights'] ?? '', 'string'),
-                CoreFunctionsServiceCustom::validateInput($data['nearby_places'] ?? '', 'string'),
+                $this->normalizeJsonField($data['amenities'] ?? null),
+                $this->normalizeJsonField($data['key_highlights'] ?? null),
+                $this->normalizeJsonField($data['nearby_places'] ?? null),
                 $imagePath,
                 !empty($data['total_plots']) ? (int)$data['total_plots'] : 0,
-                !empty($data['available_plots']) ? (int)$data['available_plots'] : 0
+                !empty($data['available_plots']) ? (int)$data['available_plots'] : 0,
+                $newStatus
             ]);
 
             if ($result) {
@@ -267,17 +268,14 @@ class SiteController extends AdminController
                 return $this->redirect('admin/sites');
             }
 
-            // Get site details
-            $sql = "SELECT s.*, 
-                           COUNT(p.id) as property_count,
-                           COUNT(pr.id) as project_count,
-                           0 as plot_count,
-                           COALESCE(SUM(p.price), 0) as total_property_value
-                    FROM sites s
-                    LEFT JOIN properties p ON s.id = p.site_id
-                    LEFT JOIN projects pr ON s.id = pr.colony_id
-                    WHERE s.id = ?
-                    GROUP BY s.id";
+            // Get site details (correlated subqueries avoid JOIN fanout)
+            $sql = "SELECT s.*,
+                           (SELECT COUNT(*) FROM properties p WHERE p.site_id = s.id) as property_count,
+                           (SELECT COUNT(*) FROM projects pr WHERE pr.colony_id = s.id) as project_count,
+                            0 as plot_count,
+                           (SELECT COALESCE(SUM(p.price), 0) FROM properties p WHERE p.site_id = s.id) as total_property_value
+                     FROM sites s
+                     WHERE s.id = ?";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$siteId]);
             $site = $stmt->fetch();
@@ -492,17 +490,17 @@ class SiteController extends AdminController
 
             if (isset($data['amenities'])) {
                 $updateFields[] = "amenities = ?";
-                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['amenities'], 'string');
+                $updateValues[] = $this->normalizeJsonField($data['amenities']);
             }
 
             if (isset($data['key_highlights'])) {
                 $updateFields[] = "key_highlights = ?";
-                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['key_highlights'], 'string');
+                $updateValues[] = $this->normalizeJsonField($data['key_highlights']);
             }
 
             if (isset($data['nearby_places'])) {
                 $updateFields[] = "nearby_places = ?";
-                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['nearby_places'], 'string');
+                $updateValues[] = $this->normalizeJsonField($data['nearby_places']);
             }
 
             if (isset($data['developed_area'])) {
@@ -642,6 +640,24 @@ class SiteController extends AdminController
             $this->loggingService->error("Site Destroy error: " . $e->getMessage());
             return $this->jsonError('Failed to delete site', 500);
         }
+    }
+
+    /**
+     * Normalize a JSON text column: empty => NULL (satisfies JSON_VALID check),
+     * valid JSON => as-is, plain text => wrapped as JSON array.
+     */
+    private function normalizeJsonField($value): ?string
+    {
+        $value = trim((string)($value ?? ''));
+        if ($value === '') {
+            return null;
+        }
+        json_decode($value);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            return $value;
+        }
+        $items = array_values(array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', $value))));
+        return json_encode($items === [] ? [$value] : $items, JSON_UNESCAPED_UNICODE);
     }
 
     /**

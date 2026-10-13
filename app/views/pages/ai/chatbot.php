@@ -17,7 +17,7 @@
                 <div class="chat-container">
                     <div class="chat-messages p-4" id="chatMessages" >
                         <div class="message bot-message mb-3 p-3 rounded-4 bg-white shadow-sm">
-                            Namaste! ðŸ™� Welcome to <strong>APS Dream Home</strong>! I'm your property assistant.\n\nHow can I help you today? Try these quick options below! ðŸ‘‡
+                            Namaste! 📢 Welcome to <strong>APS Dream Home</strong>! I'm your property assistant.\n\nHow can I help you today? Try these quick options below! ðŸ'‡
                         </div>
                     </div>
                     

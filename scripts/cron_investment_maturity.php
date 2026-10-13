@@ -17,7 +17,7 @@ $today = date('Y-m-d');
 $matured = 0;
 $errors = [];
 
-echo "=== Investment Maturity Cron â€” $today ===\n\n";
+echo "=== Investment Maturity Cron — $today ===\n\n";
 
 // Set tenant context for TenantContext consumers
 $cronTenantId = 1;
@@ -70,15 +70,15 @@ try {
                 if ($cronTenantId > 1) $activityLogData['tenant_id'] = $cronTenantId;
                 $db->insert('activity_logs_unified', $activityLogData);
             } catch (\Throwable $e) {
-                // Non-fatal â€” logging failure doesn't block maturity
+                // Non-fatal — logging failure doesn't block maturity
             }
 
-            echo "  âœ… #{$inv['id']} {$inv['investment_ref']} â€” ₹" . number_format($inv['principal_amount']) . " ({$inv['plan_name']})\n";
+            echo "  âœ… #{$inv['id']} {$inv['investment_ref']} — ₹" . number_format($inv['principal_amount']) . " ({$inv['plan_name']})\n";
             $matured++;
 
         } catch (\Throwable $e) {
             $errors[] = "Investment #{$inv['id']}: " . $e->getMessage();
-            echo "  â�Œ #{$inv['id']} {$inv['investment_ref']} â€” ERROR: " . $e->getMessage() . "\n";
+            echo "  â�Œ #{$inv['id']} {$inv['investment_ref']} — ERROR: " . $e->getMessage() . "\n";
         }
     }
 

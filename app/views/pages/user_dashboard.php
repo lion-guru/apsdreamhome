@@ -527,7 +527,7 @@ $dashBookingCount = count($dashBookings);
         <?php if (!empty($referral_earnings_breakdown)): ?>
             <?php 
                 $userId = $user['id'] ?? $_SESSION['user_id'] ?? 0;
-                include __DIR__ . '/../../components/referral_earnings_widget.php';
+                include __DIR__ . '/../components/referral_earnings_widget.php';
             ?>
         <?php endif; ?>
 

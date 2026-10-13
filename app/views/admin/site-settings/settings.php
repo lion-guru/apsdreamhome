@@ -348,7 +348,7 @@ $tabs = [
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Copyright Text</label>
-                    <input type="text" name="settings[footer_copyright]" class="form-control" value="<?= sc($settings, 'footer_copyright', 'Â© 2026 APS Dream Home. All rights reserved.') ?>">
+                    <input type="text" name="settings[footer_copyright]" class="form-control" value="<?= sc($settings, 'footer_copyright', '© 2026 APS Dream Home. All rights reserved.') ?>">
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Developer Credit</label>
@@ -435,7 +435,7 @@ $tabs = [
                     </div>
                     <div class="alert alert-info small mb-0">
                         <i class="fas fa-info-circle me-1"></i>
-                        WhatsApp number is taken from the <strong>Contact</strong> tab â†’ WhatsApp Number field.
+                        WhatsApp number is taken from the <strong>Contact</strong> tab →' WhatsApp Number field.
                     </div>
                 </div>
             </div>
@@ -515,7 +515,7 @@ $tabs = [
                 </div>
                 <div class="alert alert-warning small mb-0">
                     <i class="fas fa-exclamation-triangle me-1"></i>
-                    <strong>Gmail Users:</strong> Enable 2-Factor Auth â†’ Generate App Password at <a href="https://myaccount.google.com/apppasswords" target="_blank">myaccount.google.com/apppasswords</a>
+                    <strong>Gmail Users:</strong> Enable 2-Factor Auth →' Generate App Password at <a href="https://myaccount.google.com/apppasswords" target="_blank">myaccount.google.com/apppasswords</a>
                 </div>
             </div>
         </div>
@@ -603,7 +603,7 @@ $tabs = [
                             <input type="password" name="settings[sms_api_key]" class="form-control" value="<?= sc($settings, 'sms_api_key') ?>" id="smsApiKey">
                             <button class="btn btn-outline-secondary" type="button" onclick="var p=document.getElementById('smsApiKey');p.type=p.type==='password'?'text':'password'" aria-label="View"><i class="fas fa-eye"></i></button>
                         </div>
-                        <div class="form-text">Get from <a href="https://msg91.com" target="_blank">msg91.com</a> â†’ API section</div>
+                        <div class="form-text">Get from <a href="https://msg91.com" target="_blank">msg91.com</a> →' API section</div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Sender ID</label>

@@ -22,7 +22,7 @@
     </div>
 
     <div >
-        <p >âš  IMPORTANT NOTICE</p>
+        <p >⚖ IMPORTANT NOTICE</p>
         <p >If payment is not received within <strong>15 days</strong>, APS Dream Home reserves the right to:<br>
         1. Cancel your booking and retain amounts paid<br>
         2. Initiate legal proceedings for recovery<br>

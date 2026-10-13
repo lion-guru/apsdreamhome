@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 $_ss = $sys_stats ?? [];
 $_aa = $recent_activity ?? [];
 $_as = $agent_stats ?? [];
@@ -179,7 +179,7 @@ $_ag = $agents ?? [];
                                 <li class="mb-2"><strong>Each agent</strong> specializes in one business function</li>
                                 <li class="mb-2"><strong>Cron jobs</strong> trigger agents at scheduled intervals</li>
                                 <li class="mb-2"><strong>AI processes</strong> data and takes autonomous actions</li>
-                                <li class="mb-2"><strong>Low confidence</strong> â†’ escalates to human</li>
+                                <li class="mb-2"><strong>Low confidence</strong> →' escalates to human</li>
                                 <li class="mb-2"><strong>Full audit</strong> trail in agent_task_logs</li>
                             </ol>
                         </div>

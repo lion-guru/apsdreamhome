@@ -12,6 +12,7 @@
         "ext-mysqli": "*",
         "ext-openssl": "*",
         "cboden/ratchet": "^0.4.4",
+        "endroid/qr-code": "^6.0",
         "firebase/php-jwt": "^7.0",
         "phpmailer/phpmailer": "^7.0",
         "tecnickcom/tcpdf": "^6.11",

@@ -99,7 +99,7 @@ echo "=== FOUND WITH DIFFERENT PATHS ($underscore/hyphen mismatches or shared da
 foreach ($foundViews as $fv) {
     $r = $fv['item'];
     echo "  [{$r['id']}] {$r['section']} / {$r['name']}\n";
-    echo "    URL: {$r['url']}  â†’  View: {$fv['view']}\n";
+    echo "    URL: {$r['url']}  →'  View: {$fv['view']}\n";
 }
 echo "\n";
 

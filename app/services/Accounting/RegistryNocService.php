@@ -106,7 +106,7 @@ class RegistryNocService
         return ($stmt['count'] ?? 0) > 0;
     }
 
-    private function checkNoDues(int $bookingId): bool
+    public function checkNoDues(int $bookingId): bool
     {
         $tid = TenantContext::getId();
         // Check for any outstanding penalties, maintenance dues, etc.

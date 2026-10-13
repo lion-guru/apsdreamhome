@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 $page_title = $page_title ?? 'Record Collection';
 $page_heading = $page_heading ?? 'Record Cash Collection';
 $collectors = $collectors ?? [];

@@ -222,7 +222,7 @@ $today = date('Y-m-d');
                             </div>
                             <p class="mb-0 mt-1"><?= htmlspecialchars($act['description'] ?? '') ?></p>
                             <?php if (!empty($act['old_value']) && !empty($act['new_value'])): ?>
-                                <small class="text-muted"><i class="fas fa-arrow-right me-1"></i><?= htmlspecialchars($act['old_value'] ?? '') ?> â†' <?= htmlspecialchars($act['new_value'] ?? '') ?></small>
+                                <small class="text-muted"><i class="fas fa-arrow-right me-1"></i><?= htmlspecialchars($act['old_value'] ?? '') ?> →' <?= htmlspecialchars($act['new_value'] ?? '') ?></small>
                             <?php endif; ?>
                         </div>
                         <?php endforeach; ?>

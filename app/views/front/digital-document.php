@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 /** @var array $booking */
 /** @var array $document */
 $base = BASE_URL ?? '/apsdreamhome';

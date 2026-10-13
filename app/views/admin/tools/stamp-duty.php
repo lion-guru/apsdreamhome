@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 $configs = $configs ?? [];
 $rates = $rates ?? [];
 $circle_rates = $circle_rates ?? [];

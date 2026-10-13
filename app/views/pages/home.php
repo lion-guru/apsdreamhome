@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if (!isset($sc)) {
     $sc = function ($k, $d = '') {
         return $GLOBALS['_site_settings_cache'][$k] ?? $d;

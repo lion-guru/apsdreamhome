@@ -43,7 +43,7 @@
             <?php if (!empty($conversion_data)): ?>
                 <div class="table-responsive">
                     <table class="table table-sm table-hover">
-                        <thead><tr><th>Month</th><th>Leads</th><th>Proposals</th><th>Deals</th><th>Leadâ†’Deal %</th><th>Proposalâ†’Deal %</th></tr></thead>
+                        <thead><tr><th>Month</th><th>Leads</th><th>Proposals</th><th>Deals</th><th>Lead→'Deal %</th><th>Proposal→'Deal %</th></tr></thead>
                         <tbody>
                             <?php foreach ($conversion_data as $row): ?>
                             <tr>

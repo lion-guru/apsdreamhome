@@ -136,7 +136,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <meta name="twitter:description" content="<?= htmlspecialchars($seo['twitter_description'] ?? '') ?>">
     <meta name="twitter:image" content="<?= htmlspecialchars($seo['twitter_image'] ?? '') ?>">
 
-    <!-- Canonical (dynamic â€” overrides static one above for accuracy) -->
+    <!-- Canonical (dynamic — overrides static one above for accuracy) -->
     <link rel="canonical" href="<?= htmlspecialchars($seo['canonical'] ?? '') ?>">
 
     <!-- JSON-LD Structured Data -->
@@ -292,7 +292,7 @@ $bodyClass = $isHomePage ? 'page-home' : '';
 
     <?php
     if (!$isAdminPage) {
-        // Tell footer.php NOT to close the document â€” base.php handles it
+        // Tell footer.php NOT to close the document — base.php handles it
         $GLOBALS['_layout_handles_close'] = true;
         if ($isPremiumPage) {
             include __DIR__ . '/active/footer.php';

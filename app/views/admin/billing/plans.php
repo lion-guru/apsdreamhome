@@ -124,7 +124,7 @@ $base    = BASE_URL ?? '';
         <?php else: ?>
             <div class="alert alert-warning mb-0">
                 <i class="fas fa-exclamation-triangle me-2"></i><strong>Razorpay not configured.</strong> Add API keys in
-                <a href="<?= $base ?>/admin/settings">Site Settings â†’ Payment Gateway</a> to enable subscriptions.
+                <a href="<?= $base ?>/admin/settings">Site Settings →' Payment Gateway</a> to enable subscriptions.
                 Free plan subscriptions work without Razorpay.
             </div>
         <?php endif; ?>

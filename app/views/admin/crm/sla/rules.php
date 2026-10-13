@@ -1,4 +1,4 @@
-ï»¿<?php $page_title = $page_title ?? 'SLA Rules'; $rules = $rules ?? []; ?>
+<?php $page_title = $page_title ?? 'SLA Rules'; $rules = $rules ?? []; ?>
 <div class="container-fluid px-4 py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="fw-bold mb-0"><i class="fas fa-clock me-2 text-primary"></i>SLA Rules</h4>

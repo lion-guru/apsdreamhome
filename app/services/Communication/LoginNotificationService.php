@@ -417,7 +417,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;margin:0;padding:0;background:#f4f6
 <p>Need help? Contact us at <a href="mailto:{$supportEmail}">{$supportEmail}</a></p>
 </div>
 <div class="footer">
-<p>à‚Â© {date('Y')} APS Dream Home. All rights reserved.</p>
+<p>à‚© {date('Y')} APS Dream Home. All rights reserved.</p>
 <p>This email was sent to you because you registered at APS Dream Home.</p>
 </div>
 </div></body></html>
@@ -479,7 +479,7 @@ If you don't recognize this login, please change your password immediately and c
 <p class="style-12737">For your security, we monitor all login activity on your account.</p>
 </div>
 <div class="footer">
-<p>à‚Â© {date('Y')} APS Dream Home. All rights reserved.</p>
+<p>à‚© {date('Y')} APS Dream Home. All rights reserved.</p>
 <p>This is a security notification for your account.</p>
 </div>
 </div></body></html>

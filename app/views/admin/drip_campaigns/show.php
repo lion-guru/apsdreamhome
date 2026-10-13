@@ -15,8 +15,8 @@ ob_start();
                 <span class="badge bg-<?= ['active' => 'success', 'paused' => 'warning', 'draft' => 'secondary'][$campaign['status']] ?? 'secondary' ?>">
                     <?= ucfirst($campaign['status']) ?>
                 </span>
-                Â· Trigger: <strong><?= ucfirst(str_replace('_', ' ', $campaign['trigger_event'])) ?></strong>
-                Â· <?= count($emails) ?> emails in sequence
+                · Trigger: <strong><?= ucfirst(str_replace('_', ' ', $campaign['trigger_event'])) ?></strong>
+                · <?= count($emails) ?> emails in sequence
             </p>
         </div>
         <a href="<?= BASE_URL ?>/admin/drip-campaigns" class="btn btn-outline-secondary">
@@ -82,7 +82,7 @@ ob_start();
                                     <?= $e['delay_days'] > 0 ? $e['delay_days'] . ' day(s)' : '' ?>
                                     <?= $e['delay_hours'] > 0 ? ' ' . $e['delay_hours'] . ' hour(s)' : '' ?>
                                     <?= ($e['delay_days'] == 0 && $e['delay_hours'] == 0) ? 'enrollment' : '' ?>
-                                    Â· <span class="badge bg-light text-dark"><?= ucfirst($e['channel']) ?></span>
+                                    · <span class="badge bg-light text-dark"><?= ucfirst($e['channel']) ?></span>
                                 </p>
                                 <pre class="bg-light p-2 small rounded mb-0"><?= htmlspecialchars($e['body'] ?? '') ?></pre>
                             </div>

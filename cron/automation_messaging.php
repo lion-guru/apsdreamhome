@@ -55,7 +55,7 @@ $cronTenantSql = $cronTenantId > 1 ? " AND tenant_id = " . (int)$cronTenantId : 
 $cronTenantCol = $cronTenantId > 1 ? ", tenant_id" : "";
 $cronTenantVal = $cronTenantId > 1 ? ", " . (int)$cronTenantId : "";
 
-// â”€â”€â”€ 1. Birthday & Festival Greetings â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ——— 1. Birthday & Festival Greetings ————————————————————————
 logMsg("--- Birthday & Festival Greetings ---");
 try {
     $greetingResults = $auto->sendAutomatedGreetings();
@@ -69,7 +69,7 @@ try {
     logMsg("Greetings ERROR: " . $e->getMessage());
 }
 
-// â”€â”€â”€ 2. Newsletter Processing (weekly â€” only on Mondays) â”€â”€â”€â”€â”€â”€
+// ——— 2. Newsletter Processing (weekly — only on Mondays) ——————
 if (date('N') == 1) {
     logMsg("--- Newsletter Processing (Monday) ---");
     try {
@@ -82,7 +82,7 @@ if (date('N') == 1) {
     logMsg("--- Newsletter: Skipped (not Monday) ---");
 }
 
-// â”€â”€â”€ 3. Payment Reminder Chasers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ——— 3. Payment Reminder Chasers —————————————————————————————
 logMsg("--- Payment Reminder Chasers ---");
 try {
     $pdo = $db->getConnection();
@@ -148,6 +148,6 @@ try {
     logMsg("Payment chaser ERROR: " . $e->getMessage());
 }
 
-// â”€â”€â”€ Summary â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ——— Summary ——————————————————————————————————————————————————
 $elapsed = round((microtime(true) - $startTime) * 1000);
 logMsg("=== Completed in {$elapsed}ms ===");?>

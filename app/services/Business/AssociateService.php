@@ -40,7 +40,7 @@ class AssociateService
     {
         try {
             $offset = ($page - 1) * $limit;
-            $where = ["a.status != 'deleted'"];
+            $where = ["a.status != 'deleted'", "a.role IN ('associate', 'senior_associate', 'associate_team_lead')"];
             $params = [];
 
             // Apply filters
@@ -132,8 +132,8 @@ class AssociateService
 
             if ($userId) {
                 $this->database->insert(
-                    "INSERT INTO associates (user_id, joining_date, brokerage_rate, tenant_id, created_at) VALUES (?, ?, ?, ?, NOW())",
-                    array_merge([$userId, $data['joining_date'] ?? date('Y-m-d'), $data['commission_rate'] ?? 0], $tid > 1 ? [$tid] : [])
+                    "INSERT INTO associates (user_id, name, email, phone, level, status, agent_track, agent_type, joining_date, brokerage_rate, tenant_id, created_at) VALUES (?, ?, ?, ?, 'associate', ?, 'mlm', 'freelancer', ?, ?, ?, NOW())",
+                    array_merge([$userId, $data['name'], $data['email'], $data['phone'], $data['status'] ?? 'active', $data['joining_date'] ?? date('Y-m-d'), $data['commission_rate'] ?? 0], $tid > 1 ? [$tid] : [])
                 );
             }
 
@@ -304,7 +304,7 @@ class AssociateService
     public function getPerformanceReport($filters = [])
     {
         try {
-            $where = ["a.status = 'active'"];
+            $where = ["a.status = 'active'", "a.role IN ('associate', 'senior_associate', 'associate_team_lead')"];
             $params = [];
 
             // Apply date filters
@@ -429,7 +429,7 @@ class AssociateService
                         AVG(s.sale_amount) as avg_sale_amount
                  FROM users a
                  LEFT JOIN sales s ON a.id = s.associate_id AND s.status = 'completed' $dateCondition
-                 WHERE a.status = 'active'{$tenantSql}
+                 WHERE a.status = 'active' AND a.role IN ('associate', 'senior_associate', 'associate_team_lead'){$tenantSql}
                  GROUP BY a.id
                  HAVING sales_count > 0
                  ORDER BY total_sales_amount DESC
@@ -461,7 +461,7 @@ class AssociateService
     public function exportAssociates($format = 'csv', $filters = [])
     {
         try {
-            $where = ["a.status != 'deleted'"];
+            $where = ["a.status != 'deleted'", "a.role IN ('associate', 'senior_associate', 'associate_team_lead')"];
             $params = [];
 
             // Apply filters

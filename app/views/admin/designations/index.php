@@ -1,4 +1,4 @@
-ï»¿<!-- Designation Management - Index -->
+<!-- Designation Management - Index -->
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">
@@ -120,7 +120,7 @@
                                             $lvl = $desig['level'] ?? 1;
                                             ?>
                                             <span class="badge badge-<?= $levelColors[$lvl] ?? 'secondary' ?>">
-                                                L<?= $lvl ?> Â· <?= $levelLabels[$lvl] ?? 'Unknown' ?>
+                                                L<?= $lvl ?> · <?= $levelLabels[$lvl] ?? 'Unknown' ?>
                                             </span>
                                         </td>
                                         <td>₹<?= number_format($desig['min_salary'] ?? 0) ?> — ₹<?= number_format($desig['max_salary'] ?? 0) ?></td>

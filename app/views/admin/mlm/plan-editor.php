@@ -26,7 +26,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
         </div>
         <div class="alert alert-info mb-3 mx-3 mt-3" role="alert">
             <h6 class="alert-heading"><i class="fas fa-layer-group me-2"></i>Differential Commission Model Active</h6>
-            <p class="mb-1"><strong>Upline Override = Upline Rate âˆ’ Rate of Level Below</strong></p>
+            <p class="mb-1"><strong>Upline Override = Upline Rate âˆ' Rate of Level Below</strong></p>
             <p class="mb-0 small">The <code>direct_sale_pct</code> below is each rank's own commission rate. Upline overrides are calculated dynamically as the difference between their rate and the rate of the person directly below them. <strong>L1/L2/L3 columns are no longer used</strong> (set to 0 in DB). Same-rank breakaway: 2% Gen 1, 1% Gen 2, 0% Gen 3+.</p>
         </div>
         <div class="card-body p-0">
@@ -71,7 +71,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                                 <input type="hidden" name="benefits[<?= $rn ?>][l1_pct]" value="0">
                                 <input type="hidden" name="benefits[<?= $rn ?>][l2_pct]" value="0">
                                 <input type="hidden" name="benefits[<?= $rn ?>][l3_pct]" value="0">
-                                <div class="form-text small text-info"><i class="fas fa-info-circle"></i> Upline gets (their rate âˆ’ rate below)</div>
+                                <div class="form-text small text-info"><i class="fas fa-info-circle"></i> Upline gets (their rate âˆ' rate below)</div>
                             </td>
                                 <td>
                                     <span class="badge">
@@ -129,7 +129,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                 </table>
             </div>
             <div class="card-footer bg-white">
-                <small class="text-muted"><i class="fas fa-info-circle me-1"></i>To edit differential levels, go to <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm-settings/levels">MLM Settings â†’ Levels</a></small>
+                <small class="text-muted"><i class="fas fa-info-circle me-1"></i>To edit differential levels, go to <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm-settings/levels">MLM Settings →' Levels</a></small>
             </div>
         </div>
     </div>

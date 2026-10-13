@@ -60,7 +60,7 @@ if (isset($_SESSION['associate_id'])) {
                 </div>
                 <div class="message-content">
                     <p>ðŸ'‹ Namaste <?php echo htmlspecialchars($userName ?? ''); ?>! <br><br>
-                        Main APS AI hoon, aapka smart real estate assistant! ðŸ� <br><br>
+                        Main APS AI hoon, aapka smart real estate assistant! 🏠<br><br>
                         ðŸ'¬ Aap mujhse pooch sakte hain:<br>
                         —¢ Property buy/sell/rent<br>
                         —¢ Prices & locations<br>
@@ -74,10 +74,10 @@ if (isset($_SESSION['associate_id'])) {
 
         <!-- Quick Suggestions -->
         <div class="chatbot-suggestions">
-            <button onclick="sendQuickMessage('Plot kharidna hai')">ðŸ�  Buy Plot</button>
+            <button onclick="sendQuickMessage('Plot kharidna hai')">🏠 Buy Plot</button>
             <button onclick="sendQuickMessage('Property bechni hai')">ðŸ'° Sell Property</button>
             <button onclick="sendQuickMessage('Price kya hai?')">ðŸ'µ Pricing</button>
-            <button onclick="sendQuickMessage('Home loan chahiye')">ðŸ�¦ Home Loan</button>
+            <button onclick="sendQuickMessage('Home loan chahiye')">🏠¦ Home Loan</button>
         </div>
 
         <!-- Input Area -->
@@ -517,7 +517,7 @@ if (isset($_SESSION['associate_id'])) {
                         renderListings(data.listings);
                     }
                 } else {
-                    addMessage('Sorry, kuch problem ho gayi. Please try again! ðŸ™�', 'bot');
+                    addMessage('Sorry, kuch problem ho gayi. Please try again! 📢', 'bot');
                 }
             })
             .catch(err => {

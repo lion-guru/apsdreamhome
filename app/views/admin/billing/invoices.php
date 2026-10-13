@@ -104,7 +104,7 @@ $totalPaid     = array_sum(array_map(fn($s) => (float)($s['amount'] ?? 0), array
                                 <td><?= $sub['created_at'] ? date('d M Y H:i', strtotime($sub['created_at'])) : '—' ?></td>
                                 <td>
                                     <?= $sub['current_period_start'] ? date('d M Y', strtotime($sub['current_period_start'])) : '—' ?>
-                                    â†’
+                                    →'
                                     <?= $sub['current_period_end'] ? date('d M Y', strtotime($sub['current_period_end'])) : '—' ?>
                                 </td>
                                 <td>

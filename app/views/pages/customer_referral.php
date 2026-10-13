@@ -76,7 +76,7 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
                         </div>
                         <div>
                             <h5 class="mb-0"><?= $tierInfo['label'] ?> Tier</h5>
-                            <small class="text-muted">₹<?= number_format($tierInfo['bonus_per_referral']) ?> per signup Â· ₹<?= number_format($tierInfo['bonus_on_booking']) ?> on booking</small>
+                            <small class="text-muted">₹<?= number_format($tierInfo['bonus_per_referral']) ?> per signup · ₹<?= number_format($tierInfo['bonus_on_booking']) ?> on booking</small>
                         </div>
                     </div>
                     <?php if ($tierInfo['next_tier']): ?>

@@ -1049,7 +1049,7 @@ class UserController extends AdminController
             if (!$user) { $this->setFlash('error', 'User not found'); return $this->redirect('admin/users'); }
 
             // Wallet balance from wallet_points
-            $wallet = $this->db->fetchOne("SELECT COALESCE(SUM(points_balance), 0) as balance, COALESCE(SUM(total_credited), 0) as total_credited FROM wallet_points WHERE user_id = ?", [$userId]);
+            $wallet = $this->db->fetchOne("SELECT COALESCE(SUM(points_balance), 0) as balance, COALESCE(SUM(total_earned), 0) as total_credited FROM wallet_points WHERE user_id = ?", [$userId]);
 
             // Recent wallet transactions
             $transactions = $this->db->fetchAll(

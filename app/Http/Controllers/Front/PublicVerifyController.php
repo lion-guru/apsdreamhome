@@ -27,7 +27,7 @@ class PublicVerifyController extends PageController
     {
         $type = strtolower(trim((string)($type ?? '')));
         $ref = trim((string)($ref ?? ''));
-        $validTypes = ['receipt', 'allotment', 'statement', 'noc', 'title_cert'];
+        $validTypes = ['receipt', 'allotment', 'statement', 'noc', 'title_cert', 'transfer', 'registry_deed', 'cancellation_deed', 'possession_certificate', 'allotment_letter', 'stamp_paper'];
         $found = null;
         if (in_array($type, $validTypes, true) && $ref !== '') {
             try {
@@ -160,6 +160,128 @@ class PublicVerifyController extends PageController
                     'who' => self::maskName($r['customer_name'] ?? ''),
                     'plot' => trim(($r['plot_number'] ?? '') . ', ' . ($r['colony_name'] ?? ''), ', '),
                     'amount' => (string)($r['verdict'] ?? ''),
+                ];
+case 'transfer':
+                $r = $db->fetchOne(
+                    "SELECT t.noc_number, t.noc_issued_at, t.created_at, t.transfer_type, t.status,
+                            t.new_buyer_name, u.name AS old_customer_name,
+                            p.plot_number, c.name AS colony_name
+                         FROM plot_transfers t
+                         JOIN plots p ON p.id = t.plot_id
+                         JOIN colonies c ON c.id = p.colony_id
+                         LEFT JOIN users u ON u.id = t.from_customer_id
+                         WHERE t.noc_number = ? LIMIT 1",
+                    [$ref]
+                );
+                if (!$r) return null;
+                return [
+                    'label' => 'Ownership Transfer NOC',
+                    'ref' => $r['noc_number'],
+                    'date' => $r['noc_issued_at'] ?? $r['created_at'] ?? date('Y-m-d'),
+                    'who' => 'From: ' . self::maskName($r['old_customer_name'] ?? '') . ' → To: ' . self::maskName($r['new_buyer_name'] ?? ''),
+                    'plot' => trim(($r['plot_number'] ?? '') . ', ' . ($r['colony_name'] ?? ''), ', '),
+                    'amount' => ucfirst((string)($r['transfer_type'] ?? 'resale')) . ' Transfer · Status: ' . strtoupper((string)($r['status'] ?? '')),
+                ];
+            case 'registry_deed':
+                $r = $db->fetchOne(
+                    "SELECT rd.cert_no, rd.created_at, rd.verdict,
+                            u.name AS customer_name, p.plot_number, c.name AS colony_name
+                         FROM registry_documents rd
+                         LEFT JOIN plots p ON p.id = rd.plot_id
+                         LEFT JOIN colonies c ON c.id = rd.colony_id
+                         LEFT JOIN users u ON u.id = rd.customer_id
+                         WHERE rd.cert_no = ? LIMIT 1",
+                    [$ref]
+                );
+                if (!$r) return null;
+                return [
+                    'label' => 'Registry Deed',
+                    'ref' => $r['cert_no'],
+                    'date' => $r['created_at'],
+                    'who' => self::maskName($r['customer_name'] ?? ''),
+                    'plot' => trim(($r['plot_number'] ?? '') . ', ' . ($r['colony_name'] ?? ''), ', '),
+                    'amount' => (string)($r['verdict'] ?? 'Verified Registry Deed'),
+                ];
+            case 'cancellation_deed':
+                $r = $db->fetchOne(
+                    "SELECT cd.cert_no, cd.created_at, cd.verdict,
+                            u.name AS customer_name, p.plot_number, c.name AS colony_name
+                         FROM cancellation_documents cd
+                         LEFT JOIN plots p ON p.id = cd.plot_id
+                         LEFT JOIN colonies c ON c.id = cd.colony_id
+                         LEFT JOIN users u ON u.id = cd.customer_id
+                         WHERE cd.cert_no = ? LIMIT 1",
+                    [$ref]
+                );
+                if (!$r) return null;
+                return [
+                    'label' => 'Cancellation Deed',
+                    'ref' => $r['cert_no'],
+                    'date' => $r['created_at'],
+                    'who' => self::maskName($r['customer_name'] ?? ''),
+                    'plot' => trim(($r['plot_number'] ?? '') . ', ' . ($r['colony_name'] ?? ''), ', '),
+                    'amount' => (string)($r['verdict'] ?? 'Cancellation Deed Verified'),
+                ];
+            case 'possession_certificate':
+                $r = $db->fetchOne(
+                    "SELECT pc.cert_no, pc.created_at, pc.verdict,
+                            u.name AS customer_name, p.plot_number, c.name AS colony_name
+                         FROM possession_certificates pc
+                         LEFT JOIN plots p ON p.id = pc.plot_id
+                         LEFT JOIN colonies c ON c.id = pc.colony_id
+                         LEFT JOIN users u ON u.id = pc.customer_id
+                         WHERE pc.cert_no = ? LIMIT 1",
+                    [$ref]
+                );
+                if (!$r) return null;
+                return [
+                    'label' => 'Possession Certificate',
+                    'ref' => $r['cert_no'],
+                    'date' => $r['created_at'],
+                    'who' => self::maskName($r['customer_name'] ?? ''),
+                    'plot' => trim(($r['plot_number'] ?? '') . ', ' . ($r['colony_name'] ?? ''), ', '),
+                    'amount' => (string)($r['verdict'] ?? 'Possession Certificate Verified'),
+                ];
+            case 'allotment_letter':
+                $r = $db->fetchOne(
+                    "SELECT ad.allotment_number, ad.issued_at, ad.total_amount,
+                            u.name AS customer_name, p.plot_number, c.name AS colony_name
+                         FROM allotment_documents ad
+                         LEFT JOIN users u ON u.id = ad.customer_id
+                         LEFT JOIN plots p ON p.id = ad.plot_id
+                         LEFT JOIN colonies c ON c.id = ad.colony_id
+                         WHERE ad.allotment_number = ? LIMIT 1",
+                    [$ref]
+                );
+                if (!$r) return null;
+                return [
+                    'label' => 'Allotment Letter',
+                    'ref' => $r['allotment_number'],
+                    'date' => $r['issued_at'],
+                    'who' => self::maskName($r['customer_name'] ?? ''),
+                    'plot' => trim(($r['plot_number'] ?? '') . ', ' . ($r['colony_name'] ?? ''), ', '),
+                    'amount' => '₹' . number_format((float)($r['total_amount'] ?? 0), 2),
+                ];
+            case 'stamp_paper':
+                if (!ctype_digit($ref)) return null;
+                $r = $db->fetchOne(
+                    "SELECT sdc.*, b.booking_number, c.name AS customer_name, p.plot_number, col.name AS colony_name
+                         FROM stamp_duty_calculations sdc
+                         INNER JOIN bookings b ON sdc.booking_id = b.id
+                         INNER JOIN customers c ON b.customer_id = c.id
+                         LEFT JOIN plots p ON b.plot_id = p.id
+                         LEFT JOIN colonies col ON p.colony_id = col.id
+                         WHERE sdc.id = ? LIMIT 1",
+                    [(int)$ref]
+                );
+                if (!$r) return null;
+                return [
+                    'label' => 'Stamp Paper Verification',
+                    'ref' => (string)$r['id'],
+                    'date' => $r['created_at'],
+                    'who' => self::maskName($r['customer_name'] ?? ''),
+                    'plot' => trim(($r['plot_number'] ?? '') . ', ' . ($r['colony_name'] ?? ''), ', '),
+                    'amount' => '₹' . number_format((float)($r['total_amount'] ?? 0), 2) . ' (Stamp: ₹' . number_format((float)($r['stamp_duty_amount'] ?? 0), 2) . ' + Reg: ₹' . number_format((float)($r['registration_fee'] ?? 0), 2) . ')',
                 ];
         }
         return null;

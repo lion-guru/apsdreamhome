@@ -73,7 +73,7 @@ $statusBadgeClass = [
             <div class="label">Duration</div>
             <div class="value">
                 <?= $agreement['start_date'] ? date('d M Y', strtotime($agreement['start_date'])) : '—' ?>
-                â†’
+                →'
                 <?= $agreement['end_date'] ? date('d M Y', strtotime($agreement['end_date'])) : '—' ?>
             </div>
         </div>

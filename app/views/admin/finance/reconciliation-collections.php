@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 $page_title = $page_title ?? 'Collection Reconciliation';
 $page_heading = $page_heading ?? 'Cash Collection Reconciliation';
 $sessions = $sessions ?? [];

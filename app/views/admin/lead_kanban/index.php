@@ -328,7 +328,6 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
         .then(d => {
           if (d.success) {
             showToast('Lead moved to ' + formatStage(newStage), 'success');
-            .catch(err => console.error('Request failed:', err));
             refreshStats();
           } else {
             showToast('Failed: ' + (d.error || 'unknown'), 'error');
@@ -364,7 +363,6 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
     fetch(BASE + '/admin/lead-kanban/pipeline-stats?' + params.toString())
       .then(r => r.json())
       .then(s => {
-        .catch(err => console.error('Request failed:', err));
         document.getElementById('stat-total').textContent = s.total.toLocaleString();
         document.getElementById('stat-active').textContent = s.active.toLocaleString();
         document.getElementById('stat-value').textContent = '₹' + (s.value / 100000).toFixed(1) + 'L';
@@ -418,7 +416,6 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
         const phone = lead.phone || '—';
         const email = lead.email || '—';
         const budget = lead.budget ? '₹' + Number(lead.budget).toLocaleString() : '—';
-        .catch(err => console.error('Request failed:', err));
         const score = lead.lead_score || lead.score || 0;
         const status = (lead.status || 'new').replace(/_/g, ' ');
         const source = lead.source || '—';
@@ -442,7 +439,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
         content.innerHTML = `
           <div class="d-flex justify-content-between align-items-start mb-3">
             <div>
-              <h5 class="mb-1"><?= $base ?>` + name + `</h5>
+              <h5 class="mb-1">${name}</h5>
               <small class="text-muted">${company ? company + ' Â· ' : ''}${city || ''}</small>
             </div>
             <button class="btn btn-sm btn-outline-secondary" onclick="closeQuickView()" aria-label="Close"><i class="fas fa-times"></i></button>

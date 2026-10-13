@@ -37,7 +37,7 @@
                                     <td><strong><?= htmlspecialchars($a['name'] ?? '') ?></strong></td>
                                     <td><?= htmlspecialchars($a['email'] ?? '') ?></td>
                                     <td><?= htmlspecialchars($a['phone'] ?? '') ?></td>
-                                    <td><span class="badge bg-warning text-dark"><?= (int)($a['points'] ?? 0) ?></span></td>
+                                    <td><span class="badge bg-warning text-dark"><?= (int)($a['total_points'] ?? 0) ?></span></td>
                                     <td><?= htmlspecialchars($a['badges'] ?? '—') ?></td>
                                     <td>
                                         <div class="progress">

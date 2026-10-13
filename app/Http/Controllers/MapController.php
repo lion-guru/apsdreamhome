@@ -186,7 +186,7 @@ class MapController extends BaseController
                 return;
             }
             $plots = $this->db->fetchAll(
-                "SELECT id, plot_number, block, area_sqft, width_ft, length_ft, status, price_per_sqft, total_price, corner_plot, park_facing, road_width_ft, gata_number, facing
+                "SELECT id, plot_number, block, area_sqft, width_ft, length_ft, status, price_per_sqft, total_price, corner_plot, park_facing, road_width_ft, gata_number, facing, polygon_coordinates
                  FROM plots WHERE colony_id = ? ORDER BY block, plot_number",
                 [$id]
             );
@@ -211,15 +211,27 @@ class MapController extends BaseController
                     $y1 = $centerLat + ($bData['y'] * $scale * 1.1);
                     $x2 = $x1 + $w * $scale;
                     $y2 = $y1 + $l * $scale;
+
+                    $polyCoords = null;
+                    if (!empty($p['polygon_coordinates'])) {
+                        $decoded = json_decode($p['polygon_coordinates'], true);
+                        if (is_array($decoded) && !empty($decoded)) {
+                            $polyCoords = $decoded;
+                        }
+                    }
+                    if (!$polyCoords) {
+                        $polyCoords = [[
+                            [$x1, $y1], [$x2, $y1], [$x2, $y2], [$x1, $y2], [$x1, $y1]
+                        ]];
+                    }
+
                     $statusColors = [
                         'available' => '#22c55e', 'booked' => '#eab308', 'sold' => '#ef4444',
                         'hold' => '#6b7280', 'reserved' => '#f97316',
                     ];
                     $features[] = [
                         'type' => 'Feature',
-                        'geometry' => ['type' => 'Polygon', 'coordinates' => [[
-                            [$x1, $y1], [$x2, $y1], [$x2, $y2], [$x1, $y2], [$x1, $y1]
-                        ]]],
+                        'geometry' => ['type' => 'Polygon', 'coordinates' => $polyCoords],
                         'properties' => [
                             'plot_id' => $p['id'],
                             'plot_number' => $p['plot_number'],

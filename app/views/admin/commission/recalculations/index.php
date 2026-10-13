@@ -1,4 +1,4 @@
-ï»¿<div class="container-fluid">
+<div class="container-fluid">
     <div class="row mb-4">
         <div class="col-12">
             <h2 ><i class="fas fa-calculator me-2"></i> Commission Recalculations</h2>

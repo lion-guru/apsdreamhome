@@ -1,4 +1,4 @@
-ï»¿<!-- Department Management - Index -->
+<!-- Department Management - Index -->
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">

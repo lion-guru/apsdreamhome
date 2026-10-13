@@ -73,7 +73,7 @@ $statusBadge = match($plan['status']) { 'active' => 'bg-success', 'draft' => 'bg
                         <span class="version-chip <?= $v['id'] == $plan['id'] ? 'current' : '' ?>">
                             v<?= $v['version'] ?> — <?= $v['status'] ?>
                             (<?= $v['level_count'] ?? 0 ?> levels)
-                            <?= $v['id'] == $plan['id'] ? 'â†� current' : '' ?>
+                            <?= $v['id'] == $plan['id'] ? '→� current' : '' ?>
                         </span>
                     <?php endforeach; ?>
                 </div>

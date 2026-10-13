@@ -247,9 +247,10 @@ class FleetController extends AdminController
                     if ($driverPhone === '') $driverPhone = (string)($vd['driver_phone'] ?? '');
                 }
             }
+            $token = bin2hex(random_bytes(16));
             $st = $pdo->prepare(
-                "INSERT INTO fleet_trips (tenant_id, trip_date, vehicle_id, driver_name, driver_phone, pickup_point, colony_id, associate_id, customers_planned, notes, created_by)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                "INSERT INTO fleet_trips (tenant_id, trip_date, vehicle_id, driver_name, driver_phone, pickup_point, colony_id, associate_id, customers_planned, notes, created_by, dispatch_token)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
             );
             $st->execute([
                 $tid,
@@ -262,6 +263,7 @@ class FleetController extends AdminController
                 max(0, (int)($_POST['customers_planned'] ?? 0)),
                 trim((string)($_POST['notes'] ?? '')),
                 $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? null,
+                $token,
             ]);
             $this->setFlash('success', 'Trip scheduled.');
         } catch (\Throwable $e) {
@@ -333,4 +335,199 @@ class FleetController extends AdminController
         } catch (\Throwable $e) { $this->setFlash('error', 'Link failed.'); }
         return $this->redirect('/admin/site-visits/fleet');
     }
+
+    /* =========================================================
+     *  Live Dispatch Radar & Driver Mobile Portal
+     * ========================================================= */
+
+    /**
+     * Real-time Fleet Dispatch Monitor & Occupancy Radar
+     * GET /admin/site-visits/fleet/live-tracking
+     */
+    public function liveTracking()
+    {
+        $this->requireAdmin();
+        $pdo = $this->pdo();
+        $tid = $this->tid();
+
+        $date = trim((string)($_GET['date'] ?? date('Y-m-d')));
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            $date = date('Y-m-d');
+        }
+
+        $trips = [];
+        try {
+            $st = $pdo->prepare(
+                "SELECT ft.*, fv.vehicle_name, fv.vehicle_no, fv.capacity,
+                        c.name AS colony_name, u.name AS associate_name
+                 FROM fleet_trips ft
+                 LEFT JOIN fleet_vehicles fv ON fv.id = ft.vehicle_id
+                 LEFT JOIN colonies c ON c.id = ft.colony_id
+                 LEFT JOIN users u ON u.id = ft.associate_id
+                 WHERE ft.trip_date = ? AND ft.status != 'cancelled' AND ft.tenant_id = ?
+                 ORDER BY ft.id ASC"
+            );
+            $st->execute([$date, $tid]);
+            $trips = $st->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+            foreach ($trips as &$t) {
+                // Ensure dispatch_token exists
+                if (empty($t['dispatch_token'])) {
+                    $token = bin2hex(random_bytes(16));
+                    $pdo->prepare("UPDATE fleet_trips SET dispatch_token = ? WHERE id = ?")->execute([$token, (int)$t['id']]);
+                    $t['dispatch_token'] = $token;
+                }
+
+                // Passenger counts & breakdown
+                $pv = $pdo->prepare(
+                    "SELECT ftv.pickup_status, COUNT(*) as c
+                     FROM fleet_trip_visits ftv
+                     WHERE ftv.trip_id = ?
+                     GROUP BY ftv.pickup_status"
+                );
+                $pv->execute([(int)$t['id']]);
+                $counts = $pv->fetchAll(\PDO::FETCH_KEY_PAIR) ?: [];
+
+                $t['total_passengers'] = array_sum($counts);
+                $t['picked_up_count'] = (int)($counts['picked_up'] ?? 0) + (int)($counts['dropped_to_site'] ?? 0);
+                $t['waiting_count'] = (int)($counts['waiting'] ?? 0);
+                $t['noshow_count'] = (int)($counts['no_show'] ?? 0);
+                $cap = max(1, (int)($t['capacity'] ?? 6));
+                $t['occupancy_pct'] = min(100, round(($t['total_passengers'] * 100) / $cap));
+            }
+            unset($t);
+        } catch (\Throwable $e) {
+            error_log('FleetController::liveTracking: ' . $e->getMessage());
+        }
+
+        $this->render('admin/fleet/live_tracking', [
+            'page_title' => 'Sunday Fleet Live Dispatch Radar — ' . $date,
+            'trips' => $trips,
+            'date' => $date,
+        ]);
+    }
+
+    /**
+     * Driver Mobile Check-In & Route Portal
+     * GET /driver/trip/{id}?token=...
+     */
+    public function driverTrip($id)
+    {
+        $pdo = $this->pdo();
+        $token = trim((string)($_GET['token'] ?? ''));
+
+        $st = $pdo->prepare(
+            "SELECT ft.*, fv.vehicle_name, fv.vehicle_no, fv.capacity,
+                    c.name AS colony_name, c.location AS colony_location
+             FROM fleet_trips ft
+             LEFT JOIN fleet_vehicles fv ON fv.id = ft.vehicle_id
+             LEFT JOIN colonies c ON c.id = ft.colony_id
+             WHERE ft.id = ?"
+        );
+        $st->execute([(int)$id]);
+        $trip = $st->fetch(\PDO::FETCH_ASSOC);
+
+        if (!$trip) {
+            http_response_code(404);
+            echo "Trip record not found.";
+            return;
+        }
+
+        // Security check: Either valid admin session OR matching dispatch_token
+        $isAdmin = isset($_SESSION['role']) && in_array($_SESSION['role'], ['admin', 'superadmin'], true);
+        if (!$isAdmin && (empty($token) || $trip['dispatch_token'] !== $token)) {
+            http_response_code(403);
+            echo "Access Denied: Invalid or expired driver dispatch token.";
+            return;
+        }
+
+        // Fetch passengers
+        $passengers = [];
+        try {
+            $ps = $pdo->prepare(
+                "SELECT ftv.id AS trip_visit_id, ftv.pickup_status, ftv.picked_up_at, ftv.notes AS visit_notes,
+                        sv.id AS site_visit_id, sv.visitor_name, sv.visitor_phone, sv.pickup_location
+                 FROM fleet_trip_visits ftv
+                 JOIN site_visits sv ON sv.id = ftv.site_visit_id
+                 WHERE ftv.trip_id = ?
+                 ORDER BY ftv.id ASC"
+            );
+            $ps->execute([(int)$id]);
+            $passengers = $ps->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            error_log('FleetController::driverTrip passengers: ' . $e->getMessage());
+        }
+
+        $this->render('admin/fleet/driver_trip', [
+            'page_title' => 'Driver Portal — ' . ($trip['vehicle_no'] ?? 'Cab #' . $trip['id']),
+            'trip' => $trip,
+            'passengers' => $passengers,
+            'token' => $token,
+        ]);
+    }
+
+    /**
+     * Driver updates passenger status live
+     * POST /driver/trip/{id}/passenger/{visit_id}/status
+     */
+    public function passengerStatus($tripId, $visitId)
+    {
+        $pdo = $this->pdo();
+        $status = trim((string)($_POST['status'] ?? 'waiting'));
+        $allowed = ['waiting', 'picked_up', 'no_show', 'dropped_to_site'];
+
+        if (!in_array($status, $allowed, true)) {
+            $status = 'waiting';
+        }
+
+        $pickedUpAt = in_array($status, ['picked_up', 'dropped_to_site'], true) ? date('Y-m-d H:i:s') : null;
+
+        try {
+            $st = $pdo->prepare(
+                "UPDATE fleet_trip_visits
+                 SET pickup_status = ?, picked_up_at = COALESCE(?, picked_up_at)
+                 WHERE trip_id = ? AND site_visit_id = ?"
+            );
+            $st->execute([$status, $pickedUpAt, (int)$tripId, (int)$visitId]);
+        } catch (\Throwable $e) {
+            error_log('FleetController::passengerStatus: ' . $e->getMessage());
+        }
+
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) || (isset($_SERVER['HTTP_ACCEPT']) && str_contains($_SERVER['HTTP_ACCEPT'], 'application/json'))) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => true, 'status' => $status]);
+            return;
+        }
+
+        $token = trim((string)($_POST['token'] ?? ''));
+        return $this->redirect("/driver/trip/{$tripId}" . ($token !== '' ? "?token={$token}" : ''));
+    }
+
+    /**
+     * Driver updates trip status live
+     * POST /driver/trip/{id}/trip-status
+     */
+    public function driverTripStatus($tripId)
+    {
+        $pdo = $this->pdo();
+        $action = trim((string)($_POST['action'] ?? ''));
+        $token = trim((string)($_POST['token'] ?? ''));
+
+        try {
+            if ($action === 'start') {
+                $pdo->prepare("UPDATE fleet_trips SET status = 'in_progress', started_at = NOW() WHERE id = ?")->execute([(int)$tripId]);
+            } elseif ($action === 'arrive') {
+                $pdo->prepare("UPDATE fleet_trips SET arrived_at = NOW() WHERE id = ?")->execute([(int)$tripId]);
+            } elseif ($action === 'complete') {
+                // Compute final count of picked up passengers
+                $cnt = (int)$pdo->query("SELECT COUNT(*) FROM fleet_trip_visits WHERE trip_id = {$tripId} AND pickup_status IN ('picked_up', 'dropped_to_site')")->fetchColumn();
+                $pdo->prepare("UPDATE fleet_trips SET status = 'completed', completed_at = NOW(), customers_visited = ? WHERE id = ?")->execute([$cnt, (int)$tripId]);
+            }
+        } catch (\Throwable $e) {
+            error_log('FleetController::driverTripStatus: ' . $e->getMessage());
+        }
+
+        return $this->redirect("/driver/trip/{$tripId}" . ($token !== '' ? "?token={$token}" : ''));
+    }
 }
+

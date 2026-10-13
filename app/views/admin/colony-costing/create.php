@@ -24,7 +24,7 @@ $val = function(string $key, $default = 0) use ($e) {
     <?php if ($existing): ?>
         <div class="alert alert-info py-2 mb-3">
             <i class="fas fa-info-circle me-2"></i>
-            Existing costing v<?= (int)$existing['version'] ?> found (<?= $existing['is_approved'] ? 'âœ… Approved' : 'â�³ Pending' ?>).
+            Existing costing v<?= (int)$existing['version'] ?> found (<?= $existing['is_approved'] ? '✓ Approved' : '✓ Pending' ?>).
             Saving will create version <?= (int)$existing['version'] + 1 ?>.
         </div>
     <?php endif; ?>
@@ -310,7 +310,7 @@ $val = function(string $key, $default = 0) use ($e) {
             '<tr class="table-light"><th colspan="2">Land</th></tr>',
             '<tr><td>Total Land</td><td class="text-end">' + fmtNum(data.total_land_sqft) + ' SqFt</td></tr>',
             '<tr><td>Purchase Rate</td><td class="text-end">' + fmt(data.land_purchase_rate) + '/SqFt</td></tr>',
-            '<tr class="text-danger"><td>Total Wastage</td><td class="text-end">âˆ’' + fmtNum(data.wastage.total_sqft) + ' SqFt (' + data.wastage.total_pct + '%)</td></tr>',
+            '<tr class="text-danger"><td>Total Wastage</td><td class="text-end">âˆ'' + fmtNum(data.wastage.total_sqft) + ' SqFt (' + data.wastage.total_pct + '%)</td></tr>',
             '<tr class="fw-bold text-success"><td>Net Sellable</td><td class="text-end">' + fmtNum(data.net_sellable_sqft) + ' SqFt</td></tr>',
             '<tr class="table-light"><th colspan="2">Cost Per Sellable SqFt</th></tr>',
             '<tr><td>Land Cost/SqFt</td><td class="text-end">' + fmt(data.land_cost_per_sqft) + '</td></tr>',

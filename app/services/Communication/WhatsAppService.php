@@ -3,6 +3,7 @@
 namespace App\Services\Communication;
 
 use App\Core\Database;
+use App\Core\Security;
 use App\Traits\ServiceTenantTrait;
 
 /**
@@ -383,53 +384,68 @@ class WhatsAppService
         $digits = preg_replace('/[^0-9]/', '', $from);
         $t = mb_strtolower(trim($text));
         $intent = 'menu';
-        if (preg_match('/\b(2|visit|cab|site|sunday|tour|dekhna|pickup)\b/u', $t)) {
-            $intent = 'site_visit';
-        } elseif (preg_match('/\b(3|emi|book|payment|passbook|receipt|due|kist)\b/u', $t)) {
-            $intent = 'passbook';
-        } elseif (preg_match('/\b(4|join|associate|agent|earn|job|kamana|commission)\b/u', $t)) {
-            $intent = 'join';
-        } elseif (preg_match('/\b(1|plot|township|colony|rate|price|flat|villa|land|jameen)\b/u', $t)) {
-            $intent = 'plots';
-        } elseif (preg_match('/\b(hi|hii+|hello|hey|namaste|namaskar|ram ram|start|menu|help)\b/u', $t)) {
-            $intent = 'menu';
-        }
-
-        $base = defined('BASE_URL') ? BASE_URL : '';
         $reply = '';
-        switch ($intent) {
-            case 'plots':
-                $reply = "*APS Dream Home — New Townships*\n" . $this->townshipLines()
-                    . "\nTap a live layout to see vacant plots in green:\n{$base}/properties\n"
-                    . "Reply 2 for a FREE Sunday cab site visit.";
-                break;
-            case 'site_visit':
+
+        $flowService = new \App\Services\Communication\WhatsAppFlowService();
+        $flowService->logMessage($from, 'inbound', $text, null, 'received');
+
+        $matchedFlow = $flowService->matchFlow($text);
+        if ($matchedFlow) {
+            $intent = $matchedFlow['title'];
+            $reply = $flowService->formatReply($matchedFlow, $from, $text);
+            if (($matchedFlow['action_hook'] ?? '') === 'book_visit') {
                 $this->createInboundLead($digits, $t, 'site_visit');
-                $reply = "*FREE Sunday Site Visit booked (request noted)!*\n"
-                    . "Pickup points: Railway Station, Golghar, Medical Road.\n"
-                    . "Our team will call you to confirm cab + time.\n"
-                    . "Meanwhile see live layouts: {$base}/properties";
-                break;
-            case 'passbook':
-                $reply = "*Booking & EMI Passbook*\nCheck dues, receipts & pay online here:\n"
-                    . "{$base}/login\n"
-                    . "For help call our support. Reply 1 for new townships.";
-                break;
-            case 'join':
+            } elseif (($matchedFlow['action_hook'] ?? '') === 'create_lead') {
                 $this->createInboundLead($digits, $t, 'associate_join');
-                $reply = "*Become an Associate & earn up to Rs.50,000/month!*\n"
-                    . "Zero joining fee. Free training + Sunday site-visit leads.\n"
-                    . "Register free: {$base}/register\n"
-                    . "Our team will call you with details.";
-                break;
-            case 'menu':
-            default:
-                $reply = "*Namaste! APS Dream Home* at your service. Reply a number:\n"
-                    . "1 - New Townships & Rates\n"
-                    . "2 - FREE Sunday Cab Site Visit\n"
-                    . "3 - My Booking & EMI Passbook\n"
-                    . "4 - Become Associate (earn Rs.50,000/mo)";
-                break;
+            }
+        } else {
+            if (preg_match('/\b(2|visit|cab|site|sunday|tour|dekhna|pickup)\b/u', $t)) {
+                $intent = 'site_visit';
+            } elseif (preg_match('/\b(3|emi|book|payment|passbook|receipt|due|kist)\b/u', $t)) {
+                $intent = 'passbook';
+            } elseif (preg_match('/\b(4|join|associate|agent|earn|job|kamana|commission)\b/u', $t)) {
+                $intent = 'join';
+            } elseif (preg_match('/\b(1|plot|township|colony|rate|price|flat|villa|land|jameen)\b/u', $t)) {
+                $intent = 'plots';
+            } elseif (preg_match('/\b(hi|hii+|hello|hey|namaste|namaskar|ram ram|start|menu|help)\b/u', $t)) {
+                $intent = 'menu';
+            }
+
+            $base = defined('BASE_URL') ? BASE_URL : '';
+            switch ($intent) {
+                case 'plots':
+                    $reply = "*APS Dream Home — New Townships*\n" . $this->townshipLines()
+                        . "\nTap a live layout to see vacant plots in green:\n{$base}/properties\n"
+                        . "Reply 2 for a FREE Sunday cab site visit.";
+                    break;
+                case 'site_visit':
+                    $this->createInboundLead($digits, $t, 'site_visit');
+                    $reply = "*FREE Sunday Site Visit booked (request noted)!*\n"
+                        . "Pickup points: Railway Station, Golghar, Medical Road.\n"
+                        . "Our team will call you to confirm cab + time.\n"
+                        . "Meanwhile see live layouts: {$base}/properties";
+                    break;
+                case 'passbook':
+                    $reply = "*Booking & EMI Passbook*\nCheck dues, receipts & pay online here:\n"
+                        . "{$base}/login\n"
+                        . "For help call our support. Reply 1 for new townships.";
+                    break;
+                case 'join':
+                    $this->createInboundLead($digits, $t, 'associate_join');
+                    $reply = "*Become an Associate & earn up to Rs.50,000/month!*\n"
+                        . "Zero joining fee. Free training + Sunday site-visit leads.\n"
+                        . "Register free: {$base}/register\n"
+                        . "Our team will call you with details.";
+                    break;
+                case 'menu':
+                default:
+                    $reply = "*Namaste! APS Dream Home* at your service. Reply a number:\n"
+                        . "1 - New Townships & Rates\n"
+                        . "2 - FREE Sunday Cab Site Visit\n"
+                        . "3 - My Booking & EMI Passbook\n"
+                        . "4 - Become Associate (earn Rs.50,000/mo)";
+                    break;
+            }
         }
 
         $sent = false;
@@ -439,6 +455,9 @@ class WhatsAppService
         } catch (\Throwable $e) {
             error_log('[WhatsAppService] autoReply send failed: ' . $e->getMessage());
         }
+
+        $flowService->logMessage($from, 'outbound', $reply, $intent, $sent ? 'delivered' : 'pending');
+
         return ['replied' => $sent, 'intent' => $intent];
     }
 

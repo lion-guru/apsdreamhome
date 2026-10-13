@@ -10,7 +10,7 @@ $stages       = $stages ?? [];
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
       <h1 class="h3 mb-1"><i class="fas fa-gavel me-2 text-warning"></i>Legal Colony Development Pipeline</h1>
-      <small class="text-muted">7-Phase Legal Colony Development: Land â†’ Planning â†’ Plots â†’ RERA â†’ Dev â†’ Pricing â†’ Sales</small>
+      <small class="text-muted">7-Phase Legal Colony Development: Land →' Planning →' Plots →' RERA →' Dev →' Pricing →' Sales</small>
     </div>
     <a href="/admin/legal-colony-pipeline/start-acquisition" class="btn btn-warning">
       <i class="fas fa-plus me-1"></i> Start New Acquisition
@@ -133,7 +133,6 @@ function autoAdvance() {
   .then(data => {
     if (data.success) {
       showToast(data.summary, 'info');
-      .catch(err => console.error('Request failed:', err));
       if (data.advanced && data.advanced.length > 0) {
         location.reload();
       }

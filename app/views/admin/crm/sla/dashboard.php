@@ -1,4 +1,4 @@
-ï»¿<?php $page_title = $page_title ?? 'SLA Dashboard'; $stats = $stats ?? []; $pending = $pending ?? []; $breached = $breached ?? []; $rules = $rules ?? []; ?>
+<?php $page_title = $page_title ?? 'SLA Dashboard'; $stats = $stats ?? []; $pending = $pending ?? []; $breached = $breached ?? []; $rules = $rules ?? []; ?>
 <style>.sla-stat{background:#fff;border-radius:14px;border:1px solid #f0f0f5;padding:20px;text-align:center;transition:.3s}.sla-stat:hover{box-shadow:0 8px 24px rgba(0,0,0,.08)}.sla-stat .stat-val{font-size:32px;font-weight:800}.sla-stat .stat-label{font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px}</style>
 
 <div class="container-fluid px-4 py-4">

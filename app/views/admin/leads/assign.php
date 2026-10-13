@@ -111,7 +111,7 @@ $recent_assignments = $recent_assignments ?? [];
                             <div class="fw-bold"><?= htmlspecialchars($ra['lead_name'] ?? 'Unknown') ?></div>
                             <small class="text-muted">
                                 <?php if ($ra['from_name']): ?>
-                                    <?= htmlspecialchars($ra['from_name'] ?? '') ?> â†’
+                                    <?= htmlspecialchars($ra['from_name'] ?? '') ?> →'
                                 <?php endif; ?>
                                 <strong><?= htmlspecialchars($ra['to_name'] ?? 'Unknown') ?></strong>
                                 by <?= htmlspecialchars($ra['by_name'] ?? 'System') ?>

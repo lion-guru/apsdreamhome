@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 $page_title = 'Site Management';
 $active_page = 'sites';
 ?>
@@ -115,7 +115,7 @@ $active_page = 'sites';
                                     </small>
                                 </td>
                                 <td>
-                                    <span class="badge bg-info"><?= $site['total_properties'] ?? 0 ?></span>
+                                    <span class="badge bg-info"><?= $site['property_count'] ?? $site['total_properties'] ?? 0 ?></span>
                                 </td>
                                 <td><?= date('M j, Y', strtotime($site['created_at'])) ?></td>
                                 <td>
@@ -183,7 +183,7 @@ $active_page = 'sites';
 
 <script>
     function confirmDelete(siteId) {
-        document.getElementById('deleteForm').action = '/admin/sites/' + siteId + '/destroy';
+        document.getElementById('deleteForm').action = '<?= BASE_URL ?>/admin/sites/' + siteId + '/destroy';
         new bootstrap.Modal(document.getElementById('deleteModal')).show();
     }
 </script>

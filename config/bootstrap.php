@@ -1,6 +1,6 @@
 <?php header('Content-Type: text/html; charset=UTF-8'); error_reporting(E_ALL);
 
-if ((defined('APS_ENV') && APS_ENV === 'development') || getenv('APS_ENV') === 'development') {
+if ((defined('APS_ENV') && APS_ENV === 'development') || getenv('APS_ENV') === 'development' || (defined('ENVIRONMENT') && ENVIRONMENT === 'development')) {
     ini_set('display_errors', 1);
 } else {
     ini_set('display_errors', 0);
@@ -167,6 +167,7 @@ require_once CORE_PATH . '/Autoloader.php';
 // require_once CORE_PATH . '/SessionManager.php';
 if (file_exists(CORE_PATH . '/ErrorHandler.php')) {
     require_once CORE_PATH . '/ErrorHandler.php';
+    \App\Core\ErrorHandler::initialize();
 }
 if (file_exists(CORE_PATH . '/SystemIntegration.php')) {
     require_once CORE_PATH . '/SystemIntegration.php';

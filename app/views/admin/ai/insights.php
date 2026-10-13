@@ -42,7 +42,7 @@ $insights = $insights ?? [];
         <div class="col-md-3 col-6">
             <div class="card border-0 shadow-sm text-center py-3">
                 <div ><?= number_format($hotLeads) ?></div>
-                <div class="small text-muted">Hot Leads (Score â‰¥70)</div>
+                <div class="small text-muted">Hot Leads (Score ≥70)</div>
             </div>
         </div>
         <div class="col-md-3 col-6">

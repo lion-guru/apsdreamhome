@@ -228,9 +228,9 @@ foreach ($rank_benefits as $rb) {
                 <div class="bg-white rounded-3 p-3 mb-2">
                     <strong class="small text-muted"><?= __('assoc_mlm_eligibility', [], 'ELIGIBILITY:') ?></strong>
                     <table class="table table-sm mt-2 mb-0">
-                        <tr><td><?= __('assoc_rank_vp', [], 'Vice President') ?> (GBV â‰¥ ₹1.5 Cr)</td><td class="text-end fw-bold"><?= __('assoc_mlm_eligible', [], 'Eligible') ?></td></tr>
-                        <tr><td><?= __('assoc_rank_president', [], 'President') ?> (GBV â‰¥ ₹3 Cr)</td><td class="text-end fw-bold"><?= __('assoc_mlm_eligible', [], 'Eligible') ?></td></tr>
-                        <tr><td><?= __('assoc_rank_site_manager', [], 'Site Manager') ?> (GBV â‰¥ ₹5 Cr)</td><td class="text-end fw-bold"><?= __('assoc_mlm_eligible', [], 'Eligible') ?></td></tr>
+                        <tr><td><?= __('assoc_rank_vp', [], 'Vice President') ?> (GBV ≥ ₹1.5 Cr)</td><td class="text-end fw-bold"><?= __('assoc_mlm_eligible', [], 'Eligible') ?></td></tr>
+                        <tr><td><?= __('assoc_rank_president', [], 'President') ?> (GBV ≥ ₹3 Cr)</td><td class="text-end fw-bold"><?= __('assoc_mlm_eligible', [], 'Eligible') ?></td></tr>
+                        <tr><td><?= __('assoc_rank_site_manager', [], 'Site Manager') ?> (GBV ≥ ₹5 Cr)</td><td class="text-end fw-bold"><?= __('assoc_mlm_eligible', [], 'Eligible') ?></td></tr>
                     </table>
                 </div>
                 <small class="text-muted"><i class="fas fa-info-circle me-1"></i><?= __('assoc_mlm_track_d_note', [], 'Distributed monthly. This is additional income on top of Tracks A/B/C.') ?></small>

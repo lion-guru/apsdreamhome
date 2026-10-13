@@ -190,7 +190,7 @@ $recent_activity = $recent_activity ?? [];
                     <div class="d-flex justify-content-between mb-3">
                         <span><?= $stat['completed'] ?? 0 ?> runs today</span>
                         <?php if ($stat['last_run']): ?>
-                            <span class="pulse-dot" title="Last: <?= $stat['last_run'] ?>">â—�</span>
+                            <span class="pulse-dot" title="Last: <?= $stat['last_run'] ?>">▶</span>
                         <?php endif; ?>
                     </div>
                     <div class="d-flex gap-2">

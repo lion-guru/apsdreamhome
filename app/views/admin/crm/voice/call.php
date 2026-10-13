@@ -1,4 +1,4 @@
-ï»¿<?php $page_title = $page_title ?? 'Voice Call'; $lead = $lead ?? []; ?>
+<?php $page_title = $page_title ?? 'Voice Call'; $lead = $lead ?? []; ?>
 <style>.voice-call-ui{max-width:500px;margin:0 auto;text-align:center;padding:40px 20px}.lead-avatar-lg{width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:700;color:#fff;margin:0 auto 20px}.call-btn{width:70px;height:70px;border-radius:50%;border:none;font-size:24px;color:#fff;cursor:pointer;transition:.3s}.call-btn:hover{transform:scale(1.1)}.call-btn.end{background:#ef4444}.call-btn.mute{background:#6b7280}.call-btn.note{background:#3b82f6}</style>
 
 <div class="container-fluid px-4 py-4">

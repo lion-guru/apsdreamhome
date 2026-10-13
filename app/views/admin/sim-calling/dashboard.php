@@ -1,4 +1,4 @@
-ï»¿<?php $_conn = $_conn ?? false; $_ch = $_ch ?? []; $_st = $stats ?? []; $_rc = $recent_calls ?? []; ?>
+<?php $_conn = $_conn ?? false; $_ch = $_ch ?? []; $_st = $stats ?? []; $_rc = $recent_calls ?? []; ?>
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">

@@ -17,7 +17,7 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
         <h4 class="mb-1"><i class="fas fa-map-marked-alt"></i> <?= __('assoc_cm_title', [], 'Plot Map') ?> — <?= htmlspecialchars($colony['name'] ?? '') ?></h4>
-        <span class="text-muted small"><?= count($plots) ?> <?= __('assoc_cm_plots', [], 'plots') ?> à‚Â· <?= htmlspecialchars($colony['district_name'] ?? '') ?></span>
+        <span class="text-muted small"><?= count($plots) ?> <?= __('assoc_cm_plots', [], 'plots') ?> à‚· <?= htmlspecialchars($colony['district_name'] ?? '') ?></span>
     </div>
     <a href="<?= BASE_URL ?>/associate/browse" class="btn btn-sm btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i><?= __('assoc_cm_back', [], 'Back') ?></a>
 </div>

@@ -61,7 +61,7 @@ function rpLevelBadge($role) {
         </div>
     <?php else: ?>
 
-        <!-- Org Chart: Manager â†' You â†' Subordinates -->
+        <!-- Org Chart: Manager →' You →' Subordinates -->
         <div class="card shadow-sm border-0 mb-4">
             <div class="card-header bg-transparent border-bottom-0 pt-3">
                 <h6 class="fw-bold mb-0"><i class="fas fa-project-diagram me-2 text-primary"></i>Org Chart</h6>

@@ -245,7 +245,7 @@ $actionIcons = [
         <div class="col-lg-4">
             <!-- Hot Leads -->
             <div class="agentic-card p-4 mb-4">
-                <div class="section-title"><i class="fas fa-fire"></i> Hot Leads (Score â‰¥70)</div>
+                <div class="section-title"><i class="fas fa-fire"></i> Hot Leads (Score ≥70)</div>
                 <?php if (empty($hotLeadsList)): ?>
                     <div class="text-center py-3">
                         <i class="fas fa-check-circle"></i>

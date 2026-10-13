@@ -563,7 +563,7 @@ $progressPct = min(100, round(($points / max(1, $nextLevelPoints)) * 100));
             <div class="list-card h-100">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="fw-bold mb-0"><i class="fas fa-chart-line text-info me-2"></i>Lead Attribution</h5>
-                    <a href="<?= BASE_URL ?>/associate/attribution" class="btn btn-sm btn-outline-primary"><i class="fas fa-chart-bar me-1"></i>Details</a>
+                    <a href="<?= BASE_URL ?>/associate/leads" class="btn btn-sm btn-outline-primary"><i class="fas fa-chart-bar me-1"></i>Details</a>
                 </div>
                 <div class="d-flex gap-2 flex-wrap mb-3">
                     <div class="badge bg-info-subtle text-info border border-info-subtle px-3 py-1 small">

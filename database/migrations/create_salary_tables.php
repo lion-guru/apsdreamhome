@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Migration: Create missing salary tables
  * Creates: salary_payments, employee_salary_structure, salary_contracts, salary_history (if missing)

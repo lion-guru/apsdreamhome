@@ -1,4 +1,4 @@
-ï»¿<?php $pageTitle = 'Monitoring - Errors & Alerts'; ?>
+<?php $pageTitle = 'Monitoring - Errors & Alerts'; ?>
 <div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">

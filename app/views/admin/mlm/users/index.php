@@ -1,7 +1,7 @@
 <?php $associates = $associates ?? []; ?>
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="mb-0">MLM Associates</h4>
-    <a href="<?= BASE_URL ?>admin/mlm/users/create" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Associate</a>
+    <a href="<?= BASE_URL ?>/admin/mlm/associates/create" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Associate</a>
 </div>
 <div class="card aps-cp-card">
     <div class="card-body p-0">
@@ -27,7 +27,7 @@
                                 <i class="fas fa-user-plus fa-3x text-muted mb-3"></i>
                                 <h5 class="text-muted">No associates found</h5>
                                 <p class="text-muted mb-3">Register your first MLM associate to start building your network and tracking commissions.</p>
-                                <a href="<?= BASE_URL ?>/admin/mlm/users/create" class="btn btn-primary">
+                                <a href="<?= BASE_URL ?>/admin/mlm/associates/create" class="btn btn-primary">
                                     <i class="fas fa-plus me-1"></i> Register Associate
                                 </a>
                             </td>
@@ -50,9 +50,9 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="<?= BASE_URL ?>admin/users/<?= $a['user_id'] ?? $a['id'] ?? 0 ?>" class="btn btn-sm btn-outline-info" title="View"><i class="fas fa-eye"></i></a>
-                                    <a href="<?= BASE_URL ?>admin/users/<?= $a['user_id'] ?? $a['id'] ?? 0 ?>/wallet" class="btn btn-sm btn-outline-success" title="Wallet"><i class="fas fa-wallet"></i></a>
-                                    <a href="<?= BASE_URL ?>admin/users/<?= $a['user_id'] ?? $a['id'] ?? 0 ?>/edit" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>
+                                    <a href="<?= BASE_URL ?>/admin/users/<?= $a['user_id'] ?? $a['id'] ?? 0 ?>" class="btn btn-sm btn-outline-info" title="View"><i class="fas fa-eye"></i></a>
+                                    <a href="<?= BASE_URL ?>/admin/users/<?= $a['user_id'] ?? $a['id'] ?? 0 ?>/wallet" class="btn btn-sm btn-outline-success" title="Wallet"><i class="fas fa-wallet"></i></a>
+                                    <a href="<?= BASE_URL ?>/admin/users/<?= $a['user_id'] ?? $a['id'] ?? 0 ?>/edit" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

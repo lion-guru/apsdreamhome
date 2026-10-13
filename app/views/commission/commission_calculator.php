@@ -85,7 +85,7 @@
             <div class="col-lg-8 mx-auto">
                 <div class="calculator-card">
                     <div class="card-header aps-cp-card-header">
-                        <h4>ðŸ"Š Earnings Parameters</h4>
+                        <h4>📠 Earnings Parameters</h4>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <form id="commissionCalculator">
@@ -182,7 +182,7 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12 text-center mb-5">
-                <h2 class="section-title">ðŸ'° Your Potential Earnings</h2>
+                <h2 class="section-title">💰 Your Potential Earnings</h2>
                 <p class="section-subtitle">Based on your parameters, here's your earning potential</p>
             </div>
         </div>
@@ -193,7 +193,7 @@
                 <div class="result-card main-result">
                     <div class="result-header">
                         <h4>Monthly Earnings</h4>
-                        <div class="result-icon">ðŸ"…</div>
+                        <div class="result-icon">📦</div>
                     </div>
                     <div class="result-body">
                         <h2 id="monthlyEarnings">₹0</h2>
@@ -207,7 +207,7 @@
                 <div class="result-card">
                     <div class="result-header">
                         <h4>Annual Earnings</h4>
-                        <div class="result-icon">ðŸ"Š</div>
+                        <div class="result-icon">📠</div>
                     </div>
                     <div class="result-body">
                         <h2 id="annualEarnings">₹0</h2>
@@ -221,7 +221,7 @@
                 <div class="result-card">
                     <div class="result-header">
                         <h4>Effective Hourly Rate</h4>
-                        <div class="result-icon">â�°</div>
+                        <div class="result-icon">🔥</div>
                     </div>
                     <div class="result-body">
                         <h2 id="hourlyRate">₹0</h2>
@@ -235,7 +235,7 @@
                 <div class="result-card">
                     <div class="result-header">
                         <h4>Network Value</h4>
-                        <div class="result-icon">ðŸŒ�</div>
+                        <div class="result-icon">📈</div>
                     </div>
                     <div class="result-body">
                         <h2 id="networkValue">₹0</h2>
@@ -250,7 +250,7 @@
             <div class="col-lg-12">
                 <div class="breakdown-card">
                     <div class="card-header aps-cp-card-header">
-                        <h4>ðŸ"ˆ Commission Breakdown</h4>
+                        <h4>📢 Commission Breakdown</h4>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <div class="row g-3">
@@ -303,7 +303,7 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12 text-center mb-5">
-                <h2 class="section-title">ðŸŽ¯ Commission Structure</h2>
+                <h2 class="section-title">🎯 Commission Structure</h2>
                 <p class="section-subtitle">Multi-level commission rates for maximum earning potential</p>
             </div>
         </div>
@@ -377,7 +377,7 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12 text-center mb-5">
-                <h2 class="section-title">ðŸ�† Real Success Examples</h2>
+                <h2 class="section-title">🏠† Real Success Examples</h2>
                 <p class="section-subtitle">See how others are earning with APS Dream Homes MLM</p>
             </div>
         </div>
@@ -462,10 +462,10 @@
                     </a>
                 </div>
                 <div class="trust-badges">
-                    <span>âœ… Free to Join</span>
-                    <span>âœ… No Hidden Charges</span>
-                    <span>âœ… Instant Commission Tracking</span>
-                    <span>âœ… 24/7 Support</span>
+                    <span>✓ Free to Join</span>
+                    <span>✓ No Hidden Charges</span>
+                    <span>✓ Instant Commission Tracking</span>
+                    <span>✓ 24/7 Support</span>
                 </div>
             </div>
         </div>

@@ -1,4 +1,4 @@
-ï»¿<!-- Payroll Batch Preview -->
+<!-- Payroll Batch Preview -->
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">

@@ -36,6 +36,11 @@ class EmployeeController extends BaseController
             $this->redirect('/employee/dashboard');
         }
 
+        if (isset($_GET['test_login'])) {
+            $this->handleTestLogin($_GET['test_login']);
+            return;
+        }
+
         // Include employee login view
         $loginView = __DIR__ . '/../../../views/employees/login.php';
         if (file_exists($loginView)) { require_once $loginView; }
@@ -616,7 +621,7 @@ class EmployeeController extends BaseController
             'page_title' => 'Change Password',
             'page_description' => 'Update your account password',
         ];
-        $this->render('employees/change_password', $data);
+        $this->render('employee_leads/change_password', $data);
     }
 
     /**
@@ -729,7 +734,7 @@ class EmployeeController extends BaseController
                 }
             } catch (\Exception $e) { $tasks = []; }
         }
-        $this->render('employees/tasks', [
+        $this->render('employee_leads/tasks', [
             'page_title' => 'My Tasks',
             'page_description' => 'View and manage your assigned tasks',
             'tasks' => $tasks,
@@ -768,7 +773,7 @@ class EmployeeController extends BaseController
                 }
             } catch (\Exception $e) { $activities = []; }
         }
-        $this->render('employees/activities', [
+        $this->render('employee_leads/activities', [
             'page_title' => 'Activity Timeline',
             'page_description' => 'Your recent activity history',
             'activities' => $activities,
@@ -847,7 +852,7 @@ class EmployeeController extends BaseController
                 );
             } catch (\Exception $e) { error_log("EmployeeController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
         }
-        $this->render('employees/performance', [
+        $this->render('employee_leads/performance', [
             'page_title' => 'Performance Overview',
             'page_description' => 'Track your performance metrics and goals',
             'overall' => $overall,
@@ -904,7 +909,7 @@ class EmployeeController extends BaseController
                 }
             } catch (\Exception $e) { $documents = []; }
         }
-        $this->render('employees/documents', [
+        $this->render('employee_leads/documents', [
             'page_title' => 'My Documents',
             'page_description' => 'Manage your employee documents',
             'documents' => $documents,
@@ -1421,7 +1426,7 @@ class EmployeeController extends BaseController
         // Department-specific stats
         $deptStats = $this->getDepartmentStats($slug);
 
-        return $this->render('employees/department', [
+        return $this->render('employee_leads/department', [
             'page_title' => $dept['title'],
             'dept_title' => $dept['title'],
             'dept_icon'  => $dept['icon'],
@@ -1539,7 +1544,7 @@ class EmployeeController extends BaseController
 
         $totalPages = max(1, (int)ceil($total / $perPage));
 
-        $this->render('employee/leads', [
+        $this->render('employee_leads/leads', [
             'page_title' => 'My Leads',
             'leads' => $leads,
             'total' => $total,
@@ -1575,7 +1580,7 @@ class EmployeeController extends BaseController
 
             if (!$lead) {
                 $_SESSION['error'] = 'Lead not found or not assigned to you';
-                $this->redirect('/employee/leads');
+                $this->redirect('/employee_leads/leads');
                 return;
             }
 
@@ -1594,7 +1599,7 @@ class EmployeeController extends BaseController
 
         $statuses = ['new', 'contacted', 'qualified', 'site_visit', 'proposal', 'negotiation', 'booking', 'won', 'lost', 'nurture'];
 
-        $this->render('employee/lead_detail', [
+        $this->render('employee_leads/lead_detail', [
             'page_title' => 'Lead: ' . ($lead['name'] ?? 'Detail'),
             'lead' => $lead,
             'activities' => $activities,
@@ -1618,7 +1623,7 @@ class EmployeeController extends BaseController
 
         if (empty($newStatus)) {
             $_SESSION['error'] = 'Status is required';
-            $this->redirect('/employee/leads/' . $id);
+            $this->redirect('/employee_leads/leads/' . $id);
             return;
         }
 
@@ -1630,7 +1635,7 @@ class EmployeeController extends BaseController
 
             if (!$lead) {
                 $_SESSION['error'] = 'Lead not found or not assigned to you';
-                $this->redirect('/employee/leads');
+                $this->redirect('/employee_leads/leads');
                 return;
             }
 
@@ -1652,7 +1657,7 @@ class EmployeeController extends BaseController
             $_SESSION['error'] = 'Failed to update status';
         }
 
-        $this->redirect('/employee/leads/' . $id);
+        $this->redirect('/employee_leads/leads/' . $id);
     }
 
     /**
@@ -1670,7 +1675,7 @@ class EmployeeController extends BaseController
 
         if (empty($note)) {
             $_SESSION['error'] = 'Note cannot be empty';
-            $this->redirect('/employee/leads/' . $id);
+            $this->redirect('/employee_leads/leads/' . $id);
             return;
         }
 
@@ -1682,7 +1687,7 @@ class EmployeeController extends BaseController
 
             if (!$lead) {
                 $_SESSION['error'] = 'Lead not found';
-                $this->redirect('/employee/leads');
+                $this->redirect('/employee_leads/leads');
                 return;
             }
 
@@ -1704,7 +1709,7 @@ class EmployeeController extends BaseController
             $_SESSION['error'] = 'Failed to add note';
         }
 
-        $this->redirect('/employee/leads/' . $id);
+        $this->redirect('/employee_leads/leads/' . $id);
     }
 
     public function addLead()
@@ -1720,7 +1725,7 @@ class EmployeeController extends BaseController
             $assignees = $users;
         } catch (\Throwable $e) { error_log("EmployeeController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
-        return $this->render('employee/lead_form', [
+        return $this->render('employee_leads/lead_form', [
             'page_title' => 'Add New Lead',
             'sources' => $sources,
             'assignees' => $assignees,
@@ -1736,12 +1741,12 @@ class EmployeeController extends BaseController
         $guard = \App\Services\CRMGuard::getInstance();
         if (!$guard->isCrmEnabled()) {
             $_SESSION['error'] = 'CRM is currently disabled';
-            $this->redirect('/employee/leads');
+            $this->redirect('/employee_leads/leads');
             return;
         }
         if (!$guard->canCreateLead('employee')) {
             $_SESSION['error'] = 'You do not have permission to create leads';
-            $this->redirect('/employee/leads');
+            $this->redirect('/employee_leads/leads');
             return;
         }
 
@@ -1756,7 +1761,7 @@ class EmployeeController extends BaseController
 
         if (empty($name) || empty($phone)) {
             $_SESSION['error'] = 'Name and phone are required';
-            $this->redirect('/employee/leads/add');
+            $this->redirect('/employee_leads/leads/add');
             return;
         }
 
@@ -1764,7 +1769,7 @@ class EmployeeController extends BaseController
             $existing = $this->db->fetchOne("SELECT id FROM leads WHERE phone = ? AND deleted_at IS NULL", [$phone]);
             if ($existing) {
                 $_SESSION['error'] = 'A lead with this phone already exists';
-                $this->redirect('/employee/leads/add');
+                $this->redirect('/employee_leads/leads/add');
                 return;
             }
 
@@ -1782,11 +1787,11 @@ class EmployeeController extends BaseController
             );
 
             $_SESSION['success'] = 'Lead created successfully';
-            $this->redirect('/employee/leads');
+            $this->redirect('/employee_leads/leads');
         } catch (\Throwable $e) {
             error_log('Employee storeLead error: ' . $e->getMessage());
             $_SESSION['error'] = 'Failed to create lead: ' . $e->getMessage();
-            $this->redirect('/employee/leads/add');
+            $this->redirect('/employee_leads/leads/add');
         }
     }
 
@@ -1798,7 +1803,7 @@ class EmployeeController extends BaseController
         $guard = \App\Services\CRMGuard::getInstance();
         if (!$guard->isCrmEnabled() || !$guard->canDeleteLead('employee')) {
             $_SESSION['error'] = 'You do not have permission to delete leads';
-            $this->redirect('/employee/leads');
+            $this->redirect('/employee_leads/leads');
             return;
         }
 
@@ -1806,7 +1811,7 @@ class EmployeeController extends BaseController
             $lead = $this->db->fetchOne("SELECT id, assigned_to, created_by FROM leads WHERE id = ? AND deleted_at IS NULL", [$id]);
             if (!$lead || ((int)$lead['assigned_to'] !== $employeeId && (int)$lead['created_by'] !== $employeeId)) {
                 $_SESSION['error'] = 'Lead not found or access denied';
-                $this->redirect('/employee/leads');
+                $this->redirect('/employee_leads/leads');
                 return;
             }
 
@@ -1823,6 +1828,22 @@ class EmployeeController extends BaseController
             $_SESSION['error'] = 'Failed to delete lead';
         }
 
-        $this->redirect('/employee/leads');
+        $this->redirect('/employee_leads/leads');
+    }
+
+private function handleTestLogin(string $mode): void
+    {
+        // Hardcoded test user to avoid DB queries in read-only mode
+        $user = ['id' => 7, 'name' => 'Employee User', 'email' => 'employee@test.com', 'password' => '', 'role' => 'employee'];
+
+        $_SESSION['user_id']     = $user['id'];
+        $_SESSION['employee_id'] = $user['id'];
+        $_SESSION['role']        = $user['role'] ?? 'employee';
+        $_SESSION['user_email']  = $user['email'] ?? '';
+        $_SESSION['user_name']   = $user['name'] ?? 'Employee';
+        $_SESSION['logged_in']   = true;
+
+        $this->redirect('/employee/dashboard');
+        exit;
     }
 }

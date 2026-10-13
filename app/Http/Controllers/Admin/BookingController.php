@@ -417,7 +417,7 @@ public function show($id)
                 throw new \Exception('Please select a valid document file to upload.');
             }
 
-            $file = $_FILES['document_file'];
+$file = $_FILES['document_file'];
             $docType = trim($_POST['document_type'] ?? 'other');
             $docName = trim($_POST['document_name'] ?? '');
             if ($docName === '') {
@@ -425,6 +425,9 @@ public function show($id)
             }
             $docNumber = trim($_POST['document_number'] ?? ('DOC-BK' . $bookingId . '-' . time()));
             $physicalLocation = trim($_POST['physical_location'] ?? '');
+            $physicalRackNo = trim($_POST['physical_rack_no'] ?? '');
+            $lockerShelfId = trim($_POST['locker_shelf_id'] ?? '');
+            $folderBarCode = trim($_POST['folder_bar_code'] ?? '');
             $notes = trim($_POST['notes'] ?? '');
             $status = trim($_POST['status'] ?? 'verified');
 
@@ -455,8 +458,8 @@ public function show($id)
 
             $stmt = $this->db->prepare("
                 INSERT INTO booking_documents 
-                (booking_id, document_name, document_type, document_number, file_path, file_url, file_size, mime_type, status, physical_location, notes, uploaded_by, tenant_id, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+                (booking_id, document_name, document_type, document_number, file_path, file_url, file_size, mime_type, status, physical_location, physical_rack_no, locker_shelf_id, folder_bar_code, notes, uploaded_by, tenant_id, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
             ");
             $stmt->execute([
                 $bookingId,
@@ -469,6 +472,9 @@ public function show($id)
                 $mimeType,
                 $status,
                 $physicalLocation,
+                $physicalRackNo,
+                $lockerShelfId,
+                $folderBarCode,
                 $notes,
                 $uploadedBy,
                 $tid

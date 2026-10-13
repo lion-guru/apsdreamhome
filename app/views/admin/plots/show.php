@@ -150,7 +150,7 @@ $documents = $documents ?? [];
                                             <span class="text-muted">Not set</span>
                                         <?php endif; ?>
                                         <?php if (!empty($plot['width_ft']) && !empty($plot['length_ft'])): ?>
-                                            <span class="text-muted ms-2">(<?= floatval($plot['width_ft']) ?>ft Ã— <?= floatval($plot['length_ft']) ?>ft)</span>
+                                            <span class="text-muted ms-2">(<?= floatval($plot['width_ft']) ?>ft × <?= floatval($plot['length_ft']) ?>ft)</span>
                                         <?php endif; ?>
                                     </td>
                                 </tr>

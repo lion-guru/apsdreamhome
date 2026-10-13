@@ -1,4 +1,4 @@
-ï»¿<div class="container-fluid">
+<div class="container-fluid">
     <div class="row mb-4">
         <div class="col-8">
             <h2 ><i class="fas fa-money-check-alt me-2"></i> Payout Batches</h2>

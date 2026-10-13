@@ -108,7 +108,7 @@ function lvDays($d) { return (int)$d; }
                         <?php $pct = ($b['allocated_days'] ?? 0) > 0 ? (($b['used_days'] ?? 0) / ($b['allocated_days'] ?? 1)) * 100 : 0; ?>
                         <div class="progress-bar"></div>
                     </div>
-                    <small class="text-muted mt-1 d-block"><?= number_format($b['used_days'] ?? 0, 1) ?> used<?= ($b['carried_forward'] ?? 0) > 0 ? ' Â· ' . number_format($b['carried_forward'], 1) . ' carried forward' : '' ?></small>
+                    <small class="text-muted mt-1 d-block"><?= number_format($b['used_days'] ?? 0, 1) ?> used<?= ($b['carried_forward'] ?? 0) > 0 ? ' · ' . number_format($b['carried_forward'], 1) . ' carried forward' : '' ?></small>
                 </div>
             </div>
         </div>
@@ -198,7 +198,7 @@ function lvDays($d) { return (int)$d; }
                             <select name="leave_type_id" class="form-select" required>
                                 <option value="">Select leave type...</option>
                                 <?php foreach ($leaveTypes as $lt): ?>
-                                    <option value="<?= (int)$lt['id'] ?>"><?= htmlspecialchars($lt['name'] ?? '') ?> (<?= (int)$lt['days_per_year'] ?> days/year<?= $lt['is_paid'] ? ' Â· Paid' : ' Â· Unpaid' ?>)</option>
+                                    <option value="<?= (int)$lt['id'] ?>"><?= htmlspecialchars($lt['name'] ?? '') ?> (<?= (int)$lt['days_per_year'] ?> days/year<?= $lt['is_paid'] ? ' · Paid' : ' · Unpaid' ?>)</option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

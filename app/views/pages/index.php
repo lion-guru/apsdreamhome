@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // Homepage content (used within layouts/base.php)
 ?>
 <!-- Main Content -->

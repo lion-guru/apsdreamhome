@@ -1,4 +1,4 @@
-ï»¿<!-- Department Form - Create/Edit -->
+<!-- Department Form - Create/Edit -->
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">

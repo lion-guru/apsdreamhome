@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 $_logs = $logs ?? [];
 $_ag = $agents ?? [];
 $_filter = $filter ?? '';

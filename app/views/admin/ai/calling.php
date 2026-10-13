@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 $page_title = $page_title ?? 'AI Calling System - APS Dream Home';
 $page_heading = $page_heading ?? 'AI Calling System';
 

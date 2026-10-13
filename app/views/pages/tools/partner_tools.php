@@ -1,8 +1,8 @@
-﻿<section class="py-5 text-white" style="background: linear-gradient(135deg, #0a192f 0%, #1e3a5f 100%)">
+<section class="py-5 text-white" style="background: linear-gradient(135deg, #0a192f 0%, #1e3a5f 100%)">
     <div class="container">
         <div class="text-center mb-5">
             <h1 class="text-white fw-bold display-5"><i class="fas fa-handshake me-2"></i>Partner Tools</h1>
-            <p class="text-white-50 fs-5">Free tools for small land dealers â€” use without registration!</p>
+            <p class="text-white-50 fs-5">Free tools for small land dealers — use without registration!</p>
         </div>
 
         <!-- Tool 1: Land Area Converter -->

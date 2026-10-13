@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 $page_title = $page_title ?? 'Insights';
 $account = $account ?? [];
 $insights = $insights ?? [];

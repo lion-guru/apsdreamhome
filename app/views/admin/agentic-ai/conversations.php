@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 $_convs = $conversations ?? [];
 $_ag = $agents ?? [];
 ?>

@@ -105,13 +105,13 @@ $page_title = 'KYC Upload | APS Dream Homes';
     <div class="col-lg-8">
         <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
             <div class="card-header bg-primary text-white text-center py-4">
-                <h2 class="mb-0 fw-bold">KYC αñªαñ╕αÑìαññαñ╛αñ╡αÑçαñ£αñ╝ αñàαñ¬αñ▓αÑïαñí</h2>
-                <p class="mb-0 mt-2 opacity-75">αñàαñ¬αñ¿αÑç αñªαñ╕αÑìαññαñ╛αñ╡αÑçαñ£αñ╝ αñ╕αÑüαñ░αñòαÑìαñ╖αñ┐αññ αñ░αÑéαñ¬ αñ╕αÑç αñàαñ¬αñ▓αÑïαñí αñòαñ░αÑçαñé</p>
+                <h2 class="mb-0 fw-bold">KYC दस्तावेज़ अपलोड</h2>
+                <p class="mb-0 mt-2 opacity-75">अपने दस्तावेज़ को यहाँ अपलोड करें</p>
             </div>
             <div class="card-body p-4 p-md-5">
                 <div class="alert alert-info border-0 shadow-sm mb-4">
                     <i class="fas fa-info-circle me-2"></i>
-                    αñòαÑâαñ¬αñ»αñ╛ αñ╕αÑüαñ¿αñ┐αñ╢αÑìαñÜαñ┐αññ αñòαñ░αÑçαñé αñòαñ┐ αñªαñ╕αÑìαññαñ╛αñ╡αÑçαñ£αñ╝ αñ╕αÑìαñ¬αñ╖αÑìαñƒ αñöαñ░ αñ¬αñóαñ╝αñ¿αÑç αñ»αÑïαñùαÑìαñ» αñ╣αÑêαñéαÑñ αñàαñºαñ┐αñòαññαñ« αñ½αñ╝αñ╛αñçαñ▓ αñåαñòαñ╛αñ░: <strong>5MB</strong>αÑñ αñàαñ¿αÑüαñ«αññ αñ¬αÑìαñ░αñòαñ╛αñ░: <strong>JPG, PNG, PDF</strong>αÑñ
+                    दस्तावेज़ अपलोड करने के लिए आवश्यक दस्तावेज़: <strong>5MB</strong> तक; अनुमत प्रारूप: <strong>JPG, PNG, PDF</strong>
                 </div>
 
                 <form id="kycUploadForm" enctype="multipart/form-data" novalidate>
@@ -119,7 +119,7 @@ $page_title = 'KYC Upload | APS Dream Homes';
                     <div class="row g-4">
                         <div class="col-md-4">
                             <div class="upload-box p-3 border-2 border-dashed rounded-3 text-center bg-light">
-                                <label for="aadhar_card" class="form-label fw-bold d-block mb-3">αñåαñºαñ╛αñ░ αñòαñ╛αñ░αÑìαñí</label>
+                                <label for="aadhar_card" class="form-label fw-bold d-block mb-3">आधार कार्ड</label>
                                 <div class="icon-placeholder mb-3">
                                     <i class="fas fa-id-card fa-3x text-muted"></i>
                                 </div>
@@ -130,7 +130,7 @@ $page_title = 'KYC Upload | APS Dream Homes';
 
                         <div class="col-md-4">
                             <div class="upload-box p-3 border-2 border-dashed rounded-3 text-center bg-light">
-                                <label for="pan_card" class="form-label fw-bold d-block mb-3">αñ¬αÑêαñ¿ αñòαñ╛αñ░αÑìαñí</label>
+                                <label for="pan_card" class="form-label fw-bold d-block mb-3">पैन कार्ड</label>
                                 <div class="icon-placeholder mb-3">
                                     <i class="fas fa-address-card fa-3x text-muted"></i>
                                 </div>
@@ -141,7 +141,7 @@ $page_title = 'KYC Upload | APS Dream Homes';
 
                         <div class="col-md-4">
                             <div class="upload-box p-3 border-2 border-dashed rounded-3 text-center bg-light">
-                                <label for="address_proof" class="form-label fw-bold d-block mb-3">αñ¬αññαñ╛ αñ¬αÑìαñ░αñ«αñ╛αñú</label>
+                                <label for="address_proof" class="form-label fw-bold d-block mb-3">बैंक प्रमाण</label>
                                 <div class="icon-placeholder mb-3">
                                     <i class="fas fa-file-invoice fa-3x text-muted"></i>
                                 </div>
@@ -153,7 +153,7 @@ $page_title = 'KYC Upload | APS Dream Homes';
 
                     <div class="mt-5 text-center">
                         <button type="submit" class="btn btn-primary btn-lg px-5 rounded-pill shadow">
-                            <i class="fas fa-cloud-upload-alt me-2"></i>αñàαñ¡αÑÇ αñàαñ¬αñ▓αÑïαñí αñòαñ░αÑçαñé
+                            <i class="fas fa-cloud-upload-alt me-2"></i>अपना विवरण अपलोड करें
                         </button>
                     </div>
                 </form>
@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const allFilled = Array.from(fileInputs).every(input => input.files.length > 0);
         if (!allFilled) {
-            alert('αñòαÑâαñ¬αñ»αñ╛ αñ╕α¡αñ¿αÑÇ αñåαñ╡αñ╢αÑìαñ»αñò αñªαñ╕αÑìαññαñ╛αñ╡αÑçαñ£αñ╝ αñàαñ¬αñ▓αÑïαñí αñòαñ░αÑçαñéαÑñ');
+            alert('सभी फ़ील्ड भरें और आवश्यक दस्तावेज़ अपलोड करें');
             return;
         }
 
@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const originalBtnHtml = submitBtn.innerHTML;
 
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>αñàαñ¬αñ▓αÑïαñí αñ╣αÑï αñ░αñ╣αñ╛ αñ╣αÑê...';
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>अपना विवरण अपलोड हो रहा है...';
 
         fetch(window.location.pathname, {
             method: 'POST',
@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('αñàαñ¬αñ▓αÑïαñí αñòαÑç αñªαÑîαñ░αñ╛αñ¿ αñÅαñò αññαÑìαñ░αÑüαñƒαñ┐ αñ╣αÑüαñêαÑñ αñòαÑâαñ¬αñ»αñ╛ αñ¬αÑüαñ¿: αñ¬αÑìαñ░αñ»αñ╛αñ╕ αñòαñ░αÑçαñéαÑñ');
+            alert('अपना विवरण अपलोड करने में कोई त्रुटि आई: कृपया दोबारा कोशिश करें');
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalBtnHtml;
         });

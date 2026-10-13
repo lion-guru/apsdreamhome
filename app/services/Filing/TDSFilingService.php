@@ -494,7 +494,7 @@ class TDSFilingService
 
     public function getAssessmentYear(string $fy): string
     {
-        // FY 2025-26 â†' AY 2026-27
+        // FY 2025-26 →' AY 2026-27
         $startYear = (int)substr($fy, 0, 4);
         return ($startYear + 1) . '-' . substr($startYear + 2, -2);
     }
@@ -532,7 +532,7 @@ class TDSFilingService
             '194C' => ['rate_indiv' => 1, 'rate_co' => 2, 'desc' => 'Contractor'],
             '194H' => ['rate' => 5, 'desc' => 'Commission/Brokerage'],
             '194I' => ['rate' => 2, 'desc' => 'Rent - Plant/Machinery'],
-            '194IA'=> ['rate' => 1, 'desc' => 'Immovable Property (â‰¥50L)'],
+            '194IA'=> ['rate' => 1, 'desc' => 'Immovable Property (≥50L)'],
             '194IB'=> ['rate' => 5, 'desc' => 'Rent by Individual (50K+/month)'],
             '194J' => ['rate' => 10, 'desc' => 'Professional/Technical Fees'],
             '194LA'=> ['rate' => 10, 'desc' => 'Compulsory Acquisition'],

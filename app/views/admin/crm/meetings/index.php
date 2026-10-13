@@ -1,4 +1,4 @@
-ï»¿<?php $page_title = $page_title ?? 'Meetings'; $meetings = $meetings ?? []; $stats = $stats ?? []; ?>
+<?php $page_title = $page_title ?? 'Meetings'; $meetings = $meetings ?? []; $stats = $stats ?? []; ?>
 <style>.mtg-stat{background:#fff;border-radius:14px;border:1px solid #f0f0f5;padding:16px;text-align:center}.mtg-stat .val{font-size:24px;font-weight:800}.mtg-stat .lbl{font-size:11px;color:#888;text-transform:uppercase}</style>
 
 <div class="container-fluid px-4 py-4">

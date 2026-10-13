@@ -60,7 +60,7 @@ function inr($n) { return '₹' . number_format($n); }
             <i class="fas fa-rupee-sign fa-2x opacity-50"></i>
           </div>
           <div class="mt-2 small opacity-75">
-            <?= number_format($plotStats['total'] ?? 0) ?> plots Ã— avg <?= inr($plotStats['avg_price_sqft'] ?? 0) ?>/sqft
+            <?= number_format($plotStats['total'] ?? 0) ?> plots × avg <?= inr($plotStats['avg_price_sqft'] ?? 0) ?>/sqft
           </div>
         </div>
       </div>

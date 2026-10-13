@@ -22,7 +22,7 @@ class DocsController extends BaseController
     /** Methods we include in the OpenAPI spec. */
     private const METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
 
-    /** Group â†' tag map for nicer Swagger UI grouping. */
+    /** Group →' tag map for nicer Swagger UI grouping. */
     private const GROUP_TAGS = [
         'auth'        => 'Authentication',
         'mobile'      => 'Mobile API',

@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 $pageTitle = 'Document AI Review Queue';
 $jobs = $jobs ?? [];
 $stats = $stats ?? [];

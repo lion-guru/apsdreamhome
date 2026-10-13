@@ -1,4 +1,4 @@
-﻿<section class="py-5 text-white" style="background: linear-gradient(135deg, #0a192f 0%, #1e3a5f 100%)">
+<section class="py-5 text-white" style="background: linear-gradient(135deg, #0a192f 0%, #1e3a5f 100%)">
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><i class="fas fa-calculator me-2"></i><?php echo __('tool_loan_eligibility_title', [], 'Home Loan Eligibility Calculator'); ?></h1>

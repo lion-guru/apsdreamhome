@@ -98,7 +98,7 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
     </div>
 </div>
 
-<!-- ROW 2 — Charts (2Ã—2 grid) -->
+<!-- ROW 2 — Charts (2×2 grid) -->
 <div >
 
     <!-- Chart 1: Leads over last 7 days (Line) -->

@@ -17,7 +17,7 @@ class FarmerDashboardController extends BaseController
     {
         @session_start();
         if (!isset($_SESSION['farmer_id'])) {
-            header('Location: ' . BASE_URL . '/farmer/login');
+            header('Location: ' . BASE_URL . '/farmer_portal/login');
             exit;
         }
     }
@@ -50,7 +50,7 @@ class FarmerDashboardController extends BaseController
         }
 
         $this->layout = 'layouts/base';
-        $this->render('farmer/dashboard', [
+        $this->render('farmer_portal/dashboard', [
             'page_title' => 'Farmer Dashboard - APS Dream Home',
             'farmer' => $farmer,
             'profile' => $profile,
@@ -76,7 +76,7 @@ class FarmerDashboardController extends BaseController
         $landHoldings = $this->db->fetchAll("SELECT * FROM farmer_land_holdings WHERE farmer_id = ? ORDER BY created_at DESC", [$farmerId]);
 
         $this->layout = 'layouts/base';
-        $this->render('farmer/land_holdings', [
+        $this->render('farmer_portal/land_holdings', [
             'page_title' => 'My Land Holdings - APS Dream Home',
             'land_holdings' => $landHoldings,
         ]);
@@ -90,7 +90,7 @@ class FarmerDashboardController extends BaseController
         $payments = $this->db->fetchAll("SELECT * FROM farmer_transactions WHERE farmer_id = ? ORDER BY created_at DESC", [$farmerId]);
 
         $this->layout = 'layouts/base';
-        $this->render('farmer/payments', [
+        $this->render('farmer_portal/payments', [
             'page_title' => 'Payment History - APS Dream Home',
             'payments' => $payments,
         ]);
@@ -104,7 +104,7 @@ class FarmerDashboardController extends BaseController
         $agreements = $this->db->fetchAll("SELECT * FROM farmer_agreements WHERE farmer_id = ? ORDER BY created_at DESC", [$farmerId]);
 
         $this->layout = 'layouts/base';
-        $this->render('farmer/agreements', [
+        $this->render('farmer_portal/agreements', [
             'page_title' => 'My Agreements - APS Dream Home',
             'agreements' => $agreements,
         ]);
@@ -119,7 +119,7 @@ class FarmerDashboardController extends BaseController
 
         if (!$agreement) {
             $_SESSION['flash_error'] = 'Agreement not found';
-            header('Location: ' . BASE_URL . '/farmer/agreements');
+            header('Location: ' . BASE_URL . '/farmer_portal/agreements');
             exit;
         }
 
@@ -165,7 +165,7 @@ class FarmerDashboardController extends BaseController
         }
 
         $this->layout = 'layouts/base';
-        $this->render('farmer/profile', [
+        $this->render('farmer_portal/profile', [
             'page_title' => 'My Profile - APS Dream Home',
             'farmer' => $farmer,
             'profile' => $profile,

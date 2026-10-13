@@ -1,4 +1,4 @@
-ï»¿<?php $page_title = $page_title ?? 'Custom Field'; $field = $field ?? null; ?>
+<?php $page_title = $page_title ?? 'Custom Field'; $field = $field ?? null; ?>
 <div class="container-fluid px-4 py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div><h4 class="fw-bold mb-1"><i class="fas fa-sliders-h me-2 text-primary"></i><?= $field ? 'Edit' : 'Add' ?> Custom Field</h4></div>

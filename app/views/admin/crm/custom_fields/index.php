@@ -1,4 +1,4 @@
-ï»¿<?php $page_title = $page_title ?? 'Custom Fields'; $fields = $fields ?? []; ?>
+<?php $page_title = $page_title ?? 'Custom Fields'; $fields = $fields ?? []; ?>
 <style>.cf-card{background:#fff;border-radius:14px;border:1px solid #f0f0f5;padding:24px;transition:.3s}.cf-card:hover{box-shadow:0 8px 24px rgba(0,0,0,.08)}.cf-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;text-transform:uppercase}</style>
 
 <div class="container-fluid px-4 py-4">

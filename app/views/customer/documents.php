@@ -352,6 +352,42 @@ $base = BASE_URL ?? '';
                 </div>
             </div>
 
+            <!-- Maintenance Dues -->
+            <div class="col-12 mt-4">
+                <h5 class="fw-bold mb-3 d-flex align-items-center">
+                    <i class="fas fa-building-shield text-danger me-2"></i> Maintenance Dues
+                    <small class="text-muted fw-normal ms-2">— clear before registry NOC</small>
+                </h5>
+                <div class="row g-3">
+                    <?php $maintenanceDues = $maintenanceDues ?? []; ?>
+                    <?php if (empty($maintenanceDues)): ?>
+                        <div class="col-12">
+                            <div class="card border-0 bg-light">
+                                <div class="card-body text-center py-4">
+                                    <h6 class="text-success"><i class="fas fa-check-circle me-1"></i>No Pending Dues</h6>
+                                </div>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($maintenanceDues as $due):
+                            $amt = max(0, (float)($due['total_due'] ?? 0) - (float)($due['paid_amount'] ?? 0));
+                            $upi = 'upi://pay?' . http_build_query(['pa' => 'apsdreamhome@icici', 'pn' => 'APS Dream Home', 'am' => number_format($amt, 2, '.', ''), 'cu' => 'INR', 'tn' => substr('Maintenance ' . ($due['booking_number'] ?? ''), 0, 80)]);
+                        ?>
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card document-card h-100 border-0 shadow-sm">
+                                    <div class="card-body">
+                                        <h6 class="fw-semibold mb-1"><?= htmlspecialchars($due['booking_number'] ?? '') ?> · <?= str_pad((string)($due['bill_month'] ?? ''), 2, '0', STR_PAD_LEFT) ?>/<?= htmlspecialchars($due['bill_year'] ?? '') ?></h6>
+                                        <p class="text-muted small mb-2">Plot <?= htmlspecialchars($due['plot_number'] ?? '') ?> · <?= htmlspecialchars($due['colony_name'] ?? '') ?></p>
+                                        <p class="fw-bold mb-2">Due: ₹<?= number_format($amt) ?></p>
+                                        <a class="btn btn-sm btn-success w-100" href="<?= htmlspecialchars($upi) ?>">💳 Pay ₹<?= number_format($amt) ?> via UPI</a>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+
             <!-- Tracked Possession Certificates -->
             <div class="col-12 mt-4">
                 <h5 class="fw-bold mb-3 d-flex align-items-center">
@@ -401,6 +437,30 @@ $base = BASE_URL ?? '';
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Plot Resale & Ownership Transfer NOC Desk -->
+            <div class="col-12 mt-4">
+                <h5 class="fw-bold mb-3 d-flex align-items-center justify-content-between">
+                    <div>
+                        <i class="fas fa-exchange-alt text-primary me-2"></i> Plot Resale & Transfer NOC Desk
+                        <small class="text-muted fw-normal ms-2">— transfer rights, resell, or gift to family</small>
+                    </div>
+                    <a href="<?= BASE_URL ?>/customer/plot-transfers" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-plus me-1"></i>Apply for Transfer
+                    </a>
+                </h5>
+                <div class="card border-0 bg-light p-3">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <span class="fw-semibold">Looking to resell or transfer allotment rights?</span>
+                            <div class="small text-muted">Verify eligibility, submit buyer details, and download official QR-verified Transfer NOC.</div>
+                        </div>
+                        <a href="<?= BASE_URL ?>/customer/plot-transfers" class="btn btn-sm btn-primary">
+                            Manage Plot Transfers
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,4 +1,4 @@
-﻿<section class="py-5 text-white" style="background: linear-gradient(135deg, #0a192f 0%, #1e3a5f 100%)">
+<section class="py-5 text-white" style="background: linear-gradient(135deg, #0a192f 0%, #1e3a5f 100%)">
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><i class="fas fa-home me-2"></i><?php echo __('tool_property_valuation_title', [], 'Property Valuation Tool'); ?></h1>
@@ -86,7 +86,7 @@
                             <div class="col-md-4">
                                 <div class="bg-primary text-white rounded-3 p-3">
                                     <small class="d-block"><?php echo __('range', [], 'Range'); ?></small>
-                                    <h5 class="mb-0" id="valRange">₹67L â€” ₹83L</h5>
+                                    <h5 class="mb-0" id="valRange">₹67L — ₹83L</h5>
                                 </div>
                             </div>
                         </div>

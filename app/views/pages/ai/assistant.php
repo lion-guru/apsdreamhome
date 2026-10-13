@@ -25,7 +25,7 @@
                             <div class="d-inline-block p-3 rounded-circle mb-2">
                                 <i class="fas fa-robot fa-2x text-white"></i>
                             </div>
-                            <h4 class="mb-1"><?= __('aiast_greeting', [], 'Namaste!') ?> ðŸ™�</h4>
+                            <h4 class="mb-1"><?= __('aiast_greeting', [], 'Namaste!') ?> 📢</h4>
                             <p class="text-muted mb-0"><?= __('aiast_welcome', [], "I'm your APS Dream Home AI assistant. Ask me anything about properties, pricing, site visits, or loans!") ?></p>
                         </div>
                     </div>

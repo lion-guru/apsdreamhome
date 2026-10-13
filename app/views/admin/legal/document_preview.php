@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $doc = $doc ?? null;
 if (!$doc) { echo '<div class="container-fluid py-4"><div class="alert alert-danger">Document not found</div></div>'; return; }
 ?><!DOCTYPE html>

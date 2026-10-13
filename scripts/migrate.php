@@ -117,7 +117,7 @@ PHP;
                 $stmt->execute([$migration['version'], $migration['name']]);
                 
                 $this->pdo->commit();
-                echo "    âœ“ Done\n";
+                echo "    ✓ Done\n";
                 
             } catch (Throwable $e) {
                 $this->pdo->rollBack();
@@ -167,7 +167,7 @@ PHP;
                 $stmt->execute([$version]);
                 
                 $this->pdo->commit();
-                echo "  âœ“ Rolled back\n";
+                echo "  ✓ Rolled back\n";
                 
             } catch (Throwable $e) {
                 $this->pdo->rollBack();
@@ -186,7 +186,7 @@ PHP;
         echo str_repeat("-", 80) . "\n";
         
         foreach ($migrations as $m) {
-            $status = in_array($m['version'], $executed) ? 'âœ“ EXECUTED' : 'â—‹ PENDING';
+            $status = in_array($m['version'], $executed) ? '✓ EXECUTED' : 'â—‹ PENDING';
             $executedAt = '';
             if (in_array($m['version'], $executed)) {
                 $stmt = $this->pdo->prepare("SELECT executed_at FROM {$this->tableName} WHERE version = ?");

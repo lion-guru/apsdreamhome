@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 /**
  * God Mode Dashboard - Admin Super Powers
  * User Impersonation, Role Switching, System Control

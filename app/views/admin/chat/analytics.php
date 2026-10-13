@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 /** @var array $data ChatAnalytics dashboard data */
 /** @var array $conversations Conversation stats */
 /** @var array $actionLabels Action label map */

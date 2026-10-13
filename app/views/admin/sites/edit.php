@@ -1,4 +1,4 @@
-ï»¿<?php $pageTitle = 'Edit Site'; ?>
+<?php $pageTitle = 'Edit Site'; ?>
 <div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">

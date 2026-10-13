@@ -207,7 +207,7 @@ class ProjectController extends AdminController
                 ]);
             }
 
-            // Project list changed â€” drop the header projects cache.
+            // Project list changed — drop the header projects cache.
             $this->invalidateHeaderProjectsCache();
 
             // Clean up uploaded image if database insert failed
@@ -446,7 +446,7 @@ class ProjectController extends AdminController
                 ]);
             }
 
-            // Project list changed â€” drop the header projects cache.
+            // Project list changed — drop the header projects cache.
             $this->invalidateHeaderProjectsCache();
 
             return $this->jsonError('Failed to update project', 500);
@@ -534,7 +534,7 @@ class ProjectController extends AdminController
                 ]);
             }
 
-            // Project list changed â€” drop the header projects cache.
+            // Project list changed — drop the header projects cache.
             $this->invalidateHeaderProjectsCache();
 
             return $this->jsonError('Failed to delete project', 500);

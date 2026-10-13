@@ -64,6 +64,8 @@ class LegalAdvisorController extends BaseController
             // Get contract status
             $contractStatus = $this->getContractStatus();
 
+            $quickActionCounts = $this->getQuickActionHubCounts();
+
             $this->render('employee/legal_dashboard', [
                 'page_title' => 'Legal Dashboard - APS Dream Home',
                 'pending_documents' => $pendingDocuments,
@@ -71,7 +73,8 @@ class LegalAdvisorController extends BaseController
                 'active_disputes' => $activeDisputes,
                 'legal_metrics' => $legalMetrics,
                 'recent_activities' => $recentActivities,
-                'contract_status' => $contractStatus
+                'contract_status' => $contractStatus,
+                'quickActionCounts' => $quickActionCounts
             ]);
         } catch (\Exception $e) {
             error_log("Legal Advisor Controller Error: " . $e->getMessage());
@@ -783,6 +786,305 @@ class LegalAdvisorController extends BaseController
             $activityType,
             $description,
             json_encode(['related_id' => $relatedId])
+        ]);
+    }
+
+    /**
+     * Get pending deed executions for quick action hub
+     */
+    private function getPendingDeedExecutions()
+    {
+        try {
+            // Pending registry milestones that need document upload
+            $query = "
+                SELECT 
+                    brm.id as milestone_id,
+                    brm.booking_id,
+                    brm.stage_name,
+                    brm.stage_key,
+                    brm.status as milestone_status,
+                    brm.completed_date,
+                    brm.document_path as milestone_document,
+                    b.booking_number,
+                    b.customer_id,
+                    c.name as customer_name,
+                    c.phone as customer_phone,
+                    c.email as customer_email,
+                    p.plot_number,
+                    p.block,
+                    col.name as colony_name,
+                    rd.id as registry_doc_id,
+                    rd.document_type as registry_doc_type,
+                    rd.document_number as registry_doc_number,
+                    rd.status as registry_doc_status
+                FROM booking_registry_milestones brm
+                INNER JOIN bookings b ON brm.booking_id = b.id
+                INNER JOIN customers c ON b.customer_id = c.id
+                INNER JOIN plots p ON b.plot_id = p.id
+                INNER JOIN colonies col ON p.colony_id = col.id
+                LEFT JOIN registry_documents rd ON rd.booking_id = b.id
+                WHERE brm.status IN ('pending', 'in_progress')
+                AND brm.stage_key IN ('registry', 'deed_execution', 'possession')
+                AND (rd.id IS NULL OR rd.status NOT IN ('verified', 'approved'))
+                ORDER BY brm.created_at ASC
+                LIMIT 20";
+
+            return $this->db->fetchAll($query);
+        } catch (\Exception $e) {
+            error_log("getPendingDeedExecutions Error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get stamp paper verification tasks
+     */
+    private function getStampPaperVerification()
+    {
+        try {
+            // Check stamp duty payments that need verification
+            $query = "
+                SELECT 
+                    sdc.id as calc_id,
+                    sdc.booking_id,
+                    b.booking_number,
+                    b.customer_id,
+                    c.name as customer_name,
+                    c.phone as customer_phone,
+                    sdc.stamp_duty_amount,
+                    sdc.registration_fee,
+                    sdc.total_amount,
+                    sdc.status as calc_status,
+                    sdc.created_at as calc_created
+                FROM stamp_duty_calculations sdc
+                INNER JOIN bookings b ON sdc.booking_id = b.id
+                INNER JOIN customers c ON b.customer_id = c.id
+                WHERE sdc.status = 'pending_verification'
+                ORDER BY sdc.created_at ASC
+                LIMIT 20";
+
+            return $this->db->fetchAll($query);
+        } catch (\Exception $e) {
+            error_log("getStampPaperVerification Error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get customer cancellation settlements
+     */
+    private function getCancellationSettlements()
+    {
+        try {
+            // Get pending refunds/cancellations that need legal review
+            $query = "
+                SELECT 
+                    br.id as refund_id,
+                    br.booking_id,
+                    b.booking_number,
+                    b.customer_id,
+                    c.name as customer_name,
+                    c.phone as customer_phone,
+                    c.email as customer_email,
+                    br.refund_amount,
+                    br.cancellation_charge,
+                    br.deduction_reason,
+                    br.refund_mode,
+                    br.status as refund_status,
+                    br.created_at as refund_created,
+                    br.approved_by,
+                    br.processed_by
+                FROM booking_refunds br
+                INNER JOIN bookings b ON br.booking_id = b.id
+                INNER JOIN customers c ON b.customer_id = c.id
+                WHERE br.status IN ('pending', 'approved')
+                AND (br.processed_by IS NULL OR br.processed_by = 0)
+                ORDER BY br.created_at ASC
+                LIMIT 20";
+
+            return $this->db->fetchAll($query);
+        } catch (\Exception $e) {
+            error_log("getCancellationSettlements Error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get quick action hub summary counts
+     */
+    private function getQuickActionHubCounts()
+    {
+        $pendingDeeds = count($this->getPendingDeedExecutions());
+        $pendingStamps = count($this->getStampPaperVerification());
+        $pendingCancellations = count($this->getCancellationSettlements());
+
+        return [
+            'pending_deeds' => $pendingDeeds,
+            'pending_stamps' => $pendingStamps,
+            'pending_cancellations' => $pendingCancellations,
+            'total_pending' => $pendingDeeds + $pendingStamps + $pendingCancellations
+        ];
+    }
+
+    /**
+     * Get quick action hub data for dashboard
+     */
+    public function getQuickActionHub()
+    {
+        try {
+            $pendingDeeds = $this->getPendingDeedExecutions();
+            $pendingStamps = $this->getStampPaperVerification();
+            $pendingCancellations = $this->getCancellationSettlements();
+            $counts = $this->getQuickActionHubCounts();
+
+            return $this->jsonResponse([
+                'success' => true,
+                'counts' => $counts,
+                'pending_deeds' => $pendingDeeds,
+                'pending_stamps' => $pendingStamps,
+                'pending_cancellations' => $pendingCancellations
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonError($e->getMessage());
+        }
+    }
+
+    /**
+     * Quick action: verify stamp paper
+     */
+    public function verifyStampPaper()
+    {
+        try {
+            $calcId = (int)($_POST['calc_id'] ?? 0);
+            $verificationData = [
+                'status' => $_POST['status'] ?? '',
+                'verification_notes' => $_POST['verification_notes'] ?? '',
+            ];
+
+            if ($calcId <= 0 || $verificationData['status'] === '') {
+                return ['success' => false, 'message' => 'Calculation ID and status are required'];
+            }
+
+            $query = "UPDATE stamp_duty_calculations 
+                      SET status = ?, verification_notes = ?, verified_by = ?, verified_at = NOW()
+                      WHERE id = ?";
+            $this->db->execute($query, [
+                $verificationData['status'],
+                $verificationData['verification_notes'] ?? '',
+                $this->employeeId,
+                $calcId
+            ]);
+
+            // Log activity
+            $this->logLegalActivity(
+                'stamp_paper_verified',
+                "Stamp paper calculation #{$calcId} verified with status: {$verificationData['status']}",
+                $calcId
+            );
+
+            return [
+                'success' => true,
+                'message' => "Stamp paper verification updated successfully"
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Quick action: process cancellation settlement
+     */
+    public function processCancellationSettlement()
+    {
+        try {
+            $refundId = (int)($_POST['refund_id'] ?? 0);
+            $settlementData = [
+                'status' => $_POST['status'] ?? '',
+                'settlement_notes' => $_POST['settlement_notes'] ?? '',
+            ];
+
+            if ($refundId <= 0 || $settlementData['status'] === '') {
+                return ['success' => false, 'message' => 'Refund ID and status are required'];
+            }
+
+            // Get refund details
+            $query = "SELECT * FROM booking_refunds WHERE id = ?";
+            $refund = $this->db->fetchOne($query, [$refundId]);
+
+            if (!$refund) {
+                throw new Exception("Refund/cancellation not found");
+            }
+
+            // Update refund status
+            $query = "UPDATE booking_refunds 
+                      SET status = ?, settlement_notes = ?, processed_by = ?, processed_at = NOW()
+                      WHERE id = ?";
+            $this->db->execute($query, [
+                $settlementData['status'],
+                $settlementData['settlement_notes'] ?? '',
+                $this->employeeId,
+                $refundId
+            ]);
+
+            // Log activity
+            $this->logLegalActivity(
+                'cancellation_settled',
+                "Cancellation settlement #{$refundId} processed with status: {$settlementData['status']}",
+                $refundId
+            );
+
+            // Notify customer
+            $this->notifyCancellationUpdate($refund['booking_id'], $settlementData);
+
+            return [
+                'success' => true,
+                'message' => "Cancellation settlement processed successfully"
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Notify cancellation update to customer
+     */
+    private function notifyCancellationUpdate($bookingId, $settlementData)
+    {
+        try {
+            // Get booking customer
+            $query = "SELECT b.customer_id, c.name, c.email, c.phone
+                      FROM bookings b
+                      INNER JOIN customers c ON b.customer_id = c.id
+                      WHERE b.id = ?";
+            $booking = $this->db->fetchOne($query, [$bookingId]);
+
+            if ($booking) {
+                $message = "Your cancellation request has been {$settlementData['status']}. ";
+                if (!empty($settlementData['settlement_notes'])) {
+                    $message .= "Notes: " . $settlementData['settlement_notes'];
+                }
+                $this->createNotification($booking['customer_id'], 'cancellation_update', $message, $bookingId);
+            }
+        } catch (\Exception $e) {
+            error_log("notifyCancellationUpdate Error: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Get quick action hub summary counts for AJAX
+     */
+    public function getQuickActionHubCountsAjax()
+    {
+        $counts = $this->getQuickActionHubCounts();
+        return $this->jsonResponse([
+            'success' => true,
+            'counts' => $counts
         ]);
     }
 

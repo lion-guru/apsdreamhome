@@ -353,7 +353,7 @@ class PasswordOtpService
                             </div>
 
                             <div class="style-73851">
-                                <p class="style-61628"><strong>âš ï¸� Security Tip:</strong> Never share this code with anyone. APS Dream Home staff will never ask for your OTP.</p>
+                                <p class="style-61628"><strong>⚖ï¸� Security Tip:</strong> Never share this code with anyone. APS Dream Home staff will never ask for your OTP.</p>
                             </div>
 
                             <p class="style-49139">If you didn't request this code, please ignore this email or contact our support team if you have concerns.</p>

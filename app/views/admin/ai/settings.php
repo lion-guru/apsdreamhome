@@ -64,7 +64,7 @@ $engine_status = $engine_status ?? [];
                             <label class="api-label mb-0">Groq API Key <span class="free-badge">FREE</span></label>
                         </div>
                         <input type="password" name="groq_api_key" class="api-input" value="<?= htmlspecialchars($settings['groq_api_key'] ?? '') ?>" placeholder="gsk_...">
-                        <div class="api-hint">Free: 30 RPM. <a href="https://console.groq.com/keys" target="_blank" >Get key â†’</a> Fastest inference (~500 tok/s)</div>
+                        <div class="api-hint">Free: 30 RPM. <a href="https://console.groq.com/keys" target="_blank" >Get key →'</a> Fastest inference (~500 tok/s)</div>
                     </div>
 
                     <!-- OpenRouter -->
@@ -74,7 +74,7 @@ $engine_status = $engine_status ?? [];
                             <label class="api-label mb-0">OpenRouter API Key <span class="free-badge">FREE</span></label>
                         </div>
                         <input type="password" name="openrouter_api_key" class="api-input" value="<?= htmlspecialchars($settings['openrouter_api_key'] ?? '') ?>" placeholder="sk-or-...">
-                        <div class="api-hint">Free models: Llama 3, Mistral, Gemma. <a href="https://openrouter.ai/keys" target="_blank" >Get key â†’</a></div>
+                        <div class="api-hint">Free models: Llama 3, Mistral, Gemma. <a href="https://openrouter.ai/keys" target="_blank" >Get key →'</a></div>
                     </div>
 
                     <!-- Gemini -->
@@ -84,7 +84,7 @@ $engine_status = $engine_status ?? [];
                             <label class="api-label mb-0">Google Gemini API Key <span class="free-badge">FREE</span></label>
                         </div>
                         <input type="password" name="gemini_api_key" class="api-input" value="<?= htmlspecialchars($settings['api_key'] ?? '') ?>" placeholder="AIza...">
-                        <div class="api-hint">Free: 15 RPM, 1M tokens/day. <a href="https://aistudio.google.com/apikey" target="_blank" >Get key â†’</a></div>
+                        <div class="api-hint">Free: 15 RPM, 1M tokens/day. <a href="https://aistudio.google.com/apikey" target="_blank" >Get key →'</a></div>
                     </div>
 
                     <!-- Ollama -->
@@ -94,7 +94,7 @@ $engine_status = $engine_status ?? [];
                             <label class="api-label mb-0">Ollama (Local) <span class="free-badge">UNLIMITED</span></label>
                         </div>
                         <input type="text" name="ollama_url" class="api-input" value="<?= htmlspecialchars($settings['ollama_url'] ?? 'http://localhost:11434') ?>" placeholder="http://localhost:11434">
-                        <div class="api-hint">Unlimited, free, private. <a href="https://ollama.com" target="_blank" >Install â†’</a> Run: <code>ollama pull llama3.1:8b</code></div>
+                        <div class="api-hint">Unlimited, free, private. <a href="https://ollama.com" target="_blank" >Install →'</a> Run: <code>ollama pull llama3.1:8b</code></div>
                         <input type="text" name="ollama_model" class="api-input mt-2" value="<?= htmlspecialchars($settings['ollama_model'] ?? 'llama3.1:8b') ?>" placeholder="llama3.1:8b">
                     </div>
                 </div>
@@ -114,7 +114,7 @@ $engine_status = $engine_status ?? [];
             <div class="row mt-3">
                 <div class="col-md-4">
                     <h6 >Smart Routing</h6>
-                    <p >AI Gateway tries engines in order: Ollama â†’ Groq â†’ OpenRouter â†’ Gemini. First successful response wins.</p>
+                    <p >AI Gateway tries engines in order: Ollama →' Groq →' OpenRouter →' Gemini. First successful response wins.</p>
                 </div>
                 <div class="col-md-4">
                     <h6 >All Free Forever</h6>

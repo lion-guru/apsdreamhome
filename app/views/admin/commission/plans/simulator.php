@@ -255,7 +255,7 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                 $diffCap = $simB['global_cap'] - $simA['global_cap'];
                 ?>
                 <div class="result-card">
-                    <div >Difference (Plan B âˆ’ Plan A)</div>
+                    <div >Difference (Plan B âˆ' Plan A)</div>
                     <div class="result-num">₹<?= number_format($diffTotal) ?></div>
                     <div ><?= $diffTotal > 0 ? 'Plan B pays MORE' : ($diffTotal < 0 ? 'Plan A pays MORE' : 'Same payout') ?></div>
                 </div>

@@ -15,8 +15,50 @@ class MLMController extends AdminController
     
     public function users() 
     {
-        $this->data['page_title'] = 'users';
-        return $this->render('admin/mlm/users/index');
+        $this->requireAdmin();
+        $this->data['page_title'] = 'MLM Associates';
+
+        $associates = [];
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getPdo();
+            $params = [];
+            $tenantUserSql = '';
+            $tid = $this->tenantId();
+            if ($tid > 1) {
+                $tenantUserSql = ' AND u.tenant_id = ?';
+                $params[] = $tid;
+            }
+
+            $sql = "SELECT
+                        u.id AS user_id,
+                        COALESCE(a.name, u.name) AS name,
+                        COALESCE(a.email, u.email) AS email,
+                        COALESCE(a.phone, u.phone) AS phone,
+                        u.role,
+                        COALESCE(a.status, u.status) AS status,
+                        COALESCE(NULLIF(mp.current_level, ''), a.level, 'Associate') AS level,
+                        COALESCE(NULLIF(a.team_size, 0), mp.total_team_size, 0) AS total_downline,
+                        COALESCE(NULLIF(a.commission_earned, 0), mp.total_commission, 0) AS earnings,
+                        a.agent_track,
+                        COALESCE(a.referral_code, mp.referral_code) AS referral_code,
+                        COALESCE(sp.name, sup.name) AS sponsor_name
+                    FROM users u
+                    LEFT JOIN associates a ON a.user_id = u.id
+                    LEFT JOIN mlm_profiles mp ON mp.user_id = u.id
+                    LEFT JOIN associates sp ON sp.id = a.sponsor_id
+                    LEFT JOIN users sup ON sup.id = mp.sponsor_user_id
+                    WHERE u.role IN ('associate', 'telecaller')" . $tenantUserSql . "
+                    ORDER BY u.id DESC";
+            $stmt = $db->prepare($sql);
+            $stmt->execute($params);
+            $associates = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            error_log('MLMController::users error: ' . $e->getMessage());
+            $associates = [];
+        }
+
+        $this->data['associates'] = $associates;
+        return $this->render('admin/mlm/users/index', $this->data);
     }
     
     public function createAssociate() 
@@ -141,7 +183,7 @@ class MLMController extends AdminController
                 
                 $db->commit();
                 $this->setFlash('success', 'MLM Associate / Agent created successfully');
-                return $this->redirect('/admin/mlm/users');
+                return $this->redirect('/admin/mlm/associates');
                 
             } catch (\Exception $e) {
                 if ($db->inTransaction()) {

@@ -43,7 +43,7 @@ class FarmerController extends BaseController
                 'page_title' => 'Farmer Management Dashboard'
             ];
 
-            $this->view('farmers/dashboard', $data);
+            $this->view('farmers_admin/dashboard', $data);
         } catch (\Throwable $e) {
             error_log("FarmerController::index() error: " . $e->getMessage());
             $this->handleError($e->getMessage());
@@ -65,7 +65,7 @@ class FarmerController extends BaseController
                 'page_title' => 'All Farmers'
             ];
 
-            $this->view('farmers/list', $data);
+            $this->view('farmers_admin/list', $data);
         } catch (\Throwable $e) {
             error_log("FarmerController::list() error: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
             $this->handleError($e->getMessage());
@@ -88,7 +88,7 @@ class FarmerController extends BaseController
                 'page_title' => 'Add New Farmer'
             ];
 
-            $this->view('farmers/create', $data);
+            $this->view('farmers_admin/create', $data);
         } catch (\Throwable $e) {
             error_log("FarmerController::create() error: " . $e->getMessage());
             $this->handleError($e->getMessage());
@@ -126,14 +126,14 @@ class FarmerController extends BaseController
 
             if ($farmerId) {
                 $this->setFlash('success', 'Farmer created successfully!');
-                $this->redirect('/farmers/list');
+                $this->redirect('/farmers_admin/list');
             } else {
                 throw new \Exception('Failed to create farmer');
             }
         } catch (\Throwable $e) {
             error_log("FarmerController::store() error: " . $e->getMessage());
             $this->setFlash('error', $e->getMessage());
-            $this->redirect('/farmers/create');
+            $this->redirect('/farmers_admin/create');
         }
     }
 
@@ -156,11 +156,11 @@ class FarmerController extends BaseController
                 'page_title' => 'Farmer Details - ' . $farmer['name']
             ];
 
-            $this->view('farmers/show', $data);
+            $this->view('farmers_admin/show', $data);
         } catch (\Throwable $e) {
             error_log("FarmerController::show() error: " . $e->getMessage());
             $this->setFlash('error', $e->getMessage());
-            $this->redirect('/farmers/list');
+            $this->redirect('/farmers_admin/list');
         }
     }
 
@@ -185,11 +185,11 @@ class FarmerController extends BaseController
                 'page_title' => 'Edit Farmer - ' . $farmer['name']
             ];
 
-            $this->view('farmers/edit', $data);
+            $this->view('farmers_admin/edit', $data);
         } catch (\Throwable $e) {
             error_log("FarmerController::edit() error: " . $e->getMessage());
             $this->setFlash('error', $e->getMessage());
-            $this->redirect('/farmers/list');
+            $this->redirect('/farmers_admin/list');
         }
     }
 
@@ -223,14 +223,14 @@ class FarmerController extends BaseController
 
             if ($result) {
                 $this->setFlash('success', 'Farmer updated successfully!');
-                $this->redirect('/farmers/list');
+                $this->redirect('/farmers_admin/list');
             } else {
                 throw new \Exception('Failed to update farmer');
             }
         } catch (\Throwable $e) {
             error_log("FarmerController::update() error: " . $e->getMessage());
             $this->setFlash('error', $e->getMessage());
-            $this->redirect("/farmers/{$id}/edit");
+            $this->redirect("/farmers_admin/{$id}/edit");
         }
     }
 
@@ -252,7 +252,7 @@ class FarmerController extends BaseController
             $this->setFlash('error', $e->getMessage());
         }
 
-        $this->redirect('/farmers/list');
+        $this->redirect('/farmers_admin/list');
     }
 
     /**
@@ -270,7 +270,7 @@ class FarmerController extends BaseController
                 'page_title' => 'Search Results - Farmers'
             ];
 
-            $this->view('farmers/search', $data);
+            $this->view('farmers_admin/search', $data);
         } catch (\Throwable $e) {
             error_log("FarmerController::search() error: " . $e->getMessage());
             $this->handleError($e->getMessage());
