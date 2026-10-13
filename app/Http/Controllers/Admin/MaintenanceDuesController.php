@@ -19,6 +19,13 @@ class MaintenanceDuesController extends AdminController
         if (!in_array($status, ['pending', 'paid', 'waived'], true)) {
             $status = '';
         }
+        // Extra filters (ported from the retired maintenance/index view).
+        $billMonth = trim((string)($_GET['bill_month'] ?? '')); // "YYYY-MM"
+        $search = trim((string)($_GET['search'] ?? ''));
+        $fYear = 0; $fMonth = 0;
+        if (preg_match('/^(\\d{4})-(\\d{2})$/', $billMonth, $mm)) {
+            $fYear = (int)$mm[1]; $fMonth = (int)$mm[2];
+        }
         try {
             [$tSql, $tParams] = $this->tenantWhere();
             $colonies = $this->db->fetchAll(
@@ -35,12 +42,22 @@ class MaintenanceDuesController extends AdminController
                 $where .= " AND d.status = ?";
                 $params[] = $status;
             }
+            if ($fYear > 2000 && $fYear < 2100 && $fMonth >= 1 && $fMonth <= 12) {
+                $where .= " AND d.bill_year = ? AND d.bill_month = ?";
+                $params[] = $fYear; $params[] = (string)$fMonth;
+            }
+            if ($search !== '') {
+                $where .= " AND (p.plot_number LIKE ? OR u.name LIKE ? OR u.phone LIKE ?)";
+                $like = '%' . $search . '%';
+                $params[] = $like; $params[] = $like; $params[] = $like;
+            }
             $rows = $this->db->fetchAll(
                 "SELECT d.*, c.name AS colony_name, u.name AS customer_name, b.booking_number
                  FROM maintenance_dues d
                  LEFT JOIN colonies c ON c.id = d.colony_id
                  LEFT JOIN users u ON u.id = d.customer_id
                  LEFT JOIN plot_bookings b ON b.id = d.booking_id
+                 LEFT JOIN plots p ON p.id = d.plot_id
                  WHERE $where" . $tSql . " ORDER BY d.bill_year DESC, d.bill_month DESC, d.id DESC LIMIT 200",
                 array_merge($params, $tParams)
             ) ?: [];
@@ -50,10 +67,19 @@ class MaintenanceDuesController extends AdminController
                  FROM maintenance_dues d WHERE d.status = 'pending'" . $tSql,
                 $tParams
             );
+            $stats = $this->db->fetchOne(
+                "SELECT COUNT(*) AS total_bills,
+                        COALESCE(SUM(total_due), 0) AS total_billed,
+                        COALESCE(SUM(paid_amount), 0) AS total_collected,
+                        COALESCE(SUM(total_due - paid_amount), 0) AS total_pending
+                 FROM maintenance_dues d WHERE 1 = 1" . $tSql,
+                $tParams
+            );
         } catch (\Throwable $e) {
             error_log('[MaintenanceDuesController::index] ' . $e->getMessage());
             $rows = [];
             $totals = ['outstanding' => 0, 'collected' => 0];
+            $stats = ['total_bills' => 0, 'total_billed' => 0, 'total_collected' => 0, 'total_pending' => 0];
         }
         $this->render('admin/maintenance_dues', [
             'page_title' => 'Maintenance Dues',
@@ -62,6 +88,9 @@ class MaintenanceDuesController extends AdminController
             'colony_id' => $colonyId,
             'status_filter' => $status,
             'totals' => $totals ?: ['outstanding' => 0, 'collected' => 0],
+            'stats' => $stats ?: ['total_bills' => 0, 'total_billed' => 0, 'total_collected' => 0, 'total_pending' => 0],
+            'bill_month' => $billMonth,
+            'search' => $search,
         ]);
     }
 

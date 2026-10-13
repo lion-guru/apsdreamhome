@@ -7,6 +7,9 @@ $colonies = $colonies ?? [];
 $colony_id = (int)($colony_id ?? 0);
 $status_filter = $status_filter ?? '';
 $totals = $totals ?? ['outstanding' => 0, 'collected' => 0];
+$stats = $stats ?? ['total_bills' => 0, 'total_billed' => 0, 'total_collected' => 0, 'total_pending' => 0];
+$bill_month = $bill_month ?? '';
+$search = $search ?? '';
 $base = defined('BASE_URL') ? BASE_URL : '';
 $csrf = htmlspecialchars($_SESSION['csrf_token'] ?? '');
 $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
@@ -17,7 +20,7 @@ $stBadge = ['pending' => 'warning text-dark', 'paid' => 'success', 'waived' => '
         <h4 class="mb-1"><i class="fas fa-building-shield me-2"></i>Maintenance Dues</h4>
         <p class="text-muted mb-0">Outstanding <strong class="text-danger">₹<?= number_format((float)($totals['outstanding'] ?? 0)) ?></strong> · pending dues block registry NOC</p>
     </div>
-    <form method="GET" class="d-flex gap-2">
+    <form method="GET" class="d-flex gap-2 flex-wrap">
         <select name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
             <option value="0">All colonies</option>
             <?php foreach ($colonies as $c): ?><option value="<?= (int)$c['id'] ?>" <?= $colony_id === (int)$c['id'] ? 'selected' : '' ?>><?= $e($c['name']) ?></option><?php endforeach; ?>
@@ -26,7 +29,17 @@ $stBadge = ['pending' => 'warning text-dark', 'paid' => 'success', 'waived' => '
             <option value="">All statuses</option>
             <?php foreach (['pending', 'paid', 'waived'] as $s): ?><option value="<?= $s ?>" <?= $status_filter === $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option><?php endforeach; ?>
         </select>
+        <input type="month" name="bill_month" class="form-control form-control-sm" value="<?= $e($bill_month) ?>" onchange="this.form.submit()" title="Billing month">
+        <input type="search" name="search" class="form-control form-control-sm" value="<?= $e($search) ?>" placeholder="Plot / name / phone">
+        <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-filter"></i></button>
+        <a href="<?= $base ?>/admin/maintenance-dues" class="btn btn-sm btn-outline-secondary" title="Reset filters"><i class="fas fa-undo"></i></a>
     </form>
+</div>
+<div class="row g-3 mb-3">
+    <div class="col-md-3"><div class="aps-cp-card"><div class="aps-cp-card-body py-2"><span class="text-muted small">Total Bills</span><h5 class="mb-0 fw-bold"><?= number_format((int)($stats['total_bills'] ?? 0)) ?></h5></div></div></div>
+    <div class="col-md-3"><div class="aps-cp-card"><div class="aps-cp-card-body py-2"><span class="text-muted small">Total Billed</span><h5 class="mb-0 fw-bold">₹<?= number_format((float)($stats['total_billed'] ?? 0), 2) ?></h5></div></div></div>
+    <div class="col-md-3"><div class="aps-cp-card"><div class="aps-cp-card-body py-2"><span class="text-muted small">Collected</span><h5 class="mb-0 fw-bold text-success">₹<?= number_format((float)($stats['total_collected'] ?? 0), 2) ?></h5></div></div></div>
+    <div class="col-md-3"><div class="aps-cp-card"><div class="aps-cp-card-body py-2"><span class="text-muted small">Pending Receivables</span><h5 class="mb-0 fw-bold text-danger">₹<?= number_format((float)($stats['total_pending'] ?? 0), 2) ?></h5></div></div></div>
 </div>
 <div class="aps-cp-card mb-3"><div class="aps-cp-card-body">
     <h6 class="fw-bold mb-3">Generate Monthly Batch</h6>
@@ -65,6 +78,8 @@ $stBadge = ['pending' => 'warning text-dark', 'paid' => 'success', 'waived' => '
                         <select name="payment_mode" class="form-select form-select-sm"><option value="upi">UPI</option><option value="cash">Cash</option><option value="bank_transfer">Bank</option><option value="cheque">Cheque</option></select>
                         <button type="submit" class="btn btn-sm btn-success" data-aps-confirm="Mark this bill paid?">Collect</button>
                     </form>
+                    <?php elseif (($r['status'] ?? '') === 'paid'): ?>
+                    <a href="<?= $base ?>/admin/maintenance-dues/receipt/<?= (int)$r['id'] ?>" class="btn btn-sm btn-outline-primary" target="_blank"><i class="fas fa-receipt me-1"></i>Receipt</a>
                     <?php endif; ?>
                 </td>
             </tr>
