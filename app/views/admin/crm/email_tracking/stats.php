@@ -1,4 +1,4 @@
-ï»¿<?php $page_title = $page_title ?? 'Email Tracking'; $overall = $overall ?? []; $daily = $daily ?? []; $top_links = $top_links ?? []; $days = $days ?? 30; ?>
+<?php $page_title = $page_title ?? 'Email Tracking'; $overall = $overall ?? []; $daily = $daily ?? []; $top_links = $top_links ?? []; $days = $days ?? 30; ?>
 <style>.et-stat{background:#fff;border-radius:14px;border:1px solid #f0f0f5;padding:20px;text-align:center}.et-stat .val{font-size:28px;font-weight:800}.et-stat .label{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px}</style>
 
 <div class="container-fluid px-4 py-4">
@@ -32,7 +32,7 @@
                 <div class="card-body">
                 <?php if (empty($daily)): ?><p class="text-muted text-center">No data</p>
                 <?php else: $grouped = []; foreach ($daily as $d) { $grouped[$d['day']][] = $d; } krsort($grouped); foreach (array_slice($grouped, 0, 14, true) as $day => $events): ?>
-                    <div class="d-flex justify-content-between align-items-center mb-1"><small class="text-muted"><?= date('d M', strtotime($day)) ?></small><div><?php foreach ($events as $e): ?><span class="badge me-1"><?= $e['event_type'] === 'open' ? 'ðŸ‘�' : 'ðŸ–±' ?> <?= $e['cnt'] ?></span><?php endforeach; ?></div></div>
+                    <div class="d-flex justify-content-between align-items-center mb-1"><small class="text-muted"><?= date('d M', strtotime($day)) ?></small><div><?php foreach ($events as $e): ?><span class="badge me-1"><?= $e['event_type'] === 'open' ? '👁' : '🖱' ?> <?= $e['cnt'] ?></span><?php endforeach; ?></div></div>
                 <?php endforeach; endif; ?>
                 </div>
             </div>

@@ -85,7 +85,7 @@ $actionIcons = [
                                     $details[] = $context['reason'];
                                 }
                                 if (isset($context['new_sponsor_id'])) {
-                                    $details[] = 'Sponsor â†’ #' . $context['new_sponsor_id'];
+                                    $details[] = 'Sponsor → #' . $context['new_sponsor_id'];
                                 }
                                 if (isset($context['new_code'])) {
                                     $details[] = 'Code: ' . $context['new_code'];
@@ -96,7 +96,7 @@ $actionIcons = [
                                 if (isset($context['changes'])) {
                                     $details[] = 'Fields: ' . implode(', ', array_keys($context['changes']));
                                 }
-                                echo htmlspecialchars(implode(' Â· ', $details) ?: '—');
+                                echo htmlspecialchars(implode(' · ', $details) ?: '—');
                                 ?>
                             </small>
                         </td>

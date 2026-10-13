@@ -196,13 +196,13 @@ class MCPConfigLoader
 
 // Example usage when called directly
 if (php_sapi_name() === 'cli' && basename($argv[0]) === 'MCPConfigLoader.php') {
-    echo "ðŸ”§ MCP Configuration Loader\n";
+    echo "🔧 MCP Configuration Loader\n";
     echo "============================\n\n";
 
     $config = MCPConfigLoader::load();
     $active = MCPConfigLoader::getActiveServers();
 
-    echo "ðŸ“Š Configuration Summary:\n";
+    echo "📋 Configuration Summary:\n";
     echo "Total servers: " . count($config['mcpServers']) . "\n";
     echo "Active servers: " . count($active) . "\n\n";
 
@@ -211,12 +211,12 @@ if (php_sapi_name() === 'cli' && basename($argv[0]) === 'MCPConfigLoader.php') {
         echo "  - $server\n";
     }
 
-    echo "\nâ�Œ Disabled Servers (missing API keys):\n";
+    echo "\n📴 Disabled Servers (missing API keys):\n";
     foreach ($config['mcpServers'] as $name => $server) {
         if (!empty($server['disabled'])) {
             echo "  - $name\n";
         }
     }
 
-    echo "\nðŸ”� All API keys are loaded from .env (secure)\n";
+    echo "\n🔒 All API keys are loaded from .env (secure)\n";
 }?>

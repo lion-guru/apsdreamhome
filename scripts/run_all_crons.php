@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 /**
- * Master Cron Runner â€” APS Dream Home
+ * Master Cron Runner — APS Dream Home
  * =====================================
  * Single entry point for ALL automated tasks. Run daily via Windows Task Scheduler.
  *
@@ -19,12 +19,12 @@
  *    12. Payroll Auto-Lock (2+ mo) / Auto-Close (6+ mo)
  *
  *   MONTHLY (1st of each month):
- *     7. Royalty Pool Distribution (2% â†’ qualified site managers)
- *     8. Generation Bonus (gen volume â†’ president/site_manager)
- *     9. Infinity Override (1% â†’ VP+ leaders)
- *    10. Matching Bonus (match earnings 100%/50%/25% â†’ president+)
+ *     7. Royalty Pool Distribution (2% →' qualified site managers)
+ *     8. Generation Bonus (gen volume →' president/site_manager)
+ *     9. Infinity Override (1% →' VP+ leaders)
+ *    10. Matching Bonus (match earnings 100%/50%/25% →' president+)
  *
- * Schedule (Windows Task Scheduler â€” see below):
+ * Schedule (Windows Task Scheduler — see below):
  *   Daily:    php C:\xampp\htdocs\apsdreamhome\scripts\run_all_crons.php
  *   Monthly:  php C:\xampp\htdocs\apsdreamhome\scripts\run_all_crons.php --mode=monthly
  *
@@ -40,13 +40,13 @@
  *   1. Open Task Scheduler (taskschd.msc)
  *   2. Create Task (not Basic Task)
  *   3. Name: "APS Dream Home - Daily Cron"
- *   4. Triggers â†’ New:
+ *   4. Triggers →' New:
  *      - Daily at 1:00 AM
- *   5. Actions â†’ New:
+ *   5. Actions →' New:
  *      - Program: C:\xampp\php\php.exe
  *      - Arguments: C:\xampp\htdocs\apsdreamhome\scripts\run_all_crons.php --mode=daily
- *   6. Conditions â†’ Uncheck "Start only if on AC power"
- *   7. OK â†’ Enter admin password
+ *   6. Conditions →' Uncheck "Start only if on AC power"
+ *   7. OK →' Enter admin password
  *
  *   For monthly (royalty pool etc.), create a second task:
  *   - Name: "APS Dream Home - Monthly Cron"
@@ -79,15 +79,15 @@ $startTime = microtime(true);
 $log       = [];
 $errors    = [];
 
-echo "â•”â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•—" . PHP_EOL;
-echo "â•‘    APS DREAM HOME â€” Master Cron Runner                   â•‘" . PHP_EOL;
-echo "â• â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•£" . PHP_EOL;
-echo "â•‘  Mode: " . strtoupper($mode) . str_repeat(' ', 47 - strlen($mode)) . "â•‘" . PHP_EOL;
-echo "â•‘  Date: " . date('Y-m-d H:i:s') . str_repeat(' ', 40) . "â•‘" . PHP_EOL;
+echo str_repeat("=", 62) . PHP_EOL;
+echo "    APS DREAM HOME - Master Cron Runner" . PHP_EOL;
+echo str_repeat("-", 62) . PHP_EOL;
+echo "  Mode: " . strtoupper($mode) . PHP_EOL;
+echo "  Date: " . date("Y-m-d H:i:s") . PHP_EOL;
 if ($dryRun) {
-    echo "â•‘  âš   DRY RUN â€” no tasks will execute                     â•‘" . PHP_EOL;
+    echo "  -- DRY RUN (no tasks will execute)" . PHP_EOL;
 }
-echo "â•šâ•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�" . PHP_EOL . PHP_EOL;
+echo str_repeat("=", 62) . PHP_EOL;
 
 if ($statusOnly || $dryRun) {
     // Show what would run
@@ -171,7 +171,7 @@ try {
         $config['username'], $config['password'],
         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
     );
-    echo "[âœ“] Database connected" . PHP_EOL . PHP_EOL;
+    echo "[✓] Database connected" . PHP_EOL . PHP_EOL;
 
     define('APP_ROOT', $root);
     require_once $root . '/app/Core/Autoloader.php';
@@ -181,7 +181,7 @@ try {
     // Set tenant context for all tasks
     $tenantId = $specificTenantId ?? 1;
     \App\Core\Middleware\TenantContext::setById($tenantId, $pdo);
-    echo "[âœ“] Tenant context: ID {$tenantId}" . PHP_EOL . PHP_EOL;
+    echo "[✓] Tenant context: ID {$tenantId}" . PHP_EOL . PHP_EOL;
 
     // Tenant SQL helper: returns scoped WHERE clause for tenant-specific tables
     $tenantSql = $tenantId > 1 ? " AND tenant_id = " . (int)$tenantId : "";
@@ -190,16 +190,16 @@ try {
 
     $taskNum = 0;
 
-    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
+    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
     // DAILY TASKS
-    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
+    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
     if (in_array($mode, ['daily', 'all'])) {
 
         // 1. EMI PENALTY ACCRUAL
         $taskNum++;
-        echo "â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�" . PHP_EOL;
+        echo "—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�" . PHP_EOL;
         echo "{$taskNum}/10  EMI Penalty Accrual" . PHP_EOL;
-        echo "â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�" . PHP_EOL;
+        echo "—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�" . PHP_EOL;
         try {
             $penaltyService = new \App\Services\Accounting\MoneyWorkflowService();
             $penaltyResult  = $penaltyService->applyDailyPenalties();
@@ -207,7 +207,7 @@ try {
                 echo "  âœ… {$penaltyResult['penalties_applied']} installments, ₹" . number_format($penaltyResult['total_penalty'], 2) . PHP_EOL;
                 $log['penalties'] = $penaltyResult;
             } else {
-                echo "  âš ï¸�  " . ($penaltyResult['error'] ?? 'no overdue installments') . PHP_EOL;
+                echo "  ⚖ï¸�  " . ($penaltyResult['error'] ?? 'no overdue installments') . PHP_EOL;
             }
         } catch (\Throwable $e) {
             echo "  â�Œ " . $e->getMessage() . PHP_EOL;
@@ -217,9 +217,9 @@ try {
 
         // 2. COMMISSION CLAWBACK
         $taskNum++;
-        echo "â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�" . PHP_EOL;
+        echo "—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�" . PHP_EOL;
         echo "{$taskNum}/10  Commission Clawback" . PHP_EOL;
-        echo "â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�" . PHP_EOL;
+        echo "—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�" . PHP_EOL;
         try {
             $clawbackEngine = new \App\Services\MLM\MLMCommissionEngine($pdo);
             $clawbackResult = $clawbackEngine->processClawbacks();
@@ -233,9 +233,9 @@ try {
 
         // 3. RANK AUTO-PROMOTION
         $taskNum++;
-        echo "â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�" . PHP_EOL;
+        echo "—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�" . PHP_EOL;
         echo "{$taskNum}/10  Rank Auto-Promotion" . PHP_EOL;
-        echo "â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�" . PHP_EOL;
+        echo "—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�" . PHP_EOL;
         try {
             $rankEngine = new \App\Services\MLM\MLMCommissionEngine($pdo);
             $rankResult = $rankEngine->runRankPromotions();
@@ -249,9 +249,9 @@ try {
 
         // 4. INVESTMENT MATURITY
         $taskNum++;
-        echo "â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�" . PHP_EOL;
+        echo "—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�" . PHP_EOL;
         echo "{$taskNum}/10  Investment Maturity" . PHP_EOL;
-        echo "â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�" . PHP_EOL;
+        echo "—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�" . PHP_EOL;
         try {
             $stmt = $pdo->prepare("
                 SELECT i.*, u.name as investor_name
@@ -275,7 +275,7 @@ try {
                 echo "  âœ… {$count} investments marked as matured" . PHP_EOL;
                 $log['investment_maturity'] = ['matured' => $count];
             } else {
-                echo "  âš ï¸�  No investments reaching maturity today" . PHP_EOL;
+                echo "  ⚖ï¸�  No investments reaching maturity today" . PHP_EOL;
             }
         } catch (\Throwable $e) {
             echo "  â�Œ " . $e->getMessage() . PHP_EOL;
@@ -285,9 +285,9 @@ try {
 
         // 5. AGENT AUTO-DEACTIVATE
         $taskNum++;
-        echo "â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�" . PHP_EOL;
+        echo "—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�" . PHP_EOL;
         echo "{$taskNum}/10  Agent Auto-Deactivate (90+ days)" . PHP_EOL;
-        echo "â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�" . PHP_EOL;
+        echo "—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�" . PHP_EOL;
         try {
             $stmt = $pdo->prepare("
                 SELECT id, name, email, last_login_at
@@ -308,7 +308,7 @@ try {
                 echo "  âœ… {$count} agents deactivated" . PHP_EOL;
                 $log['agent_deactivate'] = ['deactivated' => $count];
             } else {
-                echo "  âš ï¸�  No agents inactive for 90+ days" . PHP_EOL;
+                echo "  ⚖ï¸�  No agents inactive for 90+ days" . PHP_EOL;
             }
         } catch (\Throwable $e) {
             echo "  â�Œ " . $e->getMessage() . PHP_EOL;
@@ -318,9 +318,9 @@ try {
 
         // 6. MILESTONE BONUS
         $taskNum++;
-        echo "â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�" . PHP_EOL;
+        echo "—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�" . PHP_EOL;
         echo "{$taskNum}/11  Milestone Bonus Auto-Credit" . PHP_EOL;
-        echo "â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�" . PHP_EOL;
+        echo "—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�" . PHP_EOL;
         try {
             $milestones = [
                 25 => 1000,
@@ -378,9 +378,9 @@ try {
 
         // 7. FOLLOW-UP REMINDERS
         $taskNum++;
-        echo "â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�" . PHP_EOL;
+        echo "—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�" . PHP_EOL;
         echo "{$taskNum}/11  Follow-up Reminders" . PHP_EOL;
-        echo "â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�" . PHP_EOL;
+        echo "—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�" . PHP_EOL;
         try {
             $reminderStmt = $pdo->prepare("
                 SELECT COUNT(*) FROM crm_tasks 
@@ -409,7 +409,7 @@ try {
                 echo "  âœ… {$sent} reminders processed" . PHP_EOL;
                 $log['followup_reminders'] = ['sent' => $sent];
             } else {
-                echo "  âš ï¸�  No pending reminders" . PHP_EOL;
+                echo "  ⚖ï¸�  No pending reminders" . PHP_EOL;
             }
         } catch (\Throwable $e) {
             echo "  â�Œ " . $e->getMessage() . PHP_EOL;
@@ -504,9 +504,9 @@ try {
         echo PHP_EOL;
     }
 
-    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
+    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
     // MONTHLY TASKS
-    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
+    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
     if (in_array($mode, ['monthly', 'all'])) {
 
         $periodStart = date('Y-m-01', strtotime('-1 month'));
@@ -514,9 +514,9 @@ try {
 
         // 8. ROYALTY POOL
         $taskNum++;
-        echo "â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�" . PHP_EOL;
+        echo "—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�" . PHP_EOL;
         echo "{$taskNum}/12  Royalty Pool Distribution" . PHP_EOL;
-        echo "â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�" . PHP_EOL;
+        echo "—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�" . PHP_EOL;
         try {
             $lastMonth = date('Y-m', strtotime('-1 month'));
             $thisMonth = date('Y-m');
@@ -543,7 +543,7 @@ try {
                 echo "  âœ… Pool ₹" . number_format($poolAmt) . " distributed to " . ($result['qualified_managers'] ?? 0) . " managers" . PHP_EOL;
                 $log['royalty_pool'] = $result;
             } else {
-                echo "  âš ï¸�  No pool accumulated for {$poolMonth}" . PHP_EOL;
+                echo "  ⚖ï¸�  No pool accumulated for {$poolMonth}" . PHP_EOL;
             }
         } catch (\Throwable $e) {
             echo "  â�Œ " . $e->getMessage() . PHP_EOL;
@@ -553,9 +553,9 @@ try {
 
         // 9. GENERATION BONUS
         $taskNum++;
-        echo "â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�" . PHP_EOL;
+        echo "—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�" . PHP_EOL;
         echo "{$taskNum}/12  Generation Bonus" . PHP_EOL;
-        echo "â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�" . PHP_EOL;
+        echo "—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�" . PHP_EOL;
         try {
             $genEngine = new \App\Services\MLM\GenerationBonusEngine($pdo);
             $genResult = $genEngine->calculateMonthlyGenerations($periodStart, $periodEnd);
@@ -565,7 +565,7 @@ try {
                 echo "  âœ… " . count($genResult['entries']) . " entries, ₹" . number_format($genResult['total'], 2) . ", {$newCount} persisted" . PHP_EOL;
                 $log['generation_bonus'] = ['entries' => count($genResult['entries']), 'total' => $genResult['total']];
             } else {
-                echo "  âš ï¸�  No qualifying leaders" . PHP_EOL;
+                echo "  ⚖ï¸�  No qualifying leaders" . PHP_EOL;
             }
         } catch (\Throwable $e) {
             echo "  â�Œ " . $e->getMessage() . PHP_EOL;
@@ -575,9 +575,9 @@ try {
 
         // 10. INFINITY OVERRIDE
         $taskNum++;
-        echo "â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�" . PHP_EOL;
+        echo "—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�" . PHP_EOL;
         echo "{$taskNum}/12  Infinity Override" . PHP_EOL;
-        echo "â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�" . PHP_EOL;
+        echo "—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�" . PHP_EOL;
         try {
             $infService = new \App\Services\MLM\InfinityOverrideService($pdo);
             $infResult  = $infService->calculateMonthlyOverrides($periodStart, $periodEnd);
@@ -587,7 +587,7 @@ try {
                 echo "  âœ… " . count($infResult['entries']) . " entries, ₹" . number_format($infResult['total'], 2) . ", {$newCount} persisted" . PHP_EOL;
                 $log['infinity_override'] = ['entries' => count($infResult['entries']), 'total' => $infResult['total']];
             } else {
-                echo "  âš ï¸�  No VP+ leaders with qualifying volume" . PHP_EOL;
+                echo "  ⚖ï¸�  No VP+ leaders with qualifying volume" . PHP_EOL;
             }
         } catch (\Throwable $e) {
             echo "  â�Œ " . $e->getMessage() . PHP_EOL;
@@ -597,9 +597,9 @@ try {
 
         // 11. MATCHING BONUS
         $taskNum++;
-        echo "â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�" . PHP_EOL;
+        echo "—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�" . PHP_EOL;
         echo "{$taskNum}/12  Matching Bonus" . PHP_EOL;
-        echo "â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�â”�" . PHP_EOL;
+        echo "—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�—�" . PHP_EOL;
         try {
             $matchService = new \App\Services\MLM\MatchingBonusService($pdo);
             $matchResult  = $matchService->calculateMonthlyMatching($periodStart, $periodEnd);
@@ -609,7 +609,7 @@ try {
                 echo "  âœ… " . count($matchResult['entries']) . " entries, ₹" . number_format($matchResult['total'], 2) . ", {$newCount} persisted" . PHP_EOL;
                 $log['matching_bonus'] = ['entries' => count($matchResult['entries']), 'total' => $matchResult['total']];
             } else {
-                echo "  âš ï¸�  No leaders with earnings to match" . PHP_EOL;
+                echo "  ⚖ï¸�  No leaders with earnings to match" . PHP_EOL;
             }
         } catch (\Throwable $e) {
             echo "  â�Œ " . $e->getMessage() . PHP_EOL;
@@ -683,17 +683,17 @@ echo PHP_EOL;
     }
 
     // SUMMARY
-    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
+    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
     $elapsed = round(microtime(true) - $startTime, 2);
     $totalTasks = $taskNum;
 
-    echo "â•”â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•—" . PHP_EOL;
-    echo "â•‘    SUMMARY                                              â•‘" . PHP_EOL;
-    echo "â• â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•£" . PHP_EOL;
-    echo "â•‘  Tasks run:     {$totalTasks} (includes SIP Auto-Debit)" . PHP_EOL;
-    echo "â•‘  Errors:        " . count($errors) . PHP_EOL;
-    echo "â•‘  Elapsed:       {$elapsed}s" . PHP_EOL;
-    echo "â•šâ•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�" . PHP_EOL;
+    echo str_repeat("=", 62) . PHP_EOL;
+    echo "  SUMMARY" . PHP_EOL;
+    echo str_repeat("-", 62) . PHP_EOL;
+    echo "  Tasks run:     {$totalTasks} (includes SIP Auto-Debit)" . PHP_EOL;
+    echo "  Errors:        " . count($errors) . PHP_EOL;
+    echo "  Elapsed:       {$elapsed}s" . PHP_EOL;
+    echo str_repeat("=", 62) . PHP_EOL;
 
     // Write log
     $logFile = $root . '/storage/logs/master_cron.log';
@@ -709,7 +709,7 @@ echo PHP_EOL;
     ];
     @file_put_contents($logFile, date('Y-m-d H:i:s') . " | " . strtoupper($mode) . " | " . json_encode($logEntry) . PHP_EOL, FILE_APPEND | LOCK_EX);
 
-    echo PHP_EOL . "[âœ“] Log written to storage/logs/master_cron.log" . PHP_EOL;
+    echo PHP_EOL . "[✓] Log written to storage/logs/master_cron.log" . PHP_EOL;
 
     if (!empty($errors)) {
         echo PHP_EOL . "ERRORS:" . PHP_EOL;

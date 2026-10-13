@@ -42,9 +42,9 @@ $banner = static function (string $msg) use ($logFile): void {
 };
 
 $banner('');
-$banner('â•”â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•—');
-$banner('â•‘       APS DREAM HOME - CI TEST RUNNER                       â•‘');
-$banner('â•šâ•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�');
+$banner !== null ? $banner(str_repeat("=", 62)) : print(str_repeat("=", 62) . PHP_EOL);
+$banner("  APS DREAM HOME - CI TEST RUNNER");
+$banner !== null ? $banner(str_repeat("=", 62)) : print(str_repeat("=", 62) . PHP_EOL);
 $banner('');
 $banner('Started:  ' . date('c'));
 $banner('Suite:    ' . $suite);
@@ -78,7 +78,7 @@ $junitSuites = [];
 $failedScripts = [];
 
 foreach ($toRun as $suiteName => $scripts) {
-    $banner("â”€â”€ Suite: $suiteName (" . count($scripts) . " script" . (count($scripts) === 1 ? '' : 's') . ") â”€â”€");
+    $banner("—— Suite: $suiteName (" . count($scripts) . " script" . (count($scripts) === 1 ? '' : 's') . ") ——");
     $suiteStart = microtime(true);
     $suiteStartCount = $totalTests;
     $suitePass = 0;
@@ -97,7 +97,7 @@ foreach ($toRun as $suiteName => $scripts) {
         $scriptElapsed = round(microtime(true) - $scriptStart, 3);
 
         if ($exit === 0) {
-            $banner("    âœ“ PASS  (" . $scriptElapsed . 's)');
+            $banner("    ✓ PASS  (" . $scriptElapsed . 's)');
             $suitePass++;
         } elseif ($exit === 2) {
             $banner("    âŠ˜ SKIP  (test opted out)");
@@ -145,15 +145,15 @@ foreach ($toRun as $suiteName => $scripts) {
     $banner('');
 }
 
-$banner('â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�');
+$banner('•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�');
 $banner(' TOTAL');
-$banner('â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�');
+$banner('•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�');
 $banner(" Tests run:  $totalTests");
 $banner(" Passed:     $totalPassed");
 $banner(" Failed:     $totalFailed");
 $banner(" Skipped:    $totalSkipped");
 $banner(" Duration:   " . round($totalDuration, 3) . 's');
-$banner('â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�');
+$banner('•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�');
 
 if ($emitJunit) {
     $xmlPath = $reportsDir . '/junit.xml';

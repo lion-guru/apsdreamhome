@@ -8,7 +8,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Core\Database\Database;
 
-echo "ðŸ§ª VALIDATION TEST: New Features\n";
+echo "🧪 VALIDATION TEST: New Features\n";
 echo str_repeat("=", 60) . "\n\n";
 
 $tests = [
@@ -23,7 +23,7 @@ $tests = [
 ];
 
 // Test 1: Database Tables
-echo "ðŸ—„ï¸�  Testing Database Tables...\n";
+echo "🗄�  Testing Database Tables...\n";
 try {
     $db = Database::getInstance()->getConnection();
     
@@ -31,14 +31,14 @@ try {
     foreach ($tables as $table) {
         $stmt = $db->query("SHOW TABLES LIKE '{$table}'");
         if ($stmt->rowCount() > 0) {
-            echo "   âœ… {$table} table exists\n";
+            echo "   ✅ {$table} table exists\n";
         } else {
-            echo "   â�Œ {$table} table missing\n";
+            echo "   ❌ {$table} table missing\n";
         }
     }
     $tests['Database Tables'] = true;
 } catch (Exception $e) {
-    echo "   â�Œ Error: " . $e->getMessage() . "\n";
+    echo "   ❌ Error: " . $e->getMessage() . "\n";
 }
 
 // Test 2: Controllers
@@ -52,16 +52,16 @@ $controllers = [
 
 foreach ($controllers as $controller) {
     if (class_exists($controller)) {
-        echo "   âœ… {$controller}\n";
+        echo "   ✅ {$controller}\n";
     } else {
-        echo "   â�Œ {$controller} not found\n";
+        echo "   ❌ {$controller} not found\n";
     }
 }
 $tests['MLM Growth Controller'] = class_exists('App\Http\Controllers\Admin\Reports\MLMGrowthReportController');
 $tests['ROI Calculator Controller'] = class_exists('App\Http\Controllers\Admin\Reports\ROICalculatorController');
 
 // Test 3: Services
-echo "\nâš™ï¸�  Testing Services...\n";
+echo "\n⚙�  Testing Services...\n";
 $services = [
     'App\Services\AI\AIGeminiChatbotService',
     'App\Services\Payment\PhonePeGatewayService',
@@ -70,9 +70,9 @@ $services = [
 
 foreach ($services as $service) {
     if (class_exists($service)) {
-        echo "   âœ… {$service}\n";
+        echo "   ✅ {$service}\n";
     } else {
-        echo "   â�Œ {$service} not found\n";
+        echo "   ❌ {$service} not found\n";
     }
 }
 $tests['Gemini Chatbot Service'] = class_exists('App\Services\AI\AIGeminiChatbotService');
@@ -90,9 +90,9 @@ $views = [
 foreach ($views as $view) {
     $path = __DIR__ . '/../app/views/' . $view;
     if (file_exists($path)) {
-        echo "   âœ… {$view}\n";
+        echo "   ✅ {$view}\n";
     } else {
-        echo "   â�Œ {$view} not found\n";
+        echo "   ❌ {$view} not found\n";
     }
 }
 $tests['Views'] = true; // If we got here, views were created
@@ -121,44 +121,44 @@ foreach ($routeFiles as $file) {
                 $found++;
             }
         }
-        echo "   âœ… Routes file: " . basename($file) . " ({$found}/" . count($requiredRoutes) . " routes)\n";
+        echo "   ✅ Routes file: " . basename($file) . " ({$found}/" . count($requiredRoutes) . " routes)\n";
     }
 }
 $tests['API Routes'] = true;
 
 // Test 6: Admin Sidebar
-echo "\nðŸ“‹ Testing Admin Sidebar...\n";
+echo "\n🔍 Testing Admin Sidebar...\n";
 $sidebarFile = __DIR__ . '/../app/views/admin/layouts/rbac_sidebar.php';
 if (file_exists($sidebarFile)) {
     $content = file_get_contents($sidebarFile);
     if (strpos($content, 'MLM Growth Report') !== false && 
         strpos($content, 'ROI Calculator') !== false) {
-        echo "   âœ… Menu items added\n";
+        echo "   ✅ Menu items added\n";
         $tests['Admin Sidebar'] = true;
     } else {
-        echo "   â�Œ Menu items missing\n";
+        echo "   ❌ Menu items missing\n";
     }
 }
 
 // Test 7: Migrations
-echo "\nðŸ—„ï¸�  Testing Migrations...\n";
+echo "\n🗄�  Testing Migrations...\n";
 $migrationFile = __DIR__ . '/../database/migrations/create_chatbot_payment_tables.php';
 if (file_exists($migrationFile)) {
-    echo "   âœ… Migration file exists\n";
+    echo "   ✅ Migration file exists\n";
 } else {
-    echo "   â�Œ Migration file missing\n";
+    echo "   ❌ Migration file missing\n";
 }
 
 // Summary
 echo "\n" . str_repeat("=", 60) . "\n";
-echo "ðŸ“Š TEST SUMMARY\n";
+echo "📊 TEST SUMMARY\n";
 echo str_repeat("=", 60) . "\n";
 
 $passed = 0;
 $total = count($tests);
 
 foreach ($tests as $test => $result) {
-    $status = $result ? 'âœ… PASS' : 'â�Œ FAIL';
+    $status = $result ? '✅ PASS' : '❌ FAIL';
     echo "{$status}: {$test}\n";
     if ($result) $passed++;
 }
@@ -170,6 +170,6 @@ if ($passed === $total) {
     echo "ðŸŽ‰ ALL TESTS PASSED! New features are ready.\n";
     exit(0);
 } else {
-    echo "âš ï¸�  Some tests failed. Please review.\n";
+    echo "⚖ï¸�  Some tests failed. Please review.\n";
     exit(1);
 }?>

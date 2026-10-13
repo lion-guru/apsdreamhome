@@ -23,9 +23,9 @@ class ComprehensiveTestRunner
     public function runAllTests(): array
     {
         echo "\n";
-        echo "â•”â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•—\n";
-        echo "â•‘     APS DREAM HOME - COMPREHENSIVE TEST SUITE              â•‘\n";
-        echo "â•šâ•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�\n\n";
+        echo str_repeat("=", 62) . PHP_EOL;
+        echo "  APS DREAM HOME - COMPREHENSIVE TEST SUITE" . PHP_EOL;
+        echo str_repeat("=", 62) . PHP_EOL;
         
         $startTime = microtime(true);
         
@@ -72,7 +72,7 @@ class ComprehensiveTestRunner
      */
     private function testDatabaseConnection(): void
     {
-        echo "ðŸ—„ï¸�  Testing Database Connection...\n";
+        echo "🗄�  Testing Database Connection...\n";
         
         try {
             $pdo = $this->database->getConnection();
@@ -86,7 +86,7 @@ class ComprehensiveTestRunner
             
             // Test MySQL version
             $version = $pdo->query("SELECT VERSION()")->fetchColumn();
-            echo "   âœ“ MySQL Version: $version\n";
+            echo "   ✓ MySQL Version: $version\n";
             
         } catch (\Exception $e) {
             $this->fail('Database Connection', $e->getMessage());
@@ -98,7 +98,7 @@ class ComprehensiveTestRunner
      */
     private function testTableIntegrity(): void
     {
-        echo "\nðŸ“Š Testing Table Integrity...\n";
+        echo "\n📋 Testing Table Integrity...\n";
         
         $criticalTables = [
             'users', 'properties', 'leads', 'bookings',
@@ -124,7 +124,7 @@ class ComprehensiveTestRunner
                 $countStmt->execute();
                 $count = $countStmt->fetchColumn();
                 
-                echo "   âœ“ Table '$table' exists ($count rows)\n";
+                echo "   ✓ Table '$table' exists ($count rows)\n";
                 
             } catch (\Exception $e) {
                 $corruptTables[] = "$table: " . $e->getMessage();
@@ -148,7 +148,7 @@ class ComprehensiveTestRunner
      */
     private function testForeignKeyConstraints(): void
     {
-        echo "\nðŸ”— Testing Foreign Key Constraints...\n";
+        echo "\n🔗 Testing Foreign Key Constraints...\n";
         
         $constraints = [
             ['table' => 'properties', 'column' => 'created_by', 'references' => 'users'],
@@ -171,7 +171,7 @@ class ComprehensiveTestRunner
                 if ($count > 0) {
                     $brokenConstraints[] = "{$constraint['table']}.{$constraint['column']} has $count orphaned records";
                 } else {
-                    echo "   âœ“ FK: {$constraint['table']}.{$constraint['column']} â†’ {$constraint['references']}\n";
+                    echo "   ✓ FK: {$constraint['table']}.{$constraint['column']} →' {$constraint['references']}\n";
                 }
             } catch (\Exception $e) {
                 $brokenConstraints[] = "{$constraint['table']}: " . $e->getMessage();
@@ -190,7 +190,7 @@ class ComprehensiveTestRunner
      */
     private function testServicesExist(): void
     {
-        echo "\nâš™ï¸�  Testing Services...\n";
+        echo "\n⚙�  Testing Services...\n";
         
         $services = [
             'App\Services\Payment\PaymentGatewayService',
@@ -213,10 +213,10 @@ class ComprehensiveTestRunner
         
         foreach ($services as $service) {
             if (class_exists($service)) {
-                echo "   âœ“ $service\n";
+                echo "   ✓ $service\n";
             } else {
                 $missingServices[] = $service;
-                echo "   âœ— $service NOT FOUND\n";
+                echo "   ✗ $service NOT FOUND\n";
             }
         }
         
@@ -232,7 +232,7 @@ class ComprehensiveTestRunner
      */
     private function testServiceMethods(): void
     {
-        echo "\nðŸ”§ Testing Service Methods...\n";
+        echo "\n🔧 Testing Service Methods...\n";
         
         $testCases = [
             ['service' => 'App\Services\Cache\CacheService', 'method' => 'get'],
@@ -249,10 +249,10 @@ class ComprehensiveTestRunner
                     $reflection = new ReflectionClass($test['service']);
                     
                     if ($reflection->hasMethod($test['method'])) {
-                        echo "   âœ“ {$test['service']}::{$test['method']}\n";
+                        echo "   ✓ {$test['service']}::{$test['method']}\n";
                     } else {
                         $failedMethods[] = "{$test['service']}::{$test['method']} missing";
-                        echo "   âœ— {$test['service']}::{$test['method']} NOT FOUND\n";
+                        echo "   ✗ {$test['service']}::{$test['method']} NOT FOUND\n";
                     }
                 }
             } catch (\Exception $e) {
@@ -272,7 +272,7 @@ class ComprehensiveTestRunner
      */
     private function testAPIRoutes(): void
     {
-        echo "\nðŸŒ� Testing API Routes...\n";
+        echo "\n🌐� Testing API Routes...\n";
         
         $apiFile = __DIR__ . '/../routes/api.php';
         
@@ -287,8 +287,8 @@ class ComprehensiveTestRunner
         $routeCount = substr_count($content, '$router->');
         $mobileRoutes = substr_count($content, '/api/v');
         
-        echo "   âœ“ Total routes defined: $routeCount\n";
-        echo "   âœ“ Mobile API routes: $mobileRoutes\n";
+        echo "   ✓ Total routes defined: $routeCount\n";
+        echo "   ✓ Mobile API routes: $mobileRoutes\n";
         
         // Check for critical routes
         $criticalRoutes = [
@@ -316,7 +316,7 @@ class ComprehensiveTestRunner
      */
     private function testMiddleware(): void
     {
-        echo "\nðŸ›¡ï¸�  Testing Middleware...\n";
+        echo "\n🛡 Testing Middleware...\n";
         
         $middlewareDir = __DIR__ . '/../app/Http/Middleware';
         
@@ -328,7 +328,7 @@ class ComprehensiveTestRunner
         $middlewareFiles = glob($middlewareDir . '/*.php');
         $middlewareCount = count($middlewareFiles);
         
-        echo "   âœ“ Middleware files found: $middlewareCount\n";
+        echo "   ✓ Middleware files found: $middlewareCount\n";
         
         // Check for critical middleware
         $criticalMiddleware = [
@@ -357,16 +357,16 @@ class ComprehensiveTestRunner
      */
     private function testSecurityConfiguration(): void
     {
-        echo "\nðŸ”’ Testing Security Configuration...\n";
+        echo "\n🛡 Testing Security Configuration...\n";
         
         $issues = [];
         
         // Check for .env file
-        $envFile = __DIR__ . '/../.env';
+        // (header printed above)
         if (!file_exists($envFile)) {
             $issues[] = '.env file not found';
         } else {
-            echo "   âœ“ .env file exists\n";
+            echo "   ✅ .env file exists\n";
         }
         
         // Check for JWT secret
@@ -374,7 +374,7 @@ class ComprehensiveTestRunner
         if (file_exists($jwtFile)) {
             $content = file_get_contents($jwtFile);
             if (strpos($content, 'aps_dream_home_secret_key_2026') !== false) {
-                echo "   âœ“ JWT Service configured\n";
+                echo "   ✓ JWT Service configured\n";
             }
         }
         
@@ -386,7 +386,7 @@ class ComprehensiveTestRunner
                 $csrfCount++;
             }
         }
-        echo "   âœ“ CSRF tokens in $csrfCount view files\n";
+        echo "   ✓ CSRF tokens in $csrfCount view files\n";
         
         if (empty($issues)) {
             $this->pass('Security Configuration');
@@ -400,7 +400,7 @@ class ComprehensiveTestRunner
      */
     private function testFilePermissions(): void
     {
-        echo "\nðŸ“� Testing File Permissions...\n";
+        echo "\n🔧 Testing File Permissions...\n";
         
         $paths = [
             'storage/logs' => 0755,
@@ -418,20 +418,20 @@ class ComprehensiveTestRunner
             if (!is_dir($fullPath)) {
                 // Try to create
                 if (@mkdir($fullPath, $required, true)) {
-                    echo "   âœ“ Created directory: $path\n";
+                    echo "   ✓ Created directory: $path\n";
                 } else {
                     $permissionIssues[] = "$path missing and cannot create";
-                    echo "   âœ— Cannot create: $path\n";
+                    echo "   ✗ Cannot create: $path\n";
                 }
                 continue;
             }
             
             // Check if writable
             if (is_writable($fullPath)) {
-                echo "   âœ“ $path is writable\n";
+                echo "   ✓ $path is writable\n";
             } else {
                 $permissionIssues[] = "$path not writable";
-                echo "   âœ— $path not writable\n";
+                echo "   ✗ $path not writable\n";
             }
         }
         
@@ -470,12 +470,12 @@ class ComprehensiveTestRunner
                 
                 if ($time > 100) {
                     $slowQueries[] = "$name: {$time}ms";
-                    echo "   âš  $name: {$time}ms (slow)\n";
+                    echo "   ⚖ $name: {$time}ms (slow)\n";
                 } else {
-                    echo "   âœ“ $name: {$time}ms\n";
+                    echo "   ✓ $name: {$time}ms\n";
                 }
             } catch (\Exception $e) {
-                echo "   âœ— $name: ERROR - " . $e->getMessage() . "\n";
+                echo "   ✗ $name: ERROR - " . $e->getMessage() . "\n";
             }
         }
         
@@ -491,7 +491,7 @@ class ComprehensiveTestRunner
      */
     private function testCacheConfiguration(): void
     {
-        echo "\nðŸ’¾ Testing Cache Configuration...\n";
+        echo "\nðŸ'¾ Testing Cache Configuration...\n";
         
         try {
             $cacheService = new \App\Services\Cache\CacheService('file');
@@ -504,7 +504,7 @@ class ComprehensiveTestRunner
             $value = $cacheService->get($testKey);
             
             if ($value === 'test_value') {
-                echo "   âœ“ Cache set/get working\n";
+                echo "   ✓ Cache set/get working\n";
                 $this->pass('Cache Configuration');
             } else {
                 $this->fail('Cache Configuration', 'Cache get returned wrong value');
@@ -523,7 +523,7 @@ class ComprehensiveTestRunner
      */
     private function testPaymentGateways(): void
     {
-        echo "\nðŸ’³ Testing Payment Gateways...\n";
+        echo "\nðŸ'³ Testing Payment Gateways...\n";
         
         try {
             $paymentService = new \App\Services\Payment\PaymentGatewayService('razorpay');
@@ -535,8 +535,8 @@ class ComprehensiveTestRunner
             ]);
             
             if ($result['success']) {
-                echo "   âœ“ Razorpay order creation working\n";
-                echo "   âœ“ Order ID generated: " . $result['order_id'] . "\n";
+                echo "   ✓ Razorpay order creation working\n";
+                echo "   ✓ Order ID generated: " . $result['order_id'] . "\n";
                 $this->pass('Payment Gateway - Razorpay');
             } else {
                 $this->warning('Payment Gateway', 'Order creation failed: ' . $result['error']);
@@ -552,7 +552,7 @@ class ComprehensiveTestRunner
      */
     private function testNotificationChannels(): void
     {
-        echo "\nðŸ“¢ Testing Notification Channels...\n";
+        echo "\n🔔 Testing Notification Channels...\n";
         
         try {
             $db = \App\Core\Database\Database::getInstance();
@@ -568,9 +568,9 @@ class ComprehensiveTestRunner
                 $stmt->execute([$template]);
                 if ($stmt->fetch()) {
                     $found++;
-                    echo "   âœ“ Template: $template\n";
+                    echo "   ✓ Template: $template\n";
                 } else {
-                    echo "   âœ— Template missing: $template\n";
+                    echo "   ✗ Template missing: $template\n";
                 }
             }
             
@@ -611,7 +611,7 @@ class ComprehensiveTestRunner
     {
         $this->results[] = ['test' => $test, 'status' => 'WARNING', 'message' => $message];
         $this->warnings[] = "$test: $message";
-        echo "   âš ï¸�  WARNING: $test - $message\n";
+        echo "   ⚖ï¸�  WARNING: $test - $message\n";
     }
     
     /**
@@ -620,9 +620,9 @@ class ComprehensiveTestRunner
     private function printSummary(float $totalTime): void
     {
         echo "\n";
-        echo "â•”â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•—\n";
-        echo "â•‘                    TEST SUMMARY                            â•‘\n";
-        echo "â•šâ•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�\n";
+        echo str_repeat("=", 62) . PHP_EOL;
+        echo "  TEST SUMMARY" . PHP_EOL;
+        echo str_repeat("=", 62) . PHP_EOL;
         echo "\n";
         
         $passed = count(array_filter($this->results, fn($r) => $r['status'] === 'PASS'));
@@ -633,22 +633,22 @@ class ComprehensiveTestRunner
         echo "Total Tests: $total\n";
         echo "âœ… Passed: $passed\n";
         echo "â�Œ Failed: $failed\n";
-        echo "âš ï¸�  Warnings: $warnings\n";
+        echo "⚖ï¸�  Warnings: $warnings\n";
         echo "â�±ï¸�  Total Time: {$totalTime}s\n";
         echo "\n";
         
         if ($failed > 0) {
             echo "â�Œ CRITICAL ISSUES FOUND:\n";
             foreach ($this->errors as $error) {
-                echo "   â€¢ $error\n";
+                echo "   —¢ $error\n";
             }
             echo "\n";
         }
         
         if ($warnings > 0) {
-            echo "âš ï¸�  WARNINGS:\n";
+            echo "⚖ï¸�  WARNINGS:\n";
             foreach ($this->warnings as $warning) {
-                echo "   â€¢ $warning\n";
+                echo "   —¢ $warning\n";
             }
             echo "\n";
         }
@@ -658,7 +658,7 @@ class ComprehensiveTestRunner
         } elseif ($failed === 0) {
             echo "âœ… System functional with minor warnings.\n";
         } else {
-            echo "âš ï¸�  System has critical issues that need fixing.\n";
+            echo "⚖ï¸�  System has critical issues that need fixing.\n";
         }
         
         echo "\n";
@@ -672,4 +672,4 @@ $results = $tester->runAllTests();
 // Save results to file
 $reportFile = __DIR__ . '/test_report_' . date('Y-m-d_H-i-s') . '.json';
 file_put_contents($reportFile, json_encode($results, JSON_PRETTY_PRINT));
-echo "ðŸ“„ Report saved to: $reportFile\n";?>
+echo "📄 Report saved to: $reportFile\n";

@@ -8,8 +8,8 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Core\Database\Database;
 
-echo "ðŸ”� Database Schema Validator\n";
-echo "â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�\n\n";
+echo "🔍 Database Schema Validator\n";
+echo str_repeat("=", 40) . PHP_EOL;
 
 try {
     $db = Database::getInstance();
@@ -50,17 +50,17 @@ try {
     
     // Report issues
     if (!empty($issues)) {
-        echo "â�Œ CRITICAL ISSUES:\n";
+        echo "❌ CRITICAL ISSUES:\n";
         foreach ($issues as $issue) {
-            echo "   â€¢ $issue\n";
+            echo "   •  $issue\n";
         }
         echo "\n";
     }
     
     if (!empty($suggestions)) {
-        echo "ðŸ’¡ SUGGESTIONS:\n";
+        echo "🔧'¡ SUGGESTIONS:\n";
         foreach (array_slice($suggestions, 0, 10) as $suggestion) {
-            echo "   â€¢ $suggestion\n";
+            echo "   •  $suggestion\n";
         }
         if (count($suggestions) > 10) {
             echo "   ... and " . (count($suggestions) - 10) . " more\n";
@@ -69,27 +69,27 @@ try {
     }
     
     if (empty($issues) && empty($suggestions)) {
-        echo "âœ… Schema looks good!\n";
+        echo "✅ Schema looks good!\n";
     }
     
     // Check indexes on critical tables
-    echo "ðŸ”� Checking indexes...\n";
+    echo "🔧 Checking indexes...\n";
     $criticalTables = ['users', 'properties', 'leads', 'bookings'];
     
     foreach ($criticalTables as $table) {
         if (!in_array($table, $tables)) {
-            echo "   âš ï¸�  Table '$table' not found!\n";
+            echo "   ⚖�  Table '$table' not found!\n";
             continue;
         }
         
         $indexes = $pdo->query("SHOW INDEX FROM $table")->fetchAll(\PDO::FETCH_ASSOC);
         $indexNames = array_column($indexes, 'Key_name');
         
-        echo "   âœ“ $table: " . count($indexes) . " indexes\n";
+        echo "   ✓ $table: " . count($indexes) . " indexes\n";
     }
     
 } catch (\Exception $e) {
-    echo "â�Œ Error: " . $e->getMessage() . "\n";
+    echo "❌ Error: " . $e->getMessage() . "\n";
 }
 
-echo "\nâœ… Schema validation complete\n";?>
+echo "\n✅ Schema validation complete\n";?>

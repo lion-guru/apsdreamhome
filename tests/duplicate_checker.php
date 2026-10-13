@@ -3,14 +3,14 @@
  * Duplicate Checker - Find duplicate files, routes, and functions
  */
 
-echo "â•”â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•—\n";
-echo "â•‘              DUPLICATE CHECKER - APS DREAM HOME                â•‘\n";
-echo "â•šâ•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�\n\n";
+echo str_repeat("=", 62) . PHP_EOL;
+echo "  DUPLICATE CHECKER - APS DREAM HOME" . PHP_EOL;
+echo str_repeat("=", 62) . PHP_EOL . PHP_EOL;
 
 $issues = [];
 
 // 1. Check for duplicate route definitions
-echo "ðŸ”� Checking for Duplicate Routes...\n";
+echo "🔧 Checking for Duplicate Routes...\n";
 $routesFile = __DIR__ . '/../routes/web.php';
 if (file_exists($routesFile)) {
     $content = file_get_contents($routesFile);
@@ -22,18 +22,18 @@ if (file_exists($routesFile)) {
     $duplicates = array_diff_assoc($routes, array_unique($routes));
     
     if (!empty($duplicates)) {
-        echo "â�Œ Found " . count($duplicates) . " duplicate routes:\n";
+        echo "❌ Found " . count($duplicates) . " duplicate routes:\n";
         foreach (array_unique($duplicates) as $route) {
             echo "   - $route\n";
             $issues[] = "Duplicate route: $route";
         }
     } else {
-        echo "âœ… No duplicate routes found\n";
+        echo "✅ No duplicate routes found\n";
     }
 }
 
 // 2. Check for duplicate function definitions
-echo "\nðŸ”� Checking for Duplicate Functions...\n";
+echo "\n🔧 Checking for Duplicate Functions...\n";
 $functionFiles = [
     __DIR__ . '/../app/Helpers/functions.php',
     __DIR__ . '/../app/Core/Helper.php'
@@ -46,7 +46,7 @@ foreach ($functionFiles as $file) {
         preg_match_all('/function\s+(\w+)\s*\(/', $content, $matches);
         foreach ($matches[1] as $func) {
             if (in_array($func, $definedFunctions)) {
-                echo "â�Œ Duplicate function: $func\n";
+                echo "❌ Duplicate function: $func\n";
                 $issues[] = "Duplicate function: $func";
             } else {
                 $definedFunctions[] = $func;
@@ -54,10 +54,10 @@ foreach ($functionFiles as $file) {
         }
     }
 }
-echo "âœ… Checked " . count($definedFunctions) . " functions\n";
+echo "✅ Checked " . count($definedFunctions) . " functions\n";
 
 // 3. Check for duplicate view files
-echo "\nðŸ”� Checking for Duplicate View Files...\n";
+echo "\n🔧 Checking for Duplicate View Files...\n";
 $viewsDir = __DIR__ . '/../app/views';
 $viewFiles = [];
 
@@ -68,7 +68,7 @@ foreach ($rii as $file) {
     
     $filename = $file->getFilename();
     if (isset($viewFiles[$filename])) {
-        echo "â�Œ Duplicate view file: $filename\n";
+        echo "❌ Duplicate view file: $filename\n";
         echo "   - " . $viewFiles[$filename] . "\n";
         echo "   - " . $file->getPathname() . "\n";
         $issues[] = "Duplicate view: $filename";
@@ -76,10 +76,10 @@ foreach ($rii as $file) {
         $viewFiles[$filename] = $file->getPathname();
     }
 }
-echo "âœ… Checked " . count($viewFiles) . " view files\n";
+echo "✅ Checked " . count($viewFiles) . " view files\n";
 
 // 4. Check for duplicate service classes
-echo "\nðŸ”� Checking for Duplicate Service Names...\n";
+echo "\n🔧 Checking for Duplicate Service Names...\n";
 $servicesDir = __DIR__ . '/../app/Services';
 $serviceClasses = [];
 
@@ -90,7 +90,7 @@ foreach ($rii as $file) {
     
     $filename = $file->getFilename();
     if (isset($serviceClasses[$filename])) {
-        echo "â�Œ Duplicate service: $filename\n";
+        echo "❌ Duplicate service: $filename\n";
         echo "   - " . $serviceClasses[$filename] . "\n";
         echo "   - " . $file->getPathname() . "\n";
         $issues[] = "Duplicate service: $filename";
@@ -98,10 +98,10 @@ foreach ($rii as $file) {
         $serviceClasses[$filename] = $file->getPathname();
     }
 }
-echo "âœ… Checked " . count($serviceClasses) . " services\n";
+echo "✅ Checked " . count($serviceClasses) . " services\n";
 
 // 5. Check for duplicate table definitions
-echo "\nðŸ”� Checking Migration Files for Duplicate Table Names...\n";
+echo "\n🔧 Checking Migration Files for Duplicate Table Names...\n";
 $migrationsDir = __DIR__ . '/../database/migrations';
 $tableNames = [];
 
@@ -111,7 +111,7 @@ if (is_dir($migrationsDir)) {
         preg_match_all('/CREATE TABLE(?: IF NOT EXISTS)?\s+(\w+)/i', $content, $matches);
         foreach ($matches[1] as $table) {
             if (isset($tableNames[$table])) {
-                echo "â�Œ Table '$table' defined in multiple migrations:\n";
+                echo "❌ Table '$table' defined in multiple migrations:\n";
                 echo "   - " . basename($tableNames[$table]) . "\n";
                 echo "   - " . basename($file) . "\n";
                 $issues[] = "Duplicate table definition: $table";
@@ -121,21 +121,21 @@ if (is_dir($migrationsDir)) {
         }
     }
 }
-echo "âœ… Checked " . count($tableNames) . " table definitions\n";
+echo "✅ Checked " . count($tableNames) . " table definitions\n";
 
 // Summary
 echo "\n";
-echo "â•”â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•—\n";
-echo "â•‘                      CHECK SUMMARY                             â•‘\n";
-echo "â•šâ•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�\n\n";
+echo str_repeat("=", 62) . PHP_EOL;
+echo "  CHECK SUMMARY" . PHP_EOL;
+echo str_repeat("=", 62) . PHP_EOL . PHP_EOL;
 
 if (empty($issues)) {
-    echo "ðŸŽ‰ NO DUPLICATES FOUND! Codebase is clean.\n";
+    echo "🎉 NO DUPLICATES FOUND! Codebase is clean.\n";
 } else {
-    echo "âš ï¸�  Found " . count($issues) . " potential duplicates:\n";
+    echo "⚠️  Found " . count($issues) . " potential duplicates:\n";
     foreach ($issues as $i => $issue) {
         echo "   " . ($i + 1) . ". $issue\n";
     }
 }
 
-echo "\nâœ… Duplicate check complete\n";?>
+echo "\n✅ Duplicate check complete\n";?>
