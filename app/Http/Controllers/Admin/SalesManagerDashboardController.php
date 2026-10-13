@@ -33,7 +33,9 @@ class SalesManagerDashboardController extends AdminController
         ]);
     }
 
-    private function getStats(): array
+    // NOTE (S224): must stay public — parent Admin\AdminController::getStats
+    // is public; weaker access fatals the whole class at load time.
+    public function getStats(): array
     {
         $stats = [
             'total_leads' => 0, 'new_leads_today' => 0, 'new_leads_week' => 0,

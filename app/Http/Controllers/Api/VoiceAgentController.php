@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\BaseController;
 use App\Traits\TenantAwareTrait;
 
-class VoiceAgentController extends BaseController
+class VoiceAgentController extends \App\Http\Controllers\BaseController
 {
     use TenantAwareTrait;
     

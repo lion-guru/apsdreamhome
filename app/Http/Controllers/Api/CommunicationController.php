@@ -34,9 +34,9 @@ class CommunicationController extends BaseApiController
         try {
             $this->rateLimiter->handle('email', function ($req) { return true; }, 'email');
 
-            $to = $this->validateInput($this->inputWithJson('to', ''), 'email');
-            $subject = $this->validateInput($this->inputWithJson('subject', ''), 'subject', 200);
-            $message = $this->validateInput($this->inputWithJson('message', ''), 'message', 10000);
+            $to = $this->sanitizeInputValue($this->inputWithJson('to', ''), 'email');
+            $subject = $this->sanitizeInputValue($this->inputWithJson('subject', ''), 'subject', 200);
+            $message = $this->sanitizeInputValue($this->inputWithJson('message', ''), 'message', 10000);
 
             if (!$to) return $this->jsonError('Invalid email address format', 400);
             if (!$subject) return $this->jsonError('Invalid subject format or too long', 400);
@@ -73,8 +73,8 @@ class CommunicationController extends BaseApiController
         try {
             $this->rateLimiter->handle('whatsapp', function ($req) { return true; }, 'whatsapp');
 
-            $to = $this->validateInput($this->inputWithJson('to', ''), 'phone');
-            $message = $this->validateInput($this->inputWithJson('message', ''), 'message', 1000);
+            $to = $this->sanitizeInputValue($this->inputWithJson('to', ''), 'phone');
+            $message = $this->sanitizeInputValue($this->inputWithJson('message', ''), 'message', 1000);
 
             if (!$to) return $this->jsonError('Invalid phone number format. Must be 10-15 digits.', 400);
             if (!$message) return $this->jsonError('Invalid message format or too long', 400);
@@ -111,7 +111,7 @@ class CommunicationController extends BaseApiController
             $this->rateLimiter->handle('telegram', function ($req) { return true; }, 'telegram');
 
             $chatId = $this->inputWithJson('chat_id', '');
-            $message = $this->validateInput($this->inputWithJson('message', ''), 'message', 4000);
+            $message = $this->sanitizeInputValue($this->inputWithJson('message', ''), 'message', 4000);
 
             if (!$chatId) return $this->jsonError('Chat ID is required', 400);
             if (!$message) return $this->jsonError('Message is required', 400);
@@ -140,8 +140,8 @@ class CommunicationController extends BaseApiController
         try {
             $this->rateLimiter->handle('sms', function ($req) { return true; }, 'sms');
 
-            $to = $this->validateInput($this->inputWithJson('to', ''), 'phone');
-            $message = $this->validateInput($this->inputWithJson('message', ''), 'message', 160);
+            $to = $this->sanitizeInputValue($this->inputWithJson('to', ''), 'phone');
+            $message = $this->sanitizeInputValue($this->inputWithJson('message', ''), 'message', 160);
 
             if (!$to) return $this->jsonError('Invalid phone number format', 400);
             if (!$message) return $this->jsonError('Message is required', 400);
@@ -161,7 +161,10 @@ class CommunicationController extends BaseApiController
     /**
      * Validate and sanitize input
      */
-    protected function validateInput($input, $type = 'string', $max_length = null)
+    // NOTE (S224): named sanitizeInputValue (not validateInput) — parent
+    // BaseController::validateInput($data, $rules) has an incompatible
+    // signature, and overriding it fatals the whole class at load time.
+    protected function sanitizeInputValue($input, $type = 'string', $max_length = null)
     {
         $input = \trim($input);
         if (empty($input)) return false;

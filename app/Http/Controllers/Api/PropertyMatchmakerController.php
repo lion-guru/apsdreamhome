@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use App\Services\AI\Agents\PropertyMatchmakerAgent;
 
-class PropertyMatchmakerController extends Controller
+class PropertyMatchmakerController extends \App\Http\Controllers\BaseController
 {
     protected $matchmaker;
 
@@ -88,13 +88,8 @@ class PropertyMatchmakerController extends Controller
     }
 
     /**
-     * JSON response helper
+     * JSON responses use inherited BaseController::jsonResponse()
+     * (identical behavior: header + code + echo + exit). A narrower
+     * private duplicate here fatals the whole class at load time (S224).
      */
-    private function jsonResponse(array $data, int $status = 200)
-    {
-        http_response_code($status);
-        header('Content-Type: application/json');
-        echo json_encode($data);
-        exit;
-    }
 }

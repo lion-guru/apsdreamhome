@@ -102,7 +102,9 @@ class PropertyVerificationApiController extends BaseApiController
         }
     }
 
-    public function getRequest($id)
+    // NOTE (S224): $id defaults to null for LSP compatibility with
+    // BaseController::getRequest() (router always passes {id} positionally).
+    public function getRequest($id = null)
     {
         $this->setCorsHeaders();
         try {
