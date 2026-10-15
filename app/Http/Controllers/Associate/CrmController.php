@@ -356,6 +356,10 @@ class CrmController extends BaseController
 
         $db = \App\Core\Database\Database::getInstance();
         $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
+        // Old status first — the timeline renders old → new.
+        $oldParams = [$id, $userId, $userId];
+        if (TenantContext::getId() > 1) $oldParams[] = TenantContext::getId();
+        $oldRow = $db->fetchOne("SELECT status FROM leads WHERE id = ? AND (assigned_to = ? OR created_by = ?){$tidSql} LIMIT 1", $oldParams);
         // Scope matches list + delete (assigned OR created) — detail is reachable from both.
         $params = [$status, $id, $userId, $userId];
         if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
@@ -364,6 +368,16 @@ class CrmController extends BaseController
         $stmt->execute($params);
 
         if ($stmt->rowCount() > 0) {
+            // Timeline feed (lead_activities is what the detail view renders).
+            $db->insert('lead_activities', [
+                'lead_id' => $id,
+                'activity_type' => 'status_change',
+                'description' => 'Status updated',
+                'old_value' => $oldRow['status'] ?? '',
+                'new_value' => $status,
+                'created_by' => $userId,
+                'tenant_id' => $tid,
+            ]);
             $this->logActivity('lead_status_changed', json_encode(['lead_id' => $id, 'new_status' => $status]));
             $_SESSION['success'] = 'Lead status updated!';
         } else {
@@ -436,6 +450,15 @@ class CrmController extends BaseController
             $_SESSION['success'] = 'Note added!';
         }
 
+        // Timeline feed (lead_activities is what the detail view renders).
+        $db->insert('lead_activities', [
+            'lead_id' => $id,
+            'activity_type' => 'note',
+            'description' => $note,
+            'created_by' => $userId,
+            'tenant_id' => $tid,
+        ]);
+
         $this->logActivity('lead_note_added', json_encode(['lead_id' => $id]));
 
         $this->redirect("/associate/leads/{$id}");
@@ -473,6 +496,154 @@ class CrmController extends BaseController
     }
 
     /**
+     * Assign lead to another associate (was a "Feature moved to CRM" stub on the facade).
+     */
+    public function assignLead($id)
+    {
+        $this->requireAuth();
+        $userId = $_SESSION['user_id'];
+        $tid = TenantContext::getId();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect("/associate/leads/{$id}");
+            return;
+        }
+
+        $to = (int)($_POST['assign_to'] ?? 0);
+        if ($to <= 0) {
+            $_SESSION['error'] = 'Select a team member first';
+            $this->redirect("/associate/leads/{$id}");
+            return;
+        }
+
+        $db = \App\Core\Database\Database::getInstance();
+        $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
+
+        // Target must be a real associate (matches the form's offer list).
+        $tParams = [$to];
+        if (TenantContext::getId() > 1) $tParams[] = TenantContext::getId();
+        $target = $db->fetchOne("SELECT id, name FROM users WHERE id = ? AND role = 'associate'{$tidSql} LIMIT 1", $tParams);
+        if (!$target) {
+            $_SESSION['error'] = 'Invalid team member';
+            $this->redirect("/associate/leads/{$id}");
+            return;
+        }
+
+        // Old assignee name first — the timeline renders old → new.
+        $oParams = [$id, $userId, $userId];
+        if (TenantContext::getId() > 1) $oParams[] = TenantContext::getId();
+        $oldLead = $db->fetchOne("SELECT l.assigned_to, u.name AS old_name FROM leads l LEFT JOIN users u ON u.id = l.assigned_to WHERE l.id = ? AND (l.assigned_to = ? OR l.created_by = ?){$tidSql} LIMIT 1", $oParams);
+        // Scope matches list/detail/delete/status (assigned OR created).
+        $params = [$to, $id, $userId, $userId];
+        if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
+        $stmt = $db->prepare("UPDATE leads SET assigned_to = ?, updated_at = NOW() WHERE id = ? AND (assigned_to = ? OR created_by = ?){$tidSql}");
+        $stmt->execute($params);
+
+        if ($stmt->rowCount() > 0) {
+            // Timeline feed (generic "Assignment" label — view styles known types only).
+            $db->insert('lead_activities', [
+                'lead_id' => $id,
+                'activity_type' => 'assignment',
+                'description' => 'Lead reassigned',
+                'old_value' => $oldLead['old_name'] ?? '',
+                'new_value' => $target['name'] ?? '',
+                'created_by' => $userId,
+                'tenant_id' => $tid,
+            ]);
+            $this->logActivity('lead_assigned', json_encode(['lead_id' => $id, 'assigned_to' => $to]));
+            $_SESSION['success'] = 'Lead assigned!';
+        } else {
+            $_SESSION['error'] = 'Lead not found or access denied';
+        }
+
+        $this->redirect("/associate/leads/{$id}");
+    }
+
+    /**
+     * Recalculate AI score for one lead (was a stub). Thin glue over the
+     * existing LeadScoringService — no scoring logic lives here.
+     */
+    public function recalculateScore($id)
+    {
+        $this->requireAuth();
+        $userId = $_SESSION['user_id'];
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect("/associate/leads/{$id}");
+            return;
+        }
+
+        $db = \App\Core\Database\Database::getInstance();
+        $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
+        $params = [$id, $userId, $userId];
+        if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
+        $lead = $db->fetchOne("SELECT id FROM leads WHERE id = ? AND (assigned_to = ? OR created_by = ?){$tidSql} LIMIT 1", $params);
+        if (!$lead) {
+            $_SESSION['error'] = 'Lead not found or access denied';
+            $this->redirect('/associate/leads');
+            return;
+        }
+
+        $svc = new \App\Services\LeadScoringService();
+        $scores = $svc->calculateScore($id);
+        if (!$scores) {
+            $_SESSION['error'] = 'Could not score this lead';
+            $this->redirect("/associate/leads/{$id}");
+            return;
+        }
+        $svc->saveScore($id, $scores);
+
+        $this->logActivity('lead_score_recalculated', json_encode(['lead_id' => $id, 'score' => $scores['total'], 'rank' => $scores['rank']]));
+        $_SESSION['success'] = 'Score recalculated: ' . $scores['total'] . ' (' . $scores['rank'] . ')';
+        $this->redirect("/associate/leads/{$id}");
+    }
+
+    /**
+     * Recalculate AI scores for the associate's OWN leads only (was a stub).
+     * Deliberately NOT the service's global processAllLeads() — that would
+     * write scores for other users' leads.
+     */
+    public function recalculateAllScores()
+    {
+        $this->requireAuth();
+        $userId = $_SESSION['user_id'];
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/associate/leads');
+            return;
+        }
+
+        $db = \App\Core\Database\Database::getInstance();
+        $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
+        $params = [$userId, $userId];
+        if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
+        // Chunked: unscored-first, 200 per run — a 900+ lead book must not
+        // ride one PHP request past max_execution_time. Re-click to resume.
+        // (l.-qualified tenant guard: both joined tables carry tenant_id.)
+        $total = (int)($db->fetchOne("SELECT COUNT(*) c FROM leads WHERE (assigned_to = ? OR created_by = ?){$tidSql}", $params)['c'] ?? 0);
+        $lTidSql = TenantContext::getId() > 1 ? " AND l.tenant_id = ?" : "";
+        $ids = $db->fetchAll("SELECT l.id FROM leads l LEFT JOIN lead_scores s ON s.lead_id = l.id WHERE (l.assigned_to = ? OR l.created_by = ?){$lTidSql} AND s.lead_id IS NULL ORDER BY l.id ASC LIMIT 200", $params) ?: [];
+        if (empty($ids)) {
+            // Everything scored — refresh the oldest 200 instead of no-op.
+            $ids = $db->fetchAll("SELECT l.id FROM leads l JOIN lead_scores s ON s.lead_id = l.id WHERE (l.assigned_to = ? OR l.created_by = ?){$lTidSql} ORDER BY s.calculated_at ASC LIMIT 200", $params) ?: [];
+        }
+
+        $svc = new \App\Services\LeadScoringService();
+        $done = 0;
+        foreach ($ids as $row) {
+            $scores = $svc->calculateScore($row['id']);
+            if ($scores) {
+                $svc->saveScore($row['id'], $scores);
+                $done++;
+            }
+        }
+
+        $this->logActivity('lead_scores_recalculated_bulk', json_encode(['count' => $done, 'total' => $total]));
+        $_SESSION['success'] = $done . ' of ' . $total . ' lead scores recalculated!' . ($done < $total ? ' Run again to continue.' : '');
+        $this->redirect('/associate/leads');
+    }
+
+    /**
      * Followups page
      */
     public function followups()
@@ -487,7 +658,8 @@ class CrmController extends BaseController
         if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
 
         $followups = $db->fetchAll("
-            SELECT f.*, l.name as lead_name, l.phone
+            SELECT f.*, l.name as lead_name, l.phone,
+                   f.followup_date AS due_date, f.followup_type AS task_type, l.phone AS lead_phone
             FROM followups f
             JOIN leads l ON l.id = f.lead_id
             WHERE f.assigned_to = ?{$tidSql}
@@ -519,15 +691,29 @@ class CrmController extends BaseController
         $notes = trim($_POST['notes'] ?? '');
         $nextDate = $_POST['next_followup_date'] ?? null;
 
+        // DB enum is (pending/completed/cancelled/skipped) — reject the rest (S241 family).
+        if (!in_array($status, ['pending', 'completed', 'cancelled', 'skipped'], true)) {
+            $_SESSION['error'] = 'Invalid status';
+            $this->redirect('/associate/followups');
+            return;
+        }
+        // Garbage dates 1292 under strict mode — accept only real calendar dates.
+        if (!empty($nextDate) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $nextDate)) {
+            $_SESSION['error'] = 'Invalid follow-up date';
+            $this->redirect('/associate/followups');
+            return;
+        }
+
         $db = \App\Core\Database\Database::getInstance();
         $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
         $params = [$status];
+        if ($notes !== '') $params[] = $notes;
         if ($nextDate) $params[] = $nextDate;
         $params[] = $id;
         $params[] = $userId;
         if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
 
-        $sql = "UPDATE followups SET status = ?" . ($nextDate ? ", followup_date = ?" : "") . " WHERE id = ? AND assigned_to = ?{$tidSql}";
+        $sql = "UPDATE followups SET status = ?" . ($notes !== '' ? ", result = ?" : "") . ($nextDate ? ", followup_date = ?" : "") . " WHERE id = ? AND assigned_to = ?{$tidSql}";
         $stmt = $db->prepare($sql);
         $stmt->execute($params);
 

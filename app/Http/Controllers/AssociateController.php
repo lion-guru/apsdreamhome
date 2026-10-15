@@ -637,28 +637,4 @@ class AssociateController extends BaseController
         $this->redirect('/associate/leads');
     }
 
-    public function assignLead($id)
-    {
-        // Legacy - not implemented in facade
-        $_SESSION['error'] = 'Feature moved to CRM';
-        $this->redirect('/associate/leads');
-    }
-
-    public function recalculateScore($id)
-    {
-        $_SESSION['error'] = 'Feature moved to CRM';
-        $this->redirect('/associate/leads');
-    }
-
-    public function recalculateAllScores()
-    {
-        $_SESSION['error'] = 'Feature moved to CRM';
-        $this->redirect('/associate/leads');
-    }
-
-    public function exportLeads()
-    {
-        // Legacy - redirects to CRM leads
-        $this->redirect('/associate/leads');
-    }
 }

@@ -1193,9 +1193,9 @@ $router->get('/associate/leads/import', 'App\\Http\\Controllers\\Associate\\CrmC
 $router->post('/associate/leads/import', 'App\\Http\\Controllers\\Associate\\CrmController@importLeadsStore');
 $router->get('/associate/leads/bulk-whatsapp', 'App\\Http\\Controllers\\Associate\\CrmController@bulkWhatsApp');
 $router->post('/associate/leads/bulk-whatsapp', 'App\\Http\\Controllers\\Associate\\CrmController@bulkWhatsApp');
-$router->post('/associate/leads/{id}/assign', 'App\\Http\\Controllers\\AssociateController@assignLead');
-$router->post('/associate/leads/{id}/recalculate-score', 'App\\Http\\Controllers\\AssociateController@recalculateScore');
-$router->post('/associate/leads/recalculate-all-scores', 'App\\Http\\Controllers\\AssociateController@recalculateAllScores');
+$router->post('/associate/leads/{id}/assign', 'App\\Http\\Controllers\\Associate\\CrmController@assignLead');
+$router->post('/associate/leads/{id}/recalculate-score', 'App\\Http\\Controllers\\Associate\\CrmController@recalculateScore');
+$router->post('/associate/leads/recalculate-all-scores', 'App\\Http\\Controllers\\Associate\\CrmController@recalculateAllScores');
 $router->get('/associate/leads/export', 'App\\Http\\Controllers\\Associate\\CrmController@exportLeads');
 $router->get('/associate/commissions/history', 'App\\Http\\Controllers\\AssociateController@commissions');
 $router->get('/associate/wallet/withdraw', 'App\\Http\\Controllers\\WalletController@withdrawal');
