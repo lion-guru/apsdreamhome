@@ -20334,7 +20334,7 @@ return array (
   ),
   '/admin/leads/telecaller-performance' => 
   array (
-    'name' => 'Telecoder Performance',
+    'name' => 'Telecaller Performance',
     'icon' => 'fas fa-phone-alt',
     'section' => 'sales',
     'parent_url' => NULL,

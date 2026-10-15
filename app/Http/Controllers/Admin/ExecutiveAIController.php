@@ -5,6 +5,7 @@
  * Routes:
  *   GET  /admin/ai/executive-assistant  → Dashboard with chat interface
  *   POST /admin/ai/executive-assistant/chat → Process chat message (AJAX)
+ *   POST /admin/ai/executive-assistant/execute → Execute AI-suggested action
  */
 
 namespace App\Http\Controllers\Admin;
@@ -71,6 +72,31 @@ class ExecutiveAIController extends AdminController
 
         $response = $this->aiService->chat($message, $role, $userId);
         echo json_encode($response);
+        exit;
+    }
+
+    /**
+     * Execute AI-suggested action
+     */
+    public function executeAction()
+    {
+        @session_start();
+        header('Content-Type: application/json');
+
+        $role = $_SESSION['role'] ?? $_SESSION['admin_role'] ?? 'admin';
+        $userId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+
+        $input = json_decode(file_get_contents('php://input'), true);
+        $action = $input['action'] ?? '';
+        $params = $input['params'] ?? [];
+
+        if (empty($action)) {
+            echo json_encode(['success' => false, 'error' => 'Action is required.']);
+            exit;
+        }
+
+        $result = $this->aiService->executeAction($action, $params, $role, $userId);
+        echo json_encode($result);
         exit;
     }
 }

@@ -91,7 +91,11 @@ class CrmController extends BaseController
         if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
 
         $status = $_GET['status'] ?? '';
-        $search = trim($_GET['search'] ?? '');
+        // Legacy tab keys predate the closed_won/closed_lost enum rename — map them.
+        if ($status === 'won') $status = 'closed_won';
+        if ($status === 'lost') $status = 'closed_lost';
+        // View submits search as `q` (form + filterLeads JS); accept legacy `search` too.
+        $search = trim($_GET['search'] ?? $_GET['q'] ?? '');
         $page = max(1, (int)($_GET['page'] ?? 1));
         $perPage = 20;
 
@@ -117,15 +121,44 @@ class CrmController extends BaseController
 
         $leads = $db->fetchAll("SELECT l.*, u.name as assigned_name FROM leads l LEFT JOIN users u ON u.id = l.assigned_to {$where} ORDER BY l.created_at DESC LIMIT {$perPage} OFFSET {$offset}", $params) ?: [];
 
+        // Pipeline tab counts — same scope as the list (assigned OR created),
+        // unfiltered by the active tab/search. View keys: new/contacted/
+        // qualified/site_visit/proposal/negotiation/closed_won/closed_lost/nurture.
+        $countBase = "FROM leads l WHERE (l.assigned_to = ? OR l.created_by = ?){$tidSql}";
+        $countParams = [$userId, $userId];
+        if (TenantContext::getId() > 1) $countParams[] = TenantContext::getId();
+        $pipelineCounts = [];
+        foreach (['new', 'contacted', 'qualified', 'site_visit', 'proposal', 'negotiation', 'closed_won', 'closed_lost', 'nurture'] as $sKey) {
+            $row = $db->fetchOne(
+                "SELECT COUNT(*) as count {$countBase} AND l.status = ?",
+                array_merge($countParams, [$sKey])
+            );
+            $pipelineCounts[$sKey] = (int)($row['count'] ?? 0);
+        }
+        // "All" tab + header show the unfiltered in-scope total (matches sidebar badge).
+        $unfilteredRow = $db->fetchOne("SELECT COUNT(*) as count {$countBase}", $countParams);
+        $unfilteredTotal = (int)($unfilteredRow['count'] ?? 0);
+
+        // Pagination base URL preserving active filters (view appends `page=N`).
+        $pq = [];
+        if ($status !== '') $pq[] = 'status=' . urlencode($status);
+        if ($search !== '') $pq[] = 'search=' . urlencode($search);
+        $paginationUrl = BASE_URL . '/associate/leads?' . ($pq ? implode('&', $pq) . '&' : '');
+
         $this->render('associate/leads', [
             'page_title' => 'My Leads - Associate Portal',
             'page_description' => 'Manage your leads',
             'leads' => $leads,
             'status' => $status,
+            'status_filter' => $status,
             'search' => $search,
             'page' => $page,
+            'current_page_no' => $page,
             'total_pages' => $totalPages,
             'total' => $total,
+            'total_count' => $unfilteredTotal,
+            'pipeline_counts' => $pipelineCounts,
+            'pagination_url' => $paginationUrl,
             'statuses' => ['new', 'contacted', 'qualified', 'proposal', 'negotiation', 'won', 'lost'],
         ], 'layouts/associate');
     }
@@ -307,34 +340,37 @@ class CrmController extends BaseController
         $tid = TenantContext::getId();
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect("/associate/leads/detail/{$id}");
+            $this->redirect("/associate/leads/{$id}");
             return;
         }
 
         $status = $_POST['status'] ?? '';
-        $validStatuses = ['new', 'contacted', 'qualified', 'proposal', 'negotiation', 'won', 'lost'];
+        // Must match the detail view's pipeline keys AND the DB enum
+        // (migration adds site_visit; won/lost never existed — closed_* do).
+        $validStatuses = ['new', 'contacted', 'qualified', 'site_visit', 'proposal', 'negotiation', 'closed_won', 'closed_lost', 'nurture'];
         if (!in_array($status, $validStatuses)) {
             $_SESSION['error'] = 'Invalid status';
-            $this->redirect("/associate/leads/detail/{$id}");
+            $this->redirect("/associate/leads/{$id}");
             return;
         }
 
         $db = \App\Core\Database\Database::getInstance();
         $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
-        $params = [$status, $id, $userId];
+        // Scope matches list + delete (assigned OR created) — detail is reachable from both.
+        $params = [$status, $id, $userId, $userId];
         if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
 
-        $stmt = $db->prepare("UPDATE leads SET status = ?, updated_at = NOW() WHERE id = ? AND assigned_to = ?{$tidSql}");
+        $stmt = $db->prepare("UPDATE leads SET status = ?, updated_at = NOW() WHERE id = ? AND (assigned_to = ? OR created_by = ?){$tidSql}");
         $stmt->execute($params);
 
         if ($stmt->rowCount() > 0) {
-            $this->logActivity($userId, 'lead_status_changed', ['lead_id' => $id, 'new_status' => $status]);
+            $this->logActivity('lead_status_changed', json_encode(['lead_id' => $id, 'new_status' => $status]));
             $_SESSION['success'] = 'Lead status updated!';
         } else {
             $_SESSION['error'] = 'Lead not found or access denied';
         }
 
-        $this->redirect("/associate/leads/detail/{$id}");
+        $this->redirect("/associate/leads/{$id}");
     }
 
     /**
@@ -347,24 +383,25 @@ class CrmController extends BaseController
         $tid = TenantContext::getId();
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect("/associate/leads/detail/{$id}");
+            $this->redirect("/associate/leads/{$id}");
             return;
         }
 
         $note = trim($_POST['note'] ?? '');
         if (empty($note)) {
             $_SESSION['error'] = 'Note cannot be empty';
-            $this->redirect("/associate/leads/detail/{$id}");
+            $this->redirect("/associate/leads/{$id}");
             return;
         }
 
         $db = \App\Core\Database\Database::getInstance();
         $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
-        $params = [$id, $userId];
+        // Scope matches list + delete + status (assigned OR created).
+        $params = [$id, $userId, $userId];
         if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
 
         // Verify ownership
-        $stmt = $db->prepare("SELECT id FROM leads WHERE id = ? AND assigned_to = ?{$tidSql} LIMIT 1");
+        $stmt = $db->prepare("SELECT id FROM leads WHERE id = ? AND (assigned_to = ? OR created_by = ?){$tidSql} LIMIT 1");
         $stmt->execute($params);
         if (!$stmt->fetch()) {
             $_SESSION['error'] = 'Lead not found or access denied';
@@ -372,18 +409,36 @@ class CrmController extends BaseController
             return;
         }
 
+        // Columns match the live table (lead_id/note/content/created_by — there is no user_id col).
         $db->insert('lead_notes', [
             'lead_id' => $id,
-            'user_id' => $userId,
+            'created_by' => $userId,
             'note' => $note,
+            'content' => $note,
             'created_at' => date('Y-m-d H:i:s'),
             'tenant_id' => $tid,
         ]);
 
-        $this->logActivity($userId, 'lead_note_added', ['lead_id' => $id]);
+        // Schedule follow-up when the form's Schedule button was used (else the button silently only saves a note).
+        if (!empty($_POST['schedule_followup']) && !empty($_POST['followup_date'])) {
+            $db->insert('followups', [
+                'lead_id' => $id,
+                'assigned_to' => $userId,
+                'followup_type' => $_POST['task_type'] ?? 'call',
+                'followup_date' => $_POST['followup_date'],
+                'followup_time' => !empty($_POST['followup_time']) ? $_POST['followup_time'] : null,
+                'notes' => $note,
+                'status' => 'pending',
+                'tenant_id' => $tid,
+            ]);
+            $_SESSION['success'] = 'Note added & follow-up scheduled!';
+        } else {
+            $_SESSION['success'] = 'Note added!';
+        }
 
-        $_SESSION['success'] = 'Note added!';
-        $this->redirect("/associate/leads/detail/{$id}");
+        $this->logActivity('lead_note_added', json_encode(['lead_id' => $id]));
+
+        $this->redirect("/associate/leads/{$id}");
     }
 
     /**
@@ -397,14 +452,18 @@ class CrmController extends BaseController
 
         $db = \App\Core\Database\Database::getInstance();
         $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
-        $params = [$id, $userId];
+        // Scope matches the list view (assigned_to OR created_by) — the Delete
+        // button renders for every listed row, so all of them must be deletable.
+        $params = [$id, $userId, $userId];
         if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
 
-        $stmt = $db->prepare("DELETE FROM leads WHERE id = ? AND assigned_to = ?{$tidSql}");
+        $stmt = $db->prepare("DELETE FROM leads WHERE id = ? AND (assigned_to = ? OR created_by = ?){$tidSql}");
         $stmt->execute($params);
 
         if ($stmt->rowCount() > 0) {
-            $this->logActivity($userId, 'lead_deleted', ['lead_id' => $id]);
+            // followups has NO FK to leads (no cascade) — delete explicitly or it orphans.
+            $db->execute("DELETE FROM followups WHERE lead_id = ?", [$id]);
+            $this->logActivity('lead_deleted', json_encode(['lead_id' => $id]));
             $_SESSION['success'] = 'Lead deleted!';
         } else {
             $_SESSION['error'] = 'Lead not found or access denied';

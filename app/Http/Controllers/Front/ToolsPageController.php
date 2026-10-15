@@ -202,4 +202,12 @@ class ToolsPageController extends BaseController
             'page_description' => 'How APS Dream Home works for you.',
         ]);
     }
+
+    public function aiChatbotPage()
+    {
+        $this->render('pages/ai/chatbot', [
+            'page_title' => 'Property Assistant - APS Dream Home',
+            'page_description' => 'AI-powered property assistant for all your real estate queries.',
+        ]);
+    }
 }

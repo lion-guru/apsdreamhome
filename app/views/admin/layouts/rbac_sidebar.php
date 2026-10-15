@@ -185,18 +185,21 @@ $hubOrder = ['inventory', 'sales', 'mlm', 'finance', 'control', 'operations'];
 // RBAC roles (admin/manager), but the sidebar groups by section — without
 // flattening, nested children (e.g. Locations submenu) never render.
 // Children are kept as a 'children' array on each parent item for submenu rendering.
+// IMPORTANT: Only TOP-LEVEL items go into $flatItems; children are accessed via parent['children'].
 $flatItems = [];
-$flattenMenu = function ($items, $parentSection = null) use (&$flattenMenu, &$flatItems) {
+$flattenMenu = function ($items, $parentSection = null, $isChild = false) use (&$flattenMenu, &$flatItems) {
     foreach ($items as $item) {
         if (empty($item['section']) && $parentSection) {
             $item['section'] = $parentSection;
         }
         if (!empty($item['children']) && is_array($item['children'])) {
-            $item['children'] = $flattenMenu($item['children'], $item['section'] ?? $parentSection);
+            $item['children'] = $flattenMenu($item['children'], $item['section'] ?? $parentSection, true);
         } else {
             $item['children'] = [];
         }
-        $flatItems[] = $item;
+        if (!$isChild) {
+            $flatItems[] = $item;
+        }
     }
     return $items;
 };

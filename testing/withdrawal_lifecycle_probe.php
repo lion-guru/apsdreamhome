@@ -56,7 +56,8 @@ try {
     $ok('setup synthetic customer+wallet+bank', $uid > 0 && $bid > 0);
 
     // ---- Customer login ----
-    $jar = sys_get_temp_dir() . '/probe_wd_' . $stamp . '.jar';
+    $jar = 'C:/temp/probe_wd_' . $stamp . '.jar';
+    if (!is_dir('C:/temp')) @mkdir('C:/temp', 0777, true);
     [$c, $loginPage] = http('GET', "$BASE/login", [], $jar);
     $tok = csrf($loginPage);
     $ok('login page serves csrf', !empty($tok));
@@ -92,7 +93,8 @@ try {
 
     // ---- Admin reject → refund (only if request was created) ----
     if ($reqId) {
-    $ajar = sys_get_temp_dir() . '/probe_wd_admin_' . $stamp . '.jar';
+    $ajar = 'C:/temp/probe_wd_admin_' . $stamp . '.jar';
+    if (!is_dir('C:/temp')) @mkdir('C:/temp', 0777, true);
     http('GET', "$BASE/admin/login?test_login=1", [], $ajar);
     [$c, $apage] = http('GET', "$BASE/admin/mlm/withdrawals", [], $ajar);
     $atok = csrf($apage);

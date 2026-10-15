@@ -215,7 +215,7 @@ class AdminAuthController extends BaseController
             }
 
             // Validate captcha (skip in dev mode)
-            $isDev = (isset($_SERVER['SERVER_ADDR']) && in_array($_SERVER['SERVER_ADDR'], ['127.0.0.1', '::1'])) || (defined('DEV_MODE') && constant('DEV_MODE') === true);
+            $isDev = $this->isDevEnvironment();
             if (!$isDev) {
                 $submittedCaptcha = $_POST['captcha_answer'] ?? '';
                 $sessionCaptcha = $_SESSION['captcha_result'] ?? '';
@@ -312,6 +312,50 @@ class AdminAuthController extends BaseController
             header('Location: ' . BASE_URL . '/admin/login');
             exit;
         }
+    }
+
+    /**
+     * Check if running in development environment (localhost, ngrok, cloudflare tunnels, etc.)
+     */
+    private function isDevEnvironment(): bool
+    {
+        // Check SERVER_ADDR for localhost
+        if (isset($_SERVER['SERVER_ADDR']) && in_array($_SERVER['SERVER_ADDR'], ['127.0.0.1', '::1', 'localhost'])) {
+            return true;
+        }
+
+        // Check DEV_MODE constant
+        if (defined('DEV_MODE') && constant('DEV_MODE') === true) {
+            return true;
+        }
+
+        // Check for common tunnel hostnames
+        $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? '';
+        $tunnelPatterns = [
+            'ngrok',
+            'ngrok-free',
+            'ngrok.io',
+            'loca.lt',
+            'localxpose',
+            'cloudflare',
+            'trycloudflare',
+            'serveo',
+            'sshportal',
+            'pagekite',
+            'tunnel',
+        ];
+        foreach ($tunnelPatterns as $pattern) {
+            if (stripos($host, $pattern) !== false) {
+                return true;
+            }
+        }
+
+        // Check for X-Forwarded-For indicating tunnel
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR']) && strpos($_SERVER['HTTP_X_FORWARDED_FOR'], '127.0.0.1') !== false) {
+            return true;
+        }
+
+        return false;
     }
 
     public function logout()

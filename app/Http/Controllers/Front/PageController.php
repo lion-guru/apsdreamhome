@@ -150,6 +150,59 @@ class PageController extends BaseController
         return $this->propertyPageController->propertyInquiry();
     }
 
+    public function inquiry()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $name = trim($_POST['name'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $phone = trim($_POST['phone'] ?? '');
+            $subject = trim($_POST['subject'] ?? '');
+            $message = trim($_POST['message'] ?? '');
+            $termsConsent = isset($_POST['terms_consent']);
+
+            $errors = [];
+            if (empty($name)) $errors[] = 'Name is required';
+            if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Valid email is required';
+            if (empty($phone)) $errors[] = 'Phone is required';
+            if (empty($subject)) $errors[] = 'Subject is required';
+            if (empty($message)) $errors[] = 'Message is required';
+            if (!isset($_POST['terms_consent'])) $errors[] = 'You must accept the terms and policies';
+
+            if (!empty($errors)) {
+                $_SESSION['errors'] = $errors;
+                $_SESSION['old_input'] = $_POST;
+                $this->redirect(BASE_URL . '/inquiry');
+                return;
+            }
+
+            try {
+                $db = Database::getInstance();
+                $stmt = $db->prepare("
+                    INSERT INTO inquiries (name, email, phone, subject, message, status, tenant_id, created_at)
+                    VALUES (?, ?, ?, ?, ?, 'new', ?, NOW())
+                ");
+                $stmt->execute([
+                    $name, $email, $phone, $subject, $message,
+                    $this->tenantId() > 1 ? $this->tenantId() : null
+                ]);
+
+                $_SESSION['success'] = 'Your inquiry has been submitted successfully! We will get back to you soon.';
+            } catch (\Exception $e) {
+                error_log('Inquiry submission error: ' . $e->getMessage());
+                $_SESSION['errors'] = ['Something went wrong. Please try again.'];
+            }
+
+            $this->redirect(BASE_URL . '/inquiry');
+            return;
+        }
+
+        $this->render('pages/inquiry', [
+            'page_title' => 'Contact Us - APS Dream Home',
+            'page_description' => 'Contact us for property inquiries and support',
+            'current_page' => 'inquiry'
+        ]);
+    }
+
     public function getFeaturedProperties()
     {
         return $this->propertyPageController->getFeaturedProperties();
@@ -512,33 +565,34 @@ class PageController extends BaseController
             $this->redirect(BASE_URL);
         }
     }
-
-    public function becomeAssociate()
+public function becomeAssociate()
     {
-        $viewPath = APP_PATH . '/views/pages/become_associate.php';
-        if (file_exists($viewPath)) {
-            // Referral context the view expects (was undefined => log warnings)
-            $isLoggedIn = isset($_SESSION['user_id']) && ($_SESSION['role'] ?? '') === 'associate';
-            $loggedInReferralCode = $isLoggedIn ? ($_SESSION['referral_code'] ?? null) : null;
-            if ($isLoggedIn && empty($loggedInReferralCode) && !empty($_SESSION['user_id'])) {
-                try {
-                    $db = \App\Core\Database\Database::getInstance()->getConnection();
-                    $stmt = $db->prepare("SELECT referral_code FROM users WHERE id = ? LIMIT 1");
-                    $stmt->execute([(int)$_SESSION['user_id']]);
-                    $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-                    $loggedInReferralCode = $row['referral_code'] ?? null;
-                } catch (\Throwable $e) { error_log('PageController::becomeAssociate referral lookup failed: ' . $e->getMessage()); }
+        $isLoggedIn = isset($_SESSION['user_id']) && ($_SESSION['role'] ?? '') === 'associate';
+        $loggedInReferralCode = $isLoggedIn ? ($_SESSION['referral_code'] ?? null) : null;
+        if ($isLoggedIn && empty($loggedInReferralCode) && !empty($_SESSION['user_id'])) {
+            try {
+                $db = \App\Core\Database\Database::getInstance()->getConnection();
+                $stmt = $db->prepare("SELECT referral_code FROM users WHERE id = ? LIMIT 1");
+                $stmt->execute([(int)$_SESSION['user_id']]);
+                $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+                $loggedInReferralCode = $row['referral_code'] ?? null;
+            } catch (\Throwable $e) {
+                error_log('PageController::becomeAssociate referral lookup failed: ' . $e->getMessage());
             }
-            $companyCode = getenv('COMPANY_REFERRAL_CODE') ?: 'APSREF';
-            $referral_code = trim($_GET['ref'] ?? '') ?: ($loggedInReferralCode ?: $companyCode);
-            extract($_GET + ['base' => defined('BASE_URL') ? BASE_URL : '/apsdreamhome']);
-            include $viewPath;
-        } else {
-            http_response_code(404);
-            echo 'Page not found';
         }
-    }
+        $companyCode = getenv('COMPANY_REFERRAL_CODE') ?: 'APSREF';
+        $referral_code = trim($_GET['ref'] ?? '') ?: ($loggedInReferralCode ?: $companyCode);
 
+        $this->render('pages/become_associate', [
+            'page_title' => __('assoc_page_title'),
+            'page_description' => __('assoc_page_desc', [], 'Become an Associate - APS Dream Home'),
+            'current_page' => 'become_associate',
+            'isLoggedIn' => $isLoggedIn,
+            'loggedInReferralCode' => $loggedInReferralCode,
+            'referral_code' => $referral_code,
+            'companyCode' => $companyCode,
+        ]);
+    }
     /* ============================================================
        MISCELLANEOUS PUBLIC PAGES
        ============================================================ */
@@ -558,13 +612,11 @@ class PageController extends BaseController
 
     public function navigation()
     {
-        $viewPath = APP_PATH . '/views/pages/navigation.php';
-        if (file_exists($viewPath)) {
-            extract($_GET + ['base' => defined('BASE_URL') ? BASE_URL : '/apsdreamhome']);
-            include $viewPath;
-        } else {
-            $this->redirect(BASE_URL);
-        }
+        $this->render('pages/navigation', [
+            'page_title' => __('nav_page_title', 'Navigation - APS Dream Homes'),
+            'page_description' => __('nav_page_desc', 'Navigate through all pages of APS Dream Homes website'),
+            'current_page' => 'navigation'
+        ]);
     }
 
     public function underConstruction()
@@ -593,13 +645,11 @@ class PageController extends BaseController
 
     public function analytics()
     {
-        $viewPath = APP_PATH . '/views/pages/analytics.php';
-        if (file_exists($viewPath)) {
-            extract($_GET + ['base' => defined('BASE_URL') ? BASE_URL : '/apsdreamhome']);
-            include $viewPath;
-        } else {
-            $this->redirect(BASE_URL);
-        }
+        $this->render('pages/analytics', [
+            'page_title' => __('analytics_title', [], 'Analytics - APS Dream Home'),
+            'page_description' => __('analytics_desc', [], 'Analytics Dashboard - APS Dream Home'),
+            'current_page' => 'analytics'
+        ]);
     }
 
     public function pricing()
@@ -685,14 +735,28 @@ class PageController extends BaseController
             header('Location: /apsdreamhome/properties'); exit;
         }
     }
-
-    public function saasHome() {
-        $viewPath = APP_PATH . '/views/pages/saas_home.php';
-        if (file_exists($viewPath)) {
-            include $viewPath;
-        } else {
-            header('Location: /apsdreamhome/'); exit;
+private function getPlans()
+    {
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM subscription_plans WHERE is_active = 1 ORDER BY sort_order ASC");
+            $stmt->execute();
+            $plans = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            return $plans ?: [];
+        } catch (\Exception $e) {
+            error_log('PageController::getPlans Error: ' . $e->getMessage());
+            return [];
         }
+    }
+
+    public function saasHome()
+    {
+        $plans = $this->getPlans();
+        
+        $this->render('pages/saas_home', [
+            'page_title' => 'APS CRM — All-in-One Business Platform',
+            'page_description' => 'India\'s #1 Real Estate CRM Platform — CRM, ERP, Accounting, Legal, AI — everything you need to manage properties, teams, and customers in one powerful SaaS platform.',
+            'plans' => $plans
+        ]);
     }
 
     public function tenantSignup() {
@@ -702,5 +766,10 @@ class PageController extends BaseController
         } else {
             header('Location: /apsdreamhome/pricing'); exit;
         }
+    }
+
+    public function aiChatbotPage()
+    {
+        return $this->toolsPageController->aiChatbotPage();
     }
 }

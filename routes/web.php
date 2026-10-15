@@ -2276,8 +2276,8 @@ $router->get('/colonies', 'Front\ProjectController@colonies');
 $router->get('/ai-chatbot', 'Front\AIController@aiChatbotPage');
 
 $router->get('/terms', 'App\\Http\\Controllers\\Front\\LegalController@terms');
-$router->get('/inquiry', 'Front\\ServiceController@inquiry');
-$router->post('/inquiry', 'Front\\ServiceController@inquiry');
+$router->get('/inquiry', 'Front\\PageController@inquiry');
+$router->post('/inquiry', 'Front\\PageController@inquiry');
 
 
 // Admin Analytics
@@ -3733,6 +3733,7 @@ $router->get('/admin/ai-system/health', 'App\\Http\\Controllers\\Admin\\AISystem
 // Executive AI Assistant (unified role-aware assistant)
 $router->get('/admin/ai/executive-assistant', 'App\\Http\\Controllers\\Admin\\ExecutiveAIController@index');
 $router->post('/admin/ai/executive-assistant/chat', 'App\\Http\\Controllers\\Admin\\ExecutiveAIController@chat');
+$router->post('/admin/ai/executive-assistant/execute', 'App\\Http\\Controllers\\Admin\\ExecutiveAIController@executeAction');
 // AI Content Generation (description + blog draft) — AJAX
 $router->post('/ai/content/description', 'App\\Http\\Controllers\\AI\\AIContentController@generateDescription');
 $router->post('/ai/content/blog-draft', 'App\\Http\\Controllers\\AI\\AIContentController@generateBlogDraft');

@@ -167,11 +167,14 @@ class AgentAuthController extends BaseController
         }
 
         // ── CAPTCHA validation (brute-force protection) ──
-        $captcha_code = trim($_POST['captcha_code'] ?? '');
-        if (empty($captcha_code) || !SimpleCaptcha::validate($captcha_code)) {
-            $_SESSION['errors'] = ["Invalid or expired security code. Please try again."];
-            header('Location: ' . BASE_URL . '/agent/login');
-            exit;
+        $isDev = (isset($_SERVER['SERVER_ADDR']) && in_array($_SERVER['SERVER_ADDR'], ['127.0.0.1', '::1'])) || (defined('DEV_MODE') && constant('DEV_MODE') === true);
+        if (!$isDev) {
+            $captcha_code = trim($_POST['captcha_code'] ?? '');
+            if (empty($captcha_code) || !SimpleCaptcha::validate($captcha_code)) {
+                $_SESSION['errors'] = ["Invalid or expired security code. Please try again."];
+                header('Location: ' . BASE_URL . '/agent/login');
+                exit;
+            }
         }
 
         // Rate limiting: 5 attempts per minute per IP
@@ -232,6 +235,50 @@ class AgentAuthController extends BaseController
             header('Location: ' . BASE_URL . '/agent/login');
             exit;
         }
+    }
+
+    /**
+     * Check if running in development environment (localhost, ngrok, cloudflare tunnels, etc.)
+     */
+    private function isDevEnvironment(): bool
+    {
+        // Check SERVER_ADDR for localhost
+        if (isset($_SERVER['SERVER_ADDR']) && in_array($_SERVER['SERVER_ADDR'], ['127.0.0.1', '::1', 'localhost'])) {
+            return true;
+        }
+
+        // Check DEV_MODE constant
+        if (defined('DEV_MODE') && constant('DEV_MODE') === true) {
+            return true;
+        }
+
+        // Check for common tunnel hostnames
+        $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? '';
+        $tunnelPatterns = [
+            'ngrok',
+            'ngrok-free',
+            'ngrok.io',
+            'loca.lt',
+            'localxpose',
+            'cloudflare',
+            'trycloudflare',
+            'serveo',
+            'sshportal',
+            'pagekite',
+            'tunnel',
+        ];
+        foreach ($tunnelPatterns as $pattern) {
+            if (stripos($host, $pattern) !== false) {
+                return true;
+            }
+        }
+
+        // Check for X-Forwarded-For indicating tunnel
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR']) && strpos($_SERVER['HTTP_X_FORWARDED_FOR'], '127.0.0.1') !== false) {
+            return true;
+        }
+
+        return false;
     }
 
     public function handleTestLogin(string $mode): void

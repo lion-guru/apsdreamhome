@@ -273,6 +273,32 @@ $today = date('Y-m-d');
                     <button type="submit" class="btn btn-primary btn-sm ms-1" name="schedule_followup" value="1"><i class="fas fa-calendar-plus me-1"></i> <?= __('assoc_lead_schedule_followup', [], 'Schedule Follow-up') ?></button>
                 </form>
             </div>
+
+            <!-- Saved Notes (rendered from $notes — previously fetched but never shown) -->
+            <?php if (!empty($notes)): ?>
+            <div class="detail-card">
+                <h6><i class="fas fa-sticky-note text-warning me-2"></i><?= __('assoc_lead_saved_notes', [], 'Saved Notes') ?></h6>
+                <?php foreach ($notes as $n): ?>
+                    <div class="border-bottom pb-2 mb-2">
+                        <p class="mb-1"><?= htmlspecialchars($n['note'] ?? '') ?></p>
+                        <small class="text-muted"><?= htmlspecialchars($n['user_name'] ?? '') ?> · <?= date('M d, Y g:i A', strtotime($n['created_at'])) ?></small>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <?php endif; ?>
+
+            <!-- Scheduled Follow-ups (rendered from $followups — previously fetched but never shown) -->
+            <?php if (!empty($followups)): ?>
+            <div class="detail-card">
+                <h6><i class="fas fa-calendar-check text-primary me-2"></i><?= __('assoc_lead_saved_followups', [], 'Scheduled Follow-ups') ?></h6>
+                <?php foreach ($followups as $f): ?>
+                    <div class="border-bottom pb-2 mb-2">
+                        <p class="mb-1"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $f['followup_type'] ?? 'call'))) ?> — <?= htmlspecialchars($f['followup_date'] ?? '') ?><?= !empty($f['followup_time']) ? ' ' . htmlspecialchars($f['followup_time']) : '' ?></p>
+                        <small class="text-muted"><?= htmlspecialchars($f['status'] ?? 'pending') ?><?= !empty($f['notes']) ? ' · ' . htmlspecialchars(mb_substr($f['notes'], 0, 80)) : '' ?></small>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <?php endif; ?>
         </div>
 
         <!-- Right Column -->
