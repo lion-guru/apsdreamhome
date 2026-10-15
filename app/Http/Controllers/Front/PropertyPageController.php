@@ -598,6 +598,10 @@ class PropertyPageController extends BaseController
         // Works for BOTH company inventory (properties) and user listings
         // (user_properties); opens a buyer-seller chat thread when possible.
         // Returns JSON for XHR/fetch callers, flash + redirect-back for normal form posts.
+        // Spam throttle: anonymous lead-creating endpoint (session+IP sliding window, 429 past limit).
+        if (class_exists('\App\Middleware\AjaxRateLimitMiddleware')) {
+            \App\Middleware\AjaxRateLimitMiddleware::check(30, 300);
+        }
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->redirect('/properties');
         }

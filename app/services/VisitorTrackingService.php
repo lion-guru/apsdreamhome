@@ -132,8 +132,18 @@ class VisitorTrackingService
     public function trackIncompleteRegistration($data)
     {
         try {
-            $email = $data['email'] ?? null;
-            $phone = $data['phone'] ?? null;
+            $email = trim((string)($data['email'] ?? ''));
+            $phone = trim((string)($data['phone'] ?? ''));
+            // A lead with no contact info is unwritable for every downstream
+            // consumer (telecaller/WA/follow-up) AND defeats the email/phone
+            // dedupe below (NULL never matches) — one junk Guest row per hit.
+            // Same rule as trackInterest(): anonymous → page view, not a lead.
+            if ($email === '' && $phone === '') {
+                return false;
+            }
+            // Null (not '') preserves stored values via COALESCE in the update branch.
+            $email = $email === '' ? null : $email;
+            $phone = $phone === '' ? null : $phone;
             $name = $data['name'] ?? 'Guest';
             $registrationType = $data['registration_type'] ?? 'standard';
             $stepCompleted = $data['step_completed'] ?? 1;

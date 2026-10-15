@@ -72,6 +72,11 @@ class VisitorTrackingController extends AdminController
     {
         $data = $_POST;
 
+        // Spam throttle: anonymous lead-creating endpoint (session+IP sliding window, 429 past limit).
+        if (class_exists('\App\Middleware\AjaxRateLimitMiddleware')) {
+            \App\Middleware\AjaxRateLimitMiddleware::check(30, 300);
+        }
+
         try {
             $this->getTrackingService()->trackIncompleteRegistration($data);
             echo json_encode(['success' => true]);

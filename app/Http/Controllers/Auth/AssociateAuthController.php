@@ -213,6 +213,11 @@ class AssociateAuthController extends BaseController
             exit;
         }
         if (isset($_GET['test_login'])) {
+            // Block test_login bypass in production (same gate as AuthController/AdminAuthController)
+            if ((defined('APP_ENV') && APP_ENV === 'production') || getenv('APP_ENV') === 'production') {
+                http_response_code(403);
+                exit('Forbidden in production');
+            }
             $this->handleTestLogin($_GET['test_login']);
             exit;
         }
