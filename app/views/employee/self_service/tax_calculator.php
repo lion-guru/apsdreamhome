@@ -14,7 +14,12 @@ $currentSalary = [];
 if ($employeeId) {
     try {
         $db = \App\Core\Database\Database::getInstance();
-        $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id=?{$tidSql}", array_merge([$employeeId], $tidParams));
+        // S343: `$tidSql` / `$tidParams` were never defined in this view, so
+        // array_merge() received null and threw
+        // `TypeError: array_merge(): Argument #2 must be of type array, null given`,
+        // which is an Error (not an Exception) so the catch below never fired
+        // and the whole page 500'd. Plain lookup matches the controller.
+        $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id=?", [$employeeId]);
         if ($emp) {
             $salary = $db->fetchOne("SELECT * FROM salary_structures WHERE employee_id=? AND status='active' ORDER BY effective_date DESC LIMIT 1", [$emp['id']]);
             if ($salary) {

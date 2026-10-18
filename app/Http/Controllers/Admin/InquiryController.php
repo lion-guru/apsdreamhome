@@ -100,6 +100,13 @@ class InquiryController extends AdminController
             return;
         }
 
+        // Mark as read
+        try {
+            $this->db->prepare("UPDATE inquiries SET is_read = 1 WHERE id = ?")->execute([$id]);
+            \App\Core\Cache::delete('admin_notify_inquiries_pending');
+            \App\Core\Cache::delete('admin_notify_inquiries_today');
+        } catch (\Throwable $e) {}
+
         // Mark as contacted if new
         if ($inquiry['status'] === 'new') {
             try {
@@ -110,8 +117,82 @@ class InquiryController extends AdminController
             } catch (\Exception $e) { error_log('InquiryController view status update: ' . $e->getMessage()); }
         }
 
-        $data = ['inquiry' => $inquiry];
+        // Fetch assigned staff member info
+        $assignedUser = null;
+        if (!empty($inquiry['assigned_to'])) {
+            try {
+                $uStmt = $this->db->prepare("SELECT id, name, email, phone, role FROM users WHERE id = ?");
+                $uStmt->execute([$inquiry['assigned_to']]);
+                $assignedUser = $uStmt->fetch(\PDO::FETCH_ASSOC);
+            } catch (\Throwable $e) {}
+        }
+
+        // Fetch active staff list for assignment dropdown
+        $staffList = [];
+        try {
+            $staffList = $this->db->query("SELECT id, name, role FROM users WHERE role IN ('employee', 'agent', 'telecaller', 'manager', 'admin') ORDER BY name ASC")->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {}
+
+        $data = [
+            'inquiry'      => $inquiry,
+            'assignedUser' => $assignedUser,
+            'staffList'    => $staffList
+        ];
         $this->render('admin/inquiries/view', $data);
+    }
+
+    public function assign()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->validateCsrfOrFail();
+            $id = (int)($_POST['id'] ?? 0);
+            $assignedTo = (int)($_POST['assigned_to'] ?? 0);
+
+            if ($id <= 0 || $assignedTo <= 0) {
+                $this->setFlash('error', 'Please select a valid staff member to assign.');
+                $this->redirect('/admin/inquiries/view/' . $id);
+                return;
+            }
+
+            try {
+                $stmt = $this->db->prepare("SELECT name, phone, message FROM inquiries WHERE id = ?");
+                $stmt->execute([$id]);
+                $inquiry = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+                if ($inquiry) {
+                    $updateStmt = $this->db->prepare("UPDATE inquiries SET assigned_to = ?, status = 'in_progress', updated_at = NOW() WHERE id = ?");
+                    $updateStmt->execute([$assignedTo, $id]);
+
+                    // Determine appropriate portal destination URL based on staff role
+                    $uStmt = $this->db->prepare("SELECT role FROM users WHERE id = ?");
+                    $uStmt->execute([$assignedTo]);
+                    $targetUser = $uStmt->fetch(\PDO::FETCH_ASSOC);
+                    $targetRole = $targetUser['role'] ?? 'employee';
+                    $actionUrl = in_array($targetRole, ['employee', 'telecaller'], true)
+                        ? "/employee/inquiries/{$id}"
+                        : "/admin/inquiries/view/{$id}";
+
+                    // Send in-app notification to the assigned staff member
+                    $notifService = new \App\Services\NotificationService($this->db);
+                    $notifService->notify(
+                        'inquiry',
+                        "You have been assigned inquiry #{$id} from {$inquiry['name']} ({$inquiry['phone']}).",
+                        $assignedTo,
+                        $actionUrl,
+                        "New Inquiry Assigned: {$inquiry['name']}"
+                    );
+
+                    \App\Core\Cache::delete('admin_notify_inquiries_pending');
+                    \App\Core\Cache::delete('admin_notify_inquiries_today');
+                    $this->setFlash('success', 'Inquiry assigned successfully and notification sent to staff member.');
+                }
+            } catch (\Exception $e) {
+                $this->setFlash('error', 'Failed to assign inquiry: ' . $e->getMessage());
+            }
+            $this->redirect('/admin/inquiries/view/' . $id);
+            return;
+        }
+        $this->redirect('/admin/inquiries');
     }
 
     public function updateStatus()
@@ -124,6 +205,8 @@ class InquiryController extends AdminController
                 list($tSql, $tParams) = $this->tenantWhere();
                 $stmt = $this->db->prepare("UPDATE inquiries SET status = ?, updated_at = NOW() WHERE id = ? $tSql");
                 $stmt->execute(array_merge([$status, $id], $tParams));
+                \App\Core\Cache::delete('admin_notify_inquiries_pending');
+                \App\Core\Cache::delete('admin_notify_inquiries_today');
                 $this->setFlash('success', 'Status updated successfully');
             } catch (\Exception $e) {
                 $this->setFlash('error', 'Failed to update status');

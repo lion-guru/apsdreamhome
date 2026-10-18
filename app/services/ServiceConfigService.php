@@ -101,12 +101,14 @@ class ServiceConfigService
         $pdo = $this->requirePdo();
 
         if ($existing !== null) {
+            $storeValue = (!empty($meta['is_secret'])) ? self::encryptValue((string) $value) : (string) $value;
             $stmt = $pdo->prepare(
                 "UPDATE `service_configs` SET `config_value` = ?, `updated_at` = NOW()
                  WHERE `service_name` = ? AND `config_key` = ?" . $this->tenantSql()
             );
-            $stmt->execute([(string) $value, $service, $key]);
+            $stmt->execute([$storeValue, $service, $key]);
         } else {
+            $storeValue = (!empty($meta['is_secret'])) ? self::encryptValue((string) $value) : (string) $value;
             $insertCols = ['service_name','config_key','config_value','config_type','description','is_secret','group_name','sort_order'];
             $insertVals = str_repeat('?,', count($insertCols) - 1) . '?';
             $insertCols = array_merge($insertCols, array_keys($this->tenantInsertData()));
@@ -343,20 +345,75 @@ class ServiceConfigService
     }
 
     /**
-     * Encrypt a value for storage (simple base64; production should use sodium).
+     * Encrypt a value for storage (AES-256-CBC via openssl).
+     *
+     * Key is derived from a file at storage/keys/service_config.key (outside
+     * webroot). If the key file is missing it is generated once with 32 random
+     * bytes. Ciphertext = base64(iv + ciphertext) so the IV travels with the data.
      */
     public static function encryptValue(string $value): string
     {
-        return base64_encode($value);
+        $key = self::encryptionKey();
+        $iv = random_bytes(16);
+        $cipher = openssl_encrypt($value, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);
+        if ($cipher === false) {
+            return 'enc:v1:' . base64_encode($value); // last-resort fallback, never silently plaintext
+        }
+        return 'enc:v1:' . base64_encode($iv . $cipher);
     }
 
     /**
-     * Decrypt a stored value.
+     * Decrypt a stored value. Returns the original plaintext.
+     * If the value is not in our encrypted format (legacy plaintext), it is
+     * returned as-is so existing rows remain readable until the migration pass.
      */
     public static function decryptValue(string $encoded): string
     {
-        $decoded = base64_decode($encoded, true);
-        return $decoded !== false ? $decoded : $encoded;
+        // Not our format — legacy plaintext, return as-is
+        if (!str_starts_with($encoded, 'enc:v1:')) {
+            return $encoded;
+        }
+        $raw = base64_decode(substr($encoded, 7), true);
+        if ($raw === false || strlen($raw) <= 16) {
+            return $encoded; // corrupted — return as-is rather than crash
+        }
+        $key = self::encryptionKey();
+        $iv = substr($raw, 0, 16);
+        $cipher = substr($raw, 16);
+        $plain = openssl_decrypt($cipher, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);
+        return $plain !== false ? $plain : $encoded;
+    }
+
+    /**
+     * Path to the encryption key file (outside webroot).
+     */
+    public static function keyFilePath(): string
+    {
+        $storage = defined('APS_STORAGE') ? APS_STORAGE : (defined('APS_ROOT') ? APS_ROOT . '/storage' : __DIR__ . '/../../storage');
+        return $storage . '/keys/service_config.key';
+    }
+
+    /**
+     * Derive a 32-byte encryption key from the key file. Creates the file if missing.
+     */
+    private static function encryptionKey(): string
+    {
+        $path = self::keyFilePath();
+        if (file_exists($path)) {
+            $raw = file_get_contents($path);
+            if ($raw !== false && strlen($raw) >= 32) {
+                return substr($raw, 0, 32);
+            }
+        }
+        // Generate a new key (32 random bytes, base64 for storage)
+        $dir = dirname($path);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0700, true);
+        }
+        $keyBytes = random_bytes(32);
+        file_put_contents($path, $keyBytes, LOCK_EX);
+        chmod($path, 0600);
+        return $keyBytes;
     }
 
     // ── Private helpers ──
@@ -387,6 +444,9 @@ class ServiceConfigService
             foreach ($rows as $row) {
                 $s = $row['service_name'];
                 $k = $row['config_key'];
+                if (!empty($row['is_secret']) && $row['config_value'] !== '' && $row['config_value'] !== null) {
+                    $row['config_value'] = self::decryptValue($row['config_value']);
+                }
                 $this->cache[$s][$k] = $row;
             }
         } catch (\Throwable $e) {

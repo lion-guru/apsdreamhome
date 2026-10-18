@@ -28,9 +28,10 @@ class GoogleCalendarService
     public function __construct()
     {
         $this->db = Database::getInstance();
-        $this->clientId = getenv('GOOGLE_CLIENT_ID') ?: '';
-        $this->clientSecret = getenv('GOOGLE_CLIENT_SECRET') ?: '';
-        $this->redirectUri = getenv('GOOGLE_REDIRECT_URI') ?: (defined('BASE_URL') ? BASE_URL . '/admin/calendar-sync/callback' : '');
+        $dbCfg = \App\Services\ServiceConfigService::getInstance()->getApiConfig('google_calendar');
+        $this->clientId = $dbCfg['client_id'] ?? (getenv('GOOGLE_CLIENT_ID') ?: '');
+        $this->clientSecret = $dbCfg['client_secret'] ?? (getenv('GOOGLE_CLIENT_SECRET') ?: '');
+        $this->redirectUri = $dbCfg['redirect_uri'] ?? (getenv('GOOGLE_REDIRECT_URI') ?: (defined('BASE_URL') ? BASE_URL . '/admin/calendar-sync/callback' : ''));
         $this->tenantId = (int)TenantContext::getId();
     }
 

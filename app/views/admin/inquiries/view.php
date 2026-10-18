@@ -1,3 +1,7 @@
+<?php
+$staffList = $staffList ?? [];
+$assignedUser = $assignedUser ?? null;
+?>
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h1 class="h3 mb-1">Inquiry Details</h1>
@@ -61,6 +65,53 @@
     </div>
 
     <div class="col-lg-4">
+        <!-- Staff Assignment Card -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-user-check me-2 text-primary"></i>Assigned Staff</h5>
+            </div>
+            <div class="card-body aps-cp-card-body">
+                <div class="mb-3">
+                    <label class="text-muted small">Current Handler</label>
+                    <?php if (!empty($assignedUser)): ?>
+                        <div class="d-flex align-items-center mt-1 p-2 border rounded bg-light">
+                            <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width:36px;height:36px;font-weight:600;">
+                                <?php echo strtoupper(substr($assignedUser['name'], 0, 1)); ?>
+                            </div>
+                            <div>
+                                <div class="fw-semibold text-dark"><?php echo htmlspecialchars($assignedUser['name']); ?></div>
+                                <small class="text-muted"><?php echo htmlspecialchars(ucfirst($assignedUser['role'])); ?> &bull; <?php echo htmlspecialchars($assignedUser['phone'] ?? $assignedUser['email'] ?? ''); ?></small>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <div class="alert alert-warning py-2 px-3 mt-1 mb-0 d-flex align-items-center">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <span>Unassigned &mdash; No staff assigned yet</span>
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <form method="POST" action="<?php echo BASE_URL; ?>/admin/inquiries/assign">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                    <input type="hidden" name="id" value="<?php echo e($inquiry['id']); ?>">
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Assign / Reassign Staff</label>
+                        <select name="assigned_to" class="form-select" required>
+                            <option value="">-- Select Staff Member --</option>
+                            <?php foreach ($staffList as $staff): ?>
+                                <option value="<?php echo e($staff['id']); ?>" <?php echo (!empty($inquiry['assigned_to']) && $inquiry['assigned_to'] == $staff['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($staff['name']); ?> (<?php echo htmlspecialchars(ucfirst($staff['role'])); ?>)
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-outline-primary btn-sm w-100">
+                        <i class="fas fa-paper-plane me-1"></i>Assign Staff & Notify
+                    </button>
+                </form>
+            </div>
+        </div>
+
         <!-- Status Update -->
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-white">

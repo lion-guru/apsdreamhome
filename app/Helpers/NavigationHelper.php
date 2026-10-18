@@ -149,21 +149,19 @@ class NavigationHelper
 
     private function detectAuthState(): void
     {
-        $isCustomer = isset($_SESSION['user_id']) && $_SESSION['user_id'];
-        $isAssociate = isset($_SESSION['associate_id']) && $_SESSION['associate_id'];
-        $isAgent = isset($_SESSION['agent_id']) && $_SESSION['agent_id'];
-        $isEmployee = isset($_SESSION['employee_id']) && $_SESSION['employee_id'];
         $isAdmin = isset($_SESSION['admin_id']) && $_SESSION['admin_id'];
+        $isCustomer = isset($_SESSION['user_id']) && $_SESSION['user_id'] && !$isAdmin;
+        $isAssociate = isset($_SESSION['associate_id']) && $_SESSION['associate_id'] && !$isAdmin;
+        $isAgent = isset($_SESSION['agent_id']) && $_SESSION['agent_id'] && !$isAdmin;
+        $isEmployee = isset($_SESSION['employee_id']) && $_SESSION['employee_id'] && !$isAdmin;
 
-        // Admin sessions should NOT be exposed in public header - they belong in admin panel only
-        // If admin is logged in, treat as not logged in for public header purposes
         $this->auth = [
-            'is_logged_in'  => $isCustomer || $isAssociate || $isAgent || $isEmployee,
-            'is_customer'   => $isCustomer,
-            'is_associate'  => $isAssociate,
-            'is_agent'      => $isAgent,
-            'is_employee'   => $isEmployee,
-            'is_admin'      => false, // Never expose admin in public header
+            'is_logged_in'  => (bool)($isCustomer || $isAssociate || $isAgent || $isEmployee || $isAdmin),
+            'is_customer'   => (bool)$isCustomer,
+            'is_associate'  => (bool)$isAssociate,
+            'is_agent'      => (bool)$isAgent,
+            'is_employee'   => (bool)$isEmployee,
+            'is_admin'      => (bool)$isAdmin,
         ];
     }
 
@@ -179,6 +177,7 @@ class NavigationHelper
 
     public function userName(): string
     {
+        if ($this->auth['is_admin'])        return $_SESSION['admin_name'] ?? 'Admin';
         if ($this->auth['is_associate'])    return $_SESSION['associate_name'] ?? 'Associate';
         if ($this->auth['is_agent'])        return $_SESSION['agent_name'] ?? 'Agent';
         if ($this->auth['is_employee'])     return $_SESSION['employee_name'] ?? 'Employee';
@@ -188,6 +187,7 @@ class NavigationHelper
 
     public function userRole(): string
     {
+        if ($this->auth['is_admin'])     return 'Admin';
         if ($this->auth['is_associate']) return 'Associate';
         if ($this->auth['is_agent'])     return 'Agent';
         if ($this->auth['is_employee'])  return 'Employee';
@@ -197,6 +197,7 @@ class NavigationHelper
 
     public function userIconClass(): string
     {
+        if ($this->auth['is_admin'])     return 'fa-shield-halved';
         if ($this->auth['is_associate']) return 'fa-handshake';
         if ($this->auth['is_agent'])     return 'fa-briefcase';
         if ($this->auth['is_employee'])  return 'fa-user-tie';
@@ -205,6 +206,7 @@ class NavigationHelper
 
     public function dashboardUrl(): string
     {
+        if ($this->auth['is_admin'])     return '/admin/dashboard';
         if ($this->auth['is_associate']) return '/associate/dashboard';
         if ($this->auth['is_agent'])     return '/agent/dashboard';
         if ($this->auth['is_employee'])  return '/employee/dashboard';
@@ -214,6 +216,7 @@ class NavigationHelper
 
     public function logoutUrl(): string
     {
+        if ($this->auth['is_admin'])     return '/admin/logout';
         if ($this->auth['is_associate']) return '/associate/logout';
         if ($this->auth['is_agent'])     return '/agent/logout';
         if ($this->auth['is_employee'])  return '/employee/logout';
@@ -222,16 +225,25 @@ class NavigationHelper
 
     public function roleColorClass(): string
     {
-        // Admin is not exposed in public header
-        return $this->auth['is_associate'] ? 'bg-success' : 'bg-primary';
+        if ($this->auth['is_admin'])     return 'bg-dark';
+        if ($this->auth['is_associate']) return 'bg-success';
+        return 'bg-primary';
     }
 
     /**
      * Role-specific dropdown menu items for the user/profile menu.
-     * Admin is intentionally excluded - admin users should use the admin panel layout.
      */
     public function getUserMenuItems(): array
     {
+        if ($this->auth['is_admin']) {
+            return [
+                ['label' => 'Admin Dashboard',      'url' => '/admin/dashboard',        'icon' => 'fa-tachometer-alt'],
+                ['label' => 'Manage Leads',         'url' => '/admin/manage_leads.php', 'icon' => 'fa-user-tag'],
+                ['label' => 'Properties & Plots',   'url' => '/admin/plots',            'icon' => 'fa-map-marked-alt'],
+                ['label' => 'Notification Center',  'url' => '/admin/notifications',    'icon' => 'fa-bell'],
+                ['label' => 'System Settings',      'url' => '/admin/service-configs',  'icon' => 'fa-cog'],
+            ];
+        }
         if ($this->auth['is_associate']) {
             return [
                 ['label' => __('dashboard'),            'url' => '/associate/dashboard',        'icon' => 'fa-tachometer-alt'],
@@ -340,8 +352,10 @@ class NavigationHelper
             ];
         }
 
-        $this->headerData['locations'] = $locations;
-        $this->headerData['projects']  = $all;
+        $this->headerData = [
+            'locations' => $locations,
+            'projects'  => $all,
+        ];
         return $this->headerData;
     }
 

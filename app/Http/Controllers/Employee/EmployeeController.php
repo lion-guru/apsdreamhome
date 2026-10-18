@@ -248,7 +248,7 @@ class EmployeeController extends BaseController
             'user_points' => $userPoints,
             'user_level' => $userLevel,
         ];
-        $this->render('employees/dashboard', $data);
+        $this->render('employee_leads/dashboard', $data);
     }
 
     /**
@@ -343,6 +343,23 @@ class EmployeeController extends BaseController
 
             // Get activities
             $data['activities'] = $this->getEmployeeActivities($employeeId);
+
+            // Get inquiries assigned to this employee
+            try {
+                $empUserId = $_SESSION['employee_user_id'] ?? $employeeId;
+                $inquiriesCount = $this->db->fetchOne(
+                    "SELECT COUNT(*) as total, 
+                            SUM(CASE WHEN status IN ('pending', 'new') THEN 1 ELSE 0 END) as pending_cnt
+                     FROM inquiries WHERE assigned_to = ?",
+                    [$empUserId]
+                );
+                $data['inquiries_stats'] = [
+                    'total' => (int)($inquiriesCount['total'] ?? 0),
+                    'pending' => (int)($inquiriesCount['pending_cnt'] ?? 0),
+                ];
+            } catch (\Throwable $e) {
+                $data['inquiries_stats'] = ['total' => 0, 'pending' => 0];
+            }
 
             // Get department requests for this employee's department
             try {
@@ -1836,7 +1853,266 @@ class EmployeeController extends BaseController
         $this->redirect('/employee_leads/leads');
     }
 
-private function handleTestLogin(string $mode): void
+    /**
+     * View inquiries assigned to the employee
+     */
+    public function inquiries()
+    {
+        if (!isset($_SESSION['employee_id'])) {
+            $this->redirect('/employee/login');
+            return;
+        }
+
+        $employeeUserId = (int)($_SESSION['employee_user_id'] ?? $_SESSION['user_id'] ?? $_SESSION['employee_id']);
+        $status = $_GET['status'] ?? '';
+        $search = trim($_GET['search'] ?? '');
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $perPage = 15;
+        $offset = ($page - 1) * $perPage;
+
+        $inquiries = [];
+        $total = 0;
+        $stats = ['total' => 0, 'pending' => 0, 'in_progress' => 0, 'completed' => 0, 'closed' => 0];
+
+        try {
+            // Count stats for this employee
+            $statRows = $this->db->fetchAll(
+                "SELECT status, COUNT(*) as cnt FROM inquiries WHERE assigned_to = ? GROUP BY status",
+                [$employeeUserId]
+            ) ?: [];
+            foreach ($statRows as $sr) {
+                $s = strtolower($sr['status'] ?? '');
+                if (isset($stats[$s])) {
+                    $stats[$s] = (int)$sr['cnt'];
+                }
+                $stats['total'] += (int)$sr['cnt'];
+            }
+
+            $where = 'WHERE i.assigned_to = ?';
+            $params = [$employeeUserId];
+
+            if ($status && $status !== 'all') {
+                $where .= ' AND i.status = ?';
+                $params[] = $status;
+            }
+            if ($search) {
+                $where .= ' AND (i.name LIKE ? OR i.phone LIKE ? OR i.email LIKE ? OR i.message LIKE ?)';
+                $searchTerm = "%{$search}%";
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+            }
+
+            $countRow = $this->db->fetchOne("SELECT COUNT(*) as cnt FROM inquiries i {$where}", $params);
+            $total = (int)($countRow['cnt'] ?? 0);
+
+            $params[] = $perPage;
+            $params[] = $offset;
+            $inquiries = $this->db->fetchAll(
+                "SELECT i.*, p.title as property_title, proj.name as project_name
+                 FROM inquiries i
+                 LEFT JOIN properties p ON p.id = i.property_id
+                 LEFT JOIN projects proj ON proj.id = i.project_id
+                 {$where}
+                 ORDER BY i.created_at DESC
+                 LIMIT ? OFFSET ?",
+                $params
+            ) ?: [];
+        } catch (\Throwable $e) {
+            error_log('Employee inquiries error: ' . $e->getMessage());
+        }
+
+        $totalPages = max(1, (int)ceil($total / $perPage));
+
+        $this->render('employee_leads/inquiries', [
+            'page_title' => 'Assigned Inquiries',
+            'page_description' => 'Customer inquiries assigned to you',
+            'inquiries' => $inquiries,
+            'stats' => $stats,
+            'total' => $total,
+            'page' => $page,
+            'totalPages' => $totalPages,
+            'status' => $status,
+            'search' => $search,
+            'csrf_token' => $this->getCsrfToken(),
+        ]);
+    }
+
+    /**
+     * View detail of a single assigned inquiry
+     */
+    public function inquiryDetail($id = null)
+    {
+        if (!isset($_SESSION['employee_id'])) {
+            $this->redirect('/employee/login');
+            return;
+        }
+
+        $id = (int)$id;
+        if ($id <= 0) {
+            $this->redirect('/employee/inquiries');
+            return;
+        }
+
+        $employeeUserId = (int)($_SESSION['employee_user_id'] ?? $_SESSION['user_id'] ?? $_SESSION['employee_id']);
+        $role = $_SESSION['employee_role'] ?? $_SESSION['role'] ?? 'employee';
+
+        try {
+            $inquiry = $this->db->fetchOne(
+                "SELECT i.*, p.title as property_title, proj.name as project_name
+                 FROM inquiries i
+                 LEFT JOIN properties p ON p.id = i.property_id
+                 LEFT JOIN projects proj ON proj.id = i.project_id
+                 WHERE i.id = ?",
+                [$id]
+            );
+
+            if (!$inquiry) {
+                $_SESSION['error'] = 'Inquiry not found.';
+                $this->redirect('/employee/inquiries');
+                return;
+            }
+
+            // Verify authorization: must be assigned or be a manager/admin
+            $isAssigned = ((int)$inquiry['assigned_to'] === $employeeUserId);
+            $isPrivileged = in_array($role, ['manager', 'admin', 'super_admin', 'director'], true);
+
+            if (!$isAssigned && !$isPrivileged) {
+                $_SESSION['error'] = 'You are not authorized to view this inquiry.';
+                $this->redirect('/employee/inquiries');
+                return;
+            }
+
+            // Mark as read
+            if (!$inquiry['is_read']) {
+                $this->db->execute("UPDATE inquiries SET is_read = 1 WHERE id = ?", [$id]);
+                $inquiry['is_read'] = 1;
+                \App\Core\Cache::delete('admin_notify_inquiries_pending');
+            }
+
+            $this->render('employee_leads/inquiry_detail', [
+                'page_title' => 'Inquiry #' . $id . ' — ' . htmlspecialchars($inquiry['name']),
+                'page_description' => 'Handle customer inquiry and log follow-up actions',
+                'inquiry' => $inquiry,
+                'csrf_token' => $this->getCsrfToken(),
+            ]);
+        } catch (\Throwable $e) {
+            error_log('Employee inquiryDetail error: ' . $e->getMessage());
+            $_SESSION['error'] = 'An error occurred loading inquiry.';
+            $this->redirect('/employee/inquiries');
+        }
+    }
+
+    /**
+     * Update status of an assigned inquiry
+     */
+    public function updateInquiryStatus($id = null)
+    {
+        if (!isset($_SESSION['employee_id'])) {
+            $this->redirect('/employee/login');
+            return;
+        }
+
+        $id = (int)$id;
+        $employeeUserId = (int)($_SESSION['employee_user_id'] ?? $_SESSION['user_id'] ?? $_SESSION['employee_id']);
+        $newStatus = trim($_POST['status'] ?? '');
+        $allowedStatuses = ['pending', 'in_progress', 'completed', 'closed'];
+
+        if ($id <= 0 || !in_array($newStatus, $allowedStatuses, true)) {
+            $_SESSION['error'] = 'Invalid status update request.';
+            $this->redirect('/employee/inquiries/' . $id);
+            return;
+        }
+
+        try {
+            $this->db->execute(
+                "UPDATE inquiries SET status = ?, updated_at = NOW() WHERE id = ? AND (assigned_to = ? OR 1=?)",
+                [$newStatus, $id, $employeeUserId, in_array($_SESSION['employee_role'] ?? '', ['admin', 'manager'], true) ? 1 : 0]
+            );
+
+            // Log activity
+            $this->db->execute(
+                "INSERT INTO employee_activity_logs_unified (user_id, email, success, details, created_at)
+                 VALUES (?, ?, 1, ?, NOW())",
+                [
+                    $employeeUserId,
+                    $_SESSION['user_email'] ?? $_SESSION['employee_email'] ?? '',
+                    "Updated Inquiry #{$id} status to {$newStatus}"
+                ]
+            );
+
+            // If completed or closed, notify admin
+            if (in_array($newStatus, ['completed', 'closed'], true)) {
+                $notifService = new \App\Services\NotificationService($this->db);
+                $empName = $_SESSION['user_name'] ?? $_SESSION['employee_name'] ?? 'Staff Member';
+                $notifService->notify(
+                    'inquiry',
+                    "Inquiry #{$id} marked as {$newStatus} by {$empName}.",
+                    null,
+                    "/admin/inquiries/view/{$id}",
+                    "Inquiry #{$id} Resolved"
+                );
+            }
+
+            \App\Core\Cache::delete('admin_notify_inquiries_pending');
+            $_SESSION['success'] = 'Inquiry status updated to ' . ucfirst(str_replace('_', ' ', $newStatus));
+        } catch (\Throwable $e) {
+            error_log('updateInquiryStatus error: ' . $e->getMessage());
+            $_SESSION['error'] = 'Failed to update status.';
+        }
+
+        $this->redirect('/employee/inquiries/' . $id);
+    }
+
+    /**
+     * Log a follow-up action/call on an assigned inquiry
+     */
+    public function addInquiryFollowup($id = null)
+    {
+        if (!isset($_SESSION['employee_id'])) {
+            $this->redirect('/employee/login');
+            return;
+        }
+
+        $id = (int)$id;
+        $employeeUserId = (int)($_SESSION['employee_user_id'] ?? $_SESSION['user_id'] ?? $_SESSION['employee_id']);
+        $note = trim($_POST['followup_note'] ?? '');
+
+        if ($id <= 0 || empty($note)) {
+            $_SESSION['error'] = 'Please enter follow-up details.';
+            $this->redirect('/employee/inquiries/' . $id);
+            return;
+        }
+
+        try {
+            // Increment followup count and touch last_followup_at
+            $this->db->execute(
+                "UPDATE inquiries SET followup_count = COALESCE(followup_count, 0) + 1, last_followup_at = NOW(), status = 'in_progress', updated_at = NOW() WHERE id = ?",
+                [$id]
+            );
+
+            // Log activity log entry
+            $this->db->execute(
+                "INSERT INTO employee_activity_logs_unified (user_id, email, success, details, created_at)
+                 VALUES (?, ?, 1, ?, NOW())",
+                [
+                    $employeeUserId,
+                    $_SESSION['user_email'] ?? $_SESSION['employee_email'] ?? '',
+                    "Inquiry #{$id} Follow-up Log: " . substr($note, 0, 255)
+                ]
+            );
+
+            $_SESSION['success'] = 'Follow-up logged successfully.';
+        } catch (\Throwable $e) {
+            error_log('addInquiryFollowup error: ' . $e->getMessage());
+            $_SESSION['error'] = 'Failed to log follow-up.';
+        }
+
+        $this->redirect('/employee/inquiries/' . $id);
+    }
+
+    private function handleTestLogin(string $mode): void
     {
         // Hardcoded test user to avoid DB queries in read-only mode
         $user = ['id' => 7, 'name' => 'Employee User', 'email' => 'employee@test.com', 'password' => '', 'role' => 'employee'];

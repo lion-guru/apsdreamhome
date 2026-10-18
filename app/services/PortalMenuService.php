@@ -201,6 +201,7 @@ class PortalMenuService
             $this->item('collections', 'Field Ops', 'Cash Collections', '/associate/collections', 'fas fa-hand-holding-usd'),
             $this->item('site-visits', 'Field Ops', 'Site Visits', '/associate/site-visits', 'fas fa-map-marker-alt', $this->countSiteVisits()),
             $this->item('schedule', 'Field Ops', 'My Schedule', '/associate/schedule', 'fas fa-calendar-alt'),
+            $this->item('call-recordings', 'Field Ops', 'Call Recordings', '/associate/call-recordings', 'fas fa-phone-volume', $this->countTable('call_recordings', 'associate_id')),
 
             // Property Tools
             $this->item('browse', 'Properties', 'Browse Properties', '/associate/browse', 'fas fa-search'),
@@ -276,6 +277,8 @@ class PortalMenuService
                                 $badge = $this->countTable('agent_tasks', 'assigned_to');
                             } elseif ($row['name'] === 'Leaves') {
                                 $badge = $this->countTable('employee_leave_requests', 'employee_id', 'status', 'pending');
+                            } elseif ($row['name'] === 'My Inquiries' || $row['name'] === 'Inquiries') {
+                                $badge = $this->countTable('inquiries', 'assigned_to', 'status', 'pending');
                             }
                             
                             $items[] = $this->item($key, $section, $row['name'], $row['url'], $row['icon'], $badge);
@@ -293,6 +296,7 @@ class PortalMenuService
         return [
             $this->item('dashboard', 'Main', 'Dashboard', '/employee/dashboard', 'fas fa-tachometer-alt'),
             $this->item('leads', 'CRM', 'My Leads', '/employee/leads', 'fas fa-user-tie', $this->countTable('leads', 'assigned_to')),
+            $this->item('inquiries', 'CRM', 'My Inquiries', '/employee/inquiries', 'fas fa-envelope-open-text', $this->countTable('inquiries', 'assigned_to', 'status', 'pending')),
             $this->item('leads-add', 'CRM', 'Add Lead', '/employee/leads/add', 'fas fa-plus-circle'),
             $this->item('tasks', 'Work', 'My Tasks', '/employee/tasks', 'fas fa-tasks', $this->countTable('agent_tasks', 'assigned_to')),
             $this->item('attendance', 'Work', 'Attendance', '/employee/attendance', 'fas fa-calendar-check'),

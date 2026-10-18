@@ -10,6 +10,10 @@ use App\Services\EmployeeAssetService;
 use App\Services\AnnouncementService;
 use App\Services\ShiftSwapService;
 use App\Services\HelpdeskService;
+use App\Services\EmployeeGrievanceService;
+use App\Services\TrainingService;
+use App\Services\OrgChartService;
+use App\Services\EngagementSurveyService;
 
 class EmployeeSelfServiceController extends BaseController
 {
@@ -22,6 +26,10 @@ class EmployeeSelfServiceController extends BaseController
     private $announcementService;
     private $shiftSwapService;
     private $helpdeskService;
+    private $grievanceService;
+    private $trainingService;
+    private $orgChartService;
+    private $surveyService;
 
     public function __construct()
     {
@@ -34,6 +42,32 @@ class EmployeeSelfServiceController extends BaseController
         $this->announcementService = new AnnouncementService();
         $this->shiftSwapService = new ShiftSwapService();
         $this->helpdeskService = new HelpdeskService();
+        $this->grievanceService = new EmployeeGrievanceService();
+        $this->trainingService = new TrainingService();
+        $this->orgChartService = new OrgChartService();
+        $this->surveyService = new EngagementSurveyService();
+    }
+
+    /**
+     * Require employee to be logged in (has employee_id in session)
+     */
+    protected function requireEmployeeLogin(): void
+    {
+        $this->requireLogin();
+        if (empty($_SESSION['employee_id'])) {
+            // Try to find employee by user_id
+            $userId = $_SESSION['user_id'] ?? 0;
+            if ($userId) {
+                $emp = $this->db->fetchOne("SELECT id FROM employees WHERE user_id = ? AND status = 'active' LIMIT 1", [$userId]);
+                if ($emp) {
+                    $_SESSION['employee_id'] = $emp['id'];
+                    return;
+                }
+            }
+            $this->setFlash('error', 'Employee access required');
+            $this->redirect(BASE_URL . '/employee/login');
+            exit;
+        }
     }
 
     // ... existing methods ...
@@ -331,6 +365,31 @@ class EmployeeSelfServiceController extends BaseController
     }
 
     /**
+     * Mark announcement as read
+     */
+    public function announcementMarkRead($id)
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION['employee_id'];
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request', 400);
+        }
+
+        $token = $_POST['csrf_token'] ?? '';
+        if (!$this->validateCsrfToken($token)) {
+            return $this->jsonError('Invalid CSRF token', 400);
+        }
+
+        try {
+            $this->announcementService->markAsRead((int)$id, $_SESSION['employee_id']);
+            return $this->jsonResponse(['success' => true, 'message' => 'Marked as read']);
+        } catch (Exception $e) {
+            return $this->jsonError('Failed: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
      * Shift Swaps
      */
     public function shiftSwaps()
@@ -476,6 +535,382 @@ class EmployeeSelfServiceController extends BaseController
             'page_title' => 'Ticket #' . $ticket['ticket_number'],
             'ticket' => $ticket,
             'comments' => $comments
+        ]);
+    }
+
+    /**
+     * Employee Grievances Dashboard
+     */
+    public function grievances()
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION['employee_id'];
+
+        $grievances = $this->grievanceService->getEmployeeGrievances($employeeId);
+
+        return $this->render('employee/self_service/grievances', [
+            'page_title' => 'My Grievances',
+            'grievances' => $grievances
+        ]);
+    }
+
+    /**
+     * Create new grievance
+     */
+    public function grievanceCreate()
+    {
+        $this->requireEmployeeLogin();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $result = $this->grievanceService->submitGrievance($_SESSION['employee_id'], $_POST);
+            $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
+            if ($result['success']) {
+                $this->redirect(BASE_URL . '/employee/self-service/grievances');
+            } else {
+                $this->redirect(BASE_URL . '/employee/self-service/grievances/create');
+            }
+            exit;
+        }
+
+        return $this->render('employee/self_service/grievance_create', [
+            'page_title' => 'Submit Grievance',
+            'categories' => $this->grievanceService->getCategories(),
+            'priorities' => $this->grievanceService->getPriorities(),
+        ]);
+    }
+
+    /**
+     * Grievance detail
+     */
+    public function grievanceDetail($id)
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION['employee_id'];
+
+        $grievance = $this->grievanceService->getGrievance($id);
+        if (!$grievance || $grievance['employee_id'] != $employeeId) {
+            $_SESSION['error'] = 'Grievance not found';
+            $this->redirect(BASE_URL . '/employee/self-service/grievances');
+            exit;
+        }
+
+        $comments = $this->grievanceService->getComments($id);
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $result = $this->grievanceService->addComment($id, $employeeId, $_POST['comment'] ?? '', false);
+            $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
+            $this->redirect(BASE_URL . "/employee/self-service/grievances/$id");
+            exit;
+        }
+
+        return $this->render('employee/self_service/grievance_detail', [
+            'page_title' => 'Grievance #' . $grievance['grievance_number'],
+            'grievance' => $grievance,
+            'comments' => $comments
+        ]);
+    }
+
+    /**
+     * Add comment to grievance
+     */
+    public function grievanceComment($id)
+    {
+        $this->requireEmployeeLogin();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $result = $this->grievanceService->addComment(
+                $id,
+                $_SESSION['employee_id'],
+                $_POST['comment'] ?? '',
+                false
+            );
+            $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
+            $this->redirect(BASE_URL . "/employee/self-service/grievances/$id");
+            exit;
+        }
+
+        $this->redirect(BASE_URL . "/employee/self-service/grievances/$id");
+    }
+
+    /**
+     * Close grievance with rating
+     */
+    public function grievanceClose($id)
+    {
+        $this->requireEmployeeLogin();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $result = $this->grievanceService->closeWithRating(
+                $id,
+                $_SESSION['employee_id'],
+                (int)($_POST['rating'] ?? 0),
+                $_POST['feedback'] ?? ''
+            );
+            $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
+            $this->redirect(BASE_URL . '/employee/self-service/grievances');
+            exit;
+        }
+
+        $grievance = $this->grievanceService->getGrievance($id);
+        if (!$grievance || $grievance['employee_id'] != $_SESSION['employee_id']) {
+            $_SESSION['error'] = 'Grievance not found';
+            $this->redirect(BASE_URL . '/employee/self-service/grievances');
+            return;
+        }
+
+        return $this->render('employee/self_service/grievance_close', [
+            'page_title' => 'Close Grievance',
+            'grievance' => $grievance
+        ]);
+    }
+
+    // ──────────────────────────────────────────────
+    // TRAINING / L&D
+    // ──────────────────────────────────────────────
+
+    public function training()
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION['employee_id'];
+
+        $assignments = $this->trainingService->getEmployeeAssignments($employeeId);
+
+        // Separate by status
+        $inProgress = array_filter($assignments, fn($a) => $a['status'] === 'in_progress');
+        $completed = array_filter($assignments, fn($a) => $a['status'] === 'completed');
+        $assigned = array_filter($assignments, fn($a) => $a['status'] === 'assigned' || $a['status'] === 'overdue');
+
+        return $this->render('employee/self_service/training', [
+            'page_title' => 'My Training',
+            'in_progress' => array_values($inProgress),
+            'completed' => array_values($completed),
+            'assigned' => array_values($assigned),
+            'summary' => [
+                'total' => count($assignments),
+                'in_progress' => count($inProgress),
+                'completed' => count($completed),
+                'overdue' => count(array_filter($assigned, fn($a) => $a['status'] === 'overdue'))
+            ]
+        ]);
+    }
+
+    public function trainingCourseDetail($id)
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION['employee_id'];
+
+        $assignments = $this->trainingService->getEmployeeAssignments($employeeId);
+        $assignment = null;
+        foreach ($assignments as $a) {
+            if ($a['id'] == $id) {
+                $assignment = $a;
+                break;
+            }
+        }
+
+        if (!$assignment) {
+            $_SESSION['error'] = 'Course assignment not found';
+            $this->redirect(BASE_URL . '/employee/self-service/training');
+            exit;
+        }
+
+        return $this->render('employee/self_service/training_detail', [
+            'page_title' => $assignment['course_title'],
+            'assignment' => $assignment
+        ]);
+    }
+
+    public function trainingUpdateProgress()
+    {
+        $this->requireEmployeeLogin();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request', 400);
+        }
+
+        $token = $_POST['csrf_token'] ?? '';
+        if (!$this->validateCsrfToken($token)) {
+            return $this->jsonError('Invalid CSRF token', 400);
+        }
+
+        $assignmentId = (int)($_POST['assignment_id'] ?? 0);
+        $progress = (float)($_POST['progress'] ?? 0);
+
+        $assignments = $this->trainingService->getEmployeeAssignments($_SESSION['employee_id']);
+        $found = false;
+        foreach ($assignments as $a) {
+            if ($a['id'] == $assignmentId) {
+                $found = true;
+                break;
+            }
+        }
+
+        if (!$found) {
+            return $this->jsonError('Assignment not found', 404);
+        }
+
+        $result = $this->trainingService->updateAssignmentProgress($assignmentId, ['progress' => $progress]);
+        return $this->jsonResponse($result);
+    }
+
+    public function certifications()
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION['employee_id'];
+
+        $certifications = $this->trainingService->getEmployeeCertifications($employeeId);
+
+        return $this->render('employee/self_service/certifications', [
+            'page_title' => 'My Certifications',
+            'certifications' => $certifications
+        ]);
+    }
+
+    // ──────────────────────────────────────────────
+    // ORG CHART (VIEW ONLY)
+    // ──────────────────────────────────────────────
+
+    public function orgChart()
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION['employee_id'];
+
+        // Find employee's position in org chart
+        $myNode = $this->db->fetch("SELECT * FROM org_chart_nodes WHERE employee_id = ? AND tenant_id = ? AND is_active = 1", [$employeeId, $this->tenantId()]);
+
+        $tree = $this->orgChartService->getTree();
+        $departments = $this->orgChartService->getDepartments();
+
+        return $this->render('employee/self_service/org_chart', [
+            'page_title' => 'Organizational Chart',
+            'tree' => $tree,
+            'my_node' => $myNode,
+            'departments' => $departments
+        ]);
+    }
+
+    public function orgChartDepartment($dept)
+    {
+        $this->requireEmployeeLogin();
+
+        $tree = $this->orgChartService->getDepartmentChart($dept);
+
+        return $this->render('employee/self_service/org_chart_department', [
+            'page_title' => 'Department: ' . $dept,
+            'tree' => $tree,
+            'department' => $dept
+        ]);
+    }
+
+    // ──────────────────────────────────────────────
+    // ENGAGEMENT SURVEYS
+    // ──────────────────────────────────────────────
+
+    public function surveys()
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION['employee_id'];
+
+        $availableSurveys = $this->surveyService->getEmployeeAvailableSurveys($employeeId);
+
+        return $this->render('employee/self_service/surveys', [
+            'page_title' => 'Engagement Surveys',
+            'surveys' => $availableSurveys
+        ]);
+    }
+
+    public function surveyTake($id)
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION['employee_id'];
+
+        $survey = $this->surveyService->getSurvey($id);
+        if (!$survey) {
+            $_SESSION['error'] = 'Survey not found';
+            $this->redirect(BASE_URL . '/employee/self-service/surveys');
+            exit;
+        }
+
+        // Check if survey is active and within date range
+        if ($survey['status'] !== 'active') {
+            $_SESSION['error'] = 'Survey is not active';
+            $this->redirect(BASE_URL . '/employee/self-service/surveys');
+            exit;
+        }
+
+        if ($survey['start_date'] && $survey['start_date'] > date('Y-m-d')) {
+            $_SESSION['error'] = 'Survey has not started yet';
+            $this->redirect(BASE_URL . '/employee/self-service/surveys');
+            exit;
+        }
+
+        if ($survey['end_date'] && $survey['end_date'] < date('Y-m-d')) {
+            $_SESSION['error'] = 'Survey has ended';
+            $this->redirect(BASE_URL . '/employee/self-service/surveys');
+            exit;
+        }
+
+        // Check if already responded (unless allow_multiple)
+        $existingResponse = $this->surveyService->getEmployeeResponse($id, $employeeId);
+        if ($existingResponse && !$survey['allow_multiple']) {
+            $_SESSION['info'] = 'You have already completed this survey';
+            $this->redirect(BASE_URL . '/employee/self-service/surveys');
+            exit;
+        }
+
+        $questions = $survey['questions'] ?? [];
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $answers = [];
+            foreach ($questions as $index => $question) {
+                $key = 'q_' . $index;
+                if (isset($_POST[$key])) {
+                    $answers[$index] = is_array($_POST[$key]) ? $_POST[$key] : $_POST[$key];
+                }
+            }
+
+            $completionTime = (int)($_POST['completion_time_seconds'] ?? 0);
+
+            $result = $this->surveyService->submitResponse($id, $employeeId, $answers);
+            $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
+            if ($result['success']) {
+                $this->redirect(BASE_URL . '/employee/self-service/surveys');
+            } else {
+                $this->redirect(BASE_URL . '/employee/self-service/surveys/take/' . $id);
+            }
+            exit;
+        }
+
+        return $this->render('employee/self_service/survey_take', [
+            'page_title' => $survey['title'],
+            'survey' => $survey,
+            'questions' => $questions
+        ]);
+    }
+
+    public function surveyResults($id)
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION['employee_id'];
+
+        $survey = $this->surveyService->getSurvey($id);
+        if (!$survey) {
+            $_SESSION['error'] = 'Survey not found';
+            $this->redirect(BASE_URL . '/employee/self-service/surveys');
+            exit;
+        }
+
+        $response = $this->surveyService->getEmployeeResponse($id, $employeeId);
+        if (!$response) {
+            $_SESSION['error'] = 'You have not responded to this survey';
+            $this->redirect(BASE_URL . '/employee/self-service/surveys');
+            exit;
+        }
+
+        return $this->render('employee/self_service/survey_results', [
+            'page_title' => 'Survey Results: ' . $survey['title'],
+            'survey' => $survey,
+            'response' => $response
         ]);
     }
 }

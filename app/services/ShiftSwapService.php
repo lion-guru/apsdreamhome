@@ -93,7 +93,7 @@ class ShiftSwapService
      */
     public function getEmployeeSwaps(int $employeeId): array
     {
-        return $this->fetchAll("
+        return $this->db->fetchAll("
             SELECT ssr.*, 
                    r.name as requester_name, r.employee_code as requester_code,
                    t.name as target_name, t.employee_code as target_code,
@@ -112,7 +112,7 @@ class ShiftSwapService
      */
     public function getSwap(int $swapId): ?array
     {
-        return $this->fetchOne("
+        return $this->db->fetchOne("
             SELECT ssr.*, 
                    r.name as requester_name, r.employee_code as requester_code,
                    t.name as target_name, t.employee_code as target_code
@@ -187,7 +187,7 @@ class ShiftSwapService
      */
     public function getPendingSwaps(int $employeeId): array
     {
-        return $this->fetchAll("
+        return $this->db->fetchAll("
             SELECT ssr.*, r.name as requester_name, r.employee_code as requester_code
             FROM shift_swap_requests ssr
             JOIN employees r ON ssr.requester_id = r.id
@@ -201,7 +201,7 @@ class ShiftSwapService
      */
     public function getAllPendingSwaps(): array
     {
-        return $this->fetchAll("
+        return $this->db->fetchAll("
             SELECT ssr.*, 
                    r.name as requester_name, r.employee_code as requester_code,
                    t.name as target_name, t.employee_code as target_code
@@ -218,7 +218,7 @@ class ShiftSwapService
      */
     public function getAllSwaps(): array
     {
-        return $this->fetchAll("
+        return $this->db->fetchAll("
             SELECT ssr.*, 
                    r.name as requester_name, r.employee_code as requester_code,
                    t.name as target_name, t.employee_code as target_code

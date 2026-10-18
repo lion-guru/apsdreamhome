@@ -227,6 +227,118 @@ $current_fy = $current_fy ?? (date('Y') . '-' . (date('Y') + 1));
             </div>
         </div>
 
+        <!-- Salary Advances & Loans -->
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card action-card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="action-icon bg-warning text-dark mx-auto mb-3">
+                        <i class="fas fa-hand-holding-usd fa-2x"></i>
+                    </div>
+                    <h5>Salary Advances & Loans</h5>
+                    <p class="text-muted small mb-3">Request advance/loan, track repayments</p>
+                    <a href="<?= BASE_URL ?>/employee/self-service/advances" class="btn btn-warning text-dark">
+                        <i class="fas fa-hand-holding-usd me-1"></i> Manage
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leave Encashment -->
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card action-card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="action-icon bg-success text-white mx-auto mb-3">
+                        <i class="fas fa-money-bill-wave fa-2x"></i>
+                    </div>
+                    <h5>Leave Encashment</h5>
+                    <p class="text-muted small mb-3">Convert unused leave to cash</p>
+                    <a href="<?= BASE_URL ?>/employee/self-service/encashment" class="btn btn-success">
+                        <i class="fas fa-money-bill-wave me-1"></i> Apply
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overtime Management -->
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card action-card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="action-icon bg-info text-white mx-auto mb-3">
+                        <i class="fas fa-clock fa-2x"></i>
+                    </div>
+                    <h5>Overtime Management</h5>
+                    <p class="text-muted small mb-3">Request OT, track approvals & earnings</p>
+                    <a href="<?= BASE_URL ?>/employee/self-service/overtime" class="btn btn-info">
+                        <i class="fas fa-clock me-1"></i> Manage
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Asset Assignments -->
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card action-card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="action-icon bg-primary text-white mx-auto mb-3">
+                        <i class="fas fa-laptop fa-2x"></i>
+                    </div>
+                    <h5>My Assets</h5>
+                    <p class="text-muted small mb-3">View assigned assets, report issues</p>
+                    <a href="<?= BASE_URL ?>/employee/self-service/assets" class="btn btn-primary">
+                        <i class="fas fa-laptop me-1"></i> View
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Announcements -->
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card action-card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="action-icon bg-warning text-dark mx-auto mb-3">
+                        <i class="fas fa-bullhorn fa-2x"></i>
+                    </div>
+                    <h5>Announcements</h5>
+                    <p class="text-muted small mb-3">Company news & notices</p>
+                    <a href="<?= BASE_URL ?>/employee/self-service/announcements" class="btn btn-warning text-dark">
+                        <i class="fas fa-bullhorn me-1"></i> View
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shift Swaps -->
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card action-card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="action-icon bg-secondary text-white mx-auto mb-3">
+                        <i class="fas fa-exchange-alt fa-2x"></i>
+                    </div>
+                    <h5>Shift Swaps</h5>
+                    <p class="text-muted small mb-3">Request & manage shift exchanges</p>
+                    <a href="<?= BASE_URL ?>/employee/self-service/shift-swaps" class="btn btn-secondary">
+                        <i class="fas fa-exchange-alt me-1"></i> Manage
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Helpdesk & Support -->
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card action-card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="action-icon bg-danger text-white mx-auto mb-3">
+                        <i class="fas fa-headset fa-2x"></i>
+                    </div>
+                    <h5>Helpdesk & Support</h5>
+                    <p class="text-muted small mb-3">Create & track support tickets</p>
+                    <a href="<?= BASE_URL ?>/employee/self-service/helpdesk" class="btn btn-danger">
+                        <i class="fas fa-headset me-1"></i> View
+                    </a>
+                </div>
+            </div>
+        </div>
+
         <!-- Profile -->
         <div class="col-md-6 col-lg-4 mb-3">
             <div class="card action-card h-100">

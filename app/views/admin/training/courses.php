@@ -1,165 +1,164 @@
 <?php
-$page_title = 'Training Courses';
-$page_description = 'Manage training courses';
+/** Admin Training Courses List */
+
+$page_title = $page_title ?? 'Training Courses';
+$courses = $courses ?? [];
+$stats = $stats ?? [];
+$categories = $categories ?? [];
+$filters = $filters ?? [];
 ?>
 
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>"></style>
+
 <div class="container-fluid py-4">
-    <div class="row mb-4">
-        <div class="col-12 d-flex justify-content-between align-items-center">
-            <div>
-                <h1 class="h3 mb-0">Training Courses</h1>
-                <p class="text-muted">Manage training courses and content</p>
-            </div>
-            <a href="<?php echo BASE_URL; ?>/admin/training/courses/create" class="btn btn-primary">
-                <i class="fas fa-plus me-1"></i>Create Course
-            </a>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="mb-1 fw-bold"><i class="fas fa-graduation-cap me-2 text-primary"></i>Training Courses</h4>
+            <p class="text-muted mb-0 small">Manage training courses and learning content</p>
         </div>
+        <a href="<?= BASE_URL ?>/admin/training/courses/create" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i> Create Course
+        </a>
     </div>
 
-    <!-- Stats -->
-    <div class="row mb-4">
-        <div class="col-xl-3 col-md-6">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body aps-cp-card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0 me-3">
-                            <div class="bg-primary bg-opacity-10 text-primary rounded p-3">
-                                <i class="fas fa-book fa-2x"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1">
-                            <h6 class="text-muted mb-1">Total Courses</h6>
-                            <h3 class="mb-0"><?php echo $totalCourses ?? 0; ?></h3>
-                        </div>
-                    </div>
+    <!-- Stats Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card stat-card border-0 shadow-sm bg-primary text-white">
+                <div class="card-body text-center">
+                    <div class="fw-bold fs-3"><?= $stats['total_courses'] ?? 0 ?></div>
+                    <div class="text-white-50 small">Total Courses</div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-md-6">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body aps-cp-card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0 me-3">
-                            <div class="bg-success bg-opacity-10 text-success rounded p-3">
-                                <i class="fas fa-check-circle fa-2x"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1">
-                            <h6 class="text-muted mb-1">Active</h6>
-                            <h3 class="mb-0"><?php echo $activeCourses ?? 0; ?></h3>
-                        </div>
-                    </div>
+        <div class="col-md-3">
+            <div class="card stat-card border-0 shadow-sm bg-success text-white">
+                <div class="card-body text-center">
+                    <div class="fw-bold fs-3"><?= $stats['total_assignments'] ?? 0 ?></div>
+                    <div class="text-white-50 small">Total Assignments</div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-md-6">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body aps-cp-card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0 me-3">
-                            <div class="bg-warning bg-opacity-10 text-warning rounded p-3">
-                                <i class="fas fa-gavel fa-2x"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1">
-                            <h6 class="text-muted mb-1">Mandatory</h6>
-                            <h3 class="mb-0"><?php echo $mandatoryCourses ?? 0; ?></h3>
-                        </div>
-                    </div>
+        <div class="col-md-3">
+            <div class="card stat-card border-0 shadow-sm bg-info text-white">
+                <div class="card-body text-center">
+                    <div class="fw-bold fs-3"><?= $stats['completed_assignments'] ?? 0 ?></div>
+                    <div class="text-white-50 small">Completed</div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-md-6">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body aps-cp-card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0 me-3">
-                            <div class="bg-info bg-opacity-10 text-info rounded p-3">
-                                <i class="fas fa-users fa-2x"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1">
-                            <h6 class="text-muted mb-1">Enrollments</h6>
-                            <h3 class="mb-0">
-                                <?php
-                                $totalEnrolled = 0;
-                                if (!empty($courses)) {
-                                    foreach ($courses as $c) { $totalEnrolled += (int)($c['current_enrollments'] ?? 0); }
-                                }
-                                echo $totalEnrolled;
-                                ?>
-                            </h3>
-                        </div>
-                    </div>
+        <div class="col-md-3">
+            <div class="card stat-card border-0 shadow-sm bg-warning text-white">
+                <div class="card-body text-center">
+                    <div class="fw-bold fs-3"><?= $stats['completion_rate'] ?? 0 ?>%</div>
+                    <div class="text-white-50 small">Completion Rate</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Course Cards -->
-    <?php if (empty($courses)): ?>
-    <div class="alert alert-info">
-        <i class="fas fa-info-circle me-2"></i>No courses found. <a href="<?php echo BASE_URL; ?>/admin/training/courses/create" class="alert-link">Create your first course</a>.
-    </div>
-    <?php else: ?>
-    <div class="row">
-        <?php foreach ($courses as $course): ?>
-        <div class="col-md-6 col-xl-4 mb-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body aps-cp-card-body">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <div>
-                            <span class="badge bg-<?php echo match($course['course_category'] ?? 'sales') {
-                                'sales' => 'success',
-                                'product' => 'info',
-                                'compliance' => 'danger',
-                                'leadership' => 'warning',
-                                'technical' => 'primary',
-                                'business' => 'secondary',
-                                default => 'secondary'
-                            }; ?> me-1">
-                                <?php echo ucfirst($course['course_category'] ?? 'sales'); ?>
-                            </span>
-                            <span class="badge bg-<?php echo match($course['difficulty_level'] ?? 'beginner') {
-                                'beginner' => 'success',
-                                'intermediate' => 'warning',
-                                'advanced' => 'danger',
-                                'expert' => 'dark',
-                                default => 'secondary'
-                            }; ?>">
-                                <?php echo ucfirst($course['difficulty_level'] ?? 'beginner'); ?>
-                            </span>
-                        </div>
-                        <?php if ($course['is_mandatory'] ?? 0): ?>
-                        <span class="badge bg-danger"><i class="fas fa-star me-1"></i>Mandatory</span>
-                        <?php endif; ?>
-                    </div>
-                    <h5 class="card-title mb-1"><?php echo htmlspecialchars($course['course_title'] ?? ''); ?></h5>
-                    <p class="card-text text-muted small mb-2">
-                        <?php echo htmlspecialchars(substr($course['course_description'] ?? '', 0, 120)); ?>
-                        <?php if (strlen($course['course_description'] ?? '') > 120): ?>...<?php endif; ?>
-                    </p>
-                    <div class="d-flex justify-content-between small text-muted mb-3">
-                        <span><i class="fas fa-clock me-1"></i><?php echo $course['course_duration_hours'] ?? 0; ?> hrs</span>
-                        <span>
-                            <i class="fas fa-user-graduate me-1"></i>
-                            <?php echo ($course['current_enrollments'] ?? 0); ?> / <?php echo ($course['max_enrollments'] ?? 0) ?: '∞'; ?> enrolled
-                        </span>
-                    </div>
-                    <?php if (($course['is_active'] ?? 0)): ?>
-                    <span class="badge bg-success">Active</span>
-                    <?php else: ?>
-                    <span class="badge bg-secondary">Inactive</span>
-                    <?php endif; ?>
+    <!-- Filters -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label small fw-semibold">Search</label>
+                    <input type="text" name="search" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['search'] ?? '') ?>" placeholder="Title, code, description...">
                 </div>
-                <div class="card-footer bg-white border-0 d-flex justify-content-end gap-2">
-                    <a href="<?php echo BASE_URL; ?>/admin/training/courses/edit/<?php echo e($course['id']); ?>" class="btn btn-sm btn-outline-primary">
-                        <i class="fas fa-edit me-1"></i>Edit
-                    </a>
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold">Category</label>
+                    <select name="category" class="form-select form-select-sm">
+                        <option value="">All Categories</option>
+                        <?php foreach ($categories as $key => $label): ?>
+                            <option value="<?= $key ?>" <?= ($filters['category'] ?? '') === $key ? 'selected' : '' ?>><?= $label ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
-            </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold">Status</label>
+                    <select name="is_active" class="form-select form-select-sm">
+                        <option value="">All</option>
+                        <option value="1" <?= ($filters['is_active'] ?? '') === '1' ? 'selected' : '' ?>>Active</option>
+                        <option value="0" <?= ($filters['is_active'] ?? '') === '0' ? 'selected' : '' ?>>Inactive</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary btn-sm w-100"><i class="fas fa-search me-1"></i> Filter</button>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <a href="<?= BASE_URL ?>/admin/training/courses" class="btn btn-outline-secondary btn-sm w-100">Clear</a>
+                </div>
+            </form>
         </div>
-        <?php endforeach; ?>
     </div>
-    <?php endif; ?>
+
+    <!-- Courses Table -->
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <?php if (empty($courses)): ?>
+            <div class="text-center py-5">
+                <i class="fas fa-book fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No Courses Found</h5>
+                <p class="text-muted small mb-3">Get started by creating your first training course</p>
+                <a href="<?= BASE_URL ?>/admin/training/courses/create" class="btn btn-primary"><i class="fas fa-plus me-1"></i> Create Course</a>
+            </div>
+            <?php else: ?>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 80px">Code</th>
+                            <th>Title</th>
+                            <th style="width: 150px">Category</th>
+                            <th style="width: 100px">Format</th>
+                            <th style="width: 100px">Duration</th>
+                            <th style="width: 120px">Assigned</th>
+                            <th style="width: 120px">Completed</th>
+                            <th style="width: 100px">Status</th>
+                            <th style="width: 150px">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($courses as $course): ?>
+                        <tr>
+                            <td><code class="small"><?= htmlspecialchars($course['code']) ?></code></td>
+                            <td>
+                                <div class="fw-semibold"><?= htmlspecialchars($course['title']) ?></div>
+                                <?php if (!empty($course['description'])): ?>
+                                    <div class="small text-muted text-truncate" style="max-width: 300px;"><?= htmlspecialchars($course['description']) ?></div>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark" style="background: #f1f5f9; color: #475569;">
+                                    <?= htmlspecialchars($categories[$course['category']] ?? $course['category']) ?>
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary"><?= htmlspecialchars(ucfirst($course['format'])) ?></span>
+                            </td>
+                            <td><?= $course['duration_hours'] ?> hrs</td>
+                            <td><?= $course['total_assigned'] ?? 0 ?></td>
+                            <td>
+                                <span class="fw-semibold text-success"><?= $course['total_completed'] ?? 0 ?></span>
+                            </td>
+                            <td>
+                                <span class="badge bg-<?= $course['is_active'] ? 'success' : 'secondary' ?>">
+                                    <?= $course['is_active'] ? 'Active' : 'Inactive' ?>
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="<?= BASE_URL ?>/admin/training/courses/edit/<?= $course['id'] ?>" class="btn btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>
+                                    <a href="<?= BASE_URL ?>/admin/training/assignments?course_id=<?= $course['id'] ?>" class="btn btn-outline-info" title="View Assignments"><i class="fas fa-users"></i></a>
+                                    <a href="<?= BASE_URL ?>/admin/training/courses/delete/<?= $course['id'] ?>" class="btn btn-outline-danger" title="Delete" onclick="return confirm('Delete this course?')"><i class="fas fa-trash"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
 </div>

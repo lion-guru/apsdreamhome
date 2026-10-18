@@ -30,13 +30,7 @@
   // WebSocket URL - configure in admin.php or set via window.WS_URL before script loads
   const WS_URL = window.WS_URL || 'ws://localhost:8080';
 
-  const escape = s =>
-    String(s || '')
-      .replace(/&/g, '&')
-      .replace(/</g, '<')
-      .replace(/>/g, '>');
-
-  const escape = s =>
+  const escapeHtml = s =>
     String(s || '')
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
@@ -234,7 +228,7 @@
       };
       const icon = iconMap[item.type] || 'fa-info-circle';
 
-      let bodyHtml = escape(item.body || '');
+      let bodyHtml = escapeHtml(item.body || '');
       if (item.grouped && item.count > 1) {
         bodyHtml = `<strong>${item.count} notifications</strong><br>` + bodyHtml;
       }
@@ -242,7 +236,7 @@
       toast.innerHTML = `
                 <div class="lcw-toast-icon"><i class="fas ${icon}"></i></div>
                 <div class="lcw-toast-content">
-                    <div class="lcw-toast-title">${escape(item.title)}</div>
+                    <div class="lcw-toast-title">${escapeHtml(item.title)}</div>
                     ${bodyHtml ? '<div class="lcw-toast-body">' + bodyHtml + '</div>' : ''}
                     <div class="lcw-toast-time">${this.timeAgo(item.ts)}</div>
                 </div>

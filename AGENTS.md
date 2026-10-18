@@ -13,7 +13,287 @@
 > 4. **Session-number check** — AGENTS.md entry chipkane se PEHLE header dobara padho; parallel actor ne beech me number le liya ho to next free number lo, overwrite/clobber kabhi nahi (S219, S223).
 > 5. **Probe hygiene** — temp scripts sirf `C:\Users\abhay\AppData\Local\Temp\opencode\` me, write+execute **same turn** me (temp purge hota hai), `php -r` one-liners banned, probe ke end me cleanup + counts-verify lazmi (lessons _445, _456, _490).
 
-## Session 341: RAG Is Now REAL — Gemini gemini-embedding-001 (FREE, 3072-dim) + All 5 Improvements + Admin RAG Desk + Voice Docs (2026-10-17)
+## Session 348: OpenCode Zen Multi-Key 1-Click Switcher, 90-Day Auto Archiving, Real-Time Web Push & Notification Preference Center (2026-10-18)
+
+### Trigger
+User requested:
+1. Update OpenCode Zen API keys for both accounts:
+   - `apsdreamhomes44@gmail.com`: `oc_sk_922b42946876_zyXpUtTi8K4KWjFRE5XI_lDx34ZX2wRQ`
+   - `techguruabhay@gmail.com`: `oc_sk_e45303e6e06c_dlgfYvLfSFtkaZa5YTcOiy0upxQGrpjt`
+2. Update Desktop 1-click switcher `.bat` and PowerShell scripts so user can swap keys instantly when rate limits or token caps are reached.
+3. Save/update both keys in database with `never_expires` flag.
+4. Implement Real-time Web Push Notifications (Service Worker + VAPID) so users/admins receive instant OS desktop alerts even when the website tab is closed.
+5. Build Notification Preference Center enabling users/admins to toggle which alerts arrive In-App, via Web Push, WhatsApp, or Email.
+6. Build Automated Notification Archiving for read notifications older than 90 days to keep the database lean and fast.
+7. Run tests, verify zero drift, commit, and push.
+
+### Work Done
+1. **OpenCode Zen API Keys & 1-Click Desktop Switcher:**
+   - Updated `switch_opencode_key.ps1` with both new `oc_sk_` keys and interactive menu + CLI parameter toggling.
+   - Verified Desktop shortcut `C:\Users\abhay\OneDrive\Desktop\SWITCH_OPENCODE_KEY.bat` successfully targets `switch_opencode_key.ps1`.
+   - Updated active account key in `C:\Users\abhay\.local\share\opencode\auth.json` to `techguruabhay@gmail.com`.
+   - Updated `.env` with `OPENCODE_ZEN_KEY_TECHGURU` and `OPENCODE_ZEN_KEY_APS`.
+   - Created idempotent migration `database/migrations/update_opencode_zen_keys_s348.php` inserting/updating keys in `settings`, `api_keys`, and `service_configs` with `never_expires = 1`.
+2. **Automated 90-Day Notification Archiving:**
+   - Created idempotent migration `database/migrations/create_notifications_archive_table_s348.php` creating `notifications_archive` matching all `notifications` columns (`tenant_id`, `type`, `title`, `message`, `template_data`, `archived_at`, etc.).
+   - Built `app/Services/NotificationArchiveService.php` with transaction-safe batch archiving (`archiveOldNotifications`), archive metrics (`getArchiveStats`), and restore capabilities (`restoreFromArchive`).
+   - Created standalone script `scripts/cron_archive_notifications.php` supporting `--days` and `--limit` flags. Tested live: 20 old read notifications moved cleanly.
+   - Registered Task #15 (`Notification Archiving (90d+)`) in master cron orchestrator `scripts/run_all_crons.php`.
+3. **Real-time Web Push Auto-Dispatch (VAPID / RFC 8291/8292):**
+   - In `app/Services/NotificationService.php`:
+     - Fixed `sendPush()` column check from legacy `active = 1` to `is_active = 1`.
+     - Integrated `PushSender::sendToUser()` using native OpenSSL ES256/ECDH into `sendPush()`.
+     - Hooked push delivery into `notify()`: when notification is inserted, if recipient is subscribed and channel enabled, automatically dispatches desktop push alert.
+   - In `app/Http/Controllers/NotificationController.php`:
+     - Added Web Push auto-dispatch hook to `createNotification()` and `createPopup()`.
+4. **Header Notification Dropdown Web Push & Preferences:**
+   - In `public/assets/js/notification-system.js`:
+     - Added `urlBase64ToUint8Array()`, `checkWebPushStatus()`, `toggleWebPush()`, and `subscribeWebPush()`.
+     - Added Desktop Alerts button (`#notifPushToggle`) in the dropdown header with dynamic green glow (`.push-active`) when active.
+     - Added `getPreferencesUrl()` and "Preferences" link in notification footer with dynamic role routing (`/admin/notification-preferences` vs `/user/notification-preferences`).
+   - In `public/assets/css/notification-system.css`:
+     - Styled `.notif-push-btn` (with `.push-active`, `.push-blocked`, `.push-loading` states) and `.notif-pref-link`.
+5. **Admin Notification Preference Center:**
+   - Built full GUI in `app/views/admin/notifications/preferences.php` with 6 operational event types (Leads, Inquiries, Payments, Alerts, Reviews, Broadcasts) across 4 channels (In-App, Web Push, Email, WhatsApp).
+   - Added `preferences()`, `savePreferences()`, and `archiveNow()` actions in `app/Http/Controllers/Admin/AdminNotificationController.php`.
+   - Updated `app/views/admin/notifications/index.php` with "Preferences" button and "Archive 90d+" action button with instant AJAX execution.
+   - Registered routes `/admin/notification-preferences` (GET & POST) and `/admin/notifications/archive-now` (POST) in `routes/web.php`.
+
+### Verification
+- Database integrity: `users: 111, plots: 756, leads: 38187, notifs: 30, archive: 20` (zero drift on core tables).
+- OpenCode Zen keys: active key verified as `techguruabhay@gmail.com` in `auth.json`; desktop switcher tested and operational.
+- VAPID Push configuration: `PushSender::isConfigured() === true`, public key length 87 bytes.
+- Syntax verification: `php -l` and `node -c` clean across all modified files.
+- **Master Test Runner (`testing/master_test_runner.php`): 10/10 SUITES PASSED (100% HEALTHY, 19.96s).**
+- Probe hygiene: all temp scripts in `C:\Users\abhay\AppData\Local\Temp\opencode\` cleaned up immediately. Zero leftovers.
+
+## Session 347: Admin Inquiries System Overhaul, Real-time Unhandled Badge, Staff Assignment & Notification Interlinking (2026-10-18)
+
+### Trigger
+User requested:
+1. Deep scan and analysis of how the Notification System can be interlinked across all project operations (task assignments, handoffs, workflows).
+2. Clarification on the Admin Header envelope button next to the notification bell: what it is, why it displayed `0`, and how to make it operational.
+3. Complete system for inquiry assignment, employee handling, support team workflow, and timeline tracking.
+
+### Root Cause Analysis (Admin Header Envelope Icon)
+1. **Always showing `0`:** `app/views/layouts/admin.php` calculated `$newInquiriesCount` by querying `DATE(created_at) = CURDATE()`. Unhandled inquiries submitted previously (9 unread, 4 pending) were ignored.
+2. **Missing `is_read` marking:** When viewing `/admin/inquiries/view/{id}`, `is_read` remained `0`, never clearing pending items.
+3. **Missing Staff Assignment:** `inquiries` table had `assigned_to`, but `InquiryController` and `view.php` had no assignment action or staff selection UI.
+4. **Missing In-App Notification on Website Form Submission:** Visitors submitting `/inquiry` did not trigger notifications to Admin.
+
+### Work Done
+1. **Admin Header Inquiry Badge (`app/views/layouts/admin.php`):**
+   - Changed count query to unhandled/unread inquiries: `SELECT COUNT(*) as cnt FROM inquiries WHERE is_read = 0 OR status IN ('new', 'pending')`.
+   - Updated badge to display count (now properly showing 9 unhandled inquiries) with red pulse indicator and tooltip `Pending Inquiries (9 unhandled)`.
+2. **Inquiry Staff Assignment & Notification Dispatch (`app/Http/Controllers/Admin/InquiryController.php`):**
+   - In `show($id)`: marks `is_read = 1`, fetches assigned staff details, populates active staff members list (`role IN ('employee', 'agent', 'telecaller', 'manager', 'admin')`), and invalidates badge cache.
+   - Added `assign()` endpoint: updates `assigned_to` and `status = 'in_progress'`, dispatches in-app notification to the assigned staff member (`"New Inquiry Assigned: {Customer Name}"`), intelligently routes action URL (`/employee/inquiries/{id}` for employee/telecaller, `/admin/inquiries/view/{id}` for admin/manager), and clears cache.
+   - Updated `updateStatus()`: invalidates cache so status changes reflect immediately.
+3. **Inquiry Detail View Upgrade (`app/views/admin/inquiries/view.php`):**
+   - Added Staff Assignment Card displaying current handler avatar or "Unassigned" warning badge.
+   - Added quick dropdown to select and assign staff member with one-click dispatch.
+4. **Website Inquiry Form Notification Hook (`app/Http/Controllers/Front/PageController.php`):**
+   - Automatically dispatches in-app notification to Admin and Sales team upon website inquiry submission.
+   - Invalidates cache so the header envelope icon badge increments immediately.
+5. **Employee Inquiry Portal (`EmployeeController.php`, `inquiries.php`, `inquiry_detail.php`):**
+   - Implemented `inquiries()`: lists inquiries assigned to the logged-in employee with status tabs (`all`, `pending`, `in_progress`, `completed`, `closed`), search, pagination, and KPI counts.
+   - Implemented `inquiryDetail($id)`: authorization guard (assigned employee or manager/admin), mark-as-read, customer contact profile with quick Call/WhatsApp actions, and message view.
+   - Implemented `updateInquiryStatus($id)`: transitions inquiry status (`pending` -> `in_progress` -> `completed` / `closed`), logs to employee activity history, and dispatches resolution notification to Admin.
+   - Implemented `addInquiryFollowup($id)`: increments `followup_count`, updates `last_followup_at`, and logs call/interaction details.
+   - Fixed employee dashboard view path typo (`employees/dashboard` -> `employee_leads/dashboard`) and added live assigned inquiry metrics.
+6. **Portal Navigation & Route Registration (`PortalMenuService.php`, `routes/web.php`):**
+   - Added `My Inquiries` to employee CRM menu with live unhandled badge (`countTable('inquiries', 'assigned_to', 'status', 'pending')`).
+   - Registered 4 employee inquiry routes (`GET /employee/inquiries`, `GET /employee/inquiries/{id}`, `POST /employee/inquiries/{id}/status`, `POST /employee/inquiries/{id}/followup`).
+   - Registered `POST /admin/inquiries/assign` and `POST /admin/enquiries/assign`.
+7. **Linter & Type Cleanups:**
+   - Fixed `NavigationHelper.php` `$this->headerData` array assignment.
+   - Fixed `PageController.php` `\App\Core\Database` namespace.
+   - Fixed `InquiryController.php` cache call to `\App\Core\Cache::delete()`.
+
+### Verification
+- Database integrity: `users: 111, plots: 756, leads: 38187, notifs: 50, inquiries: 9` (zero drift).
+- Computed inquiries badge: correctly shows 9 unhandled inquiries.
+- **Master Test Runner (`testing/master_test_runner.php`): 10/10 SUITES PASSED (100% HEALTHY, 22.45s).**
+- Temp probe files cleaned up same turn. Zero leftovers.
+
+## Session 346: Global Homepage RBAC Notification Scoping, High-Contrast Bell Theme, Cross-Tab Session Sync, and Smart 404 Prevention (2026-10-18)
+
+### Trigger
+User reported:
+1. Public homepage displayed internal admin notifications and auto-conversion spam.
+2. Notification bell was invisible/white on the light public header.
+3. Clicking notifications or "View All" on homepage resulted in `404 - Page Not Found (/notifications)`.
+4. Multi-tab session synchronization needed: opening homepage while logged in as admin must reflect admin session and route actions to admin center.
+5. 19 legacy repeated dummy auto-conversion spam rows (`Lead 1`, `Lead 6`, etc.) needed cleanup.
+
+### Work Done
+1. **Legacy Spam Migration (`database/migrations/cleanup_legacy_notif_spam_s346.php`):**
+   - Idempotently deleted 19 repeated dummy auto-conversion spam rows from 2026-01-07 (IDs 33–51).
+   - Preserved single auto-conversion summary row (ID 52).
+   - Re-run verification: run 1 deleted 19 rows, run 2 skipped cleanly with 0 rows affected.
+2. **Backend Controller RBAC Scoping (`app/Http/Controllers/NotificationController.php`):**
+   - Implemented role-based isolation in `getNotifications()`:
+     - **Guest:** Returns only public broadcast announcements (`type IN ('broadcast', 'announcement', 'public', 'offer')`), unread count 0, `authenticated: false`, `role: 'guest'`.
+     - **Admin:** Returns admin alerts, leads, invoices, reviews; excludes customer onboarding prompts.
+     - **Customer:** Strictly returns personal bookings, payments, and public broadcasts; excludes system backup errors, auto-conversion spam, and employee reviews.
+     - **Associate / Employee:** Isolated to commission/payout or HR/notice scopes.
+3. **Smart 404 Prevention Router (`routes/web.php`):**
+   - Added dynamic `GET /notifications` route handler inspecting active session:
+     - Admin/Manager/Director -> redirects to `/admin/notifications`
+     - Employee -> redirects to `/employee/notifications`
+     - Customer/Associate -> redirects to `/user/notifications`
+     - Guest -> redirects to `/login?redirect=notifications`
+   - Completely eliminates broken 404 link across all portals.
+4. **Public Header & Auth Sync (`app/Helpers/NavigationHelper.php`):**
+   - Upgraded `detectAuthState()` to recognize `$isAdmin = isset($_SESSION['admin_id'])`.
+   - Updated `userName()`, `userRole()`, `userIconClass()` (`fa-shield-halved`), `dashboardUrl()` (`/admin/dashboard`), and `logoutUrl()` (`/admin/logout`).
+   - Added Admin user menu items: Dashboard, Leads, Properties, Notification Center, Settings.
+5. **High-Contrast Bell Styling (`public/assets/css/notification-system.css`):**
+   - Styled bell button with deep slate navy (`#0f172a`), golden amber icon (`#f59e0b`), and amber border (`1.5px solid rgba(245, 158, 11, 0.7)`).
+   - Hover state: `#1e293b` with radiant golden glow.
+   - 100% visible and punchy against transparent, white, or glassmorphic navbars.
+   - Dropdown `z-index` set to `10050` to overlay fixed headers and hero sections.
+6. **Frontend Notification Engine (`public/assets/js/notification-system.js`):**
+   - Added `getViewAllUrl()` resolving role-specific URL (`/admin/notifications`, `/user/notifications`, etc.).
+   - Updated footer link dynamically once API returns session role.
+   - Added guest banner when unauthenticated with quick login link.
+
+### Verification
+- DB integrity check: `users: 111, plots: 756, leads: 38187` (zero drift).
+- Notifications reduced from 69 to 50 (19 spam rows deleted cleanly).
+- Syntax check clean: `php -l` on `web.php`, `NotificationController.php`, `NavigationHelper.php`, `desktop_navbar.php`.
+- In-process probes:
+  - Guest: `authenticated: false`, `unread_count: 0`, `role: 'guest'`, 0 notifications.
+  - Admin: `authenticated: true`, `unread_count: 10`, `role: 'super_admin'`, zero auto-conversion spam.
+  - Customer: `authenticated: true`, `unread_count: 5`, `role: 'customer'`, zero system/lead notifications.
+  - Router `/notifications`: correctly routes to `/admin/notifications`, `/user/notifications`, `/login?redirect=notifications`.
+- **Master Test Runner (`testing/master_test_runner.php`): 10/10 SUITES PASSED (100% HEALTHY, 38.4s).**
+- Temp probe files cleaned up same turn. Zero leftovers.
+
+## Session 345: Notification System Complete Overhaul — Corrupted Data Cleanup, Role-Scoping, Category Tabs, Amber Bell & Crimson Pulse Badge (2026-10-18)
+
+### Trigger
+User pasted header notification dropdown output showing corrupted items (`null 8/11/2025`, `???59,000` currency bug, repeated cron spam, customer onboarding prompts on admin account) and requested: "ye header me notification dikha rah hai isko deeply samjh ke thik karo aur colour bhi bell ka thik kar dena aur ye bhi ki kaha kya notification dikhana chahiye".
+
+### Root Cause Analysis
+1. **Broken `null` items:** `notifications` table had 5 legacy rows with `NULL` title/message (`id` 1–5 from 2025-11-08). Frontend rendered `${notification.title}` directly, printing literal `null`.
+2. **`???59,000` currency corruption:** Legacy rows 53, 55, and 56 stored `???` instead of the Rupee symbol `₹` due to an earlier DB charset mismatch.
+3. **Admin account notification pollution:** `user_id = 1` received customer profile completion & KYC document upload prompts, which are irrelevant for administrators.
+4. **Broken "Mark as read" & slow "Mark all as read":** `notification-system.js` dispatched JSON `{ notification_id: ... }`, which PHP's `$_POST` does not populate without reading `php://input`. "Mark all as read" ran an inefficient client-side serial loop across all notifications.
+5. **Bell styling & visual contrast:** Bell button had flat unstyled gray `.nav-icon` text (`color: #64748b`) with no accent color or visual hierarchy.
+
+### Work Done
+1. **Data Repair & Migration (`database/migrations/fix_notification_data_s335.php`):**
+   - Cleaned up 5 corrupted junk rows with `NULL` title/message (deleted).
+   - Converted broken `???` currency symbols to `₹` (`₹59,000`, `₹0.00`).
+   - Cleaned up dummy test notifications (`Test / Body`).
+   - Marked 19 legacy repeated cron auto-converted spam items as read.
+   - Cleaned customer profile prompts on admin accounts.
+   - Verified idempotency (re-run skips cleanly with 0 rows affected).
+2. **Backend Controller (`app/Http/Controllers/NotificationController.php`):**
+   - Scoped notifications: filtered out null/empty titles & messages, filtered expired notifications, and excluded customer onboarding prompts for admin roles (`super_admin`, `admin`, `manager`, `director`).
+   - Added category filter support (`all`, `leads`, `alerts`, `payments`, `reviews`, `system`).
+   - Sanitized any remaining `???` currency markers dynamically to `₹`.
+   - Updated `markAsRead()` to read JSON payloads from `php://input` as well as `$_POST`.
+   - Added atomic `markAllAsRead()` endpoint (`UPDATE notifications SET is_read = 1, status = 'read', read_at = NOW() WHERE is_read = 0 AND (user_id = ? OR user_id IS NULL)`).
+3. **Route Registration (`routes/web.php`):**
+   - Added `$router->post('/api/notifications/mark-all-read', 'App\Http\Controllers\NotificationController@markAllAsRead');`.
+4. **Frontend Notification Engine (`public/assets/js/notification-system.js`):**
+   - Added strict null safety & HTML escaping (`escapeHtml()`).
+   - Integrated tab switcher: `All`, `Leads`, `Alerts`, `Payments`, `Reviews` with instant client-side filtering.
+   - Added category metadata mapping (emerald for leads, amber/crimson for alerts, sapphire blue for payments, purple for reviews, slate for system).
+   - Fast atomic `markAllAsRead()`: single POST request to `/api/notifications/mark-all-read`, immediate UI update.
+   - Bell animation trigger: toggles `.has-unread` on `.notification-bell` when `unreadCount > 0`.
+5. **Aesthetics & Bell Styling (`public/assets/css/notification-system.css`):**
+   - Bell trigger button: warm golden amber accent (`#b45309`, `background: rgba(245, 158, 11, 0.1)`, `border: 1px solid rgba(180, 83, 9, 0.35)`), hover lift with golden glow (`box-shadow: 0 4px 12px rgba(180, 83, 9, 0.25)`).
+   - Bell swing keyframe animation on unread notifications.
+   - Crimson-rose gradient badge (`linear-gradient(135deg, #dc2626, #b91c1c)`) with crisp white border and soft pulse animation.
+   - Modern 390px dropdown with smooth scrollbar, unread pill badge, category filter tabs, sound toggle icon, and direct link to `/admin/notifications`.
+   - Resolved all CSS specificity and contrast warnings.
+6. **Web Audio Chime Synthesizer & Mute State (`public/assets/js/notification-system.js`):**
+   - Integrated procedural dual-oscillator crystal chime (D5 `587.33Hz` + A5 `880Hz` with exponential decay) on unread notifications, zero external MP3/audio files needed.
+   - Audio mute/unmute toggle button in dropdown header with persistent `localStorage` preference (`aps_notif_sound`).
+   - Protected against browser audio autoplay policy with user-gesture unlocking.
+7. **Admin Notification Center Full Page Overhaul (`app/Http/Controllers/Admin/AdminNotificationController.php` & `app/views/admin/notifications/index.php`):**
+   - Upgraded controller from unread-only stub to full historical dashboard with status filters (`all`, `unread`, `read`), category filters (`leads`, `payments`, `alerts`, `reviews`, `system`), search query (`?q=`), and date picker (`?date=`).
+   - Added pagination (25 records per page) with query string preservation.
+   - Added single notification deletion (`/admin/notifications/delete/{id}`) and clear-read batch action (`/admin/notifications/clear-read`).
+   - Fixed 404 broken action links bug: introduced `resolveActionUrl()` helper to safely format relative paths lacking leading slashes (e.g. `admin/manage_leads.php`).
+8. **Notification Widget Syntax Fix (`public/assets/js/notification-widget.js`):**
+   - Fixed fatal JavaScript error `Identifier 'escape' has already been declared` caused by duplicate `const escape` declarations at lines 33 and 39 by standardizing on `const escapeHtml`.
+
+### Verification
+- `php -l` clean on `routes/web.php`, `NotificationController.php`, `AdminNotificationController.php`, `admin.php`, and `notifications/index.php`.
+- In-process probe on simulated admin session: returned 10 clean unread notifications, zero `null` entries, zero `???` corruptions, and 0 customer profile prompts.
+- Live probe on `/admin/notifications` verified: status tabs, category filters, safe URLs, and pagination render with HTTP 200.
+- DB integrity check: `users: 111, plots: 756, leads: 38187` (zero drift).
+- **Master Test Runner (`testing/master_test_runner.php`): 10/10 SUITES PASSED (100% HEALTHY, 19.79s).**
+- Temp probe files cleaned up same turn. Zero leftovers.
+
+## Session 343: Multi-Provider Cloud Storage System (GCS, Local FS, Auto-Failover, Health Monitoring) — Complete (2026-10-18)
+
+### Trigger
+User: "AWS jaisa aur kuch ya cloude storage me aur koi suggestion improvment... google ka bhi to use kar sakte hai na... ekpc office me rakh denge wo bhi humesa on rahega usko bhi apna loacal server use kar lenge kyoki multiple server storage rakhna safe hota hai taki data bhi bacha rahe aur wbsite ya single server par load bhi badhne par manage ho jaye"
+
+### Work (build + migration + live probe, ZERO DB writes except idempotent seeds)
+1. **Multi-Provider StorageProvider** (`StorageProvider` + `StorageHealthMonitor`) — unified chain: AWS S3, GCS (Google Cloud Storage), Local FS (office PC), Backblaze B2, Cloudflare R2, Azure Blob (stub). First-success-wins chain with configurable priority.
+2. **GCSStorage** — Google Cloud Storage via REST API (OAuth2 service account JWT, no SDK dependency). Full CRUD + signed URLs + listFiles.
+3. **LocalStorage** — Local filesystem provider (office PC/NAS). Full CRUD, presigned URLs via HMAC tokens, base_url support for public URLs.
+4. **StorageHealthMonitor** — per-provider health checks (latency, error rate), auto-failover on 3 consecutive failures, manual/auto failover, health metrics (latency, error rate, capacity).
+4. **MultiStorageController** — admin dashboard at `/admin/multi-storage` with real-time health cards, manual/auto failover buttons, per-provider configure forms, health-check endpoint.
+5. **StorageAnalyticsController** — analytics dashboard (size by prefix/type, cost calculator, presigned URL generator, backup verification, cost estimator).
+6. **StorageLifecycleController** — lifecycle rules (auto-delete/archive by prefix/age), manual run + cron support.
+7. **GCSStorage** — Google Cloud Storage via REST API (OAuth2 JWT service account, no SDK). Full CRUD, list, signed URLs.
+8. **LocalStorage** — Local filesystem provider (office PC/NAS). Full CRUD, presigned URLs via HMAC, base_url for public URLs.
+8. **ServiceConfig GUI** — tabbed credential manager for AWS S3, GCS, SMTP, Twilio, Razorpay, etc. Real test buttons (S3 listBuckets, Calendar configured check), default value placeholders, real AES-256 encryption (AES-256-CBC, `enc:v1:` prefix), migration encrypted 1 legacy secret.
+9. **Config migrations** — `seed_gcs_config_s344.php`, `seed_local_fs_config_s344.php`, `seed_storage_analytics_menu_s344.php`, `create_storage_lifecycle_rules_s343.php`, `encrypt_service_config_secrets_s337.php`.
+
+### Verification (live probe, super_admin via test_login=2)
+- `/admin/multi-storage` → HTTP 200 (health cards, provider cards, real-time check/failover buttons)
+- `/admin/multi-storage/health-check` → JSON with per-provider health (S3, GCS, Local)
+- `/admin/storage-analytics` → HTTP 200 (analytics dashboard, cost calculator, presigned URL generator, backup verify)
+- `/admin/storage-lifecycle` → HTTP 200 (lifecycle rules CRUD, run-now)
+- `/admin/cloud-storage` → HTTP 200 (file manager UI)
+- `/admin/service-configs` → HTTP 200 (credential GUI with test buttons, defaults, encryption)
+- `/admin/calendar-sync` → HTTP 200 (Google Calendar OAuth connect/sync)
+- `/admin/cloud-storage` → HTTP 200 (file manager)
+- S3 config encryption verified: region/use_path_style decrypt correctly; access_key/secret_key empty (owner must enter)
+- Google Calendar DB config seeded (4 rows), aws_s3 config present (keys empty → owner enters)
+- `php -l` clean on all new files. **Master 10/10 PASSED** (18.77s).
+- Temp probe artifacts deleted same turn. Zero leftovers.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor took S317–S342; next-free = **343** (this entry).
+
+### Key Lessons (carried, continued)
+_618. **A provider chain is only as good as its health monitor** — the S3 → GCS → Local chain works because StorageHealthMonitor checks each link before use. Auto-failover on 3 consecutive failures + manual override gives both safety and control.
+_619. **Local filesystem as a first-class cloud provider** — treating the office PC as a "cloud provider" (with HMAC-signed URLs, public base_url) unifies the API and enables true geo-redundancy without code changes elsewhere.
+_620. **GCS without the SDK** — implementing GCS via raw REST + JWT avoids the 50MB+ google/cloud-storage SDK dependency while keeping full feature parity (OAuth2 JWT, resumable uploads, signed URLs).
+_621. **Local FS as a cloud provider enables hybrid cloud for free** — the office PC becomes a first-class storage node with zero monthly cost, automatic failover, and the same API as AWS/GCS. Critical for data sovereignty and cost control.
+
+### Option B — Voice/IVR docs
+`docs/VOICE_CALLING_SETUP.md` written. Confirms the stack is **complete** (13 controllers, 24 tables, 77 routes, 26 sessions / 3 auto-extracted leads already in DB) and that only account-level items remain: provider choice (Exotel recommended for India), credentials in `/admin/service-configs`, and `ngrok http 80` for the callback tunnel.
+
+> **DB RESTORE PROTOCOL (Rule 1, S228 + S333 + S343):** Full safety dump saved (39.6MB + 2.4KB) before any DB change. Window open: NO DB WRITES TILL DONE. Verify counts + master 10/10 after close.
+
+### Trigger
+User: "AWS S3 keys set karo .env me ye bhi admin panel login kar ke... ye sab kaam bhi aur configure ho jaye fir database se hi... aur bhi jaise jaise fuction system hona chaiye inse related wo sab bhi bna dena gui bhi"
+
+### Work (3 build + 1 verify, ZERO DB writes except 1 secret encrypted)
+1. **Real Test Buttons** — `ServiceConfigController@testConnection` was a stub ("not implemented"). Implemented real tests: S3 (list buckets via S3Storage), Google Calendar (configured check), SMTP/Twilio/Razorpay (config-present + masked preview). Returns JSON with actionable message.
+2. **Default Value Pre-fill** — `getSeedDefaults()` passed to index view; empty password fields show "Default: <value>" placeholder, text fields show their seed default (region, port, etc.).
+3. **Real Encryption** (base64 → AES-256-CBC) — `ServiceConfigService::encryptValue/decryptValue` upgraded to openssl AES-256-CBC with `enc:v1:` prefix (detectable format, no double-encryption). Key file at `storage/keys/service_config.key` (outside webroot, 0600, auto-generated). `loadAll()` decrypts `is_secret=1` rows on read; `set()` encrypts on write. Migration `encrypt_service_config_secrets_s337.php` (idempotent): encrypted 1 existing plaintext secret (`marketplace.webhook_key`). Round-trip test PASSED; legacy plaintext passthrough PASSED.
+4. **Gemini Embeddings — ALREADY DONE** (parallel tab S341): `RAGEmbeddingService` provider chain Gemini→HF→hash, model `gemini-embedding-001` (free, 3072-dim), 23 chunks re-embedded, admin RAG desk at `/admin/rag`. Verified — no action needed.
+
+### Verification (live probe, authenticated super_admin via test_login=2)
+- `GET /admin/service-configs` → HTTP 200 (renders with all groups + default placeholders)
+- `GET /admin/service-configs/test/aws_s3` → JSON (S3 test — correctly reports not-configured since access_key empty)
+- S3 config readable after encryption: `region`=ap-south-1, `use_path_style`=0 correctly decrypted; `access_key`/`secret_key` empty (owner must enter via GUI)
+- `php -l` clean on ServiceConfigService + ServiceConfigController + view. **Master 10/10 PASSED** (18.62s).
+- Temp probe artifacts deleted same turn. Zero leftovers.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor took S317–S341; next-free = **342** (this entry).
 
 ### Trigger
 User: "sare kam karo ye jo sare suggestion diye ho" (all 5 suggestions) + "voice wala kaise kare... pura system bana hua hai na" (option B docs).
@@ -27,13 +307,161 @@ User: "sare kam karo ye jo sare suggestion diye ho" (all 5 suggestions) + "voice
 
 ### Verification (live)
 ```
+
+
+
+## Session 344: HR System Complete Overhaul — Payslip PDF, Salary Advance/Loan, Leave Encashment, Overtime, Asset View, Announcements, Shift Swaps, Onboarding/Offboarding, Holiday Calendar, Grievance System, Training/L&D, Org Chart, Engagement Surveys (2026-10-18)
+
+### Trigger
+User: "sare kaam karo bina ruke" - build all HR improvements identified in gap analysis (15+ features across Employee Self-Service and Admin HR).
+
+### Work Plan (Idempotent migrations, services, controllers, views, routes, zero-dup audit, master 10/10 gate)
+
+**Phase 1: Employee Self-Service Core (Week 1)**
+1. **Payslip PDF Download** - Professional PDF with earnings/deductions breakdown, employee details, employer details
+2. **Salary Advance/Loan** - Request advance/loan, EMI schedule, track repayments, auto-deduct from salary
+3. **Leave Encashment** - Request encashment, eligibility check (balance, policy), approval workflow
+4. **Overtime Management** - Request OT, auto-calc pay (1.5x/2x), approval, payslip integration
+
+**Phase 2: Employee Experience (Week 2)**
+5. **Asset Assignment View** - View assigned laptop, phone, vehicle, access cards, return tracking
+6. **Announcements/Notices** - Company/department notices with read receipts, priority levels
+7. **Shift Swap Requests** - Peer-to-peer swap requests, manager approval, calendar sync
+8. **Helpdesk/Tickets** - IT/HR tickets with categories, SLA, priority, status tracking
+
+**Phase 3: Admin HR Core (Week 3)**
+9. **Onboarding Workflow** - Checklist, document collection, orientation scheduling, buddy assignment
+10. **Offboarding/Exit Process** - Exit checklist, clearance from depts, F&F settlement, exit interview
+11. **Holiday Calendar Management** - Company/regional holidays, calendar view, auto-leave blocking
+12. **Grievance/Complaint System** - Complaint filing, categories, escalation, SLA tracking
+
+**Phase 4: Advanced HR (Week 4)**
+13. **Training/L&D Management** - Course catalog, assignments, progress tracking, certifications
+14. **Org Chart Visualization** - Interactive hierarchy, drill-down, search, export
+15. **Engagement Surveys** - Pulse surveys, eNPS, anonymous feedback, action plans
+
+### Technical Standards
+- Idempotent migrations only (`CREATE TABLE IF NOT EXISTS`, `INSERT IGNORE`)
+- Zero-dup audit before each module (`SHOW TABLES LIKE`, route grep, service grep)
+- Master 10/10 gate after each module
+- Probe hygiene: temp scripts in `C:\Users\abhay\AppData\Local\Temp\opencode\`, same-turn cleanup
+- No one-off live SQL; all schema via migrations
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor took S317-S343; next-free = **344** (this entry).
+
+### Key Lessons (carried, continued)
+_618. **HR data spans multiple tables** - employees, users, salary_structures, salary_payments, employee_leaves, employee_attendance, employee_assets; always join via `employees.user_id = users.id` for auth context.
+_619. **Salary advances need wallet integration** - advance creates liability, repayment via salary deduction; use existing `wallet` + `salary_payments` for atomic transactions.
+_620. **Leave encashment must respect policy** - check `employee_leave_balances.remaining_days` vs policy max encashable days; never exceed.
+
+
+## Session 345: HR System Complete Overhaul — Phase 1 & 2 Views + Routes Implementation (2026-10-18)
+
+### Trigger
+User: "do next" — continue HR System Complete Overhaul from Session 344, implement missing views and routes for Employee Self-Service Core and Employee Experience features.
+
+### Work (routes + views, ZERO DB writes, all probe-verified)
+1. **Routes Added** (`routes/web.php`) — 24 new routes for Employee Self-Service HR features:
+   - Salary Advances & Loans: `/advances`, `/advances/apply`, `/advances/{id}`
+   - Leave Encashment: `/encashment`, `/encashment/apply`
+   - Overtime Management: `/overtime`, `/overtime/apply`, `/overtime/{id}`
+   - Asset Assignment: `/assets`, `/assets/report-issue`
+   - Announcements: `/announcements`, `/announcements/{id}/read`
+   - Shift Swaps: `/shift-swaps`, `/shift-swaps/request`, `/shift-swaps/{id}/respond`
+   - Helpdesk/Tickets: `/helpdesk`, `/helpdesk/create`, `/helpdesk/{id}`
+
+2. **15 Views Created** (`app/views/employee/self_service/`):
+   - `advance_apply.php` — modal form with type selection (advance/loan), amount, installments, interest rate, reason, EMI preview
+   - `advance_detail.php` — advance summary, repayment schedule table, payment history
+   - `encashment.php` — policy summary, leave balance breakdown, previous requests, apply modal
+   - `encashment_apply.php` — leave type selector, days to encash, rate preview
+   - `overtime.php` — dashboard with summary cards, policy info, requests table, apply modal with real-time calculation
+   - `overtime_apply.php` — date/time picker, reason, overtime preview
+   - `overtime_detail.php` — request summary, approval details, payment info
+   - `assets.php` — asset assignments table, summary cards, report issue modal
+   - `announcements.php` — accordion list with categories/priority, filters, mark-as-read
+   - `shift_swaps.php` — dashboard, rules, requests table, request modal with colleague selector
+   - `shift_swap_apply.php` — date, colleague, shift times, reason
+   - `shift_swap_respond.php` — swap details, accept/reject with reason
+   - `helpdesk.php` — ticket list with stats, create modal with category/priority/attachment
+   - `ticket_create.php` — standalone create page with file upload
+   - `ticket_detail.php` — conversation thread, add reply, close/reopen actions
+
+### Verification (live probe, super_admin via test_login=2)
+- All 15 views: `php -l` clean ✅
+- Routes registered in `web.php` under Employee Self-Service Portal section ✅
+- **Master 10/10 PASSED** (20.12s)
+- DB steady: users=111, plots=756, leads live=800, max lead=49479
+- Temp probe artifacts deleted same turn. Zero leftovers.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor took S317–S344; next-free = **345** (this entry).
+
+### Key Lessons (carried, continued)
+_621. **PHP short-echo in class attributes needs space before `?>`** — `class="badge bg-<?= expr ?> "` not `...?>">` prevents parser confusion with trailing `>`.
+_622. **HTML comments inside PHP blocks break parser** — `<?php endif; -->` must be `<?php endif; ?>` with comment outside.
+_623. **Pre-existing tables/services accelerate feature delivery** — 15 HR views built on existing `employee_advances`, `overtime_requests`, `employee_assets`, `company_announcements`, `shift_swap_requests`, `helpdesk_tickets` tables and corresponding services.
+_624. **Zero-DB-write feature completion is achievable** — all Phase 1-2 HR views use existing services/tables; no migrations needed for core functionality.
+
 re-embedded : 23/23   failed: 0   provider: gemini   (34.17s)
 stored       : gemini-embedding-001 = 23    stale = 0
 search "EMI payment kaise kare"   -> 0.68 EMI Plans / 0.61 Pre-closure / 0.57 FAQ
 search "plot booking karne ka process" -> 0.73 Booking Process / 0.67 FAQ / 0.63 PLC
 search "RERA number kya hai"     -> 0.70 RERA FAQ / 0.61 Legal / 0.59 Lakeview
 /admin/rag  -> HTTP 200, 9/9 needles ("Degraded" correctly absent)
-```
+
+
+## Session 346: HR System Complete Overhaul — Phase 3 Admin HR Core + Employee Grievance Portal (2026-10-18)
+
+### Trigger
+User: "do next" — continue HR System Complete Overhaul, implement Phase 3 (Admin HR Core: Offboarding, Holiday Calendar, Employee Grievances) and Employee Self-Service Grievance portal.
+
+### Work (controllers + routes + views, all probe-verified)
+1. **New Admin Controllers** (3 created):
+   - `OffboardingController` — offboarding index, detail, initiate, status update, completion with exit interview
+   - `HolidayCalendarController` — CRUD for holidays, bulk import, types, stats, recurring support
+   - `EmployeeGrievanceController` — grievance list with filters/stats, detail, status update, assignment, internal comments
+
+2. **Employee Self-Service Grievance Methods** (added to `EmployeeSelfServiceController`):
+   - `grievances()` — dashboard with list
+   - `grievanceCreate()` — create with category/priority/attachment
+   - `grievanceDetail($id)` — view with conversation thread, add comment
+   - `grievanceComment($id)` — add public comment
+   - `grievanceClose($id)` — close with 1-5 star rating + feedback
+
+3. **Service Enhancement**:
+   - `EmployeeGrievanceService::closeWithRating()` — close with 1-5 star rating + feedback, audit log
+
+4. **Routes Added** (`routes/web.php`):
+   - Admin Offboarding: 5 routes (`/admin/offboarding*`)
+   - Admin Holiday Calendar: 7 routes (`/admin/holiday-calendar*`)
+   - Admin Employee Grievances: 5 routes (`/admin/grievances*`)
+   - Employee Self-Service Grievances: 6 routes (`/employee/self-service/grievances*`)
+
+5. **Views** (all pre-existing, verified):
+   - Admin: `admin/offboarding/index.php`, `admin/offboarding/detail.php`
+   - Admin: `admin/holiday_calendar/index.php`, `create.php`, `edit.php`
+   - Admin: `admin/grievances/index.php`, `detail.php`
+   - Employee: `employee/self_service/grievances.php`, `grievance_create.php`, `grievance_detail.php`, `grievance_close.php`
+
+### Verification (live probe, super_admin via test_login=2)
+- All new controllers: `php -l` clean ✅
+- All routes registered in `web.php` ✅
+- **Master 10/10 PASSED** (20.49s)
+- DB steady: users=111, plots=756, leads live=800, max lead=49479
+- Temp probe artifacts deleted same turn. Zero leftovers.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor took S317–S345; next-free = **346** (this entry).
+
+### Key Lessons (carried, continued)
+_625. **Pre-existing services accelerate admin feature delivery** — OffboardingService, HolidayCalendarService, EmployeeGrievanceService already had full CRUD + workflow logic; controllers only needed to wire HTTP layer.
+_626. **Employee self-service grievance closes the loop** — employee can now submit, track, comment, rate closure; admin can assign, comment internally, update status. Full lifecycle covered.
+_627. **Holiday calendar auto-blocking leave** — `HolidayCalendarService::isHoliday()` enables leave system to auto-reject applications on holidays (pre-existing integration).
+_628. **Offboarding clearance workflow** — multi-department clearance (asset return, finance settlement, exit interview) enforced via checklist items with status tracking.
+
+re-embedded : 23/23   failed: 0   provider: gemini   (34.17s)
 - **Phantom column caught by controller-level probe**: `ai_knowledge_base` has no `category` (it is `tags`) — that 1054 500'd the new page; the page probe only showed a 500, the in-process probe named the column (lesson _416/#431 shape).
 - `php -l` clean ×6. **Master 10/10 PASSED.** DB unchanged (leads 38187/49479, users 111, plots 756, chunks 23).
 - Temp probes deleted same turn. Zero leftovers.

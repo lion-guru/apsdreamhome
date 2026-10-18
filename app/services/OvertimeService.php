@@ -31,7 +31,7 @@ class OvertimeService
         }
 
         $query .= " ORDER BY id LIMIT 1";
-        return $this->fetchOne($query, $params) ?: [
+        return $this->db->fetchOne($query, $params) ?: [
             'weekday_multiplier' => 1.5,
             'weekend_multiplier' => 2.0,
             'holiday_multiplier' => 2.0,
@@ -48,7 +48,7 @@ class OvertimeService
     public function requestOvertime(int $employeeId, array $data): array
     {
         // Validate employee
-        $emp = $this->fetchOne("
+        $emp = $this->db->fetchOne("
             SELECT e.id, e.user_id, e.name, e.department, e.designation
             FROM employees e
             WHERE e.id = ? AND e.status = 'active'{$this->tenantSql()}
@@ -86,7 +86,7 @@ class OvertimeService
         // Check monthly limit
         $monthStart = date('Y-m-01', strtotime($date));
         $monthEnd = date('Y-m-t', strtotime($date));
-        $monthlyHours = $this->fetchOne("
+        $monthlyHours = $this->db->fetchOne("
             SELECT COALESCE(SUM(hours), 0) as total
             FROM overtime_requests
             WHERE employee_id = ? AND date BETWEEN ? AND ? AND status IN ('pending','approved','paid')
@@ -105,7 +105,7 @@ class OvertimeService
         $multiplier = $isHoliday ? $policy['holiday_multiplier'] : ($isWeekend ? $policy['weekend_multiplier'] : $policy['weekday_multiplier']);
 
         // Calculate hourly rate (basic / 30 / 8)
-        $basicSalary = $this->fetchOne("
+        $basicSalary = $this->db->fetchOne("
             SELECT COALESCE(ss.basic_salary, e.salary, 0) as basic
             FROM employees e
             LEFT JOIN salary_structures ss ON ss.employee_id = e.id AND ss.status = 'active'
@@ -122,7 +122,7 @@ class OvertimeService
         $amount = round($hours * $hourlyRate * $multiplier, 2);
 
         // Check for existing request on same date
-        $existing = $this->fetchOne("
+        $existing = $this->db->fetchOne("
             SELECT id FROM overtime_requests
             WHERE employee_id = ? AND date = ? AND status IN ('pending','approved')
         ", [$employeeId, $date]);
@@ -164,7 +164,7 @@ class OvertimeService
      */
     private function isHoliday(string $date): bool
     {
-        $result = $this->fetchOne("
+        $result = $this->db->fetchOne("
             SELECT 1 FROM holiday_calendar
             WHERE date = ? AND is_active = 1 AND tenant_id = 1
         ", [$date]);
@@ -176,10 +176,10 @@ class OvertimeService
      */
     public function getEmployeeRequests(int $employeeId): array
     {
-        return $this->fetchAll("
+        return $this->db->fetchAll("
             SELECT * FROM overtime_requests
             WHERE employee_id = ?{$this->tenantSql()}
-            ORDER BY date DESC, requested_at DESC
+            ORDER BY overtime_date DESC, requested_at DESC
         ", array_merge([$employeeId], $this->tVal()));
     }
 
@@ -264,7 +264,7 @@ class OvertimeService
      */
     public function getEmployeeHistory(int $employeeId): array
     {
-        return $this->fetchAll("
+        return $this->db->fetchAll("
             SELECT * FROM overtime_requests
             WHERE employee_id = ?{$this->tenantSql()}
             ORDER BY date DESC
@@ -280,7 +280,7 @@ class OvertimeService
         $start = $month . '-01';
         $end = date('Y-m-t', strtotime($start));
 
-        return $this->fetchAll("
+        return $this->db->fetchAll("
             SELECT e.name, e.employee_code,
                    SUM(CASE WHEN orr.status = 'approved' THEN orr.hours ELSE 0 END) as approved_hours,
                    SUM(CASE WHEN orr.status = 'paid' THEN orr.hours ELSE 0 END) as paid_hours,
@@ -300,7 +300,7 @@ class OvertimeService
      */
     public function getEmployeePolicy(int $employeeId): array
     {
-        $emp = $this->fetchOne("SELECT department FROM employees WHERE id = ?", [$employeeId]);
+        $emp = $this->db->fetchOne("SELECT department FROM employees WHERE id = ?", [$employeeId]);
         return $this->getPolicy($emp['department'] ?? null);
     }
 }

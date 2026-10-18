@@ -163,7 +163,7 @@ class SalaryAdvanceService
      */
     public function getEmployeeAdvances(int $employeeId): array
     {
-        return $this->fetchAll("
+        return $this->db->fetchAll("
             SELECT * FROM salary_advances
             WHERE employee_id = ?{$this->tenantSql()}
             ORDER BY requested_at DESC
@@ -175,7 +175,7 @@ class SalaryAdvanceService
      */
     public function getRepaymentSchedule(int $advanceId): array
     {
-        return $this->fetchAll("
+        return $this->db->fetchAll("
             SELECT * FROM salary_advance_repayments
             WHERE advance_id = ?{$this->tenantSql()}
             ORDER BY installment_no
@@ -317,12 +317,12 @@ class SalaryAdvanceService
      */
     public function getPendingRepayments(int $employeeId): array
     {
-        return $this->fetchAll("
+        return $this->db->fetchAll("
             SELECT sar.*, sa.type as advance_type
             FROM salary_advance_repayments sar
             JOIN salary_advances sa ON sar.advance_id = sa.id
-            WHERE sar.employee_id = ? AND sar.status IN ('pending','overdue') AND sar.due_date <= CURDATE()
+            WHERE sar.employee_id = ? AND sar.status IN ('pending','overdue') AND sar.due_date <= CURDATE()" . $this->tenantSql() . "
             ORDER BY sar.due_date
-        ", [$this->tenantId(), $employeeId]);
+        ", [$employeeId]);
     }
 }

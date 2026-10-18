@@ -1218,6 +1218,15 @@ $router->get('/associate/workflows', 'App\\Http\\Controllers\\Associate\\CrmCont
 $router->post('/associate/workflows/store', 'App\\Http\\Controllers\\Associate\\CrmController@storeWorkflowRule');
 $router->post('/associate/workflows/{id}/toggle', 'App\\Http\\Controllers\\Associate\\CrmController@toggleWorkflowRule');
 $router->post('/associate/workflows/{id}/delete', 'App\\Http\\Controllers\\Associate\\CrmController@deleteWorkflowRule');
+
+// Call Recording routes (Gap 22)
+$router->get('/associate/call-recordings', 'App\\Http\\Controllers\\Associate\\CallRecordingController@index');
+$router->get('/associate/call-recordings/{id}/play', 'App\\Http\\Controllers\\Associate\\CallRecordingController@play');
+$router->get('/associate/call-recordings/{id}/download', 'App\\Http\\Controllers\\Associate\\CallRecordingController@download');
+$router->post('/associate/call-recordings/{id}/delete', 'App\\Http\\Controllers\\Associate\\CallRecordingController@delete');
+$router->post('/associate/call-recordings/{id}/note', 'App\\Http\\Controllers\\Associate\\CallRecordingController@addNote');
+$router->get('/associate/call-recordings/lead/{leadId}', 'App\\Http\\Controllers\\Associate\\CallRecordingController@getForLead');
+
 $router->get('/associate/followups/{id}/ics', 'App\\Http\\Controllers\\Associate\\CrmController@followupIcs');
 $router->get('/associate/commissions/history', 'App\\Http\\Controllers\\AssociateController@commissions');
 $router->get('/associate/wallet/withdraw', 'App\\Http\\Controllers\\WalletController@withdrawal');
@@ -1326,6 +1335,10 @@ $router->get('/employee/leads', 'Employee\\EmployeeController@leads');
 $router->get('/employee/leads/{id}', 'Employee\\EmployeeController@leadDetail');
 $router->post('/employee/leads/{id}/status', 'Employee\\EmployeeController@updateLeadStatus');
 $router->post('/employee/leads/{id}/note', 'Employee\\EmployeeController@addLeadNote');
+$router->get('/employee/inquiries', 'Employee\\EmployeeController@inquiries');
+$router->get('/employee/inquiries/{id}', 'Employee\\EmployeeController@inquiryDetail');
+$router->post('/employee/inquiries/{id}/status', 'Employee\\EmployeeController@updateInquiryStatus');
+$router->post('/employee/inquiries/{id}/followup', 'Employee\\EmployeeController@addInquiryFollowup');
 $router->get('/employee/tasks', 'Employee\\EmployeeController@tasks');
 $router->get('/employee/activities', 'Employee\\EmployeeController@activities');
 $router->get('/employee/attendance', 'Employee\\EmployeeController@attendance');
@@ -1447,6 +1460,45 @@ $router->post('/employee/self-service/change-password', 'Employee\\EmployeeSelfS
 
 // Attendance
 $router->get('/employee/self-service/attendance', 'Employee\\EmployeeSelfServiceController@attendance');
+
+// Salary Advances & Loans
+$router->get('/employee/self-service/advances', 'Employee\\EmployeeSelfServiceController@advances');
+$router->get('/employee/self-service/advances/apply', 'Employee\\EmployeeSelfServiceController@advanceApply');
+$router->post('/employee/self-service/advances/apply', 'Employee\\EmployeeSelfServiceController@advanceApply');
+$router->get('/employee/self-service/advances/{id}', 'Employee\\EmployeeSelfServiceController@advanceDetail');
+
+// Leave Encashment
+$router->get('/employee/self-service/encashment', 'Employee\\EmployeeSelfServiceController@encashment');
+$router->get('/employee/self-service/encashment/apply', 'Employee\\EmployeeSelfServiceController@encashmentApply');
+$router->post('/employee/self-service/encashment/apply', 'Employee\\EmployeeSelfServiceController@encashmentApply');
+
+// Overtime Management
+$router->get('/employee/self-service/overtime', 'Employee\\EmployeeSelfServiceController@overtime');
+$router->get('/employee/self-service/overtime/apply', 'Employee\\EmployeeSelfServiceController@overtimeApply');
+$router->post('/employee/self-service/overtime/apply', 'Employee\\EmployeeSelfServiceController@overtimeApply');
+$router->get('/employee/self-service/overtime/{id}', 'Employee\\EmployeeSelfServiceController@overtimeDetail');
+
+// Asset Assignment View
+$router->get('/employee/self-service/assets', 'Employee\\EmployeeSelfServiceController@assets');
+$router->post('/employee/self-service/assets/report-issue', 'Employee\\EmployeeSelfServiceController@assetReportIssue');
+
+// Announcements / Notices
+$router->get('/employee/self-service/announcements', 'Employee\\EmployeeSelfServiceController@announcements');
+$router->post('/employee/self-service/announcements/{id}/read', 'Employee\\EmployeeSelfServiceController@announcementMarkRead');
+
+// Shift Swap Requests
+$router->get('/employee/self-service/shift-swaps', 'Employee\\EmployeeSelfServiceController@shiftSwaps');
+$router->get('/employee/self-service/shift-swaps/request', 'Employee\\EmployeeSelfServiceController@shiftSwapRequest');
+$router->post('/employee/self-service/shift-swaps/request', 'Employee\\EmployeeSelfServiceController@shiftSwapRequest');
+$router->get('/employee/self-service/shift-swaps/{id}/respond', 'Employee\\EmployeeSelfServiceController@shiftSwapRespond');
+$router->post('/employee/self-service/shift-swaps/{id}/respond', 'Employee\\EmployeeSelfServiceController@shiftSwapRespond');
+
+// Helpdesk / Tickets
+$router->get('/employee/self-service/helpdesk', 'Employee\\EmployeeSelfServiceController@helpdesk');
+$router->get('/employee/self-service/helpdesk/create', 'Employee\\EmployeeSelfServiceController@ticketCreate');
+$router->post('/employee/self-service/helpdesk/create', 'Employee\\EmployeeSelfServiceController@ticketCreate');
+$router->get('/employee/self-service/helpdesk/{id}', 'Employee\\EmployeeSelfServiceController@ticketDetail');
+
 $router->get('/employee/finance-dashboard', 'Employee\\EmployeeDashboardController@financeDashboard');
 $router->get('/employee/it-dashboard', 'Employee\\EmployeeDashboardController@itDashboard');
 $router->get('/employee/ops-dashboard', 'Employee\\EmployeeDashboardController@opsDashboard');
@@ -1928,11 +1980,13 @@ $router->get('/admin/inventory', 'App\\Http\\Controllers\\Admin\\SiteController@
 $router->get('/admin/inquiries', 'App\\Http\\Controllers\\Admin\\InquiryController@index');
 $router->get('/admin/inquiries/view/{id}', 'App\\Http\\Controllers\\Admin\\InquiryController@show');
 $router->post('/admin/inquiries/update-status', 'App\\Http\\Controllers\\Admin\\InquiryController@updateStatus');
+$router->post('/admin/inquiries/assign', 'App\\Http\\Controllers\\Admin\\InquiryController@assign');
 $router->post('/admin/inquiries/delete/{id}', 'App\\Http\\Controllers\\Admin\\InquiryController@delete');
 // Alias "enquiries" spelling to the same InquiryController (enquiry management is fully live here)
 $router->get('/admin/enquiries', 'App\\Http\\Controllers\\Admin\\InquiryController@index');
 $router->get('/admin/enquiries/view/{id}', 'App\\Http\\Controllers\\Admin\\InquiryController@show');
 $router->post('/admin/enquiries/update-status', 'App\\Http\\Controllers\\Admin\\InquiryController@updateStatus');
+$router->post('/admin/enquiries/assign', 'App\\Http\\Controllers\\Admin\\InquiryController@assign');
 $router->post('/admin/enquiries/delete/{id}', 'App\\Http\\Controllers\\Admin\\InquiryController@delete');
 
 // Admin Plots
@@ -2202,6 +2256,7 @@ $router->get('/ai-assistant', 'App\\Http\\Controllers\\SmartAIController@assista
 // Notifications API
 $router->get('/api/notifications', 'App\\Http\\Controllers\\NotificationController@getNotifications');
 $router->post('/api/notifications/mark-read', 'App\\Http\\Controllers\\NotificationController@markAsRead');
+$router->post('/api/notifications/mark-all-read', 'App\\Http\\Controllers\\NotificationController@markAllAsRead');
 $router->get('/api/notifications/unread-count', 'App\\Http\\Controllers\\NotificationController@getUnreadCount');
 $router->get('/api/user/notifications/unread-count', 'Front\\UserController@apiUnreadCount');
 $router->get('/api/popups', 'App\\Http\\Controllers\\NotificationController@getPopups');
@@ -3816,6 +3871,23 @@ $router->post('/admin/ai-calling/auto-dialer/ai-schedule', 'App\\Http\\Controlle
 $router->get('/admin/ai-calling/call-logs', 'App\\Http\\Controllers\\Admin\\AICallingController@callLogs');
 $router->get('/admin/ai-calling/call-detail', 'App\\Http\\Controllers\\Admin\\AICallingController@callDetail');
 
+// Voice Calling Dashboard (S347)
+$router->get('/admin/voice-calling', 'App\\Http\\Controllers\\Admin\\VoiceCallingController@index');
+$router->post('/admin/voice-calling/test-provider', 'App\\Http\\Controllers\\Admin\\VoiceCallingController@testProvider');
+$router->get('/admin/voice-calling/provider-config', 'App\\Http\\Controllers\\Admin\\VoiceCallingController@providerConfig');
+
+// IVR Flows (S347)
+$router->get('/admin/ivr-flows', 'App\\Http\\Controllers\\Admin\\IVRFlowController@index');
+$router->get('/admin/ivr-flows/create', 'App\\Http\\Controllers\\Admin\\IVRFlowController@create');
+$router->post('/admin/ivr-flows/store', 'App\\Http\\Controllers\\Admin\\IVRFlowController@store');
+$router->get('/admin/ivr-flows/{id}/edit', 'App\\Http\\Controllers\\Admin\\IVRFlowController@edit');
+$router->post('/admin/ivr-flows/{id}/update', 'App\\Http\\Controllers\\Admin\\IVRFlowController@update');
+$router->post('/admin/ivr-flows/{id}/delete', 'App\\Http\\Controllers\\Admin\\IVRFlowController@delete');
+$router->get('/admin/ivr-flows/{id}/steps', 'App\\Http\\Controllers\\Admin\\IVRFlowController@steps');
+
+// Voice Analytics (S347)
+$router->get('/admin/voice-analytics', 'App\\Http\\Controllers\\Admin\\VoiceAnalyticsController@index');
+
 // Telecalling
 $router->get('/admin/telecalling/dashboard', 'App\\Http\\Controllers\\Employee\\TelecallingController@dashboard');
 $router->get('/admin/telecalling/assign', 'App\\Http\\Controllers\\Employee\\TelecallingController@assign');
@@ -4143,6 +4215,32 @@ $router->post('/user/notifications/read-all', 'Front\\UserController@markAllNoti
 $router->post('/user/notifications/{id}/read', 'Front\\UserController@markNotificationRead');
 $router->get('/user/messages', function () {
     header('Location: ' . BASE_URL . '/user/notifications');
+    exit;
+});
+
+// Smart RBAC router for /notifications — redirects based on active session to eliminate 404s
+$router->get('/notifications', function () {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    $role = strtolower((string)($_SESSION['admin_role'] ?? $_SESSION['role'] ?? ''));
+    $isAdmin = in_array($role, ['admin', 'super_admin', 'manager', 'ceo', 'coo', 'cfo', 'director'], true) || !empty($_SESSION['admin_id']);
+    $isEmployee = in_array($role, ['employee', 'staff'], true) || !empty($_SESSION['employee_id']);
+    $isAssociate = in_array($role, ['associate', 'agent', 'partner'], true) || !empty($_SESSION['associate_id']) || !empty($_SESSION['agent_id']);
+
+    if ($isAdmin) {
+        header('Location: ' . BASE_URL . '/admin/notifications');
+        exit;
+    }
+    if ($isEmployee) {
+        header('Location: ' . BASE_URL . '/employee/notifications');
+        exit;
+    }
+    if (isset($_SESSION['user_id']) || $isAssociate) {
+        header('Location: ' . BASE_URL . '/user/notifications');
+        exit;
+    }
+    header('Location: ' . BASE_URL . '/login?redirect=notifications');
     exit;
 });
 
@@ -4734,7 +4832,12 @@ $router->get('/admin/notifications', 'App\\Http\\Controllers\\Admin\\AdminNotifi
 $router->get('/admin/notifications/panel', 'App\\Http\\Controllers\\Admin\\AdminNotificationController@panel');
 $router->post('/admin/notifications/mark-read/{id}', 'App\\Http\\Controllers\\Admin\\AdminNotificationController@markRead');
 $router->post('/admin/notifications/mark-all-read', 'App\\Http\\Controllers\\Admin\\AdminNotificationController@markAllRead');
-$router->get('/admin/notifications/booking-log', 'App\\Http\\Controllers\\Admin\\AdminNotificationController@bookingLog');
+$router->post('/admin/notifications/delete/{id}', 'App\\Http\\Controllers\\Admin\\AdminNotificationController@delete');
+$router->post('/admin/notifications/clear-read', 'App\Http\Controllers\Admin\AdminNotificationController@clearRead');
+$router->post('/admin/notifications/archive-now', 'App\Http\Controllers\Admin\AdminNotificationController@archiveNow');
+$router->get('/admin/notification-preferences', 'App\Http\Controllers\Admin\AdminNotificationController@preferences');
+$router->post('/admin/notification-preferences', 'App\Http\Controllers\Admin\AdminNotificationController@savePreferences');
+$router->get('/admin/notifications/booking-log', 'App\Http\Controllers\Admin\AdminNotificationController@bookingLog');
 
 // ============================================================
 // NOTIFICATION DASHBOARD â€” Delivery stats, channel health, templates
@@ -6425,6 +6528,93 @@ $router->get('/customer/township-grievances', function () { header('Location: ' 
 $router->get('/customer/township-grievances/create', function () { header('Location: ' . BASE_URL . '/user/township-grievances/create', true, 301); exit; });
 $router->post('/customer/township-grievances/create', function () { header('Location: ' . BASE_URL . '/user/township-grievances/create', true, 301); exit; });
 $router->post('/customer/township-grievances/close/{id}', function ($id) { header('Location: ' . BASE_URL . '/user/township-grievances/close/' . $id, true, 301); exit; });
+
+// Admin Offboarding / Exit Process
+$router->get('/admin/offboarding', 'App\\Http\\Controllers\\Admin\\OffboardingController@index');
+$router->get('/admin/offboarding/{id}', 'App\\Http\\Controllers\\Admin\\OffboardingController@show');
+$router->post('/admin/offboarding/initiate', 'App\\Http\\Controllers\\Admin\\OffboardingController@initiate');
+$router->post('/admin/offboarding/{id}/status', 'App\\Http\\Controllers\\Admin\\OffboardingController@updateStatus');
+$router->post('/admin/offboarding/{id}/complete', 'App\\Http\\Controllers\\Admin\\OffboardingController@complete');
+
+// Admin Holiday Calendar Management
+$router->get('/admin/holiday-calendar', 'App\\Http\\Controllers\\Admin\\HolidayCalendarController@index');
+$router->get('/admin/holiday-calendar/create', 'App\\Http\\Controllers\\Admin\\HolidayCalendarController@create');
+$router->post('/admin/holiday-calendar', 'App\\Http\\Controllers\\Admin\\HolidayCalendarController@store');
+$router->get('/admin/holiday-calendar/{id}/edit', 'App\\Http\\Controllers\\Admin\\HolidayCalendarController@edit');
+$router->post('/admin/holiday-calendar/{id}', 'App\\Http\\Controllers\\Admin\\HolidayCalendarController@update');
+$router->post('/admin/holiday-calendar/{id}/delete', 'App\\Http\\Controllers\\Admin\\HolidayCalendarController@destroy');
+$router->post('/admin/holiday-calendar/bulk-import', 'App\\Http\\Controllers\\Admin\\HolidayCalendarController@bulkImport');
+
+// Admin Employee Grievances / Complaints
+$router->get('/admin/grievances', 'App\\Http\\Controllers\\Admin\\EmployeeGrievanceController@index');
+$router->get('/admin/grievances/{id}', 'App\\Http\\Controllers\\Admin\\EmployeeGrievanceController@show');
+$router->post('/admin/grievances/{id}/status', 'App\\Http\\Controllers\\Admin\\EmployeeGrievanceController@updateStatus');
+$router->post('/admin/grievances/{id}/assign', 'App\\Http\\Controllers\\Admin\\EmployeeGrievanceController@assign');
+$router->post('/admin/grievances/{id}/comment', 'App\\Http\\Controllers\\Admin\\EmployeeGrievanceController@addComment');
+
+// Employee Self-Service Grievances
+$router->get('/employee/self-service/grievances', 'Employee\\EmployeeSelfServiceController@grievances');
+$router->get('/employee/self-service/grievances/create', 'Employee\\EmployeeSelfServiceController@grievanceCreate');
+$router->post('/employee/self-service/grievances/create', 'Employee\\EmployeeSelfServiceController@grievanceCreate');
+$router->get('/employee/self-service/grievances/{id}', 'Employee\\EmployeeSelfServiceController@grievanceDetail');
+$router->post('/employee/self-service/grievances/{id}/comment', 'Employee\\EmployeeSelfServiceController@grievanceComment');
+$router->post('/employee/self-service/grievances/{id}/close', 'Employee\\EmployeeSelfServiceController@grievanceClose');
+
+// Employee Self-Service Training / L&D
+$router->get('/employee/self-service/training', 'Employee\\EmployeeSelfServiceController@training');
+$router->get('/employee/self-service/training/{id}', 'Employee\\EmployeeSelfServiceController@trainingCourseDetail');
+$router->post('/employee/self-service/training/progress', 'Employee\\EmployeeSelfServiceController@trainingUpdateProgress');
+$router->get('/employee/self-service/certifications', 'Employee\\EmployeeSelfServiceController@certifications');
+
+// Employee Self-Service Org Chart (View Only)
+$router->get('/employee/self-service/org-chart', 'Employee\\EmployeeSelfServiceController@orgChart');
+$router->get('/employee/self-service/org-chart/department/{dept}', 'Employee\\EmployeeSelfServiceController@orgChartDepartment');
+
+// Employee Self-Service Engagement Surveys
+$router->get('/employee/self-service/surveys', 'Employee\\EmployeeSelfServiceController@surveys');
+$router->get('/employee/self-service/surveys/take/{id}', 'Employee\\EmployeeSelfServiceController@surveyTake');
+$router->post('/employee/self-service/surveys/take/{id}', 'Employee\\EmployeeSelfServiceController@surveyTake');
+$router->get('/employee/self-service/surveys/results/{id}', 'Employee\\EmployeeSelfServiceController@surveyResults');
+
+// Admin Training / L&D
+$router->get('/admin/training/courses', 'App\\Http\\Controllers\\Admin\\HRController@trainingCourses');
+$router->get('/admin/training/courses/create', 'App\\Http\\Controllers\\Admin\\HRController@trainingCourseCreate');
+$router->post('/admin/training/courses/create', 'App\\Http\\Controllers\\Admin\\HRController@trainingCourseCreate');
+$router->get('/admin/training/courses/edit/{id}', 'App\\Http\\Controllers\\Admin\\HRController@trainingCourseEdit');
+$router->post('/admin/training/courses/edit/{id}', 'App\\Http\\Controllers\\Admin\\HRController@trainingCourseEdit');
+$router->get('/admin/training/courses/delete/{id}', 'App\\Http\\Controllers\\Admin\\HRController@trainingCourseDelete');
+$router->get('/admin/training/assignments', 'App\\Http\\Controllers\\Admin\\HRController@trainingAssignments');
+$router->post('/admin/training/assign', 'App\\Http\\Controllers\\Admin\\HRController@trainingAssign');
+$router->post('/admin/training/assignments/progress', 'App\\Http\\Controllers\\Admin\\HRController@trainingUpdateProgress');
+$router->post('/admin/training/assignments/certificate', 'App\\Http\\Controllers\\Admin\\HRController@trainingIssueCertificate');
+$router->get('/admin/training/certifications', 'App\\Http\\Controllers\\Admin\\HRController@certifications');
+$router->post('/admin/training/certifications', 'App\\Http\\Controllers\\Admin\\HRController@certificationCreate');
+$router->post('/admin/training/certifications/{id}', 'App\\Http\\Controllers\\Admin\\HRController@certificationUpdate');
+
+// Admin Org Chart
+$router->get('/admin/org-chart', 'App\\Http\\Controllers\\Admin\\HRController@orgChart');
+$router->get('/admin/org-chart/create', 'App\\Http\\Controllers\\Admin\\HRController@orgChartCreate');
+$router->post('/admin/org-chart/create', 'App\\Http\\Controllers\\Admin\\HRController@orgChartCreate');
+$router->get('/admin/org-chart/edit/{id}', 'App\\Http\\Controllers\\Admin\\HRController@orgChartEdit');
+$router->post('/admin/org-chart/edit/{id}', 'App\\Http\\Controllers\\Admin\\HRController@orgChartEdit');
+$router->get('/admin/org-chart/delete/{id}', 'App\\Http\\Controllers\\Admin\\HRController@orgChartDelete');
+$router->post('/admin/org-chart/reorder', 'App\\Http\\Controllers\\Admin\\HRController@orgChartReorder');
+$router->post('/admin/org-chart/sync', 'App\\Http\\Controllers\\Admin\\HRController@orgChartSync');
+$router->get('/admin/org-chart/export', 'App\\Http\\Controllers\\Admin\\HRController@orgChartExport');
+$router->get('/admin/org-chart/import', 'App\\Http\\Controllers\\Admin\\HRController@orgChartImport');
+$router->post('/admin/org-chart/import', 'App\\Http\\Controllers\\Admin\\HRController@orgChartImport');
+
+// Admin Engagement Surveys
+$router->get('/admin/engagement/surveys', 'App\\Http\\Controllers\\Admin\\HRController@engagementSurveys');
+$router->get('/admin/engagement/surveys/create', 'App\\Http\\Controllers\\Admin\\HRController@engagementSurveyCreate');
+$router->post('/admin/engagement/surveys/create', 'App\\Http\\Controllers\\Admin\\HRController@engagementSurveyCreate');
+$router->get('/admin/engagement/surveys/edit/{id}', 'App\\Http\\Controllers\\Admin\\HRController@engagementSurveyEdit');
+$router->post('/admin/engagement/surveys/edit/{id}', 'App\\Http\\Controllers\\Admin\\HRController@engagementSurveyEdit');
+$router->get('/admin/engagement/surveys/delete/{id}', 'App\\Http\\Controllers\\Admin\\HRController@engagementSurveyDelete');
+$router->get('/admin/engagement/surveys/activate/{id}', 'App\\Http\\Controllers\\Admin\\HRController@engagementSurveyActivate');
+$router->get('/admin/engagement/surveys/close/{id}', 'App\\Http\\Controllers\\Admin\\HRController@engagementSurveyClose');
+$router->get('/admin/engagement/surveys/analytics/{id}', 'App\\Http\\Controllers\\Admin\\HRController@engagementSurveyAnalytics');
+$router->get('/admin/engagement/surveys/responses/{id}', 'App\\Http\\Controllers\\Admin\\HRController@engagementSurveyResponses');
 
 // ============================================================
 // SESSION 212: TOWNSHIP BOREWELL WATER SUPPLY & SECURITY DESK

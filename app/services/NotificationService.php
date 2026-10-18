@@ -233,13 +233,25 @@ class NotificationService
 
     private function sendPush(int $userId, string $title, string $body, array $data): void
     {
-        $st = $this->db->prepare("SELECT * FROM push_subscriptions WHERE user_id = :u AND active = 1");
-        $st->execute([':u' => $userId]);
-        $subs = $st->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $st = $this->db->prepare("SELECT * FROM push_subscriptions WHERE user_id = :u AND is_active = 1");
+            $st->execute([':u' => $userId]);
+            $subs = $st->fetchAll(PDO::FETCH_ASSOC);
 
-        $tid = $this->getTenantId();
-        $st2 = $this->db->prepare("INSERT INTO push_notifications (user_id, title, body, data, tenant_id, sent_at, created_at) VALUES (:u, :t, :b, :d, :tid, NOW(), NOW())");
-        $st2->execute([':u' => $userId, ':t' => $title, ':b' => $body, ':d' => json_encode($data, JSON_UNESCAPED_UNICODE), ':tid' => $tid]);
+            $tid = $this->getTenantId();
+            $st2 = $this->db->prepare("INSERT INTO push_notifications (user_id, title, body, data, tenant_id, sent_at, created_at) VALUES (:u, :t, :b, :d, :tid, NOW(), NOW())");
+            $st2->execute([':u' => $userId, ':t' => $title, ':b' => $body, ':d' => json_encode($data, JSON_UNESCAPED_UNICODE), ':tid' => $tid]);
+
+            // Dispatch Web Push via VAPID PushSender
+            if (!empty($subs)) {
+                $pushSender = new \App\Services\Communication\PushSender();
+                if ($pushSender->isConfigured()) {
+                    $pushSender->sendToUser($userId, $title, $body, $data['url'] ?? '/');
+                }
+            }
+        } catch (\Throwable $e) {
+            error_log('NotificationService::sendPush error: ' . $e->getMessage());
+        }
     }
 
     private function sendWhatsapp(int $userId, string $message, array $data): void
@@ -332,9 +344,25 @@ class NotificationService
     {
         try {
             $tid = $this->getTenantId();
+            $resolvedTitle = $title ?? ucfirst($type);
             $this->db->prepare(
                 'INSERT INTO notifications (user_id, type, title, message, action_url, is_read, status, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, 0, ?, ?, NOW())'
-            )->execute([$userId, $type, $title ?? ucfirst($type), $message, $actionUrl, 'unread', $tid]);
+            )->execute([$userId, $type, $resolvedTitle, $message, $actionUrl, 'unread', $tid]);
+
+            // Trigger real-time Web Push notification if recipient is subscribed
+            if ($userId) {
+                try {
+                    if ($this->isChannelEnabled($userId, $type, 'push')) {
+                        $pushSender = new \App\Services\Communication\PushSender();
+                        if ($pushSender->isConfigured()) {
+                            $pushSender->sendToUser($userId, $resolvedTitle, $message, $actionUrl ?: '/');
+                        }
+                    }
+                } catch (\Throwable $pt) {
+                    error_log('NotificationService::notify push dispatch error: ' . $pt->getMessage());
+                }
+            }
+
             return true;
         } catch (\Throwable $e) {
             error_log('NotificationService::notify error: ' . $e->getMessage());

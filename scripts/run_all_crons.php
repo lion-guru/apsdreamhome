@@ -682,6 +682,25 @@ echo PHP_EOL;
         echo PHP_EOL;
     }
 
+    // 15. AUTOMATED NOTIFICATION ARCHIVING (Older than 90 days)
+    if (in_array($mode, ['daily', 'monthly', 'all'])) {
+        $taskNum++;
+        echo "==========================================================================================================" . PHP_EOL;
+        echo "{$taskNum}  Automated Notification Archiving (90+ Days)" . PHP_EOL;
+        echo "==========================================================================================================" . PHP_EOL;
+        try {
+            require_once $root . '/app/Services/NotificationArchiveService.php';
+            $archiveService = new \App\Services\NotificationArchiveService($pdo);
+            $res = $archiveService->archiveOldNotifications(90, 500);
+            $log['notification_archive'] = $res;
+            echo "  [OK] " . $res['message'] . PHP_EOL;
+        } catch (\Throwable $e) {
+            echo "  [FAIL] " . $e->getMessage() . PHP_EOL;
+            $errors[] = 'notification_archive: ' . $e->getMessage();
+        }
+        echo PHP_EOL;
+    }
+
     // SUMMARY
     // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
     $elapsed = round(microtime(true) - $startTime, 2);

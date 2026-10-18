@@ -58,6 +58,23 @@ $router->post('/admin/cloud-storage/upload', 'App\\Http\\Controllers\\Admin\\Clo
 $router->get('/admin/cloud-storage/download', 'App\\Http\\Controllers\\Admin\\CloudStorageController@download');
 $router->post('/admin/cloud-storage/delete', 'App\\Http\\Controllers\\Admin\\CloudStorageController@delete');
 
+// Admin Multi-Provider Storage (Gap 25 + improvements)
+$router->get('/admin/multi-storage', 'App\\Http\\Controllers\\Admin\\MultiStorageController@index');
+$router->post('/admin/multi-storage/health-check', 'App\\Http\\Controllers\\Admin\\MultiStorageController@healthCheck');
+$router->post('/admin/multi-storage/failover', 'App\\Http\\Controllers\\Admin\\MultiStorageController@forceFailover');
+$router->get('/admin/multi-storage/configure/{provider}', 'App\\Http\\Controllers\\Admin\\MultiStorageController@configure');
+
+// Admin Storage Analytics + Lifecycle (Gap 25 improvements)
+$router->get('/admin/storage-analytics', 'App\\Http\\Controllers\\Admin\\StorageAnalyticsController@index');
+$router->get('/admin/storage-analytics/presigned', 'App\\Http\\Controllers\\Admin\\StorageAnalyticsController@presigned');
+$router->get('/admin/storage-analytics/cost', 'App\\Http\\Controllers\\Admin\\StorageAnalyticsController@costCalculator');
+$router->post('/admin/storage-analytics/backup-verify', 'App\\Http\\Controllers\\Admin\\StorageAnalyticsController@backupVerify');
+$router->get('/admin/storage-lifecycle', 'App\\Http\\Controllers\\Admin\\StorageLifecycleController@index');
+$router->post('/admin/storage-lifecycle/store', 'App\\Http\\Controllers\\Admin\\StorageLifecycleController@store');
+$router->post('/admin/storage-lifecycle/toggle/{id}', 'App\\Http\\Controllers\\Admin\\StorageLifecycleController@toggle');
+$router->post('/admin/storage-lifecycle/delete/{id}', 'App\\Http\\Controllers\\Admin\\StorageLifecycleController@delete');
+$router->post('/admin/storage-lifecycle/run', 'App\\Http\\Controllers\\Admin\\StorageLifecycleController@run');
+
 // RAG Knowledge Base (S341) - health card + embedding model switch + re-embed
 $router->get('/admin/rag', 'App\\Http\\Controllers\\Admin\\RAGAdminController@index');
 $router->post('/admin/rag/set-model', 'App\\Http\\Controllers\\Admin\\RAGAdminController@setModel');

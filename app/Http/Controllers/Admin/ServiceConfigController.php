@@ -37,6 +37,7 @@ class ServiceConfigController extends AdminController
             'page_heading' => 'Service Configuration',
             'groups'       => $groups,
             'services'     => $svc->getAll(),
+            'defaults'     => $this->getSeedDefaults(),
             'saved'        => $_GET['saved'] ?? null,
             'error'        => $_GET['error'] ?? null,
         ]);
@@ -113,21 +114,63 @@ class ServiceConfigController extends AdminController
         $svc = ServiceConfigService::getInstance();
         $config = $svc->getApiConfig($service);
 
-        // Placeholder — real implementations check actual APIs
-        $result = [
-            'service'  => $service,
-            'test_mode'=> $svc->isTestMode($service),
-            'has_keys' => count($config) > 0,
-            'status'   => 'unknown',
-            'message'  => 'Connection test not implemented for this service yet.',
-        ];
+        $result = ['service' => $service, 'test_mode' => $svc->isTestMode($service), 'has_keys' => count($config) > 0];
 
         if (empty($config)) {
             $result['status'] = 'error';
             $result['message'] = 'No configuration found for this service.';
-        } else {
-            $result['status'] = 'ok';
-            $result['message'] = 'Configuration present. API connection test not yet wired.';
+            header('Content-Type: application/json');
+            echo json_encode($result);
+            exit;
+        }
+
+        try {
+            switch ($service) {
+                case 'aws_s3':
+                    $storage = new \App\Services\Storage\S3Storage($config);
+                    if (!$storage->isConfigured()) {
+                        $result['status'] = 'error';
+                        $result['message'] = 'S3 not fully configured (access_key, secret_key, region, bucket required).';
+                        break;
+                    }
+                    $files = $storage->listFiles('');
+                    $result['status'] = 'ok';
+                    $result['message'] = 'S3 connected. ' . count($files) . ' object(s) found in bucket.';
+                    break;
+
+                case 'google_calendar':
+                    $cal = new \App\Services\GoogleCalendarService();
+                    if (!$cal->isConfigured()) {
+                        $result['status'] = 'error';
+                        $result['message'] = 'Google Calendar not configured (client_id, client_secret, redirect_uri required).';
+                        break;
+                    }
+                    $result['status'] = 'ok';
+                    $result['message'] = 'Google Calendar configured. Connect from the Calendar Sync page to authorize.';
+                    break;
+
+                case 'smtp':
+                    $result['status'] = 'ok';
+                    $result['message'] = 'SMTP configured (host=' . ($config['host'] ?? 'not set') . ', port=' . ($config['port'] ?? 'not set') . '). Use Email Settings to send a test email.';
+                    break;
+
+                case 'twilio':
+                    $result['status'] = 'ok';
+                    $result['message'] = 'Twilio configured (account_sid=' . substr($config['account_sid'] ?? '', 0, 6) . '...). Configure webhooks in Twilio console.';
+                    break;
+
+                case 'razorpay':
+                    $result['status'] = 'ok';
+                    $result['message'] = 'Razorpay configured (key_id=' . substr($config['key_id'] ?? '', 0, 6) . '...). Use Payment Settings to verify.';
+                    break;
+
+                default:
+                    $result['status'] = 'ok';
+                    $result['message'] = 'Configuration present for ' . $service . '. No dedicated test for this service.';
+            }
+        } catch (\Throwable $e) {
+            $result['status'] = 'error';
+            $result['message'] = 'Test failed: ' . $e->getMessage();
         }
 
         header('Content-Type: application/json');

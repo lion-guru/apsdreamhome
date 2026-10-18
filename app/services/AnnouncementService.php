@@ -22,12 +22,12 @@ class AnnouncementService
      */
     public function getEmployeeAnnouncements(int $employeeId): array
     {
-        $emp = $this->fetchOne("SELECT department, role FROM users WHERE id = ?{$this->tenantSql()}", array_merge([$employeeId], $this->tVal()));
+        $emp = $this->db->fetchOne("SELECT department, role FROM employees WHERE id = ? AND status = 'active' LIMIT 1", [$employeeId]);
         if (!$emp) return [];
 
         $query = "
             SELECT ca.*, 
-                   (SELECT 1 FROM announcement_reads ar WHERE ar.announcement_id = ca.id AND ar.employee_id = ?) as read
+                   (SELECT 1 FROM announcement_reads ar WHERE ar.announcement_id = ca.id AND ar.employee_id = ?) as `read`
             FROM company_announcements ca
             WHERE ca.tenant_id = 1
               AND ca.status = 'published'
@@ -42,8 +42,8 @@ class AnnouncementService
             ORDER BY ca.is_pinned DESC, ca.created_at DESC
         ";
 
-        return $this->fetchAll($query, [
-            $this->tenantId(), $employeeId,
+        return $this->db->fetchAll($query, [
+            $employeeId,
             json_encode($emp['department']),
             json_encode($emp['role']),
             json_encode($employeeId)
@@ -55,7 +55,7 @@ class AnnouncementService
      */
     public function markAsRead(int $announcementId, int $employeeId): array
     {
-        $this->execute("
+        $this->db->execute("
             INSERT IGNORE INTO announcement_reads (tenant_id, announcement_id, employee_id)
             VALUES (?, ?, ?)
         ", [$this->tenantId(), $announcementId, $employeeId]);
@@ -68,10 +68,10 @@ class AnnouncementService
      */
     public function getUnreadCount(int $employeeId): int
     {
-        $emp = $this->fetchOne("SELECT department, role FROM users WHERE id = ?{$this->tenantSql()}", array_merge([$employeeId], $this->tVal()));
+        $emp = $this->db->fetchOne("SELECT department, role FROM employees WHERE id = ? AND status = 'active' LIMIT 1", [$employeeId]);
         if (!$emp) return 0;
 
-        $result = $this->fetchOne("
+        $result = $this->db->fetchOne("
             SELECT COUNT(*) as cnt
             FROM company_announcements ca
             WHERE ca.tenant_id = 1
@@ -133,7 +133,7 @@ class AnnouncementService
      */
     public function getAllAnnouncements(): array
     {
-        return $this->fetchAll("
+        return $this->db->fetchAll("
             SELECT ca.*, u.name as created_by_name
             FROM company_announcements ca
             LEFT JOIN users u ON ca.created_by = u.id
@@ -147,26 +147,32 @@ class AnnouncementService
      */
     public function updateAnnouncement(int $id, array $data): array
     {
-        $allowed = ['title', 'content', 'type', 'priority', 'target_audience', 'target_departments', 'target_roles', 'target_users', 'start_date', 'end_date', 'is_pinned', 'status', 'attachments'];
+        $allowedFields = ['title', 'content', 'type', 'priority', 'target_audience', 'target_departments', 'target_roles', 'target_users', 'start_date', 'end_date', 'is_pinned', 'attachments', 'status'];
         $updates = [];
         $params = [];
 
-        foreach ($data as $key => $value) {
-            if (in_array($key, $allowed)) {
-                $updates[] = "$key = ?";
-                $params[] = is_array($value) ? json_encode($value) : $value;
+        foreach ($allowedFields as $field) {
+            if (array_key_exists($field, $data)) {
+                if (in_array($field, ['target_departments', 'target_roles', 'target_users', 'attachments'])) {
+                    $updates[] = "$field = ?";
+                    $params[] = json_encode($data[$field]);
+                } else {
+                    $updates[] = "$field = ?";
+                    $params[] = $data[$field];
+                }
             }
         }
 
-        if (empty($updates)) return ['success' => false, 'message' => 'No valid fields'];
+        if (empty($updates)) {
+            return ['success' => false, 'message' => 'No valid fields to update'];
+        }
 
-        $params[] = $this->tenantId();
         $params[] = $id;
-
-        $this->execute(
-            "UPDATE company_announcements SET " . implode(', ', $updates) . ", updated_at = NOW() WHERE tenant_id = ? AND id = ?",
-            $params
-        );
+        $this->execute("
+            UPDATE company_announcements 
+            SET " . implode(', ', $updates) . ", updated_at = NOW()
+            WHERE id = ?
+        ", $params);
 
         return ['success' => true];
     }
@@ -174,9 +180,9 @@ class AnnouncementService
     /**
      * Delete announcement
      */
-    public function deleteAnnouncement(int $id): array
+    public function deleteAnnouncement(int $id): bool
     {
-        $this->execute("DELETE FROM company_announcements WHERE tenant_id = ? AND id = ?", [$this->tenantId(), $id]);
-        return ['success' => true];
+        $this->execute("DELETE FROM company_announcements WHERE id = ?", [$id]);
+        return true;
     }
 }

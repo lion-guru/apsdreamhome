@@ -1009,4 +1009,869 @@ public function viewEmployee($id)
             'shift_types' => $shiftTypes,
         ]);
     }
+
+    // ONBOARDING
+    public function onboarding()
+    {
+        $this->requireAdmin();
+        $onboardingService = new \App\Services\OnboardingService();
+        
+        $templates = $onboardingService->getTemplates();
+        $stats = $onboardingService->getOnboardingStats();
+        
+        $employees = $this->db->fetchAll("
+            SELECT e.id, e.name, e.employee_code, e.department, 
+                   (SELECT COUNT(*) FROM onboarding_checklists oc WHERE oc.employee_id = e.id) as total_items,
+                   (SELECT COUNT(*) FROM onboarding_checklists oc WHERE oc.employee_id = e.id AND oc.status = 'completed') as completed_items
+            FROM employees e
+            WHERE e.status = 'active'
+            ORDER BY e.name");
+
+        return $this->render('admin/onboarding/index', [
+            'page_title' => 'Employee Onboarding',
+            'templates' => $templates,
+            'stats' => $stats,
+            'employees' => $employees
+        ]);
+    }
+
+    public function onboardingDetail($employeeId)
+    {
+        $this->requireAdmin();
+        $onboardingService = new \App\Services\OnboardingService();
+        
+        $progress = $onboardingService->getOnboardingProgress($employeeId);
+        $employee = $this->db->fetchOne("SELECT e.*, u.name, u.email FROM employees e JOIN users u ON e.user_id = u.id WHERE e.id = ?", [$employeeId]);
+        
+        if (!$employee) {
+            $this->setFlash('error', 'Employee not found');
+            header('Location: ' . BASE_URL . '/admin/onboarding');
+            exit;
+        }
+
+        $templates = (new \App\Services\OnboardingService())->getTemplates();
+
+        return $this->render('admin/onboarding/detail', [
+            'page_title' => 'Onboarding: ' . $employee['name'],
+            'employee' => $employee,
+            'progress' => $progress,
+            'templates' => $templates
+        ]);
+    }
+
+    public function assignOnboardingTemplate()
+    {
+        $this->requireAdmin();
+        $result = (new \App\Services\OnboardingService())->assignTemplate(
+            (int)($_POST['employee_id'] ?? 0),
+            (int)($_POST['template_id'] ?? 0),
+            (int)($_SESSION['admin_id'] ?? 1)
+        );
+        $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+        header('Location: ' . BASE_URL . '/admin/onboarding/' . (int)($_POST['employee_id'] ?? 0));
+        exit;
+    }
+
+    public function updateOnboardingItem()
+    {
+        $this->requireAdmin();
+        $result = (new \App\Services\OnboardingService())->updateItemStatus(
+            (int)($_POST['item_id'] ?? 0),
+            (int)($_POST['employee_id'] ?? 0),
+            $_POST['status'] ?? '',
+            ['notes' => $_POST['notes'] ?? '']
+        );
+        $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+        header('Location: ' . BASE_URL . '/admin/onboarding/' . (int)($_POST['employee_id'] ?? 0));
+        exit;
+    }
+
+    // OFFBOARDING
+    public function offboarding()
+    {
+        $this->requireAdmin();
+        $offboardingService = new \App\Services\OffboardingService();
+        
+        $stats = $offboardingService->getOffboardingStats();
+        $employees = $offboardingService->getAllOffboardingStatus();
+        $templates = $offboardingService->getTemplates();
+
+        return $this->render('admin/offboarding/index', [
+            'page_title' => 'Employee Offboarding',
+            'stats' => $stats,
+            'employees' => $employees,
+            'templates' => $templates
+        ]);
+    }
+
+    public function offboardingDetail($employeeId)
+    {
+        $this->requireAdmin();
+        $offboardingService = new \App\Services\OffboardingService();
+        
+        $progress = $offboardingService->getOffboardingProgress($employeeId);
+        $employee = $this->db->fetchOne("SELECT e.*, u.name, u.email FROM employees e JOIN users u ON e.user_id = u.id WHERE e.id = ?", [$employeeId]);
+        
+        if (!$employee) {
+            $this->setFlash('error', 'Employee not found');
+            header('Location: ' . BASE_URL . '/admin/offboarding');
+            exit;
+        }
+
+        $templates = $offboardingService->getTemplates();
+
+        return $this->render('admin/offboarding/detail', [
+            'page_title' => 'Offboarding: ' . $employee['name'],
+            'employee' => $employee,
+            'progress' => $progress,
+            'templates' => $templates
+        ]);
+    }
+
+    public function assignOffboardingTemplate()
+    {
+        $this->requireAdmin();
+        $result = (new \App\Services\OffboardingService())->assignTemplate(
+            (int)($_POST['employee_id'] ?? 0),
+            (int)($_POST['template_id'] ?? 0),
+            (int)($_SESSION['admin_id'] ?? 1)
+        );
+        $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+        header('Location: ' . BASE_URL . '/admin/offboarding/' . (int)($_POST['employee_id'] ?? 0));
+        exit;
+    }
+
+    public function updateOffboardingItem()
+    {
+        $this->requireAdmin();
+        $result = (new \App\Services\OffboardingService())->updateItemStatus(
+            (int)($_POST['item_id'] ?? 0),
+            (int)($_POST['employee_id'] ?? 0),
+            $_POST['status'] ?? '',
+            ['notes' => $_POST['notes'] ?? '']
+        );
+        $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+        header('Location: ' . BASE_URL . '/admin/offboarding/' . (int)($_POST['employee_id'] ?? 0));
+        exit;
+    }
+
+    public function initiateOffboarding()
+    {
+        $this->requireAdmin();
+        $result = (new \App\Services\OffboardingService())->initiateOffboarding(
+            (int)($_POST['employee_id'] ?? 0),
+            (int)($_SESSION['admin_id'] ?? 1),
+            $_POST
+        );
+        $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+        header('Location: ' . BASE_URL . '/admin/offboarding');
+        exit;
+    }
+
+    public function completeOffboarding()
+    {
+        $this->requireAdmin();
+        $result = (new \App\Services\OffboardingService())->completeOffboarding(
+            (int)($_POST['employee_id'] ?? 0),
+            ['settlement_amount' => $_POST['settlement_amount'] ?? null, 'processed_by' => $_POST['processed_by'] ?? null, 'notes' => $_POST['notes'] ?? '']
+        );
+        $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+        header('Location: ' . BASE_URL . '/admin/offboarding');
+        exit;
+    }
+
+    // HOLIDAY CALENDAR
+    public function holidayCalendar()
+    {
+        $this->requireAdmin();
+        $holidayService = new \App\Services\HolidayCalendarService();
+        
+        $filters = [
+            'type' => $_GET['type'] ?? null,
+            'region' => $_GET['region'] ?? null,
+            'year' => $_GET['year'] ?? null,
+            'month' => $_GET['month'] ?? null,
+            'is_active' => $_GET['is_active'] ?? null
+        ];
+        
+        $holidays = $holidayService->getHolidays($filters);
+        $stats = $holidayService->getStats();
+        $holidayTypes = $holidayService->getHolidayTypes();
+
+        return $this->render('admin/holiday_calendar/index', [
+            'page_title' => 'Holiday Calendar',
+            'holidays' => $holidays,
+            'stats' => $stats,
+            'holiday_types' => $holidayTypes,
+            'filters' => $filters
+        ]);
+    }
+
+    public function holidayCalendarCreate()
+    {
+        $this->requireAdmin();
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $result = (new \App\Services\HolidayCalendarService())->createHoliday($_POST);
+            $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+            header('Location: ' . BASE_URL . '/admin/holiday-calendar');
+            exit;
+        }
+
+        $holidayService = new \App\Services\HolidayCalendarService();
+        $holidayTypes = $holidayService->getHolidayTypes();
+
+        return $this->render('admin/holiday_calendar/create', [
+            'page_title' => 'Add Holiday',
+            'holiday_types' => $holidayTypes
+        ]);
+    }
+
+    public function holidayCalendarEdit($id)
+    {
+        $this->requireAdmin();
+        
+        $holidayService = new \App\Services\HolidayCalendarService();
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $result = $holidayService->updateHoliday($id, $_POST);
+            $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+            header('Location: ' . BASE_URL . '/admin/holiday-calendar');
+            exit;
+        }
+
+        $holiday = $holidayService->getHoliday($id);
+        if (!$holiday) {
+            $this->setFlash('error', 'Holiday not found');
+            header('Location: ' . BASE_URL . '/admin/holiday-calendar');
+            exit;
+        }
+
+        $holidayTypes = $holidayService->getHolidayTypes();
+
+        return $this->render('admin/holiday_calendar/edit', [
+            'page_title' => 'Edit Holiday',
+            'holiday' => $holiday,
+            'holiday_types' => $holidayTypes
+        ]);
+    }
+
+    public function holidayCalendarDelete($id)
+    {
+        $this->requireAdmin();
+        $result = (new \App\Services\HolidayCalendarService())->deleteHoliday($id);
+        $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+        header('Location: ' . BASE_URL . '/admin/holiday-calendar');
+        exit;
+    }
+
+    public function holidayCalendarBulkImport()
+    {
+        $this->requireAdmin();
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_FILES['holiday_file'])) {
+            // Handle CSV upload
+            $result = ['success' => false, 'message' => 'CSV import not yet implemented'];
+            $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+            header('Location: ' . BASE_URL . '/admin/holiday-calendar');
+            exit;
+        }
+
+        return $this->render('admin/holiday_calendar/bulk_import', [
+            'page_title' => 'Bulk Import Holidays'
+        ]);
+    }
+
+    // EMPLOYEE GRIEVANCE SYSTEM
+    public function grievances()
+    {
+        $this->requireAdmin();
+        $grievanceService = new \App\Services\EmployeeGrievanceService();
+        
+        $filters = [
+            'status' => $_GET['status'] ?? null,
+            'category' => $_GET['category'] ?? null,
+            'priority' => $_GET['priority'] ?? null,
+            'assignee' => $_GET['assignee'] ?? null
+        ];
+        
+        $grievances = $grievanceService->getAllGrievances($filters);
+        $stats = $grievanceService->getStatistics();
+        $categories = $grievanceService->getCategories();
+        $priorities = $grievanceService->getPriorities();
+        $assignees = $this->db->fetchAll("SELECT id, name FROM users WHERE status = 'active' AND role IN ('admin','super_admin','hr_manager','manager') ORDER BY name");
+
+        return $this->render('admin/grievances/index', [
+            'page_title' => 'Employee Grievances',
+            'grievances' => $grievances,
+            'stats' => $stats,
+            'categories' => $categories,
+            'priorities' => $priorities,
+            'assignees' => $assignees,
+            'filters' => $filters
+        ]);
+    }
+
+    public function grievanceDetail($id)
+    {
+        $this->requireAdmin();
+        $grievanceService = new \App\Services\EmployeeGrievanceService();
+        
+        $grievance = $grievanceService->getGrievance($id);
+        if (!$grievance) {
+            $this->setFlash('error', 'Grievance not found');
+            header('Location: ' . BASE_URL . '/admin/grievances');
+            exit;
+        }
+
+        $comments = $grievanceService->getComments($id);
+        $assignees = $this->db->fetchAll("SELECT id, name FROM users WHERE status = 'active' AND role IN ('admin','super_admin','hr_manager','manager') ORDER BY name");
+
+        return $this->render('admin/grievances/detail', [
+            'page_title' => 'Grievance: ' . $grievance['grievance_number'],
+            'grievance' => $grievance,
+            'comments' => $comments,
+            'assignees' => $assignees,
+            'categories' => $grievanceService->getCategories(),
+            'priorities' => $grievanceService->getPriorities()
+        ]);
+    }
+
+    public function grievanceUpdateStatus()
+    {
+        $this->requireAdmin();
+        $result = (new \App\Services\EmployeeGrievanceService())->updateStatus(
+            (int)($_POST['grievance_id'] ?? 0),
+            $_POST['status'] ?? '',
+            (int)($_SESSION['admin_id'] ?? 1)
+        );
+        $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+        header('Location: ' . BASE_URL . '/admin/grievances/' . (int)($_POST['grievance_id'] ?? 0));
+        exit;
+    }
+
+    public function grievanceAssign()
+    {
+        $this->requireAdmin();
+        $result = (new \App\Services\EmployeeGrievanceService())->assignGrievance(
+            (int)($_POST['grievance_id'] ?? 0),
+            (int)($_POST['assignee_id'] ?? 0),
+            (int)($_SESSION['admin_id'] ?? 1)
+        );
+        $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+        header('Location: ' . BASE_URL . '/admin/grievances/' . (int)($_POST['grievance_id'] ?? 0));
+        exit;
+    }
+
+    public function grievanceAddComment()
+    {
+        $this->requireAdmin();
+        $result = (new \App\Services\EmployeeGrievanceService())->addComment(
+            (int)($_POST['grievance_id'] ?? 0),
+            (int)($_SESSION['admin_id'] ?? 1),
+            $_POST['comment'] ?? '',
+            !empty($_POST['is_internal'])
+        );
+        $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+        header('Location: ' . BASE_URL . '/admin/grievances/' . (int)($_POST['grievance_id'] ?? 0));
+        exit;
+    }
+
+    // ──────────────────────────────────────────────
+    // TRAINING / L&D
+    // ──────────────────────────────────────────────
+
+    public function trainingCourses()
+    {
+        $this->requireAdmin();
+        $trainingService = new \App\Services\TrainingService();
+
+        $filters = [
+            'category' => $_GET['category'] ?? null,
+            'is_active' => $_GET['is_active'] ?? null,
+            'search' => $_GET['search'] ?? null
+        ];
+
+        $courses = $trainingService->getCourses($filters);
+        $stats = $trainingService->getStats();
+        $categories = $trainingService->getCategories();
+
+        return $this->render('admin/training/courses', [
+            'page_title' => 'Training Courses',
+            'courses' => $courses,
+            'stats' => $stats,
+            'categories' => $categories,
+            'filters' => $filters
+        ]);
+    }
+
+    public function trainingCourseCreate()
+    {
+        $this->requireAdmin();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $result = (new \App\Services\TrainingService())->createCourse($_POST);
+            $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+            header('Location: ' . BASE_URL . '/admin/training/courses');
+            exit;
+        }
+
+        $categories = (new \App\Services\TrainingService())->getCategories();
+
+        return $this->render('admin/training/course_create', [
+            'page_title' => 'Create Training Course',
+            'categories' => $categories
+        ]);
+    }
+
+    public function trainingCourseEdit($id)
+    {
+        $this->requireAdmin();
+        $trainingService = new \App\Services\TrainingService();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $result = $trainingService->updateCourse($id, $_POST);
+            $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+            header('Location: ' . BASE_URL . '/admin/training/courses');
+            exit;
+        }
+
+        $course = $trainingService->getCourse($id);
+        if (!$course) {
+            $this->setFlash('error', 'Course not found');
+            header('Location: ' . BASE_URL . '/admin/training/courses');
+            exit;
+        }
+
+        $categories = $trainingService->getCategories();
+
+        return $this->render('admin/training/course_create', [
+            'page_title' => 'Edit Training Course',
+            'course' => $course,
+            'categories' => $categories,
+            'mode' => 'edit'
+        ]);
+    }
+
+    public function trainingCourseDelete($id)
+    {
+        $this->requireAdmin();
+        $result = (new \App\Services\TrainingService())->deleteCourse($id);
+        $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+        header('Location: ' . BASE_URL . '/admin/training/courses');
+        exit;
+    }
+
+    public function trainingAssignments()
+    {
+        $this->requireAdmin();
+        $trainingService = new \App\Services\TrainingService();
+
+        $filters = [
+            'course_id' => $_GET['course_id'] ?? null,
+            'employee_id' => $_GET['employee_id'] ?? null,
+            'status' => $_GET['status'] ?? null,
+            'assigned_by' => $_GET['assigned_by'] ?? null
+        ];
+
+        $assignments = $trainingService->getAssignments($filters);
+        $courses = $trainingService->getCourses(['is_active' => 1]);
+        $employees = $this->db->fetchAll("SELECT e.id, u.name, e.department FROM employees e JOIN users u ON e.user_id = u.id WHERE e.status = 'active' ORDER BY u.name");
+        $managers = $this->db->fetchAll("SELECT id, name FROM users WHERE status = 'active' AND role IN ('admin','super_admin','manager','hr_manager') ORDER BY name");
+
+        return $this->render('admin/training/assignments', [
+            'page_title' => 'Course Assignments',
+            'assignments' => $assignments,
+            'courses' => $courses,
+            'employees' => $employees,
+            'managers' => $managers,
+            'filters' => $filters
+        ]);
+    }
+
+    public function trainingAssign()
+    {
+        $this->requireAdmin();
+        $result = (new \App\Services\TrainingService())->assignCourse($_POST);
+        $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+        header('Location: ' . BASE_URL . '/admin/training/assignments');
+        exit;
+    }
+
+    public function trainingUpdateProgress()
+    {
+        $this->requireAdmin();
+        $result = (new \App\Services\TrainingService())->updateAssignmentProgress((int)($_POST['assignment_id'] ?? 0), $_POST);
+        $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+        header('Location: ' . BASE_URL . '/admin/training/assignments');
+        exit;
+    }
+
+    public function trainingIssueCertificate()
+    {
+        $this->requireAdmin();
+        $result = (new \App\Services\TrainingService())->issueCertificate((int)($_POST['assignment_id'] ?? 0), $_POST);
+        $this->setFlash($result['success'] ? 'success' : 'error', $result['message'] . ($result['certificate_number'] ? ' - ' . $result['certificate_number'] : ''));
+        header('Location: ' . BASE_URL . '/admin/training/assignments');
+        exit;
+    }
+
+    public function certifications()
+    {
+        $this->requireAdmin();
+        $employeeId = (int)($_GET['employee_id'] ?? 0);
+        $trainingService = new \App\Services\TrainingService();
+
+        $certifications = $employeeId 
+            ? $trainingService->getEmployeeCertifications($employeeId)
+            : $trainingService->getExpiringCertifications(30);
+        $employees = $this->db->fetchAll("SELECT e.id, u.name, e.department FROM employees e JOIN users u ON e.user_id = u.id WHERE e.status = 'active' ORDER BY u.name");
+        $expiring = $trainingService->getExpiringCertifications(60);
+
+        return $this->render('admin/training/certifications', [
+            'page_title' => 'Employee Certifications',
+            'certifications' => $certifications,
+            'employees' => $employees,
+            'expiring' => $expiring,
+            'employee_id' => $employeeId
+        ]);
+    }
+
+    public function certificationCreate()
+    {
+        $this->requireAdmin();
+        $result = (new \App\Services\TrainingService())->addCertification($_POST);
+        $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+        header('Location: ' . BASE_URL . '/admin/training/certifications' . ($result['success'] && !empty($_POST['employee_id']) ? '?employee_id=' . $_POST['employee_id'] : ''));
+        exit;
+    }
+
+    public function certificationUpdate($id)
+    {
+        $this->requireAdmin();
+        $result = (new \App\Services\TrainingService())->updateCertification($id, $_POST);
+        $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+        header('Location: ' . BASE_URL . '/admin/training/certifications');
+        exit;
+    }
+
+    // ──────────────────────────────────────────────
+    // ORG CHART
+    // ──────────────────────────────────────────────
+
+    public function orgChart()
+    {
+        $this->requireAdmin();
+        $orgService = new \App\Services\OrgChartService();
+
+        $tree = $orgService->getTree();
+        $stats = $orgService->getStats();
+        $departments = $orgService->getDepartments();
+        $vacant = $orgService->getVacantPositions();
+
+        // Get all employees for modal
+        $employees = $this->db->fetchAll("
+            SELECT e.id, u.name, u.email, e.designation, e.department
+            FROM employees e
+            JOIN users u ON e.user_id = u.id
+            WHERE e.status = 'active' AND u.status = 'active'
+            ORDER BY u.name
+        ");
+
+        return $this->render('admin/org_chart/index', [
+            'page_title' => 'Organizational Chart',
+            'tree' => $tree,
+            'stats' => $stats,
+            'departments' => $departments,
+            'vacant' => $vacant,
+            'employees' => $employees
+        ]);
+    }
+
+    public function orgChartCreate()
+    {
+        $this->requireAdmin();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $result = (new \App\Services\OrgChartService())->createNode($_POST);
+            $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+            header('Location: ' . BASE_URL . '/admin/org-chart');
+            exit;
+        }
+
+        $employees = $this->db->fetchAll("
+            SELECT e.id, u.name, e.designation, e.department
+            FROM employees e
+            JOIN users u ON e.user_id = u.id
+            WHERE e.status = 'active' AND u.status = 'active'
+            ORDER BY u.name
+        ");
+
+        $nodes = (new \App\Services\OrgChartService())->getNodes(['is_active' => 1]);
+
+        return $this->render('admin/org_chart/create', [
+            'page_title' => 'Add Position',
+            'employees' => $employees,
+            'nodes' => $nodes
+        ]);
+    }
+
+    public function orgChartEdit($id)
+    {
+        $this->requireAdmin();
+        $orgService = new \App\Services\OrgChartService();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $result = $orgService->updateNode($id, $_POST);
+            $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+            header('Location: ' . BASE_URL . '/admin/org-chart');
+            exit;
+        }
+
+        $node = $orgService->getNode($id);
+        if (!$node) {
+            $this->setFlash('error', 'Position not found');
+            header('Location: ' . BASE_URL . '/admin/org-chart');
+            exit;
+        }
+
+        $employees = $this->db->fetchAll("
+            SELECT e.id, u.name, e.designation, e.department
+            FROM employees e
+            JOIN users u ON e.user_id = u.id
+            WHERE e.status = 'active' AND u.status = 'active'
+            ORDER BY u.name
+        ");
+
+        $nodes = $orgService->getNodes(['is_active' => 1]);
+
+        return $this->render('admin/org_chart/create', [
+            'page_title' => 'Edit Position',
+            'node' => $node,
+            'employees' => $employees,
+            'nodes' => $nodes,
+            'mode' => 'edit'
+        ]);
+    }
+
+    public function orgChartDelete($id)
+    {
+        $this->requireAdmin();
+        $result = (new \App\Services\OrgChartService())->deleteNode($id);
+        $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+        header('Location: ' . BASE_URL . '/admin/org-chart');
+        exit;
+    }
+
+    public function orgChartReorder()
+    {
+        $this->requireAdmin();
+        $nodes = json_decode($_POST['nodes'] ?? '[]', true);
+        $result = (new \App\Services\OrgChartService())->bulkReorder($nodes);
+        return $this->jsonResponse($result);
+    }
+
+    public function orgChartSync()
+    {
+        $this->requireAdmin();
+        $result = (new \App\Services\OrgChartService())->syncFromEmployees();
+        $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+        header('Location: ' . BASE_URL . '/admin/org-chart');
+        exit;
+    }
+
+    public function orgChartExport()
+    {
+        $this->requireAdmin();
+        $data = (new \App\Services\OrgChartService())->exportChart();
+        header('Content-Type: application/json');
+        header('Content-Disposition: attachment; filename="org_chart_' . date('Y-m-d') . '.json"');
+        echo json_encode($data, JSON_PRETTY_PRINT);
+        exit;
+    }
+
+    public function orgChartImport()
+    {
+        $this->requireAdmin();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_FILES['chart_file'])) {
+            $file = $_FILES['chart_file'];
+            $content = file_get_contents($file['tmp_name']);
+            $data = json_decode($content, true);
+
+            if (!$data || !isset($data['chart'])) {
+                $this->setFlash('error', 'Invalid chart file format');
+                header('Location: ' . BASE_URL . '/admin/org-chart');
+                exit;
+            }
+
+            $result = (new \App\Services\OrgChartService())->importChart($data);
+            $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+            header('Location: ' . BASE_URL . '/admin/org-chart');
+            exit;
+        }
+
+        return $this->render('admin/org_chart/import', [
+            'page_title' => 'Import Org Chart'
+        ]);
+    }
+
+    // ──────────────────────────────────────────────
+    // ENGAGEMENT SURVEYS
+    // ──────────────────────────────────────────────
+
+    public function engagementSurveys()
+    {
+        $this->requireAdmin();
+        $surveyService = new \App\Services\EngagementSurveyService();
+
+        $filters = [
+            'status' => $_GET['status'] ?? null,
+            'survey_type' => $_GET['survey_type'] ?? null,
+            'search' => $_GET['search'] ?? null
+        ];
+
+        $surveys = $surveyService->getSurveys($filters);
+        $stats = $surveyService->getStats();
+        $types = $surveyService->getSurveyTypes();
+
+        return $this->render('admin/engagement/surveys', [
+            'page_title' => 'Engagement Surveys',
+            'surveys' => $surveys,
+            'stats' => $stats,
+            'types' => $types,
+            'filters' => $filters
+        ]);
+    }
+
+    public function engagementSurveyCreate()
+    {
+        $this->requireAdmin();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = $_POST;
+            if (is_array($data['questions'] ?? null)) {
+                $data['questions'] = json_encode($data['questions']);
+            }
+            if (is_array($data['settings'] ?? null)) {
+                $data['settings'] = json_encode($data['settings']);
+            }
+            $result = (new \App\Services\EngagementSurveyService())->createSurvey($data);
+            $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+            header('Location: ' . BASE_URL . '/admin/engagement/surveys');
+            exit;
+        }
+
+        $questionTypes = (new \App\Services\EngagementSurveyService())->getQuestionTypes();
+        $surveyTypes = (new \App\Services\EngagementSurveyService())->getSurveyTypes();
+
+        return $this->render('admin/engagement/survey_create', [
+            'page_title' => 'Create Survey',
+            'question_types' => $questionTypes,
+            'survey_types' => $surveyTypes
+        ]);
+    }
+
+    public function engagementSurveyEdit($id)
+    {
+        $this->requireAdmin();
+        $surveyService = new \App\Services\EngagementSurveyService();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = $_POST;
+            if (is_array($data['questions'] ?? null)) {
+                $data['questions'] = json_encode($data['questions']);
+            }
+            if (is_array($data['settings'] ?? null)) {
+                $data['settings'] = json_encode($data['settings']);
+            }
+            $result = $surveyService->updateSurvey($id, $data);
+            $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+            header('Location: ' . BASE_URL . '/admin/engagement/surveys');
+            exit;
+        }
+
+        $survey = $surveyService->getSurvey($id);
+        if (!$survey) {
+            $this->setFlash('error', 'Survey not found');
+            header('Location: ' . BASE_URL . '/admin/engagement/surveys');
+            exit;
+        }
+
+        $questionTypes = $surveyService->getQuestionTypes();
+        $surveyTypes = $surveyService->getSurveyTypes();
+
+        return $this->render('admin/engagement/survey_create', [
+            'page_title' => 'Edit Survey',
+            'survey' => $survey,
+            'question_types' => $questionTypes,
+            'survey_types' => $surveyTypes,
+            'mode' => 'edit'
+        ]);
+    }
+
+    public function engagementSurveyDelete($id)
+    {
+        $this->requireAdmin();
+        $result = (new \App\Services\EngagementSurveyService())->deleteSurvey($id);
+        $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+        header('Location: ' . BASE_URL . '/admin/engagement/surveys');
+        exit;
+    }
+
+    public function engagementSurveyActivate($id)
+    {
+        $this->requireAdmin();
+        $result = (new \App\Services\EngagementSurveyService())->activateSurvey($id);
+        $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+        header('Location: ' . BASE_URL . '/admin/engagement/surveys');
+        exit;
+    }
+
+    public function engagementSurveyClose($id)
+    {
+        $this->requireAdmin();
+        $result = (new \App\Services\EngagementSurveyService())->closeSurvey($id);
+        $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
+        header('Location: ' . BASE_URL . '/admin/engagement/surveys');
+        exit;
+    }
+
+    public function engagementSurveyAnalytics($id)
+    {
+        $this->requireAdmin();
+        $surveyService = new \App\Services\EngagementSurveyService();
+
+        $analytics = $surveyService->getSurveyAnalytics($id);
+        $departments = $surveyService->getDepartmentBreakdown($id);
+        $trend = $surveyService->getTrendData($id);
+
+        return $this->render('admin/engagement/analytics', [
+            'page_title' => 'Survey Analytics',
+            'analytics' => $analytics,
+            'departments' => $departments,
+            'trend' => $trend
+        ]);
+    }
+
+    public function engagementSurveyResponses($id)
+    {
+        $this->requireAdmin();
+        $surveyService = new \App\Services\EngagementSurveyService();
+
+        $survey = $surveyService->getSurvey($id);
+        if (!$survey) {
+            $this->setFlash('error', 'Survey not found');
+            header('Location: ' . BASE_URL . '/admin/engagement/surveys');
+            exit;
+        }
+
+        $responses = $surveyService->getResponses($id);
+
+        return $this->render('admin/engagement/responses', [
+            'page_title' => 'Survey Responses',
+            'survey' => $survey,
+            'responses' => $responses
+        ]);
+    }
 }

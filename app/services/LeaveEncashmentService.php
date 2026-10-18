@@ -155,7 +155,7 @@ class LeaveEncashmentService
      */
     public function getRequest(int $requestId): ?array
     {
-        return $this->fetchOne("
+        return $this->db->fetchOne("
             SELECT ler.*, lt.name as leave_type_name, lt.code as leave_type_code,
                    e.name as employee_name, e.employee_code, e.department
             FROM leave_encashment_requests ler
@@ -170,7 +170,7 @@ class LeaveEncashmentService
      */
     public function getEmployeeRequests(int $employeeId): array
     {
-        return $this->fetchAll("
+        return $this->db->fetchAll("
             SELECT ler.*, lt.name as leave_type_name, lt.code as leave_type_code
             FROM leave_encashment_requests ler
             JOIN leave_types lt ON ler.leave_type_id = lt.id
@@ -258,7 +258,7 @@ class LeaveEncashmentService
      */
     public function getPendingRequests(): array
     {
-        return $this->fetchAll("
+        return $this->db->fetchAll("
             SELECT ler.*, e.name as employee_name, e.employee_code, e.department,
                    lt.name as leave_type_name, lt.code as leave_type_code
             FROM leave_encashment_requests ler
@@ -274,7 +274,7 @@ class LeaveEncashmentService
      */
     public function getEmployeeHistory(int $employeeId): array
     {
-        return $this->fetchAll("
+        return $this->db->fetchAll("
             SELECT ler.*, lt.name as leave_type_name, lt.code as leave_type_code
             FROM leave_encashment_requests ler
             JOIN leave_types lt ON ler.leave_type_id = lt.id

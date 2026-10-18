@@ -312,6 +312,11 @@ if (!function_exists('navUrl')) {
                     <?php endif; ?>
                 </li>
 
+                <!-- Notification Bell (Global RBAC) -->
+                <li class="nav-item ms-1 position-relative d-flex align-items-center" id="notification-bell-placeholder">
+                    <!-- Rendered by notification-system.js -->
+                </li>
+
                 <!-- Language Switcher -->
                 <li class="nav-item dropdown ms-1">
                     <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-bs-toggle="dropdown" title="<?= __('language') ?>" aria-label="<?= __('language') ?>">

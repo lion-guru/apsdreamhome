@@ -22,7 +22,7 @@ class EmployeeAssetService
      */
     public function getEmployeeAssets(int $employeeId): array
     {
-        return $this->fetchAll("
+        return $this->db->fetchAll("
             SELECT * FROM employee_asset_assignments
             WHERE employee_id = ?{$this->tenantSql()}
             ORDER BY assigned_date DESC
@@ -34,7 +34,7 @@ class EmployeeAssetService
      */
     public function getActiveAssets(int $employeeId): array
     {
-        return $this->fetchAll("
+        return $this->db->fetchAll("
             SELECT * FROM employee_asset_assignments
             WHERE employee_id = ? AND status = 'active'{$this->tenantSql()}
             ORDER BY assigned_date DESC
@@ -157,7 +157,7 @@ class EmployeeAssetService
      */
     public function getAllActiveAssets(): array
     {
-        return $this->fetchAll("
+        return $this->db->fetchAll("
             SELECT eaa.*, e.name as employee_name, e.employee_code, e.department
             FROM employee_asset_assignments eaa
             JOIN employees e ON eaa.employee_id = e.id
@@ -171,7 +171,7 @@ class EmployeeAssetService
      */
     public function getAssetsByType(string $type): array
     {
-        return $this->fetchAll("
+        return $this->db->fetchAll("
             SELECT eaa.*, e.name as employee_name, e.employee_code, e.department
             FROM employee_asset_assignments eaa
             JOIN employees e ON eaa.employee_id = e.id
@@ -185,7 +185,7 @@ class EmployeeAssetService
      */
     public function getAssetByTag(string $tag): ?array
     {
-        return $this->fetchOne("
+        return $this->db->fetchOne("
             SELECT eaa.*, e.name as employee_name, e.employee_code, e.department
             FROM employee_asset_assignments eaa
             JOIN employees e ON eaa.employee_id = e.id

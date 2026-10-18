@@ -280,9 +280,9 @@ $GLOBALS['_html_doc_started'] = true;
             $stmt = $db->query("SELECT COUNT(*) as cnt FROM support_tickets WHERE status = 'open'");
             return (int)($stmt->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0);
         }, 120);
-        $newInquiriesCount = \App\Core\Cache::remember('admin_notify_inquiries_today', function () {
+        $newInquiriesCount = \App\Core\Cache::remember('admin_notify_inquiries_pending', function () {
             $db = \App\Core\Database::getInstance()->getConnection();
-            $stmt = $db->query("SELECT COUNT(*) as cnt FROM inquiries WHERE DATE(created_at) = CURDATE()");
+            $stmt = $db->query("SELECT COUNT(*) as cnt FROM inquiries WHERE is_read = 0 OR status IN ('new', 'pending')");
             return (int)($stmt->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0);
         }, 120);
     } catch (\Exception $e) { /* silent */
@@ -307,7 +307,7 @@ $GLOBALS['_html_doc_started'] = true;
 
             <div class="nav-right">
                 <!-- Notifications (Leads) — replaced by notification-system.js -->
-                <button class="nav-icon" id="notification-bell-placeholder" onclick="toggleNotifications()" title="New Leads Today">
+                <button class="nav-icon notification-bell-btn" id="notification-bell-placeholder" onclick="toggleNotifications()" title="Notifications">
                     <i class="fas fa-bell"></i>
                     <span class="badge"><?php echo e($newLeadsCount); ?></span>
                 </button>

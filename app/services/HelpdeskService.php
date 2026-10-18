@@ -26,7 +26,7 @@ class HelpdeskService
         $year = date('Y');
         $month = date('m');
         
-        $count = $this->fetchOne("
+        $count = $this->db->fetchOne("
             SELECT COUNT(*) as cnt FROM helpdesk_tickets 
             WHERE tenant_id = ? AND ticket_number LIKE ?
         ", [$this->tenantId(), "{$prefix}-{$year}{$month}%"])['cnt'] ?? 0;
@@ -116,7 +116,7 @@ class HelpdeskService
      */
     public function getTicket(int $ticketId): ?array
     {
-        return $this->fetchOne("
+        return $this->db->fetchOne("
             SELECT ht.*, e.name as employee_name, e.employee_code, e.email, e.phone,
                    u.name as assigned_to_name
             FROM helpdesk_tickets ht
@@ -131,7 +131,7 @@ class HelpdeskService
      */
     public function getTicketByNumber(string $ticketNumber): ?array
     {
-        return $this->fetchOne("
+        return $this->db->fetchOne("
             SELECT ht.*, e.name as employee_name, e.employee_code
             FROM helpdesk_tickets ht
             JOIN employees e ON ht.employee_id = e.id
@@ -144,7 +144,7 @@ class HelpdeskService
      */
     public function getTicketComments(int $ticketId): array
     {
-        return $this->fetchAll("
+        return $this->db->fetchAll("
             SELECT htc.*, u.name as author_name, u.role as author_role
             FROM helpdesk_ticket_comments htc
             LEFT JOIN users u ON htc.employee_id = u.id
@@ -294,7 +294,7 @@ class HelpdeskService
                 WHEN 'low' THEN 5 
             END, ht.created_at DESC";
 
-        return $this->fetchAll($query, $params);
+        return $this->db->fetchAll($query, $params);
     }
 
     /**
@@ -302,12 +302,12 @@ class HelpdeskService
      */
     public function getStatistics(): array
     {
-        $total = $this->fetchOne("SELECT COUNT(*) as cnt FROM helpdesk_tickets WHERE tenant_id = 1")['cnt'] ?? 0;
-        $open = $this->fetchOne("SELECT COUNT(*) as cnt FROM helpdesk_tickets WHERE tenant_id = 1 AND status = 'open'")['cnt'] ?? 0;
-        $inProgress = $this->fetchOne("SELECT COUNT(*) as cnt FROM helpdesk_tickets WHERE tenant_id = 1 AND status = 'in_progress'")['cnt'] ?? 0;
-        $resolved = $this->fetchOne("SELECT COUNT(*) as cnt FROM helpdesk_tickets WHERE tenant_id = 1 AND status IN ('resolved','closed')")['cnt'] ?? 0;
+        $total = $this->db->fetchOne("SELECT COUNT(*) as cnt FROM helpdesk_tickets WHERE tenant_id = 1")['cnt'] ?? 0;
+        $open = $this->db->fetchOne("SELECT COUNT(*) as cnt FROM helpdesk_tickets WHERE tenant_id = 1 AND status = 'open'")['cnt'] ?? 0;
+        $inProgress = $this->db->fetchOne("SELECT COUNT(*) as cnt FROM helpdesk_tickets WHERE tenant_id = 1 AND status = 'in_progress'")['cnt'] ?? 0;
+        $resolved = $this->db->fetchOne("SELECT COUNT(*) as cnt FROM helpdesk_tickets WHERE tenant_id = 1 AND status IN ('resolved','closed')")['cnt'] ?? 0;
 
-        $byCategory = $this->fetchAll("
+        $byCategory = $this->db->fetchAll("
             SELECT category, COUNT(*) as cnt
             FROM helpdesk_tickets
             WHERE tenant_id = 1
@@ -343,7 +343,7 @@ class HelpdeskService
      */
     public function getSLABreaches(): array
     {
-        return $this->fetchAll("
+        return $this->db->fetchAll("
             SELECT ht.*, e.name as employee_name
             FROM helpdesk_tickets ht
             JOIN employees e ON ht.employee_id = e.id

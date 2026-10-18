@@ -176,7 +176,7 @@ class PageController extends BaseController
             }
 
             try {
-                $db = Database::getInstance();
+                $db = \App\Core\Database::getInstance();
                 $stmt = $db->prepare("
                     INSERT INTO inquiries (name, email, phone, subject, message, status, tenant_id, created_at)
                     VALUES (?, ?, ?, ?, ?, 'new', ?, NOW())
@@ -185,6 +185,24 @@ class PageController extends BaseController
                     $name, $email, $phone, $subject, $message,
                     $this->tenantId() > 1 ? $this->tenantId() : null
                 ]);
+
+                $inquiryId = (int)$db->lastInsertId();
+
+                // Dispatch notification for Admin & Sales team
+                try {
+                    $notifService = new \App\Services\NotificationService($db);
+                    $notifService->notify(
+                        'inquiry',
+                        "New website inquiry from {$name} ({$phone}): " . (strlen($message) > 80 ? substr($message, 0, 80) . '...' : $message),
+                        null,
+                        "/admin/inquiries/view/{$inquiryId}",
+                        "New Website Inquiry: {$name}"
+                    );
+                    \App\Core\Cache::delete('admin_notify_inquiries_pending');
+                    \App\Core\Cache::delete('admin_notify_inquiries_today');
+                } catch (\Throwable $ne) {
+                    error_log('Inquiry notification error: ' . $ne->getMessage());
+                }
 
                 $_SESSION['success'] = 'Your inquiry has been submitted successfully! We will get back to you soon.';
             } catch (\Exception $e) {
