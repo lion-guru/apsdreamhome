@@ -42,10 +42,12 @@ class ReferralController extends BaseController
         $tid = TenantContext::getId();
 
         try {
-            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $db = \App\Core\Database\Database::getInstance();
             $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
             $params = [$userId];
-            if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
+            if (TenantContext::getId() > 1) {
+                $params[] = TenantContext::getId();
+            }
 
             // Get user's referral code
             $user = $db->fetchOne("SELECT referral_code FROM users WHERE id = ?{$tidSql} LIMIT 1", [$userId]);

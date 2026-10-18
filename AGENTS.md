@@ -13,6 +13,60 @@
 > 4. **Session-number check** — AGENTS.md entry chipkane se PEHLE header dobara padho; parallel actor ne beech me number le liya ho to next free number lo, overwrite/clobber kabhi nahi (S219, S223).
 > 5. **Probe hygiene** — temp scripts sirf `C:\Users\abhay\AppData\Local\Temp\opencode\` me, write+execute **same turn** me (temp purge hota hai), `php -r` one-liners banned, probe ke end me cleanup + counts-verify lazmi (lessons _445, _456, _490).
 
+## Session 351: Public-Facing Associate & Customer Portals Overhaul — Raw PDO Method Repairs, Withdrawal & Commission Restoration, Customer Web Push Integration & Route Deduplication (2026-10-18)
+
+### Trigger
+User requested:
+"kuch kami ya kuch improvment ka suggedtion hsi to batao assosiate aur coustomer fully publice face hai to bhut kuch dhyan dhyan dena hai iske menu se realated page ko bhi dekho sabhi ko unke koi imorovment hearachi tesm uske bussine comission etc sab deeply analysis kar ke suggestion do"
+Followed by "do next".
+
+### Root Cause & Scan Findings
+1. **Critical Raw PDO Method Invocations in Associate Controllers:**
+   - 8 Associate controllers (`TeamController`, `CommissionController`, `BookingController`, `PosterController`, `PropertyController`, `ColonyController`, `ReferralController`, `WalletActivationController`) assigned raw PDO via `\App\Core\Database\Database::getInstance()->getConnection()` and then directly called helper methods (`fetchAll()`, `fetchOne()`, `insert()`).
+   - Because `PDO` lacks these methods, fatal errors were thrown. When caught by `try/catch (\Throwable $e)`, errors were silently swallowed, returning empty lists and giving the illusion of blank data (e.g. `/associate/team` showing 0 members, `/associate/commissions` showing empty ledger, `/associate/my-bookings` returning empty tables, and wallet withdrawals failing).
+2. **Customer Allotment Acceptance Crash (`AllotmentAcceptanceController`):**
+   - Lines 45, 103, 195 assigned raw PDO connection and called `$db->fetchOne()`, breaking allotment viewing and customer digital acceptance.
+3. **EMI Model Notification Failure (`app/Models/EMI.php`):**
+   - `EMI::createPlan()` assigned raw PDO and called `$db->insert('notifications', ...)`, throwing fatal method error caught by catch block, leaving customers without notifications when EMI plans were generated.
+4. **Missing `inTransaction()` in `App\Core\Database\Database`:**
+   - Database wrapper lacked `inTransaction()` method, causing transactional catch blocks across models to fail or trigger notices.
+5. **Customer Layout Notification Gap (`app/views/layouts/customer.php`):**
+   - Customer layout still had a static bell link with legacy AJAX polling (`/api/notifications/unread-count`), lacking real-time desktop Web Push notifications, bell dropdown, sound/vibration alerts, and smart active route URL detection for sidebar navigation.
+6. **Customer Route Shadowing in `routes/web.php`:**
+   - Lines 850–852 mapped `/user/emi-tracker`, `/user/payment-history`, and `/user/site-visits` to `CustomerPassbookController@passbook` omnibus view, while lines 4285–4287 mapped them to `Front\UserController`'s dedicated handlers.
+7. **Genealogy Navigation Hardcoding (`app/views/mlm/genealogy.php`):**
+   - D3.js interactive genealogy view hardcoded Back to Dashboard link to `/associate/dashboard` even when accessed by administrative executives via `/admin/network/genealogy`.
+
+### Work Done
+1. **Repaired Database Wrapper Invocations across 8 Associate Controllers:**
+   - `app/Http/Controllers/Associate/TeamController.php`: Fixed 4 occurrences; resolved downline member ranks safely using batched `WHERE user_id IN (?)` query instead of array offset on integer IDs.
+   - `app/Http/Controllers/Associate/CommissionController.php`: Fixed 4 occurrences; restored commission summary, by-type metrics, recent ledger, and rank eligibility slabs.
+   - `app/Http/Controllers/Associate/BookingController.php`: Fixed 6 occurrences; restored bookings, my customers, customer detail, EMI tracker, payment history, and booking receipts.
+   - `app/Http/Controllers/Associate/PosterController.php`: Fixed 3 occurrences; restored associate lookup, colony dropdown, and colony poster generation.
+   - `app/Http/Controllers/Associate/PropertyController.php`: Fixed 6 occurrences; restored add property colonies, listings, edit property, browse, sold, and pending property views.
+   - `app/Http/Controllers/Associate/ColonyController.php`: Fixed occurrence; restored interactive colony plot layout view.
+   - `app/Http/Controllers/Associate/ReferralController.php`: Fixed occurrence; restored referral code retrieval, direct referrals table, and tier calculations.
+   - `app/Http/Controllers/Associate/WalletActivationController.php`: Replaced `->getConnection()` with `Database::getInstance()` in `processWithdrawal()`, restoring withdrawal request creation and transaction ledger insertion.
+2. **Repaired Customer Portal Controllers & Models:**
+   - `app/Http/Controllers/Front/AllotmentAcceptanceController.php`: Fixed 3 occurrences of raw PDO `fetchOne()`, restoring digital allotment letter acceptance and viewing.
+   - `app/Models/EMI.php`: Fixed raw PDO call in `createPlan()`, restoring automated customer notification dispatch upon EMI schedule creation.
+   - `app/Core/Database/Database.php`: Added native `inTransaction(): bool` proxying underlying PDO state safely.
+3. **Modernized Customer Portal Layout (`app/views/layouts/customer.php`):**
+   - Upgraded to `notification-system.css?v=5` and `notification-system.js?v=5`.
+   - Replaced static anchor with real-time `#notification-bell-placeholder` hooked to Web Push engine.
+   - Injected `window.NOTIFY_USER = { id, role: 'customer' }`.
+   - Added smart `$currentUri` route matching ensuring active sidebar links highlight automatically.
+4. **Cleaned & Deduplicated Routes (`routes/web.php`):**
+   - Aligned `/user/bookings`, `/user/emi-tracker`, `/user/payment-history`, and `/user/site-visits` to `Front\UserController`'s dedicated modern views, retaining `/user/passbook` for the omnibus passbook view.
+5. **Genealogy View Role-Aware Navigation (`app/views/mlm/genealogy.php`):**
+   - Dynamic Back button directing administrators to `/admin/network/genealogy` and associates to `/associate/dashboard`, with `$base` fallback.
+
+### Verification
+- Database integrity: `users: 116, plots: 756, leads: 38187, notifications: 30` (exact byte-level zero drift, zero probe leftovers).
+- Syntax verification: `php -l` clean across all 14 modified files.
+- **Master Test Runner (`testing/master_test_runner.php`): 10/10 SUITES PASSED (100% HEALTHY, 19.76s).**
+- Probe hygiene: all temp scripts in `C:\Users\abhay\AppData\Local\Temp\opencode\` cleaned up immediately. Zero leftovers.
+
 ## Session 350: Multi-Portal Health Scan, Employee Self-Service Views Implementation (Org Chart, Surveys), Raw PDO Bugfix & Menu Seeding (2026-10-18)
 
 ### Trigger

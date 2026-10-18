@@ -342,7 +342,7 @@ class WalletActivationController extends BaseController
         $params = array_merge([$userId], $tid > 1 ? [$tid] : []);
 
         try {
-            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $db = \App\Core\Database\Database::getInstance();
             $db->beginTransaction();
 
             // Get wallet (locked: concurrent double-clicks serialize here — S264)

@@ -249,6 +249,11 @@ class Database
         return $this->pdo->rollBack();
     }
 
+    public function inTransaction()
+    {
+        return $this->pdo ? $this->pdo->inTransaction() : false;
+    }
+
     public function table($table)
     {
         return new QueryBuilder($this, $table);

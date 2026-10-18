@@ -845,11 +845,12 @@ $router->post('/user/inquiries/submit',  'App\\Http\\Controllers\\DashboardContr
 $router->get('/user/settings',           'Front\\UserController@profile');
 $router->get('/user/change-password',    'Front\\UserController@profile');
 
-// Customer-specific portal pages (route to existing CustomerPassbookController and Front\UserController)
-$router->get('/user/bookings',           'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
-$router->get('/user/emi-tracker',        'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
-$router->get('/user/payment-history',    'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
-$router->get('/user/site-visits',        'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
+// Customer-specific portal pages (route to Front\UserController dedicated handlers and CustomerPassbookController)
+$router->get('/user/bookings',           'Front\\UserController@myBookings');
+$router->get('/user/emi-tracker',        'Front\\UserController@emiTracker');
+$router->get('/user/payment-history',    'Front\\UserController@paymentHistory');
+$router->get('/user/site-visits',        'Front\\UserController@mySiteVisits');
+$router->get('/user/passbook',           'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
 $router->get('/user/tickets',            'Front\\UserController@myTickets');
 $router->post('/user/tickets',           'Front\\UserController@createTicket');
 $router->post('/user/tickets/create',    'Front\\UserController@createTicket');
@@ -4281,10 +4282,7 @@ $router->get('/user/payments', function () {
     exit;
 });
 
-// Customer Portal - EMI & Payments
-$router->get('/user/emi-tracker', 'Front\\UserController@emiTracker');
-$router->get('/user/payment-history', 'Front\\UserController@paymentHistory');
-$router->get('/user/site-visits', 'Front\\UserController@mySiteVisits');
+// Customer Portal - Site Visits Booking Action
 $router->post('/user/site-visits/book', 'Front\\UserController@bookSiteVisitAction');
 
 // Lead source analytics

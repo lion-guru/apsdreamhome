@@ -42,7 +42,7 @@ class PropertyController extends BaseController
         $tid = TenantContext::getId();
 
         // Get colonies for dropdown
-        $db = \App\Core\Database\Database::getInstance()->getConnection();
+        $db = \App\Core\Database\Database::getInstance();
         $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
         $params = TenantContext::getId() > 1 ? [TenantContext::getId()] : [];
         $colonies = $db->fetchAll("SELECT * FROM colonies WHERE is_active = 1{$tidSql} ORDER BY name", $params);
@@ -157,7 +157,7 @@ class PropertyController extends BaseController
         $userId = $_SESSION['user_id'];
         $tid = TenantContext::getId();
 
-        $db = \App\Core\Database\Database::getInstance()->getConnection();
+        $db = \App\Core\Database\Database::getInstance();
         $tidSql = TenantContext::getId() > 1 ? " AND up.tenant_id = ?" : "";
         $params = [$userId];
         if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
@@ -189,7 +189,7 @@ class PropertyController extends BaseController
         $userId = $_SESSION['user_id'];
         $tid = TenantContext::getId();
 
-        $db = \App\Core\Database\Database::getInstance()->getConnection();
+        $db = \App\Core\Database\Database::getInstance();
         $tidSql = TenantContext::getId() > 1 ? " AND up.tenant_id = ?" : "";
         $params = [$id, $userId];
         if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
@@ -353,7 +353,7 @@ class PropertyController extends BaseController
         $this->requireAuth();
         $tid = TenantContext::getId();
 
-        $db = \App\Core\Database\Database::getInstance()->getConnection();
+        $db = \App\Core\Database\Database::getInstance();
         $tidSql = TenantContext::getId() > 1 ? " AND up.tenant_id = ?" : "";
         $params = TenantContext::getId() > 1 ? [TenantContext::getId()] : [];
 
@@ -405,7 +405,7 @@ class PropertyController extends BaseController
         $userId = $_SESSION['user_id'];
         $tid = TenantContext::getId();
 
-        $db = \App\Core\Database\Database::getInstance()->getConnection();
+        $db = \App\Core\Database\Database::getInstance();
         $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
         $params = [$userId];
         if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
@@ -430,7 +430,7 @@ class PropertyController extends BaseController
         $userId = $_SESSION['user_id'];
         $tid = TenantContext::getId();
 
-        $db = \App\Core\Database\Database::getInstance()->getConnection();
+        $db = \App\Core\Database\Database::getInstance();
         $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
         $params = [$userId];
         if (TenantContext::getId() > 1) $params[] = TenantContext::getId();

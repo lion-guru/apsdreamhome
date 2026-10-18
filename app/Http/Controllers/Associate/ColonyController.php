@@ -42,10 +42,12 @@ class ColonyController extends BaseController
         $tid = TenantContext::getId();
 
         try {
-            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $db = \App\Core\Database\Database::getInstance();
             $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
             $params = [$id];
-            if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
+            if (TenantContext::getId() > 1) {
+                $params[] = TenantContext::getId();
+            }
 
             $colony = $db->fetchOne("SELECT * FROM colonies WHERE id = ?{$tidSql} LIMIT 1", $params);
 

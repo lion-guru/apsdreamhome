@@ -42,10 +42,12 @@ class TeamController extends BaseController
         $tid = TenantContext::getId();
 
         try {
-            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $db = \App\Core\Database\Database::getInstance();
             $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
             $params = [$userId];
-            if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
+            if (TenantContext::getId() > 1) {
+                $params[] = TenantContext::getId();
+            }
 
             // Direct referrals
             $direct = $db->fetchAll("
@@ -68,9 +70,13 @@ class TeamController extends BaseController
 
             // Team by rank
             $byRank = [];
-            foreach ($allDownline as $member) {
-                $rank = $member['current_level'] ?? 'associate';
-                $byRank[$rank] = ($byRank[$rank] ?? 0) + 1;
+            if (!empty($allDownline)) {
+                $placeholders = implode(',', array_fill(0, count($allDownline), '?'));
+                $members = $db->fetchAll("SELECT user_id, current_level FROM mlm_profiles WHERE user_id IN ($placeholders)", $allDownline) ?: [];
+                foreach ($members as $member) {
+                    $rank = $member['current_level'] ?? 'associate';
+                    $byRank[$rank] = ($byRank[$rank] ?? 0) + 1;
+                }
             }
 
             // Recent joinings
@@ -102,9 +108,11 @@ class TeamController extends BaseController
      */
     private function getAllDownline($userId, $tidSql): array
     {
-        $db = \App\Core\Database\Database::getInstance()->getConnection();
+        $db = \App\Core\Database\Database::getInstance();
         $params = [$userId];
-        if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
+        if (TenantContext::getId() > 1) {
+            $params[] = TenantContext::getId();
+        }
 
         $direct = $db->fetchAll("SELECT associate_id FROM mlm_network_tree WHERE parent_id = ?{$tidSql}", $params) ?: [];
         $all = [];
@@ -124,10 +132,7 @@ class TeamController extends BaseController
     public function mlmPlan()
     {
         $this->requireAuth();
-        $userId = $_SESSION['user_id'];
-        $tid = TenantContext::getId();
-
-        $db = \App\Core\Database\Database::getInstance()->getConnection();
+        $db = \App\Core\Database\Database::getInstance();
         $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
         $params = TenantContext::getId() > 1 ? [TenantContext::getId()] : [];
 

@@ -25,7 +25,7 @@ class PosterController extends BaseController
 
     private function currentAssociate(): array
     {
-        $db = \App\Core\Database\Database::getInstance()->getConnection();
+        $db = \App\Core\Database\Database::getInstance();
         $tidSql = \App\Core\Middleware\TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
         $params = [$_SESSION['user_id']];
         if (\App\Core\Middleware\TenantContext::getId() > 1) $params[] = \App\Core\Middleware\TenantContext::getId();
@@ -42,7 +42,7 @@ class PosterController extends BaseController
         $this->requireAuth();
         $user = $this->currentAssociate();
         try {
-            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $db = \App\Core\Database\Database::getInstance();
             $colonies = $db->fetchAll(
                 "SELECT id, name, location, starting_price, min_price_per_sqft, available_plots
                  FROM colonies WHERE is_active = 1 ORDER BY name LIMIT 100"
@@ -78,7 +78,7 @@ class PosterController extends BaseController
         if ($colonyId <= 0) { http_response_code(400); exit('colony_id required'); }
 
         try {
-            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $db = \App\Core\Database\Database::getInstance();
             $colony = $db->fetchOne("SELECT * FROM colonies WHERE id = ? LIMIT 1", [$colonyId]);
         } catch (\Throwable $e) { $colony = null; }
         if (!$colony) { http_response_code(404); exit('Colony not found'); }

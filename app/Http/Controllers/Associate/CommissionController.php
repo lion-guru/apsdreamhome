@@ -42,7 +42,7 @@ class CommissionController extends BaseController
         $tid = TenantContext::getId();
 
         try {
-            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $db = \App\Core\Database\Database::getInstance();
             $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
             $params = [$userId];
             if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
@@ -120,7 +120,7 @@ class CommissionController extends BaseController
         $result = null;
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
-                $db = \App\Core\Database\Database::getInstance()->getConnection();
+                $db = \App\Core\Database\Database::getInstance();
                 $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
                 $params = TenantContext::getId() > 1 ? [TenantContext::getId()] : [];
 
@@ -174,7 +174,7 @@ class CommissionController extends BaseController
         }
 
         // Get rank options
-        $db = \App\Core\Database\Database::getInstance()->getConnection();
+        $db = \App\Core\Database\Database::getInstance();
         $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
         $params = TenantContext::getId() > 1 ? [TenantContext::getId()] : [];
         $ranks = $db->fetchAll("SELECT rank_slug, commission_rate AS rate FROM mlm_rank_slabs{$tidSql} ORDER BY min_gbv", $params) ?: [
@@ -205,7 +205,7 @@ class CommissionController extends BaseController
         $tid = TenantContext::getId();
 
         try {
-            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $db = \App\Core\Database\Database::getInstance();
             $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
             $params = [$userId];
             if (TenantContext::getId() > 1) $params[] = TenantContext::getId();

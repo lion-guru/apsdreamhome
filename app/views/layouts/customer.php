@@ -32,7 +32,7 @@ use App\Services\PortalMenuService;
     <!-- Design Tokens & Components -->
     <link href="<?php echo BASE_URL; ?>/assets/css/style.css?v=7" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css?v=2" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/notification-system.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/notification-system.css?v=5" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css?v=3" rel="stylesheet">
 
     <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
@@ -126,14 +126,19 @@ use App\Services\PortalMenuService;
         } catch (\Throwable $e) {
             $portalMenu = [];
         }
-        $activeKey = $current_page ?? 'dashboard';
+        $currentUri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+        $activeKey = $current_page ?? '';
         foreach ($portalMenu as $section):
-            if (empty($section['items'])) continue;
+            if (empty($section['items'])) {
+                continue;
+            }
         ?>
         <div class="sidebar-section"><?= htmlspecialchars(__($section['name'], null, $section['name'])) ?></div>
         <ul class="sidebar-menu">
             <?php foreach ($section['items'] as $menuItem):
-                $isActive = ($activeKey === $menuItem['key']);
+                $itemUrl = $menuItem['url'] ?? '';
+                $isUrlMatch = (!empty($itemUrl) && ($currentUri === $itemUrl || (strlen($itemUrl) > 6 && strpos($currentUri, $itemUrl) === 0)));
+                $isActive = ($activeKey === $menuItem['key']) || (empty($activeKey) && $isUrlMatch);
                 $isLogout = ($menuItem['key'] === 'logout');
                 $badge = $menuItem['badge'] ?? null;
             ?>
@@ -165,10 +170,7 @@ use App\Services\PortalMenuService;
                 </nav>
             </div>
             <div class="header-actions">
-                <a href="<?= BASE_URL ?>/user/notifications" class="btn-icon" title="Notifications">
-                    <i class="fas fa-bell"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notifBadge" style="display:none; font-size: 0.65rem;">0</span>
-                </a>
+                <div id="notification-bell-placeholder"></div>
                 <a href="<?= BASE_URL ?>/user/messages" class="btn-icon" title="Messages">
                     <i class="fas fa-envelope"></i>
                 </a>
@@ -219,21 +221,14 @@ use App\Services\PortalMenuService;
                 }
             });
         });
-
-        function checkNotifications() {
-            fetch('<?= BASE_URL ?>/api/notifications/unread-count')
-                .then(r => r.json())
-                .then(d => {
-                    const b = document.getElementById('notifBadge');
-                    if (b) {
-                        b.textContent = d.count || 0;
-                        b.style.display = (d.count > 0) ? 'inline' : 'none';
-                    }
-                })
-                .catch(() => {});
-        }
-        document.addEventListener('DOMContentLoaded', checkNotifications);
     </script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+        window.NOTIFY_USER = {
+            id: <?= (int)($_SESSION['user_id'] ?? 0) ?>,
+            role: '<?= htmlspecialchars($_SESSION['role'] ?? 'customer', ENT_QUOTES) ?>'
+        };
+    </script>
+    <script defer src="<?= BASE_URL ?>/assets/js/notification-system.js?v=5"></script>
     <?php include __DIR__ . '/../components/smart_chatbot.php'; ?>
 </body>
 </html>

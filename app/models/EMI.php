@@ -32,7 +32,7 @@ class EMI extends Model
     public function createPlan($data)
     {
         try {
-            $db = self::getDb()->getConnection();
+            $db = self::getDb();
             $db->beginTransaction();
 
             // Calculate EMI amount

@@ -42,7 +42,7 @@ class AllotmentAcceptanceController extends BaseController
         $allotmentId = (int)$id;
 
         try {
-            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $db = \App\Core\Database\Database::getInstance();
             $tSql = $tid > 1 ? " AND ad.tenant_id = ?" : "";
             $params = [$allotmentId];
             if ($tid > 1) $params[] = $tid;
@@ -100,7 +100,7 @@ class AllotmentAcceptanceController extends BaseController
         $userId = $_SESSION['user_id'];
 
         try {
-            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $db = \App\Core\Database\Database::getInstance();
             $tid = $this->tenantId();
             $tSql = $tid > 1 ? " AND ad.tenant_id = ?" : "";
             $params = [$id, $userId];
@@ -192,7 +192,7 @@ class AllotmentAcceptanceController extends BaseController
         $tid = $this->tenantId();
 
         try {
-            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $db = \App\Core\Database\Database::getInstance();
             $tSql = $tid > 1 ? " AND tenant_id = ?" : "";
             $params = [$allotmentId, $tid];
 

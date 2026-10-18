@@ -1,3 +1,4 @@
+<?php $base = $base ?? (defined('BASE_URL') ? BASE_URL : ''); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -444,7 +445,12 @@
             <p class="mb-0 text-white-50">Visualize your entire referral genealogy</p>
         </div>
         <div>
-            <a href="<?php echo e($base); ?>/associate/dashboard" class="btn btn-outline-light">
+            <?php
+            $backUrl = (isset($isAdmin) && $isAdmin) || in_array($_SESSION['role'] ?? '', ['admin', 'super_admin', 'director', 'ceo', 'coo'], true)
+                ? $base . '/admin/network/genealogy'
+                : $base . '/associate/dashboard';
+            ?>
+            <a href="<?php echo htmlspecialchars($backUrl); ?>" class="btn btn-outline-light">
                 <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
             </a>
         </div>
