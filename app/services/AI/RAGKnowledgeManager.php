@@ -91,13 +91,22 @@ class RAGKnowledgeManager
     private function generateEmbedding(string $text, ?int $docId = null, ?int $chunkIndex = null): string
     {
         // Try to get HF API key from settings
+        // S337 FIX: hf_api_key lives INSIDE the `settings` JSON blob — it is NOT a column
+        // (verified via information_schema.columns: id, service, api_key, is_active,
+        //  settings, created_at, updated_at, groq_api_key, openrouter_api_key,
+        //  ollama_url, ollama_model). The old `$settings['hf_api_key']` always returned
+        //  null -> silent hash-placeholder fallback even with a valid key saved.
         $tid = $this->tenantId();
         $hfKey = '';
         try {
             $settings = $this->db->fetch("SELECT * FROM ai_settings WHERE is_active = 1" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$tid] : []) ?: [];
-            $hfKey = $settings['hf_api_key'] ?? getenv('HF_API_KEY') ?: '';
+            $cfg = json_decode((string)($settings['settings'] ?? '{}'), true);
+            $hfKey = trim((string)($cfg['hf_api_key'] ?? ''));
         } catch (\Throwable $e) {
-            $hfKey = getenv('HF_API_KEY') ?: '';
+            $hfKey = '';
+        }
+        if ($hfKey === '') {
+            $hfKey = (string)(getenv('HF_API_KEY') ?: '');
         }
 
         // If no HF key, fall back to improved hash placeholder with unique vectors per doc/chunk
@@ -107,7 +116,9 @@ class RAGKnowledgeManager
 
         // Use HuggingFace Inference API for embeddings
         $model = 'sentence-transformers/all-MiniLM-L6-v2';
-        $url = "https://api-inference.huggingface.co/pipeline/feature-extraction/{$model}";
+        // S337: api-inference.huggingface.co is the retired host; the current
+        // endpoint is router.huggingface.co/hf-inference/models/{model}/pipeline/feature-extraction
+        $url = "https://router.huggingface.co/hf-inference/models/{$model}/pipeline/feature-extraction";
 
         $ch = curl_init($url);
         curl_setopt_array($ch, [
