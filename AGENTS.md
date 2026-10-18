@@ -13,6 +13,44 @@
 > 4. **Session-number check** — AGENTS.md entry chipkane se PEHLE header dobara padho; parallel actor ne beech me number le liya ho to next free number lo, overwrite/clobber kabhi nahi (S219, S223).
 > 5. **Probe hygiene** — temp scripts sirf `C:\Users\abhay\AppData\Local\Temp\opencode\` me, write+execute **same turn** me (temp purge hota hai), `php -r` one-liners banned, probe ke end me cleanup + counts-verify lazmi (lessons _445, _456, _490).
 
+## Session 337: RAG Was NEVER Using Real Embeddings — hf_api_key Never Read (JSON Blob, Not a Column) + Retired HF Host (2026-10-17)
+
+### Trigger
+User: "ye kaam kar raha test karna aur koi suggestion improvement" (test whether RAG actually uses real embeddings).
+
+### Work (live probe + 2-file fix, master green)
+1. **Retraction of S336's claim.** S336 said "RAG now uses real 384-dim embeddings". **That was wrong** — proven by probe, not by re-reading code.
+2. **Root cause #1 — the key was never read.** `ai_settings` has **no `hf_api_key` column**. Verified via `information_schema.columns`: `id, service, api_key, is_active, settings, created_at, updated_at, groq_api_key, openrouter_api_key, ollama_url, ollama_model`. The key lives inside the `settings` **JSON blob**. Both services read `$settings['hf_api_key']` → always `null` → silent hash-placeholder fallback, with a valid key sitting in the DB the whole time.
+   - **Fixed** `RAGKnowledgeManager::generateEmbedding()` — decode the JSON blob, read `hf_api_key` from it, env only as fallback.
+   - **Fixed** `FreeAIEngines::loadKeys()` — it read `$cfg['hf_api_key']` **before `$cfg` was even defined** (line 88 vs line 94). Reordered: decode blob first, then read.
+3. **Root cause #2 — retired API host.** `api-inference.huggingface.co` was retired; the live endpoint is `router.huggingface.co/hf-inference/models/{model}/pipeline/feature-extraction`. Both files updated.
+4. **Root cause #3 — no credits (owner action, NOT fixable in code).** Live call with the saved token returned **HTTP 402**: *"You have no remaining credits. Purchase pre-paid credits… or subscribe to PRO."* Free-grained tokens cannot call inference.
+5. **Existing data confirmed stale** — all 23 `ai_knowledge_chunks` rows carry `{"model":"hash-placeholder-v2", ...}`. They need a re-embed pass once credits exist.
+
+### Verification (read-only probe, zero leftovers)
+```
+1) hf_api_key via JSON path : FOUND (len=37)
+2) HF router HTTP          : 402  (no credits)
+3) REAL EMBEDDING           : NO
+4) chunk rows               : 23
+   chunk #17/#18 prefix     : {"model":"hash-placeholder-v2", ...}
+```
+- `php -l` clean ×2. **Master 10/10 PASSED.**
+- Commits pushed: `ca92c654f` (FreeAIEngines) + `b1bdde301` (RAGKnowledgeManager).
+
+### Owner action required to finish RAG
+1. Subscribe to HF **PRO** (~$9/mo) or buy pre-paid credits — free tokens cannot run inference.
+2. Run a re-embed pass over the 23 chunks once credits exist (needs a small idempotent script).
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor took S317-S336; next-free = **337** (this entry).
+
+### Key Lessons (carried, continued)
+_608. **A `?? getenv()` fallback chain hides a null forever** — `$settings['hf_api_key'] ?? getenv('HF_API_KEY') ?: ''` looks defensive but both sides were empty, so the code silently degraded to hash-placeholder for months while a valid key sat in the DB. When a `??` chain feeds a **quality** decision (real vs placeholder), log the miss instead of falling back silently.
+_609. **Probe beats re-reading for "is it working?" claims** — the S336 claim came from grepping that `RAGKnowledgeManager` *mentions* `hf_api_key`. One live call returned 402 and one `information_schema` query disproved the whole premise. "The code references the right name" is not "the code reads the right value".
+_610. **A variable read before its definition is a silent null, not a parse error** — `FreeAIEngines::loadKeys()` used `$cfg['hf_api_key']` on line 88 and assigned `$cfg` on line 94; `php -l` was clean and every call worked, just always with an empty key.
+_508. **The case-path trap re-bites even when you write the lesson down** — `git add app/Services/AI/RAGKnowledgeManager.php` exited 0 and staged nothing; repo tracks `app/services/`. Lowercase, then `git diff --cached --name-only` to confirm.
+
 ## Session 336: All 6 Owner Items Executed — drip FK Migration + HF Verify + Voice Audit + Commit Pushed (2026-10-17)
 
 ### Trigger
