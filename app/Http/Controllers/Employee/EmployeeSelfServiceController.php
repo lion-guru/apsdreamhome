@@ -1,457 +1,481 @@
 <?php
-/**
- * EmployeeSelfServiceController
- * Handles all employee self-service portal routes
- */
 
 namespace App\Http\Controllers\Employee;
 
 use App\Http\Controllers\BaseController;
-use App\Traits\TenantAwareTrait;
+use App\Services\SalaryAdvanceService;
+use App\Services\LeaveEncashmentService;
+use App\Services\OvertimeService;
+use App\Services\EmployeeAssetService;
+use App\Services\AnnouncementService;
+use App\Services\ShiftSwapService;
+use App\Services\HelpdeskService;
 
 class EmployeeSelfServiceController extends BaseController
 {
-    use TenantAwareTrait;
+    use \App\Traits\TenantAwareTrait;
 
-    private $service;
+    private $advanceService;
+    private $encashmentService;
+    private $overtimeService;
+    private $assetService;
+    private $announcementService;
+    private $shiftSwapService;
+    private $helpdeskService;
 
     public function __construct()
     {
         parent::__construct();
         $this->layout = 'layouts/employee';
-        $this->service = new \App\Services\EmployeeSelfServiceService();
+        $this->advanceService = new SalaryAdvanceService();
+        $this->encashmentService = new LeaveEncashmentService();
+        $this->overtimeService = new OvertimeService();
+        $this->assetService = new EmployeeAssetService();
+        $this->announcementService = new AnnouncementService();
+        $this->shiftSwapService = new ShiftSwapService();
+        $this->helpdeskService = new HelpdeskService();
+    }
+
+    // ... existing methods ...
+
+    /**
+     * Salary Advance/Loan Dashboard
+     */
+    public function advances()
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION['employee_id'];
+
+        $advances = $this->advanceService->getEmployeeAdvances($employeeId);
+        $pendingRepayments = $this->advanceService->getPendingRepayments($employeeId);
+
+        // Calculate summary
+        $totalAdvances = count($advances);
+        $totalPending = 0;
+        $totalRepaid = 0;
+        foreach ($advances as $a) {
+            if ($a['status'] === 'pending' || $a['status'] === 'approved') {
+                $totalPending += $a['amount'];
+            }
+            $totalRepaid += ($a['amount'] - $a['remaining_balance']);
+        }
+
+        return $this->render('employee/self_service/advances', [
+            'page_title' => 'Salary Advances & Loans',
+            'advances' => $advances,
+            'pending_repayments' => $pendingRepayments,
+            'summary' => [
+                'total_advances' => $totalAdvances,
+                'total_pending' => $totalPending,
+                'total_repaid' => $totalRepaid
+            ]
+        ]);
     }
 
     /**
-     * Dashboard - Main self-service landing page
+     * Apply for salary advance/loan
      */
-    public function dashboard()
+    public function advanceApply()
     {
         $this->requireEmployeeLogin();
-        $employeeId = $_SESSION['employee_id'];
-
-        // Get summary data
-        $taxRegime = $this->service->getTaxRegime($employeeId, date('Y'));
-        $leaveBalances = $this->service->getLeaveBalances($employeeId);
-        $payslips = $this->service->getPayslipHistory($employeeId, 6);
-        $reimbursements = $this->service->getReimbursementHistory($employeeId, 5);
-        $attendanceStats = $this->service->getAttendanceStats($employeeId);
-
-        return $this->render('employee/self_service/dashboard', [
-            'page_title' => 'Employee Self-Service Portal',
-            'tax_regime' => $taxRegime,
-            'leave_balances' => $leaveBalances,
-            'payslips' => $payslips,
-            'reimbursements' => $reimbursements,
-            'attendance_stats' => $attendanceStats,
-            'current_fy' => date('Y') . '-' . (date('Y') + 1),
-        ]);
-    }
-
-    /* ═════════════════════════════════════════════════════════════
-       TAX REGIME
-       ═════════════════════════════════════════════════════════════ */
-
-    public function taxRegime()
-    {
-        $this->requireEmployeeLogin();
-        $employeeId = $_SESSION['employee_id'];
-        $financialYear = (int)($_GET['fy'] ?? date('Y'));
-
-        $currentRegime = $this->service->getTaxRegime($employeeId, $financialYear);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $regime = $_POST['regime'] ?? 'new';
-            $result = $this->service->setTaxRegime($employeeId, $financialYear, $regime);
+            $data = [
+                'type' => $_POST['type'] ?? 'advance',
+                'amount' => (float)($_POST['amount'] ?? 0),
+                'installments' => (int)($_POST['installments'] ?? 1),
+                'interest_rate' => (float)($_POST['interest_rate'] ?? 0),
+                'reason' => $_POST['reason'] ?? ''
+            ];
+
+            $result = $this->advanceService->requestAdvance($_SESSION['employee_id'], $data);
             $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
-            $this->redirect(BASE_URL . '/employee/self-service/tax-regime?fy=' . $financialYear);
+            $this->redirect(BASE_URL . '/employee/self-service/advances');
             exit;
         }
 
-        return $this->render('employee/self_service/tax_regime', [
-            'page_title' => 'Tax Regime Selection',
-            'current_regime' => $currentRegime,
-            'financial_year' => $financialYear,
-            'fy_label' => $financialYear . '-' . ($financialYear + 1),
+        return $this->render('employee/self_service/advance_apply', [
+            'page_title' => 'Request Salary Advance / Loan',
+            'page_description' => 'Request a salary advance or loan with flexible repayment options'
         ]);
     }
 
-    /* ═════════════════════════════════════════════════════════════
-       INVESTMENT DECLARATION
-       ═════════════════════════════════════════════════════════════ */
-
-    public function investmentDeclaration()
+    /**
+     * View advance details
+     */
+    public function advanceDetail($id)
     {
         $this->requireEmployeeLogin();
         $employeeId = $_SESSION['employee_id'];
-        $financialYear = (int)($_GET['fy'] ?? date('Y'));
 
-        $declarations = $this->service->getInvestmentDeclaration($employeeId, $financialYear);
+        $advance = $this->advanceService->getAdvance($id);
+        if (!$advance || $advance['employee_id'] != $employeeId) {
+            $_SESSION['error'] = 'Advance not found';
+            $this->redirect(BASE_URL . '/employee/self-service/advances');
+            exit;
+        }
+
+        $repayments = $this->advanceService->getRepaymentSchedule($id);
+
+        return $this->render('employee/self_service/advance_detail', [
+            'page_title' => 'Advance Details',
+            'advance' => $advance,
+            'repayments' => $repayments
+        ]);
+    }
+
+    /**
+     * Leave Encashment Dashboard
+     */
+    public function encashment()
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION['employee_id'];
+
+        $policy = $this->encashmentService->getEncashmentPolicy($employeeId);
+        $requests = $this->encashmentService->getEmployeeRequests($employeeId);
+
+        return $this->render('employee/self_service/encashment', [
+            'page_title' => 'Leave Encashment',
+            'policy' => $policy,
+            'requests' => $requests
+        ]);
+    }
+
+    /**
+     * Apply for leave encashment
+     */
+    public function encashmentApply()
+    {
+        $this->requireEmployeeLogin();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $formData = $_POST['declarations'] ?? [];
-            $result = $this->service->saveInvestmentDeclaration($employeeId, $financialYear, $formData);
+            $data = [
+                'leave_type_id' => (int)($_POST['leave_type_id'] ?? 0),
+                'days_to_encash' => (float)($_POST['days_to_encash'] ?? 0)
+            ];
+
+            $result = $this->encashmentService->requestEncashment($_SESSION['employee_id'], $data);
             $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
-            $this->redirect(BASE_URL . '/employee/self-service/investment-declaration?fy=' . $financialYear);
+            $this->redirect(BASE_URL . '/employee/self-service/encashment');
             exit;
         }
 
-        // Define section limits (as per IT Act)
-        $sectionLimits = [
-            '80C' => 150000,
-            '80CCC' => 150000, // Combined with 80C
-            '80CCD(1)' => 150000, // Combined with 80C
-            '80CCD(1B)' => 50000, // NPS additional
-            '80D' => 25000, // Self/family, 50000 for senior citizens
-            '80DD' => 75000, // Disabled dependent
-            '80DDB' => 40000, // Medical treatment
-            '80E' => 0, // Education loan interest - no limit
-            '80G' => 0, // Donations - varies
-            '80TTA' => 10000, // Savings account interest
-            '80TTB' => 50000, // Senior citizen deposit interest
-            'HRA' => 0, // Based on salary/rent
-            '24b' => 200000, // Home loan interest
-        ];
+        $employeeId = $_SESSION['employee_id'];
+        $policy = $this->encashmentService->getEncashmentPolicy($employeeId);
 
-        return $this->render('employee/self_service/investment_declaration', [
-            'page_title' => 'Investment Declaration',
-            'declarations' => $declarations,
-            'financial_year' => $financialYear,
-            'fy_label' => $financialYear . '-' . ($financialYear + 1),
-            'section_limits' => $sectionLimits,
+        return $this->render('employee/self_service/encashment_apply', [
+            'page_title' => 'Apply Leave Encashment',
+            'policy' => $policy
         ]);
     }
 
-    public function uploadInvestmentProof()
+    /**
+     * Overtime Dashboard
+     */
+    public function overtime()
     {
         $this->requireEmployeeLogin();
         $employeeId = $_SESSION['employee_id'];
-        $financialYear = (int)($_POST['financial_year'] ?? date('Y'));
-        $section = $_POST['section'] ?? '';
 
-        if (!$section || empty($_FILES['proof_file']['tmp_name'])) {
-            $_SESSION['error'] = 'Section and file required';
-            $this->redirect(BASE_URL . '/employee/self-service/investment-declaration?fy=' . $financialYear);
-            exit;
+        $requests = $this->overtimeService->getEmployeeRequests($employeeId);
+        $policy = $this->overtimeService->getEmployeePolicy($employeeId);
+
+        // Calculate summary
+        $totalRequests = count($requests);
+        $totalHours = 0;
+        $totalAmount = 0;
+        $pendingCount = 0;
+
+        foreach ($requests as $r) {
+            $totalHours += $r['hours'];
+            $totalAmount += $r['amount'];
+            if ($r['status'] === 'pending') $pendingCount++;
         }
 
-        $result = $this->service->uploadInvestmentProof($employeeId, $financialYear, $section, $_FILES['proof_file']);
-        $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
-        $this->redirect(BASE_URL . '/employee/self-service/investment-declaration?fy=' . $financialYear);
-        exit;
+        return $this->render('employee/self_service/overtime', [
+            'page_title' => 'Overtime Management',
+            'requests' => $requests,
+            'policy' => $policy,
+            'summary' => [
+                'total_requests' => $totalRequests,
+                'total_hours' => $totalHours,
+                'total_amount' => $totalAmount,
+                'pending_count' => $pendingCount
+            ]
+        ]);
     }
 
-    /* ═════════════════════════════════════════════════════════════
-       FORM 16
-       ═════════════════════════════════════════════════════════════ */
-
-    public function form16()
+    /**
+     * Apply for overtime
+     */
+    public function overtimeApply()
     {
         $this->requireEmployeeLogin();
-        $employeeId = $_SESSION['employee_id'];
-
-        $form16List = $this->service->getForm16List($employeeId);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $financialYear = (int)($_POST['financial_year'] ?? 0);
-            if ($financialYear) {
-                $result = $this->service->generateForm16($employeeId, $financialYear);
-                $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
-            }
-            $this->redirect(BASE_URL . '/employee/self-service/form16');
+            $data = [
+                'date' => $_POST['date'] ?? date('Y-m-d'),
+                'start_time' => $_POST['start_time'] ?? '',
+                'end_time' => $_POST['end_time'] ?? '',
+                'reason' => $_POST['reason'] ?? ''
+            ];
+
+            $result = $this->overtimeService->requestOvertime($_SESSION['employee_id'], $data);
+            $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
+            $this->redirect(BASE_URL . '/employee/self-service/overtime');
             exit;
         }
 
-        return $this->render('employee/self_service/form16', [
-            'page_title' => 'Form 16 Download',
-            'form16_list' => $form16List,
+        $employeeId = $_SESSION['employee_id'];
+        $policy = $this->overtimeService->getEmployeePolicy($employeeId);
+
+        return $this->render('employee/self_service/overtime_apply', [
+            'page_title' => 'Apply Overtime',
+            'policy' => $policy
         ]);
     }
 
-    public function downloadForm16($financialYear)
+    /**
+     * Overtime request detail
+     */
+    public function overtimeDetail($id)
     {
         $this->requireEmployeeLogin();
         $employeeId = $_SESSION['employee_id'];
 
-        $form16List = $this->service->getForm16List($employeeId);
-        $found = null;
-        foreach ($form16List as $f) {
-            if ($f['financial_year'] == $financialYear) {
-                $found = $f;
+        $requests = $this->overtimeService->getEmployeeRequests($employeeId);
+        $request = null;
+        foreach ($requests as $r) {
+            if ($r['id'] == $id) {
+                $request = $r;
                 break;
             }
         }
 
-        // PdfService stores ABSOLUTE storage paths; older rows may hold APP-relative ones.
-        $diskPath = $found['file_path'] ?? '';
-        if ($diskPath !== '' && !is_file($diskPath)) {
-            $diskPath = APP_PATH . '/' . ltrim($diskPath, '/');
-        }
-        if (!$found || !$diskPath || !is_file($diskPath)) {
-            $_SESSION['error'] = 'Form 16 not found for this year';
-            $this->redirect(BASE_URL . '/employee/self-service/form16');
+        if (!$request) {
+            $_SESSION['error'] = 'Overtime request not found';
+            $this->redirect(BASE_URL . '/employee/self-service/overtime');
             exit;
         }
 
-        header('Content-Type: application/pdf');
-        header('Content-Disposition: attachment; filename="Form16_' . $financialYear . '_' . $employeeId . '.pdf"');
-        header('Content-Length: ' . filesize($diskPath));
-        readfile($diskPath);
+        return $this->render('employee/self_service/overtime_detail', [
+            'page_title' => 'Overtime Request Details',
+            'request' => $request
+        ]);
+    }
+
+    /**
+     * Asset Assignments Dashboard
+     */
+    public function assets()
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION['employee_id'];
+
+        $assets = $this->assetService->getEmployeeAssets($employeeId);
+        $summary = $this->assetService->getAssetSummary($employeeId);
+
+        return $this->render('employee/self_service/assets', [
+            'page_title' => 'My Asset Assignments',
+            'assets' => $assets,
+            'summary' => $summary
+        ]);
+    }
+
+    /**
+     * Report asset issue (lost/damaged)
+     */
+    public function assetReportIssue()
+    {
+        $this->requireEmployeeLogin();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect(BASE_URL . '/employee/self-service/assets');
+            exit;
+        }
+
+        $result = $this->assetService->reportIssue(
+            (int)($_POST['assignment_id'] ?? 0),
+            $_SESSION['employee_id'],
+            $_POST['issue_type'] ?? '',
+            $_POST['notes'] ?? ''
+        );
+
+        $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
+        $this->redirect(BASE_URL . '/employee/self-service/assets');
         exit;
     }
 
-    /* ═════════════════════════════════════════════════════════════
-       PAYSLIPS
-       ═════════════════════════════════════════════════════════════ */
-
-    public function payslips()
+    /**
+     * Announcements Dashboard
+     */
+    public function announcements()
     {
         $this->requireEmployeeLogin();
         $employeeId = $_SESSION['employee_id'];
 
-        $payslips = $this->service->getPayslipHistory($employeeId);
+        // Get announcements for this employee
+        $announcements = $this->announcementService->getEmployeeAnnouncements($employeeId);
 
-        return $this->render('employee/self_service/payslips', [
-            'page_title' => 'Payslip History',
-            'payslips' => $payslips,
-        ]);
-    }
-
-    public function downloadPayslip($payslipId)
-    {
-        $this->requireEmployeeLogin();
-        $employeeId = $_SESSION['employee_id'];
-        // Ownership gate: employees must only download their own payslips.
-        $emp = $this->db->fetchOne("SELECT id FROM employees WHERE user_id=?", [$employeeId]);
-        $mine = $emp ? $this->db->fetchOne("SELECT id FROM employee_payslips WHERE id=? AND employee_id=?", [(int)$payslipId, (int)$emp['id']]) : null;
-        if (!$mine) {
-            $_SESSION['error'] = 'Payslip not found';
-            $this->redirect(BASE_URL . '/employee/self-service/payslips');
-            exit;
-        }
-        $pdfPath = $this->service->getPayslipPdf((int)$payslipId);
-
-        // PdfService returns ABSOLUTE storage paths; older rows may be APP-relative.
-        $diskPath = $pdfPath ?? '';
-        if ($diskPath !== '' && !is_file($diskPath)) {
-            $diskPath = APP_PATH . '/' . ltrim($diskPath, '/');
-        }
-        if (!$diskPath || !is_file($diskPath)) {
-            $_SESSION['error'] = 'Payslip PDF not found';
-            $this->redirect(BASE_URL . '/employee/self-service/payslips');
-            exit;
+        // Mark as read
+        $unreadIds = array_filter($announcements, fn($a) => !$a['read']);
+        foreach ($unreadIds as $a) {
+            $this->announcementService->markAsRead($a['id'], $employeeId);
         }
 
-        header('Content-Type: application/pdf');
-        header('Content-Disposition: attachment; filename="Payslip_' . $payslipId . '.pdf"');
-        header('Content-Length: ' . filesize($diskPath));
-        readfile($diskPath);
-        exit;
-    }
-
-    /* ═════════════════════════════════════════════════════════════
-       LEAVE MANAGEMENT
-       ═════════════════════════════════════════════════════════════ */
-
-    public function leave()
-    {
-        $this->requireEmployeeLogin();
-        $employeeId = $_SESSION['employee_id'];
-
-        $leaveBalances = $this->service->getLeaveBalances($employeeId);
-        $leaveHistory = $this->service->getLeaveHistory($employeeId);
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $result = $this->service->applyLeave($employeeId, $_POST);
-            $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
-            $this->redirect(BASE_URL . '/employee/self-service/leave');
-            exit;
-        }
-
-        // Get leave types for dropdown
-        $leaveTypes = $this->db->fetchAll("SELECT id, name, code FROM leave_types WHERE status='active' ORDER BY name");
-
-        return $this->render('employee/self_service/leave', [
-            'page_title' => 'Leave Management',
-            'leave_balances' => $leaveBalances,
-            'leave_history' => $leaveHistory,
-            'leave_types' => $leaveTypes,
-        ]);
-    }
-
-    /* ═════════════════════════════════════════════════════════════
-       REIMBURSEMENT
-       ═════════════════════════════════════════════════════════════ */
-
-    public function reimbursement()
-    {
-        $this->requireEmployeeLogin();
-        $employeeId = $_SESSION['employee_id'];
-
-        $reimbursements = $this->service->getReimbursementHistory($employeeId);
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $result = $this->service->submitReimbursement($employeeId, $_POST + ['receipt_file' => $_FILES['receipt_file'] ?? []]);
-            $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
-            $this->redirect(BASE_URL . '/employee/self-service/reimbursement');
-            exit;
-        }
-
-        return $this->render('employee/self_service/reimbursement', [
-            'page_title' => 'Reimbursement Claims',
-            'reimbursements' => $reimbursements,
-            'claim_types' => [
-                'medical' => 'Medical Reimbursement',
-                'lta' => 'Leave Travel Allowance (LTA)',
-                'fuel' => 'Fuel / Conveyance',
-                'phone' => 'Phone / Mobile',
-                'internet' => 'Internet / Broadband',
-                'books' => 'Books & Periodicals',
-                'training' => 'Training & Development',
-                'other' => 'Other',
-            ],
-        ]);
-    }
-
-    /* ═════════════════════════════════════════════════════════════
-       PROFILE
-       ═════════════════════════════════════════════════════════════ */
-
-    public function profile()
-    {
-        $this->requireEmployeeLogin();
-        $employeeId = $_SESSION['employee_id'];
-
-        [$tidSql, $tidParams] = $this->tenantWhere();
-        $user = $this->db->fetchOne("SELECT * FROM users WHERE id=?{$tidSql}", array_merge([$employeeId], $tidParams));
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $result = $this->service->updateProfile($employeeId, $_POST);
-            $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
-            $this->redirect(BASE_URL . '/employee/self-service/profile');
-            exit;
-        }
-
-        return $this->render('employee/self_service/profile', [
-            'page_title' => 'My Profile',
-            'user' => $user,
-        ]);
-    }
-
-    public function changePassword()
-    {
-        $this->requireEmployeeLogin();
-        $employeeId = $_SESSION['employee_id'];
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (($_POST['new_password'] ?? '') !== ($_POST['confirm_password'] ?? '')) {
-                $_SESSION['error'] = 'New passwords do not match';
-                $this->redirect(BASE_URL . '/employee/self-service/change-password');
-                exit;
-            }
-            $result = $this->service->changePassword($employeeId, $_POST['current_password'] ?? '', $_POST['new_password'] ?? '');
-            $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
-            $this->redirect(BASE_URL . '/employee/self-service/profile');
-            exit;
-        }
-
-        return $this->render('employee/self_service/change_password', [
-            'page_title' => 'Change Password',
-        ]);
-    }
-
-    /* ═════════════════════════════════════════════════════════════
-       ATTENDANCE
-       ═════════════════════════════════════════════════════════════ */
-
-    public function attendance()
-    {
-        $this->requireEmployeeLogin();
-        $employeeId = $_SESSION['employee_id'];
-        $month = $_GET['month'] ?? date('Y-m');
-
-        $attendance = $this->service->getAttendance($employeeId, $month);
-        $stats = $this->service->getAttendanceStats($employeeId, $month);
-
-        return $this->render('employee/self_service/attendance', [
-            'page_title' => 'My Attendance',
-            'attendance' => $attendance,
-            'stats' => $stats,
-            'month' => $month,
-            'prev_month' => date('Y-m', strtotime($month . ' -1 month')),
-            'next_month' => date('Y-m', strtotime($month . ' +1 month')),
+        return $this->render('employee/self_service/announcements', [
+            'page_title' => 'Company Announcements',
+            'announcements' => $announcements
         ]);
     }
 
     /**
-     * Interactive Tax Calculator
-     * Compare Old vs New Regime with actual salary numbers
+     * Shift Swaps
      */
-    public function taxCalculator()
+    public function shiftSwaps()
     {
         $this->requireEmployeeLogin();
         $employeeId = $_SESSION['employee_id'];
-        $financialYear = (int)($_GET['fy'] ?? date('Y'));
 
-        // Get employee's current salary for pre-filling
-        $currentSalary = [];
-        try {
-            $emp = $this->db->fetchOne("SELECT id FROM employees WHERE user_id=?{$this->tenantSql()}", array_merge([$employeeId], $this->service->tVal()));
-            if ($emp) {
-                $salary = $this->db->fetchOne("SELECT * FROM salary_structures WHERE employee_id=? AND status='active' ORDER BY effective_date DESC LIMIT 1", [$emp['id']]);
-                if ($salary) {
-                    $currentSalary = [
-                        'basic' => $salary['basic_salary'] ?? 0,
-                        'hra' => $salary['hra'] ?? 0,
-                        'conveyance' => $salary['conveyance'] ?? 0,
-                        'medical' => $salary['medical_allowance'] ?? 0,
-                        'special' => $salary['special_allowance'] ?? 0,
-                        'other' => $salary['other_allowances'] ?? 0,
-                    ];
-                }
-            }
-        } catch (\Exception $e) {}
+        $swaps = $this->shiftSwapService->getEmployeeSwaps($employeeId);
+        $pendingSwaps = array_filter($swaps, fn($s) => $s['status'] === 'pending');
+        $completedSwaps = array_filter($swaps, fn($s) => $s['status'] === 'completed');
 
-        return $this->render('employee/self_service/tax_calculator', [
-            'page_title' => 'Tax Calculator',
-            'currentSalary' => $currentSalary,
-            'financial_year' => $financialYear,
-            'fy_label' => $financialYear . '-' . ($financialYear + 1),
+        return $this->render('employee/self_service/shift_swaps', [
+            'page_title' => 'Shift Swaps',
+            'swaps' => $swaps,
+            'pending_count' => count($pendingSwaps),
+            'completed_count' => count($completedSwaps)
         ]);
     }
 
     /**
-     * Leave Calendar View
-     * Visual calendar for leave management
+     * Request shift swap
      */
-    public function leaveCalendar()
+    public function shiftSwapRequest()
     {
         $this->requireEmployeeLogin();
-        $employeeId = $_SESSION['employee_id'];
-        $month = $_GET['month'] ?? date('Y-m');
 
-        $leaveBalances = $this->service->getLeaveBalances($employeeId);
-        $leaveHistory = $this->service->getLeaveHistory($employeeId);
-        $leaveTypes = $this->db->fetchAll("SELECT id, name, code, color FROM leave_types WHERE status='active' ORDER BY name");
-
-        return $this->render('employee/self_service/leave_calendar', [
-            'page_title' => 'Leave Calendar',
-            'leave_balances' => $leaveBalances,
-            'leave_history' => $leaveHistory,
-            'leave_types' => $leaveTypes,
-            'month' => $month,
-        ]);
-    }
-
-    /**
-     * Helper to require employee login
-     */
-    protected function requireEmployeeLogin()
-    {
-        if (!isset($_SESSION['employee_id'])) {
-            $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'];
-            header('Location: ' . BASE_URL . '/employee/login');
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $result = $this->shiftSwapService->requestSwap($_SESSION['employee_id'], $_POST);
+            $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
+            $this->redirect(BASE_URL . '/employee/self-service/shift-swaps');
             exit;
         }
+
+        // Get colleagues in same department
+        $employeeId = $_SESSION['employee_id'];
+        $colleagues = $this->db->fetchAll("
+            SELECT e.id, e.name, e.designation
+            FROM employees e
+            JOIN users u ON e.user_id = u.id
+            WHERE e.id != ? AND e.status = 'active' AND u.status = 'active'
+            ORDER BY e.name
+        ", [$employeeId]);
+
+        return $this->render('employee/self_service/shift_swap_apply', [
+            'page_title' => 'Request Shift Swap',
+            'colleagues' => $colleagues
+        ]);
+    }
+
+    /**
+     * Respond to shift swap request
+     */
+    public function shiftSwapRespond($id)
+    {
+        $this->requireEmployeeLogin();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $result = $this->shiftSwapService->respondToSwap(
+                $id,
+                $_SESSION['employee_id'],
+                $_POST['action'] ?? '',
+                $_POST['rejection_reason'] ?? ''
+            );
+            $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
+            $this->redirect(BASE_URL . '/employee/self-service/shift-swaps');
+            exit;
+        }
+
+        $swap = $this->shiftSwapService->getSwap($id);
+        if (!$swap || ($swap['requester_id'] != $_SESSION['employee_id'] && $swap['target_id'] != $_SESSION['employee_id'])) {
+            $_SESSION['error'] = 'Swap request not found';
+            $this->redirect(BASE_URL . '/employee/self-service/shift-swaps');
+            exit;
+        }
+
+        return $this->render('employee/self_service/shift_swap_respond', [
+            'page_title' => 'Respond to Shift Swap',
+            'swap' => $swap
+        ]);
+    }
+
+    /**
+     * Helpdesk/Tickets
+     */
+    public function helpdesk()
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION['employee_id'];
+
+        $tickets = $this->helpdeskService->getEmployeeTickets($employeeId);
+
+        return $this->render('employee/self_service/helpdesk', [
+            'page_title' => 'Helpdesk & Support',
+            'tickets' => $tickets
+        ]);
+    }
+
+    /**
+     * Create new ticket
+     */
+    public function ticketCreate()
+    {
+        $this->requireEmployeeLogin();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $result = $this->helpdeskService->createTicket($_SESSION['employee_id'], $_POST);
+            $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
+            $this->redirect(BASE_URL . '/employee/self-service/helpdesk');
+            exit;
+        }
+
+        return $this->render('employee/self_service/ticket_create', [
+            'page_title' => 'Create Support Ticket',
+            'categories' => ['it', 'hr', 'finance', 'facilities', 'security', 'other']
+        ]);
+    }
+
+    /**
+     * Ticket detail
+     */
+    public function ticketDetail($id)
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION['employee_id'];
+
+        $ticket = $this->helpdeskService->getTicket($id);
+        if (!$ticket || $ticket['employee_id'] != $employeeId) {
+            $_SESSION['error'] = 'Ticket not found';
+            $this->redirect(BASE_URL . '/employee/self-service/helpdesk');
+            exit;
+        }
+
+        $comments = $this->helpdeskService->getTicketComments($id);
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $result = $this->helpdeskService->addComment($id, $employeeId, $_POST);
+            $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
+            $this->redirect(BASE_URL . "/employee/self-service/helpdesk/$id");
+            exit;
+        }
+
+        return $this->render('employee/self_service/ticket_detail', [
+            'page_title' => 'Ticket #' . $ticket['ticket_number'],
+            'ticket' => $ticket,
+            'comments' => $comments
+        ]);
     }
 }
