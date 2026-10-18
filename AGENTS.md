@@ -13,6 +13,35 @@
 > 4. **Session-number check** — AGENTS.md entry chipkane se PEHLE header dobara padho; parallel actor ne beech me number le liya ho to next free number lo, overwrite/clobber kabhi nahi (S219, S223).
 > 5. **Probe hygiene** — temp scripts sirf `C:\Users\abhay\AppData\Local\Temp\opencode\` me, write+execute **same turn** me (temp purge hota hai), `php -r` one-liners banned, probe ke end me cleanup + counts-verify lazmi (lessons _445, _456, _490).
 
+## Session 336: All 6 Owner Items Executed — drip FK Migration + HF Verify + Voice Audit + Commit Pushed (2026-10-17)
+
+### Trigger
+User: "saar kaam ho gy hai ky ya koi suggestion" + "ye sab bhi kaam karo" (all 6 owner items).
+
+### Work (migration + verification + commit, ZERO app-code beyond the migration)
+1. **`drip_emails` FK migration (the long-standing blocker) — FIXED** (`database/migrations/fix_drip_emails_fk_s336.php`, idempotent):
+   - Pre-flight orphan audit: 5 live rows (all `campaign_id=2`) resolve to `drip_campaigns.id=2` → **0 orphans**, swap is data-safe.
+   - Dropped wrong FK `fk_drip_emails_campaign_id → campaigns(campaign_id)`, added correct `→ drip_campaigns(id) ON DELETE CASCADE`.
+   - Run 1 = CHANGE + verify, Run 2 = SKIP (idempotent proven).
+   - **This closes the S285 finding** — `addEmail()` no longer 1452s on any drip id.
+2. **HF key verified live** — `ai_settings.settings.$.hf_api_key` present in DB (token value redacted here on purpose; it lives only in the DB + the masked admin preview). `RAGKnowledgeManager` confirmed to read `hf_api_key`; KB seeded (23 docs / 23 chunks) → RAG now uses real 384-dim embeddings.
+3. **Voice provider audit (no code needed)** — `VoiceProviderManager.php` (13.4KB) + `VoiceCallService.php` (23KB) both live, 4 providers supported (exotel/twilio/plivo/knowlarity), webhook/callback concept present. **Only owner credentials remain** — zero code work left.
+4. **Ngrok audit** — webhook endpoints already wired in the voice stack; **only the tunnel + provider dashboard URL remain** (owner action, no code).
+5. **Commit pushed** — `1824426ba` "fix(drip): re-point drip_emails.campaign_id FK to drip_campaigns(id) (S336)", pre-commit hook linted clean, `main...origin/main` in sync.
+6. **My 5 earlier hunks already absorbed** by their `d80052679` commit (324 files) — `smart_chatbot.php`, `layouts/admin.php`, `AISettingsController.php`, `ai_settings/index.php`, `AGENTS.md` all present in HEAD. Nothing left staged.
+
+### Verification
+- `php -l` clean on migration; master **10/10 PASSED** (17.9s) on final tree.
+- DB unchanged: users 111 / plots 756 / leads 38187/49479 / drip_emails 5 / KB 23+23.
+- Zero leftovers; temp scripts deleted same turn.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor took S317-S335; next-free = **336** (this entry).
+
+### Key Lessons (carried, continued)
+_606. **An FK to the wrong parent is a write-time landmine that reads fine** — `drip_emails.campaign_id` pointed at `campaigns(campaign_id)` while the writer used `drip_campaigns(id)`; every read query worked, only `addEmail()` would have died 1452. The FK target is part of the zero-dup audit (Rule 3), not a schema detail.
+_607. **Audit-then-swap makes an FK migration safe in one file** — the pre-flight orphan query (0 rows) proved the swap data-safe BEFORE the ALTER, so no dump/restore cycle was needed for a 5-row table.
+
 ## Session 335: Steady — S334 Verified, Master 10/10 Green, DB Static (2026-10-17)
 
 ### Trigger
