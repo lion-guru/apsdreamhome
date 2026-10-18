@@ -6,7 +6,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Services\EmployeeGrievanceService;
-use App\Core\Controller\BaseController;
+use App\Http\Controllers\BaseController;
 
 class EmployeeGrievanceController extends BaseController
 {
@@ -55,16 +55,18 @@ class EmployeeGrievanceController extends BaseController
         $grievance = $this->grievanceService->getGrievance($id);
         if (!$grievance) {
             $_SESSION['error'] = 'Grievance not found';
-            $this->redirect(BASE_URL . '/admin/grievances');
-            return;
+            header('Location: ' . BASE_URL . '/admin/grievances');
+            exit;
         }
 
         $comments = $this->grievanceService->getComments($id);
+        $assignees = $this->grievanceService->getStaffList();
 
         return $this->render('admin/grievances/detail', [
             'page_title' => 'Grievance Details',
             'grievance' => $grievance,
             'comments' => $comments,
+            'assignees' => $assignees,
             'categories' => $this->grievanceService->getCategories(),
             'priorities' => $this->grievanceService->getPriorities(),
         ]);
@@ -76,18 +78,24 @@ class EmployeeGrievanceController extends BaseController
     public function updateStatus($id)
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect(BASE_URL . '/admin/grievances/' . $id);
-            return;
+            header('Location: ' . BASE_URL . '/admin/grievances/' . $id);
+            exit;
         }
 
+        $status = $_POST['status'] ?? '';
         $result = $this->grievanceService->updateStatus(
-            $id,
-            $_POST['status'] ?? '',
+            (int)$id,
+            $status,
             $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0
         );
 
+        if ($this->isAjax()) {
+            return $this->jsonResponse($result, $result['success'] ? 200 : 400);
+        }
+
         $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
-        $this->redirect(BASE_URL . '/admin/grievances/' . $id);
+        header('Location: ' . BASE_URL . '/admin/grievances/' . $id);
+        exit;
     }
 
     /**
@@ -96,18 +104,24 @@ class EmployeeGrievanceController extends BaseController
     public function assign($id)
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect(BASE_URL . '/admin/grievances/' . $id);
-            return;
+            header('Location: ' . BASE_URL . '/admin/grievances/' . $id);
+            exit;
         }
 
+        $assigneeId = (int)($_POST['assignee_id'] ?? 0);
         $result = $this->grievanceService->assignGrievance(
-            $id,
-            (int)($_POST['assignee_id'] ?? 0),
+            (int)$id,
+            $assigneeId,
             $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0
         );
 
+        if ($this->isAjax()) {
+            return $this->jsonResponse($result, $result['success'] ? 200 : 400);
+        }
+
         $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
-        $this->redirect(BASE_URL . '/admin/grievances/' . $id);
+        header('Location: ' . BASE_URL . '/admin/grievances/' . $id);
+        exit;
     }
 
     /**
@@ -116,18 +130,33 @@ class EmployeeGrievanceController extends BaseController
     public function addComment($id)
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect(BASE_URL . '/admin/grievances/' . $id);
-            return;
+            header('Location: ' . BASE_URL . '/admin/grievances/' . $id);
+            exit;
         }
 
+        $comment = $_POST['comment'] ?? '';
+        $isInternal = !empty($_POST['is_internal']);
+
         $result = $this->grievanceService->addComment(
-            $id,
+            (int)$id,
             $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0,
-            $_POST['comment'] ?? '',
-            true // isInternal = true for admin comments
+            $comment,
+            $isInternal
         );
 
+        if ($this->isAjax()) {
+            return $this->jsonResponse($result, $result['success'] ? 200 : 400);
+        }
+
         $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
-        $this->redirect(BASE_URL . '/admin/grievances/' . $id);
+        header('Location: ' . BASE_URL . '/admin/grievances/' . $id);
+        exit;
+    }
+
+    private function isAjax(): bool
+    {
+        return (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
+            || strpos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') !== false
+            || isset($_POST['ajax']);
     }
 }

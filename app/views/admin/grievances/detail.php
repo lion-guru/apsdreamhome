@@ -181,17 +181,17 @@ $priorities = $priorities ?? [];
                             </ul>
                         </div>
                         <div class="btn-group w-100 mt-2" role="group">
-                            <button type="button" class="btn btn-outline-secondary w-50" onclick="assignGrievance(<?= $grievance['id'] ?>)">
+                            <button type="button" class="btn btn-outline-secondary w-50" data-bs-toggle="modal" data-bs-target="#assignGrievanceModal">
                                 <i class="fas fa-user-plus me-1"></i> Assign
                             </button>
                             <button type="button" class="btn btn-outline-secondary w-50" data-bs-toggle="modal" data-bs-target="#addCommentModal">
                                 <i class="fas fa-comment me-1"></i> Comment
                             </button>
                         </div>
-                        <?php if (!empty($grievance['assignee_id']) && $grievance['status'] !== 'closed'): ?>
+                        <?php if (!empty($grievance['assigned_to']) && $grievance['status'] !== 'closed'): ?>
                             <div class="mt-3 p-3 bg-light rounded">
                                 <h6 class="fw-semibold mb-2"><i class="fas fa-user-tie me-1"></i>Assigned To</h6>
-                                <div class="fw-semibold"><?= htmlspecialchars($grievance['assignee_name']) ?></div>
+                                <div class="fw-semibold"><?= htmlspecialchars($grievance['assignee_name'] ?? 'Assigned Staff') ?></div>
                             </div>
                         <?php endif; ?>
                         <?php if ($grievance['is_anonymous'] ?? false): ?>
@@ -246,6 +246,7 @@ $priorities = $priorities ?? [];
                             </div>
                             <div class="mt-2 text-muted"><?= nl2br(htmlspecialchars($c['comment'] ?? '')) ?></div>
                         </div>
+                    </div>
                 </div>
                 <?php endforeach; ?>
             </div>
@@ -253,14 +254,47 @@ $priorities = $priorities ?? [];
         </div>
     </div>
 
+    <!-- Assign Grievance Modal -->
+    <div class="modal fade" id="assignGrievanceModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST" action="<?= BASE_URL ?>/admin/grievances/<?= (int)$grievance['id'] ?>/assign">
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="fas fa-user-plus me-2 text-primary"></i>Assign Grievance</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Select Staff Member <span class="text-danger">*</span></label>
+                            <select name="assignee_id" class="form-select" required>
+                                <option value="">-- Choose Investigator / Staff --</option>
+                                <?php foreach ($assignees as $staff): ?>
+                                    <option value="<?= $staff['id'] ?>" <?= (!empty($grievance['assigned_to']) && $grievance['assigned_to'] == $staff['id']) ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($staff['name']) ?> (<?= ucfirst($staff['role']) ?><?= !empty($staff['department']) ? ' · ' . htmlspecialchars($staff['department']) : '' ?>)
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <small class="text-muted">The assigned staff member will receive an instant notification in their portal.</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-check me-1"></i> Save Assignment
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Add Comment Modal -->
     <div class="modal fade" id="addCommentModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form method="POST" id="addCommentForm">
+                <form method="POST" id="addCommentForm" action="<?= BASE_URL ?>/admin/grievances/<?= (int)$grievance['id'] ?>/comment">
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-                    <input type="hidden" name="grievance_id" value="<?= $grievance['id'] ?>">
-                    <input type="hidden" name="employee_id" value="<?= $_SESSION['admin_id'] ?? 1 ?>">
                     <div class="modal-header">
                         <h5 class="modal-title"><i class="fas fa-comment me-2"></i>Add Comment</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -288,27 +322,24 @@ $priorities = $priorities ?? [];
 
 <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 function updateStatus(grievanceId, status) {
-    if (!confirm('Change status to ' + status + '?')) return;
+    if (!confirm('Change status to ' + status.replace('_', ' ') + '?')) return;
     
-    fetch('<?= BASE_URL ?>/admin/grievances/update-status', {
+    fetch('<?= BASE_URL ?>/admin/grievances/' + grievanceId + '/status', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'grievance_id=' + grievanceId + '&status=' + status + '&csrf_token=' + encodeURIComponent('<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>')
+        headers: { 
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: 'status=' + encodeURIComponent(status) + '&csrf_token=' + encodeURIComponent('<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>')
     })
     .then(r => r.json())
-    .then(data => { if (data.success) location.reload(); else alert(data.message || 'Failed'); });
-}
-
-function assignGrievance(grievanceId) {
-    const assigneeId = prompt('Enter assignee user ID:');
-    if (!assigneeId) return;
-    
-    fetch('<?= BASE_URL ?>/admin/grievances/assign', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'grievance_id=' + grievanceId + '&assignee_id=' + assigneeId + '&csrf_token=' + encodeURIComponent('<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>')
+    .then(data => { 
+        if (data.success) {
+            location.reload(); 
+        } else {
+            alert(data.message || 'Failed to update status'); 
+        }
     })
-    .then(r => r.json())
-    .then(data => { if (data.success) location.reload(); else alert(data.message || 'Failed'); });
+    .catch(() => location.reload());
 }
 </script>

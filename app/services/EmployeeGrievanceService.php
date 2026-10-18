@@ -90,7 +90,7 @@ class EmployeeGrievanceService
     public function getGrievance(int $grievanceId): ?array
     {
         return $this->fetchOne("
-            SELECT eg.*, u.name as employee_name, u.employee_code, u.department,
+            SELECT eg.*, u.name as employee_name, e.employee_code, e.department,
                    a.name as assignee_name
             FROM employee_grievances eg
             JOIN employees e ON eg.employee_id = e.id
@@ -108,34 +108,34 @@ class EmployeeGrievanceService
             $params[] = $status;
         }
         $query .= " ORDER BY created_at DESC";
-        return $this->fetchAll($query, array_merge([$employeeId], $status ? [$status] : []));
+        return $this->fetchAll($query, $params);
     }
 
     public function getAllGrievances(array $filters = []): array
     {
         $query = "
-            SELECT eg.*, u.name as employee_name, u.employee_code, u.department,
+            SELECT eg.*, u.name as employee_name, e.employee_code, e.department,
                    a.name as assignee_name
             FROM employee_grievances eg
             JOIN employees e ON eg.employee_id = e.id
             JOIN users u ON e.user_id = u.id
             LEFT JOIN users a ON eg.assigned_to = a.id
             WHERE eg.tenant_id = 1";
-        $params = [1];
+        $params = [];
 
-        if (!empty($filters['status'])) {
+        if (!empty($filters['status']) && $filters['status'] !== 'all') {
             $query .= " AND eg.status = ?";
             $params[] = $filters['status'];
         }
-        if (!empty($filters['category'])) {
+        if (!empty($filters['category']) && $filters['category'] !== 'all') {
             $query .= " AND eg.category = ?";
             $params[] = $filters['category'];
         }
-        if (!empty($filters['priority'])) {
+        if (!empty($filters['priority']) && $filters['priority'] !== 'all') {
             $query .= " AND eg.priority = ?";
             $params[] = $filters['priority'];
         }
-        if (!empty($filters['assignee'])) {
+        if (!empty($filters['assignee']) && $filters['assignee'] !== 'all') {
             $query .= " AND eg.assigned_to = ?";
             $params[] = $filters['assignee'];
         }
@@ -164,7 +164,7 @@ class EmployeeGrievanceService
         $params[] = $grievanceId;
         $this->execute(
             "UPDATE employee_grievances SET " . implode(', ', $updates) . " WHERE id = ? AND tenant_id = 1",
-            array_merge($params, [$grievanceId])
+            $params
         );
 
         return ['success' => true, 'message' => 'Status updated'];
@@ -172,7 +172,7 @@ class EmployeeGrievanceService
 
     public function assignGrievance(int $grievanceId, int $assigneeId, int $assignedBy): array
     {
-        $assignee = $this->fetchOne("SELECT id FROM users WHERE id = ? AND status = 'active'", [$assigneeId]);
+        $assignee = $this->fetchOne("SELECT id, name FROM users WHERE id = ? AND status = 'active'", [$assigneeId]);
         if (!$assignee) return ['success' => false, 'message' => 'Assignee not found or inactive'];
 
         $this->execute(
@@ -180,13 +180,32 @@ class EmployeeGrievanceService
             [$assigneeId, $grievanceId]
         );
 
-        $this->execute("
-            INSERT INTO notifications (tenant_id, user_id, type, title, message, related_id, created_at, status, tenant_id)
-            VALUES (?, ?, 'grievance_assigned', ?, ?, NOW(), 'unread', ?)",
-            [$this->tenantId(), $assigneeId, 'Grievance assigned to you', $grievanceId, $this->tenantId()]
-        );
+        try {
+            $notif = new \App\Services\NotificationService($this->db);
+            $notif->notify(
+                'grievance_assigned',
+                "Grievance #{$grievanceId} has been assigned to you for investigation/resolution.",
+                $assigneeId,
+                "/admin/grievances/{$grievanceId}",
+                'New Grievance Assigned'
+            );
+        } catch (\Throwable $e) {
+            error_log("Grievance assign notification error: " . $e->getMessage());
+        }
 
         return ['success' => true, 'message' => 'Grievance assigned'];
+    }
+
+    public function getStaffList(): array
+    {
+        return $this->fetchAll("
+            SELECT u.id, u.name, u.role, u.email, e.department, e.designation
+            FROM users u
+            LEFT JOIN employees e ON e.user_id = u.id
+            WHERE u.status = 'active'
+              AND u.role IN ('admin', 'super_admin', 'manager', 'employee', 'hr_manager', 'director', 'operations_manager', 'ceo', 'coo')
+            ORDER BY u.name ASC
+        ");
     }
 
     public function addComment(int $grievanceId, int $employeeId, string $comment, bool $isInternal = false): array
@@ -318,6 +337,21 @@ class EmployeeGrievanceService
         }
     }
 
+    private function logActivity(int $userId, string $action, array $data = []): void
+    {
+        try {
+            $user = $this->fetchOne("SELECT email FROM users WHERE id = ?", [$userId]);
+            $email = $user['email'] ?? 'employee@apsdreamhome.com';
+            $details = json_encode(array_merge(['action' => $action], $data));
+            $this->execute(
+                "INSERT INTO employee_activity_logs_unified (email, success, details, created_at) VALUES (?, 1, ?, NOW())",
+                [$email, $details]
+            );
+        } catch (\Throwable $e) {
+            error_log("Grievance logActivity failed: " . $e->getMessage());
+        }
+    }
+
     public function getCategories(): array
     {
         return [
@@ -343,5 +377,41 @@ class EmployeeGrievanceService
             'urgent' => 'Urgent',
             'critical' => 'Critical'
         ];
+    }
+
+    private function fetchOne(string $sql, array $params = []): ?array
+    {
+        try {
+            $stmt = $this->db->getConnection()->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
+        } catch (\Throwable $e) {
+            error_log('EmployeeGrievanceService::fetchOne: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    private function fetchAll(string $sql, array $params = []): array
+    {
+        try {
+            $stmt = $this->db->getConnection()->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            error_log('EmployeeGrievanceService::fetchAll: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    private function execute(string $sql, array $params = []): int
+    {
+        try {
+            $stmt = $this->db->getConnection()->prepare($sql);
+            $stmt->execute($params);
+            return (int)$this->db->getConnection()->lastInsertId();
+        } catch (\Throwable $e) {
+            error_log('EmployeeGrievanceService::execute: ' . $e->getMessage());
+            return 0;
+        }
     }
 }

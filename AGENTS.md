@@ -65,20 +65,45 @@ User requested:
 7. **Remote Tablet Testing & Ngrok Tunnel:**
    - Started persistent background daemon `ngrok http 80` exposing local development server to `https://unforced-willena-seclusively.ngrok-free.dev/apsdreamhome/`.
    - Verified HTTP 200 responses and documented verified testing credentials across all 7 user roles.
-8. **Standardized Passwords to `Aps@2026` & C-Suite Accounts Seeding (`update_test_passwords_and_seed_csuite_s348.php`):
+8. **Standardized Passwords to `Aps@2026` & C-Suite Accounts Seeding (`update_test_passwords_and_seed_csuite_s348.php`):**
    - Created idempotent migration updating all users to bcrypt hash of `Aps@2026` for seamless tablet testing.
    - Seeded missing C-suite testing accounts in `users` (`ceo@apsdreamhome.com`, `cto@apsdreamhome.com`, `cfo@apsdreamhome.com`, `coo@apsdreamhome.com`, `director@apsdreamhome.com`).
    - Synchronized `employees` table `user_id` foreign keys to ensure employee/staff lookups succeed.
    - Added `director` to `BaseController::ADMIN_ROLES`.
-   - Fixed undefined `` notice in `NotificationService::pricingPlanCreated`.
+   - Fixed undefined `$basePrice` notice in `NotificationService::pricingPlanCreated`.
    - Updated `public/sw.js` push notification icon & badge to use `/assets/images/logo-192.png`.
+9. **Employee Grievance System Overhaul & Self-Service Views Implementation:**
+   - In `app/Services/EmployeeGrievanceService.php`:
+     - Fixed `u.employee_code, u.department` query bugs by correctly joining `employees e`.
+     - Fixed parameter array duplication bug in `updateStatus()`.
+     - Replaced broken duplicated `tenant_id` notification insert with native `NotificationService::notify()`.
+     - Implemented missing DB query helpers (`fetchOne()`, `fetchAll()`, `execute()`) resolving fatal method errors.
+     - Added `getStaffList()` returning active personnel across administrative and operational roles.
+     - Added `logActivity()` helper safely recording grievance events to `employee_activity_logs_unified`.
+   - In `database/migrations/add_rating_and_closure_to_employee_grievances_s348.php`:
+     - Created idempotent migration adding `employee_rating`, `employee_feedback`, `closed_at`, and `closed_by` columns to `employee_grievances`.
+   - In `app/Http/Controllers/Admin/EmployeeGrievanceController.php`:
+     - Fixed invalid namespace import `use App\Core\Controller\BaseController;` to `use App\Http\Controllers\BaseController;`.
+     - Passed `assignees` to `show()` view.
+     - Added AJAX response handling (`isAjax()` / `jsonResponse`) in `updateStatus()`, `assign()`, and `addComment()`.
+   - In `app/views/admin/grievances/detail.php`:
+     - Replaced browser `prompt('Enter assignee user ID:')` with modal `#assignGrievanceModal` dropdown populated with staff members.
+     - Fixed `#addCommentForm` missing `action` attribute.
+     - Corrected `updateStatus()` AJAX endpoint URL.
+   - Created 4 missing Employee Self-Service Views (`app/views/employee/self_service/`):
+     - `grievances.php`: KPI cards (Total, In Progress, Resolved, Closed), priority & status badges, and responsive history table.
+     - `grievance_create.php`: Secure submission form with Category, Priority, Sub-Category, Anonymous reporting toggle, and validation.
+     - `grievance_detail.php`: Investigation tracking, resolution showcase, and employee-investigator communication thread.
+     - `grievance_close.php`: 5-star interactive satisfaction rating and closure feedback form.
 
 ### Verification
-- Database integrity: `users: 111, plots: 756, leads: 38187, notifs: 30, archive: 20` (zero drift on core tables).
+- Database integrity: `users: 116, plots: 756, leads: 38187, notifs: 30, archive: 20, grievances: 0` (zero drift on core tables).
 - OpenCode Zen keys: active key verified as `techguruabhay@gmail.com` in `auth.json`; desktop switcher tested and operational.
+- Ngrok daemon tunnel: actively serving `https://unforced-willena-seclusively.ngrok-free.dev/apsdreamhome/` (HTTP 200).
+- Universal testing credentials: all users set to `Aps@2026`.
 - VAPID Push configuration: `PushSender::isConfigured() === true`, public key length 87 bytes.
-- Syntax verification: `php -l` and `node -c` clean across all modified files.
-- **Master Test Runner (`testing/master_test_runner.php`): 10/10 SUITES PASSED (100% HEALTHY, 19.96s).**
+- Syntax verification: `php -l` clean across all modified and newly created files.
+- **Master Test Runner (`testing/master_test_runner.php`): 10/10 SUITES PASSED (100% HEALTHY, 18.16s).**
 - Probe hygiene: all temp scripts in `C:\Users\abhay\AppData\Local\Temp\opencode\` cleaned up immediately. Zero leftovers.
 
 ## Session 347: Admin Inquiries System Overhaul, Real-time Unhandled Badge, Staff Assignment & Notification Interlinking (2026-10-18)
