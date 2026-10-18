@@ -112,6 +112,8 @@ User requested:
     - Polished `app/views/layouts/admin.php` replacing non-native `<div>` overlay with accessible `<button class="sidebar-overlay">`, adding `aria-label` to top navigation `<nav>`, and adding `aria-label` to `#omniSearchInput`.
     - Enhanced `app/Http/Controllers/Employee/EmployeeSelfServiceController.php`: added `Exception` and `Throwable` imports, and enabled executive fallback resolution for `admin_id` and `ADMIN_ROLES` in `requireEmployeeLogin()`.
     - Enhanced `app/Http/Controllers/Front/NotificationPreferenceController.php`: updated `requireCustomerLogin()` to redirect admins to `/admin/notification-preferences` and allow authenticated associate/employee roles without eviction; refactored raw header redirects to native `$this->redirect()`.
+    - Added Smart RBAC router for `/notification-preferences` in `routes/web.php` dynamically routing Admins to `/admin/notification-preferences`, Customers/Employees/Associates to `/user/notification-preferences`, and Guests to `/login?redirect=notification-preferences`, preventing 404 errors.
+    - Updated `app/Services/NotificationService.php` `sendPush()` to utilize `$data['action_url']` so Web Push notifications link directly to the target record.
 
 ### Verification
 - Database integrity: `users: 116, plots: 756, leads: 38187, notifs: 30, archive: 20, grievances: 0, admin_menu_items: 376` (zero drift on core tables, zero probe leftovers).

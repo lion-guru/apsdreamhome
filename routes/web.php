@@ -4244,6 +4244,26 @@ $router->get('/notifications', function () {
     exit;
 });
 
+// Smart RBAC router for /notification-preferences — redirects based on active session to eliminate 404s
+$router->get('/notification-preferences', function () {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    $role = strtolower((string)($_SESSION['admin_role'] ?? $_SESSION['role'] ?? ''));
+    $isAdmin = in_array($role, ['admin', 'super_admin', 'manager', 'ceo', 'coo', 'cfo', 'director'], true) || !empty($_SESSION['admin_id']);
+
+    if ($isAdmin) {
+        header('Location: ' . BASE_URL . '/admin/notification-preferences');
+        exit;
+    }
+    if (isset($_SESSION['user_id']) || !empty($_SESSION['employee_id']) || !empty($_SESSION['associate_id'])) {
+        header('Location: ' . BASE_URL . '/user/notification-preferences');
+        exit;
+    }
+    header('Location: ' . BASE_URL . '/login?redirect=notification-preferences');
+    exit;
+});
+
 // Admin Messaging Panel
 $router->get('/admin/messages',                          'App\\Http\\Controllers\\Admin\\MessagesController@inbox');
 $router->get('/admin/messages/compose',                  'App\\Http\\Controllers\\Admin\\MessagesController@compose');
