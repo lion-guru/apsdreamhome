@@ -26,6 +26,8 @@ $GLOBALS['_html_doc_started'] = true;
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css?v=2" rel="stylesheet">
     <!-- Universal mobile-first responsive overrides -->
     <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css?v=3" rel="stylesheet">
+    <!-- Real-time Notification System CSS -->
+    <link href="<?= BASE_URL ?>/assets/css/notification-system.css?v=5" rel="stylesheet">
 
     <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         * {
@@ -276,6 +278,15 @@ $GLOBALS['_html_doc_started'] = true;
             cursor: pointer;
         }
 
+        /* Top Header & Header Actions */
+        .top-header { background: #fff; padding: 14px 28px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+        .page-title { font-size: 1.35rem; font-weight: 700; color: #0f172a; margin: 0; }
+        .breadcrumb { margin: 0; font-size: 0.82rem; }
+        .header-actions { display: flex; gap: 12px; align-items: center; }
+        .btn-icon { width: 40px; height: 40px; border-radius: 10px; border: 1px solid #e2e8f0; background: #fff; color: #64748b; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; text-decoration: none; position: relative; font-size: 1.05rem; cursor: pointer; }
+        .btn-icon:hover { background: #f1f5f9; color: #0f172a; border-color: #cbd5e1; }
+        .content-wrapper { padding: 28px; }
+
         /* Responsive */
         @media (max-width: 1024px) {
             .sidebar {
@@ -474,7 +485,7 @@ $GLOBALS['_html_doc_started'] = true;
 </head>
 
 <body>
-    <?php include __DIR__ . '/../components/impersonation-banner.php'; ?>
+    <?php include_once __DIR__ . '/../components/impersonation-banner.php'; ?>
     <!-- Sidebar Toggle Button (Mobile) -->
     <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
         <i class="fas fa-bars"></i>
@@ -511,18 +522,31 @@ $GLOBALS['_html_doc_started'] = true;
             $portalMenu = [];
         }
         $activeKey = $current_page ?? '';
-        // Auto-expand section containing active item
+        $currentUri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '';
+        if (str_starts_with($currentUri, '/apsdreamhome')) {
+            $currentUri = substr($currentUri, strlen('/apsdreamhome'));
+        }
+        if (empty($currentUri)) {
+            $currentUri = '/associate/dashboard';
+        }
+
+        // Auto-expand section containing active item (key match or URL match)
         $activeSection = '';
         foreach ($portalMenu as $section) {
             foreach ($section['items'] as $item) {
-                if ($item['key'] === $activeKey) {
+                if (($activeKey !== '' && $item['key'] === $activeKey) || $item['url'] === $currentUri || ($currentUri !== '/associate/dashboard' && str_starts_with($currentUri, $item['url'] . '/'))) {
                     $activeSection = $section['name'];
+                    if (empty($activeKey)) {
+                        $activeKey = $item['key'];
+                    }
                     break 2;
                 }
             }
         }
         foreach ($portalMenu as $section):
-            if (empty($section['items'])) continue;
+            if (empty($section['items'])) {
+                continue;
+            }
             $isCollapsed = ($activeSection !== '' && $activeSection !== $section['name']);
         ?>
         <div class="sidebar-section <?= $isCollapsed ? 'collapsed' : '' ?>" data-section-toggle>
@@ -563,13 +587,14 @@ $GLOBALS['_html_doc_started'] = true;
                 </nav>
             </div>
             <div class="header-actions">
-                <a href="<?= BASE_URL ?>/associate/settings" class="btn-icon" title="Notifications">
+                <button class="nav-icon notification-bell-btn btn-icon" id="notification-bell-placeholder" onclick="if(typeof toggleNotifications === 'function') toggleNotifications()" title="Notifications" aria-label="Notifications">
                     <i class="fas fa-bell"></i>
+                    <span class="badge" style="display:none;">0</span>
+                </button>
+                <a href="<?= BASE_URL ?>/associate/my-customers" class="btn-icon" title="My Customers & Contacts" aria-label="My Customers">
+                    <i class="fas fa-address-book"></i>
                 </a>
-                <a href="<?= BASE_URL ?>/associate/team" class="btn-icon" title="Messages">
-                    <i class="fas fa-envelope"></i>
-                </a>
-                <a href="<?= BASE_URL ?>/associate/profile" class="btn-icon" title="My Profile">
+                <a href="<?= BASE_URL ?>/associate/profile" class="btn-icon" title="My Profile" aria-label="My Profile">
                     <i class="fas fa-user"></i>
                 </a>
             </div>
@@ -675,7 +700,7 @@ $GLOBALS['_html_doc_started'] = true;
                 </div>
             </div>
             <div >
-                <input type="text" id="assocChatInput" placeholder="Type a message...">
+                <input type="text" id="assocChatInput" placeholder="Type a message..." aria-label="Type a message...">
                 <button id="assocChatSend" aria-label="Send message"><i class="fas fa-paper-plane" aria-hidden="true"></i></button>
             </div>
         </div>
@@ -843,8 +868,16 @@ $GLOBALS['_html_doc_started'] = true;
     </script>
     <!-- Customer & Portal Component Library JS -->
     <script defer src="<?= BASE_URL ?>/assets/js/customer-pages.js"></script>
-    <!-- Dark Mode Toggle -->
     
-    <?php include __DIR__ . '/../components/smart_chatbot.php'; ?>
+    <!-- Real-time Notification System & Web Push -->
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+        window.NOTIFY_USER = {
+            id: <?= (int)($_SESSION['user_id'] ?? 0) ?>,
+            role: '<?= htmlspecialchars($_SESSION['role'] ?? 'associate', ENT_QUOTES, 'UTF-8') ?>'
+        };
+    </script>
+    <script defer src="<?= BASE_URL ?>/assets/js/notification-system.js?v=5"></script>
+    
+    <?php include_once __DIR__ . '/../components/smart_chatbot.php'; ?>
 </body>
-</html>
+</html>

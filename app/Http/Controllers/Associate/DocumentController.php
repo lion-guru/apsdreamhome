@@ -42,7 +42,7 @@ class DocumentController extends BaseController
         $tid = TenantContext::getId();
 
         try {
-            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $db = \App\Core\Database\Database::getInstance();
             $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
             $params = [$userId];
             if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
@@ -121,7 +121,7 @@ class DocumentController extends BaseController
             $this->db->insert('user_documents', $data);
             $docId = (int)$this->db->lastInsertId();
 
-            $this->logActivity($userId, 'document_uploaded', ['document_id' => $docId]);
+            $this->logActivity('document_uploaded', json_encode(['document_id' => $docId, 'user_id' => $userId]));
 
             $_SESSION['success'] = 'Document uploaded successfully!';
             $this->redirect('/associate/documents');

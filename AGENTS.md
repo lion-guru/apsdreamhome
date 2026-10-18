@@ -13,6 +13,56 @@
 > 4. **Session-number check** — AGENTS.md entry chipkane se PEHLE header dobara padho; parallel actor ne beech me number le liya ho to next free number lo, overwrite/clobber kabhi nahi (S219, S223).
 > 5. **Probe hygiene** — temp scripts sirf `C:\Users\abhay\AppData\Local\Temp\opencode\` me, write+execute **same turn** me (temp purge hota hai), `php -r` one-liners banned, probe ke end me cleanup + counts-verify lazmi (lessons _445, _456, _490).
 
+## Session 349: Associate Portal Deep Scan & Synchronization, Controller Namespace Repairs, Dashboard Metrics Alignment, and Menu Enrichment (2026-10-18)
+
+### Trigger
+User requested:
+"assosiate ko login kar ke delho ya deep scan kar ke delho assosiate portal dasbord side bar menu etc me bhut sink kamiya hai do next also"
+(Login as associate or perform deep scan of Associate Portal: dashboard, sidebar menu, navigation, statistics, and sync gaps; fix all synchronization discrepancies, dead/missing links, broken routes, controller errors, and missing UI elements.)
+
+### Root Cause & Scan Findings
+1. **Broken Controller Imports:** `CallRecordingController`, `HolidayCalendarController`, and `OffboardingController` had invalid `use App\Core\Controller\BaseController;` resulting in fatal errors upon instantiation.
+2. **Route Mismatches in `routes/web.php`:** `/associate/sold` and `/associate/pending` targeted non-existent `Associate\CrmController@sold` and `@pending`.
+3. **Dashboard Lead Attribution Query Fatal Errors:** `Associate\DashboardController::getLeadAttributionStats()` called non-existent `PDO::fetchAll()` on raw query and referenced non-existent `user_id` on `leads` table.
+4. **Raw PDO Helper Errors in `TdsController` and `DocumentController`:** Used `Database::getInstance()->getConnection()` followed by `$db->fetchOne()` / `fetchAll()`, which threw fatal method errors on raw PDO.
+5. **Layout Discrepancies & Missing Notifications:** `app/views/layouts/associate.php` lacked proper header styling, lacked real-time notification engine stylesheet & script, lacked active route detection fallback (collapsing menus when controllers didn't pass `$current_page`), and had non-functional dummy notification bell.
+6. **Dashboard Metric Variables Desync:** `app/views/associate/dashboard.php` referenced undefined `$total_commissions`, `$team_size`, `$direct_referrals`, `$wallet_balance`, `$pending_commissions`, `$my_bookings` instead of Controller-provided `$stats` keys.
+7. **Missing Menu Links:** Associate menu in `PortalMenuService` lacked direct navigation to TDS Slips, Leaderboard, Bonanza Races, My Documents, My ID Card, and Marketing Posters.
+
+### Work Done
+1. **Repaired Controller Namespaces and Inheritance:**
+   - Fixed `use App\Http\Controllers\BaseController;` across `CallRecordingController`, `HolidayCalendarController`, and `OffboardingController`.
+   - In `CallRecordingController`: implemented proper `requireAuth()` ensuring associate or administrative role access.
+2. **Fixed Route Definitions in `routes/web.php`:**
+   - Remapped `/associate/sold` and `/associate/pending` to `Associate\PropertyController@sold` and `Associate\PropertyController@pending`.
+   - Added missing convenience routes: `/associate/posters`, `/associate/tds`, `/associate/bonanza`, `/associate/notifications`, and `/associate/notification-preferences`.
+3. **Fixed Dashboard Attribution Queries in `Associate\DashboardController.php`:**
+   - Rewrote `getLeadAttributionStats()` with valid queries referencing `assigned_to` / `created_by` on `leads` table and joining `plot_bookings` via `associates.id`.
+4. **Repaired Database Wrapper Calls in `TdsController.php` and `DocumentController.php`:**
+   - Replaced `Database::getInstance()->getConnection()` with `Database::getInstance()`.
+   - Corrected `logActivity()` parameter sequence in `DocumentController.php`.
+   - Added curly braces to single-line if conditions in `TdsController.php` resolving lint warnings.
+5. **Modernized Associate Layout & Integrated Real-Time Notifications (`app/views/layouts/associate.php`):**
+   - Added `notification-system.css?v=5` and `customer-pages.js`.
+   - Replaced dummy notification bell with real-time `#notification-bell-placeholder` hooked to Web Push engine and notification dropdown.
+   - Added modern header CSS styling (`.top-header`, `.page-title`, `.breadcrumb`, `.header-actions`, `.btn-icon`).
+   - Added smart `$currentUri` route matching to sidebar menu rendering: automatically detects and highlights active link and auto-expands the corresponding menu section even if `$current_page` is not explicitly passed.
+   - Injected `window.NOTIFY_USER = { id, role }` and `<script defer src="<?= BASE_URL ?>/assets/js/notification-system.js?v=5"></script>`.
+   - Added accessible `aria-label="Type a message..."` to assistant chat input.
+6. **Synchronized Associate Dashboard Metrics (`app/views/associate/dashboard.php`):**
+   - Unified variable fallbacks: `$totalEarnings` reads `$total_commissions ?? $stats['total_earnings']`, `$networkSize` reads `$team_size`, `$directReferrals` reads `$direct_referrals`, `$walletBalance` reads `$wallet_balance`, `$pendingCommissions` reads `$pending_commissions`, `$pendingBookings` reads `$my_bookings`.
+   - Corrected referral code resolution from `$user['referral_code'] ?? $_SESSION['referral_code']`.
+7. **Menu Enrichment & Deduplication in `app/services/PortalMenuService.php`:**
+   - Added: `TDS Slips` (`/associate/tds-slips`), `Leaderboard` (`/associate/leaderboard`), `Bonanza Races` (`/associate/bonanza-races`), `My Documents` (`/associate/documents`), `My ID Card` (`/associate/id-card`), and `Marketing Posters` (`/associate/posters`).
+   - Defined class constants `ICON_ID_CARD = 'fas fa-id-card'` and `ICON_FOLDER_OPEN = 'fas fa-folder-open'` eliminating all SonarQube literal duplication warnings.
+
+### Verification
+- Database integrity: `users: 116, plots: 756, leads: 38187, notifications: 30` (zero drift on core tables, zero probe leftovers).
+- Automated route audit: All 40 Associate Menu Routes exist in Router with 100% OK resolution.
+- Syntax verification: `php -l` clean across all modified and newly created files.
+- **Master Test Runner (`testing/master_test_runner.php`): 10/10 SUITES PASSED (100% HEALTHY, 21.92s).**
+- Probe hygiene: all temp scripts in `C:\Users\abhay\AppData\Local\Temp\opencode\` cleaned up immediately. Zero leftovers.
+
 ## Session 348: OpenCode Zen Multi-Key 1-Click Switcher, 90-Day Auto Archiving, Real-Time Web Push & Notification Preference Center (2026-10-18)
 
 ### Trigger

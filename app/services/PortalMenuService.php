@@ -30,6 +30,8 @@ class PortalMenuService
     use ServiceTenantTrait;
 
     private const ICON_BALANCE_SCALE = 'fas fa-balance-scale';
+    private const ICON_ID_CARD = 'fas fa-id-card';
+    private const ICON_FOLDER_OPEN = 'fas fa-folder-open';
 
     private ?\PDO $pdo = null;
     private ?int $userId = null;
@@ -88,8 +90,8 @@ class PortalMenuService
             $this->item('messages', 'Account', 'Messages', $this->messagesUrl(), 'fas fa-envelope'),
             $this->item('address', 'Account', 'My Address', $this->addressUrl(), 'fas fa-map-marker-alt'),
             $this->item('bank', 'Account', 'Bank Details', $this->bankUrl(), 'fas fa-university'),
-            $this->item('kyc', 'Account', 'KYC', $this->kycUrl(), 'fas fa-id-card'),
-            $this->item('documents', 'Account', 'Documents', $this->documentsUrl(), 'fas fa-folder-open'),
+            $this->item('kyc', 'Account', 'KYC', $this->kycUrl(), self::ICON_ID_CARD),
+            $this->item('documents', 'Account', 'Documents', $this->documentsUrl(), self::ICON_FOLDER_OPEN),
 
             // Settings
             $this->item('settings', 'Settings', 'Settings', $this->settingsUrl(), 'fas fa-cog'),
@@ -155,7 +157,7 @@ class PortalMenuService
             $this->item('investment', 'Support', 'Investments', '/user/investment-plans', 'fas fa-chart-line'),
 
             // Resident & Township Services
-            $this->item('documents', 'Resident Services', 'My Documents', '/user/documents', 'fas fa-folder-open'),
+            $this->item('documents', 'Resident Services', 'My Documents', '/user/documents', self::ICON_FOLDER_OPEN),
             $this->item('grievances', 'Resident Services', 'Township Grievances', '/user/township-grievances', 'fas fa-tools'),
             $this->item('construction', 'Resident Services', 'Construction Permit NOC', '/user/construction-approvals', 'fas fa-drafting-compass'),
             $this->item('solar', 'Resident Services', 'PM Surya Ghar Solar', '/user/solar-calculator', 'fas fa-solar-panel'),
@@ -190,6 +192,7 @@ class PortalMenuService
             $this->item('offers', 'Earnings', 'Offers', '/associate/offers', 'fas fa-tags'),
             $this->item('wallet', 'Earnings', 'Wallet', '/associate/wallet', 'fas fa-wallet'),
             $this->item('withdraw', 'Earnings', 'Withdraw', '/associate/wallet/withdraw', 'fas fa-money-bill-wave'),
+            $this->item('tds-slips', 'Earnings', 'TDS Slips', '/associate/tds-slips', 'fas fa-file-invoice'),
 
             // Network & Team
             $this->item('network', 'Network', 'Network Tree', '/associate/network/tree', 'fas fa-project-diagram'),
@@ -198,6 +201,8 @@ class PortalMenuService
             $this->item('rank-eligibility', 'Network', 'Rank & Eligibility', '/associate/rank-eligibility', 'fas fa-trophy'),
             $this->item('mlm-plan', 'Network', 'Commission Plan', '/associate/mlm-plan', 'fas fa-file-invoice-dollar'),
             $this->item('referral', 'Network', 'Refer & Earn', '/associate/referral', 'fas fa-user-friends'),
+            $this->item('leaderboard', 'Network', 'Leaderboard', '/associate/leaderboard', 'fas fa-medal'),
+            $this->item('bonanza', 'Network', 'Bonanza Races', '/associate/bonanza-races', 'fas fa-award'),
 
             // Field Operations
             $this->item('collections', 'Field Ops', 'Cash Collections', '/associate/collections', 'fas fa-hand-holding-usd'),
@@ -216,9 +221,12 @@ class PortalMenuService
             $this->item('my-customers', 'Business', 'My Customers', '/associate/my-customers', 'fas fa-address-book'),
             $this->item('emi-tracker', 'Business', 'EMI Tracker', '/associate/emi-tracker', 'fas fa-calendar-check'),
             $this->item('payment-history', 'Business', 'Payment History', '/associate/payment-history', 'fas fa-receipt'),
+            $this->item('documents', 'Business', 'My Documents', '/associate/documents', self::ICON_FOLDER_OPEN),
 
             // Tools & Reports
             $this->item('emi-calculator', 'Tools', 'EMI Calculator', '/tools-hub', 'fas fa-calculator'),
+            $this->item('id-card', 'Tools', 'My ID Card', '/associate/id-card', self::ICON_ID_CARD),
+            $this->item('posters', 'Tools', 'Marketing Posters', '/associate/posters', 'fas fa-image'),
             $this->item('export-earnings', 'Reports', 'Export Earnings', '/associate/export/my-earnings', 'fas fa-file-download'),
             $this->item('export-team', 'Reports', 'Export Team', '/associate/export/active-team', 'fas fa-file-export'),
         ];
@@ -346,7 +354,7 @@ class PortalMenuService
             $this->item('users', 'Main', 'All Users', '/admin/users', 'fas fa-user-friends', $this->countTable('users')),
             $this->item('onboarding', 'Tools', 'Setup Wizard', '/admin/onboarding', 'fas fa-magic'),
             $this->item('admin-tools', 'Tools', 'Admin Tools', '/admin/dev-tools', 'fas fa-tools'),
-            $this->item('admin-kyc', 'Tools', 'KYC Reviews', '/admin/kyc', 'fas fa-id-card', $this->countTable('kyc_requests', null, 'status', 'pending')),
+            $this->item('admin-kyc', 'Tools', 'KYC Reviews', '/admin/kyc', self::ICON_ID_CARD, $this->countTable('kyc_requests', null, 'status', 'pending')),
         ];
     }
 

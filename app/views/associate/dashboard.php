@@ -6,15 +6,15 @@ $stats = $stats ?? [];
 $page_title = $page_title ?? __('assoc_dashboard');
 $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 
-$totalEarnings = $stats['total_earnings'] ?? 0;
+$totalEarnings = $total_commissions ?? $stats['total_earnings'] ?? 0;
 $monthEarnings = $stats['month_earnings'] ?? 0;
-$networkSize = $stats['network_size'] ?? 0;
-$directReferrals = $stats['direct_referrals'] ?? 0;
-$walletBalance = $stats['wallet_balance'] ?? 0;
-$pendingCommissions = $stats['pending_commissions'] ?? 0;
-$activeLeads = $stats['active_leads'] ?? 0;
-$pendingBookings = $stats['pending_bookings'] ?? 0;
-$rank = htmlspecialchars($associate['rank'] ?? 'associate');
+$networkSize = $team_size ?? $stats['network_size'] ?? 0;
+$directReferrals = $direct_referrals ?? $stats['direct_referrals'] ?? 0;
+$walletBalance = $wallet_balance ?? $stats['wallet_balance'] ?? 0;
+$pendingCommissions = $pending_commissions ?? $stats['pending_commissions'] ?? 0;
+$activeLeads = count($recent_leads ?? []) ?: ($stats['active_leads'] ?? 0);
+$pendingBookings = $my_bookings ?? $stats['pending_bookings'] ?? 0;
+$rank = htmlspecialchars($user['rank'] ?? $associate['rank'] ?? 'associate');
 
 // Enhanced Rank Colors for modern look
 $rankTheme = 'primary';
@@ -209,7 +209,7 @@ body {
                 Welcome back, <?= htmlspecialchars($_SESSION['user_name'] ?? 'Associate') ?>!
             </h2>
             <p class="mb-0 text-white-50">
-                Referral Code: <strong class="text-white fs-5 ms-1"><?= htmlspecialchars($_SESSION['referral_code'] ?? 'N/A') ?></strong>
+                Referral Code: <strong class="text-white fs-5 ms-1"><?= htmlspecialchars($user['referral_code'] ?? $_SESSION['referral_code'] ?? 'N/A') ?></strong>
             </p>
         </div>
         <div class="col-md-5 text-md-end mt-4 mt-md-0">

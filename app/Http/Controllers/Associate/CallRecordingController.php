@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers\Associate;
 
-use App\Core\Controller\BaseController;
+use App\Http\Controllers\BaseController;
 use App\Services\CallRecordingService;
 
 class CallRecordingController extends BaseController
@@ -16,9 +16,20 @@ class CallRecordingController extends BaseController
     public function __construct()
     {
         parent::__construct();
-        $this->requireAssociateLogin();
+        $this->requireAuth();
         $this->layout = 'layouts/associate';
         $this->callRecordingService = new CallRecordingService();
+    }
+
+    private function requireAuth(): void
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            @session_start();
+        }
+        if (empty($_SESSION['user_id']) || !in_array($_SESSION['role'] ?? '', ['associate', 'agent', 'super_admin', 'admin'], true)) {
+            $_SESSION['error'] = 'Please login as an associate to access this page';
+            $this->redirect('/associate/login');
+        }
     }
 
     /**

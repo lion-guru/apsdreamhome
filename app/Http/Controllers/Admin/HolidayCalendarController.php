@@ -6,7 +6,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Services\HolidayCalendarService;
-use App\Core\Controller\BaseController;
+use App\Http\Controllers\BaseController;
 
 class HolidayCalendarController extends BaseController
 {

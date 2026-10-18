@@ -282,36 +282,63 @@ class DashboardController extends BaseController
     {
         $tid = TenantContext::getId();
         $tenantWhere = $tid > 1 ? " AND l.tenant_id = ?" : "";
-        $tenantParams = $tid > 1 ? [$tid] : [];
 
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
             
             // Total leads by source
-            $sourceStats = $db->fetchAll("
-                SELECT 
-                    COALESCE(source, 'unknown') as source,
-                    COUNT(*) as count
-                FROM leads l
-                WHERE l.user_id = ?{$tenantWhere} AND l.status != 'deleted'
-                GROUP BY source
-            ", array_merge([$this->getCurrentUserId()], $tid > 1 ? [$tid] : []));
+            $sourceSql = "SELECT COALESCE(source, 'direct') as source, COUNT(*) as count 
+                          FROM leads l 
+                          WHERE (l.assigned_to = ? OR l.created_by = ?) 
+                            AND l.deleted_at IS NULL" . $tenantWhere . " 
+                          GROUP BY source";
+            $sourceParams = [$userId, $userId];
+            if ($tid > 1) {
+                $sourceParams[] = $tid;
+            }
+            $stmt = $db->prepare($sourceSql);
+            $stmt->execute($sourceParams);
+            $sourceStats = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
             
             $sourceMap = [];
             foreach ($sourceStats as $stat) {
                 $sourceMap[$stat['source']] = (int)$stat['count'];
             }
 
-            // Total leads and bookings
-            $totalLeads = (int)$this->db->fetchColumn("
-                SELECT COUNT(*) FROM leads 
-                WHERE user_id = ?{$tenantWhere} AND status != 'deleted'
-            ", array_merge([$this->getCurrentUserId()], $tid > 1 ? [$tid] : []));
+            // Total leads
+            $leadSql = "SELECT COUNT(*) FROM leads l 
+                        WHERE (l.assigned_to = ? OR l.created_by = ?) 
+                          AND l.deleted_at IS NULL" . $tenantWhere;
+            $leadParams = [$userId, $userId];
+            if ($tid > 1) {
+                $leadParams[] = $tid;
+            }
+            $lStmt = $db->prepare($leadSql);
+            $lStmt->execute($leadParams);
+            $totalLeads = (int)$lStmt->fetchColumn();
             
-            $totalBookings = (int)$this->db->fetchColumn("
-                SELECT COUNT(*) FROM bookings 
-                WHERE user_id = ?{$tenantWhere} AND status NOT IN ('cancelled', 'rejected')
-            ", array_merge([$this->getCurrentUserId()], $tid > 1 ? [$tid] : []));
+            // Total bookings (lookup associate_id)
+            $assocStmt = $db->prepare("SELECT id FROM associates WHERE user_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " LIMIT 1");
+            $assocParams = [$userId];
+            if ($tid > 1) {
+                $assocParams[] = $tid;
+            }
+            $assocStmt->execute($assocParams);
+            $assocRow = $assocStmt->fetch(\PDO::FETCH_ASSOC);
+            $assocId = $assocRow ? (int)$assocRow['id'] : 0;
+
+            $totalBookings = 0;
+            if ($assocId > 0) {
+                $bSql = "SELECT COUNT(*) FROM plot_bookings 
+                         WHERE associate_id = ? AND status NOT IN ('cancelled', 'rejected')" . ($tid > 1 ? " AND tenant_id = ?" : "");
+                $bParams = [$assocId];
+                if ($tid > 1) {
+                    $bParams[] = $tid;
+                }
+                $bStmt = $db->prepare($bSql);
+                $bStmt->execute($bParams);
+                $totalBookings = (int)$bStmt->fetchColumn();
+            }
 
             // Conversion rate
             $conversionRate = $totalLeads > 0 ? round(($totalBookings / $totalLeads) * 100, 1) : 0;

@@ -6,7 +6,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Services\OffboardingService;
-use App\Core\Controller\BaseController;
+use App\Http\Controllers\BaseController;
 
 class OffboardingController extends BaseController
 {

@@ -951,6 +951,11 @@ $router->get('/associate/id-card',
 'App\\Http\\Controllers\\Associate\\ProfileController@idCard');
 $router->get('/associate/marketing/posters', 'App\\Http\\Controllers\\Associate\\PosterController@index');
 $router->get('/associate/marketing/posters/image', 'App\\Http\\Controllers\\Associate\\PosterController@image');
+$router->get('/associate/posters', 'App\\Http\\Controllers\\Associate\\PosterController@index');
+$router->get('/associate/tds', function() { header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/associate/tds-slips'); exit; });
+$router->get('/associate/bonanza', function() { header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/associate/bonanza-races'); exit; });
+$router->get('/associate/notifications', function () { header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/user/notifications'); exit; });
+$router->get('/associate/notification-preferences', function () { header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/user/notification-preferences'); exit; });
 
 // Associate branded mini-website (public lead magnet)
 $router->get('/p/{code}', 'Front\\AssociatePageController@landing');
@@ -1143,8 +1148,8 @@ $router->get('/associate/properties', 'App\\Http\\Controllers\\Associate\\Proper
 $router->get('/associate/properties/edit/{id}', 'App\\Http\\Controllers\\Associate\\PropertyController@editProperty');
 $router->post('/associate/properties/update/{id}', 'App\\Http\\Controllers\\Associate\\PropertyController@updateProperty');
 $router->post('/associate/properties/delete/{id}', 'App\\Http\\Controllers\\Associate\\PropertyController@deleteProperty');
-$router->get('/associate/sold', 'App\\Http\\Controllers\\Associate\\CrmController@sold');
-$router->get('/associate/pending', 'App\\Http\\Controllers\\Associate\\CrmController@pending');
+$router->get('/associate/sold', 'App\\Http\\Controllers\\Associate\\PropertyController@sold');
+$router->get('/associate/pending', 'App\\Http\\Controllers\\Associate\\PropertyController@pending');
 $router->get('/associate/profile', 'App\\Http\\Controllers\\Associate\\ProfileController@profile');
 // NOTE (S224): was ...@updateProfile (method never existed â†’ 500 on save).
 // profile() already handles POST internally (CSRF + UPDATE + redirect).

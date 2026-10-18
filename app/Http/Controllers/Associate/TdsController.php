@@ -26,7 +26,9 @@ class TdsController extends BaseController
     {
         if (!preg_match('/^(\d{4})-(\d{4})$/', $fy, $m) || ((int)$m[2] !== (int)$m[1] + 1)) {
             $y = (int)date('Y');
-            if ((int)date('m') < 4) $y--;
+            if ((int)date('m') < 4) {
+                $y--;
+            }
             $fy = $y . '-' . ($y + 1);
             $m = [$fy, (string)$y, (string)($y + 1)];
         }
@@ -36,7 +38,9 @@ class TdsController extends BaseController
     private function fyOptions(): array
     {
         $y = (int)date('Y');
-        if ((int)date('m') < 4) $y--;
+        if ((int)date('m') < 4) {
+            $y--;
+        }
         $opts = [];
         for ($i = 0; $i < 4; $i++) {
             $a = $y - $i;
@@ -47,7 +51,7 @@ class TdsController extends BaseController
 
     private function myTdsData(int $userId, string $fy): array
     {
-        $db = \App\Core\Database\Database::getInstance()->getConnection();
+        $db = \App\Core\Database\Database::getInstance();
         [$fyLabel, $start, $end] = $this->fyRange($fy);
         $tid = \App\Core\Middleware\TenantContext::getId();
         $tSql = $tid > 1 ? " AND tenant_id = {$tid}" : '';
@@ -115,9 +119,11 @@ class TdsController extends BaseController
         $data = $this->myTdsData((int)$_SESSION['user_id'], (string)($_GET['fy'] ?? ''));
         $tan = '—';
         try {
-            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $db = \App\Core\Database\Database::getInstance();
             $row = $db->fetchOne("SELECT value FROM service_configs WHERE `key` IN ('company_tan','tan','deductor_tan') LIMIT 1");
-            if (!empty($row['value'])) $tan = (string)$row['value'];
+            if (!empty($row['value'])) {
+                $tan = (string)$row['value'];
+            }
         } catch (\Throwable $e) { /* fallback dash */ }
         $this->render('associate/tds_certificate', array_merge([
             'page_title' => 'TDS Deduction Certificate',
