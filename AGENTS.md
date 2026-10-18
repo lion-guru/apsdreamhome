@@ -65,6 +65,13 @@ User requested:
 7. **Remote Tablet Testing & Ngrok Tunnel:**
    - Started persistent background daemon `ngrok http 80` exposing local development server to `https://unforced-willena-seclusively.ngrok-free.dev/apsdreamhome/`.
    - Verified HTTP 200 responses and documented verified testing credentials across all 7 user roles.
+8. **Standardized Passwords to `Aps@2026` & C-Suite Accounts Seeding (`update_test_passwords_and_seed_csuite_s348.php`):
+   - Created idempotent migration updating all users to bcrypt hash of `Aps@2026` for seamless tablet testing.
+   - Seeded missing C-suite testing accounts in `users` (`ceo@apsdreamhome.com`, `cto@apsdreamhome.com`, `cfo@apsdreamhome.com`, `coo@apsdreamhome.com`, `director@apsdreamhome.com`).
+   - Synchronized `employees` table `user_id` foreign keys to ensure employee/staff lookups succeed.
+   - Added `director` to `BaseController::ADMIN_ROLES`.
+   - Fixed undefined `` notice in `NotificationService::pricingPlanCreated`.
+   - Updated `public/sw.js` push notification icon & badge to use `/assets/images/logo-192.png`.
 
 ### Verification
 - Database integrity: `users: 111, plots: 756, leads: 38187, notifs: 30, archive: 20` (zero drift on core tables).

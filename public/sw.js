@@ -13,8 +13,8 @@ self.addEventListener('push', (event) => {
     const title = data.title || 'APS Dream Home';
     const options = {
         body: data.body || '',
-        icon: '/apsdreamhome/assets/images/logo.png',
-        badge: '/apsdreamhome/assets/images/logo.png',
+        icon: '/apsdreamhome/assets/images/logo-192.png',
+        badge: '/apsdreamhome/assets/images/logo-192.png',
         data: { url: data.url || '/apsdreamhome/' },
         tag: data.tag || 'aps-general',
     };

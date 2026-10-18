@@ -802,11 +802,12 @@ class NotificationService
     /**
      * Notify when a pricing plan is created/saved.
      */
-    public function pricingPlanCreated(int $colonyId, int $planId, int $version, int $createdBy): bool
+    public function pricingPlanCreated(int $colonyId, int $planId, int $version, int $createdBy = 0, float $basePrice = 0.0): bool
     {
         $title = 'New Pricing Plan Created';
-        $message = "Pricing plan v{$version} has been created for colony. Base price: ₹" . number_format($basePrice, 2) . "/sqft";
-        $data = ['event_type' => 'pricing_plan', 'colony_id' => $colonyId, 'plan_id' => $planId, 'version' => $version, 'action' => 'created', 'action_url' => '/admin/colony-pipeline/' . $colonyId . '/pricing'];
+        $priceText = $basePrice > 0 ? " Base price: ₹" . number_format($basePrice, 2) . "/sqft." : "";
+        $message = "Pricing plan v{$version} has been created for colony.{$priceText}";
+        $data = ['event_type' => 'pricing_plan', 'colony_id' => $colonyId, 'plan_id' => $planId, 'version' => $version, 'created_by' => $createdBy, 'action' => 'created', 'action_url' => '/admin/colony-pipeline/' . $colonyId . '/pricing'];
 
         // Notify admins
         $this->notify('pricing_plan', $message, null, '/admin/colony-pipeline/' . $colonyId . '/pricing', $title);

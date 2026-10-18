@@ -4,6 +4,8 @@
  * Allows administrators and managers to configure which notification channels
  * (In-App, Browser Web Push, WhatsApp, Email) are active for each business event.
  */
+$types = $types ?? [];
+$prefs = $prefs ?? [];
 ?>
 
 <div class="container-fluid px-4 py-3">
