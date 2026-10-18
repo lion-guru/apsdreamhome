@@ -46,11 +46,6 @@ class NotificationPreferenceController extends BaseController
         'push'     => 1,
     ];
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * GET /user/notification-preferences
      * Render the preferences form for the logged-in customer.
@@ -101,8 +96,7 @@ class NotificationPreferenceController extends BaseController
             $_SESSION['flash_error'] = 'Failed to save preferences: ' . $e->getMessage();
         }
 
-        header('Location: ' . BASE_URL . '/user/notification-preferences');
-        exit;
+        $this->redirect(BASE_URL . '/user/notification-preferences');
     }
 
     /**
@@ -233,14 +227,15 @@ class NotificationPreferenceController extends BaseController
         @session_start();
 
         if (empty($_SESSION['user_id'])) {
-            header('Location: ' . BASE_URL . '/login');
-            exit;
+            if (!empty($_SESSION['admin_id'])) {
+                $this->redirect(BASE_URL . '/admin/notification-preferences');
+            }
+            $this->redirect(BASE_URL . '/login');
         }
 
         $role = $_SESSION['role'] ?? '';
-        if ($role !== '' && $role !== 'customer') {
-            header('Location: ' . BASE_URL . '/login');
-            exit;
+        if (in_array($role, self::ADMIN_ROLES, true) || !empty($_SESSION['admin_id'])) {
+            $this->redirect(BASE_URL . '/admin/notification-preferences');
         }
     }
 
@@ -251,8 +246,7 @@ class NotificationPreferenceController extends BaseController
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$user) {
-            header('Location: ' . BASE_URL . '/user/logout');
-            exit;
+            $this->redirect(BASE_URL . '/user/logout');
         }
 
         return $user;

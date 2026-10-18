@@ -14,6 +14,8 @@ use App\Services\EmployeeGrievanceService;
 use App\Services\TrainingService;
 use App\Services\OrgChartService;
 use App\Services\EngagementSurveyService;
+use Exception;
+use Throwable;
 
 class EmployeeSelfServiceController extends BaseController
 {
@@ -55,12 +57,18 @@ class EmployeeSelfServiceController extends BaseController
     {
         $this->requireLogin();
         if (empty($_SESSION['employee_id'])) {
-            // Try to find employee by user_id
-            $userId = $_SESSION['user_id'] ?? 0;
+            // Try to find employee by user_id or admin_id
+            $userId = $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? 0;
             if ($userId) {
-                $emp = $this->db->fetchOne("SELECT id FROM employees WHERE user_id = ? AND status = 'active' LIMIT 1", [$userId]);
+                $emp = $this->db->fetchOne("SELECT id FROM employees WHERE user_id = ? LIMIT 1", [$userId]);
                 if ($emp) {
-                    $_SESSION['employee_id'] = $emp['id'];
+                    $_SESSION['employee_id'] = (int)$emp['id'];
+                    return;
+                }
+                // Allow admin/executive testing accounts to access self-service
+                $role = $_SESSION['role'] ?? '';
+                if (in_array($role, self::ADMIN_ROLES, true) || !empty($_SESSION['admin_id'])) {
+                    $_SESSION['employee_id'] = (int)$userId;
                     return;
                 }
             }

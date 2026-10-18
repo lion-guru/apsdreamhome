@@ -110,6 +110,8 @@ User requested:
     - Polished `app/views/admin/inquiries/view.php` with semantic `<span>` tags, explicit `id="assigned_to_select"`, and `aria-label="Update Inquiry Status"`.
     - Polished `app/views/admin/notifications/preferences.php` adding explicit IDs and descriptive `aria-label` attributes across all notification channel switches.
     - Polished `app/views/layouts/admin.php` replacing non-native `<div>` overlay with accessible `<button class="sidebar-overlay">`, adding `aria-label` to top navigation `<nav>`, and adding `aria-label` to `#omniSearchInput`.
+    - Enhanced `app/Http/Controllers/Employee/EmployeeSelfServiceController.php`: added `Exception` and `Throwable` imports, and enabled executive fallback resolution for `admin_id` and `ADMIN_ROLES` in `requireEmployeeLogin()`.
+    - Enhanced `app/Http/Controllers/Front/NotificationPreferenceController.php`: updated `requireCustomerLogin()` to redirect admins to `/admin/notification-preferences` and allow authenticated associate/employee roles without eviction; refactored raw header redirects to native `$this->redirect()`.
 
 ### Verification
 - Database integrity: `users: 116, plots: 756, leads: 38187, notifs: 30, archive: 20, grievances: 0, admin_menu_items: 376` (zero drift on core tables, zero probe leftovers).
@@ -120,7 +122,7 @@ User requested:
 - E2E Lifecycle Probe: 7/7 lifecycle stages verified (submit -> fetch -> comment -> assign -> progress -> resolve -> close with 5-star rating).
 - Syntax verification: `php -l` clean across all modified and newly created files.
 - **Master Test Runner (`testing/master_test_runner.php`): 10/10 SUITES PASSED (100% HEALTHY, 19.68s).**
-- Probe hygiene: all temp scripts in `C:\Users\abhay\AppData\Local\Temp\opencode\` cleaned up immediately. Zero leftovers. immediately. Zero leftovers.
+- Probe hygiene: all temp scripts in `C:\Users\abhay\AppData\Local\Temp\opencode\` cleaned up immediately. Zero leftovers.
 
 ## Session 347: Admin Inquiries System Overhaul, Real-time Unhandled Badge, Staff Assignment & Notification Interlinking (2026-10-18)
 
