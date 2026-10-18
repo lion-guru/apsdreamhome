@@ -1,9 +1,20 @@
 <?php
+require_once __DIR__ . '/../../../Helpers/NavigationHelper.php';
+
+/** @var \App\Helpers\NavigationHelper $nav */
+$nav = $nav ?? \App\Helpers\NavigationHelper::getInstance();
+$sc  = $sc ?? function ($key, $default = '') {
+    return $GLOBALS['_site_settings_cache'][$key] ?? $default;
+};
+
 if (!function_exists('navUrl')) {
     function navUrl($url) {
         $url = $url ?? '#';
-        if ($url === '#' || $url === '' || $url === null) return '#';
-        return BASE_URL . rtrim('/' . ltrim($url, '/'), '');
+        if ($url === '#' || $url === '' || $url === null) {
+            return '#';
+        }
+        $base = defined('BASE_URL') ? BASE_URL : '';
+        return $base . rtrim('/' . ltrim($url, '/'), '');
     }
 }
 ?>
@@ -36,8 +47,12 @@ if (!function_exists('navUrl')) {
 
         <!-- Logo - Always on the left -->
         <a class="navbar-brand d-flex align-items-center me-0" href="<?php echo BASE_URL; ?>">
-            <?php $logo = $nav->getSetting('company_logo', '/assets/images/logo/apslogonew.jpg');
-                   if ($logo && $logo[0] !== '/') $logo = '/' . $logo; ?>
+            <?php 
+            $logo = $nav->getSetting('company_logo', '/assets/images/logo/apslogonew.jpg');
+            if ($logo && $logo[0] !== '/') {
+                $logo = '/' . $logo;
+            }
+            ?>
             <img src="<?php echo navUrl($logo);?>"
                  alt="APS Dream Home"
                  class="logo"
