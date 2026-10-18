@@ -103,6 +103,25 @@ try {
     exit;
 }
 
+// Lane-split route files (S291: keeps single-owner files committable while
+// routes/web.php carries multi-lane churn). Each file registers onto $router.
+try {
+    require_once APS_ROOT . '/routes/land.php';
+} catch (\Exception $e) {
+    error_log("Land Routes Error: " . $e->getMessage());
+    echo "<h1>Error loading land routes: " . htmlspecialchars($e->getMessage()) . "</h1>";
+    exit;
+}
+
+// Gap-build lane routes (S325-S333): single-owner file for gap-build feature routes.
+try {
+    require_once APS_ROOT . '/routes/gap_builds.php';
+} catch (\Exception $e) {
+    error_log("Gap-Build Routes Error: " . $e->getMessage());
+    echo "<h1>Error loading gap-build routes: " . htmlspecialchars($e->getMessage()) . "</h1>";
+    exit;
+}
+
 // Dispatch router
 try {
     $router->dispatch();
