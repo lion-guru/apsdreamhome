@@ -1410,6 +1410,10 @@ $router->get('/employee/self-service/dashboard', 'Employee\\EmployeeSelfServiceC
 $router->get('/employee/self-service/tax-regime', 'Employee\\EmployeeSelfServiceController@taxRegime');
 $router->post('/employee/self-service/tax-regime', 'Employee\\EmployeeSelfServiceController@taxRegime');
 
+// Tax Calculator
+$router->get('/employee/self-service/tax-calculator', 'Employee\EmployeeSelfServiceController@taxCalculator');
+$router->get('/employee/self-service/tax-calculator/fy/{fy}', 'Employee\EmployeeSelfServiceController@taxCalculator');
+
 // Investment Declaration
 $router->get('/employee/self-service/investment-declaration', 'Employee\\EmployeeSelfServiceController@investmentDeclaration');
 $router->post('/employee/self-service/investment-declaration', 'Employee\\EmployeeSelfServiceController@investmentDeclaration');

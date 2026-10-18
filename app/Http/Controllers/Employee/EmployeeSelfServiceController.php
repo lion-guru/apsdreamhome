@@ -384,6 +384,43 @@ class EmployeeSelfServiceController extends BaseController
     }
 
     /**
+     * Interactive Tax Calculator
+     * Compare Old vs New Regime with actual salary numbers
+     */
+    public function taxCalculator()
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION['employee_id'];
+        $financialYear = (int)($_GET['fy'] ?? date('Y'));
+
+        // Get employee's current salary for pre-filling
+        $currentSalary = [];
+        try {
+            $emp = $this->db->fetchOne("SELECT id FROM employees WHERE user_id=?{$this->tenantSql()}", array_merge([$employeeId], $this->service->tVal()));
+            if ($emp) {
+                $salary = $this->db->fetchOne("SELECT * FROM salary_structures WHERE employee_id=? AND status='active' ORDER BY effective_date DESC LIMIT 1", [$emp['id']]);
+                if ($salary) {
+                    $currentSalary = [
+                        'basic' => $salary['basic_salary'] ?? 0,
+                        'hra' => $salary['hra'] ?? 0,
+                        'conveyance' => $salary['conveyance'] ?? 0,
+                        'medical' => $salary['medical_allowance'] ?? 0,
+                        'special' => $salary['special_allowance'] ?? 0,
+                        'other' => $salary['other_allowances'] ?? 0,
+                    ];
+                }
+            }
+        } catch (\Exception $e) {}
+
+        return $this->render('employee/self_service/tax_calculator', [
+            'page_title' => 'Tax Calculator',
+            'currentSalary' => $currentSalary,
+            'financial_year' => $financialYear,
+            'fy_label' => $financialYear . '-' . ($financialYear + 1),
+        ]);
+    }
+
+    /**
      * Helper to require employee login
      */
     protected function requireEmployeeLogin()
