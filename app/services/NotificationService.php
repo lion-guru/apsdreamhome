@@ -246,7 +246,7 @@ class NotificationService
             if (!empty($subs)) {
                 $pushSender = new \App\Services\Communication\PushSender();
                 if ($pushSender->isConfigured()) {
-                    $pushSender->sendToUser($userId, $title, $body, $data['url'] ?? '/');
+                    $pushSender->sendToUser($userId, $title, $body, $data['url'] ?? $data['action_url'] ?? '/');
                 }
             }
         } catch (\Throwable $e) {
