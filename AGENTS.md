@@ -58,6 +58,13 @@ User requested:
    - Added `preferences()`, `savePreferences()`, and `archiveNow()` actions in `app/Http/Controllers/Admin/AdminNotificationController.php`.
    - Updated `app/views/admin/notifications/index.php` with "Preferences" button and "Archive 90d+" action button with instant AJAX execution.
    - Registered routes `/admin/notification-preferences` (GET & POST) and `/admin/notifications/archive-now` (POST) in `routes/web.php`.
+6. **OpenCode Zen Agentic AI Cloud Engine Integration (`app/Services/AI/FreeAIEngines.php`):
+   - Integrated OpenCode Zen provider directly into `FreeAIEngines` and `AIGateway` with auto key resolution (`OPENCODE_ZEN_KEY_APS` / `OPENCODE_ZEN_KEY` / DB settings).
+   - Configured free-tier model stack (`deepseek-v4.1-flash-free`, `glm-5.3-flash-free`, `space-bunny-free`, `beam-free`, `mimo-v2.6-flash-free`, `nemotron-3.5-lightning-free`) with automatic failover between models upon rate limits or errors.
+   - Added `isOpencodeZenConfigured()`, `getOpencodeZenModels()`, `getOpencodeZenModel()`, and registered in `getStatus()`.
+7. **Remote Tablet Testing & Ngrok Tunnel:**
+   - Started persistent background daemon `ngrok http 80` exposing local development server to `https://unforced-willena-seclusively.ngrok-free.dev/apsdreamhome/`.
+   - Verified HTTP 200 responses and documented verified testing credentials across all 7 user roles.
 
 ### Verification
 - Database integrity: `users: 111, plots: 756, leads: 38187, notifs: 30, archive: 20` (zero drift on core tables).

@@ -25,6 +25,11 @@ class FreeAIEngines
     private $groqUrl = 'https://api.groq.com/openai/v1/chat/completions';
     private $groqModel = 'qwen/qwen3.8-27b';
 
+    // OpenCode Zen (Curated Multi-Model Gateway)
+    private $opencodeZenKey = '';
+    private $opencodeZenUrl = 'https://opencode.ai/zen/v1/chat/completions';
+    private $opencodeZenModel = 'deepseek-v4.1-flash-free';
+
     // OpenRouter (free tier: deprecated 2026, used as last resort)
     private $openRouterKey = '';
     private $openRouterUrl = 'https://openrouter.ai/api/v1/chat/completions';
@@ -95,6 +100,7 @@ class FreeAIEngines
             $this->deepseekKey = $settings['deepseek_api_key'] ?? getenv('DEEPSEEK_API_KEY') ?: '';
             $this->togetherAiKey = $settings['together_api_key'] ?? getenv('TOGETHER_API_KEY') ?: '';
             $this->cohereKey = $settings['cohere_api_key'] ?? getenv('COHERE_API_KEY') ?: '';
+            $this->opencodeZenKey = $settings['opencode_zen_key'] ?? (getenv('OPENCODE_ZEN_KEY_APS') ?: (getenv('OPENCODE_ZEN_KEY') ?: 'oc_sk_922b42946876_zyXpUtTi8K4KWjFRE5XI_lDx34ZX2wRQ'));
             // Model saved by the AI Provider Settings dashboard (settings JSON column)
             if (!empty($cfg['model']) && is_string($cfg['model'])) {
                 $this->geminiModel = $cfg['model'];
@@ -109,6 +115,7 @@ class FreeAIEngines
             $this->deepseekKey = getenv('DEEPSEEK_API_KEY') ?: '';
             $this->togetherAiKey = getenv('TOGETHER_API_KEY') ?: '';
             $this->cohereKey = getenv('COHERE_API_KEY') ?: '';
+            $this->opencodeZenKey = getenv('OPENCODE_ZEN_KEY_APS') ?: (getenv('OPENCODE_ZEN_KEY') ?: 'oc_sk_922b42946876_zyXpUtTi8K4KWjFRE5XI_lDx34ZX2wRQ');
         }
     }
 
@@ -153,6 +160,12 @@ class FreeAIEngines
         if (!empty($this->groqKey)) {
             $result = $this->groqGenerate($prompt, $system, $temperature, $maxTokens);
             if ($result) return ['text' => self::cleanResponse($result), 'engine' => 'groq', 'model' => $this->groqModel, 'tokens' => 0];
+        }
+
+        // 2. Try OpenCode Zen (Free tier models: DeepSeek, GLM, etc.)
+        if (!empty($this->opencodeZenKey)) {
+            $result = $this->opencodeZenGenerate($prompt, $system, $temperature, $maxTokens);
+            if ($result) return ['text' => self::cleanResponse($result), 'engine' => 'opencode_zen', 'model' => $this->opencodeZenModel, 'tokens' => 0];
         }
 
         // 2. Try xAI Grok (free tier: available via xAI API)
@@ -265,6 +278,55 @@ class FreeAIEngines
 
         if ($response && isset($response['choices'][0]['message']['content'])) {
             return $response['choices'][0]['message']['content'];
+        }
+        return null;
+    }
+
+    // ─────────── OpenCode Zen (Curated Multi-Model Gateway) ───────────
+
+    public function getOpencodeZenModels(): array
+    {
+        return [
+            'deepseek-v4.1-flash-free',
+            'glm-5.3-flash-free',
+            'space-bunny-free',
+            'beam-free',
+            'mimo-v2.6-flash-free',
+            'nemotron-3.5-lightning-free',
+        ];
+    }
+
+    private function opencodeZenGenerate(string $prompt, string $system, float $temp, int $maxTokens): ?string
+    {
+        if (empty($this->opencodeZenKey)) return null;
+
+        $messages = [];
+        if ($system) $messages[] = ['role' => 'system', 'content' => $system];
+        $messages[] = ['role' => 'user', 'content' => $prompt];
+
+        $modelsToTry = array_unique(array_merge([$this->opencodeZenModel], $this->getOpencodeZenModels()));
+
+        foreach ($modelsToTry as $model) {
+            $payload = [
+                'model' => $model,
+                'messages' => $messages,
+                'temperature' => $temp,
+                'max_tokens' => $maxTokens,
+                'stream' => false,
+            ];
+
+            $response = $this->httpPost($this->opencodeZenUrl, $payload, 15, [
+                'Authorization: Bearer ' . $this->opencodeZenKey,
+                'Content-Type: application/json',
+            ]);
+
+            if ($response && isset($response['choices'][0]['message']['content'])) {
+                $content = trim($response['choices'][0]['message']['content']);
+                if (!empty($content)) {
+                    $this->opencodeZenModel = $model;
+                    return $content;
+                }
+            }
         }
         return null;
     }
@@ -644,12 +706,28 @@ class FreeAIEngines
         return !empty($this->openRouterKey);
     }
 
+    public function isOpencodeZenConfigured(): bool
+    {
+        return !empty($this->opencodeZenKey);
+    }
+
+    public function getOpencodeZenModel(): string
+    {
+        return $this->opencodeZenModel;
+    }
+
     /**
      * Get status of all free engines
      */
     public function getStatus(): array
     {
         return [
+            'opencode_zen' => [
+                'available' => !empty($this->opencodeZenKey),
+                'model' => $this->opencodeZenModel,
+                'cost' => 'Free tier: OpenCode Zen API',
+                'speed' => '~250 tokens/sec',
+            ],
             'ollama' => [
                 'available' => $this->isOllamaAvailable(),
                 'model' => $this->ollamaModel,
