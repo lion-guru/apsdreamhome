@@ -37,6 +37,8 @@ class EmployeeGrievanceController extends BaseController
         $grievances = $this->grievanceService->getAllGrievances($filters);
         $stats = $this->grievanceService->getStatistics();
 
+        $staff = $this->grievanceService->getStaffList();
+
         return $this->render('admin/grievances/index', [
             'page_title' => 'Employee Grievances & Complaints',
             'grievances' => $grievances,
@@ -44,7 +46,36 @@ class EmployeeGrievanceController extends BaseController
             'filters' => $filters,
             'categories' => $this->grievanceService->getCategories(),
             'priorities' => $this->grievanceService->getPriorities(),
+            'assignees' => $staff,
+            'employees' => $staff,
         ]);
+    }
+
+    /**
+     * Store new grievance from admin
+     */
+    public function store()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . BASE_URL . '/admin/grievances');
+            exit;
+        }
+
+        $employeeId = (int)($_POST['employee_id'] ?? 0);
+        if ($employeeId <= 0) {
+            $staff = $this->grievanceService->getStaffList();
+            $employeeId = (int)($staff[0]['employee_id'] ?? $staff[0]['id'] ?? 1);
+        }
+
+        $result = $this->grievanceService->submitGrievance($employeeId, $_POST);
+
+        if ($this->isAjax()) {
+            return $this->jsonResponse($result, $result['success'] ? 200 : 400);
+        }
+
+        $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
+        header('Location: ' . BASE_URL . '/admin/grievances');
+        exit;
     }
 
     /**

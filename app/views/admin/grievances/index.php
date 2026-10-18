@@ -9,6 +9,7 @@ $stats = $stats ?? [];
 $categories = $categories ?? [];
 $priorities = $priorities ?? [];
 $assignees = $assignees ?? [];
+$employees = $employees ?? [];
 $filters = $filters ?? [];
 ?>
 
@@ -247,18 +248,28 @@ $filters = $filters ?? [];
 <div class="modal fade" id="createGrievanceModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form method="POST" id="createGrievanceForm">
+            <form method="POST" id="createGrievanceForm" action="<?= BASE_URL ?>/admin/grievances/store">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-                <input type="hidden" name="employee_id" value="<?= $_SESSION['employee_id'] ?? 1 ?>">
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title"><i class="fas fa-file-alt me-2"></i>Submit Grievance</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row g-3">
+                        <div class="col-12">
+                            <label for="create_employee_id" class="form-label fw-semibold">Employee / Complainant <span class="text-danger">*</span></label>
+                            <select name="employee_id" id="create_employee_id" class="form-select" required>
+                                <option value="">-- Select Employee --</option>
+                                <?php foreach ($employees as $emp): ?>
+                                    <option value="<?= $emp['employee_id'] ?? $emp['id'] ?>">
+                                        <?= htmlspecialchars($emp['name']) ?> (<?= htmlspecialchars($emp['email']) ?> - <?= htmlspecialchars($emp['department'] ?? 'Staff') ?>)
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold">Category <span class="text-danger">*</span></label>
-                            <select name="category" class="form-select" required>
+                            <label for="create_category" class="form-label fw-semibold">Category <span class="text-danger">*</span></label>
+                            <select name="category" id="create_category" class="form-select" required>
                                 <option value="">Select category</option>
                                 <?php foreach ($categories as $key => $label): ?>
                                     <option value="<?= $key ?>"><?= $label ?></option>
@@ -266,8 +277,8 @@ $filters = $filters ?? [];
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold">Priority <span class="text-danger">*</span></label>
-                            <select name="priority" class="form-select" required>
+                            <label for="create_priority" class="form-label fw-semibold">Priority <span class="text-danger">*</span></label>
+                            <select name="priority" id="create_priority" class="form-select" required>
                                 <option value="normal" selected>Normal</option>
                                 <option value="low">Low</option>
                                 <option value="high">High</option>
@@ -276,19 +287,19 @@ $filters = $filters ?? [];
                             </select>
                         </div>
                         <div class="col-12">
-                            <label class="form-label fw-semibold">Subject <span class="text-danger">*</span></label>
-                            <input type="text" name="subject" class="form-control" required placeholder="Brief summary of the grievance">
+                            <label for="create_subject" class="form-label fw-semibold">Subject <span class="text-danger">*</span></label>
+                            <input type="text" name="subject" id="create_subject" class="form-control" required placeholder="Brief summary of the grievance">
                         </div>
                         <div class="col-12">
-                            <label class="form-label fw-semibold">Description <span class="text-danger">*</span></label>
-                            <textarea name="description" class="form-control" rows="4" required placeholder="Detailed description of the grievance..."></textarea>
+                            <label for="create_description" class="form-label fw-semibold">Description <span class="text-danger">*</span></label>
+                            <textarea name="description" id="create_description" class="form-control" rows="4" required placeholder="Detailed description of the grievance..."></textarea>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold">Sub-category</label>
-                            <input type="text" name="sub_category" class="form-control" placeholder="e.g., Sexual harassment, Gender discrimination">
+                            <label for="create_sub_category" class="form-label fw-semibold">Sub-category</label>
+                            <input type="text" name="sub_category" id="create_sub_category" class="form-control" placeholder="e.g., Workstation ergonomics, Salary delay">
                         </div>
                         <div class="col-md-6">
-                            <div class="form-check form-switch">
+                            <div class="form-check form-switch pt-4">
                                 <input class="form-check-input" type="checkbox" name="is_anonymous" id="is_anonymous" value="1">
                                 <label class="form-check-label" for="is_anonymous">Submit anonymously</label>
                             </div>
@@ -306,32 +317,83 @@ $filters = $filters ?? [];
     </div>
 </div>
 
+<!-- Assign Grievance Modal -->
+<div class="modal fade" id="assignGrievanceModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="assignGrievanceForm" method="POST" onsubmit="submitAssignForm(event)">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                <input type="hidden" id="modalAssignGrievanceId" value="">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title"><i class="fas fa-user-check me-2 text-primary"></i>Assign Grievance</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <label for="modalAssigneeSelect" class="form-label fw-semibold">Select Staff / Investigator</label>
+                    <select name="assignee_id" id="modalAssigneeSelect" class="form-select" required>
+                        <option value="">-- Choose Staff Member --</option>
+                        <?php foreach ($assignees as $staff): ?>
+                            <option value="<?= $staff['id'] ?>">
+                                <?= htmlspecialchars($staff['name']) ?> (<?= ucfirst($staff['role']) ?> - <?= htmlspecialchars($staff['department'] ?? 'Operations') ?>)
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-check me-1"></i> Assign</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 function updateStatus(grievanceId, status) {
     if (!confirm('Change status to ' + status + '?')) return;
     
-    fetch('<?= BASE_URL ?>/admin/grievances/update-status', {
+    fetch('<?= BASE_URL ?>/admin/grievances/' + grievanceId + '/status', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'grievance_id=' + grievanceId + '&status=' + status + '&csrf_token=' + encodeURIComponent('<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>')
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+        body: 'status=' + encodeURIComponent(status) + '&csrf_token=' + encodeURIComponent('<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>')
     })
     .then(r => r.json())
     .then(data => {
         if (data.success) location.reload();
-        else alert(data.message || 'Failed');
+        else alert(data.message || 'Failed to update status');
+    })
+    .catch(err => {
+        alert('Network error while updating status');
     });
 }
 
 function assignGrievance(grievanceId) {
-    const assigneeId = prompt('Enter assignee user ID:');
-    if (!assigneeId) return;
-    
-    fetch('<?= BASE_URL ?>/admin/grievances/assign', {
+    document.getElementById('modalAssignGrievanceId').value = grievanceId;
+    var modal = new bootstrap.Modal(document.getElementById('assignGrievanceModal'));
+    modal.show();
+}
+
+function submitAssignForm(e) {
+    e.preventDefault();
+    var grievanceId = document.getElementById('modalAssignGrievanceId').value;
+    var assigneeId = document.getElementById('modalAssigneeSelect').value;
+    if (!assigneeId) {
+        alert('Please select an assignee.');
+        return;
+    }
+
+    fetch('<?= BASE_URL ?>/admin/grievances/' + grievanceId + '/assign', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'grievance_id=' + grievanceId + '&assignee_id=' + assigneeId + '&csrf_token=' + encodeURIComponent('<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>')
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+        body: 'assignee_id=' + encodeURIComponent(assigneeId) + '&csrf_token=' + encodeURIComponent('<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>')
     })
     .then(r => r.json())
-    .then(data => { if (data.success) location.reload(); else alert(data.message || 'Failed'); });
+    .then(data => {
+        if (data.success) location.reload();
+        else alert(data.message || 'Failed to assign grievance');
+    })
+    .catch(err => {
+        alert('Network error while assigning grievance');
+    });
 }
 </script>

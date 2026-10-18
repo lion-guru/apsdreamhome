@@ -90,11 +90,11 @@ class EmployeeGrievanceService
     public function getGrievance(int $grievanceId): ?array
     {
         return $this->fetchOne("
-            SELECT eg.*, u.name as employee_name, e.employee_code, e.department,
+            SELECT eg.*, COALESCE(u.name, 'Employee #' || eg.employee_id) as employee_name, e.employee_code, e.department,
                    a.name as assignee_name
             FROM employee_grievances eg
-            JOIN employees e ON eg.employee_id = e.id
-            JOIN users u ON e.user_id = u.id
+            LEFT JOIN employees e ON eg.employee_id = e.id
+            LEFT JOIN users u ON e.user_id = u.id
             LEFT JOIN users a ON eg.assigned_to = a.id
             WHERE eg.id = ? AND eg.tenant_id = 1", [$grievanceId]);
     }
@@ -114,11 +114,11 @@ class EmployeeGrievanceService
     public function getAllGrievances(array $filters = []): array
     {
         $query = "
-            SELECT eg.*, u.name as employee_name, e.employee_code, e.department,
+            SELECT eg.*, COALESCE(u.name, 'Employee #' || eg.employee_id) as employee_name, e.employee_code, e.department,
                    a.name as assignee_name
             FROM employee_grievances eg
-            JOIN employees e ON eg.employee_id = e.id
-            JOIN users u ON e.user_id = u.id
+            LEFT JOIN employees e ON eg.employee_id = e.id
+            LEFT JOIN users u ON e.user_id = u.id
             LEFT JOIN users a ON eg.assigned_to = a.id
             WHERE eg.tenant_id = 1";
         $params = [];
@@ -199,7 +199,7 @@ class EmployeeGrievanceService
     public function getStaffList(): array
     {
         return $this->fetchAll("
-            SELECT u.id, u.name, u.role, u.email, e.department, e.designation
+            SELECT u.id, u.name, u.role, u.email, COALESCE(e.id, u.id) as employee_id, e.employee_code, e.department, e.designation
             FROM users u
             LEFT JOIN employees e ON e.user_id = u.id
             WHERE u.status = 'active'
@@ -219,7 +219,7 @@ class EmployeeGrievanceService
         $this->execute("
             INSERT INTO grievance_comments
             (tenant_id, grievance_id, employee_id, comment, is_internal, created_at)
-            VALUES (?, ?, ?, ?, NOW())",
+            VALUES (?, ?, ?, ?, ?, NOW())",
             [$this->tenantId(), $grievanceId, $employeeId, $comment, $isInternal ? 1 : 0]);
 
         return ['success' => true, 'message' => 'Comment added'];

@@ -76,20 +76,28 @@ User requested:
    - In `app/Services/EmployeeGrievanceService.php`:
      - Fixed `u.employee_code, u.department` query bugs by correctly joining `employees e`.
      - Fixed parameter array duplication bug in `updateStatus()`.
+     - Fixed SQL placeholder token mismatch in `addComment()` (4 placeholders vs 5 parameters) which was causing silent comment insertion failures.
+     - Upgraded `getGrievance()` and `getAllGrievances()` with `LEFT JOIN` to ensure grievances remain visible even when employee records are loosely coupled.
      - Replaced broken duplicated `tenant_id` notification insert with native `NotificationService::notify()`.
      - Implemented missing DB query helpers (`fetchOne()`, `fetchAll()`, `execute()`) resolving fatal method errors.
-     - Added `getStaffList()` returning active personnel across administrative and operational roles.
+     - Added `getStaffList()` returning active personnel across administrative and operational roles with fallback `employee_id`.
      - Added `logActivity()` helper safely recording grievance events to `employee_activity_logs_unified`.
    - In `database/migrations/add_rating_and_closure_to_employee_grievances_s348.php`:
      - Created idempotent migration adding `employee_rating`, `employee_feedback`, `closed_at`, and `closed_by` columns to `employee_grievances`.
    - In `app/Http/Controllers/Admin/EmployeeGrievanceController.php`:
      - Fixed invalid namespace import `use App\Core\Controller\BaseController;` to `use App\Http\Controllers\BaseController;`.
+     - Passed `assignees` and `employees` to `index()` view, populating the filter and submission dropdowns.
      - Passed `assignees` to `show()` view.
+     - Added `store()` endpoint for creating grievances directly from admin panel, registering `POST /admin/grievances` and `POST /admin/grievances/store` routes.
      - Added AJAX response handling (`isAjax()` / `jsonResponse`) in `updateStatus()`, `assign()`, and `addComment()`.
    - In `app/views/admin/grievances/detail.php`:
      - Replaced browser `prompt('Enter assignee user ID:')` with modal `#assignGrievanceModal` dropdown populated with staff members.
      - Fixed `#addCommentForm` missing `action` attribute.
      - Corrected `updateStatus()` AJAX endpoint URL.
+   - In `app/views/admin/grievances/index.php`:
+     - Added `#assignGrievanceModal` dropdown modal for 1-click staff investigator assignment.
+     - Upgraded `#createGrievanceModal` with explicit form action and employee/complainant selection dropdown.
+     - Fixed broken `/admin/grievances/update-status` and `/admin/grievances/assign` URLs to RESTful route parameters.
    - Created 4 missing Employee Self-Service Views (`app/views/employee/self_service/`):
      - `grievances.php`: KPI cards (Total, In Progress, Resolved, Closed), priority & status badges, and responsive history table.
      - `grievance_create.php`: Secure submission form with Category, Priority, Sub-Category, Anonymous reporting toggle, and validation.
@@ -97,13 +105,14 @@ User requested:
      - `grievance_close.php`: 5-star interactive satisfaction rating and closure feedback form.
 
 ### Verification
-- Database integrity: `users: 116, plots: 756, leads: 38187, notifs: 30, archive: 20, grievances: 0` (zero drift on core tables).
+- Database integrity: `users: 116, plots: 756, leads: 38187, notifs: 30, archive: 20, grievances: 0` (zero drift on core tables, zero probe leftovers).
 - OpenCode Zen keys: active key verified as `techguruabhay@gmail.com` in `auth.json`; desktop switcher tested and operational.
 - Ngrok daemon tunnel: actively serving `https://unforced-willena-seclusively.ngrok-free.dev/apsdreamhome/` (HTTP 200).
 - Universal testing credentials: all users set to `Aps@2026`.
 - VAPID Push configuration: `PushSender::isConfigured() === true`, public key length 87 bytes.
+- E2E Lifecycle Probe: 7/7 lifecycle stages verified (submit -> fetch -> comment -> assign -> progress -> resolve -> close with 5-star rating).
 - Syntax verification: `php -l` clean across all modified and newly created files.
-- **Master Test Runner (`testing/master_test_runner.php`): 10/10 SUITES PASSED (100% HEALTHY, 18.16s).**
+- **Master Test Runner (`testing/master_test_runner.php`): 10/10 SUITES PASSED (100% HEALTHY, 19.03s).**
 - Probe hygiene: all temp scripts in `C:\Users\abhay\AppData\Local\Temp\opencode\` cleaned up immediately. Zero leftovers.
 
 ## Session 347: Admin Inquiries System Overhaul, Real-time Unhandled Badge, Staff Assignment & Notification Interlinking (2026-10-18)

@@ -6547,6 +6547,8 @@ $router->post('/admin/holiday-calendar/bulk-import', 'App\\Http\\Controllers\\Ad
 
 // Admin Employee Grievances / Complaints
 $router->get('/admin/grievances', 'App\\Http\\Controllers\\Admin\\EmployeeGrievanceController@index');
+$router->post('/admin/grievances', 'App\\Http\\Controllers\\Admin\\EmployeeGrievanceController@store');
+$router->post('/admin/grievances/store', 'App\\Http\\Controllers\\Admin\\EmployeeGrievanceController@store');
 $router->get('/admin/grievances/{id}', 'App\\Http\\Controllers\\Admin\\EmployeeGrievanceController@show');
 $router->post('/admin/grievances/{id}/status', 'App\\Http\\Controllers\\Admin\\EmployeeGrievanceController@updateStatus');
 $router->post('/admin/grievances/{id}/assign', 'App\\Http\\Controllers\\Admin\\EmployeeGrievanceController@assign');
