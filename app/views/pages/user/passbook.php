@@ -439,7 +439,7 @@ $statusBadgeMap = [
 <div class="pb-tabs-wrap" id="pb-tabs">
     <?php foreach ($bookings as $b): ?>
         <a class="pb-tab <?= (int)($b['id'] ?? 0) === (int)$activeBookingId ? 'active' : '' ?>"
-            href="<?= BASE_URL ?>/customer/passbook?booking_id=<?= (int)($b['id'] ?? 0) ?>">
+            href="<?= BASE_URL ?>/user/passbook?booking_id=<?= (int)($b['id'] ?? 0) ?>">
             <i class="fas fa-map-pin"></i>
             <span class="pb-tab-plot"><?= htmlspecialchars($b['plot_number'] ?? '') ?></span>
             <span><?= htmlspecialchars($b['colony_name'] ?? '') ?></span>
@@ -450,7 +450,7 @@ $statusBadgeMap = [
 
 <?php if (!empty($activeBookingId)): ?>
 <div style="margin:12px 0;">
-    <a class="pb-btn pb-btn-receipt" target="_blank" href="<?= BASE_URL ?>/customer/passbook/<?= (int)$activeBookingId ?>/statement-pdf">
+    <a class="pb-btn pb-btn-receipt" target="_blank" href="<?= BASE_URL ?>/user/passbook/<?= (int)$activeBookingId ?>/statement-pdf">
         <i class="fas fa-file-pdf"></i> Download Official Statement (PDF)
     </a>
 </div>
@@ -476,7 +476,7 @@ $statusBadgeMap = [
     });
     document.getElementById('prepaySimBtn').addEventListener('click', function () {
         out.textContent = 'Calculating…';
-        fetch('<?= BASE_URL ?>/customer/passbook/<?= (int)$activeBookingId ?>/prepay-simulate', {
+        fetch('<?= BASE_URL ?>/user/passbook/<?= (int)$activeBookingId ?>/prepay-simulate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: 'extra_amount=' + encodeURIComponent(slider.value) + '&csrf_token=' + encodeURIComponent('<?= $_SESSION['csrf_token'] ?? '' ?>')
@@ -571,7 +571,7 @@ if (!$activeBooking && !empty($bookings)) {
             </div>
         </div>
         <div class="mt-3 d-flex flex-wrap gap-2">
-            <a href="<?= BASE_URL ?>/customer/registry/<?= (int)($activeBooking['id'] ?? 0) ?>" class="pb-btn pb-btn-pay" style="padding:.55rem 1.1rem;font-size:.8rem;">
+            <a href="<?= BASE_URL ?>/user/registry/<?= (int)($activeBooking['id'] ?? 0) ?>" class="pb-btn pb-btn-pay" style="padding:.55rem 1.1rem;font-size:.8rem;">
                 <i class="fas fa-stamp"></i> Track Registry Status
             </a>
         </div>
@@ -769,7 +769,7 @@ if (!$activeBooking && !empty($bookings)) {
         document.body.style.overflow = 'hidden';
 
         /* Fetch UPI QR from API */
-        fetch(<?= json_encode(BASE_URL) ?> + '/customer/pay-emi/upi-qr', {
+        fetch(<?= json_encode(BASE_URL) ?> + '/user/pay-emi/upi-qr', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -819,7 +819,7 @@ if (!$activeBooking && !empty($bookings)) {
 
     window.downloadReceipt = function(receiptId) {
         if (!receiptId) return;
-        window.open(<?= json_encode(BASE_URL) ?> + '/customer/receipt/' + encodeURIComponent(receiptId), '_blank');
+        window.open(<?= json_encode(BASE_URL) ?> + '/user/receipt/' + encodeURIComponent(receiptId), '_blank');
     };
 
     /* Animate stat values on load */

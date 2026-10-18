@@ -247,6 +247,37 @@ $base        = defined('BASE_URL') ? BASE_URL : '';
     </div>
 </div>
 
+<!-- S272: Plots Cut on This Kisan's Gatas -->
+<div class="aps-cp-card mt-3">
+    <div class="aps-cp-card-header">
+        <span><i class="fas fa-map me-2"></i>Is Kisan Ke Gata Me Kate Plots</span>
+        <span class="badge bg-secondary"><?= count($farmer_plots ?? []) ?> Plots</span>
+    </div>
+    <div class="aps-cp-card-body p-0">
+        <?php if (empty($farmer_plots)): ?>
+            <p class="text-muted small p-3 mb-0">Abhi koi plot inke gata pe linked nahi — plotting ke time gata chuno ya <a href="<?= $base ?>/admin/land-plot-link">Link Desk</a> se jodo (kisan naam wahi update hota hai).</p>
+        <?php else: ?>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead><tr><th>Plot</th><th>Colony</th><th>Gata</th><th class="text-end">Area</th><th>Status</th><th class="text-end">Price</th></tr></thead>
+                <tbody>
+                    <?php foreach ($farmer_plots as $fp): ?>
+                    <tr>
+                        <td><a href="<?= $base ?>/admin/plots/<?= (int)$fp['id'] ?>"><?= htmlspecialchars($fp['plot_number'] ?? '') ?></a><?= !empty($fp['block']) ? ' <span class="text-muted">(' . htmlspecialchars($fp['block']) . ')</span>' : '' ?></td>
+                        <td><?= htmlspecialchars($fp['colony_name'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($fp['khasra_no'] ?? '') ?></td>
+                        <td class="text-end"><?= number_format((float)($fp['area_sqft'] ?? 0), 0) ?></td>
+                        <td><span class="badge bg-secondary"><?= htmlspecialchars($fp['status'] ?? '') ?></span></td>
+                        <td class="text-end">₹<?= number_format((float)($fp['total_price'] ?? 0), 0) ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php endif; ?>
+    </div>
+</div>
+
 <!-- Payment History Section -->
 <?php 
 $allPayments = [];

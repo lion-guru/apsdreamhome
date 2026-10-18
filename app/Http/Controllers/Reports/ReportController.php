@@ -239,16 +239,28 @@ class ReportController extends AdminController
         try {
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $reportType = $_POST['report_type'] ?? 'sales';
-                $schedule = $_POST['schedule'] ?? 'daily';
-                $recipients = $_POST['recipients'] ?? [];
+                $title = trim($_POST['title'] ?? '');
+                $frequency = $_POST['frequency'] ?? 'weekly';
+                $format = $_POST['format'] ?? 'csv';
+                $day = $_POST['day'] ?? '';
+                $recipients = array_filter(array_map('trim', explode(',', (string)($_POST['recipients'] ?? ''))));
                 $parameters = [
                     'start_date' => $_POST['start_date'] ?? date('Y-m-01'),
                     'end_date' => $_POST['end_date'] ?? date('Y-m-t'),
                     'status' => $_POST['status'] ?? null,
-                    'format' => $_POST['format'] ?? 'array'
+                    'format' => $format,
                 ];
 
-                $result = $this->reportService->scheduleReport($reportType, $parameters, $schedule, $recipients);
+                $result = $this->reportService->scheduleReport([
+                    'report_type' => $reportType,
+                    'title' => $title !== '' ? $title : ucfirst($reportType) . ' Report',
+                    'frequency' => $frequency,
+                    'format' => $format,
+                    'day' => $day,
+                    'parameters' => $parameters,
+                    'recipients' => $recipients,
+                    'notes' => trim($_POST['notes'] ?? ''),
+                ]);
 
                 if ($result) {
                     header('Location: /reports/scheduled');
@@ -461,5 +473,22 @@ class ReportController extends AdminController
         } catch (Exception $e) {
             $this->setFlash('error', 'Error generating financial report: ' . $e->getMessage());
         }
+    }
+
+    public function unschedule($id)
+    {
+        $this->requireAdmin();
+        try {
+            $result = $this->reportService->unscheduleReport((int)$id);
+            if ($result) {
+                $this->setFlash('success', 'Report unscheduled');
+            } else {
+                $this->setFlash('error', 'Failed to unschedule report');
+            }
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed: ' . $e->getMessage());
+        }
+        header('Location: ' . BASE_URL . '/reports/scheduled');
+        exit;
     }
 }

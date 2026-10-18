@@ -1,126 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($page_title ?? 'FAQs - APS Dream Home') ?></title>
-    <meta name="description" content="Frequently asked questions about APS Dream Home — Tripartite Master Deed, booking, EMI, cancellation, and legal policies.">
-    <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --navy: #2c3e50;
-            --trust-blue: #2980b9;
-            --gold: #d4af37;
-            --bg: #f4f6f9;
-        }
-        *, *::before, *::after { box-sizing: border-box; }
-        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: #1a1a2e; line-height: 1.7; }
-
-        /* ── Hero ── */
-        .faq-hero {
-            background: linear-gradient(135deg, var(--navy) 0%, var(--trust-blue) 100%);
-            color: #fff;
-            padding: 56px 20px 48px;
-            text-align: center;
-        }
-        .faq-hero h1 { font-size: 2.4rem; font-weight: 700; margin-bottom: 12px; }
-        .faq-hero p { font-size: 1.05rem; color: #cbd5e1; max-width: 600px; margin: 0 auto 20px; }
-        .faq-hero .search-box {
-            max-width: 480px;
-            margin: 0 auto;
-            position: relative;
-        }
-        .faq-hero .search-box input {
-            width: 100%;
-            padding: 14px 20px 14px 48px;
-            border-radius: 10px;
-            border: 2px solid rgba(255,255,255,0.2);
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-            font-size: 1rem;
-            outline: none;
-            backdrop-filter: blur(8px);
-        }
-        .faq-hero .search-box input::placeholder { color: #94a3b8; }
-        .faq-hero .search-box input:focus { border-color: var(--gold); }
-        .faq-hero .search-box i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
-
-        /* ── Section ── */
-        .faq-section { padding: 52px 20px; }
-        .faq-section .section-head { text-align: center; margin-bottom: 36px; }
-        .faq-section .section-head h2 { font-size: 1.7rem; color: var(--navy); font-weight: 700; margin-bottom: 6px; }
-        .faq-section .section-head p { color: #64748b; max-width: 540px; margin: 0 auto; }
-
-        /* ── Category Label ── */
-        .cat-label {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: var(--navy);
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid var(--gold);
-        }
-        .cat-label i { color: var(--trust-blue); }
-
-        /* ── Accordion ── */
-        .faq-wrap { max-width: 860px; margin: 0 auto; }
-        .faq-wrap .accordion-item { border: 1px solid #e2e8f0; border-radius: 10px !important; margin-bottom: 12px; overflow: hidden; }
-        .faq-wrap .accordion-button {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--navy);
-            padding: 18px 22px;
-            background: #fff;
-            box-shadow: none;
-        }
-        .faq-wrap .accordion-button:not(.collapsed) { background: #f1f5f9; color: var(--trust-blue); }
-        .faq-wrap .accordion-button::after { filter: none; }
-        .faq-wrap .accordion-body { padding: 0 22px 20px; color: #475569; font-size: 0.95rem; line-height: 1.8; }
-        .faq-wrap .accordion-body strong { color: var(--navy); }
-
-        /* ── Tripartite Highlight ── */
-        .trip-card {
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-left: 4px solid var(--gold);
-            border-radius: 10px;
-            padding: 24px 28px;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
-        }
-        .trip-card h4 { font-size: 1.05rem; color: var(--navy); font-weight: 700; margin: 0 0 8px; display: flex; align-items: flex-start; gap: 10px; }
-        .trip-card h4 .num { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; background: var(--trust-blue); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; }
-        .trip-card p { margin: 0; color: #475569; font-size: 0.95rem; }
-        .trip-card .warn-tag { display: inline-block; background: #fef3c7; color: #92400e; font-size: 0.78rem; font-weight: 600; padding: 3px 10px; border-radius: 20px; margin-top: 10px; }
-
-        /* ── CTA ── */
-        .faq-cta {
-            background: linear-gradient(135deg, var(--navy) 0%, var(--trust-blue) 100%);
-            color: #fff;
-            text-align: center;
-            padding: 52px 20px;
-        }
-        .faq-cta h2 { font-size: 1.6rem; margin-bottom: 8px; }
-        .faq-cta p { color: #cbd5e1; margin-bottom: 24px; }
-        .faq-cta .btn-cta { display: inline-block; padding: 13px 32px; border-radius: 8px; font-weight: 700; font-size: 1rem; text-decoration: none; transition: all 0.3s; margin: 0 6px 10px; }
-        .faq-cta .btn-gold { background: var(--gold); color: var(--navy); }
-        .faq-cta .btn-gold:hover { background: #e6c24a; transform: translateY(-2px); }
-        .faq-cta .btn-outline { border: 2px solid rgba(255,255,255,0.4); color: #fff; }
-        .faq-cta .btn-outline:hover { border-color: #fff; background: rgba(255,255,255,0.1); }
-
-        .hidden { display: none !important; }
-
-        @media (max-width: 768px) {
-            .faq-hero h1 { font-size: 1.8rem; }
-        }
-    </style>
-</head>
-<body>
-
+<?php
+$page_title = $page_title ?? 'Frequently Asked Questions - APS Dream Home';
+$page_description = $page_description ?? 'Find answers to common questions about booking, legal policies, EMI plans, cancellation, and legal policies.';
+$current_page = 'faqs';
+?>
 <!-- ═══════════════════ HERO ═══════════════════ -->
 <section class="faq-hero">
     <div class="container">
@@ -156,7 +38,7 @@
 
             <div class="trip-card">
                 <h4><span class="num">3</span> If I cancel, when do I get my refund (minus deductions)?</h4>
-                <p>Cancellation refund is processed within <strong>60 working days</strong> from the date of receipt of a written cancellation request (Clause 14). The refund is calculated as: <strong>Total deposited amount − 10% administrative charges − stamp duty &amp; registration fees already paid to government</strong>. Any interest earned on the deposited amount is retained by the developer. Refund is made via NEFT/RTGS to the original payment source. No cash refunds are entertained.</p>
+                <p>Cancellation refund is processed within <strong>60 working days</strong> from the date of receipt of a written cancellation request (Clause 14). The refund is calculated as: <strong>Total deposited amount − 10% administrative charges − stamp duty & registration fees already paid to government</strong>. Any interest earned on the deposited amount is retained by the developer. Refund is made via NEFT/RTGS to the original payment source. No cash refunds are entertained.</p>
                 <span class="warn-tag"><i class="fas fa-clock me-1"></i> 60 working days | 10% admin deduction</span>
             </div>
 
@@ -175,8 +57,7 @@
     <div class="container">
         <div class="section-head">
             <h2><i class="fas fa-list-ul me-2" style="color:var(--trust-blue);"></i> More Questions</h2>
-            <p>Browse all frequently asked questions or use the search bar above.</p>
-        </div>
+            <p>Browse all frequently asked questions or use the search bar above.</        </div>
 
         <div class="faq-wrap" id="dbFaqSection">
             <?php
@@ -223,33 +104,30 @@
 <script src="<?= BASE_URL ?>/assets/js/bootstrap.bundle.min.js"></script>
 
 <script>
-// ── FAQ Search ──
-document.getElementById('faqSearch')?.addEventListener('input', function() {
-    const q = this.value.toLowerCase().trim();
+    // ── FAQ Search ──
+    document.getElementById('faqSearch')?.addEventListener('input', function() {
+        const q = this.value.toLowerCase().trim();
 
-    // Search tripartite cards
-    document.querySelectorAll('.trip-card').forEach(card => {
-        const text = card.textContent.toLowerCase();
-        card.style.display = (!q || text.includes(q)) ? '' : 'none';
-    });
-    // Show/hide tripartite section heading if all hidden
-    const tripCards = document.querySelectorAll('.trip-card');
-    const visibleTrip = Array.from(tripCards).some(c => c.style.display !== 'none');
-    const tripSection = document.getElementById('tripSection');
-    if (tripSection) tripSection.closest('.faq-section').style.display = visibleTrip ? '' : 'none';
+        // Search tripartite cards
+        document.queryAll('.trip-card').forEach(card => {
+            const text = card.textContent.toLowerCase();
+            card.style.display = (!q || text.includes(q)) ? '' : 'none';
+        });
+        // Show/hide tripartite section heading if all hidden
+        const tripCards = document.queryAll('.trip-card');
+        const visibleTrip = Array.from(tripCards).some(c => c.style.display !== 'none');
+        const tripSection = document.getElementById('tripSection');
+        if (tripSection) tripSection.closest('.faq-section').style.display = visibleTrip ? '' : 'none';
 
-    // Search DB accordion items
-    document.querySelectorAll('.faq-item').forEach(item => {
-        const text = item.getAttribute('data-search') || '';
-        item.style.display = (!q || text.includes(q)) ? '' : 'none';
+        // Search DB accordion items
+        document.queryAll('.faq-item').forEach(item => {
+            const text = item.getAttribute('data-search') || '';
+            item.style.display = (!q || text.includes(q)) ? '' : 'none';
+        });
+        // Show/hide category groups with no visible items
+        document.queryAll('.faq-category-group').forEach(grp => {
+            const vis = grp.querySelectorAll('.faq-item:not([style*="display: none"])');
+            grp.style.display = vis.length ? '' : 'none';
+        });
     });
-    // Show/hide category groups with no visible items
-    document.querySelectorAll('.faq-category-group').forEach(grp => {
-        const vis = grp.querySelectorAll('.faq-item:not([style*="display: none"])');
-        grp.style.display = vis.length ? '' : 'none';
-    });
-});
 </script>
-
-</body>
-</html>

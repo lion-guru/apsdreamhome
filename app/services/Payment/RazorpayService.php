@@ -228,10 +228,20 @@ class RazorpayService
     private function creditWallet($userId, $amount, $type, $referenceId)
     {
         try {
+            // S264: idempotency for webhook retries — same (user, booking, type)
+            // credits exactly once.
+            $dup = $this->db->fetchOne("SELECT id FROM wallet_transactions WHERE user_id = ? AND reference_id = ? AND reference_type = 'booking' AND transaction_category = ? LIMIT 1", [$userId, $referenceId, $type]);
+            if ($dup) {
+                return;
+            }
+            // S264: atomic (was: crash between UPDATE and INSERT = money moved
+            // with no ledger row; every commission distribution calls this).
+            $this->db->beginTransaction();
+            try {
             // Get current wallet
             $tid = $this->getTenantId();
             $tenantFilter = $tid > 1 ? " AND tenant_id = ?" : "";
-            $wallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ?" . $tenantFilter, array_merge([$userId], $tid > 1 ? [$tid] : []));
+            $wallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ?" . $tenantFilter . " LIMIT 1 FOR UPDATE", array_merge([$userId], $tid > 1 ? [$tid] : []));
             
             if (!$wallet) {
                 // Create wallet
@@ -269,6 +279,11 @@ class RazorpayService
                 'status' => 'completed',
                 'created_at' => date('Y-m-d H:i:s')
             ]);
+            $this->db->commit();
+            } catch (\Throwable $e) {
+                try { $this->db->rollBack(); } catch (\Throwable $ignored) {}
+                throw $e;
+            }
             
         } catch (\Exception $e) {
             error_log("Wallet credit failed: " . $e->getMessage());

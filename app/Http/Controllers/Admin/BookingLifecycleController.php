@@ -128,6 +128,22 @@ class BookingLifecycleController extends AdminController
         $coOwners = $this->fetchCoOwners($id);
         $stampPreview = $this->stampPreview($booking, $coOwners);
 
+        // S272: plot land-source glimpse (gata + kisan) on the booking.
+        $plotGata = null;
+        try {
+            $pid = (int)($booking['plot_id'] ?? 0);
+            if ($pid > 0) {
+                $plotGata = $this->db->fetchOne("SELECT p.plot_number, p.gata_number, lp.owner_name, lp.owner_phone FROM plots p LEFT JOIN land_parcels lp ON lp.id = p.land_parcel_id WHERE p.id = ?", [$pid]) ?: null;
+                if ($plotGata && empty($plotGata['owner_name']) && !empty($plotGata['gata_number'])) {
+                    $o = $this->db->fetchOne("SELECT owner_name, owner_phone FROM land_parcels WHERE khasra_no = ? LIMIT 1", [$plotGata['gata_number']]);
+                    if ($o) {
+                        $plotGata['owner_name'] = $o['owner_name'];
+                        $plotGata['owner_phone'] = $o['owner_phone'];
+                    }
+                }
+            }
+        } catch (\Throwable $e) { error_log("bookingDetail land glimpse: " . $e->getMessage()); }
+
         $this->render('admin/sales/booking-detail', [
             'page_title'     => 'Booking #' . $id,
             'page_heading'   => 'Booking — ' . htmlspecialchars((string)($booking['booking_number'] ?? '')),
@@ -140,6 +156,7 @@ class BookingLifecycleController extends AdminController
             'commissions'    => $commissions,
             'co_owners'      => $coOwners,
             'stamp_preview'  => $stampPreview,
+            'plot_gata'      => $plotGata,
         ]);
     }
 

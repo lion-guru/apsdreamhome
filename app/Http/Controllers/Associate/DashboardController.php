@@ -93,8 +93,8 @@ class DashboardController extends BaseController
             $stmt->execute($params);
             $myProperties = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 
-            // Get recent leads
-            $stmt = $db->prepare("SELECT * FROM leads WHERE assigned_to = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " ORDER BY created_at DESC LIMIT 5");
+            // Get recent leads (trashed excluded)
+            $stmt = $db->prepare("SELECT * FROM leads WHERE assigned_to = ? AND deleted_at IS NULL" . ($tid > 1 ? " AND tenant_id = ?" : "") . " ORDER BY created_at DESC LIMIT 5");
             $params = [$userId];
             if ($tid > 1) $params[] = $tid;
             $stmt->execute($params);
@@ -206,6 +206,27 @@ class DashboardController extends BaseController
             // Get lead attribution stats for associate dashboard
             $attributionStats = $this->getLeadAttributionStats($userId);
 
+            // Today's action list: followups due, visits today, unresponded leads.
+            $todayActions = ['followups_due' => 0, 'visits_today' => 0, 'unresponded' => 0];
+            try {
+                $tSql = $tid > 1 ? " AND tenant_id = ?" : "";
+                $tp = [$userId];
+                if ($tid > 1) $tp[] = $tid;
+                $r = $db->prepare("SELECT COUNT(*) c FROM followups WHERE assigned_to = ? AND status = 'pending' AND followup_date <= CURDATE(){$tSql}");
+                $r->execute($tp);
+                $todayActions['followups_due'] = (int)($r->fetch(\PDO::FETCH_ASSOC)['c'] ?? 0);
+                $r = $db->prepare("SELECT COUNT(*) c FROM site_visits WHERE agent_id = ? AND visit_date = CURDATE() AND status <> 'cancelled'{$tSql}");
+                $r->execute($tp);
+                $todayActions['visits_today'] = (int)($r->fetch(\PDO::FETCH_ASSOC)['c'] ?? 0);
+                $lp = [$userId, $userId];
+                if ($tid > 1) $lp[] = $tid;
+                $r = $db->prepare("SELECT COUNT(*) c FROM leads WHERE (assigned_to = ? OR created_by = ?){$tSql} AND first_response_at IS NULL AND created_at < DATE_SUB(NOW(), INTERVAL 30 MINUTE)");
+                $r->execute($lp);
+                $todayActions['unresponded'] = (int)($r->fetch(\PDO::FETCH_ASSOC)['c'] ?? 0);
+            } catch (\Throwable $e) {
+                error_log('Associate dashboard today-actions: ' . $e->getMessage());
+            }
+
             $this->render('associate/dashboard', [
                 'page_title' => 'Associate Dashboard - APS Dream Home',
                 'page_description' => 'Welcome to your Associate Dashboard',
@@ -227,6 +248,7 @@ class DashboardController extends BaseController
                 'user_rank' => $userRank,
                 'user_points' => $userPoints,
                 'user_level' => $userLevel,
+                'today_actions' => $todayActions,
                 'referral_earnings_breakdown' => $referralEarningsBreakdown,
                 'attribution_stats' => $attributionStats,
             ], 'layouts/associate');
@@ -248,6 +270,7 @@ class DashboardController extends BaseController
                 'my_bookings' => 0,
                 'overdue_emis' => 0,
                 'emi_this_month' => 0.0,
+                'today_actions' => ['followups_due' => 0, 'visits_today' => 0, 'unresponded' => 0],
             ], 'layouts/associate');
         }
     }

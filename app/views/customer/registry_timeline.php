@@ -62,7 +62,7 @@ $docsChecklist = [
             <h2><i class="fas fa-stamp me-2"></i>Registry Journey</h2>
             <p>Plot <?= htmlspecialchars($booking['plot_number'] ?? '-') ?><?= !empty($booking['block']) ? ' (' . htmlspecialchars($booking['block']) . ')' : '' ?> &bull; <?= htmlspecialchars($booking['colony_name'] ?? '-') ?> &bull; Booking <?= htmlspecialchars($booking['booking_number'] ?? ('#' . $canonical_id)) ?></p>
         </div>
-        <a href="<?= BASE_URL ?>/customer/passbook" class="btn btn-sm btn-light"><i class="fas fa-arrow-left me-1"></i>Passbook</a>
+        <a href="<?= BASE_URL ?>/user/payment-history" class="btn btn-sm btn-light"><i class="fas fa-arrow-left me-1"></i>Passbook</a>
     </div>
     <div class="rg-progress-wrap"><div class="rg-progress-bar" style="width: <?= min(100, max(0, $progress_pct)) ?>%"></div></div>
     <div class="rg-progress-label"><?= $completed_count ?> of <?= count($stages) ?> stages completed (<?= $progress_pct ?>%)</div>
@@ -122,7 +122,7 @@ $docsChecklist = [
     <h5 class="justify-content-center"><i class="fas fa-award text-warning"></i>Possession Certificate</h5>
     <?php if ($can_download && $canonical_id > 0): ?>
         <p class="text-muted" style="font-size:.82rem;">Your plot handover is complete. Download the official certificate below.</p>
-        <a href="<?= BASE_URL ?>/customer/possession-certificate/<?= $canonical_id ?>" class="btn btn-success px-4"><i class="fas fa-file-download me-2"></i>Download Possession Certificate</a>
+        <a href="<?= BASE_URL ?>/user/possession-certificate/<?= $canonical_id ?>" class="btn btn-success px-4"><i class="fas fa-file-download me-2"></i>Download Possession Certificate</a>
     <?php else: ?>
         <p class="text-muted" style="font-size:.82rem;">The certificate unlocks automatically after Stage 7 (Mutation &amp; Possession Handover) is completed.</p>
         <button class="btn btn-secondary px-4" disabled><i class="fas fa-lock me-2"></i>Download Possession Certificate</button>

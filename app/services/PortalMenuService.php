@@ -130,6 +130,7 @@ class PortalMenuService
             $this->item('dashboard', 'Main', 'Dashboard', '/user/dashboard', 'fas fa-tachometer-alt'),
             $this->item('properties', 'Main', 'My Properties', '/user/properties', 'fas fa-building', $this->countTable('user_properties', 'user_id')),
             $this->item('inquiries', 'Main', 'My Inquiries', '/user/inquiries', 'fas fa-envelope-open-text', $this->countTable('inquiries', 'user_id')),
+            $this->item('contacts', 'Main', 'My Contacts', '/user/contacts', 'fas fa-address-book', $this->countTable('user_contacts', 'user_id')),
             $this->item('threads', 'Main', 'Message Threads', '/user/inquiries/threads', 'fas fa-comments'),
             $this->item('bookings', 'Main', 'My Bookings', '/user/bookings', 'fas fa-file-contract', $this->countTable('bookings', 'user_id')),
             $this->item('favorites', 'Main', 'Favorites', '/user/favorites', 'fas fa-heart', $this->countTable('favorites', 'user_id')),

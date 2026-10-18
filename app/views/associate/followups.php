@@ -161,6 +161,7 @@ $today = date('Y-m-d');
                                             <input type="hidden" name="status" value="completed">
                                             <button type="submit" class="btn btn-success btn-sm" title="<?= __('assoc_fu_mark_done', [], 'Mark Complete') ?>"><i class="fas fa-check"></i></button>
                                         </form>
+                                        <a href="<?= BASE_URL ?>/associate/followups/<?= $task['id'] ?>/ics" class="btn btn-outline-secondary btn-sm" title="<?= __('assoc_fu_cal', [], 'Add to calendar') ?>"><i class="fas fa-calendar-plus"></i></a>
                                     <?php endif; ?>
                                     <?php if (!empty($task['lead_id'])): ?>
                                     <a href="<?= BASE_URL ?>/associate/leads/<?= $task['lead_id'] ?>" class="btn btn-outline-primary btn-sm" title="<?= __('assoc_fu_view_lead', [], 'View Lead') ?>"><i class="fas fa-eye"></i></a>

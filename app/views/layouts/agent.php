@@ -208,5 +208,6 @@ $GLOBALS['_html_doc_started'] = true;
             }
         });
     </script>
+    <?php include __DIR__ . '/../components/smart_chatbot.php'; ?>
 </body>
 </html>

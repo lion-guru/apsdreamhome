@@ -24,7 +24,7 @@ $badge = ['pending' => 'warning', 'verified' => 'success', 'rejected' => 'danger
                 <h2 class="fw-bold mb-1"><i class="fas fa-globe me-2"></i>My NRI Desk</h2>
                 <p class="text-muted mb-0">FIRC + passport KYC for your cross-border investment (RBI/FEMA)</p>
             </div>
-            <a href="<?= BASE_URL ?>/customer/documents" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i> Documents</a>
+            <a href="<?= BASE_URL ?>/user/documents" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i> Documents</a>
         </div>
 
         <?php if ($flash_ok !== ''): ?><div class="alert alert-success"><?= $e($flash_ok) ?></div><?php endif; ?>
@@ -37,7 +37,7 @@ $badge = ['pending' => 'warning', 'verified' => 'success', 'rejected' => 'danger
                     <?php if (empty($bookings)): ?>
                         <p class="text-muted">No bookings on your account yet.</p>
                     <?php else: ?>
-                    <form method="POST" action="<?= BASE_URL ?>/customer/nri-desk/save" enctype="multipart/form-data">
+                    <form method="POST" action="<?= BASE_URL ?>/user/nri-desk/save" enctype="multipart/form-data">
                         <input type="hidden" name="csrf_token" value="<?= $e($_SESSION['csrf_token'] ?? '') ?>">
                         <div class="mb-2"><label class="form-label small">Booking *</label>
                             <select name="booking_id" class="form-select" required>

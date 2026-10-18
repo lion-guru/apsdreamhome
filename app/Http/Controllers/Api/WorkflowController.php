@@ -97,7 +97,10 @@ class WorkflowController extends BaseApiController
                 ], 400);
             }
 
-            $userId = $this->getCurrentUserId() ?? $this->getCurrentAssociateId() ?? 1;
+            $userId = $this->getCurrentUserId() ?? $this->getCurrentAssociateId() ?? null;
+            if (!$userId) {
+                return $this->jsonResponse(['success' => false, 'error' => 'Authentication required'], 401);
+            }
 
             $result = $this->workflowService->startWorkflow($code, $entityType, $entityId, $userId, $notes);
 
@@ -135,7 +138,10 @@ class WorkflowController extends BaseApiController
                 ], 400);
             }
 
-            $userId = $this->getCurrentUserId() ?? $this->getCurrentAssociateId() ?? 1;
+            $userId = $this->getCurrentUserId() ?? $this->getCurrentAssociateId() ?? null;
+            if (!$userId) {
+                return $this->jsonResponse(['success' => false, 'error' => 'Authentication required'], 401);
+            }
             $userType = $this->isAdmin() ? 'admin' : 'user';
 
             $result = $this->workflowService->processAction((int)$id, $action, $userId, $userType, $comments);
@@ -161,6 +167,11 @@ class WorkflowController extends BaseApiController
         }
 
         try {
+            $authId = $this->getCurrentUserId() ?? $this->getCurrentAssociateId() ?? null;
+            if (!$authId) {
+                return $this->jsonResponse(['success' => false, 'error' => 'Authentication required'], 401);
+            }
+
             $instance = $this->workflowService->getInstance((int)$id);
 
             if (!$instance) {

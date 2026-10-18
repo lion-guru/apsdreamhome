@@ -41,7 +41,9 @@ class RateLimiter
 
     public static function check(string $key = 'default', int $maxRequests = 60, int $windowSeconds = 60): bool
     {
-        if (isset($_GET['test_login']) || isset($_SERVER['HTTP_X_TESTING']) || (defined('APP_ENV') && APP_ENV === 'testing')) {
+        // S264: param bypass is dev-only (production throttle hole otherwise).
+        $__isProd = (defined('APP_ENV') && APP_ENV === 'production') || (getenv('APP_ENV') === 'production');
+        if (((isset($_GET['test_login']) || isset($_SERVER['HTTP_X_TESTING'])) && !$__isProd) || (defined('APP_ENV') && APP_ENV === 'testing')) {
             return true;
         }
 

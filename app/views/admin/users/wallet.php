@@ -102,6 +102,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
     <div class="modal-body">
         <form id="creditForm">
             <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+            <input type="hidden" name="idem_key" value="<?= bin2hex(random_bytes(8)) ?>">
             <div class="mb-3"><label class="form-label">Amount (₹)</label><input type="number" class="form-control" name="amount" required min="1" step="1"></div>
             <div class="mb-3"><label class="form-label">Reason</label><input type="text" class="form-control" name="reason" placeholder="e.g. Bonus, Referral reward, Manual correction"></div>
         </form>
@@ -115,6 +116,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
     <div class="modal-body">
         <form id="debitForm">
             <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+            <input type="hidden" name="idem_key" value="<?= bin2hex(random_bytes(8)) ?>">
             <div class="mb-3"><label class="form-label">Amount (₹)</label><input type="number" class="form-control" name="amount" required min="1" step="1"></div>
             <div class="mb-3"><label class="form-label">Reason</label><input type="text" class="form-control" name="reason" placeholder="e.g. Penalty, Adjustment, Correction"></div>
         </form>

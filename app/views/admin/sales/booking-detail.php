@@ -37,7 +37,11 @@ foreach ($schedule as $s) {
     $totalPaid += (float)($s['amount_paid']  ?? 0);
 }
 $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0;
+$plot_gata = $plot_gata ?? null;
 ?>
+<?php if (!empty($plot_gata) && !empty($plot_gata['gata_number'])): ?>
+<div class="alert alert-light border small py-2 mb-3"><i class="fas fa-mountain me-1"></i>Plot <strong><?= htmlspecialchars($plot_gata['plot_number'] ?? '') ?></strong> · Gata <strong><?= htmlspecialchars($plot_gata['gata_number']) ?></strong> · Kisan <?= htmlspecialchars($plot_gata['owner_name'] ?? '— darj nahi —') ?><?= !empty($plot_gata['owner_phone']) ? ' (' . htmlspecialchars($plot_gata['owner_phone']) . ')' : '' ?> · <a href="<?= htmlspecialchars($base ?? '') ?>/admin/land-plot-link">desk</a></div>
+<?php endif; ?>
 <div class="aps-cp-card mb-3">
     <div class="aps-cp-card-header d-flex justify-content-between align-items-center">
         <h5 class="m-0">

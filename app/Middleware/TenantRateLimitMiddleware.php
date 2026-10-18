@@ -26,8 +26,9 @@ class TenantRateLimitMiddleware
      */
     public static function check(): bool
     {
-        // Bypass during testing
-        if (isset($_GET['test_login']) || isset($_SERVER['HTTP_X_TESTING'])
+        // Bypass during testing. S264: param bypass is dev-only.
+        $__isProd = (defined('APP_ENV') && APP_ENV === 'production') || (getenv('APP_ENV') === 'production');
+        if (((isset($_GET['test_login']) || isset($_SERVER['HTTP_X_TESTING'])) && !$__isProd)
             || (defined('APP_ENV') && APP_ENV === 'testing')) {
             return true;
         }

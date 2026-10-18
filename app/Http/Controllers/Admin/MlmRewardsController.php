@@ -164,17 +164,37 @@ class MlmRewardsController extends AdminController
                     $reqRole = $roleRow['role'] ?? '';
                 } catch (\Throwable $e) { error_log('Withdrawal refund role lookup: ' . $e->getMessage()); }
                 if ($reqRole === 'customer') {
+                    $wb = $this->db->fetchOne("SELECT points_balance FROM wallet_points WHERE user_id = ? LIMIT 1", [$request['user_id']]);
+                    $balBefore = $wb ? (float)$wb['points_balance'] : 0.0;
                     $this->db->query(
                         "UPDATE wallet_points SET points_balance = points_balance + ?, total_used = GREATEST(total_used - ?, 0) WHERE user_id = ?" . $tenantSql,
                         array_merge([$request['amount'], $request['amount'], $request['user_id']], $tenantParams)
                     );
+                    $balAfter = $balBefore + (float)$request['amount'];
                 } else {
                     // Refund the user wallet - tenant-scoped
+                    $wb = $this->db->fetchOne("SELECT balance FROM user_wallets WHERE user_id = ? LIMIT 1", [$request['user_id']]);
+                    $balBefore = $wb ? (float)$wb['balance'] : 0.0;
                     $this->db->query(
                         "UPDATE user_wallets SET balance = balance + ?, updated_at = NOW() WHERE user_id = ? AND user_type = 'associate'" . $tenantSql,
                         array_merge([$request['amount'], $request['user_id']], $tenantParams)
                     );
+                    $balAfter = $balBefore + (float)$request['amount'];
                 }
+                // S264: the refund now writes its own ledger row (was: balance
+                // credited with no trail — deduct visible, return invisible).
+                $this->db->insert('wallet_transactions', [
+                    'user_id' => $request['user_id'],
+                    'transaction_type' => 'credit',
+                    'transaction_category' => 'adjustment',
+                    'amount' => $request['amount'],
+                    'balance_before' => $balBefore,
+                    'balance_after' => $balAfter,
+                    'description' => 'Withdrawal request #' . (int)$id . ' rejected — amount refunded',
+                    'reference_id' => (int)$id,
+                    'reference_type' => 'withdrawal_request',
+                    'tenant_id' => $tid,
+                ]);
             } else {
                 $update['remarks'] = $adminNotes;
             }

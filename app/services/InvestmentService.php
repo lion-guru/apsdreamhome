@@ -380,8 +380,17 @@ class InvestmentService
         try {
             $this->pdo->beginTransaction();
 
+            // S264: re-check under lock — two concurrent runs must not both pass
+            // the pre-txn 'pending' check and debit twice.
+            $lock = $this->pdo->prepare("SELECT status FROM investment_installments WHERE id = ? LIMIT 1 FOR UPDATE");
+            $lock->execute([$installmentId]);
+            if (($lock->fetch(PDO::FETCH_ASSOC)['status'] ?? '') !== 'pending') {
+                $this->pdo->rollBack();
+                return ['success' => false, 'error' => 'Installment already processed'];
+            }
+
             // Check wallet balance
-            $wallet = $this->pdo->prepare("SELECT points_balance FROM wallet_points WHERE user_id = ? LIMIT 1");
+            $wallet = $this->pdo->prepare("SELECT points_balance FROM wallet_points WHERE user_id = ? LIMIT 1 FOR UPDATE");
             $wallet->execute([$userId]);
             $walletRow = $wallet->fetch(PDO::FETCH_ASSOC);
             if (!$walletRow || (float)$walletRow['points_balance'] < $amount) {

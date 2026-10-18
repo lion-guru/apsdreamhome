@@ -3,16 +3,24 @@
 namespace App\Services\Voice;
 
 use App\Traits\ServiceTenantTrait;
+use App\Services\AI\VoiceProviderManager;
 
 class VoiceCallService
 {
     use ServiceTenantTrait;
 
-    protected $db;
+protected $db;
+    protected $voiceProvider;
 
     public function __construct()
     {
         $this->db = \App\Core\Database\Database::getInstance();
+        $this->voiceProvider = VoiceProviderManager::getInstance();
+    }
+
+    public function getVoiceProvider(): VoiceProviderManager
+    {
+        return $this->voiceProvider;
     }
 
     public function scheduleCall($leadId, $phone, $agentId, $scheduledDate, $scheduledTime = '10:00:00', $scriptTemplate = 'property_introduction', $priority = 'medium', $leadName = '')
@@ -118,32 +126,61 @@ class VoiceCallService
         $intro = $script['introduction_text'] ?? "I'm calling regarding your inquiry about " . ($schedule['property_interest'] ?? 'our properties') . ".";
         $closing = $script['closing_text'] ?? 'Thank you for your time. We will follow up with you soon.';
 
-        // Make the actual call via AsteriskService
-        $asteriskResult = null;
+        // Make the actual call via VoiceProviderManager (supports Exotel, Twilio, Plivo, Knowlarity)
+        $callResult = null;
         try {
-            $asterisk = new AsteriskService();
             $phone = $sessionData['phone'];
             $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
             if (strlen($cleanPhone) === 10) $cleanPhone = '91' . $cleanPhone;
 
-            $asteriskResult = $asterisk->makeCall($cleanPhone, $schedule['script_template'] ?? 'default', [
-                'variables' => [
-                    'SCHEDULE_ID' => (string)$scheduleId,
-                    'SESSION_ID' => (string)$sessionId,
-                    'LEAD_ID' => (string)($schedule['lead_id'] ?? ''),
-                    'LEAD_NAME' => $schedule['lead_name'] ?? '',
-                ]
+            $callResult = $this->voiceProvider->makeCall([
+                'to' => $cleanPhone,
+                'from' => '', // Will use default from config
+                'script_id' => $schedule['script_template'] ?? 'default',
+                'lead_id' => $schedule['lead_id'] ?? 0,
+                'campaign_id' => $schedule['campaign_id'] ?? 0,
             ]);
 
-            if ($asteriskResult['success']) {
+            if ($callResult['success']) {
                 $this->db->execute(
                     "UPDATE ai_call_sessions SET call_sid = ? WHERE id = ?" . $this->tenantSql(),
-                    [$asteriskResult['call_id'], $sessionId]
+                    [$callResult['call_sid'], $sessionId]
                 );
             }
         } catch (\Exception $e) {
-            error_log("VoiceCallService initiateCall Asterisk error: " . $e->getMessage());
+            error_log("VoiceCallService initiateCall VoiceProvider error: " . $e->getMessage());
         }
+
+        // Fallback to Asterisk if voice provider not configured
+        $asteriskResult = null;
+        if (empty($callResult) || !$callResult['success']) {
+            try {
+                $asterisk = new AsteriskService();
+                $phone = $sessionData['phone'];
+                $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
+                if (strlen($cleanPhone) === 10) $cleanPhone = '91' . $cleanPhone;
+
+                $asteriskResult = $asterisk->makeCall($cleanPhone, $schedule['script_template'] ?? 'default', [
+                    'variables' => [
+                        'SCHEDULE_ID' => (string)$scheduleId,
+                        'SESSION_ID' => (string)$sessionId,
+                        'LEAD_ID' => (string)($schedule['lead_id'] ?? ''),
+                        'LEAD_NAME' => $schedule['lead_name'] ?? '',
+                    ]
+                ]);
+
+                if ($asteriskResult['success']) {
+                    $this->db->execute(
+                        "UPDATE ai_call_sessions SET call_sid = ? WHERE id = ?" . $this->tenantSql(),
+                        [$asteriskResult['call_id'], $sessionId]
+                    );
+                }
+            } catch (\Exception $e) {
+                error_log("VoiceCallService initiateCall Asterisk error: " . $e->getMessage());
+            }
+        }
+
+        $finalResult = $callResult ?: $asteriskResult;
 
         return [
             'success' => true,
@@ -152,8 +189,8 @@ class VoiceCallService
             'lead_name' => $schedule['lead_name'] ?? 'Valued Customer',
             'lead_phone' => $sessionData['phone'],
             'agent_name' => $schedule['agent_name'] ?? 'AI Agent',
-            'call_id' => $asteriskResult['call_id'] ?? null,
-            'asterisk' => $asteriskResult ? ($asteriskResult['success'] ? 'connected' : 'failed') : 'unavailable',
+            'call_id' => $finalResult['call_sid'] ?? null,
+            'provider' => $finalResult['provider'] ?? ($asteriskResult ? 'asterisk' : 'none'),
             'script' => [
                 'greeting' => $greeting,
                 'introduction' => $intro,
@@ -161,9 +198,9 @@ class VoiceCallService
                 'closing' => $closing
             ],
             'duration_estimated' => 120,
-            'message' => $asteriskResult && $asteriskResult['success']
-                ? 'Call initiated via SIM card'
-                : 'Session created. ' . ($asteriskResult['message'] ?? 'Asterisk unavailable'),
+            'message' => $finalResult && $finalResult['success']
+                ? 'Call initiated via ' . ($finalResult['provider'] ?? 'cloud')
+                : 'Session created. ' . ($finalResult['message'] ?? 'No provider available'),
         ];
     }
 

@@ -410,6 +410,9 @@ function processWithdrawal() {
         const formData = new FormData();
         formData.append('bank_account_id', bankAccountId);
         formData.append('amount', amount);
+        // S264: server enforces CSRF on this endpoint — send the form token.
+        const csrfEl = document.querySelector('#withdrawalForm input[name="csrf_token"]');
+        if (csrfEl) { formData.append('csrf_token', csrfEl.value); }
         
         fetch('<?= $base ?>/wallet/withdrawal/process', {
             method: 'POST',

@@ -195,8 +195,10 @@ class SystemIntegration {
      * Setup rate limiting
      */
     private static function setupRateLimiting() {
-        // Bypass rate limiting during local development testing/auditing
-        if (isset($_GET['test_login']) || isset($_SERVER['HTTP_X_TESTING']) || (defined('APP_ENV') && APP_ENV === 'testing')) {
+        // Bypass rate limiting during local development testing/auditing.
+        // S264: param bypass is dev-only (production throttle hole otherwise).
+        $__isProd = (defined('APP_ENV') && APP_ENV === 'production') || (getenv('APP_ENV') === 'production');
+        if (((isset($_GET['test_login']) || isset($_SERVER['HTTP_X_TESTING'])) && !$__isProd) || (defined('APP_ENV') && APP_ENV === 'testing')) {
             return;
         }
 

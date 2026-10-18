@@ -67,11 +67,11 @@ class AgentOrchestrator
         }
 
         if ($unassigned > 0) {
-            $assigner = new LeadAssignmentService();
-            $result = $assigner->autoAssign(100);
+            $assigner = new LeadAssignmentService($this->db);
+            $result = $assigner->autoAssignBatch(100);
             if ($result['assigned'] > 0) {
                 $actions[] = $this->logTask('lead_gen', 'auto_assign',
-                    ['assigned' => $result['assigned'], 'handlers' => $result['handlers_used']], 'completed');
+                    ['assigned' => $result['assigned'], 'failed' => $result['failed'] ?? 0], 'completed');
             }
         }
 
@@ -292,9 +292,9 @@ class AgentOrchestrator
 
     private function logTask(string $agentType, string $taskName, array $data, string $status = 'completed'): array
     {
-        $tenantIns = $this->tenantInsertData();
-        $insCols = array_merge(['agent_type', 'task_name', 'task_data', 'status', 'created_at', 'completed_at'], array_keys($tenantIns));
-        $insVals = array_merge([$agentType, $taskName, json_encode($data), $status], array_values($tenantIns));
+        $tid = $this->tenantId();
+        $insCols = ['agent_type', 'task_name', 'task_data', 'status', 'tenant_id', 'created_at', 'completed_at'];
+        $insVals = [$agentType, $taskName, json_encode($data), $status, $tid, date('Y-m-d H:i:s'), date('Y-m-d H:i:s')];
         $colStr = implode(', ', $insCols);
         $placeholders = implode(', ', array_fill(0, count($insVals), '?'));
         $this->pdo->prepare("INSERT INTO agent_task_logs ($colStr) VALUES ($placeholders)")->execute($insVals);
@@ -303,9 +303,9 @@ class AgentOrchestrator
 
     private function createInsight(string $agentType, string $insightType, string $summary, array $data, string $priority = 'normal'): void
     {
-        $tenantIns = $this->tenantInsertData();
-        $insCols = array_merge(['agent_type', 'insight_type', 'title', 'summary', 'data', 'priority', 'created_at'], array_keys($tenantIns));
-        $insVals = array_merge([$agentType, $insightType, ucwords(str_replace('_', ' ', $insightType)), $summary, json_encode($data), $priority], array_values($tenantIns));
+        $tid = $this->tenantId();
+        $insCols = ['agent_type', 'insight_type', 'title', 'summary', 'data', 'priority', 'tenant_id', 'created_at'];
+        $insVals = [$agentType, $insightType, ucwords(str_replace('_', ' ', $insightType)), $summary, json_encode($data), $priority, $tid, date('Y-m-d H:i:s')];
         $colStr = implode(', ', $insCols);
         $placeholders = implode(', ', array_fill(0, count($insVals), '?'));
         $this->pdo->prepare("INSERT INTO agent_insights ($colStr) VALUES ($placeholders)")->execute($insVals);
@@ -313,9 +313,9 @@ class AgentOrchestrator
 
     private function createEscalation(string $agentType, string $type, string $description, array $context, string $status = 'pending'): void
     {
-        $tenantIns = $this->tenantInsertData();
-        $insCols = array_merge(['agent_type', 'escalation_type', 'title', 'description', 'context', 'status', 'created_at'], array_keys($tenantIns));
-        $insVals = array_merge([$agentType, $type, ucwords(str_replace('_', ' ', $type)), $description, json_encode($context), $status], array_values($tenantIns));
+        $tid = $this->tenantId();
+        $insCols = ['agent_type', 'escalation_type', 'title', 'description', 'context', 'status', 'tenant_id', 'created_at'];
+        $insVals = [$agentType, $type, ucwords(str_replace('_', ' ', $type)), $description, json_encode($context), $status, $tid, date('Y-m-d H:i:s')];
         $colStr = implode(', ', $insCols);
         $placeholders = implode(', ', array_fill(0, count($insVals), '?'));
         $this->pdo->prepare("INSERT INTO agent_escalations ($colStr) VALUES ($placeholders)")->execute($insVals);

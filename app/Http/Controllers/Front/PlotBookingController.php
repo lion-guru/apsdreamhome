@@ -162,8 +162,14 @@ class PlotBookingController extends PlotBaseController
                 return $this->redirect('/plots');
             }
 
-            // Determine final price (negotiated or total)
-            $dealPrice = floatval($_POST['negotiated_price'] ?? $plot['negotiated_price'] ?? $plot['total_price']);
+            // Determine final price SERVER-SIDE (S264: buyer POST must never set the price).
+            // The booking form echoes the price in a hidden field, but a crafted POST
+            // could otherwise hold any plot at any price — only the stored plot price
+            // governs. An admin-set negotiated_price applies only when approval-flagged.
+            $dealPrice = floatval($plot['total_price']);
+            if (!empty($plot['negotiated_price']) && (int)($plot['negotiated_price_approved'] ?? 0) === 1) {
+                $dealPrice = floatval($plot['negotiated_price']);
+            }
             if ($dealPrice <= 0) $dealPrice = floatval($plot['total_price']);
 
             // 2. Create booking (unique number via random_bytes)

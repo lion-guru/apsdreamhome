@@ -31,15 +31,16 @@ class DripCampaignController extends AdminController
     public function index()
     {
         $this->requireAdmin();
+        // S284: no queue processing on GET — page views must never mutate
+        // enrollments or log sends. Explicit runs go through process().
         $stats = $this->service ? $this->service->getStats() : [];
         $campaigns = $this->service ? $this->service->getAllCampaigns(20) : [];
-        $result = $this->service ? $this->service->processQueue(50) : [];
         return $this->render('admin.drip_campaigns.index', [
             'page_title' => 'Drip Campaigns',
             'page_heading' => 'Lead Nurturing Drip Campaigns',
             'stats' => $stats,
             'campaigns' => $campaigns,
-            'last_process' => $result
+            'last_process' => []
         ]);
     }
 

@@ -19,7 +19,7 @@ set_time_limit(30);
 $results = [];
 $allOk = true;
 
-// â”€â”€ 1. Database â”€â”€
+// —— 1. Database ——
 try {
     $db = Database::getInstance();
     $db->query("SELECT 1");
@@ -29,7 +29,7 @@ try {
     $allOk = false;
 }
 
-// â”€â”€ 2. Asterisk AMI â”€â”€
+// —— 2. Asterisk AMI ——
 try {
     $asterisk = new AsteriskService();
     $connected = $asterisk->ping();
@@ -47,7 +47,7 @@ try {
     $results['asterisk'] = ['status' => 'error', 'message' => $e->getMessage()];
 }
 
-// â”€â”€ 3. Ollama LLM â”€â”€
+// —— 3. Ollama LLM ——
 $ollamaUrl = getenv('OLLAMA_URL') ?: 'http://localhost:11434';
 $ch = curl_init("{$ollamaUrl}/api/tags");
 curl_setopt($ch, CURLOPT_TIMEOUT, 5);
@@ -69,7 +69,7 @@ if ($httpCode === 200) {
     $results['ollama'] = ['status' => 'warning', 'message' => 'Not reachable (run: docker start aps_ollama)'];
 }
 
-// â”€â”€ 4. Whisper STT â”€â”€
+// —— 4. Whisper STT ——
 $whisperUrl = getenv('WHISPER_URL') ?: 'http://localhost:8080';
 $ch = curl_init("{$whisperUrl}/health");
 curl_setopt($ch, CURLOPT_TIMEOUT, 5);
@@ -82,7 +82,7 @@ $results['whisper'] = $httpCode === 200
     ? ['status' => 'ok', 'message' => 'Connected']
     : ['status' => 'warning', 'message' => 'Not reachable (run: docker start aps_whisper)'];
 
-// â”€â”€ 5. WhatsApp Service â”€â”€
+// —— 5. WhatsApp Service ——
 try {
     $wa = new WhatsAppWebService();
     $status = $wa->isConnected();
@@ -99,7 +99,7 @@ try {
     $results['whatsapp'] = ['status' => 'warning', 'message' => 'Service not running'];
 }
 
-// â”€â”€ 6. Calling Schedule Stats â”€â”€
+// —— 6. Calling Schedule Stats ——
 try {
     $pending = $db->fetch("SELECT COUNT(*) as c FROM ai_calling_schedule WHERE status = 'pending'")['c'] ?? 0;
     $processing = $db->fetch("SELECT COUNT(*) as c FROM ai_calling_schedule WHERE status = 'processing'")['c'] ?? 0;
@@ -115,7 +115,7 @@ try {
     $results['schedule'] = ['status' => 'error', 'message' => $e->getMessage()];
 }
 
-// â”€â”€ 7. EMI Reminders â”€â”€
+// —— 7. EMI Reminders ——
 try {
     $overdue = $db->fetch("SELECT COUNT(*) as c FROM booking_payment_schedules WHERE status IN ('pending','overdue') AND due_date < CURDATE()")['c'] ?? 0;
     $upcoming3d = $db->fetch("SELECT COUNT(*) as c FROM booking_payment_schedules WHERE status IN ('pending','overdue') AND due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 3 DAY)")['c'] ?? 0;
@@ -129,14 +129,14 @@ try {
     $results['emi'] = ['status' => 'error', 'message' => $e->getMessage()];
 }
 
-// â”€â”€ Output â”€â”€
+// —— Output ——
 echo "=== APS Dream Home - Telephony Health Check ===\n";
 echo "Time: " . date('Y-m-d H:i:s') . "\n\n";
 
 foreach ($results as $service => $info) {
     $icon = match ($info['status']) {
-        'ok' => 'âœ“',
-        'warning' => 'âš ',
+        'ok' => '✓',
+        'warning' => '⚖',
         'error' => 'âœ—',
         default => '?',
     };

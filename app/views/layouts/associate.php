@@ -577,6 +577,18 @@ $GLOBALS['_html_doc_started'] = true;
 
         <!-- Content Wrapper -->
         <div class="content-wrapper">
+            <?php
+            // Global flash renderer (success/error were set-but-never-shown on most pages).
+            $flashOk = $_SESSION['flash_success'] ?? $_SESSION['success'] ?? null;
+            $flashErr = $_SESSION['flash_error'] ?? $_SESSION['error'] ?? null;
+            unset($_SESSION['flash_success'], $_SESSION['success'], $_SESSION['flash_error'], $_SESSION['error']);
+            ?>
+            <?php if ($flashOk): ?>
+                <div class="alert alert-success alert-dismissible fade show"><i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($flashOk) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+            <?php endif; ?>
+            <?php if ($flashErr): ?>
+                <div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($flashErr) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+            <?php endif; ?>
             <?php echo $content ?? ''; ?>
         </div>
     </main>
@@ -669,7 +681,7 @@ $GLOBALS['_html_doc_started'] = true;
         </div>
     </div>
     <!-- ═══ LEGAL COMPLIANCE: Associate Code of Conduct Consent Modal ═══ -->
-    <div id="legalConsentModal" class="modal fade" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="legalConsentModalLabel" aria-hidden="true">
+    <div id="legalConsentModal" class="modal fade" tabindex="-1" aria-labelledby="legalConsentModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content" style="border-radius: 16px; border: 2px solid #d4af37;">
                 <div class="modal-header" style="background: linear-gradient(135deg, #0a192f, #1e3a5f); color: #fff; border-radius: 14px 14px 0 0;">
@@ -742,20 +754,26 @@ $GLOBALS['_html_doc_started'] = true;
     (function() {
         var csrfToken = '<?= $_SESSION['csrf_token'] ?? '' ?>';
 
-        // Check consent status on page load
-        fetch('<?= BASE_URL ?>/associate/legal-consent/status', {
-            credentials: 'same-origin'
-        })
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-            if (!data.accepted) {
-                var modal = new bootstrap.Modal(document.getElementById('legalConsentModal'));
-                modal.show();
-            }
-        })
-        .catch(function(err) {
-            console.error('[LegalConsent] status check failed:', err);
-        });
+        // Check consent status ONCE per session (not every page load)
+        if (!sessionStorage.getItem('legalConsentChecked')) {
+            sessionStorage.setItem('legalConsentChecked', '1');
+            fetch('<?= BASE_URL ?>/associate/legal-consent/status', {
+                credentials: 'same-origin'
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (!data.accepted) {
+                    var modal = new bootstrap.Modal(document.getElementById('legalConsentModal'));
+                    modal.show();
+                }
+            })
+            .catch(function(err) {
+                console.error('[LegalConsent] status check failed:', err);
+            });
+        // If user dismisses modal without accepting (click outside / ESC), don't re-show this session
+            document.getElementById('legalConsentModal').addEventListener('hidden.bs.modal', function() {
+                sessionStorage.setItem('legalConsentChecked', '1');
+            });
 
         window.handleConsentAccept = function() {
             var checkbox = document.getElementById('legalConsentCheckbox');
@@ -827,5 +845,6 @@ $GLOBALS['_html_doc_started'] = true;
     <script defer src="<?= BASE_URL ?>/assets/js/customer-pages.js"></script>
     <!-- Dark Mode Toggle -->
     
+    <?php include __DIR__ . '/../components/smart_chatbot.php'; ?>
 </body>
 </html>

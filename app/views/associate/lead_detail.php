@@ -315,7 +315,20 @@ $today = date('Y-m-d');
                             <?php endforeach; ?>
                         </select>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label small text-muted"><?= __('assoc_lead_lost_reason', [], 'Lost reason (needed for Closed Lost)') ?></label>
+                        <select class="form-select form-select-sm" name="lost_reason">
+                            <option value="">—</option>
+                            <option value="price"><?= __('assoc_lead_lr_price', [], 'Price / budget') ?></option>
+                            <option value="location"><?= __('assoc_lead_lr_location', [], 'Location') ?></option>
+                            <option value="loan"><?= __('assoc_lead_lr_loan', [], 'Loan rejected') ?></option>
+                            <option value="competitor"><?= __('assoc_lead_lr_competitor', [], 'Went to competitor') ?></option>
+                            <option value="no_response"><?= __('assoc_lead_lr_noresp', [], 'No response') ?></option>
+                            <option value="other"><?= __('assoc_lead_lr_other', [], 'Other') ?></option>
+                        </select>
+                    </div>
                     <button type="submit" class="btn btn-primary w-100"><i class="fas fa-save me-1"></i> <?= __('assoc_lead_update_status_btn', [], 'Update Status') ?></button>
+                    <small class="text-muted d-block mt-2"><i class="fas fa-route me-1"></i><?= __('assoc_lead_next_hint', [], 'New → contact, Qualified → visit, Proposal → negotiate, Won → convert to booking.') ?></small>
                 </form>
             </div>
 
@@ -337,6 +350,29 @@ $today = date('Y-m-d');
                     <button class="btn btn-outline-purple" data-bs-toggle="modal" data-bs-target="#scheduleVisitModal">
                         <i class="fas fa-map-marker-alt me-2"></i><?= __('assoc_lead_schedule_site_visit', [], 'Schedule Site Visit') ?>
                     </button>
+                    <a href="<?= BASE_URL ?>/associate/book-plot?lead_id=<?= $lead['id'] ?>" class="btn btn-success">
+                        <i class="fas fa-file-signature me-2"></i><?= __('assoc_lead_convert_booking', [], 'Convert to Booking') ?>
+                    </a>
+                    <hr>
+                    <!-- Log Call -->
+                    <form method="POST" action="<?= BASE_URL ?>/associate/leads/<?= $lead['id'] ?>/call">
+                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+                        <h6 class="small text-muted"><?= __('assoc_lead_log_call', [], 'Log a call') ?></h6>
+                        <div class="input-group input-group-sm mb-2">
+                            <select class="form-select" name="outcome">
+                                <option value="connected"><?= __('assoc_call_connected', [], 'Connected') ?></option>
+                                <option value="interested"><?= __('assoc_call_interested', [], 'Interested') ?></option>
+                                <option value="callback"><?= __('assoc_call_callback', [], 'Callback later') ?></option>
+                                <option value="no_answer"><?= __('assoc_call_noanswer', [], 'No answer') ?></option>
+                                <option value="busy"><?= __('assoc_call_busy', [], 'Busy') ?></option>
+                            </select>
+                            <input type="number" class="form-control" name="duration" min="0" max="999" placeholder="<?= __('assoc_call_mins', [], 'min') ?>" style="max-width:80px">
+                        </div>
+                        <div class="input-group input-group-sm">
+                            <input type="text" class="form-control" name="call_notes" maxlength="255" placeholder="<?= __('assoc_call_notes_ph', [], 'Call notes (optional)') ?>">
+                            <button type="submit" class="btn btn-outline-primary"><i class="fas fa-phone"></i></button>
+                        </div>
+                    </form>
                     <hr>
                     <a href="<?= BASE_URL ?>/associate/leads" class="btn btn-outline-secondary">
                         <i class="fas fa-list me-2"></i><?= __('assoc_lead_all_leads', [], 'All Leads') ?>

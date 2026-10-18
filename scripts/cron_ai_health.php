@@ -83,7 +83,7 @@ try {
                 echo "  ✅ Auto-Dialer: Last run " . round($diff/60) . " min ago\n";
             }
         } else {
-            $alerts[] => ['type' => 'autodialer_cron_never', 'message' => 'Auto-Dialer cron has never run', 'priority' => 'high'];
+            $alerts[] = ['type' => 'autodialer_cron_never', 'message' => 'Auto-Dialer cron has never run', 'priority' => 'high'];
         }
     }
     
@@ -122,8 +122,8 @@ try {
     // Log alerts
     foreach ($alerts as $alert) {
         $db->execute(
-            "INSERT INTO ai_alerts (type, message, priority, created_at) VALUES (?, ?, ?, NOW())",
-            [$alert['type'], $alert['message'], $alert['priority']]
+            "INSERT INTO ai_alerts (alert_type, severity, message, tenant_id, created_at) VALUES (?, ?, ?, 1, NOW())",
+            [$alert['type'], $alert['priority'], $alert['message']]
         );
         echo "  🚨 {$alert['priority']}: {$alert['message']}\n";
     }
@@ -142,7 +142,7 @@ try {
     try {
         $db = Database::getInstance();
         $db->execute(
-            "INSERT INTO ai_alerts (type, message, priority, created_at) VALUES ('health_check_fatal', ?, 'critical', NOW())",
+            "INSERT INTO ai_alerts (alert_type, severity, message, tenant_id, created_at) VALUES ('health_check_fatal', 'critical', ?, 1, NOW())",
             [$errorMsg]
         );
     } catch (\Throwable $e2) {}

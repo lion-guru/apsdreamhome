@@ -108,7 +108,7 @@ $base = BASE_URL ?? '';
                         <h5 class="text-warning">Pending Acceptance</h5>
                         <p class="text-muted small">Verify OTP to accept this allotment letter</p>
                         <hr>
-                        <form method="POST" action="<?= BASE_URL ?>/customer/allotment/<?= (int)$allotment['id'] ?>/send-otp" id="sendOtpForm">
+                        <form method="POST" action="<?= BASE_URL ?>/user/allotment/<?= (int)$allotment['id'] ?>/send-otp" id="sendOtpForm">
                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                             <button type="submit" class="btn btn-primary w-100">
                                 <i class="fas fa-paper-plane me-1"></i> Send OTP
@@ -127,7 +127,7 @@ $base = BASE_URL ?? '';
                     <span><i class="fas fa-key me-2"></i>Enter OTP</span>
                 </div>
                 <div class="aps-cp-card-body">
-                    <form method="POST" action="<?= BASE_URL ?>/customer/allotment/<?= (int)$allotment['id'] ?>/accept" id="acceptForm">
+                    <form method="POST" action="<?= BASE_URL ?>/user/allotment/<?= (int)$allotment['id'] ?>/accept" id="acceptForm">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <div class="mb-3">
                             <label class="form-label">Enter 6-digit OTP</label>

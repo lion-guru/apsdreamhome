@@ -902,7 +902,8 @@ $GLOBALS['_html_doc_started'] = true;
         })();
         </script>
         <!-- Customer & Portal Component Library JS -->
-        <script defer src="<?= defined('BASE_URL') ? BASE_URL : '' ?>/assets/js/customer-pages.js"></script>
+        <?php include __DIR__ . '/../components/smart_chatbot.php'; ?>
+    <script defer src="<?= defined('BASE_URL') ? BASE_URL : '' ?>/assets/js/customer-pages.js"></script>
 </body>
 
 </html>

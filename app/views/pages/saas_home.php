@@ -1,193 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($page_title ?? 'APS CRM — All-in-One Business Platform') ?></title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css">
-    <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; color: #1a1a2e; background: #fff; line-height: 1.6; }
-
-        /* Hero */
-        .hero {
-            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-            color: #fff; padding: 100px 24px 80px; text-align: center; position: relative; overflow: hidden;
-        }
-        .hero::before {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: radial-gradient(circle at 30% 50%, rgba(102,126,234,0.15) 0%, transparent 50%),
-                        radial-gradient(circle at 70% 80%, rgba(118,75,162,0.1) 0%, transparent 40%);
-            animation: float 20s ease-in-out infinite;
-        }
-        @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
-        .hero-content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
-        .hero-badge {
-            display: inline-block; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 999px; padding: 6px 20px; font-size: 13px; font-weight: 500; letter-spacing: 0.5px;
-            margin-bottom: 24px; backdrop-filter: blur(4px);
-        }
-        .hero h1 { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; line-height: 1.15; margin-bottom: 20px; }
-        .hero h1 span { background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .hero p { font-size: 1.2rem; color: rgba(255,255,255,0.8); max-width: 600px; margin: 0 auto 36px; }
-        .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-        .btn {
-            display: inline-flex; align-items: center; gap: 8px; padding: 14px 32px; border-radius: 12px;
-            font-size: 16px; font-weight: 600; text-decoration: none; transition: all 0.3s ease; cursor: pointer; border: none;
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2); color: #fff;
-            box-shadow: 0 4px 20px rgba(102,126,234,0.4);
-        }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(102,126,234,0.5); }
-        .btn-outline { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,0.3); }
-        .btn-outline:hover { border-color: #fff; background: rgba(255,255,255,0.1); }
-
-        /* Stats Bar */
-        .stats-bar {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; max-width: 900px;
-            margin: -40px auto 0; padding: 0 24px; position: relative; z-index: 2;
-        }
-        .stat-card {
-            background: #fff; border-radius: 16px; padding: 24px; text-align: center;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-        }
-        .stat-card .number { font-size: 2rem; font-weight: 800; color: #667eea; }
-        .stat-card .label { font-size: 13px; color: #666; margin-top: 4px; }
-
-        /* Section Shared */
-        .section { padding: 80px 24px; }
-        .section-title { text-align: center; margin-bottom: 48px; }
-        .section-title h2 { font-size: clamp(1.8rem, 3vw, 2.5rem); font-weight: 800; margin-bottom: 12px; }
-        .section-title p { font-size: 1.1rem; color: #666; max-width: 600px; margin: 0 auto; }
-        .section-title .badge {
-            display: inline-block; background: linear-gradient(135deg, #667eea15, #764ba215);
-            color: #667eea; font-size: 13px; font-weight: 600; padding: 4px 14px;
-            border-radius: 999px; margin-bottom: 12px;
-        }
-
-        /* Features Grid */
-        .features-bg { background: #f8f9fc; }
-        .features-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px; max-width: 1100px; margin: 0 auto;
-        }
-        .feature-card {
-            background: #fff; border-radius: 16px; padding: 32px; border: 1px solid #eef0f5;
-            transition: all 0.3s ease;
-        }
-        .feature-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
-        .feature-icon {
-            width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center;
-            justify-content: center; font-size: 24px; margin-bottom: 20px;
-        }
-        .feature-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; }
-        .feature-card p { font-size: 0.95rem; color: #666; line-height: 1.6; }
-
-        /* Modules */
-        .modules-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px; max-width: 1100px; margin: 0 auto;
-        }
-        .module-card {
-            background: #fff; border-radius: 16px; padding: 28px; text-align: center;
-            border: 2px solid #f0f0f5; transition: all 0.3s ease; cursor: default;
-        }
-        .module-card:hover { border-color: #667eea; background: linear-gradient(135deg, #667eea08, #764ba208); }
-        .module-card i { font-size: 32px; color: #667eea; margin-bottom: 12px; }
-        .module-card h4 { font-weight: 700; margin-bottom: 6px; }
-        .module-card p { font-size: 0.85rem; color: #888; }
-
-        /* How It Works */
-        .steps-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 32px; max-width: 1000px; margin: 0 auto;
-        }
-        .step { text-align: center; }
-        .step-number {
-            width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2);
-            color: #fff; display: flex; align-items: center; justify-content: center;
-            font-size: 24px; font-weight: 800; margin: 0 auto 16px;
-        }
-        .step h4 { font-weight: 700; margin-bottom: 8px; }
-        .step p { font-size: 0.9rem; color: #666; }
-
-        /* Pricing */
-        .pricing-bg { background: #f8f9fc; }
-        .pricing-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 24px; max-width: 1100px; margin: 0 auto;
-        }
-        .price-card {
-            background: #fff; border-radius: 20px; padding: 36px; text-align: center;
-            border: 2px solid #f0f0f5; transition: all 0.3s ease; position: relative;
-        }
-        .price-card.popular { border-color: #667eea; transform: scale(1.05); }
-        .price-card.popular::before {
-            content: 'MOST POPULAR'; position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
-            background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; font-size: 11px;
-            font-weight: 700; padding: 4px 16px; border-radius: 999px; letter-spacing: 0.5px;
-        }
-        .price-card h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 4px; }
-        .price-card .desc { font-size: 0.85rem; color: #888; margin-bottom: 20px; }
-        .price-card .amount { font-size: 2.5rem; font-weight: 800; color: #1a1a2e; }
-        .price-card .amount span { font-size: 1rem; font-weight: 400; color: #888; }
-        .price-card .period { font-size: 0.85rem; color: #888; margin-bottom: 24px; }
-        .price-card ul { list-style: none; text-align: left; margin-bottom: 28px; }
-        .price-card li { padding: 8px 0; font-size: 0.9rem; color: #444; display: flex; align-items: center; gap: 10px; }
-        .price-card li i { color: #22c55e; font-size: 14px; }
-        .btn-full { width: 100%; justify-content: center; }
-
-        /* Testimonial */
-        .testimonial-section { background: linear-gradient(135deg, #0f0c29, #302b63); color: #fff; text-align: center; }
-        .testimonial-section h2 { font-size: 2rem; font-weight: 800; margin-bottom: 16px; }
-        .testimonial-section p { color: rgba(255,255,255,0.7); max-width: 600px; margin: 0 auto 40px; }
-        .testimonial-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px; max-width: 1000px; margin: 0 auto;
-        }
-        .testimonial-card {
-            background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 16px; padding: 28px; backdrop-filter: blur(4px);
-        }
-        .testimonial-card .stars { color: #fbbf24; margin-bottom: 12px; }
-        .testimonial-card .text { font-size: 0.95rem; color: rgba(255,255,255,0.85); margin-bottom: 16px; font-style: italic; }
-        .testimonial-card .author { font-weight: 600; }
-        .testimonial-card .role { font-size: 0.8rem; color: rgba(255,255,255,0.5); }
-
-        /* CTA */
-        .cta-section {
-            background: linear-gradient(135deg, #667eea, #764ba2); color: #fff;
-            text-align: center; padding: 80px 24px;
-        }
-        .cta-section h2 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; margin-bottom: 16px; }
-        .cta-section p { font-size: 1.15rem; opacity: 0.9; max-width: 600px; margin: 0 auto 32px; }
-        .btn-white { background: #fff; color: #667eea; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
-        .btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.2); }
-
-        /* Footer */
-        .footer { background: #0f0c29; color: rgba(255,255,255,0.6); padding: 48px 24px 24px; text-align: center; }
-        .footer a { color: rgba(255,255,255,0.8); text-decoration: none; }
-        .footer-links { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
-
-        @media (max-width: 768px) {
-            .stats-bar { grid-template-columns: repeat(2, 1fr); margin-top: -20px; }
-            .hero { padding: 60px 16px 50px; }
-        }
-    </style>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
-</head>
-<body>
-
+<?php
+$page_title = $page_title ?? 'APS CRM — All-in-One Business Platform';
+$page_description = $page_description ?? 'India\'s #1 Real Estate CRM Platform — CRM, ERP, Accounting, Legal, AI — everything you need to manage properties, teams, and customers in one powerful SaaS platform.';
+$current_page = 'saas_home';
+?>
 <!-- Hero -->
 <section class="hero">
     <div class="hero-content">
         <div class="hero-badge"><i class="fas fa-rocket"></i> India's #1 Real Estate CRM Platform</div>
         <h1>Run Your Entire Business on <span>One Platform</span></h1>
-        <p>CRM, ERP, Accounting, Legal, AI — everything you need to manage properties, teams, and customers in one powerful SaaS platform.</p>
-        <div class="hero-buttons">
+        <p>CRM, ERP, Accounting, Legal, AI — everything you need to manage properties, teams, and customers in one powerful SaaS platform.</        <div class="hero-buttons">
             <a href="/tenant-signup" class="btn btn-primary"><i class="fas fa-play"></i> Start Free Trial</a>
             <a href="/pricing" class="btn btn-outline"><i class="fas fa-tag"></i> View Pricing</a>
         </div>
@@ -230,8 +51,7 @@
     <div class="section-title">
         <div class="badge">GET STARTED</div>
         <h2>Up and Running in 5 Minutes</h2>
-        <p>No installation. No IT team needed. Sign up and start using immediately.</p>
-    </div>
+        <p>No installation. No IT team needed. Sign up and start using immediately.</    </div>
     <div class="steps-grid">
         <div class="step">
             <div class="step-number">1</div>
@@ -271,28 +91,23 @@
         <div class="feature-card">
             <div class="feature-icon"><i class="fas fa-brain"></i></div>
             <h3>AI-Powered</h3>
-            <p>Smart lead scoring, price prediction, auto-assignment, conversational chatbot, voice AI — all built-in, no extra cost.</p>
-        </div>
+            <p>Smart lead scoring, price prediction, auto-assignment, conversational chatbot, voice AI — all built-in, no extra cost.</        </div>
         <div class="feature-card">
             <div class="feature-icon"><i class="fas fa-puzzle-piece"></i></div>
             <h3>Modular Architecture</h3>
-            <p>Use CRM alone, or add ERP, Accounting, Legal, MLM — each module works independently or together seamlessly.</p>
-        </div>
+            <p>Use CRM alone, or add ERP, Accounting, Legal, MLM — each module works independently or together seamlessly.</        </div>
         <div class="feature-card">
             <div class="feature-icon"><i class="fas fa-palette"></i></div>
             <h3>White-Label Ready</h3>
-            <p>Your logo, your colors, your domain. Clients never see the APS brand. Full customization of sidebar, dashboard, and reports.</p>
-        </div>
+            <p>Your logo, your colors, your domain. Clients never see the APS brand. Full customization of sidebar, dashboard, and reports.</        </div>
         <div class="feature-card">
             <div class="feature-icon"><i class="fas fa-mobile-screen"></i></div>
             <h3>Mobile First</h3>
-            <p>Native Android app for field teams. Leads, properties, bookings, commissions — manage everything on the go.</p>
-        </div>
+            <p>Native Android app for field teams. Leads, properties, bookings, commissions — manage everything on the go.</        </div>
         <div class="feature-card">
             <div class="feature-icon"><i class="fas fa-headset"></i></div>
             <h3>24/7 Support</h3>
-            <p>Dedicated onboarding, phone support, video tutorials, and documentation. We're with you every step of the way.</p>
-        </div>
+            <p>Dedicated onboarding, phone support, video tutorials, and documentation. We're with you every step of the way.</        </div>
     </div>
 </section>
 
@@ -367,5 +182,173 @@
     <p>&copy; <?= date('Y') ?> APS CRM. All rights reserved. Built with <i class="fas fa-heart"></i> in India.</p>
 </footer>
 
-</body>
-</html>
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; color: #1a1a2e; background: #fff; line-height: 1.6; }
+
+    /* Hero */
+    .hero {
+        background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+        color: #fff; padding: 100px 24px 80px; text-align: center; position: relative; overflow: hidden;
+    }
+    .hero::before {
+        content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+        background: radial-gradient(circle at 30% 50%, rgba(102,126,234,0.15) 0%, transparent 50%),
+                    radial-gradient(circle at 70% 80%, rgba(118,75,162,0.1) 0%, transparent 40%);
+        animation: float 20s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+    .hero-content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
+    .hero-badge {
+        display: inline-block; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 999px; padding: 6px 20px; font-size: 13px; font-weight: 500; letter-spacing: 0.5px;
+        margin-bottom: 24px; backdrop-filter: blur(4px);
+    }
+    .hero h1 { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; line-height: 1.15; margin-bottom: 20px; }
+    .hero h1 span { background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { font-size: 1.2rem; color: rgba(255,255,255,0.8); max-width: 600px; margin: 0 auto 36px; }
+    .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .btn {
+        display: inline-flex; align-items: center; gap: 8px; padding: 14px 32px; border-radius: 12px;
+        font-size: 16px; font-weight: 600; text-decoration: none; transition: all 0.3s ease; cursor: pointer; border: none;
+    }
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea, #764ba2); color: #fff;
+        box-shadow: 0 4px 20px rgba(102,126,234,0.4);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(102,126,234,0.5); }
+    .btn-outline { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,0.3); }
+    .btn-outline:hover { border-color: #fff; background: rgba(255,255,255,0.1); }
+
+    /* Stats Bar */
+    .stats-bar {
+        display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; max-width: 900px;
+        margin: -40px auto 0; padding: 0 24px; position: relative; z-index: 2;
+    }
+    .stat-card {
+        background: #fff; border-radius: 16px; padding: 24px; text-align: center;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    }
+    .stat-card .number { font-size: 2rem; font-weight: 800; color: #667eea; }
+    .stat-card .label { font-size: 13px; color: #666; margin-top: 4px; }
+
+    /* Section Shared */
+    .section { padding: 80px 24px; }
+    .section-title { text-align: center; margin-bottom: 48px; }
+    .section-title h2 { font-size: clamp(1.8rem, 3vw, 2.5rem); font-weight: 800; margin-bottom: 12px; }
+    .section-title p { font-size: 1.1rem; color: #666; max-width: 600px; margin: 0 auto; }
+    .section-title .badge {
+        display: inline-block; background: linear-gradient(135deg, #667eea15, #764ba215);
+        color: #667eea; font-size: 13px; font-weight: 600; padding: 4px 14px;
+        border-radius: 999px; margin-bottom: 12px;
+    }
+
+    /* Features Grid */
+    .features-bg { background: #f8f9fc; }
+    .features-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px; max-width: 1100px; margin: 0 auto;
+    }
+    .feature-card {
+        background: #fff; border-radius: 16px; padding: 32px; border: 1px solid #eef0f5;
+        transition: all 0.3s ease;
+    }
+    .feature-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
+    .feature-icon {
+        width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center;
+        justify-content: center; font-size: 24px; margin-bottom: 20px;
+    }
+    .feature-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; }
+    .feature-card p { font-size: 0.95rem; color: #666; line-height: 1.6; }
+
+    /* Modules */
+    .modules-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px; max-width: 1100px; margin: 0 auto;
+    }
+    .module-card {
+        background: #fff; border-radius: 16px; padding: 28px; text-align: center;
+        border: 2px solid #f0f0f5; transition: all 0.3s ease; cursor: default;
+    }
+    .module-card:hover { border-color: #667eea; background: linear-gradient(135deg, #667eea08, #764ba208); }
+    .module-card i { font-size: 32px; color: #667eea; margin-bottom: 12px; }
+    .module-card h4 { font-weight: 700; margin-bottom: 6px; }
+    .module-card p { font-size: 0.85rem; color: #888; }
+
+    /* How It Works */
+    .steps-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 32px; max-width: 1000px; margin: 0 auto;
+    }
+    .step { text-align: center; }
+    .step-number {
+        width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff; display: flex; align-items: center; justify-content: center;
+        font-size: 24px; font-weight: 800; margin: 0 auto 16px;
+    }
+    .step h4 { font-weight: 700; margin-bottom: 8px; }
+    .step p { font-size: 0.9rem; color: #666; }
+
+    /* Pricing */
+    .pricing-bg { background: #f8f9fc; }
+    .pricing-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 24px; max-width: 1100px; margin: 0 auto;
+    }
+    .price-card {
+        background: #fff; border-radius: 20px; padding: 36px; text-align: center;
+        border: 2px solid #f0f0f5; transition: all 0.3s ease; position: relative;
+    }
+    .price-card.popular { border-color: #667eea; transform: scale(1.05); }
+    .price-card.popular::before {
+        content: 'MOST POPULAR'; position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+        background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; font-size: 11px;
+        font-weight: 700; padding: 4px 16px; border-radius: 999px; letter-spacing: 0.5px;
+    }
+    .price-card h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 4px; }
+    .price-card .desc { font-size: 0.85rem; color: #888; margin-bottom: 20px; }
+    .price-card .amount { font-size: 2.5rem; font-weight: 800; color: #1a1a2e; }
+    .price-card .amount span { font-size: 1rem; font-weight: 400; color: #888; }
+    .price-card .period { font-size: 0.85rem; color: #888; margin-bottom: 24px; }
+    .price-card ul { list-style: none; text-align: left; margin-bottom: 24px; }
+    .price-card li { padding: 8px 0; font-size: 0.9rem; color: #444; display: flex; align-items: center; gap: 10px; }
+    .price-card li i { color: #22c55e; font-size: 14px; }
+    .btn-full { width: 100%; justify-content: center; }
+
+    /* Testimonial */
+    .testimonial-section { background: linear-gradient(135deg, #0f0c29, #302b63); color: #fff; text-align: center; }
+    .testimonial-section h2 { font-size: 2rem; font-weight: 800; margin-bottom: 16px; }
+    .testimonial-section p { color: rgba(255,255,255,0.7); max-width: 600px; margin: 0 auto 40px; }
+    .testimonial-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px; max-width: 1000px; margin: 0 auto;
+    }
+    .testimonial-card {
+        background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 16px; padding: 28px; backdrop-filter: blur(4px);
+    }
+    .testimonial-card .stars { color: #fbbf24; margin-bottom: 12px; }
+    .testimonial-card .text { font-size: 0.95rem; color: rgba(255,255,255,0.85); margin-bottom: 16px; font-style: italic; }
+    .testimonial-card .author { font-weight: 600; }
+    .testimonial-card .role { font-size: 0.8rem; color: rgba(255,255,255,0.5); }
+
+    /* CTA */
+    .cta-section {
+        background: linear-gradient(135deg, #667eea, #764ba2); color: #fff;
+        text-align: center; padding: 80px 24px;
+    }
+    .cta-section h2 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; margin-bottom: 16px; }
+    .cta-section p { font-size: 1.15rem; opacity: 0.9; max-width: 600px; margin: 0 auto 32px; }
+    .btn-white { background: #fff; color: #667eea; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+    .btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.2); }
+
+    /* Footer */
+    .footer { background: #0f0c29; color: rgba(255,255,255,0.6); padding: 48px 24px 24px; text-align: center; }
+    .footer a { color: rgba(255,255,255,0.8); text-decoration: none; }
+    .footer-links { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+
+    @media (max-width: 768px) {
+        .stats-bar { grid-template-columns: repeat(2, 1fr); margin-top: -20px; }
+        .hero { padding: 60px 16px 50px; }
+    }
+</style>

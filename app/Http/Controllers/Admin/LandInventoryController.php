@@ -912,6 +912,10 @@ class LandInventoryController extends AdminController
     public function farmerDetail($farmerName, $village = '')
     {
         $this->requireAdmin();
+        // S272: path segments arrive undecoded (and the old links used urlencode,
+        // i.e. literal '+' for spaces) — normalize both spellings to real spaces.
+        $farmerName = str_replace('+', ' ', urldecode((string)$farmerName));
+        $village = str_replace('+', ' ', urldecode((string)$village));
         try {
             $sql = "
                 SELECT ll.*, ld.*
@@ -1009,7 +1013,7 @@ class LandInventoryController extends AdminController
             if (!empty($dealIds)) {
                 $placeholders = implode(',', array_fill(0, count($dealIds), '?'));
                 $paymentsStmt = $this->db->prepare("
-                    SELECT * FROM land_deal_payments WHERE deal_id IN ($placeholders) ORDER BY payment_date DESC
+                    SELECT * FROM land_deal_payments WHERE land_deal_id IN ($placeholders) ORDER BY payment_date DESC
                 ");
                 $paymentsStmt->execute($dealIds);
                 $payments = $paymentsStmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -1018,8 +1022,28 @@ class LandInventoryController extends AdminController
             // Group payments by deal
             $paymentsByDeal = [];
             foreach ($payments as $p) {
-                $paymentsByDeal[$p['deal_id']][] = $p;
+                $paymentsByDeal[$p['land_deal_id']][] = $p;
             }
+
+            // S272 reverse link: plots cut on this kisan's gatas — matched on the
+            // canonical land_parcels.owner_name (maintained from the Link Desk),
+            // parcel-id first, gata-text fallback. Name match is exact (no LIKE).
+            $farmerPlots = [];
+            try {
+                $pq = "SELECT p.id, p.plot_number, p.block, p.area_sqft, p.status, p.total_price,
+                              c.name AS colony_name, lp.khasra_no
+                       FROM plots p
+                       JOIN land_parcels lp ON (lp.id = p.land_parcel_id
+                           OR (p.land_parcel_id IS NULL AND lp.khasra_no = p.gata_number AND lp.colony_id = p.colony_id))
+                       LEFT JOIN colonies c ON c.id = p.colony_id
+                       WHERE lp.owner_name = ?" . ($village ? " AND lp.village = ?" : "") . "
+                       ORDER BY c.name, p.plot_number LIMIT 200";
+                $pp = [$farmerName];
+                if ($village) $pp[] = $village;
+                $pstmt = $this->db->prepare($pq);
+                $pstmt->execute($pp);
+                $farmerPlots = $pstmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            } catch (\Throwable $e) { error_log("LandInventoryController::farmerDetail plots: " . $e->getMessage()); }
 
             $this->render('admin/land-inventory/farmer-detail', [
                 'page_title'   => 'Farmer Detail — ' . htmlspecialchars($farmerName),
@@ -1029,6 +1053,7 @@ class LandInventoryController extends AdminController
                 'leads'        => $leads,
                 'deals'        => $deals,
                 'payments'     => $paymentsByDeal,
+                'farmer_plots' => $farmerPlots,
             ]);
         } catch (\Exception $e) {
             error_log("LandInventoryController::farmerDetail error: " . $e->getMessage());

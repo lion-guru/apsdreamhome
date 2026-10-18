@@ -13,7 +13,7 @@
 
             <div class="card aps-cp-card">
                 <div class="card-body aps-cp-card-body">
-                    <form method="POST" action="<?= BASE_URL ?>admin/plots/edit/<?= $plot['id'] ?? 0 ?>">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/plots/<?= $plot['id'] ?? 0 ?>/update">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <ul class="nav nav-tabs mb-3" id="plotTabs">
                             <li class="nav-item"><a class="nav-link active" href="#basic" data-bs-toggle="tab">Basic Info</a></li>
@@ -67,6 +67,24 @@
                                             <option value="east" <?= ($plot['facing'] ?? '') === 'east' ? 'selected' : '' ?>>East</option>
                                             <option value="west" <?= ($plot['facing'] ?? '') === 'west' ? 'selected' : '' ?>>West</option>
                                         </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Gata / Khasra <span class="text-muted">(zameen source)</span></label>
+                                        <select class="form-select" name="land_parcel_id">
+                                            <option value="">— Bina link ke —</option>
+                                            <?php foreach (($gata_parcels ?? []) as $gp): ?>
+                                                <option value="<?= (int)$gp['id'] ?>" <?= ((int)($plot['land_parcel_id'] ?? 0) === (int)$gp['id']) ? 'selected' : '' ?>>
+                                                    <?= htmlspecialchars(($gp['khasra_no'] ?? '') . ' — ' . ($gp['village'] ?? '')) ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                        <small class="text-muted">Current: <strong><?= htmlspecialchars($plot['gata_number'] ?? '—') ?></strong> · Kisan <a href="<?= BASE_URL ?>/admin/land-plot-link?colony_id=<?= (int)($plot['colony_id'] ?? 0) ?>" target="_blank">desk pe update karo</a></small>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Gata (free text, agar parcel me na ho)</label>
+                                        <input type="text" class="form-control" name="gata_number" value="<?= htmlspecialchars((empty($plot['land_parcel_id']) ? ($plot['gata_number'] ?? '') : '')) ?>" placeholder="e.g., Gata 1206">
                                     </div>
                                 </div>
                             </div>

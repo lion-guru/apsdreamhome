@@ -38,7 +38,7 @@
                         <select name="currency" id="vCurrency" class="form-select" onchange="vUpdateFx()">
                             <?php foreach ($currencies as $code => $c): ?>
                                 <option value="<?= $code ?>" data-rate="<?= $c['rate'] ?>" data-symbol="<?= $c['symbol'] ?>">
-                                    <?= $code ?> — <?= $c['name'] ?>
+                                    <?= htmlspecialchars($code) ?> — <?= htmlspecialchars($c['name'] ?? '') ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>

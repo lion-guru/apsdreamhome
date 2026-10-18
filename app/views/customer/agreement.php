@@ -32,7 +32,7 @@ $doc = $doc ?? [];
 <body>
     <div class="container py-5">
         <div class="no-print text-center mb-4">
-            <a href="<?php echo  BASE_URL ?>/customer/documents" class="btn btn-outline-primary">
+            <a href="<?php echo  BASE_URL ?>/user/documents" class="btn btn-outline-primary">
                 <i class="fas fa-arrow-left me-1"></i>Back to Documents
             </a>
             <button class="btn btn-primary ms-2 no-print" onclick="window.print()">

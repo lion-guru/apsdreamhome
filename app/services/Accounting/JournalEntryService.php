@@ -24,6 +24,7 @@ class JournalEntryService
     public function postJournalEntry(array $data): int
     {
         $tid = TenantContext::getId();
+        $userId = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 1;
 
         // Validate balanced entry
         $lines = $data['lines'] ?? [];
@@ -34,17 +35,35 @@ class JournalEntryService
             throw new Exception('Journal entry must balance: Debits (' . $totalDebit . ') != Credits (' . $totalCredit . ')');
         }
 
+        // Map reference_type to valid source_document enum
+        $refType = $data['reference_type'] ?? 'manual';
+        $sourceDocMap = [
+            'manual' => 'adjustment',
+            'system' => 'adjustment',
+            'adjustment' => 'adjustment',
+            'closing' => 'adjustment',
+            'invoice' => 'invoice',
+            'payment' => 'payment',
+            'expense' => 'expense',
+            'transfer' => 'transfer',
+            'opening' => 'opening',
+        ];
+        $sourceDocument = $sourceDocMap[$refType] ?? 'adjustment';
+
         $je = [
             'journal_number' => $data['journal_number'] ?? ('JE-' . date('YmdHis')),
             'entry_date'     => $data['entry_date'] ?? date('Y-m-d'),
             'narration'      => $data['narration'] ?? '',
-            'reference_type' => $data['reference_type'] ?? 'manual',
+            'reference_type' => $refType,
             'reference_id'   => $data['reference_id'] ?? null,
             'tenant_id'      => $tid,
+            'total_debit'    => $totalDebit,
+            'total_credit'   => $totalCredit,
+            'created_by'     => $userId,
         ];
         // Map to actual journal_entries schema
         $je['description']      = $je['narration'];
-        $je['source_document']  = $je['reference_type'];
+        $je['source_document']  = $sourceDocument;
         $je['source_id']        = $je['reference_id'];
         unset($je['narration'], $je['reference_type'], $je['reference_id']);
         $this->db->insert('journal_entries', $je);

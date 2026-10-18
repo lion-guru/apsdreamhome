@@ -87,6 +87,26 @@ $chainOrder = ['groq', 'openrouter', 'gemini'];
                             </div>
                         <?php endforeach; ?>
 
+                        <!-- Hugging Face (RAG Embeddings) -->
+                        <div class="mb-3 p-3 rounded-3" style="background:#f0f9ff;border-left:3px solid #0ea5e9;">
+                            <label class="form-label fw-semibold mb-1">
+                                <span class="badge bg-info me-1">RAG</span> Hugging Face API Key
+                            </label>
+                            <div class="small text-muted mb-2">Real 384-dim embeddings for RAG Knowledge Base (sentence-transformers/all-MiniLM-L6-v2). <a href="https://huggingface.co/settings/tokens" target="_blank">Get token →</a></div>
+                            <div class="input-group">
+                                <input type="password" class="form-control" name="hf_api_key" placeholder="<?= $hasKeys['hf'] ? 'Saved: ' . htmlspecialchars($masked['hf']) . ' — leave blank to keep' : 'hf_...' ?>" value="">
+                                <button type="button" class="btn btn-outline-secondary toggle-key" tabindex="-1"><i class="fas fa-eye"></i></button>
+                                <button type="button" class="btn btn-outline-primary test-btn" data-provider="hf"><i class="fas fa-vial me-1"></i>Test</button>
+                            </div>
+                            <div class="small mt-1 test-result" data-provider="hf"></div>
+                            <?php if ($hasKeys['hf']): ?>
+                                <div class="small mt-1 text-success"><i class="fas fa-check-circle me-1"></i>Token saved — RAG uses real 384-dim embeddings</div>
+                            <?php else: ?>
+                                <div class="small mt-1 text-warning"><i class="fas fa-exclamation-triangle me-1"></i>No HF token — RAG uses hash-placeholder (limited quality)</div>
+                            <?php endif; ?>
+                            <div class="small mt-1 text-muted">Stored server-side; only masked preview shown. Never shared with client.</div>
+                        </div>
+
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Gemini Model</label>

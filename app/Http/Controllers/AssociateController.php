@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\BaseController;
 use App\Traits\TenantAwareTrait;
 use App\Core\Middleware\TenantContext;
+use Exception;
 
 /**
  * AssociateController (Facade)
@@ -441,21 +442,36 @@ class AssociateController extends BaseController
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             // GET: render the booking form
-            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            // NOTE: wrapper (not raw PDO) — this method uses fetchAll/fetchRow/insert/update.
+            $db = \App\Core\Database\Database::getInstance();
             $tidSql = $tid > 1 ? ' AND tenant_id = ?' : '';
             $params = $tid > 1 ? [$tid] : [];
             $colonies = $db->fetchAll("SELECT * FROM colonies WHERE is_active = 1{$tidSql} ORDER BY name", $params);
             $plots = $db->fetchAll("SELECT p.*, c.name as colony_name FROM plots p JOIN colonies c ON p.colony_id = c.id WHERE p.is_active = 1{$tidSql} ORDER BY p.plot_number", $params);
+            // Convert-a-lead: prefill customer fields from an own-scope lead (?lead_id=).
+            $prefill = ['name' => '', 'phone' => '', 'email' => ''];
+            $leadId = (int)($_GET['lead_id'] ?? 0);
+            if ($leadId > 0) {
+                $lParams = [$leadId, $userId, $userId];
+                if ($tid > 1) $lParams[] = $tid;
+                $lr = $db->fetchOne("SELECT name, phone, email FROM leads WHERE id = ? AND (assigned_to = ? OR created_by = ?){$tidSql} LIMIT 1", $lParams);
+                if ($lr) {
+                    $prefill = ['name' => $lr['name'] ?? '', 'phone' => $lr['phone'] ?? '', 'email' => $lr['email'] ?? ''];
+                }
+            }
             $this->render('associate/book_plot', [
                 'page_title' => 'Book Plot - Associate Portal',
                 'colonies' => $colonies,
                 'plots' => $plots,
+                'prefill' => $prefill,
+                'prefill_lead_id' => $leadId,
             ], 'layouts/associate');
             return;
         }
 
         try {
-            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            // NOTE: wrapper (not raw PDO) — fetchRow/insert/update/beginTransaction live here.
+            $db = \App\Core\Database\Database::getInstance();
 
             // Validate CSRF
             $csrfToken = $_POST['csrf_token'] ?? '';
@@ -551,6 +567,17 @@ class AssociateController extends BaseController
             // Generate booking number
             $bookingNumber = 'BK-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -6));
 
+            // Convert-a-lead: link booking to the own-scope lead (?lead_id= prefill).
+            // Validated, never trusted blindly; invalid/missing → plain booking.
+            $convLeadId = (int)($_POST['lead_id'] ?? 0);
+            $convLead = null;
+            if ($convLeadId > 0) {
+                $cParams = [$convLeadId, $userId, $userId];
+                if ($tid > 1) $cParams[] = $tid;
+                $convLead = $db->fetch("SELECT id, status FROM leads WHERE id = ? AND (assigned_to = ? OR created_by = ?)" . ($tid > 1 ? ' AND tenant_id = ?' : '') . " LIMIT 1", $cParams);
+                if (!$convLead) $convLeadId = 0;
+            }
+
             $db->beginTransaction();
             try {
                 // Insert into plot_bookings
@@ -570,14 +597,33 @@ class AssociateController extends BaseController
                     'status' => 'pending',
                     'approval_status' => 'pending',
                     'associate_id' => $userId,
-                    'channel' => 'associate_booking',
+                    'channel' => 'associate',
+                    'lead_id' => ($convLeadId > 0 ? $convLeadId : null),
                     'notes' => 'Master Deed: ' . ($masterDeedAcceptedStr ? 'Accepted' : 'N/A') . '. Deed file: ' . ($masterDeedPath ?: 'N/A') . '. Terms accepted. Aadhar: ' . $aadharNumber . ' | PAN: ' . $panNumber . ' | ' . $notes,
                     'created_by' => $userId,
                     'created_at' => date('Y-m-d H:i:s'),
                 ]);
 
                 // Update plot status to booked
-                $db->update('plots', ['status' => 'booked', 'updated_at' => date('Y-m-d H:i:s')], "id = ?{$tidSql}", array_merge([$plotId], $tid > 1 ? [$tid] : []));
+                // NOTE: Database::update() builds NAMED set-placeholders — the
+                // WHERE must be named too (positional ? + named mix = HY093).
+                $plotWhere = "id = :wid" . ($tid > 1 ? " AND tenant_id = :wtid" : "");
+                $plotWhereParams = ['wid' => $plotId] + ($tid > 1 ? ['wtid' => $tid] : []);
+                $db->update('plots', ['status' => 'booked', 'updated_at' => date('Y-m-d H:i:s')], $plotWhere, $plotWhereParams);
+
+                // Converted lead → Won (same txn: booking + status move together or not at all).
+                if ($convLeadId > 0 && $convLead) {
+                    $db->execute("UPDATE leads SET status = 'closed_won', updated_at = NOW() WHERE id = ?", [$convLeadId]);
+                    $db->insert('lead_activities', [
+                        'lead_id' => $convLeadId,
+                        'activity_type' => 'status_change',
+                        'description' => 'Converted to booking',
+                        'old_value' => $convLead['status'] ?? '',
+                        'new_value' => 'closed_won',
+                        'created_by' => $userId,
+                        'tenant_id' => $tid,
+                    ]);
+                }
 
                 $db->commit();
 

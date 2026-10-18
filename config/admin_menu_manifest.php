@@ -6179,6 +6179,102 @@ return array (
         'delete' => 0,
       ),
     ),
+  '/admin/chart-of-accounts' =>
+  array (
+    'name' => 'Chart of Accounts',
+    'icon' => 'fas fa-sitemap',
+    'section' => 'finance',
+    'parent_url' => NULL,
+    'order' => 5,
+    'perm' => 'financial.view',
+    'roles' =>
+    array (
+      'admin' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'ceo' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'coo' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_director' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_manager' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'senior_accountant' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chartered_accountant' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'accountant' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'franchise_owner' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
   ),
   '/admin/telecaller' => 
   array (
@@ -6231,6 +6327,102 @@ return array (
         'create' => 0,
         'edit' => 1,
         'delete' => 0,
+  '/admin/journal-entries' =>
+  array (
+    'name' => 'Journal Entries',
+    'icon' => 'fas fa-book',
+    'section' => 'finance',
+    'parent_url' => NULL,
+    'order' => 6,
+    'perm' => 'financial.view',
+    'roles' =>
+    array (
+      'admin' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'ceo' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'coo' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_director' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_manager' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'senior_accountant' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chartered_accountant' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'accountant' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'franchise_owner' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
       ),
     ),
   ),

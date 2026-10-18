@@ -164,6 +164,15 @@ class ForeclosureService
             return ['success' => false, 'error' => 'Amount mismatch. Expected: ' . $foreclosure['final_amount']];
         }
 
+        // S264: idempotency — a completed foreclosure must never pay twice.
+        // (Re-running re-inserted booking_payments AND re-credited the bonus.)
+        try {
+            $done = $this->db->fetchOne("SELECT id FROM plot_bookings WHERE id = ? AND status = 'completed' LIMIT 1", [$bookingId]);
+        } catch (\Throwable $e) { $done = null; }
+        if ($done) {
+            return ['success' => true, 'message' => 'Foreclosure already completed (duplicate ignored)'];
+        }
+
         try {
             $this->db->beginTransaction();
 
@@ -218,9 +227,12 @@ class ForeclosureService
             // Credit wallet points for early closure bonus
             $points = round($rebateAmount * 0.1); // 10% of rebate as wallet points
             if ($points > 0) {
+                // S264: NO referenceId — WalletService maps it to related_user_id
+                // (FK to users), so a booking id 1452'd the whole credit and the
+                // bonus silently never paid. Plain description, no relation.
                 $wallet = new \App\Services\WalletService();
-                $wallet->credit($customerId, $points, 'referral', 
-                    "Early closure bonus for foreclosure", $bookingId);
+                $wallet->credit($customerId, $points, 'referral',
+                    "Early closure bonus for foreclosure of booking #{$bookingId}");
             }
         } catch (\Throwable $e) {
             error_log('ForeclosureService::creditForeclosurePoints: ' . $e->getMessage());

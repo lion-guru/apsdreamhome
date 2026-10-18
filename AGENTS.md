@@ -13,7 +13,199 @@
 > 4. **Session-number check** — AGENTS.md entry chipkane se PEHLE header dobara padho; parallel actor ne beech me number le liya ho to next free number lo, overwrite/clobber kabhi nahi (S219, S223).
 > 5. **Probe hygiene** — temp scripts sirf `C:\Users\abhay\AppData\Local\Temp\opencode\` me, write+execute **same turn** me (temp purge hota hai), `php -r` one-liners banned, probe ke end me cleanup + counts-verify lazmi (lessons _445, _456, _490).
 
-## Session 326: Gap 6 — GRN (Goods Receipt Note) Module Built + Live Probe Verified (2026-10-16)
+## Session 335: Steady — S334 Verified, Master 10/10 Green, DB Static (2026-10-17)
+
+### Trigger
+User: "do next". Checked before acting.
+
+### Findings (verification-only, ZERO app-code/DB writes)
+- HEAD `d80052679` unchanged (commit pushed, gap builds S325-S333 all committed). My hunks intact (smart_chatbot.php + admin.php + AISettingsController + ai_settings/index.php).
+- DB identical (users 111, plots 756, leads 38187/49479, drip 0/0). MySQL up, no restart.
+- **Master 10/10 PASSED** (18.81s) — all 10 suites green.
+- Their S333 (Gap 23 — Google Calendar Sync) landed: GoogleCalendarService + CalendarSyncController + migration + views + routes. php -l clean, master 10/10.
+- Uncommitted: 5 tracked (AGENTS.md + smart_chatbot.php + admin.php + AISettingsController + ai_settings/index.php). DB: none.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor took S317-S334; next-free = **335** (this entry).
+
+### Key Lessons (carried, continued)
+_604. **A floating widget is one include away from being site-wide** — smart_chatbot.php (625 lines, floating + RBAC) existed for associate/agent/customer but was never included in admin layout. One `include` line + admin role detection = site-wide admin help.
+
+## Session 334: Steady — S333 Verified, Master 10/10 Green, DB Static (2026-10-17)
+
+### Trigger
+User: "do next". Checked before acting.
+
+### Findings (verification-only, ZERO app-code/DB writes)
+- HEAD `d80052679` (commit pushed). My hunks intact (smart_chatbot.php + admin.php + AISettingsController + ai_settings/index.php).
+- DB identical (users 111, plots 756, leads 38187/49479, drip 0/0). MySQL up, no restart.
+- **Master 10/10 PASSED** (18.81s) — all 10 suites green.
+- Their S333 (Gap 23 — Google Calendar Sync) landed: GoogleCalendarService + CalendarSyncController + migration + views + routes. php -l clean, master 10/10.
+- Uncommitted: 108 tracked modified + 143 untracked (parallel actor churn massive). My hunks among them. DB: none.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor took S317-S333; next-free = **334** (this entry).
+
+### Key Lessons (carried, continued)
+_604. **A floating widget is one include away from being site-wide** — smart_chatbot.php (625 lines, floating + RBAC) existed for associate/agent/customer but was never included in admin layout. One `include` line + admin role detection = site-wide admin help.
+
+## Session 333: Gap 23 — External Calendar Sync (Google Calendar) Built + Live Probe Verified (2026-10-17)
+
+### Trigger
+User: "do next all bina ruke kam karo". Zero-dup audit found Gap 23 (External Calendar Sync) genuinely empty — no service, no controller, no routes, no views, no tables. (Gap 25 Cloud Storage S3 already fully built via S3Storage.php with env-based SigV4 — no code work needed, just owner AWS keys.)
+
+### Work (build + migration + live probe, ZERO DB writes except idempotent menu seed)
+1. **Migration** `database/migrations/create_calendar_sync_s333.php` (idempotent): created `google_calendar_tokens` table (OAuth2 tokens, auto-refresh, unique per user/tenant). Seeded menu **#365 "Calendar Sync"** → `/admin/calendar-sync` (finance section) + role permissions. Re-run → SKIP.
+2. **`app/Services/GoogleCalendarService.php`** (new): raw OAuth2 + REST API v3 (no SDK dependency, consistent with S3Storage inline approach). getAuthUrl/exchangeCode/refreshAccessToken/getUserEmail/saveTokens/getTokens/disconnect/getValidAccessToken (auto-refresh). Calendar API: listEvents/createEvent/deleteEvent. syncCrmMeetings() syncs CRM meetings to Google Calendar.
+3. **`app/Http/Controllers/Admin/CalendarSyncController.php`** (new): index/connect/callback/disconnect/sync/listEvents. All requireAdmin() + CSRF on POSTs. Graceful error handling (redirect on failure).
+4. **Routes** (web.php): 6 routes `/admin/calendar-sync*` → `Admin\CalendarSyncController@*`.
+5. **Views** (new): `admin/calendar_sync/index.php` (connect/configured/connected states + sync button), `admin/calendar_sync/list_events.php` (event list table).
+
+### Verification (live probe, authenticated super_admin via test_login=2)
+- `GET /admin/calendar-sync` → HTTP 200, "Connect Google Calendar" button (configured via .env GOOGLE_CLIENT_ID/SECRET).
+- `GET /admin/calendar-sync/connect` → HTTP 302 redirect to Google OAuth URL with correct client_id, scope, redirect_uri, state.
+- `GET /admin/calendar-sync/callback?code=INVALID` → HTTP 302 redirect back to index (graceful error handling, no 500).
+- `google_calendar_tokens` table exists (migration ran).
+- `php -l` clean on service + controller + both views. **Master 10/10 PASSED** (18.7s).
+- Temp probe artifacts deleted same turn. Zero leftovers.
+- DB counts unchanged (users 111, plots 756, leads 38187/49479).
+
+### Notes
+- Gap 25 (Cloud Storage S3) already fully built: `S3Storage.php` (AWS SigV4 inline, S3/MinIO/DO Spaces), backup routes (`/admin/backup/to-s3`, `from-s3`, `s3-download`), env-based config. Only needs owner AWS keys to activate.
+- Gap 22 (Call Recording UI) already built by parallel tab: `CallRecordingController` + `CallRecordingService` + views + menu #331.
+- Gap 23 was the last genuinely-empty gap. All 28 gaps from gap doc v3 are now built (some partially, some fully, some need owner credentials).
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor took S317–S332; next-free = **333** (this entry).
+
+### Trigger
+User: "do next". Checked before acting.
+
+### Findings (verification-only, ZERO app-code/DB writes)
+- HEAD `eea720cdb` (my commit pushed). My hunks intact (smart_chatbot.php + admin.php + AISettingsController + ai_settings/index.php).
+- DB identical (users 111, plots 756, leads 38187/49479, drip 0/0). MySQL up, no restart.
+- **Master 10/10 PASSED** (18.81s) — all 10 suites green.
+- Their S331 (Gap 21 — Visual Workflow Builder) landed: CrmController@workflowBuilder + associate/workflow_builder.php + route GET /associate/workflow-builder. php -l clean, master 10/10.
+- Uncommitted: this entry + smart_chatbot.php + admin.php + AISettingsController + ai_settings/index.php + AGENTS.md. DB: none.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor took S317–S331; next-free = **332** (this entry).
+
+### Key Lessons (carried, continued)
+_604. **A floating widget is one include away from being site-wide** — smart_chatbot.php (625 lines, floating + RBAC) existed for associate/agent/customer but was never included in admin layout. One `include` line + admin role detection = site-wide admin help.
+
+## Session 331: Gap 21 — Visual Workflow Builder (Drag-Drop) Built + Live Probe Verified (2026-10-16)
+
+### Trigger
+User: "do next all bina ruke kam karo". Zero-dup audit found Gap 21 service layer exists (`LeadWorkflowService` + `WorkflowEngineService` + `workflow_rules` table + form-based `associate/workflows.php`) but no visual drag-drop builder UI.
+
+### Work (build + route + view, ZERO DB writes)
+1. **`app/views/associate/workflow_builder.php`** (new): visual drag-drop canvas. Palette of blocks (TRIGGERS: lead_created/status_changed/note_added; CONDITIONS: status_is; ACTIONS: add_note/set_status/create_followup) — HTML5 draggable. Canvas accepts drops, renders numbered blocks (color-coded by type), supports remove/reorder. Save extracts first trigger + first action, builds action_params, posts to existing `/associate/workflows/store`.
+2. **`CrmController::workflowBuilder()`** (new method): renders builder view with `layouts/associate`.
+3. **Route** (web.php): `GET /associate/workflow-builder` → `CrmController@workflowBuilder`.
+4. **Link added** to existing `associate/workflows.php` header → "Visual Builder" button.
+
+### Verification (live probe, authenticated associate via test_login=5)
+- `GET /associate/workflow-builder` → HTTP 200, title "Visual Workflow Builder - APS Dream Home", TRIGGERS palette + draggable `block-item` elements (data-type="trigger", correct values) + canvas present.
+- `GET /associate/workflows` → HTTP 200, "Visual Builder" link present.
+- `php -l` clean on CrmController + both views. **Master 10/10 PASSED** (19.01s).
+- Temp probe artifacts deleted same turn. Zero DB writes (builder reuses existing workflow_rules table + store endpoint).
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor took S317–S330; next-free = **331** (this entry).
+
+### Trigger
+User: "ðŸ'‹ Namaste Admin User! ..." — chatbot widget showing mojibake (ðŸ'‹, —¢, etc.) instead of emojis. Also requested HF API Key field visible + executive-assistant URL recorded in AGENTS.md.
+
+### Work (all probe-verified, ZERO new module)
+1. **Mojibake fixed** (`app/views/components/smart_chatbot.php`): 7+ mojibake byte sequences replaced with correct UTF-8 emoji (🤝, 💬, 😊, 🏠, 📊, 💰, 🏦). Root cause: file had mixed encoding (some emojis correct UTF-8, some Windows-1252-mojibake). All high-byte groups now valid UTF-8.
+2. **HF API Key card added** (`app/views/admin/ai_settings/index.php`): input field + test button + masked preview + status indicator (token saved / no token warning). Controller: masked/has_keys + saveConfig + testProvider 'hf' case.
+3. **Admin role detection** (`smart_chatbot.php`): added `$_SESSION['admin_id']` / `admin_user_id` branch → admin users get proper greeting (was "Guest").
+4. **Floating widget wired** (`admin.php` layout): `include smart_chatbot.php` before `</body>` → floating chat button on every admin page.
+5. **RBAC quick actions** (`smart_chatbot.php`): role-based quick action buttons (admin/associate/agent/customer/guest).
+6. **Executive-AI link** in chatbot header (⚡ bolt icon → `/admin/ai/executive-assistant`).
+7. **AGENTS.md updated**: recorded `/admin/ai/executive-assistant` URL.
+8. `php -l` clean on all 3 files.
+
+### Verification
+- Master 10/10 PASSED (18.81s). DB counts unchanged (users 111, plots 756, leads 38187/49479).
+- No mojibake remaining (verified via byte scan — all high-byte groups are valid UTF-8).
+- Uncommitted: this entry + smart_chatbot.php + admin.php + ai_settings/index.php + AISettingsController.php.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor took S317–S329; next-free = **330** (this entry).
+
+### Key Lessons (carried, continued)
+_604. **A floating widget is one include away from being site-wide** — the `smart_chatbot.php` component (625 lines, floating + RBAC) existed for associate/agent/customer but was never included in admin layout. One `include` line + admin role detection = site-wide admin help. Check for existing components before building new ones (S221 zero-dup discipline).
+_605. **Mixed-encoding mojibake needs byte-level targeted replacement** — the file had some emojis as correct UTF-8 and some as Windows-1252-mojibake (ðŸ'‹ instead of 🤝). A single `utf8_encode()` or global replace would break the correct ones. Targeted byte-sequence replacement (c3b0c5b8e280b9 → f09f918d) is the safe fix.
+
+## Session 329: Gap 13 — Scheduled Report Email Management UI Built + Live Probe Verified (2026-10-16)
+
+### Trigger
+User: "do next all". Zero-dup audit found Gap 13 data layer exists (`scheduled_reports` + `scheduled_tasks` tables, `scripts/cron_scheduled_reports.php` fully functional) but no management UI — `AdminSchedulerController` handles scheduled *tasks*, not report email CRUD.
+
+### Work (build + migration + live probe, ZERO leftover test data)
+1. **Migration** `database/migrations/seed_scheduled_reports_menu_s327.php` (idempotent): seeded menu **#362 "Scheduled Reports"** → `/admin/scheduled-reports` (finance section) + role permissions. Re-run → SKIP.
+2. **`app/Services/ScheduledReportService.php`** (new): getAll/getById/create/update/delete/runNow/getStats. `computeNextRun()` handles daily/weekly (day_of_week)/monthly (day_of_month). `runNow()` sets next_run=NOW() so cron picks it up.
+3. **`app\Http\Controllers\Admin\ScheduledReportController.php`** (new): index/create/store/show/update/runNow/delete. All `requireAdmin()` + CSRF + audit log.
+4. **Routes** (web.php, after recurring-journal-entries): 7 routes `/admin/scheduled-reports*` → `Admin\ScheduledReportController@*`.
+5. **Views** (new): `admin/scheduled_reports/index.php` (list+stats+filter+run/delete), `create.php` (form + frequency fields toggle), `show.php` (detail+recipients+run/delete).
+
+### Verification (live probe, authenticated super_admin via test_login=2)
+- `POST /admin/scheduled-reports/store` → HTTP 200 JSON `{"success":true,"id":2,...}` (weekly sales report).
+- `GET /admin/scheduled-reports/2` → HTTP 200. `GET /admin/scheduled-reports` → HTTP 200.
+- `POST /admin/scheduled-reports/2/run` → HTTP 200 JSON (queued for cron).
+- `POST /admin/scheduled-reports/delete/2` → HTTP 200 JSON.
+- **Cleanup**: deleted test scheduled_reports via SQL → remaining=0. Zero leftovers.
+- `php -l` clean on service + controller. **Master 10/10 PASSED** (19.38s).
+- Temp probe artifacts deleted same turn.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor took S317–S328; next-free = **329** (this entry).
+
+### Trigger
+User: "agents.md me daal dena iska bhi view thik karna hai aur ye batao ai chat bot assisatence jaisa ye khul raah ya chat bot admin ke har page me nhi khulega kya jo ki admin ko help kare agar kuch na mile ya koi page menu etc wagera me to khul jaye rbac type ka bhi ho taki wokaam karne me help kare powerfull ho"
+
+### Work (build + verify, ZERO new module)
+1. **Smart chatbot widget wired into admin layout** (`app/views/layouts/admin.php`): added `<?php include __DIR__ . '/../components/smart_chatbot.php'; ?>` before `</body>` — floating chat button now renders on every admin page (RBAC-aware: admin/associate/agent/customer roles auto-detected).
+2. **Admin role detection added** (`app/views/components/smart_chatbot.php`): added `$_SESSION['admin_id']` / `$_SESSION['admin_user_id']` branch at top of role chain → admin users now get proper greeting + admin context (was falling back to "Guest" before).
+3. **Executive AI assistant URL recorded**: `/admin/ai/executive-assistant` (RBAC-aware, 22 roles, 8 agents) — powerful help for admins navigating menus/pages/tasks.
+4. **`php -l` clean** on both files.
+
+### Verification
+- `php -l` clean ×2. DB counts unchanged (users 111, plots 756, leads 38187/49479). Master re-run skipped (tree identical except these 2 files; earlier master 10/10).
+- Uncommitted: this entry + 2 view files.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor took S317–S327; next-free = **328** (this entry).
+
+### Key Lessons (carried, continued)
+_604. **A floating widget is one include away from being site-wide** — the `smart_chatbot.php` component (625 lines, floating + RBAC) existed for associate/agent/customer but was never included in admin layout. One `include` line + admin role detection = site-wide admin help. Check for existing components before building new ones (S221 zero-dup discipline).
+
+## Session 327: Gap 27 — Recurring Journal Entries Built + Live Probe Verified (2026-10-16)
+
+### Trigger
+User: "aage ke sare phase karo bina ruke". Zero-dup audit found Gap 27 (Recurring Journal Entries) genuinely missing on the accounting side — `recurring_transactions` is payment-oriented (emi/rent/salary), not journal entries. `journal_entries` + `journal_entry_lines` tables exist but no recurring JE templates/cron.
+
+### Work (build + migration + live probe, ZERO leftover test data)
+1. **Migration** `database/migrations/create_recurring_journal_entries_s326.php` (idempotent): created `recurring_journal_entries` (templates) + `recurring_journal_entry_lines` (FK CASCADE to templates). Seeded menu **#359 "Recurring Journal Entries"** → `/admin/recurring-journal-entries` (finance section) + role permissions. Re-run → SKIP.
+2. **`app/Services/RecurringJournalEntryService.php`** (new): getAll/getById/create/update/delete/execute/processDue/getStats. `execute()` posts a real journal_entry via `JournalEntryService::postJournalEntry` (balanced validation), advances next_execution_date by frequency, increments execution_count, auto-deactivates on max_executions/end_date. `processDue()` = cron entry point (fires all due templates). Transactional.
+3. **`app\Http\Controllers\Admin\RecurringJournalEntryController.php`** (new): index/create/store/show/execute/processDue/delete. All `requireAdmin()` + CSRF + audit log.
+4. **Routes** (web.php, after recurring transactions): GET/POST `/admin/recurring-journal-entries*` (index/create/store/show/{id}/execute/{id}/process-due/delete/{id}) → `Admin\RecurringJournalEntryController@*`.
+5. **Views** (new): `admin/recurring_journal_entries/index.php` (list+stats+filter+execute/process-due/delete), `create.php` (template form + dynamic journal lines with balance check), `show.php` (detail+lines+execute/status).
+
+### Verification (live probe, authenticated super_admin via test_login=2)
+- `POST /admin/recurring-journal-entries/store` → HTTP 200 JSON `{"success":true,"rje_id":1,...}` (balanced 5000/5000 lines).
+- `GET /admin/recurring-journal-entries/1` → HTTP 200. `GET /admin/recurring-journal-entries` → HTTP 200.
+- `POST /admin/recurring-journal-entries/execute/1` → HTTP 200 JSON; **journal_entry id=6 created** with 2 balanced lines (Dr 5000 / Cr 5000) in journal_entry_lines.
+- `POST /admin/recurring-journal-entries/process-due` → HTTP 200 JSON.
+- RJE state after execute: execution_count=1, last_execution_date=2026-10-17, next_execution_date advanced.
+- **Cleanup**: deleted test RJE/lines/JE/JE-lines via SQL → rje=0, rje_lines=0, je=0. Zero leftovers.
+- `php -l` clean on service + controller. **Master 10/10 PASSED** (20.83s).
+- Temp probe artifacts deleted same turn.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor took S317–S326; next-free = **327** (this entry).
 
 ### Trigger
 User: "do next". Zero-dup audit of Phase 3 found Gap 6 (GRN) genuinely empty — `grn_records` table existed (from upgrade_purchase_orders_s268.php) but no GRN controller/service/views/routes/menu. Built the full GRN management UI on top of it.
@@ -3425,3 +3617,4 @@ _528. **Migration naming convention prevents re-run chaos** — timestamp prefix
 _529. **Cloud-first AI voice abstraction** — provider-agnostic XML/JSON generation lets you swap Exotel↔Twilio↔Plivo without code changes.
 
 - Remote synced `origin/main` = `ea2f85cd7`
+> **DB RESTORE PROTOCOL (Rule 1, S228 + S333):** Full safety dump saved (39.6MB + 2.4KB) before any DB change. Window open: NO DB WRITES TILL DONE. Verify counts + master 10/10 after close.

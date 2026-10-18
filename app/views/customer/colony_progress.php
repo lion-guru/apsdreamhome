@@ -34,7 +34,7 @@ $statusColors = ['completed' => 'success', 'in_progress' => 'primary', 'on_hold'
             <h2 class="fw-bold mb-1"><i class="fas fa-hard-hat me-2"></i>Colony Development Feed</h2>
             <p class="text-muted mb-0">Live construction progress of your booked colon<?= count($colonies) === 1 ? 'y' : 'ies' ?></p>
         </div>
-        <a href="<?= BASE_URL ?>/customer/dashboard" class="btn btn-outline-secondary">
+        <a href="<?= BASE_URL ?>/user/dashboard" class="btn btn-outline-secondary">
             <i class="fas fa-arrow-left me-1"></i> Dashboard
         </a>
     </div>

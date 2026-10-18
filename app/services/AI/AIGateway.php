@@ -66,6 +66,41 @@ class AIGateway
     {
         $startTime = microtime(true);
 
+        // For chat tasks, skip pattern/rule engines and go directly to AI engines for conversational responses
+        if ($task === 'chat') {
+            // 1. Try Free AI Engines (Ollama → Groq → OpenRouter) — unlimited free intelligence
+            $freeResult = $this->freeEnginesProcess($task, $input, $context);
+            if ($freeResult['confidence'] >= 0.6) {
+                return $this->logResult($task, $freeResult, $freeResult['engine'] ?? 'free_ai', $startTime);
+            }
+
+            // 2. Try SelfLearningAI (free, local, learns)
+            $slResult = $this->selfLearningProcess($task, $input, $context);
+            if ($slResult['confidence'] >= 0.65) {
+                return $this->logResult($task, $slResult, 'self_learning', $startTime);
+            }
+
+            // 3. Fall back to Gemini (free tier, complex NLP)
+            if ($this->isGeminiAvailable()) {
+                $geminiResult = $this->geminiProcess($task, $input, $context);
+                if ($geminiResult['confidence'] >= 0.5) {
+                    return $this->logResult($task, $geminiResult, 'gemini', $startTime);
+                }
+            }
+
+            // 4. Try rule-based heuristics as fallback
+            $ruleResult = $this->ruleProcess($task, $input, $context);
+            if ($ruleResult['confidence'] >= 0.7) {
+                return $this->logResult($task, $ruleResult, 'rule', $startTime);
+            }
+
+            // 5. Return best available
+            $all = [$slResult, $ruleResult, $freeResult];
+            usort($all, fn($a, $b) => $b['confidence'] <=> $a['confidence']);
+            return $this->logResult($task, $all[0], $all[0]['engine'] ?? 'rule', $startTime);
+        }
+
+        // For non-chat tasks, use the original pipeline
         // 1. Try IntentDetector first (instant, free)
         $patternResult = $this->patternProcess($task, $input, $context);
         if ($patternResult['confidence'] >= 0.75) {

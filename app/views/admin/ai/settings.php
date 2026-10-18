@@ -87,6 +87,16 @@ $engine_status = $engine_status ?? [];
                         <div class="api-hint">Free: 15 RPM, 1M tokens/day. <a href="https://aistudio.google.com/apikey" target="_blank" >Get key →'</a></div>
                     </div>
 
+                    <!-- Hugging Face (RAG Embeddings) -->
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="engine-status <?= !empty($engine_status['hf']['available'] ?? true) ? 'active' : 'inactive' ?>"></span>
+                            <label class="api-label mb-0">Hugging Face API Key (RAG Embeddings) <span class="free-badge">FREE</span></label>
+                        </div>
+                        <input type="password" name="hf_api_key" class="api-input" value="<?= htmlspecialchars($settings['hf_api_key'] ?? '') ?>" placeholder="hf_...">
+                        <div class="api-hint">Real 384-dim embeddings for RAG (sentence-transformers/all-MiniLM-L6-v2). <a href="https://hugging.co/settings/tokens" target="_blank">Get key →</a></div>
+                    </div>
+
                     <!-- Ollama -->
                     <div class="col-md-6">
                         <div class="d-flex align-items-center gap-2 mb-2">

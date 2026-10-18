@@ -240,8 +240,11 @@ class RequestMiddlewareService
      */
     public function checkRateLimit(SimpleRequest $request, Closure $next): SimpleResponse
     {
-        // Bypass rate limiting during local development testing/auditing
-        if (isset($_GET['test_login']) || $request->header('X-Testing') || (defined('APP_ENV') && APP_ENV === 'testing')) {
+        // Bypass rate limiting during local development testing/auditing.
+        // S264: the ?test_login / X-Testing param bypass is dev-only — in
+        // production it would exempt anyone from throttling.
+        $__isProd = (defined('APP_ENV') && APP_ENV === 'production') || (getenv('APP_ENV') === 'production');
+        if (((isset($_GET['test_login']) || $request->header('X-Testing')) && !$__isProd) || (defined('APP_ENV') && APP_ENV === 'testing')) {
             return $next($request);
         }
 

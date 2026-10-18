@@ -1043,6 +1043,24 @@ class CustomerPassbookController extends BaseController
             return;
         }
 
+        // S272: gata line for the letter (plot → parcel → text fallback).
+        $doc['gata_number'] = null;
+        $doc['gata_owner'] = null;
+        try {
+            $pid = (int)($doc['plot_id'] ?? 0);
+            if ($pid > 0) {
+                $pg = $this->db->fetchOne("SELECT p.gata_number, lp.owner_name FROM plots p LEFT JOIN land_parcels lp ON lp.id = p.land_parcel_id WHERE p.id = ?", [$pid]);
+                if ($pg) {
+                    $doc['gata_number'] = $pg['gata_number'] ?? null;
+                    $doc['gata_owner'] = $pg['owner_name'] ?? null;
+                    if (empty($doc['gata_owner']) && !empty($doc['gata_number'])) {
+                        $o = $this->db->fetchOne("SELECT owner_name FROM land_parcels WHERE khasra_no = ? LIMIT 1", [$doc['gata_number']]);
+                        if ($o) $doc['gata_owner'] = $o['owner_name'];
+                    }
+                }
+            }
+        } catch (\Throwable $e) { error_log("downloadAllotment gata: " . $e->getMessage()); }
+
         // Generate PDF or serve file
         $filePath = $doc['file_path'] ?? '';
         if ($filePath && file_exists($filePath)) {
@@ -1105,20 +1123,37 @@ class CustomerPassbookController extends BaseController
         $userId = (int)$_SESSION['user_id'];
         $tid = (int)$this->tenantId();
 
-        $doc = $this->db->fetchOne("
-            SELECT ad.*, b.booking_number, p.plot_number, c.name as colony_name
+        // S272: agreement_documents table was never migrated — fail as 404
+        // (like "not found"), never as a 1146 fatal. Feature backlog: no
+        // writer generates these rows yet (agreement generator unbuilt).
+        try {
+            $doc = $this->db->fetchOne("
+            SELECT ad.*, b.booking_number, p.plot_number, p.gata_number, p.khasra_number, lp.owner_name AS gata_owner, c.name as colony_name
             FROM agreement_documents ad
             LEFT JOIN plot_bookings b ON ad.booking_id = b.id
             LEFT JOIN plots p ON b.plot_id = p.id
+            LEFT JOIN land_parcels lp ON lp.id = p.land_parcel_id
             LEFT JOIN colonies c ON p.colony_id = c.id
             WHERE ad.id = ? AND ad.customer_id = ? AND ad.tenant_id = ?
         ", [$id, (int)$_SESSION['user_id'], (int)$this->tenantId()]);
+        } catch (\Throwable $e) {
+            error_log("downloadAgreement: " . $e->getMessage());
+            $doc = null;
+        }
 
         if (!$doc) {
             http_response_code(404);
             echo 'Document not found';
             return;
         }
+
+        // S272: parcel-link may be empty while gata text exists — resolve owner by text.
+        try {
+            if (empty($doc['gata_owner']) && !empty($doc['gata_number'])) {
+                $o = $this->db->fetchOne("SELECT owner_name FROM land_parcels WHERE khasra_no = ? LIMIT 1", [$doc['gata_number']]);
+                if ($o && !empty($o['owner_name'])) $doc['gata_owner'] = $o['owner_name'];
+            }
+        } catch (\Throwable $e) { error_log("downloadAgreement gata: " . $e->getMessage()); }
 
         $filePath = $doc['file_path'] ?? '';
         if ($filePath && file_exists($filePath)) {

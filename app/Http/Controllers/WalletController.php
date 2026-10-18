@@ -364,11 +364,20 @@ class WalletController extends BaseController
         $bankAccountId = $_POST['bank_account_id'] ?? 0;
         $amount = floatval($_POST['amount'] ?? 0);
 
+        // S264: CSRF + atomicity. The form field exists but the fetch() builds
+        // FormData by hand — the view now appends the token (withdrawal.php).
+        if (!$this->validateCsrfToken($_POST['csrf_token'] ?? '')) {
+            echo json_encode(['success' => false, 'message' => 'Session expired. Please reload and try again.']);
+            exit;
+        }
+
         try {
-            // Get wallet
-            $wallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1", [$userId]);
+            $this->db->beginTransaction();
+            // Lock the wallet row: concurrent double-clicks serialize here.
+            $wallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1 FOR UPDATE", [$userId]);
 
             if (!$wallet || $wallet['points_balance'] < $amount) {
+                $this->db->rollBack();
                 echo json_encode(['success' => false, 'message' => 'Insufficient wallet balance']);
                 exit;
             }
@@ -378,6 +387,7 @@ class WalletController extends BaseController
             $minWithdrawal = isset($minRow['setting_value']) ? (float)$minRow['setting_value'] : 500;
 
             if ($amount < $minWithdrawal) {
+                $this->db->rollBack();
                 echo json_encode(['success' => false, 'message' => "Minimum withdrawal amount is ₹$minWithdrawal"]);
                 exit;
             }
@@ -385,6 +395,7 @@ class WalletController extends BaseController
             // Verify bank account belongs to user
             $bankAccount = $this->db->fetchOne("SELECT * FROM user_bank_accounts WHERE id = ? AND user_id = ? AND status = 'active'", [$bankAccountId, $userId]);
             if (!$bankAccount) {
+                $this->db->rollBack();
                 echo json_encode(['success' => false, 'message' => 'Invalid bank account']);
                 exit;
             }
@@ -418,9 +429,11 @@ class WalletController extends BaseController
                 'tenant_id' => $tid,
             ]);
 
+            $this->db->commit();
             echo json_encode(['success' => true, 'message' => 'Withdrawal request submitted successfully']);
             exit;
         } catch (\Exception $e) {
+            try { $this->db->rollBack(); } catch (\Throwable $ignored) {}
             echo json_encode(['success' => false, 'message' => 'Withdrawal failed: ' . $e->getMessage()]);
             exit;
         }

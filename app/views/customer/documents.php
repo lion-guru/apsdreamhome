@@ -42,7 +42,7 @@ $base = BASE_URL ?? '';
                         <p class="text-muted mb-0">Manage and download your important documents</p>
                     </div>
                     <div class="d-flex gap-2">
-                        <a href="<?= BASE_URL ?>/customer/dashboard" class="btn btn-outline-secondary">
+                        <a href="<?= BASE_URL ?>/user/dashboard" class="btn btn-outline-secondary">
                             <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
                         </a>
                     </div>
@@ -88,7 +88,7 @@ $base = BASE_URL ?? '';
                                             <?= htmlspecialchars($doc['colony_name'] ?? 'N/A') ?>
                                         </p>
                                         <div class="mt-auto document-actions">
-                                            <a href="<?= BASE_URL ?>/customer/documents/download/allotment/<?= $doc['id'] ?>" class="btn btn-sm btn-primary w-100" target="_blank">
+                                            <a href="<?= BASE_URL ?>/user/documents/download/allotment/<?= $doc['id'] ?>" class="btn btn-sm btn-primary w-100" target="_blank">
                                                 <i class="fas fa-download me-1"></i> Download
                                             </a>
                                         </div>
@@ -137,7 +137,7 @@ $base = BASE_URL ?? '';
                                             <?= number_format($doc['amount'] ?? 0) ?> paid
                                         </p>
                                         <div class="mt-auto document-actions">
-                                            <a href="<?= BASE_URL ?>/customer/documents/download/passbook/<?= $doc['id'] ?>" class="btn btn-sm btn-success w-100" target="_blank">
+                                            <a href="<?= BASE_URL ?>/user/documents/download/passbook/<?= $doc['id'] ?>" class="btn btn-sm btn-success w-100" target="_blank">
                                                 <i class="fas fa-download me-1"></i> Download Passbook
                                             </a>
                                         </div>
@@ -186,7 +186,7 @@ $base = BASE_URL ?? '';
                                             <?= htmlspecialchars($doc['type'] ?? 'Agreement') ?>
                                         </p>
                                         <div class="mt-auto document-actions">
-                                            <a href="<?= BASE_URL ?>/customer/documents/download/agreement/<?= $doc['id'] ?>" class="btn btn-sm btn-warning w-100" target="_blank">
+                                            <a href="<?= BASE_URL ?>/user/documents/download/agreement/<?= $doc['id'] ?>" class="btn btn-sm btn-warning w-100" target="_blank">
                                                 <i class="fas fa-download me-1"></i> Download Agreement
                                             </a>
                                         </div>
@@ -237,7 +237,7 @@ $base = BASE_URL ?? '';
                                             <?= !empty($doc['created_at']) ? date('d M Y', strtotime($doc['created_at'])) : '' ?>
                                         </p>
                                         <div class="mt-auto document-actions">
-                                            <a href="<?= BASE_URL ?>/customer/documents/download/title-certificate/<?= $doc['id'] ?>" class="btn btn-sm btn-success w-100" target="_blank">
+                                            <a href="<?= BASE_URL ?>/user/documents/download/title-certificate/<?= $doc['id'] ?>" class="btn btn-sm btn-success w-100" target="_blank">
                                                 <i class="fas fa-download me-1"></i> Download Certificate
                                             </a>
                                         </div>
@@ -322,7 +322,7 @@ $base = BASE_URL ?? '';
                                         <?php if (!empty($nr['nominee_name'])): ?>
                                             <p class="small mb-1"><strong><?= htmlspecialchars($nr['nominee_name']) ?></strong> (<?= htmlspecialchars($nr['nominee_relation'] ?? '') ?>)</p>
                                             <?php if (!empty($nr['guardian_name'])): ?><p class="small text-muted mb-1">Guardian: <?= htmlspecialchars($nr['guardian_name']) ?></p><?php endif; ?>
-                                            <a class="btn btn-sm btn-outline-primary" target="_blank" href="<?= BASE_URL ?>/customer/bookings/<?= (int)($nr['booking_id'] ?? 0) ?>/nominee-sheet"><i class="fas fa-print me-1"></i>Succession Sheet</a>
+                                            <a class="btn btn-sm btn-outline-primary" target="_blank" href="<?= BASE_URL ?>/user/bookings/<?= (int)($nr['booking_id'] ?? 0) ?>/nominee-sheet"><i class="fas fa-print me-1"></i>Succession Sheet</a>
                                         <?php else: ?>
                                             <p class="text-muted small mb-2">No nominee recorded.</p>
                                         <?php endif; ?>
@@ -332,7 +332,7 @@ $base = BASE_URL ?? '';
                             </div>
                             <div class="modal fade" id="nomineeModal<?= (int)($nr['booking_id'] ?? 0) ?>" tabindex="-1">
                                 <div class="modal-dialog"><div class="modal-content">
-                                    <form method="POST" action="<?= BASE_URL ?>/customer/bookings/<?= (int)($nr['booking_id'] ?? 0) ?>/nominee">
+                                    <form method="POST" action="<?= BASE_URL ?>/user/bookings/<?= (int)($nr['booking_id'] ?? 0) ?>/nominee">
                                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                         <div class="modal-header"><h6 class="modal-title">Legal Nominee — <?= htmlspecialchars($nr['booking_number'] ?? '') ?></h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                                         <div class="modal-body row g-2">
@@ -428,7 +428,7 @@ $base = BASE_URL ?? '';
                                             <?= !empty($doc['pillar_photo_path']) ? ' · <a href="' . BASE_URL . '/' . htmlspecialchars($doc['pillar_photo_path']) . '" target="_blank">pillar photo</a>' : '' ?>
                                         </p>
                                         <div class="mt-auto document-actions">
-                                            <a href="<?= BASE_URL ?>/customer/possession-certificate/<?= (int)($doc['booking_id'] ?? 0) ?>" class="btn btn-sm btn-warning w-100" target="_blank">
+                                            <a href="<?= BASE_URL ?>/user/possession-certificate/<?= (int)($doc['booking_id'] ?? 0) ?>" class="btn btn-sm btn-warning w-100" target="_blank">
                                                 <i class="fas fa-download me-1"></i> Download Certificate
                                             </a>
                                         </div>
@@ -447,7 +447,7 @@ $base = BASE_URL ?? '';
                         <i class="fas fa-exchange-alt text-primary me-2"></i> Plot Resale & Transfer NOC Desk
                         <small class="text-muted fw-normal ms-2">— transfer rights, resell, or gift to family</small>
                     </div>
-                    <a href="<?= BASE_URL ?>/customer/plot-transfers" class="btn btn-sm btn-outline-primary">
+                    <a href="<?= BASE_URL ?>/user/plot-transfers" class="btn btn-sm btn-outline-primary">
                         <i class="fas fa-plus me-1"></i>Apply for Transfer
                     </a>
                 </h5>
@@ -457,7 +457,7 @@ $base = BASE_URL ?? '';
                             <span class="fw-semibold">Looking to resell or transfer allotment rights?</span>
                             <div class="small text-muted">Verify eligibility, submit buyer details, and download official QR-verified Transfer NOC.</div>
                         </div>
-                        <a href="<?= BASE_URL ?>/customer/plot-transfers" class="btn btn-sm btn-primary">
+                        <a href="<?= BASE_URL ?>/user/plot-transfers" class="btn btn-sm btn-primary">
                             Manage Plot Transfers
                         </a>
                     </div>

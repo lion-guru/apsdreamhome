@@ -32,6 +32,7 @@ class LeadFollowUpService
                 SELECT * FROM leads
                 WHERE source = 'incomplete_registration'
                 AND status = 'new'
+                AND deleted_at IS NULL
                 AND created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
                 AND (email IS NOT NULL OR phone IS NOT NULL)
                 " . $this->tenantSql() . "
@@ -60,6 +61,7 @@ class LeadFollowUpService
                 SELECT * FROM leads
                 WHERE status = 'new'
                 AND source != 'incomplete_registration'
+                AND deleted_at IS NULL
                 AND (email IS NOT NULL OR phone IS NOT NULL)
                 " . $this->tenantSql() . "
                 ORDER BY created_at DESC

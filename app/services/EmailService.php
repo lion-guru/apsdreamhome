@@ -420,4 +420,23 @@ class EmailService
             return false;
         }
     }
+
+    public function sendWithAttachment($to, $subject, $body, $attachmentPath, $attachmentName)
+    {
+        try {
+            $mail = $this->createMailer();
+            $mail->addAddress($to);
+            $mail->isHTML(true);
+            $mail->Subject = $subject;
+            $mail->Body = $body;
+            $mail->AltBody = strip_tags($body);
+            if (is_file($attachmentPath)) {
+                $mail->addAttachment($attachmentPath, $attachmentName);
+            }
+            return $mail->send();
+        } catch (\Exception $e) {
+            error_log("Email with attachment failed: " . $e->getMessage());
+            return false;
+        }
+    }
 }

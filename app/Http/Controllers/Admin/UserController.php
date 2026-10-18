@@ -1087,6 +1087,8 @@ class UserController extends AdminController
     {
         $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
+        // S264: router-CSRF-excluded endpoint — the modal posts csrf_token; enforce it here.
+        if (!$this->validateCsrfToken($_POST['csrf_token'] ?? '')) return $this->jsonError('Session expired. Reload and retry.', 403);
         try {
             $userId = intval($id);
             $amount = (float)($_POST['amount'] ?? 0);
@@ -1096,29 +1098,51 @@ class UserController extends AdminController
             $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
             $tid = (int)$this->tenantId();
 
-            // Ensure wallet exists
-            $this->db->execute(
-                "INSERT IGNORE INTO wallet_points (user_id, tenant_id) VALUES (?, ?)",
-                [$userId, $tid]
-            );
+            // S264: idempotent replay — same per-render key twice = one money move.
+            $idemKey = trim((string)($_POST['idem_key'] ?? ''));
+            if ($idemKey !== '') {
+                $dup = $this->db->fetchOne("SELECT id FROM wallet_transactions WHERE idem_key = ? AND user_id = ? LIMIT 1", [$idemKey, $userId]);
+                if ($dup) {
+                    return $this->jsonResponse(['success' => true, 'message' => 'Already processed (duplicate ignored)']);
+                }
+            }
 
-            $wallet = $this->db->fetchOne("SELECT points_balance FROM wallet_points WHERE user_id = ? LIMIT 1", [$userId]);
-            $balanceBefore = $wallet ? (float)$wallet['points_balance'] : 0.0;
+            // S264: atomic — crash/double-click between SELECT and UPDATE can no
+            // longer credit without a ledger row (or credit twice silently).
+            $this->db->beginTransaction();
+            try {
+                // Ensure wallet exists
+                $this->db->execute(
+                    "INSERT IGNORE INTO wallet_points (user_id, tenant_id) VALUES (?, ?)",
+                    [$userId, $tid]
+                );
 
-            $this->db->execute(
-                "UPDATE wallet_points SET points_balance = points_balance + ?, total_earned = total_earned + ? WHERE user_id = ?",
-                [$amount, $amount, $userId]
-            );
+                $wallet = $this->db->fetchOne("SELECT points_balance FROM wallet_points WHERE user_id = ? LIMIT 1 FOR UPDATE", [$userId]);
+                $balanceBefore = $wallet ? (float)$wallet['points_balance'] : 0.0;
 
-            $this->db->execute(
-                "INSERT INTO wallet_transactions (tenant_id, user_id, transaction_type, transaction_category, amount, balance_before, balance_after, description, reference_id, reference_type)
-                 VALUES (?, ?, 'credit', 'adjustment', ?, ?, ?, ?, ?, 'admin_credit')",
-                [$tid, $userId, $amount, $balanceBefore, $balanceBefore + $amount, "Admin credit: {$reason}", $adminId]
-            );
+                $this->db->execute(
+                    "UPDATE wallet_points SET points_balance = points_balance + ?, total_earned = total_earned + ? WHERE user_id = ?",
+                    [$amount, $amount, $userId]
+                );
+
+                $this->db->execute(
+                    "INSERT INTO wallet_transactions (tenant_id, user_id, transaction_type, transaction_category, amount, balance_before, balance_after, description, reference_id, reference_type, idem_key)
+                     VALUES (?, ?, 'credit', 'adjustment', ?, ?, ?, ?, ?, 'admin_credit', ?)",
+                    [$tid, $userId, $amount, $balanceBefore, $balanceBefore + $amount, "Admin credit: {$reason}", $adminId, ($idemKey !== '' ? $idemKey : null)]
+                );
+                $this->db->commit();
+            } catch (\Throwable $e) {
+                try { $this->db->rollBack(); } catch (\Throwable $ignored) {}
+                throw $e;
+            }
 
             $this->loggingService->logUserActivity($adminId, 'wallet_credit', ['user_id' => $userId, 'amount' => $amount, 'reason' => $reason]);
             return $this->jsonResponse(['success' => true, 'message' => "₹" . number_format($amount) . " credited"]);
         } catch (\Exception $e) {
+            $postedKey = trim((string)($_POST['idem_key'] ?? ''));
+            if ($postedKey !== '' && stripos($e->getMessage(), 'uniq_wallet_idem') !== false) {
+                return $this->jsonResponse(['success' => true, 'message' => 'Already processed (duplicate ignored)']);
+            }
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -1130,6 +1154,8 @@ class UserController extends AdminController
     {
         $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
+        // S264: same CSRF note as creditWallet — modal posts the token.
+        if (!$this->validateCsrfToken($_POST['csrf_token'] ?? '')) return $this->jsonError('Session expired. Reload and retry.', 403);
         try {
             $userId = intval($id);
             $amount = (float)($_POST['amount'] ?? 0);
@@ -1139,26 +1165,49 @@ class UserController extends AdminController
             $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
             $tid = (int)$this->tenantId();
 
-            $wallet = $this->db->fetchOne("SELECT points_balance FROM wallet_points WHERE user_id = ? LIMIT 1", [$userId]);
-            if (!$wallet || (float)$wallet['points_balance'] < $amount) {
-                return $this->jsonError('Insufficient balance', 400);
+            // S264: idempotent replay (same note as creditWallet).
+            $idemKey = trim((string)($_POST['idem_key'] ?? ''));
+            if ($idemKey !== '') {
+                $dup = $this->db->fetchOne("SELECT id FROM wallet_transactions WHERE idem_key = ? AND user_id = ? LIMIT 1", [$idemKey, $userId]);
+                if ($dup) {
+                    return $this->jsonResponse(['success' => true, 'message' => 'Already processed (duplicate ignored)']);
+                }
             }
-            $balanceBefore = (float)$wallet['points_balance'];
 
-            $this->db->execute(
-                "UPDATE wallet_points SET points_balance = points_balance - ?, total_used = total_used + ? WHERE user_id = ?",
-                [$amount, $amount, $userId]
-            );
+            // S264: atomic debit + ledger (was: crash between UPDATE and INSERT =
+            // money moved with no trail).
+            $this->db->beginTransaction();
+            try {
+                $wallet = $this->db->fetchOne("SELECT points_balance FROM wallet_points WHERE user_id = ? LIMIT 1 FOR UPDATE", [$userId]);
+                if (!$wallet || (float)$wallet['points_balance'] < $amount) {
+                    $this->db->rollBack();
+                    return $this->jsonError('Insufficient balance', 400);
+                }
+                $balanceBefore = (float)$wallet['points_balance'];
 
-            $this->db->execute(
-                "INSERT INTO wallet_transactions (tenant_id, user_id, transaction_type, transaction_category, amount, balance_before, balance_after, description, reference_id, reference_type)
-                 VALUES (?, ?, 'debit', 'withdrawal', ?, ?, ?, ?, ?, 'admin_debit')",
-                [$tid, $userId, $amount, $balanceBefore, $balanceBefore - $amount, "Admin debit: {$reason}", $adminId]
-            );
+                $this->db->execute(
+                    "UPDATE wallet_points SET points_balance = points_balance - ?, total_used = total_used + ? WHERE user_id = ?",
+                    [$amount, $amount, $userId]
+                );
+
+                $this->db->execute(
+                    "INSERT INTO wallet_transactions (tenant_id, user_id, transaction_type, transaction_category, amount, balance_before, balance_after, description, reference_id, reference_type, idem_key)
+                     VALUES (?, ?, 'debit', 'withdrawal', ?, ?, ?, ?, ?, 'admin_debit', ?)",
+                    [$tid, $userId, $amount, $balanceBefore, $balanceBefore - $amount, "Admin debit: {$reason}", $adminId, ($idemKey !== '' ? $idemKey : null)]
+                );
+                $this->db->commit();
+            } catch (\Throwable $e) {
+                try { $this->db->rollBack(); } catch (\Throwable $ignored) {}
+                throw $e;
+            }
 
             $this->loggingService->logUserActivity($adminId, 'wallet_debit', ['user_id' => $userId, 'amount' => $amount, 'reason' => $reason]);
             return $this->jsonResponse(['success' => true, 'message' => "₹" . number_format($amount) . " debited"]);
         } catch (\Exception $e) {
+            $postedKey = trim((string)($_POST['idem_key'] ?? ''));
+            if ($postedKey !== '' && stripos($e->getMessage(), 'uniq_wallet_idem') !== false) {
+                return $this->jsonResponse(['success' => true, 'message' => 'Already processed (duplicate ignored)']);
+            }
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }

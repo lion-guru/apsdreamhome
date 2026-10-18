@@ -214,7 +214,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                         </td>
                         <td>
                             <div class="d-flex flex-wrap gap-1">
-                                <a href="<?= $base ?>/admin/land-inventory/farmer-ledger/detail/<?= urlencode($farmer['farmer_name']) ?>/<?= urlencode($farmer['village'] ?? '') ?>" 
+                                <a href="<?= $base ?>/admin/land-inventory/farmer-ledger/detail/<?= rawurlencode($farmer['farmer_name']) ?>/<?= rawurlencode($farmer['village'] ?? '') ?>" 
                                    class="btn btn-sm btn-outline-primary" title="View Details">
                                     <i class="fas fa-eye"></i>
                                 </a>

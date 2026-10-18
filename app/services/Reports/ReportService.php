@@ -470,26 +470,43 @@ class ReportService
     /**
      * Schedule report generation
      */
-    public function scheduleReport($reportType, $parameters, $schedule, $recipients)
+    public function scheduleReport(array $data)
     {
         try {
-            $sql = "INSERT INTO scheduled_reports 
-                    (report_type, parameters, schedule, recipients, created_at) 
-                    VALUES (:report_type, :parameters, :schedule, :recipients, NOW())";
-            
+            $reportType = $data['report_type'] ?? 'sales';
+            $title = $data['title'] ?? ucfirst($reportType) . ' Report';
+            $frequency = $data['frequency'] ?? 'weekly';
+            $format = $data['format'] ?? 'csv';
+            $parameters = $data['parameters'] ?? [];
+            $recipients = $data['recipients'] ?? [];
+            $notes = $data['notes'] ?? null;
+            $day = $data['day'] ?? '';
+            $nextRun = $this->computeNextRun($frequency, $day);
+
+            $sql = "INSERT INTO scheduled_reports
+                    (tenant_id, title, report_type, frequency, format, parameters, recipients, day_of_week, day_of_month, next_run, status, notes, created_at, updated_at)
+                    VALUES (:tenant_id, :title, :report_type, :frequency, :format, :parameters, :recipients, :day_of_week, :day_of_month, :next_run, 'active', :notes, NOW(), NOW())";
+
             $stmt = $this->database->prepare($sql);
-            $stmt->bindParam(':report_type', $reportType);
-            $stmt->bindParam(':parameters', json_encode($parameters));
-            $stmt->bindParam(':schedule', $schedule);
-            $stmt->bindParam(':recipients', json_encode($recipients));
-            
+            $tid = $this->getTenantId();
+            $stmt->bindValue(':tenant_id', $tid, \PDO::PARAM_INT);
+            $stmt->bindValue(':title', $title);
+            $stmt->bindValue(':report_type', $reportType);
+            $stmt->bindValue(':frequency', $frequency);
+            $stmt->bindValue(':format', $format);
+            $stmt->bindValue(':parameters', json_encode($parameters));
+            $stmt->bindValue(':recipients', json_encode($recipients));
+            $stmt->bindValue(':day_of_week', $day !== '' && !is_numeric($day) ? $day : null);
+            $stmt->bindValue(':day_of_month', is_numeric($day) ? (int)$day : null, \PDO::PARAM_INT);
+            $stmt->bindValue(':next_run', $nextRun);
+            $stmt->bindValue(':notes', $notes);
             $result = $stmt->execute();
-            
+
             if ($result) {
                 $this->logger->info("Report scheduled successfully: {$reportType}");
                 return $this->database->lastInsertId();
             }
-            
+
             return false;
         } catch (\Exception $e) {
             $this->logger->error("Error scheduling report: " . $e->getMessage());
@@ -497,9 +514,6 @@ class ReportService
         }
     }
 
-    /**
-     * Get scheduled reports
-     */
     public function getScheduledReports()
     {
         try {
@@ -511,5 +525,64 @@ class ReportService
             $this->logger->error("Error getting scheduled reports: " . $e->getMessage());
             return [];
         }
+    }
+
+    public function unscheduleReport($id)
+    {
+        try {
+            $stmt = $this->database->prepare("UPDATE scheduled_reports SET status = 'inactive', updated_at = NOW() WHERE id = ?");
+            return $stmt->execute([(int)$id]);
+        } catch (\Exception $e) {
+            $this->logger->error("Error unscheduling report: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    private function computeNextRun($frequency, $day)
+    {
+        $now = new \DateTime('now');
+        if ($frequency === 'daily') {
+            $next = clone $now;
+            $next->modify('+1 day');
+            $next->setTime(8, 0, 0);
+            return $next->format('Y-m-d H:i:s');
+        }
+        if ($frequency === 'weekly') {
+            $days = ['monday' => 1, 'tuesday' => 2, 'wednesday' => 3, 'thursday' => 4, 'friday' => 5, 'saturday' => 6, 'sunday' => 7];
+            $target = $days[strtolower((string)$day)] ?? 3;
+            $next = clone $now;
+            while ((int)$next->format('N') !== $target || $next <= $now) {
+                $next->modify('+1 day');
+            }
+            $next->setTime(8, 0, 0);
+            return $next->format('Y-m-d H:i:s');
+        }
+        if ($frequency === 'monthly') {
+            $dom = is_numeric($day) ? (int)$day : 1;
+            if ($dom < 1) {
+                $dom = 1;
+            }
+            if ($dom > 28) {
+                $dom = 28;
+            }
+            $next = new \DateTime('first day of next month');
+            $next->setDate((int)$next->format('Y'), (int)$next->format('m'), $dom);
+            $next->setTime(8, 0, 0);
+            return $next->format('Y-m-d H:i:s');
+        }
+        if ($frequency === 'quarterly') {
+            $next = new \DateTime('first day of +3 months');
+            $next->setTime(8, 0, 0);
+            return $next->format('Y-m-d H:i:s');
+        }
+        $next = clone $now;
+        $next->modify('+1 day');
+        $next->setTime(8, 0, 0);
+        return $next->format('Y-m-d H:i:s');
+    }
+
+    public function getNextRunDate($frequency, $day)
+    {
+        return $this->computeNextRun($frequency, $day);
     }
 }

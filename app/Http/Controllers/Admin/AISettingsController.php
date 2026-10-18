@@ -60,11 +60,13 @@ class AISettingsController extends AdminController
             'gemini' => $mask($config['gemini_key']),
             'groq' => $mask($config['groq_key']),
             'openrouter' => $mask($config['openrouter_key']),
+            'hf' => $mask($cfg['hf_api_key'] ?? ''),
         ];
         $this->data['has_keys'] = [
             'gemini' => trim($config['gemini_key']) !== '',
             'groq' => trim($config['groq_key']) !== '',
             'openrouter' => trim($config['openrouter_key']) !== '',
+            'hf' => trim((string)($cfg['hf_api_key'] ?? '')) !== '',
         ];
         unset($config['gemini_key'], $config['groq_key'], $config['openrouter_key']);
         $this->data['config'] = $config;
@@ -155,6 +157,9 @@ class AISettingsController extends AdminController
             $stt = $_POST['stt_engine'] ?? 'groq';
             if (in_array($stt, ['groq', 'whisper'], true)) {
                 $cfg['stt_engine'] = $stt;
+            }
+            if (!empty($_POST['hf_api_key'])) {
+                $cfg['hf_api_key'] = trim($_POST['hf_api_key']);
             }
             $fields[] = "settings = ?";
             $params[] = json_encode($cfg);
@@ -398,8 +403,21 @@ class AISettingsController extends AdminController
             case 'customer_support':
                 $result = $this->geminiService->customerSupport($prompt);
                 break;
-                
-            default:
+
+            case 'hf':
+                $key = trim((string)($cfg['hf_api_key'] ?? ''));
+                if ($key === '') { $result['message'] = 'No Hugging Face token saved'; break; }
+                $ch = curl_init('https://huggingface.co/api/whoami');
+                curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 15, CURLOPT_HTTPHEADER => ["Authorization: Bearer {$key}"]]);
+                $resp = curl_exec($ch);
+                $err = curl_error($ch);
+                $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
+                $data = json_decode((string)$resp, true);
+                $username = $data['name'] ?? $data['username'] ?? '';
+                $ok = $code === 200 && !empty($data);
+                $result = ['success' => $ok, 'message' => $ok ? ("HF token valid" . ($username ? " - account: {$username}" : '')) : "HTTP {$code}: " . substr($err ?: (string)$resp, 0, 160)];
+                break;
                 $result = $this->geminiService->generateContent($prompt);
         }
         

@@ -333,25 +333,33 @@ class ResellTransactionService
     private function payReferralCommission(int $referrerId, int $buyerId, float $amount, string $referralCode, int $transactionId, string $source): void
     {
         try {
-            // Use wallet service to credit points
-            $this->walletService->credit($referrerId, $amount, 'referral', [
-                'description' => "Referral commission from {$source} deal #{$transactionId}",
-                'reference_id' => $transactionId,
-                'reference_type' => $source,
-                'related_user_id' => $buyerId,
-                'referral_code' => $referralCode
-            ]);
-
-            // Log in referral_rewards
             $tid = $this->getTenantId();
+            // Idempotency: never pay twice for the same referrer/buyer/amount (S264).
+            $chk = $this->pdo->prepare("SELECT id FROM referral_rewards WHERE referrer_id = ? AND referred_id = ? AND reward_amount = ? AND status = 'credited' LIMIT 1");
+            $chk->execute([$referrerId, $buyerId, $amount]);
+            if ($chk->fetchColumn()) {
+                return;
+            }
+            // WalletService::credit(int,float,string,string,?int,string) — description
+            // is a STRING. The old call passed an ARRAY here: PHP8 TypeError, caught
+            // below, commission silently never paid while the ledger read 'credited'.
+            $ok = $this->walletService->credit($referrerId, $amount, 'referral',
+                "Referral commission from {$source} deal #{$transactionId}",
+                $transactionId, $source);
+
+            // Log in referral_rewards — status tells the truth about the money
+            // ('pending' = wallet move failed, retryable; never 'credited'-on-fail).
+            // Column shape matches converge_referral_rewards_s264 (union schema).
             $stmt = $this->pdo->prepare("
                 INSERT INTO referral_rewards 
                 (referrer_id, referred_id, reward_amount, reward_type, reward_percentage, referral_code, status, tenant_id, credited_at, created_at)
-                VALUES (?, ?, ?, 'wallet_points', 0, ?, 'credited', ?, NOW(), NOW())
+                VALUES (?, ?, ?, 'wallet_points', 0, ?, ?, ?, " . ($ok ? "NOW()" : "NULL") . ", NOW())
             ");
-            $params = [$referrerId, $buyerId, $amount, $referralCode, $tid];
+            $params = [$referrerId, $buyerId, $amount, $referralCode, $ok ? 'credited' : 'pending', $tid];
             $stmt->execute($params);
-
+            if (!$ok) {
+                throw new \RuntimeException('wallet credit failed for resell referral commission');
+            }
         } catch (\Throwable $e) {
             error_log("ResellTransactionService::payReferralCommission error: " . $e->getMessage());
         }

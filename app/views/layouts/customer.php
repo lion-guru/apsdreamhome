@@ -234,5 +234,6 @@ use App\Services\PortalMenuService;
         }
         document.addEventListener('DOMContentLoaded', checkNotifications);
     </script>
+    <?php include __DIR__ . '/../components/smart_chatbot.php'; ?>
 </body>
 </html>

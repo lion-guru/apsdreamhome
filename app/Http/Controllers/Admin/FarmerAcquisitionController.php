@@ -191,4 +191,190 @@ class FarmerAcquisitionController extends AdminController
             'page_title' => 'Land Compensation Payout Voucher #' . ($voucher['voucher_token'] ?? $voucher['id'])
         ]);
     }
+
+    /**
+     * S258 Plot-Gata-Kisan Link Desk.
+     * One screen joining plots.gata_number <-> land_parcels.khasra_no
+     * <-> farmer_land_holdings <-> land_deals. Zero new tables.
+     */
+    public function plotGataLink()
+    {
+        $this->requireAdmin();
+        $colonyId = !empty($_GET['colony_id']) ? (int)$_GET['colony_id'] : 6;
+
+        $pdo = Database::getInstance()->getConnection();
+
+        $cols = $pdo->query("SELECT id, name, is_active FROM colonies ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        $colony = null;
+        foreach ($cols as $c) {
+            if ((int)$c['id'] === $colonyId) { $colony = $c; break; }
+        }
+        if (!$colony) {
+            $_SESSION['flash_error'] = 'Colony not found.';
+            $this->redirect('/admin/farmer-acquisitions');
+        }
+
+        $st = $pdo->prepare("SELECT * FROM land_parcels WHERE colony_id = ? ORDER BY khasra_no ASC");
+        $st->execute([$colonyId]);
+        $parcels = $st->fetchAll(PDO::FETCH_ASSOC) ?: [];
+
+        $st = $pdo->prepare("SELECT gata_number, COUNT(*) AS c, COALESCE(SUM(area_sqft),0) AS sqft,
+                COALESCE(SUM(status = 'available'),0) AS av, COALESCE(SUM(status = 'booked'),0) AS bk,
+                COALESCE(SUM(status = 'sold'),0) AS so, COALESCE(SUM(total_price),0) AS val
+            FROM plots WHERE colony_id = ? AND deleted_at IS NULL GROUP BY gata_number");
+        $st->execute([$colonyId]);
+        $agg = [];
+        foreach ($st->fetchAll(PDO::FETCH_ASSOC) ?: [] as $a) {
+            $agg[(string)($a['gata_number'] ?? '')] = $a;
+        }
+
+        $khasras = array_values(array_unique(array_column($parcels, 'khasra_no')));
+        $holdings = [];
+        if ($khasras) {
+            $ph = implode(',', array_fill(0, count($khasras), '?'));
+            $st = $pdo->prepare("SELECT * FROM farmer_land_holdings WHERE khasra_number IN ($ph)");
+            $st->execute($khasras);
+            foreach ($st->fetchAll(PDO::FETCH_ASSOC) ?: [] as $h) {
+                $holdings[$h['khasra_number']][] = $h;
+            }
+        }
+
+        $fids = [];
+        foreach ($holdings as $lst) {
+            foreach ($lst as $h) {
+                if (!empty($h['farmer_id'])) $fids[(int)$h['farmer_id']] = true;
+            }
+        }
+        $fnames = [];
+        if ($fids) {
+            $ph = implode(',', array_fill(0, count($fids), '?'));
+            foreach (['farmers', 'farmer_profiles'] as $t) {
+                try {
+                    $st = $pdo->prepare("SELECT * FROM `$t` WHERE id IN ($ph)");
+                    $st->execute(array_keys($fids));
+                    foreach ($st->fetchAll(PDO::FETCH_ASSOC) ?: [] as $f) {
+                        $nm = $f['full_name'] ?? $f['name'] ?? $f['farmer_name'] ?? null;
+                        $fnames[$t . ':' . $f['id']] = $nm ?: ('#' . $f['id']);
+                    }
+                } catch (\Throwable $e) { /* table may not exist — skip */ }
+            }
+        }
+
+        $st = $pdo->prepare("SELECT * FROM land_deals WHERE colony_id = ? ORDER BY id DESC");
+        $st->execute([$colonyId]);
+        $deals = $st->fetchAll(PDO::FETCH_ASSOC) ?: [];
+
+        $st = $pdo->prepare("SELECT id, plot_number, block, area_sqft, status FROM plots
+            WHERE colony_id = ? AND deleted_at IS NULL AND status = 'available' AND land_parcel_id IS NULL
+            ORDER BY plot_number ASC LIMIT 200");
+        $st->execute([$colonyId]);
+        $unlinked = $st->fetchAll(PDO::FETCH_ASSOC) ?: [];
+
+        $orphans = [];
+        foreach ($agg as $g => $a) {
+            if ($g === '') continue;
+            $found = false;
+            foreach ($parcels as $pc) {
+                if ((string)$pc['khasra_no'] === (string)$g) { $found = true; break; }
+            }
+            if (!$found) $orphans[] = $a;
+        }
+        $nullGata = $agg[''] ?? null;
+
+        $linked = 0; $tAcres = 0.0; $tPlots = 0;
+        foreach ($parcels as $pc) {
+            $tAcres += (float)($pc['area_acres'] ?? 0);
+            $g = (string)$pc['khasra_no'];
+            if (isset($agg[$g])) $linked += (int)$agg[$g]['c'];
+        }
+        foreach ($agg as $a) $tPlots += (int)$a['c'];
+        $adv = 0.0; $bal = 0.0;
+        foreach ($deals as $d) {
+            $adv += (float)($d['advance_paid'] ?? 0);
+            $bal += (float)($d['balance_amount'] ?? 0);
+        }
+
+        $this->render('admin/land_acquisition/plot_gata_link', [
+            'page_title' => 'Plot-Gata-Kisan Link — ' . $colony['name'],
+            'colonies' => $cols,
+            'colony' => $colony,
+            'colony_id' => $colonyId,
+            'parcels' => $parcels,
+            'agg' => $agg,
+            'holdings' => $holdings,
+            'fnames' => $fnames,
+            'deals' => $deals,
+            'unlinked' => $unlinked,
+            'orphans' => $orphans,
+            'null_gata' => $nullGata,
+            'stats' => [
+                'parcels' => count($parcels), 'acres' => $tAcres,
+                'plots' => $tPlots, 'linked' => $linked,
+                'advance' => $adv, 'balance' => $bal,
+            ],
+        ]);
+    }
+
+    public function updateParcelOwner()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+        $colonyId = (int)($_POST['colony_id'] ?? 6);
+        $back = '/admin/land-plot-link?colony_id=' . $colonyId;
+        $pid = (int)($_POST['parcel_id'] ?? 0);
+        $name = trim((string)($_POST['owner_name'] ?? ''));
+        $phone = trim((string)($_POST['owner_phone'] ?? ''));
+        if ($pid <= 0 || $name === '') {
+            $_SESSION['flash_error'] = 'Parcel + owner (kisan) name required.';
+            $this->redirect($back);
+        }
+        if ($phone !== '' && !preg_match('/^[0-9+\-\s]{7,15}$/', $phone)) {
+            $_SESSION['flash_error'] = 'Phone number invalid.';
+            $this->redirect($back);
+        }
+        $pdo = Database::getInstance()->getConnection();
+        $st = $pdo->prepare("UPDATE land_parcels SET owner_name = ?, owner_phone = ? WHERE id = ? AND tenant_id = 1");
+        $st->execute([$name, ($phone !== '' ? $phone : null), $pid]);
+        $_SESSION['flash_success'] = $st->rowCount()
+            ? "Kisan naam update ho gaya (parcel #$pid)."
+            : 'Koi badlav nahi (parcel mila nahi?).';
+        $this->redirect($back);
+    }
+
+    public function linkPlotParcel()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+        $colonyId = (int)($_POST['colony_id'] ?? 6);
+        $back = '/admin/land-plot-link?colony_id=' . $colonyId;
+        $plotId = (int)($_POST['plot_id'] ?? 0);
+        $parcelId = (int)($_POST['parcel_id'] ?? 0);
+        if ($plotId <= 0 || $parcelId <= 0) {
+            $_SESSION['flash_error'] = 'Plot + gata (parcel) dono chuno.';
+            $this->redirect($back);
+        }
+        $pdo = Database::getInstance()->getConnection();
+        $st = $pdo->prepare("SELECT id, khasra_no, colony_id FROM land_parcels WHERE id = ? LIMIT 1");
+        $st->execute([$parcelId]);
+        $parcel = $st->fetch(PDO::FETCH_ASSOC);
+        $st = $pdo->prepare("SELECT id, plot_number, colony_id, status FROM plots WHERE id = ? LIMIT 1");
+        $st->execute([$plotId]);
+        $plot = $st->fetch(PDO::FETCH_ASSOC);
+        if (!$parcel || !$plot) {
+            $_SESSION['flash_error'] = 'Plot ya parcel nahi mila.';
+            $this->redirect($back);
+        }
+        if ((int)$parcel['colony_id'] !== (int)$plot['colony_id'] || (int)$plot['colony_id'] !== $colonyId) {
+            $_SESSION['flash_error'] = 'Plot aur gata alag colony ke hain — link nahi hoga.';
+            $this->redirect($back);
+        }
+        if ($plot['status'] !== 'available') {
+            $_SESSION['flash_error'] = 'Sirf available plot ka gata link badlo (booked/sold history freeze hai). Plot ' . $plot['plot_number'] . ' = ' . $plot['status'] . '.';
+            $this->redirect($back);
+        }
+        $st = $pdo->prepare("UPDATE plots SET land_parcel_id = ?, gata_number = ? WHERE id = ?");
+        $st->execute([$parcelId, $parcel['khasra_no'], $plotId]);
+        $_SESSION['flash_success'] = 'Plot ' . $plot['plot_number'] . ' ab ' . $parcel['khasra_no'] . ' se linked.';
+        $this->redirect($back);
+    }
 }

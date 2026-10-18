@@ -107,11 +107,11 @@ class PlcService
         try {
             $cols = $db->query("SHOW COLUMNS FROM plots LIKE 'plc_amount'")->fetchAll(\PDO::FETCH_ASSOC);
             if (empty($cols)) {
-                $db->exec("ALTER TABLE plots ADD COLUMN plc_amount DECIMAL(12,2) NOT NULL DEFAULT 0 AFTER base_price_per_sqft");
+                $db->execute("ALTER TABLE plots ADD COLUMN plc_amount DECIMAL(12,2) NOT NULL DEFAULT 0 AFTER base_price_per_sqft");
             }
             $cols = $db->query("SHOW COLUMNS FROM plots LIKE 'final_price_per_sqft'")->fetchAll(\PDO::FETCH_ASSOC);
             if (empty($cols)) {
-                $db->exec("ALTER TABLE plots ADD COLUMN final_price_per_sqft DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER plc_amount");
+                $db->execute("ALTER TABLE plots ADD COLUMN final_price_per_sqft DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER plc_amount");
             }
         } catch (\Throwable $e) {
             error_log('[PlcService::ensureColumns] ' . $e->getMessage());

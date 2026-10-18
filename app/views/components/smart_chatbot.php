@@ -11,7 +11,12 @@ $isLoggedIn = false;
 $userName = 'Guest';
 $userRole = 'guest';
 
-if (isset($_SESSION['associate_id'])) {
+if (isset($_SESSION['admin_id']) || isset($_SESSION['admin_user_id'])) {
+    $isLoggedIn = true;
+    $userName = $_SESSION['admin_name'] ?? 'Admin';
+    $userRole = 'admin';
+    $adminRole = $_SESSION['admin_role'] ?? 'admin';
+} elseif (isset($_SESSION['associate_id'])) {
     $isLoggedIn = true;
     $userName = $_SESSION['associate_name'] ?? 'Associate';
     $userRole = 'associate';
@@ -46,6 +51,7 @@ if (isset($_SESSION['associate_id'])) {
                 <span class="status"><i class="fas fa-circle"></i> <?= __('component_online', 'Online') ?></span>
             </div>
             <div class="chatbot-actions">
+                <a href="<?= defined('BASE_URL') ? BASE_URL : '' ?>/admin/ai/executive-assistant" target="_blank" title="<?= htmlspecialchars(__('component_powerful_help', 'Powerful Help (RBAC)')) ?>" style="color:inherit;text-decoration:none;margin-right:6px;"><i class="fas fa-bolt"></i></a>
                 <button onclick="clearChat()" title="<?= htmlspecialchars(__('component_clear_chat', 'Clear Chat')) ?>"><i class="fas fa-trash"></i></button>
                 <button onclick="toggleChatbot()" title="<?= htmlspecialchars(__('component_close', 'Close')) ?>"><i class="fas fa-times"></i></button>
             </div>
@@ -59,25 +65,45 @@ if (isset($_SESSION['associate_id'])) {
                     <i class="fas fa-robot"></i>
                 </div>
                 <div class="message-content">
-                    <p>ðŸ'‹ Namaste <?php echo htmlspecialchars($userName ?? ''); ?>! <br><br>
+                    <p>👍 Namaste <?php echo htmlspecialchars($userName ?? ''); ?>! <br><br>
                         Main APS AI hoon, aapka smart real estate assistant! 🏠<br><br>
-                        ðŸ'¬ Aap mujhse pooch sakte hain:<br>
-                        —¢ Property buy/sell/rent<br>
-                        —¢ Prices & locations<br>
-                        —¢ Home loan info<br>
-                        —¢ Project details<br><br>
-                        Kya main aapki madad kar sakta hoon? ðŸ˜Š</p>
+                        💬 Aap mujhse pooch sakte hain:<br>
+                        💬 Property buy/sell/rent<br>
+                        💬 Prices & locations<br>
+                        💬 Home loan info<br>
+                        💬 Project details<br><br>
+                        Kya main aapki madad kar sakta hoon? 😊</p>
                     <span class="message-time"><?php echo date('h:i A'); ?></span>
                 </div>
             </div>
         </div>
 
-        <!-- Quick Suggestions -->
+        <!-- Quick Suggestions (RBAC-aware) -->
         <div class="chatbot-suggestions">
-            <button onclick="sendQuickMessage('Plot kharidna hai')">🏠 Buy Plot</button>
-            <button onclick="sendQuickMessage('Property bechni hai')">ðŸ'° Sell Property</button>
-            <button onclick="sendQuickMessage('Price kya hai?')">ðŸ'µ Pricing</button>
-            <button onclick="sendQuickMessage('Home loan chahiye')">🏠¦ Home Loan</button>
+            <?php if ($userRole === 'admin' || $userRole === 'super_admin'): ?>
+                <button onclick="sendQuickMessage('Show me admin dashboard overview')">Dashboard</button>
+                <button onclick="sendQuickMessage('How to manage users?')">Users</button>
+                <button onclick="sendQuickMessage('Show reports and analytics')">Reports</button>
+                <button onclick="window.open('<?= defined('BASE_URL') ? BASE_URL : '' ?>/admin/ai/executive-assistant','_blank')">Powerful Help</button>
+            <?php elseif ($userRole === 'associate'): ?>
+                <button onclick="sendQuickMessage('Show my leads')">My Leads</button>
+                <button onclick="sendQuickMessage('Show my commissions')">Commissions</button>
+                <button onclick="sendQuickMessage('Add new lead')">Add Lead</button>
+                <button onclick="window.open('<?= defined('BASE_URL') ? BASE_URL : '' ?>/associate/id-card','_blank')">ID Card</button>
+            <?php elseif ($userRole === 'agent'): ?>
+                <button onclick="sendQuickMessage('Show my bookings')">Bookings</button>
+                <button onclick="sendQuickMessage('Show my leads')">Leads</button>
+                <button onclick="sendQuickMessage('Property prices?')">Pricing</button>
+            <?php elseif ($userRole === 'customer'): ?>
+                <button onclick="sendQuickMessage('My bookings')">My Bookings</button>
+                <button onclick="sendQuickMessage('Pay EMI')">Pay EMI</button>
+                <button onclick="sendQuickMessage('My documents')">Documents</button>
+            <?php else: ?>
+                <button onclick="sendQuickMessage('Plot kharidna hai')">Buy Plot</button>
+                <button onclick="sendQuickMessage('Property bechni hai')">Sell Property</button>
+                <button onclick="sendQuickMessage('Price kya hai?')">Pricing</button>
+                <button onclick="sendQuickMessage('Home loan chahiye')">Home Loan</button>
+            <?php endif; ?>
         </div>
 
         <!-- Input Area -->
@@ -99,7 +125,7 @@ if (isset($_SESSION['associate_id'])) {
     .chatbot-widget {
         position: fixed;
         bottom: 20px;
-        left: 20px;
+        right: 20px;
         z-index: 9999;
         font-family: 'Segoe UI', system-ui, sans-serif;
     }
@@ -131,7 +157,7 @@ if (isset($_SESSION['associate_id'])) {
     .chatbot-window {
         position: absolute;
         bottom: 70px;
-        left: 0;
+        right: 0;
         width: 380px;
         height: 550px;
         background: white;
@@ -522,7 +548,7 @@ if (isset($_SESSION['associate_id'])) {
             })
             .catch(err => {
                 hideTyping();
-                addMessage('Network error. Please check your connection! ðŸ"¡', 'bot');
+                addMessage('Network error. Please check your connection! 😊', 'bot');
                 console.error(err);
             });
     }
@@ -586,10 +612,10 @@ if (isset($_SESSION['associate_id'])) {
         const cards = listings.map(function(l) {
             const price = '₹' + Number(l.price).toLocaleString('en-IN');
             const area = Number(l.area_sqft).toLocaleString('en-IN') + ' sqft';
-            const facing = l.facing ? ' —¢ ' + l.facing + ' facing' : '';
+            const facing = l.facing ? ' 💬 ' + l.facing + ' facing' : '';
             return '<a class="chatbot-listing" href="' + l.link + '" target="_blank" rel="noopener">' +
                 '<div class="cl-colony">' + escapeHtml(l.colony) + '</div>' +
-                '<div class="cl-sub">Plot ' + escapeHtml(String(l.plot_number)) + ' —¢ ' + area + facing + '</div>' +
+                '<div class="cl-sub">Plot ' + escapeHtml(String(l.plot_number)) + ' 💬 ' + area + facing + '</div>' +
                 '<div class="cl-price">' + price + '</div>' +
                 '</a>';
         }).join('');
@@ -614,7 +640,7 @@ if (isset($_SESSION['associate_id'])) {
                 <i class="fas fa-robot"></i>
             </div>
             <div class="message-content">
-                <p>ðŸ'‹ Chat cleared! Kya main aapki madad kar sakta hoon?</p>
+                <p>👍 Chat cleared! Kya main aapki madad kar sakta hoon?</p>
                 <span class="message-time">${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
             </div>
         </div>

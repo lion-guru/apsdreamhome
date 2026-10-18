@@ -87,6 +87,20 @@ class GeminiChatbotController extends BaseApiController
     {
         header('Content-Type: application/json');
 
+        // S264: chat history is PII — owner or admin only (was: any userId, no auth).
+        $me = $this->getCurrentUserId();
+        $isAdmin = method_exists($this, 'isAdmin') ? (bool)$this->isAdmin() : false;
+        if (!$me) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Authentication required']);
+            return;
+        }
+        if (!$isAdmin && (int)$me !== (int)$userId) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Forbidden']);
+            return;
+        }
+
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
             $stmt = $db->prepare("

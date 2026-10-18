@@ -45,8 +45,8 @@ try {
     try {
         $db = \App\Core\Database\Database::getInstance();
         $db->execute(
-            "INSERT INTO ai_alerts (type, message, priority, created_at) VALUES (?, ?, ?, NOW())",
-            ['agentic_cron', $message, $hasErrors ? 'high' : 'normal']
+            "INSERT INTO ai_alerts (alert_type, severity, message, tenant_id, created_at) VALUES (?, ?, ?, 1, NOW())",
+            ['agentic_cron', $hasErrors ? 'high' : 'low', $message]
         );
     } catch (\Throwable $e) {
         // Silent fail for logging
@@ -62,7 +62,7 @@ try {
     try {
         $db = \App\Core\Database\Database::getInstance();
         $db->execute(
-            "INSERT INTO ai_alerts (type, message, priority, created_at) VALUES (?, ?, 'critical', NOW())",
+            "INSERT INTO ai_alerts (alert_type, severity, message, tenant_id, created_at) VALUES (?, 'critical', ?, 1, NOW())",
             ['agentic_cron_fatal', $errorMsg]
         );
     } catch (\Throwable $e2) {}

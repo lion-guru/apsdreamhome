@@ -16,14 +16,14 @@ class FreeAIEngines
 {
     private static $instance = null;
 
-// Ollama (local)
+// Ollama (local) - LAST RESORT fallback only
     private $ollamaUrl = 'http://localhost:11434';
     private $ollamaModel = 'llama3.2:3b';
 
     // Groq (free tier: 30 RPM, 14,400 RPD) - models may change, check console.groq.com
     private $groqKey = '';
     private $groqUrl = 'https://api.groq.com/openai/v1/chat/completions';
-    private $groqModel = 'groq/compound-mini';
+    private $groqModel = 'qwen/qwen3.8-27b';
 
     // OpenRouter (free tier: deprecated 2026, used as last resort)
     private $openRouterKey = '';
@@ -46,6 +46,7 @@ class FreeAIEngines
 
     // Together.ai (free tier)
     private $togetherKey = '';
+    private $togetherAiKey = '';
     private $togetherUrl = 'https://api.together.xyz/v1/chat/completions';
     private $togetherModel = 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo';
 
@@ -132,7 +133,7 @@ class FreeAIEngines
 
     /**
      * Generate text using best available free engine
-     * Priority: Ollama (local) → Groq (fastest) → xAI Grok → HuggingFace → Together.ai → DeepSeek → Together.ai → Cohere → OpenRouter (free models) → Google Gemini
+     * Priority: Groq (fastest cloud) → xAI Grok → HuggingFace → Together.ai → DeepSeek → Cohere → Google Gemini → OpenRouter → Ollama (local, LAST RESORT)
      * @param string $prompt
      * @param array $options  ['temperature' => 0.7, 'max_tokens' => 1024, 'system' => '...']
      * @param string $purpose  'chat', 'qualify', 'match', 'analyze', 'translate'
@@ -144,64 +145,58 @@ class FreeAIEngines
         $maxTokens = $options['max_tokens'] ?? 1024;
         $temperature = $options['temperature'] ?? 0.7;
 
-        // 1. Try Ollama (local, unlimited, private)
-        if ($this->isOllamaAvailable()) {
-            $result = $this->ollamaGenerate($prompt, $system, $temperature, $maxTokens);
-            if ($result) return ['text' => self::cleanResponse($result), 'engine' => 'ollama', 'model' => $this->ollamaModel, 'tokens' => 0];
-        }
-
-        // 2. Try Groq (fastest in world, free tier) - models change frequently
+        // 1. Try Groq (fastest in world, free tier) - PRIMARY
         if (!empty($this->groqKey)) {
             $result = $this->groqGenerate($prompt, $system, $temperature, $maxTokens);
             if ($result) return ['text' => self::cleanResponse($result), 'engine' => 'groq', 'model' => $this->groqModel, 'tokens' => 0];
         }
 
-        // 3. Try xAI Grok (free tier: available via xAI API)
+        // 2. Try xAI Grok (free tier: available via xAI API)
         if (!empty($this->xaiKey)) {
             $result = $this->xaiGenerate($prompt, $system, $temperature, $maxTokens);
             if ($result) return ['text' => self::cleanResponse($result), 'engine' => 'xai_grok', 'model' => $this->xaiModel, 'tokens' => 0];
         }
 
-        // 4. Try Hugging Face Inference API (free tier: 30k tokens/day)
+        // 3. Try Hugging Face Inference API (free tier: 30k tokens/day)
         if (!empty($this->hfKey)) {
             $result = $this->hfGenerate($prompt, $system, $temperature, $maxTokens);
             if ($result) return ['text' => self::cleanResponse($result), 'engine' => 'huggingface', 'model' => $this->hfModel, 'tokens' => 0];
         }
 
-        // 5. Try Together.ai (free tier: 100k tokens/day)
+        // 4. Try Together.ai (free tier: 100k tokens/day)
         if (!empty($this->togetherAiKey)) {
             $result = $this->togetherAiGenerate($prompt, $system, $temperature, $maxTokens);
             if ($result) return ['text' => self::cleanResponse($result), 'engine' => 'together_ai', 'model' => $this->togetherModel, 'tokens' => 0];
         }
 
-        // 6. Try DeepSeek (free tier via their API)
+        // 5. Try DeepSeek (free tier via their API)
         if (!empty($this->deepseekKey)) {
             $result = $this->deepseekGenerate($prompt, $system, $temperature, $maxTokens);
             if ($result) return ['text' => self::cleanResponse($result), 'engine' => 'deepseek', 'model' => $this->deepseekModel, 'tokens' => 0];
         }
 
-        // 7. Try Together.ai (free tier: 100k tokens/day)
-        if (!empty($this->togetherAiKey)) {
-            $result = $this->togetherGenerate($prompt, $system, $temperature, $maxTokens);
-            if ($result) return ['text' => self::cleanResponse($result), 'engine' => 'together', 'model' => $this->togetherModel, 'tokens' => 0];
-        }
-
-        // 8. Try Cohere (free tier: 100 calls/min)
+        // 6. Try Cohere (free tier: 100 calls/min)
         if (!empty($this->cohereKey)) {
             $result = $this->cohereGenerate($prompt, $system, $temperature, $maxTokens);
             if ($result) return ['text' => self::cleanResponse($result), 'engine' => 'cohere', 'model' => $this->cohereModel, 'tokens' => 0];
         }
 
-        // 9. Try OpenRouter (free tier: deprecated 2026, used as last resort)
+        // 7. Try Google Gemini (free tier: 15 RPM, 1M tokens/day)
+        if (!empty($this->geminiKey)) {
+            $result = $this->geminiGenerate($prompt, $system, $temperature, $maxTokens);
+            if ($result) return ['text' => self::cleanResponse($result), 'engine' => 'gemini', 'model' => $this->geminiModel, 'tokens' => 0];
+        }
+
+        // 8. Try OpenRouter (free tier: deprecated 2026, used as fallback)
         if (!empty($this->openRouterKey)) {
             $result = $this->openRouterGenerate($prompt, $system, $temperature, $maxTokens);
             if ($result) return ['text' => self::cleanResponse($result), 'engine' => 'openrouter', 'model' => 'free-model', 'tokens' => 0];
         }
 
-        // 10. Try Google Gemini (free tier: 15 RPM, 1M tokens/day)
-        if (!empty($this->geminiKey)) {
-            $result = $this->geminiGenerate($prompt, $system, $temperature, $maxTokens);
-            if ($result) return ['text' => self::cleanResponse($result), 'engine' => 'gemini', 'model' => $this->geminiModel, 'tokens' => 0];
+        // 9. LAST RESORT: Try Ollama (local, unlimited, private) - only if no cloud keys configured
+        if ($this->isOllamaAvailable()) {
+            $result = $this->ollamaGenerate($prompt, $system, $temperature, $maxTokens);
+            if ($result) return ['text' => self::cleanResponse($result), 'engine' => 'ollama', 'model' => $this->ollamaModel, 'tokens' => 0];
         }
 
         return ['text' => '', 'engine' => 'none', 'model' => '', 'tokens' => 0];

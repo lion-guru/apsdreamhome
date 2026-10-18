@@ -104,9 +104,16 @@ class RateLimitMiddleware
      */
     private function isTestRequest(): bool
     {
+        // S264: APP_ENV=testing always bypasses; the ?test_login / X-Testing
+        // param bypass is dev-only (production throttle hole otherwise).
+        if (defined('APP_ENV') && APP_ENV === 'testing') {
+            return true;
+        }
+        if ((defined('APP_ENV') && APP_ENV === 'production') || (getenv('APP_ENV') === 'production')) {
+            return false;
+        }
         return isset($_GET['test_login'])
-            || isset($_SERVER['HTTP_X_TESTING'])
-            || (defined('APP_ENV') && APP_ENV === 'testing');
+            || isset($_SERVER['HTTP_X_TESTING']);
     }
 
     /**

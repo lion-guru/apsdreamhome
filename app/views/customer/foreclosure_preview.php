@@ -135,7 +135,7 @@ $base = BASE_URL ?? '';
     <div class="aps-cp-card mb-4">
         <div class="aps-cp-card-header"><span><i class="fas fa-bolt me-2"></i>Process Foreclosure Now</span></div>
         <div class="aps-cp-card-body">
-            <form method="POST" action="<?= BASE_URL ?>/customer/foreclosure/process" id="forecloseForm">
+            <form method="POST" action="<?= BASE_URL ?>/user/foreclosure/process" id="forecloseForm">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                 <input type="hidden" name="booking_id" value="<?= (int)$booking['id'] ?>">
                 <input type="hidden" name="amount" value="<?= floatval($foreclosure['final_amount']) ?>">

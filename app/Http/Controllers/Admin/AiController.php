@@ -173,9 +173,44 @@ class AiController extends AdminController
     }
 
     /**
-     * Process AI request
+     * Free AI Engines — status + test + management
      */
-    public function processRequest()
+    public function freeEngines()
+    {
+        $this->requireAdmin();
+        try {
+            $engines = \App\Services\AI\FreeAIEngines::getInstance();
+            $status = $engines->getStatus();
+            $data = [
+                'page_title' => 'Free AI Engines - APS Dream Home',
+                'active_page' => 'ai_engines',
+                'engine_status' => $status,
+            ];
+            return $this->render('admin/ai/engines', $data);
+        } catch (\Exception $e) {
+            $this->loggingService->error("Free AI Engines error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load Free AI Engines');
+            return $this->redirect('admin/ai/hub');
+        }
+    }
+
+    /**
+     * Test a free AI engine
+     */
+    public function testFreeEngine()
+    {
+        $this->requireAdmin();
+        $provider = $_POST['provider'] ?? '';
+        try {
+            $engines = \App\Services\AI\FreeAIEngines::getInstance();
+            $result = $engines->generate("Say hello in one word.", ['max_tokens' => 20], 'chat');
+            $this->jsonResponse(['success' => !empty($result['text']), 'message' => $result['engine'] ?? 'none', 'text' => $result['text'] ?? '']);
+        } catch (\Throwable $e) {
+            $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function executeAIAction()
     {
         $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

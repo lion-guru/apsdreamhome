@@ -209,8 +209,9 @@ class PayoutController extends AdminController
             $this->db->beginTransaction();
 
             try {
-                // Get payout details
-                $sql = "SELECT * FROM commission_payouts WHERE id = ? AND status = 'pending'";
+                // Get payout details (locked — concurrent re-POSTs serialize here;
+                // the loser sees non-pending and exits at the guard below).
+                $sql = "SELECT * FROM commission_payouts WHERE id = ? AND status = 'pending' LIMIT 1 FOR UPDATE";
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute([$payoutId]);
                 $payout = $stmt->fetch();

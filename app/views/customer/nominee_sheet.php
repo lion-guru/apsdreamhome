@@ -26,7 +26,7 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
 <body>
 <div class="container py-4">
     <div class="toolbar mb-3 d-flex gap-2">
-        <a href="<?= BASE_URL ?>/customer/documents" class="btn btn-outline-secondary btn-sm">← Documents</a>
+        <a href="<?= BASE_URL ?>/user/documents" class="btn btn-outline-secondary btn-sm">← Documents</a>
         <button class="btn btn-primary btn-sm" onclick="window.print()"><i class="fas fa-print me-1"></i>Print Sheet</button>
     </div>
     <div class="sheet">

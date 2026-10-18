@@ -324,6 +324,9 @@ class WalletActivationController extends BaseController
     public function processWithdrawal()
     {
         $this->requireAssociate();
+        // S264: the view already sends the token (form field + X-CSRF-Token
+        // header) — enforce it server-side; this path is router-CSRF-excluded.
+        $this->validateCsrfOrFail();
         $userId = (int)$_SESSION['user_id'];
         $bankAccountId = (int)($_POST['bank_account_id'] ?? 0);
         $amount = (float)($_POST['amount'] ?? 0);
@@ -342,8 +345,8 @@ class WalletActivationController extends BaseController
             $db = \App\Core\Database\Database::getInstance()->getConnection();
             $db->beginTransaction();
 
-            // Get wallet
-            $stmt = $db->prepare("SELECT * FROM user_wallets WHERE user_id = ?" . $tenantWhere . " LIMIT 1");
+            // Get wallet (locked: concurrent double-clicks serialize here — S264)
+            $stmt = $db->prepare("SELECT * FROM user_wallets WHERE user_id = ?" . $tenantWhere . " LIMIT 1 FOR UPDATE");
             $stmt->execute($params);
             $wallet = $stmt->fetch(\PDO::FETCH_ASSOC);
 

@@ -35,8 +35,16 @@ class NotificationController extends BaseApiController
 
     public function create()
     {
+        // S264: user_id is session-bound. Anonymous callers get 401; non-admins
+        // can only notify themselves (kills arbitrary-inbox injection).
+        $sessionUser = $_SESSION['user_id'] ?? null;
+        if (!$sessionUser) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Authentication required'], 401);
+        }
         $data = $this->inputWithJson('data') ?? $this->inputWithJson('notification') ?? [];
-        $userId = $this->inputWithJson('user_id') ?? ($_SESSION['user_id'] ?? null);
+        $requested = $this->inputWithJson('user_id') ?? $sessionUser;
+        $isAdmin = method_exists($this, 'isAdmin') ? (bool)$this->isAdmin() : false;
+        $userId = (!$isAdmin && (int)$requested !== (int)$sessionUser) ? $sessionUser : $requested;
         $title = $this->inputWithJson('title') ?? '';
         $message = $this->inputWithJson('message') ?? '';
         $type = $this->inputWithJson('type') ?? 'info';

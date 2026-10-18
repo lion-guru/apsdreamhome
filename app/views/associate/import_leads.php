@@ -59,6 +59,9 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-upload me-1"></i> <?= __('assoc_il_import', [], 'Import Leads') ?>
                         </button>
+                        <button type="submit" name="preview_only" value="1" class="btn btn-outline-secondary ms-2">
+                            <i class="fas fa-eye me-1"></i> <?= __('assoc_il_preview', [], 'Preview First') ?>
+                        </button>
                     </form>
 
                     <?php if (!empty($errors)): ?>

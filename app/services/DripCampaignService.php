@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Services\Gateway\CommunicationGateway;
 
 use \App\Traits\ServiceTenantTrait;
 
@@ -133,7 +134,9 @@ class DripCampaignService
         $enrollmentId = (int)$this->pdo->lastInsertId();
         $tid = $this->tenantId();
         $this->pdo->prepare("UPDATE drip_campaigns SET total_enrolled = total_enrolled + 1 WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""))->execute($tid > 1 ? [$campaignId, $tid] : [$campaignId]);
-        $this->logEnrollment($enrollmentId, $campaignId, 'enrolled', 'Enrolled in campaign');
+        // S285: drip_email_log.status enum is (queued,sent,failed,bounced) —
+        // 'enrolled' truncated (1265) and killed every enroll. Queue it.
+        $this->logEnrollment($enrollmentId, $campaignId, 'queued', 'Enrolled in campaign');
         return $enrollmentId;
     }
 
@@ -175,18 +178,43 @@ class DripCampaignService
                 $vars = ['name' => $enr['name'] ?? 'Customer', 'link' => BASE_URL . '/properties', 'phone' => '+91 92771 21112'];
                 $renderedSubject = $this->renderTemplate($email['subject'], $vars);
                 $renderedBody = $this->renderTemplate($email['body'], $vars);
-                $logId = $this->logEnrollment((int)$enr['id'], (int)$enr['campaign_id'], 'sent', $renderedSubject, (int)$email['id']);
-                $this->pdo->prepare("UPDATE drip_email_log SET status = 'sent', sent_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""))->execute($tid > 1 ? [$logId, $tid] : [$logId]);
+                // S285: honest sends — only the email channel is supported, and only
+                // when SMTP is configured. Never log 'sent' without attempting a send.
+                $channel = $email['channel'] ?? 'email';
+                $sent = false;
+                $sendErr = 'channel-not-supported';
+                if ($channel === 'email') {
+                    if (empty($_ENV['SMTP_USER'])) {
+                        $sendErr = 'smtp-unconfigured';
+                    } else {
+                        try {
+                            $gw = new CommunicationGateway();
+                            $res = $gw->sendEmail($enr['email'], $renderedSubject, $renderedBody);
+                            $sent = !empty($res['success']);
+                            $sendErr = $sent ? null : substr((string)($res['error'] ?? 'send-failed'), 0, 400);
+                        } catch (\Throwable $e) {
+                            $sendErr = substr($e->getMessage(), 0, 400);
+                        }
+                    }
+                }
+                $logId = $this->logEnrollment((int)$enr['id'], (int)$enr['campaign_id'], $sent ? 'sent' : 'failed', $sent ? $renderedSubject : $sendErr, (int)$email['id']);
+                if ($sent) {
+                    $this->pdo->prepare("UPDATE drip_email_log SET status = 'sent', sent_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""))->execute($tid > 1 ? [$logId, $tid] : [$logId]);
+                }
                 $nextEmail = $emails[$nextStep + 1] ?? null;
                 $nextSend = null;
                 if ($nextEmail) {
                     $delay = ((int)$nextEmail['delay_days'] * 86400) + ((int)$nextEmail['delay_hours'] * 3600);
                     $nextSend = date('Y-m-d H:i:s', time() + $delay);
                 }
-                $this->pdo->prepare("UPDATE drip_enrollments SET current_step = current_step + 1, total_sent = total_sent + 1, last_sent_at = NOW(), next_send_at = ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""))
-                    ->execute($tid > 1 ? [$nextSend, $enr['id'], $tid] : [$nextSend, $enr['id']]);
-                $this->pdo->prepare("UPDATE drip_campaigns SET emails_sent = emails_sent + 1 WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""))->execute($tid > 1 ? [$enr['campaign_id'], $tid] : [$enr['campaign_id']]);
-                $stats['sent']++;
+                $this->pdo->prepare("UPDATE drip_enrollments SET current_step = current_step + 1, total_sent = total_sent + ?, last_sent_at = NOW(), next_send_at = ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""))
+                    ->execute($tid > 1 ? [$sent ? 1 : 0, $nextSend, $enr['id'], $tid] : [$sent ? 1 : 0, $nextSend, $enr['id']]);
+                if ($sent) {
+                    $this->pdo->prepare("UPDATE drip_campaigns SET emails_sent = emails_sent + 1 WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""))->execute($tid > 1 ? [$enr['campaign_id'], $tid] : [$enr['campaign_id']]);
+                    $stats['sent']++;
+                } else {
+                    $stats['failed']++;
+                }
             }
         } catch (\Throwable $e) {
             $stats['error'] = $e->getMessage();

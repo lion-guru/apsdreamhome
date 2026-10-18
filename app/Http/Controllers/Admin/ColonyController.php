@@ -163,11 +163,26 @@ class ColonyController extends AdminController
                 error_log("ColonyController@show ops counts: " . $e->getMessage());
             }
 
+            // S272: live land strip — parcels + deals + plot-linkage (replaces
+            // free-text guessing on the Land & Pricing card).
+            $landSummary = ['parcels' => [], 'deals' => [], 'linked' => 0, 'gata_text' => 0, 'plots' => 0, 'adv' => 0.0, 'bal' => 0.0, 'acres' => 0.0];
+            try {
+                $landSummary['parcels'] = $this->db->fetchAll("SELECT id, khasra_no, village, area_acres, area_bigha, owner_name, mutation_status FROM land_parcels WHERE colony_id = ? ORDER BY khasra_no", [$id]) ?: [];
+                $landSummary['deals'] = $this->db->fetchAll("SELECT total_consideration, advance_paid, balance_amount, status, registration_number FROM land_deals WHERE colony_id = ? ORDER BY id DESC", [$id]) ?: [];
+                $lr = $this->db->fetchOne("SELECT COUNT(*) AS c, COALESCE(SUM(land_parcel_id IS NOT NULL),0) AS l, COALESCE(SUM(gata_number IS NOT NULL AND gata_number <> ''),0) AS g FROM plots WHERE colony_id = ? AND deleted_at IS NULL", [$id]);
+                $landSummary['plots'] = (int)($lr['c'] ?? 0);
+                $landSummary['linked'] = (int)($lr['l'] ?? 0);
+                $landSummary['gata_text'] = (int)($lr['g'] ?? 0);
+                foreach ($landSummary['parcels'] as $lp) { $landSummary['acres'] += (float)($lp['area_acres'] ?? 0); }
+                foreach ($landSummary['deals'] as $d) { $landSummary['adv'] += (float)($d['advance_paid'] ?? 0); $landSummary['bal'] += (float)($d['balance_amount'] ?? 0); }
+            } catch (\Throwable $e) { error_log("ColonyController@show land strip: " . $e->getMessage()); }
+
             $this->render('admin/colonies/show', [
                 'colony' => $colony,
                 'plots' => $plots,
                 'layout' => $layout,
                 'opsSummary' => $opsSummary,
+                'land_summary' => $landSummary,
             ]);
         } catch (\Throwable $e) {
             error_log("ColonyController@show: " . $e->getMessage());

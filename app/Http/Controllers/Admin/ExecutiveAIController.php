@@ -59,6 +59,11 @@ class ExecutiveAIController extends AdminController
         @session_start();
         header('Content-Type: application/json');
 
+        // S264: session-gated (was: anonymous callers ran as role 'admin').
+        if (empty($_SESSION['admin_id']) && empty($_SESSION['user_id'])) {
+            echo json_encode(['success' => false, 'error' => 'Authentication required.']);
+            exit;
+        }
         $role = $_SESSION['role'] ?? $_SESSION['admin_role'] ?? 'admin';
         $userId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
 
@@ -83,6 +88,13 @@ class ExecutiveAIController extends AdminController
         @session_start();
         header('Content-Type: application/json');
 
+        // S264: session-gated — anonymous callers executed AI actions (lead
+        // creation etc.) with a defaulted 'admin' role. Every session flow
+        // (admin/associate/customer) keeps working; only no-session dies.
+        if (empty($_SESSION['admin_id']) && empty($_SESSION['user_id'])) {
+            echo json_encode(['success' => false, 'error' => 'Authentication required.']);
+            exit;
+        }
         $role = $_SESSION['role'] ?? $_SESSION['admin_role'] ?? 'admin';
         $userId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
 

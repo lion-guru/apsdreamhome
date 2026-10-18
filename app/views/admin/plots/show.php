@@ -166,6 +166,36 @@ $documents = $documents ?? [];
             </div>
 
             <!-- Pricing Card -->
+            <!-- S272: Land Source (Gata–Kisan) strip -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-mountain"></i> Zameen Source (Gata–Kisan)</h5>
+                    <a href="<?= BASE_URL ?>/admin/land-plot-link?colony_id=<?= (int)($plot['colony_id'] ?? 0) ?>" class="btn btn-sm btn-outline-success">Link Desk</a>
+                </div>
+                <div class="card-body aps-cp-card-body">
+                    <?php $land = $land ?? ['parcel' => null, 'holdings' => [], 'deal' => null, 'gata' => '']; ?>
+                    <?php if (empty($land['parcel']) && empty($land['gata'])): ?>
+                        <p class="text-muted mb-0">Is plot ka koi gata linked nahi — <a href="<?= BASE_URL ?>/admin/plots/<?= (int)($plot['id'] ?? 0) ?>/edit">edit plot</a> ya Link Desk se jodo.</p>
+                    <?php else: ?>
+                        <div class="table-responsive"><table class="table table-bordered mb-0">
+                            <tr><th style="width:220px">Gata / Khasra</th><td><strong><?= htmlspecialchars($land['parcel']['khasra_no'] ?? $land['gata']) ?></strong><?= !empty($land['parcel']['village']) ? ' <span class="text-muted">(' . htmlspecialchars($land['parcel']['village']) . ')</span>' : '' ?></td></tr>
+                            <tr><th>Kisan (owner)</th><td><?= htmlspecialchars($land['parcel']['owner_name'] ?? '— darj nahi —') ?><?= !empty($land['parcel']['owner_phone']) ? ' <span class="text-muted">' . htmlspecialchars($land['parcel']['owner_phone']) . '</span>' : '' ?></td></tr>
+                            <tr><th>Rakba</th><td><?= number_format((float)($land['parcel']['area_acres'] ?? 0), 2) ?> acre / <?= number_format((float)($land['parcel']['area_bigha'] ?? 0), 2) ?> bigha <span class="text-muted">(mutation: <?= htmlspecialchars($land['parcel']['mutation_status'] ?? '—') ?>)</span></td></tr>
+                            <tr><th>Kisan hissa + payment</th><td class="small">
+                                <?php if (empty($land['holdings'])): ?><span class="text-muted">—</span><?php endif; ?>
+                                <?php foreach (($land['holdings'] ?? []) as $h): ?>
+                                    <div><?= htmlspecialchars($h['farmer_name'] ?? ('#' . ($h['farmer_id'] ?? 0))) ?> · <?= htmlspecialchars($h['land_area'] ?? '') ?> <?= htmlspecialchars($h['land_area_unit'] ?? '') ?> · <?= htmlspecialchars($h['acquisition_status'] ?? '') ?> · <?= htmlspecialchars($h['payment_status'] ?? '') ?> ₹<?= number_format((float)($h['payment_received'] ?? 0), 0) ?></div>
+                                <?php endforeach; ?>
+                            </td></tr>
+                            <tr><th>Colony deal</th><td class="small">
+                                <?php if (empty($land['deal'])): ?><span class="text-muted">—</span><?php else: ?>
+                                    Paid ₹<?= number_format((float)($land['deal']['advance_paid'] ?? 0), 0) ?> · Baki ₹<?= number_format((float)($land['deal']['balance_amount'] ?? 0), 0) ?> · <?= htmlspecialchars($land['deal']['status'] ?? '') ?> · <?= htmlspecialchars($land['deal']['registration_number'] ?? '—') ?>
+                                <?php endif; ?>
+                            </td></tr>
+                        </table></div>
+                    <?php endif; ?>
+                </div>
+            </div>
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="fas fa-rupee-sign"></i> Pricing</h5>

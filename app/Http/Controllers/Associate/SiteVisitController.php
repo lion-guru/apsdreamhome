@@ -197,7 +197,7 @@ class SiteVisitController extends BaseController
             $db->insert('site_visits', $data);
             $visitId = (int)$db->lastInsertId();
 
-            $this->logActivity($userId, 'site_visit_scheduled', ['visit_id' => $visitId]);
+            $this->logActivity('site_visit_scheduled', json_encode(['visit_id' => $visitId]));
 
             $_SESSION['success'] = 'Site visit scheduled successfully!';
             $this->redirect('/associate/site-visits');
@@ -229,13 +229,36 @@ class SiteVisitController extends BaseController
             if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
 
             $feedback = trim($_POST['feedback'] ?? '');
+            $rating = (int)($_POST['rating'] ?? 0);
+            $ratingSql = ($rating >= 1 && $rating <= 5) ? ", rating = $rating" : "";
 
-            $stmt = $db->prepare("UPDATE site_visits SET status = 'completed', feedback = ?, completed_at = NOW() WHERE id = ? AND agent_id = ?{$tidSql}");
+            $stmt = $db->prepare("UPDATE site_visits SET status = 'completed', feedback = ?, completed_at = NOW(){$ratingSql} WHERE id = ? AND agent_id = ?{$tidSql}");
             $params = array_merge([$feedback, $id, $userId], TenantContext::getId() > 1 ? [TenantContext::getId()] : []);
             $stmt->execute($params);
 
             if ($stmt->rowCount() > 0) {
-                $this->logActivity($userId, 'site_visit_completed', ['visit_id' => $id]);
+                // Advance the linked lead to site_visit (never demote, never touch closed_*).
+                // A completed visit is also a definite response — stamp the SLA clock.
+                $visit = $db->fetchOne("SELECT lead_id FROM site_visits WHERE id = ?", [$id]);
+                if (!empty($visit['lead_id'])) {
+                    $lParams = [$visit['lead_id'], $userId, $userId];
+                    if (TenantContext::getId() > 1) $lParams[] = TenantContext::getId();
+                    $lead = $db->fetchOne("SELECT id, status FROM leads WHERE id = ? AND (assigned_to = ? OR created_by = ?){$tidSql} LIMIT 1", $lParams);
+                    if ($lead && in_array($lead['status'], ['new', 'contacted', 'qualified'], true)) {
+                        $db->execute("UPDATE leads SET status = 'site_visit', updated_at = NOW() WHERE id = ?", [$lead['id']]);
+                        $db->insert('lead_activities', [
+                            'lead_id' => $lead['id'],
+                            'activity_type' => 'status_change',
+                            'description' => 'Site visit completed',
+                            'old_value' => $lead['status'],
+                            'new_value' => 'site_visit',
+                            'created_by' => $userId,
+                            'tenant_id' => $tid,
+                        ]);
+                    }
+                    $db->execute("UPDATE leads SET first_response_at = NOW() WHERE id = ? AND first_response_at IS NULL", [$visit['lead_id']]);
+                }
+                $this->logActivity('site_visit_completed', json_encode(['visit_id' => $id]));
                 $_SESSION['success'] = 'Site visit marked as completed!';
             } else {
                 $_SESSION['error'] = 'Site visit not found or access denied';
@@ -271,12 +294,14 @@ class SiteVisitController extends BaseController
 
             $reason = trim($_POST['reason'] ?? '');
 
-            $stmt = $db->prepare("UPDATE site_visits SET status = 'cancelled' WHERE id = ? AND agent_id = ?{$tidSql}");
+            // Extra $reason param had no placeholder (HY093: every cancel 500'd) —
+            // reason now persists into notes.
+            $stmt = $db->prepare("UPDATE site_visits SET status = 'cancelled', notes = ? WHERE id = ? AND agent_id = ?{$tidSql}");
             $params = array_merge([$reason, $id, $userId], TenantContext::getId() > 1 ? [TenantContext::getId()] : []);
             $stmt->execute($params);
 
             if ($stmt->rowCount() > 0) {
-                $this->logActivity($userId, 'site_visit_cancelled', ['visit_id' => $id, 'reason' => $reason]);
+                $this->logActivity('site_visit_cancelled', json_encode(['visit_id' => $id, 'reason' => $reason]));
                 $_SESSION['success'] = 'Site visit cancelled!';
             } else {
                 $_SESSION['error'] = 'Site visit not found or access denied';
@@ -320,7 +345,7 @@ class SiteVisitController extends BaseController
             $stmt->execute($params);
 
             if ($stmt->rowCount() > 0) {
-                $this->logActivity($userId, 'site_visit_rescheduled', ['visit_id' => $id, 'new_date' => $newDate]);
+                $this->logActivity('site_visit_rescheduled', json_encode(['visit_id' => $id, 'new_date' => $newDate]));
                 $_SESSION['success'] = 'Site visit rescheduled!';
             } else {
                 $_SESSION['error'] = 'Site visit not found or access denied';

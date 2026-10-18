@@ -59,7 +59,7 @@ $stats = $stats ?? ['balance' => 0, 'total_earned' => 0, 'total_redeemed' => 0];
             <div class="col-md-8">
                 <p class="mb-2">Add money to your wallet instantly via UPI:</p>
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control form-control-lg" value="<?= BASE_URL ?>/customer/pay-emi/upi-qr" readonly id="upiPayLink">
+                    <input type="text" class="form-control form-control-lg" value="<?= BASE_URL ?>/user/pay-emi/upi-qr" readonly id="upiPayLink">
                     <button class="btn btn-outline-secondary" type="button" onclick="copyUpiLink()">
                         <i class="fas fa-copy"></i> Copy
                     </button>
@@ -67,7 +67,7 @@ $stats = $stats ?? ['balance' => 0, 'total_earned' => 0, 'total_redeemed' => 0];
                 <small class="text-muted">Opens your UPI app (GPay, PhonePe, Paytm) with pre-filled amount. VPA: <strong>apsdreamhome@icici</strong></small>
             </div>
             <div class="col-md-4 text-md-end">
-                <a href="<?= BASE_URL ?>/customer/pay-emi/upi-qr" class="btn btn-success btn-lg" target="_blank">
+                <a href="<?= BASE_URL ?>/user/pay-emi/upi-qr" class="btn btn-success btn-lg" target="_blank">
                     <i class="fas fa-mobile-alt me-2"></i>Pay via UPI App
                 </a>
             </div>

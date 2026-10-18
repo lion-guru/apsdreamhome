@@ -174,8 +174,12 @@ class WalletService
     public function transferToEmi(int $userId, float $amount, int $bookingId, string $description = ''): bool
     {
         try {
-            $wallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1" . $this->tenantSql(), array_merge([$userId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
-            if (!$wallet || (float)$wallet['points_balance'] < $amount) return false;
+            // S264: atomic (was: crash between UPDATE and INSERT = balance moved
+            // with no ledger row — sibling credit()/debit() both already txn).
+            $this->db->beginTransaction();
+            try {
+            $wallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1 FOR UPDATE" . $this->tenantSql(), array_merge([$userId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
+            if (!$wallet || (float)$wallet['points_balance'] < $amount) { $this->db->rollBack(); return false; }
             $newBalance = (float)$wallet['points_balance'] - $amount;
             $newEmiTransfer = (float)$wallet['total_transferred_to_emi'] + $amount;
             $this->db->query(
@@ -195,7 +199,12 @@ class WalletService
                 'status' => 'completed',
                 'created_at' => date('Y-m-d H:i:s')
             ], $this->tenantInsertData()));
+            $this->db->commit();
             return true;
+            } catch (\Throwable $e) {
+                try { $this->db->rollBack(); } catch (\Throwable $ignored) {}
+                throw $e;
+            }
         } catch (\Exception $e) {
             error_log("WalletService::transferToEmi error: " . $e->getMessage());
             return false;

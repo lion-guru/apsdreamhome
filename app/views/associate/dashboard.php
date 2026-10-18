@@ -333,6 +333,17 @@ $sc = $statusConfig[$regStatus] ?? $statusConfig['pending'];
     </div>
 </div>
 
+<!-- Today's Actions: what to do first -->
+<?php $ta = $today_actions ?? ['followups_due' => 0, 'visits_today' => 0, 'unresponded' => 0]; ?>
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body py-3 d-flex flex-wrap gap-4 align-items-center">
+        <strong><i class="fas fa-bolt text-warning me-2"></i><?= __('assoc_dash_today', [], "Today's Actions") ?></strong>
+        <a href="<?= BASE_URL ?>/associate/followups" class="text-decoration-none"><span class="badge bg-<?= $ta['followups_due'] > 0 ? 'danger' : 'success' ?> fs-6"><?= (int)$ta['followups_due'] ?></span> <small class="text-muted"><?= __('assoc_dash_fu_due', [], 'follow-ups due') ?></small></a>
+        <a href="<?= BASE_URL ?>/associate/site-visits" class="text-decoration-none"><span class="badge bg-primary fs-6"><?= (int)$ta['visits_today'] ?></span> <small class="text-muted"><?= __('assoc_dash_visits', [], 'visits today') ?></small></a>
+        <a href="<?= BASE_URL ?>/associate/leads" class="text-decoration-none"><span class="badge bg-<?= $ta['unresponded'] > 0 ? 'warning text-dark' : 'success' ?> fs-6"><?= (int)$ta['unresponded'] ?></span> <small class="text-muted"><?= __('assoc_dash_unresp', [], 'awaiting first response') ?></small></a>
+    </div>
+</div>
+
 <!-- Booking & EMI Quick Stats -->
 <div class="row g-4 mb-4">
     <div class="col-6 col-lg-3">

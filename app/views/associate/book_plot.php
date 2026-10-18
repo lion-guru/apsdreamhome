@@ -28,6 +28,10 @@ $colonies = $colonies ?? [];
     <div class="card-body">
         <form action="<?= BASE_URL ?>/associate/book-plot/submit" method="POST" enctype="multipart/form-data" id="bookingForm">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+            <?php if (!empty($prefill_lead_id)): ?>
+            <input type="hidden" name="lead_id" value="<?= (int)$prefill_lead_id ?>">
+            <div class="alert alert-info"><i class="fas fa-link me-2"></i><?= __('assoc_bp_from_lead', [], 'Booking from lead — customer details prefilled. Submitting marks the lead Won.') ?></div>
+            <?php endif; ?>
 
             <h6 class="text-primary mb-3"><i class="fas fa-map me-2"></i><?= __('assoc_bp_select_plot', [], 'Select Plot') ?></h6>
             <div class="row g-3 mb-4">
@@ -66,15 +70,15 @@ $colonies = $colonies ?? [];
             <div class="row g-3 mb-4">
                 <div class="col-md-6">
                     <label class="form-label fw-bold"><?= __('assoc_bp_customer_name', [], 'Customer Name') ?> *</label>
-                    <input type="text" name="customer_name" class="form-control" required placeholder="<?= __('assoc_bp_customer_name_placeholder', [], 'Full name as per ID') ?>">
+                    <input type="text" name="customer_name" class="form-control" required placeholder="<?= __('assoc_bp_customer_name_placeholder', [], 'Full name as per ID') ?>" value="<?= htmlspecialchars($prefill['name'] ?? '') ?>">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-bold"><?= __('assoc_bp_phone', [], 'Phone Number') ?> *</label>
-                    <input type="tel" name="customer_phone" class="form-control" required placeholder="+91 XXXXXXXXXX" pattern="[0-9]{10}">
+                    <input type="tel" name="customer_phone" class="form-control" required placeholder="+91 XXXXXXXXXX" pattern="[0-9]{10}" value="<?= htmlspecialchars($prefill['phone'] ?? '') ?>">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-bold"><?= __('assoc_bp_email', [], 'Email') ?></label>
-                    <input type="email" name="customer_email" class="form-control" placeholder="customer@email.com">
+                    <input type="email" name="customer_email" class="form-control" placeholder="customer@email.com" value="<?= htmlspecialchars($prefill['email'] ?? '') ?>">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-bold"><?= __('assoc_bp_address', [], 'Address') ?></label>

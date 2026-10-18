@@ -82,7 +82,16 @@ class PayrollBatchService
             }
         }
 
-        return ['generated' => $generated, 'skipped' => $skipped, 'errors' => $errors, 'total_net' => $totalNet];
+        $pfEsiSynced = 0;
+        try {
+            $monthStr = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT);
+            $pfService = new \App\Services\PfEsiService();
+            $pfEsiSynced = $pfService->processMonth($monthStr, $processedBy);
+        } catch (\Exception $e) {
+            $errors[] = 'PF/ESI sync: ' . $e->getMessage();
+        }
+
+        return ['generated' => $generated, 'skipped' => $skipped, 'errors' => $errors, 'total_net' => $totalNet, 'pf_esi_synced' => $pfEsiSynced];
     }
 
     /**
@@ -100,6 +109,26 @@ class PayrollBatchService
         foreach ($paymentIds as $pid) {
             $stmt->execute([$method, $reference, $processedBy, $pid]);
             $updated += $stmt->rowCount();
+        }
+        if ($updated > 0 && $method !== 'cash') {
+            try {
+                $pfService = new \App\Services\PfEsiService();
+                $paidStmt = $this->pdo->prepare("SELECT employee_id FROM salary_payments WHERE payment_status = 'paid' AND payment_month = ? AND payment_year = ?");
+                $firstPid = $paymentIds[0] ?? 0;
+                $payRow = $this->fetch("SELECT payment_month, payment_year FROM salary_payments WHERE id = ?", [$firstPid]);
+                if ($payRow) {
+                    $paidStmt->execute([$payRow['payment_month'], $payRow['payment_year']]);
+                    $empIds = array_column($paidStmt->fetchAll(\PDO::FETCH_ASSOC), 'employee_id');
+                    if ($empIds) {
+                        $placeHolders = implode(',', array_fill(0, count($empIds), '?'));
+                        $monthStr = $payRow['payment_year'] . '-' . str_pad($payRow['payment_month'], 2, '0', STR_PAD_LEFT);
+                        $this->pdo->prepare("UPDATE pf_esi_deductions SET status = 'paid', paid_at = NOW(), payment_ref = ? WHERE month_year = ? AND employee_id IN ($placeHolders)")
+                            ->execute(array_merge([$reference, $monthStr], $empIds));
+                    }
+                }
+            } catch (\Exception $e) {
+                // non-blocking: PF/ESI sync failure should not fail the payment
+            }
         }
         return $updated;
     }

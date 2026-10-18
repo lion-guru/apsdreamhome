@@ -28,7 +28,7 @@ $doc = $doc ?? [];
 <body>
     <div class="container py-5">
         <div class="no-print text-center mb-4">
-            <a href="<?php echo  BASE_URL ?>/customer/documents" class="btn btn-outline-primary">
+            <a href="<?php echo  BASE_URL ?>/user/documents" class="btn btn-outline-primary">
                 <i class="fas fa-arrow-left me-1"></i>Back to Documents
             </a>
             <button class="btn btn-primary ms-2 no-print" onclick="window.print()">
@@ -66,6 +66,12 @@ $doc = $doc ?? [];
                         <span class="detail-label">Plot Number:</span>
                         <span class="detail-value"><?php echo  htmlspecialchars($doc['plot_number'] ?? '—') ?></span>
                     </div>
+                    <?php if (!empty($doc['gata_number'])): ?>
+                    <div class="detail-row">
+                        <span class="detail-label">Gata / Khasra:</span>
+                        <span class="detail-value"><?php echo  htmlspecialchars($doc['gata_number']) ?><?= !empty($doc['gata_owner']) ? ' (' . htmlspecialchars($doc['gata_owner']) . ')' : '' ?></span>
+                    </div>
+                    <?php endif; ?>
                     <div class="detail-row">
                         <span class="detail-label">Colony:</span>
                         <span class="detail-value"><?php echo  htmlspecialchars($doc['colony_name'] ?? '—') ?></span>

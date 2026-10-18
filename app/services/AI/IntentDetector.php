@@ -17,47 +17,57 @@ class IntentDetector
     private $db;
     private $pdo;
 
-    // Common real estate intents with multi-language patterns
+    // Common real estate intents with multi-language patterns (English, Hindi, Hinglish)
     private array $defaultIntents = [
         'buy_property' => [
-            'en' => ['buy', 'purchase', 'want to buy', 'looking to buy', 'need a property', 'want a house', 'want flat', 'want plot'],
-            'hi' => ['खरीदना', 'खरीद', 'लेना है', 'चाहिए', 'घर चाहिए', 'प्लाट चाहिए', 'फ्लैट चाहिए']
+            'en' => ['buy', 'purchase', 'want to buy', 'looking to buy', 'need a property', 'want a house', 'want flat', 'want plot', 'looking for', 'property details', 'property info'],
+            'hi' => ['खरीदना', 'खरीद', 'लेना है', 'चाहिए', 'घर चाहिए', 'प्लाट चाहिए', 'फ्लैट चाहिए'],
+            'hi_lat' => ['khareedna', 'khareed', 'lena hai', 'ghar chahiye', 'plot chahiye', 'flat chahiye', 'lenge', 'chahiye mujhe', 'mujhe chahiye', 'mujhe plot', 'mujhe flat', 'mujhe ghar', 'chahiye', 'property details', 'details chahiye']
         ],
         'sell_property' => [
             'en' => ['sell', 'want to sell', 'have property to sell', 'list my property'],
-            'hi' => ['बेचना', 'बेचना है', 'बेचना चाहता', 'बेचनी है', 'प्रॉपर्टी बेचनी']
+            'hi' => ['बेचना', 'बेचना है', 'बेचना चाहता', 'बेचनी है', 'प्रॉपर्टी बेचनी'],
+            'hi_lat' => ['bechna', 'bechna hai', 'bechna chahta', 'bechni hai', 'property bechni']
         ],
         'rent_property' => [
             'en' => ['rent', 'rental', 'on rent', 'for rent', 'lease'],
-            'hi' => ['किराए', 'किराये', 'रेंट', 'लीज', 'किराए पर']
+            'hi' => ['किराए', 'किराये', 'रेंट', 'लीज', 'किराए पर'],
+            'hi_lat' => ['kirae', 'kiraaye', 'rent', 'lease', 'kirae par']
         ],
         'site_visit' => [
             'en' => ['site visit', 'visit property', 'see the property', 'schedule visit', 'book visit'],
-            'hi' => ['साइट विजिट', 'विजिट', 'देखना है', 'मिलने', 'आना चाहता']
+            'hi' => ['साइट विजिट', 'विजिट', 'देखना है', 'मिलने', 'आना चाहता'],
+            'hi_lat' => ['site visit', 'visit', 'dekhna hai', 'milne', 'aana chahta', 'book karo', 'schedule karo']
         ],
         'price_inquiry' => [
             'en' => ['price', 'cost', 'how much', 'rate', 'pricing', 'expensive', 'cheap'],
-            'hi' => ['कीमत', 'दाम', 'कितना', 'रेट', 'महंगा', 'सस्ता', 'प्राइस']
+            'hi' => ['कीमत', 'दाम', 'कितना', 'रेट', 'महंगा', 'सस्ता', 'प्राइस'],
+            'hi_lat' => ['keemat', 'daam', 'kitna', 'rate', 'mahnga', 'sasta', 'price', 'kitne ka', 'kitna ka']
         ],
         'loan' => [
             'en' => ['loan', 'home loan', 'mortgage', 'finance', 'emi'],
-            'hi' => ['लोन', 'होम लोन', 'कर्ज', 'फाइनेंस', 'ईएमआई']
+            'hi' => ['लोन', 'होम लोन', 'कर्ज', 'फाइनेंस', 'ईएमआई'],
+            'hi_lat' => ['loan', 'home loan', 'karz', 'finance', 'emi', 'kist']
         ],
         'legal_help' => [
             'en' => ['legal', 'lawyer', 'agreement', 'registry', 'documentation'],
-            'hi' => ['कानूनी', 'वकील', 'रजिस्ट्री', 'डॉक्यूमेंट', 'कागजात']
+            'hi' => ['कानूनी', 'वकील', 'रजिस्ट्री', 'डॉक्यूमेंट', 'कागजात'],
+            'hi_lat' => ['kanooni', 'vakil', 'registry', 'document', 'kagazat', 'agreement']
         ],
         'greeting' => [
-            'en' => ['hello', 'hi', 'hey', 'namaste', 'good morning', 'good evening'],
-            'hi' => ['नमस्ते', 'नमस्कार', 'हैलो', 'हाय']
+            'en' => ['hello', 'hey', 'namaste', 'good morning', 'good evening'],
+            'hi' => ['नमस्ते', 'नमस्कार', 'हैलो', 'हाय'],
+            'hi_lat' => ['namaste', 'namaskar', 'hello', 'hey', 'kaise ho', 'kya haal', 'kaise hain', 'kya bolte']
         ],
         'thanks' => [
             'en' => ['thanks', 'thank you', 'thx', 'appreciated'],
-            'hi' => ['धन्यवाद', 'शुक्रिया', 'थैंक्स']
+            'hi' => ['धन्यवाद', 'शुक्रिया', 'थैंक्स'],
+            'hi_lat' => ['dhanyawad', 'shukriya', 'thanks', 'thx']
         ],
         'goodbye' => [
             'en' => ['bye', 'goodbye', 'see you', 'talk later'],
-            'hi' => ['अलविदा', 'बाय', 'फिर मिलेंगे']
+            'hi' => ['अलविदा', 'बाय', 'फिर मिलेंगे'],
+            'hi_lat' => ['alvida', 'bye', 'phir milenge', 'chalta hoon']
         ]
     ];
 
@@ -101,6 +111,15 @@ class IntentDetector
             foreach ($patterns as $p) {
                 if (stripos($message, strtolower($p)) !== false) {
                     $scores[$intent] = ($scores[$intent] ?? 0) + 0.7;
+                }
+            }
+            
+            // Also check Hinglish patterns if language is English but message has Hinglish words
+            if ($language === 'en' && isset($langs['hi_lat'])) {
+                foreach ($langs['hi_lat'] as $p) {
+                    if (stripos($message, strtolower($p)) !== false) {
+                        $scores[$intent] = ($scores[$intent] ?? 0) + 0.8; // Higher weight for Hinglish
+                    }
                 }
             }
         }

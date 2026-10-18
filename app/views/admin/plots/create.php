@@ -26,7 +26,7 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Colony *</label>
-                                            <select class="form-select" name="colony_id" required>
+                                            <select class="form-select" name="colony_id" id="colony_id" required onchange="filterGataParcels()">
                                                 <option value="">Select Colony</option>
                                                 <?php if (empty($colonies)): ?>
                                                     <option value="" disabled>No colonies found</option>
@@ -59,6 +59,41 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Gata / Khasra <span class="text-muted">(zameen source — cutting ke time)</span></label>
+                                            <select class="form-select" name="land_parcel_id" id="land_parcel_id">
+                                                <option value="">— Bina gata ke (baad me link kar sakte ho) —</option>
+                                                <?php foreach (($gata_parcels ?? []) as $gp): ?>
+                                                    <option value="<?= (int)$gp['id'] ?>" data-colony="<?= (int)$gp['colony_id'] ?>">
+                                                        <?= htmlspecialchars(($gp['khasra_no'] ?? '') . ' — ' . ($gp['village'] ?? '')) ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                            <small class="text-muted d-block mt-1">Sirf chuni colony ke gata dikhenge. Kisan naam baad me <a href="<?= BASE_URL ?>/admin/land-plot-link" target="_blank">Plot–Gata–Kisan desk</a> pe update karo.</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Gata (free text, agar parcel me na ho)</label>
+                                            <input type="text" class="form-control" name="gata_number" id="gata_number" placeholder="e.g., Gata 1206">
+                                            <small class="text-muted">Parcel chuna to ye ignore hoga (parcel jeetega).</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <script>
+                                function filterGataParcels() {
+                                    var cid = document.getElementById('colony_id').value;
+                                    var sel = document.getElementById('land_parcel_id');
+                                    for (var i = 0; i < sel.options.length; i++) {
+                                        var oc = sel.options[i].getAttribute('data-colony');
+                                        sel.options[i].style.display = (!oc || oc === cid) ? '' : 'none';
+                                    }
+                                    if (sel.selectedOptions.length && sel.selectedOptions[0].style.display === 'none') sel.value = '';
+                                }
+                                document.addEventListener('DOMContentLoaded', filterGataParcels);
+                                </script>
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="mb-3">

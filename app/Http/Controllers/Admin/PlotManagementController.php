@@ -48,9 +48,16 @@ class PlotManagementController extends AdminController
         } catch (\Exception $e) {
             $sites = [];
         }
+        // S272: gata source list for plot cutting — parcels per colony (view filters by colony via JS).
+        try {
+            $gataParcels = $this->db->fetchAll("SELECT id, colony_id, khasra_no, village, area_bigha FROM land_parcels ORDER BY colony_id, khasra_no");
+        } catch (\Exception $e) {
+            $gataParcels = [];
+        }
         $this->render('admin/plots/create', [
             'page_title' => 'Create New Plot',
             'colonies' => $sites,
+            'gata_parcels' => $gataParcels ?: [],
             'plc_rates' => \App\Services\Pricing\PlcService::rates()
         ]);
     }
@@ -90,8 +97,26 @@ class PlotManagementController extends AdminController
                 ['colony_id' => intval($data['colony_id']), 'facing' => trim((string)($data['facing'] ?? ''))]
             );
 
-            $cols = "colony_id, plot_number, plot_type, area_sqft, width_ft, length_ft, dimension_label, base_price_per_sqft, plc_amount, final_price_per_sqft, price_per_sqft, total_price, road_width_ft, facing, corner_plot, park_facing, status, is_active, created_at";
-            $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, NOW()";
+            // S272: land source — parcel link wins over free text; a parcel from
+            // another colony is rejected (no cross-colony links at birth).
+            $parcelId = intval($data['land_parcel_id'] ?? 0);
+            $gataNo = trim((string)($data['gata_number'] ?? ''));
+            $khasraNo = '';
+            if ($parcelId > 0) {
+                try {
+                    $parcel = $this->db->fetchRow("SELECT id, colony_id, khasra_no FROM land_parcels WHERE id = ?", [$parcelId]);
+                } catch (\Exception $e) { $parcel = null; }
+                if (!$parcel || (int)$parcel['colony_id'] !== intval($data['colony_id'])) {
+                    return $this->jsonError('Selected gata belongs to another colony', 400);
+                }
+                $gataNo = (string)$parcel['khasra_no'];
+                $khasraNo = (string)$parcel['khasra_no'];
+            } else {
+                $parcelId = null;
+            }
+
+            $cols = "colony_id, plot_number, plot_type, area_sqft, width_ft, length_ft, dimension_label, base_price_per_sqft, plc_amount, final_price_per_sqft, price_per_sqft, total_price, road_width_ft, facing, corner_plot, park_facing, status, gata_number, khasra_number, land_parcel_id, is_active, created_at";
+            $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, NOW()";
             $insertParams = [
                 intval($data['colony_id']),
                 CoreFunctionsServiceCustom::validateInput($data['plot_number'], 'string'),
@@ -109,7 +134,10 @@ class PlotManagementController extends AdminController
                 trim((string)($data['facing'] ?? '')),
                 !empty($data['corner_plot']) ? 1 : 0,
                 !empty($data['park_facing']) ? 1 : 0,
-                $data['status'] ?? 'available'
+                $data['status'] ?? 'available',
+                ($gataNo !== '' ? $gataNo : null),
+                ($khasraNo !== '' ? $khasraNo : null),
+                $parcelId
             ];
             $insertExtra = $this->tenantInsertData();
             if (!empty($insertExtra)) { $cols .= ", tenant_id"; $vals .= ", ?"; $insertParams[] = $insertExtra['tenant_id']; }
@@ -1010,12 +1038,51 @@ class PlotManagementController extends AdminController
 
         // Status history from plot_status_log
         try {
-            $histStmt = $this->db->prepare("SELECT * FROM plot_status_log WHERE plot_id = ? ORDER BY created_at DESC");
+            $histStmt = $this->db->prepare("SELECT l.*, u.name AS changed_by_name FROM plot_status_log l LEFT JOIN users u ON u.id = l.changed_by WHERE l.plot_id = ? ORDER BY l.created_at DESC");
             $histStmt->execute([$id]);
             $this->data['history'] = $histStmt->fetchAll() ?: [];
         } catch (\Exception $e) {
             $this->data['history'] = [];
         }
+
+        // S272: land source strip — parcel + kisan holdings + colony deal.
+        $land = ['parcel' => null, 'holdings' => [], 'deal' => null, 'gata' => ''];
+        try {
+            $prow = $this->db->fetchRow("SELECT colony_id, gata_number, land_parcel_id FROM plots WHERE id = ?", [$id]);
+            if ($prow) {
+                $land['gata'] = (string)($prow['gata_number'] ?? '');
+                if (!empty($prow['land_parcel_id'])) {
+                    $land['parcel'] = $this->db->fetchRow("SELECT * FROM land_parcels WHERE id = ?", [(int)$prow['land_parcel_id']]) ?: null;
+                }
+                if (!$land['parcel'] && $land['gata'] !== '') {
+                    $land['parcel'] = $this->db->fetchRow("SELECT * FROM land_parcels WHERE colony_id = ? AND khasra_no = ? LIMIT 1", [(int)$prow['colony_id'], $land['gata']]) ?: null;
+                }
+                $gk = ($land['parcel']['khasra_no'] ?? null) ?: ($land['gata'] !== '' ? $land['gata'] : null);
+                if ($gk) {
+                    $land['holdings'] = $this->db->fetchAll("SELECT * FROM farmer_land_holdings WHERE khasra_number = ?", [$gk]) ?: [];
+                    foreach ($land['holdings'] as &$h) {
+                        $h['farmer_name'] = null;
+                        $fid = (int)($h['farmer_id'] ?? 0);
+                        if ($fid > 0) {
+                            foreach (['farmers', 'farmer_profiles'] as $ft) {
+                                try {
+                                    $fr = $this->db->fetchRow("SELECT * FROM `$ft` WHERE id = ? LIMIT 1", [$fid]);
+                                } catch (\Throwable $e) { $fr = null; }
+                                if ($fr) {
+                                    $h['farmer_name'] = $fr['full_name'] ?? $fr['name'] ?? $fr['farmer_name'] ?? ('#' . $fid);
+                                    break;
+                                }
+                            }
+                            if ($h['farmer_name'] === null) $h['farmer_name'] = '#' . $fid;
+                        }
+                    }
+                    unset($h);
+                }
+                $land['deal'] = $this->db->fetchRow("SELECT total_consideration, advance_paid, balance_amount, status, registration_number FROM land_deals WHERE colony_id = ? ORDER BY id DESC LIMIT 1", [(int)$prow['colony_id']]) ?: null;
+            }
+        } catch (\Throwable $e) { error_log("PlotManagementController@show land strip: " . $e->getMessage()); }
+        $this->data['land'] = $land;
+
         $this->render('admin/plots/show');
     }
 
@@ -1026,6 +1093,14 @@ class PlotManagementController extends AdminController
         $stmt = $this->db->prepare("SELECT p.*, c.name as colony_name FROM plots p LEFT JOIN colonies c ON p.colony_id = c.id WHERE p.id = ?");
         $stmt->execute([$id]);
         $this->data['plot'] = $stmt->fetch() ?: [];
+
+        // S272: gata source list for this plot's colony (edit-time linking).
+        try {
+            $this->data['gata_parcels'] = $this->db->fetchAll(
+                "SELECT id, colony_id, khasra_no, village, area_bigha FROM land_parcels WHERE colony_id = ? ORDER BY khasra_no",
+                [(int)($this->data['plot']['colony_id'] ?? 0)]
+            ) ?: [];
+        } catch (\Exception $e) { $this->data['gata_parcels'] = []; }
 
         // Price history for edit view
         $phStmt = $this->db->prepare("SELECT * FROM price_history WHERE plot_id = ? ORDER BY created_at DESC LIMIT 10");
@@ -1046,7 +1121,7 @@ class PlotManagementController extends AdminController
             $data = $_POST;
 
             // Get old values for price change detection
-            $old = $this->db->fetchRow("SELECT total_price, price_per_sqft, negotiated_price, status, colony_id FROM plots WHERE id = ?", [$id]);
+            $old = $this->db->fetchRow("SELECT total_price, price_per_sqft, negotiated_price, negotiated_price_approved, negotiated_price_approved_by, negotiated_price_approved_at, status, colony_id FROM plots WHERE id = ?", [$id]);
             if (!$old) {
                 $this->setFlash('error', 'Plot not found');
                 return $this->redirect('/admin/plots');
@@ -1074,12 +1149,40 @@ class PlotManagementController extends AdminController
 
             $tid = (int)$this->tenantId();
 
+            // S264: editing the negotiated price voids any prior approval —
+            // the discount-approval workflow (ColonyPricingService) writes its own
+            // approved=1 directly, so only a hand-edit here resets the flag.
+            $newNp = !empty($data['negotiated_price']) ? floatval($data['negotiated_price']) : null;
+            $npChanged = ($newNp ?? 0) != floatval($old['negotiated_price'] ?? 0);
+            $npApproved = $npChanged ? 0 : (int)($old['negotiated_price_approved'] ?? 0);
+            $npApprovedBy = $npChanged ? null : ($old['negotiated_price_approved_by'] ?? null);
+            $npApprovedAt = $npChanged ? null : ($old['negotiated_price_approved_at'] ?? null);
+
+            // S272: land source (same rule as store; colony is fixed — cross-colony
+            // parcel rejected back to the edit form).
+            $parcelId = intval($data['land_parcel_id'] ?? 0);
+            $gataNo = trim((string)($data['gata_number'] ?? ''));
+            $khasraNo = '';
+            if ($parcelId > 0) {
+                try {
+                    $parcel = $this->db->fetchRow("SELECT id, colony_id, khasra_no FROM land_parcels WHERE id = ?", [$parcelId]);
+                } catch (\Exception $e) { $parcel = null; }
+                if (!$parcel || (int)$parcel['colony_id'] !== (int)($old['colony_id'] ?? 0)) {
+                    $this->setFlash('error', 'Selected gata belongs to another colony');
+                    return $this->redirect('/admin/plots/' . $id . '/edit');
+                }
+                $gataNo = (string)$parcel['khasra_no'];
+                $khasraNo = (string)$parcel['khasra_no'];
+            } else {
+                $parcelId = null;
+            }
+
             $this->db->execute("UPDATE plots SET
                 plot_number = ?, block = ?, sector = ?, plot_type = ?,
                 area_sqft = ?, area_sqm = ?, width_ft = ?, length_ft = ?, dimension_label = ?,
                 frontage_ft = ?, depth_ft = ?, road_width_ft = ?,
                 base_price_per_sqft = ?, plc_amount = ?, final_price_per_sqft = ?, price_per_sqft = ?, total_price = ?,
-                negotiated_price = ?, price_override_reason = ?, status = ?,
+                negotiated_price = ?, negotiated_price_approved = ?, negotiated_price_approved_by = ?, negotiated_price_approved_at = ?, gata_number = ?, khasra_number = ?, land_parcel_id = ?, price_override_reason = ?, status = ?,
                 facing = ?, corner_plot = ?, park_facing = ?,
                 booking_amount = ?, total_paid = ?, payment_status = ?,
                 description = ?
@@ -1089,6 +1192,8 @@ class PlotManagementController extends AdminController
                 floatval($data['frontage_ft'] ?? 0), floatval($data['depth_ft'] ?? 0), floatval($data['road_width_ft'] ?? 0),
                 $basePps, $plc['plc_amount'], $plc['final_pps'], $pricePerSqft, $totalPrice,
                 !empty($data['negotiated_price']) ? floatval($data['negotiated_price']) : null,
+                $npApproved, $npApprovedBy, $npApprovedAt,
+                ($gataNo !== '' ? $gataNo : null), ($khasraNo !== '' ? $khasraNo : null), $parcelId,
                 $data['price_override_reason'] ?? '', $data['status'] ?? 'available',
                 $data['facing'] ?? '', !empty($data['corner_plot']) ? 1 : 0, !empty($data['park_facing']) ? 1 : 0,
                 floatval($data['booking_amount'] ?? 0), floatval($data['total_paid'] ?? 0), $data['payment_status'] ?? 'pending',
@@ -1137,11 +1242,11 @@ class PlotManagementController extends AdminController
             ]);
 
             $this->setFlash('success', 'Plot updated successfully');
-            return $this->redirect('/admin/plots/show/' . $id);
+            return $this->redirect('/admin/plots/' . $id);
         } catch (\Exception $e) {
             $this->loggingService->error("Plot Update error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to update plot: ' . $e->getMessage());
-            return $this->redirect('/admin/plots/edit/' . $id);
+            return $this->redirect('/admin/plots/' . $id . '/edit');
         }
     }
 
@@ -1492,6 +1597,17 @@ class PlotManagementController extends AdminController
             $bookingDate = $_POST['booking_date'] ?? date('Y-m-d');
             $possessionDate = $_POST['possession_date'] ?? null;
             $negotiatedPrice = floatval($_POST['negotiated_price'] ?? $plot['total_price']);
+            // S264: the booking honors only the approval-flagged negotiated price.
+            // A differing desk-quoted price must go through the discount-approval
+            // workflow (pricing_approvals) first — never straight into a booking.
+            $effectivePrice = floatval($plot['total_price']);
+            if (!empty($plot['negotiated_price']) && (int)($plot['negotiated_price_approved'] ?? 0) === 1) {
+                $effectivePrice = floatval($plot['negotiated_price']);
+            }
+            if (abs($negotiatedPrice - $effectivePrice) > 0.01) {
+                return $this->jsonError('Quoted price (₹' . number_format($negotiatedPrice, 2) . ') differs from the approved plot price (₹' . number_format($effectivePrice, 2) . '). Get discount approval first.', 400);
+            }
+            $negotiatedPrice = $effectivePrice;
             $paymentPlan = $_POST['payment_plan'] ?? 'Full Payment';
             $notes = $_POST['notes'] ?? '';
 
@@ -1523,13 +1639,17 @@ class PlotManagementController extends AdminController
                 if (!empty($bookingInsertExtra)) { $bookingData['tenant_id'] = $bookingInsertExtra['tenant_id']; }
                 $bookingId = $this->db->insert('bookings', $bookingData);
 
-                // Also create in plot_allocations
+                // Also create in plot_allocations (S264: plot_rate + total_amount
+                // are NOT NULL without defaults — omitting them 1364'd every
+                // insert, so allocations silently never existed).
                 try {
                     $this->db->insert('plot_allocations', [
                         'plot_id' => $id,
                         'customer_id' => $customerId,
                         'allocation_date' => $bookingDate,
+                        'plot_rate' => (float)($plot['price_per_sqft'] ?? 0),
                         'total_plot_value' => $negotiatedPrice,
+                        'total_amount' => $negotiatedPrice,
                         'amount_paid' => $tokenAmount,
                         'amount_pending' => $negotiatedPrice - $tokenAmount,
                         'status' => 'booked',

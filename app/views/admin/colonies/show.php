@@ -78,6 +78,22 @@ $cid = (int)($colony['id'] ?? 0);
                             <p><strong>Phase:</strong> <?= htmlspecialchars($colony['phase'] ?? 'Phase 1') ?></p>
                             <p><strong>Blocks:</strong> <?= (int)($colony['block_count'] ?? 0) ?></p>
                             <p><strong>Starting Price:</strong> ₹<?= number_format((float)($colony['starting_price'] ?? 0)) ?></p>
+                            <?php $ls = $land_summary ?? ['parcels' => [], 'deals' => [], 'linked' => 0, 'gata_text' => 0, 'plots' => 0, 'adv' => 0, 'bal' => 0, 'acres' => 0]; ?>
+                            <hr class="my-2">
+                            <p class="mb-1"><strong>Zameen (live):</strong> <?= count($ls['parcels']) ?> gata · <?= number_format((float)$ls['acres'], 2) ?> acre · plots linked <?= (int)$ls['linked'] ?> (parcel) / <?= (int)$ls['gata_text'] ?> (gata-text)</p>
+                            <p class="mb-1"><strong>Paisa:</strong> paid ₹<?= number_format((float)$ls['adv'], 0) ?> · baki ₹<?= number_format((float)$ls['bal'], 0) ?> (<?= count($ls['deals']) ?> deals)</p>
+                            <?php if ($ls['parcels'] || $ls['deals']): ?>
+                            <details class="small">
+                                <summary class="text-primary" style="cursor:pointer">Gata + deals dekho</summary>
+                                <?php foreach ($ls['parcels'] as $p): ?>
+                                    <div><?= htmlspecialchars($p['khasra_no'] ?? '') ?> (<?= htmlspecialchars($p['village'] ?? '') ?>) — <?= htmlspecialchars($p['owner_name'] ?? 'kisan darj nahi') ?> — <?= number_format((float)($p['area_bigha'] ?? 0), 2) ?> bigha</div>
+                                <?php endforeach; ?>
+                                <?php foreach ($ls['deals'] as $d): ?>
+                                    <div>Deal: paid ₹<?= number_format((float)($d['advance_paid'] ?? 0), 0) ?> / baki ₹<?= number_format((float)($d['balance_amount'] ?? 0), 0) ?> — <?= htmlspecialchars($d['status'] ?? '') ?> <?= htmlspecialchars($d['registration_number'] ?? '') ?></div>
+                                <?php endforeach; ?>
+                            </details>
+                            <?php endif; ?>
+                            <a href="<?= BASE_URL ?>/admin/land-plot-link?colony_id=<?= (int)($colony['id'] ?? 0) ?>" class="btn btn-sm btn-outline-success mt-2">Plot–Gata–Kisan desk</a>
                         </div>
                     </div>
                 </div>
