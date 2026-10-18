@@ -41,7 +41,7 @@ class FreeAIEngines
 
     // Hugging Face Inference API (free tier: 30k tokens/day)
     private $hfKey = '';
-    private $hfUrl = 'https://api-inference.huggingface.co/models/';
+    private $hfUrl = 'https://router.huggingface.co/hf-inference/models/';
     private $hfModel = 'meta-llama/Meta-Llama-3.1-8B-Instruct';
 
     // Together.ai (free tier)
@@ -80,19 +80,23 @@ class FreeAIEngines
         try {
             $db = \App\Core\Database\Database::getInstance();
             $settings = $db->fetch("SELECT * FROM ai_settings WHERE is_active = 1") ?: [];
+            // S337 FIX: decode the settings JSON blob BEFORE reading any keys that live inside it.
+            // hf_api_key is stored in `settings`, not as a column (information_schema verified).
+            $cfg = json_decode((string)($settings['settings'] ?? ''), true);
+            if (!is_array($cfg)) { $cfg = []; }
             $this->groqKey = $settings['groq_api_key'] ?? getenv('GROQ_API_KEY') ?: '';
             $this->openRouterKey = $settings['openrouter_api_key'] ?? getenv('OPENROUTER_API_KEY') ?: '';
             $this->geminiKey = $settings['api_key'] ?? getenv('GEMINI_API_KEY') ?: '';
             // New free cloud AI providers
             $this->xaiKey = $settings['xai_api_key'] ?? getenv('XAI_API_KEY') ?: '';
-            $this->hfKey = $settings['hf_api_key'] ?? getenv('HF_API_KEY') ?: '';
+            // hf_api_key lives in the settings JSON blob (S337 fix)
+            $this->hfKey = trim((string)(($cfg['hf_api_key'] ?? '') ?: (getenv('HF_API_KEY') ?: '')));
             $this->togetherKey = $settings['together_api_key'] ?? getenv('TOGETHER_API_KEY') ?: '';
             $this->deepseekKey = $settings['deepseek_api_key'] ?? getenv('DEEPSEEK_API_KEY') ?: '';
             $this->togetherAiKey = $settings['together_api_key'] ?? getenv('TOGETHER_API_KEY') ?: '';
             $this->cohereKey = $settings['cohere_api_key'] ?? getenv('COHERE_API_KEY') ?: '';
             // Model saved by the AI Provider Settings dashboard (settings JSON column)
-            $cfg = json_decode($settings['settings'] ?? '', true);
-            if (is_array($cfg) && !empty($cfg['model']) && is_string($cfg['model'])) {
+            if (!empty($cfg['model']) && is_string($cfg['model'])) {
                 $this->geminiModel = $cfg['model'];
             }
         } catch (\Throwable $e) {
