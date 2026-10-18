@@ -421,6 +421,29 @@ class EmployeeSelfServiceController extends BaseController
     }
 
     /**
+     * Leave Calendar View
+     * Visual calendar for leave management
+     */
+    public function leaveCalendar()
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION['employee_id'];
+        $month = $_GET['month'] ?? date('Y-m');
+
+        $leaveBalances = $this->service->getLeaveBalances($employeeId);
+        $leaveHistory = $this->service->getLeaveHistory($employeeId);
+        $leaveTypes = $this->db->fetchAll("SELECT id, name, code, color FROM leave_types WHERE status='active' ORDER BY name");
+
+        return $this->render('employee/self_service/leave_calendar', [
+            'page_title' => 'Leave Calendar',
+            'leave_balances' => $leaveBalances,
+            'leave_history' => $leaveHistory,
+            'leave_types' => $leaveTypes,
+            'month' => $month,
+        ]);
+    }
+
+    /**
      * Helper to require employee login
      */
     protected function requireEmployeeLogin()

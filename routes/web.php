@@ -1429,8 +1429,11 @@ $router->get('/employee/self-service/payslips', 'Employee\\EmployeeSelfServiceCo
 $router->get('/employee/self-service/payslip/download/{id}', 'Employee\\EmployeeSelfServiceController@downloadPayslip');
 
 // Leave Management
-$router->get('/employee/self-service/leave', 'Employee\\EmployeeSelfServiceController@leave');
-$router->post('/employee/self-service/leave', 'Employee\\EmployeeSelfServiceController@leave');
+$router->get('/employee/self-service/leave', 'Employee\EmployeeSelfServiceController@leave');
+$router->post('/employee/self-service/leave', 'Employee\EmployeeSelfServiceController@leave');
+
+$router->get('/employee/self-service/leave-calendar', 'Employee\EmployeeSelfServiceController@leaveCalendar');
+$router->get('/employee/self-service/leave-calendar/month/{month}', 'Employee\EmployeeSelfServiceController@leaveCalendar');
 
 // Reimbursement
 $router->get('/employee/self-service/reimbursement', 'Employee\\EmployeeSelfServiceController@reimbursement');
