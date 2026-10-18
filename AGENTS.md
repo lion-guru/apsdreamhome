@@ -13,6 +13,48 @@
 > 4. **Session-number check** — AGENTS.md entry chipkane se PEHLE header dobara padho; parallel actor ne beech me number le liya ho to next free number lo, overwrite/clobber kabhi nahi (S219, S223).
 > 5. **Probe hygiene** — temp scripts sirf `C:\Users\abhay\AppData\Local\Temp\opencode\` me, write+execute **same turn** me (temp purge hota hai), `php -r` one-liners banned, probe ke end me cleanup + counts-verify lazmi (lessons _445, _456, _490).
 
+## Session 350: Multi-Portal Health Scan, Employee Self-Service Views Implementation (Org Chart, Surveys), Raw PDO Bugfix & Menu Seeding (2026-10-18)
+
+### Trigger
+User requested: "do next"
+
+### Root Cause & Scan Findings
+1. **Multi-Portal Route Audit:** Verified all 40 Customer, 40 Associate, 10 Agent, 9 Employee, and 8 Admin links in `PortalMenuService` are 100% routable.
+2. **Missing Self-Service Views:** In `EmployeeSelfServiceController`, scanned 28 view rendering calls: found 4 missing views (`org_chart_department`, `surveys`, `survey_take`, `survey_results`) causing missing view errors when employees accessed department org hierarchy or surveys.
+3. **Raw PDO Crash in `EngagementSurveyService`:** In `getEmployeeAvailableSurveys()`, found raw PDO fatal call `$this->conn->fetch(...)` where `$this->conn` is a raw PDO instance lacking helper methods.
+4. **Mislabeled & Incomplete Self-Service DB Menu:** In `admin_menu_items`, parent item 215 was mislabeled as "Quality Control" instead of "Employee Self Service", and lacked menu links for Training, Org Chart, and Engagement Surveys.
+5. **Employee Layout Notification Gap:** In `app/views/layouts/employee.php`, notification bell was a static link without real-time notifications, lacked `notification-system.js?v=5`, and lacked smart `$currentUri` route matching.
+
+### Work Done
+1. **Built 4 Employee Self-Service Views:**
+   - `app/views/employee/self_service/org_chart_department.php`: Hierarchical chart filtered by department with breadcrumbs, vacant toggle, and profile shortcuts.
+   - `app/views/employee/self_service/surveys.php`: KPI metric cards (Available, Pending, Completed), active surveys table with status/privacy badges and actions.
+   - `app/views/employee/self_service/survey_take.php`: Responsive multi-question survey form supporting 1-5 star ratings, radio options, checkboxes, boolean choices, text responses, and elapsed completion timing.
+   - `app/views/employee/self_service/survey_results.php`: Confidential response showcase with question-by-question answer review, time taken, and submission timestamp.
+2. **Fixed Raw PDO Fatal Error in `EngagementSurveyService.php`:**
+   - Removed unused broken `$this->conn->fetch(...)` call in `getEmployeeAvailableSurveys()`.
+3. **Menu Seeding & RBAC Permissions (`database/migrations/seed_self_service_menu_s350.php`):**
+   - Updated parent item 215 to 'Employee Self Service' (`fas fa-user-cog`).
+   - Seeded `Training & Skills` (`/employee/self-service/training`), `Org Chart` (`/employee/self-service/org-chart`), and `Engagement Surveys` (`/employee/self-service/surveys`).
+   - Granted RBAC permissions for `employee`, `agent`, `telecaller`, `manager`, `admin`, `super_admin`.
+   - Verified 100% idempotent execution.
+4. **Modernized Employee Layout (`app/views/layouts/employee.php`):**
+   - Added `notification-system.css?v=5` and `notification-system.js?v=5`.
+   - Hooked `#notification-bell-placeholder` into real-time Web Push engine.
+   - Added smart `$currentUri` route detection ensuring active menu links highlight even when controllers omit `$current_page`.
+   - Injected `window.NOTIFY_USER = { id, role }`.
+5. **Refactored `PortalMenuService.php`:**
+   - Added `SECTION_SELF_SERVICE` and `ICON_HAND_HOLDING_USD` constants eliminating SonarQube literal duplication warnings.
+   - Enriched employee fallback menu with self-service features.
+
+### Verification
+- Database integrity: `users: 116, plots: 756, leads: 38187, notifications: 30` (zero drift on core tables, zero probe leftovers).
+- Syntax verification: `php -l` clean across all modified and newly created files.
+- View completeness: 28/28 views exist in `EmployeeSelfServiceController` (100% healthy).
+- Idempotent migration: re-run tested cleanly with all items skipped.
+- **Master Test Runner (`testing/master_test_runner.php`): 10/10 SUITES PASSED (100% HEALTHY, 18.7s).**
+- Probe hygiene: all temp scripts in `C:\Users\abhay\AppData\Local\Temp\opencode\` cleaned up immediately. Zero leftovers.
+
 ## Session 349: Associate Portal Deep Scan & Synchronization, Controller Namespace Repairs, Dashboard Metrics Alignment, and Menu Enrichment (2026-10-18)
 
 ### Trigger

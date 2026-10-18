@@ -32,6 +32,8 @@ class PortalMenuService
     private const ICON_BALANCE_SCALE = 'fas fa-balance-scale';
     private const ICON_ID_CARD = 'fas fa-id-card';
     private const ICON_FOLDER_OPEN = 'fas fa-folder-open';
+    private const ICON_HAND_HOLDING_USD = 'fas fa-hand-holding-usd';
+    private const SECTION_SELF_SERVICE = 'Self Service';
 
     private ?\PDO $pdo = null;
     private ?int $userId = null;
@@ -188,7 +190,7 @@ class PortalMenuService
 
             // Earnings & Finance
             $this->item('commissions', 'Earnings', 'Commissions', '/associate/commissions', 'fas fa-rupee-sign'),
-            $this->item('advances', 'Earnings', 'Festival Advances', '/associate/advances', 'fas fa-hand-holding-usd'),
+            $this->item('advances', 'Earnings', 'Festival Advances', '/associate/advances', self::ICON_HAND_HOLDING_USD),
             $this->item('offers', 'Earnings', 'Offers', '/associate/offers', 'fas fa-tags'),
             $this->item('wallet', 'Earnings', 'Wallet', '/associate/wallet', 'fas fa-wallet'),
             $this->item('withdraw', 'Earnings', 'Withdraw', '/associate/wallet/withdraw', 'fas fa-money-bill-wave'),
@@ -205,7 +207,7 @@ class PortalMenuService
             $this->item('bonanza', 'Network', 'Bonanza Races', '/associate/bonanza-races', 'fas fa-award'),
 
             // Field Operations
-            $this->item('collections', 'Field Ops', 'Cash Collections', '/associate/collections', 'fas fa-hand-holding-usd'),
+            $this->item('collections', 'Field Ops', 'Cash Collections', '/associate/collections', self::ICON_HAND_HOLDING_USD),
             $this->item('site-visits', 'Field Ops', 'Site Visits', '/associate/site-visits', 'fas fa-map-marker-alt', $this->countSiteVisits()),
             $this->item('schedule', 'Field Ops', 'My Schedule', '/associate/schedule', 'fas fa-calendar-alt'),
             $this->item('call-recordings', 'Field Ops', 'Call Recordings', '/associate/call-recordings', 'fas fa-phone-volume', $this->countTable('call_recordings', 'associate_id')),
@@ -311,7 +313,11 @@ class PortalMenuService
             $this->item('tasks', 'Work', 'My Tasks', '/employee/tasks', 'fas fa-tasks', $this->countTable('agent_tasks', 'assigned_to')),
             $this->item('attendance', 'Work', 'Attendance', '/employee/attendance', 'fas fa-calendar-check'),
             $this->item('leaves', 'Work', 'Leaves', '/employee/leaves', 'fas fa-umbrella-beach'),
-            $this->item('grievances', 'Work', 'My Grievances', '/employee/self-service/grievances', self::ICON_BALANCE_SCALE),
+            $this->item('grievances', self::SECTION_SELF_SERVICE, 'My Grievances', '/employee/self-service/grievances', self::ICON_BALANCE_SCALE),
+            $this->item('advances', self::SECTION_SELF_SERVICE, 'Salary Advances', '/employee/self-service/advances', self::ICON_HAND_HOLDING_USD),
+            $this->item('training', self::SECTION_SELF_SERVICE, 'Training & Skills', '/employee/self-service/training', 'fas fa-graduation-cap'),
+            $this->item('org-chart', self::SECTION_SELF_SERVICE, 'Org Chart', '/employee/self-service/org-chart', 'fas fa-sitemap'),
+            $this->item('surveys', self::SECTION_SELF_SERVICE, 'Surveys', '/employee/self-service/surveys', 'fas fa-poll-h'),
             $this->item('payroll', 'Earnings', 'Payroll', '/employee/payroll', 'fas fa-money-check-alt'),
             $this->item('performance', 'Earnings', 'Performance', '/employee/performance', 'fas fa-chart-line'),
         ];

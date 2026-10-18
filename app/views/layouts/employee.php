@@ -84,7 +84,7 @@ $GLOBALS['_html_doc_started'] = true;
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=3">
 </head>
 <body>
-    <?php include __DIR__ . '/../components/impersonation-banner.php'; ?>
+    <?php include_once __DIR__ . '/../components/impersonation-banner.php'; ?>
     <!-- Mobile Sidebar Toggle -->
     <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar menu">
         <i class="fas fa-bars"></i>
@@ -117,9 +117,27 @@ $GLOBALS['_html_doc_started'] = true;
         } catch (\Throwable $e) {
             $portalMenu = [];
         }
-        $activeKey = $current_page ?? 'dashboard';
+        $currentUri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+        $cleanCurrentUri = preg_replace('#^/apsdreamhome#', '', $currentUri);
+        $activeKey = $current_page ?? '';
+        if ($activeKey === '') {
+            foreach ($portalMenu as $sec) {
+                foreach ($sec['items'] as $item) {
+                    $itemPath = parse_url($item['url'] ?? '', PHP_URL_PATH);
+                    if ($itemPath === $cleanCurrentUri) {
+                        $activeKey = $item['key'];
+                        break 2;
+                    }
+                }
+            }
+            if ($activeKey === '') {
+                $activeKey = 'dashboard';
+            }
+        }
         foreach ($portalMenu as $section):
-            if (empty($section['items'])) continue;
+            if (empty($section['items'])) {
+                continue;
+            }
         ?>
         <div class="sidebar-section"><?= htmlspecialchars(__($section['name'], null, $section['name'])) ?></div>
         <ul class="sidebar-menu">
@@ -127,9 +145,10 @@ $GLOBALS['_html_doc_started'] = true;
                 $isActive = ($activeKey === $menuItem['key']);
                 $isLogout = ($menuItem['key'] === 'logout');
                 $badge = $menuItem['badge'] ?? null;
+                $url = str_starts_with($menuItem['url'], 'http') ? $menuItem['url'] : BASE_URL . '/' . ltrim($menuItem['url'], '/');
             ?>
             <li class="sidebar-item">
-                <a href="<?= BASE_URL . htmlspecialchars($menuItem['url'] ?? '') ?>" class="sidebar-link <?= $isActive ? 'active' : '' ?> <?= $isLogout ? 'text-danger' : '' ?>" data-menu-key="<?= htmlspecialchars($menuItem['key'] ?? '') ?>">
+                <a href="<?= htmlspecialchars($url) ?>" class="sidebar-link <?= $isActive ? 'active' : '' ?> <?= $isLogout ? 'text-danger' : '' ?>" data-menu-key="<?= htmlspecialchars($menuItem['key'] ?? '') ?>">
                     <i class="<?= htmlspecialchars($menuItem['icon'] ?? '') ?>"></i>
                     <span><?= htmlspecialchars(__('menu_' . $menuItem['key'], null, $menuItem['label'])) ?></span>
                     <?php if ($badge !== null && $badge > 0): ?>
@@ -156,14 +175,16 @@ $GLOBALS['_html_doc_started'] = true;
                 </nav>
             </div>
             <div class="header-actions">
-                <a href="<?= BASE_URL ?>/employee/notifications" class="btn-icon" title="Notifications">
-                    <i class="fas fa-bell"></i>
-                </a>
-                <a href="<?= BASE_URL ?>/employee/notifications" class="btn-icon" title="Messages">
+                <div id="notification-bell-placeholder" class="notification-bell-wrapper d-inline-block">
+                    <a href="<?= BASE_URL ?>/employee/notifications" class="btn-icon" title="Notifications" aria-label="Notifications">
+                        <i class="fas fa-bell"></i>
+                    </a>
+                </div>
+                <a href="<?= BASE_URL ?>/employee/messages" class="btn-icon" title="Messages" aria-label="Messages">
                     <i class="fas fa-envelope"></i>
                 </a>
                 <div class="dropdown">
-                    <button class="btn-icon" data-bs-toggle="dropdown" aria-expanded="false" title="Account Menu">
+                    <button class="btn-icon" data-bs-toggle="dropdown" aria-expanded="false" title="Account Menu" aria-label="Account Menu">
                         <i class="fas fa-user-circle"></i>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" style="border-radius: 12px; min-width: 180px;">
@@ -208,6 +229,14 @@ $GLOBALS['_html_doc_started'] = true;
             }
         });
     </script>
-    <?php include __DIR__ . '/../components/smart_chatbot.php'; ?>
+    <!-- Real-time Notification System & Web Push -->
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+        window.NOTIFY_USER = {
+            id: <?= (int)($_SESSION['user_id'] ?? 0) ?>,
+            role: '<?= htmlspecialchars($_SESSION['role'] ?? 'employee', ENT_QUOTES, 'UTF-8') ?>'
+        };
+    </script>
+    <script defer src="<?= BASE_URL ?>/assets/js/notification-system.js?v=5"></script>
+    <?php include_once __DIR__ . '/../components/smart_chatbot.php'; ?>
 </body>
 </html>

@@ -95,9 +95,6 @@ class EngagementSurveyService
 
     public function getEmployeeAvailableSurveys(int $employeeId): array
     {
-        $userId = $this->conn->fetch('SELECT user_id FROM employees WHERE id = ?', [$employeeId]);
-        $userId = $userId ? $userId['user_id'] : 0;
-
         $stmt = $this->conn->prepare("
             SELECT es.*, 
                 (SELECT COUNT(*) FROM survey_responses sr WHERE sr.survey_id = es.id AND sr.tenant_id = ? AND sr.employee_id = ?) as has_responded
