@@ -90,64 +90,11 @@ class RAGKnowledgeManager
      */
     private function generateEmbedding(string $text, ?int $docId = null, ?int $chunkIndex = null): string
     {
-        // Try to get HF API key from settings
-        // S337 FIX: hf_api_key lives INSIDE the `settings` JSON blob — it is NOT a column
-        // (verified via information_schema.columns: id, service, api_key, is_active,
-        //  settings, created_at, updated_at, groq_api_key, openrouter_api_key,
-        //  ollama_url, ollama_model). The old `$settings['hf_api_key']` always returned
-        //  null -> silent hash-placeholder fallback even with a valid key saved.
-        $tid = $this->tenantId();
-        $hfKey = '';
-        try {
-            $settings = $this->db->fetch("SELECT * FROM ai_settings WHERE is_active = 1" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$tid] : []) ?: [];
-            $cfg = json_decode((string)($settings['settings'] ?? '{}'), true);
-            $hfKey = trim((string)($cfg['hf_api_key'] ?? ''));
-        } catch (\Throwable $e) {
-            $hfKey = '';
-        }
-        if ($hfKey === '') {
-            $hfKey = (string)(getenv('HF_API_KEY') ?: '');
-        }
-
-        // If no HF key, fall back to improved hash placeholder with unique vectors per doc/chunk
-        if (empty($hfKey)) {
-            return $this->generateHashPlaceholderEmbedding($text, $docId, $chunkIndex);
-        }
-
-        // Use HuggingFace Inference API for embeddings
-        $model = 'sentence-transformers/all-MiniLM-L6-v2';
-        // S337: api-inference.huggingface.co is the retired host; the current
-        // endpoint is router.huggingface.co/hf-inference/models/{model}/pipeline/feature-extraction
-        $url = "https://router.huggingface.co/hf-inference/models/{$model}/pipeline/feature-extraction";
-
-        $ch = curl_init($url);
-        curl_setopt_array($ch, [
-            CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => json_encode(['inputs' => $text, 'options' => ['wait_for_model' => true]]),
-            CURLOPT_HTTPHEADER => [
-                'Authorization: Bearer ' . $hfKey,
-                'Content-Type: application/json',
-            ],
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT => 30,
-        ]);
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        if ($httpCode === 200) {
-            $result = json_decode($response, true);
-            // HF returns array of arrays (batch), we sent single input so take first
-            $embedding = is_array($result) && isset($result[0]) && is_array($result[0]) ? $result[0] : $result;
-            return json_encode([
-                'model' => $model,
-                'vector' => $embedding
-            ]);
-        }
-
-        // Fallback to improved hash placeholder on error
-        error_log("RAGKnowledgeManager: HF embedding failed (HTTP $httpCode): $response");
-        return $this->generateHashPlaceholderEmbedding($text, $docId, $chunkIndex);
+        // S341: delegate to RAGEmbeddingService — a provider chain (Gemini free ->
+        // HF PRO -> hash-placeholder) with logging, health reporting and re-embed.
+        // The old inline HF-only implementation had the two S337 bugs and fell back
+        // to hash-placeholder silently.
+        return \App\Services\AI\RAGEmbeddingService::getInstance()->embed($text);
     }
 
     /**
@@ -251,11 +198,22 @@ class RAGKnowledgeManager
         $queryVector = $queryEmbedding['vector'] ?? [];
         
         // Score chunks by cosine similarity
+        // S341: dimension guard — a query vector must never be compared against a
+        // chunk vector of a different length (e.g. Gemini 1536-dim query vs a stale
+        // hash-placeholder 384-dim chunk). Skipping is correct; comparing would
+        // produce meaningless scores and silently pollute results.
+        $queryDim = count($queryVector);
         $results = [];
+        $dimMismatch = 0;
         foreach ($chunks as $chunk) {
-            $chunkEmbedding = json_decode($chunk['embedding'], true);
+            $chunkEmbedding = json_decode((string)($chunk['embedding'] ?? ''), true);
             $chunkVector = $chunkEmbedding['vector'] ?? [];
-            
+
+            if (!is_array($chunkVector) || $queryDim === 0 || count($chunkVector) !== $queryDim) {
+                $dimMismatch++;
+                continue;
+            }
+
             $similarity = $this->cosineSimilarity($queryVector, $chunkVector);
             
             if ($similarity > 0.3) { // Threshold

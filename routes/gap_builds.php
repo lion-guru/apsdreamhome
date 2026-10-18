@@ -51,3 +51,14 @@ $router->post('/admin/grn/store', 'App\\Http\\Controllers\\Admin\\GRNController@
 $router->get('/admin/grn/{id}', 'App\\Http\\Controllers\\Admin\\GRNController@show');
 $router->post('/admin/grn/{id}/status', 'App\\Http\\Controllers\\Admin\\GRNController@updateStatus');
 $router->post('/admin/grn/delete/{id}', 'App\\Http\\Controllers\\Admin\\GRNController@delete');
+
+// Admin Cloud Storage (S3) — Gap 25
+$router->get('/admin/cloud-storage', 'App\\Http\\Controllers\\Admin\\CloudStorageController@index');
+$router->post('/admin/cloud-storage/upload', 'App\\Http\\Controllers\\Admin\\CloudStorageController@upload');
+$router->get('/admin/cloud-storage/download', 'App\\Http\\Controllers\\Admin\\CloudStorageController@download');
+$router->post('/admin/cloud-storage/delete', 'App\\Http\\Controllers\\Admin\\CloudStorageController@delete');
+
+// RAG Knowledge Base (S341) - health card + embedding model switch + re-embed
+$router->get('/admin/rag', 'App\\Http\\Controllers\\Admin\\RAGAdminController@index');
+$router->post('/admin/rag/set-model', 'App\\Http\\Controllers\\Admin\\RAGAdminController@setModel');
+$router->post('/admin/rag/reembed', 'App\\Http\\Controllers\\Admin\\RAGAdminController@reembed');
