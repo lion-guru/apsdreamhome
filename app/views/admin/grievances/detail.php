@@ -266,8 +266,8 @@ $priorities = $priorities ?? [];
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Select Staff Member <span class="text-danger">*</span></label>
-                            <select name="assignee_id" class="form-select" required>
+                            <label for="detail_assignee_id" class="form-label fw-semibold">Select Staff Member <span class="text-danger">*</span></label>
+                            <select name="assignee_id" id="detail_assignee_id" class="form-select" required>
                                 <option value="">-- Choose Investigator / Staff --</option>
                                 <?php foreach ($assignees as $staff): ?>
                                     <option value="<?= $staff['id'] ?>" <?= (!empty($grievance['assigned_to']) && $grievance['assigned_to'] == $staff['id']) ? 'selected' : '' ?>>
@@ -301,8 +301,8 @@ $priorities = $priorities ?? [];
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Comment <span class="text-danger">*</span></label>
-                            <textarea name="comment" class="form-control" rows="4" required placeholder="Enter your comment..."></textarea>
+                            <label for="detail_comment" class="form-label fw-semibold">Comment <span class="text-danger">*</span></label>
+                            <textarea name="comment" id="detail_comment" class="form-control" rows="4" required placeholder="Enter your comment..."></textarea>
                         </div>
                         <div class="form-check form-switch mb-3">
                             <input class="form-check-input" type="checkbox" name="is_internal" id="is_internal" value="1">
@@ -323,21 +323,21 @@ $priorities = $priorities ?? [];
 <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 function updateStatus(grievanceId, status) {
     if (!confirm('Change status to ' + status.replace('_', ' ') + '?')) return;
-    
+
     fetch('<?= BASE_URL ?>/admin/grievances/' + grievanceId + '/status', {
         method: 'POST',
-        headers: { 
+        headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-Requested-With': 'XMLHttpRequest'
         },
         body: 'status=' + encodeURIComponent(status) + '&csrf_token=' + encodeURIComponent('<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>')
     })
     .then(r => r.json())
-    .then(data => { 
+    .then(data => {
         if (data.success) {
-            location.reload(); 
+            location.reload();
         } else {
-            alert(data.message || 'Failed to update status'); 
+            alert(data.message || 'Failed to update status');
         }
     })
     .catch(() => location.reload());

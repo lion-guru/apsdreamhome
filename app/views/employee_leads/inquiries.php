@@ -131,7 +131,7 @@ $statusColors = [
                 <div class="col-md-9 col-12">
                     <div class="input-group">
                         <span class="input-group-text bg-light border-0"><i class="fas fa-search text-muted"></i></span>
-                        <input type="text" name="search" class="form-control bg-light border-0" placeholder="Search by customer name, phone, email, or message..." value="<?= htmlspecialchars($search) ?>">
+                        <input type="text" name="search" id="inquirySearchInput" aria-label="Search inquiries" class="form-control bg-light border-0" placeholder="Search by customer name, phone, email, or message..." value="<?= htmlspecialchars($search) ?>">
                     </div>
                 </div>
                 <div class="col-md-3 col-12 d-flex gap-2">

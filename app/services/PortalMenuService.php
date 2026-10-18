@@ -29,6 +29,8 @@ class PortalMenuService
 {
     use ServiceTenantTrait;
 
+    private const ICON_BALANCE_SCALE = 'fas fa-balance-scale';
+
     private ?\PDO $pdo = null;
     private ?int $userId = null;
     private string $role = 'guest';
@@ -164,7 +166,7 @@ class PortalMenuService
             // Explore
             $this->item('browse', 'Explore', 'Browse Properties', '/properties', 'fas fa-search'),
             $this->item('list-property', 'Explore', 'Post Property', '/list-property', 'fas fa-plus-circle'),
-            $this->item('compare', 'Explore', 'Compare Properties', '/compare', 'fas fa-balance-scale'),
+            $this->item('compare', 'Explore', 'Compare Properties', '/compare', self::ICON_BALANCE_SCALE),
             $this->item('auctions', 'Explore', 'Auctions', '/auctions', 'fas fa-gavel'),
         ];
     }
@@ -207,7 +209,7 @@ class PortalMenuService
             $this->item('browse', 'Properties', 'Browse Properties', '/associate/browse', 'fas fa-search'),
             $this->item('list-property', 'Properties', 'Add Property', '/associate/list-property', 'fas fa-plus-circle'),
             $this->item('book-plot', 'Properties', 'Book Plot', '/associate/book-plot', 'fas fa-file-signature'),
-            $this->item('compare', 'Properties', 'Compare Properties', '/associate/compare', 'fas fa-balance-scale'),
+            $this->item('compare', 'Properties', 'Compare Properties', '/associate/compare', self::ICON_BALANCE_SCALE),
 
             // My Business
             $this->item('my-bookings', 'Business', 'My Bookings', '/associate/my-bookings', 'fas fa-file-contract'),
@@ -301,6 +303,7 @@ class PortalMenuService
             $this->item('tasks', 'Work', 'My Tasks', '/employee/tasks', 'fas fa-tasks', $this->countTable('agent_tasks', 'assigned_to')),
             $this->item('attendance', 'Work', 'Attendance', '/employee/attendance', 'fas fa-calendar-check'),
             $this->item('leaves', 'Work', 'Leaves', '/employee/leaves', 'fas fa-umbrella-beach'),
+            $this->item('grievances', 'Work', 'My Grievances', '/employee/self-service/grievances', self::ICON_BALANCE_SCALE),
             $this->item('payroll', 'Earnings', 'Payroll', '/employee/payroll', 'fas fa-money-check-alt'),
             $this->item('performance', 'Earnings', 'Performance', '/employee/performance', 'fas fa-chart-line'),
         ];

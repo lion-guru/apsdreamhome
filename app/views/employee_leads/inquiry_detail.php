@@ -76,17 +76,17 @@ $priorityBadge = ($priorityKey === 'high') ? 'badge bg-danger' : (($priorityKey 
                 <div class="card-body pt-0">
                     <div class="row g-3">
                         <div class="col-sm-6">
-                            <label class="text-muted small text-uppercase fw-semibold d-block">Full Name</label>
+                            <span class="text-muted small text-uppercase fw-semibold d-block">Full Name</span>
                             <span class="fs-6 fw-semibold text-dark"><?= htmlspecialchars($inquiry['name']) ?></span>
                         </div>
                         <div class="col-sm-6">
-                            <label class="text-muted small text-uppercase fw-semibold d-block">Phone Number</label>
+                            <span class="text-muted small text-uppercase fw-semibold d-block">Phone Number</span>
                             <a href="tel:<?= htmlspecialchars($inquiry['phone']) ?>" class="fs-6 fw-semibold text-primary text-decoration-none">
                                 <i class="fas fa-phone-alt me-1 small"></i><?= htmlspecialchars($inquiry['phone']) ?>
                             </a>
                         </div>
                         <div class="col-sm-6">
-                            <label class="text-muted small text-uppercase fw-semibold d-block">Email Address</label>
+                            <span class="text-muted small text-uppercase fw-semibold d-block">Email Address</span>
                             <?php if (!empty($inquiry['email'])): ?>
                                 <a href="mailto:<?= htmlspecialchars($inquiry['email']) ?>" class="fs-6 text-dark text-decoration-none">
                                     <i class="fas fa-envelope me-1 text-muted small"></i><?= htmlspecialchars($inquiry['email']) ?>
@@ -96,7 +96,7 @@ $priorityBadge = ($priorityKey === 'high') ? 'badge bg-danger' : (($priorityKey 
                             <?php endif; ?>
                         </div>
                         <div class="col-sm-6">
-                            <label class="text-muted small text-uppercase fw-semibold d-block">Inquiry Type</label>
+                            <span class="text-muted small text-uppercase fw-semibold d-block">Inquiry Type</span>
                             <span class="badge bg-light text-dark border"><?= ucfirst($inquiry['type'] ?? 'general') ?></span>
                         </div>
                     </div>

@@ -262,7 +262,7 @@ $GLOBALS['_html_doc_started'] = true;
 
     <!-- Sidebar (DB-driven via rbac_sidebar.php) -->
     <?php include_once __DIR__ . '/../admin/layouts/rbac_sidebar.php'; ?>
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="APS.closeSidebar()"></div>
+    <button type="button" class="sidebar-overlay border-0 p-0" id="sidebarOverlay" onclick="APS.closeSidebar()" aria-label="Close sidebar"></button>
 
     <?php
     // Live notification/message counts from DB (cached 120s to avoid N+1 on every page load)
@@ -292,7 +292,7 @@ $GLOBALS['_html_doc_started'] = true;
     <!-- Main Content -->
     <main class="main-content" id="aps-main-content">
         <!-- Top Navigation -->
-        <nav class="top-nav">
+        <nav class="top-nav" aria-label="Admin top navigation">
             <div class="nav-left">
                 <button class="toggle-btn" onclick="APS.toggleSidebar()">
                     <i class="fas fa-bars"></i>
@@ -834,7 +834,7 @@ $GLOBALS['_html_doc_started'] = true;
                         <div class="d-flex align-items-center w-100">
                             <div class="position-relative flex-grow-1">
                                 <i class="fas fa-search position-absolute" style="left: 1rem; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 1.1rem;"></i>
-                                <input type="text" id="omniSearchInput" class="form-control form-control-lg ps-5 pe-5 bg-slate-800 border-0 text-white" placeholder="Search plots, customers, bookings, associates..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="background: rgba(30,41,59,0.8); color: #fff; font-size: 1.1rem; height: 3.5rem;">
+                                <input type="text" id="omniSearchInput" aria-label="Search plots, customers, bookings, associates" class="form-control form-control-lg ps-5 pe-5 bg-slate-800 border-0 text-white" placeholder="Search plots, customers, bookings, associates..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="background: rgba(30,41,59,0.8); color: #fff; font-size: 1.1rem; height: 3.5rem;">
                                 <span id="omniSearchHint" class="position-absolute text-muted small" style="right: 1rem; top: 50%; transform: translateY(-50%); pointer-events: none;">
                                     <kbd style="background: #334155; color: #94a3b8; border-radius: 4px; padding: 0.15rem 0.4rem; font-size: 0.75rem;">⌘K</kbd> to open • <kbd style="background: #334155; color: #94a3b8; border-radius: 4px; padding: 0.15rem 0.4rem; font-size: 0.75rem;">Esc</kbd> to close
                                 </span>

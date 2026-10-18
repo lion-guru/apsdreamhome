@@ -91,22 +91,22 @@ $prefs = $prefs ?? [];
                                             </td>
                                             <td class="text-center py-3">
                                                 <div class="form-check form-switch d-inline-block">
-                                                    <input class="form-check-input" type="checkbox" name="channels[<?= $key ?>][in_app]" value="1" <?= !empty($p['in_app']) ? 'checked' : '' ?>>
+                                                    <input class="form-check-input" type="checkbox" id="pref_<?= $key ?>_in_app" aria-label="<?= htmlspecialchars($meta['title']) ?> In-App" name="channels[<?= $key ?>][in_app]" value="1" <?= !empty($p['in_app']) ? 'checked' : '' ?>>
                                                 </div>
                                             </td>
                                             <td class="text-center py-3">
                                                 <div class="form-check form-switch d-inline-block">
-                                                    <input class="form-check-input" type="checkbox" name="channels[<?= $key ?>][push]" value="1" <?= !empty($p['push']) ? 'checked' : '' ?>>
+                                                    <input class="form-check-input" type="checkbox" id="pref_<?= $key ?>_push" aria-label="<?= htmlspecialchars($meta['title']) ?> Web Push" name="channels[<?= $key ?>][push]" value="1" <?= !empty($p['push']) ? 'checked' : '' ?>>
                                                 </div>
                                             </td>
                                             <td class="text-center py-3">
                                                 <div class="form-check form-switch d-inline-block">
-                                                    <input class="form-check-input" type="checkbox" name="channels[<?= $key ?>][email]" value="1" <?= !empty($p['email']) ? 'checked' : '' ?>>
+                                                    <input class="form-check-input" type="checkbox" id="pref_<?= $key ?>_email" aria-label="<?= htmlspecialchars($meta['title']) ?> Email" name="channels[<?= $key ?>][email]" value="1" <?= !empty($p['email']) ? 'checked' : '' ?>>
                                                 </div>
                                             </td>
                                             <td class="text-center pe-4 py-3">
                                                 <div class="form-check form-switch d-inline-block">
-                                                    <input class="form-check-input" type="checkbox" name="channels[<?= $key ?>][whatsapp]" value="1" <?= !empty($p['whatsapp']) ? 'checked' : '' ?>>
+                                                    <input class="form-check-input" type="checkbox" id="pref_<?= $key ?>_whatsapp" aria-label="<?= htmlspecialchars($meta['title']) ?> WhatsApp" name="channels[<?= $key ?>][whatsapp]" value="1" <?= !empty($p['whatsapp']) ? 'checked' : '' ?>>
                                                 </div>
                                             </td>
                                         </tr>

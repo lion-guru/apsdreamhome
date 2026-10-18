@@ -24,15 +24,15 @@ $assignedUser = $assignedUser ?? null;
             <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="text-muted small">Name</label>
+                        <span class="text-muted small">Name</span>
                         <div class="fw-semibold"><?php echo htmlspecialchars($inquiry['name'] ?? ''); ?></div>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="text-muted small">Email</label>
+                        <span class="text-muted small">Email</span>
                         <div class="fw-semibold"><?php echo htmlspecialchars($inquiry['email'] ?? 'N/A'); ?></div>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="text-muted small">Phone</label>
+                        <span class="text-muted small">Phone</span>
                         <div class="fw-semibold">
                             <?php echo htmlspecialchars($inquiry['phone'] ?? ''); ?>
                             <a href="tel:<?php echo htmlspecialchars($inquiry['phone'] ?? ''); ?>" class="btn btn-sm btn-success ms-2">
@@ -44,7 +44,7 @@ $assignedUser = $assignedUser ?? null;
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="text-muted small">Type</label>
+                        <span class="text-muted small">Type</span>
                         <div class="fw-semibold">
                             <span class="badge bg-secondary"><?php echo htmlspecialchars(ucfirst($inquiry['type'] ?? 'General')); ?></span>
                         </div>
@@ -72,7 +72,7 @@ $assignedUser = $assignedUser ?? null;
             </div>
             <div class="card-body aps-cp-card-body">
                 <div class="mb-3">
-                    <label class="text-muted small">Current Handler</label>
+                    <span class="text-muted small d-block">Current Handler</span>
                     <?php if (!empty($assignedUser)): ?>
                         <div class="d-flex align-items-center mt-1 p-2 border rounded bg-light">
                             <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width:36px;height:36px;font-weight:600;">
@@ -95,8 +95,8 @@ $assignedUser = $assignedUser ?? null;
                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <input type="hidden" name="id" value="<?php echo e($inquiry['id']); ?>">
                     <div class="mb-3">
-                        <label class="form-label small fw-semibold">Assign / Reassign Staff</label>
-                        <select name="assigned_to" class="form-select" required>
+                        <label for="assigned_to_select" class="form-label small fw-semibold">Assign / Reassign Staff</label>
+                        <select name="assigned_to" id="assigned_to_select" class="form-select" required>
                             <option value="">-- Select Staff Member --</option>
                             <?php foreach ($staffList as $staff): ?>
                                 <option value="<?php echo e($staff['id']); ?>" <?php echo (!empty($inquiry['assigned_to']) && $inquiry['assigned_to'] == $staff['id']) ? 'selected' : ''; ?>>
@@ -122,7 +122,8 @@ $assignedUser = $assignedUser ?? null;
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <input type="hidden" name="id" value="<?php echo e($inquiry['id']); ?>">
                     <div class="mb-3">
-                        <select name="status" class="form-select">
+                        <label for="status_select" class="visually-hidden">Status</label>
+                        <select name="status" id="status_select" class="form-select" aria-label="Update Inquiry Status">
                             <option value="new" <?php echo $inquiry['status'] === 'new' ? 'selected' : ''; ?>>New</option>
                             <option value="pending" <?php echo $inquiry['status'] === 'pending' ? 'selected' : ''; ?>>Pending</option>
                             <option value="contacted" <?php echo $inquiry['status'] === 'contacted' ? 'selected' : ''; ?>>Contacted</option>
@@ -163,12 +164,12 @@ $assignedUser = $assignedUser ?? null;
             </div>
             <div class="card-body aps-cp-card-body">
                 <div class="mb-2">
-                    <label class="text-muted small">Created</label>
+                    <span class="text-muted small d-block">Created</span>
                     <div><?php echo date('d M Y, h:i A', strtotime($inquiry['created_at'])); ?></div>
                 </div>
                 <?php if (!empty($inquiry['updated_at'])): ?>
                 <div class="mb-2">
-                    <label class="text-muted small">Last Updated</label>
+                    <span class="text-muted small d-block">Last Updated</span>
                     <div><?php echo date('d M Y, h:i A', strtotime($inquiry['updated_at'])); ?></div>
                 </div>
                 <?php endif; ?>

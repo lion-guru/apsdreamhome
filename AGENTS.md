@@ -100,20 +100,27 @@ User requested:
      - Fixed broken `/admin/grievances/update-status` and `/admin/grievances/assign` URLs to RESTful route parameters.
    - Created 4 missing Employee Self-Service Views (`app/views/employee/self_service/`):
      - `grievances.php`: KPI cards (Total, In Progress, Resolved, Closed), priority & status badges, and responsive history table.
-     - `grievance_create.php`: Secure submission form with Category, Priority, Sub-Category, Anonymous reporting toggle, and validation.
-     - `grievance_detail.php`: Investigation tracking, resolution showcase, and employee-investigator communication thread.
-     - `grievance_close.php`: 5-star interactive satisfaction rating and closure feedback form.
+     - `grievance_create.php`: Secure submission form with Category, Priority, Sub-Category, Anonymous repor      - `grievance_detail.php`: Investigation tracking, resolution showcase, and employee-investigator communication thread.
+      - `grievance_close.php`: 5-star interactive satisfaction rating and closure feedback form.
+10. **Admin & Employee Grievance Menu Seeding & Accessibility Polish:**
+    - Created idempotent migration `database/migrations/seed_grievances_menu_s348.php` seeding:
+      - Admin HRM Menu: `Employee Grievances` (`/admin/grievances`, `fas fa-balance-scale`) with full permissions for `super_admin`, `admin`, `director`, `ceo`, `coo`, `hr_director`, `hr_manager`.
+      - Employee Self-Service Menu: `My Grievances` (`/employee/self-service/grievances`, `fas fa-balance-scale`) under parent ID 215 with permissions for `employee`, `agent`, `telecaller`, `manager`, `admin`, `super_admin`.
+    - Refactored `PortalMenuService.php` with `private const ICON_BALANCE_SCALE = 'fas fa-balance-scale';` eliminating duplication and resolving lint warnings.
+    - Polished `app/views/admin/inquiries/view.php` with semantic `<span>` tags, explicit `id="assigned_to_select"`, and `aria-label="Update Inquiry Status"`.
+    - Polished `app/views/admin/notifications/preferences.php` adding explicit IDs and descriptive `aria-label` attributes across all notification channel switches.
+    - Polished `app/views/layouts/admin.php` replacing non-native `<div>` overlay with accessible `<button class="sidebar-overlay">`, adding `aria-label` to top navigation `<nav>`, and adding `aria-label` to `#omniSearchInput`.
 
 ### Verification
-- Database integrity: `users: 116, plots: 756, leads: 38187, notifs: 30, archive: 20, grievances: 0` (zero drift on core tables, zero probe leftovers).
+- Database integrity: `users: 116, plots: 756, leads: 38187, notifs: 30, archive: 20, grievances: 0, admin_menu_items: 376` (zero drift on core tables, zero probe leftovers).
 - OpenCode Zen keys: active key verified as `techguruabhay@gmail.com` in `auth.json`; desktop switcher tested and operational.
 - Ngrok daemon tunnel: actively serving `https://unforced-willena-seclusively.ngrok-free.dev/apsdreamhome/` (HTTP 200).
 - Universal testing credentials: all users set to `Aps@2026`.
 - VAPID Push configuration: `PushSender::isConfigured() === true`, public key length 87 bytes.
 - E2E Lifecycle Probe: 7/7 lifecycle stages verified (submit -> fetch -> comment -> assign -> progress -> resolve -> close with 5-star rating).
 - Syntax verification: `php -l` clean across all modified and newly created files.
-- **Master Test Runner (`testing/master_test_runner.php`): 10/10 SUITES PASSED (100% HEALTHY, 19.03s).**
-- Probe hygiene: all temp scripts in `C:\Users\abhay\AppData\Local\Temp\opencode\` cleaned up immediately. Zero leftovers.
+- **Master Test Runner (`testing/master_test_runner.php`): 10/10 SUITES PASSED (100% HEALTHY, 19.68s).**
+- Probe hygiene: all temp scripts in `C:\Users\abhay\AppData\Local\Temp\opencode\` cleaned up immediately. Zero leftovers. immediately. Zero leftovers.
 
 ## Session 347: Admin Inquiries System Overhaul, Real-time Unhandled Badge, Staff Assignment & Notification Interlinking (2026-10-18)
 
