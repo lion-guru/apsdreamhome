@@ -13,6 +13,44 @@
 > 4. **Session-number check** — AGENTS.md entry chipkane se PEHLE header dobara padho; parallel actor ne beech me number le liya ho to next free number lo, overwrite/clobber kabhi nahi (S219, S223).
 > 5. **Probe hygiene** — temp scripts sirf `C:\Users\abhay\AppData\Local\Temp\opencode\` me, write+execute **same turn** me (temp purge hota hai), `php -r` one-liners banned, probe ke end me cleanup + counts-verify lazmi (lessons _445, _456, _490).
 
+## Session 341: RAG Is Now REAL — Gemini gemini-embedding-001 (FREE, 3072-dim) + All 5 Improvements + Admin RAG Desk + Voice Docs (2026-10-17)
+
+### Trigger
+User: "sare kam karo ye jo sare suggestion diye ho" (all 5 suggestions) + "voice wala kaise kare... pura system bana hua hai na" (option B docs).
+
+### Work (5 suggestions + Gemini wiring + docs, master green)
+1. **`app\Services\AI\RAGEmbeddingService.php` (new)** — provider chain **Gemini → HuggingFace → hash-placeholder**, each with one-shot `error_log` guards. `embed()`, `reembedAllChunks(force)`, `getHealth()`, `get/setEmbeddingModel()`.
+2. **Model discovery by probe (not by docs)** — `text-embedding-004` returns **404** on `embedContent`. Listed live models via `models?key=` on both `v1beta` and `v1` → found **`gemini-embedding-001`** (+ `-2`, `-2-preview`). Switched to it; **free tier, 3072-dim, already keyed**.
+3. **`RAGKnowledgeManager::generateEmbedding()`** now delegates to the new service (dead HF-only body removed). **`search()` gained a dimension guard** — a 3072-dim query vector is never compared against a stale 384-dim chunk.
+4. **Re-embed CLI** `scripts/reembed_rag_chunks.php` — idempotent, `--dry-run` / `--force`, prints health before + a verify block after.
+5. **Admin RAG desk** `/admin/rag` — `RAGAdminController` (index/setModel/reembed) + `admin/rag/index.php` (health card, model switch, re-embed button, document inventory) + 3 routes in `routes/gap_builds.php` + menu **#367** via idempotent `seed_rag_menu_s341.php` (run 1 ADDED, run 2 SKIP).
+
+### Verification (live)
+```
+re-embedded : 23/23   failed: 0   provider: gemini   (34.17s)
+stored       : gemini-embedding-001 = 23    stale = 0
+search "EMI payment kaise kare"   -> 0.68 EMI Plans / 0.61 Pre-closure / 0.57 FAQ
+search "plot booking karne ka process" -> 0.73 Booking Process / 0.67 FAQ / 0.63 PLC
+search "RERA number kya hai"     -> 0.70 RERA FAQ / 0.61 Legal / 0.59 Lakeview
+/admin/rag  -> HTTP 200, 9/9 needles ("Degraded" correctly absent)
+```
+- **Phantom column caught by controller-level probe**: `ai_knowledge_base` has no `category` (it is `tags`) — that 1054 500'd the new page; the page probe only showed a 500, the in-process probe named the column (lesson _416/#431 shape).
+- `php -l` clean ×6. **Master 10/10 PASSED.** DB unchanged (leads 38187/49479, users 111, plots 756, chunks 23).
+- Temp probes deleted same turn. Zero leftovers.
+- Commits pushed: `f6300eb84` (8 files, +1048/−60).
+
+### Option B — Voice/IVR docs
+`docs/VOICE_CALLING_SETUP.md` written. Confirms the stack is **complete** (13 controllers, 24 tables, 77 routes, 26 sessions / 3 auto-extracted leads already in DB) and that only account-level items remain: provider choice (Exotel recommended for India), credentials in `/admin/service-configs`, and `ngrok http 80` for the callback tunnel.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor took S317-S340; next-free = **341** (this entry).
+
+### Key Lessons (carried, continued)
+_614. **Probe the provider's own model list instead of trusting the docs name** — `text-embedding-004` is what every tutorial says, but `models?key=` on v1beta/v1 returned exactly 3 embedding-capable models and `embedContent` 404'd on the doc name. One API call replaced an afternoon of guessing.
+_615. **Mixing vector dimensions is a silent correctness bug** — a 3072-dim Gemini query against a stale 384-dim hash chunk would have produced meaningless cosine scores. The dimension guard plus the re-embed pass make the migration safe; without the guard the desk would have shown plausible-looking garbage.
+_616. **A 500 on a brand-new page is usually one phantom column, and only an in-process probe names it** — page probe gave "500"; invoking the controller's exact query inside a try/catch printed `Unknown column 'kb.category'`. DESCRIBE first for any query against a table this session has not touched.
+_617. **Free-tier capability must be probed per endpoint, not per vendor** — "Gemini is free" was true for chat and false for the retired embedding model, while the *current* embedding model was free on the same key. Vendor-level pricing tables answer the wrong question; a live call answers the right one.
+
 ## Session 340: Voice/IVR Audit (System Complete) + hf_api_key Fix Verified + FREE Embedding Path = Gemini text-embedding-004 (2026-10-17)
 
 ### Trigger
