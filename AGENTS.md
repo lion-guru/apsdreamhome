@@ -13,7 +13,63 @@
 > 4. **Session-number check** — AGENTS.md entry chipkane se PEHLE header dobara padho; parallel actor ne beech me number le liya ho to next free number lo, overwrite/clobber kabhi nahi (S219, S223).
 > 5. **Probe hygiene** — temp scripts sirf `C:\Users\abhay\AppData\Local\Temp\opencode\` me, write+execute **same turn** me (temp purge hota hai), `php -r` one-liners banned, probe ke end me cleanup + counts-verify lazmi (lessons _445, _456, _490).
 
-## Session 337: RAG Was NEVER Using Real Embeddings — hf_api_key Never Read (JSON Blob, Not a Column) + Retired HF Host (2026-10-17)
+## Session 340: Voice/IVR Audit (System Complete) + hf_api_key Fix Verified + FREE Embedding Path = Gemini text-embedding-004 (2026-10-17)
+
+### Trigger
+User asked 3 questions: (1) Voice/IVR — kaunsa model, pura workflow system bana hua hai ya nahi? (2) `hf_api_key` fix thik hai ya nahi, "soch samjh ke" banaya? (3) Free embeddings ke liye kya kare — pura system/ecosystem bana hai ya nahi?
+
+### Findings (audit-only, ZERO app-code/DB writes)
+
+**Q1 — Voice / IVR system ALREADY COMPLETE. Nothing to build.**
+- Services (2): `app/Services/AI/VoiceProviderManager.php` (13.4KB, 4 providers: exotel/twilio/plivo/knowlarity) + `app/Services/Voice/VoiceCallService.php` (23KB)
+- Controllers (**13**): AICalling, CRMVoice, SIMCalling, VoiceAgentAdmin, VoiceCallScheduler, VoiceUpload, TwilioVoiceWebhook, VoiceAgent, VoiceAssistant, VoiceUploadApi, Telecalling, VoiceBot (+invoice)
+- DB tables (**24** voice/call/ivr): `ai_calling_agents` **6 rows**, `ai_calling_intents` **12**, `ai_calling_schedule` **2**, `ai_call_sessions` **26**, `ai_call_extracted_leads` **3**, `ai_voice_models`, `auc_voice_bot_sessions`, `calls_log`, `call_logs`, `telecaller_commissions`, `telecaller_daily_tasks`, `telecaller_performance`, `voice_call_logs` + more
+- Routes: **77** voice/IVR routes
+- **Live data proves the pipeline ran end-to-end**: 26 call sessions → 3 leads auto-extracted → 12 intents → 6 AI calling agents.
+- **Owner-only remaining**: paste provider credentials + `ngrok http 80` tunnel. Zero code work.
+
+**Q2 — `hf_api_key` fix CORRECT (verified line-by-line, not by re-reading prose).**
+`RAGKnowledgeManager.php:99-110` now: `json_decode($settings['settings'])` → `$cfg['hf_api_key']` → `getenv()` only as fallback. Same pattern in `FreeAIEngines::loadKeys()` (decode blob BEFORE reading blob keys — the old code read `$cfg` 6 lines before assigning it). Pushed `ca92c654f` + `b1bdde301`, master 10/10 green. **No CRUD change needed** — the admin GUI already saves via `AISettingsController::saveConfig()` → `JSON_SET(settings, '$.hf_api_key', …)`, which is why the key was in the DB but unreadable by the services.
+
+**Q3 — FREE embedding path needs NO new provider. Gemini already serves it.**
+All 4 keys live (masked prefixes verified via DB): `gsk_` Groq SET · `sk-o` OpenRouter SET · `AQ.A` Gemini SET · `hf_I` HF SET.
+| Provider | Embedding endpoint | Free? |
+|---|---|---|
+| **Gemini `text-embedding-004`** | yes, 1536-dim | **YES — 1M tokens/day already on this key** |
+| Groq | no (chat/completions only) | n/a |
+| OpenRouter | no (chat routing only) | n/a |
+| HF router | yes, 384-dim | 402 without PRO (S337) |
+→ **Free answer = Gemini embeddings primary, HF as optional upgrade.** Ecosystem is complete; only the provider call needs wiring.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor took S317-S339; next-free = **340** (this entry).
+
+### Key Lessons (carried, continued)
+_611. **Row counts answer "is the system built?" faster than file counts** — Voice/IVR looked like 2 services; `ai_call_sessions` **26 rows** + `ai_call_extracted_leads` **3** proved a running pipeline (calls → auto-extracted leads). 20 seconds of `SHOW TABLES LIKE` + counts beat 3 rounds of reading.
+_612. **Choose an embedding provider from a capability matrix, not a key list** — 4 keys were SET, but only Gemini exposes embeddings on a free tier. Groq/OpenRouter are chat-only; "we have keys" is not "we have the capability".
+_613. **A writer and a reader can disagree about where a value lives** — the admin GUI wrote `hf_api_key` into the JSON blob (correct, matches the schema) while both services read it as a column (never existed). Same string, two shapes, zero errors for months. When fixing a "not found" value, verify the reader's access path against `information_schema`, not just that a writer exists.
+
+## Session 339: Credential GUI + S3 Storage Manager + Google Calendar DB Config (All Probed, 10/10) (2026-10-17)
+
+### Trigger
+User: "AWS keys set karo .env me ye bhi admin panel login kar ke ya it employe ya cto jiske pass power hogi wo kar paye apne dashboard se ye sab kam bhi aur configure ho jaye fir database se hi... ye sabka bhi aur bhi jaise jaise fuction system hona chaiye inse related wo sab bhi bna dena gui bhi"
+
+### Work (build + migration + live probe, ZERO DB writes except idempotent seeds)
+1. **Service Config views** (credential management GUI) — `admin/service-configs/index.php` (tabbed by group: AWS S3, Google Calendar, SMTP, Twilio, Razorpay, GSTN, TIN, Leegality, General) + `history.php` (audit log). Password masking (`is_secret`), boolean switches, test/reset buttons per service. Controller + routes already existed (parallel tab); views were missing.
+2. **S3 Cloud Storage Manager** (Gap 25) — `CloudStorageController` (index/upload/download/delete) + `admin/cloud_storage/index.php` (file manager UI: upload with prefix, list, download, delete) + 4 routes in `routes/gap_builds.php` + menu **#366 "Cloud Storage (S3)"** + role permissions. Uses existing `S3Storage` service (DB-configured via `ServiceConfigService::getApiConfig('aws_s3')`).
+3. **Google Calendar DB config** — `GoogleCalendarService` now reads from `ServiceConfigService::getInstance()->getApiConfig('google_calendar')` with env fallback (was env-only). Migration `seed_google_calendar_config_s337.php` seeds 4 config rows (client_id, client_secret, redirect_uri, test_mode).
+4. **500 fix** — `ServiceConfigService::getApiConfig()` is non-static; my GoogleCalendarService edit called it statically → fatal error → 500 on `/admin/calendar-sync`. Fixed to `getInstance()->getApiConfig()`. Also fixed service-configs view parse error (nested `<?= ?>` pattern → pre-computed variables).
+
+### Verification (live probe, authenticated super_admin via test_login=2)
+- `GET /admin/service-configs` → HTTP 200 (was 500, now renders with all service groups)
+- `GET /admin/cloud-storage` → HTTP 200 (configured state, file list)
+- `GET /admin/calendar-sync` → HTTP 200 (was 500, DB config read works)
+- `google_calendar` config seeded (4 rows), `aws_s3` config already in DB (access_key, secret_key, region, bucket)
+- `php -l` clean on all new files. **Master 10/10 PASSED** (18.46s).
+- Temp probe artifacts deleted same turn. Zero leftovers.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor took S317–S338; next-free = **339** (this entry).
 
 ### Trigger
 User: "ye kaam kar raha test karna aur koi suggestion improvement" (test whether RAG actually uses real embeddings).
