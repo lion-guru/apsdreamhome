@@ -1,159 +1,219 @@
-<?php $page_title = $page_title ?? 'System Performance';
-$phpVersion = $phpVersion ?? phpversion();
-$mysqlVersion = $mysqlVersion ?? '';
-$memoryUsed = $memoryUsed ?? 0;
-$memoryPeak = $memoryPeak ?? 0;
-$memoryLimit = $memoryLimit ?? ini_get('memory_limit');
-$memoryLimitBytes = $memoryLimitBytes ?? 0;
-$diskFree = $diskFree ?? 0;
-$diskTotal = $diskTotal ?? 0;
-$diskUsed = $diskUsed ?? 0;
-$uptime = $uptime ?? '';
-$serverSoftware = $serverSoftware ?? '';
-$activeConn = $activeConn ?? 0;
-$totalTables = $totalTables ?? 0;
-$totalRows = $totalRows ?? 0;
-$dbSize = $dbSize ?? 0;
-$extensions = $extensions ?? [];
-$loadedExtensions = $loadedExtensions ?? [];
-$opcacheEnabled = $opcacheEnabled ?? false;
-$opcacheHits = $opcacheHits ?? 0;
-$opcacheMisses = $opcacheMisses ?? 0;
-$slowQueries = $slowQueries ?? 0;
-$totalQueries = $totalQueries ?? 0;
+<?php
+/** Admin Performance & Goals - List */
+
+$page_title = $page_title ?? 'Performance & Goals';
+$goals = $goals ?? [];
+$employees = $employees ?? [];
+$filters = $filters ?? [];
+$stats = $stats ?? [];
 ?>
+
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+.goal-row { transition: background 0.15s; }
+.goal-row:hover { background: #fefcf6; }
+.status-badge { font-size: 0.7rem; padding: 0.2rem 0.5rem; border-radius: 999px; }
+.progress-bar-mini { height: 8px; border-radius: 4px; }
+</style>
+
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0"><i class="fas fa-tachometer-alt me-2 text-primary"></i>System Performance</h2>
-        <button onclick="location.reload()" class="btn btn-outline-primary"><i class="fas fa-sync me-1"></i>Refresh</button>
+        <div>
+            <h4 class="mb-1 fw-bold"><i class="fas fa-bullseye me-2 text-primary"></i>Performance & Goals</h4>
+            <p class="text-muted mb-0 small">Manage employee goals, OKRs, and performance reviews</p>
+        </div>
+        <a href="<?= BASE_URL ?>/admin/performance/create" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i> Create Goal
+        </a>
     </div>
 
+    <!-- Stats Cards -->
     <div class="row g-3 mb-4">
         <div class="col-md-3">
-            <div class="aps-cp-card"><div class="aps-cp-card-body">
-                <div class="d-flex align-items-center">
-                    <div class="flex-shrink-0 me-3"><span class="badge bg-primary rounded-pill p-2"><i class="fab fa-php"></i></span></div>
-                    <div><div class="aps-cp-stat-label">PHP Version</div><div class="aps-cp-stat-value fs-5"><?= htmlspecialchars($phpVersion ?? '') ?></div></div>
+            <div class="card stat-card border-0 shadow-sm bg-primary text-white">
+                <div class="card-body text-center">
+                    <div class="fw-bold fs-3"><?= $stats['goals_by_status']['active'] ?? 0 ?></div>
+                    <div class="text-white-50 small">Active Goals</div>
                 </div>
-            </div></div>
+            </div>
         </div>
         <div class="col-md-3">
-            <div class="aps-cp-card"><div class="aps-cp-card-body">
-                <div class="d-flex align-items-center">
-                    <div class="flex-shrink-0 me-3"><span class="badge bg-info rounded-pill p-2"><i class="fas fa-database"></i></span></div>
-                    <div><div class="aps-cp-stat-label">MySQL Version</div><div class="aps-cp-stat-value fs-5"><?= htmlspecialchars($mysqlVersion ?? '') ?></div></div>
+            <div class="card stat-card border-0 shadow-sm bg-success text-white">
+                <div class="card-body text-center">
+                    <div class="fw-bold fs-3"><?= $stats['goals_by_status']['completed'] ?? 0 ?></div>
+                    <div class="text-white-50 small">Completed</div>
                 </div>
-            </div></div>
+            </div>
         </div>
         <div class="col-md-3">
-            <div class="aps-cp-card"><div class="aps-cp-card-body">
-                <div class="d-flex align-items-center">
-                    <div class="flex-shrink-0 me-3"><span class="badge bg-success rounded-pill p-2"><i class="fas fa-server"></i></span></div>
-                    <div><div class="aps-cp-stat-label">Server</div><div class="aps-cp-stat-value fs-6"><?= htmlspecialchars($serverSoftware ?? '') ?></div></div>
+            <div class="card stat-card border-0 shadow-sm bg-warning text-white">
+                <div class="card-body text-center">
+                    <div class="fw-bold fs-3"><?= $stats['goals_by_status']['at_risk'] ?? 0 ?></div>
+                    <div class="text-white-50 small">At Risk</div>
                 </div>
-            </div></div>
+            </div>
         </div>
         <div class="col-md-3">
-            <div class="aps-cp-card"><div class="aps-cp-card-body">
-                <div class="d-flex align-items-center">
-                    <div class="flex-shrink-0 me-3"><span class="badge bg-warning rounded-pill p-2"><i class="fas fa-plug"></i></span></div>
-                    <div><div class="aps-cp-stat-label">OPcache</div><div class="aps-cp-stat-value fs-5"><?= $opcacheEnabled ? '<span class="text-success">Active</span>' : '<span class="text-danger">Off</span>' ?></div></div>
+            <div class="card stat-card border-0 shadow-sm bg-info text-white">
+                <div class="card-body text-center">
+                    <div class="fw-bold fs-3"><?= $stats['avg_goal_progress'] ?? 0 ?>%</div>
+                    <div class="text-white-50 small">Avg Progress</div>
                 </div>
-            </div></div>
+            </div>
         </div>
     </div>
 
-    <div class="row g-3 mb-4">
-        <div class="col-md-4">
-            <div class="aps-cp-card"><div class="aps-cp-card-body">
-                <h6 class="text-muted mb-3"><i class="fas fa-memory me-1"></i>Memory Usage</h6>
-                <?php $memPct = $memoryLimitBytes > 0 ? min(100, ($memoryUsed / $memoryLimitBytes) * 100) : 0; ?>
-                <div class="mb-2"><strong><?= number_format($memoryUsed / 1048576, 1) ?></strong> MB / <?= $memoryLimit === '-1' ? 'Unlimited' : number_format($memoryLimitBytes / 1048576, 0) . ' MB' ?></div>
-                <div class="progress mb-1"><div class="progress-bar bg-<?= $memPct > 80 ? 'danger' : ($memPct > 50 ? 'warning' : 'success') ?>"></div></div>
-                <small class="text-muted">Peak: <?= number_format($memoryPeak / 1048576, 1) ?> MB</small>
-            </div></div>
-        </div>
-        <div class="col-md-4">
-            <div class="aps-cp-card"><div class="aps-cp-card-body">
-                <h6 class="text-muted mb-3"><i class="fas fa-hdd me-1"></i>Disk Usage</h6>
-                <?php $diskPct = $diskTotal > 0 ? min(100, ($diskUsed / $diskTotal) * 100) : 0; ?>
-                <div class="mb-2"><strong><?= number_format($diskUsed / 1073741824, 1) ?></strong> GB / <?= number_format($diskTotal / 1073741824, 1) ?> GB</div>
-                <div class="progress mb-1"><div class="progress-bar bg-<?= $diskPct > 90 ? 'danger' : ($diskPct > 70 ? 'warning' : 'info') ?>"></div></div>
-                <small class="text-muted">Free: <?= number_format($diskFree / 1073741824, 1) ?> GB</small>
-            </div></div>
-        </div>
-        <div class="col-md-4">
-            <div class="aps-cp-card"><div class="aps-cp-card-body">
-                <h6 class="text-muted mb-3"><i class="fas fa-database me-1"></i>Database Size</h6>
-                <div class="mb-2"><strong><?= $dbSize ?></strong> MB</div>
-                <div class="mb-1"><span class="text-muted">Tables:</span> <?= $totalTables ?></div>
-                <div><span class="text-muted">Total Rows:</span> <?= number_format($totalRows) ?></div>
-            </div></div>
-        </div>
-    </div>
-
-    <div class="row g-3 mb-4">
-        <div class="col-md-3">
-            <div class="aps-cp-card"><div class="aps-cp-card-body text-center">
-                <div class="aps-cp-stat-label">Active DB Connections</div>
-                <div class="aps-cp-stat-value text-primary"><?= $activeConn ?></div>
-            </div></div>
-        </div>
-        <div class="col-md-3">
-            <div class="aps-cp-card"><div class="aps-cp-card-body text-center">
-                <div class="aps-cp-stat-label">Total Queries</div>
-                <div class="aps-cp-stat-value"><?= number_format($totalQueries) ?></div>
-            </div></div>
-        </div>
-        <div class="col-md-3">
-            <div class="aps-cp-card"><div class="aps-cp-card-body text-center">
-                <div class="aps-cp-stat-label">Slow Queries</div>
-                <div class="aps-cp-stat-value text-<?= $slowQueries > 0 ? 'warning' : 'success' ?>"><?= number_format($slowQueries) ?></div>
-            </div></div>
-        </div>
-        <div class="col-md-3">
-            <div class="aps-cp-card"><div class="aps-cp-card-body text-center">
-                <div class="aps-cp-stat-label">OPcache Hit Rate</div>
-                <div class="aps-cp-stat-value"><?= ($opcacheHits + $opcacheMisses) > 0 ? round($opcacheHits / ($opcacheHits + $opcacheMisses) * 100, 1) . '%' : 'N/A' ?></div>
-            </div></div>
-        </div>
-    </div>
-
-    <div class="row g-3">
-        <div class="col-md-6">
-            <div class="aps-cp-card">
-                <div class="aps-cp-card-header"><i class="fas fa-plug me-2"></i>PHP Extensions</div>
-                <div class="aps-cp-card-body">
-                    <div class="table-responsive">
-                        <table class="table table-sm mb-0"><thead><tr><th>Extension</th><th>Status</th></tr></thead><tbody>
-                        <?php foreach ($extensions as $ext): ?>
-                            <tr><td><code><?= $ext ?></code></td><td><span class="aps-cp-badge badge bg-<?= in_array($ext, $loadedExtensions) ? 'success' : 'danger' ?>"><?= in_array($ext, $loadedExtensions) ? 'Loaded' : 'Missing' ?></span></td></tr>
+    <!-- Filters -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label small fw-semibold">Employee</label>
+                    <select name="employee_id" class="form-select form-select-sm">
+                        <option value="">All Employees</option>
+                        <?php foreach ($employees as $emp): ?>
+                            <option value="<?= $emp['id'] ?>" <?= ($filters['employee_id'] ?? '') == $emp['id'] ? 'selected' : '' ?>><?= htmlspecialchars($emp['name']) ?></option>
                         <?php endforeach; ?>
-                        </tbody></table>
-                    </div>
+                    </select>
                 </div>
-            </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold">Status</label>
+                    <select name="status" class="form-select form-select-sm">
+                        <option value="">All Status</option>
+                        <option value="active" <?= ($filters['status'] ?? '') === 'active' ? 'selected' : '' ?>>Active</option>
+                        <option value="completed" <?= ($filters['status'] ?? '') === 'completed' ? 'selected' : '' ?>>Completed</option>
+                        <option value="at_risk" <?= ($filters['status'] ?? '') === 'at_risk' ? 'selected' : '' ?>>At Risk</option>
+                        <option value="off_track" <?= ($filters['status'] ?? '') === 'off_track' ? 'selected' : '' ?>>Off Track</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold">Type</label>
+                    <select name="goal_type" class="form-select form-select-sm">
+                        <option value="">All Types</option>
+                        <option value="okr" <?= ($filters['goal_type'] ?? '') === 'okr' ? 'selected' : '' ?>>OKR</option>
+                        <option value="kpi" <?= ($filters['goal_type'] ?? '') === 'kpi' ? 'selected' : '' ?>>KPI</option>
+                        <option value="personal" <?= ($filters['goal_type'] ?? '') === 'personal' ? 'selected' : '' ?>>Personal</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary btn-sm w-100"><i class="fas fa-search me-1"></i> Filter</button>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <a href="<?= BASE_URL ?>/admin/performance" class="btn btn-outline-secondary btn-sm w-100">Clear</a>
+                </div>
+            </form>
         </div>
-        <div class="col-md-6">
-            <div class="aps-cp-card">
-                <div class="aps-cp-card-header"><i class="fas fa-cog me-2"></i>PHP Configuration</div>
-                <div class="aps-cp-card-body">
-                    <div class="table-responsive">
-                        <table class="table table-sm mb-0">
-                            <tbody>
-                                <tr><td>Memory Limit</td><td><strong><?= ini_get('memory_limit') ?></strong></td></tr>
-                                <tr><td>Max Execution Time</td><td><strong><?= ini_get('max_execution_time') ?>s</strong></td></tr>
-                                <tr><td>Upload Max Size</td><td><strong><?= ini_get('upload_max_filesize') ?></strong></td></tr>
-                                <tr><td>Post Max Size</td><td><strong><?= ini_get('post_max_size') ?></strong></td></tr>
-                                <tr><td>Max Input Vars</td><td><strong><?= ini_get('max_input_vars') ?></strong></td></tr>
-                                <tr><td>Error Reporting</td><td><strong><?= error_reporting() === E_ALL ? 'All' : 'Custom' ?></strong></td></tr>
-                                <tr><td>Display Errors</td><td><span class="aps-cp-badge badge bg-<?= ini_get('display_errors') ? 'danger' : 'success' ?>"><?= ini_get('display_errors') ? 'On' : 'Off' ?></span></td></tr>
-                                <tr><td>Session Cache Limiter</td><td><strong><?= ini_get('session.cache_limiter') ?: 'None' ?></strong></td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+    </div>
+
+    <!-- Goals Table -->
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <?php if (empty($goals)): ?>
+            <div class="text-center py-5">
+                <i class="fas fa-bullseye fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No Goals Found</h5>
+                <p class="text-muted small mb-3">Create your first goal to start tracking performance</p>
+                <a href="<?= BASE_URL ?>/admin/performance/create" class="btn btn-primary"><i class="fas fa-plus me-1"></i> Create Goal</a>
             </div>
+            <?php else: ?>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 30%">Goal</th>
+                            <th style="width: 15%">Employee</th>
+                            <th style="width: 10%">Type</th>
+                            <th style="width: 10%">Progress</th>
+                            <th style="width: 10%">Status</th>
+                            <th style="width: 15%">Period</th>
+                            <th style="width: 15%">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($goals as $goal): 
+                            $statusClass = [
+                                'active' => 'primary',
+                                'completed' => 'success',
+                                'on_track' => 'info',
+                                'at_risk' => 'warning',
+                                'off_track' => 'danger',
+                                'cancelled' => 'secondary',
+                            ][$goal['status']] ?? 'secondary';
+                            
+                            $progress = $goal['progress_percentage'] ?? 0;
+                            $isOverdue = $goal['end_date'] && $goal['end_date'] < date('Y-m-d') && $goal['status'] !== 'completed';
+                        ?>
+                        <tr class="goal-row">
+                            <td>
+                                <div class="fw-semibold"><?= htmlspecialchars($goal['title']) ?></div>
+                                <div class="small text-muted text-truncate" style="max-width: 300px;"><?= htmlspecialchars($goal['description'] ?? '') ?></div>
+                            </td>
+                            <td>
+                                <div class="fw-semibold"><?= htmlspecialchars($goal['employee_name'] ?? '—') ?></div>
+                                <div class="small text-muted"><?= htmlspecialchars($goal['employee_email'] ?? '') ?></div>
+                            </td>
+                            <td>
+                                <span class="badge bg-<?= $goal['goal_type'] === 'okr' ? 'primary' : ($goal['goal_type'] === 'kpi' ? 'success' : 'info') ?>">
+                                    <?= strtoupper($goal['goal_type']) ?>
+                                </span>
+                            </td>
+                            <td>
+                                <div class="progress progress-bar-mini mb-1">
+                                    <div class="progress-bar bg-<?= $progress >= 100 ? 'success' : ($progress >= 75 ? 'success' : ($progress >= 50 ? 'info' : 'warning')) ?>" role="progressbar" style="width: <?= $progress ?>%" aria-valuenow="<?= $progress ?>" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <small class="text-muted"><?= $progress ?>%</div>
+                            </td>
+                            <td>
+                                <span class="badge bg-<?= $statusClass ?> status-badge">
+                                    <?= ucfirst(str_replace('_', ' ', $goal['status'])) ?>
+                                </span>
+                            </td>
+                            <td>
+                                <small class="text-muted"><?= $goal['start_date'] ? date('d M Y', strtotime($goal['start_date'])) : '—' ?></small>
+                                <div class="small text-muted">to <?= $goal['end_date'] ? date('d M Y', strtotime($goal['end_date'])) : '—' ?></div>
+                                <?php if ($isOverdue): ?><span class="badge bg-danger ms-1">Overdue</span><?php endif; ?>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="<?= BASE_URL ?>/admin/performance/<?= $goal['id'] ?>" class="btn btn-outline-primary" title="View"><i class="fas fa-eye"></i></a>
+                                    <a href="<?= BASE_URL ?>/admin/performance/<?= $goal['id'] ?>/edit" class="btn btn-outline-secondary" title="Edit"><i class="fas fa-edit"></i></a>
+                                    <button class="btn btn-outline-success" onclick="recordProgress(<?= $goal['id'] ?>)" title="Record Progress"><i class="fas fa-chart-line"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <?php endif; ?>
         </div>
     </div>
 </div>
+
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+function recordProgress(goalId) {
+    const progress = prompt('Enter progress percentage (0-100):');
+    if (progress === null) return;
+    const pct = parseFloat(progress);
+    if (isNaN(pct) || pct < 0 || pct > 100) {
+        alert('Please enter a valid percentage (0-100)');
+        return;
+    }
+    const notes = prompt('Notes (optional):') || '';
+    
+    const formData = new FormData();
+    formData.append('csrf_token', '<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>');
+    formData.append('checkpoint_date', '<?= date('Y-m-d') ?>');
+    formData.append('actual_value', '0'); // Would need target value for proper calculation
+    formData.append('notes', notes);
+    
+    fetch('<?= BASE_URL ?>/admin/performance/' + goalId + '/progress', {
+        method: 'POST',
+        body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) location.reload();
+        else alert(data.message || 'Failed');
+    });
+}
+</script>

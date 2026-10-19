@@ -1,8 +1,9 @@
 <?php
-/** Employee Self-Service Holiday Calendar */
+/** Employee Self-Service - Leave Calendar */
 
-$page_title = $page_title ?? 'Holiday Calendar';
+$page_title = $page_title ?? 'Leave & Holiday Calendar';
 $holidays = $holidays ?? [];
+$leaves = $leaves ?? [];
 $stats = $stats ?? [];
 $holidayTypes = $holidayTypes ?? [];
 $filters = $filters ?? [];
@@ -15,13 +16,14 @@ $filters = $filters ?? [];
 .calendar-day { min-height: 100px; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.5rem; background: white; }
 .calendar-day.today { border-color: #7c2d12; background: #fefce8; }
 .calendar-day.has-holiday { background: #fff7ed; }
+.calendar-day.has-leave { background: #f0fdf4; }
 </style>
 
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h4 class="mb-1 fw-bold"><i class="fas fa-calendar-alt me-2 text-primary"></i>Holiday Calendar</h4>
-            <p class="text-muted mb-0 small">View company holidays and plan your time off</p>
+            <h4 class="mb-1 fw-bold"><i class="fas fa-calendar-alt me-2 text-primary"></i>Leave & Holiday Calendar</h4>
+            <p class="text-muted mb-0 small">View company holidays and your leave schedule</p>
         </div>
     </div>
 
@@ -54,8 +56,8 @@ $filters = $filters ?? [];
         <div class="col-md-3">
             <div class="card stat-card border-0 shadow-sm bg-warning text-white">
                 <div class="card-body text-center">
-                    <div class="fw-bold fs-3"><?= $stats['this_year'] ?? 0 ?></div>
-                    <div class="text-white-50 small">This Year</div>
+                    <div class="fw-bold fs-3"><?= count($leaves) ?></div>
+                    <div class="text-white-50 small">Your Leaves</div>
                 </div>
             </div>
         </div>
@@ -104,7 +106,7 @@ $filters = $filters ?? [];
                 <div class="col-md-2 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary btn-sm w-100"><i class="fas fa-search me-1"></i> Filter</button>
                 </div>
-                <div class="col-md-1 d-flex align-items-end">
+                <div class="col-md-2 d-flex align-items-end">
                     <a href="<?= BASE_URL ?>/employee/self-service/holiday-calendar" class="btn btn-outline-secondary btn-sm w-100">Clear</a>
                 </div>
             </form>
@@ -226,11 +228,56 @@ $filters = $filters ?? [];
             <?php endif; ?>
         </div>
     </div>
+
+    <!-- Your Leaves -->
+    <?php if (!empty($leaves)): ?>
+    <div class="card shadow-sm border-0 mt-4">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-semibold"><i class="fas fa-calendar-check me-2"></i>Your Leave Schedule</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Leave Type</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Days</th>
+                            <th>Status</th>
+                            <th>Applied</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($leaves as $leave): 
+                            $statusClass = [
+                                'pending' => 'warning',
+                                'approved' => 'success',
+                                'rejected' => 'danger',
+                                'cancelled' => 'secondary',
+                            ][$leave['status']] ?? 'secondary';
+                        ?>
+                        <tr>
+                            <td><?= htmlspecialchars($leave['leave_type_name'] ?? 'Leave') ?></td>
+                            <td><?= date('d M Y', strtotime($leave['start_date'])) ?></td>
+                            <td><?= date('d M Y', strtotime($leave['end_date'])) ?></td>
+                            <td><?= $leave['total_days'] ?></td>
+                            <td><span class="badge bg-<?= $statusClass ?>"><?= ucfirst($leave['status']) ?></span></td>
+                            <td><?= date('d M Y', strtotime($leave['created_at'])) ?></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
 </div>
 
 <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 // Holiday data for calendar
 const holidays = <?= json_encode($holidays) ?>;
+const leaves = <?= json_encode($leaves) ?>;
 
 function updateCalendar() {
     const year = parseInt(document.getElementById('calYear').value);
@@ -261,11 +308,14 @@ function renderCalendar(year, month) {
         const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         const isToday = dateStr === '<?= date('Y-m-d') ?>';
         const dayHolidays = holidays.filter(h => h.date === dateStr);
+        const dayLeaves = leaves.filter(l => l['start_date'] <= dateStr && l['end_date'] >= dateStr);
         const hasHoliday = dayHolidays.length > 0;
+        const hasLeave = dayLeaves.length > 0;
         
         let cellClass = 'calendar-day';
         if (isToday) cellClass += ' today';
         if (hasHoliday) cellClass += ' has-holiday';
+        if (hasLeave) cellClass += ' has-leave';
         
         html += `<td class="${cellClass}">`;
         html += `<div class="fw-semibold">${day}</div>`;
@@ -283,6 +333,14 @@ function renderCalendar(year, month) {
                 };
                 const typeColor = typeColors[h.type] || 'secondary';
                 html += `<span class="badge bg-${typeColor} badge-sm me-1" style="font-size: 0.6rem;">${h.name}</span>`;
+            });
+            html += '</div>';
+        }
+        
+        if (hasLeave) {
+            html += '<div class="small">';
+            dayLeaves.forEach(l => {
+                html += `<span class="badge bg-success badge-sm me-1" style="font-size: 0.6rem;">Leave: ${l['leave_type_name']}</span>`;
             });
             html += '</div>';
         }
