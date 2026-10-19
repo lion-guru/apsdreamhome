@@ -18,13 +18,12 @@
  *   id 219 Vendors                  -> /employee/ops-dashboard
  *   id 220 Customer Success         -> /employee/dashboard-overview
  *
- * NOT fixed here (no GET page exists — only POST action handlers):
- *   id 200 /employee/tax          -> candidates are POST-only (/employee/ca/tax-compliance)
- *   id 206 /employee/recruitment  -> POST-only (/employee/hr/application)
- *   id 210 /employee/compliance   -> POST-only (/employee/legal/compliance)
- *   id 212 /employee/surveys      -> POST-only (/employee/land/site-visit)
- *   id 221 /employee/complaints   -> POST-only (/employee/legal/dispute)
- *   These stay untouched rather than being pointed at a misleading page.
+ * S347 follow-up: the 5 remaining dead links now have GET pages:
+ *   id 200 /employee/tax          -> /employee/self-service/tax-calculator (fixed 500)
+ *   id 206 /employee/recruitment  -> /employee/hr-dashboard
+ *   id 210 /employee/compliance   -> /employee/legal-dashboard
+ *   id 212 /employee/surveys      -> /employee/self-service/surveys
+ *   id 221 /employee/complaints   -> /employee/legal-dashboard
  *
  * Idempotent: re-run verifies the URL already matches, prints SKIP.
  */
@@ -43,6 +42,12 @@ $map = [
     217 => '/employee/marketing-dashboard',
     219 => '/employee/ops-dashboard',
     220 => '/employee/dashboard-overview',
+    // S347 follow-up: 5 dead links that only had POST handlers now have GET pages
+    200 => '/employee/self-service/tax-calculator',
+    206 => '/employee/hr-dashboard',
+    210 => '/employee/legal-dashboard',
+    212 => '/employee/self-service/surveys',
+    221 => '/employee/legal-dashboard',
 ];
 
 $check = $pdo->prepare("SELECT url FROM admin_menu_items WHERE id = ?");

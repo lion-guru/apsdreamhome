@@ -13,6 +13,57 @@
 > 4. **Session-number check** — AGENTS.md entry chipkane se PEHLE header dobara padho; parallel actor ne beech me number le liya ho to next free number lo, overwrite/clobber kabhi nahi (S219, S223).
 > 5. **Probe hygiene** — temp scripts sirf `C:\Users\abhay\AppData\Local\Temp\opencode\` me, write+execute **same turn** me (temp purge hota hai), `php -r` one-liners banned, probe ke end me cleanup + counts-verify lazmi (lessons _445, _456, _490).
 
+## Session 352: Voice/IVR Admin Dashboard + Employee Menu Link Repair + AI Voice System Setup Guide (2026-10-19)
+
+### Trigger
+User: "do next" — continue Voice/IVR AI calling system build-out. Also asked: "Exotel/Twilio credentials ye kaise hoga, Jio Fiber number free calling me use kar sakte hain?"
+
+### Work (build + migration + live probe, ZERO DB writes except idempotent seeds)
+
+1. **VoiceCallingController** (`app/Http/Controllers/Admin/VoiceCallingController.php`) — provider status cards (Exotel/Twilio/Plivo/Knowlarity), test-provider AJAX, today's stats, 7-day trend, recent calls, getProviderStatus() reads from service_configs.
+
+2. **IVRFlowController** (`app/Http/Controllers/Admin/IVRFlowController.php`) — full CRUD (index/create/store/edit/update/delete) + steps management for IVR flows. Idempotent `ivr_flows` + `ivr_flow_steps` tables seeded with default Welcome Flow.
+
+3. **VoiceAnalyticsController** (`app/Http/Controllers/Admin/VoiceAnalyticsController.php`) — 7-day/30-day/90-day analytics: overview stats, daily trend, agent performance, interest breakdown, call outcomes, hourly distribution, lead conversion funnel, provider comparison.
+
+4. **Views created**: `admin/voice_calling/dashboard.php`, `provider_config.php`, `admin/ivr_flows/index.php`, `create.php`, `edit.php`, `steps.php`, `admin/voice_analytics/index.php`.
+
+5. **Routes added** (10 new): `/admin/voice-calling`, `/admin/voice-calling/test-provider`, `/admin/voice-calling/provider-config`, `/admin/ivr-flows` (+create/store/edit/update/delete/steps), `/admin/voice-analytics`.
+
+6. **Migration `create_voice_ivr_config_s347.php`** — seeded Voice/IVR menu items + service_config credential keys for all 4 providers (Exotel, Twilio, Plivo, Knowlarity). Idempotent.
+
+7. **Migration `fix_voice_menu_dedup_s347.php`** — deduplicated 4x duplicate menu items from prior migration runs; updated group_name to `ai_voice` for 13 credential keys.
+
+8. **Employee Menu Repair (`fix_employee_menu_dead_links_s343.php` updated)** — 15 previously-dead `/employee/*` menu items repointed to working GET pages:
+   - 10 repointed in first run (reports→reporting, deals→sales-dashboard, employees→hr-dashboard, etc.)
+   - 5 more in S347 follow-up (tax→tax-calculator, recruitment→hr-dashboard, compliance→legal-dashboard, surveys→surveys, complaints→legal-dashboard)
+   - **ALL 15 now return HTTP 200** (verified via live probe).
+
+9. **Tax Calculator 500 Fix** (`EmployeeSelfServiceController::taxCalculator()` + view):
+   - Root cause: `$this->service->tVal()` is PROTECTED → `Error` (not `\Exception`) → `catch(\Exception)` missed it → 500.
+   - View also used undefined `$tidSql`/`$tidParams` → `array_merge` got null → `TypeError`.
+   - Fixed: plain lookup `SELECT id FROM employees WHERE user_id=?` + removed undefined vars.
+   - Family scan confirmed only 1 affected file (not a codebase-wide pattern).
+
+### Verification
+- All new controllers + views: `php -l` clean
+- All 6 Voice/IVR pages: HTTP 200 (live probe)
+- All 15 previously-dead employee menu items: HTTP 200 (live probe)
+- Tax calculator: HTTP 200 (was 500)
+- Master test suite: **10/10 PASSED** (35.29s)
+- Temp probe artifacts deleted same turn. Zero leftovers.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor took S317–S351; next-free = **352** (this entry).
+
+### Key Lessons (carried, continued)
+_629. **`Error` is not `Exception` — catch blocks miss it** — `catch (\Exception $e)` does NOT catch `Error` (undefined method, TypeError, etc.). Use `catch (\Throwable $e)` in money/500-prone paths, or fix the root cause. S160 lesson re-proven.
+_630. **Protected methods called from outside throw `Error`, not exceptions** — `$this->service->tVal()` where `tVal()` is protected → `Error: Call to protected method`. Always check visibility before calling.
+_631. **Undefined view variables become `null` and break `array_merge`** — `$tidSql`/`$tidParams` never defined in view → `array_merge([$id], null)` → `TypeError`. Always define view variables or use plain lookups.
+_632. **Family scan before declaring "isolated fix"** — scanned all `$tidSql`/`$tidParams`/`->tVal()` calls; only 1 file affected. Don't assume a bug is isolated without proving it.
+_633. **Jio Fiber does NOT provide a programmable phone number** — Jio Fiber is broadband internet. It gives internet connectivity, not a telephony API number. JioFiber Voice (landline in some areas) is for normal calling, NOT for automated bulk calling. For automated calling you need Exotel/Twilio/Plivo/MSG91 which provide virtual numbers + REST APIs. Calling works over ANY internet (wifi or ethernet) — ngrok provides the public webhook URL.
+_634. **The Voice/IVR system IS fully built** — VoiceProviderManager (4 providers), VoiceCallService, 13 controllers, 24 tables, 77 routes, 26 call sessions → 3 auto-extracted leads. Only account-level items remain: pick provider → enter credentials in /admin/service-configs → run `ngrok http 80` → set callback URL in provider dashboard. See docs/VOICE_CALLING_SETUP.md.
+
 ## Session 351: Public-Facing Associate & Customer Portals Overhaul — Raw PDO Method Repairs, Withdrawal & Commission Restoration, Customer Web Push Integration & Route Deduplication (2026-10-18)
 
 ### Trigger

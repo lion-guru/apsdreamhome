@@ -14,6 +14,9 @@ use App\Services\EmployeeGrievanceService;
 use App\Services\TrainingService;
 use App\Services\OrgChartService;
 use App\Services\EngagementSurveyService;
+use App\Services\OnboardingService;
+use App\Services\OffboardingService;
+use App\Services\HolidayCalendarService;
 use Exception;
 use Throwable;
 
@@ -32,6 +35,9 @@ class EmployeeSelfServiceController extends BaseController
     private $trainingService;
     private $orgChartService;
     private $surveyService;
+    private $onboardingService;
+    private $offboardingService;
+    private $holidayCalendarService;
 
     public function __construct()
     {
@@ -48,6 +54,9 @@ class EmployeeSelfServiceController extends BaseController
         $this->trainingService = new TrainingService();
         $this->orgChartService = new OrgChartService();
         $this->surveyService = new EngagementSurveyService();
+        $this->onboardingService = new OnboardingService();
+        $this->offboardingService = new OffboardingService();
+        $this->holidayCalendarService = new HolidayCalendarService();
     }
 
     /**
@@ -898,27 +907,120 @@ class EmployeeSelfServiceController extends BaseController
 
     public function surveyResults($id)
     {
-        $this->requireEmployeeLogin();
-        $employeeId = $_SESSION['employee_id'];
-
-        $survey = $this->surveyService->getSurvey($id);
-        if (!$survey) {
-            $_SESSION['error'] = 'Survey not found';
-            $this->redirect(BASE_URL . '/employee/self-service/surveys');
-            exit;
-        }
-
-        $response = $this->surveyService->getEmployeeResponse($id, $employeeId);
-        if (!$response) {
-            $_SESSION['error'] = 'You have not responded to this survey';
-            $this->redirect(BASE_URL . '/employee/self-service/surveys');
-            exit;
-        }
-
         return $this->render('employee/self_service/survey_results', [
             'page_title' => 'Survey Results: ' . $survey['title'],
             'survey' => $survey,
             'response' => $response
+        ]);
+    }
+
+    // ──────────────────────────────────────────────
+    // ONBOARDING
+    // ──────────────────────────────────────────────
+
+    public function onboarding()
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION['employee_id'];
+
+        $progress = $this->onboardingService->getOnboardingProgress($employeeId);
+        $templates = $this->onboardingService->getTemplates();
+
+        return $this->render('employee/self_service/onboarding', [
+            'page_title' => 'My Onboarding',
+            'progress' => $progress,
+            'templates' => $templates
+        ]);
+    }
+
+    public function onboardingUpdate()
+    {
+        $this->requireEmployeeLogin();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request', 400);
+        }
+
+        $token = $_POST['csrf_token'] ?? '';
+        if (!$this->validateCsrfToken($token)) {
+            return $this->jsonError('Invalid CSRF token', 400);
+        }
+
+        $result = $this->onboardingService->updateItemStatus(
+            (int)($_POST['item_id'] ?? 0),
+            (int)($_POST['employee_id'] ?? 0),
+            $_POST['status'] ?? '',
+            ['notes' => $_POST['notes'] ?? '']
+        );
+        return $this->jsonResponse($result);
+    }
+
+    // ──────────────────────────────────────────────
+    // OFFBOARDING
+    // ──────────────────────────────────────────────
+
+    public function offboarding()
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION['employee_id'];
+
+        $progress = $this->offboardingService->getOffboardingProgress($employeeId);
+
+        return $this->render('employee/self_service/offboarding', [
+            'page_title' => 'My Offboarding',
+            'progress' => $progress
+        ]);
+    }
+
+    public function offboardingUpdate()
+    {
+        $this->requireEmployeeLogin();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request', 400);
+        }
+
+        $token = $_POST['csrf_token'] ?? '';
+        if (!$this->validateCsrfToken($token)) {
+            return $this->jsonError('Invalid CSRF token', 400);
+        }
+
+        $result = $this->offboardingService->updateItemStatus(
+            (int)($_POST['item_id'] ?? 0),
+            (int)($_POST['employee_id'] ?? 0),
+            $_POST['status'] ?? '',
+            ['notes' => $_POST['notes'] ?? '']
+        );
+        return $this->jsonResponse($result);
+    }
+
+    // ──────────────────────────────────────────────
+    // HOLIDAY CALENDAR
+    // ──────────────────────────────────────────────
+
+    public function holidayCalendar()
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION['employee_id'];
+
+        $filters = [
+            'type' => $_GET['type'] ?? null,
+            'region' => $_GET['region'] ?? null,
+            'year' => $_GET['year'] ?? null,
+            'month' => $_GET['month'] ?? null,
+            'is_active' => $_GET['is_active'] ?? null
+        ];
+
+        $holidays = $this->holidayCalendarService->getHolidays($filters);
+        $stats = $this->holidayCalendarService->getStats();
+        $holidayTypes = $this->holidayCalendarService->getHolidayTypes();
+
+        return $this->render('employee/self_service/holiday_calendar', [
+            'page_title' => 'Holiday Calendar',
+            'holidays' => $holidays,
+            'stats' => $stats,
+            'holiday_types' => $holidayTypes,
+            'filters' => $filters
         ]);
     }
 }

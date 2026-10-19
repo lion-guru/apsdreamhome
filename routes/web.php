@@ -6601,6 +6601,17 @@ $router->get('/employee/self-service/surveys/take/{id}', 'Employee\\EmployeeSelf
 $router->post('/employee/self-service/surveys/take/{id}', 'Employee\\EmployeeSelfServiceController@surveyTake');
 $router->get('/employee/self-service/surveys/results/{id}', 'Employee\\EmployeeSelfServiceController@surveyResults');
 
+// Employee Self-Service Onboarding
+$router->get('/employee/self-service/onboarding', 'Employee\\EmployeeSelfServiceController@onboarding');
+$router->post('/employee/self-service/onboarding/update', 'Employee\\EmployeeSelfServiceController@onboardingUpdate');
+
+// Employee Self-Service Offboarding
+$router->get('/employee/self-service/offboarding', 'Employee\\EmployeeSelfServiceController@offboarding');
+$router->post('/employee/self-service/offboarding/update', 'Employee\\EmployeeSelfServiceController@offboardingUpdate');
+
+// Employee Self-Service Holiday Calendar
+$router->get('/employee/self-service/holiday-calendar', 'Employee\\EmployeeSelfServiceController@holidayCalendar');
+
 // Admin Training / L&D
 $router->get('/admin/training/courses', 'App\\Http\\Controllers\\Admin\\HRController@trainingCourses');
 $router->get('/admin/training/courses/create', 'App\\Http\\Controllers\\Admin\\HRController@trainingCourseCreate');
