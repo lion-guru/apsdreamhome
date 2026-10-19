@@ -443,10 +443,10 @@ $router->get('/admin/api-key-mgmt/stats', function () {
         $total = $db->query("SELECT COUNT(*) FROM api_keys")->fetchColumn();
         $active = $db->query("SELECT COUNT(*) FROM api_keys WHERE status = 'active'")->fetchColumn();
         $mcp = 0; $userKeys = 0;
-        try { $mcp = $db->query("SELECT COUNT(*) FROM mcp_api_keys")->fetchColumn(); } catch (\Exception $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
-        try { $userKeys = $db->query("SELECT COUNT(*) FROM user_api_keys")->fetchColumn(); } catch (\Exception $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
+        try { $mcp = $db->query("SELECT COUNT(*) FROM mcp_api_keys")->fetchColumn(); } catch (\Throwable $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
+        try { $userKeys = $db->query("SELECT COUNT(*) FROM user_api_keys")->fetchColumn(); } catch (\Throwable $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
         echo json_encode(['success' => true, 'stats' => ['total_keys' => (int)$total, 'active_keys' => (int)$active, 'mcp_keys' => ['total' => (int)$mcp], 'user_keys' => ['total' => (int)$userKeys]]]);
-    } catch (\Exception $e) { echo json_encode(['success' => false]); }
+    } catch (\Throwable $e) { echo json_encode(['success' => false]); }
     exit;
 });
 $router->get('/admin/api-key-mgmt/mcp-keys', function () {
@@ -456,7 +456,7 @@ $router->get('/admin/api-key-mgmt/mcp-keys', function () {
         $db = \App\Core\Database\Database::getInstance()->getConnection();
         $stmt = $db->query("SELECT * FROM mcp_api_keys ORDER BY created_at DESC");
         echo json_encode(['success' => true, 'keys' => $stmt->fetchAll(\PDO::FETCH_ASSOC)]);
-    } catch (\Exception $e) { echo json_encode(['success' => true, 'keys' => []]); }
+    } catch (\Throwable $e) { echo json_encode(['success' => true, 'keys' => []]); }
     exit;
 });
 $router->get('/admin/api-key-mgmt/user-keys', function () {
@@ -466,7 +466,7 @@ $router->get('/admin/api-key-mgmt/user-keys', function () {
         $db = \App\Core\Database\Database::getInstance()->getConnection();
         $stmt = $db->query("SELECT * FROM api_keys ORDER BY created_at DESC");
         echo json_encode(['success' => true, 'keys' => $stmt->fetchAll(\PDO::FETCH_ASSOC)]);
-    } catch (\Exception $e) { echo json_encode(['success' => true, 'keys' => []]); }
+    } catch (\Throwable $e) { echo json_encode(['success' => true, 'keys' => []]); }
     exit;
 });
 $router->get('/admin/api-key-mgmt/integration', function () {
@@ -491,7 +491,7 @@ $router->post('/admin/api-key-mgmt/add-mcp-key', function () {
         $stmt = $db->prepare("INSERT INTO mcp_api_keys (service_name, key_name, key_type, key_value, description, is_active, created_at) VALUES (?, ?, ?, ?, ?, 1, NOW())");
         $stmt->execute([$name, $keyName, $keyType, $keyValue, $description]);
         echo json_encode(['success' => true]);
-    } catch (\Exception $e) { echo json_encode(['success' => false, 'message' => $e->getMessage()]); }
+    } catch (\Throwable $e) { echo json_encode(['success' => false, 'message' => $e->getMessage()]); }
     exit;
 });
 $router->post('/admin/api-key-mgmt/create-user-key', function () {
@@ -507,7 +507,7 @@ $router->post('/admin/api-key-mgmt/create-user-key', function () {
         $stmt = $db->prepare("INSERT INTO api_keys (api_key, name, user_id, permissions, rate_limit, status, created_at) VALUES (?, ?, ?, ?, ?, 'active', NOW())");
         $stmt->execute([$apiKey, $name, $userId, $permissions, $rateLimit]);
         echo json_encode(['success' => true, 'api_key' => $apiKey]);
-    } catch (\Exception $e) { echo json_encode(['success' => false, 'message' => $e->getMessage()]); }
+    } catch (\Throwable $e) { echo json_encode(['success' => false, 'message' => $e->getMessage()]); }
     exit;
 });
 
@@ -1667,7 +1667,7 @@ $router->get('/admin/api/dashboard-stats', function () {
         $properties = $db->query("SELECT COUNT(*) FROM user_properties")->fetchColumn();
         $revenue = $db->query("SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE status = 'approved'")->fetchColumn();
         echo json_encode(['success' => true, 'users' => (int)$users, 'properties' => (int)$properties, 'revenue' => (float)$revenue]);
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         echo json_encode(['success' => false]);
     }
     exit;
@@ -1693,7 +1693,7 @@ $router->get('/api/dashboard/updates', function () {
             'active_users' => (int)$activeUsers,
             'timestamp' => date('Y-m-d H:i:s')
         ]);
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         echo json_encode(['success' => false]);
     }
     exit;
@@ -1712,6 +1712,8 @@ $router->get('/api/dashboard/builder/materials', 'App\\Http\\Controllers\\RoleBa
 // Admin Dashboard Widgets
 $router->get('/admin/dashboard/customize', 'App\\Http\\Controllers\\Admin\\DashboardWidgetController@index');
 $router->get('/admin/dashboard/widgets', 'App\\Http\\Controllers\\Admin\\DashboardWidgetController@getWidgets');
+$router->post('/admin/dashboard/customize/save', 'App\\Http\\Controllers\\Admin\\DashboardWidgetController@saveLayoutJson');
+$router->post('/admin/dashboard/customize/reset', 'App\\Http\\Controllers\\Admin\\DashboardWidgetController@resetLayout');
 $router->post('/admin/dashboard/layout', 'App\\Http\\Controllers\\Admin\\DashboardWidgetController@saveLayout');
 $router->get('/admin/dashboard/layout/{id}', 'App\\Http\\Controllers\\Admin\\DashboardWidgetController@getLayout');
 $router->delete('/admin/dashboard/layout/{id}', 'App\\Http\\Controllers\\Admin\\DashboardWidgetController@deleteLayout');
@@ -2494,6 +2496,7 @@ $router->get('/admin/payments/dashboard-stats', 'App\\Http\\Controllers\\Admin\\
 $router->get('/admin/payments/export', 'App\\Http\\Controllers\\Admin\\PaymentController@export')
     ->middleware('App\\Middleware\\AjaxRateLimitMiddleware');
 $router->get('/admin/payments/{id}/receipt', 'App\\Http\\Controllers\\Admin\\PaymentController@printReceipt');
+$router->get('/admin/payments/{id}/receipt-pdf', 'App\\Http\\Controllers\\Admin\\PaymentReceiptPdfController@generate');
 
 // Admin EMI
 $router->get('/admin/emi', 'App\\Http\\Controllers\\Admin\\EMIController@index');
@@ -2678,7 +2681,7 @@ $router->get('/admin/sms/logs', function () {
         $stmt = $db->prepare($sql);
         $stmt->execute($params);
         echo json_encode($stmt->fetchAll(\PDO::FETCH_ASSOC));
-    } catch (\Exception $e) { echo json_encode([]); }
+    } catch (\Throwable $e) { echo json_encode([]); }
     exit;
 });
 
@@ -2831,6 +2834,7 @@ $router->post('/admin/recruitment/{id}/update', 'App\\Http\\Controllers\\Admin\\
 $router->post('/admin/recruitment/{id}/publish', 'App\\Http\\Controllers\\Admin\\RecruitmentController@publish');
 $router->get('/admin/recruitment/{id}/applications', 'App\\Http\\Controllers\\Admin\\RecruitmentController@applications');
 $router->post('/admin/recruitment/applications/{appId}/schedule', 'App\\Http\\Controllers\\Admin\\RecruitmentController@scheduleInterview');
+$router->get('/admin/recruitment/applications/{id}', 'App\\Http\\Controllers\\Admin\\RecruitmentController@applicationShow');
 $router->post('/admin/recruitment/interviews/{id}/feedback', 'App\\Http\\Controllers\\Admin\\RecruitmentController@submitFeedback');
 $router->post('/admin/recruitment/offers', 'App\\Http\\Controllers\\Admin\\RecruitmentController@createOffer');
 $router->post('/admin/recruitment/offers/{id}/send', 'App\\Http\\Controllers\\Admin\\RecruitmentController@sendOffer');
@@ -5362,7 +5366,7 @@ $router->put('/api/leads/tasks/{id}', function ($id) {
         $stmt = $db->prepare("UPDATE crm_tasks SET status = ?, updated_at = NOW() WHERE id = ?");
         $stmt->execute([$status, $id]);
         echo json_encode(['success' => true]);
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         echo json_encode(['success' => false, 'error' => $e->getMessage()]);
     }
     exit;
@@ -5377,7 +5381,7 @@ $router->get('/admin/api/lead-file-extraction/{id}', function ($id) {
         $extraction = $stmt->fetch(\PDO::FETCH_ASSOC);
         if (!$extraction) { echo json_encode(['success' => false, 'message' => 'Not found']); exit; }
         echo json_encode(['success' => true, 'extraction' => $extraction]);
-    } catch (\Exception $e) { echo json_encode(['success' => false, 'message' => $e->getMessage()]); }
+    } catch (\Throwable $e) { echo json_encode(['success' => false, 'message' => $e->getMessage()]); }
     exit;
 });
 $router->get('/api/leads/stats', 'App\\Http\\Controllers\\Api\\ApiLeadController@getStats');

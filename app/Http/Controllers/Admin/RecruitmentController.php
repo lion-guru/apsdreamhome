@@ -170,4 +170,26 @@ class RecruitmentController extends AdminController
         $this->requireAdmin();
         return $this->jsonResponse($this->service->getStats());
     }
+
+    public function applicationShow($id)
+    {
+        $this->requireAdmin();
+        $application = $this->service->getApplication($id);
+        if (!$application) {
+            $this->setFlash('error', 'Application not found');
+            $this->redirect(BASE_URL . '/admin/recruitment');
+        }
+
+        $job = $this->service->getJobPosting($application['job_id']);
+        $interviews = $this->service->getInterviewsForApplication($id);
+        $offer = $this->service->getOfferForApplication($id);
+
+        return $this->render('admin/recruitment/application_show', [
+            'page_title' => 'Application: ' . $application['application_number'],
+            'application' => $application,
+            'job' => $job,
+            'interviews' => $interviews,
+            'offer' => $offer,
+        ]);
+    }
 }
